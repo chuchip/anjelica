@@ -1,0 +1,854 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
+  <NonVisualComponents>
+    <Component class="gnu.chu.controles.CTextField" name="cTextField1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="cTextField1"/>
+      </Properties>
+    </Component>
+  </NonVisualComponents>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="2"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,11,0,0,2,-33"/>
+  </AuxValues>
+
+  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+  <SubComponents>
+    <Container class="gnu.chu.controles.CPanel" name="Pprinc">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="Center"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+      <SubComponents>
+        <Container class="gnu.chu.controles.CPanel" name="Pcabe">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                <EtchetBorder bevelType="0"/>
+              </Border>
+            </Property>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="10" insetsLeft="10" insetsBottom="2" insetsRight="2" anchor="10" weightX="0.0" weightY="0.0"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="cLabel1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Component id="emp_codiE" min="-2" pref="22" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Component id="cLabel2" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="fvc_anoE" min="-2" pref="42" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="cLabel3" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="fvc_serieE" min="-2" pref="43" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="cLabel4" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="fvc_numeE" min="-2" pref="46" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="cLabel5" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                              <Component id="fvc_fecfraE" min="-2" pref="80" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="fvc_impresE" min="-2" pref="23" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="cLabel6" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Component id="cLabel7" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <Component id="cli_pobleE" min="-2" pref="302" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <Component id="fvc_modifE" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Component id="cli_codiE" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="cLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="emp_codiE" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="cLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="cLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="fvc_serieE" linkSize="13" alignment="0" min="-2" pref="15" max="-2" attributes="0"/>
+                          <Component id="cLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="fvc_numeE" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="cLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="fvc_fecfraE" min="-2" max="-2" attributes="0"/>
+                          <Component id="fvc_anoE" linkSize="13" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="cLabel6" min="-2" max="-2" attributes="0"/>
+                          <Component id="cli_codiE" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="fvc_modifE" pref="0" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                              <Component id="cLabel7" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                              <Component id="cli_pobleE" alignment="3" min="-2" pref="19" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
+                  <Component id="fvc_impresE" min="-2" pref="23" max="-2" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Empresa"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="emp_codiE">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;##&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="A&#xf1;o"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_anoE">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Serie"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CComboBox" name="fvc_serieE">
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel4">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Num.Fra"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_numeE">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;#####9&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel5">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Fecha Fra."/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_fecfraE">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="fvc_impresE">
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel6">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Cliente"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel7">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Poblacion"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cli_pobleE">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="c8" id="orange" palette="1" red="ff" type="palette"/>
+                </Property>
+                <Property name="opaque" type="boolean" value="true"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CComboBox" name="fvc_modifE">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="new javax.swing.DefaultComboBoxModel(new String[] { &quot;&quot; })" type="code"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.camposdb.cliAvcPanel" name="cli_codiE">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.camposdb.cliAvcPanel() {&#xa;    public void afterFocusLost(boolean error)&#xa;    {&#xa;        afterFocusLostCli(error);&#xa;    }&#xa;}&#xa;"/>
+              </AuxValues>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="gnu.chu.controles.CTabbedPane" name="Ptab">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="1" ipadY="1" insetsTop="2" insetsLeft="2" insetsBottom="2" insetsRight="2" anchor="10" weightX="1.0" weightY="1.0"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="gnu.chu.controles.Cgrid" name="jt">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(6)"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Lineas Fra">
+                    <Property name="tabTitle" type="java.lang.String" value="Lineas Fra"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Container class="gnu.chu.controles.CPanel" name="Pcobros">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Cobros">
+                    <Property name="tabTitle" type="java.lang.String" value="Cobros"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jtCobr" alignment="1" pref="710" max="32767" attributes="2"/>
+                      <Component id="jtGiros" alignment="0" pref="710" max="32767" attributes="2"/>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                                  <Component id="cLabel19" min="-2" pref="121" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+                                  <Component id="cLabel20" min="-2" pref="136" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="153" max="-2" attributes="0"/>
+                                  <Component id="BrecCobr" min="-2" pref="158" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <EmptySpace max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="cLabel19" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="22" max="-2" attributes="1"/>
+                          <Component id="jtCobr" pref="90" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="BrecCobr" linkSize="15" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
+                              <Component id="cLabel20" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="jtGiros" min="-2" pref="100" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="gnu.chu.controles.CLabel" name="cLabel19">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="0" green="c8" id="orange" palette="1" red="ff" type="palette"/>
+                    </Property>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
+                        <BevelBorder bevelType="1"/>
+                      </Border>
+                    </Property>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
+                    <Property name="text" type="java.lang.String" value="Cobros Realizados"/>
+                    <Property name="opaque" type="boolean" value="true"/>
+                  </Properties>
+                </Component>
+                <Component class="gnu.chu.controles.Cgrid" name="jtCobr">
+                  <Properties>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                        <LineBorder/>
+                      </Border>
+                    </Property>
+                    <Property name="buscarVisible" type="boolean" value="false"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(8)"/>
+                  </AuxValues>
+                </Component>
+                <Component class="gnu.chu.controles.CLabel" name="cLabel20">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="0" green="c8" id="orange" palette="1" red="ff" type="palette"/>
+                    </Property>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
+                        <BevelBorder bevelType="1"/>
+                      </Border>
+                    </Property>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
+                    <Property name="text" type="java.lang.String" value="Recibos Pendientes"/>
+                    <Property name="opaque" type="boolean" value="true"/>
+                  </Properties>
+                </Component>
+                <Component class="gnu.chu.controles.CGridEditable" name="jtGiros">
+                  <Properties>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                        <LineBorder/>
+                      </Border>
+                    </Property>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(7)"/>
+                  </AuxValues>
+                </Component>
+                <Component class="gnu.chu.controles.CButton" name="BrecCobr">
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(&quot;Recalc&quot;,Iconos.getImageIcon(&quot;calc&quot;))"/>
+                  </AuxValues>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Container class="gnu.chu.controles.CPanel" name="Pcomen">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Comentarios">
+                    <Property name="tabTitle" type="java.lang.String" value="Comentarios"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+              <SubComponents>
+                <Component class="gnu.chu.controles.CLabel" name="cabecL">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="0" green="c8" id="orange" palette="1" red="ff" type="palette"/>
+                    </Property>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
+                        <BevelBorder bevelType="1"/>
+                      </Border>
+                    </Property>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
+                    <Property name="text" type="java.lang.String" value="Cabecera"/>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[110, 18]"/>
+                    </Property>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[110, 18]"/>
+                    </Property>
+                    <Property name="opaque" type="boolean" value="true"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[110, 18]"/>
+                    </Property>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                      <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="0" ipadX="49" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CGridEditable" name="jtComCa">
+                  <Properties>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                        <LineBorder/>
+                      </Border>
+                    </Property>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(1)"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                      <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CLabel" name="pieL">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="0" green="c8" id="orange" palette="1" red="ff" type="palette"/>
+                    </Property>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
+                        <BevelBorder bevelType="1"/>
+                      </Border>
+                    </Property>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
+                    <Property name="text" type="java.lang.String" value="Pie "/>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[110, 18]"/>
+                    </Property>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[110, 18]"/>
+                    </Property>
+                    <Property name="opaque" type="boolean" value="true"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[110, 18]"/>
+                    </Property>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                      <GridBagConstraints gridX="0" gridY="2" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CGridEditable" name="jtComPie">
+                  <Properties>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                        <LineBorder/>
+                      </Border>
+                    </Property>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(1)"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                      <GridBagConstraints gridX="0" gridY="3" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+              </SubComponents>
+            </Container>
+          </SubComponents>
+        </Container>
+        <Container class="gnu.chu.controles.CPanel" name="Ppie">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                <EtchetBorder/>
+              </Border>
+            </Property>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[623, 114]"/>
+            </Property>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="2" gridWidth="0" gridHeight="0" fill="0" ipadX="0" ipadY="0" insetsTop="2" insetsLeft="10" insetsBottom="10" insetsRight="2" anchor="10" weightX="0.0" weightY="0.0"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="cLabel14" min="-2" max="-2" attributes="1"/>
+                          <Component id="cLabel8" linkSize="4" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
+                          <Component id="cLabel15" min="-2" pref="67" max="-2" attributes="1"/>
+                          <Component id="cLabel11" linkSize="4" alignment="0" min="-2" max="-2" attributes="1"/>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="fvc_sumlinE" linkSize="6" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                          <Component id="fvc_basimpE" linkSize="6" alignment="0" min="-2" pref="64" max="-2" attributes="0"/>
+                          <Component id="fvc_sumtotE" linkSize="6" alignment="0" min="-2" pref="64" max="-2" attributes="1"/>
+                          <Component id="fvc_cobradE" linkSize="6" min="-2" pref="62" max="-2" attributes="1"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="Baceptar" min="-2" pref="105" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                              <Component id="Bcancelar" min="-2" pref="105" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="cLabel9" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="cLabel12" linkSize="3" alignment="0" max="32767" attributes="1"/>
+                                      </Group>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="fvc_dtoppE" linkSize="8" alignment="1" pref="34" max="32767" attributes="1"/>
+                                          <Component id="fvc_porivaE" alignment="1" max="32767" attributes="1"/>
+                                      </Group>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="fvc_impivaE" linkSize="2" alignment="0" min="-2" pref="64" max="-2" attributes="0"/>
+                                          <Component id="fvc_impdppE" linkSize="2" alignment="1" min="-2" pref="58" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="cLabel17" max="32767" attributes="1"/>
+                                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                                      <Component id="fvc_impcobE" linkSize="6" min="-2" pref="64" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="cLabel16" min="-2" pref="56" max="-2" attributes="1"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <Component id="fvc_traspE" min="-2" pref="46" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="cLabel18" min="-2" pref="39" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" attributes="0">
+                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                  <Component id="cLabel13" alignment="0" max="32767" attributes="1"/>
+                                                  <Component id="cLabel10" alignment="0" max="32767" attributes="1"/>
+                                              </Group>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <Component id="fvc_dtocomE" linkSize="8" min="-2" pref="26" max="-2" attributes="0"/>
+                                                      <EmptySpace max="-2" attributes="0"/>
+                                                      <Component id="fvc_impdcoE" linkSize="2" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <Group type="102" alignment="1" attributes="0">
+                                                      <Component id="fvc_porreqE" linkSize="8" min="-2" pref="34" max="-2" attributes="0"/>
+                                                      <EmptySpace max="-2" attributes="0"/>
+                                                      <Component id="fvc_imprecE" linkSize="2" min="-2" pref="65" max="-2" attributes="0"/>
+                                                  </Group>
+                                              </Group>
+                                          </Group>
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <Component id="opAgrlin" max="32767" attributes="1"/>
+                                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                                              <Component id="Brecalc" min="-2" pref="77" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="85" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="fpa_codiE" min="-2" pref="253" max="-2" attributes="1"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="40" pref="40" max="40" attributes="0"/>
+                      <Component id="fvc_sumtotE" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="42" pref="42" max="42" attributes="0"/>
+                      <Component id="cLabel14" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="fvc_dtoppE" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fvc_impdppE" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fvc_dtocomE" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fvc_impdcoE" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="cLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fvc_sumlinE" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="fvc_porivaE" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fvc_impivaE" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fvc_porreqE" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fvc_imprecE" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="cLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="fvc_basimpE" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="opAgrlin" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
+                                  <Component id="Brecalc" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="fpa_codiE" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="fvc_cobradE" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
+                                  <Component id="cLabel15" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="fvc_traspE" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
+                                  <Component id="cLabel16" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="cLabel18" alignment="0" max="32767" attributes="1"/>
+                              </Group>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="42" pref="42" max="42" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="cLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="fvc_impcobE" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="Bcancelar" linkSize="9" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                          <Component id="Baceptar" linkSize="9" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Imp. Lineas"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_sumlinE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;-,---,--9.99&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel9">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Dto. PP"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_dtoppE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;#9.99&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_impdppE">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="c8" id="orange" palette="1" red="ff" type="palette"/>
+                </Property>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;-,---,--9.99&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel10">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Dto. Comercial"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_dtocomE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;#9.99&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_impdcoE">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="c8" id="orange" palette="1" red="ff" type="palette"/>
+                </Property>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;-,---,--9.99&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel11">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="B.Imponible"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_basimpE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;-,---,--9.99&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel12">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="IVA"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_porivaE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;#9.99&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_impivaE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;-,---,--9.99&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel13">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Recargo Equiv."/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_porreqE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;#9.99&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_imprecE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;-,---,--9.99&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel14">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Imp. Factura"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_sumtotE">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" id="cyan" palette="1" red="0" type="palette"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
+                </Property>
+                <Property name="enabledParent" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;-,---,--9.99&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel15">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Tot.Cobr"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CComboBox" name="fvc_cobradE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel16">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Contabil."/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CComboBox" name="fvc_traspE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel17">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Imp.Cobrado"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fvc_impcobE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;-,---,--9.99&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel18">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="F.Pago"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.camposdb.fpaPanel" name="fpa_codiE">
+            </Component>
+            <Component class="gnu.chu.controles.CButton" name="Brecalc">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Recalc"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(&quot;Recalc&quot;,Iconos.getImageIcon(&quot;calc&quot;))"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opAgrlin">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Agr. Lineas"/>
+                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[90, 18]"/>
+                </Property>
+                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[90, 18]"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CButton" name="Baceptar">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Aceptar"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CButton" name="Bcancelar">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Cancelar"/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>

@@ -1,0 +1,753 @@
+/**
+ *
+ * <p>Titulo: cldegen</p>
+ * <p>Descripción: Consulta/Listado Despieces Generados</p>
+ * <p>Copyright: Copyright (c) 2005-2010
+ *
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los términos de la Licencia Publica General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,
+ *  pero SIN NINGUNA GARANTÍA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPÓSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * @version 1.0
+ * Created on 27-mar-2010, 9:40:54
+ */
+
+package gnu.chu.anjelica.despiece;
+
+import gnu.chu.controles.*;
+import gnu.chu.utilidades.*;
+import java.sql.*;
+import gnu.chu.Menu.*;
+import gnu.chu.interfaces.ejecutable;
+import gnu.chu.sql.DatosTabla;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Vector;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import net.sf.jasperreports.engine.*;
+
+public class Cldegen extends ventana
+{
+    utildesp utdesp;
+    DatosTabla dtDesp,dtAux;
+    String condWhere;
+    public Cldegen(EntornoUsuario eu, Principal p) {
+        EU = eu;
+        vl = p.panel1;
+        jf = p;
+        eje = true;
+
+        setTitulo("Cons./List Despieces Generados");
+
+        try {
+            if (jf.gestor.apuntar(this)) {       
+                    jbInit();
+            } else {
+                setErrorInit(true);
+            }
+        } catch (Exception ex) {
+            ErrorInit(ex);
+            setErrorInit(true);
+        }
+    }
+
+    public Cldegen(gnu.chu.anjelica.menu p, EntornoUsuario eu) {
+
+        EU = eu;
+        vl = p.getLayeredPane();
+        setTitulo("Cons./List Despieces Generados ");
+        eje = false;
+
+        try {
+            jbInit();
+        } catch (Exception ex) {
+            ErrorInit(ex);
+            setErrorInit(true);
+        }
+    }
+
+    private void jbInit() throws Exception {
+
+        iniciarFrame(); 
+       
+        this.setVersion("2011-11-14");
+        statusBar = new StatusBar(this);
+        this.getContentPane().add(statusBar, BorderLayout.SOUTH);
+        conecta();
+
+        initComponents();
+        this.setSize(new Dimension(640, 530));
+    }
+
+    @Override
+    public void iniciarVentana() throws Exception {
+       
+        Pentra.setDefButton(Baceptar);
+       
+        fecfinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
+        feciniE.setText(Formatear.sumaDias(new Date(System.currentTimeMillis()), -7));
+        
+//        emp_codiE.setValorInt(EU.em_cod);
+        llenaCombos();
+        utdesp =new utildesp();
+        dtDesp=new DatosTabla(ct);
+        dtAux=new DatosTabla(ct);
+        tid_codiE.iniciar(dtAux, this, vl, EU);
+        activarEventos();
+        feciniE.requestFocus();
+    }
+    private void llenaCombos() throws SQLException
+    {
+        String s="select fpr_codi,fpr_nomb from v_famipro "
+                +" order by fpr_nomb";
+        dtStat.select(s);
+        fam_codiE.addDatos(dtStat);
+        fam_codiE.addDatos("0","**TODAS**");
+   
+        fam_codiE.setValorInt(0);
+        fam_codiE.setCeroIsNull(true);
+        dtStat.first();
+        fam_codentE.addDatos(dtStat);
+        fam_codentE.addDatos("0","**TODAS**");
+  
+        fam_codentE.setValorInt(0);
+        fam_codentE.setCeroIsNull(true);
+        s="select agr_codi,agp_nomb from v_agupro ORDER BY agp_nomb";
+        dtStat.select(s);
+        grp_codiE.addDatos(dtStat);
+        grp_codiE.addDatos("0","**TODAS**");
+        grp_codiE.setValorInt(0);
+        grp_codiE.setCeroIsNull(true);
+        s = "SELECT alm_codi,alm_nomb FROM v_almacen "+
+              " ORDER BY alm_nomb";
+        dtStat.select(s);
+        alm_codiE.addDatos(dtStat);
+        alm_codiE.addDatos("0","**TODOS**");
+        alm_codiE.setValorInt(0);
+        alm_codiE.setCeroIsNull(true);
+    }
+    
+    private void activarEventos() {
+        Baceptar.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e) {
+                buscaDatos();
+            }
+        });
+
+        
+        jt.addListSelectionListener(new ListSelectionListener ()
+        {
+             public void valueChanged(ListSelectionEvent e)
+             {
+                 if (e.getValueIsAdjusting()) // && e.getFirstIndex() == e.getLastIndex())
+                     return;
+                 if (!jt.isEnabled())
+                     return;
+                 verDatosDesg();
+             }
+        });
+        Bprint.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e) {
+                genListado();
+            }
+        });
+        
+       jtDes.addMouseListener(new MouseAdapter() {
+          public void mouseClicked(MouseEvent e) {
+              if (e.getClickCount()<2)
+                  return;
+              if (jf==null)
+                  return;
+              if (jtDes.isVacio() )
+                  return;
+              ejecutable prog;
+              if ((prog=jf.gestor.getProceso("gnu.chu.anjelica.despiece.MantDesp"))==null)
+                  return;
+              gnu.chu.anjelica.despiece.MantDesp cm=(gnu.chu.anjelica.despiece.MantDesp) prog;
+              cm.PADQuery();
+              cm.setDeoCodi(jtDes.getValString(0));
+              cm.ej_query();
+              jf.gestor.ir(cm);
+           }
+      });
+    }
+
+    void buscaDatos() {
+        String s;
+        try {
+            if (feciniE.isNull()) {
+                mensajeErr("Introduzca Fecha Inicio");
+                feciniE.requestFocus();
+                return;
+            }
+
+            if (fecfinE.isNull()) {
+                mensajeErr("Introduzca Fecha Final");
+                fecfinE.requestFocus();
+                return;
+            }
+            new miThread("")
+            {
+                @Override
+               public void run() {
+                   msgEspere("Espere, por favor, buscando despieces");
+                  
+                   jt.setEnabled(false);
+                   boolean ret=buscaDatos0();
+                   
+                   resetMsgEspere();
+                   if (!ret)
+                    return;
+                   
+                   SwingUtilities.invokeLater(new Thread(){
+                        @Override
+                        public void run()
+                        {
+                            jt.setDatos(dtCon1);
+                            jt.requestFocusInicio();
+                            jt.setEnabled(true);
+                            int rowCount=jt.getRowCount();
+                            double kilosT=0,imporT=0;
+                            int unidT=0;
+                            for (int n=0;n<rowCount;n++)
+                            {
+                                kilosT+=jt.getValorDec(n,2);
+                                unidT+=jt.getValorInt(n,3);
+                                imporT+=jt.getValorDec(n,4);
+                            }
+                            unidTotE.setValorDec(unidT);
+                            kilTotE.setValorDec(kilosT);
+                            impTotE.setValorDec(imporT);
+                            verDatosDesg();
+                            mensajeErr("Consulta Realizada");
+                        }
+                   });
+               }  
+            };
+        
+        } catch (Exception k) {
+            Error("Error al Buscar datos", k);
+        }
+    }
+    private boolean buscaDatos0() {
+        try {
+            String s = getStrSelect();
+            jt.panelG.setVisible(false);
+            jt.removeAllDatos();
+            if (!dtCon1.select(s)) {
+                msgBox("No encontrados despieces con estos criterios");
+                jt.panelG.setVisible(true);
+                return false;
+            }
+        } catch (SQLException k) {
+            Error("Error al Buscar datos", k);
+            return false;
+        }
+        return true;
+    }
+    private String getStrSelect() {
+        fam_codentE.isNull();
+        condWhere= " l.eje_nume= C.EJE_NUME "
+             + " and deo_fecha >= TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') "
+             + " and deo_fecha <= TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy') "
+             + (opVer.getValor().equals("T") ? "" : " and c.deo_incval='" + opVer.getValor() + "' ")
+             + (tid_codiE.isNull()?"":" and c.tid_codi = "+tid_codiE.getValorInt())
+             + " and c.deo_codi = l.deo_codi "
+             + " and l.def_kilos > 0 "
+             + (alm_codiE.isNull()?"": " and c.deo_almdes  = "+alm_codiE.getValorInt() )
+             + " and c.eje_nume = c.eje_nume "
+             + (tipoProenE.getValor().equals("T") && fam_codentE.isNull()  ?"":
+                 " and exists (select * from  v_articulo as ar,v_despori as po" +
+                 " where ar.pro_codi= po.pro_codi"
+                + (tipoProenE.getValor().equals("T")?"":" and ar.pro_artcon  = "+tipoProenE.getValor())
+                 + " and ar.pro_tiplot = 'V' " // Producto es vendible.
+                 + (fam_codentE.isNull()?"": " and ar.fam_codi = "+fam_codentE.getValorInt() )
+                 + " and po.eje_nume = c.eje_nume "
+                 + " and po.deo_codi= c.deo_codi) ")
+                + (opIncReg.isSelected()  ?"":
+                 " and c.tid_codi != "+MantTipDesp.AUTO_DESPIECE);
+        String s;
+        
+        s = "select l.pro_codi,a.pro_nomb,sum(def_kilos) as kilos,"
+             + " sum (def_numpie) as def_numpie, "
+             + " sum(def_kilos*def_prcost) as costo,sum(def_kilos*def_prcost)/sum(def_kilos) as imp "
+             + " from v_despfin l ,desporig c,v_articulo a "
+             + (grp_codiE.isNull() ?"":", v_famipro as fp ")
+             + " where "+condWhere
+             + " and a.pro_codi = l.pro_codi "
+             + " and a.pro_tiplot = 'V' " // Producto es vendible.
+             + (grp_codiE.isNull() ?"":" and fp.fpr_codi = a.fam_codi ")
+             + (fam_codiE.isNull()?"": " and a.fam_codi = "+fam_codiE.getValorInt() )
+             + (grp_codiE.isNull()?"": " and fp.agr_codi = "+grp_codiE.getValorInt() )
+             + (tipoProdE.getValor().equals("T")?"": " and pro_artcon  = "+tipoProdE.getValor() )
+             + " group by l.pro_Codi,a.pro_nomb "
+             + " order by l.pro_codi";
+        return s;
+    }
+    /**
+     * Muestra los datos de desglose.
+     */
+    void verDatosDesg()
+    {
+        jtDes.removeAllDatos();
+        String prvNomb;
+        String s = "select c.deo_codi,l.pro_codi,l.def_ejelot,l.def_serlot,l.pro_lote,"+
+                " sum(def_numpie) as def_numpie,sum(def_kilos) as def_kilos "
+             + " from v_despfin l,desporig c  "
+             + " where "+condWhere+
+             " and l.pro_codi = "+jt.getValorInt(0)+
+             " group by c.deo_codi,l.pro_codi,l.def_ejelot,l.def_serlot,l.pro_lote "+
+             " order by l.def_ejelot,l.def_serlot,l.pro_lote";
+        try {
+            Boolean swCong;
+            int mesCadCong=23;
+            if (dtDesp.select(s))
+            do {
+             swCong=gnu.chu.anjelica.pad.MantArticulos.isCongelado(jt.getValorInt(0), dtStat);
+             if (swCong != null)
+                  mesCadCong=dtStat.getInt("pro_cadcong");
+//             utdesp.setNumDesp(dtDesp.getInt("deo_numdes"));
+             if (!utdesp.busDatInd(dtDesp.getString("def_serlot"), dtDesp.getInt("pro_codi"),
+                        EU.em_cod, dtDesp.getInt("def_ejelot"), dtDesp.getInt("pro_lote"),
+                         0,dtAux,dtStat, EU))
+                prvNomb=null;
+             else
+                prvNomb=gnu.chu.anjelica.pad.pdprove.getNombPrv(utdesp.getPrvCompra(),dtStat);
+             Vector v=new Vector ();
+             v.add(dtDesp.getInt("deo_codi"));
+             v.add(prvNomb);
+             v.add(""+dtDesp.getInt("pro_lote"));
+             v.add(""+dtDesp.getInt("def_numpie"));
+             v.add(dtDesp.getString("def_kilos "));
+             v.add(utdesp.getFecCompra());
+             v.add(utdesp.getFecCadPrv());
+             v.add(utdesp.getFecDesp());
+             if (! swCong)
+                v.add(utdesp.getFecCaduc());
+             else
+             {
+                java.util.Date fecCong=Formatear.sumaMesDate(utdesp.getFechaProduccion(),mesCadCong);
+                v.add(Formatear.getFecha(fecCong,"dd-MM-yyyy"));
+             }
+             jtDes.addLinea(v);
+            } while (dtDesp.next());
+            jtDes.requestFocusInicio();
+        } catch (SQLException k)
+        {
+            Error("Error al ver datos de desglose",k);
+        }
+    }
+    void genListado() {
+        try {
+            mensaje("Espere ... generando listado");
+            String s = getStrSelect();
+            dtCon1.setStrSelect(s);
+            ResultSet rs = ct.createStatement().executeQuery(dtCon1.getStrSelect());
+
+            JasperReport jr = null;
+            jr = gnu.chu.print.util.getJasperReport(EU,  "lidesgen");
+            java.util.HashMap mp = new java.util.HashMap();
+            mp.put("fecini", feciniE.getText());
+            mp.put("fecfin", fecfinE.getText());
+            JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
+            if (gnu.chu.print.util.printJasper(jp, EU)) {
+                mensajeErr("Listado ... Generado");
+            }
+            mensaje("");
+        } catch (Exception k) {
+            Error("Error al Generar Listado", k);
+        }
+    }
+
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        Pprinc = new gnu.chu.controles.CPanel();
+        Pentra = new gnu.chu.controles.CPanel();
+        cLabel1 = new gnu.chu.controles.CLabel();
+        feciniE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        cLabel2 = new gnu.chu.controles.CLabel();
+        fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        cLabel3 = new gnu.chu.controles.CLabel();
+        fam_codiE = new gnu.chu.controles.CLinkBox();
+        cLabel4 = new gnu.chu.controles.CLabel();
+        tipoProdE = new gnu.chu.controles.CComboBox();
+        cLabel8 = new gnu.chu.controles.CLabel();
+        opVer = new gnu.chu.controles.CComboBox();
+        Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
+        cLabel10 = new gnu.chu.controles.CLabel();
+        grp_codiE = new gnu.chu.controles.CLinkBox();
+        cLabel11 = new gnu.chu.controles.CLabel();
+        alm_codiE = new gnu.chu.controles.CLinkBox();
+        cLabel12 = new gnu.chu.controles.CLabel();
+        tipoProenE = new gnu.chu.controles.CComboBox();
+        opIncReg = new gnu.chu.controles.CCheckBox();
+        cLabel13 = new gnu.chu.controles.CLabel();
+        tid_codiE = new gnu.chu.camposdb.tidCodi2();
+        cLabel9 = new gnu.chu.controles.CLabel();
+        fam_codiE1 = new gnu.chu.controles.CLinkBox();
+        cLabel14 = new gnu.chu.controles.CLabel();
+        fam_codentE = new gnu.chu.controles.CLinkBox();
+        jtDes = new gnu.chu.controles.Cgrid(9);
+        Pfinal = new gnu.chu.controles.CPanel();
+        cLabel5 = new gnu.chu.controles.CLabel();
+        unidTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9");
+        cLabel6 = new gnu.chu.controles.CLabel();
+        kilTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9.9");
+        cLabel7 = new gnu.chu.controles.CLabel();
+        impTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.9");
+        opDesgl = new gnu.chu.controles.CCheckBox();
+        Bprint = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
+        jt = new gnu.chu.controles.Cgrid(6);
+
+        Pprinc.setLayout(new java.awt.GridBagLayout());
+
+        Pentra.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        Pentra.setMaximumSize(new java.awt.Dimension(559, 125));
+        Pentra.setMinimumSize(new java.awt.Dimension(559, 125));
+        Pentra.setPreferredSize(new java.awt.Dimension(559, 125));
+        Pentra.setQuery(true);
+        Pentra.setLayout(null);
+
+        cLabel1.setText("De Fecha");
+        Pentra.add(cLabel1);
+        cLabel1.setBounds(10, 1, 55, 15);
+
+        feciniE.setMinimumSize(new java.awt.Dimension(2, 18));
+        feciniE.setPreferredSize(new java.awt.Dimension(2, 18));
+        Pentra.add(feciniE);
+        feciniE.setBounds(60, 1, 79, 19);
+
+        cLabel2.setText("A Fecha");
+        cLabel2.setPreferredSize(new java.awt.Dimension(43, 18));
+        Pentra.add(cLabel2);
+        cLabel2.setBounds(160, 1, 44, 18);
+        Pentra.add(fecfinE);
+        fecfinE.setBounds(210, 1, 79, 19);
+
+        cLabel3.setText("Familia");
+        Pentra.add(cLabel3);
+        cLabel3.setBounds(238, 45, 38, 18);
+
+        fam_codiE.setAncTexto(30);
+        fam_codiE.setFormato(Types.DECIMAL,"##9");
+        Pentra.add(fam_codiE);
+        fam_codiE.setBounds(283, 45, 270, 18);
+
+        cLabel4.setText("Tipo Prod. Generado");
+        Pentra.add(cLabel4);
+        cLabel4.setBounds(3, 24, 136, 18);
+
+        tipoProdE.setMinimumSize(new java.awt.Dimension(123, 18));
+        tipoProdE.addItem("Todos", "T");
+        tipoProdE.addItem("Congelado", "-1");
+        tipoProdE.addItem("No Congelado", "0");
+        Pentra.add(tipoProdE);
+        tipoProdE.setBounds(129, 24, 140, 18);
+
+        cLabel8.setText("Ver");
+        cLabel8.setPreferredSize(new java.awt.Dimension(20, 18));
+        Pentra.add(cLabel8);
+        cLabel8.setBounds(360, 1, 20, 19);
+
+        opVer.setPreferredSize(new java.awt.Dimension(28, 18));
+        opVer.addItem("Todos","T");
+        opVer.addItem("Procesado","S");
+        opVer.addItem("No Procesado","N");
+        Pentra.add(opVer);
+        opVer.setBounds(399, 1, 140, 19);
+
+        Baceptar.setText("Aceptar");
+        Pentra.add(Baceptar);
+        Baceptar.setBounds(440, 90, 110, 27);
+
+        cLabel10.setText("Grupo");
+        Pentra.add(cLabel10);
+        cLabel10.setBounds(3, 45, 34, 18);
+
+        grp_codiE.setAncTexto(30);
+        grp_codiE.setFormato(Types.DECIMAL,"##9");
+        Pentra.add(grp_codiE);
+        grp_codiE.setBounds(40, 45, 190, 18);
+
+        cLabel11.setText("Almacen");
+        Pentra.add(cLabel11);
+        cLabel11.setBounds(273, 24, 48, 18);
+
+        alm_codiE.setAncTexto(30);
+        alm_codiE.setFormato(Types.DECIMAL,"##9");
+        Pentra.add(alm_codiE);
+        alm_codiE.setBounds(325, 24, 230, 18);
+
+        cLabel12.setText("Tipo Prod. Entrada");
+        Pentra.add(cLabel12);
+        cLabel12.setBounds(3, 67, 110, 18);
+
+        tipoProenE.addItem("Todos", "T");
+        tipoProenE.addItem("Congelado", "-1");
+        tipoProenE.addItem("No Congelado", "0");
+        Pentra.add(tipoProenE);
+        tipoProenE.setBounds(110, 67, 120, 18);
+
+        opIncReg.setText("Incluir reenvasado");
+        opIncReg.setToolTipText("Incluir productos que se generan a si mismos");
+        opIncReg.setPreferredSize(new java.awt.Dimension(83, 18));
+        Pentra.add(opIncReg);
+        opIncReg.setBounds(320, 90, 120, 18);
+
+        cLabel13.setText("Tipo  Desp");
+        Pentra.add(cLabel13);
+        cLabel13.setBounds(3, 88, 70, 18);
+
+        tid_codiE.setAncTexto(40);
+        Pentra.add(tid_codiE);
+        tid_codiE.setBounds(70, 90, 240, 18);
+
+        cLabel9.setText("Familia");
+        Pentra.add(cLabel9);
+        cLabel9.setBounds(238, 45, 38, 18);
+
+        fam_codiE1.setAncTexto(30);
+        fam_codiE.setFormato(Types.DECIMAL,"##9");
+        Pentra.add(fam_codiE1);
+        fam_codiE1.setBounds(283, 45, 255, 18);
+
+        cLabel14.setText("Familia Entrada");
+        Pentra.add(cLabel14);
+        cLabel14.setBounds(230, 67, 90, 18);
+
+        fam_codentE.setAncTexto(30);
+        fam_codentE.setFormato(Types.DECIMAL,"##9");
+        Pentra.add(fam_codentE);
+        fam_codentE.setBounds(315, 67, 240, 18);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 2, 0);
+        Pprinc.add(Pentra, gridBagConstraints);
+
+        jtDes.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtDes.setMaximumSize(new java.awt.Dimension(600, 100));
+        jtDes.setMinimumSize(new java.awt.Dimension(600, 100));
+        {Vector v = new Vector();
+            v.add("Desp"); //  0 Proveedor
+            v.add("Proveed"); //  0 Proveedor
+            v.add("Lote"); // 1
+            v.add("Unid."); // 2
+            v.add("Kilos"); // 3
+            v.add("Fec.Com"); // 4
+            v.add("Fec.Cad"); // 5
+            v.add("Fec.Desp"); // 6
+            v.add("Fec.Cad."); // 7
+            jtDes.setCabecera(v);
+        }
+        jtDes.setAlinearColumna(new int[]{2,0,0,2,2,1,1,1,1});
+        jtDes.setAnchoColumna(new int[]{50,130,70,40,60,70,70,70,70});
+        jtDes.setFormatoColumna(0,"####9");
+        jtDes.setFormatoColumna(3,"---,--9");
+        jtDes.setFormatoColumna(4,"----,--9.99");
+        jtDes.setFormatoColumna(5, "dd-MM-yy");
+        jtDes.setFormatoColumna(6, "dd-MM-yy");
+        jtDes.setFormatoColumna(7, "dd-MM-yy");
+        jtDes.setFormatoColumna(8, "dd-MM-yy");
+        jtDes.setAjustarGrid(true);
+
+        org.jdesktop.layout.GroupLayout jtDesLayout = new org.jdesktop.layout.GroupLayout(jtDes);
+        jtDes.setLayout(jtDesLayout);
+        jtDesLayout.setHorizontalGroup(
+            jtDesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 643, Short.MAX_VALUE)
+        );
+        jtDesLayout.setVerticalGroup(
+            jtDesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 148, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        Pprinc.add(jtDes, gridBagConstraints);
+
+        Pfinal.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        Pfinal.setMaximumSize(new java.awt.Dimension(580, 25));
+        Pfinal.setMinimumSize(new java.awt.Dimension(580, 25));
+        Pfinal.setPreferredSize(new java.awt.Dimension(580, 25));
+
+        cLabel5.setText("Unidades");
+
+        unidTotE.setEditable(false);
+
+        cLabel6.setText("Kilos");
+
+        kilTotE.setEditable(false);
+
+        cLabel7.setText("Importe");
+
+        impTotE.setEditable(false);
+
+        opDesgl.setText("Desglosado");
+
+        Bprint.setText("Impr");
+
+        org.jdesktop.layout.GroupLayout PfinalLayout = new org.jdesktop.layout.GroupLayout(Pfinal);
+        Pfinal.setLayout(PfinalLayout);
+        PfinalLayout.setHorizontalGroup(
+            PfinalLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(PfinalLayout.createSequentialGroup()
+                .add(cLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(4, 4, 4)
+                .add(unidTotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 52, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(cLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(2, 2, 2)
+                .add(kilTotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 70, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(2, 2, 2)
+                .add(cLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(2, 2, 2)
+                .add(impTotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 92, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(opDesgl, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(Bprint, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 107, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(32, Short.MAX_VALUE))
+        );
+        PfinalLayout.setVerticalGroup(
+            PfinalLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(PfinalLayout.createSequentialGroup()
+                .add(PfinalLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, Bprint, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, PfinalLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, opDesgl, 0, 0, Short.MAX_VALUE)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, unidTotE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, kilTotE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, impTotE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, PfinalLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(cLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(cLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(cLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
+        Pprinc.add(Pfinal, gridBagConstraints);
+
+        jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jt.setMaximumSize(new java.awt.Dimension(600, 200));
+        jt.setMinimumSize(new java.awt.Dimension(600, 200));
+
+        org.jdesktop.layout.GroupLayout jtLayout = new org.jdesktop.layout.GroupLayout(jt);
+        jt.setLayout(jtLayout);
+        jtLayout.setHorizontalGroup(
+            jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 643, Short.MAX_VALUE)
+        );
+        jtLayout.setVerticalGroup(
+            jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 148, Short.MAX_VALUE)
+        );
+
+        Vector v=new Vector();
+        v.add("Producto"); // 0
+        v.add("Descripcion"); // 1
+        v.add("Kilos"); // 2
+        v.add("Unid"); // 3
+        v.add("Importe"); // 4
+        v.add("Costo"); // 5
+        jt.setCabecera(v);
+        jt.setAnchoColumna(new int[]{50,200,60,40,70,60});
+        jt.setAlinearColumna(new int[]{0,0,2,2,2,2});
+        jt.setFormatoColumna(2,"---,--9.99");
+        jt.setFormatoColumna(3,"--,--9");
+        jt.setFormatoColumna(4,"----,--9.99");
+        jt.setFormatoColumna(5,"--9.9999");
+        jt.setAjustarGrid(true);
+
+        jt.setNumRegCargar(0);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 2, 0);
+        Pprinc.add(jt, gridBagConstraints);
+
+        getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton Baceptar;
+    private gnu.chu.controles.CButton Bprint;
+    private gnu.chu.controles.CPanel Pentra;
+    private gnu.chu.controles.CPanel Pfinal;
+    private gnu.chu.controles.CPanel Pprinc;
+    private gnu.chu.controles.CLinkBox alm_codiE;
+    private gnu.chu.controles.CLabel cLabel1;
+    private gnu.chu.controles.CLabel cLabel10;
+    private gnu.chu.controles.CLabel cLabel11;
+    private gnu.chu.controles.CLabel cLabel12;
+    private gnu.chu.controles.CLabel cLabel13;
+    private gnu.chu.controles.CLabel cLabel14;
+    private gnu.chu.controles.CLabel cLabel2;
+    private gnu.chu.controles.CLabel cLabel3;
+    private gnu.chu.controles.CLabel cLabel4;
+    private gnu.chu.controles.CLabel cLabel5;
+    private gnu.chu.controles.CLabel cLabel6;
+    private gnu.chu.controles.CLabel cLabel7;
+    private gnu.chu.controles.CLabel cLabel8;
+    private gnu.chu.controles.CLabel cLabel9;
+    private gnu.chu.controles.CLinkBox fam_codentE;
+    private gnu.chu.controles.CLinkBox fam_codiE;
+    private gnu.chu.controles.CLinkBox fam_codiE1;
+    private gnu.chu.controles.CTextField fecfinE;
+    private gnu.chu.controles.CTextField feciniE;
+    private gnu.chu.controles.CLinkBox grp_codiE;
+    private gnu.chu.controles.CTextField impTotE;
+    private gnu.chu.controles.Cgrid jt;
+    private gnu.chu.controles.Cgrid jtDes;
+    private gnu.chu.controles.CTextField kilTotE;
+    private gnu.chu.controles.CCheckBox opDesgl;
+    private gnu.chu.controles.CCheckBox opIncReg;
+    private gnu.chu.controles.CComboBox opVer;
+    private gnu.chu.camposdb.tidCodi2 tid_codiE;
+    private gnu.chu.controles.CComboBox tipoProdE;
+    private gnu.chu.controles.CComboBox tipoProenE;
+    private gnu.chu.controles.CTextField unidTotE;
+    // End of variables declaration//GEN-END:variables
+
+}

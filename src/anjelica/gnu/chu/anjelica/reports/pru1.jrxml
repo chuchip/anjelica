@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE jasperReport PUBLIC "-//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+<jasperReport
+		name="pru1"
+		pageWidth="342"
+		pageHeight="430"
+		columnWidth="320"
+		columnSpacing="0"
+		leftMargin="10"
+		rightMargin="10"
+		topMargin="0"
+		bottomMargin="0"
+		scriptletClass="chuchi.pruebas.pru2">
+
+	<variable name="ChartImage" class="java.awt.Image" calculation="System"/>
+	<variable name="ChartImage2" class="java.awt.Image" calculation="System"/>
+
+	<title>
+		<band height="300">
+			<staticText>
+				<reportElement x="0" y="0" width="200" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="12"/>
+				</textElement>
+				<text>Prueba cod. barras</text>
+                        </staticText>
+			<image  hAlign="Left" vAlign="Top">
+				<reportElement x="0" y="30" width="200" height="60"/>
+				<imageExpression class="java.awt.Image">$V{ChartImage}</imageExpression>
+			</image>
+		</band>
+	</title>
+</jasperReport>

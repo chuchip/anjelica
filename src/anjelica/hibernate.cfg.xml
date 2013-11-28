@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+    <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+    <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/anjelica</property>
+    <property name="hibernate.connection.username">anjelica</property>
+    <property name="hibernate.connection.password">anjelica</property>
+    <property name="hibernate.show_sql">true</property>
+    <property name="hibernate.query.factory_class">org.hibernate.hql.classic.ClassicQueryTranslatorFactory</property>
+    <mapping resource="anjelica/entity/Desorilin.hbm.xml"/>
+    <mapping resource="anjelica/entity/Desporig.hbm.xml"/>
+    <mapping resource="gnu/chu/sql/Desporig.hbm.xml"/>
+    <mapping resource="gnu/chu/sql/Desorilin.hbm.xml"/>
+  </session-factory>
+</hibernate-configuration>

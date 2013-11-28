@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="etiqmini" pageWidth="226" pageHeight="131" columnWidth="212" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" scriptletClass="gnu.chu.anjelica.listados.etiqueta">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<parameter name="lote" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="articulo" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="nacido" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="cebado" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="despiezado" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ntraza" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="peso" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="conservar" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="sacrificado" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="codbarra" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="codarti" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="fecrecep" class="java.lang.String" isForPrompting="false"/>
+	<variable name="codbarras" class="java.awt.Image"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band height="125">
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="5" y="18" width="30" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Lote:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Transparent" x="33" y="18" width="114" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{lote}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="3" y="34" width="216" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{articulo}]]></textFieldExpression>
+			</textField>
+			<ellipse>
+				<reportElement key="ellipse" mode="Transparent" x="150" y="2" width="66" height="30" forecolor="#000000" backcolor="#FFFFFF"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</ellipse>
+			<staticText>
+				<reportElement key="staticText" mode="Transparent" x="154" y="3" width="60" height="34" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ESPAÑA
+10.22780/NA
+C.E.E.]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="126" y="53" width="92" height="26" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" size="20" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{peso}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="4" y="65" width="120" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{conservar}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" isUsingCache="false">
+				<reportElement key="image" mode="Opaque" x="4" y="82" width="212" height="35" forecolor="#000000" backcolor="#FFFFFF"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.0" lineStyle="Solid"/>
+				</graphicElement>
+				<imageExpression class="java.awt.Image"><![CDATA[$V{codbarras}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="5" y="2" width="30" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ Ref:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="43" y="2" width="50" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{codarti}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="3" y="52" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fecrecep}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band/>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,0,-94,0,0,2,-105"/>
+  </AuxValues>
+
+  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+  <SubComponents>
+    <Container class="gnu.chu.controles.CPanel" name="Pprinc">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="Center"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="cLabel8" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="stp_unactE" min="-2" pref="32" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="cLabel9" min="-2" pref="39" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="deo_kilosE" min="-2" pref="69" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="cLabel1" alignment="0" min="-2" pref="58" max="-2" attributes="0"/>
+                              <Component id="cLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="pro_codiE" min="-2" pref="378" max="-2" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="deo_emplotE" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="cLabel3" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="alm_codiE" min="-2" pref="270" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="Baceptar" min="-2" pref="121" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Component id="cLabel2" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="deo_ejelotE" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                                  <Component id="cLabel4" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="deo_serlotE" min="-2" pref="20" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="cLabel5" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="pro_loteE" min="-2" pref="55" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="cLabel6" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="pro_numindE" min="-2" pref="32" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace min="0" pref="207" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="cLabel1" min="-2" max="-2" attributes="0"/>
+                      <Component id="pro_codiE" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="deo_emplotE" min="-2" max="-2" attributes="0"/>
+                      <Component id="cLabel7" min="-2" max="-2" attributes="0"/>
+                      <Component id="alm_codiE" min="-2" max="-2" attributes="0"/>
+                      <Component id="cLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="cLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="deo_ejelotE" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="deo_serlotE" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="pro_loteE" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="pro_numindE" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="cLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="stp_unactE" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="deo_kilosE" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="Baceptar" min="-2" pref="28" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="gnu.chu.controles.CButton" name="Baceptar">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Aceptar"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(Iconos.getImageIcon(&quot;check&quot;))"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CTextField" name="stp_unactE">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9&quot;)"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="cLabel9">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Kilos"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CLinkBox" name="alm_codiE">
+          <Properties>
+            <Property name="ancTexto" type="int" value="30"/>
+            <Property name="hasCambio" type="boolean" value="true"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CTextField" name="pro_numindE">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9&quot;)"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Unidades "/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="cLabel7">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Empresa"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CTextField" name="pro_loteE">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;#####9&quot;)"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="cLabel6">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Individuo"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CTextField" name="deo_kilosE">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;---,--9.99&quot;)"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CTextField" name="deo_serlotE">
+          <Properties>
+            <Property name="mayusc" type="boolean" value="true"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,1)"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="cLabel5">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Lote"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="cLabel1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Producto"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="cLabel4">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Serie "/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Almacen"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CTextField" name="deo_ejelotE">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9&quot;)"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Ejercicio"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.camposdb.proPanel" name="pro_codiE">
+        </Component>
+        <Component class="gnu.chu.camposdb.empPanel" name="deo_emplotE">
+          <Properties>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>

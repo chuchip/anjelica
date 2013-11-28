@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fecini" class="java.lang.String"/>
+	<parameter name="fecfin" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="pro_codi" class="java.lang.Integer"/>
+	<field name="pro_nomb" class="java.lang.String"/>
+	<field name="tipo" class="java.lang.String"/>
+	<field name="kilos" class="java.lang.Double"/>
+	<variable name="totkilos" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{kilos}]]></variableExpression>
+	</variable>
+	<variable name="prokilos" class="java.lang.Double" resetType="Group" resetGroup="producto" calculation="Sum">
+		<variableExpression><![CDATA[$F{kilos}]]></variableExpression>
+	</variable>
+	<group name="producto">
+		<groupExpression><![CDATA[$F{pro_codi}]]></groupExpression>
+		<groupFooter>
+			<band height="20">
+				<printWhenExpression><![CDATA[$V{producto_COUNT}.intValue()>1]]></printWhenExpression>
+				<staticText>
+					<reportElement x="123" y="0" width="266" height="20"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total producto ....]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="392" y="0" width="66" height="20"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{prokilos}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="27" splitType="Stretch">
+			<staticText>
+				<reportElement x="31" y="0" width="161" height="18"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Relacion Productos Reciclables]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="209" y="0" width="28" height="18"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[De]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy HH.mm">
+				<reportElement x="237" y="0" width="100" height="18"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{fecini}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="361" y="0" width="28" height="18"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[A]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy HH.mm">
+				<reportElement x="389" y="0" width="100" height="18"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{fecfin}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="71" y="0" width="48" height="18"/>
+				<box>
+					<pen lineStyle="Solid"/>
+					<topPen lineStyle="Solid"/>
+					<leftPen lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Producto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="123" y="0" width="266" height="18"/>
+				<box>
+					<pen lineStyle="Solid"/>
+					<topPen lineStyle="Solid"/>
+					<leftPen lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Nombre Producto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="392" y="0" width="66" height="18"/>
+				<box>
+					<pen lineStyle="Solid"/>
+					<topPen lineStyle="Solid"/>
+					<leftPen lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Kilos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="28" y="0" width="31" height="18"/>
+				<box>
+					<pen lineStyle="Solid"/>
+					<topPen lineStyle="Solid"/>
+					<leftPen lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField>
+				<reportElement x="123" y="0" width="266" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="71" y="0" width="48" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{pro_codi}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="28" y="0" width="31" height="18"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="392" y="0" width="66" height="18"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{kilos}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="24" splitType="Stretch">
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="392" y="0" width="66" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{totkilos}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="123" y="0" width="266" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Kilos .....]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

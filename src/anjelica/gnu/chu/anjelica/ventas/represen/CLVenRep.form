@@ -1,0 +1,444 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
+  <NonVisualComponents>
+    <Component class="gnu.chu.controles.CTextField" name="pro_codiE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;#####9&quot;)"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="pro_nombE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="avl_unidE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;---9&quot;)"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="avl_kilosE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;---9.99&quot;)"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="avl_precioE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;--9.99&quot;)"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="avl_prtariE">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;--9.99&quot;)"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="avl_gananE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;--9.99&quot;)"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="avl_numlinE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+  </NonVisualComponents>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="2"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,-80,0,0,2,-122"/>
+  </AuxValues>
+
+  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+  <SubComponents>
+    <Container class="gnu.chu.controles.CPanel" name="Pprinc">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="Center"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+      <SubComponents>
+        <Container class="gnu.chu.controles.CPanel" name="Pcondic">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                <EtchetBorder bevelType="0"/>
+              </Border>
+            </Property>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[578, 60]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[578, 60]"/>
+            </Property>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[578, 60]"/>
+            </Property>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="0.0"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="cLabel1" min="-2" pref="50" max="-2" attributes="0"/>
+                              <Component id="rep_codiE" min="-2" pref="237" max="-2" attributes="0"/>
+                              <EmptySpace min="3" pref="3" max="3" attributes="0"/>
+                              <Component id="opIncCobr" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="7" pref="7" max="7" attributes="0"/>
+                              <Component id="Baceptar" min="-2" pref="100" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="cLabel3" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="11" pref="11" max="11" attributes="0"/>
+                              <Component id="emp_codiE" min="-2" pref="60" max="-2" attributes="0"/>
+                              <EmptySpace min="20" pref="20" max="20" attributes="0"/>
+                              <Component id="cLabel5" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="1" pref="1" max="1" attributes="0"/>
+                              <Component id="fecIniE" min="-2" pref="76" max="-2" attributes="0"/>
+                              <EmptySpace min="26" pref="26" max="26" attributes="0"/>
+                              <Component id="cLabel6" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="4" pref="4" max="4" attributes="0"/>
+                              <Component id="fecFinE" min="-2" pref="75" max="-2" attributes="0"/>
+                              <EmptySpace min="42" pref="42" max="42" attributes="0"/>
+                              <Component id="bdisc" min="-2" pref="21" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="-2" pref="76" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="cLabel3" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="emp_codiE" linkSize="1" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
+                          <Component id="cLabel5" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="fecIniE" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="cLabel6" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="fecFinE" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="bdisc" linkSize="1" alignment="0" min="-2" pref="17" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="3" pref="3" max="3" attributes="0"/>
+                              <Component id="cLabel1" min="-2" pref="20" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="3" pref="3" max="3" attributes="0"/>
+                              <Component id="rep_codiE" min="-2" pref="20" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="3" pref="3" max="3" attributes="0"/>
+                              <Component id="opIncCobr" min="-2" pref="19" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="Baceptar" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel5">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="De Fecha"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fecIniE">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel6">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="A Fecha"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fecFinE">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Empresa"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.camposdb.empPanel" name="emp_codiE">
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Repres"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CLinkBox" name="rep_codiE">
+              <Properties>
+                <Property name="ancTexto" type="int" value="30"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="rep_codiE.setAncTexto(30);"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opIncCobr">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Solo cobrados"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CButtonMenu" name="Baceptar">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ejecutar"/>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.camposdb.DiscButton" name="bdisc">
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="gnu.chu.controles.Cgrid" name="jtCab">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                <LineBorder/>
+              </Border>
+            </Property>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[220, 130]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[220, 130]"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(11)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="Vector v=new Vector();  &#xa;    v.addElement(&quot;Ejer&quot;); // 0&#xa;    v.addElement(&quot;Ser&quot;); // 1&#xa;    v.addElement(&quot;Num.Alb&quot;); // 2&#xa;    v.addElement(&quot;Fec.Alb&quot;); // 3&#xa;    v.addElement(&quot;Cliente&quot;); // 4&#xa;    v.addElement(&quot;Nomb.Cliente&quot;); // 5&#xa;    v.addElement(&quot;Imp.Alb&quot;); // 6&#xa;    v.addElement(&quot;Imp.Cob&quot;); // 7&#xa;    v.addElement(&quot;Kilos&quot;); // 8&#xa;    v.addElement(&quot;Imp.Ganan&quot;); // 9&#xa;    v.addElement(&quot;Tar&quot;); // 10&#xa;jtCab.setCabecera(v);&#xa;    jtCab.setAnchoColumna(new int[]{&#xa;40,30,50,80, 60,180,80,80,70,80,30});&#xa; jtCab.setFormatoColumna(3,&quot;dd-MM-yy&quot;);&#xa; jtCab.setFormatoColumna(6,&quot;----,--9.99&quot;);&#xa; jtCab.setFormatoColumna(7,&quot;----,--9.99&quot;);&#xa; jtCab.setFormatoColumna(8,&quot;--,--9.99&quot;);&#xa; jtCab.setFormatoColumna(9,&quot;----,--9.99&quot;);&#xa; jtCab.setAlinearColumna(new int[]{2,1,2,1,2,0,2,2,2,2,2});&#xa;jtCab.setAjustarGrid(true);"/>
+          </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="2" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="3.0"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="628" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="152" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+        </Container>
+        <Container class="gnu.chu.controles.CGridEditable" name="jtLin">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                <LineBorder/>
+              </Border>
+            </Property>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[180, 100]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[180, 100]"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(8){&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return jtLinCambiaLinea(row,col);&#xa;    }&#xa;}&#xa;"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="Vector v1=new Vector();&#xa;v1.add(&quot;Prod&quot;); //0 &#xa;v1.add(&quot;Nombre&quot;); // 1&#xa;v1.add(&quot;Unid&quot;); // 2&#xa;v1.add(&quot;Kilos&quot;); // 3&#xa;v1.add(&quot;Prec&quot;); // 4&#xa;v1.add(&quot;Tarifa&quot;); // 5 &#xa;v1.add(&quot;Gananc&quot;); // 6&#xa;v1.add(&quot;NL&quot;); // 7&#xa;jtLin.setCabecera(v1);&#xa;jtLin.setAnchoColumna(new int[]{60,180,50,70,60,60,60,20});&#xa;jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,0});&#xa;jtLin.setFormatoColumna(2,&quot;---9&quot;);&#xa;jtLin.setFormatoColumna(3,&quot;---9.99&quot;);&#xa;jtLin.setFormatoColumna(4,&quot;--9.99&quot;);&#xa;jtLin.setFormatoColumna(5,&quot;--9.99&quot;);&#xa;jtLin.setFormatoColumna(6,&quot;--9.99&quot;);&#xa;&#xa;jtLin.setCanDeleteLinea(false);&#xa;jtLin.setCanInsertLinea(false);&#xa;jtLin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));&#xa;&#xa;jtLin.setPreferredSize(new java.awt.Dimension(80, 80));&#xa;&#xa;// Code of sub-components - not shown here&#xa;&#xa;// Layout setup code - not shown here&#xa;&#xa;gridBagConstraints = new java.awt.GridBagConstraints();&#xa;gridBagConstraints.gridx = 0;&#xa;gridBagConstraints.gridy = 2;&#xa;gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;&#xa;gridBagConstraints.weightx = 1.0;&#xa;gridBagConstraints.weighty = 1.0;&#xa;gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);&#xa;Pprinc.add(jtLin, gridBagConstraints);"/>
+          </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="2" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="2.0"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="628" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="101" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+        </Container>
+        <Container class="gnu.chu.controles.CPanel" name="Presumen">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                <EtchetBorder/>
+              </Border>
+            </Property>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[628, 30]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[628, 30]"/>
+            </Property>
+            <Property name="opaque" type="boolean" value="false"/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[628, 30]"/>
+            </Property>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="3" gridWidth="1" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="1" insetsLeft="0" insetsBottom="1" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="cLabel2" min="-2" pref="95" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="numAlbE" min="-2" pref="47" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="cLabel4" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="impAlbE" min="-2" pref="86" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="cLabel7" min="-2" pref="32" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="kilAlbE" min="-2" pref="86" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="cLabel8" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="impGanE" min="-2" pref="86" max="-2" attributes="0"/>
+                      <EmptySpace pref="28" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="cLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="numAlbE" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="cLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="impAlbE" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="cLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="kilAlbE" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="cLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="impGanE" alignment="3" max="32767" attributes="1"/>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Num. Albaranes"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[57, 17]"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="numAlbE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel4">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Importe"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[57, 17]"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="impAlbE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;--,---,--9.9&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel7">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Kilos"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[57, 17]"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="kilAlbE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;-,---,--9.9&quot;)"/>
+              </AuxValues>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ganancia"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[57, 17]"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="impGanE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;--,---,--9.9&quot;)"/>
+              </AuxValues>
+            </Component>
+          </SubComponents>
+        </Container>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>

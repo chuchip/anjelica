@@ -1,0 +1,210 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="2"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,83,0,0,2,18"/>
+  </AuxValues>
+
+  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+  <SubComponents>
+    <Container class="gnu.chu.controles.CPanel" name="Pprinc">
+      <Properties>
+        <Property name="defButton" type="javax.swing.AbstractButton" editor="org.netbeans.modules.form.ComponentChooserEditor">
+          <ComponentRef name="bAceptar"/>
+        </Property>
+      </Properties>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="Center"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="discrim1L" min="-2" pref="91" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="discrim1E" pref="399" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="discrim2L" min="-2" pref="91" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="discrim2E" pref="399" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="discrim3L" min="-2" pref="91" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="discrim3E" pref="399" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="discrim4L" min="-2" pref="91" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="discrim4E" pref="399" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="discrim5L" min="-2" pref="91" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="discrim5E" pref="399" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="discrim6L" min="-2" pref="91" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="discrim6E" pref="399" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="188" max="-2" attributes="0"/>
+                          <Component id="bAceptar" min="-2" pref="119" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="discrim1L" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="discrim1E" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="discrim2L" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="discrim2E" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="discrim3L" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="discrim3E" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="discrim4E" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="discrim4L" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="discrim5E" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="discrim5L" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="discrim6E" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="discrim6L" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="bAceptar" min="-2" pref="33" max="-2" attributes="0"/>
+                  <EmptySpace pref="108" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="gnu.chu.controles.CLabel" name="discrim1L">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Discrim 1"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="discrim2L">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Discrim 2"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="discrim3L">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Discrim 3"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="discrim4L">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Discrim 4"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CLinkBox" name="discrim1E">
+          <Properties>
+            <Property name="ancTexto" type="int" value="30"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CLinkBox" name="discrim2E">
+          <Properties>
+            <Property name="ancTexto" type="int" value="30"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CLinkBox" name="discrim3E">
+          <Properties>
+            <Property name="ancTexto" type="int" value="30"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CLinkBox" name="discrim4E">
+          <Properties>
+            <Property name="ancTexto" type="int" value="30"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="discrim5L">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Zona/Repr."/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CLinkBox" name="discrim5E">
+          <Properties>
+            <Property name="ancTexto" type="int" value="30"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="discrim6L">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Zona/Credito"/>
+          </Properties>
+        </Component>
+        <Component class="gnu.chu.controles.CLinkBox" name="discrim6E">
+          <Properties>
+            <Property name="ancTexto" type="int" value="30"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
+          </AuxValues>
+        </Component>
+        <Component class="gnu.chu.controles.CButton" name="bAceptar">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(&quot;Aceptar (F4)&quot;,Iconos.getImageIcon(&quot;check&quot;))"/>
+          </AuxValues>
+        </Component>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>

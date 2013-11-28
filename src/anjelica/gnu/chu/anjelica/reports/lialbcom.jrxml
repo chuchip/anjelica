@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lialbcom" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="resalta" fontName="DejaVu Sans" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1250" isPdfEmbedded="false"/>
+	<style name="normal" fontName="DejaVu Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1250" isPdfEmbedded="false"/>
+	<parameter name="incPortes" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empcodi" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ejeini" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["2004"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ejefin" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["2004"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="albini" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["555"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="albfin" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["555"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select c.acc_nume,c.acc_ano,c.acc_serie,c.acc_impokg,
+c.acc_fecrec,c.prv_codi,l.pro_codi,
+l.acl_prcom, l.acl_numcaj,l.acl_prcom,l.acl_canti,
+a.pro_nomb,p.prv_nomb
+ from v_albacol as l, v_albacoc as c, v_proveedo as p,v_articulo as a 
+where c.emp_codi = $P{empcodi}
+and p.emp_codi =  $P{empcodi}
+and a.emp_codi =  $P{empcodi}
+and c.acc_ano >= $P{ejeini}
+and c.acc_ano <= $P{ejefin}
+and c.acc_nume >= $P{albini}
+and c.acc_nume <= $P{albfin}
+and l.acc_ano = c.acc_ano
+and l.acc_nume = c.acc_nume
+and l.acc_serie = c.acc_serie
+and a.pro_codi = l.pro_codi
+and p.prv_codi = c.prv_codi]]>
+	</queryString>
+	<field name="acc_nume" class="java.lang.Integer"/>
+	<field name="acc_ano" class="java.lang.Integer"/>
+	<field name="acc_serie" class="java.lang.String"/>
+	<field name="acc_impokg" class="java.lang.Double"/>
+	<field name="acc_fecrec" class="java.util.Date"/>
+	<field name="prv_codi" class="java.lang.Integer"/>
+	<field name="pro_codi" class="java.lang.Integer"/>
+	<field name="acl_prcom" class="java.lang.Double"/>
+	<field name="acl_numcaj" class="java.lang.Integer"/>
+	<field name="acl_canti" class="java.lang.Double"/>
+	<field name="pro_nomb" class="java.lang.String"/>
+	<field name="prv_nomb" class="java.lang.String"/>
+	<field name="acl_impor" class="java.lang.Double"/>
+	<variable name="acl_medkil" class="java.lang.Double">
+		<variableExpression><![CDATA[new Double($F{acl_canti}.doubleValue()/$F{acl_numcaj}.intValue())]]></variableExpression>
+	</variable>
+	<variable name="kgAlb" class="java.lang.Double" resetType="Group" resetGroup="albaran" calculation="Sum">
+		<variableExpression><![CDATA[$F{acl_canti}]]></variableExpression>
+	</variable>
+	<variable name="unidAlb" class="java.lang.Integer" resetType="Group" resetGroup="albaran" calculation="Sum">
+		<variableExpression><![CDATA[$F{acl_numcaj}]]></variableExpression>
+	</variable>
+	<variable name="impAlb" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{acl_impor}]]></variableExpression>
+	</variable>
+	<group name="albaran" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{acc_nume}]]></groupExpression>
+		<groupHeader>
+			<band height="1" splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="21" splitType="Stretch">
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
+					<reportElement key="textField-1" style="normal" mode="Opaque" x="297" y="3" width="55" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{kgAlb}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0;-###0" isBlankWhenNull="false">
+					<reportElement key="textField-2" style="normal" mode="Opaque" x="256" y="3" width="38" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{unidAlb}]]></textFieldExpression>
+				</textField>
+				<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
+					<reportElement key="textField-3" style="normal" mode="Opaque" x="462" y="3" width="70" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{impAlb}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement key="line-3" style="normal" mode="Opaque" x="256" y="0" width="38" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="1.0" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<line direction="BottomUp">
+					<reportElement key="line-4" style="normal" mode="Opaque" x="297" y="0" width="55" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="1.0" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<line direction="BottomUp">
+					<reportElement key="line-7" style="normal" mode="Opaque" x="462" y="0" width="70" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="1.0" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement key="staticText-1" style="normal" mode="Opaque" x="150" y="0" width="101" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[TOTAL ALBARAN]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="1" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText" style="resalta" mode="Opaque" x="2" y="1" width="160" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font isUnderline="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Albaranes de Compra]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" style="resalta" mode="Opaque" x="173" y="1" width="79" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[De Albaran]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="301" y="1" width="49" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{albini}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" style="resalta" mode="Opaque" x="365" y="1" width="66" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Al Albaran]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="255" y="1" width="35" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ejeini}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="290" y="1" width="10" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[/]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="432" y="1" width="35" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ejefin}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="469" y="1" width="10" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[/]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="479" y="1" width="49" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{albfin}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" style="resalta" mode="Opaque" x="2" y="20" width="50" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Albaran]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="54" y="20" width="38" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acc_ano}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="93" y="20" width="12" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[/]]></text>
+			</staticText>
+			<textField pattern="##,##0" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="125" y="20" width="49" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acc_nume}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="291" y="20" width="74" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acc_fecrec}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" style="resalta" mode="Opaque" x="206" y="20" width="82" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Fecha Alb]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="108" y="20" width="14" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acc_serie}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" style="resalta" mode="Opaque" x="397" y="20" width="81" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Porte p/Kilo]]></text>
+			</staticText>
+			<textField pattern="##0.00;-##0.00" isBlankWhenNull="true">
+				<reportElement key="textField" style="normal" mode="Opaque" x="482" y="20" width="49" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acc_impokg}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" style="resalta" mode="Opaque" x="2" y="40" width="63" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
+			<textField pattern="###0" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="70" y="40" width="43" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prv_codi}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="116" y="40" width="345" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prv_nomb}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" style="resalta" mode="Opaque" x="463" y="38" width="71" height="19" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[new Boolean($P{incPortes}.booleanValue()==true)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Inc. Portes]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="0" y="0" width="46" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineStyle="Double"/>
+					<topPen lineStyle="Double"/>
+					<leftPen lineStyle="Double"/>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+					<rightPen lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Producto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="52" y="0" width="201" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineStyle="Double"/>
+					<topPen lineStyle="Double"/>
+					<leftPen lineStyle="Double"/>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+					<rightPen lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Descripcion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="255" y="0" width="36" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineStyle="Double"/>
+					<topPen lineStyle="Double"/>
+					<leftPen lineStyle="Double"/>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+					<rightPen lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[NºUnid]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="297" y="0" width="55" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineStyle="Double"/>
+					<topPen lineStyle="Double"/>
+					<leftPen lineStyle="Double"/>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+					<rightPen lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Kilos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="356" y="0" width="44" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineStyle="Double"/>
+					<topPen lineStyle="Double"/>
+					<leftPen lineStyle="Double"/>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+					<rightPen lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Media Kg]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="409" y="0" width="41" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineStyle="Double"/>
+					<topPen lineStyle="Double"/>
+					<leftPen lineStyle="Double"/>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+					<rightPen lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Precio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="462" y="0" width="70" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineStyle="Double"/>
+					<topPen lineStyle="Double"/>
+					<leftPen lineStyle="Double"/>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+					<rightPen lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField pattern="####0" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="0" y="0" width="42" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pro_codi}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="52" y="0" width="202" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0;-###0" isBlankWhenNull="true">
+				<reportElement key="textField" style="normal" mode="Opaque" x="256" y="0" width="38" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_numcaj}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="297" y="0" width="55" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_canti}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="356" y="0" width="44" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{acl_medkil}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##0.000;-##0.000" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="409" y="0" width="41" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_prcom}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="462" y="0" width="70" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_impor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="4" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="3" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="2" splitType="Stretch"/>
+	</summary>
+</jasperReport>

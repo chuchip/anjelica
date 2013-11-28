@@ -1,0 +1,591 @@
+package gnu.chu.anjelica.despiece;
+
+import gnu.chu.Menu.*;
+import gnu.chu.camposdb.*;
+import gnu.chu.controles.*;
+import gnu.chu.interfaces.*;
+import gnu.chu.sql.DatosTabla;
+import gnu.chu.utilidades.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+import java.util.*;
+import java.util.Date;
+import javax.swing.BorderFactory;
+
+/**
+ *
+ * <p>Título:   pdprvades
+ *
+ * <p>Descripción: Mantenimiento Productos Valorados para Despiece </p>
+ * <p> Marca Precios FIJOS de compra para los productos
+ * en una semana determinada. Utilizado en programa valoracion despieces</p>
+ * <p>Copyright: Copyright (c) 2005
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * <p>Empresa: MISL</p>
+ * @author chuchiP
+ * @version 1.0
+ */
+
+public class pdprvades extends ventanaPad implements PAD
+{
+  int ejeNume, numSem;
+  CPanel Pprinc = new CPanel();
+  CPanel Pcabe = new CPanel();
+  CGridEditable jt = new CGridEditable(3)
+  {
+    public void cambiaColumna(int col,int colNueva, int row)
+    {
+      try
+      {
+        if (col == 0)
+        {
+          String nombArt=pro_codiE.getNombArt(pro_codiE.getText());
+          if (nombArt==null)
+            jt.setValor("**PRODUCTO NO ENCONTRADO**", row, 1);
+          else
+            jt.setValor(nombArt, row, 1);
+        }
+      }
+      catch (Exception k)
+      {
+        Error("Error al buscar Nombre Articulo", k);
+      }
+    }
+    public int cambiaLinea(int row, int col)
+    {
+      return cambiaLineaJT();
+    }
+  };
+
+  String s;
+  CTextField dpv_feciniE = new CTextField(Types.DATE, "dd-MM-yyyy");
+  CLabel cLabel1 = new CLabel();
+//  CButton Baceptar = new CButton();
+//  CButton Bcancelar = new CButton();
+  proPanel pro_codiE = new proPanel();
+  CTextField pro_nombE = new CTextField();
+  CTextField dpv_preciE= new CTextField(Types.DECIMAL,"###9.99");
+  CLabel cLabel2 = new CLabel();
+  CTextField dpv_nusemE = new CTextField(Types.DECIMAL,"99");
+  CLabel cLabel3 = new CLabel();
+  CTextField eje_numeE = new CTextField(Types.DECIMAL,"9999");
+  CButton Bocul = new CButton();
+  GridBagLayout gridBagLayout1 = new GridBagLayout();
+
+    public pdprvades(EntornoUsuario eu, Principal p)
+    {
+      EU = eu;
+      vl = p.panel1;
+      jf = p;
+      eje = true;
+
+      setTitulo("Mant. Productos Valorados para Despiece ");
+
+      try
+      {
+        if (jf.gestor.apuntar(this))
+          jbInit();
+        else
+          setErrorInit(true);
+      }
+      catch (Exception e)
+      {
+        ErrorInit(e);
+        setErrorInit(true);
+      }
+    }
+
+    public pdprvades(gnu.chu.anjelica.menu p, EntornoUsuario eu)
+    {
+
+      EU = eu;
+      vl = p.getLayeredPane();
+      setTitulo("Mant. Productos Valorados para Despiece");
+      eje = false;
+
+      try
+      {
+        jbInit();
+      }
+      catch (Exception e)
+      {
+         ErrorInit(e);
+        setErrorInit(true);
+      }
+    }
+
+    private void jbInit() throws Exception
+    {
+      iniciarFrame();
+      this.setSize(new Dimension(482,493));
+      this.setVersion("2013-02-22");
+
+      strSql = "SELECT dpv_nusem,eje_nume FROM desproval " +
+          " WHERE eje_nume = " + EU.ejercicio +
+          " group by dpv_nusem,eje_nume" +
+          " order by eje_nume,dpv_nusem";
+
+      statusBar = new StatusBar(this);
+      conecta();
+      nav = new navegador(this, dtCons, false, navegador.NORMAL);
+      Pprinc.setLayout(gridBagLayout1);
+      Pcabe.setBorder(BorderFactory.createRaisedBevelBorder());
+      Pcabe.setMaximumSize(new Dimension(351, 27));
+      Pcabe.setMinimumSize(new Dimension(351, 27));
+      Pcabe.setPreferredSize(new Dimension(351, 27));
+      Pcabe.setLayout(null);
+
+      ArrayList cabecera = new ArrayList();
+      cabecera.add("Codigo"); // 0 -- Codigo
+      cabecera.add("Nombre"); //1 -- Nombre
+      cabecera.add("Precio"); // 2 -- Precio
+      jt.setCabecera(cabecera);
+      jt.setAnchoColumna(new int[]{46, 283, 60});
+      jt.alinearColumna(new int[]   {2, 0, 2});
+      pro_codiE.iniciar(dtStat, this, vl, EU);
+      pro_codiE.setProNomb(null);
+
+      pro_nombE.setEnabled(false);
+      Vector v = new Vector();
+      v.addElement(pro_codiE.pro_codiE);
+      v.addElement(pro_nombE);
+      v.addElement(dpv_preciE);
+      jt.setCampos(v);
+      jt.setMaximumSize(new Dimension(467, 400));
+      jt.setMinimumSize(new Dimension(467, 400));
+      jt.setPreferredSize(new Dimension(467, 400));
+      jt.setAjustarGrid(true);
+      jt.setConfigurar("gnu.chu.anjelica.depiece.pdprvades", EU, dtStat);
+
+      iniciar(this);
+      Baceptar.setMaximumSize(new Dimension(100, 26));
+      Baceptar.setMinimumSize(new Dimension(100, 26));
+      Baceptar.setPreferredSize(new Dimension(100, 26));
+      Bcancelar.setMaximumSize(new Dimension(100, 26));
+      Bcancelar.setMinimumSize(new Dimension(100, 26));
+      Bcancelar.setPreferredSize(new Dimension(100, 26));
+      dpv_feciniE.setBounds(new Rectangle(247, 5, 81, 15));
+      dpv_feciniE.setEnabled(false);
+      cLabel1.setText("Fecha");
+      cLabel1.setBounds(new Rectangle(211, 5, 35, 15));
+      cLabel2.setText("Semana");
+      cLabel2.setBounds(new Rectangle(104, 5, 45, 15));
+      dpv_nusemE.setBounds(new Rectangle(150, 5, 24, 15));
+      cLabel3.setText("Ejercicio");
+      cLabel3.setBounds(new Rectangle(7, 5, 52, 15));
+      eje_numeE.setBounds(new Rectangle(56, 5, 41, 15));
+      Bocul.setBounds(new Rectangle(178, 7, 1, 1));
+      Pprinc.setInputVerifier(null);
+      this.getContentPane().add(nav, BorderLayout.NORTH);
+      this.getContentPane().add(statusBar, BorderLayout.SOUTH);
+      Pcabe.add(dpv_feciniE, null);
+      Pcabe.add(cLabel1, null);
+      Pcabe.add(cLabel3, null);
+      Pcabe.add(eje_numeE, null);
+      Pcabe.add(cLabel2, null);
+      Pcabe.add(dpv_nusemE, null);
+      Pcabe.add(Bocul, null);
+      Pprinc.add(Bcancelar,     new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 70), 0, 0));
+      Pprinc.add(Baceptar,   new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 70, 0, 0), 0, 0));
+      Pprinc.add(jt,   new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(2, 2, 0, 2), 0, 0));
+      Pprinc.add(Pcabe,   new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 0, 0, 0), 0, 0));
+      this.getContentPane().add(Pprinc, BorderLayout.CENTER);
+    }
+
+    public void iniciarVentana() throws Exception
+    {
+      dpv_nusemE.setColumnaAlias("dpv_nusem");
+      eje_numeE.setColumnaAlias("eje_nume");
+      activarEventos();
+      activar(false);
+      verDatos();
+      nav.requestFocus();
+      Pprinc.setDefButton(Baceptar);
+      Pprinc.setEscButton(Bcancelar);
+    }
+
+    void activarEventos()
+    {
+      jt.tableView.addMouseListener(new MouseAdapter()
+      {
+        public void mouseClicked(MouseEvent e)
+        {
+          if (jt.isVacio() || jt.isEnabled() == false)
+            return;
+          if (jt.getSelectedColumn() != 2)
+            return;
+          jt.setValor(jt.getValBoolean(2) ? "N" : "S");
+        }
+      });
+      dpv_nusemE.addKeyListener(new KeyAdapter()
+      { 
+        public void keyPressed(KeyEvent e)
+        {
+             if ( e.getKeyCode()==  KeyEvent.VK_F1)
+             {
+                  java.util.Date fecha = mensajes.getFechaCalendario(Formatear.getDateAct());
+                  GregorianCalendar gc = new GregorianCalendar();
+                  gc.setTime(fecha);
+                  dpv_nusemE.setValorInt(gc.get(GregorianCalendar.WEEK_OF_YEAR));
+                  eje_numeE.setValorInt(gc.get(GregorianCalendar.YEAR));
+                  actFecha();
+             }
+        }
+      });
+     
+      dpv_nusemE.addFocusListener(new FocusAdapter()
+      {
+        public void focusLost(FocusEvent e)
+        {
+          actFecha();
+        }
+      });
+      Bocul.addFocusListener(new FocusAdapter()
+      {
+        public void focusGained(FocusEvent e)
+        {
+          irGrid();
+        }
+      });
+    }
+
+    void actFecha()
+    {
+      if (dpv_nusemE.getValorInt() == 0 || eje_numeE.getValorInt() == 0)
+        return;
+      try
+      {
+        GregorianCalendar gc = new GregorianCalendar();
+        gc.setTime(Formatear.getDate("01-01-" + eje_numeE.getValorInt(), "dd-MM-yyyy"));
+        gc.setFirstDayOfWeek(1);
+        gc.add(GregorianCalendar.WEEK_OF_YEAR, dpv_nusemE.getValorInt() - 1);
+        gc.get(GregorianCalendar.WEEK_OF_YEAR);
+        int dia = gc.get(GregorianCalendar.DAY_OF_WEEK);
+        if (dia > 1)
+          gc.add(GregorianCalendar.DAY_OF_MONTH, (dia - 2) * -1);
+        dpv_feciniE.setText(Formatear.getFechaVer(gc.getTime()));
+      }
+      catch (Exception k)
+      {
+        Error("Error al calcular fecha",k);
+      }
+    }
+    void irGrid()
+    {
+      if (nav.pulsado!=navegador.ADDNEW && nav.pulsado!=navegador.EDIT)
+        return;
+      if (eje_numeE.getValorInt() == 0 || dpv_nusemE.getValorInt() == 0)
+      {
+        eje_numeE.requestFocus();
+        return;
+      }
+      try {
+        if (nav.pulsado == navegador.ADDNEW)
+        {
+          s = "SELECT * FROM desproval WHERE eje_nume = " + eje_numeE.getValorInt() +
+              " and dpv_nusem = " + dpv_nusemE.getValorInt();
+          if (dtCon1.select(s))
+          {
+            verDatLin(eje_numeE.getValorInt(), dpv_nusemE.getValorInt());
+            nav.pulsado = navegador.EDIT;
+            mensaje("Editando ... ");
+          }
+        }
+
+        Pcabe.setEnabled(false);
+        Baceptar.setEnabled(true);
+        jt.setEnabled(true);
+        jt.requestFocusInicio();
+      } catch (Exception k)
+      {
+        Error("ERROR al ir al Grid",k);
+      }
+    }
+
+    void guardaDatos(int ejerc,int nusem)
+    {
+      String s;
+      try {
+
+        borDatos(ejerc,nusem);
+
+        int nRow = jt.getRowCount();
+        dtAdd.addNew("desproval");
+        for (int n = 0; n < nRow; n++)
+        {
+          if ( jt.getValorInt(n,0)==0 || jt.getValorDec(n,2)==0)
+            continue;
+          dtAdd.addNew();
+       //   dtAdd.setDato("emp_codi",EU.em_cod);
+          dtAdd.setDato("eje_nume",eje_numeE.getValorInt());
+          dtAdd.setDato("dpv_nusem",dpv_nusemE.getValorInt());
+          dtAdd.setDato("pro_codi",jt.getValorInt(n,0));
+          dtAdd.setDato("dpv_preci",jt.getValorDec(n,2));
+          dtAdd.update(stUp);
+        }
+        ctUp.commit();
+        mensajeErr("Datos ... Guardados");
+      } catch (Exception k)
+      {
+        Error("Error en La insercion de Referencias",k);
+      }
+    }
+    /**
+     * Borrar datos
+     * @param ejerc Ejercicio
+     * @param nusem Numero Semana
+     * @throws SQLException Error base de Datos
+     */
+    void  borDatos(int ejerc,int nusem) throws SQLException
+    {
+      s = "delete from desproval WHERE eje_nume = " + ejerc +
+          " and dpv_nusem  = " + nusem;
+      stUp.executeUpdate(s);
+    }
+    void verDatos()
+    {
+      try
+      {
+        if (dtCons.getNOREG())
+          return;
+        dpv_nusemE.setValorDec(dtCons.getInt("dpv_nusem"));
+        eje_numeE.setValorDec(dtCons.getInt("eje_nume"));
+        actFecha();
+        verDatLin(eje_numeE.getValorInt(), dpv_nusemE.getValorInt());
+      } catch (Exception k)
+      {
+        Error("Error al ver datos",k);
+      }
+    }
+
+    void verDatLin(int ejerc,int nusem) throws Exception
+    {
+      s = "SELECT d.pro_codi,a.pro_nomb,d.dpv_preci " +
+          " FROM desproval as d,v_articulo as a " +
+          " WHERE dpv_nusem = " + nusem +
+          " and eje_nume = " + ejerc +
+          " and a.pro_codi = d.pro_codi ";
+      dtCon1.select(s);
+      jt.setDatos(dtCon1);
+      jt.requestFocusInicio();
+    }
+    public void activar(boolean act)
+    {
+      activar(navegador.TODOS,act);
+    }
+    void activar(int modo,boolean act)
+    {
+      if (modo==navegador.TODOS)
+        jt.setEnabled(act);
+      Baceptar.setEnabled(act);
+      Bcancelar.setEnabled(act);
+      Pcabe.setEnabled(act);
+    }
+  public void PADPrimero() { verDatos();
+  }
+  public void PADAnterior() { verDatos();
+  }
+  public void PADSiguiente() {
+    verDatos();
+  }
+  public void PADUltimo() { verDatos();
+  }
+  public void PADQuery() {
+    activar(navegador.QUERY, true);
+    Pcabe.setQuery(true);
+    Pcabe.resetTexto();
+    eje_numeE.setText(""+EU.ejercicio);
+    dpv_nusemE.requestFocus();
+
+  }
+
+  public void ej_query1() {
+    ArrayList v=new ArrayList();
+    v.add(dpv_nusemE.getStrQuery());
+    v.add(eje_numeE.getStrQuery());
+    s="SELECT dpv_nusem,eje_nume FROM desproval ";
+    s=creaWhere(s,v,true);
+    s+=" group by dpv_nusem,eje_nume"+
+        " order by eje_nume,dpv_nusem";
+//    debug(s);
+    try
+    {
+      if (!dtCons.select(s))
+      {
+        mensaje("");
+        mensajeErr("No encontrados Registros para estos criterios");
+        rgSelect();
+        activaTodo();
+        return;
+      }
+      mensaje("");
+      strSql = s;
+      activaTodo();
+      rgSelect();
+      verDatos();
+      mensajeErr("Nuevos regisgtros selecionados");
+    }
+    catch (Exception ex)
+    {
+      fatalError("Error al buscar Inventarios: ", ex);
+    }
+
+  }
+
+  public void canc_query() {
+    Pcabe.setQuery(false);
+
+    mensaje("");
+    mensajeErr("Consulta ... CANCELADA");
+    activaTodo();
+    verDatos();
+  }
+
+  public void PADEdit() {
+    mensaje("Editando ....");
+    ejeNume=eje_numeE.getValorInt();
+    numSem=dpv_nusemE.getValorInt();
+    activar(true);
+    dpv_nusemE.requestFocus();
+  }
+  public void ej_edit1() {
+    jt.salirFoco();
+    if (cambiaLineaJT()>=0)
+    {
+      jt.requestFocusSelected();
+      return;
+    }
+    guardaDatos(ejeNume,numSem);
+    activaTodo();
+    verDatos();
+    mensaje("");
+  }
+  public void canc_edit() {
+    activaTodo();
+    mensajeErr("Modificacion de Datos ... Cancelada");
+    verDatos();
+    mensaje("");
+  }
+  public void PADAddNew() {
+    Pcabe.resetTexto();
+    jt.removeAllDatos();
+    activar(navegador.QUERY, true);
+    Baceptar.setEnabled(false);
+    eje_numeE.setValorDec(EU.ejercicio);
+    dpv_nusemE.requestFocus();
+    mensaje("Insertando ....");
+
+  }
+
+  public void ej_addnew1() {
+    jt.salirFoco();
+
+    if (cambiaLineaJT()>=0)
+    {
+      jt.requestFocusSelected();
+      return;
+    }
+    guardaDatos(eje_numeE.getValorInt(),dpv_nusemE.getValorInt());
+    activaTodo();
+    verDatos();
+    mensaje("");
+  }
+  public void canc_addnew() {
+    activaTodo();
+    mensajeErr("Insercion de Datos ... Cancelada");
+    verDatos();
+    mensaje("");
+  }
+  public void PADDelete() {
+    Baceptar.setEnabled(true);
+    Bcancelar.setEnabled(true);
+    Bcancelar.requestFocus();
+    mensaje("Borrando ....");
+  }
+  public void ej_delete1() {
+    try
+    {
+      borDatos(eje_numeE.getValorInt(), dpv_nusemE.getValorInt());
+      ctUp.commit();
+    } catch (Exception k)
+    {
+      Error("Error al borrar datos",k);
+    }
+    activaTodo();
+    verDatos();
+    mensaje("");
+    mensajeErr("Datos .... Borrados");
+  }
+  public void canc_delete() {
+    activaTodo();
+    verDatos();
+    mensaje("");
+    mensajeErr("Borrado de Registro ... ANULADO");
+  }
+
+  int cambiaLineaJT()
+  {
+    if (pro_codiE.getValorInt()==0)
+      return -1; // No hay producto ... paso
+    try {
+      if (!pro_codiE.controla(false))
+      {
+        mensajeErr(pro_codiE.getMsgError());
+        return 0;
+      }
+      if (dpv_preciE.getValorDec() == 0)
+      {
+        mensajeErr("Introduzca un precio de Tarifa");
+        return 1;
+      }
+    } catch (Exception k)
+    {
+      Error("ERROR AL controlar Linea del Grid",k);
+      return 0;
+    }
+    return -1;
+  }
+  /**
+   * Devuelve el precio fijo para un producto en la fecha indicada.
+   * -1 Si no existe precio .
+   * @param dt
+   * @param proCodi
+   * @param fecha
+   * @return Precio fijo
+   * @throws SQLException 
+   */
+  public static int getPrecio(DatosTabla dt, int proCodi,Date fecha)  throws SQLException
+  {
+      GregorianCalendar gc=new GregorianCalendar();
+      gc.setTime(fecha);
+      int semana = gc.get(GregorianCalendar.WEEK_OF_YEAR);
+      int ano= gc.get(GregorianCalendar.YEAR);
+      return getPrecio(dt,proCodi,ano, semana);
+  }
+  public static int getPrecio(DatosTabla dt, int proCodi,int ejeNume,int semCodi) throws SQLException
+  {
+      String sql="SELECT * FROM desproval " +
+          " WHERE eje_nume = " + ejeNume +
+            " and dpv_nusem = "+semCodi+
+            " and pro_codi = "+proCodi;
+      if (! dt.select(sql))
+          return -1;
+      return dt.getInt("dpv_preci");
+  }
+}
