@@ -724,9 +724,9 @@ public class ClDifInv extends ventana {
           " l.pro_codi,l.avp_emplot,l.avp_ejelot as eje_nume,l.alm_codori as almori,l.avc_serie AS seralb "+
           "  from v_albventa_detalle as l,v_articulo a" +
           condAlb+
-          " and l.avc_serie != 'X'"+ // NO incluir Serie X
-          (leidoDepoC.isSelected()?" and l.avc_depos != 'D' ":"")+ // No tratar los albaranes de DEPOSITO.
-          (almCodi==0?"":" and l.alm_codi = "+almCodi);
+          " and l.avc_serie != 'X'"+ // NO incluir Serie X si es un solo almacen          
+          (leidoDepoC.isSelected()?" and l.avc_depos != 'D' ":""); // No tratar los albaranes de DEPOSITO.
+        
       if (leidoDepoC.isSelected())
       {
           s+=" UNION ALL select 2 as orden,'V' as sel,'-' as tipmov,cs.avs_fecha as fecmov," +
@@ -759,23 +759,23 @@ public class ClDifInv extends ventana {
       
       if (almCodi!=0)
       { // Incluir Traspasos entre almacenes
-        s += " UNION ALL  select  1 as orden,'V' as sel,'-' as tipmov,c.avc_fecalb as fecmov," +
-          "  i.avp_serlot as serie,i.avp_numpar as  lote," +
-          " i.avp_canti as canti,0 as precio,i.avp_numind as numind, " +
-          " i.pro_codi,i.avp_emplot,i.avp_ejelot as eje_nume,l.alm_codi as almori,c.avc_serie AS seralb "+
-          "  from v_albavel l, v_albavec c,v_albvenpar i,v_articulo a" +
+        s += " UNION ALL  select  1 as orden,'V' as sel,'-' as tipmov,l.avc_fecalb as fecmov," +
+          "  l.avp_serlot as serie,l.avp_numpar as  lote," +
+          " l.avp_canti as canti,0 as precio,l.avp_numind as numind, " +
+          " l.pro_codi,l.avp_emplot,l.avp_ejelot as eje_nume,l.alm_codori as almori,l.avc_serie AS seralb "+
+          "  from v_albventa_detalle as l,v_articulo a" +
           condAlb+
-           " and c.avc_serie = 'X'"+ // Incluir Serie X
-           " and c.alm_codori = "+almCodi+
+           " and l.avc_serie = 'X'"+ // Incluir Serie X
+           " and l.alm_codori = "+almCodi+
            " UNION ALL "+
-            " select  2 as orden,'V' as sel,'-' as tipmov,c.avc_fecalb as fecmov," +
-          "  i.avp_serlot as serie,i.avp_numpar as  lote," +
-          " i.avp_canti as canti,0 as precio,i.avp_numind as numind, " +
-          " i.pro_codi,i.avp_emplot,i.avp_ejelot as eje_nume,l.alm_codi as almori,c.avc_serie AS seralb "+
-          "  from v_albavel l, v_albavec c,v_albvenpar i,v_articulo a" +
+            " select  2 as orden,'V' as sel,'-' as tipmov,l.avc_fecalb as fecmov," +
+          "  l.avp_serlot as serie,l.avp_numpar as  lote," +
+          " l.avp_canti as canti,0 as precio,l.avp_numind as numind, " +
+          " l.pro_codi,l.avp_emplot,l.avp_ejelot as eje_nume,l.alm_coddes as almori,l.avc_serie AS seralb "+
+          "  from v_albventa_detalle as l,v_articulo a" +
           condAlb+
-           " and c.avc_serie = 'X'"+ // Incluir Serie X
-           " and c.alm_coddes = "+almCodi;
+           " and l.avc_serie = 'X'"+ // Incluir Serie X
+           " and l.alm_coddes = "+almCodi;
       }
       s += " UNION all " + // Despieces (Salidas de almacen)
           " select 2 as orden,'D' as sel,'-' as tipmov,deo_tiempo as fecmov," +
