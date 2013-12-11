@@ -580,7 +580,7 @@ public class pdalbara extends ventanaPad  implements PAD
         PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2013-09-16" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2013-12-11" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -4286,12 +4286,12 @@ public class pdalbara extends ventanaPad  implements PAD
 
     if (checkAlbaran(emp_codiE.getValorInt(),avc_anoE.getValorInt(), avc_seriE.getText(),avc_numeE.getValorInt(), dtStat)<0)
     {
-        s="(actAlbaran) Problemas integridad albaran venta: "+emp_codiE.getValorInt()+"-"+avc_anoE.getValorInt()+
-                avc_seriE.getText()+avc_numeE.getValorInt()+"\n";
-        s+=getCurrentStackTrace();
+//        s="(actAlbaran) Problemas integridad albaran venta: "+emp_codiE.getValorInt()+"-"+avc_anoE.getValorInt()+
+//                avc_seriE.getText()+avc_numeE.getValorInt()+"\n";
+//        s+=getCurrentStackTrace();
         actAcumLinAlb(emp_codiE.getValorInt(),avc_anoE.getValorInt(), avc_seriE.getText(),avc_numeE.getValorInt());
 //        msgBox(s);
-        enviaMailError(s);
+//        enviaMailError(s);
     }
   }
   
@@ -7143,9 +7143,9 @@ public class pdalbara extends ventanaPad  implements PAD
                   " and avc_nume = " + avcNume+
                   " and avl_numlin="+nl;
               dtAdd.executeUpdate(s);
-              enviaMailError("(actAcumLinAlb) Problemas integridad Alb.Venta: "+empCodi+
-                  "-"+avcAno+avcSerie+avcNume+"\n"+" NL: "+nl+"Kilos: "+dtStat.getDouble("canti")+"("+
-                  canti+") Unid: "+dtStat.getInt("unid")+"("+unid+")");
+//              enviaMailError("(actAcumLinAlb) Problemas integridad Alb.Venta: "+empCodi+
+//                  "-"+avcAno+avcSerie+avcNume+"\n"+" NL: "+nl+"Kilos: "+dtStat.getDouble("canti")+"("+
+//                  canti+") Unid: "+dtStat.getInt("unid")+"("+unid+")");
           }
        } while (dtCon1.next());
        dtAdd.commit();
