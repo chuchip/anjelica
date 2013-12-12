@@ -12,12 +12,15 @@ import java.awt.event.*;
 import gnu.chu.camposdb.*;
 import javax.swing.BorderFactory;
 import gnu.chu.anjelica.almacen.actStkPart;
+import gnu.chu.isql.utilSql;
+import java.io.IOException;
+import javax.swing.JFileChooser;
 /**
  *
  * <p>Título: traspalma</p>
  * <p>Descripción: Programa para traspasar productos de un almacen a otro.
  *  </p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2013
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -37,6 +40,17 @@ import gnu.chu.anjelica.almacen.actStkPart;
 
 public class traspalma  extends ventana
 {
+  private final static int JT_ARTIC=0;
+  private final static int JT_NOMBR=1;
+  private final static int JT_EJERC=2;
+  private final static int JT_SERIE=3;
+  private final static int JT_LOTE=4;
+  private final static int JT_INDI=5;
+  private final static int JT_PESO=6;
+  private final static int JT_UNID=7;
+  private final static int JT_INSER=8;
+  JFileChooser ficeleE=null;
+  private utilSql utsql =new utilSql();
   private int cliCodi;
   actStkPart stkPart;
   String s;
@@ -58,11 +72,11 @@ public class traspalma  extends ventana
   CTextField pro_indiiE = new CTextField(Types.DECIMAL, "##9");
   CLabel cLabel9 = new CLabel();
   CTextField pro_indiiE1 = new CTextField(Types.DECIMAL, "##9");
-  CButton Bacecab = new CButton(Iconos.getImageIcon("check"));
+  CButtonMenu Bacecab = new CButtonMenu(Iconos.getImageIcon("check"));
   CPanel Pdatos = new CPanel();
-  Cgrid jt = new Cgrid(4);
-  CButton Baceptar = new CButton(Iconos.getImageIcon("check"));
-  CButton Bcancela = new CButton(Iconos.getImageIcon("cancel"));
+  Cgrid jt = new Cgrid(9);
+  CButton Baceptar = new CButton("Aceptar",Iconos.getImageIcon("check"));
+  CButton Bcancela = new CButton("Cancelar",Iconos.getImageIcon("cancel"));
   CTextField pro_serieE = new CTextField(Types.CHAR, "X");
   CLabel cLabel10 = new CLabel();
   CTextField avc_fecalbE = new CTextField(Types.DATE, "dd-MM-yyyy");
@@ -91,8 +105,7 @@ public class traspalma  extends ventana
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+        ErrorInit(e);
     }
   }
 
@@ -110,8 +123,7 @@ public class traspalma  extends ventana
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+        ErrorInit(e);
     }
   }
 
@@ -119,13 +131,15 @@ public class traspalma  extends ventana
   {
     iniciarFrame();
     this.setSize(new Dimension(492,530));
-    this.setVersion("2012-02-16");
+    this.setVersion("2013-12-12");
     statusBar = new StatusBar(this);
     conecta();
     ArrayList v = new ArrayList();
     cLabel10.setText("Fecha Traspaso");
     cLabel10.setBounds(new Rectangle(4, 95, 91, 15));
     avc_fecalbE.setBounds(new Rectangle(90, 93, 75, 19));
+    Bacecab.addMenu("Individuos");
+    Bacecab.addMenu("Importar");
     Bacecab.setMargin(new Insets(0, 0, 0, 0));
     jt.setMaximumSize(new Dimension(1, 252));
     numIndE.setEnabled(false);
@@ -136,16 +150,16 @@ public class traspalma  extends ventana
     Pdatos.setMaximumSize(new Dimension(490, 121));
     Pdatos.setMinimumSize(new Dimension(490, 121));
     Pdatos.setPreferredSize(new Dimension(490, 121));
-    Baceptar.setMaximumSize(new Dimension(95, 26));
-    Baceptar.setMinimumSize(new Dimension(95, 26));
-    Baceptar.setPreferredSize(new Dimension(95, 26));
-    Bcancela.setMaximumSize(new Dimension(95, 26));
-    Bcancela.setMinimumSize(new Dimension(95, 26));
-    Bcancela.setPreferredSize(new Dimension(95, 26));
+    Baceptar.setMaximumSize(new Dimension(105, 26));
+    Baceptar.setMinimumSize(new Dimension(105, 26));
+    Baceptar.setPreferredSize(new Dimension(105, 26));
+    Bcancela.setMaximumSize(new Dimension(105, 26));
+    Bcancela.setMinimumSize(new Dimension(105, 26));
+    Bcancela.setPreferredSize(new Dimension(125, 26));
     cPanel2.setBorder(BorderFactory.createLineBorder(Color.black));
-    cPanel2.setMaximumSize(new Dimension(60, 60));
-    cPanel2.setMinimumSize(new Dimension(30, 30));
-    cPanel2.setPreferredSize(new Dimension(30, 30));
+    cPanel2.setMaximumSize(new Dimension(230, 60));
+    cPanel2.setMinimumSize(new Dimension(230, 30));
+    cPanel2.setPreferredSize(new Dimension(230, 30));
     cPanel2.setQuery(false);
     cPanel2.setLayout(null);
     cLabel11.setText("N.Unidades");
@@ -156,21 +170,29 @@ public class traspalma  extends ventana
     Kilos.setBounds(new Rectangle(116, 4, 39, 17));
     kilosE.setText("---,--#.99");
     kilosE.setBounds(new Rectangle(160, 4, 63, 17));
-    v.add("Indiv"); // 0
-    v.add("Peso"); // 1
-    v.add("Unid."); // 2
-    v.add("Inserta"); // 3
+    v.add("Artic"); // 0
+    v.add("Nombre"); // 1
+    v.add("Ejerc"); // 2
+    v.add("Serie"); // 3
+    v.add("Lote"); // 4
+    v.add("Indiv"); // 5
+    v.add("Peso"); // 6
+    v.add("Unid."); // 7
+    v.add("Inserta"); // 8
     jt.setCabecera(v);
-    jt.setAnchoColumna(new int[]    {30, 50,40, 60});
-    jt.setAlinearColumna(new int[] {2, 2,2, 1});
-    jt.setFormatoColumna(3, "BSN");
-    jt.resetRenderer(3);
+    jt.setAnchoColumna(new int[]    {60,120,40,40,60,30, 50,40, 40});
+    jt.setAlinearColumna(new int[] {2,0,2,2,1,2, 2,2, 1});    
+    jt.setFormatoColumna(JT_INSER, "BSN");
+    jt.setFormatoColumna(JT_PESO,"#,##9.99");
+    jt.setFormatoColumna(JT_UNID,"##9");
+    jt.resetRenderer(4);
     jt.setAjustarGrid(true);
     pro_serieE.setMayusc(true);
     pro_serieE.setAutoNext(true);
     pro_serieE.setMayusc(true);
     eje_numeE.setAutoNext(true);
-    emp_codiE.setAutoNext(true);
+    emp_codiE.setEnabled(false);
+    emp_codiE.setValorInt(EU.em_cod);
     pro_numlotE.setAutoNext(true);
     pro_indiiE.setAutoNext(true);
     pro_indiiE1.setAutoNext(true);
@@ -228,7 +250,7 @@ public class traspalma  extends ventana
     cLabel9.setText("A individuo");
     pro_indiiE1.setBounds(new Rectangle(350, 94, 37, 17));
     Bacecab.setBounds(new Rectangle(390, 90, 77, 22));
-    Bacecab.setBorderPainted(true);
+   
     Pdatos.setBorder(BorderFactory.createLoweredBevelBorder());
     Pdatos.setLayout(null);
     this.getContentPane().add(cPanel1, BorderLayout.CENTER);
@@ -246,14 +268,14 @@ public class traspalma  extends ventana
     cPanel1.add(Bcancela, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0
                                                  , GridBagConstraints.EAST,
                                                  GridBagConstraints.NONE,
-                                                 new Insets(0, 0, 5, 30), 0, 0));
+                                                 new Insets(0, 0, 5, 10), 0, 0));
     cPanel1.add(Baceptar, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST,
                                                  GridBagConstraints.NONE,
-                                                 new Insets(0, 30, 5, 0), 0, 1));
+                                                 new Insets(0, 10, 5, 10), 0, 1));
     cPanel1.add(cPanel2, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0
                                                 , GridBagConstraints.CENTER,
-                                                GridBagConstraints.HORIZONTAL,
+                                                GridBagConstraints.NONE,
                                                 new Insets(0, 0, 0, 0), 0, 0));
     cPanel2.add(numIndE, null);
     cPanel2.add(cLabel11, null);
@@ -263,7 +285,7 @@ public class traspalma  extends ventana
 
   public void iniciarVentana() throws Exception
   {
-    Pdatos.setDefButton(Bacecab);
+    Pdatos.setDefButton(Bacecab.getBotonAccion());
     s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
     dtCon1.select(s);
     alm_codifE.addItem(dtCon1);
@@ -272,7 +294,7 @@ public class traspalma  extends ventana
     pro_codiE.iniciar(dtStat, this, vl, EU);
     stkPart=new actStkPart(dtCon1,EU.em_cod);
     eje_numeE.setText("" + EU.ejercicio);
-    emp_codiE.setText("" + EU.em_cod);
+    emp_codiE.setValorInt(EU.em_cod);
     pro_serieE.setText("A");
     avc_fecalbE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
     s="SELECT cli_codi from v_config WHERE emp_codi = "+EU.em_cod;
@@ -300,19 +322,20 @@ public class traspalma  extends ventana
   {
     if (jt.isVacio())
       return;
-    if (jt.getSelectedColumn() != 3)
+    if (jt.getSelectedColumn() != JT_INSER)
       return;
-    if (jt.getValBoolean(3))
+    jt.getSelectedRow();
+    if (jt.getValBoolean(JT_INSER))
     { // Esta activado se desactivara.
-      numIndE.setValorDec(numIndE.getValorInt() - jt.getValorDec(1));
-      kilosE.setValorDec(kilosE.getValorDec() - jt.getValorDec(1));
+      numIndE.setValorDec(numIndE.getValorInt() - jt.getValorDec(JT_UNID));
+      kilosE.setValorDec(kilosE.getValorDec() - jt.getValorDec(JT_PESO));
     }
     else
     {
-      numIndE.setValorDec(numIndE.getValorInt() + jt.getValorDec(1));
-      kilosE.setValorDec(kilosE.getValorDec() + jt.getValorDec(1));
+      numIndE.setValorDec(numIndE.getValorInt() + jt.getValorDec(JT_UNID));
+      kilosE.setValorDec(kilosE.getValorDec() + jt.getValorDec(JT_PESO));
     }
-    jt.setValor(jt.getValBoolean(3) ? "N" : "S", 3);
+    jt.setValor(! jt.getValBoolean(JT_INSER), JT_INSER);
   }
 
   void activarEventos()
@@ -335,7 +358,7 @@ public class traspalma  extends ventana
         {
           selecInd();
           if (jt.getSelectedRow() < jt.getRowCount())
-            jt.requestFocus(jt.getSelectedRow() + 1, 3);
+            jt.requestFocus(jt.getSelectedRow() + 1, JT_INSER);
         }
       }
 
@@ -346,7 +369,10 @@ public class traspalma  extends ventana
             @Override
       public void actionPerformed(ActionEvent e)
       {
-        aceptaCab();
+          if (e.getActionCommand().startsWith("Importar"))
+             importaDat();
+          else
+            aceptaCab();
       }
     });
     Baceptar.addActionListener(new ActionListener()
@@ -370,12 +396,76 @@ public class traspalma  extends ventana
     });
 
   }
-
+  void importaDat()
+  {
+      try
+      {
+          if (!checkFecha())
+              return;
+          String fichero = null;
+          try
+          {
+              configurarFile();
+              int returnVal = ficeleE.showOpenDialog(this);
+              if (returnVal == JFileChooser.APPROVE_OPTION)
+                  fichero = ficeleE.getSelectedFile().getAbsolutePath();
+              else
+              return;
+          } catch (Exception k)
+          {
+              fatalError("error al elegir el fichero", k);
+          }
+          
+          ArrayList al = utsql.load(fichero, ";");
+          jt.setDatos(al);
+          jt.setEnabled(true);
+          int nRow=jt.getRowCount();
+          int unid=0;
+          double kilos=0;
+        
+          for (int n=0;n<nRow;n++)
+          {
+              unid+=jt.getValorInt(n,JT_UNID);
+              kilos+=jt.getValorDec(n,JT_PESO);
+          }    
+          numIndE.setValorDec(unid);
+          kilosE.setValorDec(kilos);  
+          mensajeErr("Datos importados correctamente");
+          activar(true);
+      } catch (IOException ex)
+      {
+          Error("Error al importar datos",ex);
+      }
+  }
+  private boolean checkFecha()
+  {
+    if (avc_fecalbE.isNull())
+      {
+        mensajeErr("Introduzca Fecha de Traspaso");
+        avc_fecalbE.requestFocus();
+        return false;
+      }  
+      if (alm_codifE.getValor().equals(alm_codioE.getValor()))
+      {
+        mensajeErr("Los dos almacenes NO pueden ser iguales");
+        alm_codioE.requestFocus();
+        return false;
+      }
+      return true;
+  }
   void aceptaCab()
   {
 
     try
     {
+      if (! checkFecha())
+          return;
+      if (avc_fecalbE.isNull())
+      {
+        mensajeErr("Introduzca Fecha de Traspaso");
+        avc_fecalbE.requestFocus();
+        return;
+      }
       if (!pro_codiE.controlar())
       {
         mensajeErr(pro_codiE.getMsgError());
@@ -387,18 +477,8 @@ public class traspalma  extends ventana
         pro_numlotE.requestFocus();
         return;
       }
-      if (alm_codifE.getValor().equals(alm_codioE.getValor()))
-      {
-        mensajeErr("Los dos almacenes NO pueden ser iguales");
-        alm_codioE.requestFocus();
-        return;
-      }
-      if (avc_fecalbE.isNull())
-      {
-        mensajeErr("Introduzca Fecha de Traspaso");
-        avc_fecalbE.requestFocus();
-        return;
-      }
+    
+      
       s = "SELECT * FROM V_STKPART WHERE " +
           " EJE_NUME= " + eje_numeE.getValorInt() +
           " AND EMP_CODI= " + emp_codiE.getValorInt() +
@@ -425,6 +505,12 @@ public class traspalma  extends ventana
       do
       {
         ArrayList v = new ArrayList();
+   
+        v.add(pro_codiE.getValorInt());
+        v.add(pro_codiE.getNombArt());
+        v.add(eje_numeE.getValorInt());
+        v.add(pro_serieE.getText());
+        v.add(pro_numlotE.getValorInt());
         v.add(dtCon1.getString("pro_numind"));
         v.add(Formatear.format(dtCon1.getString("stp_kilact"),"##,##9.99"));
         v.add(Formatear.format(dtCon1.getString("stp_unact"),"##9"));
@@ -450,7 +536,7 @@ public class traspalma  extends ventana
     int unidT = 0;
     for (int n = 0; n < nl; n++)
     {
-      if (!jt.getValBoolean(n, 3))
+      if (!jt.getValBoolean(n, JT_INSER))
         continue;
       unidT++;
     }
@@ -462,7 +548,7 @@ public class traspalma  extends ventana
 
     new miThread("")
     {
-            @Override
+      @Override
       public void run()
       {
         activar(false);
@@ -527,10 +613,10 @@ public class traspalma  extends ventana
       nl = jt.getRowCount();
       for (int n = 0; n < nl; n++)
       {
-        if (!jt.getValBoolean(n, 3))
+        if (!jt.getValBoolean(n, JT_INSER))
           continue;
-        kilosT += jt.getValorDec(n, 1);
-        unidT++;
+        kilosT += jt.getValorDec(n, JT_PESO);
+        unidT+=jt.getValorInt(n,JT_UNID);
         // Insertamos linea de albaran
         dtCon1.addNew("v_albavel");
         dtCon1.setDato("emp_codi", EU.em_cod);
@@ -538,10 +624,11 @@ public class traspalma  extends ventana
         dtCon1.setDato("avc_serie", "X");
         dtCon1.setDato("avc_nume", numAlb);
         dtCon1.setDato("avl_numlin", n);
-        dtCon1.setDato("avl_unid", jt.getValorInt(n, 2));
-        dtCon1.setDato("pro_codi", pro_codiE.getText());
+        dtCon1.setDato("avl_unid", jt.getValorInt(n, JT_UNID));
+        dtCon1.setDato("pro_codi", jt.getValorInt(n, JT_ARTIC));
+        dtCon1.setDato("pro_nomb", jt.getValString(n, JT_NOMBR));
         dtCon1.setDato("alm_codi", alm_codifE.getValor());
-        dtCon1.setDato("avl_canti", jt.getValorDec(n, 1));
+        dtCon1.setDato("avl_canti", jt.getValorDec(n, JT_PESO));
         dtCon1.setDato("avc_cerra",-1);
         dtCon1.setDato("avl_fecalt","current_timestamp");
         dtCon1.update(stUp);
@@ -554,33 +641,32 @@ public class traspalma  extends ventana
         dtCon1.setDato("avc_serie", "X");
         dtCon1.setDato("avc_nume", numAlb);
         dtCon1.setDato("avl_numlin", n);
-        dtCon1.setDato("pro_codi", pro_codiE.getText());
+        dtCon1.setDato("pro_codi", jt.getValorInt(n, JT_ARTIC));
         dtCon1.setDato("avp_tiplot", "P");
-        dtCon1.setDato("avp_ejelot", eje_numeE.getValorInt());
+        dtCon1.setDato("avp_ejelot", jt.getValorInt(n, JT_EJERC));
         dtCon1.setDato("avp_emplot", emp_codiE.getValorInt());
-        dtCon1.setDato("avp_serlot", pro_serieE.getText());
-        dtCon1.setDato("avp_numpar", pro_numlotE.getValorInt());
-        dtCon1.setDato("avp_numind", jt.getValorDec(n, 0));
-        dtCon1.setDato("avp_numuni", 1);
-        dtCon1.setDato("avp_canti", jt.getValorDec(n, 1));
+        dtCon1.setDato("avp_serlot",  jt.getValString(n, JT_SERIE));
+        dtCon1.setDato("avp_numpar", jt.getValorInt(n, JT_LOTE));
+        dtCon1.setDato("avp_numind", jt.getValorInt(n, JT_INDI));
+        dtCon1.setDato("avp_numuni", jt.getValorInt(n,JT_UNID));
+        dtCon1.setDato("avp_canti", jt.getValorDec(n, JT_PESO));
         dtCon1.update(stUp);
 
         // Cambiamos el almacen para el inviduo.
         s = "UPDATE V_STKPART SET alm_codi = " +alm_codifE.getValorInt()+
-            "  WHERE  EJE_NUME= " + eje_numeE.getValorInt() +
+            "  WHERE  EJE_NUME= " + jt.getValorInt(n, JT_EJERC) +
             " AND EMP_CODI= " + emp_codiE.getValorInt() +
-            " AND PRO_SERIE='" + pro_serieE.getText() + "'" +
-            " AND pro_nupar= " + pro_numlotE.getValorInt() +
+            " AND PRO_SERIE='" + jt.getValString(n, JT_SERIE) + "'" +
+            " AND pro_nupar= " +jt.getValorInt(n, JT_LOTE) +
             " and alm_codi = " + alm_codioE.getValor() +
-            " and pro_codi= " + pro_codiE.getValorInt() +
-            " and pro_numind = " + jt.getValorDec(n, 0);
+            " and pro_codi= " + jt.getValorInt(n, JT_ARTIC)+
+            " and pro_numind = " + jt.getValorInt(n, JT_INDI);
         stUp.executeUpdate(s);
       // Actualizo Acumulados
-       stkPart.actAcum(pro_codiE.getValorInt(),alm_codioE.getValorInt(),
-                       jt.getValorDec(n,1)*-1,jt.getValorInt(n,2)*-1,avc_fecalbE.getText());
-       stkPart.actAcum(pro_codiE.getValorInt(),alm_codifE.getValorInt(),
-                jt.getValorDec(n,1),jt.getValorInt(n,2),avc_fecalbE.getText());
-
+       stkPart.actAcum( jt.getValorInt(n, JT_ARTIC),alm_codioE.getValorInt(),
+                       jt.getValorDec(n, JT_PESO)*-1,jt.getValorInt(n,JT_UNID)*-1,avc_fecalbE.getText());
+       stkPart.actAcum(jt.getValorInt(n, JT_ARTIC),alm_codifE.getValorInt(),
+                jt.getValorDec(n, JT_PESO),jt.getValorInt(n,JT_UNID),avc_fecalbE.getText());
 
       }
 /*
@@ -646,5 +732,13 @@ public class traspalma  extends ventana
     activar(false);
 
     pro_codiE.requestFocus();
+  }
+  void configurarFile() throws Exception
+  {
+      if (ficeleE != null)
+        return;
+      ficeleE = new JFileChooser();
+      ficeleE.setName("Abrir Fichero");
+      ficeleE.setCurrentDirectory(new java.io.File("c:/"));
   }
 }

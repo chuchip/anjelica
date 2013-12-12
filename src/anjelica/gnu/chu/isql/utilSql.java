@@ -44,13 +44,40 @@ public class utilSql
   public utilSql()
   {
   }
-
+  
+  public ArrayList load(String fichero, String delimit) throws IOException
+  {
+    String s;
+    FileReader fr=new FileReader(fichero);
+    BufferedReader bfr =new BufferedReader(fr);
+    nLin=0;
+    ArrayList datos=new ArrayList();
+    ArrayList v;
+    delimitador=delimit;
+    while ((s=bfr.readLine())!=null)
+    {
+        nLin++;
+        if (s.trim().equals(""))
+          continue;
+        v=insertaLinea(s);
+        
+        if (muerto)
+        {
+          bfr.close();
+          return null;
+        }
+        datos.add(v);
+    }
+    bfr.close(); 
+    return datos;
+  }
   public void load(String fichero) throws Throwable
   {
     load(fichero, null,null, null,"dd-MM-yyyy");
   }
 
-  public void load(String fichero,String tabla,DatosTabla datTab,Statement stat,String fecfor) throws Throwable {
+  public void load(String fichero,String tabla,DatosTabla datTab,Statement stat,String fecfor) throws Throwable 
+  {
     String s;
     dt=datTab;
     stUp=stat;
@@ -62,25 +89,27 @@ public class utilSql
     dt.addNew(tabla);
     FileReader fr=new FileReader(fichero);
     BufferedReader bfr =new BufferedReader(fr);
+    ArrayList v;
     nLin=0;
     while ((s=bfr.readLine())!=null)
     {
         nLin++;
         if (s.trim().equals(""))
           continue;
-        insertaLinea(s);
+        v=insertaLinea(s);
         if (muerto)
           return;
+        procesaLinea(v);
     }
     bfr.close();
   }
 
-  public void insertaLinea(String linea) throws Throwable
+  public ArrayList insertaLinea(String linea) 
   {
-    Vector v= new Vector();
-      int po=0;
+    ArrayList v= new ArrayList();
+    int po=0;
       int pf=0;
-      String dato="";
+      String dato;
       while (pf!=-1)
       {
         pf=linea.indexOf(delimitador,po);
@@ -95,24 +124,26 @@ public class utilSql
         if (delimitador.charAt(0)=='\t')
           dato=dato.replaceAll("\\\\t","\t");
         dato=dato.replaceAll("\\\\'","'");
-        v.addElement(dato);
+        v.add(dato);
       }
-      procesaLinea(v);
+      
+      return v;
   }
 
-  protected void procesaLinea(Vector v)
+  protected void procesaLinea(ArrayList v) throws SQLException
   {
     if (muerto)
       return;
     try
     {
       procesLin(v);
-    } catch (Exception k)
+    } catch (SQLException k)
     {
       System.out.println("Linea: "+nLin);
       k.printStackTrace();
       muerto=true;
       excep=k;
+      throw k;
     }
   }
   public static int getTipo(int tc)
@@ -141,15 +172,14 @@ public class utilSql
     return tc;
   }
 
-  void procesLin(Vector v) throws Exception
+  void procesLin(ArrayList v) throws SQLException
   {
-    String s="",valor;
-    try {
-      s = "INSERT INTO " + tabla + " VALUES (";
+    String s,valor;
+    s = "INSERT INTO " + tabla + " VALUES (";
 
       for (int n = 0; n < v.size(); n++)
       {
-        valor = v.elementAt(n).toString();
+        valor = v.get(n).toString();
         if (utilSql.getTipo(dt.getTipCampo(n+1)) == Types.CHAR)
           s += "'" + valor + "',";
         else if (utilSql.getTipo(dt.getTipCampo(n+1)) == Types.DECIMAL)
@@ -187,10 +217,7 @@ public class utilSql
 
       if (nLin % nMsg == 0)
         incMsg();
-    } catch (Exception k)
-    {
-      throw new SQLException(k.getMessage()+" -- "+s);
-    }
+    
     }
 
     protected void incMsg()

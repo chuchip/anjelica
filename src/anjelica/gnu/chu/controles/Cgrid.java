@@ -903,7 +903,7 @@ public class Cgrid extends CPanel implements Serializable
        return almacenarDatos(new ArrayList(vector));
     }
     /**
-    * Función que me rellena el grid con los datos de un Vector en el orden
+    * Función que me rellena el grid con los datos de un ArrayList en el orden
     * en que se encuentran almacenados.
     **/
     public boolean setDatos(final ArrayList datos){
@@ -952,7 +952,7 @@ public class Cgrid extends CPanel implements Serializable
             cargandoDatos=false;
             return false;
           }
-                            //	Llenar el Grid con los datos de Base de Datos.
+          //	Llenar el Grid con los datos de Base de Datos.
           if ((dt.get(0)).size()<0  ||
                       (dt.get(0)).size()>tableView.getColumnCount()){
               msgError="Error(almacenarDatos):Número de columnas erroneo.";
