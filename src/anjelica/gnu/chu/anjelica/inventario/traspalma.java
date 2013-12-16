@@ -14,6 +14,7 @@ import javax.swing.BorderFactory;
 import gnu.chu.anjelica.almacen.actStkPart;
 import gnu.chu.isql.utilSql;
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.swing.JFileChooser;
 /**
  *
@@ -54,6 +55,7 @@ public class traspalma  extends ventana
   private int cliCodi;
   actStkPart stkPart;
   String s;
+  String fichero = null;
   CPanel cPanel1 = new CPanel();
   CLabel cLabel1 = new CLabel();
   CLabel cLabel2 = new CLabel();
@@ -77,13 +79,14 @@ public class traspalma  extends ventana
   Cgrid jt = new Cgrid(9);
   CButton Baceptar = new CButton("Aceptar",Iconos.getImageIcon("check"));
   CButton Bcancela = new CButton("Cancelar",Iconos.getImageIcon("cancel"));
+  CButtonMenu Bselec=new CButtonMenu(Iconos.getImageIcon("filter"));
   CTextField pro_serieE = new CTextField(Types.CHAR, "X");
   CLabel cLabel10 = new CLabel();
   CTextField avc_fecalbE = new CTextField(Types.DATE, "dd-MM-yyyy");
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   CPanel cPanel2 = new CPanel();
   CLabel cLabel11 = new CLabel();
-  CTextField numIndE = new CTextField(Types.DECIMAL, "##9") ;
+  CTextField numIndE = new CTextField(Types.DECIMAL, "###9") ;
   CLabel Kilos = new CLabel();
   CTextField kilosE = new CTextField(Types.DECIMAL, "---,--9.99");
 
@@ -156,20 +159,25 @@ public class traspalma  extends ventana
     Bcancela.setMaximumSize(new Dimension(105, 26));
     Bcancela.setMinimumSize(new Dimension(105, 26));
     Bcancela.setPreferredSize(new Dimension(125, 26));
+    Bselec.addMenu("Todos");
+    Bselec.addMenu("Ninguno");
+    Bselec.addMenu("Invert");
+    
     cPanel2.setBorder(BorderFactory.createLineBorder(Color.black));
-    cPanel2.setMaximumSize(new Dimension(230, 60));
-    cPanel2.setMinimumSize(new Dimension(230, 30));
-    cPanel2.setPreferredSize(new Dimension(230, 30));
+    cPanel2.setMaximumSize(new Dimension(300, 60));
+    cPanel2.setMinimumSize(new Dimension(300, 30));
+    cPanel2.setPreferredSize(new Dimension(300, 30));
     cPanel2.setQuery(false);
     cPanel2.setLayout(null);
     cLabel11.setText("N.Unidades");
     cLabel11.setBounds(new Rectangle(1, 4, 73, 17));
-    numIndE.setText("999");
-    numIndE.setBounds(new Rectangle(73, 4, 30, 17));
+   
+    numIndE.setBounds(new Rectangle(68, 4, 30, 17));
     Kilos.setText("Kilos");
-    Kilos.setBounds(new Rectangle(116, 4, 39, 17));
+    Kilos.setBounds(new Rectangle(106, 4, 39, 17));
     kilosE.setText("---,--#.99");
-    kilosE.setBounds(new Rectangle(160, 4, 63, 17));
+    kilosE.setBounds(new Rectangle(140, 4, 63, 17));
+    Bselec.setBounds(new Rectangle(202,4,40,17));
     v.add("Artic"); // 0
     v.add("Nombre"); // 1
     v.add("Ejerc"); // 2
@@ -277,10 +285,12 @@ public class traspalma  extends ventana
                                                 , GridBagConstraints.CENTER,
                                                 GridBagConstraints.NONE,
                                                 new Insets(0, 0, 0, 0), 0, 0));
+    
     cPanel2.add(numIndE, null);
     cPanel2.add(cLabel11, null);
     cPanel2.add(Kilos, null);
     cPanel2.add(kilosE, null);
+    cPanel2.add(Bselec,null);
   }
 
   public void iniciarVentana() throws Exception
@@ -322,7 +332,7 @@ public class traspalma  extends ventana
   {
     if (jt.isVacio())
       return;
-    if (jt.getSelectedColumn() != JT_INSER)
+    if (jt.getSelectedColumn() != JT_INSER || jt.getValorInt(JT_UNID)==0)
       return;
     jt.getSelectedRow();
     if (jt.getValBoolean(JT_INSER))
@@ -340,6 +350,21 @@ public class traspalma  extends ventana
 
   void activarEventos()
   {
+    Bselec.addActionListener(new ActionListener()
+    {
+            @Override
+      public void actionPerformed(ActionEvent e)
+      {
+          if (e.getActionCommand().equals("Todos"))
+             invertirSelec(1);
+          if (e.getActionCommand().equals("Ninguno"))
+             invertirSelec(0);
+          if (e.getActionCommand().equals("Invert"))
+             invertirSelec(-1);
+
+      }
+    });
+    
     jt.addMouseListener(new MouseAdapter()
     {
             @Override
@@ -396,46 +421,116 @@ public class traspalma  extends ventana
     });
 
   }
-  void importaDat()
+  
+  private boolean checkStock(int proCodi,int ejeNume,int empCodi,String proSerie,int proNumlot,int proNumind,int almCodi) throws SQLException
   {
-      try
-      {
-          if (!checkFecha())
-              return;
-          String fichero = null;
-          try
+       s = "SELECT * FROM V_STKPART WHERE " +
+          " EJE_NUME= " + ejeNume+
+          " AND EMP_CODI= " + empCodi +
+          " AND PRO_SERIE='" + proSerie + "'" +
+          " AND pro_nupar= " + proNumlot +
+          " and pro_codi= " + proCodi +
+          " and stp_kilact > 0" +
+          " and alm_codi = " + almCodi+
+          " and pro_numind = " + proNumind ;
+      return dtStat.select(s);
+  }
+  
+  void importaDat()  
+  {
+        if (!checkFecha())
+            return;
+
+        try
+        {
+            configurarFile();
+            int returnVal = ficeleE.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION)
+                fichero = ficeleE.getSelectedFile().getAbsolutePath();
+            else
+                return;
+        } catch (Exception k)
+        {
+            fatalError("error al elegir el fichero", k);
+        }
+        new miThread("")
+        {
+            public void run() {
+                msgEspere("Importando datos...");
+                importaDat0();
+                resetMsgEspere();
+            }
+        };
+   }
+  
+   private void importaDat0()
+   {
+       try 
+       {
+          ArrayList<ArrayList> al = utsql.load(fichero, ";");
+          int nEle=al.size();
+          jt.setEnabled(false);      
+          jt.removeAllDatos();
+          boolean swErrorStock=false;
+          for (int n=0;n<nEle;n++)
           {
-              configurarFile();
-              int returnVal = ficeleE.showOpenDialog(this);
-              if (returnVal == JFileChooser.APPROVE_OPTION)
-                  fichero = ficeleE.getSelectedFile().getAbsolutePath();
-              else
-              return;
-          } catch (Exception k)
-          {
-              fatalError("error al elegir el fichero", k);
+            ArrayList lin=al.get(n);
+            if (! checkStock(Integer.parseInt(lin.get(JT_ARTIC).toString()),
+                Integer.parseInt(lin.get(JT_EJERC).toString()),
+                 emp_codiE.getValorInt(),
+                lin.get(JT_SERIE).toString(),
+                Integer.parseInt(lin.get(JT_LOTE).toString()),
+                Integer.parseInt(lin.get(JT_INDI).toString()),
+                alm_codioE.getValorInt()))
+            {
+               swErrorStock=true;
+//               lin.set(JT_UNID, 0);
+               lin.set(JT_INSER,"N");
+            }                
+            jt.addLinea(lin);
           }
-          
-          ArrayList al = utsql.load(fichero, ";");
-          jt.setDatos(al);
           jt.setEnabled(true);
-          int nRow=jt.getRowCount();
-          int unid=0;
-          double kilos=0;
-        
-          for (int n=0;n<nRow;n++)
-          {
-              unid+=jt.getValorInt(n,JT_UNID);
-              kilos+=jt.getValorDec(n,JT_PESO);
-          }    
-          numIndE.setValorDec(unid);
-          kilosE.setValorDec(kilos);  
+          if (swErrorStock)
+              msgBox("Se encontraron errores en control de Stocks");
+          
+          actAcumulad();
           mensajeErr("Datos importados correctamente");
           activar(true);
       } catch (IOException ex)
       {
           Error("Error al importar datos",ex);
       }
+
+      catch (SQLException ex)
+      {
+          Error("Error al chequear integridad en Base datos",ex);
+      }
+  }
+   void actAcumulad()
+   {
+       int nRow=jt.getRowCount();
+       int unid=0;
+       double kilos=0;
+        
+       for (int n=0;n<nRow;n++)
+       {
+           if (jt.getValBoolean(n,JT_INSER))
+           {
+              unid+=jt.getValorInt(n,JT_UNID);
+              kilos+=jt.getValorDec(n,JT_PESO);
+           }
+       }    
+       numIndE.setValorDec(unid);
+       kilosE.setValorDec(kilos);
+   }
+  private void invertirSelec(int estado)
+  {
+       int nRow=jt.getRowCount();
+       for (int n=0;n<nRow;n++)
+       {
+            jt.setValor(estado>=0?estado==1:!jt.getValBoolean(n,JT_INSER),n,JT_INSER);
+       }    
+      actAcumulad();
   }
   private boolean checkFecha()
   {
@@ -630,7 +725,7 @@ public class traspalma  extends ventana
         dtCon1.setDato("alm_codi", alm_codifE.getValor());
         dtCon1.setDato("avl_canti", jt.getValorDec(n, JT_PESO));
         dtCon1.setDato("avc_cerra",-1);
-        dtCon1.setDato("avl_fecalt","current_timestamp");
+        dtCon1.setDato("avl_fecalt","{ts '"+Formatear.getFecha(avc_fecalbE.getDate(),"yyyy-MM-dd")+ " 01:01:01'}");
         dtCon1.update(stUp);
 
         // Insertamos linea partida de albaran
@@ -667,7 +762,6 @@ public class traspalma  extends ventana
                        jt.getValorDec(n, JT_PESO)*-1,jt.getValorInt(n,JT_UNID)*-1,avc_fecalbE.getText());
        stkPart.actAcum(jt.getValorInt(n, JT_ARTIC),alm_codifE.getValorInt(),
                 jt.getValorDec(n, JT_PESO),jt.getValorInt(n,JT_UNID),avc_fecalbE.getText());
-
       }
 /*
       // Actualizo Existencias en almacen-Deposito Original.
