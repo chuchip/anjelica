@@ -9,13 +9,15 @@ import gnu.chu.camposdb.*;
 import java.awt.event.*;
 import java.util.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.inventario.CreaStkPart;
+import gnu.chu.interfaces.ejecutable;
 
 /**
  *
  * <p>Titulo: costkpar</p>
  * <p>Descripción: Consulta tabla de Stock Partidas </p>
  *
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2013
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -34,6 +36,12 @@ import gnu.chu.Menu.*;
  */
 public class costkpar extends ventana
 {
+  static final int JT_ARTIC=0;
+  static final int JT_EJERC=2;
+  static final int JT_SERIE=3;
+  static final int JT_LOTE=4;
+  static final int JT_INDI=5;
+  static final int JT_ALMAC=8;
   private String filtroEmpr;
   String s;
   CPanel Pprinc = new CPanel();
@@ -166,6 +174,7 @@ public class costkpar extends ventana
     v.add("Kg.Ini"); // 13
     v.add("Blo");
     jt.setCabecera(v);
+    jt.setToolTipText("Doble click para editar apunte Stock");
     jt.setAnchoColumna(new int[]{50,100,40,30,50,40,40,60, 50,40,80,80,40,60,30});
     jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,2,2,2,1,1,2,2,1});
     jt.setFormatoColumna(6,"--,--9");
@@ -281,6 +290,33 @@ public class costkpar extends ventana
         opStock.setSelected(false);
       }
     });
+    jt.addMouseListener(new MouseAdapter()
+    {
+      @Override
+      public void mouseClicked(MouseEvent e)
+      {
+          if (e.getClickCount()>1)
+            editStkPart();
+      }
+    });
+  }
+  void editStkPart()
+  {
+          
+    ejecutable prog;
+    if ((prog=jf.gestor.getProceso(CreaStkPart.getNombreClase()))==null)
+      return;
+    CreaStkPart cm=(CreaStkPart) prog;
+    cm.setProducto(jt.getValorInt(JT_ARTIC));
+    cm.setAlmacen(jt.getValorInt(JT_ALMAC));
+    cm.setEjercicio(jt.getValorInt(JT_EJERC));
+    cm.setSerie(jt.getValString(JT_SERIE));
+    cm.setLote(jt.getValorInt(JT_LOTE));
+    cm.setIndividuo(jt.getValorInt(JT_INDI));
+    
+    cm.verKilos();
+    jf.gestor.ir(cm);
+    cm.ej_focus();
   }
   void consultar()
   {

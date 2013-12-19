@@ -7,7 +7,7 @@ package gnu.chu.anjelica.inventario;
  * Este programa solo se deberia usar en casos limitados, si sabemos a ciencia
  * cierta que un individuo existe pero, por algun error, el programa no nos lo deja introducir.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2013
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -88,7 +88,7 @@ public class CreaStkPart extends ventana
      
         iniciarFrame(); 
        
-        this.setVersion("2012-10-05");
+        this.setVersion("2013-12-19");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -96,8 +96,39 @@ public class CreaStkPart extends ventana
         initComponents();
         this.setSize(new Dimension(543, 191));
     }
+    public static String getNombreClase() {
+        return "gnu.chu.anjelica.inventario.CreaStkPart";
+    }
+    public void setProducto(int proCodi)
+    {
+        pro_codiE.setValorInt(proCodi);
+    }
+    public void setLote(int lote)
+    {
+        pro_loteE.setValorInt(lote);
+    }
+    public void setIndividuo(int indiv)
+    {
+        pro_numindE.setValorInt(indiv);
+    }
+    public void setEjercicio(int ejerc)
+    {
+        deo_ejelotE.setValorInt(ejerc);
+    }
+    public void setSerie(String serie)
+    {
+        deo_serlotE.setText(serie);
+    }
+    public void setAlmacen(int almacen)
+    {
+        alm_codiE.setValorInt(almacen);
+    }
+    public void ej_focus()
+    {
+        stp_unactE.requestFocusLater();
+    }
    public void iniciarVentana() throws Exception
- {
+   {
    pro_codiE.iniciar(dtStat,this,vl,EU);
    deo_serlotE.setText("A");
    deo_emplotE.iniciar(dtStat, this, vl, EU);
@@ -123,7 +154,7 @@ public class CreaStkPart extends ventana
    });
  }
 
- boolean verKilos()
+ public boolean verKilos()
  {
    try
    {
