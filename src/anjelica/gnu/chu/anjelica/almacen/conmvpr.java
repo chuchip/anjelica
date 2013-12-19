@@ -220,6 +220,7 @@ public class conmvpr extends ventana
     v.add("Gan.Kg");  // 11
     v.add("Alm");  // 11
     jt.setCabecera(v);
+    jt.setToolTipText("Doble click para ir a Mvto");
     jt.setAnchoColumna(new int[]
                        {76, 61, 63, 31, 58,50, 64, 65, 64,100,80,60,30});
     jt.setAlinearColumna(new int[]

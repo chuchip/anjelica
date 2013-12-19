@@ -33,7 +33,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class miCellRender extends  DefaultTableCellRenderer
 {
- 
+   Cgrid padre;
    Color oldForeground;
    Color oldBackground;
    String nombre="Grid";
@@ -43,7 +43,10 @@ public class miCellRender extends  DefaultTableCellRenderer
 //   Color colorSel=Color.white;
 //   Color colorBac=new Color(-6710836);
    Font fuente=null;
-
+   public miCellRender(Cgrid jt)
+   {
+       padre=jt;
+   }
     @Override
    public Component getTableCellRendererComponent(JTable table,Object value,
              boolean isSelected, boolean hasFocus, int row,  int column){
@@ -87,7 +90,7 @@ public class miCellRender extends  DefaultTableCellRenderer
           table.getColumn(table.getColumnName(column)).getWidth())
         ( (JLabel) c).setToolTipText(table.getValueAt(row, column).toString());
       else
-        ( (JLabel) c).setToolTipText(null);
+        ( (JLabel) c).setToolTipText(padre.getToolTipText());
     }
 
     if (fuente!=null)

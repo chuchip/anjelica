@@ -321,7 +321,7 @@ public class Cgrid extends CPanel implements Serializable
       renders = new miCellRender[nCol];
       for (int x = 0; x < nCol; x++)
       {
-        renders[x] = new miCellRender();
+        renders[x] = new miCellRender(this);
         setRenderer(x, renders[x]);
       }
 
@@ -400,8 +400,9 @@ public class Cgrid extends CPanel implements Serializable
     {
        headerToolTip.setToolTipText(toolTip);
     }
+    
     public void setToolTipHeader(ArrayList lista)
-    {
+    {        
         Object o[]=lista.toArray();
         setToolTipHeader(Arrays.asList(o).toArray(new String[o.length]));
     }
