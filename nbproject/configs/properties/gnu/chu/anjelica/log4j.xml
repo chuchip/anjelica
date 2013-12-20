@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration PUBLIC
+  "-//APACHE//DTD LOG4J 1.2//EN" "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
+ <!--                           
+  <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+  -->
+<log4j:configuration>
+	 <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+           <layout class="org.apache.log4j.PatternLayout">
+             <param name="ConversionPattern"
+		    value="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/>
+    	   </layout>	    
+   	   <filter class="org.apache.log4j.varia.LevelRangeFilter">
+	    <param name="LevelMin" value="DEBUG"/>
+            <param name="LevelMax" value="FATAL"/>
+          </filter>
+	</appender>
+
+	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="anjelica.log" />
+		<param name="Append" value="true" />
+		<!--		<param name="MaxFileSize" value="1KB" />		
+		<param name="MaxBackupIndex" value="3" />		-->
+		<param name="DatePattern" value="'.'yyyy-MM-dd" />
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+		value="%d{dd-MM-yyyy HH:mm:ss} %-5p - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+		<param name="LevelMin" value="DEBUG"/>
+            <param name="LevelMax" value="FATAL"/>
+        </filter>
+    </appender>
+
+    
+
+    <!--                           -->
+    <!-- setup log4j's root logger -->
+    <!--                           -->
+    <root>
+	<level value="warn" /> 
+<!--        <appender-ref ref="FILE"/> -->
+	
+	<appender-ref ref="STDOUT" /> 
+    </root>
+</log4j:configuration>
+
