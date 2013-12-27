@@ -238,7 +238,7 @@ public class CLResMvtos extends ventana {
         int unComprasT=0,unVentasT=0, unEntDespT=0,unDespSalT=0,unRegT=0;
         double kgComprasT=0,kgVentasT=0, kgEntDespT=0,kgDespSalT=0,kgRegT=0;
         double impComprasT=0,impVentasT=0, impEntDespT=0,impDespSalT=0,impRegT=0;
-        double sumaLinea=0;
+        double sumaLinea;
         do {
            if (cancelarConsulta)
            {

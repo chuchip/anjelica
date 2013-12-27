@@ -78,17 +78,17 @@
             <Component class="gnu.chu.controles.CComboBox" name="feulinE">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="320" y="10" width="100" height="17"/>
+                  <AbsoluteConstraints x="330" y="10" width="90" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel3">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Ultimo Inventario"/>
+                <Property name="text" type="java.lang.String" value="Ult. Inventario"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="220" y="10" width="100" height="17"/>
+                  <AbsoluteConstraints x="250" y="10" width="80" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -267,6 +267,21 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="90" y="10" width="100" height="18"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opDatStock">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Stock"/>
+                <Property name="toolTipText" type="java.lang.String" value="Usar Inventario ya Traspasado"/>
+                <Property name="focusable" type="boolean" value="false"/>
+                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[41, 17]"/>
+                </Property>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="190" y="10" width="60" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

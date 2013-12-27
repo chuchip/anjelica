@@ -3067,23 +3067,23 @@ constraint ix_coninvcab primary key (emp_codi,cci_codi)
 -- drop table coninvlin;
 create table anjelica.coninvlin
 (
-	emp_codi int not null,					-- Empresa
-	cci_codi int not null,					-- Numero de Inventario
-	lci_nume int not null,					-- Numero de Linea
-    prp_ano  int not null,      			-- Ejercicio del lote
-	prp_empcod int not null,				-- Empresa del Lote
-	prp_seri char(1) not null,				-- Serie del Lote
-	prp_part int not null,					-- Partida
-	pro_codi int not null,					-- Producto
-	pro_nomb varchar(50),					-- Nombre de Producto
-	prp_indi int not null,					-- Individuo de Lote
-	lci_peso decimal(6,2) not null,			-- Peso de inventario
-	lci_kgsord decimal(6,2) not null,		--  Kgs. Según Ordenador
-	lci_numind int not null,				-- Numeros de Piezas
-	lci_regaut smallint not null default 0,	-- Registro Automatico (0=No)
-    lci_coment varchar(35),					-- Comentario
+    emp_codi int not null,			-- Empresa
+    cci_codi int not null,			-- Numero de Inventario
+    lci_nume int not null,			-- Numero de Linea
+    prp_ano  int not null,      		-- Ejercicio del lote
+    prp_empcod int not null,			-- Empresa del Lote
+    prp_seri char(1) not null,			-- Serie del Lote
+    prp_part int not null,			-- Partida
+    pro_codi int not null,			-- Producto
+    pro_nomb varchar(50),			-- Nombre de Producto
+    prp_indi int not null,                      -- Individuo de Lote
+    lci_peso decimal(6,2) not null,		-- Peso de inventario
+    lci_kgsord decimal(6,2) not null,		--  Kgs. Según Ordenador
+    lci_numind int not null,                    -- Numeros de Piezas
+    lci_regaut smallint not null default 0,	-- Registro Automatico (0=No)
+    lci_coment varchar(35),			-- Comentario
     lci_numpal varchar not null default '',	-- Numero Palet
-constraint ix_coninvlin primary key(emp_codi,cci_codi,lci_nume)
+  constraint ix_coninvlin primary key(emp_codi,cci_codi,lci_nume)
 );
 create index ix_coninvl2 on coninvlin(pro_codi,prp_ano,prp_part,prp_seri,prp_indi);
 --

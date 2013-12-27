@@ -49,7 +49,9 @@ import net.sf.jasperreports.engine.JasperReport;
 
 
 public class ClDifInv extends ventana {
-    
+    private String TABLA_INV_CAB="coninvcab";
+    private String TABLA_INV_LIN="coninvlin";
+    private String VISTA_INV="v_coninvent";
     boolean swConsulta=false;
     String camCodiE;
     String s,s1;
@@ -98,7 +100,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2013-06-24");
+        this.setVersion("2013-12-27");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -121,7 +123,7 @@ public class ClDifInv extends ventana {
       alm_codiE.setCeroIsNull(false);
       alm_codiE.setText("0");
       
-      s ="select MAX(cci_feccon) as cci_feccon from coninvcab  " +
+      s ="select MAX(cci_feccon) as cci_feccon from "+TABLA_INV_CAB +
           " where emp_codi = " + EU.em_cod ;
 
       dtStat.select(s);
@@ -203,37 +205,43 @@ public class ClDifInv extends ventana {
         camCodiE="";
       try 
       {
-        s="select * from v_coninvent as c where cci_feccon= TO_DATE('" +
-              cci_fecconE.getText() + "','dd-MM-yyyy')  "+
-              " and lci_regaut=0 "+
-              " and c.emp_codi = "+EU.em_cod+
-              " and (select count(*) from v_coninvent as cc where c.pro_codi = cc.pro_codi "+
-              " and c.prp_indi=cc.prp_indi and c.prp_part= cc.prp_part "+
-              " and c.prp_seri=cc.prp_seri and c.prp_ano=cc.prp_ano  "+
-              " and cci_Feccon= TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "+
-              " and cc.emp_codi = "+EU.em_cod+
-              " and lci_regaut=0 ) > 1 order by  PRO_CODI,PRP_PART,PRP_INDI";
-        if (dtCon1.select(s))
+        if (! opDatStock.isSelected())
         {
-          msgBox("AVISO!! Existen individuos metidos dos o mas veces en el inventario");
-          enviaMailError("Listado diferencias Inventario con individuos metidos mas de una vez: "+dtCon1.getSql());
-        }
-        String s2 = "SELECT c.* FROM v_coninvent AS c " +
-          " WHERE c.emp_codi =" + EU.em_cod +
-          " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') " +
-          (camCodiE.equals("") || camCodiE.equals("--") ? "" :
-           " AND c.cam_codi = '" + camCodiE + "'") +
-          (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
-          (usu_nombE.isNull()?"":" and usu_nomb ='"+usu_nombE.getText()+"'")+
-          " ORDER BY pro_codi,prp_seri,prp_part,prp_indi ";
-//      debug("S: " + s1);
-        if (!dtCon1.select(s2))
-        {
-          mensajeErr("No encontrados Control de Inventario para estas condiciones con esta fecha");
-          return;
+            TABLA_INV_CAB="coninvcab";
+            TABLA_INV_LIN="coninvlin";
+            VISTA_INV="v_coninvent";
+            s="select * from "+VISTA_INV+" as c where cci_feccon= TO_DATE('" +
+                  cci_fecconE.getText() + "','dd-MM-yyyy')  "+
+                  " and lci_regaut=0 "+
+                  " and c.emp_codi = "+EU.em_cod+
+                  " and (select count(*) from "+VISTA_INV+" as cc where c.pro_codi = cc.pro_codi "+
+                  " and c.prp_indi=cc.prp_indi and c.prp_part= cc.prp_part "+
+                  " and c.prp_seri=cc.prp_seri and c.prp_ano=cc.prp_ano  "+
+                  " and cci_Feccon= TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "+
+                  " and cc.emp_codi = "+EU.em_cod+
+                  " and lci_regaut=0 ) > 1 order by  PRO_CODI,PRP_PART,PRP_INDI";
+            if (dtCon1.select(s))
+            {
+              msgBox("AVISO!! Existen individuos metidos dos o mas veces en el inventario");
+              enviaMailError("Listado diferencias Inventario con individuos metidos mas de una vez: "+dtCon1.getSql());
+            }
+            String s2 = "SELECT c.* FROM "+VISTA_INV+" AS c " +
+              " WHERE c.emp_codi =" + EU.em_cod +
+              " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') " +
+              (camCodiE.equals("") || camCodiE.equals("--") ? "" :
+               " AND c.cam_codi = '" + camCodiE + "'") +
+              (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
+              (usu_nombE.isNull()?"":" and usu_nomb ='"+usu_nombE.getText()+"'")+
+              " ORDER BY pro_codi,prp_seri,prp_part,prp_indi ";
+    //      debug("S: " + s1);
+            if (!dtCon1.select(s2))
+            {
+              mensajeErr("No encontrados Control de Inventario para estas condiciones con esta fecha");
+              return;
+            }
         }
       }
-      catch (Exception ex)
+      catch (SQLException ex)
       {
         Error("Error al Buscar Control de Inventario", ex);
         return;
@@ -250,26 +258,45 @@ public class ClDifInv extends ventana {
     }
 
     void buscaDatos()
-    {
-       msgEspere("Buscando Diferencias Inventarios");
-      if (opCalInv.isSelected())
-      {
-        if (!calcDatos())
-        {
-            this.setEnabled(true);
-            
-            return;
-        }
-        
-      }
+    {       
+      msgEspere("Buscando Diferencias Inventarios");
       try
       {
+        int cciCodi;
+        if (opDatStock.isSelected())
+        {
+            cciCodi=calcDatosStock();
+            if (cciCodi==0)
+            {
+                this.setEnabled(true);
+                return;
+            }
+             if (!calcDatos(cciCodi))
+            {
+                this.setEnabled(true);
+                return;
+            }
+        }
+        else
+        {
+          cciCodi= dtCon1.getInt("cci_codi"); // El primer codigo (para inserts);
+          
+          if (opCalInv.isSelected())
+          {                
+            if (!calcDatos(cciCodi))
+            {
+                this.setEnabled(true);
+                return;
+            }
+          }
+        }
+
         actualizaMsg("Generando Listado ... Espere, por favor",false);
         s="select  c.cci_codi,P.cam_codi,c.PRO_CODI,p.pro_nomb,c.PRP_ANO,"+
             "c.prp_empcod ,c.PRP_SERI,"+
             " c.PRP_PART,c.PRP_INDI,c.lci_coment, "+
             " sum(c.LCI_PESO) as lci_peso,sum(c.LCI_KGSORD) as lci_kgsord "+
-           "  from v_articulo  as p,v_coninvent as c "+
+           "  from v_articulo  as p,"+VISTA_INV+" as c "+
             " where  p.pro_tiplot= 'V' "+
             " and c.pro_codi = p.pro_codi "+
             " AND c.LCI_PESO <> c.LCI_KGSORD "+
@@ -282,7 +309,7 @@ public class ClDifInv extends ventana {
             " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() +"','dd-MM-yyyy') "+
             (almCodi== 0 ? "" : " and c.alm_codi = " +almCodi) +
             (camCodiE.equals("") || camCodiE.equals("--")?"":" AND P.cam_codi = '" + camCodiE + "'")+
-            " and  (select abs(sum(cl.LCI_PESO-cl.LCI_KGSORD)) from v_coninvent as cl "+
+            " and  (select abs(sum(cl.LCI_PESO-cl.LCI_KGSORD)) from "+VISTA_INV+" as cl "+
             " where c.pro_codi = cl.pro_codi "+
             (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
             " and cl.cci_feccon = TO_DATE('" + cci_fecconE.getText() +"','dd-MM-yyyy')) > "+margenE.getValorDec();
@@ -364,7 +391,7 @@ public class ClDifInv extends ventana {
               }
               if (dtCon1.getDouble("lci_peso")==0)
               { // Busco si hay inventarios posteriores.
-                  s="select max(cci_feccon) as cci_feccon from v_coninvent where pro_codi="+dtCon1.getInt("pro_codi")+
+                  s="select max(cci_feccon) as cci_feccon from "+VISTA_INV+" where pro_codi="+dtCon1.getInt("pro_codi")+
                               " and prp_part = "+dtCon1.getInt("PRP_PART")+
                               " and prp_seri = '"+dtCon1.getString("PRP_SERI")+"'"+
                               " and prp_ano= "+dtCon1.getInt("PRP_ANO")+
@@ -378,7 +405,7 @@ public class ClDifInv extends ventana {
               }         
               if (lciComent!=null)
               {
-                   s="UPDATE coninvlin set lci_coment = '"+
+                   s="UPDATE "+TABLA_INV_LIN+" set lci_coment = '"+
                                 lciComent+"'"+
                                 " where cci_codi = "+dtCon1.getInt("cci_codi")+
                                 " and pro_codi ="+dtCon1.getInt("pro_codi")+
@@ -465,14 +492,93 @@ public class ClDifInv extends ventana {
         mensajeErr("Consulta diferencias Inventario, terminada");      
     }
     /**
+     * Calcula datos sobre stock ya introducidos.
+     * El inventario FINAL realmente lo coge de lo que haya en v_regstock en la fecha indicada 
+     * en la fecha de control.
+     * 
+     */
+    
+    int calcDatosStock()
+    {
+      try {
+        
+        actualizaMsg("Espere, por favor, Insertando Datos Inventario ...",false);
+        TABLA_INV_CAB="tmp_invcab";
+        TABLA_INV_LIN="tmp_invlin";   
+        VISTA_INV="vista_inven";
+        // Compruebo si la tabla temporal ya existe
+        s= "SELECT *  FROM   pg_catalog.pg_tables  WHERE   tablename  = '"+TABLA_INV_CAB+"'";
+        if (dtStat.select(s))
+        {
+            dtCon1.executeUpdate("drop view "+VISTA_INV);
+            dtCon1.executeUpdate("drop table "+TABLA_INV_CAB);
+            dtCon1.executeUpdate("drop table "+TABLA_INV_LIN);            
+        }
+        s="select  min(cci_codi) as cci_codi"
+            + " from coninvcab where  cci_feccon= TO_DATE('" +  cci_fecconE.getText() + "','dd-MM-yyyy') " ;
+        dtStat.select(s);
+        int cciCodi=dtStat.getInt("cci_codi");
+        s="CREATE  TABLE temp "+TABLA_INV_CAB+" as select * from coninvcab where cci_codi="+cciCodi;
+        dtCon1.executeUpdate(s);
+        s="CREATE  TABLE temp "+TABLA_INV_LIN+" as select * from coninvlin where cci_codi=0";
+        dtCon1.executeUpdate(s);
+
+        
+        s="create OR REPLACE  temp view "+VISTA_INV+" as"+
+          " select c.emp_codi,c.cci_codi,c.usu_nomb,cci_feccon, cam_codi,alm_codi,lci_nume,prp_ano, prp_empcod, prp_seri, prp_part, pro_codi, pro_nomb,"+
+          " prp_indi,lci_peso,lci_kgsord,lci_numind,lci_regaut,lci_coment,lci_numpal from "+
+            TABLA_INV_CAB+" as c, "+
+            TABLA_INV_LIN+" as l where"+
+          " c.emp_codi=c.emp_codi"+
+          " and c.cci_codi=l.cci_codi";   
+         dtCon1.executeUpdate(s);
+        s= " select r.* FROM v_regstock r, v_motregu m WHERE " +
+          " m.tir_codi = r.tir_codi " +
+          " and r.rgs_kilos <> 0"+
+          " and rgs_trasp != 0 "+
+          (almCodi==0?"":" and r.alm_codi = "+almCodi)+
+          " and tir_afestk = '=' "+
+          " AND r.rgs_fecha = TO_DATE('" +  cci_fecconE.getText() + "','dd-MM-yyyy') " ;
+        if (!dtCon1.select(s))
+            return 0;
+        int lciNume=0;
+        do
+        {
+              dtAdd.addNew(TABLA_INV_LIN);
+              dtAdd.setDato("cci_codi", cciCodi);
+              dtAdd.setDato("emp_codi", EU.em_cod);
+              dtAdd.setDato("lci_nume", ++lciNume);
+              dtAdd.setDato("lci_numind", dtCon1.getDouble("rgs_canti"));
+              dtAdd.setDato("prp_ano", dtCon1.getInt("eje_nume"));
+              dtAdd.setDato("prp_empcod", EU.em_cod);
+              dtAdd.setDato("prp_seri", dtCon1.getString("pro_serie"));
+              dtAdd.setDato("prp_part", dtCon1.getInt("pro_nupar"));
+              dtAdd.setDato("prp_indi", dtCon1.getInt("pro_numind"));
+              dtAdd.setDato("pro_codi", dtCon1.getInt("pro_codi"));
+              dtAdd.setDato("pro_nomb", "");
+              dtAdd.setDato("lci_peso", dtCon1.getDouble("rgs_kilos"));
+              dtAdd.setDato("lci_kgsord", 0);
+              dtAdd.setDato("lci_regaut", 0);
+              dtAdd.update();
+        } while (dtCon1.next());
+        return cciCodi;
+      } catch (SQLException k)
+      {
+          Error("Error al introducir datos de stock",k);
+          return 0;
+      }
+    }
+    
+    /**
      * Calcula datos de nuevo, metiendo los resultados en la tabla
      * de inventarios.
      */
     @SuppressWarnings("CallToThreadDumpStack")
-    boolean calcDatos() {
+    boolean calcDatos(int cciCodi) 
+    {
         actualizaMsg("Espere, por favor, Buscando Datos ...",false);
         
-        int cciCodi;
+      
         int lciNume;
         double canti;
         String tipMov;
@@ -487,8 +593,7 @@ public class ClDifInv extends ventana {
         String serie;
         String feulin;
         try {
-
-            cciCodi = dtCon1.getInt("cci_codi"); // El primer codigo (para inserts);
+            
             feulin = feulinE.getText();
             
             s = getStrSql(feulin, cci_fecconE.getText());
@@ -501,9 +606,9 @@ public class ClDifInv extends ventana {
 //        debug("calcDatos: "+dtCon1.getStrSelect()+"\nCci_codi: "+cciCodi);
 //        debug("S: "+dtCon1.getStrSelect());
             // Pongo a 0 los Individuos y Kgs.
-            s = "UPDATE coninvlin set  lci_kgsord=0,lci_coment = null "
+            s = "UPDATE "+TABLA_INV_LIN+" set  lci_kgsord=0,lci_coment = null "
                     + " where emp_codi = " + EU.em_cod
-                    + " and  cci_codi IN (SELECT cci_codi from coninvcab c "
+                    + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+ " c "
                     + " where c.emp_codi =" + EU.em_cod
                     + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy')) ";
             swLeeOrd = true;
@@ -512,9 +617,9 @@ public class ClDifInv extends ventana {
             stUp.executeUpdate(dtCon1.getSqlUpdate());
 
             // Borro los individuos que no tenga stock real.
-            s = "DELETE FROM coninvlin "
+            s = "DELETE FROM "+ TABLA_INV_LIN
                     + " where emp_codi = " + EU.em_cod
-                    + " and  cci_codi IN (SELECT cci_codi from coninvcab c where "
+                    + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+" c where "
                     + " c.emp_codi =" + EU.em_cod
                     + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                     + " ) "
@@ -525,7 +630,7 @@ public class ClDifInv extends ventana {
             /**
              * Busco máximo numero de linea de inventarios
              */
-            s = "SELECT MAX(lci_nume) as lci_nume from coninvlin where emp_codi = " + EU.em_cod
+            s = "SELECT MAX(lci_nume) as lci_nume from "+ TABLA_INV_LIN+" where emp_codi = " + EU.em_cod
                     + " and cci_codi = " + cciCodi;
             dtStat.select(s);
             lciNume = dtStat.getInt("lci_nume", true);
@@ -581,7 +686,7 @@ public class ClDifInv extends ventana {
                 }
             } while (dtCon1.next());
 //            actualizaMsg("Calculando Datos .... \n Leidos " + nLec + " Registros - Individuos: " + ht.size() + " **", false);
-        } catch (Exception ex1) {
+        } catch (SQLException ex1) {
 //        ex1.printStackTrace();
             Error("1.- Error al Actualizar Datos ", ex1);
             return false;
@@ -601,7 +706,7 @@ public class ClDifInv extends ventana {
                 ref =  pr.next();
                 canti =  ht.get(ref);
                
-                System.out.println(ref+"|"+canti);
+//                System.out.println(ref+"|"+canti);
                 if (canti == 0) {
                     continue;
                 }
@@ -613,7 +718,7 @@ public class ClDifInv extends ventana {
                 lote = Integer.parseInt(sArray[4]);
                 numind = Integer.parseInt(sArray[5]);
 
-                s = " SELECT l.* FROM coninvlin l,coninvcab c WHERE pro_codi = " + proCodi
+                s = " SELECT l.* FROM "+TABLA_INV_LIN+" l,"+TABLA_INV_CAB+" c WHERE pro_codi = " + proCodi
                         + " AND prp_ano = " + ejeNume
                         + " and l.prp_empcod = " + EU.em_cod
                         + " and c.emp_codi = " + EU.em_cod
@@ -636,7 +741,7 @@ public class ClDifInv extends ventana {
                 } 
                 else
                 {
-                    dtAdd.addNew("coninvlin");
+                    dtAdd.addNew(TABLA_INV_LIN);
                     dtAdd.setDato("cci_codi", cciCodi);
                     dtAdd.setDato("emp_codi", EU.em_cod);
                     dtAdd.setDato("lci_nume", ++lciNume);
@@ -671,10 +776,18 @@ public class ClDifInv extends ventana {
         }
         return true;
     }
-
+/**
+ * Monta la select que buscara los movimientos de salida y entrada 
+ * en todas las tablas necesarias, entre la fecha de Ultimo Stock Pasado y la 
+ * Fecha de Control de inventario.
+ * @param feulst Fecha Ultimo Stock pasado (Fecha inferior)
+ * @param fecStockStr Fecha Control Stock  (Fecha Superior)
+ * @return String con la SQL a ejecutar
+ */
     private String getStrSql(String feulst, String fecStockStr)
     {
-      String condCamaras="(select cam_codi from coninvcab "+
+      boolean incDep=leidoDepoC.isSelected() && ! opDatStock.isSelected();
+      String condCamaras="(select cam_codi from "+TABLA_INV_CAB+
             " where emp_codi = "+EU.em_cod+" and cci_feccon = TO_DATE('"+cci_fecconE.getText() +"','dd-MM-yyyy'))";
       String condProd = " and a.pro_tiplot = 'V' ";
       if (pro_artconE.getValorInt()!=2)
@@ -725,9 +838,9 @@ public class ClDifInv extends ventana {
           "  from v_albventa_detalle as l,v_articulo a" +
           condAlb+
           " and l.avc_serie != 'X'"+ // NO incluir Serie X si es un solo almacen          
-          (leidoDepoC.isSelected()?" and l.avc_depos != 'D' ":""); // No tratar los albaranes de DEPOSITO.
+          (incDep?" and l.avc_depos != 'D' ":""); // No tratar los albaranes de DEPOSITO.
         
-      if (leidoDepoC.isSelected())
+      if (incDep)
       {
           s+=" UNION ALL select 2 as orden,'V' as sel,'-' as tipmov,cs.avs_fecha as fecmov," +
           "  i.avs_serlot as serie,i.avs_numpar as  lote," +
@@ -852,7 +965,7 @@ public class ClDifInv extends ventana {
           condProd+
           " and tir_afestk = '=' "+
           " AND r.rgs_fecha = TO_DATE('" + feulst + "','dd-MM-yyyy') " ;
-      if (leidoDepoC.isSelected())
+      if (incDep)
       {
           s+=" UNION ALL select 0 as orden,'R' as sel,'=' as tipmov,r.ind_fecha as fecmov," +
           "  r.pro_serie as serie,r.pro_nupar as  lote," +
@@ -906,6 +1019,7 @@ public class ClDifInv extends ventana {
         leidoDepoC = new gnu.chu.controles.CCheckBox();
         Baceptar = new gnu.chu.controles.CButtonMenu();
         cci_fecconE = new gnu.chu.anjelica.inventario.PfechaInv();
+        opDatStock = new gnu.chu.controles.CCheckBox();
         jt = new gnu.chu.controles.Cgrid(9);
 
         Pgeneral.setLayout(new java.awt.GridBagLayout());
@@ -924,11 +1038,11 @@ public class ClDifInv extends ventana {
         Pcondic.add(cLabel2);
         cLabel2.setBounds(10, 10, 90, 17);
         Pcondic.add(feulinE);
-        feulinE.setBounds(320, 10, 100, 17);
+        feulinE.setBounds(330, 10, 90, 17);
 
-        cLabel3.setText("Ultimo Inventario");
+        cLabel3.setText("Ult. Inventario");
         Pcondic.add(cLabel3);
-        cLabel3.setBounds(220, 10, 100, 17);
+        cLabel3.setBounds(250, 10, 80, 17);
 
         alm_codiE.setAncTexto(30);
         alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
@@ -998,6 +1112,13 @@ public class ClDifInv extends ventana {
         Baceptar.setBounds(290, 120, 130, 26);
         Pcondic.add(cci_fecconE);
         cci_fecconE.setBounds(90, 10, 100, 18);
+
+        opDatStock.setText("Stock");
+        opDatStock.setToolTipText("Usar Inventario ya Traspasado");
+        opDatStock.setFocusable(false);
+        opDatStock.setMaximumSize(new java.awt.Dimension(41, 17));
+        Pcondic.add(opDatStock);
+        opDatStock.setBounds(190, 10, 60, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1070,6 +1191,7 @@ public class ClDifInv extends ventana {
     private gnu.chu.controles.CCheckBox leidoDepoC;
     private gnu.chu.controles.CTextField margenE;
     private gnu.chu.controles.CCheckBox opCalInv;
+    private gnu.chu.controles.CCheckBox opDatStock;
     private gnu.chu.controles.CComboBox pro_artconE;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CTextField pro_loteE;
