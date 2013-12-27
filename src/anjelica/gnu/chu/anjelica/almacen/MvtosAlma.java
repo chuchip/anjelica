@@ -296,58 +296,49 @@ public class MvtosAlma
         " AND c.acc_fecrec >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
         " and c.acc_fecrec <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
     sql+=" UNION all"; // Albaranes de Venta
-    String condAlb=  " where c.emp_codi = l.emp_codi "+
-          " AND c.avc_serie = l.avc_serie "+
-          " AND c.avc_nume = l.avc_nume "+
-          " and c.avc_ano = l.avc_ano "+
-          " and l.avl_canti <> 0 "+
-          " and i.emp_codi = l.emp_codi " +
-          " AND i.avc_serie = l.avc_serie " +
-          " AND i.avc_nume = l.avc_nume " +
-          " and i.avc_ano = l.avc_ano " +
-          " and i.avl_numlin = l.avl_numlin " +
-          (proLote==0?"":" and i.avp_numpar  = "+proLote)+
-          (proNumind==0?"":" and i.avp_numind = "+proNumind)+
-          (empCodi==0?"":" and c.emp_codi = "+empCodi)+
-          " AND l.pro_codi = "+(proCodi==-1?"?":proCodi) +
-          " AND l.avl_fecalt::date >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
-          " and l.avl_fecalt::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
+    String condAlb=  " where avl_canti <> 0 "+
+          (proLote==0?"":" and avp_numpar  = "+proLote)+
+          (proNumind==0?"":" and avp_numind = "+proNumind)+
+          (empCodi==0?"":" and emp_codi = "+empCodi)+
+          " AND pro_codi = "+(proCodi==-1?"?":proCodi) +
+          " AND avl_fecalt::date >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
+          " and avl_fecalt::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
 
-    sql+= " select 2 as orden,'VE' as sel,'-' as tipmov,l.avl_fecalt as fecmov,"+
-        "  i.avp_serlot  as serie,i.avp_numpar as  lote,"+
-        " i.avp_canti  as canti,l.avl_prbase as precio,i.avp_numind as numind,"+
-        " c.cli_codi as cliCodi,c.avc_nume as numalb, "+
-        " i.avp_ejelot as ejeNume,i.avp_emplot as empcodi,l.pro_codi as pro_codori, "+
+    sql+= " select 2 as orden,'VE' as sel,'-' as tipmov,c.avl_fecalt as fecmov,"+
+        "  avp_serlot  as serie,avp_numpar as  lote,"+
+        " avp_canti  as canti,avl_prbase as precio,avp_numind as numind,"+
+        " c.cli_codi as cliCodi,avc_nume as numalb, "+
+        " avp_ejelot as ejeNume,avp_emplot as empcodi,pro_codi as pro_codori, "+
         " rep_codi as repCodi,zon_codi as zonCodi "+
-        ",c.sbe_codi, avp_numuni as unidades, c.div_codi, l.alm_codi,c.avc_serie "+
-        ", alm_codori, alm_coddes,c.avc_depos "+
-        "  from v_albavel l, v_albvenpar i, v_albavec c "+
+        ",c.sbe_codi, avp_numuni as unidades, c.div_codi,c.alm_codori as alm_codi,avc_serie "+
+        ", alm_codori, alm_coddes,avc_depos "+
+        "  from  v_albventa_detalle as c "+
         " left join  clientes as cl on cl.cli_codi = c.cli_codi "+
          condAlb+
 //         " and avl_fecalt >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+ // Solo albaranes con fecha mvto. Superior o Igual a Inicial
           // Si almacen !=0 e incluir serie X
          (almCodi!=0 && swSerieX?" AND (alm_codori="+almCodi+" or alm_coddes="+almCodi+")":"")+
          // Si almacen !=0 y NO  incluir serie X. No tiene mucho sentido...
-        (almCodi!=0 && ! swSerieX ?" and l.alm_codi = "+almCodi: "")+
+        (almCodi!=0 && ! swSerieX ?" and c.alm_codi = "+almCodi: "")+
         // Si no se deben incluir los traspasos, quito los albaranes de serie X
         (! swSerieX?" and c.avc_serie != 'X'":"")+
         " UNION ALL "+
         " select 2 as orden,'VE' as sel,'-' as tipmov,c.avc_fecalb as fecmov,"+
-        "  i.avp_serlot  as serie,i.avp_numpar as  lote,"+
-        " i.avp_canti  as canti,l.avl_prbase as precio,i.avp_numind as numind,"+
+        "  c.avp_serlot  as serie,c.avp_numpar as  lote,"+
+        " c.avp_canti  as canti,c.avl_prbase as precio,c.avp_numind as numind,"+
         " c.cli_codi as cliCodi,c.avc_nume as numalb, "+
-        " i.avp_ejelot as ejeNume,i.avp_emplot as empcodi,l.pro_codi as pro_codori, "+
+        " c.avp_ejelot as ejeNume,c.avp_emplot as empcodi,c.pro_codi as pro_codori, "+
         " rep_codi as repCodi,zon_codi as zonCodi "+
-        ",c.sbe_codi, avp_numuni as unidades, c.div_codi, l.alm_codi,c.avc_serie "+
+        ",c.sbe_codi, avp_numuni as unidades, c.div_codi, c.alm_codori as alm_codi,c.avc_serie "+
         ", alm_codori, alm_coddes,c.avc_depos "+
-        "  from v_albavel l, v_albvenpar i, v_albavec c "+
+        "  from v_albventa_detalle as c  "+
         " left join  clientes as cl on cl.cli_codi = c.cli_codi "+
          condAlb+
          " and avl_fecalt::date < TO_DATE('"+fecIni+"','dd-MM-yyyy') "+ // Solo albaranes con fecha mvto. Inferior a Inicial
           // Si almacen !=0 e incluir serie X
          (almCodi!=0 && swSerieX?" AND (alm_codori="+almCodi+" or alm_coddes="+almCodi+")":"")+
          // Si almacen !=0 y NO  incluir serie X. No tiene mucho sentido...
-        (almCodi!=0 && ! swSerieX ?" and l.alm_codi = "+almCodi: "")+
+        (almCodi!=0 && ! swSerieX ?" and c.alm_codi = "+almCodi: "")+
         // Si no se deben incluir los traspasos, quito los albaranes de serie X
         (! swSerieX?" and c.avc_serie != 'X'":"");
 //        " and c.avc_serie "+(swSerieX?"":"!")+"='X'";
