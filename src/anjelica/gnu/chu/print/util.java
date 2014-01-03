@@ -180,11 +180,11 @@ public class util
       {
           File f=new File(EU.getPathReportAlt()+ fichJasper );
           if (f.exists()){
-            JasperReport jr = (JasperReport) JRLoader.loadObject(EU.getPathReportAlt() + fichJasper );
+            JasperReport jr = (JasperReport) JRLoader.loadObjectFromFile(EU.getPathReportAlt() + fichJasper );
             return jr;
           }
       }
-      JasperReport jr = (JasperReport) JRLoader.loadObject(EU.pathReport + fichJasper);
+      JasperReport jr = (JasperReport) JRLoader.loadObjectFromFile(EU.pathReport + fichJasper);
       return jr;
   }
   /**
