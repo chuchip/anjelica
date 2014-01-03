@@ -607,6 +607,11 @@ public void iniciarVentana() throws Exception
         {
             cabIni=Integer.parseInt(Formatear.getFecha(fecIniE.getDate(), "yyyy"));
             cabFin=Integer.parseInt(Formatear.getFecha(fecIniComE.getDate(), "yyyy"));
+            if (cabIni==cabFin)
+            {
+                cabIni=0;
+                cabFin=0;
+            }
             setCabeceraComparativo(cabIni,cabFin);
             jtCom.cuadrarGrid();
         } catch (ParseException ex)

@@ -117,11 +117,11 @@ public class AlbClienComp   extends ventana {
         jt.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2});
         jt.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2});
         jt.setFormatoColumna(2,"---,--9");
-        jt.setFormatoColumna(3,"---,--9");
-        jt.setFormatoColumna(4,"---,--9");
-        jt.setFormatoColumna(5,"---,--9");
-        jt.setFormatoColumna(6,"---,--9");
-        jt.setFormatoColumna(7,"---,--9");
+        jt.setFormatoColumna(3,"----,--9");
+        jt.setFormatoColumna(4,"----,--9");
+        jt.setFormatoColumna(5,"--,---,--9");
+        jt.setFormatoColumna(6,"--,---,--9");
+        jt.setFormatoColumna(7,"--,---,--9");
         jt.setAjustarGrid(true);
     }
   private String getSqlCli(String repCodi, String zonCodi,int sbeCodi,String fecIni,String fecFin)
