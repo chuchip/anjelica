@@ -161,7 +161,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
         if (col == 0)
           jtEnt.setValor(pro_codenE.getNombArt(pro_codenE.getText()), row, JTENT_PRONOMB);
       }
-      catch (Exception k)
+      catch (SQLException k)
       {
         Error("Error al buscar Nombre Articulo", k);
       }
@@ -360,7 +360,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2013-01-04"+(admin?"(MODO ADMINISTRADOR)":""));
+   setVersion("2014-01-08"+(admin?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -1903,7 +1903,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
               return 0;
          }
          if (dtStat.getInt("pro_codi") == pro_codenE.getValorInt() && // Prod.
-            dtStat.getInt("deo_ejelot") == eje_numeE.getValorInt() && // ejer
+            dtStat.getInt("deo_ejelot") == eje_numenE.getValorInt() && // ejer
             dtStat.getString("deo_serlot").equals(pro_serenE.getText()) && // Serie
             dtStat.getInt("pro_lote") == pro_lotenE.getValorInt() && // Lote
             dtStat.getInt("pro_numind") == pro_indenE.getValorInt()) // Peso
@@ -1972,7 +1972,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
               return 0;
          }
          if (dtAdd.getInt("pro_codi") != pro_codenE.getValorInt() || // Prod.
-            dtAdd.getInt("deo_ejelot") != eje_numeE.getValorInt() || // ejer
+            dtAdd.getInt("deo_ejelot") != eje_numenE.getValorInt() || // ejer
             !dtAdd.getString("deo_serlot").equals(pro_serenE.getText()) || // Serie
             dtAdd.getInt("pro_lote") != pro_lotenE.getValorInt() || // Lote
             dtAdd.getInt("pro_numind") != pro_indenE.getValorInt() || // Ind
