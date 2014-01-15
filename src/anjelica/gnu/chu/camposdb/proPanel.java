@@ -14,6 +14,7 @@ import gnu.chu.winayu.AyuArt;
 import gnu.chu.winayu.ayuLote;
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashSet;
@@ -43,6 +44,7 @@ import javax.swing.SwingUtilities;
  */
 public class proPanel extends CPanel
 {
+  private int almCodi=0; // Almacen donde buscar indiv. disponibles
   private boolean verIndivBloqueados=true;
   private CTextField campoLote;
   private ayuLote ayuLot = null;
@@ -847,7 +849,7 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
       {
         intfr.setSelected(true);
       }
-      catch (Exception k)
+      catch (PropertyVetoException k)
       {}
       intfr.setFoco(null);
       this.requestFocus();
@@ -883,7 +885,7 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
    * @return boolean true si el Campo es Valido.
    *         false si No lo es.
    */
-  public boolean controlar() throws Exception
+  public boolean controlar() throws SQLException
   {
     return controla(true,true);
   }
@@ -1271,6 +1273,15 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
   {
       return rseCodcli;
   }
+   public void setAlmacen(int almCodi)
+  {
+    this.almCodi=almCodi;
+  }
+  
+  public int getAlmacen()
+  {
+      return almCodi;
+  }
   /**
    * Devuelve si un producto es Vendible (true) o comentario false
    * @return boolean
@@ -1385,7 +1396,7 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
 
       intfr.setEnabled(false);
       intfr.setFoco(ayuLot);
-      ayuLot.cargaGrid(pro_codiE.getText(),0);
+      ayuLot.cargaGrid(pro_codiE.getText(),almCodi);
             SwingUtilities.invokeLater(new Thread()
       {
         @Override

@@ -106,12 +106,25 @@ public class actStkPart
 
   public boolean sumar(int ejeNume, String serie, int lote,
                        int numind, int proCodi,
-                       int almCodi, double kilos, int unidades) throws Exception
+                       int almCodi, double kilos, int unidades) throws SQLException
   {
     return sumar(ejeNume, serie, lote, numind, proCodi, almCodi, kilos,
                  unidades, null, CREAR_NO, 0, null);
   }
-
+  /**
+   * Suma los kilos mandados al individuo en cuestion
+   * @param ejeNume
+   * @param serie
+   * @param lote
+   * @param numind
+   * @param proCodi
+   * @param almCodi
+   * @param kilos
+   * @param unidades
+   * @param fecCre Fecha en formato dd-MM-yyyy
+   * @return true si se creo registro. False si habia q crear registro y se dijo de no crear.
+   * @throws SQLException 
+   */
   public boolean sumar(int ejeNume, String serie, int lote,
                        int numind, int proCodi,
                        int almCodi, double kilos, int unidades, String fecCre) throws
@@ -142,7 +155,7 @@ public class actStkPart
    * @param almCodi
    * @param kilos
    * @param unidades
-   * @param fecMvto
+   * @param fecMvto Fecha en formato dd-MM-yyyy
    * @param creaReg
    * @param prvCodi
    * @param fecCaduc

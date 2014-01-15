@@ -1723,7 +1723,8 @@ void pdreprese_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.almacen.costkpar(menu.this,EU));
   }
    void trasAlma_actionPerformed(ActionEvent e) {
-    lanzaEjecutable(new gnu.chu.anjelica.inventario.traspalma(menu.this,EU));
+    //lanzaEjecutable(new gnu.chu.anjelica.inventario.traspalma(menu.this,EU));
+    lanzaEjecutable(new gnu.chu.anjelica.almacen.MantTraspAlm(menu.this,EU));
   }
   void prueba()
   {

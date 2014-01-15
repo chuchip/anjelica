@@ -3,6 +3,7 @@ package gnu.chu.anjelica.inventario;
 
 import gnu.chu.controles.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.utilidades.*;
 import java.util.*;
 import java.sql.Types;
@@ -40,7 +41,7 @@ import javax.swing.JFileChooser;
  */
 
 public class traspalma  extends ventana
-{
+{  
   private final static int JT_ARTIC=0;
   private final static int JT_NOMBR=1;
   private final static int JT_EJERC=2;
@@ -50,6 +51,7 @@ public class traspalma  extends ventana
   private final static int JT_PESO=6;
   private final static int JT_UNID=7;
   private final static int JT_INSER=8;
+  
   JFileChooser ficeleE=null;
   private utilSql utsql =new utilSql();
   private int cliCodi;
@@ -763,50 +765,6 @@ public class traspalma  extends ventana
        stkPart.actAcum(jt.getValorInt(n, JT_ARTIC),alm_codifE.getValorInt(),
                 jt.getValorDec(n, JT_PESO),jt.getValorInt(n,JT_UNID),avc_fecalbE.getText());
       }
-/*
-      // Actualizo Existencias en almacen-Deposito Original.
-      s = "select * from v_almdep WHERE pro_codi = " + pro_codiE.getValorInt() +
-          " AND alm_codi = " + alm_codioE.getValor();
-      if (dtCon1.select(s, true))
-      {
-        kilos = dtCon1.getDouble("ald_kilos") - kilosT;
-        unid = dtCon1.getDouble("ald_unid") - unidT;
-        dtCon1.edit(dtCon1.getCondWhere());
-      }
-      else
-      {
-        kilos = kilosT * -1;
-        unid = unidT * -1;
-        dtCon1.addNew("v_almdep");
-        dtCon1.setDato("pro_codi ", pro_codiE.getValorInt());
-        dtCon1.setDato("alm_codi", alm_codioE.getValor());
-      }
-      dtCon1.setDato("ald_kilos", kilos);
-      dtCon1.setDato("ald_unid", unid);
-      //         debug("Ins. "+dtCon1.getStrInsert());
-      dtCon1.update(stUp);
-
-      // Actualizo Existencias en almacen-Deposito Final.
-      s = "select * from v_almdep WHERE pro_codi = " + pro_codiE.getValorInt() +
-          " AND alm_codi = " + alm_codifE.getValor();
-      if (dtCon1.select(s, true))
-      {
-        kilos += kilosT + dtCon1.getDouble("ald_kilos");
-        unid = unidT + dtCon1.getDouble("ald_unid");
-        dtCon1.edit(dtCon1.getCondWhere());
-      }
-      else
-      {
-        kilos = kilosT;
-        unid = unidT;
-        dtCon1.addNew("v_almdep");
-        dtCon1.setDato("pro_codi ", pro_codiE.getValorInt());
-        dtCon1.setDato("alm_codi", alm_codifE.getValor());
-      }
-      dtCon1.setDato("ald_kilos", kilos);
-      dtCon1.setDato("ald_unid", unid);
-      dtCon1.update(stUp);
-*/
       ctUp.commit();
       mensaje("");
       msgBox("Traspaso REALIZADO ... ALBARAN N. " + numAlb);
