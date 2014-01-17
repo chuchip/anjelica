@@ -226,7 +226,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (ADMIN)
             MODPRECIO=true; 
-        setVersion("2014-01-03" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2014-01-17" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -2611,16 +2611,18 @@ public class MantDesp extends ventanaPad implements PAD
                 mensajeErr("Codigo de Producto NO valido");
                 return 0;
             }
-            if (!pro_codiE.isVendible())
-            {
-                mensajeErr("Producto NO es vendible");
-                return 0;
-            }
+//            if (!pro_codiE.isVendible())
+//            {
+//                mensajeErr("Producto NO es vendible");
+//                return 0;
+//            }
             if (!pro_codiE.isActivo())
             {
                 mensajeErr("Producto NO esta ACTIVO");
                 return 0;
             }
+            if (pro_codiE.isVendible())
+            {
             if (deo_ejelotE.getValorInt() == 0 && pro_codiE.hasControlIndiv() )
             {
                 mensajeErr("Introduzca Ejercicio de Lote");
@@ -2643,7 +2645,7 @@ public class MantDesp extends ventanaPad implements PAD
                 return 5;
             }
             if (!tid_codiE.isNull() && tid_codiE.getValorInt() != MantTipDesp.LIBRE_DESPIECE
-                && CHECKTIDCODI && !opSimular.isSelected())
+                && CHECKTIDCODI && !opSimular.isSelected() && pro_codiE.isVendible())
             { // Tipo despiece esta metido. Comprobar productos
                 if (tid_codiE.getValorInt() == MantTipDesp.AUTO_DESPIECE
                     || tid_codiE.getValorInt() == MantTipDesp.CONGELADO_DESPIECE)
@@ -2679,9 +2681,10 @@ public class MantDesp extends ventanaPad implements PAD
                     }
                 }
             }
+            }
 //      jtCab.setValor("" + 1, linea, 7);
 //      deo_kilosE.setValorDec(1);
-            if (!opSimular.isSelected())
+            if (!opSimular.isSelected() && pro_codiE.isVendible())
             {
                 int res = buscaPesoLin();
                 if (res == -1 || res > 1 || res==0)
@@ -2871,8 +2874,8 @@ public class MantDesp extends ventanaPad implements PAD
         
         guardaLinOrig(pro_codiE.getValorInt(),
             deo_ejelotE.getValorInt(), deo_serlotE.getText(),
-            pro_loteE.getValorInt(),
-            pro_numindE.getValorInt(), deo_kilosE.getValorDec(), deo_prcostE.getValorDec(),
+            pro_codiE.isVendible()?pro_loteE.getValorInt():1,
+            pro_codiE.isVendible()?pro_numindE.getValorInt():1, deo_kilosE.getValorDec(), deo_prcostE.getValorDec(),
             dtAdd);
         dtAdd.commit();
         jtCab.setValor(desorli.getId().getDelNumlin(), linea, JTCAB_NL);
