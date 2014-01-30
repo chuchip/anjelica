@@ -7,7 +7,7 @@ package gnu.chu.controles;
  * color facilmente, ajuste de columnas, cabeceras, ordenar etc.
  * Tambien permite salvar la configuracion (anchura y orden de las columnas)
  * </p>
- * <p>Copyright: Copyright (c) 2005-2011
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -689,6 +689,9 @@ public class Cgrid extends CPanel implements Serializable
     public void requestFocus(){
       tableView.requestFocus();
     }
+    /**
+     * Le hace un request Focus a la columna y linea selecionada
+     */
     public void requestFocusSelected()
     {
       requestFocus();
@@ -2706,60 +2709,99 @@ public class Cgrid extends CPanel implements Serializable
            }
            return false;
          }
-         protected void processKeyEvent(KeyEvent ke) {
-           if (!procesaKeyEvent(ke))
-           {
-             super.processKeyEvent(ke);
-             return;
-           }
-           if (ke.getID() == KeyEvent.KEY_PRESSED)
-           {
-             switch (ke.getKeyCode())
-             {
-               case KeyEvent.VK_TAB:
-                 if (swGridEditable)
-                   return;
-                 else
-                 {
-                   super.processKeyEvent(ke);
-                   break;
-                 }
-               case KeyEvent.VK_C:
-                 if (ke.isControlDown())
-                 { // Pulsado Control-C
-                   ClipEditable.clipboard(getValCopy(getSelectedRow(), getSelectedColumn()));
-                   break;
-                 }
-               case KeyEvent.VK_F2:
-               case KeyEvent.VK_F3:
-               case KeyEvent.VK_F4:
-               case KeyEvent.VK_F5:
-               case KeyEvent.VK_F6:
-               case KeyEvent.VK_F7:
-               case KeyEvent.VK_F8:
-               case KeyEvent.VK_F9:
-               case KeyEvent.VK_ESCAPE:
-                 AbstractButton defaultButton = getButton(ke.getKeyCode());
-                 if (defaultButton != null)
-                 {
-                   defaultButton.requestFocus();
-                   defaultButton.doClick();
-                 }
-                 else
-                   super.processKeyEvent(ke);
-                 break;
-               default:
-                 super.processKeyEvent(ke);
-                 break;
-             }
-           }
-           else
-           {
-             super.processKeyEvent(ke);
-           }
-         }
+//          protected void processKeyEvent(KeyEvent ke) {
+//           if (!procesaKeyEvent(ke))
+//           {
+//             super.processKeyEvent(ke);
+//             return;
+//           }
+//           if (ke.getID() == KeyEvent.KEY_PRESSED)
+//           {
+//             switch (ke.getKeyCode())
+//             {
+//               case KeyEvent.VK_TAB:
+//                 if (swGridEditable)
+//                   return;
+//                 else
+//                 {
+//                   super.processKeyEvent(ke);
+//                   break;
+//                 }
+//               case KeyEvent.VK_C:
+//                 if (ke.isControlDown())
+//                 { // Pulsado Control-C
+//                   ClipEditable.clipboard(getValCopy(getSelectedRow(), getSelectedColumn()));
+//                   break;
+//                 }
+//               case KeyEvent.VK_F2:
+//               case KeyEvent.VK_F3:
+//               case KeyEvent.VK_F4:
+//               case KeyEvent.VK_F5:
+//               case KeyEvent.VK_F6:
+//               case KeyEvent.VK_F7:
+//               case KeyEvent.VK_F8:
+//               case KeyEvent.VK_F9:
+//               case KeyEvent.VK_ESCAPE:
+//                 AbstractButton defaultButton = getButton(ke.getKeyCode());
+//                 if (defaultButton != null)
+//                 {
+//                   defaultButton.requestFocus();
+//                   defaultButton.doClick();
+//                 }
+//                 else
+//                   super.processKeyEvent(ke);
+//                 break;
+//               default:
+//                 super.processKeyEvent(ke);
+//                 break;
+//             }
+//           }
+//           else
+//           {
+//             super.processKeyEvent(ke);
+//           }
+//         }
 
        };
+       
+       tableView.addKeyListener(new KeyAdapter()
+       {
+           public void keyPressed(KeyEvent ke) 
+           {                     
+                switch (ke.getKeyCode())
+                {
+//                  case KeyEvent.VK_TAB:
+//                    if (swGridEditable)
+//                      return;
+//                    else
+//                    {
+//                      super.processKeyEvent(ke);
+//                      break;
+//                    }
+                  case KeyEvent.VK_C:
+                    if (ke.isControlDown())
+                    { // Pulsado Control-C
+                      ClipEditable.clipboard(getValCopy(getSelectedRow(), getSelectedColumn()));
+                      break;
+                    }
+                  case KeyEvent.VK_F2:
+                  case KeyEvent.VK_F3:
+                  case KeyEvent.VK_F4:
+                  case KeyEvent.VK_F5:
+                  case KeyEvent.VK_F6:
+                  case KeyEvent.VK_F7:
+                  case KeyEvent.VK_F8:
+                  case KeyEvent.VK_F9:
+                  case KeyEvent.VK_ESCAPE:
+                    AbstractButton defaultButton = getButton(ke.getKeyCode());
+                    if (defaultButton != null)
+                    {
+                      defaultButton.requestFocus();
+                      defaultButton.doClick();
+                    }
+                }              
+            } 
+        });
        headerToolTip=new ToolTipHeader(tableView.getColumnModel());
        tableView.setTableHeader(headerToolTip);
        

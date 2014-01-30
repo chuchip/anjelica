@@ -68,12 +68,15 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   private int hisRowid=0;
   private String condHist=""; // Condiciones del historico
   private int frtEjer,frtNume;
+  private final int JT_NLIN=0;
   private final int JT_PROCOD=1;
   private final int JT_KILALB=4;
   private final int JT_PRCOM=5;
   private final int JT_COMENT=13;
   private final int JT_PORPAG=14;
   private final int JT_DTOPP=15;
+  private final int JTD_NUMIND=0;
+  private final int JTD_NUMLIN=10;
   private CLabel acc_dtoppL=new CLabel("Dto PP");
   private CTextField acc_dtoppE=new CTextField(Types.DECIMAL,"#9.99");
   private CTextField acl_dtoppE=new CTextField(Types.DECIMAL,"#9.99");
@@ -694,7 +697,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20130816)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20140130)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -2023,9 +2026,9 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       jtDes.requestFocusSelected();
       return;
     }
-    int nuLiAlbAnt=jt.getValorInt(0);
+    int nuLiAlbAnt=jt.getValorInt(0); // Numero linea original.
     int nLin = jt.getSelectedRowDisab();
-    int nCol=jt.getColumnCount()-4;
+    int nCol=jt.getColumnCount()-5;
     if (jt.getSelectedRowDisab() == jt.getSelectedRow())
     { // Inserto Linea al Final y la seleciono
       ArrayList v = new ArrayList();
@@ -2034,6 +2037,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       v.add(jt.getValString(2)); //2
       for (int n1 = 0; n1 < nCol; n1++)
         v.add("" + 0);
+      v.add(false); // Portes Pagados
       v.add(acc_dtoppE.getValorDec() );
       jt.addLinea(v);
       jt.requestFocusFinal();
@@ -2060,7 +2064,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
           " AND emp_codi = " + emp_codiE.getValorInt() +
           " and acc_serie = '" + acc_serieE.getText() + "'" +
           " and acc_nume = " + acc_numeE.getValorInt() +
-          " and acp_numlin = " + jtDes.getValorInt(10)+
+          " and acp_numlin = " + jtDes.getValorInt(JTD_NUMLIN)+
           " and acl_nulin = "+ nuLiAlbAnt;
 //      debug("s: "+s);
       int nLiAfe=dtAdd.executeUpdate(s);
@@ -2084,7 +2088,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       ctUp.commit();
 //      borraInd(jtDes.getSelectedRow(),jtDes.getValorInt(0));
     }
-    catch (Exception k)
+    catch (SQLException k)
     {
       Error("Error al Cambiar Individuo de Linea", k);
     }
@@ -2288,7 +2292,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       jt.requestFocusInicio();
       pro_codiE.setEditable(nLinE.getValorInt()==0);
 //      alm_codiE.setEditable(nLinE.getValorInt()==0);
-      pro_codiE.getNombArt(jt.getValString(0,0));
+      pro_codiE.getNombArt(jt.getValString(0,JT_PROCOD));
       setEditCant(pro_codiE.getTipoLote());
       pro_codiE.resetCambio();
     }
@@ -2297,10 +2301,14 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       procLineaInd();
     }
   }
+  /**
+   * Procesa linea de individuos. (desglose) y  va a lineas de productos.
+   * 
+   */
   private boolean procLineaInd()
   {
       int nCol;
-      jtDes.procesaAllFoco();
+      jtDes.salirGrid();
       nCol = cambiaLinDes(jtDes.getSelectedRow());
       if (nCol >= 0)
       {
@@ -2323,9 +2331,9 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
           BimpEti.setEnabled(false);
           Bdesagr.setEnabled(false); 
           if (ARG_MODPRECIO)
-            jt.requestFocusSelected();
+            jt.requestFocusSelectedLater();
           else
-            jt.requestFocus(jt.getSelectedRow(), 1);
+            jt.requestFocusLater(jt.getSelectedRow(), 1);
 
           if (!opAutoClas.isSelected())
             return true;
@@ -2335,10 +2343,12 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
             double prCompra=jt.getValorDec( JT_PRCOM);
             prCompra-=jt.getValorDec( JT_PRCOM)*
                       jt.getValorDec(JT_DTOPP) / 100;
+            // Se actualiza otra vez el desglose de linea, por si se han metido
+            // productos que se han ido autoclasificando.
             verDesgLinea(emp_codiE.getValorInt(), acc_anoE.getValorInt(),
                          acc_serieE.getText(), acc_numeE.getValorInt(),
-                         jt.getValorInt(0),
-                         opAgrupar.isSelected(),
+                         jt.getValorInt(JT_NLIN),
+                         false,
                          jt.getValorInt(JT_PROCOD),jt.getValorDec(JT_KILALB),prCompra);
           }
           catch (Exception k)
@@ -2414,6 +2424,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
 
   int cambiaLinDes(int row)
   {
+  
     if (swCargaAlb || swCargaLin)
         return -1;
     try 
@@ -2511,7 +2522,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
         }
     }
     int nLinAnt=numIndAnt;
-    String linea=getLinGrDes();
+    String linea=getLinGrDes(); // Un String con los datos concatenados del grid
     numIndAnt=nLinAnt;
     if (acc_numeE.getValorInt() == 0)
       {
@@ -2539,7 +2550,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
           }
 
       if (!linea.equals(lineaAnt))
-      {
+      { // Hubo cambios
         lineaAnt = linea;
 //        jtDes.procesaAllFoco(row);
         try {
@@ -2587,7 +2598,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
 
   String getLinGrDes()
   {
-    numIndAnt=jtDes.getValorInt(0);
+    numIndAnt=jtDes.getValorInt(JTD_NUMIND);
 //    System.out.println("Lin. Ant: "+numIndAnt);
     return acp_numindE.getValorInt()+""+acp_cantiE.getValorDec()+acp_nucrotE.getText()+
         mat_codiE.getValorInt()+sde_codiE.getValorInt()+
@@ -3403,9 +3414,8 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
         public void run()
         {
             jtDes.requestFocusFinal();
-            BimpEti.setEnabled(true);
-            kgIndivAnt=acp_cantiE.getValorDec();
             afterCambiaLinDes();
+            BimpEti.setEnabled(true);         
             swCargaLin=false;
         }
       });
@@ -3433,7 +3443,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
                 }
                 jtDes.setLineaEditable(true);
             }
-        } catch (Exception k) {
+        } catch (SQLException k) {
             Error("Error al comprobar stock anterior", k);
         }
         jtDes.ponValores(jtDes.getSelectedRow());
@@ -3659,7 +3669,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       Tpanel1.setSelectedIndex(0);
 
       activar(true);
-
+     
       if (dtAdd.getInt("frt_ejerc", true) == 0)
       {
         if (ARG_MODPRECIO)
@@ -3701,12 +3711,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       jtRecl.resetCambio();
       jtRecl.requestFocusInicio();
       irGridLin();
-//      alm_codiE.setEnabled( false);
-
-      pro_codiE.getNombArt(jt.getValString(0));
-    //  acc_dtoppE.setValorDec(0);
       acc_dtoppE.resetCambio();
-      setEditCant(pro_codiE.getTipoLote());
     }
     catch (Exception k)
     {
@@ -4614,6 +4619,19 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     jtRecl.resetCambio();
     actAcumVert(-1);
   }
+  /**
+   * Carga las lineas desglose en el grid jtDes
+   * @param empCodi
+   * @param accAno
+   * @param serie
+   * @param accNume
+   * @param linea
+   * @param agruLin
+   * @param proCodi
+   * @param canti
+   * @param prec
+   * @throws SQLException 
+   */
   void verDesgLinea(int empCodi, int accAno, String serie, int accNume,
                     int linea,boolean agruLin,int proCodi,double canti,double prec)
       throws SQLException
@@ -4693,12 +4711,10 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     if (nav.pulsado == navegador.ADDNEW || nav.pulsado==navegador.EDIT)
     {
       pro_codiE.setEditable(nLinE.getValorInt() <= 0);
-//      alm_codiE.setEditable(nLinE.getValorInt() <= 0);
     }
     else
     {
       pro_codiE.setEditable(false);
-//      alm_codiE.setEditable(false);
     }
     jtDes.requestFocusInicio();
     jtDes.setEnabled(false);

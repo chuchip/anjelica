@@ -1103,7 +1103,7 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
       return "";
     try {
       codArt = ""+Integer.parseInt(codArt.trim());
-    } catch (Exception k){codArt="0";}
+    } catch (NumberFormatException k){codArt="0";}
     if (prodEqu)
     {
       s = "SELECT * FROM refproeq WHERE pro_codi= '" + codArt +"'"+

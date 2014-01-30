@@ -5,7 +5,7 @@ package gnu.chu.controles;
  * <p>Descripción: Extiende de CGrid. permite modificar el valor de los campos
  * facilmente. Controlando validacion en cambio de columnas y filas.
  * </p> 
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -96,6 +96,7 @@ public class CGridEditable extends Cgrid implements CQuery {
     tableView.setCellSelectionEnabled(true);
     tableView.getTableHeader().setResizingAllowed(false);
     tableView.getTableHeader().setReorderingAllowed(false);
+   
     super.setOrdenar(false);
     activarEventos();
     this.setEnabled(false);
@@ -605,7 +606,7 @@ public class CGridEditable extends Cgrid implements CQuery {
         tableView.getColumnModel().getColumn(n).setCellEditor(new
             DefaultCellEditor( (CTextField) comp)
         {
-                    @Override
+           @Override
           public Object getCellEditorValue()
           {
             if (getQuery())
@@ -620,6 +621,13 @@ public class CGridEditable extends Cgrid implements CQuery {
                return false;
             return super.stopCellEditing();
           }
+          
+//          public boolean isCellEditable( EventObject e )
+//          {
+//            if (! super.isCellEditable(e))
+//                return false;
+//            return ( ((CTextField) comp).isEditable() &&  ((CTextField) comp).isEnabled());                
+//          }
         });
         vCampo.add( ( (CEditable) comp).getText());
         ( (CTextField) comp).setGridEditable(this);
@@ -682,7 +690,10 @@ public class CGridEditable extends Cgrid implements CQuery {
   {
     requestFocus(getRowCount() - 1, 0);
   }
-
+  public void requestFocusFinalLater()
+  {
+    requestFocusLater(getRowCount() - 1, 0);
+  }
   public void requestFocusInicioLater()
   {
     SwingUtilities.invokeLater(new Thread()
