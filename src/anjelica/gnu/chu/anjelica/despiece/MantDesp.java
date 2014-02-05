@@ -226,7 +226,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (ADMIN)
             MODPRECIO=true; 
-        setVersion("2014-01-17" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2014-02-05" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -3216,7 +3216,7 @@ public class MantDesp extends ventanaPad implements PAD
                 null, utdesp.conservarE,
                 utdesp.sacrificadoE,
                 null,
-                deo_fechaE.getText(), deo_fechaE.getDate(),
+                deo_fecproE.getText(), deo_fecproE.getDate(),
                 deo_feccadE.getText(), utdesp.fecSacrE);
             etiq.setNumCopias(numCopiasE.getValorInt());
             etiq.listar(etiqueta.ETIQINT);
@@ -3224,7 +3224,7 @@ public class MantDesp extends ventanaPad implements PAD
 //     this.setEnabled(true);
             mensaje("");
             mensajeErr("Etiqueta Interior ... Listada");
-        } catch (Throwable ex)
+        } catch (Exception ex)
         {
             Error("Error al Guardar Datos Despiece", ex);
         }
