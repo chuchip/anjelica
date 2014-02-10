@@ -12,7 +12,7 @@ import gnu.chu.anjelica.pad.pdprove;
 import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.camposdb.*;
 import gnu.chu.comm.BotonBascula;
-import gnu.chu.controles.*;
+import gnu.chu.controles.*;     
 import gnu.chu.interfaces.PAD;
 import gnu.chu.print.util;
 import gnu.chu.sql.DatosTabla;
@@ -40,7 +40,7 @@ import net.sf.jasperreports.engine.*;
  * <p>Título: pdalbco2</p>
  * <p>Descripción: Mantenimiento Albaranes de Compra</p>
  * <p>Created on 03-abr-2009, 18:14:38</p>
- *  <p>Copyright: Copyright (c) 2005-2012
+ *  <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -2570,7 +2570,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       }
     } catch (Exception k)
     {
-      Error("Error al Guardar Linea Despiece",k);
+      Error("Error al Guardar Individuo en  Albaran de compra",k);
     }
     kgIndivAnt=acp_cantiE.getValorDec();
     acp_cantiE.resetCambio();
