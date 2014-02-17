@@ -2584,19 +2584,39 @@ String procesaTecla()
     else
       return false;
    }
-
+  /**
+   * Devuelve si en una query se aceptaran comodines. (*, ?... )
+   * Por defecto es true
+   * @return 
+   */
    public boolean isAceptaComodines()
    {
      return aceptaComodines;
    }
+   /**
+    * Indica si en una query se acetaran comodines. (*, ?... 
+    * Este valor por defecto es true.
+    * @param aceptaComodines `true/false
+    */
    public void setAceptaComodines(boolean aceptaComodines)
    {
      this.aceptaComodines=aceptaComodines;
    }
+   /**
+    * Devuelve si en una query si el campo es tipo char se incluiran comodines 
+    * automaticamente. Es decir si a la cadena se le incluira el caracter % al principio y al final.
+    * @return true si se incluiran comodines.
+    */
    public boolean isIncluirComodines()
    {
      return incluirComodines;
    }
+   /**
+    * Indica si se deben incluir comodines al devolver una cadena de query 
+    * en el caso de q el campo sea tipo CHAR.
+    * Por defecto es true
+    * @param incluirComodines 
+    */
    public void setIncluirComodines(boolean incluirComodines)
    {
      this.incluirComodines=incluirComodines;
