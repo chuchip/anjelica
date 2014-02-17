@@ -321,8 +321,9 @@ public class DatosTabla   implements Serializable
 
   /**
   * Actualizar datos de la posicion Actual en El vector Interno.
-  * @param String - Nombre de Columna a actualizar
-  * @param Object - Dato a establecer.
+  * @param columna - Nombre de Columna a actualizar
+  * @param dato - Dato a establecer.
+  * @throws SQLException
   */
   public void setDato(String columna, Object dato) throws SQLException
   {
@@ -2448,7 +2449,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
  }
   /**
   * Rutina Especifica para recoger un PreparedStatement
-  * @param String con el la Instrucion a Preparar ..
+  * @param sql con el la Instrucion a Preparar ..
   *      Esta String sera convertida igual que cualquier otra en esta clase,
   *      soportando el caracter '\uFFFD' y la conversion del TO_DATE, ETC.
   *
