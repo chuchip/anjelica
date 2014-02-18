@@ -1,8 +1,26 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
   <NonVisualComponents>
     <Component class="gnu.chu.controles.CLinkBox" name="cLinkBox2">
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="tar_codiE">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;##9&quot;)"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="tar_nombE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="gnu.chu.controles.CCheckBox" name="cli_actiC">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CCheckBox(&quot;S&quot;,&quot;N&quot;)"/>
+      </AuxValues>
     </Component>
   </NonVisualComponents>
   <SyntheticProperties>
@@ -18,7 +36,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,35,0,0,4,-78"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,35,0,0,3,12"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -225,43 +243,38 @@
                 </Constraint>
               </Constraints>
             </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opEmail">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Solo con Email"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="160" y="20" width="120" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
           </SubComponents>
         </Container>
-        <Container class="gnu.chu.controles.Cgrid" name="jt">
+        <Container class="gnu.chu.controles.CGridEditable" name="jt">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder/>
               </Border>
             </Property>
-            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[539, 139]"/>
-            </Property>
-            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[539, 139]"/>
-            </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(10)"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Cliente&quot;); //0&#xa;v.add(&quot;Act&quot;); // 1&#xa;v.add(&quot;Nombre Social&quot;); // 1&#xa;v.add(&quot;Nombre Fiscal&quot;); //2&#xa;v.add(&quot;Poblacion&quot;); // 3&#xa;v.add(&quot;Fec.Alta&quot;); //4&#xa;v.add(&quot;Zona&quot;); // 5&#xa;v.add(&quot;Repr&quot;); // 6&#xa;v.add(&quot;Seccion&quot;); // 8&#xa;v.add(&quot;Fec.Mvt&quot;); // 9&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]{50,30,200,200,100,80,30,30,30,80});&#xa;jt.setAlinearColumna(new int[]{2,1,0,0,0,1,0,0,2,1});&#xa;jt.setFormatoColumna(JT_ACTIV, &quot;BSN&quot;);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(12){&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        int ret=cambiaLineaGrid(row);&#xa;        return ret;&#xa;    }&#xa;    @Override&#xa;    public void afterCambiaColumna(int col,int colNueva,int row)&#xa;    {&#xa;        if (col==JT_TARIFA)&#xa;        {&#xa;            jt.setValor(getNombreTarifa(jt.getValorInt(row,JT_TARIFA)),row,JT_TARNOMB);&#xa;        }&#xa;    }&#xa;}&#xa;"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="jt.setMaximumSize(new java.awt.Dimension(539, 139));&#xa;jt.setMinimumSize(new java.awt.Dimension(539, 139));&#xa;jt.setCanDeleteLinea(false);&#xa;jt.setCanInsertLinea(false);&#xa;ArrayList v=new ArrayList();&#xa;v.add(&quot;Cliente&quot;); //0&#xa;v.add(&quot;Act&quot;); // 1&#xa;v.add(&quot;Nombre Social&quot;); // 1&#xa;v.add(&quot;Nombre Fiscal&quot;); //2&#xa;v.add(&quot;Poblacion&quot;); // 3&#xa;v.add(&quot;Fec.Alta&quot;); //4&#xa;v.add(&quot;Zona&quot;); // 5&#xa;v.add(&quot;Repr&quot;); // 6&#xa;v.add(&quot;Seccion&quot;); // 8&#xa;v.add(&quot;Fec.Mvt&quot;); // 9&#xa;v.add(&quot;Tar&quot;); //10&#xa;v.add(&quot;Nombre Tarifa&quot;); //11&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]{50,30,200,200,100,80,30,30,30,80,40,100});&#xa;jt.setAlinearColumna(new int[]{2,1,0,0,0,1,0,0,2,1,2,0});&#xa;jt.setFormatoColumna(JT_ACTIV, &quot;BSN&quot;);&#xa;CTextField ct[]=new CTextField[9];&#xa;for (int n=0;n&lt;9;n++)&#xa;{&#xa;    ct[n]=new CTextField();&#xa;    ct[n].setEnabled(false);&#xa;}&#xa;ArrayList tx=new ArrayList();&#xa;tx.add(ct[0]); //0 &#xa;tx.add(cli_actiC); // 1&#xa;tx.add(ct[1]); // 2&#xa;tx.add(ct[2]); // 3&#xa;tx.add(ct[3]); // 4&#xa;tx.add(ct[4]); // 5&#xa;tx.add(ct[5]); // 6&#xa;tx.add(ct[6]); // 7&#xa;tx.add(ct[7]); //8 &#xa;tx.add(ct[8]); // 9&#xa;tx.add(tar_codiE); //10&#xa;tx.add(tar_nombE); //11&#xa;try {&#xa;    jt.setCampos(tx);&#xa;} catch (Exception k1) {Error(&quot;Errr al a&#xf1;adir campos&quot;,k1);}"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-              <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="2" insetsLeft="0" insetsBottom="0" insetsRight="2" anchor="10" weightX="1.0" weightY="1.0"/>
+              <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="2.0" weightY="2.0"/>
             </Constraint>
           </Constraints>
 
-          <Layout>
-            <DimensionLayout dim="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="1182" max="32767" attributes="0"/>
-              </Group>
-            </DimensionLayout>
-            <DimensionLayout dim="1">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="407" max="32767" attributes="0"/>
-              </Group>
-            </DimensionLayout>
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+            <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
         </Container>
         <Container class="gnu.chu.controles.CPanel" name="Ppie">

@@ -22,6 +22,7 @@ package gnu.chu.anjelica.pad;
  * @version 1.0
  */
 import gnu.chu.Menu.Principal;
+import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
@@ -43,8 +44,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MantCliActiv extends ventana {
+   
    private static final int JT_ACTIV=1;
    private static final int JT_CLICODI=0;
+   private static final int JT_TARIFA=10;
+   private static final int JT_TARNOMB=11;
    public MantCliActiv(EntornoUsuario eu, Principal p)
   {
     this(eu, p, null);
@@ -58,7 +62,7 @@ public class MantCliActiv extends ventana {
    jf=p;
    eje=true;
 
-   setTitulo("Mantenimiento Clientes Activos");
+   setTitulo("Mantenimiento Masivo de Clientes");
 
    try
    {
@@ -77,7 +81,7 @@ public class MantCliActiv extends ventana {
 
    EU=eu;
    vl=p.getLayeredPane();
-   setTitulo("Mantenimiento Clientes Activos");
+   setTitulo("Mantenimiento Masivo de Clientes");
    eje=false;
 
    try  {
@@ -93,7 +97,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2012-05-21");
+   this.setVersion("2013-02-18");
    statusBar = new StatusBar(this);
    conecta();
    initComponents();
@@ -111,6 +115,8 @@ public void iniciarVentana() throws Exception
 }
     private void activarEventos()
     {
+        
+        
         Baceptar.addActionListener(new ActionListener() {
 
             @Override
@@ -156,6 +162,10 @@ public void iniciarVentana() throws Exception
     }
     private void actualizar()
     {
+      jt.salirGrid();
+      if (cambiaLineaGrid(jt.getSelectedRow())>=0)
+          return;
+      
       new miThread("")
       {
             @Override
@@ -176,19 +186,21 @@ public void iniciarVentana() throws Exception
              for (int n=0;n<nCol;n++)
              {
                  String nuevoValor=jt.getValBoolean(n,JT_ACTIV)?"S":"N";
+                 int tarCodi=jt.getValorInt(n,JT_TARIFA);
                  dtCon1.select("select * from clientes  WHERE cli_codi ="+jt.getValorInt(n,JT_CLICODI),true);
-                 if (dtCon1.getString("cli_activ").equals(nuevoValor))
+                 if (dtCon1.getString("cli_activ").equals(nuevoValor) && dtCon1.getInt("tar_codi")==tarCodi)
                      continue; // No hay cambios
                  s = " INSERT INTO cliencamb values(" + dtCon1.getStrInsert() +
                        ", '" + EU.usuario + "'" +
                        ",TO_DATE('" + Formatear.getFechaAct("dd-MM-yyyy") + "','dd-MM-yyyy')" +
                        "," + Formatear.getFechaAct("HH.mm") +
-                       ",'" + "Mant. Clientes Activos: "+(jt.getValBoolean(n,JT_ACTIV)?"S":"N")
+                       ",'" + "Mant. Masivo Clientes : "+(jt.getValBoolean(n,JT_ACTIV)?"S":"N")
                        + "')";
              //     debug(dtAdd.getStrSelect(s));
                  stUp.executeUpdate(dtCon1.getStrSelect(s));
                  dtCon1.edit();
-                 dtCon1.setDato("cli_activ",(jt.getValBoolean(n,JT_ACTIV)?"S":"N"));
+                 dtCon1.setDato("cli_activ",nuevoValor);
+                 dtCon1.setDato("tar_codi",tarCodi);
                  dtCon1.update();
                  nCliCamb++;
              }
@@ -216,7 +228,37 @@ public void iniciarVentana() throws Exception
       return true;
 
     }
-
+    
+    private String getNombreTarifa(int tarCodi)
+    {
+       try
+       {
+           if (tarCodi==0)
+               return "";
+           String s="select tar_nomb from tipotari where tar_codi="+tarCodi;
+           if (dtCon1.select(s))
+               return dtCon1.getString("tar_nomb");
+           else
+               return null;
+       } catch (SQLException ex)
+       {
+           Error("Error al buscar Tipo Tarifa",ex);
+       }
+       return null;
+    }
+    private int cambiaLineaGrid(int row)
+    {
+        if (tar_codiE.isNull())
+            return -1;
+        String nombTarif=getNombreTarifa(tar_codiE.getValorInt());
+        if (nombTarif==null)
+        {
+            mensajeErr("Codigo de Tarifa no valida");
+            return JT_TARIFA;
+        }
+        jt.setValor(nombTarif,row,JT_TARNOMB);
+        return -1;
+    }
     private void Baceptar_actionPerformed()
     {
 
@@ -277,6 +319,8 @@ public void iniciarVentana() throws Exception
           v.add(dtCon1.getString("rep_codi"));
           v.add(dtCon1.getInt("sbe_codi"));
           v.add(rs.getDate("avc_fecalb"));
+          v.add(dtCon1.getInt("tar_codi"));
+          v.add(dtCon1.getString("tar_nomb"));
           jt.addLinea(v);
         }
         while (dtCon1.next());
@@ -294,8 +338,10 @@ public void iniciarVentana() throws Exception
     }
     String getStrSql()
     {
-     String s = "SELECT cl.* FROM clientes as cl  " +
-          " WHERE 1= 1 ";
+     String s = "SELECT cl.*,t.tar_nomb FROM clientes as cl,tipotari as t  " +
+          " WHERE t.tar_codi=cl.tar_codi ";
+       if (opEmail.isSelected())
+          s+=" and ((cl.cli_email1 is not null and cl.cli_email1 != '' ) or (cl.cli_email2 is not null and cl.cli_email2!='')) ";
       if (!rep_codiE.isNull(true) && !rep_codiE.getText().equals("**") && !rep_codiE.getText().equals("*"))
         s += " and cl.rep_codi  LIKE '" + Formatear.reemplazar(rep_codiE.getText(), "*", "%") + "'";
       if (!zon_codiE.isNull(true) && !zon_codiE.getText().equals("**") && !zon_codiE.getText().equals("*"))
@@ -319,6 +365,9 @@ public void iniciarVentana() throws Exception
         java.awt.GridBagConstraints gridBagConstraints;
 
         cLinkBox2 = new gnu.chu.controles.CLinkBox();
+        tar_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
+        tar_nombE = new gnu.chu.controles.CTextField();
+        cli_actiC = new gnu.chu.controles.CCheckBox("S","N");
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         zon_codiE = new gnu.chu.controles.CLinkBox();
@@ -337,12 +386,33 @@ public void iniciarVentana() throws Exception
         zon_codiL2 = new gnu.chu.controles.CLabel();
         sbe_codiE = new gnu.chu.camposdb.sbePanel();
         sbe_nombL = new gnu.chu.controles.CLabel();
-        jt = new gnu.chu.controles.Cgrid(10);
+        opEmail = new gnu.chu.controles.CCheckBox();
+        jt = new gnu.chu.controles.CGridEditable(12){
+            @Override
+            public int cambiaLinea(int row, int col)
+            {
+                int ret=cambiaLineaGrid(row);
+                return ret;
+            }
+            @Override
+            public void afterCambiaColumna(int col,int colNueva,int row)
+            {
+                if (col==JT_TARIFA)
+                {
+                    jt.setValor(getNombreTarifa(jt.getValorInt(row,JT_TARIFA)),row,JT_TARNOMB);
+                }
+            }
+        }
+        ;
         Ppie = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
         numCliE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         Bselec = new gnu.chu.controles.CButtonMenu();
         Bactualizar = new gnu.chu.controles.CButton();
+
+        tar_nombE.setEnabled(false);
+
+        cli_actiC.setEnabled(false);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -424,6 +494,10 @@ public void iniciarVentana() throws Exception
         Pcabe.add(sbe_nombL);
         sbe_nombL.setBounds(100, 40, 170, 17);
 
+        opEmail.setText("Solo con Email");
+        Pcabe.add(opEmail);
+        opEmail.setBounds(160, 20, 120, 17);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -432,9 +506,10 @@ public void iniciarVentana() throws Exception
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         Pprinc.add(Pcabe, gridBagConstraints);
 
-        jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jt.setMaximumSize(new java.awt.Dimension(539, 139));
         jt.setMinimumSize(new java.awt.Dimension(539, 139));
+        jt.setCanDeleteLinea(false);
+        jt.setCanInsertLinea(false);
         ArrayList v=new ArrayList();
         v.add("Cliente"); //0
         v.add("Act"); // 1
@@ -446,29 +521,41 @@ public void iniciarVentana() throws Exception
         v.add("Repr"); // 6
         v.add("Seccion"); // 8
         v.add("Fec.Mvt"); // 9
+        v.add("Tar"); //10
+        v.add("Nombre Tarifa"); //11
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{50,30,200,200,100,80,30,30,30,80});
-        jt.setAlinearColumna(new int[]{2,1,0,0,0,1,0,0,2,1});
+        jt.setAnchoColumna(new int[]{50,30,200,200,100,80,30,30,30,80,40,100});
+        jt.setAlinearColumna(new int[]{2,1,0,0,0,1,0,0,2,1,2,0});
         jt.setFormatoColumna(JT_ACTIV, "BSN");
-
-        javax.swing.GroupLayout jtLayout = new javax.swing.GroupLayout(jt);
-        jt.setLayout(jtLayout);
-        jtLayout.setHorizontalGroup(
-            jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1182, Short.MAX_VALUE)
-        );
-        jtLayout.setVerticalGroup(
-            jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 407, Short.MAX_VALUE)
-        );
-
+        CTextField ct[]=new CTextField[9];
+        for (int n=0;n<9;n++)
+        {
+            ct[n]=new CTextField();
+            ct[n].setEnabled(false);
+        }
+        ArrayList tx=new ArrayList();
+        tx.add(ct[0]); //0
+        tx.add(cli_actiC); // 1
+        tx.add(ct[1]); // 2
+        tx.add(ct[2]); // 3
+        tx.add(ct[3]); // 4
+        tx.add(ct[4]); // 5
+        tx.add(ct[5]); // 6
+        tx.add(ct[6]); // 7
+        tx.add(ct[7]); //8
+        tx.add(ct[8]); // 9
+        tx.add(tar_codiE); //10
+        tx.add(tar_nombE); //11
+        try {
+            jt.setCampos(tx);
+        } catch (Exception k1) {Error("Errr al añadir campos",k1);}
+        jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 2);
+        gridBagConstraints.weightx = 2.0;
+        gridBagConstraints.weighty = 2.0;
         Pprinc.add(jt, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -521,15 +608,19 @@ public void iniciarVentana() throws Exception
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLinkBox cLinkBox2;
+    private gnu.chu.controles.CCheckBox cli_actiC;
     private gnu.chu.controles.CComboBox cli_activE;
     private gnu.chu.controles.CTextField fealfiE;
     private gnu.chu.controles.CTextField fealinE;
     private gnu.chu.controles.CTextField feulmvE;
-    private gnu.chu.controles.Cgrid jt;
+    private gnu.chu.controles.CGridEditable jt;
     private gnu.chu.controles.CTextField numCliE;
+    private gnu.chu.controles.CCheckBox opEmail;
     private gnu.chu.controles.CLinkBox rep_codiE;
     private gnu.chu.camposdb.sbePanel sbe_codiE;
     private gnu.chu.controles.CLabel sbe_nombL;
+    private gnu.chu.controles.CTextField tar_codiE;
+    private gnu.chu.controles.CTextField tar_nombE;
     private gnu.chu.controles.CLinkBox zon_codiE;
     private gnu.chu.controles.CLabel zon_codiL;
     private gnu.chu.controles.CLabel zon_codiL1;
