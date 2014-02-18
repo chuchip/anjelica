@@ -882,7 +882,7 @@ public class CGridEditable extends Cgrid implements CQuery {
     {
       chT = ( (CCheckBox) campos.get(nCampo));
       if (!chT.isEnabled())
-        return "N";
+        return getValBoolean(linea,nCampo);
       if (Formato[nCampo].equals("") || Formato[nCampo].charAt(0) != 'B')
       {
         return chT.isSelected() ? chT.getStringSelect() : chT.getStringNoSelect();
