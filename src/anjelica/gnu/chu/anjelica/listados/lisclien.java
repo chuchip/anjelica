@@ -428,6 +428,4 @@ public class lisclien extends ventana
       Error("Error al generar Listado",k);
     }
   }
-
 }
-
