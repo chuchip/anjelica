@@ -571,8 +571,9 @@ public class actStkPart
    * @param unid int
    * @throws SQLException
    * @return int 2 Si EL REGISTRO HA SIDO BORRADO.<BR>
-   * 1 SI ACTUALIZA LOS KILOS.
-   * 0 SI NO ENCUENTRA EL REGISTRO.
+   * 1 SI ACTUALIZA LOS KILOS. 
+   * 0 SI NO ENCUENTRA EL REGISTRO en stock Partidas
+   * 3 Si el producto no tiene control stock o es de comentario
    */
   public int anuStkPart(int proCodi, int ejeLot, int empLot, String serLot,
                         int numLot,
@@ -596,8 +597,10 @@ public class actStkPart
       else
       {
         if (dtAdd.getInt("pro_coinst")==0)
-            return 0; // No tiene control por individuos. Todo bien.
-        if (dtAdd.getString("pro_tiplot").equals("V"))
+            return 3; // No tiene control por individuos. Todo bien.
+        if (! dtAdd.getString("pro_tiplot").equals("V"))
+            return 3;
+        else
         {
             Logger.getLogger(actStkPart.class.getName()).error("Sin stock Partidas\n"+s+"\n"+ventana.getCurrentStackTrace());
             HashMap ht=new HashMap();  

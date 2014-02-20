@@ -108,8 +108,8 @@ public class MantDesp extends ventanaPad implements PAD
     private boolean DESPPENDIENTE=false;
 // Variable que indica si se podra mantener el lote de entrada
     private boolean AGRUPALOTE; // Variable cogida de tabla parametros.
-    private int JTCAB_GRID = 1;
-    private int JTLIN_GRID = 2;
+    final private int JTCAB_GRID = 1;
+    final private int JTLIN_GRID = 2;
     private boolean swMantLote = false;
     private boolean CHECKTIDCODI = true;// Variable cogida de tabla parametros
     private boolean AVISATIDCODI = false;// Variable cogida de tabla parametros
@@ -226,7 +226,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (ADMIN)
             MODPRECIO=true; 
-        setVersion("2014-02-05" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2014-02-20" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -2623,64 +2623,63 @@ public class MantDesp extends ventanaPad implements PAD
             }
             if (pro_codiE.isVendible())
             {
-            if (deo_ejelotE.getValorInt() == 0 && pro_codiE.hasControlIndiv() )
-            {
-                mensajeErr("Introduzca Ejercicio de Lote");
-                return 2;
-            }
-
-            if (deo_serlotE.getText().trim().equals("")  && pro_codiE.hasControlIndiv())
-            {
-                mensajeErr("Introduzca Serie de Lote");
-                return 4;
-            }
-            if (pro_loteE.getValorInt() == 0  && pro_codiE.hasControlIndiv())
-            {
-                mensajeErr("Introduzca Número de Lote");
-                return 5;
-            }
-            if (jtCab.getValorDec(linea, JTCAB_KILOS) < 0)
-            {
-                mensajeErr("Kilos no pueden estar en negativo");
-                return 5;
-            }
-            if (!tid_codiE.isNull() && tid_codiE.getValorInt() != MantTipDesp.LIBRE_DESPIECE
-                && CHECKTIDCODI && !opSimular.isSelected() && pro_codiE.isVendible())
-            { // Tipo despiece esta metido. Comprobar productos
-                if (tid_codiE.getValorInt() == MantTipDesp.AUTO_DESPIECE
-                    || tid_codiE.getValorInt() == MantTipDesp.CONGELADO_DESPIECE)
+                if (deo_ejelotE.getValorInt() == 0 && pro_codiE.hasControlIndiv() )
                 {
-                    int nRow = jtCab.getRowCount();
-                    for (int n = 0; n < nRow; n++)
+                    mensajeErr("Introduzca Ejercicio de Lote");
+                    return 2;
+                }
+                if (deo_serlotE.getText().trim().equals("")  && pro_codiE.hasControlIndiv())
+                {
+                    mensajeErr("Introduzca Serie de Lote");
+                    return 4;
+                }
+                if (pro_loteE.getValorInt() == 0  && pro_codiE.hasControlIndiv())
+                {
+                    mensajeErr("Introduzca Número de Lote");
+                    return 5;
+                }
+                if (jtCab.getValorDec(linea, JTCAB_KILOS) < 0)
+                {
+                    mensajeErr("Kilos no pueden estar en negativo");
+                    return 5;
+                }
+                if (!tid_codiE.isNull() && tid_codiE.getValorInt() != MantTipDesp.LIBRE_DESPIECE
+                    && CHECKTIDCODI && !opSimular.isSelected() && pro_codiE.isVendible())
+                { // Tipo despiece esta metido. Comprobar productos
+                    if (tid_codiE.getValorInt() == MantTipDesp.AUTO_DESPIECE
+                        || tid_codiE.getValorInt() == MantTipDesp.CONGELADO_DESPIECE)
                     {
-                        if (tid_codiE.getValorInt() == MantTipDesp.CONGELADO_DESPIECE && pro_codiE.isCongelado())
+                        int nRow = jtCab.getRowCount();
+                        for (int n = 0; n < nRow; n++)
                         {
-                            mensajeErr("Para tipo despiece CONGELAR, los productos de entrada deben ser frescos");
+                            if (tid_codiE.getValorInt() == MantTipDesp.CONGELADO_DESPIECE && pro_codiE.isCongelado())
+                            {
+                                mensajeErr("Para tipo despiece CONGELAR, los productos de entrada deben ser frescos");
+                                return 0;
+                            }
+                            if (n == linea)
+                            {
+                                continue;
+                            }
+                            if (jtCab.getValorDec(n, JTCAB_KILOS) == 0 || jtCab.getValorInt(n, JTCAB_PROCODI) == 0)
+                                continue;
+
+                            if (MantArticulos.getTipoProd(jtCab.getValorInt(n, JTCAB_PROCODI),dtStat)==MantArticulos.TIPO_VENDIBLE && !MantTipDesp.esEquivalente(jtCab.getValorInt(n, JTCAB_PROCODI), pro_codiE.getValorInt(), dtStat) )
+                            {
+                                mensajeErr("Para autodespieces TODOS los productos entrada deben ser iguales");
+                                return 0;
+                            }
+                        }
+                    } 
+                    else
+                    {
+                        if (!MantTipDesp.checkArticuloEntrada(dtStat, pro_codiE.getValorInt(), tid_codiE.getValorInt()))
+                        {
+                            mensajeErr("ARTICULO no valido para este tipo de despiece");
                             return 0;
                         }
-                        if (n == linea)
-                        {
-                            continue;
-                        }
-                        if (jtCab.getValorDec(n, JTCAB_KILOS) == 0 || jtCab.getValorInt(n, JTCAB_PROCODI) == 0)
-                            continue;
-
-                        if (!MantTipDesp.esEquivalente(jtCab.getValorInt(n, JTCAB_PROCODI), pro_codiE.getValorInt(), dtStat))
-                        {
-                            mensajeErr("Para autodespieces TODOS los productos entrada deben ser iguales");
-                            return 0;
-                        }
-                    }
-                } 
-                else
-                {
-                    if (!MantTipDesp.checkArticuloEntrada(dtStat, pro_codiE.getValorInt(), tid_codiE.getValorInt()))
-                    {
-                        mensajeErr("ARTICULO no valido para este tipo de despiece");
-                        return 0;
                     }
                 }
-            }
             }
 //      jtCab.setValor("" + 1, linea, 7);
 //      deo_kilosE.setValorDec(1);
@@ -3264,9 +3263,8 @@ public class MantDesp extends ventanaPad implements PAD
             + " and deo_codi = " + deo_codiE.getValorInt()
             + " and def_orden = " + defOrden;
         if (!dtAdd.select(s, true))
-        {
             return 0;
-        }
+                
         if (anuStkPart(dtAdd.getInt("pro_codi"), dtAdd.getInt("def_ejelot"), EU.em_cod,
             dtAdd.getString("def_serlot"), dtAdd.getInt("pro_lote"),
             dtAdd.getInt("pro_numind"), dtAdd.getDouble("def_kilos"),
@@ -3275,7 +3273,8 @@ public class MantDesp extends ventanaPad implements PAD
             msgBox("No encontrado apunte en Stock-Partidas");
             return 0;
         }
-        s = "DELETE FROM v_despfin "
+        
+        s = "DELETE FROM v_despfin " 
             + " WHERE eje_nume = " + eje_numeE.getValorInt()
             + " and deo_codi = " + deo_codiE.getValorInt()
             + " and def_orden = " + defOrden;
@@ -3506,10 +3505,8 @@ public class MantDesp extends ventanaPad implements PAD
     }
 
     boolean borraLineajtLIn(int row) {
-        if (jtLin.getValorInt(row, JTLIN_NUMIND) == 0)
-        {
+        if (jtLin.getValorInt(row, JTLIN_NUMIND) == 0)        
             return true;
-        }
 
         try
         {
@@ -3520,7 +3517,7 @@ public class MantDesp extends ventanaPad implements PAD
             }
 
             ctUp.commit();
-        } catch (Exception ex)
+        } catch (SQLException ex)
         {
             Error("Error al borrar Linea", ex);
         }

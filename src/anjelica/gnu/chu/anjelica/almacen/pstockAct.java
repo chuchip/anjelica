@@ -546,7 +546,7 @@ public class pstockAct extends CPanel
 
 
       // Resto de Stock los pedidos de Venta SIN Albaran
-      s = "SELECT sum(pvl_canti) as  pvl_canti " +
+      s = "SELECT sum(pvl_unid) as  pvl_canti " +
           "  FROM pedvenc as c, pedvenl as l " +
           " where c.emp_codi = l.emp_codi" +
           " and c.eje_nume= l.eje_nume " +
@@ -645,7 +645,7 @@ public class pstockAct extends CPanel
     String fecped=pdc_fecpedE.getText();
     try
     {
-      s = "SELECT sum(stp_unact) as unidades,SUM(stp_kilact) as cantidad,prv_codi, "+
+      s = "SELECT 1 as tipsel,sum(stp_unact) as unidades,SUM(stp_kilact) as cantidad,prv_codi, "+
           " stp_feccad as feccad " +
           " FROM v_stkpart where pro_codi = " + proCodi +
           " and emp_codi = " + emp_codi +
@@ -656,7 +656,7 @@ public class pstockAct extends CPanel
      if (incPedid)
        s+=" UNION ALL " +
  // Pedidos Compras Pendientes
-          " SELECT sum(pcl_nucape) as unidades, sum(pcl_cantpe) as cantidad, " +
+          " SELECT 2 as tipsel,sum(pcl_nucape) as unidades, sum(pcl_cantpe) as cantidad, " +
           " c.prv_codi,l.pcl_feccad as feccad " +
           " FROM pedicoc as c,pedicol as l " +
           " where c.emp_codi = l.emp_codi" +
@@ -671,7 +671,7 @@ public class pstockAct extends CPanel
           " group by c.prv_codi,l.pcl_feccad " +
           " UNION ALL " +
 // Pedidos Compras Confirmados
-         " SELECT sum(pcl_nucaco) as unidades, sum(pcl_cantco) as cantidad, " +
+         " SELECT 3 as tipsel, sum(pcl_nucaco) as unidades, sum(pcl_cantco) as cantidad, " +
          " c.prv_codi,l.pcl_feccad as feccad " +
          " FROM pedicoc as c,pedicol as l " +
          " where c.emp_codi = l.emp_codi" +
@@ -686,7 +686,7 @@ public class pstockAct extends CPanel
          " group by c.prv_codi,l.pcl_feccad " +
          " UNION ALL " +
  // Pedidos Compras Pre-Factura
-         " SELECT sum(pcl_nucafa) as unidades, sum(pcl_cantfa) as cantidad, " +
+         " SELECT 4 as tipsel,  sum(pcl_nucafa) as unidades, sum(pcl_cantfa) as cantidad, " +
          " c.prv_codi,l.pcl_feccad as feccad " +
          " FROM pedicoc as c,pedicol as l " +
          " where c.emp_codi = l.emp_codi" +
@@ -701,7 +701,7 @@ public class pstockAct extends CPanel
          " group by c.prv_codi,l.pcl_feccad " +
          " UNION ALL "+
 // Pedidos Ventas Pendientes
-         "SELECT sum(pvl_canti)*-1 as  unidades, 0 as cantidad, " +
+         "SELECT 5 as tipsel, sum(pvl_unid)*-1 as  unidades, 0 as cantidad, " +
          " l.prv_codi,pvl_feccad as feccad " +
          "  FROM pedvenc as c, pedvenl as l " +
          " where c.emp_codi = l.emp_codi" +
@@ -715,7 +715,7 @@ public class pstockAct extends CPanel
          " group by l.prv_codi,pvl_feccad "+
          " UNION ALL " +
  // Albaranes Compra SIN Cerrar Y CON PEDIDOS
-         " select sum(acp_canind)*-1 as unidades,sum(acp_canti)*-1 as cantidad,  "+
+         " select 6 as tipsel, sum(acp_canind)*-1 as unidades,sum(acp_canti)*-1 as cantidad,  "+
         " c.prv_codi , p.acp_feccad as feccad "+
         " from v_albacoc as c, v_albacol as l ,v_albcompar as p "+
         " WHERE c.emp_codi = l.emp_codi "+
@@ -740,7 +740,7 @@ public class pstockAct extends CPanel
         " group by prv_codi,acp_feccad "+
          " UNION ALL " +
 // Albaranes Ventas sin CERRAR Y con pedidos
-         " select sum(avp_numuni) as unidades,sum(avp_canti) as cantidad, " +
+         " select 7 as tipsel, sum(avp_numuni) as unidades,sum(avp_canti) as cantidad, " +
          " s.prv_codi, s.stp_feccad as feccad " +
          " from v_albavec as c,v_albavel as li, v_albvenpar as l,v_stkpart as s " +
          " WHERE c.emp_codi = l.emp_codi " +
@@ -778,18 +778,21 @@ public class pstockAct extends CPanel
         String feccad=dtCon1.getFecha("feccad","dd-MM-yy");
         String prvNomb="";
         limpiaPanel(PDesProd, null);
-
+        
         vt.removeAllElements();
         int unid=0;
         double canti=0;
         do
-        {
+        {         
           if (prvCodi!=dtCon1.getInt("prv_codi",true) || !feccad.equals(dtCon1.getFecha("feccad","dd-MM-yy")))
           {
-            CButton BProd = getBotonDesgl(proCodi,precio, prvCodi, feccad, unid, canti);
-            vt.add(BProd);
+            if (unid>=1 && canti>=1) 
+            {
+                CButton BProd = getBotonDesgl(proCodi,precio, prvCodi, feccad, unid, canti);
+                vt.add(BProd);
+            }
             unid = 0;
-            canti = 0;
+            canti = 0; 
             prvCodi = dtCon1.getInt("prv_codi",true);
             feccad = dtCon1.getFecha("feccad", "dd-MM-yy");
           }
