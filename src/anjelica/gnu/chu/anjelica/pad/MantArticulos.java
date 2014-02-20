@@ -49,9 +49,9 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class MantArticulos extends ventanaPad  implements PAD
 {
-    private int PROEXCLUYE=-1;
-    private int PROINCLUYE=1;
-    private int PROINCCONG=2;
+    final private int PROEXCLUYE=-1;
+    final private int PROINCLUYE=1;
+    final private int PROINCCONG=2;
     public static final String TIPO_VENDIBLE="V";
     public static final String TIPO_COMENTARIO="C";
     public static final String TIPO_DESHECHO="D";
