@@ -718,8 +718,7 @@ public class ventana extends CInternalFrame implements ejecutable
     return resetBloqueo(dt, tabla, registro, true);
   }
 
-  public boolean resetBloqueo(DatosTabla dt, String tabla, String registro, boolean commit) throws SQLException,
-      java.text.ParseException
+  public boolean resetBloqueo(DatosTabla dt, String tabla, String registro, boolean commit) throws SQLException
   {
     tabla=tabla.toLowerCase();
     if (!isBloqueado(dt, tabla, registro))
