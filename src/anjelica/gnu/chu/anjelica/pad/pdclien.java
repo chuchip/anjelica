@@ -45,6 +45,11 @@ import javax.swing.event.*;
  */
 public class pdclien extends ventanaPad implements PAD
 {
+    public static final char EST_CONTACT='C';
+    public static final char EST_NOCONT='N';
+    public static final char EST_AUSENTE='A';
+    public static final char EST_LLAMAR='L';
+    
     String clc_comen;
     boolean chgCliente = true;
     String s;

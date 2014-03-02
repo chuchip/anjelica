@@ -54,6 +54,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 public class FichaClientes extends ventana implements PAD
 {
+  private boolean  swActCli=false;
   private boolean relClien=true;
   boolean mataConsulta=false;
   int numDec=2;
@@ -367,7 +368,7 @@ public class FichaClientes extends ventana implements PAD
   {
     iniciarFrame();
     this.setSize(732, 535);
-    this.setVersion("2012-01-04");
+    this.setVersion("2014-03-02");
     if (CONBD)
     {
       conecta();
@@ -1176,6 +1177,22 @@ public class FichaClientes extends ventana implements PAD
 
  void activarEventos()
  {
+     TPanel.addChangeListener(new ChangeListener() {
+        public void stateChanged(ChangeEvent e) {
+            if ( swActCli)
+            {
+                swActCli=false;
+                try {
+                    pRelClien.getDatosCliente(dtCli);
+                } catch (SQLException k)
+                {
+                    Error("Error al buscar cliente",k);
+                }
+                setRelacionClientes(false);
+                verDatClien(dtCli);   
+            }            
+        }
+    });
    albfacE.addActionListener(new ActionListener() {
      public void actionPerformed(ActionEvent e) {
        if (navcli.pulsado==navegador.QUERY || swBusDat)
@@ -2177,6 +2194,8 @@ public class FichaClientes extends ventana implements PAD
     Bmodcom.setEnabled(false);
     jtCom.setEnabled(false);
     jtCom.removeAllDatos();
+ 
+   
   }
   void verDatComen(int cliCodi) throws SQLException,ParseException
   {
@@ -2195,9 +2214,12 @@ public class FichaClientes extends ventana implements PAD
         Vector v = new Vector();
         v.addElement(dtCon1.getFecha("cpv_fecha","dd-MM-yyyy"));
         v.addElement(dtCon1.getString("cpv_come"));
-         jtCom.addLinea(v);
+        jtCom.addLinea(v);
       } while (dtCon1.next());
+       cpv_textE.setText(jtCom.getValString(0,1));
     }
+    else
+        cpv_textE.setText("");
     if (mataConsulta)
             return;
     String fecAct=Formatear.getFechaAct("dd-MM-yyyy");
@@ -2262,7 +2284,7 @@ public class FichaClientes extends ventana implements PAD
     GregorianCalendar gc= new GregorianCalendar();
     gc.setTime(new Date(System.currentTimeMillis()));
     gc.add(GregorianCalendar.MONTH,-2);
-    feinvpE.setText(Formatear.formatearFecha(gc.getTime(),"dd-MM-yyyy"));
+    feinvpE.setText(Formatear.getFecha(gc.getTime(),"dd-MM-yyyy"));
 //    feinvpE.setText();
     s = "select pro_codi,max(avc_fecalb) as avc_fecalb from v_albavec c, v_albavel l" +
         " where  l.avc_ano = c.avc_ano " +
@@ -2466,6 +2488,12 @@ public class FichaClientes extends ventana implements PAD
    {
      fatalError("Error al Borrar Comentario",k);
    }
+  }
+  void setCabecera(String nombCli, String poblCli)
+  {
+      swActCli=true;
+      cli_nombE.setText(nombCli);
+      cli_poblE.setText(poblCli);
   }
   public void PADPrimero() {
     try

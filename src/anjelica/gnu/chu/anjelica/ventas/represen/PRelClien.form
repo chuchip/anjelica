@@ -4,9 +4,11 @@
   <NonVisualComponents>
     <Component class="gnu.chu.controles.CTextField" name="cli_codiE">
       <Properties>
-        <Property name="text" type="java.lang.String" value="cTextField1"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;####9&quot;)"/>
+      </AuxValues>
     </Component>
     <Component class="gnu.chu.controles.CTextField" name="cli_nombE">
       <Properties>
@@ -73,7 +75,7 @@
         </Property>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(7){ public void afterCambiaLinea()&#xa;    {&#xa;        actualCampos();&#xa;    }&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        if (! cli_estconE.hasCambio())&#xa;        return -1;&#xa;        actualEstado(row,cli_estconE.getText());&#xa;        return -1;&#xa;    }&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(7){&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        actualCampos();&#xa;    }&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        if (! cli_estconE.hasCambio())&#xa;            return -1;&#xa;        actualEstado(row,cli_estconE.getText());&#xa;        return -1;&#xa;    }&#xa;}"/>
         <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="Vector v= new Vector();&#xa;v.add(&quot;Cliente&quot;); // 0&#xa;v.add(&quot;Nombre&quot;); // 1&#xa;v.add(&quot;Poblac.&quot;); // 2&#xa;v.add(&quot;Zona&quot;); // 3&#xa;v.add(&quot;Ult.Venta&quot;); // 4&#xa;v.add(&quot;Ult.Cont.&quot;); // 5&#xa;v.add(&quot;Estado&quot;); // 6&#xa;jt.setCabecera(v);&#xa;jt.setFormatoColumna(4,&quot;dd-MM-yyyy&quot;);&#xa;jt.setFormatoColumna(5,&quot;dd-MM-yyyy&quot;);&#xa;jt.setAnchoColumna(new int[]{40,180,120,90,80,80,70});&#xa;jt.setAlinearColumna(new int[]{2,0,0,0,1,1,0});&#xa;Vector vc=new Vector();&#xa;vc.add(cli_codiE);&#xa;vc.add(cli_nombE);&#xa;vc.add(cli_poblE);&#xa;vc.add(zon_nombE);&#xa;vc.add(feulveE);&#xa;vc.add(feulcoE);&#xa;vc.add(cli_estconE);&#xa;try {&#xa;jt.setCampos(vc); } catch (Exception k11){}&#xa;jt.setCanDeleteLinea(false);&#xa;jt.setCanInsertLinea(false);"/>
       </AuxValues>
       <Constraints>
@@ -112,45 +114,43 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="cLabel2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="cli_perconE" min="-2" pref="208" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="cLabel1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="cli_telconE" min="-2" pref="122" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="cLabel3" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="cli_telefE" min="-2" pref="130" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="cLabel6" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="ncliSelE" min="-2" pref="38" max="-2" attributes="0"/>
-                          </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="cLabel2" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="cli_perconE" min="-2" pref="208" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="cLabel1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="cli_telconE" min="-2" pref="122" max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="cLabel3" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="cli_telefE" min="-2" pref="130" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="1">
-                              <Component id="cLabel5" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="ncliPendE" min="-2" pref="38" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                              <Component id="bPedido" min="-2" pref="65" max="-2" attributes="0"/>
-                              <EmptySpace pref="28" max="32767" attributes="0"/>
-                              <Component id="bReset" min="-2" pref="104" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="1">
-                              <Component id="cLabel4" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="tar_codiE" pref="321" max="32767" attributes="0"/>
-                          </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="cLabel6" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="ncliSelE" min="-2" pref="38" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="1">
+                          <Component id="cLabel5" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="ncliPendE" min="-2" pref="38" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                          <Component id="bPedido" min="-2" pref="65" max="-2" attributes="0"/>
+                          <EmptySpace pref="28" max="32767" attributes="0"/>
+                          <Component id="bReset" min="-2" pref="104" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="1">
+                          <Component id="cLabel4" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="tar_codiE" pref="321" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
