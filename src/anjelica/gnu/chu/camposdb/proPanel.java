@@ -1013,11 +1013,26 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
     return true;
     
   }
-  public String getNombArtCli(int codArt,int codCli) throws SQLException,java.text.ParseException
+  /**
+   * Devuelve el nombre dado a ese cliente para un producto.
+   * @param codArt Codigo de Articulo
+   * @param codCli Codigo de Cliente
+   * @return nombre de articulo. Null si no existe
+   * @throws SQLException 
+  */
+  public String getNombArtCli(int codArt,int codCli) throws SQLException
   {
     return getNombArtCli(codArt,codCli,eu.em_cod,dt);
   }
-  public String getNombArtCli(int proCodi,int codCli,int empCodi) throws SQLException,java.text.ParseException
+  /**
+   * Devuelve el nombre dado a ese cliente para un producto
+   * @param proCodi  Codido de Articulo
+   * @param codCli COodigo cliente
+   * @param empCodi Empresa (normalmente siempre 1)
+   * @return nombre de articulo. Null si no existe
+   * @throws SQLException 
+   */
+  public String getNombArtCli(int proCodi,int codCli,int empCodi) throws SQLException
   {
     return getNombArtCli(proCodi,codCli,empCodi,dt);
   }
@@ -1030,11 +1045,11 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
    * @param dt
    * @return
    * @throws SQLException
-   * @throws java.text.ParseException
+   * 
    */
   public String getNombArtCli(int proCodi,int codCli,int empCodi,DatosTabla dt) throws SQLException
   {
-    String s="";
+    String s;
     s = "SELECT * FROM v_articulo WHERE pro_codi= " + proCodi;
     dt.selectInto(s, lkPrd);
     if (dt.getNOREG())
