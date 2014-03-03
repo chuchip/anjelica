@@ -56,6 +56,12 @@ public class PRelClien extends CPanel {
           cli_telconE.setText(padre.dtCli.getString("cli_telcon"));
           cli_telefE.setText(padre.dtCli.getString("cli_telef"));
           cli_perconE.setText(padre.dtCli.getString("cli_percon"));
+          String s=" SELECT * FROM compedven WHERE cli_codi = "+getCliente()+
+             " ORDER BY cpv_fecha desc";
+          if (! dtStat.select(s))
+              cli_comenE.resetTexto();
+          else
+              cli_comenE.setText(dtStat.getString("cpv_come"));
         } catch (SQLException k)
         {
             padre.Error("Error al buscar cliente", k);
@@ -83,7 +89,9 @@ public class PRelClien extends CPanel {
             ncliPendE.setValorInt(ncliPendE.getValorInt()+1);
         else
             ncliPendE.setValorInt(ncliPendE.getValorInt()-1);
-        jt.setValor( estcon.equals(""+pdclien.EST_CONTACT)?Formatear.getFechaAct("dd-MM-yyyy"):"",row,JT_FECCON);
+        
+        if (estcon.equals(""+pdclien.EST_CONTACT))
+            jt.setValor( Formatear.getFechaAct("dd-MM-yyyy"),row,JT_FECCON);
         padre.mensajeRapido("Estado de cliente actualizado");
     }
     /**
@@ -220,6 +228,7 @@ public class PRelClien extends CPanel {
         bPedido = new gnu.chu.controles.CButton();
         cLabel6 = new gnu.chu.controles.CLabel();
         ncliSelE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
+        cli_comenE = new gnu.chu.controles.CTextField();
 
         cli_codiE.setEnabled(false);
 
@@ -246,11 +255,11 @@ public class PRelClien extends CPanel {
         jt.setLayout(jtLayout);
         jtLayout.setHorizontalGroup(
             jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 567, Short.MAX_VALUE)
+            .add(0, 661, Short.MAX_VALUE)
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 357, Short.MAX_VALUE)
+            .add(0, 355, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -264,27 +273,51 @@ public class PRelClien extends CPanel {
         add(jt, gridBagConstraints);
 
         Ppie.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        Ppie.setMaximumSize(new java.awt.Dimension(50, 84));
+        Ppie.setMinimumSize(new java.awt.Dimension(50, 84));
+        Ppie.setPreferredSize(new java.awt.Dimension(50, 84));
+        Ppie.setLayout(null);
 
         cLabel1.setText("Tel. Contacto ");
+        Ppie.add(cLabel1);
+        cLabel1.setBounds(320, 4, 75, 15);
 
         cli_telconE.setEditable(false);
+        Ppie.add(cli_telconE);
+        cli_telconE.setBounds(399, 3, 122, 17);
 
         cLabel2.setText("Persona Contacto ");
+        Ppie.add(cLabel2);
+        cLabel2.setBounds(3, 4, 101, 15);
 
         cli_perconE.setEditable(false);
+        Ppie.add(cli_perconE);
+        cli_perconE.setBounds(108, 3, 208, 17);
 
         cLabel3.setText("Telefono");
+        Ppie.add(cLabel3);
+        cLabel3.setBounds(3, 29, 49, 15);
 
         cli_telefE.setEditable(false);
+        Ppie.add(cli_telefE);
+        cli_telefE.setBounds(56, 28, 130, 17);
 
         cLabel4.setText("Tarifa");
+        Ppie.add(cLabel4);
+        cLabel4.setBounds(204, 29, 31, 15);
 
         tar_codiE.setAncTexto(30);
         tar_codiE.setEnabled(false);
+        Ppie.add(tar_codiE);
+        tar_codiE.setBounds(239, 28, 300, 17);
 
         cLabel5.setText("N.Clientes Pend");
+        Ppie.add(cLabel5);
+        cLabel5.setBounds(190, 50, 87, 17);
 
         ncliPendE.setEditable(false);
+        Ppie.add(ncliPendE);
+        ncliPendE.setBounds(280, 50, 38, 17);
 
         bReset.setText("Resetear Todo");
         bReset.addActionListener(new java.awt.event.ActionListener() {
@@ -292,76 +325,24 @@ public class PRelClien extends CPanel {
                 bResetActionPerformed(evt);
             }
         });
+        Ppie.add(bReset);
+        bReset.setBounds(550, 30, 104, 18);
 
         bPedido.setText("Pedido");
+        Ppie.add(bPedido);
+        bPedido.setBounds(590, 2, 65, 19);
 
         cLabel6.setText("N.Clientes Selecionados");
+        Ppie.add(cLabel6);
+        cLabel6.setBounds(3, 50, 133, 17);
 
         ncliSelE.setEditable(false);
+        Ppie.add(ncliSelE);
+        ncliSelE.setBounds(140, 50, 38, 17);
 
-        org.jdesktop.layout.GroupLayout PpieLayout = new org.jdesktop.layout.GroupLayout(Ppie);
-        Ppie.setLayout(PpieLayout);
-        PpieLayout.setHorizontalGroup(
-            PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PpieLayout.createSequentialGroup()
-                .add(cLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(cli_perconE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 208, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(cLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(cli_telconE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 122, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(PpieLayout.createSequentialGroup()
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(cLabel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(cli_telefE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(cLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(ncliSelE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 38, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .add(18, 18, 18)
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(cLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(ncliPendE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 38, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(30, 30, 30)
-                        .add(bPedido, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 65, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 28, Short.MAX_VALUE)
-                        .add(bReset, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(cLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(tar_codiE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE))))
-        );
-        PpieLayout.setVerticalGroup(
-            PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PpieLayout.createSequentialGroup()
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(cLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(cli_perconE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(cLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(cli_telconE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(cli_telefE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(cLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(tar_codiE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(ncliSelE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(cLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(ncliPendE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(bPedido, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(bReset, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        cli_comenE.setEditable(false);
+        Ppie.add(cli_comenE);
+        cli_comenE.setBounds(340, 50, 310, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -400,6 +381,7 @@ public class PRelClien extends CPanel {
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CTextField cli_codiE;
+    private gnu.chu.controles.CTextField cli_comenE;
     private gnu.chu.controles.CTextField cli_estconE;
     private gnu.chu.controles.CTextField cli_nombE;
     private gnu.chu.controles.CTextField cli_perconE;

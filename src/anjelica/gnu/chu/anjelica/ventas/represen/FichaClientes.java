@@ -2197,15 +2197,20 @@ public class FichaClientes extends ventana implements PAD
  
    
   }
-  void verDatComen(int cliCodi) throws SQLException,ParseException
+  boolean getSqlComent(DatosTabla dt, int cliCodi) throws SQLException
   {
-    s="SELECT * FROM compedven WHERE cli_codi = "+cliCodi+
+       s="SELECT * FROM compedven WHERE cli_codi = "+cliCodi+
         " ORDER BY cpv_fecha desc";
+       return dt.select(s);
+  }
+  void verDatComen(int cliCodi) throws SQLException
+  {
+   
     limpiaComen();
     if (relClien)
         mensaje("Buscando datos Comentarios de Ventas ...",false);
 
-    if (dtCon1.select(s))
+    if (getSqlComent(dtCon1,cliCodi))
     {
       do
       {
