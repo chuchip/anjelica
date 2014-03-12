@@ -151,10 +151,7 @@ public class prvPanel extends CPanel
   }
   public boolean isNull()
   {
-    if (prv_codiE.getValorDec() == 0 || prv_codiE.getText().trim().equals(""))
-      return true;
-    else
-      return false;
+      return prv_codiE.getValorDec() == 0 || prv_codiE.getText().trim().equals("");
   }
     @Override
  public void setText(String repres)

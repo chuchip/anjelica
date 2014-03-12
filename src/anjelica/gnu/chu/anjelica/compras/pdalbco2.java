@@ -2117,6 +2117,8 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   void cambioPrv(boolean forzarCambioPrv)
   {
     try {
+      if (prv_codiE.isNull())
+          return;
       s = "SELECT v_saladesp.sde_codi,sde_nrgsa FROM v_prvsade,v_saladesp "+
           " WHERE prv_codi = " +prv_codiE.getText()+
           " and v_prvsade.sde_codi = v_saladesp.sde_codi "+
@@ -5536,8 +5538,10 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       eje_numeE.setValorDec(conped.getEjePed());
       if (prv_codiE.isNull())
       {
-        prv_codiE.setText(conped.prv_codiE.getText());
+          prv_codiE.setText(conped.prv_codiE.getText());         
+          acc_copvfaE.setText(conped.prv_codiE.getText());  
       }
+
     }
     conped.dispose();
 
