@@ -1,16 +1,27 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * PRelClien.java
+package gnu.chu.anjelica.ventas.represen;
+/**
+ *
+ * <p>Título: PRelClien</p>
+ * <p>Descripción: Panel de relacion de clientes </p>
+ * <p`>Usado por clase FichaClientes.
+* <p>Copyright: Copyright (c) 2005-2014
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,ed
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * @author chuchiP
+ * <p>Empresa: MISL</p>
  *
  * Created on 23-jul-2010, 8:33:54
  */
-
-package gnu.chu.anjelica.ventas.represen;
-
 import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.anjelica.pad.pdtipotar;
 import gnu.chu.controles.CPanel;
