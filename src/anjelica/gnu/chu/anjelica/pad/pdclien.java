@@ -26,7 +26,7 @@ import javax.swing.event.*;
  * <p>Título: pdclien</p>
  * <p>Descripción: Mantenimiento de la Tabla de Clientes. Los cambios los guarda en
  * la tabla cliencamb </p>
-* <p>Copyright: Copyright (c) 2005-2012
+* <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -229,9 +229,9 @@ public class pdclien extends ventanaPad implements PAD
     private CLabel cli_estconL = new CLabel();
     private CComboBox cli_estconE = new CComboBox();
     private CLabel cli_email1L = new CLabel();
-    private CTextField cli_email1E = new CTextField(Types.CHAR, "X", 40);
+    private CTextField cli_email1E = new CTextField(Types.CHAR, "X", 60);
     private CLabel cli_email2L = new CLabel();
-    private CTextField cli_email2E = new CTextField(Types.CHAR, "X", 40);
+    private CTextField cli_email2E = new CTextField(Types.CHAR, "X", 60);
 
   /**
    * Constructor

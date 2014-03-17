@@ -15,7 +15,10 @@ alter table usuarios alter sbe_codi set  not null;
 alter table clientes add cli_intern smallint;
 update clientes set cli_intern=0;
 alter table clientes alter cli_intern set not null;
+------
 
+alter table anjelica.clientes alter cli_email1  type char(60);
+alter table anjelica.clientes alter cli_email2  type char(60);
 -- Hacer un pg_dump de la table cliencamb
 -- pg_dump -i -F p -a -v -f "cliencamb.sql" -t cliencamb anjelica
 -- Volver a crear la tabla y restaurar datos.

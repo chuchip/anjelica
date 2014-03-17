@@ -250,7 +250,7 @@ pro_artcon int, 	-- Articulo Congelado 0=No
 pro_unicaj int default 1 not null,-- Unidades por Caja
 pro_cajpal int default 0 not null,	-- Cajas por Palet
 pro_kguni float default 0 not null,	-- Kilos por Unidad
-pro_kgcaj float default 0 not null,	-- Kilos por Caja
+pro_kgcaj float default 0 not null,	-- Kilos por Caja/Unidad
 pro_stock float default 0 not null,	-- Kilos actuales (Stock)
 pro_kgmin float default 0 not null,	-- Kg. Minimos en Stock
 pro_kgmax float default 0 not null,	-- Kg. Maximos en Stock
@@ -478,8 +478,8 @@ rep_codi char(2),       -- Representante
 cli_feulve date,        -- Fecha Ult. Venta
 cli_feulco date,        -- Fecha Ult. Contacto
 cli_estcon char(1) default 'N',     -- Estado de Contacto (No contacto,Ausente,Contacto, Llamar)
-cli_email1 char(40),     -- Correo Electronico Comercial (Tarifas)
-cli_email2 char(40),     -- Correo Electronico Administr. (Facturas/Alb.)
+cli_email1 char(60),     -- Correo Electronico Comercial (Tarifas)
+cli_email2 char(60),     -- Correo Electronico Administr. (Facturas/Alb.)
 usu_nomb varchar(15) not null, -- Usuario que realiza el Cambio
 clc_fecha date not null, -- Fecha de Cambio
 clc_hora decimal(5,2) not null, -- Hora de Cambio
@@ -3143,7 +3143,9 @@ create table anjelica.pedvenl
  eje_nume int not null,		-- Ejercicio de Pedido
  pvc_nume int not null,		-- Numero de Pedido
  pvl_numlin int not null,	-- Numero de Linea
- pvl_canti float not null,	-- Unidades de Producto
+ pvl_kilos float not null,	-- Kilos o unidades de producto.
+ pvl_unid float not null,       -- Unidades
+ pvl_tipo char(1) not null default 'K', -- Tipo Unidad introducida. (K/U)
  pro_codi int not null,		-- Codigo de Producto
  pvl_comen varchar(100),	-- Comentario sobre el producto
  pvl_precio float not null,	-- Precio
