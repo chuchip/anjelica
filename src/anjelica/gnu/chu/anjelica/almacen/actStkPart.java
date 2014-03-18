@@ -1349,6 +1349,7 @@ public class actStkPart
          (proArtcon==2?"":", v_articulo as a ")+
          " WHERE s.emp_codi = "+empCodi+
          " and eje_nume != 0 " +
+         " and pro_Codi != 0 " +
          (proCodi!=0?" and s.pro_codi = "+proCodi:"")+
          (proArtcon==2?"":" and a.pro_artcon " + (proArtcon == 0 ? "= 0" : " <> 0")+
           " and s.pro_codi = a.pro_codi "
@@ -1376,7 +1377,7 @@ public class actStkPart
            res = dtAdd.executeUpdate(s);
            if (res == 0)
            {
-               logger.error("Articulo: " + proCodi + " en Empresa: "
+               logger.error("Articulo: " + proCodT + " en Empresa: "
                    + empCodi + " NO Encontrado en tabla Maestros de Articulos");
            }
            proCodT=dt.getInt("pro_codi");
@@ -1393,7 +1394,7 @@ public class actStkPart
        res = dtAdd.executeUpdate(s);
        if (res == 0)
        {
-           logger.error("Articulo: " + proCodi + " en Empresa: "
+           logger.error("Articulo: " + proCodT + " en Empresa: "
                + empCodi + " NO Encontrado en tabla Maestros de Articulos");
        }
      return true;
