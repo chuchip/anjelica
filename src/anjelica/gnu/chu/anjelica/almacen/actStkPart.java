@@ -385,6 +385,8 @@ public class actStkPart
       dtAdd.setDato("stp_unact", unidAlmac);
       dtAdd.update();
     }
+    if (actual) 
+        return true; // Si es actualizar (Machacar, vamos), no actualizo tabla productos.
     // Actualizo Acumulados de Producto en tabla productos
     s = "UPDATE v_articulo set " +
         " pro_stock = "+(actual?"(":" pro_stock + (") + kilos + ")," +
@@ -1352,14 +1354,48 @@ public class actStkPart
           " and s.pro_codi = a.pro_codi "
           //+ " and s.emp_codi = a.emp_codi "
           )+
-         " group by s.alm_codi,s.pro_codi ";
+         " group by s.alm_codi,s.pro_codi "+
+         " order by s.pro_codi,s.alm_codi";
      if (! dt.select(s))
        return false;
+     double kilos=dt.getDouble("stp_kilact");
+     int unidades=dt.getInt("stp_unact"),res;
+     int proCodT=dt.getInt("pro_codi");
      do
      {
        actAcum(dt.getInt("pro_codi"),dt.getInt("alm_codi"),dt.getDouble("stp_kilact"),
                dt.getInt("stp_unact"),fecMvto,true);
+      
+         // Actualizo Acumulados de Producto en tabla productos
+       if (proCodT!=dt.getInt("pro_codi"))
+       {
+           s = "UPDATE v_articulo set "
+               + " pro_stock = " + kilos
+               + ", pro_stkuni = " + unidades
+               + " WHERE pro_codi = " + proCodT;
+           res = dtAdd.executeUpdate(s);
+           if (res == 0)
+           {
+               logger.error("Articulo: " + proCodi + " en Empresa: "
+                   + empCodi + " NO Encontrado en tabla Maestros de Articulos");
+           }
+           proCodT=dt.getInt("pro_codi");
+           kilos=0;
+           unidades=0;
+       }
+       kilos+=dt.getDouble("stp_kilact");
+       unidades+=dt.getInt("stp_unact");
      } while (dt.next());
+       s = "UPDATE v_articulo set "
+           + " pro_stock = " + kilos
+           + ", pro_stkuni = " + unidades
+           + " WHERE pro_codi = " + proCodT;
+       res = dtAdd.executeUpdate(s);
+       if (res == 0)
+       {
+           logger.error("Articulo: " + proCodi + " en Empresa: "
+               + empCodi + " NO Encontrado en tabla Maestros de Articulos");
+       }
      return true;
    }
    public void setAceptaNeg(boolean acepNegativo)
@@ -1380,11 +1416,11 @@ public class actStkPart
     * @param fecInic Fecha Inicio desde la que buscar Mvtos. Tecnicamente la fecha
     * del ultimo stock fisico. Si es NULO 1-1-(A\uFFFDo curso)
     * @param proCodi Codigo de Producto .. No puede ser nulo.
-    * @param ejeNume Ejercicio de producto .. si es 0 se pondra el actual.
-    * @param empCodi Empresa ... si es 0 se buscara en la activa.
-    * @param serie   Serie .. si es null se buscara en todas
+    * @param ejeLote Ejercicio de producto .. si es 0 se pondra el actual.
+    * @param empLote Empresa ... si es 0 se buscara en la activa.
+    * @param serLote   Serie .. si es null se buscara en todas
     * @param numLote si es 0 .. se buscara en todas.
-    * @throws Exception en caso de cualquier error
+    * @throws SQLException en caso de cualquier error
     *
     * @return boolean true si encontro datos para tratar.
     */
