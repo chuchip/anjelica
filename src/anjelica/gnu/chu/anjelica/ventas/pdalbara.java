@@ -52,6 +52,7 @@ package gnu.chu.anjelica.ventas;
  */ 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.DatosIVA;
+import gnu.chu.anjelica.almacen.DatIndiv;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.actStkPart;
 import gnu.chu.anjelica.almacen.pdalmace;
@@ -132,6 +133,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private final int JTDES_LOTE=6;
   private final int JTDES_NUMIND=7;
   private final int JTDES_KILOS=8; // Campo Kilos en grid desglose individuos
+  private final int JTDES_NUMLIN=9; // Numero Linea de desglose individuos
   private final int JT_PROCODI=1; //
   private final int JT_NULIAL=0; // Numero de Albaran.
   private final int JTRES_PROCODI=0;
@@ -406,7 +408,7 @@ public class pdalbara extends ventanaPad  implements PAD
   CTextField avp_ejelotE = new CTextField(Types.DECIMAL, "###9");
   CTextField avp_serlotE = new CTextField(Types.CHAR, "X", 1);
   CTextField avp_numparE = new CTextField(Types.DECIMAL, "####9");
-  CTextField avp_numindE = new CTextField(Types.DECIMAL, "##9");
+  CTextField avp_numindE = new CTextField(Types.DECIMAL, "###9");
   CTextField avp_cantiE = new CTextField(Types.DECIMAL, "---,--9.99");
   CTextField avp_numlinE = new CTextField(Types.DECIMAL, "##9");
   CLabel cLabel17 = new CLabel();
@@ -580,7 +582,7 @@ public class pdalbara extends ventanaPad  implements PAD
         PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2013-12-11" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2014-04-15" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -649,7 +651,7 @@ public class pdalbara extends ventanaPad  implements PAD
         avp_serlotE.setText("A");
         avp_serlotE.setMayusc(true);
         avp_numuniE.setValorDec(1);
-        Vector vc1 = new Vector();
+        ArrayList vc1 = new ArrayList();
 
         avp_ejelotE.setToolTipText("F3 Cons. Lotes Disponibles");
         avp_numuniE.setToolTipText("F3 Cons. Lotes Disponibles");
@@ -659,16 +661,16 @@ public class pdalbara extends ventanaPad  implements PAD
         pro_codicE.setEditable(false);
         pro_nombcE.setEditable(false);
         avp_numlinE.setEnabled(false);
-        vc1.addElement(pro_codicE.getTextField()); // 0
-        vc1.addElement(pro_nombcE); // 1
-        vc1.addElement(avp_emplotE); // 2
-        vc1.addElement(avp_ejelotE); // 3
-        vc1.addElement(avp_numuniE); // 4
-        vc1.addElement(avp_serlotE); // 5
-        vc1.addElement(avp_numparE); // 6
-        vc1.addElement(avp_numindE); // 7
-        vc1.addElement(avp_cantiE); // 8
-        vc1.addElement(avp_numlinE); // 9
+        vc1.add(pro_codicE.getTextField()); // 0
+        vc1.add(pro_nombcE); // 1
+        vc1.add(avp_emplotE); // 2
+        vc1.add(avp_ejelotE); // 3
+        vc1.add(avp_numuniE); // 4
+        vc1.add(avp_serlotE); // 5
+        vc1.add(avp_numparE); // 6
+        vc1.add(avp_numindE); // 7
+        vc1.add(avp_cantiE); // 8
+        vc1.add(avp_numlinE); // 9
         jtDes.setCampos(vc1);
         jt.setPonValoresInFocus(false);
         jtDes.setPonValoresInFocus(false);
@@ -4772,7 +4774,6 @@ public class pdalbara extends ventanaPad  implements PAD
    */
   void irGridLin()
   {
-    int nCol;
     try
     {
       if (!jtDes.isEnabled())
@@ -4853,7 +4854,7 @@ public class pdalbara extends ventanaPad  implements PAD
         guardaLinDes(jt.getSelectedRow());
         if (jt.getValorDec(3)==0 && jt.getValorInt(0)>0)
         { // Esta linea de albaran se habia guardado pero ahora no tiene KILOS
-          mensajeErr("La suma de Kilos del Desglose  NO puede ser 0");
+          mensajeErr("La suma de Kilos de los individuos  NO puede ser 0");
           jtDes.requestFocusLater(0, 0);
           return;
         }
@@ -4903,7 +4904,7 @@ public class pdalbara extends ventanaPad  implements PAD
   void actGridDes() throws Exception
   { 
     // Meto todas las lineas anteriores en un vector.
-    ArrayList<ArrayList> datAnt = new ArrayList();
+    ArrayList<DatIndiv> datAnt = new ArrayList();
     if (swEntdepos)
     {
         s = "SELECT  "+jt.getValorInt(1)
@@ -4917,36 +4918,36 @@ public class pdalbara extends ventanaPad  implements PAD
     else
         s = "SELECT * FROM v_albvenpar " +
             " WHERE "+getCondCurrent()+
-            " and avl_numlin = " + jt.getValorInt(0);
+            " and avl_numlin = " + jt.getValorInt(JT_NULIAL);
     if (dtCon1.select(s))
     {
       do
       {
-        ArrayList v = new ArrayList();
-        v.add("N"); // 0
-        v.add(dtCon1.getString("pro_codi")); // 1
-        v.add(dtCon1.getString("avp_ejelot")); // 2
-        v.add(dtCon1.getString("avp_numpar")); // 3
-        v.add("" + dtCon1.getInt("avp_numind")); // 4
-        v.add(dtCon1.getString("avp_serlot")); // 5
-        v.add(dtCon1.getString("avp_canti")); // 6
-        v.add(dtCon1.getString("avp_numlin")); // 7
-        v.add("" + dtCon1.getInt("avp_numuni")); // 8
-        datAnt.add(v);
-      }   while (dtCon1.next());
+        DatIndiv di = new DatIndiv();
+        di.setAuxiliar("N"); // 0
+        di.setProducto(dtCon1.getInt("pro_codi")); 
+        di.setEjercLot(dtCon1.getInt("avp_ejelot")); // 2
+        di.setLote(dtCon1.getInt("avp_numpar")); // 3
+        di.setNumind(dtCon1.getInt("avp_numind")); // 4
+        di.setSerie(dtCon1.getString("avp_serlot")); // 5
+        di.setCanti(dtCon1.getDouble("avp_canti")); // 6
+        di.setNumLinea(dtCon1.getInt("avp_numlin")); // 7
+        di.setNumuni(dtCon1.getInt("avp_numuni")); // 8
+        datAnt.add(di);
+      }  while (dtCon1.next());
     }
 
-    int nRowVec = datAnt.size();
+    int nRowIndAnt = datAnt.size();
     int nRow = jtDes.getRowCount();
     int l;
-    ArrayList v;
+    DatIndiv v;
     // Busco en datos anteriores para ver si YA no existen
-    for (int n = 0; n < nRowVec; n++)
+    for (int n = 0; n < nRowIndAnt; n++)
     {
       if (n >= nRow)
         l = -1;
       else
-      l = buscaDesp(datAnt, n);
+      l = buscaIndiv(datAnt, n);
       if (l == -1)
       { // Una linea que antes existia ahora NO esta. La borro
         v =  datAnt.get(n);
@@ -4959,19 +4960,21 @@ public class pdalbara extends ventanaPad  implements PAD
                 " and emp_codi = " + emp_codiE.getValorInt() +
                 " and avc_nume = " + avc_numeE.getValorInt() +
                 " and avc_serie = '" + avc_seriE.getText() + "'" +
-                " and avl_numlin = " + jt.getValorInt(0) +
-                " AND avp_numlin = " + v.get(7);
+                " and avl_numlin = " + jt.getValorInt(JT_NULIAL) +
+                " AND avp_numlin = " + v.getNumLinea();
         stUp.executeUpdate(s);
+         
         if ( ! swEntdepos)
-             anuStkPart(Integer.parseInt(v.get(1).toString()),
-                   Integer.parseInt(v.get(2).toString()),
+        { // Vuelvo a crear el stock
+             anuStkPart(v.getProducto(),
+                   v.getEjercLot(),
                    emp_codiE.getValorInt(),
-                   v.get(5).toString(),
-                   Integer.parseInt(v.get(3).toString()),
-                   Integer.parseInt(v.get(4).toString()),
-                   Double.parseDouble(v.get(6).toString()) * -1,
-                   Integer.parseInt(v.get(8).toString()) * -1
-                   );
+                   v.getSerie(),
+                   v.getLote(),
+                   v.getNumind(),
+                   v.getCanti()* -1,
+                   v.getNumuni()* -1 );
+        }
       }
     }
     double kg = 0;
@@ -4981,9 +4984,9 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       if (!isLinDesVal(n))
         continue;
-      kg += jtDes.getValorDec(n, 8);
-      nUn += jtDes.getValorDec(n, 4);
-      if (n >= nRowVec)
+      kg += jtDes.getValorDec(n, JTDES_KILOS);
+      nUn += jtDes.getValorDec(n, JTDES_UNID);
+      if (n >= nRowIndAnt)
       {
          if (swEntdepos)
              guardaLinEnt(n,jt.getValorInt(0));
@@ -4992,12 +4995,12 @@ public class pdalbara extends ventanaPad  implements PAD
         continue;
       }
       v =  datAnt.get(n);
-      if (v.get(0).toString().equals("N"))
+      if (v.getAuxiliar().equals("N"))
       {
          if (swEntdepos)
-            guardaLinEnt(n,jt.getValorInt(0));
+            guardaLinEnt(n,jt.getValorInt(JT_NULIAL));
          else
-            guardaLinDes(n, jt.getValorInt(0));
+            guardaLinDes(n, jt.getValorInt(JT_NULIAL));
       }
     }
     jt.setValor("" + kg, 3);
@@ -5013,27 +5016,28 @@ public class pdalbara extends ventanaPad  implements PAD
 
   }
   /**
-   * Busca los datos de un despiece en un vector
-   * @param dat vector con los datos
+   * Busca los datos del individuo que hay en la linea de jtDes mandada 
+   * en un vector anteriormente cargado con todos los individuos existentes.
+   * @param dat vector con los datos anteriores
    * @param nLin Numero de Linea con la que comparar
    * @return posicion donde lo ha encontrado.
    */
-  int buscaDesp(ArrayList<ArrayList> dat, int nLin)
+  int buscaIndiv(ArrayList<DatIndiv> dat, int nLin)
   {
     int nl = dat.size();
     for (int n = 0; n < nl; n++)
     {
-      ArrayList v = (ArrayList) dat.get(n);
-      if (igualInt(v.get(1).toString(), jtDes.getValString(nLin, 0)) && // Prod.
-          igualInt(v.get(2).toString(), jtDes.getValString(nLin, 3)) && // ejer
-          v.get(5).toString().equals(jtDes.getValString(nLin, 5)) && // Serie
-          igualInt(v.get(3).toString(), jtDes.getValString(nLin, 6)) && // Lote
-          igualInt(v.get(4).toString(), jtDes.getValString(nLin, 7)) && // Ind
-          igualDouble(v.get(6).toString(), jtDes.getValString(nLin, 8)) && // Cantidad
-          igualDouble(v.get(8).toString(), jtDes.getValString(nLin, 3)) && // N. Indiv
-          igualInt(v.get(7).toString(), "" + nLin)) // N� Linea
-      {
-        v.set(0, "E");
+      DatIndiv v =  dat.get(n);
+      if ( jtDes.getValorInt(nLin, JTDES_PROCODI)==v.getProducto()  && // Prod.
+         jtDes.getValorInt(nLin, JTDES_EJE) == v.getEjercLot() && // ejer
+          jtDes.getValString(nLin, JTDES_SERIE).equals(v.getSerie()) && // Serie
+          jtDes.getValorInt(nLin, JTDES_LOTE)==v.getLote() && // Lote
+          jtDes.getValorInt(nLin, JTDES_NUMIND)==v.getNumind() && // Ind
+           jtDes.getValorDec(nLin, JTDES_KILOS ) ==v.getCanti() && // Cantidad
+          jtDes.getValorInt(nLin, JTDES_UNID)==v.getNumuni() && // N. Indiv
+          jtDes.getValorInt(nLin,JTDES_NUMLIN) == v.getNumLinea()) // No Linea
+      { 
+        v.setAuxiliar("E"); // Lo marco como encontrado
         dat.set(n, v);
         return n;
       }
@@ -5095,7 +5099,7 @@ public class pdalbara extends ventanaPad  implements PAD
         ctUp.commit();
       }
       else
-      {
+      { // Nueva linea
         actGridDes();
         actAcumPed(pro_codiE.getValorInt());
       }
@@ -5268,7 +5272,7 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avc_serie", avc_seriE.getText());
     dtAdd.setDato("avc_nume", avc_numeE.getValorInt());
     dtAdd.setDato("avl_numlin", nLiAlb);
-    dtAdd.setDato("avp_numlin", nLin+1);
+    dtAdd.setDato("avp_numlin", nLin+1); 
     dtAdd.setDato("pro_codi", jtDes.getValorInt(nLin, 0));
     dtAdd.setDato("avp_tiplot", "L");
     dtAdd.setDato("avp_ejelot", jtDes.getValorInt(nLin, 3));
@@ -5279,10 +5283,11 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avp_numuni", jtDes.getValorInt(nLin, 4));
     dtAdd.setDato("avp_canti", jtDes.getValorDec(nLin, 8));
     dtAdd.update(stUp);
-    anuStkPart(jtDes.getValorInt(nLin, 0), jtDes.getValorInt(nLin, 3),
-               jtDes.getValorInt(nLin, 2), jtDes.getValString(nLin, 5),
-               jtDes.getValorInt(nLin, 6), jtDes.getValorInt(nLin, 7),
-               jtDes.getValorDec(nLin, 8) * 1, jtDes.getValorInt(nLin, 4));
+    anuStkPart(jtDes.getValorInt(nLin, JTDES_PROCODI), jtDes.getValorInt(nLin, JTDES_EJE),
+               jtDes.getValorInt(nLin, JTDES_EMP), jtDes.getValString(nLin, JTDES_SERIE),
+               jtDes.getValorInt(nLin, JTDES_LOTE), jtDes.getValorInt(nLin, JTDES_NUMIND),
+               jtDes.getValorDec(nLin, JTDES_KILOS) * 1, jtDes.getValorInt(nLin, JTDES_UNID));
+    jtDes.setValor(nLin+1,nLin,JTDES_NUMLIN);
   }
 
   private boolean anuStkPart(int proCodi, int ejeLot, int empLot, String serLot, int numLot,
