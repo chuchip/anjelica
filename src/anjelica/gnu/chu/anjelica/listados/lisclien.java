@@ -241,6 +241,7 @@ public class lisclien extends ventana
       ordenE.addItem("Nombre","cli_nomb");
       ordenE.addItem("Poblacion","cli_pobl,cli_nomb");
       ordenE.addItem("Cod.Postal","cli_codpo,cli_nomb");
+      ordenE.addItem("Est.Cred","cli_zoncre,cli_codi"); 
       cli_activE.addItem("Si","S");
       cli_activE.addItem("NO", "N");
       cli_activE.addItem("TODOS","%");
@@ -274,7 +275,8 @@ public class lisclien extends ventana
 
     String getStrSql()
     {
-      s = "SELECT * FROM clientes " +
+      s = "SELECT cl.*,dis_nomb as cli_zoncren FROM clientes as cl left join  v_discrim  as d " +
+          "  on dis_tipo='CC' ANd dis_codi=cli_zoncre" +
           " WHERE 1= 1 ";
       if (opEmail.isSelected())
           s+=" and ((cli_email1 is not null and cli_email1 != '' ) or (cli_email2 is not null and cli_email2!='')) ";
