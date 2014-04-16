@@ -582,7 +582,7 @@ public class pdalbara extends ventanaPad  implements PAD
         PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2014-04-15" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2014-04-16" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -5259,6 +5259,15 @@ public class pdalbara extends ventanaPad  implements PAD
    */
   void guardaLinDes(int nLin, int nLiAlb) throws Exception
   {
+    
+    s="SELECT max(avp_numlin) as avp_numlin FROM v_albvenpar "
+        + " WHERE emp_codi="+emp_codiE.getValorInt()+
+        " and avc_ano = "+avc_anoE.getValorInt()+
+        " and avc_serie ='"+avc_seriE.getText()+"'"+
+        " and avc_nume = "+avc_numeE.getValorInt()+
+        " and avl_numlin = "+nLiAlb;
+    dtAdd.select(s);
+    int avpNumlin=dtAdd.getInt("avp_numlin",true)+1;
     int avpNumpar=jtDes.getValorInt(nLin, 6);
     if (avpNumpar==0)
     {
@@ -5272,7 +5281,7 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avc_serie", avc_seriE.getText());
     dtAdd.setDato("avc_nume", avc_numeE.getValorInt());
     dtAdd.setDato("avl_numlin", nLiAlb);
-    dtAdd.setDato("avp_numlin", nLin+1); 
+    dtAdd.setDato("avp_numlin",avpNumlin); 
     dtAdd.setDato("pro_codi", jtDes.getValorInt(nLin, 0));
     dtAdd.setDato("avp_tiplot", "L");
     dtAdd.setDato("avp_ejelot", jtDes.getValorInt(nLin, 3));
@@ -5287,7 +5296,7 @@ public class pdalbara extends ventanaPad  implements PAD
                jtDes.getValorInt(nLin, JTDES_EMP), jtDes.getValString(nLin, JTDES_SERIE),
                jtDes.getValorInt(nLin, JTDES_LOTE), jtDes.getValorInt(nLin, JTDES_NUMIND),
                jtDes.getValorDec(nLin, JTDES_KILOS) * 1, jtDes.getValorInt(nLin, JTDES_UNID));
-    jtDes.setValor(nLin+1,nLin,JTDES_NUMLIN);
+    jtDes.setValor(avpNumlin,nLin,JTDES_NUMLIN);
   }
 
   private boolean anuStkPart(int proCodi, int ejeLot, int empLot, String serLot, int numLot,
