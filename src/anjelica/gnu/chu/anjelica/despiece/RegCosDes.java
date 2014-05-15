@@ -300,7 +300,7 @@ public class RegCosDes extends ventana {
            if (dtCon1.select(s)) 
             buscoDesp(false);
            s = "select  pro_codi,deo_numdes as deo_codi, min(deo_fecha) as deo_fecha,"
-                    + " sum(deo_kilos) as kilos,sum(deo_kilos*deo_prcost) as costo "
+                    + " sum(deo_kilos) as kilos,sum(deo_kilos*deo_prcost) as costo  "
                     + " from v_despori as orig WHERE 1=1  " + condWhereOrig
                     + " and deo_numdes > 0"
                     + " GROUP BY pro_codi,deo_numdes  "
@@ -377,7 +377,8 @@ public class RegCosDes extends ventana {
 //                    }
                     if ( mvtosAlm.getPrecioStock() == 0)
                     {
-                        addLineaComent(deoCodi,"ERR","Sin costo para  prod: "+dtCon1.getInt("pro_codi"));
+                        if (gnu.chu.anjelica.pad.MantArticulos.getTipoProd(dtCon1.getInt("pro_codi"), dtStat).equals("V"))
+                            addLineaComent(deoCodi,"ERR","Costo Cero para  prod: "+dtCon1.getInt("pro_codi"));
                         swSinCosto=true;
                     }
                     if ( mvtosAlm.getPrecioStock() < 0)
@@ -401,7 +402,8 @@ public class RegCosDes extends ventana {
                 }
                 else
                 {
-                    addLineaComent(deoCodi,"ERR","Sin costo para  prod: "+dtCon1.getInt("pro_codi"));
+                    if (gnu.chu.anjelica.pad.MantArticulos.getTipoProd(dtCon1.getInt("pro_codi"), dtStat).equals("V"))                        
+                        addLineaComent(deoCodi,"ERR","Sin costo para  prod: "+dtCon1.getInt("pro_codi"));
                     swSinCosto=true;
                     impTotCalc += dtCon1.getDouble("costo");
                 }
