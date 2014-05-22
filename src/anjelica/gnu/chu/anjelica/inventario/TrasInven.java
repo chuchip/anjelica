@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  *
  * <p>Titulo: TrasInven </p>
  * <p>Descripción: Traspasar Inventario. Inserta en tabla de regularizaciones  </p>
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -251,6 +251,7 @@ public class TrasInven extends ventanaPad implements PAD {
     void traspasar1()
     {
         try {
+            stkPart.setActStkAutomatico(true);
             mensaje("Insertando apuntes de regularización...");
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY - 1);
             

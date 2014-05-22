@@ -21,7 +21,7 @@ import java.util.Iterator;
  * <p>Descripción: Clase con rutinas para calcular mvtos valorados de almacen
  * @see gnu.chu.anjelica.almacen.conmvpr</p>
  * @see gnu.chu.anjelica.margenes.colizona
- * <p>Copyright: Copyright (c) 2005-2011
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -40,8 +40,9 @@ import java.util.Iterator;
  */
 public class MvtosAlma
 {
+  private boolean mvtoDesgl=true;
   private String tiposVert="";
-  private boolean swDesglInd=false;
+  private boolean swDesglInd;
   private double incCosto=0;
   private String accesoEmp;
   private Date dateFin;
@@ -214,14 +215,104 @@ public class MvtosAlma
        swIgnVert=ignVert;
   }
   /**
+   * Indica si se buscaran los movimientos desglosandolo. 
+   * Es decir buscando en albaranes de venta, compra, desp,  etc, o se buscara en la tabla mvtos.
+   * Por defecto se busca en albaranes de venta/compra y desp.
+   * @return true si se se busca Desglosado (Albaranes/Despieces)
+   */
+  public boolean getMvtoDesgl()
+  {
+      return mvtoDesgl;
+  }
+  /**
+   * Si se manda true la busqueda de mvtos se hara a traves de los albaranes y despieces
+   * Si se manda false la busqueda de mvtos. se hara leyendo la tabla d mvtos.
+   * @param mvtoDesgl  true o false
+   */
+  public void setMvtoDesgl(boolean mvtoDesgl)
+  {
+      this.mvtoDesgl=mvtoDesgl;
+  }
+  /**
    * Devuelve Sentencia SQL a ejecutar para buscar los movimientos.
    * @param fecIni Fecha Inico
    * @param fecFin Fecha Final
    * @param proCodi Producto. Si el producto es -1 pone un interrogante para utilizarlo
    *        como PreparedStatement
    * @return String con la sentencia sql
+   * @throws java.text.ParseException
    */
   public String getSqlMvt(String fecIni, String fecFin, int proCodi) throws ParseException
+  {
+    if (mvtoDesgl)
+        return getSqlMvtAnt(fecIni,fecFin,proCodi);    
+    return getSqlMvtNuevo(fecIni,fecFin,proCodi);
+  }
+  private String getSqlMvtNuevo(String fecIni, String fecFin, int proCodi) throws ParseException
+  {
+    numProd=1;
+    this.dateFin=Formatear.getDate(fecFin,"dd-MM-yyyy");          
+    String sql="";
+    if (! swSoloInv)
+    {   
+       sql+="SELECT 0 as orden,mvt_tipdoc as sel, mvt_tipo as tipmov,  "+
+            " mvt_fecdoc as fecmov,"+
+            "  mvt_serdoc as serie,pro_numlot as  lote,"+
+            " mvt_canti as canti,mvt_prec as precio,pro_indlot as numind,"+
+            " mvt_cliprv as cliCodi,mvt_numdoc  as numalb,pro_ejelot as ejenume, "+
+            " 1 as empcodi,'0' as pro_codori "+
+            ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
+            ", mvt_unid as unidades,0 as div_codi,alm_codi,mvt_serdoc as avc_serie "+
+             ", 'N' as avc_depos "+
+             " from mvtosalm where "+
+             "   mvt_canti <> 0 "+
+            (almCodi==0?"":" and alm_codi = "+almCodi)+
+            (proLote==0?"":" and pro_numlot  = "+proLote)+
+            (proNumind==0?"":" and pro_indlot = "+proNumind)+
+            " AND pro_codi = " + (proCodi==-1?"?":proCodi) +
+            " AND mvt_fecdoc >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
+            " and mvt_fecdoc <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";      
+   
+    }
+    if (! incInvFinal || swSoloInv)
+    { // No incluir inventario final.
+         numProd++;
+         if (! swSoloInv)
+             sql+=" UNION all "; // Regularizaciones Inc. Inventario
+         else
+         {
+            numProd=1;
+            sql="";
+         }
+         sql+=" select 1 as orden,'RE' as sel,'=' as tipmov,"
+             + "r.rgs_fecha as fecmov,"+
+           "  r.pro_serie as serie,r.pro_nupar as  lote,"+
+           " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "+
+           " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
+           " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
+           ", tir_tipo as repCodi,m.tir_nomb as zonCodi,0 as sbe_codi "+
+           ", rgs_canti as unidades, 0 as div_codi,alm_codi,'.' as avc_serie, "+
+           " 'N' as avc_depos "+
+           " FROM v_regstock r, v_motregu m WHERE "+
+           " m.tir_codi = r.tir_codi "+
+           " and tir_afestk = '='"+ // Solo Inventarios
+           " and rgs_kilos <> 0 "+
+            " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
+           (almCodi==0?"":" and alm_codi = "+almCodi)+
+           (proLote==0?"":" and r.pro_nupar  = "+proLote)+
+           (proNumind==0?"":" and r.pro_numind = "+proNumind)+
+           (empCodi==0?"":" and r.emp_codi = "+empCodi)+
+           (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
+            " AND r.pro_codi = " + (proCodi==-1?"?":proCodi)  +
+            (swSoloInv?" AND r.rgs_fecha::date = TO_DATE('" + fecIni + "','dd-MM-yyyy') ":
+            " AND r.rgs_fecha::date >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
+            " and r.rgs_fecha::date <"+(incInvFinal?"=":"")+
+            " TO_DATE('"+fecFin+"','dd-MM-yyyy') ");
+    }
+    sql+= " ORDER BY 4,1,3 desc"; // FECHA,orden y tipo
+    return sql;      
+  }
+  private String getSqlMvtAnt(String fecIni, String fecFin, int proCodi) throws ParseException
   {
     numProd=1;
     this.dateFin=Formatear.getDate(fecFin,"dd-MM-yyyy");
@@ -474,6 +565,7 @@ public class MvtosAlma
    * @param dtCon1  DatosTabla principal
    * @param dtStat  DatosTabla Auxilar (no se usa si jt == null)
    * @param jt Cgrid donde poner los datos de lineas.
+   * @return 
    * @throws java.sql.SQLException
    * @throws java.text.ParseException
    */
@@ -559,6 +651,11 @@ public class MvtosAlma
 
     /**
      * Debera haberse llamado primero a la funcion iniciarMvtos
+     * @param dtCon1
+     * @param dtStat
+     * @param zonCodi
+     * @param repCodi
+     * @return  true si encuentra mvtos. False en caso contrario
      * @see iniciarMvtos(String fecini,String fecfin, DatosTabla dt)
      * @param proCodi Producto
      * @throws SQLException
@@ -649,7 +746,7 @@ public class MvtosAlma
   public boolean calculaMvtos(ResultSet rs,DatosTabla dt,DatosTabla dtStat,Cgrid jt,String zonCodi,
        String repCodi,int proCodi) throws SQLException
   {
-    boolean ignDesp=false;
+    boolean ignDesp;
     boolean swErr=true;
     String tipMov;
     String cliNomb;
@@ -691,6 +788,14 @@ public class MvtosAlma
         unid=0;
         precio =preStk;
         tipMov=dt.getString("tipmov");
+        if (! mvtoDesgl)
+        {
+               
+            if  (tipMov.equals("E"))
+                tipMov="+";
+            if  (tipMov.equals("S"))
+                tipMov="-";            
+        }
         sel=dt.getString("sel").charAt(0);
         if (dt.getString("sel").equals("DE"))
           sel='d';
@@ -862,8 +967,11 @@ public class MvtosAlma
             {
               if (sel=='V')
               {
-                  if (almCodi!=0 && dt.getInt("alm_coddes")!=almCodi && dt.getInt("alm_codori")!=almCodi )
+                  if (! mvtoDesgl )
+                  {
+                    if (almCodi!=0 && dt.getInt("alm_coddes")!=almCodi && dt.getInt("alm_codori")!=almCodi )
                         continue; // No lo trato.
+                  }
                   if (dt.getString("avc_serie").equals("X"))
                   { // Traspaso entre almacenes
 //                    if (almCodi!=0 && dt.getInt("alm_coddes")!=almCodi && dt.getInt("alm_codori")!=almCodi )

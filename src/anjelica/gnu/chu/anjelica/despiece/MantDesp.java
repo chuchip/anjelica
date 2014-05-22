@@ -13,7 +13,7 @@ package gnu.chu.anjelica.despiece;
  *   checktidcodi y autollenardesp para ver si tiene que comprobar el
  *   tipo de despiece (por defecto SI) y si debe hacer autollenado de
  *   los productos para un tipo de despiece (por defecto, NO)
- *   Comprueba variable despPend para ve si puede salir de un despiece faltando kilos
+ *   Comprueba variabenos le despPend para ve si puede salir de un despiece faltando kilos
  *   por defecto NO.
  * </p>
  * <P>
@@ -226,7 +226,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (ADMIN)
             MODPRECIO=true; 
-        setVersion("2014-02-20" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2014-04-07" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -860,8 +860,17 @@ public class MantDesp extends ventanaPad implements PAD
         jtCab.afterCambiaLinea();
     }
 
-    void resetCambioLineaCab() {
-        
+    void resetCambioLineaCab() 
+    {
+        boolean swEditable=true;
+        if (jtCab.getSelectedRow()==0 && existLineasSalida())
+             swEditable=false;
+        pro_numindE.setEditable(swEditable);
+        pro_loteE.setEditable(swEditable);
+        pro_codiE.setEditable(swEditable);
+        deo_ejelotE.setEditable(swEditable);
+        deo_serlotE.setEditable(swEditable);
+
         pro_numindE.resetCambio();
         pro_loteE.resetCambio();
         pro_codiE.resetCambio();
@@ -1160,7 +1169,7 @@ public class MantDesp extends ventanaPad implements PAD
                 return;
             if (!checkCab())
                 return;
-            
+            resetCambioLineaCab();
 
             if (!AGRUPALOTE)
             {
@@ -1211,6 +1220,15 @@ public class MantDesp extends ventanaPad implements PAD
                     jtCab.requestFocusInicioLater();
                 }
                 return;
+            }
+            if (desorca!=null)
+            {
+                if (tid_codiE.getValorInt()!=desorca.getTidCodi())
+                { // Actualizo el Tipo de despiece.
+                    desorca.setTidCodi(tid_codiE.getValorInt());
+                    desorca.updateTidCodi(dtAdd);
+                    dtAdd.commit();
+                }
             }
             activar(false, 1);
             Pcabe.setEnabled(false);
@@ -1567,6 +1585,8 @@ public class MantDesp extends ventanaPad implements PAD
             Baceptar.setEnabled(true);
             deo_desnueE.setPulsado(false);
             eje_numeE.setEnabled(false);
+            deo_almoriE.setEnabled(false);
+            deo_almdesE.setEnabled(false);
             if (uniFinE.getValorInt() > 0 )
             {
                 if ( tid_codiE.getValorInt()!=0)
@@ -2005,7 +2025,19 @@ public class MantDesp extends ventanaPad implements PAD
         nav.pulsado = navegador.NINGUNO;
         PADAddNew(); // Vuelta a Introducir.
     }
-
+    /**
+     * Comprueba si existen lineas de salida en el despiece
+     * @return true hay lineas de salida.
+     */
+    boolean existLineasSalida()
+    {        
+         for (int n = 0; n < jtLin.getRowCount(); n++)
+         {
+              if (jtLin.getValorInt(n, JTLIN_ORDEN) > 0 )
+                  return true;
+         }
+         return false;
+    }
     /**
      * Borra Linea de Cabecera
      * @param numLin int Numero de Linea de la tabla desorilin
@@ -2018,9 +2050,8 @@ public class MantDesp extends ventanaPad implements PAD
             + " and del_numlin = " + numLin;
         s = "select * FROM " + condS;
         if (!dtAdd.select(s, true))
-        {
             return false;
-        }
+
         if (proCodiB != 0 && numLinB == numLin)
         {
             anuStkPart(dtAdd.getInt("pro_codi"),
@@ -2060,6 +2091,13 @@ public class MantDesp extends ventanaPad implements PAD
                 jtLin.setValor("" + proCodAnt, JTLIN_PROCODI); // Restauro el valor Antiguo
                 jtLin.setValor("" + defKilAnt, JTLIN_KILOS);
                 nav.pulsado = navegador.NINGUNO;
+                for (int n = 0; n < jtLin.getRowCount(); n++)
+                {
+                    if (jtLin.getValorInt(n, JTLIN_ORDEN) > 0)
+                    {
+                        borraLinDesp(jtLin.getValorInt(n, JTLIN_ORDEN));
+                    }
+                }
                 for (int n = 0; n < jtCab.getRowCount(); n++)
                 {
                     if (jtCab.getValorInt(n, JTCAB_NL) > 0)
@@ -2068,13 +2106,7 @@ public class MantDesp extends ventanaPad implements PAD
                     }
                 }
 
-                for (int n = 0; n < jtLin.getRowCount(); n++)
-                {
-                    if (jtLin.getValorInt(n, JTLIN_ORDEN) > 0)
-                    {
-                        borraLinDesp(jtLin.getValorInt(n, JTLIN_ORDEN));
-                    }
-                }
+                
 
                 resetBloqueo(dtAdd, TABLA_BLOCK, eje_numeE.getValorInt()
                     + "|" + deo_codiE.getValorInt());
@@ -2304,6 +2336,7 @@ public class MantDesp extends ventanaPad implements PAD
 //        deo_blockE.setEnabled(enab);
             case navegador.EDIT:
                 deo_almoriE.setEnabled(enab);
+                deo_almdesE.setEnabled(enab);
                 ImprEtiqMI.setEnabled(!enab);
                 cli_codiE.setEnabled(enab);
                 cli_codiE.cli_nombL.setEnabled(enab);
@@ -3408,7 +3441,7 @@ public class MantDesp extends ventanaPad implements PAD
         if (deo_codiE.getValorInt()==0)
         { // No encontrado Numero de despiece.
             enviaMailError("Numero despiece sin asignar al intentar actualizarlo"+
-                    "Nlineas Cabecera: "+jtCab.getRowCount()+
+                    "N. lineas Cabecera: "+jtCab.getRowCount()+
                     "Producto: "+jtCab.getValorInt(0,JTCAB_PROCODI)+
                     "-"+jtCab.getValorInt(0,JTCAB_EJELOT)+
                     jtCab.getValString(0,JTCAB_SERLOT)+
@@ -3941,9 +3974,15 @@ public class MantDesp extends ventanaPad implements PAD
                     {
                         if (jtCab.getValorInt(row, JTCAB_NL) == 0)
                         return true;
+                        if (row==0 && existLineasSalida())
+                        {
+                            msgBox("Hay productos de salida. Imposible borrar producto Origen");
+                            return false;
+                        }
                         if (!borraLinCab(jtCab.getValorInt(row, JTCAB_NL)))
-                        throw new SQLException("Linea con Numero de Despiece No ENCONTRADA: "+jtCab.getValorInt(row, JTCAB_NL) );
-
+                        {
+                            throw new SQLException("Linea con Numero de Despiece No ENCONTRADA: "+jtCab.getValorInt(row, JTCAB_NL) );
+                        }
                         dtAdd.commit();
                         mensajeErr("Linea borrada... ");
                     }
@@ -4045,15 +4084,17 @@ public class MantDesp extends ventanaPad implements PAD
 
                 def_feccadE.setToolTipText("");
 
+                def_numindE.setText("0");
                 def_numindE.setEnabled(false);
 
-                def_ordenE.setText("1");
+                def_ordenE.setText("0");
                 def_ordenE.setEnabled(false);
 
                 def_unicajE.setText("1");
 
                 def_prcostE.setEnabled(false);
 
+                del_numlinE.setText("0");
                 del_numlinE.setEnabled(false);
 
                 deo_preusuE.setEnabled(false);
@@ -4337,6 +4378,7 @@ public class MantDesp extends ventanaPad implements PAD
                     ArrayList v1= new ArrayList();
 
                     def_unicajE.setText("1");
+                    def_ordenE.setText("0");
                     v1.add(pro_codlE.getTextField()); // 0
                     v1.add(pro_nombE); // 1
                     v1.add(def_kilosE); // 2

@@ -877,14 +877,14 @@ public class utildesp
    else
      dtAdd.edit(dtAdd.getCondWhere());
 
-   java.util.Date fecha=null;
+   java.util.Date fecha;
    try
    {
      fecha=Formatear.getDate(feccad,"dd-MM-yyyy");
      int ano=Integer.parseInt(Formatear.getFecha(fecha,"yyyy").trim());
      if (ano<2000)
        throw new Exception("Año: "+ano+" NO VALIDO");
-   } catch (Throwable k1)
+   } catch (Exception k1)
    {
      loger.warn("Usuario: "+EU.usu_nomb+"\nError en fecha despices\nDespiece: "+
                                           " and deo_codi = " + numDesp +

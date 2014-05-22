@@ -317,7 +317,7 @@ public class clstkdes extends ventana
     {
       public void propertyChange(PropertyChangeEvent e)
       {
-        System.out.println("this " + e.getPropertyName() + " pr.iD" + e.getNewValue());
+//        System.out.println("this " + e.getPropertyName() + " pr.iD" + e.getNewValue());
         if (e.getPropertyName().equals("selected"))
         {
           if (! ( (Boolean) e.getNewValue()).booleanValue())
@@ -337,11 +337,7 @@ public class clstkdes extends ventana
         }
       }
     });
-    ifPru.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
-             System.out.println("ifpru "+e.getPropertyName()+" pr.iD"+e.getNewValue());
-            }
-          });
+  
 
 
   }

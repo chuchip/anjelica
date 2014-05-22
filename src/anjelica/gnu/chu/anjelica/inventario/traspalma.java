@@ -750,7 +750,7 @@ public class traspalma  extends ventana
         dtCon1.update(stUp);
 
         // Cambiamos el almacen para el inviduo.
-        s = "UPDATE V_STKPART SET alm_codi = " +alm_codifE.getValorInt()+
+        s = "UPDATE stockpart SET alm_codi = " +alm_codifE.getValorInt()+
             "  WHERE  EJE_NUME= " + jt.getValorInt(n, JT_EJERC) +
             " AND EMP_CODI= " + emp_codiE.getValorInt() +
             " AND PRO_SERIE='" + jt.getValString(n, JT_SERIE) + "'" +

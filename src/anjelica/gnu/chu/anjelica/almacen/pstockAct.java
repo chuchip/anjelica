@@ -483,7 +483,7 @@ public class pstockAct extends CPanel
    */
   void getAcumPedid(int proCodi,String fecped,int almCodi) throws Exception
   {
-    // Sumo pedidos de compra que no esten cerrados
+    // Sumo pedidos de compra que no esten cerrados.
     s = "SELECT sum(pcl_nucape) as pcl_nucape, sum(pcl_cantpe) as pcl_cantpe, " +
         " sum(pcl_nucaco) as pcl_nucaco, sum(pcl_cantco) as pcl_cantco, " +
         " sum(pcl_nucafa) as pcl_nucafa, sum(pcl_cantfa) as pcl_cantfa, " +
@@ -494,9 +494,10 @@ public class pstockAct extends CPanel
         " and c.pcc_nume =l.pcc_nume " +
         " and c.EMP_CODI = " + emp_codi +
         " and l.pro_codi = "+proCodi+
+        " and pcc_estrec != 'C' "+ // ignorar los pedidos cancelado.
         " and c.acc_cerra = 0 "+ // Pedidos NO Cerrados
         (almCodi == 0?"":" and c.alm_codi = "+almCodi)+
-        " and c.pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +
+        " and c.pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +       
         " group by c.pcc_estad,c.prv_codi,pcl_feccad";
       char estad;
       if (dtStat.select(s))
@@ -680,6 +681,7 @@ public class pstockAct extends CPanel
          " and C.EMP_CODI = " + emp_codi +
          " and l.pro_codi = " + proCodi +
          (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
+         " and c.pcc_estrec != 'C' "+ // Ignorar pedidos cancelados
          " and c.pcc_estad = 'C' " +
          " AND C.ACC_CERRA = 0 "+ // Pendientes
          " and c.pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +
@@ -695,6 +697,7 @@ public class pstockAct extends CPanel
          " and C.EMP_CODI = " + emp_codi +
          " and l.pro_codi = " + proCodi +
          (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
+          " and c.pcc_estrec != 'C' "+ // Ignorar pedidos cancelados
          " and c.pcc_estad = 'F' " +
          " AND C.ACC_CERRA = 0 "+ // Pendientes
          " and c.pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +

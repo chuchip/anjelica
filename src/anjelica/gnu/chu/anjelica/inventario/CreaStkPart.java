@@ -207,7 +207,7 @@ public class CreaStkPart extends ventana
      }
      this.setEnabled(false);
      int res=mensajes.YES;
-     s = "select stp_kilact,stp_unact from v_stkpart WHERE emp_codi = " + deo_emplotE.getValorInt() +
+     s = "select stp_kilact,stp_unact from stockpart WHERE emp_codi = " + deo_emplotE.getValorInt() +
          " and alm_codi = " + alm_codiE.getValorInt() +
          " and eje_nume = " + deo_ejelotE.getValorInt() +
          " and pro_Serie = '" + deo_serlotE.getText() + "'" +
@@ -225,7 +225,7 @@ public class CreaStkPart extends ventana
      }
      if (dtCon1.getNOREG())
      {
-       dtCon1.addNew("v_stkpart");
+       dtCon1.addNew("stockpart");
        edAdd="ADDNEW";
        dtCon1.setDato("eje_nume",deo_ejelotE.getValorInt());
        dtCon1.setDato("emp_codi",deo_emplotE.getValorInt());

@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Titulo: lisaldos </p>
  * <p>Descripción: Listado de Saldos </p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -152,7 +152,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(592, 516));
-    this.setVersion("2012-03-15");
+    this.setVersion("2014-05-06");
     ifMvtos.setSize(new Dimension(475, 325));
     
     ifMvtos.setVisible(false);
@@ -478,10 +478,10 @@ public class lisaldos   extends ventana  implements JRDataSource
          jtMv.addLinea(v);
        }
        else
-         tipMov = "+";
+         tipMov = "E";
      }
 
-     if (tipMov.equals("+"))
+     if (tipMov.equals("E"))
      { // Entrada.
        v.add(dtCon1.getString("sel"));
        v.add(dtCon1.getString("canti"));
@@ -491,9 +491,9 @@ public class lisaldos   extends ventana  implements JRDataSource
      }
 
 
-     if (tipMov.equals("-"))
+     if (tipMov.equals("S"))
      {
-       v.add("-");
+       v.add(dtCon1.getString("sel"));
        v.add(dtCon1.getString("canti"));
        v.add(dtCon1.getString("unid"));
        v.add(dtCon1.getString("precio"));
@@ -546,6 +546,7 @@ public class lisaldos   extends ventana  implements JRDataSource
 //    activar(false);
     try
     {
+      mvtosAlm.setMvtoDesgl(false);
       mvtosAlm.setIncUltFechaInv(fecsalE.getText().equals(feulinE.getText()));
       mvtosAlm.setValorarDesp(valDesp);
       mvtosAlm.setAlmacen(alm_inicE.getValorInt());
@@ -768,63 +769,74 @@ public class lisaldos   extends ventana  implements JRDataSource
 
   String getStrSql(int proCodi, String fecini, String fecfin) throws SQLException
   {
-    // Compras
+    
     if (ps==null)
     {
-      s = "SELECT 'CO' as sel,'+' as tipmov,c.acc_fecrec as fecmov," +
-          " l.acl_canti as canti,l.acl_prcom as precio,acl_numcaj as unid,0 AS PRO_CODORI " +
-          " FROM v_albacoc c,v_albacol l" +
-          " where c.emp_codi = l.emp_codi " +
-          " AND c.acc_serie = l.acc_serie " +
-          " AND c.acc_nume = l.acc_nume " +
-          " and c.acc_ano = l.acc_ano " +
-          " and l.acl_canti <> 0 " +
-          " AND l.pro_codi = ?" +
-          (alm_inicE.getValorInt() == 0 ? "" : " and l.alm_codi = " + alm_inicE.getValorInt()) +
-          " AND c.acc_fecrec >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
-          " and c.acc_fecrec <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
-      s += " UNION all"+  // Albaranes de Venta
-           " select 'VE' as sel,'-' as tipmov,c.avc_fecalb as fecmov," +
-          " l.avl_canti as canti,0 as precio,avl_unid as unid,0 AS PRO_CODORI  " +
-          "  from v_albavel l, v_albavec c" +
-          " where c.emp_codi = l.emp_codi " +
-          " AND c.avc_serie = l.avc_serie " +
-          " AND c.avc_nume = l.avc_nume " +
-          " and c.avc_ano = l.avc_ano " +
-          " and l.avl_canti <> 0 " +
-          (alm_inicE.getValorInt() == 0 ? "" : " and c.alm_codori = " + alm_inicE.getValorInt()) +
-          " AND C.AVC_SERIE != 'X' " + // Quito los albaranes de trasp. ALMACEN.
-          " AND l.pro_codi = ? " +
-          " AND c.avc_fecalb >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
-          " and c.avc_fecalb <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
-      s += " UNION all " + // Despieces (Salidas de Almacen)
-          " select 'DS' as sel,'" +
-          (opValDesp.isSelected() ? "+":"-")+"'  as tipmov ,"+
-          "deo_fecha as fecmov," +
-          " deo_kilos as canti,deo_prcost as precio,1 as unid,0 AS PRO_CODORI  " +
-          " from  v_despori where " +
-          " deo_kilos <> 0 " +
-          (alm_inicE.getValorInt() == 0 ? "" : " and deo_almori = " + alm_inicE.getValorInt()) +
-          " AND pro_codi = ? " +
-          " AND deo_fecha >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
-          " and deo_fecha <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
-      s += " UNION all " + // Despieces (Entradas en Almacen)
-          " select 'DE' as sel, '+' as tipmov,c.deo_fecha as fecmov," +
-          " l.def_kilos as canti,l.def_prcost as precio,def_numpie as unid,C.PRO_CODI AS PRO_CODORI  " +
-          " from  v_despori c,v_despfin l where " +
-          " C.EMP_codi = l.emp_codi " +
-          " and c.eje_nume = l.eje_nume " +
-          " and c.deo_codi = l.deo_codi " +
-          " and l.def_kilos <> 0 " +
-          (alm_inicE.getValorInt() == 0 ? "" : " and alm_codi = " + alm_inicE.getValorInt()) +
-          " AND l.pro_codi = ? " +
-          " AND c.deo_fecha >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
-          " and c.deo_fecha <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
+       s="SELECT  mvt_tipdoc as sel, mvt_tipo as tipmov,  "+
+            " mvt_fecdoc as fecmov,"+        
+            " mvt_canti as canti,mvt_prec as precio "+
+            ", mvt_unid as unid " +
+            " from mvtosalm where "+
+            "   mvt_canti <> 0 "+
+             " AND pro_codi = ?" +
+              (alm_inicE.getValorInt() == 0 ? "" : " and alm_codi = " + alm_inicE.getValorInt()) +
+             " AND mvt_fecdoc >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
+          "   and  mvt_fecdoc <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
+//      s = "SELECT 'CO' as sel,'+' as tipmov,c.acc_fecrec as fecmov," +
+//          " l.acl_canti as canti,l.acl_prcom as precio,acl_numcaj as unid,0 AS PRO_CODORI " +
+//          " FROM v_albacoc c,v_albacol l" +
+//          " where c.emp_codi = l.emp_codi " +
+//          " AND c.acc_serie = l.acc_serie " +
+//          " AND c.acc_nume = l.acc_nume " +
+//          " and c.acc_ano = l.acc_ano " +
+//          " and l.acl_canti <> 0 " +
+//          " AND l.pro_codi = ?" +
+//          (alm_inicE.getValorInt() == 0 ? "" : " and l.alm_codi = " + alm_inicE.getValorInt()) +
+//          " AND c.acc_fecrec >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
+//          " and c.acc_fecrec <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
+//      s += " UNION all"+  // Albaranes de Venta
+//           " select 'VE' as sel,'-' as tipmov,c.avc_fecalb as fecmov," +
+//          " l.avl_canti as canti,0 as precio,avl_unid as unid,0 AS PRO_CODORI  " +
+//          "  from v_albavel l, v_albavec c" +
+//          " where c.emp_codi = l.emp_codi " +
+//          " AND c.avc_serie = l.avc_serie " +
+//          " AND c.avc_nume = l.avc_nume " +
+//          " and c.avc_ano = l.avc_ano " +
+//          " and l.avl_canti <> 0 " +
+//          (alm_inicE.getValorInt() == 0 ? "" : " and c.alm_codori = " + alm_inicE.getValorInt()) +
+//          " AND C.AVC_SERIE != 'X' " + // Quito los albaranes de trasp. ALMACEN.
+//          " AND l.pro_codi = ? " +
+//          " AND c.avc_fecalb >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
+//          " and c.avc_fecalb <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
+//      s += " UNION all " + // Despieces (Salidas de Almacen)
+//          " select 'DS' as sel,'" +
+//          (opValDesp.isSelected() ? "+":"-")+"'  as tipmov ,"+
+//          "deo_fecha as fecmov," +
+//          " deo_kilos as canti,deo_prcost as precio,1 as unid,0 AS PRO_CODORI  " +
+//          " from  v_despori where " +
+//          " deo_kilos <> 0 " +
+//          (alm_inicE.getValorInt() == 0 ? "" : " and deo_almori = " + alm_inicE.getValorInt()) +
+//          " AND pro_codi = ? " +
+//          " AND deo_fecha >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
+//          " and deo_fecha <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
+//      s += " UNION all " + // Despieces (Entradas en Almacen)
+//          " select 'DE' as sel, '+' as tipmov,c.deo_fecha as fecmov," +
+//          " l.def_kilos as canti,l.def_prcost as precio,def_numpie as unid,C.PRO_CODI AS PRO_CODORI  " +
+//          " from  v_despori c,v_despfin l where " +
+//          " C.EMP_codi = l.emp_codi " +
+//          " and c.eje_nume = l.eje_nume " +
+//          " and c.deo_codi = l.deo_codi " +
+//          " and l.def_kilos <> 0 " +
+//          (alm_inicE.getValorInt() == 0 ? "" : " and alm_codi = " + alm_inicE.getValorInt()) +
+//          " AND l.pro_codi = ? " +
+//          " AND c.deo_fecha >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
+//          " and c.deo_fecha <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
       s += " UNION all " + // Regularizaciones.
           " select 'RE' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov," +
-          " r.rgs_kilos as canti,r.rgs_prregu as precio,1 as unid,0 AS PRO_CODORI  " +
+          " r.rgs_kilos as canti,r.rgs_prregu as precio,1 as unid  " +
           " FROM v_regstock r, v_motregu m WHERE " +
           " m.tir_codi = r.tir_codi " +
+          " and tir_afestk = '='"+
           " and rgs_kilos <> 0" +
           " and rgs_trasp != 0 "+
           (alm_inicE.getValorInt() == 0 ? "" : " and alm_codi = " + alm_inicE.getValorInt()) +
@@ -835,10 +847,7 @@ public class lisaldos   extends ventana  implements JRDataSource
       ps=dtCon1.getConexion().prepareStatement(dtCon1.getStrSelect(s));
     }
     ps.setInt(1,proCodi);
-    ps.setInt(2,proCodi);
-    ps.setInt(3,proCodi);
-    ps.setInt(4,proCodi);
-    ps.setInt(5,proCodi);
+    ps.setInt(2,proCodi);   
     return s;
   }
 

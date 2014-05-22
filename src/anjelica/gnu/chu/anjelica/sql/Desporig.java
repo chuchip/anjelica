@@ -299,7 +299,22 @@ public class Desporig  implements java.io.Serializable {
      
       dtAdd.update();
     }
-    
+    /**
+     * Actualizo solo el tipo de despiece (tid_codi) sobre el despiece actual.
+     * @param dtAdd DatosTabla sobre el que realizar la actualizcion
+     * @throws SQLException 
+     */
+    public void updateTidCodi(DatosTabla dtAdd) throws SQLException
+    {
+      if (id==null)
+          return; // No hay indice. No hago Nada.
+      if (!select(dtAdd,true))
+          throw new SQLException("No encontrado cabecera despiece: "+id.getEjeNume()+"-"+id.getDeoCodi());
+      dtAdd.edit();
+      dtAdd.setDato("tid_codi", getTidCodi());
+      
+      dtAdd.update();
+    }
     void setDesorca(DatosTabla dtAdd) throws SQLException
     {
       dtAdd.setDato("deo_fecha", getDeoFecha());

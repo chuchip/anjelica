@@ -17,7 +17,7 @@ import gnu.chu.interfaces.ejecutable;
  * <p>Titulo: costkpar</p>
  * <p>Descripción: Consulta tabla de Stock Partidas </p>
  *
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -302,7 +302,8 @@ public class costkpar extends ventana
   }
   void editStkPart()
   {
-          
+    if (jf==null)
+        return; // Para cuando se esta en modo debug
     ejecutable prog;
     if ((prog=jf.gestor.getProceso(CreaStkPart.getNombreClase()))==null)
       return;

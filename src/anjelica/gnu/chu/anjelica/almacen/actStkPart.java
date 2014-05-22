@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
  * <p>Descripción: Clase encargada de actualizar el stock actual de TODOS los productos.
 *  A traves de sus funciones se sumaran y restaran kilos a los tabla stkpart y articulos (acumulados)
 *  </p>
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class actStkPart
 {
+  private boolean actStkAutomatico=true; 
   boolean checkUnid=true; // Indica si debe comprobar que no haya mas de una unidad en stock Partidas
   MvtosAlma mvtos=null;
   private HashMap<Integer,Double>  difProd=new HashMap() ;
@@ -172,8 +173,17 @@ public class actStkPart
                  unidades, fecMvto, creaReg, prvCodi, fecCaduc, excep,false);
 
   }
-
+  
+  public void setActStkAutomatico(boolean actStkAutomatico )
+  {
+      this.actStkAutomatico=actStkAutomatico;
+  }
+   public boolean getActStkAutomatico( )
+  {
+      return this.actStkAutomatico;
+  }
   /**
+   *  @deprecated 
    * Funcion encargada de sumar kilos y unidades al stock.
    * Actualiza las siguientes tablas:<br>
    * v_stkpart Para los kilos y unidades de ese individuo.<br>
@@ -206,6 +216,18 @@ public class actStkPart
                        int prvCodi, java.util.Date fecCaduc, boolean excep,boolean actual) throws
       java.sql.SQLException
   {
+    if (actStkAutomatico)
+        return true;
+    return suma_regen(ejeNume,serie,lote,numind,proCodi,almCodi,kilos, unidades,fecMvto,creaReg,prvCodi,fecCaduc,excep,actual);
+   }
+  private boolean suma_regen(int ejeNume, String serie, int lote, int numind,
+                       int proCodi,
+                       int almCodi, double kilos, int unidades, String fecMvto,
+                       int creaReg,
+                       int prvCodi, java.util.Date fecCaduc, boolean excep,boolean actual) throws
+      java.sql.SQLException
+  {
+      
     int res;
     String s1;
     if (fecMvto != null)
@@ -214,7 +236,7 @@ public class actStkPart
         fecMvto = null;
     }
     String stp_fefici=fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") : fecMvto;
-    String s = "UPDATE  v_stkpart set stp_kilact = "+(actual?"(":"stp_kilact + (")+kilos+")"+
+    String s = "UPDATE  stockpart set stp_kilact = "+(actual?"(":"stp_kilact + (")+kilos+")"+
         " ,stp_unact= "+(actual?"(":" stp_unact+ (")+unidades+")"+
         " ,stp_fefici = to_date('"+stp_fefici+"','dd-MM-yyyy')"  +
         " WHERE emp_codi = " + empCodi +
@@ -257,7 +279,7 @@ public class actStkPart
         }
         kilStk = kilos;
         unidStk = unidades;
-        dtAdd.addNew("v_stkpart");
+        dtAdd.addNew("stockpart");
         dtAdd.setDato("eje_nume", ejeNume);
         dtAdd.setDato("emp_codi", empCodi);
         dtAdd.setDato("pro_serie", serie);
@@ -319,7 +341,16 @@ public class actStkPart
       return true;
     return actAcum(proCodi, almCodi, kilos, unidades, fecMvto,false);
   }
-  //
+  /**
+   * Actualizar acumulados (Productos y registro general en stockPartidas)
+   * @param proCodi
+   * @param almCodi
+   * @param kilos
+   * @param unidades
+   * @param fecMvto
+   * @return
+   * @throws java.sql.SQLException 
+   */
   public boolean actAcum(int proCodi, int almCodi, double kilos, int unidades,
                          String fecMvto) throws java.sql.SQLException
   {
@@ -330,6 +361,7 @@ public class actStkPart
    * Actualizo Stock sobre el producto y almacen para la empresa dada.
    * Actualiza la tabla v_stkpart con los datos mandados y los acumulados
    * de la tabla productos
+   * @deprecated 
    * @param proCodi int
    * @param almCodi int
    * @param kilos double Kilos a sumar
@@ -343,10 +375,12 @@ public class actStkPart
   public boolean actAcum(int proCodi, int almCodi, double kilos, int unidades,
                          String fecMvto,boolean actual) throws java.sql.SQLException
   {
+    if (actStkAutomatico)
+        return true;
     int res;
 
     String fefici=fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") : fecMvto;
-    String s="UPDATE v_stkpart SET stp_kilact = "+(actual?"(":"stp_kilact + (")+kilos+")"+
+    String s="UPDATE stockpart SET stp_kilact = "+(actual?"(":"stp_kilact + (")+kilos+")"+
         " ,stp_unact= "+(actual?"(":"stp_unact + (")+unidades +")"+
         " ,stp_fefici = to_date('"+fefici+"','dd-MM-yyyy')"+
             " WHERE emp_codi = " + empCodi +
@@ -360,7 +394,7 @@ public class actStkPart
     { // No lo ha modificado. Creo el registro
       kilAlmac = kilos;
       unidAlmac = unidades;
-      dtAdd.addNew("v_stkpart");
+      dtAdd.addNew("stockpart");
       dtAdd.setDato("eje_nume", 0);
       dtAdd.setDato("emp_codi", empCodi);
       dtAdd.setDato("pro_serie", "S");
@@ -403,8 +437,7 @@ public class actStkPart
 
   public boolean restar(int ejeNume, String serie, int lote,
                         int numind, int proCodi,
-                        int almCodi, double kilos, int unidades, String fecMvto) throws
-      SQLException
+                        int almCodi, double kilos, int unidades, String fecMvto) throws   SQLException
   {
 
     return sumar(ejeNume, serie, lote, numind, proCodi, almCodi, kilos * -1,
@@ -413,8 +446,7 @@ public class actStkPart
 
   public boolean restar(int ejeNume, String serie, int lote,
                         int numind, int proCodi,
-                        int almCodi, double kilos, int unidades) throws
-      SQLException
+                        int almCodi, double kilos, int unidades) throws  SQLException
   {
     return restar(ejeNume, serie, lote, numind, proCodi, almCodi, kilos,
                   unidades, null);
@@ -524,7 +556,7 @@ public class actStkPart
                         int numLot,
                         int nInd, int almCodi, boolean bloquea) throws SQLException
   {
-     String s="UPDATE v_stkpart set stk_block ="+(bloquea?-1:0)+
+     String s="UPDATE stockpart set stk_block ="+(bloquea?-1:0)+
         " WHERE eje_nume = " + ejeLot +
         " AND emp_codi =  " + empLot +
         " and pro_serie = '" + serLot + "'" +
@@ -561,7 +593,7 @@ public class actStkPart
    * Anular el Stock creado. Esta rutina difiere de sumar en que el caso
    * de que el registro quede con kilos = 0 y unidades = 0 en vez de actualizar la
    * tabla 'v_stkpart'  BORRA el registro (tambien actualizando acumulados)
-   *
+   * @deprecated
    * @param proCodi int
    * @param ejeLot int
    * @param empLot int
@@ -581,6 +613,7 @@ public class actStkPart
                         int numLot,
                         int nInd, int almCodi, double kilos, int unid) throws SQLException
   {
+    if (actStkAutomatico) return 2;
     String s = "SELECT * FROM v_stkpart WHERE eje_nume = " + ejeLot +
         " AND emp_codi =  " + empLot +
         " and pro_serie = '" + serLot + "'" +
@@ -1188,13 +1221,10 @@ public class actStkPart
      if (ht==null)
          return false;
      
-//     int proCodi = 0;
      int n;
-//     double canti;
-//     int numuni;
      // Pongo acumulados de stock-partidas a 0 para el almacen recibido
      // como parametro.
-     String s = "UPDATE v_stkpart set stp_unact = 0,stp_kilact= 0 " +
+     String s = "UPDATE stockpart set stp_unact = 0,stp_kilact= 0 " +
          " where (stp_unact != 0 or stp_kilact != 0) " +
          (almCodi==0?"":" and alm_codi = " + almCodi) ;
 
@@ -1259,7 +1289,7 @@ public class actStkPart
        key = it.next().toString();
        valor = (ht.get(key)).toString();
        datInd =new DatIndiv(key,valor);
-       sumar(datInd.ejeNume,datInd.serie,datInd.lote,datInd.numind,
+       suma_regen(datInd.ejeNume,datInd.serie,datInd.lote,datInd.numind,
                datInd.proCodi,datInd.almCodi,datInd.canti,datInd.numuni,fecinv,
              CREAR_SI,0,Formatear.getDate(fecinv,"dd-MM-yyyy"),false,true);
        n++;
@@ -1387,16 +1417,16 @@ public class actStkPart
        kilos+=dt.getDouble("stp_kilact");
        unidades+=dt.getInt("stp_unact");
      } while (dt.next());
-       s = "UPDATE v_articulo set "
+     s = "UPDATE v_articulo set "
            + " pro_stock = " + kilos
            + ", pro_stkuni = " + unidades
            + " WHERE pro_codi = " + proCodT;
-       res = dtAdd.executeUpdate(s);
-       if (res == 0)
-       {
+     res = dtAdd.executeUpdate(s);
+     if (res == 0)
+     {
            logger.error("Articulo: " + proCodT + " en Empresa: "
                + empCodi + " NO Encontrado en tabla Maestros de Articulos");
-       }
+     }
      return true;
    }
    public void setAceptaNeg(boolean acepNegativo)

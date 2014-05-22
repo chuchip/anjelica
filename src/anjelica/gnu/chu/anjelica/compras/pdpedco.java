@@ -936,7 +936,7 @@ public class pdpedco extends ventanaPad   implements PAD
     {
       pcc_estadE.setValor(""+tipo);
       mensajeErr("Tipo Pedido en estado: "+pcc_estadE.getText());
-      if (nav.pulsado!=nav.ADDNEW)
+      if (nav.pulsado!=navegador.ADDNEW)
         return false;
     }
     return true;

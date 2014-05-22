@@ -24,8 +24,104 @@ public class DatIndiv
     public double canti;
     public int numuni,proCodi,empCodi,ejeNume,lote,numind,almCodi;
     public String serie;
+    private String auxiliar;
     int posFin;
+    private int numLinea;
 
+    public int getNumLinea() {
+        return numLinea;
+    }
+
+    public void setNumLinea(int numLinea) {
+        this.numLinea = numLinea;
+    }
+    
+    public int getNumuni() {
+        return numuni;
+    }
+
+    public void setNumuni(int numuni) {
+        this.numuni = numuni;
+    }
+
+    public int getProducto() {
+        return proCodi;
+    }
+
+    public void setProducto(int proCodi) {
+        this.proCodi = proCodi;
+    }
+
+    public int getEmpCodi() {
+        return empCodi;
+    }
+
+    public void setEmpCodi(int empCodi) {
+        this.empCodi = empCodi;
+    }
+
+    public int getEjercLot() {
+        return ejeNume;
+    }
+
+    public void setEjercLot(int ejeNume) {
+        this.ejeNume = ejeNume;
+    }
+
+    public int getLote() {
+        return lote;
+    }
+
+    public void setLote(int lote) {
+        this.lote = lote;
+    }
+
+    public int getNumind() {
+        return numind;
+    }
+
+    public void setNumind(int numind) {
+        this.numind = numind;
+    }
+
+    public int getAlmCodi() {
+        return almCodi;
+    }
+
+    public void setAlmCodi(int almCodi) {
+        this.almCodi = almCodi;
+    }
+
+    public String getSerie() {
+        return serie;
+    }
+
+    public void setSerie(String serie) {
+        this.serie = serie;
+    }
+    
+    public void setCanti(double canti)
+    {
+        this.canti=canti;
+    }
+    public double getCanti()
+    {
+        return canti;
+    }
+    public String getAuxiliar()
+    {
+        return auxiliar;
+    }
+    public void setAuxiliar(String auxiliar)
+    {
+        this.auxiliar=auxiliar;
+    }
+    public DatIndiv()
+    {
+        
+    }
+   
+    
     public DatIndiv(String key,String valor)
     {
        canti = Double.parseDouble(getCampoLlave(valor, 0));

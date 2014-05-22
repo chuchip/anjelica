@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Título: paregalm</p>
  * <p>Descripcion: Panel para mantenimientos  Regularizaciones en almacen  </p>
- *  <p>Copyright: Copyright (c) 2005-2012
+ *  <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -637,6 +637,7 @@ public class paregalm extends CPanel {
      * @param accAno
      * @param accSerie
      * @param accNume
+     * @param rgsNume
      * @return
      * @throws SQLException
      */
@@ -744,7 +745,7 @@ public class paregalm extends CPanel {
 
         dtAdd.setDato("rgs_kilos", kilos);
         dtAdd.setDato("rgs_coment", coment);
-        dtAdd.setDato("rgs_cliprv", rgsCliprv);
+        dtAdd.setDato("rgs_cliprv", rgsCliprv==0?cliDev:rgsCliprv);
 
         dtAdd.setDato("rgs_clidev", cliDev);
         dtAdd.setDato("rgs_kilant", 0);

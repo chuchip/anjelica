@@ -12,7 +12,6 @@ import gnu.chu.interfaces.*;
 import java.awt.event.*;
 import javax.swing.*;
 import gnu.chu.anjelica.almacen.pstockAct;
-import java.text.*;
 import net.sf.jasperreports.engine.*;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.winayu.AyuArt;
@@ -20,7 +19,7 @@ import gnu.chu.winayu.AyuArt;
  *
  * <p>Título: pdpeve </p>
  * <p>Descripción: Mantenimiento Pedidos de Ventas. Incluye panel consulta stock de Productos</p>
- * <p>Copyright: Copyright (c) 2005-2009
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU seg�n es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -58,6 +57,8 @@ public class pdpeve  extends ventanaPad   implements PAD
   CTextField pvl_dtoE=new CTextField(Types.DECIMAL,"#9.99");
   CTextField pvl_prclprE=new CTextField(Types.DECIMAL,"---,--9.99");
   CTextField pvl_dtoproE=new CTextField(Types.DECIMAL,"#9.99");
+  CTextField pvl_tipoE=new CTextField(Types.CHAR,"?",1);
+  
   CComboBox alm_codiE = new CComboBox();
   CPanel Pprinc = new CPanel();
   CPanel Pcabe = new CPanel();
@@ -86,28 +87,38 @@ public class pdpeve  extends ventanaPad   implements PAD
   CLabel cLabel9 = new CLabel();
   CTextField usu_nombE = new CTextField(Types.CHAR,"X",20);
   CLabel cLabel12 = new CLabel();
-  CGridEditable jt = new CGridEditable(10)
+   final int JT_PROD=0;
+    final int JT_NOMBPRO=1;
+    final int JT_PROV=2;
+    final int JT_NOMPRV=3;
+    final int JT_FECCAD=4;    
+    final int JT_CANTI=5;
+    final int JT_TIPCAN=6;
+    final int JT_PRECIO=7;
+    final int JT_PRECON=8;
+    final int JT_COMEN=9;
+    final int JT_NL=10;
+  CGridEditable jt = new CGridEditable(11)
   {
     public void cambiaColumna(int col, int colNueva, int row)
     {
       try
       {
-        if (col == 0)
+        if (col == JT_PROD)
           jt.setValor(pro_codiE.getNombArtCli(pro_codiE.getValorInt(),
-                                              cli_codiE.getValorInt()), row, 1);
-        if (col == 2)
-          jt.setValor(prv_codiE.getNombPrv(prv_codiE.getText()), row, 3);
-        if (col==6)
+                                              cli_codiE.getValorInt()), row, JT_NOMBPRO);
+        if (col == JT_PROV)
+          jt.setValor(prv_codiE.getNombPrv(prv_codiE.getText()), row, JT_NOMPRV);
+        if (col==JT_PRECIO)
         {
           if (pvl_precioE.hasCambio())
           {
-            jt.setValor(new Boolean(pvl_precioE.getValorInt() != 0), 7);
-//            pvl_confirE.setSelected(pvl_precioE.getValorInt() != 0);
+            jt.setValor(pvl_precioE.getValorInt() != 0, JT_PRECON);
             pvl_precioE.resetCambio();
           }
         }
       }
-      catch (Exception k)
+      catch (SQLException k)
       {
         Error("Error al buscar Nombre Articulo", k);
       }
@@ -177,8 +188,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+       ErrorInit(e);      
     }
   }
 
@@ -195,8 +205,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+       ErrorInit(e);   
     }
   }
 
@@ -206,7 +215,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2010-03-15");
+    this.setVersion("2014-02-03");
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -229,9 +238,9 @@ public class pdpeve  extends ventanaPad   implements PAD
           ArrayList v = new ArrayList();
           
           jt.setEnabled(false);
-          if (jt.getValorInt(0) == proCodi && jt.getValorInt(2) == prvCodi
-              && jt.getValString(4).equals(feccad))
-            jt.setValor("" + (jt.getValorInt(5) + 1),5);
+          if (jt.getValorInt(JT_PROD) == proCodi && jt.getValorInt(JT_PROV) == prvCodi
+              && jt.getValString(JT_FECCAD).equals(feccad))
+            jt.setValor("" + (jt.getValorInt(JT_CANTI) + 1),JT_CANTI);
           else
           {
             v.add("" + proCodi); // 0
@@ -240,11 +249,12 @@ public class pdpeve  extends ventanaPad   implements PAD
             v.add(prv_codiE.getNombPrv("" + prvCodi)); //3
             v.add(feccad); // 4
             v.add("1"); // 5
-            v.add(""+precio); // 6
-            v.add(precio!=0); // 7
-            v.add(""); // 8
-            v.add("0"); // 9
-            if (jt.getValorInt(0) == 0)
+            v.add("U"); // 6 Unidades
+            v.add(""+precio); // 7
+            v.add(precio!=0); // 8
+            v.add(""); // 9
+            v.add("0"); // 10
+            if (jt.getValorInt(JT_PROD) == 0)
               jt.setLinea(v);
             else
             {
@@ -261,13 +271,13 @@ public class pdpeve  extends ventanaPad   implements PAD
           {
             pvl_precioE.setValorDec(precio);
             pvl_confirE.setSelected(true);
-            jt.requestFocus(row, 8);
+            jt.requestFocus(row, JT_COMEN);
           }
           else
-            jt.requestFocus(row, 6);
+            jt.requestFocus(row, JT_PRECIO);
 
         }
-        catch (Exception k)
+        catch (SQLException k)
         {
           Error("Error al pasar datos al grid", k);
         }
@@ -456,44 +466,51 @@ public class pdpeve  extends ventanaPad   implements PAD
 
   private void conf_jt() throws Exception
   {
-    Vector v=new Vector();
-    v.addElement("Prod."); // 0
-    v.addElement("Desc. Prod."); // 1
-    v.addElement("Prv"); // 2
-    v.addElement("Nombre Prv"); // 3
-    v.addElement("Fec.Cad"); // 4
-    v.addElement("Cant"); // 5
-    v.addElement("Precio"); // 6
-    v.addElement("Conf"); // 7 Confirmado Precio ?
-    v.addElement("Comentario"); // 8 Comentario
-    v.addElement("NL.");// 9
+   
+    ArrayList v=new ArrayList();
+    v.add("Prod."); // 0
+    v.add("Desc. Prod."); // 1
+    v.add("Prv"); // 2
+    v.add("Nombre Prv"); // 3
+    v.add("Fec.Cad"); // 4
+    v.add("Cant"); // 5
+    v.add("Tipo");// 6
+    v.add("Precio"); // 7
+    v.add("Conf"); // 8 Confirmado Precio ?
+    v.add("Comentario"); // 9 Comentario
+    v.add("NL.");// 10
     jt.setCabecera(v);
     jt.setMaximumSize(new Dimension(2147483647, 200));
     jt.setMinimumSize(new Dimension(31, 250));
     jt.setPreferredSize(new Dimension(477, 250));
     jt.setPuntoDeScroll(50);
-    jt.setAnchoColumna(new int[]{60,160,50,150,90,70,60,50,150,30});
-    jt.setAlinearColumna(new int[]{2,0,2,0,1,2,2,1,0,2});
-    jt.setFormatoColumna(5,"--,---9");
-    jt.setFormatoColumna(6,"---,--9.99");
-    jt.setFormatoColumna(7,"BSN");
+    jt.setAnchoColumna(new int[]{60,160,50,150,90,70,40,60,50,150,30});
+    jt.setAlinearColumna(new int[]{2,0,2,0,1,1,0,2,1,0,2});
+    jt.setFormatoColumna(JT_CANTI,"--,---9");
+    jt.setFormatoColumna(JT_PRECIO,"---,--9.99");
+    jt.setFormatoColumna(JT_PRECON,"BSN");
 
-    Vector v1=new Vector();
+    ArrayList v1=new ArrayList();
+    pvl_tipoE.setText("U");
+    pvl_tipoE.setMayusc(true);
+    pvl_tipoE.setCaracterAceptar("UK");
+    pvl_tipoE.setToolTipText("Tipo Cantidad: (K)ilos, (U)nidades");
     pro_nombE.setEnabled(false);
     pro_codiE.setProNomb(null);
-    prv_codiE.setPrvNomb(null);
+    prv_codiE.setCampoNombre(null);
     pvl_numlinE.setEnabled(false);
     prv_nombE.setEnabled(false);
-    v1.addElement(pro_codiE.pro_codiE); // 0
-    v1.addElement(pro_nombE); // 1
-    v1.addElement(prv_codiE.prv_codiE); // 2
-    v1.addElement(prv_nombE); // 3
-    v1.addElement(pvl_feccadE); // 4
-    v1.addElement(pvl_cantiE); // 5
-    v1.addElement(pvl_precioE); // 6
-    v1.addElement(pvl_confirE); // 7
-    v1.addElement(pvl_comenE); // 8
-    v1.addElement(pvl_numlinE); // 9
+    v1.add(pro_codiE.pro_codiE); // 0
+    v1.add(pro_nombE); // 1
+    v1.add(prv_codiE.prv_codiE); // 2
+    v1.add(prv_nombE); // 3
+    v1.add(pvl_feccadE); // 4
+    v1.add(pvl_cantiE); // 5
+    v1.add(pvl_tipoE);//6
+    v1.add(pvl_precioE); // 7
+    v1.add(pvl_confirE); // 8
+    v1.add(pvl_comenE); // 9
+    v1.add(pvl_numlinE); // 10
     jt.setCampos(v1);
   }
 
@@ -711,11 +728,11 @@ public class pdpeve  extends ventanaPad   implements PAD
        c.requestFocus();
        return;
      }
-     Vector v = new Vector();
+     ArrayList v = new ArrayList();
 
-     v.addElement(cli_codiE.getStrQuery());
-     v.addElement(emp_codiE.getStrQuery());
-     v.addElement(eje_numeE.getStrQuery());
+     v.add(cli_codiE.getStrQuery());
+     v.add(emp_codiE.getStrQuery());
+     v.add(eje_numeE.getStrQuery());
      v.add(pvc_numeE.getStrQuery());
      v.add(pvc_fecentE.getStrQuery());
      v.add(cli_codiE.getStrQuery());
@@ -749,7 +766,7 @@ public class pdpeve  extends ventanaPad   implements PAD
      if (opVerProd.getValor().equals(""+pstockAct.VER_ULTVENTAS))
        cli_codiE_afterFocusLost(false);
    }
-   catch (Exception k)
+   catch (SQLException k)
    {
      Error("Error al buscar datos", k);
    }
@@ -824,7 +841,7 @@ public class pdpeve  extends ventanaPad   implements PAD
      mensaje("");
      mensajeErr("Pedido ... MODIFICADO");
    }
-   catch (Exception k)
+   catch (SQLException k)
    {
      Error("Error al Insertar Pedido", k);
      return;
@@ -876,7 +893,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       pvc_fecentE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
       pvc_fecentE.resetCambio();
       jt.setEnabled(true);
-    } catch (Exception k)
+    } catch (SQLException k)
     {
       Error("Error en PADAddNew ",k);
       return;
@@ -935,13 +952,12 @@ public class pdpeve  extends ventanaPad   implements PAD
       PADAddNew();
     } catch (Exception k)
     {
-      Error("Error al Insertar Pedido",k);
-      return;
+      Error("Error al Insertar Pedido",k);      
     }
 
   }
 
-  private void actLinea() throws SQLException, ParseException
+  private void actLinea() throws SQLException
   {
     int nRow=jt.getRowCount();
     int nl=1;
@@ -965,15 +981,22 @@ public class pdpeve  extends ventanaPad   implements PAD
       else
         dtAdd.edit();
       dtAdd.setDato("pvl_numlin", nl);
-      dtAdd.setDato("pvl_canti", jt.getValorInt(n,5));
-      dtAdd.setDato("pro_codi", jt.getValorInt(n,0));
-      dtAdd.setDato("pvl_comen", jt.getValString(n,8));
-      dtAdd.setDato("pvl_precio", jt.getValorDec(n,6));
-      dtAdd.setDato("pvl_precon", jt.getValBoolean(n,7)?-1:0);
-      dtAdd.setDato("prv_codi", jt.getValorInt(n,2));
-      dtAdd.setDato("pvl_feccad",jt.getValString(n,4).trim().equals("")?null:jt.getValString(n,4),"dd-MM-yy");
+      dtAdd.setDato("pvl_unid", jt.getValorInt(n,JT_CANTI));
+      dtAdd.setDato("pvl_kilos", jt.getValorInt(n,JT_CANTI));
+      dtAdd.setDato("pvl_unid", jt.getValorDec(n,JT_CANTI));
+      dtAdd.setDato("pvl_unid", jt.getValorDec(n,JT_CANTI));
+      dtAdd.setDato("pvl_tipo", jt.getValString(n,JT_TIPCAN));
+      dtAdd.setDato("pro_codi", jt.getValorInt(n,JT_PROD));
+      dtAdd.setDato("pvl_comen", jt.getValString(n,JT_COMEN));
+      dtAdd.setDato("pvl_precio", jt.getValorDec(n,JT_PRECIO));
+      dtAdd.setDato("pvl_precon", jt.getValBoolean(n,JT_PRECON)?-1:0);
+      dtAdd.setDato("prv_codi", jt.getValorInt(n,JT_PROV));
+      dtAdd.setDato("pvl_feccad",jt.getValString(n,JT_FECCAD).trim().equals("")?null:jt.getValString(n,JT_FECCAD),"dd-MM-yy");
       if (dtAdd.getTipoUpdate()==DatosTabla.ADDNEW)
+      {
         dtAdd.setDato("pvl_fecped", "{ts '"+Formatear.getFechaAct("yyyy-MM-dd hh:mm:ss")+"'}");
+        dtAdd.setDato("pvl_fecmod", (Timestamp)null);
+      }
       else
         dtAdd.setDato("pvl_fecmod", "{ts '"+Formatear.getFechaAct("yyyy-MM-dd hh:mm:ss")+"'}");
       dtAdd.update();
@@ -999,7 +1022,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     dtAdd.executeUpdate(s);
   }
 
-  private void actCabecera() throws ParseException, SQLException
+  private void actCabecera() throws  SQLException
   {
     dtAdd.setDato("cli_codi",cli_codiE.getValorInt());
     dtAdd.setDato("alm_codi",alm_codiE.getValorInt());
@@ -1199,24 +1222,26 @@ public class pdpeve  extends ventanaPad   implements PAD
       {
         do
         {
-          Vector v=new Vector();
-          v.addElement(dtCon1.getString("pro_codi"));
-          v.addElement(pro_codiE.getNombArtCli(dtCon1.getInt("pro_codi"),
+          ArrayList v=new ArrayList();
+          v.add(dtCon1.getString("pro_codi"));
+          v.add(pro_codiE.getNombArtCli(dtCon1.getInt("pro_codi"),
                                               cli_codiE.getValorInt()));
-         v.addElement(dtCon1.getString("prv_codi"));
-         v.addElement(prv_codiE.getNombPrv(dtCon1.getString("prv_codi")));
-         v.addElement(dtCon1.getFecha("pvl_feccad","dd-MM-yy"));
-         v.addElement(dtCon1.getString("pvl_canti"));
-         v.addElement(dtCon1.getString("pvl_precio"));
-         v.addElement(new Boolean(dtCon1.getInt("pvl_precon")!=0));
-         v.addElement(dtCon1.getString("pvl_comen"));
-         v.addElement(dtCon1.getString("pvl_numlin"));
+         v.add(dtCon1.getString("prv_codi"));
+         v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi")));
+         v.add(dtCon1.getFecha("pvl_feccad","dd-MM-yy"));
+         v.add(dtCon1.getString("pvl_tipo").equals("K")?dtCon1.getDouble("pvl_kilos"):
+             dtCon1.getDouble("pvl_unid"));
+          v.add(dtCon1.getString("pvl_tipo"));
+         v.add(dtCon1.getString("pvl_precio"));
+         v.add(dtCon1.getInt("pvl_precon")!=0);
+         v.add(dtCon1.getString("pvl_comen"));
+         v.add(dtCon1.getString("pvl_numlin"));
          jt.addLinea(v);
         }
         while (dtCon1.next());
       }
       actAcumJT();
-    } catch (Exception k)
+    } catch (SQLException k)
     {
       Error("Error al Visualizar Pedidos",k);
     }
@@ -1229,18 +1254,30 @@ public class pdpeve  extends ventanaPad   implements PAD
       if (!pro_codiE.controla(false))
       {
         mensajeErr(pro_codiE.getMsgError());
-        return 0;
+        return JT_PROD;
       }
       if (!prv_codiE.controla(false))
       {
         mensajeErr(prv_codiE.getMsgError());
-        return 0;
+        return JT_PROV;
       }
       if (pvl_cantiE.getValorDec()==0)
       {
         mensajeErr("Introduzca Cantidad de Producto Pedido");
-        return 5;
+        return JT_CANTI;
       }
+      if (pvl_tipoE.isNull())
+      {
+          mensajeErr("Introduzca tipo de cantidad (Kilos o Unidades)");
+          return JT_TIPCAN;
+      }
+      if (pvl_tipoE.getText().equals("U") && pvl_tipoE.getText().equals("K"))
+      {
+          mensajeErr("Tipo cantidad Invalida. Aceptables: Kilos/Unidades");
+          return JT_TIPCAN;
+         
+      }
+          
     } catch (Exception k)
     {
       Error("Erro al controlar cambio de linea",k);
@@ -1248,7 +1285,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     return -1;
   }
 
-  int getNumPed(boolean act) throws SQLException, java.text.ParseException
+  int getNumPed(boolean act) throws SQLException
   {
     int nAlb;
     s = "SELECT num_pedid  FROM v_numerac WHERE emp_codi = " +  emp_codiE.getValorInt() +

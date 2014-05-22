@@ -1532,7 +1532,7 @@ void limpiaDB()
 
   void comprasItem1_actionPerformed(ActionEvent e) {
     Hashtable ht = new Hashtable();
-     ht.put("modPrecio","false");
+     ht.put("modPrecio","true");
 ////    ht.put("modConsulta","true");
 //     ht.put("admin","true");
      ht.put("AlbSinPed","true");
@@ -1667,7 +1667,7 @@ void pdreprese_actionPerformed(ActionEvent e) {
   }
 
   void lisclien_actionPerformed(ActionEvent e) {
-    lanzaEjecutable(new gnu.chu.anjelica.listados.lisclien(menu.this, EU));
+    lanzaEjecutable(new gnu.chu.anjelica.listados.ClClien(menu.this, EU));
   }
  void tratclien_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.pad.MantCliActiv(menu.this, EU));

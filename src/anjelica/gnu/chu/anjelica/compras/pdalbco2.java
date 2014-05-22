@@ -206,8 +206,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
             int res=mensajes.mensajeYesNo("Linea tiene individuos. Mantenerla?");
             if (res==mensajes.YES)
                 return false;
-        }
-       
+        }       
         borraLinea(row);
         ctUp.commit();
       }
@@ -520,8 +519,8 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
         k.printStackTrace();
       }
     }
-
-        @Override
+    
+    @Override
     public boolean deleteLinea(int row, int col)
     {
       if (jtRecl.getValorInt(ROWNVERT) == 0)
@@ -2806,7 +2805,10 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     }
     else
       nLiAlb=getNextLinAlb();
-
+    actAcuLiAlb();
+    
+    guardaLinAlb(nLiAlb, jt.getSelectedRow(), nLinE.getValorInt(),
+           kilosE.getValorDec(),kgFac,prLiAlb,acl_kgrecE.getValorDec() ,acl_comenE.getText(),dtopp);
 
     if (jtDes.getValorInt(row, DESNIND) == 0)
     { // Es un individuo nuevo
@@ -2821,11 +2823,6 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     }
     else // Ya existia el numero de individuo
       actGridDes(nLiAlb,row,jtDes.getValorInt(row,DESNLIN),jtDes.getValorInt(row,DESNIND),numIndAnt, nLiAlAnt);
-
-    actAcuLiAlb();
-    
-    guardaLinAlb(nLiAlb, jt.getSelectedRow(), nLinE.getValorInt(),
-           kilosE.getValorDec(),kgFac,prLiAlb,acl_kgrecE.getValorDec() ,acl_comenE.getText(),dtopp);
 
     jt.setValor( nLiAlb, 0);
     if (! opAutoClas.isSelected() &&  ! cll_codiE.isNull())
@@ -3792,12 +3789,12 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
         actDatosFra();
       if ( swCambioPrv || alm_codiE.hasCambio())
       {
-          s="update v_stkpart  set prv_codi= "+prv_codiE.getValorInt()+
+          s="update stockpart  set prv_codi= "+prv_codiE.getValorInt()+
             ", alm_codi = "+alm_codiE.getValorInt()+
-           " where  eje_nume =  " + acc_anoE.getValorInt()+
-           " and emp_codi =  " + emp_codiE.getValorInt()+
-           " and pro_serie  = '" +acc_serieE.getText()+"'"+
-           " and pro_nupar = " + acc_numeE.getValorInt();
+            " where  eje_nume =  " + acc_anoE.getValorInt()+
+            " and emp_codi =  " + emp_codiE.getValorInt()+
+            " and pro_serie  = '" +acc_serieE.getText()+"'"+
+            " and pro_nupar = " + acc_numeE.getValorInt();
           dtAdd.executeUpdate(s);
       }
       ctUp.commit();

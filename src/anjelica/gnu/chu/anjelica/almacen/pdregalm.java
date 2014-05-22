@@ -553,7 +553,7 @@ public void ej_query()
    }
    try
    {
-     s = "select * from v_regstock WHERE rgs_nume = " + jt.getValInt(12);
+     s = "select * from v_regstock WHERE rgs_nume = " + jt.getValorInt(12);
      if (!dtAdd.select(s, true))
      {
        mensaje("");
@@ -562,9 +562,10 @@ public void ej_query()
        return;
      }
    }
-   catch (Exception k)
+   catch (SQLException k)
    {
      Error("Error al bloquear registro de Stock", k);
+     return;
    }
    jt.setEnabled(false);
    Baceptar.setEnabled(true);
@@ -587,7 +588,7 @@ public void ej_query()
      mensaje("");
      mensajeErr("Regularizacion ... BORRADA");
    }
-   catch (Exception k)
+   catch (SQLException k)
    {
      Error("Error al Modificar Datos", k);
    }
