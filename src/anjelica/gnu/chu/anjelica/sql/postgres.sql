@@ -3797,6 +3797,11 @@ create table anjelica.mvtosalm
 CREATE INDEX ix_mvtalm1 on anjelica.mvtosalm(mvt_tipdoc,mvt_fecdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc);
 CREATE INDEX ix_mvtalm2 on anjelica.mvtosalm(pro_codi,pro_ejelot,pro_serlot,pro_numlot,pro_indlot,mvt_time);
 
+create table anjelica.ajustedb
+(
+    aju_regacu int not null -- // Regenerar Acumulados (0 No). Usado por fn_acumstk
+);
+insert into anjelica.ajustedb values(1);
 
 CREATE OR REPLACE FUNCTION anjelica."fn_acpralb"()
   RETURNS TRIGGER AS $grabar$   

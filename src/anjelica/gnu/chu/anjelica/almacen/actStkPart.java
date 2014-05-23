@@ -1224,7 +1224,9 @@ public class actStkPart
      int n;
      // Pongo acumulados de stock-partidas a 0 para el almacen recibido
      // como parametro.
-     String s = "UPDATE stockpart set stp_unact = 0,stp_kilact= 0 " +
+     String s;
+     dtAdd.executeUpdate("update ajustedb set aju_regacu=0"); // Deshabilito Reg. Acum.
+     s = "UPDATE stockpart set stp_unact = 0,stp_kilact= 0 " +
          " where (stp_unact != 0 or stp_kilact != 0) " +
          (almCodi==0?"":" and alm_codi = " + almCodi) ;
 
@@ -1298,7 +1300,9 @@ public class actStkPart
  //        System.out.println(key+" : "+htPrv.get(key));
      }
 
-     return regAcuProducto(dt,proArtcon,fecinv,pro_codi);
+     boolean ret=regAcuProducto(dt,proArtcon,fecinv,pro_codi);
+     dtAdd.executeUpdate("update ajustedb set aju_regacu=1"); // Habilito Reg. Acum.
+     return ret;
    }
     /**
      * Inserta Regularizaciones Inventario sobre producto  Congelado
