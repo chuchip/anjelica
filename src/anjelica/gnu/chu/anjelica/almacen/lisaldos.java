@@ -40,6 +40,7 @@ import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.ventana;
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyVetoException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -89,7 +90,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   proPanel pro_codiE = new proPanel();
   
   GridBagLayout gridBagLayout1 = new GridBagLayout();
-  Cgrid jtMv = new Cgrid(4);
+  Cgrid jtMv = new Cgrid(6);
   proPanel pro_codmvE = new proPanel();
   CTextField fecsalE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CLabel cLabel6 = new CLabel();
@@ -200,17 +201,21 @@ public class lisaldos   extends ventana  implements JRDataSource
     confGrid(new ArrayList());
 
     ArrayList v1=new ArrayList();
-    v1.add("Tipo");
-    v1.add("Cantidad");
-    v1.add("Unidades");
-    v1.add("Precio");
+    v1.add("Tipo"); // 0 
+    v1.add("Kg.Entr.");// 1
+    v1.add("Un.Entr");// 2
+    v1.add("Kg. Sal");// 3
+    v1.add("Un Sal");// 4
+    v1.add("Precio");// 5
     jtMv.setCabecera(v1);
     jtMv.setAjustarGrid(true);
-    jtMv.setAnchoColumna(new int[]{50,80,70,70});
-    jtMv.setAlinearColumna(new int[]{1,2,2,2});
+    jtMv.setAnchoColumna(new int[]{50,80,70,80,70,70});
+    jtMv.setAlinearColumna(new int[]{1,2,2,2,2,2});
     jtMv.setFormatoColumna(1,"---,--9.99");
     jtMv.setFormatoColumna(2,"---,--9");
     jtMv.setFormatoColumna(3,"---,--9.99");
+    jtMv.setFormatoColumna(4,"---,--9");   
+    jtMv.setFormatoColumna(5,"-,--9.99");
 
  
     cLabel5.setText("Producto");
@@ -397,7 +402,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     fecsalE.addFocusListener(new FocusAdapter()
     {
             @Override
-     public void focusLost(FocusEvent e) {
+        public void focusLost(FocusEvent e) {
          try {
           if (fecsalE.isNull() || fecsalE.getError())
               return;
@@ -474,6 +479,8 @@ public class lisaldos   extends ventana  implements JRDataSource
          v.add("=");
          v.add(dtCon1.getString("canti"));
          v.add(dtCon1.getString("unid"));
+         v.add(0);
+         v.add(0);
          v.add(dtCon1.getString("precio"));
          jtMv.addLinea(v);
        }
@@ -486,6 +493,8 @@ public class lisaldos   extends ventana  implements JRDataSource
        v.add(dtCon1.getString("sel"));
        v.add(dtCon1.getString("canti"));
        v.add(dtCon1.getString("unid"));
+       v.add(0);
+       v.add(0);
        v.add(dtCon1.getString("precio"));
        jtMv.addLinea(v);
      }
@@ -494,6 +503,8 @@ public class lisaldos   extends ventana  implements JRDataSource
      if (tipMov.equals("S"))
      {
        v.add(dtCon1.getString("sel"));
+       v.add(0);
+       v.add(0);
        v.add(dtCon1.getString("canti"));
        v.add(dtCon1.getString("unid"));
        v.add(dtCon1.getString("precio"));
@@ -502,7 +513,7 @@ public class lisaldos   extends ventana  implements JRDataSource
    } while (dtCon1.next());
 
  }
- catch (Exception k)
+ catch (SQLException k)
  {
    Error("Error al ver Mvtos desglosados", k);
  }
@@ -909,9 +920,7 @@ class cglisaldos implements VirtualGrid
 {
  public boolean getColorGrid(int row, int col, Object valor, boolean selecionado, String nombreGrid)
  {
-     if (col==1 && ((String) valor).startsWith("Fam:"))
-         return true;
-     return false;
+     return  (col==1 && ((String) valor).startsWith("Fam:"));             
  }
 }
 
@@ -932,6 +941,6 @@ class  ifMvtosClase extends ventana
           papa.setFoco(null);
           try {
               papa.setSelected(true);
-          } catch (Exception k){}
+          } catch (PropertyVetoException k){}
         }  
   }
