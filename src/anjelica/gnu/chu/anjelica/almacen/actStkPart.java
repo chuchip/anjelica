@@ -1312,6 +1312,7 @@ public class actStkPart
      * @param fecinv Fecha Inventario
      * @param fecsup Fecha en la que insertar las regularizaciones
      * @param usuNomb Usuario que genera las regularizaciones
+     * @throws java.text.ParseException
      * @throws SQLException
      */
    public void insInventCong(DatosTabla dtAdd, DatosTabla dtStat,int almCodi,

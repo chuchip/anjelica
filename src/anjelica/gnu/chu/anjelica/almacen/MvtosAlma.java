@@ -36,11 +36,11 @@ import java.util.Iterator;
  * </p>
  * <p>Empresa: miSL</p>
  * @author chuchiP
- * @version 1.0
+ * @version 2.0 (2014-05-29)
  */
 public class MvtosAlma
 {
-  private boolean mvtoDesgl=true;
+  private boolean mvtoDesgl=true; // Mvto. Desglosado
   private String tiposVert="";
   private boolean swDesglInd;
   private double incCosto=0;
@@ -256,7 +256,7 @@ public class MvtosAlma
     if (! swSoloInv)
     {   
        sql+="SELECT 0 as orden,mvt_tipdoc as sel, mvt_tipo as tipmov,  "+
-            " mvt_fecdoc as fecmov,"+
+            " mvt_time as fecmov,"+
             "  mvt_serdoc as serie,pro_numlot as  lote,"+
             " mvt_canti as canti,mvt_prec as precio,pro_indlot as numind,"+
             " mvt_cliprv as cliCodi,mvt_numdoc  as numalb,pro_ejelot as ejenume, "+
@@ -270,9 +270,8 @@ public class MvtosAlma
             (proLote==0?"":" and pro_numlot  = "+proLote)+
             (proNumind==0?"":" and pro_indlot = "+proNumind)+
             " AND pro_codi = " + (proCodi==-1?"?":proCodi) +
-            " AND mvt_fecdoc >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
-            " and mvt_fecdoc <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";      
-   
+            " AND mvt_time >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
+            " and mvt_time <= TO_DATE('"+fecFin+"','dd-MM-yyyy') "; 
     }
     if (! incInvFinal || swSoloInv)
     { // No incluir inventario final.
@@ -967,10 +966,15 @@ public class MvtosAlma
             {
               if (sel=='V')
               {
-                  if (! mvtoDesgl )
+                  if ( mvtoDesgl )
                   {
                     if (almCodi!=0 && dt.getInt("alm_coddes")!=almCodi && dt.getInt("alm_codori")!=almCodi )
                         continue; // No lo trato.
+                  }
+                  else
+                  {
+                    if (almCodi!=0 && dt.getInt("alm_codi")!=almCodi)  
+                         continue; // No lo trato.
                   }
                   if (dt.getString("avc_serie").equals("X"))
                   { // Traspaso entre almacenes
@@ -1011,7 +1015,7 @@ public class MvtosAlma
           }
           else
           {
-               if (swTraspAlm && almCodi != 0 &&   dt.getInt("alm_coddes")==almCodi )
+               if (swTraspAlm && almCodi != 0 &&  (mvtoDesgl?dt.getInt("alm_coddes")==almCodi:dt.getInt("alm_codi")==almCodi) )
                {
                    canti = canStk + dt.getDouble("canti",true);
                    unid = uniStk +  dt.getInt("unidades");

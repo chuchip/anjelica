@@ -153,7 +153,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(592, 516));
-    this.setVersion("2014-05-06");
+    this.setVersion("2014-05-29");
     ifMvtos.setSize(new Dimension(475, 325));
     
     ifMvtos.setVisible(false);
@@ -427,14 +427,7 @@ public class lisaldos   extends ventana  implements JRDataSource
          }
      }
     });
-//    Bcancelar.addActionListener(new ActionListener()
-//    {
-//      public void actionPerformed(ActionEvent e)
-//      {
-//        mensaje("Espere, por favor ... Cancelando Consulta");
-//        Bcancelar.setEnabled(false);
-//      }
-//    });
+
     jt.addMouseListener(new MouseAdapter() {
          public void mouseClicked(MouseEvent e) {
           if (jt.isVacio()  || e.getClickCount()<2)
@@ -791,57 +784,8 @@ public class lisaldos   extends ventana  implements JRDataSource
             "   mvt_canti <> 0 "+
              " AND pro_codi = ?" +
               (alm_inicE.getValorInt() == 0 ? "" : " and alm_codi = " + alm_inicE.getValorInt()) +
-             " AND mvt_fecdoc >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
-          "   and  mvt_fecdoc <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
-//      s = "SELECT 'CO' as sel,'+' as tipmov,c.acc_fecrec as fecmov," +
-//          " l.acl_canti as canti,l.acl_prcom as precio,acl_numcaj as unid,0 AS PRO_CODORI " +
-//          " FROM v_albacoc c,v_albacol l" +
-//          " where c.emp_codi = l.emp_codi " +
-//          " AND c.acc_serie = l.acc_serie " +
-//          " AND c.acc_nume = l.acc_nume " +
-//          " and c.acc_ano = l.acc_ano " +
-//          " and l.acl_canti <> 0 " +
-//          " AND l.pro_codi = ?" +
-//          (alm_inicE.getValorInt() == 0 ? "" : " and l.alm_codi = " + alm_inicE.getValorInt()) +
-//          " AND c.acc_fecrec >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
-//          " and c.acc_fecrec <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
-//      s += " UNION all"+  // Albaranes de Venta
-//           " select 'VE' as sel,'-' as tipmov,c.avc_fecalb as fecmov," +
-//          " l.avl_canti as canti,0 as precio,avl_unid as unid,0 AS PRO_CODORI  " +
-//          "  from v_albavel l, v_albavec c" +
-//          " where c.emp_codi = l.emp_codi " +
-//          " AND c.avc_serie = l.avc_serie " +
-//          " AND c.avc_nume = l.avc_nume " +
-//          " and c.avc_ano = l.avc_ano " +
-//          " and l.avl_canti <> 0 " +
-//          (alm_inicE.getValorInt() == 0 ? "" : " and c.alm_codori = " + alm_inicE.getValorInt()) +
-//          " AND C.AVC_SERIE != 'X' " + // Quito los albaranes de trasp. ALMACEN.
-//          " AND l.pro_codi = ? " +
-//          " AND c.avc_fecalb >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
-//          " and c.avc_fecalb <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
-//      s += " UNION all " + // Despieces (Salidas de Almacen)
-//          " select 'DS' as sel,'" +
-//          (opValDesp.isSelected() ? "+":"-")+"'  as tipmov ,"+
-//          "deo_fecha as fecmov," +
-//          " deo_kilos as canti,deo_prcost as precio,1 as unid,0 AS PRO_CODORI  " +
-//          " from  v_despori where " +
-//          " deo_kilos <> 0 " +
-//          (alm_inicE.getValorInt() == 0 ? "" : " and deo_almori = " + alm_inicE.getValorInt()) +
-//          " AND pro_codi = ? " +
-//          " AND deo_fecha >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
-//          " and deo_fecha <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
-//      s += " UNION all " + // Despieces (Entradas en Almacen)
-//          " select 'DE' as sel, '+' as tipmov,c.deo_fecha as fecmov," +
-//          " l.def_kilos as canti,l.def_prcost as precio,def_numpie as unid,C.PRO_CODI AS PRO_CODORI  " +
-//          " from  v_despori c,v_despfin l where " +
-//          " C.EMP_codi = l.emp_codi " +
-//          " and c.eje_nume = l.eje_nume " +
-//          " and c.deo_codi = l.deo_codi " +
-//          " and l.def_kilos <> 0 " +
-//          (alm_inicE.getValorInt() == 0 ? "" : " and alm_codi = " + alm_inicE.getValorInt()) +
-//          " AND l.pro_codi = ? " +
-//          " AND c.deo_fecha >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
-//          " and c.deo_fecha <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
+             " AND mvt_time >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
+          "   and  mvt_time <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
       s += " UNION all " + // Regularizaciones.
           " select 'RE' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov," +
           " r.rgs_kilos as canti,r.rgs_prregu as precio,1 as unid  " +
