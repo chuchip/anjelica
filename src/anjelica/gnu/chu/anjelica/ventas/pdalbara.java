@@ -582,7 +582,7 @@ public class pdalbara extends ventanaPad  implements PAD
         PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2014-04-16" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2014-05-23" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -7006,16 +7006,9 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     stUp.getConnection().getAutoCommit();
     stUp.getConnection().setAutoCommit(false);
-    s = "update V_albavel set avc_ano = " + avc_anoE.getValorInt() +
-        ", emp_codi = " + emp_codiE.getValorInt() +
-        ", avc_serie = '" + avc_seriE.getText() + "'" +
-        ",avc_nume = " + avcNume +
-        "  WHERE avc_ano =" + avc_anoE.getTextAnt() +
-        " and emp_codi = " + emp_codiE.getTextAnt() +
-        " and avc_serie = '" + avc_seriE.getTextAnt() + "'" +
-        " and avc_nume = " + avcNumeAnt;
-    stUp.executeUpdate(s);
-    s = "update V_albvenpar set avc_ano = " + avc_anoE.getValorInt() +
+   
+   
+    s = "update v_albavel set avc_ano = " + avc_anoE.getValorInt() +
         ", emp_codi = " + emp_codiE.getValorInt() +
         ", avc_serie = '" + avc_seriE.getText() + "'" +
         ",avc_nume = " + avcNume +
@@ -7025,6 +7018,15 @@ public class pdalbara extends ventanaPad  implements PAD
         " and avc_nume = " + avcNumeAnt;
     stUp.executeUpdate(s);
     s = "update V_albavec set avc_ano = " + avc_anoE.getValorInt() +
+        ", emp_codi = " + emp_codiE.getValorInt() +
+        ", avc_serie = '" + avc_seriE.getText() + "'" +
+        ",avc_nume = " + avcNume +
+        "  WHERE avc_ano =" + avc_anoE.getTextAnt() +
+        " and emp_codi = " + emp_codiE.getTextAnt() +
+        " and avc_serie = '" + avc_seriE.getTextAnt() + "'" +
+        " and avc_nume = " + avcNumeAnt;
+    stUp.executeUpdate(s);
+     s = "update V_albvenpar set avc_ano = " + avc_anoE.getValorInt() +
         ", emp_codi = " + emp_codiE.getValorInt() +
         ", avc_serie = '" + avc_seriE.getText() + "'" +
         ",avc_nume = " + avcNume +

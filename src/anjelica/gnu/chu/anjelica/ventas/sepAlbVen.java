@@ -27,7 +27,7 @@ import javax.swing.BorderFactory;
  * el mantenimiento de albaranes de ventas y se encarga de convertir un albaran en varios.
  * Utilizado sobre todo para albaranes a particulares cuyo importe no puede ser superior a un limite
  * que marca la ley</p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2014
  * Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -41,7 +41,7 @@ import javax.swing.BorderFactory;
  *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
  * </p>
  * @author chuchiP
- *
+ * @version 1.1 
  *
  */
 
@@ -60,7 +60,7 @@ public class sepAlbVen extends ventana
   boolean swRotoLin;
   double impAcum=0;
   double kLiAlb;
-  int uLiAlb;
+  
   actCabAlbFra datCab;
   CPanel Pprinc = new CPanel();
   CPanel PdatAlb = new CPanel();
@@ -432,17 +432,29 @@ public class sepAlbVen extends ventana
           swRotoLin = true;
         }
 
-        impLinea=Formatear.Redondea(dtCon1.getDouble("avl_prven")*dtCon1.getDouble("avp_canti"),numDec);
+        impLinea=Formatear.redondea(dtCon1.getDouble("avl_prven")*dtCon1.getDouble("avp_canti"),numDec);
+        String indiv=dtCon1.getInt("avp_ejelot")+dtCon1.getString("avp_serlot")+
+            dtCon1.getInt("avp_numpar")+dtCon1.getInt("avp_numind");
+        int numUni=dtCon1.getInt("avp_numuni");
         while (impLinea > 0 && nLiJT+1 <= jt.getRowCount() )
         {
+          if (! indiv.equals(dtCon1.getInt("avp_ejelot")+dtCon1.getString("avp_serlot")+
+                dtCon1.getInt("avp_numpar")+dtCon1.getInt("avp_numind")))
+          { // Cambio de Individuo
+               indiv=dtCon1.getInt("avp_ejelot")+dtCon1.getString("avp_serlot")+
+                dtCon1.getInt("avp_numpar")+dtCon1.getInt("avp_numind");
+               numUni=dtCon1.getInt("avp_numuni");
+          }
           if (impAcum + impLinea > impGrid)
           {
+             
             impAlb=jt.getValorDec(nLiJT, 2)- impAcum;
-            kilos = Formatear.Redondea(impAlb / dtCon1.getDouble("avl_prven"), numDec);
-            acumAlb+= Formatear.Redondea((kilos *  dtCon1.getDouble("avl_prven")),numDec);
-            impLinea -= Formatear.Redondea((kilos *  dtCon1.getDouble("avl_prven")),numDec);
+            kilos = Formatear.redondea(impAlb / dtCon1.getDouble("avl_prven"), numDec);
+            acumAlb+= Formatear.redondea((kilos *  dtCon1.getDouble("avl_prven")),numDec);
+            impLinea -= Formatear.redondea((kilos *  dtCon1.getDouble("avl_prven")),numDec);
 
-            guardaLineaDes(kilos);
+            guardaLineaDes(kilos,numUni);
+            numUni=0; // Pongo todas las unidades al primer inidviduo
             swRotoAlb = true;
             swRotoLin = true;
             nLiJT++;
@@ -457,11 +469,12 @@ public class sepAlbVen extends ventana
           }
           else
           {
-            kilos = Formatear.Redondea(impLinea / dtCon1.getDouble("avl_prven"), numDec);
-            acumAlb+=Formatear.Redondea((kilos *  dtCon1.getDouble("avl_prven")),numDec);
-            impAcum+= Formatear.Redondea( (kilos *  dtCon1.getDouble("avl_prven")),numDec);
+            kilos = Formatear.redondea(impLinea / dtCon1.getDouble("avl_prven"), numDec);
+            acumAlb+=Formatear.redondea((kilos *  dtCon1.getDouble("avl_prven")),numDec);
+            impAcum+= Formatear.redondea( (kilos *  dtCon1.getDouble("avl_prven")),numDec);
             impLinea = 0;
-            guardaLineaDes( kilos);
+            guardaLineaDes( kilos,numUni);
+            numUni=0; // Pongo todas las unidades al primer inidviduo
           }
         }
       }  while (dtCon1.next());
@@ -559,12 +572,12 @@ public class sepAlbVen extends ventana
 //     impLinE.setValorDec(datCab.getValDouble("avc_impbru"));
 
    }
-   void  guardaLineaDes(double kilos) throws Exception
+   void  guardaLineaDes(double kilos,int numUni) throws Exception
    {
      if (swRotoAlb)
        guardaCab();
       if (swRotoLin)
-        guardaLin(kilos,uLiAlb);
+        guardaLin(kilos,numUni);
       nLiDes++;
 //      debug("Guardando Desglose Lina Albaran: " + numAlb+
 //            " Linea: "+nLiAlb+ " Linea Despiece: "+nLiDes+ " Kilos: "+kilos+ " Importe: "+kilos*dtCon1.getDouble("avl_prven")+" Imp. Pendiente: "+impLinea);
@@ -583,7 +596,7 @@ public class sepAlbVen extends ventana
       dtAdd.setDato("avp_serlot", dtCon1.getString("avp_serlot"));
       dtAdd.setDato("avp_numpar", dtCon1.getInt("avp_numpar"));
       dtAdd.setDato("avp_numind", dtCon1.getInt("avp_numind"));
-      dtAdd.setDato("avp_numuni", 1);
+      dtAdd.setDato("avp_numuni", numUni);
       dtAdd.setDato("avp_canti", kilos);
       dtAdd.update();
       kLiAlb+=kilos;
