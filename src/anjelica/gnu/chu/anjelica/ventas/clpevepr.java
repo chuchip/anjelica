@@ -22,7 +22,6 @@ package gnu.chu.anjelica.ventas;
  *
  */
 import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.view.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.controles.*;
 import gnu.chu.Menu.*;
@@ -38,6 +37,7 @@ import java.text.*;
 
 public class  clpevepr extends ventana  implements  JRDataSource
 {
+  final static int JT_CANTI=2;
   int linProd = 0;
   int linClien=0;
   boolean swRotoProd;
@@ -397,12 +397,12 @@ public class  clpevepr extends ventana  implements  JRDataSource
       proCodi=Integer.parseInt(producto.substring(1));
     else
       proCodi=Integer.parseInt(producto);
-    s="SELECT cl.cli_codi, cl.cli_nomb, sum(pvl_canti) as pvl_canti FROM pedvenc as c,pedvenl as l, clientes as cl "+
+    s="SELECT cl.cli_codi, cl.cli_nomb, sum(pvl_unid) as pvl_canti FROM v_pedven as p, clientes as cl "+
         (swGrupo?", tilialpr as t ":"")+
         condWhere+
-        (swGrupo?" and tla_orden = "+proCodi+" and l.pro_codi = t.pro_codi ":
-         " and l.pro_codi = "+proCodi)+
-        " and cl.cli_codi = c.cli_codi "+
+        (swGrupo?" and tla_orden = "+proCodi+" and p.pro_codi = t.pro_codi ":
+         " and p.pro_codi = "+proCodi)+
+        " and cl.cli_codi = p.cli_codi "+
         " group by cl.cli_codi,cl.cli_nomb "+
         " order by cl.cli_codi ";
 //    debug(s);
@@ -461,25 +461,23 @@ public class  clpevepr extends ventana  implements  JRDataSource
     s = "SELECT "+
         (tla_codiE.getValorInt()==99?"ar.pro_codi , ar.pro_nomb ":
          "t.tla_orden as pro_codi , gr.pro_desc as pro_nomb ")+
-        " ,sum(pvl_canti) as pvl_canti FROM pedvenc as c,pedvenl as l" +
+        " ,sum(pvl_unid) as pvl_canti FROM v_pedven as  p " +
         (tla_codiE.getValorInt()==99?",v_articulo as ar ":", tilialpr as t,tilialgr as gr ");
 
-    condWhere=" where c.emp_codi = l.emp_codi "+
-        " and c.eje_nume = l.eje_nume "+
-        " and c.pvc_nume = l.pvc_nume "+
+    condWhere=" where  1 = 1 "+
         (pvc_feciniE.isNull()?"":" AND pvc_fecped >= to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')") +
         (pvc_fecfinE.isNull()?"": " and pvc_fecped <= {ts '" + pvc_fecfinE.getFecha("yyyy-MM-dd") + " 23:59:59'}" )+
         (feeninE.isNull()?"":" AND pvc_fecent >= to_date('" + feeninE.getText() + "','dd-MM-yyyy')") +
         (feenfiE.isNull()?"": " and pvc_fecent <= to_date('" + feenfiE.getFecha("yyyy-MM-dd") + "','dd-MM-yyyy')")+
-        " and c.alm_codi >= " + alm_iniE.getValor() +
-        " and c.alm_codi <= " + alm_finE.getValor() +
-        " AND c.emp_codi = " + emp_codiE.getValorInt()+
+        " and p.alm_codi >= " + alm_iniE.getValor() +
+        " and p.alm_codi <= " + alm_finE.getValor() +
+        " AND p.emp_codi = " + emp_codiE.getValorInt()+
         (pvc_confirE.getValor().equals("-")?"":" and pvc_confir = '" + pvc_confirE.getValor() + "'");
     s=s+ condWhere+
-       (tla_codiE.getValorInt()==99?"  and ar.pro_codi = l.pro_codi ":
-       " and l.pro_codi = t.pro_codi ")+
-        (tla_codiE.getValorInt()!=99 || proiniE.getValorInt()==0?"": " and l.pro_codi >= "+proiniE.getValorInt())+
-        (tla_codiE.getValorInt()!=99 || profinE.getValorInt()==0?"": " and l.pro_codi > "+profinE.getValorInt())+
+       (tla_codiE.getValorInt()==99?"  and ar.pro_codi = p.pro_codi ":
+       " and p.pro_codi = t.pro_codi ")+
+        (tla_codiE.getValorInt()!=99 || proiniE.getValorInt()==0?"": " and p.pro_codi >= "+proiniE.getValorInt())+
+        (tla_codiE.getValorInt()!=99 || profinE.getValorInt()==0?"": " and p.pro_codi > "+profinE.getValorInt())+
         (tla_codiE.getValorInt()==99?"":" and gr.tla_codi = t.tla_codi "+
         " and gr.tla_orden = t.tla_orden ")+
        " group by  "+
@@ -573,14 +571,14 @@ public class  clpevepr extends ventana  implements  JRDataSource
      else
        proCodi = Integer.parseInt(producto);
 
-     s="SELECT c.*,l.*,pv.prv_nomb FROM pedvenc as c,"+
-       " pedvenl as l left join v_proveedo as pv on pv.prv_codi = l.prv_codi  "+
+     s="SELECT p.*,pv.prv_nomb FROM v_pedven as p"+
+       "  left join v_proveedo as pv on pv.prv_codi = p.prv_codi  "+
       (swGrupo?", tilialpr as t ":"")+
       condWhere+
-      (swGrupo?" and tla_orden = "+proCodi+" and l.pro_codi = t.pro_codi ":
-       " and l.pro_codi = "+proCodi)+
-       " AND c.cli_codi = "+cliCodi+
-       " order by c.emp_codi,c.eje_nume,c.pvc_nume ";
+      (swGrupo?" and tla_orden = "+proCodi+" and p.pro_codi = t.pro_codi ":
+       " and p.pro_codi = "+proCodi)+
+       " AND p.cli_codi = "+cliCodi+
+       " order by p.emp_codi,p.eje_nume,p.pvc_nume ";
 //   debug(s);
        jtPed.removeAllDatos();
        if (! dtCon1.select(s))
@@ -594,12 +592,12 @@ public class  clpevepr extends ventana  implements  JRDataSource
          Vector v=new Vector();
          v.addElement(dtCon1.getString("eje_nume")+"/"+dtCon1.getString("pvc_nume"));
          v.addElement(dtCon1.getFecha("pvc_fecent","dd-MM-yy"));
-         v.addElement(dtCon1.getString("pvl_canti"));
+         v.addElement((dtCon1.getString("pvl_tipo").equals("K")?dtCon1.getString("pvl_kilos"):dtCon1.getString("pvl_unid"))+dtCon1.getString("pvl_tipo"));
          v.addElement(dtCon1.getString("pvl_precio"));
-         v.addElement(new Boolean(dtCon1.getInt("pvl_precon") != 0));
+         v.addElement(dtCon1.getInt("pvl_precon") != 0);
          v.addElement(dtCon1.getString("prv_nomb"));
          v.addElement(dtCon1.getFecha("pvl_feccad","dd-MM-yy"));
-         v.addElement(new Boolean(dtCon1.getString("pvc_confir").equals("S")));
+         v.addElement(dtCon1.getString("pvc_confir").equals("S"));
          v.addElement(dtCon1.getString("alm_codi"));
          v.addElement(dtCon1.getString("pvl_comen"));
          jtPed.addLinea(v);
@@ -668,7 +666,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
       if (campo.equals("pro_nomb"))
         return swRotoProd?jtProd.getValString(linProd,1):null;
       if (campo.equals("pvl_canti"))
-        return swRotoProd?new Integer(jtProd.getValorInt(linProd,2)):null;
+        return swRotoProd?jtProd.getValString(linProd,JT_CANTI):null;
       if (campo.equals("cli_nomb"))
         return jtCli.getValString(linClien,1);
       if (campo.equals("unidcli"))

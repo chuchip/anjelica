@@ -1338,7 +1338,7 @@ public class pdalbara extends ventanaPad  implements PAD
       if ( MantTarifa.isTarifaCosto(dtStat,cli_codiE.getLikeCliente().getInt("tar_codi")) )
        avc_valoraE.setValor("1");
     }
-    catch (Exception k)
+    catch (SQLException k)
     {
       Error("Error al Buscar datos de Cliente", k);
     }
@@ -1799,10 +1799,12 @@ public class pdalbara extends ventanaPad  implements PAD
       public void focusLost(FocusEvent e)
       {
         try {
-          if (pvc_numeE.hasCambio() && pvc_numeE.getValorInt() != 0 && pvc_anoE.getValorInt()!=0)
-          {
+          if (pvc_numeE.hasCambio() || pvc_anoE.hasCambio())
+          {     
+            pvc_anoE.resetCambio();
             pvc_numeE.resetCambio();
             cli_codiE.setValorInt(getClientePedido());
+            afterFocusLostCli(false);
             actPedAlbaran();
           }
         } catch (Exception k)
@@ -2122,6 +2124,7 @@ public class pdalbara extends ventanaPad  implements PAD
       pvc_anoE.setValorInt(copeve.ejeNumeS);
       pvc_numeE.setValorInt(copeve.pvcNumeS);
       cli_codiE.setValorInt(copeve.cliCodiS);
+      afterFocusLostCli(false);
     }
     try {
       actPedAlbaran();
@@ -4279,7 +4282,7 @@ public class pdalbara extends ventanaPad  implements PAD
     if (getClientePedido(dtAdd,true)>0)
     {
       dtAdd.edit();
-      dtAdd.setDato("avc_cerra", avc_cerraE.isSelected()?-1:0);
+      dtAdd.setDato("pvc_cerra", avc_cerraE.isSelected()?-1:0);
       dtAdd.update();
     }
 
@@ -7276,23 +7279,17 @@ public class pdalbara extends ventanaPad  implements PAD
   void verDatPedido(boolean busAlbaran) throws Exception
   {
     if (busAlbaran)
-      s = "SELECT c.usu_nomb,c.pvc_comen,c.pvc_fecped,c.pvc_fecent, l.* FROM pedvenc as c, pedvenl as l " +
-      " WHERE c.emp_codi =  " + emp_codiE.getValorInt() +
-      " AND c.avc_ano = " + avc_anoE.getValorInt() +
-      " and c.avc_nume = " + avc_numeE.getValorInt() +
-      " and c.avc_serie = '"+avc_seriE.getText()+"'"+
-      " and l.emp_codi = c.emp_codi " +
-      " and l.eje_nume = c.eje_nume " +
-      " and l.pvc_nume = c.pvc_nume " +
+      s = "SELECT * FROM v_pedven " +
+      " WHERE emp_codi =  " + emp_codiE.getValorInt() +
+      " AND avc_ano = " + avc_anoE.getValorInt() +
+      " and avc_nume = " + avc_numeE.getValorInt() +
+      " and avc_serie = '"+avc_seriE.getText()+"'"+
       " order by pvl_numlin ";
     else
-      s = "SELECT c.usu_nomb,c.pvc_comen,c.pvc_fecped,c.pvc_fecent, l.* FROM pedvenc as c, pedvenl as l " +
-        " WHERE c.emp_codi =  " + emp_codiE.getValorInt() +
-        " AND c.eje_nume = " + pvc_anoE.getValorInt() +
-        " and c.pvc_nume = " + pvc_numeE.getValorInt() +
-        " and l.emp_codi = c.emp_codi " +
-        " and l.eje_nume = c.eje_nume " +
-        " and l.pvc_nume = c.pvc_nume " +
+      s = "SELECT * FROM v_pedven " +
+        " WHERE emp_codi =  " + emp_codiE.getValorInt() +
+        " AND eje_nume = " + pvc_anoE.getValorInt() +
+        " and pvc_nume = " + pvc_numeE.getValorInt() +
         " order by pvl_numlin ";
     jtLinPed.removeAllDatos();
     pvc_fecentE.resetTexto();
@@ -7328,7 +7325,7 @@ public class pdalbara extends ventanaPad  implements PAD
                                            cli_codiE.getValorInt(), EU.em_cod, dtStat));
       v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi"), dtStat));
       v.add(dtCon1.getFecha("pvl_feccad","dd-MM-yy"));
-      v.add(dtCon1.getString("pvl_canti"));
+      v.add((dtCon1.getString("pvl_tipo").equals("K")?dtCon1.getString("pvl_kilos"):dtCon1.getString("pvl_unid"))+dtCon1.getString("pvl_tipo"));
       if (verPrecios)
         v.add(dtCon1.getString("pvl_precio"));
       else

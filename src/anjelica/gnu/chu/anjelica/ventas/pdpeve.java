@@ -40,6 +40,7 @@ import gnu.chu.winayu.AyuArt;
 public class pdpeve  extends ventanaPad   implements PAD
 {
   AyuArt aypro;
+  CComboBox pcc_estadE=new CComboBox();
   CButton Bimpri=new CButton(Iconos.getImageIcon("print"));
   CButton BbusProd=new CButton(Iconos.getImageIcon("buscar"));
   String s;
@@ -345,8 +346,12 @@ public class pdpeve  extends ventanaPad   implements PAD
     cLabel9.setText("Usuario");
     cLabel9.setBounds(new Rectangle(182, 4, 49, 16));
     cLabel12.setText("Comentario");
-    cLabel12.setBounds(new Rectangle(3, 38, 68, 18));
-
+    cLabel12.setBounds(new Rectangle(3, 38, 68, 16));
+    pcc_estadE.addItem("Pendiente","P");
+    pcc_estadE.addItem("Preparado","L");
+    pcc_estadE.addItem("Cancelado","C");
+    pcc_estadE.setBounds(new Rectangle(3, 58, 68, 17));
+        
     cLabel1.setText("Cliente");
     cLabel1.setBounds(new Rectangle(75, 3, 43, 16));
     Ppie.setBorder(BorderFactory.createRaisedBevelBorder());
@@ -384,7 +389,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     opPedidos.setHorizontalTextPosition(SwingConstants.LEFT);
     opPedidos.setMargin(new Insets(0, 0, 0, 0));
     opPedidos.setText("Incluir Pedidos");
-    opPedidos.setBounds(new Rectangle(644, 37, 119, 17));
+    opPedidos.setToolTipText("Incluir pedidos en calculo stock actual");
+    opPedidos.setBounds(new Rectangle(630, 37, 119, 17));
     cLabel11.setText("Empr.");
     cLabel11.setBounds(new Rectangle(3, 3, 35, 16));
     emp_codiE.setBounds(new Rectangle(37, 3, 33, 16));
@@ -431,6 +437,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     Pcabe.add(avc_anoE, null);
     Pcabe.add(opVerProd, null);
     Pcabe.add(cLabel12, null);
+    Pcabe.add(pcc_estadE,null);
     Pcabe.add(cLabel10, null);
     Pcabe.add(alm_codiE, null);
     Pcabe.add(cLabel14, null);
@@ -485,7 +492,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     jt.setPreferredSize(new Dimension(477, 250));
     jt.setPuntoDeScroll(50);
     jt.setAnchoColumna(new int[]{60,160,50,150,90,70,40,60,50,150,30});
-    jt.setAlinearColumna(new int[]{2,0,2,0,1,1,0,2,1,0,2});
+    jt.setAlinearColumna(new int[]{2,0,2,0,1,2,0,2,1,0,2});
     jt.setFormatoColumna(JT_CANTI,"--,---9");
     jt.setFormatoColumna(JT_PRECIO,"---,--9.99");
     jt.setFormatoColumna(JT_PRECON,"BSN");
@@ -918,16 +925,28 @@ public class pdpeve  extends ventanaPad   implements PAD
         pvc_fecentE.requestFocus();
         return false;
       }
-      jt.procesaAllFoco();
+      if (pcc_estadE.getValor().equals("L"))
+      {
+          pcc_estadE.requestFocus();
+          mensajeErr("Este estado solo se puede poner desde mantenimiento Albaranes venta");
+          return false;
+      }
+      jt.salirGrid();
+      int nr=cambiaLineaJT(jt.getSelectedRow());
+      if (nr>=0)
+      {
+          jt.requestFocusLater(jt.getSelectedRow(), nr);
+          return false;
+      }
       actAcumJT();
       if (nlE.getValorInt()==0)
       {
-        mensajeErr("Introduze alguna linea de pedido ... �� Cachondo !!");
+        mensajeErr("Introducir alguna linea de pedido");
         jt.requestFocusInicio();
         return false;
       }
 
-    } catch (Exception k)
+    } catch (SQLException k)
     {
       Error("Error al validar datos",k);
     }
@@ -981,10 +1000,18 @@ public class pdpeve  extends ventanaPad   implements PAD
       else
         dtAdd.edit();
       dtAdd.setDato("pvl_numlin", nl);
-      dtAdd.setDato("pvl_unid", jt.getValorInt(n,JT_CANTI));
-      dtAdd.setDato("pvl_kilos", jt.getValorInt(n,JT_CANTI));
-      dtAdd.setDato("pvl_unid", jt.getValorDec(n,JT_CANTI));
-      dtAdd.setDato("pvl_unid", jt.getValorDec(n,JT_CANTI));
+      if (jt.getValString(n,JT_TIPCAN).equals("U"))
+      {          
+        dtAdd.setDato("pvl_unid", jt.getValorDec(n,JT_CANTI)); 
+        dtAdd.setDato("pvl_kilos",
+            gnu.chu.anjelica.pad.MantArticulos.getKilos(jt.getValorInt(n,JT_PROD),dtStat,jt.getValorDec(n,JT_CANTI)));
+      }
+      else
+      {
+        dtAdd.setDato("pvl_kilos", jt.getValorDec(n,JT_CANTI));
+        dtAdd.setDato("pvl_unid",
+            gnu.chu.anjelica.pad.MantArticulos.getUnidades(jt.getValorInt(n,JT_PROD),dtStat,jt.getValorDec(n,JT_CANTI)));        
+      }     
       dtAdd.setDato("pvl_tipo", jt.getValString(n,JT_TIPCAN));
       dtAdd.setDato("pro_codi", jt.getValorInt(n,JT_PROD));
       dtAdd.setDato("pvl_comen", jt.getValString(n,JT_COMEN));
@@ -1030,11 +1057,11 @@ public class pdpeve  extends ventanaPad   implements PAD
     dtAdd.setDato("pvc_fecent",pvc_fecentE.getText(),"dd-MM-yyyy");
     dtAdd.setDato("pvc_comen",Formatear.strCorta(pvc_comenE.getText(),200));
     dtAdd.setDato("pvc_confir",pvc_confirE.getValor());
-    dtAdd.setDato("avc_ano",0);
+    dtAdd.setDato("avc_ano",pcc_estadE.getValor().equals("C")?-1:0 );
     dtAdd.setDato("avc_serie","A");
     dtAdd.setDato("avc_nume",0);
     dtAdd.setDato("usu_nomb",usu_nombE.getText());
-    dtAdd.setDato("avc_cerra",0); // Albaran Abierto
+    dtAdd.setDato("pvc_cerra",0); // Albaran Abierto
     dtAdd.setDato("pvc_nupecl",pvc_nupeclE.getText());
     dtAdd.update();
   }
@@ -1134,19 +1161,21 @@ public class pdpeve  extends ventanaPad   implements PAD
 
     Baceptar.setEnabled(b);
     Bcancelar.setEnabled(b);
-    cli_codiE.setEnabled(b);
+    cli_codiE.setEnabled(b);  
     if (modo!=navegador.ADDNEW && modo!=navegador.EDIT )
     {
       if (modo!=navegador.QUERY)
       {
         jt.setEnabled(b);
-        Ppie.setEnabled(b);
+        Ppie.setEnabled(b);        
       }
       eje_numeE.setEnabled(b);
       pvc_numeE.setEnabled(b);
     }
-    if (modo!=navegador.EDIT)
+    if (modo!=navegador.EDIT)    
       emp_codiE.setEnabled(b);
+   
+    pcc_estadE.setEnabled(modo==navegador.EDIT && b);  
     pvc_nupeclE.setEnabled(b);
     pvc_fecentE.setEnabled(b);
     pvc_confirE.setEnabled(b);
@@ -1212,9 +1241,9 @@ public class pdpeve  extends ventanaPad   implements PAD
       usu_nombE.setText(dtCon1.getString("usu_nomb"));
       avc_numeE.setText(dtCon1.getString("avc_nume"));
       avc_serieE.setValor(dtCon1.getString("avc_serie"));
-      avc_anoE.setValorDec(dtCon1.getInt("avc_nume"));
+      avc_anoE.setValorDec(dtCon1.getInt("avc_ano"));
       pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
-
+      pcc_estadE.setValor(dtCon1.getInt("avc_ano")==0?"P":dtCon1.getInt("avc_ano")>0?"L":"C" );
       s = "SELECT * FROM pedvenl WHERE emp_codi = " + emp_codiE.getValorInt() +
               " and eje_nume= " + eje_numeE.getValorInt() +
               " and pvc_nume = " + pvc_numeE.getValorInt();

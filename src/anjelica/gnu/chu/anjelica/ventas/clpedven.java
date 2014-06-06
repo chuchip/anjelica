@@ -430,7 +430,7 @@ public class  clpedven extends ventana
         v.addElement(dtCon1.getString("cli_nomb")); // 4
         v.addElement(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy")); // 5
         v.addElement(dtCon1.getString("pvc_confir")); // 6
-        v.addElement(new Boolean(dtCon1.getInt("avc_cerra")!=0)); // 7
+        v.addElement(dtCon1.getInt("pvc_cerra")!=0); // 7
         v.addElement(dtCon1.getString("pvc_nupecl")); // 8
         v.addElement(dtCon1.getString("alm_nomb")); // 9
         jtCabPed.addLinea(v);
@@ -532,17 +532,17 @@ public class  clpedven extends ventana
   }
   private void confJtLin() throws Exception
    {
-     Vector v = new Vector();
-     v.addElement("Prod."); // 0
-     v.addElement("Desc. Prod."); // 1
-     v.addElement("Prv"); // 2
-     v.addElement("Nombre Prv"); // 3
-     v.addElement("Fec.Cad"); // 4
-     v.addElement("Cant"); // 5
-     v.addElement("Precio"); // 6
-     v.addElement("Conf"); // 7 Confirmado Precio ?
-     v.addElement("Comentario"); // 8 Comentario
-     v.addElement("NL."); // 9
+     ArrayList v = new ArrayList();
+     v.add("Prod."); // 0
+     v.add("Desc. Prod."); // 1
+     v.add("Prv"); // 2
+     v.add("Nombre Prv"); // 3
+     v.add("Fec.Cad"); // 4
+     v.add("Cant"); // 5
+     v.add("Precio"); // 6
+     v.add("Conf"); // 7 Confirmado Precio ?
+     v.add("Comentario"); // 8 Comentario
+     v.add("NL."); // 9
      jtLinPed.setCabecera(v);
      jtLinPed.setMaximumSize(new Dimension(548, 127));
      jtLinPed.setMinimumSize(new Dimension(548, 127));
@@ -552,7 +552,7 @@ public class  clpedven extends ventana
                         {60, 160, 50, 150, 90, 70, 60, 50, 150, 30});
      jtLinPed.setAlinearColumna(new int[]
                           {2, 0, 2, 0, 1, 2, 2, 1, 0, 2});
-     jtLinPed.setFormatoColumna(5, "--,---9");
+     
      jtLinPed.setFormatoColumna(6, "---,--9.99");
      jtLinPed.setFormatoColumna(7, "BSN");
    }
@@ -561,13 +561,10 @@ public class  clpedven extends ventana
    {
      try
      {
-       s="SELECT c.usu_nomb,c.pvc_comen,c.pvc_fecped,c.pvc_impres, l.* FROM pedvenc as c, pedvenl as l "+
-           " WHERE c.emp_codi =  "+empCodi+
-           " AND c.eje_nume = "+ejeNume+
-           " and c.pvc_nume = "+pvcNume+
-           " and l.emp_codi = c.emp_codi "+
-           " and l.eje_nume = c.eje_nume "+
-           " and l.pvc_nume = c.pvc_nume "+
+       s="SELECT * FROM v_pedven "+
+           " WHERE emp_codi =  "+empCodi+
+           " AND eje_nume = "+ejeNume+
+           " and pvc_nume = "+pvcNume+
            " order by pvl_numlin ";
        jtLinPed.removeAllDatos();
        Ppie.resetTexto();
@@ -590,9 +587,9 @@ public class  clpedven extends ventana
          v.addElement(dtCon1.getString("prv_codi"));
          v.addElement(prv_codiE.getNombPrv(dtCon1.getString("prv_codi"),dtStat));
          v.addElement(dtCon1.getFecha("pvl_feccad"));
-         v.addElement(dtCon1.getString("pvl_canti"));
+         v.addElement((dtCon1.getString("pvl_tipo").equals("K")?dtCon1.getString("pvl_kilos"):dtCon1.getString("pvl_unid"))+dtCon1.getString("pvl_tipo"));
          v.addElement(dtCon1.getString("pvl_precio"));
-         v.addElement(new Boolean(dtCon1.getInt("pvl_precon") != 0));
+         v.addElement(dtCon1.getInt("pvl_precon") != 0);
          v.addElement(dtCon1.getString("pvl_comen"));
          v.addElement(dtCon1.getString("pvl_numlin"));
          jtLinPed.addLinea(v);
