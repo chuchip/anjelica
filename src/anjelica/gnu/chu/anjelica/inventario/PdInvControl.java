@@ -1196,7 +1196,7 @@ public class PdInvControl extends ventanaPad implements PAD
       String msg="";
       String condProd = " and a.pro_artcon " + (cam_codiE.getText().equals("X")? "<> 0" : " = 0");
       // Busco compras en el periodo que no esten en inventario final.
-       s= "SELECT c.pro_codi,A.pro_nomb, acc_ano as ano, acc_serie as serie, acc_nume as lote, acp_numind as numind"+
+       s= "SELECT c.pro_codi,a.pro_nomb, acc_ano as ano, acc_serie as serie, acc_nume as lote, acp_numind as numind"+
           " from v_compras as c, v_articulo as a   " +
           " where c.pro_codi = a.pro_codi " +
           " and c.acp_canti <> 0 " +        
