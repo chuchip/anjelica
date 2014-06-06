@@ -5,7 +5,7 @@ package gnu.chu.anjelica.pad;
  * <p>Título: MantArticulos </p>
  * <p>Descripcion: Mantenimiento Tabla de Articulos</p>
  * <p>Empresa: miSL</p>
-*  <p>Copyright: Copyright (c) 2005-2012
+*  <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -1044,6 +1044,48 @@ public class MantArticulos extends ventanaPad  implements PAD
      else
        conservarE = "Conservar a -18ºC";
      return conservarE;
+   }
+   /**
+    * Devuelve los kilos estimados para las unidades mandadas de un producto
+    * @param codProd
+    * @param dt
+    * @param unidades
+    * @return kilos estimados para las unidades mandadas de un producto
+    * @throws SQLException 
+    */
+   public static double getKilos(int codProd, DatosTabla dt, double unidades) throws SQLException
+   {
+        return unidades*getKilosUnid(codProd,dt);  
+   }
+    /**
+    * Devuelve las unidades estimadas para unos kilos mandados de un producto
+    * @param codProd
+    * @param dt
+    * @param kilos
+    * @return unidades estimadas para unos kilos mandados de un producto
+    * @throws SQLException 
+    */
+   public static double getUnidades(int codProd, DatosTabla dt, double kilos) throws SQLException
+   {
+       double kilosUnid=getKilosUnid(codProd,dt);
+       if (kilosUnid==0)
+           kilosUnid=1;
+       return gnu.chu.utilidades.Formatear.redondea(kilos/ kilosUnid,0);
+   }
+   /**
+    * Devuelve los kilos estimados para las unidades mandadas de un producto
+    * @param codProd
+    * @param dt
+    * @return kilos estimados para las unidades mandadas de un producto
+    * @throws SQLException 
+    */
+   public static double getKilosUnid(int codProd, DatosTabla dt) throws SQLException
+   {
+        String s = "select pro_kguni from v_articulo  where " +
+         "  pro_codi = " + codProd;
+        if (!dt.select(s))
+            return 0;
+        return dt.getDouble("pro_kguni"); 
    }
    /**
      * Devuelve el nombre de producto
