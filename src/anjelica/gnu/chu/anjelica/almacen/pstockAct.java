@@ -17,7 +17,7 @@ import java.util.*;
  * <p>Descripción: Panel Stock Actual. Muestra el stock actual y previsible de los productos
  * en un almacen o en todos. Permite ver el total de kilos por producto y desglosandolo por
  * proveedor y fecha caducidad </p>
-* <p>Copyright: Copyright (c) 2005-2009
+* <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU seg�n es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -396,13 +396,8 @@ public class pstockAct extends CPanel
         if (almCodi!=0)
         {
           s = "SELECT SUM(stp_kilact) as pro_stock,sum(stp_unact) as pro_stkuni " +
-              " FROM v_stkpart where pro_codi = " + dtCon1.getString("pro_codi") +
-              " and emp_codi = " + emp_codi +
+              " FROM actstkpart where pro_codi = " + dtCon1.getString("pro_codi") +             
               " and stp_kilact > 0 " +
-              " and eje_nume = 0 " +
-              " and pro_serie = 'S'" +
-              " and pro_nupar =  0 " +
-              " and pro_numind = 0 " +
               " and alm_codi = " + almCodi;
           dtStat.select(s);
           stock=dtStat.getDouble("pro_stock", true);
@@ -494,8 +489,7 @@ public class pstockAct extends CPanel
         " and c.pcc_nume =l.pcc_nume " +
         " and c.EMP_CODI = " + emp_codi +
         " and l.pro_codi = "+proCodi+
-        " and pcc_estrec != 'C' "+ // ignorar los pedidos cancelado.
-        " and c.acc_cerra = 0 "+ // Pedidos NO Cerrados
+        " AND C.pcc_estrec = 'P' "+
         (almCodi == 0?"":" and c.alm_codi = "+almCodi)+
         " and c.pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +       
         " group by c.pcc_estad,c.prv_codi,pcl_feccad";
@@ -553,7 +547,7 @@ public class pstockAct extends CPanel
           " and c.eje_nume= l.eje_nume " +
           " and c.pvc_nume =l.pvc_nume " +
           " and C.EMP_CODI = " + emp_codi +
-          " and (c.avc_ano = 0 or c.avc_cerra = 0) "+ // Pedidos NO cerrados
+          " and (c.avc_ano = 0 or c.pvc_cerra = 0) "+ // Pedidos NO cerrados
           (almCodi == 0?"":" and c.alm_codi = "+almCodi)+
           " and l.pro_codi = " + proCodi +
           " AND pvc_fecent <= TO_DATE('" + fefise + "','dd-MM-yyyy')";
@@ -656,7 +650,7 @@ public class pstockAct extends CPanel
           " group by prv_codi,stp_feccad" ;
      if (incPedid)
        s+=" UNION ALL " +
- // Pedidos Compras Pendientes
+ // Pedidos Compras Pendientes de confirmar
           " SELECT 2 as tipsel,sum(pcl_nucape) as unidades, sum(pcl_cantpe) as cantidad, " +
           " c.prv_codi,l.pcl_feccad as feccad " +
           " FROM pedicoc as c,pedicol as l " +
@@ -667,7 +661,7 @@ public class pstockAct extends CPanel
           " and l.pro_codi = " + proCodi +
           (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
           " and c.pcc_estad = 'P' " +
-          " AND C.ACC_CERRA = 0 "+ // Pendientes
+          " AND C.pcc_estrec = 'P' "+ // Pendientes
           " and c.pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +
           " group by c.prv_codi,l.pcl_feccad " +
           " UNION ALL " +
@@ -681,9 +675,8 @@ public class pstockAct extends CPanel
          " and C.EMP_CODI = " + emp_codi +
          " and l.pro_codi = " + proCodi +
          (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
-         " and c.pcc_estrec != 'C' "+ // Ignorar pedidos cancelados
-         " and c.pcc_estad = 'C' " +
-         " AND C.ACC_CERRA = 0 "+ // Pendientes
+         " AND C.pcc_estrec = 'P' "+ // Pendientes
+         " and c.pcc_estad = 'C' " + // Confirmados.
          " and c.pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +
          " group by c.prv_codi,l.pcl_feccad " +
          " UNION ALL " +
@@ -697,21 +690,20 @@ public class pstockAct extends CPanel
          " and C.EMP_CODI = " + emp_codi +
          " and l.pro_codi = " + proCodi +
          (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
-          " and c.pcc_estrec != 'C' "+ // Ignorar pedidos cancelados
+          " and c.pcc_estrec = 'P' "+ // Ignorar pedidos cancelados
          " and c.pcc_estad = 'F' " +
-         " AND C.ACC_CERRA = 0 "+ // Pendientes
          " and c.pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +
          " group by c.prv_codi,l.pcl_feccad " +
          " UNION ALL "+
 // Pedidos Ventas Pendientes
-         "SELECT 5 as tipsel, sum(pvl_unid)*-1 as  unidades, 0 as cantidad, " +
+         "SELECT 5 as tipsel, sum(pvl_unid)*-1 as  unidades, sum(pvl_kilos) as cantidad, " +
          " l.prv_codi,pvl_feccad as feccad " +
          "  FROM pedvenc as c, pedvenl as l " +
          " where c.emp_codi = l.emp_codi" +
          " and c.eje_nume= l.eje_nume " +
          " and c.pvc_nume =l .pvc_nume " +
          " and C.EMP_CODI = " + emp_codi +
-         " and (avc_ano = 0 or avc_cerra = 0) "+ // Sin Albaran o Albaran sin CERRAR
+         " and (avc_ano = 0 or pvc_cerra = 0) "+ // Sin Albaran o Albaran sin CERRAR
          (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
          " and l.pro_codi = " + proCodi +
          " AND pvc_fecent <= TO_DATE('" + fecped + "','dd-MM-yyyy')" +
@@ -745,26 +737,10 @@ public class pstockAct extends CPanel
 // Albaranes Ventas sin CERRAR Y con pedidos
          " select 7 as tipsel, sum(avp_numuni) as unidades,sum(avp_canti) as cantidad, " +
          " s.prv_codi, s.stp_feccad as feccad " +
-         " from v_albavec as c,v_albavel as li, v_albvenpar as l,v_stkpart as s " +
-         " WHERE c.emp_codi = l.emp_codi " +
-         " and c.avc_ano = l.avc_ano " +
-         " and c.avc_serie = l.avc_serie " +
-         " and c.avc_nume = l.avc_nume " +
-         " and li.emp_codi = l.emp_codi " +
-         " and li.avc_ano = l.avc_ano " +
-         " and li.avc_serie = l.avc_serie " +
-         " and li.avc_nume = l.avc_nume " +
-         " and li.avl_numlin = l.avl_numlin " +
-         " and s.eje_nume = l.avp_ejelot " +
-         " and s.emp_codi = l.avp_emplot " +
-         " and s.pro_serie = l.avp_serlot " +
-         " and s.pro_nupar = l.avp_numpar " +
-         " and s.pro_codi = l.pro_codi " +
-         " and s.pro_numind = l.avp_numind " +
-         " AND C.AvC_CERRA = 0 " + // Abierto y con pedido
-         " and li.avc_cerra = 0 " +
+         " from v_albventa_detalle as c,v_stkpart as s " +
+         " WHERE c.avc_cerra = 0 " + // Abierto y con pedido
          (almCodi == 0 ? "" : " and s.alm_codi = " + almCodi) +
-         " and li.pro_codi = " + proCodi +
+         " and c.pro_codi = " + proCodi +
          " and c.emp_codi = " + emp_codi +
          " and  exists ( select emp_codi from pedvenc as p " +
          " where p.emp_codi = c.emp_codi " +

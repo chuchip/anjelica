@@ -410,21 +410,12 @@ public class clresstock extends ventana implements  JRDataSource
       {
         s+=" union all "+
            " select sum(acp_canind)*-1 as unidades,sum(acp_canti)*-1 as cantidad,  "+
-            " c.prv_codi , p.acp_feccad as feccad "+
-            " from v_albacoc as c, v_albacol as l ,v_albcompar as p "+
-            " WHERE c.emp_codi = l.emp_codi "+
-            " and c.acc_ano = l.acc_ano "+
-            " and c.acc_serie = l.acc_serie "+
-            " and c.acc_nume = l.acc_nume "+
-            " and c.emp_codi = l.emp_codi "+
-            " and c.acc_ano = l.acc_ano "+
-            " and c.acc_serie = l.acc_serie "+
-            " and c.acc_nume = l.acc_nume "+
-            " and c.emp_codi = "+empCodi+
-            " and p.pro_codi = ?"+
-            " AND l.ACC_CERRA = 0 "+ // No esta cerrada la cabecera
+            " c.prv_codi , acp_feccad as feccad "+
+            " from v_compras as c"+
+            " WHERE emp_codi = "+empCodi+
+            " and pro_codi = ?"+            
             " AND C.ACC_CERRA = 0 "+ // No estan cerradas las lineas
-            (almCodi == 0 ? "" : " and l.alm_codi = " + almCodi)+
+            (almCodi == 0 ? "" : " and alm_codi = " + almCodi)+
             " and exists ( select   emp_codi "+
             " from pedicoc as p " +
             " where p.emp_codi = c.emp_codi "+
@@ -436,32 +427,22 @@ public class clresstock extends ventana implements  JRDataSource
 // Albaranes Ventas sin CERRAR Y con pedidos
             " select sum(avp_numuni) as unidades,sum(avp_canti) as cantidad, " +
             " s.prv_codi, s.stp_feccad as feccad " +
-            " from v_albavec as c,v_albavel as li, v_albvenpar as l,v_stkpart as s " +
-            " WHERE c.emp_codi = l.emp_codi " +
-            " and c.avc_ano = l.avc_ano " +
-            " and c.avc_serie = l.avc_serie " +
-            " and c.avc_nume = l.avc_nume " +
-            " and li.emp_codi = l.emp_codi " +
-            " and li.avc_ano = l.avc_ano " +
-            " and li.avc_serie = l.avc_serie " +
-            " and li.avc_nume = l.avc_nume " +
-            " and li.avl_numlin = l.avl_numlin " +
-            " and s.eje_nume = l.avp_ejelot " +
-            " and s.emp_codi = l.avp_emplot " +
-            " and s.pro_serie = l.avp_serlot " +
-            " and s.pro_nupar = l.avp_numpar " +
-            " and s.pro_codi = l.pro_codi " +
-            " and s.pro_numind = l.avp_numind " +
-            " AND C.AvC_CERRA = 0 " + // Abierto y con pedido
-            " and li.avc_cerra = 0 " +
+            " from v_albventa_detalle as a,v_stkpart as s " +
+            " WHERE  s.eje_nume = a.avp_ejelot " +
+            " and s.emp_codi = a.avp_emplot " +
+            " and s.pro_serie = a.avp_serlot " +
+            " and s.pro_nupar = a.avp_numpar " +
+            " and s.pro_codi = a.pro_codi " +
+            " and s.pro_numind = a.avp_numind " +
+            " AND avc_cerra = 0 " + // Abierto y con pedido
             (almCodi == 0 ? "" : " and s.alm_codi = " + almCodi) +
-            " and li.pro_codi = ? "+
-            " and c.emp_codi = " + empCodi +
+            " and a.pro_codi = ? "+
+            " and a.emp_codi = " + empCodi +
             " and  exists ( select emp_codi from pedvenc as p " +
-            " where p.emp_codi = c.emp_codi " +
-            " and p.avc_ano = c.avc_ano " +
-            " and p.avc_serie = c.avc_serie " +
-            " and p.avc_nume = c.avc_nume) " +
+            " where p.emp_codi = a.emp_codi " +
+            " and p.avc_ano = a.avc_ano " +
+            " and p.avc_serie = a.avc_serie " +
+            " and p.avc_nume = a.avc_nume) " +
             " group by s.prv_codi, s.stp_feccad ";
       } // Fin de incluir pedidos
 //      debug("s: "+s);
@@ -470,65 +451,53 @@ public class clresstock extends ventana implements  JRDataSource
       s = // Pedidos de Compras Pendientes de confirmar
           " SELECT sum(pcl_nucape) as unidCompr, sum(pcl_cantpe) as cantCompr, " +
           " 0 as unidVent, 0 as cantVent, " +
-          " c.prv_codi,l.pcl_feccad as feccad " +
-          " FROM pedicoc as c,pedicol as l " +
-          " where c.emp_codi = l.emp_codi" +
-          " and c.eje_nume= l.eje_nume " +
-          " and c.pcc_nume =l .pcc_nume " +
-          " and C.EMP_CODI = " + empCodi +
-          " and l.pro_codi = ?" +
-          (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
-          " and c.pcc_estad = 'P' " +
-          " AND C.ACC_CERRA = 0 " + // Pendientes
-          " and c.pcc_fecrec <=  TO_DATE('" + fecStockE.getText() + "','dd-MM-yyyy')" +
-          " group by c.prv_codi,l.pcl_feccad " +
+          " prv_codi,pcl_feccad as feccad " +
+          " FROM v_pedico  " +
+          " where EMP_CODI = " + empCodi +
+          " and pro_codi = ?" +
+          (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
+          " and pcc_estad = 'C' " +
+          " AND pcc_estrec = 'P' "+
+          " and pcc_fecrec <=  TO_DATE('" + fecStockE.getText() + "','dd-MM-yyyy')" +
+          " group by prv_codi,pcl_feccad " +
           " UNION ALL " +
           // Pedidos Compras Confirmados
           " SELECT sum(pcl_nucaco) as unidCompr, sum(pcl_cantco) as cantCompr, " +
           " 0 as unidVent, 0 as cantVent, " +
-          " c.prv_codi,l.pcl_feccad as feccad " +
-          " FROM pedicoc as c,pedicol as l " +
-          " where c.emp_codi = l.emp_codi" +
-          " and c.eje_nume= l.eje_nume " +
-          " and c.pcc_nume =l .pcc_nume " +
-          " and C.EMP_CODI = " + empCodi +
-          " and l.pro_codi = ? " +
-          (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
-          " and c.pcc_estad = 'C' " +
-          " AND C.ACC_CERRA = 0 " + // Pendientes
-          " and c.pcc_fecrec <=  TO_DATE('" + fecStockE.getText() + "','dd-MM-yyyy')" +
-          " group by c.prv_codi,l.pcl_feccad " +
+          " prv_codi,pcl_feccad as feccad " +
+          " FROM v_pedico " +
+          " where EMP_CODI = " + empCodi +
+          " and pro_codi = ? " +
+          (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
+          " and pcc_estad = 'C' " +
+          " AND pcc_estrec = 'P' "+
+          " and pcc_fecrec <=  TO_DATE('" + fecStockE.getText() + "','dd-MM-yyyy')" +
+          " group by prv_codi,pcl_feccad " +
           " UNION ALL " +
           // Pedidos Compras Pre-Factura
           " SELECT sum(pcl_nucafa) as unidCompr, sum(pcl_cantfa) as cantCompr, " +
           " 0 as unidVent, 0 as cantVent, " +
-          " c.prv_codi,l.pcl_feccad as feccad " +
-          " FROM pedicoc as c,pedicol as l " +
-          " where c.emp_codi = l.emp_codi" +
-          " and c.eje_nume= l.eje_nume " +
-          " and c.pcc_nume =l .pcc_nume " +
-          " and C.EMP_CODI = " + empCodi +
-          " and l.pro_codi = ?" +
-          (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
-          " and c.pcc_estad = 'F' " +
-          " AND C.ACC_CERRA = 0 " + // Pendientes
-          " and c.pcc_fecrec <=  TO_DATE('" + fecStockE.getText() + "','dd-MM-yyyy')" +
-          " group by c.prv_codi,l.pcl_feccad " +
+          " prv_codi,pcl_feccad as feccad " +
+          " FROM v_pedico " +
+          " where EMP_CODI = " + empCodi +
+          " and pro_codi = ?" +
+          (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
+          " and pcc_estad = 'F' " +
+          " AND pcc_estrec = 'P' "+
+          " and pcc_fecrec <=  TO_DATE('" + fecStockE.getText() + "','dd-MM-yyyy')" +
+          " group by prv_codi,pcl_feccad " +
           " UNION ALL " +
-          // Pedidos Ventas Pendientes
+          // Pedidos Ventas Pendientes de preparar albaran
           "SELECT  0 as unidCompr,0 as cantCompr, " +
-          " sum(pvl_canti) as  unidVent, 0 as cantVent, " +
-          " l.prv_codi,pvl_feccad as feccad " +
-          "  FROM pedvenc as c, pedvenl as l " +
-          " where c.emp_codi = l.emp_codi" +
-          " and c.eje_nume= l.eje_nume " +
-          " and c.pvc_nume =l .pvc_nume " +
-          " and C.EMP_CODI = " + empCodi +
-          " and (avc_ano = 0 or avc_cerra = 0) " + // Sin Albaran o Albaran sin CERRAR
-          (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
-          " and l.pro_codi = ?" +
+          " sum(pvl_unid) as  unidVent, sum(pvl_kilos) as cantVent, " +
+          " prv_codi,pvl_feccad as feccad " +
+          "  FROM v_pedven " +
+          " where  EMP_CODI = " + empCodi +
+          " and (avc_ano = 0 or pvc_cerra = 0) " + // Sin Albaran o Albaran sin CERRAR
+          (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
+          " and pro_codi = ?" +
           " AND pvc_fecent <= TO_DATE('" + fecStockE.getText() + "','dd-MM-yyyy')" +
-          " group by l.prv_codi,pvl_feccad ";
+          " group by prv_codi,pvl_feccad ";
       pst2 = ct.prepareCall(dtAux.parseaSql(s));
       if (tlaCodi == 99)
       {
@@ -799,16 +768,12 @@ public class clresstock extends ventana implements  JRDataSource
   }
   boolean checkCond()
   {
-    if (opIncPedE.isSelected())
-    {
-      if (tla_vekgcaE.getValor().equals("K"))
-      {
-        mensajeErr("No se puede incluir Pedidos si se desea sacar kilos");
-        tla_vekgcaE.requestFocus();
-        return false;
-      }
-    
-    }
+//    if (opIncPedE.isSelected() && tla_vekgcaE.getValor().equals("K"))
+//    {
+//        mensajeErr("No se puede incluir Pedidos si se desea sacar kilos");
+//        tla_vekgcaE.requestFocus();
+//        return false;
+//    }
     if (fecStockE.isNull())
     {
         mensajeErr("Introduzca Fecha de Stock");
