@@ -339,7 +339,7 @@ public class actStkPart
     }
     if (actual)
       return true;
-    return actAcum(proCodi, almCodi, kilos, unidades, fecMvto,false);
+    return true; //actAcum(proCodi, almCodi, kilos, unidades, fecMvto,false);
   }
   /**
    * Actualizar acumulados (Productos y registro general en stockPartidas)
@@ -351,17 +351,17 @@ public class actStkPart
    * @return
    * @throws java.sql.SQLException 
    */
-  public boolean actAcum(int proCodi, int almCodi, double kilos, int unidades,
-                         String fecMvto) throws java.sql.SQLException
-  {
-    return actAcum(proCodi,almCodi,kilos,unidades,fecMvto,false);
-  }
+//  public boolean actAcum(int proCodi, int almCodi, double kilos, int unidades,
+//                         String fecMvto) throws java.sql.SQLException
+//  {
+//    return actAcum(proCodi,almCodi,kilos,unidades,fecMvto,false);
+//  }
 
   /**
    * Actualizo Stock sobre el producto y almacen para la empresa dada.
    * Actualiza la tabla v_stkpart con los datos mandados y los acumulados
    * de la tabla productos
-   * @deprecated 
+   * 
    * @param proCodi int
    * @param almCodi int
    * @param kilos double Kilos a sumar
@@ -372,46 +372,27 @@ public class actStkPart
    * @throws SQLException Error en DB
    * @return boolean
    */
-  public boolean actAcum(int proCodi, int almCodi, double kilos, int unidades,
+  private void actAcum(int proCodi, int almCodi, double kilos, int unidades,
                          String fecMvto,boolean actual) throws java.sql.SQLException
   {
-    if (actStkAutomatico)
-        return true;
-    int res;
+
 
     String fefici=fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") : fecMvto;
-    String s="UPDATE stockpart SET stp_kilact = "+(actual?"(":"stp_kilact + (")+kilos+")"+
+    String s="UPDATE actstkpart SET stp_kilact = "+(actual?"(":"stp_kilact + (")+kilos+")"+
         " ,stp_unact= "+(actual?"(":"stp_unact + (")+unidades +")"+
         " ,stp_fefici = to_date('"+fefici+"','dd-MM-yyyy')"+
-            " WHERE emp_codi = " + empCodi +
-            " and pro_codi = " + proCodi +
-            " and alm_codi = " + almCodi +
-            " and eje_nume = 0 " +
-            " and pro_serie = 'S'" +
-            " and pro_nupar =  0 " +
-            " and pro_numind = 0 ";
+            " WHERE pro_codi = " + proCodi +
+            " and alm_codi = " + almCodi ;
     if (dtAdd.executeUpdate(s)==0)
     { // No lo ha modificado. Creo el registro
       kilAlmac = kilos;
       unidAlmac = unidades;
-      dtAdd.addNew("stockpart");
-      dtAdd.setDato("eje_nume", 0);
-      dtAdd.setDato("emp_codi", empCodi);
-      dtAdd.setDato("pro_serie", "S");
-      dtAdd.setDato("stp_tiplot", "S");
-      dtAdd.setDato("pro_nupar", 0);
-     // dtAdd.setDato("stk_nlipar", 0);
+      dtAdd.addNew("actstkpart"); 
       dtAdd.setDato("pro_codi", proCodi);
-      dtAdd.setDato("pro_numind", 0);
       dtAdd.setDato("alm_codi", almCodi);
-      dtAdd.setDato("stp_unini", unidAlmac);
       dtAdd.setDato("stp_feccre",
                     fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") : fecMvto,
                     "dd-MM-yyyy");
-      dtAdd.setDato("stp_fefici",
-                    fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") : fecMvto,
-                    "dd-MM-yyyy");
-      dtAdd.setDato("stp_kilini", kilAlmac);
       dtAdd.setDato("stp_fefici",
                     fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") : fecMvto,
                     "dd-MM-yyyy");
@@ -419,20 +400,6 @@ public class actStkPart
       dtAdd.setDato("stp_unact", unidAlmac);
       dtAdd.update();
     }
-    if (actual) 
-        return true; // Si es actualizar (Machacar, vamos), no actualizo tabla productos.
-    // Actualizo Acumulados de Producto en tabla productos
-    s = "UPDATE v_articulo set " +
-        " pro_stock = "+(actual?"(":" pro_stock + (") + kilos + ")," +
-        " pro_stkuni = "+(actual?"(":"pro_stkuni + (") + unidades + ")" +
-        " WHERE pro_codi = " + proCodi;
-    res = dtAdd.executeUpdate(s);
-    if (res == 0)
-    {
-      logger.error("Articulo: " + proCodi + " en Empresa: " +
-                                      empCodi + " NO Encontrado en tabla Maestros de Articulos");
-    }
-    return true;
   }
 
   public boolean restar(int ejeNume, String serie, int lote,
@@ -654,14 +621,14 @@ public class actStkPart
     if (unid == 0 && kilos == 0)
     {
       dtAdd.executeUpdate("DELETE FROM v_stkpart WHERE " + dtAdd.getCondWhere());
-      actAcum(proCodi, almCodi, kilAnt*-1, unAnt*-1, null);
+//      actAcum(proCodi, almCodi, kilAnt*-1, unAnt*-1, null);
       return 2;
     }
     dtAdd.edit(dtAdd.getCondWhere());
     dtAdd.setDato("stp_unact", unid);
     dtAdd.setDato("stp_kilact", kilos);
     dtAdd.update();
-    actAcum(proCodi, almCodi, kilAnt*-1, unAnt*-1, null);
+//    actAcum(proCodi, almCodi, kilAnt*-1, unAnt*-1, null);
     return 1;
   }
   public int cambiaProd(DatosTabla dt,int proCodi, int proCodAnt, int ejeLot,
@@ -699,8 +666,8 @@ public class actStkPart
         " and alm_codi = " + almCodi;
     if (dt.select(s))
     {
-      actAcum(proCodAnt,almCodi,dt.getDouble("stp_kilact")*-1,dt.getInt("stp_unact")*-1,null);
-      actAcum(proCodi,almCodi,dt.getDouble("stp_kilact"),dt.getInt("stp_unact"),null);
+//      actAcum(proCodAnt,almCodi,dt.getDouble("stp_kilact")*-1,dt.getInt("stp_unact")*-1,null);
+//      actAcum(proCodi,almCodi,dt.getDouble("stp_kilact"),dt.getInt("stp_unact"),null);
       s = "UPDATE v_stkpart SET pro_codi = " + proCodi +
           " WHERE eje_nume = " + ejeLot +
           " AND emp_codi =  " + empLot +
@@ -1366,7 +1333,7 @@ public class actStkPart
 
    /**
     * Regenera acumulados sobre tabla productos a partir de los datos en la tabla
-    *  v_stkpart. Actualiza tanto los acumulados por almacen en v_stkpart como en
+    * v_stkpart. Actualiza tanto los acumulados por almacen en actstkpart como en
     * la tabla productos.
     *
     * @param dt DatosTabla
@@ -1376,7 +1343,7 @@ public class actStkPart
     * @throws Exception
     * @return boolean Si se encontraron registros para actualizar.
     */
-   public boolean regAcuProducto (DatosTabla dt, int proArtcon,String fecMvto,int proCodi) throws
+   private boolean regAcuProducto (DatosTabla dt, int proArtcon,String fecMvto,int proCodi) throws
        Exception
    {
      String s = "select s.pro_codi,s.alm_codi,sum(stp_kilact) as stp_kilact, sum(stp_unact) as stp_unact "+
@@ -1399,6 +1366,7 @@ public class actStkPart
      int proCodT=dt.getInt("pro_codi");
      do
      {
+    
        actAcum(dt.getInt("pro_codi"),dt.getInt("alm_codi"),dt.getDouble("stp_kilact"),
                dt.getInt("stp_unact"),fecMvto,true);
       

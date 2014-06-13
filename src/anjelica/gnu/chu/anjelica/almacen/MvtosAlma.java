@@ -828,9 +828,17 @@ public class MvtosAlma
                }
                impCompra+=dt.getDouble("precio")*dt.getDouble("canti");
             }
-            kgEnt+=dt.getDouble("canti"); // Ignoramos los Inventarios
-            unEnt+=dt.getInt("unidades");
-            prEnt+=dt.getDouble("precio")*dt.getDouble("canti");
+            if (sel=='V' && dt.getString("avc_serie").equals("X"))
+            { // Traspaso entre almacenes
+                if (almCodi == 0 ||  (mvtoDesgl?dt.getInt("alm_coddes")!=almCodi:dt.getInt("alm_codi")!=almCodi))
+                    swTraspAlm=true;
+            }
+            if (!swTraspAlm)
+            {
+                kgEnt+=dt.getDouble("canti"); // Ignoramos los Inventarios
+                unEnt+=dt.getInt("unidades");
+                prEnt+=dt.getDouble("precio")*dt.getDouble("canti");
+            }
         }
         if (sel=='R' && ! tipMov.equals("="))
         {
@@ -863,8 +871,8 @@ public class MvtosAlma
               tipMov = "+";
         }
 
-        if (tipMov.equals("+"))
-        { // Entrada.
+        if (tipMov.equals("+") )
+        { 
           kg=dt.getDouble("canti");
           cantiInd+=dt.getDouble("canti");
           cj=dt.getInt("unidades");
@@ -873,10 +881,19 @@ public class MvtosAlma
             kg = kg * -1;
             cj = cj * -1;
           }
-
-          canti = canStk + kg;
-          unid = uniStk + cj;
           swPas1=false;
+          if (swTraspAlm)
+          {
+             canti = canStk ;
+             unid = uniStk ;
+             swPas1=true;
+          }
+          else
+          {
+            canti = canStk + kg;
+            unid = uniStk + cj;
+          }
+          
           if (sel=='d')
           { // Despiece de salida (Entrada a almacen)            
             ignDesp=false;
@@ -1007,27 +1024,42 @@ public class MvtosAlma
             }
           }
           if (swTraspAlm && almCodi==0)
-          {
+          {// No influye en stock
               canti=canStk;
               preStk=precio;
-              uniStk=unid;
-          // No influye en stock
+              unid=uniStk;          
           }
           else
           {
-               if (swTraspAlm && almCodi != 0 &&  (mvtoDesgl?dt.getInt("alm_coddes")==almCodi:dt.getInt("alm_codi")==almCodi) )
+               if (swTraspAlm)
                {
-                   canti = canStk + dt.getDouble("canti",true);
-                   unid = uniStk +  dt.getInt("unidades");
+                   if (mvtoDesgl)
+                   {
+                        if (almCodi != 0 && dt.getInt("alm_coddes")==almCodi)
+                        {
+                          canti = canStk + dt.getDouble("canti",true);
+                          unid = uniStk +  dt.getInt("unidades");
+                        }
+                        else
+                        {
+                            canti = canStk - dt.getDouble("canti",true);
+                            unid = uniStk - dt.getInt("unidades");
+                        }
+                   }
+                   else
+                   {
+                        if (almCodi != 0 && dt.getInt("alm_codi")==almCodi)
+                        {
+                          canti = canStk - dt.getDouble("canti",true);
+                          unid = uniStk - dt.getInt("unidades");
+                        }
+                   }
                }
                else
                {
-//            if ( almCodi==0 || dt.getInt("alm_coddes")==almCodi )
-//          {
-                canti = canStk - dt.getDouble("canti",true);
-                unid = uniStk - dt.getInt("unidades");
-              }
-//          }
+                 canti = canStk - dt.getDouble("canti",true);
+                 unid = uniStk - dt.getInt("unidades");
+               }
           }
          }
          if (swDesglInd)
