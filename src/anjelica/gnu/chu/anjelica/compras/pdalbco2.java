@@ -39,6 +39,9 @@ import net.sf.jasperreports.engine.*;
  *
  * <p>Título: pdalbco2</p>
  * <p>Descripción: Mantenimiento Albaranes de Compra</p>
+ * Parametros: modPrecio Indica si se puede modificar los precios del albaran.
+ *  admin: Modo Aministrador.
+ *  AlbSinPed true/False Indica si se pueden cargar albaranes sin un pedido de compras
  * <p>Created on 03-abr-2009, 18:14:38</p>
  *  <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
@@ -144,6 +147,10 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   CTextField acc_fecrecE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CLabel usu_nombL = new CLabel();
   CTextField usu_nombE = new CTextField(Types.CHAR,"X",20);
+  CLabel frt_ejercL=new CLabel("Factura Transp");
+  CTextField frt_ejercE = new CTextField(Types.DECIMAL,"###9");
+  CTextField frt_numeE = new CTextField(Types.DECIMAL,"#####9");
+
   CLabel prv_codiL = new CLabel();
   prvPanel prv_codiE = new prvPanel()
   {
@@ -912,6 +919,11 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     acc_fecrecL.setBounds(new Rectangle(354, 3, 61, 16));
     usu_nombL.setText("Usuario");
     usu_nombL.setBounds(new Rectangle(0, 58, 45, 16));
+    frt_ejercL.setBounds(new Rectangle(0, 78, 95, 16));
+    frt_ejercE.setBounds(new Rectangle(100, 78, 45, 16));
+    frt_numeE.setBounds(new Rectangle(150, 78, 55, 16));
+    frt_ejercE.setEnabled(false);
+    frt_numeE.setEnabled(false);
     prv_codiL.setText("Proveedor");
     prv_codiL.setBounds(new Rectangle(1, 23, 66, 18));
     prv_codiE.setBounds(new Rectangle(59, 23, 432, 18));
@@ -1279,7 +1291,9 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     Potros.add(acc_copvfaE, null);
     Potros.add(usu_nombL, null);
     Potros.add(usu_nombE, null);
-
+    Potros.add(frt_ejercL, null);
+    Potros.add(frt_ejercE, null);
+    Potros.add(frt_numeE, null);
     acc_totfraE.addItem("Si", "-1");
     acc_totfraE.addItem("No", "0");
   }
@@ -4063,14 +4077,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
           activaTodo();
           return;
       }
-      if (!setBloqueo(dtAdd, "v_albacoc",
-                      acc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
-                      "|" + acc_serieE.getText() + "|" + acc_numeE.getValorInt()))
-      {
-        msgBox(msgBloqueo);
-        activaTodo();
-        return;
-      }
+     
 
       s = "SELECT * FROM V_albacoc WHERE acc_ano =" + acc_anoE.getValorInt() +
           " and emp_codi = " + emp_codiE.getValorInt() +
@@ -4085,6 +4092,14 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       if (dtAdd.getInt("frt_ejerc",true)!=0)
       {
         msgBox("Albaran ESTA metido en UNA FRA. DE TRANSP. IMPOSIBLE BORRAR");
+        activaTodo();
+        return;
+      }
+      if (!setBloqueo(dtAdd, "v_albacoc",
+                      acc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
+                      "|" + acc_serieE.getText() + "|" + acc_numeE.getValorInt()))
+      {
+        msgBox(msgBloqueo);
         activaTodo();
         return;
       }
@@ -4316,6 +4331,8 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       fcc_numeE.setValorDec(dtCon1.getInt("fcc_nume", true));
       acc_obserE.setText(dtCon1.getString("acc_obser"));
       acc_portesE.setValor(dtCon1.getString("acc_portes",true));
+      frt_ejercE.setValorInt(dtCon1.getInt("frt_ejerc",true));
+      frt_numeE.setValorInt(dtCon1.getInt("frt_nume",true));
       sbe_codiE.setValorInt(dtCon1.getInt("sbe_codi"));
       avc_anoE.setValorInt(dtCon1.getInt("avc_ano",true));
       avc_numeE.setValorInt(dtCon1.getInt("avc_nume",true));
