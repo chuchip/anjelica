@@ -3,7 +3,7 @@
  * <p>Título: CLResMvtos </p>
  * <p>Descripción: Consulta Listado Resultado de Movimientos
  * @see gnu.chu.anjelica.almacen.conmvpr</p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -217,6 +217,7 @@ public class CLResMvtos extends ventana {
        
         
         mvtosAlm.setSbeCodi(sbe_codiE.getValorInt());
+        mvtosAlm.setMvtoDesgl(sbe_codiE.getValorInt()!=0);
         boolean proCodNull=pro_codiE.isNull();
         String s = "select a.pro_codi,a.pro_nomb "+
                 " from v_articulo as a where 1=1 "+
@@ -235,20 +236,28 @@ public class CLResMvtos extends ventana {
             msgBox("No encontrados Productos para estas condiciones");
             return;
         }
-        int unComprasT=0,unVentasT=0, unEntDespT=0,unDespSalT=0,unRegT=0;
-        double kgComprasT=0,kgVentasT=0, kgEntDespT=0,kgDespSalT=0,kgRegT=0;
-        double impComprasT=0,impVentasT=0, impEntDespT=0,impDespSalT=0,impRegT=0;
+        int unEntT=0,unSalT=0,unComprasT=0,unVentasT=0, unEntDespT=0,unDespSalT=0,unRegT=0;
+        double kgEntT=0,kgSalT=0, kgComprasT=0,kgVentasT=0, kgEntDespT=0,kgDespSalT=0,kgRegT=0;
+        double impSalT=0,impEntT=0,impComprasT=0,impVentasT=0, impEntDespT=0,impDespSalT=0,impRegT=0;
         double sumaLinea;
         do {
-           if (cancelarConsulta)
-           {
-               mensaje("");
-               mensajeErr("Consulta CANCELADA");
-               return;
-           }
-            if (! mvtosAlm.calculaMvtos(feciniE.getText(), feciniE.getText(),
-                fecfinE.getText(),dtPro.getInt("pro_codi"),null,null,0,dtCon1,dtStat,null))
-              continue;
+            if (cancelarConsulta)
+            {
+                mensaje("");
+                mensajeErr("Consulta CANCELADA");
+                return;
+            }
+            if (opMvtos.isSelected())
+            {
+                if (! mvtosAlm.getAcumuladosMvtos(feciniE.getText(), fecfinE.getText(), alm_codiE.getValorInt(),
+                    dtPro.getInt("pro_codi"), 0, dtCon1))
+                    continue;
+            } else
+            {
+                if (!mvtosAlm.calculaMvtos(feciniE.getText(), feciniE.getText(),
+                    fecfinE.getText(), dtPro.getInt("pro_codi"), null, null, 0, dtCon1, dtStat, null))
+                    continue;
+            }
             ArrayList v =new ArrayList();
             v.add(dtPro.getString("pro_codi"));
             v.add(dtPro.getString("pro_nomb"));
@@ -289,18 +298,24 @@ public class CLResMvtos extends ventana {
                 if (sumaLinea==0)
                     continue;
             }
+            unEntT+=mvtosAlm.getUnidadesEntrada();
+            unSalT+=mvtosAlm.getUnidadesSalida();
             unComprasT+=mvtosAlm.getUnidadesCompra();
             unVentasT+=mvtosAlm.getUnidadesVenta();
             unEntDespT+=mvtosAlm.getUnidadesEntDesp();
             unDespSalT+=mvtosAlm.getUnidadesSalDesp();
             unRegT+=mvtosAlm.getUnidadesRegul();
 
+            kgEntT+=mvtosAlm.getKilosEntrada();
+            kgSalT+=mvtosAlm.getKilosSalida();
             kgComprasT+=mvtosAlm.getKilosCompra();
             kgVentasT+=mvtosAlm.getKilosVenta();
             kgEntDespT+=mvtosAlm.getKilosEntDesp();
             kgDespSalT+=mvtosAlm.getKilosSalDesp();
             kgRegT+=mvtosAlm.getKilosRegul();
 
+            impEntT+=mvtosAlm.getImporteEntrada();
+            impSalT+=mvtosAlm.getImporteSalida();
             impComprasT+=mvtosAlm.getImporteCompra();
             impVentasT+=mvtosAlm.getImporteVenta();
             impEntDespT+=mvtosAlm.getImporteEntDesp();
@@ -330,6 +345,12 @@ public class CLResMvtos extends ventana {
         v.add(impRegT); // 17
         jt.addLinea(v);
         jt.requestFocusInicio();
+        kgEntE.setValorDec(kgEntT);
+        unEntE.setValorDec(unEntT);
+        impEntE.setValorDec(impEntT);
+        kgSalE.setValorDec(kgSalT);
+        unSalE.setValorDec(unSalT);
+        impSalE.setValorDec(impSalT);
         mensaje("");
         mensajeErr("Consulta realizada");
      } catch (Exception k)
@@ -382,6 +403,7 @@ public class CLResMvtos extends ventana {
         prodVendE.addItem("Vendible","V");
         prodVendE.addItem("No Vendible","C");
         prodVendE.addItem("Todos","T");
+        opMvtos = new gnu.chu.controles.CCheckBox();
         jt = new gnu.chu.controles.Cgrid(17);
         ArrayList v=new ArrayList();
         v.add("Producto"); // 0
@@ -419,6 +441,19 @@ public class CLResMvtos extends ventana {
         jt.setFormatoColumna(14, "--,--9");
         jt.setFormatoColumna(15, "---,--9.9");
         jt.setFormatoColumna(16, "----,--9");
+        Ppie = new gnu.chu.controles.CPanel();
+        cLabel9 = new gnu.chu.controles.CLabel();
+        cLabel10 = new gnu.chu.controles.CLabel();
+        kgEntE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9.99");
+        kgSalE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9.99");
+        cLabel11 = new gnu.chu.controles.CLabel();
+        unEntE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9");
+        cLabel12 = new gnu.chu.controles.CLabel();
+        unSalE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9");
+        cLabel13 = new gnu.chu.controles.CLabel();
+        impEntE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.99");
+        cLabel14 = new gnu.chu.controles.CLabel();
+        impSalE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.99");
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -504,6 +539,12 @@ public class CLResMvtos extends ventana {
         Pcabe.add(prodVendE);
         prodVendE.setBounds(420, 28, 130, 18);
 
+        opMvtos.setSelected(true);
+        opMvtos.setText("Mvtos");
+        opMvtos.setToolTipText("Usa mvtos en vez de documentos");
+        Pcabe.add(opMvtos);
+        opMvtos.setBounds(300, 74, 70, 17);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -521,7 +562,7 @@ public class CLResMvtos extends ventana {
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 352, Short.MAX_VALUE)
+            .addGap(0, 312, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -534,6 +575,55 @@ public class CLResMvtos extends ventana {
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 0);
         Pprinc.add(jt, gridBagConstraints);
 
+        Ppie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        Ppie.setEnabled(false);
+        Ppie.setMaximumSize(new java.awt.Dimension(500, 40));
+        Ppie.setMinimumSize(new java.awt.Dimension(500, 40));
+        Ppie.setPreferredSize(new java.awt.Dimension(500, 40));
+        Ppie.setQuery(true);
+        Ppie.setLayout(null);
+
+        cLabel9.setText("KilosSalida ");
+        Ppie.add(cLabel9);
+        cLabel9.setBounds(10, 20, 80, 17);
+
+        cLabel10.setText("Kilos Entrada ");
+        Ppie.add(cLabel10);
+        cLabel10.setBounds(10, 0, 80, 17);
+        Ppie.add(kgEntE);
+        kgEntE.setBounds(90, 0, 70, 17);
+        Ppie.add(kgSalE);
+        kgSalE.setBounds(90, 20, 70, 17);
+
+        cLabel11.setText("Unid. Entrada ");
+        Ppie.add(cLabel11);
+        cLabel11.setBounds(180, 0, 80, 17);
+        Ppie.add(unEntE);
+        unEntE.setBounds(260, 0, 50, 17);
+
+        cLabel12.setText("Unid. Salida ");
+        Ppie.add(cLabel12);
+        cLabel12.setBounds(180, 20, 80, 17);
+        Ppie.add(unSalE);
+        unSalE.setBounds(260, 20, 50, 17);
+
+        cLabel13.setText("Imp. Entrada ");
+        Ppie.add(cLabel13);
+        cLabel13.setBounds(320, 0, 80, 17);
+        Ppie.add(impEntE);
+        impEntE.setBounds(400, 0, 80, 17);
+
+        cLabel14.setText("Imp. Salida ");
+        Ppie.add(cLabel14);
+        cLabel14.setBounds(320, 20, 80, 17);
+        Ppie.add(impSalE);
+        impSalE.setBounds(400, 20, 80, 17);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        Pprinc.add(Ppie, gridBagConstraints);
+
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
         pack();
@@ -543,9 +633,15 @@ public class CLResMvtos extends ventana {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButtonMenu Baceptar;
     private gnu.chu.controles.CPanel Pcabe;
+    private gnu.chu.controles.CPanel Ppie;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CLinkBox alm_codiE;
     private gnu.chu.controles.CLabel cLabel1;
+    private gnu.chu.controles.CLabel cLabel10;
+    private gnu.chu.controles.CLabel cLabel11;
+    private gnu.chu.controles.CLabel cLabel12;
+    private gnu.chu.controles.CLabel cLabel13;
+    private gnu.chu.controles.CLabel cLabel14;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -553,15 +649,23 @@ public class CLResMvtos extends ventana {
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel8;
+    private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.camposdb.empPanel emp_codiE;
     private gnu.chu.controles.CLinkBox fam_codiE;
     private gnu.chu.controles.CTextField fecfinE;
     private gnu.chu.controles.CTextField feciniE;
+    private gnu.chu.controles.CTextField impEntE;
+    private gnu.chu.controles.CTextField impSalE;
     private gnu.chu.controles.Cgrid jt;
+    private gnu.chu.controles.CTextField kgEntE;
+    private gnu.chu.controles.CTextField kgSalE;
+    private gnu.chu.controles.CCheckBox opMvtos;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CComboBox prodVendE;
     private gnu.chu.camposdb.sbePanel sbe_codiE;
     private gnu.chu.controles.CComboBox tipoProdE;
+    private gnu.chu.controles.CTextField unEntE;
+    private gnu.chu.controles.CTextField unSalE;
     // End of variables declaration//GEN-END:variables
 
 }

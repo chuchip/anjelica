@@ -63,9 +63,10 @@ public class MvtosAlma
     }
   private boolean swVerVenta,swVerCompra,swVerDesEnt,swVerDespSal,swVerRegul;
   private double costoFijo=-1; 
-  double prVen=0;
-  double kgEnt=0,kgVen=0,kgCompra=0,kgRegul=0;
-  double prEnt=0;
+  double impVenta,impSal=0;
+  double kgSal,kgEnt=0,kgVen=0,kgCompra=0,kgRegul=0;
+  
+  double impEnt=0;
   double impGana,impCompra,impEntDes,impSalDes,impRegul;
   double kgSalDes=0;
   double kgEntDes=0;
@@ -74,7 +75,7 @@ public class MvtosAlma
   private String msgLog="",msgDesp="",msgCompra="";
   private boolean cancelarConsulta=false;
   private double preStk,canStk;
-  private int uniStk,unEnt,unVent,unCompra,unSalDes, unEntDes,unRegul;
+  private int unSal,uniStk,unEnt,unVent,unCompra,unSalDes, unEntDes,unRegul;
   private boolean swDespSalida=false,swValDesp=false;
   private boolean swIgnDespIgu=false;
   private int almCodi=0;
@@ -543,10 +544,80 @@ public class MvtosAlma
   {
       this.incInvFinal=incInvFinal;
   }
+  public boolean getAcumuladosMvtos( String fecIni, String fecFin,
+            int almCodi,int proCodi,int proLote, DatosTabla dt) throws SQLException,ParseException
+  {
+       resetAcumulados();
+       resetAcumMvtos();
+       setLote(proLote);
+       String s = "SELECT mvt_tipdoc,mvt_tipo, sum(mvt_canti) as canti,sum(mvt_unid) as unid, "+
+            " sum(mvt_canti* mvt_prec)  as importe "+
+             " from mvtosalm where "+
+             "   mvt_canti <> 0 "+
+             " and mvt_serdoc!='X' "+
+            (almCodi==0?"":" and alm_codi = "+almCodi)+
+            (proLote==0?"":" and pro_numlot  = "+proLote)+            
+            " AND pro_codi = " + (proCodi==-1?"?":proCodi) +
+            " AND mvt_time >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
+            " and mvt_time <= TO_DATE('"+fecFin+"','dd-MM-yyyy') "+
+            " group by mvt_tipdoc,mvt_tipo";
+       if (!dt.select(s))
+           return false;
+       double canti,unid,importe;
+       boolean tipEnt;
+       do
+       {
+           canti=dt.getDouble("canti",true);
+           unid=dt.getDouble("unid",true);
+           importe = dt.getDouble("importe",true);
+           tipEnt = dt.getString("mvt_tipo").equals("E");
+           if (tipEnt)
+           {
+               kgEnt+=canti;
+               unEnt+=unid;
+               impEnt=importe;
+           }
+           else
+           {
+               kgSal+=canti;
+               unSal+=unid;
+               impSal+=importe;
+           }
+           switch (dt.getString("mvt_tipdoc"))
+           {
+               case "C":
+                   kgCompra+=canti;
+                   unCompra+=unid;
+                   impCompra+=importe;
+                   break;
+               case "V":
+                   kgVen+=canti;
+                   unVent+=unid;
+                   impVenta+=importe; 
+                   break;
+                case "d":  
+                   kgEntDes+=canti;
+                   unEntDes+=unid;
+                   impEntDes+=importe;
+                   break;
+                case "D":
+                   kgSalDes+=canti;
+                   unSalDes+=unid;
+                   impSalDes+=importe;
+                   break;
+                 case "R":
+                   kgRegul+=canti;
+                   unRegul+=unid;
+                   impRegul+=importe;
+                   break;
+           }
+       } while (dt.next());
+       return !(kgEnt==0 && kgSal==0);
+  }
   /**
    * Define la cadena para limitar accesos a las empresas.
    * @param acessoEmp
-   * @return 
+   * 
    */
   public void setAccesoEmp(String acessoEmp)
   {
@@ -755,14 +826,7 @@ public class MvtosAlma
     double canti;
     int unid,cj;
     char sel;
-    kgEnt=0;
-    unEnt=unVent=unSalDes=unEntDes=unCompra=unRegul=0;
-    prEnt=0;
-    kgVen=kgCompra=kgRegul=0;
-    prVen=0;
-    impGana=0;
-    kgSalDes=0;
-    kgEntDes=impEntDes=impSalDes=impCompra=impRegul=0;
+    resetAcumMvtos();   
     boolean swNegat=false;
     boolean swIgnVenta=false;
     boolean swTraspAlm;
@@ -788,8 +852,7 @@ public class MvtosAlma
         precio =preStk;
         tipMov=dt.getString("tipmov");
         if (! mvtoDesgl)
-        {
-               
+        {               
             if  (tipMov.equals("E"))
                 tipMov="+";
             if  (tipMov.equals("S"))
@@ -828,16 +891,31 @@ public class MvtosAlma
                }
                impCompra+=dt.getDouble("precio")*dt.getDouble("canti");
             }
-            if (sel=='V' && dt.getString("avc_serie").equals("X"))
-            { // Traspaso entre almacenes
-                if (almCodi == 0 ||  (mvtoDesgl?dt.getInt("alm_coddes")!=almCodi:dt.getInt("alm_codi")!=almCodi))
-                    swTraspAlm=true;
+            if (sel=='V') 
+            {
+                if (dt.getString("avc_serie").equals("X"))
+                { // Traspaso entre almacenes
+                    if (almCodi == 0 ||  (mvtoDesgl?dt.getInt("alm_coddes")!=almCodi:dt.getInt("alm_codi")!=almCodi))
+                        swTraspAlm=true;
+                }
+                else 
+                { // Albaran de Abono
+                    kgVen -= dt.getDouble("canti");
+                    impVenta -= dt.getDouble("canti", true) * dt.getDouble("precio", true);
+                    unVent -= dt.getDouble("unidades");
+                }                    
             }
+            
             if (!swTraspAlm)
             {
                 kgEnt+=dt.getDouble("canti"); // Ignoramos los Inventarios
                 unEnt+=dt.getInt("unidades");
-                prEnt+=dt.getDouble("precio")*dt.getDouble("canti");
+                impEnt+=dt.getDouble("precio")*dt.getDouble("canti");
+            }
+            if (sel=='V' && dt.getString("avc_serie").equals("X"))
+            { // Traspaso entre almacenes
+                if (almCodi == 0 ||  (mvtoDesgl?dt.getInt("alm_coddes")!=almCodi:dt.getInt("alm_codi")!=almCodi))
+                    swTraspAlm=true;
             }
         }
         if (sel=='R' && ! tipMov.equals("="))
@@ -1002,13 +1080,13 @@ public class MvtosAlma
                   if (!swTraspAlm )
                   {
                     kgVen += dt.getDouble("canti");
-                    prVen += dt.getDouble("canti", true) * dt.getDouble("precio", true);
+                    impVenta += dt.getDouble("canti", true) * dt.getDouble("precio", true);
                     unVent += dt.getDouble("unidades");
                     if (preStk==0)
                       msgLog+="Venta con precio stock = 0 "+
                                " EN Fecha: " + dt.getFecha("fecmov")+": Producto: "+proCodi+" \n";
                     impGana += dt.getDouble("canti", true) *
-                    (dt.getDouble("precio", true) - preStk);
+                              (dt.getDouble("precio", true) - preStk);
                   }
               }
               else
@@ -1216,6 +1294,17 @@ public class MvtosAlma
   {
        return cancelarConsulta;
   }
+  void resetAcumMvtos()
+  {
+    kgEnt=kgSal=0;
+    unEnt=unSal=unVent=unSalDes=unEntDes=unCompra=unRegul=0;
+    impEnt=impSal=0;
+    kgVen=kgCompra=kgRegul=0;
+    impVenta=0;
+    impGana=0;
+    kgSalDes=0;
+    kgEntDes=impEntDes=impSalDes=impCompra=impRegul=0;
+  }
   public void resetAcumulados()
   {
       preStk=0;
@@ -1238,7 +1327,7 @@ public class MvtosAlma
   }
   public double getImporteEntrada()
   {
-      return prEnt;
+      return impEnt;
   }
   public double getKilosEntrada()
   {
@@ -1276,7 +1365,18 @@ public class MvtosAlma
   {
        return  unVent;
   }
- 
+  public double getKilosSalida()
+  {
+      return kgSal;
+  }
+  public double getUnidadesSalida()
+  {
+      return unSal;
+  }
+  public double getImporteSalida()
+  {
+      return impSal;
+  }
   public int getUnidStock()
   {
     return     uniStk;
@@ -1285,17 +1385,10 @@ public class MvtosAlma
   {
       return kgVen;
   }
-  /**
-   * @deprecated usar getImporteVenta
-   * @return
-   */
-  public double getPrecioVenta()
-  {
-      return prVen;
-  }
+  
   public double getImporteVenta()
   {
-      return prVen;
+      return impVenta;
   }
   public double getImpGana()
   {
