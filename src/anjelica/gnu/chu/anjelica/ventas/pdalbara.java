@@ -4947,13 +4947,10 @@ public class pdalbara extends ventanaPad  implements PAD
     // Busco en datos anteriores para ver si YA no existen
     for (int n = 0; n < nRowIndAnt; n++)
     {
-      if (n >= nRow)
-        l = -1;
-      else
-      l = buscaIndiv(datAnt, n);
+      v =  datAnt.get(n);
+      l = buscaIndiv(v,nRow);
       if (l == -1)
-      { // Una linea que antes existia ahora NO esta. La borro
-        v =  datAnt.get(n);
+      { // Una linea que antes existia ahora NO esta. La borro        
         if (swEntdepos)
             s="delete from albvenseri " +
                 " WHERE avs_nume = " + avsNume +
@@ -4967,17 +4964,17 @@ public class pdalbara extends ventanaPad  implements PAD
                 " AND avp_numlin = " + v.getNumLinea();
         stUp.executeUpdate(s);
          
-        if ( ! swEntdepos)
-        { // Vuelvo a crear el stock
-             anuStkPart(v.getProducto(),
-                   v.getEjercLot(),
-                   emp_codiE.getValorInt(),
-                   v.getSerie(),
-                   v.getLote(),
-                   v.getNumind(),
-                   v.getCanti()* -1,
-                   v.getNumuni()* -1 );
-        }
+//        if ( ! swEntdepos)
+//        { // Vuelvo a crear el stock
+//             anuStkPart(v.getProducto(),
+//                   v.getEjercLot(),
+//                   emp_codiE.getValorInt(),
+//                   v.getSerie(),
+//                   v.getLote(),
+//                   v.getNumind(),
+//                   v.getCanti()* -1,
+//                   v.getNumuni()* -1 );
+//        }
       }
     }
     double kg = 0;
@@ -4987,23 +4984,16 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       if (!isLinDesVal(n))
         continue;
+      
       kg += jtDes.getValorDec(n, JTDES_KILOS);
       nUn += jtDes.getValorDec(n, JTDES_UNID);
-      if (n >= nRowIndAnt)
+      l = buscaIndiv(datAnt,n);
+      if (l==-1)
       {
          if (swEntdepos)
              guardaLinEnt(n,jt.getValorInt(0));
         else
              guardaLinDes(n, jt.getValorInt(0));
-        continue;
-      }
-      v =  datAnt.get(n);
-      if (v.getAuxiliar().equals("N"))
-      {
-         if (swEntdepos)
-            guardaLinEnt(n,jt.getValorInt(JT_NULIAL));
-         else
-            guardaLinDes(n, jt.getValorInt(JT_NULIAL));
       }
     }
     jt.setValor("" + kg, 3);
@@ -5025,12 +5015,11 @@ public class pdalbara extends ventanaPad  implements PAD
    * @param nLin Numero de Linea con la que comparar
    * @return posicion donde lo ha encontrado.
    */
-  int buscaIndiv(ArrayList<DatIndiv> dat, int nLin)
+  int buscaIndiv(DatIndiv v,int nRows)
   {
-    int nl = dat.size();
-    for (int n = 0; n < nl; n++)
-    {
-      DatIndiv v =  dat.get(n);
+   
+    for (int nLin = 0; nLin < nRows; nLin++)
+    {     
       if ( jtDes.getValorInt(nLin, JTDES_PROCODI)==v.getProducto()  && // Prod.
          jtDes.getValorInt(nLin, JTDES_EJE) == v.getEjercLot() && // ejer
           jtDes.getValString(nLin, JTDES_SERIE).equals(v.getSerie()) && // Serie
@@ -5041,8 +5030,34 @@ public class pdalbara extends ventanaPad  implements PAD
           jtDes.getValorInt(nLin,JTDES_NUMLIN) == v.getNumLinea()) // No Linea
       { 
         v.setAuxiliar("E"); // Lo marco como encontrado
-        dat.set(n, v);
-        return n;
+        return nLin;
+      }
+    }
+    return -1;
+  }
+/**
+   * Busca los datos del individuo que hay en la linea de jtDes mandada 
+   * en un vector anteriormente cargado con todos los individuos existentes.
+   * @param dat vector con los datos anteriores
+   * @param nLin Numero de Linea con la que comparar
+   * @return posicion donde lo ha encontrado.
+   */
+  int buscaIndiv(ArrayList<DatIndiv>  datInd,int nRow)
+  {
+    int nRows=datInd.size();
+    for (int nLin = 0; nLin < nRows; nLin++)
+    {     
+      DatIndiv v=datInd.get(nLin);
+      if ( jtDes.getValorInt(nRow, JTDES_PROCODI)==v.getProducto()  && // Prod.
+         jtDes.getValorInt(nRow, JTDES_EJE) == v.getEjercLot() && // ejer
+          jtDes.getValString(nRow, JTDES_SERIE).equals(v.getSerie()) && // Serie
+          jtDes.getValorInt(nRow, JTDES_LOTE)==v.getLote() && // Lote
+          jtDes.getValorInt(nRow, JTDES_NUMIND)==v.getNumind() && // Ind
+           jtDes.getValorDec(nRow, JTDES_KILOS ) ==v.getCanti() && // Cantidad
+          jtDes.getValorInt(nRow, JTDES_UNID)==v.getNumuni() && // N. Indiv
+          jtDes.getValorInt(nRow,JTDES_NUMLIN) == v.getNumLinea()) // No Linea
+      {        
+        return nLin;
       }
     }
     return -1;
@@ -5295,35 +5310,35 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avp_numuni", jtDes.getValorInt(nLin, 4));
     dtAdd.setDato("avp_canti", jtDes.getValorDec(nLin, 8));
     dtAdd.update(stUp);
-    anuStkPart(jtDes.getValorInt(nLin, JTDES_PROCODI), jtDes.getValorInt(nLin, JTDES_EJE),
-               jtDes.getValorInt(nLin, JTDES_EMP), jtDes.getValString(nLin, JTDES_SERIE),
-               jtDes.getValorInt(nLin, JTDES_LOTE), jtDes.getValorInt(nLin, JTDES_NUMIND),
-               jtDes.getValorDec(nLin, JTDES_KILOS) * 1, jtDes.getValorInt(nLin, JTDES_UNID));
+//    anuStkPart(jtDes.getValorInt(nLin, JTDES_PROCODI), jtDes.getValorInt(nLin, JTDES_EJE),
+//               jtDes.getValorInt(nLin, JTDES_EMP), jtDes.getValString(nLin, JTDES_SERIE),
+//               jtDes.getValorInt(nLin, JTDES_LOTE), jtDes.getValorInt(nLin, JTDES_NUMIND),
+//               jtDes.getValorDec(nLin, JTDES_KILOS) * 1, jtDes.getValorInt(nLin, JTDES_UNID));
     jtDes.setValor(avpNumlin,nLin,JTDES_NUMLIN);
   }
 
-  private boolean anuStkPart(int proCodi, int ejeLot, int empLot, String serLot, int numLot,
-                 int nInd, double kilos, int unid) throws Exception
-  {
-    try
-    {
-      if (numLot==0)
-      { // Solo resto del Acumulado.
-        return stkPart.sumar(ejeLot, serLot, numLot, nInd, proCodi,
-                            avc_almoriE.getValorInt(), kilos*-1, unid*-1,avc_fecalbE.getText(),
-                            actStkPart.CREAR_SI,0,avc_fecalbE.getDate());
-//        stkPart.actAcum(proCodi,alm_codiE.getValorInt(),kilos*-1,unid*-1,avc_fecalbE.getText());
-//        return false;
-      }
-      return stkPart.restar(ejeLot, serLot, numLot, nInd, proCodi,
-                            avc_almoriE.getValorInt(), kilos, unid);
-    } catch (SQLWarning k)
-    {
-       aviso("NO SE Pudo restar stock en pdalbara:\nAlb: "+emp_codiE.getValorInt()+"-"+
-             avc_seriE.getText()+avc_numeE.getValorInt()+"\n"+ k.getMessage());
-       return false;
-    }
-  }
+//  private boolean anuStkPart(int proCodi, int ejeLot, int empLot, String serLot, int numLot,
+//                 int nInd, double kilos, int unid) throws Exception
+//  {
+//    try
+//    {
+//      if (numLot==0)
+//      { // Solo resto del Acumulado.
+//        return stkPart.sumar(ejeLot, serLot, numLot, nInd, proCodi,
+//                            avc_almoriE.getValorInt(), kilos*-1, unid*-1,avc_fecalbE.getText(),
+//                            actStkPart.CREAR_SI,0,avc_fecalbE.getDate());
+////        stkPart.actAcum(proCodi,alm_codiE.getValorInt(),kilos*-1,unid*-1,avc_fecalbE.getText());
+////        return false;
+//      }
+//      return stkPart.restar(ejeLot, serLot, numLot, nInd, proCodi,
+//                            avc_almoriE.getValorInt(), kilos, unid);
+//    } catch (SQLWarning k)
+//    {
+//       aviso("NO SE Pudo restar stock en pdalbara:\nAlb: "+emp_codiE.getValorInt()+"-"+
+//             avc_seriE.getText()+avc_numeE.getValorInt()+"\n"+ k.getMessage());
+//       return false;
+//    }
+//  }
   /**
    * Guarda linea albaran de entrega
    * @param nLiAlb
@@ -5670,7 +5685,8 @@ public class pdalbara extends ventanaPad  implements PAD
                         + " AND avc_ano = " + avc_anoE.getValorInt()
                         + " and avc_nume = " + avc_numeE.getValorInt()
                         + " and avc_serie = '" + avc_seriE.getText() + "'"
-                        + " and avl_numlin = " + jt.getValorInt(0)
+                        + " and avp_canti > 0 "  // Solo tenemos en cuenta cargos.
+                        + " and avl_numlin = " + jt.getValorInt(0)                              
                         + " and avp_serlot = '" + avp_serlotE.getText() + "'"
                         + " and avp_numpar = " + avp_numparE.getValorInt()
                         + " and avp_ejelot = " + avp_ejelotE.getValorInt()
@@ -6574,27 +6590,27 @@ public class pdalbara extends ventanaPad  implements PAD
         ctUp.commit();
         return;
     }
-    s = "SELECT * FROM v_albvenpar " +
-        " WHERE emp_codi = " + emp_codiE.getValorInt() +
-        " AND avc_ano = " + avc_anoE.getValorInt() +
-        " and avc_nume = " + avc_numeE.getValorInt() +
-        " and avc_serie = '" + avc_seriE.getText() + "'" +
-        " and avl_numlin = " + jt.getValorInt(row, 0);
-    if (dtCon1.select(s))
-    {
-      do
-      {
-        anuStkPart(dtCon1.getInt("pro_codi"),
-                   dtCon1.getInt("avp_ejelot"),
-                   dtCon1.getInt("avp_emplot"),
-                   dtCon1.getString("avp_serlot"),
-                   dtCon1.getInt("avp_numpar"),
-                   dtCon1.getInt("avp_numind"),
-                   dtCon1.getDouble("avp_canti") * -1,
-                   dtCon1.getInt("avp_numuni") * -1);
-
-      }  while (dtCon1.next());
-    }
+//    s = "SELECT * FROM v_albvenpar " +
+//        " WHERE emp_codi = " + emp_codiE.getValorInt() +
+//        " AND avc_ano = " + avc_anoE.getValorInt() +
+//        " and avc_nume = " + avc_numeE.getValorInt() +
+//        " and avc_serie = '" + avc_seriE.getText() + "'" +
+//        " and avl_numlin = " + jt.getValorInt(row, 0);
+//    if (dtCon1.select(s))
+//    {
+//      do
+//      {
+//        anuStkPart(dtCon1.getInt("pro_codi"),
+//                   dtCon1.getInt("avp_ejelot"),
+//                   dtCon1.getInt("avp_emplot"),
+//                   dtCon1.getString("avp_serlot"),
+//                   dtCon1.getInt("avp_numpar"),
+//                   dtCon1.getInt("avp_numind"),
+//                   dtCon1.getDouble("avp_canti") * -1,
+//                   dtCon1.getInt("avp_numuni") * -1);
+//
+//      }  while (dtCon1.next());
+//    }
     s = "delete from v_albvenpar WHERE avc_ano = " + avc_anoE.getValorInt() +
         " and emp_codi = " + emp_codiE.getValorInt() +
         " and avc_nume = " + avc_numeE.getValorInt() +
