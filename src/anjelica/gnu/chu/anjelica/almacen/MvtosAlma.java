@@ -606,9 +606,9 @@ public class MvtosAlma
                    impSalDes+=importe;
                    break;
                  case "R":
-                   kgRegul+=canti;
-                   unRegul+=unid;
-                   impRegul+=importe;
+                   kgRegul+=tipEnt?canti:canti*-1;
+                   unRegul+=tipEnt?unid:unid*-1;
+                   impRegul+=tipEnt?importe:importe*-1;
                    break;
            }
        } while (dt.next());
