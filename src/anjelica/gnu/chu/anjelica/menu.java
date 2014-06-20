@@ -123,6 +123,10 @@ public class menu extends JFrame
   JMenuItem pdbanteso = new JMenuItem();
   JMenuItem coarbtraz = new JMenuItem();
   JPopupMenu JpopupVentas = new JPopupMenu();
+  JPopupMenu JpopupPedVentas=new JPopupMenu();
+  JMenuItem pdpedven = new JMenuItem("PAD Pedidos Ventas");
+  JMenuItem clpedven = new JMenuItem("Cons.List. Ped.Ventas");
+  JMenuItem clpevepr = new JMenuItem("Cons Ped.Ventas x Producto");
   JMenuItem clAlbSinCosto = new JMenuItem();
   JMenuItem pdalbara = new JMenuItem();
   JMenuItem lialbara = new JMenuItem();
@@ -846,7 +850,10 @@ public class menu extends JFrame
     JPopupAlmacen.add(jMenuAlmacen);
     JPopupAlmacen.add(ItemInventario);
     JpopupVentas.add(ItemRepresen);
-    ItemRepresen.add(clvenrep);
+    JpopupPedVentas.add(pdpedven);
+    JpopupPedVentas.add(clpevepr);
+    JpopupPedVentas.add(clpedven);
+    JpopupPedVentas.add(clvenrep);
     JPopupAlmacen.add(ALclstkdes);
     JPopupAlmacen.add(ALclresstock);
     JPopupAlmacen.add(ALlisaldos);
@@ -1039,6 +1046,28 @@ public class menu extends JFrame
 
   void activarEventos()
   {
+     pdpedven.addActionListener(new ActionListener()
+     {
+       public void actionPerformed(ActionEvent e)
+       {
+         lanzaEjecutable(new gnu.chu.anjelica.ventas.pdpeve(menu.this,EU));         
+       }
+     });
+     clpedven.addActionListener(new ActionListener()
+     {
+       public void actionPerformed(ActionEvent e)
+       {
+         lanzaEjecutable(new gnu.chu.anjelica.ventas.clpedven(menu.this,EU,new Hashtable()));         
+       }
+     });
+     clpevepr.addActionListener(new ActionListener()
+     {
+       public void actionPerformed(ActionEvent e)
+       {
+         lanzaEjecutable(new gnu.chu.anjelica.ventas.clpevepr(menu.this,EU,new Hashtable()));         
+       }
+     });
+
       mnuZoMarg.addActionListener(new ActionListener()
      {
        public void actionPerformed(ActionEvent e)
@@ -1383,8 +1412,7 @@ public class menu extends JFrame
   }
 
   void BPedVen_actionPerformed(ActionEvent e) {
-         Hashtable ht = new Hashtable();
-    ht.put("admin", "true");
+       JpopupPedVentas.show(BPedVen,20,20);
 //    lanzaEjecutable(new gnu.chu.comm.cajanegra(menu.this,EU));
 // lanzaEjecutable(new gnu.chu.logs.verLogs(menu.this,EU));
  //   lanzaEjecutable(new gnu.chu.hylafax.confaxes(menu.this,EU));
@@ -1394,7 +1422,7 @@ public class menu extends JFrame
 //
 
 //    lanzaEjecutable(new consVentas(this,EU));
-    lanzaEjecutable(new gnu.chu.anjelica.ventas.pdpeve(menu.this,EU));
+//    lanzaEjecutable(new gnu.chu.anjelica.ventas.pdpeve(menu.this,EU));
 //    lanzaEjecutable(new gnu.chu.anjelica.ventas.clpedven(menu.this,EU,new Hashtable()));
 //      lanzaEjecutable(new gnu.chu.anjelica.JpopupVentas.clpevepr(menu.this,EU,new Hashtable()));
   }

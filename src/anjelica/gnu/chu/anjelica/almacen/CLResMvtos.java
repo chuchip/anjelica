@@ -166,6 +166,7 @@ public class CLResMvtos extends ventana {
         mensajeErr("SubEmpresa No valida");
         return false;
     }
+   
     if (feciniE.getError() || feciniE.isNull()) {
         mensajeErr("Fecha Inicial NO es valida");
         feciniE.requestFocus();
@@ -174,6 +175,12 @@ public class CLResMvtos extends ventana {
     if (fecfinE.getError() || fecfinE.isNull()) {
         mensajeErr("Fecha FINAL NO es valida");
         feciniE.requestFocus();
+        return false;
+    }
+     if ((emp_codiE.getValorInt()!=0 || sbe_codiE.getValorInt()!=0) && opMvtos.isSelected())
+    {
+        msgBox("No se puede consultar por movimientos si seleccionas empresa o Subempresa");
+        emp_codiE.requestFocus();
         return false;
     }
     return true;
@@ -214,10 +221,9 @@ public class CLResMvtos extends ventana {
      try {
         mvtosAlm.setAlmacen(almCodi);
         mvtosAlm.setEmpresa(emp_codiE.getValorInt());
-       
-        
+               
         mvtosAlm.setSbeCodi(sbe_codiE.getValorInt());
-        mvtosAlm.setMvtoDesgl(sbe_codiE.getValorInt()!=0);
+        mvtosAlm.setMvtoDesgl(true);
         boolean proCodNull=pro_codiE.isNull();
         String s = "select a.pro_codi,a.pro_nomb "+
                 " from v_articulo as a where 1=1 "+
@@ -345,12 +351,19 @@ public class CLResMvtos extends ventana {
         v.add(impRegT); // 17
         jt.addLinea(v);
         jt.requestFocusInicio();
-        kgEntE.setValorDec(kgEntT);
-        unEntE.setValorDec(unEntT);
-        impEntE.setValorDec(impEntT);
-        kgSalE.setValorDec(kgSalT);
-        unSalE.setValorDec(unSalT);
-        impSalE.setValorDec(impSalT);
+        if (opMvtos.isSelected())
+        {
+            kgEntE.setValorDec(kgEntT);
+            unEntE.setValorDec(unEntT);
+            impEntE.setValorDec(impEntT);
+            kgSalE.setValorDec(kgSalT);
+            unSalE.setValorDec(unSalT);
+            impSalE.setValorDec(impSalT);
+        } 
+        else
+        {
+            Ppie.resetTexto();
+        }
         mensaje("");
         mensajeErr("Consulta realizada");
      } catch (Exception k)

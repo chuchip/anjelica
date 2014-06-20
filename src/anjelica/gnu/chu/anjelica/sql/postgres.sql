@@ -1193,9 +1193,10 @@ constraint ix_albcompar primary key(acc_ano,emp_codi,acc_serie,acc_nume,acl_nuli
 );
 -- create index ix_albcompar on v_albcompar (acc_ano,emp_codi,acc_serie,acc_nume,acp_numlin);
 create index ix_albcompar2 on v_albcompar (acc_ano,emp_codi,acc_serie,acl_nulin,acp_numlin);
-create view v_compras as 
-select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,
-l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,
+
+create or replace view v_compras as 
+select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,
+l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi,
 i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_nucrot,i.acp_painac,i.acp_paisac,i.acp_engpai,i.mat_codi
 from anjelica.v_albacoc as c,anjelica.v_albacol as l, anjelica.v_albcompar as i
 where c.acc_ano=l.acc_ano
@@ -1207,7 +1208,7 @@ and c.emp_codi=i.emp_codi
 and c.acc_serie=i.acc_serie
 and c.acc_nume=i.acc_nume
 and l.acl_nulin=i.acl_nulin
-order by l.acl_nulin,i.acp_numlin;
+--order by l.acl_nulin,i.acp_numlin;
 --
 -- Historico Individuos albaranes de compras
 --
@@ -2295,7 +2296,7 @@ CREATE TABLE pedicoc
   pcc_fecped date not null,	-- Fecha Pedido
   pcc_fecrec date,		-- Fecha entrega
   alm_codi int not null,	-- Almacen Recepcion
-  pcc_estad varchar(1) not null,   -- Estado (Pendiente, Confirmado, preFact,Cancelada)
+  pcc_estad varchar(1) not null,   -- Estado (Pendiente, Confirmado, preFact)
   pcc_estrec varchar(1) not null,-- Estado Recep. (Recep./Cancelado/Pend/Bloqueado)
   pcc_imppor float not null,	-- Importe de Portes por Kilos.
   pcc_comen varchar(255),       -- Comentario sobre el pedido
@@ -2315,25 +2316,37 @@ CREATE TABLE pedicoc
 CREATE TABLE pedicol(
 	eje_nume int not null,
 	emp_codi int NOT NULL ,
-	pcc_nume int not null,		-- N� Pedido
+	pcc_nume int not null,		-- No. Pedido
 	prv_codi int not null,		-- Codigo de Proveedor
-	pcl_numli int not null,		-- N� Linea Pedido
+	pcl_numli int not null,		-- No Linea Pedido
 	pro_codi  int not null, 	-- Codigo de Producto.
 	pro_nomb varchar(50) not null,	-- Descr. Producto
 	pcl_feccad date not null,	-- Fecha de Caducidad
-	pcl_nucape int not null,	-- N� de Cajas Pedidas
+	pcl_nucape int not null,	-- No. de Cajas Pedidas
 	pcl_cantpe float not null,	-- Cantidad (kgs) Pedida
 	pcl_precpe float not null,	-- Precio pedido
 	div_codi int not null,		-- Divisa
-	pcl_nucaco int not null,	-- N� Cajas Confirmadas
+	pcl_nucaco int not null,	-- No. Cajas Confirmadas
 	pcl_cantco float not null,	-- Cantidad Confirmada
 	pcl_precco float not null,	-- Precio Compra Conf.
-	pcl_nucafa int not null,	-- N� Cajas Fact.
+	pcl_nucafa int not null,	-- No. Cajas Fact.
 	pcl_cantfa  float not null,	-- Cantidad Fact.
 	pcl_precfa  float not null,	-- Precio Compra Fact.
 	pcl_comen varchar(50),		-- Comentario sobre Linea Pedido
 	constraint ix_pedicol primary key(eje_nume,emp_codi,pcc_nume,pcl_numli)
 );
+create or replace view v_pedico as select  c.eje_nume,c.emp_codi,c.pcc_nume, c.prv_codi,pcc_fecped ,
+  pcc_fecrec ,  alm_codi ,  pcc_estad , pcc_estrec , pcc_imppor , pcc_comen,
+  acc_ano , acc_serie ,  acc_nume , acc_cerra , pcc_subjec , pcc_portes , sbe_codi,
+  pcl_numli ,pro_codi ,	pro_nomb ,pcl_feccad,pcl_nucape ,pcl_cantpe,pcl_precpe ,
+  div_codi,	pcl_nucaco,	pcl_cantco,	pcl_precco,	pcl_nucafa,	pcl_cantfa,	pcl_precfa ,pcl_comen 
+	from pedicoc as c, pedicol as l where
+	c.eje_nume=l.eje_nume and
+	c.emp_codi=l.emp_codi and
+	c.pcc_nume=l.pcc_nume;
+
+  
+  
 --
 -- Facturas Compras Cabecera
 --
@@ -3086,7 +3099,6 @@ constraint ix_invprec primary key (cci_feccon,pro_codi)
 -- Cabecera de pedidos de Ventas
 --
 -- drop table pedvenc;
-create table anjelica.pedvenc
 (
  emp_codi int not null,		-- Empresa
  eje_nume int not null,		-- Ejercicio de Pedido
@@ -3101,7 +3113,7 @@ create table anjelica.pedvenc
  avc_serie char(1) not null,	-- Serie del Albaran
  avc_nume int not null,		-- Numero de Albaran
  usu_nomb varchar(8) not null,	-- Usuario q. crea el pedido
- avc_cerra int not null,	-- Albaran Cerrado (0 NO, -1 SI)
+ pvc_cerra int not null,	-- Albaran Cerrado (0 NO, -1 SI)
  pvc_nupecl varchar(20),	-- Numero pedido de Cliente
  pvc_impres char(1) not null,	-- Listado (S/N)
  constraint ix_pedvenc primary key(emp_codi,eje_nume,pvc_nume)
@@ -3129,6 +3141,14 @@ create table anjelica.pedvenl
  pvl_fecmod timestamp,		-- Fecha Mod. Linea Pedido
  constraint ix_pedvenl primary key(emp_codi,eje_nume,pvc_nume,pvl_numlin)
 );
+
+create or replace view v_pedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
+ pvc_fecent, pvc_comen , pvc_confir , avc_ano , avc_serie , avc_nume ,
+ usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,
+ pvl_numlin, pvl_kilos,pvl_unid,pvl_tipo, pro_codi,
+ pvl_comen, pvl_precio ,pvl_precon ,prv_codi,pvl_feccad, pvl_fecped, pvl_fecmod  from 
+ pedvenc as c, pedvenl as l where c.emp_codi=l.emp_codi
+ and c.eje_nume=l.eje_nume and c.pvc_nume = l.pvc_nume ;
 --
 -- Tabla Comentario de Pedidos de ventas.
 -- Utilizado SOLO por programa gnu.chu.anjelica.consCliente
@@ -3763,6 +3783,7 @@ create table anjelica.stockpart
 	stp_kilact float,	-- Kilos Actuales
 	prv_codi int,		-- Proveedor
 	stp_feccad date		-- Fecha de Caducidad
+	constraint ix_stockpart primary key (pro_codi,eje_nume,pro_serie,pro_nupar,pro_numind);
 );
 create index ix_stkpart1 on anjelica.stockpart(eje_nume,pro_serie,pro_nupar,pro_numind,pro_codi);
 create index ix_stkpart2 on anjelica.stockpart(pro_codi,eje_nume,pro_serie,pro_nupar);
@@ -3797,603 +3818,59 @@ create table anjelica.mvtosalm
 CREATE INDEX ix_mvtalm1 on anjelica.mvtosalm(mvt_tipdoc,mvt_fecdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc);
 CREATE INDEX ix_mvtalm2 on anjelica.mvtosalm(pro_codi,pro_ejelot,pro_serlot,pro_numlot,pro_indlot,mvt_time);
 
+drop table anjelica.ajustedb;
 create table anjelica.ajustedb
 (
-    aju_regacu int not null -- // Regenerar Acumulados (0 No). Usado por fn_acumstk
+    aju_regacu int not null, -- // Regenerar Acumulados (0 No). Usado por fn_acumstk
+	aju_regmvt int not null  -- // Crear mvtos. Almacen (Solo para temas de testeo)
 );
-insert into anjelica.ajustedb values(1);
-
-CREATE OR REPLACE FUNCTION anjelica."fn_acpralb"()
-  RETURNS TRIGGER AS $grabar$   
-  BEGIN
-        if TG_TABLE_NAME = 'v_albavel' then
-           update anjelica.mvtosalm set mvt_prec = NEW.avl_prven where
-	        mvt_empcod =OLD.emp_codi and
-	        mvt_ejedoc=OLD.avc_ano and
-	        mvt_numdoc=OLD.avc_nume and
-	        mvt_serdoc=OLD.avc_serie and
-		mvt_tipdoc='V' AND
-	        mvt_lindoc=OLD.avl_numlin;	
-        end if; 
-        if TG_TABLE_NAME = 'v_albacol' then
-           update anjelica.mvtosalm set mvt_prec = NEW.acl_prcom,
-                alm_codi = NEW.alm_codi where
-                alm_codi = OLD.alm_codi AND
-	        mvt_empcod =OLD.emp_codi and
-	        mvt_ejedoc=OLD.acc_ano and
-	        mvt_numdoc=OLD.acc_nume and
-	        mvt_serdoc=OLD.acc_serie and
-	        mvt_lindoc=OLD.acl_nulin
-	        AND mvt_tipdoc='C';	
-        end if;
-        if TG_TABLE_NAME = 'v_albacoc' then
-           update anjelica.mvtosalm set mvt_cliprv = NEW.prv_codi,
-		mvt_time=acc_fecrec 
-           where mvt_ejedoc=OLD.acc_ano and
-	        mvt_numdoc=OLD.acc_nume and
-	        mvt_serdoc=OLD.acc_serie and
-	        mvt_tipdoc='C';	        
-        end if;
-        if TG_TABLE_NAME = 'desporig' then
-           update anjelica.mvtosalm set mvt_cliprv = NEW.prv_codi
-             where mvt_ejedoc=OLD.eje_nume and
-	        mvt_numdoc= OLD.deo_codi and
-	        (mvt_tipdoc='D' OR MVT_TIPdoc='d');
-        end if;
-
-	return NEW;
-END;
-$grabar$ LANGUAGE 'plpgsql';
-
-CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
-  RETURNS TRIGGER AS $grabar$   
-  DECLARE   
-  STKNEW RECORD;
-  STKOLD RECORD;
-  kilos float;
-  unid int;
-  BEGIN
-        kilos=0;
-        unid=0;      
-      
-        if TG_OP =  'INSERT' or TG_OP =  'UPDATE' then 
-            select * INTO STKNEW FROM  anjelica.stockpart where 
-                pro_codi= NEW.pro_codi and
-                eje_nume= NEW.pro_ejelot  and 
-                pro_serie = NEW.pro_serlot and
-                pro_nupar = NEW.pro_numlot and
-                pro_numind  = NEW.pro_indlot and
-                alm_codi = NEW.alm_codi;                
-            if STKNEW is  null then
-                kilos=NEW.mvt_canti;
-                unid=NEW.mvt_unid;
-                if NEW.mvt_tipo='S' then
-                        kilos=kilos*-1;
-                        unid= unid * -1;
-                end if;
-                insert into anjelica.stockpart (eje_nume,
-                    emp_codi,pro_serie, stp_tiplot,pro_nupar,                    
-                    pro_codi,pro_numind,alm_codi,
-                    stp_unini,stp_unact,
-                    stp_feccre,
-		    stp_kilini,stp_kilact,
-		    prv_codi,stp_feccad) 
-                 values
-                 (
-                        NEW.pro_ejelot, 
-			NEW.mvt_empcod,NEW.pro_serlot,'P', NEW.pro_numlot,
-                        NEW.pro_codi,NEW.pro_indlot,NEW.alm_codi,
-			unid,unid,
-			current_date,
-                        kilos,kilos,
-                        NEW.mvt_cliprv,NEW.mvt_feccad);
-            else
-                if NEW.mvt_tipo='E' then
-                   kilos=STKNEW.stp_kilact+NEW.mvt_canti;
-                   unid=STKNEW.stp_unact+NEW.mvt_unid;
-                else
-                   kilos=STKNEW.stp_kilact-NEW.mvt_canti;
-                   unid=STKNEW.stp_unact-NEW.mvt_unid;
-                end if;
-                UPDATE anjelica.stockpart set stp_kilact= kilos,
-                        stp_unact=unid,
-                        stp_fefici = current_date 
-                WHERE   pro_codi = NEW.pro_codi and 
-			eje_nume=NEW.pro_ejelot  and 
-                         pro_codi= NEW.pro_codi and
-                         pro_serie = NEW.pro_serlot and
-                         pro_nupar = NEW.pro_numlot and
-                         pro_numind  = NEW.pro_indlot AND
-                         alm_codi = NEW.alm_codi;
-                                 
-            end if;
-        end if;
-        if TG_OP = 'UPDATE' or TG_OP = 'DELETE' then
-            select * INTO STKOLD FROM  anjelica.stockpart where 
-                pro_codi= OLD.pro_codi and
-                eje_nume= OLD.pro_ejelot  and 
-                pro_serie = OLD.pro_serlot and
-                pro_nupar = OLD.pro_numlot and
-                pro_numind  = OLD.pro_indlot and
-                alm_codi = OLD.alm_codi;     
-	    if STKOLD is null then
-		RAISE EXCEPTION 'No encontrado Apunte stock anterior Almacen:% Art: % Individuo:% % %-%',OLD.alm_codi,
-			OLD.pro_codi,OLD.pro_ejelot,OLD.pro_serlot,OLD.pro_numlot,OLD.pro_indlot;
-		return null;
-	    end if;
-            if OLD.mvt_tipo='E' then
-                 kilos=STKOLD.stp_kilact-OLD.mvt_canti;
-                 unid=STKOLD.stp_unact-OLD.mvt_unid;
-            else
-                 kilos=STKOLD.stp_kilact+OLD.mvt_canti;
-                 unid=STKOLD.stp_unact+OLD.mvt_unid;
-            end if;
-            UPDATE anjelica.stockpart set stp_kilact= kilos,
-                   stp_unact=unid,
-                   stp_fefici = current_date 
-            WHERE  pro_codi = OLD.pro_codi and
-		   eje_nume=OLD.pro_ejelot  and 
-                   pro_serie = OLD.pro_serlot and
-                   pro_nupar = OLD.pro_numlot and
-                   pro_numind  = OLD.pro_indlot AND
-                   alm_codi = OLD.alm_codi;
-             RETURN OLD;
-        end if;
-        
-	return NEW;
-END;
-$grabar$ LANGUAGE 'plpgsql';
+insert into anjelica.ajustedb values(1,1);
+--
+-- Tabla con Acumulados de Stock Partidas
+--
+CREATE TABLE anjelica.actstkpart
+(
+  pro_codi integer,
+  alm_codi integer,
+  stp_unact integer,
+  stp_feccre date,
+  stp_fefici date,
+  stp_kilact double precision
+)
+WITH (
+  OIDS=FALSE
+);
+-- Index: anjelica.ix_astkpart
+-- DROP INDEX anjelica.ix_astkpart;
+CREATE INDEX ix_astkpart
+  ON anjelica.actstkpart
+  USING btree
+  (pro_codi, alm_codi)
 
 
-CREATE OR REPLACE FUNCTION anjelica."fn_acumstk"()
-  RETURNS TRIGGER AS $grabar$   
-  DECLARE   
-  STKNEW RECORD;
-  STKOLD RECORD;
-  kilos float;
-  unid int;
-  swUpd int;
-  BEGIN
-	swUpd=0;
-        kilos=0;
-        unid=0;      
-      
-        if TG_OP =  'INSERT' or TG_OP =  'UPDATE' then 
-	    --RAISE NOTICE  'En Act. Stk Serie % ',NEW.pro_serie ;
-	    if NEW.pro_serie = 'S' then
-		return NEW;
-	    end if;
-            select * INTO STKNEW FROM  anjelica.actstkpart where 
-		pro_codi = NEW.pro_codi and                
-                alm_codi = NEW.alm_codi;                
-            if STKNEW is  null then
-                kilos=NEW.stp_kilact;
-                unid=NEW.stp_unact;               
-                insert into anjelica.actstkpart (                  
-                    pro_codi,alm_codi,
-                    stp_unact,
-                    stp_feccre,
-		    stp_kilact    ) 
-                 values
-                 (    NEW.pro_codi,NEW.alm_codi,
-		      unid,
-		      current_date,
-                      kilos);
-		-- RAISE NOTICE  'Insert. Stk con serie S articulo Nuevo % Kilos: % ',NEW.pro_codi,kilos;		         
-            else
-                kilos=STKNEW.stp_kilact+NEW.stp_kilact;
-                unid=STKNEW.stp_unact+NEW.stp_unact;
-                if TG_OP =  'UPDATE' then
-			if NEW.pro_codi = OLD.pro_codi and NEW.alm_codi=OLD.alm_codi then
-				kilos=kilos-OLD.stp_kilact;
-				unid=unid-OLD.stp_unact;
-				swUpd=1;
-			end if;
-                end if;
-                UPDATE anjelica.actstkpart set stp_kilact= kilos,
-                        stp_unact=unid,
-                        stp_fefici = current_date 
-                WHERE pro_codi = NEW.pro_codi and
-                         alm_codi = NEW.alm_codi;
-  	        select sum(stp_unact),sum(stp_kilact) into unid,kilos  from anjelica.actstkpart
- 			where pro_codi = NEW.pro_codi;
-	        UPDATE anjelica.v_articulo set pro_stkuni=unid,pro_stock=kilos
-			where pro_codi=NEW.pro_codi;   
-                         
-                 -- RAISE NOTICE  'Act. Stk con serie S articulo Nuevo % Kilos: % upd % ',NEW.pro_codi,kilos,swUpd;		         
-            end if;
-        end if;
-        if (TG_OP = 'UPDATE' or TG_OP = 'DELETE') and swUpd = 0 then
-	    --RAISE NOTICE  'En Act. Stk olD Serie % ',OLD.pro_serie ;
-	   if OLD.pro_serie = 'S' then
-		return OLD;
-	    end if;
-            select * INTO STKOLD FROM  anjelica.actstkpart where 
-		pro_codi = OLD.pro_codi and             
-                alm_codi = OLD.alm_codi;     
-	    if STKOLD is null then
-		RAISE EXCEPTION 'No encontrado Apunte stock anterior Almacen:% Articulo:% ',OLD.alm_codi,
-			OLD.pro_codi;
-		return null;
-	    end if;             
-            kilos=STKOLD.stp_kilact-OLD.stp_kilact;
-            unid=STKOLD.stp_unact-OLD.stp_unact;
-            UPDATE anjelica.actstkpart set stp_kilact= kilos,
-                   stp_unact=unid,
-                   stp_fefici = current_date 
-            WHERE  pro_codi = OLD.pro_codi  and
-                   alm_codi = OLD.alm_codi;
-	    -- RAISE NOTICE  'Act. Stk con serie S articulo viejo % Kilos: % ',OLD.pro_codi,kilos;	
-	    select sum(stp_unact),sum(stp_kilact) into unid,kilos  from anjelica.actstkpart
-			where pro_codi = OLD.pro_codi ;
-	    UPDATE anjelica.v_articulo set pro_stkuni=unid,pro_stock=kilos
-			where pro_codi=OLD.pro_codi;   
-        end if;
-	
-	if TG_OP = 'UPDATE' or TG_OP  ='INSERT' then
-              RETURN NEW;
-         else
-	      return OLD;
-	 end if;        	
-END;
-$grabar$ LANGUAGE 'plpgsql';
+create trigger albvenpar_insert AFTER insert  on anjelica.v_albvenpar for each row execute procedure anjelica.fn_mvtoalm();
+create trigger albvenpar_update BEFORE UPDATE OR DELETE  on anjelica.v_albvenpar for each row execute procedure anjelica.fn_mvtoalm();
+create trigger albavel_UPDATE AFTER UPDATE  on anjelica.v_albavel for each row   WHEN (OLD.avl_prven IS DISTINCT FROM NEW.avl_prven) execute procedure anjelica.fn_acpralb();
 
--- create trigger stkpart_insert BEFORE insert OR UPDATE  on anjelica.stockpart for each row   WHEN (NEW.pro_serie !='S' ) execute procedure anjelica.fn_acumstk();
--- create trigger stkpart_delete BEFORE  DELETE  on anjelica.stockpart for each row WHEN (OLD.pro_serie !='S' ) execute procedure anjelica.fn_acumstk();
+create trigger albcompar_insert AFTER insert  on anjelica.v_albcompar for each row execute procedure anjelica.fn_mvtoalm();
+create trigger albcompar_update BEFORE UPDATE OR DELETE  on anjelica.v_albcompar for each row execute procedure anjelica.fn_mvtoalm();
+create trigger v_albacol_UPDATE AFTER UPDATE  on anjelica.v_albacol for each row  WHEN (OLD.acl_prcom IS DISTINCT FROM NEW.acl_prcom OR OLD.alm_codi IS DISTINCT FROM NEW.alm_codi) execute procedure anjelica.fn_acpralb();
+create trigger v_albacoc_UPDATE AFTER UPDATE  on anjelica.v_albacoc for each row  WHEN (OLD.prv_codi IS DISTINCT FROM NEW.prv_codi or OLD.acc_fecrec  IS DISTINCT FROM NEW.acc_fecrec  ) execute procedure anjelica.fn_acpralb();
 
-CREATE OR REPLACE FUNCTION anjelica."fn_acumstk"()
-  RETURNS TRIGGER AS $grabar$   
-  DECLARE   
-  STKNEW RECORD;
-  STKOLD RECORD;
-  kilos float;
-  unid int;
-  swUpd int;
-  BEGIN
-	swUpd=0;
-        kilos=0;
-        unid=0;      
-      
-        if TG_OP =  'INSERT' or TG_OP =  'UPDATE' then 
-	    --RAISE NOTICE  'En Act. Stk Serie % ',NEW.pro_serie ;
-	    if NEW.pro_serie = 'S' then
-		return NEW;
-	    end if;
-            select * INTO STKNEW FROM  anjelica.actstkpart where 
-		pro_codi = NEW.pro_codi and                
-                alm_codi = NEW.alm_codi;                
-            if STKNEW is  null then
-                kilos=NEW.stp_kilact;
-                unid=NEW.stp_unact;               
-                insert into anjelica.actstkpart (                  
-                    pro_codi,alm_codi,
-                    stp_unact,
-                    stp_feccre,
-		    stp_kilact    ) 
-                 values
-                 (    NEW.pro_codi,NEW.alm_codi,
-		      unid,
-		      current_date,
-                      kilos);
-		-- RAISE NOTICE  'Insert. Stk con serie S articulo Nuevo % Kilos: % ',NEW.pro_codi,kilos;		         
-            else
-                kilos=STKNEW.stp_kilact+NEW.stp_kilact;
-                unid=STKNEW.stp_unact+NEW.stp_unact;
-                if TG_OP =  'UPDATE' then
-			if NEW.pro_codi = OLD.pro_codi and NEW.alm_codi=OLD.alm_codi then
-				kilos=kilos-OLD.stp_kilact;
-				unid=unid-OLD.stp_unact;
-				swUpd=1;
-			end if;
-                end if;
-                UPDATE anjelica.actstkpart set stp_kilact= kilos,
-                        stp_unact=unid,
-                        stp_fefici = current_date 
-                WHERE pro_codi = NEW.pro_codi and
-                         alm_codi = NEW.alm_codi;
-  	        select sum(stp_unact),sum(stp_kilact) into unid,kilos  from anjelica.actstkpart
- 			where pro_codi = NEW.pro_codi;
-	        UPDATE anjelica.v_articulo set pro_stkuni=unid,pro_stock=kilos
-			where pro_codi=NEW.pro_codi;   
-                         
-                 -- RAISE NOTICE  'Act. Stk con serie S articulo Nuevo % Kilos: % upd % ',NEW.pro_codi,kilos,swUpd;		         
-            end if;
-        end if;
-        if (TG_OP = 'UPDATE' or TG_OP = 'DELETE') and swUpd = 0 then
-	    --RAISE NOTICE  'En Act. Stk olD Serie % ',OLD.pro_serie ;
-	   if OLD.pro_serie = 'S' then
-		return OLD;
-	    end if;
-            select * INTO STKOLD FROM  anjelica.actstkpart where 
-		pro_codi = OLD.pro_codi and             
-                alm_codi = OLD.alm_codi;     
-	    if STKOLD is null then
-		RAISE EXCEPTION 'No encontrado Apunte stock anterior Almacen:% Articulo:% ',OLD.alm_codi,
-			OLD.pro_codi;
-		return null;
-	    end if;             
-            kilos=STKOLD.stp_kilact-OLD.stp_kilact;
-            unid=STKOLD.stp_unact-OLD.stp_unact;
-            UPDATE anjelica.actstkpart set stp_kilact= kilos,
-                   stp_unact=unid,
-                   stp_fefici = current_date 
-            WHERE  pro_codi = OLD.pro_codi  and
-                   alm_codi = OLD.alm_codi;
-	    -- RAISE NOTICE  'Act. Stk con serie S articulo viejo % Kilos: % ',OLD.pro_codi,kilos;	
-	    select sum(stp_unact),sum(stp_kilact) into unid,kilos  from anjelica.actstkpart
-			where pro_codi = OLD.pro_codi ;
-	    UPDATE anjelica.v_articulo set pro_stkuni=unid,pro_stock=kilos
-			where pro_codi=OLD.pro_codi;   
-        end if;
-	
-	if TG_OP = 'UPDATE' or TG_OP  ='INSERT' then
-              RETURN NEW;
-         else
-	      return OLD;
-	 end if;        	
-END;
-$grabar$ LANGUAGE 'plpgsql';
+create trigger v_despfin_insert AFTER insert  on anjelica.v_despfin for each row execute procedure anjelica.fn_mvtoalm();
+create trigger v_despfin_update BEFORE UPDATE OR DELETE  on anjelica.v_despfin for each row execute procedure anjelica.fn_mvtoalm();
+create trigger desporig_update AFTER UPDATE on anjelica.desporig  for each row  WHEN (OLD.prv_codi IS DISTINCT FROM NEW.prv_codi )  execute procedure anjelica.fn_acpralb();
 
-delete from anjelica.mvtosalm;
-CREATE OR REPLACE FUNCTION anjelica."genmvto"( )
-  RETURNS numeric AS
-$BODY$DECLARE
-linalb RECORD;
-almCodi int;
-tipoMvto char(1);
-BEGIN	
-		
-	FOR linalb IN
-		SELECT p.*, l.avl_prven,c.avc_fecalb,l.avl_fecalt,alm_codori,
-	          alm_coddes, alm_codi,c.cli_codi
-		  FROM anjelica.V_ALBVENPAR as p,anjelica.v_albavel as l,
-			anjelica.v_albavec as c where 
-			c.emp_codi=l.emp_codi and
-			c.avc_ano=l.avc_ano and
-			c.avc_nume=l.avc_nume and
-			c.avc_serie=l.avc_serie and
-			l.avl_numlin = p.avl_numlin and
-			l.emp_codi=p.emp_codi and
-			l.avc_ano=p.avc_ano and
-			l.avc_nume=p.avc_nume and
-			l.avc_serie=p.avc_serie and
-			c.emp_codi=l.emp_codi and
-			c.avc_ano=l.avc_ano and
-			c.avc_nume=l.avc_nume and
-			c.avc_serie=l.avc_serie and			
-		        c.AVC_ANO>=2014 loop 
-	   almCodi=linalb.alm_codi;
-	   if  linalb.avc_serie = 'X' THEN
-		 -- Traspaso entre Almacenes.
-			 INSERT INTO anjelica.mvtosalm (mvt_oper,mvt_time,
-				mvt_tipo , mvt_tipdoc ,
-				alm_codi, 
-				mvt_fecdoc,mvt_empcod , mvt_ejedoc , 
-				mvt_serdoc , mvt_numdoc ,mvt_lindoc,
-				pro_codi  , 
-				pro_ejelot ,pro_serlot, 
-				pro_numlot ,pro_indlot ,
-				mvt_canti, mvt_unid , mvt_prec,mvt_cliprv )
-			values 		
-			(
-			'Insert',
-			linalb.avl_fecalt,
-			'E','V',
-			linalb.alm_coddes,			
-			linalb.avc_fecalb,
-			linalb.emp_codi,
-			linalb.avc_ano,
-			linalb.avc_serie,
-			linalb.avc_nume,
-			linalb.avl_numlin,
-			linalb.pro_codi,
-			linalb.avp_ejelot,
-			linalb.avp_serlot,
-			linalb.avp_numpar,
-			linalb.avp_numind,
-			linalb.avp_canti,
-			linalb.avp_numuni,
-			linalb.avl_prven,
-                        linalb.cli_codi
-			);
-			almCodi=linalb.alm_codori;
-	   end if;
-	   INSERT INTO anjelica.mvtosalm (mvt_oper,mvt_time,
-			mvt_tipo , mvt_tipdoc ,
-			alm_codi, 
-			mvt_fecdoc,mvt_empcod , mvt_ejedoc , 
-			mvt_serdoc , mvt_numdoc ,mvt_lindoc,
-			pro_codi  , 
-			pro_ejelot ,pro_serlot, 
-			pro_numlot ,pro_indlot ,
-			mvt_canti, mvt_unid , mvt_prec,mvt_cliprv )
-		values 		
-		(
-		'Insert',
-		linalb.avl_fecalt,
-		'S','V',
-		almCodi,
-		linalb.avc_fecalb,
-		linalb.emp_codi,
-		linalb.avc_ano,
-		linalb.avc_serie,
-		linalb.avc_nume,
-		linalb.avl_numlin,
-		linalb.pro_codi,
-		linalb.avp_ejelot,
-		linalb.avp_serlot,
-		linalb.avp_numpar,
-		linalb.avp_numind,
-		linalb.avp_canti,
-		linalb.avp_numuni,
-		linalb.avl_prven,
-                linalb.cli_codi
-		);	   
-	END LOOP;
-	FOR linalb IN
-	   select p.*, l.acl_prcom,c.acc_fecrec,l.alm_codi,prv_codi		 
-                 from anjelica.v_albacol as l,anjelica.v_albacoc as c,
-			anjelica.v_albcompar as p
-                 where  c.emp_codi=l.emp_codi and
-                       c.acc_ano=l.acc_ano and
-			c.acc_nume=l.acc_nume and
-			c.acc_serie=l.acc_serie and
-			l.acl_nulin=p.acl_nulin and
-			c.emp_codi=p.emp_codi and
-			c.acc_ano=p.acc_ano and
-			c.acc_nume=p.acc_nume and
-			c.acc_serie=p.acc_serie and
-			c.emp_codi=p.emp_codi and
-			c.acc_ano=p.acc_ano and
-			c.acc_nume=p.acc_nume and
-			c.acc_serie=p.acc_serie 
-			and c.acc_ano>=2014
-			loop
-			INSERT INTO anjelica.mvtosalm (mvt_oper,mvt_time,
-			mvt_tipo , mvt_tipdoc ,
-			alm_codi,
-			mvt_fecdoc,mvt_empcod , mvt_ejedoc , 
-			mvt_serdoc , mvt_numdoc ,mvt_lindoc,
-			pro_codi  , 
-			pro_ejelot ,pro_serlot, 
-			pro_numlot ,pro_indlot ,
-			mvt_canti, mvt_unid , mvt_prec,mvt_cliprv,mvt_feccad )
-		values 		
-		(
-		'Insert',
-		linalb.acc_fecrec,
-		'E','C',linalb.alm_codi,linalb.acc_fecrec,
-		linalb.emp_codi,linalb.acc_ano,linalb.acc_serie,
-		linalb.acc_nume,	linalb.acl_nulin,	linalb.pro_codi,
-		linalb.acc_ano,	linalb.acc_serie,	linalb.acc_nume,
-		linalb.acp_numind,	linalb.acp_canti,	linalb.acp_canind,
-		linalb.acl_prcom,  
-		linalb.prv_codi,
-		linalb.acp_feccad);
-	end loop;
-	for linalb in 
-	     select f.*,deo_fecha,prv_codi from anjelica.desporig as d,
-		anjelica.v_despfin as f where 
-			d.eje_nume=f.eje_nume and
-			d.deo_codi=f.deo_codi 
-			and d.eje_nume>=2014			
-			loop 
-			
-		INSERT INTO anjelica.mvtosalm (mvt_oper,mvt_time,
-			mvt_tipo , mvt_tipdoc , 
-			alm_codi,
-			mvt_fecdoc,mvt_empcod , mvt_ejedoc , 
-			mvt_serdoc , mvt_numdoc ,mvt_lindoc,
-			pro_codi  , 
-			pro_ejelot ,pro_serlot, 
-			pro_numlot ,pro_indlot ,
-			mvt_canti, mvt_unid , mvt_prec,mvt_cliprv,mvt_feccad )
-		values 		
-		(
-		'Insert',linalb.def_tiempo,'E','d',
-		linalb.alm_codi,
-		linalb.deo_fecha,
-		linalb.emp_codi,
-		linalb.eje_nume,
-		'D',
-		linalb.deo_codi,
-		linalb.def_orden,
-		linalb.pro_codi,
-		linalb.def_ejelot,
-		linalb.def_serlot,
-		linalb.pro_lote,
-		linalb.pro_numind,
-		linalb.def_kilos,
-		linalb.def_numpie,
-		linalb.def_prcost,            linalb.prv_codi,    linalb.def_feccad
-		);
-	end loop;
-	for linalb in 
-		select l.*,deo_fecha,deo_almori,prv_codi                
-		 from anjelica.desporig as c,anjelica.desorilin as l where 
-			c.eje_nume=l.eje_nume and
-			c.deo_codi=l.deo_codi
-			and c.eje_nume>=2014
-			loop
-		INSERT INTO anjelica.mvtosalm (mvt_oper,mvt_time,
-			mvt_tipo , mvt_tipdoc , 
-			alm_codi,
-			mvt_fecdoc,mvt_empcod , mvt_ejedoc , 
-			mvt_serdoc , mvt_numdoc ,mvt_lindoc,
-			pro_codi  , 
-			pro_ejelot ,pro_serlot, 
-			pro_numlot ,pro_indlot ,
-			mvt_canti, mvt_unid , mvt_prec,mvt_cliprv )
-		values 		
-		('Insert',linalb.deo_tiempo,
-		'S','D',
-		linalb.deo_almori,
-		linalb.deo_fecha,
-		1,
-		linalb.eje_nume,
-		'D',
-		linalb.deo_codi,
-		linalb.del_numlin,
-		linalb.pro_codi,
-		linalb.deo_ejelot,
-		linalb.deo_serlot,
-		linalb.pro_lote,
-		linalb.pro_numind,
-		linalb.deo_kilos,
-		1,
-		linalb.deo_prcost,
-                linalb.prv_codi
-		);
-	end loop;
-	for linalb in 	   
-	        SELECT r.*, tir_afestk FROM anjelica.v_motregu as m,anjelica.v_regstock as r  WHERE 
-			m.tir_codi = r.tir_codi
-			and tir_afestk != '='  
-			and rgs_fecha >= '20140101'
-			loop
 
-		if not found then
-			RAISE EXCEPTION 'NO encontrado tipo Mvto %',linalb.tir_codi;
-		end if;             
-		if linalb.tir_afestk='+' then
-		    tipoMvto='E';
-                else			
-                    tipoMvto='S';
-		end if;
-			INSERT INTO anjelica.mvtosalm (mvt_oper,mvt_time,
-			mvt_tipo , mvt_tipdoc , 
-			alm_codi,
-			mvt_fecdoc,mvt_empcod , mvt_ejedoc , 
-			mvt_serdoc , mvt_numdoc ,mvt_lindoc,
-			pro_codi  , 
-			pro_ejelot ,pro_serlot, 
-			pro_numlot ,pro_indlot ,
-			mvt_canti, mvt_unid , mvt_prec,mvt_cliprv )
-		values 		
-		(
-		'Insert',
-		linalb.rgs_fecha,
-		tipoMvto,'R',
-		linalb.alm_codi,
-		linalb.rgs_fecha,
-		linalb.emp_codi,
-		linalb.eje_nume,
-		'R',
-		linalb.rgs_nume,
-		1, -- mvt_lindoc
-		linalb.pro_codi,
-		linalb.eje_nume,
-		linalb.pro_serie,
-		linalb.pro_nupar,
-		linalb.pro_numind,
-		linalb.rgs_kilos,
-		linalb.rgs_canti,
-		linalb.rgs_prregu,
-                linalb.rgs_cliprv
-		);
-		
-	end loop;	
-	return 1;
-END;$BODY$
-  LANGUAGE 'plpgsql';
-select * from anjelica."genmvto"();
+create trigger desorilin_insert AFTER insert  on anjelica.desorilin for each row execute procedure anjelica.fn_mvtoalm();
+create trigger desorilin_update BEFORE UPDATE OR DELETE  on anjelica.desorilin for each row execute procedure anjelica.fn_mvtoalm();
+
+create trigger regstock_insert AFTER insert  on anjelica.v_regstock for each row execute procedure anjelica.fn_mvtoalm();
+create trigger regstock_update BEFORE UPDATE OR DELETE  on anjelica.v_regstock for each row execute procedure anjelica.fn_mvtoalm();
+
+create trigger mvtosalm_insert BEFORE insert  on anjelica.mvtosalm for each row execute procedure anjelica.fn_actstk();
+create trigger mvtosalm_update BEFORE UPDATE OR DELETE  on anjelica.mvtosalm for each row execute procedure anjelica.fn_actstk();
+
+create trigger stkpart_insert BEFORE insert OR UPDATE  on anjelica.stockpart for each row   WHEN (NEW.pro_serie !='S' ) execute procedure anjelica.fn_acumstk();
+create trigger stkpart_delete BEFORE  DELETE  on anjelica.stockpart for each row WHEN (OLD.pro_serie !='S' ) execute procedure anjelica.fn_acumstk();
+
