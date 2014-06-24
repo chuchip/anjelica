@@ -360,7 +360,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2014-01-08"+(admin?"(MODO ADMINISTRADOR)":""));
+   setVersion("2014-06-24"+(admin?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -1630,7 +1630,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
           " WHERE d.pro_codi = pr.pro_codi "+
           " AND d.eje_nume = "+eje_numeE.getValorInt()+
           " AND d.deo_codi = "+deo_codiE.getValorInt()+
-          " ORDER BY d.eje_nume,d.deo_codi,deo_ejelot,pro_lote,pro_numind";
+          " ORDER BY d.del_numlin";
       
       int nLiOr=0;
       double kgLiOr=0;
