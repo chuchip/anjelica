@@ -541,19 +541,16 @@ public class pstockAct extends CPanel
 
 
       // Resto de Stock los pedidos de Venta SIN Albaran
-      s = "SELECT sum(pvl_unid) as  pvl_canti " +
-          "  FROM pedvenc as c, pedvenl as l " +
-          " where c.emp_codi = l.emp_codi" +
-          " and c.eje_nume= l.eje_nume " +
-          " and c.pvc_nume =l.pvc_nume " +
-          " and C.EMP_CODI = " + emp_codi +
-          " and (c.avc_ano = 0 or c.pvc_cerra = 0) "+ // Pedidos NO cerrados
-          (almCodi == 0?"":" and c.alm_codi = "+almCodi)+
-          " and l.pro_codi = " + proCodi +
+      s = "SELECT sum(pvl_unid) as  pvl_unid, sum(pvl_kilos) as pvl_kilos" +
+          "  FROM v_pedven " +
+          " where EMP_CODI = " + emp_codi +
+          " and (avc_ano = 0 or pvc_cerra = 0) "+ // Pedidos NO cerrados
+          (almCodi == 0?"":" and alm_codi = "+almCodi)+
+          " and pro_codi = " + proCodi +
           " AND pvc_fecent <= TO_DATE('" + fefise + "','dd-MM-yyyy')";
       dtStat.select(s);
-      unidad -= dtStat.getDouble("pvl_canti",true); // Resto la cantidad
-
+      unidad -= dtStat.getDouble("pvl_unid",true);
+      stock -=dtStat.getDouble("pvl_kilos",true); 
       // Sumo a Stock los Albaranes de Venta SIN cerrar Y CON pedido
       s = "select sum(avl_canti) as cantidad,sum(avl_unid) as unidades " +
           "  from v_albavec as c, v_albavel as l " +

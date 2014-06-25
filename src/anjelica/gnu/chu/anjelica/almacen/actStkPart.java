@@ -1361,8 +1361,8 @@ public class actStkPart
          " order by s.pro_codi,s.alm_codi";
      if (! dt.select(s))
        return false;
-     double kilos=dt.getDouble("stp_kilact");
-     int unidades=dt.getInt("stp_unact"),res;
+     double kilos=0;
+     int unidades=0,res;
      int proCodT=dt.getInt("pro_codi");
      do
      {
