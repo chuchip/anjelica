@@ -419,36 +419,9 @@ public class pdinven extends ventanaPad implements PAD
                             0, "", jt.getValorDec(n,7), null,0,sbeCodi,1,0,0,"",0,0);
           pRegAlm.setRegNume(++rgsNume);
 
-
-//          dtAdd.addNew();
-//          dtAdd.setDato("pro_codi",pro_codiE.getValorInt());
-//          dtAdd.setDato("rgs_fecha",rgs_fechaE.getText(),"dd-MM-yyyy");
-//          dtAdd.setDato("rgs_hora",rgs_fechaE.getText(),"dd-MM-yyyy");
-//          if (rgsNume>=0)
-//            dtAdd.setDato("rgs_nume",++rgsNume);
-//          dtAdd.setDato("eje_nume",jt.getValorInt(n,0));
-//          dtAdd.setDato("emp_codi",jt.getValorInt(n,1));
-//          dtAdd.setDato("pro_Serie",jt.getValString(n,2));
-//          dtAdd.setDato("pro_nupar",jt.getValorInt(n,3));
-//          dtAdd.setDato("pro_numind",jt.getValorInt(n,4));
-//          dtAdd.setDato("tir_codi",tirCodi);
-//          dtAdd.setDato("rgs_canti",jt.getValorDec(n,6));
-//          dtAdd.setDato("alm_codi",almCodi);
-//          dtAdd.setDato("rgs_gener",1); // General (s/n)
-//          dtAdd.setDato("rgs_almac",1); // Almacen (s/n)
-//          dtAdd.setDato("rgs_partid ",1); // partida (s/n)  que?
-//          dtAdd.setDato("usu_nomb",EU.usuario);
-//          dtAdd.setDato("rgs_prebas",jt.getValorDec(n,7));
-//          dtAdd.setDato("rgs_prmeco",jt.getValorDec(n,7));
-//          dtAdd.setDato("rgs_prulco",jt.getValorDec(n,7)); // Buscamos el precio Ul.Compra ?
-//          dtAdd.setDato("rgs_prregu",jt.getValorDec(n,7));
-//          dtAdd.setDato("rgs_kilos",jt.getValorDec(n,5));
-//          dtAdd.setDato("rgs_canant",0);
-//          dtAdd.setDato("rgs_kilant",0);
-//          dtAdd.setDato("rgs_trasp",0);
-//          dtAdd.update(stUp);
         }
         stkPart.regeneraStock(dtBloq,2,almCodi,rgs_fechaE.getText(),pro_codiE.getValorInt());
+        dtAdd.executeUpdate("update ajustedb set aju_regacu=1"); // Habilito Reg. Acum.
         ctUp.commit();
         if (jf != null)
         {
@@ -483,13 +456,14 @@ public class pdinven extends ventanaPad implements PAD
           " and alm_codi = "+almCodi;
 
       stUp.executeUpdate(dtAdd.parseaSql(s));
-      s = "UPDATE v_stkpart set stp_unact = 0,stp_kilact= 0 " +
+      dtAdd.executeUpdate("update ajustedb set aju_regacu=0"); // Deshabilito Reg. Acum.
+      s = "UPDATE stockpart set stp_unact = 0,stp_kilact= 0 " +
           " where alm_codi = " + almCodi+
-          " and pro_codi = "+proCodi;
+          " and pro_codi = "+proCodi;      
       dtAdd.executeUpdate(s, stUp);
-      s = "UPDATE v_articulo set pro_stock = 0, pro_stkuni = 0 " +
-          " where pro_codi = "+proCodi;
-      dtAdd.executeUpdate(s, stUp);
+//      s = "UPDATE v_articulo set pro_stock = 0, pro_stkuni = 0 " +
+//          " where pro_codi = "+proCodi;
+//      dtAdd.executeUpdate(s, stUp);
     }
 
     void verDatos()
@@ -644,8 +618,8 @@ public class pdinven extends ventanaPad implements PAD
   }
 
   public void ej_edit1() {
-    jt.procesaAllFoco();
-    jt.salirFoco();
+    jt.salirGrid();
+    jt.actualizarGrid();
     if (cambiaLineaJT()>=0)
     {
       jt.requestFocusSelected();
