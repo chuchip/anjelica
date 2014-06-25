@@ -271,8 +271,8 @@ public class MvtosAlma
             (proLote==0?"":" and pro_numlot  = "+proLote)+
             (proNumind==0?"":" and pro_indlot = "+proNumind)+
             " AND pro_codi = " + (proCodi==-1?"?":proCodi) +
-            " AND mvt_time >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
-            " and mvt_time <= TO_DATE('"+fecFin+"','dd-MM-yyyy') "; 
+            " AND mvt_time::date >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
+            " and mvt_time::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') "; 
     }
     if (! incInvFinal || swSoloInv)
     { // No incluir inventario final.

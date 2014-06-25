@@ -153,7 +153,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(592, 516));
-    this.setVersion("2014-05-29");
+    this.setVersion("2014-06-25");
     ifMvtos.setSize(new Dimension(475, 325));
     
     ifMvtos.setVisible(false);
@@ -443,9 +443,9 @@ public class lisaldos   extends ventana  implements JRDataSource
   void verMvtos()
   {
     ifMvtos.setVisible(true);
-    int proCodi = jt.getValorInt(0);
+    int proCodi = jt.getValorInt(jt.getSelectedRowDisab(),0);
     String  fecinv=fecsalE.getText();
-    pro_codmvE.setValorInt(jt.getValorInt(0));
+    pro_codmvE.setValorInt(proCodi);
     jtMv.removeAllDatos();
     ArrayList v=new ArrayList();
     try {
@@ -784,8 +784,8 @@ public class lisaldos   extends ventana  implements JRDataSource
             "   mvt_canti <> 0 "+
              " AND pro_codi = ?" +
               (alm_inicE.getValorInt() == 0 ? "" : " and alm_codi = " + alm_inicE.getValorInt()) +
-             " AND mvt_time >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
-          "   and  mvt_time <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
+             " AND mvt_time::date >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
+          "   and  mvt_time::date <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
       s += " UNION all " + // Regularizaciones.
           " select 'RE' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov," +
           " r.rgs_kilos as canti,r.rgs_prregu as precio,1 as unid  " +
@@ -796,8 +796,8 @@ public class lisaldos   extends ventana  implements JRDataSource
           " and rgs_trasp != 0 "+
           (alm_inicE.getValorInt() == 0 ? "" : " and alm_codi = " + alm_inicE.getValorInt()) +
           " AND r.pro_codi = ? " +
-          " AND r.rgs_fecha >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
-          " and r.rgs_fecha <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
+          " AND r.rgs_fecha::date >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
+          " and r.rgs_fecha::date <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
       s += " ORDER BY 3,2 desc"; // FECHA y tipo
       ps=dtCon1.getConexion().prepareStatement(dtCon1.getStrSelect(s));
     }
