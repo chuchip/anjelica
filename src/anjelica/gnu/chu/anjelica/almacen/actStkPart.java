@@ -631,13 +631,28 @@ public class actStkPart
 //    actAcum(proCodi, almCodi, kilAnt*-1, unAnt*-1, null);
     return 1;
   }
-  public int cambiaProd(DatosTabla dt,int proCodi, int proCodAnt, int ejeLot,
+  /**
+   * @deprecated
+   * Cambia una referencia por otra en StockPartidas
+   * @param dt
+   * @param proCodi
+   * @param proCodAnt
+   * @param ejeLot
+   * @param serLot
+   * @param numLot
+   * @param nInd
+   * @param almCodi
+   * @return
+   * @throws SQLException 
+   */
+  private int cambiaProd(DatosTabla dt,int proCodi, int proCodAnt, int ejeLot,
                         String serLot, int numLot,
                         int nInd, int almCodi) throws SQLException
   {
     return cambiaProd(dt,proCodi,proCodAnt,ejeLot,empCodi,serLot,numLot,nInd,almCodi);
   }
   /**
+   *  @deprecated
    * Rutina utilizada para sustituir un producto por otro en movimientos de stock.
    *
    * @param dt DatosTabla
@@ -652,7 +667,7 @@ public class actStkPart
    * @throws SQLException
    * @return int
    */
-  public int cambiaProd(DatosTabla dt,int proCodi, int proCodAnt, int ejeLot, int empLot,
+  private int cambiaProd(DatosTabla dt,int proCodi, int proCodAnt, int ejeLot, int empLot,
                         String serLot, int numLot,
                         int nInd, int almCodi) throws SQLException
   {
@@ -685,7 +700,6 @@ public class actStkPart
    *
    * @param dt DatosTabla
    * @param proCodi int
-   * @param proCodAnt int
    * @param ejeLot int
    * @param empLot int
    * @param serLot String
@@ -1691,8 +1705,3 @@ public class actStkPart
       }
   }
 }
-
-
-
-
-

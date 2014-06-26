@@ -22,6 +22,7 @@ import gnu.chu.winayu.ayuMat;
 import gnu.chu.winayu.ayuSde;
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyVetoException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -703,7 +704,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20140130)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20140626)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -6106,7 +6107,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
      {
        frProd.setSelected(true);
      }
-     catch (Exception k)
+     catch (PropertyVetoException k)
      {}
 
      javax.swing.SwingUtilities.invokeLater(new Thread()
@@ -6249,13 +6250,13 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
          mensaje("Actualizando Individuo: "+dtCon1.getInt("acp_numind"));
 
          // Actualizo el registro de Stock Partidas.
-         stkPart.cambiaProd(dtStat,proCodi,dtCon1.getInt("pro_codi") ,
-             acc_anoE.getValorInt(),
-             emp_codiE.getValorInt(),
-             acc_serieE.getText(),
-             acc_numeE.getValorInt(),
-             dtCon1.getInt("acp_numind"),
-             alm_codiE.getValorInt());
+//         stkPart.cambiaProd(dtStat,proCodi,dtCon1.getInt("pro_codi") ,
+//             acc_anoE.getValorInt(),
+//             emp_codiE.getValorInt(),
+//             acc_serieE.getText(),
+//             acc_numeE.getValorInt(),
+//             dtCon1.getInt("acp_numind"),
+//             alm_codiE.getValorInt());
 
          s = "UPDATE v_albcompar SET  pro_codi= " + proCodi +
              " WHERE acc_ano = " + acc_anoE.getValorInt() +
