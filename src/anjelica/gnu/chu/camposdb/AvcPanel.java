@@ -118,10 +118,12 @@ public class AvcPanel extends CPanel {
     }
     public static boolean selCabAlb(String tablaCab,DatosTabla dt,int avcAno,int empCodi,String avcSerie,int avcNume,boolean block,boolean excepNotFound) throws SQLException
     {
-      String sql = "SELECT * FROM "+tablaCab+" WHERE avc_ano =" + avcAno +
+      String sql = "SELECT * FROM "+tablaCab+" WHERE "+
+          (empCodi>0?" avc_ano =" + avcAno +
         " and emp_codi = " + empCodi +
         " and avc_serie = '" + avcSerie+ "'" +
-        " and avc_nume = " + avcNume;
+        " and avc_nume = " + avcNume:
+          "  his_rowid= "+avcNume);
       boolean ret=dt.select(sql, block);
       if (block && ! ret  && excepNotFound)
        throw new SQLException("No encontrado Cabecera Albaran.\n Select: " + sql);

@@ -97,16 +97,18 @@ public class pdalbara extends ventanaPad  implements PAD
   public final static String TABLACAB="v_albavec";
   public final static String TABLALIN="v_albavel";
   public final static String TABLAIND="v_albvenpar";
+  public final static String VISTAIND="v_albventa_detalle";
   Cgrid jtHist=new Cgrid(4);
   CPanel Phist=new CPanel();
   DatosTabla dtHist;
   private int hisRowid=0;
-  private String condHist=""; // Condiciones del historico
+
   private int nLiMaxEdit; // Usada para ver cuando una linea se puede borrar / Modificar al editar 
                           // un albaran de deposito con genero entregado.
   private String tablaCab="v_albavec";
   private String tablaLin="v_albavel";
   private String tablaInd="v_albvenpar";
+  private String vistaInd="v_albventa_detalle";
   private boolean swProcesaEdit=false;
   private boolean confAlbDep=false;
   private boolean IMPALBTEXTO=false;
@@ -582,7 +584,7 @@ public class pdalbara extends ventanaPad  implements PAD
         PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2014-05-23" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2014-06-03" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -1855,15 +1857,11 @@ public class pdalbara extends ventanaPad  implements PAD
     tablaCab="hisalcave";
     tablaLin="hisallive";
     tablaInd="hisalpave";
-
-    condHist=" and his_rowid = "+hisRowid;
+    vistaInd="v_halbventa_detalle";    
+    
     try {
-         s="SELECT * FROM "+tablaCab+" WHERE emp_codi = "+emp_codiE.getValorInt()+
-          " and avc_ano = "+avc_anoE.getValorInt()+
-          " and avc_serie = '"+avc_seriE.getText()+"'"+
-          " and avc_nume = "+avc_numeE.getValorInt() +
-         condHist;
-
+         s="SELECT * FROM "+tablaCab+" WHERE his_rowid = "+hisRowid;
+         
         dtHist.select(s);
         verDatos(dtHist,opAgru.isSelected());
     } catch (SQLException k)
@@ -2273,9 +2271,9 @@ public class pdalbara extends ventanaPad  implements PAD
     tablaCab=TABLACAB;
     tablaLin=TABLALIN;
     tablaInd=TABLAIND;
-
+    vistaInd=VISTAIND;
     hisRowid=0;
-    condHist="";
+
     verDatos(dt, opAgru.isSelected());
   }
 
@@ -2289,8 +2287,9 @@ public class pdalbara extends ventanaPad  implements PAD
         return;
 
       opVerdat=true;
-      if (!selCabAlb(tablaCab,dtAdd,dt.getInt("avc_ano"),dt.getInt("emp_codi"),dt.getString("avc_serie"),
-                        dt.getInt("avc_nume"),true,false))
+      if (!selCabAlb(tablaCab,dtAdd,dt.getInt("avc_ano"),
+                    hisRowid>0?-1: dt.getInt("emp_codi"),dt.getString("avc_serie"),
+                        hisRowid>0?hisRowid: dt.getInt("avc_nume"),true,false))
       {
         mensajes.mensajeAviso("Registro NO encontrado ... SEGURAMENTE SE BORRO");
         Pcabe.resetTexto();
@@ -2639,9 +2638,9 @@ public class pdalbara extends ventanaPad  implements PAD
   void verDatLin(DatosTabla dt, boolean agrupa, boolean incIva) throws
       Exception
   {
-    verDatLin(dt.getInt("avc_ano"), dt.getInt("emp_codi"),
+    verDatLin(dt.getInt("avc_ano"), hisRowid>0?-1:dt.getInt("emp_codi"),
               dt.getString("avc_serie"),
-              dt.getInt("avc_nume"), dt.getDouble("avc_impcob"), agrupa, incIva);
+              hisRowid>0?hisRowid:dt.getInt("avc_nume"), dt.getDouble("avc_impcob"), agrupa, incIva);
   }
   /**
    * Setencia sql que devuelve las lineas albaran con producto para entrega
@@ -2742,10 +2741,11 @@ public class pdalbara extends ventanaPad  implements PAD
          (modPrecio? " avl_prven,":"")+
          "a.pro_nomb,l.pro_nomb as avl_pronom,a.pro_tipiva " +
          " FROM "+tablaLin +" as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
-         " WHERE l.avc_ano = " + ano +
+         " WHERE "+(empCodi<=0?" his_rowid ="+nume:
+         " l.avc_ano = " + ano +
          " and l.emp_codi = " + empCodi +
          " and l.avc_serie = '" + serie + "'" +
-         " and l.avc_nume = " + nume +
+         " and l.avc_nume = " + nume )+
          " and l.avl_canti >= 0 " +
          " group by l.pro_codi,"+(modPrecio?"avl_prven,":"")+
          " tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva " +
@@ -2754,15 +2754,16 @@ public class pdalbara extends ventanaPad  implements PAD
          " sum(avl_unid) as avl_unid,tar_preci,"+
          (modPrecio? " avl_prven,":"")+
          " a.pro_nomb,l.pro_nomb as avl_pronom,a.pro_tipiva " +
-         " FROM V_ALBAVEL as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
+         " FROM "+tablaLin+" as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
 //         " and a.emp_codi = "+EU_emCod+
-         " WHERE l.avc_ano = " + ano +
+         " WHERE "+(empCodi<=0?" his_rowid ="+nume:
+         " l.avc_ano = " + ano +
          " and l.emp_codi = " + empCodi +
          " and l.avc_serie = '" + serie + "'" +
-         " and l.avc_nume = " + nume +
+         " and l.avc_nume = " + nume )+
          " and l.avl_canti < 0 " +
          " group by l.pro_codi,"+(modPrecio?"avl_prven,":"")+
-         "tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva " +
+          "tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva " +
          " ORDER BY 2";
   }
   /**
@@ -2786,8 +2787,8 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   /**
    * Ver Datos de Linea de Albaran
-   * @param ano int
-   * @param empCodi int
+   * @param ano int 
+   * @param empCodi int si es < 0 El numero se refiere al numero de Historico
    * @param serie String
    * @param nume int
    * @param avcImpcob double
@@ -2933,8 +2934,11 @@ public class pdalbara extends ventanaPad  implements PAD
       avc_impcobE.setValorDec(avcImpcob);
 
       swActDesg = true;
-      verDesgLinea(empCodi,ano,
-                   serie, nume,
+       
+      verDesgLinea(hisRowid<=0?empCodi:-1,
+                    ano,
+                   serie,
+                   hisRowid<=0?nume:hisRowid,
                    jt.getValorInt(0, 0),
                    jt.getValorInt(0, 1), 
                    jt.getValString(0, 2), 
@@ -3102,12 +3106,20 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       if (! swEntdepos)
       {
-        if (verDepoC.getValor().equals("S"))
-            s=getStrSqlDesgServ(empCodi, ejeNume, serie, numAlb,proCodi);
-        else if      (verDepoC.getValor().equals("P"))
-            s=getStrSqlDesgPend(empCodi, ejeNume, serie, numAlb, proCodi);
-        else
-            s=getStrSqlDesg(tablaInd, empCodi, ejeNume, serie, numAlb, nLin, proCodi,proNomb, precio,verPrecios);
+          switch (verDepoC.getValor())
+          {
+              case "S":
+                  s=getStrSqlDesgServ(empCodi, ejeNume, serie, numAlb,proCodi);
+                  break;
+              case "P":
+                  s=getStrSqlDesgPend(empCodi, ejeNume, serie, numAlb, proCodi);
+                  break;
+              default:
+                  s=getStrSqlDesg(vistaInd,
+                      hisRowid<=0?empCodi:-1, ejeNume, serie,
+                      hisRowid<=0?numAlb:hisRowid, nLin, proCodi,proNomb, precio,verPrecios);
+                  break;
+          }
       }
       else
         s=getStrSqlDesgEnt(avsNume, nLin, proCodi);
@@ -3134,7 +3146,7 @@ public class pdalbara extends ventanaPad  implements PAD
         v.add(dtCon1.getString("avp_numind"));
         v.add(dtCon1.getString("avp_canti"));
         v.add(dtCon1.getInt("avp_numlin"));
-        canti= Formatear.Redondea(canti+dtCon1.getDouble("avp_canti"),2);
+        canti= Formatear.redondea(canti+dtCon1.getDouble("avp_canti"),2);
         unid+=dtCon1.getInt("avp_numuni");
         
         jtDes.addLinea(v);
@@ -3150,7 +3162,7 @@ public class pdalbara extends ventanaPad  implements PAD
       jtDes.requestFocus(0, 0);
       jtDes.setEnabled(enab);
     }
-    catch (Exception k)
+    catch (SQLException k)
     {
       Error("Error al Ver Desglose Linea de Albaran", k);
     }
@@ -3158,12 +3170,14 @@ public class pdalbara extends ventanaPad  implements PAD
   public static String getStrSqlDesg(int empCodi, int ejeNume, String serie, int numAlb, int nLin,
                              int proCodi, String proNomb,double precio,boolean modPrecio)
   {
-      return getStrSqlDesg("v_albvenpar",empCodi,ejeNume,serie, numAlb, nLin,proCodi, proNomb, precio, modPrecio);
+      return getStrSqlDesg(VISTAIND ,empCodi,ejeNume,serie, numAlb, nLin,proCodi, proNomb, precio, modPrecio);
   }
 /**
  * Devuelve sentencia SQL para mostras los individuos sobre un albaran normal
  *
- * @param empCodi
+ * @param vistaDet
+ * 
+ * @param empCodi Si es <0 El numero de Albaran es el ID del Historico de Albaranes.
  * @param ejeNume
  * @param serie
  * @param numAlb
@@ -3174,28 +3188,23 @@ public class pdalbara extends ventanaPad  implements PAD
  * @param modPrecio Sacar precio (true=si)
  * @return
  */
-  public static String getStrSqlDesg(String tablaInd,int empCodi, int ejeNume, String serie, int numAlb, int nLin,
+  public static String getStrSqlDesg(String vistaDet,
+      int empCodi, int ejeNume, String serie, int numAlb, int nLin,
                              int proCodi, String proNomb,double precio,boolean modPrecio)
   {
     return "SELECT p.pro_codi,p.pro_nomb,a.avp_emplot,a.avp_ejelot,a.avp_serlot, " +
         " a.avp_numpar,a.avp_numind,a.avp_canti,a.avp_numuni,a.avp_numlin "+
-        " FROM "+tablaInd+" as a,v_articulo as p,v_albavel as l " +
-        " WHERE a.emp_codi = " + empCodi +
+        " FROM "+vistaDet+" as a,v_articulo as p " +
+        " WHERE "+ (empCodi==-1? " a.his_rowid = "+numAlb: " a.emp_codi = " + empCodi +
         " and a.avc_ano = " + ejeNume +
         " and a.avc_serie = '" + serie + "'" +
-        " and a.avc_nume = " + numAlb +
+        " and a.avc_nume = " + numAlb) +
         (nLin >= 0 ? " and a.avl_numlin = " + nLin :
-         " and l.pro_codi = " + proCodi +
-         (proNomb==null?"":" and (l.pro_nomb is null or l.pro_nomb = '"+proNomb+"')")+
-         (modPrecio?" and l.avl_prven = " + precio:"")) +
-//          " and p.emp_codi = a.avp_emplot " +
-          " and p.pro_codi = a.pro_codi " +
-        " and l.emp_codi = a.emp_codi " +
-        " and l.avc_ano = a.avc_ano " +
-        " and l.avc_serie = a.avc_serie " +
-        " and l.avc_nume = a.avc_nume " +
-        " and l.avl_numlin = a.avl_numlin " +
-        " order by a.avp_emplot,a.avp_ejelot,a.avp_serlot,a.avp_numpar,a.avp_numlin";
+         " and a.pro_codi = " + proCodi +
+         (proNomb==null?"":" and (a.pro_nomb is null or a.pro_nomb = '"+proNomb+"')")+
+         (modPrecio?" and a.avl_prven = " + precio:"")) +
+          " and p.pro_codi = a.pro_codi " +      
+        " order by a.avp_numlin";
   }
  /**
   * Devuelve sentencia SQL para buscar lineas desglose albaran de entrega

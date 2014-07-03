@@ -502,7 +502,7 @@ avc_aux3 varchar(50),
 avc_impre2 float,
 avc_basimp float not null,    -- Base Imponible  (Imp.Lin - Dtos)
 avc_imcob2 float,
-avc_impuv2 float,       -- Suma de Kilos.
+avc_kilos float,       -- Suma de Kilos.
 div_codi int,		-- Divisa
 div_codi2 int,
 avc_tottas float,
@@ -572,7 +572,7 @@ avc_aux3 varchar(50),
 avc_impre2 float,
 avc_basimp float not null,    -- Base Imponible  (Imp.Lin - Dtos)
 avc_imcob2 float,
-avc_impuv2 float,       -- Suma de Kilos.
+avc_kilos float,       -- Suma de Kilos.
 div_codi int,		-- Divisa
 div_codi2 int,
 avc_tottas float,
@@ -799,6 +799,28 @@ avp_numuni float,		-- Numero de Unidades
 avp_canti decimal(9,3),         -- Kilos
 constraint ix_albvenpar primary key  (avc_ano,emp_codi,avc_nume,avc_serie,avl_numlin,avp_numlin)
 );
+CREATE OR REPLACE VIEW anjelica.v_albventa_detalle AS 
+ SELECT c.emp_codi, c.avc_ano, c.avc_serie, c.avc_nume, c.cli_codi, 
+    c.avc_clinom, c.avc_fecalb, c.usu_nomb, c.avc_tipfac, c.cli_codfa, 
+    c.fvc_ano, c.fvc_nume, c.avc_cerra, c.avc_impres, c.avc_fecemi, c.sbe_codi, 
+    c.avc_cobrad, c.avc_obser, c.avc_fecrca, c.avc_basimp, c.avc_kilos, 
+    c.div_codi, c.avc_impalb, c.avc_impcob, c.avc_dtopp, c.avc_dtootr, 
+    c.avc_valora, c.fvc_serie, c.avc_depos, l.avl_numlin, l.pro_codi, 
+    l.pro_nomb, l.avl_canti, l.avl_prven, l.avl_prbase, l.tar_preci, l.avl_unid, 
+    l.avl_canbru, l.avl_fecalt, l.fvl_numlin, l.avl_fecrli, c.alm_codori, 
+    c.alm_coddes, p.avp_numlin, p.avp_ejelot, p.avp_emplot, p.avp_serlot, 
+    p.avp_numpar, p.avp_numind, p.avp_numuni, p.avp_canti
+   FROM anjelica.v_albavel l, anjelica.v_albavec c, anjelica.v_albvenpar p
+  WHERE c.emp_codi = l.emp_codi AND c.avc_ano = l.avc_ano AND c.avc_serie = l.avc_serie AND c.avc_nume = l.avc_nume AND c.emp_codi = p.emp_codi AND c.avc_ano = p.avc_ano AND c.avc_serie = p.avc_serie AND c.avc_nume = p.avc_nume AND l.avl_numlin = p.avl_numlin;
+
+ALTER TABLE anjelica.v_albventa_detalle
+  OWNER TO cpuente;
+GRANT ALL ON TABLE anjelica.v_albventa_detalle TO cpuente;
+GRANT ALL ON TABLE anjelica.v_albventa_detalle TO ester;
+GRANT ALL ON TABLE anjelica.v_albventa_detalle TO guadi;
+GRANT ALL ON TABLE anjelica.v_albventa_detalle TO anjelica;
+GRANT ALL ON TABLE anjelica.v_albventa_detalle TO jgarcia;
+
 create index ix_albvenpa1 on v_albvenpar (avp_ejelot,avp_serlot,avp_numpar,avp_numind);
 create view anjelica.v_albventa_detalle as select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
@@ -810,6 +832,7 @@ from v_albavel as l, v_albavec as c, v_albvenpar as p
 where c.emp_codi=l.emp_codi and c.avc_ano=l.avc_ano and c.avc_serie=l.avc_serie and c.avc_nume=l.avc_nume and 
 c.emp_codi=p.emp_codi and c.avc_ano=p.avc_ano and c.avc_serie=p.avc_serie and c.avc_nume=p.avc_nume
 and l.avl_numlin=p.avl_numlin;
+
 
 --
 -- Historico Partidas de Albaranes de Venta
@@ -837,7 +860,16 @@ his_usunom varchar(15) not null, -- Usuario que realiza el Cambio
  his_coment varchar(100), -- Comentario sobre el Cambio
  his_rowid int not null
 );
-cretate index ix_hisalpave on hisalpave  (his_rowid);
+create index ix_hisalpave on hisalpave  (his_rowid);
+create view anjelica.v_halbventa_detalle as select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
+fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
+avc_basimp,avc_kilos,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
+avc_depos,l.avl_numlin,l.pro_codi,pro_nomb,avl_canti,avl_prven,avl_prbase,tar_preci,avl_unid,
+avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,
+avp_numlin,avp_ejelot,avp_emplot,avp_serlot,avp_numpar,avp_numind,avp_numuni,avp_canti
+from hisalcave as c, hisallive as l, hisalpave as p 
+where c.his_rowid=l.his_rowid and l.his_rowid=p.his_rowid
+and l.avl_numlin=p.avl_numlin;
 --
 -- Tabla Productos de Residiuos en albaran de ventas(MER,GRASA,etc)
 --
