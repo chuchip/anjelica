@@ -90,20 +90,45 @@ public class util
           fichero = new File(path, file+numeral+"."+ext);
           if (fichero.exists())
           {
-              if (Formatear.comparaFechas(new Date(fichero.lastModified()),Formatear.getDateAct())>7)
+              if (Formatear.comparaFechas(new Date(fichero.lastModified()),Formatear.getDateAct())>3)
                   fichero.delete();
           }
         }
        if ((fichero=getFichero(0, path, file, ext))!=null) 
             return fichero;
+       int ficBor=0;
+        for (int n=0;n<1000 && ficBor <50 ;n++)
+        {
+          numeral=Formatear.format(n,"999");
+          fichero = new File(path, file+numeral+"."+ext);
+          if (fichero.exists())          
+          {
+             fichero.delete();
+             ficBor++;
+          }
+        }
+        if ((fichero=getFichero(0, path, file, ext))!=null) 
+           return fichero;
     }
     throw new IOException("Mas de 999 Ficheros Temporales con el mismo Nombre");
   }
-
+/**
+ * Devuelve un puntero a un fichero nuevo para escribir.
+ * Ese fichero es creado a traves de la cadean  'file', con extension 'ext'
+ * Si ya esixte file.ext, busca file001.ext, file002.ext y asi sucesivamente, hata 999
+ * si estan todos ocupados devuelve null.
+ * @param n No usado.
+ * @param path
+ * @param file
+ * @param ext
+ * @return 
+ */
     private static File getFichero(int n, String path, String file, String ext) {
+        if (true)
+            return null;
         String numeral;
         File fichero;
-        for (n=0; n<1000; n++) {
+        for (; n<1000; n++) {
             numeral=Formatear.format(n,"999");
             fichero = new File(path, file+numeral+"."+ext);
             if (!fichero.exists()) {
