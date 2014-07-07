@@ -94,9 +94,9 @@ public class util
                   fichero.delete();
           }
         }
-       if ((fichero=getFichero(0, path, file, ext))!=null) 
+        if ((fichero=getFichero(0, path, file, ext))!=null) 
             return fichero;
-       int ficBor=0;
+        int ficBor=0;
         for (int n=0;n<1000 && ficBor <50 ;n++)
         {
           numeral=Formatear.format(n,"999");
@@ -123,20 +123,21 @@ public class util
  * @param ext
  * @return 
  */
-    private static File getFichero(int n, String path, String file, String ext) {
-        if (true)
-            return null;
-        String numeral;
-        File fichero;
-        for (; n<1000; n++) {
-            numeral=Formatear.format(n,"999");
-            fichero = new File(path, file+numeral+"."+ext);
-            if (!fichero.exists()) {
-                return fichero;
-            }
+  private static File getFichero(int n, String path, String file, String ext) 
+  {
+    String numeral;
+    File fichero;
+    for (; n < 1000; n++)
+    {
+        numeral = Formatear.format(n, "999");
+        fichero = new File(path, file + numeral + "." + ext);
+        if (!fichero.exists())
+        {
+            return fichero;
         }
-        return null;
     }
+    return null;
+  }
   
   public static FileOutputStream getOutputStream(String file,EntornoUsuario eu) throws java.io.IOException
   {
