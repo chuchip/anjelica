@@ -1161,7 +1161,7 @@ create table anjelica.v_albcompar
    pcc_nume int ,		-- Numero de Pedido (NO USADO)
    guiasanitarianumero varchar(30), -- NO USADO
    guiasanitariaserie varchar(10),  -- NO USADO
-   guiasanitariafecha date, 	    -- NO USADO
+   acp_fecpro date,                 -- Fecha Produccion.
    guiasanitariancrotal varchar(30),-- NO USADO
    guiasanitariacomunidad int ,	    -- NO USADO
    dib varchar(50),                 -- NO USADO
@@ -1229,7 +1229,8 @@ create index ix_albcompar2 on v_albcompar (acc_ano,emp_codi,acc_serie,acl_nulin,
 create or replace view v_compras as 
 select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,
 l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi,
-i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_nucrot,i.acp_painac,i.acp_paisac,i.acp_engpai,i.mat_codi
+i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_fecpro,i.acp_nucrot,i.acp_painac,
+i.acp_paisac,i.acp_engpai,i.mat_codi
 from anjelica.v_albacoc as c,anjelica.v_albacol as l, anjelica.v_albcompar as i
 where c.acc_ano=l.acc_ano
 and c.emp_codi=l.emp_codi
@@ -1259,6 +1260,7 @@ create table anjelica.hisalpaco
    acp_feccad date,		-- Fecha Caducidad
    acp_paisac int,		-- Pais de Sacrificio
    acp_fecsac date,		-- Fecha de Sacrificio
+   acp_fecpro date,             -- Fecha de Produccion
    observaciones varchar(255),
    clasificacion char(1),       -- NO USADO
    pro_codi int,		-- Codigo de Producto

@@ -1073,8 +1073,8 @@ public class Cgrid extends CPanel implements Serializable
      * @param fil int
      * @param col int
      * @param formFec String
-     * @throws ParseException
      * @return Date
+     * @throws java.text.ParseException
      */
     public java.util.Date getValDate(int fil, int col,String formFec) throws java.text.ParseException
     {

@@ -1044,7 +1044,12 @@ public class MantDesp extends ventanaPad implements PAD
             if (utdesp.feccadE != null)
                 deo_feccadE.setText(utdesp.feccadE);
         }
-
+        if (deo_fecproE.isNull())
+        {
+            if (utdesp.getFechaProduccion() != null)
+                deo_fecproE.setDate(utdesp.getFechaProduccion());
+        }
+        
         if (deo_feccadE.isNull() && reset)
         {
             mensajeErr("Introduzca Fecha de Caducidad");

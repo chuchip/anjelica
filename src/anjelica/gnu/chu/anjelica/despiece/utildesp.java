@@ -48,9 +48,9 @@ public class utildesp
   private String datmat=null;
   private String diremp=null;
   private String logo=null;
-  private boolean swGenCrotal=false; // Generar crotal aleatoriamente.
-  private Vector <String> indiv  =new Vector();
-  private Vector <String> crotales  =new Vector();
+  private final boolean swGenCrotal=false; // Generar crotal aleatoriamente.
+  private final Vector <String> indiv  =new Vector();
+  private final Vector <String> crotales  =new Vector();
   private int repiteIndiv=0;
   private boolean buscaIndDesp=false;
   private Date fecCadDesp;
@@ -222,6 +222,7 @@ public class utildesp
     nacidoE = null;
     cebadoE = null;
     fecSacrE = null;
+    
     feccadE=null;
     fecCadDesp=null;
     deoCodi=0;
@@ -426,6 +427,9 @@ public class utildesp
           fecCadPrvE=dtStat.getDate("acp_feccad");
           if (fecSacrE==null)
             fecSacrE=dtStat.getDate("acp_fecsac");
+          if (fecProdE==null)
+            fecProdE=dtStat.getDate("acp_fecpro");
+
           if (!swDesp)
           {
             fecrepL = "Fec.Recep:";
@@ -1141,59 +1145,7 @@ public class utildesp
         etiq.listarDefec();
     }
 
-//    public int guardaGrupDesp(String feccad, int prvCodi,java.util.Date fecProd) throws Exception {
-//        return guardaGrupDesp(feccad, prvCodi, pddespie.SERIE, 0, 1, 0,fecProd);
-//    }
-    /**
-     * Guarda un grupo de despiece
-     * @param feccad
-     * @param prvCodi
-     * @param serie
-     * @param kilos
-     * @param unid
-     * @param prMeco
-     * @param fecProd
-     * @return
-     * @throws Exception
-     */
-   /* public int guardaGrupDesp(String feccad, int prvCodi, String serie,
-            double kilos, int unid, double prMeco,java.util.Date fecProd) throws SQLException {
-        grdNume = 0;
-        // Localiza el Grupo de Despice a asignar
-//      if (! dtAdd.isAutoIncrement("grd_nume"))
-//      if (dtAdd.getConexion().getDriverType()==conexion.POSTGRES)
-//        dtAdd.executeUpdate("lock table grupdesp"); // Para bloquear la tabla en postgres.
-        grdNume = utildesp.buscaMaxGrp(dtAdd, ejeNume, empCodi, 0);
 
-        // Creamos el Registro en grupo
-        dtAdd.addNew("grupdesp");
-        dtAdd.setDato("emp_codi", empCodi);
-        dtAdd.setDato("eje_nume", ejeNume);
-//      if (dtAdd.isAutoIncrement("grd_nume"))
-//        dtAdd.setDato("grd_nume", null);
-//      else
-        dtAdd.setDato("grd_nume", grdNume);
-        dtAdd.setDato("grd_serie", serie);
-        dtAdd.setDato("grd_kilo", kilos);
-        dtAdd.setDato("grd_unid", unid);
-        dtAdd.setDato("grd_prmeco", prMeco);
-        dtAdd.setDato("grd_incval", "N");
-        dtAdd.setDato("grd_valor", "N");
-        dtAdd.setDato("grd_block", "N");
-        dtAdd.setDato("grd_feccad", feccad, "dd-MM-yyyy");
-        dtAdd.setDato("prv_codi", prvCodi);
-        dtAdd.setDato("grd_fecpro",fecProd);
-        dtAdd.update();
-//      if (dtAdd.getConexion().getDriverType()==conexion.POSTGRES)
-//        dtAdd.commit();
-//      if (dtAdd.isAutoIncrement("grd_nume"))
-//      {
-//        dtAdd.select("select CURRVAL('grupdesp_grd_nume_seq')");
-//        grdNume=dtAdd.getInt(1);
-//      }
-        return grdNume;
-    }
-*/
     public int getAcpPainac() {
         return acp_painac;
     }
@@ -1233,9 +1185,9 @@ public class utildesp
    {
      return fecSacrE;
    }
-     public int getEjeLotCompra() {
+   public int getEjeLotCompra() {
         return ejeLotCompra;
-    }
+   }
 
     public int getProCodiCompra() {
         return proCodiCompra;

@@ -80,7 +80,11 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   private final int JT_PORPAG=14;
   private final int JT_DTOPP=15;
   private final int JTD_NUMIND=0;
-  private final int JTD_NUMLIN=10;
+  private final int JTD_FECSAC=9;
+  private final int JTD_FECPRO=10;
+  private final int JTD_NUMLIN=11;
+  private final int JTD_CANIND=12;
+
   private CLabel acc_dtoppL=new CLabel("Dto PP");
   private CTextField acc_dtoppE=new CTextField(Types.DECIMAL,"#9.99");
   private CTextField acl_dtoppE=new CTextField(Types.DECIMAL,"#9.99");
@@ -117,7 +121,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   CButton  Bimpri   = new CButton(Iconos.getImageIcon("print"));
   CCheckBox opIncDet=new CCheckBox("Inc. Individuos");
   CComboBox div_codiE = new CComboBox();
-  final static int DESNLIN=10;
+  
   final static int DESNIND=0;
   
   CTextField acp_numlinE= new CTextField(Types.DECIMAL,"###9");
@@ -126,7 +130,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   char estPedi;
   String campPedi;
   copedco conped;  
-  String ultMat=null,ultSalDes,ultNac,ultCeb,ultSacr,ultFecCad,ultFecSac;
+  String ultMat=null,ultSalDes,ultNac,ultCeb,ultSacr,ultFecCad,ultFecSac,ultFecPro;
   String lineaAnt;
   etiqueta etiq;
   int ALMACEN=1;
@@ -294,14 +298,12 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
         @Override
     public boolean insertaLinea(int row, int col)
     {
-      if (nav.pulsado != navegador.EDIT && nav.pulsado != navegador.ADDNEW)
-        return false;
-      return true;
+      return nav.pulsado == navegador.EDIT || nav.pulsado == navegador.ADDNEW;
     }
 
   };
   double kgIndivAnt=0; // Kilos anteriores. Usada para autoclasificacion
-  CGridEditable jtDes = new CGridEditable(12)
+  CGridEditable jtDes = new CGridEditable(13)
   {
     @Override
     public boolean deleteLinea(int row, int col)
@@ -386,6 +388,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   CLinkBox acp_paisacE = new CLinkBox();
   CTextField acp_feccadE= new CTextField(Types.DATE,"dd-MM-yyyy");
   CTextField acp_fecsacE= new CTextField(Types.DATE,"dd-MM-yyyy");
+  CTextField acp_fecproE= new CTextField(Types.DATE,"dd-MM-yyyy");
   CButton Bulcabe = new CButton();
   CButton Birgrid = new CButton(Iconos.getImageIcon("reload"));
   CCheckBox opImpEti = new CCheckBox();
@@ -1313,20 +1316,22 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     v1.add("Sacrif"); // 7
     v1.add("Fec.Cad"); // 8
     v1.add("Fec.Sac"); // 9
-    v1.add("N.Lin"); // 10
-    v1.add("C.Ind."); // 11 Cantidad de Indiv.
+    v1.add("Fec.Pro"); // 10
+    v1.add("N.Lin"); // 11
+    v1.add("C.Ind."); // 12 Cantidad de Indiv.
     jtDes.setCabecera(v1);
     jtDes.setMaximumSize(new Dimension(743, 168));
     jtDes.setMinimumSize(new Dimension(743, 158));
     jtDes.setPreferredSize(new Dimension(743, 168));
-    jtDes.setAnchoColumna(new int[]{50,70,120,150,150,130,130,130,90,90,40,40});
-    jtDes.setAlinearColumna(new int[]{2,2,0,0,0,0,0,0,1,1,2,2});
+    jtDes.setAnchoColumna(new int[]{50,70,120,150,150,130,130,130,80,80,80,40,40});
+    jtDes.setAlinearColumna(new int[]{2,2,0,0,0,0,0,0,1,1,1,2,2});
     jtDes.setFormatoColumna(1,"---9.99");
     jtDes.setFormatoColumna(8,acp_feccadE.getFormato());
-    jtDes.setFormatoColumna(9,acp_fecsacE.getFormato());
+    jtDes.setFormatoColumna(JTD_FECSAC,acp_fecsacE.getFormato());
+    jtDes.setFormatoColumna(JTD_FECPRO,acp_fecproE.getFormato());
     ArrayList vc1=new ArrayList();
     acp_feccadE.setText("");
-    acp_fecsacE.setText("");
+
     mat_codiE.setAncTexto(40);
     sde_codiE.setAncTexto(40);
     mat_codiE.setCeroIsNull(true);
@@ -1351,7 +1356,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     acp_cantiE.setLeePesoBascula(botonBascula);
     acp_numlinE.setEnabled(false);
     acp_feccadE.setText("");
-    acp_fecsacE.setText("");
+
     vc1.add(acp_numindE); // 0
     vc1.add(acp_cantiE); // 1
     vc1.add(acp_nucrotE); // 2
@@ -1362,8 +1367,9 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     vc1.add(acp_paisacE); // 7
     vc1.add(acp_feccadE); // 8
     vc1.add(acp_fecsacE); // 9
-    vc1.add(acp_numlinE); // 10
-    vc1.add(acp_canindE); // 11
+    vc1.add(acp_fecproE); // 10
+    vc1.add(acp_numlinE); // 11
+    vc1.add(acp_canindE); // 12
     jtDes.setAjusAncCol(false);
     jtDes.setColNueva(1);
 //    jtDes.ajustar(true);
@@ -2443,7 +2449,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   
     if (swCargaAlb || swCargaLin)
         return -1;
-    try 
+    try     
     {
         
     if (acp_numindE.getValorInt()!=numIndAnt && ARG_ADMIN)
@@ -2496,6 +2502,14 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     {
       mensajeErr("Es obligatorio introducir la Fecha Sacrificio  para este Producto");
       return 9;
+    }
+    if (acp_fecproE.isNull() && !acp_fecsacE.isNull())
+        acp_fecproE.setText(acp_fecsacE.getText());
+
+    if (acp_fecsacE.isNull() && acp_fecproE.isNull())
+    {
+        mensajeErr("Introducir fecha Produccion");
+        return JTD_FECPRO;
     }
     if (proNumcro>0)
     {
@@ -2562,7 +2576,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
           {
             acp_canindE.setValorDec(1);
             mensajeErr("Introduzca Numero de Individuos");
-            return 11;
+            return JTD_CANIND;
           }
 
       if (!linea.equals(lineaAnt))
@@ -2579,6 +2593,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
         ultCeb=acp_engpaiE.getCellEditorValue().toString();
         ultFecCad=acp_feccadE.getText();
         ultFecSac=acp_fecsacE.getText();
+        ultFecPro=acp_fecproE.getText();
         ultMat=mat_codiE.getCellEditorValue().toString();
         ultNac=acp_painacE.getCellEditorValue().toString();
         ultSacr=acp_paisacE.getCellEditorValue().toString();
@@ -2605,7 +2620,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     {
       if (jtDes.getValorDec(n,1)==0)
         continue;
-      nInd=nInd+jtDes.getValorInt(n,11);
+      nInd=nInd+jtDes.getValorInt(n,JTD_CANIND);
       kilos+=jtDes.getValorDec(n,1);
     }
     nLinE.setValorDec(nInd);
@@ -2620,6 +2635,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
         mat_codiE.getValorInt()+sde_codiE.getValorInt()+
         acp_painacE.getValorInt()+acp_engpaiE.getValorInt()+
         acp_paisacE.getValorInt()+acp_feccadE.getText()+acp_fecsacE.getText()+
+        acp_fecproE.getText()+
         acp_numlinE.getValorInt()+
         acp_canindE.getValorInt();
   }
@@ -2837,7 +2853,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       guardaLinDes(row, nLiAlDe, nLiAlb, nIndiv);
     }
     else // Ya existia el numero de individuo
-      actGridDes(nLiAlb,row,jtDes.getValorInt(row,DESNLIN),jtDes.getValorInt(row,DESNIND),numIndAnt, nLiAlAnt);
+      actGridDes(nLiAlb,row,jtDes.getValorInt(row,JTD_NUMLIN),jtDes.getValorInt(row,DESNIND),numIndAnt, nLiAlAnt);
 
     jt.setValor( nLiAlb, 0);
     if (! opAutoClas.isSelected() &&  ! cll_codiE.isNull())
@@ -2954,12 +2970,13 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
                  Formatear.format(jtDes.getValString(nLin, 1), "##9.99") +
                  " Kg",
                  getConservar(jt.getValorInt(1)),
-                 sacrificadoE,
-                 "F. Entr: " + acc_fecrecE.getText(),
+                 sacrificadoE,                
+                 jtDes.getValDate(nLin,JTD_FECPRO)==null?"":
+                   "Fec.Prod: "+jtDes.getValString(nLin,JTD_FECPRO),                 
                  "Fec. Caduc.:",null,
                  jtDes.getValString(nLin, 8).trim().equals("") ? null :
                  jtDes.getValString(nLin, 8),
-                 jtDes.getValDate(nLin, 9,acp_fecsacE.getFormato()));
+                 jtDes.getValDate(nLin, JTD_FECSAC,acp_fecsacE.getFormato()));
     etiq.setTipoEtiq(dtCon1,emp_codiE.getValorInt(),proCodeti);
     if (Formatear.comparaFechas(jtDes.getValDate(nLin,8),acc_fecrecE.getDate())>180 )
         etiq.setFechaCongelado(""); // Si la fecha introducida es superior en mas de 180 dias a la de entrada
@@ -2979,7 +2996,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   }
   void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
                     int acp_painac,java.util.Date acp_feccad,int acp_paisac,
-                    int acp_engpai,java.util.Date acp_fecsac,int pro_codi,
+                    int acp_engpai,java.util.Date acp_fecsac,java.util.Date acp_fecpro,int pro_codi,
                     int acl_nulin,int mat_codi,int sde_codi,
                     double acp_canti, int acp_canind) throws SQLException
   {
@@ -3000,6 +3017,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     dtAdd.setDato("acp_paisac", acp_paisac);
     dtAdd.setDato("acp_engpai",acp_engpai); // Pais Engorde
     dtAdd.setDato("acp_fecsac",acp_fecsac); // Fecha Sacrificio
+    dtAdd.setDato("acp_fecpro",acp_fecpro); // Fecha Produccion
     dtAdd.setDato("pro_codi", pro_codi);
     dtAdd.setDato("mat_codi",mat_codi); // Matadero
     dtAdd.setDato("sde_codi",sde_codi); // Sala Despiece
@@ -3043,16 +3061,17 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     jtDes.setValor(""+nInd,row,DESNIND);
     guardaLinDes(nLiAlDe,nInd,jtDes.getValString(row,2),
                  mat_codiE.getTextoInt(jtDes.getValString(row,5,true)),
-                 Formatear.getDate(jtDes.getValString(row,8),"dd-MM-yyyy"),
+                 jtDes.getValDate(row,8),
                  mat_codiE.getTextoInt(jtDes.getValString(row,7,true)),
                  mat_codiE.getTextoInt(jtDes.getValString(row,6,true)),
-                 Formatear.getDate(jtDes.getValString(row,9),"dd-MM-yyyy"),
+                 jtDes.getValDate(row,JTD_FECSAC),
+                 jtDes.getValDate(row,JTD_FECPRO),
                  jt.getValorInt(1), // codigo Prod. 
                  nLiAlb,
                  mat_codiE.getTextoInt(jtDes.getValString(row,3,true)),
                  sde_codiE.getTextoInt(jtDes.getValString(row,4,true)),
                  jtDes.getValorDec(row, 1),
-                 jtDes.getValorInt(row, 11));
+                 jtDes.getValorInt(row, JTD_CANIND));
 
     // Busco el ultimo Numero de Individuo
 /*    s = "SELECT acp_numlin FROM v_albcompar "+
@@ -3065,11 +3084,12 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     dtAdd.select(s);
     jtDes.setValor(""+dtAdd.getInt("acp_numlin"),row,DESNLIN);*/
 
-    jtDes.setValor(""+nLiAlDe,row,DESNLIN);
+    jtDes.setValor(""+nLiAlDe,row,JTD_NUMLIN);
 
     } catch (java.text.ParseException k)
     {
-      throw new SQLException("Error al Parsear fechas",k.getMessage());
+      k.printStackTrace();
+      throw new SQLException("Error al Parsear fechas",k);
     }
   }
   void guardaLinAlb(int nLiAlb, int nLin,int nCaja,double kilos,
@@ -3239,6 +3259,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
             acp_paisacE.getValorInt() == dtCon1.getInt("acp_paisac") &&
             acp_feccadE.getText().equals(dtCon1.getFecha("acp_feccad","dd-MM-yyyy")) &&
             acp_fecsacE.getText().equals(dtCon1.getFecha("acp_fecsac","dd-MM-yyyy")) &&
+            acp_fecproE.getText().equals(dtCon1.getFecha("acp_fecpro","dd-MM-yyyy")) &&
             acp_canindE.getValorInt() == dtCon1.getInt("acp_canind"))
           return; // Son iguales
 
@@ -3409,8 +3430,9 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
                 jtDes.setValor(ultCeb, 6);
                 jtDes.setValor(ultSacr, 7);
                 jtDes.setValor(ultFecCad, 8);
-                jtDes.setValor(ultFecSac, 9);
-                jtDes.setValor("0",DESNLIN);
+                jtDes.setValor(ultFecSac, JTD_FECSAC);
+                jtDes.setValor(ultFecPro, JTD_FECPRO);
+                jtDes.setValor("0",JTD_NUMLIN);
             }
             jtDes.salirFoco();
             BimpEti.setEnabled(true);
@@ -4717,6 +4739,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       v.add(dtCon1.getInt("acp_paisac")+" - "+getPais(dtCon1.getInt("acp_paisac")));
       v.add(dtCon1.getFecha("acp_feccad","dd-MM-yyyy"));
       v.add(dtCon1.getFecha("acp_fecsac","dd-MM-yyyy"));
+      v.add(dtCon1.getFecha("acp_fecpro","dd-MM-yyyy"));
       v.add(dtCon1.getString("acp_numlin"));
       v.add(dtCon1.getString("acp_canind"));
       jtDes.addLinea(v);
@@ -4776,7 +4799,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     }
 
     int nLiAlb=jt.getValorInt(0);
-    int nLinDes=jtDes.getValorInt(nRow,DESNLIN);
+    int nLinDes=jtDes.getValorInt(nRow,JTD_NUMLIN);
     s = "SELECT * FROM v_albcompar " +
         " WHERE emp_codi = " + emp_codiE.getValorInt() +
         " AND acc_ano = " + acc_anoE.getValorInt() +
@@ -6364,11 +6387,11 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
        impLiT=Formatear.Redondea(impLiT,3);
        impLi0 = impLiT;
        if (dtCon1.getDouble("fcc_dtopp") != 0)
-         impLiT -= Formatear.Redondea(impLi0 * dtCon1.getDouble("fcc_dtopp") / 100,3);
+         impLiT -= Formatear.redondea(impLi0 * dtCon1.getDouble("fcc_dtopp") / 100,3);
        if (dtCon1.getDouble("fcc_dtocom") != 0)
-         impLiT -= Formatear.Redondea(impLi0 * dtCon1.getDouble("fcc_dtocom") / 100,3);
-       impIva = Formatear.Redondea(impLiT * dtCon1.getDouble("fcc_piva1", true) / 100,3);
-       impRec = Formatear.Redondea(impLiT * dtCon1.getDouble("fcc_prec1", true) / 100,3);
+         impLiT -= Formatear.redondea(impLi0 * dtCon1.getDouble("fcc_dtocom") / 100,3);
+       impIva = Formatear.redondea(impLiT * dtCon1.getDouble("fcc_piva1", true) / 100,3);
+       impRec = Formatear.redondea(impLiT * dtCon1.getDouble("fcc_prec1", true) / 100,3);
        s = "UPDATE  v_facaco SET fcc_sumlin =" + impLi0 + "," +
            " fcc_basim1 =" + impLiT + "," +
            " fcc_impiv1 =" + impIva + "," +
@@ -7250,6 +7273,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
                               utdes.getAcpPainac(), Formatear.getDate(utdes.feccadE, "dd-MM-yyyy"),
                               utdes.getAcpPaisac(), utdes.getAcpEngpai(),
                               utdes.fecSacrE,
+                              utdes.getFechaProduccion(),
                               dtInd.getInt("pro_codi"), nLin, utdes.getMatCodi(),
                               utdes.getSdeCodi(), dtInd.getDouble("avp_canti"),
                               dtInd.getInt("avp_numuni"));
