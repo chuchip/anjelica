@@ -793,9 +793,7 @@ public class pdusua extends ventanaPad   implements PAD
      String s="select u.* from usuarios as u WHERE u.usu_nomb= '"+usuario+"'";
      if (!dt.select(s))
          return false;
-     if (dt.getString("usu_pass").equals(Formatear.encrypt(passwd)))
-         return true;
-     return false;
+     return dt.getString("usu_pass").equals(Formatear.encrypt(passwd));
   }
 
     public void darPermisos(String usuNomb) throws SQLException {
