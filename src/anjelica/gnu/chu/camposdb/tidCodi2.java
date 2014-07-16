@@ -36,6 +36,7 @@ import javax.swing.*;
 
 public class tidCodi2 extends CLinkBox
 {
+  private boolean ADMIN=false;
   private boolean incluirEstaticos=true;
   AyuTid ayuTid;
   CInternalFrame infFrame;
@@ -118,7 +119,8 @@ public class tidCodi2 extends CLinkBox
             requestFocus();
             return false;
         }
-        if (getValorInt() == MantTipDesp.LIBRE_DESPIECE && !swModoCons)
+        
+        if (getValorInt() == MantTipDesp.LIBRE_DESPIECE && !swModoCons && !ADMIN)
         {
             try
             {
@@ -373,4 +375,11 @@ public class tidCodi2 extends CLinkBox
       this.requestFocus();
     }
   }
+   public boolean isAdmin() {
+        return ADMIN;
+    }
+
+    public void setAdmin(boolean ADMIN) {
+        this.ADMIN = ADMIN;
+    }
 }

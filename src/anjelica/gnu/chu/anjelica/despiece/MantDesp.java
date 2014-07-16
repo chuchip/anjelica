@@ -226,7 +226,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (ADMIN)
             MODPRECIO=true; 
-        setVersion("2014-04-07" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2014-16-07" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -278,6 +278,7 @@ public class MantDesp extends ventanaPad implements PAD
         tid_codiE.setTidActiv(1); // Solo activo. NO tactil.
         tid_codiE.setModoConsulta(false);
         tid_codiE.iniciar(dtProd, this, vl, EU);
+        tid_codiE.setAdmin(ADMIN);
         s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
         dtCon1.select(s);
         deo_almoriE.addDatos(dtCon1);
@@ -1594,7 +1595,7 @@ public class MantDesp extends ventanaPad implements PAD
             deo_almdesE.setEnabled(false);
             if (uniFinE.getValorInt() > 0 )
             {
-                if ( tid_codiE.getValorInt()!=0)
+                if ( tid_codiE.getValorInt()!=0 && ! ADMIN)
                     tid_codiE.setEnabled(false);
                 deo_lotnueE.setEnabled(false);
             }
@@ -4659,6 +4660,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 pack();
             }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton BautoDesp;
