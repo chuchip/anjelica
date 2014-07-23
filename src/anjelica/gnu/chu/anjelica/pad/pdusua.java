@@ -8,6 +8,8 @@ import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -43,6 +45,7 @@ public class pdusua extends ventanaPad   implements PAD
   CPanel Pprinc = new CPanel();
   CLabel usu_nombreL = new CLabel();
   CLabel cLabel6 = new CLabel();
+  CButton Bpermisos=new CButton("Perm",Iconos.getImageIcon("data-undo"));
   CLinkBox emp_codiE = new CLinkBox();
   CLabel cLabel8 = new CLabel();
   CTextField usu_nombE = new CTextField(Types.CHAR,"X",30);
@@ -166,6 +169,8 @@ public class pdusua extends ventanaPad   implements PAD
     cLabel5.setBounds(new Rectangle(3, 88, 52, 18));
     Baceptar.setBounds(new Rectangle(99, 206, 133, 31));
     Bcancelar.setBounds(new Rectangle(261, 206, 133, 31));
+    Bpermisos.setBounds(new Rectangle(400, 206, 80, 24));
+    Bpermisos.setToolTipText("Regenerar permisos sobre base de datos");
     cLabel1.setText("Ejecuta programas externos");
     cLabel1.setBounds(new Rectangle(271, 109, 161, 18));
     cLabel2.setText("Administrador Bloqueos");
@@ -219,6 +224,7 @@ public class pdusua extends ventanaPad   implements PAD
     cPanel1.add(usu_diapriE, null);
     Pprinc.add(Bcancelar, null);
     Pprinc.add(Baceptar, null);
+    Pprinc.add(Bpermisos);
     Pprinc.add(cLabel9, null);
     Pprinc.add(sbe_codiE, null);
     Pprinc.add(usu_emailE, null);
@@ -288,6 +294,23 @@ public class pdusua extends ventanaPad   implements PAD
   }
   void activarEventos()
   {
+    Bpermisos.addActionListener(new ActionListener(){
+     public void actionPerformed(ActionEvent e)
+     {
+         if (usu_nombE.isNull())
+             return;
+         try
+         {
+             darPermisos(usu_nombE.getText());
+             dtAdd.commit();
+         } catch (SQLException ex)
+         {
+             Error("Error al regenerar Permisos",ex);
+         }
+         msgBox("Regenerados permisos de "+usu_nombE.getText());
+     }
+     
+    });
     emp_codiE.addCambioListener(new CambioListener()
     {
       public void cambio(CambioEvent event)
@@ -351,6 +374,7 @@ public class pdusua extends ventanaPad   implements PAD
 
   public void activar(boolean act)
   {
+    Bpermisos.setEnabled(!act);
     emp_codiE.setEnabled(act);
     sbe_codiE.setEnabled(act);
     usu_nombE.setEnabled(act);
@@ -521,7 +545,6 @@ public class pdusua extends ventanaPad   implements PAD
         mensajes.mensajeUrgente("Error al MODIFICAR usuario en base de datos\n" + k.getMessage());
         mensajes.mensajeAviso("El programa se Abortara...");
       }
-
     }
     catch (Throwable ex)
     {
@@ -824,6 +847,7 @@ public class pdusua extends ventanaPad   implements PAD
      * @param usuario Usuario a comprobar
      * @param dt Conexion con base de datos
      * @return  true = Si Puede. False = No puede.
+     * @throws java.sql.SQLException
      */
     public static boolean canEjecutarProgExt(String usuario,DatosTabla dt) throws SQLException
     {
