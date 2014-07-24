@@ -3132,7 +3132,8 @@ constraint ix_invprec primary key (cci_feccon,pro_codi)
 --
 -- Cabecera de pedidos de Ventas
 --
--- drop table pedvenc;
+-- drop table anjelica.pedvenc;
+create table anjelica.pedvenc;
 (
  emp_codi int not null,		-- Empresa
  eje_nume int not null,		-- Ejercicio de Pedido
@@ -3146,7 +3147,7 @@ constraint ix_invprec primary key (cci_feccon,pro_codi)
  avc_ano int,			-- Ejercicio del Albaran
  avc_serie char(1) not null,	-- Serie del Albaran
  avc_nume int not null,		-- Numero de Albaran
- usu_nomb varchar(8) not null,	-- Usuario q. crea el pedido
+ usu_nomb varchar(15) not null,	-- Usuario q. crea el pedido
  pvc_cerra int not null,	-- Albaran Cerrado (0 NO, -1 SI)
  pvc_nupecl varchar(20),	-- Numero pedido de Cliente
  pvc_impres char(1) not null,	-- Listado (S/N)

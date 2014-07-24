@@ -4,6 +4,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.actStkPart;
 import gnu.chu.anjelica.almacen.paregalm;
+import gnu.chu.anjelica.despiece.DespVenta;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.MantPaises;
@@ -74,12 +75,14 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   private int frtEjer,frtNume;
   private final int JT_NLIN=0;
   private final int JT_PROCOD=1;
+  private final int JT_CANIND=3;
   private final int JT_KILALB=4;
   private final int JT_PRCOM=5;
   private final int JT_COMENT=13;
   private final int JT_PORPAG=14;
   private final int JT_DTOPP=15;
   private final int JTD_NUMIND=0;
+  private final int JTD_FECCAD=8;
   private final int JTD_FECSAC=9;
   private final int JTD_FECPRO=10;
   private final int JTD_NUMLIN=11;
@@ -707,7 +710,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20140626)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20140724)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -3061,7 +3064,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     jtDes.setValor(""+nInd,row,DESNIND);
     guardaLinDes(nLiAlDe,nInd,jtDes.getValString(row,2),
                  mat_codiE.getTextoInt(jtDes.getValString(row,5,true)),
-                 jtDes.getValDate(row,8),
+                 jtDes.getValDate(row,JTD_FECCAD),
                  mat_codiE.getTextoInt(jtDes.getValString(row,7,true)),
                  mat_codiE.getTextoInt(jtDes.getValString(row,6,true)),
                  jtDes.getValDate(row,JTD_FECSAC),
@@ -3088,7 +3091,6 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
 
     } catch (java.text.ParseException k)
     {
-      k.printStackTrace();
       throw new SQLException("Error al Parsear fechas",k);
     }
   }
@@ -3267,7 +3269,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     nLinDes=dtCon1.getInt("acp_numlin");
     double canti=dtCon1.getDouble("acp_canti");
     int canInd=dtCon1.getInt("acp_canind");
-    int nIndiv = 0;
+    int nIndiv;
 //    int nLiAlDe=dtCon1.getInt("acl_nulin");
     if (nInd!=nIndAnt && ARG_ADMIN)
         nIndiv=nInd;
@@ -3282,15 +3284,15 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
         " and acl_nulin = "+nLiAlAnt+
         " and acp_numlin = "+nLinDes;
     stUp.executeUpdate(s);
-    if ( stkPart.anuStkPart(jt.getValorInt(1),
-                   acc_anoE.getValorInt(),
-                   emp_codiE.getValorInt(),
-                   acc_serieE.getText(),
-                   acc_numeE.getValorInt(),
-                   nIndAnt,
-                   alm_codiE.getValorInt(),
-                   canti, canInd)==2)
-    nIndiv=nInd; // Stock Borrado.
+//    if ( stkPart.anuStkPart(jt.getValorInt(1),
+//                   acc_anoE.getValorInt(),
+//                   emp_codiE.getValorInt(),
+//                   acc_serieE.getText(),
+//                   acc_numeE.getValorInt(),
+//                   nIndAnt,
+//                   alm_codiE.getValorInt(),
+//                   canti, canInd)==2)
+//    nIndiv=nInd; // Stock Borrado.
 
     guardaLinDes(row,nLinDes, nLinAlb,nIndiv);
     ctUp.commit();
@@ -3366,6 +3368,33 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       }
   }
   /**
+   * Comprueba si una linea del albaran de compra tiene diferentes clasificaciones.
+   */
+  boolean hasDiferentClas(int nLiAlb) throws SQLException
+  {
+      int cllCodi=cll_codiE.getValorInt();
+      s = "SELECT * FROM v_albcompar " +
+        " WHERE emp_codi = " + emp_codiE.getValorInt() +
+        " AND acc_ano = " + acc_anoE.getValorInt() +
+        " and acc_nume = " + acc_numeE.getValorInt() +
+        " and acc_serie = '" + acc_serieE.getText() + "'" +
+        " and acl_nulin = "+nLiAlb;
+      if (! dtCon1.select(s))
+          return false;
+      
+      do
+      {
+          s = "SELECT pro_codi FROM claslomos WHERE cll_kilos <= " + dtCon1.getDouble("acp_canti") +
+                " and cll_codi = "+cllCodi+                
+                " order by cll_kilos desc";
+          if (! dtStat.select(s))
+              return true;
+          if (dtStat.getInt("pro_codi")!= jt.getValorInt(JT_PROCOD))
+              return true;
+      } while (dtCon1.next());
+      return false;
+  }
+  /**
    * Ir a grid de despiece de lineas (de inviduos, vamos)
    */
   void irGridDes0()
@@ -3393,7 +3422,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       if (llenaCllCodi())
       {
         opAutoClas.setEnabled(true);
-        opAutoClas.setSelected(true);
+        opAutoClas.setSelected(jt.getValorInt(JT_CANIND)==0?true:!hasDiferentClas(jt.getValorInt(JT_NLIN)));
         opAutoCl=true;
       }
       else
@@ -3824,16 +3853,16 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       }
       if (fcc_numeE.getValorDec() > 0 && opActFra.isSelected())
         actDatosFra();
-      if ( swCambioPrv || alm_codiE.hasCambio())
-      {
-          s="update stockpart  set prv_codi= "+prv_codiE.getValorInt()+
-            ", alm_codi = "+alm_codiE.getValorInt()+
-            " where  eje_nume =  " + acc_anoE.getValorInt()+
-            " and emp_codi =  " + emp_codiE.getValorInt()+
-            " and pro_serie  = '" +acc_serieE.getText()+"'"+
-            " and pro_nupar = " + acc_numeE.getValorInt();
-          dtAdd.executeUpdate(s);
-      }
+//      if ( swCambioPrv || alm_codiE.hasCambio())
+//      {
+//          s="update stockpart  set prv_codi= "+prv_codiE.getValorInt()+
+//            ", alm_codi = "+alm_codiE.getValorInt()+
+//            " where  eje_nume =  " + acc_anoE.getValorInt()+
+//            " and emp_codi =  " + emp_codiE.getValorInt()+
+//            " and pro_serie  = '" +acc_serieE.getText()+"'"+
+//            " and pro_nupar = " + acc_numeE.getValorInt();
+//          dtAdd.executeUpdate(s);
+//      }
       ctUp.commit();
       resetBloqueo(dtAdd,"v_albacoc", acc_anoE.getValorInt()+"|"+emp_codiE.getValorInt()+
                       "|"+acc_serieE.getText()+"|"+acc_numeE.getValorInt());

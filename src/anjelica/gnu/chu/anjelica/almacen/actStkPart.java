@@ -727,9 +727,7 @@ public class actStkPart
       return false;
     if (kilos > dt.getDouble("stp_kilact") && kilos != 0)
       return false;
-    if (unids > dt.getDouble("stp_unact") && unids != 0)
-      return false;
-    return true;
+    return unids <= dt.getDouble("stp_unact") || unids == 0;
   }
 
   private String getCampoLlave(String llave, int posIni)
