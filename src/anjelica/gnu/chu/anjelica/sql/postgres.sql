@@ -3828,11 +3828,11 @@ create view anjelica.v_stkpart as select * from anjelica.stockpart;
 --drop table anjelica.mvtosalm;
 create table anjelica.mvtosalm
 (	
-        mvt_oper char(10) not null, --
-        mvt_time timestamp not null default current_timestamp,	-- Fecha de mvto.
+    mvt_oper char(10) not null, --
+    mvt_time timestamp not null default current_timestamp,	-- Fecha de mvto.
 	mvt_tipo char(1) not null default 'S', -- Entrada o Salida
 	mvt_tipdoc char(1) not null, -- C (Alb. Compra), V (Alb.Venta), R (Regulariz), Despiece Entrada a alm.(d), Desp. Salida (D)
-        alm_codi int not null,             -- Almacen
+    alm_codi int not null,             -- Almacen
 	mvt_fecdoc date not null,	   -- Fecha del Documento
 	mvt_empcod int not null default 1, -- Empresa del Documento.
 	mvt_ejedoc int not null, -- Ejercicio del Documento.
@@ -3847,8 +3847,8 @@ create table anjelica.mvtosalm
 	mvt_canti float not null, -- Cantidad
 	mvt_unid int not null,    -- Unidades
 	mvt_prec float,		 -- Precio
-        mvt_cliprv int,          -- Cliente / Proveedor.
-        mvt_feccad date          -- Fecha Caducidad del Indiv.
+    mvt_cliprv int,          -- Cliente / Proveedor.
+    mvt_feccad date          -- Fecha Caducidad del Indiv.
 );
 CREATE INDEX ix_mvtalm1 on anjelica.mvtosalm(mvt_tipdoc,mvt_fecdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc);
 CREATE INDEX ix_mvtalm2 on anjelica.mvtosalm(pro_codi,pro_ejelot,pro_serlot,pro_numlot,pro_indlot,mvt_time);

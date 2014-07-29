@@ -9,6 +9,8 @@ import java.awt.*;
 import java.util.*;
 import javax.swing.BorderFactory;
 import java.awt.event.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.jasperreports.engine.*;
 
 
@@ -16,7 +18,7 @@ import net.sf.jasperreports.engine.*;
  *
  * <p>Titulo: clintalco</p>
  * <p>Descripció: Cons/Listado Integridad Albaranes de Compras</p>
- * <p>Copyright: Copyright (c) 2004-2012</p>
+ * <p>Copyright: Copyright (c) 2004-2014</p>
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -63,7 +65,7 @@ public class clintalco extends ventana implements JRDataSource {
                 setErrorInit(true);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ErrorInit(e);
             setErrorInit(true);
         }
     }
@@ -78,7 +80,7 @@ public class clintalco extends ventana implements JRDataSource {
         try {
             jbInit();
         } catch (Exception e) {
-            e.printStackTrace();
+            ErrorInit(e);
             setErrorInit(true);
         }
     }
@@ -86,7 +88,7 @@ public class clintalco extends ventana implements JRDataSource {
     private void jbInit() throws Exception {
         iniciarFrame();
         this.setSize(new Dimension(700, 500));
-        this.setVersion("2012-05-28");
+        this.setVersion("2014-07-29");
 
         statusBar = new StatusBar(this);
         conecta();
@@ -106,7 +108,7 @@ public class clintalco extends ventana implements JRDataSource {
         PintrDatos.setDefButton(Baceptar.getBotonAccion());
         PintrDatos.setLayout(null);
         fecfinE.setBounds(new Rectangle(216, 5, 77, 18));
-        Vector v = new Vector();
+        ArrayList v = new ArrayList();
         Pprinc.setMaximumSize(new Dimension(32767, 32767));
 
         v.add("Albaran"); // 0
@@ -131,6 +133,7 @@ public class clintalco extends ventana implements JRDataSource {
         jt.setNumRegCargar(200);
         Baceptar.addMenu("Integridad");
         Baceptar.addMenu("Sin Precio");
+        Baceptar.addMenu("Ind.Perdido");
         Baceptar.addMenu("Imprimir");
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         this.getContentPane().add(Pprinc, BorderLayout.CENTER);
@@ -161,6 +164,11 @@ public class clintalco extends ventana implements JRDataSource {
         Baceptar.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                if (e.getActionCommand().startsWith("Ind"))
+                {
+                    buscaIndPerd();
+                    return;
+                }
                 if (e.getActionCommand().startsWith("Impr")) {
                     BListar_actionPerformed();
                 } else {
@@ -240,7 +248,91 @@ public class clintalco extends ventana implements JRDataSource {
         }
         return true;
     }
+    /**
+     * Busca individuos que han salido y que no tienen trazabilidad.
+     */
+    void buscaIndPerd()
+    {
+         try {
+            if (!checkCampos()) {
+                return;
+            }
+            s = getSelect();
+            jt.removeAllDatos();
+            if (!dtCon1.select(s)) {
+                mensajeErr("NO encontrados ALBARANES ENTRE ESTAS FECHAS");
+                return;
+            }
+            mensaje("Espere, por favor ... Buscando datos");
+            new miThread("") {
 
+                @Override
+                public void run() {
+                    buscaIndPerd0();
+                }
+            };
+        } catch (SQLException k) {
+            Error("Error al Buscar datos", k);
+        }
+    }
+    void buscaIndPerd0() 
+    {
+        try
+        {            
+            this.setEnabled(false);
+            jt.panelG.setVisible(false);
+            s="select m.*,a.pro_nomb,prv_nomb,acc_fecrec from mvtosalm as m, v_albacoc as c , v_articulo as a,v_proveedo as p " +
+                " where mvt_tipo='S' and "+
+                " m.mvt_empcod=c.emp_codi "+
+                " and m.pro_ejelot = c.acc_ano " +
+                " and m.pro_serlot = c.acc_serie " +
+                " and m.pro_numlot = c.acc_nume " +
+                " and m.pro_codi = a. pro_codi "+
+                " and c.prv_codi = p.prv_codi "+
+                " and c.acc_fecrec between TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy')"+
+                         " and  TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy')"+
+                " and not exists (select * from mvtosalm as m1 where  "+
+                " m1.mvt_tipo='E'  "+
+                " and m.mvt_empcod = m1.mvt_empcod  "+
+                " and m.pro_ejelot = m1.pro_ejelot "+
+                " and m.pro_serlot = m1.pro_serlot "+
+                " and m.pro_numlot = m1.pro_numlot "+
+                " and m.pro_indlot= m1.pro_indlot "+
+                " ) order by pro_numlot,pro_indlot ";
+            if (! dtCon1.select(s))
+            {
+               msgBox("No encontrados salidas de individuos sin entradas");
+               this.setEnabled(true);
+               return;
+            }
+            jt.panelG.setVisible(false);
+            do
+            {
+               ArrayList v = new ArrayList();
+               v.add(dtCon1.getString("pro_numlot"));
+               v.add(dtCon1.getFecha("acc_fecrec", "dd-MM-yyyy"));
+               v.add(dtCon1.getString("prv_nomb"));
+               v.add(dtCon1.getString("pro_codi"));
+               v.add(dtCon1.getString("pro_nomb"));
+               v.add(dtCon1.getString("mvt_unid", true)   );
+               v.add(dtCon1.getString("mvt_canti", true));
+               v.add("0");
+               v.add("0");
+               v.add("Tipo "+dtCon1.getString("mvt_tipo")+" Doc:"+
+                   dtCon1.getString("mvt_empcod")+"-"+
+                   dtCon1.getString("mvt_ejedoc")+
+                   dtCon1.getString("mvt_serdoc")+
+                   dtCon1.getString("mvt_numdoc"));
+               jt.addLinea(v); 
+            } while (dtCon1.next());
+        } catch (SQLException ex)
+        {
+            Error("Error al buscar Salidas sin entradas",ex);
+        }
+        this.setEnabled(true);
+        jt.panelG.setVisible(true);
+        mensajeErr("Salidas sin entradas .. encontradas");
+    }
     void buscaDatos() {
         try {
             if (!checkCampos()) {
@@ -260,7 +352,7 @@ public class clintalco extends ventana implements JRDataSource {
                     llenaGrid();
                 }
             };
-        } catch (Exception k) {
+        } catch (SQLException k) {
             Error("Error al Buscar datos", k);
         }
 
