@@ -9,6 +9,8 @@ import java.math.RoundingMode;
 import java.security.MessageDigest;
 import java.util.*;
 import java.text.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.mail.internet.MimeUtility;
 
 /**
@@ -1800,17 +1802,35 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
     * @param fecha Fecha a transformar.
     * @param formfec Formato de la fecha mandada.
     * @return clase java.util.Date con la fecha introducida (soporta timestamp)
+     * @throws java.text.ParseException
     */
    public static Date getDate(String fecha,String formfec) throws java.text.ParseException
-    {
+   {
       if (fecha==null)
         return null;
       if (fecha.trim().equals(""))
         return null;
       SimpleDateFormat sd = new SimpleDateFormat(formfec);
-      return new Date(sd.parse(fecha).getTime());
-    }
-
+      try
+      {
+          return new Date(sd.parse(fecha).getTime());
+      } catch (ParseException ex)
+      {
+          throw new ParseException("Error al Parsear Fecha: "+fecha+ " con formato: "+formfec,ex.getErrorOffset());
+      }
+   }
+   /**
+    * Comprueba si una fecha es nula.
+    * @param fecha Cadena con la presunta fecha
+    * @return a true si la cadena mandada no tiene ningun numero  o es null. 
+    */
+   public static boolean isNullDate(String fecha)
+   {
+        if (fecha==null)
+            return true; 
+       
+        return !fecha.matches(".*[1-9].*");
+   }
    public static void verAncGrid(gnu.chu.controles.Cgrid jt)
    {
      for (int n=0;n<jt.getColumnCount();n++)

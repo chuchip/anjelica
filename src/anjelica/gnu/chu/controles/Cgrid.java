@@ -1070,6 +1070,7 @@ public class Cgrid extends CPanel implements Serializable
     }
     /**
      * Devuelve el valor de una columna en formato DATE
+     * Si la columna esta vacia devuelve Null.
      * @param fil int
      * @param col int
      * @param formFec String
@@ -1084,9 +1085,10 @@ public class Cgrid extends CPanel implements Serializable
       Object o = getValor(fil, col);
       if (o == null)
         return null;
-      if (o.toString().trim().equals(""))
+      String fecha=o.toString().trim();      
+      if (Formatear.isNullDate(fecha))
           return null;
-      return Formatear.getDate(o.toString(),formFec);
+      return Formatear.getDate(fecha,formFec);
 
     }
 
