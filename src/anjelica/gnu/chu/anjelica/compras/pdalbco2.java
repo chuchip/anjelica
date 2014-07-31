@@ -4,7 +4,6 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.actStkPart;
 import gnu.chu.anjelica.almacen.paregalm;
-import gnu.chu.anjelica.despiece.DespVenta;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.MantPaises;
@@ -710,7 +709,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20140724)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20140730)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -2506,9 +2505,11 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       mensajeErr("Es obligatorio introducir la Fecha Sacrificio  para este Producto");
       return 9;
     }
-    if (acp_fecproE.isNull() && !acp_fecsacE.isNull())
+    if (acp_fecproE.isNull() && !acp_fecsacE.isNull() && jtDes.getValorInt(row,JTD_NUMIND)==0)
+    {
+        jtDes.setValor(acp_fecsacE.getText(),row,JTD_FECPRO);
         acp_fecproE.setText(acp_fecsacE.getText());
-
+    }
     if (acp_fecsacE.isNull() && acp_fecproE.isNull())
     {
         mensajeErr("Introducir fecha Produccion");
