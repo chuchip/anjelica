@@ -9,8 +9,6 @@ import java.awt.*;
 import java.util.*;
 import javax.swing.BorderFactory;
 import java.awt.event.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.jasperreports.engine.*;
 
 
@@ -316,9 +314,10 @@ public class clintalco extends ventana implements JRDataSource {
                v.add(dtCon1.getString("pro_nomb"));
                v.add(dtCon1.getString("mvt_unid", true)   );
                v.add(dtCon1.getString("mvt_canti", true));
+               v.add(dtCon1.getInt("pro_indlot"));
                v.add("0");
-               v.add("0");
-               v.add("Tipo "+dtCon1.getString("mvt_tipo")+" Doc:"+
+               v.add("Indiv: "+dtCon1.getInt("pro_indlot")+
+                   " "+dtCon1.getString("mvt_tipdoc")+" Doc:"+
                    dtCon1.getString("mvt_empcod")+"-"+
                    dtCon1.getString("mvt_ejedoc")+
                    dtCon1.getString("mvt_serdoc")+
