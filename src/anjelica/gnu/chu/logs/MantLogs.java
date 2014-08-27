@@ -87,7 +87,7 @@ public class MantLogs extends ventana {
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      ErrorInit(e);
       setErrorInit(true);
     }
   }
@@ -114,7 +114,7 @@ public class MantLogs extends ventana {
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      ErrorInit(e);
       setErrorInit(true);
     }
   }
@@ -122,7 +122,12 @@ public class MantLogs extends ventana {
   private void jbInit() throws Exception {
         statusBar = new StatusBar(this);
         iniciarFrame();
-        this.setVersion("2011-05-23" + (PARAM_CONSULTA ? "SOLO LECTURA" : ""));
+        if (EU.isRootAV())
+        {
+            PARAM_CONSULTA=false;
+            PARAM_ALLUSER=true;
+        }
+        this.setVersion("2014-08-27" + (PARAM_CONSULTA ? "SOLO LECTURA" : ""));
       
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         initComponents();
