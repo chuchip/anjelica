@@ -1,7 +1,8 @@
 package gnu.chu.utilidades;
 
-import java.awt.MediaTracker;
+import java.awt.Toolkit;
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import javax.swing.*;
 /**
@@ -37,6 +38,7 @@ public class Iconos
 
   /**
    * Retorna un Array de String con los nombre de los Iconos
+     * @return Array de Strings con todos los iconos.
    */
   public static String[] getIconos()
   {
@@ -45,7 +47,7 @@ public class Iconos
       ResourceBundle param = ResourceBundle.getBundle("gnu.chu.anjelica.db",
           Locale.getDefault());
 
-      String path = "";
+      String path;
       if (System.getProperty("os.name").toUpperCase().indexOf("WIN") != -1)
         path = param.getString("GenPathIconWIN");
       else if (System.getProperty("os.name").indexOf("UNIX") != -1)
@@ -63,31 +65,29 @@ public class Iconos
 
       // Cuenta el numero de Iconos
       int lon = 0;
-      for (int i = 0; i < files.length; i++)
+      for (File file : files)
       {
-        // Si es un directorio continua con el bucle
-        if (files[i].isDirectory())
-          continue;
-        // Si no tiene la extension gif continua
-        if (files[i].getName().indexOf(".gif") == -1)
-          continue;
-
-        lon++;
+            // Si es un directorio continua con el bucle
+            if (file.isDirectory())
+                continue;
+            // Si no tiene la extension gif continua
+            if (file.getName().indexOf(".gif") == -1)
+                continue;
+            lon++;
       }
 
       String[] icons = new String[lon];
       int x = 0;
-      for (int i = 0; i < files.length; i++)
+      for (File file : files)
       {
-        // Si es un directorio continua con el bucle
-        if (files[i].isDirectory())
-          continue;
-        // Si no tiene la extension gif continua
-        if (files[i].getName().indexOf(".gif") == -1)
-          continue;
-
-        icons[x] = files[i].getName();
-        x++;
+            // Si es un directorio continua con el bucle
+            if (file.isDirectory())
+                continue;
+            // Si no tiene la extension gif continua
+            if (file.getName().indexOf(".gif") == -1)
+                continue;
+            icons[x] = file.getName();
+            x++;
       }
       return icons;
     }
@@ -98,42 +98,25 @@ public class Iconos
 
   /**
    * Retorna el icono que se envia como parametro
+     * @param icon
+     * @return ImageIcon con el icono
    */
   public static ImageIcon getImageIcon(String icon)
   {
     if (icon == null || icon.trim().equals(""))
-      return null;
-    ImageIcon icono = null;
-    try
-    {
-
-      String path = "";
-      if (icon.indexOf("/iconos/") == -1)
-      {
-        path=getPathIcon();
-        icon = icon.toLowerCase();
-        if (icon.indexOf(".png") == -1 && icon.indexOf(".gif") == -1 && icon.indexOf(".jpg")==-1)
+        return null;
+    String iconMin=icon.toLowerCase();
+            
+    if ( ! iconMin.endsWith(".png")  && ! iconMin.endsWith(".gif")  && ! iconMin.endsWith(".jpg"))
           icon += ".png";
-      }
-      else
-      {
-        path = System.getProperty("java.home");
-      }
 
-      icono = new ImageIcon(path + icon);
-
-      if (icono.getImageLoadStatus() == MediaTracker.ERRORED)
-        icono = new ImageIcon(System.getProperty("java.home") + "/iconos/" +
-                              icon);
-    }
-    catch (Exception j)
-    {
-    }
-    catch (Throwable j)
-    {}
-
-    return icono;
+    URL ur=Iconos.class.getClass().getResource((iconMin.indexOf("gnu.chu")==-1?"/gnu/chu/icons/":"")+icon);
+    if (ur!=null)
+        return new ImageIcon(Toolkit.getDefaultToolkit().getImage(ur));      
+    
+    return new ImageIcon(Toolkit.getDefaultToolkit().getImage(Iconos.class.getClass().getResource("/gnu/chu/icons/break.png")));
   }
+  
   public static String getPathIcon()
   {
     String raiz = System.getProperty("raiz");
