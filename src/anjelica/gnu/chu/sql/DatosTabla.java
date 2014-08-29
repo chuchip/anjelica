@@ -5,7 +5,6 @@ import java.sql.*;
 import java.util.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.interfaces.*;
-import java.text.ParseException;
 
 /**
  *
@@ -82,7 +81,8 @@ public class DatosTabla   implements Serializable
   private CEditable CEditable = null;
   /**
    * Constructor Final.
-   * @param Conexion y Select a Ejecutar.
+   * @param conexion y Select a Ejecutar.
+   * @throws java.sql.SQLException
    */
   public DatosTabla(conexion conexion) throws SQLException
   {
@@ -91,7 +91,8 @@ public class DatosTabla   implements Serializable
   }
   /**
    * Constructor Final.
-   * @param Conexion y Select a Ejecutar.
+   * @param conesion y Select a Ejecutar.
+   * @throws java.sql.SQLException
    */
   public DatosTabla(Connection conesion) throws SQLException
   {
@@ -141,10 +142,10 @@ public class DatosTabla   implements Serializable
         return NOREG;
     }
   /**
-  * @param establece la Variable que indica si la \uFFFDltima Select
+  * @param nr establece la Variable que indica si la última Select
   * ha devuelto algun Registro
   * <p>
-  *  Solo tiene efectos de cara a la rutina getNOREG.
+  *  Solo tiene efectos de cara a la rutina getNOREG.</p>
   */
     public void setNOREG(boolean nr)
   {
@@ -156,6 +157,8 @@ public class DatosTabla   implements Serializable
   * <p>
   * Esto puede dar problemas con algunas select, por un problema del JDBC
   *
+  * @param b Indica si se debe cerrar el cursor y volverlo a abrir antes de cada select.
+  * Por defecto es true.
   */
   public void setCerrarCursor(boolean b)
   {
@@ -177,6 +180,7 @@ public class DatosTabla   implements Serializable
 
   /**
   * Cancela la Select Activa
+  * @throws java.sql.SQLException
   */
  public void cancel() throws SQLException
  {
@@ -196,8 +200,7 @@ public class DatosTabla   implements Serializable
   * * Cierra el cursor establecido con la Ultima select.
   * <p>
   * Cada vez que se llama a select esta cierra el Ultimo cursor.
-  * @exception Lanza una SQLException en caso de cualquier
-  * tipo de error.
+  
   * @see getMsgError()
   * @throws SQLException en caso de error en la DB
   */
@@ -214,8 +217,6 @@ public class DatosTabla   implements Serializable
   * * Cierra el cursor establecido con la Ultima select.
   * <p>
   * Cada vez que se llama a select esta cierra el Ultimo cursor.
-  * @exception Lanza una SQLException en caso de cualquier
-  * tipo de error.
   * @see getMsgError()
   * @throws SQLException en caso de error en la DB
   */
@@ -283,6 +284,7 @@ public class DatosTabla   implements Serializable
 
   /**
   * @return Numero de Columnas de la Ultima sentencia Select ejecutada.
+  * @throws java.sql.SQLException
   * @deprecated  usar getColumnCount
   */
   public int getNumCol() throws SQLException
@@ -467,82 +469,76 @@ public class DatosTabla   implements Serializable
   }
 
     /**
-    * Actualiza los datos del Vector Interno.
-    * @param String con las condiciones del Update.
-  * <p>
-    * El formato debe ser similar a la funcion Update de SQL(No acepta los DATE)
-    * Ej: cli_nume = 20, cli_nomb='pepe' ....
-  * @return false si hay alg\uFFFDn tipo de Error.
-    */
-  public  boolean setAllDatos(String strUpdate) throws SQLException
-  {
-    String campo="";
-    String valor="";
-    int pos=0;
-    int r;
+     * Actualiza los datos del Vector Interno.
+     *
+     * @param strUpdate Condiciones del Update.
+     * <p>
+     * El formato debe ser similar a la funcion Update de SQL(No acepta los
+     * DATE) Ej: cli_nume = 20, cli_nomb='pepe' ....
+     * @return false si hay alg\uFFFDn tipo de Error.
+     * @throws java.sql.SQLException
+     */
+    public boolean setAllDatos(String strUpdate) throws SQLException {
+        String campo;
+        String valor;
+        int pos = 0;
+        int r;
 
-    if ((strUpdate=sqlOracleToInformix(strUpdate,true))==null)
-      return false;
-
-    do {
-        // Busca Campo.
-            // Ignoro los espacios en blanco.
-            for (;pos<strUpdate.length();pos++)
+        if ((strUpdate = sqlOracleToInformix(strUpdate, true)) == null)
+            return false;
+        do
+        {
+            // Busca Campo. Ignoro los espacios en blanco.
+            for (; pos < strUpdate.length(); pos++)
             {
-                if (strUpdate.charAt(pos)!=' ')
+                if (strUpdate.charAt(pos) != ' ')
                     break;
             }
-
-        r=Formatear.buscaletra(strUpdate,'=',pos);
-            if (r<0)
+            r = Formatear.buscaletra(strUpdate, '=', pos);
+            if (r < 0)
                 return true;
-            campo= strUpdate.substring(pos,r);
-            pos=r+1;
-            // Busca Valor a asignar.
-            // Se salta los campos en blanco
-            for (;pos<strUpdate.length();pos++)
+            campo = strUpdate.substring(pos, r);
+            pos = r + 1;
+            // Busca Valor a asignar. Se salta los campos en blanco
+            for (; pos < strUpdate.length(); pos++)
             {
-                if (strUpdate.charAt(pos)!=' ')
+                if (strUpdate.charAt(pos) != ' ')
                     break;
             }
 
-            if (strUpdate.charAt(pos)=='\'')
+            if (strUpdate.charAt(pos) == '\'')
             {
-
                 // Entre comillas .. Busco donde se cierran.
                 pos++;
-                r=Formatear.buscaletra(strUpdate,'\'',pos);
-                if (r<0)
+                r = Formatear.buscaletra(strUpdate, '\'', pos);
+                if (r < 0)
                 {
-                    MsgError="COMILLAS SIN TERMINAR";
+                    MsgError = "COMILLAS SIN TERMINAR";
                     return false;
                 }
-                valor=strUpdate.substring(pos,r);
-                pos=r;
-            }
-            else
+                valor = strUpdate.substring(pos, r);
+                pos = r;
+            } else
             {
                 // Se supone que es un numero. Busco donde termina.
-                for (r=pos;r<strUpdate.length();r++)
+                for (r = pos; r < strUpdate.length(); r++)
                 {
-                    if ( Character.isDigit(strUpdate.charAt(r))==false &&  strUpdate.charAt(r)!= '.' &&  strUpdate.charAt(r)!= 'E')
+                    if (Character.isDigit(strUpdate.charAt(r)) == false && strUpdate.charAt(r) != '.' && strUpdate.charAt(r) != 'E')
                         break;
                 }
-                valor=strUpdate.substring(pos,r);
-                pos=r;
+                valor = strUpdate.substring(pos, r);
+                pos = r;
             }
 
-           setDato(campo,valor);
-
+            setDato(campo, valor);
             // Busco la coma.
-
-            r=Formatear.buscaletra(strUpdate,',',pos);
-            if (r<0)
+            r = Formatear.buscaletra(strUpdate, ',', pos);
+            if (r < 0)
                 return true;
-            pos=r+1;
+            pos = r + 1;
         } while (true);
 
-  }
+    }
 
   /**
   * Establece la conexion y pone la varible dtb_con igual
@@ -550,8 +546,10 @@ public class DatosTabla   implements Serializable
   * <p>
   * Si la conexion es a una Base de Datos Informix establece el eschema a "",
   * en caso contrario a ".barpimo"
-  * @return true si se ha establecido la conexi\uFFFDn con exito.<p>
-  * false en caso de error.
+  * </p>
+  * 
+     * @param conexion
+     * @throws java.sql.SQLException
   * @see conexion
   */
  public void setConexion(conexion conexion) throws SQLException
@@ -679,18 +677,18 @@ public class DatosTabla   implements Serializable
     return;
   }
 */
-    /******************************************************
-  * Devuelve la Setencia SQL (select) a ejectar o ejecutada.
-  *******************************************************/
-  /*
+  /**
+  * 
+  *
+  * @return Devuelve la ultima Sql Ejecutada
   * @despreciado Usar en su lugar getStrSelect
   */
     public String getSql()
   {
     return getStrSelect();
   }
-    /**
-  * Devuelve la Setencia select a ejectar o ya ejecutada.
+  /**
+  * @return Devuelve la Setencia select a ejectar o ya ejecutada.
   */
  public String getStrSelect()
   {
@@ -699,11 +697,10 @@ public class DatosTabla   implements Serializable
 
   /**
   * Establece la sentencia SELECT a ejectutar cuando se llame
-  * a la funci\uFFFDn select() sin el String.
+  * a la función select() sin el String.
   *
-  * @param String a establecer como sentencia SELECT.
-  * @return true -> si la Instruccion SQL es Valida.
-  *         false -> si tiene un error al tratar instruccion SQL.
+  * @param strSelect a establecer como sentencia SELECT.
+  * @throws java.sql.SQLException
   */
  public void setStrSelect(String strSelect)  throws SQLException
   {
@@ -713,7 +710,7 @@ public class DatosTabla   implements Serializable
    * Utilizada para formatear los TO_DATE y alguna cosilla mas
    *
    * @param sql String Sentencia SQL a Parsear
-   * @throws ParseException si la sentencia NO es valida
+   * @throws SQLException si la sentencia NO es valida
    * @return String Select Parseada
    */
   public String getStrSelect(String sql) throws SQLException
@@ -745,7 +742,7 @@ public class DatosTabla   implements Serializable
      String pp, valor;
      sqlLocal = strSelect.toUpperCase();
      int pos = 0;
-     int r = 0;
+     int r;
      String formFecha;
      // Base de datos es Informix ... Quitar los TO_DATE
      do
@@ -804,18 +801,16 @@ public class DatosTabla   implements Serializable
        else
          valor = "";
        s = s + "'" + valor + "'";
-       pos = r + 1;
+    
        r = sqlLocal.indexOf(')', r + 1); //Busco Cerrar Parentesis
        if (r < 0)
        {
          MsgError = "No encontrado Cerrar Parentesis despues de TO_DATE";
          Error = true;
          return null;
-       }
+       }      
        pos = r + 1;
-       pos = r + 1;
-     }
-     while (true);
+     }  while (true);
 
      return s;
    } catch (java.text.ParseException k)
@@ -825,6 +820,8 @@ public class DatosTabla   implements Serializable
     }
 
   /**
+     * @param strSelect
+     * @throws java.sql.SQLException
     * @despreciado Usar en su Lugar setStrSelect
   */
     public void setSql(String strSelect)  throws SQLException
@@ -840,6 +837,9 @@ public class DatosTabla   implements Serializable
   * Devuelve N\uFFFD DE Registros Modificados.
   *          -1 si hay un error.
   * NO PONER CLAUSULAS WHERE, las coge del CURSOR.
+     * @param mod Clausula con condiciones para moficar
+     * @return Numero de registros modificados
+     * @throws java.sql.SQLException
     ************************************************************/
     public   int UpdateAll(String mod) throws SQLException
   {
@@ -861,16 +861,15 @@ public class DatosTabla   implements Serializable
       Error=true;
             return -1;
      }
-
-    String s= "UPDATE "+nomTabla+" SET "+mod+ " WHERE "+condWhere;
-    return executeUpdate(s);
+    
+    return executeUpdate("UPDATE "+nomTabla+" SET "+mod+ " WHERE "+condWhere);
   }
   /**
    * Borra TODOS los registros selecionados en la ultima select.
    *
    * @return int Numero de Registros borrados
    * @throws SQLException Error en DB
-   * @throws ParseException ERROR en DB
+   *
    */
   public int delete() throws SQLException
   {
@@ -886,7 +885,7 @@ public class DatosTabla   implements Serializable
    * @param st Statement Statement donde ejecutar el update.
    * @param ceroisError boolean Lanzar exception en caso de que no se borre ningun registro
    * @throws SQLException Error en DB
-   * @throws ParseException Error en DB
+   * 
    * @return int Numero de registros borrados
    */
   public int delete(Statement st,boolean ceroisError) throws SQLException
@@ -972,11 +971,15 @@ public class DatosTabla   implements Serializable
         return select(forUpdate);
   }
   /**
-  * @despreciado Usar select en su lugar
+     * @param sql Sentencia SQL a ejecutar
+     * @param upd ForUpdate
+     * @return true si encuentra algun registro
+     * @throws java.sql.SQLException
+  * @deprecated Usar select en su lugar
   */
-    public  boolean ejecSql(String q,boolean u) throws SQLException
+  public  boolean ejecSql(String sql,boolean upd) throws SQLException
   {
-    return select(q,u);
+    return select(sql,upd);
   }
 
 
@@ -1021,8 +1024,7 @@ public class DatosTabla   implements Serializable
          sw = false;
        }
        catch (SQLException j)
-       {
-         j.printStackTrace();
+       {         
          Error = true;
          MsgError = "Select: " + s + "\nError: " + j.getMessage();
          if (dtb_Con.getDriverType() == conexion.ORACLE)
@@ -1039,18 +1041,11 @@ public class DatosTabla   implements Serializable
    catch (SQLException k)
    {
      if (CEditable != null)
-       CEditable.setText(msgEdi);
-     throw k;
-   }
-   catch (Exception k)
-   {
-     k.printStackTrace();
-     if (CEditable != null)
-       CEditable.setText(msgEdi);
+       CEditable.setText(msgEdi);   
      Error = true;
      MsgError = "Select: " + s + "\n Select: " + k.getMessage();
      stmOpen = false;
-     throw new SQLException(MsgError);
+     throw k;
    }
    if (CEditable != null)
      CEditable.setText(msgEdi);
@@ -1122,7 +1117,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   }
 
   nomTabla = sto.nextToken().toUpperCase();
-  int pw = 0;
+  int pw;
   int pun;
   condWhere = "";
 
@@ -1136,7 +1131,6 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   }
   return s;
 }
-
     /*
     * Establece si se deben (true) 	o no deben (false) lanzar eventos
     * tipo DBCambio, cuando se produce un cambio en SQL.
@@ -1144,7 +1138,6 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     public void setLanzaDBCambio(boolean b)
     {
         lanzaDBCambio=b;
-        return;
     }
 
     /*
@@ -1158,6 +1151,8 @@ private String parseaSelect(boolean forUpdate) throws SQLException
 
     /*****************************************************************
   * Posiciona el Cursor en el Primer Registro.
+     * @return false En caso de error
+     * @throws java.sql.SQLException
   ******************************************************************/
  public boolean first() throws SQLException
  {
@@ -1206,14 +1201,6 @@ private String parseaSelect(boolean forUpdate) throws SQLException
      stmOpen = false;
      throw new SQLException(MsgError);
    }
-   // Instrucion SQL ejecturada correctamente.
-
-   // Inicializar Variables de Posicion.
-
-//   datos.removeAllElements(); // Quitar datos del Vector.
-//   ponDatos();
-
-
    MsgError = "";
    Error = false;
    return true;
@@ -1221,6 +1208,8 @@ private String parseaSelect(boolean forUpdate) throws SQLException
 
   /*****************************************************************
    * Posiciona el Cursor en el Ultimo Registro.
+     * @return false en caso de error.
+     * @throws java.sql.SQLException 
    *****************************************************************/
   public boolean last() throws SQLException
   {
@@ -1300,7 +1289,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
       Error = true;
       return false;
     }
-    boolean rt=true;
+    boolean rt;
     if (p == 1)
       rt=rs.previous();
     else
@@ -1368,7 +1357,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   }
 /**
  * Devuelve como string el valor del campo
- * @param col Nombre del campo
+ * @param campo Nombre del campo
  * @param trim Realiza un trim. Si es false y el valor devuelto es null, devuelve null, si es true
  * y el valor es null devuelve una cadena vacia ("")
  * @return Valor del campo, como string
@@ -1391,6 +1380,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
    * y trim es true se devolvera un string vacio "", en caso contrario se devolvera
    * null.
    * @return String Valor del campo
+     * @throws java.sql.SQLException
    */
   public String getString(int col,boolean trim) throws SQLException
   {
@@ -1489,7 +1479,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
             i=Short.valueOf(vecAddNew.elementAt(col-1).toString());
         else
             i = rs.getShort(col);
-     } catch (Exception k)
+     } catch (NumberFormatException | SQLException k)
      {
       Error=true;
       MsgError="Campo NO se pudo transformar a Numero";
@@ -1543,7 +1533,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
             i=Long.valueOf(vecAddNew.elementAt(col-1).toString());
         else
             i = rs.getLong(col);
-     } catch (Exception k)
+     } catch (NumberFormatException | SQLException k)
      {
       Error=true;
       MsgError="Campo NO se pudo transformar a Numero";
@@ -1630,7 +1620,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
        {
          try {
             return new Timestamp(Long.parseLong(vecAddNew.elementAt(col-1).toString()));
-         } catch (Exception k)
+         } catch (NumberFormatException k)
          {
              return null; // No es un timestamp.
          }
@@ -1733,7 +1723,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     Double i;
     try {
       i= new Double(o.toString());
-     } catch (Exception k)
+     } catch (NumberFormatException k)
      {
       Error=true;
       MsgError="Campo NO se pudo transformar a Numero";
@@ -1758,7 +1748,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     Double i;
     try {
       i= new Double(o.toString());
-     } catch (Exception k)
+     } catch (NumberFormatException k)
      {
       Error=true;
       try {
@@ -1786,13 +1776,11 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     int lg;
     try {
       lg=inStr.read(bit);
-    } catch (Exception k)
+    } catch (IOException k)
     {
       MsgError="Error al Leer memo: "+k.getMessage();
       Error=true;
-      SqlException=(SQLException) k;
-//      throw new SQLException(MsgError);
-      throw  SqlException;
+      throw  new SQLException(k);
     }
     if (lg==-1)
       return "";
@@ -1922,6 +1910,9 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     /**
      * Devuelve el Numero de una columna a traves de su nombre
      * 
+     * @param s Nombre de columna
+     * @return  Numero de columna
+     * @throws java.sql.SQLException 
      * @deprecated usar findColumn
      */
     public int getNomCol(String s) throws SQLException
@@ -1941,10 +1932,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
       sqlUpdate=s;
       return true;
     }
-
-    if ((sqlUpdate=sqlOracleToInformix(s,true))==null)
-      return false;
-    return true;
+    return (sqlUpdate=sqlOracleToInformix(s,true)) != null;
   }
 
 
@@ -2132,8 +2120,11 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   }
   /***********************************************************************
     * Devuelve la Precision del campo.
+     * @param n Numero columna
+     * @return Precision del campo
+     * @throws java.sql.SQLException 
     ***************************************************************************/
-    public int getPreCampo(int n) throws SQLException
+  public int getPreCampo(int n) throws SQLException
   {
     return rs.getMetaData().getPrecision(n);
 
@@ -2163,8 +2154,11 @@ private String parseaSelect(boolean forUpdate) throws SQLException
 
     /**********************************************************************
     * Devuelve los Decimales del Campo.
+     * @param n Numero Columna
+     * @return Tipo de campo
+     * @throws java.sql.SQLException
     ***************************************************************************/
-    public  String getTipNomCampo(int n) throws SQLException
+  public  String getTipNomCampo(int n) throws SQLException
   {
     return rs.getMetaData().getColumnTypeName(n);
   }
@@ -2203,7 +2197,8 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   /**
   * Establece el String utilizado como Schema
   * <p>
-  * por defecto es ".barpimo"
+  * por defecto es "."
+  * @param esquema
   */
   public void setSchema(String esquema)
   {
@@ -2217,6 +2212,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   * <p>
   * Por defecto es '\uFFFD' Caracter 158
   *
+  * @param comodin
   */
   public void setComodin(String comodin)
   {
@@ -2226,6 +2222,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   /**
   * Devuelve el String que se utilizara como comodin para sustituirlo
   * por la cadena establecido en setSchema()
+  * @return 
   */
   public String getComodin()
   {
@@ -2288,12 +2285,14 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   /**
   * Devuelve el String que se puede Mandar a Una Insert para insertar todos los Datos
   * de esa tabla.
+     * @return 
+     * @throws java.sql.SQLException
   * @Throw Exception en Caso de Error al leer Datos.
   */
  public String getStrInsert() throws SQLException
  {
    String s = "";
-   String f = "";
+   String f;
    int n;
    int tc;
    for (n = 1; n <= getNumCol(); n++)
@@ -2375,12 +2374,13 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   * Devuelve el String que se puede Mandar a Una Update
   *  para Modificar todos los Datos
   * de esa tabla.
-  * @Throw Exception en Caso de Error al leer Datos.
+  * @return 
+  * @throws SQLException Exception en Caso de Error al leer Datos.
   */
  public String getStrUpdate() throws SQLException
  {
    String s = "";
-   String f = "";
+   String f ;
    int n;
    int tc;
    for (n = 1; n <= getNumCol(); n++)
@@ -2452,7 +2452,9 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   * @param sql con el la Instrucion a Preparar ..
   *      Esta String sera convertida igual que cualquier otra en esta clase,
   *      soportando el caracter '\uFFFD' y la conversion del TO_DATE, ETC.
+     * @return 
   *
+     * @throws java.sql.SQLException
   */
   public PreparedStatement getPreparedStatement(String sql) throws SQLException
   {
@@ -2490,6 +2492,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   /**
   * Prepara los datos para poder realizar una Modificacion de los registros
   * a traves del SetDatos.
+     * @param condEdit Setencia  a Ejecutar
   * @throws SQLException si el cursor no es forUpdate o no hay nada selecionado
   */
   public void edit(String condEdit) throws SQLException
@@ -2533,7 +2536,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   * en SedDatos.
   * @param tabla
   * @param allCampos Indica si se debera realizar el insert sobre todos los campos.
-  * @throws Exception si el cursor no es forUpdate o no hay nada selecionado
+  * @throws SQLException si el cursor no es forUpdate o no hay nada selecionado
   */
  public void addNew(String tabla,boolean allCampos) throws SQLException
  {
@@ -2553,9 +2556,10 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   }
   /**
   * Prepara los datos para poder realizar una Insercion de los registros
-  * en SedDatos.
-  * Incluir todos los campos por defecto en el insert
-  * @throws Exception si el cursor no es forUpdate o no hay nada selecionado
+  * en SetDatos.
+  * 
+  * @param allCampos Incluir todos los campos por defecto en el insert
+  * @throws SQLException si el cursor no es forUpdate o no hay nada selecionado
   */
   public void addNew(boolean allCampos) throws SQLException
   {
@@ -2579,6 +2583,8 @@ private String parseaSelect(boolean forUpdate) throws SQLException
    * Copia TODOS los registros activo de la select de esta tabla  a otra en un datostabla mandado.
    * El datosTabla final no es necesario que  tenga hecho el addnew(tabla) inicial 
    * No se realizara un commit al final. 
+   * @param dt 
+   * @throws java.sql.SQLException
    */
   public void copy(DatosTabla dt) throws SQLException
   {
@@ -2651,6 +2657,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
    * anteriormente lanzada. Usa el statement que tenga
    * definido por defecto este datostabla.
    *
+   * @return Numero de registros modificados
    * @throws SQLException
    */
   public int update() throws SQLException
@@ -2661,6 +2668,8 @@ private String parseaSelect(boolean forUpdate) throws SQLException
    * Ejecuta un update sobre una sentencia ADDNEW o EDIT
    * anteriormente lanzada.
    *
+   * @param st Statement a usar
+   * @return Numero de registros modificados
    * @throws SQLException
    */
   public int update(Statement st) throws SQLException
@@ -2779,26 +2788,32 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   }
   /**
    * Retorna si el curso es for update
+     * @return true si la sentencia sql es for update 
    */
   public boolean isForUpdate() { return sw_sqlUpdate; }
   /**
    * Indica el tiempo maximo que espera cuando un registro esta bloqueado
+     * @param seg tiempo maximo que espera cuando un registro esta bloqueado
    */
   public void setMaxEsperaBloq(int seg) { maxEsperaBloq = seg; }
   /**
    * Retorna el tiempo maximo que espera cuando un registro esta bloqueado
+     * @return tiempo maximo que espera cuando un registro esta bloqueado
    */
   public int getMaxEsperaBloq() { return maxEsperaBloq; }
   /**
    * Indica si se debe reintentar la select/update si el registro esta bloqueado
+     * @param sino indica si  debe reintentar la select/update si el registro esta bloqueado
    */
   public void setReintentarBloq(boolean sino) { swReintentaBloq = sino; }
   /**
    * Retorna si se debe reintentar la select/update si el registro esta bloqueado
+     * @return true si debe reintentar la select/update si el registro esta bloqueado
    */
   public boolean getReintentarBloq() { return swReintentaBloq; }
   /**
    * Asigna el CEditable donde debe escribir el mensaje de Bloqueo
+     * @param e
    */
   public void setCEditable(CEditable e) { CEditable = e; }
 
@@ -2863,41 +2878,4 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   public int getTimeSelect() {
     return timeSelect;
   }
-
 }
-
-/*
-class ThreadDT extends Thread
-{
-  DatosTabla dt;
-  int timeSelect;
-
-  public ThreadDT(DatosTabla dt)
-  {
-    this.dt=dt;
-    timeSelect=dt.timeSelect;
-    this.start();
-  }
-
-  public void run() {
-    try {
-      while (timeSelect > 0) {
-        this.sleep(100);
-        if (dt.ejecSelect)
-          return;
-        timeSelect--;
-
-        if (timeSelect == 0) {
-          dt.cancel();
-          return;
-        }
-      }
-      ;
-    }
-    catch (Exception k) {
-      k.printStackTrace();
-    }
-  }
-}
-
-*/
