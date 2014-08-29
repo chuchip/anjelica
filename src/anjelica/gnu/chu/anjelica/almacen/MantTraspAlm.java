@@ -27,6 +27,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.menu;
+import gnu.chu.anjelica.pad.pdejerci;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
@@ -139,7 +140,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
     }
 
     private void jbInit() throws Exception {      
-        setVersion("2014-01-08");
+        setVersion("2014-29-08");
   
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
@@ -1536,20 +1537,40 @@ public class MantTraspAlm extends ventanaPad implements PAD
   }
   private boolean checkFecha()
   {
-    if (avc_fecalbE.isNull())
+      try
       {
-        mensajeErr("Introduzca Fecha de Traspaso");
-        avc_fecalbE.requestFocus();
-        return false;
-      }  
-      if (alm_codifE.getValor().equals(alm_codioE.getValor()))
+          if (avc_fecalbE.isNull())
+          {
+              mensajeErr("Introduzca Fecha de Traspaso");
+              avc_fecalbE.requestFocus();
+              return false;
+          }
+          s=pdejerci.checkFecha(dtStat,avc_anoE.getValorInt(),EU.em_cod,avc_fecalbE.getText(),true);
+          if (s!=null)
+          {
+              mensajeErr(s);
+              avc_fecalbE.requestFocus();
+              return false;
+          }
+          if (Math.abs(Formatear.comparaFechas(avc_fecalbE.getDate(),Formatear.getDateAct()))>7)
+          {
+              mensajeErr("La fecha deberia es un rango de 7 dias sobre la actual");
+              avc_fecalbE.requestFocus();
+              return false;
+          }
+          if (alm_codifE.getValor().equals(alm_codioE.getValor()))
+          {
+              mensajeErr("Los dos almacenes NO pueden ser iguales");
+              alm_codioE.requestFocus();
+              return false;
+          }
+          pro_codiE.setAlmacen(alm_codioE.getValorInt());
+          return true;
+      } catch (SQLException | ParseException ex )
       {
-        mensajeErr("Los dos almacenes NO pueden ser iguales");
-        alm_codioE.requestFocus();
-        return false;
-      }
-      pro_codiE.setAlmacen(alm_codioE.getValorInt());
-      return true;
+          Error("Error al comprobar datos", ex);
+          return false;
+      }     
   }
     
   void importaDat()  
