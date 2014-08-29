@@ -3480,6 +3480,87 @@ create table anjelica.histventas
     hve_kiveav float,        -- Kilos Venta Articulos Vendibles
     hve_imveav float,        -- Importe de Venta Articulos Vendibles
 );
+-- alter table anjelica.v_stkpart rename to stkpart_old;
+-- drop table anjelica.stockpart;
+create table anjelica.stockpart
+(
+	eje_nume int,		-- Ejercicio
+ 	emp_codi int,		-- Empresa (Para permisos de acceso)
+	pro_serie char(1),	-- Serie
+ 	stp_tiplot char(1),	-- Tipo Lote (P: Partida S: Acumulado,  B Bloqueado)
+ 	pro_nupar int,		-- Partida
+	stk_block int not null default 0, --   Bloqueado. 0: No
+	pro_codi int,		-- Producto
+	pro_numind int,		-- Numero Individuo
+	alm_codi int,		-- Almacen
+	stp_unini int,		-- Unidades Iniciales (puestas al crear
+				-- el registro)
+ 	stp_unact int,		-- Unidades Actuales
+ 	stp_feccre date,	-- Fecha de Creacion
+ 	stp_fefici date,	-- Fecha Ult. Actualizacion
+ 	stp_kilini float,	-- Kilos Iniciales
+	stp_kilact float,	-- Kilos Actuales
+	prv_codi int,		-- Proveedor
+	stp_feccad date		-- Fecha de Caducidad
+	constraint ix_stockpart primary key (pro_codi,eje_nume,pro_serie,pro_nupar,pro_numind);
+);
+create index ix_stkpart1 on anjelica.stockpart(eje_nume,pro_serie,pro_nupar,pro_numind,pro_codi);
+create index ix_stkpart2 on anjelica.stockpart(pro_codi,eje_nume,pro_serie,pro_nupar);
+
+-- alter table anjelica.v_stkpart rename to stkpart_antigua
+create view anjelica.v_stkpart as select * from anjelica.stockpart;
+--drop table anjelica.mvtosalm;
+create table anjelica.mvtosalm
+(	
+    mvt_oper char(10) not null, --
+    mvt_time timestamp not null default current_timestamp,	-- Fecha de mvto.
+	mvt_tipo char(1) not null default 'S', -- Entrada o Salida
+	mvt_tipdoc char(1) not null, -- C (Alb. Compra), V (Alb.Venta), R (Regulariz), Despiece Entrada a alm.(d), Desp. Salida (D)
+    alm_codi int not null,             -- Almacen
+	mvt_fecdoc date not null,	   -- Fecha del Documento
+	mvt_empcod int not null default 1, -- Empresa del Documento.
+	mvt_ejedoc int not null, -- Ejercicio del Documento.
+	mvt_serdoc char(1) not null, -- Serie del Ejercicio.
+	mvt_numdoc int not null,	 -- Numero del Documento.
+	mvt_lindoc int not null, -- Linea del documento
+	pro_codi   int not null, -- Codigo de producto.
+	pro_ejelot int not null, -- Ejercicio del Lote
+	pro_serlot char(1) not null, -- Serie del Lote
+	pro_numlot int not null, -- Numero de Lote
+	pro_indlot int not null, -- Individuo del Lote.
+	mvt_canti float not null, -- Cantidad
+	mvt_unid int not null,    -- Unidades
+	mvt_prec float,		 -- Precio
+    mvt_cliprv int,          -- Cliente / Proveedor.
+    mvt_feccad date          -- Fecha Caducidad del Indiv.
+);
+CREATE INDEX ix_mvtalm1 on anjelica.mvtosalm(mvt_tipdoc,mvt_fecdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc);
+CREATE INDEX ix_mvtalm2 on anjelica.mvtosalm(pro_codi,pro_ejelot,pro_serlot,pro_numlot,pro_indlot,mvt_time);
+
+drop table anjelica.ajustedb;
+create table anjelica.ajustedb
+(
+    aju_regacu int not null, -- // Regenerar Acumulados (0 No). Usado por fn_acumstk
+	aju_regmvt int not null  -- // Crear mvtos. Almacen (Solo para temas de testeo)
+);
+insert into anjelica.ajustedb values(1,1);
+--
+-- Tabla con Acumulados de Stock Partidas
+--
+CREATE TABLE anjelica.actstkpart
+(
+  pro_codi integer,
+  alm_codi integer,
+  stp_unact integer,
+  stp_feccre date,
+  stp_fefici date,
+  stp_kilact double precision
+)
+WITH ( OIDS=FALSE );
+-- Index: anjelica.ix_astkpart
+-- DROP INDEX anjelica.ix_astkpart;
+CREATE INDEX ix_astkpart ON anjelica.actstkpart   (pro_codi, alm_codi)
+
 
 --- Constraints tipo Foreign Key
 alter table anjelica.v_albavec add constraint avc_procl foreign key (cli_codi)
@@ -3592,7 +3673,7 @@ return basImp;
 END;$BODY$
   LANGUAGE 'plpgsql';
 
-CREATE OR REPLACE FUNCTION "getImp_albven"("empCodi" integer, "ejeNume" integer, "avcSerie" character, "avcNume" integer)
+CREATE OR REPLACE FUNCTION anjelica."getImp_albven"("empCodi" integer, "ejeNume" integer, "avcSerie" character, "avcNume" integer)
   RETURNS numeric AS
 $BODY$DECLARE
 linalb RECORD;
@@ -3648,7 +3729,7 @@ if porcIva = 0 then
    WHERE tii_codi =  linalb.pro_tipiva
     and  avcFecAlb between tii_fecini and tii_fecfin;
  if not found then
-   RAISE EXCEPTION 'Tipo IVA: % NO ENCONTRADO ',tipoIva;
+   RAISE EXCEPTION 'Tipo IVA: % NO ENCONTRADO en Alb:% % % %',tipoIva,"empCodi","ejeNume","avcSerie","avcNume";
    return 0;
  end if;
  -- raise notice 'PORCENT. IVA: %',porcIva;
@@ -3795,92 +3876,6 @@ SELECT 'GRANT SELECT ON ' || relname || ' TO xxx;'
 FROM pg_class JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
 WHERE nspname = 'public' AND relkind IN ('r', 'v');
   on anjelica.mvtosalm for each row execute procedure anjelica.fn_actstk();
-
-alter table anjelica.v_stkpart rename to stkpart_old;
-drop table anjelica.stockpart;
-create table anjelica.stockpart
-(
-	eje_nume int,		-- Ejercicio
- 	emp_codi int,		-- Empresa (Para permisos de acceso)
-	pro_serie char(1),	-- Serie
- 	stp_tiplot char(1),	-- Tipo Lote (P: Partida S: Acumulado,  B Bloqueado)
- 	pro_nupar int,		-- Partida
-	stk_block int not null default 0, --   Bloqueado. 0: No
-	pro_codi int,		-- Producto
-	pro_numind int,		-- Numero Individuo
-	alm_codi int,		-- Almacen
-	stp_unini int,		-- Unidades Iniciales (puestas al crear
-				-- el registro)
- 	stp_unact int,		-- Unidades Actuales
- 	stp_feccre date,	-- Fecha de Creacion
- 	stp_fefici date,	-- Fecha Ult. Actualizacion
- 	stp_kilini float,	-- Kilos Iniciales
-	stp_kilact float,	-- Kilos Actuales
-	prv_codi int,		-- Proveedor
-	stp_feccad date		-- Fecha de Caducidad
-	constraint ix_stockpart primary key (pro_codi,eje_nume,pro_serie,pro_nupar,pro_numind);
-);
-create index ix_stkpart1 on anjelica.stockpart(eje_nume,pro_serie,pro_nupar,pro_numind,pro_codi);
-create index ix_stkpart2 on anjelica.stockpart(pro_codi,eje_nume,pro_serie,pro_nupar);
-
--- alter table anjelica.v_stkpart rename to stkpart_antigua
-create view anjelica.v_stkpart as select * from anjelica.stockpart;
---drop table anjelica.mvtosalm;
-create table anjelica.mvtosalm
-(	
-    mvt_oper char(10) not null, --
-    mvt_time timestamp not null default current_timestamp,	-- Fecha de mvto.
-	mvt_tipo char(1) not null default 'S', -- Entrada o Salida
-	mvt_tipdoc char(1) not null, -- C (Alb. Compra), V (Alb.Venta), R (Regulariz), Despiece Entrada a alm.(d), Desp. Salida (D)
-    alm_codi int not null,             -- Almacen
-	mvt_fecdoc date not null,	   -- Fecha del Documento
-	mvt_empcod int not null default 1, -- Empresa del Documento.
-	mvt_ejedoc int not null, -- Ejercicio del Documento.
-	mvt_serdoc char(1) not null, -- Serie del Ejercicio.
-	mvt_numdoc int not null,	 -- Numero del Documento.
-	mvt_lindoc int not null, -- Linea del documento
-	pro_codi   int not null, -- Codigo de producto.
-	pro_ejelot int not null, -- Ejercicio del Lote
-	pro_serlot char(1) not null, -- Serie del Lote
-	pro_numlot int not null, -- Numero de Lote
-	pro_indlot int not null, -- Individuo del Lote.
-	mvt_canti float not null, -- Cantidad
-	mvt_unid int not null,    -- Unidades
-	mvt_prec float,		 -- Precio
-    mvt_cliprv int,          -- Cliente / Proveedor.
-    mvt_feccad date          -- Fecha Caducidad del Indiv.
-);
-CREATE INDEX ix_mvtalm1 on anjelica.mvtosalm(mvt_tipdoc,mvt_fecdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc);
-CREATE INDEX ix_mvtalm2 on anjelica.mvtosalm(pro_codi,pro_ejelot,pro_serlot,pro_numlot,pro_indlot,mvt_time);
-
-drop table anjelica.ajustedb;
-create table anjelica.ajustedb
-(
-    aju_regacu int not null, -- // Regenerar Acumulados (0 No). Usado por fn_acumstk
-	aju_regmvt int not null  -- // Crear mvtos. Almacen (Solo para temas de testeo)
-);
-insert into anjelica.ajustedb values(1,1);
---
--- Tabla con Acumulados de Stock Partidas
---
-CREATE TABLE anjelica.actstkpart
-(
-  pro_codi integer,
-  alm_codi integer,
-  stp_unact integer,
-  stp_feccre date,
-  stp_fefici date,
-  stp_kilact double precision
-)
-WITH (
-  OIDS=FALSE
-);
--- Index: anjelica.ix_astkpart
--- DROP INDEX anjelica.ix_astkpart;
-CREATE INDEX ix_astkpart
-  ON anjelica.actstkpart
-  USING btree
-  (pro_codi, alm_codi)
 
 
 create trigger albvenpar_insert AFTER insert  on anjelica.v_albvenpar for each row execute procedure anjelica.fn_mvtoalm();
