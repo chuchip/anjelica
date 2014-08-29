@@ -2784,7 +2784,7 @@ public class MantDesp extends ventanaPad implements PAD
             }
             if (! opSimular.isSelected() && pro_codiE.hasControlIndiv() )
             {
-              if (stkPartid.getKilos() < jtCab.getValorDec(linea, JTCAB_KILOS))
+              if (Formatear.redondea(stkPartid.getKilos(),2) < jtCab.getValorDec(linea, JTCAB_KILOS))
               {
                 if (jtCab.getValorInt(linea, JTCAB_NL) != 0)
                 {
