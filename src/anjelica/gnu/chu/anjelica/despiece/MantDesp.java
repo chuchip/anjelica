@@ -2703,7 +2703,7 @@ public class MantDesp extends ventanaPad implements PAD
                             if (jtCab.getValorDec(n, JTCAB_KILOS) == 0 || jtCab.getValorInt(n, JTCAB_PROCODI) == 0)
                                 continue;
 
-                            if (MantArticulos.getTipoProd(jtCab.getValorInt(n, JTCAB_PROCODI),dtStat)==MantArticulos.TIPO_VENDIBLE && !MantTipDesp.esEquivalente(jtCab.getValorInt(n, JTCAB_PROCODI), pro_codiE.getValorInt(), dtStat) )
+                            if (MantArticulos.getTipoProd(jtCab.getValorInt(n, JTCAB_PROCODI),dtStat).equals(MantArticulos.TIPO_VENDIBLE) && !MantTipDesp.esEquivalente(jtCab.getValorInt(n, JTCAB_PROCODI), pro_codiE.getValorInt(), dtStat) )
                             {
                                 mensajeErr("Para autodespieces TODOS los productos entrada deben ser iguales");
                                 return 0;
@@ -2784,7 +2784,7 @@ public class MantDesp extends ventanaPad implements PAD
             }
             if (! opSimular.isSelected() && pro_codiE.hasControlIndiv() )
             {
-              if (Formatear.redondea(stkPartid.getKilos(),2) < jtCab.getValorDec(linea, JTCAB_KILOS))
+              if (stkPartid.getKilos() < jtCab.getValorDec(linea, JTCAB_KILOS))
               {
                 if (jtCab.getValorInt(linea, JTCAB_NL) != 0)
                 {
@@ -2794,7 +2794,7 @@ public class MantDesp extends ventanaPad implements PAD
                         + " and del_numlin = " + jtCab.getValorInt(linea, JTCAB_NL);
                     if (dtStat.select(s))
                     {
-                        if (stkPartid.getKilos() < jtCab.getValorDec(linea, JTCAB_KILOS) - dtStat.getDouble("deo_kilos"))
+                        if (stkPartid.getKilos()< jtCab.getValorDec(linea, JTCAB_KILOS) - dtStat.getDouble("deo_kilos"))
                         {
                             mensajeErr("No hay suficiente stock de este individuo");
                             return 0;
@@ -2807,7 +2807,6 @@ public class MantDesp extends ventanaPad implements PAD
                 }
               }
             }
-
 
             if (opSimular.isSelected())
                 return -1;

@@ -545,7 +545,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
              
             if (dtCon1.select(s))
             {
-                stkPartid.setKilos(stkPartid.getKilos()+ dtCon1.getDouble("avp_canti"));
+                stkPartid.setKilos(stkPartid.getKilos()+ Formatear.redondea(dtCon1.getDouble("avp_canti"),2));
                 stkPartid.setUnidades(stkPartid.getUnidades()+dtCon1.getInt("avp_numuni"));
             }
         }

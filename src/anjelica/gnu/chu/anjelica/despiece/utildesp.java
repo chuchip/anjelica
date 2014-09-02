@@ -718,8 +718,10 @@ public class utildesp
       return new StkPartid(StkPartid.INDIV_NOT_FOUND); // "NO encontrado Partida para estos valores";
     }
     if (! incBloq &&  dt.getInt("stk_block")!=0)
-         return new StkPartid(StkPartid.INDIV_LOCK,dt.getDouble("stp_kilact"),dt.getInt("stp_unact")) ; //"Individuo Bloqueado";
-    return new StkPartid(StkPartid.INDIV_OK,dt.getDouble("stp_kilact"),dt.getInt("stp_unact")) ;
+         return new StkPartid(StkPartid.INDIV_LOCK,
+             Formatear.redondea(dt.getDouble("stp_kilact"),2),dt.getInt("stp_unact")) ; //"Individuo Bloqueado";
+    return new StkPartid(StkPartid.INDIV_OK,
+        Formatear.redondea(dt.getDouble("stp_kilact"),2),dt.getInt("stp_unact")) ;
   }
 
   void debug(String msg,EntornoUsuario EU)
