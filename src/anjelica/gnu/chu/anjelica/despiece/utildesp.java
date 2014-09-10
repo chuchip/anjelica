@@ -25,7 +25,7 @@ package gnu.chu.anjelica.despiece;
 
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.actStkPart;
-import gnu.chu.anjelica.compras.pdalbco2;
+import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -515,7 +515,7 @@ public class utildesp
 //                    System.out.println("pues esta repetido el crotal: "+ntrazaE);
                if (swGenCrotal)
                {
-                   ntrazaE=pdalbco2.getRandomCrotal(ntrazaE);
+                   ntrazaE=MantAlbComCarne.getRandomCrotal(ntrazaE);
                    crotales.add(ntrazaE);
                    if (checkRepetic(crotales,ntrazaE))
                    {

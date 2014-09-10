@@ -43,7 +43,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.actStkPart;
-import gnu.chu.anjelica.compras.pdalbco2;
+import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantArticulos;
@@ -788,9 +788,9 @@ public class MantDesp extends ventanaPad implements PAD
                     if (utdesp.getAccNume() != 0)
                     {
                         ejecutable prog;
-                        if ((prog = jf.gestor.getProceso(pdalbco2.getNombreClase())) == null)
+                        if ((prog = jf.gestor.getProceso(MantAlbComCarne.getNombreClase())) == null)
                             return;
-                        pdalbco2 cm = (pdalbco2) prog;
+                        MantAlbComCarne cm = (MantAlbComCarne) prog;
                         if (cm.inTransation())
                         {
                             msgBox("Mantenimiento Compras ocupado. No se puede realizar la busqueda");

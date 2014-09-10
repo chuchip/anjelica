@@ -1,4 +1,5 @@
-﻿CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
+﻿
+CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
   RETURNS TRIGGER AS $grabar$  
   DECLARE   
   almCodi int;
@@ -37,7 +38,7 @@
 			c.avc_ano=l.avc_ano and
 			c.avc_nume=l.avc_nume and
 			c.avc_serie=l.avc_serie and
-            l.avl_numlin = NEW.avl_numlin and
+                        l.avl_numlin = NEW.avl_numlin and
 			c.emp_codi=NEW.emp_codi and
 			c.avc_ano=NEW.avc_ano and
 			c.avc_nume=NEW.avc_nume and
@@ -165,7 +166,7 @@
 		        mvt_ejedoc=OLD.avc_ano and
 		        mvt_numdoc=OLD.avc_nume and
 		        mvt_serdoc=OLD.avc_serie and
-		        pro_codi  = OLD.pro_codi AND
+		        pro_codi  = OLD.pro_codi AND			
 			pro_ejelot =OLD.avp_ejelot AND
 			pro_serlot = OLD.avp_serlot AND
 			pro_numlot =OLD.avp_numpar AND
@@ -177,7 +178,10 @@
 			RAISE EXCEPTION 'No encontrado mvto a Borrar. Alb. Venta';
 			return null;
 		end if;
-		if nRows > 1 then
+		if nRows > 1 AND  OLD.avc_serie != 'X' then
+		   RAISE EXCEPTION '(Borrar)Encontrado mas de un mvto para este individuo. Alb: % % % % Producto: % Ind: % % %-%',
+                            OLD.emp_codi,OLD.avc_ano,OLD.avc_nume,OLD.avc_serie,
+                            OLD.pro_codi,OLD.avp_ejelot,OLD.avp_serlot, OLD.avp_numpar,OLD.avp_numind; 
 			RAISE EXCEPTION '(Borrar)Encontrado mas de un mvto para este individuo de venta';
 			return null;
 		end if;

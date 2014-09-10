@@ -1,8 +1,6 @@
 package gnu.chu.anjelica;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-import com.jgoodies.looks.plastic.theme.DesertBlue;
 import com.jgoodies.looks.plastic.theme.ExperienceBlue;
 import gnu.chu.anjelica.ventas.represen.FichaClientes;
 import gnu.chu.Menu.LoginDB;
@@ -79,7 +77,8 @@ public class menu extends JFrame
   JPopupMenu JPopupAlmacen = new JPopupMenu();
   JMenuItem jMenuAlmacen = new JMenuItem();
   JPopupMenu jPopupCompras = new JPopupMenu();
-  JMenuItem comprasItem1 = new JMenuItem();
+  JMenuItem albComCarne = new JMenuItem();
+  JMenuItem albComPlanta = new JMenuItem();
   JMenuItem comprasItem2 = new JMenuItem();
   JMenuItem conalbco = new JMenuItem();
    JMenuItem albaPrv = new JMenuItem("Alb.Prv");
@@ -305,10 +304,16 @@ public class menu extends JFrame
         Balmacen_ActionPerformed(e);
       }
     });
-    comprasItem1.setText("Albaranes");
-    comprasItem1.addActionListener(new java.awt.event.ActionListener() {
+    albComCarne.setText("Albar. Carne");
+    albComCarne.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         comprasItem1_actionPerformed(e);
+      }
+    });
+    albComPlanta.setText("Albar.Planta");
+    albComPlanta.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        albComPlanta_actionPerformed(e);
       }
     });
     comprasItem2.setText("Facturas");
@@ -870,7 +875,8 @@ public class menu extends JFrame
     
      JPopupAlmacen.add(clresmvtos);
      JPopupAlmacen.add(clprodrec);
-    jPopupCompras.add(comprasItem1);
+    jPopupCompras.add(albComCarne);
+    jPopupCompras.add(albComPlanta);
     jPopupCompras.add(comprasItem2);
     jPopupCompras.add(albaPrv);
     jPopupCompras.add(conalbco);
@@ -1192,7 +1198,7 @@ public class menu extends JFrame
 //    {
 //      public void actionPerformed(ActionEvent e)
 //      {
-//        lanzaEjecutable(new gnu.chu.anjelica.compras.pdalbco2(menu.this, EU));
+//        lanzaEjecutable(new gnu.chu.anjelica.compras.MantAlbComCarne(menu.this, EU));
 //      }
 //    });
 
@@ -1566,9 +1572,18 @@ void limpiaDB()
      ht.put("AlbSinPed","true");
 
 //     ht.put("verPrecio","true");
-     lanzaEjecutable(new gnu.chu.anjelica.compras.pdalbco2(menu.this, EU,ht));
+     lanzaEjecutable(new gnu.chu.anjelica.compras.MantAlbComCarne(menu.this, EU,ht));
   }
+ void albComPlanta_actionPerformed(ActionEvent e) {
+    Hashtable ht = new Hashtable();
+     ht.put("modPrecio","true");
+////    ht.put("modConsulta","true");
+//     ht.put("admin","true");
+     ht.put("AlbSinPed","true");
 
+//     ht.put("verPrecio","true");
+     lanzaEjecutable(new gnu.chu.anjelica.compras.MantAlbComPlanta(menu.this, EU,ht));
+  }
   void comprasItem2_actionPerformed(ActionEvent e) {
     Hashtable ht = new Hashtable();
      ht.put("modPrecio","true");

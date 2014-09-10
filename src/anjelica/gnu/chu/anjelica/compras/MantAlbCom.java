@@ -8,7 +8,6 @@ import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.anjelica.pad.pdejerci;
-import gnu.chu.anjelica.pad.pdprove;
 import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.camposdb.*;
 import gnu.chu.comm.BotonBascula;
@@ -18,8 +17,6 @@ import gnu.chu.print.util;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.vlike;
 import gnu.chu.utilidades.*;
-import gnu.chu.winayu.ayuMat;
-import gnu.chu.winayu.ayuSde;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
@@ -38,12 +35,13 @@ import net.sf.jasperreports.engine.*;
 
 /**
  *
- * <p>Título: pdalbco2</p>
+ * <p>Título: MantAlbCom</p>
  * <p>Descripción: Mantenimiento Albaranes de Compra</p>
  * Parametros: modPrecio Indica si se puede modificar los precios del albaran.
  *  admin: Modo Aministrador.
  *  AlbSinPed true/False Indica si se pueden cargar albaranes sin un pedido de compras
- * <p>Created on 03-abr-2009, 18:14:38</p>
+ * </p>
+ * <p> Creado a partir pdalbaco2</p>
  *  <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
@@ -59,9 +57,9 @@ import net.sf.jasperreports.engine.*;
  * </p>
  * <p>Empresa: MISL</p>
  * @author Chuchi P
- * @version 2.0
+ * @version 1.0
  */
-public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
+public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSource,MantAlbCom_Interface
 {
   Cgrid jtHist=new Cgrid(4);
   CPanel Phist=new CPanel();
@@ -71,37 +69,37 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
 
   private int hisRowid=0;
   private String condHist=""; // Condiciones del historico
-  private int frtEjer,frtNume;
-  private final int JT_NLIN=0;
-  private final int JT_PROCOD=1;
-  private final int JT_CANIND=3;
-  private final int JT_KILALB=4;
-  private final int JT_PRCOM=5;
-  private final int JT_COMENT=13;
-  private final int JT_PORPAG=14;
-  private final int JT_DTOPP=15;
-  private final int JTD_NUMIND=0;
-  private final int JTD_FECCAD=8;
-  private final int JTD_FECSAC=9;
-  private final int JTD_FECPRO=10;
-  private final int JTD_NUMLIN=11;
-  private final int JTD_CANIND=12;
+//  private int frtEjer,frtNume;
+  final int JT_NLIN=0;
+  final int JT_PROCOD=1;
+  final int JT_CANIND=3;
+  final int JT_KILALB=4;
+  final int JT_PRCOM=5;
+  final int JT_COMENT=13;
+  final int JT_PORPAG=14;
+  final int JT_DTOPP=15;
+  final int JTD_NUMIND=0;
+  final int JTD_CANTI=1;
+  final int JTD_NUMCRO=2;
+  
+  int JTD_NUMLIN=11;
+  int JTD_CANIND=12;
 
   private CLabel acc_dtoppL=new CLabel("Dto PP");
   private CTextField acc_dtoppE=new CTextField(Types.DECIMAL,"#9.99");
   private CTextField acl_dtoppE=new CTextField(Types.DECIMAL,"#9.99");
-  private BotonBascula botonBascula;
-  private int proNumcro; // Numeros de crotal iguales, maximos por albaran
+  BotonBascula botonBascula;
+  int proNumcro; // Numeros de crotal iguales, maximos por albaran
   private boolean swCargaLin=false;
-  private int numIndAnt;
+  int numIndAnt;
   private boolean swCambioPrv;
-  private boolean proOblfsa; // Obligatorio el Introduc. Fecha Sacrificio
-  private int proCodeti=0; // Tipo de etiqueta para el producto.
+  boolean proOblfsa; // Obligatorio el Introduc. Fecha Sacrificio
+  int proCodeti=0; // Tipo de etiqueta para el producto.
   private java.util.Date feulin;
   private actStkPart stkPart;
   private boolean swCargaAlb=false,cargaAlbVentas=false;
-  private  static  int ROWTREG=9;
-  private  static  int ROWNVERT=14;
+  static  int ROWTREG=9;
+  static  int ROWNVERT=14;
   private  DatosTabla dtCursor;
   private  DatosTabla dtInd;
   utildesp utdes=null;
@@ -132,7 +130,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   char estPedi;
   String campPedi;
   copedco conped;  
-  String ultMat=null,ultSalDes,ultNac,ultCeb,ultSacr,ultFecCad,ultFecSac,ultFecPro;
+  
   String lineaAnt;
   etiqueta etiq;
   int ALMACEN=1;
@@ -305,54 +303,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
 
   };
   double kgIndivAnt=0; // Kilos anteriores. Usada para autoclasificacion
-  CGridEditable jtDes = new CGridEditable(13)
-  {
-    @Override
-    public boolean deleteLinea(int row, int col)
-    {
-      if (! jtDes.isLineaEditable())
-      {
-         mensajeErr("Una linea cuyo individuo haya tenido movientos NO se puede borrar");
-        return false;
-      }
-      if (jtDes.getValorInt(0)==0)
-        return true;
-      try
-      {
-        boolean res=borraInd(row,jtDes.getValorInt(0));
-        ctUp.commit();
-        return res;
-      }
-      catch (Exception k)
-      {
-        Error("Error al Borrar Linea", k);
-      }
-      return true;
-    }
-
-    @Override
-    public void afterCambiaLinea()
-    {
-      afterCambiaLinDes();
-    }
-
-    @Override
-    public void afterInsertaLinea(boolean insLinea)
-    {
-      int nRow;
-      if (jtDes.getRowCount()==0 || jtDes.isVacio() )
-        return;
-      nRow=jtDes.getSelectedRow();
-      ponValDefDes(nRow,insLinea?nRow+1:nRow-1);
-    }
-        @Override
-    public int cambiaLinea(int row, int col)
-    {
-//      jtDes.setValor(jtDes.actValGrid(row,col),row,col);
-      return cambiaLinDes(row);
-    }
-
-  };
+  CGridEditable jtDes; 
 //  CButton Baceptar = new CButton("Aceptar(F4)",Iconos.getImageIcon("check"));
 //  CButton Bcancelar = new CButton("Cancelar",Iconos.getImageIcon("cancel"));
   proPanel pro_codiE = new proPanel();
@@ -383,14 +334,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   CLabel cLabel3 = new CLabel();
   CTextField acp_cantiE= new CTextField(Types.DECIMAL,"---9.99");
   CTextField acp_nucrotE= new CTextField(Types.CHAR,"X",30);
-  CLinkBox mat_codiE = new CLinkBox();
-  CLinkBox sde_codiE = new CLinkBox();
-  CLinkBox acp_painacE = new CLinkBox();
-  CLinkBox acp_engpaiE = new CLinkBox();
-  CLinkBox acp_paisacE = new CLinkBox();
-  CTextField acp_feccadE= new CTextField(Types.DATE,"dd-MM-yyyy");
-  CTextField acp_fecsacE= new CTextField(Types.DATE,"dd-MM-yyyy");
-  CTextField acp_fecproE= new CTextField(Types.DATE,"dd-MM-yyyy");
+ 
   CButton Bulcabe = new CButton();
   CButton Birgrid = new CButton(Iconos.getImageIcon("reload"));
   CCheckBox opImpEti = new CCheckBox();
@@ -400,9 +344,9 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   prvPanel acc_copvfaE = new prvPanel();
   CLabel prv_codiL1 = new CLabel();
   CCheckBox opBloquea = new CCheckBox();
-  private boolean ARG_ADMIN=false;
-  private boolean ARG_MODPRECIO=false;
-  private boolean ARG_ALBSINPED=false;
+  boolean ARG_ADMIN=false;
+  boolean ARG_MODPRECIO=false;
+  boolean ARG_ALBSINPED=false;
   //private int ARG_TIPOETIQ=etiqueta.NORMAL;
   CLabel cLabel4 = new CLabel();
   CTextField eje_numeE = new CTextField(Types.DECIMAL,"###9");
@@ -604,11 +548,11 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   CTextField avc_numeE = new CTextField(Types.DECIMAL,"#####9");
 //  CComboBox estIniE = new CComboBox();
 
-  public pdalbco2(EntornoUsuario eu, Principal p)
+  public MantAlbCom(EntornoUsuario eu, Principal p)
   {
     this(eu,p,null);
   }
-  public pdalbco2(EntornoUsuario eu, Principal p,Hashtable ht)
+  public MantAlbCom(EntornoUsuario eu, Principal p,Hashtable ht)
   {
     EU = eu;
     vl = p.panel1;
@@ -646,16 +590,16 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     }
     catch (Exception e)
     {
-      Logger.getLogger(pdalbco2.class.getName()).log(Level.SEVERE, null, e);
+      Logger.getLogger(MantAlbCom.class.getName()).log(Level.SEVERE, null, e);
       setErrorInit(true);
     }
   }
 
-  public pdalbco2(gnu.chu.anjelica.menu p, EntornoUsuario eu)
+  public MantAlbCom(gnu.chu.anjelica.menu p, EntornoUsuario eu)
   {
     this(p,eu,null);
   }
-  public pdalbco2(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable ht)
+  public MantAlbCom(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable ht)
   {
     EU = eu;
     vl = p.getLayeredPane();
@@ -688,12 +632,12 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     }
     catch (Exception e)
     {
-      Logger.getLogger(pdalbco2.class.getName()).log(Level.SEVERE, null, e);
+      Logger.getLogger(MantAlbCom.class.getName()).log(Level.SEVERE, null, e);
       setErrorInit(true);
     }
   }
 
-    private boolean getIndAlbcompar(int nLiAlb, int nInd,DatosTabla dt) throws SQLException {
+    boolean getIndAlbcompar(int nLiAlb, int nInd,DatosTabla dt) throws SQLException {
         // No lo encuentro por Num. Linea. Pruebo por Num. Individuo
         String ss = "SELECT * FROM v_albcompar " +
              " WHERE emp_codi = " + emp_codiE.getValorInt() +
@@ -705,11 +649,11 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
         return dt.select(ss);
     }
 
-  private void jbInit() throws Exception
+  void jbInit() throws Exception
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20140730)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20140906)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -908,7 +852,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
    
 
     confGridLin();
-    confGridInd();
+    //confGridDesglose();
     confGridHist();
     Pcabe.setBorder(BorderFactory.createRaisedBevelBorder());
     Pcabe.setMaximumSize(new Dimension(713, 105));
@@ -1302,82 +1246,10 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     Potros.add(frt_numeE, null);
     acc_totfraE.addItem("Si", "-1");
     acc_totfraE.addItem("No", "0");
+    
   }
 
-  private void confGridInd() throws Exception
-  {
-    acp_canindE.setValorDec(1);
-    ArrayList v1 = new ArrayList();
-    v1.add("N.Ind"); // 0 No. Individuo
-    v1.add("Peso"); // 1
-    v1.add("Crotal"); // 2
-    v1.add("Matad"); // 3
-    v1.add("S.Desp"); //4
-    v1.add("Nacido"); // 5
-    v1.add("Cebado"); // 6
-    v1.add("Sacrif"); // 7
-    v1.add("Fec.Cad"); // 8
-    v1.add("Fec.Sac"); // 9
-    v1.add("Fec.Pro"); // 10
-    v1.add("N.Lin"); // 11
-    v1.add("C.Ind."); // 12 Cantidad de Indiv.
-    jtDes.setCabecera(v1);
-    jtDes.setMaximumSize(new Dimension(743, 168));
-    jtDes.setMinimumSize(new Dimension(743, 158));
-    jtDes.setPreferredSize(new Dimension(743, 168));
-    jtDes.setAnchoColumna(new int[]{50,70,120,150,150,130,130,130,80,80,80,40,40});
-    jtDes.setAlinearColumna(new int[]{2,2,0,0,0,0,0,0,1,1,1,2,2});
-    jtDes.setFormatoColumna(1,"---9.99");
-    jtDes.setFormatoColumna(8,acp_feccadE.getFormato());
-    jtDes.setFormatoColumna(JTD_FECSAC,acp_fecsacE.getFormato());
-    jtDes.setFormatoColumna(JTD_FECPRO,acp_fecproE.getFormato());
-    ArrayList vc1=new ArrayList();
-    acp_feccadE.setText("");
-
-    mat_codiE.setAncTexto(40);
-    sde_codiE.setAncTexto(40);
-    mat_codiE.setCeroIsNull(true);
-    sde_codiE.setCeroIsNull(true);
-    acp_painacE.setAncTexto(40);
-    acp_painacE.setCeroIsNull(true);
-    acp_engpaiE.setAncTexto(40);
-    acp_engpaiE.setCeroIsNull(true);
-    acp_paisacE.setAncTexto(40);
-    acp_paisacE.setCeroIsNull(true);
-    sde_codiE.setFormato(true);
-    sde_codiE.setFormato(Types.DECIMAL,"####9",5);
-    mat_codiE.setFormato(true);
-    mat_codiE.setFormato(Types.DECIMAL,"####9",5);
-    acp_painacE.setFormato(true);
-    acp_painacE.setFormato(Types.DECIMAL,"####9",5);
-    acp_engpaiE.setFormato(true);
-    acp_engpaiE.setFormato(Types.DECIMAL,"####9",5);
-    acp_paisacE.setFormato(true);
-    acp_paisacE.setFormato(Types.DECIMAL,"####9",5);
-    acp_nucrotE.setToolTipText("Pulse F3 para generar Num. Crotal");
-    acp_cantiE.setLeePesoBascula(botonBascula);
-    acp_numlinE.setEnabled(false);
-    acp_feccadE.setText("");
-
-    vc1.add(acp_numindE); // 0
-    vc1.add(acp_cantiE); // 1
-    vc1.add(acp_nucrotE); // 2
-    vc1.add(mat_codiE); // 3 Matadero
-    vc1.add(sde_codiE); // 4
-    vc1.add(acp_painacE); // 5
-    vc1.add(acp_engpaiE); // 6
-    vc1.add(acp_paisacE); // 7
-    vc1.add(acp_feccadE); // 8
-    vc1.add(acp_fecsacE); // 9
-    vc1.add(acp_fecproE); // 10
-    vc1.add(acp_numlinE); // 11
-    vc1.add(acp_canindE); // 12
-    jtDes.setAjusAncCol(false);
-    jtDes.setColNueva(1);
-//    jtDes.ajustar(true);
-//    jtDes.ajustar(true);
-    jtDes.setCampos(vc1);
-  }
+  
   private void confGridHist()
   {
     ArrayList vh=new ArrayList();
@@ -1516,7 +1388,13 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     sbe_nombL = sbe_codiE.creaLabelSbe();
     sbe_codiE.setLabelSbe(sbe_nombL);
     strSql = getStrSql();
-
+    try
+    {
+          confGridDesglose();
+    } catch (Exception ex)
+    {
+          Error("Error al configurar grid Desglose",ex);
+    }
   }
 
     @Override
@@ -1563,19 +1441,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     acc_portesE.setColumnaAlias("acc_portes");
     acc_totfraE.setColumnaAlias("acc_totfra");
     sbe_codiE.setColumnaAlias("sbe_codi");
-    acp_painacE.getComboBox().setPreferredSize(new Dimension(150,17));
-    acp_paisacE.getComboBox().setPreferredSize(new Dimension(150,17));
-    acp_engpaiE.getComboBox().setPreferredSize(new Dimension(150,17));
-    s = "SELECT pai_codi,pai_nomb FROM v_paises where pai_activ!=0 ORDER BY pai_nomb";
-    if (dtStat.select(s))
-    {
-      do
-      {
-        acp_painacE.addDatos(dtStat.getString("pai_codi"),dtStat.getString("pai_nomb"));
-        acp_paisacE.addDatos(dtStat.getString("pai_codi"),dtStat.getString("pai_nomb"));
-        acp_engpaiE.addDatos(dtStat.getString("pai_codi"),dtStat.getString("pai_nomb"));
-      } while (dtStat.next());
-    }
+   
     s = "SELECT div_codi,div_codedi FROM v_divisa order by div_codedi";
     if (!dtStat.select(s))
       throw new SQLException("NO HAY NINGUNA DIVISA DEFINIDA");
@@ -1630,24 +1496,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
           acc_dtoppE.resetCambio();  
       }
     });
-    mat_codiE.addKeyListener(new KeyAdapter()
-    {
-            @Override
-      public void keyPressed(KeyEvent e)
-      {
-        if (e.getKeyCode() == KeyEvent.VK_F3)
-          consMatCodi();
-      }
-    });
-    sde_codiE.addKeyListener(new KeyAdapter()
-    {
-            @Override
-      public void keyPressed(KeyEvent e)
-      {
-        if (e.getKeyCode() == KeyEvent.VK_F3)
-          consSdeCodi();
-      }
-    });
+   
     acc_serieE.addFocusListener(new FocusAdapter()
     {
 
@@ -2136,33 +1985,8 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
   {    
       cambioPrv(false);
   }
-  void cambioPrv(boolean forzarCambioPrv)
-  {
-    try {
-      if (prv_codiE.isNull())
-          return;
-      s = "SELECT v_saladesp.sde_codi,sde_nrgsa FROM v_prvsade,v_saladesp "+
-          " WHERE prv_codi = " +prv_codiE.getText()+
-          " and v_prvsade.sde_codi = v_saladesp.sde_codi "+
-          " ORDER BY sde_nrgsa";
-      dtStat.select(s);
-      sde_codiE.addDatos(dtStat);
-      s = "SELECT v_matadero.mat_codi,mat_nrgsa FROM v_prvmata,v_matadero "+
-          " WHERE prv_codi = " + prv_codiE.getText()+
-          " and v_prvmata.mat_codi = v_matadero.mat_codi "+
-          " order by mat_nrgsa";
-      dtStat.select(s);
-      mat_codiE.addDatos(dtStat);
-      if (acc_copvfaE.isNull() || forzarCambioPrv)
-      {
-        acc_copvfaE.setText(prv_codiE.getText());
-        acc_copvfaE.controla(false);
-      }
-    } catch (Exception k)
-    {
-      Error("Error al buscar datos Mataderos de Proveedores",k);
-    }
-  }
+  
+  
   /**
    * Comprueba que los datos de la cabecera del albaran son validos
    * @throws SQLException
@@ -2292,11 +2116,11 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     { // Vengo de la cabecera
       if (!checkCabecera())
         return;
-      if (acc_serieE.getText().equals(EntornoUsuario.SERIEY))
-      {
-        cargaALbVentas();
-        return;
-      }
+//      if (acc_serieE.getText().equals(EntornoUsuario.SERIEY))
+//      {
+//        cargaALbVentas();
+//        return;
+//      }
       if (pcc_numeE.isEnabled())
       {
         if (!cargaLinPedido(false))
@@ -2446,168 +2270,65 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     dtStat.select(s);
   }
 
-  int cambiaLinDes(int row)
+  int cambiaLinDes(int row) 
   {
-  
     if (swCargaAlb || swCargaLin)
         return -1;
-    try     
+    try
     {
-        
-    if (acp_numindE.getValorInt()!=numIndAnt && ARG_ADMIN)
-    { // Han cambiado la linea. Comprobar q no existe ese individuo.
-        if (getIndAlbcompar(-1,acp_numindE.getValorInt(),dtStat))
-        {
-            mensajeErr("Numero de individuo ya esta asignado en este albaran");
-            return 0;
+        if (acp_numindE.getValorInt() != numIndAnt && ARG_ADMIN)
+        { // Han cambiado la linea. Comprobar q no existe ese individuo.
+            if (getIndAlbcompar(-1, acp_numindE.getValorInt(), dtStat))
+            {
+                mensajeErr("Numero de individuo ya esta asignado en este albaran");
+                return 0;
+            }
         }
-    }
-    if (acp_cantiE.getValorDec()==0 && jtDes.getValorInt(row,DESNIND)==0)
-      return -1;
+        if (acp_cantiE.getValorDec() == 0 && jtDes.getValorInt(row, DESNIND) == 0)
+            return -1;
 
+        int ret = cambiaLinDesg0(row);
+        if (ret >= 0)
+            return ret;
 
-    if (mat_codiE.getError() && !mat_codiE.isNull())
-    {
-      mensajeErr("Introduzca un Codigo de Matadero  valido");
-      return 3;
-    }
-    if (sde_codiE.getError() && !sde_codiE.isNull())
-    {
-      mensajeErr("Introduzca un Codigo de SALA DE DESPIECE valido");
-      return 4;
-    }
-    if (acp_painacE.getError() && !acp_painacE.isNull())
-    {
-      mensajeErr("Introduzca un PAIS DE NACIMIENTO");
-      return 5;
-    }
-    if (acp_engpaiE.getError() && !acp_engpaiE.isNull())
-    {
-      mensajeErr("Introduzca un PAIS DE ENGORDE");
-      return 6;
-    }
-    if (acp_paisacE.getError() && !acp_paisacE.isNull())
-    {
-      mensajeErr("Introduzca un PAIS DE SACRIFICIO");
-      return 7;
-    }
-    if (acp_feccadE.isNull() || acp_feccadE.getError())
-    {
-      acp_feccadE.setDate(Formatear.sumaDiasDate(acc_fecrecE.getDate(),pro_codiE.getDiasCad()) );
-      mensajeErr("Introduzca Fecha de Caducidad");
-      return 8;
-    }
-    if (Formatear.comparaFechas(acp_feccadE.getDate(), acc_fecrecE.getDate())<=0)
-        msgBox("ATENCION Fecha Caducidad deberia ser superior a la del Albarán");
-    
-    if (proOblfsa && ( acp_fecsacE.isNull() || acp_fecsacE.getError()))
-    {
-      mensajeErr("Es obligatorio introducir la Fecha Sacrificio  para este Producto");
-      return 9;
-    }
-    if (acp_fecproE.isNull() && !acp_fecsacE.isNull() && jtDes.getValorInt(row,JTD_NUMIND)==0)
-    {
-        jtDes.setValor(acp_fecsacE.getText(),row,JTD_FECPRO);
-        acp_fecproE.setText(acp_fecsacE.getText());
-    }
-    if (acp_fecsacE.isNull() && acp_fecproE.isNull())
-    {
-        mensajeErr("Introducir fecha Produccion");
-        return JTD_FECPRO;
-    }
-    if (proNumcro>0)
-    {
-        if (acp_nucrotE.isNull())
+        int nLinAnt = numIndAnt;
+        String linea = getLinGrDes(); // Un String con los datos concatenados del grid
+        numIndAnt = nLinAnt;
+        if (acc_numeE.getValorInt() == 0)
         {
-            mensajeErr("Es obligatorio introducir codigo crotal para este producto");
-            return 2;
+            if (!checkCabecera())
+            {
+                msgBox("Error en condiciones de Albaran (Cabecera).\n" + getMensajeErr());
+                return 0;
+            }
         }
-        int numCrotal=getNumCrotal(acp_nucrotE.getText(),numIndAnt,jt.getValorInt(1));
-        if (numCrotal>= proNumcro)
-        {
-            mensajeErr("No puede haber mas de "+proNumcro+"  numeros de crotal iguales");
-            if (acp_nucrotE.isEditable())
-                return 2;
-        }
-        if (mat_codiE.isNull())
-        {
-          mensajeErr("Codigo de Matadero Obligatorio para este producto");
-          return 3;
-        }
-        if (sde_codiE.isNull())
-        {
-            mensajeErr("SALA DE DESPIECE Obligatoria para este producto");
-            return 4;
-        }
-        if (acp_painacE.isNull())
-        {
-            mensajeErr("PAIS DE NACIMIENTO Obligatorio para este producto");
-            return 5;
-        }
-        if (acp_engpaiE.isNull())
-        {
-            mensajeErr("PAIS DE CEBADO Obligatorio para este producto");
-            return 6;
-        }
-        if (acp_paisacE.isNull())
-        {
-            mensajeErr("PAIS DE SACRIFICIO Obligatorio para este producto");
-            return 7;
-        }
-    }
-    int nLinAnt=numIndAnt;
-    String linea=getLinGrDes(); // Un String con los datos concatenados del grid
-    numIndAnt=nLinAnt;
-    if (acc_numeE.getValorInt() == 0)
-      {
-        if (!checkCabecera())
-        {
-          msgBox("Error en condiciones de Albaran (Cabecera).\n"+getMensajeErr());
-          return 0;
-        }
-      }
 
-      if (nav.pulsado==navegador.ADDNEW)
-      {
-        if (Formatear.comparaFechas(acp_feccadE.getDate(), Formatear.getDateAct()) <
-            0)
+        if (acp_canindE.getValorDec() <= 0)
         {
-          mensajeErr("Fecha de Caducidad NO puede ser inferior a la actual");
-          return 8;
-        }
-      }
-        if (acp_canindE.getValorDec()<=0)
-          {
             acp_canindE.setValorDec(1);
             mensajeErr("Introduzca Numero de Individuos");
             return JTD_CANIND;
-          }
-
-      if (!linea.equals(lineaAnt))
-      { // Hubo cambios
-        lineaAnt = linea;
-//        jtDes.procesaAllFoco(row);
-        try {
-            guardaLinDes(row);
-        } catch (NumberFormatException k1)
-        {
-            msgBox("Datos introducidos NO VALIDOS");
-            return 0;
         }
-        ultCeb=acp_engpaiE.getCellEditorValue().toString();
-        ultFecCad=acp_feccadE.getText();
-        ultFecSac=acp_fecsacE.getText();
-        ultFecPro=acp_fecproE.getText();
-        ultMat=mat_codiE.getCellEditorValue().toString();
-        ultNac=acp_painacE.getCellEditorValue().toString();
-        ultSacr=acp_paisacE.getCellEditorValue().toString();
-        ultSalDes=sde_codiE.getCellEditorValue().toString();
-      }
+
+        if (!linea.equals(lineaAnt))
+        { // Hubo cambios
+            lineaAnt = linea;
+//        jtDes.procesaAllFoco(row);
+            try
+            {
+                guardaLinDes(row);
+            } catch (NumberFormatException k1)
+            {
+                msgBox("Datos introducidos NO VALIDOS");
+                return 0;
+            }
+            guardaUltValoresDesg();
+        }
     } catch (Exception k)
     {
-      Error("Error al Guardar Individuo en  Albaran de compra",k);
+        Error("Error al Guardar Individuo en  Albaran de compra", k);
     }
-    kgIndivAnt=acp_cantiE.getValorDec();
+    kgIndivAnt = acp_cantiE.getValorDec();
     acp_cantiE.resetCambio();
     return -1;
   }
@@ -2631,18 +2352,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     kilosE.setValorDec(kilos);
   }
 
-  String getLinGrDes()
-  {
-    numIndAnt=jtDes.getValorInt(JTD_NUMIND);
-//    System.out.println("Lin. Ant: "+numIndAnt);
-    return acp_numindE.getValorInt()+""+acp_cantiE.getValorDec()+acp_nucrotE.getText()+
-        mat_codiE.getValorInt()+sde_codiE.getValorInt()+
-        acp_painacE.getValorInt()+acp_engpaiE.getValorInt()+
-        acp_paisacE.getValorInt()+acp_feccadE.getText()+acp_fecsacE.getText()+
-        acp_fecproE.getText()+
-        acp_numlinE.getValorInt()+
-        acp_canindE.getValorInt();
-  }
+  
   /**
    * Retorna el Numero de Linea (del grid) donde esta un individuo
    *
@@ -2894,207 +2604,11 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
      return dtCon1.getInt("acp_numlin", true) + 1; // N. Linea. Alb. Desp.
   }
 
-  private String getConservar(int codProd) throws SQLException
+  String getConservar(int codProd) throws SQLException
   {
     return gnu.chu.anjelica.pad.MantArticulos.getStrConservar(codProd,dtCon1);
   }
-  /**
-   * Imprime etiqueta
-   * @param nLin Numero de linea del grid de desglose
-   * @param nInd Numero de Individuo.
-   * @throws SQLException
-   * @throws java.text.ParseException
-   */
-  void imprEtiq(int nLin,int nInd) throws SQLException,java.text.ParseException
-  {
-    if (jtDes.getValorDec(nLin,1)<=0 )
-    {
-      msgBox("No se pueden imprimir etiquetas sobre Cantidades negativos o a cero");
-      return;
-    }
-    String codBarras = acc_anoE.getText().substring(2) +
-        (acc_numeE.getValorInt()>9999?Formatear.format(emp_codiE.getText(), "9"):
-         Formatear.format(emp_codiE.getText(), "99")) +
-        acc_serieE.getText() +
-        (acc_numeE.getValorInt()>9999?Formatear.format(acc_numeE.getText(), "99999"):
-         Formatear.format(acc_numeE.getText(), "9999"))+
-        Formatear.format(jt.getValorInt(1), "99999") +
-        Formatear.format(nInd, "999") +
-        Formatear.format(jtDes.getValorDec(nLin,1), "999.99");
-    String lote=acc_anoE.getText().substring(2) + "/" +
-                       Formatear.format(emp_codiE.getText(), "9") + "/" +
-                       acc_serieE.getText() + "/" +
-                       acc_numeE.getText().trim() + "/" +
-                       nInd;
-
-    String sacrificadoE="",despiezadoE="";
-    String nombArt="",codArt="";
-    codArt=jt.getValString(1);
-    nombArt=pro_codiE.getNombArt(codArt,emp_codiE.getValorInt());
-    int sdeCodi=0,matCodi=0;
-    try {
-      matCodi=Integer.parseInt(mat_codiE.getTexto(jtDes.getValString(3)));
-    } catch (Exception k) {}
-
-    s = "SELECT mat_nrgsa,pai_codi FROM v_matadero m WHERE m.mat_codi = " + matCodi;
-    if (dtCon1.select(s))
-    {
-      sacrificadoE =  dtCon1.getString("mat_nrgsa");
-      s = MantPaises.getNombrePais(dtCon1.getInt("pai_codi"), dtCon1);
-      if (s!=null)
-        sacrificadoE=s + "-" +sacrificadoE;
-    }
-    else
-      sacrificadoE=matCodi+" NO ENCONTRADO";
-    try {
-      sdeCodi=Integer.parseInt(sde_codiE.getTexto(jtDes.getValString(nLin,4)));
-    } catch (Exception k) {}
-
-    s = "SELECT sde_nrgsa,pai_codi FROM v_saladesp m " +
-        " WHERE m.sde_codi = " + sdeCodi;
-    if (dtCon1.select(s))
-    {
-      despiezadoE = dtCon1.getString("sde_nrgsa");
-      s = MantPaises.getNombrePais(dtCon1.getInt("pai_codi"), dtCon1);
-      if (s!=null)
-        despiezadoE = s + "-" + despiezadoE;
-    }
-    else
-      despiezadoE = sdeCodi + " NO ENCONTRADO";
-
-    if (etiq == null)
-      etiq = new etiqueta(EU);
-
-    etiq.iniciar(codBarras, lote,
-                 codArt, nombArt,
-                 mat_codiE.getTextoCombo(jtDes.getValString(nLin, 5)),
-                 mat_codiE.getTextoCombo(jtDes.getValString(nLin, 6)),
-                 despiezadoE,
-                 jtDes.getValString(nLin, 2),
-                 Formatear.format(jtDes.getValString(nLin, 1), "##9.99") +
-                 " Kg",
-                 getConservar(jt.getValorInt(1)),
-                 sacrificadoE,                
-                 jtDes.getValDate(nLin,JTD_FECPRO)==null?"":
-                   "Fec.Prod: "+jtDes.getValString(nLin,JTD_FECPRO),                 
-                 "Fec. Caduc.:",null,
-                 jtDes.getValString(nLin, 8).trim().equals("") ? null :
-                 jtDes.getValString(nLin, 8),
-                 jtDes.getValDate(nLin, JTD_FECSAC,acp_fecsacE.getFormato()));
-    etiq.setTipoEtiq(dtCon1,emp_codiE.getValorInt(),proCodeti);
-    if (Formatear.comparaFechas(jtDes.getValDate(nLin,8),acc_fecrecE.getDate())>180 )
-        etiq.setFechaCongelado(""); // Si la fecha introducida es superior en mas de 180 dias a la de entrada
-                                    // no se pondra nunca la fecha de congelado.
-    else
-        etiq.setFechaCongelado(utildesp.getFechaCongelado(jt.getValorInt(1), acc_fecrecE.getDate(), dtCon1));
-    try
-    {
-      etiq.listar();
-//        new ThreadPrint_alco(this);
-    }
-    catch (Exception k)
-    {
-      Error("Error al Imprimir Etiquetas", k);
-    }
-    mensajeErr("Etiqueta ... Listada");
-  }
-  void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
-                    int acp_painac,java.util.Date acp_feccad,int acp_paisac,
-                    int acp_engpai,java.util.Date acp_fecsac,java.util.Date acp_fecpro,int pro_codi,
-                    int acl_nulin,int mat_codi,int sde_codi,
-                    double acp_canti, int acp_canind) throws SQLException
-  {
-
-    dtAdd.addNew("v_albcompar");
-    dtAdd.setDato("acc_ano",acc_anoE.getValorInt());
-    dtAdd.setDato("emp_codi",emp_codiE.getValorInt());
-    dtAdd.setDato("acc_serie",acc_serieE.getText());
-    dtAdd.setDato("acc_nume",acc_numeE.getValorInt());
-    dtAdd.setDato("acl_nulin", acl_nulin);// Numero Linea Albaran
-    dtAdd.setDato("acp_numlin", acp_numlin);
-    dtAdd.setDato("acp_claani", 0);
-    dtAdd.setDato("acp_numind", acp_numind);
-    dtAdd.setDato("pcc_nume", 0);
-    dtAdd.setDato("acp_nucrot",acp_nucrot);
-    dtAdd.setDato("acp_painac",acp_painac);
-    dtAdd.setDato("acp_feccad",acp_feccad);
-    dtAdd.setDato("acp_paisac", acp_paisac);
-    dtAdd.setDato("acp_engpai",acp_engpai); // Pais Engorde
-    dtAdd.setDato("acp_fecsac",acp_fecsac); // Fecha Sacrificio
-    dtAdd.setDato("acp_fecpro",acp_fecpro); // Fecha Produccion
-    dtAdd.setDato("pro_codi", pro_codi);
-    dtAdd.setDato("mat_codi",mat_codi); // Matadero
-    dtAdd.setDato("sde_codi",sde_codi); // Sala Despiece
-    dtAdd.setDato("acp_canti", acp_canti);
-    dtAdd.setDato("acp_canind", acp_canind);
-    dtAdd.update(stUp);
-    stkPart.sumar(acc_anoE.getValorInt(),acc_serieE.getText(),
-                     acc_numeE.getValorInt(),acp_numind,
-                     pro_codi, // Producto
-                     alm_codiE.getValorInt(), // Almacen
-                     acp_canti, // Kilos
-                     acp_canind,  // Num. Unidades
-                     acc_fecrecE.getText(),
-                     actStkPart.CREAR_SI,
-                     prv_codiE.getValorInt(), // Proveedor
-                     acp_feccad   // Fecha Cad.
-                     );
-  }
-
-  /**
-   *
-   *  !! ATENCION !!! En la base de datos MicrosftSQL  la columna nLiAlDe es incremental
-   *  por lo que no nos hace caso al numero que nosotros le ponemos. Por eso se
-   *  realiza una select para ver que numero nos ha dado la base de datos.
-   *
-   *  @param row int N. Linea Alb. Desglose para BD
-   *  @param nLiAlDe int N. Linea Alb. Desglose para BD
-   * @param nLiAlb int N. LINEA Alb. PARA BD
-   * @param nInd int N. Individuo para BD
-   * @throws SQLException error BD
-   * @throws ParseException error BD
-   *
-   */
-  void guardaLinDes(int row,int nLiAlDe,int nLiAlb,int nInd) throws SQLException,NumberFormatException
-  {
-
-    try {
-    if (opImpEti.isSelected())
-      imprEtiq(row, nInd);
-//    debug("guardaLinDes: row "+row+" nLiAlDe: "+nLiAlDe+" nInd: "+nInd);
-    jtDes.setValor(""+nInd,row,DESNIND);
-    guardaLinDes(nLiAlDe,nInd,jtDes.getValString(row,2),
-                 mat_codiE.getTextoInt(jtDes.getValString(row,5,true)),
-                 jtDes.getValDate(row,JTD_FECCAD),
-                 mat_codiE.getTextoInt(jtDes.getValString(row,7,true)),
-                 mat_codiE.getTextoInt(jtDes.getValString(row,6,true)),
-                 jtDes.getValDate(row,JTD_FECSAC),
-                 jtDes.getValDate(row,JTD_FECPRO),
-                 jt.getValorInt(1), // codigo Prod. 
-                 nLiAlb,
-                 mat_codiE.getTextoInt(jtDes.getValString(row,3,true)),
-                 sde_codiE.getTextoInt(jtDes.getValString(row,4,true)),
-                 jtDes.getValorDec(row, 1),
-                 jtDes.getValorInt(row, JTD_CANIND));
-
-    // Busco el ultimo Numero de Individuo
-/*    s = "SELECT acp_numlin FROM v_albcompar "+
-       " WHERE emp_codi = " +emp_codiE.getValorInt() +
-       " AND acc_ano = " + acc_anoE.getValorInt() +
-       " and acc_nume = " + acc_numeE.getValorInt()+
-       " and acc_serie = '"+acc_serieE.getText()+"'"+
-       " and acl_nulin = "+nLiAlb+
-       " and acp_numind = "+nInd;
-    dtAdd.select(s);
-    jtDes.setValor(""+dtAdd.getInt("acp_numlin"),row,DESNLIN);*/
-
-    jtDes.setValor(""+nLiAlDe,row,JTD_NUMLIN);
-
-    } catch (java.text.ParseException k)
-    {
-      throw new SQLException("Error al Parsear fechas",k);
-    }
-  }
+  
   void guardaLinAlb(int nLiAlb, int nLin,int nCaja,double kilos,
                     double kgFac,double prLiAlb,double kgRec,String coment,double dtopp) throws SQLException
   {
@@ -3223,81 +2737,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     dtAdd.update(stUp);
     return nAlb;
   }
-  /**
-   * Actualizo Datos de Desglose
-   * @param nLinAlb int
-   * @param row int Linea del Grid de Desgloses
-   * @param nLinDes int Numero Linea de Desglose
-   * @param nInd int Numero Individuo
-   * @param nLiAlAnt int Numero Linea Anterior
-   * @param nIndAnt Numero Individuo anterior
-   * @throws SQLException
-   * @throws ParseException
-   */
-  void actGridDes(int nLinAlb,int row,int nLinDes,int nInd,int nIndAnt, int nLiAlAnt) throws SQLException,java.text.ParseException
-  {
-    s = "SELECT * FROM v_albcompar "+
-        " WHERE emp_codi = " +emp_codiE.getValorInt() +
-        " AND acc_ano = " + acc_anoE.getValorInt() +
-        " and acc_nume = " + acc_numeE.getValorInt()+
-        " and acc_serie = '"+acc_serieE.getText()+"'"+
-        " and acl_nulin = "+nLiAlAnt+
-        " and acp_numlin = "+nLinDes;
-    if (! dtCon1.select(s))
-    { // No lo encuentro por Num. Linea. Pruebo por Num. Individuo
-
-      if (! getIndAlbcompar(nLiAlAnt, nIndAnt,dtCon1))
-      {
-        aviso("pdalbaco: (NO encontrado Individuo en desglose de Alb. Compras)\n" +s);
-        return;
-      }
-//        throw new SQLException("NO ENCONTRADO REGISTRO EN PARTIDAS DE COMPRAS\n"+s);
-    }
-    if (nIndAnt==nInd && acp_cantiE.getValorDec() == dtCon1.getDouble("acp_canti") &&
-            acp_nucrotE.getText().equals(dtCon1.getString("acp_nucrot")) &&
-            mat_codiE.getValorInt() == dtCon1.getInt("mat_codi") &&
-            sde_codiE.getValorInt() == dtCon1.getInt("sde_codi") &&
-            acp_painacE.getValorInt() == dtCon1.getInt("acp_painac") &&
-            acp_engpaiE.getValorInt() == dtCon1.getInt("acp_engpai") &&
-            acp_paisacE.getValorInt() == dtCon1.getInt("acp_paisac") &&
-            acp_feccadE.getText().equals(dtCon1.getFecha("acp_feccad","dd-MM-yyyy")) &&
-            acp_fecsacE.getText().equals(dtCon1.getFecha("acp_fecsac","dd-MM-yyyy")) &&
-            acp_fecproE.getText().equals(dtCon1.getFecha("acp_fecpro","dd-MM-yyyy")) &&
-            acp_canindE.getValorInt() == dtCon1.getInt("acp_canind"))
-          return; // Son iguales
-
-    nIndAnt=dtCon1.getInt("acp_numind");
-    nLinDes=dtCon1.getInt("acp_numlin");
-    double canti=dtCon1.getDouble("acp_canti");
-    int canInd=dtCon1.getInt("acp_canind");
-    int nIndiv;
-//    int nLiAlDe=dtCon1.getInt("acl_nulin");
-    if (nInd!=nIndAnt && ARG_ADMIN)
-        nIndiv=nInd;
-    else
-      nIndiv=utildesp.getMaxNumInd(dtCon1,jt.getValorInt(1),acc_anoE.getValorInt(),emp_codiE.getValorInt(),
-                        acc_serieE.getText(),acc_numeE.getValorInt());
-
-    s = "delete from v_albcompar WHERE acc_ano = " + acc_anoE.getValorInt() +
-        " and emp_codi = " + emp_codiE.getValorInt() +
-        " and acc_nume = " + acc_numeE.getValorInt()+
-        " and acc_serie = '"+acc_serieE.getText()+"'"+
-        " and acl_nulin = "+nLiAlAnt+
-        " and acp_numlin = "+nLinDes;
-    stUp.executeUpdate(s);
-//    if ( stkPart.anuStkPart(jt.getValorInt(1),
-//                   acc_anoE.getValorInt(),
-//                   emp_codiE.getValorInt(),
-//                   acc_serieE.getText(),
-//                   acc_numeE.getValorInt(),
-//                   nIndAnt,
-//                   alm_codiE.getValorInt(),
-//                   canti, canInd)==2)
-//    nIndiv=nInd; // Stock Borrado.
-
-    guardaLinDes(row,nLinDes, nLinAlb,nIndiv);
-    ctUp.commit();
-  }
+  
   /**
    * Busca los datos de un despiece en un vector
    * @param dat vector con los datos
@@ -3452,18 +2892,10 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
         public void run()
         {
             jtDes.requestFocusInicio();
-            if (ultMat!=null)
-            {
-                jtDes.setValor(ultMat, 3);
-                jtDes.setValor(ultSalDes, 4);
-                jtDes.setValor(ultNac, 5);
-                jtDes.setValor(ultCeb, 6);
-                jtDes.setValor(ultSacr, 7);
-                jtDes.setValor(ultFecCad, 8);
-                jtDes.setValor(ultFecSac, JTD_FECSAC);
-                jtDes.setValor(ultFecPro, JTD_FECPRO);
-                jtDes.setValor("0",JTD_NUMLIN);
-            }
+           
+                copiaJtValorAnt();
+                
+           
             jtDes.salirFoco();
             BimpEti.setEnabled(true);
             kgIndivAnt=acp_cantiE.getValorDec();
@@ -3488,10 +2920,10 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     }
   }
 
-  private void afterCambiaLinDes() {
+  void afterCambiaLinDes() {
       try {
             if (jtDes.getValorInt(0) != 0) {
-                if (!actStkPart.checkStock(dtStat, jt.getValorInt(1),
+                if (!actStkPart.checkStock(dtStat, jt.getValorInt(JT_PROCOD),
                      acc_anoE.getValorInt(), emp_codiE.getValorInt(),
                      acc_serieE.getText(), acc_numeE.getValorInt(),
                      jtDes.getValorInt(0), alm_codiE.getValorInt(),
@@ -3965,8 +3397,9 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
 //    acl_prcomE.setEditable(true);
     prv_codiE.resetCambio();
     prv_codiE.requestFocus();
-    ultMat=null;
+    
     swActDesg=true;
+    PADAddNew0();
   }
 
     @Override
@@ -4745,33 +4178,8 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
     int nLin=0;
     do
     {
-      ArrayList v=new ArrayList();
-      v.add(dtCon1.getString("acp_numind"));
-      v.add(dtCon1.getString("acp_canti"));
-      v.add(dtCon1.getString("acp_nucrot"));
-      s = "SELECT mat_nrgsa FROM v_matadero m "+
-          " WHERE m.mat_codi = " + dtCon1.getInt("mat_codi");
-      if (dtStat.select(s))
-        v.add(dtCon1.getInt("mat_codi")+" - "+ dtStat.getString("mat_nrgsa"));
-      else
-        v.add(dtCon1.getInt("mat_codi")+" - Mat. "+dtCon1.getInt("mat_codi")+"  NO ENCONTRADO");
-
-      s = "SELECT sde_nrgsa FROM v_saladesp m "+
-          " WHERE m.sde_codi = " + dtCon1.getInt("sde_codi");
-      if (dtStat.select(s))
-        v.add(dtCon1.getInt("sde_codi")+" - "+ dtStat.getString("sde_nrgsa"));
-      else
-        v.add(dtCon1.getInt("sde_codi") + " - S.DESP. "+dtCon1.getInt("sde_codi") +
-                     " NO ENCONTRADO");
-
-      v.add(dtCon1.getInt("acp_painac")+" - "+getPais(dtCon1.getInt("acp_painac")));
-      v.add(dtCon1.getInt("acp_engpai")+" - "+getPais(dtCon1.getInt("acp_engpai")));
-      v.add(dtCon1.getInt("acp_paisac")+" - "+getPais(dtCon1.getInt("acp_paisac")));
-      v.add(dtCon1.getFecha("acp_feccad","dd-MM-yyyy"));
-      v.add(dtCon1.getFecha("acp_fecsac","dd-MM-yyyy"));
-      v.add(dtCon1.getFecha("acp_fecpro","dd-MM-yyyy"));
-      v.add(dtCon1.getString("acp_numlin"));
-      v.add(dtCon1.getString("acp_canind"));
+      ArrayList v=getDatosDesgl();
+     
       jtDes.addLinea(v);
       kilos+=dtCon1.getDouble("acp_canti",true)==0?1:dtCon1.getDouble("acp_canti",true);
       nLin++;
@@ -4819,7 +4227,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
 
     if (opAutoClas.isSelected())
     { // Busco el No de Linea dentro del Albaran.
-      int n=getLinProducto(jtDes.getValorInt(nRow,0));
+      int n=getLinProducto(jtDes.getValorInt(nRow,JTD_NUMIND));
       if (n==-1)
       {
         msgBox("No encontrada Linea de Albaran donde esta este Producto");
@@ -4844,15 +4252,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
       return false; // No encontrado Individuo
     }
     double canti=dtCon1.getDouble("acp_canti");
-    stkPart.anuStkPart(dtCon1.getInt("pro_codi"),
-               dtCon1.getInt("acc_ano"),
-               dtCon1.getInt("emp_codi"),
-               dtCon1.getString("acc_serie"),
-               dtCon1.getInt("acc_nume"),
-               dtCon1.getInt("acp_numind"),
-               alm_codiE.getValorInt(),
-               canti,
-               dtCon1.getInt("acp_canind"));
+
     s = "DELETE FROM v_albcompar " +
         " WHERE emp_codi = " + emp_codiE.getValorInt() +
         " AND acc_ano = " + acc_anoE.getValorInt() +
@@ -4898,7 +4298,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
                    acl_comenE.getText(),dtopp);
       for (int n=0;n<jt.getRowCount();n++)
       {
-        if (jt.getValorInt(n,3)==0) // N. Unidades = 0
+        if (jt.getValorInt(n, JT_CANIND)==0) // N. Unidades = 0
         {
           borraLinea(n);
           jt.removeLinea(n);
@@ -4911,8 +4311,8 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
                    kilosE.getValorDec(),kgFac,prLiAlb,acl_kgrecE.getValorDec(),
                    acl_comenE.getText(),dtopp);
       jt.setValor("" + nLiAlb, 0);
-      jt.setValor("" + nLinE.getValorInt(), 3);
-      jt.setValor("" + kilosE.getValorDec(), 4);
+      jt.setValor("" + nLinE.getValorInt(), JT_CANIND);
+      jt.setValor("" + kilosE.getValorDec(), JT_KILALB);
       if (kilosE.getValorDec()==0 && opAutoCl)
         opAutoClas.setEnabled(true);
     }
@@ -5206,8 +4606,8 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
         " and acc_nume = " + acc_numeE.getValorInt();
     if (!dtAdd.select(s, true))
       throw new SQLException("No encontrado Cabecera Albaran.\n Select: " + s);
-    frtEjer=dtAdd.getInt("frt_ejerc",true);
-    frtNume=dtAdd.getInt("frt_nume",true);
+//    frtEjer=dtAdd.getInt("frt_ejerc",true);
+//    frtNume=dtAdd.getInt("frt_nume",true);
     dtAdd.edit(dtAdd.getCondWhere());
     if (prv_codiE.getValorInt()!=dtAdd.getInt("prv_codi"))
         swCambioPrv=true;
@@ -6155,7 +5555,7 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
      pro_codcamE.setText(jt.getValString(1), true);
  //     System.out.println("en CambiaRefProd");
      frProd.setVisible(true);
-     pdalbco2.this.setEnabled(false);
+     MantAlbCom.this.setEnabled(false);
      try
      {
        frProd.setSelected(true);
@@ -6931,197 +6331,8 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
         jtDes.requestFocus(jtDes.getSelectedRow(),3);
     }
 
-    /**
-     * Consulta Mataderos
-     * Llama a la Ayuda de Mataderos
-     */
-    public void consMatCodi() {
-        final ayuMat ayMat;
-
-        try {
-            ayMat = new ayuMat(EU, vl);
-            ayMat.addInternalFrameListener(new InternalFrameAdapter()
-            {
-
-                @Override
-                public void internalFrameClosing(InternalFrameEvent e) {
-                    ej_consMat(ayMat);
-                }
-            });
-
-            vl.add(ayMat);
-            ayMat.setLocation(25, 25);
-            ayMat.setVisible(true);
-            this.setEnabled(false);
-            this.setFoco(ayMat);
-            ayMat.iniciarVentana();
-        } catch (Exception j) {
-            this.setEnabled(true);
-        }
-    }
-
-  void ej_consMat(ayuMat ayMat)
-  {
-    if (ayMat.consulta)
-    {
-      mat_codiE.setText(ayMat.mat_codiT);
-      if (! mat_codiE.controla())
-      {
-          int res=mensajes.mensajeYesNo("Matadero "+ayMat.mat_nombT +
-               " NO Habilitado para este Proveedor. Habilitarlo ?");
-          if (res==mensajes.YES)
-          {
-              altaMat(mat_codiE.getValorInt());
-              mat_codiE.addDatos(""+ayMat.mat_codiT,ayMat.mat_nombT);
-              mat_codiE.setText(ayMat.mat_codiT);
-          }
-      }
-    }
    
-    ayMat.dispose();
-    this.setEnabled(true);
-      this.toFront();
-      try
-      {
-        this.setSelected(true);
-      }
-      catch (Exception k)
-      {}
-      this.setFoco(null);
-      mat_codiE.requestFocus();
-  }
-  void altaMat(int matCodi)
-  {
-    try {
-        pdprove.insMatadero(prv_codiE.getValorInt(), matCodi, dtAdd);
-        dtAdd.commit();
-        msgBox("Matadero Insertado");
-    } catch (SQLException k)
-    {
-        Error("Error al dar alta Matadero", k);
-    }
-  }
-   /**
-   * Consulta Mataderos
-   * Llama a la Ayuda de Mataderos
-   */
-  public void consSdeCodi()
-  {
-    final ayuSde aySde;
-
-    try
-    {
-      aySde = new ayuSde(EU, vl);
-      aySde.addInternalFrameListener(new InternalFrameAdapter()
-      {
-                @Override
-        public void internalFrameClosing(InternalFrameEvent e)
-        {
-          ej_consSde(aySde);
-        }
-      });
-
-      vl.add(aySde);
-      aySde.setLocation(25, 25);
-      aySde.setVisible(true);
-      this.setEnabled(false);
-      this.setFoco(aySde);
-      aySde.iniciarVentana();
-    }
-    catch (Exception j)
-    {
-        this.setEnabled(true);
-    }
-  }
-
-  void ej_consSde(ayuSde aySde)
-  {
-    if (aySde.consulta)
-    {
-      sde_codiE.setText(aySde.sde_codiT);
-      if (! sde_codiE.controla())
-      {
-          int res=mensajes.mensajeYesNo("Sala Despiece "+aySde.sde_nombT +
-               " NO Habilitada para este Proveedor. Habilitarla ?");
-          if (res==mensajes.YES)
-          {
-              altaSde(sde_codiE.getValorInt());
-              sde_codiE.addDatos(""+aySde.sde_codiT,aySde.sde_nombT);
-              sde_codiE.setText(aySde.sde_codiT);
-          }
-      }
-    }
-
-    aySde.dispose();
-    this.setEnabled(true);
-      this.toFront();
-      try
-      {
-        this.setSelected(true);
-      }
-      catch (Exception k)
-      {}
-      this.setFoco(null);
-      sde_codiE.requestFocus();
-  }
-  void altaSde(int sdeCodi)
-  {
-    try {
-        pdprove.insSalaDesp(prv_codiE.getValorInt(), sdeCodi, dtAdd);
-        dtAdd.commit();
-        msgBox("Sala Despiece Insertada");
-    } catch (SQLException k)
-    {
-        Error("Error al dar alta Sala de Despiece", k);
-    }
-  }
-     void BvertSala_actionPerformed()
-     {
-       if (jtRecl.isVacio())
-         return;
-       int nLin=cambiaLinRecl(jtRecl.getSelectedRow());
-       if (nLin>=0)
-       {
-         jtRecl.requestFocusLater(jtRecl.getSelectedRow(),nLin);
-         return;
-       }
-       try {
-         char estFin = estFinE.getValor().charAt(0);
-         int nRow = jtRecl.getRowCount();
-         for (int n = 0; n < nRow; n++)
-         {
-           if (jtRecl.getValorInt(n, ROWNVERT) == 0)
-             continue;
-           if (!jtRecl.getValString(n, 7).equals(estIniE.getValor()))
-             continue;
-
-           if (estFin == 'P' || estFin == 'E')
-             jtRecl.setValor("", n, 8); // Pongo la Fecha Resol. vacia
-           if (estFin == 'R' || estFin == 'A')
-           {
-             if (jtRecl.getValString(n, 8).trim().equals(""))
-               jtRecl.setValor(Formatear.getFechaAct("dd-MM-yy"), n, 8);
-           }
-           if (estFin == 'R')
-             jtRecl.setValor("0", n, 5);
-           jtRecl.setValor(""+estFin,n,7);
-           s = "update v_regstock set rgs_recprv = " + getRecPrv("" + estFin) + "," +
-               " rgs_fecres = "+ (jtRecl.getValString(n,8).trim().equals("")?"null":
-               "TO_DATE('" + jtRecl.getValString(n, 8) + "','dd-MM-yy')")+", " +
-               " rgs_prregu = " + jtRecl.getValorDec(n, 5) +
-               " WHERE rgs_nume = " + jtRecl.getValorInt(n, 10);
-//           debug("s: "+s);
-           dtAdd.executeUpdate(s);
-         }
-         ctUp.commit();
-         jtRecl.requestFocusInicio();
-         mensajeErr("Estado de las Reclamaciones  ... CAMBIADAS");
-       } catch (Exception k)
-       {
-         Error("Error al cambiar estado a Vertederos",k);
-       }
-
-     }
+ 
 
 
      int getRecPrv(String tipo)
@@ -7182,152 +6393,152 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
        return dt.select(s);
      }
 
-     private void cargaALbVentas()
-     {
-       new miThread("")
-       {
-            @Override
-         public void run()
-         {
-           try {
-             cargaALbVentas0();
-           } catch (SQLException k)
-           {
-             Error("Error al cargar albaran de Ventas",k);
-           }
-         }
-       };
-     }
-     /**
+//     private void cargaALbVentas()
+//     {
+//       new miThread("")
+//       {
+//            @Override
+//         public void run()
+//         {
+//           try {
+//             cargaALbVentas0();
+//           } catch (SQLException k)
+//           {
+//             Error("Error al cargar albaran de Ventas",k);
+//           }
+//         }
+//       };
+//     }
+      /**
       * Función NO usada. Era para cuando se hicieran traspasos de una empresa a otra.
       * @throws SQLException 
       */
-     private void cargaALbVentas0() throws SQLException
-     {
-       int nLinDes;
-       if (cargaAlbVentas)
-         return; // Para que no se le llame mas que una vez.
-       cargaAlbVentas=true;
-       msgEspere("Cargando Albaran de Ventas ...");
-       swCargaAlb=false;
-       if (dtCursor == null)
-       {
-         dtCursor = new DatosTabla(ct);
-         dtInd = new DatosTabla(ct);
-         utdes = new utildesp();
-       }
-       try
-       {
-         String sLocal = pdalbara.getSqlLinAgr(pdalbara.TABLALIN,avc_anoE.getValorInt(), emp_codiE.getValorInt(),
-                                          EntornoUsuario.SERIEY, avc_numeE.getValorInt(), true);
-         int acp_numind;
-         if (dtCursor.select(sLocal))
-         {
-           guardaCab();
-           jt.removeAllDatos();
-           int nLin = 1;
-           acp_numind = 1;
-           ArrayList datos=new ArrayList();
-           do
-           {
-             ArrayList v = new ArrayList();
-             v.add("" + nLin); // 0
-             v.add(dtCursor.getString("pro_codi")); // 1
-             v.add(dtCursor.getString("avl_pronom")); // 2
-             v.add(dtCursor.getString("avl_unid")); // 3
-             v.add(dtCursor.getString("avl_canti")); // 4
-             if (opVerPrecios.isSelected())
-               v.add(dtCursor.getString("avl_prven", true)); // 5
-             else
-               v.add(0);
-             v.add("0");
-             v.add("0");
-             v.add("0");
-             v.add("0");
-             v.add("0");
-             v.add("0");
-             v.add("0");
-             v.add("");
-             v.add(0);
-             v.add(true);
-             datos.add(v);
-             stkPart.buscaStock(acc_fecrecE.getDate(),
-                                feulin,dtCursor.getInt("pro_codi"),emp_codiE.getValorInt(),0,null,0);
-
-             guardaLinAlb(nLin, nLin-1, dtCursor.getInt("avl_unid"), dtCursor.getDouble("avl_canti"), 0,
-                          dtCursor.getDouble("avl_prven"), 0,stkPart.getPrecioAcum(),
-                          "Alb.Venta: " + avc_anoE.getValorInt() + "-" + avc_numeE.getValorInt(),
-                          0);
-
-             sLocal = pdalbara.getStrSqlDesg(emp_codiE.getValorInt(), avc_anoE.getValorInt(),
-                                        EntornoUsuario.SERIEY, avc_numeE.getValorInt(), -1,
-                                        dtCursor.getInt("pro_codi"),null,
-                                        dtCursor.getDouble("avl_prven", true), true);
-//             System.out.println("s: "+s);
-             if (dtInd.select(sLocal))
-             {
-               nLinDes=1;
-               do
-               {
-                 boolean ret = utdes.busDatInd(dtInd.getString("avp_serlot"), dtInd.getInt("pro_codi"),
-                                               dtInd.getInt("avp_emplot"),
-                                               dtInd.getInt("avp_ejelot"), dtInd.getInt("avp_numpar"),
-                                               dtInd.getInt("avp_numind"),
-                                               dtCon1, dtStat, EU);
-                 if (!ret)
-                 {
-                   swCargaAlb = true;
-                   cargaAlbVentas=false;
-                   dtAdd.rollback();
-                   resetMsgEspere();
-                   msgBox("No encontrados datos de Despiece del Producto: "+ dtInd.getInt("pro_codi")+
-                          " Individuo: "+ dtInd.getInt("avp_emplot")+"-"+dtInd.getInt("avp_ejelot")+"/"+
-                          dtInd.getString("avp_serlot")+dtInd.getInt("avp_numpar")+":"+dtInd.getInt("avp_numind"));
-                   return;
-                 }
-                 dtAdd.addNew("v_albcopave");
-                 dtAdd.setDato("acc_ano", acc_anoE.getValorInt());
-                 dtAdd.setDato("emp_codi", emp_codiE.getValorInt());
-                 dtAdd.setDato("acc_serie", acc_serieE.getText());
-                 dtAdd.setDato("acc_nume", acc_numeE.getValorInt());
-                 dtAdd.setDato("acl_nulin", nLin); // Numero Linea Albaran
-                 dtAdd.setDato("acp_numlin", nLinDes); // Numero Linea Desglose
-                 dtAdd.setDato("pro_codi",dtInd.getInt("pro_codi"));
-                 dtAdd.setDato("avp_ejelot",dtInd.getInt("avp_ejelot"));
-                 dtAdd.setDato("avp_serlot",dtInd.getString("avp_serlot"));
-                 dtAdd.setDato("avp_numpar",dtInd.getInt("avp_numpar"));
-                 dtAdd.setDato("avp_numind",dtInd.getInt("avp_numind"));
-                 dtAdd.update(stUp);
-                 guardaLinDes(nLinDes++, acp_numind++,
-                              utdes.getNumCrot(),
-                              utdes.getAcpPainac(), Formatear.getDate(utdes.feccadE, "dd-MM-yyyy"),
-                              utdes.getAcpPaisac(), utdes.getAcpEngpai(),
-                              utdes.fecSacrE,
-                              utdes.getFechaProduccion(),
-                              dtInd.getInt("pro_codi"), nLin, utdes.getMatCodi(),
-                              utdes.getSdeCodi(), dtInd.getDouble("avp_canti"),
-                              dtInd.getInt("avp_numuni"));
-               }  while (dtInd.next());
-             }
-             nLin++;
-           } while (dtCursor.next());
-           jt.setDatos(datos);
-         }
-         swCargaAlb = true;
-         if (jt.getRowCount()==1)
-           verDesgLinea(jt.tableView.getSelectedRow());
-         else
-           jt.requestFocusInicioLater();
-         dtAdd.commit();
-         resetMsgEspere();
-         mensajeErr("Albaran de Venta ... importado ");
-         acc_cerraE.setValor("0");
-         return;
-       }  catch (java.text.ParseException k1)
-     {
-       throw new SQLException("Error al pasear fechas. "+k1.getMessage());
-     }
-   }
+//     private void cargaALbVentas0() throws SQLException
+//     {
+//       int nLinDes;
+//       if (cargaAlbVentas)
+//         return; // Para que no se le llame mas que una vez.
+//       cargaAlbVentas=true;
+//       msgEspere("Cargando Albaran de Ventas ...");
+//       swCargaAlb=false;
+//       if (dtCursor == null)
+//       {
+//         dtCursor = new DatosTabla(ct);
+//         dtInd = new DatosTabla(ct);
+//         utdes = new utildesp();
+//       }
+//       try
+//       {
+//         String sLocal = pdalbara.getSqlLinAgr(pdalbara.TABLALIN,avc_anoE.getValorInt(), emp_codiE.getValorInt(),
+//                                          EntornoUsuario.SERIEY, avc_numeE.getValorInt(), true);
+//         int acp_numind;
+//         if (dtCursor.select(sLocal))
+//         {
+//           guardaCab();
+//           jt.removeAllDatos();
+//           int nLin = 1;
+//           acp_numind = 1;
+//           ArrayList datos=new ArrayList();
+//           do
+//           {
+//             ArrayList v = new ArrayList();
+//             v.add("" + nLin); // 0
+//             v.add(dtCursor.getString("pro_codi")); // 1
+//             v.add(dtCursor.getString("avl_pronom")); // 2
+//             v.add(dtCursor.getString("avl_unid")); // 3
+//             v.add(dtCursor.getString("avl_canti")); // 4
+//             if (opVerPrecios.isSelected())
+//               v.add(dtCursor.getString("avl_prven", true)); // 5
+//             else
+//               v.add(0);
+//             v.add("0");
+//             v.add("0");
+//             v.add("0");
+//             v.add("0");
+//             v.add("0");
+//             v.add("0");
+//             v.add("0");
+//             v.add("");
+//             v.add(0);
+//             v.add(true);
+//             datos.add(v);
+//             stkPart.buscaStock(acc_fecrecE.getDate(),
+//                                feulin,dtCursor.getInt("pro_codi"),emp_codiE.getValorInt(),0,null,0);
+//
+//             guardaLinAlb(nLin, nLin-1, dtCursor.getInt("avl_unid"), dtCursor.getDouble("avl_canti"), 0,
+//                          dtCursor.getDouble("avl_prven"), 0,stkPart.getPrecioAcum(),
+//                          "Alb.Venta: " + avc_anoE.getValorInt() + "-" + avc_numeE.getValorInt(),
+//                          0);
+//
+//             sLocal = pdalbara.getStrSqlDesg(emp_codiE.getValorInt(), avc_anoE.getValorInt(),
+//                                        EntornoUsuario.SERIEY, avc_numeE.getValorInt(), -1,
+//                                        dtCursor.getInt("pro_codi"),null,
+//                                        dtCursor.getDouble("avl_prven", true), true);
+////             System.out.println("s: "+s);
+//             if (dtInd.select(sLocal))
+//             {
+//               nLinDes=1;
+//               do
+//               {
+//                 boolean ret = utdes.busDatInd(dtInd.getString("avp_serlot"), dtInd.getInt("pro_codi"),
+//                                               dtInd.getInt("avp_emplot"),
+//                                               dtInd.getInt("avp_ejelot"), dtInd.getInt("avp_numpar"),
+//                                               dtInd.getInt("avp_numind"),
+//                                               dtCon1, dtStat, EU);
+//                 if (!ret)
+//                 {
+//                   swCargaAlb = true;
+//                   cargaAlbVentas=false;
+//                   dtAdd.rollback();
+//                   resetMsgEspere();
+//                   msgBox("No encontrados datos de Despiece del Producto: "+ dtInd.getInt("pro_codi")+
+//                          " Individuo: "+ dtInd.getInt("avp_emplot")+"-"+dtInd.getInt("avp_ejelot")+"/"+
+//                          dtInd.getString("avp_serlot")+dtInd.getInt("avp_numpar")+":"+dtInd.getInt("avp_numind"));
+//                   return;
+//                 }
+//                 dtAdd.addNew("v_albcopave");
+//                 dtAdd.setDato("acc_ano", acc_anoE.getValorInt());
+//                 dtAdd.setDato("emp_codi", emp_codiE.getValorInt());
+//                 dtAdd.setDato("acc_serie", acc_serieE.getText());
+//                 dtAdd.setDato("acc_nume", acc_numeE.getValorInt());
+//                 dtAdd.setDato("acl_nulin", nLin); // Numero Linea Albaran
+//                 dtAdd.setDato("acp_numlin", nLinDes); // Numero Linea Desglose
+//                 dtAdd.setDato("pro_codi",dtInd.getInt("pro_codi"));
+//                 dtAdd.setDato("avp_ejelot",dtInd.getInt("avp_ejelot"));
+//                 dtAdd.setDato("avp_serlot",dtInd.getString("avp_serlot"));
+//                 dtAdd.setDato("avp_numpar",dtInd.getInt("avp_numpar"));
+//                 dtAdd.setDato("avp_numind",dtInd.getInt("avp_numind"));
+//                 dtAdd.update(stUp);
+//                 guardaLinDes(nLinDes++, acp_numind++,
+//                              utdes.getNumCrot(),
+//                              utdes.getAcpPainac(), Formatear.getDate(utdes.feccadE, "dd-MM-yyyy"),
+//                              utdes.getAcpPaisac(), utdes.getAcpEngpai(),
+//                              utdes.fecSacrE,
+//                              utdes.getFechaProduccion(),
+//                              dtInd.getInt("pro_codi"), nLin, utdes.getMatCodi(),
+//                              utdes.getSdeCodi(), dtInd.getDouble("avp_canti"),
+//                              dtInd.getInt("avp_numuni"));
+//               }  while (dtInd.next());
+//             }
+//             nLin++;
+//           } while (dtCursor.next());
+//           jt.setDatos(datos);
+//         }
+//         swCargaAlb = true;
+//         if (jt.getRowCount()==1)
+//           verDesgLinea(jt.tableView.getSelectedRow());
+//         else
+//           jt.requestFocusInicioLater();
+//         dtAdd.commit();
+//         resetMsgEspere();
+//         mensajeErr("Albaran de Venta ... importado ");
+//         acc_cerraE.setValor("0");
+//         return;
+//       }  catch (java.text.ParseException k1)
+//     {
+//       throw new SQLException("Error al pasear fechas. "+k1.getMessage());
+//     }
+//   }
     @Override
    public void activaTodo()
    {
@@ -7456,5 +6667,52 @@ public class pdalbco2 extends ventanaPad   implements PAD, JRDataSource
          dt.copy(dtUpd, usuario, coment,rowid);    
       }
       dtUpd.commit();
+  }
+  void BvertSala_actionPerformed()
+  {
+       if (jtRecl.isVacio())
+         return;
+       int nLin=cambiaLinRecl(jtRecl.getSelectedRow());
+       if (nLin>=0)
+       {
+         jtRecl.requestFocusLater(jtRecl.getSelectedRow(),nLin);
+         return;
+       }
+       try {
+         char estFin = estFinE.getValor().charAt(0);
+         int nRow = jtRecl.getRowCount();
+         for (int n = 0; n < nRow; n++)
+         {
+           if (jtRecl.getValorInt(n, ROWNVERT) == 0)
+             continue;
+           if (!jtRecl.getValString(n, 7).equals(estIniE.getValor()))
+             continue;
+
+           if (estFin == 'P' || estFin == 'E')
+             jtRecl.setValor("", n, 8); // Pongo la Fecha Resol. vacia
+           if (estFin == 'R' || estFin == 'A')
+           {
+             if (jtRecl.getValString(n, 8).trim().equals(""))
+               jtRecl.setValor(Formatear.getFechaAct("dd-MM-yy"), n, 8);
+           }
+           if (estFin == 'R')
+             jtRecl.setValor("0", n, 5);
+           jtRecl.setValor(""+estFin,n,7);
+           s = "update v_regstock set rgs_recprv = " + getRecPrv("" + estFin) + "," +
+               " rgs_fecres = "+ (jtRecl.getValString(n,8).trim().equals("")?"null":
+               "TO_DATE('" + jtRecl.getValString(n, 8) + "','dd-MM-yy')")+", " +
+               " rgs_prregu = " + jtRecl.getValorDec(n, 5) +
+               " WHERE rgs_nume = " + jtRecl.getValorInt(n, 10);
+//           debug("s: "+s);
+           dtAdd.executeUpdate(s);
+         }
+         ctUp.commit();
+         jtRecl.requestFocusInicio();
+         mensajeErr("Estado de las Reclamaciones  ... CAMBIADAS");
+       } catch (SQLException k)
+       {
+         Error("Error al cambiar estado a Vertederos",k);
+       }
+
   }
 }

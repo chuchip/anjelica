@@ -22,7 +22,7 @@
  */
 package gnu.chu.camposdb;
 
-import gnu.chu.anjelica.compras.pdalbco2;
+import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.controles.CCheckBox;
@@ -167,9 +167,9 @@ public class DatTrazPanel extends CPanel {
               }
               else
               {
-                  if ((prog=papa.jf.gestor.getProceso(pdalbco2.getNombreClase()))==null)
+                  if ((prog=papa.jf.gestor.getProceso(MantAlbComCarne.getNombreClase()))==null)
                       return;
-                  pdalbco2 cm=(pdalbco2) prog;
+                  MantAlbComCarne cm=(MantAlbComCarne) prog;
                   cm.PADQuery();
                   cm.setAccCodi(acc_numeE.getText());
                   cm.ej_query();

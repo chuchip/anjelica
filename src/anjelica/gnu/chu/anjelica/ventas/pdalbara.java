@@ -57,7 +57,7 @@ import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.actStkPart;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.almacen.pdmotregu;
-import gnu.chu.anjelica.compras.pdalbco2;
+import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.DatTrazFrame;
 import gnu.chu.anjelica.despiece.DespVenta;
 import gnu.chu.anjelica.despiece.listraza;
@@ -2371,7 +2371,7 @@ public class pdalbara extends ventanaPad  implements PAD
       verDepoC.setEnabled(true);
       verIconoListado(dtAdd.getInt("avc_impres",true));
       accCerra=false;
-      swCompra=pdalbco2.isAlbCompra(dtStat,emp_codiE.getValorInt(),
+      swCompra=MantAlbComCarne.isAlbCompra(dtStat,emp_codiE.getValorInt(),
                                     avc_anoE.getValorInt(),
                                     avc_numeE.getValorInt(),false);
       if (swCompra)
@@ -3675,7 +3675,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     if (avc_seriE.getText().equals(EntornoUsuario.SERIEY) && swCompra)
     {
-      if (pdalbco2.isAlbCompra(dtStat,emp_codiE.getValorInt(),
+      if (MantAlbComCarne.isAlbCompra(dtStat,emp_codiE.getValorInt(),
                                avc_anoE.getValorInt(),avc_numeE.getValorInt(),false))
       {
         msgBox("Albaran se ha utilizado para realizar la compra: " + dtStat.getInt("acc_ano") + "-" +
@@ -4159,7 +4159,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
       if (swCompra && opAgru.isSelected())
       { // Modificar precio de Alb. de Compra.
-        if ( pdalbco2.getLineaAlb(dtAdd,emp_codiE.getValorInt(),
+        if ( MantAlbComCarne.getLineaAlb(dtAdd,emp_codiE.getValorInt(),
                                   accAno,"Y",accNume,row+1,true))
         {
           dtAdd.edit();

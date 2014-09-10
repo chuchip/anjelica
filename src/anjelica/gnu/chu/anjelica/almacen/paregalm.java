@@ -22,7 +22,7 @@ package gnu.chu.anjelica.almacen;
  * @version 2.0 - Fecha 01/03/2007
  */
 
-import gnu.chu.anjelica.compras.pdalbco2;
+import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.camposdb.cliPanel;
 import gnu.chu.camposdb.proPanel;
@@ -405,9 +405,9 @@ public class paregalm extends CPanel {
                         rgs_recprvE.setValor(ESTPEND);
                     }
                     tir_codiE.resetCambio();
-//          rgs_clidevE.setEnabled(tir_codiE.getValorInt() == pdalbco2.ESTPEND ||
-//              tir_codiE.getValorInt() == pdalbco2.ESTACEP ||
-//              tir_codiE.getValorInt() == pdalbco2.ESTRECH);
+//          rgs_clidevE.setEnabled(tir_codiE.getValorInt() == MantAlbComCarne.ESTPEND ||
+//              tir_codiE.getValorInt() == MantAlbComCarne.ESTACEP ||
+//              tir_codiE.getValorInt() == MantAlbComCarne.ESTRECH);
                 } catch (Exception k) {
                     papa.Error("Error al Comprobar tipo de Movimiento", k);
                 }
@@ -842,7 +842,7 @@ public class paregalm extends CPanel {
                     acc_numeE.requestFocus();
                     return false;
                 }
-                if (!pdalbco2.getCabeceraAlb(deo_emplotE.getValorInt(),
+                if (!MantAlbComCarne.getCabeceraAlb(deo_emplotE.getValorInt(),
                         acc_anoE.getValorInt(), acc_serieE.getText(),
                         acc_numeE.getValorInt(), dtStat)) {
                     mensajeErr("Albaran NO existe");
@@ -988,9 +988,9 @@ public class paregalm extends CPanel {
 
     void PADEdit() {
         tir_codiE.resetCambio();
-//      rgs_clidevE.setEnabled(tir_codiE.getValorInt() == pdalbco2.ESTPEND ||
-//              tir_codiE.getValorInt() == pdalbco2.ESTACEP ||
-//              tir_codiE.getValorInt() == pdalbco2.ESTRECH);
+//      rgs_clidevE.setEnabled(tir_codiE.getValorInt() == MantAlbComCarne.ESTPEND ||
+//              tir_codiE.getValorInt() == MantAlbComCarne.ESTACEP ||
+//              tir_codiE.getValorInt() == MantAlbComCarne.ESTRECH);
     }
 
     public void setCampos(java.util.Date fecmvto, int proCodi, int empCodi, int ejeNume, String serie, int numPar, int numInd,

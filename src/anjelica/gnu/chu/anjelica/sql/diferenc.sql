@@ -263,6 +263,7 @@ alter table v_albacoc add apc_nume int;
 -- Incluir clasificacion en producto.
 -- alter table v_albcompar add acp_clasif char(1) default 'X' NOT NULL;
 alter table v_albcompar rename guiasanitariafecha to acp_fecpro;
+alter table v_albcompar rename guiasanitariacomunidad to dre_nume;
 -- Incluyendo tipo para subempresa.
 ALTER TABLE subempresa add sbe_tipo char(1) not null default 'C';
 

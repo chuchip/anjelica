@@ -8,8 +8,6 @@ import javax.swing.*;
 /**
  * <b>Funciones para obtener imagenes.</b>
  * <p>
- * @autor Angel J. Apellaniz
- * @version 1.0  -  05/01/2000
  */
 public class Iconos
 {
@@ -113,8 +111,9 @@ public class Iconos
     URL ur=Iconos.class.getClass().getResource((iconMin.indexOf("gnu.chu")==-1?"/gnu/chu/icons/":"")+icon);
     if (ur!=null)
         return new ImageIcon(Toolkit.getDefaultToolkit().getImage(ur));      
-    
-    return new ImageIcon(Toolkit.getDefaultToolkit().getImage(Iconos.class.getClass().getResource("/gnu/chu/icons/break.png")));
+    if (Iconos.class.getClass().getResource("/gnu/chu/icons/break.png")==null)
+        return new ImageIcon();
+    return new ImageIcon(Toolkit.getDefaultToolkit().getImage(Iconos.class.getClass().getResource("/gnu/chu/icons/anjelica.png")));
   }
   
   public static String getPathIcon()

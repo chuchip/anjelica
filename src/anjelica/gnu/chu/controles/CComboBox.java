@@ -1,6 +1,6 @@
 package gnu.chu.controles;
 
-import gnu.chu.anjelica.compras.pdalbco2;
+import gnu.chu.anjelica.compras.MantAlbComCarne;
 import java.awt.event.*;
 import gnu.chu.sql.*;
 import java.sql.Types;

@@ -1260,6 +1260,7 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
   {
     return proConExist;
   }
+ 
   /**
    * Devuelve si este producto tiene control sobre individuos (En Stock-Partidas)
    * @return

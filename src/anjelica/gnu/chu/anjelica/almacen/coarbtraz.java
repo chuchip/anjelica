@@ -2,7 +2,7 @@ package gnu.chu.anjelica.almacen;
 
 import gnu.chu.utilidades.*;
 import gnu.chu.Menu.*;
-import gnu.chu.anjelica.compras.pdalbco2;
+import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.controles.*;
 import java.awt.*;
@@ -275,9 +275,9 @@ public class coarbtraz extends ventana
    void irCompra(String coment)
    {
        ejecutable prog;
-       if ((prog=jf.gestor.getProceso(pdalbco2.getNombreClase()))==null)
+       if ((prog=jf.gestor.getProceso(MantAlbComCarne.getNombreClase()))==null)
          return;
-       pdalbco2 cm=(pdalbco2) prog; 
+       MantAlbComCarne cm=(MantAlbComCarne) prog; 
        if (cm.inTransation())
        {
             msgBox("Mantenimiento Albaran de Compras esta en transacion. Imposible ejecutar consulta");

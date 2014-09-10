@@ -49,6 +49,7 @@ public class etiqueta  extends JRDefaultScriptlet
   String litFecha;
   String ntraza, peso, conservar, sacrificado;
   String fecrecep;
+  int numUnid;
   java.util.Date fecprod=null;
   String feccadu=null;
   String fecCong=null;
@@ -165,6 +166,30 @@ public class etiqueta  extends JRDefaultScriptlet
       return logotipo;
   }
   /**
+   * Recepcion de plantas
+     * @param codBarras
+     * @param lote
+     * @param articulo
+     * @param codArti
+     * @param fecrecep
+     * @param peso
+     * @param ntraza
+     * @param numUnid
+   */
+  public void iniciar(String codBarras,String lote,String codArti,
+                      String articulo,String ntraza,String peso,int numUnid, String fecrecep)
+  {
+    this.codbarras=codBarras;
+    this.lote=lote;
+    this.codArti= codArti;
+    this.articulo=articulo;   
+    this.ntraza=ntraza;
+    this.peso=peso;
+   
+    this.fecrecep=fecrecep;
+    this.numUnid=numUnid;
+  }
+  /**
    * Imprime una o varias etiqueta
    * @param tipEtiq Tipo Etiqueta.
    * @param fichEtiq Fichero jasper con la etiqueta a imprimir
@@ -264,7 +289,7 @@ public class etiqueta  extends JRDefaultScriptlet
       Barcode barcode = new Code128Barcode(super.getParameterValue("codbarra").toString());
 //      Barcode barcode =  BarcodeFactory.createCode128(super.getParameterValue("codbarra").toString());
       barcode.setBarWidth(1);
-     barcode.setFont(new Font("Serif", Font.PLAIN, 12));
+      barcode.setFont(new Font("Serif", Font.PLAIN, 12));
       bufferedImage = new BufferedImage(300, 60, BufferedImage.TYPE_BYTE_INDEXED);
 
       barcode.draw(bufferedImage.createGraphics(), 0, 0);
@@ -273,7 +298,6 @@ public class etiqueta  extends JRDefaultScriptlet
     }
     catch (Exception ex)
     {
-      ex.printStackTrace();
       throw new JRScriptletException(ex.getMessage());
     }
 

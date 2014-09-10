@@ -22,7 +22,7 @@ package gnu.chu.anjelica.almacen;
  */
 
 import gnu.chu.Menu.Principal;
-import gnu.chu.anjelica.compras.pdalbco2;
+import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.pdprvades;
 import gnu.chu.anjelica.pad.MantRepres;
@@ -550,9 +550,9 @@ public class conmvpr extends ventana
               }
               if (jt.getValString(3).equals("CO"))
               {
-                 if ((prog=jf.gestor.getProceso(pdalbco2.getNombreClase()))==null)
+                 if ((prog=jf.gestor.getProceso(MantAlbComCarne.getNombreClase()))==null)
                     return;
-                 pdalbco2 cm=(pdalbco2) prog; 
+                 MantAlbComCarne cm=(MantAlbComCarne) prog; 
                  if (cm.inTransation())
                  {
                     msgBox("Mantenimiento Albaranes de Compras ocupado. No se puede realizar la busqueda");

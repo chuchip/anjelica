@@ -235,7 +235,7 @@ pro_feulco date,        -- Fecha Ult. Compra
 pro_prvulco int, 	-- Proveedor  Ult. Compra
 pro_fulcon date, 	-- Fecha Ult. Coste
 pro_tiplot varchar(1) not null,	-- Tipo Lote.  C -> Comentario, V-> Vendible, 'D' Desecho
-pro_coexis varchar(1),   -- Control Existencias
+pro_coexis varchar(1) not null default 'S',  -- Control Existencias (S/N)
 pro_coinst int default -1 not null,	-- Control Individuos en Stock.
 emp_codi int,		-- Empresa del Producto (DEPRECATED)
 pro_conmax smallint,	-- Llevar Control de Maximos
@@ -1163,7 +1163,7 @@ create table anjelica.v_albcompar
    guiasanitariaserie varchar(10),  -- NO USADO
    acp_fecpro date,                 -- Fecha Produccion.
    guiasanitariancrotal varchar(30),-- NO USADO
-   guiasanitariacomunidad int ,	    -- NO USADO
+   dre_nume int ,                  -- Numero de Datos Registro 
    dib varchar(50),                 -- NO USADO
    acp_nucrot varchar(30),	-- Numero de Crotal
    acp_painac int,		-- Pais de Nacimiento
@@ -2650,7 +2650,7 @@ create table anjelica.etiquetas
         eti_client smallint not null -- Etiqueta para cliente.
 );
 INSERT INTO etiquetas (emp_codi,eti_codi,eti_nomb,eti_logo,eti_ficnom,eti_defec,eti_client)
-VALUES (1,1,'ESTANDART','anjelica.png','etiqueta','S',0);
+    VALUES (1,1,'ESTANDART','anjelica.png','etiqueta','S',0);
 
 ---
 --- Tabla de Bloqueos

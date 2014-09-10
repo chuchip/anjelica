@@ -184,8 +184,8 @@ public class MantArticulos extends ventanaPad  implements PAD
        " and eti_client = 0 "+ // solo etiquetas q no pertenezcan a clientes
        " ORDER BY eti_codi";
     dtStat.select(s);
-    pro_codetiE.addDatos(dtStat);
-    pro_codetiE.setFormato(Types.DECIMAL,"-9",2);
+    pro_codetiE.addDatos(dtStat);    
+    
     pro_codetiE.addDatos("-1","Sin Etiqueta");
     s="SELECT fpr_codi,fpr_nomb FROM v_famipro "+
         " ORDER BY fpr_nomb";
@@ -1118,6 +1118,17 @@ public class MantArticulos extends ventanaPad  implements PAD
        return null;
      return dt.getString("pro_tiplot");
    }
+   
+   public static boolean hasControlExist(int codProd, DatosTabla dt) throws SQLException
+   {
+     String s = "select pro_coexis from v_articulo  where " +
+         "  pro_codi = " + codProd;
+     if (!dt.select(s))
+       throw new SQLException("Articulo"+codProd+" no encontrado en Maestro Articulos");
+     return dt.getString("pro_coexis").equals("S");
+   }
+
+   
    /**
     * Devuelve si el producto es vendible
     * @param codProd
@@ -1428,8 +1439,9 @@ public class MantArticulos extends ventanaPad  implements PAD
         Pinicio.add(cLabel12);
         cLabel12.setBounds(370, 76, 52, 18);
 
-        pro_codetiE.setAncTexto(30);
+        pro_codetiE.setAncTexto(40);
         pro_codetiE.setPreferredSize(new java.awt.Dimension(122, 17));
+        pro_codetiE.setFormato(Types.DECIMAL,"-999");
         Pinicio.add(pro_codetiE);
         pro_codetiE.setBounds(430, 76, 186, 18);
 
