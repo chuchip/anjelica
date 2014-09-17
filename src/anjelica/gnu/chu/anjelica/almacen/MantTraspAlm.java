@@ -194,7 +194,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         deo_serlot1E.setText("A");
         pro_codiE.setProNomb(pro_nocabE);
         pro_codiE.iniciar(new DatosTabla(ct), this, vl, EU);
-        pro_codiE.setCamposLote(deo_ejelotE, null, deo_serlotE, pro_loteE,
+        pro_codiE.setCamposLote(deo_ejelotE,  deo_serlotE, pro_loteE,
             pro_numindE, deo_kilosE);
         pro_codiE.setAyudaLotes(true);
         
@@ -523,7 +523,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
     }
     /*
      * Devuelve clase StkPartid con el peso del individuo de origen activo
-     * Escribe mensaje de error y pone variable swArtBloq si procede
+     * Escribe mensaje de error 
      */
 
     StkPartid buscaPeso() throws Exception {
@@ -532,7 +532,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
             deo_serlotE.getText(), pro_loteE.getValorInt(),
             pro_numindE.getValorInt(), pro_codiE.getValorInt(), alm_codioE.getValorInt());
         if (nav.pulsado==navegador.EDIT)
-        { // Sumo los kilos del albaran             
+        { // Sumo los kilos del albaran si los hubiera.        
             s="select * from v_albvenpar "+
                 " where emp_codi = "+EU.em_cod+
                 " AND avc_ano =" +avc_anoE.getValorInt()+
@@ -552,8 +552,8 @@ public class MantTraspAlm extends ventanaPad implements PAD
         if (! stkPartid.hasError())
             return stkPartid;
         
-        if (stkPartid.getEstado()==StkPartid.INDIV_LOCK)
-            return stkPartid;
+//        if (stkPartid.isLockIndiv())
+//            return stkPartid;
         mensajeErr(stkPartid.getMensaje());
         return stkPartid;
     }

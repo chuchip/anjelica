@@ -78,11 +78,25 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   final int JT_COMENT=13;
   final int JT_PORPAG=14;
   final int JT_DTOPP=15;
+  /**
+   * Numero Individuo 0
+   */
   final int JTD_NUMIND=0;
+  /**
+   * Kilos (cantidad) 1
+   */
   final int JTD_CANTI=1;
+  /** 
+   * Numero Crotal 2
+   */
   final int JTD_NUMCRO=2;
-  
+  /**
+   * Numero Linea del Grid de desglose 11
+   */
   int JTD_NUMLIN=11;
+  /**
+   * Cantidad de Individuos 12
+   */
   int JTD_CANIND=12;
 
   private CLabel acc_dtoppL=new CLabel("Dto PP");
@@ -332,7 +346,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   CLabel cLabel11 = new CLabel();
   CLabel cLabel2 = new CLabel();
   CLabel cLabel3 = new CLabel();
-  CTextField acp_cantiE= new CTextField(Types.DECIMAL,"---9.99");
+  CTextField acp_cantiE= new CTextField(Types.DECIMAL,"--,--9.99");
   CTextField acp_nucrotE= new CTextField(Types.CHAR,"X",30);
  
   CButton Bulcabe = new CButton();

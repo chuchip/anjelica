@@ -148,6 +148,7 @@ public class actStkPart
   }
   /**
    * Suma los kilos y unidades mandados a stock-partidas.
+   * @deprecated
    * @param ejeNume
    * @param serie
    * @param lote
@@ -401,7 +402,20 @@ public class actStkPart
       dtAdd.update();
     }
   }
-
+/**
+ * @deprecated
+ * @param ejeNume
+ * @param serie
+ * @param lote
+ * @param numind
+ * @param proCodi
+ * @param almCodi
+ * @param kilos
+ * @param unidades
+ * @param fecMvto
+ * @return
+ * @throws SQLException 
+ */
   public boolean restar(int ejeNume, String serie, int lote,
                         int numind, int proCodi,
                         int almCodi, double kilos, int unidades, String fecMvto) throws   SQLException
@@ -410,7 +424,19 @@ public class actStkPart
     return sumar(ejeNume, serie, lote, numind, proCodi, almCodi, kilos * -1,
                  unidades * -1, fecMvto, CREAR_NO, 0, null, true,false);
   }
-
+/**
+ * @deprecated
+ * @param ejeNume
+ * @param serie
+ * @param lote
+ * @param numind
+ * @param proCodi
+ * @param almCodi
+ * @param kilos
+ * @param unidades
+ * @return
+ * @throws SQLException 
+ */
   public boolean restar(int ejeNume, String serie, int lote,
                         int numind, int proCodi,
                         int almCodi, double kilos, int unidades) throws  SQLException
@@ -439,6 +465,26 @@ public class actStkPart
 
   }
   /**
+   * @deprecated usar la funcion sin mandar empresa.
+   * @param dt
+   * @param empCodi
+   * @param ejeNume
+   * @param serie
+   * @param lote
+   * @param numInd
+   * @param proCodi
+   * @param almCodi
+   * @return
+   * @throws java.sql.SQLException 
+   */
+   public boolean verKilos(DatosTabla dt, int empCodi, int ejeNume, String serie,
+                          int lote,
+                          int numInd, int proCodi,
+                          int almCodi) throws java.sql.SQLException
+   {
+       return verKilos(dt,ejeNume,serie,lote,numInd,proCodi,almCodi);
+   }
+  /**
    * Carga las variables unidStk y kilStk con los kilos actuales en la tabla de stok-partidas
    * @param dt DatosTabla
    * @param empCodi int
@@ -451,7 +497,7 @@ public class actStkPart
    * @throws SQLException
    * @return boolean false si no encontrado registro en stock partidas.
    */
-  public boolean verKilos(DatosTabla dt, int empCodi, int ejeNume, String serie,
+  public boolean verKilos(DatosTabla dt,  int ejeNume, String serie,
                           int lote,
                           int numind, int proCodi,
                           int almCodi) throws java.sql.SQLException

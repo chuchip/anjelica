@@ -1,13 +1,17 @@
 package gnu.chu.anjelica.listados;
 
+import gnu.chu.anjelica.despiece.MantDespTactil;
+import gnu.chu.controles.Cgrid;
 import gnu.chu.print.util;
 import gnu.chu.sql.DatosTabla;
+import gnu.chu.utilidades.CodigoBarras;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Iconos;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import net.sf.jasperreports.engine.*;
 import net.sourceforge.barbecue.Barcode;
 import net.sourceforge.barbecue.BarcodeImageHandler;
@@ -35,9 +39,13 @@ import net.sourceforge.barbecue.linear.code128.Code128Barcode;
  * <p>Empresa: MISL</p>
  * @version 1.2
  */
-public class etiqueta  extends JRDefaultScriptlet
+public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
 {
-  private String LOGOTIPO="logotipo_bn.jpg"; // Logotipo por defecto.
+  private final String LOGOTIPO="logotipo_bn.jpg"; // Logotipo por defecto.
+  int nLin,nInd;
+  Cgrid jt;
+  ArrayList<Integer> lineas;
+  DatosTabla dt;
   String fichEtiq;
   EntornoUsuario EU;
   String codbarras;
@@ -64,7 +72,13 @@ public class etiqueta  extends JRDefaultScriptlet
   String diremp=null;
   String datmat=null;
   String logotipo=null;
-  int tipoEtiq=-1;
+  int etiNuetpa=1;
+  CodigoBarras codBarras;
+  private int tipoEtiq=-1;
+
+    public int getEtiquetasPorPagina() {
+        return etiNuetpa;
+    }
   JasperReport jr=null;
   int tipEtiqOld;
   private int numCopias=0;
@@ -240,39 +254,7 @@ public class etiqueta  extends JRDefaultScriptlet
     if (EU.getSimulaPrint())
       return;
     gnu.chu.print.util.printJasper(jp, EU,numCopias);
-//    if (preVisual || EU.previsual)
-//      JasperViewer.viewReport(jp, false);
-//    else
-//    {
-//      if (printDialog || EU.dialogoPrint)
-//        JasperPrintManager.printReport(jp, true);
-//      else
-//      {
-//        if (numCopias <= 1)
-//          JasperPrintManager.printReport(jp, false);
-//        else
-//        { // Establece el numero de copias
-//          PrintService dfI = PrintServiceLookup.lookupDefaultPrintService();
-//          System.out.println("Impresora por defecto:" + dfI.getName());
-//          // create the print service exporter so that we can print to a named printer
-//          JRPrintServiceExporter exporter = new JRPrintServiceExporter();
-//          exporter.setParameter(JRPrintServiceExporterParameter.JASPER_PRINT, jp);
-//          PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
-//          aset.add(new Copies(numCopias));
-////        aset.add(MediaSizeName.ISO_A4);
-//          exporter.setParameter(JRPrintServiceExporterParameter.PRINT_REQUEST_ATTRIBUTE_SET, aset);
-//          // let the exporter know which printer we want to print on
-//          PrintServiceAttributeSet serviceAttributeSet = new HashPrintServiceAttributeSet();
-////     serviceAttributeSet.add(new PrinterName("HP LaserJet 4050 Series PCL6", null));
-//          serviceAttributeSet.add(new PrinterName(dfI.getName(), null));
-////     serviceAttributeSet.add(dfI.getName());
-//          exporter.setParameter(JRPrintServiceExporterParameter.PRINT_SERVICE_ATTRIBUTE_SET, serviceAttributeSet);
-//          exporter.setParameter(JRPrintServiceExporterParameter.DISPLAY_PAGE_DIALOG, Boolean.FALSE);
-//          exporter.setParameter(JRPrintServiceExporterParameter.DISPLAY_PRINT_DIALOG, Boolean.FALSE);
-//          exporter.exportReport();
-//        }
-//      }
-//    }
+
   }
 
     @Override
@@ -341,8 +323,7 @@ public class etiqueta  extends JRDefaultScriptlet
    * @param dt DatosTabla
    * @param empCodi int
    * @param etiCodi int
-   * @throws SQLException
-   * @throws ParseException
+   * @throws SQLException 
    * @return DatosTabla
    */
   public DatosTabla getDatosRep(DatosTabla dt,int empCodi,int etiCodi)  throws SQLException
@@ -368,7 +349,14 @@ public class etiqueta  extends JRDefaultScriptlet
           return -1;
       return dt.getInt("eti_codi");
   }
-  
+  /**
+   * Establece el tipo de etiqueta
+   * @param dt
+   * @param empCodi
+   * @param etiCodi
+   * @return
+   * @throws SQLException 
+   */
   public boolean setTipoEtiq(DatosTabla dt,int empCodi, int etiCodi)  throws SQLException
   {
     if (etiCodi==this.tipoEtiq)
@@ -378,9 +366,8 @@ public class etiqueta  extends JRDefaultScriptlet
     dt=getDatosRep(dt,empCodi,etiCodi);
     if (dt.getNOREG())
       return false;
-    tipoEtiq=dt.getInt("eti_codi");
-    fichEtiq=dt.getString("eti_ficnom");
-    logotipo=dt.getString("eti_logo");
+    setValoresEtiqueta(dt);
+    
     return true;
   }
   public boolean setEtiqDefault(DatosTabla dt,int empCodi) throws SQLException
@@ -390,12 +377,16 @@ public class etiqueta  extends JRDefaultScriptlet
     dt.select(s);
     if (dt.getNOREG())
       return false;
+    setValoresEtiqueta(dt);
+    return true;
+  }
+  private void setValoresEtiqueta(DatosTabla dt) throws SQLException
+  {
     tipoEtiq=dt.getInt("eti_codi");
     fichEtiq=dt.getString("eti_ficnom");
     logotipo=dt.getString("eti_logo");
-    return true;
+    etiNuetpa=dt.getInt("eti_nuetpa");
   }
-
   public void listarDefec() throws Exception
   {
     listar(tipoEtiq,fichEtiq,logotipo);
@@ -425,5 +416,111 @@ public class etiqueta  extends JRDefaultScriptlet
   {
     return this.fecSacr;
   }
+  
+  public boolean next() throws JRException
+  {
+    int rowGrid=lineas.get(nLin);
+    int nIndGrid=jt.getValorInt(rowGrid,MantDespTactil.JTSAL_NUMPIE);
+    if (nInd>=nIndGrid)
+    {
+       nLin++; 
+       if (nLin>=lineas.size())
+        return false;
+       rowGrid=lineas.get(nLin);
+       nextLinea(rowGrid);      
+       nInd=0;
+    }
+    nInd++;
+    return true;
+  }
+  
+  private void nextLinea(int rowGrid) throws JRException
+  {
+     
+     String s = "select * from v_articulo as a, categorias_art as cat,calibres_art as cal where " +
+         "  pro_codi = " + jt.getValorInt(rowGrid,MantDespTactil.JTSAL_PROCODI)+
+         " and a.cat_codi = cat.cat_codi "+
+         " and a.cal_codi = cal.cal_codi ";
+      try
+      {
+          if (! dt.select(s))
+              throw new JRException("Articulo: "+
+                  jt.getValorInt(rowGrid,MantDespTactil.JTSAL_PROCODI)+" No encontrado Maestro");
+          codBarras.setProCodi(jt.getValorInt(rowGrid,MantDespTactil.JTSAL_PROCODI));
+          codBarras.setProIndi(jt.getValorInt(rowGrid,MantDespTactil.JTSAL_NUMIND));
+          codBarras.initCodigoBarras();
+      } catch (SQLException ex)
+      {
+          throw new JRException(ex.getMessage(),ex);
+      }
+  }
+	
+  public Object getFieldValue(JRField jrField) throws JRException
+  {
+      String campo = jrField.getName().toLowerCase();
+      try {
+      switch (campo)
+      {
+          case "pro_nomb":
+              return jt.getValString(MantDespTactil.JTSAL_PRONOMB);
+          case "cat_nomb":
+              return dt.getString("cat_nomb") ;             
+          case "cal_nomb":
+              return dt.getString("cal_nomb") ;
+          case "pro_numind":
+              return (nLin*1000)+nInd ;
+           case "codbarra":
+              return codBarras.getCodBarra();
+          default:
+              throw new JRException("Campo: "+campo+ " No definido");
+      }
+      } catch (SQLException k)
+      {
+          throw new JRException(k);
+      }
+  }
+    
+  public void listarPagina(DatosTabla dt,java.util.Date fechaEnv,String paiNaci, 
+        Cgrid jt,ArrayList<Integer> lineas, CodigoBarras codBarras ) throws Exception
+  { 
+         if (lineas.isEmpty())
+             return;
+         if (jr==null || tipoEtiq!=tipEtiqOld)
+            jr = util.getJasperReport(EU,fichEtiq);
+         
+        this.dt=dt;
+        this.lineas=lineas;
+        this.jt=jt;
+        this.codBarras=codBarras;
+        tipEtiqOld=tipoEtiq;
+        java.util.HashMap mp = new java.util.HashMap();
+    
+         mp.put("emp_nomb",EU.lkEmpresa.getString("emp_nomb"));
+         mp.put("emp_dire",EU.lkEmpresa.getString("emp_dire")+" "+
+            EU.lkEmpresa.getString("emp_codpo")+ " "+EU.lkEmpresa.getString("emp_pobl"));
+      
+         mp.put("emp_nif",EU.lkEmpresa.getString("emp_nif"));
+         mp.put("emp_nurgsa",EU.lkEmpresa.getString("emp_nurgsa"));
+         mp.put("pai_nomb",paiNaci);
+         mp.put("deo_fecha",fechaEnv);
+        
+        String img="";
+        if (logotipo!=null)
+        {
+          if (! logotipo.equals(""))
+            img=Iconos.getPathIcon()+logotipo;
+        }
+        else
+          img=Iconos.getPathIcon()+LOGOTIPO;
 
+    mp.put("logotipo",img.equals("")?null:img);
+     nLin=0;
+     nInd=0;
+      nextLinea(lineas.get(nLin));
+    JasperPrint jp = JasperFillManager.fillReport(jr, mp,this);
+    if (EU.getSimulaPrint())
+      return;
+    gnu.chu.print.util.printJasper(jp, EU,numCopias);
+    }
+   
 }

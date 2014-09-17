@@ -66,8 +66,6 @@ public class MantAlbComPlanta extends MantAlbCom
         super(p, eu, ht);
    }
   
-   public int getTipoProg(){return TIPO_PLANTA;}
-
    private void activarEventos0()
    {
      
@@ -349,15 +347,10 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
       msgBox("No se pueden imprimir etiquetas sobre Cantidades negativos o a cero");
       return;
     }
-    String codBarras = "C"+acc_anoE.getText().substring(2) +
-        acc_serieE.getText() +
-        Formatear.format(acc_numeE.getText(), "99999")+
-        Formatear.format(jt.getValorInt(JT_PROCOD), "99999") +
-        Formatear.format(nInd, "999") ;
-    String lote=acc_anoE.getText().substring(2) + "/" +                       
-                       acc_serieE.getText() + "/" +
-                       acc_numeE.getText().trim() + "/" +
-                       nInd;
+    CodigoBarras codBarras = new CodigoBarras("C", acc_anoE.getText() ,acc_serieE.getText() ,
+        acc_numeE.getValorInt(), jt.getValorInt(JT_PROCOD), nInd,
+        jtDes.getValorDec(JTD_CANTI));    
+       
 
     
     String codArt=jt.getValString(JT_PROCOD);
@@ -367,7 +360,7 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
     if (etiq == null)
       etiq = new etiqueta(EU);
 
-    etiq.iniciar(codBarras, lote,
+    etiq.iniciar(codBarras.getCodBarra(), codBarras.getLote(),
                  codArt, nombArt,                              
                  jtDes.getValString(nLin, JTD_NUMCRO),
                  Formatear.format(jtDes.getValString(nLin, JTD_CANTI), "##9.99"),

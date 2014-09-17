@@ -87,7 +87,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      ErrorInit(e);
       setErrorInit(true);
     }
   }
@@ -111,7 +111,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      ErrorInit(e);
       setErrorInit(true);
     }
   }
@@ -186,6 +186,13 @@ public class MantArticulos extends ventanaPad  implements PAD
     dtStat.select(s);
     pro_codetiE.addDatos(dtStat);    
     
+    
+    dtStat.select("SELECT cat_codi,cat_nomb FROM categorias_art  ORDER BY cat_codi");
+    cat_codiE.addDatos(dtStat);    
+    
+    dtStat.select("SELECT cal_codi,cal_nomb FROM calibres_art  ORDER BY cal_codi");
+    cal_codiE.addDatos(dtStat);    
+    
     pro_codetiE.addDatos("-1","Sin Etiqueta");
     s="SELECT fpr_codi,fpr_nomb FROM v_famipro "+
         " ORDER BY fpr_nomb";
@@ -243,6 +250,8 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_coinstE.setColumnaAlias("pro_coinst");
     pro_tiplotE.setColumnaAlias("pro_tiplot");
     pro_codetiE.setColumnaAlias("pro_codeti");
+    cat_codiE.setColumnaAlias("cat_codi");
+    cal_codiE.setColumnaAlias("cal_codi");
     activarEventos();
     verDatos(dtCons);
     }
@@ -359,7 +368,8 @@ public class MantArticulos extends ventanaPad  implements PAD
       pro_fecaltE.setDate(dtCon1.getDate("pro_fecalt"));
       pro_feulmoE.setDate(dtCon1.getDate("pro_feulmo"));
       usu_nombE.setText(dtCon1.getString("usu_nomb"));
-
+      cat_codiE.setValorDec(dtCon1.getInt("cat_codi"));
+      cal_codiE.setValorDec(dtCon1.getInt("cal_codi"));
       verDatosAgru(pro_codiE.getValorInt(),pro_codiE.getValorInt(),jtExclu,"artiexcl");
       verDatosAgru(pro_codiE.getValorInt(),pro_codiE.getValorInt(),jtEqui,"artiequiv");
       verDatosAgru(pro_codiE.getValorInt(),0,jtEquCon,"artequcon");
@@ -438,6 +448,8 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_coinstE.setEnabled(act);
     pro_tiplotE.setEnabled(act);
     pro_codetiE.setEnabled(act);
+    cat_codiE.setEnabled(act);
+    cal_codiE.setEnabled(act);
     if (!act || nav.pulsado==navegador.QUERY)
     {
         pro_feulcoE.setEnabled(act);
@@ -538,7 +550,8 @@ public class MantArticulos extends ventanaPad  implements PAD
     v.add(pro_coinstE.getStrQuery());
     v.add(pro_tiplotE.getStrQuery());
     v.add(pro_codetiE.getStrQuery());
-
+    v.add(cat_codiE.getStrQuery());
+    v.add(cal_codiE.getStrQuery());
     s = "SELECT * FROM v_articulo ";
     s = creaWhere(s, v,true);
     s+=  Pdiscrim.getCondWhere(null);
@@ -735,6 +748,8 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_envvacE.setValor("0");
     pro_activE.setValor("-1");
     pro_codetiE.setValorInt(0);
+    cat_codiE.setValorInt(1);
+    cal_codiE.setValorInt(1);
     mensaje("Introduzca datos del producto a insertar ...");
   }
     @Override
@@ -803,6 +818,17 @@ public class MantArticulos extends ventanaPad  implements PAD
      mensajeErr("Codigo Etiqueta  NO VALIDA");
      return false;
    }
+   if (! cat_codiE.controla())
+   {
+     mensajeErr("Categoria NO VALIDA");
+     return false;
+   }
+   if (! cal_codiE.controla())
+   {
+     mensajeErr("Clasificacion NO VALIDA");
+     return false;
+   }
+
     if (jtExclu.isEnabled())
     {
         jtExclu.salirGrid();
@@ -899,6 +925,8 @@ public class MantArticulos extends ventanaPad  implements PAD
     dt.setDato("pro_coinst", pro_coinstE.getValor());
     dt.setDato("pro_tiplot", pro_tiplotE.getValor());
     dt.setDato("pro_codeti",pro_codetiE.getValorInt());
+    dt.setDato("cat_codi",cat_codiE.getValorInt());
+    dt.setDato("cal_codi",cal_codiE.getValorInt());
     dt.setDato("pro_oblfsa",pro_oblfsaE.isSelected()?1:0);
     dt.setDato("usu_nomb",EU.usuario);
   }
@@ -1246,6 +1274,10 @@ public class MantArticulos extends ventanaPad  implements PAD
         pro_cosincE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9.999");
         Pdiscrim = new gnu.chu.camposdb.DiscProPanel();
         Pfamil = new gnu.chu.controles.CPanel();
+        cLabel39 = new gnu.chu.controles.CLabel();
+        cat_codiE = new gnu.chu.controles.CLinkBox();
+        cLabel40 = new gnu.chu.controles.CLabel();
+        cal_codiE = new gnu.chu.controles.CLinkBox();
         Pexclu = new gnu.chu.controles.CPanel();
         jtExclu = new gnu.chu.controles.CGridEditable(2) {
             public void cambiaColumna(int col,int colNueva, int row)
@@ -1666,6 +1698,29 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         Ptab.addTab("Inicio", Pinicio);
         Ptab.addTab("Discriminadores", Pdiscrim);
+
+        Pfamil.setLayout(null);
+
+        cLabel39.setText("Categoria");
+        Pfamil.add(cLabel39);
+        cLabel39.setBounds(10, 10, 60, 18);
+
+        cat_codiE.setAncTexto(40);
+        cat_codiE.setPreferredSize(new java.awt.Dimension(122, 17));
+        cat_codiE.setFormato(Types.DECIMAL,"###9");
+        Pfamil.add(cat_codiE);
+        cat_codiE.setBounds(100, 10, 270, 18);
+
+        cLabel40.setText("Clasificación");
+        Pfamil.add(cLabel40);
+        cLabel40.setBounds(10, 40, 80, 18);
+
+        cal_codiE.setAncTexto(40);
+        cal_codiE.setPreferredSize(new java.awt.Dimension(122, 17));
+        cal_codiE.setFormato(Types.DECIMAL,"###9");;
+        Pfamil.add(cal_codiE);
+        cal_codiE.setBounds(100, 40, 270, 18);
+
         Ptab.addTab("Familias", Pfamil);
 
         Pexclu.setLayout(new javax.swing.BoxLayout(Pexclu, javax.swing.BoxLayout.LINE_AXIS));
@@ -1813,7 +1868,9 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CLabel cLabel36;
     private gnu.chu.controles.CLabel cLabel37;
     private gnu.chu.controles.CLabel cLabel38;
+    private gnu.chu.controles.CLabel cLabel39;
     private gnu.chu.controles.CLabel cLabel4;
+    private gnu.chu.controles.CLabel cLabel40;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
@@ -1821,7 +1878,9 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CPanel cPanel1;
     private gnu.chu.controles.CPanel cPanel2;
+    private gnu.chu.controles.CLinkBox cal_codiE;
     private gnu.chu.controles.CLinkBox cam_codiE;
+    private gnu.chu.controles.CLinkBox cat_codiE;
     private gnu.chu.controles.CLinkBox fam_codiE;
     private gnu.chu.controles.CGridEditable jtEquCon;
     private gnu.chu.controles.CGridEditable jtEqui;

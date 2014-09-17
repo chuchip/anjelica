@@ -24,7 +24,49 @@ package gnu.chu.anjelica.almacen;
 
 public class StkPartid {
     private double kilos=0;
+    private boolean indivStock;
+    private boolean controlInd;
+    private int estado;
+  public final static int ARTIC_NOT_FOUND = 1; // Articulo NO encontrado
+    public final static int INDIV_NOT_FOUND= 2; //"NO encontrado Partida para estos valores";
+//    public final static int INDIV_LOCK=3; // Individuo Bloqueado
+//    public final static int ARTIC_SIN_CONTROL_INDIV=4;// Articulo sin Control Individuos
+//    public final static int ARTIC_SIN_CONTROL_EXIST=5;// Articulo sin Control Exist.
+//    public final static int ARTIC_SIN_CONTROL=6;// Articulo sin Control Exist. ni indiv.
+    public final static int INDIV_OK=0; // Individuo Encontrado
+    private final String[] literal=new String[]{null,"Articulo NO encontrado",
+        "Individuo NO encontrado en Stock-Partidas",
+        "Individuo Bloqueado",
+        "Articulo sin Control Individuos",
+        "Articulo sin Control Existencias",
+        "Articulo sin Control Existencias ni Indiv."
+  };
+    public boolean hasControlInd() {
+        return controlInd;
+    }
 
+    public void setControlInd(boolean controlInd) {
+        this.controlInd = controlInd;
+    }
+
+    public boolean isControlExist() {
+        return controlExist;
+    }
+
+    public void setControlExist(boolean controlExist) {
+        this.controlExist = controlExist;
+    }
+
+    public boolean isLockIndiv() {
+        return estado==INDIV_OK && lockIndiv;
+    }
+
+    public void setLockIndiv(boolean lockIndiv) {
+        this.lockIndiv = lockIndiv;
+    }
+    private boolean controlExist;
+    private boolean lockIndiv;
+    
     public double getKilos() {
         return kilos;
     }
@@ -33,13 +75,7 @@ public class StkPartid {
         this.kilos = kilos;
     }
 
-    public int getEstado() {
-        return estado;
-    }
-
-    public void setEstado(int estado) {
-        this.estado = estado;
-    }
+  
 
     public int getUnidades() {
         return unidades;
@@ -49,18 +85,18 @@ public class StkPartid {
         this.unidades = unidades;
     }
     private int unidades=0;
-    private int estado=0;
 
-    public final static int ARTIC_NOT_FOUND = 1; // "Articulo NO encontrado";
-    public final static int INDIV_NOT_FOUND= 2; //"NO encontrado Partida para estos valores";
-    public final static int INDIV_LOCK=3; // "Individuo Bloqueado"
-    public final static int ARTIC_SIN_CONTROL_INDIV=4;// Articulo sin Control Individuos
-    public final static int INDIV_OK=0;
-    private final String[] literal=new String[]{null,"Articulo NO encontrado",
-        "Individuo NO encontrado en Stock-Partidas",
-        "Individuo Bloqueado",
-        "Articulo sin Control Individuos"
-  };
+
+  
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
+    
   public String getMensaje(int estad)
   {
       return literal[estad];
@@ -69,23 +105,56 @@ public class StkPartid {
   {
       return getMensaje(estado);
   }
-  public boolean hasError()
+  /**
+   * Indica si existe el individuo existe en stock partidas
+   * @param indivStock 
+   */
+  public void setIndivStock(boolean indivStock)
   {
-    return estado!=INDIV_OK && estado!=ARTIC_SIN_CONTROL_INDIV;
+      this.indivStock=indivStock;
   }
-  public boolean hasControlIndiv()
+  
+  public boolean getIndivStock()
   {
-    return estado!=ARTIC_SIN_CONTROL_INDIV;
+      return indivStock;
   }
-
-  public StkPartid(int estado, double kilos, int unidad)
+  
+ 
+  
+  public StkPartid(int estado,double kilos, int unidad)
   {
+    this.estado=estado;
     unidades=unidad;
     this.kilos=kilos;
-    this.estado=estado;
   }
   public StkPartid(int estado)
+  {   
+      this(estado,0,0);
+  }
+  public boolean hasError()
   {
-     this(estado,0,0);
+      if (estado==ARTIC_NOT_FOUND)
+          return true;
+      return estado==INDIV_NOT_FOUND && hasControlInd();
+  }
+  
+  /**
+   * Comprueba si hay algo de stock para este individuo
+   * @return 
+   */
+  public boolean hasStock()
+  {
+       if (estado==ARTIC_NOT_FOUND)
+          return false;
+       return kilos != 0 || !isControlExist();
+ }
+  
+  public boolean hasStock(double kilos)
+  {
+      if (hasError())
+          return false;
+      if (! isControlExist())
+          return true;
+      return getKilos()>=kilos;
   }
 }

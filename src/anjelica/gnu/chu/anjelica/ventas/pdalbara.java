@@ -267,7 +267,7 @@ public class pdalbara extends ventanaPad  implements PAD
         ArrayList v = new ArrayList();
         v.add(pro_codiE.getText().trim());
         v.add(pro_nombcE.getText().trim());
-        v.add(avp_emplotE.getText().trim());
+        v.add(EU.em_cod);
         v.add(avp_ejelotE.getText().trim());
         v.add("1");
         v.add(avp_serlotE.getText().trim());
@@ -649,6 +649,7 @@ public class pdalbara extends ventanaPad  implements PAD
         pro_nombcE.setEnabled(false);
 
         avp_emplotE.setValorDec(EU.em_cod);
+        avp_emplotE.setEnabled(false);
         avp_ejelotE.setValorDec(EU.ejercicio);
         avp_serlotE.setText("A");
         avp_serlotE.setMayusc(true);
@@ -1273,7 +1274,7 @@ public class pdalbara extends ventanaPad  implements PAD
     avc_dtoppE.setColumnaAlias("avc_dtopp");
     avc_dtocomE.setColumnaAlias("avc_dtocom");
     sbe_codiE.setColumnaAlias("sbe_codi");
-    pro_codiE.setCamposLote(avp_ejelotE, avp_emplotE, avp_serlotE, avp_numparE,
+    pro_codiE.setCamposLote(avp_ejelotE, avp_serlotE, avp_numparE,
                             avp_numindE, avp_cantiE);
     Pcabe.setButton(KeyEvent.VK_F2, Birgrid);
     jt.setButton(KeyEvent.VK_F2, Birgrid);
@@ -2209,7 +2210,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     if (ayuLot.consulta)
     {
-      avp_emplotE.setValorDec(ayuLot.jt.getValorInt(0));
+//      avp_emplotE.setValorDec(ayuLot.jt.getValorInt(0));
       avp_ejelotE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, 1));
       avp_serlotE.setText(ayuLot.jt.getValString(ayuLot.rowAct, 2));
 
@@ -5588,11 +5589,11 @@ public class pdalbara extends ventanaPad  implements PAD
               mensajeErr(pro_codicE.getMsgError());
               return 0;
           }
-          if (! emp_codiE.hasAcceso(avp_emplotE.getValorInt()))
-          {
-              mensajeErr("Empresa no valida");
-              return 2;
-          }
+//          if (! emp_codiE.hasAcceso(avp_emplotE.getValorInt()))
+//          {
+//              mensajeErr("Empresa no valida");
+//              return 2;
+//          }
           if (avp_ejelotE.getValorInt() == 0) {
               mensajeErr("Introduzca Ejercicio de Lote");
               return 3;
@@ -5723,7 +5724,7 @@ public class pdalbara extends ventanaPad  implements PAD
                     && avp_numparE.getValorInt() == jtDes.getValorDec(n, 6)
                     && avp_numindE.getValorInt() == jtDes.getValorInt(n, 7)
                     && avp_ejelotE.getValorInt() == jtDes.getValorInt(n, 3)
-                    && avp_emplotE.getValorInt() == jtDes.getValorInt(n, 2)) {
+                    ) {
                 canti += jtDes.getValorDec(n, 8);
                 unid += jtDes.getValorInt(n, 4);
             }
@@ -5785,7 +5786,7 @@ public class pdalbara extends ventanaPad  implements PAD
             StkPartid canStk=buscaPeso();
             if (canStk.hasError())
                  return false;
-            if (canStk.getEstado()!=StkPartid.ARTIC_SIN_CONTROL_INDIV)
+            if (canStk.isControlExist())
             {
                 if ( canti >= 0
                         && canStk.getKilos() <= canti - 0.1) {
@@ -6115,7 +6116,7 @@ public class pdalbara extends ventanaPad  implements PAD
   StkPartid buscaPeso() throws Exception
   {
     StkPartid ret = utildesp.buscaPeso(dtCon1, avp_ejelotE.getValorInt(),
-                                       avp_emplotE.getValorInt(),
+                                       EU.em_cod,
                                        avp_serlotE.getText(),
                                        avp_numparE.getValorInt(),
                                        avp_numindE.getValorInt(),
@@ -6128,7 +6129,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
   private void resetCambioIndividuo()
   {
-    avp_emplotE.resetCambio();
+//    avp_emplotE.resetCambio();
     avp_ejelotE.resetCambio();
     avp_serlotE.resetCambio();
     avp_numindE.resetCambio();
@@ -6142,7 +6143,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     if (avp_numparE.getValorInt() == 0 || ! jtDes.isEnabled())
       return;
-    if (! avp_emplotE.hasCambio() &&  !avp_ejelotE.hasCambio() && ! avp_serlotE.hasCambio()
+    if (  !avp_ejelotE.hasCambio() && ! avp_serlotE.hasCambio()
             && !avp_numindE.hasCambio() && !avp_numparE.hasCambio() &&
         !pro_codicE.hasCambio())
       return;
@@ -6181,7 +6182,7 @@ public class pdalbara extends ventanaPad  implements PAD
           StkPartid cantStk=buscaPeso();
           if (!cantStk.hasError())
           {
-             if (! cantStk.hasControlIndiv())
+             if (! cantStk.hasControlInd())
                   canti=0;
              else
                 canti+=cantStk.getKilos();
@@ -6189,7 +6190,7 @@ public class pdalbara extends ventanaPad  implements PAD
                   canti=0;
           }
 
-          avp_cantiE.setEditable(cantStk.hasControlIndiv()?P_ADMIN:true);
+          avp_cantiE.setEditable( cantStk.hasControlInd() && cantStk.isControlExist() ?P_ADMIN:true);
           jtDes.setValor(""+canti,8);
           avp_cantiE.setValorDec(canti);
       }
@@ -6456,7 +6457,7 @@ public class pdalbara extends ventanaPad  implements PAD
         });
       }
     }
-    catch (Exception k)
+    catch (SQLException k)
     {
       Error("Error al Ir al Grid de Despiece", k);
     }
@@ -6468,7 +6469,7 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       jtDes.removeAllDatos();
       avp_numuniE.resetTexto();
-      avp_emplotE.resetTexto();
+//      avp_emplotE.resetTexto();
       avp_ejelotE.resetTexto();
       avp_serlotE.resetTexto();
       avp_numparE.resetTexto();
@@ -7410,7 +7411,8 @@ public class pdalbara extends ventanaPad  implements PAD
      else
        ifRegAlm.statusBar.setEnabled(true);
      ifRegAlm.setVisible(true);
-     ifRegAlm.getPanelReg().setCampos(avc_fecalbE.getDate(), pro_codicE.getValorInt(),avp_emplotE.getValorInt(),
+     ifRegAlm.getPanelReg().setCampos(avc_fecalbE.getDate(), pro_codicE.getValorInt(),
+                                        EU.em_cod,
                                       avp_ejelotE.getValorInt(), avp_serlotE.getText(),avp_numparE.getValorInt(),
                                       avp_numindE.getValorInt(),avp_numuniE.getValorInt()*-1,
                                       avp_cantiE.getValorDec()*-1,

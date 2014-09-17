@@ -764,7 +764,7 @@ public class pdusua extends ventanaPad   implements PAD
     activaTodo();
     try {
       resetBloqueo(dtAdd, "usuarios",usu_nombE.getText(),true);
-    } catch (Exception k)
+    } catch (SQLException k)
     {
       Error("Error al Anular bloqueo sobre tabla usuarios",k);
     }

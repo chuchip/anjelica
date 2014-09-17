@@ -111,7 +111,7 @@ public class paregalm extends CPanel {
     CTextField pro_numindE = new CTextField(Types.DECIMAL, "###9");
     cliPanel cli_codiE = new cliPanel();
     CLabel cli_codiL = new CLabel();
-    CTextField deo_emplotE = new CTextField(Types.DECIMAL, "#9");
+//    CTextField deo_emplotE = new CTextField(Types.DECIMAL, "#9");
     CLabel cLabel5 = new CLabel();
     CLabel cLabel12 = new CLabel();
     CTextField rgs_fecresE = new CTextField(Types.DATE, "dd-MM-yy");
@@ -206,9 +206,9 @@ public class paregalm extends CPanel {
         cli_codiE.setBounds(new Rectangle(59, 79, 340, 16));
         cli_codiL.setText("Cliente");
         cli_codiL.setBounds(new Rectangle(3, 79, 55, 16));
-        deo_emplotE.setEnabled(false);
-        deo_emplotE.setBounds(new Rectangle(179, 41, 21, 16));
-        deo_emplotE.setAutoNext(true);
+//        deo_emplotE.setEnabled(false);
+//        deo_emplotE.setBounds(new Rectangle(179, 41, 21, 16));
+//        deo_emplotE.setAutoNext(true);
         cLabel5.setText("Empresa");
         cLabel5.setBounds(new Rectangle(129, 41, 53, 16));
         cLabel12.setBounds(new Rectangle(137, 27, 128, 25));
@@ -271,7 +271,7 @@ public class paregalm extends CPanel {
         this.add(cLabel4, null);
         this.add(deo_serlotE, null);
         this.add(cLabel6, null);
-        this.add(deo_emplotE, null);
+//        this.add(deo_emplotE, null);
         this.add(cLabel5, null);
         this.add(deo_ejelotE, null);
         this.add(cLabel9, null);
@@ -331,7 +331,7 @@ public class paregalm extends CPanel {
     public void iniciar(DatosTabla dtCon1) throws Exception {
         this.dtCon1 = dtCon1;
         deo_ejelotE.setValorDec(EU.ejercicio);
-        deo_emplotE.setValorDec(EU.em_cod);
+//        deo_emplotE.setValorDec(EU.em_cod);
         tir_codiE.setFormato(Types.DECIMAL, "##9", 3);
 //     tir_codiE1.setFormato(Types.DECIMAL, "##9", 3);
 
@@ -347,7 +347,7 @@ public class paregalm extends CPanel {
         }
 
         pro_codiE.iniciar(dtStat, papa, vl, EU);
-        pro_codiE.setCamposLote(deo_ejelotE, deo_emplotE, deo_serlotE, pro_loteE, pro_numindE,
+        pro_codiE.setCamposLote(deo_ejelotE, deo_serlotE, pro_loteE, pro_numindE,
                 deo_kilosE);
         stkPart = new actStkPart(dtAdd, EU.em_cod);
         alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
@@ -439,7 +439,7 @@ public class paregalm extends CPanel {
 
     void actProvCli() throws Exception {
         if (prv_codiE.isVisible() && prv_codiE.getValorInt() == 0) {
-            utDesp.busDatInd(deo_serlotE.getText(), pro_codiE.getValorInt(), 0, deo_emplotE.getValorInt(),
+            utDesp.busDatInd(deo_serlotE.getText(), pro_codiE.getValorInt(), 0,
                     deo_ejelotE.getValorInt(),
                     pro_loteE.getValorInt(), pro_numindE.getValorInt(), dtCon1, dtStat, EU);
             if (utDesp.prvCompra == 0) {
@@ -450,7 +450,7 @@ public class paregalm extends CPanel {
             }
         }
         if (cli_codiE.isVisible() && cli_codiE.getValorInt() == 0) {
-            int cliCodi = utDesp.busCliVenta(deo_serlotE.getText(), pro_codiE.getValorInt(), deo_emplotE.getValorInt(),
+            int cliCodi = utDesp.busCliVenta(deo_serlotE.getText(), pro_codiE.getValorInt(), EU.em_cod,
                     deo_ejelotE.getValorInt(),
                     pro_loteE.getValorInt(), pro_numindE.getValorInt(), dtStat, null);
             if (cliCodi == 0) {
@@ -474,7 +474,7 @@ public class paregalm extends CPanel {
             
             actProvCli();
 
-            if (!stkPart.verKilos(dtCon1, deo_emplotE.getValorInt(), deo_ejelotE.getValorInt(),
+            if (!stkPart.verKilos(dtCon1, deo_ejelotE.getValorInt(),
                     deo_serlotE.getText(), pro_loteE.getValorInt(), pro_numindE.getValorInt(),
                     pro_codiE.getValorInt(), alm_codiE.getValorInt())) {
                 mensajeErr("Registro de Stock NO encontrado");
@@ -552,7 +552,7 @@ public class paregalm extends CPanel {
         tir_codiE.setText(dtCon1.getString("tir_codi"));
         pro_codiE.setText(dtCon1.getString("pro_codi"));
         deo_ejelotE.setText(dtCon1.getString("eje_nume"));
-        deo_emplotE.setText(dtCon1.getString("emp_codi"));
+//        deo_emplotE.setText(dtCon1.getString("emp_codi"));
         deo_serlotE.setText(dtCon1.getString("pro_serie"));
         pro_loteE.setText(dtCon1.getString("pro_nupar"));
         pro_numindE.setText(dtCon1.getString("pro_numind"));
@@ -601,7 +601,7 @@ public class paregalm extends CPanel {
         return insRegistro(cci_fecconE.getFecha("yyyy-MM-dd")+" "+
             Formatear.format(cci_horconE.getText(),"99")+":"+
             Formatear.format(cci_minconE.getText(),"99")
-            , pro_codiE.getValorInt(), deo_emplotE.getValorInt(),
+                , pro_codiE.getValorInt(), EU.em_cod,
                 deo_ejelotE.getValorInt(), deo_serlotE.getText(), pro_loteE.getValorInt(),
                 pro_numindE.getValorInt(), stp_unactE.getValorInt(),
                 deo_kilosE.getValorDec(), alm_codiE.getValorInt(), tir_codiE.getValorInt(),
@@ -808,7 +808,7 @@ public class paregalm extends CPanel {
                 }
                 if (rgs_traspE.isSelected() && pro_codiE.hasControlIndiv() )
                 {
-                    if (!stkPart.verKilos(dtStat, deo_emplotE.getValorInt(),
+                    if (!stkPart.verKilos(dtStat,
                             deo_ejelotE.getValorInt(), deo_serlotE.getText(),
                             pro_loteE.getValorInt(), pro_numindE.getValorInt(),
                             pro_codiE.getValorInt(), alm_codiE.getValorInt())) {
@@ -842,7 +842,7 @@ public class paregalm extends CPanel {
                     acc_numeE.requestFocus();
                     return false;
                 }
-                if (!MantAlbComCarne.getCabeceraAlb(deo_emplotE.getValorInt(),
+                if (!MantAlbComCarne.getCabeceraAlb(EU.em_cod,
                         acc_anoE.getValorInt(), acc_serieE.getText(),
                         acc_numeE.getValorInt(), dtStat)) {
                     mensajeErr("Albaran NO existe");
@@ -886,11 +886,11 @@ public class paregalm extends CPanel {
             kilos = kilos * -1;
             unAct = unAct * -1;
         }
-        stkPart.setEmpresa(deo_emplotE.getValorInt());
-        stkPart.restar(deo_ejelotE.getValorInt(), deo_serlotE.getText(),
-                pro_loteE.getValorInt(), pro_numindE.getValorInt(),
-                pro_codiE.getValorInt(), alm_codiE.getValorInt(),
-                kilos, unAct);
+//        stkPart.setEmpresa(deo_emplotE.getValorInt());
+//        stkPart.restar(deo_ejelotE.getValorInt(), deo_serlotE.getText(),
+//                pro_loteE.getValorInt(), pro_numindE.getValorInt(),
+//                pro_codiE.getValorInt(), alm_codiE.getValorInt(),
+//                kilos, unAct);
 
     }
 
@@ -929,11 +929,11 @@ public class paregalm extends CPanel {
             unAct = unAct * -1;
         }
 
-        stkPart.setEmpresa(deo_emplotE.getValorInt());
-        stkPart.restar(dtAdd.getInt("eje_nume"), dtAdd.getString("pro_serie"),
-                dtAdd.getInt("pro_nupar"), dtAdd.getInt("pro_numind"),
-                dtAdd.getInt("pro_codi"), dtAdd.getInt("alm_codi"),
-                kilos, unAct);
+//        stkPart.setEmpresa(deo_emplotE.getValorInt());
+//        stkPart.restar(dtAdd.getInt("eje_nume"), dtAdd.getString("pro_serie"),
+//                dtAdd.getInt("pro_nupar"), dtAdd.getInt("pro_numind"),
+//                dtAdd.getInt("pro_codi"), dtAdd.getInt("alm_codi"),
+//                kilos, unAct);
         s = "DELETE FROM v_regstock WHERE rgs_nume = " + rgsNume;
         nRowAf = dtAdd.executeUpdate(s); // Borro el registro de v_regstock
         return nRowAf > 0;
@@ -954,7 +954,7 @@ public class paregalm extends CPanel {
         tir_codiE.setEnabled(b);
         pro_codiE.setEnabled(b);
         deo_ejelotE.setEnabled(b);
-        deo_emplotE.setEnabled(b);
+//        deo_emplotE.setEnabled(b);
         deo_serlotE.setEnabled(b);
         pro_loteE.setEnabled(b);
         pro_numindE.setEnabled(b);
@@ -977,7 +977,7 @@ public class paregalm extends CPanel {
         tir_codiE.resetCambio();
         deo_ejelotE.setValorInt(EU.ejercicio);
         deo_serlotE.setText("A");
-        deo_emplotE.setValorDec(EU.em_cod);
+//        deo_emplotE.setValorDec(EU.em_cod);
         rgs_clidevE.setEnabled(true);
         rgs_traspE.setSelected(true);
         cci_fecconE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -1017,7 +1017,7 @@ public class paregalm extends CPanel {
             int accAno, String accSerie, int accNume) throws Exception {
         pro_codiE.setValorInt(proCodi);
         pro_codiE.controla(false);
-        deo_emplotE.setValorInt(empCodi);
+//        deo_emplotE.setValorInt(empCodi);
         deo_ejelotE.setValorInt(ejeNume);
         deo_serlotE.setText(serie);
         pro_loteE.setValorInt(numPar);

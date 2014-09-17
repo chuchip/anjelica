@@ -50,16 +50,45 @@ public class MantAlbComCarne extends MantAlbCom
    CLinkBox mat_codiE,sde_codiE,acp_painacE,acp_engpaiE,acp_paisacE;
   
    CTextField acp_feccadE,acp_fecsacE,acp_fecproE;
-   
+   /**
+    * Codigo matadero 3
+    */   
    final int JTD_MATCODI=3;
+   /**
+    * Sala Despiece 4
+    */
    final int JTD_SDECODI=4;
-   final int JTD_PAINAC=5;
+   /**
+    * Pais Nacimiento - 5
+    */
+   final int JTD_PAINAC=5; 
+   /**
+    * Pais Engorde 6
+    */
    final int JTD_ENGPAI=6;
+   /**
+    * Pais Sacrificio 7
+    */
    final int JTD_PAISAC=7;
+   /**
+    * Fecha Caducicad 8
+    */
    final int JTD_FECCAD=8;
+   /**
+    * Fecha Sacrificio 9
+    */
    final int JTD_FECSAC=9;
+   /**
+    * Fecha Prodcuccion 10
+    */
    final int JTD_FECPRO=10;
+   /**
+    * Numero Linea desglose 11
+    */
    int JTD_NUMLIN=11;
+   /**
+    * Numero de individuos 12
+    */
    int JTD_CANIND=12;
    
    public MantAlbComCarne(EntornoUsuario eu, Principal p) {
@@ -77,8 +106,7 @@ public class MantAlbComCarne extends MantAlbCom
    public MantAlbComCarne(menu p, EntornoUsuario eu, Hashtable ht) {
         super(p, eu, ht);
    }
-  
-   public int getTipoProg(){return TIPO_CARNICA;}
+     
 
    private void activarEventos0()
    {
@@ -196,10 +224,7 @@ public class MantAlbComCarne extends MantAlbCom
     jtDes.setPreferredSize(new Dimension(743, 168));
     jtDes.setAnchoColumna(new int[]{50,70,120,150,150,130,130,130,80,80,80,40,40});
     jtDes.setAlinearColumna(new int[]{2,2,0,0,0,0,0,0,1,1,1,2,2});
-    jtDes.setFormatoColumna(1,"---9.99");
-    jtDes.setFormatoColumna(8,acp_feccadE.getFormato());
-    jtDes.setFormatoColumna(JTD_FECSAC,acp_fecsacE.getFormato());
-    jtDes.setFormatoColumna(JTD_FECPRO,acp_fecproE.getFormato());
+  
     ArrayList vc1=new ArrayList();
     acp_feccadE.setText("");
 
@@ -244,6 +269,11 @@ public class MantAlbComCarne extends MantAlbCom
     jtDes.setAjusAncCol(false);
     jtDes.setColNueva(1);
     jtDes.setCampos(vc1);
+    jtDes.setFormatoCampos();
+//      jtDes.setFormatoColumna(1,"---9.99");
+//    jtDes.setFormatoColumna(8,acp_feccadE.getFormato());
+//    jtDes.setFormatoColumna(JTD_FECSAC,acp_fecsacE.getFormato());
+//    jtDes.setFormatoColumna(JTD_FECPRO,acp_fecproE.getFormato());
   }
   
    public int cambiaLinDesg0(int row) throws Exception
@@ -377,7 +407,7 @@ public class MantAlbComCarne extends MantAlbCom
 
     try {
       if (opImpEti.isSelected())
-      imprEtiq(row, nInd);
+        imprEtiq(row, nInd);
 //    debug("guardaLinDes: row "+row+" nLiAlDe: "+nLiAlDe+" nInd: "+nInd);
        
       jtDes.setValor(""+nInd,row,DESNIND);
@@ -541,23 +571,18 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
       msgBox("No se pueden imprimir etiquetas sobre Cantidades negativos o a cero");
       return;
     }
-    String codBarras = acc_anoE.getText().substring(2) +
-        (acc_numeE.getValorInt()>9999?Formatear.format(emp_codiE.getText(), "9"):
-         Formatear.format(emp_codiE.getText(), "99")) +
-        acc_serieE.getText() +
-        (acc_numeE.getValorInt()>9999?Formatear.format(acc_numeE.getText(), "99999"):
-         Formatear.format(acc_numeE.getText(), "9999"))+
-        Formatear.format(jt.getValorInt(1), "99999") +
-        Formatear.format(nInd, "999") +
-        Formatear.format(jtDes.getValorDec(nLin,1), "999.99");
-    String lote=acc_anoE.getText().substring(2) + "/" +
-                       Formatear.format(emp_codiE.getText(), "9") + "/" +
-                       acc_serieE.getText() + "/" +
-                       acc_numeE.getText().trim() + "/" +
-                       nInd;
+    CodigoBarras codBarras = new CodigoBarras("C", 
+         acc_anoE.getText() ,
+        acc_serieE.getText() ,
+        acc_numeE.getValorInt(),        
+        jt.getValorInt(JT_PROCOD) ,
+        nInd,
+        jtDes.getValorDec(nLin,JTD_CANTI));
+        
+  
 
-    String sacrificadoE="",despiezadoE="";
-    String nombArt="",codArt="";
+    String sacrificadoE,despiezadoE;
+    String nombArt,codArt;
     codArt=jt.getValString(1);
     nombArt=pro_codiE.getNombArt(codArt,emp_codiE.getValorInt());
     int sdeCodi=0,matCodi=0;
@@ -594,13 +619,13 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
     if (etiq == null)
       etiq = new etiqueta(EU);
 
-    etiq.iniciar(codBarras, lote,
+    etiq.iniciar(codBarras.getCodBarra(), codBarras.getLote(),
                  codArt, nombArt,
-                 mat_codiE.getTextoCombo(jtDes.getValString(nLin, 5)),
-                 mat_codiE.getTextoCombo(jtDes.getValString(nLin, 6)),
+                 mat_codiE.getTextoCombo(jtDes.getValString(nLin, JTD_PAINAC)),
+                 mat_codiE.getTextoCombo(jtDes.getValString(nLin, JTD_ENGPAI)),
                  despiezadoE,
-                 jtDes.getValString(nLin, 2),
-                 Formatear.format(jtDes.getValString(nLin, 1), "##9.99") +
+                 jtDes.getValString(nLin, JTD_NUMCRO),
+                 Formatear.format(jtDes.getValString(nLin, JTD_CANTI), "##9.99") +
                  " Kg",
                  getConservar(jt.getValorInt(JT_PROCOD)),
                  sacrificadoE,                

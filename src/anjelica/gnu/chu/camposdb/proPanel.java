@@ -7,6 +7,7 @@ import gnu.chu.controles.CPanel;
 import gnu.chu.controles.CTextField;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.vlike;
+import gnu.chu.utilidades.CodigoBarras;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.mensajes;
@@ -25,7 +26,7 @@ import javax.swing.SwingUtilities;
 /**
  *  Panel con el Código de Producto y Nombre de Producto.
  * @Author Chuchi P
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -44,6 +45,7 @@ import javax.swing.SwingUtilities;
  */
 public class proPanel extends CPanel
 {
+  private  CodigoBarras codBarra=null;
   private int almCodi=0; // Almacen donde buscar indiv. disponibles
   private boolean verIndivBloqueados=true;
   private CTextField campoLote;
@@ -64,7 +66,7 @@ public class proPanel extends CPanel
   private boolean controlIndiv=true;
   private boolean swControl=true;
   private CTextField prp_anoE=null;
-  private CTextField emp_codiE;
+//  private CTextField emp_codiE;
   private CTextField prp_serieE;
   private CTextField prp_partE;
   private CTextField prp_indiE;
@@ -96,7 +98,7 @@ public class proPanel extends CPanel
     }
   };
   int ancTexto = 50;
-  EntornoUsuario eu1;
+//  EntornoUsuario eu1;
   boolean ponBcons = true;
   boolean ponBins = false;
   String msgError = "";
@@ -185,7 +187,7 @@ public class proPanel extends CPanel
       {
         afterFocusLost(controla(false,true));
       }
-      catch (Exception k)
+      catch (SQLException k)
       {}
     }
 
@@ -408,30 +410,23 @@ public class proPanel extends CPanel
   {
     pro_codiE.setColumnaAlias(alias);
   }
-public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
-                            CTextField prp_partE,
-                            CTextField prp_indiE,CTextField prp_pesoE)
-{
-  setCamposLote(prp_anoE,null,prp_seriE,prp_partE,prp_indiE,prp_pesoE);
-}
 
   /**
    * Establece los Campos que definen el Lote.
    * Les pone un KeyListener para que al pulsar F3 salga la ventana de ayuda
    * con los lotes disponibles
-   * @param prp_anoE CTextField
-   * @param emp_codiE CTextField
-   * @param prp_seriE CTextField
-   * @param prp_partE CTextField
-   * @param prp_indiE CTextField
-   * @param prp_pesoE CTextField
+   * @param prpAnoE CTextField  
+   * @param prpSeriE CTextField
+   * @param prpPartE CTextField
+   * @param prpIndiE CTextField
+   * @param prpPesoE CTextField
    */
-  public void setCamposLote(CTextField prpAnoE,CTextField empCodiE,CTextField prpSeriE,
+  public void setCamposLote(CTextField prpAnoE,CTextField prpSeriE,
                             CTextField prpPartE,
                             CTextField prpIndiE,CTextField prpPesoE)
   {
     this.prp_anoE=prpAnoE;
-    this.emp_codiE=empCodiE;
+   
     this.prp_serieE=prpSeriE;
     this.prp_partE=prpPartE;
     this.prp_indiE=prpIndiE;
@@ -500,18 +495,7 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
         procesaTeclaLote(e);
       }
     });
-    if (emp_codiE!=null)
-    {
-        emp_codiE.addKeyListener(new KeyAdapter()
-        {
-          @Override
-          public void keyPressed(KeyEvent e)
-          {
-            campoLote=emp_codiE;
-            procesaTeclaLote(e);
-          }
-        });
-    }
+  
   }
 
   protected void antesLlenaCampos()
@@ -539,64 +523,27 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
     antesLlenaCampos();
 //    System.out.println("LLenar campos");
     String valor=pro_codiE.getText();
-    try {
-      prp_anoE.setValorDec(Integer.parseInt(valor.substring(0, 2))+2000);
-    } catch (Exception k){}
-    /*
-     Año: 03
-     Emp: 1 o 01
-     Serie: A
-     Partida: 1240 o 01240
-     Producto: 10951
-     Individuo: 001
-     Peso: 025.33
-     Ejemplo: 0301A124010951001025.33
-              04-1-A-02381-10601-001-010.00
-              041A0238110601001010.00
-              051A0000100001001011.00
-              051A0034510601225023.00
-              051A0000100001004002.00
-              061A0000100001012005.00
-              061A0000610601031021.00
-              071A0015110601054013.10
-     */
+    
+    if (codBarra==null)
+         codBarra=new CodigoBarras(valor);
+    codBarra.setCodBarra(valor);
+    if (codBarra.isError() )
+    {
+        mensajes.mensajeAviso("Codigo Barras no es valido");
+        return;
+    }
+    prp_anoE.setValorDec(codBarra.getProEjeLote()) ;       
 
-    // Localizo donde esta la Serie.
-    int posSerie=4;
-    for (int n=2;n<6;n++)
-    {
-      if (!Character.isDigit(valor.charAt(n)))
-        posSerie=n; // NO Es tipo  Digito. Hemos encontrado la serie
-    }
-    if (posSerie==4)
-    {
-      if (emp_codiE!=null)
-        emp_codiE.setText(valor.substring(2,4)); // la empresa usa un solo digito (Antiguo sistema)
-      prp_serieE.setText(valor.substring(4,5));
-      prp_partE.setText(valor.substring(5,9));
-    }
-    else
-    {
-      if (emp_codiE!=null)
-        emp_codiE.setText(valor.substring(2, 3)); // la empresa usa un solo digito.
-      prp_serieE.setText(valor.substring(3, 4));
-      prp_partE.setText(valor.substring(4, 9));
-    }
-    pro_codiE.setText(valor.substring(9,14));
-    if (valor.length()==23)
-    {
-      prp_indiE.setText(valor.substring(14,17));
-      prp_pesoE.setText(valor.substring(17,23));
-    }
-    else
-    {
-      prp_indiE.setText(valor.substring(14,18));
-      prp_pesoE.setText(valor.substring(18,23));
-    }
+    prp_serieE.setText(codBarra.getProSerie());
+    prp_partE.setValorInt(codBarra.getProLote() );
+    pro_codiE.setValorInt(codBarra.getProCodi());
+    prp_indiE.setValorInt(codBarra.getProIndi());
+    prp_pesoE.setValorDec(codBarra.getProKilos()); 
     proCodiAnt=0;
     pro_codiE_focusLost();
     despuesLlenaCampos();
   }
+ 
 
  
   /**
@@ -1260,10 +1207,13 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
   {
     return proConExist;
   }
- 
+  public boolean hasControlExist()
+  {
+    return proConExist=='S';
+  }
   /**
    * Devuelve si este producto tiene control sobre individuos (En Stock-Partidas)
-   * @return
+   * @return true si este producto tiene control sobre individuos (En Stock-Partidas)
    */
   public boolean hasControlIndiv()
   {
@@ -1375,8 +1325,7 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
         prp_serieE.setToolTipText("F3 para consulta lotes disponibles");
         prp_partE.setToolTipText("F3 para consulta lotes disponibles");
         prp_indiE.setToolTipText("F3 para consulta lotes disponibles");
-        if (emp_codiE!=null)
-            emp_codiE.setToolTipText("F3 para consulta lotes disponibles");
+        
     }
   }
    /**
@@ -1439,9 +1388,7 @@ public void setCamposLote(CTextField prp_anoE,CTextField prp_seriE,
   void ej_consLote()
   {
     if (ayuLot.consulta)
-    {
-      if (emp_codiE!=null)
-        emp_codiE.setValorDec(ayuLot.jt.getValorInt(0));
+    {    
       prp_anoE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, 1));
       prp_serieE.setText(ayuLot.jt.getValString(ayuLot.rowAct, 2));
       prp_partE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, 3));

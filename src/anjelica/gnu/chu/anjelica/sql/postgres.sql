@@ -35,8 +35,8 @@ create table anjelica.usuarios
 	usu_previ char(1),	    -- Previsualizar Listados (S/N)
 	usu_diapri char(1),	    -- Mostrar dialogo Imprimir
 	sbe_codi smallint not null, -- Subempresa. Si es 0 tendra acceso a TODAS
-        usu_pass varchar(80),       -- Contraseña Usuario (en SHA-1)
-        usu_look varchar(3),        -- Look And Feel Usuario 
+    usu_pass varchar(80),       -- Contraseña Usuario (en SHA-1)
+    usu_look varchar(3),        -- Look And Feel Usuario 
 	constraint ix_usuarios primary  key (usu_nomb)
 );
 insert into  usuarios VALUES('anjelica',1,2008,'Administrador de BD','anjelica@localhost.com','S','S','S',null,'N','N',1);
@@ -264,21 +264,50 @@ pro_mancos int default 0 not null, -- Mantener costo para despieces 0 NO. Si -1
 pro_fecalt date not null,    -- Fecha Alta
 pro_feulmo date,             -- Fecha Ultima Modificacion
 usu_nomb varchar(15) not null,-- Usuario que hizo la ult. modific. o alta
+cat_codi int not null default 1, -- Categoria Articulo
+cal_codi int not null default 1, -- Calibres
 constraint ix_articulo primary key(pro_codi)
 );
 
+--
+-- Tabla de Categorias
+--
+create table anjelica.categorias_art
+(
+	cat_codi int not null, -- Codigo Categoria
+	cat_nomb varchar(8) not null, -- Nombre Categoria
+	cat_desr varchar(25) not null, -- Descripción Categoria
+	constraint ix_categorias_art primary key  (cat_codi)
+);
+insert into anjelica.categorias_art values(1,'EXTRA','CATEGORIA EXTRA');
+alter table anjelica.v_articulo add constraint cat_profk
+   foreign key (cat_codi) references anjelica.categorias_art(cat_codi) DEFERRABLE INITIALLY DEFERRED;
+
+--
+-- Tabla de Categorias
+--
+create table anjelica.calibres_art
+(
+	cal_codi int not null, -- Codigo Categoria
+	cal_nomb varchar(12) not null, -- Nombre calibre
+	cal_desr varchar(25) not null, -- Descripción calibre
+	constraint ix_calibres_art primary key (cal_codi)
+);
+insert into anjelica.calibres_art values(1,'82-102 mm','Calibre gordo');
+alter table anjelica.v_articulo add constraint cal_profk
+   foreign key (cal_codi) references anjelica.calibres_art(cal_codi) DEFERRABLE INITIALLY DEFERRED;
 --
 -- Tabla  de Lotes
 --
 -- drop table lotes;
 create table anjelica.lotes
 (
-        pro_codi int not null,     -- Articulo
+    pro_codi int not null,     -- Articulo
 	eje_nume int not null,	   -- Ejercicio
 	pro_serie char(1) not null,-- Serie
  	pro_numpar int not null,   -- Partida
-        lot_costo float not null,  -- Precio costo
-        lot_feulen date not null,  -- Fecha Ult. Entrada
+    lot_costo float not null,  -- Precio costo
+    lot_feulen date not null,  -- Fecha Ult. Entrada
   constraint ix_lotes primary key(pro_codi,eje_nume ,pro_serie,pro_numpar)
 );
 --
@@ -812,14 +841,6 @@ CREATE OR REPLACE VIEW anjelica.v_albventa_detalle AS
     p.avp_numpar, p.avp_numind, p.avp_numuni, p.avp_canti
    FROM anjelica.v_albavel l, anjelica.v_albavec c, anjelica.v_albvenpar p
   WHERE c.emp_codi = l.emp_codi AND c.avc_ano = l.avc_ano AND c.avc_serie = l.avc_serie AND c.avc_nume = l.avc_nume AND c.emp_codi = p.emp_codi AND c.avc_ano = p.avc_ano AND c.avc_serie = p.avc_serie AND c.avc_nume = p.avc_nume AND l.avl_numlin = p.avl_numlin;
-
-ALTER TABLE anjelica.v_albventa_detalle
-  OWNER TO cpuente;
-GRANT ALL ON TABLE anjelica.v_albventa_detalle TO cpuente;
-GRANT ALL ON TABLE anjelica.v_albventa_detalle TO ester;
-GRANT ALL ON TABLE anjelica.v_albventa_detalle TO guadi;
-GRANT ALL ON TABLE anjelica.v_albventa_detalle TO anjelica;
-GRANT ALL ON TABLE anjelica.v_albventa_detalle TO jgarcia;
 
 create index ix_albvenpa1 on v_albvenpar (avp_ejelot,avp_serlot,avp_numpar,avp_numind);
 create view anjelica.v_albventa_detalle as select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
@@ -1711,7 +1732,7 @@ deo_codi int not null,	-- Numero de Desp.
 def_orden int not null, -- Numero Orden (Para desp. Agrupados)
 pro_codi int,		-- Producto
 def_ejelot int,		-- Ejercicio del Lote Entrada
-def_emplot int,		-- Empresa del Lote Entrada
+def_emplot int,		-- Empresa del Lote Entrada @deprecated
 def_serlot char(1),	-- Serie del Lote Entrada
 pro_lote int,		-- Numero de Lote Entrada
 pro_numind int,		-- Numero de Individuo
@@ -2647,7 +2668,8 @@ create table anjelica.etiquetas
 	eti_logo varchar(100) not null,  -- Logotipo para la etiqueta
 	eti_ficnom varchar(100) not null, -- Fichero conf. de la Etiqueta
 	eti_defec char(1) not null,  -- Etiqueta Defecto (S/N)
-        eti_client smallint not null -- Etiqueta para cliente.
+	eti_nuetpa smallint not null default 1, -- Numero Etiquetas por Pagina
+    eti_client smallint not null -- Etiqueta para cliente (0 Todos)
 );
 INSERT INTO etiquetas (emp_codi,eti_codi,eti_nomb,eti_logo,eti_ficnom,eti_defec,eti_client)
     VALUES (1,1,'ESTANDART','anjelica.png','etiqueta','S',0);
@@ -3027,6 +3049,7 @@ create table anjelica.v_config
   cfg_lialgr char(1) not null,	   -- Listado Albaranes Compras Graficos (S/N)
   cfg_lifrgr char(1) not null,	   -- Listado Fras. Compras Grafico (S/N)
   cli_codi   int    not null,      -- Cliente para uso Interno (Traspaso almacenes)
+  cfg_tipemp int    not null default 1, -- Tipo de Empresa (1. Carnica, 2. Plantación)
   constraint ix_config primary key (emp_codi)
 );
 insert into v_config values(1,1,1,2,1,1,9999,

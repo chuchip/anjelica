@@ -108,7 +108,13 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
      }
       return txt;
   }
-
+/**
+ * Carga los valores disponibles a traves de un datosTabla
+ *  Si la consulta tiene mas de una columna, la primera sera el indice y la segunda
+ *   el nombre que aparecera en el combo.
+ * @param dt
+ * @throws SQLException 
+ */
  public void setDatos(DatosTabla dt) throws SQLException
  {
    addItem(dt);
@@ -139,7 +145,13 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
             dim.width = Math.max(dim.width, getPreferredSize().width);
         return dim;
     }
-
+/**
+ * Añadir Items (valores disponibles en el comboBox)
+ * @param dt DatosTabla con los datos ya disponibles.
+ * Si la consulta tiene mas de una columna, la primera sera el indice y la segunda
+ * el nombre que aparecera en el combo.
+ * @throws SQLException 
+ */
   public void addItem(DatosTabla dt) throws SQLException
   {
     addItem(dt,true);

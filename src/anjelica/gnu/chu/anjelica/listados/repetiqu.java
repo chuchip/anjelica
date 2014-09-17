@@ -16,7 +16,7 @@ import gnu.chu.anjelica.despiece.utildesp;
  * mostrar. Permite elegir diferentes tipos de etiqueta.
  * La opcion de generar el inventario esta obsoleta y deshabilitada.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2010</p>
+ * <p>Copyright: Copyright (c) 2005-2014</p>
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -200,6 +200,8 @@ public class repetiqu extends ventana
       cLabel9.setText("Ejercicio");
       deo_emplotE.setBounds(new Rectangle(138, 23, 21, 15));
       deo_emplotE.setAutoNext(true);
+      deo_emplotE.setValorInt(EU.em_cod);
+      deo_emplotE.setEnabled(false);
       cLabel5.setBounds(new Rectangle(87, 23, 51, 15));
       cLabel5.setText("Empresa");
       deo_kilosE.setBounds(new Rectangle(408, 23, 62, 14));
@@ -281,7 +283,7 @@ public class repetiqu extends ventana
 
       Pprinc.setDefButton(Baceptar);
       pro_codiE.iniciar(dtStat,this,vl,EU);
-      pro_codiE.setCamposLote(deo_ejelotE,deo_emplotE,deo_serlotE,pro_loteE,pro_numindE,deo_kilosE);
+      pro_codiE.setCamposLote(deo_ejelotE,deo_serlotE,pro_loteE,pro_numindE,deo_kilosE);
 
       this.setEnabled(false);
     }
@@ -306,7 +308,7 @@ public class repetiqu extends ventana
       tipetiqE.setDatos(etiqueta.getReports(dtStat, EU.em_cod,0));
 //      tipetiqE.addItem("Normal", "" + etiqueta.NORMAL);
 //      tipetiqE.addItem("Mini", "" + etiqueta.MINI);
-      deo_emplotE.setText("" + EU.em_cod);
+      
       deo_ejelotE.setText("" + EU.ejercicio);
       modoL.setText("Repetir");
       swModo = 'R';
@@ -342,7 +344,7 @@ public class repetiqu extends ventana
       if (swModo=='R')
       {
         fecrepL.setText("Fecha Recep:");
-        deo_emplotE.setEnabled(b);
+//        deo_emplotE.setEnabled(b);
         deo_ejelotE.setEnabled(b);
         deo_serlotE.setEnabled(b);
         pro_loteE.setEnabled(b);
@@ -438,7 +440,7 @@ public class repetiqu extends ventana
         numLote++;
         pro_loteE.setValorDec(numLote);
 
-      } catch (Exception k)
+      } catch (SQLException k)
       {
         Error("Error al buscar N.de Lote",k);
         return;
@@ -479,12 +481,12 @@ public class repetiqu extends ventana
         deo_ejelotE.requestFocus();
         return;
       }
-      if (deo_emplotE.getValorInt() == 0)
-      {
-        mensajeErr("Introduzca Empresa de Lote");
-        deo_emplotE.requestFocus();
-        return;
-      }
+//      if (deo_emplotE.getValorInt() == 0)
+//      {
+//        mensajeErr("Introduzca Empresa de Lote");
+//        deo_emplotE.requestFocus();
+//        return;
+//      }
       if (deo_serlotE.getText().trim().equals(""))
       {
         mensajeErr("Introduzca Serie de Lote");
@@ -569,7 +571,7 @@ public class repetiqu extends ventana
     boolean verDatos0() throws Exception
     {
       if (!utDesp.busDatInd(deo_serlotE.getText(), pro_codiE.getValorInt(),
-                             deo_emplotE.getValorInt(),
+                             EU.em_cod,
                             deo_ejelotE.getValorInt(), pro_loteE.getValorInt(),
                             pro_numindE.getValorInt(),
                             dtCon1, dtStat, EU))
@@ -615,16 +617,12 @@ public class repetiqu extends ventana
         etiq.setTipoEtiq(dtStat, EU.em_cod,
                           Integer.parseInt(tipetiqE.getValor().trim()));
 
-        String codBarras=utDesp.getCodBarras(deo_ejelotE.getText(),deo_emplotE.getValorInt(),
+        CodigoBarras codBarras=new CodigoBarras("R",deo_ejelotE.getText(),
                 deo_serlotE.getText(),
                 pro_loteE.getValorInt(),pro_codiE.getValorInt(),pro_numindE.getValorInt(),
                 deo_kilosE.getValorDec());
                               
-        etiq.iniciar(codBarras,deo_ejelotE.getText()+"/"+
-            Formatear.format(deo_emplotE.getText(),"99")+"/"+
-            deo_serlotE.getText()+"/"+
-            pro_loteE.getText()+"/"+
-            pro_numindE.getText(),
+        etiq.iniciar(codBarras.getCodBarra() ,codBarras.getLote(),
             pro_codiE.getText(),pro_codiE.getTextNomb(),nacidoE.getText(),cebadoE.getText(),despiezadoE.getText(),
             ntrazaE.getText(),deo_kilosE.getValorDec()+" Kg",
             conservarE.getText(),sacrificadoE.getText(),
@@ -647,14 +645,17 @@ public class repetiqu extends ventana
         return;
       }
     }
-
+/**
+ * 
+ * @throws Exception 
+ */
     void insEtiq() throws Exception
     {
       dtCon1.addNew("genetiq");
       dtCon1.setDato("get_fecha",Formatear.getFechaAct("dd-MM-yyyy"),"dd-MM-yyyy");
       dtCon1.setDato("usu_codi",EU.usuario);
       dtCon1.setDato("pro_codi",pro_codiE.getValorInt());
-      dtCon1.setDato("emp_codi",deo_emplotE.getValorInt());
+      dtCon1.setDato("emp_codi",EU.em_cod);
       dtCon1.setDato("eje_nume",deo_ejelotE.getValorInt());
       dtCon1.setDato("pro_serie",deo_serlotE.getText());
       dtCon1.setDato("pro_lote",pro_loteE.getValorInt());
@@ -669,7 +670,7 @@ public class repetiqu extends ventana
       {
         s = "SELECT * FROM V_STKPART WHERE " +
             " EJE_NUME= " + deo_ejelotE.getValorInt() +
-            " AND EMP_CODI= " + deo_emplotE.getValorInt() +
+//            " AND EMP_CODI= " + deo_emplotE.getValorInt() +
             " AND PRO_SERIE='" + deo_serlotE.getText() + "'" +
             " AND pro_nupar= " + pro_loteE.getValorInt() +
             " and pro_numind= " + pro_numindE.getValorInt() +

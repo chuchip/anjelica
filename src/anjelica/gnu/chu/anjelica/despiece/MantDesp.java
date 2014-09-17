@@ -20,7 +20,7 @@ package gnu.chu.anjelica.despiece;
  * El parametro MODPRECIO indica si se veran los precios.  Los precios NO se pueden 
  * modificar.
  * </P>
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -135,7 +135,7 @@ public class MantDesp extends ventanaPad implements PAD
     final static int JTLIN_ORDEN = 7;
     final static int JTLIN_NUMCAJ = 8;
     final static int JTLIN_PREUSU = 9;
-    private boolean swArtBloq = false;
+//    private boolean swArtBloq = false;
     private BotonBascula botonBascula;
     conexion ctProd;
     DatosTabla dtProd;
@@ -268,7 +268,7 @@ public class MantDesp extends ventanaPad implements PAD
         prv_codiE.iniciar(dtProd, this, vl, EU);
         pro_codiE.setProNomb(pro_nocabE);
         pro_codiE.iniciar(dtProd, this, vl, EU);
-        pro_codiE.setCamposLote(deo_ejelotE, null, deo_serlotE, pro_loteE,
+        pro_codiE.setCamposLote(deo_ejelotE, deo_serlotE, pro_loteE,
             pro_numindE, deo_kilosE);
         pro_codiE.setAyudaLotes(true);
         pro_codlE.setProNomb(null);
@@ -880,44 +880,44 @@ public class MantDesp extends ventanaPad implements PAD
     }
 
     /**
-     * Devuelve -2 si no ha habido cambios
-     *          -1 Si no encuentra el registro.
-     *          >=0 Numero de unidades encontradas
-     * @return
+     * Devuelve 
+     * @return true si ha habido cambios en el individuo
      */
-    int buscaPesoLin() {
+    private boolean buscaPesoLin() {
         if (!pro_numindE.hasCambio() && !pro_loteE.hasCambio()
             && !pro_codiE.hasCambio() && !deo_serlotE.hasCambio()
             && !deo_ejelotE.hasCambio())
 //        deo_kilosE.getValorDec() != 0)
         {
-            return -2;
+            return false;
         }
 
         resetCambioLineaCab();
         try
         {
-            StkPartid stkPartid= buscaPeso();
-            if (stkPartid.getUnidades() == 1)
-            {
-                jtCab.setValor("" + stkPartid.getKilos(), JTCAB_KILOS);
+            stkPartid=buscaPeso();
+            if (stkPartid.hasError())
+                return true;
+//            if (stkPartid.getUnidades() == 1)
+//            {
+                jtCab.setValor(stkPartid.getKilos(), JTCAB_KILOS);
                 deo_kilosE.setValorDec(stkPartid.getKilos());
-                return 1;
-            }
-            if (stkPartid.getUnidades() > 1)
-            {
-                mensajeErr("Individuo con mas de una unidad. Imposible despiezar");
-            }
-            jtCab.setValor(0, JTCAB_KILOS);
-            deo_kilosE.setValorDec(0);
-            if (stkPartid.getUnidades() >= 0)
-                return stkPartid.getUnidades();
+              return true; 
+              
+//            if (stkPartid.getUnidades() >= 0)
+//                return stkPartid.getUnidades();
+
+//            }
+//            if (stkPartid.getUnidades() > 1)
+//                mensajeErr("Individuo con mas de una unidad. Imposible despiezar");
+
+           
             
         } catch (Exception k)
         {
-            Error("Error al Leer Peso", k);
+            Error("Error al buscar Peso", k);
         }
-        return -2;
+        return true;
     }
     /*
      * Devuelve clase StkPartid con el peso del individuo de origen activo
@@ -925,19 +925,10 @@ public class MantDesp extends ventanaPad implements PAD
      */
 
     StkPartid buscaPeso() throws Exception {
-        swArtBloq = false;
+       
         stkPartid = utildesp.buscaPeso(dtCon1, deo_ejelotE.getValorInt(), EU.em_cod,
             deo_serlotE.getText(), pro_loteE.getValorInt(),
             pro_numindE.getValorInt(), pro_codiE.getValorInt(), deo_almoriE.getValorInt());
-        if (! stkPartid.hasError())
-            return stkPartid;
-        
-        if (stkPartid.getEstado()==StkPartid.INDIV_LOCK)
-        {
-            swArtBloq = true;
-            return stkPartid;
-        }
-        mensajeErr(stkPartid.getMensaje());
         return stkPartid;
     }
 
@@ -1943,11 +1934,11 @@ public class MantDesp extends ventanaPad implements PAD
 
         deo_blockE.setValor("S");
         jtCab.salirFoco(0);
-        stkPart.ponerStock(pro_codiE.getValorInt(), deo_ejelotE.getValorInt(),
-            EU.em_cod,
-            deo_serlotE.getText(), pro_loteE.getValorInt(),
-            pro_numindE.getValorInt(), deo_almoriE.getValorInt(), kgDifE.getValorDec(),
-            1);
+//        stkPart.ponerStock(pro_codiE.getValorInt(), deo_ejelotE.getValorInt(),
+//            EU.em_cod,
+//            deo_serlotE.getText(), pro_loteE.getValorInt(),
+//            pro_numindE.getValorInt(), deo_almoriE.getValorInt(), kgDifE.getValorDec(),
+//            1);
         stkPart.setBloqueo(pro_codiE.getValorInt(), deo_ejelotE.getValorInt(),
             EU.em_cod,
             deo_serlotE.getText(), pro_loteE.getValorInt(),
@@ -1957,15 +1948,10 @@ public class MantDesp extends ventanaPad implements PAD
         utdesp.setLogotipo(null);
         utdesp.setDirEmpresa(null);
 
-        if (pro_codiE.getLikeProd().isNull("pro_codeti"))
-        {
-            proCodeti = 0;
-        } else
-        {
-            proCodeti = pro_codiE.getLikeProd().getInt("pro_codeti");
-        }
+        proCodeti=pro_codiE.getLikeProd().isNull("pro_codeti")?0:pro_codiE.getLikeProd().getInt("pro_codeti");
+        
         utdesp.imprEtiq(proCodeti, dtCon1, pro_codiE.getValorInt(), pro_nombE.getText(),
-            EU.em_cod,
+           "D",
             pro_loteE.getValorInt(),
             "" + deo_ejelotE.getValorInt(), deo_serlotE.getText(),
             pro_numindE.getValorInt(),
@@ -2724,67 +2710,87 @@ public class MantDesp extends ventanaPad implements PAD
 //      deo_kilosE.setValorDec(1);
             if (!opSimular.isSelected() && pro_codiE.isVendible())
             {
-                int res = buscaPesoLin();
-                if (res == -1 || res > 1 || res==0)
-                    return 0;  // No encontrado registro o Numero unidades Disponibles NO validas
-                if (res == -2)
-                    return -1; // No ha habido cambios.
-            }
-            if (swArtBloq)
-            {
-                if (nav.pulsado == navegador.ADDNEW)
+                boolean res = buscaPesoLin();
+                if (res)
                 {
-                    if (jtCab.getRowCount() > 1)
+                    if (stkPartid.hasError())
                     {
-                        mensajeErr("No se puede incluir productos bloqueados si ya existe otra linea");
-                        return 0;
+                        mensajeErr(stkPartid.getMensaje());
+                        return JTCAB_PROCODI;
                     }
-                    if (deo_codiE.getValorInt() != 0 && jtCab.getValorInt(linea, JTCAB_NL) == 0)
+                    if (stkPartid.isLockIndiv())
                     {
-                        mensajeErr("No se puede incluir productos bloqueados si existen productos de salida");
-                        return 0;
-                    }
-
-                    s = "SELECT * FROM v_despori WHERE deo_ejelot= " + deo_ejelotE.getValorInt()
-                        + " and deo_serlot='" + deo_serlotE.getText() + "'"
-                        + " and pro_lote = " + pro_loteE.getValorInt()
-                        + " and pro_numind =" + pro_numindE.getValorInt()
-                        + " and pro_codi = " + pro_codiE.getValorInt();
-                    if (!dtCon1.select(s))
-                    {
-                        enviaMailError("No encontrado despiece para articulo bloqueado" + s);
-                        msgBox("No encontrado despiece para articulo bloqueado");
-                        return 0;
-                    }
-                    strSql = getStrSql() + " and eje_nume = " + dtCon1.getInt("eje_nume")
-                        + " and deo_numdes = " + dtCon1.getInt("deo_numdes")
-                        + getOrderQuery();
-                    activar(false);
-                    rgSelect();
-                    verDatos(dtCons);
-                    SwingUtilities.invokeLater(new Thread()
-                    {
-
-                        @Override
-                        public void run() {
-                            nav.pulsado = navegador.EDIT;
-                            PADEdit();
-                            mensajeErr("Editando Despiece abierto...");
-                        }
-                    });
-                    return -1;
-                } else
-                { // Estoy editando un despiece.
-                    if (proCodiB == 0 || numLinB != jtCab.getValorInt(linea, JTCAB_NL))
-                    {
-                        mensajeErr("No se puede introducir un individuo bloqueado, modificando un despiece");
-                        return 0;
+                        mensajeErr("Individuo bloqueado");
+                        return JTCAB_EJELOT;
                     }
                 }
             }
-            if (! opSimular.isSelected() && pro_codiE.hasControlIndiv() )
+//            if (swArtBloq)
+//            {
+//                if (nav.pulsado == navegador.ADDNEW)
+//                {
+//                    if (jtCab.getRowCount() > 1)
+//                    {
+//                        mensajeErr("No se puede incluir productos bloqueados si ya existe otra linea");
+//                        return 0;
+//                    }
+//                    if (deo_codiE.getValorInt() != 0 && jtCab.getValorInt(linea, JTCAB_NL) == 0)
+//                    {
+//                        mensajeErr("No se puede incluir productos bloqueados si existen productos de salida");
+//                        return 0;
+//                    }
+//
+//                    s = "SELECT * FROM v_despori WHERE deo_ejelot= " + deo_ejelotE.getValorInt()
+//                        + " and deo_serlot='" + deo_serlotE.getText() + "'"
+//                        + " and pro_lote = " + pro_loteE.getValorInt()
+//                        + " and pro_numind =" + pro_numindE.getValorInt()
+//                        + " and pro_codi = " + pro_codiE.getValorInt();
+//                    if (!dtCon1.select(s))
+//                    {
+//                        enviaMailError("No encontrado despiece para articulo bloqueado" + s);
+//                        msgBox("No encontrado despiece para articulo bloqueado");
+//                        return 0;
+//                    }
+//                    strSql = getStrSql() + " and eje_nume = " + dtCon1.getInt("eje_nume")
+//                        + " and deo_numdes = " + dtCon1.getInt("deo_numdes")
+//                        + getOrderQuery();
+//                    activar(false);
+//                    rgSelect();
+//                    verDatos(dtCons);
+//                    SwingUtilities.invokeLater(new Thread()
+//                    {
+//
+//                        @Override
+//                        public void run() {
+//                            nav.pulsado = navegador.EDIT;
+//                            PADEdit();
+//                            mensajeErr("Editando Despiece abierto...");
+//                        }
+//                    });
+//                    return -1;
+//                } else
+//                { // Estoy editando un despiece.
+//                    if (proCodiB == 0 || numLinB != jtCab.getValorInt(linea, JTCAB_NL))
+//                    {
+//                        mensajeErr("No se puede introducir un individuo bloqueado, modificando un despiece");
+//                        return 0;
+//                    }
+//                }
+//            }
+            double kilact=deo_kilosE.isEnabled()?deo_kilosE.getValorDec():jtCab.getValorDec(linea, JTCAB_KILOS);
+            if (! opSimular.isSelected() )
             {
-              if (stkPartid.getKilos() < jtCab.getValorDec(linea, JTCAB_KILOS))
+                s = "SELECT * FROM desorilin "+
+                    " WHERE  eje_nume = " + eje_numeE.getValorInt() +
+                    " and deo_codi = "+deo_codiE.getValorInt()+
+                    " and pro_codi  = "+pro_codiE.getValorInt()+
+                    " and deo_ejelot = " + deo_ejelotE.getValorInt() +
+                    " and deo_serlot = '" + deo_serlotE.getText() + "'" +
+                    " and pro_lote = " + pro_loteE.getValorDec()+
+                    " AND pro_numind = "+pro_numindE.getValorInt();
+              if (dtCon1.select(s))
+                kilact += dtCon1.getDouble("deo_kilos");
+              if ( stkPartid.hasStock( kilact))
               {
                 if (jtCab.getValorInt(linea, JTCAB_NL) != 0)
                 {
@@ -3205,7 +3211,7 @@ public class MantDesp extends ventanaPad implements PAD
             }
 
             utdesp.imprEtiq(TIPOETIQ == 0 ? proCodeti : TIPOETIQ, dtStat, pro_codlE.getValorInt(), nombArt,
-                EU.em_cod,
+                "D",
                 opSimular.isSelected() ? jtCab.getValorInt(0, JTCAB_NUMLOT) : deo_nulogeE.getValorInt(),
                 opSimular.isSelected() ? jtCab.getValString(0, JTCAB_EJELOT) : deo_ejlogeE.getText(),
                 opSimular.isSelected() ? jtCab.getValString(0, JTCAB_SERLOT) : deo_selogeE.getText(),

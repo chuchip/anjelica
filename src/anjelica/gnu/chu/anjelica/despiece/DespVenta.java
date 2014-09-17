@@ -8,7 +8,7 @@ package gnu.chu.anjelica.despiece;
  *   autollenardesp para ver  si debe hacer autollenado de
  *   los productos para un tipo de despiece (por defecto, NO)
  * </p>
- * <p>Copyright: Copyright (c) 2005-2011
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -39,6 +39,7 @@ import gnu.chu.controles.Cgrid;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.conexion;
+import gnu.chu.utilidades.CodigoBarras;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.mensajes;
@@ -54,7 +55,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 import javax.swing.SwingUtilities;
 
 
@@ -200,16 +200,7 @@ public class DespVenta extends ventana {
             }
           });
     }
-    /**
-     * Devuelve el codigo del producto como un codigo de barras
-     */
-   
-    public String getCodBarras()
-    {
-        return utildesp.getCodBarras(""+ejeNume,empCodi,SERIE,deoCodi,jt.getValorInt(0),
-                jt.getValorInt(JT_NUMIND),jt.getValorDec(JT_KILOS));
-                
-    }
+    
     void pro_codiE_despuesLlenaCampos()
     {
 
@@ -330,7 +321,7 @@ public class DespVenta extends ventana {
                  else
                     proCodeti = pro_codiE.getLikeProd().getInt("pro_codeti");
                  utdesp.imprEtiq(proCodeti,dtCon1,pro_codiE.getValorInt(), pro_nombE.getText(),
-                    empCodi,
+                    "D",
                     pro_loteE.getValorInt(),
                     ""+deo_ejelotE.getValorInt(), deo_serlotE.getText(),
                     pro_numindE.getValorInt(),
@@ -622,7 +613,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
       deo_kilosE.setValorDec(canStk.getKilos());
       return true;
     }
-    if (canStk.getEstado()==StkPartid.INDIV_LOCK )
+    if (canStk.isLockIndiv() )
     {
       mensajeErr(canStk.getMensaje());
       deo_kilosE.setValorDec(canStk.getKilos());
@@ -840,11 +831,16 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
              imprEtiq(linea);
          }
        }
-       catch (Exception ex)
+       catch (SQLException ex)
        {
          Error("Error al Cambiar Linea de Grid", ex);
        }
        return -1;
+    }
+    public String getCodBarras()
+    {
+        return new CodigoBarras("R",""+ejeNume,SERIE,deoCodi,jt.getValorInt(0),
+                jt.getValorInt(JT_NUMIND),jt.getValorDec(JT_KILOS)).getCodBarra() ;                
     }
    /**
     * Comprueba si un articulo es excluyente contra los del grid.
@@ -1033,7 +1029,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
      utdesp.setLogotipo(null);
      utdesp.setDirEmpresa(null);
      utdesp.imprEtiq(proCodeti,dtCon1,jt.getValorInt(linea,0), nombArt,
-                    empCodi,
+                    "D",
                     deoCodi,
                     ""+ejeNume, SERIE,
                     jt.getValorInt(linea,JT_NUMIND),

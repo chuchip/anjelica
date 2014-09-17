@@ -9,9 +9,11 @@ import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.print.PrinterException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +27,7 @@ import net.sf.jasperreports.engine.*;
  * <p>Título: clresstock </p>
  * <p>Descripción: Consulta/Listado Resumen de stock desglosandolo
  * por proveedor y fecha de caducidad</p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -821,7 +823,7 @@ public class clresstock extends ventana implements  JRDataSource
       mensaje("");
       mensajeErr("Listado ... GENERADO");
     }
-    catch (Exception k)
+    catch (PrinterException | JRException k)
     {
       Error("Error al imprimir", k);
     }
@@ -891,10 +893,8 @@ public class clresstock extends ventana implements  JRDataSource
 
       throw new JRException("Campo: "+campo+ " No definido");
     }
-    catch (Exception k)
+    catch (ParseException | JRException k)
     {
-//      debug("Campo: "+campo);
-      k.printStackTrace();
       throw new JRException(k);
     }
   }

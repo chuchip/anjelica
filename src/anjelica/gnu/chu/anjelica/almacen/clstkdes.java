@@ -30,9 +30,9 @@ import javax.swing.border.TitledBorder;
  *
  * <p>T�tulo: clstkdes</p>
  * <p>Descripción: Cons/List Stock por producto / Proveedor / Fecha Cad.</p>
- * <p>Copyright: Copyright (c) 2005-2009
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
- *  los terminos de la Licencia Pública General de GNU seg�n es publicada por
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
  *  o bien (según su elección) de cualquier versión posterior.
  *  Este programa se distribuye con la esperanza de que sea útil,ed

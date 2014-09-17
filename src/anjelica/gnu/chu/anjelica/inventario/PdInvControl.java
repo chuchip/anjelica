@@ -1887,7 +1887,7 @@ public class PdInvControl extends ventanaPad implements PAD
 
             try {
                 pro_codiE.iniciar(dtStat, this, vl, EU);
-                pro_codiE.setCamposLote(prp_anoE, prp_empcodE, prp_serieE, prp_partE,
+                pro_codiE.setCamposLote(prp_anoE, prp_serieE, prp_partE,
                     prp_indiE, prp_pesoE);
                 pro_codiE.setProNomb(pro_nombE);
                 prp_empcodE.setEnabled(false);

@@ -16,7 +16,7 @@ import javax.swing.border.*;
  *
  * <p>Título: pdconfig </p>
  * <p>Descripción: Mantenimiento de configuraciones por empresa</p>
- * <p>Copyright: Copyright (c) 2005-2011
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -34,7 +34,9 @@ import javax.swing.border.*;
  */
 public class pdconfig    extends ventanaPad     implements PAD
 {
-    CTextField[][] camposDisc=new CTextField[3][4];
+  public final static int TIPOEMP_SALADESP=1; // Sala despiece
+  public final static int TIPOEMP_PLANTACION=2; // Plantacion (Invernadero)
+  CTextField[][] camposDisc=new CTextField[3][4];
   String s;
   boolean modConsulta = true;
   CPanel Pprinc = new CPanel();
@@ -66,7 +68,8 @@ public class pdconfig    extends ventanaPad     implements PAD
   CCheckBox cfg_lifrgrC = new CCheckBox("S","N");
   private CLabel cli_codiL = new CLabel();
   private cliPanel cli_codiE = new cliPanel();
-
+  private CLabel cfg_tipempL = new CLabel("Tipo Empresa");
+  private CComboBox cfg_tipempE = new CComboBox();
   public pdconfig(EntornoUsuario eu, Principal p)
   {
     this(eu, p, null);
@@ -130,7 +133,7 @@ public class pdconfig    extends ventanaPad     implements PAD
 
     iniciarFrame();
    this.setSize(new Dimension(567, 417));
-   this.setVersion("2009-10-26 " + (modConsulta ? "-SOLO LECTURA-" : ""));
+   this.setVersion("2014-09-10 " + (modConsulta ? "-SOLO LECTURA-" : ""));
 
    strSql = "SELECT * FROM v_config WHERE emp_codi = " + EU.em_cod +
        getOrderQuery();
@@ -142,8 +145,7 @@ public class pdconfig    extends ventanaPad     implements PAD
    iniciar(this);
 
 
-
-    Tpanel1.setBounds(new Rectangle(3, 22, 535, 233));
+    Tpanel1.setBounds(new Rectangle(3, 22, 535, 255));
 
     Pdiscr.setLayout(null);
     Pdisart.setBounds(new Rectangle(31, 3, 456, 62));
@@ -179,8 +181,11 @@ public class pdconfig    extends ventanaPad     implements PAD
 
    emp_prvdesE.setBounds(new Rectangle(105, 88, 390, 20));
    prv_nombL.setBounds(new Rectangle(7, 88, 90, 20));
+   cfg_tipempE.addItem("Sala Despiece","1");
+   cfg_tipempE.addItem("Plantación","2");
 
-
+   cfg_tipempL.setBounds(7,205,80,16);
+   cfg_tipempE.setBounds(100,205,150,16);
    cfg_tideveE.setBounds(new Rectangle(108, 66, 389, 18));
    cLabel5.setBounds(new Rectangle(7, 66, 105, 18));
    cfg_desvenE.setBounds(new Rectangle(281, 46, 216, 18));
@@ -193,8 +198,8 @@ public class pdconfig    extends ventanaPad     implements PAD
 
    cLabel1.setText("Empresa");
    cLabel1.setBounds(new Rectangle(59, 3, 55, 17));
-   Baceptar.setBounds(new Rectangle(111, 259, 126, 28));
-   Bcancelar.setBounds(new Rectangle(289, 259, 126, 28));
+   Baceptar.setBounds(new Rectangle(111, 279, 126, 28));
+   Bcancelar.setBounds(new Rectangle(289, 279, 126, 28));
    emp_codiE.setBounds(new Rectangle(112, 2, 358, 18));
 
    cLabel2.setText("Almacen Compras");
@@ -211,24 +216,26 @@ public class pdconfig    extends ventanaPad     implements PAD
    prv_nombL.setText("Proveedor Desp.");
    emp_codiE.setAncTexto(30);
    Pbasic.setLayout(null);
-        Pbasic.add(cli_codiE, null);
-        Pbasic.add(cli_codiL, null);
-        Pbasic.add(cfg_almcomE, null);
-    Pbasic.add(cLabel2, null);
-    Pbasic.add(cLabel3, null);
-    Pbasic.add(prv_nombL, null);
-    Pbasic.add(cfg_almvenE, null);
+   Pbasic.add(cli_codiE, null);
+   Pbasic.add(cli_codiL, null);
+   Pbasic.add(cfg_almcomE, null);
+   Pbasic.add(cLabel2, null);
+   Pbasic.add(cLabel3, null);
+   Pbasic.add(prv_nombL, null);
+   Pbasic.add(cfg_almvenE, null);
     Pbasic.add(emp_prvdesE, null);
     Pbasic.add(cfg_desvenE, null);
     Pbasic.add(cLabel4, null);
     Pbasic.add(cfg_numdecE, null);
     Pbasic.add(cfg_tideveE, null);
     Pbasic.add(cLabel5, null);
-        Pbasic.add(cfg_caejauE, null);
-        Pbasic.add(cPanel1, null);
-        cPanel1.add(cfg_lialgrC, null);
-        cPanel1.add(cfg_lifrgrC, null);
-        Tpanel1.add(Pbasic, "Basicos");
+    Pbasic.add(cfg_tipempL,null);
+    Pbasic.add(cfg_tipempE,null);
+    Pbasic.add(cfg_caejauE, null);
+    Pbasic.add(cPanel1, null);
+    cPanel1.add(cfg_lialgrC, null);
+    cPanel1.add(cfg_lifrgrC, null);
+    Tpanel1.add(Pbasic, "Basicos");
     Tpanel1.add(Pdiscr, "Discriminadores");
     Pprinc.add(cLabel1, null);
     Pprinc.add(emp_codiE, null);
@@ -341,11 +348,12 @@ public class pdconfig    extends ventanaPad     implements PAD
      cfg_caejauE.setSelected(dtCon1.getString("cfg_caejau").equals("S"));
      cfg_lialgrC.setSelected(dtCon1.getString("cfg_lialgr").equals("S"));
      cfg_lifrgrC.setSelecion(dtCon1.getString("cfg_lifrgr"));
+     cfg_tipempE.setValor(dtCon1.getString("cfg_tipemp"));
      verDatos(0,"pr");
      verDatos(1,"cl");
      verDatos(2,"pv");
    }
-   catch (Exception k)
+   catch (SQLException k)
    {
      Error("Error al Mostrar Datos", k);
    }
@@ -620,6 +628,8 @@ public class pdconfig    extends ventanaPad     implements PAD
    dt.setDato("cfg_caejau",cfg_caejauE.isSelected()?"S":"N");
    dt.setDato("cfg_lialgr",cfg_lialgrC.getSelecion());
    dt.setDato("cfg_lifrgr",cfg_lifrgrC.getSelecion());
+   dt.setDato("cfg_tipemp",cfg_tipempE.getValor());
+   
    actDatos(dt,0,"pr");
    actDatos(dt,1,"cl");
    actDatos(dt,2,"pv");
@@ -823,5 +833,11 @@ public static int getAlmVentas(int empCodi,DatosTabla dt) throws SQLException
    if (! getConfiguracion(empCodi,dt))
      throw new SQLException("Configuración para empresa: " + empCodi + " NO encontrada");
    return dt.getInt("cfg_almven");
+ }
+ public static int getTipoEmpresa(int empCodi,DatosTabla dt) throws SQLException
+ {
+   if (! getConfiguracion(empCodi,dt))
+     throw new SQLException("Configuración para empresa: " + empCodi + " NO encontrada");
+   return dt.getInt("cfg_tipemp");
  }
 }

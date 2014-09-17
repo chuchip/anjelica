@@ -28,6 +28,7 @@ import gnu.chu.anjelica.almacen.actStkPart;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.sql.DatosTabla;
+import gnu.chu.utilidades.CodigoBarras;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import java.sql.Date;
@@ -698,7 +699,17 @@ public class utildesp
                                  String serLot,int numLot,int numind,int proCodi,
                                  int almCodi,boolean incBloq) throws SQLException
   {
-    String s = "SELECT * FROM V_STKPART WHERE " +
+     StkPartid stkPart=new StkPartid(StkPartid.ARTIC_NOT_FOUND);
+     String s = "SELECT pro_coinst,pro_coexis,pro_stock,pro_stkuni "+
+          " FROM V_ARTICULO WHERE pro_codi = " +proCodi;
+      if (!dt.select(s))
+        return  stkPart;
+      stkPart.setControlInd(dt.getInt("pro_coinst") != 0);
+      stkPart.setControlExist(dt.getString("pro_coexis").equals("S"));
+      stkPart.setKilos(Formatear.redondea(dt.getDouble("pro_stock"),2));      
+      stkPart.setUnidades(dt.getInt("pro_stkuni"));
+      
+      s = "SELECT * FROM V_STKPART WHERE " +
         " EJE_NUME= " + ejeLot +
         " AND EMP_CODI= " + empLot +
         " AND PRO_SERIE='" + serLot + "'" +
@@ -708,20 +719,14 @@ public class utildesp
         (almCodi!=0?" and alm_codi = "+almCodi:"");
     if (!dt.select(s))
     {
-      // Compruebo si el producto tiene control stock por individuo
-      s = "SELECT pro_coinst,pro_stock as stp_kilact,1 as stp_unact "+
-          " FROM V_ARTICULO WHERE pro_codi = " +proCodi;
-      if (!dt.select(s))
-        return new StkPartid(StkPartid.ARTIC_NOT_FOUND);
-      if (dt.getInt("pro_coinst") == 0)
-        return new StkPartid(StkPartid.ARTIC_SIN_CONTROL_INDIV);        // SIN CONTROL individual devolvemos el STOCK
-      return new StkPartid(StkPartid.INDIV_NOT_FOUND); // "NO encontrado Partida para estos valores";
+      stkPart.setEstado(StkPartid.INDIV_NOT_FOUND);           
+      return stkPart;
     }
-    if (! incBloq &&  dt.getInt("stk_block")!=0)
-         return new StkPartid(StkPartid.INDIV_LOCK,
-             Formatear.redondea(dt.getDouble("stp_kilact"),2),dt.getInt("stp_unact")) ; //"Individuo Bloqueado";
-    return new StkPartid(StkPartid.INDIV_OK,
-        Formatear.redondea(dt.getDouble("stp_kilact"),2),dt.getInt("stp_unact")) ;
+    stkPart.setEstado(StkPartid.INDIV_OK);     
+    stkPart.setLockIndiv(dt.getInt("stk_block")!=0);   
+    stkPart.setKilos(Formatear.redondea(dt.getDouble("stp_kilact"),2));
+    stkPart.setUnidades(dt.getInt("stp_unact"));
+    return stkPart;
   }
 
   void debug(String msg,EntornoUsuario EU)
@@ -1068,38 +1073,14 @@ public class utildesp
   {
       return logo;
   }
-  /**
-   * Devuelve una cadena con el codigo de barras para el grafico.
-   * @param ejeLot
-   * @param empLot
-   * @param serLot
-   * @param proLote
-   * @param proCodi
-   * @param proNumind
-   * @param deoKilos
-   * @return 
-   */
-  public static String getCodBarras(String ejeLot,int empLot,String serLot,int proLote,int proCodi,
-          int proNumind,double deoKilos)
-  {
-      return ejeLot.substring(2)
-                + (proLote > 9999 ? Formatear.format(empLot, "9")
-                : Formatear.format(empLot, "99"))
-                + serLot
-                + (proLote > 9999 ? Formatear.format(proLote, "99999")
-                : Formatear.format(proLote, "9999"))
-                + Formatear.format(proCodi, "99999")
-                + Formatear.format(proNumind, "999")
-                + Formatear.format(deoKilos, "999.99");
-      
-  }
+  
  /**
   * Imprime etiqueta
   * @param TIPOETIQ Tipo etiqueta. Segun tabla etiquetas
   * @param dtStat DatosTabla para buscar tipo etiqueta
   * @param proCodi Codigo Articulo
   * @param nombArt Nombre Articulo
-  * @param empCodi Empresa
+  * @param indiceEti Indice Etiqueta (C, D...)
   * @param nuloge Numero Lote
   * @param ejloge Ejercicio de Lote
   * @param seloge Serie de Lote
@@ -1113,7 +1094,7 @@ public class utildesp
   * @throws Exception
   */
  public void imprEtiq(int TIPOETIQ, DatosTabla dtStat,
-                      int proCodi, String nombArt, int empCodi, int nuloge, String ejloge,
+                      int proCodi, String nombArt,  String indiceEti, int nuloge, String ejloge,
                       String seloge, int numInd,
                       double kilos, String fecDesp, java.util.Date fecProd, String fecCad,
                       java.util.Date fecSacr,java.util.Date cadProdDate) throws  Exception
@@ -1123,14 +1104,10 @@ public class utildesp
             etiq = new etiqueta(EU);
         }
         etiq.setTipoEtiq(dtStat, EU.em_cod, TIPOETIQ);
-        String codBarras = getCodBarras(ejloge,empCodi,seloge,nuloge,proCodi,numInd,kilos);
+        CodigoBarras codBarras = new CodigoBarras(indiceEti,ejloge,seloge,nuloge,proCodi,numInd,kilos);
       
         etiq.setFechaCongelado(getFechaCongelado(proCodi, fecProd, dtStat));    
-        etiq.iniciar(codBarras, ejloge + "/"
-                + Formatear.format(empCodi, "9") + "/"
-                + seloge + "/"
-                + nuloge + "/"
-                + numInd,
+        etiq.iniciar(codBarras.getCodBarra() ,codBarras.getLote() ,
                 "" + proCodi, nombArt,
                 nacidoE, cebadoE, despiezadoE,
                 ntrazaE, kilos + "Kg",

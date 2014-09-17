@@ -548,7 +548,7 @@ public class despVentas extends ventana
            return;
          utdesp.imprEtiq(tipoEtiq,dtStat,jtLin.getValorInt(linea,0),
                          pro_codlE.getTextNomb(),
-                    emp_codiE.getValorInt(),pro_loteE.getValorInt(),deo_ejelotE.getText(),
+                    "D",pro_loteE.getValorInt(),deo_ejelotE.getText(),
                    deo_serlotE.getText(),jtLin.getValorInt(linea,3),jtLin.getValorDec(linea,2),
                    deo_fechaE.getText(),fecprodE.isNull()?null:fecprodE.getDate(),
                    "Cad:"+ jtLin.getValDate(linea,4,"dd-MM-yy"),

@@ -15,12 +15,8 @@ import java.util.ArrayList;
  * @author jpuente.ext
  */
 public interface MantAlbCom_Interface
-{
-   public final static int TIPO_CARNICA=1;
-   public final static int TIPO_PLANTA=2;
-   
-   public int getTipoProg();
-  
+{  
+ 
    public void confGridDesglose() throws Exception;
    public int cambiaLinDesg0(int row) throws Exception;
    public String getLinGrDes();
