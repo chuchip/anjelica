@@ -32,6 +32,7 @@ import java.awt.Color;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -40,11 +41,12 @@ import javax.swing.JPopupMenu;
 
 
 public class CButtonMenu extends CPanel {
+    Hashtable<String,String> ht=new Hashtable();
     private String menuPrincipal=null;
     int numMenu=0;
-    private JPopupMenu Mprinc=new JPopupMenu();
+    private final JPopupMenu Mprinc=new JPopupMenu();
     private ImageIcon icono=null;
-    private Vector actionListenerList = new Vector();
+    private final Vector actionListenerList = new Vector();
  
     public CButtonMenu(ImageIcon icono) {
         this.icono=icono;
@@ -152,6 +154,25 @@ public class CButtonMenu extends CPanel {
     {
         actionListenerList.add(e);
     }
+    
+    public void addMenu(String textoMenu,String indice)
+    {
+        ht.put(textoMenu, indice);
+        addMenu(textoMenu);
+    }
+    /**
+     * Devuelve el indice sobre un valor mandado. 
+     * El valor mandado normalmente sera el recogido en el getActionCommand del actionEvent
+     * @param valor
+     * @return indice
+     */
+    
+    public String getValor(String valor)
+    {
+        return ht.get(valor);
+    }
+    
+    
     public void addMenu(final String textoMenu)
     {
         if (menuPrincipal==null)

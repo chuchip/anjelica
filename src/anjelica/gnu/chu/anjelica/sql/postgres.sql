@@ -697,7 +697,7 @@ avl_numues varchar(15),
 avl_fecmue date,
 avl_fecrli date,
 avl_trapa smallint,
-turno int,
+avl_numpal int not null default 0, -- Numero Pale
 avl_coment varchar(50),      -- Comentario
 aux_2 varchar(50),
 aux_3 varchar(50),
@@ -760,6 +760,7 @@ avl_tipdes char(1),         -- Tipo de Descuento. Siempre '%'
 fvl_numlin int,             -- Nº Linea de Factura
 alm_codi int,               -- Almacen de Producto (Siempre albavec.alm_codori)
 pro_nomb varchar(50),	    -- Descripcion del Articulo
+avl_numpal int not null default 0, -- Numero de Pale
 avl_numues varchar(15),
 avl_fecmue date,
 avl_fecrli date,
