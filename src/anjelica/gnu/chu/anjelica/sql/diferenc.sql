@@ -420,9 +420,10 @@ alter table v_despfin add constraint indi_positivo CHECK (pro_numind > 0);
 alter table desorilin add constraint lote_positivo CHECK (pro_lote > 0);
 
 -- Puesto campo para incluir numero de palet.
-alter table anjelica.v_albavel rename turno to avl_numpale;
-alter table anjelica.v_albavel alter avl_numpale set   default 0;
-alter table anjelica.v_albavel alter avl_numpale set  not null;
+alter table anjelica.v_albavel rename turno to avl_numpal;
+alter table anjelica.v_albavel alter avl_numpal set   default 0;
+alter table anjelica.v_albavel alter avl_numpal set  not null;
+alter table anjelica.hisallive add avl_numpal int not null default 0;
 
 --
 --- Triggers

@@ -93,7 +93,7 @@ public class lialbven implements JRDataSource
    * @param obser
    * @param copiaPapel
    * @param numCopias
-   * @param swEntDepos true: Se trata de un albaran de entrega.
+   * @param avsNume  
    * @return
    * @throws Exception
    */

@@ -504,7 +504,7 @@ public class proPanel extends CPanel
   }
   public void llenaCampos()
   {
-    if (pro_codiE.getText().length()!=23 && pro_codiE.getText().length()!=24)
+    if (pro_codiE.getText().length()<17)
     {
       if (pro_nombL.isEnabled())
       {

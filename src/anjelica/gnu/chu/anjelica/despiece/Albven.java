@@ -275,10 +275,9 @@ public class Albven extends ventana {
             verDatosDesg();
             jtLin.setEnabled(true);
             baceptar.setEnabled(true);
-        } catch (Exception k)
+        } catch (SQLException k)
         {
             Error("Error al buscar albaran",k);
-            return;
         }
     }
     void verDatosDesg()
@@ -286,7 +285,8 @@ public class Albven extends ventana {
        jtDesg.setEnabled(false);
        jtDesg.removeAllDatos();
        String s=pdalbara.getStrSqlDesg(empCodi, avc_numeE.geValorIntAno() ,
-               avc_numeE.getTextSerie(),avc_numeE.geValorIntNume(),-1,jtLin.getValorInt(1),(String) null,0,false);
+               avc_numeE.getTextSerie(),avc_numeE.geValorIntNume(),-1,jtLin.getValorInt(1),
+               0,(String) null,0,false);
   
        try  {
         if (! dtCon1.select(s))
