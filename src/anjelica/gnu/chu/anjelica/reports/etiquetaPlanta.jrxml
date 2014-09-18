@@ -166,7 +166,7 @@
 				<textFieldExpression><![CDATA[$P{ntraza}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Transparent" x="158" y="70" width="85" height="30" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Transparent" x="161" y="70" width="85" height="30" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineColor="#000000"/>
 					<leftPen lineColor="#000000"/>
@@ -264,7 +264,7 @@
 				<textFieldExpression><![CDATA[$P{diremp}]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement x="2" y="127" width="306" height="83"/>
+				<reportElement x="25" y="127" width="266" height="83"/>
 				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="true" checksumRequired="false" barWidth="1" barHeight="0">
 					<jr:codeExpression><![CDATA[$P{codbarra}]]></jr:codeExpression>
 				</jr:barbecue>

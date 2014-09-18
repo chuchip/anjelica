@@ -279,7 +279,7 @@ create table anjelica.categorias_art
 	cat_desr varchar(25) not null, -- Descripción Categoria
 	constraint ix_categorias_art primary key  (cat_codi)
 );
-insert into anjelica.categorias_art values(1,'EXTRA','CATEGORIA EXTRA');
+insert into anjelica.categorias_art values(1,'1G','1G');
 alter table anjelica.v_articulo add constraint cat_profk
    foreign key (cat_codi) references anjelica.categorias_art(cat_codi) DEFERRABLE INITIALLY DEFERRED;
 
@@ -293,7 +293,7 @@ create table anjelica.calibres_art
 	cal_desr varchar(25) not null, -- Descripción calibre
 	constraint ix_calibres_art primary key (cal_codi)
 );
-insert into anjelica.calibres_art values(1,'82-102 mm','Calibre gordo');
+insert into anjelica.calibres_art values(1,'67-82 mm','1G');
 alter table anjelica.v_articulo add constraint cal_profk
    foreign key (cal_codi) references anjelica.calibres_art(cal_codi) DEFERRABLE INITIALLY DEFERRED;
 --
@@ -845,17 +845,6 @@ CREATE OR REPLACE VIEW anjelica.v_albventa_detalle AS
   WHERE c.emp_codi = l.emp_codi AND c.avc_ano = l.avc_ano AND c.avc_serie = l.avc_serie AND c.avc_nume = l.avc_nume AND c.emp_codi = p.emp_codi AND c.avc_ano = p.avc_ano AND c.avc_serie = p.avc_serie AND c.avc_nume = p.avc_nume AND l.avl_numlin = p.avl_numlin;
 
 create index ix_albvenpa1 on v_albvenpar (avp_ejelot,avp_serlot,avp_numpar,avp_numind);
-create view anjelica.v_albventa_detalle as select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
-fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
-avc_basimp,avc_kilos,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
-avc_depos,l.avl_numlin,l.pro_codi,pro_nomb,avl_canti,avl_prven,avl_prbase,tar_preci,avl_unid,
-avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,
-avp_numlin,avp_ejelot,avp_emplot,avp_serlot,avp_numpar,avp_numind,avp_numuni,avp_canti
-from v_albavel as l, v_albavec as c, v_albvenpar as p 
-where c.emp_codi=l.emp_codi and c.avc_ano=l.avc_ano and c.avc_serie=l.avc_serie and c.avc_nume=l.avc_nume and 
-c.emp_codi=p.emp_codi and c.avc_ano=p.avc_ano and c.avc_serie=p.avc_serie and c.avc_nume=p.avc_nume
-and l.avl_numlin=p.avl_numlin;
-
 
 --
 -- Historico Partidas de Albaranes de Venta
@@ -884,7 +873,7 @@ his_usunom varchar(15) not null, -- Usuario que realiza el Cambio
  his_rowid int not null
 );
 create index ix_hisalpave on hisalpave  (his_rowid);
-DROP VIEW  anjelica.v_halbventa_detalle;
+-- DROP VIEW  anjelica.v_halbventa_detalle;
 create view anjelica.v_halbventa_detalle as select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
 avc_basimp,avc_kilos,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
@@ -3307,6 +3296,7 @@ create table anjelica.relsubempr
 create table anjelica.listados
 (
  emp_codi int not null,		-- Empresa (Si es 0 indica TODAS las empresas)
+ emp_codi int not null,		-- Empresa (Si es 0 indica TODAS las empresas)
  lis_codi int not null,		-- Codigo Listado
  lis_nomb char(80) not null,    -- Descripcion Listado
  lis_file char(80) not null,    -- Fichero con Listado (Incluyendo .jasper)
@@ -3317,6 +3307,9 @@ insert into listados values(0,2,'Listado Facturas Ventas (Cabecera)','cabfrave')
 insert into listados values(0,3,'Listado Facturas Ventas (Lineas)','lifrave');
 insert into listados values(0,5,' Listado Facturas Comentarios (PIE) ','cpfrave');
 insert into listados values(0,6,'Listado Fact. Ventas PreImpr. (Cab)','cabfravepi');
+insert into listados values(0,7, 'Listado Albaran Ventas (Cabecera)','cabalbve');
+insert into listados values(0,8, 'Listado Albaran Ventas (Linea)','lialbve');
+insert into listados values(0,9, 'Listado Albaran Ventas Desgl.(Linea)','lialbvedep');
 
 --
 -- Tabla de Envases

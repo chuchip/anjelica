@@ -42,9 +42,10 @@ import net.sourceforge.barbecue.linear.code128.Code128Barcode;
 public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
 {
   private final String LOGOTIPO="logotipo_bn.jpg"; // Logotipo por defecto.
-  int nLin,nInd;
+  int nInd;
+  int rowGrid;
   Cgrid jt;
-  ArrayList<Integer> lineas;
+  
   DatosTabla dt;
   String fichEtiq;
   EntornoUsuario EU;
@@ -419,21 +420,35 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   
   public boolean next() throws JRException
   {
-    int rowGrid=lineas.get(nLin);
+
     int nIndGrid=jt.getValorInt(rowGrid,MantDespTactil.JTSAL_NUMPIE);
     if (nInd>=nIndGrid)
     {
-       nLin++; 
-       if (nLin>=lineas.size())
-        return false;
-       rowGrid=lineas.get(nLin);
+       rowGrid=getNextLinea(rowGrid);
+       if (rowGrid < 0)
+           return false;
        nextLinea(rowGrid);      
-       nInd=0;
+       
     }
     nInd++;
     return true;
   }
-  
+  /**
+   * Busca siguiente linea en el grid que esta marcada para imprimir.
+   * @param rowGrid
+   * @return 
+   */
+  int getNextLinea(int rowGrid)
+  {
+      int nRow=jt.getRowCount();
+      for (int n=rowGrid+1;n<nRow;n++)
+      {
+          if (jt.getValBoolean(n,MantDespTactil.JTSAL_IMPRIM))
+              return n;
+      }
+      return -1;
+          
+  }
   private void nextLinea(int rowGrid) throws JRException
   {
      
@@ -449,6 +464,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
           codBarras.setProCodi(jt.getValorInt(rowGrid,MantDespTactil.JTSAL_PROCODI));
           codBarras.setProIndi(jt.getValorInt(rowGrid,MantDespTactil.JTSAL_NUMIND));
           codBarras.initCodigoBarras();
+          nInd=0;
       } catch (SQLException ex)
       {
           throw new JRException(ex.getMessage(),ex);
@@ -462,15 +478,17 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
       switch (campo)
       {
           case "pro_nomb":
-              return jt.getValString(MantDespTactil.JTSAL_PRONOMB);
+              return jt.getValString(rowGrid,MantDespTactil.JTSAL_PRONOMB);
           case "cat_nomb":
               return dt.getString("cat_nomb") ;             
           case "cal_nomb":
               return dt.getString("cal_nomb") ;
           case "pro_numind":
-              return (nLin*1000)+nInd ;
+              return (rowGrid*1000)+nInd ;
            case "codbarra":
               return codBarras.getCodBarra();
+          case "pro_lote":
+              return codBarras.getLote();
           default:
               throw new JRException("Campo: "+campo+ " No definido");
       }
@@ -481,15 +499,14 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   }
     
   public void listarPagina(DatosTabla dt,java.util.Date fechaEnv,String paiNaci, 
-        Cgrid jt,ArrayList<Integer> lineas, CodigoBarras codBarras ) throws Exception
+        Cgrid jt, CodigoBarras codBarras ) throws Exception
   { 
-         if (lineas.isEmpty())
-             return;
+        
          if (jr==null || tipoEtiq!=tipEtiqOld)
             jr = util.getJasperReport(EU,fichEtiq);
          
         this.dt=dt;
-        this.lineas=lineas;
+        
         this.jt=jt;
         this.codBarras=codBarras;
         tipEtiqOld=tipoEtiq;
@@ -514,9 +531,10 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
           img=Iconos.getPathIcon()+LOGOTIPO;
 
     mp.put("logotipo",img.equals("")?null:img);
-     nLin=0;
-     nInd=0;
-      nextLinea(lineas.get(nLin));
+
+    nInd=0;
+    rowGrid=rowGrid=getNextLinea(-1);
+    nextLinea(rowGrid);
     JasperPrint jp = JasperFillManager.fillReport(jr, mp,this);
     if (EU.getSimulaPrint())
       return;
