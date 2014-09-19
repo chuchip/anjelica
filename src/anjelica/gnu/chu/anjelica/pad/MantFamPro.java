@@ -481,9 +481,10 @@ public class MantFamPro   extends ventanaPad  implements PAD  {
             public boolean deleteLinea(int row, int col) {
                 return deleteLineaJT(row,col);
             }
-            public void afterInsertaLinea(boolean insLinea)
+            public boolean afterInsertaLinea(boolean insLinea)
             {
                 afterInsertaLineaJT(insLinea);
+                return true;
             }
         };
         {
@@ -521,9 +522,10 @@ public class MantFamPro   extends ventanaPad  implements PAD  {
             public boolean deleteLinea(int row, int col) {
                 return deleteLineaJTGru(row,col);
             }
-            public void afterInsertaLinea(boolean insLinea)
+            public boolean afterInsertaLinea(boolean insLinea)
             {
                 afterInsertaLineaJTGru(insLinea);
+                return true;
             }
         }
         ;
@@ -562,7 +564,7 @@ public class MantFamPro   extends ventanaPad  implements PAD  {
         jt.setLayout(jtLayout);
         jtLayout.setHorizontalGroup(
             jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 537, Short.MAX_VALUE)
+            .addGap(0, 538, Short.MAX_VALUE)
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -582,13 +584,13 @@ public class MantFamPro   extends ventanaPad  implements PAD  {
         jtGru.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtGru.setMaximumSize(new java.awt.Dimension(100, 175));
         jtGru.setMinimumSize(new java.awt.Dimension(100, 175));
-        jtGru.setProcInsLinea(false);
+        jtGru.setProcInsLinea(true);
 
         javax.swing.GroupLayout jtGruLayout = new javax.swing.GroupLayout(jtGru);
         jtGru.setLayout(jtGruLayout);
         jtGruLayout.setHorizontalGroup(
             jtGruLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 537, Short.MAX_VALUE)
+            .addGap(0, 538, Short.MAX_VALUE)
         );
         jtGruLayout.setVerticalGroup(
             jtGruLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

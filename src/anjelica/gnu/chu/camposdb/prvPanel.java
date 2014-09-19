@@ -42,6 +42,7 @@ public class prvPanel extends CPanel
   CTextField prv_nombL = new CTextField();
   CButton Bcons = new CButton(Iconos.getImageIcon("find"));
   CButton Binserta = new CButton(Iconos.getImageIcon("nuevo"));
+
   int ancTexto = 60;
   EntornoUsuario eu1;
   boolean ponBcons = true;
@@ -61,7 +62,6 @@ public class prvPanel extends CPanel
     }
     catch (Exception e)
     {
-      e.printStackTrace();
     }
   }
 
@@ -675,6 +675,7 @@ public class prvPanel extends CPanel
   {
     aceptaNulo = acepNulo;
   }
+  
   public void setEnabledNombre(boolean enab)
   {
     prv_nombL.setEnabled(enab);

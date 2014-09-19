@@ -970,7 +970,7 @@ public class menu extends JFrame
 
     EU.usu_nomb="SuperUsuario";
     EU.usuario="cpuente";
-    EU.password="anjelica";
+    EU.password="sus23vic";
     EU.email="cpuente@misl.es";
     EU.setUsuReser1("S");
   

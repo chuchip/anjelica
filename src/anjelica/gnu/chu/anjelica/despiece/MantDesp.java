@@ -3859,10 +3859,11 @@ public class MantDesp extends ventanaPad implements PAD
                 actKilos(JTLIN_GRID);
             }
             @Override
-            public void afterInsertaLinea(boolean ins)
+            public boolean afterInsertaLinea(boolean ins)
             {
                 jtLin.setValor(deo_feccadE.getText(), 5);
                 def_feccadE.setText(deo_feccadE.getText());
+                return true;
             }
             @Override
             public int cambiaLinea(int row, int col)
@@ -3931,16 +3932,16 @@ public class MantDesp extends ventanaPad implements PAD
                     return true;
                 }
                 @Override
-                public void afterInsertaLinea(boolean insLinea)
+                public boolean afterInsertaLinea(boolean insLinea)
                 {
                     if (proCodTD==0 && insLinea==false &&  jtCab.getRowCount()==1)
                     {
                         jtCab.setProcInsLinea(false);
                         swPrimeraLinea=true;
                         BirGrid.doClick();
-                        return;
+                        return false;
                     }
-
+                    return true;
                     // deo_ejelotE.setValorDec(EU.ejercicio);
                     // jtCab.setValor(""+EU.ejercicio,jtCab.getSelectedRow(),JTCAB_EJELOT);
                 }

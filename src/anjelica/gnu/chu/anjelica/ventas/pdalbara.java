@@ -78,6 +78,7 @@ import gnu.chu.winayu.ayuLote;
 import gnu.hylafax.HylaFAXClient;
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyVetoException;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.*;
@@ -94,6 +95,8 @@ import javax.swing.event.ListSelectionListener;
  
 public class pdalbara extends ventanaPad  implements PAD
 {
+  private boolean swCanti=false;
+  private boolean isEmpPlanta=false;
   public final static String TABLACAB="v_albavec";
   public final static String TABLALIN="v_albavel";
   public final static String TABLAIND="v_albvenpar";
@@ -139,6 +142,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private final int JT_PROCODI=1; //
   private final int JT_NULIAL=0; // Numero de Albaran.
   int JT_NUMPALE=8; // Numero Pale
+  int JT_CODENV=9; // Codigo Envase
   private final int JTRES_PROCODI=0;
   private final int JTRES_KILOS=2;
   private final int JTRES_NL=3;
@@ -203,7 +207,7 @@ public class pdalbara extends ventanaPad  implements PAD
         if (col == 0)
           jtRes.setValor(pro_codresE.getNombArt(pro_codresE.getValorInt()),row, 1);
       }
-      catch (Exception k)
+      catch (SQLException k)
       {
         Error("Error al buscar Nombre Articulo", k);
       }
@@ -282,21 +286,12 @@ public class pdalbara extends ventanaPad  implements PAD
           jtDes.setLinea(v);
           jtDes.ponValores(0);
           swGridDes++;
-          irGridDes( avp_cantiE.getValorDec()==0 ?JTDES_UNID: JTDES_LOTE);
+          swCanti=avp_cantiE.getValorDec()==0;
+          irGridDes( swCanti?JTDES_UNID: JTDES_LOTE);
           return;
         }
         jtDes.addLinea(v);
-//        if (Bdespiece.isSelected())
-//        {
-//          jtDes.procesaAllFoco(0);
-//          swGridDes++;
-//          irGridDes(8);
-//          return;
-//        }
-//        pro_codicE.setText(pro_codiE.getText());
-//        pro_nombcE.setText(getNombArt(pro_codicE.getText()));
-      
-//        this.isVendible();
+
         avl_cantiE.setValorDec(avp_cantiE.getValorDec());
         avl_unidE.setValorDec(1);
 //        jt.setValor(pro_nombE.getText(),2,0);
@@ -379,9 +374,15 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       return cambiaLinDes(row);
     }
-@Override
-    public void afterInsertaLinea(boolean insLinea)
+    @Override
+    public boolean afterInsertaLinea(boolean insLinea)
     {
+      if (swCanti)
+      {   
+          irGridLin();
+          jt.mueveSigLinea(1);          
+          return false;
+      }
       pro_codicE.setText(pro_codiE.getText());
       jtDes.setValor(pro_codiE.getText(), jtDes.getSelectedRow(), 0);
       jtDes.setValor(pro_nombE.getText(), jtDes.getSelectedRow(), 1);
@@ -389,6 +390,7 @@ public class pdalbara extends ventanaPad  implements PAD
       jtDes.setValor("" + EU.ejercicio, jtDes.getSelectedRow(), 3);
       jtDes.setValor("1", jtDes.getSelectedRow(), 4);
       jtDes.ponValores(jtDes.getSelectedRow());
+      return true;
     }
 @Override
     public void afterCambiaLinea()
@@ -586,7 +588,7 @@ public class pdalbara extends ventanaPad  implements PAD
         PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2014-07-03" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2014-09-19" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -1180,6 +1182,8 @@ public class pdalbara extends ventanaPad  implements PAD
     @Override
   public void afterConecta() throws SQLException, ParseException
   {
+    
+    isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
     dtAdd.setConexion(ctUp);
     cli_codiE.setZona(P_ZONA);
     cli_codiE.iniciar(dtStat, this, vl, EU);
@@ -2246,7 +2250,7 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       this.setSelected(true);
     }
-    catch (Exception k)
+    catch (PropertyVetoException k)
     {}
     this.setFoco(null);
     SwingUtilities.invokeLater(new Thread()
@@ -6387,7 +6391,8 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   void irGridDes()
   {
-      irGridDes(JTDES_LOTE );
+      swCanti=false;
+      irGridDes(JTDES_LOTE);
   }
   void irGridDes(int col_desp)
   {
@@ -6438,10 +6443,11 @@ public class pdalbara extends ventanaPad  implements PAD
           ArrayList v=new ArrayList();
           v.add(pro_codiE.getText());
           v.add(pro_nombE.getText());
-          v.add("" + EU.em_cod);
-          v.add("" + EU.ejercicio);
+          v.add( EU.em_cod);
+          v.add( EU.ejercicio);
           v.add("1");
           v.add("A");
+          v.add("0");
           v.add("0");
           v.add("0");
           v.add("0");
@@ -6449,13 +6455,7 @@ public class pdalbara extends ventanaPad  implements PAD
           pro_codicE.setText(pro_codiE.getText());
           jtDes.afterInsertaLinea(true);
           jtDes.actualizarGrid(0);
-//          avp_emplotE.resetTexto();
-//          avp_numuniE.resetTexto();
-//          avp_ejelotE.resetTexto();
-//          avp_serlotE.resetTexto();
-//          avp_numparE.resetTexto();
-//          avp_numindE.resetTexto();
-//          avp_cantiE.resetTexto();
+
         }
         Bdespiece.setEnabled(false);
         jtDes.setEnabled(true);
@@ -7492,6 +7492,7 @@ public class pdalbara extends ventanaPad  implements PAD
   void confGridCab() throws Exception
   {
     JT_NUMPALE=P_MODPRECIO || P_PONPRECIO ? 8: 6;
+    JT_CODENV=JT_NUMPALE+1;
     jt = new CGridEditable(P_MODPRECIO || P_PONPRECIO ? 9 : 7)
     {
       @Override

@@ -44,7 +44,7 @@ import javax.swing.event.InternalFrameEvent;
 public class ayuLote extends ventana
 {
   String empAccesos;
-  boolean verBloqueados=true;
+  boolean verBloqueados=false;
   int proCodi;
   public int rowAct;
   CPanel Pprinc = new CPanel();
@@ -198,13 +198,13 @@ public class ayuLote extends ventana
     try
     {
       pro_codiE.setText(""+proCodi);
+      
       String s="SELECT emp_codi,eje_nume,pro_serie,pro_nupar,pro_numind,stp_kilact,stp_unact,stk_block "+
           " FROM v_stkpart WHERE pro_codi = "+proCodi+
           " AND emp_codi = "+EU.em_cod+
           (almCodi!=0?" and alm_codi = "+almCodi:"")+
           (verBloqueados?"":" and stk_block= 0")+
-          " and stp_kilact > 0 "+
-          " and stp_unact > 0 "+
+          (pro_codiE.hasControlExist()?" and stp_kilact > 0 and stp_unact > 0 ":"")+
           " and pro_nupar > 0 "+
 //          " and emp_codi in ("+empAccesos+")"+
           " ORDER BY emp_codi, eje_nume desc,pro_serie,pro_nupar desc,pro_numind";

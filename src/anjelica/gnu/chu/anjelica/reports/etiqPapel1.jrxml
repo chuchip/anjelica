@@ -75,7 +75,7 @@
 					<text><![CDATA[C.I.F]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="22" y="84" width="42" height="12"/>
+					<reportElement x="22" y="84" width="49" height="12"/>
 					<textElement verticalAlignment="Top">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>

@@ -1,5 +1,6 @@
 package gnu.chu.anjelica.ventas;
 
+import gnu.chu.anjelica.listados.utillista;
 import gnu.chu.utilidades.*;
 import gnu.chu.sql.*;
 import java.sql.*;
@@ -47,7 +48,10 @@ public class lialbven implements JRDataSource
   String s;
   boolean valora;
   FileOutputStream fOut;
-
+  private final static int CODLISTADO_CAB=7;
+  private final static int CODLISTADO_LIN=8;
+  private final static int CODLISTADO_LINENT=9;
+  
   public lialbven(DatosTabla dt,EntornoUsuario EU) throws SQLException,java.text.ParseException
   {
     datCab = new actCabAlbFra(dt);
@@ -116,7 +120,9 @@ public class lialbven implements JRDataSource
    String avcSerie=rs.getString("avc_serie");
    int avcNume=rs.getInt("avc_nume");
 
-   JasperReport jr = gnu.chu.print.util.getJasperReport(EU, "cabalbve");
+   JasperReport jr = gnu.chu.print.util.getJasperReport(EU, utillista.getNombList(EU.
+         em_cod,  CODLISTADO_CAB, dtCon1)
+       );
    java.util.HashMap mp = new java.util.HashMap();
    mp.put(JRParameter.REPORT_CONNECTION,ct);
    if (avsNume==0)
@@ -137,10 +143,10 @@ public class lialbven implements JRDataSource
     }
     mp.put("avs_fecha",dtTemp.getDate("avs_fecha"));
    }
-   if (avsNume>0) 
-    mp.put("SUBREPORT_FILE_NAME",EU.pathReport +"/lialbvedep.jasper");
-   else
-    mp.put("SUBREPORT_FILE_NAME",EU.pathReport +"/lialbve.jasper");
+
+    mp.put("SUBREPORT_FILE_NAME",EU.pathReport +"/"+
+        utillista.getNombList(EU.em_cod,avsNume>0?CODLISTADO_LINENT:
+            CODLISTADO_LIN, dtCon1)+".jasper");
   
       if (!getDatosAlb(rs.getInt("avc_ano"),rs.getInt("avc_empcod"),rs.getString("avc_serie"),
                      rs.getInt("avc_nume")))

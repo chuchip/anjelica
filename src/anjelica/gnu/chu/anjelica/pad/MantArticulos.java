@@ -1246,11 +1246,11 @@ public class MantArticulos extends ventanaPad  implements PAD
         cLabel27 = new gnu.chu.controles.CLabel();
         pro_fulconE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel28 = new gnu.chu.controles.CLabel();
-        pro_prvulcoE = new gnu.chu.camposdb.prvPanel();
         cLabel19 = new gnu.chu.controles.CLabel();
         pro_stockE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9.99");
         cLabel23 = new gnu.chu.controles.CLabel();
         pro_stkuniE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9");
+        pro_prvulcoE = new gnu.chu.camposdb.prvPanel();
         cLabel26 = new gnu.chu.controles.CLabel();
         pro_unicomE = new gnu.chu.controles.CComboBox();
         cLabel24 = new gnu.chu.controles.CLabel();
@@ -1594,11 +1594,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel28.setText("Prov. Ult. Compra");
         cPanel2.add(cLabel28);
-        cLabel28.setBounds(6, 46, 112, 15);
-
-        pro_prvulcoE.setEnabled(false);
-        cPanel2.add(pro_prvulcoE);
-        pro_prvulcoE.setBounds(122, 46, 442, 17);
+        cLabel28.setBounds(6, 46, 112, 16);
 
         cLabel19.setText("Kilos Actuales");
         cPanel2.add(cLabel19);
@@ -1615,6 +1611,8 @@ public class MantArticulos extends ventanaPad  implements PAD
         pro_stkuniE.setEnabled(false);
         cPanel2.add(pro_stkuniE);
         pro_stkuniE.setBounds(400, 20, 50, 17);
+        cPanel2.add(pro_prvulcoE);
+        pro_prvulcoE.setBounds(120, 46, 470, 16);
 
         Pinicio.add(cPanel2);
         cPanel2.setBounds(20, 260, 600, 70);

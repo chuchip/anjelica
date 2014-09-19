@@ -47,7 +47,7 @@ public class CGridEditable extends Cgrid implements CQuery {
     private boolean ponValoresInFocus = false;
     boolean reqFocusEdit = false;
     public boolean binsert = false;
-    boolean procInsLinea = true;
+
     int colNueva = 0; // Col. donde ir cuando se inserta una Linea
     private int eatCambioLinea = 0;
     int eatCambioCol = 0;
@@ -75,7 +75,15 @@ public class CGridEditable extends Cgrid implements CQuery {
   {    
     iniciar(numcol);
   }
-
+  /**
+   * @deprecated 
+   * Usado anteriormente para que no siguiera con el proceso despues de insertar linea
+   * @param aa 
+   */
+  public void  setProcInsLinea(boolean aa)
+  {
+      
+  }
   public void iniciar(int numcol)
   {
     try {
@@ -296,14 +304,17 @@ public class CGridEditable extends Cgrid implements CQuery {
       afterDeleteLinea();
       afterCambiaLinea0();
       if (vacio)
-        afterInsertaLinea0(true);
-            setAntRow(rw);
+      {
+        if (!afterInsertaLinea0(true))
+            return;
+      }
+      setAntRow(rw);
       TABLAVACIA=swVacio;
     }
     else
     {
       requestFocus(0, getSelectedColumn());
-            setAntRow(0);
+      setAntRow(0);
     }
   }
   /**
@@ -412,7 +423,8 @@ public class CGridEditable extends Cgrid implements CQuery {
     rw = getSelectedRow();
     addLinea(v, rw);
     requestFocus(rw, colNueva);
-    afterInsertaLinea0(insLinea);
+    if (!afterInsertaLinea0(insLinea))
+        return;
     afterCambiaLinea0();
     binsert = false;
   }
@@ -1400,7 +1412,10 @@ public class CGridEditable extends Cgrid implements CQuery {
   {
     mueveSigLinea(getSelectedColumn());
   }
-
+  /**
+   * Mueve el cursor a la siguiente linea, en la columna especificada
+   * @param columna  Columna donde posicionarse despues de mover a la siguiente linea.
+   */
   public void mueveSigLinea(int columna)
   {
     mueveSigLinea(columna, true);
@@ -1408,7 +1423,7 @@ public class CGridEditable extends Cgrid implements CQuery {
 
   void mueveSigLinea(int columna, boolean focus)
   {
-    boolean swInsLinea = false;
+    boolean swInsLinea;
     int row = getSelectedRow();
     int rw = tableView.getSelectedRow() + 1;
     if (rw >= tableView.getRowCount())
@@ -1426,27 +1441,25 @@ public class CGridEditable extends Cgrid implements CQuery {
 
       if ( (nColErr = cambiaLinea1(getSelectedRow(), columna)) >= 0)
       { // Anulado
-        requestFocus(tableView.getSelectedRow(), nColErr);
+        requestFocusLater(tableView.getSelectedRow(), nColErr);
         return;
       }
       setAntRow(rw);
       swInsLinea = true;
-//      if (TABLAVACIA)
-//      {
-//        Vector v = datosLinea();
-//        addLinea(v);
-//      }
+
       ArrayList v = new ArrayList();
       insLinea(v);
       addLinea(v);
-      requestFocus(rw, colNueva); // colIni
+      
       ponValores(rw, false, false);
 
       if (swInsLinea)
-        afterInsertaLinea0(false);
-      if (!procInsLinea)
-        return;
+      {
+        if (! afterInsertaLinea0(false))
+            return;
+      }
       afterCambiaLinea0();
+      requestFocusLater(rw, colNueva); 
       SwingUtilities.invokeLater(new Thread()
       {
         public void run()
@@ -1455,14 +1468,13 @@ public class CGridEditable extends Cgrid implements CQuery {
           {
             Thread.sleep(100);
           }
-          catch (Exception k)
+          catch (InterruptedException k)
           {}
           ( (Component) campos.get(colNueva)).requestFocus();
         }
       });
-      return;
     }
-    else
+    else // No hay que insertar una nueva linea.
       procCambiaLinea(row, row + 1, getSelectedColumn(), columna);
   }
 
@@ -1474,7 +1486,7 @@ public class CGridEditable extends Cgrid implements CQuery {
     { // Me dicen que no cambie de Linea.
       if (nColErr != colAnt)
         eatCambioCol++;
-      requestFocus(rowAnt, nColErr);
+      requestFocusLater (rowAnt, nColErr);
       return false;
     }
         setEatCambioLinea(1);
@@ -1524,35 +1536,25 @@ public class CGridEditable extends Cgrid implements CQuery {
    * Machacar esta función si se quiere controlar algo despues de Insertar una linea
    * insLinea = true se ha insertado una linea con F7 o el boton
    *          = false es una nueva linea al final del grid
+     * @param insLinea
    */
-  public void afterInsertaLinea(boolean insLinea)
+  public boolean afterInsertaLinea(boolean insLinea)
   {
-
+      return true;
   }
-
+  
+  
   /**
    * Machacar esta funcion si se quiere controlar algo despues de Insertar una linea
    * insLinea = true se ha insertado una linea con F7 o el boton
    *          = false es una nueva linea al final del grid
    */
-  private void afterInsertaLinea0(boolean insLinea)
-  {
-    procInsLinea = true;
-    afterInsertaLinea(insLinea);
+  private boolean afterInsertaLinea0(boolean insLinea)
+  {    
+    return afterInsertaLinea(insLinea);
   }
 
-  /**
-   * Si es llamado con false no se llamara a afterCambiaLinea despues de Insertar
-   * una nueva linea, en caso contrario si.
-   * Esta funcion debe ser llamada desde un AfterInsertaLinea
-   * ya que afterInsertaLinea0 la llama con false.
-   *
-   * @param procInsLin si se debe llamar a aftercambialinea
-   */
-  public void setProcInsLinea(boolean procInsLin)
-  {
-    procInsLinea = procInsLin;
-  }
+  
 /**
  * Funcion a machacar cuando se quiera hacer algo despues de borrar linea
  *
@@ -1689,7 +1691,7 @@ public class CGridEditable extends Cgrid implements CQuery {
   /**
    * Establece si debe realizarse un requestFocus por defecto a las columnas que no son
    * editables. Por defecto es false.
-   * @param colEditables boolean true si debe hacerse un req. Focus por defecto aunque el
+   * @param ReqFocusEdit boolean true si debe hacerse un req. Focus por defecto aunque el
    * cambo no sea swGridEditable. Solo valido para TextFields
    */
   public void setReqFocusEdit(boolean ReqFocusEdit)

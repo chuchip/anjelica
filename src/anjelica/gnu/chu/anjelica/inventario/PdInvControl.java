@@ -1729,7 +1729,7 @@ public class PdInvControl extends ventanaPad implements PAD
             }
 
             @Override
-            public void afterInsertaLinea(boolean insLinea)
+            public boolean afterInsertaLinea(boolean insLinea)
             {
                 numpesE.setValorDec(numpesE.getValorDec() + 1);
                 numpesE1.setValorDec(numpesE1.getValorDec() + 1);
@@ -1738,6 +1738,7 @@ public class PdInvControl extends ventanaPad implements PAD
                     jt.setText(lci_numpalE.getCopia(),jt.getSelectedRow(),JT_NUMPAL);
                     lci_numpalE.setText(lci_numpalE.getCopia());
                 }
+                return true;
                 //      jt.setValor("1",9);
             }
 

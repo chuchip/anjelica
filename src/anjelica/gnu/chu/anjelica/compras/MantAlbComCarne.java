@@ -163,13 +163,14 @@ public class MantAlbComCarne extends MantAlbCom
         }
 
         @Override
-        public void afterInsertaLinea(boolean insLinea)
+        public boolean afterInsertaLinea(boolean insLinea)
         {
           int nRow;
           if (jtDes.getRowCount()==0 || jtDes.isVacio() )
-            return;
+            return true;
           nRow=jtDes.getSelectedRow();
           ponValDefDes(nRow,insLinea?nRow+1:nRow-1);
+          return true;
         }
             @Override
         public int cambiaLinea(int row, int col)

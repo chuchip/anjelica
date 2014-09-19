@@ -276,10 +276,10 @@ create table anjelica.categorias_art
 (
 	cat_codi int not null, -- Codigo Categoria
 	cat_nomb varchar(8) not null, -- Nombre Categoria
-	cat_desr varchar(25) not null, -- Descripción Categoria
+	cat_descr varchar(25) not null, -- Descripción Categoria
 	constraint ix_categorias_art primary key  (cat_codi)
 );
-insert into anjelica.categorias_art values(1,'1G','1G');
+insert into anjelica.categorias_art values(1,'I','Primera');
 alter table anjelica.v_articulo add constraint cat_profk
    foreign key (cat_codi) references anjelica.categorias_art(cat_codi) DEFERRABLE INITIALLY DEFERRED;
 

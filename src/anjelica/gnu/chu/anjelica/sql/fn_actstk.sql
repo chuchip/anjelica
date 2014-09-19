@@ -8,7 +8,7 @@
   BEGIN
         kilos=0;
         unid=0;      
-      
+		
         if TG_OP =  'INSERT' or TG_OP =  'UPDATE' then 
             select * INTO STKNEW FROM  anjelica.stockpart where 
                 pro_codi= NEW.pro_codi and
@@ -29,15 +29,15 @@
                     pro_codi,pro_numind,alm_codi,
                     stp_unini,stp_unact,
                     stp_feccre,
-		    stp_kilini,stp_kilact,
-		    prv_codi,stp_feccad) 
+					stp_kilini,stp_kilact,
+					prv_codi,stp_feccad) 
                  values
                  (
                         NEW.pro_ejelot, 
-			NEW.mvt_empcod,NEW.pro_serlot,'P', NEW.pro_numlot,
+						NEW.mvt_empcod,NEW.pro_serlot,'P', NEW.pro_numlot,
                         NEW.pro_codi,NEW.pro_indlot,NEW.alm_codi,
-			unid,unid,
-			current_date,
+						unid,unid,
+						current_date,
                         kilos,kilos,
                         NEW.mvt_cliprv,NEW.mvt_feccad);
             else
@@ -50,10 +50,10 @@
                 end if;
                 UPDATE anjelica.stockpart set stp_kilact= kilos,
                         stp_unact=unid,
-			prv_codi = NEW.mvt_cliprv,
+						prv_codi = NEW.mvt_cliprv,
                         stp_fefici = current_date 
-                WHERE   pro_codi = NEW.pro_codi and 
-			eje_nume=NEW.pro_ejelot  and 
+						WHERE   pro_codi = NEW.pro_codi and 
+						eje_nume=NEW.pro_ejelot  and 
                          pro_codi= NEW.pro_codi and
                          pro_serie = NEW.pro_serlot and
                          pro_nupar = NEW.pro_numlot and

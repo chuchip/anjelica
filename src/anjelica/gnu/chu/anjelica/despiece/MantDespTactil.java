@@ -160,9 +160,10 @@ public class MantDespTactil  extends ventanaPad implements PAD
       calcSumCab(jtEnt.getValorInt(JTENT_PROCODI), jtEnt.getValorDec(JTENT_KILOS));
     }
 
-    public void afterInsertaLinea(boolean insLinea)
+    public boolean afterInsertaLinea(boolean insLinea)
     {
       pdf_jtEnt();
+      return true;
     }
     public void cambiaColumna(int col, int colNueva,int row)
     {

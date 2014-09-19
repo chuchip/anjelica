@@ -342,7 +342,7 @@ public class sbePanel extends CPanel
     @Override
   public  Component getErrorConf()
   {
-    if (eu.getSbeCodi()==0 || getAceptaNulo() )
+    if (eu.getSbeCodi()==0 || getAceptaNulo() || getQuery())
       return null; // Permito cualquier valor si el usuario tiene acceso a todas subempresas o esta puesto que acepte NULO.
     if (sbe_codiE.getErrorConf()!=null)
       return sbe_codiE.getErrorConf();

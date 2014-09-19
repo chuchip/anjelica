@@ -95,19 +95,19 @@ public class pdpedco extends ventanaPad   implements PAD
     }
 
         @Override
-    public void afterInsertaLinea(boolean insLinea)
+    public boolean afterInsertaLinea(boolean insLinea)
     {
       try
       {
         pcl_feccadE.setText(Formatear.sumaDias(pcc_fecrecE.getText(),
                                                "dd-MM-yyyy", NDIACAD));
         jt.setValor(pcl_feccadE.getText(), 2);
-
       }
-      catch (Exception k)
+      catch (ParseException k)
       {
         Error("Error en afterInsertaLinea", k);
       }
+      return true;
     }
 
         @Override
