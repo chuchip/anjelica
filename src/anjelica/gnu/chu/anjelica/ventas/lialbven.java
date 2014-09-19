@@ -51,6 +51,7 @@ public class lialbven implements JRDataSource
   private final static int CODLISTADO_CAB=7;
   private final static int CODLISTADO_LIN=8;
   private final static int CODLISTADO_LINENT=9;
+  private final static int CODLISTADO_PALE=10;
   
   public lialbven(DatosTabla dt,EntornoUsuario EU) throws SQLException,java.text.ParseException
   {
@@ -85,6 +86,25 @@ public class lialbven implements JRDataSource
        return envAlbarFax(ct,  dtCon1, sql,
                        EU,valora, numFax, obser, copiaPapel,
                       numCopia,0);
+   }
+   public int imprEtiqPalets( String sqlAlb,lialbven liAlb,  DatosTabla dtCon1,EntornoUsuario EU ) throws Exception
+   {
+      JasperReport jr = gnu.chu.print.util.getJasperReport(EU, utillista.getNombList(EU.
+         em_cod,  CODLISTADO_PALE, dtCon1)  );
+      java.util.HashMap mp = new java.util.HashMap();
+      mp.put("logotipo",Iconos.getPathIcon()+"logotipo.jpg");
+               
+      if (! dtCon1.select(sqlAlb))
+      {
+          mensajes.mensajeAviso("Albaran no tiene Palets");
+          return 0;
+      }      
+      dtCon1.getResultSet().beforeFirst();
+      JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(dtCon1.getResultSet()));
+
+//     JasperViewer.viewReport(jp,false);
+      gnu.chu.print.util.printJasper(jp, EU);
+      return 1;
    }
   /**
    * Imprime albaran tanto en papel como enviandolo por fax

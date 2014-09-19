@@ -94,7 +94,7 @@ import javax.swing.event.ListSelectionListener;
 
  
 public class pdalbara extends ventanaPad  implements PAD
-{
+{  
   private boolean swCanti=false;
   private boolean isEmpPlanta=false;
   public final static String TABLACAB="v_albavec";
@@ -1242,6 +1242,7 @@ public class pdalbara extends ventanaPad  implements PAD
     ifFax.setLocation(this.getLocation().x+30,this.getLocation().x+30);
     vl.add(ifFax,new Integer(1));
     Bimpri.addMenu("---","-");
+
     Bimpri.addMenu("Alb Gráfico", "B");
     opHojRut.addItem("Alb Gráfico", "B");
     if (IMPALBTEXTO)
@@ -1258,6 +1259,8 @@ public class pdalbara extends ventanaPad  implements PAD
       Bimpri.addMenu("Fax Alb.", "F");
       opHojRut.addItem("Fax Alb.", "F");
     }
+    Bimpri.addMenu("Palets", "P");
+    opHojRut.addItem("Palets", "P");
     Bimpri.addMenu("Etiquetas", "E");
     opHojRut.addItem("Etiquetas", "E");
     
@@ -6756,6 +6759,8 @@ public class pdalbara extends ventanaPad  implements PAD
       imprHojRuta();
     if (indice.equals("E"))
       imprEtiq();
+    if (indice.equals("P"))
+      imprPalets();
     this.setEnabled(true);
     mensaje("");
   }
@@ -6839,16 +6844,48 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     mensajeErr("Etiqueta ... Listada");
   }
-
+  
+  private String getSqlListaAlb()
+  {
+      return "SELECT c.emp_codi as avc_empcod, c.*,cl.*" +
+          " FROM v_albavec as c,clientes cl WHERE c.avc_ano =" + avc_anoE.getValorInt() +
+          " and c.emp_codi = " + emp_codiE.getValorInt() +
+          " and c.avc_serie = '" + avc_seriE.getText() + "'" +
+          " and c.avc_nume = " + avc_numeE.getValorInt() +
+          " and c.cli_codi = cl.cli_codi ";
+  }
+  void imprPalets()
+  {
+    try
+    {
+      mensaje("Imprimiendo Hojas de Palets ...");
+            
+      sqlAlb =   "SELECT c.*, cl.cli_nomb,cli_nomen,cli_diree,cli_poble,cli_codpoe "+
+          " FROM v_albventa as c,clientes cl "
+          + " WHERE c.avc_ano =" + avc_anoE.getValorInt() +
+          " and c.emp_codi = " + emp_codiE.getValorInt() +
+          " and c.avc_serie = '" + avc_seriE.getText() + "'" +
+          " and c.avc_nume = " + avc_numeE.getValorInt() +
+          " and c.cli_codi = cl.cli_codi "+
+          " and avl_numpal!=0";
+           
+      if (liAlb == null)
+        liAlb = new lialbven(dtStat, EU);
+      liAlb.imprEtiqPalets(sqlAlb,liAlb,dtCon1,EU);
+          
+      mensajeErr("Hojas de Palets  ... Impresa");
+      mensaje("");
+    }
+    catch (Exception k)
+    {
+      Error("Error al Imprimir Hoja de Ruta", k);
+    }
+    
+  }
   void imprHojRuta()
   {
     try
     {
-//     if (nav.pulsado!=navegador.NINGUNO)
-//     {
-//         msgBox("Solo se pueden imprimir la HOJA TRAZABILIDAD en modo consulta");
-//         return;
-//     }
       mensaje("Imprimiendo HOJA DE Trazabilidad ...");
       if (liTra == null)
       {
@@ -6905,12 +6942,7 @@ public class pdalbara extends ventanaPad  implements PAD
 //          " FROM albvenserc as c ,clientes cl WHERE c.avs_nume =" + avsNume +
 //          " and c.cli_codi = cl.cli_codi ";
 //      else
-        sqlAlb = "SELECT c.emp_codi as avc_empcod, c.*,cl.*" +
-          " FROM v_albavec as c,clientes cl WHERE c.avc_ano =" + avc_anoE.getValorInt() +
-          " and c.emp_codi = " + emp_codiE.getValorInt() +
-          " and c.avc_serie = '" + avc_seriE.getText() + "'" +
-          " and c.avc_nume = " + avc_numeE.getValorInt() +
-          " and c.cli_codi = cl.cli_codi ";
+      sqlAlb = getSqlListaAlb();
       if (indice.equals("B") || indice.equals("T"))
       {
         liAlb.envAlbarFax(ct.getConnection(), dtStat, sqlAlb, EU,
