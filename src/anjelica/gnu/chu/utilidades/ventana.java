@@ -1,5 +1,6 @@
 package gnu.chu.utilidades;
 
+import com.jgoodies.looks.plastic.PlasticInternalFrameUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
@@ -17,6 +18,9 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
+
+
+
 /**
  *
  * <p>Título: ventana</p>
@@ -49,7 +53,7 @@ public class ventana extends CInternalFrame implements ejecutable
   private PopEspere popEspere;;
   private String tablaLock=null;
   private String registroLock=null;
-  public static Logger logger = Logger.getLogger(ventana.class.getName());
+  public static Logger logger = Logger.getRootLogger();
   String versionID="1.0";
   String titProg="";
   public String msgBloqueo="";
@@ -300,6 +304,18 @@ public class ventana extends CInternalFrame implements ejecutable
                                         InternalFrameEvent.
                                         INTERNAL_FRAME_CLOSING));
     return;
+  }
+  /**
+   * Establece si la ventana debe tener una cabecera
+   * La cabecera es la parte arriba de la ventana donde se pone el boton minimizar, maximizar, etc.
+   * Por defecto esta puesto
+   * @param cabecera 
+   */
+  public void setCabeceraVentana(boolean cabecera)
+  {
+   this.putClientProperty(
+             PlasticInternalFrameUI.IS_PALETTE,
+             !cabecera);
   }
   public void matar()
   {

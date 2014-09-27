@@ -10,7 +10,6 @@ import java.net.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.controles.*;
 import gnu.chu.sql.*;
-import java.io.*;
 /**
  *
  * <p>Título: Menu1</p>
@@ -145,29 +144,19 @@ public class Menu1 extends Principal
     panelDeNotas = panelNotas;
 
     try
-    {
-      // Intento Mandar por correos los ficheros de salida antiguos si todavia estan.
-      enviaSalEstandard();
-      boolean noOut=true;
-      if (System.getProperty("noOut") != null)
-      {
-        if (System.getProperty("noOut").toString().equals("true"))
-          noOut=false;
-      }
-      if (noOut)
-      {
-        PrintStream pOut = new PrintStream(new FileOutputStream(Usuario.dirTmp + "/salida.out"));
-        System.setOut(pOut);
-        enviaSalError();
-        PrintStream pErr = new PrintStream(new FileOutputStream(Usuario.dirTmp + "/salida.err"));
-        System.setErr(pErr);
-      }
+    {                  
+        SystemOut sout=new SystemOut(System.out);
+        System.setOut(sout);        
+        SystemOut serr=new SystemOut(System.err);
+        serr.setSalidaError(true);
+        System.setErr(serr);
     }
     catch (Throwable k)
     {
       k.printStackTrace();
       System.out.println("No puedo redirigir la salida ..."+k.getMessage());
     }
+    ventana.logger.debug("Iniciado Menu con usuario: "+Usuario.usuario);   
     ht.clear();
     ht.put("%u", Usuario.usuario + " (" + InetAddress.getLocalHost().getHostName() + ")");
     guardaMens("EM", ht);

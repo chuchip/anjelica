@@ -1,30 +1,25 @@
 package gnu.chu.Menu;
 
-import gnu.chu.anjelica.almacen.actStkPart;
 import gnu.chu.anjelica.pad.pdusua;
 import gnu.chu.mail.sendMail;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.net.*;
 import java.rmi.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import javax.swing.*;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.xml.DOMConfigurator;
+
 
 /**
  *
  * <p>Título: Principal.java</p>
  * <p>Descripción: Clase  de la que extiende Menu1.
  *  </p>
- * <p>Copyright: Copyright (c) 2005-2011
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -169,36 +164,8 @@ public class Principal extends JFrame
     Usuario.pathCom=EU.pathCom;
     Usuario.catalog=EU.catalog;
     Usuario.setImpresoras(EU.getImpresoras());
-    if (EU.getLog4J() == null)
-      BasicConfigurator.configure();
-    else
-    {
-      if (EU.getLog4J().indexOf("xml") >= 0)
-      {
-        DOMConfigurator.configure(EU.getLog4J());
-      }
-      else
-        PropertyConfigurator.configureAndWatch(EU.getLog4J());
-    }
-//    System.out.println("Usuario.dirTmp:"+ Usuario.dirTmp);
-    org.apache.log4j.Appender fl=null;
-    Enumeration enum1= org.apache.log4j.Logger.getRootLogger().getAllAppenders();
-    while (enum1.hasMoreElements())
-    {
-       fl=( org.apache.log4j.Appender) enum1.nextElement();
-       if (fl instanceof org.apache.log4j.FileAppender && fl != null)
-       {
-         String fich=((org.apache.log4j.FileAppender) fl).getFile();
-         if (fich != null)
-         {
-           int lastBarra = fich.lastIndexOf("/");
-           if (lastBarra != -1)
-             fich = fich.substring(lastBarra+1);
-         }
-         ( (org.apache.log4j.FileAppender) fl).setFile(Usuario.dirTmp + "/" +fich);
-         ( (org.apache.log4j.FileAppender) fl).activateOptions();
-       }
-     }
+ 
+
 //     Logger.getLogger(this.getName()).debug("aa");
     this.setTitle("Anjelica (" + EU.empresa + ")");
 
@@ -440,10 +407,7 @@ public class Principal extends JFrame
                  Usuario.usuario + " (" + InetAddress.getLocalHost().getHostName() +
                  ")");
           guardaMens("MS",ht);
-          System.out.close();
-          System.err.close();
-          enviaSalEstandard();
-          enviaSalError();
+    
         } catch (Throwable k){}
 
        System.exit(0);
@@ -457,10 +421,7 @@ public class Principal extends JFrame
                         Thread.currentThread().sleep(1000);
                     if (reiniciar)
                        reiniciar();
-                     System.out.close();
-                     System.err.close();
-                    enviaSalEstandard();
-                    enviaSalError();
+               
                    } catch (Throwable j) {}
                     System.exit(0);
              }
@@ -643,9 +604,9 @@ public class Principal extends JFrame
       }
       dt.getConexion().commit();
       st.close();
-    } catch (Exception k)
+    } catch (SQLException k)
     {
-        Logger.getLogger(Principal.class.getName()).error(ventana.getCurrentStackTrace());
+        ventana.logger.error(ventana.getCurrentStackTrace());
     }
   }
    /**
@@ -660,50 +621,30 @@ public class Principal extends JFrame
     guardaMens(dt1,codMens,ht,explicac,Usuario.usuario);
    
   }
-  void enviaSalEstandard() throws Throwable
-   {
-     if (gnu.chu.Menu.LoginDB.getDirMailAviso()==null)
-       return;
-     if (sm==null)
-       sm =new sendMail(false,Usuario);
-     File f = new File(Usuario.dirTmp + "salida.out");
-     if (! f.exists())
-       return;
+  
 
-     if (f.length()==0)
-     {
-       f.delete();
-       return;
-     }
-     FileInputStream fr = new FileInputStream(f);
-     sm.addFile(f);
-     sm.send(gnu.chu.Menu.LoginDB.getDirMailAviso(), "<ANJELICA> Salida Standard");
-     fr.close();
-     f.delete();
-   }
-
-   void enviaSalError() throws Throwable
-   {
-     if (gnu.chu.Menu.LoginDB.getDirMailAviso()==null)
-       return;
-     if (sm==null)
-       sm =new sendMail(false,Usuario);
-
-     File f = new File(Usuario.dirTmp + "salida.err");
-     if (! f.exists())
-       return;
-     if (f.length()==0)
-     {
-       f.delete();
-       return;
-     }
-     FileInputStream fr = new FileInputStream(f);
-     sm.addFile(f);
-
-     sm.send(gnu.chu.Menu.LoginDB.getDirMailAviso(), "<ANJELICA> Salida Errores");
-     fr.close();
-     f.delete();
-   }
+//   void enviaSalError() throws Throwable
+//   {
+//     if (gnu.chu.Menu.LoginDB.getDirMailAviso()==null)
+//       return;
+//     if (sm==null)
+//       sm =new sendMail(false,Usuario);
+//
+//     File f = new File(Usuario.dirTmp + "salida.err");
+//     if (! f.exists())
+//       return;
+//     if (f.length()==0)
+//     {
+//       f.delete();
+//       return;
+//     }
+//     FileInputStream fr = new FileInputStream(f);
+//     sm.addFile(f);
+//
+//     sm.send(gnu.chu.Menu.LoginDB.getDirMailAviso(), "<ANJELICA> Salida Errores");
+//     fr.close();
+//     f.delete();
+//   }
   public boolean canExecuteClase(String clase, String usuario) throws SQLException
   {
     if (pdusua.canEjecutarProgExt(usuario,dt1) )

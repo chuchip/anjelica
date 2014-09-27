@@ -1,9 +1,6 @@
 package gnu.chu.utilidades;
 
 import java.io.*;
-import java.lang.*;
-
-import gnu.chu.utilidades.*;
 import gnu.chu.interfaces.*;
 /**
 * Clase que sustitye a la estandar System.err
@@ -105,7 +102,7 @@ class printTH implements Runnable
   public void run()
   {
     try {
-      t.sleep(2000);
+      Thread.sleep(2000);
     } catch (Exception k){}
     pErr.inicio=true;
     pErr.th.suspend();
