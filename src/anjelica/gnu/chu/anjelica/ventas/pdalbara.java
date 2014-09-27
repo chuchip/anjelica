@@ -28,7 +28,7 @@ package gnu.chu.anjelica.ventas;
  *   Permite modificar albaranes de un ejercicio cerrado.
  *   Permite modificar albaranes que ya hayan sido facturados.
  *</p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -66,6 +66,7 @@ import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.*;
 import gnu.chu.camposdb.*;
+import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;
 import gnu.chu.hylafax.IFFax;
 import gnu.chu.hylafax.SendFax;
@@ -105,7 +106,7 @@ public class pdalbara extends ventanaPad  implements PAD
   CPanel Phist=new CPanel();
   DatosTabla dtHist;
   private int hisRowid=0;
-
+  private BotonBascula botonBascula;
   private int nLiMaxEdit; // Usada para ver cuando una linea se puede borrar / Modificar al editar 
                           // un albaran de deposito con genero entregado.
   private String tablaCab="v_albavec";
@@ -358,13 +359,19 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       try
       {
-        if (col == 0)
+        if (col == JTDES_PROCODI)
           jtDes.setValor(pro_codicE.getNombArtCli(pro_codicE.getValorInt(),
                           cli_codiE.getValorInt()), row, 1);
-        if (col == 7)
+        if (col== JTDES_UNID)
+        {
+            if (pro_codiE.getEnvase()>0)                
+                botonBascula.setPesoCajas(pro_codiE.getPesoCajas());
+            botonBascula.setNumeroCajas(avp_numuniE.getValorInt());
+        }
+        if (col == JTDES_NUMIND)
               pro_numindE_focusLost();
       }
-      catch (Exception k)
+      catch (SQLException k)
       {
         Error("Error al buscar Nombre Articulo", k);
       }
@@ -588,7 +595,7 @@ public class pdalbara extends ventanaPad  implements PAD
         PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2014-09-19" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2014-09-25" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -628,7 +635,13 @@ public class pdalbara extends ventanaPad  implements PAD
         statusBar.add(Bdesgl, new GridBagConstraints(9, 0, 1, 2, 0.0, 0.0, GridBagConstraints.EAST,
                 GridBagConstraints.VERTICAL,
                 new Insets(0, 5, 0, 0), 0, 0));
-
+        botonBascula = new BotonBascula(EU, this);
+        botonBascula.setPreferredSize(new Dimension(50, 24));
+        botonBascula.setMinimumSize(new Dimension(50, 24));
+        botonBascula.setMaximumSize(new Dimension(50, 24));
+        statusBar.add(botonBascula, new GridBagConstraints(8, 0, 1, 2, 0.0, 0.0, GridBagConstraints.EAST,
+            GridBagConstraints.VERTICAL,
+            new Insets(0, 5, 0, 0), 0, 0));
         confGridCab();
         
         avp_cantiE.setEditable( P_ADMIN);
@@ -668,6 +681,9 @@ public class pdalbara extends ventanaPad  implements PAD
         pro_codicE.setEditable(false);
         pro_nombcE.setEditable(false);
         avp_numlinE.setEnabled(false);
+        avp_cantiE.setLeePesoBascula(botonBascula);
+        botonBascula.setNumeroCajas(0);
+        botonBascula.setPesoCajas(0);
         vc1.add(pro_codicE.getTextField()); // 0
         vc1.add(pro_nombcE); // 1
         vc1.add(avp_emplotE); // 2
@@ -1525,7 +1541,7 @@ public class pdalbara extends ventanaPad  implements PAD
               cli_codiE.getValorInt());
           jt.setValor(proNomb,  2);
           pro_nombE.setText(proNomb);
-        } catch (Exception k)
+        } catch (SQLException k)
         {
           Error("Error al actualizar nombre de producto",k);
         }
@@ -2725,12 +2741,12 @@ public class pdalbara extends ventanaPad  implements PAD
          " and l.avc_nume = " + nume +
          " and l.avl_canti >= 0 " +
          " group by l.pro_codi,"+(modPrecio?"avl_prven,avl_prepvp,avl_profer,":"")+
-         "tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,l.alm_codi,avl_coment " +
+         "tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,l.alm_codi,avl_coment,avl_numpal " +
          " UNION ALL " +
          "SELECT -1 as avl_numlin,l.pro_codi,sum(avl_canti) as avl_canti, " +
          " sum(avl_unid) as avl_unid,"+
          (modPrecio? " avl_prven,":"")+
-         "tar_preci, a.pro_nomb,l.pro_nomb as avl_pronom,avl_numpal"
+         "tar_preci, a.pro_nomb,l.pro_nomb as avl_pronom,avl_numpal,"
         + "a.pro_tipiva,l.alm_codi,avl_coment " +
           (modPrecio? " ,avl_prepvp,avl_profer ":"")+
          " FROM "+tablaLin+" as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
@@ -3518,8 +3534,8 @@ public class pdalbara extends ventanaPad  implements PAD
   }
     @Override
   public void PADEdit()
-  {
-//    debug("Entrando en Edit: "+ avc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
+  {         
+//   debug("Entrando en Edit: "+ avc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
 //                      "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt());
     try
     {
@@ -3875,8 +3891,7 @@ public class pdalbara extends ventanaPad  implements PAD
   public void ej_edit1()
   {
     try
-    {
-      
+    {      
       if (emp_codiE.hasCambio() || avc_anoE.hasCambio() || avc_numeE.hasCambio() || avc_seriE.hasCambio())
       {
           swProcesaEdit=true;
@@ -4082,6 +4097,24 @@ public class pdalbara extends ventanaPad  implements PAD
 
     mensaje("");
     activaTodo();
+    if (isEmpPlanta)
+    {       
+         strSql = getStrSql(" avc_nume = " + lastAvcNume +
+                           " and emp_codi = " + lastEmpCodi +
+                           " and avc_ano = " + lastAvcAno +
+                           " and avc_serie = '" + lastAvcSerie + "'", null);
+        try
+        {
+            rgSelect();
+        } catch (SQLException ex)
+        {
+              Error("Error al buscar datos de Albaran dado de alta", ex);
+              return;
+        }
+        verDatos(dtCons);       
+        nav.pulsado = navegador.NINGUNO;
+        return;
+    }
     nav.ponEnabled(false);
     PADAddNew();
     graba = true;
@@ -6540,7 +6573,7 @@ public class pdalbara extends ventanaPad  implements PAD
       {
         Bdespiece.setEnabled(false);
         jtDes.requestFocus();
-        jtDes.requestFocus(0, 6);
+        jtDes.requestFocus(0,  isEmpPlanta?JTDES_UNID:JTDES_LOTE);
         resetCambioIndividuo();
       }
     });
@@ -6867,7 +6900,8 @@ public class pdalbara extends ventanaPad  implements PAD
           " and c.avc_serie = '" + avc_seriE.getText() + "'" +
           " and c.avc_nume = " + avc_numeE.getValorInt() +
           " and c.cli_codi = cl.cli_codi "+
-          " and avl_numpal!=0";
+          " and avl_numpal!=0"+
+          " order by avl_numpal,pro_codi";
            
       if (liAlb == null)
         liAlb = new lialbven(dtStat, EU);
@@ -7089,6 +7123,7 @@ public class pdalbara extends ventanaPad  implements PAD
       ifFax.setVisible(false);
       ifFax.dispose();
     }
+    botonBascula.dispose();
 //    if (despAlbar!=null)
 //    {
 //      despAlbar.setVisible(false);
@@ -7647,6 +7682,7 @@ public class pdalbara extends ventanaPad  implements PAD
         {
           pro_codiE.getNombArt(jt.getValString(1), EU.em_cod, 0,
                                dtStat);
+          botonBascula.setPesoCajas(pro_codiE.getPesoCajas());
         }
         catch (SQLException k)
         {
@@ -7725,6 +7761,7 @@ public class pdalbara extends ventanaPad  implements PAD
     pro_codicE.setProNomb(null);
     tar_preciE.setEnabled(false);
     avl_fecaltE.setEnabled(false);
+  
     vc.add(avl_numlinE); // 0
     vc.add(pro_codiE.getTextField()); // 1
     vc.add(pro_nombE); // 2

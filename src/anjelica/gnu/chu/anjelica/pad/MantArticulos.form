@@ -602,6 +602,32 @@
                         </Constraint>
                       </Constraints>
                     </Component>
+                    <Component class="gnu.chu.controles.CLabel" name="env_codiL">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Envase"/>
+                      </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="190" y="47" width="52" height="18"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CLinkBox" name="env_codiE">
+                      <Properties>
+                        <Property name="ancTexto" type="int" value="40"/>
+                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[122, 17]"/>
+                        </Property>
+                      </Properties>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="env_codiE.setFormato(Types.DECIMAL,&quot;###9&quot;);&#xa;env_codiE.addDatos(&quot;0&quot;, &quot;Generico&quot;);"/>
+                      </AuxValues>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="250" y="47" width="280" height="18"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
                   </SubComponents>
                 </Container>
                 <Container class="gnu.chu.controles.CPanel" name="cPanel2">

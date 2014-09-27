@@ -5,7 +5,7 @@ package gnu.chu.comm;
  * <p>Título: BotonBascula </p>
  * <p>Descripción: Clase que muestra un Boton con un menu y que sirve para
  *  elegir de que bascula se debe leer un peso en un Ctextfield </p>
- * <p>Copyright: Copyright (c) 2005-2011
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -28,13 +28,18 @@ import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.ventana;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyVetoException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.event.InternalFrameEvent;
 
 
 public class BotonBascula extends CButtonMenu{
+  IFBascula ifBascula;
   int bascActiva=0;
   EntornoUsuario EU;
-  private int numBasculas;
-  private ventana papa;
+  private final int numBasculas;
+  private final ventana papa;
 
     public BotonBascula(EntornoUsuario eu, ventana padre) {
         this.EU = eu;
@@ -43,14 +48,16 @@ public class BotonBascula extends CButtonMenu{
         for (int n = 0; n < numBasculas; n++) {
             this.addMenu(EU.getBascula().getNombreBascula(n));
         }
+        
         this.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {                
                 if (e.getID() < 0) {
-                    int nBasc = bascActiva + 1;
-                    if (nBasc >= numBasculas)
-                        nBasc = 0;
-                    cambiaBascula(nBasc);
+                    verBascula();
+//                    int nBasc = bascActiva + 1;
+//                    if (nBasc >= numBasculas)
+//                        nBasc = 0;
+//                    cambiaBascula(nBasc);
                 } else {
                     cambiaBascula(e.getID());
                 }
@@ -59,7 +66,46 @@ public class BotonBascula extends CButtonMenu{
         cambiaBascula(0);
         this.setIcon(Iconos.getImageIcon("balanza"));
     }
-  
+    public void setNumeroCajas(int numeroCajas)
+    {
+         for (int n = 0; n < numBasculas; n++) {
+            EU.getBascula().getClassleePeso(n).setNumeroCajas(numeroCajas);
+         if (ifBascula!=null)
+              ifBascula.setNumeroCajas(numeroCajas);
+
+        }
+    }
+     public void setPesoCajas(double pesoCajas)
+    {
+         for (int n = 0; n < numBasculas; n++) {
+            EU.getBascula().getClassleePeso(n).setPesoCajas(pesoCajas);
+            if (ifBascula!=null)
+                ifBascula.setPesoCaja(pesoCajas);
+        }
+    }
+  void verBascula()
+  {
+      if (ifBascula==null)
+      {
+         for (int n = 0; n < numBasculas; n++) {
+           EU.getBascula().getPesoBascula(n);  
+         }
+         ifBascula = new IFBascula(EU.getBascula().getClassleePeso(bascActiva));
+       
+         papa.vl.add(ifBascula);
+         ifBascula.setLocation(25, 25);
+      }
+      try
+      {
+          ifBascula.setVisible(true);  
+          ifBascula.setSelected(true);
+          ifBascula.setClosed(false);
+          ifBascula.actualTemporizador();
+      } catch (PropertyVetoException ex)
+      {
+          Logger.getLogger(BotonBascula.class.getName()).log(Level.SEVERE, null, ex);
+      }
+  }
   private void cambiaBascula(int numBasc)
   {
     String nombre="";
@@ -73,5 +119,10 @@ public class BotonBascula extends CButtonMenu{
   public double getPesoBascula()
   {
      return EU.getBascula().getPesoBascula(bascActiva);
+  }
+  public void dispose()
+  {
+      if (ifBascula!=null)
+          ifBascula.dispose();
   }
 }

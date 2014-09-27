@@ -2725,58 +2725,7 @@ public class MantDesp extends ventanaPad implements PAD
                     }
                 }
             }
-//            if (swArtBloq)
-//            {
-//                if (nav.pulsado == navegador.ADDNEW)
-//                {
-//                    if (jtCab.getRowCount() > 1)
-//                    {
-//                        mensajeErr("No se puede incluir productos bloqueados si ya existe otra linea");
-//                        return 0;
-//                    }
-//                    if (deo_codiE.getValorInt() != 0 && jtCab.getValorInt(linea, JTCAB_NL) == 0)
-//                    {
-//                        mensajeErr("No se puede incluir productos bloqueados si existen productos de salida");
-//                        return 0;
-//                    }
-//
-//                    s = "SELECT * FROM v_despori WHERE deo_ejelot= " + deo_ejelotE.getValorInt()
-//                        + " and deo_serlot='" + deo_serlotE.getText() + "'"
-//                        + " and pro_lote = " + pro_loteE.getValorInt()
-//                        + " and pro_numind =" + pro_numindE.getValorInt()
-//                        + " and pro_codi = " + pro_codiE.getValorInt();
-//                    if (!dtCon1.select(s))
-//                    {
-//                        enviaMailError("No encontrado despiece para articulo bloqueado" + s);
-//                        msgBox("No encontrado despiece para articulo bloqueado");
-//                        return 0;
-//                    }
-//                    strSql = getStrSql() + " and eje_nume = " + dtCon1.getInt("eje_nume")
-//                        + " and deo_numdes = " + dtCon1.getInt("deo_numdes")
-//                        + getOrderQuery();
-//                    activar(false);
-//                    rgSelect();
-//                    verDatos(dtCons);
-//                    SwingUtilities.invokeLater(new Thread()
-//                    {
-//
-//                        @Override
-//                        public void run() {
-//                            nav.pulsado = navegador.EDIT;
-//                            PADEdit();
-//                            mensajeErr("Editando Despiece abierto...");
-//                        }
-//                    });
-//                    return -1;
-//                } else
-//                { // Estoy editando un despiece.
-//                    if (proCodiB == 0 || numLinB != jtCab.getValorInt(linea, JTCAB_NL))
-//                    {
-//                        mensajeErr("No se puede introducir un individuo bloqueado, modificando un despiece");
-//                        return 0;
-//                    }
-//                }
-//            }
+
             double kilact=deo_kilosE.isEnabled()?deo_kilosE.getValorDec():jtCab.getValorDec(linea, JTCAB_KILOS);
             if (! opSimular.isSelected() )
             {
@@ -2790,7 +2739,7 @@ public class MantDesp extends ventanaPad implements PAD
                     " AND pro_numind = "+pro_numindE.getValorInt();
               if (dtCon1.select(s))
                 kilact += dtCon1.getDouble("deo_kilos");
-              if ( stkPartid.hasStock( kilact))
+              if (! stkPartid.hasStock( kilact))
               {
                 if (jtCab.getValorInt(linea, JTCAB_NL) != 0)
                 {

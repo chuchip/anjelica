@@ -45,7 +45,9 @@ import javax.swing.SwingUtilities;
  */
 public class proPanel extends CPanel
 {
+  private double pesoCajas;
   private  CodigoBarras codBarra=null;
+  private int envCodi=0;
   private int almCodi=0; // Almacen donde buscar indiv. disponibles
   private boolean verIndivBloqueados=true;
   private CTextField campoLote;
@@ -1053,6 +1055,7 @@ public class proPanel extends CPanel
   {
     if (dt.getConexion().isClosed())
         return null;
+    envCodi=0;
     tipLote='-';
     activo=-1;
     etiCodi=0;
@@ -1077,43 +1080,43 @@ public class proPanel extends CPanel
       }
       codArt=dt.getString("pro_nume");
     }
-    if (prvCodi==0)
-      s = "SELECT * FROM v_articulo WHERE pro_codi= " + codArt;
-    else
+    String proNomb=null;
+    if (prvCodi!=0)     
     {
-      s="SELECT * FROM pedicol WHERE emp_codi = "+empCodi+
-      " and prv_codi = "+prvCodi+
-      " and pro_codi = "+codArt+
-      " order by eje_nume desc,pcc_nume desc";
-      if (! dt.select(s))
-        s = "SELECT * FROM v_articulo WHERE pro_codi= " + codArt;
-      else
-      {
-
-        s = "SELECT pro_nomb FROM pedicol WHERE emp_codi = " + empCodi +
-            " and eje_nume =  "+dt.getInt("eje_nume")+
-            " and pcc_nume = "+dt.getInt("pcc_nume")+
-            " and pro_codi = "+codArt;
-//            System.out.println("proPanel: "+s);
-      }
+      s="SELECT pro_nomb FROM pedicol WHERE emp_codi = "+empCodi+
+        " and prv_codi = "+prvCodi+
+        " and pro_codi = "+codArt+
+        " order by eje_nume desc,pcc_nume desc";
+      if ( dt.select(s))
+        proNomb=dt.getString("pro_nomb");
     }
+    s = "SELECT a.*,e.env_peso FROM v_articulo as a left join envases as e on "
+        + " a.env_codi  = e.env_codi WHERE pro_codi= " + codArt;
     dt.selectInto(s,lkPrd);
     if (dt.getNOREG())
       return null;
     
-    if (prvCodi==0)
-    {
-      camCodi= dt.getString("cam_codi");
-      sbeCodi=dt.getInt("sbe_codi");
-      famCodi = dt.getString("fam_codi");
-      proCoinst = dt.getInt("pro_coinst");
-      activo=dt.getInt("pro_activ");
-      tipLote = (dt.getString("pro_tiplot").length()>=1)? dt.getString("pro_tiplot").charAt(0):'-';
-      etiCodi=dt.getInt("pro_codeti");
-      proConExist =dt.getString("pro_coexis").length()>=1?dt.getString("pro_coexis").charAt(0):'-';
-      controlIndiv=dt.getInt("pro_coinst")!=0;
-    }
-    return dt.getString("pro_nomb");
+ 
+    camCodi= dt.getString("cam_codi");
+    sbeCodi=dt.getInt("sbe_codi");
+    famCodi = dt.getString("fam_codi");
+    proCoinst = dt.getInt("pro_coinst");
+    activo=dt.getInt("pro_activ");
+    tipLote = (dt.getString("pro_tiplot").length()>=1)? dt.getString("pro_tiplot").charAt(0):'-';
+    etiCodi=dt.getInt("pro_codeti");
+    proConExist =dt.getString("pro_coexis").length()>=1?dt.getString("pro_coexis").charAt(0):'-';
+    controlIndiv=dt.getInt("pro_coinst")!=0;
+    pesoCajas=dt.getDouble("env_peso",true);
+    envCodi=dt.getInt("env_codi");
+    return proNomb==null?dt.getString("pro_nomb"):proNomb;
+  }
+  public double getPesoCajas()
+  {
+      return pesoCajas;
+  }
+  public int getEnvase()
+  {
+      return envCodi;
   }
   public boolean isCongelado() throws SQLException
   {

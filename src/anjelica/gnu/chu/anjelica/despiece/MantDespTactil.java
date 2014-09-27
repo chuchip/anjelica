@@ -1392,9 +1392,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
         }
       }
        
-      if (getNumLinImprimir()>0)
+      if (isEmpPlanta && getNumLinImprimir()>0)
       {
-         int ret= mensajes.mensajeYesNo("Salir sin imprimir etiquetas");
+         int ret= mensajes.mensajeYesNo("¿ Salir sin imprimir etiquetas ?");
          if (ret!=mensajes.YES)
              return;
       }

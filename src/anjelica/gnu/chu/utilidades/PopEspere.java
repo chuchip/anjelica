@@ -6,9 +6,9 @@ package gnu.chu.utilidades;
  * <p>Título: popEspere</p>
  * <p>Descripción: Clase que implementa un internalFrame con el texto espere, por favor...
 *   y un grafico moviendose.</p>
- * <p>Copyright: Copyright (c) 2005-2009
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
- *  los terminos de la Licencia Pública General de GNU seg�n es publicada por
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
  *  o bien (según su elección) de cualquier versión posterior.
  *  Este programa se distribuye con la esperanza de que sea útil,ed
@@ -32,7 +32,6 @@ import gnu.chu.controles.CPanel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 public class PopEspere extends CInternalFrame
 {

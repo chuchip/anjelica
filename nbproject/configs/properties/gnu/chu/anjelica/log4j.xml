@@ -17,7 +17,7 @@
 	</appender>
 
 	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="anjelica.log" />
+		<param name="File" value="${logfilename}" />
 		<param name="Append" value="true" />
 		<!--		<param name="MaxFileSize" value="1KB" />		
 		<param name="MaxBackupIndex" value="3" />		-->
@@ -28,7 +28,7 @@
 		value="%d{dd-MM-yyyy HH:mm:ss} %-5p - %m%n"/>
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
-		<param name="LevelMin" value="DEBUG"/>
+	   <param name="LevelMin" value="DEBUG"/>
             <param name="LevelMax" value="FATAL"/>
         </filter>
     </appender>
@@ -39,10 +39,7 @@
     <!-- setup log4j's root logger -->
     <!--                           -->
     <root>
-	<level value="warn" /> 
-<!--        <appender-ref ref="FILE"/> -->
-	
-	<appender-ref ref="STDOUT" /> 
+	<appender-ref ref="FILE" /> 
     </root>
 </log4j:configuration>
 

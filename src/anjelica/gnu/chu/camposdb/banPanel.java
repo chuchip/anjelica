@@ -12,9 +12,9 @@ import javax.swing.event.*;
 /**
  *
  * <p>Título: banPanel</p>
- * <p>Descripci�n: Panel para introducir el codigo de un banco. <br>
+ * <p>Descripción: Panel para introducir el codigo de un banco. <br>
  *  Utiliza la tabla <b>v_banco</B> para comprobar la validez de ese codigo.</p>
- * <p>Copyright: Copyright (c) 2004</p>
+ * <p>Copyright: Copyright (c) 2004-2014</p>
  * <p>Empresa: </p>
  * @author gnu.chup
  * @version 1.0

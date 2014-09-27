@@ -266,6 +266,7 @@ pro_feulmo date,             -- Fecha Ultima Modificacion
 usu_nomb varchar(15) not null,-- Usuario que hizo la ult. modific. o alta
 cat_codi int not null default 1, -- Categoria Articulo
 cal_codi int not null default 1, -- Calibres
+env_codi int not null default 0, -- Tipo de Envase
 constraint ix_articulo primary key(pro_codi)
 );
 
@@ -737,11 +738,13 @@ constraint ix_albavel primary key (avc_ano,emp_codi,avc_nume,avc_serie,avl_numli
 create index ix_albavel2 on anjelica.v_albavel (pro_codi,avc_cerra);
 create index ix_albavel3 on anjelica.v_albavel (avl_fecalt);
 
-drop view anjelica.v_albventa;
-create view anjelica.v_albventa as select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
+--drop view anjelica.v_albventa;
+create view anjelica.v_albventa as select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,
+cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
 avc_basimp,avc_kilos,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
-avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,tar_preci,avl_unid,
+avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,
+tar_preci,avl_unid,
 avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes 
 from v_albavel as l, v_albavec as c 
 where c.emp_codi=l.emp_codi and c.avc_ano=l.avc_ano and c.avc_serie=l.avc_serie 
@@ -3317,7 +3320,7 @@ insert into listados values(0,6,'Listado Fact. Ventas PreImpr. (Cab)','cabfravep
 insert into listados values(0,7, 'Listado Albaran Ventas (Cabecera)','cabalbve');
 insert into listados values(0,8, 'Listado Albaran Ventas (Linea)','lialbve');
 insert into listados values(0,9, 'Listado Albaran Ventas Desgl.(Linea)','lialbvedep');
-insert into listados values(0,9, 'Listado Hojas Palets','etiqPalets');
+insert into listados values(0,10, 'Listado Hojas Palets','etiqPalets');
 
 --
 -- Tabla de Envases
@@ -3325,23 +3328,14 @@ insert into listados values(0,9, 'Listado Hojas Palets','etiqPalets');
 -- drop table envases;
 create table anjelica.envases
 (
- emp_codi int not null, -- Empresa
- env_codi char(2) not null, -- Esta sera la clave corta (CJ=Cajas,etc,PL=Palet)
+ env_codi smallint not null, -- Codigo de Envase
  env_nomb char(25) not null, -- Descripcion de la clave.
- env_unid smallint, --  Cambio a Unidades
- constraint ix_envases primary key (emp_codi,env_codi)
+ env_unid smallint not null, --  Unidades Media de productos por envase
+ env_kilmax real not null default 0, -- Kilos Maximos x Envase
+ env_peso real not null,	--  Peso del envase
+ constraint ix_envases primary key (env_codi)
 );
---
--- Tabla envases por producto.
---
-create table anjelica.envaprod
-(
- emp_codi int not null, -- Empresa
- env_codi smallint not null, -- Envase
- pro_codi int not null, -- Codigo de Producto.
- enp_unid smallint not null, -- Unidades para este envase
- constraint ix_envaprod primary key (emp_codi,env_codi,pro_codi)
-);
+
 
 --
 -- Acesso a Empresas por parte de los usuarios

@@ -316,7 +316,7 @@ public class MantPrAlb extends ventana {
                 .add(Baceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(Bcancelar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         IFselalbLayout.linkSize(new java.awt.Component[] {Baceptar, Bcancelar}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -474,7 +474,7 @@ public class MantPrAlb extends ventana {
         vl.addElement("Comen"); // 14
         vl.addElement("NL"); // 15
         jtLin.setCabecera(vl);
-        jtLin.setAnchoColumna(new int[]{45,120,25,55,45,45,45,45,5,45,45,65,45,25,130,30});
+        jtLin.setAnchoColumna(new int[]{45,180,25,55,45,45,45,45,5,45,45,65,45,25,130,30});
         jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,2,2,2,2,1,2,2,0,2});
 
         Vector vc=new Vector();

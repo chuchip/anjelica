@@ -224,28 +224,27 @@ public class CodigoBarras
       if (!Character.isDigit(valor.charAt(n)))
         posSerie=n; // NO Es tipo  Digito. Hemos encontrado la serie
     }
+    
     if (posSerie==4)
-    {
-     
+    {     
       proSerie=valor.substring(4,5);
       proLote=Integer.parseInt(valor.substring(5,9));
     }
     else
     {
-
-      proSerie=valor.substring(3, 4);
-      proLote=Integer.parseInt(valor.substring(4, 9));
+      proSerie=valor.substring(3,4);  
+      proLote=Integer.parseInt(valor.substring(4,9));
     }
     proCodi=Integer.parseInt(valor.substring(9,14));
     if (valor.length()==23)
     {
       proIndi = Integer.parseInt(valor.substring(14,17));
-      proKilos=Integer.parseInt(valor.substring(17,23));
+      proKilos=Double.parseDouble(valor.substring(17,23));
     }
     else
     {
       proIndi=Integer.parseInt(valor.substring(14,18));
-      proKilos=Integer.parseInt(valor.substring(18,23));
+      proKilos=Double.parseDouble(valor.substring(18,23));
     }
     error=false;
   }

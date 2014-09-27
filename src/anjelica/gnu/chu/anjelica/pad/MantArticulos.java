@@ -182,10 +182,15 @@ public class MantArticulos extends ventanaPad  implements PAD
     Pprinc.setButton(KeyEvent.VK_F4,Baceptar);
     s="SELECT eti_codi,eti_nomb FROM etiquetas where emp_codi = "+EU.em_cod+
        " and eti_client = 0 "+ // solo etiquetas q no pertenezcan a clientes
-       " ORDER BY eti_codi";
+       " ORDER BY eti_nomb";
     dtStat.select(s);
-    pro_codetiE.addDatos(dtStat);    
+    pro_codetiE.addDatos(dtStat);  
     
+     s="SELECT env_codi,env_nomb from envases "+
+       " ORDER BY env_nomb ";
+    dtStat.select(s);
+    env_codiE.setCeroIsNull(false);
+    env_codiE.addDatos(dtStat,false);    
     
     dtStat.select("SELECT cat_codi,cat_nomb FROM categorias_art  ORDER BY cat_codi");
     cat_codiE.addDatos(dtStat);    
@@ -250,6 +255,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_coinstE.setColumnaAlias("pro_coinst");
     pro_tiplotE.setColumnaAlias("pro_tiplot");
     pro_codetiE.setColumnaAlias("pro_codeti");
+    env_codiE.setColumnaAlias("env_codi");
     cat_codiE.setColumnaAlias("cat_codi");
     cal_codiE.setColumnaAlias("cal_codi");
     activarEventos();
@@ -364,6 +370,7 @@ public class MantArticulos extends ventanaPad  implements PAD
       pro_coinstE.setValor(dtCon1.getInt("pro_coinst"));
       pro_tiplotE.setValor(dtCon1.getString("pro_tiplot"));
       pro_codetiE.setValorDec(dtCon1.getInt("pro_codeti",true));
+      env_codiE.setValorDec(dtCon1.getInt("env_codi",true));
       pro_oblfsaE.setSelected(dtCon1.getInt("pro_oblfsa")!=0);
       pro_fecaltE.setDate(dtCon1.getDate("pro_fecalt"));
       pro_feulmoE.setDate(dtCon1.getDate("pro_feulmo"));
@@ -448,6 +455,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_coinstE.setEnabled(act);
     pro_tiplotE.setEnabled(act);
     pro_codetiE.setEnabled(act);
+    env_codiE.setEnabled(act);
     cat_codiE.setEnabled(act);
     cal_codiE.setEnabled(act);
     if (!act || nav.pulsado==navegador.QUERY)
@@ -550,6 +558,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     v.add(pro_coinstE.getStrQuery());
     v.add(pro_tiplotE.getStrQuery());
     v.add(pro_codetiE.getStrQuery());
+    v.add(env_codiE.getStrQuery());
     v.add(cat_codiE.getStrQuery());
     v.add(cal_codiE.getStrQuery());
     s = "SELECT * FROM v_articulo ";
@@ -748,6 +757,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_envvacE.setValor("0");
     pro_activE.setValor("-1");
     pro_codetiE.setValorInt(0);
+    env_codiE.setValorInt(0);
     cat_codiE.setValorInt(1);
     cal_codiE.setValorInt(1);
     mensaje("Introduzca datos del producto a insertar ...");
@@ -816,6 +826,11 @@ public class MantArticulos extends ventanaPad  implements PAD
    if (! pro_codetiE.controla())
    {
      mensajeErr("Codigo Etiqueta  NO VALIDA");
+     return false;
+   }
+   if (! env_codiE.controla())
+   {
+     mensajeErr("Tipo Envase,  NO VALIDO");
      return false;
    }
    if (! cat_codiE.controla())
@@ -925,6 +940,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     dt.setDato("pro_coinst", pro_coinstE.getValor());
     dt.setDato("pro_tiplot", pro_tiplotE.getValor());
     dt.setDato("pro_codeti",pro_codetiE.getValorInt());
+    dt.setDato("env_codi",env_codiE.getValorInt());
     dt.setDato("cat_codi",cat_codiE.getValorInt());
     dt.setDato("cal_codi",cal_codiE.getValorInt());
     dt.setDato("pro_oblfsa",pro_oblfsaE.isSelected()?1:0);
@@ -1240,6 +1256,8 @@ public class MantArticulos extends ventanaPad  implements PAD
         pro_kgminE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###,##9");
         cLabel38 = new gnu.chu.controles.CLabel();
         pro_mancosE = new gnu.chu.controles.CComboBox();
+        env_codiL = new gnu.chu.controles.CLabel();
+        env_codiE = new gnu.chu.controles.CLinkBox();
         cPanel2 = new gnu.chu.controles.CPanel();
         cLabel25 = new gnu.chu.controles.CLabel();
         pro_feulcoE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
@@ -1570,6 +1588,17 @@ public class MantArticulos extends ventanaPad  implements PAD
         cPanel1.add(pro_mancosE);
         pro_mancosE.setBounds(130, 47, 51, 18);
 
+        env_codiL.setText("Envase");
+        cPanel1.add(env_codiL);
+        env_codiL.setBounds(190, 47, 52, 18);
+
+        env_codiE.setAncTexto(40);
+        env_codiE.setPreferredSize(new java.awt.Dimension(122, 17));
+        env_codiE.setFormato(Types.DECIMAL,"###9");
+        env_codiE.addDatos("0", "Generico");
+        cPanel1.add(env_codiE);
+        env_codiE.setBounds(250, 47, 280, 18);
+
         Pinicio.add(cPanel1);
         cPanel1.setBounds(30, 190, 540, 70);
 
@@ -1879,6 +1908,8 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CLinkBox cal_codiE;
     private gnu.chu.controles.CLinkBox cam_codiE;
     private gnu.chu.controles.CLinkBox cat_codiE;
+    private gnu.chu.controles.CLinkBox env_codiE;
+    private gnu.chu.controles.CLabel env_codiL;
     private gnu.chu.controles.CLinkBox fam_codiE;
     private gnu.chu.controles.CGridEditable jtEquCon;
     private gnu.chu.controles.CGridEditable jtEqui;

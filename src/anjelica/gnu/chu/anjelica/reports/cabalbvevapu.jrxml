@@ -369,17 +369,17 @@ C.E.E]]></text>
 				<text><![CDATA[CLIENTE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-11" mode="Opaque" x="8" y="132" width="63" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-11" mode="Opaque" x="8" y="132" width="49" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<text><![CDATA[REFERENCIA]]></text>
+				<text><![CDATA[CODIGO]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-12" mode="Opaque" x="153" y="132" width="59" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -395,20 +395,20 @@ C.E.E]]></text>
 				<text><![CDATA[CONCEPTO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-13" mode="Opaque" x="305" y="132" width="57" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-13" mode="Opaque" x="368" y="132" width="40" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<text><![CDATA[CANTIDAD]]></text>
+				<text><![CDATA[KILOS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-14" mode="Opaque" x="379" y="132" width="47" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-14" mode="Opaque" x="412" y="132" width="42" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -421,38 +421,38 @@ C.E.E]]></text>
 				<text><![CDATA[PRECIO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-15" mode="Opaque" x="462" y="132" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-15" mode="Opaque" x="459" y="132" width="70" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[IMPORTE]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-5" mode="Opaque" x="74" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-5" mode="Opaque" x="56" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-6" mode="Opaque" x="294" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-6" mode="Opaque" x="365" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-7" mode="Opaque" x="370" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-7" mode="Opaque" x="410" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-8" mode="Opaque" x="434" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-8" mode="Opaque" x="452" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>

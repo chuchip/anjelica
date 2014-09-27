@@ -90,25 +90,8 @@ public class PopError
     double i = Math.random();
     int x = (int)(i * 2) + 1;
     String icon = "error" + x;
-    icon="obrasinf.gif";
-/*    String hoy = Fecha.getFechaSys("dd-MM-yyyy");
-    int ano = Formatear.strToInt(Fecha.getFechaSys("yyyy"));
-    int mes = Formatear.strToInt(Fecha.getFechaSys("MM"));
-    int dia = Formatear.strToInt(Fecha.getFechaSys("dd"));
-    lblNav:
-    if (mes == 1 || mes == 12) {
-       if (mes == 12) {
-          if (dia < 11)
-             break lblNav;
-       } else {
-           if (dia > 7)
-              break lblNav;
-       }
+    icon="electric_shock.png";
 
-       i = Math.random();
-       x = (int)(i * 5) + 1;
-       icon = "navidad" + x;
-    }*/
     CLabel dibujo = new CLabel(Iconos.getImageIcon(icon));
 
 //    dibujo.setMaximumSize(new Dimension(71, 79));
@@ -144,7 +127,7 @@ public class PopError
     accionL.setOpaque(true);
     accionL.setBackground(Color.yellow);
     accionL.setHorizontalAlignment(0);
-    accionL.setText("Avise a Proceso de Datos");
+    accionL.setText("Si el error persiste, pongase en contacto con el programador");
 //    xYLayout2.setHeight(437);
     vPanel1.setDefButton(Bcancelar);
     vPanel1.setAltButton(Breintentar);

@@ -14,9 +14,6 @@ import javax.swing.event.*;
 import gnu.chu.controles.*; 
 import gnu.chu.utilidades.*;
 
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.xml.DOMConfigurator;
-import org.apache.log4j.BasicConfigurator;
 import gnu.chu.sql.*;  
 import java.io.BufferedReader;
 import java.io.File;
@@ -189,7 +186,7 @@ public class menu extends JFrame
       String hostname = InetAddress.getLocalHost().getHostName();
       System.out.println("Hostname: "+hostname);
 
-        System.out.println("Version java: "+System.getProperties().getProperty("java.runtime.version"));
+      System.out.println("Version java: "+System.getProperties().getProperty("java.runtime.version"));
 
 //      PlasticLookAndFeel.setMyCurrentTheme(new  com.jgoodies.looks.plastic.theme.ExperienceBlue());
 //      PlasticLookAndFeel.setHighContrastFocusColorsEnabled(true);
@@ -244,12 +241,6 @@ public class menu extends JFrame
   }
   private void jbInit() throws Exception
   {
-    String fich="c:/aa/bb/cc.log";
-    int n=fich.lastIndexOf("/");
-    if (n!=-1)
-    {
-      System.out.println("n:"+n+ " Fich: "+fich.substring(n+1));
-    }
     this.setTitle("Lanzador");
        // ntp();
     this.setSize(new Dimension(780, 610));
@@ -957,22 +948,23 @@ public class menu extends JFrame
     jPopupVarios.add(MenuFicha);
     jPopupVarios.add(MenuLogs);
     EU=gnu.chu.Menu.LoginDB.cargaEntornoUsu();
-
-    if (EU.getLog4J() == null)
-      BasicConfigurator.configure();
-    else
-    {
-      if (EU.getLog4J().indexOf("xml") >= 0)
-        DOMConfigurator.configureAndWatch(EU.getLog4J());
-      else
-        PropertyConfigurator.configureAndWatch(EU.getLog4J());
-    }
-
-    EU.usu_nomb="SuperUsuario";
+    EU.usuario="cpuente";EU.usu_nomb="SuperUsuario";
     EU.usuario="cpuente";
-    EU.password="sus23vic";
+    EU.password="anjelica";
     EU.email="cpuente@misl.es";
     EU.setUsuReser1("S");
+    SystemOut sout=new SystemOut(System.err);    
+    System.setOut(sout);        
+    SystemOut serr=new SystemOut(System.err);
+    serr.setSalidaError(true);
+    System.setErr(serr);
+    ventana.logger.trace("trace!!!");
+    ventana.logger.debug("Debug!!!");
+    ventana.logger.info("informacion!!!");
+    ventana.logger.warn("warn!!!");
+      System.out.println("salida estandar");
+      System.err.println("salida errores");
+    
   
 //    EU.catalog="qc_pruebas";
     EU.ejercicio=Integer.parseInt( Formatear.getFechaAct("yyyy"));

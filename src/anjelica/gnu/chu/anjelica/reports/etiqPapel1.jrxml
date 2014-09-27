@@ -29,7 +29,7 @@
 		<groupHeader>
 			<band height="129" splitType="Stretch">
 				<textField pattern="" isBlankWhenNull="false">
-					<reportElement key="textField" mode="Opaque" x="22" y="61" width="225" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="textField" mode="Opaque" x="22" y="61" width="242" height="21" forecolor="#000000" backcolor="#FFFFFF"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

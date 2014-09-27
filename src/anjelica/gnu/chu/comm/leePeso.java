@@ -10,9 +10,9 @@ import java.io.*;
  * <p>Título: leePeso</p>
  * <p>Descripción: Clase que lee el peso de un puerto serie para basculas</p>
  * 
-*  <p>Copyright: Copyright (c) 2005-2009
+*  <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
- *  los terminos de la Licencia P�blica General de GNU seg�n es publicada por
+ *  los terminos de la Licencia P�blica General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
  *  o bien (según su elección) de cualquier versión posterior.
  *  Este programa se distribuye con la esperanza de que sea útil,ed
@@ -29,7 +29,10 @@ import java.io.*;
  */
 public class leePeso
 {
+  double pesoCaja=0,tara=0;
+  int numeroCajas=0;
   CommPortIdentifier portId;
+  private int startChar=0,endChar=0;   
   private String nombre=null;
   InputStream inputStream;
   OutputStream outputStream;
@@ -50,13 +53,7 @@ public class leePeso
   public final static int tipo_RAW=2; // Busca números y los devuelve sin hacer ninguna comprobación más
   private boolean activo=false;
   
-  /**
-   * Según el parametro bascula abrira el fichero de propiedades bascula.properties si es
-   * '0', bascula1.properties si es 1, bascula2.properities si es 2...
-   * @param raiz raiz de donde esta el fichero de propiedades. Normalmente gnu.chu.anjelica
-   * @param bascula Numero de bascula a abrir.
-   * @throws Exception
-   */
+  
   public leePeso(String ficProperties) throws Exception
   {
     ResourceBundle param=null;
@@ -79,6 +76,18 @@ public class leePeso
         puerto=val;
       if (el.equals("CADLEEPESO"))
         cadLeePeso=val;
+      if (el.equals("STARTCHAR"))
+      {
+        try {
+            startChar=Integer.parseInt(val);
+        }  catch (NumberFormatException k){}
+      }
+       if (el.equals("ENDCHAR"))
+      {
+        try {
+            endChar=Integer.parseInt(val);
+        }  catch (NumberFormatException k){}
+      }
       if (el.equals("VELOCIDAD"))
         velocidad=Integer.parseInt(val);
       if (el.equals("BITSDATOS"))
@@ -124,8 +133,9 @@ public class leePeso
                  bitsDatos,// SerialPort.DATABITS_8,
                  bitsStop, // SerialPort.STOPBITS_1,
                  paridad);//SerialPort.PARITY_NONE);
-    } catch (Exception k)
+    } catch (NoSuchPortException | PortInUseException | IOException | UnsupportedCommOperationException k)
     {
+        k.printStackTrace();
         mensajes.mensajeAviso("Error al abrir puerto serie : "+puerto+" de bascula: "+nombre);
         return;
     }
@@ -149,35 +159,68 @@ public class leePeso
   }
   public double getPeso()
   {
-    if (!swInic)
-      return 0;
+      return getPeso(true);
+  }
+  public void setTara(double tara)
+  {
+      this.tara=tara;
+  }
+  public double getPesoDescontar()
+  {
+      return tara + (numeroCajas*pesoCaja);      
+  }
+  public void setNumeroCajas(int numCajas)
+  {
+      this.numeroCajas=numCajas;
+  }
+  public void setPesoCajas(double pesoCaja)
+  {
+   this.pesoCaja=pesoCaja;   
+  }
+
+    public double getPesoCaja() {
+        return pesoCaja;
+    }
+
+    public double getTara() {
+        return tara;
+    }
+
+    public int getNumeroCajas() {
+        return numeroCajas;
+    }
+  
+  /**
+   * 
+   * @param desTarado Indica si se debe quitar la tara y peso envases.
+   * @return 
+   */
+  public  double getPeso(boolean desTarado)
+  {
+    if (!swInic || inputStream==null) 
+      if (!swDebug) return 0;// 4.7 - getPesoDescontar(); 
     double peso;
     try {
       String lect;
       datosDisponi=false;
       lect=cadLeePeso==null?"0224323403":cadLeePeso;
-//      System.out.println("Cadena Mandada: "+lect);
-
-      outputStream.write(Formatear.HexToBytes(lect));
+      if (swDebug)
+          System.out.println("Intentando mandar cadena: "+lect);
+      if (outputStream!=null)
+        outputStream.write(Formatear.HexToBytes(lect));
+       if (swDebug)
+          System.out.println("Cadena mandada");
       int nIntentos=10;
 //      System.out.println("Esperando a ver si puedo leer algo ....");
       while (nIntentos>0)
-      {
-        if (inputStream.available() >0)
-        {
+      {       
           peso=leeDatos(tipo);
-          if (peso!=0)
-            return peso;
-        }
-        Thread.sleep(100);
-        nIntentos--;
-      }
-       if (inputStream.available() !=0)
-        return 0;
-      peso=leeDatos(tipo);
-      if (peso != 0)
-        return peso;
-    } catch (Exception k)
+          if (peso>=0)
+            return peso - (desTarado? getPesoDescontar():0);
+          Thread.sleep(100);
+          nIntentos--;
+      }     
+    } catch (IOException | InterruptedException k)
     {
       k.printStackTrace();
       return 0;
@@ -187,41 +230,53 @@ public class leePeso
 
   private double leeDatos(int tipo) throws IOException
   {
-//    System.out.println("en LeeDatos");
+    if (swDebug)
+        System.out.println("en LeeDatos");
     byte[] readBuffer = new byte[30];
-    int numBytes=0;
+    int numBytes;
     String peso="";
-//    System.out.println("Disponible: "+inputStream.available());
-//    if (inputStream.available() == 0)
-//    {
-//      System.out.println("que no tengo bytes disponibles");
-//      return 0;
-//    }
+
     numBytes=0;
     int nBytes;
-
-    while (inputStream.available()>0)
+    if (inputStream!=null)
     {
-           nBytes = inputStream.read(readBuffer);
-           numBytes+=nBytes;
-           peso=peso + new String(readBuffer,0,nBytes);
+        if (swDebug)
+          System.out.println("InputStream: NO ES NULL");
+        while (inputStream.available()>0)
+        {
+               nBytes = inputStream.read(readBuffer);
+               if (swDebug)
+                System.out.println("Leido de InputStream: "+readBuffer);
+               numBytes+=nBytes;
+               peso=peso + new String(readBuffer,0,nBytes);
+        }
     }
-
-    // Para pruebas
-//    readBuffer=Formatear.HexToBytes("0241202020302e3532300d");
-//    peso=new String(readBuffer);
-//    numBytes=peso.length();
-// Fin de Pruebas
+    else
+    {
+     // Para pruebas
+        readBuffer=Formatear.HexToBytes("02412020202020342C350d");
+        peso=new String(readBuffer);
+        numBytes=peso.length();
+        // Fin de Pruebas
+     }
+   
     readBuffer=peso.getBytes();
-    // Fin de Pruebas
+   
     if (swDebug)
           System.out.println("Cadena recibida en Hex: "+Formatear.StrToHex(peso)+" TIPO: "+tipo);
     if (tipo == tipo_RAW)
     {
         if (swDebug)
           System.out.println("TIPO RAW");
-        int posIni=0,posFin=0,n;
-        for (n=0;n<numBytes;n++)
+        int posIni=startChar>0?startChar:0;
+        if (posIni>=numBytes)
+            return -1;
+        int posFin=endChar>0?endChar:0;
+        int n;
+        if (peso.indexOf(".")==-1) // No hay puntos, x si acaso remplazo las , x .
+              peso=peso.replace(',', '.');
+
+        for (n=posIni;n<numBytes;n++)
         {
             if (Character.isDigit(peso.charAt(n)))
             {
@@ -232,8 +287,8 @@ public class leePeso
         if (posIni==0)
         {
             if (swDebug)
-                System.out.println("No encontrado ningun digito en la cadena");
-            return 0;
+                System.out.println("No encontrado ningún digito en la cadena");
+            return -1;
         }
         for (n=posIni+1;n<numBytes;n++)
         {
@@ -247,17 +302,17 @@ public class leePeso
             posFin=numBytes;
         if (swDebug)
              System.out.println("PESO: "+peso+" peso:*"+peso.substring(posIni,posFin)+"*");
-        peso=peso.substring(posIni,posFin);
+        peso=peso.substring(posIni,posFin>numBytes?numBytes:posFin);
         try {
           double pesoDoble= Double.parseDouble(peso.trim());
-//          if (swDebug)
-//                System.out.println("peso en decimal: "+pesoDoble);
+          if (swDebug)
+                System.out.println("peso en decimal: "+pesoDoble);
           return pesoDoble;
         } catch (NumberFormatException k)
         {
           if (swDebug)
                 k.printStackTrace(System.out);
-          return 0;
+          return -1;
         }
     }
       if (swDebug)
@@ -269,20 +324,20 @@ public class leePeso
     {
        if (swDebug)
           System.out.println("Numero Bytes < 12");
-      return 0;
+      return -1;
     }
 
     if (readBuffer[0]!=6)
     {
         if (swDebug)
          System.out.println("Byte 0 no es 6");
-      return 0;
+      return -1;
     }
     if (readBuffer[11]!=13) // 0D
     {
       if (swDebug)
           System.out.println("Posicion 11 No ES 13. Es: "+readBuffer[11]);
-      return 0;
+      return -1;
     }
 //    Formatear.HexToDec("4a");
     int chk=0;
@@ -304,13 +359,15 @@ public class leePeso
       return Double.parseDouble(peso.trim());
     } catch (NumberFormatException k)
     {
-      return 0;
+      return -1;
     }
   }
 
    public static void main(String[] args) {
      try {
        leePeso lp = new leePeso("gnu.chu.anjelica.bascula1");
+       lp.startChar=5;
+       lp.endChar=0;
        System.out.println("Peso: "+lp.leeDatos(leePeso.tipo_RAW));
 
      } catch (Exception k)
@@ -318,5 +375,5 @@ public class leePeso
        k.printStackTrace();
      }
    }
-
+   
 }

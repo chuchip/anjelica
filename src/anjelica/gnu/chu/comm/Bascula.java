@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
  */
 public class Bascula {
 
-    private int bascActiva=0; // Bascula Activa
+//    private final int bascActiva=0; // Bascula Activa
     public gnu.chu.comm.leePeso leepeso=null;
  
     private String raiz;
@@ -101,15 +101,17 @@ public class Bascula {
      try {
          if (! pesos.get(bascula).isIniciado())
              pesos.get(bascula).iniciar();
-         if (! pesos.get(bascula).isActivo())
-             return 0;
          return pesos.get(bascula).getPeso();
      } catch (Throwable k)
      {
-         mensajes.mensajeAviso("Erro al Inicializar bascula "+getNombreBascula(bascula)+"\n"+k.getMessage());
-//       k.printStackTrace();
+        mensajes.mensajeAviso("Erro al Inicializar bascula "+getNombreBascula(bascula)+"\n"+k.getMessage());
+        k.printStackTrace();
      }
      return 0;
    }
+    public leePeso getClassleePeso(int bascula)
+    {                 
+       return pesos.get(bascula);     
+    }
 }
 
