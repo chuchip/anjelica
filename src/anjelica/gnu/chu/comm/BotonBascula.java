@@ -92,7 +92,7 @@ public class BotonBascula extends CButtonMenu{
          }
          ifBascula = new IFBascula(EU.getBascula().getClassleePeso(bascActiva));
        
-         papa.vl.add(ifBascula);
+         papa.vl.add(ifBascula,new Integer(1));
          ifBascula.setLocation(25, 25);
       }
       try
