@@ -225,6 +225,21 @@ public class EntornoUsuario implements Serializable
      }
      return 0;
    }
+   /**
+    * Devuelve si el usuario es administrador de la base de datos
+    * @param dt DatosTabla usado en caso de que no se haya inicialiado el VLike
+    * @return true si es administrador de base de datos.
+    * @throws SQLException 
+    */
+   public boolean isAdminDB(DatosTabla dt) throws SQLException
+   {
+   
+     if (getLikeUsuario()==null && dt!=null)
+         setLikeUsuario(gnu.chu.anjelica.pad.pdusua.getVLikeUsuario(usu_nomb,dt));
+       
+     return getLikeUsuario().getString("usu_admdb").equals("S");
+    
+   }
    public void iniciarParametros(DatosTabla dt) throws SQLException
    {
        htParam.clear();

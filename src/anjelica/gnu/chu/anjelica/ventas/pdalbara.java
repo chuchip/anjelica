@@ -2422,7 +2422,7 @@ public class pdalbara extends ventanaPad  implements PAD
       avl_prvenE.setEditable((P_MODPRECIO || verPrecios) && hisRowid==0);
       if ( isBloqueado(dtStat, TABLACAB,
                       avc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
-                      "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt(),true))
+                      "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt(),true,false))
       {
         lockE.setIcon(Iconos.getImageIcon("lock"));
         isLock = true;
@@ -4181,7 +4181,7 @@ public class pdalbara extends ventanaPad  implements PAD
 //      jt.setValor(""+avl_prvenE.getValorDec(),5);
       if (isBloqueado(dtAdd, "v_albavec",
                       avc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
-                      "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt(),true))
+                      "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt(),true,false))
       {
         msgBox(msgBloqueo);
         verDatos(dtCons);
@@ -6954,7 +6954,7 @@ public class pdalbara extends ventanaPad  implements PAD
       }
       if (isBloqueado(dtStat, "v_albavec",
                       avc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
-                      "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt(),true))
+                      "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt(),true,false))
       {
         msgBox("NO se pudo listar albaran\n"+msgBloqueo);
         verDatos(dtCons);

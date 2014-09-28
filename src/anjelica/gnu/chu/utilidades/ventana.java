@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  * (incluido ventanaPad). Incluye una serie de funciones generales de ayuda. Es
  * la clase base que instanciara el menu
  *  </p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU seg�n es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -43,7 +43,7 @@ import org.apache.log4j.Logger;
  * </p>
  *
  * @author chuchi P.
- * @version 2.0
+ * @version 2.1
  */
 public class ventana extends CInternalFrame implements ejecutable
 {
@@ -645,7 +645,7 @@ public class ventana extends CInternalFrame implements ejecutable
   }
   public boolean isBloqueado(DatosTabla dt, String tabla, String registro) throws SQLException
   {
-    return isBloqueado(dt,tabla,registro,false);
+    return isBloqueado(dt,tabla,registro,false,true);
   }
   /**
    * Comprueba si un registro esta bloqueado en una tabla
@@ -656,7 +656,7 @@ public class ventana extends CInternalFrame implements ejecutable
    * @throws SQLException Error en la DB
    * @return boolean true (bloqueado) false (No bloqueado)
    */
-  public boolean isBloqueado(DatosTabla dt, String tabla, String registro,boolean porMi) throws SQLException
+  public boolean isBloqueado(DatosTabla dt, String tabla, String registro,boolean porMi,boolean swCheck) throws SQLException
   {
     tabla = tabla.toLowerCase();
     if (porMi && tabla.equals(tablaLock) && registro.equals(registroLock))
@@ -670,6 +670,17 @@ public class ventana extends CInternalFrame implements ejecutable
           "\n El registro se edito el: " +
           dt.getFecha("blo_fecha", "dd-MM-yyyy") + " " +
           dt.getDouble("blo_hora");
+      if ((dt.getString("usu_nomb").equals(EU.usuario) || EU.isAdminDB(dt)) && swCheck)
+      {
+         int res= mensajes.mensajePreguntar(msgBloqueo+"\n Desbloquear y continuar ");
+         if (res==mensajes.YES)
+         {
+             resetBloqueo(dt,tabla,registro);
+             msgBloqueo = "Registro desbloqueado";
+             return false;
+         }
+      }
+     
       return true;
     }
     else
@@ -688,7 +699,7 @@ public class ventana extends CInternalFrame implements ejecutable
   public boolean setBloqueo(DatosTabla dt, String tabla, String registro, boolean commit) throws SQLException
   {
     tabla = tabla.toLowerCase();
-    if (isBloqueado(dt, tabla, registro))
+    if (isBloqueado(dt, tabla, registro,false,true))
     {
       msgBloqueo = "REGISTRO ESTA SIENDO EDITADO POR: " + dt.getString("usu_nomb") +
           "\n El registro se edito el: " + dt.getFecha("blo_fecha", "dd-MM-yyyy") + " " + dt.getDouble("blo_hora");
@@ -728,8 +739,7 @@ public class ventana extends CInternalFrame implements ejecutable
     return res;
   }
 
-  public boolean resetBloqueo(DatosTabla dt, String tabla, String registro) throws SQLException,
-      java.text.ParseException
+  public boolean resetBloqueo(DatosTabla dt, String tabla, String registro) throws SQLException
   {
     return resetBloqueo(dt, tabla, registro, true);
   }
@@ -737,7 +747,7 @@ public class ventana extends CInternalFrame implements ejecutable
   public boolean resetBloqueo(DatosTabla dt, String tabla, String registro, boolean commit) throws SQLException
   {
     tabla=tabla.toLowerCase();
-    if (!isBloqueado(dt, tabla, registro))
+    if (!isBloqueado(dt, tabla, registro,false,false))
     {
       msgBloqueo = "Registro NO esta bloqueado";
       return false;
