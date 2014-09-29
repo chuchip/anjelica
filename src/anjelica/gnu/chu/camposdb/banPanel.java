@@ -52,7 +52,7 @@ public class banPanel extends CPanel
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      SystemOut.print(e);
     }
   }
 
@@ -138,7 +138,7 @@ public class banPanel extends CPanel
         controla(false);
     } catch (Exception k)
     {
-      k.printStackTrace();
+      SystemOut.print(k);
     }
   }
 

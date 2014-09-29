@@ -7810,7 +7810,7 @@ class checkFax extends Thread
       dtStat = new DatosTabla(ctUp);
     } catch (Exception k)
     {
-      k.printStackTrace();
+      SystemOut.print(k);
       return;
     }
     while (! padre.muerto)
@@ -7884,7 +7884,7 @@ class checkFax extends Thread
         Thread.sleep(300000); // 300 Segundos (5 minutos)
       } catch (Exception k)
       {
-        k.printStackTrace();
+         SystemOut.print(k);
       }
     }
   }

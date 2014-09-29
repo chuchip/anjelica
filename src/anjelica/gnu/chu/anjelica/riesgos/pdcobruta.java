@@ -142,8 +142,7 @@ public class pdcobruta extends ventanaPad implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 
@@ -160,8 +159,7 @@ public class pdcobruta extends ventanaPad implements PAD
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 

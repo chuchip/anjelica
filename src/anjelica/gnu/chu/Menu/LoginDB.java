@@ -77,7 +77,7 @@ public class LoginDB extends JFrame
       jbInit();
     }
     catch (Exception e) {
-      e.printStackTrace();
+     SystemOut.print(e);
     }
   }
 
@@ -245,7 +245,7 @@ public class LoginDB extends JFrame
           }
         } catch (Throwable k)
         {
-          k.printStackTrace();
+          SystemOut.print(k);
         }
     }
 
@@ -341,8 +341,7 @@ public class LoginDB extends JFrame
         }
         catch (Throwable j)
         {
-          j.printStackTrace();
-          System.exit(1);
+          SystemOut.print(j);
         }
       }
     }

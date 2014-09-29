@@ -70,8 +70,7 @@ public class clAlbSinCosto extends ventana
          setErrorInit(true);
      }
      catch (Exception e) {
-       e.printStackTrace();
-       setErrorInit(true);
+       ErrorInit(e);
      }
    }
 
@@ -86,8 +85,7 @@ public class clAlbSinCosto extends ventana
        jbInit();
      }
      catch (Exception e) {
-       e.printStackTrace();
-       setErrorInit(true);
+      ErrorInit(e);
      }
    }
 

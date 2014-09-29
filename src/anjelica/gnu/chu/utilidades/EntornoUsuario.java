@@ -221,7 +221,7 @@ public class EntornoUsuario implements Serializable
        return getLikeUsuario().getInt("sbe_codi");
      } catch (Exception k)
      {
-       k.printStackTrace();
+      SystemOut.print(k);
      }
      return 0;
    }

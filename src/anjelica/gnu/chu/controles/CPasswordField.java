@@ -2276,7 +2276,7 @@ public String getCopia(){
        return getFecha(getFormato());
      } catch (java.text.ParseException k)
      {
-       k.printStackTrace();
+        SystemOut.print(k);
        return "";     }
  }
 

@@ -11,6 +11,8 @@ import java.io.*;
 public class SystemOut extends PrintStream implements Serializable
 {
   private boolean salidaErr=false;  
+  String mensaje="";
+  boolean inicio=true;
   
   public SystemOut(OutputStream out,boolean autoFlush)
   {
@@ -64,7 +66,13 @@ public class SystemOut extends PrintStream implements Serializable
     else
         ventana.logger.trace(o);
   }
-
+  
+  public static void print(Throwable th)
+  {
+      escribe systemOut = new escribe(System.out);
+      th.printStackTrace(systemOut);      
+      ventana.logger.error(systemOut.getMessage());
+  }
   
 }
 

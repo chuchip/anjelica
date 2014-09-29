@@ -274,8 +274,7 @@ public class pdprove extends ventanaPad implements PAD
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 
@@ -303,8 +302,7 @@ public class pdprove extends ventanaPad implements PAD
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 

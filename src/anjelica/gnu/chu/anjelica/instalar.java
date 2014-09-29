@@ -3,6 +3,7 @@ package gnu.chu.anjelica;
 import java.sql.*;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.EntornoUsuario;
+import gnu.chu.utilidades.SystemOut;
 
 
 public class instalar
@@ -25,7 +26,7 @@ public class instalar
       jbInit();
     } catch (Throwable k)
     {
-      k.printStackTrace();
+      SystemOut.print(k);
       System.exit(1);
     }
   }

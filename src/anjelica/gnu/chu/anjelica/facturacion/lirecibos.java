@@ -54,8 +54,7 @@ public class lirecibos extends ventana  implements JRDataSource
         setErrorInit(true);
     }
     catch (Exception e) {
-      e.printStackTrace();
-      setErrorInit(true);
+     ErrorInit(e);
     }
   }
 
@@ -71,8 +70,7 @@ public class lirecibos extends ventana  implements JRDataSource
       jbInit();
     }
     catch (Exception e) {
-      e.printStackTrace();
-      setErrorInit(true);
+    ErrorInit(e);
     }
   }
 

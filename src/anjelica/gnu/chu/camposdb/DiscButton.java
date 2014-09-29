@@ -7,6 +7,7 @@ import gnu.chu.controles.CInternalFrame;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.SystemOut;
 import gnu.chu.winayu.VentDiscrCli;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -121,7 +122,7 @@ public class DiscButton extends CButton {
       }
       catch (Exception j)
       {
-        j.printStackTrace();
+        SystemOut.print(j);
         if (papa != null)
           papa.setEnabled(true);
       }

@@ -91,8 +91,7 @@ public class MantPrAlb extends ventana {
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 
@@ -113,8 +112,7 @@ public class MantPrAlb extends ventana {
 
             jbInit();
         } catch (Exception e) {
-            e.printStackTrace();
-            setErrorInit(true);
+            ErrorInit(e);
         } 
     }
 /**

@@ -28,6 +28,7 @@ import gnu.chu.interfaces.ejecutable;
 import gnu.chu.print.util;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
+import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
@@ -763,14 +764,14 @@ public class ClDifInv extends ventana {
             ctUp.commit();
             
         } catch (Exception ex1) {
-            ex1.printStackTrace();
+            SystemOut.print(ex1);
             try {
                 Error("2.- Error al Actualizar Datos. proCodi: " + proCodi + " Canti: "
                         + canti
                         + " CanOri: " + canOri + " getSqlUpdate: " + dtAdd.getSqlUpdate(),
                         ex1);
             } catch (Exception k) {
-                k.printStackTrace();
+               SystemOut.print(k);
             }
             return false;
         }

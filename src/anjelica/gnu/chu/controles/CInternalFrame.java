@@ -17,6 +17,7 @@ import java.awt.event.*;
 import java.util.*;
 import gnu.chu.interfaces.*;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.SystemOut;
 /**
  *
  * @author cpuente
@@ -230,7 +231,7 @@ public class CInternalFrame extends javax.swing.JInternalFrame {
          } catch (Exception k)
         {
 //          System.out.println("VInternalFrame: (setEnabledParent) Lanzada Exception");
-          k.printStackTrace();
+           SystemOut.print(k);
         }
       }
   }

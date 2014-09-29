@@ -52,8 +52,7 @@ public class ClClien extends ventana
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+     ErrorInit(e);
     }
   }
 
@@ -71,8 +70,7 @@ public class ClClien extends ventana
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+         ErrorInit(e);
     }
   }
 

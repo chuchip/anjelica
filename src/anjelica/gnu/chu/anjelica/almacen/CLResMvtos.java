@@ -64,8 +64,7 @@ public class CLResMvtos extends ventana {
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);   
     }
   }
 
@@ -82,8 +81,7 @@ public class CLResMvtos extends ventana {
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 

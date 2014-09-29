@@ -90,8 +90,7 @@ public class cllibrovto extends ventana
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 
@@ -110,8 +109,7 @@ public class cllibrovto extends ventana
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 

@@ -77,7 +77,7 @@ public class condBusFra extends CPanel
       jbInit();
     }
     catch (Exception e) {
-      e.printStackTrace();
+      SystemOut.print(e);
     }
   }
 

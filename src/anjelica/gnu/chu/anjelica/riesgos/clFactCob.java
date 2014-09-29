@@ -89,8 +89,7 @@ public class clFactCob  extends ventana
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+     ErrorInit(e);
     }
   }
 
@@ -107,8 +106,7 @@ public class clFactCob  extends ventana
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 

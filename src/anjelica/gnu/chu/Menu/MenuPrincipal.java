@@ -12,6 +12,7 @@ import javax.swing.event.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.controles.*;
 import gnu.chu.sql.*;
+import java.beans.PropertyVetoException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /* 
@@ -116,7 +117,7 @@ public class MenuPrincipal extends CInternalFrame
   }
 
   private boolean conectar(SQLException j) {
-    j.printStackTrace();
+          SystemOut.print(j);
           if (mensajes.mensajePreguntar("ERROR DE BASE DE DATOS\n" + j.getMessage() + "\nDESEA INTENTAR LA CONEXION?", frmPrincipal) == mensajes.YES) {
              conexion c = frmPrincipal.dt1.getConexion();
              try {
@@ -286,9 +287,9 @@ public class MenuPrincipal extends CInternalFrame
                 }
               });
             }
-            catch (Exception k)
+            catch (PropertyVetoException k)
             {
-              k.printStackTrace();
+              SystemOut.print(k);
             }
       }
     });
@@ -732,9 +733,9 @@ public class MenuPrincipal extends CInternalFrame
     try {
       if (EntornoUsu.catalog != null)
         Empresa.setText(Empresa.getText() + " (" + BaseDatos.getCatalog() + ")");
-    } catch (Exception k)
+    } catch (SQLException k)
     {
-      k.printStackTrace();
+      SystemOut.print(k);
     }
     ejercicioE.setValor(EntornoUsu.ejercicio);
     ejercicioE.addActionListener(new ActionListener()

@@ -35,7 +35,7 @@ public class getMsgTexto extends CInternalFrame
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      SystemOut.print(e);
     }
 
   }

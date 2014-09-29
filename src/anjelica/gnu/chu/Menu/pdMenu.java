@@ -91,7 +91,7 @@ public class pdMenu extends ventanaPad implements PAD {
           selector=new Selector(pdMenu.this);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      SystemOut.print(e);
       setErrorInit(true);
     }
   }
@@ -535,7 +535,7 @@ public class pdMenu extends ventanaPad implements PAD {
       }
       catch (Exception ex)
       {
-        ex.printStackTrace();
+        SystemOut.print(ex);
         return;
       }
 
@@ -641,7 +641,7 @@ public class pdMenu extends ventanaPad implements PAD {
       mensaje("Adiccion Cancelada");
       activaTodo();
       try {
-      rellenaGrid(dtCons); } catch (Exception k){k.printStackTrace();}
+      rellenaGrid(dtCons); } catch (Exception k){SystemOut.print(k);;}
       redibujar();
   };
 
@@ -869,7 +869,7 @@ public class pdMenu extends ventanaPad implements PAD {
     }
 
       activaTodo();
-      try {rellenaGrid(dtCons);} catch (Exception k){k.printStackTrace();}
+      try {rellenaGrid(dtCons);} catch (Exception k){SystemOut.print(k);}
       redibujar();
       mensaje("Edicion Cancelada");
 
@@ -1162,7 +1162,7 @@ public class pdMenu extends ventanaPad implements PAD {
 
       rellenaGrid(dtCons);
       } catch (Exception k)
-      {k.printStackTrace();}
+      {SystemOut.print(k);}
       redibujar();
       return true;
   }
@@ -1199,7 +1199,7 @@ public class pdMenu extends ventanaPad implements PAD {
     }
 
     rellenaGrid(dtCons);
-  } catch (Exception k){k.printStackTrace();}
+  } catch (Exception k){SystemOut.print(k);;}
       redibujar();
       return datos;
   }
@@ -1228,7 +1228,7 @@ public class pdMenu extends ventanaPad implements PAD {
     }
 
     rellenaGrid(dtCons);
-  }catch (Exception k){k.printStackTrace();}
+  }catch (Exception k){SystemOut.print(k);;}
       redibujar();
       return datos;
   }
@@ -1371,7 +1371,7 @@ try{
       rgSelect();
       redibujar();
       rellenaGrid(dtCons);
-      } catch (Exception k){k.printStackTrace();}
+      } catch (Exception k){SystemOut.print(k);}
       activaTodo();
       mensaje("Transf. OK");
       botpulsado=NINGUNO;
@@ -1385,7 +1385,7 @@ try{
       redibujar();
       try{
       rellenaGrid(dtCons);
-      } catch (Exception k){k.printStackTrace();}
+      } catch (Exception k){SystemOut.print(k);}
   }
   /**
  	* Rutina a ejecutarse cuando se pulsa el BOTON Aceptar.
@@ -1444,7 +1444,7 @@ try {
         mensaje("Usuario no encontrado");
     }else
         rellenaGrid(dtCons);
-        } catch (Exception k){k.printStackTrace();}
+        } catch (Exception k){SystemOut.print(k);}
     TituloL.setText("SUBMENUS DEL MENU PRINCIPAL ");
 //    configurarControles();
     activar(false);
@@ -1648,7 +1648,7 @@ class Selector extends CInternalFrame {
       pdmenu.vl.add(this,new Integer(this.getLayer()+1));
     }
     catch (Exception e) {
-      e.printStackTrace();
+     SystemOut.print(e);
     }
   }
   //***************************************************************

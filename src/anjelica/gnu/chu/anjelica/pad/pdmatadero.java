@@ -124,8 +124,7 @@ public class pdmatadero extends ventanaPad   implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 
@@ -148,8 +147,7 @@ public class pdmatadero extends ventanaPad   implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 

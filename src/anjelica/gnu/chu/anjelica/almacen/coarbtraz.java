@@ -88,8 +88,7 @@ public class coarbtraz extends ventana
      }
      catch (Exception e)
      {
-       e.printStackTrace();
-       setErrorInit(true);
+      ErrorInit(e);
      }
    }
 
@@ -107,8 +106,7 @@ public class coarbtraz extends ventana
      }
      catch (Exception e)
      {
-       e.printStackTrace();
-       setErrorInit(true);
+        ErrorInit(e);
      }
    }
 

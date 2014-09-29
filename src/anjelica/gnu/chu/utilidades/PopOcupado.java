@@ -57,7 +57,7 @@ public class PopOcupado extends CInternalFrame
       }
       catch (Exception k)
       {
-        k.printStackTrace();
+        SystemOut.print(k);
       }
     }
 

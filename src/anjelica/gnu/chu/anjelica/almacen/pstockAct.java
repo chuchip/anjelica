@@ -88,7 +88,7 @@ public class pstockAct extends CPanel
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      SystemOut.print(e);
     }
   }
 

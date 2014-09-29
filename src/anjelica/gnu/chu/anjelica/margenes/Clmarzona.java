@@ -83,8 +83,7 @@ public class Clmarzona extends ventana {
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+           ErrorInit(e);
     }
   }
 
@@ -102,8 +101,7 @@ public class Clmarzona extends ventana {
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+        ErrorInit(e);
     }
   }
 

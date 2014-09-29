@@ -71,8 +71,7 @@ public class clpagpen extends ventana
      }
      catch (Exception e)
      {
-       e.printStackTrace();
-       setErrorInit(true);
+      ErrorInit(e);
      }
    }
 
@@ -90,8 +89,7 @@ public class clpagpen extends ventana
      }
      catch (Exception e)
      {
-       e.printStackTrace();
-       setErrorInit(true);
+       ErrorInit(e);
      }
    }
 

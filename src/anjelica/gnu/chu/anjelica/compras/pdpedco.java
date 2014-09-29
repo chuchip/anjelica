@@ -206,8 +206,7 @@ public class pdpedco extends ventanaPad   implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+     ErrorInit(e);
     }
   }
 
@@ -236,8 +235,7 @@ public class pdpedco extends ventanaPad   implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 

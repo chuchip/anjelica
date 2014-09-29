@@ -75,7 +75,7 @@ public class StatusBar  extends CPanel
       jbInit();
     }
     catch (Exception k) {
-      k.printStackTrace();
+      SystemOut.print(k);
     }
   }
 

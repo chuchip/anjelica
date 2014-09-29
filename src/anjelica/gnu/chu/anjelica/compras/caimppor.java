@@ -19,18 +19,19 @@ import net.sf.jasperreports.view.*;
    *
    * <p>Titulo: caimppor</p>
    * <p>Descripción: Calculo y Listado  Importe de Portes de Albaranes de Compras
-   * <p>Copyright: Copyright (c) 2005
-   *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
-   *  los t�rminos de la Licencia P�blica General de GNU seg�n es publicada por
-   *  la Free Software Foundation, bien de la versi�n 2 de dicha Licencia
-   *  o bien (seg�n su elecci�n) de cualquier versi�n posterior.
-   *  Este programa se distribuye con la esperanza de que sea �til,
-   *  pero SIN NINGUNA GARANT�A, incluso sin la garant�a MERCANTIL impl�cita
-   *  o sin garantizar la CONVENIENCIA PARA UN PROP�SITO PARTICULAR.
-   *  V�ase la Licencia P�blica General de GNU para m�s detalles.
-   *  Deber�a haber recibido una copia de la Licencia P�blica General junto con este programa.
-   *  Si no ha sido as�, escriba a la Free Software Foundation, Inc.,
+   * <p>Copyright: Copyright (c) 2005-2014</p>
+   * <p>  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+   *  los terminos de la Licencia Pública General de GNU según es publicada por
+   *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+   *  o bien (según su elección) de cualquier versión posterior.
+   *  Este programa se distribuye con la esperanza de que sea útil,
+   *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+   *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+   *  Véase la Licencia Pública General de GNU para más detalles.
+   *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+   *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
    *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+   * </p>
    * </p>
    * <p>Empresa: MISL</p>
    * @author chuchiP
@@ -92,8 +93,7 @@ public class caimppor extends ventana implements  JRDataSource
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 
@@ -111,8 +111,7 @@ public class caimppor extends ventana implements  JRDataSource
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+       ErrorInit(e);
     }
   }
 
@@ -553,7 +552,7 @@ public class caimppor extends ventana implements  JRDataSource
     }
     catch (Exception k)
     {
-      k.printStackTrace();
+      ErrorInit(k);
       throw new JRException(k);
     }
   }

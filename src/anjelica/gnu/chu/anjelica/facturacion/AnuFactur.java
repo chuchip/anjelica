@@ -52,8 +52,7 @@ public class AnuFactur extends ventana
         setErrorInit(true);
     }
     catch (Exception e) {
-      e.printStackTrace();
-      setErrorInit(true);
+          ErrorInit(e);
     }
   }
 
@@ -69,8 +68,7 @@ public class AnuFactur extends ventana
       jbInit();
     }
     catch (Exception e) {
-      e.printStackTrace();
-      setErrorInit(true);
+        ErrorInit(e);
     }
   }
  private void jbInit() throws Exception

@@ -1,6 +1,7 @@
 package gnu.chu.comm;
 
 import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.mensajes;
 import java.util.*;
 import gnu.io.*;
@@ -135,7 +136,7 @@ public class leePeso
                  paridad);//SerialPort.PARITY_NONE);
     } catch (NoSuchPortException | PortInUseException | IOException | UnsupportedCommOperationException k)
     {
-        k.printStackTrace();
+        SystemOut.print(k);
         mensajes.mensajeAviso("Error al abrir puerto serie : "+puerto+" de bascula: "+nombre);
         return;
     }
@@ -222,7 +223,7 @@ public class leePeso
       }     
     } catch (IOException | InterruptedException k)
     {
-      k.printStackTrace();
+       SystemOut.print(k);
       return 0;
     }
     return 0;
@@ -311,7 +312,7 @@ public class leePeso
         } catch (NumberFormatException k)
         {
           if (swDebug)
-                k.printStackTrace(System.out);
+                 SystemOut.print(k);
           return -1;
         }
     }
@@ -372,7 +373,7 @@ public class leePeso
 
      } catch (Exception k)
      {
-       k.printStackTrace();
+       SystemOut.print(k);
      }
    }
    

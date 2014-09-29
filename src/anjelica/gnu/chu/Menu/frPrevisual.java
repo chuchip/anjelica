@@ -3,6 +3,7 @@ package gnu.chu.Menu;
 import gnu.chu.controles.*;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.EntornoUsuario;
+import gnu.chu.utilidades.ventana;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -27,7 +28,7 @@ import java.awt.event.ActionEvent;
  * @version 1.0
 */
 
-class frPrevisual extends CInternalFrame
+class frPrevisual extends ventana
 {
   CPanel Pprinc = new CPanel();
   CCheckBox opPrevisual = new CCheckBox();
@@ -50,15 +51,15 @@ class frPrevisual extends CInternalFrame
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      ErrorInit(e);
     }
 
   }
 
   private void jbInit() throws Exception
   {
-    this.setTitle("Configurar Listados");
-    this.setSize(new Dimension(400, 100));
+    setTitle("Configurar Listados");
+    setSize(new Dimension(400, 100));
     Pprinc.setLayout(null);
     opPrevisual.setText("Previsualizar Listados");
     opDialogoPrint.setText("Mostrar Dialogo Impr.");

@@ -74,7 +74,7 @@ public class condBusqCl extends CPanel
       jbInit();
     }
     catch(Exception e) {
-      e.printStackTrace();
+      SystemOut.print(e);
     }
   }
   private void jbInit() throws Exception {

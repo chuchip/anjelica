@@ -62,8 +62,7 @@ public class Clrelalbco extends ventana {
                 setErrorInit(true);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            setErrorInit(true);
+          ErrorInit(e);
         }
     }
 
@@ -77,8 +76,7 @@ public class Clrelalbco extends ventana {
         try {
             jbInit();
         } catch (Exception e) {
-            e.printStackTrace();
-            setErrorInit(true);
+           ErrorInit(e);
         }
     }
 

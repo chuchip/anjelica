@@ -129,8 +129,7 @@ public class creareme  extends ventanaPad implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 
@@ -147,8 +146,7 @@ public class creareme  extends ventanaPad implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 

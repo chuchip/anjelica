@@ -28,6 +28,7 @@ import gnu.chu.sql.conexion;
 import gnu.chu.utilidades.DatosProd;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.mensajes;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -215,7 +216,7 @@ class MyRenderer extends DefaultTreeCellRenderer {
                     verDatosArbol();
                 }  catch (SQLException k)
                 {
-                    k.printStackTrace();
+                    SystemOut.print(k);
                 }
             }
         });

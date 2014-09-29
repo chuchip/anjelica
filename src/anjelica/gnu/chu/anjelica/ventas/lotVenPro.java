@@ -88,7 +88,7 @@ public class lotVenPro extends ventana
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      ErrorInit(e);
     }
   }
   private void jbInit() throws Exception

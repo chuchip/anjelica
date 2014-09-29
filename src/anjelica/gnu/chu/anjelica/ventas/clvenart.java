@@ -6,6 +6,7 @@ import java.sql.*;
 import gnu.chu.utilidades.*;
 import java.awt.event.*;
 import gnu.chu.Menu.*;
+import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import net.sf.jasperreports.engine.*;
@@ -72,8 +73,7 @@ public class clvenart extends ventana implements  JRDataSource
       }
       catch (Exception e)
       {
-        e.printStackTrace();
-        setErrorInit(true);
+        ErrorInit(e);
       }
     }
 
@@ -90,8 +90,7 @@ public class clvenart extends ventana implements  JRDataSource
      }
      catch (Exception e)
      {
-       e.printStackTrace();
-       setErrorInit(true);
+      ErrorInit(e);
      }
    }
 
@@ -522,7 +521,7 @@ public class clvenart extends ventana implements  JRDataSource
     gnu.chu.print.util.printJasper(jp, EU);
        mensaje("");
        mensajeErr("Listado ... GENERADO");
-     } catch (Exception k)
+     } catch (SQLException | JRException | PrinterException k)
      {
        Error("Error al imprimir",k);
      }
@@ -610,10 +609,10 @@ public class clvenart extends ventana implements  JRDataSource
        if (campo.equals("avp_canti") )
          return new Double(rs1.getDouble(campo));
       return null;
-    } catch (Exception k)
+    } catch (SQLException k)
     {
-      k.printStackTrace();
-      throw new JRException(k);
+     SystemOut.print(k);
+     return null;
     }
   }
   String getStrSubQuery(int proCodi,int cliCodi,java.sql.Date avcFecalb,int avcAno,int empCodi,String avcSerie,

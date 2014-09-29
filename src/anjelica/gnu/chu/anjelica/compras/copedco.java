@@ -95,8 +95,7 @@ public class copedco extends ventana
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+    ErrorInit(e);
    }
  }
 
@@ -126,8 +125,7 @@ public class copedco extends ventana
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+    ErrorInit(e);
    }
  }
  public copedco(EntornoUsuario eu,javax.swing.JLayeredPane lp,boolean verPrec) throws Exception

@@ -30,6 +30,7 @@ import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventanaPad;
 import java.awt.*;
@@ -1766,7 +1767,7 @@ public class MantArticulos extends ventanaPad  implements PAD
             v1.add(pro_noexclE);
             jtExclu.setCampos(v1);
             jtExclu.setAjustarColumnas(true);
-        } catch (Exception k ){k.printStackTrace();}
+        } catch (Exception k ){ SystemOut.print(k);}
         Pexclu.add(jtExclu);
 
         Ptab.addTab("Exclusion", Pexclu);
@@ -1787,7 +1788,7 @@ public class MantArticulos extends ventanaPad  implements PAD
             v1.add(pro_noequiE);
             jtEqui.setCampos(v1);
             jtEqui.setAjustarColumnas(true);
-        } catch (Exception k ){k.printStackTrace();}
+        } catch (Exception k ){SystemOut.print(k);}
         jtEqui.setMaximumSize(new java.awt.Dimension(100, 100));
         jtEqui.setMinimumSize(new java.awt.Dimension(100, 100));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1813,7 +1814,7 @@ public class MantArticulos extends ventanaPad  implements PAD
             v1.add(pro_noeqcoE);
             jtEquCon.setCampos(v1);
             jtEquCon.setAjustarColumnas(true);
-        } catch (Exception k ){k.printStackTrace();}
+        } catch (Exception k ){SystemOut.print(k);}
         jtEquCon.setMaximumSize(new java.awt.Dimension(100, 100));
         jtEquCon.setMinimumSize(new java.awt.Dimension(100, 100));
         gridBagConstraints = new java.awt.GridBagConstraints();

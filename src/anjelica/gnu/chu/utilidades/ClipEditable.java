@@ -78,7 +78,7 @@ public class ClipEditable
         }
         catch (Throwable j)
         {
-          j.printStackTrace();
+          SystemOut.print(j);
         }
       }
     });

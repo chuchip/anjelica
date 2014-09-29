@@ -115,8 +115,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 
@@ -142,8 +141,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+     ErrorInit(e);
     }
   }
 

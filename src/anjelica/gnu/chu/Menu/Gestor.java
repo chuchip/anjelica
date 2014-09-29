@@ -204,7 +204,7 @@ public class Gestor extends Thread implements Serializable
       return;
     } catch(Throwable e) {
       mensajes.mensajeAviso("Error en Programa: " + nombreClase + "\nPosiblemente el nombre este mal escrito");
-      e.printStackTrace();
+      SystemOut.print(e);
       new miThread("Activando Menu ...") {
                 @Override
           public void run() {
@@ -363,7 +363,7 @@ public class Gestor extends Thread implements Serializable
     }
     prog.setVisible(true);
       prog.setIcon(false);
-    } catch (Exception k){k.printStackTrace();}
+    } catch (Exception k){SystemOut.print(k);}
   }
 
   private boolean conectar(SQLException j)
@@ -767,7 +767,7 @@ public class Gestor extends Thread implements Serializable
       catch (SQLException j)
       {
         if (j.getErrorCode()==-1)
-          j.printStackTrace();
+         SystemOut.print(j);
         else
         {
           if (conectar(j))
@@ -964,7 +964,7 @@ public class Gestor extends Thread implements Serializable
 public void fatalError(String s, Throwable k)
 {
 //    String msgStack = "";
-    k.printStackTrace(systemOut);
+    SystemOut.print(k);
 //    msgStack = systemOut.getMessage();
 
     PopError pe = new PopError("ERROR AL EJECUTAR UN PROGRAMA\n" + s + "\n" +
@@ -1050,7 +1050,7 @@ class SListener extends InternalFrameAdapter
       }
     } catch (Exception k)
     {
-      k.printStackTrace();
+      SystemOut.print(k);
     }
   }
     @Override
@@ -1062,7 +1062,7 @@ class SListener extends InternalFrameAdapter
     }
     catch (Exception k)
     {
-      k.printStackTrace();
+     SystemOut.print(k);
     }
 
   }
@@ -1074,7 +1074,7 @@ class SListener extends InternalFrameAdapter
       }
       catch (Exception k)
       {
-        k.printStackTrace();
+       SystemOut.print(k);
       }
   }
 }

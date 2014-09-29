@@ -242,8 +242,7 @@ public class pdfactra extends ventanaPad   implements PAD
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+    ErrorInit(e);
    }
  }
 
@@ -277,8 +276,7 @@ public class pdfactra extends ventanaPad   implements PAD
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 
@@ -1860,7 +1858,7 @@ int cambiaLinAlb(int row)
     }
     catch (Exception k)
     {
-      k.printStackTrace();
+      SystemOut.print(k);
     }
 
   }

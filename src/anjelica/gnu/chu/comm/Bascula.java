@@ -1,5 +1,6 @@
 package gnu.chu.comm;
 
+import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.mensajes;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -105,7 +106,7 @@ public class Bascula {
      } catch (Throwable k)
      {
         mensajes.mensajeAviso("Erro al Inicializar bascula "+getNombreBascula(bascula)+"\n"+k.getMessage());
-        k.printStackTrace();
+        SystemOut.print(k);
      }
      return 0;
    }

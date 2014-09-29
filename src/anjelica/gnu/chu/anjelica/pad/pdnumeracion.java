@@ -66,8 +66,7 @@ public pdnumeracion(EntornoUsuario eu, Principal p)
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 
@@ -88,8 +87,7 @@ public pdnumeracion(EntornoUsuario eu, Principal p)
 
             jbInit();
         } catch (Exception e) {
-            e.printStackTrace();
-            setErrorInit(true);
+            ErrorInit(e);
         }
     }
 

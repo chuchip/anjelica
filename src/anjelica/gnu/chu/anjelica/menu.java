@@ -216,7 +216,7 @@ public class menu extends JFrame
 //      prueba1();
     }
     catch(Exception e) {
-      e.printStackTrace();
+      SystemOut.print(e);
     }
 
   }
@@ -230,12 +230,7 @@ public class menu extends JFrame
     }
     catch (Throwable ex)
     {
-      String msgStack;
-      escribe out = new escribe(System.out);
-      ex.printStackTrace(out);
-      msgStack = out.getMessage();
-
-      ex.printStackTrace();
+      SystemOut.print(ex);
     }
 
   }
@@ -1400,7 +1395,7 @@ public class menu extends JFrame
       ejec.guardaTamanoOriginal();
     } catch (Exception k)
     {
-      k.printStackTrace();
+      SystemOut.print(k);
    }
   }
 
@@ -1543,8 +1538,7 @@ void limpiaDB()
     dtAdd.commit();
   } catch (Exception k)
   {
-    k.printStackTrace();
-
+    SystemOut.print(k);
   }
 }
 

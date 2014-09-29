@@ -141,8 +141,7 @@ public class cacobrea extends ventanaPad implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+     ErrorInit(e);
     }
   }
 
@@ -159,8 +158,7 @@ public class cacobrea extends ventanaPad implements PAD
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 

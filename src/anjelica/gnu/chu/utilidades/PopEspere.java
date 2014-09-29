@@ -60,7 +60,7 @@ public class PopEspere extends CInternalFrame
       }
       catch (Exception k)
       {
-        k.printStackTrace();
+       SystemOut.print(k);
       }
     }
 

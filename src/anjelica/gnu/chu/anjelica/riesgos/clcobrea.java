@@ -98,8 +98,7 @@ public class clcobrea extends ventana
   }
   catch (Exception e)
   {
-    e.printStackTrace();
-    setErrorInit(true);
+    ErrorInit(e);
   }
 }
 
@@ -116,8 +115,7 @@ public clcobrea(gnu.chu.anjelica.menu p, EntornoUsuario eu)
   }
   catch (Exception e)
   {
-    e.printStackTrace();
-    setErrorInit(true);
+    ErrorInit(e);
   }
 }
 

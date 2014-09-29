@@ -109,8 +109,7 @@ public class clvertprv  extends ventana
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 
@@ -129,8 +128,7 @@ public class clvertprv  extends ventana
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+        ErrorInit(e);
     }
   }
 

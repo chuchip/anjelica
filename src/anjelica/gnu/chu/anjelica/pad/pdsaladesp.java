@@ -125,8 +125,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 
@@ -149,8 +148,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 

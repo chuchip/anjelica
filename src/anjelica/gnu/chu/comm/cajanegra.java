@@ -69,8 +69,7 @@ public cajanegra(EntornoUsuario eu, Principal p,Hashtable ht)
   }
   catch (Exception e)
   {
-    e.printStackTrace();
-    setErrorInit(true);
+   ErrorInit(e);
   }
 }
 
@@ -93,8 +92,7 @@ public cajanegra(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable ht)
   }
   catch (Exception e)
   {
-    e.printStackTrace();
-    setErrorInit(true);
+   ErrorInit(e);
   }
 }
 
@@ -331,7 +329,7 @@ private void jbInit() throws Exception
     }
     catch (Exception k)
     {
-      k.printStackTrace();
+      ErrorInit(k);
     }
     super.matar(cerrarConexion);
   }

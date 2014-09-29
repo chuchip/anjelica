@@ -68,8 +68,7 @@ public class MantPaises extends   ventanaPad  implements PAD
                 setErrorInit(true);
         } catch (Exception e)
         {
-            e.printStackTrace();
-            setErrorInit(true);
+          ErrorInit(e);
         }
     }
 
@@ -92,8 +91,7 @@ public class MantPaises extends   ventanaPad  implements PAD
             jbInit();
         } catch (Exception e)
         {
-            e.printStackTrace();
-            setErrorInit(true);
+           ErrorInit(e);
         }
     }
 

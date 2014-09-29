@@ -189,7 +189,7 @@ public class sendMail
     }
     catch (Throwable j)
     {
-      j.printStackTrace();
+      SystemOut.print(j);
     }
   }
   public static void enviaMailError(String s,escribe systemOut,EntornoUsuario EU ) {
@@ -203,7 +203,7 @@ public class sendMail
      }
      catch (Throwable j)
      {
-       j.printStackTrace();
+      SystemOut.print(j);
      }
 
    }

@@ -244,7 +244,7 @@ public class Cgrid extends CPanel implements Serializable
           jbInit();
         }
         catch(Exception e){
-           e.printStackTrace();
+            SystemOut.print(e);
         }
     }
     /**
@@ -615,7 +615,7 @@ public class Cgrid extends CPanel implements Serializable
         return dat;
       }  catch (Exception k)
       {
-        k.printStackTrace();
+         SystemOut.print(k);
         msgError = "Error:Insertar Datos en Grid. " + k.getMessage();
         removeAllDatos();
         return null;
@@ -3243,7 +3243,7 @@ public class Cgrid extends CPanel implements Serializable
          dt.rollback(); //Deshacemos las insert oportunas
        } catch (Exception k)
        {
-         k.printStackTrace();
+         SystemOut.print(k);
        }
         JOptionPane.showMessageDialog(panelG,"Error al salvar configuracion"+msg,"ERROR",JOptionPane.INFORMATION_MESSAGE);
      }

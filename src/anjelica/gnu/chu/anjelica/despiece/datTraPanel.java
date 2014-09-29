@@ -1,6 +1,7 @@
 package gnu.chu.anjelica.despiece;
 
 import gnu.chu.controles.*;
+import gnu.chu.utilidades.SystemOut;
 import java. awt.*;
 /**
  * <p>Titulo:   datTraPanel </p>
@@ -49,7 +50,7 @@ public class datTraPanel    extends CPanel
    }
    catch (Exception e)
    {
-     e.printStackTrace();
+     SystemOut.print(e);
    }
   }
 

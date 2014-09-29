@@ -152,7 +152,7 @@ public class FichaClientes extends ventana implements PAD
          }
          catch (Exception ex)
          {
-           ex.printStackTrace();
+           SystemOut.print(ex);
          }
 
        }
@@ -172,7 +172,7 @@ public class FichaClientes extends ventana implements PAD
          }
          catch (Exception ex)
          {
-           ex.printStackTrace();
+           SystemOut.print(ex);
          }
        }
 
@@ -191,7 +191,7 @@ public class FichaClientes extends ventana implements PAD
          }
          catch (Exception ex)
          {
-           ex.printStackTrace();
+           SystemOut.print(ex);
          }
        }
      };
@@ -334,8 +334,7 @@ public class FichaClientes extends ventana implements PAD
        setErrorInit(true);
    }
    catch (Exception e) {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 
@@ -2512,7 +2511,7 @@ public class FichaClientes extends ventana implements PAD
        }
        catch (Exception ex)
        {
-         ex.printStackTrace();
+         SystemOut.print(ex);
        }
 }
   public void PADAnterior() {
@@ -2540,7 +2539,7 @@ public class FichaClientes extends ventana implements PAD
          }
          catch (Exception ex)
          {
-           ex.printStackTrace();
+           SystemOut.print(ex);
          }
   }
 
@@ -2557,7 +2556,7 @@ public class FichaClientes extends ventana implements PAD
     }
     catch (Exception ex)
     {
-      ex.printStackTrace();
+      SystemOut.print(ex);
     }
   }
 

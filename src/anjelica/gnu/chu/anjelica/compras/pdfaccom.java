@@ -264,8 +264,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 
@@ -300,8 +299,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+    ErrorInit(e);
    }
  }
 

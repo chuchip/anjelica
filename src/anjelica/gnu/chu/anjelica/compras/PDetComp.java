@@ -63,7 +63,7 @@ public class PDetComp extends CPanel
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      SystemOut.print(e);
     }
   }
 

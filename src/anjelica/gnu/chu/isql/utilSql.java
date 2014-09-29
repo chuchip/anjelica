@@ -3,6 +3,7 @@ package gnu.chu.isql;
 import java.io.*;
 import java.util.*;
 import gnu.chu.sql.*;
+import gnu.chu.utilidades.SystemOut;
 import java.sql.*;
 
 /**
@@ -140,7 +141,7 @@ public class utilSql
     } catch (SQLException k)
     {
       System.out.println("Linea: "+nLin);
-      k.printStackTrace();
+       SystemOut.print(k);
       muerto=true;
       excep=k;
       throw k;
@@ -370,7 +371,7 @@ public class utilSql
     } catch (SQLException k)
     {
       bfr.close();
-      k.printStackTrace();
+       SystemOut.print(k);
       throw new SQLException("Error al parsear sentencia: "+sql+" en linea: "+nLin);
     }
     bfr.close();

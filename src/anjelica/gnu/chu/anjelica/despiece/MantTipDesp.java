@@ -82,8 +82,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
       }
       catch (Exception e)
       {
-        e.printStackTrace();
-        setErrorInit(true);
+           ErrorInit(e);
       }
     }
 
@@ -101,8 +100,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
       }
       catch (Exception e)
       {
-        e.printStackTrace();
-        setErrorInit(true);
+          ErrorInit(e);
       }
     }
     private void jbInit() throws Exception

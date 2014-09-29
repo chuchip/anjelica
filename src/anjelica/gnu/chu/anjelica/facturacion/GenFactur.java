@@ -41,6 +41,7 @@ import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Fecha;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
@@ -1108,7 +1109,7 @@ public void iniciarVentana() throws Exception
     }
     catch (Exception k)
     {
-      k.printStackTrace();
+      SystemOut.print(k);
     }
   }
 

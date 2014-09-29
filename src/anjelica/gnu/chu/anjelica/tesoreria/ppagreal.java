@@ -25,6 +25,7 @@ package gnu.chu.anjelica.tesoreria;
 
 import gnu.chu.controles.*;
 import gnu.chu.sql.*;
+import gnu.chu.utilidades.SystemOut;
 import java.sql.*;
 import java.awt.*;
 import java.util.*;
@@ -46,7 +47,7 @@ public class ppagreal extends CPanel
       jbInit();
     }
     catch(Exception e) {
-      e.printStackTrace();
+      SystemOut.print(e);
     }
   }
   private void jbInit() throws Exception

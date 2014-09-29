@@ -98,8 +98,7 @@ public class pdconfig    extends ventanaPad     implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 
@@ -122,8 +121,7 @@ public class pdconfig    extends ventanaPad     implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 
@@ -651,6 +649,7 @@ public class pdconfig    extends ventanaPad     implements PAD
  {
    try
    {
+       Error("Error al darle al delete",new Exception("prueba"));
      if (emp_codiE.getValorInt()==EU.em_cod)
      {
        mensajeErr("NO se puede borrar configurar de empresa actual");

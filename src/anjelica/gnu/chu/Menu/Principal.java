@@ -100,7 +100,7 @@ public class Principal extends JFrame
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      SystemOut.print(e);
       System.exit(1);
     }
   }
@@ -114,7 +114,7 @@ public class Principal extends JFrame
       this.MyDb = conex;
       jbInit();
     } catch (Exception e) {
-      e.printStackTrace();
+        SystemOut.print(e);
         System.exit(1);
     }
   }
@@ -271,7 +271,7 @@ public class Principal extends JFrame
                    cargaMenu();
                  }
                } catch (Throwable j) {
-                 j.printStackTrace();
+                 SystemOut.print(j);
 //                 mensajes.mensajeUrgente("Error al Cargar Menu\n" + j.getMessage());
                }
                try {
@@ -395,7 +395,7 @@ public class Principal extends JFrame
          dt1.executeUpdate("SHUTDOWN");
      } catch (Exception k)
      {
-       k.printStackTrace();
+        SystemOut.print(k);
      }
     if (preguntar)
     {
@@ -482,7 +482,7 @@ public class Principal extends JFrame
     }
     catch (Exception j)
     {
-      j.printStackTrace();
+     SystemOut.print(j);
       mensajes.mensajeUrgente("Error al Leer Usuario/Empresas\n" + j, this);
       return false;
     }

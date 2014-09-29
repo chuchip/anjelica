@@ -103,8 +103,7 @@ public class repetiqu extends ventana
          setErrorInit(true);
      }
      catch (Exception e) {
-       e.printStackTrace();
-       setErrorInit(true);
+        ErrorInit(e);
      }
    }
 
@@ -119,8 +118,7 @@ public class repetiqu extends ventana
         jbInit();
       }
       catch (Exception e) {
-        e.printStackTrace();
-        setErrorInit(true);
+              ErrorInit(e);
       }
     }
 

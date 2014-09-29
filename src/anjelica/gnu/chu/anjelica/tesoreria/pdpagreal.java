@@ -174,8 +174,7 @@ public  class pdpagreal extends ventanaPad implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+     ErrorInit(e);
     }
   }
 
@@ -192,8 +191,7 @@ public  class pdpagreal extends ventanaPad implements PAD
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 

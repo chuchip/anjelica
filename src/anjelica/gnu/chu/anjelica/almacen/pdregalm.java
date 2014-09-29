@@ -103,8 +103,7 @@ public class pdregalm extends ventanaPad implements PAD
        jbInit();
      }
      catch (Exception e) {
-       e.printStackTrace();
-       setErrorInit(true);
+       ErrorInit(e);
      }
    }
 

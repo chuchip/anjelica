@@ -136,7 +136,7 @@ public class CLinkBox
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+       SystemOut.print(e);
     }
   }
 

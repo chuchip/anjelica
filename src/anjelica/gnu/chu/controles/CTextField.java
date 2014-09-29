@@ -6,6 +6,7 @@ import gnu.chu.interfaces.CEditable;
 import gnu.chu.interfaces.CQuery;
 import gnu.chu.utilidades.ClipEditable;
 import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.mensajes;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
@@ -810,7 +811,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
       }
      } catch (Exception k)
      {
-       k.printStackTrace();
+        SystemOut.print(k);
        return;
      }
      setText(txt,true);
@@ -2807,7 +2808,7 @@ String procesaTecla()
      }
      catch (java.text.ParseException k)
      {
-       k.printStackTrace();
+        SystemOut.print(k);
        return "";
      }
    }

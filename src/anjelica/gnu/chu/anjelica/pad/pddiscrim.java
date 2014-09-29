@@ -83,8 +83,7 @@ public class pddiscrim    extends ventanaPad     implements PAD
       }
       catch (Exception e)
       {
-        e.printStackTrace();
-        setErrorInit(true);
+       ErrorInit(e);
       }
     }
 
@@ -107,8 +106,7 @@ public class pddiscrim    extends ventanaPad     implements PAD
       }
       catch (Exception e)
       {
-        e.printStackTrace();
-        setErrorInit(true);
+       ErrorInit(e);
       }
     }
     private void jbInit() throws Exception

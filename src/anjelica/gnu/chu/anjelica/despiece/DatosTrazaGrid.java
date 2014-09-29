@@ -26,6 +26,7 @@ package gnu.chu.anjelica.despiece;
 import gnu.chu.anjelica.despiece.listraza.DatosTraza;
 import gnu.chu.controles.CGridEditable;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -123,7 +124,7 @@ public class DatosTrazaGrid extends ventana {
             v1.add(fecsacrE);
             v1.add(comentE);
             jt.setCampos(v1);
-        } catch (Exception k) {k.printStackTrace();}
+        } catch (Exception k) {SystemOut.print(k);}
         jt.setAlinearColumna(new int[]{2,0,0,2,0,0,0,0,0,0,1,0});
         jt.setAnchoColumna(new int[]{50,150,80,50,150,120,120,120,120,140,70,120});
 

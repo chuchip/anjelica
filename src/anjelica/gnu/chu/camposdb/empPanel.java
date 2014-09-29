@@ -8,6 +8,7 @@ import gnu.chu.eventos.CambioListener;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.mensajes;
 import gnu.chu.winayu.ayuEmp;
 import java.awt.*;
@@ -65,7 +66,7 @@ public class empPanel extends CPanel
     }
     catch (Throwable e)
     {
-      e.printStackTrace();
+     SystemOut.print(e);
     }
   }
 

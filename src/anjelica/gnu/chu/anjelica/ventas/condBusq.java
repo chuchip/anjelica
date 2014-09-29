@@ -6,6 +6,7 @@ import gnu.chu.controles.*;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.ventana;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -88,7 +89,7 @@ public class condBusq extends CPanel
       jbInit();
     }
     catch(Exception e) {
-      e.printStackTrace();
+      SystemOut.print(e);
     }
   }
   private void jbInit() throws Exception {

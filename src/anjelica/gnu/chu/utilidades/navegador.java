@@ -145,7 +145,7 @@ public class navegador extends CPanel
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      SystemOut.print(e);
     }
   }
 
@@ -341,7 +341,7 @@ public class navegador extends CPanel
       Error = true;
       MsgError = "ERROR: " + j.getMessage();
       mensajes.mensajeUrgente(MsgError);
-      j.printStackTrace();
+      SystemOut.print(j);
     }
 
     if (pd != null)
@@ -377,7 +377,7 @@ public class navegador extends CPanel
         dt.previous();
       } catch (java.sql.SQLException k)
       {
-        k.printStackTrace(); // No se que hacer, la verdad.
+       SystemOut.print(k); // No se que hacer, la verdad.
       }
       this.setEnabled(true);
       if (pd != null)
@@ -554,7 +554,7 @@ public class navegador extends CPanel
         Error = true;
         MsgError = "ERROR: " + j.getMessage();
         mensajes.mensajeUrgente(MsgError);
-        j.printStackTrace();
+        SystemOut.print(j);
       }
     }
 
@@ -618,7 +618,7 @@ public class navegador extends CPanel
       Error = true;
       MsgError = "ERROR: " + j.getMessage();
       mensajes.mensajeUrgente(MsgError);
-      j.printStackTrace();
+      SystemOut.print(j);
     }
     if (pd != null)
     {

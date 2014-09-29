@@ -47,7 +47,7 @@ public class ifregalm  extends ventana
     }
     catch (Exception e)
     {
-      e.printStackTrace();
+      ErrorInit(e);
     }
 
   }

@@ -55,7 +55,7 @@ public class PopError
     }
     catch (Exception k)
     {
-      k.printStackTrace();
+     SystemOut.print(k);
     }
   }
 
@@ -196,7 +196,7 @@ public class PopError
     {
       public void actionPerformed(ActionEvent e)
       {
-        System.out.println(msg);
+        System.err.println(msg);
       }
     });
   }

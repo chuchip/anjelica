@@ -73,7 +73,7 @@ public class cliPanel extends CPanel
       jbInit();
     }
     catch (Exception ex) {
-      ex.printStackTrace();
+      SystemOut.print(ex);
     }
   }
 
@@ -89,7 +89,7 @@ public class cliPanel extends CPanel
       jbInit();
     }
     catch (Exception ex) {
-      ex.printStackTrace();
+      SystemOut.print(ex);
     }
   }
   protected void finalize() throws Throwable { }
@@ -112,7 +112,7 @@ public class cliPanel extends CPanel
       jbInit();
     }
     catch (Exception ex) {
-      ex.printStackTrace();
+      SystemOut.print(ex);
     }
 //    setMascaraDB(dt, empresa);
   }
@@ -528,7 +528,7 @@ public void setZona(String zonCli)
       }
       catch (Exception j)
       {
-        j.printStackTrace();
+        SystemOut.print(j);
         if (intfr != null)
           intfr.setEnabled(true);
       }

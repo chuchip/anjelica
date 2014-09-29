@@ -110,7 +110,7 @@ public class ventana extends CInternalFrame implements ejecutable
     }
     catch (Exception ex)
     {
-      ex.printStackTrace();
+      SystemOut.print(ex);
     }
     //    System.setErr(pError);
   }

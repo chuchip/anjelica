@@ -485,9 +485,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           jtRecl.setValor(nombCli,row,12);
         }
       }
-      catch (Exception k)
+      catch (SQLException k)
       {
-        k.printStackTrace();
+        Error("Error al cambiar Columna",k);
       }
     }
     

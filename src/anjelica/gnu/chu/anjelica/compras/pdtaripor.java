@@ -94,8 +94,7 @@ public class pdtaripor extends ventanaPad implements PAD
       }
       catch (Exception e)
       {
-        e.printStackTrace();
-        setErrorInit(true);
+        ErrorInit(e);
       }
     }
 
@@ -113,8 +112,7 @@ public class pdtaripor extends ventanaPad implements PAD
       }
       catch (Exception e)
       {
-        e.printStackTrace();
-        setErrorInit(true);
+         ErrorInit(e);
       }
     }
 

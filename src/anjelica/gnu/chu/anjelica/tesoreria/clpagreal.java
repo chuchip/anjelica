@@ -99,8 +99,7 @@ public  class clpagreal extends ventana
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 
@@ -117,8 +116,7 @@ public  class clpagreal extends ventana
    }
    catch (Exception e)
    {
-     e.printStackTrace();
-     setErrorInit(true);
+     ErrorInit(e);
    }
  }
 
