@@ -3,9 +3,14 @@ package gnu.chu.comm;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.mensajes;
+import gnu.chu.utilidades.ventana;
 import java.util.*;
-import gnu.io.*;
-import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
 /**
  *
  * <p>Título: leePeso</p>
@@ -30,13 +35,14 @@ import java.io.*;
  */
 public class leePeso
 {
+  double pesoReal=0;
   double pesoCaja=0,tara=0;
   int numeroCajas=0;
-  CommPortIdentifier portId;
+ 
   private int startChar=0,endChar=0;   
   private String nombre=null;
-  InputStream inputStream;
-  OutputStream outputStream;
+//  InputStream inputStream;
+//  OutputStream outputStream;
   SerialPort serialPort;
   int nInt=10;
   private boolean swInic=false;
@@ -123,18 +129,60 @@ public class leePeso
            System.out.println("Puerto: "+puerto+
                    " Velocidad: "+velocidad+" bitsDatos: "+bitsDatos+
                             " BitsStop: "+bitsStop+" paridad: "+paridad+" FLOWCONTROL: "+flowControl);
-        portId =CommPortIdentifier.getPortIdentifier(puerto);
-        serialPort = (SerialPort) portId.open("gnu.chu.comm.leePeso", 2000);
-        inputStream = serialPort.getInputStream();
-        outputStream = serialPort.getOutputStream();
-
-        serialPort.notifyOnDataAvailable(true);
+        serialPort = new SerialPort(puerto);
+        if (! serialPort.openPort())
+            throw new SerialPortException(puerto,"No se pudo abrir el puerto","");
+                
+       
         serialPort.setFlowControlMode(flowControl);
-        serialPort.setSerialPortParams(velocidad,
+        serialPort.setParams(velocidad,
                  bitsDatos,// SerialPort.DATABITS_8,
                  bitsStop, // SerialPort.STOPBITS_1,
                  paridad);//SerialPort.PARITY_NONE);
-    } catch (NoSuchPortException | PortInUseException | IOException | UnsupportedCommOperationException k)
+        int mask = SerialPort.MASK_RXCHAR + SerialPort.MASK_CTS + SerialPort.MASK_DSR;
+        serialPort.setEventsMask(mask);//Set mask
+        serialPort.addEventListener(new SerialPortEventListener()
+        {
+            public void serialEvent(SerialPortEvent event)
+            {
+                try
+                {                    
+                     if(event.isRXCHAR())
+                     {
+                        if (event.getEventValue() >5)
+                        {
+                            pesoReal= leeDatos(tipo);
+                        }
+                     }
+                     else    if(event.isCTS())
+                     {//If CTS line has changed state
+                        if(event.getEventValue() == 1)
+                        {//If line is ON
+                           if (swDebug) System.out.println("CTS - ON");
+                        }
+                        else 
+                        {
+                           if (swDebug)  System.out.println("CTS - OFF");
+                        }
+                    }
+                     else if(event.isDSR())
+                     {///If DSR line has changed state
+                        if(event.getEventValue() == 1){//If line is ON
+                           if (swDebug)  System.out.println("DSR - ON");
+                        }
+                        else
+                        {
+                            if (swDebug)  System.out.println("DSR - OFF");
+                        }
+                     }
+                } catch (SerialPortException ex)
+                {
+                    if (swDebug)
+                        SystemOut.print(ex)  ;                 
+                }
+            }
+           });
+    } catch (SerialPortException k)
     {
         SystemOut.print(k);
         mensajes.mensajeAviso("Error al abrir puerto serie : "+puerto+" de bascula: "+nombre);
@@ -198,69 +246,91 @@ public class leePeso
    */
   public  double getPeso(boolean desTarado)
   {
-    if (!swInic || inputStream==null) 
-      if (!swDebug) return 0;// 4.7 - getPesoDescontar(); 
-    double peso;
+    if (!swInic || serialPort==null) 
+       return 0;// 4.7 - getPesoDescontar(); 
+       
     try {
       String lect;
+      pesoReal=0;
       datosDisponi=false;
       lect=cadLeePeso==null?"0224323403":cadLeePeso;
       if (swDebug)
           System.out.println("Intentando mandar cadena: "+lect);
-      if (outputStream!=null)
-        outputStream.write(Formatear.HexToBytes(lect));
-       if (swDebug)
-          System.out.println("Cadena mandada");
+      if (serialPort!=null)
+      {
+        if (serialPort.isOpened())
+        {           
+            serialPort.writeBytes(Formatear.HexToBytes(lect));          
+        }
+      }
+      if (swDebug)
+          System.out.println("Cadena mandada...");
       int nIntentos=10;
-//      System.out.println("Esperando a ver si puedo leer algo ....");
+      
       while (nIntentos>0)
-      {       
-          peso=leeDatos(tipo);
-          if (peso>=0)
-            return peso - (desTarado? getPesoDescontar():0);
-          Thread.sleep(100);
+      {    
+          if (swDebug)
+              System.out.println("en getPeso. Intento: "+nIntentos+" Peso Real: "+pesoReal);
+          if (pesoReal>0)
+            return pesoReal - (double) (desTarado? getPesoDescontar():0);
+          Thread.sleep(500);
           nIntentos--;
       }     
-    } catch (IOException | InterruptedException k)
+    } catch (SerialPortException | InterruptedException k)
     {
        SystemOut.print(k);
-      return 0;
+       return 0;
     }
     return 0;
   }
 
-  private double leeDatos(int tipo) throws IOException
+  double leeDatos(int tipo) throws SerialPortException
   {
     if (swDebug)
         System.out.println("en LeeDatos");
-    byte[] readBuffer = new byte[30];
+    byte[] readBuffer;// = new byte[30];
     int numBytes;
     String peso="";
 
     numBytes=0;
-    int nBytes;
-    if (inputStream!=null)
+//    int nBytes;
+    if (serialPort!=null)
     {
-        if (swDebug)
-          System.out.println("InputStream: NO ES NULL");
-        while (inputStream.available()>0)
+//        if (swDebug)
+//          System.out.println("InputStream: NO ES NULL");
+        if (serialPort.isOpened())
         {
-               nBytes = inputStream.read(readBuffer);
-               if (swDebug)
-                System.out.println("Leido de InputStream: "+readBuffer);
-               numBytes+=nBytes;
-               peso=peso + new String(readBuffer,0,nBytes);
+            while (serialPort.getInputBufferBytesCount()>0)
+            {   
+                   readBuffer = serialPort.readBytes();
+                   numBytes+=readBuffer.length;
+                   peso=peso + new String(readBuffer,0,readBuffer.length);
+            }
+            // Por si acaso va lento, espero 300 ms y vuelvo a intentar leer.
+            try
+            {
+                 Thread.sleep(300);
+            } catch (InterruptedException ex)
+            {
+                 SystemOut.print(ex);
+            }
+            while (serialPort.getInputBufferBytesCount()>0)
+            {   
+                   readBuffer = serialPort.readBytes();
+                   numBytes+=readBuffer.length;
+                   peso=peso + new String(readBuffer,0,readBuffer.length);
+            }
         }
     }
-    else
-    {
-     // Para pruebas
-        readBuffer=Formatear.HexToBytes("02412020202020342C350d");
-        peso=new String(readBuffer);
-        numBytes=peso.length();
-        // Fin de Pruebas
-     }
-   
+//    else
+//    {
+//     // Para pruebas
+//        readBuffer=Formatear.HexToBytes("02412020202020342C350d");
+//        peso=new String(readBuffer);
+//        numBytes=peso.length();
+//        // Fin de Pruebas
+//     }
+//   
     readBuffer=peso.getBytes();
    
     if (swDebug)
@@ -271,7 +341,8 @@ public class leePeso
           System.out.println("TIPO RAW");
         int posIni=startChar>0?startChar:0;
         if (posIni>=numBytes)
-            return -1;
+            throw new SerialPortException(puerto, "", "Numero bytes leidos ("+numBytes+
+                ") inferior Posicion Incial"+posIni);
         int posFin=endChar>0?endChar:0;
         int n;
         if (peso.indexOf(".")==-1) // No hay puntos, x si acaso remplazo las , x .
@@ -287,9 +358,7 @@ public class leePeso
         }
         if (posIni==0)
         {
-            if (swDebug)
-                System.out.println("No encontrado ningún digito en la cadena");
-            return -1;
+            throw new SerialPortException(puerto, "", "No encontrado ningún digito en la cadena");
         }
         for (n=posIni+1;n<numBytes;n++)
         {
@@ -313,7 +382,7 @@ public class leePeso
         {
           if (swDebug)
                  SystemOut.print(k);
-          return -1;
+           throw new SerialPortException(puerto, "", "Error al pasar string "+peso+ " a numero");
         }
     }
       if (swDebug)
@@ -322,24 +391,12 @@ public class leePeso
 //       06024a202020202d312e330d
 //    System.out.println("Leido: "+peso+ " Hex: "+Formatear.StrToHex(peso)+ " N. Car: "+numBytes);
     if (numBytes<12)
-    {
-       if (swDebug)
-          System.out.println("Numero Bytes < 12");
-      return -1;
-    }
+         throw new SerialPortException(puerto, "","Numero Bytes < 12");    
 
     if (readBuffer[0]!=6)
-    {
-        if (swDebug)
-         System.out.println("Byte 0 no es 6");
-      return -1;
-    }
+        throw new SerialPortException(puerto, ""," Byte 0 no es 6");    
     if (readBuffer[11]!=13) // 0D
-    {
-      if (swDebug)
-          System.out.println("Posicion 11 No ES 13. Es: "+readBuffer[11]);
-      return -1;
-    }
+       throw new SerialPortException(puerto, "","Posicion 11 No ES 13. Es: "+readBuffer[11]);    
 //    Formatear.HexToDec("4a");
     int chk=0;
 //    byte chk1,chk2;
@@ -360,7 +417,7 @@ public class leePeso
       return Double.parseDouble(peso.trim());
     } catch (NumberFormatException k)
     {
-      return -1;
+       throw new SerialPortException(puerto, "", "Error al pasar String "+peso+ " a numero");
     }
   }
 

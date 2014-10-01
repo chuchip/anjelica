@@ -235,7 +235,7 @@ public class EntornoUsuario implements Serializable
    {
    
      if (getLikeUsuario()==null && dt!=null)
-         setLikeUsuario(gnu.chu.anjelica.pad.pdusua.getVLikeUsuario(usu_nomb,dt));
+         setLikeUsuario(gnu.chu.anjelica.pad.pdusua.getVLikeUsuario(usuario,dt));
        
      return getLikeUsuario().getString("usu_admdb").equals("S");
     

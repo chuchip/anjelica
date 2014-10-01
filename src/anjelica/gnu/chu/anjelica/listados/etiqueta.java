@@ -11,7 +11,6 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import net.sf.jasperreports.engine.*;
 import net.sourceforge.barbecue.Barcode;
 import net.sourceforge.barbecue.BarcodeImageHandler;
@@ -498,7 +497,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
       }
   }
     
-  public void listarPagina(DatosTabla dt,java.util.Date fechaEnv,String paiNaci, 
+  public void listarPagina(DatosTabla dt,java.util.Date fechaEnv,
         Cgrid jt, CodigoBarras codBarras ) throws Exception
   { 
         
@@ -518,7 +517,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
       
          mp.put("emp_nif",EU.lkEmpresa.getString("emp_nif"));
          mp.put("emp_nurgsa",EU.lkEmpresa.getString("emp_nurgsa"));
-         mp.put("pai_nomb",paiNaci);
+//         mp.put("pai_nomb",paiNaci);
          mp.put("deo_fecha",fechaEnv);
         
         String img="";

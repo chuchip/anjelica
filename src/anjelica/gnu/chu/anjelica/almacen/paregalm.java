@@ -22,7 +22,7 @@ package gnu.chu.anjelica.almacen;
  * @version 2.0 - Fecha 01/03/2007
  */
 
-import gnu.chu.anjelica.compras.MantAlbComCarne;
+import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.camposdb.cliPanel;
 import gnu.chu.camposdb.proPanel;
@@ -842,7 +842,7 @@ public class paregalm extends CPanel {
                     acc_numeE.requestFocus();
                     return false;
                 }
-                if (!MantAlbComCarne.getCabeceraAlb(EU.em_cod,
+                if (!MantAlbCom.getCabeceraAlb(EU.em_cod,
                         acc_anoE.getValorInt(), acc_serieE.getText(),
                         acc_numeE.getValorInt(), dtStat)) {
                     mensajeErr("Albaran NO existe");

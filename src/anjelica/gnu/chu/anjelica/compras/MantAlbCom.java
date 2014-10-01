@@ -2983,10 +2983,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     verDatos(dtCons);
     nav.pulsado=navegador.NINGUNO;
   }
-  public static String getNombreClase()
-  {
-      return  "gnu.chu.anjelica.compras.pdalbco2";
-  }
+  
   public void setAccCodi(String accNume)
   {
       acc_numeE.setText(accNume);

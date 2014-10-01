@@ -43,7 +43,9 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.actStkPart;
+import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
+import gnu.chu.anjelica.compras.MantAlbComPlanta;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantArticulos;
@@ -84,6 +86,8 @@ import javax.swing.event.ListSelectionListener;
 
 public class MantDesp extends ventanaPad implements PAD
 {
+    int tipoEmp; // Tipo Empresa (Sala Despiece o Plantacion)
+    private boolean isEmpPlanta=false; // Indica si la empresa es tipo Plantacion
     private StkPartid stkPartid;
     private String tablaCab="desporig";
     private String tablaEnt="desorilin";
@@ -265,6 +269,8 @@ public class MantDesp extends ventanaPad implements PAD
     public void afterConecta() throws SQLException, ParseException {
         ctProd = ct;
         dtProd = new DatosTabla(ctProd);
+        tipoEmp=pdconfig.getTipoEmpresa(EU.em_cod, dtStat);
+        isEmpPlanta=tipoEmp==pdconfig.TIPOEMP_PLANTACION;
         prv_codiE.iniciar(dtProd, this, vl, EU);
         pro_codiE.setProNomb(pro_nocabE);
         pro_codiE.iniciar(dtProd, this, vl, EU);
@@ -788,9 +794,18 @@ public class MantDesp extends ventanaPad implements PAD
                     if (utdesp.getAccNume() != 0)
                     {
                         ejecutable prog;
-                        if ((prog = jf.gestor.getProceso(MantAlbComCarne.getNombreClase())) == null)
-                            return;
-                        MantAlbComCarne cm = (MantAlbComCarne) prog;
+                        if (isEmpPlanta)
+                        {
+                           if ((prog = jf.gestor.getProceso(MantAlbComPlanta.getNombreClase())) == null)
+                              return;
+                        }
+                        else
+                        {
+                           if ((prog = jf.gestor.getProceso(MantAlbComCarne.getNombreClase())) == null)
+                              return;
+                        }
+                        
+                        MantAlbCom cm = (MantAlbCom) prog;
                         if (cm.inTransation())
                         {
                             msgBox("Mantenimiento Compras ocupado. No se puede realizar la busqueda");
@@ -887,10 +902,7 @@ public class MantDesp extends ventanaPad implements PAD
         if (!pro_numindE.hasCambio() && !pro_loteE.hasCambio()
             && !pro_codiE.hasCambio() && !deo_serlotE.hasCambio()
             && !deo_ejelotE.hasCambio())
-//        deo_kilosE.getValorDec() != 0)
-        {
             return false;
-        }
 
         resetCambioLineaCab();
         try
@@ -898,26 +910,14 @@ public class MantDesp extends ventanaPad implements PAD
             stkPartid=buscaPeso();
             if (stkPartid.hasError())
                 return true;
-//            if (stkPartid.getUnidades() == 1)
-//            {
-                jtCab.setValor(stkPartid.getKilos(), JTCAB_KILOS);
-                deo_kilosE.setValorDec(stkPartid.getKilos());
-              return true; 
-              
-//            if (stkPartid.getUnidades() >= 0)
-//                return stkPartid.getUnidades();
-
-//            }
-//            if (stkPartid.getUnidades() > 1)
-//                mensajeErr("Individuo con mas de una unidad. Imposible despiezar");
-
-           
-            
+            jtCab.setValor(stkPartid.getKilos(), JTCAB_KILOS);
+            deo_kilosE.setValorDec(stkPartid.getKilos());
+            return true;                                      
         } catch (Exception k)
         {
             Error("Error al buscar Peso", k);
         }
-        return true;
+        return false;
     }
     /*
      * Devuelve clase StkPartid con el peso del individuo de origen activo

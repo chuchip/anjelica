@@ -847,4 +847,8 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
       v.add(dtCon1.getString("acp_canind"));
       return v;
      }
+     public static String getNombreClase()
+     {
+        return  "gnu.chu.anjelica.compras.MantAlbComCarne";
+     }
 } 

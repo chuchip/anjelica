@@ -22,9 +22,12 @@
  */
 package gnu.chu.camposdb;
 
+import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
+import gnu.chu.anjelica.compras.MantAlbComPlanta;
 import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.utildesp;
+import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.CCheckBox;
 import gnu.chu.controles.CPanel;
 import gnu.chu.interfaces.ejecutable;
@@ -43,6 +46,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLayeredPane;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -167,13 +172,28 @@ public class DatTrazPanel extends CPanel {
               }
               else
               {
-                  if ((prog=papa.jf.gestor.getProceso(MantAlbComCarne.getNombreClase()))==null)
-                      return;
-                  MantAlbComCarne cm=(MantAlbComCarne) prog;
-                  cm.PADQuery();
-                  cm.setAccCodi(acc_numeE.getText());
-                  cm.ej_query();
-                  papa.jf.gestor.ir(cm); 
+                  try      
+                  {
+                      if (pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION)
+                      {
+                          if ((prog = papa.jf.gestor.getProceso(MantAlbComPlanta.getNombreClase())) == null)
+                              return;
+                      }
+                      else
+                      {
+                          if ((prog = papa.jf.gestor.getProceso(MantAlbComCarne.getNombreClase())) == null)
+                              return;
+                      }
+                      
+                      MantAlbCom cm = (MantAlbCom) prog;
+                      cm.PADQuery();
+                      cm.setAccCodi(acc_numeE.getText());
+                      cm.ej_query();
+                      papa.jf.gestor.ir(cm);
+                  } catch (SQLException ex)
+                  {
+                      papa.Error("Error al ir albaran compras",ex);
+                  }
               }
           }
       });

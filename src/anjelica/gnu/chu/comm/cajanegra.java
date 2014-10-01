@@ -9,12 +9,14 @@ import java.awt.*;
 import java.sql.*;
 import java.awt.event.*;
 import javax.swing.*;
-//import javax.comm.*;
-import gnu.io.*;
+import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
 
-public class cajanegra extends ventana implements SerialPortEventListener
+
+public class cajanegra extends ventana //implements SerialPortEventListener
 {
-  CommPortIdentifier portId;
+  
   SerialPort serialPort;
   InputStream inputStream;
   OutputStream outputStream;
@@ -182,14 +184,14 @@ private void jbInit() throws Exception
 }
   public void iniciarVentana()
   {
-    Enumeration en =CommPortIdentifier.getPortIdentifiers();
-    String puerto;
-    while (en.hasMoreElements())
-    {
-      portId = (CommPortIdentifier)  en.nextElement();
-      puerto=portId.getName();
-      puertoE.addItem(puerto,puerto);
-    }
+//    String en[] = SerialPortList.getPortNames("", "");
+//    String puerto;
+//    while (en.hasMoreElements())
+//    {
+//      portId = (SerialPortList)  en.nextElement();
+//      puerto=portId.getName();
+//      puertoE.addItem(puerto,puerto);
+//    }
     bitsDatosE.addItem(""+SerialPort.DATABITS_5,""+SerialPort.DATABITS_5);
     bitsDatosE.addItem(""+SerialPort.DATABITS_6,""+SerialPort.DATABITS_6);
     bitsDatosE.addItem(""+SerialPort.DATABITS_7,""+SerialPort.DATABITS_7);
@@ -245,56 +247,29 @@ private void jbInit() throws Exception
     {
       inputStream.close();
       outputStream.close();
-      serialPort.close();
+      serialPort.closePort();
     }
-    portId = CommPortIdentifier.getPortIdentifier(puertoE.getValor());
-    serialPort = (SerialPort) portId.open("gnu.chu.comm.cajanegra", 2000);
-    inputStream = serialPort.getInputStream();
-    outputStream = serialPort.getOutputStream();
-    serialPort.notifyOnDataAvailable(true);
-    serialPort.setFlowControlMode(Integer.parseInt(flowControlE.getValor()));
+//    portId = CommPortIdentifier.getPortIdentifier(puertoE.getValor());
+//    serialPort = (SerialPort) portId.open("gnu.chu.comm.cajanegra", 2000);
+//    inputStream = serialPort.getInputStream();
+//    outputStream = serialPort.getOutputStream();
+//    serialPort.notifyOnDataAvailable(true);
+//    serialPort.setFlowControlMode(Integer.parseInt(flowControlE.getValor()));
+//
+//    serialPort.setSerialPortParams(velocidadE.getValorInt(),
+//                                   Integer.parseInt(bitsDatosE.getValor()),
+//                                   Integer.parseInt(bitsStopE.getValor()),
+//                                   Integer.parseInt(paridadE.getValor()));
 
-    serialPort.setSerialPortParams(velocidadE.getValorInt(),
-                                   Integer.parseInt(bitsDatosE.getValor()),
-                                   Integer.parseInt(bitsStopE.getValor()),
-                                   Integer.parseInt(paridadE.getValor()));
-
     serialPort.setFlowControlMode(Integer.parseInt(flowControlE.getValor()));
-    serialPort.addEventListener(this);
+//    serialPort.addEventListener(this);
   } catch (Exception k)
   {
     Error("Error al Establecer comunicacion",k);
   }
   }
 
-  public void serialEvent(SerialPortEvent event) {
-       switch(event.getEventType()) {
-       case SerialPortEvent.BI:
-       case SerialPortEvent.OE:
-       case SerialPortEvent.FE:
-       case SerialPortEvent.PE:
-       case SerialPortEvent.CD:
-       case SerialPortEvent.CTS:
-       case SerialPortEvent.DSR:
-       case SerialPortEvent.RI:
-       case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
-           break;
-       case SerialPortEvent.DATA_AVAILABLE:
-           int numBytes;
-           byte[] readBuffer = new byte[20];
-           try {
-               while (inputStream.available() > 0) {
-                   numBytes = inputStream.read(readBuffer);
-                   texEntHexE.append(Formatear.StrToHex(new String(readBuffer,0,numBytes)));
-                   texEntStrE.append(new String(readBuffer,0,numBytes));
-               }
-             } catch (IOException k)
-             {
-               Error("Error al escribir", k);
-             }
-           break;
-       }
-   }
+  
 
   void Benviar_actionPerformed(ActionEvent e) {
     try {
@@ -324,7 +299,7 @@ private void jbInit() throws Exception
       {
         inputStream.close();
         outputStream.close();
-        serialPort.close();
+        serialPort.closePort();
       }
     }
     catch (Exception k)

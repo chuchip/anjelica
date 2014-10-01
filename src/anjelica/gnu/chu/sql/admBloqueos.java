@@ -1,11 +1,30 @@
 package gnu.chu.sql;
-
+/**
+ *
+ * <p>Título: admBloqueos </p>
+ * <p>Descripción: Administrador tabla bloqueos</p>
+ * <p>Empresa: miCasa</p>
+ *  <p>Copyright: Copyright (c) 2005-2013
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los términos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * @author chuchiP
+ * @version 1.0
+ */
 import gnu.chu.utilidades.*;
 import java.awt.*;
 import gnu.chu.Menu.*;
 import gnu.chu.controles.*;
 import javax.swing.BorderFactory;
-import java.sql.*;
 import java.awt.event.*;
 import java.util.*;
 import java.sql.*;
@@ -48,8 +67,7 @@ public class admBloqueos extends ventana
           setErrorInit(true);
       }
       catch (Exception e) {
-        e.printStackTrace();
-        setErrorInit(true);
+        ErrorInit(e);
       }
     }
 
@@ -64,8 +82,7 @@ public class admBloqueos extends ventana
         jbInit();
       }
       catch (Exception e) {
-        e.printStackTrace();
-        setErrorInit(true);
+       ErrorInit(e);
       }
     }
 
@@ -105,13 +122,13 @@ public class admBloqueos extends ventana
     conecta();
     dtAdd=new DatosTabla(ctUp);
 
-    Vector v=new Vector();
-    v.addElement("Usuario"); // 0
-    v.addElement("Terminal"); // 1
-    v.addElement("Fecha"); // 2
-    v.addElement("Hora"); // 3
-    v.addElement("Programa"); // 4
-    v.addElement("Registro"); // 5
+    ArrayList v=new ArrayList();
+    v.add("Usuario"); // 0
+    v.add("Terminal"); // 1
+    v.add("Fecha"); // 2
+    v.add("Hora"); // 3
+    v.add("Programa"); // 4
+    v.add("Registro"); // 5
     jt.setCabecera(v);
     jt.setAnchoColumna(new int[]{70,70,90,60,150,150});
     jt.setAlinearColumna(new int[]{0,0,1,1,0,0});

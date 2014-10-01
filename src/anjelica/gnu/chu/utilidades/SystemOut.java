@@ -31,7 +31,7 @@ public class SystemOut extends PrintStream implements Serializable
   public void println(char s[])
   {
     if (salidaErr)
-        ventana.logger.error(s+"\n");
+        ventana.logger.debug(s+"\n");
     else
         ventana.logger.trace(s+"\n");        
   }
@@ -39,7 +39,7 @@ public class SystemOut extends PrintStream implements Serializable
   public void println(String s)
   {
     if (salidaErr)
-        ventana.logger.error(s+"\n");
+        ventana.logger.debug(s+"\n");
     else
         ventana.logger.trace(s+"\n");        
   }
@@ -47,7 +47,7 @@ public class SystemOut extends PrintStream implements Serializable
   public void print(char s[])
   {
     if (salidaErr)
-        ventana.logger.error(s);
+        ventana.logger.debug(s);
     else
         ventana.logger.trace(s);
   }
@@ -55,14 +55,14 @@ public class SystemOut extends PrintStream implements Serializable
   public void print(String s)
   {
    if (salidaErr)
-        ventana.logger.error(s);
+        ventana.logger.debug(s);
     else
         ventana.logger.trace(s);
   }
   public void print(Object o)
   {
   if (salidaErr)
-        ventana.logger.error(o);
+        ventana.logger.debug(o);
     else
         ventana.logger.trace(o);
   }

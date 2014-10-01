@@ -2,8 +2,11 @@ package gnu.chu.anjelica.almacen;
 
 import gnu.chu.utilidades.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
+import gnu.chu.anjelica.compras.MantAlbComPlanta;
 import gnu.chu.anjelica.despiece.MantDesp;
+import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.*;
 import java.awt.*;
 import javax.swing.*;
@@ -17,6 +20,8 @@ import java.awt.event.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -42,6 +47,7 @@ import java.util.*;
  */
 public class coarbtraz extends ventana
 {
+  
   TreeSet liDes=new TreeSet();
   TreeSet liCom=new TreeSet();
 //  String serie;
@@ -216,6 +222,7 @@ public class coarbtraz extends ventana
     @Override
    public void iniciarVentana() throws Exception
    {
+       
      Pcondic.setDefButton(Baceptar);
      Pcondic.setButton(KeyEvent.VK_F4, Baceptar);
 //     emp_codiE.setValorInt(1);
@@ -238,9 +245,15 @@ public class coarbtraz extends ventana
      jtCom.addMouseListener(new MouseAdapter() {
             @Override
           public void mouseClicked(MouseEvent e) {
-              if (e.getClickCount()<2 || jtCom.isVacio())
-                  return;
-              irCompra(jtCom.getValString(0));
+                try
+                {
+                    if (e.getClickCount()<2 || jtCom.isVacio())
+                        return;
+                    irCompra(jtCom.getValString(0));
+                } catch (SQLException ex)
+                {
+                    Error("Error al ir a compra",ex);
+                }
           }
      });
       jtDes.addMouseListener(new MouseAdapter() {
@@ -270,12 +283,22 @@ public class coarbtraz extends ventana
     cm.ej_query();
     jf.gestor.ir(cm);
    }
-   void irCompra(String coment)
+   void irCompra(String coment) throws SQLException
    {
        ejecutable prog;
-       if ((prog=jf.gestor.getProceso(MantAlbComCarne.getNombreClase()))==null)
-         return;
-       MantAlbComCarne cm=(MantAlbComCarne) prog; 
+       if (pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION)      
+        {
+           if ((prog = jf.gestor.getProceso(MantAlbComPlanta.getNombreClase())) == null)
+              return;
+        }
+        else
+        {
+           if ((prog = jf.gestor.getProceso(MantAlbComCarne.getNombreClase())) == null)
+              return;
+        }
+
+       MantAlbCom cm = (MantAlbCom) prog;
+    
        if (cm.inTransation())
        {
             msgBox("Mantenimiento Albaran de Compras esta en transacion. Imposible ejecutar consulta");

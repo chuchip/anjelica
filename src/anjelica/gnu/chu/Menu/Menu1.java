@@ -81,7 +81,7 @@ public class Menu1 extends Principal
     try {
         jbInit();
     } catch (Throwable j) {
-      SystemOut.print(j);
+      j.printStackTrace();
       System.exit(1);
     }
   }
@@ -153,7 +153,7 @@ public class Menu1 extends Principal
     }
     catch (Throwable k)
     {
-      SystemOut.print(k);
+      k.printStackTrace();
       System.out.println("No puedo redirigir la salida ..."+k.getMessage());
     }
     ventana.logger.debug("Iniciado Menu con usuario: "+Usuario.usuario);   

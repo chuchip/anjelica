@@ -2499,7 +2499,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
             SERIE,deo_codiE.getValorInt(),1,
                 1,
                 0);
-     etiq.listarPagina(dtStat,grd_fechaE.getDate(),utdesp.nacidoE,
+     etiq.listarPagina(dtStat,grd_fechaE.getDate(),
          jtSal,codBarras);
      mensajeErr("Etiquetas impresas");     
  }
@@ -2914,3 +2914,4 @@ class actionPerforMDT implements ActionListener
 //   System.out.println("pulsado: "+proCodi);
  }
 }
+ 

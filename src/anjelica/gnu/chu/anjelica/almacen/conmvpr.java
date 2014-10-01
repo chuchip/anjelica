@@ -22,10 +22,13 @@ package gnu.chu.anjelica.almacen;
  */
 
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
+import gnu.chu.anjelica.compras.MantAlbComPlanta;
 import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.pdprvades;
 import gnu.chu.anjelica.pad.MantRepres;
+import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.camposdb.empPanel;
 import gnu.chu.camposdb.proPanel;
@@ -39,6 +42,8 @@ import java.awt.event.*;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 
 
@@ -548,19 +553,32 @@ public class conmvpr extends ventana
               }
               if (jt.getValString(3).equals("CO"))
               {
-                 if ((prog=jf.gestor.getProceso(MantAlbComCarne.getNombreClase()))==null)
-                    return;
-                 MantAlbComCarne cm=(MantAlbComCarne) prog; 
-                 if (cm.inTransation())
-                 {
-                    msgBox("Mantenimiento Albaranes de Compras ocupado. No se puede realizar la busqueda");
-                    return;
-                 }
-                 cm.PADQuery();
-                 int n=coment.indexOf("(")+1;
-                 cm.setAccCodi(coment.substring(n,coment.indexOf(")")));
-                 cm.ej_query();
-                 jf.gestor.ir(cm);
+                  try {
+                      if (pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION)
+                      {
+                          if ((prog = jf.gestor.getProceso(MantAlbComPlanta.getNombreClase())) == null)
+                              return;
+                      }
+                      else
+                      {
+                          if ((prog = jf.gestor.getProceso(MantAlbComCarne.getNombreClase())) == null)
+                              return;
+                      }
+                      
+                      MantAlbCom cm = (MantAlbCom) prog;
+                      if (cm.inTransation())
+                      {
+                          msgBox("Mantenimiento Albaranes de Compras ocupado. No se puede realizar la busqueda");
+                          return;
+                      }
+                      cm.PADQuery();
+                      int n=coment.indexOf("(")+1;
+                      cm.setAccCodi(coment.substring(n,coment.indexOf(")")));
+                      cm.ej_query();
+                      jf.gestor.ir(cm);
+                  } catch (SQLException ex) {
+                      Error("Error al ir al programa",ex);
+                  }
               }   
           }
       });

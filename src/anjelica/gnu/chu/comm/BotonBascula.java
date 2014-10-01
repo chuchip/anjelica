@@ -87,9 +87,7 @@ public class BotonBascula extends CButtonMenu{
   {
       if (ifBascula==null)
       {
-         for (int n = 0; n < numBasculas; n++) {
-           EU.getBascula().getPesoBascula(n);  
-         }
+         EU.getBascula().getPesoBascula(bascActiva);  
          ifBascula = new IFBascula(EU.getBascula().getClassleePeso(bascActiva));
        
          papa.vl.add(ifBascula,new Integer(1));

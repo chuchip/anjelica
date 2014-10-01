@@ -676,11 +676,18 @@ public class ventana extends CInternalFrame implements ejecutable
          if (res==mensajes.YES)
          {
              resetBloqueo(dt,tabla,registro);
+              if (jf != null)
+              {
+                  jf.ht.clear();
+                  jf.ht.put("%t", tabla);
+                  jf.ht.put("%r", registro);
+                  jf.guardaMens("BL", jf.ht);
+              }
              msgBloqueo = "Registro desbloqueado";
              return false;
          }
       }
-     
+      dt.select(s);
       return true;
     }
     else

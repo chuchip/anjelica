@@ -92,7 +92,7 @@ order by 1]]>
 					<textElement>
 						<font isUnderline="true"/>
 					</textElement>
-					<text><![CDATA[Total Pale]]></text>
+					<text><![CDATA[Total Palet]]></text>
 				</staticText>
 				<textField>
 					<reportElement x="98" y="0" width="30" height="16"/>
