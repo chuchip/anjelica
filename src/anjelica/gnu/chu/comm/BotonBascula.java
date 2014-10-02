@@ -31,10 +31,10 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.event.InternalFrameEvent;
 
 
 public class BotonBascula extends CButtonMenu{
+  double pesoCaja=0;
   IFBascula ifBascula;
   int bascActiva=0;
   EntornoUsuario EU;
@@ -77,11 +77,16 @@ public class BotonBascula extends CButtonMenu{
     }
      public void setPesoCajas(double pesoCajas)
     {
+        this.pesoCaja=pesoCajas;
          for (int n = 0; n < numBasculas; n++) {
             EU.getBascula().getClassleePeso(n).setPesoCajas(pesoCajas);
             if (ifBascula!=null)
                 ifBascula.setPesoCaja(pesoCajas);
         }
+    }
+    public double getPesoCajas()
+    {
+        return pesoCaja;
     }
   void verBascula()
   {

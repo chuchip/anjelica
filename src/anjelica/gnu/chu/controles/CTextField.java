@@ -313,6 +313,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
               }
               else
                 leePesoBasc(0);
+              
               break;
             case KeyEvent.VK_ESCAPE:
             case KeyEvent.VK_F2:
@@ -1848,10 +1849,17 @@ String procesaTecla()
 
   protected void procesaEnter(KeyEvent ke)
   {
+    afterProcesaEnter();
     if (gridEdit != null)
       gridEdit.procesaEnter(ke);
   }
-
+  /**
+   * Rutina perezosa para poder hacer algo cuando  se le da al Enter
+   */
+  public void afterProcesaEnter()
+  {
+      
+  }
   public void setGridEditable(CGridEditable gridEdit)
   {
     this.gridEdit=gridEdit;

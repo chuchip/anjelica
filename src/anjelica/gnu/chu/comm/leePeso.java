@@ -35,7 +35,7 @@ import jssc.SerialPortException;
  */
 public class leePeso
 {
-  double pesoReal=0;
+  double pesoReal=-1;
   double pesoCaja=0,tara=0;
   int numeroCajas=0;
  
@@ -129,6 +129,12 @@ public class leePeso
            System.out.println("Puerto: "+puerto+
                    " Velocidad: "+velocidad+" bitsDatos: "+bitsDatos+
                             " BitsStop: "+bitsStop+" paridad: "+paridad+" FLOWCONTROL: "+flowControl);
+        if (puerto.equals("null"))
+        {
+            if (swDebug)
+                System.out.println("Puerto deshabilitado");
+            return;
+        }
         serialPort = new SerialPort(puerto);
         if (! serialPort.openPort())
             throw new SerialPortException(puerto,"No se pudo abrir el puerto","");
@@ -151,7 +157,8 @@ public class leePeso
                      {
                         if (event.getEventValue() >5)
                         {
-                            pesoReal= leeDatos(tipo);
+                            double peso= leeDatos(tipo);
+                            pesoReal=peso;
                         }
                      }
                      else    if(event.isCTS())
@@ -246,12 +253,26 @@ public class leePeso
    */
   public  double getPeso(boolean desTarado)
   {
-    if (!swInic || serialPort==null) 
-       return 0;// 4.7 - getPesoDescontar(); 
+    if (! swInic)
+        return 0;
+    if ( serialPort==null) 
+    {
+        return 0;
+//        String valor=mensajes.mensajeGetTexto("Introduzca peso de bascula", "Introduzca peso");
+//        if (valor==null)
+//            return 0;
+//        try {
+//            return Double.parseDouble(valor.trim());
+//        } catch (NumberFormatException k)
+//        {
+//            return 0;
+//        }        
+    }
+       
        
     try {
       String lect;
-      pesoReal=0;
+      pesoReal=-1;
       datosDisponi=false;
       lect=cadLeePeso==null?"0224323403":cadLeePeso;
       if (swDebug)
@@ -271,7 +292,7 @@ public class leePeso
       {    
           if (swDebug)
               System.out.println("en getPeso. Intento: "+nIntentos+" Peso Real: "+pesoReal);
-          if (pesoReal>0)
+          if (pesoReal>=0)
             return pesoReal - (double) (desTarado? getPesoDescontar():0);
           Thread.sleep(500);
           nIntentos--;

@@ -96,6 +96,7 @@ import javax.swing.event.ListSelectionListener;
  
 public class pdalbara extends ventanaPad  implements PAD
 {  
+  private boolean pesoManual=false; // Indica si se restara peso de cajas al darle enter en campo PESO.
   private boolean swCanti=false;
   private boolean isEmpPlanta=false;
   public final static String TABLACAB="v_albavec";
@@ -422,7 +423,19 @@ public class pdalbara extends ventanaPad  implements PAD
   CTextField avp_serlotE = new CTextField(Types.CHAR, "X", 1);
   CTextField avp_numparE = new CTextField(Types.DECIMAL, "####9");
   CTextField avp_numindE = new CTextField(Types.DECIMAL, "###9");
-  CTextField avp_cantiE = new CTextField(Types.DECIMAL, "---,--9.99");
+  CTextField avp_cantiE = new CTextField(Types.DECIMAL, "---,--9.99")
+  {
+      public void afterProcesaEnter()
+      {
+          if (! avp_cantiE.hasCambio())
+              return;          
+          if (pesoManual)
+          {
+              avp_cantiE.setValorDec(avp_cantiE.getValorDec()-(avp_numuniE.getValorInt()*botonBascula.getPesoCajas()));
+              avp_cantiE.resetCambio();
+          }
+      }
+  };
   CTextField avp_numlinE = new CTextField(Types.DECIMAL, "##9");
   CLabel cLabel17 = new CLabel();
   CLabel cli_pobleE = new CLabel();
@@ -1200,6 +1213,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     
     isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
+    pesoManual=isEmpPlanta;
     dtAdd.setConexion(ctUp);
     cli_codiE.setZona(P_ZONA);
     cli_codiE.iniciar(dtStat, this, vl, EU);

@@ -5978,22 +5978,22 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        jtRecl.setMinimumSize(new Dimension(752, 315));
        jtRecl.setPreferredSize(new Dimension(752, 315));
 
-       Vector v = new Vector();
-       v.addElement("Producto"); //0
-       v.addElement("Nombre"); // 1
-       v.addElement("Indiv."); // 2
-       v.addElement("Unds"); // 3
-       v.addElement("Peso"); // 4
-       v.addElement("Importe"); // 5
-       v.addElement("Fec.Recl"); // 6
-       v.addElement("Estado"); // 7
-       v.addElement("Fec.Resol"); // 8
-       v.addElement("Tipo Reg."); // 9 Tipo Regularizaci�n
-       v.addElement("Trasp."); // 10 Traspasado
-       v.addElement("Cliente"); // 11 Cod. Cliente
-       v.addElement("Nomb.Cliente"); // 12 Nombre Cliente
-       v.addElement("Coment"); // 13
-       v.addElement("N.Vert"); // 14
+       ArrayList v = new ArrayList();
+       v.add("Producto"); //0
+       v.add("Nombre"); // 1
+       v.add("Indiv."); // 2
+       v.add("Unds"); // 3
+       v.add("Peso"); // 4
+       v.add("Importe"); // 5
+       v.add("Fec.Recl"); // 6
+       v.add("Estado"); // 7
+       v.add("Fec.Resol"); // 8
+       v.add("Tipo Reg."); // 9 Tipo Regularizaci�n
+       v.add("Trasp."); // 10 Traspasado
+       v.add("Cliente"); // 11 Cod. Cliente
+       v.add("Nomb.Cliente"); // 12 Nombre Cliente
+       v.add("Coment"); // 13
+       v.add("N.Vert"); // 14
        jtRecl.setCabecera(v);
        jtRecl.setAnchoColumna(new int[] {70, 120, 40, 40,65, 65,60,30,60,180,30,50,150,150,50});
        jtRecl.setAlinearColumna(new int[]{2, 0, 2, 2,2,2, 1,1,1,0,1,2,0,0,2});
