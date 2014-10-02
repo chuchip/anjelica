@@ -405,7 +405,7 @@ CIF: B26501437]]></text>
 				<imageExpression><![CDATA[$P{logotipo}]]></imageExpression>
 			</image>
 			<textField pattern="000000" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="258" y="165" width="92" height="17" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="258" y="165" width="109" height="17" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="2.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

@@ -95,7 +95,7 @@ order by 1]]>
 					<text><![CDATA[Total Palet]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="98" y="0" width="30" height="16"/>
+					<reportElement x="98" y="0" width="59" height="16"/>
 					<box>
 						<topPen lineWidth="2.0"/>
 						<leftPen lineWidth="0.0"/>
@@ -105,7 +105,7 @@ order by 1]]>
 					<textElement>
 						<font isUnderline="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{avl_numpal}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{avc_nume}+"-"+$F{avl_numpal}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="239" y="0" width="29" height="16"/>
