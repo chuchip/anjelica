@@ -1652,8 +1652,7 @@ public class CGridEditable extends Cgrid implements CQuery {
   }
 
   void procesaEnter(KeyEvent ke)
-  {
-
+  {    
     if (ke.isAltDown() || ke.isControlDown() || ke.isShiftDown())
       return;
     int ultColAct = getUltColAct();
