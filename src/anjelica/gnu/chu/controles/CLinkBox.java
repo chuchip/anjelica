@@ -1099,6 +1099,10 @@ public class CLinkBox
   {
     return Integer.parseInt(getTexto(text));
   }
+  public CTextField getTextField()
+  {
+      return texto;
+  }
 
   /**
    * Devuelve el texto del combo sobre el texto

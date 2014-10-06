@@ -73,6 +73,7 @@ public class proPanel extends CPanel
   private CTextField prp_partE;
   private CTextField prp_indiE;
   private CTextField prp_pesoE;
+  private CTextField alm_codiE;
   boolean aceptaNulo = true;
   boolean inHistorico = false;
   boolean swIniciar = false;
@@ -412,8 +413,7 @@ public class proPanel extends CPanel
   {
     pro_codiE.setColumnaAlias(alias);
   }
-
-  /**
+ /**
    * Establece los Campos que definen el Lote.
    * Les pone un KeyListener para que al pulsar F3 salga la ventana de ayuda
    * con los lotes disponibles
@@ -427,12 +427,30 @@ public class proPanel extends CPanel
                             CTextField prpPartE,
                             CTextField prpIndiE,CTextField prpPesoE)
   {
+      setCamposLote(prpAnoE,prpSeriE,prpPartE,prpIndiE,prpPesoE,null);
+  }
+  /**
+   * Establece los Campos que definen el Lote.
+   * Les pone un KeyListener para que al pulsar F3 salga la ventana de ayuda
+   * con los lotes disponibles
+   * @param prpAnoE CTextField  
+   * @param prpSeriE CTextField
+   * @param prpPartE CTextField
+   * @param prpIndiE CTextField
+   * @param prpPesoE CTextField
+   * @param almCodiE Almacen
+   */
+  public void setCamposLote(CTextField prpAnoE,CTextField prpSeriE,
+                            CTextField prpPartE,
+                            CTextField prpIndiE,CTextField prpPesoE,CTextField almCodiE)
+  {
     this.prp_anoE=prpAnoE;
    
     this.prp_serieE=prpSeriE;
     this.prp_partE=prpPartE;
     this.prp_indiE=prpIndiE;
     this.prp_pesoE=prpPesoE;
+    this.alm_codiE=almCodiE;
     pro_codiE.setIncluirComodines(false);
     pro_codiE.setAutoNext(false);
     pro_codiE.setTipoCampo(Types.CHAR);
@@ -1364,7 +1382,7 @@ public class proPanel extends CPanel
 
       intfr.setEnabled(false);
       intfr.setFoco(ayuLot);
-      ayuLot.cargaGrid(pro_codiE.getText(),almCodi);
+      ayuLot.cargaGrid(pro_codiE.getText(),alm_codiE==null?almCodi:alm_codiE.getValorInt());
             SwingUtilities.invokeLater(new Thread()
       {
         @Override

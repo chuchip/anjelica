@@ -532,7 +532,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    
     pro_codenE.iniciar(dtStat,this,vl,EU);
     pro_codenE.setCamposLote(eje_numenE,  pro_serenE, pro_lotenE,
-                        pro_indenE, pro_kilenE);
+                        pro_indenE, pro_kilenE,deo_almoriE.getTextField());
     pro_codenE.setProNomb(null);
     pro_nomenE.setEnabled(false);
     pro_serenE.setMayusc(true);
