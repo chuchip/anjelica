@@ -667,7 +667,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20140906)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20141006)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -841,7 +841,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
                        , GridBagConstraints.EAST,GridBagConstraints.VERTICAL,
                        new Insets(0, 5, 0, 0), 0, 0));
 
-    botonBascula = new BotonBascula(EU,this);
+   
     botonBascula.setPreferredSize(new Dimension(50,24));
     botonBascula.setMinimumSize(new Dimension(50,24));
     botonBascula.setMaximumSize(new Dimension(50,24));

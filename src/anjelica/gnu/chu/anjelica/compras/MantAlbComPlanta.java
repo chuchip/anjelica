@@ -4,6 +4,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
+import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;     
 import gnu.chu.utilidades.*;
 import java.awt.*;
@@ -121,7 +122,7 @@ public class MantAlbComPlanta extends MantAlbCom
         }
     };
     
- 
+    botonBascula = new BotonBascula(EU,this);
     acp_canindE.setValorDec(1);    
     acp_feccadE    = new CTextField(Types.DATE,"dd-MM-yyyy");    
     acp_fecproE    = new CTextField(Types.DATE,"dd-MM-yyyy");

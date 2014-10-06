@@ -6,6 +6,7 @@ import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.anjelica.pad.pdprove;
+import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;     
 import gnu.chu.utilidades.*;
 import gnu.chu.winayu.ayuMat;
@@ -225,7 +226,7 @@ public class MantAlbComCarne extends MantAlbCom
     jtDes.setPreferredSize(new Dimension(743, 168));
     jtDes.setAnchoColumna(new int[]{50,70,120,150,150,130,130,130,80,80,80,40,40});
     jtDes.setAlinearColumna(new int[]{2,2,0,0,0,0,0,0,1,1,1,2,2});
-  
+    botonBascula = new BotonBascula(EU,this);
     ArrayList vc1=new ArrayList();
     acp_feccadE.setText("");
 
