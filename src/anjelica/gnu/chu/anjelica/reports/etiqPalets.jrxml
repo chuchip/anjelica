@@ -70,7 +70,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$V{unidPale}]]></textFieldExpression>
 				</textField>
-				<textField pattern="##0.00;-##0.00">
+				<textField pattern="#,##0.00;-#,##0.00">
 					<reportElement x="355" y="4" width="65" height="16"/>
 					<textElement textAlignment="Right">
 						<font isUnderline="false" isStrikeThrough="false"/>
@@ -453,7 +453,7 @@ CIF: B26501437]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
 			</textField>
-			<textField pattern="##0.00;-##0.00" isBlankWhenNull="false">
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="355" y="1" width="65" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
