@@ -324,7 +324,7 @@ public class pdalbara extends ventanaPad  implements PAD
   CTextField pro_nombE = new CTextField(Types.CHAR, "X", 45);
   CTextField avl_numlinE = new CTextField(Types.DECIMAL, "---9");
   CTextField avl_cantiE = new CTextField(Types.DECIMAL, "---,--9.99");
-  CTextField avl_unidE = new CTextField(Types.DECIMAL, "--9");
+  CTextField avl_unidE = new CTextField(Types.DECIMAL, "---9");
   CTextField avl_fecaltE=new CTextField();
   CTextField avl_numpalE=new CTextField(Types.DECIMAL, "##9");
   CTextField avl_prvenE = new CTextField(Types.DECIMAL, "--,--9.99");
@@ -3216,7 +3216,7 @@ public class pdalbara extends ventanaPad  implements PAD
       }
        if (unid!=jt.getValorInt(jt.getSelectedRowDisab(),4))
       {
-          msgBox(("UNIDADES DIFERENTES ENTRE LINEAS E INDIVIDUOS"));
+          msgBox(("UNIDADES DIFERENTES ENTRE LINEAS E INDIVIDUOS"+unid+" != "+jt.getValorInt(jt.getSelectedRowDisab(),4)));
       }
       jtDes.requestFocus(0, 0);
       jtDes.setEnabled(enab);
