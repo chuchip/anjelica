@@ -1,16 +1,27 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * CInternalFrame.java
- *
- * Created on 20-dic-2008, 20:04:17
- */
-
 package gnu.chu.controles;
-
+/**
+ *
+ * <p>Título: CInternalFrame</p>
+ * <p>Descripción: Clase heredada de JInternalFrame con algunas particularidades</p>
+ *
+ * <p>Copyright: Copyright (c) 2008-2012
+ *  <p>  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * </p>
+ * <p>Empresa: miSL</p>
+ * @author chuchi P
+ * @version 1.0
+ */
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -18,10 +29,7 @@ import java.util.*;
 import gnu.chu.interfaces.*;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.SystemOut;
-/**
- *
- * @author cpuente
- */
+
 public class CInternalFrame extends javax.swing.JInternalFrame {
 
     Component focOwer=null;
@@ -101,7 +109,7 @@ public class CInternalFrame extends javax.swing.JInternalFrame {
     @Override
     public void setSelected(boolean b) throws java.beans.PropertyVetoException
     {
-      if (foco==null)
+        if (foco==null)
       {
         if (! b)
           focOwer=this.getFocusOwner();

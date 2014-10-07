@@ -187,8 +187,8 @@ public class AlbVenZR extends ventana {
         " where c.cli_codi = cl.cli_codi " +
         " and c.avc_fecalb >= TO_DATE('" + padre.getFechaInic() + "','dd-MM-yyyy') " +
         " and c.avc_fecalb <= TO_DATE('" + padre.getFechaFinal() + "','dd-MM-yyyy') " +
-        " and cl.zon_codi LIKE '" + zonCodi + "'" +
-        " and cl.rep_codi LIKE '" + repCodi + "'" +
+        " and cl.zon_codi = '" + zonCodi + "'" +
+        " and cl.rep_codi = '" + repCodi + "'" +
         " and c.sbe_codi = "+sbeCodi+
         (padre.getEmpresa()==0?"":" and c.emp_codi = "+padre.getEmpresa())+
         (padre.getSubEmpresa()==0?"":" and c.sbe_codi = "+padre.getSubEmpresa())+

@@ -914,7 +914,7 @@ public class Gestor extends Thread implements Serializable
           ((CInternalFrame)bicho).setVisible(true);
           ((CInternalFrame)bicho).repaint();
           controlaProg(bicho);
-          // A�adir boton a la barra de estado
+          // Añadir boton a la barra de estado
 //          miGestor.apuntar(bicho);
 //          miGestor.ponerBoton(bicho, ((CInternalFrame)bicho).getTitle());
         }
@@ -935,7 +935,7 @@ public class Gestor extends Thread implements Serializable
       fatalError("No existe constructor con esos parametros",e);
     }
     catch( SecurityException e) {
-      fatalError("Imposible acceder a la informaci�n",e);
+      fatalError("Imposible acceder a la información",e);
       java.util.logging.Logger.getLogger(Gestor.class.getName()).log(Level.SEVERE, null, e);
       JOptionPane.showMessageDialog(vl, "Imposible acceder a la información", "Atención", JOptionPane.ERROR_MESSAGE);
     }
