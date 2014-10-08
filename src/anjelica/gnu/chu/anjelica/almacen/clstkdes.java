@@ -1,6 +1,5 @@
 package gnu.chu.anjelica.almacen;
 
-import com.jgoodies.looks.plastic.PlasticInternalFrameUI;
 import gnu.chu.Menu.Principal;
 import gnu.chu.camposdb.empPanel;
 import gnu.chu.camposdb.proPanel;
@@ -21,9 +20,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
 import javax.swing.BorderFactory;
-import javax.swing.JInternalFrame;
 import javax.swing.border.TitledBorder;
-//import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 
 /**
@@ -50,7 +47,7 @@ import javax.swing.border.TitledBorder;
 public class clstkdes extends ventana
 {
   private String filtroEmpr;
-  JInternalFrame ifPru=new JInternalFrame();
+  ventana ifPru=new ventana();
   proPanel pro_codiE=new proPanel();
   prvPanel prv_codiE=new prvPanel();
   String s;
@@ -108,7 +105,6 @@ public class clstkdes extends ventana
     catch (Exception e)
     {
       ErrorInit(e);
-      setErrorInit(true);
     }
   }
 
@@ -127,7 +123,6 @@ public class clstkdes extends ventana
     catch (Exception e)
     {
       ErrorInit(e);
-      setErrorInit(true);
     }
   }
 
@@ -243,10 +238,8 @@ public class clstkdes extends ventana
     filtroEmpr=empPanel.getStringAccesos(dtStat, EU.usuario,true);
     ifPru.setSize(new Dimension(100,100));
     vl.add(ifPru);
-    ifPru.putClientProperty(
-             PlasticInternalFrameUI.IS_PALETTE,
-             Boolean.TRUE);
-//    ((BasicInternalFrameUI)ifPru.getUI()).setNorthPane(null);
+    ifPru.setCabeceraVentana(false);
+        
 
     Pcons.setButton(KeyEvent.VK_F4,Bconsulta);
     String feulin;

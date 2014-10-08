@@ -693,18 +693,15 @@ public class pstockAct extends CPanel
          " group by c.prv_codi,l.pcl_feccad " +
          " UNION ALL "+
 // Pedidos Ventas Pendientes
-         "SELECT 5 as tipsel, sum(pvl_unid)*-1 as  unidades, sum(pvl_kilos) as cantidad, " +
+         "SELECT 5 as tipsel, sum(pvl_unid)*-1 as  unidades, sum(pvl_kilos)*-1 as cantidad, " +
          " l.prv_codi,pvl_feccad as feccad " +
-         "  FROM pedvenc as c, pedvenl as l " +
-         " where c.emp_codi = l.emp_codi" +
-         " and c.eje_nume= l.eje_nume " +
-         " and c.pvc_nume =l .pvc_nume " +
-         " and C.EMP_CODI = " + emp_codi +
+         "  FROM v_pedven as c" +
+         " where C.EMP_CODI = " + emp_codi +
          " and (avc_ano = 0 or pvc_cerra = 0) "+ // Sin Albaran o Albaran sin CERRAR
          (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
-         " and l.pro_codi = " + proCodi +
+         " and c.pro_codi = " + proCodi +
          " AND pvc_fecent <= TO_DATE('" + fecped + "','dd-MM-yyyy')" +
-         " group by l.prv_codi,pvl_feccad "+
+         " group by c.prv_codi,pvl_feccad "+
          " UNION ALL " +
  // Albaranes Compra SIN Cerrar Y CON PEDIDOS
          " select 6 as tipsel, sum(acp_canind)*-1 as unidades,sum(acp_canti)*-1 as cantidad,  "+

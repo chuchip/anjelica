@@ -634,7 +634,7 @@ public class clresstock extends ventana implements  JRDataSource
                 if ( (o = hm.get(llave)) != null)
                   cutValString(o.toString());
                 cantC+=verKilos ? dtAux1.getDouble("cantCompr") : dtAux1.getDouble("unidCompr");
-                cantV+=dtAux1.getDouble("unidVent");
+                cantV+= verKilos? dtAux1.getDouble("cantVent") : dtAux1.getDouble("unidVent");
                 hm.put(llave,cantS+":"+cantC+":"+cantV);
               } while (dtAux1.next());
             }
