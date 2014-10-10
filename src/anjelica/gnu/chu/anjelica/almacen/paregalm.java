@@ -333,6 +333,7 @@ public class paregalm extends CPanel {
         deo_ejelotE.setValorDec(EU.ejercicio);
 //        deo_emplotE.setValorDec(EU.em_cod);
         tir_codiE.setFormato(Types.DECIMAL, "##9", 3);
+       tir_codiE.setAnchoComboDesp(350);
 //     tir_codiE1.setFormato(Types.DECIMAL, "##9", 3);
 
         s = "SELECT * FROM v_motregu ORDER BY tir_codi";
@@ -795,15 +796,11 @@ public class paregalm extends CPanel {
 
             afeStk = actAfeStk(dtStat, tir_codiE.getValorInt());
 
-            if (!afeStk.equals("=")) {
-                if (stp_unactE.getValorInt() == 0) {
-                    mensajeErr("Introduzca Unidades de Regularizacion");
+            if (!afeStk.equals("="))
+            {
+                if (stp_unactE.getValorInt() == 0 && deo_kilosE.getValorDec() == 0 ) {
+                    mensajeErr("Introduzca Unidades o kilos de Regularizacion");
                     stp_unactE.requestFocus();
-                    return false;
-                }
-                if (deo_kilosE.getValorDec() == 0) {
-                    mensajeErr("Introduzca Kilos de Regularizacion");
-                    deo_kilosE.requestFocus();
                     return false;
                 }
                 if (rgs_traspE.isSelected() && pro_codiE.hasControlIndiv() )

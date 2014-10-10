@@ -111,7 +111,7 @@ public class pdregalm extends ventanaPad implements PAD
    {
      iniciarFrame();
      this.setSize(new Dimension(583, 562));
-     this.setVersion("2012-03-16");
+     this.setVersion("2014-10-10");
      Pprinc.setDefButton(Baceptar);
      Pprinc.setDefButtonDisable(false);
      Pprinc.setLayout(null);
@@ -233,6 +233,7 @@ public class pdregalm extends ventanaPad implements PAD
    linPantE.setDependePadre(false);
    pRegAlm.iniciar(dtCon1);
    tir_codiE1.setFormato(Types.DECIMAL, "##9", 3);
+   tir_codiE1.setAnchoComboDesp(450);
 //     tir_codiE1.setFormato(Types.DECIMAL, "##9", 3);
 
    s = "SELECT * FROM v_motregu ORDER BY tir_codi";
