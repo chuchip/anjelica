@@ -765,7 +765,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
           if (gridEdit.campos.get(n1)==this)
             nCol=n1;
         }
-        gridEdit.setValor(super.getText(), gridEdit.getSelectedRow(),
+        gridEdit.setValor(super.getText(), gridEdit.getRowEditada(),
                           nCol);
       }
     }

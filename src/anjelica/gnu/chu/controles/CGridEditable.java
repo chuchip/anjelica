@@ -36,6 +36,7 @@ import javax.swing.event.*;
 
 
 public class CGridEditable extends Cgrid implements CQuery {
+    private int rowEdit=0;
     private boolean query=false;
     final private  String TIPO_LINKBOX="L";
     final private  String TIPO_TEXTFIELD="T"; 
@@ -222,7 +223,14 @@ public class CGridEditable extends Cgrid implements CQuery {
     cambiaLinea();
     setAntColumn(col);
   }
-
+  /**
+   * Llamada por CTextField para ver que campo del grid debe actualizar.
+   * @return row a editar (setValor)
+   */
+  public int getRowEditada()
+  {
+      return rowEdit==0?getSelectedRow():rowEdit;
+  }
   boolean puedeCambiarLinea()
   {
     if (!isEnabled() || campos == null || swEvent || getAntRow() == getSelectedRow())
@@ -236,14 +244,16 @@ public class CGridEditable extends Cgrid implements CQuery {
       TABLAVACIA = false;
 //    System.out.println("Antigua Row: "+antRow);
     ponValores(getAntRow());//,true,true);
-
+    rowEdit=getAntRow();
     if ( (nColErr = cambiaLinea1(getAntRow(), getAntColumn())) >= 0)
     {
+      rowEdit=0;
       swEvent = false;
       requestFocus(getAntRow(),nColErr);
       return false;
     }
-//    ponValores(getSelectedRow(), false, false);
+    rowEdit=0;
+
     if (getAntColumn() != getSelectedColumn())
     {
       eatCambioCol++;
