@@ -917,7 +917,18 @@ public class CLinkBox
     for (int i = 0; i < cambioListenerList.size(); i++)
       cambioListenerList.get(i).cambio(ev);
   }
-
+  /**
+   * Indica la anchura del combo una vez desplegado.
+   * @param anc 
+   */
+  public void setAnchoComboDesp(int anc)
+  {
+      combo.setPreferredSize(new Dimension(anc,this.getPreferredSize().height));
+  }
+  /**
+   * Indica cuanto tiene que ser el ancho del campo texto
+   * @param anc 
+   */
   public void setAncTexto(int anc)
   {
     ancTexto = anc;
