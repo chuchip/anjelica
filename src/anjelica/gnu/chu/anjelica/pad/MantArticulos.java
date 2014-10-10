@@ -152,7 +152,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2013-02-26" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2014-10-09" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM v_articulo where pro_activ != 0 "+
                 " ORDER BY pro_codi";
 
@@ -1492,7 +1492,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         pro_codetiE.setAncTexto(40);
         pro_codetiE.setPreferredSize(new java.awt.Dimension(122, 17));
-        pro_codetiE.setFormato(Types.DECIMAL,"-999");
+        pro_codetiE.setFormato(Types.DECIMAL,"---9");
         Pinicio.add(pro_codetiE);
         pro_codetiE.setBounds(430, 76, 186, 18);
 
