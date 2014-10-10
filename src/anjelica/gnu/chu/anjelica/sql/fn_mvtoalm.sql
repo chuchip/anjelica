@@ -1,4 +1,3 @@
-﻿
 CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
   RETURNS TRIGGER AS $grabar$  
   DECLARE   
@@ -13,11 +12,12 @@ CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
   mvtFecmvt timestamp;
   mvtCliprv int;
   ajuRegmvt int;
+  ajuDelmvt int;
   mvtFeccad date;
   BEGIN
 
 -- Albaranes de Venta
-   select aju_regmvt into ajuRegmvt from anjelica.ajustedb;
+   select aju_regmvt,aju_delmvt into ajuRegmvt,ajuDelmvt from anjelica.ajustedb;
 	if not found then
 		RAISE EXCEPTION 'NO encontrado Ajustes DB';
 	end if;
@@ -174,7 +174,7 @@ CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
 			mvt_lindoc = OLD.avl_numlin and
 			mvt_canti = OLD.avp_canti;
 		GET DIAGNOSTICS nRows = ROW_COUNT;		
-		if nRows = 0 then
+		if nRows = 0  and ajuDelmvt = 0 then
 			RAISE EXCEPTION 'No encontrado mvto a Borrar. Alb. Venta';
 			return null;
 		end if;
@@ -302,7 +302,7 @@ CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
 			pro_indlot =OLD.acp_numind;
 		GET DIAGNOSTICS nRows = ROW_COUNT;	
 		RAISE warning 'cucu % ',nRows;	
-		if nRows = 0 then
+		if nRows = 0   and ajuDelmvt = 0 then
 			RAISE EXCEPTION 'No encontrado mvto a Borrar Almacen % Alb. Compra % % % % Producto: % Ind: %',
                             almCodi,
                             OLD.emp_codi,OLD.acc_ano,OLD.acc_serie,OLD.acc_nume, 
@@ -401,7 +401,7 @@ CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
 			pro_numlot =OLD.pro_lote AND
 			pro_indlot =OLD.pro_numind;
 		GET DIAGNOSTICS nRows = ROW_COUNT;		
-		if nRows = 0 then
+		if nRows = 0  and ajuDelmvt = 0 then
 			RAISE EXCEPTION 'No encontrado mvto a Borrar.Desp. Entrada';
 			return null;
 		end if;
@@ -497,8 +497,9 @@ CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
 			pro_indlot =OLD.pro_numind and
 			MVT_CANTI = OLD.deo_kilos;
 		GET DIAGNOSTICS nRows = ROW_COUNT;		
-		if nRows = 0 then
-			RAISE EXCEPTION 'No encontrado mvto a Borrar.Desp. Salida % % %',almCodi,OLD.eje_nume,OLD.deo_codi;
+		if nRows = 0 and ajuDelmvt = 0 then                 
+			RAISE EXCEPTION  'No encontrado Mvto a Borrar. Desp.Salida Lote:% % Prod: % Indiv:%  Kilos: %',OLD.eje_nume,
+				OLD.deo_codi,OLD.pro_codi,OLD.pro_numind,OLD.deo_kilos;
 			return null;
 		end if;
 		-- raise NOTICE 'Mvto. Borrado';
@@ -594,7 +595,7 @@ CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
 			mvt_tipdoc='R' and					
 		    mvt_numdoc=OLD.rgs_nume;	
 		GET DIAGNOSTICS nRows = ROW_COUNT;		
-		if nRows = 0 then
+		if nRows = 0  and ajuDelmvt = 0 then
 			RAISE EXCEPTION 'No encontrado mvto a Borrar. Regularizacion % ',OLD.rgs_nume;
 			return null;
 		end if;
