@@ -368,9 +368,10 @@ public class Clmarzona extends ventana {
     
     fecinv=feulinE.getText();
     mvtosAlm.setIgnoraVert(! opIncVertE.isSelected());
-    mvtosAlm.iniciarMvtos(feulinE.getText(), feciniE.getText(),fecfinE.getText(),dtCon1);
     mvtosAlm.setEmpresa(emp_codiE.getValorInt());
     mvtosAlm.setSbeCodi(sbe_codiE.getValorInt());
+
+    mvtosAlm.iniciarMvtos(feulinE.getText(), feciniE.getText(),fecfinE.getText(),dtCon1);
     mvtosAlm.resetMensajes();
     do
     {
@@ -471,14 +472,16 @@ public class Clmarzona extends ventana {
             + " and g.agr_codi = gf.agr_codi "
             + " group by g.agr_codi,g.agp_nomb "
             + " order by g.agr_codi ";
-    dtCon1.select(s);
-    do
+    if (dtCon1.select(s))
     {
-         verDatos(dtCon1.getString("agr_codi"),dtCon1.getString("agp_nomb"),
-                    dtCon1.getDouble("mar_kilven"), dtCon1.getDouble("mar_impven"),
-                     dtCon1.getDouble("mar_gananc"),
-                     dtCon1.getDouble("mar_kilcom"),dtCon1.getDouble("mar_impcom"),jtGru);
-    } while (dtCon1.next());
+        do
+        {
+             verDatos(dtCon1.getString("agr_codi"),dtCon1.getString("agp_nomb"),
+                        dtCon1.getDouble("mar_kilven"), dtCon1.getDouble("mar_impven"),
+                         dtCon1.getDouble("mar_gananc"),
+                         dtCon1.getDouble("mar_kilcom"),dtCon1.getDouble("mar_impcom"),jtGru);
+        } while (dtCon1.next());
+    }
     incindenE.setText(mvtosAlm.getMsgLog());
      
     stockE.setText( mvtosAlm.getMsgStock());

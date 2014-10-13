@@ -390,7 +390,7 @@ public class MvtosAlma
     String condAlb=  " where avl_canti <> 0 "+
           (proLote==0?"":" and avp_numpar  = "+proLote)+
           (proNumind==0?"":" and avp_numind = "+proNumind)+
-          (empCodi==0?"":" and emp_codi = "+empCodi)+
+          (empCodi==0?"":" and c.emp_codi = "+empCodi)+
           " AND pro_codi = "+(proCodi==-1?"?":proCodi) +
           " AND avl_fecalt::date >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
           " and avl_fecalt::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
@@ -676,7 +676,7 @@ public class MvtosAlma
     public void iniciarMvtos(String fecInv, String fecIni, String fecFin,
             DatosTabla dtCon1) throws SQLException, ParseException {
 
-        String fefi=fecIni;
+        String fefi;
         boolean soloInv=swSoloInv;
         boolean incUltFecInv=incInvFinal;
         tiposVert=pdmotregu.getTiposRegul(dtCon1,"V%");
