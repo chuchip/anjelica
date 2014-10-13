@@ -42,7 +42,7 @@ and l.avc_ano = $P{avc_ano}
 and l.avc_serie = $P{avc_serie}
 and avl_canti < 0
 GROUP BY avl_numpal,l.PRO_CODI,avl_prven,l.pro_nomb
-order by 1]]>
+order by 1,2]]>
 	</queryString>
 	<field name="pro_codi" class="java.lang.Integer"/>
 	<field name="avl_canti" class="java.lang.Double"/>

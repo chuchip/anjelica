@@ -26,7 +26,7 @@ import net.sf.jasperreports.engine.*;
  *
  * <p>Titulo: lisfactu</p> 
  * <p>Descripción: Listado Facturas de Ventas</p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -44,6 +44,7 @@ import net.sf.jasperreports.engine.*;
  */
 public class lisfactu extends ventana  implements JRDataSource
 {
+  int numLiComCab,numLiComPie;
   private boolean IMPFRATEXTO=false; // Permite imprimir facturas en modo texto? (tabla parametros)
   private boolean fraPreImp=false; // Usar listado fra. grafico Preimpresa
   private boolean simular=false; // Simula el listado (para opcion de enviar fax)
@@ -866,6 +867,9 @@ private String buscaBanco(int banCodi) throws SQLException
                            rs.getDouble("fvc_dtocom"),
                            recEquiv,null))
      return false;
+   numLiComCab=0;
+   numLiComPie=0;
+       
    htCab = datCab.getHashTable();
    impVtoAc = 0;
    nVtos = clFactCob.calDiasVto(dtCon1, dtCon1.getInt("cli_dipa1"),
@@ -873,6 +877,23 @@ private String buscaBanco(int banCodi) throws SQLException
                                 dtCon1.getFecha("fvc_fecfra", "dd-MM-yyyy"));
    banNomb = buscaBanco(dtCon1.getInt("ban_codi", true));
    impVto = (getValHash("fvc_sumtot") - dtCon1.getDouble("fvc_impcob")) / nVtos;
+   s="SELECT count(*) as cuantos,fco_tipo FROM facvecom "+
+    " where fvc_nume= "+fvcNume+
+    " and fvc_serie= '"+fvcSerie+"'"+
+    " and emp_codi = "+empCodi+
+    " and eje_nume = "+ejeNume+
+    " group by fco_tipo";
+   if (dtStat.select(s))
+   {
+       do
+       {
+           if (dtStat.getString("fco_tipo").equals("C"))
+            numLiComCab = dtStat.getInt("cuantos");
+           if (dtStat.getString("fco_tipo").equals("P"))
+            numLiComPie = dtStat.getInt("cuantos");
+
+       } while (dtCon1.next());
+   }
    return true;
  }
 
@@ -1137,6 +1158,11 @@ private String buscaBanco(int banCodi) throws SQLException
          return banNomb;
        if (campo.equals("fpa_nomb"))
          return dtCon1.getString("fpa_nomb");
+       if (campo.equals("numLinComCab"))
+           return numLiComCab;
+       if (campo.equals("numLinComPie"))
+           return numLiComPie;
+       
        throw new Exception("Campo " + jRField.getName() + " NO encontrado");
 
      }

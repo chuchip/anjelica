@@ -141,8 +141,18 @@ public class pdalbara extends ventanaPad  implements PAD
   private final int JTDES_NUMIND=7;
   private final int JTDES_KILOS=8; // Campo Kilos en grid desglose individuos
   private final int JTDES_NUMLIN=9; // Numero Linea de desglose individuos
-  private final int JT_PROCODI=1; //
+  /**
+   * Codigo de Producto (1)
+   */
+  private final int JT_PROCODI=1; 
+  /**
+   * Numero Linea Albaran (0)
+   */
   private final int JT_NULIAL=0; // Numero de Albaran.
+  /**
+   * Kilos Linea albaran (3)
+   */
+  int JT_KILOS=3; 
   int JT_NUMPALE=8; // Numero Pale
   int JT_CODENV=9; // Codigo Envase
   private final int JTRES_PROCODI=0;
@@ -2741,10 +2751,10 @@ public class pdalbara extends ventanaPad  implements PAD
   public static String getSqlLinAgr(String tablaLin,int ano, int empCodi,String serie, int nume,boolean modPrecio)
   {
 
-    return "SELECT -1 as avl_numlin,l.pro_codi,sum(avl_canti) as avl_canti, " +
+    return "SELECT -1 as avl_numlin,l.pro_codi,avl_numpal,sum(avl_canti) as avl_canti, " +
          " sum(avl_unid) as avl_unid,"+
          (modPrecio? " avl_prven,":"")+
-         "tar_preci,a.pro_nomb,l.pro_nomb as avl_pronom,avl_numpal,"
+         "tar_preci,a.pro_nomb,l.pro_nomb as avl_pronom,"
         + " a.pro_tipiva,l.alm_codi,avl_coment " +
          (modPrecio? " ,avl_prepvp,avl_profer":"")+
          " FROM "+tablaLin+" as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
@@ -2757,10 +2767,10 @@ public class pdalbara extends ventanaPad  implements PAD
          " group by l.pro_codi,"+(modPrecio?"avl_prven,avl_prepvp,avl_profer,":"")+
          "tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,l.alm_codi,avl_coment,avl_numpal " +
          " UNION ALL " +
-         "SELECT -1 as avl_numlin,l.pro_codi,sum(avl_canti) as avl_canti, " +
+         "SELECT -1 as avl_numlin,l.pro_codi,avl_numpal,sum(avl_canti) as avl_canti, " +
          " sum(avl_unid) as avl_unid,"+
          (modPrecio? " avl_prven,":"")+
-         "tar_preci, a.pro_nomb,l.pro_nomb as avl_pronom,avl_numpal,"
+         "tar_preci, a.pro_nomb,l.pro_nomb as avl_pronom,"
         + "a.pro_tipiva,l.alm_codi,avl_coment " +
           (modPrecio? " ,avl_prepvp,avl_profer ":"")+
          " FROM "+tablaLin+" as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
@@ -2772,7 +2782,7 @@ public class pdalbara extends ventanaPad  implements PAD
          " and l.avl_canti < 0 " +
          " group by l.pro_codi,"+(modPrecio?"avl_prven,avl_prepvp,avl_profer,":"")+
          " avl_numpal,tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,l.alm_codi,avl_coment " +
-         " ORDER BY 2";
+         " ORDER BY 3,2";
   }
   public static String getSqlLinList(int ano, int empCodi,String serie, int nume,boolean modPrecio)
   {
@@ -2790,10 +2800,10 @@ public class pdalbara extends ventanaPad  implements PAD
   public static String getSqlLinList(String tablaLin,int ano, int empCodi,String serie, int nume,boolean modPrecio)
   {
 
-    return "SELECT -1 as avl_numlin,l.pro_codi,sum(avl_canti) as avl_canti, " +
+    return "SELECT -1 as avl_numlin,l.pro_codi,avl_numpal,sum(avl_canti) as avl_canti, " +
          " sum(avl_unid) as avl_unid,tar_preci,"+
          (modPrecio? " avl_prven,":"")+
-         "a.pro_nomb,l.pro_nomb as avl_pronom, avl_numpal, a.pro_tipiva " +
+         "a.pro_nomb,l.pro_nomb as avl_pronom,  a.pro_tipiva " +
          " FROM "+tablaLin +" as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
          " WHERE "+(empCodi<=0?" his_rowid ="+nume:
          " l.avc_ano = " + ano +
@@ -2804,10 +2814,10 @@ public class pdalbara extends ventanaPad  implements PAD
          " group by l.pro_codi,"+(modPrecio?"avl_prven,":"")+
          " avl_numpal,tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva " +
          " UNION ALL " +
-         "SELECT -1 as avl_numlin,l.pro_codi,sum(avl_canti) as avl_canti, " +
+         "SELECT -1 as avl_numlin,l.pro_codi,avl_numpal,sum(avl_canti) as avl_canti, " +
          " sum(avl_unid) as avl_unid,tar_preci,"+
          (modPrecio? " avl_prven,":"")+
-         " a.pro_nomb,l.pro_nomb as avl_pronom,avl_numpal,a.pro_tipiva " +
+         " a.pro_nomb,l.pro_nomb as avl_pronom,a.pro_tipiva " +
          " FROM "+tablaLin+" as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
 //         " and a.emp_codi = "+EU_emCod+
          " WHERE "+(empCodi<=0?" his_rowid ="+nume:
@@ -2818,7 +2828,7 @@ public class pdalbara extends ventanaPad  implements PAD
          " and l.avl_canti < 0 " +
          " group by l.pro_codi,"+(modPrecio?"avl_prven,":"")+
           " avl_numpal,tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva " +
-         " ORDER BY 2";
+         " ORDER BY 3,2";
   }
   /**
    * Devuelve sentencia SQL de las lineas de albarán agrupadas por producto 
@@ -4165,20 +4175,27 @@ public class pdalbara extends ventanaPad  implements PAD
       avl_prvenE.resetCambio();
       avl_numpalE.resetCambio();
   }
+  /**
+   * Devuelve condiciones (where) para la sentencia sql para modificar el
+   * precio en un albaran
+   * @param row Linea de grid
+   * @return 
+   */
   String getCondWhereActAlb(int row)
   {
       String cw= " WHERE avc_ano =" + avc_anoE.getValorInt() +
           " and emp_codi = " + emp_codiE.getValorInt() +
           " and avc_serie = '" + avc_seriE.getText() + "'" +
           " and avc_nume = " + avc_numeE.getValorInt() +
-          (jt.getValorDec(row, 3) > 0 ? " and avl_canti > 0" :
+          (jt.getValorDec(row, JT_KILOS) > 0 ? " and avl_canti > 0" :
            " and avl_canti < 0");
-      if (jt.getValorInt(row, 0) >= 0)
-        cw += " AND avl_numlin = " + jt.getValorInt(row, 0);
+      if (jt.getValorInt(row, JT_NULIAL) >= 0)
+        cw += " AND avl_numlin = " + jt.getValorInt(row, JT_NULIAL);
       else
       {
-        cw += " AND pro_codi = " + jt.getValorInt(row, 1) +
-            " and avl_prven = " + antPrecio;
+        cw += " AND pro_codi = " + jt.getValorInt(row, JT_PROCODI) +
+            " and avl_prven = " + antPrecio+
+            " and avl_numpal = "+jt.getValorInt(row,JT_NUMPALE);
       }
       return cw;
    }
@@ -4212,11 +4229,9 @@ public class pdalbara extends ventanaPad  implements PAD
 //        avl_prvenE.setValorDec(jt.getValorDec(row,5)); // Restaurado valor anterior
         return;
       }
-
       
       double avlPrven=Formatear.redondea(precio,numDec);
       double avlPrbase = avlPrven - (avlPrven * ((avc_dtocomE.getValorDec()+avc_dtoppE.getValorDec())/100)) ;
-
 
       avlPrbase=Formatear.redondea(avlPrbase,numDec);
 
