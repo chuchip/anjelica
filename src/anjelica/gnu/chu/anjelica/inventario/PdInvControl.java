@@ -70,8 +70,7 @@ import net.sf.jasperreports.engine.JasperReport;
  */
 public class PdInvControl extends ventanaPad implements PAD
 {
-  private String proCodiQ,prp_anoQ,prp_indiQ,prp_partQ,prp_seriQ;
-  private int nCamposCond=-1;
+ private String condLineas="";
   private  final int JT_NUMPAL=10;
   private String condWhere;
   boolean swKilos0 = false;
@@ -154,8 +153,7 @@ public class PdInvControl extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-
-        this.setVersion("2013-10-14 "+(swAdmin?"Administrador":""));
+        this.setVersion("2014-10-15 "+(swAdmin?"Administrador":""));
         condWhere=" where emp_codi =  "+EU.em_cod;
         strSql = "SELECT * FROM coninvcab "+condWhere+
          "order by cci_feccon,cam_codi,alm_codi";
@@ -521,16 +519,16 @@ public class PdInvControl extends ventanaPad implements PAD
       s = "select  * from coninvlin where  cci_codi = " + dt.getInt("cci_codi") +
           " and lci_nume <> 0 " +
           " and lci_regaut = 0" + // Solo registros no automaticos
+          condLineas+
           " ORDER BY lci_nume ";
       if (!dtCon1.select(s))
         return;
       int n=0;
-      
-      int nRowCond=0;
-      int numCond;
+            
+    
       do
       {
-        numCond=0;
+       
         ArrayList v = new ArrayList();
         v.add(dtCon1.getString("lci_nume")); // 0
         v.add(dtCon1.getString("pro_codi")); // 1
@@ -538,38 +536,22 @@ public class PdInvControl extends ventanaPad implements PAD
         v.add(dtCon1.getString("prp_ano")); // 3
         v.add(dtCon1.getString("prp_empcod")); // 4
         v.add(dtCon1.getString("prp_seri")); // 5  
-        v.add(dtCon1.getString("prp_part")); // 6
-        if (nRowCond==0)
-        {
-            if (proCodiQ!=null && proCodiQ.equals(dtCon1.getString("pro_codi")))
-                numCond++;
-            if (prp_anoQ!=null && prp_anoQ.equals(dtCon1.getString("prp_ano")))
-                numCond++;         
-            if (prp_seriQ!=null && prp_seriQ.equals(dtCon1.getString("prp_seri")))
-                numCond++;
-            if (prp_partQ!=null && prp_partQ.equals(dtCon1.getString("prp_part")))
-                numCond++;
-            if (prp_indiQ!=null && prp_indiQ.equals(dtCon1.getString("prp_indi")))
-                numCond++;
-        }
+        v.add(dtCon1.getString("prp_part")); // 6 
         v.add(dtCon1.getString("prp_indi")); // 7
         v.add(dtCon1.getString("lci_peso")); // 8
         v.add(dtCon1.getString("lci_numind")); // 9
         v.add(dtCon1.getString("lci_numpal"));
         jt.addLinea(v);
-        if (numCond==nCamposCond)
-            nRowCond=n;
         n++;
       }
       while (dtCon1.next());
       jt.tableView.setVisible(true);
       
       jt.requestFocusInicio();
-      if (nRowCond>0)
-          jt.requestFocusLater(nRowCond,0);
+ 
       calcTotales(true);
     }
-    catch (Exception k)
+    catch (SQLException k)
     {
       Error("Error al visualizar datos", k);
     }
@@ -590,66 +572,52 @@ public class PdInvControl extends ventanaPad implements PAD
     v.add(cam_codiE.getStrQuery());
     v.add(usu_nombE.getStrQuery());
     v.add(alm_codiE.getStrQuery());
+    
     v.add(pro_codiE.getStrQuery());
     v.add(prp_anoE.getStrQuery());
     v.add(prp_serieE.getStrQuery());
     v.add(prp_partE.getStrQuery());
     v.add(prp_indiE.getStrQuery());
     v.add(lci_numpalE.getStrQuery());
-    nCamposCond=0;
-    
-    if (! pro_codiE.getText().equals(""))
-    {
-        nCamposCond++;
-        proCodiQ=pro_codiE.getText();
-    }
-     if (! prp_anoE.getText().equals(""))
-    {
-        nCamposCond++;
-        prp_anoQ=prp_anoE.getText();
-    }
-    if (! prp_indiE.getText().equals(""))
-    {
-        nCamposCond++;
-          prp_indiQ=prp_indiE.getText();
-    }
-     if (! prp_partE.getText().equals(""))
-    {
-        nCamposCond++;
-        prp_partQ=prp_partE.getText();
-    }
-    
-     if (! prp_serieE.getText().equals(""))
-    {
-       nCamposCond++;
-       prp_seriQ=prp_serieE.getText();
-    }
-    if (nCamposCond==0)
-        nCamposCond=-1;
+       
     s = creaWhere("select distinct(cci_codi) as cci_codi from v_coninvent "+
          condWhere +" and lci_peso>0 ", v,false);
     s += " ORDER BY cci_codi";
 //    debug("Query: "+s);
-    activaTodo();
-    Pcabe.setQuery(false);
-    jt.setQuery(false);    
+    
+    
     try
     {
       if (!dtCons.select(s))
       {
         mensaje("");
-        mensajeErr("No encontrados Inventarios de Control para estos criterios");
+        msgBox("No encontrados Inventarios de Control para estos criterios");
+        activaTodo();
+        Pcabe.setQuery(false);
+        jt.setQuery(false);   
         rgSelect();
         verDatos(dtCons);
         return;
       }
+      ArrayList v1 = new ArrayList();
+      v1.add(pro_codiE.getStrQuery());
+      v1.add(prp_anoE.getStrQuery());
+      v1.add(prp_serieE.getStrQuery());
+      v1.add(prp_partE.getStrQuery());
+      v1.add(prp_indiE.getStrQuery());
+      v1.add(lci_numpalE.getStrQuery());
+      condLineas=creaWhere("",v1,false);
+      activaTodo();
+      Pcabe.setQuery(false);
+      jt.setQuery(false);    
       mensaje("");
       strSql = s;
+   
       rgSelect();
       verDatos(dtCons);
       mensajeErr("Nuevos registros selecionados");
     }
-    catch (Exception ex)
+    catch (SQLException ex)
     {
       fatalError("Error al buscar Inventarios: ", ex);
     }
@@ -669,6 +637,13 @@ public class PdInvControl extends ventanaPad implements PAD
   {
     try
     {
+      if (!condLineas.equals(""))
+      {
+          msgBox("No se puede editar un registro si esta en modo busqueda individuos.  Ejecute consulta de nuevo");
+          nav.pulsado = navegador.NINGUNO;
+          activaTodo();
+          return;
+      }
       s = "SELECT * FROM coninvcab WHERE  cci_codi = " + cci_codiE.getValorInt();
       if (!dtCab.select(s, true))
       {
@@ -678,7 +653,7 @@ public class PdInvControl extends ventanaPad implements PAD
         return;
       }
     }
-    catch (Exception k)
+    catch (SQLException k)
     {
       Error("Error al Modificar datos de Inventario",k);
       return;
@@ -741,8 +716,7 @@ public class PdInvControl extends ventanaPad implements PAD
     usu_nombE.setEnabled(true);
     Pcabe.setQuery(true);
     Pcabe.resetTexto();
-    proCodiQ=null;prp_anoQ=null;prp_indiQ=null;prp_partQ=null;prp_seriQ=null;
-    nCamposCond=-1;
+      
     jt.setQuery(true);
     jt.removeAllDatos();  
     jt.ponValores(0);
