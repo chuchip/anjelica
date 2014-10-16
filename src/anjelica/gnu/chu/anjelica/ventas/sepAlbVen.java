@@ -453,7 +453,7 @@ public class sepAlbVen extends ventana
             acumAlb+= Formatear.redondea((kilos *  dtCon1.getDouble("avl_prven")),numDec);
             impLinea -= Formatear.redondea((kilos *  dtCon1.getDouble("avl_prven")),numDec);
 
-            guardaLineaDes(kilos,numUni);
+            guardaLineaDes(kilos,numUni,dtCon1.getFecha("avl_fecalt","yyyy-MM-dd"));
             numUni=0; // Pongo todas las unidades al primer inidviduo
             swRotoAlb = true;
             swRotoLin = true;
@@ -473,7 +473,7 @@ public class sepAlbVen extends ventana
             acumAlb+=Formatear.redondea((kilos *  dtCon1.getDouble("avl_prven")),numDec);
             impAcum+= Formatear.redondea( (kilos *  dtCon1.getDouble("avl_prven")),numDec);
             impLinea = 0;
-            guardaLineaDes( kilos,numUni);
+            guardaLineaDes( kilos,numUni,dtCon1.getFecha("avl_fecalt","yyyy-MM-dd"));
             numUni=0; // Pongo todas las unidades al primer inidviduo
           }
         }
@@ -499,8 +499,8 @@ public class sepAlbVen extends ventana
           " and avc_serie = '" + avc_seriE.getText() + "'" +
           " and avc_nume = " + avc_numeE.getValorInt();
       dtAdd.executeUpdate(s);
-
-      dtAdd.commit();
+      // Actualizo fechas de Mvtos a Fecha Alta Lineas.
+     
       mensajeErr("Albaranes .... desglosados");
       jt.setEnabled(false);
       Baceptar.setEnabled(false);
@@ -572,7 +572,7 @@ public class sepAlbVen extends ventana
 //     impLinE.setValorDec(datCab.getValDouble("avc_impbru"));
 
    }
-   void  guardaLineaDes(double kilos,int numUni) throws Exception
+   void  guardaLineaDes(double kilos,int numUni,String avlFecalt) throws Exception
    {
      if (swRotoAlb)
        guardaCab();
@@ -599,6 +599,14 @@ public class sepAlbVen extends ventana
       dtAdd.setDato("avp_numuni", numUni);
       dtAdd.setDato("avp_canti", kilos);
       dtAdd.update();
+      String s="update mvtosalm set mvt_time = {d '"+avlFecalt+"'}"+          
+          " where mvt_tipdoc='V' and mvt_empcod="+emp_codiE.getValorInt()+
+          " and mvt_numdoc="+numAlb+
+          " and mvt_serdoc = '"+avc_seriE.getText()+"'"+
+          " and mvt_ejedoc ="+avc_anoE.getValorInt()+
+          " and mvt_lindoc= "+nLiAlb;
+      if (dtAdd.executeUpdate(s)!=1)
+          throw new SQLException("Error al asignar fecha mvto en "+s);
       kLiAlb+=kilos;
    }
 
