@@ -97,6 +97,7 @@ import javax.swing.event.ListSelectionListener;
 public class pdalbara extends ventanaPad  implements PAD
 {  
   private boolean pesoManual=false; // Indica si se restara peso de cajas al darle enter en campo PESO.
+  private boolean swUsaPalets=true;
   private boolean swCanti=false;
   private boolean isEmpPlanta=false;
   public final static String TABLACAB="v_albavec";
@@ -1220,9 +1221,10 @@ public class pdalbara extends ventanaPad  implements PAD
 
     @Override
   public void afterConecta() throws SQLException, ParseException
-  {
-    
+  {    
     isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
+    swUsaPalets=pdconfig.getUsaPalets(EU.em_cod, dtStat);
+    avl_numpalE.setEnabled(swUsaPalets);
     pesoManual=isEmpPlanta;
     dtAdd.setConexion(ctUp);
     cli_codiE.setZona(P_ZONA);
@@ -7775,13 +7777,7 @@ public class pdalbara extends ventanaPad  implements PAD
                            {2, 2, 0, 2, 2,0,2});
 
     }
-//    jt.setFormatoColumna(3, "---,--9.99");
-//    jt.setFormatoColumna(4, "---9");
-//    if (P_MODPRECIO || P_PONPRECIO)
-//    {
-//      jt.setFormatoColumna(5, "----9.99");
-//      jt.setFormatoColumna(6, "---9.99");
-//    }
+    
     ArrayList vc = new ArrayList();
     pro_nombE.setRequestFocusEnabled(false);
     avl_prvenE.setToolTipText("F3 Consulta Ultimos Precios");

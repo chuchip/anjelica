@@ -2916,6 +2916,7 @@ create table anjelica.v_config
   cfg_lifrgr char(1) not null,	   -- Listado Fras. Compras Grafico (S/N)
   cli_codi   int    not null,      -- Cliente para uso Interno (Traspaso almacenes)
   cfg_tipemp int    not null default 1, -- Tipo de Empresa (1. Carnica, 2. Plantación)
+  cfg_palven int not null default 1, -- Usa Palets en Ventas.
   constraint ix_config primary key (emp_codi)
 );
 insert into v_config values(1,1,1,2,1,1,9999,
