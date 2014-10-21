@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="21"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -37,7 +37,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
-						<font size="13" isBold="true" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font size="11" isBold="true" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
@@ -96,21 +96,21 @@
 					<textFieldExpression><![CDATA[$F{cat_nomb}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="99" y="82" width="35" height="13"/>
+					<reportElement x="116" y="82" width="35" height="13"/>
 					<textElement verticalAlignment="Top">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
 					<text><![CDATA[Origen]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="95" y="99" width="50" height="12"/>
+					<reportElement x="22" y="98" width="50" height="12"/>
 					<textElement verticalAlignment="Top">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
 					<text><![CDATA[Fecha Env.]]></text>
 				</staticText>
 				<textField pattern="dd/MM/yy" isBlankWhenNull="false">
-					<reportElement key="textField" mode="Opaque" x="150" y="99" width="62" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="textField" mode="Opaque" x="74" y="98" width="62" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -145,7 +145,7 @@
 					<textFieldExpression><![CDATA[$F{cal_nomb}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="136" y="82" width="112" height="13"/>
+					<reportElement x="156" y="82" width="90" height="13"/>
 					<textElement verticalAlignment="Top">
 						<font fontName="SansSerif" size="9" isBold="true"/>
 					</textElement>
@@ -157,6 +157,20 @@
 						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<text><![CDATA[La Rioja - España]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="156" y="98" width="42" height="12"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<text><![CDATA[Variedad]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="201" y="98" width="45" height="13"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="SansSerif" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Jack]]></text>
 				</staticText>
 			</band>
 		</groupHeader>
