@@ -1765,12 +1765,10 @@ create table anjelica.grupdesp
 	grd_block char(1) default 'N',  -- Abierto en tactil(S). Cerrado (N) Bloqueado (B) ?
 	grd_feccad date, -- Fecha de Caducidad
 	prv_codi int not null,
-	grd_desnue char(1), -- Despiece Nuestro (S/N)
-        grd_fecval timestamp,      -- Fecha de Valoracion.
-        grd_usuval varchar(20), -- Usuario q hizo valoración
-        grd_fecpro date, -- Fecha de Produccion
-        grd_fecha date default current_date,
-        constraint ix_grupdesp primary key (eje_nume,grd_nume)
+	grd_desnue char(1), -- Despiece Nuestro (S/N)  
+    grd_fecpro date, -- Fecha de Produccion
+    grd_fecha date default current_date, -- Fecha del grupo.
+    constraint ix_grupdesp primary key (eje_nume,grd_nume)
 );
 --
 --
@@ -3495,9 +3493,17 @@ l.def_orden, pro_codi, def_ejelot, def_emplot, def_serlot, pro_lote,pro_numind ,
 def_feccad,def_preusu,def_tiempo,l.alm_codi
  from anjelica.desporig as c, anjelica.v_despfin as l where c.eje_nume=l.eje_nume
  and c.deo_codi= l.deo_codi;
+ 
+create  view v_despiece as select  1 as emp_codi, c.*, g.grd_serie,g.grd_kilo,grd_unid,grd_prmeco,grd_incval,
+grd_valor,grd_block,grd_feccad,g.prv_codi as grd_prvcod,grd_desnue,grd_fecpro,grd_fecha,
+1 as deo_emloge, 1 as deo_emplot ,
+l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcost, deo_kilos , deo_preusu,deo_tiempo
+ from desporig as c left join grupdesp as g on c.eje_nume=g.eje_nume and c.deo_numdes = g.grd_nume,  desorilin as l 
+  where c.eje_nume=l.eje_nume
+ and c.deo_codi= l.deo_codi;
 -- Procedures
 
-CREATE OR REPLACE FUNCTION "getBI_albven"("empCodi" integer, "ejeNume" integer, "avcSerie" character, "avcNume" integer)
+CREATE OR REPLACE FUNCTION anjelica."getBI_albven"("empCodi" integer, "ejeNume" integer, "avcSerie" character, "avcNume" integer)
   RETURNS numeric AS
 $BODY$DECLARE
 linalb RECORD;
@@ -3521,7 +3527,7 @@ BEGIN
  implinT :=0;
  FOR linalb IN
 select *
-from v_albavel where emp_codi = "empCodi"
+from anjelica.v_albavel where emp_codi = "empCodi"
 and avc_ano = "ejeNume"
 and avc_nume = "avcNume"
 and avc_serie = "avcSerie" LOOP
@@ -3537,7 +3543,7 @@ end if;
 -- raise notice 'IMPORTE LINEAS: %',implinT;
 SELECT c.cli_codi,avc_dtopp,avc_dtocom, cli_recequ
  into cliCodi,avcDtopp,avcDtocom,cliReceq
- FROM v_albavec c, clientes cl WHERE c.avc_ano = "ejeNume"
+ FROM anjelica.v_albavec c, anjelica.clientes cl WHERE c.avc_ano = "ejeNume"
          and c.emp_codi = "empCodi"
          and c.avc_serie = "avcSerie"
         and c.avc_nume = "avcNume"
@@ -3589,7 +3595,7 @@ BEGIN
 
  implinT :=0;
  porcIva= 0;
- select  avc_fecalb into avcFecAlb from v_albavec
+ select  avc_fecalb into avcFecAlb from anjelica.v_albavec
     where  emp_codi = "empCodi"
          and avc_ano = "ejeNume"
          and avc_nume = "avcNume"
@@ -3600,7 +3606,8 @@ BEGIN
 
  FOR linalb IN
     select  l.pro_codi,sum(l.avl_canti) as avl_canti,
-         avl_prven-avl_dtolin as avl_prven,pro_tipiva FROM V_ALBAVEL as l, v_articulo as a 
+         avl_prven-avl_dtolin as avl_prven,pro_tipiva FROM anjelica.V_ALBAVEL as l, 
+		 anjelica.v_articulo as a 
          where l.emp_codi = "empCodi"
          and avc_ano = "ejeNume"
          and avc_nume = "avcNume"
@@ -3611,7 +3618,7 @@ BEGIN
  LOOP
 implin := linalb.avl_canti *  linalb.avl_prven;
 if porcIva = 0 then
- SELECT tii_iva,tii_rec into porcIva,porcReq FROM tiposiva
+ SELECT tii_iva,tii_rec into porcIva,porcReq FROM anjelica.tiposiva
    WHERE tii_codi =  linalb.pro_tipiva
     and  avcFecAlb between tii_fecini and tii_fecfin;
  if not found then
@@ -3632,7 +3639,7 @@ end if;
 -- raise notice 'IMPORTE LINEAS: %',implinT;
 SELECT c.cli_codi,cli_exeiva,avc_dtopp,avc_dtocom, cli_recequ
  into cliCodi,cliExeIVA,avcDtopp,avcDtocom,cliReceq
- FROM v_albavec c, clientes cl WHERE c.avc_ano = "ejeNume"
+ FROM anjelica.v_albavec c, anjelica.clientes cl WHERE c.avc_ano = "ejeNume"
          and c.emp_codi = "empCodi"
          and c.avc_serie = "avcSerie"
         and c.avc_nume = "avcNume"
