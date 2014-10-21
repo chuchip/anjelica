@@ -44,7 +44,7 @@ import java.util.logging.Logger;
 public class RegCosDes extends ventana {
     private boolean swSinCosto=false;
     private boolean swRegenerar;
-    private String condWhereOrig;
+    private String condWhereOrig,condWhereGrupo;
     DatosTabla dtAdd;
     final static int MAXPERM=1;
     PreparedStatement prstFin,prstFin1,prstUpd1,prstUpd,prstDesp;
@@ -91,7 +91,7 @@ public class RegCosDes extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2013-04-28");
+        this.setVersion("2014-10-21");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -128,7 +128,7 @@ public class RegCosDes extends ventana {
         if (dtStat.getDate("deo_fecha")!=null)
             feciniE.setDate(dtStat.getDate("deo_fecha"));
         fecinvE.setText(feulin);
-        Pcondic.setDefButton(Baceptar);
+        Pcondic.setDefButton(Baceptar.getBotonAccion());
        
         llenaCombos();
         eje_numeE.setValor(EU.ejercicio);
@@ -139,7 +139,10 @@ public class RegCosDes extends ventana {
         Baceptar.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                buscaDatos();
+                if (e.getActionCommand().equals("Regenerar"))
+                 buscaDatos();
+                else
+                  resetearDatos();
             }
         });
         popEspere_BCancelaraddActionListener(new ActionListener(){
@@ -181,20 +184,85 @@ public class RegCosDes extends ventana {
         }
         return true;
     }
-    private void buscaDatos() {
-       
-        if (!validaCampos()) {
+    private void resetearDatos()
+    {
+        try {
+    
+        if (!checkDatosDesp()) 
             return;
+        
+           String s="select * from v_despfin as fi,desporig as orig  "+
+                    " WHERE  fi.def_preusu !=  0 " +
+                     " AND fi.deo_codi =  orig.deo_codi " +
+                     " and fi.eje_nume = orig.eje_nume " +
+                   condWhereOrig;
+            swRegenerar=true;
+            if (! dtStat.select(s))
+            {
+                msgBox("No hay costos regenerados para estos criterios");
+                return;
+            }
+            s = "UPDATE v_despfin set def_prcost = def_preusu "
+                        + " WHERE   eje_nume = " + eje_numeE.getValorInt()
+                        + " and def_preusu != 0 "
+                        + " AND exists (select deo_codi from v_despori  as orig "
+                        + " where orig.deo_codi = v_despfin.deo_codi "
+                        + " and orig.eje_nume = v_despfin.eje_nume "
+                        + " and orig.deo_numdes = 0 " 
+                        + condWhereOrig + ")";
+            int nRegAf = stUp.executeUpdate(s);
+            s = "UPDATE v_despfin set def_prcost = def_preusu "
+                        + " WHERE   eje_nume = " + eje_numeE.getValorInt()
+                        + " and def_preusu != 0 "
+                        + " AND exists (select deo_codi from v_despiece  as orig "
+                        + " where orig.deo_codi = v_despfin.deo_codi "
+                        + " and orig.eje_nume = v_despfin.eje_nume "
+                        + " and orig.deo_numdes > 0 " 
+                        + condWhereGrupo + ")";
+            nRegAf += stUp.executeUpdate(s);
+            s = "UPDATE desorilin set deo_prcost = deo_preusu "
+                        + " WHERE   eje_nume = " + eje_numeE.getValorInt()
+                        + " and deo_preusu != 0 "+
+                        "  and exists (select deo_codi from v_despori as orig "+
+                        " where orig.deo_codi = desorilin.deo_codi "+
+                        " and orig.eje_nume=desorilin.eje_nume "+
+                        " and orig.deo_numdes = 0 " +
+                         condWhereOrig+")";  
+              nRegAf+=dtAdd.executeUpdate(s);
+              s = "UPDATE desorilin set deo_prcost = deo_preusu "
+                        + " WHERE   eje_nume = " + eje_numeE.getValorInt()
+                        + " and deo_preusu != 0 "+
+                        "  and exists (select deo_codi from v_despiece as orig "+
+                        " where orig.deo_codi = desorilin.deo_codi "+
+                        " and orig.eje_nume=desorilin.eje_nume "+
+                        " and orig.deo_numdes > 0 " +
+                         condWhereGrupo+")";  
+            nRegAf+=dtAdd.executeUpdate(s);
+            dtAdd.commit();
+            msgBox("Rescatados precio usuario en  " + nRegAf + " Registros ");
+            
+        } catch (SQLException k)
+        {
+            Error("Error al resetear Datos de costos",k);
+        }
+    }
+    private boolean checkDatosDesp() throws SQLException
+    {
+        if (!validaCampos()) {
+            return false;
         }
         condWhereOrig = " and deo_fecha between to_date('" + feciniE.getText() + "','dd-MM-yyyy')"
                 + " and to_date('" + fecfinE.getText() + "','dd-MM-yyyy')"
                 + (deo_codiE.getValorInt()==0?"":" and (orig.deo_codi = "+deo_codiE.getValorInt() +
                    " or orig.deo_numdes= "+deo_codiE.getValorInt()+")")
-                + " and orig.eje_nume = " + eje_numeE.getValorInt();
-        String s;
-        try {
-           
-            s = "select  pro_codi,deo_codi, deo_fecha as deo_fecha,"
+                + " and orig.eje_nume = " + eje_numeE.getValorInt();        
+        condWhereGrupo= " and grd_fecha between to_date('" + feciniE.getText() + "','dd-MM-yyyy')"
+                + " and to_date('" + fecfinE.getText() + "','dd-MM-yyyy')"
+                + (deo_codiE.getValorInt()==0?"":" and (orig.deo_codi = "+deo_codiE.getValorInt() +
+                   " or orig.deo_numdes= "+deo_codiE.getValorInt()+")")
+                + " and orig.eje_nume = " + eje_numeE.getValorInt();   
+        
+         String s = "select  pro_codi,deo_codi, deo_fecha as deo_fecha,"
                     + " sum(deo_kilos) as kilos,sum(deo_kilos*deo_prcost) as costo "
                     + " from v_despori as orig WHERE 1=1  " + condWhereOrig
                     + " GROUP BY pro_codi,deo_codi,deo_fecha "
@@ -202,9 +270,18 @@ public class RegCosDes extends ventana {
             if (!dtCon1.select(s)) {
                 msgBox("No encontrados despieces con esos criterios");
                 feciniE.requestFocus();
-                return;
+                return false;
             }
-            s="select * from v_despfin as fi,desporig as orig  "+
+            jt.removeAllDatos();
+            textoE.resetTexto();
+            return true;
+    }
+    private void buscaDatos() {
+       
+        try {
+            if (! checkDatosDesp())
+                return;
+            String s="select * from v_despfin as fi,desporig as orig  "+
                     " WHERE  fi.def_preusu !=  0 " +
                      " AND fi.deo_codi =  orig.deo_codi " +
                      " and fi.eje_nume = orig.eje_nume " +
@@ -236,8 +313,7 @@ public class RegCosDes extends ventana {
 
     private void buscaDato1() {
         try {
-            jt.removeAllDatos();
-            textoE.resetTexto();
+          
             String s;
             msgEspere("Recalculando despieces ...");
             popEspere_BCancelarSetEnabled(true);
@@ -245,11 +321,8 @@ public class RegCosDes extends ventana {
                 mvtosAlm = new MvtosAlma();
                 mvtosAlm.setResetCostoStkNeg(true); 
             }
-            mvtosAlm.setIgnorarDespFecha(false);
-           
-            mvtosAlm.iniciarMvtos(fecinvE.getText(), dtCon1.getFecha("deo_fecha","dd-MM-yyyy"), dtAdd);
-            
-           
+            mvtosAlm.setIgnorarDespFecha(false);           
+            mvtosAlm.iniciarMvtos(fecinvE.getText(), dtCon1.getFecha("deo_fecha","dd-MM-yyyy"), dtAdd);                      
 
             if (swRegenerar)
             {
@@ -257,18 +330,40 @@ public class RegCosDes extends ventana {
              // Paso todos los costos al campo de precio de usuario  y pongo el precio costo a 0
                 s = "UPDATE v_despfin set def_preusu= def_prcost  "
                         + " WHERE   eje_nume = " + eje_numeE.getValorInt()
-                        + " AND deo_codi = (select distinct(deo_codi) from v_despori as orig where deo_codi = v_despfin.deo_codi "
+                        + " AND exists "
+                        + " (select distinct(deo_codi) from v_despori as orig "
+                        + "where deo_codi = v_despfin.deo_codi "
+                        + " and orig.eje_nume = v_despfin.eje_nume "
+                        + " and orig.deo_numdes = 0 "
                         + condWhereOrig + ")";
                 int nRegAf = dtAdd.executeUpdate(s);
+                s = "UPDATE v_despfin set def_preusu= def_prcost  "
+                        + " WHERE   eje_nume = " + eje_numeE.getValorInt()
+                        + " AND exists "
+                        + " (select deo_codi from v_despiece as orig "
+                        + " where deo_codi = v_despfin.deo_codi "
+                        + " and orig.eje_nume = v_despfin.eje_nume "
+                        + " and orig.deo_numdes > 0 "
+                        + condWhereGrupo + ")";
+                nRegAf += dtAdd.executeUpdate(s);
                 textoE.setText(textoE.getText() + "AVISO: Puestas  " + nRegAf + " lineas de desp. salida con costo = 0");
                 s = "UPDATE desorilin set deo_preusu= deo_prcost "
                         + " WHERE   eje_nume = " + eje_numeE.getValorInt()+
                          "  and exists (select orig.deo_codi from v_despori as orig "+
                         " where orig.deo_codi = desorilin.deo_codi "+
                         " and orig.eje_nume=desorilin.eje_nume "+
+                        " and orig.deo_numdes = 0 "+
                          condWhereOrig+")";
                 nRegAf = dtAdd.executeUpdate(s);
-                textoE.setText(textoE.getText() + "AVISO: Puestas  " + nRegAf + " lineas de desp. Entradas con costo = 0");
+                 s = "UPDATE desorilin set deo_preusu= deo_prcost "
+                        + " WHERE   eje_nume = " + eje_numeE.getValorInt()+
+                         "  and exists (select orig.deo_codi from v_despiece as orig "+
+                        " where orig.deo_codi = desorilin.deo_codi "+
+                        " and orig.eje_nume=desorilin.eje_nume "+
+                        " and orig.deo_numdes > 0 "+
+                        condWhereGrupo+")";
+                nRegAf += dtAdd.executeUpdate(s);
+                textoE.setText(textoE.getText() + "\n AVISO: Puestas  " + nRegAf + " lineas de desp. Entradas con costo = 0");
             }
             else
             { // NO es la Primera vez que se regeneran costos
@@ -278,8 +373,18 @@ public class RegCosDes extends ventana {
                         + " AND exists (select deo_codi from v_despori  as orig "
                         + " where orig.deo_codi = v_despfin.deo_codi "
                         + " and orig.eje_nume = v_despfin.eje_nume "
+                        + " and orig.deo_numdes = 0 "
                         + condWhereOrig + ")";
                 int nRegAf = stUp.executeUpdate(s);
+                s = "UPDATE v_despfin set def_preusu= def_prcost "
+                        + " WHERE   eje_nume = " + eje_numeE.getValorInt()
+                        + " and def_preusu = 0 "
+                        + " AND exists (select deo_codi from v_despiece  as orig "
+                        + " where orig.deo_codi = v_despfin.deo_codi "
+                        + " and orig.eje_nume = v_despfin.eje_nume "
+                        + " and orig.deo_numdes > 0 "
+                        + condWhereGrupo + ")";
+                nRegAf += stUp.executeUpdate(s);
                 textoE.setText(textoE.getText() + "\nAVISO: Puesto precio usuario a precio costo a " + nRegAf + " lineas de desp. salida");
                 s = "UPDATE desorilin set deo_preusu= deo_prcost "
                         + " WHERE   eje_nume = " + eje_numeE.getValorInt()
@@ -287,8 +392,18 @@ public class RegCosDes extends ventana {
                         "  and exists (select deo_codi from v_despori as orig "+
                         " where orig.deo_codi = desorilin.deo_codi "+
                         " and orig.eje_nume=desorilin.eje_nume "+
-                         condWhereOrig+")";
+                        " and orig.deo_numdes = 0 " +
+                         condWhereOrig+")";                
                 nRegAf = stUp.executeUpdate(s);
+                s = "UPDATE desorilin set deo_preusu= deo_prcost "
+                        + " WHERE   eje_nume = " + eje_numeE.getValorInt()
+                        + " and deo_preusu = 0 "+
+                        "  and exists (select deo_codi from v_despiece as orig "+
+                        " where orig.deo_codi = desorilin.deo_codi "+
+                        " and orig.eje_nume=desorilin.eje_nume "+
+                        " and orig.deo_numdes > 0 " +
+                         condWhereGrupo+")";
+                nRegAf += stUp.executeUpdate(s);
                 textoE.setText(textoE.getText() + "\nAVISO: Puesto precio usuario a precio costo a " + nRegAf + " lineas de desp. Entrada");
            }
            s = "select  pro_codi,deo_codi, deo_fecha as deo_fecha,"
@@ -301,7 +416,7 @@ public class RegCosDes extends ventana {
             buscoDesp(false);
            s = "select  pro_codi,deo_numdes as deo_codi, min(deo_fecha) as deo_fecha,"
                     + " sum(deo_kilos) as kilos,sum(deo_kilos*deo_prcost) as costo  "
-                    + " from v_despori as orig WHERE 1=1  " + condWhereOrig
+                    + " from v_despiece as orig WHERE 1=1  " + condWhereGrupo
                     + " and deo_numdes > 0"
                     + " GROUP BY pro_codi,deo_numdes  "
                     + " order by deo_codi ";
@@ -313,6 +428,11 @@ public class RegCosDes extends ventana {
             Error("Error al calcular despieces", k);
         }
     }
+    /**
+     * Busca despieces de la sentenecia en dtCon1
+     * @param agrupados
+     * @throws Exception 
+     */
     void buscoDesp(boolean agrupados) throws Exception
     {
         String condWhere=" where def_kilos !=  0 "
@@ -504,7 +624,6 @@ public class RegCosDes extends ventana {
 
         Pprinc = new javax.swing.JPanel();
         Pcondic = new gnu.chu.controles.CPanel();
-        Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
         cLabel3 = new gnu.chu.controles.CLabel();
         feciniE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -515,6 +634,7 @@ public class RegCosDes extends ventana {
         fecinvE = new gnu.chu.controles.CComboBox();
         cLabel6 = new gnu.chu.controles.CLabel();
         deo_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
+        Baceptar = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("check"));
         cScrollPane1 = new gnu.chu.controles.CScrollPane();
         textoE = new gnu.chu.controles.CTextArea();
         jt = new gnu.chu.controles.Cgrid(3);
@@ -527,10 +647,6 @@ public class RegCosDes extends ventana {
         Pcondic.setPreferredSize(new java.awt.Dimension(422, 85));
         Pcondic.setRequestFocusEnabled(false);
         Pcondic.setLayout(null);
-
-        Baceptar.setText("Aceptar");
-        Pcondic.add(Baceptar);
-        Baceptar.setBounds(251, 50, 131, 27);
 
         cLabel3.setText("Ejercicio");
         Pcondic.add(cLabel3);
@@ -561,6 +677,12 @@ public class RegCosDes extends ventana {
         cLabel6.setBounds(294, 24, 31, 17);
         Pcondic.add(deo_codiE);
         deo_codiE.setBounds(331, 24, 51, 17);
+
+        Baceptar.addMenu("Regenerar");
+        Baceptar.addMenu("Cancelar");
+        Baceptar.setText("Aceptar");
+        Pcondic.add(Baceptar);
+        Baceptar.setBounds(230, 50, 150, 26);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -612,7 +734,7 @@ public class RegCosDes extends ventana {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private gnu.chu.controles.CButton Baceptar;
+    private gnu.chu.controles.CButtonMenu Baceptar;
     private gnu.chu.controles.CPanel Pcondic;
     private javax.swing.JPanel Pprinc;
     private gnu.chu.controles.CLabel cLabel1;
