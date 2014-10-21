@@ -1079,6 +1079,7 @@ private String buscaBanco(int banCodi) throws SQLException
               dtCon1.getString("fvc_serie")+"/"+dtCon1.getInt("fvc_nume");
         return 0;
      }
+     rs.first();
      jp = JasperFillManager.fillReport(jr, mp, this);
      if (copiaPapel)
        gnu.chu.print.util.printJasper(jp, EU);
