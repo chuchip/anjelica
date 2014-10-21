@@ -44,7 +44,7 @@ import net.sf.jasperreports.engine.*;
  */
 public class lisfactu extends ventana  implements JRDataSource
 {
-  int numLiComCab,numLiComPie;
+  int numLiComCab,numLiComPie,numLinFra;
   private boolean IMPFRATEXTO=false; // Permite imprimir facturas en modo texto? (tabla parametros)
   private boolean fraPreImp=false; // Usar listado fra. grafico Preimpresa
   private boolean simular=false; // Simula el listado (para opcion de enviar fax)
@@ -869,7 +869,7 @@ private String buscaBanco(int banCodi) throws SQLException
      return false;
    numLiComCab=0;
    numLiComPie=0;
-       
+   numLinFra=0;
    htCab = datCab.getHashTable();
    impVtoAc = 0;
    nVtos = clFactCob.calDiasVto(dtCon1, dtCon1.getInt("cli_dipa1"),
@@ -877,6 +877,13 @@ private String buscaBanco(int banCodi) throws SQLException
                                 dtCon1.getFecha("fvc_fecfra", "dd-MM-yyyy"));
    banNomb = buscaBanco(dtCon1.getInt("ban_codi", true));
    impVto = (getValHash("fvc_sumtot") - dtCon1.getDouble("fvc_impcob")) / nVtos;
+   s="SELECT count(*) as cuantos FROM v_facvel "+
+    " where fvc_nume= "+fvcNume+
+    " and fvc_serie= '"+fvcSerie+"'"+
+    " and emp_codi = "+empCodi+
+    " and eje_nume = "+ejeNume;
+   dtStat.select(s);
+   numLinFra=dtStat.getInt("cuantos",true);
    s="SELECT count(*) as cuantos,fco_tipo FROM facvecom "+
     " where fvc_nume= "+fvcNume+
     " and fvc_serie= '"+fvcSerie+"'"+
@@ -891,7 +898,6 @@ private String buscaBanco(int banCodi) throws SQLException
             numLiComCab = dtStat.getInt("cuantos");
            if (dtStat.getString("fco_tipo").equals("P"))
             numLiComPie = dtStat.getInt("cuantos");
-
        } while (dtCon1.next());
    }
    return true;
@@ -1162,7 +1168,8 @@ private String buscaBanco(int banCodi) throws SQLException
            return numLiComCab;
        if (campo.equals("numLinComPie"))
            return numLiComPie;
-       
+       if (campo.equals("numLinFra"))
+           return numLinFra;
        throw new Exception("Campo " + jRField.getName() + " NO encontrado");
 
      }
