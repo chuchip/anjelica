@@ -72,6 +72,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 //  private int frtEjer,frtNume;
   final int JT_NLIN=0;
   final int JT_PROCOD=1;
+  final int JT_PRONOM=2;
   final int JT_CANIND=3;
   final int JT_KILALB=4;
   final int JT_PRCOM=5;
@@ -667,7 +668,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20141006)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20141028)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -1495,7 +1496,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
             @Override
       public void keyPressed(KeyEvent e)
       {
-        if (e.getKeyCode() == KeyEvent.VK_F3)
+        if (e.getKeyCode() == KeyEvent.VK_F3 &&  acp_nucrotE.isEditable())            
           genNumCrotal();
       }
     });
@@ -1878,7 +1879,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           for (int n=0;n<nRow;n++)
           {
            jt.setValor(acc_dtoppE.getValorDec(),n,JT_DTOPP);
-           actPrecioLinAlb(0,n, jt.getValorDec(n,JT_PRCOM),jt.getValBoolean(n,JT_PORPAG),jt.getValorDec(n,JT_DTOPP) );   
+           acl_dtoppE.setValorDec(acc_dtoppE.getValorDec());
+           actPrecioLinAlb(0,n, jt.getValorDec(n,JT_PRCOM),jt.getValBoolean(n,JT_PORPAG),
+               jt.getValorDec(n,JT_DTOPP) );   
           }
 //          actAcuTot();
 //          actImporteAlb(dtAdd ,emp_codiE.getValorInt(),acc_anoE.getValorInt(),acc_serieE.getText(),
@@ -1904,24 +1907,24 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       jtDes.requestFocus(jtDes.getSelectedRow(), nColErr);
       return;
     }
-
-    if (jtDes.getValorInt(0) == 0)
+    int numInd=jtDes.getValorInt(JTD_NUMIND);
+    if (numInd == 0)
     {
       mensajeErr("Linea NO tiene asignado ningún Individuo");
       jtDes.requestFocusSelected();
       return;
     }
     int nuLiAlbAnt=jt.getValorInt(0); // Numero linea original.
-    int nLin = jt.getSelectedRowDisab();
+    int nLin = jt.getSelectedRowDisab(); // Linea final
     int nCol=jt.getColumnCount()-5;
     if (jt.getSelectedRowDisab() == jt.getSelectedRow())
     { // Inserto Linea al Final y la seleciono
       ArrayList v = new ArrayList();
       v.add("0"); // 0
-      v.add("" + jt.getValorInt(1)); // 1
-      v.add(jt.getValString(2)); //2
+      v.add(jt.getValorInt(JT_PROCOD)); // 1
+      v.add(jt.getValString(JT_PRONOM)); //2
       for (int n1 = 0; n1 < nCol; n1++)
-        v.add("" + 0);
+        v.add(0);
       v.add(false); // Portes Pagados
       v.add(acc_dtoppE.getValorDec() );
       jt.addLinea(v);
@@ -1950,12 +1953,14 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           " and acc_serie = '" + acc_serieE.getText() + "'" +
           " and acc_nume = " + acc_numeE.getValorInt() +
           " and acp_numlin = " + jtDes.getValorInt(JTD_NUMLIN)+
-          " and acl_nulin = "+ nuLiAlbAnt;
+          " and acl_nulin = "+ nuLiAlbAnt+
+          " and acp_numind = "+numInd;
 //      debug("s: "+s);
       int nLiAfe=dtAdd.executeUpdate(s);
       if (nLiAfe!=1)
       {
         msgBox("No SE PUDO Cambiar Linea de Desglose. Lineas Afectadas: "+nLiAfe);
+        dtAdd.rollback();
         return;
       }
       if (jt.getValorInt(nLin,0)==0)
@@ -1966,16 +1971,16 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 
       actKgLinAlb(nLiAlb,nLin);
       actKgLinAlb(nuLiAlbAnt,jt.getSelectedRow());
-      jtDes.setValor("0",0);
+      acp_numindE.setValorInt(0);   
+      jtDes.setValor(0,JTD_NUMIND); // Reseteo el numero de Individuo
+                                    // para que borrar linea no haga nada sobre base de datos      
       jtDes.Bborra.doClick();
 
-//      jtDes.removeLinea();
       ctUp.commit();
-//      borraInd(jtDes.getSelectedRow(),jtDes.getValorInt(0));
     }
     catch (SQLException k)
     {
-      Error("Error al Cambiar Individuo de Linea", k);
+      Error("Error al Cambiar Individuo de Linea", k);      
     }
   }
 
@@ -2933,7 +2938,11 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       });
     }
   }
-
+  /**
+   * Funcion llamada cada vez que se cambia despues de cambiar una linea
+   * de despiece
+   */
+  
   void afterCambiaLinDes() {
       try {
             if (jtDes.getValorInt(0) != 0) {
@@ -4247,7 +4256,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       jt.setRowFocus(n);
     }
 
-    int nLiAlb=jt.getValorInt(0);
+    int nLiAlb=jt.getValorInt(JT_NLIN);
     int nLinDes=jtDes.getValorInt(nRow,JTD_NUMLIN);
     s = "SELECT * FROM v_albcompar " +
         " WHERE emp_codi = " + emp_codiE.getValorInt() +
@@ -4259,7 +4268,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 
     if (!dtCon1.select(s,true))
     {
-      msgBox("No ENCONTRADO Individuo en el Albaran");
+      msgBox("No ENCONTRADO Individuo en el Albaran"+s);
+      enviaMailError("No ENCONTRADO Individuo en el Albaran\n"+s);
       return false; // No encontrado Individuo
     }
     double canti=dtCon1.getDouble("acp_canti");
@@ -4274,7 +4284,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     stUp.executeUpdate(s);
     if (nLiAlb==0)
     {
-      msgBox("Individuo NO se pudo borrar (No encontrado)");
+      enviaMailError(".No ENCONTRADO Individuo en el Albaran"+s);        
+      msgBox("Individuo NO se pudo borrar (No encontrado)\n"+s);      
       return false;
     }
     double kgFac=0,prLiAlb=0,dtopp=0;
@@ -4760,7 +4771,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       aclPrCom-= (aclPrCom*aclDtopp/100); // Le quito el DTO PP
       aclPrCom+=impPortes; // Si no se estan viendo los portes en pantalla.
  
-      aclPrCom=Formatear.Redondea(aclPrCom,3);
+      aclPrCom=Formatear.redondea(aclPrCom,3);
       s = "UPDATE v_albacol SET acl_prcom = " +aclPrCom +
           ", acl_dtopp = "+acl_dtoppE.getValorDec()+
           " WHERE acc_ano = " + acc_anoE.getValorInt() +

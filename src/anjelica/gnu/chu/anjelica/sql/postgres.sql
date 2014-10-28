@@ -748,15 +748,17 @@ his_usunom varchar(15) not null, -- Usuario que realiza el Cambio
 );
 create index ix_hisalpave on hisalpave  (his_rowid);
 -- DROP VIEW  anjelica.v_halbventa_detalle;
-create view anjelica.v_halbventa_detalle as select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
+create view anjelica.v_halbventa_detalle as 
+select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
-avc_basimp,avc_kilos,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
+avc_basimp,avc_kilos,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,c.his_rowid,
 avc_depos,l.avl_numlin,l.pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,tar_preci,avl_unid,
 avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,
 avp_numlin,avp_ejelot,avp_emplot,avp_serlot,avp_numpar,avp_numind,avp_numuni,avp_canti
 from hisalcave as c, hisallive as l, hisalpave as p 
 where c.his_rowid=l.his_rowid and l.his_rowid=p.his_rowid
 and l.avl_numlin=p.avl_numlin;
+
 --
 -- Tabla Productos de Residiuos en albaran de ventas(MER,GRASA,etc)
 --

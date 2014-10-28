@@ -52,6 +52,7 @@ import javax.swing.text.PlainDocument;
 
 public class CTextField extends JTextField implements  CQuery,CEditable,TableCellRenderer
 {
+  Color colBackGround=null;
   private boolean incluirComodines=true;
   boolean aceptaComodines=true;
   boolean iniciado=false;
@@ -191,6 +192,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
     this.setMargin(new Insets(0,0,0,0));
 
     this.setDisabledTextColor((Color) UIManager.get("ComboBox.disabledForeground"));
+    
     this.addFocusListener(new FocusAdapter() {
       public void focusGained(FocusEvent e) {
         if (e.isTemporary())
@@ -312,8 +314,10 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
                 setDate(fecha);
               }
               else
-                leePesoBasc(0);
-              
+              {
+                if (isEditable())
+                    leePesoBasc(0);
+              }
               break;
             case KeyEvent.VK_ESCAPE:
             case KeyEvent.VK_F2:
@@ -818,16 +822,11 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
      setText(txt,true);
   }
 
-  public void setEditable(boolean edit)
+  
+  public void setBackground(Color colorBack)
   {
-    editable = edit;
-    if (editable)
-    {
-      if (editadoParent || ! iniciado)
-        super.setEditable(true);
-      return;
-    }
-    super.setEditable(false);
+      colBackGround=colorBack;
+      super.setBackground(colBackGround);
   }
 
     @Override
@@ -886,7 +885,25 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
       }
     }
   }
-
+  
+  public void setEditable(boolean edit)
+  {
+    editable = edit;
+    if (editable)
+    {
+     
+      if (editadoParent || ! iniciado)
+      {
+        super.setEditable(true);
+        if (colBackGround!=null && gridEdit!=null && isEnabled())
+            super.setBackground(colBackGround); 
+      }     
+      return;
+    }
+    if (gridEdit!=null && isEnabled())
+        super.setBackground(Color.LIGHT_GRAY);
+    super.setEditable(false);      
+  }
     @Override
   public void setEditableParent(boolean edit)
   {
@@ -896,12 +913,20 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
     if (!edit)
     {
       if (super.isEditable())
+      {
+         if (gridEdit!=null && isEnabled())
+            super.setBackground(Color.LIGHT_GRAY);
         super.setEditable(false);
+      }
     }
     else
     {
       if (!super.isEditable() && this.editable)
+      {
+        if (colBackGround!=null && gridEdit!=null && isEnabled())
+            super.setBackground(colBackGround); 
         super.setEditable(true);
+      }
     }
 }
 

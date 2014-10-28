@@ -142,7 +142,7 @@ public class MantAlbComCarne extends MantAlbCom
              mensajeErr("Una linea cuyo individuo haya tenido movientos NO se puede borrar");
             return false;
           }
-          if (jtDes.getValorInt(0)==0)
+          if (jtDes.getValorInt(JTD_NUMIND)==0)
             return true;
           try
           {

@@ -619,7 +619,7 @@ public class pdalbara extends ventanaPad  implements PAD
         PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2014-09-25" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2014-10-22" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -5739,9 +5739,9 @@ public class pdalbara extends ventanaPad  implements PAD
          
           if (! swEntdepos)
           { // No es entrega de desposito
-              if (avp_cantiE.isEditable())
+              if (avp_cantiE.isEditable() && ! isEmpPlanta)
               {
-                if (dtCon1.getDouble("stp_kilact") > avp_cantiE.getValorDec() + 0.1
+                if ( dtCon1.getDouble("stp_kilact") > avp_cantiE.getValorDec() + 0.1
                       && avp_numuniE.getValorInt() == 1) {
                   lanzaDespVentas(row);
                 }

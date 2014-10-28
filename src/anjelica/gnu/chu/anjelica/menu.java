@@ -230,7 +230,8 @@ public class menu extends JFrame
     }
     catch (Throwable ex)
     {
-      SystemOut.print(ex);
+      ex.printStackTrace();
+
     }
 
   }
@@ -1554,7 +1555,7 @@ void limpiaDB()
     Hashtable ht = new Hashtable();
      ht.put("modPrecio","true");
 ////    ht.put("modConsulta","true");
-//     ht.put("admin","true");
+     ht.put("admin","true");
      ht.put("AlbSinPed","true");
 
 //     ht.put("verPrecio","true");

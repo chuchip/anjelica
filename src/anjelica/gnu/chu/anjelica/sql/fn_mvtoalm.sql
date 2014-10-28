@@ -300,8 +300,7 @@ CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
 		        mvt_serdoc=OLD.acc_serie and
 		        pro_codi  = OLD.pro_codi AND			
 			pro_indlot =OLD.acp_numind;
-		GET DIAGNOSTICS nRows = ROW_COUNT;	
-		RAISE warning 'cucu % ',nRows;	
+		GET DIAGNOSTICS nRows = ROW_COUNT;			
 		if nRows = 0   and ajuDelmvt = 0 then
 			RAISE EXCEPTION 'No encontrado mvto a Borrar Almacen % Alb. Compra % % % % Producto: % Ind: %',
                             almCodi,

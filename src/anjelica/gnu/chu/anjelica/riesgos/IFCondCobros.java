@@ -105,7 +105,7 @@ public class IFCondCobros extends ventana {
         );
 
         Pprinc.setText("Aceptar");
-        Pprinc.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        Pprinc.setLayout(null);
 
         PFiltro.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -145,11 +145,11 @@ public class IFCondCobros extends ventana {
                                 .add(9, 9, 9)
                                 .add(empIniE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 40, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(2, 2, 2)
-                                .add(empNomIniE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE))
+                                .add(empNomIniE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, PFiltroLayout.createSequentialGroup()
                                 .add(PFiltroLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(cLabel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-                                    .add(cLabel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE))
+                                    .add(cLabel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .add(cLabel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(PFiltroLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                                     .add(cliIniE, 0, 0, Short.MAX_VALUE)
@@ -157,12 +157,9 @@ public class IFCondCobros extends ventana {
                         .add(4, 4, 4))
                     .add(PFiltroLayout.createSequentialGroup()
                         .add(PFiltroLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, PFiltroLayout.createSequentialGroup()
-                                .add(cLabel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED))
-                            .add(PFiltroLayout.createSequentialGroup()
-                                .add(cLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, cLabel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(cLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(PFiltroLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                             .add(org.jdesktop.layout.GroupLayout.LEADING, PFiltroLayout.createSequentialGroup()
                                 .add(feciniE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 80, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -224,7 +221,8 @@ public class IFCondCobros extends ventana {
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        Pprinc.add(PFiltro, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 0, 450, 110));
+        Pprinc.add(PFiltro);
+        PFiltro.setBounds(70, 0, 450, 110);
 
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -239,13 +237,16 @@ public class IFCondCobros extends ventana {
             .add(0, 238, Short.MAX_VALUE)
         );
 
-        Pprinc.add(jt, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 110, 700, 240));
+        Pprinc.add(jt);
+        jt.setBounds(0, 110, 700, 240);
 
         Baceptar.setText("Cancelar");
-        Pprinc.add(Baceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 360, 120, -1));
+        Pprinc.add(Baceptar);
+        Baceptar.setBounds(200, 360, 120, 19);
 
         Bcancelar.setText("Aceptar");
-        Pprinc.add(Bcancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 360, 120, -1));
+        Pprinc.add(Bcancelar);
+        Bcancelar.setBounds(40, 360, 120, 19);
 
         cPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
 
@@ -270,7 +271,7 @@ public class IFCondCobros extends ventana {
                 .add(18, 18, 18)
                 .add(cLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(impDocsE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE))
+                .add(impDocsE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE))
             .add(org.jdesktop.layout.GroupLayout.TRAILING, cPanel2Layout.createSequentialGroup()
                 .addContainerGap(113, Short.MAX_VALUE)
                 .add(BInvSelec, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 125, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -288,7 +289,8 @@ public class IFCondCobros extends ventana {
                 .add(BInvSelec, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
-        Pprinc.add(cPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 350, 320, 60));
+        Pprinc.add(cPanel2);
+        cPanel2.setBounds(380, 350, 320, 60);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 

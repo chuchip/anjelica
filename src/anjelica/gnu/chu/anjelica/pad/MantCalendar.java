@@ -456,6 +456,8 @@ public class MantCalendar extends ventanaPad     implements PAD  {
         {
             if (cal_mesE.getValorInt() == 0)
                 return -1; // No hay producto ... paso
+
+          
             if (cal_mesE.getValorInt() > 12)
             {
                 mensajeErr("Mes no puede ser superior a 12");
