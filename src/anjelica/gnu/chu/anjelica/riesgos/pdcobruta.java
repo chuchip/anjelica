@@ -10,10 +10,9 @@ import java.util.*;
 import javax.swing.BorderFactory;
 import gnu.chu.interfaces.*;
 import java.awt.event.*;
+import java.awt.print.PrinterException;
 import java.text.*;
 import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.util.JRLoader;
-import net.sf.jasperreports.view.*;
 /**
  *
  * <p>Titulo: pdcobruta </p>
@@ -85,7 +84,6 @@ public class pdcobruta extends ventanaPad implements PAD
       catch (Exception k)
       {
         Error("Error al Cambiar Columna", k);
-        return;
       }
     }
 
@@ -167,7 +165,7 @@ public class pdcobruta extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(589,564));
-   this.setVersion("2010-07-21");
+   this.setVersion("2014-10-28");
    Pprinc.setLayout(gridBagLayout1);
    statusBar = new StatusBar(this);
    nav = new navegador(this, dtCons, false, navegador.NORMAL);
@@ -333,8 +331,7 @@ public class pdcobruta extends ventanaPad implements PAD
        mensajeErr("NO HAY REGISTROS ACTIVOS");
        return;
      }
-     String zonCodi=zon_codiE.getText();
-     zonCodi=zonCodi.replace('*','%');
+     
      s="select f.*,c.cli_codi,c.cli_nomb,fr.fvc_fecfra from factruta f,clientes c,v_facvec fr "+
          " WHERE cor_fecha = TO_DATE('"+cor_fechaE.getText()+"','dd-MM-yyyy') "+
          " and usu_nomb  = '"+usu_nombE.getText()+"'"+
@@ -344,7 +341,8 @@ public class pdcobruta extends ventanaPad implements PAD
          " and fr.fvc_ano = f.fvc_ano "+
          " and fr.emp_codi = f.emp_codi "+
          " and fr.fvc_nume = f.fvc_nume "+
-         " order by c.cli_codi,f.fvc_ano,f.emp_codi,f.fvc_nume";
+         " and fr.fvc_serie =f.fvc_serie "+
+         " order by c.cli_codi,f.fvc_ano,f.emp_codi,fvc_serie,f.fvc_nume";
      dtCon1.setStrSelect(s);
      ResultSet rs=ct.createStatement().executeQuery(dtCon1.getStrSelect());
 
@@ -360,10 +358,9 @@ public class pdcobruta extends ventanaPad implements PAD
 //     JasperViewer.viewReport(jp,false);
     gnu.chu.print.util.printJasper(jp, EU);
 
-   } catch (Exception k)
+   } catch (SQLException | JRException | PrinterException k)
    {
      Error("Error al generar Listado",k);
-     return;
    }
 
  }
@@ -386,18 +383,22 @@ public class pdcobruta extends ventanaPad implements PAD
    }
 
  }
+  @Override
   public void PADPrimero() {
     verDatos(dtCons);
   }
+  @Override
   public void PADAnterior() {
     verDatos(dtCons);
   }
+  @Override
   public void PADSiguiente() {
     verDatos(dtCons);
   }
   public void PADUltimo() {
     verDatos(dtCons);
   }
+  @Override
   public void PADQuery() {
     activar(true);
     Pcabe.setQuery(true);
@@ -408,6 +409,7 @@ public class pdcobruta extends ventanaPad implements PAD
     cor_fechaE.requestFocus();
   }
 
+  @Override
   public void ej_query1()
   {
     try
@@ -419,10 +421,10 @@ public class pdcobruta extends ventanaPad implements PAD
         c.requestFocus();
         return;
       }
-      Vector v = new Vector();
-      v.addElement(cor_fechaE.getStrQuery());
-      v.addElement(usu_nombE.getStrQuery());
-      v.addElement(zon_codiE.getStrQuery());
+      ArrayList v = new ArrayList();
+      v.add(cor_fechaE.getStrQuery());
+      v.add(usu_nombE.getStrQuery());
+      v.add(zon_codiE.getStrQuery());
       s = "select cor_fecha,usu_nomb,zon_codi,cor_orden " +
           "  from factruta ";
       s = creaWhere(s, v, true);
@@ -454,6 +456,7 @@ public class pdcobruta extends ventanaPad implements PAD
     activaTodo();
 
   }
+  @Override
   public void canc_query() {
     Pcabe.setQuery(false);
     activaTodo();
@@ -461,6 +464,7 @@ public class pdcobruta extends ventanaPad implements PAD
     mensaje("");
     mensajeErr("Consulta ... Cancelada");
   }
+  @Override
   public void PADEdit() {
     if (dtCons.getNOREG())
     {
@@ -473,13 +477,14 @@ public class pdcobruta extends ventanaPad implements PAD
     mensaje("Modificacion de Facturas entregadas");
   }
 
+  @Override
   public void ej_edit1()
   {
     if (!checkCab())
       return;
     try
     {
-      jt.procesaAllFoco();
+      jt.salirGrid();
       if (checkLinea(0) >= 0)
       {
         jt.requestFocusSelected();
@@ -515,17 +520,17 @@ public class pdcobruta extends ventanaPad implements PAD
     cor_ordenE.setValorDec(getNumOrden());
     for (int n = 0; n < nRow; n++)
     {
-      if (jt.getValInt(n, 2) == 0)
+      if (jt.getValorInt(n, 3) == 0)
         continue;
       dtAdd.addNew("factruta");
       dtAdd.setDato("cor_fecha", cor_fechaE.getText(), "dd-MM-yyyy");
       dtAdd.setDato("usu_nomb", usu_nombE.getText());
       dtAdd.setDato("zon_codi", zon_codiE.getText());
       dtAdd.setDato("cor_orden", cor_ordenE.getValorInt());
-      dtAdd.setDato("fvc_ano", jt.getValInt(n, 0));
-      dtAdd.setDato("emp_codi", jt.getValInt(n, 1));
+      dtAdd.setDato("fvc_ano", jt.getValorInt(n, 0));
+      dtAdd.setDato("emp_codi", jt.getValorInt(n, 1));
       dtAdd.setDato("fvc_serie", jt.getValString(n, 2));
-      dtAdd.setDato("fvc_nume", jt.getValInt(n, 3));
+      dtAdd.setDato("fvc_nume", jt.getValorInt(n, 3));
       dtAdd.setDato("fvc_sumtot", jt.getValorDec(n, 7));
       dtAdd.setDato("fvc_imppen", jt.getValorDec(n, 8));
       dtAdd.setDato("fvc_impcob", 0);
@@ -536,6 +541,7 @@ public class pdcobruta extends ventanaPad implements PAD
     }
 
   }
+  @Override
   public void canc_edit()
   {
     activaTodo();
@@ -543,6 +549,7 @@ public class pdcobruta extends ventanaPad implements PAD
     mensajeErr("Modificacion de Facturas ... Cancelada");
     verDatos(dtCons);
   }
+  @Override
   public void PADAddNew()
   {
     activar(true);
@@ -554,12 +561,13 @@ public class pdcobruta extends ventanaPad implements PAD
     cor_fechaE.requestFocus();
     mensaje("Alta de Facturas entregadas");
   }
+  @Override
   public void ej_addnew1() {
     if (! checkCab())
       return;
     try
     {
-      jt.procesaAllFoco();
+      jt.salirGrid();
       if (checkLinea(0)>=0)
       {
         jt.requestFocusSelected();
@@ -622,6 +630,7 @@ public class pdcobruta extends ventanaPad implements PAD
     dtCon1.select(s);
     return dtCon1.getInt("cor_orden",true)+1;
   }
+  @Override
   public void canc_addnew() {
 
     activaTodo();
@@ -629,6 +638,7 @@ public class pdcobruta extends ventanaPad implements PAD
     mensajeErr("Alta de Facturas ... Cancelada");
     verDatos(dtCons);
   }
+  @Override
   public void PADDelete() {
     if (dtCons.getNOREG())
     {
@@ -641,6 +651,7 @@ public class pdcobruta extends ventanaPad implements PAD
     mensaje("Borrando  Facturas entregadas ...");
     Bcancelar.requestFocus();
   }
+  @Override
   public void ej_delete1() {
     try
     {
@@ -659,7 +670,7 @@ public class pdcobruta extends ventanaPad implements PAD
         }
       }
     }
-    catch (Exception k)
+    catch (SQLException | ParseException k)
     {
       Error("Error al Insertar datos", k);
     }
@@ -667,6 +678,7 @@ public class pdcobruta extends ventanaPad implements PAD
     mensaje("");
     mensajeErr("Datos ... BORRADOS");
   }
+  @Override
   public void canc_delete() {
     activaTodo();
     mensaje("");
@@ -674,6 +686,7 @@ public class pdcobruta extends ventanaPad implements PAD
     verDatos(dtCons);
   }
 
+  @Override
   public void activar(boolean b)
   {
     cor_fechaE.setEnabled(b);
@@ -748,16 +761,16 @@ public class pdcobruta extends ventanaPad implements PAD
       double impFras=0;
       do
       {
-        Vector v=new Vector();
-        v.addElement(dtCon1.getString("fvc_ano"));
-        v.addElement(dtCon1.getString("emp_codi"));
-        v.addElement(dtCon1.getString("fvc_serie"));
-        v.addElement(dtCon1.getString("fvc_nume"));
-        v.addElement(dtCon1.getString("cli_codi"));
-        v.addElement(dtCon1.getString("cli_nomb"));
-        v.addElement(dtCon1.getFecha("fvc_fecfra","dd-MM-yyyy"));
-        v.addElement(dtCon1.getString("fvc_sumtot"));
-        v.addElement(dtCon1.getString("fvc_imppen"));
+        ArrayList v=new ArrayList();
+        v.add(dtCon1.getString("fvc_ano"));
+        v.add(dtCon1.getString("emp_codi"));
+        v.add(dtCon1.getString("fvc_serie"));
+        v.add(dtCon1.getString("fvc_nume"));
+        v.add(dtCon1.getString("cli_codi"));
+        v.add(dtCon1.getString("cli_nomb"));
+        v.add(dtCon1.getFecha("fvc_fecfra","dd-MM-yyyy"));
+        v.add(dtCon1.getString("fvc_sumtot"));
+        v.add(dtCon1.getString("fvc_imppen"));
         jt.addLinea(v);
         nFras++;
         impFras+=dtCon1.getDouble("fvc_imppen");
@@ -767,7 +780,6 @@ public class pdcobruta extends ventanaPad implements PAD
     } catch (Exception k)
     {
       Error("Error al ver datos",k);
-      return;
     }
   }
   void calcSumFras()
@@ -778,7 +790,7 @@ public class pdcobruta extends ventanaPad implements PAD
 
     for (int n=0;n<nRow;n++)
     {
-      if (jt.getValInt(n, 2) == 0)
+      if (jt.getValorInt(n, 2) == 0)
         continue;
       nFras++;
       impFras+=jt.getValorDec(n,7);
