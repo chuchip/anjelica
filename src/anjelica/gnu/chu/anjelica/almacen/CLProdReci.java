@@ -239,13 +239,13 @@ public class CLProdReci extends ventana
               " select '-' as tipo, a.pro_codi,sum(rgs_canti) as kilos,pro_nomb from v_regstock as a, "
               + "v_articulo as pr  where rgs_fecha "+s1+
                condEmpr+
-              " and tir_codi in (select tir_codi from v_motregu where tir_afestk = '-')  "+
+              " and tir_afestk  = '-'  "+
               " group by a.pro_codi,pro_nomb "+
                 " union all "+
               " select '+' as tipo,a.pro_codi,sum(rgs_canti)*-1 as kilos,pro_nomb from v_regstock as a,"
               + " v_articulo as pr  where rgs_fecha "+s1+
               condEmpr+
-              " and tir_codi in (select tir_codi from v_motregu where tir_afestk = '+')  "+
+              " and tir_afestk = '+' "+
               " group by a.pro_codi,pro_nomb "+
               " order by 2  ";
         }
@@ -259,12 +259,12 @@ public class CLProdReci extends ventana
               " select '-' as tipo, a.pro_codi,rgs_canti as kilos,rgs_fecha as fecha from v_regstock as a, "
               + "v_articulo as pr  where rgs_fecha "+s1+
               condEmpr+
-              " and tir_codi in (select tir_codi from v_motregu where tir_afestk = '-')  "+
+              " and  tir_afestk = '-' "+
                 " union all "+
               " select '+' as tipo,a.pro_codi,rgs_canti*-1 as kilos,rgs_fecha as fecha from v_regstock as a,"
               + " v_articulo as pr  where rgs_fecha "+s1+
               condEmpr+
-              " and tir_codi in (select tir_codi from v_motregu where tir_afestk = '+')  "+
+              " and  tir_afestk = '+'  "+
             " order by 2,4";
         return s;
   }

@@ -64,7 +64,7 @@ public class paregalm extends CPanel {
     ventana papa;
     String afeStk;
     String s;
-    actStkPart stkPart;
+    ActStkPart stkPart;
     CLabel cLabel8 = new CLabel();
     CTextField deo_serlotE = new CTextField(Types.CHAR, "X");
     CLabel cLabel1 = new CLabel();
@@ -350,7 +350,7 @@ public class paregalm extends CPanel {
         pro_codiE.iniciar(dtStat, papa, vl, EU);
         pro_codiE.setCamposLote(deo_ejelotE, deo_serlotE, pro_loteE, pro_numindE,
                 deo_kilosE);
-        stkPart = new actStkPart(dtAdd, EU.em_cod);
+        stkPart = new ActStkPart(dtAdd, EU.em_cod);
         alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
 
         s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_codi";
@@ -531,7 +531,7 @@ public class paregalm extends CPanel {
     }
 
     public boolean getDatosReg(DatosTabla dt, int rgsNume) throws SQLException {
-        String s = "SELECT r.*,m.tir_tipo FROM v_regstock as r,v_motregu as m "
+        String s = "SELECT r.*,m.tir_tipo FROM regalmacen as r,v_motregu as m "
                 + " where rgs_nume = " + rgsNume
                 + " and r.tir_codi = m.tir_codi ";
         return dt.select(s);
@@ -647,26 +647,7 @@ public class paregalm extends CPanel {
             int almCodi, int tirCodi, int rgsCliprv, String coment,
             double precbas, java.util.Date fecres, int cliDev, int sbeCodi, int rgsTrasp,
             int rgsRecPrv, int accAno, String accSerie, int accNume,int rgsNume) throws SQLException {
-        double kilosMvt = kilos;
-        int unActMvt = unAct;
-
-        afeStk=actAfeStk(dtStat, tirCodi);
-        if (!afeStk.equals("=") && rgsTrasp != 0) { // No es Inventario
-            if (afeStk.equals("-")) {
-                kilosMvt = kilos * -1;
-                unActMvt = unAct * -1;
-            }
-            // Actualizo las tabla de Stock/Partidas
-            stkPart.setEmpresa(empCodi);
-            // suma en stock-partidas el movimiento
-            if (!stkPart.sumar(ejeNume, serie,
-                    numPar, numInd,
-                    proCodi, almCodi,
-                    kilosMvt, unActMvt,
-                    fecmvto)) {
-                return -1;
-            }
-        }
+                        
         return insRegularizacion(dtAdd, fecmvto, proCodi, empCodi, ejeNume,
                 serie, numPar, numInd, unAct, kilos,
                 almCodi, tirCodi, rgsCliprv, coment,
@@ -717,12 +698,12 @@ public class paregalm extends CPanel {
       
         if (rgsNume==0)
         {
-            String s = "SELECT MAX(rgs_nume) as rgs_nume FROM v_regstock";
+            String s = "SELECT MAX(rgs_nume) as rgs_nume FROM regalmacen ";
             dtAdd.select(s);
             rgsNume = dtAdd.getInt("rgs_nume", true) + 1;
         }
         
-        dtAdd.addNew("v_regstock");
+        dtAdd.addNew("regalmacen");
         dtAdd.setDato("pro_codi", proCodi);
         dtAdd.setDato("rgs_fecha", "{ts '"+fecmvto+"'}");
 //        dtAdd.setDato("rgs_hora", fecmvto, "dd-MM-yyyy");
@@ -795,8 +776,8 @@ public class paregalm extends CPanel {
             }
 
             afeStk = actAfeStk(dtStat, tir_codiE.getValorInt());
-
-            if (!afeStk.equals("="))
+            
+            if (!afeStk.equals("=") && !afeStk.equals("*"))
             {
                 if (stp_unactE.getValorInt() == 0 && deo_kilosE.getValorDec() == 0 ) {
                     mensajeErr("Introduzca Unidades o kilos de Regularizacion");
@@ -823,7 +804,8 @@ public class paregalm extends CPanel {
                     }
                 }
             }
-            if (!rgs_recprvE.getValor().equals("0")) {
+            if (!rgs_recprvE.getValor().equals("0")) 
+            {
                 if (acc_anoE.getValorInt() == 0) {
                     mensajeErr("Introduzca Ejercicio de Albarán de Compra");
                     acc_anoE.requestFocus();
@@ -871,7 +853,7 @@ public class paregalm extends CPanel {
      */
     public void borrarRegistro(double kilos, int unAct, int tirCodi) throws SQLException {
         int rgsTrasp = dtAdd.getInt("rgs_trasp");
-        dtAdd.delete(); // Borro el registro de v_regstock
+        dtAdd.delete(); // Borro el registro de regalmacen
 
         afeStk = actAfeStk(dtStat, tirCodi);
 
@@ -900,7 +882,7 @@ public class paregalm extends CPanel {
     }
 
     /**
-     * Borro el registro de v_regstock y resto movimientos
+     * Borro el registro de regalmacen 
      * @param rgsNume int Numero de Registro
      * @throws SQLException Error en Base de datos
      * @return boolean true si se borro el registro.
@@ -909,7 +891,7 @@ public class paregalm extends CPanel {
     public boolean borrarRegistro(int rgsNume) throws SQLException {
         double kilos;
         int unAct, nRowAf;
-        s = "select * from v_regstock WHERE rgs_nume = " + rgsNume;
+        s = "select * from regalmacen WHERE rgs_nume = " + rgsNume;
         if (!dtAdd.select(s, true)) {
             return false;
         }
@@ -919,19 +901,19 @@ public class paregalm extends CPanel {
             nRowAf = dtAdd.delete(); // SOLO Borro el Registro Regularizaci�n.
             return nRowAf > 0;
         }
-        kilos = dtAdd.getDouble("rgs_kilos", true);
-        unAct = dtAdd.getInt("rgs_canti", true);
-        if (afeStk.equals("-")) {
-            kilos = kilos * -1;
-            unAct = unAct * -1;
-        }
+//        kilos = dtAdd.getDouble("rgs_kilos", true);
+//        unAct = dtAdd.getInt("rgs_canti", true);
+//        if (afeStk.equals("-")) {
+//            kilos = kilos * -1;
+//            unAct = unAct * -1;
+//        }
 
 //        stkPart.setEmpresa(deo_emplotE.getValorInt());
 //        stkPart.restar(dtAdd.getInt("eje_nume"), dtAdd.getString("pro_serie"),
 //                dtAdd.getInt("pro_nupar"), dtAdd.getInt("pro_numind"),
 //                dtAdd.getInt("pro_codi"), dtAdd.getInt("alm_codi"),
 //                kilos, unAct);
-        s = "DELETE FROM v_regstock WHERE rgs_nume = " + rgsNume;
+        s = "DELETE FROM regalmacen WHERE rgs_nume = " + rgsNume;
         nRowAf = dtAdd.executeUpdate(s); // Borro el registro de v_regstock
         return nRowAf > 0;
     }

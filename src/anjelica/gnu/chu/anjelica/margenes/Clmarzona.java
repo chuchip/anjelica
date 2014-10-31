@@ -139,10 +139,9 @@ public class Clmarzona extends ventana {
     sbe_codiE.setAceptaNulo(true);
     emp_codiE.setAceptaNulo(true);
     pro_codiE.iniciar(dtStat, this, vl, EU);
-    s="select distinct(rgs_fecha) as cci_feccon from v_regstock as r,v_motregu  as m "+
+    s="select distinct(rgs_fecha) as cci_feccon from v_regstock as r "+
         " where r.emp_codi = "+EU.em_cod+
-        " and r.tir_codi = m.tir_codi "+
-        " and M.tir_afestk='=' "+
+        " and tir_afestk='=' "+
         " order by cci_feccon desc ";
 
     if (dtStat.select(s))

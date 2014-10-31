@@ -533,10 +533,9 @@ public class ClDifInv extends ventana {
           " c.emp_codi=c.emp_codi"+
           " and c.cci_codi=l.cci_codi";   
          dtCon1.executeUpdate(s);
-        s= " select r.* FROM v_regstock r, v_motregu m WHERE " +
-          " m.tir_codi = r.tir_codi " +
-          " and r.rgs_kilos <> 0"+
-          " and rgs_trasp != 0 "+
+        s= " select r.* FROM v_regstock r  WHERE " +
+          "  r.rgs_kilos <> 0"+
+//          " and rgs_trasp != 0 "+
           (almCodi==0?"":" and r.alm_codi = "+almCodi)+
           " and tir_afestk = '=' "+
           " AND r.rgs_fecha = TO_DATE('" +  cci_fecconE.getText() + "','dd-MM-yyyy') " ;
@@ -930,11 +929,10 @@ public class ClDifInv extends ventana {
           "  r.pro_serie as serie,r.pro_nupar as  lote," +
           " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, " +
           " R.pro_codi,r.emp_codi, eje_nume,rgs_canti as almori,'' AS seralb "+
-          " FROM v_regstock r, v_motregu m,v_articulo a WHERE " +
-          " m.tir_codi = r.tir_codi " +
-          " and a.pro_codi =r.pro_codi "+
+          " FROM v_regstock r,v_articulo a WHERE " +
+          " a.pro_codi =r.pro_codi "+
           " and r.rgs_kilos <> 0"+
-          " and rgs_trasp != 0 "+
+//          " and rgs_trasp != 0 "+
           (almCodi==0?"":" and r.alm_codi = "+almCodi)+
           (camCodiE.equals("--")?" and a.cam_codi in "+
            condCamaras:
@@ -952,11 +950,10 @@ public class ClDifInv extends ventana {
           "  r.pro_serie as serie,r.pro_nupar as  lote," +
           " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, " +
           " R.pro_codi,r.emp_codi, eje_nume,rgs_canti as almori,'' AS seralb "+
-          " FROM v_regstock r, v_motregu m,v_articulo a WHERE " +
-          " m.tir_codi = r.tir_codi " +
-          " and a.pro_codi =r.pro_codi "+
+          " FROM v_regstock r,v_articulo a WHERE " +
+          " a.pro_codi =r.pro_codi "+
           " and r.rgs_kilos <> 0"+
-          " and rgs_trasp != 0 "+
+//          " and rgs_trasp != 0 "+
           (almCodi==0?"":" and r.alm_codi = "+almCodi)+
           (camCodiE.equals("--")?" and a.cam_codi in "+
           condCamaras:

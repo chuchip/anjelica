@@ -244,10 +244,9 @@ public class clstkdes extends ventana
     Pcons.setButton(KeyEvent.VK_F4,Bconsulta);
     String feulin;
     s =
-        "select distinct(rgs_fecha) as cci_feccon from v_regstock as r,v_motregu  as m " +
-        " where r.tir_codi = m.tir_codi " +
-        (filtroEmpr==null?"":" and r.emp_codi in ("+filtroEmpr+")")+
-        " and M.tir_afestk='=' " +
+        "select distinct(rgs_fecha) as cci_feccon from v_regstock as r " +
+        " where tir_afestk='=' " +
+        (filtroEmpr==null?"":" and r.emp_codi in ("+filtroEmpr+")")+     
         " order by cci_feccon desc ";
 
     if (dtStat.select(s))
@@ -641,10 +640,9 @@ public class clstkdes extends ventana
         " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, " +
         " R.pro_codi,r.emp_codi, eje_nume,0 as almori,'' AS seralb, " +
          " 0 as prv_codi, null as feccad,rgs_canti as canind "+
-        " FROM v_regstock r, v_motregu m,v_articulo a WHERE " +
-        " m.tir_codi = r.tir_codi " +
-        " and a.pro_codi =r.pro_codi " +
-        " and r.rgs_trasp != 0 "+
+        " FROM v_regstock r,v_articulo a WHERE " +        
+        " a.pro_codi =r.pro_codi " +
+//        " and r.rgs_trasp != 0 "+
         " and r.rgs_kilos <> 0" +
         (filtroEmpr==null?"":" and r.emp_codi in ("+filtroEmpr+")")+
         condArt + " AND r.rgs_fecha >= TO_DATE('" + feulst + "','dd-MM-yyyy') " +

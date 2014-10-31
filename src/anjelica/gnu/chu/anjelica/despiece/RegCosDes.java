@@ -108,10 +108,9 @@ public class RegCosDes extends ventana {
     public void iniciarVentana() throws Exception {
         dtAdd = new DatosTabla(dtCon1.getConexion());
         String feulin; // actStkPart.getFechaUltInv(EU.em_cod, 0, dtStat);
-        String s = "select distinct(rgs_fecha) as cci_feccon from v_regstock as r,v_motregu  as m "
+        String s = "select distinct(rgs_fecha) as cci_feccon from v_regstock as r "
                 + " where r.emp_codi = " + EU.em_cod
-                + " and r.tir_codi = m.tir_codi "
-                + " and M.tir_afestk='=' "
+                + " and tir_afestk='=' "
                 + " order by cci_feccon desc ";
 
         if (dtStat.select(s)) {

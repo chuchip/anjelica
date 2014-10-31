@@ -1390,7 +1390,7 @@ public  class pdpagreal extends ventanaPad implements PAD
           return false;
       }
       msgAviso="";
-      s = "SELECT l.eje_nume, l.fcc_nume FROM v_falico as l, libpagdet as d, v_regstock as r " +
+      s = "SELECT l.eje_nume, l.fcc_nume FROM v_falico as l, libpagdet as d, regalmacen as r " +
           " where d.emp_codi = " + emp_codiE.getValorInt() +
           " AND d.lbp_nume = " + lbp_numeE.getValorInt() +
           " and d.lbv_orige = 'C' " +

@@ -10,7 +10,7 @@ import javax.swing.BorderFactory;
 import gnu.chu.camposdb.*;
 import gnu.chu.interfaces.*;
 import java.awt.event.*;
-import gnu.chu.anjelica.almacen.actStkPart;
+import gnu.chu.anjelica.almacen.ActStkPart;
 import gnu.chu.anjelica.almacen.paregalm;
 
 /**
@@ -36,7 +36,7 @@ import gnu.chu.anjelica.almacen.paregalm;
 public class pdinven extends ventanaPad implements PAD
 {
   paregalm pRegAlm;
-  actStkPart stkPart;
+  ActStkPart stkPart;
   int tirCodi;
   String fecini,tipo;
   CPanel Pprinc = new CPanel();
@@ -298,7 +298,7 @@ public class pdinven extends ventanaPad implements PAD
     alm_codiE.setFormato(true);
     alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
 
-    stkPart = new actStkPart(dtAdd,EU.em_cod);
+    stkPart = new ActStkPart(dtAdd,EU.em_cod);
     stkPart.setVentana(this);
 
     s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
@@ -365,7 +365,7 @@ public class pdinven extends ventanaPad implements PAD
         }
         if (nav.pulsado == navegador.ADDNEW)
         {
-          s = "SELECT * FROM v_regstock  "+
+          s = "SELECT * FROM regalmacen  "+
               " WHERE rgs_fecha = TO_DATE('" + rgs_fechaE.getText() + "','dd-MM-yyyy') " +
               " AND pro_codi = " + pro_codiE.getValorInt()+
               " and alm_codi = "+alm_codiE.getValorInt();
@@ -394,10 +394,10 @@ public class pdinven extends ventanaPad implements PAD
       try {
         int rgsNume=-1;
         borDatos(fecha,proCodi,almCodi);
-        dtAdd.addNew("v_regstock");
+        dtAdd.addNew("regalmacen");
         if (!dtAdd.getMetaData().isAutoIncrement(dtAdd.getNomCol("rgs_nume")))
          {
-           s = "SELECT MAX(rgs_nume) as rgs_nume FROM v_regstock";
+           s = "SELECT MAX(rgs_nume) as rgs_nume FROM regalmacen";
            dtStat.select(s);
            rgsNume = dtStat.getInt("rgs_nume", true) + 1;
 //     debug("Campo rgsNume NO isAutoIncrement");
@@ -447,7 +447,7 @@ public class pdinven extends ventanaPad implements PAD
      */
     void  borDatos(String fecha,int proCodi,int almCodi) throws SQLException,java.text.ParseException
     {
-      s = "DELETE FROM v_regstock " +
+      s = "DELETE FROM regalmacen " +
           " WHERE rgs_fecha = TO_DATE('" + fecha + "','dd-MM-yyyy') " +
           " AND pro_codi = " + proCodi+
           " and tir_codi = "+tirCodi+
@@ -495,7 +495,7 @@ public class pdinven extends ventanaPad implements PAD
 
           */
       s = "SELECT eje_nume,emp_codi,pro_serie,pro_nupar,pro_numind,rgs_kilos,rgs_canti,rgs_prregu " +
-          " FROM v_regstock " +
+          " FROM regalmacen " +
           " WHERE rgs_fecha = TO_DATE('"+fecha+"','dd-MM-yyyy') "+
           " AND pro_codi = "+proCodi+
           " and alm_codi = "+almCodi+
@@ -553,15 +553,16 @@ public class pdinven extends ventanaPad implements PAD
 
   }
 
+  @Override
   public void ej_query1() {
     Baceptar.setEnabled(false);
-    Vector v=new Vector();
-    v.addElement(rgs_fechaE.getStrQuery());
-    v.addElement(pro_codiE.getStrQuery());
-    v.addElement(alm_codiE.getStrQuery());
+    ArrayList v=new ArrayList();
+    v.add(rgs_fechaE.getStrQuery());
+    v.add(pro_codiE.getStrQuery());
+    v.add(alm_codiE.getStrQuery());
 
     Pcabe.setQuery(false);
-    s = "SELECT pro_codi,rgs_fecha,alm_codi FROM v_regstock";
+    s = "SELECT pro_codi,rgs_fecha,alm_codi FROM regalmacen ";
     s=creaWhere(s,v);
     s += " group by pro_codi,rgs_fecha,alm_codi" +
         " order by rgs_fecha,pro_codi,alm_codi";
@@ -761,6 +762,7 @@ public class pdinven extends ventanaPad implements PAD
     return -1;
   }
 
+  @Override
   public void afterConecta() throws SQLException, java.text.ParseException
   {
     s = "select  tir_codi from v_motregu where tir_afestk = '='";
@@ -769,11 +771,12 @@ public class pdinven extends ventanaPad implements PAD
 
     tirCodi = dtCon1.getInt("tir_codi");
 
-    strSql = "SELECT pro_codi,rgs_fecha,alm_codi FROM v_regstock " +
+    strSql = "SELECT pro_codi,rgs_fecha,alm_codi FROM regalmacen " +
         " where tir_codi = '" + tirCodi + "'" +
         " group by pro_codi,rgs_fecha,alm_codi" +
         " order by rgs_fecha,pro_codi,alm_codi";
   }
+  @Override
   public void rgSelect() throws SQLException
    {
      super.rgSelect();

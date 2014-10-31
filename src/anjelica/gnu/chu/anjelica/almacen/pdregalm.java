@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Título: pdregalm</p>
  * <p>Descripcion: Mantenimientos de Regularizaciones en almacén (Actualiza la tabla v_regstock) </p>
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -118,7 +118,7 @@ public class pdregalm extends ventanaPad implements PAD
      fecfinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
      feciniE.setText(Formatear.sumaDias(fecfinE.getText(), "dd-MM-yyyy", -30));
 
-     strSql = "select * from v_regstock WHERE rgs_fecha >= to_date('" + feciniE.getText() +
+     strSql = "select * from regalmacen WHERE rgs_fecha >= to_date('" + feciniE.getText() +
          "','dd-MM-yyyy')" +
          " and rgs_fecha <= to_date('" + fecfinE.getText() + "','dd-MM-yyyy')" +
          " AND tir_codi NOT IN (SELECT tir_codi FROM v_motregu WHERE tir_afestk = '=') " +
@@ -398,7 +398,7 @@ public void ej_query()
       fecfinE.requestFocus();
       return;
     }
-    strSql = "select * from v_regstock WHERE rgs_fecha >= to_date('" + feciniE.getText() + "','dd-MM-yyyy')" +
+    strSql = "select * from regalmacen WHERE rgs_fecha >= to_date('" + feciniE.getText() + "','dd-MM-yyyy')" +
         " and rgs_fecha <= to_date('" + fecfinE.getText() + "','dd-MM-yyyy')" +
         (pro_codiE1.getValorInt() != 0 ? " AND pro_codi = " + pro_codiE1.getValorInt() : "") +
         (tir_codiE1.getValorInt() != 0 ? " AND tir_codi = " + tir_codiE1.getValorInt() : "") +
@@ -443,7 +443,7 @@ public void ej_query()
    }
    try
    {
-     s = "select * from v_regstock WHERE rgs_nume = " + jt.getValorInt(12);
+     s = "select * from regalmacen WHERE rgs_nume = " + jt.getValorInt(12);
      if (!dtAdd.select(s, true))
      {
        mensaje("");
@@ -553,7 +553,7 @@ public void ej_query()
    }
    try
    {
-     s = "select * from v_regstock WHERE rgs_nume = " + jt.getValorInt(12);
+     s = "select * from regalmacen WHERE rgs_nume = " + jt.getValorInt(12);
      if (!dtAdd.select(s, true))
      {
        mensaje("");
@@ -660,7 +660,7 @@ public void ej_query()
  }
  void verDato(int rgsNume) throws Exception
  {
-   s="SELECT r.*,pro_nomb FROM v_regstock as r,v_articulo as p "+
+   s="SELECT r.*,pro_nomb FROM regalmacen as r,v_articulo as p "+
        " WHERE rgs_nume = "+dtCons.getInt("rgs_nume")+
        " and r.pro_codi = p.pro_codi";
    if (!dtCon1.select(s))

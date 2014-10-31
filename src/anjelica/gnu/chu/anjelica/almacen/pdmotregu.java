@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Título: pdmotregu</p>
  * <p>Descripcion: Mant. TIPOS de Regularizacion</p>
- * <p>Copyright: Copyright (c) 2006-2013
+ * <p>Copyright: Copyright (c) 2006-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -28,6 +28,7 @@ import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
 import java.awt.*;
 import java.sql.*;
+import java.text.ParseException;
 import java.util.*;
 import javax.swing.BorderFactory;
 import javax.swing.event.ListSelectionEvent;
@@ -70,8 +71,7 @@ public class pdmotregu extends ventanaPad implements PAD
          setErrorInit(true);
      }
      catch (Exception e) {
-       ErrorInit(e);
-       setErrorInit(true);
+       ErrorInit(e);      
      }
    }
 
@@ -93,7 +93,7 @@ public class pdmotregu extends ventanaPad implements PAD
    {
      iniciarFrame();
      this.setSize(new Dimension(539, 522));
-     this.setVersion("2013-02-21");
+     this.setVersion("2014-10-30");
      strSql = "select * from v_motregu ORDER BY tir_codi";
      statusBar = new StatusBar(this);
      nav = new navegador(this, false, navegador.GRID);
@@ -158,6 +158,7 @@ public class pdmotregu extends ventanaPad implements PAD
      tir_afestkE.addItem("Suma","+");
      tir_afestkE.addItem("Resta","-");
      tir_afestkE.addItem("Invent.","=");
+     tir_afestkE.addItem("No Afecta.","*");
      tir_tipoE.addItem("----","");
      tir_tipoE.addItem("Vert. Cliente",VERT_CLIENTE);
      tir_tipoE.addItem("Vert. Proveed",VERT_PROVEE);
@@ -256,11 +257,13 @@ public class pdmotregu extends ventanaPad implements PAD
       Error("Error al Editar Registro",k);
     }
   }
+  @Override
   public boolean checkEdit()
   {
     return checkAddNew();
   }
 
+  @Override
   public void ej_edit1()
   {
     try
@@ -273,12 +276,13 @@ public class pdmotregu extends ventanaPad implements PAD
       activaTodo();
       verDatos();
     }
-    catch (Exception k)
+    catch (SQLException k)
     {
       Error("Error al Insertar Motivo de Regularizacion", k);
     }
 
   }
+  @Override
   public void canc_edit(){
     try
     {
@@ -294,6 +298,7 @@ public class pdmotregu extends ventanaPad implements PAD
     }
   }
 
+  @Override
   public void PADAddNew(){
     jt.setEnabled(false);
     activar(true);
@@ -302,7 +307,8 @@ public class pdmotregu extends ventanaPad implements PAD
     tir_codiE.requestFocus();
     mensaje("Introduzca UN Nuevo tipo de Vertedero");
   }
-  public boolean checkAddNew()
+  @Override
+  public boolean checkAddNew() 
   {
     if (tir_codiE.getValorInt()==0)
     {
@@ -310,13 +316,18 @@ public class pdmotregu extends ventanaPad implements PAD
       tir_codiE.requestFocus();
       return false;
     }
-    if (tir_codiE.getValorInt() <= 20)
+    try {
+        if (tir_codiE.getValorInt() <= 20 && ! EU.isAdminDB(dtStat))
+        {
+          mensajeErr("Codigo de Regularizacion Inferiores a 20 Estan reservados para uso interno");
+          tir_codiE.requestFocus();
+          return false;
+        }
+    } catch (SQLException k)
     {
-      mensajeErr("Codigo de Regularizacion Inferiores a 20 Estan reservados para uso interno");
-      tir_codiE.requestFocus();
-      return false;
+        Error("Error al comprobar permisos de usuario",k);
+        return false;
     }
-
     if (tir_nombE.isNull())
     {
       mensajeErr("Introduzca Descripcion Tipo de Regularizacion");
@@ -326,6 +337,7 @@ public class pdmotregu extends ventanaPad implements PAD
 
     return true;
   }
+  @Override
   public void ej_addnew1(){
     try {
       String s = "SELECT * FROM v_motregu WHERE tir_codi = " + tir_codiE.getValorInt();
@@ -347,13 +359,14 @@ public class pdmotregu extends ventanaPad implements PAD
       Error("Error al Insertar Motivo de Regularizacion",k);
     }
   }
-  void actDatos() throws SQLException,java.text.ParseException
+  void actDatos() throws SQLException
   {
     dtAdd.setDato("tir_nomb", tir_nombE.getText());
     dtAdd.setDato("tir_afestk", tir_afestkE.getValor());
     dtAdd.setDato("tir_tipo", tir_tipoE.getValor());
     dtAdd.update(stUp);
   }
+  @Override
   public void canc_addnew(){
     mensaje("");
     jt.setEnabled(false);

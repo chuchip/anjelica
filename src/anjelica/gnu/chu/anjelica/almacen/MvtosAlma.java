@@ -290,14 +290,13 @@ public class MvtosAlma
            " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "+
            " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
            " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
-           ", tir_tipo as repCodi,m.tir_nomb as zonCodi,0 as sbe_codi "+
+           ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "+
            ", rgs_canti as unidades, 0 as div_codi,alm_codi,'.' as avc_serie, "+
            " 'N' as avc_depos "+
-           " FROM v_regstock r, v_motregu m WHERE "+
-           " m.tir_codi = r.tir_codi "+
-           " and tir_afestk = '='"+ // Solo Inventarios
+           " FROM v_regstock r  WHERE "+         
+           " tir_afestk = '='"+ // Solo Inventarios
            " and rgs_kilos <> 0 "+
-            " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
+//            " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
            (almCodi==0?"":" and alm_codi = "+almCodi)+
            (proLote==0?"":" and r.pro_nupar  = "+proLote)+
            (proNumind==0?"":" and r.pro_numind = "+proNumind)+
@@ -480,15 +479,14 @@ public class MvtosAlma
        " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "+
        " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
        " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
-       ", tir_tipo as repCodi,m.tir_nomb as zonCodi,0 as sbe_codi "+
+       ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "+
        ", rgs_canti as unidades, 0 as div_codi,alm_codi,'.' as avc_serie "+
        ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
-       " FROM v_regstock r, v_motregu m WHERE "+
-       " m.tir_codi = r.tir_codi "+
-       " and rgs_kilos <> 0 "+
+       " FROM v_regstock r WHERE "+       
+       " rgs_kilos <> 0 "+
        ( incInvFinal?"": " and tir_afestk != '='")+ // Sin Incluir Inventarios
        (swIgnVert?" and tir_tipo NOT like 'V%'":"")+
-        " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
+//        " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
        (almCodi==0?"":" and alm_codi = "+almCodi)+
        (proLote==0?"":" and r.pro_nupar  = "+proLote)+
        (proNumind==0?"":" and r.pro_numind = "+proNumind)+
@@ -513,14 +511,13 @@ public class MvtosAlma
            " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "+
            " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
            " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
-           ", tir_tipo as repCodi,m.tir_nomb as zonCodi,0 as sbe_codi "+
+           ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "+
            ", rgs_canti as unidades, 0 as div_codi,alm_codi,'.' as avc_serie "+
            ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
-           " FROM v_regstock r, v_motregu m WHERE "+
-           " m.tir_codi = r.tir_codi "+
-           " and tir_afestk = '='"+ // Solo Inventarios
+           " FROM v_regstock r WHERE "+        
+           " tir_afestk = '='"+ // Solo Inventarios
            " and rgs_kilos <> 0 "+
-            " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
+//            " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
            (almCodi==0?"":" and alm_codi = "+almCodi)+
            (proLote==0?"":" and r.pro_nupar  = "+proLote)+
            (proNumind==0?"":" and r.pro_numind = "+proNumind)+
@@ -1606,10 +1603,9 @@ public class MvtosAlma
             ,int maxElemen) throws SQLException {
 
         String feulin;
-        String s = "select distinct(rgs_fecha) as cci_feccon from v_regstock as r,v_motregu  as m "
-                + " where r.emp_codi = " + empCodi
-                + " and r.tir_codi = m.tir_codi "
-                + " and M.tir_afestk='=' "
+        String s = "select distinct(rgs_fecha) as cci_feccon from v_regstock as r  "
+                + " where r.emp_codi = " + empCodi              
+                + " and tir_afestk='=' "
                 + " order by cci_feccon desc ";
 
         if (dt.select(s)) {

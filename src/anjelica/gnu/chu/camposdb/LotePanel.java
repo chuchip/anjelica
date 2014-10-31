@@ -44,6 +44,7 @@ public class LotePanel extends CPanel {
         this.EU=EU;
         pro_codiE.iniciar(dt, intFrame, layPane, EU);
     }
+    @Override
     public void requestFocus()
     {
         if (pro_codiE!=null)
@@ -64,6 +65,7 @@ public class LotePanel extends CPanel {
         pro_loteE.setValorInt(proLote);
         pro_indivE.setValorInt(proNumind);
     }
+    @Override
     public void setEditable(boolean edita)
     {
         pro_codiE.setEditable(edita);

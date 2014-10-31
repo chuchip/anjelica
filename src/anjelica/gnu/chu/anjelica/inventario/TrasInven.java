@@ -2,7 +2,7 @@ package gnu.chu.anjelica.inventario;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
-import gnu.chu.anjelica.almacen.actStkPart;
+import gnu.chu.anjelica.almacen.ActStkPart;
 import gnu.chu.anjelica.almacen.paregalm;
 import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.controles.StatusBar;
@@ -50,7 +50,7 @@ public class TrasInven extends ventanaPad implements PAD {
    String s;
    boolean swInvCong;
    int tirCodi;
-   actStkPart stkPart;
+   ActStkPart stkPart;
    paregalm pRegAlm;
     
  public TrasInven(EntornoUsuario eu, Principal p)
@@ -128,7 +128,7 @@ public class TrasInven extends ventanaPad implements PAD {
         emp_codiE.setColumnaAlias("emp_codi");
         alm_codiE.setColumnaAlias("alm_codi");
         cci_fecconE.setColumnaAlias("cci_feccon");
-        stkPart = new actStkPart(dtAdd, EU.em_cod);
+        stkPart = new ActStkPart(dtAdd, EU.em_cod);
         stkPart.setVentana(this);
         pRegAlm = new paregalm();
         pRegAlm.iniciar(EU, dtStat, dtAdd, vl, this, dtBloq);
@@ -159,7 +159,7 @@ public class TrasInven extends ventanaPad implements PAD {
         try {
             alm_codiE.setValorInt(dtCons.getInt("alm_codi"));
             cci_fecconE.setText(dtCons.getFecha("cci_feccon"));
-            s = "select * from v_regstock where "
+            s = "select * from regalmacen where "
                     + "  rgs_fecha = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                     + " and tir_codi = " + tirCodi;
 
@@ -294,7 +294,7 @@ public class TrasInven extends ventanaPad implements PAD {
     }
 
     /**
-     * Inserta en la tabla v_regstock las regularizaciones tipo inventario
+     * Inserta en la tabla regalmacen las regularizaciones tipo inventario
      *
      * @throws SQLException
      */
@@ -326,7 +326,7 @@ public class TrasInven extends ventanaPad implements PAD {
 
         int nReg = 1;
         int rgsNume;
-        s = "SELECT max(rgs_nume) as rgs_nume FROM v_regstock  ";
+        s = "SELECT max(rgs_nume) as rgs_nume FROM regalmacen  ";
         dtStat.select(s);
         rgsNume = dtStat.getInt("rgs_nume", true) + 1;
         int almCodi;
@@ -439,7 +439,7 @@ public class TrasInven extends ventanaPad implements PAD {
                 /**
                  * Comprobar que no hay inventarios para esta fecha.
                  */
-                s = "select * from v_regstock where "
+                s = "select * from regalmacen where "
                         + "  rgs_fecha = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                         + " and tir_codi = " + tirCodi;
                 if (dtCon1.select(s)) {
@@ -457,7 +457,7 @@ public class TrasInven extends ventanaPad implements PAD {
 
                     res = mensajes.mensajeYesNo("Borrar los registros existentes ?");
                     if (res == mensajes.YES) {
-                        s = "delete from v_regstock where "
+                        s = "delete from regalmacen where "
                                 + " rgs_fecha = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                                 + " and tir_codi = " + tirCodi
                                 +(opInsAllAlmac.isSelected()?"":

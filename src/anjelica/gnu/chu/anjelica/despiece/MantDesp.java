@@ -42,7 +42,7 @@ import gnu.chu.Menu.LoginDB;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.StkPartid;
-import gnu.chu.anjelica.almacen.actStkPart;
+import gnu.chu.anjelica.almacen.ActStkPart;
 import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.compras.MantAlbComPlanta;
@@ -145,7 +145,7 @@ public class MantDesp extends ventanaPad implements PAD
     conexion ctProd;
     DatosTabla dtProd;
     boolean ADMIN = false;
-    actStkPart stkPart;
+    ActStkPart stkPart;
     boolean swTienePrec = false;
     boolean inTidCodi = false;
     public final static double LIMDIF = 0.02;
@@ -356,7 +356,7 @@ public class MantDesp extends ventanaPad implements PAD
         deo_selogeE.setColumnaAlias("deo_seloge");
         deo_nulogeE.setColumnaAlias("deo_nuloge");
         jtLin.setButton(KeyEvent.VK_F5, BcopLin);
-        stkPart = new actStkPart(dtAdd, EU.em_cod);
+        stkPart = new ActStkPart(dtAdd, EU.em_cod);
         cargaPSC.setSelected(AUTOLLENARDESP);
         activarEventos();
         verDatos(dtCons);
@@ -1478,11 +1478,11 @@ public class MantDesp extends ventanaPad implements PAD
                     jtLin.getValString(n,JTLIN_FECCAD),
                     jtLin.getValorInt(n,JTLIN_ORDEN)
                     );
-             insStkPart(jtLin.getValorInt(n,JTLIN_PROCODI), deo_ejlogeE.getValorInt(),
-                    EU.em_cod,
-                    deo_selogeE.getText(), deo_nulogeE.getValorInt(),
-                    jtLin.getValorInt(n,JTLIN_NUMIND),
-                    jtLin.getValorDec(n,JTLIN_KILOS));
+//             insStkPart(jtLin.getValorInt(n,JTLIN_PROCODI), deo_ejlogeE.getValorInt(),
+//                    EU.em_cod,
+//                    deo_selogeE.getText(), deo_nulogeE.getValorInt(),
+//                    jtLin.getValorInt(n,JTLIN_NUMIND),
+//                    jtLin.getValorDec(n,JTLIN_KILOS));
         }
         dtAdd.commit();
         mensajeErr("Datos restaurados ");
@@ -1590,7 +1590,7 @@ public class MantDesp extends ventanaPad implements PAD
             genDatEtiq();
             proCodiB = 0;
             boolean isBlock = deo_blockE.getValor().equals("S");
-            if (isBlock && actStkPart.isBloqueado(dtStat, jtCab.getValorInt(0, JTCAB_PROCODI), jtCab.getValorInt(0, JTCAB_EJELOT),
+            if (isBlock && ActStkPart.isBloqueado(dtStat, jtCab.getValorInt(0, JTCAB_PROCODI), jtCab.getValorInt(0, JTCAB_EJELOT),
                 EU.em_cod, jtCab.getValString(0, JTCAB_SERLOT),
                 jtCab.getValorInt(0, JTCAB_NUMLOT), jtCab.getValorInt(0, JTCAB_NUMIND),
                 deo_almoriE.getValorInt()))
@@ -1680,7 +1680,7 @@ public class MantDesp extends ventanaPad implements PAD
            
             if (proCodiB != 0)
             { // Antes tenia un producto bloqueado. Pongo kilos a 0 de producto entrada, si todavia sigue bloqueado
-                if (actStkPart.isBloqueado(dtStat, proCodiB, ejeLoteB, EU.em_cod, serLoteB, numLoteB, numIndiB, almOrigB))
+                if (ActStkPart.isBloqueado(dtStat, proCodiB, ejeLoteB, EU.em_cod, serLoteB, numLoteB, numIndiB, almOrigB))
                 {
                     stkPart.ponerStock(proCodiB, ejeLoteB,
                         EU.em_cod,
@@ -3112,10 +3112,10 @@ public class MantDesp extends ventanaPad implements PAD
                     pro_codlE.getValorInt(),
                     def_kilosE.getValorDec(), def_numpieE.getValorInt(), def_unicajE.getValorInt(),
                     def_feccadE.getText(), 0);
-                insStkPart(pro_codlE.getValorInt(), deo_ejlogeE.getValorInt(),
-                    EU.em_cod,
-                    deo_selogeE.getText(), deo_nulogeE.getValorInt(),
-                    nInd, def_kilosE.getValorDec());
+//                insStkPart(pro_codlE.getValorInt(), deo_ejlogeE.getValorInt(),
+//                    EU.em_cod,
+//                    deo_selogeE.getText(), deo_nulogeE.getValorInt(),
+//                    nInd, def_kilosE.getValorDec());
             } 
             else
             {
@@ -3133,10 +3133,10 @@ public class MantDesp extends ventanaPad implements PAD
                     pro_codlE.getValorInt(), def_kilosE.getValorDec(),
                     def_numpieE.getValorInt(), def_unicajE.getValorInt(),
                     def_feccadE.getText(), nOrd);//
-                insStkPart(pro_codlE.getValorInt(), deo_ejlogeE.getValorInt(),
-                    EU.em_cod,
-                    deo_selogeE.getText(), deo_nulogeE.getValorInt(),
-                    nInd, def_kilosE.getValorDec());
+//                insStkPart(pro_codlE.getValorInt(), deo_ejlogeE.getValorInt(),
+//                    EU.em_cod,
+//                    deo_selogeE.getText(), deo_nulogeE.getValorInt(),
+//                    nInd, def_kilosE.getValorDec());
             }
             jtLin.setValor("" + nInd, linea, 6);
             jtLin.setValor("" + nOrd, linea, 7);
@@ -3539,23 +3539,23 @@ public class MantDesp extends ventanaPad implements PAD
         }
         return true;
     }
-    /**
-     * Inserta registro de stock 
-     * @param proCodi
-     * @param ejeLot
-     * @param empLot
-     * @param serLot
-     * @param numLot
-     * @param nInd Numero de Individuo 
-     * @param kilos Kilos a Insertar.
-     * @throws Exception 
-     */
-    void insStkPart(int proCodi, int ejeLot, int empLot, String serLot, int numLot, int nInd, double kilos) throws Exception {
-        stkPart.sumar(ejeLot, serLot, numLot, nInd, proCodi, deo_almdesE.getValorInt(),
-            kilos, 1, deo_fechaE.getText(), actStkPart.CREAR_SI,
-            prv_codiE.getValorInt(), deo_feccadE.getDate());
-
-    }
+//    /**
+//     * Inserta registro de stock 
+//     * @param proCodi
+//     * @param ejeLot
+//     * @param empLot
+//     * @param serLot
+//     * @param numLot
+//     * @param nInd Numero de Individuo 
+//     * @param kilos Kilos a Insertar.
+//     * @throws Exception 
+//     */
+//    void insStkPart(int proCodi, int ejeLot, int empLot, String serLot, int numLot, int nInd, double kilos) throws Exception {
+//        stkPart.sumar(ejeLot, serLot, numLot, nInd, proCodi, deo_almdesE.getValorInt(),
+//            kilos, 1, deo_fechaE.getText(), actStkPart.CREAR_SI,
+//            prv_codiE.getValorInt(), deo_feccadE.getDate());
+//
+//    }
 
     int anuStkPart(int proCodi, int ejeLot, int empLot, String serLot, int numLot, int nInd, double kilos, int unid, int almCodi) throws SQLException {
         return anuStkPart(proCodi, ejeLot, empLot, serLot, numLot, nInd, kilos, unid, almCodi, false);

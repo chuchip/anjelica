@@ -8,7 +8,6 @@ import java.awt.*;
 import java.util.*;
 import java.awt.event.*;
 import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.view.*;
 import gnu.chu.anjelica.almacen.paregalm;
 import gnu.chu.camposdb.*;
 import javax.swing.event.ListSelectionListener;
@@ -30,7 +29,6 @@ import javax.swing.*;
  *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
  *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
  *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
- * </p>
  * </p>
  * @author chuchiP
  * @version 1.0
@@ -397,7 +395,7 @@ public class clvertprv  extends ventana
        String s="select c.*,r.*,pv.prv_nomb,ar.pro_nomb,mr.tir_nomb "+
           " from v_albacoc as c left join v_proveedo as pv on "+
         " pv.prv_codi =  c.prv_codi, "+
-           " v_regstock  as r left join v_articulo as ar on " +
+           " regalmacen  as r left join v_articulo as ar on " +
            " r.pro_codi = ar. pro_codi "+
            " left join v_motregu as mr on "+
            "  mr.tir_codi = r.tir_codi "+
@@ -479,7 +477,7 @@ public class clvertprv  extends ventana
 
    void verDetalle()
    {
-     s = "select c.emp_codi,c.acc_ano,c.acc_serie,c.acc_nume from v_albacoc as c,v_regstock  as r" +
+     s = "select c.emp_codi,c.acc_ano,c.acc_serie,c.acc_nume from v_albacoc as c,regalmacen  as r" +
          " where r.emp_codi = c.emp_codi " +
          " and r.pro_nupar = c.acc_nume " +
          " and r.pro_serie = c.acc_serie" +
@@ -547,7 +545,7 @@ public class clvertprv  extends ventana
        while (dtCon1.next());
        s = "select  sum(r.rgs_kilos) as rgs_kilos," +
            " sum(r.rgs_canti) as rgs_canti ,sum(r.rgs_prregu*r.rgs_kilos) as rgs_prregu " +
-           "  from v_regstock  as r, v_albacoc as c " +
+           "  from regalmacen  as r, v_albacoc as c " +
            " where r.emp_codi = c.emp_codi " +
            " and r.pro_nupar = c.acc_nume " +
            " and r.pro_serie = c.acc_serie" +
@@ -578,7 +576,7 @@ public class clvertprv  extends ventana
         " c.emp_codi, c.acc_nume,c.acc_serie,c.acc_ano, "+
        " r.rgs_fecha, p.pro_codi,p.pro_nomcor,r.rgs_kilos,r.rgs_canti,r.rgs_prregu," +
         " mr.tir_nomb,rgs_recprv,r.rgs_fecres,r.rgs_coment,r.rgs_nume,r.rgs_clidev " +
-        " FROM v_regstock as r left join v_proveedo as pv on pv.prv_codi = r.rgs_cliprv , "+
+        " FROM regalmacen as r left join v_proveedo as pv on pv.prv_codi = r.rgs_cliprv , "+
         "  v_articulo AS p,v_motregu as mr,v_albacoc as c " +
         " where  r.pro_codi = p.pro_codi " +
         " and mr.tir_codi = r.tir_codi " +
@@ -628,7 +626,7 @@ public class clvertprv  extends ventana
       jtPrv.requestFocusInicio();
       s = "SELECT rgs_cliprv,sum(rgs_kilos) as rgs_kilos, "+
           " sum(r.rgs_canti) as rgs_canti,sum (r.rgs_prregu*rgs_kilos) as importe " +
-          " FROM v_regstock as r , " +
+          " FROM regalmacen as r , " +
           " v_albacoc as c " +
           " where r.rgs_recprv != 0" +
           " and r.emp_codi = c.emp_codi " +
@@ -671,7 +669,7 @@ public class clvertprv  extends ventana
     if (! opGrupos.isSelected())
       s = "SELECT p.pro_codi,p.pro_nomb,r.rgs_kilos,r.rgs_canti,r.rgs_prregu," +
         " r.pro_numind,mr.tir_nomb,rgs_recprv,r.rgs_fecha,r.rgs_fecres,r.rgs_coment,r.rgs_nume" +
-        " FROM v_regstock as r, v_articulo AS p,v_motregu as mr " +
+        " FROM regalmacen as r, v_articulo AS p,v_motregu as mr " +
         " where  r.pro_codi = p.pro_codi " +
         " and r.emp_codi = " + empCodi +
         " and r.pro_nupar = " + accNume +
@@ -683,7 +681,7 @@ public class clvertprv  extends ventana
     else
       s = "SELECT p.pro_codi,p.pro_nomb,mr.tir_nomb,rgs_recprv,sum(r.rgs_kilos) as rgs_kilos,"+
           " sum(r.rgs_canti) as rgs_canti ,sum(r.rgs_prregu*r.rgs_kilos) as rgs_prregu" +
-        " FROM v_regstock as r, v_articulo AS p,v_motregu as mr " +
+        " FROM regalmacen as r, v_articulo AS p,v_motregu as mr " +
         " where  r.pro_codi = p.pro_codi " +
         " and r.emp_codi = " + empCodi +
         " and r.pro_nupar = " + accNume +

@@ -24,7 +24,7 @@ package gnu.chu.anjelica.despiece;
  */
 
 import gnu.chu.anjelica.almacen.StkPartid;
-import gnu.chu.anjelica.almacen.actStkPart;
+import gnu.chu.anjelica.almacen.ActStkPart;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.sql.DatosTabla;
@@ -87,7 +87,8 @@ public class utildesp
   DatosTabla dtAdd;
   int grdNume=0;
   EntornoUsuario EU;
-  actStkPart stkPart;
+  ActStkPart actStkPart;
+  StkPartid stkPart;
   etiqueta etiq;
 
   Logger loger = Logger.getLogger(utildesp.class.getName());
@@ -670,11 +671,7 @@ public class utildesp
       return grdNume+1;
   }
 
-//  public static String buscaPeso(DatosTabla dt,int ejeLot,int empLot,
-//                                 String serLot,int numLot,int numind,int proCodi) throws SQLException
-//  {
-//    return buscaPeso(dt,ejeLot,empLot,serLot,numLot,numind,proCodi,0);
-//  }
+
    public static StkPartid buscaPeso(DatosTabla dt,int ejeLot,int empLot,
                                  String serLot,int numLot,int numind,int proCodi,
                                  int almCodi) throws SQLException
@@ -728,7 +725,14 @@ public class utildesp
     stkPart.setUnidades(dt.getInt("stp_unact"));
     return stkPart;
   }
-
+  public void setStockPartidas(StkPartid stkPart)
+  {
+      this.stkPart=stkPart;
+  }
+  public StkPartid getStockPartidas()
+  {
+     return this.stkPart;
+  }
   void debug(String msg,EntornoUsuario EU)
   {
     if (EU==null)
@@ -764,14 +768,14 @@ public class utildesp
     nInd++;
     return nInd;
   }
-  public void setStkPart(actStkPart stkPart)
+  public void setActStkPart(ActStkPart actStkPart)
   {
-    this.stkPart=stkPart;
+    this.actStkPart=actStkPart;
   }
 
-  public actStkPart getStkPart()
+  public ActStkPart getActStkPart()
   {
-    return this.stkPart;
+    return this.actStkPart;
   }
 
   public void iniciar(DatosTabla dtAdd,int ejeNume,int empCodi,int almDest,int almOrig,EntornoUsuario EU)
@@ -783,8 +787,8 @@ public class utildesp
     this.almOrig=almOrig;
     this.numDesp=0;
     this.EU=EU;
-    if (stkPart==null)
-      stkPart=new actStkPart(dtAdd,EU.em_cod);
+    if (actStkPart==null)
+      actStkPart=new ActStkPart(dtAdd,EU.em_cod);
   }
   
   public void setGrupoDesp(int grdNume)

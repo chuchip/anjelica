@@ -1821,12 +1821,21 @@ public class Cgrid extends CPanel implements Serializable
           datosModelo.setValueAt(filtrarGrid(val,col),row,col);
        return true;
     }
-
+    /**
+     * Pone al grid los valores de los campos editables
+     * @param vector Vector el valor de los campos editables
+     */
     public void setLinea(ArrayList vector){
        cambiarLinea(vector);
     }
-    public boolean setLinea(ArrayList vector,int fila){
-       return cambiarLinea(vector,fila);
+    /**
+     * Pone al grid los valores de los campos editables
+     * @param arrList  ArrayList Con el valor de los campos editables
+     * @param fila
+     * @return Parametros incorrectos
+     */
+    public boolean setLinea(ArrayList arrList,int fila){
+       return cambiarLinea(arrList,fila);
     }
     public void setEntornoUsuario(EntornoUsuario entUsuario){
     entUsu = entUsuario;
@@ -1842,6 +1851,8 @@ public class Cgrid extends CPanel implements Serializable
     }
     /**
     * Cambiar valores de fila especificada.
+    * @param val Valores a poner en la linea
+    * @param rowActivo
     * @despreciado Usar setLinea
     **/
     public boolean cambiarLinea(ArrayList val, int rowActivo)
@@ -1849,12 +1860,12 @@ public class Cgrid extends CPanel implements Serializable
        if(getSelectedRow()==-1)
         return false;
        if (rowActivo<0 || rowActivo>= tableView.getRowCount()){
-          msgError="Error(cambiarValor):Numero de fila erroneo.";
+          msgError="Error(cambiarValor):Número de fila erroneo.";
           return false;
        }
        if (val.size()!=tableView.getColumnCount())
        {
-          msgError="Error(cambiarLinea):nnmero de columnas erroneo";
+          msgError="Error(cambiarLinea):número de columnas erroneo";
           return false;
        }
      

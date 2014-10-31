@@ -83,7 +83,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
   private final static int JT_UNID=7;
   private final static int JT_INSER=8;
   private String s;
-  private actStkPart stkPart;
+  private ActStkPart stkPart;
   JFileChooser ficeleE=null;
  
   private int cliCodi;
@@ -204,7 +204,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         dtCon1.select(s); // Volvemos al principio
         alm_codioE.addItem(dtCon1);
 
-        stkPart=new actStkPart(dtCon1,EU.em_cod);
+        stkPart=new ActStkPart(dtCon1,EU.em_cod);
         avc_fecalbE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
         s="SELECT cli_codi from v_config WHERE emp_codi = "+EU.em_cod;
         if (! dtStat.select(s))
@@ -1529,7 +1529,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                  jt.getValorInt(n, JT_ARTIC),
                    alm_codifE.getValorInt(),
                   jt.getValorDec(n, JT_PESO), jt.getValorInt(n,JT_UNID),
-                  avc_fecalbE.getText(),actStkPart.CREAR_SI,prvCodi,fecCad); 
+                  avc_fecalbE.getText(),ActStkPart.CREAR_SI,prvCodi,fecCad); 
       }
       return numAlb;
     

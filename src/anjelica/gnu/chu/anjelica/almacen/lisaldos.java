@@ -341,10 +341,9 @@ public class lisaldos   extends ventana  implements JRDataSource
     pro_codmvE.iniciar(dtStat,this,vl,EU);
 //    activar(true);
 
-    s="select distinct(rgs_fecha) as cci_feccon from v_regstock as r,v_motregu  as m "+
+    s="select distinct(rgs_fecha) as cci_feccon from v_regstock as r "+
          " where r.emp_codi = "+EU.em_cod+
-         " and r.tir_codi = m.tir_codi "+
-         " and M.tir_afestk='=' "+
+         " and tir_afestk='=' "+
          " order by cci_feccon desc ";
 
      if (dtStat.select(s))
@@ -789,9 +788,8 @@ public class lisaldos   extends ventana  implements JRDataSource
       s += " UNION all " + // Regularizaciones.
           " select 'RE' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov," +
           " r.rgs_kilos as canti,r.rgs_prregu as precio,1 as unid  " +
-          " FROM v_regstock r, v_motregu m WHERE " +
-          " m.tir_codi = r.tir_codi " +
-          " and tir_afestk = '='"+
+          " FROM v_regstock as r WHERE " +
+          " tir_afestk = '='"+
           " and rgs_kilos <> 0" +
           " and rgs_trasp != 0 "+
           (alm_inicE.getValorInt() == 0 ? "" : " and alm_codi = " + alm_inicE.getValorInt()) +

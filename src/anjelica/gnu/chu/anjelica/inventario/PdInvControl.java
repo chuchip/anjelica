@@ -27,7 +27,7 @@ package gnu.chu.anjelica.inventario;
  */
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.DatIndiv;
-import gnu.chu.anjelica.almacen.actStkPart;
+import gnu.chu.anjelica.almacen.ActStkPart;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
@@ -1350,7 +1350,7 @@ public class PdInvControl extends ventanaPad implements PAD
 //            cci_fecoriE.requestFocus();
 //            return 0;
 //         }
-         actStkPart stkPart=new actStkPart(dtAdd,EU.em_cod);
+         ActStkPart stkPart=new ActStkPart(dtAdd,EU.em_cod);
          HashMap ht = stkPart.getStockControl(dtCon1,cam_codiE.getText().equals("X")?1:0,
            cci_fecoriE.getText(),cci_fecconE.getText());
          if (ht == null || ht.isEmpty())

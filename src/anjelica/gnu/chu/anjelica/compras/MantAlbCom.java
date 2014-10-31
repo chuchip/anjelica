@@ -2,8 +2,9 @@ package gnu.chu.anjelica.compras;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
-import gnu.chu.anjelica.almacen.actStkPart;
+import gnu.chu.anjelica.almacen.ActStkPart;
 import gnu.chu.anjelica.almacen.paregalm;
+import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.MantPaises;
@@ -37,7 +38,7 @@ import net.sf.jasperreports.engine.*;
  *
  * <p>Título: MantAlbCom</p>
  * <p>Descripción: Mantenimiento Albaranes de Compra</p>
- * Parametros: modPrecio Indica si se puede modificar los precios del albaran.
+ * <p>Parametros: modPrecio Indica si se puede modificar los precios del albaran.
  *  admin: Modo Aministrador.
  *  AlbSinPed true/False Indica si se pueden cargar albaranes sin un pedido de compras
  * </p>
@@ -61,12 +62,23 @@ import net.sf.jasperreports.engine.*;
  */
 public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSource,MantAlbCom_Interface
 {
+  int tirCodNoAfecta=0;
   Cgrid jtHist=new Cgrid(4);
   CPanel Phist=new CPanel();
+  utildesp utdesp;
   private String tablaCab="desporig";
   private String tablaLin="desorilin";
   private String tablaInd="v_despfin";
-
+  final  int JTR_ARTIC=0,  JTR_EJELOT=2,
+         JTR_SERLOT=3,
+         JTR_LOTE=4,
+         JTR_INDIV=5,
+      JTR_KILOS=7, JTR_UNID=6, JTR_COSTO=8,
+      JTR_ESTAD=10,     JTR_FECRES=11,
+      JTR_CODCLI=14,
+      JTR_NOMCLI=15;
+  static  int ROWTREG=12;
+  static  int ROWNVERT=17;
   private int hisRowid=0;
   private String condHist=""; // Condiciones del historico
 //  private int frtEjer,frtNume;
@@ -111,10 +123,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   boolean proOblfsa; // Obligatorio el Introduc. Fecha Sacrificio
   int proCodeti=0; // Tipo de etiqueta para el producto.
   private java.util.Date feulin;
-  private actStkPart stkPart;
+  private ActStkPart stkPart;
   private boolean swCargaAlb=false,cargaAlbVentas=false;
-  static  int ROWTREG=9;
-  static  int ROWNVERT=14;
+ 
   private  DatosTabla dtCursor;
   private  DatosTabla dtInd;
   utildesp utdes=null;
@@ -425,44 +436,64 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   CPanel PVerted = new CPanel();
   cliPanel rgs_clidevE= new cliPanel();
   CTextField rgs_clinombE=new CTextField(Types.CHAR,"X",50);
-  CGridEditable jtRecl = new CGridEditable(15)
+  CGridEditable jtRecl = new CGridEditable(18)
   {
-        @Override
+     @Override
     public void cambiaColumna(int col,int colNueva, int row)
     {
       try
       {
-//        debug ("Num. ind:"+pro_numindE.getValorInt());
-        if (col == 0)
+        if (col == JTR_ARTIC)
         {
           pro_codverE.resetCambio();
           actNombProdVert(row);
           return;
         }
-        if (col==2)
+        if (col==JTR_INDIV)
         {
-          if (pro_numindE.hasCambio())
+            boolean swValDef=false;
+            if (rgs_ejenumE.getValorInt()==0)
+            {
+               rgs_ejenumE.setValorInt(acc_anoE.getValorInt());
+               swValDef=true;
+            }
+            if (rgs_partiE.getValorInt()==0)
+            {
+                rgs_partiE.setValorInt(acc_numeE.getValorInt());
+                swValDef=true;
+            }
+            if (rgs_serieE.isNull(true))
+            { 
+                rgs_serieE.setText("A");
+                swValDef=true;
+            }
+            if (swValDef)
+                jtRecl.setValCamposToGrid();
+
+          if (pro_numindE.hasCambio() || pro_codverE.hasCambio() || rgs_ejenumE.hasCambio() || 
+                 rgs_serieE.hasCambio() || rgs_partiE.hasCambio() ||pro_numindE.hasCambio())
           {
-            rgs_kilosE.resetTexto();
-            pro_codverE.resetTexto();
-          }
-          pro_numindE.resetCambio();
-          if (rgs_kilosE.getValorDec()==0 || pro_codverE.isNull())
-            actLinVert(pro_numindE.getValorInt(),row);
+            pro_numindE.resetCambio();  pro_codverE.resetCambio();rgs_ejenumE.resetCambio();
+            rgs_serieE.resetCambio() ;rgs_partiE.resetCambio(); pro_numindE.resetCambio();
+          }   
+          else
+              return;
+          if (getDatosInd(pro_codverE.getValorInt(), rgs_ejenumE.getValorInt(),
+                rgs_serieE.getText(),rgs_partiE.getValorInt(),pro_numindE.getValorInt()))
+          {
+                rgs_kilosE.setValorDec(utdesp.getStockPartidas().hasStock()?
+                    utdesp.getStockPartidas().getKilos():0);
+                rgs_unidE.setValorDec(utdesp.getStockPartidas().hasStock()?
+                    utdesp.getStockPartidas().getUnidades():0);
+                jtRecl.setValCamposToGrid();
+            }
         }
-        if (col==7) // Estado
+        if (col==JTR_ESTAD) // Estado
         {
-//          if (tir_codiE.getValorInt()==0)
-//          {
-//            int tirCodi=rgs_recprvE.getText().equals("R")?paregalm.TIRVERPRVREC:
-//                rgs_recprvE.getText().equals("A")?paregalm.TIRVERPRVACE:paregalm.TIRVERPRVPEN;
-//            tir_codiE.setValorInt(tirCodi);
-//            jtRecl.setValor(""+tirCodi, row,ROWTREG);
-//          }
           if (rgs_recprvE.getText().equals("R"))
           {
             rgs_prreguE.setValorDec(0);
-            jtRecl.setValor("0", row,5);
+            jtRecl.setValor(0, row,JTR_COSTO);
           }
           if (rgs_recprvE.getText().equals("A") || rgs_recprvE.getText().equals("R"))
           {
@@ -471,9 +502,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           }
           else
             rgs_fecresE.resetTexto();
-         jtRecl.setValor(rgs_fecresE.getText(),row,8);
+         jtRecl.setValor(rgs_fecresE.getText(),row,JTR_FECRES);
         }
-        if (col==11) // Cliente
+        if (col==JTR_CODCLI) // Cliente
         {
           String nombCli="";
           if (rgs_clidevE.getValorInt()==0)
@@ -483,7 +514,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           if (nombCli==null)
             nombCli="Cliente NO encontrado";
 //          rgs_clinombE.setText(nombCli);
-          jtRecl.setValor(nombCli,row,12);
+          jtRecl.setValor(nombCli,row,JTR_NOMCLI);
         }
       }
       catch (SQLException k)
@@ -520,7 +551,6 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         @Override
     public int cambiaLinea(int row, int col)
     {
-//        jtRecl.setValor(jtRecl.actValGrid(row,col),row,col);
       return cambiaLinRecl(row);
     }
 
@@ -530,15 +560,18 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   CTextField vertNPiezE = new CTextField("###9");
   CLabel cLabel23 = new CLabel();
   CTextField vertKilosE = new CTextField(Types.DECIMAL,"---,--9.99");
-  CTextField pro_nomverE = new CTextField();
-  CTextField pro_numindE = new CTextField(Types.DECIMAL, "####9");
+  CTextField pro_nomverE = new CTextField();  
+  CTextField rgs_ejenumE = new CTextField(Types.DECIMAL, "###9");
+  CTextField rgs_serieE = new CTextField(Types.CHAR, "X",1);
+  CTextField rgs_partiE = new CTextField(Types.DECIMAL, "####9");
+  CTextField pro_numindE = new CTextField(Types.DECIMAL, "####9"); 
   CTextField rgs_kilosE = new CTextField(Types.DECIMAL, "--,--9.99");
   CTextField rgs_prreguE = new CTextField(Types.DECIMAL, "--,--9.99");
 
   CTextField rgs_fechaE = new CTextField(Types.DATE,"dd-MM-yy");
   CTextField rgs_fecresE = new CTextField(Types.DATE,"dd-MM-yy"); // Fecha Resoluci�n
   CTextField rgs_numeE= new CTextField(Types.DECIMAL,"#####9");
-  CTextField rgs_cantiE= new CTextField(Types.DECIMAL,"----9");
+  CTextField rgs_unidE= new CTextField(Types.DECIMAL,"----9");
   CTextField rgs_recprvE= new CTextField(Types.CHAR,"?");
   CTextField rgs_comenE = new CTextField(Types.CHAR,"X",100);
   CButton BvertSala = new CButton();
@@ -1461,8 +1494,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     if (!dtStat.select(s))
       throw new SQLException("NO HAY NINGUNA DIVISA DEFINIDA");
     div_codiE.addItem(dtStat);
-    stkPart=new actStkPart(dtAdd,EU.em_cod);
-    String fecinve=actStkPart.getFechaUltInv(0,0,null,dtStat);
+    stkPart=new ActStkPart(dtAdd,EU.em_cod);
+    String fecinve=ActStkPart.getFechaUltInv(0,0,null,dtStat);
     if (fecinve==null)
        fecinve = "01-01-" + EU.ejercicio; // Buscamos desde el principio del a�o.
     feulin=Formatear.getDate(fecinve,"dd-MM-yyyy");
@@ -2946,7 +2979,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   void afterCambiaLinDes() {
       try {
             if (jtDes.getValorInt(0) != 0) {
-                if (!actStkPart.checkStock(dtStat, jt.getValorInt(JT_PROCOD),
+                if (!ActStkPart.checkStock(dtStat, jt.getValorInt(JT_PROCOD),
                      acc_anoE.getValorInt(), emp_codiE.getValorInt(),
                      acc_serieE.getText(), acc_numeE.getValorInt(),
                      jtDes.getValorInt(0), alm_codiE.getValorInt(),
@@ -4106,7 +4139,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
    */
   void verDatRecl() throws SQLException
   {
-    s="SELECT * FROM v_regstock WHERE emp_codi = "+emp_codiE.getValorInt()+
+    s="SELECT * FROM regalmacen WHERE emp_codi = "+emp_codiE.getValorInt()+
         " and acc_nume = "+acc_numeE.getValorInt()+
         " and acc_serie = '"+acc_serieE.getText()+"'"+
         " and acc_ano = "+acc_anoE.getValorInt()+
@@ -4121,7 +4154,10 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         ArrayList v = new ArrayList();
         v.add(dtCon1.getString("pro_codi"));
         v.add(pro_codverE.getNombArt(dtCon1.getString("pro_codi")));
-        v.add(dtCon1.getString("pro_numind"));
+        v.add(dtCon1.getInt("eje_nume"));        
+        v.add(dtCon1.getString("pro_serie"));
+        v.add(dtCon1.getInt("pro_nupar"));        
+        v.add(dtCon1.getInt("pro_numind"));
         v.add(dtCon1.getString("rgs_canti"));
         v.add(dtCon1.getString("rgs_kilos"));
         v.add(dtCon1.getString("rgs_prregu"));
@@ -4129,7 +4165,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         v.add(paregalm.getStrTipRecl(dtCon1.getInt("rgs_recprv")));
         v.add(dtCon1.getFecha("rgs_fecres", "dd-MM-yy"));
         v.add(dtCon1.getString("tir_codi")+" - "+ tir_codiE.getValor(dtCon1.getString("tir_codi")));
-        v.add(Boolean.valueOf(dtCon1.getInt("rgs_trasp")!=0));
+        v.add(dtCon1.getInt("rgs_trasp")!=0);
         v.add(dtCon1.getString("rgs_clidev"));
         v.add(rgs_clidevE.getNombCliente(dtStat,dtCon1.getInt("rgs_clidev")));
         v.add(dtCon1.getString("rgs_coment"));
@@ -4839,7 +4875,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
                           dtCon1.getDouble("acp_canti"), // Kilos
                           dtCon1.getInt("acp_canind"),  // Num. Unidades
                           acc_fecrecE.getText(),
-                          actStkPart.CREAR_SI,
+                          ActStkPart.CREAR_SI,
                           prv_codiE.getValorInt(), // Producto
                           dtCon1.getDate("acp_feccad")   // Fecha Cad.
                           );
@@ -5992,31 +6028,32 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        ArrayList v = new ArrayList();
        v.add("Producto"); //0
        v.add("Nombre"); // 1
-       v.add("Indiv."); // 2
-       v.add("Unds"); // 3
-       v.add("Peso"); // 4
-       v.add("Importe"); // 5
-       v.add("Fec.Recl"); // 6
-       v.add("Estado"); // 7
-       v.add("Fec.Resol"); // 8
-       v.add("Tipo Reg."); // 9 Tipo Regularizaci�n
-       v.add("Trasp."); // 10 Traspasado
-       v.add("Cliente"); // 11 Cod. Cliente
-       v.add("Nomb.Cliente"); // 12 Nombre Cliente
+       v.add("Eje."); // 2
+       v.add("Ser"); // 3
+       v.add("Lote"); // 4
+       v.add("Ind"); // 5
+       v.add("Unds"); // 6
+       v.add("Peso"); // 7
+       v.add("Precio"); // 8
+       v.add("Fec.Recl"); // 9
+       v.add("Estado"); // 10
+       v.add("Fec.Resol"); // 11
+       v.add("Tipo Reg."); // 12 Tipo Regularización
+       v.add("Trasp."); // 13 Traspasado
+       v.add("Cliente"); // 14 Cod. Cliente
+       v.add("Nomb.Cliente"); // 15 Nombre Cliente
        v.add("Coment"); // 13
        v.add("N.Vert"); // 14
        jtRecl.setCabecera(v);
-       jtRecl.setAnchoColumna(new int[] {70, 120, 40, 40,65, 65,60,30,60,180,30,50,150,150,50});
-       jtRecl.setAlinearColumna(new int[]{2, 0, 2, 2,2,2, 1,1,1,0,1,2,0,0,2});
-       jtRecl.setFormatoColumna(3, "---9");
-       jtRecl.setFormatoColumna(4, "--,--9.99");
-       jtRecl.setFormatoColumna(5, "--,--9.99");
-       jtRecl.setFormatoColumna(10, "BSN");
-
+       jtRecl.setAnchoColumna(new int[] {70, 120, 35,25,40,30, 40,65, 65,60,30,60,180,30,50,150,150,50});
+       jtRecl.setAlinearColumna(new int[]{2, 0, 2,0,2,2, 2,2,2, 1,1,1,0,1,2,0,0,2});
+       
        tir_codiE.setAncTexto(30);
        tir_codiE.setFormato(Types.DECIMAL, "##9", 3);
 
-       s = "SELECT * FROM v_motregu ORDER BY tir_codi";
+       s = "SELECT * FROM v_motregu "+
+           " where tir_tipo = 'VP' or tir_afestk = '*' "+
+           " ORDER BY tir_codi";
        if (dtCon1.select(s))
        {
          do
@@ -6028,7 +6065,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
          while (dtCon1.next());
        }
        tir_codiE.setValorInt(paregalm.TIRRECPRV);
-       rgs_cantiE.setValorDec(1);
+       tir_codiE.getComboBox().setPreferredSize(new Dimension(300,300));
+       rgs_unidE.setValorDec(1);
        pro_codverE.setProNomb(null);
 //       rgs_kilosE.setEnabled(false);
        rgs_recprvE.setAdmiteCar(CTextField.CHAR_LIMIT);
@@ -6054,23 +6092,27 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        rgs_fecresE.resetTexto();
        rgs_fecresE.setAceptaNulo(true);
        ArrayList v1 = new ArrayList();
-       v1.add(pro_codverE.getTextField());
-       v1.add(pro_nomverE);
-       v1.add(pro_numindE); // 2
-       v1.add(rgs_cantiE); //3
-       v1.add(rgs_kilosE); //4
-       v1.add(rgs_prreguE); // 5
-       v1.add(rgs_fechaE); // 6
-       v1.add(rgs_recprvE); // 7
-       v1.add(rgs_fecresE); // 8 Fecha Resolución
-       v1.add(tir_codiE); // 9 Tipo Regularización.
-       v1.add(rgs_traspE); // 10
-       v1.add(rgs_clidevE.cli_codiE); // 10
-       v1.add(rgs_clinombE); // 10
-       v1.add(rgs_comenE); // 11
-       v1.add(rgs_numeE); // 12
+       v1.add(pro_codverE.getTextField()); //0
+       v1.add(pro_nomverE);  //1
+       v1.add(rgs_ejenumE); //2
+       v1.add(rgs_serieE); //3 
+       v1.add(rgs_partiE); //4
+       v1.add(pro_numindE); // 5
+       v1.add(rgs_unidE); //6
+       v1.add(rgs_kilosE); //7
+       v1.add(rgs_prreguE); // 8
+       v1.add(rgs_fechaE); // 9
+       v1.add(rgs_recprvE); // 10
+       v1.add(rgs_fecresE); //11 Fecha Resolución
+       v1.add(tir_codiE); // 12 Tipo Regularización.
+       v1.add(rgs_traspE); // 13
+       v1.add(rgs_clidevE.cli_codiE); // 14
+       v1.add(rgs_clinombE); // 15
+       v1.add(rgs_comenE); // 16
+       v1.add(rgs_numeE); // 17
 
        jtRecl.setCampos(v1);
+       jtRecl.setFormatoCampos();
        rgs_fecresE.setError(false);
        jtRecl.setDefButton(Baceptar);
      }
@@ -6079,7 +6121,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
      {
        if (jtRecl.getValorInt(row,ROWNVERT)!=0)
        {
-         s = "select * from v_regstock WHERE rgs_nume = " + jtRecl.getValorInt(row, ROWNVERT);
+         s = "select * from regalmacen WHERE rgs_nume = " + jtRecl.getValorInt(row, ROWNVERT);
          if (dtStat.select(s))
          {
            pRegAlm.setSbeCodi(dtStat.getInt("sbe_codi"));
@@ -6088,10 +6130,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
          }
        }
        pRegAlm.setRegNume(0);
-       if (pRegAlm.insRegistro()==-1)
-           throw new Exception("Error al Modificar Registro");
+       int nRegul=pRegAlm.insRegistro();
 
-       jtRecl.setValor(""+pRegAlm.getNumReg(),row,ROWNVERT);
+       jtRecl.setValor(nRegul,row,ROWNVERT);
        actAcumVert(row);
        mensajeErr("Vertedero de linea: "+row+" ... Guardado");
      }
@@ -6103,20 +6144,21 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        int numVert=0;
        for (int n=0;n<jtRecl.getRowCount();n++)
        {
-         if (jtRecl.getValorInt(n,0)==0)
+         if (jtRecl.getValorInt(n,0)==JTR_ARTIC)
            continue;
          numVert++;
          if (row==n)
          {
            kilos+=rgs_kilosE.getValorDec();
-           unid+=rgs_cantiE.getValorInt();
+           unid+=rgs_unidE.getValorInt();
            impor+=(rgs_kilosE.getValorDec()*rgs_prreguE.getValorDec());
          }
          else
          {
-           kilos += jtRecl.getValorDec(n, 4);
-           unid+=jtRecl.getValorInt(n,3);
-           impor+=(jtRecl.getValorDec(n,4)*jtRecl.getValorDec(n,5));
+            
+           kilos += jtRecl.getValorDec(n, JTR_KILOS);
+           unid+=jtRecl.getValorInt(n,JTR_UNID);
+           impor+=(jtRecl.getValorDec(n,JTR_KILOS)*jtRecl.getValorDec(n,JTR_COSTO));
          }
        }
        vertNPiezE.setValorDec(unid);
@@ -6132,74 +6174,70 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
      int cambiaLinRecl(int row)
      {
        try
-       {
+       {              
+         if (! jtRecl.hasCambio())
+             return -1; // No ha habido cambios
+         jtRecl.resetCambio();
 
-         if (jtRecl.getValorInt(row, 0) == 0)
+         if (! pro_codverE.controla(false,false) )
          {
-           if (jtRecl.getValorInt(row, 2) != 0)
-           {
-             if (getDatosInd(jtRecl.getValorInt(row, 2)))
-             {
-   //             pro_codverE.setText(dtStat.getString("pro_codi"));
-               jtRecl.setValor(dtStat.getString("pro_codi"), row, 0);
-             }
-           }
-         }
-
-         if (jtRecl.getValorInt(row, 0) == 0)
-         {
-           if (jtRecl.getValorInt(row, 10) == 0)
-             return -1; // No trato la linea
-           else
-           { // Ya tenia Numero de Regularizaci�n
-             mensajeErr("Introduzca CODIGO de producto");
+             mensajeErr(pro_codverE.getMsgError());
              return 0;
-           }
-         }
-         if (!jtRecl.hasCambio())
-           return -1;
-
-         if (!pro_codverE.controla(false, false))
-         {
-           mensajeErr("Código de Producto NO existe");
-           return 0;
-         }
+         }               
          jtRecl.setValor(pro_codverE.getLikeProd().getString("pro_nomb"), row, 1); // Actualizo el nombre (por si acaso).
-         if (pro_numindE.getValorInt() == 0)
-         {
-           mensajeErr("Introduzca N�mero de Individuo");
-           return 2;
-         }
-         if (!getDatosInd(pro_numindE.getValorInt()))
-         {
-           mensajeErr("Individuo NO encontrado en vertederos");
-           return 2;
-         }
-         if (dtStat.getInt("pro_codi") != pro_codverE.getValorInt())
-         {
-           mensajeErr("Producto Introducido NO coincide con el del individuo");
-           return 0;
-         }
-         if (rgs_recprvE.isNull())
-         {
-           mensajeErr("Introduzca Estado de Reclamación");
-           return 7;
-         }
          if (! tir_codiE.controla(false))
          {
            mensajeErr("Tipo Regularización NO valida");
            return ROWTREG;
          }
+         if (tirCodNoAfecta==0)
+            tirCodNoAfecta=pdmotregu.getTipoMotRegu(dtStat, "*");
+         if (tirCodNoAfecta!=tir_codiE.getValorInt())
+         {
+            if (rgs_partiE.getValorInt()==0)
+            {
+                mensajeErr("Introduzca Lote");
+                return JTR_LOTE;
+            }
+            if (rgs_ejenumE.getValorInt()==0)
+            {
+                mensajeErr("Introduzca Ejercicio de lote");
+                return JTR_EJELOT;
+            }
+            if (rgs_serieE.isNull(true))
+            {
+                mensajeErr("Introduzca Serie del Lote");
+                return JTR_SERLOT;
+            }
+
+            if (pro_numindE.getValorInt() == 0)
+            {
+              mensajeErr("Introduzca Número de Individuo");
+              return 2;
+            }
+         }
+     
+         if (rgs_recprvE.isNull())
+         {
+           mensajeErr("Introduzca Estado de Reclamación");
+           return 7;
+         }
+     
          int rgsRecprv = getRecPrv(rgs_recprvE.getText());
 
          double kilos = rgs_kilosE.getValorDec();
-         int unids = rgs_cantiE.getValorInt();
-         if (jtRecl.getValorInt(row, ROWNVERT) != 0)
+         int unids = rgs_unidE.getValorInt();
+         
+         if (jtRecl.getValorInt(row, ROWNVERT) != 0 && tirCodNoAfecta==tir_codiE.getValorInt())
          {
            if (pRegAlm.getDatosReg(dtStat, jtRecl.getValorInt(row, ROWNVERT)))
            {
              if (pro_numindE.getValorInt() == dtStat.getInt("pro_numind") &&
-                 pro_codverE.getValorInt() == dtStat.getInt("pro_codi"))
+                 pro_codverE.getValorInt() == dtStat.getInt("pro_codi") && 
+                 rgs_partiE.getValorInt()==dtStat.getInt("pro_nupar") && 
+                 rgs_ejenumE.getValorInt()==dtStat.getInt("eje_nume") &&
+                 rgs_serieE.getText().equals(dtStat.getString("pro_serie"))
+                 )
              {
                kilos -= dtStat.getDouble("rgs_kilos");
                unids -= dtStat.getDouble("rgs_canti");
@@ -6211,26 +6249,31 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
            if (! rgs_clidevE.controlar(cliPanel.LOSTFOCUS))
            {
              mensajeErr("Cliente NO valido");
-             return 11;
+             return JTR_CODCLI;
            }
          }
-         if (rgs_traspE.isSelected())
+         if (tirCodNoAfecta!=tir_codiE.getValorInt())
          {
-           if (!actStkPart.checkStock(dtStat, pro_codverE.getValorInt(), acc_anoE.getValorInt(),
-                                      emp_codiE.getValorInt(), acc_serieE.getText(),
-                                      acc_numeE.getValorInt(),
-                                      pro_numindE.getValorInt(), alm_codiE.getValorInt(),
-                                      kilos, unids))
+           if (!getDatosInd(pro_codverE.getValorInt(), rgs_ejenumE.getValorInt(),
+                rgs_serieE.getText(),rgs_partiE.getValorInt(),pro_numindE.getValorInt()))
            {
-             mensajeErr("NO hay suficiente STOCK para crear este vertedero");
-             return 2;
+             mensajeErr("Individuo no encontrado en almacen");
+             return 0;
+           }
+           if (rgs_traspE.isSelected() )
+           {
+            if (!utdesp.getStockPartidas().hasStock(kilos))
+            {
+              mensajeErr("NO hay suficiente STOCK para crear este vertedero");
+              return 0;
+            }
            }
          }
          pRegAlm.setCampos(rgs_fechaE.getDate(), pro_codverE.getValorInt(),
-                           emp_codiE.getValorInt(), acc_anoE.getValorInt(),
-                           acc_serieE.getText(), acc_numeE.getValorInt(),
+                           emp_codiE.getValorInt(), rgs_ejenumE.getValorInt(),
+                           rgs_serieE.getText(), rgs_partiE.getValorInt(),
                            pro_numindE.getValorInt(),
-                           rgs_cantiE.getValorInt(), rgs_kilosE.getValorDec(),
+                           rgs_unidE.getValorInt(), rgs_kilosE.getValorDec(),
                            alm_codiE.getValorInt(), tir_codiE.getValorInt(), prv_codiE.getValorInt(),
                            rgs_comenE.getText(),rgs_prreguE.getValorDec(),
                            rgs_fecresE.getDate(),rgs_clidevE.getValorInt(),sbe_codiE.getValorInt(),rgs_traspE.isSelected()?1:0,
@@ -6246,55 +6289,67 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        }
        return -1;
      }
-
-    boolean getDatosInd(int numInd) throws SQLException
-    {
-      s = "SELECT p.*,l.pro_codi,l.acl_prcom FROM v_albcompar as p,v_albacol as l  " +
-          " where p.emp_codi =  l.emp_codi " +
-          " and p.acc_serie = l.acc_serie " +
-          " and p.acc_nume = l.acc_nume " +
-          " and p.acc_ano = l.acc_ano " +
-          " and p.acl_nulin = l.acl_nulin" +
-          " and p.emp_codi = " + emp_codiE.getValorInt() +
-          " AND p.acc_serie = '" + acc_serieE.getText() + "'" +
-          " and p.acc_nume = " + acc_numeE.getValorInt() +
-          " and p.acc_ano = " + acc_anoE.getValorInt() +
-          " and p.acp_numind = " + numInd;
-//      debug("s: "+s);
-      return dtStat.select(s);
-    }
      /**
-      * Actualizar Linea de vertederos despues de introducir numero de Individuo
-      * @param numInd int
-      * @param row int Numero de Linea en Grid Vertedero
-      * @throws SQLException
+      * Busca datos de Individuo para Reclamacion
+      * @param proCodi
+      * @param ejeLote
+      * @param serLote
+      * @param lote
+      * @param indLote
+      * @return false si no encuentra datos de trazabilidad
+      * @throws SQLException 
       */
-     void actLinVert(int numInd,int row) throws SQLException
+     boolean getDatosInd(int proCodi,int ejeLote,String serLote,int lote, int indLote) throws SQLException
      {
-       if (getDatosInd(numInd))
-       {
-//         jtRecl.setValor("1",row,3);
-         if (rgs_kilosE.getValorDec()==0)
-         {
-//           rgs_kilosE.setValorDec(dtStat.getDouble("acp_canti"));
-           jtRecl.setValor(dtStat.getString("acp_canti"), row, 4);
-//           rgs_cantiE.setValorDec(dtStat.getDouble("acp_canind"));
-           jtRecl.setValor(dtStat.getString("acp_canind"), row, 3);
-         }
-         if (jtRecl.getValorInt(row, 10) == 0)
-         {
-           jtRecl.setValor(dtStat.getString("acl_prcom"), row,5);
-//           rgs_prreguE.setValorDec(dtStat.getDouble("acl_prcom"));
-         }
-
-         if (pro_codverE.isNull())
-         {
-//           pro_codverE.setText(dtStat.getString("pro_codi"));
-           jtRecl.setValor(dtStat.getString("pro_codi"),row,0);
-           actNombProdVert(row);
-         }
-       }
+         if (utdesp==null)
+            utdesp = new utildesp();
+         utdesp.setStockPartidas(utildesp.buscaPeso(dtStat,ejeLote,EU.em_cod,serLote,lote,indLote,proCodi,
+             alm_codiE.getValorInt()));
+         if (!utdesp.busDatInd(serLote,proCodi,EU.em_cod,            
+            ejeLote,
+            lote,
+            indLote, // N. Ind.
+            alm_codiE.getValorInt(),
+            dtCon1, dtStat, EU))
+        {
+            mensajeErr(utdesp.getMsgAviso());
+            return false;
+        }
+        return true;
      }
+   
+//     /**
+//      * Actualizar Linea de vertederos despues de introducir numero de Individuo
+//      * @param numInd int
+//      * @param row int Numero de Linea en Grid Vertedero
+//      * @throws SQLException
+//      */
+//     void actLinVert(int numInd,int row) throws SQLException
+//     {
+//       if (getDatosInd(numInd))
+//       {
+////         jtRecl.setValor("1",row,3);
+//         if (rgs_kilosE.getValorDec()==0)
+//         {
+////           rgs_kilosE.setValorDec(dtStat.getDouble("acp_canti"));
+//           jtRecl.setValor(dtStat.getString("acp_canti"), row, 4);
+////           rgs_cantiE.setValorDec(dtStat.getDouble("acp_canind"));
+//           jtRecl.setValor(dtStat.getString("acp_canind"), row, 3);
+//         }
+//         if (jtRecl.getValorInt(row, 10) == 0)
+//         {
+//           jtRecl.setValor(dtStat.getString("acl_prcom"), row,5);
+////           rgs_prreguE.setValorDec(dtStat.getDouble("acl_prcom"));
+//         }
+//
+//         if (pro_codverE.isNull())
+//         {
+////           pro_codverE.setText(dtStat.getString("pro_codi"));
+//           jtRecl.setValor(dtStat.getString("pro_codi"),row,0);
+//           actNombProdVert(row);
+//         }
+//       }
+//     }
     public static String getRandomCrotal(String crotalBase)
     {
          int len = crotalBase.length();
@@ -6352,11 +6407,6 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         acp_nucrotE.setText(numCrot);
         jtDes.requestFocus(jtDes.getSelectedRow(),3);
     }
-
-   
- 
-
-
      int getRecPrv(String tipo)
      {
        if (tipo.equals("P"))
@@ -6379,7 +6429,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
          return true;
        do
        {
-         if (!actStkPart.checkStock(dtStat, jt.getValorInt(1), acc_anoE.getValorInt(),
+         if (!ActStkPart.checkStock(dtStat, jt.getValorInt(1), acc_anoE.getValorInt(),
                                  emp_codiE.getValorInt(), acc_serieE.getText(),
                                  acc_numeE.getValorInt(), dtCon1.getInt("acp_numind"),
                                  alm_codiE.getValorInt(), dtCon1.getDouble("acp_canti"),
@@ -6720,7 +6770,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
            if (estFin == 'R')
              jtRecl.setValor("0", n, 5);
            jtRecl.setValor(""+estFin,n,7);
-           s = "update v_regstock set rgs_recprv = " + getRecPrv("" + estFin) + "," +
+           s = "update regalmacen set rgs_recprv = " + getRecPrv("" + estFin) + "," +
                " rgs_fecres = "+ (jtRecl.getValString(n,8).trim().equals("")?"null":
                "TO_DATE('" + jtRecl.getValString(n, 8) + "','dd-MM-yy')")+", " +
                " rgs_prregu = " + jtRecl.getValorDec(n, 5) +

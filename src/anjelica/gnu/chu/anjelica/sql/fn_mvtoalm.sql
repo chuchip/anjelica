@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
+﻿CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
   RETURNS TRIGGER AS $grabar$  
   DECLARE   
   almCodi int;
@@ -506,101 +506,88 @@ CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
 	    end if;
 	end if;	
 -- Mvtos de Regularizacion
-	if TG_TABLE_NAME = 'v_regstock' then
-	   if TG_OP =  'INSERT' or TG_OP='UPDATE' then
-	        SELECT tir_afestk into tipoMvto FROM anjelica.v_motregu  WHERE 
-			tir_codi = NEW.tir_codi;
-		if not found then
-			RAISE EXCEPTION 'NO encontrado tipo Mvto %',NEW.tir_codi;
+	if TG_TABLE_NAME = 'regalmacen' then	  
+	  if TG_OP =  'INSERT' or TG_OP =  'UPDATE' then
+		tipoMvto='';
+		if NEW.rgs_trasp=0 then
+			tipoMvto='*';
 		end if;
-                if tipoMvto='=' then
-			return NEW; -- Ignoro apuntes de Inventario
-                end if;
-		if tipoMvto='+' then
-		    tipoMvto='E';
-        else			
-            tipoMvto='S';
+		IF tipoMvto!='*' then 
+			SELECT tir_afestk into tipoMvto FROM anjelica.v_motregu  WHERE 
+				tir_codi = NEW.tir_codi;
+			if not found then
+				RAISE EXCEPTION 'NO encontrado tipo Mvto %',NEW.tir_codi;
+			end if;
+			raise notice 'Tipo De movimiento %',tipoMvto;
+			if tipoMvto ='='  then
+				tipoMvto='*';
+			end if;
+			if tipoMvto='+' then
+				tipoMvto='E';
+			end if;
+			if tipoMvto='-' then		
+				tipoMvto='S';
+			end if;
 		end if;
-	   end if;
-	   if TG_OP =  'INSERT' then		
-		INSERT INTO anjelica.mvtosalm (mvt_oper,mvt_time,
-			mvt_tipo , mvt_tipdoc , 
-			alm_codi,
-			mvt_fecdoc,mvt_empcod , mvt_ejedoc , 
-			mvt_serdoc , mvt_numdoc ,mvt_lindoc,
-			pro_codi  , 
-			pro_ejelot ,pro_serlot, 
-			pro_numlot ,pro_indlot ,
-			mvt_canti, mvt_unid , mvt_prec,mvt_cliprv )
-		values 		
-		(
-		TG_OP,
-		current_timestamp,
-		tipoMvto,'R',
-		NEW.alm_codi,
-		NEW.rgs_fecha,
-		NEW.emp_codi,
-		NEW.eje_nume,
-		'R',
-		NEW.rgs_nume,
-		1, -- mvt_lindoc
-		NEW.pro_codi,
-		NEW.eje_nume,
-		NEW.pro_serie,
-		NEW.pro_nupar,
-		NEW.pro_numind,
-		NEW.rgs_kilos,
-		NEW.rgs_canti,
-		NEW.rgs_prregu,
-                NEW.rgs_cliprv
-		);
-		return NEW;
-	    end if;
-	    if TG_OP =  'UPDATE' then
-		-- RAISE NOTICE 'En update Regularizaciones ';
-		update anjelica.mvtosalm set mvt_oper= TG_OP,
-			mvt_numdoc = NEW.rgs_nume,
-			mvt_tipo=tipoMvto,
-		        mvt_time=NEW.rgs_fecha,
-			pro_codi  = NEW.pro_codi,
-			pro_ejelot =NEW.eje_nume,
-			pro_serlot = NEW.pro_serie,
-			pro_numlot =NEW.pro_nupar,
-			pro_indlot =NEW.pro_numind,
-			mvt_canti=NEW.rgs_kilos,
-			mvt_unid =NEW.rgs_canti,
-			mvt_prec = NEW.rgs_prregu,
-                        mvt_cliprv = NEW.rgs_cliprv
-                where	mvt_tipdoc='R' and					
-		        mvt_numdoc=OLD.rgs_nume;		      
-		GET DIAGNOSTICS nRows = ROW_COUNT;
-		if nRows = 0 then
-			RAISE EXCEPTION 'No encontrado Mvto a modificar. para Regul.';
-			RETURN null;
+		if tipoMvto != '*' then
+			INSERT INTO anjelica.mvtosalm (mvt_oper,mvt_time,
+				mvt_tipo , mvt_tipdoc , 
+				alm_codi,
+				mvt_fecdoc,mvt_empcod , mvt_ejedoc , 
+				mvt_serdoc , mvt_numdoc ,mvt_lindoc,
+				pro_codi  , 
+				pro_ejelot ,pro_serlot, 
+				pro_numlot ,pro_indlot ,
+				mvt_canti, mvt_unid , mvt_prec,mvt_cliprv )
+			values 		
+			(
+			TG_OP,
+			current_timestamp,
+			tipoMvto,'R',
+			NEW.alm_codi,
+			NEW.rgs_fecha,
+			NEW.emp_codi,
+			NEW.eje_nume,
+			'R',
+			NEW.rgs_nume,
+			1, -- mvt_lindoc
+			NEW.pro_codi,
+			NEW.eje_nume,
+			NEW.pro_serie,
+			NEW.pro_nupar,
+			NEW.pro_numind,
+			NEW.rgs_kilos,
+			NEW.rgs_canti,
+			NEW.rgs_prregu,
+			 NEW.rgs_cliprv
+			);
 		end if;
-		return NEW;
-	    end if;
-	    if TG_OP =  'DELETE' then	
-	       -- RAISE NOTICE  'borrando mvto de Regularizaciones';	
-               SELECT tir_afestk into tipoMvto FROM anjelica.v_motregu  WHERE 
-			tir_codi = OLD.tir_codi;
+		if TG_OP = 'INSERT' then
+			return NEW;
+		end if;
+	  end if;
+	  if TG_OP =  'DELETE' or TG_OP =  'UPDATE' then	
+		if OLD.rgs_trasp=0 then
+			return OLD; -- Ignoro apuntes de Inventario
+		end if;    	
+		SELECT tir_afestk into tipoMvto FROM anjelica.v_motregu  WHERE 
+		   tir_codi = OLD.tir_codi;
 		if not found then
 			RAISE EXCEPTION 'NO encontrado tipo Mvto %',OLD.tir_codi;
 		end if;
-                if tipoMvto='=' then
+		if tipoMvto='=' or tipoMvto='*' then
 			return OLD; -- Ignoro apuntes de Inventario
-                end if;     
-	       DELETE FROM anjelica.mvtosalm  where	
+		end if;     
+		DELETE FROM anjelica.mvtosalm  where	
 			mvt_tipdoc='R' and					
-		    mvt_numdoc=OLD.rgs_nume;	
+			mvt_numdoc=OLD.rgs_nume;	
 		GET DIAGNOSTICS nRows = ROW_COUNT;		
 		if nRows = 0  and ajuDelmvt = 0 then
 			RAISE EXCEPTION 'No encontrado mvto a Borrar. Regularizacion % ',OLD.rgs_nume;
 			return null;
-		end if;
-		-- raise NOTICE 'Mvto. Borrado';
+		end if;		
 		return OLD;
-	    end if;
+	  end if;	   	  
 	end if;
 	return null;
 END;

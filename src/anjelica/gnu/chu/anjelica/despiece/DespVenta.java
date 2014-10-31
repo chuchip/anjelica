@@ -26,7 +26,7 @@ package gnu.chu.anjelica.despiece;
  */
 
 import gnu.chu.anjelica.almacen.StkPartid;
-import gnu.chu.anjelica.almacen.actStkPart;
+import gnu.chu.anjelica.almacen.ActStkPart;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.sql.Desorilin;
@@ -79,7 +79,7 @@ public class DespVenta extends ventana {
     utildesp utdesp;
     DatosTabla dtAdd;
     int almCodi,prvCodi;
-    actStkPart stkPart;
+    ActStkPart stkPart;
 
 
     public DespVenta() {
@@ -132,7 +132,7 @@ public class DespVenta extends ventana {
         pro_codsalE.iniciar(dtStat, this, getLayeredPane(), EU);
         pro_codsalE.setEntrada(true);
         pro_kilsalE.setLeePesoBascula(botonBascula);
-        stkPart=new actStkPart(dtAdd,EU.em_cod);
+        stkPart=new ActStkPart(dtAdd,EU.em_cod);
         tid_codiE.iniciar(dtStat, padre, padre.vl, EU);
         pro_codsalE.setProNomb(pro_nombE);
         ArrayList vc=new ArrayList();
@@ -949,7 +949,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
      stkPart.sumar(ejeNume, SERIE,deoCodi,nInd,pro_codsalE.getValorInt(),
               almCodi,
               pro_kilsalE.getValorDec(),pro_unidE.getValorInt(),
-              null,actStkPart.CREAR_SI,
+              null,ActStkPart.CREAR_SI,
               prvCodi,def_feccadE.getDate());
     
      jt.setValor(""+nInd,linea,JT_NUMIND);

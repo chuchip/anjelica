@@ -857,7 +857,17 @@ public class CGridEditable extends Cgrid implements CQuery {
   {
     salirGrid();
   }
-
+  /**
+   * Pasa los valores de los CEditable al grid
+   * (realiza un setValor de todas los campos al grid)
+   */
+  public void setValCamposToGrid()
+  {      
+      if (campos==null)
+       return;
+     int linea=tableView.getSelectedRow();
+     procesaAllFoco(linea);    
+  }
   /**
    * Pasa al Grid los valores de los campos (CTextField, CComboBox, etc.)
    * de la linea mandada al grid.
@@ -1328,7 +1338,7 @@ public class CGridEditable extends Cgrid implements CQuery {
    }
 
    /**
-    * Resetea el cambio de todas las variables del Grid
+    * Comprueba si ha habido cambios en algun campo de la linea del grid
     * @return true si ha habido cambios en el grid
     */
     @Override

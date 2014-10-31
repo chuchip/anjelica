@@ -255,10 +255,9 @@ public class coresinv extends ventana
   {
     String s,feulin;
     s =
-        "select distinct(rgs_fecha) as cci_feccon from v_regstock as r,v_motregu  as m " +
+        "select distinct(rgs_fecha) as cci_feccon from v_regstock as r " +
         " where r.emp_codi = " + EU.em_cod +
-        " and r.tir_codi = m.tir_codi " +
-        " and M.tir_afestk='=' " +
+        " and tir_afestk='=' " +
         " order by cci_feccon desc ";
 
     if (dtStat.select(s))
@@ -416,10 +415,9 @@ public class coresinv extends ventana
 
         s = "select sum(rgs_kilos*rgs_prregu) as importe, "+
             " sum(rgs_kilos) as kilos " +
-            " from v_regstock as r,v_motregu  as m " +
+            " from v_regstock as r " +
             " where r.emp_codi = " + EU.em_cod +
-            " and r.tir_codi = m.tir_codi " +
-            " and M.tir_afestk='=' " +
+            " and tir_afestk='=' " +
             " and r.pro_codi = " + dtStat.getInt("pro_codi") +
             " and rgs_fecha = TO_DATE('" + feciniE.getText() +
             "','dd-MM-yyyy') ";
@@ -430,10 +428,9 @@ public class coresinv extends ventana
 
         s = "select sum(rgs_kilos*rgs_prregu) as importe, " +
             " sum(rgs_kilos) as kilos " +
-            " from v_regstock as r,v_motregu  as m " +
+            " from v_regstock as r " +
             " where r.emp_codi = " + EU.em_cod +
-            " and r.tir_codi = m.tir_codi " +
-            " and M.tir_afestk='=' " +
+            " and tir_afestk='=' " +
             " and r.pro_codi = " + dtStat.getInt("pro_codi") +
             " and rgs_fecha = TO_DATE('" + fecfinE.getText() +
             "','dd-MM-yyyy') ";

@@ -13,7 +13,7 @@ import gnu.chu.anjelica.listados.*;
 import java.util.*;
 import gnu.chu.anjelica.despiece.utildesp;
 import java.awt.event.*;
-import gnu.chu.anjelica.almacen.actStkPart;
+import gnu.chu.anjelica.almacen.ActStkPart;
 import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.comm.BotonBascula;
@@ -394,12 +394,7 @@ public class despVentas extends ventana
                                          pro_loteE.getValorInt(), nInd, jtLin.getValorInt(n, 0),
                                          jtLin.getValorDec(n, 2), jtLin.getValorInt(n,3),
                                          jtLin.getValString(n,4), 0,0, 0,  0);
-       utdesp.getStkPart().sumar(deo_ejelotE.getValorInt(), deo_serlotE.getText(),
-                                 pro_loteE.getValorInt(),
-                                 nInd, jtLin.getValorInt(n, 0), alm_codiE.getValorInt(),
-                                 jtLin.getValorDec(n, 2), jtLin.getValorInt(n, 3),
-                                 deo_fechaE.getText(), actStkPart.CREAR_SI,
-                                 prvCodi, Formatear.getDate(jtLin.getValString(n, 4), "dd-MM-yyyy"));
+      
        jtLin.setValor(""+nInd,n,3);
        imprEtiq(n,TIPOETIQ);
      }

@@ -1652,16 +1652,19 @@ def_tiempo date default  current_date,
 -- Motivos de Regularizacion
 ---
 -- drop table v_motregu;
-create table anjelica.v_motregu
+create table anjelica.motregu
 (
     tir_codi int not null,		-- Codigo de la Regularizacion
     tir_nomb varchar(50),           -- Descripcion de la Regularizacion
     tir_afestk varchar(1) not null,	-- Como afecta al Stock
-                                    -- (+ Suma, - Resta, = Inventario)
+                                    -- (+ Suma, - Resta, = Inventario, * No Afecta)
     tir_tipo varchar(2) default '--',-- Tipo Regul. Definido en clase pdmotregu (VS: Vert. Sala,
                                            VC: Vert.Cliente, VP: Vert. Proveedor,MC: Merma Cliente)
   constraint ix_motregu primary key (tir_codi)
 );
+grant select on anjelica.v_motregu to public;
+insert into anjelica.motregu values(5,'NO AFECTA STOCK','*','');
+create view anjelica.v_motregu as select * from anjelica.motregu;
 --
 -- Motivos de Regularizacion FIJOS (Codigo < 20)
 --
@@ -2402,8 +2405,8 @@ create index ix_invdepos on invdepos(ind_fecha,pro_codi);
 --
 -- Tabla de Regularizaciones
 --
--- drop table v_regstock;
-create table anjelica.anjelica.v_regstock
+-- drop table regalmacen;
+create table anjelica.regalmacen
 (
 pro_codi int not null,		-- Codigo Producto
 rgs_fecha timestamp not null,	-- Fecha y hora de Regularizacion
@@ -2429,7 +2432,7 @@ rgs_prregu float,		-- Precio de Regularizacion
 rgs_kilos float,		-- Kilos
 rgs_clidev int not null,	-- Cliente q genero la Dev.
 rgs_kilant float not null,	-- Kilos Antiguos (NO USADO)
-rgs_trasp smallint not null ,   -- Traspasado (Indica si influye en Almacen)
+rgs_trasp smallint not null default -1,   -- Traspasado (Indica si influye en Almacen)
 rgs_numer varchar(8),		-- Numerador
 rgs_cliprv int,			-- Codigo Cliente o Proveedor
 rgs_coment varchar(100),	-- Comentario
@@ -2439,9 +2442,15 @@ acc_serie  char(1),		-- Serie de Albaran Compra
 acc_nume   int,			-- Numero Albaran de Compra.
 constraint ix_regstock primary key (rgs_nume)
 );
-create index ix_regstock2 on v_regstock(pro_codi,rgs_fecha,tir_codi);
-create index ix_regstock3 on v_regstock(emp_codi,pro_nupar,pro_serie,eje_nume);
-create index ix_regstock4 on v_regstock(rgs_fecha);
+create index ix_regstock2 on regalmacen(pro_codi,rgs_fecha,tir_codi);
+create index ix_regstock3 on regalmacen(emp_codi,pro_nupar,pro_serie,eje_nume);
+create index ix_regstock4 on regalmacen(rgs_fecha);
+
+create view anjelica.v_regstock as select r.*,  tir_nomb, tir_afestk,  tir_tipo 
+from anjelica.regalmacen as r,anjelica.motregu as m 
+    where r.tir_codi = m.tir_codi 
+    and tir_tipo != '*' and rgs_trasp!=0;  
+grant select on anjelica.v_regstock to public;
 ----
 --- Historicos Mensajes
 ----
@@ -3695,7 +3704,7 @@ nlin numeric;
 BEGIN
 
  nlin:=0;
- select max(rgs_nume) into nreg from v_regstock;
+ select max(rgs_nume) into nreg from regalmacen;
  nreg :=nreg+1;
  FOR linalb IN
 select pro_codi,avc_fecalb,
@@ -3710,7 +3719,7 @@ LOOP
  -- raise notice 'Fecha: % ',linalb.avc_fecalb;
  -- raise notice 'Numero Registro %',nreg;
   
-  INSERT INTO v_regstock (pro_codi,rgs_fecha,rgs_nume,eje_nume,emp_codi,pro_serie,
+  INSERT INTO regalmacen (pro_codi,rgs_fecha,rgs_nume,eje_nume,emp_codi,pro_serie,
   pro_nupar,pro_numind,tir_codi, rgs_canti,alm_codi,
    rgs_recprv,sbe_codi,rgs_partid,usu_nomb,rgs_prebas,rgs_prmeco,rgs_prulco,rgs_prregu,rgs_kilos,
    rgs_clidev,rgs_kilant,rgs_trasp,rgs_numer,rgs_cliprv,rgs_coment,rgs_fecres,acc_ano,acc_serie,acc_nume) 
@@ -3790,8 +3799,8 @@ create trigger desporig_update AFTER UPDATE on anjelica.desporig  for each row  
 create trigger desorilin_insert AFTER insert  on anjelica.desorilin for each row execute procedure anjelica.fn_mvtoalm();
 create trigger desorilin_update BEFORE UPDATE OR DELETE  on anjelica.desorilin for each row execute procedure anjelica.fn_mvtoalm();
 
-create trigger regstock_insert AFTER insert  on anjelica.v_regstock for each row execute procedure anjelica.fn_mvtoalm();
-create trigger regstock_update BEFORE UPDATE OR DELETE  on anjelica.v_regstock for each row execute procedure anjelica.fn_mvtoalm();
+create trigger regstock_insert AFTER insert  on anjelica.regalmacen for each row execute procedure anjelica.fn_mvtoalm();
+create trigger regstock_update BEFORE UPDATE OR DELETE  on anjelica.regalmacen for each row execute procedure anjelica.fn_mvtoalm();
 
 create trigger mvtosalm_insert BEFORE insert  on anjelica.mvtosalm for each row execute procedure anjelica.fn_actstk();
 create trigger mvtosalm_update BEFORE UPDATE OR DELETE  on anjelica.mvtosalm for each row execute procedure anjelica.fn_actstk();

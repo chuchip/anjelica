@@ -1,7 +1,5 @@
 -- Diferencias con version 1.0 de Anjelica
-alter table v_regstock add acc_ano  int; -- Ejercicio de Alb. Compra.
-alter table v_regstock add acc_serie char(1); -- Serie Alb. Compra.
-alter table v_regstock add acc_nume int;   -- Numero Albaran de Compra.
+
 update v_regstock set acc_ano=eje_nume,acc_nume=pro_nupar,acc_Serie=pro_serie where rgs_recprv <> 0;
 
 --  Añadido serie Y (para albaranes internos)
