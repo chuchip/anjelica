@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
  * <p>Descripción: Clase encargada de actualizar el stock actual de TODOS los productos.
 *  A traves de sus funciones se sumaran y restaran kilos a los tabla stkpart y articulos (acumulados)
 *  </p>
- * <p>Copyright: Copyright (c) 2005-2014
+ *  <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
  * @author chuchi P
  * @version 1.1
  */
-public class actStkPart
+public class ActStkPart
 {
   private boolean actStkAutomatico=true; 
   boolean checkUnid=true; // Indica si debe comprobar que no haya mas de una unidad en stock Partidas
@@ -63,7 +63,7 @@ public class actStkPart
   private String usuario;
   private String strAccesos;
   
-  public actStkPart(DatosTabla dtAdd, int empCodi)
+  public ActStkPart(DatosTabla dtAdd, int empCodi)
   {
     this.dtAdd = dtAdd;
     this.empCodi = empCodi;
@@ -73,7 +73,7 @@ public class actStkPart
         strAccesos=empPanel.getStringAccesos(dtAdd, usuario);
     } catch (SQLException ex)
     {
-        java.util.logging.Logger.getLogger(actStkPart.class.getName()).log(Level.SEVERE, null, ex);
+        java.util.logging.Logger.getLogger(ActStkPart.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
   /**
@@ -91,7 +91,7 @@ public class actStkPart
         strAccesos=empPanel.getStringAccesos(dtAdd, usuario);
     } catch (SQLException ex)
     {
-        java.util.logging.Logger.getLogger(actStkPart.class.getName()).log(Level.SEVERE, null, ex);
+        java.util.logging.Logger.getLogger(ActStkPart.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
 
@@ -200,7 +200,7 @@ public class actStkPart
    * @param kilos double Kilos a sumar
    * @param unidades int Unidades a Restar
    * @param fecMvto String Fecha de Movimiento (formato dd-MM-yyyy)
-   * @param creaReg int CREAR_SI Sí,CREAR_NO No (dar error si no existe) CREAR_PREGUNTAR Preguntar.
+   * @param creaReg int CREAR_SI SÃ­,CREAR_NO No (dar error si no existe) CREAR_PREGUNTAR Preguntar.
    * @param prvCodi int Proveedor al que se le compro el producto
    * @param fecCaduc java.util.Date Fecha de Caducidad del Individuo
    * @param excep boolean Lanzar una exception si se deberia insertar un registro y creaReg
@@ -328,7 +328,7 @@ public class actStkPart
                 " and stp_unact > 1";
             if (dtAdd.select(s))
             {
-                   Logger.getLogger(actStkPart.class.getName()).error("Stock Partidas con mas de un individuo\n"+s+"\n"+ventana.getCurrentStackTrace());
+                   Logger.getLogger(ActStkPart.class.getName()).error("Stock Partidas con mas de un individuo\n"+s+"\n"+ventana.getCurrentStackTrace());
                    HashMap ht=new HashMap();  
                    ht.put("%a",almCodi);
                    ht.put("%p",proCodi);
@@ -650,7 +650,7 @@ public class actStkPart
             return 3;
         else
         {
-            Logger.getLogger(actStkPart.class.getName()).error("Sin stock Partidas\n"+s+"\n"+ventana.getCurrentStackTrace());
+            Logger.getLogger(ActStkPart.class.getName()).error("Sin stock Partidas\n"+s+"\n"+ventana.getCurrentStackTrace());
             HashMap ht=new HashMap();  
             ht.put("%a",almCodi);
             ht.put("%p",proCodi);
@@ -941,10 +941,9 @@ public class actStkPart
         " r.emp_codi  as empcodi,r.pro_codi as pro_codi, " +
         " r.rgs_prregu as precio,rgs_canti as canind,  " +
         " alm_codi as almori,alm_codi as almfin,'' as avc_serie" +
-        " FROM v_regstock r, v_motregu m,v_articulo as a " +
-        " where m.tir_codi = r.tir_codi " +
-        " and r.emp_codi in ("+strAccesos+")"+
-        " and rgs_kilos <> 0 " +
+        " FROM v_regstock r,v_articulo as a " +
+        " where  r.emp_codi in ("+strAccesos+")"+
+//        " and rgs_kilos <> 0 " +
         " and r.rgs_trasp != 0 "+
         (pro_codi == 0 ? "" : " and r.pro_codi = " + pro_codi) +
         (almCodi==0?"":" and alm_codi = " + almCodi) +
@@ -979,11 +978,10 @@ public class actStkPart
             " r.emp_codi  as empcodi,r.pro_codi as pro_codi, " +
             " r.rgs_prregu as precio,rgs_canti as canind,  " +
             " alm_codi as almori,alm_codi as almfin,'' as avc_serie" +
-            " FROM v_regstock r, v_motregu m,v_articulo as a " +
-            " where m.tir_codi = r.tir_codi " +
-            " and r.emp_codi in ("+strAccesos+")"+
+            " FROM v_regstock r,v_articulo as a " +
+            " where r.emp_codi in ("+strAccesos+")"+
             " and rgs_kilos <> 0 " +
-            " and r.rgs_trasp != 0 "+
+//            " and r.rgs_trasp != 0 "+
             (pro_codi == 0 ? "" : " and r.pro_codi = " + pro_codi) +
             (almCodi==0?"":" and alm_codi = " + almCodi) +
             " and tir_afestk = '=' "+
@@ -1590,10 +1588,8 @@ public class actStkPart
        "  r.pro_serie as serie,r.pro_nupar as  lote,"+
        " r.rgs_kilos as canti,r.rgs_prregu as precio,r.rgs_prregu as prstk,"+
        " r.pro_codi as pro_codori "+
-       " FROM v_regstock r, v_motregu m WHERE "+
-       " m.tir_codi = r.tir_codi "+
-       " and r.emp_codi = "+empCodi+
-       " and r.rgs_trasp != 0 "+
+       " FROM v_regstock r WHERE   r.emp_codi = "+empCodi+
+//       " and r.rgs_trasp != 0 "+
 //          " AND r.eje_nume = " + ejeNume +
         (serLote != null ? " AND r.pro_serie = '" + serLote + "'" : "") +
         (numLote == 0 ? "" : " AND r.pro_nupar = " + numLote) +
@@ -1681,7 +1677,7 @@ public class actStkPart
                  precStk=prStk;
              }
             else
-            { // La cantidad es cercana a 0 ó 0
+            { // La cantidad es cercana a 0 Ã³ 0
               precio = precAcu;
               precStk=prStk;
             }
@@ -1724,12 +1720,11 @@ public class actStkPart
   public static String getFechaUltInv(int empCodi,int ejeCodi,Date fecLim, DatosTabla dt ) throws SQLException
   {
     String strFecLim=Formatear.getFecha(fecLim,"dd-MM-yyyy");
-    String s = "select MAX(rgs_fecha) as cci_feccon from v_regstock as r,v_motregu  as m " +
-      " where r.tir_codi = m.tir_codi " +
+    String s = "select MAX(rgs_fecha) as cci_feccon from v_regstock as r " +
+      " where tir_afestk='=' "+
       (ejeCodi==0?"": " and r.eje_nume = "+ejeCodi)+
       (fecLim==null?"": " and rgs_fecha <= TO_DATE('"+strFecLim+"','dd-MM-yyyy')")+
-      (empCodi==0?"": " and r.emp_codi = "+empCodi)+
-      " and M.tir_afestk='=' ";
+      (empCodi==0?"": " and r.emp_codi = "+empCodi);
     dt.select(s);
     if (dt.getObject("cci_feccon") == null)
       return null;
