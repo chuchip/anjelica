@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
  * <p>Título: actStkPart</p>
  * <p>Descripción: Clase encargada de actualizar el stock actual de TODOS los productos.
 *  A traves de sus funciones se sumaran y restaran kilos a los tabla stkpart y articulos (acumulados)
-*  </p>
+*  </p> 
  *  <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
