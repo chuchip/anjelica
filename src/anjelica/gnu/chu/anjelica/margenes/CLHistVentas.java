@@ -2,7 +2,7 @@
  *
  * <p>Título: CLHisVentas</p>
  * <p>Descripción: Consulta/Listado Historico ventas</p>
- *  <p>Copyright: Copyright (c) 2005-2013
+ *  <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -38,6 +38,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -107,7 +108,7 @@ public class CLHistVentas extends ventana {
   {
       iniciarFrame();
 
-      this.setVersion("2013-05-07"+(actual?"(Actualizar)":""));
+      this.setVersion("2014-10-06"+(actual?"(Actualizar)":""));
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -288,20 +289,43 @@ public class CLHistVentas extends ventana {
             if (Formatear.comparaFechas(fecFin, fecFinCal)>0)
                 fecFin=fecFinCal;
         }
-        if (Formatear.comparaFechas(fecIni, fecFinCal)<0)
+        if (fecIniAnt!= null && Formatear.comparaFechas(fecIniAnt, fecFinCalAnt)<0)
         {
             ArrayList v=new ArrayList();
-            addSemana(v,fecIni,fecFinCal,true);
-            if (fecIniAnt!=null)
-              addSemana(v,fecIniAnt,fecFinCalAnt,false);
+            if (Formatear.comparaFechas(fecIni, fecFinCal)<0)
+            {
+                addSemana(v,fecIni,fecFinCal,true);
+            }
             else
             {
                 v.add("");v.add("");v.add("");v.add("");
             }
+           
+            if (Formatear.comparaFechas(fecIniAnt, fecFinCalAnt)<0)
+            {
+              addSemana(v,fecIniAnt,fecFinCalAnt,false);
+            }
+            else
+            {
+               v.add("");v.add("");v.add("");v.add("");
+            }
             jtSem.addLinea(v);
-        }
+        } 
+//        {
+//            ArrayList v=new ArrayList();
+//            addSemana(v,fecIni,fecFinCal,true);
+//            if (fecIniAnt!=null)
+//            {
+//              addSemana(v,fecIniAnt,fecFinCalAnt,false);
+//            }
+//            else
+//            {
+//                v.add("");v.add("");v.add("");v.add("");
+//            }
+//            jtSem.addLinea(v);
+//        }
         jtSem.requestFocusInicio();
-    } catch (Exception k)
+    } catch (SQLException | ParseException k)
     {
         Error("Error al cargar semanas",k);
     }

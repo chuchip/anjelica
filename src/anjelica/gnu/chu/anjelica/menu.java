@@ -1407,7 +1407,7 @@ public class menu extends JFrame
 
   void BPedVen_actionPerformed(ActionEvent e) {
        JpopupPedVentas.show(BPedVen,20,20);
-    lanzaEjecutable(new gnu.chu.comm.cajanegra(menu.this,EU));
+//    lanzaEjecutable(new gnu.chu.comm.cajanegra(menu.this,EU));
 // lanzaEjecutable(new gnu.chu.logs.verLogs(menu.this,EU));
  //   lanzaEjecutable(new gnu.chu.hylafax.confaxes(menu.this,EU));
 //    lanzaEjecutable(new gnu.chu.anjelica.angulo.Cointprtar(menu.this,EU));
