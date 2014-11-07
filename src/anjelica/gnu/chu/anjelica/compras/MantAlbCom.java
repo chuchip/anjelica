@@ -1948,6 +1948,24 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       return;
     }
     int nuLiAlbAnt=jt.getValorInt(0); // Numero linea original.
+    
+    try
+    {
+    s="select count (*) as cuantos from v_albcompar "+
+        " WHERE acc_ano = " + acc_anoE.getValorInt() +
+          " AND emp_codi = " + emp_codiE.getValorInt() +
+          " and acc_serie = '" + acc_serieE.getText() + "'" +
+          " and acc_nume = " + acc_numeE.getValorInt() +
+          " and acp_numlin = " + jtDes.getValorInt(JTD_NUMLIN)+
+          " and acl_nulin = "+ nuLiAlbAnt;
+    dtAdd.select(s);
+    if (dtAdd.getInt("cuantos")==0)
+    {
+        msgBox("No encontrado linea desglose "+ jtDes.getValorInt(JTD_NUMLIN)+ " en linea alb: "+nuLiAlbAnt+
+            " a mover. ");
+        jtDes.requestFocusSelected();
+        return;
+    }
     int nLin = jt.getSelectedRowDisab(); // Linea final
     int nCol=jt.getColumnCount()-5;
     if (jt.getSelectedRowDisab() == jt.getSelectedRow())
@@ -1965,8 +1983,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       nLin=jt.getRowCount()-1;
     }
 
-    try
-    {
+   
       int nLiAlb=jt.getValorInt(nLin,0);
       if (nLiAlb == 0)
         nLiAlb = getNextLinAlb();
@@ -1986,8 +2003,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           " and acc_serie = '" + acc_serieE.getText() + "'" +
           " and acc_nume = " + acc_numeE.getValorInt() +
           " and acp_numlin = " + jtDes.getValorInt(JTD_NUMLIN)+
-          " and acl_nulin = "+ nuLiAlbAnt+
-          " and acp_numind = "+numInd;
+          " and acl_nulin = "+ nuLiAlbAnt;          
 //      debug("s: "+s);
       int nLiAfe=dtAdd.executeUpdate(s);
       if (nLiAfe!=1)

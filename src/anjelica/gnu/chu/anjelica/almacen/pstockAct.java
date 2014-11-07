@@ -46,7 +46,7 @@ public class pstockAct extends CPanel
   boolean incPedid=false; // Incluir Pedidos de Ventas y Compras en Consulta.
   int cliCodi=-1; // Ver Productos  vendidos a Clientes
   char opVerProd=VER_CONSTOCK;
-  Vector vt=new Vector();
+  ArrayList<CButton> vt=new ArrayList();
   CButton btVolver=new CButton("Volver a Productos");
   AbstractButton Bprimero = null;
   double stock,unidad;
@@ -387,7 +387,7 @@ public class pstockAct extends CPanel
 
     padre.mensaje("Buscando productos de Familia: "+famCodi,false);
     double precio;
-    vt.removeAllElements();
+    vt.clear();
     if (dtCon1.select(s))
     {
       do
@@ -437,22 +437,22 @@ public class pstockAct extends CPanel
     }
     javax.swing.SwingUtilities.invokeLater(new Thread()
     {
+      @Override
       public void run()
       {
         int x = 0;
         int y = 0;
-        for (int n=0;n<vt.size();n++)
+        for (CButton vt1 : vt)
         {
-          Pprod.add((CButton) vt.elementAt(n)  , new GridBagConstraints(x, y, 1, 1, 1.0, 1.0
-                                                  , GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                                  new Insets(2, 0, 0, 2), 0, 0));
-          x++;
-
-          if (x > 3) // 3 Botones por linea
-          {
-            x = 0;
-            y++;
-          }
+              Pprod.add(vt1, new GridBagConstraints(x, y, 1, 1, 1.0, 1.0
+                  , GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                  new Insets(2, 0, 0, 2), 0, 0));
+              x++;
+              if (x > 3) // 3 Botones por linea
+              {
+                  x = 0;
+                  y++;
+              }
         }
         if (Sprod.getViewport().getComponent(0)!=Pprod)
         {
@@ -482,17 +482,14 @@ public class pstockAct extends CPanel
     s = "SELECT sum(pcl_nucape) as pcl_nucape, sum(pcl_cantpe) as pcl_cantpe, " +
         " sum(pcl_nucaco) as pcl_nucaco, sum(pcl_cantco) as pcl_cantco, " +
         " sum(pcl_nucafa) as pcl_nucafa, sum(pcl_cantfa) as pcl_cantfa, " +
-        " pcc_estad,c.prv_codi,l.pcl_feccad " +
-        " FROM pedicoc as c,pedicol as l " +
-        " where c.emp_codi = l.emp_codi" +
-        " and c.eje_nume= l.eje_nume " +
-        " and c.pcc_nume =l.pcc_nume " +
-        " and c.EMP_CODI = " + emp_codi +
-        " and l.pro_codi = "+proCodi+
-        " AND C.pcc_estrec = 'P' "+
-        (almCodi == 0?"":" and c.alm_codi = "+almCodi)+
-        " and c.pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +       
-        " group by c.pcc_estad,c.prv_codi,pcl_feccad";
+        " pcc_estad,prv_codi,pcl_feccad " +
+        " FROM v_pedico " +
+        " where EMP_CODI = " + emp_codi +
+        " and pro_codi = "+proCodi+
+        " AND pcc_estrec = 'P' "+
+        (almCodi == 0?"":" and alm_codi = "+almCodi)+
+        " and pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +       
+        " group by pcc_estad,prv_codi,pcl_feccad";
       char estad;
       if (dtStat.select(s))
       {
@@ -544,6 +541,7 @@ public class pstockAct extends CPanel
       s = "SELECT sum(pvl_unid) as  pvl_unid, sum(pvl_kilos) as pvl_kilos" +
           "  FROM v_pedven " +
           " where EMP_CODI = " + emp_codi +
+          " and pvc_confir = 'S' "+
           " and (avc_ano = 0 or pvc_cerra = 0) "+ // Pedidos NO cerrados
           (almCodi == 0?"":" and alm_codi = "+almCodi)+
           " and pro_codi = " + proCodi +
@@ -580,19 +578,19 @@ public class pstockAct extends CPanel
   void limpiaPanel(CPanel p, ButtonGroup bt)
   {
     Component c[] = p.getComponents();
-    for (int n = 0; n < c.length; n++)
+    for (Component c1 : c)
     {
-      p.remove(c[n]);
-      if (bt != null && c[n] instanceof AbstractButton)
-        bt.remove((AbstractButton) c[n]);
-      if (c[n] instanceof AbstractButton)
-      {
-        ActionListener al[] = ( (AbstractButton) c[n]).getActionListeners();
-        for (int j = 0; j < al.length; j++)
+        p.remove(c1);
+        if (bt != null && c1 instanceof AbstractButton)
+            bt.remove((AbstractButton) c1);
+        if (c1 instanceof AbstractButton)
         {
-          ( (AbstractButton) c[n]).removeActionListener(al[j]);
+            ActionListener[] al = ((AbstractButton) c1).getActionListeners();
+            for (ActionListener al1 : al)
+            {
+                ((AbstractButton) c1).removeActionListener(al1);
+            }
         }
-      }
     }
   }
 
@@ -627,6 +625,12 @@ public class pstockAct extends CPanel
       }
     };
   }
+  /**
+   * Busca Desglose de un producto.
+   * @param bt
+   * @param proCodi
+   * @param precio 
+   */
   void verDesglProd0 (final CButton bt,int proCodi,double precio)
   {
     Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
@@ -649,77 +653,60 @@ public class pstockAct extends CPanel
        s+=" UNION ALL " +
  // Pedidos Compras Pendientes de confirmar
           " SELECT 2 as tipsel,sum(pcl_nucape) as unidades, sum(pcl_cantpe) as cantidad, " +
-          " c.prv_codi,l.pcl_feccad as feccad " +
-          " FROM pedicoc as c,pedicol as l " +
-          " where c.emp_codi = l.emp_codi" +
-          " and c.eje_nume= l.eje_nume " +
-          " and c.pcc_nume =l .pcc_nume " +
-          " and C.EMP_CODI = " + emp_codi +
-          " and l.pro_codi = " + proCodi +
-          (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
-          " and c.pcc_estad = 'P' " +
-          " AND C.pcc_estrec = 'P' "+ // Pendientes
-          " and c.pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +
-          " group by c.prv_codi,l.pcl_feccad " +
+          " prv_codi,pcl_feccad as feccad " +
+          " FROM v_pedico " +
+          " where EMP_CODI = " + emp_codi +
+          " and pro_codi = " + proCodi +
+          (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
+          " and pcc_estad = 'P' " +
+          " AND pcc_estrec = 'P' "+ // Pendientes
+          " and pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +
+          " group by prv_codi,pcl_feccad " +
           " UNION ALL " +
 // Pedidos Compras Confirmados
          " SELECT 3 as tipsel, sum(pcl_nucaco) as unidades, sum(pcl_cantco) as cantidad, " +
-         " c.prv_codi,l.pcl_feccad as feccad " +
-         " FROM pedicoc as c,pedicol as l " +
-         " where c.emp_codi = l.emp_codi" +
-         " and c.eje_nume= l.eje_nume " +
-         " and c.pcc_nume =l .pcc_nume " +
-         " and C.EMP_CODI = " + emp_codi +
-         " and l.pro_codi = " + proCodi +
-         (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
-         " AND C.pcc_estrec = 'P' "+ // Pendientes
-         " and c.pcc_estad = 'C' " + // Confirmados.
-         " and c.pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +
-         " group by c.prv_codi,l.pcl_feccad " +
+         " prv_codi,pcl_feccad as feccad " +
+         " FROM v_pedico " +
+         " where EMP_CODI = " + emp_codi +
+         " and pro_codi = " + proCodi +
+         (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
+         " AND pcc_estrec = 'P' "+ // Pendientes
+         " and pcc_estad = 'C' " + // Confirmados.
+         " and pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +
+         " group by prv_codi,pcl_feccad " +
          " UNION ALL " +
  // Pedidos Compras Pre-Factura
          " SELECT 4 as tipsel,  sum(pcl_nucafa) as unidades, sum(pcl_cantfa) as cantidad, " +
-         " c.prv_codi,l.pcl_feccad as feccad " +
-         " FROM pedicoc as c,pedicol as l " +
-         " where c.emp_codi = l.emp_codi" +
-         " and c.eje_nume= l.eje_nume " +
-         " and c.pcc_nume =l .pcc_nume " +
-         " and C.EMP_CODI = " + emp_codi +
-         " and l.pro_codi = " + proCodi +
-         (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
-          " and c.pcc_estrec = 'P' "+ // Ignorar pedidos cancelados
-         " and c.pcc_estad = 'F' " +
-         " and c.pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +
-         " group by c.prv_codi,l.pcl_feccad " +
+         " prv_codi,pcl_feccad as feccad " +
+         " FROM v_pedico  " +
+         " where EMP_CODI = " + emp_codi +
+         " and pro_codi = " + proCodi +
+         (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
+         " and pcc_estrec = 'P' "+ // Ignorar pedidos cancelados
+         " and pcc_estad = 'F' " +
+         " and pcc_fecrec <=  TO_DATE('" + fecped + "','dd-MM-yyyy')" +
+         " group by prv_codi,pcl_feccad " +
          " UNION ALL "+
 // Pedidos Ventas Pendientes
          "SELECT 5 as tipsel, sum(pvl_unid)*-1 as  unidades, sum(pvl_kilos)*-1 as cantidad, " +
-         " l.prv_codi,pvl_feccad as feccad " +
+         " prv_codi,pvl_feccad as feccad " +
          "  FROM v_pedven as c" +
          " where C.EMP_CODI = " + emp_codi +
          " and (avc_ano = 0 or pvc_cerra = 0) "+ // Sin Albaran o Albaran sin CERRAR
+         " and pvc_confir = 'S' "+
          (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
          " and c.pro_codi = " + proCodi +
          " AND pvc_fecent <= TO_DATE('" + fecped + "','dd-MM-yyyy')" +
          " group by c.prv_codi,pvl_feccad "+
          " UNION ALL " +
  // Albaranes Compra SIN Cerrar Y CON PEDIDOS
-         " select 6 as tipsel, sum(acp_canind)*-1 as unidades,sum(acp_canti)*-1 as cantidad,  "+
-        " c.prv_codi , p.acp_feccad as feccad "+
-        " from v_albacoc as c, v_albacol as l ,v_albcompar as p "+
-        " WHERE c.emp_codi = l.emp_codi "+
-        " and c.acc_ano = l.acc_ano "+
-        " and c.acc_serie = l.acc_serie "+
-        " and c.acc_nume = l.acc_nume "+
-        " and c.emp_codi = l.emp_codi "+
-        " and c.acc_ano = l.acc_ano "+
-        " and c.acc_serie = l.acc_serie "+
-        " and c.acc_nume = l.acc_nume "+
+        " select 6 as tipsel, sum(acp_canind)*-1 as unidades,sum(acp_canti)*-1 as cantidad,  "+
+        " c.prv_codi , c.acp_feccad as feccad "+
+        " from v_compras as c "+
+        " WHERE c.emp_codi = "+emp_codi+ 
         (almCodi == 0 ? "" : " and l.alm_codi = " + almCodi) +
-        " and c.emp_codi = "+emp_codi+
-        " and p.pro_codi = "+proCodi+
-        " AND l.ACC_CERRA = 0 "+
-        " AND C.ACC_CERRA = 0 "+
+        " and c.pro_codi = "+proCodi+
+        " AND c.ACC_CERRA = 0 "+        
         " and exists ( select   emp_codi "+
         " from pedicoc as p " +
         " where p.emp_codi = c.emp_codi "+
@@ -746,24 +733,24 @@ public class pstockAct extends CPanel
 //      padre.debug("verDesglProd: "+s);
 
       if (dtCon1.select(s))
-      {
+      { 
         int prvCodi=dtCon1.getInt("prv_codi",true);
         String feccad=dtCon1.getFecha("feccad","dd-MM-yy");
         String prvNomb="";
         limpiaPanel(PDesProd, null);
         
-        vt.removeAllElements();
+        vt.clear();
         int unid=0;
         double canti=0;
         do
         {         
           if (prvCodi!=dtCon1.getInt("prv_codi",true) || !feccad.equals(dtCon1.getFecha("feccad","dd-MM-yy")))
           {
-            if (unid>=1 && canti>=1) 
-            {
+//            if (unid>=1 && canti>=1) 
+//            {
                 CButton BProd = getBotonDesgl(proCodi,precio, prvCodi, feccad, unid, canti);
                 vt.add(BProd);
-            }
+//            }
             unid = 0;
             canti = 0; 
             prvCodi = dtCon1.getInt("prv_codi",true);
@@ -813,19 +800,18 @@ public class pstockAct extends CPanel
 
             int x = 0;
             int y = 1;
-            for (int n = 0; n < vt.size(); n++)
-            {
-              PDesProd.add( (CButton) vt.elementAt(n), new GridBagConstraints(x, y, 1, 1, 1.0, 1.0
-                  , GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                  new Insets(2, 0, 0, 2), 0, 0));
-              x++;
-
-              if (x > 3) // 4 Botones por linea
+              for (CButton vt1 : vt)
               {
-                x = 0;
-                y++;
+                  PDesProd.add(vt1, new GridBagConstraints(x, y, 1, 1, 1.0, 1.0
+                      , GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                      new Insets(2, 0, 0, 2), 0, 0));
+                  x++;
+                  if (x > 3) // 4 Botones por linea
+                  {
+                      x = 0;
+                      y++;
+                  }
               }
-            }
             Sprod.getViewport().remove(Pprod);
             Sprod.getViewport().add(PDesProd, null);
 

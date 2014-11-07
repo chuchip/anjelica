@@ -331,7 +331,7 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
         " and acl_nulin = "+nLiAlAnt+
         " and acp_numlin = "+nLinDes;
     stUp.executeUpdate(s);
-
+    nLinDes=getNumLinDes(nLinAlb);
     guardaLinDes(row,nLinDes, nLinAlb,nIndiv);
     ctUp.commit();
   }

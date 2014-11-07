@@ -81,8 +81,8 @@ pro_codi int not null,	-- Codigo Producto
 pro_nomb varchar(50),	-- Nombre de Producto
 pro_nomcor varchar(30),	-- Nombre Producto Corto
 fam_codi int,		-- Familia a la que pertenece
-pro_univen varchar(2),	-- Unidad de Venta (Kg/Ud/Cajas)
-pro_deunve varchar(15), -- Descripcion Unidades de Venta
+pro_univen char(1) not null default 'P',	-- Unidad de Venta (Piezas/Cajas)
+pro_deunve varchar(15), -- Descripcion Unidades de Venta (NO SE USA)
 sbe_codi int not null,	-- SubEmpresa
 pro_codeti int,		-- Codigo de Etiqueta. (0 por defecto. -1 Sin etiqueta)
 pro_numcro int not null,    -- No Crotales iguales (0, por defecto = ilimitados)
@@ -111,7 +111,7 @@ pro_disc3 varchar(2),	-- Discriminador 3 (SIN USO)
 pro_disc4 varchar(2),	-- Discriminador 4 (Mayor/Calle)
 pro_oblfsa smallint not null,	-- Obligatorio Fecha Sacrificio (0->NO)
 pro_artcon int, 	-- Articulo Congelado 0=No
-pro_unicaj int default 1 not null,-- Unidades por Caja
+pro_unicaj int default 1 not null,-- Unidades por Caja (NO USUADO)
 pro_cajpal int default 0 not null,	-- Cajas por Palet
 pro_kguni float default 0 not null,	-- Kilos por Unidad
 pro_kgcaj float default 0 not null,	-- Kilos por Caja/Unidad
@@ -1113,7 +1113,7 @@ create table anjelica.v_albcompar
 constraint ix_albcompar primary key(acc_ano,emp_codi,acc_serie,acc_nume,acl_nulin,acp_numlin)
 );
 -- create index ix_albcompar on v_albcompar (acc_ano,emp_codi,acc_serie,acc_nume,acp_numlin);
-create index ix_albcompar2 on v_albcompar (acc_ano,emp_codi,acc_serie,acl_nulin,acp_numlin);
+ create index ix_albcompar2 on v_albcompar (pro_codi,acc_ano,acc_serie,acp_numind);
 
 create or replace view v_compras as 
 select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,
@@ -3042,7 +3042,7 @@ create table anjelica.pedvenc;
  pvc_fecped timestamp not null,	-- Fecha de Pedido
  pvc_fecent date not null,	-- Fecha de Entrega
  pvc_comen varchar(200),	-- Comentario s/cabec. pedido
- pvc_confir char(1) not null,	-- Pedido Confirmado (S/N)
+ pvc_confir char(1) not null,	-- Pedido Confirmado (S/N/Cancelado)
  avc_ano int,			-- Ejercicio del Albaran
  avc_serie char(1) not null,	-- Serie del Albaran
  avc_nume int not null,		-- Numero de Albaran
@@ -3063,8 +3063,9 @@ create table anjelica.pedvenl
  pvc_nume int not null,		-- Numero de Pedido
  pvl_numlin int not null,	-- Numero de Linea
  pvl_kilos float not null,	-- Kilos o unidades de producto.
- pvl_unid float not null,       -- Unidades
- pvl_tipo char(1) not null default 'K', -- Tipo Unidad introducida. (K/U)
+ pvl_unid float not null,   -- Unidades
+ pvl_canti float not null default '0',  -- Cantidad Introducida.
+ pvl_tipo char(1) not null default 'K', -- Tipo Unidad introducida. (K/P/C)
  pro_codi int not null,		-- Codigo de Producto
  pvl_comen varchar(100),	-- Comentario sobre el producto
  pvl_precio float not null,	-- Precio

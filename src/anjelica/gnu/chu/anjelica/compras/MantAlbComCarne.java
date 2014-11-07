@@ -404,6 +404,7 @@ public class MantAlbComCarne extends MantAlbCom
         ultSacr=acp_paisacE.getCellEditorValue().toString();
         ultSalDes=sde_codiE.getCellEditorValue().toString();
   }
+   @Override
   public  void guardaLinDes(int row,int nLiAlDe,int nLiAlb,int nInd) throws SQLException,NumberFormatException
   {
 
@@ -505,6 +506,7 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
    * @throws SQLException
    * @throws ParseException
    */
+   @Override
   public void actGridDes(int nLinAlb,int row,int nLinDes,int nInd,int nIndAnt, int nLiAlAnt) throws SQLException,java.text.ParseException
   {
     s = "SELECT * FROM v_albcompar "+
@@ -555,7 +557,7 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
         " and acl_nulin = "+nLiAlAnt+
         " and acp_numlin = "+nLinDes;
     stUp.executeUpdate(s);
-
+    nLinDes=getNumLinDes(nLinAlb);
     guardaLinDes(row,nLinDes, nLinAlb,nIndiv);
     ctUp.commit();
   }

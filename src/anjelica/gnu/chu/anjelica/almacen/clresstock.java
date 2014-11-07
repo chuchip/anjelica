@@ -496,6 +496,7 @@ public class clresstock extends ventana implements  JRDataSource
           "  FROM v_pedven " +
           " where  EMP_CODI = " + empCodi +
           " and (avc_ano = 0 or pvc_cerra = 0) " + // Sin Albaran o Albaran sin CERRAR
+          " and pvc_confir = 'S' "+
           (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
           " and pro_codi = ?" +
           " AND pvc_fecent <= TO_DATE('" + fecStockE.getText() + "','dd-MM-yyyy')" +
