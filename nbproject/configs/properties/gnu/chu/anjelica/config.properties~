@@ -1,0 +1,24 @@
+GenPathIconWIN=q:/anjelica/icons/
+GenPathIconUNIX=/home/cpuente/java/chuchi/icons/
+GenPathIcon=/home/cpuente/java/chuchi/icons/
+## Ejercicio (SOLO PARA PRUEBAS)
+EJERC=2004
+PATHREPORT=/java/xml/
+PATHREPORTUNIX=/java/xml/
+PATHREPORTWIN=q:/anjelica/xml/
+## Empresa (SOLO PARA PRUEBAS)
+EMPCODI=1
+DEBUG=true
+DIRTMP=/tmp/
+DIRTMPWIN=c:/tmp/
+COMPRINT=printjava.sh
+COMPRINTWIN=printjava.bat
+PUERTOALB=epson
+PUERTOALBWIN=lpt1:
+PATHCOM=/java/bin/
+PATHCOMWIN=q:/anjelica/bin/
+DIRMAILAVISO=cpuente@iberrioja.net
+DIRMAILERROR=cpuente@iberrioja.net
+MAILHOST=192.168.5.43
+SERVFAX=192.168.5.43
+LOG4J=Q:/anjelica/properties/gnu/chu/anjelica/log4j.xml 

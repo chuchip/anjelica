@@ -4865,7 +4865,8 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     s = "SELECT * FROM pedvenc WHERE emp_codi = " + emp_codiE.getValorInt() +
          " and eje_nume = " + pvc_anoE.getValorInt() +
-         " and pvc_nume = " + pvc_numeE.getValorInt();
+         " and pvc_nume = " + pvc_numeE.getValorInt()+
+         " and pvc_confir = 'S' ";
      if (!dt.select(s,block))
        return 0;
      return dt.getInt("cli_codi");
@@ -7504,7 +7505,7 @@ public class pdalbara extends ventanaPad  implements PAD
                                            cli_codiE.getValorInt(), EU.em_cod, dtStat));
       v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi"), dtStat));
       v.add(dtCon1.getFecha("pvl_feccad","dd-MM-yy"));
-      v.add((dtCon1.getString("pvl_tipo").equals("K")?dtCon1.getString("pvl_kilos"):dtCon1.getString("pvl_unid"))+dtCon1.getString("pvl_tipo"));
+      v.add(dtCon1.getString("pvl_canti"));
       if (verPrecios)
         v.add(dtCon1.getString("pvl_precio"));
       else

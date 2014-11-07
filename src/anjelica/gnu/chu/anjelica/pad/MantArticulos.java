@@ -152,7 +152,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2014-10-09" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2014-11-04" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM v_articulo where pro_activ != 0 "+
                 " ORDER BY pro_codi";
 
@@ -222,7 +222,6 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_deunveE.setColumnaAlias("pro_deunve");
     pro_diacomE.setColumnaAlias("pro_diacom");
     pro_cadcongE.setColumnaAlias("pro_cadcong");
-    pro_univenE.setColumnaAlias("pro_univen");
     pro_tipivaE.setColumnaAlias("pro_tipiva");
     pro_costkmiE.setColumnaAlias("pro_costkmi");
     pro_mancosE.setColumnaAlias("pro_mancos");
@@ -243,7 +242,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_artconE.setColumnaAlias("pro_artcon");
     pro_envvacE.setColumnaAlias("pro_envvac");
     pro_activE.setColumnaAlias("pro_activ");
-    pro_unicajE.setColumnaAlias("pro_unicaj");
+   
     pro_cajpalE.setColumnaAlias("pro_cajpal");
     pro_kguniE.setColumnaAlias("pro_kguni");
     pro_cosincE.setColumnaAlias("pro_cosinc");
@@ -339,8 +338,7 @@ public class MantArticulos extends ventanaPad  implements PAD
       pro_deunveE.setText(dtCon1.getString("pro_deunve"));
       pro_diacomE.setText(dtCon1.getString("pro_diacom"));
       pro_cadcongE.setText(dtCon1.getString("pro_cadcong"));
-      pro_univenE.setValor(dtCon1.getString("pro_univen"));
-      pro_tipivaE.setText(dtCon1.getString("pro_tipiva"));
+        pro_tipivaE.setText(dtCon1.getString("pro_tipiva"));
       pro_costkmiE.setValor(dtCon1.getInt("pro_costkmi"));
       pro_mancosE.setValor(dtCon1.getInt("pro_mancos"));
       pro_codartE.setText(dtCon1.getString("pro_codart"));
@@ -358,7 +356,7 @@ public class MantArticulos extends ventanaPad  implements PAD
       pro_artconE.setValor(dtCon1.getInt("pro_artcon"));
       pro_envvacE.setValor(dtCon1.getInt("pro_envvac"));
       pro_activE.setValor(dtCon1.getInt("pro_activ"));
-      pro_unicajE.setValorDec(dtCon1.getDouble("pro_unicaj"));
+      
       pro_cajpalE.setValorDec(dtCon1.getDouble("pro_cajpal"));
       pro_kguniE.setValorDec(dtCon1.getDouble("pro_kguni"));
       pro_cosincE.setValorDec(dtCon1.getDouble("pro_cosinc"));
@@ -417,7 +415,6 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_nombE.setEnabled(act);
     pro_nomcorE.setEnabled(act);
     fam_codiE.setEnabled(act);
-    pro_univenE.setEnabled(act);
     pro_deunveE.setEnabled(act);
     pro_diacomE.setEnabled(act);
     pro_cadcongE.setEnabled(act);
@@ -440,7 +437,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_artconE.setEnabled(act);
     pro_envvacE.setEnabled(act);
     pro_activE.setEnabled(act);
-    pro_unicajE.setEnabled(act);
+
     pro_cajpalE.setEnabled(act);
     pro_kguniE.setEnabled(act);
     pro_cosincE.setEnabled(act);
@@ -467,21 +464,25 @@ public class MantArticulos extends ventanaPad  implements PAD
     }
   }
 
+    @Override
   public void PADPrimero()
   {
     verDatos(dtCons);
   }
 
+    @Override
   public void PADAnterior()
   {
     verDatos(dtCons);
   }
 
+    @Override
   public void PADSiguiente()
   {
     verDatos(dtCons);
   }
 
+    @Override
   public void PADUltimo()
   {
     verDatos(dtCons);
@@ -526,8 +527,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     v.add(pro_univenE.getStrQuery());
     v.add(pro_deunveE.getStrQuery());
     v.add(pro_diacomE.getStrQuery());
-    v.add(pro_cadcongE.getStrQuery());
-    v.add(pro_univenE.getStrQuery());
+    v.add(pro_cadcongE.getStrQuery());  
     v.add(pro_tipivaE.getStrQuery());
     v.add(pro_costkmiE.getStrQuery());
     v.add(pro_mancosE.getStrQuery());
@@ -546,7 +546,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     v.add(pro_artconE.getStrQuery());
     v.add(pro_envvacE.getStrQuery());
     v.add(pro_activE.getStrQuery());
-    v.add(pro_unicajE.getStrQuery());
+
     v.add(pro_cajpalE.getStrQuery());
     v.add(pro_kguniE.getStrQuery());
     v.add(pro_cosincE.getStrQuery());
@@ -909,8 +909,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     dt.setDato("pro_univen", pro_univenE.getValor());
     dt.setDato("pro_deunve", pro_deunveE.getText());
     dt.setDato("pro_diacom", pro_diacomE.getValorInt());
-    dt.setDato("pro_cadcong", pro_cadcongE.getValorInt());
-    dt.setDato("pro_univen", pro_univenE.getValor());
+    dt.setDato("pro_cadcong", pro_cadcongE.getValorInt());    
     dt.setDato("pro_tipiva", pro_tipivaE.getText());
     dt.setDato("pro_costkmi", pro_costkmiE.getValor());
     dt.setDato("pro_mancos", pro_mancosE.getValor());
@@ -928,7 +927,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     dt.setDato("pro_artcon", pro_artconE.getValor());
     dt.setDato("pro_envvac", pro_envvacE.getValor());
     dt.setDato("pro_activ", pro_activE.getValor());
-    dt.setDato("pro_unicaj", pro_unicajE.getValorInt());
+
     dt.setDato("pro_cajpal", pro_cajpalE.getValorInt());
     dt.setDato("pro_kguni", pro_kguniE.getValorDec());
     dt.setDato("pro_cosinc", pro_cosincE.getValorDec());
@@ -947,6 +946,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     dt.setDato("pro_oblfsa",pro_oblfsaE.isSelected()?1:0);
     dt.setDato("usu_nomb",EU.usuario);
   }
+    @Override
   public void canc_addnew()
   {
     mensaje("");
@@ -1132,6 +1132,73 @@ public class MantArticulos extends ventanaPad  implements PAD
             return 0;
         return dt.getDouble("pro_kguni"); 
    }
+    /**
+    * Devuelve los kilos por caja
+    * @param codProd
+    * @param dt
+    * @return kilos estimados por caja. 0 si no encuentra el producto.
+    * @throws SQLException 
+    */
+   public static double getKilosCaja(int codProd, DatosTabla dt) throws SQLException
+   {
+        String s = "select pro_kgcaj from v_articulo  where " +
+         "  pro_codi = " + codProd;
+        if (!dt.select(s))
+            return 0;
+        return dt.getDouble("pro_kgcaj"); 
+   }
+   public static final  int KGXUNI=1;
+   public static final  int KGXCAJ=2;
+   public static final  int TIPVENCAJA=3;
+   /**
+    * Devuelve un HashMap<String, Integer> con la relacion entre unidades y kilos
+    * El hashmap tendra los campos: 
+    * KGXUNI: Kilos por unidad (Double)
+    * KGXCAJ: Kilos por caja (Double)
+    * TIPVENCAJA: Ventas por caja (1) o por unidades (0)
+    * @param codProd Codigo de producto a buscar
+    * @param dt DatosTabla
+    * @return null si no encuentra el producto
+    * @throws SQLException 
+    */
+   public static HashMap<Integer, Double> getRelUnidadKilos(int codProd, DatosTabla dt) throws SQLException
+   {
+        if (!dt.select("select pro_kguni,pro_kgcaj, pro_univen from v_articulo  where " +
+         "  pro_codi = " + codProd))
+            return null;
+        HashMap<Integer, Double> ht =new HashMap();
+        ht.put(KGXUNI, dt.getDouble("pro_kguni"));
+        ht.put(KGXCAJ, dt.getDouble("pro_kgcaj"));
+        ht.put(TIPVENCAJA, dt.getString("pro_univen").equals("C")?1.0:0);
+        return ht;
+   }
+   /**
+    * Devuelve el numero de piezas en las cajas mandadas
+    * @param codProd
+    * @param dt 
+    * @param caja Numero de cajas
+    * @return Numero de unidades resultantes. 0 Si no se encuentra el productro
+    * @throws SQLException 
+    */
+//   public static double getUnidCaja(int codProd, DatosTabla dt, double caja) throws SQLException
+//   {
+//        return caja*getUnidCaja(codProd,dt);  
+//   }
+//   /**
+//    * Devuelve el numero de unidades (piezas) por caja
+//    * @param codProd Codigo producto
+//    * @param dt DatosTabla
+//    * @return 0 si no encuentra el producto.
+//    * @throws SQLException 
+//    */
+//   public static double getUnidCaja(int codProd, DatosTabla dt) throws SQLException
+//   {
+//        String s = "select pro_unicaj from v_articulo  where " +
+//         "  pro_codi = " + codProd;
+//        if (!dt.select(s))
+//            return 0;
+//        return dt.getDouble("pro_unicaj"); 
+//   }
    /**
      * Devuelve el nombre de producto
      * @param codProd Codigo Producto
@@ -1274,8 +1341,6 @@ public class MantArticulos extends ventanaPad  implements PAD
         pro_unicomE = new gnu.chu.controles.CComboBox();
         cLabel24 = new gnu.chu.controles.CLabel();
         pro_cajpalE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
-        cLabel29 = new gnu.chu.controles.CLabel();
-        pro_unicajE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
         cLabel30 = new gnu.chu.controles.CLabel();
         pro_kguniE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
         cLabel31 = new gnu.chu.controles.CLabel();
@@ -1448,9 +1513,9 @@ public class MantArticulos extends ventanaPad  implements PAD
         Pinicio.add(cLabel7);
         cLabel7.setBounds(0, 76, 92, 18);
 
-        pro_univenE.addItem("Kg","Kg");
-        pro_univenE.addItem("Un","Un");
-        pro_univenE.addItem("**","**");
+        pro_univenE.addItem("Piezas","P");
+        pro_univenE.addItem("Cajas","C");
+        pro_univenE.setPreferredSize(new Dimension(100,100));
         Pinicio.add(pro_univenE);
         pro_univenE.setBounds(100, 76, 51, 18);
         Pinicio.add(pro_deunveE);
@@ -1663,12 +1728,6 @@ public class MantArticulos extends ventanaPad  implements PAD
         Pinicio.add(pro_cajpalE);
         pro_cajpalE.setBounds(100, 146, 35, 18);
 
-        cLabel29.setText("Unidades por caja");
-        Pinicio.add(cLabel29);
-        cLabel29.setBounds(140, 146, 100, 18);
-        Pinicio.add(pro_unicajE);
-        pro_unicajE.setBounds(240, 146, 35, 18);
-
         cLabel30.setText("Costo Añadido");
         Pinicio.add(cLabel30);
         cLabel30.setBounds(450, 170, 100, 18);
@@ -1677,9 +1736,9 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel31.setText("Kilos por caja");
         Pinicio.add(cLabel31);
-        cLabel31.setBounds(300, 146, 80, 18);
+        cLabel31.setBounds(220, 146, 80, 18);
         Pinicio.add(pro_kgcajE);
-        pro_kgcajE.setBounds(380, 146, 50, 18);
+        pro_kgcajE.setBounds(305, 146, 50, 18);
 
         cLabel32.setText("Cajas por Palet");
         Pinicio.add(cLabel32);
@@ -1885,7 +1944,6 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CLabel cLabel26;
     private gnu.chu.controles.CLabel cLabel27;
     private gnu.chu.controles.CLabel cLabel28;
-    private gnu.chu.controles.CLabel cLabel29;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel30;
     private gnu.chu.controles.CLabel cLabel31;
@@ -1954,7 +2012,6 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CTextField pro_stockE;
     private gnu.chu.controles.CLinkBox pro_tipivaE;
     private gnu.chu.controles.CComboBox pro_tiplotE;
-    private gnu.chu.controles.CTextField pro_unicajE;
     private gnu.chu.controles.CComboBox pro_unicomE;
     private gnu.chu.controles.CComboBox pro_univenE;
     private gnu.chu.camposdb.sbePanel sbe_codiE;
@@ -1978,6 +2035,24 @@ public class MantArticulos extends ventanaPad  implements PAD
 
      return dt.getInt("pro_artcon")!=0;
    }
+    /**
+     * Devuelve el tipo de Unidad en que se vende un producto
+     * Kilos, Cajas, Piezas
+     * @param codProd
+     * @param dt
+     * @return null si no encuentra el producto.
+     * @throws SQLException 
+     */
+   public static String getTipoUnidad(int codProd, DatosTabla dt) throws SQLException
+   {
+     String s = "select pro_univen  from v_articulo  where " +
+         "  pro_codi = " + codProd;
+     if (! dt.select(s))
+        return null;
+
+     return dt.getString("pro_univen");
+   }
+    
    /**
     * Devuelve el costo a incrementar a un producto
     * @param dt

@@ -420,24 +420,24 @@ public class  clpedven extends ventana
         return;
       do
       {
-        Vector v=new Vector();
-        v.addElement(dtCon1.getString("emp_codi")); // 0
-        v.addElement(dtCon1.getString("eje_nume")); // 1
-        v.addElement(dtCon1.getString("pvc_nume")); // 2
-        v.addElement(dtCon1.getString("cli_codi")); // 3
-        v.addElement(dtCon1.getString("cli_nomb")); // 4
-        v.addElement(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy")); // 5
-        v.addElement(dtCon1.getString("pvc_confir")); // 6
-        v.addElement(dtCon1.getInt("pvc_cerra")!=0); // 7
-        v.addElement(dtCon1.getString("pvc_nupecl")); // 8
-        v.addElement(dtCon1.getString("alm_nomb")); // 9
+        ArrayList v=new ArrayList();
+        v.add(dtCon1.getString("emp_codi")); // 0
+        v.add(dtCon1.getString("eje_nume")); // 1
+        v.add(dtCon1.getString("pvc_nume")); // 2
+        v.add(dtCon1.getString("cli_codi")); // 3
+        v.add(dtCon1.getString("cli_nomb")); // 4
+        v.add(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy")); // 5
+        v.add(dtCon1.getString("pvc_confir")); // 6
+        v.add(dtCon1.getInt("pvc_cerra")!=0); // 7
+        v.add(dtCon1.getString("pvc_nupecl")); // 8
+        v.add(dtCon1.getString("alm_nomb")); // 9
         jtCabPed.addLinea(v);
       } while (dtCon1.next());
       jtCabPed.requestFocusInicio();
       jtCabPed.setEnabled(true);
       verDatPed(jtCabPed.getValorInt(0),jtCabPed.getValorInt(1),jtCabPed.getValorInt(2));
     }
-    catch (Exception k)
+    catch (SQLException | ParseException k)
     {
       Error("Error al buscar pedidos", k);
     }
@@ -464,6 +464,7 @@ public class  clpedven extends ventana
         " and pvc_fecped <= {ts '" + pvc_fecfinE.getFecha("yyyy-MM-dd") + " 23:59:59'}" +
         " and c.alm_codi >= " + alm_iniE.getValor() +
         " and c.alm_codi <= " + alm_finE.getValor() +
+        " and c.pvc_confir = 'S' "+
         " and cl.cli_codi = c.cli_codi " +
         " and c.alm_codi = al.alm_codi "+
         (emp_codiE.getValorInt() == 0 ? "" : " AND c.emp_codi = " + emp_codiE.getValorInt());
@@ -476,9 +477,9 @@ public class  clpedven extends ventana
       s += " and pvc_confir = '" + pvc_confirE.getValor() + "'";
     if (!cli_codiE.isNull())
       s += " AND c.cli_codi = " + cli_codiE.getValorInt();
-    if (!cli_zoncreE.isNull(true) && !cli_zoncreE.equals("**") && !cli_zoncreE.equals("*"))
+    if (!cli_zoncreE.isNull(true) && !cli_zoncreE.getText().equals("**") && !cli_zoncreE.getText().equals("*"))
       s += " and cl.cli_zoncre  LIKE '" + Formatear.reemplazar(cli_zoncreE.getText(), "*", "%") + "'";
-    if (!cli_zonrepE.isNull(true) && !cli_zonrepE.equals("**") && !cli_zonrepE.equals("*"))
+    if (!cli_zonrepE.isNull(true) && !cli_zonrepE.getText().equals("**") && !cli_zonrepE.getText().equals("*"))
       s += " and cl.cli_zonrep  LIKE '" + Formatear.reemplazar(cli_zonrepE.getText(), "*", "%") + "'";
     if (! opListado.getValor().equals("T"))
       s+=" AND c.pvc_impres = '"+opListado.getValor()+"'";
@@ -578,18 +579,18 @@ public class  clpedven extends ventana
        pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
        do
        {
-         Vector v=new Vector();
-         v.addElement(dtCon1.getString("pro_codi"));
-         v.addElement(pro_codiE.getNombArtCli(dtCon1.getInt("pro_codi"),
+         ArrayList v=new ArrayList();
+         v.add(dtCon1.getString("pro_codi"));
+         v.add(pro_codiE.getNombArtCli(dtCon1.getInt("pro_codi"),
                                               cli_codiE.getValorInt(),EU.em_cod,dtStat));
-         v.addElement(dtCon1.getString("prv_codi"));
-         v.addElement(prv_codiE.getNombPrv(dtCon1.getString("prv_codi"),dtStat));
-         v.addElement(dtCon1.getFecha("pvl_feccad"));
-         v.addElement((dtCon1.getString("pvl_tipo").equals("K")?dtCon1.getString("pvl_kilos"):dtCon1.getString("pvl_unid"))+dtCon1.getString("pvl_tipo"));
-         v.addElement(dtCon1.getString("pvl_precio"));
-         v.addElement(dtCon1.getInt("pvl_precon") != 0);
-         v.addElement(dtCon1.getString("pvl_comen"));
-         v.addElement(dtCon1.getString("pvl_numlin"));
+         v.add(dtCon1.getString("prv_codi"));
+         v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi"),dtStat));
+         v.add(dtCon1.getFecha("pvl_feccad"));
+         v.add(dtCon1.getString("pvl_canti"));
+         v.add(dtCon1.getString("pvl_precio"));
+         v.add(dtCon1.getInt("pvl_precon") != 0);
+         v.add(dtCon1.getString("pvl_comen"));
+         v.add(dtCon1.getString("pvl_numlin"));
          jtLinPed.addLinea(v);
        } while (dtCon1.next());
        actAcumJT();
@@ -665,6 +666,7 @@ public class  clpedven extends ventana
             " and l.pro_codi = a.pro_codi " +
             " and al.alm_codi = c.alm_codi " +
             " and c.cli_codi = cl.cli_codi " +
+            " and c.pvc_confir = 'S' "+
             " and c.alm_codi >= " + alm_iniE.getValor() +
             " and c.alm_codi <= " + alm_finE.getValor() +
             " and cl.cli_codi = c.cli_codi " +

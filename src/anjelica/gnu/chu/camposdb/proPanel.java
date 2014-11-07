@@ -45,6 +45,7 @@ import javax.swing.SwingUtilities;
  */
 public class proPanel extends CPanel
 {
+  private String proUniVen="";
   private double pesoCajas;
   private  CodigoBarras codBarra=null;
   private int envCodi=0;
@@ -958,8 +959,8 @@ public class proPanel extends CPanel
             if (! swPerm)
             {
                  msgError = "**ARTICULO NO VENDIBLE EN ESTA SECCION**";
-                  if (ponTexto)
-                 pro_nombL.setText(msgError);
+                 if (ponTexto)
+                    pro_nombL.setText(msgError);
                  if (reqFocus)
                     pro_codiE.requestFocus();
                 return false;
@@ -1078,6 +1079,7 @@ public class proPanel extends CPanel
     activo=-1;
     etiCodi=0;
     proConExist='-';
+    proUniVen="";
     controlIndiv=true;
     String s;
     if (codArt==null)
@@ -1114,7 +1116,7 @@ public class proPanel extends CPanel
     if (dt.getNOREG())
       return null;
     
- 
+    proUniVen=dt.getString("pro_univen");
     camCodi= dt.getString("cam_codi");
     sbeCodi=dt.getInt("sbe_codi");
     famCodi = dt.getString("fam_codi");
@@ -1160,7 +1162,10 @@ public class proPanel extends CPanel
   {
     return camCodi;
   }
-
+  public String getTipoUnidVenta()
+  {
+      return proUniVen;
+  }
   public int getSubEmpresa()
   {
     return sbeCodi;
