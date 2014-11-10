@@ -54,7 +54,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.DatosIVA;
 import gnu.chu.anjelica.almacen.DatIndiv;
 import gnu.chu.anjelica.almacen.StkPartid;
-import gnu.chu.anjelica.almacen.ActStkPart;
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
@@ -178,7 +178,7 @@ public class pdalbara extends ventanaPad  implements PAD
   int tirCodi=0;
   boolean swAvisoDto=true;
   boolean P_CONPEDIDO=false;
-  ActStkPart stkPart;
+  ActualStkPart stkPart;
   prvPanel prv_codiE = new prvPanel();
   clpedven copeve;
   String sqlAlb;
@@ -1355,7 +1355,7 @@ public class pdalbara extends ventanaPad  implements PAD
     avc_valoraE.addItem("Pend.Val","1");
 
     avc_valoraE.setColumnaAlias("avc_valora");
-    stkPart=new ActStkPart(dtAdd,EU.em_cod);
+    stkPart=new ActualStkPart(dtAdd,EU.em_cod);
     pdalmace.llenaCombo(avc_almoriE, dtCon1);
     pdalmace.llenaCombo(alm_codoriE, dtCon1);
     pdalmace.llenaCombo(alm_coddesE, dtCon1);
