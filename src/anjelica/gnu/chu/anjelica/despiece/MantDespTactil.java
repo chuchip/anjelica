@@ -374,7 +374,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2014-09-18"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2014-11-10"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -1536,9 +1536,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
     @Override
   public void PADDelete()
   {
-    if (jtEnt.isVacio())
+    if (jtEnt.isVacio() && !PARAM_ADMIN) 
     {
-        msgBox("Despiece VACIO. Imposible Modificar");
+        msgBox("Despiece VACIO. Imposible Borrar");
         nav.pulsado = navegador.NINGUNO;
         activaTodo();
         return;
@@ -1697,6 +1697,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
     {
         jtEnt.removeAllDatos();
         jtOri.removeAllDatos();
+        jtFin.removeAllDatos();
+        jtSal.removeAllDatos();
     }
     if (dt.getNOREG())
       return;
