@@ -24,7 +24,7 @@ package gnu.chu.anjelica.inventario;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
-import gnu.chu.anjelica.almacen.ActStkPart;
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.paregalm;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
@@ -48,7 +48,7 @@ public class Valinven extends ventanaPad implements PAD {
  MvtosAlma mvtosAlm=new MvtosAlma();;
   paregalm pRegAlm;
 //  boolean control=false;
-  ActStkPart stkPart;
+  ActualStkPart stkPart;
   int tirCodi;
   boolean DEBUG = false;
   String s;
@@ -536,7 +536,7 @@ public class Valinven extends ventanaPad implements PAD {
     emp_codiE.iniciar(dtStat, this, vl, EU);
     MvtosAlma.llenaComboFecInv(dtStat, EU.em_cod, EU.ejercicio, fecinvE);
     Pcabe.setDefButton(Baceptar);
-    stkPart = new ActStkPart(dtAdd,EU.em_cod);
+    stkPart = new ActualStkPart(dtAdd,EU.em_cod);
     jt.setButton(KeyEvent.VK_F2, Bvallin);
     stkPart.setVentana(this);
     cam_codiE.setFormato(Types.CHAR, "XX", 2);

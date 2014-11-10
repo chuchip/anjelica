@@ -2,7 +2,7 @@ package gnu.chu.anjelica.compras;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
-import gnu.chu.anjelica.almacen.ActStkPart;
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.paregalm;
 import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.despiece.utildesp;
@@ -123,7 +123,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   boolean proOblfsa; // Obligatorio el Introduc. Fecha Sacrificio
   int proCodeti=0; // Tipo de etiqueta para el producto.
   private java.util.Date feulin;
-  private ActStkPart stkPart;
+  private ActualStkPart stkPart;
   private boolean swCargaAlb=false,cargaAlbVentas=false;
  
   private  DatosTabla dtCursor;
@@ -1494,8 +1494,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     if (!dtStat.select(s))
       throw new SQLException("NO HAY NINGUNA DIVISA DEFINIDA");
     div_codiE.addItem(dtStat);
-    stkPart=new ActStkPart(dtAdd,EU.em_cod);
-    String fecinve=ActStkPart.getFechaUltInv(0,0,null,dtStat);
+    stkPart=new ActualStkPart(dtAdd,EU.em_cod);
+    String fecinve=ActualStkPart.getFechaUltInv(0,0,null,dtStat);
     if (fecinve==null)
        fecinve = "01-01-" + EU.ejercicio; // Buscamos desde el principio del a�o.
     feulin=Formatear.getDate(fecinve,"dd-MM-yyyy");
@@ -2995,7 +2995,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   void afterCambiaLinDes() {
       try {
             if (jtDes.getValorInt(0) != 0) {
-                if (!ActStkPart.checkStock(dtStat, jt.getValorInt(JT_PROCOD),
+                if (!ActualStkPart.checkStock(dtStat, jt.getValorInt(JT_PROCOD),
                      acc_anoE.getValorInt(), emp_codiE.getValorInt(),
                      acc_serieE.getText(), acc_numeE.getValorInt(),
                      jtDes.getValorInt(0), alm_codiE.getValorInt(),
@@ -4891,7 +4891,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
                           dtCon1.getDouble("acp_canti"), // Kilos
                           dtCon1.getInt("acp_canind"),  // Num. Unidades
                           acc_fecrecE.getText(),
-                          ActStkPart.CREAR_SI,
+                          ActualStkPart.CREAR_SI,
                           prv_codiE.getValorInt(), // Producto
                           dtCon1.getDate("acp_feccad")   // Fecha Cad.
                           );
@@ -6445,7 +6445,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
          return true;
        do
        {
-         if (!ActStkPart.checkStock(dtStat, jt.getValorInt(1), acc_anoE.getValorInt(),
+         if (!ActualStkPart.checkStock(dtStat, jt.getValorInt(1), acc_anoE.getValorInt(),
                                  emp_codiE.getValorInt(), acc_serieE.getText(),
                                  acc_numeE.getValorInt(), dtCon1.getInt("acp_numind"),
                                  alm_codiE.getValorInt(), dtCon1.getDouble("acp_canti"),

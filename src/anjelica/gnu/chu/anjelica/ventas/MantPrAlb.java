@@ -23,7 +23,7 @@ package gnu.chu.anjelica.ventas;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
-import gnu.chu.anjelica.almacen.ActStkPart;
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.pad.MantTarifa;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.pad.pdprove;
@@ -657,12 +657,12 @@ public class MantPrAlb extends ventana {
         avc_numacE.iniciar(EU);
         emp_codiE.iniciar(dtCli, this, vl, EU);
         emp_codiE.setAceptaNulo(false);
-        feulinv=ActStkPart.getFechaUltInv(0,0,null,dtStat);
+        feulinv=ActualStkPart.getFechaUltInv(0,0,null,dtStat);
         fecAct=Formatear.getFechaAct("dd-MM-yyyy");
         
         datCab = new actCabAlbFra(dtCon1,dtAdd);
         Pcondic.setButton(KeyEvent.VK_F4, Bbuscar);
-        feulin=ActStkPart.getFechaUltInv(0,0,null,dtStat);
+        feulin=ActualStkPart.getFechaUltInv(0,0,null,dtStat);
         if (feulin == null)
             feulin = "01-01-" + EU.ejercicio; // Buscamos desde el principio del año.
         rep_codiE.setFormato(Types.CHAR,"XX");

@@ -437,7 +437,7 @@ public class MantAlbComCarne extends MantAlbCom
     }
   }
 
-void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
+  void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
                     int acp_painac,java.util.Date acp_feccad,int acp_paisac,
                     int acp_engpai,java.util.Date acp_fecsac,java.util.Date acp_fecpro,int pro_codi,
                     int acl_nulin,int mat_codi,int sde_codi,

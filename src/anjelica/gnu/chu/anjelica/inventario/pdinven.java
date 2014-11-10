@@ -10,7 +10,7 @@ import javax.swing.BorderFactory;
 import gnu.chu.camposdb.*;
 import gnu.chu.interfaces.*;
 import java.awt.event.*;
-import gnu.chu.anjelica.almacen.ActStkPart;
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.paregalm;
 
 /**
@@ -36,7 +36,7 @@ import gnu.chu.anjelica.almacen.paregalm;
 public class pdinven extends ventanaPad implements PAD
 {
   paregalm pRegAlm;
-  ActStkPart stkPart;
+  ActualStkPart stkPart;
   int tirCodi;
   String fecini,tipo;
   CPanel Pprinc = new CPanel();
@@ -298,7 +298,7 @@ public class pdinven extends ventanaPad implements PAD
     alm_codiE.setFormato(true);
     alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
 
-    stkPart = new ActStkPart(dtAdd,EU.em_cod);
+    stkPart = new ActualStkPart(dtAdd,EU.em_cod);
     stkPart.setVentana(this);
 
     s = "SELECT alm_codi,alm_nomb FROM v_almacen " +

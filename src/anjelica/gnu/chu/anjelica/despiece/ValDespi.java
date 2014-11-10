@@ -21,7 +21,7 @@ package gnu.chu.anjelica.despiece;
  */
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
-import gnu.chu.anjelica.almacen.ActStkPart;
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
@@ -160,7 +160,7 @@ public class ValDespi extends ventana {
    {
   
      tid_codiE.iniciar(dtStat, this, vl, EU);
-     feulin=ActStkPart.getFechaUltInv(0,0,null,dtStat);
+     feulin=ActualStkPart.getFechaUltInv(0,0,null,dtStat);
      if (feulin == null)
         feulin = "01-01-" + EU.ejercicio; // Buscamos desde el principio del año.
      
@@ -904,7 +904,7 @@ public class ValDespi extends ventana {
                fecInv = Formatear.getDate(feulin, "dd-MM-yyyy");
                Date fecDesp = jtDesp.getValDate(rowEdit, JTDES_FECDES);
                if (Formatear.comparaFechas(fecInv, fecDesp) > 0) {
-                   fecInv = ActStkPart.getDateUltInv(jtDesp.getValDate(rowEdit, JTDES_FECDES), dtStat);
+                   fecInv = ActualStkPart.getDateUltInv(jtDesp.getValDate(rowEdit, JTDES_FECDES), dtStat);
                }
                boolean res;
                if (jtCab.isEnabled()) {
@@ -951,7 +951,7 @@ public class ValDespi extends ventana {
         fecInv=Formatear.getDate(feulin,"dd-MM-yyyy");
         
         if (Formatear.comparaFechas(fecInv, fecDesp)>0)
-          fecInv= ActStkPart.getDateUltInv(jtDesp.getValDate(rowEdit,JTDES_FECDES),dtStat);
+          fecInv= ActualStkPart.getDateUltInv(jtDesp.getValDate(rowEdit,JTDES_FECDES),dtStat);
    }
    
    void calcFechaCostos(Date fecDesp) throws Exception

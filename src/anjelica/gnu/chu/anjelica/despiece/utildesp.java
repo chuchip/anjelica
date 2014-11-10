@@ -24,7 +24,7 @@ package gnu.chu.anjelica.despiece;
  */
 
 import gnu.chu.anjelica.almacen.StkPartid;
-import gnu.chu.anjelica.almacen.ActStkPart;
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.sql.DatosTabla;
@@ -87,7 +87,7 @@ public class utildesp
   DatosTabla dtAdd;
   int grdNume=0;
   EntornoUsuario EU;
-  ActStkPart actStkPart;
+  ActualStkPart actStkPart;
   StkPartid stkPart;
   etiqueta etiq;
 
@@ -768,12 +768,12 @@ public class utildesp
     nInd++;
     return nInd;
   }
-  public void setActStkPart(ActStkPart actStkPart)
+  public void setActStkPart(ActualStkPart actStkPart)
   {
     this.actStkPart=actStkPart;
   }
 
-  public ActStkPart getActStkPart()
+  public ActualStkPart getActStkPart()
   {
     return this.actStkPart;
   }
@@ -788,7 +788,7 @@ public class utildesp
     this.numDesp=0;
     this.EU=EU;
     if (actStkPart==null)
-      actStkPart=new ActStkPart(dtAdd,EU.em_cod);
+      actStkPart=new ActualStkPart(dtAdd,EU.em_cod);
   }
   
   public void setGrupoDesp(int grdNume)

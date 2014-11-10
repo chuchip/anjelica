@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
  * @author chuchi P
  * @version 1.1
  */
-public class ActStkPart
+public class ActualStkPart
 {
   private boolean actStkAutomatico=true; 
   boolean checkUnid=true; // Indica si debe comprobar que no haya mas de una unidad en stock Partidas
@@ -63,7 +63,7 @@ public class ActStkPart
   private String usuario;
   private String strAccesos;
   
-  public ActStkPart(DatosTabla dtAdd, int empCodi)
+  public ActualStkPart(DatosTabla dtAdd, int empCodi)
   {
     this.dtAdd = dtAdd;
     this.empCodi = empCodi;
@@ -73,7 +73,7 @@ public class ActStkPart
         strAccesos=empPanel.getStringAccesos(dtAdd, usuario);
     } catch (SQLException ex)
     {
-        java.util.logging.Logger.getLogger(ActStkPart.class.getName()).log(Level.SEVERE, null, ex);
+        java.util.logging.Logger.getLogger(ActualStkPart.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
   /**
@@ -91,7 +91,7 @@ public class ActStkPart
         strAccesos=empPanel.getStringAccesos(dtAdd, usuario);
     } catch (SQLException ex)
     {
-        java.util.logging.Logger.getLogger(ActStkPart.class.getName()).log(Level.SEVERE, null, ex);
+        java.util.logging.Logger.getLogger(ActualStkPart.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
 
@@ -328,7 +328,7 @@ public class ActStkPart
                 " and stp_unact > 1";
             if (dtAdd.select(s))
             {
-                   Logger.getLogger(ActStkPart.class.getName()).error("Stock Partidas con mas de un individuo\n"+s+"\n"+ventana.getCurrentStackTrace());
+                   Logger.getLogger(ActualStkPart.class.getName()).error("Stock Partidas con mas de un individuo\n"+s+"\n"+ventana.getCurrentStackTrace());
                    HashMap ht=new HashMap();  
                    ht.put("%a",almCodi);
                    ht.put("%p",proCodi);
@@ -650,7 +650,7 @@ public class ActStkPart
             return 3;
         else
         {
-            Logger.getLogger(ActStkPart.class.getName()).error("Sin stock Partidas\n"+s+"\n"+ventana.getCurrentStackTrace());
+            Logger.getLogger(ActualStkPart.class.getName()).error("Sin stock Partidas\n"+s+"\n"+ventana.getCurrentStackTrace());
             HashMap ht=new HashMap();  
             ht.put("%a",almCodi);
             ht.put("%p",proCodi);

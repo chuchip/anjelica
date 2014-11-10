@@ -2,7 +2,7 @@ package gnu.chu.anjelica.despiece;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.StkPartid;
-import gnu.chu.anjelica.almacen.ActStkPart;
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.pdconfig;
@@ -74,7 +74,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    // Mantener fecha de caducidad del producto origen en productos finales (true)
   //  Poner la de producion + los dias de caducidad del producto final (false)
   final static boolean MANTFECDES=false;
-  ActStkPart stkPart;
+  ActualStkPart stkPart;
   String serLotDF;
   boolean swTienePrec;
   HashMap <Integer,Integer>  htAcu=new HashMap();
@@ -821,7 +821,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    def_usunomE.setDatos(dtCon1);
    def_usunomE.setText(EU.usu_nomb);
    
-   stkPart=new ActStkPart(dtAdd,EU.em_cod);
+   stkPart=new ActualStkPart(dtAdd,EU.em_cod);
    MantDesp.deoBlockE_addItem(deo_blockE);
    eje_numeE.setColumnaAlias("eje_nume");
    deo_codiE.setColumnaAlias("deo_codi");
@@ -2654,7 +2654,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  void insStkPart(int proCodi,int ejeLot,int empLot,String serLot,int numLot,int nInd,double kilos,int numPie) throws Exception
  {
    stkPart.sumar(ejeLot,serLot,numLot,nInd,proCodi,deo_almdesE.getValorInt(),
-                     kilos,numPie,grd_fechaE.getText(),ActStkPart.CREAR_SI,
+                     kilos,numPie,grd_fechaE.getText(),ActualStkPart.CREAR_SI,
                      getPrvDesp(dtStat,EU.em_cod),grd_feccadE.getDate());
 
  }

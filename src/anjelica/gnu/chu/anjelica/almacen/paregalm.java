@@ -64,7 +64,7 @@ public class paregalm extends CPanel {
     ventana papa;
     String afeStk;
     String s;
-    ActStkPart stkPart;
+    ActualStkPart stkPart;
     CLabel cLabel8 = new CLabel();
     CTextField deo_serlotE = new CTextField(Types.CHAR, "X");
     CLabel cLabel1 = new CLabel();
@@ -350,7 +350,7 @@ public class paregalm extends CPanel {
         pro_codiE.iniciar(dtStat, papa, vl, EU);
         pro_codiE.setCamposLote(deo_ejelotE, deo_serlotE, pro_loteE, pro_numindE,
                 deo_kilosE);
-        stkPart = new ActStkPart(dtAdd, EU.em_cod);
+        stkPart = new ActualStkPart(dtAdd, EU.em_cod);
         alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
 
         s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_codi";

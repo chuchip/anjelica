@@ -2,7 +2,7 @@ package gnu.chu.anjelica.inventario;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
-import gnu.chu.anjelica.almacen.ActStkPart;
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.paregalm;
 import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.controles.StatusBar;
@@ -50,7 +50,7 @@ public class TrasInven extends ventanaPad implements PAD {
    String s;
    boolean swInvCong;
    int tirCodi;
-   ActStkPart stkPart;
+   ActualStkPart stkPart;
    paregalm pRegAlm;
     
  public TrasInven(EntornoUsuario eu, Principal p)
@@ -128,7 +128,7 @@ public class TrasInven extends ventanaPad implements PAD {
         emp_codiE.setColumnaAlias("emp_codi");
         alm_codiE.setColumnaAlias("alm_codi");
         cci_fecconE.setColumnaAlias("cci_feccon");
-        stkPart = new ActStkPart(dtAdd, EU.em_cod);
+        stkPart = new ActualStkPart(dtAdd, EU.em_cod);
         stkPart.setVentana(this);
         pRegAlm = new paregalm();
         pRegAlm.iniciar(EU, dtStat, dtAdd, vl, this, dtBloq);

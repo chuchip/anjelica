@@ -21,7 +21,7 @@ package gnu.chu.anjelica.despiece;
  * @author chuchiP
  * @version 1.0
  */
-import gnu.chu.anjelica.almacen.ActStkPart;
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.sql.Desorilin;
 import gnu.chu.anjelica.sql.DesorilinId;
 import gnu.chu.anjelica.sql.Desporig;
@@ -41,7 +41,7 @@ import java.util.Iterator;
 
 
 public class AutoDesp extends ventana {
-    ActStkPart stkPart;
+    ActualStkPart stkPart;
     int newDeoCodi=0;
     final String SERIE="X";
     DatosTabla dtAdd,dtBloq;
@@ -81,7 +81,7 @@ public class AutoDesp extends ventana {
       pro_codoriE.iniciar(dtStat, papa, vl, EU);  
       pro_codfinE.iniciar(dtStat, papa, vl, EU); 
       tid_codiE.iniciar(dtStat, papa, vl, EU);
-      stkPart = new ActStkPart(dtAdd, EU.em_cod);
+      stkPart = new ActualStkPart(dtAdd, EU.em_cod);
       activarEventos();
     }
     private void activarEventos()
@@ -227,7 +227,7 @@ public class AutoDesp extends ventana {
                 //Creo apunte en stock partidas.
                 stkPart.sumar(defEjelot, SERIE, proLote, proNumind, pro_codfinE.getValorInt(),
                     dtAdd.getInt("alm_codi"),
-                    0, 0, deoFecha, ActStkPart.CREAR_SI,
+                    0, 0, deoFecha, ActualStkPart.CREAR_SI,
                     prvCodi, deoFeccad);
             }
             dtAdd.commit();

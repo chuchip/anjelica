@@ -42,7 +42,7 @@ import gnu.chu.Menu.LoginDB;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.StkPartid;
-import gnu.chu.anjelica.almacen.ActStkPart;
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.compras.MantAlbComPlanta;
@@ -145,7 +145,7 @@ public class MantDesp extends ventanaPad implements PAD
     conexion ctProd;
     DatosTabla dtProd;
     boolean ADMIN = false;
-    ActStkPart stkPart;
+    ActualStkPart stkPart;
     boolean swTienePrec = false;
     boolean inTidCodi = false;
     public final static double LIMDIF = 0.02;
@@ -356,7 +356,7 @@ public class MantDesp extends ventanaPad implements PAD
         deo_selogeE.setColumnaAlias("deo_seloge");
         deo_nulogeE.setColumnaAlias("deo_nuloge");
         jtLin.setButton(KeyEvent.VK_F5, BcopLin);
-        stkPart = new ActStkPart(dtAdd, EU.em_cod);
+        stkPart = new ActualStkPart(dtAdd, EU.em_cod);
         cargaPSC.setSelected(AUTOLLENARDESP);
         activarEventos();
         verDatos(dtCons);
@@ -1590,7 +1590,7 @@ public class MantDesp extends ventanaPad implements PAD
             genDatEtiq();
             proCodiB = 0;
             boolean isBlock = deo_blockE.getValor().equals("S");
-            if (isBlock && ActStkPart.isBloqueado(dtStat, jtCab.getValorInt(0, JTCAB_PROCODI), jtCab.getValorInt(0, JTCAB_EJELOT),
+            if (isBlock && ActualStkPart.isBloqueado(dtStat, jtCab.getValorInt(0, JTCAB_PROCODI), jtCab.getValorInt(0, JTCAB_EJELOT),
                 EU.em_cod, jtCab.getValString(0, JTCAB_SERLOT),
                 jtCab.getValorInt(0, JTCAB_NUMLOT), jtCab.getValorInt(0, JTCAB_NUMIND),
                 deo_almoriE.getValorInt()))
@@ -1680,7 +1680,7 @@ public class MantDesp extends ventanaPad implements PAD
            
             if (proCodiB != 0)
             { // Antes tenia un producto bloqueado. Pongo kilos a 0 de producto entrada, si todavia sigue bloqueado
-                if (ActStkPart.isBloqueado(dtStat, proCodiB, ejeLoteB, EU.em_cod, serLoteB, numLoteB, numIndiB, almOrigB))
+                if (ActualStkPart.isBloqueado(dtStat, proCodiB, ejeLoteB, EU.em_cod, serLoteB, numLoteB, numIndiB, almOrigB))
                 {
                     stkPart.ponerStock(proCodiB, ejeLoteB,
                         EU.em_cod,

@@ -13,7 +13,7 @@ import gnu.chu.anjelica.listados.*;
 import java.util.*;
 import gnu.chu.anjelica.despiece.utildesp;
 import java.awt.event.*;
-import gnu.chu.anjelica.almacen.ActStkPart;
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.comm.BotonBascula;
