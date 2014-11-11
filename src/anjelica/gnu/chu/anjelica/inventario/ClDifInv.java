@@ -37,12 +37,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.print.PrinterException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -101,7 +103,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2013-12-27");
+        this.setVersion("2014-11-11");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -321,6 +323,8 @@ public class ClDifInv extends ventana {
         {
             resetMsgEspere();
             msgBox("Sin registros para estas condiciones");
+            if (swConsulta)
+                    jt.removeAllDatos();
             this.setEnabled(true);
             return;
         } 
@@ -446,7 +450,7 @@ public class ClDifInv extends ventana {
         mensajeErr("Listado ... Generado");
         this.setEnabled(true);
       }
-      catch (Exception ex)
+      catch (SQLException | JRException | PrinterException ex)
       {
         Error("Error al Generar Listado",ex);
       }
