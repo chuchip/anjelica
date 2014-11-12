@@ -3437,9 +3437,10 @@ drop table anjelica.ajustedb;
 create table anjelica.ajustedb
 (
     aju_regacu int not null, -- // Regenerar Acumulados (0 No). Usado por fn_acumstk
-	aju_regmvt int not null  -- // Crear mvtos. Almacen (Solo para temas de testeo)
+	aju_regmvt int not null,  -- // Crear mvtos. Almacen (Solo para temas de testeo)
+	aju_delmvt int not null default 0
 );
-insert into anjelica.ajustedb values(1,1);
+insert into anjelica.ajustedb values(1,1,0);
 --
 -- Tabla con Acumulados de Stock Partidas
 --
@@ -3510,7 +3511,8 @@ create  view v_despiece as select  1 as emp_codi, c.*, g.grd_serie,g.grd_kilo,gr
 grd_valor,grd_block,grd_feccad,g.prv_codi as grd_prvcod,grd_desnue,grd_fecpro,grd_fecha,
 1 as deo_emloge, 1 as deo_emplot ,
 l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcost, deo_kilos , deo_preusu,deo_tiempo
- from desporig as c left join grupdesp as g on c.eje_nume=g.eje_nume and c.deo_numdes = g.grd_nume,  desorilin as l 
+ from desporig as c left join grupdesp as g on c.eje_nume=g.eje_nume and c.deo_numdes = g.grd_nume, 
+ desorilin as l 
   where c.eje_nume=l.eje_nume
  and c.deo_codi= l.deo_codi;
 -- Procedures

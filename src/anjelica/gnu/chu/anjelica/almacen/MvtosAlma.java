@@ -9,6 +9,7 @@ import gnu.chu.utilidades.ventana;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,7 +43,7 @@ public class MvtosAlma
 {
   private boolean mvtoDesgl=true; // Mvto. Desglosado
   private String tiposVert="";
-  private boolean swDesglInd;
+  private boolean swDesglInd=false; // Indica si los mvtos. se deben desglosar por individuos
   private double incCosto=0;
   private String accesoEmp;
   private Date dateFin;
@@ -150,6 +151,10 @@ public class MvtosAlma
   {
       return proLote;
   }
+  /**
+   * Indica si los mvtos se deben desglosar por individuos.
+   * @param desglIndiv 
+   */
   public void setDesglIndiv(boolean desglIndiv)
   {
       this.swDesglInd =desglIndiv;
@@ -249,13 +254,45 @@ public class MvtosAlma
         return getSqlMvtAnt(fecIni,fecFin,proCodi);    
     return getSqlMvtNuevo(fecIni,fecFin,proCodi);
   }
+  private String getSqlMvtCostos(String fecIni)  {
+    return "SELECT 0 as orden,mvt_tipdoc as sel, mvt_tipo as tipmov,  "
+        + " mvt_time as fecmov,"
+        + "  mvt_serdoc as serie,pro_numlot as  lote,"
+        + " mvt_canti as canti,mvt_prec as precio,pro_indlot as numind,"
+        + " mvt_cliprv as cliCodi,mvt_numdoc  as numalb,pro_ejelot as ejenume, "
+        + " 1 as empcodi,'0' as pro_codori "
+        + ", '' as repCodi,'' as zonCodi,0 as sbe_codi "
+        + ", mvt_unid as unidades,0 as div_codi,alm_codi,mvt_serdoc as avc_serie "
+        + ", 'N' as avc_depos "
+        + " from mvtosalm where "
+        + "   mvt_canti <> 0 "
+        + " AND pro_codi = ? "
+        + " AND mvt_time >= TO_DATE('" + fecIni + "','dd-MM-yyyy') "
+        + " and mvt_time <=  ? "
+        + " union all "
+        + " select 1 as orden,'RE' as sel,'=' as tipmov,"
+        + "r.rgs_fecha as fecmov,"
+        + "  r.pro_serie as serie,r.pro_nupar as  lote,"
+        + " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "
+        + " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"
+        + " r.emp_codi  as empcodi,r.pro_codi as pro_codori"
+        + ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "
+        + ", rgs_canti as unidades, 0 as div_codi,alm_codi,'.' as avc_serie, "
+        + " 'N' as avc_depos "
+        + " FROM v_regstock r  WHERE "
+        + " tir_afestk = '='" // Solo Inventarios
+        + " and rgs_kilos <> 0 "
+        + " AND r.pro_codi = ? "
+        + " AND r.rgs_fecha::date = TO_DATE('" + fecIni + "','dd-MM-yyyy') "
+        + " ORDER BY 4,1,3 desc"; // FECHA,orden y tipo
+  }
   private String getSqlMvtNuevo(String fecIni, String fecFin, int proCodi) throws ParseException
   {
     numProd=1;
     this.dateFin=Formatear.getDate(fecFin,"dd-MM-yyyy");          
     String sql="";
     if (! swSoloInv)
-    {   
+    {
        sql+="SELECT 0 as orden,mvt_tipdoc as sel, mvt_tipo as tipmov,  "+
             " mvt_time as fecmov,"+
             "  mvt_serdoc as serie,pro_numlot as  lote,"+
@@ -266,13 +303,14 @@ public class MvtosAlma
             ", mvt_unid as unidades,0 as div_codi,alm_codi,mvt_serdoc as avc_serie "+
              ", 'N' as avc_depos "+
              " from mvtosalm where "+
-             "   mvt_canti <> 0 "+
+             "  mvt_canti <> 0 "+      
             (almCodi==0?"":" and alm_codi = "+almCodi)+
             (proLote==0?"":" and pro_numlot  = "+proLote)+
             (proNumind==0?"":" and pro_indlot = "+proNumind)+
             " AND pro_codi = " + (proCodi==-1?"?":proCodi) +
             " AND mvt_time::date >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
-            " and mvt_time::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') "; 
+            " and mvt_time::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
+         
     }
     if (! incInvFinal || swSoloInv)
     { // No incluir inventario final.
@@ -555,8 +593,8 @@ public class MvtosAlma
             (almCodi==0?"":" and alm_codi = "+almCodi)+
             (proLote==0?"":" and pro_numlot  = "+proLote)+            
             " AND pro_codi = " + (proCodi==-1?"?":proCodi) +
-            " AND mvt_time >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
-            " and mvt_time <= TO_DATE('"+fecFin+"','dd-MM-yyyy') "+
+            " AND mvt_time::date >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
+            " and mvt_time::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') "+
             " group by mvt_tipdoc,mvt_tipo";
        if (!dt.select(s))
            return false;
@@ -619,6 +657,27 @@ public class MvtosAlma
   public void setAccesoEmp(String acessoEmp)
   {
       this.accesoEmp=acessoEmp;
+  }
+  /**
+   * 
+   * @param proCodi
+   * @param timeMvt
+   * @param dtCon1
+   * @param dtStat
+   * @return
+   * @throws SQLException
+   * @throws java.text.ParseException 
+   */
+  public boolean getCostoRefInFecha(int proCodi,Timestamp timeMvt,DatosTabla dtCon1, DatosTabla dtStat) throws SQLException, java.text.ParseException      
+  {
+      resetAcumulados();
+      pStmt.setInt(1, proCodi);
+      pStmt.setTimestamp(2, timeMvt);
+      pStmt.setInt(3, proCodi);
+      ResultSet rs=pStmt.executeQuery();
+       if (!rs.next())
+            return false;
+      return calculaMvtos(rs,dtCon1, dtStat,null,null,null,0);
   }
   /**
    * 
@@ -705,8 +764,8 @@ public class MvtosAlma
    * Funcion  a llamar cuando se van a calcular Movimientos sobre diferentes 
    * productos pero con las mismas condiciones.
    * LLamar despues a calculaMvtos(int proCodi,DatosTabla dtCon1,DatosTabla dtStat,String zonCodi, String repCodi)
-   * @param fecInv Fecha ultimo inventario (o de Inicio)
-   * @param fecMvto Fecha en la que calcular costo y kilos
+   * @param fecIni Fecha ultimo inventario (o de Inicio)
+   * @param fecFin Fecha en la que calcular costo y kilos
    * @param dtCon1 DatosTabla principal
    * @throws SQLException
    * @throws java.text.ParseException
@@ -715,7 +774,17 @@ public class MvtosAlma
         String s = getSqlMvt(fecIni, fecFin, -1);
         pStmt=dtCon1.getPreparedStatement(s);
     }
-
+    /**
+     * Inicia consulta sobre mvtos, usado para calcular costo en una fecha determinada.
+     * @param fecIni
+     * @param dtCon1
+     * @throws SQLException
+     * @throws ParseException 
+     */
+    public void iniciarMvtos(String fecIni,  DatosTabla dtCon1) throws SQLException,ParseException {
+        String s = getSqlMvtCostos(fecIni);
+        pStmt=dtCon1.getPreparedStatement(s);
+    }
     /**
      * Debera haberse llamado primero a la funcion iniciarMvtos
      * @param dtCon1
@@ -858,19 +927,19 @@ public class MvtosAlma
         sel=dt.getString("sel").charAt(0);
         if (dt.getString("sel").equals("DE"))
           sel='d';
-       if (swDesglInd)
-       {
-        ref = proCodi + "|" + dt.getInt("ejenume", true) + "|"
-                         + dt.getInt("empcodi", true) + "|"
-                         + dt.getString("serie") + "|"
-                         + dt.getInt("lote", true) + "|"
-                         + dt.getInt("numind", true);
-        cant =  ht.get(ref);
-        if (cant==null)
-            cantiInd=0;
-        else
-            cantiInd=cant;
-       }
+        if (swDesglInd)
+        {
+            ref = proCodi + "|" + dt.getInt("ejenume", true) + "|"
+                             + dt.getInt("empcodi", true) + "|"
+                             + dt.getString("serie") + "|"
+                             + dt.getInt("lote", true) + "|"
+                             + dt.getInt("numind", true);
+            cant =  ht.get(ref);
+            if (cant==null)
+                cantiInd=0;
+            else
+                cantiInd=cant;
+        }
        
         if (tipMov.equals("+"))
         { // Se pone aqui por que al tratar los inventarios se pondra tipmov= '+'

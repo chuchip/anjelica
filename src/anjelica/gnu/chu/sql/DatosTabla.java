@@ -1593,7 +1593,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   }
   /**
    * Devuelve el valor de la columna de tipo TimeStamp
-   * @param col COlumna
+   * @param col Numero de Columna
    * @return Si no es convertible a timestamp. Devuelve NULL.
    * @throws SQLException 
    */

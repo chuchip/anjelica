@@ -156,7 +156,7 @@
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon(&quot;check&quot;))"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="Baceptar.addMenu(&quot;Regenerar&quot;);&#xa;Baceptar.addMenu(&quot;Cancelar&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="Baceptar.addMenu(&quot;Regenerar&quot;);&#xa;Baceptar.addMenu(&quot;Anular Reg.&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
