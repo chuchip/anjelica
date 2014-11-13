@@ -225,11 +225,9 @@ public class pdfactra extends ventanaPad   implements PAD
      {
 
        if (ht.get("modPrecio") != null)
-         modPrecio = Boolean.valueOf(ht.get("modPrecio").toString()).
-             booleanValue();
+         modPrecio = Boolean.parseBoolean(ht.get("modPrecio").toString());
        if (ht.get("admin") != null)
-         admin = Boolean.valueOf(ht.get("admin").toString()).
-             booleanValue();
+         admin = Boolean.parseBoolean(ht.get("admin").toString());
        if (admin)
          modPrecio=true;
      }
@@ -284,7 +282,7 @@ public class pdfactra extends ventanaPad   implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(775, 530));
-   this.setVersion("20120304  "+(modPrecio?"-Modificar Precios-":"")+
+   this.setVersion("20141113 "+(modPrecio?"-Modificar Precios-":"")+
          (admin?"-ADMINISTRADOR-":"")+")");
 
    strSql = "SELECT emp_codi,eje_nume,frt_nume " +
@@ -745,7 +743,7 @@ public class pdfactra extends ventanaPad   implements PAD
      insLiAlb0();
    } while (dtCon1.next());
 
-   jtAlb.requestFocusInicio();
+   jtAlb.requestFocusInicioLater();
  }
 
 private void insLiAlb0() throws IllegalArgumentException, ParseException,
@@ -876,6 +874,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
        activaTodo();
        return;
      }
+     frtPrekil_Ant=frt_prekilE.getValorDec();
      mensaje("Modificando Factura ....");
      activar(navegador.ADDNEW,true);
      tra_codiE.resetCambio();
@@ -885,6 +884,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
 
      irGridFra();
      actAcumFra();
+     swLlenaAlb=false;
      llenaGridAlb();
    } catch (Exception k)
    {
@@ -896,8 +896,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
  public void ej_edit1()
  {
    mensaje("Espere, por favor .. Actualizando Factura");
-   jtFra.salirFoco();
-   jtFra.procesaAllFoco();
+   jtFra.actualizarGrid();   
 
    this.setEnabled(false);
    try
@@ -929,7 +928,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
                      eje_numeE.getValorInt(), frt_numeE.getValorInt());
      mensaje("");
      nav.pulsado = navegador.NINGUNO;
-     frtPrekil_Ant=frt_prekilE.getValorDec();
+     
    }
    catch (Exception k)
    {
@@ -971,33 +970,33 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
                 " and acc_serie = '" + dtCon1.getString("acc_serie") + "'";
        dtAdd.executeUpdate(s,stUp);
       
-       Albacoc fc=new Albacoc(dtCon1.getInt("frt_numalb"),dtCon1.getInt("dcc_ejerc"),dtCon1.getString("acc_serie"));
+       Albacoc fc=new Albacoc(dtCon1.getInt("frt_numalb"),
+           dtCon1.getInt("dcc_ejerc"),dtCon1.getString("acc_serie"));
        if (v.indexOf(fc)==-1)
            v.add(fc);
      }
    } while (dtCon1.next());
-   int nRow=v.size();
    double impTot;
-   for (int n=0;n<nRow;n++)
+   for (Albacoc v1 : v)
    {
-      s = "SELECT frt_ejerc,frt_nume,acc_impokg,acc_totfra FROM v_albacoc "+
-          " WHERE emp_codi = " + emp_codiE.getValorInt() +
-           " and acc_ano = " + v.get(n).getAccAno() +
-           " and acc_nume = " + v.get(n).getAccNume() +
-           " and acc_serie = '" + v.get(n).getAccSerie() + "'";
-       if (!dtAdd.select(s,true))
-         throw new Exception("NO encontrado registro Cabecera Albaran.\n" + s);
-       if (opSobAlb.isSelected()) // Sobreescribir Albaran ?
-          frtPrekil_Ant=dtBloq.getDouble("acc_impokg");
-//       impTot=pdalbco2.getImporteAlb(dtCon1,emp_codiE.getValorInt(),v.get(n).getAccAno(),
+          s = "SELECT frt_ejerc,frt_nume,acc_impokg,acc_totfra FROM v_albacoc "+
+              " WHERE emp_codi = " + emp_codiE.getValorInt() +
+              " and acc_ano = " + v1.getAccAno() +
+              " and acc_nume = " + v1.getAccNume() + 
+              " and acc_serie = '" + v1.getAccSerie() + "'";
+          if (!dtAdd.select(s,true))
+              throw new Exception("NO encontrado registro Cabecera Albaran.\n" + s);
+          if (opSobAlb.isSelected()) // Sobreescribir Albaran ?
+              frtPrekil_Ant=dtBloq.getDouble("acc_impokg");
+          //       impTot=pdalbco2.getImporteAlb(dtCon1,emp_codiE.getValorInt(),v.get(n).getAccAno(),
 //           v.get(n).getAccSerie(),v.get(n).getAccNume());
-       dtAdd.edit();
-       dtAdd.setDato("frt_ejerc",0); 
-       dtAdd.setDato("frt_nume",0);
-       dtAdd.setDato("acc_impokg", opSobAlb.isSelected()?0:dtAdd.getDouble("acc_impokg") - frtPrekil_Ant);
-//       dtAdd.setDato("acc_totfra",impTot);
-       dtAdd.update();
-   }
+          dtAdd.edit();
+          dtAdd.setDato("frt_ejerc",0);
+          dtAdd.setDato("frt_nume",0);
+          dtAdd.setDato("acc_impokg", opSobAlb.isSelected()?0:dtAdd.getDouble("acc_impokg") - frtPrekil_Ant);
+          //       dtAdd.setDato("acc_totfra",impTot);
+          dtAdd.update();
+      }
    
    s = "DELETE FROM fratrali WHERE emp_codi = " + emp_codiE.getValorInt() +
        " and eje_nume = " + eje_numeE.getValorInt() +
@@ -1283,28 +1282,26 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
      }
      nLin++;
    }
-   nRow=v.size();
-   double impTot;
-   for (int n=0;n<nRow;n++)
-   {
-      s = "SELECT frt_ejerc,frt_nume,acc_impokg,acc_totfra  FROM v_albacoc "+
-          " WHERE emp_codi = " + emp_codiE.getValorInt() +
-           " and acc_ano = " + v.get(n).getAccAno() +
-           " and acc_nume = " + v.get(n).getAccNume() +
-           " and acc_serie = '" + v.get(n).getAccSerie() + "'";
-       if (!dtAdd.select(s,true))
-         throw new Exception("NO encontrado registro Cabecera Albaran.\n" + s);
       
-//       impTot=pdalbco2.getImporteAlb(dtCon1,emp_codiE.getValorInt(),v.get(n).getAccAno(),
+   for (Albacoc v1 : v)
+   {
+          s = "SELECT frt_ejerc,frt_nume,acc_impokg,acc_totfra  FROM v_albacoc "+
+              " WHERE emp_codi = " + emp_codiE.getValorInt() +
+              " and acc_ano = " + v1.getAccAno() + 
+              " and acc_nume = " + v1.getAccNume() +
+              " and acc_serie = '" + v1.getAccSerie() + "'";
+          if (!dtAdd.select(s,true))
+              throw new Exception("NO encontrado registro Cabecera Albaran.\n" + s);
+          //       impTot=pdalbco2.getImporteAlb(dtCon1,emp_codiE.getValorInt(),v.get(n).getAccAno(),
 //           v.get(n).getAccSerie(),v.get(n).getAccNume());
-       dtAdd.edit();
-       dtAdd.setDato("frt_ejerc",eje_numeE.getValorInt());
-       dtAdd.setDato("frt_nume",frt_numeE.getValorInt());
-       dtAdd.setDato("acc_impokg",opSobAlb.isSelected()? frt_prekilE.getValorDec():dtAdd.getDouble("acc_impokg")+frt_prekilE.getValorDec());
-//       dtAdd.setDato("acc_totfra",impTot);
-       dtAdd.update(stUp);
+          dtAdd.edit();
+          dtAdd.setDato("frt_ejerc",eje_numeE.getValorInt());
+          dtAdd.setDato("frt_nume",frt_numeE.getValorInt());
+          dtAdd.setDato("acc_impokg",opSobAlb.isSelected()? frt_prekilE.getValorDec():dtAdd.getDouble("acc_impokg")+frt_prekilE.getValorDec());
+          //       dtAdd.setDato("acc_totfra",impTot);
+          dtAdd.update(stUp);
+    }
    }
- }
 
     @Override
  public void canc_addnew()
@@ -1360,6 +1357,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
  }
 
 
+  @Override
  public void ej_delete1()
  {
    mensaje("Espere, por favor .. Borrando Factura");

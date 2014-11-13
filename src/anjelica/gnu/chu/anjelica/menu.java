@@ -173,6 +173,7 @@ public class menu extends JFrame
   JMenuItem pdpedco = new JMenuItem();
   JMenuItem copedco = new JMenuItem();
   JMenuItem pdfatra = new JMenuItem();
+  JMenuItem mantartra = new JMenuItem();
   JMenuItem pdjercici = new JMenuItem();
   JMenuItem valdespi2 = new JMenuItem();
   JMenuItem Valdespi = new JMenuItem();
@@ -781,6 +782,12 @@ public class menu extends JFrame
         pdfatra_actionPerformed(e);
       }
     });
+    mantartra.setText("Tarifas Transp.");
+    mantartra.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mantartra_actionPerformed(e);
+      }
+    });
     pdjercici.setText("Ejercicios");
     pdjercici.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -876,6 +883,7 @@ public class menu extends JFrame
     jPopupCompras.add(pdpedco);
     jPopupCompras.add(copedco);
     jPopupCompras.add(pdfatra);
+    jPopupCompras.add(mantartra);
     ItemInventario.add(cargaInv);
     ItemInventario.add(mantInv);
     ItemInventario.add(valInv);
@@ -1962,6 +1970,9 @@ void clrelalco_actionPerformed(ActionEvent e) {
   }
 void pdfatra_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.compras.pdfactra(menu.this, EU));
+  }
+  void mantartra_actionPerformed(ActionEvent e) {
+    lanzaEjecutable(new gnu.chu.anjelica.compras.pdtaripor(menu.this, EU));
   }
   void pdjercici_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.pad.pdejerci(menu.this, EU,null));

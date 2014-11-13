@@ -19,7 +19,7 @@ import javax.swing.*;
  *  la tarifa 1 del prov 1 valida del 1/3/05 al 1/4/5 (Misma tarifa y prov, distintas fechas)
  *  la tarifa 1 del prov 2 valida del 1/1/05 al /1/5/05 (misma tarifa, distinto proveedor).
  *   etc.
- * <p>Copyright: Copyright (c) 2005
+ * <p>Copyright: Copyright (c) 2005-2014
  *   *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -76,15 +76,13 @@ public class pdtaripor extends ventanaPad implements PAD
       vl = p.panel1;
       jf = p;
       eje = true;
-
-      setTitulo( "Mant. Tarifas Portes (V 1.01)");
-
+      setTitulo( "Mant. Tarifas Portes");
       try
       {
         if (ht != null)
         {
           if (ht.get("modoConsulta") != null)
-            modoConsulta = Boolean.valueOf(ht.get("modoConsulta").toString()).booleanValue();
+            modoConsulta = Boolean.parseBoolean(ht.get("modoConsulta").toString());
         }
 
         if (jf.gestor.apuntar(this))
@@ -98,12 +96,12 @@ public class pdtaripor extends ventanaPad implements PAD
       }
     }
 
-    public pdtaripor (gnu.chu.anjelica.menu p, EntornoUsuario eu, Hashtable ht)
+    public pdtaripor (gnu.chu.anjelica.menu p, EntornoUsuario eu)
     {
 
       EU = eu;
       vl = p.getLayeredPane();
-      setTitulo( "Mant. Tarifas Portes (V 1.01)");
+      setTitulo( "Mant. Tarifas Portes");
       eje = false;
 
       try
@@ -120,7 +118,7 @@ public class pdtaripor extends ventanaPad implements PAD
     {
       iniciar(502, 522);
       this.setSize(new Dimension(502, 522));
-
+      setVersion( "(20141113)" + (modoConsulta?"-Modo Consulta-":"")+")");
       strSql = "SELECT tra_codi,tap_codi,tap_fecini,tap_fecfin from taripor " +
           " group by tra_codi,tap_codi,tap_fecini,tap_fecfin " +
           " order by tra_codi,tap_codi,tap_fecini ";
@@ -135,16 +133,14 @@ public class pdtaripor extends ventanaPad implements PAD
       Pcabe.setPreferredSize(new Dimension(485, 20));
       Pcabe.setLayout(null);
 
-      Vector cabecera = new Vector();
-      cabecera.addElement("Hasta Kilos"); // 0 -- Kilos (0 Sin limite)
-      cabecera.addElement("Importe"); //1 -- Importe
-      cabecera.addElement("Kilos/Fijo"); // 2 -- Kilos o Fijo
+      ArrayList cabecera = new ArrayList();
+      cabecera.add("Hasta Kilos"); // 0 -- Kilos (0 Sin limite)
+      cabecera.add("Importe"); //1 -- Importe
+      cabecera.add("Kilos/Fijo"); // 2 -- Kilos o Fijo
       jt.setCabecera(cabecera);
       jt.setAnchoColumna(new int[]      {90, 90, 80});
       jt.alinearColumna(new int[]      {2, 2, 1});
-      jt.setFormatoColumna(0, "###,##9.99");
-      jt.setFormatoColumna(1, "###,##9.99");
-
+     
       tap_fijkilE.setAdmiteCar(CTextField.CHAR_LIMIT);
       tap_fijkilE.setStrCarEsp("KF");
       tap_fijkilE.setMayusc(true);
@@ -161,9 +157,10 @@ public class pdtaripor extends ventanaPad implements PAD
       jt.setPreferredSize(new Dimension(491, 443));
       jt.setAjustarGrid(true);
       jt.setAjusAncCol(true);
+      jt.setFormatoCampos();
       jt.setConfigurar("gnu.chu.anjelica.compras.pdtaripor", EU, dtStat);
       jt.setNumRegCargar(100);
-      Iniciar(this);
+      iniciar(this);
       Baceptar.setMaximumSize(new Dimension(100, 26));
       Baceptar.setMinimumSize(new Dimension(100, 26));
       Baceptar.setPreferredSize(new Dimension(100, 26));
@@ -206,16 +203,17 @@ public class pdtaripor extends ventanaPad implements PAD
       this.getContentPane().add(Pprinc, BorderLayout.CENTER);
       Pcabe.add(cLabel1, null);
       Pcabe.add(tra_codiE, null);
-    Pcabe.add(cLabel3, null);
-    Pcabe.add(tap_nombE, null);
-    Pcabe.add(tap_codiE, null);
-    Pcabe.add(cLabel4, null);
-    Pcabe.add(Bocul, null);
-    Pcabe.add(tap_fecfinE, null);
-    Pcabe.add(cLabel2, null);
-    Pcabe.add(tap_feciniE, null);
+      Pcabe.add(cLabel3, null);
+      Pcabe.add(tap_nombE, null);
+      Pcabe.add(tap_codiE, null);
+      Pcabe.add(cLabel4, null);
+      Pcabe.add(Bocul, null);
+      Pcabe.add(tap_fecfinE, null);
+      Pcabe.add(cLabel2, null);
+      Pcabe.add(tap_feciniE, null);
     }
 
+  @Override
     public void iniciarVentana() throws Exception
     {
       jt.setButton(KeyEvent.VK_F4,Baceptar);
@@ -239,6 +237,7 @@ public class pdtaripor extends ventanaPad implements PAD
     {
       Bocul.addFocusListener(new FocusAdapter()
       {
+        @Override
         public void focusGained(FocusEvent e)
         {
           irGrid();
@@ -247,6 +246,7 @@ public class pdtaripor extends ventanaPad implements PAD
       tap_codiE.addFocusListener(new FocusAdapter()
       {
 
+        @Override
         public void focusLost(FocusEvent e)
         {
           if (!tap_codiE.isQuery())
