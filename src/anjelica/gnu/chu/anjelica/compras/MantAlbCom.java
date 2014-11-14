@@ -2930,9 +2930,13 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
      
       if (llenaCllCodi())
       {
+        boolean autoClase=jt.getValorInt(JT_CANIND)==0?true:!hasDiferentClas(jt.getValorInt(JT_NLIN));
         opAutoClas.setEnabled(true);
-        opAutoClas.setSelected(jt.getValorInt(JT_CANIND)==0?true:!hasDiferentClas(jt.getValorInt(JT_NLIN)));
+        opAutoClas.setSelected(autoClase);
         opAutoCl=true;
+        if (! autoClase)
+            msgBox("Atencion!. Autoclasificacion desactivada para esta referencia");
+
       }
       else
       {
@@ -6193,7 +6197,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        {              
          if (! jtRecl.hasCambio())
              return -1; // No ha habido cambios
-         jtRecl.resetCambio();
+        
 
          if (! pro_codverE.controla(false,false) )
          {
@@ -6244,7 +6248,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
          double kilos = rgs_kilosE.getValorDec();
          int unids = rgs_unidE.getValorInt();
          
-         if (jtRecl.getValorInt(row, ROWNVERT) != 0 && tirCodNoAfecta==tir_codiE.getValorInt())
+         if (jtRecl.getValorInt(row, ROWNVERT) != 0 && tirCodNoAfecta!=tir_codiE.getValorInt())
          {
            if (pRegAlm.getDatosReg(dtStat, jtRecl.getValorInt(row, ROWNVERT)))
            {
@@ -6296,6 +6300,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
                            rgsRecprv,acc_anoE.getValorInt(),acc_serieE.getText(),acc_numeE.getValorInt());
 
          guardaLinRecl(row);
+         jtRecl.resetCambio();
          ctUp.commit();
        }
        catch (Exception k)
