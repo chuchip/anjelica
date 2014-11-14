@@ -776,6 +776,10 @@ public class proPanel extends CPanel
             ej_consPro(aypro);
           }
         };
+        if (intfr!=null)
+            intfr.getLayeredPane().add(aypro,1);
+          else
+            vl.add(aypro);
         vl.add(aypro);
         aypro.setLocation(25, 25);
         aypro.iniciarVentana();

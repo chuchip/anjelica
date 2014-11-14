@@ -2156,9 +2156,11 @@ public class pdalbara extends ventanaPad  implements PAD
             cerrarCopeve();
           }
         };
-        vl.add(copeve);
-        copeve.setLocation(this.getLocation().x, this.getLocation().y + 30);
+        this.getLayeredPane().add(copeve, new Integer(1));
+        
+        copeve.setLocation(5,  5);
         copeve.iniciarVentana();
+        copeve.setCabeceraVentana(false);
       }
       copeve.setVisible(true);
       this.setEnabled(false);

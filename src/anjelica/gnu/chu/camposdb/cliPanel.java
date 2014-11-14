@@ -509,8 +509,10 @@ public void setZona(String zonCli)
             }
           };
           aycli.setLocation(25, 25);
-
-          vl.add(aycli,peso);
+          if (intfr!=null)
+            intfr.getLayeredPane().add(aycli,1);
+          else
+            vl.add(aycli,peso);
         }
         aycli.setVisible(true);
         if (intfr!=null)
