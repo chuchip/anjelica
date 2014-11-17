@@ -701,7 +701,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20141028)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20141117)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -2638,7 +2638,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       actGridDes(nLiAlb,row,jtDes.getValorInt(row,JTD_NUMLIN),jtDes.getValorInt(row,DESNIND),numIndAnt, nLiAlAnt);
 
     jt.setValor( nLiAlb, 0);
-    if (! opAutoClas.isSelected() &&  ! cll_codiE.isNull())
+    if (! opAutoClas.isSelected() ||  cll_codiE.isNull())
     {
       jt.setValor( "" + nLinE.getValorInt(), 3);
       jt.setValor( "" + kilosE.getValorDec(),4);
@@ -2930,13 +2930,13 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
      
       if (llenaCllCodi())
       {
-        boolean autoClase=jt.getValorInt(JT_CANIND)==0?true:!hasDiferentClas(jt.getValorInt(JT_NLIN));
-        opAutoClas.setEnabled(true);
-        opAutoClas.setSelected(autoClase);
-        opAutoCl=true;
-        if (! autoClase)
+        boolean autoClase=hasDiferentClas(jt.getValorInt(JT_NLIN));
+        if ( autoClase && jt.getValorInt(JT_CANIND)>0)
             msgBox("Atencion!. Autoclasificacion desactivada para esta referencia");
-
+       
+        opAutoCl= jt.getValorInt(JT_CANIND)==0?true:!autoClase;
+        opAutoClas.setEnabled(true);
+        opAutoClas.setSelected(opAutoCl);
       }
       else
       {
