@@ -3,10 +3,7 @@ package gnu.chu.comm;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.mensajes;
-import gnu.chu.utilidades.ventana;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
@@ -137,7 +134,12 @@ public class leePeso
         }
         serialPort = new SerialPort(puerto);
         if (! serialPort.openPort())
-            throw new SerialPortException(puerto,"No se pudo abrir el puerto","");
+        {
+             if (swDebug)
+                System.out.println("No se pudo abrir el puerto");
+            return;
+        }
+
                 
        
         serialPort.setFlowControlMode(flowControl);
