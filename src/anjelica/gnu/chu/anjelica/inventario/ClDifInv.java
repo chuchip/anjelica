@@ -1038,7 +1038,7 @@ public class ClDifInv extends ventana {
 
         cLabel2.setText("Fecha Control ");
         Pcondic.add(cLabel2);
-        cLabel2.setBounds(10, 10, 90, 17);
+        cLabel2.setBounds(10, 10, 80, 17);
         Pcondic.add(feulinE);
         feulinE.setBounds(330, 10, 90, 17);
 

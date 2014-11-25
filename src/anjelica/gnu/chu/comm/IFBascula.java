@@ -36,9 +36,10 @@ public class IFBascula extends ventana
         });
         temporizador.setDelay(3000);
         temporizador.start();
-        setCabeceraVentana(false);
+        setVisibleCabeceraVentana(false);
         
     }
+    @Override
     public void matar(boolean cerrarConexion)
     {
         temporizador.stop();

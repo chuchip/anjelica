@@ -2160,7 +2160,7 @@ public class pdalbara extends ventanaPad  implements PAD
         
         copeve.setLocation(5,  5);
         copeve.iniciarVentana();
-        copeve.setCabeceraVentana(false);
+        copeve.setVisibleCabeceraVentana(false);
       }
       copeve.setVisible(true);
       this.setEnabled(false);

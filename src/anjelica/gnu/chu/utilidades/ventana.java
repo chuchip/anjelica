@@ -311,7 +311,7 @@ public class ventana extends CInternalFrame implements ejecutable
    * Por defecto esta puesto
    * @param cabecera 
    */
-  public void setCabeceraVentana(boolean cabecera)
+  public void setVisibleCabeceraVentana(boolean cabecera)
   {
    this.putClientProperty(
              PlasticInternalFrameUI.IS_PALETTE,

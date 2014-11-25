@@ -40,20 +40,28 @@ import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.ventana;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.print.PrinterException;
 import java.beans.PropertyVetoException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
+import javax.swing.JMenuItem;
 import javax.swing.border.BevelBorder;
 import net.sf.jasperreports.engine.*;
 
 
 public class lisaldos   extends ventana  implements JRDataSource
 {
+  ArrayList<DatIndiv>  listIndiv=new ArrayList();
+  JMenuItem verIndiv = new JMenuItem("Ver Individuos", Iconos.getImageIcon("view_tree"));
+  JMenuItem verMvtos = new JMenuItem("Ver Mvtos", Iconos.getImageIcon("view_tree"));
   private double kgVen,kgCom,kgReg=0;
   private CCheckBox pro_cosincE=new CCheckBox("Inc.Costo");
   MvtosAlma mvtosAlm = new MvtosAlma();
@@ -63,7 +71,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   PreparedStatement ps;
   ResultSet rs;
   ifMvtosClase ifMvtos = new ifMvtosClase();
-  
+   IFStockPart ifStk=new IFStockPart(this);
   boolean imprList=false;
   int nLin;
   CButton Bimpr = new CButton(Iconos.getImageIcon("print"));
@@ -105,7 +113,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     private CLabel pro_congeL = new CLabel();
     private CLabel ordenL = new CLabel();
     private CComboBox ordenE = new CComboBox();
-
+   
 
     public lisaldos(EntornoUsuario eu, Principal p)
   {
@@ -153,12 +161,14 @@ public class lisaldos   extends ventana  implements JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(592, 516));
-    this.setVersion("2014-06-25");
+    this.setVersion("2014-11-25");
     ifMvtos.setSize(new Dimension(475, 325));
     
     ifMvtos.setVisible(false);
     ifMvtos.setClosable(true);
     ifMvtos.setPadre(this);
+    ifStk.setVisible(false);
+    ifStk.setClosable(false);
     fecsalE.setBounds(new Rectangle(55, 22, 79, 17));
     cLabel6.setBounds(new Rectangle(5, 22, 50, 17));
     cLabel6.setText("En Fecha");
@@ -172,7 +182,10 @@ public class lisaldos   extends ventana  implements JRDataSource
     cam_codiE.setBounds(new Rectangle(332, 22, 191, 18));
     Pdatcon.setMaximumSize(new Dimension(540, 91));
 
-    vl.add(ifMvtos,new Integer(1));
+    this.getLayeredPane().add(ifMvtos);
+    this.getLayeredPane().add(ifStk);
+    ifMvtos.setLocation(5, 5);
+    ifStk.setLocation(5,5);
     Pprinc.setLayout(gridBagLayout1);
 
     statusBar= new StatusBar(this);
@@ -217,7 +230,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     jtMv.setFormatoColumna(4,"---,--9");   
     jtMv.setFormatoColumna(5,"-,--9.99");
 
- 
+    
     cLabel5.setText("Producto");
     cLabel5.setBounds(new Rectangle(4, 3, 59, 17));
     pro_codiE.setBounds(new Rectangle(63, 2, 452, 17));
@@ -319,6 +332,9 @@ public class lisaldos   extends ventana  implements JRDataSource
     jt.setFormatoColumna(4,"---9.99");
     jt.setFormatoColumna(5,"---,--9.99");
     jt.setAjustarGrid(true);
+    jt.getPopMenu().add(verIndiv,1);
+    jt.getPopMenu().add(verMvtos,2);
+    jt.setToolTipText("Click en boton derecho para más opciones");
     cglisaldos vg=new cglisaldos();
     for (int n=0;n<jt.getColumnCount();n++)
     {
@@ -377,13 +393,30 @@ public class lisaldos   extends ventana  implements JRDataSource
   }
   void activarEventos()
   {
+    verIndiv.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (jt.isVacio()) 
+             return;
+        
+          try
+          {
+              verIndividuos(jt.getValorInt(0));
+          } catch (SQLException ex)
+          {
+              Error("Error al localizar individuos",ex);
+          }
+      }
+    });
     Baceptar.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
        Baceptar_actionPerformed(threadlisaldos.CONSULTA);
       }
     });
     Bimpr.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Baceptar_actionPerformed(threadlisaldos.LISTA);
@@ -391,6 +424,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     });
     popEspere_BCancelaraddActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         msgEspere("Espere, por favor ... Cancelando Consulta");
@@ -426,14 +460,64 @@ public class lisaldos   extends ventana  implements JRDataSource
          }
      }
     });
-
-    jt.addMouseListener(new MouseAdapter() {
-         public void mouseClicked(MouseEvent e) {
-          if (jt.isVacio()  || e.getClickCount()<2)
-            return;
-          verMvtos();
-         }
-       });
+    verMvtos.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (jt.isVacio()) 
+             return;
+        verMvtos();
+      }
+    });
+   
+  }
+  /**
+   * Muestra los individuos desglosados en stock.
+   * @param proCodi 
+   */
+  void verIndividuos(int proCodi) throws SQLException
+  {
+    listIndiv.clear();
+    
+    s=getStrSql(proCodi, feulinE.getValor(),fecsalE.getText());
+    rs = ps.executeQuery();
+    if (!rs.next())
+        msgBox("No encontrados invidivuos");
+    ifStk.setVisible(true);
+    DatIndiv dtInd;
+    int row;
+    do
+    {
+        dtInd=new DatIndiv();
+        dtInd.setAlmCodi(rs.getInt("alm_codi"));
+        dtInd.setProducto(proCodi);
+        dtInd.setEjercLot(rs.getInt("pro_ejelot"));
+        dtInd.setAlmCodi(rs.getInt("alm_codi"));
+        dtInd.setSerie(rs.getString("pro_serlot"));
+        dtInd.setLote(rs.getInt("pro_numlot"));
+        dtInd.setNumind(rs.getInt("pro_indlot"));
+       
+        row=listIndiv.indexOf(dtInd);
+        if (row>=0)
+            dtInd=listIndiv.get(row);
+        dtInd.setCanti((rs.getString("tipmov").equals("=")?0:dtInd.getCanti())+
+            rs.getDouble("canti")* (rs.getString("tipmov").equals("S")?-1:1 ));
+         dtInd.setNumuni((rs.getString("tipmov").equals("=")?0:dtInd.getNumuni())+
+            rs.getInt("unid")* (rs.getString("tipmov").equals("S")?-1:1 ));
+         if (row>=0)
+             listIndiv.set(row,dtInd);
+         else
+            listIndiv.add(dtInd);
+    } while (rs.next());
+    ifStk.iniciar(proCodi,feulinE.getValor(),fecsalE.getText(), listIndiv);
+//    for (DatIndiv dtInd1 : listIndiv)
+//    {
+//        if (dtInd1.getCanti()==0)
+//            continue;
+//        System.out.println("indiv: "+dtInd1.getProducto()+" "+
+//            dtInd1.getEjercLot()+ dtInd1.getSerie()+dtInd1.getLote()+" "+dtInd1.getNumind()+ ":"+
+//            dtInd1.getCanti()+" kg "+dtInd1.getNumuni());
+//    }
+    return;
   }
   /**
    * LLamada cuando se hace doble click en una linea.
@@ -441,80 +525,78 @@ public class lisaldos   extends ventana  implements JRDataSource
    */
   void verMvtos()
   {
-    ifMvtos.setVisible(true);
-    int proCodi = jt.getValorInt(jt.getSelectedRowDisab(),0);
-    String  fecinv=fecsalE.getText();
-    pro_codmvE.setValorInt(proCodi);
-    jtMv.removeAllDatos();
-    ArrayList v=new ArrayList();
-    try {
-      String feulst, tipMov;
+      ifMvtos.setVisible(true);
+      int proCodi = jt.getValorInt(jt.getSelectedRowDisab(), 0);
+      String fecinv = fecsalE.getText();
+      pro_codmvE.setValorInt(proCodi);
+      jtMv.removeAllDatos();
+      ArrayList v = new ArrayList();
+      try
+      {
+          String feulst, tipMov;
 
-      getStrSql(proCodi, feulin, fecinv);
+          getStrSql(proCodi, feulin, fecinv);
 //   debug("verMvtos: "+s);
-   rs= ps.executeQuery();
-   if (! rs.next())
-     return;
-   dtCon1.setResultSet(rs);
+          rs = ps.executeQuery();
+          if (!rs.next())
+              return;
+          dtCon1.setResultSet(rs);
 
-   feulst = "";
-   unid=0;
-   do
-   {
-     v.clear();
-     tipMov = dtCon1.getString("tipmov");
-     if (tipMov.equals("="))
-     {
-       if (!feulst.equals(dtCon1.getFecha("fecmov")))
-       {
-         feulst = dtCon1.getFecha("fecmov");
-         v.add("=");
-         v.add(dtCon1.getString("canti"));
-         v.add(dtCon1.getString("unid"));
-         v.add(0);
-         v.add(0);
-         v.add(dtCon1.getString("precio"));
-         jtMv.addLinea(v);
-       }
-       else
-         tipMov = "E";
-     }
+          feulst = "";
+          unid = 0;
+          do
+          {
+              v.clear();
+              tipMov = dtCon1.getString("tipmov");
+              if (tipMov.equals("="))
+              {
+                  if (!feulst.equals(dtCon1.getFecha("fecmov")))
+                  {
+                      feulst = dtCon1.getFecha("fecmov");
+                      v.add("=");
+                      v.add(dtCon1.getString("canti"));
+                      v.add(dtCon1.getString("unid"));
+                      v.add(0);
+                      v.add(0);
+                      v.add(dtCon1.getString("precio"));
+                      jtMv.addLinea(v);
+                  } else
+                      tipMov = "E";
+              }
 
-     if (tipMov.equals("E"))
-     { // Entrada.
-       v.add(dtCon1.getString("sel"));
-       v.add(dtCon1.getString("canti"));
-       v.add(dtCon1.getString("unid"));
-       v.add(0);
-       v.add(0);
-       v.add(dtCon1.getString("precio"));
-       jtMv.addLinea(v);
-     }
+              if (tipMov.equals("E"))
+              { // Entrada.
+                  v.add(dtCon1.getString("sel"));
+                  v.add(dtCon1.getString("canti"));
+                  v.add(dtCon1.getString("unid"));
+                  v.add(0);
+                  v.add(0);
+                  v.add(dtCon1.getString("precio"));
+                  jtMv.addLinea(v);
+              }
 
+              if (tipMov.equals("S"))
+              {
+                  v.add(dtCon1.getString("sel"));
+                  v.add(0);
+                  v.add(0);
+                  v.add(dtCon1.getString("canti"));
+                  v.add(dtCon1.getString("unid"));
+                  v.add(dtCon1.getString("precio"));
+                  jtMv.addLinea(v);
+              }
+          } while (dtCon1.next());
 
-     if (tipMov.equals("S"))
-     {
-       v.add(dtCon1.getString("sel"));
-       v.add(0);
-       v.add(0);
-       v.add(dtCon1.getString("canti"));
-       v.add(dtCon1.getString("unid"));
-       v.add(dtCon1.getString("precio"));
-       jtMv.addLinea(v);
-     }
-   } while (dtCon1.next());
-
- }
- catch (SQLException k)
- {
-   Error("Error al ver Mvtos desglosados", k);
- }
-
+      } catch (SQLException k)
+      {
+          Error("Error al ver Mvtos desglosados", k);
+      }
   }
   void Baceptar_actionPerformed(int opcion)
   {
     ps=null;
     ifMvtos.setVisible(false);
+    ifStk.setVisible(false);
     if (fecsalE.isNull())
     {
       mensajeErr("Introduzca Fecha de Saldo");
@@ -604,15 +686,15 @@ public class lisaldos   extends ventana  implements JRDataSource
         ArrayList v = new ArrayList();
         v.add(dtProd.getString("pro_codi"));
         v.add(dtProd.getString("pro_nomb"));
-        v.add("" + unid);
-        v.add("" + kilos);
-        v.add("" + precio);
-        v.add("" + (kilos * precio));
+        v.add( unid);
+        v.add(kilos);
+        v.add( precio);
+        v.add(kilos * precio);
         v.add(famCodi);
         datos.add(v);
         kilosT+=kilos;
         unidT+=unid;
-        kgComT+=kgCom;;
+        kgComT+=kgCom;
         kgVenT+=kgVen;
         kgRegT+=+kgReg;
         importeT+=(kilos * precio);
@@ -624,13 +706,13 @@ public class lisaldos   extends ventana  implements JRDataSource
       importeE.setValorDec(importeT);
 //        System.out.println("Kilos venta: "+kgVenT+" Kg.Compra: "+kgComT+" Kg. Reg:"+kgRegT);
       resetMsgEspere();
-      mensaje("Pulse Doble click en una linea para ver los movimientos");
+    //  mensaje("Pulse Doble click en una linea para ver los movimientos");
       mensajeErr("Consulta .... Generada");
 //      activar(true);
       Pdatcon.resetCambio();
       pro_codiE.requestFocus();
     }
-    catch (Exception ex)
+    catch (SQLException | ParseException | JRException ex)
     {
       Error("Error al buscar Productos", ex);
     }
@@ -678,7 +760,7 @@ public class lisaldos   extends ventana  implements JRDataSource
 
       imprList=false;
     }
-    catch (Exception ex)
+    catch (JRException | PrinterException ex)
     {
       Error("Error al buscar Productos",ex);
     }
@@ -740,28 +822,28 @@ public class lisaldos   extends ventana  implements JRDataSource
     try
     {
       if (field.getName().equals("pro_codi"))
-        return new Integer(jt.getValorInt(nLin,0));
+        return jt.getValorInt(nLin,0);
        if (field.getName().equals("fam_codi"))
-        return new Integer(jt.getValorInt(nLin,6));
+        return jt.getValorInt(nLin,6);
        if (field.getName().equals("fpr_nomb"))
         return MantFamPro.getNombreFam(jt.getValorInt(nLin,6),dtStat);
       if (field.getName().equals("pro_nomb"))
         return jt.getValString(nLin,1);
       if (field.getName().equals("kilos"))
-        return new Double(jt.getValorDec(nLin,3));
+        return jt.getValorDec(nLin,3);
       if (field.getName().equals("unid"))
-        return new Integer(jt.getValorInt(nLin,2));
+        return jt.getValorInt(nLin,2);
       if (field.getName().equals("precio"))
-        return new Double(jt.getValorDec(nLin,4));
+        return jt.getValorDec(nLin,4);
       if (field.getName().equals("importe"))
-        return new Double(jt.getValorDec(nLin,5));
+        return jt.getValorDec(nLin,5);
       throw new JRException("Field: "+field.getName()+" NO valido");
     }
     catch (NumberFormatException n)
     { // Para cuando salen infinitos y cosas asi
-      return new Double(0);
+      return (double) 0;
     }
-    catch (Exception k)
+    catch (SQLException | JRException k)
     {
       Error("Error en getFieldValue: ("+field.getName()+")", k);
       throw new JRException(k.getMessage());
@@ -775,18 +857,21 @@ public class lisaldos   extends ventana  implements JRDataSource
     
     if (ps==null)
     {
-       s="SELECT  mvt_tipdoc as sel, mvt_tipo as tipmov,  "+
+       s="SELECT  mvt_tipdoc as sel, mvt_tipo as tipmov, alm_codi, pro_codi,"
+           + "pro_ejelot,pro_serlot,pro_numlot,pro_indlot,"+
             " mvt_fecdoc as fecmov,"+        
             " mvt_canti as canti,mvt_prec as precio "+
             ", mvt_unid as unid " +
             " from mvtosalm where "+
-            "   mvt_canti <> 0 "+
-             " AND pro_codi = ?" +
+            " mvt_canti <> 0 "+
+            " AND pro_codi = ?" +
               (alm_inicE.getValorInt() == 0 ? "" : " and alm_codi = " + alm_inicE.getValorInt()) +
              " AND mvt_time::date >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
-          "   and  mvt_time::date <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
-      s += " UNION all " + // Regularizaciones.
-          " select 'RE' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov," +
+          "   and  mvt_time::date <= TO_DATE('" + fecfin + "','dd-MM-yyyy') "+
+          " UNION all " + // Inventarios
+          " select 'RE' as sel,tir_afestk as tipmov,alm_codi, pro_codi, eje_nume as pro_ejelot,"
+           + "pro_serie as pro_serlot,pro_nupar as pro_numlot, pro_numind as pro_indlot,"
+           + "rgs_fecha as fecmov," +
           " r.rgs_kilos as canti,r.rgs_prregu as precio,1 as unid  " +
           " FROM v_regstock as r WHERE " +
           " tir_afestk = '='"+
@@ -804,21 +889,6 @@ public class lisaldos   extends ventana  implements JRDataSource
     return s;
   }
 
-//  void activar(boolean b)
-//  {
-//    pro_codiE.setEnabled(b);
-//    alm_inicE.setEnabled(b);
-//    cam_codiE.setEnabled(b);
-//    pro_artconE.setEnabled(b);
-//    opValDesp.setEnabled(b);
-//    ordenE.setEnabled(b);
-//    fecsalE.setEnabled(b);
-//    feulinE.setEnabled(b);
-//    Baceptar.setEnabled(b);
-//
-//    statusBar.setEnabled(b);
-//    Bimpr.setEnabled(b);
-//  }
     @Override
   public void matar(boolean cerrarConexion)
  {
@@ -829,6 +899,8 @@ public class lisaldos   extends ventana  implements JRDataSource
      ifMvtos.setVisible(false);
      ifMvtos.dispose();
    } 
+   ifStk.setVisible(false);
+   ifStk.dispose();
    super.matar(cerrarConexion);
  }
 
@@ -860,6 +932,7 @@ class threadlisaldos extends Thread
 }
 class cglisaldos implements VirtualGrid
 {
+ @Override
  public boolean getColorGrid(int row, int col, Object valor, boolean selecionado, String nombreGrid)
  {
      return  (col==1 && ((String) valor).startsWith("Fam:"));             

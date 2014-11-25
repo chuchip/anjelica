@@ -238,7 +238,7 @@ public class clstkdes extends ventana
     filtroEmpr=empPanel.getStringAccesos(dtStat, EU.usuario,true);
     ifPru.setSize(new Dimension(100,100));
     vl.add(ifPru);
-    ifPru.setCabeceraVentana(false);
+    ifPru.setVisibleCabeceraVentana(false);
         
 
     Pcons.setButton(KeyEvent.VK_F4,Bconsulta);

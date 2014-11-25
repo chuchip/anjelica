@@ -63,9 +63,8 @@ public class VentDiscrCli extends ventana {
         this.setSize(500, 302);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         BasicInternalFrameUI miUi = (BasicInternalFrameUI)this.getUI();
-        this.putClientProperty(
-             PlasticInternalFrameUI.IS_PALETTE,
-             Boolean.TRUE);
+        setVisibleCabeceraVentana(false);
+      
 //        miUi.setNorthPane(null); // Para quitar el titulo a la ventana
     }
 

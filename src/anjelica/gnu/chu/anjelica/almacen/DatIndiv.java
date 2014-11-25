@@ -19,7 +19,7 @@ package gnu.chu.anjelica.almacen;
  * </p>
  * @author jpuente.ext
  */
-public class DatIndiv
+public class DatIndiv 
 {
     public double canti;
     public int numuni,proCodi,empCodi,ejeNume,lote,numind,almCodi;
@@ -130,7 +130,7 @@ public class DatIndiv
        proCodi= Integer.parseInt(getCampoLlave(key, 0));
        empCodi=Integer.parseInt(getCampoLlave(key, posFin));
        ejeNume=Integer.parseInt(getCampoLlave(key, posFin));
-       serie=getCampoLlave(key.toString(), posFin);
+       serie=getCampoLlave(key, posFin);
        lote=Integer.parseInt(getCampoLlave(key, posFin));
        numind=Integer.parseInt(getCampoLlave(key, posFin));
        almCodi=Integer.parseInt(getCampoLlave(key, posFin));
@@ -142,5 +142,30 @@ public class DatIndiv
       return llave.substring(posIni);
     else
       return llave.substring(posIni, posFin++);
+  }
+    
+    @Override
+  public boolean equals(Object obj) {
+      if ( obj instanceof  DatIndiv )
+      {
+          if (((DatIndiv)obj).getProducto()==getProducto() &&
+              ((DatIndiv)obj).getEjercLot()==getEjercLot() &&
+              ((DatIndiv)obj).getLote()==getLote() && 
+              ((DatIndiv)obj).getSerie().equals(getSerie()) &&
+              ((DatIndiv)obj).getNumind()==getNumind() && 
+              ((DatIndiv)obj).getAlmCodi()==getAlmCodi())
+              return true;
+      }
+      return false;
+      
+  }
+    @Override
+  public String toString()
+  {
+          return getAlmCodi()+" "+getProducto() + 
+              getEjercLot()+ 
+              getSerie() +
+              getLote() +"-"+ 
+              getNumind();
   }
 }
