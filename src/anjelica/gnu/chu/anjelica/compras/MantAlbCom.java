@@ -600,7 +600,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     this(eu,p,null);
   }
-  public MantAlbCom(EntornoUsuario eu, Principal p,Hashtable ht)
+  public MantAlbCom(EntornoUsuario eu, Principal p,Hashtable<String,String> ht)
   {
     EU = eu;
     vl = p.panel1;
@@ -614,13 +614,11 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 //        if (ht.get("tipoEtiq") != null)
 //          ARG_TIPOETIQ = Integer.parseInt(ht.get("tipoEtiq").toString());
         if (ht.get("modPrecio") != null)
-          ARG_MODPRECIO = Boolean.valueOf(ht.get("modPrecio").toString()).
-              booleanValue();
+          ARG_MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
         if (ht.get("admin") != null)
-          ARG_ADMIN = Boolean.valueOf(ht.get("admin").toString()).
-              booleanValue();
+          ARG_ADMIN = Boolean.parseBoolean(ht.get("admin"));
         if (ht.get("AlbSinPed") != null)
-          ARG_ALBSINPED = Boolean.valueOf(ht.get("AlbSinPed").toString()).booleanValue();
+          ARG_ALBSINPED = Boolean.parseBoolean(ht.get("AlbSinPed"));
 
         if (ARG_ADMIN)
         {
@@ -647,7 +645,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     this(p,eu,null);
   }
-  public MantAlbCom(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable ht)
+  public MantAlbCom(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable<String,String> ht)
   {
     EU = eu;
     vl = p.getLayeredPane();
@@ -660,13 +658,11 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 //        if (ht.get("tipoEtiq") != null)
 //          ARG_TIPOETIQ = Integer.parseInt(ht.get("tipoEtiq").toString());
         if (ht.get("modPrecio") != null)
-          ARG_MODPRECIO = Boolean.valueOf(ht.get("modPrecio").toString()).
-              booleanValue();
+          ARG_MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
         if (ht.get("admin") != null)
-          ARG_ADMIN = Boolean.valueOf(ht.get("admin").toString()).
-              booleanValue();
+          ARG_ADMIN = Boolean.parseBoolean(ht.get("admin"));
         if (ht.get("AlbSinPed") != null)
-          ARG_ALBSINPED = Boolean.valueOf(ht.get("AlbSinPed").toString()).booleanValue();
+          ARG_ALBSINPED = Boolean.parseBoolean(ht.get("AlbSinPed"));
 
         if (ARG_ADMIN)
         {
@@ -701,7 +697,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20141117)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20141124)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -3748,7 +3744,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       acc_portesE.setEnabled(b);
       acc_totfraE.setEnabled(!b);
       acc_cerraE.setEnabled(!b);
-      jtRecl.setEnabled(b);
+      if (nav.getPulsado()!=navegador.QUERY)
+        jtRecl.setEnabled(b);
       BvertSala.setEnabled(b);
       estIniE.setEnabled(b);
       estFinE.setEnabled(b);
@@ -4167,6 +4164,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         " and rgs_recprv != 0 "+
         " order by rgs_nume";
     jtRecl.removeAllDatos();
+    jtRecl.setEnabled(false);
     if ( dtCon1.select(s))
     {
       do
