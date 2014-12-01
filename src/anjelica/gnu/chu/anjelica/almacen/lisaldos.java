@@ -98,7 +98,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   proPanel pro_codiE = new proPanel();
   
   GridBagLayout gridBagLayout1 = new GridBagLayout();
-  Cgrid jtMv = new Cgrid(6);
+  Cgrid jtMv = new Cgrid(7);
   proPanel pro_codmvE = new proPanel();
   CTextField fecsalE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CLabel cLabel6 = new CLabel();
@@ -214,6 +214,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     confGrid(new ArrayList());
 
     ArrayList v1=new ArrayList();
+    v1.add("Fecha");
     v1.add("Tipo"); // 0 
     v1.add("Kg.Entr.");// 1
     v1.add("Un.Entr");// 2
@@ -222,14 +223,15 @@ public class lisaldos   extends ventana  implements JRDataSource
     v1.add("Precio");// 5
     jtMv.setCabecera(v1);
     jtMv.setAjustarGrid(true);
-    jtMv.setAnchoColumna(new int[]{50,80,70,80,70,70});
-    jtMv.setAlinearColumna(new int[]{1,2,2,2,2,2});
-    jtMv.setFormatoColumna(1,"---,--9.99");
-    jtMv.setFormatoColumna(2,"---,--9");
-    jtMv.setFormatoColumna(3,"---,--9.99");
-    jtMv.setFormatoColumna(4,"---,--9");   
-    jtMv.setFormatoColumna(5,"-,--9.99");
-
+    jtMv.setAnchoColumna(new int[]{70,50,80,70,80,70,70});
+    jtMv.setAlinearColumna(new int[]{1,1,2,2,2,2,2});
+    
+    jtMv.setFormatoColumna(2,"---,--9.99");
+    jtMv.setFormatoColumna(3,"---,--9");
+    jtMv.setFormatoColumna(4,"---,--9.99");
+    jtMv.setFormatoColumna(5,"---,--9");   
+    jtMv.setFormatoColumna(6,"-,--9.99");
+    jtMv.setAjustarGrid(true);
     
     cLabel5.setText("Producto");
     cLabel5.setBounds(new Rectangle(4, 3, 59, 17));
@@ -532,8 +534,7 @@ public class lisaldos   extends ventana  implements JRDataSource
       jtMv.removeAllDatos();
       ArrayList v = new ArrayList();
       try
-      {
-          String feulst, tipMov;
+      {          
 
           getStrSql(proCodi, feulin, fecinv);
 //   debug("verMvtos: "+s);
@@ -542,49 +543,36 @@ public class lisaldos   extends ventana  implements JRDataSource
               return;
           dtCon1.setResultSet(rs);
 
-          feulst = "";
           unid = 0;
           do
           {
               v.clear();
-              tipMov = dtCon1.getString("tipmov");
-              if (tipMov.equals("="))
+              v.add(dtCon1.getFecha("fecmov","dd-MM-yy"));
+              switch (dtCon1.getString("tipmov"))
               {
-                  if (!feulst.equals(dtCon1.getFecha("fecmov")))
-                  {
-                      feulst = dtCon1.getFecha("fecmov");
+                  case "=":
                       v.add("=");
                       v.add(dtCon1.getString("canti"));
                       v.add(dtCon1.getString("unid"));
                       v.add(0);
-                      v.add(0);
-                      v.add(dtCon1.getString("precio"));
-                      jtMv.addLinea(v);
-                  } else
-                      tipMov = "E";
+                      v.add(0);                                        
+                      break;
+                  case "E":  
+                    v.add(dtCon1.getString("sel"));
+                    v.add(dtCon1.getString("canti"));
+                    v.add(dtCon1.getString("unid"));
+                    v.add(0);
+                    v.add(0);
+                    break;
+                  default:              
+                    v.add(dtCon1.getString("sel"));
+                    v.add(0);
+                    v.add(0);
+                    v.add(dtCon1.getString("canti"));
+                    v.add(dtCon1.getString("unid"));
               }
-
-              if (tipMov.equals("E"))
-              { // Entrada.
-                  v.add(dtCon1.getString("sel"));
-                  v.add(dtCon1.getString("canti"));
-                  v.add(dtCon1.getString("unid"));
-                  v.add(0);
-                  v.add(0);
-                  v.add(dtCon1.getString("precio"));
-                  jtMv.addLinea(v);
-              }
-
-              if (tipMov.equals("S"))
-              {
-                  v.add(dtCon1.getString("sel"));
-                  v.add(0);
-                  v.add(0);
-                  v.add(dtCon1.getString("canti"));
-                  v.add(dtCon1.getString("unid"));
-                  v.add(dtCon1.getString("precio"));
-                  jtMv.addLinea(v);
-              }
+              v.add(dtCon1.getString("precio"));
+              jtMv.addLinea(v);
           } while (dtCon1.next());
 
       } catch (SQLException k)
@@ -857,9 +845,9 @@ public class lisaldos   extends ventana  implements JRDataSource
     
     if (ps==null)
     {
-       s="SELECT  mvt_tipdoc as sel, mvt_tipo as tipmov, alm_codi, pro_codi,"
+       s="SELECT  mvt_tipdoc as sel, mvt_tipo as tipmov,mvt_fecdoc as fecmov, alm_codi, pro_codi,"
            + "pro_ejelot,pro_serlot,pro_numlot,pro_indlot,"+
-            " mvt_fecdoc as fecmov,"+        
+            " "+        
             " mvt_canti as canti,mvt_prec as precio "+
             ", mvt_unid as unid " +
             " from mvtosalm where "+
@@ -869,9 +857,8 @@ public class lisaldos   extends ventana  implements JRDataSource
              " AND mvt_time::date >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
           "   and  mvt_time::date <= TO_DATE('" + fecfin + "','dd-MM-yyyy') "+
           " UNION all " + // Inventarios
-          " select 'RE' as sel,tir_afestk as tipmov,alm_codi, pro_codi, eje_nume as pro_ejelot,"
-           + "pro_serie as pro_serlot,pro_nupar as pro_numlot, pro_numind as pro_indlot,"
-           + "rgs_fecha as fecmov," +
+          " select 'RE' as sel,tir_afestk as tipmov,rgs_fecha as fecmov,alm_codi, pro_codi, eje_nume as pro_ejelot,"
+           + "pro_serie as pro_serlot,pro_nupar as pro_numlot, pro_numind as pro_indlot,"+
           " r.rgs_kilos as canti,r.rgs_prregu as precio,1 as unid  " +
           " FROM v_regstock as r WHERE " +
           " tir_afestk = '='"+

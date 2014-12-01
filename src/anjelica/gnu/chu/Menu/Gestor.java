@@ -911,7 +911,12 @@ public class Gestor extends Thread implements Serializable
           ((CInternalFrame)bicho).toFront();
           ((ejecutable)bicho).iniciarVentana();
           ((CInternalFrame)bicho).validate();
-          ((CInternalFrame)bicho).setVisible(true);
+          try {
+            ((CInternalFrame)bicho).setVisible(true);
+          } catch (ClassCastException cc)
+          { // Ignoro este error.
+              Logger.getRootLogger().error("Error al poner visible la clase: "+miClase);
+          }
           ((CInternalFrame)bicho).repaint();
           controlaProg(bicho);
           // Añadir boton a la barra de estado
@@ -921,7 +926,7 @@ public class Gestor extends Thread implements Serializable
         else
         {
           mensajes.mensajeAviso("Error al Iniciar Programa");
-         borra(bicho);
+          borra(bicho);
         }
       }
     }

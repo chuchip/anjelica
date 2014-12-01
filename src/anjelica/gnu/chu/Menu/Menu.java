@@ -11,7 +11,7 @@ import javax.swing.*;
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia P�blica General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versi�n 2 de dicha Licencia
- *  o bien (seg�n su elecci�n) de cualquier versi�n posterior.
+ *  o bien (según su elección) de cualquier versi�n posterior.
  *  Este programa se distribuye con la esperanza de que sea �til,
  *  pero SIN NINGUNA GARANT�A, incluso sin la garant�a MERCANTIL impl�cita
  *  o sin garantizar la CONVENIENCIA PARA UN PROP�SITO PARTICULAR.

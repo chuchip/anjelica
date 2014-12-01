@@ -2449,7 +2449,7 @@ create index ix_regstock4 on regalmacen(rgs_fecha);
 create view anjelica.v_regstock as select r.*,  tir_nomb, tir_afestk,  tir_tipo 
 from anjelica.regalmacen as r,anjelica.motregu as m 
     where r.tir_codi = m.tir_codi 
-    and tir_tipo != '*' and rgs_trasp!=0;  
+    and tir_afestk != '*' and rgs_trasp!=0;  
 grant select on anjelica.v_regstock to public;
 ----
 --- Historicos Mensajes
