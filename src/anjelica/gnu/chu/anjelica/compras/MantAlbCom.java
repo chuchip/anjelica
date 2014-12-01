@@ -62,6 +62,7 @@ import net.sf.jasperreports.engine.*;
  */
 public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSource,MantAlbCom_Interface
 {
+  ArrayList<Double> preciosGrid=new ArrayList();
   int tirCodNoAfecta=0;
   Cgrid jtHist=new Cgrid(4);
   CPanel Phist=new CPanel();
@@ -478,15 +479,18 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           }   
           else
               return;
-          if (getDatosInd(pro_codverE.getValorInt(), rgs_ejenumE.getValorInt(),
-                rgs_serieE.getText(),rgs_partiE.getValorInt(),pro_numindE.getValorInt()))
+          if (pro_numindE.getValorInt()>0)
           {
-                rgs_kilosE.setValorDec(utdesp.getStockPartidas().hasStock()?
-                    utdesp.getStockPartidas().getKilos():0);
-                rgs_unidE.setValorDec(utdesp.getStockPartidas().hasStock()?
-                    utdesp.getStockPartidas().getUnidades():0);
-                jtRecl.setValCamposToGrid();
+            if (getDatosInd(pro_codverE.getValorInt(), rgs_ejenumE.getValorInt(),
+                  rgs_serieE.getText(),rgs_partiE.getValorInt(),pro_numindE.getValorInt()))
+            {
+                  rgs_kilosE.setValorDec(utdesp.getStockPartidas().hasStock()?
+                      utdesp.getStockPartidas().getKilos():0);
+                  rgs_unidE.setValorDec(utdesp.getStockPartidas().hasStock()?
+                      utdesp.getStockPartidas().getUnidades():0);
+                  jtRecl.setValCamposToGrid();
             }
+          }
         }
         if (col==JTR_ESTAD) // Estado
         {
@@ -697,7 +701,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20141124)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20141201)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -2252,9 +2256,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           try
           {
             actAcuLomos();
-            double prCompra=jt.getValorDec( JT_PRCOM);
-            prCompra-=jt.getValorDec( JT_PRCOM)*
-                      jt.getValorDec(JT_DTOPP) / 100;
+            double prCompra=preciosGrid.get(jt.getSelectedRow());
             // Se actualiza otra vez el desglose de linea, por si se han metido
             // productos que se han ido autoclasificando.
             verDesgLinea(emp_codiE.getValorInt(), acc_anoE.getValorInt(),
@@ -4044,6 +4046,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       opBloquea.setSelected(false);
       double impLinAct;
       double accDtopp=0;
+      preciosGrid.clear();
       if (dtCon1.select(s))
       {
         alm_codiE.setValor(dtCon1.getString("alm_codi"));
@@ -4066,7 +4069,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           v.add(dtCon1.getString("acl_canti"));
           if (dtCon1.getDouble("acl_prcom",true)!=0)
             opBloquea.setSelected(true);
-           
+          preciosGrid.add(dtCon1.getDouble("acl_prcom",true));
           impLinAct=opVerPrecios.isSelected()?
                 ( dtCon1.getDouble("acl_dtopp")==0?dtCon1.getDouble("acl_prcom",true):
                  (dtCon1.getDouble("acl_prcom",true)-acc_impokgE.getValorDec())/(1- (dtCon1.getDouble("acl_dtopp")/100) )+acc_impokgE.getValorDec())
@@ -4129,9 +4132,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         imptotE.setValorDec(impLin);
         swActDesg = true;
         getNomArtPed(jt.getValorInt(0,JT_PROCOD),eje_numeE.getValorInt(),pcc_numeE.getValorInt());
-        double prCompra=jt.getValorDec(0, JT_PRCOM);
-        prCompra-=jt.getValorDec(0, JT_PRCOM)*
-                  jt.getValorDec(0, JT_DTOPP) / 100;
+        double prCompra= preciosGrid.get(0);
         verDesgLinea(empCodi, accAno,
                      accSerie, accNume,
                      jt.getValorInt(0,0),agruLin,jt.getValorInt(0,JT_PROCOD),
@@ -4836,6 +4837,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
            "AND acl_canti "+(jt.getValorDec(row,JT_PRCOM)>=0?" >= 0":"<0"):
           " and acl_nulin = " + jt.getValorInt(row, 0));
       stUp.executeUpdate(s);
+      preciosGrid.set(row, aclPrCom);
   }
   void cambiarAlmacen()
   {
@@ -6639,9 +6641,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
    }
    void verDesgLinea(int nRow) throws SQLException
    {
-     double prCompra=jt.getValorDec(nRow, JT_PRCOM);
-     prCompra-=jt.getValorDec(nRow, JT_PRCOM)*
-               jt.getValorDec(nRow, JT_DTOPP) / 100;
+     double prCompra=preciosGrid.get(nRow);
+     
      verDesgLinea(emp_codiE.getValorInt(), acc_anoE.getValorInt(),
                   acc_serieE.getText(), acc_numeE.getValorInt(),
                   jt.getValorInt(nRow, 0),
