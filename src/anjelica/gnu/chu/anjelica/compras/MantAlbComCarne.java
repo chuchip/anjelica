@@ -278,8 +278,18 @@ public class MantAlbComCarne extends MantAlbCom
 //    jtDes.setFormatoColumna(JTD_FECPRO,acp_fecproE.getFormato());
   }
   
+    /**
+     * Invocado desde MantAlbCom, despues de cambiar linea desglose del grid
+     * @param row
+     * @return
+     * @throws Exception
+     */
+    @Override
    public int cambiaLinDesg0(int row) throws Exception
    {
+    
+    if (getLinGrDes().equals(lineaAnt))
+        return -1;
     if (mat_codiE.getError() && !mat_codiE.isNull())
      {
        mensajeErr("Introduzca un Codigo de Matadero  valido");
@@ -336,6 +346,9 @@ public class MantAlbComCarne extends MantAlbCom
             mensajeErr("Es obligatorio introducir codigo crotal para este producto");
             return 2;
         }
+        /*
+        * @todo revisar en caso de f6. Xq falla.
+        */
         int numCrotal=getNumCrotal(acp_nucrotE.getText(),numIndAnt,jt.getValorInt(1));
         if (numCrotal>= proNumcro)
         {

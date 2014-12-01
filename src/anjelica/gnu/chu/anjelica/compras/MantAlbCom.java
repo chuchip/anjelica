@@ -2256,7 +2256,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           try
           {
             actAcuLomos();
-            double prCompra=preciosGrid.get(jt.getSelectedRow());
+            double prCompra=nav.getPulsado()==navegador.ADDNEW || 
+                nav.getPulsado()==navegador.EDIT?jt.getValorDec(JT_PRCOM):
+                preciosGrid.get(jt.getSelectedRow());
             // Se actualiza otra vez el desglose de linea, por si se han metido
             // productos que se han ido autoclasificando.
             verDesgLinea(emp_codiE.getValorInt(), acc_anoE.getValorInt(),
@@ -6641,7 +6643,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
    }
    void verDesgLinea(int nRow) throws SQLException
    {
-     double prCompra=preciosGrid.get(nRow);
+     double prCompra=nav.getPulsado()==navegador.ADDNEW || 
+        nav.getPulsado()==navegador.EDIT?jt.getValorDec(nRow,JT_PRCOM):  preciosGrid.get(nRow);
      
      verDesgLinea(emp_codiE.getValorInt(), acc_anoE.getValorInt(),
                   acc_serieE.getText(), acc_numeE.getValorInt(),
