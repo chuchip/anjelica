@@ -104,6 +104,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     final int JT_NL=10;
   CGridEditable jt = new CGridEditable(11)
   {
+    @Override
     public void cambiaColumna(int col, int colNueva, int row)
     {
       try
@@ -248,11 +249,11 @@ public class pdpeve  extends ventanaPad   implements PAD
             jt.setValor("" + (jt.getValorInt(JT_CANTI) + 1),JT_CANTI);
           else
           {
-            v.add("" + proCodi); // 0
-            v.add(pro_codiE.getNombArt("" + proCodi)); // 1           
-            v.add("1"); // 5
+            v.add( proCodi); // 0
+            v.add(pro_codiE.getNombArt(proCodi)); // 1           
+            v.add(1); // 5
             v.add(pro_codiE.getTipoUnidVenta()); // 6 Tipo Unidad
-            v.add(""+precio); // 7
+            v.add(precio); // 7
             v.add(precio!=0); // 8
             v.add(""); // 9
             v.add(prvCodi); // 2
@@ -557,6 +558,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     avc_serieE.addItem("D", "D");
   }
 
+  @Override
   public void iniciarVentana() throws Exception
   {
     pstock.setPedidos(opPedidos.isSelected());

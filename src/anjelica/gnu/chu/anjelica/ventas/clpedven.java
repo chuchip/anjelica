@@ -4,7 +4,7 @@ package gnu.chu.anjelica.ventas;
  *
  * <p>Título: clpedven </p>
  * <p>Descripción: Consulta/Listado Pedidos de Ventas</p>
- * <p>Copyright: Copyright (c) 2005
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -168,7 +168,7 @@ public class  clpedven extends ventana
   {
     iniciarFrame();
     this.setSize(new Dimension(675, 519));
-    this.setVersion( " (2006-01-24)"+ (verPrecio ? " (CON PRECIOS) " : ""));
+    this.setVersion( " (2014-11-26)"+ (verPrecio ? " (CON PRECIOS) " : ""));
     statusBar = new StatusBar(this);
 
     if (dtStat==null)
@@ -460,8 +460,8 @@ public class  clpedven extends ventana
     if (! ejecSelect)
       return true;
     s = "SELECT c.*,cl.cli_nomb,al.alm_nomb FROM pedvenc as c,clientes as cl,v_almacen as al " +
-        " WHERE pvc_fecped >= to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +
-        " and pvc_fecped <= {ts '" + pvc_fecfinE.getFecha("yyyy-MM-dd") + " 23:59:59'}" +
+        " WHERE pvc_fecent between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +
+        " and  to_date('" + pvc_fecfinE.getText()  + "','dd-MM-yyyy')" +
         " and c.alm_codi >= " + alm_iniE.getValor() +
         " and c.alm_codi <= " + alm_finE.getValor() +
         " and c.pvc_confir = 'S' "+
@@ -659,8 +659,8 @@ public class  clpedven extends ventana
             " from pedvenl as l left join v_proveedo p on  p.prv_codi = l.prv_codi, " +
             " pedvenc as c,v_articulo as a,v_almacen as al,clientes as cl " +
             " where  c.emp_codi = l.emp_codi " +
-            " and pvc_fecped >= to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +
-            " and pvc_fecped <= {ts '" + pvc_fecfinE.getFecha("yyyy-MM-dd") + " 23:59:59'}" +
+            " and pvc_fecent  between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +
+            " and to_date('" + pvc_fecfinE.getText() + "','dd-MM-yyyy')"  +
             " and c.eje_nume = l.eje_nume " +
             " and c.pvc_nume = l.pvc_nume " +
             " and l.pro_codi = a.pro_codi " +
