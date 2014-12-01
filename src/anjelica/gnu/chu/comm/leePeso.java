@@ -193,7 +193,8 @@ public class leePeso
            });
     } catch (SerialPortException k)
     {
-        SystemOut.print(k);
+        if (swDebug)
+            SystemOut.print(k);
         mensajes.mensajeAviso("Error al abrir puerto serie : "+puerto+" de bascula: "+nombre);
         return;
     }
