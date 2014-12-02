@@ -17,15 +17,15 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Vector;
 import javax.swing.SwingUtilities;
 
 /**
  *
  * <p>Titulo: Clrelalbco</p>
  * <p>Descripción: Consulta/Listado Relacion Albaranes de Compras</p>
- * <p>Copyright: Copyright (c) 2005-2010
- *
+ * <p>Copyright: Copyright (c) 2005-2014</p>
+ * <p> El importe de la fras es solo la parte enlazada al albaran. No el total de la fra.</p>
+ * <p>
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -37,6 +37,7 @@ import javax.swing.SwingUtilities;
  *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
  *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
  *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
  * @version 1.0
  * Created on 27-mar-2010, 9:40:54
  */
@@ -84,7 +85,7 @@ public class Clrelalbco extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2011-12-26");
+        this.setVersion("2014-12-02");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -494,7 +495,7 @@ public class Clrelalbco extends ventana {
         // Code of sub-components - not shown here
 
         // Layout setup code - not shown here
-        Vector v=new Vector();
+        ArrayList v=new ArrayList();
         v.add("Albaran"); // 0
         v.add("Fec.Alb");  // 1
         v.add("Proveed"); // 2

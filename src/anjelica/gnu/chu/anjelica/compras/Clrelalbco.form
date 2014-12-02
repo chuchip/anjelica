@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
   <SyntheticProperties>
@@ -270,7 +270,7 @@
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(8)"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));&#xa;&#xa;// Code of sub-components - not shown here&#xa;&#xa;// Layout setup code - not shown here&#xa;Vector v=new Vector();&#xa;v.add(&quot;Albaran&quot;); // 0&#xa;v.add(&quot;Fec.Alb&quot;);  // 1 &#xa;v.add(&quot;Proveed&quot;); // 2&#xa;v.add(&quot;Nombre Prv.&quot;); // 3&#xa;v.add(&quot;Importe&quot;); // 4&#xa;v.add(&quot;Kilos&quot;); // 5&#xa;v.add(&quot;Imp.Fra&quot;); // 6&#xa;v.add(&quot;Kil.Fra&quot;); // 7&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]{100,80,50,200,70,60,70,60});&#xa;jt.setAlinearColumna(new int[]{2,1,2,0,2,2,2,2});&#xa;jt.setAjustaPanel(true);&#xa;jt.setFormatoColumna(4, &quot;----,--9.99&quot;);&#xa;jt.setFormatoColumna(5, &quot;---,--9.9&quot;);&#xa;jt.setFormatoColumna(6, &quot;----,--9.99&quot;);&#xa;jt.setFormatoColumna(7, &quot;---,--9.9&quot;);&#xa;Pprinc.add(jt);&#xa;jt.setBounds(9, 120, 600, 210);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));&#xa;&#xa;// Code of sub-components - not shown here&#xa;&#xa;// Layout setup code - not shown here&#xa;ArrayList v=new ArrayList();&#xa;v.add(&quot;Albaran&quot;); // 0&#xa;v.add(&quot;Fec.Alb&quot;);  // 1 &#xa;v.add(&quot;Proveed&quot;); // 2&#xa;v.add(&quot;Nombre Prv.&quot;); // 3&#xa;v.add(&quot;Importe&quot;); // 4&#xa;v.add(&quot;Kilos&quot;); // 5&#xa;v.add(&quot;Imp.Fra&quot;); // 6&#xa;v.add(&quot;Kil.Fra&quot;); // 7&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]{100,80,50,200,70,60,70,60});&#xa;jt.setAlinearColumna(new int[]{2,1,2,0,2,2,2,2});&#xa;jt.setAjustaPanel(true);&#xa;jt.setFormatoColumna(4, &quot;----,--9.99&quot;);&#xa;jt.setFormatoColumna(5, &quot;---,--9.9&quot;);&#xa;jt.setFormatoColumna(6, &quot;----,--9.99&quot;);&#xa;jt.setFormatoColumna(7, &quot;---,--9.9&quot;);&#xa;Pprinc.add(jt);&#xa;jt.setBounds(9, 120, 600, 210);"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
