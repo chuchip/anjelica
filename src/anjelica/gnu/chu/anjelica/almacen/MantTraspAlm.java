@@ -68,6 +68,7 @@ import javax.swing.JFileChooser;
 
 public class MantTraspAlm extends ventanaPad implements PAD
 {
+  private boolean ARG_ADMIN=false;
   private boolean addVentanaLote=true;
   private boolean swAddnew=false;
   private utilSql utsql =new utilSql();
@@ -98,7 +99,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         this(eu, p, null);
     }
 
-    public MantTraspAlm(EntornoUsuario eu, Principal p, Hashtable ht) {
+    public MantTraspAlm(EntornoUsuario eu, Principal p, Hashtable<String,String> ht) {
         EU = eu;
         vl = p.panel1;
         jf = p;
@@ -108,7 +109,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
 
         try
         {
-            
+            setParametros(ht);
             if (jf.gestor.apuntar(this))
                 jbInit();
             else
@@ -121,8 +122,11 @@ public class MantTraspAlm extends ventanaPad implements PAD
             setErrorInit(true);
         }
     }
-
     public MantTraspAlm(menu p, EntornoUsuario eu) {
+        this(p,eu, null);
+    }
+    public MantTraspAlm(menu p, EntornoUsuario eu,Hashtable ht) {
+    
 
         EU = eu;
         vl = p.getLayeredPane();
@@ -131,6 +135,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
        
         try
         {
+            setParametros(ht);
             jbInit();
         } catch (Exception e)
         {
@@ -138,9 +143,14 @@ public class MantTraspAlm extends ventanaPad implements PAD
             setErrorInit(true);
         }
     }
-
+    private void setParametros(Hashtable<String,String> ht)
+    {
+          if (ht!=null)
+                ARG_ADMIN=ht.get("admin")==null?false:
+                    Boolean.parseBoolean(ht.get("admin"));
+    }
     private void jbInit() throws Exception {      
-        setVersion("2014-29-08");
+        setVersion("2014-12-03 "+ (ARG_ADMIN?"ADMIN":""));
   
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
@@ -493,6 +503,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
      this.setFoco(IFLote);    
      IFLote.setVisible(true);
     }
+  @Override
     public void PADAddNew() {
       
         mensaje("Introducir Nuevo traspaso");
@@ -525,7 +536,6 @@ public class MantTraspAlm extends ventanaPad implements PAD
      * Devuelve clase StkPartid con el peso del individuo de origen activo
      * Escribe mensaje de error 
      */
-
     StkPartid buscaPeso() throws Exception {
        
         stkPartid = utildesp.buscaPeso(dtCon1, deo_ejelotE.getValorInt(), EU.em_cod,
@@ -576,7 +586,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         try
         {
             StkPartid stkPartid= buscaPeso();
-            if (stkPartid.getUnidades() >= 1)
+            if ( ! stkPartid.hasError() && stkPartid.hasStock()) 
             {               
                 jt.setValor(stkPartid.getKilos(), JT_PESO);
                 deo_kilosE.setValorDec(stkPartid.getKilos());
@@ -651,7 +661,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                 mensajeErr("Introduzca Unidades a traspasar");
                 return JT_UNID;
             }
-            if ( pro_codiE.hasControlIndiv() )
+            if ( pro_codiE.hasControlIndiv() && !ARG_ADMIN )
             {
               if (stkPartid.getKilos() < deo_kilosE.getValorDec())
               {               
