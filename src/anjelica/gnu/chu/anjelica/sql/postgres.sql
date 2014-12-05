@@ -2451,6 +2451,12 @@ from anjelica.regalmacen as r,anjelica.motregu as m
     where r.tir_codi = m.tir_codi 
     and tir_afestk != '*' and rgs_trasp!=0;  
 grant select on anjelica.v_regstock to public;
+create view anjelica.v_inventar as select r.* 
+from anjelica.regalmacen as r,anjelica.motregu as m 
+    where r.tir_codi = m.tir_codi 
+    and tir_afestk = '=';  
+grant select on anjelica.v_inventar to public;
+
 ----
 --- Historicos Mensajes
 ----

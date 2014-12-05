@@ -94,7 +94,7 @@ public class TrasInven extends ventanaPad implements PAD {
         nav = new navegador(this, dtCons, false,navegador.CURYCON);
         iniciarFrame();
 
-        this.setVersion("2013-27-01" );
+        this.setVersion("2014-12-05" );
         strSql = "SELECT emp_codi, alm_codi, cci_feccon FROM coninvcab where emp_codi = "+EU.em_cod+
                 " group by emp_codi, alm_codi,cci_feccon "+
             " order by cci_feccon";
@@ -395,12 +395,11 @@ public class TrasInven extends ventanaPad implements PAD {
 //            }
             if (!tipoTraspE.getValor().equals(TIPOSTOCKPARTI)) { // No es traspaso solo STOCK-PARTIDAS
 
-                s = "select  l.cci_codi,l.pro_codi,c.cam_codi from coninvlin l,coninvcab c "
-                        + "  where c.cci_codi = l.cci_codi "
-                        + " and c.emp_codi = l.emp_codi "
-                        + " and c.emp_codi = " + emp_codiE.getValorInt()
+                s = "select  cci_codi,pro_codi,cam_codi from v_coninvent as l "
+                        + "  where emp_codi = " + emp_codiE.getValorInt()
+                        + (opInsAllAlmac.isSelected()?"":" and alm_codi = "+alm_codiE.getValorInt())
                         + " and lci_peso <> 0 "
-                        + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                        + " and cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                         + " and not exists (SELECT * FROM invprec where pro_codi = l.pro_codi "
                         + " and cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy')) ";
                 if (dtCon1.select(s)) {
@@ -409,12 +408,11 @@ public class TrasInven extends ventanaPad implements PAD {
                     return false;
                 }
                 s =
-                        "select  l.cci_codi,l.pro_codi,c.cam_codi from coninvlin l,coninvcab c "
-                        + " where c.cci_codi = l.cci_codi "
-                        + " and c.emp_codi = l.emp_codi "
-                        + " and c.emp_codi = " + emp_codiE.getValorInt()
+                        "select  cci_codi,pro_codi,cam_codi from v_coninvent as l "
+                        + " where emp_codi = " + emp_codiE.getValorInt()
+                        + (opInsAllAlmac.isSelected()?"":" and alm_codi = "+alm_codiE.getValorInt())
                         + " and lci_peso <> 0 "
-                        + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                        + " and cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                         + " and exists (SELECT * FROM invprec where pro_codi = l.pro_codi "
                         + " and cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy')"
                         + " and ipr_prec = 0) ";
@@ -441,7 +439,9 @@ public class TrasInven extends ventanaPad implements PAD {
                  */
                 s = "select * from regalmacen where "
                         + "  rgs_fecha = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                       + (opInsAllAlmac.isSelected()?"":" and alm_codi = "+alm_codiE.getValorInt())
                         + " and tir_codi = " + tirCodi;
+                
                 if (dtCon1.select(s)) {
                     int res = mensajes.mensajeYesNo("YA EXISTEN REGISTROS DE"
                             + " INVENTARIOS EN ESTA FECHA.  CONTINUAR ?");
@@ -463,7 +463,7 @@ public class TrasInven extends ventanaPad implements PAD {
                                 +(opInsAllAlmac.isSelected()?"":
                                     " and alm_codi = " + alm_codiE.getValorInt());
                         dtAdd.executeUpdate(s, stUp);
-                        s = "delete from invdepos where "
+                        s = "delete from in vdepos where "
                                 + " ind_fecha = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                                 +(opInsAllAlmac.isSelected()?"":
                                     " and alm_codi = " + alm_codiE.getValorInt());

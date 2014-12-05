@@ -1259,18 +1259,16 @@ public class ActualStkPart
      {
        if (controlCam)
          s += " and exists (select pro_codi from v_articulo " +
-             "  where v_articulo.pro_codi = v_stkpart.pro_codi " +
+             "  where v_articulo.pro_codi = stockpart.pro_codi " +
              " and cam_codi = '" + camara + "')";
        else if (proArtcon != 2) // Incluir Congelados
          s += " and exists (select pro_codi from v_articulo " +
-             "  where v_articulo.pro_codi = v_stkpart.pro_codi " +
+             "  where v_articulo.pro_codi = stockpart.pro_codi " +
              " and pro_artcon " + (proArtcon == 0 ? "= 0" : " <> 0") + ")";
 
        if (!resetear) // No resetear TODOS los productos
-         s += " AND exists (select pro_codi FROM coninvlin as l, coninvcab as c " +
-             " where l.pro_codi = v_stkpart.pro_codi  " +
-             " and c.cci_codi = l.cci_codi " +
-             " and c.emp_codi = l.emp_codi " +
+         s += " AND exists (select pro_codi FROM v_coninvent as c" +
+             " where c.pro_codi = stockpart.pro_codi  " +
              " and c.emp_codi = " + empCodi +
              (almCodi==0?"":" and c.alm_codi = " + almCodi )+
              (controlCam ? " and c.cam_codi = '" + camara + "'" : "") +
@@ -1407,7 +1405,7 @@ public class ActualStkPart
          (proArtcon==2?"":", v_articulo as a ")+
          " WHERE s.emp_codi = "+empCodi+
          " and eje_nume != 0 " +
-         " and pro_Codi != 0 " +
+         " and s.pro_Codi != 0 " +
          (proCodi!=0?" and s.pro_codi = "+proCodi:"")+
          (proArtcon==2?"":" and a.pro_artcon " + (proArtcon == 0 ? "= 0" : " <> 0")+
           " and s.pro_codi = a.pro_codi "

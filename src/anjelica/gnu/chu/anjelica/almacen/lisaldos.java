@@ -161,7 +161,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(592, 516));
-    this.setVersion("2014-11-25");
+    this.setVersion("2014-12-05");
     ifMvtos.setSize(new Dimension(475, 325));
     
     ifMvtos.setVisible(false);
@@ -914,7 +914,7 @@ class threadlisaldos extends Thread
       lisal.consultar();
     if (opcion==LISTA)
       lisal.listar();
- 
+    lisal.mensaje("");
   }
 }
 class cglisaldos implements VirtualGrid
