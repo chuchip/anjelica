@@ -463,7 +463,7 @@ public class TrasInven extends ventanaPad implements PAD {
                                 +(opInsAllAlmac.isSelected()?"":
                                     " and alm_codi = " + alm_codiE.getValorInt());
                         dtAdd.executeUpdate(s, stUp);
-                        s = "delete from in vdepos where "
+                        s = "delete from invdepos where "
                                 + " ind_fecha = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                                 +(opInsAllAlmac.isSelected()?"":
                                     " and alm_codi = " + alm_codiE.getValorInt());
