@@ -403,7 +403,7 @@ public class lisaldos   extends ventana  implements JRDataSource
         
           try
           {
-              verIndividuos(jt.getValorInt(0));
+              verIndividuos(jt.getValorInt(jt.getSelectedRowDisab(), 0));
           } catch (SQLException ex)
           {
               Error("Error al localizar individuos",ex);
@@ -519,7 +519,7 @@ public class lisaldos   extends ventana  implements JRDataSource
 //            dtInd1.getEjercLot()+ dtInd1.getSerie()+dtInd1.getLote()+" "+dtInd1.getNumind()+ ":"+
 //            dtInd1.getCanti()+" kg "+dtInd1.getNumuni());
 //    }
-    return;
+
   }
   /**
    * LLamada cuando se hace doble click en una linea.
