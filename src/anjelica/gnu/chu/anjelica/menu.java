@@ -286,7 +286,7 @@ public class menu extends JFrame
     Bfactur.setBounds(new Rectangle(662, 3, 62, 16));
     Bfactur.setMargin(new Insets(0, 0, 0, 0));
     Bfactur.setText("Factur.");
-   jMenuAlmacen.setText("Almacen");
+   jMenuAlmacen.setText("Mant.Almac");
     jMenuAlmacen.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         Balmacen_ActionPerformed(e);

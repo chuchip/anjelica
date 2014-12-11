@@ -38,7 +38,7 @@ public class pdconfig    extends ventanaPad     implements PAD
   public final static int TIPOEMP_PLANTACION=2; // Plantacion (Invernadero)
   CTextField[][] camposDisc=new CTextField[3][4];
   String s;
-  boolean modConsulta = true;
+  boolean modConsulta = true; 
   CPanel Pprinc = new CPanel();
   prvPanel emp_prvdesE = new prvPanel();
   CLinkBox emp_codiE = new CLinkBox();
@@ -63,7 +63,7 @@ public class pdconfig    extends ventanaPad     implements PAD
   CPanel Pdisprv = new CPanel();
   CCheckBox cfg_caejauE = new CCheckBox();
   CCheckBox cfg_lialgrC = new CCheckBox("S","N");
-  CPanel cPanel1 = new CPanel();
+  CPanel PmodoGraf = new CPanel();
   TitledBorder titledBorder5=new TitledBorder("") ;
   CCheckBox cfg_lifrgrC = new CCheckBox("S","N");
   private CLabel cli_codiL = new CLabel();
@@ -131,9 +131,9 @@ public class pdconfig    extends ventanaPad     implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(567, 417));
-   this.setVersion("2014-10-17 " + (modConsulta ? "-SOLO LECTURA-" : ""));
+   this.setVersion("2014-12-10 " + (modConsulta ? "-SOLO LECTURA-" : ""));
 
-   strSql = "SELECT * FROM v_config WHERE emp_codi = " + EU.em_cod +
+   strSql = "SELECT * FROM configuracion WHERE emp_codi = " + EU.em_cod +
        getOrderQuery();
 
 
@@ -159,10 +159,11 @@ public class pdconfig    extends ventanaPad     implements PAD
     cfg_caejauE.setBounds(new Rectangle(5, 140, 156, 18));
     cfg_lialgrC.setText("Albaranes Venta");
     cfg_lialgrC.setBounds(new Rectangle(21, 18, 138, 19));
-    cPanel1.setBorder(titledBorder5);
-    cPanel1.setText("Impresion modo grafico");
-    cPanel1.setBounds(new Rectangle(160, 140, 174, 62));
-    cPanel1.setLayout(null);
+    PmodoGraf.setBorder(titledBorder5);
+    PmodoGraf.setText("Impresion modo grafico");
+    PmodoGraf.setBounds(new Rectangle(160, 140, 174, 62));
+    PmodoGraf.setLayout(null);
+  
     titledBorder5.setTitleFont(new Font("Dialog", 1, 11));
     titledBorder5.setTitle("Impresion modo grafico");
     cfg_lifrgrC.setBounds(new Rectangle(21, 37, 127, 19));
@@ -235,9 +236,9 @@ public class pdconfig    extends ventanaPad     implements PAD
     Pbasic.add(cfg_tipempE,null);
     Pbasic.add(cfg_palvenE,null);
     Pbasic.add(cfg_caejauE, null);
-    Pbasic.add(cPanel1, null);
-    cPanel1.add(cfg_lialgrC, null);
-    cPanel1.add(cfg_lifrgrC, null);
+    Pbasic.add(PmodoGraf, null);
+    PmodoGraf.add(cfg_lialgrC, null);
+    PmodoGraf.add(cfg_lifrgrC, null);
     Tpanel1.add(Pbasic, "Basicos");
     Tpanel1.add(Pdiscr, "Discriminadores");
     Pprinc.add(cLabel1, null);
@@ -371,7 +372,7 @@ public class pdconfig    extends ventanaPad     implements PAD
  }
  private boolean selectRegPant(DatosTabla dt,boolean block) throws SQLException
  {
-   s = "select * from v_config WHERE emp_codi = " + emp_codiE.getValorInt() ;
+   s = "select * from configuracion WHERE emp_codi = " + emp_codiE.getValorInt() ;
 
    return dt.select(s,block);
 
@@ -415,7 +416,7 @@ public class pdconfig    extends ventanaPad     implements PAD
 //     v.add(cfg_almcomE.getStrQuery());
 //     v.add(cfg_almvenE.getStrQuery());
 //     v.add(emp_prvdesE.getStrQuery());
-     s = "SELECT * FROM v_config ";
+     s = "SELECT * FROM configuracion ";
      s = creaWhere(s, v, true);
      s += getOrderQuery();
 //      debug("s: "+s);
@@ -461,7 +462,7 @@ public class pdconfig    extends ventanaPad     implements PAD
  {
    try
    {
-     if (!setBloqueo(dtAdd, "v_config",
+     if (!setBloqueo(dtAdd, "configuracion",
                    emp_codiE.getText() ))
      {
        activaTodo();
@@ -491,7 +492,7 @@ public class pdconfig    extends ventanaPad     implements PAD
      dtAdd.edit();
      actDatos(dtAdd);
      dtAdd.update(stUp);
-     resetBloqueo(dtAdd, "v_config",
+     resetBloqueo(dtAdd, "configuracion",
                    emp_codiE.getText(),false);
 
      ctUp.commit();
@@ -509,7 +510,7 @@ public class pdconfig    extends ventanaPad     implements PAD
  public void canc_edit()
  {
    try {
-     resetBloqueo(dtAdd, "v_config",
+     resetBloqueo(dtAdd, "configuracion",
                    emp_codiE.getText());
    } catch (Exception k)
    {
@@ -521,6 +522,7 @@ public class pdconfig    extends ventanaPad     implements PAD
    mensajeErr("Edicion de registro ... CANCELADO");
  }
 
+  @Override
  public void PADAddNew()
  {
    activar(true);
@@ -532,6 +534,7 @@ public class pdconfig    extends ventanaPad     implements PAD
    cfg_caejauE.setSelected(true );
    emp_codiE.requestFocus();
  }
+  @Override
  public boolean checkEdit()
  {
    return checkAddNew();
@@ -600,7 +603,7 @@ public class pdconfig    extends ventanaPad     implements PAD
        emp_codiE.requestFocus();
        return;
      }
-     dtAdd.addNew("v_config");
+     dtAdd.addNew("configuracion");
      dtAdd.setDato("emp_codi", emp_codiE.getValorInt());
 
      actDatos(dtAdd);
@@ -631,11 +634,10 @@ public class pdconfig    extends ventanaPad     implements PAD
    dt.setDato("cfg_tideve", cfg_tideveE.getValorInt());
    dt.setDato("emp_prvdes",emp_prvdesE.getValorInt());
    dt.setDato("cli_codi",cli_codiE.getValorInt());
-   dt.setDato("cfg_caejau",cfg_caejauE.isSelected()?"S":"N");
+   dt.setDato("cfg_caejau",cfg_caejauE.isSelected()?"S":"N");   
    dt.setDato("cfg_lialgr",cfg_lialgrC.getSelecion());
    dt.setDato("cfg_lifrgr",cfg_lifrgrC.getSelecion());
    dt.setDato("cfg_tipemp",cfg_tipempE.getValor());
-   
    actDatos(dt,0,"pr");
    actDatos(dt,1,"cl");
    actDatos(dt,2,"pv");
@@ -645,6 +647,7 @@ public class pdconfig    extends ventanaPad     implements PAD
    for (int n = 0; n < 4; n++)
       dt.setDato("cfg_dis"+tabla+(n+1),camposDisc[p][n].getText());
  }
+  @Override
  public void canc_addnew()
  {
    activaTodo();
@@ -664,7 +667,7 @@ public class pdconfig    extends ventanaPad     implements PAD
        activaTodo();
        return;
      }
-     if (!setBloqueo(dtAdd, "v_config",
+     if (!setBloqueo(dtAdd, "configuracion",
                    emp_codiE.getText()))
      {
        activaTodo();
@@ -690,7 +693,7 @@ public class pdconfig    extends ventanaPad     implements PAD
  {
    selectRegPant(dtAdd, true);
    dtAdd.delete();
-   resetBloqueo(dtAdd, "v_config",
+   resetBloqueo(dtAdd, "configuracion",
                    emp_codiE.getText(),false);
    ctUp.commit();
    mensaje("");
@@ -710,7 +713,7 @@ public class pdconfig    extends ventanaPad     implements PAD
  {
    try
    {
-     resetBloqueo(dtAdd, "v_config", emp_codiE.getText());
+     resetBloqueo(dtAdd, "configuracion", emp_codiE.getText());
    }
    catch (Exception k)
    {
@@ -746,7 +749,7 @@ public class pdconfig    extends ventanaPad     implements PAD
      tipo="pr"+ tipo.charAt(1);
    if (tipo.startsWith("P"))
      tipo="pv"+ tipo.charAt(1);
-   String s="SELECT cfg_dis"+tipo +" FROM v_config WHERE emp_codi = "+empCodi;
+   String s="SELECT cfg_dis"+tipo +" FROM configuracion WHERE emp_codi = "+empCodi;
    if (! dt.select(s))
      return "NO ENCONTRADA CONFIGURACION PARA ESTA EMPRESA";
    return dt.getString("cfg_dis"+tipo);
@@ -795,14 +798,16 @@ public class pdconfig    extends ventanaPad     implements PAD
  }
  public static boolean getConfiguracion(int empCodi,DatosTabla dt, vlike lk) throws SQLException
  {
-   String s = "select * from v_config where emp_codi = " + empCodi;
+   String s = "select * from configuracion where emp_codi = " + empCodi;
    return dt.selectInto(s, lk);
  }
  public static boolean getConfiguracion(int empCodi,DatosTabla dt) throws SQLException
  {
-   String s = "select * from v_config where emp_codi = " + empCodi;
+   String s = "select * from configuracion where emp_codi = " + empCodi;
    return dt.select(s);
  }
+
+    
  /**
   * Devuelve el codigo del proveedor para despieces
   * @param empCodi Empresa

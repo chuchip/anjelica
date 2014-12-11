@@ -1,5 +1,10 @@
-﻿CREATE OR REPLACE FUNCTION anjelica."fn_mvtoalm"()
-  RETURNS TRIGGER AS $grabar$  
+﻿-- Function: fn_mvtoalm()
+
+-- DROP FUNCTION fn_mvtoalm();
+
+CREATE OR REPLACE FUNCTION fn_mvtoalm()
+  RETURNS trigger AS
+$BODY$  
   DECLARE   
   almCodi int;
   almOrig int;
@@ -542,7 +547,7 @@
 			values 		
 			(
 			TG_OP,
-			current_timestamp,
+			NEW.rgs_fecha,
 			tipoMvto,'R',
 			NEW.alm_codi,
 			NEW.rgs_fecha,
@@ -591,4 +596,8 @@
 	end if;
 	return null;
 END;
-$grabar$ LANGUAGE 'plpgsql';
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION fn_mvtoalm()
+  OWNER TO anjelica;

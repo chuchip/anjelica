@@ -534,8 +534,7 @@ public class lisaldos   extends ventana  implements JRDataSource
       jtMv.removeAllDatos();
       ArrayList v = new ArrayList();
       try
-      {          
-
+      {
           getStrSql(proCodi, feulin, fecinv);
 //   debug("verMvtos: "+s);
           rs = ps.executeQuery();

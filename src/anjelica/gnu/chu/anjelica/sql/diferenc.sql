@@ -30,16 +30,16 @@ alter table pedicoc add sbe_codi smallint;
 update pedicoc set sbe_codi=1;
 alter table pedicoc alter sbe_codi set not null;
 -- Modificacion tabla almacenes
-alter table v_almacen add emp_codi smallint;
-update v_almacen set emp_codi=1;
-alter table v_almacen alter emp_codi set not null;
+alter table almacen add emp_codi smallint;
+update almacen set emp_codi=1;
+alter table almacen alter emp_codi set not null;
 
-alter table v_almacen add sbe_codi smallint;
-update v_almacen set sbe_codi=1;
-alter table v_almacen alter sbe_codi set not null;
+alter table almacen add sbe_codi smallint;
+update almacen set sbe_codi=1;
+alter table almacen alter sbe_codi set not null;
 
-alter table v_almacen drop CONSTRAINT ix_almacen;
-alter table v_almacen add CONSTRAINT ix_almacen unique (emp_codi,alm_codi);
+alter table almacen drop CONSTRAINT ix_almacen;
+alter table almacen add CONSTRAINT ix_almacen unique (emp_codi,alm_codi);
 -- Actualizando Cabecera Alb. Compras
 alter table v_albacoc add avc_ano smallint;
 alter table v_albacoc add avc_nume smallint;
@@ -111,10 +111,10 @@ alter table  albvefax alter  avf_tipdoc set not null;
 alter table v_albavec add constraint avc_procl foreign key (cli_codi) references clientes(cli_codi);
 alter table v_albavel add constraint avl_profk foreign key (pro_codi) references v_articulo(pro_codi);
 
--- Pongo campo cli_codi en v_config y le pongo valor por defecto 9999.
-alter table  v_config add cli_codi int;
-update v_config set cli_codi=9999;
-alter table  v_config alter  cli_codi set not null;
+-- Pongo campo cli_codi en configuracion y le pongo valor por defecto 9999.
+alter table  configuracion add cli_codi int;
+update configuracion set cli_codi=9999;
+alter table  configuracion alter  cli_codi set not null;
 
 -- Cambio campo pro_numeti para incluir numeros de crotal por individuo
 alter table v_articulo  rename pro_numeti to pro_numcro;
@@ -320,7 +320,7 @@ delete from v_albacoc where emp_Codi!=1;
 delete from v_albacol where emp_Codi!=1;
 delete from v_empresa where emp_codi!=1;
 delete from v_numerac where emp_codi!=1;
-delete from v_config where emp_codi!=1;
+delete from configuracion where emp_codi!=1;
 
 -- Mejorando velocidad de calculo de inventarios
  create index ix_coninvli3 on coninvlin (cci_codi,pro_Codi);

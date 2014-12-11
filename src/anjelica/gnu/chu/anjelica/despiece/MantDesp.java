@@ -43,6 +43,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.compras.MantAlbComPlanta;
@@ -69,6 +70,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.*;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
@@ -1551,7 +1553,8 @@ public class MantDesp extends ventanaPad implements PAD
                     jf.guardaMens("D6", jf.ht);
                 }
             }
-
+            if (!checkMvtos(eje_numeE.getValorInt(), deo_codiE.getValorInt()))
+                return;
             if (!setBloqueo(dtAdd, TABLA_BLOCK, eje_numeE.getValorInt() + "|"
                 + deo_codiE.getValorInt()))
             {
@@ -1619,7 +1622,30 @@ public class MantDesp extends ventanaPad implements PAD
             Error("Error al bloquear registro", k);
         }
     }
-
+    private boolean checkMvtos(int ejeNume, int deoCodi ) throws SQLException
+    {               
+        dtStat.select("select min(deo_tiempo) as tiempo from desorilin where eje_nume="+ejeNume+
+            " and deo_codi = "+deoCodi);
+        java.sql.Date feulmv=dtStat.getDate("tiempo");
+        if (!checkMvto(pdalmace.getFechaInventario(deo_almoriE.getValorInt(), dtStat),feulmv))
+            return false;
+    
+        dtStat.select("select min(def_tiempo) as tiempo from v_despfin where eje_nume="+ejeNume+
+            " and deo_codi = "+deoCodi);
+        feulmv=dtStat.getDate("tiempo");
+        return checkMvto(pdalmace.getFechaInventario(deo_almdesE.getValorInt(), dtStat),feulmv);
+    }
+    private boolean checkMvto(java.sql.Date fecInv,java.sql.Date fecMvto)
+    {
+         if (fecMvto != null && Formatear.comparaFechas(fecInv, fecMvto)>= 0 )
+        {
+              msgBox("Despiece con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar");
+              nav.pulsado = navegador.NINGUNO;
+              activaTodo();
+              return false;
+        }
+        return true;
+    }
     private void copiaRegistro(String coment) throws SQLException {
         utdesp.copiaDespieceNuevo(dtStat, dtAdd, coment, EU.usuario,
             eje_numeE.getValorInt(), deo_codiE.getValorInt());
@@ -2216,6 +2242,8 @@ public class MantDesp extends ventanaPad implements PAD
                activaTodo();
                return;
            }
+             if (!checkMvtos(eje_numeE.getValorInt(), deo_codiE.getValorInt()))
+                return;
            if (!setBloqueo(dtAdd, TABLA_BLOCK,
                 eje_numeE.getValorInt()
                 + "|" + deo_codiE.getValorInt()))
@@ -2224,7 +2252,7 @@ public class MantDesp extends ventanaPad implements PAD
                 activaTodo();
                 return;
            }
-        } catch (Exception k)
+        } catch (SQLException | UnknownHostException k)
         {
             Error("Error al bloquear registro", k);
         }

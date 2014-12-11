@@ -3,7 +3,7 @@ package gnu.chu.anjelica.ventas;
  *
  * <p>Titulo: pdalbara </p>
  * <p>Descripción: Mantenimiento Albaranes de Ventas</p>
- * <P>Parámetros (Respetar mayúsculas y minúsculas):
+ * <p>Parámetros (Respetar mayúsculas y minúsculas):
  * - modPrecio (true/false)
  *   Controla si: Permite enviar Albaranes por FAX (por defecto, no se permite)
  *   Permite valorar los albaranes según precio de tarifa (botón valorar tarifas)
@@ -2609,6 +2609,24 @@ public class pdalbara extends ventanaPad  implements PAD
       printE.setToolTipText("");
     }
   }
+  /**
+   * Devuelve la fecha minima de mvto para un albaran
+   * @param avcAno
+   * @param empCodi
+   * @param avcSerie
+   * @param avcNume
+   * @return
+   * @throws SQLException 
+   */
+  java.sql.Date getMinFechaMvto( int avcAno,int empCodi,String avcSerie, int avcNume) throws SQLException
+  {
+    dtStat.select("SELECT min(avl_fecalt) as avl_fecalt FROM v_albavel WHERE "+
+         " avc_ano =" + avcAno +
+        " and emp_codi = " + empCodi +
+        " and avc_serie = '" + avcSerie+ "'" +
+        " and avc_nume = " + avcNume);
+    return dtStat.getDate("avl_fecalt");
+  }
   public static boolean selCabAlb(DatosTabla dt,int avcAno,int empCodi,String avcSerie,int avcNume,boolean block,boolean excepNotFound) throws SQLException
   {
       return selCabAlb(TABLACAB,dt, avcAno, empCodi, avcSerie, avcNume, block, excepNotFound);
@@ -3560,6 +3578,7 @@ public class pdalbara extends ventanaPad  implements PAD
       }
       dtUpd.commit();
   }
+  
     @Override
   public void PADEdit()
   {         
@@ -3627,7 +3646,7 @@ public class pdalbara extends ventanaPad  implements PAD
         activaTodo();
         return;
       }
-
+      
       swAvisoDto=true;
       //selCabAlb(dtAdd,avc_anoE.getValorInt(), emp_codiE.getValorInt(),avc_seriE.getText() ,avc_numeE.getValorInt(),true);
 
@@ -3639,6 +3658,8 @@ public class pdalbara extends ventanaPad  implements PAD
         activaTodo();
         return;
       }
+     
+      
       if (avcImpres == 1 && ! P_MODPRECIO )
       {
         int res = mensajes.mensajeYesNo("Albaran YA se ha listado\n ¿ Cancelar modficación ?");
@@ -3649,7 +3670,7 @@ public class pdalbara extends ventanaPad  implements PAD
           return;
         }
       }
-      if (checkAlbCompra())
+      if (checkEdicionAlbaran())
       return;
 
     pro_nombE.setEditable(true);
@@ -3739,7 +3760,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
 
   }
-  private boolean  checkAlbCompra() throws SQLException
+  private boolean  checkEdicionAlbaran() throws SQLException
   {
     if ( avc_seriE.getValor().equals("X"))
     {
@@ -3747,6 +3768,15 @@ public class pdalbara extends ventanaPad  implements PAD
         nav.pulsado = navegador.NINGUNO;
         activaTodo();
         return true;
+    }
+    java.sql.Date fecMinMvt=getMinFechaMvto(avc_anoE.getValorInt(), emp_codiE.getValorInt(),avc_seriE.getText(),
+                       avc_numeE.getValorInt());
+    if (Formatear.comparaFechas(pdalmace.getFechaInventario(avc_almoriE.getValorInt(), dtStat) , fecMinMvt)>= 0 )
+    {
+          msgBox("Albaran con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar");
+          nav.pulsado = navegador.NINGUNO;
+          activaTodo();
+          return true;
     }
     if (avc_seriE.getText().equals(EntornoUsuario.SERIEY) && swCompra)
     {
@@ -4728,7 +4758,7 @@ public class pdalbara extends ventanaPad  implements PAD
               activaTodo();
               return;
           }
-          if (checkAlbCompra()) 
+          if (checkEdicionAlbaran()) 
               return;
           
           if (!setBloqueo(dtStat, "v_albavec",
@@ -7375,7 +7405,7 @@ public class pdalbara extends ventanaPad  implements PAD
      dt.select(s);
      if (dt.getObject("canti")==null)
          return 1; // Puede que sea un albaran sin lineas. 
-     double canti=Formatear.Redondea(dt.getDouble("canti"),2);
+     double canti=Formatear.redondea(dt.getDouble("canti"),2);
      int unid=dt.getInt("unid");
      s="select sum(avp_canti ) as canti, sum(avp_numuni) as unid from v_albvenpar  WHERE avc_ano =" + avcAno +
           " and emp_codi = " +empCodi+
@@ -7385,7 +7415,7 @@ public class pdalbara extends ventanaPad  implements PAD
      if (dt.getObject("canti")==null)
          return 2; // Puede que todas las lineas sean de comentario
      
-     if (canti!= Formatear.Redondea(dt.getDouble("canti"),2))
+     if (canti!= Formatear.redondea(dt.getDouble("canti"),2))
          return -1;
      if (unid !=dt.getInt("unid"))
         return -2;

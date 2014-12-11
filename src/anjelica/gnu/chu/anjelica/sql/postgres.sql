@@ -1833,7 +1833,7 @@ create  index ix_tarifa on c_tarifa(tar_fecini,tar_fecfin,tar_codi,pro_codi);
 --- Maestro de  Almacenes
 ---
 -- drop table v_almacen;
-create table anjelica.v_almacen
+create table anjelica.almacen
 (
 alm_codi int not null,		-- Codigo de Almacen
 alm_nomb varchar(50),		-- Nombre de Almacen
@@ -1846,8 +1846,11 @@ alm_fax varchar(15),		-- Fax
 alm_respo varchar(30),		-- Responsable
 emp_codi smallint not null,	-- Empresa
 sbe_codi smallint not null,	-- Subempresa a la que pertenece el Almacen
+alm_ulfein date,			-- Fecha Ultimo Inventario.
 constraint ix_almacen primary key (emp_codi,alm_codi)
 );
+create view v_almacen as select * from almacen ;
+grant select on  v_almacen to public;
 --
 -- Tabla de Empresas
 --
@@ -1879,7 +1882,7 @@ create table anjelica.v_empresa
  emp_codcom int,         -- Comunidad de Empresa
  emp_codpvi int,    	 -- Provincia de Empresa
  emp_divimp int,         -- Divisa de Importacion
- emp_divexp int,         -- Divisa de Exportaci�n
+ emp_divexp int,         -- Divisa de Exportación
  emp_desspr varchar(50), -- Destino Subproductos
  emp_codedi varchar(17), -- Codigo EDI
  emp_regmer varchar(70), -- Registro Mercantil
@@ -2904,8 +2907,8 @@ create index ix_lipade2 on libpagdet(emp_codi,lbp_nume,lbp_numlin);
 --
 -- Tabla con Parametros de configuracion de la Aplicacion
 --
--- drop table v_config;
-create table anjelica.v_config
+-- drop table configuracion;
+create table anjelica.configuracion
 (
   emp_codi int not null,           -- Empresa
   cfg_almcom int not null,         -- Almacen de Compras por defecto.
@@ -2931,13 +2934,15 @@ create table anjelica.v_config
   cfg_lifrgr char(1) not null,	   -- Listado Fras. Compras Grafico (S/N)
   cli_codi   int    not null,      -- Cliente para uso Interno (Traspaso almacenes)
   cfg_tipemp int    not null default 1, -- Tipo de Empresa (1. Carnica, 2. Plantación)
-  cfg_palven int not null default 1, -- Usa Palets en Ventas.
+  cfg_palven int not null default 1, -- Usa Palets en Ventas. 
   constraint ix_config primary key (emp_codi)
 );
-insert into v_config values(1,1,1,2,1,1,9999,
+insert into configuracion values(1,1,1,2,1,1,9999,
 'Inc.Lista', 'Otros','Camara','Mayor/Calle',
 'Zon/Rep', 'Zona/Cred.','Activo','Giro',
 'Activo', 'Discr1','Discr2','Discr3','S','N','N',9999);
+create view v_config as select * from configuracion ;
+grant select on  v_config to public;
 --
 -- Tabla con diferentes Parametros para la aplicación
 --

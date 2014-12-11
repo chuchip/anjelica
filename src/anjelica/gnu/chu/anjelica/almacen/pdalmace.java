@@ -13,6 +13,9 @@ import javax.swing.event.ListSelectionEvent;
 import gnu.chu.camposdb.*;
 import gnu.chu.sql.DatosTabla;
 import java.awt.event.*;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -39,11 +42,13 @@ public class pdalmace extends ventanaPad implements PAD
 {
   String s;
   CPanel Pprinc = new CPanel();
-  Cgrid jt = new Cgrid(9);
+  Cgrid jt = new Cgrid(10);
   CPanel Pdatos = new CPanel();
   CLabel cLabel1 = new CLabel();
   CTextField alm_codiE = new CTextField(Types.DECIMAL,"##9");
   CTextField alm_nombE = new CTextField(Types.CHAR,"X",50);
+  CLabel alm_feulinL = new CLabel("Ult.Inventario");
+  CTextField alm_feulinE= new CTextField(Types.DATE,"dd-MM-yyyy");
 //  CButton Baceptar = new CButton("Aceptar",Iconos.getImageIcon("check"));
 //  CButton Bcancelar = new CButton("Cancelar",Iconos.getImageIcon("cancel"));
   CTextField alm_poblE = new CTextField(Types.CHAR,"X",30);
@@ -102,23 +107,23 @@ public class pdalmace extends ventanaPad implements PAD
    { 
      iniciarFrame();
      this.setSize(new Dimension(539, 522));
-     this.setVersion("2008-01-31");
-     strSql = "select * from v_almacen where emp_codi = "+EU.em_cod + "ORDER BY alm_codi";
+     this.setVersion("2014-12-11 ");
+     strSql = "select * from almacen where emp_codi = "+EU.em_cod + "ORDER BY alm_codi";
      statusBar = new StatusBar(this);
      nav = new navegador(this, false, navegador.GRID);
      conecta();
      iniciar(this);
-     Vector v = new Vector();
+     
      cLabel1.setText("Codigo");
     cLabel1.setBounds(new Rectangle(3, 24, 47, 18));
     alm_codiE.setBounds(new Rectangle(58, 24, 42, 18));
     alm_nombE.setBounds(new Rectangle(106, 24, 405, 18));
-    jt.setMaximumSize(new Dimension(528, 369));
-    jt.setMinimumSize(new Dimension(528, 369));
-    jt.setPreferredSize(new Dimension(516, 303));
-    Pdatos.setMaximumSize(new Dimension(518, 102));
-    Pdatos.setMinimumSize(new Dimension(518, 102));
-    Pdatos.setPreferredSize(new Dimension(518, 102));
+    jt.setMaximumSize(new Dimension(528, 349));
+    jt.setMinimumSize(new Dimension(528, 349));
+    jt.setPreferredSize(new Dimension(516, 283));
+    Pdatos.setMaximumSize(new Dimension(518, 122));
+    Pdatos.setMinimumSize(new Dimension(518, 122));
+    Pdatos.setPreferredSize(new Dimension(518, 122));
     Baceptar.setMaximumSize(new Dimension(148, 30));
     Baceptar.setMinimumSize(new Dimension(148, 30));
     Baceptar.setPreferredSize(new Dimension(148, 30));
@@ -138,6 +143,8 @@ public class pdalmace extends ventanaPad implements PAD
     cLabel7.setText("Fax");
     cLabel7.setBounds(new Rectangle(4, 79, 29, 17));
     alm_faxE.setBounds(new Rectangle(58, 79, 129, 17));
+    alm_feulinL.setBounds(new Rectangle(4, 99, 90, 17));
+    alm_feulinE.setBounds(new Rectangle(95, 99, 80, 17));
     cLabel6.setText("Telef.");
     cLabel6.setBounds(new Rectangle(348, 61, 32, 17));
     alm_respoE.setBounds(new Rectangle(285, 79, 227, 17));
@@ -161,6 +168,7 @@ public class pdalmace extends ventanaPad implements PAD
     Pempre.setMinimumSize(new Dimension(453, 28));
     Pempre.setPreferredSize(new Dimension(453, 28));
     Pempre.setLayout(null);
+    ArrayList v = new ArrayList();
     v.add("Codigo"); // 0
     v.add("Nombre");  // 1
     v.add("Direccion"); // 2
@@ -170,9 +178,11 @@ public class pdalmace extends ventanaPad implements PAD
     v.add("Fax"); //6
     v.add("Responsable"); //7
     v.add("SubEmpresa"); // 8
+    v.add("Fec.Inv."); // 9
     jt.setCabecera(v);
-    jt.setAnchoColumna(new int[]   {40, 160,160,120,60,60,60,80,40});
-    jt.setAlinearColumna(new int[] {2, 0, 0, 0,0,0,0,0,2});
+    jt.setAnchoColumna(new int[]   {40, 160,160,120,60,60,60,80,40,80});
+    jt.setAlinearColumna(new int[] {2, 0, 0, 0,0,0,0,0,2,1});
+    jt.setFormatoColumna(9,alm_feulinE.getFormato());
 //    jt.ajustar(true);
 
      Pprinc.setLayout(gridBagLayout1);
@@ -205,6 +215,9 @@ public class pdalmace extends ventanaPad implements PAD
     Pdatos.add(sbe_nombL, null);
     Pdatos.add(cLabel3, null);
     Pdatos.add(sbe_codiE, null);
+    Pdatos.add(alm_feulinL, null);
+    Pdatos.add(alm_feulinE, null);
+    
     Pprinc.add(Pempre,    new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 37, 0, 39), 0, 0));
     Pempre.add(emp_nombL, null);
@@ -266,7 +279,7 @@ public class pdalmace extends ventanaPad implements PAD
          return;
        }
        emp_codiE.getTextField().resetCambio();
-       strSql = "select * from v_almacen where emp_codi = "+emp_codiE.getValorInt() + "ORDER BY alm_codi";
+       strSql = "select * from almacen where emp_codi = "+emp_codiE.getValorInt() + "ORDER BY alm_codi";
 
        verDatos();
 //     } catch (SQLException k)
@@ -276,20 +289,27 @@ public class pdalmace extends ventanaPad implements PAD
    }
    void cambiaLinea()
    {
-     if (jt.isVacio())
-     {
-       Pdatos.resetTexto();
-       return;
-     }
-     alm_codiE.setText(jt.getValString(0));
-     alm_nombE.setText(jt.getValString(1));
-     alm_direcE.setText(jt.getValString(2));
-     alm_poblE.setText(jt.getValString(3));
-     alm_codposE.setText(jt.getValString(4));
-     alm_telefE.setText(jt.getValString(5));
-     alm_faxE.setText(jt.getValString(6));
-     alm_respoE.setText(jt.getValString(7));
-     sbe_codiE.setValorInt(jt.getValInt(8));
+      try
+      {
+          if (jt.isVacio())
+          {
+              Pdatos.resetTexto();
+              return;
+          }
+          alm_codiE.setText(jt.getValString(0));
+          alm_nombE.setText(jt.getValString(1));
+          alm_direcE.setText(jt.getValString(2));
+          alm_poblE.setText(jt.getValString(3));
+          alm_codposE.setText(jt.getValString(4));
+          alm_telefE.setText(jt.getValString(5));
+          alm_faxE.setText(jt.getValString(6));
+          alm_respoE.setText(jt.getValString(7));
+          sbe_codiE.setValorInt(jt.getValorInt(8));
+          alm_feulinE.setDate(jt.getValDate(9));
+      } catch (ParseException ex)
+      {
+          Error("Error al poner datos de linea de grid",ex);
+      }
    }
 
    public void verDatos()
@@ -301,16 +321,17 @@ public class pdalmace extends ventanaPad implements PAD
        {
          do
          {
-           Vector v= new Vector();
-           v.addElement(dtCons.getString("alm_codi"));
-           v.addElement(dtCons.getString("alm_nomb"));
-           v.addElement(dtCons.getString("alm_direc"));
-           v.addElement(dtCons.getString("alm_pobl"));
-           v.addElement(dtCons.getString("alm_codpos"));
-           v.addElement(dtCons.getString("alm_telef"));
-           v.addElement(dtCons.getString("alm_fax"));
-           v.addElement(dtCons.getString("alm_respo"));
-           v.addElement(dtCons.getString("sbe_codi"));
+           ArrayList v= new ArrayList();
+           v.add(dtCons.getString("alm_codi"));
+           v.add(dtCons.getString("alm_nomb"));
+           v.add(dtCons.getString("alm_direc"));
+           v.add(dtCons.getString("alm_pobl"));
+           v.add(dtCons.getString("alm_codpos"));
+           v.add(dtCons.getString("alm_telef"));
+           v.add(dtCons.getString("alm_fax"));
+           v.add(dtCons.getString("alm_respo"));
+           v.add(dtCons.getString("sbe_codi"));
+           v.add(dtCons.getDate("alm_feulin"));
            jt.addLinea(v);
          } while (dtCons.next());
          jt.requestFocusInicio();
@@ -323,9 +344,13 @@ public class pdalmace extends ventanaPad implements PAD
        Error("Error al ver Almacenes",k);
      }
    }
+  @Override
  public void PADPrimero(){}
+  @Override
  public void PADAnterior(){}
+  @Override
  public void PADSiguiente(){}
+  @Override
  public void PADUltimo(){}
 
     @Override
@@ -336,7 +361,7 @@ public class pdalmace extends ventanaPad implements PAD
     @Override
   public void PADEdit(){
     try {
-      s = "SELECT * FROM v_almacen WHERE emp_codi = "+emp_codiE.getValorInt()+" and alm_codi = "+alm_codiE.getValorInt();
+      s = "SELECT * FROM almacen WHERE emp_codi = "+emp_codiE.getValorInt()+" and alm_codi = "+alm_codiE.getValorInt();
       if (! dtAdd.select(s,true))
       {
         mensajeErr("ALMACEN NO ENCONTRADO ... PROBABLEMENTE SE BORRO");
@@ -431,14 +456,14 @@ public class pdalmace extends ventanaPad implements PAD
   }
   public void ej_addnew1(){
     try {
-      String s = "SELECT * FROM v_almacen WHERE emp_codi = "+emp_codiE.getValorInt()+
+      String s = "SELECT * FROM almacen WHERE emp_codi = "+emp_codiE.getValorInt()+
           " and alm_codi = " + alm_codiE.getValorInt();
       if (dtStat.select(s))
       {
         mensajeErr("ALMACEN YA existe");
         return;
       }
-      dtAdd.addNew("v_almacen");
+      dtAdd.addNew("almacen");
       dtAdd.setDato("emp_codi",emp_codiE.getValorInt());
       dtAdd.setDato("alm_codi",alm_codiE.getValorInt());
       actDatos();
@@ -462,8 +487,10 @@ public class pdalmace extends ventanaPad implements PAD
     dtAdd.setDato("alm_fax", alm_faxE.getText());
     dtAdd.setDato("alm_respo", alm_respoE.getText());
     dtAdd.setDato("sbe_codi",sbe_codiE.getValorInt());
+    dtAdd.setDato("alm_feulin",alm_feulinE.getDate());
     dtAdd.update(stUp);
   }
+  @Override
   public void canc_addnew(){
     mensaje("");
     jt.setEnabled(false);
@@ -494,7 +521,7 @@ public class pdalmace extends ventanaPad implements PAD
         return;
       }
 
-      s = "SELECT * FROM v_almacen WHERE emp_codi = "+emp_codiE.getValorInt()+" and alm_codi = " + alm_codiE.getValorInt();
+      s = "SELECT * FROM almacen WHERE emp_codi = "+emp_codiE.getValorInt()+" and alm_codi = " + alm_codiE.getValorInt();
       if (!dtAdd.select(s, true))
       {
         mensajeErr("ALMACEN NO ENCONTRADO ... PROBABLEMENTE SE BORRO");
@@ -554,7 +581,7 @@ public class pdalmace extends ventanaPad implements PAD
   }
   public static void llenaCombo(CComboBox almCodi, DatosTabla dt) throws SQLException
   {
-    String s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
+    String s = "SELECT alm_codi,alm_nomb FROM almacen " +
               " ORDER BY alm_codi";
     dt.select(s);
     almCodi.addItem(dt);
@@ -564,7 +591,7 @@ public class pdalmace extends ventanaPad implements PAD
     almCodi.setFormato(true);
     almCodi.setFormato(Types.DECIMAL, "#9", 2);
 
-    String s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
+    String s = "SELECT alm_codi,alm_nomb FROM almacen " +
               " ORDER BY alm_codi";
     dt.select(s);
     almCodi.addDatos(dt);
@@ -574,4 +601,19 @@ public class pdalmace extends ventanaPad implements PAD
      int ALMACENPRNCIPAL=1;
      return ALMACENPRNCIPAL;
    }
+   
+    /**
+     * Devuelve la fecha de ultimo inventario para una empresa
+     * @param almCodi Empresa de la q buscar la fecha inventario. 0 para todas. 
+     * @param dt Datostabla
+     * @return Fecha Inventario. Puede ser null
+     * @throws SQLException Si no encuentra la configuracion o hay un erro de DB 
+     */
+ public static java.sql.Date getFechaInventario(int almCodi, DatosTabla dt) throws SQLException
+ {
+     if (!dt.select("select alm_feulin from almacen"+
+         " where alm_codi = " + almCodi))
+         throw new SQLException("No encontrado Almacen"+almCodi);
+     return dt.getDate("alm_feulin");
+ }
 }

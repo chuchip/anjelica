@@ -1060,9 +1060,15 @@ public class Cgrid extends CPanel implements Serializable
       }
       return true;
     }
-    public java.util.Date getValDate(int row) throws java.text.ParseException
+    /**
+     * Devuelve como un date el valor de la columna selecionada (activa)  y la columna mandada
+     * @param col
+     * @return
+     * @throws java.text.ParseException 
+     */
+    public java.util.Date getValDate(int col) throws java.text.ParseException
     {
-      return getValDate(getSelectedColumn(),row);
+      return getValDate(getSelectedRow(),col);
     }
     public java.util.Date getValDate(int fil, int col) throws java.text.ParseException
     {

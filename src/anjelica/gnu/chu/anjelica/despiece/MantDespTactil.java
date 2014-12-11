@@ -3,6 +3,7 @@ package gnu.chu.anjelica.despiece;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.pdconfig;
@@ -21,6 +22,7 @@ import gnu.chu.utilidades.*;
 import gnu.chu.winayu.ayuLote;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
@@ -1236,27 +1238,29 @@ public class MantDespTactil  extends ventanaPad implements PAD
         activaTodo();
         return;
     }
-
-    if (swTienePrec)
-    {
-      if (!PARAM_ADMIN)
-      {
+    try {
+     if (!checkMvtos(eje_numeE.getValorInt(), deo_codiE.getValorInt()))
+                return;
+     if (swTienePrec)
+     {
+       if (!PARAM_ADMIN)
+       {
           mensajeErr("DESPIECE VALORADO ... IMPOSIBLE MODIFICAR");
           nav.pulsado = navegador.NINGUNO;
           activaTodo();
           return;
-      }
-      int ret=mensajes.mensajeYesNo("Despiece ya ha sido valorado. Si lo edita se pondran los costos a cero.\n"+
+       }
+       int ret=mensajes.mensajeYesNo("Despiece ya ha sido valorado. Si lo edita se pondran los costos a cero.\n"+
               " Seguro que desea editarlo ?");
-      if (ret!=mensajes.YES)
-      {
+       if (ret!=mensajes.YES)
+       {
          nav.pulsado = navegador.NINGUNO;
          activaTodo();
          return;
-      }
-    }
-    try {
-      if (! setBloqueo(dtAdd,TABLA_BLOCK, eje_numeE.getValorInt()+"|"+
+       }
+     }
+   
+     if (! setBloqueo(dtAdd,TABLA_BLOCK, eje_numeE.getValorInt()+"|"+
                    deo_codiE.getValorInt()))
       {
             msgBox(msgBloqueo);
@@ -1267,7 +1271,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
               eje_numeE.getValorInt(),deo_codiE.getValorInt());
       dtAdd.commit();
       
-    } catch (Exception k)
+    } catch (SQLException | UnknownHostException k)
     {
         Error("Error al realizar copia de registro actual",k);
         return;
@@ -1290,7 +1294,30 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Bcancelar.setEnabled(false);
     jtEnt.requestFocusInicio();
   }
-
+  private boolean checkMvtos(int ejeNume, int deoCodi ) throws SQLException
+  {               
+       dtStat.select("select min(deo_tiempo) as tiempo from desorilin where eje_nume="+ejeNume+
+            " and deo_codi = "+deoCodi);
+        java.sql.Date feulmv=dtStat.getDate("tiempo");
+        if (!checkMvto(pdalmace.getFechaInventario(deo_almoriE.getValorInt(), dtStat),feulmv))
+            return false;
+    
+        dtStat.select("select min(def_tiempo) as tiempo from v_despfin where eje_nume="+ejeNume+
+            " and deo_codi = "+deoCodi);
+        feulmv=dtStat.getDate("tiempo");
+        return checkMvto(pdalmace.getFechaInventario(deo_almdesE.getValorInt(), dtStat),feulmv);
+    }
+    private boolean checkMvto(java.sql.Date fecInv,java.sql.Date fecMvto)
+    {
+         if (fecMvto != null && Formatear.comparaFechas(fecInv, fecMvto)>= 0 )
+        {
+              msgBox("Despiece con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar");
+              nav.pulsado = navegador.NINGUNO;
+              activaTodo();
+              return false;
+        }
+        return true;
+    }
     @Override
   public void ej_edit1() {
     ej_addnew1();
@@ -1558,6 +1585,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
     }
     try {
+        if (!checkMvtos(eje_numeE.getValorInt(), deo_codiE.getValorInt()))
+                return;
         if (!setBloqueo(dtAdd, TABLA_BLOCK,
                           eje_numeE.getValorInt() +
                           "|" + deo_codiE.getValorInt()))

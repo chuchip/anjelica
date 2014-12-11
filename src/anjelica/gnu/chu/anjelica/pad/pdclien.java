@@ -1698,7 +1698,7 @@ public class pdclien extends ventanaPad implements PAD
   }
   boolean checkCliConf(int cliCodi, int empCodi) throws SQLException
   {
-    s="SELECT cli_codi from v_config WHERE cli_codi = "+cliCodi+
+    s="SELECT cli_codi from configuracion WHERE cli_codi = "+cliCodi+
         " and emp_codi = "+empCodi;
     if (dtStat.select(s))
     {

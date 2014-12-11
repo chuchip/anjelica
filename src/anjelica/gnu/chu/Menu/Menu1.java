@@ -180,14 +180,14 @@ public class Menu1 extends Principal
   void checkEjercicio() throws Exception
   {
     String s;
-    s="select now() as ahora from v_config ";
+    s="select now() as ahora from configuracion ";
     dt1.select(s);
     //int ejerFecha=Integer.parseInt(Formatear.getFechaAct("yyyy"));
     int ejerFecha=Integer.parseInt(Formatear.getFecha(dt1.getDate("ahora"),"yyyy"));
 //    ejerFecha=2008;
     if (ejerFecha<=Usuario.ejercicio)
       return;
-    s="SELECT * FROM v_config WHERE emp_codi = "+Usuario.em_cod;
+    s="SELECT * FROM configuracion WHERE emp_codi = "+Usuario.em_cod;
     if (! dt1.select(s))
       return;
     if (dt1.getString("cfg_caejau").equals("N"))

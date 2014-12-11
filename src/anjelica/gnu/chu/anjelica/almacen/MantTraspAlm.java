@@ -150,7 +150,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                     Boolean.parseBoolean(ht.get("admin"));
     }
     private void jbInit() throws Exception {      
-        setVersion("2014-12-03 "+ (ARG_ADMIN?"ADMIN":""));
+        setVersion("2014-12-11 "+ (ARG_ADMIN?"ADMIN":""));
   
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
@@ -216,7 +216,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
 
         stkPart=new ActualStkPart(dtCon1,EU.em_cod);
         avc_fecalbE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-        s="SELECT cli_codi from v_config WHERE emp_codi = "+EU.em_cod;
+        s="SELECT cli_codi from configuracion WHERE emp_codi = "+EU.em_cod;
         if (! dtStat.select(s))
         {
             Error("Codigo de Cliente INTERNO NO encontrado",new Exception());
@@ -856,7 +856,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         try {
             numAlb=traspDato1();
             dtAdd.commit();
-        } catch (Exception k)
+        } catch (SQLException | ParseException k)
         {
             Error("Error al insertar registro",k);
         }
@@ -1370,12 +1370,37 @@ public class MantTraspAlm extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField usu_nombE;
     // End of variables declaration//GEN-END:variables
   /**
+   * Devuelve la fecha minima de mvto para un albaran
+   * @param avcAno
+   * @param empCodi
+   * @param avcSerie
+   * @param avcNume
+   * @return
+   * @throws SQLException 
+   */
+  java.sql.Date getMinFechaMvto( int avcAno,int empCodi,String avcSerie, int avcNume) throws SQLException
+  {
+    dtStat.select("SELECT min(avl_fecalt) as avl_fecalt FROM v_albavel WHERE "+
+         " avc_ano =" + avcAno +
+        " and emp_codi = " + empCodi +
+        " and avc_serie = '" + avcSerie+ "'" +
+        " and avc_nume = " + avcNume);
+    return dtStat.getDate("avl_fecalt");
+  }
+    /**
    * Comprueba si ha tenido mvtos algun individuo
    */
   String checkMvtos()
   {
+    
       try 
       {
+        java.sql.Date fecMinMvt=getMinFechaMvto(avc_anoE.getValorInt(), EU.em_cod,"X",
+                       avc_numeE.getValorInt());
+        if (Formatear.comparaFechas(pdalmace.getFechaInventario(alm_codioE.getValorInt(), dtStat) , fecMinMvt)>= 0 )
+          return "Almacen "+alm_codioE.getValorInt() +" con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar";
+        if (Formatear.comparaFechas(pdalmace.getFechaInventario(alm_codifE.getValorInt(), dtStat) , fecMinMvt)>= 0 )
+          return "Almacen "+alm_codifE.getValorInt() +" con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar";
         int nl = jt.getRowCount();
         for (int n = 0; n < nl; n++)    
         {
@@ -1509,7 +1534,8 @@ public class MantTraspAlm extends ventanaPad implements PAD
         dtCon1.setDato("alm_codi", alm_codifE.getValor());
         dtCon1.setDato("avl_canti", jt.getValorDec(n, JT_PESO));
         dtCon1.setDato("avc_cerra",-1);
-        dtCon1.setDato("avl_fecalt","{ts '"+Formatear.getFecha(avc_fecalbE.getDate(),"yyyy-MM-dd")+ " 01:01:01'}");
+//        dtCon1.setDato("avl_fecalt","{ts '"+Formatear.getFecha(avc_fecalbE.getDate(),"yyyy-MM-dd")+ " 01:01:01'}");
+        dtCon1.setDato("avl_fecalt","current_timestamp");
         dtCon1.update(stUp);
 
         // Insertamos linea partida de albaran
@@ -1529,17 +1555,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         dtCon1.setDato("avp_numind", jt.getValorInt(n, JT_INDI));
         dtCon1.setDato("avp_numuni", jt.getValorInt(n,JT_UNID));
         dtCon1.setDato("avp_canti", jt.getValorDec(n, JT_PESO));
-        dtCon1.update(stUp);
-        stkPart.sumar(jt.getValorInt(n, JT_EJERC),jt.getValString(n, JT_SERIE),
-            jt.getValorInt(n, JT_LOTE), jt.getValorInt(n, JT_INDI),            
-            jt.getValorInt(n, JT_ARTIC), alm_codioE.getValorInt(),                  
-                    jt.getValorDec(n, JT_PESO)*-1, jt.getValorInt(n,JT_UNID)*-1); 
-        stkPart.sumar(jt.getValorInt(n, JT_EJERC),jt.getValString(n, JT_SERIE),
-                 jt.getValorInt(n, JT_LOTE), jt.getValorInt(n, JT_INDI),            
-                 jt.getValorInt(n, JT_ARTIC),
-                   alm_codifE.getValorInt(),
-                  jt.getValorDec(n, JT_PESO), jt.getValorInt(n,JT_UNID),
-                  avc_fecalbE.getText(),ActualStkPart.CREAR_SI,prvCodi,fecCad); 
+        dtCon1.update(stUp);      
       }
       return numAlb;
     

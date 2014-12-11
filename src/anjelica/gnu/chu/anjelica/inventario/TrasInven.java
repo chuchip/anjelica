@@ -94,7 +94,7 @@ public class TrasInven extends ventanaPad implements PAD {
         nav = new navegador(this, dtCons, false,navegador.CURYCON);
         iniciarFrame();
 
-        this.setVersion("2014-12-05" );
+        this.setVersion("2014-12-11" );
         strSql = "SELECT emp_codi, alm_codi, cci_feccon FROM coninvcab where emp_codi = "+EU.em_cod+
                 " group by emp_codi, alm_codi,cci_feccon "+
             " order by cci_feccon";
@@ -282,7 +282,9 @@ public class TrasInven extends ventanaPad implements PAD {
                         opInsAllAlmac.isSelected()?0:alm_codiE.getValorInt(),
                         cci_fecconE.getText(),0,opResetear.isSelected());
             }
-         
+            dtBloq.executeUpdate("update almacen set alm_feulin = TO_DATE('"+cci_fecconE.getFechaDB()+"','yyyyMMdd')"+
+                (opInsAllAlmac.isSelected()?"":" where alm_codi = "+alm_codiE.getValorInt()));
+            
             ctUp.commit();
 
             mensaje("");
