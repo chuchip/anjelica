@@ -28,6 +28,7 @@ import gnu.chu.interfaces.ejecutable;
 import gnu.chu.print.util;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
+import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
@@ -646,7 +647,8 @@ public class ClDifInv extends ventana {
              * Guardo en un HashTable(ht) los kilos para todos los productos, según el ordenador.
              */
             do {
-                ref = dtCon1.getInt("pro_codi") + "|" + dtCon1.getInt("eje_nume", true) + "|"
+                ref = //dtCon1.getInt("almori")+
+                    dtCon1.getInt("pro_codi") + "|" + dtCon1.getInt("eje_nume", true) + "|"
                         + dtCon1.getInt("emp_codi", true) + "|"
                         + dtCon1.getString("serie") + "|"
                         + dtCon1.getInt("lote", true) + "|"
@@ -758,7 +760,7 @@ public class ClDifInv extends ventana {
                     dtAdd.setDato("pro_codi", proCodi);
                     dtAdd.setDato("pro_nomb", "");
                     dtAdd.setDato("lci_peso", 0);
-                    dtAdd.setDato("lci_kgsord", canti);
+                    dtAdd.setDato("lci_kgsord", Formatear.redondea(canti, 2));
                     dtAdd.setDato("lci_regaut", 1);
                     canOri=canti;
                 }
@@ -801,29 +803,19 @@ public class ClDifInv extends ventana {
       s = // Albaranes de Compras
           "SELECT 1 as orden,'C' as sel,'+' as tipmov,c.acc_fecrec as fecmov, c.acc_serie as serie," +
           " c.acc_nume as  lote," +
-          " i.acp_canti as canti,0 as precio,i.acp_numind as numind, " +
-          " i.pro_codi,i.emp_codi,i.acc_ano as eje_nume,0 as almori,'' AS seralb "+
-          " FROM v_albacoc c,v_albcompar i,v_albacol as l,v_articulo a " +
-          " where i.emp_codi = c.emp_codi " +
-          " AND i.acc_serie = c.acc_serie " +
-          " AND i.acc_nume = c.acc_nume " +
-          " and i.acc_ano = c.acc_ano " +
-          " and a.pro_codi = i.pro_codi "+
-          " and i.acp_canti <> 0 "+
-          " and l.emp_codi = c.emp_codi " +
-          " AND l.acc_serie = c.acc_serie " +
-          " AND l.acc_nume = c.acc_nume " +
-          " and l.acc_ano = c.acc_ano " +
-          " and l.acl_nulin = i.acl_nulin "+
-          (almCodi==0?"":" and l.alm_codi = "+almCodi)+
+          " acp_canti as canti,acp_numind as numind, " +
+          " c.pro_codi,c.emp_codi,c.acc_ano as eje_nume,alm_codi as almori,'' AS seralb "+
+          " FROM v_compras as c, v_articulo a " +
+          " where  c.acc_fecrec between TO_DATE('" + feulst + "','dd-MM-yyyy') " +
+          " and  TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "+
+          " and c.pro_codi = a.pro_codi "+
+          (almCodi==0?"":" and c.alm_codi = "+almCodi)+
           (camCodiE.equals("--")?" and a.cam_codi in "+
             condCamaras:
             (camCodiE.equals("")?"":" and a.cam_codi = '"+camCodiE +"'"))+
-          (PROCODI!=0?" and i.pro_codi = "+PROCODI:"")+
-          (LOTE>=0?" and i.acc_nume = "+LOTE:"")+
-          condProd+
-          " AND c.acc_fecrec > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
-          " and c.acc_fecrec <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
+          (PROCODI!=0?" and c.pro_codi = "+PROCODI:"")+
+          (LOTE>=0?" and c.acc_nume = "+LOTE:"")+
+          condProd;
       s += " UNION all"; // Albaranes de Venta
       String condAlb= " where  a.pro_codi = l.pro_codi "+
           " and l.avp_canti <> 0 "+
@@ -833,22 +825,23 @@ public class ClDifInv extends ventana {
           (PROCODI!=0?" and l.PRo_codi = "+PROCODI:"")+
           (LOTE>=0?" and l.avp_numpar = "+LOTE:"") +
           condProd+
-          " AND l.avl_fecalt > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
-          " and l.avl_fecalt <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
+          " AND l.avl_fecalt::date > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
+          " and l.avl_fecalt::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
       s += " select 2 as orden,'V' as sel,'-' as tipmov,l.avl_fecalt as fecmov," +
           "  l.avp_serlot as serie,l.avp_numpar as  lote," +
-          " l.avp_canti as canti,0 as precio,l.avp_numind as numind, " +
-          " l.pro_codi,l.avp_emplot,l.avp_ejelot as eje_nume,l.alm_codori as almori,l.avc_serie AS seralb "+
+          " l.avp_canti as canti,l.avp_numind as numind, " +
+          " l.pro_codi,l.avp_emplot,l.avp_ejelot as eje_nume,"
+          + "l.alm_codori as almori,l.avc_serie AS seralb "+
           "  from v_albventa_detalle as l,v_articulo a" +
           condAlb+
-          " and l.avc_serie != 'X'"+ // NO incluir Serie X si es un solo almacen          
+          " and l.avc_serie != 'X'" + // No incluir traspasos entre almacenes
           (incDep?" and l.avc_depos != 'D' ":""); // No tratar los albaranes de DEPOSITO.
         
       if (incDep)
       {
           s+=" UNION ALL select 2 as orden,'V' as sel,'-' as tipmov,cs.avs_fecha as fecmov," +
           "  i.avs_serlot as serie,i.avs_numpar as  lote," +
-          " i.avs_canti as canti,0 as precio,i.avs_numind as numind, " +
+          " i.avs_canti as canti,i.avs_numind as numind, " +
           " l.pro_codi,i.avs_emplot,i.avs_ejelot as eje_nume,c.alm_codori as almori,c.avc_serie AS seralb "+
           "  from albvenserl as l, v_albavec as c, albvenserc as cs,albvenseri as i, v_articulo a" +
           " WHERE c.emp_codi = cs.emp_codi " +
@@ -878,8 +871,9 @@ public class ClDifInv extends ventana {
       { // Incluir Traspasos entre almacenes
         s += " UNION ALL  select  1 as orden,'V' as sel,'-' as tipmov,l.avc_fecalb as fecmov," +
           "  l.avp_serlot as serie,l.avp_numpar as  lote," +
-          " l.avp_canti as canti,0 as precio,l.avp_numind as numind, " +
-          " l.pro_codi,l.avp_emplot,l.avp_ejelot as eje_nume,l.alm_codori as almori,l.avc_serie AS seralb "+
+          " l.avp_canti as canti,l.avp_numind as numind, " +
+          " l.pro_codi,l.avp_emplot,l.avp_ejelot as eje_nume,l.alm_codori as almori,"
+            + "l.avc_serie AS seralb "+
           "  from v_albventa_detalle as l,v_articulo a" +
           condAlb+
            " and l.avc_serie = 'X'"+ // Incluir Serie X
@@ -887,8 +881,9 @@ public class ClDifInv extends ventana {
            " UNION ALL "+
             " select  2 as orden,'V' as sel,'-' as tipmov,l.avc_fecalb as fecmov," +
           "  l.avp_serlot as serie,l.avp_numpar as  lote," +
-          " l.avp_canti as canti,0 as precio,l.avp_numind as numind, " +
-          " l.pro_codi,l.avp_emplot,l.avp_ejelot as eje_nume,l.alm_coddes as almori,l.avc_serie AS seralb "+
+          " l.avp_canti*-1 as canti,l.avp_numind as numind , " +
+          " l.pro_codi,l.avp_emplot,l.avp_ejelot as eje_nume,l.alm_coddes as almori,"
+            + "l.avc_serie AS seralb "+
           "  from v_albventa_detalle as l,v_articulo a" +
           condAlb+
            " and l.avc_serie = 'X'"+ // Incluir Serie X
@@ -897,7 +892,7 @@ public class ClDifInv extends ventana {
       s += " UNION all " + // Despieces (Salidas de almacen)
           " select 2 as orden,'D' as sel,'-' as tipmov,deo_tiempo as fecmov," +
           "  deo_serlot as serie,pro_lote as  lote," +
-          " deo_kilos as canti,0 as precio,pro_numind as numind, " +
+          " deo_kilos as canti,pro_numind as numind, " +
           " L.pro_codi,deo_emplot,deo_ejelot as eje_nume,0 as almori,'' AS seralb "+
           " from  v_despori l,v_articulo a where " +
           "  a.pro_codi = l.pro_codi "+
@@ -909,12 +904,12 @@ public class ClDifInv extends ventana {
           (PROCODI!=0?" AND  L.PRo_codi = "+ PROCODI:"") +
           (LOTE>=0?" and L.pro_lote = "+LOTE:"") +
           condProd+
-          " and deo_tiempo > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
-          " and deo_tiempo <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
+          " and deo_tiempo::date > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
+          " and deo_tiempo::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
       s += " UNION all " + // Despieces (Entradas a almacen)
           " select 1 as orden,'d' as sel, '+' as tipmov,d.def_tiempo as fecmov," +
           "  d.def_serlot as serie,d.pro_lote as  lote," +
-          " d.def_kilos as canti,d.def_prcost as precio,d.pro_numind as numind, " +
+          " d.def_kilos as canti,d.pro_numind as numind, " +
           " d.pro_codi,d.def_emplot,d.def_ejelot as eje_nume,0 as numind,'' AS seralb "+
           " from  v_despsal as d,v_articulo a where " +
           "  d.def_kilos <> 0 "+
@@ -926,12 +921,12 @@ public class ClDifInv extends ventana {
           (PROCODI!=0?" and  d.PRo_codi = "+PROCODI:"") +
           (LOTE>=0?" and d.pro_lote = "+LOTE:"") +
           condProd+
-          " AND d.def_tiempo > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
-          " and d.def_tiempo <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
+          " AND d.def_tiempo::date > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
+          " and d.def_tiempo::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
       s += " UNION all " + // Regularizaciones.
           " select 3 as orden,'R' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov," +
           "  r.pro_serie as serie,r.pro_nupar as  lote," +
-          " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, " +
+          " r.rgs_kilos as canti,r.pro_numind as numind, " +
           " R.pro_codi,r.emp_codi, eje_nume,rgs_canti as almori,'' AS seralb "+
           " FROM v_regstock r,v_articulo a WHERE " +
           " a.pro_codi =r.pro_codi "+
@@ -952,9 +947,9 @@ public class ClDifInv extends ventana {
        s+= // Inventario Inicial.
           " select 0 as orden,'R' as sel,'=' as tipmov,r.rgs_fecha as fecmov," +
           "  r.pro_serie as serie,r.pro_nupar as  lote," +
-          " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, " +
+          " r.rgs_kilos as canti,r.pro_numind as numind, " +
           " R.pro_codi,r.emp_codi, eje_nume,rgs_canti as almori,'' AS seralb "+
-          " FROM v_regstock r,v_articulo a WHERE " +
+          " FROM v_inventar r,v_articulo a WHERE " +
           " a.pro_codi =r.pro_codi "+
           " and r.rgs_kilos <> 0"+
 //          " and rgs_trasp != 0 "+
@@ -965,13 +960,13 @@ public class ClDifInv extends ventana {
           (PROCODI!=0?"  and R.PRo_codi = "+PROCODI:"") +
           (LOTE>=0?" and r.pro_nupar = "+LOTE:"") +
           condProd+
-          " and tir_afestk = '=' "+
+//          " and tir_afestk = '=' "+
           " AND r.rgs_fecha = TO_DATE('" + feulst + "','dd-MM-yyyy') " ;
       if (incDep)
       {
           s+=" UNION ALL select 0 as orden,'R' as sel,'=' as tipmov,r.ind_fecha as fecmov," +
           "  r.pro_serie as serie,r.pro_nupar as  lote," +
-          " r.ind_kilos as canti,0 as precio,r.pro_numind as numind, " +
+          " r.ind_kilos as canti,r.pro_numind as numind, " +
           " R.pro_codi,r.emp_codi, eje_nume, ind_numuni as almori,'' AS seralb "+
           " FROM invdepos r,  v_articulo a WHERE " +
           " a.pro_codi =r.pro_codi "+
