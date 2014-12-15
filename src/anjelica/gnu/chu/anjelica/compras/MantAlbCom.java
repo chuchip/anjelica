@@ -4,6 +4,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.paregalm;
+import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
@@ -21,6 +22,7 @@ import gnu.chu.utilidades.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
+import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -3169,48 +3171,88 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     mensajeErr("Consulta ... Cancelada");
     nav.pulsado=navegador.NINGUNO;
   }
-  @Override
-  public void PADEdit()
+  boolean checkEdicion() throws SQLException, ParseException
   {
-    try
-    {
       if (hisRowid!=0)
       {
-        msgBox("Viendo albaran historico ... IMPOSIBLE MODIFICAR");
-        activaTodo();
-        return;
+        msgBox("Viendo albaran historico ... IMPOSIBLE MODIFICAR");       
+        return false;
+      }
+      s = "SELECT * FROM V_albacoc WHERE acc_ano =" + acc_anoE.getValorInt() +
+          " and emp_codi = " + emp_codiE.getValorInt() +
+          " and acc_serie = '" + acc_serieE.getText() + "'" +
+          " and acc_nume = " + acc_numeE.getValorInt();
+      if (!dtAdd.select(s, true))
+      {
+        msgBox("Albaran NO encontrado .. PROBABLEMENTE se ha borrado");
+        return false;
       }
       if (avc_numeE.getValorInt() != 0)
       {
-        msgBox("Albaran se creo sobre una Venta ... IMPOSIBLE MODIFICAR");
-        activaTodo();
-        return;
+        msgBox("Albaran se creo sobre una Venta ... IMPOSIBLE MODIFICAR");        
+        return false;
       }
       if (fcc_numeE.getValorDec() > 0 && !ARG_ADMIN)
       {
         msgBox("Albaran YA se HA FACTURADO ... IMPOSIBLE MODIFICAR");
-        activaTodo();
-        return;
+        return false;
       }
       if (!ARG_MODPRECIO && opBloquea.isSelected())
       {
-        msgBox("ALBARAN YA TIENE PRECIOS ASIGNADOS .. IMPOSIBLE MODIFICAR");
-        activaTodo();
-        return;
+        msgBox("ALBARAN YA TIENE PRECIOS ASIGNADOS .. IMPOSIBLE MODIFICAR");        
+        return false;
       }
       if (pdejerci.isCerrado(dtStat, acc_anoE.getValorInt(), emp_codiE.getValorInt()))
       {
         if (!ARG_ADMIN)
         {
           msgBox("Albaran es de un ejercicio YA cerrado ... IMPOSIBLE MODIFICAR");
-          nav.pulsado = navegador.NINGUNO;
-          activaTodo();
-          return;
+          return false;
         }
         else
           msgBox("ATENCION!!! Albaran es de un ejercicio YA cerrado");
+      } 
+    if (Formatear.comparaFechas(pdalmace.getFechaInventario(alm_codiE.getValorInt(), dtStat) , acc_fecrecE.getDate())>= 0 )
+    {
+          msgBox("Albaran con fecha anterior a Ult. Fecha Inventario. Imposible Editar/Borrar");
+          return false;
+    }
+    if (nav.pulsado!=navegador.DELETE)
+        return true;
+    
+      if (! jtRecl.isVacio())
+      {
+        msgBox("Albaran TIENE vertederos Asignados... IMPOSIBLE BORRAR");
+        return false;
       }
-
+     
+      if (MvtosAlma.hasMvtosSalida(dtCon1, 0, emp_codiE.getValorInt(), acc_anoE.getValorInt(), 
+              acc_serieE.getText(), acc_numeE.getValorInt(), 0,0,acc_fecrecE.getText())!=0)
+      {
+          msgBox("Este albaran tiene mvtos de salida. Imposible BORRAR");
+          return false;
+      }
+           
+      if (dtAdd.getInt("frt_ejerc",true)!=0)
+      {
+        msgBox("Albaran ESTA metido en UNA FRA. DE TRANSP. IMPOSIBLE BORRAR");
+        return false;
+      }
+    return true;
+  }
+  @Override
+  public void PADEdit()
+  {
+    try
+    {
+      if (!checkEdicion())
+      {
+          activaTodo();
+          nav.pulsado=navegador.NINGUNO;
+          return;
+      }
+          
+    
       if (! setBloqueo(dtAdd,"v_albacoc", acc_anoE.getValorInt()+"|"+emp_codiE.getValorInt()+
                       "|"+acc_serieE.getText()+"|"+acc_numeE.getValorInt()))
       {
@@ -3590,70 +3632,45 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     try
     {
-     if (hisRowid!=0)
-      {
-        msgBox("Viendo albaran historico ... IMPOSIBLE BORRAR");
-        activaTodo();
-        return;
-      }
-      if (fcc_numeE.getValorDec() > 0)
-      {
-        if ( ARG_ADMIN)
-          msgBox("Albaran se ha FACTURADO ... QUITELO PRIMERO DE LA FACTURA: "+fcc_numeE.getValorInt());
-        else
-          msgBox("Albaran YA se HA FACTURADO ... IMPOSIBLE BORRAR");
-        activaTodo();
-        return;
-      }
-      if (! jtRecl.isVacio())
-      {
-        msgBox("Albaran TIENE vertederos Asignados... IMPOSIBLE BORRAR");
-        activaTodo();
-        return;
-      }
-      if (!ARG_MODPRECIO && opBloquea.isSelected())
-      {
-        msgBox("ALBARAN YA TIENE PRECIOS ASIGNADOS .. IMPOSIBLE MODIFICAR");
-        activaTodo();
-        return;
-      }
-      if (pdejerci.isCerrado(dtStat, acc_anoE.getValorInt(), emp_codiE.getValorInt()))
-      {
-        if (!ARG_ADMIN)
+        if (!checkEdicion())
         {
-          msgBox("Albaran es de un ejercicio YA cerrado ... IMPOSIBLE BORRAR");
-          nav.pulsado = navegador.NINGUNO;
-          activaTodo();
-          return;
+            nav.pulsado=navegador.NINGUNO;
+            activaTodo();
+            return;
         }
-        else
-          msgBox("ATENCION!!! Albaran es de un ejercicio YA cerrado");
-      }
-      if (MvtosAlma.hasMvtosSalida(dtCon1, 0, emp_codiE.getValorInt(), acc_anoE.getValorInt(), 
-              acc_serieE.getText(), acc_numeE.getValorInt(), 0,0,acc_fecrecE.getText())!=0)
-      {
-          msgBox("Este albaran tiene mvtos de salida. Imposible BORRAR");
-          activaTodo();
-          return;
-      }
-     
-
-      s = "SELECT * FROM V_albacoc WHERE acc_ano =" + acc_anoE.getValorInt() +
-          " and emp_codi = " + emp_codiE.getValorInt() +
-          " and acc_serie = '" + acc_serieE.getText() + "'" +
-          " and acc_nume = " + acc_numeE.getValorInt();
-      if (!dtAdd.select(s, true))
-      {
-        msgBox("Albaran NO encontrado .. PROBABLEMENTE se ha borrado");
-        activaTodo();
-        return;
-      }
-      if (dtAdd.getInt("frt_ejerc",true)!=0)
-      {
-        msgBox("Albaran ESTA metido en UNA FRA. DE TRANSP. IMPOSIBLE BORRAR");
-        activaTodo();
-        return;
-      }
+//     if (hisRowid!=0)
+//      {
+//        msgBox("Viendo albaran historico ... IMPOSIBLE BORRAR");
+//        activaTodo();
+//        return;
+//      }
+//      if (fcc_numeE.getValorDec() > 0)
+//      {
+//        if ( ARG_ADMIN)
+//          msgBox("Albaran se ha FACTURADO ... QUITELO PRIMERO DE LA FACTURA: "+fcc_numeE.getValorInt());
+//        else
+//          msgBox("Albaran YA se HA FACTURADO ... IMPOSIBLE BORRAR");
+//        activaTodo();
+//        return;
+//      }
+//       if (!ARG_MODPRECIO && opBloquea.isSelected())
+//      {
+//        msgBox("ALBARAN YA TIENE PRECIOS ASIGNADOS .. IMPOSIBLE MODIFICAR");
+//        activaTodo();
+//        return;
+//      }
+//      if (pdejerci.isCerrado(dtStat, acc_anoE.getValorInt(), emp_codiE.getValorInt()))
+//      {
+//        if (!ARG_ADMIN)
+//        {
+//          msgBox("Albaran es de un ejercicio YA cerrado ... IMPOSIBLE BORRAR");
+//          nav.pulsado = navegador.NINGUNO;
+//          activaTodo();
+//          return;
+//        }
+//        else
+//          msgBox("ATENCION!!! Albaran es de un ejercicio YA cerrado");
+//      }
       if (!setBloqueo(dtAdd, "v_albacoc",
                       acc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
                       "|" + acc_serieE.getText() + "|" + acc_numeE.getValorInt()))
@@ -3672,13 +3689,14 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       mensaje("BORRAR  Albaran ...");
       Bcancelar.requestFocus();
     }
-    catch (Exception k)
+    catch (SQLException | ParseException | UnknownHostException k)
     {
-      Error("Error al Modificar Albar�n", k);
+      Error("Error al Modificar Albarán", k);
     }
 
   }
   
+  @Override
   public void ej_delete1()
   {
     try
