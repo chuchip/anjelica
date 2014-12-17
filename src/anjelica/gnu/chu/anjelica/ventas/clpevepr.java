@@ -4,7 +4,7 @@ package gnu.chu.anjelica.ventas;
  *
  * <p>Título: clpevepr </p>
  * <p>Descripción: Consulta/Listado Pedidos de Ventas Agrupados por Productos</p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -51,7 +51,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
   String ZONA = null;
   CPanel Pprinc = new CPanel();
   CPanel Pcondi = new CPanel();
-  Cgrid jtProd = new Cgrid(3);
+  Cgrid jtProd = new Cgrid(4);
   Cgrid jtCli = new Cgrid(3);
   CLabel cLabel2 = new CLabel();
   CTextField pvc_feciniE = new CTextField(Types.DATE, "dd-MM-yyyy");
@@ -150,7 +150,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(675, 519));
-    this.setVersion("(2006-01-26)"+ (verPrecio ? " (CON PRECIOS) " : ""));
+    this.setVersion("(2014-17-12)"+ (verPrecio ? " (CON PRECIOS) " : ""));
     statusBar = new StatusBar(this);
 
     if (dtStat==null)
@@ -277,7 +277,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
       tlaCodi = dtStat.getInt("tla_codi");
     tla_codiE.addDatos(dtStat);
     tla_codiE.addDatos("99", "Definido Usuario");
-    tla_codiE.setValorInt(tlaCodi);
+    tla_codiE.setValorInt(99);
 
     cam_codiE.texto.setMayusc(true);
     cam_codiE.setFormato(Types.CHAR, "XX", 2);
@@ -321,6 +321,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
 
     Baceptar.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Baceptar_actionPerformed();
@@ -328,6 +329,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
     });
     jtProd.addListSelectionListener(new ListSelectionListener()
     {
+      @Override
       public void valueChanged(ListSelectionEvent e)
       {
         if (e.getValueIsAdjusting() || ! jtProd.isEnabled() || jtProd.isVacio() )
@@ -343,6 +345,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
 
     jtCli.addListSelectionListener(new ListSelectionListener()
     {
+      @Override
       public void valueChanged(ListSelectionEvent e)
       {
         if (e.getValueIsAdjusting() || ! jtCli.isEnabled() || jtCli.isVacio() )
@@ -365,10 +368,11 @@ public class  clpevepr extends ventana  implements  JRDataSource
         return;
       do
       {
-        Vector v=new Vector();
-        v.addElement((tla_codiE.getValorInt()==99?"":"L")+dtCon1.getString("pro_codi")); // 0
-        v.addElement(dtCon1.getString("pro_nomb")); // 1
-        v.addElement(dtCon1.getString("pvl_canti")); // 2
+        ArrayList v=new ArrayList();
+        v.add((tla_codiE.getValorInt()==99?"":"L")+dtCon1.getString("pro_codi")); // 0
+        v.add(dtCon1.getString("pro_nomb")); // 1
+        v.add(dtCon1.getString("pvl_canti")); // 2
+        v.add(dtCon1.getString("pvl_tipo")); // 2
         jtProd.addLinea(v);
       } while (dtCon1.next());
       jtProd.requestFocusInicio();
@@ -395,13 +399,13 @@ public class  clpevepr extends ventana  implements  JRDataSource
       proCodi=Integer.parseInt(producto.substring(1));
     else
       proCodi=Integer.parseInt(producto);
-    s="SELECT cl.cli_codi, cl.cli_nomb, sum(pvl_unid) as pvl_canti FROM v_pedven as p, clientes as cl "+
+    s="SELECT cl.cli_codi, cl.cli_nomb, sum(pvl_canti) as pvl_canti,pvl_tipo FROM v_pedven as p, clientes as cl "+
         (swGrupo?", tilialpr as t ":"")+
         condWhere+
         (swGrupo?" and tla_orden = "+proCodi+" and p.pro_codi = t.pro_codi ":
          " and p.pro_codi = "+proCodi)+
         " and cl.cli_codi = p.cli_codi "+
-        " group by cl.cli_codi,cl.cli_nomb "+
+        " group by pvl_tipo,cl.cli_codi,cl.cli_nomb "+
         " order by cl.cli_codi ";
 //    debug(s);
     jtCli.setEnabled(false);
@@ -410,10 +414,10 @@ public class  clpevepr extends ventana  implements  JRDataSource
       return;
     do
     {
-      Vector v=new Vector();
-      v.addElement(dtCon1.getString("cli_codi"));
-      v.addElement(dtCon1.getString("cli_nomb"));
-      v.addElement(dtCon1.getString("pvl_canti"));
+      ArrayList v=new ArrayList();
+      v.add(dtCon1.getString("cli_codi"));
+      v.add(dtCon1.getString("cli_nomb"));
+      v.add(dtCon1.getString("pvl_canti")+dtCon1.getString("pvl_tipo"));
       jtCli.addLinea(v);
     } while (dtCon1.next());
     jtCli.requestFocusInicio();
@@ -459,7 +463,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
     s = "SELECT "+
         (tla_codiE.getValorInt()==99?"ar.pro_codi , ar.pro_nomb ":
          "t.tla_orden as pro_codi , gr.pro_desc as pro_nomb ")+
-        " ,sum(pvl_unid) as pvl_canti FROM v_pedven as  p " +
+        " ,sum(pvl_canti) as pvl_canti,pvl_tipo as pvl_tipo FROM v_pedven as  p " +
         (tla_codiE.getValorInt()==99?",v_articulo as ar ":", tilialpr as t,tilialgr as gr ");
 
     condWhere=" where  1 = 1 "+
@@ -477,8 +481,8 @@ public class  clpevepr extends ventana  implements  JRDataSource
         (tla_codiE.getValorInt()!=99 || proiniE.getValorInt()==0?"": " and p.pro_codi >= "+proiniE.getValorInt())+
         (tla_codiE.getValorInt()!=99 || profinE.getValorInt()==0?"": " and p.pro_codi > "+profinE.getValorInt())+
         (tla_codiE.getValorInt()==99?"":" and gr.tla_codi = t.tla_codi "+
-        " and gr.tla_orden = t.tla_orden ")+
-       " group by  "+
+        " and gr.tla_orden = t.tla_orden and t.tla_codi="+tla_codiE.getValorInt())+
+       " group by pvl_tipo,   "+
        (tla_codiE.getValorInt()==99?"ar.pro_codi , ar.pro_nomb ":
          "t.tla_orden , gr.pro_desc ")+
         (tla_codiE.getValorInt()==99?" order by ar.pro_codi ": " order by t.tla_orden ");
@@ -508,25 +512,26 @@ public class  clpevepr extends ventana  implements  JRDataSource
 
   private void confJtPro()
   {
-    Vector v=new Vector();
-    v.addElement("Codigo"); // 0
-    v.addElement("Nombre Producto"); // 1
-    v.addElement("Unid.");// 2
+    ArrayList v=new ArrayList();
+    v.add("Codigo"); // 0
+    v.add("Nombre Producto"); // 1
+    v.add("Canti.");// 2
+    v.add("Tipo");// 3
     jtProd.setCabecera(v);
     jtProd.setMaximumSize(new Dimension(333, 345));
     jtProd.setMinimumSize(new Dimension(333, 345));
     jtProd.setPreferredSize(new Dimension(333, 345));
     jtProd.setBuscarVisible(false);
-    jtProd.setAnchoColumna(new int[]{50,160,70});
-    jtProd.setAlinearColumna(new int[]{2,0,2});
-    jtProd.setFormatoColumna(2,"----9");
+    jtProd.setAnchoColumna(new int[]{50,160,70,50});
+    jtProd.setAlinearColumna(new int[]{2,0,2,0});
+    jtProd.setFormatoColumna(2,"##9.99");
   }
     private void confJtCli() throws Exception
    {
-     Vector v = new Vector();
-     v.addElement("Cliente"); // 0
-     v.addElement("Nombre Cliente"); // 1
-     v.addElement("Unid."); // 2
+     ArrayList v = new ArrayList();
+     v.add("Cliente"); // 0
+     v.add("Nombre Cliente"); // 1
+     v.add("Canti"); // 2
      jtCli.setCabecera(v);
      jtCli.setMaximumSize(new Dimension(322, 208));
     jtCli.setMinimumSize(new Dimension(322, 208));
@@ -539,17 +544,17 @@ public class  clpevepr extends ventana  implements  JRDataSource
    }
    private void confJtPed() throws Exception
    {
-     Vector v = new Vector();
-     v.addElement("Pedido"); // 0
-     v.addElement("Fec.Entr."); // 1
-     v.addElement("Unid."); // 2
-     v.addElement("Precio"); // 3
-     v.addElement("CP");  // 4 Confirmado Precio
-     v.addElement("Proveed"); // 5 Nombre Proveedor
-     v.addElement("Fec.Cad"); // 6
-     v.addElement("Conf"); // 7 Pedido Confirmado
-     v.addElement("Alm."); // 8
-     v.addElement("Comentario"); // 9 Comentario
+     ArrayList v = new ArrayList();
+     v.add("Pedido"); // 0
+     v.add("Fec.Entr."); // 1
+     v.add("Unid."); // 2
+     v.add("Precio"); // 3
+     v.add("CP");  // 4 Confirmado Precio
+     v.add("Proveed"); // 5 Nombre Proveedor
+     v.add("Fec.Cad"); // 6
+     v.add("Conf"); // 7 Pedido Confirmado
+     v.add("Alm."); // 8
+     v.add("Comentario"); // 9 Comentario
      jtPed.setCabecera(v);
      jtPed.setAnchoColumna(new int[]{70,70,40,50,30,100,70,30,30,100});
      jtPed.setAlinearColumna(new int[]{2,1,2,2,1,0,1,2,0,0});
@@ -587,17 +592,17 @@ public class  clpevepr extends ventana  implements  JRDataSource
 
        do
        {
-         Vector v=new Vector();
-         v.addElement(dtCon1.getString("eje_nume")+"/"+dtCon1.getString("pvc_nume"));
-         v.addElement(dtCon1.getFecha("pvc_fecent","dd-MM-yy"));
-         v.addElement((dtCon1.getString("pvl_tipo").equals("K")?dtCon1.getString("pvl_kilos"):dtCon1.getString("pvl_unid"))+dtCon1.getString("pvl_tipo"));
-         v.addElement(dtCon1.getString("pvl_precio"));
-         v.addElement(dtCon1.getInt("pvl_precon") != 0);
-         v.addElement(dtCon1.getString("prv_nomb"));
-         v.addElement(dtCon1.getFecha("pvl_feccad","dd-MM-yy"));
-         v.addElement(dtCon1.getString("pvc_confir").equals("S"));
-         v.addElement(dtCon1.getString("alm_codi"));
-         v.addElement(dtCon1.getString("pvl_comen"));
+         ArrayList v=new ArrayList();
+         v.add(dtCon1.getString("eje_nume")+"/"+dtCon1.getString("pvc_nume"));
+         v.add(dtCon1.getFecha("pvc_fecent","dd-MM-yy"));
+         v.add(dtCon1.getString("pvl_canti")+dtCon1.getString("pvl_tipo"));
+         v.add(dtCon1.getString("pvl_precio"));
+         v.add(dtCon1.getInt("pvl_precon") != 0);
+         v.add(dtCon1.getString("prv_nomb"));
+         v.add(dtCon1.getFecha("pvl_feccad","dd-MM-yy"));
+         v.add(dtCon1.getString("pvc_confir").equals("S"));
+         v.add(dtCon1.getString("alm_codi"));
+         v.add(dtCon1.getString("pvl_comen"));
          jtPed.addLinea(v);
        } while (dtCon1.next());
        jtPed.requestFocusInicio();
