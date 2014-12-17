@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
  */
 public class ventana extends CInternalFrame implements ejecutable
 {
+  private String labelMsgEspere=null;
   private PopOcupado popOcupado;
   boolean trabajando=false;
   ArrayList vActList;
@@ -885,9 +886,18 @@ public class ventana extends CInternalFrame implements ejecutable
     popEspere = new PopEspere("", this);
     if (vActList!=null)
     {
-      for (int n=0;n< vActList.size();n++)
-        popEspere.BCancelar_addActionListener((ActionListener) vActList.get(n));
+        for (Object vActList1 : vActList)
+        {
+            popEspere.BCancelar_addActionListener((ActionListener) vActList1);
+        }
     }
+    popEspere.setTextoMsgEspere(labelMsgEspere);
+  }
+  public void setLabelMsgEspere(String msg)
+  {
+      labelMsgEspere=msg;      
+      if (popEspere!=null)
+          popEspere.setTextoMsgEspere(labelMsgEspere);
   }
   public void popEspere_BCancelarSetEnabled(final boolean  enabl)
   {

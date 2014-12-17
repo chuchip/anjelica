@@ -27,6 +27,7 @@ package gnu.chu.anjelica.ventas;
  *   Permite ver albaranes de traspasos de albaranes
  *   Permite modificar albaranes de un ejercicio cerrado.
  *   Permite modificar albaranes que ya hayan sido facturados.
+ * checkPedido: true o false, indica si se comprobara si exiten pedidos pendientes. Por defecto es true.
  *</p>
  * <p>Copyright: Copyright (c) 2005-2014
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
@@ -96,6 +97,9 @@ import javax.swing.event.ListSelectionListener;
  
 public class pdalbara extends ventanaPad  implements PAD
 {  
+  private javax.swing.Timer temporizador; 
+  int numPedPend=0;
+  
   private boolean pesoManual=false; // Indica si se restara peso de cajas al darle enter en campo PESO.
   private boolean swUsaPalets=true;
   private boolean swCanti=false;
@@ -106,7 +110,7 @@ public class pdalbara extends ventanaPad  implements PAD
   public final static String VISTAIND="v_albventa_detalle";
   Cgrid jtHist=new Cgrid(4);
   CPanel Phist=new CPanel();
-  DatosTabla dtHist;
+  DatosTabla dtHist,dtPedi;
   private int hisRowid=0;
   private BotonBascula botonBascula;
   private int nLiMaxEdit; // Usada para ver cuando una linea se puede borrar / Modificar al editar 
@@ -200,7 +204,8 @@ public class pdalbara extends ventanaPad  implements PAD
   private boolean P_ADMIN = false;
   boolean modModif = true;
   boolean P_MODPRECIO = false; // Indica si se pueden Modificar Precios
-  boolean P_PONPRECIO = false; // Indica si se pueden Modificar Precios
+  boolean P_PONPRECIO = false; // Indica si se pueden Poner Precios
+  boolean P_CHECKPED= true; // Comprueba si hay pedidos nuevos.
   private boolean verPrecios=false;
   boolean graba = false;
   lialbven liAlb = null;
@@ -520,7 +525,7 @@ public class pdalbara extends ventanaPad  implements PAD
     this(eu, p, new Hashtable());
   }
 
-  public pdalbara(EntornoUsuario eu, Principal p, Hashtable ht)
+  public pdalbara(EntornoUsuario eu, Principal p, Hashtable<String,String> ht)
   {
     EU = eu;
     vl = p.panel1;
@@ -532,18 +537,19 @@ public class pdalbara extends ventanaPad  implements PAD
       if (ht != null)
       {
         if (ht.get("modPrecio") != null)
-          P_MODPRECIO = Boolean.valueOf(ht.get("modPrecio").toString()).
+          P_MODPRECIO = Boolean.valueOf(ht.get("modPrecio")).
               booleanValue();
         if (ht.get("ponPrecio") != null)
-          P_PONPRECIO = Boolean.valueOf(ht.get("ponPrecio").toString()).
-              booleanValue();
+          P_PONPRECIO = Boolean.parseBoolean(ht.get("ponPrecio"));
+        if (ht.get("checkPedido")!=null)
+            P_CHECKPED=Boolean.parseBoolean(ht.get("checkPedido"));
         if (ht.get("admin") != null)
-          P_ADMIN = Boolean.valueOf(ht.get("admin").toString()).
+          P_ADMIN = Boolean.valueOf(ht.get("admin")).
               booleanValue();
         if (ht.get("zona") != null)
           P_ZONA = ht.get("zona").toString();
         if (ht.get("conPedido") != null)
-          P_CONPEDIDO = Boolean.valueOf(ht.get("conPedido").toString()).
+          P_CONPEDIDO = Boolean.valueOf(ht.get("conPedido")).
               booleanValue();
 
       }
@@ -619,7 +625,7 @@ public class pdalbara extends ventanaPad  implements PAD
         PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2014-10-22" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2014-12-17" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -1275,6 +1281,7 @@ public class pdalbara extends ventanaPad  implements PAD
     Bdespiece.setSelected(false);
     EU.getImpresora(gnu.chu.print.util.ALBARAN);
     dtHist=new DatosTabla(ct);
+    dtPedi=new DatosTabla(ct);
     s="SELECT * FROM v_motregu WHERE tir_tipo='"+pdmotregu.MERM_CLIENTE+"'" ; // Merma Cliente
     if (dtStat.select(s))
       tirCodi=dtStat.getInt("tir_codi");
@@ -1375,11 +1382,68 @@ public class pdalbara extends ventanaPad  implements PAD
 
 
     activarEventos();
+    if (P_CHECKPED)
+    {
+        temporizador=new javax.swing.Timer(15000,new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  checkPedidos();
+                }
+        });
+        temporizador.setDelay(15000);
+        temporizador.start();
+        setLabelMsgEspere("Pedidos Pendientes");
+        checkPedidos();
+    }
     if (P_MODPRECIO)
       jt.setEnabled(true);
 //    if (P_MODPRECIO)
 //        avc_revpreE.setEnabled(true);
 //    verDatos(dtCons);
+  }
+  void activar() throws PropertyVetoException
+  {
+       if (isIcon())
+            setIcon(false);
+        moveToFront();
+        show();
+        setSelected(true);
+  }
+  void checkPedidos()
+  {
+     
+      try
+      {          
+          if (nav.isEdicion() )
+              return;
+          
+          temporizador.stop();         
+          
+          dtPedi.select("select count(*) as cuantos from pedvenc where pvc_fecent <= CURRENT_DATE AND pvc_confir='S' and avc_ano = 0");
+          if (dtPedi.getInt("cuantos")!= numPedPend)
+          {
+              numPedPend=dtPedi.getInt("cuantos");
+              if (! isSelected() || isIcon() )
+              {   
+               SwingUtilities.invokeLater(new Thread(){
+                @Override
+                public void run()
+                {                       
+                    try
+                    {
+                       activar();
+                    } catch (PropertyVetoException ex)
+                    {
+                        Logger.getLogger(pdalbara.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+              });               
+              }
+              msgEspere("Existen "+numPedPend+ " pedidos pendientes");
+          }      
+      } catch (SQLException ex)
+      {
+          Logger.getLogger(pdalbara.class.getName()).log(Level.SEVERE, null, ex);
+      }      
   }
 
   void afterFocusLostCli(boolean error)
@@ -1433,6 +1497,16 @@ public class pdalbara extends ventanaPad  implements PAD
         jtRes.setEnabled(true);
         jtRes.requestFocusInicioLater();
       }
+    });
+    
+    popEspere_BCancelaraddActionListener(new ActionListener()
+    {
+           @Override
+        public void actionPerformed(ActionEvent e)
+        {
+             temporizador.restart();
+             resetMsgEspere();
+        }
     });
     avc_revpreE.addActionListener(new ActionListener()
     {
@@ -2341,8 +2415,16 @@ public class pdalbara extends ventanaPad  implements PAD
     hisRowid=0;
 
     verDatos(dt, opAgru.isSelected());
+    resetTiempoPedidos();
   }
-
+  void resetTiempoPedidos()
+  {
+        if (temporizador!=null)
+    {
+        if (temporizador.isRunning())
+            temporizador.restart();
+    }
+  }
   void verDatos(DatosTabla dt, boolean agrupa)
   {
     try
@@ -4641,6 +4723,7 @@ public class pdalbara extends ventanaPad  implements PAD
     verDatos(dtCons);
     mensajeErr("ALTA ... Cancelada");
     mensaje("");
+    
     nav.pulsado = navegador.NINGUNO;
   }
 
@@ -7193,11 +7276,13 @@ public class pdalbara extends ventanaPad  implements PAD
 //      despAlbar.setVisible(false);
 //      despAlbar.dispose();
 //    }
+    temporizador.stop();
     try
     {
       dtHist.close();
+      dtPedi.close();
       resetBloqueo(dtAdd);
-    } catch (Exception k) {}
+    } catch (SQLException | ParseException k) {}
     super.matar(cerrarConexion);
   }
 

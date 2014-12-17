@@ -1846,7 +1846,7 @@ alm_fax varchar(15),		-- Fax
 alm_respo varchar(30),		-- Responsable
 emp_codi smallint not null,	-- Empresa
 sbe_codi smallint not null,	-- Subempresa a la que pertenece el Almacen
-alm_ulfein date,			-- Fecha Ultimo Inventario.
+alm_feulin date,			-- Fecha Ultimo Inventario.
 constraint ix_almacen primary key (emp_codi,alm_codi)
 );
 create view v_almacen as select * from almacen ;

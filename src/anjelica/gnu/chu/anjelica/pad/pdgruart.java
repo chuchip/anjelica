@@ -200,7 +200,7 @@ public class pdgruart  extends ventanaPad  implements PAD
     cLabel7.setBounds(new Rectangle(164, 20, 151, 17));
     cLabel5.setText("Ver");
     cLabel5.setBounds(new Rectangle(5, 20, 31, 17));
-    tla_nuliprE.setToolTipText("N�mero Lineas a Imprimir por grupo");
+    tla_nuliprE.setToolTipText("Número Lineas a Imprimir por grupo");
     tla_nuliprE.setBounds(new Rectangle(503, 20, 27, 17));
     Baceptar.setMaximumSize(new Dimension(112, 28));
     Baceptar.setMinimumSize(new Dimension(112, 28));
@@ -920,6 +920,7 @@ public class pdgruart  extends ventanaPad  implements PAD
   }
 
 
+  @Override
   public void activar(boolean b)
   {
     Birgrid.setEnabled(b);

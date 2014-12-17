@@ -197,5 +197,8 @@ public class PopEspere extends CInternalFrame
     {
 
     }
-
+    public void setTextoMsgEspere(String msg)
+    {
+        textoL.setText(msg);
+    }
 }
