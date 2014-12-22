@@ -334,34 +334,47 @@ public class TrasInven extends ventanaPad implements PAD {
         int almCodi;
         int sbeCodi = 1;
         double kilosDeposito=0;
-        do {
-            // Quito los individuos que esten en albaranes de deposito.
-            s="SELECT * FROM V_albvenpar as  p, v_albavec as c "+
-                    " WHERE c.avc_depos ='D' AND c.emp_codi=p.emp_codi "+
-                    " and c.avc_ano=p.avc_ano and c.avc_serie=p.avc_serie "+
-                    " and c.avc_nume = p.avc_nume "+
-                    " and c.avc_fecalb <= to_date('"+cci_fecconE.getText()+"','dd-MM-yyyy')"+
-                    " and p.pro_codi = "+dtCon1.getInt("pro_codi")+
-                    " and p.avp_ejelot= "+dtCon1.getInt("prp_ano")+
-                    " and p.avp_serlot= '"+ dtCon1.getString("prp_seri")+ "' "+
-                    " and p.avp_numpar = "+dtCon1.getInt("prp_part")+
-                    " and p.avp_numind = "+dtCon1.getInt("prp_indi"); // No ponemos la empresa,pues esta obsoleta
-            if (dtStat.select(s))
-            { // Esta puesto en un albaran de deposito. Se ignora
-                dtAdd.addNew("invdepos");
-                dtAdd.setDato("ind_fecha", cci_fecconE.getDate());
-                dtAdd.setDato("pro_codi", dtCon1.getInt("pro_codi"));
-                dtAdd.setDato("eje_nume", dtCon1.getInt("prp_ano"));
-                dtAdd.setDato("emp_codi", dtCon1.getInt("prp_empcod"));
-                dtAdd.setDato("pro_serie", dtCon1.getString("prp_seri"));
-                dtAdd.setDato("pro_nupar", dtCon1.getInt("prp_part"));
-                dtAdd.setDato("pro_numind",  dtCon1.getInt("prp_indi"));
-                dtAdd.setDato("ind_numuni", dtCon1.getInt("lci_numind"));
-                dtAdd.setDato("alm_codi", dtCon1.getInt("alm_codi"));
-                dtAdd.setDato("ind_kilos", dtCon1.getDouble("lci_peso"));
-                dtAdd.update();
-                kilosDeposito+=dtCon1.getDouble("lci_peso");
-                continue;
+        do {          
+            if (opLeidoDep.isSelected())
+            {   // Quito los individuos que esten en albaranes de deposito.
+                s="SELECT max(avc_fecalb) as avc_fecalb FROM V_albvenpar as  p, v_albavec as c "+
+                        " WHERE c.avc_depos ='D' AND c.emp_codi=p.emp_codi "+
+                        " and c.avc_ano=p.avc_ano and c.avc_serie=p.avc_serie "+
+                        " and c.avc_nume = p.avc_nume "+
+                        " and c.avc_fecalb <= to_date('"+cci_fecconE.getText()+"','dd-MM-yyyy')"+
+                        " and p.pro_codi = "+dtCon1.getInt("pro_codi")+
+                        " and p.avp_ejelot= "+dtCon1.getInt("prp_ano")+
+                        " and p.avp_serlot= '"+ dtCon1.getString("prp_seri")+ "' "+
+                        " and p.avp_numpar = "+dtCon1.getInt("prp_part")+
+                        " and p.avp_numind = "+dtCon1.getInt("prp_indi"); // No ponemos la empresa,pues esta obsoleta
+                dtStat.select(s);
+                if (dtStat.getObject("avc_fecalb")!=null)
+                { // Esta puesto en un albaran de deposito. Se ignora
+                    s="SELECT avc_fecalb  FROM v_albventa_detalle "+
+                        " WHERE avc_fecalb > to_date('"+dtStat.getFecha("avc_fecalb","dd-MM-yyyy")+"','dd-MM-yyyy')"+
+                        " and pro_codi = "+dtCon1.getInt("pro_codi")+
+                        " and avp_ejelot= "+dtCon1.getInt("prp_ano")+
+                        " and avp_serlot= '"+ dtCon1.getString("prp_seri")+ "' "+
+                        " and avp_numpar = "+dtCon1.getInt("prp_part")+
+                        " and avp_numind = "+dtCon1.getInt("prp_indi"); // No ponemos la empresa,pues esta obsoleta
+                    if (!dtStat.select(s))
+                    { // No tiene apuntes posteriores.
+                        dtAdd.addNew("invdepos");
+                        dtAdd.setDato("ind_fecha", cci_fecconE.getDate());
+                        dtAdd.setDato("pro_codi", dtCon1.getInt("pro_codi"));
+                        dtAdd.setDato("eje_nume", dtCon1.getInt("prp_ano"));
+                        dtAdd.setDato("emp_codi", dtCon1.getInt("prp_empcod"));
+                        dtAdd.setDato("pro_serie", dtCon1.getString("prp_seri"));
+                        dtAdd.setDato("pro_nupar", dtCon1.getInt("prp_part"));
+                        dtAdd.setDato("pro_numind",  dtCon1.getInt("prp_indi"));
+                        dtAdd.setDato("ind_numuni", dtCon1.getInt("lci_numind"));
+                        dtAdd.setDato("alm_codi", dtCon1.getInt("alm_codi"));
+                        dtAdd.setDato("ind_kilos", dtCon1.getDouble("lci_peso"));
+                        dtAdd.update();
+                        kilosDeposito+=dtCon1.getDouble("lci_peso");
+                        continue;
+                    }              
+                }
             }
             almCodi = dtCon1.getInt("alm_codi");
             pRegAlm.setRegNume(++rgsNume);
@@ -525,6 +538,7 @@ public class TrasInven extends ventanaPad implements PAD {
         fecinvConE = new gnu.chu.controles.CComboBox();
         opInsAllAlmac = new gnu.chu.controles.CCheckBox();
         opIgnCongel = new gnu.chu.controles.CCheckBox();
+        opLeidoDep = new gnu.chu.controles.CCheckBox();
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -684,7 +698,7 @@ public class TrasInven extends ventanaPad implements PAD {
         opResetear.setText("Poner a 0 prod. sin inventariar");
         opResetear.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Ptraspa.add(opResetear);
-        opResetear.setBounds(0, 20, 171, 23);
+        opResetear.setBounds(0, 20, 171, 17);
 
         cLabel5.setText("Fecha Inv. Congelado");
         Ptraspa.add(cLabel5);
@@ -700,12 +714,18 @@ public class TrasInven extends ventanaPad implements PAD {
         opInsAllAlmac.setText("Insertar Todos Almacenes");
         opInsAllAlmac.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Ptraspa.add(opInsAllAlmac);
-        opInsAllAlmac.setBounds(447, 24, 151, 23);
+        opInsAllAlmac.setBounds(447, 20, 151, 17);
 
         opIgnCongel.setText("Ignorar Inventario Congelado ");
         opIgnCongel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Ptraspa.add(opIgnCongel);
-        opIgnCongel.setBounds(200, 20, 200, 23);
+        opIgnCongel.setBounds(200, 20, 200, 17);
+
+        opLeidoDep.setSelected(true);
+        opLeidoDep.setText("Leido Depositos");
+        opLeidoDep.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        Ptraspa.add(opLeidoDep);
+        opLeidoDep.setBounds(310, 50, 120, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -741,6 +761,7 @@ public class TrasInven extends ventanaPad implements PAD {
     private gnu.chu.controles.CCheckBox opIgnCongel;
     private gnu.chu.controles.CCheckBox opIncCong;
     private gnu.chu.controles.CCheckBox opInsAllAlmac;
+    private gnu.chu.controles.CCheckBox opLeidoDep;
     private gnu.chu.controles.CCheckBox opResetear;
     private gnu.chu.controles.CCheckBox opTrasp;
     private gnu.chu.controles.CComboBox pro_artconE;
