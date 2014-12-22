@@ -503,13 +503,13 @@ create table anjelica.albvenserc
 (
 	avs_nume serial,
 	avs_fecha date not null default current_date,
-        avc_ano int not null, -- Año del Albaran al que esta ligado
-        emp_codi int not null,--  del Albaran al que esta ligado
-        avc_serie char(1) not null, -- Serie del Albaran al que esta ligado
-        avc_nume int not null, -- Numero del Albaran al que esta ligado
+    avc_ano int not null, -- Año del Albaran al que esta ligado
+    emp_codi int not null,--  del Albaran al que esta ligado
+    avc_serie char(1) not null, -- Serie del Albaran al que esta ligado
+    avc_nume int not null, -- Numero del Albaran al que esta ligado
 	cli_codi int not null,
-        constraint ix_albserc primary key(avs_nume),
-        CONSTRAINT con1 CHECK ( avc_nume >0)
+    constraint ix_albserc primary key(avs_nume),
+    CONSTRAINT con1 CHECK ( avc_nume >0)
 );
 --
 -- Lineas de  de Albaranes servidos en deposito
@@ -525,7 +525,7 @@ create table anjelica.albvenserl
     constraint ix_albvenserl primary key (avs_nume,avs_numlin)
 ) ;
 --
--- Individuos de  de Albaranes servidos en deposito
+-- Individuos de Albaranes servidos en deposito
 --
 create table anjelica.albvenseri
 (

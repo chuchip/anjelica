@@ -526,6 +526,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     jt.setFormatoCampos();
   }
 
+  @Override
   public void afterConecta() throws SQLException, java.text.ParseException
   {
     cli_codiE.iniciar(dtStat, this, vl, EU);
