@@ -38,6 +38,7 @@ import java.text.*;
 public class  clpevepr extends ventana  implements  JRDataSource
 {
   final static int JT_CANTI=2;
+  final static int JT_TIPO=3;
   int linProd = 0;
   int linClien=0;
   boolean swRotoProd;
@@ -661,6 +662,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
       return true;
     }
 
+  @Override
     public Object getFieldValue(JRField jRField) throws JRException
     {
       String campo = jRField.getName();
@@ -669,7 +671,9 @@ public class  clpevepr extends ventana  implements  JRDataSource
       if (campo.equals("pro_nomb"))
         return swRotoProd?jtProd.getValString(linProd,1):null;
       if (campo.equals("pvl_canti"))
-        return swRotoProd?jtProd.getValString(linProd,JT_CANTI):null;
+        return swRotoProd?jtProd.getValorDec(linProd,JT_CANTI):null;
+      if (campo.equals("pvl_tipo"))
+        return swRotoProd?jtProd.getValString(linProd,JT_TIPO):null;
       if (campo.equals("cli_nomb"))
         return jtCli.getValString(linClien,1);
       if (campo.equals("unidcli"))
