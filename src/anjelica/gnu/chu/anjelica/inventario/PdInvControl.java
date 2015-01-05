@@ -153,7 +153,7 @@ public class PdInvControl extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2014-10-15 "+(swAdmin?"Administrador":""));
+        this.setVersion("2015-05-01 "+(swAdmin?"Administrador":""));
         condWhere=" where emp_codi =  "+EU.em_cod;
         strSql = "SELECT * FROM coninvcab "+condWhere+
          "order by cci_feccon,cam_codi,alm_codi";
@@ -200,6 +200,7 @@ public class PdInvControl extends ventanaPad implements PAD
     alm_codiE.addDatos(dtStat);
 
     usu_nombE.setColumnaAlias("usu_nomb");
+    cci_codiE.setColumnaAlias("cci_codi");
     cci_fecconE.setColumnaAlias("cci_feccon");
     cam_codiE.setColumnaAlias("cam_codi");
     alm_codiE.setColumnaAlias("alm_codi");  
@@ -568,6 +569,7 @@ public class PdInvControl extends ventanaPad implements PAD
     }
     ArrayList v = new ArrayList();
 
+    v.add(cci_codiE.getStrQuery());
     v.add(cci_fecconE.getStrQuery());
     v.add(cam_codiE.getStrQuery());
     v.add(usu_nombE.getStrQuery());
@@ -588,7 +590,7 @@ public class PdInvControl extends ventanaPad implements PAD
     
     try
     {
-      if (!dtCons.select(s))
+      if (!dtCons.select(s))     
       {
         mensaje("");
         msgBox("No encontrados Inventarios de Control para estos criterios");
@@ -633,16 +635,20 @@ public class PdInvControl extends ventanaPad implements PAD
     activaTodo();
   }
 
+ @Override
   public void PADEdit()
   {
+    int  linEdit=0;
     try
     {
       if (!condLineas.equals(""))
       {
-          msgBox("No se puede editar un registro si esta en modo busqueda individuos.  Ejecute consulta de nuevo");
-          nav.pulsado = navegador.NINGUNO;
-          activaTodo();
-          return;
+          msgBox("No se puede editar un registro si esta en modo busqueda individuos.  Refrescando registro");
+          linEdit=jt.getValorInt(0,0);
+          condLineas="";
+          dtCons.select("SELECT * FROM coninvcab where cci_codi = "+cci_codiE.getValorInt());
+          rgSelect();
+          verDatos(dtCons);
       }
       s = "SELECT * FROM coninvcab WHERE  cci_codi = " + cci_codiE.getValorInt();
       if (!dtCab.select(s, true))
@@ -663,8 +669,13 @@ public class PdInvControl extends ventanaPad implements PAD
     activar(true, navegador.EDIT);
 
     mensaje("Modificar .. Registro");
-    jt.requestFocusFinal();
-    jt.mueveSigLinea();
+    if (linEdit==0)
+    {
+        jt.requestFocusFinal();
+        jt.mueveSigLinea();
+    }
+    else
+        jt.requestFocusLater(linEdit, 1);
     Bcancelar.setEnabled(false);
     numpesE1.setText("0");
     kiltotE1.setValorDec(0);
@@ -710,7 +721,7 @@ public class PdInvControl extends ventanaPad implements PAD
     @Override
   public void PADQuery()
   {
-    activar(true, navegador.ADDNEW);
+    activar(true, navegador.QUERY);
     Baceptar.setEnabled(true);
     Birlin.setEnabled(false);
     usu_nombE.setEnabled(true);
@@ -726,6 +737,7 @@ public class PdInvControl extends ventanaPad implements PAD
     mensaje("Introduzca Criterios de Busqueda");
   }
 
+ @Override
   public void PADAddNew()
   {
     activar(true, navegador.ADDNEW);
@@ -744,6 +756,7 @@ public class PdInvControl extends ventanaPad implements PAD
     cci_fecconE.requestFocus();
   }
 
+ @Override
   public void ej_addnew1()
   {
     jt.salirGrid();
@@ -1035,9 +1048,10 @@ public class PdInvControl extends ventanaPad implements PAD
       activaTodo();
     }
    
+ @Override
     public void activar(boolean b)
     {
-      activar(b, navegador.ADDNEW);
+      activar(b, navegador.QUERY);
       activar(b, navegador.EDIT);
     }
     void activar(boolean b, int modo)
@@ -1046,6 +1060,8 @@ public class PdInvControl extends ventanaPad implements PAD
       Bimpri.setEnabled(!b);
       switch (modo)
       {
+        case navegador.QUERY:
+            cci_codiE.setEnabled(b);
         case navegador.ADDNEW:
           Pcabe.setEnabled(b);
           cci_fecconE.setEnabled(b);
