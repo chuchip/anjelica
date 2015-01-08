@@ -233,7 +233,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (ADMIN)
             MODPRECIO=true; 
-        setVersion("2014-10-10" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2015-01-08" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -1452,10 +1452,16 @@ public class MantDesp extends ventanaPad implements PAD
                activaTodo();
                return;
         }
+       
         copiaRegistro("Vuelta atras en Historico");
         borraRegistro(true);
         
         cambiaLineaHist(hisRowidOld); // Vuelvo a mostrar el registro de historico
+         if (deo_nulogeE.isNull() )
+        {
+            msgBox("Numero de Lote esta a cero. Creo un lote nuevo");
+            ponLoteNuevo();
+        }
         guardaCabOrig(deo_codiE.getValorInt());
         int nRow=jtCab.getRowCount();
         for (int n=0;n<nRow;n++)
@@ -1555,6 +1561,11 @@ public class MantDesp extends ventanaPad implements PAD
             }
             if (!checkMvtos(eje_numeE.getValorInt(), deo_codiE.getValorInt()))
                 return;
+            if (deo_nulogeE.isNull() )
+            {
+                msgBox("Numero de Lote esta a cero. Creo un lote nuevo");
+                ponLoteNuevo();
+            }
             if (!setBloqueo(dtAdd, TABLA_BLOCK, eje_numeE.getValorInt() + "|"
                 + deo_codiE.getValorInt()))
             {
