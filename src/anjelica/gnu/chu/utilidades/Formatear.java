@@ -70,18 +70,31 @@ public class  Formatear
    return redondea(numero, numeroDecimales);
   }
   /**
-   * Redondea un numero a los decimales mandados. 
+   * Redondea un numero a los decimales mandados, utiliza modo BigDecimal.ROUND_HALF_UP
    * @param numero Numero a redondear
    * @param numeroDecimales numero de decimales a los q redondear
    * @return Numero redondeado.
    */
   public static double redondea(double numero, int numeroDecimales)
+  {      
+        return redondea(numero, numeroDecimales,BigDecimal.ROUND_HALF_UP);
+  }
+   /**
+   * Redondea un numero a los decimales mandados.
+   * @param numero Numero a redondear
+   * @param numeroDecimales numero de decimales a los q redondear
+   * @param tipoRedondeo Especifica el tipoRedondeo como en clase BigDecimal
+   * @see  java.math.RoundingMode
+  
+   * @return Numero redondeado.
+   */
+      
+  public static double redondea(double numero, int numeroDecimales,int tipoRedondeo)
   {
         BigDecimal big = new BigDecimal(numero);
-        big = big.setScale(numeroDecimales, RoundingMode.HALF_EVEN);
+        big = big.setScale(numeroDecimales, tipoRedondeo);
         return big.doubleValue();
   }
-  
   public static boolean isNumeric(String p)
   {
   try
