@@ -537,20 +537,17 @@ public class pdalbara extends ventanaPad  implements PAD
       if (ht != null)
       {
         if (ht.get("modPrecio") != null)
-          P_MODPRECIO = Boolean.valueOf(ht.get("modPrecio")).
-              booleanValue();
+          P_MODPRECIO = Boolean.valueOf(ht.get("modPrecio"));
         if (ht.get("ponPrecio") != null)
           P_PONPRECIO = Boolean.parseBoolean(ht.get("ponPrecio"));
         if (ht.get("checkPedido")!=null)
             P_CHECKPED=Boolean.parseBoolean(ht.get("checkPedido"));
         if (ht.get("admin") != null)
-          P_ADMIN = Boolean.valueOf(ht.get("admin")).
-              booleanValue();
+          P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
         if (ht.get("zona") != null)
-          P_ZONA = ht.get("zona").toString();
+          P_ZONA = ht.get("zona");
         if (ht.get("conPedido") != null)
-          P_CONPEDIDO = Boolean.valueOf(ht.get("conPedido")).
-              booleanValue();
+          P_CONPEDIDO = Boolean.parseBoolean(ht.get("conPedido"));
 
       }
      
@@ -567,7 +564,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
   }
 
-  public pdalbara(menu p, EntornoUsuario eu, Hashtable ht)
+  public pdalbara(menu p, EntornoUsuario eu, Hashtable<String,String> ht)
   {
     EU = eu;
     vl = p.getLayeredPane();
@@ -578,19 +575,15 @@ public class pdalbara extends ventanaPad  implements PAD
       if (ht != null)
       {
         if (ht.get("modPrecio") != null)
-          P_MODPRECIO = Boolean.valueOf(ht.get("modPrecio").toString()).
-              booleanValue();
+          P_MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
         if (ht.get("ponPrecio") != null)
-          P_PONPRECIO = Boolean.valueOf(ht.get("ponPrecio").toString()).
-              booleanValue();
+          P_PONPRECIO = Boolean.parseBoolean(ht.get("ponPrecio"));
         if (ht.get("admin") != null)
-          P_ADMIN = Boolean.valueOf(ht.get("admin").toString()).
-              booleanValue();
+          P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
         if (ht.get("zona") != null)
-          P_ZONA = ht.get("zona").toString();
+          P_ZONA = ht.get("zona");
         if (ht.get("conPedido") != null)
-          P_CONPEDIDO = Boolean.valueOf(ht.get("conPedido").toString()).
-              booleanValue();
+          P_CONPEDIDO = Boolean.parseBoolean(ht.get("conPedido"));
       }
       
       setTitulo("Mant Albaranes Ventas");
@@ -622,7 +615,7 @@ public class pdalbara extends ventanaPad  implements PAD
             P_CONPEDIDO=false;
         }
         if (P_MODPRECIO)
-        PERMFAX=true;
+            PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
         setVersion("2014-12-17" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
@@ -1380,11 +1373,14 @@ public class pdalbara extends ventanaPad  implements PAD
      }
     // Bdespiece.setEnabled(PEDIRDESP);
 
-
     activarEventos();
+    if (getLabelEstado()!=null)
+        if (getLabelEstado().getText().contains("*DIRECTO*"))
+            setChequeaPedidos(false);
     if (P_CHECKPED)
     {
         temporizador=new javax.swing.Timer(15000,new java.awt.event.ActionListener() {
+                @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                   checkPedidos();
                 }
@@ -1399,6 +1395,14 @@ public class pdalbara extends ventanaPad  implements PAD
 //    if (P_MODPRECIO)
 //        avc_revpreE.setEnabled(true);
 //    verDatos(dtCons);
+  }
+  public void setChequeaPedidos(boolean checkPedidos)
+  {
+      P_CHECKPED=checkPedidos;
+  }
+  public boolean getChequeaPedidos()
+  {
+      return P_CHECKPED;
   }
   void activar() throws PropertyVetoException
   {
@@ -1415,8 +1419,8 @@ public class pdalbara extends ventanaPad  implements PAD
       {          
           if (nav.isEdicion() )
               return;
-          
-          temporizador.stop();         
+          if (P_CHECKPED)
+            temporizador.stop();         
           
           dtPedi.select("select count(*) as cuantos from pedvenc where pvc_fecent <= CURRENT_DATE AND pvc_confir='S' and avc_ano = 0");
           if (dtPedi.getInt("cuantos")!= numPedPend)
@@ -1504,7 +1508,8 @@ public class pdalbara extends ventanaPad  implements PAD
            @Override
         public void actionPerformed(ActionEvent e)
         {
-             temporizador.restart();
+             if (P_CHECKPED)
+                temporizador.restart();
              resetMsgEspere();
         }
     });
@@ -2419,7 +2424,7 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   void resetTiempoPedidos()
   {
-        if (temporizador!=null)
+    if (temporizador!=null)
     {
         if (temporizador.isRunning())
             temporizador.restart();
@@ -6225,12 +6230,12 @@ public class pdalbara extends ventanaPad  implements PAD
         n++;
         continue;
       }
-      if (proCodi==0 || jtLinPed.getValInt(n,1)==proCodi)
+      if (proCodi==0 || jtLinPed.getValorInt(n,1)==proCodi)
         jtLinPed.removeLinea(n);
       else
         n++;
     }
-    s="select 1 as tipo,l.pro_codi,sum(avp_numuni) as avp_numuni " +
+    s="select 1 as tipo,l.pro_codi,sum(avp_numuni) as avp_numuni,sum(avp_canti) as avp_canti " +
              (! opAgrPrv.isSelected()?", s.prv_codi": "")+
               (!opAgrFecha.isSelected()?", s.stp_feccad ":"") +
              " from v_albvenpar as l,v_stkpart as s " +
@@ -6249,7 +6254,7 @@ public class pdalbara extends ventanaPad  implements PAD
              (!opAgrPrv.isSelected()?" ,s.prv_codi ":"")+
              (!opAgrFecha.isSelected()?", stp_feccad ":"")+
              " UNION ALL "+
-             "select 0 as tipo, l.pro_codi,sum(avp_numuni) as avp_numuni " +
+             "select 0 as tipo, l.pro_codi,sum(avp_numuni) as avp_numuni,sum(avp_canti) as avp_canti " +
              (!opAgrPrv.isSelected() ? ",c.cli_codi AS prv_codi" : "") +
              (!opAgrFecha.isSelected() ? ", c.avc_fecalb as stp_feccad " : "") +
               " from v_albvenpar as l,v_albavec as c  where  c.avc_ano = l.avc_ano  "+
@@ -6306,7 +6311,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
       v.add(dtCon1.getString("avp_numuni"));
       v.add("");
-      v.add("");
+      v.add(dtCon1.getString("avp_canti"));
       v.add(false);
       v.add("");
       if (opAgrPrv.isSelected())
@@ -7276,7 +7281,8 @@ public class pdalbara extends ventanaPad  implements PAD
 //      despAlbar.setVisible(false);
 //      despAlbar.dispose();
 //    }
-    temporizador.stop();
+    if (P_CHECKPED)
+        temporizador.stop();
     try
     {
       dtHist.close();
@@ -7622,7 +7628,7 @@ public class pdalbara extends ventanaPad  implements PAD
                                            cli_codiE.getValorInt(), EU.em_cod, dtStat));
       v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi"), dtStat));
       v.add(dtCon1.getFecha("pvl_feccad","dd-MM-yy"));
-      v.add(dtCon1.getString("pvl_canti"));
+      v.add(dtCon1.getString("pvl_canti")+" "+dtCon1.getString("pvl_tipo") );
       if (verPrecios)
         v.add(dtCon1.getString("pvl_precio"));
       else

@@ -226,10 +226,10 @@ public class cliPanel extends CPanel
             @Override
       public void keyPressed(KeyEvent e)
       {
-        if (botonConsultar && e.getKeyCode() == KeyEvent.VK_F3)
+        if (botonConsultar && (e.getKeyCode() == KeyEvent.VK_F3 ||
+            (e.getKeyChar()=='3' && e.getModifiers()==KeyEvent.CTRL_MASK)) )
         {
           consCli();
-          return;
         }
 
       }

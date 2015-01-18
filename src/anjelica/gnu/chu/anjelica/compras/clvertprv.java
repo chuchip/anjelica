@@ -51,7 +51,7 @@ public class clvertprv  extends ventana
   CLabel cLabel17 = new CLabel();
   CLabel cLabel4 = new CLabel();
   CLabel cLabel3 = new CLabel();
-  CComboBox tir_codiE = new CComboBox();
+  CComboBox rgs_recprvE = new CComboBox();
   CButton Bconsultar = new CButton( "Buscar (F4)",Iconos.getImageIcon("buscar"));
   CTextField fealiniE = new CTextField(Types.DATE, "dd-MM-yyyy");
   CLabel cLabel5 = new CLabel();
@@ -88,7 +88,9 @@ public class clvertprv  extends ventana
   Cgrid jtPrv = new Cgrid(9);
   Cgrid jtAcuPrv = new Cgrid(4);
   GridBagLayout gridBagLayout3 = new GridBagLayout();
-
+  CLabel tir_codiL = new CLabel("Tipo Reg");
+  CLinkBox tir_codiE = new CLinkBox();
+  
   public clvertprv(EntornoUsuario eu, Principal p)
   {
     EU = eu;
@@ -97,7 +99,6 @@ public class clvertprv  extends ventana
     eje = true;
 
     setTitulo("Cons/List Reclamac. a Proveedores");
-
     try
     {
       if (jf.gestor.apuntar(this))
@@ -119,7 +120,6 @@ public class clvertprv  extends ventana
 
     setTitulo("Cons/List Reclamac. a Proveedores");
 
-
     try
     {
       jbInit();
@@ -137,7 +137,7 @@ public class clvertprv  extends ventana
     jtPrv.setPreferredSize(new Dimension(663, 280));
     iniciarFrame();
     this.setSize(new Dimension(689, 575));
-    this.setVersion("2007-04-29");
+    this.setVersion("2014-12-23");
 
     statusBar = new StatusBar(this);
     conecta();
@@ -145,20 +145,22 @@ public class clvertprv  extends ventana
     jtLin.setMinimumSize(new Dimension(644, 136));
     jtLin.setPreferredSize(new Dimension(644, 136));
 
-    Pcond.setMaximumSize(new Dimension(533, 90));
-    Pcond.setMinimumSize(new Dimension(533, 90));
-    Pcond.setOpaque(true);
-    Pcond.setPreferredSize(new Dimension(533, 90));
+    Pcond.setMaximumSize(new Dimension(533, 110));
+    Pcond.setMinimumSize(new Dimension(533, 110));
+    Pcond.setPreferredSize(new Dimension(533, 110));
     Blistar.setPreferredSize(new Dimension(24, 24));
     Blistar.setMaximumSize(new Dimension(24, 24));
     Blistar.setMinimumSize(new Dimension(24, 24));
     Blistar.setToolTipText("Listar Reclamaciones a Proveedores");
 
-    Bconsultar.setBounds(new Rectangle(409, 62, 120, 25));
+    Bconsultar.setBounds(new Rectangle(409, 85, 120, 25));
     Bconsultar.setMargin(new Insets(0, 0, 0, 0));
-    opIncFraE.setBounds(new Rectangle(263, 62, 144, 20));
-    tir_codiE.setBounds(new Rectangle(43, 65, 108, 20));
-    cLabel3.setBounds(new Rectangle(2, 64, 45, 21));
+    opIncFraE.setBounds(new Rectangle(283, 62, 144, 20));
+    tir_codiL.setBounds(new Rectangle(2, 85, 70, 20));
+    tir_codiE.setBounds(new Rectangle(72, 85, 255, 21));
+    
+    rgs_recprvE.setBounds(new Rectangle(43, 65, 108, 20));
+    cLabel3.setBounds(new Rectangle(2, 65, 45, 21));
     prv_codfinE.setBounds(new Rectangle(80, 42, 441, 18));
     cLabel17.setBounds(new Rectangle(2, 42, 73, 18));
     prv_codiniE.setBounds(new Rectangle(81, 22, 442, 18));
@@ -302,9 +304,11 @@ public class clvertprv  extends ventana
     Pcond.add(cLabel2, null);
     Pcond.add(ferclfinE, null);
     Pcond.add(cLabel1, null);
-    Pcond.add(tir_codiE, null);
+    Pcond.add(rgs_recprvE, null);
     Pcond.add(opGrupos, null);
     Pcond.add(Bconsultar, null);
+    Pcond.add(tir_codiL, null);
+    Pcond.add(tir_codiE, null);
     Pcond.add(cLabel3, null);
     Pcond.add(opIncFraE, null);
     Pprinc.add(PacuTot,   new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
@@ -327,15 +331,35 @@ public class clvertprv  extends ventana
     confGridPrv();
   }
 
+  @Override
   public void iniciarVentana() throws Exception
   {
     Pcond.setDefButton(Bconsultar);
-    tir_codiE.addItem("Pendiente", "P");
-    tir_codiE.addItem("Aceptado", "A");
-    tir_codiE.addItem("Rechazado", "R");
-    tir_codiE.addItem("Recl.Pend", "E");
-    tir_codiE.addItem("TODOS", "T");
+    rgs_recprvE.addItem("Pendiente", "P");
+    rgs_recprvE.addItem("Aceptado", "A");
+    rgs_recprvE.addItem("Rechazado", "R");
+    rgs_recprvE.addItem("Recl.Pend", "E");
+    rgs_recprvE.addItem("TODOS", "T");
+     
+    tir_codiE.setAncTexto(30);
+    tir_codiE.setFormato(Types.DECIMAL, "##9", 3);
 
+    s = "SELECT * FROM v_motregu "+
+        " where tir_tipo = 'VP' or tir_afestk = '*' "+
+        " ORDER BY tir_codi";
+    if (dtCon1.select(s))
+    {
+      do
+      {
+        tir_codiE.addDatos(dtCon1.getString("tir_codi"),
+                           dtCon1.getString("tir_nomb") + "  (" + dtCon1.getString("tir_afestk") +
+                           ")", true);
+      }
+      while (dtCon1.next());
+    }
+ 
+    tir_codiE.getComboBox().setPreferredSize(new Dimension(300,300));
+    tir_codiE.setValorInt(0);
     prv_codfinE.iniciar(dtStat, this, vl, EU);
     prv_codiniE.iniciar(dtStat, this, vl, EU);
     activarEventos();
@@ -414,7 +438,7 @@ public class clvertprv  extends ventana
        java.util.HashMap mp = new java.util.HashMap();
        mp.put("acc_fecrec",fealiniE.getDate());
        mp.put("acc_fecrec1",fealfinE.getDate());
-       mp.put("estado",tir_codiE.getText());
+       mp.put("estado",rgs_recprvE.getText());
        mp.put("acc_fecrcl",fercliniE.getDate());
        mp.put("acc_fecrcl1",ferclfinE.getDate());
        mp.put("agrupProd",new Boolean(opGrupos.isSelected()));
@@ -439,10 +463,11 @@ public class clvertprv  extends ventana
    }
    String getCondiciones()
    {
-     char tirCodi = tir_codiE.getValor().charAt(0);
+     char tirCodi = rgs_recprvE.getValor().charAt(0);
      return ( tirCodi=='T'?" != 0":
         " = "+(tirCodi=='P'? paregalm.ESTPEND : tirCodi=='A'? paregalm.ESTACEP:tirCodi=='E'?paregalm.PENDREC:paregalm.ESTRECH))+
        (prv_codiniE.isNull()?"":" and c.prv_codi >= "+prv_codiniE.getValorInt())+
+        (tir_codiE.isNull()?"":" and tir_codi = "+tir_codiE.getValorInt())+
        (prv_codfinE.isNull()?"":" and c.prv_codi <= "+prv_codfinE.getValorInt())+
        (fealiniE.isNull()?"":" and c.acc_fecrec >= TO_DATE('"+fealiniE.getText()+"','dd-MM-yyyy')")+
        (fealfinE.isNull()?"":" and c.acc_fecrec <= TO_DATE('"+fealfinE.getText()+"','dd-MM-yyyy')")+
@@ -530,15 +555,15 @@ public class clvertprv  extends ventana
          ps.setInt(4, dtCon1.getInt("acc_ano"));
          rs = ps.executeQuery();
          rs.next();
-         Vector v = new Vector();
-         v.addElement(rs.getString("prv_codi"));
-         v.addElement(rs.getString("prv_nomb"));
+         ArrayList v = new ArrayList();
+         v.add(rs.getString("prv_codi"));
+         v.add(rs.getString("prv_nomb"));
 
-         v.addElement(Formatear.formatearFecha(rs.getDate("acc_fecrec"), "dd-MM-yy"));
-         v.addElement(dtCon1.getString("emp_codi"));
-         v.addElement(dtCon1.getString("acc_ano"));
-         v.addElement(dtCon1.getString("acc_serie"));
-         v.addElement(dtCon1.getString("acc_nume"));
+         v.add(Formatear.getFecha(rs.getDate("acc_fecrec"), "dd-MM-yy"));
+         v.add(dtCon1.getString("emp_codi"));
+         v.add(dtCon1.getString("acc_ano"));
+         v.add(dtCon1.getString("acc_serie"));
+         v.add(dtCon1.getString("acc_nume"));
          jtCab.addLinea(v);
          nLin++;
        }
@@ -600,26 +625,26 @@ public class clvertprv  extends ventana
       ResultSet rs;
       do
       {
-        Vector v=new Vector();
-        v.addElement(dtCon1.getFecha("rgs_fecha","dd-MM-yy"));
-        v.addElement(dtCon1.getString("prv_nomb"));
-        v.addElement(""+dtCon1.getInt("emp_codi")+"-"+dtCon1.getInt("acc_ano")+"/"+dtCon1.getString("acc_serie")+
+        ArrayList v=new ArrayList();
+        v.add(dtCon1.getFecha("rgs_fecha","dd-MM-yy"));
+        v.add(dtCon1.getString("prv_nomb"));
+        v.add(""+dtCon1.getInt("emp_codi")+"-"+dtCon1.getInt("acc_ano")+"/"+dtCon1.getString("acc_serie")+
                      dtCon1.getInt("acc_nume"));
-        v.addElement(dtCon1.getString("rgs_kilos"));
-        v.addElement(dtCon1.getString("rgs_prregu"));
-        v.addElement(""+(dtCon1.getDouble("rgs_kilos",true)*dtCon1.getDouble("rgs_prregu",true)));
-        v.addElement(paregalm.getStrLongTipRecl(dtCon1.getInt("rgs_recprv")));
-        v.addElement(dtCon1.getString("pro_nomcor")+"("+dtCon1.getString("pro_codi")+")");
+        v.add(dtCon1.getString("rgs_kilos"));
+        v.add(dtCon1.getString("rgs_prregu"));
+        v.add(""+(dtCon1.getDouble("rgs_kilos",true)*dtCon1.getDouble("rgs_prregu",true)));
+        v.add(paregalm.getStrLongTipRecl(dtCon1.getInt("rgs_recprv")));
+        v.add(dtCon1.getString("pro_nomcor")+"("+dtCon1.getString("pro_codi")+")");
         if (dtCon1.getInt("rgs_clidev",true)==0)
-          v.addElement("");
+          v.add("");
         else
         {
           ps.setInt(1,dtCon1.getInt("rgs_clidev",true));
           rs = ps.executeQuery();
           if (rs.next())
-            v.addElement(rs.getString("cli_nomb")+"("+ dtCon1.getString("rgs_clidev")+")");
+            v.add(rs.getString("cli_nomb")+"("+ dtCon1.getString("rgs_clidev")+")");
           else
-            v.addElement( dtCon1.getString("rgs_clidev")+" NO ENCONTRADO");
+            v.add( dtCon1.getString("rgs_clidev")+" NO ENCONTRADO");
         }
         jtPrv.addLinea(v);
       } while (dtCon1.next());
@@ -645,16 +670,16 @@ public class clvertprv  extends ventana
           " where prv_codi = ?");
       do
       {
-        Vector v=new Vector();
+        ArrayList v=new ArrayList();
         ps.setInt(1,dtCon1.getInt("rgs_cliprv",true));
         rs = ps.executeQuery();
         if (rs.next())
-          v.addElement(rs.getString("prv_nomb"));
+          v.add(rs.getString("prv_nomb"));
         else
-          v.addElement(dtCon1.getString("rgs_clidev")+ " NO ENCONTRADO");
-        v.addElement(dtCon1.getString("rgs_canti"));
-        v.addElement(dtCon1.getString("rgs_kilos"));
-        v.addElement(dtCon1.getString("importe"));
+          v.add(dtCon1.getString("rgs_clidev")+ " NO ENCONTRADO");
+        v.add(dtCon1.getString("rgs_canti"));
+        v.add(dtCon1.getString("rgs_kilos"));
+        v.add(dtCon1.getString("importe"));
         jtAcuPrv.addLinea(v);
       } while (dtCon1.next());
       jtAcuPrv.requestFocusInicio();
@@ -706,6 +731,7 @@ public class clvertprv  extends ventana
     int proCodi=dtCon1.getInt("pro_codi");
 //    String proNomb=dtCon1.getString("pro_nomb");
     String tirNomb=dtCon1.getString("tir_nomb");
+    int rgsLineas=0;
     do
     {
       if (! opGrupos.isSelected())
@@ -713,30 +739,33 @@ public class clvertprv  extends ventana
         if (proCodi != dtCon1.getInt("pro_codi") || ! tirNomb.equals( dtCon1.getString("tir_nomb"))
             ||  rgsRecprv != dtCon1.getInt("rgs_recprv"))
         {
-          ponAcumPro(proCodi, "Total Producto", rgsRecprv, rgsKilos, rgsCanti, rgsPrreg);
+          if (rgsLineas>1)
+            ponAcumPro(proCodi, "Total Producto", rgsRecprv, rgsKilos, rgsCanti, rgsPrreg);
           proCodi = dtCon1.getInt("pro_codi");
           tirNomb = dtCon1.getString("tir_nomb");
           rgsRecprv=dtCon1.getInt("rgs_recprv");
           rgsKilos = 0;
           rgsCanti = 0;
           rgsPrreg = 0;
+          rgsLineas=0;
         }
 
         rgsKilos+=dtCon1.getDouble("rgs_kilos");
         rgsCanti+=dtCon1.getInt("rgs_canti");
         rgsPrreg+=dtCon1.getDouble("rgs_kilos")*dtCon1.getDouble("rgs_prregu");
-        Vector v = new Vector();
-        v.addElement(dtCon1.getString("pro_codi"));
-        v.addElement(dtCon1.getString("pro_nomb"));
-        v.addElement(dtCon1.getString("rgs_kilos"));
-        v.addElement(dtCon1.getString("rgs_canti"));
-        v.addElement(dtCon1.getString("rgs_prregu"));
-        v.addElement(dtCon1.getString("pro_numind"));
-        v.addElement(dtCon1.getInt("rgs_recprv") == paregalm.ESTPEND ? "P" :
+        ArrayList v = new ArrayList();
+        v.add(dtCon1.getString("pro_codi"));
+        v.add(dtCon1.getString("pro_nomb"));
+        v.add(dtCon1.getString("rgs_kilos"));
+        v.add(dtCon1.getString("rgs_canti"));
+        v.add(dtCon1.getString("rgs_prregu"));
+        v.add(dtCon1.getString("pro_numind"));
+        v.add(dtCon1.getInt("rgs_recprv") == paregalm.ESTPEND ? "P" :
                      dtCon1.getInt("rgs_recprv") == paregalm.ESTACEP ? "A" : "R");
-        v.addElement(dtCon1.getFecha("rgs_fecha", "dd-MM-yy"));
-        v.addElement(dtCon1.getFecha("rgs_fecres", "dd-MM-yy"));
-        v.addElement(dtCon1.getString("tir_nomb"));
+        v.add(dtCon1.getFecha("rgs_fecha", "dd-MM-yy"));
+        v.add(dtCon1.getFecha("rgs_fecres", "dd-MM-yy"));
+        v.add(dtCon1.getString("tir_nomb"));
+        rgsLineas++;
         jtLin.addLinea(v);
       }
       else
@@ -745,37 +774,37 @@ public class clvertprv  extends ventana
                    dtCon1.getDouble("rgs_kilos"), dtCon1.getInt("rgs_canti"),
                  dtCon1.getDouble("rgs_prregu"));
     } while (dtCon1.next());
-    if (! opGrupos.isSelected())
+    if (! opGrupos.isSelected() && rgsLineas>1)
       ponAcumPro(proCodi, "Total Producto", rgsRecprv, rgsKilos, rgsCanti, rgsPrreg);
     jtLin.requestFocusInicio();
     actAcumVert();
   }
   void  ponAcumPro(int proCodi,String proNomb,int rgsRecprv,double rgsKilos,int rgsCanti,double rgsPrreg)
   {
-    Vector v=new Vector();
-    v.addElement(""+proCodi);
-    v.addElement(""+proNomb);
-    v.addElement(""+rgsKilos);
-    v.addElement(""+rgsCanti);
-    v.addElement(""+rgsPrreg/rgsKilos);
-    v.addElement("");
-    v.addElement(rgsRecprv == paregalm.ESTPEND ? "P" :
+    ArrayList v=new ArrayList();
+    v.add(""+proCodi);
+    v.add(""+proNomb);
+    v.add(""+rgsKilos);
+    v.add(""+rgsCanti);
+    v.add(""+rgsPrreg/rgsKilos);
+    v.add("");
+    v.add(rgsRecprv == paregalm.ESTPEND ? "P" :
                      rgsRecprv == paregalm.ESTACEP ? "A" : "R");
-    v.addElement("");
-    v.addElement("");
-    v.addElement("");
+    v.add("");
+    v.add("");
+    v.add("");
     jtLin.addLinea(v);
   }
   private void confGridCab() throws Exception
   {
-    Vector v = new Vector();
-    v.addElement("Prov"); //0
-    v.addElement("Nombre Prv"); // 1
-    v.addElement("Fec.Alb"); // 2
-    v.addElement("Emp"); // 3
-    v.addElement("Ejer"); // 4
-    v.addElement("Serie"); // 5
-    v.addElement("Numero"); // 6
+    ArrayList v = new ArrayList();
+    v.add("Prov"); //0
+    v.add("Nombre Prv"); // 1
+    v.add("Fec.Alb"); // 2
+    v.add("Emp"); // 3
+    v.add("Ejer"); // 4
+    v.add("Serie"); // 5
+    v.add("Numero"); // 6
     jtCab.setCabecera(v);
 
     jtCab.setAnchoColumna(new int[]
@@ -789,17 +818,17 @@ public class clvertprv  extends ventana
 
   private void confGridLin() throws Exception
   {
-    Vector v = new Vector();
-    v.addElement("Prod."); // 0
-    v.addElement("Nombre Prod"); // 1
-    v.addElement("Kilos"); // 2
-    v.addElement("Unid"); // 3
-    v.addElement("Precio"); // 4
-    v.addElement("Ind."); // 5 Inviduo
-    v.addElement("Est"); // 6
-    v.addElement("Fec.Recl"); // 7
-    v.addElement("Fec.Res."); // 8
-    v.addElement("T.Recl"); //9
+    ArrayList v = new ArrayList();
+    v.add("Prod."); // 0
+    v.add("Nombre Prod"); // 1
+    v.add("Kilos"); // 2
+    v.add("Unid"); // 3
+    v.add("Precio"); // 4
+    v.add("Ind."); // 5 Inviduo
+    v.add("Est"); // 6
+    v.add("Fec.Recl"); // 7
+    v.add("Fec.Res."); // 8
+    v.add("T.Recl"); //9
     jtLin.setCabecera(v);
     jtLin.setAnchoColumna(new int[]
                           {50, 160, 60, 50, 50, 35, 40, 70, 70,120});
@@ -813,16 +842,16 @@ public class clvertprv  extends ventana
 
   private void confGridPrv() throws Exception
   {
-    Vector v=new Vector();
-    v.addElement("Fec.Recl"); // 0
-    v.addElement("Proveedor"); // 1
-    v.addElement("Albaran"); // 2
-    v.addElement("Kilos"); // 3
-    v.addElement("Precio"); // 4
-    v.addElement("Importe"); // 5
-    v.addElement("Estado"); // 6
-    v.addElement("Producto"); // 7
-    v.addElement("Cliente"); // 8
+    ArrayList v=new ArrayList();
+    v.add("Fec.Recl"); // 0
+    v.add("Proveedor"); // 1
+    v.add("Albaran"); // 2
+    v.add("Kilos"); // 3
+    v.add("Precio"); // 4
+    v.add("Importe"); // 5
+    v.add("Estado"); // 6
+    v.add("Producto"); // 7
+    v.add("Cliente"); // 8
     jtPrv.setCabecera(v);
     jtPrv.setAnchoColumna(new int[]{60,130,90,55,50,60,40,130,150});
     jtPrv.setAlinearColumna(new int[]{1,0,0,2,2,2,1,0,0});
@@ -834,11 +863,11 @@ public class clvertprv  extends ventana
 
   private void confGridAcuPrv() throws Exception
   {
-    Vector v = new Vector();
-    v.addElement("Proveedor"); // 0
-    v.addElement("Unid."); // 1
-    v.addElement("Kilos"); // 2
-    v.addElement("Importe"); // 3
+    ArrayList v = new ArrayList();
+    v.add("Proveedor"); // 0
+    v.add("Unid."); // 1
+    v.add("Kilos"); // 2
+    v.add("Importe"); // 3
     jtAcuPrv.setCabecera(v);
     jtAcuPrv.setAnchoColumna(new int[]
                              {250, 50, 65, 80});
@@ -856,7 +885,7 @@ public class clvertprv  extends ventana
     int numVert = 0;
     for (int n = 0; n < jtLin.getRowCount(); n++)
     {
-      if (jtLin.getValorInt(n,5)>0)
+      if (jtLin.getValString(n,1).equals("Total Producto"))
         continue;
       numVert++;
 

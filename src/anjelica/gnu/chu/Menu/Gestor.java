@@ -88,9 +88,9 @@ public class Gestor extends Thread implements Serializable
   private int pesoActual = 0;
 
   /**
-  * Peso m�ximo de los programas ejecutados por el usuario
+  * Peso máximo de los programas ejecutados por el usuario
   */
-  private int pesoMaximo = 100;
+  private final int pesoMaximo = 100;
 
   /**
   * Tabla de procesos
@@ -249,7 +249,7 @@ public class Gestor extends Thread implements Serializable
   * Apunta el objeto en la tabla de procesos del sistema, en el caso de que no se
   * pueda ejecutar el proceso la función devolvera falso. Si se puede ejecutar
   * añadira un eventlistener a las ventanas para detectar su finalización.
-  * @param objeto el objeto que se pretende ejecutar
+  * @param miobjeto el objeto que se pretende ejecutar
   * @param chequeo booleano para indicar que se realice chequeo de copias
   * @return true si el objeto puede ser ejecutado
   */
@@ -906,7 +906,7 @@ public class Gestor extends Thread implements Serializable
         if (!((ejecutable)bicho).getErrorInit())
         {
           posicionaComponent(((Component)bicho), miClase.getName());
-
+          ((ejecutable)bicho).setLabelEstado(estado);
           vl.add((Component)bicho);
           ((CInternalFrame)bicho).toFront();
           ((ejecutable)bicho).iniciarVentana();
@@ -918,6 +918,7 @@ public class Gestor extends Thread implements Serializable
               Logger.getRootLogger().error("Error al poner visible la clase: "+miClase);
           }
           ((CInternalFrame)bicho).repaint();
+          
           controlaProg(bicho);
           // Añadir boton a la barra de estado
 //          miGestor.apuntar(bicho);

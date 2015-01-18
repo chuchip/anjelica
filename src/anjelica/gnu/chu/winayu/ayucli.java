@@ -6,7 +6,7 @@ package gnu.chu.winayu;
  * Description:  Pantalla de Ayuda de Clientes,    permite Consultar clientes
  * por nombre, NIF o Razon Social.
  * Siempre sera Llamado desde otro programa.
- * <p>Copyright: Copyright (c) 2005
+ * <p>Copyright: Copyright (c) 2005-2015
  *   Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -26,14 +26,12 @@ package gnu.chu.winayu;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
 import java.sql.*;
 import gnu.chu.sql.*;
 import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
-import gnu.chu.sql.*;
+import java.util.ArrayList;
 import javax.swing.*;
-import javax.swing.event.*;
 
 public class ayucli extends ventana
 {
@@ -52,7 +50,7 @@ public class ayucli extends ventana
   Cgrid jt = new Cgrid(4);
   CButton Bbuscar = new CButton(Iconos.getImageIcon("binocular"));
 //  Vector datos=new Vector();
-  Vector cabecera = new Vector();
+  ArrayList cabecera = new ArrayList();
 
   String strSql="";
   public boolean Error=false;
@@ -89,7 +87,7 @@ public class ayucli extends ventana
   }
 
   private void jbInit() throws Exception {
-    this.setSize(new Dimension(580, 451));
+    this.setSize(new Dimension(480, 351));
     this.setIconifiable(false);
     this.setClosable(false);
     this.setResizable(true);
@@ -141,16 +139,16 @@ public class ayucli extends ventana
     cli_nombcL.setText("Nomb. Social");
     cli_nombcL.setHorizontalAlignment(4);
     // Configurando el Grid.
-    cabecera.addElement("Codigo"); // 0
-    cabecera.addElement("Nombre Fiscal"); //1
-    cabecera.addElement("Nombre Social"); // 2
-    cabecera.addElement("Poblaccion"); // 3
+    cabecera.add("Codigo"); // 0
+    cabecera.add("Nombre Fiscal"); //1
+    cabecera.add("Nombre Social"); // 2
+    cabecera.add("Poblaccion"); // 3
    jt.setCabecera(cabecera);
     int i []= {50,300,300,300};
     jt.setAnchoColumna(i);
 
     jt.setConfigurar("gnu.chu.winayu.ayucli",EU,dtCon1);
-    Vector v1= new Vector();
+    ArrayList v1= new ArrayList();
 
     this.getContentPane().add(vPanel1,  BorderLayout.CENTER);
     vPanel1.add(jt,   new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
@@ -228,21 +226,21 @@ public class ayucli extends ventana
   public void Bbuscar_actionPerformed() {
     String s="";
 
-    if (cli_nombE.getText().length()<= 3 && ! cli_nombE.isNull())
+    if (cli_nombE.getText().length()<= 2 && ! cli_nombE.isNull())
     {
-      mensaje("Introduzca al Menos 3 Caracteres");
+      mensaje("Introduzca al Menos 2 Caracteres");
       cli_nombE.requestFocus();
       return;
     }
-    if (cli_nombcE.getText().length()<= 3 && ! cli_nombcE.isNull())
+    if (cli_nombcE.getText().length()<= 2 && ! cli_nombcE.isNull())
     {
-      mensaje("Introduzca al Menos 3 Caracteres");
+      mensaje("Introduzca al Menos 2 Caracteres");
       cli_nombcE.requestFocus();
       return;
     }
-    if (cli_poblE.getText().length()<= 3 && ! cli_poblE.isNull())
+    if (cli_poblE.getText().length()<= 2 && ! cli_poblE.isNull())
     {
-      mensaje("Introduzca al Menos 3 Caracteres");
+      mensaje("Introduzca al Menos 2 Caracteres");
       cli_poblE.requestFocus();
       return;
     }

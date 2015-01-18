@@ -2,7 +2,7 @@ package gnu.chu.winayu;
 /**
  * <p>Titulo:   AyuArt </p>
  * <p>Descripción: Ventana de ayuda para buscar productos por nombre/familia/estado.
- * <p>Copyright: (c) 2005-2012
+ * <p>Copyright: (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
 *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -81,7 +81,7 @@ public class AyuArt extends  ventana {
     
     initComponents();
     this.getContentPane().add(statusBar, BorderLayout.SOUTH);
-    this.setSize(new Dimension(466, 526));
+    this.setSize(new Dimension(466, 426));
   }
     @Override
   public void iniciarVentana() throws Exception

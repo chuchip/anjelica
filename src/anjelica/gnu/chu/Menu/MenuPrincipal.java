@@ -680,7 +680,8 @@ public class MenuPrincipal extends CInternalFrame
   {
     try {
       // ejecuta una aplicacion externa
-      if (clas.trim().startsWith("$")) {
+      if (clas.trim().startsWith("$")) 
+      {
         if (! pdusua.canEjecutarProgExt(EntornoUsu.usuario,frmPrincipal.dt1))
           return;
         swLst = (clas.trim().equals("$"));
@@ -690,9 +691,11 @@ public class MenuPrincipal extends CInternalFrame
         else
            cambiaMenu();
         return;
-      } else   if (clas.startsWith("#"))
+      }
+      else   if (clas.startsWith("#"))
       {
          new miThread("Ejecutando " + clas.substring(1) + " ...") {
+             @Override
              public void run() {
                     try {
                         Runtime.getRuntime().exec(clas.substring(1));

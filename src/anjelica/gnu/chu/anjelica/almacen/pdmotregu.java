@@ -447,6 +447,7 @@ public class pdmotregu extends ventanaPad implements PAD
   }
 
 
+  @Override
   public void activar(boolean b){
     Baceptar.setEnabled(b);
     Bcancelar.setEnabled(b);

@@ -6079,7 +6079,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        v.add("Estado"); // 10
        v.add("Fec.Resol"); // 11
        v.add("Tipo Reg."); // 12 Tipo Regularización
-       v.add("Trasp."); // 13 Traspasado
+       v.add("Mvt?"); // 13 Traspasado
        v.add("Cliente"); // 14 Cod. Cliente
        v.add("Nomb.Cliente"); // 15 Nombre Cliente
        v.add("Coment"); // 13
@@ -6125,7 +6125,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        estFinE.addItem("Rech", "R");
        estFinE.addItem("Recl.Pend","E");
        rgs_traspE.setSelected(true);
-
+       rgs_traspE.setToolTipText("Influye Stock?");
        rgs_fechaE.setText(Formatear.getFechaAct("dd-MM-yy"));
        rgs_numeE.setEnabled(false);
        pro_nomverE.setEnabled(false);
@@ -6150,7 +6150,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        v1.add(rgs_clinombE); // 15
        v1.add(rgs_comenE); // 16
        v1.add(rgs_numeE); // 17
-
+       jtRecl.setToolTipHeader(13,"Influye Stock?");
        jtRecl.setCampos(v1);
        jtRecl.setFormatoCampos();
        rgs_fecresE.setError(false);
@@ -6798,24 +6798,24 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
          {
            if (jtRecl.getValorInt(n, ROWNVERT) == 0)
              continue;
-           if (!jtRecl.getValString(n, 7).equals(estIniE.getValor()))
+           if (!jtRecl.getValString(n, JTR_ESTAD).equals(estIniE.getValor()))
              continue;
 
            if (estFin == 'P' || estFin == 'E')
              jtRecl.setValor("", n, 8); // Pongo la Fecha Resol. vacia
            if (estFin == 'R' || estFin == 'A')
            {
-             if (jtRecl.getValString(n, 8).trim().equals(""))
-               jtRecl.setValor(Formatear.getFechaAct("dd-MM-yy"), n, 8);
+             if (jtRecl.getValString(n, JTR_FECRES).trim().equals(""))
+               jtRecl.setValor(Formatear.getFechaAct("dd-MM-yy"), n, JTR_FECRES);
            }
            if (estFin == 'R')
-             jtRecl.setValor("0", n, 5);
-           jtRecl.setValor(""+estFin,n,7);
+             jtRecl.setValor(0, n, JTR_COSTO);
+           jtRecl.setValor(""+estFin,n,JTR_ESTAD);
            s = "update regalmacen set rgs_recprv = " + getRecPrv("" + estFin) + "," +
-               " rgs_fecres = "+ (jtRecl.getValString(n,8).trim().equals("")?"null":
-               "TO_DATE('" + jtRecl.getValString(n, 8) + "','dd-MM-yy')")+", " +
-               " rgs_prregu = " + jtRecl.getValorDec(n, 5) +
-               " WHERE rgs_nume = " + jtRecl.getValorInt(n, 10);
+               " rgs_fecres = "+ (jtRecl.getValString(n,JTR_FECRES).trim().equals("")?"null":
+               "TO_DATE('" + jtRecl.getValString(n, JTR_FECRES) + "','dd-MM-yy')")+", " +
+               " rgs_prregu = " + jtRecl.getValorDec(n, JTR_COSTO) +
+               " WHERE rgs_nume = " + jtRecl.getValorInt(n, ROWNVERT);
 //           debug("s: "+s);
            dtAdd.executeUpdate(s);
          }

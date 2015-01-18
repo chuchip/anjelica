@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Titulo: conmvpr </p>
  * <p>Descripcion: Consulta Mvtos de Almacen Valorados</p>
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -548,6 +548,7 @@ public class conmvpr extends ventana
                  int n=coment.indexOf("(")+1;
                  cm.setSerieAlbaran(coment.substring(n,n+1));
                  cm.setNumeroAlbaran(coment.substring(n+1,coment.indexOf(")")));
+              
                  cm.ej_query();
                  jf.gestor.ir(cm);
               }

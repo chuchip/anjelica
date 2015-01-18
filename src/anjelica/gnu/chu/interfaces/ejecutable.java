@@ -2,6 +2,8 @@
 package gnu.chu.interfaces;
 
 import java.util.Locale;
+import javax.swing.JLabel;
+
 
 public interface ejecutable
 {
@@ -61,5 +63,6 @@ public interface ejecutable
   public void iniciarVentana() throws Exception;
   public boolean isClosable();
   public void setClosable(boolean b);
-
+  public void setLabelEstado(JLabel labelEstado);
+  public JLabel getLabelEstado();
 }

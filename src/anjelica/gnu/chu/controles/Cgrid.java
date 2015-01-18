@@ -406,6 +406,15 @@ public class Cgrid extends CPanel implements Serializable
         Object o[]=lista.toArray();
         setToolTipHeader(Arrays.asList(o).toArray(new String[o.length]));
     }
+    public void setToolTipHeader(int col, String tooltipText)
+    {                
+        headerToolTip.setToolTipString(col,tooltipText);
+    }
+    public String getToolTipHeader(int col)
+    {                
+        return headerToolTip.getToolTipString(col);
+    }
+
     public void setNumColumnas(int i) throws Exception {
         if (nCol != 0) {
             throw new UnsupportedOperationException("Esta funcion no se puede llamar mas que una vez");
@@ -3798,9 +3807,7 @@ class ToolTipHeader extends JTableHeader {
       String retStr;
       try {
         retStr = toolTips[modelCol];
-      } catch (NullPointerException ex) {
-        retStr = "";
-      } catch (ArrayIndexOutOfBoundsException ex) {
+      } catch (NullPointerException | ArrayIndexOutOfBoundsException ex) {
         retStr = "";
       }
       if (retStr.length() < 1) {
@@ -3811,5 +3818,26 @@ class ToolTipHeader extends JTableHeader {
 
     public void setToolTipStrings(String[] toolTips) {
       this.toolTips = toolTips;
+    }
+    
+    public void setToolTipString(int col, String toolTipString) {
+       if (toolTips==null)
+       {
+           int nCol=getTable().getColumnCount();
+           toolTips=new String[nCol];
+           for (int n=0;n<nCol;n++)
+               toolTips[n]="";
+       }
+       toolTips[col]=toolTipString;
+    }
+    
+    public String getToolTipString(int col) {
+       if (toolTips==null)
+           return null;
+       return toolTips[col];
+    }
+
+    public String[] getToolTipStrings() {
+      return this.toolTips; 
     }
   }

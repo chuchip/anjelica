@@ -272,8 +272,14 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
     // Anade Listener para las teclas pulsadas.
     this.addKeyListener(new KeyAdapter()
     {
+      @Override
       public void keyPressed(KeyEvent e)
       {
+        if (e.isControlDown() && e.getKeyChar()=='1')
+        {
+            pulsadaF1();
+            return;
+        }
         if (! e.isAltDown())
         {
           switch (e.getKeyCode())
@@ -299,25 +305,8 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
               }
               break;
             case KeyEvent.VK_F1:
-              if (getTipoCampo()==Types.DATE)
-              {
-                Date fecha=null;
-                try
-                {
-                    fecha = mensajes.getFechaCalendario(getDate());
-                } catch (ParseException ex)
-                {
-                    Logger.getLogger(CTextField.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                if (fecha==null)
-                    return;
-                setDate(fecha);
-              }
-              else
-              {
-                if (isEditable())
-                    leePesoBasc(0);
-              }
+              pulsadaF1();
+             
               break;
             case KeyEvent.VK_ESCAPE:
             case KeyEvent.VK_F2:
@@ -411,6 +400,28 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
 
     });
     */
+  }
+  void  pulsadaF1()
+  {
+    if (getTipoCampo()==Types.DATE)
+    {
+      Date fecha=null;
+      try
+      {
+          fecha = mensajes.getFechaCalendario(getDate());
+      } catch (ParseException ex)
+      {
+          Logger.getLogger(CTextField.class.getName()).log(Level.SEVERE, null, ex);
+      }
+      if (fecha==null)
+          return;
+      setDate(fecha);
+    }
+    else
+    {
+      if (isEditable())
+          leePesoBasc(0);
+    }
   }
   public boolean leePesoBasc()
   {

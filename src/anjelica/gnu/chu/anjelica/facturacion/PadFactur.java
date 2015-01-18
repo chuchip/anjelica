@@ -2,7 +2,7 @@
  *
  * <p>Titulo: PadFactur </p>
  * <p>Descripción: Mantenimiento Facturas de Ventas</p>
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -44,10 +44,7 @@ import java.awt.event.*;
 import java.sql.*;
 import java.text.*;
 import java.util.*;
-/**
- *
- * @author jpuente
- */
+
 public class PadFactur extends ventanaPad   implements PAD {
   private boolean IMPFRATEXTO=false;
   int numDec=2;
