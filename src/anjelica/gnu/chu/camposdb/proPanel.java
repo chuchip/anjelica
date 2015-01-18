@@ -676,8 +676,9 @@ public class proPanel extends CPanel
   void procesaTecla(KeyEvent e)
   {
     if (ponBcons)
-    {
-      if (e.getKeyCode() == KeyEvent.VK_F3 && isEditable())
+    { 
+      if ((e.getKeyCode() == KeyEvent.VK_F3  || (e.getKeyChar()=='3' && e.getModifiers()==KeyEvent.CTRL_MASK))
+          && isEditable())
       {
         consPro();
         return;
@@ -721,9 +722,13 @@ public class proPanel extends CPanel
   {
       if (! ayudaLotes)
           return;
-       if (e.getKeyCode() != KeyEvent.VK_F3 ||  ! isEditable() || ! isEnabled())
+      if (e.getKeyCode() == KeyEvent.VK_F3  || (e.getKeyChar()=='3' && e.getModifiers()==KeyEvent.CTRL_MASK) )
+      {
+       if (! isEditable() || ! isEnabled())
                    return;
-       
+      }
+      else
+          return;
       if (pro_codiE.getValorInt()==0)
       {
           mensajes.mensajeAviso("Introduzca Codigo Producto para consultar lotes disponbiles");
@@ -780,8 +785,8 @@ public class proPanel extends CPanel
             intfr.getLayeredPane().add(aypro,1);
           else
             vl.add(aypro);
-        vl.add(aypro);
-        aypro.setLocation(25, 25);
+ 
+        aypro.setLocation(15, 15);
         aypro.iniciarVentana();
       }
 
