@@ -10,17 +10,15 @@ import java.awt.event.*;
 import java.sql.*;
 import gnu.chu.sql.*;
 import java.util.*;
-import java.text.*;
 import gnu.chu.anjelica.ventas.*;
-
-import java.util.Date;
-
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.*;
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantRepres;
+import java.text.ParseException;
+import java.util.Date;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -35,7 +33,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * ultimos albaranes y/o facturas. Cobros realizados, importe pendiente de cobro y comentarios.
  *  </p><p>Tambien permite modificar ciertos datos de conctacto del cliente.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2009
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -115,7 +113,7 @@ public class FichaClientes extends ventana implements PAD
   lotVenPro ayLoPr =null;
 
   navegador navcli = new navegador(this,false,navegador.CURYCON);
-
+  CButton realPedi = new CButton(Iconos.getImageIcon("pon"));
      navegador navAlb = new navegador(null, false, navegador.SOLCUR)
      {
         @Override
@@ -478,21 +476,22 @@ public class FichaClientes extends ventana implements PAD
    jtTpe.setFormatoColumna(5, "--,---,--9.99");
    jtTpe.setAlinearColumna(new int[]{2,2,0,2,1,2,0});
 
-   Vector v4=new Vector();
+   ArrayList v4=new ArrayList();
 
-   v4.addElement("Fec.Cobro");
-   v4.addElement("Imp.Cobro");
-   v4.addElement("Tipo Cobro");
-   v4.addElement("Vto.Cobro");
+   v4.add("Fec.Cobro");
+   v4.add("Imp.Cobro");
+   v4.add("Tipo Cobro");
+   v4.add("Vto.Cobro");
 
    s="select c.cob_feccob,c.cob_impor,tpc_codi,cob_fecvto ";
-   Vector v5=new Vector();
+   ArrayList v5=new ArrayList();
    cPanel1.setOpaque(true);
     cPanel1.setBounds(new Rectangle(0, 350, 360, 65));
     cgrid1.setBounds(new Rectangle(360, 350, 345, 65));
     Palbave.setBounds(new Rectangle(20, 165, 693, 27));
     navAlb.setBounds(new Rectangle(60, 145, 602, 18));
     navcli.setBounds(new Rectangle(116, 2, 481, 18));
+    realPedi.setBounds(new Rectangle(600,2,18,18));
     opSoloCli.setSelectedIcon(null);
     opSoloCli.setText("Ver Solo Datos de Clientes");
     opSoloCli.setBounds(new Rectangle(173, 22, 179, 16));
@@ -570,6 +569,10 @@ public class FichaClientes extends ventana implements PAD
     cgrid1.setMinimumSize(new Dimension(354, 96));
     cgrid1.setPreferredSize(new Dimension(354, 96));
     cgrid1.setBuscarVisible(false);
+    realPedi.setToolTipText("Realizar pedido a cliente");
+    realPedi.setMaximumSize(new Dimension(18,18));
+    realPedi.setMinimumSize(new Dimension(18,18));
+    realPedi.setPreferredSize(new Dimension(18,18));
     navcli.setMaximumSize(new Dimension(478, 22));
     navcli.setMinimumSize(new Dimension(478, 22));
     navcli.setPreferredSize(new Dimension(478, 22));
@@ -1061,6 +1064,7 @@ public class FichaClientes extends ventana implements PAD
         cPanel4.add(cob_devanE, null);
         jtFco.add(cPanel5, BorderLayout.SOUTH);
         Pcliente.add(navcli, null);
+        Pcliente.add(realPedi);
         Pcliente.add(Pdatcli, null);
     }
 
@@ -1170,12 +1174,39 @@ public class FichaClientes extends ventana implements PAD
    } catch (Exception k)
    {
      Error("Error al ver Albaranes/Facturas",k);
-     return;
    }
  }
 
  void activarEventos()
  {
+     realPedi.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          try{
+            if (cli_codiE.isNull())
+                return;
+            ejecutable prog;
+             if ((prog=jf.gestor.getProceso(pdpeve.getNombreClase()))==null)
+                       return;
+                    pdpeve cm=(pdpeve) prog;
+                    if (cm.inTransation())
+                    {
+                       msgBox("Mantenimiento Pedidos de Ventas ocupado. No se puede realizar el Alta");
+                       return;
+                    }
+                    cm.nav.setPulsado(navegador.ADDNEW);
+                    cm.nav.setEnabled(navegador.TODOS, false);
+                    cm.PADAddNew();
+                    cm.setCliente(cli_codiE.getValorInt());
+                    cm.leerDatosCliente();
+                    cm.irGrid();
+                    jf.gestor.ir(cm);
+
+          }catch (Exception k)
+          {
+            Error("Error al cambiar formato vista albaran ",k);
+          }
+        }
+     });
      TPanel.addChangeListener(new ChangeListener() {
         public void stateChanged(ChangeEvent e) {
             if ( swActCli)
@@ -1672,7 +1703,7 @@ public class FichaClientes extends ventana implements PAD
         return;
   }
 
-  void verAlbFra(DatosTabla dt) throws SQLException, ParseException
+  void verAlbFra(DatosTabla dt) throws SQLException
   {
     if (dt.getNOREG() || dt.getSqlOpen() == false)
       return;
@@ -1706,7 +1737,7 @@ public class FichaClientes extends ventana implements PAD
     verDatAlbaran(dtAlb);
   }
 
-  void verDatAlbaran(DatosTabla dt) throws SQLException,ParseException
+  void verDatAlbaran(DatosTabla dt) throws SQLException
   {
 
     if (dt.getNOREG() || dt.getSqlOpen() == false)
@@ -1836,22 +1867,22 @@ public class FichaClientes extends ventana implements PAD
     {
       if (mataConsulta)
         return;
-      Vector v=new Vector();
-      v.addElement(dt.getString("pro_Codi"));
-      v.addElement(dt.getString("art_nomb"));
-      v.addElement(dt.getString("avl_canti"));
-      v.addElement(dt.getString("avl_unid"));
-      v.addElement(dt.getString("avl_prven"));
-      v.addElement(""+(dt.getDouble("avl_canti")*dt.getDouble("avl_prven")));
+      ArrayList v=new ArrayList();
+      v.add(dt.getString("pro_Codi"));
+      v.add(dt.getString("art_nomb"));
+      v.add(dt.getString("avl_canti"));
+      v.add(dt.getString("avl_unid"));
+      v.add(dt.getString("avl_prven"));
+      v.add(""+(dt.getDouble("avl_canti")*dt.getDouble("avl_prven")));
       if (opAgrlin.isSelected())
-        v.addElement("");
+        v.add("");
       else
-        v.addElement(dt.getString("avl_numlin"));
+        v.add(dt.getString("avl_numlin"));
       jtAlb.addLinea(v);
     } while (dt.next());
   }
 
-  void verDatCob(DatosTabla dtAlb) throws SQLException,ParseException
+  void verDatCob(DatosTabla dtAlb) throws SQLException
   {
     cgrid1.removeAllDatos();
     s ="select  cob_anofac, fac_nume,c.cob_feccob,c.cob_impor,tc.tpc_nomb,cob_fecvto " +
@@ -1889,7 +1920,7 @@ public class FichaClientes extends ventana implements PAD
     }
   }
 
-  void verDatFra(DatosTabla dt) throws SQLException,ParseException
+  void verDatFra(DatosTabla dt) throws SQLException
   {
     avc_serieE.resetTexto();
     avc_numeE.resetTexto();

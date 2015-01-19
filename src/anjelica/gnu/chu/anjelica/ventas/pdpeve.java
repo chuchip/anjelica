@@ -215,13 +215,20 @@ public class pdpeve  extends ventanaPad   implements PAD
        ErrorInit(e);   
     }
   }
-
+ public static String getNombreClase()
+  {
+   return "gnu.chu.anjelica.ventas.pdpeve";
+  }
+  public boolean inTransation()
+  {
+      return (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
+  }
   private void jbInit() throws Exception
   {
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2014-10-04");
+    this.setVersion("2015-01-19");
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -577,17 +584,42 @@ public class pdpeve  extends ventanaPad   implements PAD
     avc_numeE.setColumnaAlias("avc_nume");
     Pcabe.setDefButton(Baceptar);
     jt.setDefButton(Baceptar);
+    boolean verDatDif=true;
+    if (getLabelEstado()!=null)
+    {
+        if (getLabelEstado().getText().contains("*DIRECTO*"))
+            verDatDif=false;        
+    }
+    if (verDatDif)
+    {
+       SwingUtilities.invokeLater(new Thread()
+      {
+        @Override
+        public void run()
+        {
+            try{  finalIniciar();  } catch (Exception k)
+            {
+                Error("Error al iniciar Ventana",k);
+            }
+        }
+      });
+    }
+    else
+       finalIniciar();
+    
+  }
+  
+  void finalIniciar() throws Exception
+  {
     verDatos();
-//    opPedidos.setEnabled(true);
-//    opVerProd.setEnabled(true);
-//    pvc_verfecE.setEnabled(true);
     pstock.verFamilias();
-    activarEventos();
+    activarEventos();  
   }
   void activarEventos()
   {
     pvc_fecentE.addFocusListener(new FocusAdapter()
     {
+      @Override
       public void focusLost(FocusEvent e)
       {
         if (! jt.isEnabled())
@@ -887,6 +919,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     mensaje("");
   }
 
+  @Override
   public void PADAddNew()
   {
     try {
@@ -1419,17 +1452,16 @@ public class pdpeve  extends ventanaPad   implements PAD
        Error("Error al imprimir Pedido Venta", k);
      }
    }
-
-   void cli_codiE_afterFocusLost(boolean error)
+    public void irGrid()
+    {
+        jt.requestFocusInicioLater();
+    }
+   public void setCliente(int cliCodi)
    {
-     if (error)
-     {
-       cli_poblE.setText("");
-       return;
-     }
-
-     try
-     {
+       cli_codiE.setValorInt(cliCodi);
+   }
+   public void leerDatosCliente() throws Exception
+   {
        cli_poblE.setText(cli_codiE.getLikeCliente().getString("cli_pobl"));
        boolean releer = false;
        if (cli_codiE.getTarifa() != pstock.getTarifa())
@@ -1444,11 +1476,23 @@ public class pdpeve  extends ventanaPad   implements PAD
        }
        if (releer)
          pstock.verFamilias();
+   }
+   void cli_codiE_afterFocusLost(boolean error)
+   {
+     if (error)
+     {
+       cli_poblE.setText("");
+       return;
+     }
+
+     try
+     {
+       leerDatosCliente();
      }
      catch (Exception k)
      {
        Error("Error al ver Productos de nuevo cliente", k);
-     }
+     }   
    }
 
    void BbusProd_actionPerformed()

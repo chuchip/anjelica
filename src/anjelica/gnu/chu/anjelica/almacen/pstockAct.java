@@ -332,10 +332,10 @@ public class pstockAct extends CPanel
   {
 //    javax.swing.SwingUtilities.invokeLater(new Thread()
 //    {
-    new miThread("")
-    {
-      public void run()
-      {
+//    new miThread("")
+//    {
+//      public void run()
+//      {
         try
         {
           verProductos0(famCodi,0);
@@ -344,9 +344,9 @@ public class pstockAct extends CPanel
         {
           padre.Error("Error al Visualizar Productos de Familia: " + famCodi, k);
         }
-
-      }
-    };
+//
+//      }
+//    };
 
   }
   public void verProducto(int proCodi) throws Exception
@@ -435,11 +435,11 @@ public class pstockAct extends CPanel
 
       }  while (dtCon1.next());
     }
-    javax.swing.SwingUtilities.invokeLater(new Thread()
-    {
-      @Override
-      public void run()
-      {
+//    javax.swing.SwingUtilities.invokeLater(new Thread()
+//    {
+//      @Override
+//      public void run()
+//      {
         int x = 0;
         int y = 0;
         for (CButton vt1 : vt)
@@ -462,8 +462,8 @@ public class pstockAct extends CPanel
         padre.mensaje("");
         padre.mensajeErr("Productos encontrados ",false);
         padre.setEnabled(true);
-      }
-    });
+//      }
+//    });
 
   }
   /**
@@ -761,10 +761,10 @@ public class pstockAct extends CPanel
         }  while (dtCon1.next());
         CButton BProd = getBotonDesgl(proCodi,precio, prvCodi, feccad, unid, canti);
         vt.add(BProd);
-        javax.swing.SwingUtilities.invokeLater(new Thread()
-        {
-          public void run()
-          {
+//        javax.swing.SwingUtilities.invokeLater(new Thread()
+//        {
+//          public void run()
+//          {
             CLabel prodL = new CLabel(bt.getText(), CLabel.CENTER);
             prodL.setOpaque(true);
             prodL.setBackground(Color.blue);
@@ -820,8 +820,8 @@ public class pstockAct extends CPanel
             padre.mensaje("");
             padre.mensajeErr("Productos Desglosado ",false);
             padre.setEnabled(true);
-          }
-        });
+//          }
+//        });
       }
       else
       {

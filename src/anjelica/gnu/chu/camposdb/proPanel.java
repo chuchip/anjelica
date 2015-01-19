@@ -1397,14 +1397,7 @@ public class proPanel extends CPanel
       intfr.setEnabled(false);
       intfr.setFoco(ayuLot);
       ayuLot.cargaGrid(pro_codiE.getText(),alm_codiE==null?almCodi:alm_codiE.getValorInt());
-            SwingUtilities.invokeLater(new Thread()
-      {
-        @Override
-        public void run()
-        {
-          ayuLot.jt.requestFocusInicio();
-        }
-      });
+      ayuLot.jt.requestFocusInicioLater();
 
     }
     catch (Exception j)
