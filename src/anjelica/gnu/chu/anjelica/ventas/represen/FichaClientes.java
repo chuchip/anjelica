@@ -1184,7 +1184,7 @@ public class FichaClientes extends ventana implements PAD
           try{
             if (cli_codiE.isNull())
                 return;
-            ejecutable prog;
+             ejecutable prog;
              if ((prog=jf.gestor.getProceso(pdpeve.getNombreClase()))==null)
                        return;
                     pdpeve cm=(pdpeve) prog;

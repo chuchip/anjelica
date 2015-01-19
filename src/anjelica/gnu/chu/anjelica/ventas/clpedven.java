@@ -4,7 +4,7 @@ package gnu.chu.anjelica.ventas;
  *
  * <p>Título: clpedven </p>
  * <p>Descripción: Consulta/Listado Pedidos de Ventas</p>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -22,7 +22,6 @@ package gnu.chu.anjelica.ventas;
  *
  */
 import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.view.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.controles.*;
 import gnu.chu.Menu.*;
@@ -31,6 +30,7 @@ import java.awt.*;
 import javax.swing.BorderFactory;
 import java.sql.*;
 import gnu.chu.camposdb.*;
+import gnu.chu.interfaces.ejecutable;
 import java.awt.event.*;
 import gnu.chu.sql.*;
 import javax.swing.event.*;
@@ -38,6 +38,9 @@ import java.text.*;
 
 public class  clpedven extends ventana
 {
+  private final int JTCAB_SERALB=11;
+  private final int JTCAB_NUMALB= 12;   
+  private final int JTCAB_EJEALB=10;
   CButton Bimpri=new CButton("Imprimir",Iconos.getImageIcon("print"));
   int empCodiS,ejeNumeS,pvcNumeS,cliCodiS;
   ventana padre=null;
@@ -48,7 +51,7 @@ public class  clpedven extends ventana
   String ZONA = null;
   CPanel Pprinc = new CPanel();
   CPanel Pcondi = new CPanel();
-  Cgrid jtCabPed = new Cgrid(10);
+  Cgrid jtCabPed = new Cgrid(13);
   Cgrid jtLinPed = new Cgrid(10);
   CLabel cLabel1 = new CLabel();
   CComboBox verPedidosE = new CComboBox();
@@ -392,25 +395,49 @@ public class  clpedven extends ventana
 
       }
     });
-    if (padre!=null)
+  
+    jtCabPed.addMouseListener(new MouseAdapter()
     {
-      jtCabPed.addMouseListener(new MouseAdapter()
+      @Override
+      public void mouseClicked(MouseEvent e)
       {
-        public void mouseClicked(MouseEvent e)
+        if (e.getClickCount() < 2)
+          return;
+        if (jtCabPed.isVacio())
+          return;
+        if (padre!=null)
         {
-          if (e.getClickCount() < 2)
-            return;
-          if (jtCabPed.isVacio())
-            return;
           empCodiS=jtCabPed.getValorInt(0);
           ejeNumeS=jtCabPed.getValorInt(1);
           pvcNumeS=jtCabPed.getValorInt(2);
           cliCodiS=jtCabPed.getValorInt(3);
           matar();
         }
+        else
+        { 
+            if (jtCabPed.getValorInt(JTCAB_EJEALB)==0)
+                return;
+             ejecutable prog;
+             if ((prog=jf.gestor.getProceso(pdalbara.getNombreClase()))==null)
+                    return;
+            pdalbara cm=(pdalbara) prog;
+            if (cm.inTransation())
+            {
+               msgBox("Mantenimiento Albaranes de Ventas ocupado. No se puede realizar la busqueda");
+               return;
+            }
+            cm.PADQuery();
+            
+            cm.setSerieAlbaran(jtCabPed.getValString(JTCAB_SERALB));
+            cm.setNumeroAlbaran(jtCabPed.getValString(JTCAB_NUMALB));
+            cm.setEjercAlbaran(jtCabPed.getValorInt(JTCAB_EJEALB));
 
-      });
-    }
+            cm.ej_query();
+            jf.gestor.ir(cm);
+        }
+      }
+
+    });    
   }
   void Baceptar_actionPerformed()
   {
@@ -431,6 +458,9 @@ public class  clpedven extends ventana
         v.add(dtCon1.getInt("pvc_cerra")!=0); // 7
         v.add(dtCon1.getString("pvc_nupecl")); // 8
         v.add(dtCon1.getString("alm_nomb")); // 9
+        v.add(dtCon1.getString("avc_ano")); //10
+        v.add(dtCon1.getString("avc_serie")); // 11
+        v.add(dtCon1.getString("avc_nume")); //12
         jtCabPed.addLinea(v);
       } while (dtCon1.next());
       jtCabPed.requestFocusInicio();
@@ -508,23 +538,26 @@ public class  clpedven extends ventana
 
   private void confJTCab()
   {
-    Vector v=new Vector();
-    v.addElement("Em"); // 0
-    v.addElement("Eje."); // 1
-    v.addElement("Num.");// 2
-    v.addElement("Cliente"); // 3
-    v.addElement("Nombre Cliente"); // 4
-    v.addElement("Fec.Entrega"); // 5
-    v.addElement("Conf"); // 6
-    v.addElement("Cerr");// 7
-    v.addElement("Ped.Cliente"); // 8
-    v.addElement("Almacen");// 9
+    ArrayList v=new ArrayList();
+    v.add("Em"); // 0
+    v.add("Eje."); // 1
+    v.add("Num.");// 2
+    v.add("Cliente"); // 3
+    v.add("Nombre Cliente"); // 4
+    v.add("Fec.Entrega"); // 5
+    v.add("Conf"); // 6
+    v.add("Cerr");// 7
+    v.add("Ped.Cliente"); // 8
+    v.add("Almacen");// 9
+    v.add("Ej.Alb");
+    v.add("S.Alb");
+    v.add("Num.Alb");
     jtCabPed.setCabecera(v);
     jtCabPed.setMaximumSize(new Dimension(548, 158));
     jtCabPed.setMinimumSize(new Dimension(548, 158));
     jtCabPed.setPreferredSize(new Dimension(548, 158));
-    jtCabPed.setAnchoColumna(new int[]{26,40,49,55,150,76,30,40,80,100});
-    jtCabPed.setAlinearColumna(new int[]{2,2,2,2,0,1,1,1,0,0});
+    jtCabPed.setAnchoColumna(new int[]{26,40,49,55,150,76,30,40,80,100,40,40,60});
+    jtCabPed.setAlinearColumna(new int[]{2,2,2,2,0,1,1,1,0,0,2,1,2});
 
     jtCabPed.setFormatoColumna(6,"BSN");
     jtCabPed.setFormatoColumna(7,"BSN");

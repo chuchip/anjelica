@@ -3444,6 +3444,10 @@ public class pdalbara extends ventanaPad  implements PAD
   {
       avc_numeE.setText(numAlbaran);
   }
+  public void setEjercAlbaran(int avcAno)
+  {
+      avc_anoE.setValorInt(avcAno);
+  }
   public boolean inTransation()
   {
       return (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
@@ -3453,7 +3457,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     try {
       resetBloqueo(dtAdd);
-    } catch (Exception k){}
+    } catch (SQLException | ParseException k){}
     mensaje("Introduzca Criterios de Busqueda");
     nav.pulsado = navegador.QUERY;
     activar(true);
