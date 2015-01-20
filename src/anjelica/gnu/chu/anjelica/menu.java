@@ -1797,7 +1797,7 @@ void pdreprese_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
     ht.put("modPrecio","true");
 //     ht.put("ponPrecio","true");
-    ht.put("admin","true");
+    ht.put("admin","false");
 //    ht.put("tipoEtiq",""+gnu.chu.anjelica.despiece.pddespie.NORMAL);
 
     lanzaEjecutable(new gnu.chu.anjelica.ventas.pdalbara(this,EU, ht));

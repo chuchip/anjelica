@@ -9,12 +9,14 @@ import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.winayu.*;
 import gnu.chu.anjelica.pad.pdusua;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * <p>Título: sbePanel </p>
  * <p>Descripción: Campo para introducir la SubEmpresa. <br>
  *  Restringe el uso de las empresas segun los permisos en tablas</p>
- * <p>Copyright: Copyright (c) 2008-2011
+ * <p>Copyright: Copyright (c) 2008-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -49,14 +51,13 @@ public class sbePanel extends CPanel
 
   public sbePanel()
   {
-    try
-    {
-      jbInit();
-    }
-    catch (Throwable e)
-    {
-      e.printStackTrace();
-    }
+     try
+     {
+         jbInit();
+     } catch (Throwable ex)
+     {
+         Logger.getLogger(sbePanel.class.getName()).log(Level.SEVERE, null, ex);
+     }
   }
 
   private void jbInit() throws Throwable
@@ -132,6 +133,7 @@ public class sbePanel extends CPanel
   {
     Bcons.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         consSubempresa();
@@ -139,25 +141,24 @@ public class sbePanel extends CPanel
     });
     sbe_codiE.addFocusListener(new FocusAdapter()
     {
+      @Override
       public void focusLost(FocusEvent e)
       {
         try {
           controla(false);
         } catch (SQLException k)
         {
-          k.printStackTrace();
+         Logger.getLogger(sbePanel.class.getName()).log(Level.SEVERE, null, k);
         }
       }
     });
     sbe_codiE.addKeyListener(new KeyAdapter()
     {
+      @Override
       public void keyPressed(KeyEvent e)
       {
-        if (e.getKeyCode() == KeyEvent.VK_F3 && isEditable())
-        {
+        if ((e.getKeyCode() == KeyEvent.VK_F3 || (e.isControlDown() && e.getKeyChar()=='3')) && isEditable())
           consSubempresa();
-          return;
-        }
       }
     });
 
@@ -179,8 +180,7 @@ public class sbePanel extends CPanel
       controla(false);
     } catch (SQLException k)
     {
-      k.printStackTrace();
-//      mensajes.mensajeUrgente("Error al Actualizar Nombre SubEmpresa\n"+k.getMessage());
+        Logger.getLogger(sbePanel.class.getName()).log(Level.SEVERE, null, k);
     }
   }
   public void setTipo(String tipo)
@@ -256,6 +256,22 @@ public class sbePanel extends CPanel
     }
     setTextLabel(dt.getString("sbe_nomb"));
     return true;
+  }
+  /**
+   * Indica si en una subempresa de una empresa dada, es obligatorio meter
+   * un pedido para cargar el albaran
+   * @param dt
+   * @param empCodi
+   * @param sbeCodi
+   * @return true si es obligatorio.
+   * @throws SQLException 
+   */
+  public static boolean incPedidosAlb(DatosTabla dt,int empCodi,int sbeCodi) throws SQLException
+  {
+      if (!dt.select("SELECT sbe_albped FROM subempresa where sbe_codi = "+sbeCodi+
+           " and emp_codi = "+empCodi))
+          return false;
+      return dt.getInt("sbe_albped")!=0;
   }
   public boolean getSubEmpresa(DatosTabla dt,int sbeCodi,int empCodi,String tipo) throws SQLException
   {

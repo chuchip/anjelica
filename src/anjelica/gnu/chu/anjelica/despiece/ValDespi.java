@@ -34,6 +34,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -146,7 +147,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2012-03-13" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2015-01-20" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -154,7 +155,14 @@ public class ValDespi extends ventana {
         
         conecta();
    }
-   
+   public static String getNombreClase()
+   {
+    return "gnu.chu.anjelica.despiece.ValDespi";
+   }
+   public boolean inTransation()
+   {
+      return Baceptar.isEnabled();
+   }
    @Override
    public void iniciarVentana() throws Exception
    {
@@ -1643,7 +1651,21 @@ public class ValDespi extends ventana {
        popEspere_BCancelarSetEnabled(false);
        cancelaBuscaDesp=true;
    }
-   void buscarDespieces()
+   
+   public void setDespiece(int numDesp)
+   {
+       grd_valorE.setValor("*");
+       grupoC.setValor("D");
+       try
+       {
+           fecsupE.setDate(Formatear.getDate("01-01-"+EU.ejercicio,"dd-MM-yyyy"));
+       } catch (ParseException ex)
+       {
+           Logger.getLogger(ValDespi.class.getName()).log(Level.SEVERE, null, ex);
+       }
+       deo_codiE.setValorInt(numDesp);
+   }
+   public void buscarDespieces()
    {
        if (eje_numeE.isNull())
        {

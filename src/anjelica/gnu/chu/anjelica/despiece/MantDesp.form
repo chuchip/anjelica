@@ -959,7 +959,7 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="390" y="2" width="40" height="18"/>
+                          <AbsoluteConstraints x="350" y="1" width="40" height="18"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -969,7 +969,7 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="470" y="2" width="-1" height="18"/>
+                          <AbsoluteConstraints x="430" y="1" width="-1" height="18"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -982,7 +982,7 @@
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="505" y="2" width="60" height="18"/>
+                          <AbsoluteConstraints x="470" y="1" width="60" height="18"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -995,7 +995,7 @@
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="430" y="2" width="30" height="18"/>
+                          <AbsoluteConstraints x="390" y="1" width="30" height="18"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1015,7 +1015,7 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="570" y="2" width="-1" height="17"/>
+                          <AbsoluteConstraints x="530" y="1" width="-1" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1028,21 +1028,24 @@
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="620" y="2" width="70" height="17"/>
+                          <AbsoluteConstraints x="580" y="1" width="70" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CButton" name="BautoDesp">
+                    <Component class="gnu.chu.controles.CButton" name="BvalDesp">
                       <Properties>
                         <Property name="toolTipText" type="java.lang.String" value="Generar Auto Despiece"/>
                         <Property name="focusable" type="boolean" value="false"/>
                       </Properties>
+                      <AccessibilityProperties>
+                        <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value=""/>
+                      </AccessibilityProperties>
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(Iconos.getImageIcon(&quot;fill&quot;))"/>
+                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(Iconos.getImageIcon(&quot;precio&quot;))"/>
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="360" y="2" width="18" height="18"/>
+                          <AbsoluteConstraints x="660" y="1" width="18" height="18"/>
                         </Constraint>
                       </Constraints>
                     </Component>

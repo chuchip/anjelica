@@ -56,6 +56,7 @@ import gnu.chu.anjelica.sql.Desorilin;
 import gnu.chu.anjelica.sql.DesorilinId;
 import gnu.chu.anjelica.sql.Desporig;
 import gnu.chu.anjelica.sql.DesporigId;
+import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.CComboBox;
 import gnu.chu.controles.StatusBar;
@@ -204,7 +205,7 @@ public class MantDesp extends ventanaPad implements PAD
         }
     }
 
-    public MantDesp(menu p, EntornoUsuario eu, Hashtable ht) {
+    public MantDesp(menu p, EntornoUsuario eu, Hashtable<String,String> ht) {
 
         EU = eu;
         vl = p.getLayeredPane();
@@ -213,11 +214,11 @@ public class MantDesp extends ventanaPad implements PAD
         if (ht != null)
         {
             if (ht.get("tipoEtiq") != null)
-                TIPOETIQ = Integer.parseInt(ht.get("tipoEtiq").toString());
+                TIPOETIQ = Integer.parseInt(ht.get("tipoEtiq"));
             if (ht.get("modPrecio") != null)
-                MODPRECIO = Boolean.valueOf(ht.get("modPrecio").toString()).booleanValue();
+                MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
             if (ht.get("admin") != null)
-                ADMIN = Boolean.valueOf(ht.get("admin").toString()).booleanValue();
+                ADMIN = Boolean.parseBoolean(ht.get("admin"));
         }
 
         try
@@ -360,19 +361,32 @@ public class MantDesp extends ventanaPad implements PAD
         jtLin.setButton(KeyEvent.VK_F5, BcopLin);
         stkPart = new ActualStkPart(dtAdd, EU.em_cod);
         cargaPSC.setSelected(AUTOLLENARDESP);
+         BvalDesp.setVisible(MODPRECIO);
         activarEventos();
         verDatos(dtCons);
 //    this.setEnabled(true);
         mensajeErr("");
+
         activar(false);
     }
 
     void activarEventos() {
-        BautoDesp.addActionListener(new ActionListener()
+        BvalDesp.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e) {
-                autoDesp();
+                ejecutable prog;
+                if ((prog=jf.gestor.getProceso(ValDespi.getNombreClase()))==null)
+                    return;
+                 ValDespi cm=(ValDespi) prog;
+                 if (cm.inTransation())
+                 {
+                    msgBox("Valoracion Despieces ocupado. No se puede realizar la busqueda");
+                    return;
+                 }
+                 cm.setDespiece(deo_codiE.getValorInt());
+                 cm.buscarDespieces();
+                 jf.gestor.ir(cm);
             }
         });
         opVerAgrup.addActionListener(new ActionListener()
@@ -696,6 +710,9 @@ public class MantDesp extends ventanaPad implements PAD
             Error("Error al ver datos de historicos",k);
         }
      }
+    /**
+     * NO USADA!!. Obsoleta
+     */
     private void autoDesp() {
         try
         {
@@ -2382,8 +2399,7 @@ public class MantDesp extends ventanaPad implements PAD
 
         switch (est)
         {
-            case navegador.TODOS:
-                BautoDesp.setEnabled(!enab);
+            case navegador.TODOS:                
                 opVerGrupo.setEnabled(enab);
                 deo_nulogeE.setEnabled(false);
                 deo_selogeE.setEnabled(false);
@@ -2419,6 +2435,7 @@ public class MantDesp extends ventanaPad implements PAD
                 BirGrid.setEnabled(enab);
                 opSimular.setEnabled(enab);
                 opVerAgrup.setEnabled(!enab);
+                BvalDesp.setEnabled(!enab);
         }
     }
 
@@ -4060,7 +4077,7 @@ public class MantDesp extends ventanaPad implements PAD
                 BsalLin = new gnu.chu.controles.CButton();
                 cLabel19 = new gnu.chu.controles.CLabel();
                 impOrigE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9.99");
-                BautoDesp = new gnu.chu.controles.CButton(Iconos.getImageIcon("fill"));
+                BvalDesp = new gnu.chu.controles.CButton(Iconos.getImageIcon("precio"));
                 Phist = new gnu.chu.controles.CPanel();
                 jtHist = new gnu.chu.controles.Cgrid(4);
                 Ptotal1 = new gnu.chu.controles.CPanel();
@@ -4508,19 +4525,19 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel14.setText("Unid");
                 Ptipdes.add(cLabel14);
-                cLabel14.setBounds(390, 2, 40, 18);
+                cLabel14.setBounds(350, 1, 40, 18);
 
                 cLabel15.setText("Kilos");
                 Ptipdes.add(cLabel15);
-                cLabel15.setBounds(470, 2, 27, 18);
+                cLabel15.setBounds(430, 1, 27, 18);
 
                 kgOrigE.setEnabled(false);
                 Ptipdes.add(kgOrigE);
-                kgOrigE.setBounds(505, 2, 60, 18);
+                kgOrigE.setBounds(470, 1, 60, 18);
 
                 uniOrigE.setEnabled(false);
                 Ptipdes.add(uniOrigE);
-                uniOrigE.setBounds(430, 2, 30, 18);
+                uniOrigE.setBounds(390, 1, 30, 18);
 
                 BsalLin.setText("cButton1");
                 Ptipdes.add(BsalLin);
@@ -4528,16 +4545,17 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel19.setText("Importe");
                 Ptipdes.add(cLabel19);
-                cLabel19.setBounds(570, 2, 44, 17);
+                cLabel19.setBounds(530, 1, 44, 17);
 
                 impOrigE.setEnabled(false);
                 Ptipdes.add(impOrigE);
-                impOrigE.setBounds(620, 2, 70, 17);
+                impOrigE.setBounds(580, 1, 70, 17);
 
-                BautoDesp.setToolTipText("Generar Auto Despiece");
-                BautoDesp.setFocusable(false);
-                Ptipdes.add(BautoDesp);
-                BautoDesp.setBounds(360, 2, 18, 18);
+                BvalDesp.setToolTipText("Generar Auto Despiece");
+                BvalDesp.setFocusable(false);
+                Ptipdes.add(BvalDesp);
+                BvalDesp.setBounds(660, 1, 18, 18);
+                BvalDesp.getAccessibleContext().setAccessibleDescription("");
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -4663,13 +4681,13 @@ public class MantDesp extends ventanaPad implements PAD
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
-    private gnu.chu.controles.CButton BautoDesp;
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CButton BcopLin;
     private gnu.chu.controles.CButtonMenu Bimpeti;
     private gnu.chu.controles.CButton BirGrid;
     private gnu.chu.controles.CButton BsalLin;
     private gnu.chu.controles.CButton BsaltaCab;
+    private gnu.chu.controles.CButton BvalDesp;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Pgrid;
     private gnu.chu.controles.CPanel Phist;

@@ -181,7 +181,7 @@ public class pdalbara extends ventanaPad  implements PAD
   int TIDCODI=0; // Tipo despiece por defecto.
   int tirCodi=0;
   boolean swAvisoDto=true;
-  boolean P_CONPEDIDO=false;
+  boolean P_CONPEDIDO=true; // Depende de campo sbe_albped en tabla subempresa
   ActualStkPart stkPart;
   prvPanel prv_codiE = new prvPanel();
   clpedven copeve;
@@ -618,7 +618,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2014-12-17" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-01-20" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -3962,6 +3962,11 @@ public class pdalbara extends ventanaPad  implements PAD
         swAvisoAlbRep=false;
       }
     }
+    if (! sbe_codiE.controla(true))
+    {
+      mensajeErr("SubEmpresa de Cliente NO valida");
+      return false;
+    }
     if (pvc_anoE.getValorInt() != 0)
     { // Albaran sobre un pedido
       if (getClientePedido() == 0)
@@ -3998,16 +4003,15 @@ public class pdalbara extends ventanaPad  implements PAD
     {
         if (P_CONPEDIDO)
         {
-          pvc_anoE.requestFocus();
-          mensajeErr("Introduzca Pedido de Albaran");
-          return false;
+            if (sbePanel.incPedidosAlb(dtStat, emp_codiE.getValorInt(),sbe_codiE.getValorInt()))
+            {
+              pvc_anoE.requestFocus();
+              mensajeErr("Introduzca Pedido de Albaran");
+              return false;
+            }
         }
     }
-    if (! sbe_codiE.controla(true))
-    {
-      mensajeErr("SubEmpresa de Cliente NO valida");
-      return false;
-    }
+   
     if (!P_MODPRECIO)
       return true;
     int res;
@@ -4187,8 +4191,7 @@ public class pdalbara extends ventanaPad  implements PAD
     nav.pulsado=navegador.ADDNEW;
     Bdespiece.setSelected(false);
     confAlbDep=false;
-    if (P_CONPEDIDO)
-      BbusPed.doClick();
+
     avsNume=0;
     mensaje("Introduciendo Nuevo Albaran ...");
   }
@@ -5068,7 +5071,7 @@ public class pdalbara extends ventanaPad  implements PAD
           Bcancelar.setEnabled(false);
         if (nav.pulsado==navegador.ADDNEW)
            swEntdepos=avc_deposE.getValor().equals("E");
-        
+        //sbe_codiE.setEnabled(false);
         Baceptar.setEnabled(true);
         Bimpri.setEnabled(true);
         jt.setEnabled(true);
@@ -6754,7 +6757,8 @@ public class pdalbara extends ventanaPad  implements PAD
     avc_impalbE.setEnabled(false);
     avc_impcobE.setEnabled(false);
      Bdespiece.setEnabled(false);
-    sbe_codiE.setEnabled(b);    
+    if (P_MODPRECIO)
+        sbe_codiE.setEnabled(b);    
     emp_codiE.setEnabled(b);
     avc_anoE.setEnabled(b);
     avc_seriE.setEnabled(b);
