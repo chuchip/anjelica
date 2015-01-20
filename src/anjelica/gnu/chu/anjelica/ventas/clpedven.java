@@ -33,6 +33,7 @@ import gnu.chu.camposdb.*;
 import gnu.chu.interfaces.ejecutable;
 import java.awt.event.*;
 import gnu.chu.sql.*;
+import java.awt.print.PrinterException;
 import javax.swing.event.*;
 import java.text.*;
 
@@ -97,7 +98,7 @@ public class  clpedven extends ventana
     this(eu, p, new Hashtable());
   }
 
-  public clpedven(EntornoUsuario eu, Principal p, Hashtable ht)
+  public clpedven(EntornoUsuario eu, Principal p, Hashtable<String,String> ht)
   {
     EU = eu;
     vl = p.panel1;
@@ -109,10 +110,9 @@ public class  clpedven extends ventana
       if (ht != null)
       {
         if (ht.get("verPrecio") != null)
-          verPrecio = Boolean.valueOf(ht.get("verPrecio").toString()).
-              booleanValue();
+          verPrecio = Boolean.parseBoolean(ht.get("verPrecio"));
         if (ht.get("zona") != null)
-          ZONA = ht.get("zona").toString();
+          ZONA = ht.get("zona");
       }
       setTitulo("Cons/List. Pedidos Ventas");
 
@@ -128,7 +128,7 @@ public class  clpedven extends ventana
     }
   }
 
-  public clpedven(gnu.chu.anjelica.menu p, EntornoUsuario eu, Hashtable ht)
+  public clpedven(gnu.chu.anjelica.menu p, EntornoUsuario eu, Hashtable<String, String> ht)
   {
     EU = eu;
     vl = p.getLayeredPane();
@@ -139,10 +139,9 @@ public class  clpedven extends ventana
       if (ht != null)
       {
         if (ht.get("verPrecio") != null)
-          verPrecio = Boolean.valueOf(ht.get("verPrecio").toString()).
-              booleanValue();
+          verPrecio = Boolean.parseBoolean(ht.get("verPrecio"));
         if (ht.get("zona") != null)
-          ZONA = ht.get("zona").toString();
+          ZONA = ht.get("zona");
       }
       setTitulo("Cons/List. Pedidos Ventas") ;
 
@@ -171,7 +170,7 @@ public class  clpedven extends ventana
   {
     iniciarFrame();
     this.setSize(new Dimension(675, 519));
-    this.setVersion( " (2014-11-26)"+ (verPrecio ? " (CON PRECIOS) " : ""));
+    this.setVersion( " (2015-01-20)"+ (verPrecio ? " (CON PRECIOS) " : ""));
     statusBar = new StatusBar(this);
 
     if (dtStat==null)
@@ -321,6 +320,7 @@ public class  clpedven extends ventana
     }
   }
 
+  @Override
   public void iniciarVentana() throws Exception
   {
     opLista.addItem("Relacion","R");
@@ -364,13 +364,14 @@ public class  clpedven extends ventana
     pvc_confirE.addItem("**", "-");
     pvc_feciniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -15));
     pvc_fecfinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-    new Integer("1").intValue();
+   
     activarEventos();
   }
   void activarEventos()
   {
     Bimpri.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Bimpri_actionPerformed();
@@ -379,6 +380,7 @@ public class  clpedven extends ventana
 
     Baceptar.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Baceptar_actionPerformed();
@@ -386,6 +388,7 @@ public class  clpedven extends ventana
     });
     jtCabPed.addListSelectionListener(new ListSelectionListener()
     {
+      @Override
       public void valueChanged(ListSelectionEvent e)
       {
         if (e.getValueIsAdjusting() || ! jtCabPed.isEnabled() || jtCabPed.isVacio() ) // && e.getFirstIndex() == e.getLastIndex())
@@ -619,7 +622,7 @@ public class  clpedven extends ventana
          v.add(dtCon1.getString("prv_codi"));
          v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi"),dtStat));
          v.add(dtCon1.getFecha("pvl_feccad"));
-         v.add(dtCon1.getString("pvl_canti"));
+         v.add(dtCon1.getString("pvl_canti")+" "+dtCon1.getString("pvl_tipo"));
          v.add(dtCon1.getString("pvl_precio"));
          v.add(dtCon1.getInt("pvl_precon") != 0);
          v.add(dtCon1.getString("pvl_comen"));
@@ -676,7 +679,7 @@ public class  clpedven extends ventana
 
          mensajeErr("Relacion Pedido Ventas ... IMPRESO ");
       }
-      catch (Exception k)
+      catch (SQLException | ParseException | JRException | PrinterException k)
       {
         Error("Error al imprimir Pedido Venta", k);
       }
@@ -714,9 +717,9 @@ public class  clpedven extends ventana
           s += " and pvc_confir = '" + pvc_confirE.getValor() + "'";
         if (!cli_codiE.isNull())
           s += " AND c.cli_codi = " + cli_codiE.getValorInt();
-        if (!cli_zoncreE.isNull(true) && !cli_zoncreE.equals("**") && !cli_zoncreE.equals("*"))
+        if (!cli_zoncreE.isNull(true) && !cli_zoncreE.getText().equals("**") && !cli_zoncreE.getText().equals("*"))
           s += " and cl.cli_zoncre  LIKE '" + Formatear.reemplazar(cli_zoncreE.getText(), "*", "%") + "'";
-        if (!cli_zonrepE.isNull(true) && !cli_zonrepE.equals("**") && !cli_zonrepE.equals("*"))
+        if (!cli_zonrepE.isNull(true) && !cli_zonrepE.getText().equals("**") && !cli_zonrepE.getText().equals("*"))
           s += " and cl.cli_zonrep  LIKE '" + Formatear.reemplazar(cli_zonrepE.getText(), "*", "%") + "'";
         if (! opListado.getValor().equals("T"))
           s+=" AND c.pvc_impres = '"+opListado.getValor()+"'";
@@ -747,7 +750,7 @@ public class  clpedven extends ventana
         ctUp.commit();
         mensajeErr("Pedido Ventas ... IMPRESO ");
       }
-      catch (Exception k)
+      catch (SQLException | JRException | PrinterException k)
       {
         Error("Error al imprimir Pedido Venta", k);
       }
