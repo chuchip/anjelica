@@ -3170,11 +3170,12 @@ create table anjelica.subempresa
  sbe_codi smallint not null,	-- SubEmpresa
  sbe_nomb char(40) not null,	-- Descripción SubEmpresa
  sbe_tipo char(1) not null default 'C', -- (C)liente, (A)rticulo
+ sbe_albped smallint not null default 0, -- Indica si los alb. Deben ir sobre pedido.
  -- alm_codi int not null,		-- Almacen por defecto para esta subempresa
  constraint ix_subempr primary key (emp_codi,sbe_codi,sbe_tipo)
 );
-INSERT INTO SUBEMPRESA VALUES(1,1,'GENERAL','C');
-INSERT INTO SUBEMPRESA VALUES(1,1,'ARTICULO','A');
+INSERT INTO SUBEMPRESA VALUES(1,1,'GENERAL','C',0);
+INSERT INTO SUBEMPRESA VALUES(1,1,'ARTICULO','A',0);
 --
 -- Tabla relacion entre subempresas cliente y articulo
 -- Si no hay registros para una subempresa de cliente, se entendera que esa subempresa

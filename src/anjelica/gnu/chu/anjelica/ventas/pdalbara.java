@@ -7031,7 +7031,7 @@ public class pdalbara extends ventanaPad  implements PAD
       } while (dtCon1.next());
 
     }
-    catch (Exception k)
+    catch (Throwable k)
     {
       Error("Error al imprimir etiquetas", k);
     }

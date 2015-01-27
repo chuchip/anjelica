@@ -376,7 +376,7 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
       etiq.listar();
 //        new ThreadPrint_alco(this);
     }
-    catch (Exception k)
+    catch (Throwable k)
     {
       Error("Error al Imprimir Etiquetas", k);
     }

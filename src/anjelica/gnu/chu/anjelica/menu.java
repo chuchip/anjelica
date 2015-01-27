@@ -160,7 +160,7 @@ public class menu extends JFrame
   JMenuItem pdusbempr = new JMenuItem();
   JMenuItem pdempresa = new JMenuItem();
 
-  JMenuItem pdusua = new JMenuItem();
+  JMenuItem lkpdusua = new JMenuItem();
   JMenuItem cocaalco = new JMenuItem();
   JMenuItem clrealco = new JMenuItem();
   JMenuItem lirefacco = new JMenuItem();
@@ -715,8 +715,8 @@ public class menu extends JFrame
       }
     });
 
-    pdusua.setText("Usuarios");
-    pdusua.addActionListener(new java.awt.event.ActionListener() {
+    lkpdusua.setText("Usuarios");
+    lkpdusua.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         pdusua_actionPerformed(e);
       }
@@ -916,7 +916,7 @@ public class menu extends JFrame
     JPopupPad.add(pdnumerac);
     JPopupPad.add(pdusbempr);
     JPopupPad.add(pdempresa);
-    JPopupPad.add(pdusua);
+    JPopupPad.add(lkpdusua);
     JPopupPad.add(tipotari);
      JPopupPad.add(tarifa);
      JPopupPad.add(mantCalendar);

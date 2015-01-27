@@ -1101,7 +1101,7 @@ public class utildesp
                       int proCodi, String nombArt,  String indiceEti, int nuloge, String ejloge,
                       String seloge, int numInd,
                       double kilos, String fecDesp, java.util.Date fecProd, String fecCad,
-                      java.util.Date fecSacr,java.util.Date cadProdDate) throws  Exception
+                      java.util.Date fecSacr,java.util.Date cadProdDate) throws  Throwable
     {
         actualConservar(proCodi, dtStat);
         if (etiq == null) {

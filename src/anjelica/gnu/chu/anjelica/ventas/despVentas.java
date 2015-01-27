@@ -551,7 +551,7 @@ public class despVentas extends ventana
 
           mensajeErr("Etiqueta ... Listada");
        }
-       catch (Exception ex)
+       catch (Throwable ex)
        {
          Error("Error al Imprimir Etiqueta", ex);
        }

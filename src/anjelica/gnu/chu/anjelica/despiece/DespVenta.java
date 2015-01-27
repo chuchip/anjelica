@@ -362,7 +362,7 @@ public class DespVenta extends ventana {
                          "|"+deoCodi,false);
             dtAdd.commit();
             nuevoDespiece=true;
-        } catch (Exception k)
+        } catch (Throwable k)
         {
            Error("Error al guardar despiece ",k);
         }
@@ -1041,7 +1041,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                     def_feccadE.getDate());
       mensajeErr("Etiqueta ... Listada");
    }
-   catch (Exception ex)
+   catch (Throwable ex)
    {
      Error("Error al Guardar Datos Despiece", ex);
    }

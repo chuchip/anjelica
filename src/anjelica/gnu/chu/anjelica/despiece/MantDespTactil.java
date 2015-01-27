@@ -1034,7 +1034,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
 //       mensaje("Imprimiendo etiqueta: " + n + " de " + netiintE.getValorInt());
 //     }
    }
-   catch (Exception ex)
+   catch (Throwable ex)
    {
      Error("Error al imprimir etiqueta Interior", ex);
    }
@@ -2590,7 +2590,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
          grd_fechaE.getDate(), dtStat));
      etiq.listarDefec();
    }
-   catch (Exception k)
+   catch (Throwable k)
    {
      Error("Error al Imprimir Etiqueta Salida", k);
    }

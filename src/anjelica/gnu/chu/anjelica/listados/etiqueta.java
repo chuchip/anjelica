@@ -139,12 +139,12 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     this.logotipo=logotipo;
   }
 
-  public void listar() throws Exception
+  public void listar() throws Throwable
   {
     listar(tipoEtiq,fichEtiq,logotipo);
   }
 
-  public void listar(int tipEtiq) throws Exception
+  public void listar(int tipEtiq) throws Throwable
   {
     fichEtiq="etiqueta";
     if (tipEtiq==MINI)
@@ -211,7 +211,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
    * El logo no deberia ser nunca nulo... ;)
    * @throws java.lang.Exception
    */
-  public void listar(int tipEtiq,String fichEtiq,String logo) throws Exception
+  public void listar(int tipEtiq,String fichEtiq,String logo) throws Throwable
   {
     if (jr==null || tipEtiq!=tipEtiqOld)
       jr = util.getJasperReport(EU,fichEtiq);
@@ -387,7 +387,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     logotipo=dt.getString("eti_logo");
     etiNuetpa=dt.getInt("eti_nuetpa");
   }
-  public void listarDefec() throws Exception
+  public void listarDefec() throws Throwable
   {
     listar(tipoEtiq,fichEtiq,logotipo);
   }

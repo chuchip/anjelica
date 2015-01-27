@@ -581,6 +581,7 @@ public class MantAlbComCarne extends MantAlbCom
    * @throws SQLException
    * @throws java.text.ParseException
    */
+   @Override
   public void imprEtiq(int nLin,int nInd) throws SQLException,java.text.ParseException
   {
     if (jtDes.getValorDec(nLin,1)<=0 )
@@ -663,7 +664,7 @@ public class MantAlbComCarne extends MantAlbCom
       etiq.listar();
 //        new ThreadPrint_alco(this);
     }
-    catch (Exception k)
+    catch (Throwable k)
     {
       Error("Error al Imprimir Etiquetas", k);
     }

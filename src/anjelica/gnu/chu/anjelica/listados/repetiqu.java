@@ -637,10 +637,9 @@ public class repetiqu extends ventana
         pro_codiE.requestFocus();
         mensajeErr("Listado ... Generado");
       }
-      catch (Exception k)
+      catch (Throwable k)
       {
         Error("Error al Imprimir Etiqueta", k);
-        return;
       }
     }
 /**

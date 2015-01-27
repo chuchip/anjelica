@@ -1764,7 +1764,7 @@ public class MantDesp extends ventanaPad implements PAD
             resetBloqueo(dtAdd, TABLA_BLOCK,
                 eje_numeE.getValorInt()
                 + "|" + deo_codiE.getValorInt());
-        } catch (Exception k)
+        } catch (Throwable k)
         {
             Error("Error al Guardar Datos", k);
             return;
@@ -2015,7 +2015,7 @@ public class MantDesp extends ventanaPad implements PAD
      * Pone stock por diferencia a producto original.
      * @throws Exception
      */
-    void ponStockDif() throws Exception
+    void ponStockDif() throws Throwable
     {
 //      deo_blockE.setValor("N");
 
@@ -2092,7 +2092,7 @@ public class MantDesp extends ventanaPad implements PAD
             resetBloqueo(dtAdd, TABLA_BLOCK, eje_numeE.getValorInt()
                 + "|" + deo_codiE.getValorInt());
 
-        } catch (Exception k)
+        } catch (Throwable k)
         {
             Error("Error al Guardar Datos", k);
             return;
@@ -3251,7 +3251,7 @@ public class MantDesp extends ventanaPad implements PAD
                 utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
                 jtLin.getValDate(linea, 5));
             mensajeErr("Etiqueta ... Listada");
-        } catch (Exception ex)
+        } catch (Throwable ex)
         {
             Error("Error al Guardar Datos Despiece", ex);
         }
@@ -3295,7 +3295,7 @@ public class MantDesp extends ventanaPad implements PAD
 //     this.setEnabled(true);
             mensaje("");
             mensajeErr("Etiqueta Interior ... Listada");
-        } catch (Exception ex)
+        } catch (Throwable ex)
         {
             Error("Error al Guardar Datos Despiece", ex);
         }
