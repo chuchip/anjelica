@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyVetoException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -659,6 +660,7 @@ public class Gestor extends Thread implements Serializable
 
 
     botonCancela.addActionListener(new ActionListener() {
+       @Override
        public void actionPerformed(ActionEvent e) {
               t.stop();
 //              t = null;
@@ -736,14 +738,20 @@ public class Gestor extends Thread implements Serializable
   /**
    * Selecciona de la Base de Datos el Programa Indicado
    * y los posiciona respecto a los valores que tenga guardados
+     * @param c
+     * @param programa
    */
   public void posicionaComponent(Component c, String programa)
   {
+  
     int x = 0, y = 0;
     int width = 0, height = 0;
     if (c instanceof ventana)
-      ( (ventana) c).guardaTamanoOriginal();
-    String s = "Select * from xypantalla where emp_codi = " + principal.Usuario.em_cod +
+    {      
+        ( (ventana) c).guardaTamanoOriginal();
+    }
+      
+    String s = "select * from xypantalla where emp_codi = " + principal.Usuario.em_cod +
         " and usu_nomb = '" + principal.Usuario.usuario + "' and xyp_prog = '" +
         programa + "'";
 
@@ -756,7 +764,7 @@ public class Gestor extends Thread implements Serializable
         {
           x = principal.dt1.getInt("xyp_posx");
           y = principal.dt1.getInt("xyp_posy");
-          if (principal.dt1.getDatos("xyp_with") != null)
+          if (principal.dt1.getObject("xyp_with") != null)
           {
             width = principal.dt1.getInt("xyp_with");
             height = principal.dt1.getInt("xyp_heig");
@@ -767,12 +775,10 @@ public class Gestor extends Thread implements Serializable
       catch (SQLException j)
       {
         if (j.getErrorCode()==-1)
-         SystemOut.print(j);
+         java.util.logging.Logger.getLogger(Gestor.class.getName()).log(Level.SEVERE, "Error al posicionar ventana");
         else
         {
-          if (conectar(j))
-            continue;
-          else
+          if (! conectar(j))
             break;
         }
       }
@@ -786,13 +792,16 @@ public class Gestor extends Thread implements Serializable
   }
   /**
    * Guarda la Posioncion y el tama�o actual del Componente
+     * @param c
+     * @param programa
    */
-  public void guardaPosicion(Component c, String programa) {
+  public void guardaPosicion(Component c, String programa)
+  {
 
-           int x=c.getLocation().x, y=c.getLocation().y;
-          int height=c.getSize().height, width=c.getSize().width;
+        int x=c.getLocation().x, y=c.getLocation().y;
+        int height=c.getSize().height, width=c.getSize().width;
 
-          String s = "Select * from xypantalla where emp_codi = " + principal.Usuario.em_cod +
+        String s = "Select * from xypantalla where emp_codi = " + principal.Usuario.em_cod +
                      " and usu_nomb = '" + principal.Usuario.usuario + "' and xyp_prog = '" +
                      programa + "'";
           while (true) {
@@ -813,9 +822,7 @@ public class Gestor extends Thread implements Serializable
                     principal.dt1.commit();
                     break;
                 } catch (SQLException j) {
-                  if (conectar(j))
-                     continue;
-                  else
+                  if (! conectar(j))
                       break;
                 }
 
@@ -910,6 +917,17 @@ public class Gestor extends Thread implements Serializable
           vl.add((Component)bicho);
           ((CInternalFrame)bicho).toFront();
           ((ejecutable)bicho).iniciarVentana();
+          if (System.getProperty("maximizada") != null)
+          {
+            ((CInternalFrame)bicho).setMaximizable(true);
+           try
+           {
+               ((CInternalFrame) bicho).setMaximum(true);               
+           } catch (PropertyVetoException ex)
+           {
+               java.util.logging.Logger.getLogger(Gestor.class.getName()).log(Level.SEVERE, null, ex);
+           }
+          }
           ((CInternalFrame)bicho).validate();
           try {
             ((CInternalFrame)bicho).setVisible(true);
