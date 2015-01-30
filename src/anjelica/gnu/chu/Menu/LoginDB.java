@@ -10,6 +10,8 @@ import javax.swing.*;
 import gnu.chu.controles.*;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -18,7 +20,7 @@ import gnu.chu.utilidades.*;
  * <p>Descripción: Muestra la pantalla de login para entrar a Anjelica
  * Si la contraseña y usuario es valido lanza la clase gnu.chu.Menu.Menu1
  *  </p>
- * <p>Copyright: Copyright (c) 2005-2009
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -73,12 +75,14 @@ public class LoginDB extends JFrame
 
 
   public LoginDB() {
-    try {
-      jbInit();
-    }
-    catch (Exception e) {
-     e.printStackTrace();
-    }
+    
+      try
+      {
+          jbInit();
+      } catch (Exception ex)
+      {
+          Logger.getLogger(LoginDB.class.getName()).log(Level.SEVERE, null, ex);
+      }
   }
 
 
@@ -171,6 +175,7 @@ public class LoginDB extends JFrame
   {
     Baceptar.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         if (Usuario.getText().equals(""))
@@ -190,6 +195,7 @@ public class LoginDB extends JFrame
 
     Bsalir.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         cancelar();
@@ -197,6 +203,7 @@ public class LoginDB extends JFrame
     });
     this.addWindowListener(new WindowAdapter()
     {
+      @Override
       public void windowOpened(WindowEvent e)
       {
         if (Usuario.getText().equals(""))
@@ -205,6 +212,7 @@ public class LoginDB extends JFrame
           Password.requestFocus();
       }
 
+      @Override
       public void windowClosing(WindowEvent e)
       {
         Bsalir.doClick();
@@ -215,6 +223,7 @@ public class LoginDB extends JFrame
   protected void cancelar() {
     System.exit(0);
   }
+  @Override
   public void dispose() {
     try {
         this.dispose();
