@@ -586,6 +586,12 @@ public class pdalmace extends ventanaPad implements PAD
     dt.select(s);
     almCodi.addItem(dt);
   }
+  /**
+   * Carga un LinkBox con los datos necesarios para buscar un almacen
+   * @param almCodi
+   * @param dt
+   * @throws SQLException 
+   */
   public static void llenaLinkBox(CLinkBox almCodi, DatosTabla dt) throws SQLException
   {
     almCodi.setFormato(true);

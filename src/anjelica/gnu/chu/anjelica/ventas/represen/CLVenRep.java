@@ -650,80 +650,44 @@ public class CLVenRep extends ventana {
     Pcondic.setMaximumSize(new java.awt.Dimension(578, 60));
     Pcondic.setMinimumSize(new java.awt.Dimension(578, 60));
     Pcondic.setPreferredSize(new java.awt.Dimension(578, 60));
+    Pcondic.setLayout(null);
 
     cLabel5.setText("De Fecha");
+    Pcondic.add(cLabel5);
+    cLabel5.setBounds(163, 8, 49, 20);
+    Pcondic.add(fecIniE);
+    fecIniE.setBounds(213, 8, 76, 20);
 
     cLabel6.setText("A Fecha");
+    Pcondic.add(cLabel6);
+    cLabel6.setBounds(315, 8, 43, 20);
+    Pcondic.add(fecFinE);
+    fecFinE.setBounds(362, 8, 75, 20);
 
     cLabel3.setText("Empresa");
+    Pcondic.add(cLabel3);
+    cLabel3.setBounds(23, 8, 49, 20);
+    Pcondic.add(emp_codiE);
+    emp_codiE.setBounds(83, 8, 60, 20);
 
     cLabel1.setText("Repres");
+    Pcondic.add(cLabel1);
+    cLabel1.setBounds(23, 37, 50, 20);
 
     rep_codiE.setAncTexto(30);
     rep_codiE.setAncTexto(30);
+    Pcondic.add(rep_codiE);
+    rep_codiE.setBounds(73, 37, 237, 20);
 
     opIncCobr.setText("Solo cobrados");
+    Pcondic.add(opIncCobr);
+    opIncCobr.setBounds(313, 37, 93, 19);
 
     Baceptar.setText("Ejecutar");
-
-    org.jdesktop.layout.GroupLayout PcondicLayout = new org.jdesktop.layout.GroupLayout(Pcondic);
-    Pcondic.setLayout(PcondicLayout);
-    PcondicLayout.setHorizontalGroup(
-        PcondicLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-        .add(PcondicLayout.createSequentialGroup()
-            .add(21, 21, 21)
-            .add(PcondicLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(PcondicLayout.createSequentialGroup()
-                    .add(cLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 50, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(rep_codiE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 237, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(3, 3, 3)
-                    .add(opIncCobr, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(7, 7, 7)
-                    .add(Baceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(PcondicLayout.createSequentialGroup()
-                    .add(cLabel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(11, 11, 11)
-                    .add(emp_codiE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(20, 20, 20)
-                    .add(cLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(1, 1, 1)
-                    .add(fecIniE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 76, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(26, 26, 26)
-                    .add(cLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(4, 4, 4)
-                    .add(fecFinE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 75, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(42, 42, 42)
-                    .add(bdisc, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-            .add(76, 76, 76))
-    );
-    PcondicLayout.setVerticalGroup(
-        PcondicLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-        .add(PcondicLayout.createSequentialGroup()
-            .add(6, 6, 6)
-            .add(PcondicLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(cLabel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(emp_codiE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(cLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(fecIniE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(cLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(fecFinE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(bdisc, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-            .add(PcondicLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(PcondicLayout.createSequentialGroup()
-                    .add(3, 3, 3)
-                    .add(cLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(PcondicLayout.createSequentialGroup()
-                    .add(3, 3, 3)
-                    .add(rep_codiE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(PcondicLayout.createSequentialGroup()
-                    .add(3, 3, 3)
-                    .add(opIncCobr, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(Baceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(12, 12, 12))
-    );
-
-    PcondicLayout.linkSize(new java.awt.Component[] {bdisc, cLabel3, cLabel5, cLabel6, emp_codiE, fecFinE, fecIniE}, org.jdesktop.layout.GroupLayout.VERTICAL);
+    Pcondic.add(Baceptar);
+    Baceptar.setBounds(413, 34, 100, 26);
+    Pcondic.add(bdisc);
+    bdisc.setBounds(479, 8, 21, 20);
 
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;

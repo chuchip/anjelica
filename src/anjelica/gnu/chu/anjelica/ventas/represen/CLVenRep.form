@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
   <NonVisualComponents>
@@ -108,106 +108,76 @@
             </Constraint>
           </Constraints>
 
-          <Layout>
-            <DimensionLayout dim="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="cLabel1" min="-2" pref="50" max="-2" attributes="0"/>
-                              <Component id="rep_codiE" min="-2" pref="237" max="-2" attributes="0"/>
-                              <EmptySpace min="3" pref="3" max="3" attributes="0"/>
-                              <Component id="opIncCobr" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="7" pref="7" max="7" attributes="0"/>
-                              <Component id="Baceptar" min="-2" pref="100" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="cLabel3" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="11" pref="11" max="11" attributes="0"/>
-                              <Component id="emp_codiE" min="-2" pref="60" max="-2" attributes="0"/>
-                              <EmptySpace min="20" pref="20" max="20" attributes="0"/>
-                              <Component id="cLabel5" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="1" pref="1" max="1" attributes="0"/>
-                              <Component id="fecIniE" min="-2" pref="76" max="-2" attributes="0"/>
-                              <EmptySpace min="26" pref="26" max="26" attributes="0"/>
-                              <Component id="cLabel6" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="4" pref="4" max="4" attributes="0"/>
-                              <Component id="fecFinE" min="-2" pref="75" max="-2" attributes="0"/>
-                              <EmptySpace min="42" pref="42" max="42" attributes="0"/>
-                              <Component id="bdisc" min="-2" pref="21" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <EmptySpace min="-2" pref="76" max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-            <DimensionLayout dim="1">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="cLabel3" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="emp_codiE" linkSize="1" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
-                          <Component id="cLabel5" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="fecIniE" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="cLabel6" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="fecFinE" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="bdisc" linkSize="1" alignment="0" min="-2" pref="17" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="3" pref="3" max="3" attributes="0"/>
-                              <Component id="cLabel1" min="-2" pref="20" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="3" pref="3" max="3" attributes="0"/>
-                              <Component id="rep_codiE" min="-2" pref="20" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="3" pref="3" max="3" attributes="0"/>
-                              <Component id="opIncCobr" min="-2" pref="19" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="Baceptar" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+            <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
             <Component class="gnu.chu.controles.CLabel" name="cLabel5">
               <Properties>
                 <Property name="text" type="java.lang.String" value="De Fecha"/>
               </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="163" y="8" width="-1" height="20"/>
+                </Constraint>
+              </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CTextField" name="fecIniE">
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
               </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="213" y="8" width="76" height="20"/>
+                </Constraint>
+              </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel6">
               <Properties>
                 <Property name="text" type="java.lang.String" value="A Fecha"/>
               </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="315" y="8" width="-1" height="20"/>
+                </Constraint>
+              </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CTextField" name="fecFinE">
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
               </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="362" y="8" width="75" height="20"/>
+                </Constraint>
+              </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Empresa"/>
               </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="23" y="8" width="-1" height="20"/>
+                </Constraint>
+              </Constraints>
             </Component>
             <Component class="gnu.chu.camposdb.empPanel" name="emp_codiE">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="83" y="8" width="60" height="20"/>
+                </Constraint>
+              </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Repres"/>
               </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="23" y="37" width="50" height="20"/>
+                </Constraint>
+              </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CLinkBox" name="rep_codiE">
               <Properties>
@@ -216,18 +186,38 @@
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="rep_codiE.setAncTexto(30);"/>
               </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="73" y="37" width="237" height="20"/>
+                </Constraint>
+              </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CCheckBox" name="opIncCobr">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Solo cobrados"/>
               </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="313" y="37" width="-1" height="19"/>
+                </Constraint>
+              </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CButtonMenu" name="Baceptar">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Ejecutar"/>
               </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="413" y="34" width="100" height="-1"/>
+                </Constraint>
+              </Constraints>
             </Component>
             <Component class="gnu.chu.camposdb.DiscButton" name="bdisc">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="479" y="8" width="21" height="20"/>
+                </Constraint>
+              </Constraints>
             </Component>
           </SubComponents>
         </Container>

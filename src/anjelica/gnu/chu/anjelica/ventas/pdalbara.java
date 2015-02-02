@@ -184,7 +184,7 @@ public class pdalbara extends ventanaPad  implements PAD
   boolean P_CONPEDIDO=true; // Depende de campo sbe_albped en tabla subempresa
   ActualStkPart stkPart;
   prvPanel prv_codiE = new prvPanel();
-  clpedven copeve;
+  CLPedidVen copeve;
   String sqlAlb;
   boolean traspCont,traspReci;
   double antPrecio;
@@ -618,7 +618,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-01-20" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-01-29" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -1479,6 +1479,25 @@ public class pdalbara extends ventanaPad  implements PAD
 
   void activarEventos()
   {
+      printE.addMouseListener(new MouseAdapter() {
+        @Override
+      public void mouseClicked(MouseEvent e)
+      {
+        if (e.getClickCount()<2 || (avcImpres & 1) == 0)
+          return;
+        if (inTransation())
+          return;
+        try
+        {
+            setAlbaranImpreso(0);
+            mensaje("Quitada marca de listado al albaran");
+        } catch (SQLException ex)
+        {
+            Error("Error al establece estado de listado a albaran",ex);
+        }
+        
+      }
+    });
       jtHist.tableView.getSelectionModel().addListSelectionListener(new
        ListSelectionListener()
     {
@@ -2227,7 +2246,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
       if (copeve == null)
       {
-        copeve = new clpedven(this)
+        copeve = new CLPedidVen(this)
         {
           @Override
           public void matar(boolean cerrarConexion)
@@ -2243,12 +2262,12 @@ public class pdalbara extends ventanaPad  implements PAD
       }
       copeve.setVisible(true);
       this.setEnabled(false);
-      copeve.cli_codiE.setText(cli_codiE.getText());
-      copeve.emp_codiE.setValorInt(emp_codiE.getValorInt());
+      copeve.setCliCodiText(cli_codiE.getText());
+      copeve.setEmpCodiText(emp_codiE.getText());
       copeve.empCodiS=0;
       copeve.ejeNumeS=0;
       copeve.pvcNumeS=0;
-      copeve.Baceptar.doClick();
+      copeve.Baceptar_doClick();
     }
     catch (Exception k)
     {
@@ -3991,7 +4010,7 @@ public class pdalbara extends ventanaPad  implements PAD
         pvc_anoE.requestFocus();
         return false;
       }
-      if (dtStat.getInt("cli_codi") != cli_codiE.getValorInt())
+      if (dtStat.getInt("cli_codi") != cli_codiE.getValorInt() && !P_ADMIN )
       {
         mensajeErr("PEDIDO es para Cliente: " + dtStat.getInt("cli_codi") +
                    " Imposible continuar");
@@ -4001,12 +4020,12 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     else
     {
-        if (P_CONPEDIDO)
+        if (P_CONPEDIDO && !avc_deposE.getValor().equals("E"))
         {
             if (sbePanel.incPedidosAlb(dtStat, emp_codiE.getValorInt(),sbe_codiE.getValorInt()))
             {
               pvc_anoE.requestFocus();
-              mensajeErr("Introduzca Pedido de Albaran");
+              mensajeErr("Introduzca Pedido del Albaran");
               return false;
             }
         }
@@ -6242,6 +6261,8 @@ public class pdalbara extends ventanaPad  implements PAD
       else
         n++;
     }
+    // Se busca por un lado lo que tiene stock, para buscar el prv. y si no tiene stock
+    // se pone al cliente como prv.
     s="select 1 as tipo,l.pro_codi,sum(avp_numuni) as avp_numuni,sum(avp_canti) as avp_canti " +
              (! opAgrPrv.isSelected()?", s.prv_codi": "")+
               (!opAgrFecha.isSelected()?", s.stp_feccad ":"") +
@@ -7124,13 +7145,9 @@ public class pdalbara extends ventanaPad  implements PAD
 
       if (liAlb == null)
         liAlb = new lialbven(dtStat, EU);
-      s= "update  v_albavec set avc_impres = 1 WHERE avc_ano =" + avc_anoE.getValorInt() +
-               " and emp_codi = " + emp_codiE.getValorInt() +
-               " and avc_serie = '" + avc_seriE.getText() + "'" +
-               " and avc_nume = " + avc_numeE.getValorInt();
-      dtAdd.executeUpdate(s);
-      dtAdd.commit();
-      verIconoListado(1);
+      
+      setAlbaranImpreso(1);      
+
 //      if (swEntdepos)
 //        sqlAlb = "SELECT c.emp_codi as avc_empcod, c.*,cl.*" +
 //          " FROM albvenserc as c ,clientes cl WHERE c.avs_nume =" + avsNume +
@@ -7167,7 +7184,22 @@ public class pdalbara extends ventanaPad  implements PAD
 
     }
   }
-
+  
+  /**
+   * Establece el estado de albaran impreso
+   * @param albImpreso
+   * @throws SQLException 
+   */
+  void setAlbaranImpreso(int albImpreso) throws SQLException
+  {
+      s= "update  v_albavec set avc_impres = "+albImpreso +" WHERE avc_ano =" + avc_anoE.getValorInt() +
+               " and emp_codi = " + emp_codiE.getValorInt() +
+               " and avc_serie = '" + avc_seriE.getText() + "'" +
+               " and avc_nume = " + avc_numeE.getValorInt();
+      dtAdd.executeUpdate(s);
+      dtAdd.commit();
+      verIconoListado(albImpreso);
+  }
   void consPrecios()
   {
     if (ayVePr == null)

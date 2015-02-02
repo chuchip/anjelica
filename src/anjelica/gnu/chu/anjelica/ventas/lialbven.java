@@ -146,13 +146,13 @@ public class lialbven implements JRDataSource
    java.util.HashMap mp = new java.util.HashMap();
    mp.put(JRParameter.REPORT_CONNECTION,ct);
    if (avsNume==0)
-     mp.put("valora", Boolean.valueOf(valora));
+     mp.put("valora", valora);
    else
-     mp.put("valora", Boolean.valueOf(false));
+     mp.put("valora", false);
    mp.put("emp_obsalb", empObsAlb);
    mp.put("obser", obser==null?null:obser.trim());
    mp.put("logotipo",Iconos.getPathIcon()+"logotipo.jpg");
-   mp.put("avs_nume",Integer.valueOf(avsNume));
+   mp.put("avs_nume", avsNume);
    if (avsNume!=0)
    { // Busco la fecha de albaran de servicio.
     DatosTabla dtTemp=new DatosTabla(ct);
@@ -195,6 +195,7 @@ public class lialbven implements JRDataSource
    return nAlbImp;
  }
 
+  @Override
   public boolean next() throws JRException
   {
     boolean ret;
@@ -211,7 +212,7 @@ public class lialbven implements JRDataSource
           return true;
         }
       }
-    } catch (Exception k)
+    } catch (SQLException | ParseException k)
     {
       throw new JRException(k);
     }
@@ -229,6 +230,7 @@ public class lialbven implements JRDataSource
     ht = datCab.getHashTable();
     return true;
   }
+  @Override
   public Object getFieldValue(JRField jRField) throws JRException
   {
     String nombre=jRField.getName() ;
@@ -246,7 +248,7 @@ public class lialbven implements JRDataSource
             nombre.equals("cli_codpoe") ||
             nombre.equals("cli_recequ") ||
             nombre.equals("avc_ano"))
-          return new Integer(rs.getInt(nombre));
+          return rs.getInt(nombre);
         if (nombre.equals("avc_fecalb"))
           return rs.getDate(jRField.getName());
         if (jRField.getName().equals("avc_impiva"))
@@ -288,6 +290,7 @@ public class lialbven implements JRDataSource
 
   /**
    *
+   * @param empCodi
    * @param dtLin DatosTabla
    * @param dtCab DatosTabla
    * @param sql String

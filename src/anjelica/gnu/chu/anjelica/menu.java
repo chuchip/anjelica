@@ -121,11 +121,13 @@ public class menu extends JFrame
   JPopupMenu JpopupVentas = new JPopupMenu();
   JPopupMenu JpopupPedVentas=new JPopupMenu();
   JMenuItem pdpedven = new JMenuItem("PAD Pedidos Ventas");
-  JMenuItem clpedven = new JMenuItem("Cons.List. Ped.Ventas");
+ 
   JMenuItem clpevepr = new JMenuItem("Cons Ped.Ventas x Producto");
   JMenuItem clAlbSinCosto = new JMenuItem();
   JMenuItem pdalbara = new JMenuItem();
   JMenuItem lialbara = new JMenuItem();
+  JMenuItem clrelpedven = new JMenuItem();
+
    JMenuItem manpralbar = new JMenuItem();
   JMenuItem clvenArt = new JMenuItem();
   JMenuItem coVenPro = new JMenuItem();
@@ -544,6 +546,12 @@ public class menu extends JFrame
         lialbara_actionPerformed(e);
       }
     });
+    clrelpedven.setText("CL Ped.Ventas");
+    clrelpedven.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        clrelalbve_actionPerformed(e);
+      }
+    });
 
     clvenArt.setText("Ventas p/Art");
     clvenArt.addActionListener(new java.awt.event.ActionListener() {
@@ -858,7 +866,7 @@ public class menu extends JFrame
     JpopupVentas.add(ItemRepresen);
     JpopupPedVentas.add(pdpedven);
     JpopupPedVentas.add(clpevepr);
-    JpopupPedVentas.add(clpedven);
+    //JpopupPedVentas.add(clpedven);
     JpopupPedVentas.add(clvenrep);
     JPopupAlmacen.add(ALclstkdes);
     JPopupAlmacen.add(ALclresstock);
@@ -938,6 +946,7 @@ public class menu extends JFrame
     JpopupVentas.add(clAlbSinCosto);
     JpopupVentas.add(pdalbara);
     JpopupVentas.add(lialbara);
+    JpopupPedVentas.add(clrelpedven);
      JpopupVentas.add(manpralbar);
     JpopupVentas.add(clvenArt);
     JpopupVentas.add(coVenPro);
@@ -1063,13 +1072,7 @@ public class menu extends JFrame
          lanzaEjecutable(new gnu.chu.anjelica.ventas.pdpeve(menu.this,EU));         
        }
      });
-     clpedven.addActionListener(new ActionListener()
-     {
-       public void actionPerformed(ActionEvent e)
-       {
-         lanzaEjecutable(new gnu.chu.anjelica.ventas.clpedven(menu.this,EU,new Hashtable()));         
-       }
-     });
+    
      clpevepr.addActionListener(new ActionListener()
      {
        public void actionPerformed(ActionEvent e)
@@ -1806,6 +1809,11 @@ void pdreprese_actionPerformed(ActionEvent e) {
 
     lanzaEjecutable(new gnu.chu.anjelica.ventas.clrealve(this,EU));
   }
+    void clrelalbve_actionPerformed(ActionEvent e) {
+    HashMap ht=new HashMap();
+    lanzaEjecutable(new gnu.chu.anjelica.ventas.CLPedidVen(this,EU,ht));
+  }
+
  void manpralb_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
 //    ht.put("modConsulta","true");
