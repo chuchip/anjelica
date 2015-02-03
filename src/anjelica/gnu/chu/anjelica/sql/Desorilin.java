@@ -3,7 +3,7 @@ package gnu.chu.anjelica.sql;
  *
  * <p>Titulo: Desorilin</p>
  * <p>Descripción: Clase para actualizar tabla desorilin (de despieces)</p>
- * <p>Copyright: Copyright (c) 2005-2011
+ * <p>Copyright: Copyright (c) 2005-2015
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -36,8 +36,8 @@ public class Desorilin  implements java.io.Serializable {
      private Double deoPrcost;
      private Double deoKilos;
      private Double deoPrusu;
-   
      
+       
     public Desorilin() {
     }
 
@@ -64,7 +64,7 @@ public class Desorilin  implements java.io.Serializable {
     
     public void setId(DesorilinId id) {
         this.id = id;
-    }
+    }   
     public Integer getProCodi() {
         return this.proCodi;
     }
@@ -140,6 +140,7 @@ public class Desorilin  implements java.io.Serializable {
     }
     /**
      * Llena los campos con el registro activo
+     * @param dtAdd
      * @param dt
      * @throws SQLException 
      */
@@ -162,7 +163,7 @@ public class Desorilin  implements java.io.Serializable {
         dtAdd.setDato("deo_kilos",getDeoKilos());
         if (getDeoPrusu()!=null)
          dtAdd.setDato("deo_preusu",getDeoPrusu());
-        dtAdd.setDato("deo_tiempo","current_timestamp");
+        dtAdd.setDato("deo_tiempo", "current_timestamp");
         dtAdd.update();
     }
 

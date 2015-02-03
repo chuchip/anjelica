@@ -173,7 +173,7 @@ public class MantDesp extends ventanaPad implements PAD
         this(eu, p, null);
     }
 
-    public MantDesp(EntornoUsuario eu, Principal p, Hashtable ht) {
+    public MantDesp(EntornoUsuario eu, Principal p, Hashtable<String, String> ht) {
         EU = eu;
         vl = p.panel1;
         jf = p;
@@ -186,11 +186,11 @@ public class MantDesp extends ventanaPad implements PAD
             if (ht != null)
             {
                 if (ht.get("tipoEtiq") != null)
-                    TIPOETIQ = Integer.parseInt(ht.get("tipoEtiq").toString());
+                    TIPOETIQ = Integer.parseInt(ht.get("tipoEtiq"));
                 if (ht.get("modPrecio") != null)
-                    MODPRECIO = Boolean.valueOf(ht.get("modPrecio").toString()).booleanValue();
+                    MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
                 if (ht.get("admin") != null)
-                    ADMIN = Boolean.valueOf(ht.get("admin").toString()).booleanValue();
+                    ADMIN = Boolean.parseBoolean(ht.get("admin"));
             }
             if (jf.gestor.apuntar(this))
                 jbInit();
@@ -234,7 +234,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (ADMIN)
             MODPRECIO=true; 
-        setVersion("2015-01-08" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2015-02-03" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -307,7 +307,7 @@ public class MantDesp extends ventanaPad implements PAD
         jtCab.cuadrarGrid();
         jtLin.cuadrarGrid();
         utdesp = new utildesp();
-
+        opMantFecha.setEnabled(ADMIN);
         Pcabe.setDefButton(Baceptar);
         Pcabe.setEscButton(Bcancelar);
         Pcabe.setAltButton(BirGrid);
@@ -1605,6 +1605,7 @@ public class MantDesp extends ventanaPad implements PAD
 
             pro_codiE.resetCambio();
             proCodTD = 1;
+            opMantFecha.setSelected(false);
             Baceptar.setEnabled(true);
             deo_desnueE.setPulsado(false);
             eje_numeE.setEnabled(false);
@@ -1699,7 +1700,7 @@ public class MantDesp extends ventanaPad implements PAD
 
     @Override
     public void ej_edit1() {
-        int nRow, l;
+       // int nRow, l;
         if (jtCab.isEnabled())
         {
             jtCab.salirGrid();
@@ -1730,6 +1731,12 @@ public class MantDesp extends ventanaPad implements PAD
         {
             mensaje("Modificando Datos .. Espere, por favor");
             ordenarLineasCab();
+            if (opMantFecha.isSelected())
+            {// Mantener fecha de Despiece en mvto.
+                dtAdd.executeUpdate("update v_despfin set def_tiempo= {d '"+deo_fechaE.getFecha("yyyy-MM-dd")+"'}"
+                      + " where eje_nume = "+eje_numeE.getValorInt()
+                      + " and deo_codi = "+deo_codiE.getValorInt());
+            }
             // Ordenar las lineas
            
             if (proCodiB != 0)
@@ -1813,6 +1820,7 @@ public class MantDesp extends ventanaPad implements PAD
 
         activar(true, navegador.ADDNEW);
         tid_codiE.setDeoCodi(null);
+        
         Pcabe.resetTexto();
         pro_codiE.resetCambio();
         deo_fechaE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -1854,7 +1862,7 @@ public class MantDesp extends ventanaPad implements PAD
      * y no el de introduccion.
      * @throws SQLException 
      */
-    void ordenarLineasCab() throws SQLException
+    void ordenarLineasCab() throws SQLException,ParseException
     {
          int numLin=1;
          if (nav.getPulsado()==navegador.ADDNEW)
@@ -1868,17 +1876,20 @@ public class MantDesp extends ventanaPad implements PAD
          }
          for (int n=0;n<jtCab.getRowCount();n++)
          {
-             if (jtCab.getValorInt(n,JTCAB_NL)==0)
-                 continue;
-             s="update desorilin  set del_numlin = "+numLin+" where "
-                    + " eje_nume = "+eje_numeE.getValorInt()
-                    +  " and deo_codi = "+deo_codiE.getValorInt()
-                    + " and  del_numlin= "+jtCab.getValorInt(n,JTCAB_NL);
-             int nRows=dtAdd.executeUpdate(s);
-             if (nRows!=1)
-                    throw new SQLException("Error al regenerar numeros de linea: "+s+" Lineas modificadas: "+nRows);
-             jtCab.setValor(numLin,n,JTCAB_NL);
-             numLin++;
+            
+            if (jtCab.getValorInt(n,JTCAB_NL)==0)
+                continue;
+            s="update desorilin  set del_numlin = "+numLin+
+                (opMantFecha.isSelected()?", deo_tiempo= {d '"+deo_fechaE.getFecha("yyyy-MM-dd")+"'}":"")
+                + " where eje_nume = "+eje_numeE.getValorInt()
+                + " and deo_codi = "+deo_codiE.getValorInt()
+                + " and  del_numlin= "+jtCab.getValorInt(n,JTCAB_NL);
+            int nRows=dtAdd.executeUpdate(s);
+            if (nRows!=1)
+                throw new SQLException("Error al regenerar numeros de linea: "+s+" Lineas modificadas: "+nRows);
+            jtCab.setValor(numLin,n,JTCAB_NL);
+            numLin++;
+        
          }
     }
     /**
@@ -2055,21 +2066,6 @@ public class MantDesp extends ventanaPad implements PAD
         inTidCodi = false;
         try
         {
-//            if (jtCab.isEnabled())
-//            {
-//                jtCab.salirGrid();
-//                if (cambiaLineajtCab(jtCab.getSelectedRow()) >= 0)
-//                {
-//                    return;
-//                }
-//            } else
-//            {
-//                jtLin.salirGrid();
-//                if (cambiaLineajtLin(jtLin.getSelectedRow()) >= 0)
-//                {
-//                    return;
-//                }
-//            }
             if (deo_blockE.getValor().equals("N"))
             {
                  if (kgDifE.getValorDec() >= kgOrigE.getValorDec() * LIMDIF)
@@ -3460,6 +3456,7 @@ public class MantDesp extends ventanaPad implements PAD
         desorli.setProCodi(proCodi);
         desorli.setProLote(numLot);
         desorli.setProNumind(numInd);
+        
         desorli.save(dtAdd);
 //        try
 //        {
@@ -3855,6 +3852,7 @@ public class MantDesp extends ventanaPad implements PAD
         usu_nombE = new gnu.chu.controles.CTextField();
         cLabel9 = new gnu.chu.controles.CLabel();
         deo_incvalE = new gnu.chu.controles.CCheckBox("S","N");
+        opMantFecha = new gnu.chu.controles.CCheckBox();
         Ppie = new gnu.chu.controles.CPanel();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
@@ -4153,7 +4151,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 deo_cerraE.setText("Cerrado");
                 Pcabe.add(deo_cerraE);
-                deo_cerraE.setBounds(500, 2, 80, 17);
+                deo_cerraE.setBounds(480, 2, 65, 17);
 
                 deo_numdesL.setText("Grupo ");
                 Pcabe.add(deo_numdesL);
@@ -4277,15 +4275,20 @@ public class MantDesp extends ventanaPad implements PAD
 
                 usu_nombE.setEnabled(false);
                 Pcabe.add(usu_nombE);
-                usu_nombE.setBounds(380, 2, 100, 17);
+                usu_nombE.setBounds(380, 2, 90, 17);
 
                 cLabel9.setText("Usuario");
                 Pcabe.add(cLabel9);
-                cLabel9.setBounds(330, 2, 50, 15);
+                cLabel9.setBounds(330, 2, 50, 17);
 
                 deo_incvalE.setText("Procesado");
                 Pcabe.add(deo_incvalE);
-                deo_incvalE.setBounds(580, 2, 90, 17);
+                deo_incvalE.setBounds(550, 2, 80, 17);
+
+                opMantFecha.setText("MF");
+                opMantFecha.setToolTipText("Mantener Fecha Despiece en Mvtos");
+                Pcabe.add(opMantFecha);
+                opMantFecha.setBounds(630, 2, 40, 17);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -4442,7 +4445,7 @@ public class MantDesp extends ventanaPad implements PAD
                     jtLin.setLayout(jtLinLayout);
                     jtLinLayout.setHorizontalGroup(
                         jtLinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 1146, Short.MAX_VALUE)
+                        .addGap(0, 683, Short.MAX_VALUE)
                     );
                     jtLinLayout.setVerticalGroup(
                         jtLinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4469,7 +4472,7 @@ public class MantDesp extends ventanaPad implements PAD
                 jtCab.setLayout(jtCabLayout);
                 jtCabLayout.setHorizontalGroup(
                     jtCabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 1145, Short.MAX_VALUE)
+                    .addGap(0, 682, Short.MAX_VALUE)
                 );
                 jtCabLayout.setVerticalGroup(
                     jtCabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4586,7 +4589,7 @@ public class MantDesp extends ventanaPad implements PAD
                 jtHist.setLayout(jtHistLayout);
                 jtHistLayout.setHorizontalGroup(
                     jtHistLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 1148, Short.MAX_VALUE)
+                    .addGap(0, 685, Short.MAX_VALUE)
                 );
                 jtHistLayout.setVerticalGroup(
                     jtHistLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4767,6 +4770,7 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField kgOrigE;
     private gnu.chu.controles.CTextField numCopiasE;
     private gnu.chu.controles.CCheckBox opImpEt;
+    private gnu.chu.controles.CCheckBox opMantFecha;
     private gnu.chu.controles.CCheckBox opSimular;
     private gnu.chu.controles.CCheckBox opVerAgrup;
     private gnu.chu.controles.CCheckBox opVerGrupo;
