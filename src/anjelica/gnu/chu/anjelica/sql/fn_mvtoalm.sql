@@ -125,7 +125,7 @@ $BODY$
 		-- RAISE NOTICE 'En update Albaran venta';
 		update anjelica.mvtosalm set mvt_oper= TG_OP,
 			alm_codi=almCodi,
-		        mvt_time=mvtFecdoc,
+		        mvt_time=mvtFecmvt,
 		        mvt_empcod =NEW.emp_codi,
 		        mvt_ejedoc=NEW.avc_ano,
 		        mvt_numdoc=NEW.avc_nume,

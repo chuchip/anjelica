@@ -28,7 +28,9 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;     
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,9 +79,12 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
          JTR_LOTE=4,
          JTR_INDIV=5,
       JTR_KILOS=7, JTR_UNID=6, JTR_COSTO=8,
+      JTR_MVTO=9,
       JTR_ESTAD=10,     JTR_FECRES=11,
+      JTR_TIPREG=12,
       JTR_CODCLI=14,
-      JTR_NOMCLI=15;
+      JTR_NOMCLI=15,
+      JTR_INCL=18;
   static  int ROWTREG=12;
   static  int ROWNVERT=17;
   private int hisRowid=0;
@@ -439,7 +444,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   CPanel PVerted = new CPanel();
   cliPanel rgs_clidevE= new cliPanel();
   CTextField rgs_clinombE=new CTextField(Types.CHAR,"X",50);
-  CGridEditable jtRecl = new CGridEditable(18)
+  CGridEditable jtRecl = new CGridEditable(19)
   {
      @Override
     public void cambiaColumna(int col,int colNueva, int row)
@@ -577,6 +582,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   CTextField rgs_fechaE = new CTextField(Types.DATE,"dd-MM-yy");
   CTextField rgs_fecresE = new CTextField(Types.DATE,"dd-MM-yy"); // Fecha Resoluci�n
   CTextField rgs_numeE= new CTextField(Types.DECIMAL,"#####9");
+  CCheckBox rgs_incluE=new CCheckBox();
   CTextField rgs_unidE= new CTextField(Types.DECIMAL,"----9");
   CTextField rgs_recprvE= new CTextField(Types.CHAR,"?");
   CTextField rgs_comenE = new CTextField(Types.CHAR,"X",100);
@@ -703,7 +709,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20141201)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20150204)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -4209,6 +4215,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         v.add(rgs_clidevE.getNombCliente(dtStat,dtCon1.getInt("rgs_clidev")));
         v.add(dtCon1.getString("rgs_coment"));
         v.add(dtCon1.getString("rgs_nume"));
+        v.add(true);
         jtRecl.addLinea(v);
       } while (dtCon1.next());
     }
@@ -6066,6 +6073,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        jtRecl.setPreferredSize(new Dimension(752, 315));
 
        ArrayList v = new ArrayList();
+       
        v.add("Producto"); //0
        v.add("Nombre"); // 1
        v.add("Eje."); // 2
@@ -6082,11 +6090,12 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        v.add("Mvt?"); // 13 Traspasado
        v.add("Cliente"); // 14 Cod. Cliente
        v.add("Nomb.Cliente"); // 15 Nombre Cliente
-       v.add("Coment"); // 13
-       v.add("N.Vert"); // 14
+       v.add("Coment"); // 16
+       v.add("N.Vert"); // 17
+       v.add("Inc");//18
        jtRecl.setCabecera(v);
-       jtRecl.setAnchoColumna(new int[] {70, 120, 35,25,40,30, 40,65, 65,60,30,60,180,30,50,150,150,50});
-       jtRecl.setAlinearColumna(new int[]{2, 0, 2,0,2,2, 2,2,2, 1,1,1,0,1,2,0,0,2});
+       jtRecl.setAnchoColumna(new int[] {70, 120, 35,25,40,30, 40,65, 65,60,30,60,180,30,50,150,150,50,30});
+       jtRecl.setAlinearColumna(new int[]{2, 0, 2,0,2,2, 2,2,2, 1,1,1,0,1,2,0,0,2,1});
        
        tir_codiE.setAncTexto(30);
        tir_codiE.setFormato(Types.DECIMAL, "##9", 3);
@@ -6131,6 +6140,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        pro_nomverE.setEnabled(false);
        rgs_fecresE.resetTexto();
        rgs_fecresE.setAceptaNulo(true);
+       rgs_incluE.setSelected(true);
        ArrayList v1 = new ArrayList();
        v1.add(pro_codverE.getTextField()); //0
        v1.add(pro_nomverE);  //1
@@ -6150,6 +6160,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        v1.add(rgs_clinombE); // 15
        v1.add(rgs_comenE); // 16
        v1.add(rgs_numeE); // 17
+       v1.add(rgs_incluE); //18
        jtRecl.setToolTipHeader(13,"Influye Stock?");
        jtRecl.setCampos(v1);
        jtRecl.setFormatoCampos();
@@ -6184,7 +6195,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        int numVert=0;
        for (int n=0;n<jtRecl.getRowCount();n++)
        {
-         if (jtRecl.getValorInt(n,0)==JTR_ARTIC)
+         if (jtRecl.getValorInt(n,JTR_ARTIC)==0)
            continue;
          numVert++;
          if (row==n)
@@ -6395,7 +6406,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     {
          int len = crotalBase.length();
          int numAleatorio;
-         String numCrot =crotalBase;
+         String numCrot;
             if (len > 6) {
                 numCrot = crotalBase.substring(0, len - 6);
                 len = 6;
@@ -6781,24 +6792,40 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       }
       dtUpd.commit();
   }
+  /**
+   * Pasar Reclamaciones de un estado a otro.
+   */
   void BvertSala_actionPerformed()
   {
+      
        if (jtRecl.isVacio())
          return;
+       if (jtDes.isEnabled())
+       { 
+           msgBox("Imposible cambiar estado si esta editando individuos");
+           return;
+       }
+      
        int nLin=cambiaLinRecl(jtRecl.getSelectedRow());
        if (nLin>=0)
        {
          jtRecl.requestFocusLater(jtRecl.getSelectedRow(),nLin);
          return;
        }
+       HashMap<Integer,Double> htImpor = new HashMap();
+       
        try {
+         if (tirCodNoAfecta==0)
+             tirCodNoAfecta=pdmotregu.getTipoMotRegu(dtStat, "*");
+
          char estFin = estFinE.getValor().charAt(0);
+         char estIni = estIniE.getValor().charAt(0);
          int nRow = jtRecl.getRowCount();
          for (int n = 0; n < nRow; n++)
          {
            if (jtRecl.getValorInt(n, ROWNVERT) == 0)
              continue;
-           if (!jtRecl.getValString(n, JTR_ESTAD).equals(estIniE.getValor()))
+           if (!jtRecl.getValString(n, JTR_ESTAD).equals(estIniE.getValor()) ||  !jtRecl.getValBoolean(n,JTR_INCL))
              continue;
 
            if (estFin == 'P' || estFin == 'E')
@@ -6810,7 +6837,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
            }
            if (estFin == 'R')
              jtRecl.setValor(0, n, JTR_COSTO);
-           jtRecl.setValor(""+estFin,n,JTR_ESTAD);
+           jtRecl.setValor(estFin,n,JTR_ESTAD);
            s = "update regalmacen set rgs_recprv = " + getRecPrv("" + estFin) + "," +
                " rgs_fecres = "+ (jtRecl.getValString(n,JTR_FECRES).trim().equals("")?"null":
                "TO_DATE('" + jtRecl.getValString(n, JTR_FECRES) + "','dd-MM-yy')")+", " +
@@ -6818,14 +6845,55 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
                " WHERE rgs_nume = " + jtRecl.getValorInt(n, ROWNVERT);
 //           debug("s: "+s);
            dtAdd.executeUpdate(s);
+           if (estFin=='A' && estIni!='A' )
+           { // Paso a Aceptado
+               if (! jtRecl.getValBoolean(n,JTR_MVTO) || jtRecl.getValorInt(n,JTR_TIPREG)==tirCodNoAfecta )
+               {
+                double importe=0;
+                if (htImpor.get(jtRecl.getValorInt(n,JTR_ARTIC))!=null)
+                  importe=htImpor.get(jtRecl.getValorInt(n,JTR_ARTIC));
+                importe+=jtRecl.getValorDec(n,JTR_KILOS) *jtRecl.getValorDec(n,JTR_COSTO);
+                if (importe>0)
+                    htImpor.put(jtRecl.getValorInt(n,JTR_ARTIC), importe);
+               }
+           }
          }
+         for (Map.Entry<Integer,Double> e: htImpor.entrySet()) 
+         {
+               recalImportes(e.getKey(),e.getValue());
+         }
+           
          ctUp.commit();
          jtRecl.requestFocusInicio();
-         mensajeErr("Estado de las Reclamaciones  ... CAMBIADAS");
+         msgBox("Estado de las Reclamaciones  ... CAMBIADAS");
        } catch (SQLException k)
        {
          Error("Error al cambiar estado a Vertederos",k);
        }
-
+  }
+  
+  /**
+   * Recalcula importes de albaran
+   */
+  void recalImportes(int proCodi, double valor) throws SQLException
+  {
+      int nRows=jt.getRowCount();
+      double importe;
+      for (int n=0;n<nRows;n++)
+      {
+          if (jt.getValorInt(n,JT_PROCOD)==proCodi)
+          {
+              importe= (jt.getValorDec(n,JT_KILALB)*jt.getValorDec(n,JT_PRCOM))-valor;
+              if (valor>0)
+              {
+                  importe=Formatear.redondea(importe/jt.getValorDec(n,JT_KILALB),3);
+                  jt.setValor(importe,n,JT_PRCOM);
+                  if (n==jt.getSelectedRow())
+                      acl_prcomE.setValorDec(importe);
+                  return;
+              }
+          }          
+      }
+      msgBox("Articulo "+proCodi+" No encontrado en albaran. Descuente, manualmente el "+valor+" en los productos deseados");
   }
 }
