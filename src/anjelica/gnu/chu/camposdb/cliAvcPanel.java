@@ -96,7 +96,7 @@ public class cliAvcPanel extends cliPanel
       }
     }
     boolean err=controlar1(caso==COMPROBAR?CHECK_NOTEXT:caso,cliNomb);
-    if (isEnabled())
+    if (cli_codiE.isEnabled())
     {
       if (err)
         cli_nombL.setEnabled(getLikeCliente().getInt("cli_gener") != 0);
@@ -122,6 +122,7 @@ public class cliAvcPanel extends cliPanel
     }
     cli_codiE.resetCambio();
   }
+  @Override
   public void setEnabled(boolean enab)
   {
     super.setEnabled(enab);

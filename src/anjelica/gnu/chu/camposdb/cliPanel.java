@@ -451,6 +451,7 @@ public void setZona(String zonCli)
     swControl = swControla;
   }
 
+  @Override
   public String getText() {
     return cli_codiE.getText();
   }
@@ -567,15 +568,12 @@ public void setZona(String zonCli)
   }
   /**
     *
-    * @param pro_nombE CTextField poner a NULL si no se quiere actualizar el nombre
+    * @param cli_nombE CTextField poner a NULL si no se quiere actualizar el nombre
     *                  del producto.
     */
    public void setCliNomb(CTextField cli_nombE)
    {
-     if (cli_nombE==null)
-       swControl = false;
-     else
-       swControl = true;
+     swControl = cli_nombE != null;
 
      this.remove(cli_nombL);
      this.remove(Bcons);

@@ -2286,6 +2286,7 @@ public class pdalbara extends ventanaPad  implements PAD
       pvc_anoE.setValorInt(copeve.ejeNumeS);
       pvc_numeE.setValorInt(copeve.pvcNumeS);
       cli_codiE.setValorInt(copeve.cliCodiS);
+      cli_codiE.getCliNomb().setText(copeve.getCliNomb());
       afterFocusLostCli(false);
     }
     try {

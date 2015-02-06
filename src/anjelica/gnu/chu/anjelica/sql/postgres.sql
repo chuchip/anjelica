@@ -3049,6 +3049,7 @@ create table anjelica.pedvenc;
  eje_nume int not null,		-- Ejercicio de Pedido
  pvc_nume int not null,		-- Numero de Pedido
  cli_codi int not null,		-- Cliente
+ cli_nomb varchar(30),		-- Nombre cliente.
  alm_codi int not null,		-- Almacen
  pvc_fecped timestamp not null,	-- Fecha de Pedido
  pvc_fecent date not null,	-- Fecha de Entrega

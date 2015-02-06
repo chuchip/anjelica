@@ -21,9 +21,9 @@ import java.net.UnknownHostException;
  *
  * <p>Título: pdpeve </p>
  * <p>Descripción: Mantenimiento Pedidos de Ventas. Incluye panel consulta stock de Productos</p>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
- *  los terminos de la Licencia Pública General de GNU seg�n es publicada por
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
  *  o bien (según su elección) de cualquier versión posterior.
  *  Este programa se distribuye con la esperanza de que sea útil,
@@ -66,7 +66,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   CPanel Pprinc = new CPanel();
   CPanel Pcabe = new CPanel();
   CLabel cLabel1 = new CLabel();
-  cliPanel cli_codiE = new cliPanel()
+  cliAvcPanel cli_codiE = new cliAvcPanel()
   {
     @Override
     public void afterFocusLost(boolean error)
@@ -717,12 +717,16 @@ public class pdpeve  extends ventanaPad   implements PAD
       }
     });
   }
+  @Override
   public void PADPrimero()  {    verDatos();  }
-
+  
+  @Override
   public void PADAnterior()  {    verDatos();}
-
+  
+  @Override
   public void PADSiguiente()  {    verDatos();}
 
+  @Override
   public void PADUltimo()  {    verDatos();}
 
   void setPanelQuery(boolean query)
@@ -740,6 +744,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     avc_numeE.setQuery(query);
 
   }
+  
+  @Override
   public void PADQuery()
   {
     setPanelQuery(true);
@@ -764,7 +770,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     mensaje("Introduzca filtro de Consulta ...");
   }
 
-
+  @Override
   public void ej_query1()
   {
     try
@@ -806,7 +812,6 @@ public class pdpeve  extends ventanaPad   implements PAD
      }
      strSql = s;
      activaTodo();
-
      this.setEnabled(true);
      rgSelect();
      mensaje("");
@@ -822,7 +827,8 @@ public class pdpeve  extends ventanaPad   implements PAD
    nav.pulsado = navegador.NINGUNO;
 
   }
-
+  
+  @Override
   public void canc_query()
   {
     setPanelQuery(false);
@@ -832,7 +838,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     mensaje("");
     nav.pulsado=navegador.NINGUNO;
   }
-
+  
+  @Override
   public void PADEdit()
   {
     try {
@@ -870,7 +877,8 @@ public class pdpeve  extends ventanaPad   implements PAD
  {
    return checkAddNew();
  }
-
+ 
+ @Override
  public void ej_edit1()
  {
    try
@@ -1094,6 +1102,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   private void actCabecera() throws  SQLException
   {
     dtAdd.setDato("cli_codi",cli_codiE.getValorInt());
+    dtAdd.setDato("pvc_clinom",cli_codiE.getTextNomb());
     dtAdd.setDato("alm_codi",alm_codiE.getValorInt());
     dtAdd.setDato("pvc_fecped","{ts '"+Formatear.getFechaAct("yyyy-MM-dd hh:mm:ss")+"'}");
     dtAdd.setDato("pvc_fecent",pvc_fecentE.getText(),"dd-MM-yyyy");
@@ -1272,6 +1281,8 @@ public class pdpeve  extends ventanaPad   implements PAD
         return;
       }
       cli_codiE.setValorInt(dtCon1.getInt("cli_codi"));
+      if (dtCon1.getObject("pvc_clinom")!=null)          
+          cli_codiE.getCliNomb().setText(dtCon1.getString("pvc_clinom"));
       cli_poblE.setText(cli_codiE.getLikeCliente().getString("cli_pobl"));
       pvc_nupeclE.setText(dtCon1.getString("pvc_nupecl"));
       pvc_fecentE.setText(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy"));

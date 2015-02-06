@@ -70,6 +70,7 @@ public class CLPedidVen extends  ventana
     private final int JTCAB_SERALB=11;
     private final int JTCAB_NUMALB= 12;   
     private final int JTCAB_EJEALB=10;
+    private final int JTCAB_NOMCLI=4;
     
     public CLPedidVen(EntornoUsuario eu, Principal p) {
         this(eu, p, null);
@@ -243,6 +244,11 @@ public class CLPedidVen extends  ventana
       }
 
     });    
+    }
+    
+    public String getCliNomb()
+    {
+        return jtCabPed.getValString(JTCAB_NOMCLI);
     }
     void verDatPed(int empCodi,int ejeNume,int pvcNume)
    {
@@ -620,7 +626,7 @@ public class CLPedidVen extends  ventana
         v.add(dtCon1.getString("eje_nume")); // 1
         v.add(dtCon1.getString("pvc_nume")); // 2
         v.add(dtCon1.getString("cli_codi")); // 3
-        v.add(dtCon1.getString("cli_nomb")); // 4
+        v.add(dtCon1.getObject("pvc_clinom")==null?dtCon1.getString("cli_nomb"):dtCon1.getString("pvc_clinom")); // 4
         v.add(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy")); // 5
         v.add(dtCon1.getString("pvc_confir")); // 6
         v.add(dtCon1.getInt("pvc_cerra")!=0); // 7
