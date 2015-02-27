@@ -620,7 +620,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-01-29" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-02-27" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -7193,9 +7193,11 @@ public class pdalbara extends ventanaPad  implements PAD
             ifMail.setVisible(true);
             ifMail.setSelected(true);            
             ifMail.setLialbven(liAlb);
-            ifMail.setAsunto("Albaran "+avc_anoE.getValorInt()+avc_seriE.getText()+ avc_numeE.getText()+"  de fecha: "+avc_fecalbE.getText());
-            ifMail.setText("Estimado cliente,\n\nAdjunto le enviamos el albaran "+avc_anoE.getValorInt()+avc_seriE.getText()+ avc_numeE.getText()+"  de fecha: "+avc_fecalbE.getText()+
-                " de fecha "+avc_fecalbE.getText()+"\n\nAtentamente\n\n"+emp_codiE.getEmpNomb());
+            ifMail.setAsunto("Albaran "+avc_anoE.getValorInt()+avc_seriE.getText()+ avc_numeE.getValorInt()+"  de fecha: "+avc_fecalbE.getText());
+            ifMail.setText("Estimado cliente,\n\nAdjunto le enviamos el albaran "+avc_anoE.getValorInt()+avc_seriE.getText()+
+                avc_numeE.getValorInt()+
+                "  de fecha: "+avc_fecalbE.getText()+
+                "\n\nAtentamente\n\n"+emp_codiE.getEmpNomb());
             ifMail.setDatosDoc("A",sqlAlb, opValora.isSelected());
             ifMail.setCliCodi(cli_codiE.getText());
 

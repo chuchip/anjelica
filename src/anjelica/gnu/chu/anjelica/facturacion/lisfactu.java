@@ -10,6 +10,7 @@ import gnu.chu.anjelica.ventas.*;
 import gnu.chu.camposdb.*;
 import gnu.chu.controles.*;
 import gnu.chu.hylafax.SendFax;
+import gnu.chu.mail.MailHtml;
 import gnu.chu.print.*;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
@@ -44,6 +45,9 @@ import net.sf.jasperreports.engine.*;
  */
 public class lisfactu extends ventana  implements JRDataSource
 {
+  String subject;
+  String emailCC;
+  String asunto;
   int numLiComCab,numLiComPie,numLinFra;
   private boolean IMPFRATEXTO=false; // Permite imprimir facturas en modo texto? (tabla parametros)
   private boolean fraPreImp=false; // Usar listado fra. grafico Preimpresa
@@ -1025,6 +1029,38 @@ private String buscaBanco(int banCodi) throws SQLException
         }
         sendFax.setCliente(cliCodi);
         sendFax.sendFax("F", empCodi, fvcAno, fvcSerie, fvcNume, numFax, fichPDF.getAbsolutePath());
+    }
+      /**
+    * Especifica el subject para cuando se envia un correo
+    * @param subject 
+    */
+   public void setSubject(String subject)
+   {
+       this.subject=subject;
+   }
+   public void setEmailCC(String emailCC)
+   {
+       this.emailCC=emailCC;
+   }
+    public void setAsunto(String asunto)
+   {
+       this.asunto=asunto;
+   }
+    public void sendFraEmail(String sql, String from, int cliCodi) throws Exception
+    {
+        setFraPreImpr(false);
+        if (impFacturaJasper(sql,false) == 0) {
+            return;
+        }
+        File fichPDF = util.getFile("fraven", EU, "pdf",true);
+        FileOutputStream outStr = new FileOutputStream(fichPDF);
+        JasperExportManager.exportReportToPdfStream(jp, outStr);
+        outStr.close();
+        MailHtml correo=new MailHtml(EU.usu_nomb,EU.email);
+        correo.setEmailCC(emailCC);
+        correo.enviarFichero(from,asunto,subject,
+                    fichPDF,"factura.pdf");       
+       
     }
     /**
      * Indica si la fra se sacara en papel preimpreso (true) o blanco (false)

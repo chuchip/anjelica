@@ -6,6 +6,7 @@ import gnu.chu.anjelica.facturacion.lisfactu;
 import gnu.chu.anjelica.ventas.lialbven;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.ventana;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -47,6 +48,7 @@ public class IFMail extends ventana {
 
     public IFMail() {
         initComponents();
+        setSize(new Dimension(580,350));
     }
 
     /** This method is called from within the constructor to
@@ -242,11 +244,10 @@ public class IFMail extends ventana {
         });
         Bcancelar.addActionListener(new ActionListener()
         {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 padre.mensajeErr("Email ... CANCELADO");
-                cancelFax();
+                cancelEmail();
             }
         });
     }
@@ -264,15 +265,22 @@ public class IFMail extends ventana {
     }
     void enviarEmailFra()
     {
-        try {
-      liFra.sendFraFax(sqlDoc, cli_emailE.getText(), cli_codiE.getValorInt(),false );
-      cancelFax();
-      padre.mensajeErr("Fax ..... Enviado");
-    }
-    catch (Exception k)
-    {
-      Error("Error al enviar Albaran por Email por usuario: "+EU.usuario, k);
-    }
+       try {
+            liFra.setSubject(asuntoE.getText());
+            liFra.setEmailCC(opCopia.isSelected()? EU.email:null);
+            liFra.setAsunto(respuestE.getText());
+            liFra.sendFraEmail(sqlDoc, cli_emailE.getText(), cli_codiE.getValorInt() );
+            HashMap hm=new HashMap();
+            hm.put("%c", cli_codiE.getValorInt());
+            hm.put("%a",asuntoE.getText());
+            Principal.guardaMens(padre.dtCon1, "EF",hm,null,EU.usuario);
+            cancelEmail();
+            padre.mensajeErr("Email ..... Enviado");
+        }
+        catch (Exception k)
+        {
+          Error("Error al enviar Albaran por Email por usuario: "+EU.usuario, k);
+        }
     }
     public void setAsunto(String subject)
     {
@@ -294,7 +302,7 @@ public class IFMail extends ventana {
             hm.put("%c", cli_codiE.getValorInt());
             hm.put("%a",asuntoE.getText());
             Principal.guardaMens(padre.dtCon1, "EA",hm,null,EU.usuario);
-            cancelFax();
+            cancelEmail();
             padre.mensajeErr("Email ..... Enviado");
         }
         catch (Exception k)
@@ -303,7 +311,7 @@ public class IFMail extends ventana {
         }
   }
 
-  void cancelFax()
+  void cancelEmail()
   {
     padre.setEnabled(true);
     this.setVisible(false);

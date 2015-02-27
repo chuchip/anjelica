@@ -28,6 +28,7 @@ import gnu.chu.Menu.*;
 import gnu.chu.anjelica.DatosIVA;
 import gnu.chu.anjelica.pad.MantTipoIVA;
 import gnu.chu.anjelica.pad.pdejerci;
+import gnu.chu.anjelica.pad.pdempresa;
 import gnu.chu.anjelica.pad.pdnumeracion;
 import gnu.chu.anjelica.riesgos.clFactCob;
 import gnu.chu.anjelica.ventas.actCabAlbFra;
@@ -37,6 +38,7 @@ import gnu.chu.eventos.GridAdapter;
 import gnu.chu.eventos.GridEvent;
 import gnu.chu.hylafax.IFFax;
 import gnu.chu.interfaces.*;
+import gnu.chu.mail.IFMail;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
 import java.awt.*;
@@ -52,6 +54,7 @@ public class PadFactur extends ventanaPad   implements PAD {
   public final static String IMPGRAFICO="Gráfico";
   public final static String IMPGRAFPRE="Gráf.Preim";
   public final static String SENDFAX="Fax";
+  public final static String SENDMAIL="E-Mail";
   lisfactu lifact=null;
   actCabAlbFra datCab;
   String s;
@@ -60,6 +63,7 @@ public class PadFactur extends ventanaPad   implements PAD {
   DatosTabla dtAux;
   CButtonMenu Bprint=new CButtonMenu(Iconos.getImageIcon("print"));
   IFFax ifFax=null;
+  IFMail ifMail=null;
   proPanel pro_codiE=new proPanel();
   CTextField rec_numeE = new CTextField(Types.DECIMAL,"###9");
   CTextField rec_importE = new CTextField(Types.DECIMAL,"--,---,--9.99");
@@ -134,7 +138,7 @@ public class PadFactur extends ventanaPad   implements PAD {
        
         iniciarFrame();
 
-        this.setVersion("2012-09-05" + (MOD_CONS ? "SOLO LECTURA" : ""));
+        this.setVersion("2015-02-27" + (MOD_CONS ? "SOLO LECTURA" : ""));
         strSql = getStrSql();
         IMPFRATEXTO=EU.getValorParam("impFraTexto",IMPFRATEXTO);
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -152,6 +156,7 @@ public class PadFactur extends ventanaPad   implements PAD {
         if (IMPFRATEXTO)
             Bprint.addMenu(IMPPLANO);
         Bprint.addMenu(SENDFAX);
+        Bprint.addMenu(SENDMAIL);
         Bprint.addMenu("Correo Electronico");
         
         statusBar.add(Bprint, new GridBagConstraints(9, 0, 1, 2, 0.0, 0.0
@@ -846,23 +851,27 @@ public class PadFactur extends ventanaPad   implements PAD {
 
    Bprint.addActionListener(new ActionListener()
    {
+     @Override
      public void actionPerformed(ActionEvent e)
      {
        String name=e.getActionCommand();
 //         System.out.println("e: "+name);
-       if ( name.indexOf("Button") >=0 || name.indexOf(IMPPLANO)>=0 ||
-           name.indexOf(IMPGRAFICO)>=0 || name.indexOf(IMPGRAFPRE)>=0 )
+       if ( name.contains(IMPGRAFICO) ||
+           name.contains("Button") || name.contains(IMPPLANO) || name.contains(IMPGRAFPRE) )
        {
          Bprint_actionPerformed(name);
          return;
        }
-       if (name.indexOf(SENDFAX)>=0)
+       if (name.contains(SENDFAX))
            enviarFax();
+        if (name.contains(SENDMAIL))
+           enviarMail();
        else
          msgBox("Acion: "+name+" SIN implementar");
      }
    });
  }
+ 
  void enviarFax()
  {
     try {
@@ -871,7 +880,7 @@ public class PadFactur extends ventanaPad   implements PAD {
         if (ifFax == null) {
             ifFax = new IFFax();
             ifFax.iniciar(this);
-            ifFax.getCliField().setPeso(new Integer(1));
+            ifFax.getCliField().setPeso(1);
             ifFax.setVisible(false);
             ifFax.setIconifiable(false);
             ifFax.setLocation(this.getLocation().x + 30, this.getLocation().x + 30);
@@ -887,6 +896,35 @@ public class PadFactur extends ventanaPad   implements PAD {
     } catch (Exception k)
     {
         Error("Error al enviar el fax",k);
+    }
+ }
+ void enviarMail()
+ {
+    try {
+         if (lifact==null)
+          lifact=new lisfactu(EU,dtCon1,dtStat,dtBloq);
+        if (ifMail == null) {
+            ifMail = new IFMail();
+            ifMail.iniciar(this);
+            ifMail.getCliField().setPeso(1);
+            ifMail.setVisible(false);
+            ifMail.setIconifiable(false);
+            ifMail.setLocation(this.getLocation().x + 30, this.getLocation().x + 30);
+            ifMail.setLisfactu(lifact);
+            vl.add(ifMail, 1);
+        }
+        ifMail.setVisible(true);
+        ifMail.setSelected(true);        
+        ifMail.setAsunto("Factura "+fvc_anoE.getValorInt()+"-"+fvc_serieE.getText()+"-"+ fvc_numeE.getValorInt()+"  de fecha: "+fvc_fecfraE.getText());
+        ifMail.setText("Estimado cliente,\n\nAdjunto le enviamos la factura "+fvc_anoE.getValorInt()+"-"+
+                fvc_serieE.getText()+"-"+ fvc_numeE.getValorInt()+"  de fecha: "+fvc_fecfraE.getText()+
+               "\n\nAtentamente\n\n"+pdempresa.getNombreEmpresa(dtStat, emp_codiE.getValorInt()) );           
+        ifMail.setCliCodi(cli_codiE.getText());
+
+        ifMail.setDatosDoc("F", getSqlListFra(), true);     
+    } catch (Exception k)
+    {
+        Error("Error al enviar el Correo",k);
     }
  }
  String getStrSql()
@@ -1878,6 +1916,7 @@ public class PadFactur extends ventanaPad   implements PAD {
       Error("Error al Listar Factura",k);
     }
   }
+  @Override
   public void matar(boolean cerrarConexion)
  {
    if (muerto)
@@ -1886,6 +1925,16 @@ public class PadFactur extends ventanaPad   implements PAD {
    {
      if (! lifact.muerto)
        lifact.matar(false);
+   }
+    if (ifFax!=null)
+    {
+      ifFax.setVisible(false);
+      ifFax.dispose();
+    }
+   if (ifMail!=null)
+   {
+      ifMail.setVisible(false);
+      ifMail.dispose();
    }
    super.matar(cerrarConexion);
  }
