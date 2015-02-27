@@ -489,15 +489,15 @@ public class pdgruart  extends ventanaPad  implements PAD
     pro_codiE.setCeroIsNull(true);
     pro_codiE.setProNomb(null);
     pro_nombE.setEnabled(false);
-    Vector v1 = new Vector();
-    v1.addElement("Producto");
-    v1.addElement("Nombre de Producto");
+    ArrayList v1 = new ArrayList();
+    v1.add("Producto");
+    v1.add("Nombre de Producto");
     jtLin.setCabecera(v1);
     jtLin.setAnchoColumna(new int[] {50, 200});
     jtLin.setAlinearColumna(new int[]  {2, 0});
-    Vector vc1 = new Vector();
-    vc1.addElement(pro_codiE.pro_codiE);
-    vc1.addElement(pro_nombE);
+    ArrayList vc1 =  new ArrayList();
+    vc1.add(pro_codiE.getFieldProCodi());
+    vc1.add(pro_nombE);
     jtLin.setCampos(vc1);
     jtLin.setAjustarGrid(true);
   }

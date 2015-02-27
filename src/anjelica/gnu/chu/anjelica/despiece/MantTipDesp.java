@@ -5,7 +5,7 @@ package gnu.chu.anjelica.despiece;
  * <p>Título: MantTipDesp </p>
  * <p>Descripcion: Mantenimiento Tipos de Despiece</p>
  * <p>Empresa: miSL</p>
-*  <p>Copyright: Copyright (c) 2005-2011
+*  <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -1028,7 +1028,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
             jtEnt.setAnchoColumna(new int[]{46, 283});
             jtEnt.alinearColumna(new int[] {2, 0});
             Vector v = new Vector();
-            v.addElement(pro_codiE.pro_codiE);
+            v.addElement(pro_codiE.getFieldProCodi());
             v.addElement(pro_nombE);
             jtEnt.setCampos(v);
             jtEnt.setAjustarGrid(true);
@@ -1077,7 +1077,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
             tds_unidE.setValorDec(1);
             tds_grupoE.setValorDec(1);
             Vector vecL=new Vector();
-            vecL.addElement(pro_codsE.pro_codiE);//0
+            vecL.addElement(pro_codsE.getFieldProCodi());//0
             vecL.addElement(pro_nombsE); // 1
             vecL.addElement(tds_unidE); // 2
             vecL.addElement(tds_costoE); // 3

@@ -1906,7 +1906,7 @@ public class PdInvControl extends ventanaPad implements PAD
                 Vector v1 = new Vector();
 
                 v1.add(lci_numeE); // 0
-                v1.add(pro_codiE.pro_codiE); // 1
+                v1.add(pro_codiE.getFieldProCodi()); // 1
                 v1.add(pro_nombE); // 2
                 v1.add(prp_anoE); // 3
                 v1.add(prp_empcodE); // 4

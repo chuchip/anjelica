@@ -709,7 +709,7 @@ public class MantTarifa extends ventanaPad implements PAD
         pro_nombE.setEnabled(false);
         try {
             Vector v = new Vector();
-            v.addElement(pro_codiE.pro_codiE);
+            v.addElement(pro_codiE.getFieldProCodi());
             v.addElement(pro_nombE);
             v.addElement(tar_preciE);
             v.addElement(tar_comenG);

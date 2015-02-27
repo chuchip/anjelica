@@ -19,9 +19,10 @@ import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLayeredPane;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 /**
  *  Panel con el Código de Producto y Nombre de Producto.
@@ -82,7 +83,7 @@ public class proPanel extends CPanel
   String sefCodi = "";
   String camCodi="";
   GridBagLayout gridBagLayout1 = new GridBagLayout();
-  public CTextField pro_codiE = new CTextField(Types.DECIMAL, "####9");
+  private CTextField pro_codiE = new CTextField(Types.DECIMAL, "####9");
   public CTextField pro_nombL = new CTextField();
   public vlike lkPrd=new vlike();
   CButton Bcons = new CButton(Iconos.getImageIcon("find"))
@@ -114,14 +115,13 @@ public class proPanel extends CPanel
 
   public proPanel()
   {
-    try
-    {
-      jbInit();
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-    }
+      try
+      {
+          jbInit();
+      } catch (Exception ex)
+      {
+          Logger.getLogger(proPanel.class.getName()).log(Level.SEVERE, null, ex);
+      }
   }
 
   private void jbInit() throws Exception
@@ -138,6 +138,7 @@ public class proPanel extends CPanel
     Bcons.setPreferredSize(new Dimension(17, 17));
     Bcons.setMinimumSize(new Dimension(17, 17));
     Bcons.setMaximumSize(new Dimension(17, 17));
+    Bcons.setToolTipText("Buscar Productos (F3)");
     Binserta.setPreferredSize(new Dimension(17, 17));
     Binserta.setMinimumSize(new Dimension(17, 17));
     Binserta.setMaximumSize(new Dimension(17, 17));
@@ -624,6 +625,7 @@ public class proPanel extends CPanel
 
     Bcons.addActionListener(new java.awt.event.ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         consPro();
@@ -664,6 +666,7 @@ public class proPanel extends CPanel
     Binserta.setVisible(visible);
 
   }
+  @Override
   public void addMouseListener(MouseListener l)
   {
     if (pro_codiE!=null)
@@ -684,14 +687,8 @@ public class proPanel extends CPanel
         return;
       }
     }
-    if (ponBins)
-    {
-      if (e.getKeyCode() == KeyEvent.VK_INSERT && isEditable())
-      {
+    if (ponBins && e.getKeyCode() == KeyEvent.VK_INSERT && isEditable())
         altaPro();
-        return;
-      }
-    }
   }
     @Override
   public boolean isEditable()
@@ -1051,6 +1048,22 @@ public class proPanel extends CPanel
   public String getNombArt(String codArt) throws SQLException
   {
     return getNombArt(codArt,eu.em_cod);
+  }
+  /**
+   * Devuelve el campo pro_codi, donde se introducira el codido del producto
+   * @return CTextField 
+   */
+  public CTextField getFieldProCodi()
+  {
+      return pro_codiE;
+  }
+  /**
+   * Devuelve el Boton de Consulta, con el que se invoca a la ventana de ayuda de prod.
+   * @return CButton
+   */
+  public CButton getFieldBotonCons()
+  {
+      return Bcons;
   }
   /**
    * Devuelve el nombre del articulo
@@ -1439,10 +1452,12 @@ public class proPanel extends CPanel
   /**
    * Función para machacar si se quiere controlar algo despues de salir del lote
    * 
+     * @param ayuLot
    */
   public void afterSalirLote(ayuLote ayuLot)
   {
 
   }
+
 }
 

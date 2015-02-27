@@ -1815,14 +1815,14 @@ public class MantArticulos extends ventanaPad  implements PAD
         try {
             pro_coexclE.iniciar(dtStat, this, vl, EU);
             pro_coexclE.setProNomb(null);
-            Vector v=new Vector();
+            ArrayList v=new ArrayList();
             v.add("Producto");
             v.add("Nombre");
             jtExclu.setCabecera(v);
             jtExclu.setAnchoColumna(new int[]{60,250});
             jtExclu.setAlinearColumna(new int[]{2,0});
             Vector v1=new Vector();
-            v1.add(pro_coexclE.pro_codiE);
+            v1.add(pro_coexclE.getFieldProCodi());
             v1.add(pro_noexclE);
             jtExclu.setCampos(v1);
             jtExclu.setAjustarColumnas(true);
@@ -1836,14 +1836,14 @@ public class MantArticulos extends ventanaPad  implements PAD
         try {
             pro_coequiE.iniciar(dtStat, this, vl, EU);
             pro_coequiE.setProNomb(null);
-            Vector v=new Vector();
+            ArrayList v=new ArrayList();
             v.add("Producto");
             v.add("Nombre");
             jtEqui.setCabecera(v);
             jtEqui.setAnchoColumna(new int[]{60,250});
             jtEqui.setAlinearColumna(new int[]{2,0});
             Vector v1=new Vector();
-            v1.add(pro_coequiE.pro_codiE);
+            v1.add(pro_coequiE.getFieldProCodi());
             v1.add(pro_noequiE);
             jtEqui.setCampos(v1);
             jtEqui.setAjustarColumnas(true);
@@ -1862,14 +1862,14 @@ public class MantArticulos extends ventanaPad  implements PAD
         try {
             pro_coeqcoE.iniciar(dtStat, this, vl, EU);
             pro_coeqcoE.setProNomb(null);
-            Vector v=new Vector();
+            ArrayList v=new ArrayList();
             v.add("Producto");
             v.add("Nombre");
             jtEquCon.setCabecera(v);
             jtEquCon.setAnchoColumna(new int[]{60,250});
             jtEquCon.setAlinearColumna(new int[]{2,0});
             Vector v1=new Vector();
-            v1.add(pro_coeqcoE.pro_codiE);
+            v1.add(pro_coeqcoE.getFieldProCodi());
             v1.add(pro_noeqcoE);
             jtEquCon.setCampos(v1);
             jtEquCon.setAjustarColumnas(true);

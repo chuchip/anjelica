@@ -18,7 +18,7 @@ import javax.swing.*;
  * <p>Titulo:   pdclaslom </p>
  * <p>Descripci�n: Mantenimienteos CLASIFICACION de Lomos
  * </p>
- * <p>Copyright: Copyright (c) 2005
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los t�rminos de la Licencia P�blica General de GNU seg�n es publicada por
  *  la Free Software Foundation, bien de la versi�n 2 de dicha Licencia
@@ -176,7 +176,7 @@ public class pdclaslom extends ventanaPad implements PAD
 
       pro_nombE.setEnabled(false);
       ArrayList v = new ArrayList();
-      v.add(pro_codiE.pro_codiE);
+      v.add(pro_codiE.getFieldProCodi());
       v.add(pro_nombE);
       v.add(cll_kilosE);
       jt.setCampos(v);

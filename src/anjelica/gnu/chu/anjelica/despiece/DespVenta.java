@@ -136,7 +136,7 @@ public class DespVenta extends ventana {
         tid_codiE.iniciar(dtStat, padre, padre.vl, EU);
         pro_codsalE.setProNomb(pro_nombE);
         ArrayList vc=new ArrayList();
-        vc.add(pro_codsalE.pro_codiE);
+        vc.add(pro_codsalE.getFieldProCodi());
         vc.add(pro_nombE);
         vc.add(pro_kilsalE);
         vc.add(pro_unidE);

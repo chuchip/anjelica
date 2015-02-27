@@ -29,7 +29,7 @@ package gnu.chu.anjelica.ventas;
  *   Permite modificar albaranes que ya hayan sido facturados.
  * checkPedido: true o false, indica si se comprobara si exiten pedidos pendientes. Por defecto es true.
  *</p>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -72,6 +72,7 @@ import gnu.chu.controles.*;
 import gnu.chu.hylafax.IFFax;
 import gnu.chu.hylafax.SendFax;
 import gnu.chu.interfaces.PAD;
+import gnu.chu.mail.IFMail;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.conexion;
 import gnu.chu.sql.vlike;
@@ -189,6 +190,7 @@ public class pdalbara extends ventanaPad  implements PAD
   boolean traspCont,traspReci;
   double antPrecio;
   IFFax ifFax=new IFFax();
+  IFMail ifMail=new IFMail();
   ifregalm ifRegAlm;//=new CInternalFrame("Regularización Almacén",false,false,false,false);
   public final static int numDec=2;
   actCabAlbFra datCab;
@@ -624,6 +626,9 @@ public class pdalbara extends ventanaPad  implements PAD
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         ifFax.setVisible(false);
         ifFax.setIconifiable(false);
+        ifMail.setVisible(false);
+        ifMail.setIconifiable(false);
+
         strSql = getStrSql(null, null);
 
         statusBar = new StatusBar(this);
@@ -731,7 +736,7 @@ public class pdalbara extends ventanaPad  implements PAD
         
         conecta();
         iniciar(this);
-        pro_codiE.pro_codiE.setToolTipText("F3 Buscar por nombre. Doble Click Restaurar Nombre Articulo");
+        pro_codiE.getFieldProCodi().setToolTipText("F3 Buscar por nombre. Doble Click Restaurar Nombre Articulo");
         Pprinc.setLayout(gridBagLayout1);
         Pcabe.setBorder(BorderFactory.createRaisedBevelBorder());
         Pcabe.setMaximumSize(new Dimension(595, 98));
@@ -1228,12 +1233,14 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setConexion(ctUp);
     cli_codiE.setZona(P_ZONA);
     cli_codiE.iniciar(dtStat, this, vl, EU);
+    ifMail.iniciar(this);
+    
     ifFax.iniciar(this);
-    ifFax.getCliField().setPeso(new Integer(1));
+    ifFax.getCliField().setPeso(1);
     ifFax.setCopiaPapel(true);
     pro_codiE.iniciar(dtStat, this, vl, EU);
     pro_codiE.setEntrada(true);
-    pro_codiE.pro_codiE.setToolTipText("Doble click para actualizar nombre");
+    pro_codiE.getFieldProCodi().setToolTipText("Doble click para actualizar nombre");
     pro_codicE.iniciar(dtStat, this, vl, EU);
     pro_codicE.setEntrada(true);
     pro_codresE.iniciar(dtStat, this, vl, EU);
@@ -1283,6 +1290,9 @@ public class pdalbara extends ventanaPad  implements PAD
     datCab = new actCabAlbFra(dtCon1,dtAdd);
     ifFax.setLocation(this.getLocation().x+30,this.getLocation().x+30);
     vl.add(ifFax,new Integer(1));
+    ifMail.setLocation(this.getLocation().x+30,this.getLocation().x+30);
+    vl.add(ifMail,new Integer(1));
+
     Bimpri.addMenu("---","-");
 
     Bimpri.addMenu("Alb Gráfico", "B");
@@ -1300,6 +1310,9 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       Bimpri.addMenu("Fax Alb.", "F");
       opHojRut.addItem("Fax Alb.", "F");
+      Bimpri.addMenu("Email Alb.", "M");
+      opHojRut.addItem("Email Alb.", "M");
+      
     }
     Bimpri.addMenu("Palets", "P");
     opHojRut.addItem("Palets", "P");
@@ -1650,7 +1663,7 @@ public class pdalbara extends ventanaPad  implements PAD
         BmvReg_actionPerformed();
       }
     });
-    pro_codiE.pro_codiE.addMouseListener(new MouseAdapter()
+    pro_codiE.getFieldProCodi().addMouseListener(new MouseAdapter()
     {
       @Override
       public void mouseClicked(MouseEvent e)
@@ -1782,6 +1795,7 @@ public class pdalbara extends ventanaPad  implements PAD
     });
     Bimpri.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {        
         imprAlbaran(e.getActionCommand().equals("---")?opHojRut.getValor():Bimpri.getValor(e.getActionCommand()) );
@@ -6968,7 +6982,7 @@ public class pdalbara extends ventanaPad  implements PAD
       }
     }
     if (indice.equals("A") || indice.equals("T")
-        || indice.equals("F") || indice.equals("B")  )
+        || indice.equals("F") || indice.equals("B") || indice.equals("M") )
       imprAlbar(indice);
     if (indice.equals("H") || indice.equals("T"))
       imprHojRuta();
@@ -7124,7 +7138,7 @@ public class pdalbara extends ventanaPad  implements PAD
    */
   void imprAlbar(String indice)
   {
-    int nAlbImp = 0;
+//    int nAlbImp = 0;
     try
     {
 //       int empCodi,int avcAno,String avcSerie,int avcNume,DatosTabla dt
@@ -7156,26 +7170,39 @@ public class pdalbara extends ventanaPad  implements PAD
 //      else
       sqlAlb = getSqlListaAlb();
       if (indice.equals("B") || indice.equals("T"))
-      {
+      { // Albaran grafico o Hoja trazabilidad + Albaran. Solo imprime y sale.
         liAlb.envAlbarFax(ct.getConnection(), dtStat, sqlAlb, EU,
                   opValora.isSelected(),null,
                   null,true,NUMCOPIAS_ALBGRAF,avsNume);
         return;
       }
-
-      if (indice.equals("F"))
+      switch (indice)
       {
-        this.setEnabled(false);
-        ifFax.setVisible(true);
-        ifFax.setSelected(true);
-        String numfax=cli_codiE.getLikeCliente().getString("cli_fax",true);
-        ifFax.setLialbven(liAlb);
-        ifFax.setDatosDoc("A",sqlAlb, opValora.isSelected());
-        ifFax.setCliCodi(cli_codiE.getText());
-        ifFax.setNumFax(numfax);
+          case "F":             
+            this.setEnabled(false);
+            ifFax.setVisible(true);
+            ifFax.setSelected(true);
+            String numfax=cli_codiE.getLikeCliente().getString("cli_fax",true);
+            ifFax.setLialbven(liAlb);
+            ifFax.setDatosDoc("A",sqlAlb, opValora.isSelected());
+            ifFax.setCliCodi(cli_codiE.getText());
+            ifFax.setNumFax(numfax);  
+            break;
+           case "M":
+            this.setEnabled(false);
+            ifMail.setVisible(true);
+            ifMail.setSelected(true);            
+            ifMail.setLialbven(liAlb);
+            ifMail.setAsunto("Albaran "+avc_anoE.getValorInt()+avc_seriE.getText()+ avc_numeE.getText()+"  de fecha: "+avc_fecalbE.getText());
+            ifMail.setText("Estimado cliente,\n\nAdjunto le enviamos el albaran "+avc_anoE.getValorInt()+avc_seriE.getText()+ avc_numeE.getText()+"  de fecha: "+avc_fecalbE.getText()+
+                " de fecha "+avc_fecalbE.getText()+"\n\nAtentamente\n\n"+emp_codiE.getEmpNomb());
+            ifMail.setDatosDoc("A",sqlAlb, opValora.isSelected());
+            ifMail.setCliCodi(cli_codiE.getText());
+
+             break;
+           default:
+             liAlb.impAlbaran(emp_codiE.getValorInt(),dtStat, dtCon1, sqlAlb, EU, opValora.isSelected());
       }
-      else
-         nAlbImp = liAlb.impAlbaran(emp_codiE.getValorInt(),dtStat, dtCon1, sqlAlb, EU, opValora.isSelected());
       mensajeErr("Albaran ... Impreso");
 
     }
@@ -7315,6 +7342,11 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       ifFax.setVisible(false);
       ifFax.dispose();
+    }
+    if (ifMail!=null)
+    {
+      ifMail.setVisible(false);
+      ifMail.dispose();
     }
     botonBascula.dispose();
 //    if (despAlbar!=null)

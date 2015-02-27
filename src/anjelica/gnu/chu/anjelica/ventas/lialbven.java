@@ -11,12 +11,13 @@ import gnu.chu.print.*;
 import java.text.*;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.hylafax.SendFax;
+import gnu.chu.mail.MailHtml;
 /**
  *
  * <p>Título: lialbven</p>
  * <p>Descripción: Clase para imprimir los albaranes de Ventas <br>
  *   Imprime en modo texto (dump) o en pdf para enviar por fax.</p>
- * <p>Copyright: Copyright (c) 2005-2009
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -37,7 +38,8 @@ public class lialbven implements JRDataSource
 {
   SendFax sendFax=null;
   actCabAlbFra datCab;
-
+  String subject;
+  String emailCC;
   int nAlbImp;
   int nLinALb;
   String empObsAlb="";
@@ -106,8 +108,25 @@ public class lialbven implements JRDataSource
       gnu.chu.print.util.printJasper(jp, EU);
       return 1;
    }
+   public int envAlbaranEmail(Connection ct, DatosTabla dtCon1, String sql,
+                      EntornoUsuario EU,boolean valora,String email,String obser) throws Exception
+   {
+      return envAlbarFax(ct,dtCon1,sql,EU,valora,email,obser,false,1,0);
+   }
+   /**
+    * Especifica el subject para cuando se envia un correo
+    * @param subject 
+    */
+   public void setSubject(String subject)
+   {
+       this.subject=subject;
+   }
+   public void setEmailCC(String emailCC)
+   {
+       this.emailCC=emailCC;
+   }
   /**
-   * Imprime albaran tanto en papel como enviandolo por fax
+   * Imprime albaran tanto en papel como enviandolo por fax/Email
    * @param ct
    * @param dtCon1
    * @param sql
@@ -186,7 +205,14 @@ public class lialbven implements JRDataSource
    FileOutputStream outStr=new FileOutputStream(fichPDF);
    JasperExportManager.exportReportToPdfStream(jp,outStr);
    outStr.close();
-
+   if (numFax.indexOf("@")>0)
+   { // Es un correo.        
+       MailHtml correo=new MailHtml(EU.usu_nomb,EU.email);
+       correo.setEmailCC(emailCC);
+       correo.enviarFichero(numFax,obser,subject,
+          fichPDF,"albaran.pdf");       
+       return nAlbImp;
+   }
    if (sendFax==null)
        sendFax=new SendFax(EU,dtCon1); // Inicio clase SendFax
    sendFax.setCliente(cliCodi);
