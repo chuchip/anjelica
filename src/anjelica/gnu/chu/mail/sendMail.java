@@ -26,7 +26,6 @@ import javax.mail.internet.*;
 import gnu.chu.utilidades.*;
 import java.io.*;
 import java.util.Properties;
-import javax.mail.Address.*;
 import java.util.Date;
 
 public class sendMail
@@ -48,9 +47,9 @@ public class sendMail
   /**
    * Constructor
    *
-   * @param boolean True visualiza el proceso de enviar Email
-   *        EntornoUsuario para recoger Datos del Usuario que envia el Email
-   *        mailHost Servidor de Correo saliente.
+   * @param debugon True visualiza el proceso de enviar Email
+   * @param entUsu para recoger Datos del Usuario que envia el Email
+   * @param mailHost Servidor de Correo saliente.
    */
   public sendMail(boolean debugon, EntornoUsuario entUsu, String mailHost)
   {
@@ -76,10 +75,9 @@ public class sendMail
 
   /**
    * Envia un Correo Rapido a una direccion
-   * @param String to Direccion e-mail donde va dirigido el Correo.
-   *        EntornoUsuario de donde recogera el Nombre del Usuario y otros datos.
-   *        String subject De que va el correo.
-   *        String msg Mensaje a poner en el correo.
+   * @param to Direccion e-mail donde va dirigido el Correo.
+   * @param subject De que va el mensaje (Subject)
+   * @param mens Mensaje a poner en el correo.
    * @throws Exception si hay algun error
    */
   public  void send(String to, String subject,String mens) throws Exception
@@ -101,9 +99,8 @@ public class sendMail
   /**
    * Envia un correo con el mensaje enviado con el setText
    *
-   * @param String to Direccion e-mail donde va dirigido el Correo.
-   *        EntornoUsuario de donde recogera el Nombre del Usuario y otros datos.
-   *        String subject De que va el correo.
+   * @param  to Direccion e-mail donde va dirigido el Correo.
+   * @param subject De que va el correo.
    * @throws Exception si hay algun error
    *
    */
@@ -129,12 +126,17 @@ public class sendMail
   }
   /**
    * Añade Texto al Email
+   * @param mensaje Mensaje a enviar
+     * @throws java.lang.Exception
    */
   public void setText(String mensaje) throws Exception {
     setText(mensaje, null);
   }
   /**
    * Añade un fichero ascii al EMail
+     * @param mensaje
+     * @param nombFichero
+     * @throws java.lang.Exception
    */
   public void setText(String mensaje, String nombFichero) throws Exception {
     MimeBodyPart b = new MimeBodyPart();
@@ -148,13 +150,18 @@ public class sendMail
     // añde el texto o fichero al cuerpo del fichero
     mp.addBodyPart(b);
   }
+  /**
+   * Añade un fichero al correo.
+   * @param f
+   * @param content
+   * @throws Exception 
+   */
   public void addFile(File f,String content) throws Exception
-  {
-      
+  {      
     byte[] b=new byte[100];
-    StringBuffer s=new StringBuffer();
+    StringBuilder s=new StringBuilder();
     FileInputStream fIn=new FileInputStream(f);
-    int nBytes=0;
+    int nBytes;
     while ( (nBytes=fIn.read(b))>0)
     {
       s.append(new String(b, 0, nBytes));

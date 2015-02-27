@@ -5,7 +5,7 @@ package gnu.chu.controles;
  * <p>Descripción: Extiende de CGrid. permite modificar el valor de los campos
  * facilmente. Controlando validacion en cambio de columnas y filas.
  * </p> 
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -924,7 +924,7 @@ public class CGridEditable extends Cgrid implements CQuery {
     }
     if (tCampo.get(nCampo).toString().compareTo("C") == 0)
     {
-      if (! ( (CComboBox) campos.get(nCampo)).isEnabled() || ! ( (CComboBox) campos.get(nCampo)).isEditable())
+      if (! ( (CComboBox) campos.get(nCampo)).isEnabled() )
         return getValString(linea, nCampo); // No esta enabled o editable. Devuelvo el valor del grid
       return ( (CComboBox) campos.get(nCampo)).getText();
     }
@@ -1750,11 +1750,9 @@ public class CGridEditable extends Cgrid implements CQuery {
             if   (( (CLinkBox) campos.get(n)).isEditable() || reqFocusEdit)
                 return n;
         }
-        if (tCampo.get(n).equals(TIPO_COMBOBOX))
-        {
-            if   (( (CComboBox) campos.get(n)).isEditable() || reqFocusEdit)
+        if (tCampo.get(n).equals(TIPO_COMBOBOX))       
                 return n;
-        }
+
       }
     }
     return colActual;
@@ -1999,7 +1997,24 @@ class focusAdaptGrid extends FocusAdapter
     nCol=col;
     padre=grid;
   }
-
+  @Override
+  public void focusGained(java.awt.event.FocusEvent e)
+  {
+//      try
+//      {
+//          Component c=e.getComponent();
+//          if (c==null)
+//              return;
+//          
+//          if (Class.forName("gnu.chu.controles.CComboBox").isAssignableFrom(c.getClass()))
+//          {
+//              ((CComboBox) c).setPopupVisible(false);
+//          }
+//      } catch (ClassNotFoundException ex)
+//      {
+//          Logger.getLogger(focusAdaptGrid.class.getName()).log(Level.SEVERE, null, ex);
+//      }
+  }
     @Override
   public void focusLost(java.awt.event.FocusEvent e)
   {

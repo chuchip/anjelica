@@ -550,6 +550,7 @@ public class Principal extends JFrame
     /**
    * Guarda mensajes en la tabla histmens
    * @param codMens Codigo Mensaje
+   * @param dt Conexion con base de datos
    * @param ht Parametros diversos para poner en los mensajes
     *@param explicac Explicacion por la que se creo el mensaje dada por el usuario
     *@param usuario que genera el evento. (Login)

@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
   <Properties>
@@ -31,37 +31,38 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="cli_codiE" pref="421" max="32767" attributes="0"/>
-                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" attributes="0">
-                      <Component id="cli_emailE" min="-2" pref="241" max="-2" attributes="0"/>
+                      <Component id="cli_emailE" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
+                      <Component id="opCopia" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="cli_codiE" pref="421" max="32767" attributes="0"/>
               </Group>
+              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-              <Component id="BacepFax" min="-2" pref="156" max="-2" attributes="0"/>
+              <Component id="Baceptar" min="-2" pref="156" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="127" max="-2" attributes="0"/>
-              <Component id="BcancFax" min="-2" pref="156" max="-2" attributes="0"/>
+              <Component id="Bcancelar" min="-2" pref="156" max="-2" attributes="0"/>
               <EmptySpace pref="26" max="32767" attributes="0"/>
           </Group>
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="scmsgE" pref="466" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="cLabel3" pref="466" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="cLabel4" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="asuntoE" pref="422" max="32767" attributes="0"/>
+          <Group type="102" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="scmsgE" pref="466" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="cLabel3" pref="466" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="cLabel4" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="asuntoE" pref="422" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -75,11 +76,12 @@
                   <Component id="cli_codiE" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="cLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="cli_emailE" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="cLabel2" min="-2" max="-2" attributes="0"/>
+                  <Component id="cli_emailE" min="-2" max="-2" attributes="0"/>
+                  <Component id="opCopia" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="cLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="asuntoE" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -90,10 +92,10 @@
               <Component id="scmsgE" min="-2" pref="127" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="BacepFax" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="BcancFax" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="Baceptar" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
+                  <Component id="Bcancelar" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="42" max="32767" attributes="0"/>
+              <EmptySpace pref="24" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -111,11 +113,6 @@
         <Property name="text" type="java.lang.String" value="Correo"/>
       </Properties>
     </Component>
-    <Component class="gnu.chu.controles.CTextField" name="cli_emailE">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,12)"/>
-      </AuxValues>
-    </Component>
     <Component class="gnu.chu.controles.CLabel" name="cLabel3">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -125,7 +122,7 @@
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="text" type="java.lang.String" value="Introduzca un texto a acompa&#xf1;ar al Documento"/>
+        <Property name="text" type="java.lang.String" value="Introduzca un texto a acompa&#xf1;ar al Correo"/>
         <Property name="opaque" type="boolean" value="true"/>
       </Properties>
     </Component>
@@ -154,7 +151,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="gnu.chu.controles.CButton" name="BacepFax">
+    <Component class="gnu.chu.controles.CButton" name="Baceptar">
       <Properties>
         <Property name="text" type="java.lang.String" value="Aceptar"/>
       </Properties>
@@ -162,7 +159,7 @@
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(Iconos.getImageIcon(&quot;check&quot;))"/>
       </AuxValues>
     </Component>
-    <Component class="gnu.chu.controles.CButton" name="BcancFax">
+    <Component class="gnu.chu.controles.CButton" name="Bcancelar">
       <Properties>
         <Property name="text" type="java.lang.String" value="Cancelar"/>
       </Properties>
@@ -177,8 +174,19 @@
     </Component>
     <Component class="gnu.chu.controles.CTextField" name="asuntoE">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,12)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,100)"/>
       </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CLinkBox" name="cli_emailE">
+      <Properties>
+        <Property name="ancTexto" type="int" value="180"/>
+      </Properties>
+    </Component>
+    <Component class="gnu.chu.controles.CCheckBox" name="opCopia">
+      <Properties>
+        <Property name="selected" type="boolean" value="true"/>
+        <Property name="text" type="java.lang.String" value="Copia Local"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

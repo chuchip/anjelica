@@ -32,9 +32,9 @@ import gnu.chu.winayu.*;
  */
 public class cliPanel extends CPanel
 {
-  private Integer peso=new Integer(1);
+  private Integer peso=1;
   private boolean swControl=true;
-  ayucli aycli;
+  AyuClientes ayucli;
   String zona=null;
   boolean evQuery=true;
   CInternalFrame intfr = null;
@@ -92,12 +92,14 @@ public class cliPanel extends CPanel
       SystemOut.print(ex);
     }
   }
-  protected void finalize() throws Throwable { }
+  @Override
+  protected void finalize() throws Throwable 
   {
-    if (aycli!=null)
-      aycli.dispose();
-    aycli=null;
-  }
+    if (ayucli!=null)
+      ayucli.dispose();
+    ayucli=null;
+    super.finalize();
+  };
   public void setMsgError(String msgErr)
   {
     MsgError=msgErr;
@@ -499,34 +501,34 @@ public void setZona(String zonCli)
   {
       try
       {
-        if (aycli==null)
+        if (ayucli==null)
         {
-          aycli = new ayucli(eu, vl, dt)
+          ayucli = new AyuClientes(eu, vl, dt)
           {
             @Override
             public void matar()
             {
-               ej_consCli(aycli);
+               ej_consCli(ayucli);
             }
           };
-          aycli.setLocation(25, 25);
+          ayucli.setLocation(25, 25);
           if (intfr!=null)
-            intfr.getLayeredPane().add(aycli,1);
+            intfr.getLayeredPane().add(ayucli,1);
           else
-            vl.add(aycli,peso);
+            vl.add(ayucli,peso);
         }
-        aycli.setVisible(true);
+        ayucli.setVisible(true);
         if (intfr!=null)
         {
           intfr.setEnabled(false);
-          intfr.setFoco(aycli);
+          intfr.setFoco(ayucli);
         }
-        aycli.setZona(zona);
-        aycli.iniciarVentana();
+        ayucli.setZona(zona);
+        ayucli.iniciarVentana();
         if (nombCli!=null)
         {
-          aycli.cli_nombE.setText(nombCli);
-          aycli.Bbuscar_actionPerformed();
+          ayucli.setCliNomb(nombCli);
+          ayucli.Bbuscar_actionPerformed();
         }
       }
       catch (Exception j)
@@ -538,15 +540,15 @@ public void setZona(String zonCli)
 
   }
 
-  void ej_consCli(ayucli aycli)
+  void ej_consCli(AyuClientes aycli)
   {
     evQuery=false;
     if (aycli.consulta)
     {
       cli_codiE.setText(aycli.cli_codiE);
        if (swControl)
-         cli_nombL.setText(aycli.cli_nombE.getText());
-      setNomComercial(aycli.cli_nombcE.getText());
+         cli_nombL.setText(aycli.getCliNomb());
+      setNomComercial(aycli.getNombCom());
     }
     cli_codiE.requestFocus();
     aycli.setVisible(false);

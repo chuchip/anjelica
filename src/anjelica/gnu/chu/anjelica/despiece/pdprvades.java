@@ -159,7 +159,7 @@ public class pdprvades extends ventanaPad implements PAD
 
       pro_nombE.setEnabled(false);
       Vector v = new Vector();
-      v.addElement(pro_codiE.pro_codiE);
+      v.addElement(pro_codiE.getFieldProCodi());
       v.addElement(pro_nombE);
       v.addElement(dpv_preciE);
       jt.setCampos(v);

@@ -2917,7 +2917,10 @@ public class Cgrid extends CPanel implements Serializable
       });
       this.setButton(KeyEvent.VK_F7,Binser);
     }
-
+    public CPanel getPanelBotones()
+    {
+        return Pboton;
+    }
     protected void Binser_actionPerformed(boolean b)
     {
     }

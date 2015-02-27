@@ -1464,7 +1464,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       fatalError("Configuracion para empresa por defecto: " + EU.em_cod + " NO ENCONTRADA");
       return;
     }
-    pro_codiE.pro_codiE.setToolTipText("Boton derecho para otras opciones sobre este campo");
+    pro_codiE.getFieldProCodi().setToolTipText("Boton derecho para otras opciones sobre este campo");
 
     pro_codcamE.iniciar(dtStat,frProd,vl,EU);
 

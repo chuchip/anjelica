@@ -9,6 +9,7 @@ import gnu.chu.utilidades.*;
 import java.awt.*;
 import java.text.ParseException;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -51,7 +52,7 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   boolean depPadre=true;
   private String copia = "";
 
-  Vector valor = new Vector();
+  List<String> indice = new ArrayList<>();
 
   public CComboBox(ComboBoxModel modelo) {
       super(modelo);
@@ -204,14 +205,14 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
     addItem(v,v.toString());
   }
 /**
- * Añade un valor nuevo al comboBox
+ * Añade un indice nuevo al comboBox
  * @param valorCombo Valor a mostrar en pantalla
  * @param indice lo q se devolvera a recoger getValor()
  */
   public void addItem(Object valorCombo,String indice)
   {
     super.addItem(valorCombo);
-    valor.addElement(indice);
+    this.indice.add(indice);
   }
 
   public void setActDatosDB(boolean a)
@@ -237,16 +238,21 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
         return "";
     }
   }
-
+/**
+ * Devuelve el Texto del combo, segun el valor mandado (indice)
+ * @param val
+ * @return null si no lo encuentra.
+ */
   public String getText(String val)
   {
     if (val == null)
       return null;
-    int nItems = getItemCount();
-    for (int n = 0; n < nItems; n++)
+    int n=0;
+    for (String i : indice)
     {
-      if ( valor.elementAt(n).toString().equals(val))
+      if (i.equals(val))
         return getItemAt(n).toString();
+      n++;
     }
     return null;
   }
@@ -269,7 +275,6 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
             setSelectedItem(s);
         } catch (Exception k)
         {
-            return;
         }
     }
 
@@ -311,7 +316,7 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
         return conectaColumna+" = '"+getValor()+"'";
   }
   /**
-   * Devuelve el valor (el indice) de la lista selecionada
+   * Devuelve el indice (el indice) de la lista selecionada
    * @return Valor del combo
    */
   public String getValor()
@@ -334,26 +339,21 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
       }
   }
   /**
-   * Es el valor igual al mandando (haciendo un trim)
+   * Es el indice igual al mandando (haciendo un trim)
    *
    * @param valCompara String
    * @return boolean
    */
   public boolean isValor(String valCompara)
-  {
-    String val=getValor(getSelectedIndex());
-    if (val.trim().equals(valCompara))
-      return true;
-    else
-      return false;
+  {   
+    return getValor(getSelectedIndex()).trim().equals(valCompara);
   }
   public String getValor(int index){
-    if (index<valor.size())
-      return (String)valor.elementAt(index);
+    if (index<indice.size())
+      return (String)indice.get(index);
     else
       return "";
   }
-
   
   public void setValor(double valor)
   {
@@ -390,11 +390,11 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   public void setValor(int s)
   {
     try {
-        for (int n=0;n<valor.size();n++)
+        for (int n=0;n<indice.size();n++)
         {
-          if (valor.elementAt(n)==null)
+          if (indice.get(n)==null)
             continue;
-          if (Integer.parseInt(valor.elementAt(n).toString())==s)
+          if (Integer.parseInt(indice.get(n))==s)
           {
             this.setSelectedIndex(n);
             return;
@@ -409,11 +409,11 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   {
     if (s==null)
       return;
-    for (int n=0;n<valor.size();n++)
+    for (int n=0;n<indice.size();n++)
     {
-      if (valor.elementAt(n)==null)
+      if (indice.get(n)==null)
         continue;
-      if (valor.elementAt(n).toString().compareTo(s)==0)
+      if (indice.get(n).equals(s))
       {
         this.setSelectedIndex(n);
         return;
@@ -424,9 +424,8 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
    * Retorna el valor del combo para un texto mandado
    * @param texto String Indice sobre el que buscar el Texto
    * @return String Valor del combo
-   */
-
-  public String getValor(String texto)
+   */    
+    public String getValor(String texto)
   {
     if (texto==null)
       return null;
@@ -434,19 +433,26 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
     for (int n=0;n<nItems;n++)
     {
       if (getItemAt(n).toString().equals(texto))
-        return valor.elementAt(n).toString();
+        return indice.get(n);
     }
     return null;
   }
-
+  /**
+   * Devuelve el valor para un indice mandado
+   * @param val Indice
+   * @return  Valor o null si no encuentra el indice.
+   */
   public Object getItemAt(String val){
-      for (int n=0;n<valor.size();n++)
-         if (valor.elementAt(n).toString().equals(val))
+      for (int n=0;n<indice.size();n++)
+      {
+         if (indice.get(n).equals(val))
             return getItemAt(n);
+      }
       return null;
 
   }
 
+  @Override
   public Component getErrorConf()
   {
     return null;
@@ -461,12 +467,10 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   * lanzara un NullPointerException.
   *
   */
+  @Override
   public boolean hasCambio()
   {
-    if (copia.trim().compareTo(getText().trim())!=0)
-      return true;
-    else
-      return false;
+      return ! copia.trim().equals(getText().trim());
   }
   public String getTextAnt()
   {
@@ -478,18 +482,19 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   * Si llamamos inmediatamente a la funcion hasCambio, esta devolveria true.
   *
   */
+  @Override
   public void resetCambio()
   {
     copia=getText();
   }
   /**
-  * Retorna el valor Anterior
+  * Retorna el indice Anterior
   * @return String
   */
   public String getValorOld() { return copia; };
 
   /**
-   * Retorna el valor Actual. Igual que hacer getText()
+   * Retorna el indice Actual. Igual que hacer getText()
   *  @return String
    */
   public String getValorAct() {
@@ -497,8 +502,9 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   };
    /**
   * Funcion que me pone en blanco los controles que implementan VEditable
-  * a un valor por defecto
+ a un indice por defecto
   */
+  @Override
   public void resetTexto()
   {
     if (getQuery())
@@ -512,6 +518,7 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   private boolean activado=true;
   private boolean activadoParent=true;
 
+  @Override
   public void setEnabled(boolean enab)
   {
     activado=enab;
@@ -562,15 +569,18 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
    * NO Hago nada. Solo para cumplir con el interface Ceditable
    * @param editable boolean
    */
+  @Override
   public void setEditableParent(boolean editable)
   {
 
   }
 
+  @Override
   public void removeAllItems() {
     super.removeAllItems();
-    valor.removeAllElements();
+    indice.clear();
   }
+  @Override
   public void removeItem(Object c) {
     int pos = -1;
     for (int i=0;i<getItemCount();i++) {
@@ -581,7 +591,7 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
     }
     super.removeItem(c);
     if (pos != -1)
-       valor.removeElementAt(pos);
+       indice.remove(pos);
   }
   /**
    * Indica si el texto visualizado en el Combo se le ha asignado Valor
@@ -592,17 +602,17 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
        return isVacio();
   }
   /**
-   * Indica si hay algun valor disponible en el Combo
+   * Indica si hay algun indice disponible en el Combo
    *
    * @return boolean
    */
   public boolean isVacio()
   {
-    if (valor.isEmpty()) return true;
-    if (valor.elementAt(0) == null)
+    if (indice.isEmpty()) return true;
+    if (indice.get(0) == null)
       return true;
-    return ( (valor.elementAt(0).toString().equals(gnu.chu.interfaces.ejecutable.VACIO))
-            || (valor.elementAt(0).toString().equals("")) ? true : false);
+    return ( (indice.get(0).equals(gnu.chu.interfaces.ejecutable.VACIO))
+        || (indice.get(0).equals("")));
   }
   public boolean isNull()
   {
@@ -610,9 +620,7 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   }
   public boolean isNull(boolean trim)
   {
-    if (trim?getText().trim().equals(""):getText().equals(""))
-      return true;
-    return false;
+    return trim?getText().trim().equals(""):getText().equals("");
   }
   public void removeListeners()
   {
@@ -637,6 +645,7 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
     this.addKeyListener(new KeyAdapter()
     {
       AbstractButton defaultButton;
+      @Override
       public void keyPressed(KeyEvent e)
       {
         if (!e.isAltDown())

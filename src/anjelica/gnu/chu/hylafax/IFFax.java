@@ -14,7 +14,7 @@ import java.sql.Types;
  *
  * <p>Titulo: IFFax </p>
  * <p>Descripción: Ventana para mandar por fax las facturas</p>
- * <p>Copyright: Copyright (c) 2005-2009
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -205,14 +205,14 @@ public class IFFax extends ventana {
     private void activarEventos() {
         BacepFax.addActionListener(new ActionListener()
         {
-
+            @Override
             public void actionPerformed(ActionEvent e) {
                 enviarFax();
             }
         });
         BcancFax.addActionListener(new ActionListener()
         {
-
+            @Override
             public void actionPerformed(ActionEvent e) {
                 padre.mensajeErr("Fax ... CANCELADO");
                 cancelFax();

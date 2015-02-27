@@ -2539,6 +2539,8 @@ insert into mensajes values('I5','Mant. Inventario Fecha  %f Almacen %a Producto
 insert into mensajes values('A1','Stock > 1 Individuo. Almac: %a Prod: %p Indiv: %i','A');
 insert into mensajes values('A2','Sin reg. Stock. Almac: %a Prod: %p Indiv: %i','A');
 insert into mensajes values('R1','Anulados cobros. Condiciones: %c','A');
+insert into mensajes values('EA','Enviado Email a Cliente %c con Albaran: %a','I');
+insert into mensajes values('EF','Enviado Email a Cliente %c con Factura: %a','I');
 
 --
 -- Tabla de Etiquetas  (para trazabilidad y compras)
@@ -3049,7 +3051,7 @@ create table anjelica.pedvenc;
  eje_nume int not null,		-- Ejercicio de Pedido
  pvc_nume int not null,		-- Numero de Pedido
  cli_codi int not null,		-- Cliente
- cli_nomb varchar(30),		-- Nombre cliente.
+ pvc_clinom varchar(40),	-- Nombre cliente.
  alm_codi int not null,		-- Almacen
  pvc_fecped timestamp not null,	-- Fecha de Pedido
  pvc_fecent date not null,	-- Fecha de Entrega

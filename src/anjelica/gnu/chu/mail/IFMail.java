@@ -1,6 +1,7 @@
 
 package gnu.chu.mail;
 
+import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.facturacion.lisfactu;
 import gnu.chu.anjelica.ventas.lialbven;
 import gnu.chu.utilidades.Iconos;
@@ -9,12 +10,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
- * <p>Titulo: IFFax </p>
- * <p>Descripción: Ventana para mandar por fax las facturas</p>
- * <p>Copyright: Copyright (c) 2005-2009
+ * <p>Titulo: IFMail </p>
+ * <p>Descripción: Ventana para mandar por Email los Albaranes y facturas</p>
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -57,14 +61,15 @@ public class IFMail extends ventana {
         cli_codiE = new gnu.chu.camposdb.cliPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
         cLabel2 = new gnu.chu.controles.CLabel();
-        cli_emailE = new gnu.chu.controles.CTextField(Types.CHAR,"X",12);
         cLabel3 = new gnu.chu.controles.CLabel();
         scmsgE = new javax.swing.JScrollPane();
         respuestE = new gnu.chu.controles.CTextArea();
-        BacepFax = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
-        BcancFax = new gnu.chu.controles.CButton(Iconos.getImageIcon("cancel"));
+        Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
+        Bcancelar = new gnu.chu.controles.CButton(Iconos.getImageIcon("cancel"));
         cLabel4 = new gnu.chu.controles.CLabel();
-        asuntoE = new gnu.chu.controles.CTextField(Types.CHAR,"X",12);
+        asuntoE = new gnu.chu.controles.CTextField(Types.CHAR,"X",100);
+        cli_emailE = new gnu.chu.controles.CLinkBox();
+        opCopia = new gnu.chu.controles.CCheckBox();
 
         setTitle("Enviar Correo Electronico");
 
@@ -75,7 +80,7 @@ public class IFMail extends ventana {
         cLabel3.setBackground(java.awt.Color.blue);
         cLabel3.setForeground(new java.awt.Color(255, 255, 255));
         cLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        cLabel3.setText("Introduzca un texto a acompañar al Documento");
+        cLabel3.setText("Introduzca un texto a acompañar al Correo");
         cLabel3.setOpaque(true);
 
         scmsgE.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -85,11 +90,16 @@ public class IFMail extends ventana {
         respuestE.setRows(5);
         scmsgE.setViewportView(respuestE);
 
-        BacepFax.setText("Aceptar");
+        Baceptar.setText("Aceptar");
 
-        BcancFax.setText("Cancelar");
+        Bcancelar.setText("Cancelar");
 
         cLabel4.setText("Asunto");
+
+        cli_emailE.setAncTexto(180);
+
+        opCopia.setSelected(true);
+        opCopia.setText("Copia Local");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -103,30 +113,30 @@ public class IFMail extends ventana {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(cli_codiE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
-                        .add(12, 12, 12))
-                    .add(layout.createSequentialGroup()
-                        .add(cli_emailE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 241, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .add(cli_emailE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(opCopia, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(cli_codiE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE))
+                .add(12, 12, 12))
             .add(layout.createSequentialGroup()
                 .add(21, 21, 21)
-                .add(BacepFax, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 156, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(Baceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 156, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(127, 127, 127)
-                .add(BcancFax, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 156, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(Bcancelar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 156, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(26, Short.MAX_VALUE))
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .add(scmsgE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
-                .addContainerGap())
             .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(cLabel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
-                .addContainerGap())
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(cLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(asuntoE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(scmsgE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(cLabel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(cLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(asuntoE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -137,10 +147,11 @@ public class IFMail extends ventana {
                     .add(cLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(cli_codiE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(cLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(cli_emailE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(5, 5, 5)
+                    .add(cli_emailE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(opCopia, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(8, 8, 8)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(cLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(asuntoE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -150,9 +161,9 @@ public class IFMail extends ventana {
                 .add(scmsgE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 127, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(BacepFax, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(BcancFax, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(34, Short.MAX_VALUE))
+                    .add(Baceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 32, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(Bcancelar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 32, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         pack();
@@ -176,24 +187,43 @@ public class IFMail extends ventana {
     }
     public void setCliCodi(String cliCodi)
     {
-        cli_codiE.setText(cliCodi);
+        if (!cli_codiE.getText().equals(cliCodi))
+        {
+            cli_codiE.setText(cliCodi);
+            cli_emailE.removeAllItems();
+            llenaCorreos();
+            cli_emailE.resetTexto();
+        }
+    }
+    /**
+     * Llena combo de correos con los correos del cliente.
+     */
+    void llenaCorreos()
+    {
+        try
+        {
+            addCorreo(cli_codiE.getLikeCliente().getString("cli_email2"));
+            addCorreo(cli_codiE.getLikeCliente().getString("cli_email1"));
+        } catch (SQLException ex)
+        {
+            Logger.getLogger(IFMail.class.getName()).log(Level.SEVERE,
+                "Error al llenar Correos de cliente "+cli_codiE.getText(), ex);
+        }
+    }
+    void addCorreo(String email)
+    {
+        if (email==null)
+            return;
+        if (email.indexOf("@")>0)
+            cli_emailE.addDatos(email, email);
+            
     }
     public gnu.chu.camposdb.cliPanel getCliField()
     {
         return cli_codiE;
     }
    
-    public void setNumFax(String numfax)
-    {
-        if (! numfax.equals(""))
-        {
-          numfax = numfax.replaceAll("/", "");
-          numfax = numfax.replaceAll("\\.", "");
-          numfax = numfax.replaceAll("-", "");
-        }
-        cli_emailE.setText(numfax);
-        respuestE.requestFocus();
-    }
+    
     public void setDatosDoc( String tipoDoc,
          String sqlDoc,
          boolean opValora)
@@ -203,35 +233,36 @@ public class IFMail extends ventana {
          this.opValora=opValora;
     }
     private void activarEventos() {
-        BacepFax.addActionListener(new ActionListener()
+        Baceptar.addActionListener(new ActionListener()
         {
-
+            @Override
             public void actionPerformed(ActionEvent e) {
-                enviarFax();
+                enviarEmail();
             }
         });
-        BcancFax.addActionListener(new ActionListener()
+        Bcancelar.addActionListener(new ActionListener()
         {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
-                padre.mensajeErr("Fax ... CANCELADO");
+                padre.mensajeErr("Email ... CANCELADO");
                 cancelFax();
             }
         });
     }
-    void enviarFax()
+    void enviarEmail()
     {
       if (cli_emailE.isNull(true) )
       {
-        msgBox("Introduzca No de Fax del Cliente");
+        msgBox("Introduzca Correo Electronico");
         return;
       }
         if (tipoDoc.equals("A"))
-            enviarFaxAlb();
+            enviarEmailAlb();
         else
-            enviarFaxFra();
+            enviarEmailFra();
     }
-    void enviarFaxFra()
+    void enviarEmailFra()
     {
         try {
       liFra.sendFraFax(sqlDoc, cli_emailE.getText(), cli_codiE.getValorInt(),false );
@@ -240,30 +271,36 @@ public class IFMail extends ventana {
     }
     catch (Exception k)
     {
-      Error("Error al enviar Albaran por Fax por usuario: "+EU.usuario, k);
+      Error("Error al enviar Albaran por Email por usuario: "+EU.usuario, k);
     }
     }
-    void enviarFaxAlb()
+    public void setAsunto(String subject)
     {
-    try
-    {
-     
-//      String sqlAlb = "SELECT c.emp_codi as avc_empcod, c.*,cl.*" +
-//          " FROM V_albavec as c,clientes cl WHERE c.avc_ano =" + docAno +
-//          " and c.emp_codi = " + empCodi+
-//          " and c.avc_serie = '" + docSerie + "'" +
-//          " and c.avc_nume = " + docNume +
-//          " and c.cli_codi = cl.cli_codi ";
-      liAlb.envAlbarFax(ct.getConnection(), dtStat, sqlDoc, EU,
-                        opValora,cli_emailE.getText(),
-                        respuestE.getText(),false,1);
-      cancelFax();
-      padre.mensajeErr("Fax ..... Enviado");
+        asuntoE.setText(subject);
     }
-    catch (Exception k)
+    public void setText(String subject)
     {
-      Error("Error al enviar Albaran por Fax por usuario: "+EU.usuario, k);
-    }
+        respuestE.setText(subject);
+    }    void enviarEmailAlb()
+    {
+        try
+        {
+            liAlb.setSubject(asuntoE.getText());
+            liAlb.setEmailCC(opCopia.isSelected()? EU.email:null);
+            liAlb.envAlbaranEmail(ct.getConnection(), dtStat, sqlDoc, EU,
+                            opValora,cli_emailE.getText(),
+                            respuestE.getText());
+            HashMap hm=new HashMap();
+            hm.put("%c", cli_codiE.getValorInt());
+            hm.put("%a",asuntoE.getText());
+            Principal.guardaMens(padre.dtCon1, "EA",hm,null,EU.usuario);
+            cancelFax();
+            padre.mensajeErr("Email ..... Enviado");
+        }
+        catch (Exception k)
+        {
+           Error("Error al enviar Albaran por Email por usuario: "+EU.usuario, k);
+        }
   }
 
   void cancelFax()
@@ -277,15 +314,16 @@ public class IFMail extends ventana {
   }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private gnu.chu.controles.CButton BacepFax;
-    private gnu.chu.controles.CButton BcancFax;
+    private gnu.chu.controles.CButton Baceptar;
+    private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CTextField asuntoE;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.camposdb.cliPanel cli_codiE;
-    private gnu.chu.controles.CTextField cli_emailE;
+    private gnu.chu.controles.CLinkBox cli_emailE;
+    private gnu.chu.controles.CCheckBox opCopia;
     private gnu.chu.controles.CTextArea respuestE;
     private javax.swing.JScrollPane scmsgE;
     // End of variables declaration//GEN-END:variables

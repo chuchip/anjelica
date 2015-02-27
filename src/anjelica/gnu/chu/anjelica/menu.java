@@ -972,7 +972,7 @@ public class menu extends JFrame
     EU.usuario="cpuente";EU.usu_nomb="SuperUsuario";
     EU.usuario="cpuente";
     EU.password="anjelica";
-    EU.email="cpuente@misl.es";
+    EU.email="jpuente.ext@riojasalud.es";
     EU.setUsuReser1("S");
     SystemOut sout=new SystemOut(System.err);    
     System.setOut(sout);        

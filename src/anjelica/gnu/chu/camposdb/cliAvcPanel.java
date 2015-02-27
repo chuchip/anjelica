@@ -126,8 +126,10 @@ public class cliAvcPanel extends cliPanel
   public void setEnabled(boolean enab)
   {
     super.setEnabled(enab);
+
     if (! enab && cli_nombL!=null)
-      cli_nombL.setEnabled(false);
+      cli_nombL.setEnabled(false);      
+
   }
 
 }
