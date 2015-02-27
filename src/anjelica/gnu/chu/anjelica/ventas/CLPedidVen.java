@@ -4,7 +4,7 @@
  * Este programa saca los margenes sobre el precio de tarifa entre unas fechas
  * y para una zona/Representante dada.
  * Tambien permite sacar una relacion de los albaranes, que no tienen precio de tarifa
- * puestos, dando la opción de actualizarlos.
+ * puestos, dandoz< la opción de actualizarlos.
  * Created on 03-dic-2009, 22:41:09
  *
  * <p>Copyright: Copyright (c) 2005-2015
@@ -762,7 +762,7 @@ public class CLPedidVen extends  ventana
         cLabel18.setText("Zona");
         cLabel18.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel18);
-        cLabel18.setBounds(270, 48, 90, 18);
+        cLabel18.setBounds(270, 48, 40, 18);
 
         cLabel9.setText("Confirmado");
         Pcabe.add(cLabel9);

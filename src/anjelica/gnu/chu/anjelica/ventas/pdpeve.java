@@ -60,7 +60,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   CTextField pvl_dtoE=new CTextField(Types.DECIMAL,"#9.99");
   CTextField pvl_prclprE=new CTextField(Types.DECIMAL,"---,--9.99");
   CTextField pvl_dtoproE=new CTextField(Types.DECIMAL,"#9.99");
-  CTextField pvl_tipoE=new CTextField(Types.CHAR,"?",1);
+  CComboBox pvl_tipoE=new CComboBox(); // Types.CHAR,"?",1
   
   CComboBox alm_codiE = new CComboBox();
   CPanel Pprinc = new CPanel();
@@ -228,7 +228,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2015-01-19");
+    this.setVersion("2015-02-11");
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -251,6 +251,7 @@ public class pdpeve  extends ventanaPad   implements PAD
           ArrayList v = new ArrayList();
           
           jt.setEnabled(false);
+          pro_codiE.getFieldBotonCons().setEnabled(false);
           if (jt.getValorInt(JT_PROD) == proCodi && jt.getValorInt(JT_PROV) == prvCodi
               && jt.getValString(JT_FECCAD).equals(feccad))
             jt.setValor("" + (jt.getValorInt(JT_CANTI) + 1),JT_CANTI);
@@ -259,7 +260,7 @@ public class pdpeve  extends ventanaPad   implements PAD
             v.add( proCodi); // 0
             v.add(pro_codiE.getNombArt(proCodi)); // 1           
             v.add(1); // 5
-            v.add(pro_codiE.getTipoUnidVenta()); // 6 Tipo Unidad
+            v.add(pvl_tipoE.getText(pro_codiE.getTipoUnidVenta())); // 6 Tipo Unidad
             v.add(precio); // 7
             v.add(precio!=0); // 8
             v.add(""); // 9
@@ -280,6 +281,7 @@ public class pdpeve  extends ventanaPad   implements PAD
           prv_codiE.setValorInt(prvCodi);
           pvl_feccadE.setText(feccad);
           jt.setEnabled(true);
+          pro_codiE.getFieldBotonCons().setEnabled(true);
           if (precio != 0)
           {
             pvl_precioE.setValorDec(precio);
@@ -504,21 +506,25 @@ public class pdpeve  extends ventanaPad   implements PAD
     jt.setMinimumSize(new Dimension(31, 250));
     jt.setPreferredSize(new Dimension(477, 250));
     jt.setPuntoDeScroll(50);
-    jt.setAnchoColumna(new int[]{60,160,70,40,60,50,150,50,150,90,30});
+    jt.setAnchoColumna(new int[]{60,160,70,50,60,50,150,50,150,90,30});
     jt.setAlinearColumna(new int[]{2,0,2,0,2,1,0,2,0,1,2});
     
 
     ArrayList v1=new ArrayList();
-    pvl_tipoE.setText("K");
-    pvl_tipoE.setMayusc(true);
-    pvl_tipoE.setCaracterAceptar("PCK");
+    pvl_tipoE.addItem("Kilos","K");
+    pvl_tipoE.addItem("Piezas","P");
+    pvl_tipoE.addItem("Cajas","C");
+    
+//    pvl_tipoE.setText("K");
+//    pvl_tipoE.setMayusc(true);
+//    pvl_tipoE.setCaracterAceptar("PCK");
     pvl_tipoE.setToolTipText("Tipo Cantidad: (K)ilos, (P)iezas, (C)ajas");
     pro_nombE.setEnabled(false);
     pro_codiE.setProNomb(null);
     prv_codiE.setCampoNombre(null);
     pvl_numlinE.setEnabled(false);
     prv_nombE.setEnabled(false);
-    v1.add(pro_codiE.pro_codiE); // 0
+    v1.add(pro_codiE.getFieldProCodi()); // 0
     v1.add(pro_nombE); // 1  
     v1.add(pvl_cantiE); // 2
     v1.add(pvl_tipoE);//3
@@ -531,6 +537,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     v1.add(pvl_numlinE); // 10
     jt.setCampos(v1);
     jt.setFormatoCampos();
+    pro_codiE.getFieldBotonCons().setText("Ayuda Producto");
+    jt.getPanelBotones().add(pro_codiE.getFieldBotonCons());
   }
 
   @Override
@@ -570,7 +578,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   public void iniciarVentana() throws Exception
   {
     pstock.setPedidos(opPedidos.isSelected());
-
+    pro_codiE.getFieldBotonCons().setEnabled(false);
     emp_codiE.setColumnaAlias("emp_codi");
     eje_numeE.setColumnaAlias("eje_nume");
     cli_codiE.setColumnaAlias("cli_codi");
@@ -617,6 +625,28 @@ public class pdpeve  extends ventanaPad   implements PAD
   }
   void activarEventos()
   {
+    pvl_tipoE.addKeyListener(new KeyAdapter()
+    {
+        @Override
+        public void keyPressed(KeyEvent ke) {
+                char c=ke.getKeyChar();
+            
+            if (c=='K' ||c=='k' 
+               || c=='P' ||c=='p'
+               || c=='C' ||c=='c')
+                jt.requestFocusLater(jt.getSelectedRow(), jt.getSelectedColumn()+1 );
+        }
+//        @Override
+//        public void keyTyped(KeyEvent ke) {
+//            char c=ke.getKeyChar();
+//            
+//            if (c=='K' ||c=='k' 
+//               || c=='P' ||c=='p'
+//               || c=='C' ||c=='c')
+//                jt.requestFocusLater(jt.getSelectedRow(), jt.getSelectedColumn()+1 );
+//        }
+
+    });
     pvc_fecentE.addFocusListener(new FocusAdapter()
     {
       @Override
@@ -859,10 +889,30 @@ public class pdpeve  extends ventanaPad   implements PAD
         activaTodo();
         return;
       }
+      // Busco Lineas con Numero inferior a 0 (Cuelgues anteriores)
+      s = " select *  from pedvenl where pvl_numlin<0  and emp_codi = " + emp_codiE.getValorInt() +
+        " and eje_nume= " + eje_numeE.getValorInt() +
+        " and pvc_nume = " + pvc_numeE.getValorInt()+ " order by pvl_numlin ";
+      if (dtCon1.select(s))
+      {
+          int nl=100;          
+          do
+          {
+              s="update pedvenl set pvl_numlin="+nl+ " where  emp_codi = " + emp_codiE.getValorInt() +
+                " and eje_nume= " + eje_numeE.getValorInt() +
+                " and pvc_nume = " + pvc_numeE.getValorInt()+
+                " and pvl_numlin = "+dtCon1.getInt("pvl_numlin");
+              dtAdd.executeUpdate(s);
+              nl++;
+          } while (dtCon1.next());
+          dtAdd.commit();
+          verDatos();
+      }
       pvc_verfecE.setEnabled(opVerProd.getValor().equals(""+pstockAct.VER_ULTVENTAS));
       pvl_precioE.resetCambio();
       pvc_fecentE.resetCambio();
       jt.setEnabled(true);
+      pro_codiE.getFieldBotonCons().setEnabled(true);
       cli_codiE_afterFocusLost(false);
       mensaje("Editando Pedido ...");
       jt.requestFocusInicio();
@@ -952,6 +1002,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       pvc_fecentE.resetCambio();
       pcc_estadE.setValor("P");
       jt.setEnabled(true);
+      pro_codiE.getFieldBotonCons().setEnabled(true);
     } catch (SQLException k)
     {
       Error("Error en PADAddNew ",k);
@@ -1062,7 +1113,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       dtAdd.setDato("pvl_kilos", kilos);             
       dtAdd.setDato("pvl_unid", kilos/ (hm.get(MantArticulos.TIPVENCAJA)==1?
           hm.get(MantArticulos.KGXCAJ):hm.get(MantArticulos.KGXUNI)));
-      dtAdd.setDato("pvl_tipo", jt.getValString(n,JT_TIPCAN));
+      dtAdd.setDato("pvl_tipo", jt.getValString(n,JT_TIPCAN).substring(0,1));
       dtAdd.setDato("pro_codi", jt.getValorInt(n,JT_PROD));
       dtAdd.setDato("pvl_comen", jt.getValString(n,JT_COMEN));
       dtAdd.setDato("pvl_precio", jt.getValorDec(n,JT_PRECIO));
@@ -1218,6 +1269,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       if (modo!=navegador.QUERY)
       {
         jt.setEnabled(b);
+        pro_codiE.getFieldBotonCons().setEnabled(b);
         Ppie.setEnabled(b);        
       }
       eje_numeE.setEnabled(b);
@@ -1248,6 +1300,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     Bimpri.setEnabled(!b);
   }
 
+  @Override
   public void activar(boolean b)
   {
     activar(navegador.TODOS,b);
@@ -1309,7 +1362,7 @@ public class pdpeve  extends ventanaPad   implements PAD
           v.add(pro_codiE.getNombArtCli(dtCon1.getInt("pro_codi"),
                                               cli_codiE.getValorInt()));    
          v.add(dtCon1.getDouble("pvl_canti"));
-         v.add(dtCon1.getString("pvl_tipo"));
+         v.add(pvl_tipoE.getItemAt(dtCon1.getString("pvl_tipo")));
          v.add(dtCon1.getString("pvl_precio"));
          v.add(dtCon1.getInt("pvl_precon")!=0);
          v.add(dtCon1.getString("pvl_comen"));
@@ -1357,12 +1410,12 @@ public class pdpeve  extends ventanaPad   implements PAD
           mensajeErr("Tipo de cantidad Invalida. Aceptables: Kilos/Piezas/Cajas");
           return JT_TIPCAN;         
       }
-      if (pvl_tipoE.getText().equals("P") &&    MantArticulos.getKilosUnid(pro_codiE.getValorInt(), dtAdd)==0)
+      if (pvl_tipoE.getValor().equals("P") &&    MantArticulos.getKilosUnid(pro_codiE.getValorInt(), dtAdd)==0)
       {
           mensajeErr("Este producto no tiene equivalencia Kilos/Unidades. Imposible realizar el pedido en Unidades");
           return JT_TIPCAN;
       }
-      if (pvl_tipoE.getText().equals("c") &&    MantArticulos.getKilosCaja(pro_codiE.getValorInt(), dtAdd)==0)
+      if (pvl_tipoE.getValor().equals("C") &&    MantArticulos.getKilosCaja(pro_codiE.getValorInt(), dtAdd)==0)
       {
           mensajeErr("Este producto no tiene equivalencia Kilos/Caja. Imposible realizar el pedido en Cajas");
           return JT_TIPCAN;
