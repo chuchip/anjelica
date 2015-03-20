@@ -709,7 +709,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20150204)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20150304)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -3030,6 +3030,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         }
         jtDes.ponValores(jtDes.getSelectedRow());
         lineaAnt = getLinGrDes();
+        numIndAnt=jtDes.getValorInt(JTD_NUMIND);
         kgIndivAnt = acp_cantiE.getValorDec();
         acp_cantiE.resetCambio();
     }

@@ -395,9 +395,10 @@ public class MantAlbComCarne extends MantAlbCom
      return -1;
   }
    
+   @Override
   public String getLinGrDes()
   {
-    numIndAnt=jtDes.getValorInt(JTD_NUMIND);
+//    numIndAnt=jtDes.getValorInt(JTD_NUMIND);
 //    System.out.println("Lin. Ant: "+numIndAnt);
     return acp_numindE.getValorInt()+""+acp_cantiE.getValorDec()+acp_nucrotE.getText()+
         mat_codiE.getValorInt()+sde_codiE.getValorInt()+

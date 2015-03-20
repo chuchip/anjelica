@@ -668,7 +668,7 @@ public class ClDifInv extends ventana {
                 if (cant == null) {
                     canti = 0;
                 } else {
-                    canti = cant.doubleValue();
+                    canti = cant;
                 }
                 nLec++;
                 tipMov = dtCon1.getString("tipmov");

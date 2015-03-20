@@ -13,7 +13,7 @@ package gnu.chu.anjelica.ventas;
  *    > dto. Comercial
  *    > Valorado
  *    > cambiar sección a un cliente.
- *    > Poner albarán como No facturar (conforme)
+ *    
  * - ponPrecio (true/false).
  * Si esta variable es true permite poner precios y modificarlos en los albaranes
  * del dia.
@@ -27,6 +27,7 @@ package gnu.chu.anjelica.ventas;
  *   Permite ver albaranes de traspasos de albaranes
  *   Permite modificar albaranes de un ejercicio cerrado.
  *   Permite modificar albaranes que ya hayan sido facturados.
+ *   Poner albarán como No facturar (conforme)
  * checkPedido: true o false, indica si se comprobara si exiten pedidos pendientes. Por defecto es true.
  *</p>
  * <p>Copyright: Copyright (c) 2005-2015
@@ -620,7 +621,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-02-27" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-03-11" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -906,7 +907,7 @@ public class pdalbara extends ventanaPad  implements PAD
         avc_confoE.setText("Facturar");
         avc_confoE.setBounds(new Rectangle(590, 20, 76, 16));
         
-        avc_confoE.setEnabled(P_MODPRECIO);
+        avc_confoE.setEnabled(P_ADMIN);
         opCopia.setSelected(true);
         opCopia.setText("Imprimir Copia a Papel");
         opCopia.setBounds(new Rectangle(293, 20, 165, 17));
@@ -6792,9 +6793,8 @@ public class pdalbara extends ventanaPad  implements PAD
     impLinE.setEnabled(false);
     avc_impalbE.setEnabled(false);
     avc_impcobE.setEnabled(false);
-     Bdespiece.setEnabled(false);
-    if (P_MODPRECIO)
-        sbe_codiE.setEnabled(b);    
+    Bdespiece.setEnabled(false);    
+          
     emp_codiE.setEnabled(b);
     avc_anoE.setEnabled(b);
     avc_seriE.setEnabled(b);
@@ -6817,12 +6817,13 @@ public class pdalbara extends ventanaPad  implements PAD
     avc_almoriE.setEnabled(b);
     if (P_MODPRECIO)
     {
+      sbe_codiE.setEnabled(b);  
       BValTar.setEnabled(!b);
       avc_dtoppE.setEnabled(b);
-      avc_dtocomE.setEnabled(b);
-//      avc_revpreE.setEnabled(b);
-      avc_confoE.setEnabled(b);
+      avc_dtocomE.setEnabled(b);      
     }
+    if (P_ADMIN)
+        avc_confoE.setEnabled(b);
     avc_obserE.setEnabled(b);
     pvc_anoE.setEnabled(b);
     pvc_numeE.setEnabled(b);
@@ -6831,9 +6832,7 @@ public class pdalbara extends ventanaPad  implements PAD
     avl_cantiE.setEnabled(b);
     pro_nombE.setEditable(b);
     usu_nompedE.setEnabled(false);
-    opAgru.setEnabled(!b);
-    
-    
+    opAgru.setEnabled(!b);        
   }
 @Override
   public void rgSelect() throws SQLException

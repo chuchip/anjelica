@@ -523,7 +523,7 @@ $BODY$
 			if not found then
 				RAISE EXCEPTION 'NO encontrado tipo Mvto %',NEW.tir_codi;
 			end if;
-			raise notice 'Tipo De movimiento %',tipoMvto;
+--			raise notice 'Tipo De movimiento %',tipoMvto;
 			if tipoMvto ='='  then
 				tipoMvto='*';
 			end if;
@@ -534,7 +534,7 @@ $BODY$
 				tipoMvto='S';
 			end if;
 		end if;
-		if tipoMvto != '*' then
+		if tipoMvto != '*' then			
 			INSERT INTO anjelica.mvtosalm (mvt_oper,mvt_time,
 				mvt_tipo , mvt_tipdoc , 
 				alm_codi,
@@ -572,7 +572,8 @@ $BODY$
 		end if;
 	  end if;
 	  if TG_OP =  'DELETE' or TG_OP =  'UPDATE' then	
-		if OLD.rgs_trasp=0 then
+		raise notice 'Inserto movimiento % TIPO %',tipoMvto,TG_OP;
+		if OLD.rgs_trasp=0 then			
 			return OLD; -- Ignoro apuntes de Inventario
 		end if;    	
 		SELECT tir_afestk into tipoMvto FROM anjelica.v_motregu  WHERE 
@@ -590,8 +591,13 @@ $BODY$
 		if nRows = 0  and ajuDelmvt = 0 then
 			RAISE EXCEPTION 'No encontrado mvto a Borrar. Regularizacion % ',OLD.rgs_nume;
 			return null;
-		end if;		
-		return OLD;
+		end if;	
+--		raise notice 'Inserto movimiento %',OLD;
+		if TG_OP =  'DELETE' then
+			return OLD;
+		else
+			return NEW;
+		end if;
 	  end if;	   	  
 	end if;
 	return null;
