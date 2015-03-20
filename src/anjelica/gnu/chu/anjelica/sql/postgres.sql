@@ -258,8 +258,8 @@ rep_codi char(2),       -- Representante
 cli_feulve date,        -- Fecha Ult. Venta
 cli_feulco date,        -- Fecha Ult. Contacto
 cli_estcon char(1) default 'N',     -- Estado de Contacto (No contacto,Ausente,Contacto, Llamar)
-cli_email1 char(40),     -- Correo Electronico Comercial (Tarifas)
-cli_email2 char(40),     -- Correo Electronico Administr. (Facturas/Alb.)
+cli_email1 char(60),     -- Correo Electronico Comercial (Tarifas)
+cli_email2 char(60),     -- Correo Electronico Administr. (Facturas/Alb.)
 constraint ix_vcliente primary key(cli_codi)
 );
 --
@@ -504,7 +504,7 @@ create table anjelica.albvenserc
 	avs_nume serial,
 	avs_fecha date not null default current_date,
     avc_ano int not null, -- Año del Albaran al que esta ligado
-    emp_codi int not null,--  del Albaran al que esta ligado
+    emp_codi int not null,--  Emprsa del Albaran al que esta ligado
     avc_serie char(1) not null, -- Serie del Albaran al que esta ligado
     avc_nume int not null, -- Numero del Albaran al que esta ligado
 	cli_codi int not null,
@@ -2389,19 +2389,21 @@ constraint ix_falico primary key (eje_nume,emp_codi,fcc_nume,fcl_numlin)
 );
 create index ix_falico1 on v_falico(emp_codi,acc_ano,acc_nume,acc_serie);
 --
--- Tabla de Inventarios de depositos
+-- Tabla de Inventarios de depositos.
+-- Esta tabla es llenada por el traspaso de inventarios, para anotar los productos que estaran en almacen,
+-- pero en deposito.
 --
 create table anjelica.anjelica.invdepos
 (
 pro_codi int not null,		-- Codigo Producto
-ind_fecha date not null,	-- Fecha y hora de Regularizacion
+ind_fecha date not null,	-- Fecha de Inventario
 eje_nume int  ,			-- Ejercicio de Reg.
 emp_codi int ,			-- Empresa del lote
 pro_serie char(1),		-- Serie de Producto
 pro_nupar int,			-- Numero Partida
 pro_numind int,			-- Numero de Individuo
 alm_codi int,			-- Almacen
-ind_numuni int,                 -- Numero de Unidades
+ind_numuni int,         -- Numero de Unidades
 ind_kilos float
 );
 create index ix_invdepos on invdepos(ind_fecha,pro_codi);
@@ -3497,14 +3499,20 @@ alter table anjelica.albvenseri add constraint avs_nume_i foreign key (avs_nume)
 alter table anjelica.v_albvenpar add constraint avl_cabel foreign key (emp_codi,avc_ano,avc_serie,avc_nume,avl_numlin)
 references anjelica.v_albavel(emp_codi,avc_ano,avc_serie,avc_nume,avl_numlin) DEFERRABLE INITIALLY DEFERRED;
 
+
 create view anjelica.v_albvenserv as
-SELECT c.avs_nume,c.avs_fecha,c.avc_ano,c.emp_codi,c.avc_serie,c.avc_nume,
+SELECT a.alm_codori,a.alm_codfin,a.avc_fecha,a.sbe_codi,c.avs_nume,c.avs_fecha,c.avc_ano,c.emp_codi,c.avc_serie,c.avc_nume,
 c.cli_codi,l.avs_numlin,l.pro_codi,l.pro_nomb,l.avs_canti AS avl_canti,
 l.avs_unid,i.avi_numlin,i.avs_ejelot,i.avs_emplot,i.avs_serlot,
 i.avs_numpar,i.avs_numind,i.avs_numuni,i.avs_canti
-FROM albvenserc c, albvenserl l, albvenseri i
+FROM albvenserc c, albvenserl l, albvenseri i,v_albavec as a
 WHERE l.avs_nume = c.avs_nume AND i.avs_nume = c.avs_nume
-   AND l.avs_numlin = i.avs_numlin;
+   AND l.avs_numlin = i.avs_numlin
+   and c.emp_codi = a.emp_codi 
+   AND c.avc_serie = a.avc_serie
+   aND c.avc_nume = a.avc_nume 
+   and c.avc_ano = a.avc_ano ;
+
 --
 -- Vista para mantener compatibilidad
 --

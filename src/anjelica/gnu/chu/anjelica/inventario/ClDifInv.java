@@ -4,7 +4,7 @@ package gnu.chu.anjelica.inventario;
  *
  * <p>Titulo: ClDifInv </p>
  * <p>Descripción: Consulta / Listado Diferencias Existencias Reales sobre las introducidas en Control </p>
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -30,6 +30,7 @@ import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.SystemOut;
+import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
@@ -104,7 +105,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2014-11-11");
+        this.setVersion("2015-02-19");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -226,8 +227,18 @@ public class ClDifInv extends ventana {
                   " and lci_regaut=0 ) > 1 order by  PRO_CODI,PRP_PART,PRP_INDI";
             if (dtCon1.select(s))
             {
-              msgBox("AVISO!! Existen individuos metidos dos o mas veces en el inventario");
-              enviaMailError("Listado diferencias Inventario con individuos metidos mas de una vez: "+dtCon1.getSql());
+              String msg="Inventario en fecha: "+cci_fecconE.getText()+"\n";
+              do 
+              {
+                  msg+=" Linea: "+dtCon1.getString("lci_nume")+" en ID: "+dtCon1.getString("cci_codi")+": "+
+                      dtCon1.getString("pro_codi")+" "+dtCon1.getString("prp_ano")+
+                      dtCon1.getString("prp_seri")+
+                      dtCon1.getString("PRP_PART")+" "+dtCon1.getString("lci_peso")+" Kg";
+                  dtCon1.next();
+                  msg+=" Repetido en linea: "+dtCon1.getString("lci_nume")+" del ID: "+dtCon1.getString("cci_codi")+"\n";
+              } while (dtCon1.next());
+              mensajes.mensajeExplica("Aviso",  "Individuos metidos dos veces en invetntario",msg);              
+              enviaMailError("Listado diferencias Inventario con individuos metidos mas de una vez: "+msg);
             }
             String s2 = "SELECT c.* FROM "+VISTA_INV+" AS c " +
               " WHERE c.emp_codi =" + EU.em_cod +
@@ -839,32 +850,23 @@ public class ClDifInv extends ventana {
         
       if (incDep)
       {
-          s+=" UNION ALL select 2 as orden,'V' as sel,'-' as tipmov,cs.avs_fecha as fecmov," +
-          "  i.avs_serlot as serie,i.avs_numpar as  lote," +
-          " i.avs_canti as canti,i.avs_numind as numind, " +
-          " l.pro_codi,i.avs_emplot,i.avs_ejelot as eje_nume,c.alm_codori as almori,c.avc_serie AS seralb "+
-          "  from albvenserl as l, v_albavec as c, albvenserc as cs,albvenseri as i, v_articulo a" +
-          " WHERE c.emp_codi = cs.emp_codi " +
-          " AND c.avc_serie = cs.avc_serie " +
-          " AND c.avc_nume = cs.avc_nume " +
-          " and c.avc_ano = cs.avc_ano " +
-          " and cs.avs_nume = l.avs_nume"+
-          " and cs.avs_nume = i.avs_nume"+
-          " and l.avs_numlin = i.avs_numlin "+
-          " and i.avs_canti <> 0 "+
-          " and a. pro_codi = l.pro_codi "+
+          s+=" UNION ALL select 2 as orden,'V' as sel,'-' as tipmov,avs_fecha as fecmov," +
+          "  avs_serlot as serie,avs_numpar as  lote," +
+          " avs_canti as canti,avs_numind as numind, " +
+          " a.pro_codi,avs_emplot,avs_ejelot as eje_nume,alm_codori as almori,avc_serie AS seralb "+
+          "  from v_albvenserv as al, v_articulo a " +
+          " WHERE avs_canti <> 0 "+
+          " and a.pro_codi = al.pro_codi "+
           (camCodiE.equals("--")?" and a.cam_codi in "+
            condCamaras:
-          (camCodiE.equals("")?"":" and A.cam_codi = '"+camCodiE +"'"))+
-          (PROCODI!=0?" and l.pro_codi = "+PROCODI:"")+
-          (LOTE>=0?" and i.avs_numpar = "+LOTE:"") +
+          (camCodiE.equals("")?"":" and a.cam_codi = '"+camCodiE +"'"))+
+          (PROCODI!=0?" and a.pro_codi = "+PROCODI:"")+
+          (LOTE>=0?" and avs_numpar = "+LOTE:"") +
           condProd+
-          " and c.avc_depos = 'D' "+
-//          " AND c.avc_fecalb > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
-//          " and c.avc_fecalb <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "+
+          " and avc_depos = 'D' "+
           " and avs_fecha > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
           " and avs_fecha <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "+
-          (almCodi==0?"":" and c.alm_codori = "+almCodi);
+          (almCodi==0?"":" and a.alm_codori = "+almCodi);
       }
       
       if (almCodi!=0)
