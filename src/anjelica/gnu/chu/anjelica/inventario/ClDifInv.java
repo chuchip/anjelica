@@ -866,7 +866,7 @@ public class ClDifInv extends ventana {
           " and avc_depos = 'D' "+
           " and avs_fecha > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
           " and avs_fecha <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "+
-          (almCodi==0?"":" and a.alm_codori = "+almCodi);
+          (almCodi==0?"":" and alm_codori = "+almCodi);
       }
       
       if (almCodi!=0)
