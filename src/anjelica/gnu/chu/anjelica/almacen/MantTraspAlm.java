@@ -5,7 +5,7 @@ package gnu.chu.anjelica.almacen;
  * <p>Título: MantTraspAlm</p>
  * <p>Descripción: Mantenimiento traspasar Individuos de un almacen a otro.
  *  </p>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -56,6 +56,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -150,7 +151,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                     Boolean.parseBoolean(ht.get("admin"));
     }
     private void jbInit() throws Exception {      
-        setVersion("2014-12-11 "+ (ARG_ADMIN?"ADMIN":""));
+        setVersion("2015-03-31 "+ (ARG_ADMIN?"ADMIN":""));
   
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
@@ -808,10 +809,17 @@ public class MantTraspAlm extends ventanaPad implements PAD
         }
         int numAlb=0;
         try {
+            Timestamp fecAlta=borrarTraspaso();
             borrarTraspaso();
-            numAlb=traspDato1();
+            if (ARG_ADMIN)
+            {
+                int ret=mensajes.mensajePreguntar("Mantener fecha de mvto?");
+                if (ret!=mensajes.YES)
+                    fecAlta=null;
+            }
+            numAlb=traspDato1(fecAlta);
             dtAdd.commit();
-        } catch (Exception k)
+        } catch (SQLException | ParseException k)
         {
             Error("Error al actualizar Traspasado",k);
         }
@@ -854,7 +862,8 @@ public class MantTraspAlm extends ventanaPad implements PAD
         }
         int numAlb=0;
         try {
-            numAlb=traspDato1();
+            
+            numAlb=traspDato1(null);
             dtAdd.commit();
         } catch (SQLException | ParseException k)
         {
@@ -1402,6 +1411,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         if (Formatear.comparaFechas(pdalmace.getFechaInventario(alm_codifE.getValorInt(), dtStat) , fecMinMvt)>= 0 )
           return "Almacen "+alm_codifE.getValorInt() +" con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar";
         int nl = jt.getRowCount();
+        int ret=mensajes.NO;
         for (int n = 0; n < nl; n++)    
         {
             if (!checkStock(jt.getValorInt(n, JT_ARTIC),
@@ -1410,11 +1420,19 @@ public class MantTraspAlm extends ventanaPad implements PAD
                 jt.getValorInt(n, JT_INDI),alm_codifE.getValorInt()))
             { // Sin Registro Stock
                 
-                 return "Sin registro stock de "+jt.getValorInt(n, JT_ARTIC)+" "+
+                String msg="Sin registro stock de "+jt.getValorInt(n, JT_ARTIC)+" "+
                      jt.getValorInt(n, JT_EJERC)+jt.getValString(n, JT_SERIE)+"-"+
                      jt.getValorInt(n, JT_LOTE)+"/"+jt.getValorInt(n, JT_INDI);
+                if (ARG_ADMIN)
+                {
+                    ret=mensajes.mensajePreguntar(msg+"\ncontinuar");
+                    if (ret!=mensajes.YES)
+                        return msg;        
+                }
+                else
+                    return msg;                
             }
-            if (jt.getValorDec(n,JT_PESO)!= dtStat.getDouble("stp_kilact"))
+            if (ret != mensajes.YES &&  jt.getValorDec(n,JT_PESO)!= dtStat.getDouble("stp_kilact"))
             {
                  return "Kilos actuales no son los traspasados de:  "+jt.getValorInt(n, JT_ARTIC)+" "+
                      jt.getValorInt(n, JT_EJERC)+jt.getValString(n, JT_SERIE)+"-"+
@@ -1430,47 +1448,51 @@ public class MantTraspAlm extends ventanaPad implements PAD
   }
   /**
    * Borrar el traspaso.
+   * @return fecha de Alta de albaran
    */
-  void borrarTraspaso() throws SQLException
+  Timestamp borrarTraspaso() throws SQLException
   {
       
       s=" where emp_codi = "+EU.em_cod+
           " AND avc_ano =" +avc_anoE.getValorInt()+" and avc_serie = 'X' and avc_nume= "+avc_numeE.getValorInt();
       mensaje("Espere, por favor ... Borrando Traspaso");
       if (!dtStat.select("select * from v_albvenpar "+s))
-          return;
+          return null;
       
-      do
-      {    
-        stkPart.anuStkPart(dtStat.getInt("pro_codi"),
-            dtStat.getInt("avp_ejelot"),
-             EU.em_cod,
-             dtStat.getString("avp_serlot"),
-             dtStat.getInt("avp_numpar"),
-             dtStat.getInt("avp_numind"),
-             alm_codifE.getValorInt(),
-             dtStat.getDouble("avp_canti"),
-             dtStat.getInt("avp_numuni"));
-                     
-         stkPart.sumar(dtStat.getInt("avp_ejelot"),dtStat.getString("avp_serlot"),
-            dtStat.getInt("avp_numpar"), dtStat.getInt("avp_numind"),            
-            dtStat.getInt("pro_codi"),
-            alm_codioE.getValorInt(),
-            dtStat.getDouble("avp_canti"), dtStat.getInt("avp_numuni"));        
-      }  while (dtStat.next());
+//      do
+//      {    
+//        stkPart.anuStkPart(dtStat.getInt("pro_codi"),
+//            dtStat.getInt("avp_ejelot"),
+//             EU.em_cod,
+//             dtStat.getString("avp_serlot"),
+//             dtStat.getInt("avp_numpar"),
+//             dtStat.getInt("avp_numind"),
+//             alm_codifE.getValorInt(),
+//             dtStat.getDouble("avp_canti"),
+//             dtStat.getInt("avp_numuni"));
+//                     
+//         stkPart.sumar(dtStat.getInt("avp_ejelot"),dtStat.getString("avp_serlot"),
+//            dtStat.getInt("avp_numpar"), dtStat.getInt("avp_numind"),            
+//            dtStat.getInt("pro_codi"),
+//            alm_codioE.getValorInt(),
+//            dtStat.getDouble("avp_canti"), dtStat.getInt("avp_numuni"));        
+//      }  while (dtStat.next());
+      dtStat.select("select avl_fecalt from v_albavel "+s);
+      Timestamp fecAlta=dtStat.getTimeStamp("avl_fecalt");
       dtAdd.executeUpdate("delete from v_albvenpar "+s);
       dtAdd.executeUpdate("delete from v_albavel "+s);
       dtAdd.executeUpdate("delete from v_albavec "+s);
+      return fecAlta;
   }
   /**
    * Crear el traspaso.
+   * @param fecAlta Fecha de alta para mvtos (Null si debe ser la del dia)
    * @return numero albaran generado
    */
-  int traspDato1() throws SQLException, ParseException
+  int traspDato1(Timestamp fecAlta) throws SQLException, ParseException
   {    
       int numAlb;
      
-
       mensaje("Espere, por favor ... traspasando Individuos");
 
       // Busco el numero de Albaran a asignar.
@@ -1535,7 +1557,10 @@ public class MantTraspAlm extends ventanaPad implements PAD
         dtCon1.setDato("avl_canti", jt.getValorDec(n, JT_PESO));
         dtCon1.setDato("avc_cerra",-1);
 //        dtCon1.setDato("avl_fecalt","{ts '"+Formatear.getFecha(avc_fecalbE.getDate(),"yyyy-MM-dd")+ " 01:01:01'}");
-        dtCon1.setDato("avl_fecalt","current_timestamp");
+        if (fecAlta==null)
+            dtCon1.setDato("avl_fecalt","current_timestamp");
+        else
+            dtCon1.setDato("avl_fecalt",fecAlta);
         dtCon1.update(stUp);
 
         // Insertamos linea partida de albaran
@@ -1556,6 +1581,16 @@ public class MantTraspAlm extends ventanaPad implements PAD
         dtCon1.setDato("avp_numuni", jt.getValorInt(n,JT_UNID));
         dtCon1.setDato("avp_canti", jt.getValorDec(n, JT_PESO));
         dtCon1.update(stUp);      
+      }
+      
+      if (fecAlta!=null)
+      { // Poner mvtos a fecha anterior
+         s="update mvtosalm set mvt_time = {d '"+Formatear.getFecha(fecAlta,"yyyyMMdd")+"'}"+          
+          " where mvt_tipdoc='V' and mvt_empcod="+EU.em_cod+
+          " and mvt_numdoc="+numAlb+
+          " and mvt_serdoc = '"+"X"+"'"+
+          " and mvt_ejedoc ="+avc_anoE.getValorInt();
+         dtCon1.executeUpdate(s);
       }
       return numAlb;
     
