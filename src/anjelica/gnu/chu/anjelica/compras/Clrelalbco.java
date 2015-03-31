@@ -23,7 +23,7 @@ import javax.swing.SwingUtilities;
  *
  * <p>Titulo: Clrelalbco</p>
  * <p>Descripción: Consulta/Listado Relacion Albaranes de Compras</p>
- * <p>Copyright: Copyright (c) 2005-2014</p>
+ * <p>Copyright: Copyright (c) 2005-2015</p>
  * <p> El importe de la fras es solo la parte enlazada al albaran. No el total de la fra.</p>
  * <p>
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
@@ -479,6 +479,7 @@ public class Clrelalbco extends ventana {
         Pentra.add(opRecFra);
         opRecFra.setBounds(350, 2, 210, 16);
 
+        opIncPortes.setSelected(true);
         opIncPortes.setText("Inc. Portes");
         opIncPortes.setToolTipText("Incluir Portes");
         Pentra.add(opIncPortes);

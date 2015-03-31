@@ -246,6 +246,7 @@
             </Component>
             <Component class="gnu.chu.controles.CCheckBox" name="opIncPortes">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Inc. Portes"/>
                 <Property name="toolTipText" type="java.lang.String" value="Incluir Portes"/>
               </Properties>
