@@ -18,7 +18,7 @@ import javax.swing.event.ListSelectionListener;
 /**
 * <p>Titulo:   pdcobros </p>
  * <p>Descripción: Mantenimientos Cobros DE FACTURAS Y ALBARANES DE VENTAS
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
