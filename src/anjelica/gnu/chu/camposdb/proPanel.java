@@ -347,7 +347,10 @@ public class proPanel extends CPanel
       return null;
     return texto.substring(1);
   }
-
+  /**
+   * Devuelve el Nombre del producto.
+   * @return  String con el nombre del producto.
+   */
   public String getTextNomb()
   {
     return pro_nombL.getText();
