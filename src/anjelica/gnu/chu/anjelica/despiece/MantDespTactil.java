@@ -41,7 +41,7 @@ import javax.swing.event.InternalFrameEvent;
  *
  * <p>Titulo: MantDespTactil</p>
  * <p>Descripción: Mant. DESPIECES POR TACTIL</p>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -220,7 +220,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     }
 //
   };
-  CLabel cLabel13 = new CLabel();
+  CLabel numPiezasL = new CLabel();
   CLabel cLabel14 = new CLabel();
   CTextField grd_unioriE1 = new CTextField(Types.DECIMAL,"###9");
   CTextField grd_kilorgE1 = new CTextField(Types.DECIMAL,"###,##9.999");
@@ -313,7 +313,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
   CTextField grd_feccadE = new CTextField(Types.DATE,"dd-MM-yyyy");
   boolean PARAM_ADMIN=false;
   CButton BmodDaIn = new CButton();
-  CLabel cLabel25 = new CLabel();
+  CLabel numCopiasL = new CLabel();
   CTextField numCopiasE = new CTextField(Types.DECIMAL,"##9");
   public MantDespTactil(EntornoUsuario eu, Principal p)
   {
@@ -376,7 +376,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2014-11-10"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2015-03-31"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -445,15 +445,23 @@ public class MantDespTactil  extends ventanaPad implements PAD
     grd_blockL.setText("Situacion");
     
     cLabel11.setText("N. Piezas");
+    numPiezasL.setBounds(new Rectangle(0, 4, 52, 17));
     cLabel11.setBounds(new Rectangle(170, 1, 52, 17));
     cLabel12.setText("Kilos");
     cLabel12.setBounds(new Rectangle(349, 1, 31, 17));
     Porig.setLayout(gridBagLayout3);
-    Bimpetin.setBounds(new Rectangle(215, 4, 187, 18));
-    Bimpetin.setToolTipText("Imprimir Etiquetas Interiores");
+    
+    Bimpetin.setToolTipText("Imp.Etiq.Int.");
     Bimpetin.setText("Imp. Etiquetas Interiores");
-    cLabel13.setText("N. Piezas");
-    cLabel13.setBounds(new Rectangle(0, 4, 52, 17));
+
+    numCopiasL.setText("Copias");
+    Bimpetin.setBounds(new Rectangle(415, 2, 147, 18));
+    numCopiasE.setBounds(new Rectangle(565, 2, 38, 17));
+    numCopiasL.setBounds(new Rectangle(610, 2, 49, 17));
+    
+    numCopiasE.setValorInt(1);    
+    numPiezasL.setText("N. Piezas");    
+    
     cLabel14.setText("Kilos");
     cLabel14.setBounds(new Rectangle(104, 4, 31, 17));
     cLabel14.setRequestFocusEnabled(true);
@@ -638,9 +646,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Ppie.setMinimumSize(new Dimension(24, 30));
     Ppie.setPreferredSize(new Dimension(24, 30));
     Ppie.setLayout(null);
-    Baceptar.setBounds(new Rectangle(200, 1, 100, 26));
+    Baceptar.setBounds(new Rectangle(100, 1, 100, 26));
     Baceptar.setText("Aceptar");
-    Bcancelar.setBounds(new Rectangle(410, 1, 100, 26));
+    Bcancelar.setBounds(new Rectangle(310, 1, 100, 26));
     Bcancelar.setMaximumSize(new Dimension(81, 29));
     Bcancelar.setMinimumSize(new Dimension(81, 29));
     Bcancelar.setPreferredSize(new Dimension(81, 29));
@@ -687,11 +695,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     BmodDaIn.setBounds(new Rectangle(526, 4, 132, 19));
     BmodDaIn.setMargin(new Insets(0, 0, 0, 0));
     BmodDaIn.setText("Ver/Mod. Datos Ind.");
-    cLabel25.setText("Copias");
-    cLabel25.setBounds(new Rectangle(444, 4, 49, 17));
-
-    numCopiasE.setBounds(new Rectangle(404, 4, 38, 17));
-    numCopiasE.setValorInt(1);
+    
     this.getContentPane().add(Pprinc,  BorderLayout.CENTER);
     Pprinc.setLayout(new BorderLayout());
     Pprinc.add(Ptabed,BorderLayout.CENTER);
@@ -777,15 +781,16 @@ public class MantDespTactil  extends ventanaPad implements PAD
     cPanel1.add(grd_kilorgE1, null);
     cPanel1.add(cLabel14, null);
     cPanel1.add(grd_unioriE1, null);
-    cPanel1.add(cLabel13, null);
-    cPanel1.add(Bimpetin, null);
-    cPanel1.add(BmodDaIn, null);
-    cPanel1.add(cLabel25, null);
-    cPanel1.add(numCopiasE, null);
+    cPanel1.add(numPiezasL, null);
+        cPanel1.add(BmodDaIn, null);
+   
     Ptabed.add(Pfin, "Final");
     Ppie.add(Bcancelar, null);
     Ppie.add(Baceptar, null);
-
+    
+    Ppie.add(Bimpetin, null);
+    Ppie.add(numCopiasL, null);
+    Ppie.add(numCopiasE, null);
     grd_unioriE1.setEnabled(false);
 
 
@@ -839,7 +844,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    tid_codiE.releer(); // Carga todos los despieces activos 
    activarEventos();
    verDatos(dtCons);
-   actButton(false);
+   actButton(true);
  }
 
  void activarEventos()
@@ -950,13 +955,23 @@ public class MantDespTactil  extends ventanaPad implements PAD
        numCopiasE.requestFocus();
        return;
      }
+     if (pro_codsalE.isNull())
+     {
+         mensajeErr("Debe elegir el Codigo de Producto de Salida");
+         return;
+     }
+     if (!pro_codsalE.isVendible())
+     {
+         mensajeErr("Producto debe ser vendible para imprimir etiquetas interiores");
+         return;
+     }
      buscaDatInd();
      etiq.iniciar(deo_codiE.getText(),
                   eje_numeE.getText() + "/" +
                    Formatear.format(EU.em_cod, "99") + "/" +
                    SERIE + "/" +
                    deo_codiE.getValorInt(),
-                  null, null, utdesp.nacidoE, utdesp.cebadoE,
+                  pro_codsalE.getText(), pro_codsalE.getTextNomb(), utdesp.nacidoE, utdesp.cebadoE,
                   utdesp.despiezadoE, null,
                   null, utdesp.conservarE,
                   utdesp.sacrificadoE,
@@ -1106,25 +1121,25 @@ public class MantDespTactil  extends ventanaPad implements PAD
   public void PADPrimero() {
     nav.pulsado=navegador.NINGUNO;
     verDatos(dtCons);
-    actButton(false);
+    actButton(true);
   }
     @Override
   public void PADAnterior() {
     nav.pulsado=navegador.NINGUNO;
     verDatos(dtCons);
-    actButton(false);
+    actButton(true);
  }
     @Override
   public void PADSiguiente() {
     nav.pulsado=navegador.NINGUNO;
     verDatos(dtCons);
-    actButton(false);
+    actButton(true);
   }
     @Override
   public void PADUltimo() {
     nav.pulsado=navegador.NINGUNO;
     verDatos(dtCons);
-    actButton(false);
+    actButton(true);
   }
     @Override
   public void PADQuery() {
@@ -1188,7 +1203,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
        {
          fatalError("Error al buscar Despieces: ", ex);
        }
-       actButton(false);
+       actButton(true);
   }
 
     @Override
@@ -1215,7 +1230,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Pcabe.setQuery(false);
     verDatos(dtCons);
     activaTodo();
-    actButton(false);
+    actButton(true);
     nav.pulsado=navegador.NINGUNO;
     mensajeErr("Consulta .. cancelada");
     mensaje("");
@@ -1646,7 +1661,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     @Override
   public void canc_delete() {
     activaTodo();
-    actButton(false);
+    actButton(true);
     mensajeErr("Borrado .. cancelada");
     nav.pulsado=navegador.NINGUNO;
     mensaje("");
@@ -1692,7 +1707,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
         if (PARAM_ADMIN || isEmpPlanta)
             def_usunomE.setEnabled(activ);
         def_numpiE.setEnabled(activ);
-        actButton(activ);
+//        actButton(activ);
         if (!isEmpPlanta)
             BrepEti.setEnabled(activ);
         opImpEti.setEnabled(activ);
@@ -2716,6 +2731,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    pro_indenE.setEditable(edit);
    pro_kilenE.setEditable(edit);
  }
+ 
  private void actButton(boolean activ)
  {    
   
