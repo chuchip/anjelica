@@ -224,6 +224,7 @@ public class RegCosDes extends ventana {
         try 
         {
            msgEspere("Anulando Regeneracion de costos en despieces ...");
+           setLabelMsgEspere("Anulando Costos");
            popEspere_BCancelarSetEnabled(false);
            String s = "UPDATE v_despfin set def_prcost = def_preusu "
                         + " WHERE   eje_nume = " + eje_numeE.getValorInt()
@@ -234,7 +235,7 @@ public class RegCosDes extends ventana {
                         + " and orig.deo_numdes = 0 " 
                         + condWhereOrig + ")";
             int nRegAf = stUp.executeUpdate(s);
-            setMensajePopEspere("Anulados despicees de Salida sin agrupar: "+nRegAf,false);
+            setMensajePopEspere("Anulados despieces de Salida sin agrupar: "+nRegAf,false);
             s = "UPDATE v_despfin set def_prcost = def_preusu "
                         + " WHERE   eje_nume = " + eje_numeE.getValorInt()
                         + " and def_preusu != 0 "
@@ -244,7 +245,7 @@ public class RegCosDes extends ventana {
                         + " and orig.deo_numdes > 0 " 
                         + condWhereGrupo + ")";
             nRegAf += stUp.executeUpdate(s);
-            setMensajePopEspere("Anulados despicees de Salida Agrupados: "+nRegAf,false);
+            setMensajePopEspere("Anulados despieces de Salida Agrupados: "+nRegAf,false);
             s = "UPDATE desorilin set deo_prcost = deo_preusu "
                         + " WHERE   eje_nume = " + eje_numeE.getValorInt()
                         + " and deo_preusu != 0 "+
@@ -254,7 +255,7 @@ public class RegCosDes extends ventana {
                         " and orig.deo_numdes = 0 " +
                          condWhereOrig+")";  
               nRegAf+=dtAdd.executeUpdate(s);
-              setMensajePopEspere("Anulados despices de Entrada sin agrupar: "+nRegAf,false);
+              setMensajePopEspere("Anulados despieces de Entrada sin agrupar: "+nRegAf,false);
               s = "UPDATE desorilin set deo_prcost = deo_preusu "
                         + " WHERE   eje_nume = " + eje_numeE.getValorInt()
                         + " and deo_preusu != 0 "+
@@ -342,6 +343,7 @@ public class RegCosDes extends ventana {
           
             String s;
             msgEspere("Recalculando despieces ...");
+            setLabelMsgEspere("Regenerando Costos");
             popEspere_BCancelarSetEnabled(true);
             if (mvtosAlm == null) {
                 mvtosAlm = new MvtosAlma();
