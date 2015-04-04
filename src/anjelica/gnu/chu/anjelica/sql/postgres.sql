@@ -1130,6 +1130,15 @@ and c.emp_codi=i.emp_codi
 and c.acc_serie=i.acc_serie
 and c.acc_nume=i.acc_nume
 and l.acl_nulin=i.acl_nulin
+
+create or replace view v_albacom as 
+select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,
+l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi
+from anjelica.v_albacoc as c,anjelica.v_albacol as l, anjelica
+where c.acc_ano=l.acc_ano
+and c.emp_codi=l.emp_codi
+and c.acc_serie=l.acc_serie
+and c.acc_nume=l.acc_nume
 --order by l.acl_nulin,i.acp_numlin;
 --
 -- Historico Individuos albaranes de compras
