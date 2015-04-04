@@ -1,7 +1,7 @@
 /*
-* <p>Copyright: Copyright (c) 2005-2009
+* <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
- *  los terminos de la Licencia P�blica General de GNU seg�n es publicada por
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
  *  o bien (según su elección) de cualquier versión posterior.
  *  Este programa se distribuye con la esperanza de que sea útil,
@@ -95,7 +95,7 @@ public class BarraEstado extends CPanel
     Bsalir.setMaximumSize(new Dimension(24, 24));
     Bsalir.setPreferredSize(new Dimension(24, 24));
     Bsalir.setMinimumSize(new Dimension(24, 24));
-    Bsalir.setToolTipText("Salir de la aplicaci�n");
+    Bsalir.setToolTipText("Salir de la aplicación");
     BMenu.setVerifyInputWhenFocusTarget(true);
 
     Hora.setBorder(bordeLowered);
@@ -125,6 +125,7 @@ public class BarraEstado extends CPanel
      */
     time = new javax.swing.Timer(10000, new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         actualizaFecha();
@@ -140,6 +141,7 @@ public class BarraEstado extends CPanel
   {
     BMenu.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         if (MenuPri == null)
@@ -153,15 +155,17 @@ public class BarraEstado extends CPanel
     });
     BMenu.addMouseListener(new MouseAdapter()
     {
+      @Override
       public void mouseClicked(MouseEvent e)
       {
-        if (e.getModifiers() == e.BUTTON1_MASK)
+        if (e.getModifiers() == MouseEvent.BUTTON1_MASK)
           return;
         showMenu(BMenu);
       }
     });
     Bsalir.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
 //        System.out.println("saliendo...");
@@ -176,6 +180,7 @@ public class BarraEstado extends CPanel
 
   /**
    * Visualiza el BMenu de Persianas
+   * @param c componente a mostrar
    */
   public void showMenu(Component c) {}
 }
