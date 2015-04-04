@@ -919,23 +919,23 @@ public class ventana extends CInternalFrame implements ejecutable
   {
     return popEspere;
   }
-/**
- * Actualizar mensaje de msgEspere
- * @param msg Mensaje a poner. Lo añade al que ya hubiera.
- */
-  public void actualizaMsg(String msg)
+  /**
+   * Actualizar mensaje de msgEspere. Añadiendo al anterior el mandado.
+   * No pone salto de linea.
+   * @param msg 
+   */
+  public void setMensajePopEspere(String msg)
   {
-    actualizaMsg(msg, true);
+      setMensajePopEspere(msg,true);
   }
   /**
    * Actualizar mensaje de msgEspere
-   *
    * @param msg
    * @param anadir true, añade al mensaje anterior. (no pone salto de linea ni nada)
    */
-  public void actualizaMsg(String msg, boolean anadir)
+  public void setMensajePopEspere(String msg, boolean anadir)
   {
-    if (popEspere==null)
+     if (popEspere==null)
       return;
     if (SwingUtilities.isEventDispatchThread())
     {
@@ -943,6 +943,25 @@ public class ventana extends CInternalFrame implements ejecutable
      return;
     }
     SwingUtilities.invokeLater(new actualizaMsg(popEspere,(anadir ? popEspere.getMensaje() : "") + " " + msg));
+  }
+/**
+ * Actualizar mensaje de msgEspere
+ * @deprecated use setMensajePopEspere
+ * @param msg Mensaje a poner. Lo añade al que ya hubiera.
+ */
+  public void actualizaMsg(String msg)
+  {
+    setMensajePopEspere(msg, true);
+  }
+  /**
+   * Actualizar mensaje de msgEspere
+   * @deprecated use setMensajePopEspere
+   * @param msg Mensaje a poner.
+   * @param anadir true, añade al mensaje anterior. (no pone salto de linea ni nada)
+   */
+  public void actualizaMsg(String msg, boolean anadir)
+  {
+    setMensajePopEspere(msg,anadir);
   }
   class actualizaMsg  extends Thread
   {
