@@ -234,7 +234,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (ADMIN)
             MODPRECIO=true; 
-        setVersion("2015-02-03" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2015-03-07" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -3815,6 +3815,8 @@ public class MantDesp extends ventanaPad implements PAD
         def_preusuE = new gnu.chu.controles.CTextField(Types.DECIMAL, "---9.9999");
         def_tiempoE = new gnu.chu.controles.CTextField();
         deo_tiempoE = new gnu.chu.controles.CTextField();
+        MFechaCab = new javax.swing.JMenuItem();
+        MFechaLin = new javax.swing.JMenuItem();
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         eje_numeL = new gnu.chu.controles.CLabel();
@@ -4125,6 +4127,20 @@ public class MantDesp extends ventanaPad implements PAD
                 def_tiempoE.setEnabled(false);
 
                 deo_tiempoE.setEnabled(false);
+
+                MFechaCab.setText("Rest. Fecha");
+                MFechaCab.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        MFechaCabActionPerformed(evt);
+                    }
+                });
+
+                MFechaLin.setText("Rest. Fecha");
+                MFechaLin.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        MFechaLinActionPerformed(evt);
+                    }
+                });
 
                 Pprinc.setForeground(new java.awt.Color(255, 255, 255));
                 Pprinc.setMaximumSize(new java.awt.Dimension(669, 187));
@@ -4439,6 +4455,7 @@ public class MantDesp extends ventanaPad implements PAD
                             }
                         });
                         jtLin.getPopMenu().add(etiqueta);
+                        jtLin.getPopMenu().add(MFechaLin);
                     } catch (Exception k) { Error("Error al configurar grid lineas",k);}
 
                     javax.swing.GroupLayout jtLinLayout = new javax.swing.GroupLayout(jtLin);
@@ -4467,6 +4484,7 @@ public class MantDesp extends ventanaPad implements PAD
                 jtCab.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
                 jtCab.setMaximumSize(new java.awt.Dimension(449, 109));
                 jtCab.setMinimumSize(new java.awt.Dimension(449, 109));
+                jtCab.getPopMenu().add(MFechaCab);
 
                 javax.swing.GroupLayout jtCabLayout = new javax.swing.GroupLayout(jtCab);
                 jtCab.setLayout(jtCabLayout);
@@ -4682,6 +4700,66 @@ public class MantDesp extends ventanaPad implements PAD
                 pack();
             }// </editor-fold>//GEN-END:initComponents
 
+    private void MFechaCabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MFechaCabActionPerformed
+        try
+        {
+            if (jtCab.isVacio())
+                return;
+            if (nav.isEdicion())
+                return;
+            if (opVerAgrup.isSelected())
+            {
+                msgBox("Desagrupe las lineas para restaurar fecha mvto");
+                return;
+            }
+            s="UPDATE desorilin set deo_tiempo='"+deo_fechaE.getFechaDB()+"' where eje_nume="+eje_numeE.getValorInt()+
+                " and deo_codi="+deo_codiE.getValorInt()+
+                " and del_numlin="+jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_NL);
+            dtAdd.executeUpdate(s);
+            s="UPDATE mvtosalm set mvt_time='"+deo_fechaE.getFechaDB()+"' where mvt_ejedoc="+eje_numeE.getValorInt()+
+                " and mvt_numdoc="+deo_codiE.getValorInt()+" and mvt_tipdoc='D'"+
+                " and mvt_lindoc="+jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_NL);
+            dtAdd.executeUpdate(s);
+            dtAdd.commit();
+            verDatos(dtCons);
+            msgBox("Fecha mvto, puesta a la misma que la fecha de documento");
+        } catch (Exception ex)
+        {
+            Error("Error al actualizar fecha de mvto",ex);
+        }
+
+    }//GEN-LAST:event_MFechaCabActionPerformed
+
+    private void MFechaLinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MFechaLinActionPerformed
+       try
+        {
+            if (jtLin.isVacio())
+                return;
+            if (nav.isEdicion())
+                return;
+            if (opVerAgrup.isSelected())
+            {
+                msgBox("Desagrupe las lineas para restaurar fecha mvto");
+                return;
+            }
+            s="UPDATE v_despfin set def_tiempo='"+deo_fechaE.getFechaDB()+"' where eje_nume="+eje_numeE.getValorInt()+
+                " and deo_codi="+deo_codiE.getValorInt()+
+                " and def_orden="+jtLin.getValorInt(jtLin.getSelectedRowDisab(),JTLIN_ORDEN);
+            dtAdd.executeUpdate(s);
+            s="UPDATE mvtosalm set mvt_time='"+deo_fechaE.getFechaDB()+"' where mvt_ejedoc="+eje_numeE.getValorInt()+
+                " and mvt_numdoc="+deo_codiE.getValorInt()+" and mvt_tipdoc='d'"+
+                " and mvt_lindoc="+jtLin.getValorInt(jtLin.getSelectedRowDisab(),JTLIN_ORDEN);
+            dtAdd.executeUpdate(s);
+            dtAdd.commit();
+            verDatos(dtCons);
+            msgBox("Fecha mvto, puesta a la misma que la fecha de documento");
+        } catch (Exception ex)
+        {
+            Error("Error al actualizar fecha de mvto",ex);
+        }
+
+    }//GEN-LAST:event_MFechaLinActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
@@ -4691,6 +4769,8 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CButton BsalLin;
     private gnu.chu.controles.CButton BsaltaCab;
     private gnu.chu.controles.CButton BvalDesp;
+    private javax.swing.JMenuItem MFechaCab;
+    private javax.swing.JMenuItem MFechaLin;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Pgrid;
     private gnu.chu.controles.CPanel Phist;
