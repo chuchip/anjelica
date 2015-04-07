@@ -514,12 +514,11 @@ public class ClDifInv extends ventana {
      * en la fecha de control.
      * 
      */
-    
     int calcDatosStock()
     {
       try {
         
-        actualizaMsg("Espere, por favor, Insertando Datos Inventario ...",false);
+        setMensajePopEspere("Espere, por favor, Insertando Datos Inventario ...",false);
         TABLA_INV_CAB="tmp_invcab";
         TABLA_INV_LIN="tmp_invlin";   
         VISTA_INV="vista_inven";
@@ -535,9 +534,9 @@ public class ClDifInv extends ventana {
             + " from coninvcab where  cci_feccon= TO_DATE('" +  cci_fecconE.getText() + "','dd-MM-yyyy') " ;
         dtStat.select(s);
         int cciCodi=dtStat.getInt("cci_codi");
-        s="CREATE  TABLE temp "+TABLA_INV_CAB+" as select * from coninvcab where cci_codi="+cciCodi;
+        s="CREATE  temp TABLE  "+TABLA_INV_CAB+" as select * from coninvcab where cci_codi="+cciCodi;
         dtCon1.executeUpdate(s);
-        s="CREATE  TABLE temp "+TABLA_INV_LIN+" as select * from coninvlin where cci_codi=0";
+        s="CREATE temp  TABLE "+TABLA_INV_LIN+" as select * from coninvlin where cci_codi=0";
         dtCon1.executeUpdate(s);
 
         
@@ -549,12 +548,10 @@ public class ClDifInv extends ventana {
           " c.emp_codi=c.emp_codi"+
           " and c.cci_codi=l.cci_codi";   
          dtCon1.executeUpdate(s);
-        s= " select r.* FROM v_regstock r  WHERE " +
-          "  r.rgs_kilos <> 0"+
-//          " and rgs_trasp != 0 "+
-          (almCodi==0?"":" and r.alm_codi = "+almCodi)+
-          " and tir_afestk = '=' "+
-          " AND r.rgs_fecha = TO_DATE('" +  cci_fecconE.getText() + "','dd-MM-yyyy') " ;
+        s= " select * FROM v_inventar WHERE " +
+          "  rgs_kilos <> 0"+
+          (almCodi==0?"":" and alm_codi = "+almCodi)+
+          " AND rgs_fecha = TO_DATE('" +  cci_fecconE.getText() + "','dd-MM-yyyy') " ;
         if (!dtCon1.select(s))
             return 0;
         int lciNume=0;
