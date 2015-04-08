@@ -80,9 +80,11 @@ import gnu.chu.sql.vlike;
 import gnu.chu.utilidades.*;
 import gnu.chu.winayu.ayuLote;
 import gnu.hylafax.HylaFAXClient;
+import gnu.inet.ftp.ServerResponseException;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
+import java.io.IOException;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.*;
@@ -444,6 +446,7 @@ public class pdalbara extends ventanaPad  implements PAD
   CTextField avp_numindE = new CTextField(Types.DECIMAL, "###9");
   CTextField avp_cantiE = new CTextField(Types.DECIMAL, "---,--9.99")
   {
+      @Override
       public void afterProcesaEnter()
       {
           if (! avp_cantiE.hasCambio())
@@ -621,7 +624,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-03-11" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-04-08" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -1564,6 +1567,7 @@ public class pdalbara extends ventanaPad  implements PAD
     });
     Bdespiece.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         if ( pro_codiE.isEditable())
@@ -1572,6 +1576,7 @@ public class pdalbara extends ventanaPad  implements PAD
     });
     Bdespiece.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
           if (!P_ADMIN)
@@ -1582,6 +1587,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
     avc_deposE.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         if (! avc_deposE.isEnabled())
@@ -1594,6 +1600,7 @@ public class pdalbara extends ventanaPad  implements PAD
     });
     verDepoC.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         try {
@@ -1820,6 +1827,7 @@ public class pdalbara extends ventanaPad  implements PAD
     });
     Birgrid.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         irGrid();
@@ -1986,7 +1994,7 @@ public class pdalbara extends ventanaPad  implements PAD
             afterFocusLostCli(false);
             actPedAlbaran();
           }
-        } catch (Exception k)
+        } catch (SQLException | ParseException k)
         {
           Error("Error al Chequear Pedido de ventas ",k);
         }
@@ -2000,7 +2008,7 @@ public class pdalbara extends ventanaPad  implements PAD
       {
         try {
           actAcumPed(0);
-        } catch (Exception k)
+        } catch (SQLException | ParseException k)
         {
           Error("Error al ver acumulados de Pedidos",k);
         }
@@ -2015,7 +2023,7 @@ public class pdalbara extends ventanaPad  implements PAD
         {
           actAcumPed(0);
         }
-        catch (Exception k)
+        catch (SQLException | ParseException k)
         {
           Error("Error al ver acumulados de Pedidos", k);
         }
@@ -2116,7 +2124,6 @@ public class pdalbara extends ventanaPad  implements PAD
         despVenta.setAlmacen(alm_codoriE.getValorInt());
       } catch (Exception k ){
           Error("Error al iniciar aplicacion despiece en ventas",k);
-          return;
       }
   }
   /**
@@ -2306,7 +2313,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     try {
       actPedAlbaran();
-    } catch (Exception k)
+    } catch (SQLException | ParseException k)
     {
       Error("Error al Actualizar pedido de albaran",k);
     }
@@ -2798,7 +2805,7 @@ public class pdalbara extends ventanaPad  implements PAD
    */
   void actImpFra() throws SQLException
   {
-    double sumtot=0;
+    double sumtot;
     if (! datCab.actDatosFra(fvc_anoE.getValorInt() ,emp_codiE.getValorInt()  ,fvc_serieE.getText() ,fvc_numeE.getValorInt()))
       return;
     if ( datCab.getCambioIva())
@@ -2885,6 +2892,7 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   /**
    * Devuelve la setencia SQL para mostrar las lineas de un albaran agrupadas
+   * @param tablaLin
    * @param ano Ejercicio
    * @param empCodi Empresa de Albaran
    * @param serie Serie
@@ -2934,6 +2942,7 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   /**
    * Sentencia SQL para listar el albarán
+   * @param tablaLin
    * @param ano
    * @param empCodi
    * @param serie
@@ -3397,6 +3406,7 @@ public class pdalbara extends ventanaPad  implements PAD
  * @param numAlb
  * @param nLin Numero Linea Albaran. Si 0 mostrara todo lo que pertenezca a un producto y precio
  * @param proCodi
+ * @param numPale
  * @param proNomb Nombre de producto
  * @param precio
  * @param modPrecio Sacar precio (true=si)
@@ -3517,6 +3527,7 @@ public class pdalbara extends ventanaPad  implements PAD
     cli_codiE.requestFocus();
   }
 
+  @Override
   public void ej_query1()
   {
 
@@ -3895,15 +3906,19 @@ public class pdalbara extends ventanaPad  implements PAD
         activaTodo();
         return true;
     }
-    java.sql.Date fecMinMvt=getMinFechaMvto(avc_anoE.getValorInt(), emp_codiE.getValorInt(),avc_seriE.getText(),
-                       avc_numeE.getValorInt());
-    if (Formatear.comparaFechas(pdalmace.getFechaInventario(avc_almoriE.getValorInt(), dtStat) , fecMinMvt)>= 0 )
+    if (avsNume==0)
     {
-          msgBox("Albaran con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar");
-          nav.pulsado = navegador.NINGUNO;
-          activaTodo();
-          return true;
+        java.sql.Date fecMinMvt=getMinFechaMvto(avc_anoE.getValorInt(), emp_codiE.getValorInt(),avc_seriE.getText(),
+                           avc_numeE.getValorInt());
+        if (Formatear.comparaFechas(pdalmace.getFechaInventario(avc_almoriE.getValorInt(), dtStat) , fecMinMvt)>= 0 )
+        {
+              msgBox("Albaran con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar");
+              nav.pulsado = navegador.NINGUNO;
+              activaTodo();
+              return true;
+        }
     }
+    
     if (avc_seriE.getText().equals(EntornoUsuario.SERIEY) && swCompra)
     {
       if (MantAlbComCarne.isAlbCompra(dtStat,emp_codiE.getValorInt(),
@@ -4164,7 +4179,7 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       resetBloqueo(dtAdd);
     }
-    catch (Exception k)
+    catch (SQLException | ParseException k)
     {
       mensajes.mensajeAviso("Error al Quitar el bloqueo\n" + k.getMessage());
     }
@@ -4265,6 +4280,8 @@ public class pdalbara extends ventanaPad  implements PAD
       }
       if (! swEntdepos)
         actAlbaran();
+      else
+          ponAlbPedido();
       actProdRecicla();
       
       resetBloqueo(dtAdd);
@@ -4575,12 +4592,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
     if (checkAlbaran(emp_codiE.getValorInt(),avc_anoE.getValorInt(), avc_seriE.getText(),avc_numeE.getValorInt(), dtStat)<0)
     {
-//        s="(actAlbaran) Problemas integridad albaran venta: "+emp_codiE.getValorInt()+"-"+avc_anoE.getValorInt()+
-//                avc_seriE.getText()+avc_numeE.getValorInt()+"\n";
-//        s+=getCurrentStackTrace();
         actAcumLinAlb(emp_codiE.getValorInt(),avc_anoE.getValorInt(), avc_seriE.getText(),avc_numeE.getValorInt());
-//        msgBox(s);
-//        enviaMailError(s);
     }
   }
   
@@ -4923,6 +4935,7 @@ public class pdalbara extends ventanaPad  implements PAD
       Bcancelar.requestFocus();
   }
 
+  @Override
   public void ej_delete1()
   {
     try
@@ -4993,6 +5006,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
   }
 
+  @Override
   public void canc_delete()
   {
     activaTodo();
@@ -5001,7 +5015,7 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       resetBloqueo(dtAdd);
     }
-    catch (Exception k)
+    catch (SQLException | ParseException k)
     {
       mensajes.mensajeAviso("Error al Quitar el bloqueo\n" + k.getMessage());
     }
@@ -7376,7 +7390,7 @@ public class pdalbara extends ventanaPad  implements PAD
       if (swProcesaEdit)
               ej_edit1();
     }
-    catch (Exception k)
+    catch (SQLException | ParseException k)
     {
       Error("Error al Cambiar Datos Albaran ", k);
     }
@@ -7459,7 +7473,7 @@ public class pdalbara extends ventanaPad  implements PAD
       cambiaEmp(numAlbAnt, numAlb);
       mensajeErr("Numero de Albaran .... CAMBIADO");
     }
-    catch (Exception k)
+    catch (SQLException | ParseException k)
     {
       Error("Error al Insertar Numero de Albaran", k);
     }
@@ -7477,7 +7491,10 @@ public class pdalbara extends ventanaPad  implements PAD
   /**
    * Busca albaranes con una antiguedad maxima del parametro mandado
    * @param dias 
+     * @param dt 
+     * @param dt1 
    * @return Hashtable con los albaranes con incidencia y una descripcion de la incidencia
+     * @throws java.sql.SQLException
    */
   public static Hashtable checkAlbaran(int dias,DatosTabla dt,DatosTabla dt1) throws SQLException
   {
@@ -8031,7 +8048,7 @@ class checkFax extends Thread
       ctUp.setAutoCommit(true);
       stUp = ctUp.crearEstamento();
       dtStat = new DatosTabla(ctUp);
-    } catch (Exception k)
+    } catch (SQLException | ClassNotFoundException | IllegalAccessException | InstantiationException k)
     {
       SystemOut.print(k);
       return;
@@ -8055,8 +8072,8 @@ class checkFax extends Thread
         String linea;
         String s;
         int job;
-        String usuario = "", estado = "";
-        String msgerr = "";
+        String usuario, estado ;
+        String msgerr ;
         while (lines.hasMoreElements())
         {
           linea = lines.nextElement().toString();
@@ -8097,7 +8114,7 @@ class checkFax extends Thread
         c.quit();
 //        c.finalize();
       }
-      catch (Exception k)
+      catch (IOException | ServerResponseException | NumberFormatException | SQLException k)
       {
         nErr++;
         if (nErr>9)
