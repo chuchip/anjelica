@@ -174,7 +174,7 @@ public class utildesp
    * @param dtStat DatosTabla
    * @param EU EntornoUsuario
    * @throws SQLException
-   * @throws ParseException
+   *
    * @return boolean
    */
     
