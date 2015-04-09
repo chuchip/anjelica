@@ -8,7 +8,6 @@ import gnu.chu.eventos.CambioListener;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Iconos;
-import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.mensajes;
 import gnu.chu.winayu.ayuEmp;
 import java.awt.*;
@@ -17,6 +16,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLayeredPane;
 
 /**
@@ -24,7 +25,7 @@ import javax.swing.JLayeredPane;
  * <p>Título: empPanel </p>
  * <p>Descripción: Campo para introducir la empresa. <br>
  *  Restringe el uso de las empresas según los permisos en tablas</p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -56,18 +57,20 @@ public class empPanel extends CPanel
  CLabel emp_nombL=null;
  String msgError=null;
  CTextField emp_codiE = new CTextField(Types.DECIMAL,"#9");
-  CButton Bcons = new CButton(Iconos.getImageIcon("find"));
+  CButton Bcons = new CButton();
   GridBagLayout gridBagLayout1 = new GridBagLayout();
+  
   public empPanel()
   {
-    try
-    {
-      jbInit();
-    }
-    catch (Throwable e)
-    {
-     SystemOut.print(e);
-    }
+   
+     try
+     {
+         jbInit();
+     } catch (Throwable ex)
+     {
+         Logger.getLogger(empPanel.class.getName()).log(Level.SEVERE, null, ex);
+     }
+   
   }
 
   private void jbInit() throws Throwable
@@ -78,6 +81,7 @@ public class empPanel extends CPanel
     Bcons.setMaximumSize(new Dimension(17, 17));
     Bcons.setFocusable(false);
     emp_codiE.setAceptaComodines(false);
+
     this.add(emp_codiE,     new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
             ,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     this.add(Bcons,   new GridBagConstraints(1, 0, 1, 1, 0.0, 1.0
@@ -87,6 +91,7 @@ public class empPanel extends CPanel
   public void iniciar(DatosTabla datTabla, CInternalFrame intFrame,
                       JLayeredPane layPan, EntornoUsuario entUsu) throws SQLException
   {
+    Bcons.setIcon(Iconos.getImageIcon("find"));
     intfr = intFrame;
     dt = datTabla;
     vl = layPan;
@@ -134,6 +139,8 @@ public class empPanel extends CPanel
   }
   public synchronized void addCambioListener(CambioListener cambioListener)
   {
+    if (emp_codiE.isNull())
+        return;
     emp_codiE.resetCambio();
     cambioListenerList.add(cambioListener);
   }
@@ -152,8 +159,10 @@ public class empPanel extends CPanel
       return;
     emp_codiE.resetCambio();
     CambioEvent ev = new CambioEvent(this);
-    for (int i = 0; i < cambioListenerList.size(); i++)
-      ( (CambioListener) cambioListenerList.get(i)).cambio(ev);
+     for (Object cambioListenerList1 : cambioListenerList)
+     {
+         ((CambioListener) cambioListenerList1).cambio(ev);
+     }
     emp_codiE.resetCambio();
   }
   void ponOrejas()
@@ -406,6 +415,7 @@ public class empPanel extends CPanel
       {
         ayEmp = new ayuEmp(eu, dt)
         {
+          @Override
           public void matar()
           {
             ej_consEmp(ayEmp);
@@ -495,12 +505,13 @@ public class empPanel extends CPanel
     }
     return strQuery;
   }
+ @Override
   public  Component getErrorConf()
   {
     if (emp_codiE.getErrorConf()!=null)
       return emp_codiE.getErrorConf();
-      if (!controla(false))
-        return this;
+    if (!controla(false))
+      return this;
     return null;
   }
   public String getTextAnt()
