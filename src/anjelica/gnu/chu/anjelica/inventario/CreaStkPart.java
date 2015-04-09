@@ -319,7 +319,7 @@ public class CreaStkPart extends ventana
         alm_codiE.setAncTexto(30);
         alm_codiE.setHasCambio(true);
         Pprinc.add(alm_codiE);
-        alm_codiE.setBounds(170, 23, 270, 17);
+        alm_codiE.setBounds(170, 23, 250, 17);
         Pprinc.add(pro_numindE);
         pro_numindE.setBounds(365, 48, 32, 17);
 
@@ -359,7 +359,7 @@ public class CreaStkPart extends ventana
         Pprinc.add(cLabel2);
         cLabel2.setBounds(0, 49, 46, 15);
         Pprinc.add(pro_codiE);
-        pro_codiE.setBounds(62, 0, 378, 17);
+        pro_codiE.setBounds(62, 0, 355, 17);
 
         deo_emplotE.setEnabled(false);
         Pprinc.add(deo_emplotE);
@@ -370,40 +370,40 @@ public class CreaStkPart extends ventana
 
         cLabel8.setText("Unidades ");
         cPanel1.add(cLabel8);
-        cLabel8.setBounds(10, 16, 54, 15);
+        cLabel8.setBounds(2, 16, 54, 15);
         cPanel1.add(stp_unactE);
-        stp_unactE.setBounds(70, 16, 32, 17);
+        stp_unactE.setBounds(60, 16, 32, 17);
 
         cLabel9.setText("Kilos");
         cPanel1.add(cLabel9);
-        cLabel9.setBounds(110, 16, 39, 15);
+        cLabel9.setBounds(100, 16, 39, 15);
         cPanel1.add(stp_kilactE);
-        stp_kilactE.setBounds(150, 16, 69, 17);
+        stp_kilactE.setBounds(135, 16, 69, 17);
 
         Pprinc.add(cPanel1);
-        cPanel1.setBounds(10, 70, 240, 40);
+        cPanel1.setBounds(2, 70, 210, 40);
 
         cPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Iniciales"));
         cPanel2.setLayout(null);
 
         cLabel12.setText("Unidades ");
         cPanel2.add(cLabel12);
-        cLabel12.setBounds(10, 16, 54, 15);
+        cLabel12.setBounds(2, 16, 54, 15);
 
         stp_uniniE.setEditable(false);
         cPanel2.add(stp_uniniE);
-        stp_uniniE.setBounds(70, 16, 32, 17);
+        stp_uniniE.setBounds(60, 16, 32, 17);
 
         cLabel13.setText("Kilos");
         cPanel2.add(cLabel13);
-        cLabel13.setBounds(110, 16, 39, 15);
+        cLabel13.setBounds(100, 16, 39, 15);
 
         stp_kiliniE.setEditable(false);
         cPanel2.add(stp_kiliniE);
-        stp_kiliniE.setBounds(150, 16, 69, 17);
+        stp_kiliniE.setBounds(135, 16, 69, 17);
 
         Pprinc.add(cPanel2);
-        cPanel2.setBounds(270, 70, 240, 40);
+        cPanel2.setBounds(210, 70, 210, 40);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
