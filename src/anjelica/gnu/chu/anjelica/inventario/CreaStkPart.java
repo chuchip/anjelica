@@ -7,7 +7,7 @@ package gnu.chu.anjelica.inventario;
  * Este programa solo se deberia usar en casos limitados, si sabemos a ciencia
  * cierta que un individuo existe pero, por algun error, el programa no nos lo deja introducir.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -64,7 +64,6 @@ public class CreaStkPart extends ventana
      }
      catch (Exception e) {
        ErrorInit(e);
-       setErrorInit(true);
      }
    }
 
@@ -79,8 +78,7 @@ public class CreaStkPart extends ventana
        jbInit();
      }
      catch (Exception e) {
-       ErrorInit(e);
-       setErrorInit(true);
+       ErrorInit(e);    
      }
    }
 
@@ -88,13 +86,13 @@ public class CreaStkPart extends ventana
      
         iniciarFrame(); 
        
-        this.setVersion("2013-12-19");
+        this.setVersion("2015-04-09");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
 
         initComponents();
-        this.setSize(new Dimension(543, 191));
+        this.setSize(new Dimension(543, 201));
     }
     public static String getNombreClase() {
         return "gnu.chu.anjelica.inventario.CreaStkPart";
@@ -127,6 +125,7 @@ public class CreaStkPart extends ventana
     {
         stp_unactE.requestFocusLater();
     }
+    @Override
    public void iniciarVentana() throws Exception
    {
    pro_codiE.iniciar(dtStat,this,vl,EU);
@@ -142,6 +141,7 @@ public class CreaStkPart extends ventana
  void activarEventos()
  {
    Baceptar.addActionListener(new ActionListener() {
+     @Override
      public void actionPerformed(ActionEvent e) {
        anulaEntrada();
      }
@@ -168,13 +168,14 @@ public class CreaStkPart extends ventana
      if (!dtCon1.select(s))
      {
        mensajeErr("Registro de Stock NO encontrado");
-       deo_kilosE.setValorDec(0);
+       stp_kilactE.setValorDec(0);
        stp_unactE.setValorDec(0);
        return false;
      }
-     deo_kilosE.setValorDec(dtCon1.getDouble("stp_kilact"));
+     stp_kilactE.setValorDec(dtCon1.getDouble("stp_kilact"));
      stp_unactE.setValorDec(dtCon1.getDouble("stp_unact"));
-
+     stp_kiliniE.setValorDec(dtCon1.getDouble("stp_kilini"));
+     stp_uniniE.setValorDec(dtCon1.getDouble("stp_unini"));
      return true;
    }
    catch (Exception k)
@@ -239,15 +240,15 @@ public class CreaStkPart extends ventana
        dtCon1.setDato("stp_unini",stp_unactE.getValorDec() );
        dtCon1.setDato("stp_feccre",Fecha.getFechaSys("dd-MM-yyyy"),"dd-MM-yyyy");
        dtCon1.setDato("stp_fefici",(Date) null);
-       dtCon1.setDato("stp_kilini",deo_kilosE.getValorDec());
-       dtCon1.setDato("stp_kilact",deo_kilosE.getValorDec());
+       dtCon1.setDato("stp_kilini",stp_kilactE.getValorDec());
+       dtCon1.setDato("stp_kilact",stp_kilactE.getValorDec());
      }
      else
      {
        edAdd="EDIT";
        dtCon1.edit(dtCon1.getCondWhere());
      }
-     dtCon1.setDato("stp_kilact",deo_kilosE.getValorDec());
+     dtCon1.setDato("stp_kilact",stp_kilactE.getValorDec());
      dtCon1.setDato("stp_unact",stp_unactE.getValorDec() );
      dtCon1.update(stUp);
      ctUp.commit();
@@ -258,7 +259,7 @@ public class CreaStkPart extends ventana
        jf.ht.put("%u", EU.usuario);
        jf.ht.put("%p", pro_codiE.getText());
        jf.ht.put("%U", Formatear.format(stp_unactE.getText(), "---9"));
-       jf.ht.put("%k", Formatear.format(deo_kilosE.getText(), "---9.99"));
+       jf.ht.put("%k", Formatear.format(stp_kilactE.getText(), "---9.99"));
        jf.ht.put("%l", deo_emplotE.getValorInt() + "-" +
                  deo_ejelotE.getValorInt() + "/" +
                  deo_serlotE.getText() + "-" +
@@ -284,15 +285,11 @@ public class CreaStkPart extends ventana
 
         Pprinc = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
-        stp_unactE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        cLabel9 = new gnu.chu.controles.CLabel();
         alm_codiE = new gnu.chu.controles.CLinkBox();
         pro_numindE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        cLabel8 = new gnu.chu.controles.CLabel();
         cLabel7 = new gnu.chu.controles.CLabel();
         pro_loteE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#####9");
         cLabel6 = new gnu.chu.controles.CLabel();
-        deo_kilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9.99");
         deo_serlotE = new gnu.chu.controles.CTextField(Types.CHAR,"X",1);
         cLabel5 = new gnu.chu.controles.CLabel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -302,114 +299,111 @@ public class CreaStkPart extends ventana
         cLabel2 = new gnu.chu.controles.CLabel();
         pro_codiE = new gnu.chu.camposdb.proPanel();
         deo_emplotE = new gnu.chu.camposdb.empPanel();
+        cPanel1 = new gnu.chu.controles.CPanel();
+        cLabel8 = new gnu.chu.controles.CLabel();
+        stp_unactE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
+        cLabel9 = new gnu.chu.controles.CLabel();
+        stp_kilactE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9.99");
+        cPanel2 = new gnu.chu.controles.CPanel();
+        cLabel12 = new gnu.chu.controles.CLabel();
+        stp_uniniE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
+        cLabel13 = new gnu.chu.controles.CLabel();
+        stp_kiliniE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9.99");
+
+        Pprinc.setLayout(null);
 
         Baceptar.setText("Aceptar");
-
-        cLabel9.setText("Kilos");
+        Pprinc.add(Baceptar);
+        Baceptar.setBounds(190, 120, 121, 28);
 
         alm_codiE.setAncTexto(30);
         alm_codiE.setHasCambio(true);
-
-        cLabel8.setText("Unidades ");
+        Pprinc.add(alm_codiE);
+        alm_codiE.setBounds(170, 23, 270, 17);
+        Pprinc.add(pro_numindE);
+        pro_numindE.setBounds(365, 48, 32, 17);
 
         cLabel7.setText("Empresa");
+        Pprinc.add(cLabel7);
+        cLabel7.setBounds(0, 23, 49, 15);
+        Pprinc.add(pro_loteE);
+        pro_loteE.setBounds(232, 48, 55, 17);
 
         cLabel6.setText("Individuo");
+        Pprinc.add(cLabel6);
+        cLabel6.setBounds(305, 49, 50, 15);
 
         deo_serlotE.setMayusc(true);
+        Pprinc.add(deo_serlotE);
+        deo_serlotE.setBounds(159, 48, 20, 17);
 
         cLabel5.setText("Lote");
+        Pprinc.add(cLabel5);
+        cLabel5.setBounds(197, 49, 25, 15);
 
         cLabel1.setText("Producto");
+        Pprinc.add(cLabel1);
+        cLabel1.setBounds(0, 0, 58, 15);
 
         cLabel4.setText("Serie ");
+        Pprinc.add(cLabel4);
+        cLabel4.setBounds(123, 49, 32, 15);
 
         cLabel3.setText("Almacen");
+        Pprinc.add(cLabel3);
+        cLabel3.setBounds(112, 23, 48, 15);
+        Pprinc.add(deo_ejelotE);
+        deo_ejelotE.setBounds(56, 48, 40, 17);
 
         cLabel2.setText("Ejercicio");
+        Pprinc.add(cLabel2);
+        cLabel2.setBounds(0, 49, 46, 15);
+        Pprinc.add(pro_codiE);
+        pro_codiE.setBounds(62, 0, 378, 17);
 
         deo_emplotE.setEnabled(false);
+        Pprinc.add(deo_emplotE);
+        deo_emplotE.setBounds(62, 23, 40, 19);
 
-        javax.swing.GroupLayout PprincLayout = new javax.swing.GroupLayout(Pprinc);
-        Pprinc.setLayout(PprincLayout);
-        PprincLayout.setHorizontalGroup(
-            PprincLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(PprincLayout.createSequentialGroup()
-                .addGroup(PprincLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PprincLayout.createSequentialGroup()
-                        .addComponent(cLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(stp_unactE, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deo_kilosE, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(PprincLayout.createSequentialGroup()
-                        .addGroup(PprincLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(PprincLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(pro_codiE, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(PprincLayout.createSequentialGroup()
-                                .addComponent(deo_emplotE, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(alm_codiE, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(PprincLayout.createSequentialGroup()
-                        .addGroup(PprincLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(Baceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(PprincLayout.createSequentialGroup()
-                                .addComponent(cLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(deo_ejelotE, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(27, 27, 27)
-                                .addComponent(cLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(deo_serlotE, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(cLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(pro_loteE, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addComponent(cLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(pro_numindE, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 207, Short.MAX_VALUE))
-        );
-        PprincLayout.setVerticalGroup(
-            PprincLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PprincLayout.createSequentialGroup()
-                .addGroup(PprincLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pro_codiE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(PprincLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(deo_emplotE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(alm_codiE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(PprincLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deo_ejelotE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deo_serlotE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pro_loteE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pro_numindE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(PprincLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(stp_unactE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deo_kilosE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Baceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        cPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Actuales"));
+        cPanel1.setLayout(null);
+
+        cLabel8.setText("Unidades ");
+        cPanel1.add(cLabel8);
+        cLabel8.setBounds(10, 16, 54, 15);
+        cPanel1.add(stp_unactE);
+        stp_unactE.setBounds(70, 16, 32, 17);
+
+        cLabel9.setText("Kilos");
+        cPanel1.add(cLabel9);
+        cLabel9.setBounds(110, 16, 39, 15);
+        cPanel1.add(stp_kilactE);
+        stp_kilactE.setBounds(150, 16, 69, 17);
+
+        Pprinc.add(cPanel1);
+        cPanel1.setBounds(10, 70, 240, 40);
+
+        cPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Iniciales"));
+        cPanel2.setLayout(null);
+
+        cLabel12.setText("Unidades ");
+        cPanel2.add(cLabel12);
+        cLabel12.setBounds(10, 16, 54, 15);
+
+        stp_uniniE.setEditable(false);
+        cPanel2.add(stp_uniniE);
+        stp_uniniE.setBounds(70, 16, 32, 17);
+
+        cLabel13.setText("Kilos");
+        cPanel2.add(cLabel13);
+        cLabel13.setBounds(110, 16, 39, 15);
+
+        stp_kiliniE.setEditable(false);
+        cPanel2.add(stp_kiliniE);
+        stp_kiliniE.setBounds(150, 16, 69, 17);
+
+        Pprinc.add(cPanel2);
+        cPanel2.setBounds(270, 70, 240, 40);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
@@ -420,6 +414,8 @@ public class CreaStkPart extends ventana
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CLinkBox alm_codiE;
     private gnu.chu.controles.CLabel cLabel1;
+    private gnu.chu.controles.CLabel cLabel12;
+    private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -428,13 +424,17 @@ public class CreaStkPart extends ventana
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CLabel cLabel9;
+    private gnu.chu.controles.CPanel cPanel1;
+    private gnu.chu.controles.CPanel cPanel2;
     private gnu.chu.controles.CTextField deo_ejelotE;
     private gnu.chu.camposdb.empPanel deo_emplotE;
-    private gnu.chu.controles.CTextField deo_kilosE;
     private gnu.chu.controles.CTextField deo_serlotE;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CTextField pro_loteE;
     private gnu.chu.controles.CTextField pro_numindE;
+    private gnu.chu.controles.CTextField stp_kilactE;
+    private gnu.chu.controles.CTextField stp_kiliniE;
     private gnu.chu.controles.CTextField stp_unactE;
+    private gnu.chu.controles.CTextField stp_uniniE;
     // End of variables declaration//GEN-END:variables
 }
