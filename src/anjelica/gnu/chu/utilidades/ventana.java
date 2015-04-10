@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
 public class ventana extends CInternalFrame implements ejecutable
 {
   private JLabel labelEstado;
-  private String labelMsgEspere=null;
+  private String labelMsgEspere="Espere, por favor";
   private PopOcupado popOcupado;
   boolean trabajando=false;
   ArrayList vActList;
@@ -892,6 +892,7 @@ public class ventana extends CInternalFrame implements ejecutable
             popEspere.BCancelar_addActionListener((ActionListener) vActList1);
         }
     }
+
     popEspere.setTextoMsgEspere(labelMsgEspere);
   }
   public void setLabelMsgEspere(String msg)

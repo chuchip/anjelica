@@ -502,9 +502,9 @@ avc_depos char(1) default 'N' NOT NULL, -- 'N' Normal, 'D' Deposito
 create table anjelica.albvenserc
 (
 	avs_nume serial,
-	avs_fecha date not null default current_date,
+	avs_fecha date not null default current_date, -- Fecha de entrega
     avc_ano int not null, -- Año del Albaran al que esta ligado
-    emp_codi int not null,--  Emprsa del Albaran al que esta ligado
+    emp_codi int not null,--  Empresa del Albaran al que esta ligado
     avc_serie char(1) not null, -- Serie del Albaran al que esta ligado
     avc_nume int not null, -- Numero del Albaran al que esta ligado
 	cli_codi int not null,
@@ -838,7 +838,7 @@ create table anjelica.hisalbavec
     avc_nalsab varchar(15),
     avc_ncarg char(17),
     avc_nrelen varchar(17),
-    avc_depos char(1) default 'N' NOT NULL,
+    avc_depos char(1) default 'N' NOT NULL, -- (N)o es alb. Deposito, (D)Deposito
 constraint ix_halbvec primary key (emp_codi,avc_ano,avc_nume,avc_serie)
 );
 create table anjelica.hisalbavel

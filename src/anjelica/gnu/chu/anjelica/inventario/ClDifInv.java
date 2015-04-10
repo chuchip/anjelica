@@ -105,7 +105,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2015-02-19");
+        this.setVersion("2015-04-10");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -202,7 +202,7 @@ public class ClDifInv extends ventana {
       swConsulta=e.getActionCommand().startsWith("Consultar");
       LOTE=-1;
       PROCODI=pro_codiE.getValorInt();
-      if (! pro_loteE.getText().trim().equals("") && PROCODI>0 )
+      if (! pro_loteE.isNull() && PROCODI>0 )
         LOTE = pro_loteE.getValorInt();
       camCodiE=cam_codiE.getText();
       almCodi=alm_codiE.getValorInt();
@@ -237,7 +237,7 @@ public class ClDifInv extends ventana {
                   dtCon1.next();
                   msg+=" Repetido en linea: "+dtCon1.getString("lci_nume")+" del ID: "+dtCon1.getString("cci_codi")+"\n";
               } while (dtCon1.next());
-              mensajes.mensajeExplica("Aviso",  "Individuos metidos dos veces en invetntario",msg);              
+              mensajes.mensajeExplica("Aviso",  "Individuos metidos dos veces en inventario",msg);              
               enviaMailError("Listado diferencias Inventario con individuos metidos mas de una vez: "+msg);
             }
             String s2 = "SELECT c.* FROM "+VISTA_INV+" AS c " +
@@ -534,13 +534,15 @@ public class ClDifInv extends ventana {
             + " from coninvcab where  cci_feccon= TO_DATE('" +  cci_fecconE.getText() + "','dd-MM-yyyy') " ;
         dtStat.select(s);
         int cciCodi=dtStat.getInt("cci_codi");
-        s="CREATE  temp TABLE  "+TABLA_INV_CAB+" as select * from coninvcab where cci_codi="+cciCodi;
+        String tt=" TEMP ";
+//        tt="";
+        s="CREATE "+tt+" TABLE  "+TABLA_INV_CAB+" as select * from coninvcab where cci_codi="+cciCodi;
         dtCon1.executeUpdate(s);
-        s="CREATE temp  TABLE "+TABLA_INV_LIN+" as select * from coninvlin where cci_codi=0";
+        s="CREATE "+tt+"  TABLE "+TABLA_INV_LIN+" as select * from coninvlin where cci_codi=0";
         dtCon1.executeUpdate(s);
 
         
-        s="create OR REPLACE  temp view "+VISTA_INV+" as"+
+        s="create OR REPLACE  "+tt+" view "+VISTA_INV+" as"+
           " select c.emp_codi,c.cci_codi,c.usu_nomb,cci_feccon, cam_codi,alm_codi,lci_nume,prp_ano, prp_empcod, prp_seri, prp_part, pro_codi, pro_nomb,"+
           " prp_indi,lci_peso,lci_kgsord,lci_numind,lci_regaut,lci_coment,lci_numpal from "+
             TABLA_INV_CAB+" as c, "+
@@ -589,15 +591,15 @@ public class ClDifInv extends ventana {
     @SuppressWarnings("CallToThreadDumpStack")
     boolean calcDatos(int cciCodi) 
     {
-        actualizaMsg("Espere, por favor, Buscando Datos ...",false);
+        setMensajePopEspere("Espere, por favor, Buscando Datos ...",false);
         
       
         int lciNume;
         double canti;
-        String tipMov;
-//        debug("s: "+dtCon1.getStrSelect());
+        char tipMov;
+
         int nLec = 0;
-        HashMap<String,Double> ht = new HashMap(2000);
+        HashMap<String,Double> ht = new HashMap(5000);
         Double cant;
         String ref;
         Iterator<String> pr;
@@ -615,7 +617,7 @@ public class ClDifInv extends ventana {
                 mensajeErr("No encontrado Movimientos entre estas fechas");
                 return false;
             }
-            actualizaMsg("Tratando datos ...",true);
+            setMensajePopEspere("Tratando datos ...",true);
 //        debug("calcDatos: "+dtCon1.getStrSelect()+"\nCci_codi: "+cciCodi);
 //        debug("S: "+dtCon1.getStrSelect());
             // Pongo a 0 los Individuos y Kgs.
@@ -656,8 +658,7 @@ public class ClDifInv extends ventana {
              */
             do {
                 ref = //dtCon1.getInt("almori")+
-                    dtCon1.getInt("pro_codi") + "|" + dtCon1.getInt("eje_nume", true) + "|"
-                        + dtCon1.getInt("emp_codi", true) + "|"
+                    dtCon1.getInt("pro_codi") + "|" + dtCon1.getInt("eje_nume", true) + "|"                       
                         + dtCon1.getString("serie") + "|"
                         + dtCon1.getInt("lote", true) + "|"
                         + dtCon1.getInt("numind", true);
@@ -668,12 +669,17 @@ public class ClDifInv extends ventana {
                     canti = cant;
                 }
                 nLec++;
-                tipMov = dtCon1.getString("tipmov");
-                if (tipMov.equals("=")) {
+                tipMov = dtCon1.getString("tipmov").charAt(0);
+                if (tipMov=='E')
+                    tipMov='+';
+                if (tipMov=='S')
+                    tipMov='-';
+                if (tipMov=='=') {
                     canti = dtCon1.getDouble("canti", true);
                     totInv += dtCon1.getDouble("canti", true);
                 }
-                if (tipMov.equals("+")) {
+                if (tipMov=='+') 
+                {
                     canti = canti + dtCon1.getDouble("canti", true);
                     if (dtCon1.getString("sel").equals("C")) {
                         totCom += dtCon1.getDouble("canti", true);
@@ -682,7 +688,8 @@ public class ClDifInv extends ventana {
                         totDeEnt += dtCon1.getDouble("canti", true);
                     }
                 }
-                if (tipMov.equals("-")) {
+                if (tipMov=='-') 
+                {
                     canti = canti - dtCon1.getDouble("canti", true);
                     if (dtCon1.getString("sel").equals("V")) {
                         totVen += dtCon1.getDouble("canti", true);
@@ -696,7 +703,7 @@ public class ClDifInv extends ventana {
                 }
                 ht.put(ref, canti);
                 if (nLec % 100 == 0) {
-                    actualizaMsg("Calculando Datos. Leidos " + nLec + " Registros - Individuos: " + ht.size(),false);
+                    setMensajePopEspere("Calculando Datos. Leidos " + nLec + " Registros - Individuos: " + ht.size(),false);
                 }
             } while (dtCon1.next());
 //            actualizaMsg("Calculando Datos .... \n Leidos " + nLec + " Registros - Individuos: " + ht.size() + " **", false);
@@ -728,9 +735,9 @@ public class ClDifInv extends ventana {
                 proCodi = Integer.parseInt(sArray[0]);
                 ejeNume = Integer.parseInt(sArray[1]);
               
-                serie = sArray[3];
-                lote = Integer.parseInt(sArray[4]);
-                numind = Integer.parseInt(sArray[5]);
+                serie = sArray[2];
+                lote = Integer.parseInt(sArray[3]);
+                numind = Integer.parseInt(sArray[4]);
 
                 s = " SELECT l.* FROM "+TABLA_INV_LIN+" l,"+TABLA_INV_CAB+" c WHERE pro_codi = " + proCodi
                         + " AND prp_ano = " + ejeNume
@@ -800,186 +807,256 @@ public class ClDifInv extends ventana {
  */
     private String getStrSql(String feulst, String fecStockStr)
     {
-      boolean incDep=leidoDepoC.isSelected() && ! opDatStock.isSelected();
-      String condCamaras="(select cam_codi from "+TABLA_INV_CAB+
-            " where emp_codi = "+EU.em_cod+" and cci_feccon = TO_DATE('"+cci_fecconE.getText() +"','dd-MM-yyyy'))";
-      String condProd = " and a.pro_tiplot = 'V' ";
-      if (pro_artconE.getValorInt()!=2)
-        condProd+=" and a.pro_artcon " + (pro_artconE.getValorInt() == 0 ? "= 0" : " <> 0");
-      s="";
-    
-      s = // Albaranes de Compras
-          "SELECT 1 as orden,'C' as sel,'+' as tipmov,c.acc_fecrec as fecmov, c.acc_serie as serie," +
-          " c.acc_nume as  lote," +
-          " acp_canti as canti,acp_numind as numind, " +
-          " c.pro_codi,c.emp_codi,c.acc_ano as eje_nume,alm_codi as almori,'' AS seralb "+
-          " FROM v_compras as c, v_articulo a " +
-          " where  c.acc_fecrec between TO_DATE('" + feulst + "','dd-MM-yyyy') " +
-          " and  TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "+
-          " and c.pro_codi = a.pro_codi "+
-          (almCodi==0?"":" and c.alm_codi = "+almCodi)+
-          (camCodiE.equals("--")?" and a.cam_codi in "+
-            condCamaras:
-            (camCodiE.equals("")?"":" and a.cam_codi = '"+camCodiE +"'"))+
-          (PROCODI!=0?" and c.pro_codi = "+PROCODI:"")+
-          (LOTE>=0?" and c.acc_nume = "+LOTE:"")+
-          condProd;
-      s += " UNION all"; // Albaranes de Venta
-      String condAlb= " where  a.pro_codi = l.pro_codi "+
-          " and l.avp_canti <> 0 "+
-          (camCodiE.equals("--")?" and a.cam_codi in "+
-            condCamaras:
-            (camCodiE.equals("")?"":" and a.cam_codi = '"+camCodiE +"'"))+
-          (PROCODI!=0?" and l.PRo_codi = "+PROCODI:"")+
-          (LOTE>=0?" and l.avp_numpar = "+LOTE:"") +
-          condProd+
-          " AND l.avl_fecalt::date > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
-          " and l.avl_fecalt::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
-      s += " select 2 as orden,'V' as sel,'-' as tipmov,l.avl_fecalt as fecmov," +
-          "  l.avp_serlot as serie,l.avp_numpar as  lote," +
-          " l.avp_canti as canti,l.avp_numind as numind, " +
-          " l.pro_codi,l.avp_emplot,l.avp_ejelot as eje_nume,"
-          + "l.alm_codori as almori,l.avc_serie AS seralb "+
-          "  from v_albventa_detalle as l,v_articulo a" +
-          condAlb+
-          " and l.avc_serie != 'X'" + // No incluir traspasos entre almacenes
-          (incDep?" and l.avc_depos != 'D' ":""); // No tratar los albaranes de DEPOSITO.
+        String condProd = " and a.pro_tiplot = 'V' ";
+        if (pro_artconE.getValorInt() != 2)
+            condProd += " and a.pro_artcon " + (pro_artconE.getValorInt() == 0 ? "= 0" : " <> 0");
+        boolean incDep = leidoDepoC.isSelected() && !opDatStock.isSelected();
+        String condCamaras = "(select cam_codi from " + TABLA_INV_CAB
+                + " where emp_codi = " + EU.em_cod + 
+                " and cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy'))";
+
+        if (opMvtos.isSelected())
+        {
+            s = "SELECT 0 as orden,mvt_tipdoc as sel, mvt_tipo as tipmov,  "
+                + " mvt_time as fecmov,"
+                + "  pro_serlot as serie,pro_numlot as  lote,"
+                + " mvt_canti as canti,pro_indlot as numind,"
+                + " m.pro_codi,"
+                + " pro_ejelot as eje_nume,"
+                + " m.alm_codi,mvt_serdoc as seralb "
+                + " from mvtosalm as m,v_articulo as a where "
+                + "  mvt_canti <> 0 "
+                + " and a.pro_codi = m.pro_codi "
+                + (almCodi == 0 ? "" : " and m.alm_codi = " + almCodi)
+                + (camCodiE.equals("--") ? " and a.cam_codi in "
+                    + condCamaras
+                    : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
+                + (LOTE <= 0 ? "" : " and pro_numlot  = " + LOTE)
+                + (PROCODI != 0 ? " and a.pro_codi = " + PROCODI : "")
+                + " AND mvt_time::date > TO_DATE('" + feulst + "','dd-MM-yyyy') "
+                + " and mvt_time::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
+            if (incDep)
+            {
+                s += " union all " // Incluyo salidas de deposito.
+                    + " select 2 as orden,'V' as sel,'-' as tipmov,"
+                    + "avs_fecha as fecmov,"
+                    + "  avs_serlot as serie,avs_numpar as  lote,"
+                    + " avs_canti as canti,avs_numind as numind, "
+                    + " a.pro_codi,avs_ejelot as eje_nume,alm_codori as almori,avc_serie AS seralb "
+                    + "  from v_albvenserv as al, v_articulo a "
+                    + " WHERE avs_canti <> 0 "
+                    + " and a.pro_codi = al.pro_codi "
+                    + (PROCODI != 0 ? " and a.pro_codi = " + PROCODI : "")
+                    + (LOTE >= 0 ? " and avs_numpar = " + LOTE : "")
+                    + (almCodi == 0 ? "" : " and alm_codori = " + almCodi)
+                    + (camCodiE.equals("--") ? " and a.cam_codi in "
+                    + condCamaras
+                    : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
+                    + condProd
+                    + " and avs_fecha > TO_DATE('" + feulst + "','dd-MM-yyyy') "
+                    + " and avs_fecha <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "
+                    + (almCodi == 0 ? "" : " and alm_codori = " + almCodi);
+                s += " union all " + // Anulo Mvtos q pertenezcan  a albaranes de Deposito
+                    "SELECT 0 as orden,mvt_tipdoc as sel, '+' as tipmov,  "
+                    + " mvt_time as fecmov,"
+                    + "  pro_serlot as serie,pro_numlot as  lote,"
+                    + " mvt_canti as canti,pro_indlot as numind,"
+                    + " m.pro_codi,"
+                    + " pro_ejelot as eje_nume,"
+                    + " m.alm_codi,mvt_serdoc as seralb "
+                    + " from mvtosalm as m,v_articulo as a,v_albavec as c where "
+                    + "  mvt_canti <> 0 "
+                    + " and mvt_tipdoc = 'V' "
+                    + " and c.avc_depos='D'"
+                    + " and c.emp_codi = m.mvt_empcod "
+                    + " and c.avc_ano = m.mvt_ejedoc "
+                    + " and c.avc_serie=m.mvt_serdoc "
+                    + " and c.avc_nume =m.mvt_numdoc "
+                    + " and a.pro_codi = m.pro_codi "
+                    + (almCodi == 0 ? "" : " and alm_codi = " + almCodi)
+                    + (camCodiE.equals("--") ? " and a.cam_codi in "
+                    + condCamaras
+                    : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
+                    + (LOTE <= 0 ? "" : " and pro_numlot  = " + LOTE)
+                    + (PROCODI != 0 ? " and a.pro_codi = " + PROCODI : "")
+                    + " AND mvt_time::date > TO_DATE('" + feulst + "','dd-MM-yyyy') "
+                    + " and mvt_time::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
+            }          
+        }
+        else
+        {
+            s = // Albaranes de Compras
+                "SELECT 1 as orden,'C' as sel,'+' as tipmov,c.acc_fecrec as fecmov, c.acc_serie as serie,"
+                + " c.acc_nume as  lote,"
+                + " acp_canti as canti,acp_numind as numind, "
+                + " c.pro_codi,c.acc_ano as eje_nume,alm_codi as almori,'' AS seralb "
+                + " FROM v_compras as c, v_articulo a "
+                + " where  c.acc_fecrec between TO_DATE('" + feulst + "','dd-MM-yyyy') "
+                + " and  TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "
+                + " and c.pro_codi = a.pro_codi "
+                + (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi)
+                + (camCodiE.equals("--") ? " and a.cam_codi in "
+                    + condCamaras
+                    : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
+                + (PROCODI != 0 ? " and c.pro_codi = " + PROCODI : "")
+                + (LOTE >= 0 ? " and c.acc_nume = " + LOTE : "")
+                + condProd;
+            s += " UNION all"; // Albaranes de Venta
+            String condAlb = " where  a.pro_codi = l.pro_codi "
+                + " and l.avp_canti <> 0 "
+                + (camCodiE.equals("--") ? " and a.cam_codi in "
+                    + condCamaras
+                    : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
+                + (PROCODI != 0 ? " and l.PRo_codi = " + PROCODI : "")
+                + (LOTE >= 0 ? " and l.avp_numpar = " + LOTE : "")
+                + condProd
+                + " AND l.avl_fecalt::date > TO_DATE('" + feulst + "','dd-MM-yyyy') "
+                + " and l.avl_fecalt::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
+            s += " select 2 as orden,'V' as sel,'-' as tipmov,l.avl_fecalt as fecmov,"
+                + "  l.avp_serlot as serie,l.avp_numpar as  lote,"
+                + " l.avp_canti as canti,l.avp_numind as numind, "
+                + " l.pro_codi,l.avp_ejelot as eje_nume,"
+                + "l.alm_codori as almori,l.avc_serie AS seralb "
+                + "  from v_albventa_detalle as l,v_articulo a"
+                + condAlb
+                + " and l.avc_serie != 'X'" + // No incluir traspasos entre almacenes
+                (incDep ? " and l.avc_depos != 'D' " : ""); // No tratar los albaranes de DEPOSITO.
+
+            if (incDep)
+            {
+                s += " UNION ALL select 2 as orden,'V' as sel,'-' as tipmov,avs_fecha as fecmov,"
+                    + "  avs_serlot as serie,avs_numpar as  lote,"
+                    + " avs_canti as canti,avs_numind as numind, "
+                    + " a.pro_codi,avs_ejelot as eje_nume,alm_codori as almori,avc_serie AS seralb "
+                    + "  from v_albvenserv as al, v_articulo a "
+                    + " WHERE avs_canti <> 0 "
+                    + " and a.pro_codi = al.pro_codi "
+                    + (almCodi == 0 ? "" : " and m.alm_codori = " + almCodi)                  
+                    + (camCodiE.equals("--") ? " and a.cam_codi in "
+                        + condCamaras
+                        : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
+                    + (PROCODI != 0 ? " and a.pro_codi = " + PROCODI : "")
+                    + (LOTE >= 0 ? " and avs_numpar = " + LOTE : "")
+                    + condProd
+                    + " and avc_depos = 'D' "
+                    + " and avs_fecha > TO_DATE('" + feulst + "','dd-MM-yyyy') "
+                    + " and avs_fecha <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "
+                    + (almCodi == 0 ? "" : " and alm_codori = " + almCodi);
+            }
+
+            if (almCodi != 0)
+            { // Incluir Traspasos entre almacenes
+                s += " UNION ALL  select  1 as orden,'V' as sel,'-' as tipmov,l.avc_fecalb as fecmov,"
+                    + "  l.avp_serlot as serie,l.avp_numpar as  lote,"
+                    + " l.avp_canti as canti,l.avp_numind as numind, "
+                    + " l.pro_codi,l.avp_ejelot as eje_nume,l.alm_codori as almori,"
+                    + "l.avc_serie AS seralb "
+                    + "  from v_albventa_detalle as l,v_articulo a"
+                    + condAlb
+                    + " and l.avc_serie = 'X'" + // Incluir Serie X
+                    " and l.alm_codori = " + almCodi
+                    + " UNION ALL "
+                    + " select  2 as orden,'V' as sel,'-' as tipmov,l.avc_fecalb as fecmov,"
+                    + "  l.avp_serlot as serie,l.avp_numpar as  lote,"
+                    + " l.avp_canti*-1 as canti,l.avp_numind as numind , "
+                    + " l.pro_codi,l.avp_ejelot as eje_nume,l.alm_coddes as almori,"
+                    + "l.avc_serie AS seralb "
+                    + "  from v_albventa_detalle as l,v_articulo a"
+                    + condAlb
+                    + " and l.avc_serie = 'X'" + // Incluir Serie X
+                    " and l.alm_coddes = " + almCodi;
+            }
+            s += " UNION all " + // Despieces (Salidas de almacen)
+                " select 2 as orden,'D' as sel,'-' as tipmov,deo_tiempo as fecmov,"
+                + "  deo_serlot as serie,pro_lote as  lote,"
+                + " deo_kilos as canti,pro_numind as numind, "
+                + " L.pro_codi,deo_ejelot as eje_nume,0 as almori,'' AS seralb "
+                + " from  v_despori l,v_articulo a where "
+                + "  a.pro_codi = l.pro_codi "
+                + " and deo_kilos <> 0 "
+                + (camCodiE.equals("--") ? " and a.cam_codi in "
+                    + condCamaras
+                    : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
+                + (almCodi == 0 ? "" : " and deo_almori = " + almCodi)
+                + (PROCODI != 0 ? " AND  L.PRo_codi = " + PROCODI : "")
+                + (LOTE >= 0 ? " and L.pro_lote = " + LOTE : "")
+                + condProd
+                + " and deo_tiempo::date > TO_DATE('" + feulst + "','dd-MM-yyyy') "
+                + " and deo_tiempo::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
+            s += " UNION all " + // Despieces (Entradas a almacen)
+                " select 1 as orden,'d' as sel, '+' as tipmov,d.def_tiempo as fecmov,"
+                + "  d.def_serlot as serie,d.pro_lote as  lote,"
+                + " d.def_kilos as canti,d.pro_numind as numind, "
+                + " d.pro_codi,d.def_ejelot as eje_nume,0 as numind,'' AS seralb "
+                + " from  v_despsal as d,v_articulo a where "
+                + "  d.def_kilos <> 0 "
+                + " and d.pro_codi= a. pro_codi "
+                + (almCodi == 0 ? "" : " and d.alm_codi = " + almCodi)
+                + (camCodiE.equals("--") ? " and a.cam_codi in "
+                    + condCamaras
+                    : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
+                + (PROCODI != 0 ? " and  d.PRo_codi = " + PROCODI : "")
+                + (LOTE >= 0 ? " and d.pro_lote = " + LOTE : "")
+                + condProd
+                + " AND d.def_tiempo::date > TO_DATE('" + feulst + "','dd-MM-yyyy') "
+                + " and d.def_tiempo::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
+            s += " UNION all " + // Regularizaciones.
+                " select 3 as orden,'R' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov,"
+                + "  r.pro_serie as serie,r.pro_nupar as  lote,"
+                + " r.rgs_kilos as canti,r.pro_numind as numind, "
+                + " R.pro_codi, eje_nume,alm_codi as almori,'' AS seralb "
+                + " FROM v_regstock r,v_articulo a WHERE "
+                + " a.pro_codi =r.pro_codi "
+                + " and r.rgs_kilos <> 0"
+                + //          " and rgs_trasp != 0 "+
+                (almCodi == 0 ? "" : " and r.alm_codi = " + almCodi)
+                + (camCodiE.equals("--") ? " and a.cam_codi in "
+                    + condCamaras
+                    : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
+                + (PROCODI != 0 ? "  and R.PRo_codi = " + PROCODI : "")
+                + (LOTE >= 0 ? " and r.pro_nupar = " + LOTE : "")
+                + condProd
+                + " and tir_afestk != '=' "
+                + " AND r.rgs_fecha > TO_DATE('" + feulst + "','dd-MM-yyyy') "
+                + " and r.rgs_fecha <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";              
+        }
         
-      if (incDep)
-      {
-          s+=" UNION ALL select 2 as orden,'V' as sel,'-' as tipmov,avs_fecha as fecmov," +
-          "  avs_serlot as serie,avs_numpar as  lote," +
-          " avs_canti as canti,avs_numind as numind, " +
-          " a.pro_codi,avs_emplot,avs_ejelot as eje_nume,alm_codori as almori,avc_serie AS seralb "+
-          "  from v_albvenserv as al, v_articulo a " +
-          " WHERE avs_canti <> 0 "+
-          " and a.pro_codi = al.pro_codi "+
-          (camCodiE.equals("--")?" and a.cam_codi in "+
-           condCamaras:
-          (camCodiE.equals("")?"":" and a.cam_codi = '"+camCodiE +"'"))+
-          (PROCODI!=0?" and a.pro_codi = "+PROCODI:"")+
-          (LOTE>=0?" and avs_numpar = "+LOTE:"") +
-          condProd+
-          " and avc_depos = 'D' "+
-          " and avs_fecha > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
-          " and avs_fecha <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "+
-          (almCodi==0?"":" and alm_codori = "+almCodi);
-      }
-      
-      if (almCodi!=0)
-      { // Incluir Traspasos entre almacenes
-        s += " UNION ALL  select  1 as orden,'V' as sel,'-' as tipmov,l.avc_fecalb as fecmov," +
-          "  l.avp_serlot as serie,l.avp_numpar as  lote," +
-          " l.avp_canti as canti,l.avp_numind as numind, " +
-          " l.pro_codi,l.avp_emplot,l.avp_ejelot as eje_nume,l.alm_codori as almori,"
-            + "l.avc_serie AS seralb "+
-          "  from v_albventa_detalle as l,v_articulo a" +
-          condAlb+
-           " and l.avc_serie = 'X'"+ // Incluir Serie X
-           " and l.alm_codori = "+almCodi+
-           " UNION ALL "+
-            " select  2 as orden,'V' as sel,'-' as tipmov,l.avc_fecalb as fecmov," +
-          "  l.avp_serlot as serie,l.avp_numpar as  lote," +
-          " l.avp_canti*-1 as canti,l.avp_numind as numind , " +
-          " l.pro_codi,l.avp_emplot,l.avp_ejelot as eje_nume,l.alm_coddes as almori,"
-            + "l.avc_serie AS seralb "+
-          "  from v_albventa_detalle as l,v_articulo a" +
-          condAlb+
-           " and l.avc_serie = 'X'"+ // Incluir Serie X
-           " and l.alm_coddes = "+almCodi;
-      }
-      s += " UNION all " + // Despieces (Salidas de almacen)
-          " select 2 as orden,'D' as sel,'-' as tipmov,deo_tiempo as fecmov," +
-          "  deo_serlot as serie,pro_lote as  lote," +
-          " deo_kilos as canti,pro_numind as numind, " +
-          " L.pro_codi,deo_emplot,deo_ejelot as eje_nume,0 as almori,'' AS seralb "+
-          " from  v_despori l,v_articulo a where " +
-          "  a.pro_codi = l.pro_codi "+
-          " and deo_kilos <> 0 "+
-         (camCodiE.equals("--")?" and a.cam_codi in "+
-          condCamaras:
-          (camCodiE.equals("")?"":" and a.cam_codi = '"+camCodiE +"'"))+
-          (almCodi==0?"":" and deo_almori = "+almCodi)+
-          (PROCODI!=0?" AND  L.PRo_codi = "+ PROCODI:"") +
-          (LOTE>=0?" and L.pro_lote = "+LOTE:"") +
-          condProd+
-          " and deo_tiempo::date > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
-          " and deo_tiempo::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
-      s += " UNION all " + // Despieces (Entradas a almacen)
-          " select 1 as orden,'d' as sel, '+' as tipmov,d.def_tiempo as fecmov," +
-          "  d.def_serlot as serie,d.pro_lote as  lote," +
-          " d.def_kilos as canti,d.pro_numind as numind, " +
-          " d.pro_codi,d.def_emplot,d.def_ejelot as eje_nume,0 as numind,'' AS seralb "+
-          " from  v_despsal as d,v_articulo a where " +
-          "  d.def_kilos <> 0 "+
-          " and d.pro_codi= a. pro_codi "+
-          (almCodi==0?"":" and d.alm_codi = "+almCodi)+
-          (camCodiE.equals("--") ? " and a.cam_codi in " +
-          condCamaras :
-             (camCodiE.equals("")?"":" and a.cam_codi = '"+camCodiE +"'"))+
-          (PROCODI!=0?" and  d.PRo_codi = "+PROCODI:"") +
-          (LOTE>=0?" and d.pro_lote = "+LOTE:"") +
-          condProd+
-          " AND d.def_tiempo::date > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
-          " and d.def_tiempo::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
-      s += " UNION all " + // Regularizaciones.
-          " select 3 as orden,'R' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov," +
-          "  r.pro_serie as serie,r.pro_nupar as  lote," +
-          " r.rgs_kilos as canti,r.pro_numind as numind, " +
-          " R.pro_codi,r.emp_codi, eje_nume,rgs_canti as almori,'' AS seralb "+
-          " FROM v_regstock r,v_articulo a WHERE " +
-          " a.pro_codi =r.pro_codi "+
-          " and r.rgs_kilos <> 0"+
-//          " and rgs_trasp != 0 "+
-          (almCodi==0?"":" and r.alm_codi = "+almCodi)+
-          (camCodiE.equals("--")?" and a.cam_codi in "+
-           condCamaras:
-           (camCodiE.equals("")?"":" and a.cam_codi = '"+camCodiE +"'"))+
-          (PROCODI!=0?"  and R.PRo_codi = "+PROCODI:"") +
-          (LOTE>=0?" and r.pro_nupar = "+LOTE:"") +
-          condProd+
-          " and tir_afestk != '=' "+
-          " AND r.rgs_fecha > TO_DATE('" + feulst + "','dd-MM-yyyy') " +
-          " and r.rgs_fecha <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "+
-          " UNION all " ;
-        
-       s+= // Inventario Inicial.
-          " select 0 as orden,'R' as sel,'=' as tipmov,r.rgs_fecha as fecmov," +
-          "  r.pro_serie as serie,r.pro_nupar as  lote," +
-          " r.rgs_kilos as canti,r.pro_numind as numind, " +
-          " R.pro_codi,r.emp_codi, eje_nume,rgs_canti as almori,'' AS seralb "+
-          " FROM v_inventar r,v_articulo a WHERE " +
-          " a.pro_codi =r.pro_codi "+
-          " and r.rgs_kilos <> 0"+
-//          " and rgs_trasp != 0 "+
-          (almCodi==0?"":" and r.alm_codi = "+almCodi)+
-          (camCodiE.equals("--")?" and a.cam_codi in "+
-          condCamaras:
-           (camCodiE.equals("")?"":" and a.cam_codi = '"+camCodiE +"'"))+
-          (PROCODI!=0?"  and R.PRo_codi = "+PROCODI:"") +
-          (LOTE>=0?" and r.pro_nupar = "+LOTE:"") +
-          condProd+
-//          " and tir_afestk = '=' "+
-          " AND r.rgs_fecha = TO_DATE('" + feulst + "','dd-MM-yyyy') " ;
-      if (incDep)
-      {
-          s+=" UNION ALL select 0 as orden,'R' as sel,'=' as tipmov,r.ind_fecha as fecmov," +
-          "  r.pro_serie as serie,r.pro_nupar as  lote," +
-          " r.ind_kilos as canti,r.pro_numind as numind, " +
-          " R.pro_codi,r.emp_codi, eje_nume, ind_numuni as almori,'' AS seralb "+
-          " FROM invdepos r,  v_articulo a WHERE " +
-          " a.pro_codi =r.pro_codi "+
-          (almCodi==0?"":" and r.alm_codi = "+almCodi)+
-          (camCodiE.equals("--")?" and a.cam_codi in "+
-          condCamaras:
-           (camCodiE.equals("")?"":" and a.cam_codi = '"+camCodiE +"'"))+
-          (PROCODI!=0?"  and r.PRo_codi = "+PROCODI:"") +
-          (LOTE>=0?" and r.pro_nupar = "+LOTE:"") +
-          condProd+
-          " AND r.ind_fecha = TO_DATE('" + feulst + "','dd-MM-yyyy') " ;
-      }
-      s += " ORDER BY 4,1,3 desc"; // FECHA y tipo
-      return s;
+        if (incDep)
+        {
+            s += " UNION ALL select 0 as orden,'R' as sel,'=' as tipmov,r.ind_fecha as fecmov,"
+                + "  r.pro_serie as serie,r.pro_nupar as  lote,"
+                + " r.ind_kilos as canti,r.pro_numind as numind, "
+                + " R.pro_codi, eje_nume, alm_codi as almori,'' AS seralb "
+                + " FROM invdepos r,  v_articulo a WHERE "
+                + " a.pro_codi =r.pro_codi "
+                + (almCodi == 0 ? "" : " and r.alm_codi = " + almCodi)
+                + (camCodiE.equals("--") ? " and a.cam_codi in "
+                    + condCamaras
+                    : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
+                + (PROCODI != 0 ? "  and r.PRo_codi = " + PROCODI : "")
+                + (LOTE >= 0 ? " and r.pro_nupar = " + LOTE : "")
+                + condProd
+                + " AND r.ind_fecha = TO_DATE('" + feulst + "','dd-MM-yyyy') ";
+        }
+        s += " union all "+// Inventario Inicial.
+            " select 0 as orden,'R' as sel,'=' as tipmov,r.rgs_fecha as fecmov,"
+            + "  r.pro_serie as serie,r.pro_nupar as  lote,"
+            + " r.rgs_kilos as canti,r.pro_numind as numind, "
+            + " R.pro_codi, eje_nume,rgs_canti as almori,'' AS seralb "
+            + " FROM v_inventar r,v_articulo a WHERE "
+            + " a.pro_codi =r.pro_codi "
+            + " and r.rgs_kilos <> 0"
+            + //          " and rgs_trasp != 0 "+
+            (almCodi == 0 ? "" : " and r.alm_codi = " + almCodi)
+            + (camCodiE.equals("--") ? " and a.cam_codi in "
+                + condCamaras
+                : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
+            + (PROCODI != 0 ? "  and R.PRo_codi = " + PROCODI : "")
+            + (LOTE >= 0 ? " and r.pro_nupar = " + LOTE : "")
+            + condProd
+            + " AND r.rgs_fecha = TO_DATE('" + feulst + "','dd-MM-yyyy') ";
+        s += " ORDER BY 4,1,3 desc"; // FECHA y tipo
+        return s;
     }
 
     /** This method is called from within the constructor to
@@ -1016,6 +1093,7 @@ public class ClDifInv extends ventana {
         Baceptar = new gnu.chu.controles.CButtonMenu();
         cci_fecconE = new gnu.chu.anjelica.inventario.PfechaInv();
         opDatStock = new gnu.chu.controles.CCheckBox();
+        opMvtos = new gnu.chu.controles.CCheckBox();
         jt = new gnu.chu.controles.Cgrid(9);
 
         Pgeneral.setLayout(new java.awt.GridBagLayout());
@@ -1088,18 +1166,19 @@ public class ClDifInv extends ventana {
         Pcondic.add(opCalInv);
         opCalInv.setBounds(150, 130, 140, 17);
 
-        cLabel9.setText("Margen Kilos por producto ");
+        cLabel9.setText("Umbral Kilos ");
+        cLabel9.setToolTipText("Ignorar si Kilos por producto es inferior que el valor introducido ");
         Pcondic.add(cLabel9);
-        cLabel9.setBounds(10, 110, 160, 15);
+        cLabel9.setBounds(10, 110, 90, 15);
 
         margenE.setText("1");
         Pcondic.add(margenE);
-        margenE.setBounds(170, 110, 40, 17);
+        margenE.setBounds(90, 110, 40, 17);
 
         leidoDepoC.setSelected(true);
         leidoDepoC.setText("Leido Depositos");
         Pcondic.add(leidoDepoC);
-        leidoDepoC.setBounds(10, 130, 140, 17);
+        leidoDepoC.setBounds(140, 110, 140, 17);
 
         Baceptar.setText("Aceptar");
         Baceptar.addMenu("Consultar");
@@ -1115,6 +1194,11 @@ public class ClDifInv extends ventana {
         opDatStock.setMaximumSize(new java.awt.Dimension(41, 17));
         Pcondic.add(opDatStock);
         opDatStock.setBounds(190, 10, 60, 17);
+
+        opMvtos.setSelected(true);
+        opMvtos.setText("Usar Mvtos.");
+        Pcondic.add(opMvtos);
+        opMvtos.setBounds(10, 130, 130, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1188,6 +1272,7 @@ public class ClDifInv extends ventana {
     private gnu.chu.controles.CTextField margenE;
     private gnu.chu.controles.CCheckBox opCalInv;
     private gnu.chu.controles.CCheckBox opDatStock;
+    private gnu.chu.controles.CCheckBox opMvtos;
     private gnu.chu.controles.CComboBox pro_artconE;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CTextField pro_loteE;

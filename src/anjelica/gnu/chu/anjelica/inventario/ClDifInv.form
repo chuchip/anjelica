@@ -218,11 +218,12 @@
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel9">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Margen Kilos por producto "/>
+                <Property name="text" type="java.lang.String" value="Umbral Kilos "/>
+                <Property name="toolTipText" type="java.lang.String" value="Ignorar si Kilos por producto es inferior que el valor introducido "/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="110" width="160" height="-1"/>
+                  <AbsoluteConstraints x="10" y="110" width="90" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -235,7 +236,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="170" y="110" width="40" height="17"/>
+                  <AbsoluteConstraints x="90" y="110" width="40" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -246,7 +247,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="130" width="140" height="17"/>
+                  <AbsoluteConstraints x="140" y="110" width="140" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -282,6 +283,17 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="190" y="10" width="60" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opMvtos">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Usar Mvtos."/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="10" y="130" width="130" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
