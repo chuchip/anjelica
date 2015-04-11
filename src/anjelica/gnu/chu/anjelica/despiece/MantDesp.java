@@ -147,7 +147,7 @@ public class MantDesp extends ventanaPad implements PAD
     private BotonBascula botonBascula;
     conexion ctProd;
     DatosTabla dtProd;
-    boolean ADMIN = false;
+    boolean P_ADMIN = false;
     ActualStkPart stkPart;
     boolean swTienePrec = false;
     boolean inTidCodi = false;
@@ -190,7 +190,7 @@ public class MantDesp extends ventanaPad implements PAD
                 if (ht.get("modPrecio") != null)
                     MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
                 if (ht.get("admin") != null)
-                    ADMIN = Boolean.parseBoolean(ht.get("admin"));
+                    P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
             }
             if (jf.gestor.apuntar(this))
                 jbInit();
@@ -218,7 +218,7 @@ public class MantDesp extends ventanaPad implements PAD
             if (ht.get("modPrecio") != null)
                 MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
             if (ht.get("admin") != null)
-                ADMIN = Boolean.parseBoolean(ht.get("admin"));
+                P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
         }
 
         try
@@ -232,9 +232,9 @@ public class MantDesp extends ventanaPad implements PAD
     }
 
     private void jbInit() throws Exception {
-        if (ADMIN)
+        if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2015-04-08" + (MODPRECIO ? " (VER PRECIOS)" : "") + (ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2015-04-08" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -288,7 +288,7 @@ public class MantDesp extends ventanaPad implements PAD
         tid_codiE.setTidActiv(1); // Solo activo. NO tactil.
         tid_codiE.setModoConsulta(false);
         tid_codiE.iniciar(dtProd, this, vl, EU);
-        tid_codiE.setAdmin(ADMIN);
+        tid_codiE.setAdmin(P_ADMIN);
         s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
         dtCon1.select(s);
         deo_almoriE.addDatos(dtCon1);
@@ -307,7 +307,7 @@ public class MantDesp extends ventanaPad implements PAD
         jtCab.cuadrarGrid();
         jtLin.cuadrarGrid();
         utdesp = new utildesp();
-        opMantFecha.setEnabled(ADMIN);
+        opMantFecha.setEnabled(P_ADMIN);
         Pcabe.setDefButton(Baceptar);
         Pcabe.setEscButton(Bcancelar);
         Pcabe.setAltButton(BirGrid);
@@ -1613,7 +1613,7 @@ public class MantDesp extends ventanaPad implements PAD
             deo_almdesE.setEnabled(false);
             if (uniFinE.getValorInt() > 0 )
             {
-                if ( tid_codiE.getValorInt()!=0 && ! ADMIN)
+                if ( tid_codiE.getValorInt()!=0 && ! P_ADMIN)
                     tid_codiE.setEnabled(false);
                 deo_lotnueE.setEnabled(false);
             }
@@ -1951,7 +1951,7 @@ public class MantDesp extends ventanaPad implements PAD
             actKilos(0);
             if (kgDifE.getValorDec() < 0)
             {
-                if (! ADMIN)
+                if (! P_ADMIN)
                 {
                     msgBox("Kilos de salida superior a los de entrada. Imposible guardar");
                     return false;
@@ -3997,7 +3997,7 @@ public class MantDesp extends ventanaPad implements PAD
                     {
                         if (jtCab.getValorInt(row, JTCAB_NL) == 0)
                         return true;
-                        if (row==0 && existLineasSalida() && !ADMIN)
+                        if (row==0 && existLineasSalida() && !P_ADMIN)
                         {
                             msgBox("Hay productos de salida. Imposible borrar producto Origen");
                             return false;
@@ -4455,6 +4455,7 @@ public class MantDesp extends ventanaPad implements PAD
                             }
                         });
                         jtLin.getPopMenu().add(etiqueta);
+                        if (P_ADMIN)
                         jtLin.getPopMenu().add(MFechaLin);
                     } catch (Exception k) { Error("Error al configurar grid lineas",k);}
 
@@ -4484,6 +4485,7 @@ public class MantDesp extends ventanaPad implements PAD
                 jtCab.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
                 jtCab.setMaximumSize(new java.awt.Dimension(449, 109));
                 jtCab.setMinimumSize(new java.awt.Dimension(449, 109));
+                if (P_ADMIN)
                 jtCab.getPopMenu().add(MFechaCab);
 
                 javax.swing.GroupLayout jtCabLayout = new javax.swing.GroupLayout(jtCab);
