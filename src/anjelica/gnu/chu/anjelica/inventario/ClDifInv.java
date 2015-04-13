@@ -855,8 +855,7 @@ public class ClDifInv extends ventana {
                     + condProd
                     + " and avs_fecha > TO_DATE('" + feulst + "','dd-MM-yyyy') "
                     + " and avs_fecha <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "
-                    + (almCodi == 0 ? "" : " and alm_codori = " + almCodi);
-                s += " union all " + // Anulo Mvtos q pertenezcan  a albaranes de Deposito
+                    + " union all " + // Anulo Mvtos q pertenezcan  a albaranes de Deposito
                     "SELECT 0 as orden,mvt_tipdoc as sel, '+' as tipmov,  "
                     + " mvt_time as fecmov,"
                     + "  pro_serlot as serie,pro_numlot as  lote,"
@@ -931,7 +930,7 @@ public class ClDifInv extends ventana {
                     + "  from v_albvenserv as al, v_articulo a "
                     + " WHERE avs_canti <> 0 "
                     + " and a.pro_codi = al.pro_codi "
-                    + (almCodi == 0 ? "" : " and m.alm_codori = " + almCodi)                  
+                    + (almCodi == 0 ? "" : " and al.alm_codori = " + almCodi)                  
                     + (camCodiE.equals("--") ? " and a.cam_codi in "
                         + condCamaras
                         : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
@@ -940,8 +939,7 @@ public class ClDifInv extends ventana {
                     + condProd
                     + " and avc_depos = 'D' "
                     + " and avs_fecha > TO_DATE('" + feulst + "','dd-MM-yyyy') "
-                    + " and avs_fecha <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "
-                    + (almCodi == 0 ? "" : " and alm_codori = " + almCodi);
+                    + " and avs_fecha <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
             }
 
             if (almCodi != 0)
