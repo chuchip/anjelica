@@ -101,6 +101,8 @@ import javax.swing.event.ListSelectionListener;
  
 public class pdalbara extends ventanaPad  implements PAD
 {  
+  JMenuItem MFechaCab = new JMenuItem("Rest.Fec.Mvto");
+  JMenuItem MAllFechaCab = new JMenuItem("Rest.Todas Fec.Mvto");
   private javax.swing.Timer temporizador; 
   int numPedPend=0;
   
@@ -161,9 +163,10 @@ public class pdalbara extends ventanaPad  implements PAD
   /**
    * Kilos Linea albaran (3)
    */
-  int JT_KILOS=3; 
-  int JT_NUMPALE=8; // Numero Pale
-  int JT_CODENV=9; // Codigo Envase
+  private int JT_KILOS=3; 
+  private  int JT_FECMVT=7; // Fecha Mvto.
+  private int JT_NUMPALE=8; // Numero Pale
+  private int JT_CODENV=9; // Codigo Envase
   private final int JTRES_PROCODI=0;
   private final int JTRES_KILOS=2;
   private final int JTRES_NL=3;
@@ -624,7 +627,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-04-08" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-04-13" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
         IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -1496,6 +1499,20 @@ public class pdalbara extends ventanaPad  implements PAD
 
   void activarEventos()
   {
+      MAllFechaCab.addActionListener(new java.awt.event.ActionListener()
+      {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
+              MFechaCabActionPerformed(-1);
+          }
+      });
+      MFechaCab.addActionListener(new java.awt.event.ActionListener()
+      {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
+              MFechaCabActionPerformed(jt.getSelectedRowDisab());
+          }
+      });
       printE.addMouseListener(new MouseAdapter() {
         @Override
       public void mouseClicked(MouseEvent e)
@@ -7227,7 +7244,53 @@ public class pdalbara extends ventanaPad  implements PAD
 
     }
   }
-  
+  /**
+   * Ponea la fecha de mvto a la fecha de alta de la linea.
+   * @param nl  Numero de Linea del grid (0 todas)
+   */
+  private void MFechaCabActionPerformed(int nl) {                                          
+        try
+        {
+            if (jt.isVacio())
+                return;
+            if (nav.isEdicion())
+                return;
+            if (opAgru.isSelected())
+            {
+                msgBox("Desagrupe las lineas para restaurar fecha mvto");
+                return;
+            }
+            if (nl>=0)
+                changeFecMvto(nl);
+            else
+            {
+                for (int n=0;n<jt.getRowCount();n++)
+                {
+                  changeFecMvto(n);   
+                }
+            }
+            dtAdd.commit();
+            verDatos(dtCons);
+            msgBox("Fecha mvto, puesta a la misma que la fecha de alta");
+        } catch (ParseException | SQLException ex)
+        {
+            Error("Error al actualizar fecha de mvto",ex);
+        }
+
+    }  
+    private void   changeFecMvto(int nl) throws SQLException,ParseException
+    {
+        s="UPDATE mvtosalm set mvt_time='"+
+                Formatear.getFechaDB(jt.getValString(nl,JT_FECMVT),"dd-MM-yy")+
+                "' where mvt_ejedoc="+avc_anoE.getValorInt()+
+                " and mvt_numdoc="+avc_numeE.getValorInt()+
+                " and mvt_serdoc='"+avc_seriE.getText()+"'"+
+                " and mvt_tipdoc='V'"+
+                " and mvt_lindoc="+jt.getValorInt(nl,JT_NULIAL);
+        dtAdd.executeUpdate(s);     
+    }            
+            
+
   /**
    * Establece el estado de albaran impreso
    * @param albImpreso
@@ -7804,7 +7867,9 @@ public class pdalbara extends ventanaPad  implements PAD
 
   void confGridCab() throws Exception
   {
+    
     JT_NUMPALE=P_MODPRECIO || P_PONPRECIO ? 8: 6;
+    JT_FECMVT=JT_NUMPALE - 1;
     JT_CODENV=JT_NUMPALE+1;
     jt = new CGridEditable(P_MODPRECIO || P_PONPRECIO ? 9 : 7)
     {
@@ -7958,7 +8023,11 @@ public class pdalbara extends ventanaPad  implements PAD
         return nav.pulsado == navegador.EDIT || nav.pulsado == navegador.ADDNEW;
       }
     };
-
+    if (P_ADMIN)
+    {
+        jt.getPopMenu().add(MFechaCab);
+        jt.getPopMenu().add(MAllFechaCab);
+    }
     jt.setMaximumSize(new Dimension(538, 181));
     jt.setMinimumSize(new Dimension(538, 181));
     jt.setPreferredSize(new Dimension(538, 181));

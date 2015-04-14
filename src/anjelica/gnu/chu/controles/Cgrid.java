@@ -879,10 +879,7 @@ public class Cgrid extends CPanel implements Serializable
         if (Formato[col].charAt(1)=='-')
         {
           try {
-            if (Integer.parseInt(dat.toString().trim()) == 0)
-              return false;
-            else
-              return true;
+              return Integer.parseInt(dat.toString().trim()) != 0;
           } catch (NumberFormatException k)
           {
             return false;
@@ -890,16 +887,13 @@ public class Cgrid extends CPanel implements Serializable
         }
         else
         {
-          if (dat.toString().equals("" + Formato[col].charAt(1)))
-            return true;
-          else
-            return false;
+            return dat.toString().equals("" + Formato[col].charAt(1));
         }
        }
         // Formato decimal
        try{
-          Double d = new Double(Formatear.strToDouble2(""+dat));
-          return ((""+Formatear.FormatDecimal(d.doubleValue(),Formato[col])).trim());
+          Double d = Formatear.strToDouble2(""+dat);
+          return ((""+Formatear.FormatDecimal(d,Formato[col])).trim());
        }catch(Exception e){
           return dat;
        }

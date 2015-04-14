@@ -446,10 +446,11 @@ public class conmvpr extends ventana
 
     alm_codiE.setFormato(true);
     alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
-    s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
-        " ORDER BY alm_codi";
-    dtStat.select(s);
-    alm_codiE.addDatos(dtStat);
+    pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
+//    s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
+//        " ORDER BY alm_codi";
+//    dtStat.select(s);
+//    alm_codiE.addDatos(dtStat);
     alm_codiE.setText("0");
     pro_codiE.iniciar(dtStat, this, vl, EU);
     rep_codiE.setFormato(Types.CHAR, "XX", 2);

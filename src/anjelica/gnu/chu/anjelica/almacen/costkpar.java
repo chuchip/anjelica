@@ -258,10 +258,10 @@ public class costkpar extends ventana
     Pcabe.resetTexto();
     eje_numeE.setValorDec(EU.ejercicio);
     pro_serieE.setText("A");
-
-    String s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_codi ";
-    dtStat.select(s);
-    alm_codiE.addDatos(dtStat);
+    pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
+//    String s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_codi ";
+//    dtStat.select(s);
+//    alm_codiE.addDatos(dtStat);
     opStock.setSelected(true);
     jt.cuadrarGrid();
     activarEventos();

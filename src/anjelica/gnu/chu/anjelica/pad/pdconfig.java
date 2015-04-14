@@ -10,6 +10,7 @@ import gnu.chu.interfaces.*;
 import java.text.*;
 import gnu.chu.camposdb.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.almacen.pdalmace;
 import javax.swing.border.*;
 
  /**
@@ -320,11 +321,13 @@ public class pdconfig    extends ventanaPad     implements PAD
    emp_prvdesE.iniciar(dtStat, this, vl, EU);
    cli_codiE.setAceptaNulo(false);
    cli_codiE.iniciar(dtStat, this, vl, EU);
-   s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_nomb";
-   dtCon1.select(s);
-   cfg_almcomE.addDatos(dtCon1);
-   dtCon1.first();
-   cfg_almvenE.addDatos(dtCon1);
+   pdalmace.llenaLinkBox(cfg_almcomE, dtStat);
+   pdalmace.llenaLinkBox(cfg_almvenE, dtStat);
+//   s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_nomb";
+//   dtCon1.select(s);
+//   cfg_almcomE.addDatos(dtCon1);
+//   dtCon1.first();
+//   cfg_almvenE.addDatos(dtCon1);
    cfg_tideveE.iniciar(dtStat,this,vl,EU);
  }
  void verDatos()

@@ -1,6 +1,7 @@
 package gnu.chu.anjelica.compras;
 
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.camposdb.*;
 import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
@@ -252,10 +253,11 @@ public class clprpeco extends ventana implements  JRDataSource
    tla_codiE.setValorInt(tlaCodi);
    alm_codiE.setFormato(true);
    alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
-   s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
-       " ORDER BY alm_codi";
-   dtStat.select(s);
-   alm_codiE.addDatos(dtStat);
+   pdalmace.llenaLinkBox(alm_codiE, dtCon1,'*');
+//   s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
+//       " ORDER BY alm_codi";
+//   dtStat.select(s);
+//   alm_codiE.addDatos(dtStat);
    alm_codiE.setText("0");
 
    cam_codiE.setFormato(Types.CHAR, "XX");

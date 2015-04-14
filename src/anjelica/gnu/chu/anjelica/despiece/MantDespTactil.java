@@ -819,11 +819,13 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
    Pfin.setButton(KeyEvent.VK_F8,BborLiSa);
    Pfin.setButton(KeyEvent.VK_F9,BrepEti);
-   s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
-   dtCon1.select(s);
-   deo_almoriE.addDatos(dtCon1);
-   dtCon1.first();
-   deo_almdesE.addDatos(dtCon1);
+   pdalmace.llenaLinkBox(deo_almoriE, dtCon1);
+   pdalmace.llenaLinkBox(deo_almdesE, dtCon1);
+//   s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
+//   dtCon1.select(s);
+//   deo_almoriE.addDatos(dtCon1);
+//   dtCon1.first();
+//   deo_almdesE.addDatos(dtCon1);
    dtCon1.select("select usu_nomb from usuarios where usu_activ='S'");
    def_usunomE.setDatos(dtCon1);
    def_usunomE.setText(EU.usu_nomb);

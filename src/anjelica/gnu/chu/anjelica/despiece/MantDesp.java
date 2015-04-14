@@ -289,11 +289,13 @@ public class MantDesp extends ventanaPad implements PAD
         tid_codiE.setModoConsulta(false);
         tid_codiE.iniciar(dtProd, this, vl, EU);
         tid_codiE.setAdmin(P_ADMIN);
-        s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
-        dtCon1.select(s);
-        deo_almoriE.addDatos(dtCon1);
-        dtCon1.first();
-        deo_almdesE.addDatos(dtCon1);
+        pdalmace.llenaLinkBox(deo_almoriE, dtCon1);
+        pdalmace.llenaLinkBox(deo_almdesE, dtCon1);
+//        s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
+//        dtCon1.select(s);
+//        deo_almoriE.addDatos(dtCon1);
+//        dtCon1.first();
+//        deo_almdesE.addDatos(dtCon1);
         opVerGrupo.setSelected(false);
         strSql = getStrSql() + getCondWhere()
             + getOrderQuery();

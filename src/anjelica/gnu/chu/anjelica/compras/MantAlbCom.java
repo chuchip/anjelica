@@ -758,7 +758,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     Bcacafe.setBounds(new Rectangle(219, 58, 118, 29));
     cLabel20.setText("Almacén");
     cLabel20.setBounds(new Rectangle(2, 63, 54, 18));
-    alm_codiE.setToolTipText("Almacen de Recepci�n");
+    alm_codiE.setToolTipText("Almacen de Recepción");
     alm_codiE.setBounds(new Rectangle(59, 63, 304, 18));
     prv_codiL1.setToolTipText("");
 
@@ -1436,9 +1436,10 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     pro_codverE.iniciar(dtStat, this, vl, EU);
     rgs_clidevE.setCliNomb(null);
     rgs_clidevE.iniciar(dtStat,this,vl,EU);
-    s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_nomb";
-    dtCon1.select(s);
-    alm_codiE.addItem(dtCon1);
+    pdalmace.llenaCombo(alm_codiE, dtCon1,'I');
+//    s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_nomb";
+//    dtCon1.select(s);
+//    alm_codiE.addItem(dtCon1);
     sbe_codiE.iniciar(dtStat,this,vl,EU);
     sbe_codiE.setFieldEmpCodi(emp_codiE.getTextField());
     sbe_nombL = sbe_codiE.creaLabelSbe();

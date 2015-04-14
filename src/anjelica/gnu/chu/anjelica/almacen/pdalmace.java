@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  *
  * <p>Título: pdalmace</p>
  * <p>Descripcion: Mant. Almacenes de Ventas</p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2015
 *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
 *  los términos de la Licencia Publica General de GNU según es publicada por
 *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -42,15 +42,15 @@ public class pdalmace extends ventanaPad implements PAD
 {
   String s;
   CPanel Pprinc = new CPanel();
-  Cgrid jt = new Cgrid(10);
+  Cgrid jt = new Cgrid(11);
   CPanel Pdatos = new CPanel();
   CLabel cLabel1 = new CLabel();
   CTextField alm_codiE = new CTextField(Types.DECIMAL,"##9");
   CTextField alm_nombE = new CTextField(Types.CHAR,"X",50);
   CLabel alm_feulinL = new CLabel("Ult.Inventario");
   CTextField alm_feulinE= new CTextField(Types.DATE,"dd-MM-yyyy");
-//  CButton Baceptar = new CButton("Aceptar",Iconos.getImageIcon("check"));
-//  CButton Bcancelar = new CButton("Cancelar",Iconos.getImageIcon("cancel"));
+  CLabel alm_tipoL = new CLabel("Tipo");
+  CComboBox alm_tipoE= new CComboBox();
   CTextField alm_poblE = new CTextField(Types.CHAR,"X",30);
   CLabel cLabel4 = new CLabel();
   CLabel cLabel33 = new CLabel();
@@ -107,7 +107,7 @@ public class pdalmace extends ventanaPad implements PAD
    { 
      iniciarFrame();
      this.setSize(new Dimension(539, 522));
-     this.setVersion("2014-12-11 ");
+     this.setVersion("2015-04-14 ");
      strSql = "select * from almacen where emp_codi = "+EU.em_cod + "ORDER BY alm_codi";
      statusBar = new StatusBar(this);
      nav = new navegador(this, false, navegador.GRID);
@@ -145,6 +145,11 @@ public class pdalmace extends ventanaPad implements PAD
     alm_faxE.setBounds(new Rectangle(58, 79, 129, 17));
     alm_feulinL.setBounds(new Rectangle(4, 99, 90, 17));
     alm_feulinE.setBounds(new Rectangle(95, 99, 80, 17));
+    alm_tipoE.addItem("Interno", "I");
+    alm_tipoE.addItem("Externo", "E");
+    alm_tipoL.setBounds(new Rectangle(245, 99, 90, 17));
+    alm_tipoE.setBounds(new Rectangle(285, 99, 80, 17));
+
     cLabel6.setText("Telef.");
     cLabel6.setBounds(new Rectangle(348, 61, 32, 17));
     alm_respoE.setBounds(new Rectangle(285, 79, 227, 17));
@@ -179,9 +184,10 @@ public class pdalmace extends ventanaPad implements PAD
     v.add("Responsable"); //7
     v.add("SubEmpresa"); // 8
     v.add("Fec.Inv."); // 9
+    v.add("Tipo"); // 9
     jt.setCabecera(v);
-    jt.setAnchoColumna(new int[]   {40, 160,160,120,60,60,60,80,40,80});
-    jt.setAlinearColumna(new int[] {2, 0, 0, 0,0,0,0,0,2,1});
+    jt.setAnchoColumna(new int[]   {40, 160,160,120,60,60,60,80,40,80,30});
+    jt.setAlinearColumna(new int[] {2, 0, 0, 0,0,0,0,0,2,1,1});
     jt.setFormatoColumna(9,alm_feulinE.getFormato());
 //    jt.ajustar(true);
 
@@ -217,6 +223,8 @@ public class pdalmace extends ventanaPad implements PAD
     Pdatos.add(sbe_codiE, null);
     Pdatos.add(alm_feulinL, null);
     Pdatos.add(alm_feulinE, null);
+    Pdatos.add(alm_tipoL, null);
+    Pdatos.add(alm_tipoE, null);
     
     Pprinc.add(Pempre,    new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 37, 0, 39), 0, 0));
@@ -306,6 +314,7 @@ public class pdalmace extends ventanaPad implements PAD
           alm_respoE.setText(jt.getValString(7));
           sbe_codiE.setValorInt(jt.getValorInt(8));
           alm_feulinE.setDate(jt.getValDate(9));
+          alm_tipoE.setValor(jt.getValString(10));
       } catch (ParseException ex)
       {
           Error("Error al poner datos de linea de grid",ex);
@@ -332,6 +341,7 @@ public class pdalmace extends ventanaPad implements PAD
            v.add(dtCons.getString("alm_respo"));
            v.add(dtCons.getString("sbe_codi"));
            v.add(dtCons.getDate("alm_feulin"));
+           v.add(dtCons.getString("alm_tipo"));
            jt.addLinea(v);
          } while (dtCons.next());
          jt.requestFocusInicio();
@@ -488,6 +498,7 @@ public class pdalmace extends ventanaPad implements PAD
     dtAdd.setDato("alm_respo", alm_respoE.getText());
     dtAdd.setDato("sbe_codi",sbe_codiE.getValorInt());
     dtAdd.setDato("alm_feulin",alm_feulinE.getDate());
+    dtAdd.setDato("alm_tipo",alm_tipoE.getValor());
     dtAdd.update(stUp);
   }
   @Override
@@ -573,6 +584,7 @@ public class pdalmace extends ventanaPad implements PAD
    }
 
   }
+  @Override
   public void activar(boolean b){
     emp_codiE.setEnabled(!b);
     Baceptar.setEnabled(b);
@@ -581,23 +593,42 @@ public class pdalmace extends ventanaPad implements PAD
   }
   public static void llenaCombo(CComboBox almCodi, DatosTabla dt) throws SQLException
   {
+       llenaCombo(almCodi,dt,'I');
+  }
+  /**
+   * Llena un combo con los tipos de almacen disponibles.
+   * @param almCodi
+   * @param dt
+   * @param tipo Tipo de Almacen '*'=TODOS. 
+   * @throws SQLException 
+   */
+  public static void  llenaCombo(CComboBox almCodi, DatosTabla dt,char tipo) throws SQLException
+  {
     String s = "SELECT alm_codi,alm_nomb FROM almacen " +
+              (tipo=='*'?"":" where alm_tipo= '"+tipo+"'")+
               " ORDER BY alm_codi";
     dt.select(s);
+    Dimension d=new Dimension();
     almCodi.addItem(dt);
   }
+    public static void llenaLinkBox(CLinkBox almCodi, DatosTabla dt) throws SQLException
+    {
+        llenaLinkBox(almCodi,dt,'I');
+    }
   /**
    * Carga un LinkBox con los datos necesarios para buscar un almacen
    * @param almCodi
    * @param dt
+   * @param tipo Tipo de Almacen '*'=TODOS. 
    * @throws SQLException 
    */
-  public static void llenaLinkBox(CLinkBox almCodi, DatosTabla dt) throws SQLException
+  public static void llenaLinkBox(CLinkBox almCodi, DatosTabla dt,char tipo) throws SQLException
   {
     almCodi.setFormato(true);
     almCodi.setFormato(Types.DECIMAL, "#9", 2);
 
     String s = "SELECT alm_codi,alm_nomb FROM almacen " +
+            (tipo=='*'?"":" where alm_tipo= '"+tipo+"'")+
               " ORDER BY alm_codi";
     dt.select(s);
     almCodi.addDatos(dt);

@@ -148,8 +148,9 @@ public class pstockAct extends CPanel
     Pcondi.add(alm_codiE, null);
     Psuperior.add(SFami, BorderLayout.CENTER);
     SFami.getViewport().add(Pfami, null);
-    s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_nomb";
-    dtCon1.select(s);
+    pdalmace.llenaCombo(alm_codiE, dtCon1,'*');
+//    s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_nomb";
+//    dtCon1.select(s);
     alm_codiE.addItem("**TODOS**","0");
     alm_codiE.addItem(dtCon1,false);
     alm_codiE.setValor(0);

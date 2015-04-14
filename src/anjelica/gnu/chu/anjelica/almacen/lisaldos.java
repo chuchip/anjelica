@@ -384,10 +384,10 @@ public class lisaldos   extends ventana  implements JRDataSource
     alm_inicE.setFormato(Types.DECIMAL,"#9",2);
     
     
-    
-    s="SELECT alm_codi,alm_nomb FROM V_ALMACen ORDER BY alm_codi ";
-    dtStat.select(s);
-    alm_inicE.addDatos(dtStat);
+    pdalmace.llenaLinkBox(alm_inicE, dtStat,'*');
+//    s="SELECT alm_codi,alm_nomb FROM V_ALMACen ORDER BY alm_codi ";
+//    dtStat.select(s);
+//    alm_inicE.addDatos(dtStat);
   
     activarEventos();
     fecsalE.setText(Formatear.getFechaAct("dd-MM-yyyy"));

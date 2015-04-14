@@ -28,6 +28,7 @@ package gnu.chu.anjelica.inventario;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.DatIndiv;
 import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
@@ -57,8 +58,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -194,10 +193,11 @@ public class PdInvControl extends ventanaPad implements PAD
 
     alm_codiE.setFormato(true);
     alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
-    s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
-        " ORDER BY alm_codi";
-    dtStat.select(s);
-    alm_codiE.addDatos(dtStat);
+    pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
+//    s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
+//        " ORDER BY alm_codi";
+//    dtStat.select(s);
+//    alm_codiE.addDatos(dtStat);
 
     usu_nombE.setColumnaAlias("usu_nomb");
     cci_codiE.setColumnaAlias("cci_codi");

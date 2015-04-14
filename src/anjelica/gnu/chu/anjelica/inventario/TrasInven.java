@@ -4,6 +4,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.paregalm;
+import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
@@ -119,10 +120,11 @@ public class TrasInven extends ventanaPad implements PAD {
         emp_codiE.iniciar(dtStat, this, vl, EU);
         alm_codiE.setFormato(true);
         alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
-        s = "SELECT alm_codi,alm_nomb FROM v_almacen "
-                + " ORDER BY alm_codi";
-        dtStat.select(s);
-        alm_codiE.addDatos(dtStat);
+        pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
+//        s = "SELECT alm_codi,alm_nomb FROM v_almacen "
+//                + " ORDER BY alm_codi";
+//        dtStat.select(s);
+//        alm_codiE.addDatos(dtStat);
         MvtosAlma.llenaComboFecInv(dtStat, EU.em_cod, EU.ejercicio, fecinvConE,32);
         Pprinc.setButton(KeyEvent.VK_F4, Btraspasar);
         emp_codiE.setColumnaAlias("emp_codi");

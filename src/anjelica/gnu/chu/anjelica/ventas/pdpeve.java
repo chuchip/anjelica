@@ -5,6 +5,7 @@ import gnu.chu.utilidades.*;
 import gnu.chu.sql.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.almacen.pdalmace;
 import java.awt.*;
 import java.util.*;
 import gnu.chu.camposdb.*;
@@ -550,9 +551,10 @@ public class pdpeve  extends ventanaPad   implements PAD
     pro_codiE.setAceptaInactivo(false);
     prv_codiE.iniciar(dtStat,this,vl,EU);
     prv_codiE.setAceptaNulo(true);
-    s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_nomb";
-    dtCon1.select(s);
-    alm_codiE.addItem(dtCon1);
+      pdalmace.llenaCombo(alm_codiE, dtCon1); 
+//    s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_nomb";
+//    dtCon1.select(s);
+//    alm_codiE.addItem(dtCon1);
     ALMACEN = 1;
 
     if (pdconfig.getConfiguracion(EU.em_cod,dtStat))

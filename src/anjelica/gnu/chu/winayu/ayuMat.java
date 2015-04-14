@@ -3,19 +3,20 @@ package gnu.chu.winayu;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
 import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.sql.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.*;
 
 /**
  *
  * <p>Título: ayumat</p>
  * <p>Descripcion: Pantalla de Ayuda de Mataderos</p>
- * <p>Copyright: Copyright (c) 2005-2009
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
- *  los terminos de la Licencia Pública General de GNU seg�n es publicada por
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
  *  o bien (según su elección) de cualquier versión posterior.
  *  Este programa se distribuye con la esperanza de que sea útil,ed
@@ -32,8 +33,7 @@ import javax.swing.*;
  */
 
 public class ayuMat extends ventana implements  Runnable
-{
-    Vector datos=new Vector();
+{    
   BorderLayout bLay1 = new BorderLayout();
   String strSql="";
   public String mat_codiT="";
@@ -75,7 +75,6 @@ public class ayuMat extends ventana implements  Runnable
    catch (Exception k)
    {
      setErrorInit(true);
-     return;
    }
  }
 
@@ -114,10 +113,10 @@ public class ayuMat extends ventana implements  Runnable
     Pprinc.setLayout(gridBagLayout2);
 
     // Configurando el Grid.
-    Vector cabecera = new Vector();
-    cabecera.addElement("Codigo"); // 0 -- Codigo
-    cabecera.addElement("Nombre"); //1 -- Nombre
-    cabecera.addElement("N.Reg.San."); // 2 -- Num.Reg.San
+    ArrayList cabecera = new ArrayList();
+    cabecera.add("Codigo"); // 0 -- Codigo
+    cabecera.add("Nombre"); //1 -- Nombre
+    cabecera.add("N.Reg.San."); // 2 -- Num.Reg.San
     jt.setCabecera(cabecera);
     int i []= {46,283,283};
     jt.setAnchoColumna(i);
@@ -141,11 +140,13 @@ public class ayuMat extends ventana implements  Runnable
 
         // Poniendo Orejas.
     Belegir.addActionListener(new java.awt.event.ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         Belegir_actionPerformed();
       }
     });
     Baceptar.addActionListener(new java.awt.event.ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         Baceptar_actionPerformed();
       }
@@ -205,12 +206,12 @@ public class ayuMat extends ventana implements  Runnable
      mat_nrgsaE.setColumnaAlias("mat_nrgsa");
      mat_nombE.setQuery(true);
      mat_nrgsaE.setQuery(true);
-     mat_nombE.requestFocus();
+     mat_nombE.requestFocusLater();
   }
   void Baceptar_actionPerformed()
   {
     String s="";
-    Vector v=new Vector();
+    ArrayList v=new ArrayList();
     v.add(mat_nombE.getStrQuery());
     v.add(mat_nrgsaE.getStrQuery());
 
@@ -234,7 +235,7 @@ public class ayuMat extends ventana implements  Runnable
         return true;
       }
     }
-    catch (Throwable k)
+    catch (SQLException k)
     {
       Error("Error al Buscar Mataderos: ", dtCon1.SqlException);
       return false;

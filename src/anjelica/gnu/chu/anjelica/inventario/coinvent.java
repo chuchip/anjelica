@@ -2,6 +2,7 @@ package gnu.chu.anjelica.inventario;
 
 import gnu.chu.utilidades.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.controles.*;
 import java.awt.*;
 import gnu.chu.camposdb.*;
@@ -201,13 +202,15 @@ public class coinvent extends ventana
    Pcabe.setDefButton(Baceptar);
    alm_codiE.setFormato(true);
    alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
-   s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
-       " ORDER BY alm_codi";
-   dtStat.select(s);
+//   s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
+//       " ORDER BY alm_codi";
+//   dtStat.select(s);
+   pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
+//    alm_codiE.addDatos(dtStat);
+   alm_codiE.resetTexto();
    emp_codiE.iniciar(dtStat, this, vl, EU);
    opVerDetalle.setSelected(true);
-   alm_codiE.addDatos(dtStat);
-   alm_codiE.resetTexto();
+  
 
    s="SELECT MAX(cci_feccon) as cci_feccon FROM coninvcab ";
    dtStat.select(s);

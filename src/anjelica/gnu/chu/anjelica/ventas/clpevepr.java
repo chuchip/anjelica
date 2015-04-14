@@ -25,6 +25,7 @@ import net.sf.jasperreports.engine.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.controles.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.almacen.pdalmace;
 import java.util.*;
 import java.awt.*;
 import javax.swing.BorderFactory;
@@ -290,16 +291,20 @@ public class  clpevepr extends ventana  implements  JRDataSource
 
     pvc_feciniE.setAceptaNulo(false);
     pvc_fecfinE.setAceptaNulo(false);
-
-    s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_codi";
-    dtCon1.select(s);
-    int almIni = dtCon1.getInt("alm_codi");
-    alm_iniE.setValor(almIni);
-    alm_iniE.addItem(dtCon1);
-    dtCon1.select(s);
-    alm_finE.addItem(dtCon1);
-    dtCon1.last();
-    alm_finE.setValor(dtCon1.getInt("alm_codi"));
+    pdalmace.llenaCombo(alm_iniE, dtStat);
+    pdalmace.llenaCombo(alm_finE, dtStat);
+    alm_iniE.resetTexto();
+    alm_finE.setTextFin();
+//    pdalmace.llenaCombo(alm_finE, dtStat);
+//    s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_codi";
+//    dtCon1.select(s);
+//    int almIni = dtCon1.getInt("alm_codi");
+//    alm_iniE.setValor(almIni);
+//    alm_iniE.addItem(dtCon1);
+//    dtCon1.select(s);
+//    alm_finE.addItem(dtCon1);
+//    dtCon1.last();
+//    alm_finE.setValor(dtCon1.getInt("alm_codi"));
 
 
     pvc_confirE.addItem("Si", "S");

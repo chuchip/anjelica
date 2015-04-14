@@ -4,16 +4,16 @@ package gnu.chu.winayu;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
 import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.sql.*;
+import java.util.ArrayList;
 import javax.swing.*;
 /**
  *
  * <p>Titulo: ayuSde</p>
  * <p>Descripcion: Pantalla de Ayuda de Salas de Despiece</p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -31,9 +31,8 @@ import javax.swing.*;
  * @version 1.0
  */
 
-public class ayuSde extends ventana implements  Runnable
-{
-  Vector datos=new Vector();
+public class ayuSde extends ventana 
+{ 
   BorderLayout bLay1 = new BorderLayout();
   String strSql="";
   public String sde_codiT="";
@@ -75,7 +74,6 @@ public class ayuSde extends ventana implements  Runnable
    catch (Exception k)
    {
      setErrorInit(true);
-     return;
    }
  }
 
@@ -113,16 +111,16 @@ public class ayuSde extends ventana implements  Runnable
     Pprinc.setLayout(gridBagLayout2);
 
     // Configurando el Grid.
-    Vector cabecera = new Vector();
-    cabecera.addElement("Codigo"); // 0 -- Codigo
-    cabecera.addElement("Nombre"); //1 -- Nombre
-    cabecera.addElement("N�Reg.San."); // 2 -- Num.Reg.San
+    ArrayList cabecera = new ArrayList();
+    cabecera.add("Codigo"); // 0 -- Codigo
+    cabecera.add("Nombre"); //1 -- Nombre
+    cabecera.add("N.Reg.San."); // 2 -- Num.Reg.San
     jt.setCabecera(cabecera);
     int i []= {46,283,283};
     jt.setAnchoColumna(i);
     int a[]= {1,0,0};
     jt.alinearColumna(a);
-    jt.ajustar(true);
+    jt.setAjustarColumnas(true);
     jt.setNumRegCargar(100);
     jt.setAjustarGrid(true);
 //    jt.setIgnoraColumna(0,true);
@@ -140,11 +138,13 @@ public class ayuSde extends ventana implements  Runnable
 
         // Poniendo Orejas.
     Belegir.addActionListener(new java.awt.event.ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         Belegir_actionPerformed();
       }
     });
     Baceptar.addActionListener(new java.awt.event.ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         Baceptar_actionPerformed();
       }
@@ -152,6 +152,7 @@ public class ayuSde extends ventana implements  Runnable
 
     jt.tableView.addMouseListener(new MouseAdapter()
     {
+      @Override
       public void mouseClicked(MouseEvent m)
       {
         if (m.getClickCount() > 1)
@@ -173,7 +174,7 @@ public class ayuSde extends ventana implements  Runnable
 
     sde_nombE.setBounds(new Rectangle(48, 3, 259, 15));
 
-    cLabel1.setText("N� Reg. Sanitario");
+    cLabel1.setText("N. Reg. Sanitario");
     cLabel1.setBounds(new Rectangle(26, 20, 99, 16));
     sde_nrgsaE.setBounds(new Rectangle(129, 20, 175, 15));
     Belegir.setBounds(200,0,25,22);
@@ -193,6 +194,7 @@ public class ayuSde extends ventana implements  Runnable
     jt.panelBuscar.add(Belegir,null);
 
   }
+  @Override
   public void iniciarVentana() throws Exception
   {
      Pcons.setDefButton(Baceptar);
@@ -202,21 +204,30 @@ public class ayuSde extends ventana implements  Runnable
      sde_nrgsaE.setColumnaAlias("sde_nrgsa");
      sde_nombE.setQuery(true);
      sde_nrgsaE.setQuery(true);
-     sde_nombE.requestFocus();
+     sde_nombE.requestFocusLater();
   }
   void Baceptar_actionPerformed()
   {
     String s="";
-    Vector v=new Vector();
+    ArrayList v=new ArrayList();
     v.add(sde_nombE.getStrQuery());
     v.add(sde_nrgsaE.getStrQuery());
 
     strSql="select sde_codi,sde_nomb,sde_nrgsa FROM v_saladesp ";
     strSql = creaWhere(strSql, v,true);
     strSql+=" order by sde_codi";
-    Thread th= new Thread(this);
-    th.setPriority(Thread.MAX_PRIORITY);
-    th.start();
+    new miThread("a")
+    {
+        @Override
+        public void run()
+        {
+            setEnabled(false);
+            rgSelect();
+            setEnabled(true);
+            jt.setEnabled(true);
+            jt.requestFocusInicio();      
+        }
+    };
   }
 
   public boolean rgSelect()
@@ -263,15 +274,7 @@ public class ayuSde extends ventana implements  Runnable
     consulta=true;
     matar();
   }
+}
 
-  public void run()
-  {
-    setEnabled(false);
-    rgSelect();
-    setEnabled(true);
-    jt.setEnabled(true);
-    jt.requestFocusInicio();
-  }
-} // Final de Clase
 
 

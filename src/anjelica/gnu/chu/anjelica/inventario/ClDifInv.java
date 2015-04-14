@@ -23,6 +23,7 @@ package gnu.chu.anjelica.inventario;
 */
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
+import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.print.util;
@@ -120,10 +121,12 @@ public class ClDifInv extends ventana {
       dtAdd=new DatosTabla(ct);
       MvtosAlma.llenaComboFecInv(dtStat,EU.em_cod,EU.ejercicio,feulinE,12);
       cci_fecconE.iniciar(dtStat, this, vl, EU);
-      s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
-          " ORDER BY alm_codi";
-      dtStat.select(s);
-      alm_codiE.addDatos(dtStat);
+      pdalmace.llenaLinkBox(alm_codiE, dtStat);
+       
+//      s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
+//          " ORDER BY alm_codi";
+//      dtStat.select(s);
+//      alm_codiE.addDatos(dtStat);
       alm_codiE.addDatos("0","Todos");
       alm_codiE.setCeroIsNull(false);
       alm_codiE.setText("0");

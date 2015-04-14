@@ -209,11 +209,13 @@ public class MantTraspAlm extends ventanaPad implements PAD
             pro_numindE, deo_kilosE);
         pro_codiE.setAyudaLotes(true);
         
-        s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
-        dtCon1.select(s);
-        alm_codifE.addItem(dtCon1);
-        dtCon1.select(s); // Volvemos al principio
-        alm_codioE.addItem(dtCon1);
+        pdalmace.llenaCombo(alm_codifE, dtCon1,'*');
+        pdalmace.llenaCombo(alm_codioE, dtCon1,'*');
+//        s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
+//        dtCon1.select(s);
+//        alm_codifE.addItem(dtCon1);
+//        dtCon1.select(s); // Volvemos al principio
+//        alm_codioE.addItem(dtCon1);
 
         stkPart=new ActualStkPart(dtCon1,EU.em_cod);
         avc_fecalbE.setText(Formatear.getFechaAct("dd-MM-yyyy"));

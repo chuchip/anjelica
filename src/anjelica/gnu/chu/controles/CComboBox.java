@@ -487,12 +487,17 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   {
     copia=getText();
   }
+  
   /**
   * Retorna el indice Anterior
   * @return String
   */
   public String getValorOld() { return copia; };
-
+  
+  public void setTextInicio()
+  {
+      
+  }
   /**
    * Retorna el indice Actual. Igual que hacer getText()
   *  @return String
@@ -514,6 +519,18 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
       if (getItemCount()>0)
         setSelectedIndex(0);
     }
+  }
+  
+  public void setTextFin()
+  {
+    if (getQuery())
+      setText(gnu.chu.interfaces.ejecutable.VACIO);
+    else
+    {
+      if (getItemCount()>0)
+        setSelectedIndex(getItemCount()-1);
+    }
+      
   }
   private boolean activado=true;
   private boolean activadoParent=true;

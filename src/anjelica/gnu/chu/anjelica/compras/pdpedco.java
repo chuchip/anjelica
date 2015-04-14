@@ -4,6 +4,7 @@ import gnu.chu.controles.*;
 import gnu.chu.sql.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.almacen.pdalmace;
 import java.awt.*;
 import java.util.*;
 import javax.swing.BorderFactory;
@@ -1248,9 +1249,10 @@ public class pdpedco extends ventanaPad   implements PAD
 
     prv_codiE.iniciar(dtStat, this, vl, EU);
     prv_codiE.setEnabled(false);
-    s = "SELECT alm_codi,alm_nomb FROM v_almacen order by alm_nomb ";
-    dtStat.select(s);
-    alm_codiE.addDatos(dtStat);
+    pdalmace.llenaLinkBox(alm_codiE, dtStat);
+//    s = "SELECT alm_codi,alm_nomb FROM v_almacen order by alm_nomb ";
+//    dtStat.select(s);
+//    alm_codiE.addDatos(dtStat);
     pro_codiE.iniciar(dtStat, this, vl, EU);
 //    pro_codiE.setProdEquiv(true);
     pro_codiE.setProNomb(null);

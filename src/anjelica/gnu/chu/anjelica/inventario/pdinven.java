@@ -12,6 +12,7 @@ import gnu.chu.interfaces.*;
 import java.awt.event.*;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.paregalm;
+import gnu.chu.anjelica.almacen.pdalmace;
 
 /**
  * <p>Titulo:   Mant. de  INVENTARIO </p>
@@ -293,6 +294,7 @@ public class pdinven extends ventanaPad implements PAD
                                                 new Insets(2, 50, 2, 0), 0, 0));
   }
 
+  @Override
   public void iniciarVentana() throws Exception
   {
     alm_codiE.setFormato(true);
@@ -300,11 +302,11 @@ public class pdinven extends ventanaPad implements PAD
 
     stkPart = new ActualStkPart(dtAdd,EU.em_cod);
     stkPart.setVentana(this);
-
-    s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
-        " ORDER BY alm_codi";
-    dtStat.select(s);
-    alm_codiE.addDatos(dtStat);
+    pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
+//    s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
+//        " ORDER BY alm_codi";
+//    dtStat.select(s);
+//    alm_codiE.addDatos(dtStat);
     Pcabe.setDefButton(Baceptar);
     Pcabe.setEscButton(Bcancelar);
 
