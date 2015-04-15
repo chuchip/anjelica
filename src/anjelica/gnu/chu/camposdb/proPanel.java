@@ -875,11 +875,11 @@ public class proPanel extends CPanel
    * @return boolean true si el Campo es Valido.
    *         false si No lo es.
    */
-  public boolean controla() throws Exception
+  public boolean controla() throws SQLException
   {
     return controla(true,true);
   }
-  public boolean controla(boolean reqFocus) throws Exception
+  public boolean controla(boolean reqFocus) throws SQLException
   {
     return controla(reqFocus,true);
   }

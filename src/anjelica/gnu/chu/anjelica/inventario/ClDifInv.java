@@ -44,9 +44,12 @@ import java.awt.print.PrinterException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -55,6 +58,15 @@ import net.sf.jasperreports.engine.JasperReport;
 
 
 public class ClDifInv extends ventana {
+   
+    private  final int  JT_PROCODI=0;
+    private  final int  JT_PRONOMB=1;
+    private  final int  JT_PRPANO=2;
+    private  final int  JT_PRPSERI=3;
+    private  final int  JT_PRPPART=4;
+    private  final int  JT_PRPINDI=5;
+    private  final int  JT_PESOORD=7;
+             
     private String TABLA_INV_CAB="coninvcab";
     private String TABLA_INV_LIN="coninvlin";
     private String VISTA_INV="v_coninvent";
@@ -121,7 +133,7 @@ public class ClDifInv extends ventana {
       dtAdd=new DatosTabla(ct);
       MvtosAlma.llenaComboFecInv(dtStat,EU.em_cod,EU.ejercicio,feulinE,12);
       cci_fecconE.iniciar(dtStat, this, vl, EU);
-      pdalmace.llenaLinkBox(alm_codiE, dtStat);
+      pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
        
 //      s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
 //          " ORDER BY alm_codi";
@@ -178,14 +190,14 @@ public class ClDifInv extends ventana {
               gnu.chu.anjelica.almacen.conmvpr cm=(gnu.chu.anjelica.almacen.conmvpr) prog;
               for (int n=jt.getSelectedRow();n>=0;n--)
               {
-                  if (jt.getValorInt(n,0)!=0)
+                  if (jt.getValorInt(n,JT_PROCODI)!=0)
                   {
-                      cm.setProCodi(jt.getValorInt(n,0));
+                      cm.setProCodi(jt.getValorInt(n,JT_PROCODI));
                       break;
                   }
               }          
-              cm.setLote(jt.getValorInt(4));
-              cm.setIndividuo(jt.getValorInt(5));
+              cm.setLote(jt.getValorInt(JT_PRPPART));
+              cm.setIndividuo(jt.getValorInt(JT_PRPINDI));
               cm.ejecutaConsulta();
               jf.gestor.ir(cm);
           }
@@ -1070,6 +1082,8 @@ public class ClDifInv extends ventana {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        MInsInv = new javax.swing.JMenuItem();
+        MInsReg = new javax.swing.JMenuItem();
         Pgeneral = new gnu.chu.controles.CPanel();
         Pcondic = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -1096,6 +1110,22 @@ public class ClDifInv extends ventana {
         opDatStock = new gnu.chu.controles.CCheckBox();
         opMvtos = new gnu.chu.controles.CCheckBox();
         jt = new gnu.chu.controles.Cgrid(9);
+
+        MInsInv.setText("Ins. Inv.");
+        MInsInv.setToolTipText("Insertar en control inventario");
+        MInsInv.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MInsInvActionPerformed(evt);
+            }
+        });
+
+        MInsReg.setText("Ins. Reg");
+        MInsReg.setToolTipText("Crear Regularizacion");
+        MInsReg.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MInsRegActionPerformed(evt);
+            }
+        });
 
         Pgeneral.setLayout(new java.awt.GridBagLayout());
 
@@ -1225,6 +1255,8 @@ public class ClDifInv extends ventana {
         jt.setFormatoColumna(7, "---,--9.99");
         jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,2,0});
         jt.setAnchoColumna(new int[]{50,150,40,30,45,40,60,60,80});
+        jt.getPopMenu().add(MInsInv);
+        jt.getPopMenu().add(MInsReg);
 
         javax.swing.GroupLayout jtLayout = new javax.swing.GroupLayout(jt);
         jt.setLayout(jtLayout);
@@ -1251,8 +1283,110 @@ public class ClDifInv extends ventana {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void MInsInvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MInsInvActionPerformed
+        try
+        {
+            if (jt.isVacio())
+                return;
+            int nl=jt.getSelectedRowDisab();
+            if (jt.getValorDec(nl,JT_PESOORD)<=0)
+            {
+                msgBox("Imposible insertar inventario si kilos no son positivos");
+                return;
+            }
+            int proCodi=jt.getValorInt(JT_PROCODI);
+            String proNomb=jt.getValString(JT_PRONOMB);
+            for (int n=jt.getSelectedRow();n>=0;n--)
+              {
+                  if (jt.getValorInt(n,0)!=0)
+                  {
+                      proCodi=jt.getValorInt(n,JT_PROCODI);
+                      proNomb=jt.getValString(n,JT_PRONOMB);
+                      break;
+                  }
+              }   
+            s="select cci_codi from v_coninvent where cci_feccon= '"+cci_fecconE.getFechaDB()+"'"+
+                " and pro_codi = "+jt.getValorInt(nl,JT_PROCODI);
+            if (!dtStat.select(s))
+            {
+                s="select cci_codi from coninvcab where cci_feccon= '"+cci_fecconE.getFechaDB()+"'"+
+                    " order by cci_codi";
+                if (!dtStat.select(s))
+                {
+                    msgBox("No encontrado Control de inventario");
+                    return;
+                }
+            }
+            int cciCodi=dtStat.getInt("cci_codi");
+            s="select max(lci_nume) as lci_nume from coninvlin where cci_codi="+cciCodi;
+            dtStat.select(s);
+            dtAdd.addNew("coninvlin");
+            dtAdd.setDato("emp_codi", EU.em_cod);
+            dtAdd.setDato("cci_codi", cciCodi);
+            dtAdd.setDato("lci_nume", dtStat.getInt("lci_nume")+1);
+            dtAdd.setDato("prp_ano", jt.getValorInt(nl,JT_PRPANO));
+            dtAdd.setDato("prp_empcod", EU.em_cod);
+            dtAdd.setDato("prp_seri", jt.getValString(nl,JT_PRPSERI));
+            dtAdd.setDato("prp_part", jt.getValorInt(nl,JT_PRPPART));
+            dtAdd.setDato("pro_codi", proCodi);
+            dtAdd.setDato("pro_nomb", proNomb);
+            dtAdd.setDato("prp_indi", jt.getValorInt(nl,JT_PRPINDI));
+            dtAdd.setDato("lci_peso",  jt.getValorDec(nl,JT_PESOORD));
+            dtAdd.setDato("lci_numind", 1);
+            dtAdd.setDato("lci_numpal","");
+            dtAdd.update(stUp);
+            ctUp.commit();
+            msgBox("Realizado apunte en inventario. Apunte: "+cciCodi+" NL: "+(dtStat.getInt("lci_nume")+1));
+        } catch (ParseException | SQLException ex)
+        {
+            Error("Error al insertar registro en control inventario",ex);
+        }
+    }//GEN-LAST:event_MInsInvActionPerformed
+
+    private void MInsRegActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MInsRegActionPerformed
+        if (jf==null)
+             return;
+         ejecutable prog;
+         if ((prog=jf.gestor.getProceso("gnu.chu.anjelica.almacen.pdregalm"))==null)
+             return;
+         gnu.chu.anjelica.almacen.pdregalm cm=(gnu.chu.anjelica.almacen.pdregalm) prog;
+         if (cm.inTransation())
+         {
+            msgBox("Programa ocupado. Imposible llamar");
+            return; 
+         }
+         try
+         {
+            cm.nav.btnAddNew.doClick();
+            for (int n=jt.getSelectedRow();n>=0;n--)
+            {
+                if (jt.getValorInt(n,JT_PROCODI)!=0)
+                {
+                    cm.setProCodi(jt.getValorInt(n,JT_PROCODI));
+                    break;
+                }
+            }          
+
+            cm.setLote(jt.getValorInt(JT_PRPPART));
+            cm.setIndividuo(jt.getValorInt(JT_PRPINDI));
+            cm.setEjercicio(jt.getValorInt(JT_PRPANO));
+            cm.setSerie(jt.getValString(JT_PRPSERI));
+       
+            cm.setFecha(Formatear.sumaDiasDate(cci_fecconE.getDate(),-1));
+            jf.gestor.ir(cm);
+        } catch (ParseException ex)
+        {
+            Error("Error al restar fecha",ex);
+
+        }
+        
+    }//GEN-LAST:event_MInsRegActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButtonMenu Baceptar;
+    private javax.swing.JMenuItem MInsInv;
+    private javax.swing.JMenuItem MInsReg;
     private gnu.chu.controles.CPanel Pcondic;
     private gnu.chu.controles.CPanel Pgeneral;
     private gnu.chu.controles.CLinkBox alm_codiE;

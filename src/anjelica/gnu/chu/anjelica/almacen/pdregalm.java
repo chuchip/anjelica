@@ -32,6 +32,8 @@ import java.util.*;
 import gnu.chu.Menu.*;
 import gnu.chu.interfaces.PAD;
 import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 
@@ -496,7 +498,7 @@ public void ej_query()
    activaTodo();
    jt.setEnabled(true);
  }
-
+ 
     @Override
  public void PADAddNew(){
    activar(true,navegador.ADDNEW);
@@ -694,4 +696,37 @@ public void ej_query()
  {
     return pRegAlm.checkCampos();
  }
+  public static String getNombreClase()
+  {
+   return "gnu.chu.anjelica.almacen.pdregalm";
+  }
+  public void setFecha(java.util.Date fecha)
+  {
+      pRegAlm.cci_fecconE.setDate(fecha);
+  }
+  public boolean inTransation()
+  {
+      return (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
+  }
+  public void setProCodi(int proCodi) 
+  {
+      pRegAlm.pro_codiE.setValorInt(proCodi,true);    
+  }
+  public void setLote(int lote)
+  {
+      pRegAlm.pro_loteE.setValorInt(lote);
+  }
+  public void setIndividuo(int indiv)
+  {
+      pRegAlm.pro_numindE.setValorInt(indiv);
+  }
+  public void setSerie(String serie)
+  {
+      pRegAlm.deo_serlotE.setText(serie);
+  }
+  public void setEjercicio(int ejerc)
+  {
+      pRegAlm.deo_ejelotE.setValorInt(ejerc);
+  }
+           
 }
