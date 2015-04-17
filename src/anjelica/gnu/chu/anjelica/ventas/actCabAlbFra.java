@@ -1,7 +1,9 @@
 package gnu.chu.anjelica.ventas;
 
 import gnu.chu.anjelica.DatosIVA;
+import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.MantTipoIVA;
+import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
 import gnu.hylafax.job.TimeParser.ParseException;
@@ -41,14 +43,21 @@ public class actCabAlbFra
   Hashtable ht=new Hashtable();
   boolean valora=true;
   int numDec=2;
+  int numDecPrecio=4;
+  int empCodi;
 
-  public actCabAlbFra(DatosTabla dtLin)
+  public actCabAlbFra(DatosTabla dtLin,int empCodi) throws SQLException
   {
-    this(null,dtLin);
+    this(null,dtLin,empCodi);
   }
 
-  public actCabAlbFra(DatosTabla dtCab, DatosTabla dtLin)
+  public actCabAlbFra(DatosTabla dtCab, DatosTabla dtLin,int empCodi) throws SQLException
+  {    
+    this(dtCab,dtLin,empCodi,pdconfig.getNumDecimales(empCodi,dtLin));   
+  }
+  public actCabAlbFra(DatosTabla dtCab, DatosTabla dtLin,int empCodi,int numDecPrec)
   {
+    this.numDecPrecio=numDecPrec;
     this.dtCab=dtCab;
     this.dtLin=dtLin;
   }
@@ -73,16 +82,17 @@ public class actCabAlbFra
     boolean incIva = dtCab.getInt("cli_exeiva") == 0 && empCodi < 90;
 
     return actDatosAlb(empCodi,avcAno,avcSerie,avcNume,incIva,
-              Formatear.redondea(dtCab.getDouble("avc_dtopp") + dtCab.getDouble("avc_dtocom"),numDec),
+              Formatear.redondea(dtCab.getDouble("avc_dtopp"),numDec), 
+              Formatear.redondea(dtCab.getDouble("avc_dtocom"),numDec),
               dtCab.getInt("cli_recequ"),dtCab.getDate("avc_fecalb"));
 
   }
   public boolean actDatosAlb(int empCodi, int avcAno, String avcSerie,
                              int avcNume,boolean incIva,
-                             double dtos,int recequ) throws SQLException
+                             double dtopp,double dtoCom,int recequ) throws SQLException
 
   {
-      return actDatosAlb(empCodi,avcAno,avcSerie,avcNume,incIva,dtos,recequ,null);
+      return actDatosAlb(empCodi,avcAno,avcSerie,avcNume,incIva,dtopp,dtoCom,recequ,null);
   }
   /**
    * Actualizar datos de albaran de venta. Mete en el HashTable ht ciertos valores
@@ -92,14 +102,15 @@ public class actCabAlbFra
    * @param avcSerie
    * @param avcNume
    * @param incIva
-   * @param dtos
+   * @param dtopp
+   * @param dtoCom
    * @param recequ
    * @return
    * @throws SQLException
    */
   public boolean actDatosAlb(int empCodi, int avcAno, String avcSerie,
                              int avcNume,boolean incIva,
-                             double dtos,int recequ,Date fecAlb) throws SQLException
+                             double dtopp,double dtoCom,int recequ,Date fecAlb) throws SQLException
   {
     if (fecAlb==null)
     {// Buscar fecha Albaran
@@ -113,32 +124,36 @@ public class actCabAlbFra
 
     }
     ht.put("incIva", incIva);
-    ht.put("avc_impbru", new Double(0));
-    ht.put("kilos", new Double(0));
-    ht.put("nLin", new Integer(0));
-    ht.put("avc_dtopp", new Double(0));
-    ht.put("avc_impdpp", new Double(0));
-    ht.put("avc_basimp", new Double(0));
-    ht.put("avc_tipiva", new Double(0));
-    ht.put("avc_impiva", new Double(0));
-    ht.put("avc_tipree", new Double(0));
-    ht.put("avc_impree", new Double(0));
-    ht.put("avc_impalb", new Double(0));
+    ht.put("avc_impbru", (double) 0);
+    ht.put("kilos", (double) 0);
+    ht.put("nLin", 0);
+    ht.put("avc_dtocom", (double) 0);
+    ht.put("avc_impdco", (double) 0);
+    ht.put("avc_dtopp", (double) 0);
+    ht.put("avc_impdpp", (double) 0);
+    ht.put("avc_basimp", (double) 0);
+    ht.put("avc_tipiva", (double) 0);
+    ht.put("avc_impiva", (double) 0);
+    ht.put("avc_tipree", (double) 0);
+    ht.put("avc_impree", (double) 0);
+    ht.put("avc_impalb", (double) 0);
 
     s = "SELECT l.pro_codi,sum(l.avl_canti) as avl_canti, " +
-        " avl_prven-avl_dtolin as avl_prven,pro_tipiva FROM V_ALBAVEL as l, v_articulo as a " +
+        " avl_prven-avl_dtolin as avl_prven,pro_tipiva,pro_indtco FROM V_ALBAVEL as l, v_articulo as a " +
         " WHERE l.avc_ano = " + avcAno +
         " and l.emp_codi = " + empCodi +
         " and l.avc_serie = '" + avcSerie + "'" +
         " and l.avc_nume = " + avcNume +
         " and l.avl_canti != 0 " +
         " and l.pro_codi = a.pro_Codi " +
-        " group by l.pro_codi,avl_prven,avl_dtolin,pro_tipiva ";
+        " group by l.pro_codi,avl_prven,avl_dtolin,pro_tipiva,pro_indtco ";
     if (!dtLin.select(s))
       return false; // SIN LINEAS DE ALBARAN
     double impLin;
     double kilos=0;
     double impBim = 0, impDtoPP = 0, impIva = 0, impReq = 0;
+    double impDtCom=0,impDtoCom=0;
+    
     int nLin=0;
     tipIva=-1;
     do
@@ -147,26 +162,34 @@ public class actCabAlbFra
         swCamTipIva = true;
       tipIva = dtLin.getInt("pro_tipiva");
       impLin=Formatear.redondea(Formatear.redondea(dtLin.getDouble("avl_canti",true), 2) *
-                                Formatear.redondea(dtLin.getDouble("avl_prven",true),3),2);
+                                Formatear.redondea(dtLin.getDouble("avl_prven",true),numDecPrecio),numDec);
 
       kilos+=dtLin.getDouble("avl_canti", true);
+      impDtCom+=dtLin.getInt("pro_indtco")==0?0:impLin;    
       impBim += impLin;
+      
       nLin++;
     }  while (dtLin.next());
   
     impBim=Formatear.redondea(impBim,numDec);
-    ht.put("avc_impbru", new Double(impBim));
-    ht.put("kilos", new Double(Formatear.redondea(kilos,numDec)));
-    ht.put("nLin", new Integer(nLin));
+    ht.put("avc_impbru", impBim);
+    ht.put("kilos", Formatear.redondea(kilos,numDec));
+    ht.put("nLin", nLin);
 
-    if (dtos != 0)
-      impDtoPP = Formatear.redondea(impBim * dtos / 100, numDec);
-    impBim = Formatear.redondea(impBim - impDtoPP,numDec);
+    if (dtopp != 0)
+      impDtoPP = Formatear.redondea(impBim * dtopp / 100, numDec);
+     if (dtoCom != 0)
+      impDtoCom = Formatear.redondea(impDtCom * dtoCom / 100, numDec);
+     
+    impBim = Formatear.redondea(impBim - impDtoPP-impDtoCom,numDec);
     if (valora)
     {
-      ht.put("avc_dtopp", new Double(dtos));
-      ht.put("avc_impdpp", new Double(impDtoPP));
-      ht.put("avc_basimp", new Double(impBim));
+      ht.put("avc_dtopp", dtopp);
+      ht.put("avc_impdpp", impDtoPP);
+      ht.put("avc_dtocom", dtoCom);
+      ht.put("avc_impdco", impDtoCom);
+
+      ht.put("avc_basimp", impBim);
     }
     DatosIVA dtIva=null;
     if (incIva)
@@ -190,20 +213,20 @@ public class actCabAlbFra
     {
       if (incIva)
       {
-        ht.put("avc_tipiva", new Double( dtIva.getPorcIVA()));
-        ht.put("avc_impiva", new Double(impIva));
-        ht.put("avc_tipree", recequ == 0?new Double(0):new Double( dtIva.getPorcREQ()));
-        ht.put("avc_impree", new Double(impReq));
+        ht.put("avc_tipiva", dtIva.getPorcIVA());
+        ht.put("avc_impiva", impIva);
+        ht.put("avc_tipree", recequ == 0?0: dtIva.getPorcREQ());
+        ht.put("avc_impree", impReq);
       }
-      ht.put("avc_impalb", new Double(impAlb)); // Importe de ALbaran con Imp. Incluidos
+      ht.put("avc_impalb",impAlb); // Importe de ALbaran con Imp. Incluidos
     }
     else
     {
-      ht.put("avc_tipiva", new Double(0));
-      ht.put("avc_impiva", new Double(0));
-      ht.put("avc_tipree", new Double(0));
-      ht.put("avc_impree", new Double(0));
-      ht.put("avc_impalb", new Double(0));
+      ht.put("avc_tipiva", (double) 0);
+      ht.put("avc_impiva",(double) 0);
+      ht.put("avc_tipree", (double) 0);
+      ht.put("avc_impree", (double) 0);
+      ht.put("avc_impalb", (double) 0);
     }
     return true;
   }
@@ -245,8 +268,9 @@ public class actCabAlbFra
 
     boolean incIva=dtCab.getInt("cli_exeiva")==0 && empCodi<90;
     return actDatosFra(ejeNume,empCodi,fvcSerie,fvcNume,incIva,
-                       Formatear.redondea(dtCab.getDouble("fvc_dtopp")+dtCab.getDouble("fvc_dtocom"),numDec),
-                       dtCab.getInt("fvc_porreq"),dtCab.getDate("fvc_fecfra") );
+                       Formatear.redondea(dtCab.getDouble("fvc_dtopp"),numDec),
+                       Formatear.redondea(dtCab.getDouble("fvc_dtocom"),numDec),
+                       dtCab.getDouble("cli_recequ")!=0,dtCab.getDate("fvc_fecfra") );
   }
   /**
    * Actualizar datos de factura
@@ -255,14 +279,15 @@ public class actCabAlbFra
    * @param fvcSerie char
    * @param fvcNume int
    * @param incIva boolean
-   * @param dtos double
-   * @param cliRecequ int
+   * @param dtopp double
+   *  @param dtoCom double
+   * @param cliRecequ boolean (Cliente tiene rec.equiv)
    * @throws SQLException
-   * @throws ParseException
+   * 
    * @return boolean
    */
   public boolean actDatosFra(int ejeNume,int empCodi,String fvcSerie,int fvcNume,
-       boolean incIva,double dtos,int cliRecequ,Date fecha) throws SQLException
+       boolean incIva,double dtopp,double dtoCom,boolean cliRecequ,Date fecha) throws SQLException
   {
       if (fecha==null)
       {
@@ -276,19 +301,21 @@ public class actCabAlbFra
       }
 //    double impBruto=0;
     double impDtoPP=0;
+    double impDtoCom=0;
     int tipIva=-1;
 
     double impIva=0;
-    double impReq=0,impLin,impLinT=0;
+    double impReq=0,impLin,impLinT=0,impLinDtoComT=0;
     double impBim;
     s = "SELECT l.avc_fecalb,l.avc_ano,l.avc_serie,l.avc_nume, l.pro_codi,"+
-        " sum(l.fvl_canti) as fvl_canti,  fvl_prven,fvl_dto,pro_tipiva  FROM v_facvel as l, v_articulo as a "+
+        " sum(l.fvl_canti) as fvl_canti,  fvl_prven,fvl_dto,pro_tipiva,pro_indtco"
+        + "  FROM v_facvel as l, v_articulo as a "+
         " WHERE l.eje_nume = " + ejeNume+
         " and l.emp_codi = " + empCodi +
         " and l.fvc_serie = '"+fvcSerie+"'"+
         " and l.fvc_nume = " + fvcNume +
         " and l.pro_codi = a.pro_Codi "+
-        " group by l.avc_fecalb, l.avc_serie,l.avc_ano,l.avc_nume, l.pro_codi,fvl_prven,fvl_dto,pro_tipiva ";
+        " group by l.avc_fecalb, l.avc_serie,l.avc_ano,l.avc_nume, l.pro_codi,fvl_prven,fvl_dto,pro_tipiva,pro_indtco ";
     if (! dtLin.select(s))
       return false; // SIN LINEAS DE Factura
     do
@@ -297,29 +324,36 @@ public class actCabAlbFra
         swCamTipIva=true;
       tipIva=dtLin.getInt("pro_tipiva");
       impLin=Formatear.redondea(Formatear.redondea(dtLin.getDouble("fvl_canti",true), 2) *
-                                Formatear.redondea(dtLin.getDouble("fvl_prven",true),3),2);
+                                Formatear.redondea(dtLin.getDouble("fvl_prven",true),numDecPrecio),2);
+      impLinDtoComT+=dtLin.getInt("pro_indtco")==0?0:impLin;
       impLinT+=impLin;
     } while (dtLin.next());
   
     impLinT=Formatear.redondea(impLinT,numDec);
     if (valora)
-      ht.put("fvc_impbru",new Double(impLinT));
+      ht.put("fvc_impbru", impLinT);
     else
-      ht.put("fvc_impbru",new Double(0));
-    if (dtos!=0 )
-      impDtoPP= Formatear.redondea(impLinT *dtos / 100,numDec);
-    impBim= Formatear.redondea(impLinT-impDtoPP,numDec);
+      ht.put("fvc_impbru", (double) 0);
+    if (dtopp!=0 )
+      impDtoPP= Formatear.redondea(impLinT *dtopp / 100,numDec);
+    if (dtoCom!=0 )
+        impDtoCom= Formatear.redondea(impLinDtoComT *dtoCom / 100,numDec);
+
+    impBim= Formatear.redondea(impLinT-impDtoPP-impDtoCom,numDec);
     if (valora)
     {
-      ht.put("fvc_dtopp",new Double(dtos));
-      ht.put("fvc_impdpp", new Double(impDtoPP));
-      ht.put("fvc_basimp",new Double(impBim));
+      ht.put("fvc_dtopp",dtopp);
+      ht.put("fvc_impdpp", impDtoPP);
+      ht.put("fvc_dtoco",dtoCom);
+      ht.put("fvc_impdco", impDtoCom);
+
+      ht.put("fvc_basimp",impBim);
     }
     else
     {
-      ht.put("fvc_dtopp",new Double(0));
-      ht.put("fvc_impdpp", new Double(0));
-      ht.put("fvc_basimp",new Double(0));
+      ht.put("fvc_dtopp", (double) 0);
+      ht.put("fvc_impdpp", (double) 0);
+      ht.put("fvc_basimp", (double) 0);
     }
     DatosIVA tipoIva=null;
     if (incIva)
@@ -329,7 +363,7 @@ public class actCabAlbFra
       if (dtLin.select(s))
       {
         impIva = Formatear.redondea(impBim * tipoIva.getPorcIVA() / 100, numDec);
-        if (cliRecequ != 0)
+        if (cliRecequ )
           impReq = Formatear.redondea(impBim * tipoIva.getPorcREQ() / 100,numDec );
       }
       else
@@ -341,17 +375,17 @@ public class actCabAlbFra
     {
       if (incIva)
       {
-        ht.put("fvc_tipiva", new Double( tipoIva.getPorcIVA()));
-        ht.put("fvc_impiva", new Double(impIva));
-        ht.put("fvc_tipree", cliRecequ == 0?new Double(0):new Double(tipoIva.getPorcREQ()));
-        ht.put("fvc_impree", new Double(impReq));
+        ht.put("fvc_tipiva", tipoIva.getPorcIVA());
+        ht.put("fvc_impiva", impIva);
+        ht.put("fvc_tipree", cliRecequ ?tipoIva.getPorcREQ():(double) 0);
+        ht.put("fvc_impree", impReq);
       }
       else
       {
-        ht.put("fvc_tipiva", new Double(0));
-        ht.put("fvc_impiva", new Double(0));
-        ht.put("fvc_tipree", new Double(0));
-        ht.put("fvc_impree", new Double(0));
+        ht.put("fvc_tipiva", (double) 0);
+        ht.put("fvc_impiva", (double) 0);
+        ht.put("fvc_tipree",(double) 0);
+        ht.put("fvc_impree", (double) 0);
       }
 
       ht.put("fvc_sumtot", new Double(impFra));

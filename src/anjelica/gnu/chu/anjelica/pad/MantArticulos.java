@@ -5,7 +5,7 @@ package gnu.chu.anjelica.pad;
  * <p>Título: MantArticulos </p>
  * <p>Descripcion: Mantenimiento Tabla de Articulos</p>
  * <p>Empresa: miSL</p>
-*  <p>Copyright: Copyright (c) 2005-2014
+*  <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -240,6 +240,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     cam_codiE.setColumnaAlias("cam_codi");
     sbe_codiE.setColumnaAlias("sbe_codi");
     pro_artconE.setColumnaAlias("pro_artcon");
+    pro_indtcoE.setColumnaAlias("pro_indtcoE");
     pro_envvacE.setColumnaAlias("pro_envvac");
     pro_activE.setColumnaAlias("pro_activ");
    
@@ -354,6 +355,7 @@ public class MantArticulos extends ventanaPad  implements PAD
       sbe_codiE.setValorInt(dtCon1.getInt("sbe_codi"));
       cam_codiE.setText(dtCon1.getString("cam_codi"));
       pro_artconE.setValor(dtCon1.getInt("pro_artcon"));
+      pro_indtcoE.setValor(dtCon1.getInt("pro_indtco"));
       pro_envvacE.setValor(dtCon1.getInt("pro_envvac"));
       pro_activE.setValor(dtCon1.getInt("pro_activ"));
       
@@ -435,6 +437,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     sbe_codiE.setEnabled(act);
     cam_codiE.setEnabled(act);
     pro_artconE.setEnabled(act);
+    pro_indtcoE.setEnabled(act);
     pro_envvacE.setEnabled(act);
     pro_activE.setEnabled(act);
 
@@ -544,6 +547,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     v.add(sbe_codiE.getStrQuery());
     v.add(cam_codiE.getStrQuery());
     v.add(pro_artconE.getStrQuery());
+    v.add(pro_indtcoE.getStrQuery());
     v.add(pro_envvacE.getStrQuery());
     v.add(pro_activE.getStrQuery());
 
@@ -755,6 +759,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_stockE.setEnabled(false);
     pro_fulconE.setEnabled(false);
     pro_artconE.setValor("0");
+    pro_indtcoE.setValor("-1");
     pro_envvacE.setValor("0");
     pro_activE.setValor("-1");
     pro_codetiE.setValorInt(0);
@@ -925,6 +930,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     dt.setDato("sbe_codi",sbe_codiE.getValorInt());
     dt.setDato("cam_codi",cam_codiE.getText());
     dt.setDato("pro_artcon", pro_artconE.getValor());
+    dt.setDato("pro_indtco", pro_indtcoE.getValor());
     dt.setDato("pro_envvac", pro_envvacE.getValor());
     dt.setDato("pro_activ", pro_activE.getValor());
 
@@ -1362,6 +1368,8 @@ public class MantArticulos extends ventanaPad  implements PAD
         cat_codiE = new gnu.chu.controles.CLinkBox();
         cLabel40 = new gnu.chu.controles.CLabel();
         cal_codiE = new gnu.chu.controles.CLinkBox();
+        cLabel29 = new gnu.chu.controles.CLabel();
+        pro_indtcoE = new gnu.chu.controles.CComboBox();
         Pexclu = new gnu.chu.controles.CPanel();
         jtExclu = new gnu.chu.controles.CGridEditable(2) {
             public void cambiaColumna(int col,int colNueva, int row)
@@ -1730,7 +1738,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel30.setText("Costo Añadido");
         Pinicio.add(cLabel30);
-        cLabel30.setBounds(450, 170, 100, 18);
+        cLabel30.setBounds(450, 170, 90, 18);
         Pinicio.add(pro_kguniE);
         pro_kguniE.setBounds(560, 146, 50, 18);
 
@@ -1808,7 +1816,16 @@ public class MantArticulos extends ventanaPad  implements PAD
         Pfamil.add(cal_codiE);
         cal_codiE.setBounds(100, 40, 270, 18);
 
-        Ptab.addTab("Familias", Pfamil);
+        cLabel29.setText("Incluir Dto.Comercial");
+        Pfamil.add(cLabel29);
+        cLabel29.setBounds(10, 90, 130, 18);
+
+        pro_indtcoE.addItem("No","0");
+        pro_indtcoE.addItem("Si","-1");
+        Pfamil.add(pro_indtcoE);
+        pro_indtcoE.setBounds(140, 90, 51, 18);
+
+        Ptab.addTab("Parametros", Pfamil);
 
         Pexclu.setLayout(new javax.swing.BoxLayout(Pexclu, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -1944,6 +1961,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CLabel cLabel26;
     private gnu.chu.controles.CLabel cLabel27;
     private gnu.chu.controles.CLabel cLabel28;
+    private gnu.chu.controles.CLabel cLabel29;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel30;
     private gnu.chu.controles.CLabel cLabel31;
@@ -1995,6 +2013,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CTextField pro_feulcoE;
     private gnu.chu.controles.CTextField pro_feulmoE;
     private gnu.chu.controles.CTextField pro_fulconE;
+    private gnu.chu.controles.CComboBox pro_indtcoE;
     private gnu.chu.controles.CTextField pro_kgcajE;
     private gnu.chu.controles.CTextField pro_kgmaxE;
     private gnu.chu.controles.CTextField pro_kgminE;
@@ -2034,6 +2053,23 @@ public class MantArticulos extends ventanaPad  implements PAD
         return null;
 
      return dt.getInt("pro_artcon")!=0;
+   }
+    /**
+     *  Devuelve  si el producto influye en el dto comercial..
+     * @param codProd
+     * @param dt
+     * @return  Devuelve true si el producto influye en el dto comercial.
+     *          null si no encuentra el producto.
+     * @throws SQLException 
+     */
+    public static Boolean getInclDtoCom(int codProd, DatosTabla dt) throws SQLException
+   {
+     String s = "select pro_indtco from v_articulo  where " +
+         "  pro_codi = " + codProd;
+     if (! dt.select(s))
+        return null;
+
+     return dt.getInt("pro_indtco")!=0;
    }
     /**
      * Devuelve el tipo de Unidad en que se vende un producto

@@ -27,6 +27,7 @@ package gnu.chu.anjelica.facturacion;
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.DatosIVA;
 import gnu.chu.anjelica.pad.MantTipoIVA;
+import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.pad.pdejerci;
 import gnu.chu.anjelica.pad.pdempresa;
 import gnu.chu.anjelica.pad.pdnumeracion;
@@ -48,8 +49,12 @@ import java.text.*;
 import java.util.*;
 
 public class PadFactur extends ventanaPad   implements PAD {
+  double impLinDtCom;
+  boolean proIndtco;
   private boolean IMPFRATEXTO=false;
   int numDec=2;
+  int numDecPrecio=4;  
+  String FORMDECPRECIO=".9999";
   public final static String IMPPLANO="Texto Plano";
   public final static String IMPGRAFICO="Gráfico";
   public final static String IMPGRAFPRE="Gráf.Preim";
@@ -699,23 +704,23 @@ public class PadFactur extends ventanaPad   implements PAD {
  
  void confGrids() throws Exception
  {
-      Vector vv = new Vector();
-    vv.addElement("Producto"); // 0
-    vv.addElement("Nombre Producto"); // 1
-    vv.addElement("Cantidad"); // 2
-    vv.addElement("Precio"); // 3
-    vv.addElement("Importe"); // 4
-    vv.addElement("NL"); // 5
+      ArrayList vv = new ArrayList();
+    vv.add("Producto"); // 0
+    vv.add("Nombre Producto"); // 1
+    vv.add("Cantidad"); // 2
+    vv.add("Precio"); // 3
+    vv.add("Importe"); // 4
+    vv.add("NL"); // 5
     jt.setCabecera(vv);
     jt.setAnchoColumna(new int[]  {52, 273, 72, 72, 87, 30});
     jt.setAjustarGrid(true);
     jt.setFormatoColumna(2, "---,--9.99");
-    jt.setFormatoColumna(3, "---,--9.99");
-    jt.setFormatoColumna(4, "--,---,--9.99");
+    jt.setFormatoColumna(3, "---,--9"+FORMDECPRECIO); // Precio
+    jt.setFormatoColumna(4, "--,---,--9.99"); // Importe
     jt.setAlinearColumna(new int[]{0, 0, 2,  2, 2, 2});
     
-     Vector v=new Vector();
-        v.add("Tip.Cob."); // 0 Tipo Cobro
+     ArrayList v=new ArrayList();
+    v.add("Tip.Cob."); // 0 Tipo Cobro
     v.add("Fec.Cobro"); // 1 Fecha de Cobro
     v.add("Fec.Vto"); // 2 Fecha Vto.
     v.add("N.Rem"); // 3 Numero de Remesa
@@ -751,14 +756,14 @@ public class PadFactur extends ventanaPad   implements PAD {
   //  jtGiros.setBounds(new Rectangle(6, 132, 592, 139));
     rec_numeE.setEnabled(false);
     rec_fecvtoE.setText("");
-    Vector vx=new Vector();
-    vx.addElement(rec_numeE);
-    vx.addElement(rec_importE);
-    vx.addElement(rec_fecvtoE);
-    vx.addElement(ban_codiE);
-    vx.addElement(rec_baoficE);
-    vx.addElement(rec_badicoE);
-    vx.addElement(rec_bacuenE);
+    ArrayList vx=new ArrayList();
+    vx.add(rec_numeE);
+    vx.add(rec_importE);
+    vx.add(rec_fecvtoE);
+    vx.add(ban_codiE);
+    vx.add(rec_baoficE);
+    vx.add(rec_badicoE);
+    vx.add(rec_bacuenE);
     jtGiros.setCampos(vx);
     jtGiros.setEnabled(true);
     jtGiros.addGridListener(new GridAdapter()
@@ -785,10 +790,10 @@ public class PadFactur extends ventanaPad   implements PAD {
      jtComCa.setBounds(new Rectangle(6, 132, 592, 139));
      jtComCa.setAjustarGrid(true);
      
-     Vector vc=new Vector();
+     ArrayList vc=new ArrayList();
      vc.add(fvc_comencE);
      jtComCa.setCampos(vc);
-     Vector vl=new Vector();
+     ArrayList vl=new ArrayList();
      vl.add(fvc_comenpE);
 
      jtComPie.setCabecera(v);
@@ -797,11 +802,13 @@ public class PadFactur extends ventanaPad   implements PAD {
      jtComPie.setAlinearColumna(new int[]{0});
      jtComPie.setAjustarGrid(true);
  }
+  @Override
  public void iniciarVentana() throws Exception
  {
  
    Pcabe.setButton(KeyEvent.VK_F4, Baceptar);
-   datCab = new actCabAlbFra(dtCon1, dtAdd);
+   datCab = new actCabAlbFra(dtCon1, dtAdd,EU.em_cod,numDecPrecio);
+  
    cli_codiE.setColumnaAlias("cli_codi");
    fvc_anoE.setColumnaAlias("fvc_ano");
    emp_codiE.setColumnaAlias("emp_codi");
@@ -999,9 +1006,7 @@ public class PadFactur extends ventanaPad   implements PAD {
      if (fvc_dtoppE.getValorDec()!=0)
        fvc_impdppE.setValorDec((fvc_dtoppE.getValorDec()/100)*fvc_sumlinE.getValorDec()) ;
 
-     if (fvc_dtocomE.getValorDec()!=0)
-       fvc_impdcoE.setValorDec((fvc_dtocomE.getValorDec()/100)*fvc_sumlinE.getValorDec()) ;
-
+   
      fvc_sumtotE.setValorDec(dtCon1.getDouble("fvc_sumtot"));
      fvc_impcobE.setValorDec(dtCon1.getDouble("fvc_impcob"));
      fvc_basimpE.setValorDec(dtCon1.getDouble("fvc_basimp"));
@@ -1029,6 +1034,7 @@ public class PadFactur extends ventanaPad   implements PAD {
        return;
      }
      tiiIva=0;
+     impLinDtCom=0;
      do
      {
        ArrayList v=new ArrayList();
@@ -1044,6 +1050,8 @@ public class PadFactur extends ventanaPad   implements PAD {
        if (dtAux.select(s))
          verLinAlb(dtAux);
      } while (dtCon1.next());
+    if (fvc_dtocomE.getValorDec()!=0)
+       fvc_impdcoE.setValorDec((fvc_dtocomE.getValorDec()/100)*impLinDtCom) ;
 
      jtGiros.setDefaultValor(0,"0");
      jtGiros.setDefaultValor(3,cli_codiE.getLikeCliente().getString("ban_codi"));
@@ -1131,19 +1139,21 @@ public class PadFactur extends ventanaPad   implements PAD {
  private void verLinAlb(DatosTabla dt) throws SQLException, ParseException, IllegalArgumentException
   {
     String proNomb;
+    double impL;
     do
     {
       ArrayList v=new ArrayList();
-      if (tiiIva==0)
-        tiiIva=getTipoIva(dt.getInt("pro_codi"));
+      tiiIva=getTipoIva(dt.getInt("pro_codi"));
+      impL=Formatear.redondea(Formatear.redondea(dt.getDouble("avl_canti",true), 2) *
+                                Formatear.redondea(dt.getDouble("avl_prven",true),numDecPrecio),2);
       v.add(dt.getString("pro_Codi"));
       proNomb = dt.getString("fvl_nompro");
       v.add(proNomb);
       v.add(dt.getString("avl_canti"));
       v.add(dt.getString("avl_prven"));
-      v.add(""+Formatear.redondea(Formatear.redondea(dt.getDouble("avl_canti",true), 2) *
-                                Formatear.redondea(dt.getDouble("avl_prven",true),3),2));
+      v.add(impL);
       v.add(dt.getString("avl_numlin"));
+      impLinDtCom+=proIndtco?impL:0;
       jt.addLinea(v);
     } while (dt.next());
   }
@@ -1177,7 +1187,8 @@ public class PadFactur extends ventanaPad   implements PAD {
  {
    if (pro_codiE.getNombArt(""+proCodi)==null)
      return 0;
-   return pro_codiE.getLikeProd().getDatoInt("pro_tipiva");
+   proIndtco=pro_codiE.getLikeProd().getInt("pro_indtco")!=0;
+   return pro_codiE.getLikeProd().getInt("pro_tipiva");   
 
  }
  private String getSqlLinFra(DatosTabla dt) throws SQLException
@@ -1775,6 +1786,7 @@ public class PadFactur extends ventanaPad   implements PAD {
       Error("Error al Buscar datos de Cliente", k);
     }
   }
+  @Override
   public void afterConecta() throws SQLException, ParseException
   {
     pdnumeracion.llenaSeriesFraVen(fvc_serieE);
@@ -1789,6 +1801,10 @@ public class PadFactur extends ventanaPad   implements PAD {
     cli_codiE.iniciar(dtStat,this,vl,EU);
     fvc_modifE.addItem("Modificado","M");
     fvc_modifE.addItem("Automatico","A");
+    numDecPrecio=pdconfig.getNumDecimales(EU.em_cod, dtStat);
+    FORMDECPRECIO=".";
+    for (int n=0;n<numDecPrecio;n++)
+       FORMDECPRECIO+="9";
   }
   /**
    * Recalcular Importe Cobrado.
@@ -1894,14 +1910,14 @@ public class PadFactur extends ventanaPad   implements PAD {
      
       lifact.setAgrupa(opAgrlin.isSelected());
       String cfgLifrgr=null;
-      if (accion.indexOf(IMPPLANO)>=0)
+      if (accion.contains(IMPPLANO))
           cfgLifrgr="N";
-       if (accion.indexOf(IMPGRAFICO)>=0)
+       if (accion.contains(IMPGRAFICO))
        {
            lifact.setFraPreImpr(false);
           cfgLifrgr="S";
        }
-       if (accion.indexOf(IMPGRAFPRE)>=0)
+       if (accion.contains(IMPGRAFPRE))
        {
           lifact.setFraPreImpr(true);
           cfgLifrgr="S";

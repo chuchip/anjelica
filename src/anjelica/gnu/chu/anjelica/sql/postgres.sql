@@ -131,6 +131,7 @@ usu_nomb varchar(15) not null,-- Usuario que hizo la ult. modific. o alta
 cat_codi int not null default 1, -- Categoria Articulo
 cal_codi int not null default 1, -- Calibres
 env_codi int not null default 0, -- Tipo de Envase
+pro_indtco int not null default 1, -- Incluye en dto. Comercial (0: No)
 constraint ix_articulo primary key(pro_codi)
 );
 
@@ -412,7 +413,7 @@ avc_cucomi int,
 avc_valora int,		-- 0 NO valorado -1 Si valorado
 avc_dtopp decimal(5,2),	-- Dto. Pronto Pago
 avc_dtocom decimal(5,2),-- Dto Comercial
-avc_dtootr decimal(5,2), -- Dto Otros
+avc_dtootr decimal(5,2), -- Dto Otros - En Euros. 
 avc_recfin decimal(5,2),
 avc_tipalb varchar(1),
 avc_rcaedi varchar(3),
@@ -1846,7 +1847,7 @@ create table anjelica.almacen
 (
 alm_codi int not null,		-- Codigo de Almacen
 alm_nomb varchar(50),		-- Nombre de Almacen
-tipo varchar(1),		-- NO USADO
+alm_tipo varchar(1) default 'I' not null ,-- (I)nterno (E)xterno
 alm_direc varchar(40),		-- Direccion
 alm_pobl varchar(40),		-- Poblacion
 alm_codpos int,			-- Codigo Postal

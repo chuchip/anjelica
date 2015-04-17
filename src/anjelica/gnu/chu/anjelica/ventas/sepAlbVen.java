@@ -249,7 +249,7 @@ public class sepAlbVen extends ventana
                        double importe) throws Exception
    {
      if (datCab==null)
-       datCab = new actCabAlbFra(dtCon1,dtAdd);
+       datCab = new actCabAlbFra(dtCon1,dtAdd,EU.em_cod);
 //     utilAlb=new actCabAlbFra(dtAdd,dtCon1);
      this.dtCon1 = dtCon1;
      this.dtAdd = dtAdd;
@@ -543,7 +543,7 @@ public class sepAlbVen extends ventana
      datCab.actDatosAlb(empCodi, avcAno, avcSerie, avcNume,
                         dtStat.getInt("cli_exeiva")==0  &&
                         empCodi < 90,
-                        dtStat.getDouble("avc_dtopp") + dtStat.getDouble("avc_dtocom"),
+                        dtStat.getDouble("avc_dtopp"), dtStat.getDouble("avc_dtocom"),
                         dtStat.getInt("cli_recequ"));
 
      if (datCab.getCambioIva())

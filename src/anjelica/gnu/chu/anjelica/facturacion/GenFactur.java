@@ -26,8 +26,10 @@ package gnu.chu.anjelica.facturacion;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.DatosIVA;
+import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.MantTipoIVA;
 import gnu.chu.anjelica.pad.pdclien;
+import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.pad.pdejerci;
 import gnu.chu.anjelica.pad.pdnumeracion;
 import gnu.chu.anjelica.riesgos.clFactCob;
@@ -82,12 +84,13 @@ public class GenFactur extends ventana {
   conexion ctCom;
   String fecAlb;
   int nFras;
-  double impLin;
+  double impLin,impDtCom;
   boolean incIva;
   int fpaCodi,cliDipa1,cliDipa2;
   String fvcFecfra;
   int cliRecequ;
   int numDec=2;
+  int numDecPrecio=4;
   int avcNume;
   int divCodi;
   int banCodi,banOfic,banDico;
@@ -157,7 +160,7 @@ public class GenFactur extends ventana {
   {
     iniciarFrame();
     this.setSize(new Dimension(534, 543));
-    setVersion("2012-09-06");
+    setVersion("2015-04-16");
    
     statusBar= new StatusBar(this);
     this.getContentPane().add(statusBar,BorderLayout.SOUTH);
@@ -459,7 +462,7 @@ public void iniciarVentana() throws Exception
 
     ctUp.setAutoCommit(false);
     pdclien.llenaTipoFact(cli_tipfacE,false);
-
+   
     cli_codiE.iniciar(dtStat, this, vl, EU);
     cli_codiE1.iniciar(dtStat, this, vl, EU);
     fecfinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -619,6 +622,7 @@ public void iniciarVentana() throws Exception
         fvc_numeE.requestFocus();
         return;
       }
+      numDecPrecio=pdconfig.getNumDecimales(emp_codiE.getValorInt(), dtStat);
     } catch (Exception k)
     {
       Error("Error al comprobar condiciones",k);
@@ -798,10 +802,15 @@ public void iniciarVentana() throws Exception
               " and avc_nume = " + dtAlb.getInt("avc_nume") +
              " group by pro_codi,avl_prven,pro_nomb ";
           dtCon1.select(s);
+      
+          double impL;
           do
           {
-            impLin+=Formatear.Redondea(Formatear.Redondea(dtCon1.getDouble("avl_canti",true), 2) *
-                        Formatear.Redondea(dtCon1.getDouble("avl_prven",true),3),2);
+            impL=Formatear.redondea(Formatear.redondea(dtCon1.getDouble("avl_canti",true), 2) *
+                        Formatear.redondea(dtCon1.getDouble("avl_prven",true),numDecPrecio),2);
+            impDtCom+=MantArticulos.getInclDtoCom(dtCon1.getInt("pro_codi"), dtStat)?
+                impL:0;
+            impLin+=impL;
           } while (dtCon1.next());
 
           s = "SELECT * FROM v_albavec WHERE emp_codi = " + emp_codiE.getValorInt() +
@@ -953,13 +962,15 @@ public void iniciarVentana() throws Exception
     dtAdd.setDato("fpa_codi", fpaCodi);
     dtAdd.setDato("fvc_modif", "A");
 
-    double impDtoPP = 0, impIva = 0, impReq = 0;
-    double dtos = dtoCom + dtoPP;
+    double impDtoPP = 0,impDtoCom=0;
+    double impIva = 0, impReq = 0;
+    //double dtos = dtoCom + dtoPP;
 
-    if (dtos != 0)
-      impDtoPP = Formatear.redondea(impLin * dtos / 100, numDec);
-
-    double impBim = Formatear.redondea(impLin - impDtoPP, numDec);
+    if (dtoPP != 0)
+      impDtoPP = Formatear.redondea(impLin * dtoPP / 100, numDec);
+    if (dtoCom != 0)
+      impDtoCom = Formatear.redondea(impDtCom* dtoCom / 100, numDec);
+    double impBim = Formatear.redondea(impLin - impDtoPP - impDtoCom, numDec);
     DatosIVA datoIva=null;
     if (incIva)
     {
@@ -986,7 +997,7 @@ public void iniciarVentana() throws Exception
     dtAdd.setDato("fvc_cobtra", 0); // Cobro traspasado
     dtAdd.setDato("fvc_impres", 0); // Factura Impresa
     dtAdd.setDato("div_codi", divCodi); // Divisa
-    dtAdd.setDato("fvc_impcob", Formatear.Redondea(fvcImpcob, numDec));
+    dtAdd.setDato("fvc_impcob", Formatear.redondea(fvcImpcob, numDec));
     dtAdd.setDato("fvc_basimp", impBim);
     dtAdd.setDato("fvc_dtopp", dtoPP);
     dtAdd.setDato("fvc_dtocom", dtoCom);
@@ -1061,6 +1072,7 @@ public void iniciarVentana() throws Exception
     opAgrCli=opAgrCliC.isSelected();
     tipIva=-1;
     impLin=0;
+    impDtCom=0;
     cliCodi=dtAlb.getInt(opAgrCli?"cli_codfa":"cli_codi");
     avcClinom=dtAlb.getInt("cli_gener")==0?null:dtAlb.getString("avc_clinom");
     recEqu=dtAlb.getInt("cli_recequ");

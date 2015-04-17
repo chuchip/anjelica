@@ -24,6 +24,7 @@ package gnu.chu.anjelica.ventas;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.MantTarifa;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.pad.pdprove;
@@ -50,6 +51,8 @@ import javax.swing.event.ListSelectionListener;
  * @author cpuente
  */
 public class MantPrAlb extends ventana {
+    int numDecPrecio=2;
+    String formDecPrecio=".99";
 //    boolean inActualCosto=false;
 //    private boolean inEventoSelecion=false;
     String feulin;
@@ -80,8 +83,7 @@ public class MantPrAlb extends ventana {
      if (ht != null)
      {
        if (ht.get("modConsulta") != null)
-         ARG_MODCONSULTA = Boolean.valueOf(ht.get("modConsulta").toString()).
-             booleanValue();
+         ARG_MODCONSULTA = Boolean.parseBoolean(ht.get("modConsulta").toString());
      }
      setTitulo("Mantenimiento Precios de Albaranes");
      if (jf.gestor.apuntar(this))
@@ -103,8 +105,7 @@ public class MantPrAlb extends ventana {
         try {
             if (ht != null) {
                 if (ht.get("modConsulta") != null) {
-                    ARG_MODCONSULTA = Boolean.valueOf(ht.get("modConsulta").toString()).
-                            booleanValue();
+                    ARG_MODCONSULTA = Boolean.parseBoolean(ht.get("modConsulta").toString());
                 }
             }
             setTitulo("Mantenimiento Precios de Albaranes");
@@ -169,6 +170,14 @@ public class MantPrAlb extends ventana {
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
 
         conecta();
+        numDecPrecio=pdconfig.getNumDecimales(EU.em_cod,dtStat);
+        formDecPrecio=".";
+        for (int n=0;n<numDecPrecio;n++)
+              formDecPrecio+="9";          
+        avl_prvenE.setFormato(avl_prvenE.getFormato()+formDecPrecio);
+        avl_prulveE.setFormato(avl_prulveE.getFormato()+formDecPrecio);
+        avl_prtecnE.setFormato(avl_prtecnE.getFormato()+formDecPrecio);
+        jtLin.setFormatoCampos();
     //    activar(false);
 
     }
@@ -185,13 +194,13 @@ public class MantPrAlb extends ventana {
 
         pvl_precioE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
         pro_ganancE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
-        avl_prulveE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
+        avl_prulveE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----");
         avl_feulveE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
         pro_prulcoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
         pro_prcostE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
         tar_preciE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
-        avl_prtecnE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
-        avl_prvenE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
+        avl_prtecnE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----");
+        avl_prvenE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----");
         avl_prvenE.setToolTipText("Pulse F3 para poner el ult. Precio Compra");
         avl_unidE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---");
         avl_cantiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---.99");
@@ -442,7 +451,7 @@ public class MantPrAlb extends ventana {
         );
         jtSelAlbLayout.setVerticalGroup(
             jtSelAlbLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 314, Short.MAX_VALUE)
+            .add(0, 278, Short.MAX_VALUE)
         );
 
         PSelec.add(jtSelAlb, java.awt.BorderLayout.CENTER);
@@ -660,7 +669,7 @@ public class MantPrAlb extends ventana {
         feulinv=ActualStkPart.getFechaUltInv(0,0,null,dtStat);
         fecAct=Formatear.getFechaAct("dd-MM-yyyy");
         
-        datCab = new actCabAlbFra(dtCon1,dtAdd);
+        datCab = new actCabAlbFra(dtCon1,dtAdd,EU.em_cod,numDecPrecio);
         Pcondic.setButton(KeyEvent.VK_F4, Bbuscar);
         feulin=ActualStkPart.getFechaUltInv(0,0,null,dtStat);
         if (feulin == null)
@@ -1285,7 +1294,8 @@ public class MantPrAlb extends ventana {
              msgBox("ERROR INTERNO: NO encontrada cabecera de Albaran");
              return;
          }
-         double avcDto=dtStat.getDouble("avc_dtocom")+ dtStat.getDouble("avc_dtopp");
+         double avcDtoCom=dtStat.getDouble("avc_dtocom");
+         double avcDtoPP=dtStat.getDouble("avc_dtopp");
          int nLinPrecio=0,nLinPreTec=0;
          for (int row=0;row<jtLin.getRowCount();row++)
          {
@@ -1301,10 +1311,13 @@ public class MantPrAlb extends ventana {
              ( (agrupLin?" and avl_numlin in ("+jtLin.getValString(row,15)+")":
                " and avl_numlin = "+jtLin.getValorDec(row,15)) );
            
-            s = "select avl_prven,avl_prepvp from  v_albavel " + condWhere;
-            double avlPrven=Formatear.Redondea(jtLin.getValorDec(row,4),pdalbara.numDec);
-            double avlPrbase = avlPrven - (avlPrven * (avcDto/100)) ;
-            avlPrbase=Formatear.Redondea(avlPrbase,pdalbara.numDec);
+//            s = "select avl_prven,avl_prepvp from  v_albavel " + condWhere;
+            
+            double avlPrven=Formatear.redondea(jtLin.getValorDec(row,4),numDecPrecio);
+            double avlPrbase = avlPrven - (avlPrven * 
+                (avcDtoPP+
+                (MantArticulos.getInclDtoCom(jtLin.getValorInt(row,0), dtAdd)?avcDtoCom:0)/100)) ;
+            avlPrbase=Formatear.redondea(avlPrbase,numDecPrecio);
 
              if (jtLin.getValorDec(row,5)!=0)
                    nLinPreTec++;
@@ -1330,7 +1343,7 @@ public class MantPrAlb extends ventana {
          datCab.actDatosAlb(emp_codiE.getValorInt(),avc_numacE.geValorIntAno(),avc_numacE.getTextSerie(),
                   avc_numacE.geValorIntNume(),
                             cli_codacE.getLikeCliente().getInt("cli_exeiva") == 0 && emp_codiE.getValorInt() < 90,
-                            avcDto,
+                            avcDtoPP,avcDtoCom,
                             cli_codacE.getLikeCliente().getInt("cli_recequ"),avc_fecalbE.getDate());
         avc_numacE.selCabAlb(dtAdd,emp_codiE.getValorInt(),true,true);
 

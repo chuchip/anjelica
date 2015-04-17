@@ -805,7 +805,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="450" y="170" width="100" height="18"/>
+                      <AbsoluteConstraints x="450" y="170" width="90" height="18"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -975,8 +975,8 @@
             <Container class="gnu.chu.controles.CPanel" name="Pfamil">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Familias">
-                    <Property name="tabTitle" type="java.lang.String" value="Familias"/>
+                  <JTabbedPaneConstraints tabName="Parametros">
+                    <Property name="tabTitle" type="java.lang.String" value="Parametros"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -1034,6 +1034,26 @@
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="100" y="40" width="270" height="18"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CLabel" name="cLabel29">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Incluir Dto.Comercial"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="10" y="90" width="130" height="18"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CComboBox" name="pro_indtcoE">
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="pro_indtcoE.addItem(&quot;No&quot;,&quot;0&quot;);&#xa;pro_indtcoE.addItem(&quot;Si&quot;,&quot;-1&quot;);"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="140" y="90" width="51" height="18"/>
                     </Constraint>
                   </Constraints>
                 </Component>

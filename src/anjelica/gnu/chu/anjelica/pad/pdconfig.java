@@ -836,6 +836,12 @@ public class pdconfig    extends ventanaPad     implements PAD
      throw new SQLException("Configuración para empresa: " + empCodi + " NO encontrada");
    return dt.getString("cfg_lifrgr");
  }
+  public static int getNumDecimales(int empCodi,DatosTabla dt) throws SQLException
+ {
+   if (! getConfiguracion(empCodi,dt))
+     throw new SQLException("Configuración para empresa: " + empCodi + " NO encontrada");
+   return dt.getInt("cfg_numdec");
+ }
  /**
   * Devuelve el Almacen de ventas por defecto
   * @param empCodi

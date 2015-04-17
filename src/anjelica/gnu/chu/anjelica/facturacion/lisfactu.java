@@ -193,7 +193,7 @@ public class lisfactu extends ventana  implements JRDataSource
  {
    iniciarFrame();
    this.setSize(new Dimension(600, 539));
-   setVersion("2012-12-27");
+   setVersion("2015-16-04");
 
    titledBorder2 = new TitledBorder("");
    Princ.setLayout(gridBagLayout1);
@@ -382,7 +382,7 @@ public class lisfactu extends ventana  implements JRDataSource
 
    cli_codiE.iniciar(dtStat, this, vl, EU);
    cli_codiE1.iniciar(dtStat, this, vl, EU);
-   datCab = new actCabAlbFra(dtStat);
+   datCab = new actCabAlbFra(dtStat,EU.em_cod);
 
    fvc_serie1E.setText("1");
    fvc_serie1E.setText("1");
@@ -674,7 +674,7 @@ public class lisfactu extends ventana  implements JRDataSource
 
      if (!getDatosFra(dtCon1.getInt("fvc_ano"),
           dtCon1.getInt("fvc_empcod"), dtCon1.getString("fvc_serie"),
-                      dtCon1.getInt("fvc_nume"), dtCon1.getInt("fvc_porreq")))
+                      dtCon1.getInt("fvc_nume"), dtCon1.getDouble("fvc_porreq")!=0))
        continue;
 
      imprCabe(dtCon1);
@@ -860,16 +860,16 @@ private String buscaBanco(int banCodi) throws SQLException
        " and fvc_nume = " + fvcNume;
    return dt.executeUpdate(s);
  }
- boolean getDatosFra(int ejeNume, int empCodi,String fvcSerie, int fvcNume,int recEquiv) throws Exception
+ boolean getDatosFra(int ejeNume, int empCodi,String fvcSerie, int fvcNume,boolean recEquiv) throws Exception
  {
    if ( simular)
     setFraListada(ejeNume,empCodi,fvcSerie,fvcNume,-1);
    boolean incIva;
    incIva = dtCon1.getInt("cli_exeiva") == 0 && empCodi <= 90;
    if (!datCab.actDatosFra(ejeNume, empCodi, fvcSerie,fvcNume, incIva,
-                           rs.getDouble("fvc_dtopp") +
+                           rs.getDouble("fvc_dtopp"),
                            rs.getDouble("fvc_dtocom"),
-                           recEquiv,null))
+                           recEquiv ,null))
      return false;
    numLiComCab=0;
    numLiComPie=0;
@@ -1108,7 +1108,8 @@ private String buscaBanco(int banCodi) throws SQLException
      nFraImp = 1;
      rs = dtCon1.getResultSet();
      if (!getDatosFra(dtCon1.getInt("fvc_ano"), dtCon1.getInt("fvc_empcod"),
-                       dtCon1.getString("fvc_serie"),dtCon1.getInt("fvc_nume"), dtCon1.getInt("fvc_porreq")))
+                       dtCon1.getString("fvc_serie"),dtCon1.getInt("fvc_nume"),
+                       dtCon1.getDouble("fvc_porreq")!=0))
      {
          msgError="No entrado datos de fra:  "+dtCon1.getInt("fvc_ano")+"-"+
               dtCon1.getInt("fvc_empcod")+" "+
@@ -1139,7 +1140,8 @@ private String buscaBanco(int banCodi) throws SQLException
          if (!ret)
            return false;
          if (getDatosFra(dtCon1.getInt("fvc_ano"), dtCon1.getInt("fvc_empcod"),
-                         dtCon1.getString("fvc_serie"), dtCon1.getInt("fvc_nume"), dtCon1.getInt("fvc_porreq")))
+                         dtCon1.getString("fvc_serie"), dtCon1.getInt("fvc_nume"),
+                         dtCon1.getDouble("fvc_porreq")!=0))
          {
            actualizaMsg("Imprimiendo fra "+nFraImp+ " de "+numFrasTratar,false);
            nFraImp++;
@@ -1153,6 +1155,7 @@ private String buscaBanco(int banCodi) throws SQLException
      }
    }
 
+  @Override
    public Object getFieldValue(JRField jRField) throws JRException
    {
      try
@@ -1171,17 +1174,15 @@ private String buscaBanco(int banCodi) throws SQLException
            campo.equals("cli_codpo") ||
            campo.equals("cli_recequ") ||
            campo.equals("fvc_ano"))
-         return new Integer(dtCon1.getInt(campo));
+         return dtCon1.getInt(campo);
        if (campo.equals("fvc_dtocom") ||
            campo.equals("fvc_dtootr"))
-         return new Double(dtCon1.getDouble(campo));
+         return dtCon1.getDouble(campo);
        if (campo.equals("fvc_fecfra"))
          return rs.getDate(campo);
 
        if (campo.equals("fvc_sumtot") ||
-           campo.equals("fvc_impbru") ||
-           campo.equals("fvc_dtopp") ||
-           campo.equals("fvc_impdpp") ||
+           campo.equals("fvc_impbru") ||      
            campo.equals("fvc_basimp") ||
            campo.equals("fvc_impiva") ||
            campo.equals("fvc_tipiva") ||
@@ -1189,6 +1190,10 @@ private String buscaBanco(int banCodi) throws SQLException
            campo.equals("fvc_impree") ||
            campo.equals("fvc_impfra"))
          return (Double) htCab.get(jRField.getName());
+       if (campo.equals("fvc_dtos"))
+           return (double)htCab.get("fvc_dtopp")+(double)htCab.get("fvc_dtoco");
+       if (campo.equals("fvc_impdto"))
+           return (double)htCab.get("fvc_impdpp")+(double)htCab.get("fvc_impdco");
        if (campo.equals("diaVto1") ||
            campo.equals("diaVto2") ||
            campo.equals("diaVto3"))

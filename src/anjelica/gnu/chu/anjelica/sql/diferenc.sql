@@ -1,3 +1,9 @@
+alter table anjelica.almacen rename tipo to alm_tipo;
+alter table anjelica.almacen alter alm_tipo  set default 'I';
+alter table anjelica.almacen alter alm_tipo  set NOT NULL;
+
+alter table anjelica.v_articulo add pro_indtco int not null default -1;
+
 -- Diferencias con version 1.0 de Anjelica
 
 update v_regstock set acc_ano=eje_nume,acc_nume=pro_nupar,acc_Serie=pro_serie where rgs_recprv <> 0;
@@ -400,6 +406,10 @@ alter table tiposiva alter tii_fecfin set not null;
 -- Poner tipo decimal 8,2 a campos de facturas de venta
 alter table v_facvec alter  column fvc_sumtot type decimal(8,2) ;
 alter table v_facvec alter  column fvc_impiva type decimal(8,2) ;
+alter table anjelica.almacen rename tipo to alm_tipo;
+alter table anjelica.almacen alter alm_tipo  set default 'I';
+alter table anjelica.almacen alter alm_tipo  set NOT NULL;
+
 alter table v_facvec alter  column fvc_imprec type decimal(8,2) ;
 -- Incluir campos de  ventas x articulos vendibles en historicos
 alter table histventas add hve_kiveav float;

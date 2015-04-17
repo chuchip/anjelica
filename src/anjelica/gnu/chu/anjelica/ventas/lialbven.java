@@ -57,7 +57,7 @@ public class lialbven implements JRDataSource
   
   public lialbven(DatosTabla dt,EntornoUsuario EU) throws SQLException,java.text.ParseException
   {
-    datCab = new actCabAlbFra(dt);
+    datCab = new actCabAlbFra(dt,EU.em_cod);
   }
 
   public int impAlbar(Connection ct, DatosTabla dtCon1, String sql,
@@ -249,8 +249,9 @@ public class lialbven implements JRDataSource
     boolean incIva;
 
     incIva=rs.getInt("cli_exeiva")==0 && empCodi<90;
+    datCab.setValora(valora);
     if (! datCab.actDatosAlb(empCodi,avcAno,avcSerie,avcNume,incIva,
-                       rs.getDouble("avc_dtopp")+rs.getDouble("avc_dtocom"),
+                       rs.getDouble("avc_dtopp"),rs.getDouble("avc_dtocom"),
                        rs.getInt("cli_recequ")))
          return false;
     ht = datCab.getHashTable();
@@ -280,20 +281,23 @@ public class lialbven implements JRDataSource
         if (jRField.getName().equals("avc_impiva"))
           return (Double) ht.get(nombre);
 
-        if (nombre.equals("avc_impbru") ||
-            nombre.equals("avc_dtopp") ||
-            nombre.equals("avc_impdpp") ||
+        if (nombre.equals("avc_impbru") ||         
             nombre.equals("avc_basimp") ||
             nombre.equals("avc_tipiva") ||
     //        jRField.getName().equals("avc_impiva") ||
             nombre.equals("avc_tipree") ||
             nombre.equals("avc_impree") ||
-            nombre.equals("avc_impalb"))
+            nombre.equals("avc_impalb"))            
           return (Double) ht.get(nombre);
+        if (   nombre.equals("avc_dtopp"))
+            return (double)ht.get("avc_dtopp")+(double)ht.get("avc_dtocom");
+        if (nombre.equals("avc_impdpp"))
+            return (double)ht.get("avc_impdpp")+(double)ht.get("avc_impdco");
 
     throw new Exception("Campo "+jRField.getName()+" NO encontrado");
     } catch (Exception k)
     {
+        k.printStackTrace();
       throw new JRException(k);
     }
   }

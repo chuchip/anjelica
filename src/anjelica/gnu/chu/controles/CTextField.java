@@ -534,16 +534,10 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
       case Types.DECIMAL:
         setHorizontalAlignment(RIGHT);
         n=Formato.indexOf(DECIMALSEPARATOR);
-        if (n==-1)
-          aceptapunto=false;
-        else
-          aceptapunto=true;
+        aceptapunto = n != -1;
 
         n=Formato.indexOf(MINUSSIGN);
-        if (n==-1)
-          aceptamenos=false;
-        else
-          aceptamenos=true;
+        aceptamenos = n != -1;
 
         nc_DecMasc=0;
         nc_EntMasc=0;

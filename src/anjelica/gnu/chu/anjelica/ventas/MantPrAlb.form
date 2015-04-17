@@ -20,7 +20,7 @@
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;----.99&quot;)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;----&quot;)"/>
       </AuxValues>
     </Component>
     <Component class="gnu.chu.controles.CTextField" name="avl_feulveE">
@@ -57,12 +57,12 @@
     </Component>
     <Component class="gnu.chu.controles.CTextField" name="avl_prtecnE">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;----.99&quot;)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;----&quot;)"/>
       </AuxValues>
     </Component>
     <Component class="gnu.chu.controles.CTextField" name="avl_prvenE">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;----.99&quot;)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;----&quot;)"/>
         <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="avl_prvenE.setToolTipText(&quot;Pulse F3 para poner el ult. Precio Compra&quot;);"/>
       </AuxValues>
     </Component>
@@ -521,7 +521,7 @@
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="314" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="278" max="32767" attributes="0"/>
                       </Group>
                     </DimensionLayout>
                   </Layout>

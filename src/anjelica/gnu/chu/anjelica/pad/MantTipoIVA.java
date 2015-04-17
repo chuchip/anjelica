@@ -604,8 +604,8 @@ public class MantTipoIVA extends  ventanaPad     implements PAD
     {
       do
       {
-        lkbox.addDatos(dt.getString("tii_codi"),"Iva: "+dt.getInt("tii_iva")+
-                " ..Req.Eq. "+dt.getInt("tii_rec"));
+        lkbox.addDatos(dt.getString("tii_codi"),"Iva: "+dt.getDouble("tii_iva")+
+                " ..Req.Eq. "+dt.getDouble("tii_rec"));
       } while (dt.next());
     }
     lkbox.setFormato(true);
