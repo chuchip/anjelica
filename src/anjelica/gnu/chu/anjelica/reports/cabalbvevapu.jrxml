@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabalbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="56" bottomMargin="20">
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2015-04-17T10:36:12 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabalbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="56" bottomMargin="20" uuid="8ad01048-3ed1-412c-9f75-d79db66b0206">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -63,19 +65,19 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 	<columnHeader>
 		<band height="153">
 			<rectangle radius="5">
-				<reportElement key="rectangle-3" mode="Transparent" x="4" y="130" width="529" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="rectangle-3" mode="Transparent" x="4" y="130" width="529" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="39bb0247-2840-4d97-a0d2-551d25390179"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</rectangle>
 			<rectangle radius="5">
-				<reportElement key="rectangle-2" mode="Transparent" x="282" y="74" width="245" height="37" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="rectangle-2" mode="Transparent" x="282" y="74" width="245" height="37" forecolor="#000000" backcolor="#FFFFFF" uuid="0885e7de-9ae9-431a-b5b9-d78f622483bf"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</rectangle>
 			<textField pattern=" 000000" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="445" y="94" width="56" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="445" y="94" width="56" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="57271ddf-c1cd-4b29-805a-b7c767dc5f2d"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -88,7 +90,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<textFieldExpression><![CDATA[$F{cli_codi}]]></textFieldExpression>
 			</textField>
 			<textField pattern="000000" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="327" y="93" width="42" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="327" y="93" width="42" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="bb46da44-e0ab-450c-8a67-86012f795533"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -101,7 +103,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<textFieldExpression><![CDATA[$F{avc_nume}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="306" y="93" width="12" height="16" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="306" y="93" width="12" height="16" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="2061fab2-0677-4056-9fd6-75a95e851741"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -114,7 +116,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<textFieldExpression><![CDATA[$F{avc_serie}]]></textFieldExpression>
 			</textField>
 			<textField pattern=" 00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="288" y="93" width="18" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="288" y="93" width="18" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="8b350cd9-e51f-4e95-b03b-b8a917e5d6b4"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -127,7 +129,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<textFieldExpression><![CDATA[$F{avc_empcod}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MM-yy" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="378" y="94" width="62" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="378" y="94" width="62" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="fec3784c-5851-4c50-9470-2dc429e3ccd3"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -140,7 +142,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<textFieldExpression><![CDATA[$F{avc_fecalb}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="290" y="28" width="240" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="290" y="28" width="240" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="25e834e9-90c5-49ba-8f01-0cdc6ab29fa0"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -153,7 +155,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<textFieldExpression><![CDATA[$F{cli_diree}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="290" y="50" width="60" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="290" y="50" width="60" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="270efcff-6f3a-4c61-b502-8702ae772ed8"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -166,7 +168,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<textFieldExpression><![CDATA[$F{cli_codpoe}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="352" y="50" width="12" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText" mode="Opaque" x="352" y="50" width="12" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="9ba0f944-d46c-483c-afae-a1f12a1546c2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -179,7 +181,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<text><![CDATA[-	]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="364" y="50" width="164" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="364" y="50" width="164" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="db5169c8-59aa-4df4-b344-cf1b89975e87"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -192,7 +194,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<textFieldExpression><![CDATA[$F{cli_poble}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="320" y="93" width="6" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText" mode="Opaque" x="320" y="93" width="6" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="d0a2083e-4b64-4a9f-b428-b7c8f15d6884"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -205,7 +207,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<text><![CDATA[/]]></text>
 			</staticText>
 			<image scaleImage="FillFrame" hAlign="Left" vAlign="Middle" isUsingCache="false" evaluationTime="Report">
-				<reportElement key="image-1" mode="Opaque" x="185" y="4" width="94" height="75" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="image-1" mode="Opaque" x="185" y="4" width="94" height="75" forecolor="#000000" backcolor="#FFFFFF" uuid="9846131a-5cca-47bb-9e98-c29e7f3e1bde"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -218,7 +220,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<imageExpression><![CDATA[$P{logotipo}]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement key="staticText-2" mode="Opaque" x="16" y="0" width="99" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-2" mode="Opaque" x="16" y="0" width="99" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="f035bcd3-fe6e-40bb-8470-3cedff6b8846"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -232,13 +234,13 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<text><![CDATA[PUENTE]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-1" mode="Opaque" x="2" y="20" width="110" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-1" mode="Opaque" x="2" y="20" width="110" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="01b7d444-b25b-4bea-a7ff-8f586219d23b"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="staticText-3" mode="Opaque" x="16" y="23" width="99" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-3" mode="Opaque" x="16" y="23" width="99" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="59e57b12-dca5-4243-bfb2-a63c0c9d9eb2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -252,7 +254,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<text><![CDATA[VACUNOS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-5" mode="Opaque" x="8" y="39" width="119" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-5" mode="Opaque" x="8" y="39" width="119" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="dc9e638b-8575-479e-8252-6f383d1f9e06"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -266,7 +268,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<text><![CDATA[Vacunos Puente,]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-6" mode="Opaque" x="127" y="41" width="50" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-6" mode="Opaque" x="127" y="41" width="50" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="2b01865f-0173-4531-8260-95f6c08921e2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -280,7 +282,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 				<text><![CDATA[S.L.U]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-7" mode="Opaque" x="0" y="57" width="211" height="71" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-7" mode="Opaque" x="0" y="57" width="211" height="71" forecolor="#000000" backcolor="#FFFFFF" uuid="a9b5c70b-5f06-4307-bc0d-b6ec2a8a5752"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -297,7 +299,7 @@ Telefono 948 646679
 Fax. 948 645590]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-1" mode="Opaque" x="192" y="88" width="77" height="40" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-1" mode="Opaque" x="192" y="88" width="77" height="40" forecolor="#000000" backcolor="#FFFFFF" uuid="d96008be-c1e9-4f11-99e6-56a9031e3b35"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -312,19 +314,19 @@ Fax. 948 645590]]></text>
 C.E.E]]></text>
 			</staticText>
 			<rectangle radius="5">
-				<reportElement key="rectangle-1" mode="Transparent" x="282" y="4" width="252" height="68" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="rectangle-1" mode="Transparent" x="282" y="4" width="252" height="68" forecolor="#000000" backcolor="#FFFFFF" uuid="2820cbef-b67f-45c3-8de0-f20a81109d87"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</rectangle>
 			<line>
-				<reportElement key="line-2" mode="Opaque" x="375" y="75" width="1" height="36" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-2" mode="Opaque" x="375" y="75" width="1" height="36" forecolor="#000000" backcolor="#FFFFFF" uuid="d8e61b62-81c4-4159-bb70-335dcf1855be"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="staticText-8" mode="Opaque" x="294" y="79" width="64" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-8" mode="Opaque" x="294" y="79" width="64" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="3ceea7c3-cbab-46de-be84-2afd52304c3c"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -337,7 +339,7 @@ C.E.E]]></text>
 				<text><![CDATA[ALBARAN Nº]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-9" mode="Opaque" x="387" y="79" width="39" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-9" mode="Opaque" x="387" y="79" width="39" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="f554b0db-5cbc-4e0d-8062-0c276fa7da2a"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -350,13 +352,13 @@ C.E.E]]></text>
 				<text><![CDATA[FECHA]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-4" mode="Opaque" x="440" y="75" width="1" height="36" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-4" mode="Opaque" x="440" y="75" width="1" height="36" forecolor="#000000" backcolor="#FFFFFF" uuid="94e57d23-261c-429f-9803-cc25ce5c5b38"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="staticText-10" mode="Opaque" x="457" y="79" width="48" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-10" mode="Opaque" x="457" y="79" width="48" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="62db0f8f-554a-46fd-b8d0-fd3fb8de5149"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -369,7 +371,7 @@ C.E.E]]></text>
 				<text><![CDATA[CLIENTE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-11" mode="Opaque" x="8" y="132" width="49" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-11" mode="Opaque" x="8" y="132" width="49" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="91584628-5b78-4e2a-af5f-a5bd94b32a74"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -382,7 +384,7 @@ C.E.E]]></text>
 				<text><![CDATA[CODIGO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-12" mode="Opaque" x="153" y="132" width="59" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-12" mode="Opaque" x="153" y="132" width="59" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="beacba59-f59c-4c37-89ed-69421247524a"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -395,7 +397,7 @@ C.E.E]]></text>
 				<text><![CDATA[CONCEPTO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-13" mode="Opaque" x="368" y="132" width="40" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-13" mode="Opaque" x="368" y="132" width="40" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="579b4e98-6116-4f64-ad17-912d2006cbd0"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -408,7 +410,7 @@ C.E.E]]></text>
 				<text><![CDATA[KILOS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-14" mode="Opaque" x="412" y="132" width="42" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-14" mode="Opaque" x="412" y="132" width="42" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="9f36866f-b87a-4dc5-bb7d-49dad61c893f"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -421,7 +423,7 @@ C.E.E]]></text>
 				<text><![CDATA[PRECIO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-15" mode="Opaque" x="459" y="132" width="70" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-15" mode="Opaque" x="459" y="132" width="70" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="887ba2d2-0f78-461a-ad5c-033019a2993f"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -434,44 +436,43 @@ C.E.E]]></text>
 				<text><![CDATA[IMPORTE]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-5" mode="Opaque" x="56" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-5" mode="Opaque" x="56" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="50f2834c-4694-48f5-8155-3bd7a5734e21"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-6" mode="Opaque" x="365" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-6" mode="Opaque" x="365" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="e6dc286b-f0ef-4140-b734-0e4428e47181"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-7" mode="Opaque" x="410" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-7" mode="Opaque" x="410" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="28a6c155-2e41-4290-a109-2c961f300f7a"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-8" mode="Opaque" x="452" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-8" mode="Opaque" x="452" y="130" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="45ec31c7-a04c-4733-9a5d-f69371c7b666"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<ellipse>
-				<reportElement key="ellipse-1" mode="Transparent" x="186" y="83" width="88" height="43" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="ellipse-1" mode="Transparent" x="186" y="83" width="88" height="43" forecolor="#000000" backcolor="#FFFFFF" uuid="a3d07ad2-b547-4ace-9a55-c40e5590275b"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</ellipse>
 			<line>
-				<reportElement key="line-3" mode="Opaque" x="286" y="92" width="239" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-3" mode="Opaque" x="286" y="92" width="239" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="555d9cd0-9c1b-4494-852f-f2af27d8e1d9"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="290" y="8" width="240" height="18"/>
-				<textElement/>
+				<reportElement x="290" y="8" width="240" height="18" uuid="fbbb185a-eb69-464f-b781-9640ad8bd80d"/>
 				<textFieldExpression><![CDATA[$V{nombreCli}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -479,7 +480,7 @@ C.E.E]]></text>
 	<detail>
 		<band height="20">
 			<subreport isUsingCache="true">
-				<reportElement key="subreport" mode="Opaque" x="0" y="0" width="533" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="subreport" mode="Opaque" x="0" y="0" width="533" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="0d13d66a-46f9-4ef0-9ae8-380dbf339317"/>
 				<subreportParameter name="valora">
 					<subreportParameterExpression><![CDATA[$P{valora}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -519,7 +520,7 @@ C.E.E]]></text>
 		<band height="40">
 			<printWhenExpression><![CDATA[new Boolean(! $P{obser}.equals(""))]]></printWhenExpression>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-1" mode="Opaque" x="2" y="0" width="530" height="40" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-1" mode="Opaque" x="2" y="0" width="530" height="40" forecolor="#000000" backcolor="#FFFFFF" uuid="401189e6-8402-4e6f-a67f-2cd293cbc0c1"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -536,7 +537,7 @@ C.E.E]]></text>
 	<summary>
 		<band height="81">
 			<textField pattern="###,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="456" y="27" width="70" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" mode="Opaque" x="456" y="27" width="70" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="441dc1ac-0ddb-4b5b-a87b-daa8c2c417fa">
 					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -551,7 +552,7 @@ C.E.E]]></text>
 				<textFieldExpression><![CDATA[$F{avc_impalb}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="79" y="27" width="29" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" mode="Opaque" x="79" y="27" width="29" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="7af20606-ee23-4f5c-979d-1c2cea7629d0">
 					<printWhenExpression><![CDATA[new Boolean($F{avc_dtopp}.doubleValue()!=0 && $P{valora}.booleanValue())]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -566,7 +567,7 @@ C.E.E]]></text>
 				<textFieldExpression><![CDATA[$F{avc_dtopp}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="114" y="27" width="63" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" mode="Opaque" x="114" y="27" width="63" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="51b9d334-ad79-42f9-9b6b-419d1ea2cef4">
 					<printWhenExpression><![CDATA[new Boolean($F{avc_dtopp}.doubleValue()!=0 && $P{valora}.booleanValue())]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -581,7 +582,7 @@ C.E.E]]></text>
 				<textFieldExpression><![CDATA[$F{avc_impdpp}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="4" y="27" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" mode="Opaque" x="4" y="27" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="d902b142-b12e-44ec-9335-46c4621c611e">
 					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -596,7 +597,7 @@ C.E.E]]></text>
 				<textFieldExpression><![CDATA[$F{avc_impbru}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="182" y="27" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" mode="Opaque" x="182" y="27" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="9917d72a-ebbe-4c23-a363-25b13f2073c9">
 					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -611,7 +612,7 @@ C.E.E]]></text>
 				<textFieldExpression><![CDATA[$F{avc_basimp}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="267" y="27" width="26" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" mode="Opaque" x="267" y="27" width="26" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="4f6defe2-90da-4eed-a731-0419f9ae67ce">
 					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -626,7 +627,7 @@ C.E.E]]></text>
 				<textFieldExpression><![CDATA[$F{avc_tipiva}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="299" y="28" width="60" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" mode="Opaque" x="299" y="28" width="60" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="066933d2-d669-45a3-a254-fe1c582a7b8e">
 					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -641,8 +642,8 @@ C.E.E]]></text>
 				<textFieldExpression><![CDATA[$F{avc_impiva}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="396" y="28" width="54" height="16" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[new Boolean($F{cli_recequ}.intValue()!=0)]]></printWhenExpression>
+				<reportElement key="textField" mode="Opaque" x="396" y="28" width="54" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5646d6e8-60da-4d8e-8d8a-af7cb5cb9d7f">
+					<printWhenExpression><![CDATA[$F{cli_recequ}.intValue()!=0 && $P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -656,8 +657,8 @@ C.E.E]]></text>
 				<textFieldExpression><![CDATA[$F{avc_impree}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0.00" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="367" y="27" width="20" height="16" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[new Boolean($F{cli_recequ}.intValue()!=0)]]></printWhenExpression>
+				<reportElement key="textField" mode="Opaque" x="367" y="27" width="20" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="f02e3554-f526-4d99-86c0-2aca5ee3a455">
+					<printWhenExpression><![CDATA[$F{cli_recequ}.intValue()!=0 && $P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -671,7 +672,7 @@ C.E.E]]></text>
 				<textFieldExpression><![CDATA[$F{avc_tipree}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-16" mode="Opaque" x="163" y="50" width="368" height="31" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-16" mode="Opaque" x="163" y="50" width="368" height="31" forecolor="#000000" backcolor="#FFFFFF" uuid="bd3c25c9-a08a-449f-b497-98002445f4b2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -686,13 +687,13 @@ Domicilio Social: Crta El Cortijo Km 3- 26006 - LOGROÑO
 EMPRESA AUTORIZADA PARA LA RETIRADA DEL MER]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-9" mode="Opaque" x="2" y="25" width="527" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-9" mode="Opaque" x="2" y="25" width="527" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="778b4a2a-927e-4aa6-aa0a-9275a960b129"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="staticText-17" mode="Opaque" x="5" y="8" width="70" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-17" mode="Opaque" x="5" y="8" width="70" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="1bd735c7-4567-435c-9663-0267eb54daed"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -705,13 +706,13 @@ EMPRESA AUTORIZADA PARA LA RETIRADA DEL MER]]></text>
 				<text><![CDATA[Importe Bruto]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-10" mode="Opaque" x="77" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-10" mode="Opaque" x="77" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF" uuid="373764c8-8d39-4a49-930d-ea38e4bd859f"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="staticText-18" mode="Opaque" x="83" y="8" width="22" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-18" mode="Opaque" x="83" y="8" width="22" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="90a47acc-b092-4086-8850-e65fa1874fb4"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -724,13 +725,13 @@ EMPRESA AUTORIZADA PARA LA RETIRADA DEL MER]]></text>
 				<text><![CDATA[%]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-11" mode="Opaque" x="111" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-11" mode="Opaque" x="111" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF" uuid="1acc4c31-bd7c-4ff1-a335-716146e73ae8"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="staticText-19" mode="Opaque" x="116" y="8" width="59" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-19" mode="Opaque" x="116" y="8" width="59" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="a9cc4755-22e3-4ca7-ae17-63b08eef08c1"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -743,13 +744,13 @@ EMPRESA AUTORIZADA PARA LA RETIRADA DEL MER]]></text>
 				<text><![CDATA[Descuento]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-12" mode="Opaque" x="179" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-12" mode="Opaque" x="179" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF" uuid="21bf834e-9d3b-4484-8bf4-77348b27b572"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="staticText-20" mode="Opaque" x="182" y="8" width="79" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-20" mode="Opaque" x="182" y="8" width="79" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="f1b27456-cd24-4bf8-9d1c-15471982b66e"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -762,13 +763,13 @@ EMPRESA AUTORIZADA PARA LA RETIRADA DEL MER]]></text>
 				<text><![CDATA[Base Imponible]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-13" mode="Opaque" x="265" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-13" mode="Opaque" x="265" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF" uuid="8ea4f782-7779-4318-9b76-a1d0f70154e9"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="staticText-21" mode="Opaque" x="267" y="8" width="22" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-21" mode="Opaque" x="267" y="8" width="22" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5e9ba6eb-370b-4eb6-b5ac-ab36a0965878"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -781,13 +782,13 @@ EMPRESA AUTORIZADA PARA LA RETIRADA DEL MER]]></text>
 				<text><![CDATA[%]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-14" mode="Opaque" x="295" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-14" mode="Opaque" x="295" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF" uuid="db051ff7-ddd6-49f7-bed3-6833ba82813b"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="staticText-22" mode="Opaque" x="305" y="8" width="54" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-22" mode="Opaque" x="305" y="8" width="54" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b1d3b1a2-acac-4c14-89cd-cd3a7a37b6e6"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -800,13 +801,13 @@ EMPRESA AUTORIZADA PARA LA RETIRADA DEL MER]]></text>
 				<text><![CDATA[I.V.A.]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-15" mode="Opaque" x="365" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-15" mode="Opaque" x="365" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF" uuid="f5688246-29a3-447c-9773-890b10fae30b"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="staticText-23" mode="Opaque" x="368" y="8" width="22" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-23" mode="Opaque" x="368" y="8" width="22" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="8c443631-2f1e-4c9c-9e83-bde988effd3a"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -819,13 +820,13 @@ EMPRESA AUTORIZADA PARA LA RETIRADA DEL MER]]></text>
 				<text><![CDATA[%]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-16" mode="Opaque" x="393" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-16" mode="Opaque" x="393" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF" uuid="279d9938-4744-4166-b84b-165221d9aefb"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="staticText-24" mode="Opaque" x="398" y="8" width="51" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-24" mode="Opaque" x="398" y="8" width="51" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5c84b68d-98a8-443e-add7-6bde732cf7ce"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -838,13 +839,13 @@ EMPRESA AUTORIZADA PARA LA RETIRADA DEL MER]]></text>
 				<text><![CDATA[Rec.Equiv.]]></text>
 			</staticText>
 			<line>
-				<reportElement key="line-17" mode="Opaque" x="454" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-17" mode="Opaque" x="454" y="8" width="1" height="38" forecolor="#000000" backcolor="#FFFFFF" uuid="0fef0a20-4f7b-4bf9-a52f-59f02b3d1e8a"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement key="staticText-25" mode="Opaque" x="458" y="8" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-25" mode="Opaque" x="458" y="8" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="a6ffdad2-dbc3-4df6-8fa8-4ca8ffd02184"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -857,7 +858,7 @@ EMPRESA AUTORIZADA PARA LA RETIRADA DEL MER]]></text>
 				<text><![CDATA[TOTAL ALB.]]></text>
 			</staticText>
 			<rectangle radius="5">
-				<reportElement key="rectangle-4" mode="Transparent" x="1" y="7" width="531" height="41" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="rectangle-4" mode="Transparent" x="1" y="7" width="531" height="41" forecolor="#000000" backcolor="#FFFFFF" uuid="f92d4f8b-5e88-4cca-bc78-beb10b1022e0"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>

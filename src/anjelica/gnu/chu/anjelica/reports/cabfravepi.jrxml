@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabfravepi" pageWidth="595" pageHeight="842" columnWidth="543" leftMargin="30" rightMargin="22" topMargin="22" bottomMargin="20">
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2015-04-16T13:34:18 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabfravepi" pageWidth="595" pageHeight="842" columnWidth="543" leftMargin="30" rightMargin="22" topMargin="22" bottomMargin="20" uuid="c6fbf972-aefb-4fe7-9ae6-6d52c448b40a">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<reportFont name="normal" isDefault="true"  size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+	<style name="normal" isDefault="true" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 	<parameter name="SUBREPORT_FILE_NAME" class="java.lang.String">
 		<parameterDescription><![CDATA[Subreport con las lineas de Albaran]]></parameterDescription>
 	</parameter>
@@ -40,9 +42,11 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 	<field name="fvc_impiva" class="java.lang.Double"/>
 	<field name="fvc_impree" class="java.lang.Double"/>
 	<field name="fvc_basimp" class="java.lang.Double"/>
-	<field name="fvc_dtopp" class="java.lang.Double"/>
+	<field name="fvc_dtos" class="java.lang.Double"/>
 	<field name="fvc_dtocom" class="java.lang.Double"/>
-	<field name="fvc_dtootr" class="java.lang.Double"/>
+	<field name="fvc_impdto" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="fvc_tipiva" class="java.lang.Double"/>
 	<field name="fvc_tipree" class="java.lang.Double"/>
 	<field name="fvc_sumtot" class="java.lang.Double"/>
@@ -68,275 +72,280 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 		<groupHeader>
 			<band height="170">
 				<rectangle radius="5">
-					<reportElement key="rectangle-1" mode="Transparent" x="270" y="0" width="252" height="119" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="rectangle-1" mode="Transparent" x="270" y="0" width="252" height="119" forecolor="#000000" backcolor="#FFFFFF" uuid="802c6740-d8c0-4ce9-b17c-7f1aac17ff21"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="0.5" lineStyle="Solid"/>
 					</graphicElement>
 				</rectangle>
 				<rectangle radius="5">
-					<reportElement key="rectangle-3" mode="Transparent" x="4" y="146" width="529" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="rectangle-3" mode="Transparent" x="4" y="146" width="529" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="d8254a9c-0a7b-49fa-a945-8c3dd8392ec5"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="0.5" lineStyle="Solid"/>
 					</graphicElement>
 				</rectangle>
 				<rectangle radius="5">
-					<reportElement key="rectangle-2" mode="Transparent" x="3" y="109" width="237" height="37" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="rectangle-2" mode="Transparent" x="3" y="109" width="237" height="37" forecolor="#000000" backcolor="#FFFFFF" uuid="1b32e090-9e89-4a9d-836a-950aec945c8b"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="0.5" lineStyle="Solid"/>
 					</graphicElement>
 				</rectangle>
 				<textField pattern=" 000000" isBlankWhenNull="false">
-					<reportElement key="textField" mode="Opaque" x="170" y="127" width="56" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="textField" style="normal" mode="Opaque" x="170" y="127" width="56" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="76def92c-8eb0-4046-b998-2b9c8ae30f28"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Integer"><![CDATA[$F{cli_codi}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{cli_codi}]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="false">
-					<reportElement key="textField" mode="Opaque" x="278" y="20" width="240" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="textField" style="normal" mode="Opaque" x="278" y="20" width="240" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="4389a7d6-7696-410e-bea7-7cdc635821f3"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{cli_nomco}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{cli_nomco}]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="false">
-					<reportElement key="textField" mode="Opaque" x="7" y="126" width="90" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="textField" style="normal" mode="Opaque" x="7" y="126" width="90" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="1a2682fb-c346-437c-b7bd-de9c8480ec98"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{fvc_serie}+"/"+$F{fvc_ano}+"-"+$F{fvc_nume}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{fvc_serie}+"/"+$F{fvc_ano}+"-"+$F{fvc_nume}]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd-MM-yy" isBlankWhenNull="false">
-					<reportElement key="textField" mode="Opaque" x="103" y="127" width="62" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="textField" style="normal" mode="Opaque" x="103" y="127" width="62" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="2dd7c7ef-3de3-48ac-9644-eb4bd4943d69"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal"/>
+					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.util.Date"><![CDATA[$F{fvc_fecfra}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{fvc_fecfra}]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="false">
-					<reportElement key="textField" mode="Opaque" x="278" y="37" width="240" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="textField" style="normal" mode="Opaque" x="278" y="37" width="240" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="5b5a53c5-33a0-428a-83a5-e4fce9338b27"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{cli_direc}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{cli_direc}]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="false">
-					<reportElement key="textField" mode="Opaque" x="278" y="56" width="240" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="textField" style="normal" mode="Opaque" x="278" y="56" width="240" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="83ed77e6-20be-48e3-865d-0d90088b0a39"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{cli_codpo}+" - "+$F{cli_pobl}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{cli_codpo}+" - "+$F{cli_pobl}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement key="line-2" mode="Opaque" x="100" y="108" width="1" height="36" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="line-2" mode="Opaque" x="100" y="108" width="1" height="36" forecolor="#000000" backcolor="#FFFFFF" uuid="f3b78be5-9b4b-458a-85f1-664aa000420a"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="0.5" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement key="staticText-8" mode="Opaque" x="19" y="112" width="64" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="staticText-8" style="normal" mode="Opaque" x="19" y="112" width="64" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="e2bb67de-f067-4b15-b4cd-776a0e263a32"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal" fontName="Arial"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Arial"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[FACTURA Nº]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-9" mode="Opaque" x="112" y="112" width="39" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="staticText-9" style="normal" mode="Opaque" x="112" y="112" width="39" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="705ff6be-b91f-475b-97d4-6f83a1eba855"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal" fontName="Arial"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Arial"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[FECHA]]></text>
 				</staticText>
 				<line>
-					<reportElement key="line-4" mode="Opaque" x="165" y="108" width="1" height="36" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="line-4" mode="Opaque" x="165" y="108" width="1" height="36" forecolor="#000000" backcolor="#FFFFFF" uuid="d3350d14-91eb-444d-963b-b02fc3c61feb"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="0.5" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement key="staticText-10" mode="Opaque" x="182" y="112" width="48" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="staticText-10" style="normal" mode="Opaque" x="182" y="112" width="48" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="7726d7c4-aa6d-41f9-9d8e-0835cf1e4fca"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal" fontName="Arial"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Arial"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[CLIENTE]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-11" mode="Opaque" x="11" y="148" width="72" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="staticText-11" style="normal" mode="Opaque" x="11" y="148" width="72" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="215538ed-19e0-44d8-b3ec-6efdb0049109"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal" fontName="Arial"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Arial"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[REFERENCIA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-12" mode="Opaque" x="148" y="148" width="59" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="staticText-12" style="normal" mode="Opaque" x="148" y="148" width="59" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="25d3b0d1-d416-4e61-9f8a-b9cde54336d2"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal" fontName="Arial"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Arial"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[CONCEPTO]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-13" mode="Opaque" x="299" y="148" width="57" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="staticText-13" style="normal" mode="Opaque" x="299" y="148" width="57" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="440c8f52-c5bf-4b60-949b-6eb1d57d4934"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal" fontName="Arial"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Arial"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[CANTIDAD]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-14" mode="Opaque" x="379" y="148" width="47" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="staticText-14" style="normal" mode="Opaque" x="379" y="148" width="47" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="f15b0d87-18b3-481c-8c2b-57ace7d2bf6d"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal" fontName="Arial"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Arial"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[PRECIO]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-15" mode="Opaque" x="456" y="148" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="staticText-15" style="normal" mode="Opaque" x="456" y="148" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="75e53231-3f69-4fc8-a1e8-c8d7393b8920"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal" fontName="Arial"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="Arial"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<text><![CDATA[IMPORTE]]></text>
 				</staticText>
 				<line>
-					<reportElement key="line-5" mode="Opaque" x="83" y="146" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="line-5" mode="Opaque" x="83" y="146" width="1" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="1aed0497-2dd9-4796-af85-acaf6846d1a9"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="0.5" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-6" mode="Opaque" x="285" y="146" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="line-6" mode="Opaque" x="285" y="146" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="4395f46b-3095-4a70-968d-5e0fbbcb464a"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="0.5" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-7" mode="Opaque" x="373" y="146" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="line-7" mode="Opaque" x="373" y="146" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="82403f91-d4ef-4b3f-af59-615215de41f1"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="0.5" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-8" mode="Opaque" x="435" y="146" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="line-8" mode="Opaque" x="435" y="146" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="928d9cb8-680a-43e4-ad7c-fb0cd3915051"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="0.5" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement key="line-3" mode="Opaque" x="3" y="125" width="237" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="line-3" mode="Opaque" x="3" y="125" width="237" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="ae15999c-4b9b-431a-847b-294214a3c566"/>
 					<graphicElement fill="Solid">
 						<pen lineWidth="0.5" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
 				<textField pattern="" isBlankWhenNull="false">
-					<reportElement key="textField-2" mode="Opaque" x="278" y="3" width="240" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="textField-2" style="normal" mode="Opaque" x="278" y="3" width="240" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="bc2b40c0-9684-4fbb-b473-7d31a1841847"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{cli_nomb}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{cli_nomb}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-3" x="278" y="78" width="215" height="16"/>
+					<reportElement key="textField-3" style="normal" x="278" y="78" width="215" height="16" uuid="add67c3a-e080-486b-b0ec-b531bd0422cf"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement>
-						<font reportFont="normal"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["Nif: "+$F{cli_nif}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Nif: "+$F{cli_nif}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement key="staticText-26" x="365" y="119" width="170" height="14"/>
+					<reportElement key="staticText-26" style="normal" x="365" y="119" width="170" height="14" uuid="e0644092-2eac-4819-86c3-89587e2720eb"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -344,12 +353,12 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font reportFont="normal" size="8"/>
+						<font size="8"/>
 					</textElement>
 					<text><![CDATA[Crta El Cortijo Km 3- 26006 - LOGROÑO]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-27" x="245" y="119" width="116" height="14"/>
+					<reportElement key="staticText-27" style="normal" x="245" y="119" width="116" height="14" uuid="44f61e6e-5f58-481d-8212-1b9ee2c01c39"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -357,12 +366,12 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font reportFont="normal" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
 					<text><![CDATA[Vacunos Puente, S.L.U]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-27" x="310" y="132" width="27" height="14"/>
+					<reportElement key="staticText-27" style="normal" x="310" y="132" width="27" height="14" uuid="5824a09c-7e19-42ee-9aa1-82eefe2b60f3"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -370,27 +379,27 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font reportFont="normal" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
 					<text><![CDATA[NIF:]]></text>
 				</staticText>
 				<textField pattern=" 000000" isBlankWhenNull="false">
-					<reportElement key="textField" mode="Opaque" x="345" y="132" width="91" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement key="textField" style="normal" mode="Opaque" x="345" y="132" width="91" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="0b3a62f8-a49c-4d1f-b102-b79e53014418"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font reportFont="normal"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{empNif}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{empNif}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band isSplitAllowed="false"/>
+			<band splitType="Prevent"/>
 		</groupFooter>
 	</group>
 	<background>
@@ -408,7 +417,7 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 	<detail>
 		<band height="466">
 			<subreport isUsingCache="true">
-				<reportElement key="subreport" mode="Opaque" x="0" y="17" width="533" height="420" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="subreport" mode="Opaque" x="0" y="17" width="533" height="420" forecolor="#000000" backcolor="#FFFFFF" uuid="92e2134c-abf7-420e-8c9c-ccfc0b84fc6a"/>
 				<subreportParameter name="emp_codi">
 					<subreportParameterExpression><![CDATA[$F{emp_codi}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -434,10 +443,10 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 					<subreportParameterExpression><![CDATA[$F{fvc_ano}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_FILE_NAME}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_FILE_NAME}]]></subreportExpression>
 			</subreport>
 			<staticText>
-				<reportElement key="staticText-30" isPrintRepeatedValues="false" mode="Opaque" x="4" y="0" width="174" height="16" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="staticText-30" style="normal" isPrintRepeatedValues="false" mode="Opaque" x="4" y="0" width="174" height="16" isPrintWhenDetailOverflows="true" uuid="60a77ee5-96af-4a6d-84e6-88b3f280656c"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -445,12 +454,12 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font reportFont="normal" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[Viene de la página anterior]]></text>
 			</staticText>
 			<frame>
-				<reportElement key="frame-1" x="0" y="17" width="533" height="449" isPrintWhenDetailOverflows="true"/>
+				<reportElement key="frame-1" x="0" y="17" width="533" height="449" isPrintWhenDetailOverflows="true" uuid="fb5d97cc-eae5-46e1-9dba-9d29f1f829f2"/>
 				<box>
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
@@ -464,39 +473,40 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 		<band/>
 	</columnFooter>
 	<pageFooter>
-		<band height="130" isSplitAllowed="false">
+		<band height="130" splitType="Prevent">
 			<rectangle radius="6">
-				<reportElement key="rectangle-8" x="456" y="0" width="77" height="114"/>
+				<reportElement key="rectangle-8" x="456" y="0" width="77" height="114" uuid="e75637ff-ce6b-4094-a163-6e9ae862551d"/>
 			</rectangle>
 			<rectangle radius="6">
-				<reportElement key="rectangle-7" x="421" y="0" width="33" height="114"/>
+				<reportElement key="rectangle-7" x="421" y="0" width="33" height="114" uuid="03a9b354-9e88-46c1-a604-c9afb442723a"/>
 			</rectangle>
 			<rectangle radius="6">
-				<reportElement key="rectangle-6" x="329" y="0" width="89" height="114"/>
+				<reportElement key="rectangle-6" x="329" y="0" width="89" height="114" uuid="065bc95d-f60d-46ce-b7cf-2e7171146b17"/>
 			</rectangle>
 			<staticText>
-				<reportElement key="staticText-1" mode="Opaque" x="207" y="20" width="77" height="40" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-1" style="normal" mode="Opaque" x="207" y="20" width="77" height="40" forecolor="#000000" backcolor="#FFFFFF" uuid="f34d4382-7e92-4a7d-ac22-620bcb45e3cd"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal" fontName="Arial"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[España
 10-09290/LO
 C.E.E-]]></text>
 			</staticText>
 			<ellipse>
-				<reportElement key="ellipse-1" mode="Transparent" x="200" y="20" width="88" height="43" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="ellipse-1" mode="Transparent" x="200" y="20" width="88" height="43" forecolor="#000000" backcolor="#FFFFFF" uuid="1daeb7f6-e493-43b2-974e-e130f4aa8621"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</ellipse>
 			<textField pattern="###,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="458" y="90" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" style="normal" mode="Opaque" x="458" y="90" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="1cb39950-6cd0-4622-9420-9778f4309c84">
 					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -505,14 +515,15 @@ C.E.E-]]></text>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal" fontName="SansSerif" size="12" isBold="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{fvc_sumtot}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fvc_sumtot}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="423" y="20" width="29" height="16" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[new Boolean($F{fvc_dtopp}.doubleValue()+ $F{fvc_dtocom}.doubleValue()+ $F{fvc_dtootr}.doubleValue() !=0)]]></printWhenExpression>
+				<reportElement key="textField" style="normal" mode="Opaque" x="423" y="20" width="29" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="14246998-919d-495e-937b-7d11d2f48fca">
+					<printWhenExpression><![CDATA[new Boolean($F{fvc_dtos}.doubleValue()+ $F{fvc_dtocom}.doubleValue()+ $F{fvc_impdto}.doubleValue() !=0)]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -520,14 +531,14 @@ C.E.E-]]></text>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[new Double($F{fvc_dtopp}.doubleValue()+ $F{fvc_dtootr}.doubleValue())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fvc_dtos}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="463" y="21" width="63" height="16" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[new Boolean($F{fvc_dtopp}.doubleValue()+ $F{fvc_dtocom}.doubleValue()+ $F{fvc_dtootr}.doubleValue() !=0)]]></printWhenExpression>
+				<reportElement key="textField" style="normal" mode="Opaque" x="463" y="21" width="63" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="37c52ad5-90da-47fa-b90e-effc5791e662">
+					<printWhenExpression><![CDATA[new Boolean($F{fvc_dtos}.doubleValue()+ $F{fvc_dtocom}.doubleValue()+ $F{fvc_impdto}.doubleValue() !=0)]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -535,26 +546,26 @@ C.E.E-]]></text>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[new Double($F{fvc_impbru}.doubleValue()*+($F{fvc_dtopp}.doubleValue()+ $F{fvc_dtootr}.doubleValue())/100)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fvc_impdto}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="458" y="5" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" style="normal" mode="Opaque" x="458" y="5" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="fe2ff821-0afb-413c-9963-02722a4e16eb"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{fvc_impbru}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fvc_impbru}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="458" y="37" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" style="normal" mode="Opaque" x="458" y="37" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="1bfa6799-8c7a-4592-b72a-b8141a361193">
 					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -563,13 +574,13 @@ C.E.E-]]></text>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{fvc_basimp}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fvc_basimp}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="423" y="68" width="26" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" style="normal" mode="Opaque" x="423" y="68" width="26" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="1b44f9fc-ec7c-4596-8c2c-82fbe9183fa8">
 					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -578,13 +589,13 @@ C.E.E-]]></text>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{fvc_tipiva}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fvc_tipiva}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="466" y="69" width="60" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" style="normal" mode="Opaque" x="466" y="69" width="60" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="a17b6766-db1e-4523-8cb5-25b001eb7481">
 					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -593,13 +604,13 @@ C.E.E-]]></text>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{fvc_impiva}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fvc_impiva}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="472" y="53" width="54" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" style="normal" mode="Opaque" x="472" y="53" width="54" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="7b1e52b8-6d5a-41fb-a7e5-4aedc2fe1eb7">
 					<printWhenExpression><![CDATA[new Boolean($F{cli_recequ}.intValue()!=0)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -608,13 +619,13 @@ C.E.E-]]></text>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{fvc_impree}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fvc_impree}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0.00" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="423" y="52" width="26" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" style="normal" mode="Opaque" x="423" y="52" width="26" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="753129b8-26f6-4a61-9cf0-a1d24b56685e">
 					<printWhenExpression><![CDATA[new Boolean($F{cli_recequ}.intValue()!=0)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -623,218 +634,196 @@ C.E.E-]]></text>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{fvc_tipree}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fvc_tipree}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-17" mode="Opaque" x="342" y="5" width="70" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-17" style="normal" mode="Opaque" x="342" y="5" width="70" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="9c72778c-8ec0-42a3-908b-303713cf9fcc"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal" fontName="Arial"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Importe Bruto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-19" mode="Opaque" x="342" y="21" width="59" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-19" style="normal" mode="Opaque" x="342" y="21" width="59" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="18ec3cf5-5a4f-4339-a33e-db856481cbf1"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal" fontName="Arial"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Descuento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-20" mode="Opaque" x="337" y="37" width="79" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-20" style="normal" mode="Opaque" x="337" y="37" width="79" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="19c3d6d3-df71-46ca-94a8-6cb3e001aedf"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal" fontName="Arial"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Base Imponible]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-22" mode="Opaque" x="342" y="69" width="54" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-22" style="normal" mode="Opaque" x="342" y="69" width="54" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="99c2cabd-b6e9-4dc1-b253-e2368327d533"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal" fontName="Arial"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[I.V.A.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-24" mode="Opaque" x="342" y="53" width="51" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-24" style="normal" mode="Opaque" x="342" y="53" width="51" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="bcd9002a-9292-43db-9863-d83e57c8d664"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal" fontName="Arial"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Rec.Equiv.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-25" mode="Opaque" x="342" y="90" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText-25" style="normal" mode="Opaque" x="342" y="90" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="ffe1c186-9687-4c93-a83f-995807f4f19f"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-					<font reportFont="normal" fontName="Arial" isBold="true" pdfFontName="Helvetica-Bold"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[TOTAL FRA.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-28" x="9" y="4" width="55" height="16"/>
+				<reportElement key="staticText-28" style="normal" x="9" y="4" width="55" height="16" uuid="f1dec49d-14b5-47c1-96d4-ed9e231fc14e"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center">
-					<font reportFont="normal"/>
-				</textElement>
+				<textElement textAlignment="Center"/>
 				<text><![CDATA[Fec.Vto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-29" x="74" y="4" width="55" height="16"/>
+				<reportElement key="staticText-29" style="normal" x="74" y="4" width="55" height="16" uuid="3288abd1-42e7-4cf6-9f09-e48002d3299b"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center">
-					<font reportFont="normal"/>
-				</textElement>
+				<textElement textAlignment="Center"/>
 				<text><![CDATA[Imp.Vto]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yy" isBlankWhenNull="true">
-				<reportElement key="textField-4" x="4" y="20" width="58" height="16"/>
+				<reportElement key="textField-4" style="normal" x="4" y="20" width="58" height="16" uuid="95281720-e98c-40df-9f34-3289b51b61b8"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement>
-					<font reportFont="normal"/>
-				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{diaVto1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{diaVto1}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yy" isBlankWhenNull="true">
-				<reportElement key="textField-5" x="4" y="36" width="58" height="16"/>
+				<reportElement key="textField-5" style="normal" x="4" y="36" width="58" height="16" uuid="f558e532-14c2-4a48-932f-5cda2162f80f"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement>
-					<font reportFont="normal"/>
-				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{diaVto2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{diaVto2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yy" isBlankWhenNull="true">
-				<reportElement key="textField-6" x="4" y="52" width="58" height="16"/>
+				<reportElement key="textField-6" style="normal" x="4" y="52" width="58" height="16" uuid="fb26511a-fdfa-4ad1-ba02-fcf7d42181a2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement>
-					<font reportFont="normal"/>
-				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{diaVto3}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{diaVto3}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###,##0.00;-###,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-7" x="74" y="20" width="61" height="16"/>
+				<reportElement key="textField-7" style="normal" x="74" y="20" width="61" height="16" uuid="c52492be-b18b-48b6-886f-ef6ef36ff8ff"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement>
-					<font reportFont="normal"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{impVto1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{impVto1}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###,##0.00;-###,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-8" x="72" y="36" width="61" height="16"/>
+				<reportElement key="textField-8" style="normal" x="72" y="36" width="61" height="16" uuid="971088dd-aa0b-41fd-913e-5ea4b10a78e4"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement>
-					<font reportFont="normal"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{impVto2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{impVto2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###,##0.00;-###,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-9" x="72" y="52" width="61" height="16"/>
+				<reportElement key="textField-9" style="normal" x="72" y="52" width="61" height="16" uuid="52dfe7bc-a93e-45e3-9eb7-9e6ff48f9507"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement>
-					<font reportFont="normal"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{impVto3}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{impVto3}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-10" x="3" y="83" width="285" height="17"/>
+				<reportElement key="textField-10" style="normal" x="3" y="83" width="285" height="17" uuid="f98d7d1b-084e-4ebb-a13a-1a0693fe7960"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement>
-					<font reportFont="normal"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{fpa_nomb}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fpa_nomb}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-11" x="0" y="106" width="295" height="19"/>
+				<reportElement key="textField-11" style="normal" x="0" y="106" width="295" height="19" uuid="64bf5f6b-d54d-411e-8b28-95efde700388"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement>
-					<font reportFont="normal"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{banNomb}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{banNomb}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
