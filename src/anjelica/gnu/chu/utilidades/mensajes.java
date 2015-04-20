@@ -178,6 +178,7 @@ public class mensajes {
     Baceptar.setMnemonic('A');
     Baceptar.addActionListener(new java.awt.event.ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         resul=OK;
@@ -187,6 +188,7 @@ public class mensajes {
     Bcancelar.setMnemonic('C');
     Bcancelar.addActionListener(new java.awt.event.ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         resul=CANCEL;

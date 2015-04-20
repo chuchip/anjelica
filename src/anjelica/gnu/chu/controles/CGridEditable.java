@@ -512,16 +512,16 @@ public class CGridEditable extends Cgrid implements CQuery {
    * @throws Exception En caso de que el numero de campos mandados o los tipos de estos
    * no sean correctos.
    */
-  public void setCampos(ArrayList v) throws Exception
+  public void setCampos(ArrayList v) throws IllegalArgumentException, ClassNotFoundException
   {
       if (!swIniciar)
-          throw new Exception("Llame primero a la funcion Iniciar");
+          throw new IllegalArgumentException("Llame primero a la funcion Iniciar");
     if (v.size() != nCol)
     {
       msgError = "(setCampos) No de Campos(" + v.size() +
           ") NO coincide con No Columnas(" + nCol + ") del Grid";
       setEnabled(true);
-      throw new Exception(msgError);
+      throw new IllegalArgumentException(msgError);
     }
     campos = v;
     tCampo = new ArrayList();

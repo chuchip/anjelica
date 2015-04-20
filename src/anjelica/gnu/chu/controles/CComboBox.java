@@ -349,8 +349,9 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
     return getValor(getSelectedIndex()).trim().equals(valCompara);
   }
   public String getValor(int index){
-    if (index<indice.size())
-      return (String)indice.get(index);
+      
+    if (index<indice.size() && index>=0)
+      return indice.get(index);
     else
       return "";
   }

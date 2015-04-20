@@ -187,7 +187,7 @@ public class pdalbara extends ventanaPad  implements PAD
   int rowDesp;
   boolean PEDIRDESP=true; // Posibilibad de pedir despice al vuelo. Se busca en mant. configuracion
   int TIDCODI=0; // Tipo despiece por defecto.
-  int NUMDECPRECIO=4; // Numero de decimales
+  int NUMDECPRECIO=2; // Numero de decimales
   String FORMDECPRECIO=".9999";
   final int NUMDEC=2;  
   final String FORMDEC=".99";
@@ -631,7 +631,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-04-15" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-04-20" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -682,7 +682,7 @@ public class pdalbara extends ventanaPad  implements PAD
         statusBar.add(botonBascula, new GridBagConstraints(8, 0, 1, 2, 0.0, 0.0, GridBagConstraints.EAST,
             GridBagConstraints.VERTICAL,
             new Insets(0, 5, 0, 0), 0, 0));
-        confGridCab();
+        
         
         avp_cantiE.setEditable( P_ADMIN);
 
@@ -738,7 +738,7 @@ public class pdalbara extends ventanaPad  implements PAD
         vc1.add(avp_cantiE); // 8
         vc1.add(avp_numlinE); // 9
         jtDes.setCampos(vc1);
-        jt.setPonValoresInFocus(false);
+       
         jtDes.setPonValoresInFocus(false);
 
         opAgru.setSelected(true);
@@ -1242,57 +1242,64 @@ public class pdalbara extends ventanaPad  implements PAD
     @Override
   public void afterConecta() throws SQLException, ParseException
   {    
-    isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
-    swUsaPalets=pdconfig.getUsaPalets(EU.em_cod, dtStat);
-    avl_numpalE.setEnabled(swUsaPalets);
-    if (pdconfig.getConfiguracion(EU.em_cod,dtStat))
-    {
-      ALMACEN=dtStat.getInt("cfg_almven");
-      PEDIRDESP=dtStat.getInt("cfg_desven",true)!=0;
-      TIDCODI=dtStat.getInt("cfg_tideve",true);
-      NUMDECPRECIO=dtStat.getInt("cfg_numdec",true);
-      FORMDECPRECIO=".";
-      for (int n=0;n<NUMDECPRECIO;n++)
-          FORMDECPRECIO+="9";          
-    }
-    IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
-    IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
-    pesoManual=isEmpPlanta;
-    dtAdd.setConexion(ctUp);
-    cli_codiE.setZona(P_ZONA);
-    cli_codiE.iniciar(dtStat, this, vl, EU);
-    ifMail.iniciar(this);
-    
-    ifFax.iniciar(this);
-    ifFax.getCliField().setPeso(1);
-    ifFax.setCopiaPapel(true);
-    pro_codiE.iniciar(dtStat, this, vl, EU);
-    pro_codiE.setEntrada(true);
-    pro_codiE.getFieldProCodi().setToolTipText("Doble click para actualizar nombre");
-    pro_codicE.iniciar(dtStat, this, vl, EU);
-    pro_codicE.setEntrada(true);
-    pro_codresE.iniciar(dtStat, this, vl, EU);
-    emp_codiE.iniciar(dtStat,this,vl, EU);
-    sbe_codiE.iniciar(dtStat,this,vl,EU);
-    sbe_codiE.setFieldEmpCodi(emp_codiE.getTextField());
-    sbe_nombL=sbe_codiE.creaLabelSbe();
-    sbe_codiE.setLabelSbe(sbe_nombL);
-    pdnumeracion.llenaSeriesAlbVen(true,avc_seriE,true,P_ADMIN);
-
-    s="SELECT div_codi,div_nomb FROM v_divisa ORDER BY div_nomb";
-    dtCon1.select(s);
-    div_codiE.setDatos(dtCon1);
-    if (EU.getUsuReser1().equals("S"))
-      div_codiE.addItem("-------","0");
-    div_codiE.setColumnaAlias("div_codi");
-    tar_codiE.setFormato(true);
-    tar_codiE.setFormato(Types.DECIMAL, "#9", 1);
-    s = "SELECT tar_codi,tar_nomb FROM tipotari " +
-         " ORDER BY tar_codi ";
-    dtStat.select(s);
-    tar_codiE.addDatos(dtStat);
-    avc_deposE.setColumnaAlias("avc_depos");
-    initAvcRevpreE(avc_revpreE,true);
+      try
+      {
+          isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
+          swUsaPalets=pdconfig.getUsaPalets(EU.em_cod, dtStat);
+          avl_numpalE.setEnabled(swUsaPalets);
+          if (pdconfig.getConfiguracion(EU.em_cod,dtStat))
+          {
+              ALMACEN=dtStat.getInt("cfg_almven");
+              PEDIRDESP=dtStat.getInt("cfg_desven",true)!=0;
+              TIDCODI=dtStat.getInt("cfg_tideve",true);
+              NUMDECPRECIO=dtStat.getInt("cfg_numdec",true);
+              FORMDECPRECIO=".";
+              for (int n=0;n<NUMDECPRECIO;n++)
+                  FORMDECPRECIO+="9";
+          }
+          confGridCab();
+          IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
+          IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
+          pesoManual=isEmpPlanta;
+          dtAdd.setConexion(ctUp);
+          cli_codiE.setZona(P_ZONA);
+          cli_codiE.iniciar(dtStat, this, vl, EU);
+          ifMail.iniciar(this);
+          
+          ifFax.iniciar(this);
+          ifFax.getCliField().setPeso(1);
+          ifFax.setCopiaPapel(true);
+          pro_codiE.iniciar(dtStat, this, vl, EU);
+          pro_codiE.setEntrada(true);
+          pro_codiE.getFieldProCodi().setToolTipText("Doble click para actualizar nombre");
+          pro_codicE.iniciar(dtStat, this, vl, EU);
+          pro_codicE.setEntrada(true);
+          pro_codresE.iniciar(dtStat, this, vl, EU);
+          emp_codiE.iniciar(dtStat,this,vl, EU);
+          sbe_codiE.iniciar(dtStat,this,vl,EU);
+          sbe_codiE.setFieldEmpCodi(emp_codiE.getTextField());
+          sbe_nombL=sbe_codiE.creaLabelSbe();
+          sbe_codiE.setLabelSbe(sbe_nombL);
+          pdnumeracion.llenaSeriesAlbVen(true,avc_seriE,true,P_ADMIN);
+          
+          s="SELECT div_codi,div_nomb FROM v_divisa ORDER BY div_nomb";
+          dtCon1.select(s);
+          div_codiE.setDatos(dtCon1);
+          if (EU.getUsuReser1().equals("S"))
+              div_codiE.addItem("-------","0");
+          div_codiE.setColumnaAlias("div_codi");
+          tar_codiE.setFormato(true);
+          tar_codiE.setFormato(Types.DECIMAL, "#9", 1);
+          s = "SELECT tar_codi,tar_nomb FROM tipotari " +
+              " ORDER BY tar_codi ";
+          dtStat.select(s);
+          tar_codiE.addDatos(dtStat);
+          avc_deposE.setColumnaAlias("avc_depos");
+          initAvcRevpreE(avc_revpreE,true);
+      } catch (IllegalArgumentException | ClassNotFoundException ex  )
+      {
+         Error("Error al configurar grid",ex);
+      } 
   }
   public static void initAvcRevpreE(CComboBox cb, boolean incNo)
   {
@@ -7892,7 +7899,7 @@ public class pdalbara extends ventanaPad  implements PAD
     jtDes.requestFocusLater();
   }
 
-  void confGridCab() throws Exception
+  private void confGridCab() throws IllegalArgumentException, ClassNotFoundException 
   {
     
     JT_NUMPALE=P_MODPRECIO || P_PONPRECIO ? 8: 6;
@@ -8116,6 +8123,7 @@ public class pdalbara extends ventanaPad  implements PAD
     jt.setCampos(vc);
     jt.setFormatoCampos();
     jt.setAjustarGrid(true);
+    jt.setPonValoresInFocus(false);
   }
 }
 

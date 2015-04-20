@@ -709,7 +709,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20150304)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20150420)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -3597,6 +3597,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     nav.pulsado=navegador.NINGUNO;
   }
 
+  @Override
   public void canc_addnew()
   {
     try
@@ -3604,7 +3605,10 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       swCargaAlb=false;
       if (acc_numeE.getValorInt() > 0)
       { // Borrar Cabecera
-        if (mensajes.mensajeYesNo("VOLVER AL ALBARAN ? ",this)==mensajes.YES)
+        String txt= mensajes.mensajeGetTexto(
+            "Para anular alta teclee la palabra 'BORRAR'",
+            "Confirme", this, "");
+        if (txt == null || !txt.equalsIgnoreCase("BORRAR"))
           return;
         if (jf != null)
         {
