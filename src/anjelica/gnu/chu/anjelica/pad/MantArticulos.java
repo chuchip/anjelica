@@ -152,7 +152,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2014-11-04" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2015-04-21" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM v_articulo where pro_activ != 0 "+
                 " ORDER BY pro_codi";
 
@@ -240,7 +240,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     cam_codiE.setColumnaAlias("cam_codi");
     sbe_codiE.setColumnaAlias("sbe_codi");
     pro_artconE.setColumnaAlias("pro_artcon");
-    pro_indtcoE.setColumnaAlias("pro_indtcoE");
+    pro_indtcoE.setColumnaAlias("pro_indtco");
     pro_envvacE.setColumnaAlias("pro_envvac");
     pro_activE.setColumnaAlias("pro_activ");
    
@@ -522,6 +522,12 @@ public class MantArticulos extends ventanaPad  implements PAD
       mensaje("Error en Criterios de busqueda (Panel Inicio)");
       return;
     }
+      if ((c=Pfamil.getErrorConf())!=null)
+    {
+      c.requestFocus();
+      mensaje("Error en Criterios de busqueda (Panel parametros)");
+      return;
+    }
     ArrayList v = new ArrayList();
     v.add(pro_codiE.getStrQuery());
     v.add(pro_nombE.getStrQuery());
@@ -614,6 +620,9 @@ public class MantArticulos extends ventanaPad  implements PAD
     Pprinc.setQuery(query);
     Pdiscrim.setQuery(query);
     Pinicio.setQuery(query);
+    Pfamil.setQuery(query);
+        
+
   }
   void resetTexto()
   {
