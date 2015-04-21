@@ -228,6 +228,7 @@ public class utildesp
     feccadE=null;
     fecCadDesp=null;
     deoCodi=0;
+    boolean deoDesnue=false;
     deoAno=0;
     accSerie="";
     accAno=0;
@@ -286,7 +287,7 @@ public class utildesp
       if (!dtRes )
       {
         // No encontrado individuo  en compras, lo busco en salidas de despieces
-        s = "SELECT df.*,de.tid_codi FROM v_despfin as df,desporig as de "+
+        s = "SELECT df.*,de.tid_codi,de.deo_desnue FROM v_despfin as df,desporig as de "+
             " WHERE df.pro_codi = " + proCodi +
             " and df.def_ejelot = " + ejeLot +
             " and df.def_serlot = '" + serie + "'" +
@@ -307,6 +308,8 @@ public class utildesp
         swTidCodi=false;
         if (tidCodi==0 || tidCodi==dtCon1.getInt("tid_codi"))
             swTidCodi=true;
+        if (!deoDesnue)
+            deoDesnue=dtCon1.getString("deo_desnue").equals("S");
 //        }
 //        else
 //        {
@@ -483,7 +486,7 @@ public class utildesp
           if (dtCon1.select(s))
             acp_paisacNomb = dtCon1.getString("pai_nomb");
           sde_codi=dtStat.getInt("sde_codi");
-          if (swDesp)
+          if (deoDesnue)
             s = "select pai_nomb from v_paises where pai_codi = " + paiEmp;
           else
             s = "SELECT pai_codi,sde_nrgsa FROM v_saladesp m " +
@@ -496,7 +499,7 @@ public class utildesp
           }
           else
           {
-            if (!swDesp)
+            if (!deoDesnue)
             {
               despiezadoE =dtCon1.getString("sde_nrgsa");
               sde_nrgsa=despiezadoE;

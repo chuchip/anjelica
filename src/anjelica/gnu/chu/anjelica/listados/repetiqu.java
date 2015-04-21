@@ -16,7 +16,7 @@ import gnu.chu.anjelica.despiece.utildesp;
  * mostrar. Permite elegir diferentes tipos de etiqueta.
  * La opcion de generar el inventario esta obsoleta y deshabilitada.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2014</p>
+ * <p>Copyright: Copyright (c) 2005-2015</p>
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -126,7 +126,7 @@ public class repetiqu extends ventana
     {
       iniciarFrame();
       this.setSize(new Dimension(519,339));
-      this.setVersion("2011-08-29");
+      this.setVersion("2015-04-21");
       Pprinc.setLayout(null);
       statusBar = new StatusBar(this);
       Bindi.setBounds(new Rectangle(471, 25, 1, 1));
@@ -341,7 +341,7 @@ public class repetiqu extends ventana
       pro_codiE.setEnabled(b);
       if (swModo=='R')
       {
-        fecrepL.setText("Fecha Recep:");
+//        fecrepL.setText("Fecha Recep:");
 //        deo_emplotE.setEnabled(b);
         deo_ejelotE.setEnabled(b);
         deo_serlotE.setEnabled(b);
@@ -374,12 +374,14 @@ public class repetiqu extends ventana
         }
       });
       Bgenera.addActionListener(new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
           Bgenera_actionPerformed();
         }
       });
       pro_numindE.addFocusListener(new FocusAdapter() {
 
+        @Override
         public void focusLost(FocusEvent e) {
           try
           {
@@ -399,6 +401,7 @@ public class repetiqu extends ventana
         }
       });
       Bindi.addFocusListener(new FocusAdapter() {
+        @Override
         public void focusGained(FocusEvent e) {
           if (swModo=='G')
             return;
@@ -411,12 +414,14 @@ public class repetiqu extends ventana
       });
       Bindi.addActionListener(new ActionListener()
       {
+        @Override
         public void actionPerformed(ActionEvent e)
         {
             Bindi_actionPerformed();
         }
       });
       Bcancelar.addActionListener(new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
           activar(true);
           pro_codiE.requestFocus();
@@ -467,6 +472,8 @@ public class repetiqu extends ventana
     void Bindi_actionPerformed()
     {
       try {
+      if (muerto)
+          return;
       if (!pro_codiE.controlar())
       {
         mensajeErr(pro_codiE.getMsgError());
@@ -582,7 +589,16 @@ public class repetiqu extends ventana
       sacrificadoE.setText(utDesp.sacrificadoE);
       despiezadoE.setText(utDesp.despiezadoE);
       ntrazaE.setText(utDesp.ntrazaE);
-      fecrecepE.setText(utDesp.fecrecepE);
+      if (utDesp.swDesp)
+      {
+        fecrepL.setText("Fecha Prod:");
+        fecrecepE.setDate(utDesp.getFechaProduccion());
+      }
+      else
+      {
+          fecrepL.setText("Fecha Recep:");
+          fecrecepE.setText(utDesp.fecrecepE);
+      }
       conservarE.setText(utDesp.conservarE);
       feccadE.setText(utDesp.feccadE);
       grd_fecpro=utDesp.getFechaProduccion();
@@ -665,6 +681,8 @@ public class repetiqu extends ventana
     {
       try
       {
+        if (muerto)
+            return false;
         s = "SELECT * FROM V_STKPART WHERE " +
             " EJE_NUME= " + deo_ejelotE.getValorInt() +
 //            " AND EMP_CODI= " + deo_emplotE.getValorInt() +
