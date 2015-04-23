@@ -10,6 +10,7 @@ import gnu.chu.anjelica.ventas.*;
 import gnu.chu.camposdb.*;
 import gnu.chu.controles.*;
 import gnu.chu.hylafax.SendFax;
+import gnu.chu.mail.IFMail;
 import gnu.chu.mail.MailHtml;
 import gnu.chu.print.*;
 import gnu.chu.sql.*;
@@ -45,6 +46,7 @@ import net.sf.jasperreports.engine.*;
  */
 public class lisfactu extends ventana  implements JRDataSource
 {
+  IFMail ifMail=null;
   String subject;
   String emailCC;
   String asunto;
@@ -296,6 +298,7 @@ public class lisfactu extends ventana  implements JRDataSource
    cLabel10.setText("A Fecha");
    Baceptar.addMenu(PadFactur.IMPGRAFICO);
    Baceptar.addMenu(PadFactur.IMPGRAFPRE);
+   Baceptar.addMenu(PadFactur.SENDMAIL);
    if (IMPFRATEXTO)
      Baceptar.addMenu(PadFactur.IMPPLANO);
    Baceptar.setToolTipText("Consultar e Imprimir");
@@ -632,6 +635,11 @@ public class lisfactu extends ventana  implements JRDataSource
           setFraPreImpr(true);
           cfgLifrgr="S";
        }
+       if (accion.indexOf(PadFactur.SENDMAIL)>=0)
+       {
+           enviarMail();
+           return;
+       }
      res = impFactura(s, empIniE.getValorInt(),cfgLifrgr);
      if (res==0)
        mensajeErr(msgError);
@@ -642,6 +650,45 @@ public class lisfactu extends ventana  implements JRDataSource
      Error("Error al Listar Facturas",k);
    }
  }
+ void enviarMail()
+ {
+//    if (cli_codiE.isNull() || cli_codiE1.isNull())
+//    {
+//        msgBox("Cliente origen y final no debe ser nulo");
+//        return;
+//    }
+//        if (cli_codiE.getValorInt() != cli_codiE1.getValorInt())
+//    {
+//        msgBox("Introduzca Cliente origen igual a cliente final");
+//        return;
+//    }
+
+    try {
+        if (ifMail == null) {
+            ifMail = new IFMail();
+            ifMail.iniciar(this);
+            ifMail.getCliField().setPeso(1);
+            ifMail.setVisible(false);
+            ifMail.setIconifiable(false);
+            ifMail.setLocation(this.getLocation().x + 30, this.getLocation().x + 30);
+            ifMail.setLisfactu(this);
+            vl.add(ifMail, 1);
+        }
+        ifMail.setVisible(true);
+        ifMail.setSelected(true); 
+        ifMail.setAsunto("Relación de Facturas ");
+        ifMail.setText("Estimado cliente,\n\nAdjunto le enviamos las facturas de la fecha: "+
+            feciniE.getText()+" a "+fecfinE.getText()+
+               "\n\nAtentamente\n\n"+pdempresa.getNombreEmpresa(dtStat, EU.em_cod) );           
+        ifMail.setCliCodi(cli_codiE.getText());
+
+        ifMail.setDatosDoc("F", getStrSql(), true);     
+    } catch (Exception k)
+    {
+        Error("Error al enviar el Correo",k);
+    }
+ }
+ 
  public int getNumFraImpr()
  {
    return nFraImp;

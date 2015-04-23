@@ -62,98 +62,108 @@ public class IFMail extends ventana {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         cTextArea1 = new gnu.chu.controles.CTextArea();
-        cli_codiE = new gnu.chu.camposdb.cliPanel();
-        cLabel1 = new gnu.chu.controles.CLabel();
-        cLabel2 = new gnu.chu.controles.CLabel();
-        cLabel3 = new gnu.chu.controles.CLabel();
-        scmsgE = new javax.swing.JScrollPane();
-        respuestE = new gnu.chu.controles.CTextArea();
-        Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
-        Bcancelar = new gnu.chu.controles.CButton(Iconos.getImageIcon("cancel"));
-        cLabel4 = new gnu.chu.controles.CLabel();
-        asuntoE = new gnu.chu.controles.CTextField(Types.CHAR,"X",100);
-        cli_emailE = new gnu.chu.controles.CLinkBox();
-        opCopia = new gnu.chu.controles.CCheckBox();
-        cLabel5 = new gnu.chu.controles.CLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        toEmailE = new gnu.chu.controles.CTextArea();
-        BIncluir = new gnu.chu.controles.CButton();
+        cli_codiE = new gnu.chu.camposdb.cliPanel()
+        { protected void afterFocusLost(boolean noError)
+            {
+                if (noError)
+                return;
+                cli_emailE.removeAllItems();
 
-        cTextArea1.setColumns(20);
-        cTextArea1.setRows(5);
-        jScrollPane1.setViewportView(cTextArea1);
+                llenaCorreos();
+                cli_emailE.resetTexto();
+            }}
+            ;
+            cLabel1 = new gnu.chu.controles.CLabel();
+            cLabel2 = new gnu.chu.controles.CLabel();
+            cLabel3 = new gnu.chu.controles.CLabel();
+            scmsgE = new javax.swing.JScrollPane();
+            respuestE = new gnu.chu.controles.CTextArea();
+            Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
+            Bcancelar = new gnu.chu.controles.CButton(Iconos.getImageIcon("cancel"));
+            cLabel4 = new gnu.chu.controles.CLabel();
+            asuntoE = new gnu.chu.controles.CTextField(Types.CHAR,"X",100);
+            cli_emailE = new gnu.chu.controles.CLinkBox();
+            opCopia = new gnu.chu.controles.CCheckBox();
+            cLabel5 = new gnu.chu.controles.CLabel();
+            jScrollPane2 = new javax.swing.JScrollPane();
+            toEmailE = new gnu.chu.controles.CTextArea();
+            BIncluir = new gnu.chu.controles.CButton();
 
-        setTitle("Enviar Correo Electronico");
-        getContentPane().setLayout(null);
-        getContentPane().add(cli_codiE);
-        cli_codiE.setBounds(53, 11, 421, 18);
+            cTextArea1.setColumns(20);
+            cTextArea1.setRows(5);
+            jScrollPane1.setViewportView(cTextArea1);
 
-        cLabel1.setText("Cliente");
-        getContentPane().add(cLabel1);
-        cLabel1.setBounds(10, 14, 39, 15);
+            setTitle("Enviar Correo Electronico");
+            getContentPane().setLayout(null);
+            getContentPane().add(cli_codiE);
+            cli_codiE.setBounds(53, 11, 421, 18);
 
-        cLabel2.setText("Correo");
-        getContentPane().add(cLabel2);
-        cLabel2.setBounds(10, 35, 39, 15);
+            cLabel1.setText("Cliente");
+            getContentPane().add(cLabel1);
+            cLabel1.setBounds(10, 14, 39, 15);
 
-        cLabel3.setBackground(java.awt.Color.blue);
-        cLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        cLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        cLabel3.setText("Introduzca un texto a acompañar al Correo");
-        cLabel3.setOpaque(true);
-        getContentPane().add(cLabel3);
-        cLabel3.setBounds(10, 130, 466, 15);
+            cLabel2.setText("Correo");
+            getContentPane().add(cLabel2);
+            cLabel2.setBounds(10, 35, 39, 15);
 
-        scmsgE.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+            cLabel3.setBackground(java.awt.Color.blue);
+            cLabel3.setForeground(new java.awt.Color(255, 255, 255));
+            cLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            cLabel3.setText("Introduzca un texto a acompañar al Correo");
+            cLabel3.setOpaque(true);
+            getContentPane().add(cLabel3);
+            cLabel3.setBounds(10, 130, 466, 15);
 
-        respuestE.setBorder(null);
-        respuestE.setColumns(20);
-        respuestE.setRows(5);
-        scmsgE.setViewportView(respuestE);
+            scmsgE.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        getContentPane().add(scmsgE);
-        scmsgE.setBounds(10, 148, 466, 90);
+            respuestE.setBorder(null);
+            respuestE.setColumns(20);
+            respuestE.setRows(5);
+            scmsgE.setViewportView(respuestE);
 
-        Baceptar.setText("Aceptar");
-        getContentPane().add(Baceptar);
-        Baceptar.setBounds(140, 244, 156, 32);
+            getContentPane().add(scmsgE);
+            scmsgE.setBounds(10, 148, 466, 90);
 
-        Bcancelar.setText("Cancelar");
-        getContentPane().add(Bcancelar);
-        Bcancelar.setBounds(304, 244, 156, 32);
+            Baceptar.setText("Aceptar");
+            getContentPane().add(Baceptar);
+            Baceptar.setBounds(140, 244, 156, 32);
 
-        cLabel4.setText("Asunto");
-        getContentPane().add(cLabel4);
-        cLabel4.setBounds(10, 110, 40, 15);
-        getContentPane().add(asuntoE);
-        asuntoE.setBounds(60, 110, 410, 17);
+            Bcancelar.setText("Cancelar");
+            getContentPane().add(Bcancelar);
+            Bcancelar.setBounds(304, 244, 156, 32);
 
-        cli_emailE.setAncTexto(180);
-        getContentPane().add(cli_emailE);
-        cli_emailE.setBounds(53, 35, 330, 17);
+            cLabel4.setText("Asunto");
+            getContentPane().add(cLabel4);
+            cLabel4.setBounds(10, 110, 40, 15);
+            getContentPane().add(asuntoE);
+            asuntoE.setBounds(60, 110, 410, 17);
 
-        opCopia.setSelected(true);
-        opCopia.setText("Copia Local");
-        getContentPane().add(opCopia);
-        opCopia.setBounds(20, 244, 90, 23);
+            cli_emailE.setAncTexto(180);
+            getContentPane().add(cli_emailE);
+            cli_emailE.setBounds(53, 35, 330, 17);
 
-        cLabel5.setText("A");
-        getContentPane().add(cLabel5);
-        cLabel5.setBounds(10, 57, 20, 15);
+            opCopia.setSelected(true);
+            opCopia.setText("Copia Local");
+            getContentPane().add(opCopia);
+            opCopia.setBounds(20, 244, 90, 23);
 
-        toEmailE.setColumns(20);
-        toEmailE.setRows(5);
-        jScrollPane2.setViewportView(toEmailE);
+            cLabel5.setText("A");
+            getContentPane().add(cLabel5);
+            cLabel5.setBounds(10, 57, 20, 15);
 
-        getContentPane().add(jScrollPane2);
-        jScrollPane2.setBounds(30, 60, 440, 40);
+            toEmailE.setColumns(20);
+            toEmailE.setRows(5);
+            jScrollPane2.setViewportView(toEmailE);
 
-        BIncluir.setText("Incluir");
-        getContentPane().add(BIncluir);
-        BIncluir.setBounds(390, 35, 70, 19);
+            getContentPane().add(jScrollPane2);
+            jScrollPane2.setBounds(30, 60, 440, 40);
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+            BIncluir.setText("Incluir");
+            getContentPane().add(BIncluir);
+            BIncluir.setBounds(390, 35, 70, 19);
+
+            pack();
+        }// </editor-fold>//GEN-END:initComponents
     public void iniciar(ventana padre) throws SQLException
     {
         this.padre=padre;
@@ -189,6 +199,8 @@ public class IFMail extends ventana {
     {
         try
         {
+            if (cli_codiE.hasError())
+                return;
             addCorreo(cli_codiE.getLikeCliente().getString("cli_email2"));
             addCorreo(cli_codiE.getLikeCliente().getString("cli_email1"));
         } catch (SQLException ex)
@@ -246,6 +258,7 @@ public class IFMail extends ventana {
                     (toEmailE.getText().trim().equals("")?"":", ")+cli_emailE.getText());
             }
         });
+      
     }
     void enviarEmail()
     {

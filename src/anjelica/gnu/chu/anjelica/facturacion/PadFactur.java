@@ -58,6 +58,7 @@ public class PadFactur extends ventanaPad   implements PAD {
   public final static String IMPPLANO="Texto Plano";
   public final static String IMPGRAFICO="Gráfico";
   public final static String IMPGRAFPRE="Gráf.Preim";
+ 
   public final static String SENDFAX="Fax";
   public final static String SENDMAIL="E-Mail";
   lisfactu lifact=null;
@@ -143,7 +144,7 @@ public class PadFactur extends ventanaPad   implements PAD {
        
         iniciarFrame();
 
-        this.setVersion("2015-02-27" + (MOD_CONS ? "SOLO LECTURA" : ""));
+        this.setVersion("2015-04-23" + (MOD_CONS ? "SOLO LECTURA" : ""));
         strSql = getStrSql();
         IMPFRATEXTO=EU.getValorParam("impFraTexto",IMPFRATEXTO);
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -162,7 +163,7 @@ public class PadFactur extends ventanaPad   implements PAD {
             Bprint.addMenu(IMPPLANO);
         Bprint.addMenu(SENDFAX);
         Bprint.addMenu(SENDMAIL);
-        Bprint.addMenu("Correo Electronico");
+        
         
         statusBar.add(Bprint, new GridBagConstraints(9, 0, 1, 2, 0.0, 0.0
                                         , GridBagConstraints.EAST,
@@ -908,6 +909,11 @@ public class PadFactur extends ventanaPad   implements PAD {
  void enviarMail()
  {
     try {
+         if (! opAgrlin.isSelected())
+         {
+             if (mensajes.mensajePreguntar("Enviar por email factura con las lineas sin agrupar")!=mensajes.YES)
+                 return;
+         }
          if (lifact==null)
           lifact=new lisfactu(EU,dtCon1,dtStat,dtBloq);
         if (ifMail == null) {
@@ -921,7 +927,7 @@ public class PadFactur extends ventanaPad   implements PAD {
             vl.add(ifMail, 1);
         }
         ifMail.setVisible(true);
-        ifMail.setSelected(true);        
+        ifMail.setSelected(true); 
         ifMail.setAsunto("Factura "+fvc_anoE.getValorInt()+"-"+fvc_serieE.getText()+"-"+ fvc_numeE.getValorInt()+"  de fecha: "+fvc_fecfraE.getText());
         ifMail.setText("Estimado cliente,\n\nAdjunto le enviamos la factura "+fvc_anoE.getValorInt()+"-"+
                 fvc_serieE.getText()+"-"+ fvc_numeE.getValorInt()+"  de fecha: "+fvc_fecfraE.getText()+
