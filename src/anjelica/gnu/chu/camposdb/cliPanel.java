@@ -28,7 +28,7 @@ import gnu.chu.winayu.*;
  * </p>
  * <p>Empresa: MISL</p>
  * @author chuchiP
- * @version 1.0
+ * @version 2.0
  */
 public class cliPanel extends CPanel
 {
@@ -201,9 +201,11 @@ public class cliPanel extends CPanel
 
       cli_codiE.addFocusListener(new FocusListener()
       {
+        @Override
         public void focusGained(FocusEvent e)
         {}
 
+        @Override
         public void focusLost(FocusEvent e)
         {
           if (getQuery())
@@ -637,7 +639,29 @@ public void setZona(String zonCli)
   public String getValorAct() {
     return getText();
   }
-
+  /**
+   * Añade un listener al foco.
+   * El foco se añade al campo cli_codiE  (CTextField)  
+   * @see  afterFocusLost(boolean noError)
+   * @param f 
+   */
+  @Override
+  public void addFocusListener(FocusListener f)
+  {
+      if (cli_codiE!=null)
+          cli_codiE.addFocusListener(f);      
+  }
+  /**
+   * Quita un listener al foco. El foco se habria añadido al campo cli_codiE (CTextField)
+   * @param f 
+   */
+  @Override
+  public void removeFocusListener(FocusListener f)
+  {
+      if (cli_codiE!=null)
+          cli_codiE.removeFocusListener(f);     
+  }
+  
 }  // Final de Class
 
 
