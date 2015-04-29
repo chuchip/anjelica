@@ -11,7 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.SwingConstants;
 import gnu.chu.anjelica.despiece.utildesp;
 /**
- * <p>Titulo: repeti </p>
+ * <p>Titulo: repetiqu </p>
  * <p>Descripcion: Permite repetir etiquetas de un producto, cambiando los datos a
  * mostrar. Permite elegir diferentes tipos de etiqueta.
  * La opcion de generar el inventario esta obsoleta y deshabilitada.
@@ -126,7 +126,7 @@ public class repetiqu extends ventana
     {
       iniciarFrame();
       this.setSize(new Dimension(519,339));
-      this.setVersion("2015-04-21");
+      this.setVersion("2015-04-29");
       Pprinc.setLayout(null);
       statusBar = new StatusBar(this);
       Bindi.setBounds(new Rectangle(471, 25, 1, 1));
@@ -642,7 +642,7 @@ public class repetiqu extends ventana
             conservarE.getText(),sacrificadoE.getText(),
             fecrepL.getText()+fecrecepE.getText(),"Fec.Cad:",grd_fecpro,
             feccadE.getText(),fecsacrE.getDate());
-        etiq.setFechaCongelado(utildesp.getFechaCongelado(pro_codiE.getValorInt(), grd_fecpro, dtStat));
+        etiq.setFechaCongelado(utildesp.getFechaCongelado(pro_codiE.getValorInt(), fecrecepE.getDate(), dtStat));
         etiq.listarDefec();
         if (swModo=='G')
         {
