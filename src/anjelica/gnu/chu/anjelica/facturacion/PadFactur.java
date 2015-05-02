@@ -482,98 +482,128 @@ public class PadFactur extends ventanaPad   implements PAD {
         Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         Ppie.setMinimumSize(new java.awt.Dimension(640, 114));
         Ppie.setPreferredSize(new java.awt.Dimension(640, 114));
-        Ppie.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        Ppie.setLayout(null);
 
         cLabel8.setText("Imp. Lineas");
-        Ppie.add(cLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 3, 72, -1));
+        Ppie.add(cLabel8);
+        cLabel8.setBounds(2, 3, 72, 15);
 
         fvc_sumlinE.setEnabled(false);
-        Ppie.add(fvc_sumlinE, new org.netbeans.lib.awtextra.AbsoluteConstraints(78, 2, 75, -1));
+        Ppie.add(fvc_sumlinE);
+        fvc_sumlinE.setBounds(78, 2, 75, 17);
 
         cLabel9.setText("Dto. PP");
-        Ppie.add(cLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 3, -1, -1));
+        Ppie.add(cLabel9);
+        cLabel9.setBounds(175, 3, 38, 15);
 
         fvc_dtoppE.setEnabled(false);
-        Ppie.add(fvc_dtoppE, new org.netbeans.lib.awtextra.AbsoluteConstraints(217, 2, 34, -1));
+        Ppie.add(fvc_dtoppE);
+        fvc_dtoppE.setBounds(217, 2, 34, 17);
 
         fvc_impdppE.setBackground(java.awt.Color.orange);
         fvc_impdppE.setEnabled(false);
-        Ppie.add(fvc_impdppE, new org.netbeans.lib.awtextra.AbsoluteConstraints(257, 2, 65, -1));
+        Ppie.add(fvc_impdppE);
+        fvc_impdppE.setBounds(257, 2, 65, 17);
 
         cLabel10.setText("Dto. Comercial");
-        Ppie.add(cLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(335, 3, -1, -1));
+        Ppie.add(cLabel10);
+        cLabel10.setBounds(335, 3, 80, 15);
 
         fvc_dtocomE.setEnabled(false);
-        Ppie.add(fvc_dtocomE, new org.netbeans.lib.awtextra.AbsoluteConstraints(419, 2, 34, -1));
+        Ppie.add(fvc_dtocomE);
+        fvc_dtocomE.setBounds(419, 2, 34, 17);
 
         fvc_impdcoE.setBackground(java.awt.Color.orange);
         fvc_impdcoE.setEnabled(false);
-        Ppie.add(fvc_impdcoE, new org.netbeans.lib.awtextra.AbsoluteConstraints(459, 2, 65, -1));
+        Ppie.add(fvc_impdcoE);
+        fvc_impdcoE.setBounds(459, 2, 65, 17);
 
         cLabel11.setText("B.Imponible");
-        Ppie.add(cLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 22, 72, -1));
+        Ppie.add(cLabel11);
+        cLabel11.setBounds(2, 22, 72, 15);
 
         fvc_basimpE.setEnabled(false);
-        Ppie.add(fvc_basimpE, new org.netbeans.lib.awtextra.AbsoluteConstraints(78, 21, 75, -1));
+        Ppie.add(fvc_basimpE);
+        fvc_basimpE.setBounds(78, 21, 75, 17);
 
         cLabel12.setText("IVA");
-        Ppie.add(cLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 22, 38, -1));
+        Ppie.add(cLabel12);
+        cLabel12.setBounds(175, 22, 38, 15);
 
         fvc_porivaE.setEnabled(false);
-        Ppie.add(fvc_porivaE, new org.netbeans.lib.awtextra.AbsoluteConstraints(217, 21, 34, -1));
+        Ppie.add(fvc_porivaE);
+        fvc_porivaE.setBounds(217, 21, 34, 17);
 
         fvc_impivaE.setEnabled(false);
-        Ppie.add(fvc_impivaE, new org.netbeans.lib.awtextra.AbsoluteConstraints(257, 21, 65, -1));
+        Ppie.add(fvc_impivaE);
+        fvc_impivaE.setBounds(257, 21, 65, 17);
 
         cLabel13.setText("Recargo Equiv.");
-        Ppie.add(cLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(335, 22, -1, -1));
+        Ppie.add(cLabel13);
+        cLabel13.setBounds(335, 22, 80, 15);
 
         fvc_porreqE.setEnabled(false);
-        Ppie.add(fvc_porreqE, new org.netbeans.lib.awtextra.AbsoluteConstraints(419, 21, 34, -1));
+        Ppie.add(fvc_porreqE);
+        fvc_porreqE.setBounds(419, 21, 34, 17);
 
         fvc_imprecE.setEnabled(false);
-        Ppie.add(fvc_imprecE, new org.netbeans.lib.awtextra.AbsoluteConstraints(459, 21, 65, -1));
+        Ppie.add(fvc_imprecE);
+        fvc_imprecE.setBounds(459, 21, 65, 17);
 
         cLabel14.setText("Imp. Factura");
-        Ppie.add(cLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 44, -1, -1));
-        Ppie.add(fvc_sumtotE, new org.netbeans.lib.awtextra.AbsoluteConstraints(78, 42, 75, -1));
+        Ppie.add(cLabel14);
+        cLabel14.setBounds(2, 44, 67, 15);
+        Ppie.add(fvc_sumtotE);
+        fvc_sumtotE.setBounds(78, 42, 75, 17);
 
         cLabel15.setText("Tot.Cobr");
-        Ppie.add(cLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 63, 67, 17));
+        Ppie.add(cLabel15);
+        cLabel15.setBounds(2, 63, 67, 17);
 
         fvc_cobradE.setEnabled(false);
-        Ppie.add(fvc_cobradE, new org.netbeans.lib.awtextra.AbsoluteConstraints(78, 63, 75, 17));
+        Ppie.add(fvc_cobradE);
+        fvc_cobradE.setBounds(78, 63, 75, 17);
 
         cLabel16.setText("Contabil.");
-        Ppie.add(cLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 63, 56, 17));
+        Ppie.add(cLabel16);
+        cLabel16.setBounds(175, 63, 56, 17);
 
         fvc_traspE.setEnabled(false);
-        Ppie.add(fvc_traspE, new org.netbeans.lib.awtextra.AbsoluteConstraints(235, 63, 46, 17));
+        Ppie.add(fvc_traspE);
+        fvc_traspE.setBounds(235, 63, 46, 17);
 
         cLabel17.setText("Imp.Cobrado");
-        Ppie.add(cLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 45, -1, -1));
+        Ppie.add(cLabel17);
+        cLabel17.setBounds(175, 45, 71, 15);
 
         fvc_impcobE.setEnabled(false);
-        Ppie.add(fvc_impcobE, new org.netbeans.lib.awtextra.AbsoluteConstraints(254, 44, 75, -1));
+        Ppie.add(fvc_impcobE);
+        fvc_impcobE.setBounds(254, 44, 75, 17);
 
         cLabel18.setText("F.Pago");
-        Ppie.add(cLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(285, 63, 39, 17));
-        Ppie.add(fpa_codiE, new org.netbeans.lib.awtextra.AbsoluteConstraints(335, 63, -1, -1));
+        Ppie.add(cLabel18);
+        cLabel18.setBounds(285, 63, 39, 17);
+        Ppie.add(fpa_codiE);
+        fpa_codiE.setBounds(335, 63, 261, 17);
 
         Brecalc.setText("Recalc");
-        Ppie.add(Brecalc, new org.netbeans.lib.awtextra.AbsoluteConstraints(454, 40, 77, 22));
+        Ppie.add(Brecalc);
+        Brecalc.setBounds(454, 40, 77, 22);
 
         opAgrlin.setSelected(true);
         opAgrlin.setText("Agr. Lineas");
         opAgrlin.setMaximumSize(new java.awt.Dimension(90, 18));
         opAgrlin.setMinimumSize(new java.awt.Dimension(90, 18));
-        Ppie.add(opAgrlin, new org.netbeans.lib.awtextra.AbsoluteConstraints(335, 42, 113, 18));
+        Ppie.add(opAgrlin);
+        opAgrlin.setBounds(335, 42, 113, 18);
 
         Baceptar.setText("Aceptar");
-        Ppie.add(Baceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 81, 105, 28));
+        Ppie.add(Baceptar);
+        Baceptar.setBounds(175, 81, 105, 28);
 
         Bcancelar.setText("Cancelar");
-        Ppie.add(Bcancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 81, 105, 28));
+        Ppie.add(Bcancelar);
+        Bcancelar.setBounds(300, 81, 105, 28);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1327,6 +1357,15 @@ public class PadFactur extends ventanaPad   implements PAD {
       dtAdd.setDato("fvc_basimp", impBim);
       dtAdd.setDato("fvc_imprec", impReq);
       dtAdd.setDato("fvc_impiva", impIva);
+      if (fvc_sumtotE.hasCambio())
+      {
+          if (Math.abs(fvc_sumtotE.getValorDec() - (impBim + impReq + impIva)) > 1) 
+          {
+              msgBox("Importe de la factura NO debe diferir en mas de uno");
+              this.setEnabled(true);
+              return;
+          }
+      }       
       dtAdd.setDato("fvc_sumtot", fvc_sumtotE.hasCambio()?fvc_sumtotE.getValorDec(): impBim + impReq + impIva);
       dtAdd.update(stUp);
 // Actualizar Lineas de Comentarios
