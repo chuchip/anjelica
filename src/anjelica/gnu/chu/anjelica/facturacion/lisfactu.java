@@ -28,7 +28,7 @@ import net.sf.jasperreports.engine.*;
  *
  * <p>Titulo: lisfactu</p> 
  * <p>Descripción: Listado Facturas de Ventas</p>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -195,7 +195,7 @@ public class lisfactu extends ventana  implements JRDataSource
  {
    iniciarFrame();
    this.setSize(new Dimension(600, 539));
-   setVersion("2015-16-04");
+   setVersion("2015-02-05");
 
    titledBorder2 = new TitledBorder("");
    Princ.setLayout(gridBagLayout1);
@@ -434,6 +434,7 @@ public class lisfactu extends ventana  implements JRDataSource
  void activarEventos()
  {
    Baceptar.addActionListener(new ActionListener() {
+     @Override
      public void actionPerformed(ActionEvent e) {
 
          Baceptar_actionPerformed(e.getActionCommand());
@@ -441,6 +442,7 @@ public class lisfactu extends ventana  implements JRDataSource
    });
    BConsul.addActionListener(new ActionListener()
    {
+     @Override
      public void actionPerformed(ActionEvent e)
      {
        BConsul_actionPerformed();
@@ -652,16 +654,11 @@ public class lisfactu extends ventana  implements JRDataSource
  }
  void enviarMail()
  {
-//    if (cli_codiE.isNull() || cli_codiE1.isNull())
-//    {
-//        msgBox("Cliente origen y final no debe ser nulo");
-//        return;
-//    }
-//        if (cli_codiE.getValorInt() != cli_codiE1.getValorInt())
-//    {
-//        msgBox("Introduzca Cliente origen igual a cliente final");
-//        return;
-//    }
+    if (! opAgrupa.isSelected())
+    {
+        if (mensajes.mensajePreguntar("Enviar por email factura con las lineas sin agrupar")!=mensajes.YES)
+            return;
+    }
 
     try {
         if (ifMail == null) {
@@ -1223,13 +1220,12 @@ private String buscaBanco(int banCodi) throws SQLException
            campo.equals("fvc_ano"))
          return dtCon1.getInt(campo);
        if (campo.equals("fvc_dtocom") ||
-           campo.equals("fvc_dtootr"))
+           campo.equals("fvc_dtootr") || campo.equals("fvc_sumtot"))
          return dtCon1.getDouble(campo);
        if (campo.equals("fvc_fecfra"))
          return rs.getDate(campo);
 
-       if (campo.equals("fvc_sumtot") ||
-           campo.equals("fvc_impbru") ||      
+       if ( campo.equals("fvc_impbru") ||      
            campo.equals("fvc_basimp") ||
            campo.equals("fvc_impiva") ||
            campo.equals("fvc_tipiva") ||
@@ -1237,6 +1233,7 @@ private String buscaBanco(int banCodi) throws SQLException
            campo.equals("fvc_impree") ||
            campo.equals("fvc_impfra"))
          return (Double) htCab.get(jRField.getName());
+       
        if (campo.equals("fvc_dtos"))
            return (double)htCab.get("fvc_dtopp")+(double)htCab.get("fvc_dtoco");
        if (campo.equals("fvc_impdto"))

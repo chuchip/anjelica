@@ -144,7 +144,7 @@ public class PadFactur extends ventanaPad   implements PAD {
        
         iniciarFrame();
 
-        this.setVersion("2015-04-23" + (MOD_CONS ? "SOLO LECTURA" : ""));
+        this.setVersion("2015-05-02" + (MOD_CONS ? "SOLO LECTURA" : ""));
         strSql = getStrSql();
         IMPFRATEXTO=EU.getValorParam("impFraTexto",IMPFRATEXTO);
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -397,14 +397,14 @@ public class PadFactur extends ventanaPad   implements PAD {
                         .add(cLabel20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 136, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(153, 153, 153)
                         .add(BrecCobr, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 158, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         PcobrosLayout.setVerticalGroup(
             PcobrosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(PcobrosLayout.createSequentialGroup()
                 .add(cLabel19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(22, 22, 22)
-                .add(jtCobr, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                .add(jtCobr, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(PcobrosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(BrecCobr, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -480,221 +480,105 @@ public class PadFactur extends ventanaPad   implements PAD {
         Pprinc.add(Ptab, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        Ppie.setPreferredSize(new java.awt.Dimension(623, 114));
+        Ppie.setMinimumSize(new java.awt.Dimension(640, 114));
+        Ppie.setPreferredSize(new java.awt.Dimension(640, 114));
+        Ppie.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         cLabel8.setText("Imp. Lineas");
+        Ppie.add(cLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 3, 72, -1));
 
         fvc_sumlinE.setEnabled(false);
+        Ppie.add(fvc_sumlinE, new org.netbeans.lib.awtextra.AbsoluteConstraints(78, 2, 75, -1));
 
         cLabel9.setText("Dto. PP");
+        Ppie.add(cLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 3, -1, -1));
 
         fvc_dtoppE.setEnabled(false);
+        Ppie.add(fvc_dtoppE, new org.netbeans.lib.awtextra.AbsoluteConstraints(217, 2, 34, -1));
 
         fvc_impdppE.setBackground(java.awt.Color.orange);
         fvc_impdppE.setEnabled(false);
+        Ppie.add(fvc_impdppE, new org.netbeans.lib.awtextra.AbsoluteConstraints(257, 2, 65, -1));
 
         cLabel10.setText("Dto. Comercial");
+        Ppie.add(cLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(335, 3, -1, -1));
 
         fvc_dtocomE.setEnabled(false);
+        Ppie.add(fvc_dtocomE, new org.netbeans.lib.awtextra.AbsoluteConstraints(419, 2, 34, -1));
 
         fvc_impdcoE.setBackground(java.awt.Color.orange);
         fvc_impdcoE.setEnabled(false);
+        Ppie.add(fvc_impdcoE, new org.netbeans.lib.awtextra.AbsoluteConstraints(459, 2, 65, -1));
 
         cLabel11.setText("B.Imponible");
+        Ppie.add(cLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 22, 72, -1));
 
         fvc_basimpE.setEnabled(false);
+        Ppie.add(fvc_basimpE, new org.netbeans.lib.awtextra.AbsoluteConstraints(78, 21, 75, -1));
 
         cLabel12.setText("IVA");
+        Ppie.add(cLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 22, 38, -1));
 
         fvc_porivaE.setEnabled(false);
+        Ppie.add(fvc_porivaE, new org.netbeans.lib.awtextra.AbsoluteConstraints(217, 21, 34, -1));
 
         fvc_impivaE.setEnabled(false);
+        Ppie.add(fvc_impivaE, new org.netbeans.lib.awtextra.AbsoluteConstraints(257, 21, 65, -1));
 
         cLabel13.setText("Recargo Equiv.");
+        Ppie.add(cLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(335, 22, -1, -1));
 
         fvc_porreqE.setEnabled(false);
+        Ppie.add(fvc_porreqE, new org.netbeans.lib.awtextra.AbsoluteConstraints(419, 21, 34, -1));
 
         fvc_imprecE.setEnabled(false);
+        Ppie.add(fvc_imprecE, new org.netbeans.lib.awtextra.AbsoluteConstraints(459, 21, 65, -1));
 
         cLabel14.setText("Imp. Factura");
-
-        fvc_sumtotE.setEditable(false);
-        fvc_sumtotE.setBackground(java.awt.Color.cyan);
-        fvc_sumtotE.setForeground(java.awt.Color.white);
-        fvc_sumtotE.setEnabledParent(false);
+        Ppie.add(cLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 44, -1, -1));
+        Ppie.add(fvc_sumtotE, new org.netbeans.lib.awtextra.AbsoluteConstraints(78, 42, 75, -1));
 
         cLabel15.setText("Tot.Cobr");
+        Ppie.add(cLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 63, 67, 17));
 
         fvc_cobradE.setEnabled(false);
+        Ppie.add(fvc_cobradE, new org.netbeans.lib.awtextra.AbsoluteConstraints(78, 63, 75, 17));
 
         cLabel16.setText("Contabil.");
+        Ppie.add(cLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 63, 56, 17));
 
         fvc_traspE.setEnabled(false);
+        Ppie.add(fvc_traspE, new org.netbeans.lib.awtextra.AbsoluteConstraints(235, 63, 46, 17));
 
         cLabel17.setText("Imp.Cobrado");
+        Ppie.add(cLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 45, -1, -1));
 
         fvc_impcobE.setEnabled(false);
+        Ppie.add(fvc_impcobE, new org.netbeans.lib.awtextra.AbsoluteConstraints(254, 44, 75, -1));
 
         cLabel18.setText("F.Pago");
+        Ppie.add(cLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(285, 63, 39, 17));
+        Ppie.add(fpa_codiE, new org.netbeans.lib.awtextra.AbsoluteConstraints(335, 63, -1, -1));
 
         Brecalc.setText("Recalc");
+        Ppie.add(Brecalc, new org.netbeans.lib.awtextra.AbsoluteConstraints(454, 40, 77, 22));
 
         opAgrlin.setSelected(true);
         opAgrlin.setText("Agr. Lineas");
         opAgrlin.setMaximumSize(new java.awt.Dimension(90, 18));
         opAgrlin.setMinimumSize(new java.awt.Dimension(90, 18));
+        Ppie.add(opAgrlin, new org.netbeans.lib.awtextra.AbsoluteConstraints(335, 42, 113, 18));
 
         Baceptar.setText("Aceptar");
+        Ppie.add(Baceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 81, 105, 28));
 
         Bcancelar.setText("Cancelar");
-
-        org.jdesktop.layout.GroupLayout PpieLayout = new org.jdesktop.layout.GroupLayout(Ppie);
-        Ppie.setLayout(PpieLayout);
-        PpieLayout.setHorizontalGroup(
-            PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PpieLayout.createSequentialGroup()
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(cLabel14, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(cLabel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 72, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(cLabel15, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 67, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(cLabel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(fvc_sumlinE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 75, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(fvc_basimpE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 64, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(fvc_sumtotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 64, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(fvc_cobradE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 62, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(22, 22, 22)
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(Baceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(20, 20, 20)
-                        .add(Bcancelar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(PpieLayout.createSequentialGroup()
-                                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(cLabel9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(cLabel12, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                                    .add(org.jdesktop.layout.GroupLayout.TRAILING, fvc_dtoppE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-                                    .add(org.jdesktop.layout.GroupLayout.TRAILING, fvc_porivaE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(fvc_impivaE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 64, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(org.jdesktop.layout.GroupLayout.TRAILING, fvc_impdppE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 58, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, PpieLayout.createSequentialGroup()
-                                .add(cLabel17, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(8, 8, 8)
-                                .add(fvc_impcobE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 64, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(PpieLayout.createSequentialGroup()
-                                .add(cLabel16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(fvc_traspE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(cLabel18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 39, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(PpieLayout.createSequentialGroup()
-                                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(PpieLayout.createSequentialGroup()
-                                        .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                                            .add(cLabel13, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .add(cLabel10, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                        .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                            .add(PpieLayout.createSequentialGroup()
-                                                .add(fvc_dtocomE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                                .add(fvc_impdcoE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                                            .add(org.jdesktop.layout.GroupLayout.TRAILING, PpieLayout.createSequentialGroup()
-                                                .add(fvc_porreqE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 34, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                                .add(fvc_imprecE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 65, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                                    .add(org.jdesktop.layout.GroupLayout.TRAILING, PpieLayout.createSequentialGroup()
-                                        .add(opAgrlin, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                                        .add(Brecalc, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 77, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                                .add(85, 85, 85))
-                            .add(fpa_codiE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 253, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
-        );
-
-        PpieLayout.linkSize(new java.awt.Component[] {fvc_impdcoE, fvc_impdppE, fvc_impivaE, fvc_imprecE}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        PpieLayout.linkSize(new java.awt.Component[] {cLabel12, cLabel9}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        PpieLayout.linkSize(new java.awt.Component[] {cLabel11, cLabel8}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        PpieLayout.linkSize(new java.awt.Component[] {fvc_basimpE, fvc_cobradE, fvc_impcobE, fvc_sumlinE, fvc_sumtotE}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        PpieLayout.linkSize(new java.awt.Component[] {fvc_dtocomE, fvc_dtoppE, fvc_porreqE}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        PpieLayout.setVerticalGroup(
-            PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PpieLayout.createSequentialGroup()
-                .add(40, 40, 40)
-                .add(fvc_sumtotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(PpieLayout.createSequentialGroup()
-                .add(42, 42, 42)
-                .add(cLabel14, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(PpieLayout.createSequentialGroup()
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                .add(fvc_dtoppE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(cLabel9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(fvc_impdppE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(cLabel10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(fvc_dtocomE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(fvc_impdcoE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                .add(cLabel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(fvc_sumlinE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                        .add(2, 2, 2)
-                        .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                .add(fvc_porivaE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(fvc_impivaE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(cLabel13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(fvc_porreqE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(fvc_imprecE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(cLabel12, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                .add(cLabel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(fvc_basimpE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                        .add(2, 2, 2)
-                        .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(opAgrlin, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(Brecalc, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(1, 1, 1)
-                        .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(fpa_codiE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(fvc_cobradE, 0, 0, Short.MAX_VALUE)
-                            .add(cLabel15, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(fvc_traspE, 0, 0, Short.MAX_VALUE)
-                            .add(cLabel16, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(cLabel18, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(42, 42, 42)
-                        .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(cLabel17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(fvc_impcobE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .add(1, 1, 1)
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(Bcancelar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(Baceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-        );
-
-        PpieLayout.linkSize(new java.awt.Component[] {Baceptar, Bcancelar}, org.jdesktop.layout.GroupLayout.VERTICAL);
+        Ppie.add(Bcancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 81, 105, 28));
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 10, 10, 2);
         Pprinc.add(Ppie, gridBagConstraints);
 
@@ -808,6 +692,7 @@ public class PadFactur extends ventanaPad   implements PAD {
  {
  
    Pcabe.setButton(KeyEvent.VK_F4, Baceptar);
+   Ppie.setButton(KeyEvent.VK_F4, Baceptar);
    datCab = new actCabAlbFra(dtCon1, dtAdd,EU.em_cod,numDecPrecio);
   
    cli_codiE.setColumnaAlias("cli_codi");
@@ -836,6 +721,7 @@ public class PadFactur extends ventanaPad   implements PAD {
  {
    BrecCobr.addActionListener(new ActionListener()
    {
+     @Override
      public void actionPerformed(ActionEvent e)
      {
         BrecalcCobros_actionPerformed();
@@ -1356,6 +1242,8 @@ public class PadFactur extends ventanaPad   implements PAD {
       Bprint.setEnabled(false);
 
       mensaje("Modificando la Factura ....");
+      fvc_sumtotE.resetCambio();
+      fvc_sumtotE.setEnabled(true);
       fvc_modifE.setValor("M");
       fvc_fecfraE.requestFocus();
       cli_codiE.getCliNomb().setEnabled(cli_codiE.getLikeCliente().getInt("cli_gener") != 0);
@@ -1367,6 +1255,7 @@ public class PadFactur extends ventanaPad   implements PAD {
 
   }
 
+  @Override
   public boolean checkEdit()
   {
     try {
@@ -1388,7 +1277,7 @@ public class PadFactur extends ventanaPad   implements PAD {
         mensajeErr(fpa_codiE.getMsgError());
         return false;
       }
-    } catch (Exception k)
+    } catch (SQLException | ParseException k)
     {
       Error("Error al comprobar valores de factura",k);
       return false;
@@ -1396,6 +1285,7 @@ public class PadFactur extends ventanaPad   implements PAD {
     return true;
   }
 
+  @Override
   public void ej_edit1()
   {
     this.setEnabled(false);
@@ -1437,7 +1327,7 @@ public class PadFactur extends ventanaPad   implements PAD {
       dtAdd.setDato("fvc_basimp", impBim);
       dtAdd.setDato("fvc_imprec", impReq);
       dtAdd.setDato("fvc_impiva", impIva);
-      dtAdd.setDato("fvc_sumtot", impBim + impReq + impIva);
+      dtAdd.setDato("fvc_sumtot", fvc_sumtotE.hasCambio()?fvc_sumtotE.getValorDec(): impBim + impReq + impIva);
       dtAdd.update(stUp);
 // Actualizar Lineas de Comentarios
        // jtComCa.salirFoco();
@@ -1737,6 +1627,7 @@ public class PadFactur extends ventanaPad   implements PAD {
     nav.pulsado = navegador.NINGUNO;
   }
 
+  @Override
   public void activar(boolean b)
   {
     activar(b, navegador.TODOS);
@@ -1746,7 +1637,7 @@ public class PadFactur extends ventanaPad   implements PAD {
     fvc_fecfraE.setEnabled(b);
     fvc_dtoppE.setEnabled(b);
     fvc_dtocomE.setEnabled(b);
-
+    fvc_sumtotE.setEnabled(b);
     fvc_modifE.setEnabled(b);
     fpa_codiE.setEnabled(b);
     Baceptar.setEnabled(b);
@@ -1765,7 +1656,7 @@ public class PadFactur extends ventanaPad   implements PAD {
     fvc_numeE.setEnabled(b);
     fvc_impcobE.setEnabled(b);
     fvc_basimpE.setEnabled(b);
-    fvc_sumtotE.setEnabled(b);
+//    fvc_sumtotE.setEnabled(b);
     fvc_sumlinE.setEnabled(b);
     fvc_impivaE.setEnabled(b);
     fvc_imprecE.setEnabled(b);
