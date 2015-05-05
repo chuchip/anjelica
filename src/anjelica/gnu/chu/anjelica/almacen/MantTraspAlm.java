@@ -83,7 +83,8 @@ public class MantTraspAlm extends ventanaPad implements PAD
   private final static int JT_INDI=5;
   private final static int JT_PESO=6;
   private final static int JT_UNID=7;
-  private final static int JT_INSER=8;
+  private final static int JT_NUMPAL=8;
+  private final static int JT_INSER=9;
   private String s;
   private ActualStkPart stkPart;
   JFileChooser ficeleE=null;
@@ -151,7 +152,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                     Boolean.parseBoolean(ht.get("admin"));
     }
     private void jbInit() throws Exception {      
-        setVersion("2015-03-31 "+ (ARG_ADMIN?"ADMIN":""));
+        setVersion("2015-05-02 "+ (ARG_ADMIN?"ADMIN":""));
   
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
@@ -230,6 +231,8 @@ public class MantTraspAlm extends ventanaPad implements PAD
         avc_numeE.setColumnaAlias("avc_nume");       
         avc_fecalbE.setColumnaAlias("avc_fecalb");
         usu_nombE.setColumnaAlias("usu_nomb");
+        alm_codioE.setColumnaAlias("alm_codori");
+        alm_codifE.setColumnaAlias("alm_coddes");
         activarEventos();
         navActivarAll();    
         verDatos(dtCons);
@@ -741,6 +744,8 @@ public class MantTraspAlm extends ventanaPad implements PAD
         v.add(avc_numeE.getStrQuery());       
         v.add(avc_fecalbE.getStrQuery());
         v.add(usu_nombE.getStrQuery());
+        v.add(alm_codioE.getStrQuery());
+        v.add(alm_codifE.getStrQuery());
         s = creaWhere(getStrSql(), v, false);
         s += getOrderQuery();
 //       debug("Query: "+s);
@@ -959,7 +964,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
             avc_numeE.setValorInt(dt.getInt("avc_nume"));
             s="select p.pro_nomb,a.pro_codi,a.avp_ejelot,a.avp_serlot,a.avp_numpar,avp_numind,"
                 + "avp_canti,avp_numuni,a.usu_nomb,a.alm_codori,a.alm_coddes, "
-                + " avc_fecalb "
+                + " avc_fecalb,avl_numpal "
                 + " from v_albventa_detalle as a left join v_articulo as p on a.pro_codi =p.pro_codi  WHERE a.emp_codi="+EU.em_cod+
                 " and avc_serie='X' and avc_ano ="+dt.getInt("avc_ano")+
                 " and avc_nume = "+dt.getInt("avc_nume");            
@@ -985,6 +990,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                 v.add(dtCon1.getInt("avp_numind")); // 5
                 v.add(dtCon1.getDouble("avp_canti")); // 6
                 v.add(dtCon1.getInt("avp_numuni")); // 7
+                v.add(dtCon1.getInt("avl_numpal")); // 8
                 v.add("S"); // 8
                 jt.addLinea(v);
             } while (dtCon1.next());
@@ -1074,6 +1080,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         pro_indfinE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
         Bcancelar1 = new gnu.chu.controles.CButton(Iconos.getImageIcon("cancel"));
         Baceptar1 = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
+        avl_numpalE = new gnu.chu.controles.CTextField(Types.DECIMAL, "##9");
         Pinic = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -1088,7 +1095,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         BirGrid = new gnu.chu.controles.CButton();
         cLabel5 = new gnu.chu.controles.CLabel();
         usu_nombE = new gnu.chu.controles.CTextField();
-        jt = new gnu.chu.controles.CGridEditable(9){
+        jt = new gnu.chu.controles.CGridEditable(10){
             @Override
             public int cambiaLinea(int row, int col)
             {
@@ -1243,13 +1250,13 @@ public class MantTraspAlm extends ventanaPad implements PAD
         v.add("Indiv"); // 5
         v.add("Peso"); // 6
         v.add("Unid."); // 7
-        v.add("NL"); // 8
+        v.add("Palet"); // 8
+        v.add("NL"); // 9
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]    {60,120,40,40,60,30, 50,40, 40});
-        jt.setAlinearColumna(new int[] {2,0,2,1,2,2, 2,2, 1});
+        jt.setAnchoColumna(new int[]    {60,120,40,40,60,30, 50,40, 50,40});
+        jt.setAlinearColumna(new int[] {2,0,2,1,2,2, 2,2,2, 1});
         jt.setFormatoColumna(JT_INSER, "BSN");
-        jt.setFormatoColumna(JT_PESO,"#,##9.99");
-        jt.setFormatoColumna(JT_UNID,"##9");
+
         jt.resetRenderer(JT_INSER);
 
         linselE.setEnabled(false);
@@ -1263,9 +1270,11 @@ public class MantTraspAlm extends ventanaPad implements PAD
             vc1.add(pro_loteE); // 4
             vc1.add(pro_numindE); // 5
             vc1.add(deo_kilosE); // 6
+            vc1.add(avl_numpalE); // 7
             vc1.add(deo_unidE); // 7
             vc1.add(linselE); // 8
             jt.setCampos(vc1);
+            jt.setFormatoCampos();
         } catch (Exception k){Error("Error al cargar campos en grid",k);}
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1346,6 +1355,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField avc_anoE;
     private gnu.chu.controles.CTextField avc_fecalbE;
     private gnu.chu.controles.CTextField avc_numeE;
+    private gnu.chu.controles.CTextField avl_numpalE;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
@@ -1557,6 +1567,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         dtCon1.setDato("pro_nomb", jt.getValString(n, JT_NOMBR));
         dtCon1.setDato("alm_codi", alm_codifE.getValor());
         dtCon1.setDato("avl_canti", jt.getValorDec(n, JT_PESO));
+        dtCon1.setDato("avl_numpal",jt.getValorInt(n,JT_NUMPAL));
         dtCon1.setDato("avc_cerra",-1);
 //        dtCon1.setDato("avl_fecalt","{ts '"+Formatear.getFecha(avc_fecalbE.getDate(),"yyyy-MM-dd")+ " 01:01:01'}");
         if (fecAlta==null)
