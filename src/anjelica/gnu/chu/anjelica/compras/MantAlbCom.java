@@ -2096,16 +2096,16 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         mensajeErr("PROVEEDOR NO ESTA MARCADO COMO INTERNO. SE DEBE UTILIZAR LA SERIE Y");
         prv_codiE.requestFocus();
         return false;
-      }
+      } 
       if (avc_anoE.getValorInt()==0)
       {
-        mensajeErr("Introduzca el a�o del Albaran de Venta");
+        mensajeErr("Introduzca el año del Albaran de Venta");
         avc_anoE.requestFocus();
         return false;
       }
       if (avc_numeE.getValorInt() == 0)
       {
-        mensajeErr("Introduzca el N�mero del Albaran de Venta");
+        mensajeErr("Introduzca el Número del Albaran de Venta");
         avc_anoE.requestFocus();
         return false;
       }
@@ -2758,6 +2758,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     emp_codiE.setEnabled(false);
     acc_obserE.setEnabled(false);
     pcc_numeE.setEnabled(false);
+    BbusPed.setEnabled(false);
     eje_numeE.setEnabled(false);
     prv_codiE.setEnabled(false);
     avc_numeE.setEnabled(false);
@@ -3312,6 +3313,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       avc_anoE.setEnabled(false);
       avc_numeE.setEnabled(false);
       pcc_numeE.setEnabled(false);
+      BbusPed.setEnabled(false);
       if (ARG_MODPRECIO)
         acc_totfraE.setEnabled(true);
 //      alm_codiE.setEnabled(false);
@@ -3801,6 +3803,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     sbe_codiE.setEnabled(b);
     eje_numeE.setEnabled(b);
     pcc_numeE.setEnabled(b);
+    BbusPed.setEnabled(b);
     cll_codiE.setEnabled(b);
     jt.setEnabled(b);
     if (!b)

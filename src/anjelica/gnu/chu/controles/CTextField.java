@@ -869,6 +869,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
              super.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
  }
 
+  @Override
   public void setEnabledParent(boolean enab)
   {
     if (! dependePadre)

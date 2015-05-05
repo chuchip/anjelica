@@ -512,6 +512,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
         java.util.HashMap mp = new java.util.HashMap();
     
          mp.put("emp_nomb",EU.lkEmpresa.getString("emp_nomb"));
+         mp.put("emp_dirweb",EU.lkEmpresa.getString("emp_dirweb"));
          mp.put("emp_dire",EU.lkEmpresa.getString("emp_dire")+" "+
             EU.lkEmpresa.getString("emp_codpo")+ " "+EU.lkEmpresa.getString("emp_pobl"));
       

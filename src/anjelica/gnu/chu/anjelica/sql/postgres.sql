@@ -1896,6 +1896,7 @@ create table anjelica.v_empresa
  emp_desspr varchar(50), -- Destino Subproductos
  emp_codedi varchar(17), -- Codigo EDI
  emp_regmer varchar(70), -- Registro Mercantil
+ emp_dirweb varchar(100), -- Direccion web de la empresa 
  primary key (emp_codi)
 );
 INSERT INTO v_empresa VALUES (1, 'Anjelica, S.L.', 'C/ SOFTWARE LIBRE', 'LOGRO�O', 26006, '555-12345', '555-54321', 'Z12345', 91, NULL, '', '12345/LO', '0', 11, '', '', '', '', 'S.L. FOR PRESIDENT', '', '', '', 16, 26, 1, 1, '', '', '');
