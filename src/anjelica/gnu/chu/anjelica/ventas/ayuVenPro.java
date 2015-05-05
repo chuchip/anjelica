@@ -187,7 +187,7 @@ public class ayuVenPro extends ventana
     pro_nombL.setText(proNomb);
     s="select  c.avc_fecalb,l.emp_codi,l.avc_ano,l.avc_serie,l.avc_nume,"+
         " sum(l.avl_canti) as avl_canti,sum(l.avl_unid) as avl_unid, "+
-        " l.avl_prven, sum(l.avl_prven*l.avl_canti) as avl_impor from v_albavec c,v_albavel l where  "+
+        " l.avl_prbase, sum(l.avl_prbase*l.avl_canti) as avl_impor from v_albavec c,v_albavel l where  "+
         " c.cli_codi = "+cliCodi+
         " AND l.avc_ano = c.avc_ano " +
         " and l.emp_Codi = c.emp_codi" +
@@ -195,7 +195,7 @@ public class ayuVenPro extends ventana
         " and l.avc_nume = c.avc_nume " +
         " and l.pro_codi = "+proCodi +
         (eu.isRootAV()?"":" and c.div_codi > 0 ")+
-        " group by c.avc_fecalb,l.emp_codi,l.avc_ano,l.avc_serie,l.avc_nume,l.avl_prven "+
+        " group by c.avc_fecalb,l.emp_codi,l.avc_ano,l.avc_serie,l.avc_nume,l.avl_prbase "+
         " order by c.avc_fecalb desc";
     jt.removeAllDatos();
     if (! dt.select(s))

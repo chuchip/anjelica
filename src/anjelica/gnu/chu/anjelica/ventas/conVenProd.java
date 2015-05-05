@@ -16,9 +16,9 @@ import javax.swing.*;
  * <p>Título: conVenProd</p>
  * <p>Descripción: Permite Consultar las Ventas por Productos y desglosar
  * luego los clientes que han comprado ese producto.</p>
- * <p>Copyright: Copyright (c) 2005-2011
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
- *  los terminos de la Licencia Pública General de GNU seg�n es publicada por
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
  *  o bien (según su elección) de cualquier versión posterior.
  *  Este programa se distribuye con la esperanza de que sea útil,
@@ -127,7 +127,7 @@ public class conVenProd  extends ventana
    private void jbInit() throws Exception
    {
      iniciarFrame();
-     this.setVersion("2013-02-11");
+     this.setVersion("2015-05-05");
      this.setSize(new Dimension(590,446));
      Pprinc.setLayout(gridBagLayout1);
 
@@ -336,7 +336,7 @@ public class conVenProd  extends ventana
          zonCodi = zonCodi.replace('*', '%');
        char grupo=grupoE.getValor().charAt(0);
        condWhere=", sum(l.avl_canti) as kilos, " +
-             " sum(l.avl_canti*l.avl_prven)  as importe" +
+             " sum(l.avl_canti*l.avl_prbase)  as importe" +
              " from v_albventa as l,clientes AS cl, v_articulo as a "
            + (grupo=='F'?", v_famipro as f ":"")+
              (grupo=='G'?", v_agupro as g,grufampro as gf ":"") +

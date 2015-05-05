@@ -376,7 +376,7 @@ public class CLHistVentas extends ventana {
   void actualDatosPV(Date fecIni,Date fecFin) throws SQLException
   {
      s= "select sum(avl_canti) as avc_kilos," +
-               " sum(avl_canti* avl_prven) as avc_basimp " +
+               " sum(avl_canti* avl_prbase) as avc_basimp " +
              " from v_albventa as c, v_articulo as a " +
              " where c.avc_serie >='A' and c.avc_serie <='C' "+
              " and c.pro_codi = a.pro_codi "+

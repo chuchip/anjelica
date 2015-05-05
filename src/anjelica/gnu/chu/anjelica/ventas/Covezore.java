@@ -7,7 +7,7 @@ package gnu.chu.anjelica.ventas;
  * <p>Puede recibir como parametros:
  * repr Representante
  * sbeCodi Seccion Empresa</p>
-* <p>Copyright: Copyright (c) 2005-2013
+* <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -919,7 +919,7 @@ void busVenZona()
              " group by c.sbe_codi,cl.rep_codi,cl.zon_codi "+
              " order by c.sbe_codi,cl.rep_codi,cl.zon_codi";
         return "select sum(avl_canti) as avc_kilos," +
-               " sum(avl_canti* avl_prven) as avc_basimp, count (distinct c.emp_codi + avc_ano +avc_nume || avc_serie) as numalb,"
+               " sum(avl_canti* avl_prbase) as avc_basimp, count (distinct c.emp_codi + avc_ano +avc_nume || avc_serie) as numalb,"
              + "count (distinct c.cli_codi) as cliCodiD," +
                " cl.zon_codi,cl.rep_codi,c.sbe_codi " +
              " from v_albventa  c, clientes cl, v_articulo as ar " +

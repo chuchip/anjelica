@@ -15,7 +15,7 @@ import net.sf.jasperreports.engine.*;
  *
  * <p>T�tulo: clvenart </p>
  * <p>Descripción: Consulta/Listado Ventas por Cliente y Articulo</p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -98,7 +98,7 @@ public class clvenart extends ventana implements  JRDataSource
    {
      iniciarFrame();
      this.setSize(new Dimension(602, 533));
-     this.setVersion("2010-11-15");
+     this.setVersion("2015-05-02");
     statusBar = new StatusBar(this);
     conecta();
     Pprinc.setLayout(gridBagLayout1);
@@ -370,7 +370,7 @@ public class clvenart extends ventana implements  JRDataSource
   {
     String s="SELECT "+(tipoListE.getValor().equals("C")?"a.cli_codi,":"")+
         "l.pro_codi,p.pro_nomb,sum(avl_canti) as avl_canti,"+
-        " sum(avl_unid) as avl_unid,sum(avl_prven*avl_canti) as importe ";
+        " sum(avl_unid) as avl_unid,sum(avl_prbase*avl_canti) as importe ";
     if (agrupadoE.getValor().equals("F"))
       s+=", a.avc_fecalb ";
     if (agrupadoE.getValor().equals("A"))

@@ -148,7 +148,7 @@ public class AlbClienComp   extends ventana {
       char grupo=grupoE.getValor().charAt(0);
       String s1="",s2="";
       String condWhere=", sum(l.avl_canti) as kilos, " +
-             " sum(l.avl_canti*l.avl_prven)  as importe" +
+             " sum(l.avl_canti*l.avl_prbase)  as importe" +
              " from v_albventa as l,clientes AS cl, v_articulo as a "
            + (grupo=='F'?", v_famipro as f ":"")+
              (grupo=='G'?", v_agupro as g,grufampro as gf ":"") +

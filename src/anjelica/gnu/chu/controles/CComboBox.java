@@ -50,7 +50,7 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   String formato="";
   boolean query=false;
   boolean depPadre=true;
-  private String copia = "";
+  private String copia = "",copiaValor="";
 
   List<String> indice = new ArrayList<>();
 
@@ -487,13 +487,14 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   public void resetCambio()
   {
     copia=getText();
+    copiaValor=getValor();
   }
   
   /**
   * Retorna el indice Anterior
   * @return String
   */
-  public String getValorOld() { return copia; };
+  public String getValorOld() { return copiaValor; };
   
   public void setTextInicio()
   {

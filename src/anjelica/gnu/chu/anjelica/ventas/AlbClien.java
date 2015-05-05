@@ -155,12 +155,12 @@ public class AlbClien extends ventana {
                     proNomb = dtCon1.getString("pro_nomb");
                  v.add(dtCon1.getString("pro_codi"));
                  v.add(proNomb);
-                 v.add(""+Formatear.Redondea(dtCon1.getDouble("avl_canti",true), 2));
+                 v.add(""+Formatear.redondea(dtCon1.getDouble("avl_canti",true), 2));
                  v.add(dtCon1.getString("avl_unid"));
                  if (!verPrecios)
                     v.add("0");
                  else
-                    v.add(""+Formatear.Redondea(dtCon1.getDouble("avl_prven",true),3));
+                    v.add(""+Formatear.redondea(dtCon1.getDouble("avl_prven",true),3));
                  jtLin.addLinea(v);
              }  while (dtCon1.next());
              jtLin.requestFocus(0,0);

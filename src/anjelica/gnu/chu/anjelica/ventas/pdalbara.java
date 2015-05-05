@@ -631,7 +631,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-04-20" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-05-05" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -1518,9 +1518,51 @@ public class pdalbara extends ventanaPad  implements PAD
       Error("Error al Buscar datos de Cliente", k);
     }
   }
-
+  
+  boolean canModDepos() throws SQLException
+  {
+        if ( verDepoC.getValor().equals("O") && swTieneEnt)
+        {
+            msgBox("ATENCION!!. Este albaran de deposito ya tiene genero entregado");
+            return false;
+        }
+        if (avc_deposE.getValor().equals("E"))
+        {
+            msgBox("Un albaran solo se puede modificar de Deposito a Normal o viceversa");
+            return false;
+        }
+        if (checkEdicionAlbaran())
+            return false;
+      
+        return true;
+  }
   void activarEventos()
   {
+      avc_deposE.addActionListener(new java.awt.event.ActionListener()
+      {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
+              try
+              {
+                  if (nav.pulsado!=navegador.NINGUNO  || !avc_deposE.hasCambio() )
+                      return ;
+                  if (!canModDepos())
+                  {
+                      avc_deposE.setValor(avc_deposE.getValorOld());
+                      return;
+                  }
+                  
+                  dtAdd.executeUpdate("update v_albavec set avc_depos='"+avc_deposE.getValor()+"' where "+getCondCurrent());
+                  dtAdd.commit();
+                  msgBox("Tipo Albaran cambiado a "+avc_deposE.getText());
+                  avc_deposE.resetCambio();
+              } catch (SQLException ex)
+              {
+                  Error("Error al cambiar albaran a deposito", ex);     
+              }
+            
+          }
+      });
       MAllFechaCab.addActionListener(new java.awt.event.ActionListener()
       {
           @Override
@@ -2470,26 +2512,31 @@ public class pdalbara extends ventanaPad  implements PAD
     });
   }
 
+  @Override
   public void PADPrimero()
   {
     verDatos(dtCons);
+    nav.setPulsado(navegador.NINGUNO);
   }
 
   public void PADAnterior()
   {
     verDatos(dtCons);
+    nav.setPulsado(navegador.NINGUNO);
   }
 
     @Override
   public void PADSiguiente()
   {
     verDatos(dtCons);
+    nav.setPulsado(navegador.NINGUNO);
   }
 
     @Override
   public void PADUltimo()
   {
     verDatos(dtCons);
+    nav.setPulsado(navegador.NINGUNO);
   }
 
   void verDatos(DatosTabla dt)
@@ -2579,7 +2626,7 @@ public class pdalbara extends ventanaPad  implements PAD
       alm_codoriE.setValor(dtAdd.getString("alm_codori"));
       alm_coddesE.setValor(dtAdd.getString("alm_coddes"));
       avc_deposE.setValor(dtAdd.getString("avc_depos"));
-     
+      avc_deposE.resetCambio();
       verDepoC.setEnabled(false);
       swTieneEnt=false;
       verDepoC.removeAllItems();
@@ -3944,13 +3991,33 @@ public class pdalbara extends ventanaPad  implements PAD
     }
 
   }
-  private boolean  checkEdicionAlbaran() throws SQLException
+  /**
+   *
+   * Comprueba si es posible editar un albaran
+   *
+   * @return true en caso de error. False si todo esta bien.
+   * @throws SQLException 
+   */
+  private boolean checkEdicionAlbaran() throws SQLException
+  {
+      if (checkEdicionAlbaran0())
+      {
+          nav.pulsado = navegador.NINGUNO;
+          activaTodo();
+          return true;
+      }
+      return false;
+  }
+  /**
+   * Comprueba si es posible editar un albaran
+   * @return true en caso de error. False si todo esta bien.
+   * @throws SQLException 
+   */
+  private boolean  checkEdicionAlbaran0() throws SQLException
   {
     if ( avc_seriE.getValor().equals("X"))
     {
-        msgBox("Albaranes de serie X ... IMPOSIBLE MODIFICAR O BORRAR");
-        nav.pulsado = navegador.NINGUNO;
-        activaTodo();
+        msgBox("Albaranes de serie X ... IMPOSIBLE MODIFICAR O BORRAR");       
         return true;
     }
     if (avsNume==0)
@@ -3960,8 +4027,6 @@ public class pdalbara extends ventanaPad  implements PAD
         if (Formatear.comparaFechas(pdalmace.getFechaInventario(avc_almoriE.getValorInt(), dtStat) , fecMinMvt)>= 0 )
         {
               msgBox("Albaran con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar");
-              nav.pulsado = navegador.NINGUNO;
-              activaTodo();
               return true;
         }
     }
@@ -3973,8 +4038,6 @@ public class pdalbara extends ventanaPad  implements PAD
       {
         msgBox("Albaran se ha utilizado para realizar la compra: " + dtStat.getInt("acc_ano") + "-" +
                dtStat.getInt("acc_nume") + " IMPOSIBLE MODIFICAR O BORRAR");
-        nav.pulsado = navegador.NINGUNO;
-        activaTodo();
         return true;
       }
     }
@@ -6843,7 +6906,8 @@ public class pdalbara extends ventanaPad  implements PAD
     jtRes.setEnabled(false);
     verDatTraz.setEnabled(!b);
     verDepoC.setEnabled(!b);
-    avc_deposE.setEnabled(b);
+    if (! P_ADMIN)
+        avc_deposE.setEnabled(b);
     Bdesgl.setEnabled(!b);
     Bfincab.setEnabled(b);
     Baceptar.setEnabled(b);

@@ -99,7 +99,7 @@ public class AlbVenPro extends ventana {
   public void verDatClien(int proCodi) throws Exception
   {
    String s="select  cl.cli_codi,cl.cli_nomb,"+
-        " sum(avl_canti) as avl_canti,sum(avl_canti*avl_prven)  as  importe "+
+        " sum(avl_canti) as avl_canti,sum(avl_canti*avl_prbase)  as  importe "+
         " from v_albavec c,v_albavel as l,clientes cl  "+
         " where c.cli_codi = cl.cli_codi " +
         " and c.avc_fecalb >= TO_DATE('" + padre.getFechaInic() + "','dd-MM-yyyy') " +
@@ -151,7 +151,7 @@ public class AlbVenPro extends ventana {
     jt.setEnabled(false);
     String s;
     s="select  a.pro_codi,a.pro_nomb,"+
-        " sum(avl_canti) as avl_canti,sum(avl_canti*avl_prven)  as  importe "+
+        " sum(avl_canti) as avl_canti,sum(avl_canti*avl_prbase)  as  importe "+
         " from v_albavec c,v_albavel as l,clientes cl,v_articulo as a  "+
         " where c.cli_codi = cl.cli_codi " +
         " and c.avc_fecalb >= TO_DATE('" + padre.getFechaInic() + "','dd-MM-yyyy') " +
