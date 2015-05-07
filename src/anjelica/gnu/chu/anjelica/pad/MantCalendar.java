@@ -1,41 +1,53 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * MantCalendar.java
- *
- * Created on 29-may-2012, 9:14:33
- */
-
 package gnu.chu.anjelica.pad;
+/**
+ *
+ * <p>Titulo: MantCalendar </p>
+ * <p>Descripción: Mantenimiento Calendario </p>
+ * <p>Parametros:  modConsulta=true si queremos que solo se lanze el programa en modo consulta.
+ * Por defecto es en modo ediccion. 
+ * </p>
+ * <p>Copyright: Copyright (c) 2005-2015
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los términos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,
+ *  pero SIN
+ * NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * @author chuchiP
 
+ *
+ */ 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.menu;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventanaPad;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author jpuente
- */
+
 public class MantCalendar extends ventanaPad     implements PAD  {
     
     boolean ARG_MODCONSULTA=false;
@@ -104,7 +116,7 @@ public class MantCalendar extends ventanaPad     implements PAD  {
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2012-05-29" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
+        this.setVersion("2015-05-06" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
         strSql = "SELECT distinct(cal_ano) FROM calendario "+
                 " ORDER BY cal_ano ";
 
@@ -135,9 +147,11 @@ public class MantCalendar extends ventanaPad     implements PAD  {
     {
       if (modo==navegador.TODOS)
         jt.setEnabled(act);
+      Bautomat.setEnabled(!act || modo==navegador.ADDNEW);
       Baceptar.setEnabled(act);
       Bcancelar.setEnabled(act);
       Pcabe.setEnabled(act);
+      cal_anoE.setEnabled(act);
     }
     @Override
     public void iniciarVentana() throws Exception
@@ -258,7 +272,42 @@ public class MantCalendar extends ventanaPad     implements PAD  {
     }
     void activarEventos()
     {
-
+      Bautomat.addActionListener(new ActionListener(){
+           @Override
+           public void actionPerformed(ActionEvent ae)
+          {
+             if (!jt.isVacio())
+             {
+                if (mensajes.mensajePreguntar("Insertar calendario automatico, borrando datos existentes?")!=mensajes.YES)
+                    return;
+             }
+             jt.setEnabled(false);
+            jt.removeAllDatos();
+            ArrayList datos=new ArrayList();
+            for (int n=1;n<=12;n++)
+            {
+                try
+                {
+                    ArrayList ht=new ArrayList();
+                    ht.add(n);
+                    ht.add("01-"+Formatear.format(n, "99")+"-"+cal_anoE.getValorInt());
+                    if (n==12)
+                        ht.add("31-12-"+cal_anoE.getValorInt());
+                    else
+                        ht.add(Formatear.sumaDias("01"+Formatear.format(n+1, "99")+cal_anoE.getValorInt(),
+                            "ddMMyyyy", -1));
+                    datos.add(ht);
+                } catch (ParseException ex)
+                {
+                    Logger.getLogger(MantCalendar.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            jt.setDatos(datos);
+            jt.setEnabled(true);
+            jt.requestFocusInicioLater();
+          }
+      });
+      
       BirGrid.addFocusListener(new FocusAdapter()
       {
         @Override
@@ -287,7 +336,7 @@ public class MantCalendar extends ventanaPad     implements PAD  {
                 return;
             }
             jt.setEnabled(true);
-            Pcabe.setEnabled(false);
+            cal_anoE.setEnabled(false);
             jt.requestFocusInicioLater();
         }
       });
@@ -310,6 +359,7 @@ public class MantCalendar extends ventanaPad     implements PAD  {
         cal_anoL = new gnu.chu.controles.CLabel();
         cal_anoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"9999");
         BirGrid = new gnu.chu.controles.CButton();
+        Bautomat = new gnu.chu.controles.CButton();
         jt = new gnu.chu.controles.CGridEditable(3){
             public int cambiaLinea(int row, int col)
             {
@@ -323,7 +373,7 @@ public class MantCalendar extends ventanaPad     implements PAD  {
         v.add("Final");
         jt.setCabecera(v);
         try {
-            Vector vc=new Vector();
+            ArrayList vc=new ArrayList();
             vc.add(cal_mesE);
             vc.add(cal_feciniE);
             vc.add(cal_fecfinE);
@@ -344,9 +394,9 @@ public class MantCalendar extends ventanaPad     implements PAD  {
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        Pcabe.setMaximumSize(new java.awt.Dimension(120, 23));
-        Pcabe.setMinimumSize(new java.awt.Dimension(120, 23));
-        Pcabe.setPreferredSize(new java.awt.Dimension(120, 23));
+        Pcabe.setMaximumSize(new java.awt.Dimension(180, 23));
+        Pcabe.setMinimumSize(new java.awt.Dimension(180, 23));
+        Pcabe.setPreferredSize(new java.awt.Dimension(180, 23));
         Pcabe.setLayout(null);
 
         cal_anoL.setText("Año");
@@ -358,6 +408,11 @@ public class MantCalendar extends ventanaPad     implements PAD  {
         BirGrid.setText("cButton1");
         Pcabe.add(BirGrid);
         BirGrid.setBounds(95, 4, 2, 2);
+
+        Bautomat.setText("Automatico");
+        Bautomat.setToolTipText("Generar fechas automaticamente.");
+        Pcabe.add(Bautomat);
+        Bautomat.setBounds(107, 2, 70, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -419,6 +474,7 @@ public class MantCalendar extends ventanaPad     implements PAD  {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
+    private gnu.chu.controles.CButton Bautomat;
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CButton BirGrid;
     private gnu.chu.controles.CPanel Pcabe;
