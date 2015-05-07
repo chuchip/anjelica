@@ -68,7 +68,7 @@ public class CButton extends JButton implements gnu.chu.interfaces.CEditable,Tab
    * Crea un boton con un dibujo
    *
    * @param s el texto que visualizara el boton
-   * @param i el dibujo que visualizara el boton
+   * @param icon el dibujo que visualizara el boton
    */
   public CButton(String s, Icon icon)
   {
@@ -79,6 +79,7 @@ public class CButton extends JButton implements gnu.chu.interfaces.CEditable,Tab
 
   }
 
+  @Override
   public void resetTexto()
   {} // Pone todos los campos a su valor defecto
 
@@ -120,12 +121,15 @@ public class CButton extends JButton implements gnu.chu.interfaces.CEditable,Tab
    * NO Hago nada. Solo para cumplir con el interface Ceditable
    * @param editable boolean
    */
+  @Override
   public void setEditableParent(boolean editable)
   {
 
   }
 
+  @Override
   public void resetCambio(){}
+  @Override
   public  boolean hasCambio(){return false;}
 
   private void iniciar()
