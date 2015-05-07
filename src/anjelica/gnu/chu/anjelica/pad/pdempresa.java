@@ -12,6 +12,7 @@ import gnu.chu.utilidades.ventanaPad;
 import java.awt.event.KeyEvent;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.vlike;
+import java.net.UnknownHostException;
 
 
 /**
@@ -19,7 +20,7 @@ import gnu.chu.sql.vlike;
  * <p>Título: pdempresa </p>
  * <p>Descripción: Mantenimiento de Empresas</p>
  * <p>Empresa: miCasa</p>
- * <p>Copyright: Copyright (c) 2005
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -42,6 +43,8 @@ public class pdempresa extends ventanaPad   implements PAD
   boolean modConsulta=true;
 //  CButton Baceptar = new CButton();
 //  CButton Bcancelar = new CButton();
+  CLabel emp_dirwebL=new CLabel("Direc.Web:");
+  CTextField emp_dirwebE = new CTextField(Types.CHAR,"X",100);
   CTextField emp_codiE = new CTextField(Types.DECIMAL,"#9");
   CTextField emp_poblE = new CTextField(Types.CHAR,"X",30);
   CTextField emp_nombE = new CTextField(Types.CHAR,"X",40);
@@ -115,8 +118,7 @@ public class pdempresa extends ventanaPad   implements PAD
       if (ht != null)
       {
         if (ht.get("modConsulta") != null)
-          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-              booleanValue();
+          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString());
       }
       setTitulo("Mantenimiento Empresas" );
       if (jf.gestor.apuntar(this))
@@ -141,8 +143,7 @@ public class pdempresa extends ventanaPad   implements PAD
       if (ht != null)
       {
         if (ht.get("modConsulta") != null)
-          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-              booleanValue();
+          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString());
       }
       setTitulo("Mantenimiento Empresas");
       jbInit();
@@ -266,13 +267,12 @@ public class pdempresa extends ventanaPad   implements PAD
     cLabel112.setText("EDI");
     cLabel112.setBounds(new Rectangle(459, 278, 30, 17));
     emp_regmerE.setToolTipText("Registro Mercantil");
-    emp_regmerE.setStrQuery("");
-    emp_regmerE.setTipoCampo(1);
-    emp_regmerE.setText("");
+
     emp_regmerE.setBounds(new Rectangle(118, 297, 514, 17));
     cLabel113.setText("Registro Mercantil");
-    cLabel113.setBounds(new Rectangle(4, 297, 111, 17));
-    cLabel113.setToolTipText("");
+    cLabel113.setBounds(new Rectangle(4, 297, 111, 17)); 
+    emp_dirwebL.setBounds(new Rectangle(4, 315, 110, 17)); 
+    emp_dirwebE.setBounds(new Rectangle(75, 315, 450, 17)); 
     Bcancelar.setBounds(new Rectangle(349, 347, 106, 27));
     Baceptar.setBounds(new Rectangle(191, 347, 106, 27));
     emp_codpviE.setBounds(new Rectangle(409, 239, 30, 17));
@@ -313,6 +313,8 @@ public class pdempresa extends ventanaPad   implements PAD
     Pprinc.add(cLabel12, null);
     Pprinc.add(pai_codiE, null);
     Pprinc.add(cLabel8, null);
+    Pprinc.add(emp_dirwebL,null);
+    Pprinc.add(emp_dirwebE,null);
     Pprinc.add(jScrollPane1, null);
     jScrollPane1.getViewport().add(emp_obsfraE, null);
     Pprinc.add(Bcancelar, null);
@@ -346,6 +348,7 @@ public class pdempresa extends ventanaPad   implements PAD
 
   }
 
+  @Override
   public void iniciarVentana() throws Exception
   {
 
@@ -377,7 +380,7 @@ public class pdempresa extends ventanaPad   implements PAD
     emp_dessprE.setColumnaAlias("emp_desspr");
     emp_codediE.setColumnaAlias("emp_codedi");
     emp_regmerE.setColumnaAlias("emp_regmer");
-
+    emp_dirwebE.setColumnaAlias("emp_dirweb");
     activarEventos();
     activaTodo();
     verDatos();
@@ -426,14 +429,14 @@ public class pdempresa extends ventanaPad   implements PAD
        emp_dessprE.setText(dtCon1.getString("emp_desspr"));
        emp_codediE.setText(dtCon1.getString("emp_codedi"));
        emp_regmerE.setText(dtCon1.getString("emp_regmer"));
-
+       emp_dirwebE.setText(dtCon1.getString("emp_dirweb"));
     } catch (Exception k)
     {
       Error("Error al ver Datos",k);
-      return;
     }
   }
 
+  @Override
   public void activar(boolean enab)
   {
     emp_codiE.setEnabled(enab);
@@ -462,11 +465,12 @@ public class pdempresa extends ventanaPad   implements PAD
     emp_dessprE.setEnabled(enab);
     emp_codediE.setEnabled(enab);
     emp_regmerE.setEnabled(enab);
-
+    emp_dirwebE.setEnabled(enab);
     Baceptar.setEnabled(enab);
     Bcancelar.setEnabled(enab);
   }
 
+  @Override
   public void afterConecta() throws SQLException, java.text.ParseException
   {
     pai_codiE.setAceptaNulo(false);
@@ -483,26 +487,31 @@ public class pdempresa extends ventanaPad   implements PAD
 
 
   }
+  @Override
   public void PADPrimero()
   {
     verDatos();
   }
 
+  @Override
   public void PADAnterior()
   {
     verDatos();
   }
 
+  @Override
   public void PADSiguiente()
   {
     verDatos();
   }
 
+  @Override
   public void PADUltimo()
   {
     verDatos();
   }
 
+  @Override
   public void PADQuery()
   {
     activar(true);
@@ -511,6 +520,7 @@ public class pdempresa extends ventanaPad   implements PAD
     emp_codiE.requestFocus();
   }
 
+  @Override
   public void ej_query1()
   {
     Component c;
@@ -521,7 +531,7 @@ public class pdempresa extends ventanaPad   implements PAD
       return;
     }
 
-    Vector v = new Vector();
+    ArrayList v = new ArrayList();
     v.add(emp_codiE.getStrQuery());
     v.add(emp_poblE.getStrQuery());
     v.add(emp_nombE.getStrQuery());
@@ -548,9 +558,10 @@ public class pdempresa extends ventanaPad   implements PAD
     v.add(emp_dessprE.getStrQuery());
     v.add(emp_codediE.getStrQuery());
     v.add(emp_regmerE.getStrQuery());
+    v.add(emp_dirwebE.getStrQuery());
 
 
-    v.addElement(emp_codiE.getStrQuery());
+    v.add(emp_codiE.getStrQuery());
 
     s = "SELECT * FROM v_empresa ";
     s = creaWhere(s, v,true);
@@ -581,7 +592,7 @@ public class pdempresa extends ventanaPad   implements PAD
     }
 
   }
-
+  @Override
   public void canc_query()
   {
     Pprinc.setQuery(false);
@@ -591,6 +602,7 @@ public class pdempresa extends ventanaPad   implements PAD
     verDatos();
   }
 
+  @Override
   public void PADEdit()
   {
     if (! checkRegistro())
@@ -601,6 +613,7 @@ public class pdempresa extends ventanaPad   implements PAD
     emp_direE.requestFocus();
   }
 
+  @Override
   public void ej_edit1()
   {
     try
@@ -621,7 +634,8 @@ public class pdempresa extends ventanaPad   implements PAD
     activaTodo();
     verDatos();
   }
-
+  
+  @Override
   public void canc_edit()
   {
     mensaje("");
@@ -637,12 +651,13 @@ public class pdempresa extends ventanaPad   implements PAD
     verDatos();
   }
 
+  @Override
   public boolean checkEdit()
   {
     return checkAddNew();
   }
 
-
+  @Override
   public void PADAddNew()
   {
     Pprinc.resetTexto();
@@ -650,6 +665,8 @@ public class pdempresa extends ventanaPad   implements PAD
     emp_codiE.requestFocus();
     mensaje("Insertando Empresa ...");
   }
+  
+  @Override
   public boolean checkAddNew()
   {
     try {
@@ -707,6 +724,8 @@ public class pdempresa extends ventanaPad   implements PAD
     }
     return true;
   }
+  
+  @Override
   public void ej_addnew1()
   {
     try
@@ -761,8 +780,10 @@ public class pdempresa extends ventanaPad   implements PAD
     dt.setDato("emp_desspr",emp_dessprE.getText());
     dt.setDato("emp_codedi",emp_codediE.getText());
     dt.setDato("emp_regmer",emp_regmerE.getText());
+    dt.setDato("emp_dirweb",emp_dirwebE.getText());
   }
-
+  
+  @Override
   public void canc_addnew()
   {
     mensaje("");
@@ -793,14 +814,15 @@ public class pdempresa extends ventanaPad   implements PAD
         return false;
       }
     }
-    catch (Exception k)
+    catch (SQLException | UnknownHostException k)
     {
       Error("Error al bloquear el registro", k);
       return false;
     }
     return true;
   }
-
+  
+  @Override  
   public void PADDelete()
   {
     mensaje("Borrar Registro ...");
@@ -812,6 +834,7 @@ public class pdempresa extends ventanaPad   implements PAD
     Bcancelar.requestFocus();
   }
 
+  @Override
   public void ej_delete1()
   {
     try
@@ -836,6 +859,8 @@ public class pdempresa extends ventanaPad   implements PAD
     mensaje("");
     mensajeErr("Registro ... Borrado");
   }
+  
+  @Override
   public void canc_delete() {
     mensaje("");
     activaTodo();
@@ -848,6 +873,13 @@ public class pdempresa extends ventanaPad   implements PAD
     mensajeErr("Borrado  de Datos Cancelada");
     verDatos();
   }
+  /**
+   * Devuelve un vlike con los datos de la empresa
+   * @param dt DatosTabla
+   * @param empCodi Codigo empresa
+   * @return vlike con los datos de la empresa. Null si la empresda no existe.
+   * @throws SQLException 
+   */
   public static vlike getDatosEmpresa(DatosTabla dt, int empCodi) throws SQLException
   {
       String s="select * from v_empresa WHERE emp_codi = "+empCodi;
@@ -857,6 +889,13 @@ public class pdempresa extends ventanaPad   implements PAD
       else
           return lkEmp;
   }
+  /**
+   * Busca el nombre de una empresa
+   * @param dt  DatosTabla con conexion a DB 
+   * @param empCodi Codigo empresa
+   * @return Nombre d la empresa. Null si no la encuentra
+   * @throws SQLException 
+   */
    public static String getNombreEmpresa(DatosTabla dt, int empCodi) throws SQLException
   {
       String s="select emp_nomb from v_empresa WHERE emp_codi = "+empCodi;      
