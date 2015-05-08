@@ -98,7 +98,7 @@ public class clvenart extends ventana implements  JRDataSource
    {
      iniciarFrame();
      this.setSize(new Dimension(602, 533));
-     this.setVersion("2015-05-02");
+     this.setVersion("2015-05-08");
     statusBar = new StatusBar(this);
     conecta();
     Pprinc.setLayout(gridBagLayout1);
@@ -155,15 +155,15 @@ public class clvenart extends ventana implements  JRDataSource
     v.add("Precio"); // 6
     v.add("Importe"); // 7
     jt.setCabecera(v);
-    jt.setAnchoColumna(new int[]{110,65,179,44,70,70,53,79});
+    jt.setAnchoColumna(new int[]{85,50,179,34,67,60,53,79});
     jt.setAlinearColumna(new int[]{1,2,0,2,2,2,2,2});
-    jt.setFormatoColumna(3,"---9");
+    jt.setFormatoColumna(3,"--,--9");
     jt.setFormatoColumna(4,"---,--9.99");
     jt.setFormatoColumna(5,"---9.99");
     jt.setFormatoColumna(6,"---9.99");
-    jt.setFormatoColumna(7,"---,--9.99");
+    jt.setFormatoColumna(7,"--,---,--9.99");
     jt.setAjustarGrid(true);
-    jt.ajustar(false);
+//    jt.ajustar(false);
     this.getContentPane().add(statusBar,BorderLayout.SOUTH);
     Pprinc.add(PcondBus,   new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -349,11 +349,11 @@ public class clvenart extends ventana implements  JRDataSource
        v.add("");
        v.add("");
        v.add("TOTAL GENERAL");
-       v.add(""+unidT);
-       v.add(""+cantiT);
-       v.add(""+(cantiT/unidT));
-       v.add(""+importeT);
-       v.add(""+(importeT/cantiT));
+       v.add(unidT);
+       v.add(cantiT);
+       v.add(cantiT/unidT);
+       v.add(importeT/cantiT);
+       v.add(importeT);
        jt.addLinea(v);
        mensaje("");
        mensajeErr("Consulta ... REALIZADA");
@@ -405,9 +405,9 @@ public class clvenart extends ventana implements  JRDataSource
      v.add("Total Cliente");
      v.add(""+unidCl);
      v.add(""+cantiCl);
-     v.add(""+(cantiCl/unidCl));
-     v.add(""+importeCl);
+     v.add(""+(cantiCl/unidCl));    
      v.add(""+(importeCl/cantiCl));
+     v.add(""+importeCl);
      jt.addLinea(v);
      cantiT+=cantiCl;
      unidT+=unidCl;
