@@ -3275,18 +3275,22 @@ public class MantDesp extends ventanaPad implements PAD
                 return;
             }
             buscaDatInd();
+            int proCodi=jtLin.getValorInt(jtDesp.getSelectedRowDisab(), JTLIN_PROCODI);
+            String proNomb=jtLin.getValString(jtDesp.getSelectedRowDisab(), JTLIN_PRONOMB);
+            java.util.Date fecCong=utildesp.getDateCongelado(proCodi, deo_fecproE.getDate(), dtStat);    
             etiq.iniciar(deo_nulogeE.getText(),
                 eje_numeE.getText() + "/"
                 + Formatear.format(EU.em_cod, "99") + "/"
                 + deo_selogeE.getText() + "/"
                 + deo_nulogeE.getValorInt(),
-                null, null, utdesp.nacidoE, utdesp.cebadoE,
+                ""+proCodi, proNomb, utdesp.nacidoE, utdesp.cebadoE,
                 utdesp.despiezadoE, null,
                 null, utdesp.conservarE,
                 utdesp.sacrificadoE,
                 null,
                 deo_fecproE.getText(), deo_fecproE.getDate(),
-                deo_feccadE.getText(), utdesp.fecSacrE);
+                fecCong==null?deo_feccadE.getText():Formatear.getFecha(fecCong, "dd-MM-yyyy") , 
+                utdesp.fecSacrE);
             etiq.setNumCopias(numCopiasE.getValorInt());
             etiq.listar(etiqueta.ETIQINT);
 

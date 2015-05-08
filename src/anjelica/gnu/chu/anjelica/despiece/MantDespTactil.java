@@ -968,6 +968,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
          return;
      }
      buscaDatInd();
+     java.util.Date fecCong=utildesp.getDateCongelado(pro_codsalE.getValorInt(), grd_fechaE.getDate(), dtStat);
      etiq.iniciar(deo_codiE.getText(),
                   eje_numeE.getText() + "/" +
                    Formatear.format(EU.em_cod, "99") + "/" +
@@ -979,7 +980,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
                   utdesp.sacrificadoE,
                   null,
                   grd_fechaE.getText(),grd_fechaE.getDate(),
-                  grd_feccadE.getText(),utdesp.fecSacrE);
+                  fecCong==null?grd_feccadE.getText():Formatear.getFecha(fecCong, "dd-MM-yyyy") , 
+                  utdesp.fecSacrE);
 //     new miThread("aaa")
 //     {
 //       public void run()
@@ -2601,8 +2603,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
                   utdesp.conservarE, utdesp.sacrificadoE,
                   "F. Prod: " + grd_fechaE.getText(),
                   "Fec.Cad.",grd_fechaE.getDate(),grd_feccadE.getText(),utdesp.getFecSacrif());
-     etiq.setPrintDialog(false);
-    
+     etiq.setPrintDialog(false);    
      etiq.setFechaCongelado(utildesp.getFechaCongelado(jtSal.getValorInt(linea,JTSAL_PROCODI ),
          grd_fechaE.getDate(), dtStat));
      etiq.listarDefec();

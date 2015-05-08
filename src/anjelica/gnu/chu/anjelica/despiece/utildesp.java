@@ -638,16 +638,22 @@ public class utildesp
    * @throws SQLException
    */
   public static String getFechaCongelado(int codProd, java.util.Date fecProd, DatosTabla dt) throws SQLException
-  {
-     if (fecProd==null)
+  {   
+     java.util.Date fecCong=getDateCongelado(codProd,fecProd,dt);
+     if (fecCong==null)
          return "";
+     return "Cad.Cong:"+ Formatear.getFecha(fecCong, "dd-MM-yy");
+  }
+  public static java.util.Date getDateCongelado(int codProd, java.util.Date fecProd, DatosTabla dt) throws SQLException
+  {
+       if (fecProd==null)
+         return null;
      Boolean b=gnu.chu.anjelica.pad.MantArticulos.isCongelado(codProd,dt);
      if (b==null)
-         return "";
+         return null;
      if (!b)
-         return "";
-     java.util.Date fecCong=Formatear.sumaMesDate(fecProd, dt.getInt("pro_cadcong"));
-     return "Cad.Cong:"+ Formatear.getFecha(fecCong, "dd-MM-yy");
+         return null;
+     return Formatear.sumaMesDate(fecProd, dt.getInt("pro_cadcong"));
   }
   /**
    * Busca Maximo Numero de Grupo a Asignar

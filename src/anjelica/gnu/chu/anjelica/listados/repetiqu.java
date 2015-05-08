@@ -49,6 +49,8 @@ public class repetiqu extends ventana
   CLabel cLabel8 = new CLabel();
   CTextField deo_serlotE = new CTextField(Types.CHAR, "X");
   CTextField pro_numindE = new CTextField(Types.DECIMAL, "##9");
+  CLabel numEtiqL = new CLabel("N.Etiq:");
+  CTextField numEtiqE = new CTextField(Types.DECIMAL, "##9");
   CLabel cLabel7 = new CLabel();
   CLabel cLabel9 = new CLabel();
   CTextField deo_emplotE = new CTextField(Types.DECIMAL, "#9");
@@ -126,7 +128,7 @@ public class repetiqu extends ventana
     {
       iniciarFrame();
       this.setSize(new Dimension(519,339));
-      this.setVersion("2015-04-29");
+      this.setVersion("2015-05-08");
       Pprinc.setLayout(null);
       statusBar = new StatusBar(this);
       Bindi.setBounds(new Rectangle(471, 25, 1, 1));
@@ -161,7 +163,10 @@ public class repetiqu extends ventana
     opError.setSelected(true);
     opError.setText("Imprimir s/compra");
     opError.setToolTipText("Imprimir aunque no tenga datos de compra");
-    opError.setBounds(new Rectangle(348, 170, 128, 16));
+    opError.setBounds(new Rectangle(285, 170, 128, 16));
+    numEtiqL.setBounds(new Rectangle(415, 170, 40, 16));
+    numEtiqE.setBounds(new Rectangle(455, 170, 30, 16));
+    numEtiqE.setText("1");
     cLabel13.setText("Fecha Cad.");
     cLabel13.setBounds(new Rectangle(317, 81, 64, 16));
     feccadE.setTipoCampo(Types.DATE);
@@ -250,6 +255,9 @@ public class repetiqu extends ventana
     cPanel1.add(feccadE, null);
     cPanel1.add(fecsacrE, null);
     Pentra.add(opError, null);
+    Pentra.add(numEtiqL, null);
+    Pentra.add(numEtiqE, null);
+    
     Pentra.add(Baceptar, null);
     Pentra.add(cLabel12, null);
     Pentra.add(Bcancelar, null);
@@ -304,8 +312,7 @@ public class repetiqu extends ventana
 
       etiq=new etiqueta(EU);
       tipetiqE.setDatos(etiqueta.getReports(dtStat, EU.em_cod,0));
-//      tipetiqE.addItem("Normal", "" + etiqueta.NORMAL);
-//      tipetiqE.addItem("Mini", "" + etiqueta.MINI);
+
       
       deo_ejelotE.setText("" + EU.ejercicio);
       modoL.setText("Repetir");
@@ -465,7 +472,7 @@ public class repetiqu extends ventana
       activar(true);
       pro_codiE.requestFocus();
       tipetiqE.setEnabled(false);
-      tipetiqE.setText("Mini");
+
       mensajeErr("Activado Modo ... Generar");
     }
 
@@ -630,19 +637,29 @@ public class repetiqu extends ventana
         mensajeErr("Espere, por favor ... Imprimiendo");
         etiq.setTipoEtiq(dtStat, EU.em_cod,
                           Integer.parseInt(tipetiqE.getValor().trim()));
-
+        
         CodigoBarras codBarras=new CodigoBarras("R",deo_ejelotE.getText(),
                 deo_serlotE.getText(),
                 pro_loteE.getValorInt(),pro_codiE.getValorInt(),pro_numindE.getValorInt(),
                 deo_kilosE.getValorDec());
-                              
+        java.util.Date fecCong=null;
+        etiq.setNumCopias(1);
+        if (tipetiqE.getText().startsWith("INTER"))
+        {
+            fecCong=utildesp.getDateCongelado(pro_codiE.getValorInt(), fecrecepE.getDate(), dtStat);
+            etiq.setNumCopias(numEtiqE.getValorInt());
+        }
+        else
+            etiq.setFechaCongelado(utildesp.getFechaCongelado(pro_codiE.getValorInt(), fecrecepE.getDate(), dtStat));
+        
         etiq.iniciar(codBarras.getCodBarra() ,codBarras.getLote(),
             pro_codiE.getText(),pro_codiE.getTextNomb(),nacidoE.getText(),cebadoE.getText(),despiezadoE.getText(),
             ntrazaE.getText(),deo_kilosE.getValorDec()+" Kg",
             conservarE.getText(),sacrificadoE.getText(),
             fecrepL.getText()+fecrecepE.getText(),"Fec.Cad:",grd_fecpro,
-            feccadE.getText(),fecsacrE.getDate());
-        etiq.setFechaCongelado(utildesp.getFechaCongelado(pro_codiE.getValorInt(), fecrecepE.getDate(), dtStat));
+            fecCong==null?feccadE.getText():Formatear.getFecha(fecCong, "dd-MM-yyyy") , 
+            fecsacrE.getDate());
+        
         etiq.listarDefec();
         if (swModo=='G')
         {

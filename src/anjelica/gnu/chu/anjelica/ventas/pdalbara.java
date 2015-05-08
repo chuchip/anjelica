@@ -5826,7 +5826,7 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avl_numues", 0);
     dtAdd.setDato("avl_fecmue", (java.sql.Date) null);
     dtAdd.setDato("avl_fecrli", Formatear.getFechaAct("dd-MM-yyyy"),"dd-MM-yyyy");
-    dtAdd.setDato("avl_trapa", 0);
+    dtAdd.setDato("avl_numcaj", 0);
     dtAdd.setDato("avl_numpal", jt.getValorInt(nLin,JT_NUMPALE));
     dtAdd.setDato("avl_coment", "");
     dtAdd.setDato("aux_2", (String) null);
