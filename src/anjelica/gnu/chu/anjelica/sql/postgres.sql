@@ -562,7 +562,7 @@ pro_nomb varchar(50),	    -- Descripcion del Articulo
 avl_numues varchar(15),
 avl_fecmue date,
 avl_fecrli date,
-avl_trapa smallint,
+avl_numcaj smallint not null default 0, -- Numero de Caja
 avl_numpal int not null default 0, -- Numero Pale
 avl_coment varchar(50),      -- Comentario
 aux_2 varchar(50),
@@ -632,6 +632,7 @@ avl_tipdes char(1),         -- Tipo de Descuento. Siempre '%'
 fvl_numlin int,             -- Nº Linea de Factura
 alm_codi int,               -- Almacen de Producto (Siempre albavec.alm_codori)
 pro_nomb varchar(50),	    -- Descripcion del Articulo
+avl_numcaj smallint not null default 0, -- Numero de Caja
 avl_numpal int not null default 0, -- Numero de Pale
 avl_numues varchar(15),
 avl_fecmue date,
@@ -708,7 +709,7 @@ CREATE OR REPLACE VIEW anjelica.v_albventa_detalle AS
     c.fvc_ano, c.fvc_nume, c.avc_cerra, c.avc_impres, c.avc_fecemi, c.sbe_codi, 
     c.avc_cobrad, c.avc_obser, c.avc_fecrca, c.avc_basimp, c.avc_kilos, 
     c.div_codi, c.avc_impalb, c.avc_impcob, c.avc_dtopp, c.avc_dtootr, 
-    c.avc_valora, c.fvc_serie, c.avc_depos, l.avl_numlin, l.pro_codi, l.avl_numpal,
+    c.avc_valora, c.fvc_serie, c.avc_depos, l.avl_numlin, l.pro_codi, l.avl_numpal,avl_numcaj,
     l.pro_nomb, l.avl_canti, l.avl_prven, l.avl_prbase, l.tar_preci, l.avl_unid,
     l.avl_canbru, l.avl_fecalt, l.fvl_numlin, l.avl_fecrli, c.alm_codori, 
     c.alm_coddes, p.avp_numlin, p.avp_ejelot, p.avp_emplot, p.avp_serlot, 

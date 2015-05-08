@@ -433,6 +433,12 @@ alter table anjelica.v_albavel alter avl_numpal set   default 0;
 alter table anjelica.v_albavel alter avl_numpal set  not null;
 alter table anjelica.hisallive add avl_numpal int not null default 0;
 
+-- Puesto campo para incluir numero de Caja.
+alter table anjelica.v_albavel rename avl_trapa to avl_numcaj;
+alter table anjelica.v_albavel alter avl_numcaj set   default 0;
+alter table anjelica.v_albavel alter avl_numcaj set  not null;
+alter table anjelica.hisallive add avl_numcaj smallint not null default 0;
+
 --
 --- Triggers
 drop TRIGGER if_desp_updf on  v_Despfin cascade;
