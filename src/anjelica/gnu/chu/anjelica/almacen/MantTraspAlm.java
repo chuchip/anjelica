@@ -153,7 +153,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                     Boolean.parseBoolean(ht.get("admin"));
     }
     private void jbInit() throws Exception {      
-        setVersion("2015-05-08 "+ (ARG_ADMIN?"ADMIN":""));
+        setVersion("2015-05-11 "+ (ARG_ADMIN?"ADMIN":""));
   
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
@@ -1699,30 +1699,33 @@ public class MantTraspAlm extends ventanaPad implements PAD
           int nEle=al.size();
           jt.setEnabled(false);      
           jt.removeAllDatos();
-          boolean swErrorStock=false;
-          for (int n=0;n<nEle;n++)
+          int  numErrorStock=0;
+          int n;
+          for ( n=0;n<nEle;n++)
           {
-            ArrayList lin=al.get(n);
-            if (! checkStock(Integer.parseInt(lin.get(JT_ARTIC).toString()),
-                Integer.parseInt(lin.get(JT_EJERC).toString()),
+            ArrayList<String> lin=al.get(n);
+            if (! checkStock(Integer.parseInt(lin.get(JT_ARTIC)),
+                Integer.parseInt(lin.get(JT_EJERC)),
                  EU.em_cod,
-                lin.get(JT_SERIE).toString(),
-                Integer.parseInt(lin.get(JT_LOTE).toString()),
-                Integer.parseInt(lin.get(JT_INDI).toString()),
+                lin.get(JT_SERIE),
+                Integer.parseInt(lin.get(JT_LOTE)),
+                Integer.parseInt(lin.get(JT_INDI)),
                 alm_codioE.getValorInt()))
             {
-               swErrorStock=true;
+               numErrorStock++;
 //               lin.set(JT_UNID, 0);
                lin.set(JT_INSER,"N");
-            }                
+            }
+            if (lin.get(JT_PESO).contains(","))
+                   lin.set(JT_PESO,lin.get(JT_PESO).replace(',','.'));
             jt.addLinea(lin);
           }
           jt.setEnabled(true);
-          if (swErrorStock)
-              msgBox("Se encontraron errores en control de Stocks");
+          if (numErrorStock>0)
+              msgBox("Se encontraron "+numErrorStock+" errores en control de Stocks");
           
           calcAcumulados();
-          mensajeErr("Datos importados correctamente");
+          mensajeErr("Se importaron: "+n+" Lineas,  correctamente");
           activar(true);
       } catch (IOException ex)
       {
