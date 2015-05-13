@@ -2,6 +2,7 @@
 package gnu.chu.mail;
 
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.despiece.listraza;
 import gnu.chu.anjelica.facturacion.lisfactu;
 import gnu.chu.anjelica.ventas.lialbven;
 import gnu.chu.utilidades.Iconos;
@@ -39,6 +40,7 @@ public class IFMail extends ventana {
     private ventana padre;
     lialbven liAlb = null;
     lisfactu liFra = null;
+    listraza liTra = null;
     String tipoDoc;
 //    String docSerie;
 //    int empCodi,docAno,docNume;
@@ -177,6 +179,10 @@ public class IFMail extends ventana {
     {
        this.liAlb=liAlb;
     }
+    public void setHojaTraz(listraza liTra)
+    {
+        this.liTra=liTra;
+    }
     public void setLisfactu (lisfactu liFra)
     {
         this.liFra=liFra;
@@ -271,11 +277,20 @@ public class IFMail extends ventana {
         msgBox("Introduzca algún Correo Electronico de destino");
         return;
       }
-      if (tipoDoc.equals("A"))
+      switch (tipoDoc)
+      {
+          case "A":
             enviarEmailAlb();
-      else
-            enviarEmailFra();
+            break;
+          case "T":
+            enviaEmailTra();
+            break;
+          default:
+           enviarEmailFra();
+      }
+               
     }
+    
     void enviarEmailFra()
     {
        try {
@@ -302,7 +317,32 @@ public class IFMail extends ventana {
     public void setText(String subject)
     {
         respuestE.setText(subject);
-    }    void enviarEmailAlb()
+    }    
+    
+    void enviaEmailTra()
+    {
+       try
+        {           
+            liTra.setSubject(asuntoE.getText());
+            liTra.setToEmail(toEmailE.getText());
+            liTra.setEmailCC(opCopia.isSelected()? EU.email:null);
+            liTra.setAsunto(respuestE.getText());
+            liTra.envHojaEmail();
+
+            HashMap hm=new HashMap();
+            hm.put("%c", cli_codiE.getValorInt());
+            hm.put("%a",asuntoE.getText());
+            Principal.guardaMens(padre.dtCon1, "EA",hm,null,EU.usuario);
+            
+            cancelEmail();
+            padre.mensajeErr("Email ..... Enviado");
+        }
+        catch (Exception k)
+        {
+           Error("Error al enviar Albaran por Email por usuario: "+EU.usuario, k);
+        } 
+    }
+    void enviarEmailAlb()
     {
         try
         {

@@ -101,6 +101,21 @@ import javax.swing.event.ListSelectionListener;
  
 public class pdalbara extends ventanaPad  implements PAD
 {  
+  private final char IMPR_ALB_GRAF='A';
+  private final char IMPR_ALB_TEXT='a';
+  private final char IMPR_HOJA_TRA='T';
+  /**
+   * hoja Traz + Albaran
+   */
+  private final char IMPR_ALB_TRA='t'; 
+  private final char IMPR_PALETS='P';
+  private final char IMPR_ETIQUETAS='E';
+  private char ultSelecImpr=IMPR_ALB_GRAF;
+  
+  private final String DSAL_IMPRE="I";
+  private final String DSAL_FAX="F";
+  private final String DSAL_EMAIL="M";
+  
   double impDtoCom=0,impDtoPP=0;
   JMenuItem MFechaCab = new JMenuItem("Rest.Fec.Mvto");
   JMenuItem MAllFechaCab = new JMenuItem("Rest.Todas Fec.Mvto");
@@ -441,7 +456,7 @@ public class pdalbara extends ventanaPad  implements PAD
   boolean swActDesg = true;
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   CCheckBox opValora = new CCheckBox();
-  CComboBox opHojRut = new CComboBox();
+  CComboBox opDispSalida = new CComboBox();
   CComboBox avc_valoraE = new CComboBox();
   CButton Bfincab = new CButton();
   proPanel pro_codicE = new proPanel();
@@ -631,7 +646,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-05-05" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-05-12" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -665,7 +680,7 @@ public class pdalbara extends ventanaPad  implements PAD
         opAgru.setToolTipText("Ver Lineas Agrupadas");
         sbe_codiE.setBounds(new Rectangle(58, 76, 43, 18));
         cLabel210.setBounds(new Rectangle(485, 3, 101, 17));
-        cLabel210.setText("Tipo List.");
+        cLabel210.setText("Disp.Salida");
         cLabel210.setHorizontalTextPosition(SwingConstants.CENTER);
         cLabel210.setHorizontalAlignment(SwingConstants.CENTER);
         cLabel210.setOpaque(true);
@@ -886,7 +901,7 @@ public class pdalbara extends ventanaPad  implements PAD
         opValora.setMargin(new Insets(0, 0, 0, 0));
         opValora.setText("Valorado");
         opValora.setBounds(new Rectangle(398, 21, 85, 16));
-        opHojRut.setBounds(new Rectangle(485, 20, 101, 16));
+        opDispSalida.setBounds(new Rectangle(485, 20, 101, 16));
         avc_valoraE.setText("Valorado");
         avc_valoraE.setBounds(new Rectangle(458, 22, 95, 16));
         Bfincab.setBounds(new Rectangle(540, 66, 1, 1));
@@ -1064,7 +1079,7 @@ public class pdalbara extends ventanaPad  implements PAD
         Ppie.add(Birgrid, null);
         Ppie.add(eti_codiE, null);
         Ppie.add(cLabel20, null);
-        Ppie.add(opHojRut, null);
+        Ppie.add(opDispSalida, null);
         Ppie.add(cLabel210, null);
         Ppie.add(opValora, null);
         Ppie.add(Bimpri, null);
@@ -1328,31 +1343,24 @@ public class pdalbara extends ventanaPad  implements PAD
     ifMail.setLocation(this.getLocation().x+30,this.getLocation().x+30);
     vl.add(ifMail,new Integer(1));
     avc_almoriE.setValor(""+ALMACEN); // Almacen de VENTAS
-    Bimpri.addMenu("---","-");
-
-    Bimpri.addMenu("Alb Gráfico", "B");
-    opHojRut.addItem("Alb Gráfico", "B");
-    if (IMPALBTEXTO)
-    {
-        Bimpri.addMenu("Alb Texto", "A");
-        opHojRut.addItem("Alb Texto", "A");
-    }
-    Bimpri.addMenu("H.Traz.", "H");
-    opHojRut.addItem("H.Traz.", "H");
-    Bimpri.addMenu("Alb/H.Traz", "T");
-    opHojRut.addItem("Alb/H.Traz", "T");
+    opDispSalida.addItem("Impresora", DSAL_IMPRE);
     if (PERMFAX)
     {
-      Bimpri.addMenu("Fax Alb.", "F");
-      opHojRut.addItem("Fax Alb.", "F");
-      Bimpri.addMenu("Email Alb.", "M");
-      opHojRut.addItem("Email Alb.", "M");
-      
+        opDispSalida.addItem("Fax", DSAL_FAX);
+        opDispSalida.addItem("E-Mail", DSAL_EMAIL);
     }
-    Bimpri.addMenu("Palets", "P");
-    opHojRut.addItem("Palets", "P");
-    Bimpri.addMenu("Etiquetas", "E");
-    opHojRut.addItem("Etiquetas", "E");
+    
+    Bimpri.addMenu("---","-");
+    Bimpri.addMenu("Alb Gráfico", ""+IMPR_ALB_GRAF);
+    
+    if (IMPALBTEXTO)   
+        Bimpri.addMenu("Alb Texto", ""+IMPR_ALB_TEXT);    
+    Bimpri.addMenu("H.Traz.", ""+IMPR_HOJA_TRA );
+    
+    Bimpri.addMenu("Alb/H.Traz", ""+IMPR_ALB_TRA);
+       
+    Bimpri.addMenu("Palets", ""+IMPR_PALETS);
+    Bimpri.addMenu("Etiquetas", ""+IMPR_ETIQUETAS);
     
     
     opValora.setSelected(false);
@@ -1887,7 +1895,7 @@ public class pdalbara extends ventanaPad  implements PAD
       @Override
       public void actionPerformed(ActionEvent e)
       {        
-        imprAlbaran(e.getActionCommand().equals("---")?opHojRut.getValor():Bimpri.getValor(e.getActionCommand()) );
+        imprimir(e.getActionCommand().equals("---")?ultSelecImpr:Bimpri.getValor(e.getActionCommand()).charAt(0) );
       }
     });
     opAgru.addActionListener(new ActionListener()
@@ -7054,17 +7062,19 @@ public class pdalbara extends ventanaPad  implements PAD
     ctUp.commit();
   }
 
-
-  private void imprAlbaran(String indice)
+/**
+ * Imprime albaran/hojas de trazabilidad,palets, etc. Segun lo mandado en indice
+ */
+  private void imprimir(char indice)
   {
-    /*    if (nav.pulsado!= navegador.EDIT && nav.pulsado!=navegador.ADDNEW)
-         {
-           jt.procesaAllFoco();
-           if (jt.getSelectedColumn() == 5 && P_MODPRECIO &&  (fvc_anoE.getValorInt() == 0 || P_ADMIN) && (fvc_numeE.getValorInt() == 0 || P_ADMIN))
-             actPrecioAlb(jt.getSelectedRow());
-           return;
-         }
-     */
+    if (!opDispSalida.getValor().equals(DSAL_IMPRE))
+    {
+        if (indice!=IMPR_ALB_GRAF && indice!=IMPR_HOJA_TRA)
+        {
+            msgBox("Este tipo de listado solo puede ser mandado a impresora");
+            return;
+        }
+    }
     this.setEnabled(false);
     if (nav.pulsado == navegador.ADDNEW || nav.pulsado == navegador.EDIT)
     {
@@ -7105,14 +7115,16 @@ public class pdalbara extends ventanaPad  implements PAD
            }
       }
     }
-    if (indice.equals("A") || indice.equals("T")
-        || indice.equals("F") || indice.equals("B") || indice.equals("M") )
+   
+    ultSelecImpr=indice;
+    if (indice==IMPR_ALB_GRAF || indice == IMPR_ALB_TEXT
+        || indice== IMPR_ALB_TRA )
       imprAlbar(indice);
-    if (indice.equals("H") || indice.equals("T"))
-      imprHojRuta();
-    if (indice.equals("E"))
+    if (indice==IMPR_HOJA_TRA || indice == IMPR_ALB_TRA)
+      imprHojaTraza();
+    if (indice==IMPR_ETIQUETAS)
       imprEtiq();
-    if (indice.equals("P"))
+    if (indice==IMPR_PALETS)
       imprPalets();
     this.setEnabled(true);
     mensaje("");
@@ -7236,7 +7248,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     
   }
-  void imprHojRuta()
+  void imprHojaTraza()
   {
     try
     {
@@ -7247,9 +7259,48 @@ public class pdalbara extends ventanaPad  implements PAD
 //        liTra.setPreview(true);
       }
       liTra.setRepiteIndiv(repiteIndE.getValorInt());
-      liTra.lista(avc_numeE.getValorInt(), emp_codiE.getValorInt(),
+      liTra.setDatosAlbaran(avc_numeE.getValorInt(), emp_codiE.getValorInt(),
                   avc_anoE.getValorInt(), avc_seriE.getText());
-      mensajeErr("Hoja Trazabilidad  ... Impresa");
+      
+      if (liTra.cargaDatosTraz()<0)
+      {
+          mensajeErr("Error al generar la Hoja Trazabilidad ");
+          mensaje("");
+          return;
+      }
+      switch (opDispSalida.getValor())
+      {
+          case DSAL_FAX:             
+            this.setEnabled(false);
+            ifFax.setVisible(true);
+            ifFax.setSelected(true);
+            String numfax=cli_codiE.getLikeCliente().getString("cli_fax",true);
+            ifFax.setLialbven(liAlb);
+            ifFax.setDatosDoc("A",sqlAlb, opValora.isSelected());
+            ifFax.setCliCodi(cli_codiE.getText());
+            ifFax.setNumFax(numfax);  
+            break;
+           case DSAL_EMAIL:
+            this.setEnabled(false);
+            ifMail.setVisible(true);
+            ifMail.setSelected(true);            
+            ifMail.setHojaTraz(liTra);
+            ifMail.setAsunto("Hoja Trazabilidad de Albaran "+avc_anoE.getValorInt()+avc_seriE.getText()+ avc_numeE.getValorInt()+"  de fecha: "+avc_fecalbE.getText());
+            ifMail.setText("Estimado cliente,\n\nAdjunto le enviamos la hoja de trazabilidad del albaran "+avc_anoE.getValorInt()+avc_seriE.getText()+
+                avc_numeE.getValorInt()+
+                "  de fecha: "+avc_fecalbE.getText()+
+                "\n\nAtentamente\n\n"+emp_codiE.getEmpNomb());
+            ifMail.setDatosDoc("T",sqlAlb, opValora.isSelected());
+            ifMail.setCliCodi(cli_codiE.getText());
+
+             break;
+           default:
+             liTra.setToEmail(null);
+             
+             liTra.imprimir();
+      }
+         
+      mensajeErr("Hoja Trazabilidad  ... generada");
       mensaje("");
     }
     catch (Exception k)
@@ -7260,7 +7311,7 @@ public class pdalbara extends ventanaPad  implements PAD
   /**
    * Imprimir albaran
    */
-  void imprAlbar(String indice)
+  void imprAlbar(char indice)
   {
 //    int nAlbImp = 0;
     try
@@ -7293,16 +7344,16 @@ public class pdalbara extends ventanaPad  implements PAD
 //          " and c.cli_codi = cl.cli_codi ";
 //      else
       sqlAlb = getSqlListaAlb();
-      if (indice.equals("B") || indice.equals("T"))
+      if (opDispSalida.getValor().equals(DSAL_IMPRE) )
       { // Albaran grafico o Hoja trazabilidad + Albaran. Solo imprime y sale.
         liAlb.envAlbarFax(ct.getConnection(), dtStat, sqlAlb, EU,
                   opValora.isSelected(),null,
                   null,true,NUMCOPIAS_ALBGRAF,avsNume);
         return;
       }
-      switch (indice)
+      switch (opDispSalida.getValor())
       {
-          case "F":             
+          case DSAL_FAX:             
             this.setEnabled(false);
             ifFax.setVisible(true);
             ifFax.setSelected(true);
@@ -7312,7 +7363,7 @@ public class pdalbara extends ventanaPad  implements PAD
             ifFax.setCliCodi(cli_codiE.getText());
             ifFax.setNumFax(numfax);  
             break;
-           case "M":
+           case DSAL_EMAIL:
             this.setEnabled(false);
             ifMail.setVisible(true);
             ifMail.setSelected(true);            

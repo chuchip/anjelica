@@ -1,8 +1,16 @@
 package gnu.chu.anjelica.despiece;
 
+import gnu.chu.hylafax.SendFax;
+import gnu.chu.mail.MailHtml;
+import gnu.chu.print.util;
 import net.sf.jasperreports.engine.*;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
+import java.awt.print.PrinterException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -30,6 +38,14 @@ import java.util.Vector;
 
 public class listraza  implements JRDataSource
 {
+  int cliCodi;
+  SendFax sendFax=null;
+  boolean copiaPapel=true;
+  String numFax=null;
+  String subject;
+  String emailCC;
+  String asunto;
+  boolean swListar=true;
   private  String msgLog="";
   static final int CODLISTA=1;
   DatosTabla dtStat,dtCon1,dtCur;
@@ -162,15 +178,33 @@ public class listraza  implements JRDataSource
         utdes=new utildesp();
       utdes.setBuscaIndDesp(buscaIndDesp);
   }
-  public void lista(int numAlb, int empCodi,int ejeNume,String serie) throws Exception
+  public void setDatosAlbaran(int numAlb, int empCodi,int ejeNume,String serie)
   {
-    msgLog="";
-    if (utdes==null)
-      utdes=new utildesp();
     this.numAlb=numAlb;
     this.empCodi=empCodi;
     this.ejeNume=ejeNume;
-    this.serie=serie;
+    this.serie=serie;        
+  }
+  public void setCliente(int cliCodi)
+  {
+      this.cliCodi=cliCodi;
+  }
+  /**
+   * Carga datos de trazabilidad
+   * @param numAlb
+   * @param empCodi
+   * @param ejeNume
+   * @param serie
+   * @return 0 si todo ha ido bien. 1 Si se han editado los datos. -1 en caso de error.
+   * @throws SQLException
+   * @throws JRException 
+   */
+  public int cargaDatosTraz() throws SQLException, JRException 
+  {
+     msgLog="";
+    if (utdes==null)
+      utdes=new utildesp();
+    
     if (utdes.getRepiteIndiv()>0)
         utdes.resetIndividuos();
     
@@ -192,7 +226,7 @@ public class listraza  implements JRDataSource
     if (! dtCur.select(s))
     {
       mensajes.mensajeAviso("(listraza) No encontrados datos para imprimir");
-      return;
+      return -1;
     }
     datos.clear();
     boolean ret;
@@ -250,12 +284,52 @@ public class listraza  implements JRDataSource
                 " Editar campos ? ")==mensajes.YES)
         {
             cargaGrid();
-            return;
+            return 1;
         }
     }
-    imprimir();
+    return 0;
   }
-  void imprimir() throws Exception
+  
+  public void lista(int numAlb, int empCodi,int ejeNume,String serie) throws Exception
+  {
+    swListar=true;
+    copiaPapel=true;
+    setDatosAlbaran(numAlb, empCodi, ejeNume, serie);
+    if (cargaDatosTraz()==0)        
+        imprimir();
+  }
+  /**
+    * Especifica el subject para cuando se envia un correo
+    * @param subject 
+    */
+   public void setSubject(String subject)
+   {
+       this.subject=subject;
+   }
+   public void setEmailCC(String emailCC)
+   {
+       this.emailCC=emailCC;
+   }
+  public void envHojaEmail() throws Exception
+  {
+      copiaPapel=false;
+      swListar=false;
+      imprimir();
+  }
+  public void setCopiaPapel(boolean copiaPapel)
+  {
+      this.copiaPapel=copiaPapel;
+  }
+   public void setAsunto(String asunto)
+   {
+       this.asunto=asunto;
+   }
+   
+   public void setToEmail(String toEmail)
+   {
+       numFax=toEmail;
+   }
+  public void imprimir() throws Exception
   {
     String nombJasper=gnu.chu.anjelica.listados.utillista.getNombList(empCodi,CODLISTA,dtStat);
     nElem=0;
@@ -265,7 +339,32 @@ public class listraza  implements JRDataSource
 
     JasperPrint jp = JasperFillManager.fillReport(jr, mp, this);
 
-    gnu.chu.print.util.printJasper(jp, EU);
+    if (copiaPapel)
+     gnu.chu.print.util.printJasper(jp, EU);
+   if (numFax==null)
+     return ; // Solo copia a Papel
+   
+//   System.out.println("Dir. temporal: "+EU.dirTmp);
+   
+   File fichPDF=util.getFile("hojatra",EU, "pdf",true) ;
+   FileOutputStream outStr=new FileOutputStream(fichPDF);
+   JasperExportManager.exportReportToPdfStream(jp,outStr);
+   outStr.close();
+   if (numFax.indexOf("@")>0)
+   { // Es un correo.        
+       MailHtml correo=new MailHtml(EU.usu_nomb,EU.email);
+       correo.setEmailCC(emailCC);
+       correo.enviarFichero(numFax,asunto,subject,
+          fichPDF,"hojatra.pdf");       
+       return;
+   }
+   if (sendFax==null)
+       sendFax=new SendFax(EU,dtCon1); // Inicio clase SendFax
+   sendFax.setCliente(cliCodi);
+   
+   sendFax.sendFax("A",empCodi,ejeNume,serie, numAlb,  numFax, fichPDF.getAbsolutePath());
+  
+
   
   }
 
@@ -283,7 +382,7 @@ public class listraza  implements JRDataSource
       namField=jRField.getName();
       return dtTrz.getCampo(namField);
   }
-   void cargaGrid()
+  void cargaGrid()
   {
     try
     {
@@ -338,7 +437,8 @@ public class listraza  implements JRDataSource
                    dtGrid.getGrid().getValDate(n,10)
                    );
         }
-        imprimir();
+        if (swListar)
+            imprimir();
       } catch (Exception k)
       {
           padre.Error("Error al imprimir hoja trazabilidad", k);

@@ -1,6 +1,8 @@
 
 package gnu.chu.hylafax;
 
+import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.despiece.listraza;
 import gnu.chu.anjelica.facturacion.lisfactu;
 import gnu.chu.anjelica.ventas.lialbven;
 import gnu.chu.utilidades.Iconos;
@@ -9,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.HashMap;
 
 /**
  *
@@ -34,6 +37,7 @@ public class IFFax extends ventana {
     private ventana padre;
     lialbven liAlb = null;
     lisfactu liFra = null;
+    listraza liTra = null;
     String tipoDoc;
 //    String docSerie;
 //    int empCodi,docAno,docNume;
@@ -167,6 +171,11 @@ public class IFFax extends ventana {
     {
         this.liFra=liFra;
     }
+    
+    public void setHojaTraz(listraza liTra)
+    {
+        this.liTra=liTra;
+    }
     public void setCliCodi(String cliCodi)
     {
         cli_codiE.setText(cliCodi);
@@ -226,11 +235,36 @@ public class IFFax extends ventana {
         msgBox("Introduzca No de Fax del Cliente");
         return;
       }
-        if (tipoDoc.equals("A"))
+      switch (tipoDoc)
+      {
+          case "A":
             enviarFaxAlb();
-        else
+            break;
+          case "T":
+            enviarHojaTra();
+            break;
+          default:
             enviarFaxFra();
+      }
     }
+    void enviarHojaTra()
+    {
+       try
+        {           
+            liTra.setCliente(cli_codiE.getValorInt());
+            liTra.setToEmail(cli_faxE.getText());
+            liTra.setCopiaPapel(opCopia.isSelected());
+            liTra.envHojaEmail();         
+            
+            cancelFax();
+            padre.mensajeErr("Fax ..... Enviado");
+        }
+        catch (Exception k)
+        {
+           Error("Error al enviar Albaran por Email por usuario: "+EU.usuario, k);
+        }   
+    }
+
     void enviarFaxFra()
     {
         try {

@@ -197,7 +197,8 @@ public class MailHtml
          mp.addBodyPart(b);
   }
  
-  public void enviarFichero(String to,String texto,String subject,File fichero, String nombFichero) throws Exception {    
+  public void enviarFichero(String to,String texto,String subject,File fichero, String nombFichero) throws MessagingException, UnsupportedEncodingException 
+  {    
 
         if (from != null)
          msg.setFrom(new InternetAddress(emailFrom,from));
