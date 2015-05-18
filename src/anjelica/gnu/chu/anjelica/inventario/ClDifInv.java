@@ -118,7 +118,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2015-04-10");
+        this.setVersion("2015-05-18");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -1084,6 +1084,7 @@ public class ClDifInv extends ventana {
 
         MInsInv = new javax.swing.JMenuItem();
         MInsReg = new javax.swing.JMenuItem();
+        MInsInvDep = new javax.swing.JMenuItem();
         Pgeneral = new gnu.chu.controles.CPanel();
         Pcondic = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -1124,6 +1125,15 @@ public class ClDifInv extends ventana {
         MInsReg.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MInsRegActionPerformed(evt);
+            }
+        });
+
+        MInsInvDep.setText("Ins Inv.Dep.");
+        MInsInvDep.setToolTipText("Insertar enl inventario anterior de deposito");
+        MInsInvDep.setActionCommand("Ins.Inv.Deposito");
+        MInsInvDep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MInsInvDepActionPerformed(evt);
             }
         });
 
@@ -1257,6 +1267,7 @@ public class ClDifInv extends ventana {
         jt.setAnchoColumna(new int[]{50,150,40,30,45,40,60,60,80});
         jt.getPopMenu().add(MInsInv);
         jt.getPopMenu().add(MInsReg);
+        jt.getPopMenu().add(MInsInvDep);
 
         javax.swing.GroupLayout jtLayout = new javax.swing.GroupLayout(jt);
         jt.setLayout(jtLayout);
@@ -1383,9 +1394,55 @@ public class ClDifInv extends ventana {
         
     }//GEN-LAST:event_MInsRegActionPerformed
 
+    private void MInsInvDepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MInsInvDepActionPerformed
+        try
+        {
+            if (jt.isVacio())
+                return;
+            int nl=jt.getSelectedRowDisab();
+            if (jt.getValorDec(nl,JT_PESOORD)>=0)
+            {
+                msgBox("Imposible insertar inventario Anterior deposito si kilos  son positivos");
+                return;
+            }
+            int proCodi=jt.getValorInt(JT_PROCODI);
+            
+            for (int n=jt.getSelectedRow();n>=0;n--)
+              {
+                  if (jt.getValorInt(n,0)!=0)
+                  {
+                      proCodi=jt.getValorInt(n,JT_PROCODI);                      
+                      break;
+                  }
+              }   
+           
+           
+            dtAdd.addNew("invdepos");
+            dtAdd.setDato("pro_codi", proCodi);
+            
+            dtAdd.setDato("ind_fecha", feulinE.getDate());
+            dtAdd.setDato("eje_nume", jt.getValorInt(nl,JT_PRPANO));
+            dtAdd.setDato("emp_codi", EU.em_cod);
+            dtAdd.setDato("pro_serie", jt.getValString(nl,JT_PRPSERI));
+            dtAdd.setDato("pro_nupar", jt.getValorInt(nl,JT_PRPPART));          
+            dtAdd.setDato("alm_codi", pdalmace.getAlmacenPrincipal());          
+            dtAdd.setDato("pro_numind", jt.getValorInt(nl,JT_PRPINDI));
+            dtAdd.setDato("ind_numuni", 1);
+            dtAdd.setDato("ind_kilos",  jt.getValorDec(nl,JT_PESOORD)*-1);            
+   
+            dtAdd.update(stUp);
+            ctUp.commit();
+            msgBox("Realizado apunte en inventario deposito");
+        } catch (ParseException  | SQLException ex)
+        {
+            Error("Error al insertar registro en control inventario",ex);
+        }
+    }//GEN-LAST:event_MInsInvDepActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButtonMenu Baceptar;
     private javax.swing.JMenuItem MInsInv;
+    private javax.swing.JMenuItem MInsInvDep;
     private javax.swing.JMenuItem MInsReg;
     private gnu.chu.controles.CPanel Pcondic;
     private gnu.chu.controles.CPanel Pgeneral;
