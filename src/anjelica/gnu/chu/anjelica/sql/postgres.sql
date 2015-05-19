@@ -637,7 +637,6 @@ avl_numpal int not null default 0, -- Numero de Pale
 avl_numues varchar(15),
 avl_fecmue date,
 avl_fecrli date,
-avl_trapa smallint,
 turno int,
 avl_coment varchar(50),      -- Comentario
 aux_2 varchar(50),
@@ -859,7 +858,6 @@ create table anjelica.hisalbavel
     avl_numues varchar(15),
     avl_fecmue date,
     avl_fecrli date,
-    avl_trapa smallint,
     turno int,
     avl_coment varchar(50),
     aux_2 varchar(50),
@@ -1010,7 +1008,7 @@ constraint ix_albacol  primary key (acc_ano,emp_codi,acc_serie,acc_nume,acl_nuli
 --
 -- Historico lineas de albaranes de compras
 --
-create table anjelica.hisallico
+create table31 anjelica.hisallico
 (
 acc_ano int not null,		-- Año Albaran
 emp_codi int not null,		-- Empresa Albaran
@@ -3007,6 +3005,7 @@ create table anjelica.coninvcab
 	alm_codi int not null,
 constraint ix_coninvcab primary key (emp_codi,cci_codi)
 );
+create index ix_coninvcab1 on coninvcab(cci_feccon,emp_codi);
 --
 -- Lineas Control de Inventarios
 --
@@ -3461,6 +3460,7 @@ create table anjelica.mvtosalm
 );
 CREATE INDEX ix_mvtalm1 on anjelica.mvtosalm(mvt_tipdoc,mvt_fecdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc);
 CREATE INDEX ix_mvtalm2 on anjelica.mvtosalm(pro_codi,pro_ejelot,pro_serlot,pro_numlot,pro_indlot,mvt_time);
+CREATE INDEX ix_mvtalm3 on anjelica.mvtosalm(pro_codi,mvt_time);
 
 drop table anjelica.ajustedb;
 create table anjelica.ajustedb

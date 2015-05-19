@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 
 public class pdalmace extends ventanaPad implements PAD
 {
+  public final static int ALMACENPRINCIPAL=1;
   String s;
   CPanel Pprinc = new CPanel();
   Cgrid jt = new Cgrid(11);
@@ -635,8 +636,7 @@ public class pdalmace extends ventanaPad implements PAD
   }
    public static int getAlmacenPrincipal()
    {
-     int ALMACENPRNCIPAL=1;
-     return ALMACENPRNCIPAL;
+     return ALMACENPRINCIPAL;
    }
    
     /**

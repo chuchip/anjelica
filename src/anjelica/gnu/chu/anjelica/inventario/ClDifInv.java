@@ -118,7 +118,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2015-05-18");
+        this.setVersion("2015-05-19");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -728,7 +728,7 @@ public class ClDifInv extends ventana {
             return false;
         }
         double canOri = 0;
-        actualizaMsg("Calculando Datos. Insertando en temporales",false);
+        setMensajePopEspere("Calculando Datos. Insertando en temporales",false);
         try {
             nLec = 1;
             pr = ht.keySet().iterator();
@@ -736,7 +736,7 @@ public class ClDifInv extends ventana {
             {
                 nLec++;
                 if (nLec % 100 == 0) {
-                    actualizaMsg("Calculando Datos. Insertando registro N. " + nLec + " de: " + ht.size(), false);
+                    setMensajePopEspere("Calculando Datos. Insertando registro N. " + nLec + " de: " + ht.size(), false);
                 }
                
                 ref =  pr.next();
@@ -754,22 +754,21 @@ public class ClDifInv extends ventana {
                 lote = Integer.parseInt(sArray[3]);
                 numind = Integer.parseInt(sArray[4]);
 
-                s = " SELECT l.* FROM "+TABLA_INV_LIN+" l,"+TABLA_INV_CAB+" c WHERE pro_codi = " + proCodi
+                s = " SELECT * FROM "+VISTA_INV+" WHERE pro_codi = " + proCodi
                         + " AND prp_ano = " + ejeNume
-                        + " and l.prp_empcod = " + EU.em_cod
-                        + " and c.emp_codi = " + EU.em_cod
-                        + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                        + " and prp_empcod = " + EU.em_cod
+                        + " and emp_codi = " + EU.em_cod
+                        + " and cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                         + (usu_nombE.isNull()?"":" and usu_nomb ='"+usu_nombE.getText()+"'")
-                        + " and c.cci_codi = l.cci_codi "
-                        + " and c.emp_codi = l.emp_codi "
                         + " and prp_seri = '" + serie + "'"
                         + " and prp_part = " + lote
                         + " and prp_indi = " + numind;
-                if (dtAdd.select(s, true)) 
+                if (dtAdd.select(s)) 
                 { // Actualizo el Stock.
-                    s = "emp_codi = " + EU.em_cod
+                    s =  " emp_codi = " + EU.em_cod
                             + " AND cci_codi = " + dtAdd.getInt("cci_codi")
                             + " and lci_nume = " + dtAdd.getInt("lci_nume");
+                    dtAdd.select( "SELECT * FROM "+TABLA_INV_LIN+" where "+s,true);
                     dtAdd.edit(s); 
                     canOri = dtAdd.getDouble("lci_kgsord")+canti;
                     dtAdd.setDato("lci_kgsord", canOri );
