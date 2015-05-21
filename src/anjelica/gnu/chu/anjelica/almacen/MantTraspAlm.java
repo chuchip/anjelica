@@ -69,6 +69,8 @@ import javax.swing.JFileChooser;
 
 public class MantTraspAlm extends ventanaPad implements PAD
 {
+  private int almCodio,almCodif;
+        
   private boolean ARG_ADMIN=false;
   private boolean addVentanaLote=true;
   private boolean swAddnew=false;
@@ -153,7 +155,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                     Boolean.parseBoolean(ht.get("admin"));
     }
     private void jbInit() throws Exception {      
-        setVersion("2015-05-11 "+ (ARG_ADMIN?"ADMIN":""));
+        setVersion("2015-05-21 "+ (ARG_ADMIN?"ADMIN":""));
   
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
@@ -376,10 +378,11 @@ public class MantTraspAlm extends ventanaPad implements PAD
             return;
         if (modo!=navegador.EDIT)
         {
-            alm_codioE.setEnabled(estado);
-            alm_codifE.setEnabled(estado);
+          
             avc_fecalbE.setEnabled(estado);
         }
+        alm_codioE.setEnabled(estado);
+        alm_codifE.setEnabled(estado);
         Pcabe.setEnabled(estado);
         Bselec.setEnabled(estado);
         Bherr.setEnabled(estado);
@@ -819,14 +822,14 @@ public class MantTraspAlm extends ventanaPad implements PAD
         int numAlb=0;
         try {
             Timestamp fecAlta=borrarTraspaso();
-            borrarTraspaso();
+//            borrarTraspaso();
             if (ARG_ADMIN)
             {
                 int ret=mensajes.mensajePreguntar("Mantener fecha de mvto?");
                 if (ret!=mensajes.YES)
                     fecAlta=null;
             }
-            numAlb=traspDato1(fecAlta);
+            numAlb=traspDato1(fecAlta,avc_numeE.getValorInt());
             dtAdd.commit();
         } catch (SQLException | ParseException k)
         {
@@ -872,7 +875,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         int numAlb=0;
         try {
             
-            numAlb=traspDato1(null);
+            numAlb=traspDato1(null,0);
             dtAdd.commit();
         } catch (SQLException | ParseException k)
         {
@@ -906,7 +909,11 @@ public class MantTraspAlm extends ventanaPad implements PAD
             nav.pulsado=navegador.NINGUNO;
             activaTodo();
             return;
-        }            
+        }   
+        almCodio=alm_codioE.getValorInt();
+        almCodif=alm_codifE.getValorInt();
+        
+
         activar(true,navegador.EDIT);
         mensaje("Editando registro...");
         jt.requestFocusInicioLater();
@@ -1515,21 +1522,24 @@ public class MantTraspAlm extends ventanaPad implements PAD
   /**
    * Crear el traspaso.
    * @param fecAlta Fecha de alta para mvtos (Null si debe ser la del dia)
+   * @param numAlbaran si 0 asignar uno nuevo
    * @return numero albaran generado
    */
-  int traspDato1(Timestamp fecAlta) throws SQLException, ParseException
-  {    
-      int numAlb;
+  int traspDato1(Timestamp fecAlta,int numAlb) throws SQLException, ParseException
+  {         
      
       mensaje("Espere, por favor ... traspasando Individuos");
 
       // Busco el numero de Albaran a asignar.
-      s = "SELECT num_serieX FROM v_numerac WHERE emp_codi = " + EU.em_cod +
-          " AND eje_nume = " + EU.ejercicio;
-      if (!dtCon1.select(s))
-        throw new SQLException("s: " + s + "\nError al buscar numeracion serie X");
-      numAlb = dtCon1.getInt("num_serieX");
-      numAlb++;
+      if (numAlb==0)
+      {
+        s = "SELECT num_serieX FROM v_numerac WHERE emp_codi = " + EU.em_cod +
+            " AND eje_nume = " + EU.ejercicio;
+        if (!dtCon1.select(s))
+          throw new SQLException("s: " + s + "\nError al buscar numeracion serie X");
+        numAlb = dtCon1.getInt("num_serieX");
+        numAlb++;
+      }
       // Lo guardo .
       s = "UPDATE v_numerac set  num_serieX = " + numAlb +
           " WHERE emp_codi = " + EU.em_cod +
