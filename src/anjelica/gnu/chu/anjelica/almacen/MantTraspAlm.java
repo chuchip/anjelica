@@ -155,7 +155,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                     Boolean.parseBoolean(ht.get("admin"));
     }
     private void jbInit() throws Exception {      
-        setVersion("2015-05-21 "+ (ARG_ADMIN?"ADMIN":""));
+        setVersion("2015-05-22 "+ (ARG_ADMIN?"ADMIN":""));
   
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
@@ -1539,13 +1539,14 @@ public class MantTraspAlm extends ventanaPad implements PAD
           throw new SQLException("s: " + s + "\nError al buscar numeracion serie X");
         numAlb = dtCon1.getInt("num_serieX");
         numAlb++;
-      }
       // Lo guardo .
-      s = "UPDATE v_numerac set  num_serieX = " + numAlb +
-          " WHERE emp_codi = " + EU.em_cod +
-          " AND eje_nume = " + EU.ejercicio;
+        s = "UPDATE v_numerac set  num_serieX = " + numAlb +
+            " WHERE emp_codi = " + EU.em_cod +
+            " AND eje_nume = " + EU.ejercicio;
 
-      stUp.executeUpdate(s);
+        stUp.executeUpdate(s);
+      }
+    
 
       // Genero la cabecera del Albaran
       dtCon1.addNew("v_albavec");
