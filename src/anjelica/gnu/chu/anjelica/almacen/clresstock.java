@@ -2,8 +2,8 @@ package gnu.chu.anjelica.almacen;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.pad.pdprove;
-import gnu.chu.camposdb.empPanel;
 import gnu.chu.camposdb.proPanel;
+import gnu.chu.camposdb.sbePanel;
 import gnu.chu.controles.*;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
@@ -88,7 +88,7 @@ public class clresstock extends ventana implements  JRDataSource
   CLabel cLabel18 = new CLabel();
   CLinkBox cam_codiE = new CLinkBox();
   CLabel cLabel10 = new CLabel();
-  empPanel emp_codiE = new empPanel();
+  sbePanel sbe_codiE = new sbePanel();
   CCheckBox opSoloVend = new CCheckBox();
   private boolean VERNEGATIVO=true;
   
@@ -137,13 +137,13 @@ public class clresstock extends ventana implements  JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(760, 540));
-    this.setVersion("2011-12-07");
+    this.setVersion("2015-05-21");
     VERNEGATIVO=EU.getValorParam("verNegResStock",VERNEGATIVO);
     statusBar = new StatusBar(this);
     conecta();
-    cLabel10.setText("Empr.");
-    cLabel10.setBounds(new Rectangle(385, 23, 39, 17));
-    emp_codiE.setBounds(new Rectangle(427, 23, 35, 17));
+    cLabel10.setText("Seccion");
+    cLabel10.setBounds(new Rectangle(365, 23, 49, 17));
+    sbe_codiE.setBounds(new Rectangle(414, 23, 40, 17));
     tla_diagfeE.setToolTipText("Introducir Numero de Dias por los que agrupar");
     cam_codiE.setAncTexto(25);
     tla_diagfeE.setValorDec(3);
@@ -184,8 +184,8 @@ public class clresstock extends ventana implements  JRDataSource
     fecStockE.setSelectionEnd(10);
     fecStockE.setFormato("dd-MM-yyyy");
     fecStockE.setBounds(new Rectangle(196, 23, 73, 17));
-    opIncPedE.setText("Inc. Pedidos");
-    opIncPedE.setBounds(new Rectangle(282, 23, 101, 17));
+    opIncPedE.setText("Inc.Pedidos");
+    opIncPedE.setBounds(new Rectangle(275, 23, 90, 17));
     cLabel3.setText("Almacen");
     cLabel3.setBounds(new Rectangle(504, 3, 57, 17));
     alm_codiE.setAncTexto(30);
@@ -224,7 +224,7 @@ public class clresstock extends ventana implements  JRDataSource
     PtipoCons.add(cLabel7, null);
     PtipoCons.add(opIncPedE, null);
     PtipoCons.add(cLabel10, null);
-    PtipoCons.add(emp_codiE, null);
+    PtipoCons.add(sbe_codiE, null);
     PtipoCons.add(tla_diagfeE, null);
     PtipoCons.add(cLabel9, null);
     PtipoCons.add(fecStockE, null);
@@ -276,7 +276,10 @@ public class clresstock extends ventana implements  JRDataSource
     profinE.iniciar(dtStat, this, vl, EU);
 
     fecStockE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-    emp_codiE.iniciar(dtStat, this, vl, EU);
+    sbe_codiE.iniciar(dtStat, this, vl, EU);
+    sbe_codiE.setTipo("A");
+    sbe_codiE.setValorInt(0);
+    sbe_codiE.setAceptaNulo(true);
     ponTipListado();
     activarEventos();
   }
@@ -354,12 +357,12 @@ public class clresstock extends ventana implements  JRDataSource
   {  
     Pgrids.removeAll();
     int tlaCodi = tla_codiE.getValorInt();
-    int empCodi = emp_codiE.getValorInt();
+//    int sbeCodi = sbe_codiE.getValorInt();
     int almCodi = alm_codiE.getValorInt();
     maxLinGrid=0;
     try
     {
-      s = getSqlCab(tlaCodi,empCodi);
+      s = getSqlCab(tlaCodi,sbe_codiE.getValorInt());
       if (!dtCon1.select(s))
       {
         mensajeErr("NO encontrados datos para estos criterios");
@@ -400,7 +403,6 @@ public class clresstock extends ventana implements  JRDataSource
       s="SELECT sum(stp_unact) as unidades,SUM(stp_kilact) as cantidad," +
             " prv_codi, stp_feccad as feccad " +
             " FROM v_stkpart where pro_codi = ?" +
-            " and emp_codi = " + empCodi +
             (VERNEGATIVO?
                 "  and (stp_kilact > 0.49 or stp_kilact < -0.49)"+
                 (verKilos?"":" and stp_unact != 0 "):
@@ -414,9 +416,8 @@ public class clresstock extends ventana implements  JRDataSource
         s+=" union all "+
            " select sum(acp_canind)*-1 as unidades,sum(acp_canti)*-1 as cantidad,  "+
             " c.prv_codi , acp_feccad as feccad "+
-            " from v_compras as c"+
-            " WHERE emp_codi = "+empCodi+
-            " and pro_codi = ?"+            
+            " from v_compras as c"+          
+            " where pro_codi = ?"+            
             " AND C.ACC_CERRA = 0 "+ // No estan cerradas las lineas
             (almCodi == 0 ? "" : " and alm_codi = " + almCodi)+
             " and exists ( select   emp_codi "+
@@ -439,8 +440,7 @@ public class clresstock extends ventana implements  JRDataSource
             " and s.pro_numind = a.avp_numind " +
             " AND avc_cerra = 0 " + // Abierto y con pedido
             (almCodi == 0 ? "" : " and s.alm_codi = " + almCodi) +
-            " and a.pro_codi = ? "+
-            " and a.emp_codi = " + empCodi +
+            " and a.pro_codi = ? "+           
             " and  exists ( select emp_codi from pedvenc as p " +
             " where p.emp_codi = a.emp_codi " +
             " and p.avc_ano = a.avc_ano " +
@@ -455,9 +455,8 @@ public class clresstock extends ventana implements  JRDataSource
           " SELECT sum(pcl_nucape) as unidCompr, sum(pcl_cantpe) as cantCompr, " +
           " 0 as unidVent, 0 as cantVent, " +
           " prv_codi,pcl_feccad as feccad " +
-          " FROM v_pedico  " +
-          " where EMP_CODI = " + empCodi +
-          " and pro_codi = ?" +
+          " FROM v_pedico  " +        
+          " where pro_codi = ?" +
           (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
           " and pcc_estad = 'C' " +
           " AND pcc_estrec = 'P' "+
@@ -468,9 +467,8 @@ public class clresstock extends ventana implements  JRDataSource
           " SELECT sum(pcl_nucaco) as unidCompr, sum(pcl_cantco) as cantCompr, " +
           " 0 as unidVent, 0 as cantVent, " +
           " prv_codi,pcl_feccad as feccad " +
-          " FROM v_pedico " +
-          " where EMP_CODI = " + empCodi +
-          " and pro_codi = ? " +
+          " FROM v_pedico " +       
+          " where pro_codi = ? " +
           (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
           " and pcc_estad = 'C' " +
           " AND pcc_estrec = 'P' "+
@@ -481,9 +479,8 @@ public class clresstock extends ventana implements  JRDataSource
           " SELECT sum(pcl_nucafa) as unidCompr, sum(pcl_cantfa) as cantCompr, " +
           " 0 as unidVent, 0 as cantVent, " +
           " prv_codi,pcl_feccad as feccad " +
-          " FROM v_pedico " +
-          " where EMP_CODI = " + empCodi +
-          " and pro_codi = ?" +
+          " FROM v_pedico " +          
+          " where pro_codi = ?" +
           (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
           " and pcc_estad = 'F' " +
           " AND pcc_estrec = 'P' "+
@@ -495,8 +492,7 @@ public class clresstock extends ventana implements  JRDataSource
           " sum(pvl_unid) as  unidVent, sum(pvl_kilos) as cantVent, " +
           " prv_codi,pvl_feccad as feccad " +
           "  FROM v_pedven " +
-          " where  EMP_CODI = " + empCodi +
-          " and (avc_ano = 0 or pvc_cerra = 0) " + // Sin Albaran o Albaran sin CERRAR
+          " where (avc_ano = 0 or pvc_cerra = 0) " + // Sin Albaran o Albaran sin CERRAR
           " and pvc_confir = 'S' "+
           (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
           " and pro_codi = ?" +
@@ -506,8 +502,7 @@ public class clresstock extends ventana implements  JRDataSource
       if (tlaCodi == 99)
       {
         s = "SELECT sum(stp_unact) as unidades " +
-           " FROM v_stkpart where emp_codi = " + empCodi +
-           " and pro_codi = ? " +
+           " FROM v_stkpart where  pro_codi = ? " +
            " and stp_kilact != 0 " +
            " and eje_nume > 0 " + // Para no incluir Acumulados
            (almCodi == 0 ? "" : " and alm_codi = " + almCodi);
@@ -772,24 +767,31 @@ public class clresstock extends ventana implements  JRDataSource
   }
   boolean checkCond()
   {
-//    if (opIncPedE.isSelected() && tla_vekgcaE.getValor().equals("K"))
+      try
+      {
+          //    if (opIncPedE.isSelected() && tla_vekgcaE.getValor().equals("K"))
 //    {
 //        mensajeErr("No se puede incluir Pedidos si se desea sacar kilos");
 //        tla_vekgcaE.requestFocus();
 //        return false;
 //    }
-    if (fecStockE.isNull())
-    {
-        mensajeErr("Introduzca Fecha de Stock");
-        fecStockE.requestFocus();
-        return false;
-    }
-    if (!emp_codiE.controla())
-    {
-        mensajeErr(emp_codiE.getMsgError());
-        return false;
-    }
-    return true;
+          if (fecStockE.isNull())
+          {
+              mensajeErr("Introduzca Fecha de Stock");
+              fecStockE.requestFocus();
+              return false;
+          }
+          if (!sbe_codiE.controla())
+          {
+              mensajeErr("Seccion no valida");
+              return false;
+          }          
+      } catch (SQLException ex)
+      {
+          Error("Error al comprobar seccion de articulo",ex);
+          return false;
+      }
+      return true; 
   }
   void listar()
   {
@@ -903,20 +905,22 @@ public class clresstock extends ventana implements  JRDataSource
 
 
 
-  String getSqlCab(int tlaCodi, int empCodi)
+  String getSqlCab(int tlaCodi, int sbeCodi)
   {
     if (tlaCodi == 99)
     {
       String proDisc3 = Formatear.reemplazar(cam_codiE.getText(), "*", "%").trim();
-      if (proDisc3.equals("%%") || proDisc3.equals("%") || proDisc3.equals(""))
+      if (proDisc3.equals("%%") || proDisc3.equals("%") || proDisc3.trim().equals(""))
         proDisc3 = null;
-    String condArt = (proDisc3 == null ? "" : " and cam_codi like '%" + proDisc3 + "%'") +
+    String condArt = " 1 = 1 "+
+        (proDisc3 == null ? "" : " and cam_codi like '%" + proDisc3 + "%'") +
         (!proiniE.isNull() ? "  and pro_codi >= " + proiniE.getValorInt() : "") +
           (!profinE.isNull() ? "  and pro_codi <= " + profinE.getValorInt() :
            "")+
          (opSoloVend.isSelected()?" and pro_tiplot = 'V'":"");
-
-      s = "SELECT pro_codi,pro_nomcor as pro_desc from v_articulo where 1 = 1" +
+    if (sbeCodi!=0)
+        condArt+=" and sbe_codi ="+sbeCodi;
+      s = "SELECT pro_codi,pro_nomcor as pro_desc from v_articulo where " +
           condArt +
           " order by pro_codi";
     }

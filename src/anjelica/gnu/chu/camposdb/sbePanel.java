@@ -183,6 +183,11 @@ public class sbePanel extends CPanel
         Logger.getLogger(sbePanel.class.getName()).log(Level.SEVERE, null, k);
     }
   }
+  /**
+   * Establecer el tipo de subempresa. 'C'liente o 'A'rticulo.
+   * Por defecto el tipo es 'C'
+   * @param tipo 
+   */
   public void setTipo(String tipo)
   {
     this.tipo=tipo;
@@ -424,6 +429,8 @@ public class sbePanel extends CPanel
   }
   public boolean hasAllAccess()  throws SQLException
   {
+      if (emp_codiE == null)
+          return true;
       return hasAllAccess(emp_codiE.getValorInt());
   }
   public boolean hasAllAccess(int empCodi)  throws SQLException
