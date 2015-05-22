@@ -262,7 +262,7 @@ public class MvtosAlma
         + " mvt_cliprv as cliCodi,mvt_numdoc  as numalb,pro_ejelot as ejenume, "
         + " 1 as empcodi,'0' as pro_codori "
         + ", '' as repCodi,'' as zonCodi,0 as sbe_codi "
-        + ", mvt_unid as unidades,0 as div_codi,alm_codi,mvt_serdoc as avc_serie "
+        + ", mvt_unid as unidades,1 as div_codi,alm_codi,mvt_serdoc as avc_serie "
         + ", 'N' as avc_depos "
         + " from mvtosalm where "
         + "   mvt_canti <> 0 "
@@ -277,7 +277,7 @@ public class MvtosAlma
         + " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"
         + " r.emp_codi  as empcodi,r.pro_codi as pro_codori"
         + ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "
-        + ", rgs_canti as unidades, 0 as div_codi,alm_codi,'.' as avc_serie, "
+        + ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie, "
         + " 'N' as avc_depos "
         + " FROM v_regstock r  WHERE "
         + " tir_afestk = '='" // Solo Inventarios
@@ -300,7 +300,7 @@ public class MvtosAlma
             " mvt_cliprv as cliCodi,mvt_numdoc  as numalb,pro_ejelot as ejenume, "+
             " 1 as empcodi,'0' as pro_codori "+
             ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
-            ", mvt_unid as unidades,0 as div_codi,alm_codi,mvt_serdoc as avc_serie "+
+            ", mvt_unid as unidades,1 as div_codi,alm_codi,mvt_serdoc as avc_serie "+
              ", 'N' as avc_depos "+
              " from mvtosalm where "+
              "  mvt_canti <> 0 "+      
@@ -329,7 +329,7 @@ public class MvtosAlma
            " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
            " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
            ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "+
-           ", rgs_canti as unidades, 0 as div_codi,alm_codi,'.' as avc_serie, "+
+           ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie, "+
            " 'N' as avc_depos "+
            " FROM v_regstock r  WHERE "+         
            " tir_afestk = '='"+ // Solo Inventarios
@@ -361,7 +361,7 @@ public class MvtosAlma
           " 0 as cliCodi,l.deo_codi  as numalb,l.def_ejelot as ejenume, "+
           " l.def_emplot as empcodi,'0' as pro_codori "+
           ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
-          ", l.def_numpie as unidades,0 as div_codi,alm_codi,'.' as avc_serie "+
+          ", l.def_numpie as unidades,1 as div_codi,alm_codi,'.' as avc_serie "+
            ", 0 as alm_codori,0 as alm_coddes, 'N' as avc_depos "+
           " from  v_despfin l where "+
           " l.def_kilos <> 0 "+
@@ -381,7 +381,7 @@ public class MvtosAlma
         " l.acl_canti as canti,l.acl_prcom as precio,0 as numind,"+
         " c.prv_codi as cliCodi,  c.acc_nume as numalb, "+
         " c.acc_ano as ejeNume,c.emp_codi as empCodi,l.pro_codi as pro_codori "+
-        ", '' as repCodi,'' as zonCodi,sbe_codi,acl_numcaj as unidades,0 as div_codi, "+
+        ", '' as repCodi,'' as zonCodi,sbe_codi,acl_numcaj as unidades,1 as div_codi, "+
         " l.alm_codi,'.' as avc_serie "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
         " FROM v_albacoc c,v_albacol l " + //,v_albcompar i "+
@@ -402,7 +402,7 @@ public class MvtosAlma
         " i.acp_canti as canti,l.acl_prcom as precio,acp_numind as numind,"+
         " c.prv_codi as cliCodi,  c.acc_nume as numalb, "+
         " c.acc_ano as ejeNume,c.emp_codi as empCodi,l.pro_codi as pro_codori "+
-        ", '' as repCodi,'' as zonCodi,sbe_codi,acp_canind as unidades,0 as div_codi, "+
+        ", '' as repCodi,'' as zonCodi,sbe_codi,acp_canind as unidades,1 as div_codi, "+
         " l.alm_codi,'.' as avc_serie "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
         " FROM v_albacoc c,v_albacol l,v_albcompar i "+
@@ -479,7 +479,7 @@ public class MvtosAlma
         " 0 as cliCodi,deo_codi as numalb,deo_ejelot as ejeNume," +
         " deo_emplot as empcodi,pro_codi as pro_codori "+
         ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
-        ", 1 as unidades,0 as div_codi,deo_almori as alm_codi,'.' as avc_serie "+
+        ", 1 as unidades,1 as div_codi,deo_almori as alm_codi,'.' as avc_serie "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
         " from  v_despori where "+
         "  pro_codi = " + (proCodi==-1?"?":proCodi)  +
@@ -498,7 +498,7 @@ public class MvtosAlma
        " 0 as cliCodi,l.deo_codi  as numalb,l.def_ejelot as ejenume, "+
        " l.def_emplot as empcodi,0 as pro_codori "+
        ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
-       ", l.def_numpie as unidades,0 as div_codi,alm_codi,'.' as avc_serie "+
+       ", l.def_numpie as unidades,1 as div_codi,alm_codi,'.' as avc_serie "+
        ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
        " from  desporig c,v_despfin l where "+
        "  c.eje_nume = l.eje_nume "+
@@ -518,7 +518,7 @@ public class MvtosAlma
        " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
        " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
        ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "+
-       ", rgs_canti as unidades, 0 as div_codi,alm_codi,'.' as avc_serie "+
+       ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie "+
        ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
        " FROM v_regstock r WHERE "+       
        " rgs_kilos <> 0 "+
@@ -550,7 +550,7 @@ public class MvtosAlma
            " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
            " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
            ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "+
-           ", rgs_canti as unidades, 0 as div_codi,alm_codi,'.' as avc_serie "+
+           ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie "+
            ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
            " FROM v_regstock r WHERE "+        
            " tir_afestk = '='"+ // Solo Inventarios
@@ -1242,9 +1242,9 @@ public class MvtosAlma
           if (sel=='C' && ! swVerCompra)
             continue;
           if (sel=='d' && !swVerDesEnt)
-              continue;
+            continue;
           if (sel=='D' && !swVerDespSal)
-          continue;
+            continue;
           if (sel=='R' && !swVerRegul)
             continue;
           if (sel=='V' && dt.getInt("div_codi")<=0 && ! isRootAV())
@@ -1337,17 +1337,17 @@ public class MvtosAlma
           jt.addLinea(v);
         }
       } while (dt.next());
-      if (swDesglInd)
-      {
-        Iterator<String> pr = ht.keySet().iterator();
-        while (pr.hasNext()) 
-        {
-              ref =  pr.next();
-              cantiInd =  ht.get(ref);
-//              if (cantiInd!=0)
-//                System.out.println(ref+"|"+cantiInd);
-        }
-      }
+//      if (swDesglInd)
+//      {
+//        Iterator<String> pr = ht.keySet().iterator();
+//        while (pr.hasNext()) 
+//        {
+//              ref =  pr.next();
+//              cantiInd =  ht.get(ref);
+////              if (cantiInd!=0)
+////                System.out.println(ref+"|"+cantiInd);
+//        }
+//      }
                 //System.out.println(ref+"|"+canti);
       return true;
   }

@@ -779,7 +779,7 @@ public class lisaldos   extends ventana  implements JRDataSource
       }
       if (! dtProd.next())
         return false;
-      actualizaMsg("Ejecutando Consulta de Saldos\nTratando producto "+dtProd.getInt("pro_codi"),false);
+      setMensajePopEspere("Ejecutando Consulta de Saldos\nTratando producto "+dtProd.getInt("pro_codi"),false);
 
       precio=0;
       while (true)
