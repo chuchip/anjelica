@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Titulo: lisaldos </p>
  * <p>Descripción: Listado de Saldos </p>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -31,6 +31,7 @@ import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantFamPro;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.camposdb.proPanel;
+import gnu.chu.camposdb.sbePanel;
 import gnu.chu.controles.*;
 import gnu.chu.interfaces.VirtualGrid;
 import gnu.chu.print.util;
@@ -49,8 +50,6 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.border.BevelBorder;
@@ -59,6 +58,8 @@ import net.sf.jasperreports.engine.*;
 
 public class lisaldos   extends ventana  implements JRDataSource
 {
+  CLabel sbe_codiL=new CLabel("Seccion");
+  sbePanel sbe_codiE = new sbePanel();
   ArrayList<DatIndiv>  listIndiv=new ArrayList();
   JMenuItem verIndiv = new JMenuItem("Ver Individuos", Iconos.getImageIcon("view_tree"));
   JMenuItem verMvtos = new JMenuItem("Ver Mvtos", Iconos.getImageIcon("view_tree"));
@@ -84,7 +85,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   CPanel Pdatcon = new CPanel();
     CLinkBox cam_codiE = new CLinkBox();
   CComboBox pro_artconE = new CComboBox();
-  CLabel cLabel9 = new CLabel();
+  CLabel cam_codiL = new CLabel();
   CButton Baceptar = new CButton("Aceptar",Iconos.getImageIcon("check"));
   String camCodi;
   ResultSet dtProd;
@@ -161,7 +162,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(592, 516));
-    this.setVersion("2014-12-05");
+    this.setVersion("2015-05-22");
     ifMvtos.setSize(new Dimension(475, 325));
     
     ifMvtos.setVisible(false);
@@ -173,13 +174,15 @@ public class lisaldos   extends ventana  implements JRDataSource
     cLabel6.setBounds(new Rectangle(5, 22, 50, 17));
     cLabel6.setText("En Fecha");
     opValDesp.setFocusable(false);
-    opValDesp.setBounds(new Rectangle(160, 22, 135, 17));
-    opValDesp.setText("Valorar Desp.");
+    opValDesp.setBounds(new Rectangle(140, 22, 70, 17));
+    sbe_codiL.setBounds(new Rectangle(215, 22, 50, 17));
+    sbe_codiE.setBounds(new Rectangle(268, 22, 40, 17));
+    opValDesp.setText("Val.Desp.");
     opValDesp.setMargin(new Insets(0, 0, 0, 0));
     opValDesp.setToolTipText("Considerar despieces de Salida como entradas en negativo");
-    cLabel9.setText("Camara");
-    cLabel9.setBounds(new Rectangle(284, 22, 47, 18));
-    cam_codiE.setBounds(new Rectangle(332, 22, 191, 18));
+    cam_codiL.setText("Camara");
+    cam_codiL.setBounds(new Rectangle(310, 22, 47, 18));
+    cam_codiE.setBounds(new Rectangle(360, 22, 162, 18));
     Pdatcon.setMaximumSize(new Dimension(540, 91));
 
     this.getLayeredPane().add(ifMvtos);
@@ -306,12 +309,14 @@ public class lisaldos   extends ventana  implements JRDataSource
     ifMvtos.getContentPane().add(stBar,BorderLayout.SOUTH);
     Pdatcon.add(cLabel4, null);
     Pdatcon.add(feulinE, null);
-    Pdatcon.add(cLabel9, null);
+    Pdatcon.add(cam_codiL, null);
     Pdatcon.add(cam_codiE, null);
     Pdatcon.add(pro_artconE, null);
     Pdatcon.add(pro_cosincE,null );
     Pdatcon.add(alm_inicE, null);
     Pdatcon.add(opValDesp, null);
+    Pdatcon.add(sbe_codiL, null);
+    Pdatcon.add(sbe_codiE, null);
     Pdatcon.add(Baceptar, null);   
   }
 
@@ -357,6 +362,10 @@ public class lisaldos   extends ventana  implements JRDataSource
     cam_codiE.texto.setMayusc(true);
     pro_codiE.iniciar(dtStat,this,vl,EU);
     pro_codmvE.iniciar(dtStat,this,vl,EU);
+    sbe_codiE.iniciar(dtStat, this, vl, EU);
+    sbe_codiE.setTipo("A");
+    sbe_codiE.setValorInt(0);
+    sbe_codiE.setAceptaNulo(true);
 //    activar(true);
 
     s="select distinct(rgs_fecha) as cci_feccon from v_regstock as r "+
@@ -635,6 +644,7 @@ public class lisaldos   extends ventana  implements JRDataSource
           (camCodi != null ? " and a.cam_codi= '" + camCodi + "'" : "") +
           (pro_codiE.isNull()?"":" and a.pro_codi = "+pro_codiE.getValorInt())+
           (pro_artconE.getValorInt()==0?"": " and a.pro_artcon "+(pro_artconE.getValorInt()==1?"!":"")+"=0")+
+          (sbe_codiE.getValorInt()==0?"": " and a.sbe_codi = "+sbe_codiE.getValorInt())+
           " and a.pro_tiplot='V' "+
           " ORDER BY "+(orden=='F'?" fam_codi,":"")+
           " pro_codi ";
