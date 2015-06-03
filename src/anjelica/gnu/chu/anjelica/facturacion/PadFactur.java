@@ -144,7 +144,7 @@ public class PadFactur extends ventanaPad   implements PAD {
        
         iniciarFrame();
 
-        this.setVersion("2015-05-02" + (MOD_CONS ? "SOLO LECTURA" : ""));
+        this.setVersion("2015-06-03" + (MOD_CONS ? "SOLO LECTURA" : ""));
         strSql = getStrSql();
         IMPFRATEXTO=EU.getValorParam("impFraTexto",IMPFRATEXTO);
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -498,7 +498,7 @@ public class PadFactur extends ventanaPad   implements PAD {
 
         fvc_dtoppE.setEnabled(false);
         Ppie.add(fvc_dtoppE);
-        fvc_dtoppE.setBounds(217, 2, 34, 17);
+        fvc_dtoppE.setBounds(217, 2, 37, 17);
 
         fvc_impdppE.setBackground(java.awt.Color.orange);
         fvc_impdppE.setEnabled(false);
@@ -511,7 +511,7 @@ public class PadFactur extends ventanaPad   implements PAD {
 
         fvc_dtocomE.setEnabled(false);
         Ppie.add(fvc_dtocomE);
-        fvc_dtocomE.setBounds(419, 2, 34, 17);
+        fvc_dtocomE.setBounds(419, 2, 37, 17);
 
         fvc_impdcoE.setBackground(java.awt.Color.orange);
         fvc_impdcoE.setEnabled(false);
@@ -532,7 +532,7 @@ public class PadFactur extends ventanaPad   implements PAD {
 
         fvc_porivaE.setEnabled(false);
         Ppie.add(fvc_porivaE);
-        fvc_porivaE.setBounds(217, 21, 34, 17);
+        fvc_porivaE.setBounds(217, 21, 37, 17);
 
         fvc_impivaE.setEnabled(false);
         Ppie.add(fvc_impivaE);
@@ -544,7 +544,7 @@ public class PadFactur extends ventanaPad   implements PAD {
 
         fvc_porreqE.setEnabled(false);
         Ppie.add(fvc_porreqE);
-        fvc_porreqE.setBounds(419, 21, 34, 17);
+        fvc_porreqE.setBounds(419, 21, 37, 17);
 
         fvc_imprecE.setEnabled(false);
         Ppie.add(fvc_imprecE);
@@ -1335,8 +1335,10 @@ public class PadFactur extends ventanaPad   implements PAD {
       dtAdd.setDato("fvc_modif", fvc_modifE.getValor());
       double impDtoPP = 0;
       double dtos = fvc_dtoppE.getValorDec() + fvc_dtocomE.getValorDec();
+      
       if (dtos != 0)
-        impDtoPP = Formatear.redondea(fvc_sumlinE.getValorDec() * dtos / 100, numDec);
+        impDtoPP = Formatear.redondea(impLinDtCom * dtos / 100, numDec);
+      
       double impBim = Formatear.redondea(fvc_sumlinE.getValorDec() - impDtoPP, numDec);
       double impIva;
       double impReq=0;
@@ -1361,7 +1363,9 @@ public class PadFactur extends ventanaPad   implements PAD {
       {
           if (Math.abs(fvc_sumtotE.getValorDec() - (impBim + impReq + impIva)) > 1) 
           {
-              msgBox("Importe de la factura NO debe diferir en mas de uno");
+              msgBox("Importe de la factura NO debe diferir en mas de uno. "
+                  + "Valor calculado: BI: "+impBim+ " IVA: "+  impIva+ "RE: "+impReq+" Total: "+
+                      (impBim + impReq + impIva));
               this.setEnabled(true);
               return;
           }
@@ -1370,8 +1374,8 @@ public class PadFactur extends ventanaPad   implements PAD {
       dtAdd.update(stUp);
 // Actualizar Lineas de Comentarios
        // jtComCa.salirFoco();
-       jtComCa.procesaAllFoco();
-     jtComPie.procesaAllFoco();
+       jtComCa.salirGrid();
+     jtComPie.salirGrid();
       String condicionWhere=" emp_codi = " + emp_codiE.getValorInt() +
           " and fvc_serie = '"+fvc_serieE.getValor()+"'"+
           " AND eje_nume = " + fvc_anoE.getValorInt() +
