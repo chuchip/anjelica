@@ -805,7 +805,7 @@ public class lisfactu extends ventana  implements JRDataSource
      nVtos = clFactCob.calDiasVto(dtCon1, dtCon1.getInt("cli_dipa1"),
                                   dtCon1.getInt("cli_dipa2"), 0,
                                   dtCon1.getFecha("fvc_fecfra", "dd-MM-yyyy"));
-     impVto = (getValHash("fvc_sumtot") - dtCon1.getDouble("fvc_impcob")) / nVtos;
+     impVto = (dtCon1.getDouble("fvc_sumtot") - dtCon1.getDouble("fvc_impcob")) / nVtos;
      if (valora)
      {
        // Imp.Bruto
@@ -850,7 +850,7 @@ public class lisfactu extends ventana  implements JRDataSource
 
        print(Formatear.space(2) + Formatear.ajusIzq(banNomb, 30) +
              Formatear.space(margIzqE.getValorInt() + 7 - 32) +
-             Formatear.format(getValHash("fvc_sumtot"), "---,--9.99"));
+             Formatear.format(dtCon1.getDouble("fvc_sumtot"), "---,--9.99"));
      }
      else
        println(1);
@@ -924,7 +924,7 @@ private String buscaBanco(int banCodi) throws SQLException
                                 dtCon1.getInt("cli_dipa2"), 0,
                                 dtCon1.getFecha("fvc_fecfra", "dd-MM-yyyy"));
    banNomb = buscaBanco(dtCon1.getInt("ban_codi", true));
-   impVto = (getValHash("fvc_sumtot") - dtCon1.getDouble("fvc_impcob")) / nVtos;
+   impVto = (dtCon1.getDouble("fvc_sumtot") - dtCon1.getDouble("fvc_impcob")) / nVtos;
    s="SELECT count(*) as cuantos FROM v_facvel "+
     " where fvc_nume= "+fvcNume+
     " and fvc_serie= '"+fvcSerie+"'"+
@@ -989,7 +989,7 @@ private String buscaBanco(int banCodi) throws SQLException
      if (nVtos > nVto)
        print(Formatear.space(1)+clFactCob.diasVto[nVto] + // 10 Car.
              Formatear.space(3) +
-             (nVto+1==nVtos?Formatear.format( (getValHash("fvc_sumtot") -dtCon1.getDouble("fvc_impcob")) - impVtoAc, "---,--9.99"):
+             (nVto+1==nVtos?Formatear.format( (dtCon1.getDouble("fvc_sumtot") -dtCon1.getDouble("fvc_impcob")) - impVtoAc, "---,--9.99"):
               Formatear.format(impVto, "---,--9.99")), false);
      else
        print(Formatear.space(24), false);
@@ -1275,11 +1275,11 @@ private String buscaBanco(int banCodi) throws SQLException
      if (nVtos > nVto)
      {
        if (nVto +1 == nVtos)
-         return new Double( (getValHash("fvc_sumtot") - dtCon1.getDouble("fvc_impcob")) - impVtoAc);
+         return (dtCon1.getDouble("fvc_sumtot") - dtCon1.getDouble("fvc_impcob")) - impVtoAc;
        else
        {
          impVtoAc+=impVto;
-         return new Double(impVto);
+         return impVto;
        }
      }
      else
