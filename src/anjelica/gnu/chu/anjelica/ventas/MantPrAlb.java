@@ -51,6 +51,7 @@ import javax.swing.event.ListSelectionListener;
  * @author cpuente
  */
 public class MantPrAlb extends ventana {
+  
     int numDecPrecio=2;
     String formDecPrecio=".99";
 //    boolean inActualCosto=false;
@@ -162,7 +163,7 @@ public class MantPrAlb extends ventana {
      
         iniciarFrame();
 
-        this.setVersion("2012-03-13" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
+        this.setVersion("2015-06-05" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
         
        
         initComponents();
@@ -261,6 +262,8 @@ public class MantPrAlb extends ventana {
             }
         };
         jtDes = new gnu.chu.controles.Cgrid(5);
+        Ppedido = new gnu.chu.controles.CPanel();
+        jtLinPed = new gnu.chu.controles.Cgrid(11);
         PLinea1 = new gnu.chu.controles.CPanel();
         cLabel9 = new gnu.chu.controles.CLabel();
         avc_numacE = new gnu.chu.camposdb.AvcPanel();
@@ -463,44 +466,44 @@ public class MantPrAlb extends ventana {
         jtLin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtLin.setMinimumSize(new java.awt.Dimension(650, 359));
         jtLin.setPreferredSize(new java.awt.Dimension(650, 259));
-        Vector vl= new Vector();
-        vl.addElement("Prod.");
-        vl.addElement("Nombre"); // 1
-        vl.addElement("Und"); //2
-        vl.addElement("Kilos"); // 3
-        vl.addElement("Precio"); // 4
-        vl.addElement("PrTec"); // 5
-        vl.addElement("PrPed"); // 6
-        vl.addElement("PMedio"); // 7
-        vl.addElement("Gananc."); // 8
-        vl.addElement("PCompra"); // 9
-        vl.addElement("PrUV.");  // 10
-        vl.addElement("FecUV"); // 11
-        vl.addElement("Pr.Tar.");  // 12
-        vl.addElement("Alm"); //13
-        vl.addElement("Comen"); // 14
-        vl.addElement("NL"); // 15
+        ArrayList vl= new ArrayList();
+        vl.add("Prod.");
+        vl.add("Nombre"); // 1
+        vl.add("Und"); //2
+        vl.add("Kilos"); // 3
+        vl.add("Precio"); // 4
+        vl.add("PrTec"); // 5
+        vl.add("PrPed"); // 6
+        vl.add("PMedio"); // 7
+        vl.add("Gananc."); // 8
+        vl.add("PCompra"); // 9
+        vl.add("PrUV.");  // 10
+        vl.add("FecUV"); // 11
+        vl.add("Pr.Tar.");  // 12
+        vl.add("Alm"); //13
+        vl.add("Comen"); // 14
+        vl.add("NL"); // 15
         jtLin.setCabecera(vl);
         jtLin.setAnchoColumna(new int[]{45,180,25,55,45,45,45,45,5,45,45,65,45,25,130,30});
         jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,2,2,2,2,1,2,2,0,2});
 
-        Vector vc=new Vector();
-        vc.addElement(pro_codiE);
-        vc.addElement(pro_nombE);
-        vc.addElement(avl_unidE);
-        vc.addElement(avl_cantiE);
-        vc.addElement(avl_prvenE);
-        vc.addElement(avl_prtecnE);
-        vc.addElement(pvl_precioE);
-        vc.addElement(pro_prcostE);
-        vc.addElement(pro_ganancE);
-        vc.addElement(pro_prulcoE);
-        vc.addElement(avl_prulveE);
-        vc.addElement(avl_feulveE);
-        vc.addElement(tar_preciE);
-        vc.addElement(alm_codiE);
-        vc.addElement(avl_comentE);
-        vc.addElement(avl_numlinE);
+        ArrayList vc=new ArrayList();
+        vc.add(pro_codiE); // 0
+        vc.add(pro_nombE); // 1
+        vc.add(avl_unidE); // 2
+        vc.add(avl_cantiE); // 3
+        vc.add(avl_prvenE); // 4
+        vc.add(avl_prtecnE); // 5
+        vc.add(pvl_precioE); // 6 Precio pedido
+        vc.add(pro_prcostE);
+        vc.add(pro_ganancE);
+        vc.add(pro_prulcoE);
+        vc.add(avl_prulveE);
+        vc.add(avl_feulveE);
+        vc.add(tar_preciE);
+        vc.add(alm_codiE);
+        vc.add(avl_comentE);
+        vc.add(avl_numlinE);
         try {
             jtLin.setCampos(vc); } catch (Exception k) {msgBox("Error al inicializar grid"+k.getMessage());}
         jtLin.setFormatoCampos();
@@ -562,6 +565,17 @@ public class MantPrAlb extends ventana {
         PLinea.add(jtDes, gridBagConstraints);
 
         PTabPane1.addTab("Lineas Alb", PLinea);
+
+        Ppedido.setLayout(new java.awt.BorderLayout());
+
+        try {confJtLin();} catch (Exception k){Error("Error al configurar grid Lineas",k);}
+        jtLinPed.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtLinPed.setMaximumSize(new java.awt.Dimension(681, 101));
+        jtLinPed.setMinimumSize(new java.awt.Dimension(681, 101));
+        jtLinPed.setPreferredSize(new java.awt.Dimension(681, 102));
+        Ppedido.add(jtLinPed, java.awt.BorderLayout.CENTER);
+
+        PTabPane1.addTab("Pedido", Ppedido);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -755,6 +769,20 @@ public class MantPrAlb extends ventana {
                  irLineaAlb();
          }
         });
+        jtLinPed.addMouseListener(new MouseAdapter() { 
+            @Override
+         public void mouseClicked(MouseEvent e) {
+             if (jtLinPed.isVacio())
+                 return;
+             if (e.getClickCount()>1 && jtLin.isEnabled() )// && ! jtSelAlb.isVacio() && jtSelAlb.isEnabled())
+             {
+                 pvl_precioE.setValorDec(jtLinPed.getValorDec(7));
+                 jtLin.setValor(jtLinPed.getValorDec(7),6);
+                 PTabPane1.setSelectedIndex(1);
+                 jtLin.requestFocusLater();
+             }
+         }
+        });
         avc_revpracE.addActionListener(new ActionListener()
         {
             @Override
@@ -813,16 +841,24 @@ public class MantPrAlb extends ventana {
         int avcAno=Integer.parseInt(albaran.substring(0,4));
         String avcSerie=albaran.substring(4,5);
         int avcNume=Integer.parseInt(albaran.substring(5));
+        
         cli_codacE.setValorInt(jtSelAlb.getValorInt(row,2));
         
         avc_numacE.setText(albaran);
         avc_fecalbE.setText(jtSelAlb.getValString(row,1));
         avc_revpracE.setEnabled(false);
         avc_revpracE.setValor(avc_revpreE.getValor());
-        avc_revpracE.setEnabled(true);
-
-        pvl_precioE.setEditable(avc_revpracE.getValorInt()==pdalbara.REVPRE_PCOSTO &&
-             jtSelAlb.getValorInt(row,5)==0);
+        avc_revpracE.setEnabled(true);      
+        String[] parts = jtSelAlb.getValString(row,5).split("-");
+        int pvcAno=0,pvcNume=0;
+        if (parts.length==2)
+        {
+            pvcAno= Integer.parseInt(parts[0]); 
+            pvcNume= Integer.parseInt(parts[1]); 
+        }
+        
+        pvl_precioE.setEditable(avc_revpracE.getValorInt()==pdalbara.REVPRE_PCOSTO); //          jtSelAlb.getValorInt(row,5)==0);
+        
         String feulVen,prulVen,prulCom;
 
         HashMap<Integer,precVentas> htPrulv = new HashMap();
@@ -877,17 +913,13 @@ public class MantPrAlb extends ventana {
                 prVenta=htPrulv.get(dtAlb.getInt("pro_codi"));
                 if (prVenta==null)
                 {
-                    s="SELECT avc_fecalb , avl_prven from v_albavel as l, v_albavec c WHERE" +
+                    s="SELECT avc_fecalb , avl_prven from v_albventa WHERE" +
                         " pro_codi = "+dtAlb.getInt("pro_codi")+
-                        " and c.emp_codi = "+emp_codiE.getValorInt()+
+                        " and emp_codi = "+emp_codiE.getValorInt()+
                         " and avc_fecalb >= current_date - 60  "+
-                        " and c.avc_nume != "+avc_numacE.geValorIntNume()+
+                        " and avc_nume != "+avc_numacE.geValorIntNume()+
                         " and avl_prven !=0 "+
-                        " and c.cli_codi = "+cli_codacE.getValorInt()+
-                        " and l.emp_codi = c.emp_codi "+
-                        " and l.avc_ano = c.avc_ano "+
-                        " and l.avc_serie = c.avc_serie  "+
-                        " and l.avc_nume = c.avc_nume "+
+                        " and cli_codi = "+cli_codacE.getValorInt()+
                         " order by avc_fecalb desc";
                     if (! dtStat.select(s))
                     {
@@ -938,18 +970,7 @@ public class MantPrAlb extends ventana {
                 {
                     prulCom=htCompra.get( dtAlb.getInt("pro_codi"));
                 }
-//                Double prec=htCosto.get(dtAlb.getInt("pro_codi"));
-//                if (prec==null)
-//                {
-////                    if (! mvtosAlm.calculaMvtos(dtAlb.getInt("pro_codi"), dtAdd, dtStat, null,null))
-////                        prCosto=0;
-////                    else
-////                        prCosto = mvtosAlm.getPrecioStock();
-//                     prCosto=0;
-//                    htCosto.put(dtAlb.getInt("pro_codi"), prCosto);
-//                }
-//                else
-//                   prCosto=prec;
+//               
                 numLin++;
                 ArrayList v=new ArrayList();
                 v.add(dtAlb.getString("pro_codi")); //0
@@ -984,29 +1005,8 @@ public class MantPrAlb extends ventana {
             avl_comentE.resetCambio();
             actualCostos();
             buscaDesglose(0);
-            jtLin.requestFocusInicioLater();
-//            SwingUtilities.invokeLater(new Thread()
-//            {
-//                @Override
-//                public void run()
-//                {
-//                  try {
-//                      while (inActualCosto)
-//                      {
-//                          Thread.sleep(50);
-//                      } 
-//                  }catch (Exception k1 ){}
-//                  actualCostos();
-//                  try {
-//                      while (inEventoSelecion)
-//                      {
-//                              Thread.sleep(50);
-//                      }
-//                  }catch (Exception k1 ){}
-//                
-//                  buscaDesglose(0);
-//                }
-//            });
+            verDatPed(emp_codiE.getValorInt(),pvcAno,pvcNume);
+            jtLin.requestFocusInicioLater();   
             
             mensajeErr("");
         } catch (SQLException k)
@@ -1026,6 +1026,7 @@ public class MantPrAlb extends ventana {
         int nRow=jtLin.getRowCount();
         int nLin=jtSelAlb.getSelectedRow();
         try {
+          mvtosAlm.setMvtoDesgl(false);
           mvtosAlm.iniciarMvtos(feulin,fecCostoE.isNull()?avc_fecalbE.getText():fecCostoE.getText(),dtCos1);
         for (int n=0;n<nRow;n++)
         {
@@ -1112,6 +1113,70 @@ public class MantPrAlb extends ventana {
         }
 //        inEventoSelecion=false;
     }
+   private void confJtLin() throws Exception
+   {
+     ArrayList v = new ArrayList();
+     v.add("Tipo"); // 0 Albaran o Pedido
+     v.add("Prod."); // 1
+     v.add("Desc. Prod."); // 2
+     v.add("Prv"); // 3
+     v.add("Nombre Prv"); // 4
+     v.add("Fec.Cad"); // 5
+     v.add("Cant"); // 6
+     v.add("Precio"); // 7
+     v.add("Conf"); // 8 Confirmado Precio ?
+     v.add("Comentario"); // 9 Comentario
+     v.add("NL."); // 10
+     jtLinPed.setCabecera(v);
+     jtLinPed.setMaximumSize(new Dimension(548, 127));
+     jtLinPed.setMinimumSize(new Dimension(548, 127));
+     jtLinPed.setPreferredSize(new Dimension(548, 127));
+     jtLinPed.setPuntoDeScroll(50);
+     jtLinPed.setAnchoColumna(new int[]
+                        {20,50, 160, 50, 140, 55, 50, 50, 30, 150, 30});
+     jtLinPed.setAlinearColumna(new int[]
+                          {1,2, 0, 2, 0, 1, 2, 2, 1, 0, 2});
+     
+     jtLinPed.setFormatoColumna(7, "-,--9.99");
+     jtLinPed.setFormatoColumna(8, "BSN");
+    }
+   void verDatPed(int empCodi,int ejeNume,int pvcNume) throws SQLException
+   {   
+       jtLinPed.removeAllDatos();
+       if (ejeNume==0)
+           return;
+       s="SELECT * FROM v_pedven "+
+           " WHERE emp_codi =  "+empCodi+
+           " AND eje_nume = "+ejeNume+
+           " and pvc_nume = "+pvcNume+
+           " order by pvl_numlin ";
+       
+       if (! dtCon1.select(s))
+       {
+         msgBox("NO ENCONTRADOS DATOS PARA ESTE PEDIDO");
+         return;
+       }
+     
+      
+       do
+       {
+         ArrayList v=new ArrayList();
+         v.add("P");
+         v.add(dtCon1.getString("pro_codi"));
+         v.add(MantArticulos.getNombProd(dtCon1.getInt("pro_codi"),dtStat));
+         v.add(dtCon1.getString("prv_codi"));
+         v.add(pdprove.getNombPrv(dtCon1.getInt("prv_codi"),dtStat));
+         v.add(dtCon1.getFecha("pvl_feccad"));
+         v.add(dtCon1.getString("pvl_canti")+" "+dtCon1.getString("pvl_tipo"));
+         v.add(dtCon1.getString("pvl_precio"));
+         v.add(dtCon1.getInt("pvl_precon") != 0);
+         v.add(dtCon1.getString("pvl_comen"));
+         v.add(dtCon1.getString("pvl_numlin"));
+         jtLinPed.addLinea(v);
+       } while (dtCon1.next());
+           
+   }
+   
     void Bbuscar_actionPerformed() {
         guardaCambios();
         jtLinCambio=false;
@@ -1148,7 +1213,8 @@ public class MantPrAlb extends ventana {
         }
         avl_prtecnE.setEditable(avc_revpreE.getValorInt() == pdalbara.REVPRE_PCOSTO );
         avl_prvenE.setEditable(avc_revpreE.getValorInt() == pdalbara.REVPRE_PVALOR
-                || avc_revpreE.getValorInt() == pdalbara.REVPRE_REVISA ); pvl_precioE.setEditable(avc_revpreE.getValorInt() == pdalbara.REVPRE_PCOSTO );
+                || avc_revpreE.getValorInt() == pdalbara.REVPRE_REVISA );
+        pvl_precioE.setEditable(avc_revpreE.getValorInt() == pdalbara.REVPRE_PCOSTO );
         new miThread("")
         {
 
@@ -1163,7 +1229,7 @@ public class MantPrAlb extends ventana {
 
     void busca1()
     {
-        int pvcNume;
+        
         mensaje("Espere, por favor, buscando Albaranes");
         jtLin.setColNueva(avc_revpreE.getValorInt()==pdalbara.REVPRE_PCOSTO?5:4);
         try {
@@ -1208,16 +1274,18 @@ public class MantPrAlb extends ventana {
             return;
         }
         ArrayList<ArrayList> datos=new ArrayList();
+        String pvcNume;
         do
         {
-             s = "SELECT pvc_nume FROM pedvenc WHERE avc_ano =" +dtCon1.getInt("avc_ano") +
-              " and emp_codi = " + +dtCon1.getInt("emp_codi")  +
-              " and avc_serie = '" + dtCon1.getString("avc_serie") + "'" +
-              " and avc_nume = " + dtCon1.getInt("avc_nume");
+            
+             s = "SELECT eje_nume,pvc_nume FROM pedvenc WHERE avc_ano =" +dtCon1.getInt("avc_ano") +
+                " and emp_codi = " + +dtCon1.getInt("emp_codi")  +
+                " and avc_serie = '" + dtCon1.getString("avc_serie") + "'" +
+                " and avc_nume = " + dtCon1.getInt("avc_nume");
             if (!dtStat.select(s))
-                pvcNume=0;
+                pvcNume="";
             else
-                pvcNume=dtStat.getInt("pvc_nume",true);
+                pvcNume=dtStat.getString("eje_nume",true)+"-"+dtStat.getString("pvc_nume",true);
             ArrayList v=new ArrayList();
             v.add(Formatear.format(dtCon1.getInt("avc_ano"),"9999")+
                  dtCon1.getString("avc_serie")+Formatear.format(dtCon1.getInt("avc_nume"),"999999"));
@@ -1380,6 +1448,7 @@ public class MantPrAlb extends ventana {
     private gnu.chu.controles.CPanel PSelec;
     private gnu.chu.controles.CTabbedPane PTabPane1;
     private gnu.chu.controles.CPanel Pcondic;
+    private gnu.chu.controles.CPanel Ppedido;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CTextField alm_codiE;
     private gnu.chu.controles.CTextField avc_fecalbE;
@@ -1420,6 +1489,7 @@ public class MantPrAlb extends ventana {
     private gnu.chu.controles.CTextField fecIniE;
     private gnu.chu.controles.Cgrid jtDes;
     private gnu.chu.controles.CGridEditable jtLin;
+    private gnu.chu.controles.Cgrid jtLinPed;
     private gnu.chu.controles.Cgrid jtSelAlb;
     private gnu.chu.controles.CCheckBox opAgrpLin;
     private gnu.chu.controles.CTextField pro_codiE;
@@ -1459,4 +1529,5 @@ class precVentas
         return precTarifa;
 
     }
+ 
 }

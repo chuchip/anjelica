@@ -555,7 +555,7 @@
                   </Properties>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(16){&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return jtLinCambiaLinea(row,col);&#xa;    }&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        buscaDesglose(jtLin.getSelectedRow());&#xa;    }&#xa;}"/>
-                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Vector vl= new Vector();&#xa;vl.addElement(&quot;Prod.&quot;);&#xa;vl.addElement(&quot;Nombre&quot;); // 1&#xa;vl.addElement(&quot;Und&quot;); //2&#xa;vl.addElement(&quot;Kilos&quot;); // 3&#xa;vl.addElement(&quot;Precio&quot;); // 4&#xa;vl.addElement(&quot;PrTec&quot;); // 5&#xa;vl.addElement(&quot;PrPed&quot;); // 6 &#xa;vl.addElement(&quot;PMedio&quot;); // 7&#xa;vl.addElement(&quot;Gananc.&quot;); // 8&#xa;vl.addElement(&quot;PCompra&quot;); // 9&#xa;vl.addElement(&quot;PrUV.&quot;);  // 10&#xa;vl.addElement(&quot;FecUV&quot;); // 11&#xa;vl.addElement(&quot;Pr.Tar.&quot;);  // 12&#xa;vl.addElement(&quot;Alm&quot;); //13&#xa;vl.addElement(&quot;Comen&quot;); // 14&#xa;vl.addElement(&quot;NL&quot;); // 15&#xa;jtLin.setCabecera(vl);&#xa;jtLin.setAnchoColumna(new int[]{45,180,25,55,45,45,45,45,5,45,45,65,45,25,130,30});&#xa;jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,2,2,2,2,1,2,2,0,2});&#xa;&#xa;Vector vc=new Vector();&#xa;vc.addElement(pro_codiE);&#xa;vc.addElement(pro_nombE);&#xa;vc.addElement(avl_unidE);&#xa;vc.addElement(avl_cantiE);&#xa;vc.addElement(avl_prvenE);&#xa;vc.addElement(avl_prtecnE);&#xa;vc.addElement(pvl_precioE);&#xa;vc.addElement(pro_prcostE);&#xa;vc.addElement(pro_ganancE);&#xa;vc.addElement(pro_prulcoE);&#xa;vc.addElement(avl_prulveE);&#xa;vc.addElement(avl_feulveE);&#xa;vc.addElement(tar_preciE);&#xa;vc.addElement(alm_codiE);&#xa;vc.addElement(avl_comentE);&#xa;vc.addElement(avl_numlinE);&#xa;try {&#xa;jtLin.setCampos(vc); } catch (Exception k) {msgBox(&quot;Error al inicializar grid&quot;+k.getMessage());}&#xa;jtLin.setFormatoCampos();"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList vl= new ArrayList();&#xa;vl.add(&quot;Prod.&quot;);&#xa;vl.add(&quot;Nombre&quot;); // 1&#xa;vl.add(&quot;Und&quot;); //2&#xa;vl.add(&quot;Kilos&quot;); // 3&#xa;vl.add(&quot;Precio&quot;); // 4&#xa;vl.add(&quot;PrTec&quot;); // 5&#xa;vl.add(&quot;PrPed&quot;); // 6 &#xa;vl.add(&quot;PMedio&quot;); // 7&#xa;vl.add(&quot;Gananc.&quot;); // 8&#xa;vl.add(&quot;PCompra&quot;); // 9&#xa;vl.add(&quot;PrUV.&quot;);  // 10&#xa;vl.add(&quot;FecUV&quot;); // 11&#xa;vl.add(&quot;Pr.Tar.&quot;);  // 12&#xa;vl.add(&quot;Alm&quot;); //13&#xa;vl.add(&quot;Comen&quot;); // 14&#xa;vl.add(&quot;NL&quot;); // 15&#xa;jtLin.setCabecera(vl);&#xa;jtLin.setAnchoColumna(new int[]{45,180,25,55,45,45,45,45,5,45,45,65,45,25,130,30});&#xa;jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,2,2,2,2,1,2,2,0,2});&#xa;&#xa;ArrayList vc=new ArrayList();&#xa;vc.add(pro_codiE); // 0&#xa;vc.add(pro_nombE); // 1&#xa;vc.add(avl_unidE); // 2&#xa;vc.add(avl_cantiE); // 3&#xa;vc.add(avl_prvenE); // 4&#xa;vc.add(avl_prtecnE); // 5&#xa;vc.add(pvl_precioE); // 6 Precio pedido&#xa;vc.add(pro_prcostE);&#xa;vc.add(pro_ganancE);&#xa;vc.add(pro_prulcoE);&#xa;vc.add(avl_prulveE);&#xa;vc.add(avl_feulveE);&#xa;vc.add(tar_preciE);&#xa;vc.add(alm_codiE);&#xa;vc.add(avl_comentE);&#xa;vc.add(avl_numlinE);&#xa;try {&#xa;jtLin.setCampos(vc); } catch (Exception k) {msgBox(&quot;Error al inicializar grid&quot;+k.getMessage());}&#xa;jtLin.setFormatoCampos();"/>
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -609,6 +609,50 @@
                           <EmptySpace min="0" pref="98" max="32767" attributes="0"/>
                       </Group>
                     </DimensionLayout>
+                  </Layout>
+                </Container>
+              </SubComponents>
+            </Container>
+            <Container class="gnu.chu.controles.CPanel" name="Ppedido">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Pedido">
+                    <Property name="tabTitle" type="java.lang.String" value="Pedido"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+              <SubComponents>
+                <Container class="gnu.chu.controles.Cgrid" name="jtLinPed">
+                  <Properties>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                        <LineBorder/>
+                      </Border>
+                    </Property>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[681, 101]"/>
+                    </Property>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[681, 101]"/>
+                    </Property>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[681, 102]"/>
+                    </Property>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(11)"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="try {confJtLin();} catch (Exception k){Error(&quot;Error al configurar grid Lineas&quot;,k);}"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                      <BorderConstraints direction="Center"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                    <Property name="useNullLayout" type="boolean" value="true"/>
                   </Layout>
                 </Container>
               </SubComponents>
