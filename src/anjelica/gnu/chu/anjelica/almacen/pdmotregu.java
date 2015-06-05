@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Título: pdmotregu</p>
  * <p>Descripcion: Mant. TIPOS de Regularizacion</p>
- * <p>Copyright: Copyright (c) 2006-2014
+ * <p>Copyright: Copyright (c) 2006-201
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -93,8 +93,8 @@ public class pdmotregu extends ventanaPad implements PAD
    {
      iniciarFrame();
      this.setSize(new Dimension(539, 522));
-     this.setVersion("2014-10-30");
-     strSql = "select * from v_motregu ORDER BY tir_codi";
+     this.setVersion("2015-06-05");
+     strSql = "select * from motregu ORDER BY tir_codi";
      statusBar = new StatusBar(this);
      nav = new navegador(this, false, navegador.GRID);
      conecta();
@@ -241,7 +241,7 @@ public class pdmotregu extends ventanaPad implements PAD
         activaTodo();
         return;
       }
-      s = "SELECT * FROM v_motregu WHERE tir_codi = "+tir_codiE.getValorInt();
+      s = "SELECT * FROM motregu WHERE tir_codi = "+tir_codiE.getValorInt();
       if (! dtAdd.select(s,true))
       {
         mensajeErr("Tipo de Regularizacion NO ENCONTRADO ... PROBABLEMENTE SE BORRO");
@@ -340,13 +340,13 @@ public class pdmotregu extends ventanaPad implements PAD
   @Override
   public void ej_addnew1(){
     try {
-      String s = "SELECT * FROM v_motregu WHERE tir_codi = " + tir_codiE.getValorInt();
+      String s = "SELECT * FROM motregu WHERE tir_codi = " + tir_codiE.getValorInt();
       if (dtStat.select(s))
       {
         mensajeErr("Motivo de Regularizacion YA existe");
         return;
       }
-      dtAdd.addNew("v_motregu");
+      dtAdd.addNew("motregu");
       dtAdd.setDato("tir_codi",tir_codiE.getValorInt());
       actDatos();
       ctUp.commit();
@@ -393,7 +393,7 @@ public class pdmotregu extends ventanaPad implements PAD
         activaTodo();
         return;
       }
-      s = "SELECT * FROM v_motregu WHERE tir_codi = " + tir_codiE.getValorInt();
+      s = "SELECT * FROM motregu WHERE tir_codi = " + tir_codiE.getValorInt();
       if (!dtAdd.select(s, true))
       {
         mensajeErr("Tipo de Regularizacion NO ENCONTRADO ... PROBABLEMENTE SE BORRO");
@@ -457,12 +457,12 @@ public class pdmotregu extends ventanaPad implements PAD
    * Devuelve el codigo de un motivo de regularizacion segun como afecta al stock
    * @param dt DatosTabla
    * @param afestk String indicando como afecta a stock (normalmente '=')
-   * @return codigo (tir_codi) de la tabla v_motregu. -1 si no lo encuentra
+   * @return codigo (tir_codi) de la tabla motregu. -1 si no lo encuentra
    * @throws SQLException
    */
   public static int getTipoMotRegu(DatosTabla dt,String afestk) throws SQLException
   {
-    String s = "select  tir_codi from v_motregu where tir_afestk = '"+afestk+"'";
+    String s = "select  tir_codi from motregu where tir_afestk = '"+afestk+"'";
      if (!dt.select(s))
        return -1;
      return  dt.getInt("tir_codi");
@@ -478,7 +478,7 @@ public class pdmotregu extends ventanaPad implements PAD
   public static String getTiposRegul(DatosTabla dt,String tipRegul) throws SQLException
   {
     String tirCodi="";
-    String s = "select  tir_codi from v_motregu where tir_tipo like '"+tipRegul+"'";
+    String s = "select  tir_codi from motregu where tir_tipo like '"+tipRegul+"'";
      if (!dt.select(s))
        return tirCodi;
      do
