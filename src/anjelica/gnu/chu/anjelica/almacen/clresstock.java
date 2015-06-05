@@ -380,7 +380,7 @@ public class clresstock extends ventana implements  JRDataSource
       boolean verKilos = tla_vekgcaE.getValor().equals("K");
       productos.clear();
       grids.clear();
-      Object o;
+      String result;
       ArrayList vc = new ArrayList();
       vc.add("Proveed");
       vc.add("Fecha");
@@ -418,7 +418,7 @@ public class clresstock extends ventana implements  JRDataSource
             " c.prv_codi , acp_feccad as feccad "+
             " from v_compras as c"+          
             " where pro_codi = ?"+            
-            " AND C.ACC_CERRA = 0 "+ // No estan cerradas las lineas
+            " AND c.acc_cerra = 0 "+ // No estan cerradas las lineas
             (almCodi == 0 ? "" : " and alm_codi = " + almCodi)+
             " and exists ( select   emp_codi "+
             " from pedicoc as p " +
@@ -543,12 +543,15 @@ public class clresstock extends ventana implements  JRDataSource
         jt.setCabecera(vc);
         jt.setAnchoColumna(ancGrid );
         jt.setAlinearColumna(alineaGrid);
-        jt.setFormatoColumna(2, "--,---9");
+        String formCanti="--,--9";
+        if (tla_vekgcaE.getValor().equals("K"))
+               formCanti="-,--9.9";
+        jt.setFormatoColumna(2, formCanti);
         if (opIncPedE.isSelected())
         {
-          jt.setFormatoColumna(3, "--,---9");
-          jt.setFormatoColumna(4, "--,---9");
-          jt.setFormatoColumna(5, "--,---9");
+          jt.setFormatoColumna(3, formCanti);
+          jt.setFormatoColumna(4,formCanti);
+          jt.setFormatoColumna(5, formCanti);
         }
         CLabel pro_descL = new CLabel();
         pro_descL.setText((tlaCodi == 99?dtCon1.getInt("pro_codi")+" -> ":"")+ dtCon1.getString("pro_desc"));
@@ -562,7 +565,7 @@ public class clresstock extends ventana implements  JRDataSource
         jt.setMinimumSize(new Dimension(236, 128));
         jt.setPreferredSize(new Dimension(236, 128));
         jt.setBuscarVisible(false);
-        HashMap hm = new HashMap();
+        HashMap <String,String> hm = new HashMap();
 
         do
         { // Para cada producto busca el stock
@@ -593,15 +596,16 @@ public class clresstock extends ventana implements  JRDataSource
 //                     Formatear.formatearFecha(new java.util.Date(fecCad),"dd-MM-yyyy")+" dt: "+dtAux1.getFecha("feccad","dd-MM-yyyy"));
 
               llave = fecCad + "/" + dtAux1.getInt("prv_codi", true);
-              if ( (o = hm.get(llave)) == null)
+              if ( (result = hm.get(llave)) == null)
                 hm.put(llave, verKilos ? dtAux1.getString("cantidad") : dtAux1.getString("unidades"));
               else
               {
-                cutValString(o.toString());
+                cutValString(result);
                 cantS += verKilos ? dtAux1.getDouble("cantidad") : dtAux1.getDouble("unidades");
                 hm.put(llave, cantS + ":" + cantC + ":" + cantV);
               }
             }  while (dtAux1.next());
+            
             if (opIncPedE.isSelected())
             {
               pst2.setInt(1,proCodi);
@@ -628,8 +632,8 @@ public class clresstock extends ventana implements  JRDataSource
                 cantV=0;
                 cantC=0;
                 cantS=0;
-                if ( (o = hm.get(llave)) != null)
-                  cutValString(o.toString());
+                if ( (result = hm.get(llave)) != null)
+                  cutValString(result);
                 cantC+=verKilos ? dtAux1.getDouble("cantCompr") : dtAux1.getDouble("unidCompr");
                 cantV+= verKilos? dtAux1.getDouble("cantVent") : dtAux1.getDouble("unidVent");
                 hm.put(llave,cantS+":"+cantC+":"+cantV);
@@ -667,7 +671,7 @@ public class clresstock extends ventana implements  JRDataSource
           else
             v.add(Formatear.getFecha(new java.util.Date(
                 Long.parseLong(s.substring(0, n))), "dd-MM-yy"));
-          cutValString(hm.get(s).toString());
+          cutValString(hm.get(s));
           if (opIncPedE.isSelected())
           {
             v.add(""+(cantS+cantC-cantV));
@@ -693,9 +697,9 @@ public class clresstock extends ventana implements  JRDataSource
         v.add("" + cantT); // Kilos o Unidades Totales
         if (opIncPedE.isSelected())
         {
-          v.add("" + cantTS);
-          v.add("" + cantTC);
-          v.add("" + cantTV);
+          v.add( cantTS);
+          v.add( cantTC);
+          v.add( cantTV);
         }
         jt.addLinea(v);
         productos.add(pro_descL.getText());
@@ -719,7 +723,7 @@ public class clresstock extends ventana implements  JRDataSource
       mensaje("");
       mensajeErr("Consulta ... REALIZADA");
     }
-    catch (Exception k)
+    catch (SQLException | NumberFormatException k)
     {
       Error("Error al Buscar datos", k);
     }
@@ -803,13 +807,10 @@ public class clresstock extends ventana implements  JRDataSource
         tlaNulipr=tla_nuliprE.getValorInt();
       else
         tlaNulipr=maxLinGrid;
-      JasperReport jr;
+      String report=opIncPedE.isSelected()?"resstock_d":"resstock";
+      JasperReport jr=gnu.chu.print.util.getJasperReport(EU,  report);
       numProd=-1;
       linGrid=999;
-      if (opIncPedE.isSelected())
-        jr = gnu.chu.print.util.getJasperReport(EU,  "resstock_d");
-      else
-        jr = gnu.chu.print.util.getJasperReport(EU, "resstock");
       java.util.HashMap mp = new java.util.HashMap();
       mp.put("tla_nombP",tla_codiE.getTextCombo());
       mp.put("tla_diagfeP",tla_diagfeE.getText());
@@ -834,6 +835,7 @@ public class clresstock extends ventana implements  JRDataSource
     this.setEnabled(true);
   }
 
+  @Override
   public boolean next() throws JRException
   {
 
@@ -877,7 +879,7 @@ public class clresstock extends ventana implements  JRDataSource
         if (campo.equals("stp_feccad"))
           return Formatear.getDate(grid.getValString(linGrid, 1), "dd-MM-yy");
         if ( nCol>0)
-          return new Double(grid.getValorDec(linGrid, nCol));
+          return grid.getValorDec(linGrid, nCol);
       }
       else
       {
@@ -890,7 +892,7 @@ public class clresstock extends ventana implements  JRDataSource
            double kilos=0;
            for (int n=linGrid;n+1<grid.getRowCount();n++)
              kilos+=grid.getValorDec(n, nCol);
-           return new Double(kilos);
+           return kilos;
          }
       }
 
@@ -909,24 +911,24 @@ public class clresstock extends ventana implements  JRDataSource
   {
     if (tlaCodi == 99)
     {
-      String proDisc3 = Formatear.reemplazar(cam_codiE.getText(), "*", "%").trim();
-      if (proDisc3.equals("%%") || proDisc3.equals("%") || proDisc3.trim().equals(""))
-        proDisc3 = null;
-    String condArt = " 1 = 1 "+
-        (proDisc3 == null ? "" : " and cam_codi like '%" + proDisc3 + "%'") +
-        (!proiniE.isNull() ? "  and pro_codi >= " + proiniE.getValorInt() : "") +
-          (!profinE.isNull() ? "  and pro_codi <= " + profinE.getValorInt() :
-           "")+
-         (opSoloVend.isSelected()?" and pro_tiplot = 'V'":"");
-    if (sbeCodi!=0)
-        condArt+=" and sbe_codi ="+sbeCodi;
-      s = "SELECT pro_codi,pro_nomcor as pro_desc from v_articulo where " +
-          condArt +
-          " order by pro_codi";
+        String proDisc3 = Formatear.reemplazar(cam_codiE.getText(), "*", "%").trim();
+        if (proDisc3.equals("%%") || proDisc3.equals("%") || proDisc3.trim().equals(""))
+          proDisc3 = null;
+        String condArt = " 1 = 1 "+
+          (proDisc3 == null ? "" : " and cam_codi like '%" + proDisc3 + "%'") +
+          (!proiniE.isNull() ? "  and pro_codi >= " + proiniE.getValorInt() : "") +
+            (!profinE.isNull() ? "  and pro_codi <= " + profinE.getValorInt() :
+             "")+
+           (opSoloVend.isSelected()?" and pro_tiplot = 'V'":"");
+        if (sbeCodi!=0)
+          condArt+=" and sbe_codi ="+sbeCodi;
+        s = "SELECT pro_codi,pro_nomcor as pro_desc from v_articulo where " +
+            condArt +
+            " order by pro_codi";
     }
     else
-      s = "SELECT * FROM tilialgr WHERE tla_codi = " + tlaCodi +
-          " order by tla_orden";
+        s = "SELECT * FROM tilialgr WHERE tla_codi = " + tlaCodi +
+            " order by tla_orden";
 
     return s;
   }
