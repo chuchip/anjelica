@@ -17,7 +17,7 @@ import gnu.chu.interfaces.ejecutable;
  * <p>Titulo: costkpar</p>
  * <p>Descripción: Consulta tabla de Stock Partidas </p>
  *
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -42,6 +42,8 @@ public class costkpar extends ventana
   static final int JT_LOTE=4;
   static final int JT_INDI=5;
   static final int JT_ALMAC=8;
+  static final int JT_NUMPAL=9;
+  static final int JT_NUMCAJ=10;
   private String filtroEmpr;
   String s;
   CPanel Pprinc = new CPanel();
@@ -69,7 +71,7 @@ public class costkpar extends ventana
   CTextField stp_kilactE = new CTextField(Types.DECIMAL,"---,--9.99");
   CLabel cLabel11 = new CLabel();
   CButton Baceptar = new CButton("Aceptar (F4)",Iconos.getImageIcon("check"));
-  Cgrid jt = new Cgrid(15);
+  Cgrid jt = new Cgrid(17);
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   CCheckBox opStock = new CCheckBox();
 
@@ -117,7 +119,7 @@ public class costkpar extends ventana
   {
     iniciarFrame();
     this.setSize(new Dimension(621,471));
-    this.setVersion("2009-12-22");
+    this.setVersion("2015-06-11");
     Pprinc.setLayout(gridBagLayout1);
 
     conecta();
@@ -165,21 +167,23 @@ public class costkpar extends ventana
     v.add("Un.Act"); // 6
     v.add("Kg.Act"); // 7
     v.add("Alm"); // 8
-    v.add("Prv."); // 9
-    v.add("Fec.Cad."); // 10
-    v.add("Fec.Creac."); // 11
-    v.add("Un.Ini"); // 12
-    v.add("Kg.Ini"); // 13
-    v.add("Blo");
+    v.add("Palet"); // 9
+    v.add("Caja");  // 10
+    v.add("Prv."); // 11
+    v.add("Fec.Cad."); // 12
+    v.add("Fec.Creac."); // 13
+    v.add("Un.Ini"); // 14
+    v.add("Kg.Ini"); // 15
+    v.add("Blo"); // 16
     jt.setCabecera(v);
     jt.setToolTipText("Doble click para editar apunte Stock");
-    jt.setAnchoColumna(new int[]{50,100,40,30,50,40,40,60, 50,40,80,80,40,60,30});
-    jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,2,2,2,1,1,2,2,1});
+    jt.setAnchoColumna(new int[]{50,100,40,30,50,40,40,60, 50,40,40,40,80,80,40,60,30});
+    jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,2,2,2,2,2,1,1,2,2,1});
     jt.setFormatoColumna(6,"--,--9");
     jt.setFormatoColumna(7,"---,--9.99");
-    jt.setFormatoColumna(12,"--,--9");
-    jt.setFormatoColumna(13,"---,--9.99");
-    jt.setFormatoColumna(14,"B-");
+    jt.setFormatoColumna(14,"--,--9");
+    jt.setFormatoColumna(15,"---,--9.99");
+    jt.setFormatoColumna(16,"B-");
     jt.setMaximumSize(new Dimension(594, 179));
     jt.setMinimumSize(new Dimension(594, 179));
     jt.setPreferredSize(new Dimension(594, 179));
@@ -350,7 +354,7 @@ public class costkpar extends ventana
 
       s = "SELECT s.pro_codi,a.pro_nomb,s.eje_nume,s.pro_serie,s.pro_nupar,"+
           " s.pro_numind,s.stp_unact,s.stp_kilact, "+
-          " s.alm_codi,s.prv_codi, s.stp_feccad,  "+
+          " s.alm_codi, s.stp_numpal,s.stp_numcaj, s.prv_codi, s.stp_feccad,  "+
           " s.stp_feccre,s.stp_unini, s.stp_kilini,s.stk_block "+
           " FROM V_stkpart as s, v_articulo as a where a.pro_codi = s.pro_codi "+
            (filtroEmpr==null?"":" and s.emp_codi in ("+filtroEmpr+")")+

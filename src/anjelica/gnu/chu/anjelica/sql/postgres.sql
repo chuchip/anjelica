@@ -3425,7 +3425,9 @@ create table anjelica.stockpart
  	stp_kilini float,	-- Kilos Iniciales
 	stp_kilact float,	-- Kilos Actuales
 	prv_codi int,		-- Proveedor
-	stp_feccad date		-- Fecha de Caducidad
+	stp_feccad date,	-- Fecha de Caducidad
+	stp_numpal sallint, -- Numero Palet
+	stp_numcaj smallint, -- Numero caja
 	constraint ix_stockpart primary key (pro_codi,eje_nume,pro_serie,pro_nupar,pro_numind);
 );
 create index ix_stkpart1 on anjelica.stockpart(eje_nume,pro_serie,pro_nupar,pro_numind,pro_codi);

@@ -155,7 +155,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                     Boolean.parseBoolean(ht.get("admin"));
     }
     private void jbInit() throws Exception {      
-        setVersion("2015-05-22 "+ (ARG_ADMIN?"ADMIN":""));
+        setVersion("2015-06-11 "+ (ARG_ADMIN?"ADMIN":""));
   
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
@@ -1512,8 +1512,19 @@ public class MantTraspAlm extends ventanaPad implements PAD
 //            alm_codioE.getValorInt(),
 //            dtStat.getDouble("avp_canti"), dtStat.getInt("avp_numuni"));        
 //      }  while (dtStat.next());
-      dtStat.select("select avl_fecalt from v_albavel "+s);
+      dtStat.select("select avl_fecalt,alm_coddes from v_albventa "+s);
       Timestamp fecAlta=dtStat.getTimeStamp("avl_fecalt");
+      
+      if (pdalmace.isAlmacenExterno(dtStat.getInt("alm_coddes"),dtStat))
+      { // Era entrada a almacen externo. Quito almacen y caja en stock-partida
+        dtAdd.executeUpdate("update stockpart"
+            + " SET stp_numpal=0, STP_NUMCAJ=0 where exists(select pro_codi from v_albvenpar as v "+s+
+            " and v.pro_codi =  stockpart.pro_codi "
+            + "and v.avp_ejelot=stockpart.eje_nume "
+            + "and  v.avp_serlot=stockpart.pro_serie "
+            + "and v.avp_numpar=stockpart.pro_nupar "
+            + "and v.avp_numind=stockpart.pro_numind)");        
+      }
       dtAdd.executeUpdate("delete from v_albvenpar "+s);
       dtAdd.executeUpdate("delete from v_albavel "+s);
       dtAdd.executeUpdate("delete from v_albavec "+s);
@@ -1546,7 +1557,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
 
         stUp.executeUpdate(s);
       }
-    
+      boolean isAlmExt=pdalmace.isAlmacenExterno(alm_codifE.getValorInt(),dtStat);
 
       // Genero la cabecera del Albaran
       dtCon1.addNew("v_albavec");
@@ -1622,6 +1633,23 @@ public class MantTraspAlm extends ventanaPad implements PAD
         dtCon1.setDato("avp_numuni", jt.getValorInt(n,JT_UNID));
         dtCon1.setDato("avp_canti", jt.getValorDec(n, JT_PESO));
         dtCon1.update(stUp);      
+        if (isAlmExt)
+        {
+          if (dtAdd.executeUpdate("update stockpart"+
+             " SET stp_numpal="+jt.getValorInt(n,JT_NUMPAL)+
+             ", STP_NUMCAJ="+jt.getValorInt(n,JT_NUMCAJ)+
+              " where pro_codi ="+jt.getValorInt(n, JT_ARTIC)+
+              " and pro_serie='"+ jt.getValString(n, JT_SERIE)+"'"+
+              " and pro_nupar="+jt.getValorInt(n, JT_LOTE)+
+              " and pro_numind="+jt.getValorInt(n, JT_INDI)+
+              " and alm_codi = "+alm_codifE.getValorInt())==0)
+              throw new SQLException("Error al establecer palet en individuo: "+
+                 jt.getValorInt(n, JT_ARTIC)+"-"+
+                 jt.getValString(n, JT_SERIE)+
+                 jt.getValorInt(n, JT_LOTE)+"-"+
+                 jt.getValorInt(n, JT_INDI));
+              
+        }
       }
       
       if (fecAlta!=null)
@@ -1633,6 +1661,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
           " and mvt_ejedoc ="+avc_anoE.getValorInt();
          dtCon1.executeUpdate(s);
       }
+     
       return numAlb;
     
     

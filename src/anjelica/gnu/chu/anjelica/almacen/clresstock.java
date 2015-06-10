@@ -27,7 +27,7 @@ import net.sf.jasperreports.engine.*;
  * <p>Título: clresstock </p>
  * <p>Descripción: Consulta/Listado Resumen de stock desglosandolo
  * por proveedor y fecha de caducidad</p>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -42,7 +42,7 @@ import net.sf.jasperreports.engine.*;
  * </p>
  * <p>Empresa: miSL</p>
  * @author chuchi P
- * @version 1.0
+ * @version 1.1
  */
 public class clresstock extends ventana implements  JRDataSource
 {
@@ -110,8 +110,7 @@ public class clresstock extends ventana implements  JRDataSource
     }
     catch (Exception e)
     {
-      Logger.getLogger(clresstock.class.getName()).log(Level.SEVERE, null, e);
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 
@@ -128,8 +127,7 @@ public class clresstock extends ventana implements  JRDataSource
     }
     catch (Exception e)
     {
-      Logger.getLogger(clresstock.class.getName()).log(Level.SEVERE, null, e);
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 
@@ -137,7 +135,7 @@ public class clresstock extends ventana implements  JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(760, 540));
-    this.setVersion("2015-05-21");
+    this.setVersion("2015-06-11");
     VERNEGATIVO=EU.getValorParam("verNegResStock",VERNEGATIVO);
     statusBar = new StatusBar(this);
     conecta();

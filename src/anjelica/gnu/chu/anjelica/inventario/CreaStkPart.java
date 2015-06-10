@@ -86,7 +86,7 @@ public class CreaStkPart extends ventana
      
         iniciarFrame(); 
        
-        this.setVersion("2015-04-09");
+        this.setVersion("2015-06-11");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -176,6 +176,8 @@ public class CreaStkPart extends ventana
      stp_unactE.setValorDec(dtCon1.getDouble("stp_unact"));
      stp_kiliniE.setValorDec(dtCon1.getDouble("stp_kilini"));
      stp_uniniE.setValorDec(dtCon1.getDouble("stp_unini"));
+     stp_numpalE.setValorInt(dtCon1.getInt("stp_numpal"));
+     stp_numcajE.setValorInt(dtCon1.getInt("stp_numcaj"));
      return true;
    }
    catch (Exception k)
@@ -208,7 +210,7 @@ public class CreaStkPart extends ventana
      }
      this.setEnabled(false);
      int res=mensajes.YES;
-     s = "select stp_kilact,stp_unact from stockpart WHERE emp_codi = " + deo_emplotE.getValorInt() +
+     s = "select stp_kilact,stp_unact,stp_numcaj,stp_numpal from stockpart WHERE emp_codi = " + deo_emplotE.getValorInt() +
          " and alm_codi = " + alm_codiE.getValorInt() +
          " and eje_nume = " + deo_ejelotE.getValorInt() +
          " and pro_Serie = '" + deo_serlotE.getText() + "'" +
@@ -242,6 +244,8 @@ public class CreaStkPart extends ventana
        dtCon1.setDato("stp_fefici",(Date) null);
        dtCon1.setDato("stp_kilini",stp_kilactE.getValorDec());
        dtCon1.setDato("stp_kilact",stp_kilactE.getValorDec());
+       dtCon1.setDato("stp_numpal",stp_numpalE.getValorInt());
+       dtCon1.setDato("stp_numcaj",stp_numcajE.getValorInt());
      }
      else
      {
@@ -250,6 +254,8 @@ public class CreaStkPart extends ventana
      }
      dtCon1.setDato("stp_kilact",stp_kilactE.getValorDec());
      dtCon1.setDato("stp_unact",stp_unactE.getValorDec() );
+     dtCon1.setDato("stp_numpal",stp_numpalE.getValorInt());
+     dtCon1.setDato("stp_numcaj",stp_numcajE.getValorInt());
      dtCon1.update(stUp);
      ctUp.commit();
      mensajeErr("Inventario ... Generado");
@@ -309,12 +315,16 @@ public class CreaStkPart extends ventana
         stp_uniniE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         cLabel13 = new gnu.chu.controles.CLabel();
         stp_kiliniE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9.99");
+        cLabel10 = new gnu.chu.controles.CLabel();
+        stp_numpalE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
+        cLabel11 = new gnu.chu.controles.CLabel();
+        stp_numcajE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
 
         Pprinc.setLayout(null);
 
         Baceptar.setText("Aceptar");
         Pprinc.add(Baceptar);
-        Baceptar.setBounds(190, 120, 121, 28);
+        Baceptar.setBounds(295, 110, 121, 28);
 
         alm_codiE.setAncTexto(30);
         alm_codiE.setHasCambio(true);
@@ -405,6 +415,18 @@ public class CreaStkPart extends ventana
         Pprinc.add(cPanel2);
         cPanel2.setBounds(210, 70, 210, 40);
 
+        cLabel10.setText("Palet");
+        Pprinc.add(cLabel10);
+        cLabel10.setBounds(10, 110, 40, 17);
+        Pprinc.add(stp_numpalE);
+        stp_numpalE.setBounds(50, 110, 32, 17);
+
+        cLabel11.setText("Caja");
+        Pprinc.add(cLabel11);
+        cLabel11.setBounds(100, 110, 30, 17);
+        Pprinc.add(stp_numcajE);
+        stp_numcajE.setBounds(130, 110, 32, 17);
+
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
         pack();
@@ -414,6 +436,8 @@ public class CreaStkPart extends ventana
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CLinkBox alm_codiE;
     private gnu.chu.controles.CLabel cLabel1;
+    private gnu.chu.controles.CLabel cLabel10;
+    private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel2;
@@ -434,6 +458,8 @@ public class CreaStkPart extends ventana
     private gnu.chu.controles.CTextField pro_numindE;
     private gnu.chu.controles.CTextField stp_kilactE;
     private gnu.chu.controles.CTextField stp_kiliniE;
+    private gnu.chu.controles.CTextField stp_numcajE;
+    private gnu.chu.controles.CTextField stp_numpalE;
     private gnu.chu.controles.CTextField stp_unactE;
     private gnu.chu.controles.CTextField stp_uniniE;
     // End of variables declaration//GEN-END:variables

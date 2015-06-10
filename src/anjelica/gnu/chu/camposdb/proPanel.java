@@ -1024,7 +1024,7 @@ public class proPanel extends CPanel
    * @throws SQLException
    * 
    */
-  public String getNombArtCli(int proCodi,int codCli,int empCodi,DatosTabla dt) throws SQLException
+  public  String getNombArtCli(int proCodi,int codCli,int empCodi,DatosTabla dt) throws SQLException
   {
     String s;
     s = "SELECT * FROM v_articulo WHERE pro_codi= " + proCodi;
@@ -1038,6 +1038,7 @@ public class proPanel extends CPanel
     else
       return lkPrd.getString("pro_nomb");
   }
+  
   public String getNombArt() throws SQLException
   {
     return getNombArt(pro_codiE.getText(),eu.em_cod);

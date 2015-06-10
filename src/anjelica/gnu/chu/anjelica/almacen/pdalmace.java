@@ -612,10 +612,17 @@ public class pdalmace extends ventanaPad implements PAD
     Dimension d=new Dimension();
     almCodi.addItem(dt);
   }
-    public static void llenaLinkBox(CLinkBox almCodi, DatosTabla dt) throws SQLException
-    {
+  public static void llenaLinkBox(CLinkBox almCodi, DatosTabla dt) throws SQLException
+  {
         llenaLinkBox(almCodi,dt,'I');
-    }
+  }
+  
+  public static boolean isAlmacenExterno(int almCodi,DatosTabla dt) throws SQLException
+  {
+      if (! dt.select("SELECT alm_tipo FROM almacen where alm_codi = "+almCodi))
+          return false;
+      return dt.getString("alm_tipo").equals("E");                    
+  }
   /**
    * Carga un LinkBox con los datos necesarios para buscar un almacen
    * @param almCodi
