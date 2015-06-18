@@ -65,6 +65,7 @@ public class ClDifInv extends ventana {
     private  final int  JT_PRPSERI=3;
     private  final int  JT_PRPPART=4;
     private  final int  JT_PRPINDI=5;
+    private  final int  JT_PESOINV=6;
     private  final int  JT_PESOORD=7;
              
     private String TABLA_INV_CAB="coninvcab";
@@ -118,7 +119,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2015-05-19");
+        this.setVersion("2015-06-17");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -321,7 +322,7 @@ public class ClDifInv extends ventana {
           }
         }
 
-        actualizaMsg("Generando Listado ... Espere, por favor",false);
+        setMensajePopEspere("Generando Listado ... Espere, por favor",false);
         s="select  c.cci_codi,P.cam_codi,c.PRO_CODI,p.pro_nomb,c.PRP_ANO,"+
             "c.prp_empcod ,c.PRP_SERI,"+
             " c.PRP_PART,c.PRP_INDI,c.lci_coment, "+
@@ -1399,22 +1400,22 @@ public class ClDifInv extends ventana {
             if (jt.isVacio())
                 return;
             int nl=jt.getSelectedRowDisab();
-            if (jt.getValorDec(nl,JT_PESOORD)>=0)
+            if (jt.getValorDec(nl,JT_PESOORD)>0 && jt.getValorDec(nl,JT_PESOINV)>0)
             {
                 msgBox("Imposible insertar inventario Anterior deposito si kilos  son positivos");
                 return;
             }
+            double kilos=jt.getValorDec(nl,JT_PESOORD)>0?jt.getValorDec(nl,JT_PESOORD)*-1:jt.getValorDec(nl,JT_PESOINV);
             int proCodi=jt.getValorInt(JT_PROCODI);
             
             for (int n=jt.getSelectedRow();n>=0;n--)
-              {
-                  if (jt.getValorInt(n,0)!=0)
-                  {
-                      proCodi=jt.getValorInt(n,JT_PROCODI);                      
-                      break;
-                  }
-              }   
-           
+            {
+                if (jt.getValorInt(n,0)!=0)
+                {
+                    proCodi=jt.getValorInt(n,JT_PROCODI);                      
+                    break;
+                }
+            }   
            
             dtAdd.addNew("invdepos");
             dtAdd.setDato("pro_codi", proCodi);
@@ -1424,10 +1425,10 @@ public class ClDifInv extends ventana {
             dtAdd.setDato("emp_codi", EU.em_cod);
             dtAdd.setDato("pro_serie", jt.getValString(nl,JT_PRPSERI));
             dtAdd.setDato("pro_nupar", jt.getValorInt(nl,JT_PRPPART));          
-            dtAdd.setDato("alm_codi", pdalmace.getAlmacenPrincipal());          
+            dtAdd.setDato("alm_codi",alm_codiE.getValorInt()==0?pdalmace.getAlmacenPrincipal():alm_codiE.getValorInt());          
             dtAdd.setDato("pro_numind", jt.getValorInt(nl,JT_PRPINDI));
             dtAdd.setDato("ind_numuni", 1);
-            dtAdd.setDato("ind_kilos",  jt.getValorDec(nl,JT_PESOORD)*-1);            
+            dtAdd.setDato("ind_kilos",  kilos);            
    
             dtAdd.update(stUp);
             ctUp.commit();
