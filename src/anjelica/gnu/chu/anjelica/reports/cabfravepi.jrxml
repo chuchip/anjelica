@@ -7,7 +7,7 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="normal" isDefault="true" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+	<style name="normal" isDefault="true" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 	<parameter name="SUBREPORT_FILE_NAME" class="java.lang.String">
 		<parameterDescription><![CDATA[Subreport con las lineas de Albaran]]></parameterDescription>
 	</parameter>

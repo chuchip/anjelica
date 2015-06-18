@@ -4,8 +4,8 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="resalta" fontName="DejaVu Sans" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1250" isPdfEmbedded="false"/>
-	<style name="normal" fontName="DejaVu Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1250" isPdfEmbedded="false"/>
+	<style name="resalta" fontName="DejaVu Sans" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1250" isPdfEmbedded="false"/>
+	<style name="normal" fontName="DejaVu Sans" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1250" isPdfEmbedded="false"/>
 	<parameter name="incPortes" class="java.lang.Boolean" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
 	</parameter>
@@ -78,7 +78,7 @@
 						<printWhenExpression><![CDATA[new Boolean($P{difFecha}.booleanValue()==false)]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{pro_codi}]]></textFieldExpression>
@@ -88,7 +88,7 @@
 						<printWhenExpression><![CDATA[new Boolean($P{difFecha}.booleanValue()==false)]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
@@ -96,7 +96,7 @@
 				<textField pattern="###0;-###0" isBlankWhenNull="true">
 					<reportElement key="textField" style="normal" mode="Opaque" x="256" y="3" width="38" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{unidProd}]]></textFieldExpression>
@@ -104,7 +104,7 @@
 				<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField" style="normal" mode="Opaque" x="297" y="3" width="55" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{kgProd}]]></textFieldExpression>
@@ -112,7 +112,7 @@
 				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField" style="normal" mode="Opaque" x="356" y="3" width="44" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{acp_medkil}]]></textFieldExpression>
@@ -120,7 +120,7 @@
 				<textField pattern="##0.000;-##0.000" isBlankWhenNull="false">
 					<reportElement key="textField" style="normal" mode="Opaque" x="409" y="3" width="41" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{prProd}]]></textFieldExpression>
@@ -128,7 +128,7 @@
 				<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField" style="normal" mode="Opaque" x="462" y="3" width="70" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{impProd}]]></textFieldExpression>
@@ -364,7 +364,7 @@
 					<bottomPen lineWidth="2.0" lineStyle="Double"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Producto]]></text>
@@ -375,7 +375,7 @@
 					<bottomPen lineWidth="2.0" lineStyle="Double"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Descripcion]]></text>
@@ -386,7 +386,7 @@
 					<bottomPen lineWidth="2.0" lineStyle="Double"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[NºUnid]]></text>
@@ -397,7 +397,7 @@
 					<bottomPen lineWidth="2.0" lineStyle="Double"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Kilos]]></text>
@@ -408,7 +408,7 @@
 					<bottomPen lineWidth="2.0" lineStyle="Double"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Media Kg]]></text>
@@ -419,7 +419,7 @@
 					<bottomPen lineWidth="2.0" lineStyle="Double"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Precio]]></text>
@@ -430,7 +430,7 @@
 					<bottomPen lineWidth="2.0" lineStyle="Double"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Importe]]></text>
@@ -443,7 +443,7 @@
 			<textField pattern="####0" isBlankWhenNull="false">
 				<reportElement key="textField" style="normal" mode="Opaque" x="0" y="0" width="42" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pro_codi}]]></textFieldExpression>
@@ -451,7 +451,7 @@
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" style="normal" mode="Opaque" x="44" y="0" width="210" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
@@ -459,7 +459,7 @@
 			<textField pattern="###0;-###0" isBlankWhenNull="true">
 				<reportElement key="textField" style="normal" mode="Opaque" x="256" y="0" width="38" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{acl_numcaj}]]></textFieldExpression>
@@ -467,7 +467,7 @@
 			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" style="normal" mode="Opaque" x="297" y="0" width="55" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{acl_canti}]]></textFieldExpression>
@@ -475,7 +475,7 @@
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" style="normal" mode="Opaque" x="356" y="0" width="44" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{acl_medkil}]]></textFieldExpression>
@@ -483,7 +483,7 @@
 			<textField pattern="##0.000;-##0.000" isBlankWhenNull="false">
 				<reportElement key="textField" style="normal" mode="Opaque" x="409" y="0" width="41" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{acl_prcom}]]></textFieldExpression>
@@ -491,7 +491,7 @@
 			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" style="normal" mode="Opaque" x="462" y="0" width="70" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{acl_impor}]]></textFieldExpression>
@@ -509,7 +509,7 @@
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-1" style="normal" mode="Opaque" x="300" y="3" width="55" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{kgAlb}]]></textFieldExpression>
@@ -517,7 +517,7 @@
 			<textField pattern="###0;-###0" isBlankWhenNull="false">
 				<reportElement key="textField-2" style="normal" mode="Opaque" x="259" y="3" width="38" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{unidAlb}]]></textFieldExpression>
@@ -525,7 +525,7 @@
 			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-3" style="normal" mode="Opaque" x="462" y="3" width="70" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{impAlb}]]></textFieldExpression>

@@ -36,7 +36,7 @@
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Transparent" x="89" y="37" width="123" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="7cdad2c5-3ebc-420e-9784-58a96ab4d1d0"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{lote}]]></textFieldExpression>
@@ -50,7 +50,7 @@
 			<staticText>
 				<reportElement key="staticText" mode="Transparent" x="154" y="3" width="60" height="34" forecolor="#000000" backcolor="#FFFFFF" uuid="7eacefe3-f35a-40cb-abae-4169eccf2e22"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ESPAÑA
@@ -60,7 +60,7 @@ C.E.E.]]></text>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="3" y="112" width="113" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="41954d66-6d5a-4a42-8b10-356faf8ba3a2"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{conservar}]]></textFieldExpression>
@@ -68,7 +68,7 @@ C.E.E.]]></text>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="53" y="52" width="58" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="6ba74fdb-2b1b-4026-ad7c-6e869c526d95"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fecprod}]]></textFieldExpression>
@@ -76,7 +76,7 @@ C.E.E.]]></text>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" mode="Opaque" x="156" y="52" width="65" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="f513a97b-3753-4421-9a80-27e60fe1696e"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{feccadu}]]></textFieldExpression>
@@ -84,7 +84,7 @@ C.E.E.]]></text>
 			<staticText>
 				<reportElement key="staticText" mode="Opaque" x="5" y="52" width="41" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="3433e557-ee3a-4f53-9992-d65a5d3b364e"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Fec. Prod]]></text>
@@ -92,7 +92,7 @@ C.E.E.]]></text>
 			<staticText>
 				<reportElement key="staticText" mode="Opaque" x="116" y="52" width="38" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="cf7b1959-ecfd-4163-91d2-e15360a40fdf"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Fec. Cad]]></text>
@@ -100,7 +100,7 @@ C.E.E.]]></text>
 			<staticText>
 				<reportElement key="staticText" mode="Opaque" x="5" y="67" width="37" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="f392e6bb-64d9-4a20-a3c3-c68518d49576"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Pais Nac.]]></text>
@@ -108,7 +108,7 @@ C.E.E.]]></text>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="46" y="67" width="65" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="aaee55c0-2280-445c-b51a-1c1d2e9e8ca7"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{nacido}]]></textFieldExpression>
@@ -116,7 +116,7 @@ C.E.E.]]></text>
 			<staticText>
 				<reportElement key="staticText" mode="Opaque" x="116" y="67" width="38" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="774111a0-dd12-4cc2-ada5-d5380f516460"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Cebado]]></text>
@@ -124,7 +124,7 @@ C.E.E.]]></text>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="156" y="67" width="65" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="702bb4ea-758f-4cf1-823b-3f27179a48e7"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cebado}]]></textFieldExpression>
@@ -132,7 +132,7 @@ C.E.E.]]></text>
 			<staticText>
 				<reportElement key="staticText" mode="Opaque" x="5" y="82" width="44" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="16d77e1e-a617-48c5-af67-263a5f8e0281"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Sacrificado]]></text>
@@ -140,7 +140,7 @@ C.E.E.]]></text>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="50" y="82" width="73" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="2f8377aa-dcf2-4160-9526-e5f94d546ca5"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{sacrificado}]]></textFieldExpression>
@@ -148,7 +148,7 @@ C.E.E.]]></text>
 			<staticText>
 				<reportElement key="staticText" mode="Opaque" x="4" y="98" width="36" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a405f5b9-8e33-47df-9637-cdd810de4c98"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Despiece]]></text>
@@ -156,7 +156,7 @@ C.E.E.]]></text>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="40" y="98" width="83" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="ac2a2b28-180b-4c02-83e3-f9db5083c04e"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{despiezado}]]></textFieldExpression>
@@ -171,7 +171,7 @@ C.E.E.]]></text>
 			<staticText>
 				<reportElement key="staticText" mode="Opaque" x="60" y="37" width="27" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="a2df4010-2db0-4795-a97a-4bfb0b07beb2"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Lote]]></text>
