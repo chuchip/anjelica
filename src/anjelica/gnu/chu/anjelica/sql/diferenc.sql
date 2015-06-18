@@ -1,3 +1,27 @@
+-- Update para poner el numero de palet y caja a stock-partidas
+update stockpart set stp_numpal=(select avl_numpal from v_albventa_detalle as a
+	where alm_coddes=3 and avc_serie='X' and stockpart.pro_codi=a.pro_codi
+and stockpart.eje_nume=avp_ejelot
+and stockpart.pro_serie=avp_serlot
+and stockpart.pro_nupar=avp_numpar
+and stockpart.pro_numind=avp_numind), 
+stp_numcaj=(select avl_numcaj from v_albventa_detalle as a
+where alm_coddes=3 and avc_serie='X' and stockpart.pro_codi=a.pro_codi
+and stockpart.eje_nume=avp_ejelot
+and stockpart.pro_serie=avp_serlot
+and stockpart.pro_nupar=avp_numpar
+and stockpart.pro_numind=avp_numind)
+where alm_codi=3 and stp_kilact > 0 and exists (select * from v_albventa_detalle as a
+where alm_coddes=3 and avc_serie='X' and stockpart.pro_codi=a.pro_codi
+and stockpart.eje_nume=avp_ejelot
+and stockpart.pro_serie=avp_serlot
+and stockpart.pro_nupar=avp_numpar
+and stockpart.pro_numind=avp_numind);
+--- Añadido campo palet y caja a stock-partidas
+alter table anjelica.stockpart  add stp_numpal smallint;
+alter table anjelica.stockpart  add stp_numcaj smallint;
+create or replace view anjelica.v_stkpart as select * from anjelica.stockpart;
+---
 alter table anjelica.almacen rename tipo to alm_tipo;
 alter table anjelica.almacen alter alm_tipo  set default 'I';
 alter table anjelica.almacen alter alm_tipo  set NOT NULL;

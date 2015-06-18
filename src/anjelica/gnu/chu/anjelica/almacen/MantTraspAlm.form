@@ -544,7 +544,7 @@
             <Component class="gnu.chu.controles.CButtonMenu" name="Bherr">
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon(&quot;configure&quot;))"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="Bherr.addMenu(&quot;Lote&quot;);&#xa;Bherr.addMenu(&quot;Importar&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="Bherr.addMenu(&quot;Lote&quot;);&#xa;Bherr.addMenu(&quot;List.Ubic&quot;);&#xa;Bherr.addMenu(&quot;Importar&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

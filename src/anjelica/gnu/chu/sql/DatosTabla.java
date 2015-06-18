@@ -1692,11 +1692,11 @@ private String parseaSelect(boolean forUpdate) throws SQLException
           return "";
       if (! Character.isDigit(f.charAt(0))) // PRE-formateada o funcion especial
         return f;
-      if (f.indexOf("-") == -1)
+      if (!f.contains("-"))
         return Formatear.formatearFecha(f, "yyyyMMdd", frSali);
       else
         return Formatear.formatearFecha(f,
-                                        (f.indexOf(":") == -1 ? "yyyy-MM-dd" : "yyyy-MM-dd hh:mm:ss"),
+                                        (!f.contains(":") ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss"),
                                         frSali);
     } catch (java.text.ParseException k)
     {
@@ -2550,6 +2550,13 @@ private String parseaSelect(boolean forUpdate) throws SQLException
    // prepara el cursor para a�adir
    addNew(allCampos);
   }
+  /**
+  * Prepara los datos para poder realizar una Insercion de los registros
+  * en SetDatos.  Incluiye todos los campos  en el insert
+  * 
+  * 
+  * @throws SQLException si el cursor no es forUpdate o no hay nada selecionado
+  */
   public void addNew()  throws SQLException
   {
     addNew(true);
@@ -2576,7 +2583,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     if (! allCampos)
         vecEdit.removeAllElements();
     vecAddNew.removeAllElements();
-    for (int n=0;n<getNumCol();n++)
+    for (int n=0;n<getColumnCount();n++)
       vecAddNew.addElement("");
   }
    /**

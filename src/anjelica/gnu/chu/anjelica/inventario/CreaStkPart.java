@@ -176,8 +176,8 @@ public class CreaStkPart extends ventana
      stp_unactE.setValorDec(dtCon1.getDouble("stp_unact"));
      stp_kiliniE.setValorDec(dtCon1.getDouble("stp_kilini"));
      stp_uniniE.setValorDec(dtCon1.getDouble("stp_unini"));
-     stp_numpalE.setValorInt(dtCon1.getInt("stp_numpal"));
-     stp_numcajE.setValorInt(dtCon1.getInt("stp_numcaj"));
+     stp_numpalE.setValorInt(dtCon1.getInt("stp_numpal",true));
+     stp_numcajE.setValorInt(dtCon1.getInt("stp_numcaj",true));
      return true;
    }
    catch (Exception k)

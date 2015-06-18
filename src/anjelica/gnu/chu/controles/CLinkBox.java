@@ -50,6 +50,7 @@ public class CLinkBox
   private int ancTexto = 80;
   public CTextField texto = new CTextField()
   {
+    @Override
     protected boolean doClick(int keyCode)
     {
       if (keyCode != KeyEvent.VK_ENTER)
@@ -68,6 +69,7 @@ public class CLinkBox
 
   public CButton button = new CButton(Iconos.getImageIcon("nuevo"))
   {
+    @Override
     public boolean isFocusTraversable()
     {
       return false;
@@ -76,8 +78,8 @@ public class CLinkBox
   String NombIdx; // Columna principal del DatosTabla
   String NombDef; // Columna que se visualizara en el Combo
 
-  public Vector vecIdx = new Vector();
-  public Vector vecDef = new Vector();
+  public ArrayList<String> vecIdx = new ArrayList();
+  public ArrayList<String> vecDef = new ArrayList();
 
   public boolean buttonSN = false; // Indica si esta visible el boton
 
@@ -113,6 +115,7 @@ public class CLinkBox
     return formato;
   }
 
+  @Override
   public void setFont(Font f)
   {
     super.setFont(f);
@@ -249,8 +252,7 @@ public class CLinkBox
 
     for (int wi = 0; wi < vecIdx.size(); wi++)
     {
-      if (vecIdx.elementAt(wi).toString().trim().compareTo(
-          WText.trim()) == 0)
+      if (vecIdx.get(wi).trim().equals(WText.trim()))
       {
         if (actCombo)
           combo.setSelectedIndex(wi); //vecDef.elementAt(wi).toString().trim());
@@ -312,6 +314,7 @@ public class CLinkBox
    * Retorna si esta en modo Query
    * @return true si esta en modo Query
    */
+  @Override
   public boolean getQuery()
   {
     return query;
@@ -321,6 +324,7 @@ public class CLinkBox
    * Recoge el texto del Query formado
    * @return texto formado
    */
+  @Override
   public String getStrQuery()
   {
     return texto.getStrQuery();
@@ -330,6 +334,7 @@ public class CLinkBox
    * Retorna el texto del CTextField
    * @return Texto que tiene el CTextField
    */
+  @Override
   public String getText()
   {
     if (texto.getGridEditable() == null)
@@ -339,7 +344,7 @@ public class CLinkBox
   }
   /**
    * Devuelve el Texto del Combo a partir del Valor del TextField
-   * @param val String Valor del TextField
+   * @param texto String Valor del TextField
    * @return String Valor del Combo
    */
   public String getValor(String texto)
@@ -349,14 +354,14 @@ public class CLinkBox
      int nItems= vecIdx.size();
      for (int n=0;n<nItems;n++)
      {
-       if (vecIdx.elementAt(n).toString().equals(texto))
-         return vecDef.elementAt(n).toString();
+       if (vecIdx.get(n).equals(texto))
+         return vecDef.get(n);
      }
      return null;
   }
   /**
    * Devuelve el Valor del TextField a partir del Valor del Combo
-   * @param val String valor del Combo
+   * @param texto String valor del Combo
    * @return String Valor del TextField
    */
   public String getText(String texto)
@@ -366,8 +371,8 @@ public class CLinkBox
    int nItems= vecDef.size();
    for (int n=0;n<nItems;n++)
    {
-     if (vecDef.elementAt(n).toString().equals(texto))
-       return vecIdx.elementAt(n).toString();
+     if (vecDef.get(n).equals(texto))
+       return vecIdx.get(n);
    }
    return null;
 
@@ -391,6 +396,7 @@ public class CLinkBox
   {
     return texto.getValorInt();
   }
+  @Override
   public void resetTexto()
   {
     if (texto.isQuery())
@@ -401,17 +407,16 @@ public class CLinkBox
       {
         texto.setText("");
         Encontrado = false;
-        return;
       }
       else
       {
         combo.setSelectedIndex(0);
-        texto.setText(vecIdx.elementAt(combo.getSelectedIndex()).toString().
-                      trim());
+        texto.setText(vecIdx.get(combo.getSelectedIndex()).trim());
       }
     }
   }
 
+  @Override
   public void requestFocus()
   {
     texto.requestFocus();
@@ -470,6 +475,7 @@ public class CLinkBox
     texto.setColumnaAlias(alias);
   }
 
+  @Override
   public String getColumnaAlias()
   {
     return texto.getColumnaAlias();
@@ -488,6 +494,7 @@ public class CLinkBox
    * Pone en modo Query el control
    * @param b true poner en modo query
    */
+  @Override
   public void setQuery(boolean b)
   {
     query = b;
@@ -500,7 +507,16 @@ public class CLinkBox
   {
     setText(s, true);
   }
-
+  /**
+   * Pone el valor inicial en el LinkBox
+   */
+  public void setTextInicio()
+  {
+      if (combo.isVacio())
+          return;
+      setText(vecIdx.get(0));
+  }
+      
   public void setGridEditable(CGridEditable gridEdit)
   {
     if (texto!=null)
@@ -595,20 +611,20 @@ public class CLinkBox
   public void addDatosVec(Vector v)
   {
     event = false;
-    vecIdx.removeAllElements();
-    vecDef.removeAllElements();
+    vecIdx.clear();
+    vecDef.clear();
     if (combo.getItemCount() > 0)
       combo.removeAllItems();
 
     for (int i = 0; i < v.size(); i++)
     {
-      vecIdx.addElement( ( (Vector) v.elementAt(i)).elementAt(0));
-      vecDef.addElement( ( (Vector) v.elementAt(i)).elementAt(1));
+      vecIdx.add( ( (Vector) v.elementAt(i)).elementAt(0).toString());
+      vecDef.add( ( (Vector) v.elementAt(i)).elementAt(1).toString());
     }
 
-    for (int i = 0; i < vecDef.size(); i++)
+    for (String vecDef1 : vecDef)
     {
-      combo.addItem(vecDef.elementAt(i));
+          combo.addItem(vecDef1);
     }
     event = true;
   }
@@ -623,8 +639,8 @@ public class CLinkBox
   public void addDatos(String indice, String nombre, boolean avisa)
   {
     event = false;
-    vecIdx.addElement(indice);
-    vecDef.addElement(nombre);
+    vecIdx.add(indice);
+    vecDef.add(nombre);
     combo.addItem(nombre);
 //    if (avisa)
 //     this.getComboModel().avisaAdd();
@@ -634,13 +650,13 @@ public class CLinkBox
   public void removeAllItems()
   {
     event = false;
-    vecIdx.removeAllElements();
-    vecDef.removeAllElements();
+    vecIdx.clear();
+    vecDef.clear();
     combo.removeAllItems();
     event = true;
   }
 
-  public void removeItem(Object c)
+  public void removeItem(String c)
   {
     if (vecDef.indexOf(c) < 0)
       return;
@@ -672,8 +688,8 @@ public class CLinkBox
     event = false;
     if (vaciar)
     {
-      vecIdx.removeAllElements();
-      vecDef.removeAllElements();
+      vecIdx.clear();
+      vecDef.clear();
       combo.removeAllItems();
     }
     if (dt.getNOREG())
@@ -685,9 +701,9 @@ public class CLinkBox
 
     do
     {
-      vecIdx.addElement(dt.getString(1));
-      vecDef.addElement(dt.getString(2)+(dt.getNumCol()>2?" ... " + dt.getString(3):""));
-      combo.addItem(dt.getString(2) +(dt.getNumCol()>2?" ... " + dt.getString(3):""));
+      vecIdx.add(dt.getString(1));
+      vecDef.add(dt.getString(2)+(dt.getColumnCount()>2?" ... " + dt.getString(3):""));
+      combo.addItem(dt.getString(2) +(dt.getColumnCount()>2?" ... " + dt.getString(3):""));
     } while (dt.next());
     event = true;
     combo.setEditable(false);
@@ -701,6 +717,7 @@ public class CLinkBox
   {
     combo.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         if (!getEnabled())
@@ -710,8 +727,7 @@ public class CLinkBox
           return;
 
         event = false;
-        String text = vecIdx.elementAt(combo.getSelectedIndex()).toString().
-            trim();
+        String text = vecIdx.get(combo.getSelectedIndex()).trim();
         texto.setText(text);
         event = true;
         Encontrado = true;
@@ -722,6 +738,7 @@ public class CLinkBox
     combo.getAccessibleContext().getAccessibleComponent().addFocusListener(new
         FocusListener()
     {
+      @Override
       public void focusGained(FocusEvent e)
       {
         if (!Encontrado)
@@ -739,13 +756,13 @@ public class CLinkBox
           {
             if (!aceptaError)
             {
-              texto.setText(vecIdx.elementAt(combo.getSelectedIndex()).toString().
-                            trim());
+              texto.setText(vecIdx.get(combo.getSelectedIndex()).trim());
             }
           }
         }
       }
 
+      @Override
       public void focusLost(FocusEvent e)
       {
         if (e.getOppositeComponent() == texto)
@@ -755,6 +772,7 @@ public class CLinkBox
 
     texto.addFocusListener(new FocusAdapter()
     {
+      @Override
       public void focusLost(FocusEvent e)
       {
         if (!getEnabled())
@@ -772,6 +790,7 @@ public class CLinkBox
 
     texto.addKeyListener(new KeyAdapter()
     {
+      @Override
       public void keyPressed(KeyEvent e)
       {
         if (!getEnabled())
@@ -792,6 +811,7 @@ public class CLinkBox
             e.consume();
             SwingUtilities.invokeLater(new Runnable()
             {
+              @Override
               public void run()
               {
                 combo.setFocusable(true);
@@ -848,6 +868,7 @@ public class CLinkBox
     return texto.getMinusc();
   }
 
+  @Override
   public void addFocusListener(FocusListener fc)
   {
     if (eventVector == null)
@@ -857,16 +878,19 @@ public class CLinkBox
       texto.addFocusListener(this);
   }
 
+  @Override
   public void focusGained(FocusEvent e)
   {
     processFocusEvent(e);
   }
 
+  @Override
   public void focusLost(FocusEvent e)
   {
     processFocusEvent(e);
   }
 
+  @Override
   public void processFocusEvent(FocusEvent e)
   {
     super.processFocusEvent(e);
@@ -874,24 +898,25 @@ public class CLinkBox
       return;
     if (e.getOppositeComponent() == combo)
       return;
-    for (int n = 0; n < eventVector.size(); n++)
+    for (FocusListener eventVector1 : eventVector)
     {
-      int id = e.getID();
-      FocusListener listener = (FocusListener) eventVector.get(n);
-      if (listener != null)
-      {
-        switch (id)
-        {
-          case FocusEvent.FOCUS_GAINED:
-            listener.focusGained(e);
-            break;
-          case FocusEvent.FOCUS_LOST:
-            listener.focusLost(e);
-            break;
-        }
-      }
+          int id = e.getID();
+          //FocusListener listener = (FocusListener) eventVector1;
+          if (eventVector1 != null)
+          {
+              switch (id)
+              {
+                  case FocusEvent.FOCUS_GAINED:
+                      eventVector1.focusGained(e);
+                      break;
+                  case FocusEvent.FOCUS_LOST:
+                      eventVector1.focusLost(e);
+                      break;
+              }
+          }
     }
   }
+  @Override
   public synchronized void addKeyListener(KeyListener l) {
       if (texto!=null)
         texto.addKeyListener(l);
@@ -914,8 +939,10 @@ public class CLinkBox
 
     copia=texto.getText();
     CambioEvent ev = new CambioEvent(this);
-    for (int i = 0; i < cambioListenerList.size(); i++)
-      cambioListenerList.get(i).cambio(ev);
+    for (CambioListener cambioListenerList1 : cambioListenerList)
+    {
+         cambioListenerList1.cambio(ev);
+    }
   }
   /**
    * Indica la anchura del combo una vez desplegado.
@@ -947,6 +974,7 @@ public class CLinkBox
   transient protected ChangeEvent changeEvent = null;
 
   // Force this to be implemented.
+  @Override
   public Object getCellEditorValue()
   {
     return getText() + " - " + getTextCombo();
@@ -957,6 +985,7 @@ public class CLinkBox
    * @param e  an event object
    * @return true
    */
+  @Override
   public boolean isCellEditable(EventObject e)
   {
     return true;
@@ -967,6 +996,7 @@ public class CLinkBox
    * @param anEvent  an event object
    * @return true
    */
+  @Override
   public boolean shouldSelectCell(EventObject anEvent)
   {
     return true;
@@ -976,6 +1006,7 @@ public class CLinkBox
    * Calls <code>fireEditingStopped</code> and returns true.
    * @return true
    */
+  @Override
   public boolean stopCellEditing()
   {
     fireEditingStopped();
@@ -985,6 +1016,7 @@ public class CLinkBox
   /**
    * Calls <code>fireEditingCanceled</code>.
    */
+  @Override
   public void cancelCellEditing()
   {
     fireEditingCanceled();
@@ -994,6 +1026,7 @@ public class CLinkBox
    * Adds a <code>CellEditorListener</code> to the listener list.
    * @param l  the new listener to be added
    */
+  @Override
   public void addCellEditorListener(CellEditorListener l)
   {
     listenerList.add(CellEditorListener.class, l);
@@ -1003,6 +1036,7 @@ public class CLinkBox
    * Removes a <code>CellEditorListener</code> from the listener list.
    * @param l  the listener to be removed
    */
+  @Override
   public void removeCellEditorListener(CellEditorListener l)
   {
     listenerList.remove(CellEditorListener.class, l);
@@ -1072,6 +1106,7 @@ public class CLinkBox
     }
   }
 
+  @Override
   public Component getTableCellEditorComponent(JTable table, Object value,
                                                boolean isSelected,
                                                int row, int column)
@@ -1138,10 +1173,12 @@ public class CLinkBox
     }
     return text.trim();
   }
+  @Override
   public boolean hasCambio()
   {
     return texto.hasCambio();
   }
+  @Override
   public void resetCambio()
   {
     texto.resetCambio();
@@ -1168,6 +1205,7 @@ public class CLinkBox
     texto.setEditable(edit);
     combo.setEnabled(edit);
   }
+  @Override
   public boolean isEditable()
   {
     if (texto==null)
@@ -1175,6 +1213,7 @@ public class CLinkBox
     return texto.isEditable();
   }
 
+  @Override
   public void setEditableParent(boolean editable)
   {
     setEditable(editable);

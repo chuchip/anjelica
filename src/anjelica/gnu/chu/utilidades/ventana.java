@@ -444,7 +444,13 @@ public class ventana extends CInternalFrame implements ejecutable
     if (isCloseable())
       super.setClosed(b);
   }
-
+  /**
+   * Muestra un mensaje de aviso en formato popup (Modal mode)
+   * Con el texto 'aviso', arriba y el mensaje mandado como parametro.
+   * Hasta que no se le de al boton 'ACEPTAR' que aparece no seguira el programa.
+   * 
+   * @param msg  Mensaje a mostrar.
+   */
   public void msgBox(String msg)
   {
     mensajes.mensajeAviso(msg, this);

@@ -55,6 +55,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -70,7 +71,14 @@ import javax.swing.JFileChooser;
 public class MantTraspAlm extends ventanaPad implements PAD
 {
   private int almCodio,almCodif;
-        
+  ListStock ifList=new ListStock(this)
+  {
+    @Override
+    public void matado()
+    {
+        insertarRegHist();
+    }
+  };     
   private boolean ARG_ADMIN=false;
   private boolean addVentanaLote=true;
   private boolean swAddnew=false;
@@ -155,7 +163,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                     Boolean.parseBoolean(ht.get("admin"));
     }
     private void jbInit() throws Exception {      
-        setVersion("2015-06-11 "+ (ARG_ADMIN?"ADMIN":""));
+        setVersion("2015-06-18 "+ (ARG_ADMIN?"ADMIN":""));
   
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
@@ -194,6 +202,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
     {
         return " order by avc_ano,avc_nume";
     }
+  @Override
     public void iniciarVentana() throws Exception
     {
         Pcabe.setDefButton(Baceptar);
@@ -215,11 +224,10 @@ public class MantTraspAlm extends ventanaPad implements PAD
         
         pdalmace.llenaCombo(alm_codifE, dtCon1,'*');
         pdalmace.llenaCombo(alm_codioE, dtCon1,'*');
-//        s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
-//        dtCon1.select(s);
-//        alm_codifE.addItem(dtCon1);
-//        dtCon1.select(s); // Volvemos al principio
-//        alm_codioE.addItem(dtCon1);
+        ifList.setVisible(false);
+        ifList.setClosable(false);
+        this.getLayeredPane().add(ifList);
+        ifList.setLocation(5,5);     
 
         stkPart=new ActualStkPart(dtCon1,EU.em_cod);
         avc_fecalbE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -273,6 +281,8 @@ public class MantTraspAlm extends ventanaPad implements PAD
         {
             if (e.getActionCommand().equals("Lote"))
                 verVentanaLote();
+            if (e.getActionCommand().equals("List.Ubic"))
+                verHistoricoList();
              if (e.getActionCommand().equals("Importar"))
                  importaDat();
                  
@@ -322,7 +332,72 @@ public class MantTraspAlm extends ventanaPad implements PAD
 
       });
     }
-    
+    public void matar(boolean cerrarConexion)
+    {
+        if (muerto)
+          return;
+        if (ifList!=null)
+        {
+          ifList.setVisible(false);
+          ifList.dispose();
+        } 
+
+        super.matar(cerrarConexion);
+    }
+    void verHistoricoList()
+    {
+        
+      try
+      {
+          ifList.setVisible(true);
+          ifList.iniciar(dtCon1,alm_codioE.getValorInt());
+      } catch (SQLException ex)
+      {
+          Error("Error al ver datos historico de listados", ex);
+      }
+    }
+    private void insertarRegHist()
+    {
+      try
+      {
+          if (ifList.getFechaHist()==null)
+              return;
+          if (!dtCon1.select("select h.*,s.*,pro_nomb from hislisstk as h,v_stkpart as s "
+              + "  left join v_articulo as p on s.pro_codi =p.pro_codi "
+              + " where hls_fecstk={ts '"+Formatear.getFecha(ifList.getFechaHist(),"yyyy-MM-dd HH:mm:ss")+"'}"
+              + " and h.alm_codi=  "+ifList.getAlmacen()
+              + " and s.alm_codi = h.alm_codi "
+              + " and h.pro_codi= s.pro_codi "
+              + " and  h.pro_ejelot= eje_nume"
+              + " and h.pro_serlot=pro_serie"
+              + " and  h.pro_numlot=pro_nupar "
+              + " and h.pro_indlot = pro_numind"
+              +" order by  h.pro_codi, h.pro_ejelot,h.pro_serlot, h.pro_numlot,h.pro_indlot "))
+          {
+              msgBox("No encontrado stocks del listado selecionado");
+              return;
+          }
+          do
+          {
+               ArrayList v=new ArrayList();
+               v.add(dtCon1.getInt("pro_codi")); // 0
+               v.add(dtCon1.getString("pro_nomb")); // 1
+               v.add(dtCon1.getInt("pro_ejelot"));
+               v.add(dtCon1.getString("pro_serlot")); // 3
+               v.add(dtCon1.getInt("pro_numlot")); // 4
+               v.add(dtCon1.getInt("pro_indlot")); // 5
+               v.add(dtCon1.getDouble("stp_kilact")); // 6
+               v.add(dtCon1.getInt("stp_unact")); // 7
+               v.add(dtCon1.getInt("stp_numpal")); // 8
+               v.add(dtCon1.getInt("stp_numcaj")); // 8
+               v.add("S"); // 8
+               jt.addLinea(v);
+          } while (dtCon1.next());
+      } catch (SQLException ex)
+      {
+          Error("Error al buscar datos de listado anterior", ex);
+      }
+    }
     private void invertirSelec(int estado)
     {
        int nRow=jt.getRowCount();
@@ -1344,6 +1419,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         Bselec.setBounds(230, 2, 40, 20);
 
         Bherr.addMenu("Lote");
+        Bherr.addMenu("List.Ubic");
         Bherr.addMenu("Importar");
         Ppie.add(Bherr);
         Bherr.setBounds(280, 2, 40, 20);

@@ -3487,9 +3487,21 @@ CREATE TABLE anjelica.actstkpart
 WITH ( OIDS=FALSE );
 -- Index: anjelica.ix_astkpart
 -- DROP INDEX anjelica.ix_astkpart;
-CREATE INDEX ix_astkpart ON anjelica.actstkpart   (pro_codi, alm_codi)
+CREATE INDEX ix_astkpart ON anjelica.actstkpart   (pro_codi, alm_codi);
 
-
+drop table anjelica.hislisstk;
+CREATE TABLE anjelica.hislisstk
+(
+	hls_fecstk timestamp not null, -- Fecha Listado Stock
+	alm_codi int not null, -- Almacen
+	
+	pro_codi int,	  	-- Producto
+	pro_ejelot int not null, -- Ejerc. Lote
+	pro_serlot char(1) not null,	-- Serie 	
+ 	pro_numlot int not null,		-- Lote
+	pro_indlot int not null		-- Numero Individuo		
+);
+create index  ix_hislisstk on anjelica.hislisstk  (alm_codi,hls_fecstk)
 --- Constraints tipo Foreign Key
 alter table anjelica.v_albavec add constraint avc_procl foreign key (cli_codi)
     references anjelica.clientes(cli_codi);
