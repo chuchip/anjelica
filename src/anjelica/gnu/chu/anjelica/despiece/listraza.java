@@ -6,10 +6,8 @@ import gnu.chu.print.util;
 import net.sf.jasperreports.engine.*;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
-import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -19,7 +17,7 @@ import java.util.Vector;
  * <p>Título: listraza </p>
  * <p>Descripción: Genera un listado con la trazabilidad de los productos.
  *  existentes en un albaran.</p>
- *  <p>Copyright: Copyright (c) 2005-2011
+ *  <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -71,11 +69,12 @@ public class listraza  implements JRDataSource
       String artVenta,pro_nomb,avp_serlot,msgLog;
       Double avp_canti;
       Integer proCodi,avp_numpar,avp_numind;
-      java.util.Date fecSacrE;
+      java.util.Date fecSacrE,fecCaduE;
 
       DatosTraza(String ntrazaE,String nacidoE,String sacrificadoE,
               String despiezadoE,String cebadoE,
-            String artVenta,java.util.Date fecSacrE,String pro_nomb,
+            String artVenta,java.util.Date fecSacrE,java.util.Date fecCaduE,
+            String pro_nomb,
             Double avp_canti,Integer avp_numind,Integer avp_numpar,String avp_serlot,
             Integer proCodi,String msgLog)
       {
@@ -86,6 +85,7 @@ public class listraza  implements JRDataSource
           this.cebadoE=cebadoE;
           this.artVenta=artVenta;
           this.fecSacrE=fecSacrE;
+          this.fecCaduE=fecCaduE;
           this.pro_nomb=pro_nomb;
           this.avp_canti=avp_canti;
           this.avp_numpar=avp_numpar;
@@ -120,12 +120,14 @@ public class listraza  implements JRDataSource
         return avp_numpar;
       if (namField.equals("avp_numind"))
         return avp_numind;
-        return proCodi;
+       if (namField.equals("fecCaduc"))
+        return fecCaduE;
+       return proCodi;
       }
 
-      Vector getVector()
+      ArrayList getVector()
       {
-          Vector v=new Vector();
+          ArrayList v=new ArrayList();
           v.add(proCodi);
           v.add(pro_nomb);
           v.add(avp_serlot+" "+avp_numpar+"-"+avp_numind);
@@ -138,12 +140,13 @@ public class listraza  implements JRDataSource
           v.add(artVenta);
           v.add(fecSacrE);
           v.add(msgLog);
+          v.add(fecCaduE);
           return v;
       }
       void actualiza(String ntrazaE,String sacrificadoE,
               String despiezadoE,String nacidoE,String cebadoE,
             String artVenta,
-            java.util.Date fecSacrE)
+            java.util.Date fecSacrE,java.util.Date fecCaduE)
       {
           this.ntrazaE=ntrazaE;
           this.sacrificadoE=sacrificadoE;
@@ -152,6 +155,7 @@ public class listraza  implements JRDataSource
           this.cebadoE=cebadoE;
           this.artVenta=artVenta;
           this.fecSacrE=fecSacrE;
+          this.fecCaduE=fecCaduE;
       }
   }
   public listraza(DatosTabla dtCur,DatosTabla dtStat,DatosTabla dtCon1,EntornoUsuario eu, ventana padre)
@@ -191,10 +195,6 @@ public class listraza  implements JRDataSource
   }
   /**
    * Carga datos de trazabilidad
-   * @param numAlb
-   * @param empCodi
-   * @param ejeNume
-   * @param serie
    * @return 0 si todo ha ido bien. 1 Si se han editado los datos. -1 en caso de error.
    * @throws SQLException
    * @throws JRException 
@@ -266,12 +266,12 @@ public class listraza  implements JRDataSource
         }
         DatosTraza dtTraza=new DatosTraza(utdes.ntrazaE,
                 utdes.nacidoE,utdes.sacrificadoE,utdes.despiezadoE,utdes.cebadoE,
-                artVenta,  utdes.getFecSacrif() , dtCur.getString("pro_nomb"),
-                new Double(dtCur.getDouble("avp_canti")),
-                new Integer(dtCur.getInt("avp_numind")),
-                new Integer(dtCur.getInt("avp_numpar")),
+                artVenta,  utdes.getFecSacrif() ,utdes.getFecCaduc(), dtCur.getString("pro_nomb"),
+                dtCur.getDouble("avp_canti"),
+                dtCur.getInt("avp_numind"),
+                dtCur.getInt("avp_numpar"),
                 dtCur.getString("avp_serlot"),
-                new Integer(dtCur.getInt("pro_codi")),msgLogL
+                dtCur.getInt("pro_codi"),msgLogL
                 );
         datos.add(dtTraza);
     } while (dtCur.next());
@@ -434,7 +434,8 @@ public class listraza  implements JRDataSource
                    dtGrid.getGrid().getValString(n,7),
                    dtGrid.getGrid().getValString(n,8),
                    dtGrid.getGrid().getValString(n,9),
-                   dtGrid.getGrid().getValDate(n,10)
+                   dtGrid.getGrid().getValDate(n,10),
+                   dtGrid.getGrid().getValDate(n,12)
                    );
         }
         if (swListar)

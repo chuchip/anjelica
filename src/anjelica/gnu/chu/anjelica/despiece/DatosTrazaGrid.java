@@ -83,7 +83,8 @@ public class DatosTrazaGrid extends ventana {
         artorigenE = new gnu.chu.controles.CTextField(Types.CHAR,"X",40);
         fecsacrE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
         comentE = new gnu.chu.controles.CTextField(Types.CHAR,"X",40);
-        jt = new gnu.chu.controles.CGridEditable(12);
+        fecCaduE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
+        jt = new gnu.chu.controles.CGridEditable(13);
 
         pro_codiE.setEnabled(false);
 
@@ -108,6 +109,7 @@ public class DatosTrazaGrid extends ventana {
         v.add("Art.Origen"); // 9
         v.add("F.Sacrificio"); //10
         v.add("Comentarios"); // 11
+        v.add("F.Cad"); //12
         jt.setCabecera(v);
         try {
             ArrayList v1=new ArrayList();
@@ -123,12 +125,14 @@ public class DatosTrazaGrid extends ventana {
             v1.add(artorigenE);
             v1.add(fecsacrE);
             v1.add(comentE);
+            v1.add(fecCaduE);
             jt.setCampos(v1);
         } catch (Exception k) {SystemOut.print(k);}
-        jt.setAlinearColumna(new int[]{2,0,0,2,0,0,0,0,0,0,1,0});
-        jt.setAnchoColumna(new int[]{50,150,80,50,150,120,120,120,120,140,70,120});
+        jt.setAlinearColumna(new int[]{2,0,0,2,0,0,0,0,0,0,1,0,1});
+        jt.setAnchoColumna(new int[]{50,150,80,50,150,120,120,120,120,140,70,120,70});
 
         jt.setFormatoColumna(10,"dd-MM-yy");
+        jt.setFormatoColumna(12,"dd-MM-yy");
         jt.setCanDeleteLinea(false);
         jt.setCanInsertLinea(false);
 
@@ -154,6 +158,7 @@ public class DatosTrazaGrid extends ventana {
     private gnu.chu.controles.CTextField artorigenE;
     private gnu.chu.controles.CTextField comentE;
     private gnu.chu.controles.CTextField engordeE;
+    private gnu.chu.controles.CTextField fecCaduE;
     private gnu.chu.controles.CTextField fecsacrE;
     private gnu.chu.controles.CGridEditable jt;
     private gnu.chu.controles.CTextField mataderoE;

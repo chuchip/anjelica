@@ -98,6 +98,7 @@ public class menu extends JFrame
   JMenuItem ALclstkdes = new JMenuItem();
   JMenuItem ALclresstock = new JMenuItem();
   JMenuItem ALlisaldos = new JMenuItem();
+  JMenuItem ALclUbiArt = new JMenuItem();
   JMenuItem ALconmvpr = new JMenuItem();
   JMenuItem pdproveed = new JMenuItem();
   JMenuItem pdarticu = new JMenuItem();
@@ -416,6 +417,7 @@ public class menu extends JFrame
         ALclresstock_actionPerformed(e);
       }
     });
+    ALclUbiArt.setText("CL Ubic.Art");
     ALlisaldos.setText("Listado Saldos");
     ALconmvpr.setText("Cons. Mvtos");
     ALconmvpr.addActionListener(new java.awt.event.ActionListener() {
@@ -871,6 +873,7 @@ public class menu extends JFrame
     JPopupAlmacen.add(ALclstkdes);
     JPopupAlmacen.add(ALclresstock);
     JPopupAlmacen.add(ALlisaldos);
+    JPopupAlmacen.add(ALclUbiArt);
     JPopupAlmacen.add(ALconmvpr);
     JPopupAlmacen.add(pdregalm);
     JPopupAlmacen.add(costkpar);
@@ -1121,12 +1124,19 @@ public class menu extends JFrame
 
     ALlisaldos.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         ALlisaldos_actionPerformed(e);
       }
     });
-
+    ALclUbiArt.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        ALclUbiArt_actionPerformed(e);
+      }
+    });
     Briesgo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         Briesgo_actionPerformed();
@@ -1695,7 +1705,10 @@ void pdreprese_actionPerformed(ActionEvent e) {
       
     lanzaEjecutable(new gnu.chu.anjelica.almacen.lisaldos(menu.this,EU));
   }
-
+   void ALclUbiArt_actionPerformed(ActionEvent e) {
+      
+    lanzaEjecutable(new gnu.chu.anjelica.almacen.CLUbicArt(menu.this,EU));
+  }
   void ALconmvpr_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.almacen.conmvpr(menu.this,EU));
 

@@ -77,6 +77,11 @@
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,40)"/>
       </AuxValues>
     </Component>
+    <Component class="gnu.chu.controles.CTextField" name="fecCaduE">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yy&quot;)"/>
+      </AuxValues>
+    </Component>
   </NonVisualComponents>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -102,8 +107,8 @@
         <Property name="canInsertLinea" type="boolean" value="false"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(12)"/>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="Vector v=new Vector();&#xa;v.add(&quot;Codigo&quot;); //0&#xa;v.add(&quot;Nombre&quot;); // 1&#xa;v.add(&quot;Indiv&quot;); // 2&#xa;v.add(&quot;Kilos&quot;); // 3&#xa;v.add(&quot;Lote&quot;); // 4&#xa;v.add(&quot;Matadero&quot;); // 5&#xa;v.add(&quot;Sala Desp.&quot;); // 6&#xa;v.add(&quot;Nacimiento&quot;); // 7&#xa;v.add(&quot;Engorde&quot;); // 8 &#xa;v.add(&quot;Art.Origen&quot;); // 9&#xa;v.add(&quot;F.Sacrificio&quot;); //10&#xa;v.add(&quot;Comentarios&quot;); // 11&#xa;jt.setCabecera(v);&#xa;try {&#xa;ArrayList v1=new ArrayList();&#xa;v1.add(pro_codiE);&#xa;v1.add(pro_nombE);&#xa;v1.add(pro_etiquE);&#xa;v1.add(acl_kilosE);&#xa;v1.add(pro_loteE);&#xa;v1.add(mataderoE);&#xa;v1.add(saladespE);&#xa;v1.add(nacimientoE);&#xa;v1.add(engordeE);&#xa;v1.add(artorigenE);&#xa;v1.add(fecsacrE);&#xa;v1.add(comentE);&#xa;jt.setCampos(v1);&#xa;} catch (Exception k) {SystemOut.print(k);}&#xa;jt.setAlinearColumna(new int[]{2,0,0,2,0,0,0,0,0,0,1,0});&#xa;jt.setAnchoColumna(new int[]{50,150,80,50,150,120,120,120,120,140,70,120});&#xa;&#xa;jt.setFormatoColumna(10,&quot;dd-MM-yy&quot;);"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(13)"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="Vector v=new Vector();&#xa;v.add(&quot;Codigo&quot;); //0&#xa;v.add(&quot;Nombre&quot;); // 1&#xa;v.add(&quot;Indiv&quot;); // 2&#xa;v.add(&quot;Kilos&quot;); // 3&#xa;v.add(&quot;Lote&quot;); // 4&#xa;v.add(&quot;Matadero&quot;); // 5&#xa;v.add(&quot;Sala Desp.&quot;); // 6&#xa;v.add(&quot;Nacimiento&quot;); // 7&#xa;v.add(&quot;Engorde&quot;); // 8 &#xa;v.add(&quot;Art.Origen&quot;); // 9&#xa;v.add(&quot;F.Sacrificio&quot;); //10&#xa;v.add(&quot;Comentarios&quot;); // 11&#xa;v.add(&quot;F.Cad&quot;); //12&#xa;jt.setCabecera(v);&#xa;try {&#xa;ArrayList v1=new ArrayList();&#xa;v1.add(pro_codiE);&#xa;v1.add(pro_nombE);&#xa;v1.add(pro_etiquE);&#xa;v1.add(acl_kilosE);&#xa;v1.add(pro_loteE);&#xa;v1.add(mataderoE);&#xa;v1.add(saladespE);&#xa;v1.add(nacimientoE);&#xa;v1.add(engordeE);&#xa;v1.add(artorigenE);&#xa;v1.add(fecsacrE);&#xa;v1.add(comentE);&#xa;v1.add(fecCaduE);&#xa;jt.setCampos(v1);&#xa;} catch (Exception k) {SystemOut.print(k);}&#xa;jt.setAlinearColumna(new int[]{2,0,0,2,0,0,0,0,0,0,1,0,1});&#xa;jt.setAnchoColumna(new int[]{50,150,80,50,150,120,120,120,120,140,70,120,70});&#xa;&#xa;jt.setFormatoColumna(10,&quot;dd-MM-yy&quot;);&#xa;jt.setFormatoColumna(12,&quot;dd-MM-yy&quot;);"/>
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
