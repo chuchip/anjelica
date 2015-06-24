@@ -1,5 +1,32 @@
 package gnu.chu.anjelica.compras;
 
+
+/**
+ *
+ * <p>Título: MantAlbCom</p>
+ * <p>Descripción: Mantenimiento Albaranes de Compra</p>
+ * <p>Parametros: modPrecio Indica si se puede modificar los precios del albaran.
+ *  admin: Modo Aministrador.
+ *  AlbSinPed true/False Indica si se pueden cargar albaranes sin un pedido de compras
+ * </p>
+ * <p> Creado a partir pdalbaco2</p>
+ *  <p>Copyright: Copyright (c) 2005-2015
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,ed
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * <p>Empresa: MISL</p>
+ * @author Chuchi P
+ * @version 1.0
+ */
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.ActualStkPart;
@@ -38,32 +65,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import net.sf.jasperreports.engine.*;
 
-/**
- *
- * <p>Título: MantAlbCom</p>
- * <p>Descripción: Mantenimiento Albaranes de Compra</p>
- * <p>Parametros: modPrecio Indica si se puede modificar los precios del albaran.
- *  admin: Modo Aministrador.
- *  AlbSinPed true/False Indica si se pueden cargar albaranes sin un pedido de compras
- * </p>
- * <p> Creado a partir pdalbaco2</p>
- *  <p>Copyright: Copyright (c) 2005-2014
- *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
- *  los terminos de la Licencia Pública General de GNU según es publicada por
- *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
- *  o bien (según su elección) de cualquier versión posterior.
- *  Este programa se distribuye con la esperanza de que sea útil,ed
- *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
- *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
- *  Véase la Licencia Pública General de GNU para más detalles.
- *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
- *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
- *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
- * </p>
- * <p>Empresa: MISL</p>
- * @author Chuchi P
- * @version 1.0
- */
 public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSource,MantAlbCom_Interface
 {
   ArrayList<Double> preciosGrid=new ArrayList();
@@ -3184,7 +3185,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
       if (hisRowid!=0)
       {
-        msgBox("Viendo albaran historico ... IMPOSIBLE MODIFICAR");       
+        msgBox("Viendo albaran historico ... IMPOSIBLE MODIFICAR/BORRAR");       
         return false;
       }
       s = "SELECT * FROM V_albacoc WHERE acc_ano =" + acc_anoE.getValorInt() +
@@ -3646,45 +3647,19 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     try
     {
-        if (!checkEdicion())
-        {
-            nav.pulsado=navegador.NINGUNO;
-            activaTodo();
-            return;
-        }
-//     if (hisRowid!=0)
-//      {
-//        msgBox("Viendo albaran historico ... IMPOSIBLE BORRAR");
-//        activaTodo();
-//        return;
-//      }
-//      if (fcc_numeE.getValorDec() > 0)
-//      {
-//        if ( ARG_ADMIN)
-//          msgBox("Albaran se ha FACTURADO ... QUITELO PRIMERO DE LA FACTURA: "+fcc_numeE.getValorInt());
-//        else
-//          msgBox("Albaran YA se HA FACTURADO ... IMPOSIBLE BORRAR");
-//        activaTodo();
-//        return;
-//      }
-//       if (!ARG_MODPRECIO && opBloquea.isSelected())
-//      {
-//        msgBox("ALBARAN YA TIENE PRECIOS ASIGNADOS .. IMPOSIBLE MODIFICAR");
-//        activaTodo();
-//        return;
-//      }
-//      if (pdejerci.isCerrado(dtStat, acc_anoE.getValorInt(), emp_codiE.getValorInt()))
-//      {
-//        if (!ARG_ADMIN)
-//        {
-//          msgBox("Albaran es de un ejercicio YA cerrado ... IMPOSIBLE BORRAR");
-//          nav.pulsado = navegador.NINGUNO;
-//          activaTodo();
-//          return;
-//        }
-//        else
-//          msgBox("ATENCION!!! Albaran es de un ejercicio YA cerrado");
-//      }
+      if (!checkEdicion())
+      {
+          nav.pulsado=navegador.NINGUNO;
+          activaTodo();
+          return;
+      }
+      if (jt.isVacio() )
+      {
+          msgBox("Albaran esta vacio o ha sido borrado");
+          nav.pulsado=navegador.NINGUNO;
+          activaTodo();
+          return;
+      }
       if (!setBloqueo(dtAdd, "v_albacoc",
                       acc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
                       "|" + acc_serieE.getText() + "|" + acc_numeE.getValorInt()))
@@ -4741,13 +4716,13 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   }
   void borraAlbaran() throws Exception
   {
-    s = "DELETE FROM v_albacoc WHERE acc_ano =" + acc_anoE.getValorInt() +
-        " and emp_codi = " + emp_codiE.getValorInt() +
-        " and acc_serie = '" + acc_serieE.getText() + "'" +
-        " and acc_nume = " + acc_numeE.getValorInt();
-    if (dtAdd.executeUpdate(s) != 1)
-      throw new Exception("No encontrado Cabecera Albaran.\n Select: " + s);
-    if (acc_serieE.getText().equals("Y"))
+//    s = "DELETE FROM v_albacoc WHERE acc_ano =" + acc_anoE.getValorInt() +
+//        " and emp_codi = " + emp_codiE.getValorInt() +
+//        " and acc_serie = '" + acc_serieE.getText() + "'" +
+//        " and acc_nume = " + acc_numeE.getValorInt();
+//    if (dtAdd.executeUpdate(s) != 1)
+//      throw new Exception("No encontrado Cabecera Albaran.\n Select: " + s);
+//    if (acc_serieE.getText().equals("Y"))
     { // Borro los datos de las partidas en ventas
       s = "DELETE FROM v_albcopave WHERE acc_ano =" + acc_anoE.getValorInt() +
           " and emp_codi = " + emp_codiE.getValorInt() +
@@ -6235,13 +6210,19 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
      {
        try
        {              
-         if (! jtRecl.hasCambio())
-             return -1; // No ha habido cambios
+         if (! jtRecl.hasCambio() || jtRecl.isVacio())
+             return -1; // No ha habido cambios o esta vacio
         
-
+         if ( pro_codverE.isNull())
+         {
+         // Sin codigo de producto. Ignorar linea
+             jtRecl.resetCambio();
+             return -1;
+         }
+         
          if (! pro_codverE.controla(false,false) )
          {
-             mensajeErr(pro_codverE.getMsgError());
+             mensajeErr("Error en prod. Reclamaciones:"+pro_codverE.getMsgError());
              return 0;
          }               
          jtRecl.setValor(pro_codverE.getLikeProd().getString("pro_nomb"), row, 1); // Actualizo el nombre (por si acaso).

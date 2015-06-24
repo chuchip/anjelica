@@ -7261,8 +7261,8 @@ public class pdalbara extends ventanaPad  implements PAD
       liTra.setRepiteIndiv(repiteIndE.getValorInt());
       liTra.setDatosAlbaran(avc_numeE.getValorInt(), emp_codiE.getValorInt(),
                   avc_anoE.getValorInt(), avc_seriE.getText());
-      
-      if (liTra.cargaDatosTraz()<0)
+      int retCargaDatos=liTra.cargaDatosTraz();
+      if (retCargaDatos<0)
       {
           mensajeErr("Error al generar la Hoja Trazabilidad ");
           mensaje("");
@@ -7295,9 +7295,10 @@ public class pdalbara extends ventanaPad  implements PAD
 
              break;
            default:
-             liTra.setToEmail(null);
              
-             liTra.imprimir();
+             liTra.setToEmail(null);
+             if (retCargaDatos==0)
+                liTra.imprimir();
       }
          
       mensajeErr("Hoja Trazabilidad  ... generada");

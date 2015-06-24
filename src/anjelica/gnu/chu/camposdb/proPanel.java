@@ -245,7 +245,10 @@ public class proPanel extends CPanel
 
   }
 
-
+  /**
+   * Comprueba si el valor es nulo
+   * @return true si es nulo
+   */
   public boolean isNull()
   {
     if (pro_codiE.getText().trim().equals(""))
@@ -253,11 +256,10 @@ public class proPanel extends CPanel
     try {
       Integer.parseInt(pro_codiE.getText().trim());
     } catch (Exception k){return false;}
-    if (pro_codiE.getValorDec() == 0)
-      return true;
-    return false;
+    return pro_codiE.getValorInt() == 0;
   }
 
+  @Override
   public void setText(String proCodi)
   {
     setText(proCodi,false);

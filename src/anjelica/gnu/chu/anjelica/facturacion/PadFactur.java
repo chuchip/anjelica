@@ -81,7 +81,7 @@ public class PadFactur extends ventanaPad   implements PAD {
   CTextField fvc_comencE=new CTextField(Types.CHAR,"X",76);
   CTextField fvc_comenpE=new CTextField(Types.CHAR,"X",76);
 
-    /** Creates new form PadFactur */
+   
  public PadFactur(EntornoUsuario eu, Principal p,Hashtable ht)
  {
    EU = eu;
@@ -144,7 +144,7 @@ public class PadFactur extends ventanaPad   implements PAD {
        
         iniciarFrame();
 
-        this.setVersion("2015-06-03" + (MOD_CONS ? "SOLO LECTURA" : ""));
+        this.setVersion("2015-06-19" + (MOD_CONS ? "SOLO LECTURA" : ""));
         strSql = getStrSql();
         IMPFRATEXTO=EU.getValorParam("impFraTexto",IMPFRATEXTO);
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -801,6 +801,7 @@ public class PadFactur extends ventanaPad   implements PAD {
     try {
          if (lifact==null)
           lifact=new lisfactu(EU,dtCon1,dtStat,dtBloq);
+        lifact.setAgrupa(opAgrlin.isSelected());
         if (ifFax == null) {
             ifFax = new IFFax();
             ifFax.iniciar(this);
@@ -813,6 +814,7 @@ public class PadFactur extends ventanaPad   implements PAD {
         }
         ifFax.setVisible(true);
         ifFax.setSelected(true);
+        
         String numfax=cli_codiE.getLikeCliente().getString("cli_fax",true);
         ifFax.setCliCodi(cli_codiE.getText());
         ifFax.setDatosDoc("F", getSqlListFra(), true);
@@ -832,6 +834,7 @@ public class PadFactur extends ventanaPad   implements PAD {
          }
          if (lifact==null)
           lifact=new lisfactu(EU,dtCon1,dtStat,dtBloq);
+        lifact.setAgrupa(opAgrlin.isSelected());
         if (ifMail == null) {
             ifMail = new IFMail();
             ifMail.iniciar(this);
@@ -1156,6 +1159,7 @@ public class PadFactur extends ventanaPad   implements PAD {
 
   public void PADUltimo(){verDatos(dtCons);}
 
+  @Override
   public void PADQuery(){
     Pcabe.setQuery(true);
     Ppie.setQuery(true);

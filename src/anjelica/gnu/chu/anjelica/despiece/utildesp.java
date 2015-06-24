@@ -96,12 +96,21 @@ public class utildesp
   private boolean swSaltaDespInt=false;
   private boolean swAlbInt=false;
   private int  ejeLotY,proLoteY,  empLotY ;
-
+  private boolean swPaisCorto=false; // Especifica si pone el nombre del pais o las siglas del pais.
+  
   public utildesp()
   {
 
   }
-
+  /**
+   * Especifica si poner el nombre del pais o las iniciales del pais en el matadero y sala de despiece
+   * por defecto pone el nombre del pais. 
+   * @param swNombrePais Si se manda true, pondra las iniciales, false pondra el nombre
+   */
+  public void setInicialesPais(boolean swNombrePais)
+  {
+      swPaisCorto=swNombrePais;
+  }
   public void setSaltaDespInt(boolean saltaDespInt)
   {
     swSaltaDespInt = saltaDespInt;
@@ -325,7 +334,7 @@ public class utildesp
         if (!dtStat.select(s))
         {
                 msgAviso = "NO encontrado cabecera de Despiece: "
-                        + (EU == null ? EU.em_cod + "-" : "") + dtCon1.getInt("eje_nume")
+                        + (EU != null ? EU.em_cod + "-" : "") + dtCon1.getInt("eje_nume")
                         + "-" + dtCon1.getInt("deo_codi") + " Para Individ: "
                         + empLot + "|" + ejeLot + "-" + proCodi + ":" + serie + proLote + "-" + proIndi;
                 return false;
@@ -443,7 +452,7 @@ public class utildesp
           if (swBuscaCompra)
               return true;
           acp_painac=dtStat.getInt("acp_painac");
-          s = "SELECT pai_nomb FROM v_paises WHERE pai_codi = " +
+          s = "SELECT pai_nomb,pai_inic FROM v_paises WHERE pai_codi = " +
               dtStat.getInt("acp_painac");
           if (!dtCon1.select(s))
           {
@@ -454,7 +463,7 @@ public class utildesp
           else
             nacidoE = dtCon1.getString("pai_nomb");
           acp_engpai=dtStat.getInt("acp_engpai");
-          s = "SELECT pai_nomb FROM v_paises WHERE pai_codi = " +
+          s = "SELECT pai_nomb,pai_inic FROM v_paises WHERE pai_codi = " +
               dtStat.getInt("acp_engpai");
           if (!dtCon1.select(s))
           {
@@ -477,17 +486,18 @@ public class utildesp
           {
             sacrificadoE =dtCon1.getString("mat_nrgsa");
             mat_nrgsa=sacrificadoE;
-            s = "select pai_nomb from v_paises where pai_codi = " + dtCon1.getInt("pai_codi");
+            s = "select pai_nomb,pai_inic from v_paises where pai_codi = " + dtCon1.getInt("pai_codi");
             if (dtCon1.select(s))
-              sacrificadoE = dtCon1.getString("pai_nomb") + "-" + sacrificadoE;
+              sacrificadoE = (swPaisCorto?  dtCon1.getString("pai_inic") :dtCon1.getString("pai_nomb") )
+                  + "-" + sacrificadoE;
           }
           acp_paisac = dtStat.getInt("acp_paisac");
-          s = "select pai_nomb from v_paises where pai_codi = " + acp_paisac;
+          s = "select pai_nomb,pai_inic from v_paises where pai_codi = " + acp_paisac;
           if (dtCon1.select(s))
             acp_paisacNomb = dtCon1.getString("pai_nomb");
           sde_codi=dtStat.getInt("sde_codi");
           if (deoDesnue)
-            s = "select pai_nomb from v_paises where pai_codi = " + paiEmp;
+            s = "select pai_nomb,pai_inic from v_paises where pai_codi = " + paiEmp;
           else
             s = "SELECT pai_codi,sde_nrgsa FROM v_saladesp m " +
                 " WHERE  m.sde_codi = " + dtStat.getInt("sde_codi");
@@ -503,12 +513,12 @@ public class utildesp
             {
               despiezadoE =dtCon1.getString("sde_nrgsa");
               sde_nrgsa=despiezadoE;
-              s = "select pai_nomb from v_paises where pai_codi = " + dtCon1.getInt("pai_codi");
+              s = "select pai_nomb,pai_inic from v_paises where pai_codi = " + dtCon1.getInt("pai_codi");
               if (dtCon1.select(s))
-                despiezadoE=dtCon1.getString("pai_nomb") + "-" +despiezadoE;
+                despiezadoE=(swPaisCorto?  dtCon1.getString("pai_inic") :dtCon1.getString("pai_nomb") )+ "-" +despiezadoE;
             }
             else
-              despiezadoE = dtCon1.getString("pai_nomb") + "-" +empRGSA;
+              despiezadoE = (swPaisCorto?  dtCon1.getString("pai_inic") :dtCon1.getString("pai_nomb") ) + "-" +empRGSA;
           }
        ntrazaE = dtStat.getString("acp_nucrot");
        if (repiteIndiv>0 && ntrazaE.length()>0)
@@ -595,7 +605,7 @@ public class utildesp
       despiezadoE = "";
       return;
     }
-    despiezadoE = dt.getString("pai_nomb") + "-" + empRGSA;
+    despiezadoE = (swPaisCorto?  dt.getString("pai_inic") :dt.getString("pai_nomb") ) + "-" + empRGSA;
   }
 
   public int busCliVenta(String serie, int proCodi, int empLot,
