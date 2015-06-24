@@ -178,6 +178,7 @@ public class menu extends JFrame
   JMenuItem pdfatra = new JMenuItem();
   JMenuItem mantartra = new JMenuItem();
   JMenuItem pdjercici = new JMenuItem();
+  JMenuItem pdmatadero = new JMenuItem();
   JMenuItem pdgruart = new JMenuItem();
   JMenuItem valdespi2 = new JMenuItem();
   JMenuItem Valdespi = new JMenuItem();
@@ -805,6 +806,12 @@ public class menu extends JFrame
         pdjercici_actionPerformed(e);
       }
     });
+    pdmatadero.setText("Mataderos");
+    pdmatadero.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        pdmatadero_actionPerformed(e);
+      }
+    });
     pdgruart.setText("Grupos Art.");
     pdgruart.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -932,6 +939,7 @@ public class menu extends JFrame
      JPopupPad.add(tarifa);
      JPopupPad.add(mantCalendar);
     JPopupPad.add(pdjercici);
+    JPopupPad.add(pdmatadero);
     JPopupPad.add(pdgruart);
      popupMarg.add(mnuZoMarg) ;
      popupMarg.add(mnuInvMarg);
@@ -2007,6 +2015,9 @@ void pdfatra_actionPerformed(ActionEvent e) {
   }
   void pdjercici_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.pad.pdejerci(menu.this, EU,null));
+  }
+   void pdmatadero_actionPerformed(ActionEvent e) {
+    lanzaEjecutable(new gnu.chu.anjelica.pad.pdmatadero(menu.this, EU,null));
   }
 void pdgruart_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.pad.pdgruart(menu.this, EU));

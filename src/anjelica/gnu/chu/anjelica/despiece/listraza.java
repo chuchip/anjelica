@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  *
@@ -207,7 +206,7 @@ public class listraza  implements JRDataSource
     
     if (utdes.getRepiteIndiv()>0)
         utdes.resetIndividuos();
-    
+    utdes.setInicialesPais(true);
     s="select a.fam_codi,a.pro_nomb,p.*,l.pro_codi as proCodAlb "+
         " from v_albvenpar as p,v_articulo as a,v_albavel as l "+
         " where p.emp_codi = "+empCodi+

@@ -16,7 +16,7 @@ import gnu.chu.sql.DatosTabla;
  *
  * <p>Título: pdmatadero </p>
  * <p>Descripción: Mantenimiento Tabla de Mataderos</p>
- *   Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ * <p> Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
  *  o bien (según su elección) de cualquier versión posterior.

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.4.final using JasperReports Library version 6.0.4  -->
-<!-- 2015-06-18T13:46:57 -->
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2015-06-22T12:23:23 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listraza" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="800" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="23add961-4970-4ecf-a07d-61792a64b304">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -215,7 +215,7 @@
 				<text><![CDATA[Lote]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="386" y="1" width="95" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="facafb68-c9b0-461a-80c5-753a42bc6718">
+				<reportElement key="staticText" mode="Opaque" x="386" y="1" width="100" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="facafb68-c9b0-461a-80c5-753a42bc6718">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -232,9 +232,11 @@
 				<text><![CDATA[Matadero]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="485" y="1" width="95" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="23a6328f-5ea8-46e1-8332-9bc59e28945d">
+				<reportElement key="staticText" mode="Opaque" x="487" y="1" width="100" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="23a6328f-5ea8-46e1-8332-9bc59e28945d">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -249,7 +251,7 @@
 				<text><![CDATA[Sala Despiece]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="582" y="1" width="55" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="36752cd8-87f3-4306-8d63-fe2ca89bfa88">
+				<reportElement key="staticText" mode="Opaque" x="588" y="1" width="55" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="36752cd8-87f3-4306-8d63-fe2ca89bfa88">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -266,9 +268,11 @@
 				<text><![CDATA[Nacimiento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="640" y="1" width="55" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="f9daee5f-248f-42b9-b5c9-6bc8bf63a674">
+				<reportElement key="staticText" mode="Opaque" x="645" y="1" width="55" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="f9daee5f-248f-42b9-b5c9-6bc8bf63a674">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -283,7 +287,7 @@
 				<text><![CDATA[Engorde]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="732" y="1" width="38" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="af2e639b-1c44-4dc1-963f-e62109e6836d">
+				<reportElement key="staticText" mode="Opaque" x="732" y="1" width="40" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="af2e639b-1c44-4dc1-963f-e62109e6836d">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -300,7 +304,7 @@
 				<text><![CDATA[F.Sacr]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="699" y="1" width="30" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="8c19871d-ec88-4c16-989e-7a3ec0ffd102">
+				<reportElement key="staticText" mode="Opaque" x="702" y="1" width="30" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="8c19871d-ec88-4c16-989e-7a3ec0ffd102">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -331,7 +335,7 @@
 				<text><![CDATA[Individ.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="773" y="1" width="38" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="e3fac2e6-7d64-4aa6-ae34-09404b020212">
+				<reportElement key="staticText" mode="Opaque" x="774" y="1" width="40" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="e3fac2e6-7d64-4aa6-ae34-09404b020212">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="local_mesure_unity" value="pixel"/>
@@ -381,7 +385,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="false">
+			<textField pattern="##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="191" y="0" width="31" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="ac0744d7-bc0f-45e5-9002-1d743c152677"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -410,7 +414,7 @@
 				<textFieldExpression><![CDATA[$F{crotal}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="386" y="0" width="95" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="0589ae9a-717d-4259-890b-c4ba1deac715">
+				<reportElement key="textField" mode="Opaque" x="386" y="0" width="100" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="0589ae9a-717d-4259-890b-c4ba1deac715">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -421,13 +425,13 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="DejaVu Sans" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{matadero}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="640" y="0" width="55" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="703a5b9d-7f9b-4054-b33f-52f877c16c6e">
+				<reportElement key="textField" mode="Opaque" x="645" y="0" width="55" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="703a5b9d-7f9b-4054-b33f-52f877c16c6e">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -444,7 +448,7 @@
 				<textFieldExpression><![CDATA[$F{engordado}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MM-yy" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="732" y="0" width="38" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="0559529a-df46-4510-9572-c4a200a0627c">
+				<reportElement key="textField" mode="Opaque" x="732" y="0" width="40" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="0559529a-df46-4510-9572-c4a200a0627c">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -468,7 +472,7 @@
 				<textFieldExpression><![CDATA[$F{avp_serlot}+" "+$F{avp_numpar}+"-"+$F{avp_numind}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="699" y="0" width="30" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="015d94bc-bb03-444e-9656-268cf4bb2547">
+				<reportElement key="textField" mode="Opaque" x="702" y="0" width="28" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="015d94bc-bb03-444e-9656-268cf4bb2547">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -485,7 +489,10 @@
 				<textFieldExpression><![CDATA[$F{artVenta}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="582" y="0" width="55" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="543da215-8257-414a-b3c3-2bd97d73af5e"/>
+				<reportElement key="textField" mode="Opaque" x="588" y="0" width="55" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="543da215-8257-414a-b3c3-2bd97d73af5e">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -499,7 +506,7 @@
 				<textFieldExpression><![CDATA[$F{nacido}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="485" y="0" width="95" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="8ec7f620-b6be-49e8-a396-c38b7ae2df6a">
+				<reportElement key="textField" mode="Opaque" x="487" y="0" width="100" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="8ec7f620-b6be-49e8-a396-c38b7ae2df6a">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -510,13 +517,13 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="DejaVu Sans" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{salaDespiece}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MM-yy" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="773" y="0" width="38" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="4fdf6789-fcaa-46b5-97c2-07bb02b9aa32">
+				<reportElement key="textField" mode="Opaque" x="774" y="0" width="40" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="4fdf6789-fcaa-46b5-97c2-07bb02b9aa32">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="local_mesure_unity" value="pixel"/>
@@ -532,8 +539,7 @@
 					<font fontName="DejaVu Sans" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{fecCaduc}
-]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fecCaduc}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

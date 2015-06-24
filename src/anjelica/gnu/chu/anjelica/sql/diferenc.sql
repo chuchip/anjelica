@@ -1,3 +1,9 @@
+-- Incluido nombre abreviado
+alter table paises add pai_nomcor varchar(5);
+update paises set pai_nomcor = substring(pai_nomb,1, 5);
+alter table paises alter pai_nomcor set not null;
+drop view anjelica.v_paises;
+create view anjelica.v_paises as select * from paises ;
 -- Update para poner el numero de palet y caja a stock-partidas
 update stockpart set stp_numpal=(select avl_numpal from v_albventa_detalle as a
 	where alm_coddes=3 and avc_serie='X' and stockpart.pro_codi=a.pro_codi
