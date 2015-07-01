@@ -8,7 +8,7 @@ package gnu.chu.anjelica.inventario;
  * con el mismo individuo,lote y peso. Por defecto, lo permite. </p>
  * <p> <em>admin=true</em> Permitira meter Generar inventario a  partir de otro.
  * Por defecto esta deshabilitada esa caracteristica. </p>
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -63,10 +63,6 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 
-/**
- *
- * @author jpuente.ext
- */
 public class PdInvControl extends ventanaPad implements PAD
 {
  private String condLineas="";
@@ -74,7 +70,7 @@ public class PdInvControl extends ventanaPad implements PAD
   private String condWhere;
   boolean swKilos0 = false;
   DatosTabla dtCab;
-  boolean swSal = true;
+  boolean swSal = false;
   double kgAnt=0;
   String s;
   boolean swRepLineas=false;
@@ -152,7 +148,7 @@ public class PdInvControl extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2015-05-01 "+(swAdmin?"Administrador":""));
+        this.setVersion("2015-06-30 "+(swAdmin?"Administrador":""));
         condWhere=" where emp_codi =  "+EU.em_cod;
         strSql = "SELECT * FROM coninvcab "+condWhere+
          "order by cci_feccon,cam_codi,alm_codi";
@@ -643,11 +639,16 @@ public class PdInvControl extends ventanaPad implements PAD
     {
       if (!condLineas.equals(""))
       {
-          msgBox("No se puede editar un registro si esta en modo busqueda individuos.  Refrescando registro");
-          linEdit=jt.getValorInt(0,0);
+          mensajeErr("Refrescando registro para edicion");
+          s="SELECT count(*) as cuantos FROM v_coninvent where cci_codi = "+cci_codiE.getValorInt()+
+             " and lci_nume<"+   jt.getValorInt(jt.getSelectedRowDisab(),0)+
+             " and lci_regaut = 0" ; // Solo registros no automaticos
+             
+          dtStat.select(s);
+          linEdit=dtStat.getInt("cuantos",true);
           condLineas="";
           dtCons.select("SELECT * FROM coninvcab where cci_codi = "+cci_codiE.getValorInt());
-          rgSelect();
+//          rgSelect();
           verDatos(dtCons);
       }
       s = "SELECT * FROM coninvcab WHERE  cci_codi = " + cci_codiE.getValorInt();
@@ -664,10 +665,11 @@ public class PdInvControl extends ventanaPad implements PAD
       Error("Error al Modificar datos de Inventario",k);
       return;
     }
+    swSal=true;
     kgAnt=0;
     activar(true, navegador.ADDNEW);
     activar(true, navegador.EDIT);
-
+    
     mensaje("Modificar .. Registro");
     if (linEdit==0)
     {
@@ -675,11 +677,12 @@ public class PdInvControl extends ventanaPad implements PAD
         jt.mueveSigLinea();
     }
     else
-        jt.requestFocusLater(linEdit, 1);
-    Bcancelar.setEnabled(false);
+        jt.requestFocus(linEdit, 1);
+    
+//    Bcancelar.setEnabled(false);
     numpesE1.setText("0");
     kiltotE1.setValorDec(0);
-    swSal = true;
+    swSal = false;
   }
 
     @Override
@@ -821,6 +824,8 @@ public class PdInvControl extends ventanaPad implements PAD
   {
     try
     {
+        if (swSal)
+            return -1;
 //      if (DEBUG)
 //        return -1;
       if (pro_codiE.getText().trim().equals("0") || pro_codiE.getText().trim().equals(""))
@@ -948,6 +953,7 @@ public class PdInvControl extends ventanaPad implements PAD
     dtAdd.setDato("lci_peso", prp_pesoE.getValorDec());
     dtAdd.setDato("lci_numind", prp_numpieE.getValorDec());
     dtAdd.setDato("lci_numpal",lci_numpalE.getText());
+    dtAdd.setDato("alm_codlin",alm_codiE.getValorInt());
     dtAdd.update(stUp);
     ctUp.commit();
     return nl;
@@ -1410,7 +1416,9 @@ public class PdInvControl extends ventanaPad implements PAD
             dtAdd.setDato("prp_indi", datInd.numind);
             dtAdd.setDato("lci_peso", datInd.canti);
             dtAdd.setDato("lci_numind", datInd.numuni);
-            dtAdd.setDato("lci_numpal","");
+            dtAdd.setDato("lci_numpal",0);
+            dtAdd.setDato("alm_codlin",datInd.almCodi);
+
             dtAdd.update(stUp);  
             lAlm.put(datInd.almCodi,new Dimension(cciCodi,++nl));
           }
@@ -1920,7 +1928,7 @@ public class PdInvControl extends ventanaPad implements PAD
                 jt.setAjustarGrid(true);
                 jt.setAjustarColumnas(false);
                 jt.setAnchoColumna(new int[]
-                    {30, 80, 200, 40,30, 20, 40, 40, 60, 40,40});
+                    {45, 80, 200, 40,30, 20, 40, 40, 60, 40,40});
                 jt.setAlinearColumna(new int[]
                     {2, 2, 0, 2,2, 0, 2, 2, 2, 2,0});
                 jt.setFormatoCampos();

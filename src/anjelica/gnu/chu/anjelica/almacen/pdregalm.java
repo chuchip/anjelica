@@ -32,8 +32,6 @@ import java.util.*;
 import gnu.chu.Menu.*;
 import gnu.chu.interfaces.PAD;
 import java.text.SimpleDateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 
@@ -73,9 +71,9 @@ public class pdregalm extends ventanaPad implements PAD
   CCheckBox opVerInv = new CCheckBox();
   CLabel cLabel1 = new CLabel();
   CTextField linPantE = new CTextField(Types.DECIMAL,"##9");
+  boolean P_ADMIN=false;
 
-
-  public pdregalm(EntornoUsuario eu, Principal p) {
+  public pdregalm(EntornoUsuario eu, Principal p,Hashtable<String,String> ht) {
      EU=eu;
      vl=p.panel1;
      jf=p;
@@ -84,6 +82,8 @@ public class pdregalm extends ventanaPad implements PAD
      setTitulo("Mant. Regularizaciones de Almacen");
 
      try  {
+        if (ht.get("admin") != null)
+             P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
        if(jf.gestor.apuntar(this))
            jbInit();
        else
@@ -93,8 +93,11 @@ public class pdregalm extends ventanaPad implements PAD
        setErrorInit(true);
      }
    }
+    public pdregalm(gnu.chu.anjelica.menu p,EntornoUsuario eu) {
+        this(p,eu,null);
+    }
 
-   public pdregalm(gnu.chu.anjelica.menu p,EntornoUsuario eu) {
+   public pdregalm(gnu.chu.anjelica.menu p,EntornoUsuario eu,Hashtable<String,String> ht) {
 
      EU=eu;
      vl=p.getLayeredPane();
@@ -102,6 +105,8 @@ public class pdregalm extends ventanaPad implements PAD
      eje=false;
 
      try  {
+          if (ht.get("admin") != null)
+             P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
        jbInit();
      }
      catch (Exception e) {
@@ -113,7 +118,7 @@ public class pdregalm extends ventanaPad implements PAD
    {
      iniciarFrame();
      this.setSize(new Dimension(583, 562));
-     this.setVersion("2014-10-10");
+     this.setVersion("2015-06-25 "+(P_ADMIN?"  ADMIN":""));
      Pprinc.setDefButton(Baceptar);
      Pprinc.setDefButtonDisable(false);
      Pprinc.setLayout(null);
@@ -129,7 +134,7 @@ public class pdregalm extends ventanaPad implements PAD
      nav = new navegador(this, false, navegador.NORMAL);
      conecta();
      pRegAlm = new paregalm(EU, dtStat, dtAdd, vl, this);
-
+     pRegAlm.setAdmin(P_ADMIN);
      iniciar(this);
 
     Pcond.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -416,6 +421,7 @@ public void ej_query()
     verDatos();
     activaTodo();
     mensaje("");
+    nav.setPulsado(navegador.NINGUNO);
   } catch (Exception k)
   {
     Error("Error al introducir criterios de busqueda",k);
@@ -431,6 +437,7 @@ public void ej_query()
   mensaje("");
   mensajeErr("Introducion Criterios de Busqueda ... CANCELADA");
   activaTodo();
+  nav.setPulsado(navegador.NINGUNO);
  }
 
     @Override
@@ -479,6 +486,7 @@ public void ej_query()
      activaTodo();
      dtCons.previous(jt.getRowCount()-1);
      verDatos();
+     nav.setPulsado(navegador.NINGUNO);
      mensajeErr("Registro .. MODIFICADO");
    } catch (Exception k)
    {
@@ -531,7 +539,7 @@ public void ej_query()
      Error("Error al Insertar Registro", k);
      return;
    }
-
+   nav.setPulsado(navegador.NINGUNO);
    this.setEnabled(true);
    activaTodo();
    jt.setEnabled(true);
@@ -594,6 +602,7 @@ public void ej_query()
    {
      Error("Error al Modificar Datos", k);
    }
+   nav.setPulsado(navegador.NINGUNO);
  }
 
 
@@ -690,7 +699,7 @@ public void ej_query()
  {
     return checkAddNew();
  }
-
+ 
     @Override
  public boolean checkAddNew()
  {
@@ -728,5 +737,8 @@ public void ej_query()
   {
       pRegAlm.deo_ejelotE.setValorInt(ejerc);
   }
-           
+  public void setAlmacen(int almac)
+  {
+      pRegAlm.alm_codiE.setValorInt(almac);
+  }       
 }

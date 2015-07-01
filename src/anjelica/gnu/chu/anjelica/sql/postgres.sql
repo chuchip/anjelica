@@ -11,7 +11,7 @@ create schema anjelica;
 
 CREATE TABLE anjelica.gridajuste (
     emp_codi integer NOT NULL,     -- Empresa a la que pert. el usuario
-    usu_nomb varchar(20) NOT NULL, -- Usuario que guarda la conf.
+    usu_nomb varchar(15) NOT NULL, -- Usuario que guarda la conf.
     gra_nomb varchar(80) NOT NULL, -- Nombre del Grid.
     grd_colum integer NOT NULL,    -- Numero de Columna
     grd_anccol integer NOT NULL,   -- Anchura de Columna
@@ -2004,6 +2004,7 @@ constraint ix_tiposiva primary key(tii_codi,tii_fecini,tii_fecfin)
 --
 -- Tabla relacion Detalles albaran Compra con Productos de venta
 -- Utilizado para Albaranes serie Y.
+-- @deprecated
 --
 create table anjelica.v_albcopave
 (
@@ -2104,6 +2105,7 @@ create table anjelica.paises
  pai_codi int not null,		-- Codigo de Pais
  pai_inic VARCHAR(2) not null,  -- Iniciales de Pais
  pai_nomb VARCHAR(50) not null,	-- Nombre de Pais
+ pai_nomcor VARCHAR(5) not null,  -- Nombre corto del Pais (Para trazabilidad)
  pai_estcro VARCHAR(30),	-- Estructura Crotal (NO USADO)
  pai_coisa INT, 		-- CODIGO ISO-AECOC (NO Usado)
  pai_activ smallint not null default -1,  -- Activo
@@ -2403,7 +2405,7 @@ create index ix_falico1 on v_falico(emp_codi,acc_ano,acc_nume,acc_serie);
 -- Esta tabla es llenada por el traspaso de inventarios, para anotar los productos que estaran en almacen,
 -- pero en deposito.
 --
-create table anjelica.anjelica.invdepos
+create table anjelica.invdepos
 (
 pro_codi int not null,		-- Codigo Producto
 ind_fecha date not null,	-- Fecha de Inventario
@@ -3028,6 +3030,7 @@ create table anjelica.coninvlin
     lci_regaut smallint not null default 0,	-- Registro Automatico (0=No)
     lci_coment varchar(35),			-- Comentario
     lci_numpal varchar not null default '',	-- Numero Palet
+	alm_codlin int not null, -- Almacen (Para List. Dif. Inventario)
   constraint ix_coninvlin primary key(emp_codi,cci_codi,lci_nume)
 );
 create index ix_coninvl2 on coninvlin(pro_codi,prp_ano,prp_part,prp_seri,prp_indi);
@@ -3489,7 +3492,7 @@ WITH ( OIDS=FALSE );
 -- DROP INDEX anjelica.ix_astkpart;
 CREATE INDEX ix_astkpart ON anjelica.actstkpart   (pro_codi, alm_codi);
 
-drop table anjelica.hislisstk;
+-- drop table anjelica.hislisstk;
 CREATE TABLE anjelica.hislisstk
 (
 	hls_fecstk timestamp not null, -- Fecha Listado Stock
@@ -3501,7 +3504,45 @@ CREATE TABLE anjelica.hislisstk
  	pro_numlot int not null,		-- Lote
 	pro_indlot int not null		-- Numero Individuo		
 );
-create index  ix_hislisstk on anjelica.hislisstk  (alm_codi,hls_fecstk)
+create index  ix_hislisstk on anjelica.hislisstk  (alm_codi,hls_fecstk);
+
+CREATE TABLE anjelica.partecab
+(
+	par_codi serial, -- Numero secuencial de parte
+	emp_codi int not null, -- Empresa
+	par_fecalt timestamp not null default current_timestamp, -- Fecha Creacion de parte
+	par_usuinc  varchar(15)  not null, -- Usuario Genera Incidencia (Operario sala)
+	par_usupro   varchar(15) , -- Usuario Procesa (Gerencia)
+	par_usures   varchar(15) , -- Usuario Resuelve (Oficina)
+	par_fecinc date not null, -- Fecha Inicidencia
+	par_fecpro date, -- Fecha Procesado
+	par_fecres date, -- Fecha Resuelto
+	par_estad char(1) not null, -- Estado del parte (Inicidencia/Procesar/Resuelto)	
+	par_tipo char(1) not null, -- Tipo Parte: Entrada, Devol, No-recepcion,Sala	
+	par_coment varchar(150), -- Comentario
+	par_cliprv int,	-- Cliente/Proveedor	
+	par_docano int, -- Ejercicio Documento
+	avc_docser char(1), -- Serie Alb. Venta
+	avc_docnum int -- Numero Alb. Venta
+);
+
+create table anjelica.partelin
+(
+	par_codi int not null, -- Codigo Parte
+	pro_codi int not null,	  	-- Producto
+	pro_kilos double, -- Kilos
+	pro_unid int not null, -- Unidades.
+	pro_cajas int not null, -- Cajas
+	pro_ejelot int, -- Ejerc. Lote
+	pro_serlot char(1),	-- Serie 	
+ 	pro_numlot int,		-- Lote
+	pro_indlot int,	-- Numero Individuo			
+	par_accion char(1), -- (V)ertedero/(R)eutilizar/(C)ongelear
+	par_solabo smallint not null default 0, -- Hacer/Solicitar Abono? (0=No)
+	par_kilabo double, -- Kilos Abono
+	par_preabo double -- Precio Abono
+);
+
 --- Constraints tipo Foreign Key
 alter table anjelica.v_albavec add constraint avc_procl foreign key (cli_codi)
     references anjelica.clientes(cli_codi);

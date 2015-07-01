@@ -1,9 +1,23 @@
+-- Incluido almacen en lineas de inventario control
+alter table coninvlin add alm_codlin int;
+update coninvlin set alm_codlin = (select alm_codi from coninvcab where coninvcab.cci_codi= coninvlin.cci_codi);
+
+alter table coninvlin alter alm_codlin set not null;
+drop view anjelica.v_coninvent;
+create view anjelica.v_coninvent as
+select c.emp_codi,c.cci_codi,c.usu_nomb,cci_feccon, cam_codi,alm_codi,lci_nume,prp_ano, prp_empcod, prp_seri, prp_part, pro_codi, pro_nomb,
+prp_indi,lci_peso,lci_kgsord,lci_numind,lci_regaut,lci_coment,lci_numpal,alm_codlin from coninvcab as c, coninvlin as l where
+c.emp_codi=c.emp_codi
+and c.cci_codi=l.cci_codi;
+grant select on  anjelica.v_coninvent to public;
+
 -- Incluido nombre abreviado
 alter table paises add pai_nomcor varchar(5);
 update paises set pai_nomcor = substring(pai_nomb,1, 5);
 alter table paises alter pai_nomcor set not null;
 drop view anjelica.v_paises;
 create view anjelica.v_paises as select * from paises ;
+grant select on  anjelica.v_paises to public;
 -- Update para poner el numero de palet y caja a stock-partidas
 update stockpart set stp_numpal=(select avl_numpal from v_albventa_detalle as a
 	where alm_coddes=3 and avc_serie='X' and stockpart.pro_codi=a.pro_codi

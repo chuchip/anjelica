@@ -48,6 +48,7 @@ import javax.swing.SpinnerNumberModel;
 
 
 public class paregalm extends CPanel {
+    boolean P_ADMIN=false;
     int rgsNume=0;
     public static int ESTPEND = 1; // Vert. Proveedor Pend.
     public static int ESTACEP = 2; // Vert. Proveedor
@@ -145,7 +146,10 @@ public class paregalm extends CPanel {
         papa = padre;
         jbInit();
     }
-
+    public void setAdmin(boolean admin)
+    {
+        P_ADMIN=admin;
+    }
     private void jbInit() throws Exception {
         this.setLayout(null);
         rgs_comentE.setBounds(new Rectangle(59, 133, 454, 16));
@@ -791,7 +795,8 @@ public class paregalm extends CPanel {
                             pro_loteE.getValorInt(), pro_numindE.getValorInt(),
                             pro_codiE.getValorInt(), alm_codiE.getValorInt())) {
                         mensajeErr("Este individuo NO tiene Registro inicial en STOCK");
-                        return false;
+                        if (! P_ADMIN)
+                            return false;
                     }
                     if (stkPart.getKilosStk()<=0 && afeStk.equals("-"))
                     {

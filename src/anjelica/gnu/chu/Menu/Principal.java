@@ -650,6 +650,6 @@ public class Principal extends JFrame
   {
     if (pdusua.canEjecutarProgExt(usuario,dt1) )
         return true;
-    return dt1.select("select * from menus where mnu_prog like '%"+clase+"%' and mnu_usua='"+usuario+"'");
+    return dt1.select("select mnu_prog from menus where mnu_prog like '%"+clase+"%' and mnu_usua='"+usuario+"'");
   }
 }

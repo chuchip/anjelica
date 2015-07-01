@@ -163,7 +163,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                     Boolean.parseBoolean(ht.get("admin"));
     }
     private void jbInit() throws Exception {      
-        setVersion("2015-06-18 "+ (ARG_ADMIN?"ADMIN":""));
+        setVersion("2015-06-29 "+ (ARG_ADMIN?"ADMIN":""));
   
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
@@ -949,8 +949,14 @@ public class MantTraspAlm extends ventanaPad implements PAD
         }
         int numAlb=0;
         try {
-            
-            numAlb=traspDato1(null,0);
+            Timestamp fecAlta=null;
+            if (ARG_ADMIN && Math.abs(Formatear.comparaFechas(avc_fecalbE.getDate(),Formatear.getDateAct()))>7)
+            {
+                int ret=mensajes.mensajePreguntar("Mantener fecha de mvto?");
+                if (ret==mensajes.YES)
+                    fecAlta=new Timestamp(avc_fecalbE.getDate().getTime());
+            }
+            numAlb=traspDato1(fecAlta,0);
             dtAdd.commit();
         } catch (SQLException | ParseException k)
         {
@@ -1759,7 +1765,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
               avc_fecalbE.requestFocus();
               return false;
           }
-          if (Math.abs(Formatear.comparaFechas(avc_fecalbE.getDate(),Formatear.getDateAct()))>7)
+          if (Math.abs(Formatear.comparaFechas(avc_fecalbE.getDate(),Formatear.getDateAct()))>7 && ! ARG_ADMIN)
           {
               mensajeErr("La fecha deberia es un rango de 7 dias sobre la actual");
               avc_fecalbE.requestFocus();

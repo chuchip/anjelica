@@ -1785,7 +1785,7 @@ void pdreprese_actionPerformed(ActionEvent e) {
   }
 
   void pdregalm_actionPerformed(ActionEvent e) {
-       lanzaEjecutable(new gnu.chu.anjelica.almacen.pdregalm(menu.this,EU));
+       lanzaEjecutable(new gnu.chu.anjelica.almacen.pdregalm(menu.this,EU,new Hashtable<String, String>()));
 
   }
 

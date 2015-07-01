@@ -35,6 +35,7 @@ import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventanaPad;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.print.PrinterException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -1079,7 +1081,7 @@ public class MantArticulos extends ventanaPad  implements PAD
            new JRResultSetDataSource(rs));
        gnu.chu.print.util.printJasper(jp, EU);
      }
-     catch (Exception k)
+     catch (JRException | SQLException | PrinterException k)
      {
        Error("Error al imprimir albaran", k);
      }
@@ -1161,6 +1163,21 @@ public class MantArticulos extends ventanaPad  implements PAD
         if (!dt.select(s))
             return 0;
         return dt.getDouble("pro_kgcaj"); 
+   }
+     /**
+    * Devuelve la camara asignada a un producto
+    * @param codProd
+    * @param dt
+    * @return camara asignada a un producto. Null si no encuentra el producto
+    * @throws SQLException 
+    */
+   public static String getCamara(int codProd, DatosTabla dt) throws SQLException
+   {
+        String s = "select cam_codi from v_articulo  where " +
+         "  pro_codi = " + codProd;
+        if (!dt.select(s))
+            return null;
+        return dt.getString("cam_codi"); 
    }
    public static final  int KGXUNI=1;
    public static final  int KGXCAJ=2;

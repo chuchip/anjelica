@@ -524,7 +524,9 @@ public class Gestor extends Thread implements Serializable
         return eje;
     try {
         if (principal.canExecuteClase(clase,principal.Usuario.usuario))
+        {
             principal.ejecutar(clase, "*DIRECTO*");
+        }
        return tabla.getProceso(clase);
     } catch (SQLException k)
     {
