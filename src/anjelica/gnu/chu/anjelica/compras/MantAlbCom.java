@@ -518,7 +518,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         }
         if (col==JTR_CODCLI) // Cliente
         {
-          String nombCli="";
+          String nombCli;
           if (rgs_clidevE.getValorInt()==0)
             nombCli="";
           else
@@ -1635,6 +1635,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 
     opVerPrecios.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         if (nav.pulsado==navegador.NINGUNO)
@@ -4573,7 +4574,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           " AND acl_nulin = "+jt.getValorInt(n,0);
 //          " group by pro_codi ";
       dtAdd.select(s);
-      jt.setValor(Formatear.Redondea(dtAdd.getDouble("acp_canti",true),2), n,4);
+      jt.setValor(Formatear.redondea(dtAdd.getDouble("acp_canti",true),2), n,4);
       jt.setValor(dtAdd.getInt("acp_canind",true), n,3);
       // Compruebo si todos los codigos de desglose son iguales que los de la linea.
       s="SELECT pro_codi  "+
