@@ -148,7 +148,7 @@ public class PdInvControl extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2015-06-30 "+(swAdmin?"Administrador":""));
+        this.setVersion("2015-07-03 "+(swAdmin?"Administrador":""));
         condWhere=" where emp_codi =  "+EU.em_cod;
         strSql = "SELECT * FROM coninvcab "+condWhere+
          "order by cci_feccon,cam_codi,alm_codi";
@@ -755,7 +755,7 @@ public class PdInvControl extends ventanaPad implements PAD
     numpesE.setValorDec(0);
     numpesE1.setValorDec(0);
     cci_codiE.setText("");
-    swSal = true;
+    swSal = false;
     cci_fecconE.requestFocus();
   }
 
