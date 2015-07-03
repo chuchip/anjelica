@@ -815,7 +815,7 @@ public class DatosTabla   implements Serializable
      return s;
    } catch (java.text.ParseException k)
    {
-     throw new java.sql.SQLException("Error al Parsear SQL\n"+k.getMessage(),"Error de Parseo",-1);
+     throw new java.sql.SQLException("Error al Parsear SQL:"+strSelect+"\n"+k.getMessage(),"Error de Parseo",-1);
    }
     }
 

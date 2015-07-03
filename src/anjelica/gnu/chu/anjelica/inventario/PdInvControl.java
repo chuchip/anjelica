@@ -1408,7 +1408,7 @@ public class PdInvControl extends ventanaPad implements PAD
             dtAdd.setDato("cci_codi", cciCodi);
             dtAdd.setDato("lci_nume", nl);
             dtAdd.setDato("prp_ano", datInd.ejeNume);
-            dtAdd.setDato("prp_empcod", datInd.empCodi);
+            dtAdd.setDato("prp_empcod",EU.em_cod);
             dtAdd.setDato("prp_seri", datInd.serie);
             dtAdd.setDato("prp_part", datInd.lote);
             dtAdd.setDato("pro_codi", datInd.proCodi);

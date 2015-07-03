@@ -131,6 +131,7 @@ public class TrasInven extends ventanaPad implements PAD {
         alm_codiE.setColumnaAlias("alm_codi");
         cci_fecconE.setColumnaAlias("cci_feccon");
         stkPart = new ActualStkPart(dtAdd, EU.em_cod);
+        stkPart.setEmpresa(EU.em_cod);
         stkPart.setVentana(this);
         pRegAlm = new paregalm();
         pRegAlm.iniciar(EU, dtStat, dtAdd, vl, this, dtBloq);

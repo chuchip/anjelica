@@ -50,7 +50,7 @@ public class ActualStkPart
   private String camara;
   private int posFin;
   private DatosTabla dtAdd;
-  private int empCodi;
+  private int empCodi=1;
   private double kilStk;
   private int unidStk;
   private double kilAlmac;
@@ -788,117 +788,60 @@ public class ActualStkPart
   {
       return getSqlMvt(true,proArtcon,0,fecinv,fecsup,0,true);
   }
-  /**
-   * 
-   * @param swFecMvto Indica si se debe coger la fecha del movimiento (true) o del documento
-   * @param almCodi Almacen. 0 Para todos
-   * @param fecinv Fecha Inventario (Fecha Inicial)
-   * @param fecsup Fecha final.
-   * @param pro_codi Codigo Producto . 0 Para todos
-   * @param condProd Condiciones para poner a los productos (congelado, etc).
-   * @return 
-   */
-  public static String getSqlMvtEntra(boolean swFecMvto, int almCodi, String fecinv, String fecsup,int pro_codi,String condProd)
-  {
-        return "SELECT 'C' as sel,'+' as tipmov,c.acc_fecrec as fecmov," +
-        " c.acc_serie as serie," +
-        " c.acc_nume as  lote," +
-        " i.acp_canti as canti,acp_numind as numind," +
-        " c.acc_ano as ejeNume,c.emp_codi as empCodi,i.pro_codi as pro_codi, " +
-        " l.acl_prcom as precio, i.acp_canind as canind, " +
-        " l.alm_codi as almori,l.alm_codi as almfin, '' as avc_serie " +
-        " FROM v_albacoc as c,v_albacol as l,v_albcompar as i,v_articulo as a " +
-        " where c.emp_codi = l.emp_codi " +
-        " AND c.acc_serie = l.acc_serie " +
-        " AND c.acc_nume = l.acc_nume " +
-        " and c.acc_ano = l.acc_ano " +
-        " and c.emp_codi = i.emp_codi " +
-        " AND c.acc_serie = i.acc_serie " +
-        " AND c.acc_nume = i.acc_nume " +
-        " and c.acc_ano = i.acc_ano " +
-        " and l.acl_nulin = i.acl_nulin " +
-        " and i.acp_canti <> 0 " +
-        (pro_codi == 0 ? "" : " and l.pro_codi = " + pro_codi) +
-        (almCodi==0?"":" and l.alm_codi = " + almCodi) +
-        " and a.pro_codi = l.pro_codi " +
-        " and a.pro_tiplot = 'V' "+
-        condProd +
-        (fecsup==null?"":" AND c.acc_fecrec <= TO_DATE('" + fecsup + "','dd-MM-yyyy') ")+
-        " AND c.acc_fecrec > TO_DATE('" + fecinv + "','dd-MM-yyyy') "+
-        " union all "+
-        " select 'd' as sel, '+' as tipmov,"+
-        (swFecMvto?"def_tiempo": "deo_fecha")+" as fecmov," +
-        "  l.def_serlot as serie,l.pro_lote as  lote," +
-        " l.def_kilos as canti,l.pro_numind as numind," +
-        " l.def_ejelot as ejenume, " +
-        " 1 as empcodi,l.pro_codi as pro_codi, " +
-        " l.def_prcost as precio,1 as canind,  " +
-        " alm_codi as almori,alm_codi as almfin,'' as avc_serie" +
-        " from  v_despsal as l, v_articulo as a " +
-        " where l.def_kilos <> 0 " +
-        " and a.pro_tiplot = 'V' "+
-        (pro_codi == 0 ? "" : " and l.pro_codi = " + pro_codi) +
-        (almCodi==0?"":" and alm_codi = " + almCodi) +
-        " and a.pro_codi = l.pro_codi " +
-        condProd +
-         (fecsup==null?"":" and "+(swFecMvto?"def_tiempo": "deo_fecha")+
-        " <= TO_DATE('" + fecsup + "','dd-MM-yyyy') ")+
-        " AND "+(swFecMvto?"def_tiempo": "deo_fecha")+
-        " > TO_DATE('" + fecinv + "','dd-MM-yyyy') ";
-  }
-  public static String getSqlMvtSalida(boolean swFecMvto, int almCodi, String fecinv, String fecsup,int pro_codi,String condProd)
-  {
-     return " select 'V' as sel,'-' as tipmov,"+
-         (swFecMvto?"l.avl_fecalt": "c.avc_fecalb")+" as fecmov," +
-        "  i.avp_serlot  as serie,i.avp_numpar as  lote," +
-        " i.avp_canti  as canti,i.avp_numind as numind," +
-        " i.avp_ejelot as ejeNume,i.avp_emplot as empcodi,l.pro_codi as pro_codi, " +
-        " l.avl_prven as precio,avp_numuni as canind,  " +
-        " c.alm_codori as almori, c.alm_coddes as almfin,c.avc_serie as avc_serie " +
-        "  from v_albavel l, v_albavec c,v_albvenpar i, v_articulo as a " +
-        " where c.emp_codi = l.emp_codi " +
-        " AND c.avc_serie = l.avc_serie " +
-        " AND c.avc_nume = l.avc_nume " +
-        " and c.avc_ano = l.avc_ano " +
-        (almCodi==0?"":" and c.alm_codori = " + almCodi) +
-        " and l.avl_canti <> 0 " +
-        " and i.emp_codi = l.emp_codi " +
-        " AND i.avc_serie = l.avc_serie " +
-        " AND i.avc_nume = l.avc_nume " +
-        " and i.avc_ano = l.avc_ano " +
-        " and i.avl_numlin = l.avl_numlin " +
-        (pro_codi == 0 ? "" : " and l.pro_codi = " + pro_codi) +
-        " and a.pro_codi = l.pro_codi " +
-        //" and a.pro_activ != 0 "+
-        " and a.pro_tiplot = 'V' "+
-        condProd +
-        (fecsup==null?"":" AND "+
-        (swFecMvto?"l.avl_fecalt": "c.avc_fecalb")+
-        "<= TO_DATE('" + fecsup + "','dd-MM-yyyy') ")+
-        " AND "+
-        (swFecMvto?"l.avl_fecalt": "c.avc_fecalb")+
-        " > TO_DATE('" + fecinv + "','dd-MM-yyyy') "+
-        " UNION all " + // Despieces (Salidas de Stock)
-        " select 'D' as sel,'-' as tipmov,"+
-        (swFecMvto?"deo_tiempo": "deo_fecha")+" as fecmov," +
-        "  deo_serlot as serie,pro_lote as  lote," +
-        " deo_kilos as canti,pro_numind as numind," +
-        " deo_ejelot as ejeNume," +
-        " 1 as empcodi,l.pro_codi as pro_codi, " +
-        " deo_prcost as precio,1 as canind, " +
-        " deo_almori as almori,deo_almori as almfin, '' as avc_serie" +
-        " from  v_despori as l,v_articulo as a  " +
-        " where deo_kilos <> 0 " +
-        " and a.pro_tiplot = 'V' "+
-         (pro_codi == 0 ? "" : " and l.pro_codi = " + pro_codi) +
-        (almCodi==0?"":" and deo_almori = " + almCodi) +
-        " and a.pro_codi = l.pro_codi " +
-        condProd +
-        (fecsup==null?"":" AND "+  (swFecMvto?"deo_tiempo": "deo_fecha")+
-        " <= TO_DATE('" + fecsup + "','dd-MM-yyyy') ")+
-        " AND "+ (swFecMvto?"deo_tiempo": "deo_fecha")+
-        " > TO_DATE('" + fecinv + "','dd-MM-yyyy') ";
-  }
+
+//  public static String getSqlMvtSalida(boolean swFecMvto, int almCodi, String fecinv, String fecsup,int pro_codi,String condProd)
+//  {
+//     return " select 'V' as sel,'-' as tipmov,"+
+//         (swFecMvto?"l.avl_fecalt": "c.avc_fecalb")+" as fecmov," +
+//        "  i.avp_serlot  as serie,i.avp_numpar as  lote," +
+//        " i.avp_canti  as canti,i.avp_numind as numind," +
+//        " i.avp_ejelot as ejeNume,i.avp_emplot as empcodi,l.pro_codi as pro_codi, " +
+//        " l.avl_prven as precio,avp_numuni as canind,  " +
+//        " c.alm_codori as almori, c.alm_coddes as almfin,c.avc_serie as avc_serie " +
+//        "  from v_albavel l, v_albavec c,v_albvenpar i, v_articulo as a " +
+//        " where c.emp_codi = l.emp_codi " +
+//        " AND c.avc_serie = l.avc_serie " +
+//        " AND c.avc_nume = l.avc_nume " +
+//        " and c.avc_ano = l.avc_ano " +
+//        (almCodi==0?"":" and c.alm_codori = " + almCodi) +
+//        " and l.avl_canti <> 0 " +
+//        " and i.emp_codi = l.emp_codi " +
+//        " AND i.avc_serie = l.avc_serie " +
+//        " AND i.avc_nume = l.avc_nume " +
+//        " and i.avc_ano = l.avc_ano " +
+//        " and i.avl_numlin = l.avl_numlin " +
+//        (pro_codi == 0 ? "" : " and l.pro_codi = " + pro_codi) +
+//        " and a.pro_codi = l.pro_codi " +
+//        //" and a.pro_activ != 0 "+
+//        " and a.pro_tiplot = 'V' "+
+//        condProd +
+//        (fecsup==null?"":" AND "+
+//        (swFecMvto?"l.avl_fecalt": "c.avc_fecalb")+
+//        "<= TO_DATE('" + fecsup + "','dd-MM-yyyy') ")+
+//        " AND "+
+//        (swFecMvto?"l.avl_fecalt": "c.avc_fecalb")+
+//        " > TO_DATE('" + fecinv + "','dd-MM-yyyy') "+
+//        " UNION all " + // Despieces (Salidas de Stock)
+//        " select 'D' as sel,'-' as tipmov,"+
+//        (swFecMvto?"deo_tiempo": "deo_fecha")+" as fecmov," +
+//        "  deo_serlot as serie,pro_lote as  lote," +
+//        " deo_kilos as canti,pro_numind as numind," +
+//        " deo_ejelot as ejeNume," +
+//        " 1 as empcodi,l.pro_codi as pro_codi, " +
+//        " deo_prcost as precio,1 as canind, " +
+//        " deo_almori as almori,deo_almori as almfin, '' as avc_serie" +
+//        " from  v_despori as l,v_articulo as a  " +
+//        " where deo_kilos <> 0 " +
+//        " and a.pro_tiplot = 'V' "+
+//         (pro_codi == 0 ? "" : " and l.pro_codi = " + pro_codi) +
+//        (almCodi==0?"":" and deo_almori = " + almCodi) +
+//        " and a.pro_codi = l.pro_codi " +
+//        condProd +
+//        (fecsup==null?"":" AND "+  (swFecMvto?"deo_tiempo": "deo_fecha")+
+//        " <= TO_DATE('" + fecsup + "','dd-MM-yyyy') ")+
+//        " AND "+ (swFecMvto?"deo_tiempo": "deo_fecha")+
+//        " > TO_DATE('" + fecinv + "','dd-MM-yyyy') ";
+//  }
   /**
    * Devuelve sentencia SQL para buscar movimientos de un producto o varios.
    * @param swFecMvto Coger como fechas las de mvto (True) . En caso contrario coge las de los documentos.
@@ -928,39 +871,36 @@ public class ActualStkPart
            fecFin=fecinv;
         }
     }
-    String s=getSqlMvtEntra(swFecMvto,almCodi,  fecIni, fecFin, pro_codi,condProd)+
-        " UNION all"+
-        getSqlMvtSalida(swFecMvto,almCodi,  fecIni, fecFin, pro_codi,condProd);
-
-   
-    s += " UNION all " + // Regularizaciones.
-        " select 'R' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov," +
-        "  r.pro_serie as serie,r.pro_nupar as  lote," +
-        " r.rgs_kilos as canti,r.pro_numind as numind, " +
-        "  r.eje_nume as ejeNume," +
-        " r.emp_codi  as empcodi,r.pro_codi as pro_codi, " +
-        " r.rgs_prregu as precio,rgs_canti as canind,  " +
-        " alm_codi as almori,alm_codi as almfin,'' as avc_serie" +
-        " FROM v_regstock r,v_articulo as a " +
-        " where  r.emp_codi in ("+strAccesos+")"+
-//        " and rgs_kilos <> 0 " +
-        " and r.rgs_trasp != 0 "+
-        (pro_codi == 0 ? "" : " and r.pro_codi = " + pro_codi) +
-        (almCodi==0?"":" and alm_codi = " + almCodi) +
-        " and tir_afestk != '=' "+
-        " and a.pro_codi = r.pro_codi " +
-        condProd +
-        (fecFin==null?"":" AND r.rgs_fecha <= TO_DATE('" + fecFin + "','dd-MM-yyyy') ")+
-        " AND r.rgs_fecha > TO_DATE('" + fecIni + "','dd-MM-yyyy') ";
+    
+    String s= "SELECT 2 as orden,mvt_tipo as tipmov,  "
+                + " m.pro_codi, "
+                + "  pro_serlot as serie,pro_numlot as lote,"
+                + " pro_ejelot as ejeNume,"   
+                + " pro_indlot as numind, "                                    
+                + " m.alm_codi  as alm_codi,  "
+                + " sum(mvt_canti) as canti,"
+                + " sum(mvt_unid) as canind  " 
+                + " from mvtosalm as m, v_articulo as a"
+                + " where a.pro_codi=m.pro_codi  " 
+                + condProd
+                 + " and   mvt_canti <> 0 "            
+//                + (almCodi == 0 ? "" : " and m.alm_codi = " + almCodi)                           
+                + (pro_codi != 0 ? " and pro_codi = " + pro_codi : "")
+               +  (almCodi != 0 ? " and alm_codi = "+almCodi:"")
+                + " AND mvt_time::date > TO_DATE('" + fecIni + "','dd-MM-yyyy') "
+                + (fecFin==null?"":" and mvt_time::date <= TO_DATE('" + fecFin + "','dd-MM-yyyy') ")+
+               " group by mvt_tipo,alm_codi,m.pro_codi,pro_ejelot,pro_serlot,pro_numlot,pro_indlot";
+              
     if (swControlInv)
         s += " UNION all " + // Inventario de Control
-        " select 'R' as sel,'=' as tipmov,r.cci_feccon as fecmov," +
-        "  r.prp_seri as serie,r.prp_part as  lote," +
-        " r.lci_peso as canti,r.prp_indi as numind, " +
-        "  r.prp_ano as ejeNume," +
-        " r.emp_codi  as empcodi,r.pro_codi as pro_codi, " +
-        " 0 as precio,lci_numind as canind,  " +
-        " alm_codi as almori,alm_codi as almfin,'' as avc_serie" +
+        " select 1 as orden,  '=' as tipmov, " +
+        " r.pro_codi as pro_codi,"+
+        "  r.prp_seri as serie,r.prp_part as  lote," +        
+        "  r.prp_ano as ejeNume," +       
+        " r.prp_indi as numind, "+            
+        " alm_codi as alm_codi " +
+        " r.lci_peso as canti, " +
+        " lci_numind as canind  " +   
         " FROM v_coninvent as r,v_articulo as a " +
         " where lci_peso > 0 " +
         " and lci_regaut = 0 "+
@@ -971,13 +911,14 @@ public class ActualStkPart
         " AND r.cci_feccon = TO_DATE('" + fecinv + "','dd-MM-yyyy') ";
     else
         s += " UNION all " + // Inventario Normal
-            " select 'R' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov," +
-            "  r.pro_serie as serie,r.pro_nupar as  lote," +
-            " r.rgs_kilos as canti,r.pro_numind as numind, " +
+            " select 1 as orden,  '=' as tipmov, " +
+            " r.pro_codi as pro_codi, " +
+            " r.pro_serie as serie,r.pro_nupar as  lote," +
             "  r.eje_nume as ejeNume," +
-            " r.emp_codi  as empcodi,r.pro_codi as pro_codi, " +
-            " r.rgs_prregu as precio,rgs_canti as canind,  " +
-            " alm_codi as almori,alm_codi as almfin,'' as avc_serie" +
+            " r.pro_numind as numind,"+
+            " alm_codi as alm_codi,  " +
+            " r.rgs_kilos as canti, " +                       
+            "  rgs_canti as canind  " +
             " FROM v_regstock r,v_articulo as a " +
             " where r.emp_codi in ("+strAccesos+")"+
             " and rgs_kilos <> 0 " +
@@ -987,8 +928,7 @@ public class ActualStkPart
             " and tir_afestk = '=' "+
             " and a.pro_codi = r.pro_codi " +
             condProd +
-            " AND r.rgs_fecha = TO_DATE('" + fecinv + "','dd-MM-yyyy') ";
-    s += " ORDER BY 10,3,2 desc"; // Producto,Fecha y tipo
+            " AND r.rgs_fecha = TO_DATE('" + fecinv + "','dd-MM-yyyy') ";    
     return s;
   }
    public void setVentana(ventana papa)
@@ -1041,6 +981,8 @@ public class ActualStkPart
     * @param proArtcon Articulo Congelado?. 0=No -1= Si.
     * @param fecControl  Fecha Control Original
     * @param fecFinal  Fecha final de control
+    * @return HashMap  con los registros de stocks a  la fecha dada.
+    * @throws java.sql.SQLException
     */
    public HashMap getStockControl(DatosTabla dt,int proArtcon,String fecControl,String fecFinal) throws SQLException
    {
@@ -1058,7 +1000,7 @@ public class ActualStkPart
      if (!dt.select(s))
        return null;
      
-     return getStockInd0(dt,fecControl,true,restar);
+     return getStockInd0(dt,fecControl,restar);
     
    }
    /**
@@ -1068,22 +1010,20 @@ public class ActualStkPart
     * @param proArtcon int Es Articulo Congelado (2 Ambos, -1 SI, 0 No)
     * @param almCodi Almacen (0 Todos)
     * @param fecinv Fecha Inventario. Se considera que los inventarios se hacen a final del dia.
-    * @param pro_codi Producto (0 Todos)
-    * @param controlCam Obsoleto siempre es false.
+    * @param pro_codi Producto (0 Todos) 
     * @param swIncProd Si es true llenara el Hash difProd con los diferentes productos
-    *                   encontrados
-    * @param ignInvSup Ignora inventarios diferentes a la fecha de Inventario
+    *                   encontrados   
     * @return HashMap con los diferentes individuos encontrados
     * @throws Exception
     */
    private HashMap getStockInd(DatosTabla dt,int proArtcon, int almCodi,
                                 String fecinv,String fecsup,int pro_codi,
-                                boolean controlCam,boolean swIncProd,boolean ignInvSup) throws SQLException
+                                boolean swIncProd) throws SQLException
    {
-//     pro_codi=95108;
+
      if (swIncProd)
          difProd.clear();
-     String s;
+     String s;    
      boolean restar=false;
      try {
         if (fecsup!=null)
@@ -1091,7 +1031,7 @@ public class ActualStkPart
             if (Formatear.restaDias(fecsup, fecinv)<0)   
                    restar=true;         
         }
-      s = getSqlMvt(true,proArtcon, almCodi, fecinv,fecsup,pro_codi,false);
+        s = getSqlMvt(true,proArtcon, almCodi, fecinv,fecsup,pro_codi,false);
      } catch (ParseException k1)
      {
          throw new SQLException("Error al montar select ",k1);
@@ -1100,7 +1040,7 @@ public class ActualStkPart
      if (!dt.select(s))
        return null;
      
-     return getStockInd0(dt,fecinv,ignInvSup,restar);
+     return getStockInd0(dt,fecinv,restar);
    }
    /**
     * Carga en un hashmap el stock por individuos   
@@ -1111,15 +1051,15 @@ public class ActualStkPart
     * @return HashMap
     * @throws SQLException Carga
     */
-   private HashMap getStockInd0(DatosTabla dt,String fecinv,boolean ignInvSup,boolean restar) throws SQLException
+   private HashMap getStockInd0(DatosTabla dt,String fecinv,boolean restar) throws SQLException
    {
-     HashMap ht = new HashMap();
+     HashMap<String,String> ht = new HashMap();
      int n = 0;
      String tipMov, llave;
-     String feulst = fecinv;
+//     String feulst = fecinv;
      double canti;
      int numuni;
-     Object o;
+     String o;
      do
      {
        n++;
@@ -1128,93 +1068,26 @@ public class ActualStkPart
                     dt.getString("pro_codi"), false);
        tipMov = dt.getString("tipmov");
        llave = dt.getString("pro_codi") + "|" +
-           dt.getInt("empcodi") + "|" + dt.getInt("ejenume") + "|" +
+           dt.getInt("ejenume") + "|" +
            dt.getString("serie") + "|" + dt.getInt("lote") + "|" +
-           dt.getInt("numind", true)+"|"+dt.getInt("almori");
+           dt.getInt("numind", true)+"|"+dt.getInt("alm_codi");
        difProd.put(dt.getInt("pro_codi"),(double) 0);
 
        if (tipMov.equals("="))
-       { // Registro de Inventario
-         if (! fecinv.equals(dt.getFecha("fecmov")) && ignInvSup )
-             continue;
-//         if (controlCam && dt.getString("sel").equals("R") && fecinv.equals(dt.getFecha("fecmov")))
-//           continue; // NO tratamos inventarios en fecha.
-         if (feulst.equals(dt.getFecha("fecmov")))
-           tipMov = "+";
-         else
-         {
-           feulst = dt.getFecha("fecmov");
-           ht.put(llave,
-                  dt.getString("canti", true) + "|" +
-                  dt.getInt("canind", true));
-           continue;
-         }
+       { // Registro de Inventario      
+         tipMov="E";
        }
-       else
+       if (restar)
+             tipMov=tipMov.equals("E")?"S":"E";
+
+       canti=dt.getDouble("canti")*(tipMov.equals("S")?-1:1);
+       numuni=dt.getInt("canind")*(tipMov.equals("S")?-1:1);
+       if ( (o = ht.get(llave)) != null)
        {
-           if (restar)
-               tipMov=tipMov.equals("+")?"-":"+";
+           canti = Double.parseDouble(getCampoLlave(o, 0))+canti;
+           numuni = Integer.parseInt(getCampoLlave(o, posFin))+numuni;
        }
-       if (tipMov.equals("+"))  // Entradas
-       {
-         if ( (o = ht.get(llave)) == null)
-           ht.put(llave,
-                  dt.getString("canti", true) + "|" + dt.getInt("canind", true));
-         else
-         {
-           canti = Double.parseDouble(getCampoLlave(o.toString(), 0));
-           numuni = Integer.parseInt(getCampoLlave(o.toString(), posFin));
-           ht.put(llave,
-                  (dt.getDouble("canti") + canti) + "|" +
-                  (dt.getInt("canind", true) + numuni));
-         }
-       }
-       if (tipMov.equals("-")) // Salidas
-       {
-         if ( (o = ht.get(llave)) == null)
-         {
-           canti = 0;
-           numuni = 0;
-         }
-         else
-         {
-           canti = Double.parseDouble(getCampoLlave(o.toString(), 0));
-           numuni = Integer.parseInt(getCampoLlave(o.toString(), posFin));
-         }
-         if (dt.getString("sel").equals("V") &&
-             dt.getString("avc_serie").equals("X"))
-         { // Traspaso entre almacenes.
- //           if (almCodi!=0)
-   //         { // Si estoy tratando un solo almacen, debo hacer la salida de uno y entrada en otro.
-                canti = canti - dt.getDouble("canti", true);
-                numuni = numuni - dt.getInt("canind", true);
-                ht.put(llave, canti + "|" + numuni); // Saco el prod. de Alm. Orig.
-                llave = dt.getString("pro_codi") + "|" +
-                    dt.getInt("empcodi") + "|" + dt.getInt("ejenume") + "|" +
-                    dt.getString("serie") + "|" + dt.getInt("lote") + "|" +
-                    dt.getInt("numind", true)+"|"+dt.getInt("almfin");
-                if ( (o = ht.get(llave)) == null)
-                {
-                 canti = 0;
-                 numuni = 0;
-                }
-                else
-                {
-                    canti = Double.parseDouble(getCampoLlave(o.toString(), 0));
-                    numuni = Integer.parseInt(getCampoLlave(o.toString(), posFin));
-                }
-                // Meto la misma cantidad y unidades en el almacen final.
-                canti  += dt.getDouble("canti", true);
-                numuni += dt.getInt("canind", true);
-     //       }
-         } // Fin de tratamiento traspaso entre almacenes
-         else
-         {
-           canti = canti - dt.getDouble("canti", true);
-           numuni = numuni - dt.getInt("canind", true);
-         }
-         ht.put(llave, canti + "|" + numuni);
-       }
+       ht.put(llave,canti + "|" + numuni);
      }  while (dt.next());
      return ht;
 }
@@ -1240,7 +1113,7 @@ public class ActualStkPart
    private boolean regeneraStock(DatosTabla dt,int proArtcon, int almCodi,
                                 String fecinv,int pro_codi,boolean controlCam,boolean resetear) throws Exception
    {
-     HashMap ht =getStockInd(dt,proArtcon,almCodi,fecinv,null,pro_codi,controlCam,false, true);
+     HashMap ht =getStockInd(dt,proArtcon,almCodi,fecinv,null,pro_codi,controlCam);
      if (ht==null)
          return false;
      
@@ -1339,7 +1212,7 @@ public class ActualStkPart
    public void insInventCong(DatosTabla dtAdd, DatosTabla dtStat,int almCodi,
                                 String fecinv,String fecsup,String usuNomb) throws ParseException,SQLException
    {
-     HashMap ht =getStockInd(dtStat,-1,almCodi,fecinv,fecsup,0,false,true,true);
+     HashMap<String,String> ht =getStockInd(dtStat,-1,almCodi,fecinv,fecsup,0,true);
      if (ht==null)
          return ;
      /**
@@ -1352,19 +1225,20 @@ public class ActualStkPart
          mvtos=new MvtosAlma();
      mvtos.setIncUltFechaInv(false);
      mvtos.iniciarMvtos(fecinv, fecsup,dtStat);
-     Iterator it;
-     it =difProd.keySet().iterator();
+     Iterator<Integer> itArtic;
+     itArtic =difProd.keySet().iterator();
      int proCodi;
      // Busco los precios y los coloco en el stock encontrado.
-     while (it.hasNext())
+     while (itArtic.hasNext())
      {
-       proCodi = (Integer) it.next();
+       proCodi =  itArtic.next();
        mvtos.calculaMvtos(proCodi, dtAdd, dtStat, null,null);
        difProd.put(proCodi,mvtos.getPrecioStock());
      }
      
      
      String key,valor;
+     Iterator<String> it;
      it = ht.keySet().iterator();
 
      int n = 0;
@@ -1372,13 +1246,13 @@ public class ActualStkPart
      DatIndiv datInd;
      while (it.hasNext())
      {
-       key = it.next().toString();
-       valor = (ht.get(key)).toString();
+       key = it.next();
+       valor = ht.get(key);
        datInd =new DatIndiv(key,valor);
 //       if (datInd.numind<=0 || datInd.canti<=0)
 //           continue; // Permito tener inventario en negativo.
        precio=difProd.get(datInd.proCodi);
-       paregalm.insRegStock(dtAdd, fecsup, datInd.proCodi, datInd.empCodi, datInd.ejeNume, datInd.serie,
+       paregalm.insRegStock(dtAdd, fecsup, datInd.proCodi, empCodi, datInd.ejeNume, datInd.serie,
                datInd.lote,datInd.numind,
                datInd.numuni,datInd.canti,datInd.almCodi,tirCodi,"Reg. Congelado Automatica",precio,
                usuNomb,0);

@@ -1,5 +1,7 @@
 package gnu.chu.anjelica.almacen;
 
+import java.util.Objects;
+
 /**
   <p> Descripción: Clase para almacenar los datos de un individuo mandados a traves de 
  * HashMap.
@@ -22,7 +24,7 @@ package gnu.chu.anjelica.almacen;
 public class DatIndiv 
 {
     public double canti;
-    public int numuni,proCodi,empCodi,ejeNume,lote,numind,almCodi;
+    public int numuni,proCodi,ejeNume,lote,numind,almCodi;
     public String serie;
     private String auxiliar;
     int posFin;
@@ -52,13 +54,7 @@ public class DatIndiv
         this.proCodi = proCodi;
     }
 
-    public int getEmpCodi() {
-        return empCodi;
-    }
 
-    public void setEmpCodi(int empCodi) {
-        this.empCodi = empCodi;
-    }
 
     public int getEjercLot() {
         return ejeNume;
@@ -128,7 +124,7 @@ public class DatIndiv
        numuni = Integer.parseInt(getCampoLlave(valor, posFin));
 
        proCodi= Integer.parseInt(getCampoLlave(key, 0));
-       empCodi=Integer.parseInt(getCampoLlave(key, posFin));
+       //empCodi=Integer.parseInt(getCampoLlave(key, posFin));
        ejeNume=Integer.parseInt(getCampoLlave(key, posFin));
        serie=getCampoLlave(key, posFin);
        lote=Integer.parseInt(getCampoLlave(key, posFin));
@@ -159,6 +155,21 @@ public class DatIndiv
       return false;
       
   }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + this.numuni;
+        hash = 89 * hash + this.proCodi;
+        hash = 89 * hash + this.ejeNume;
+        hash = 89 * hash + this.lote;
+        hash = 89 * hash + this.numind;
+        hash = 89 * hash + this.almCodi;
+        hash = 89 * hash + Objects.hashCode(this.serie);
+        return hash;
+    }
+
+   
     @Override
   public String toString()
   {
