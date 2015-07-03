@@ -1333,7 +1333,11 @@ public class MvtosAlma
             v.add(Formatear.format(dt.getDouble("precio")-preStk,"---9.99"));
           else
             v.add("");
-          v.add(dt.getInt("alm_codi"));
+          if (dt.getInt("alm_codori")==0)
+              v.add(dt.getInt("alm_codi"));
+          else
+              v.add(dt.getInt("alm_codori")+"->"+dt.getInt("alm_coddes"));
+//          v.add(dt.getInt("alm_codi"));
           jt.addLinea(v);
         }
       } while (dt.next());
