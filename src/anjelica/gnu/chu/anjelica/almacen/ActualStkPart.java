@@ -890,6 +890,7 @@ public class ActualStkPart
                 + " AND mvt_time::date > TO_DATE('" + fecIni + "','dd-MM-yyyy') "
                 + (fecFin==null?"":" and mvt_time::date <= TO_DATE('" + fecFin + "','dd-MM-yyyy') ")+
                " group by mvt_tipo,alm_codi,m.pro_codi,pro_ejelot,pro_serlot,pro_numlot,pro_indlot";
+               
               
     if (swControlInv)
         s += " UNION all " + // Inventario de Control
@@ -928,7 +929,8 @@ public class ActualStkPart
             " and tir_afestk = '=' "+
             " and a.pro_codi = r.pro_codi " +
             condProd +
-            " AND r.rgs_fecha = TO_DATE('" + fecinv + "','dd-MM-yyyy') ";    
+            " AND r.rgs_fecha = TO_DATE('" + fecinv + "','dd-MM-yyyy') ";
+    s+= " order by 3"; // Ordenado por producto
     return s;
   }
    public void setVentana(ventana papa)
@@ -944,6 +946,12 @@ public class ActualStkPart
      if (padre==null)
        return;
      padre.mensajeErr(msg,sonido);
+   }
+   private void setMensajePopEspere(String msg)
+   {
+     if (padre==null)
+       return;
+     padre.setMensajePopEspere(msg,false);
    }
    public void setCamara(String camara)
    {
@@ -1064,8 +1072,8 @@ public class ActualStkPart
      {
        n++;
        if (n % 10 == 0)
-         mensajeErr("Buscando Mvtos. Tratando Producto: " +
-                    dt.getString("pro_codi"), false);
+         setMensajePopEspere("Buscando stocks de Individuos. Tratando Producto: " +
+                    dt.getString("pro_codi"));
        tipMov = dt.getString("tipmov");
        llave = dt.getString("pro_codi") + "|" +
            dt.getInt("ejenume") + "|" +
@@ -1190,7 +1198,7 @@ public class ActualStkPart
              CREAR_SI,0,Formatear.getDate(fecinv,"dd-MM-yyyy"),false,true);
        n++;
        if (n % 10 == 0)
-         mensajeErr("Actualizando Stock ... Tratando Producto: " + datInd.proCodi, false);
+         setMensajePopEspere("Actualizando Stock ... Tratando Producto: " + datInd.proCodi);
  //        System.out.println(key+" : "+htPrv.get(key));
      }
 

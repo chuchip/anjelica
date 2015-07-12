@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  * </p>
  * <p>Empresa: miSL</p>
  * @author chuchi P
- * @version 1.0
+ * @version 2.0
  */
 public class TrasInven extends ventanaPad implements PAD {
    final static String TIPOINVENTARIO="I";
@@ -95,7 +95,7 @@ public class TrasInven extends ventanaPad implements PAD {
         nav = new navegador(this, dtCons, false,navegador.CURYCON);
         iniciarFrame();
 
-        this.setVersion("2014-12-11" );
+        this.setVersion("2015-07-12" );
         strSql = "SELECT emp_codi, alm_codi, cci_feccon FROM coninvcab where emp_codi = "+EU.em_cod+
                 " group by emp_codi, alm_codi,cci_feccon "+
             " order by cci_feccon";
@@ -241,9 +241,10 @@ public class TrasInven extends ventanaPad implements PAD {
             @Override
             public void run()
             {
-                TrasInven.this.setEnabled(false);
+                msgEspere("Insertando Inventario");
                 traspasar1();
-                TrasInven.this.setEnabled(true);
+                resetMsgEspere();
+                msgBox("Inventario ... Insertado");
                 activaTodo();
             }
         };
@@ -255,7 +256,7 @@ public class TrasInven extends ventanaPad implements PAD {
     {
         try {
             stkPart.setActStkAutomatico(true);
-            mensaje("Insertando apuntes de regularización...");
+            setMensajePopEspere("Insertando apuntes de regularización...");
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY - 1);
             
             if (!tipoTraspE.getValor().equals(TIPOSTOCKPARTI))
@@ -268,7 +269,7 @@ public class TrasInven extends ventanaPad implements PAD {
                        cci_fecconE.getText(),EU.usuario);
                 }
             }
-            mensaje("Actualizando Acumulados de Articulos y Stock-Partidas ...");
+            setMensajePopEspere("Actualizando Acumulados de Articulos y Stock-Partidas ...",false);
 
             int proArtcon = pro_artconE.getValorInt();
 
@@ -290,8 +291,7 @@ public class TrasInven extends ventanaPad implements PAD {
             
             ctUp.commit();
 
-            mensaje("");
-            msgBox("Inventario ... Insertado");
+           
         } catch (Exception ex) {
             Error("Error al Insertar inventario ", ex);
         }
@@ -304,7 +304,7 @@ public class TrasInven extends ventanaPad implements PAD {
      * @throws SQLException
      */
     private void insertaRegul() throws Exception {
-        mensaje("Insertando Regularizaciones .... A esperar tocan ;-)");
+        setMensajePopEspere("Insertando Regularizaciones .... A esperar tocan ;-)",false);
         // Busco los productos en Inventario agrupandolos por Individuo.
         s = "select c.alm_codi, l.pro_codi,prp_ano,l.prp_empcod,prp_seri,prp_part,prp_indi,a.pro_coinst, "
                 + " sum(lci_peso) as lci_peso, "
@@ -392,7 +392,7 @@ public class TrasInven extends ventanaPad implements PAD {
             }
 
             if (++nReg % 10 == 0) {
-                mensaje("Insertados: " + nReg + " Registros en Regulacion Stock", false);
+                setMensajePopEspere("Insertados: " + nReg + " Registros en Regulacion Stock", false);
             }
         } while (dtCon1.next());
         if (jf != null) {
@@ -401,7 +401,7 @@ public class TrasInven extends ventanaPad implements PAD {
             jf.ht.put("%a", alm_codiE.getText());
             jf.guardaMens("I3", jf.ht);
         }
-        debug("Kilos ignorados: "+kilosDeposito);
+//        debug("Kilos ignorados: "+kilosDeposito);
     }
     public boolean checkTraspasar()
     {

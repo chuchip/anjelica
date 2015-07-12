@@ -621,6 +621,7 @@ public class PdInvControl extends ventanaPad implements PAD
     }
   }
 
+ @Override
   public void canc_query()
   {
     Pcabe.setQuery(false);
