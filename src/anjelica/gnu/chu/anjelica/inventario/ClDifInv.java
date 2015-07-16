@@ -1649,14 +1649,15 @@ public class ClDifInv extends ventana {
         
     }
     private void insertarInvDep(int nl) throws SQLException,ParseException
-    {
-         
+    {         
             if (jt.getValorDec(nl,JT_PESOORD)>0 && jt.getValorDec(nl,JT_PESOINV)>0)
             {
                 msgBox("Imposible insertar inventario Anterior deposito si kilos  son positivos");
                 return;
             }
             double kilos=jt.getValorDec(nl,JT_PESOORD)>0?jt.getValorDec(nl,JT_PESOORD):jt.getValorDec(nl,JT_PESOINV);
+            if (kilos<0)
+                kilos=kilos*-1;
             int proCodi=jt.getValorInt(JT_PROCODI);
             
             for (int n=jt.getSelectedRow();n>=0;n--)

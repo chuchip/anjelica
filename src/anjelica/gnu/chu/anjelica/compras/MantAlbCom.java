@@ -710,7 +710,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20150420)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20150716)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -2587,14 +2587,18 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     int nIndiv;
     opAutoClas.setEnabled(false);
     nLiAlAnt=jt.getValorInt(0); // Numero linea anterior del grid de productos
-    
+    boolean swAutoClas=false;
     if (opAutoClas.isSelected())
-    { // Autoclasificar
+    { // Autoclasificar      
       int n=getLinAutoClas(acp_cantiE.getValorDec(),true);
-      jt.setRowFocus(n);
-      nLiAlAnt= getLinAutoClas(kgIndivAnt,false);
-      if (nLiAlAnt>=0)
-        nLiAlAnt=jt.getValorInt(nLiAlAnt,0);
+      if (jt.getValorInt(n,JT_PROCOD)!=jt.getValorInt(JT_PROCOD))
+      {
+        swAutoClas=true;
+        jt.setRowFocus(n);
+        nLiAlAnt= getLinAutoClas(kgIndivAnt,false);
+        if (nLiAlAnt>=0)
+          nLiAlAnt=jt.getValorInt(nLiAlAnt,0);
+      }
     }
     double kgFac=0;// Kilos Facturados.
     double prLiAlb=0; // Precio de Compra
@@ -2649,7 +2653,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       actGridDes(nLiAlb,row,jtDes.getValorInt(row,JTD_NUMLIN),jtDes.getValorInt(row,DESNIND),numIndAnt, nLiAlAnt);
 
     jt.setValor( nLiAlb, 0);
-    if (! opAutoClas.isSelected() ||  cll_codiE.isNull())
+    if (! swAutoClas ||  cll_codiE.isNull())
     {
       jt.setValor( "" + nLinE.getValorInt(), 3);
       jt.setValor( "" + kilosE.getValorDec(),4);
