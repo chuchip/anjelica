@@ -30,6 +30,7 @@ import gnu.chu.interfaces.*;
 
 public class navegador extends CPanel
 {
+  private int modificadores=0;
   GridLayout gridLayout1 = new GridLayout();
   private boolean llame=false;
   public CButton btnPrimero = new CButton(Iconos.getImageIcon("start"));
@@ -242,7 +243,23 @@ public class navegador extends CPanel
    }
    activarEventos();
   }
-
+  /**
+   * Establece modificadores del actionPerformed o KeyPerformed (ActionEvent.getModifiers)
+   * @param modificadores 
+   */
+  void setModifiers(int modificadores)
+  {
+      this.modificadores=modificadores;
+  }
+  /**
+   * Devuelve los modificadoes establecidos por el ultimo ActionPerformed o KeyPerformed
+   * @return  modificadores 
+   * @see ActionEvent.getModifiers()
+   */
+  public int getModifiers()
+  {
+      return modificadores;
+  }
   void activarEventos()
   {
 
@@ -642,6 +659,7 @@ public class navegador extends CPanel
 
   void this_keyPressed(KeyEvent e)
   {
+    setModifiers(e.getModifiers());
     switch (e.getKeyCode())
     {
       case KeyEvent.VK_UP: // Primero
@@ -916,6 +934,7 @@ class navegador_btnPrimero_actionAdapter implements java.awt.event.ActionListene
   }
 
   public void actionPerformed(ActionEvent e) {
+    adaptee.setModifiers(e.getModifiers()); 
     adaptee.btnPrimero_actionPerformed();
   }
 }
@@ -929,6 +948,7 @@ class navegador_btnAnterior_actionAdapter implements java.awt.event.ActionListen
   }
 
   public void actionPerformed(ActionEvent e) {
+    adaptee.setModifiers(e.getModifiers()); 
     adaptee.btnAnterior_actionPerformed();  }
 
 }
@@ -941,7 +961,7 @@ class navegador_btnQuery_actionAdapter implements java.awt.event.ActionListener{
   }
 
   public void actionPerformed(ActionEvent e) {
-
+    adaptee.setModifiers(e.getModifiers()); 
     adaptee.btnQuery_actionPerformed();
   }
 }
@@ -954,6 +974,7 @@ class navegador_btnEdit_actionAdapter implements java.awt.event.ActionListener{
   }
 
   public void actionPerformed(ActionEvent e) {
+    adaptee.setModifiers(e.getModifiers()); 
     adaptee.btnEdit_actionPerformed();
   }
 }
@@ -966,6 +987,7 @@ class navegador_btnAddNew_actionAdapter implements java.awt.event.ActionListener
   }
 
   public void actionPerformed(ActionEvent e) {
+    adaptee.setModifiers(e.getModifiers()); 
     adaptee.btnAddNew_actionPerformed();
   }
 }
@@ -977,7 +999,8 @@ class navegador_btnDelete_actionAdapter implements java.awt.event.ActionListener
     this.adaptee = adaptee;
   }
 
-  public void actionPerformed(ActionEvent e) {
+  public void actionPerformed(ActionEvent e) {      
+    adaptee.setModifiers(e.getModifiers()); 
     adaptee.btnDelete_actionPerformed();
   }
 }
@@ -990,6 +1013,7 @@ class navegador_btnSiguiente_actionAdapter implements java.awt.event.ActionListe
   }
 
   public void actionPerformed(ActionEvent e) {
+      adaptee.setModifiers(e.getModifiers()); 
       adaptee.btnSiguiente_actionPerformed();
   }
 }
@@ -1003,6 +1027,7 @@ class navegador_btnUltimo_actionAdapter implements java.awt.event.ActionListener
   }
 
   public void actionPerformed(ActionEvent e) {
+    adaptee.setModifiers(e.getModifiers()); 
     adaptee.btnUltimo_actionPerformed();
   }
 }
@@ -1015,6 +1040,7 @@ class navegador_btnChose_actionAdapter implements java.awt.event.ActionListener{
   }
 
   public void actionPerformed(ActionEvent e) {
+    adaptee.setModifiers(e.getModifiers()); 
     adaptee.btnChose_actionPerformed();
   }
 }

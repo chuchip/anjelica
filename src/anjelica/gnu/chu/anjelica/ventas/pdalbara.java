@@ -101,6 +101,7 @@ import javax.swing.event.ListSelectionListener;
  
 public class pdalbara extends ventanaPad  implements PAD
 {  
+  private boolean swPreguntaDestruir=false; // Pregunta si se debe destruir todo rastro de un albaran
   private final char IMPR_ALB_GRAF='A';
   private final char IMPR_ALB_TEXT='a';
   private final char IMPR_HOJA_TRA='T';
@@ -646,7 +647,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-05-12" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-07-24" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -4032,10 +4033,13 @@ public class pdalbara extends ventanaPad  implements PAD
     {
         java.sql.Date fecMinMvt=getMinFechaMvto(avc_anoE.getValorInt(), emp_codiE.getValorInt(),avc_seriE.getText(),
                            avc_numeE.getValorInt());
-        if (Formatear.comparaFechas(pdalmace.getFechaInventario(avc_almoriE.getValorInt(), dtStat) , fecMinMvt)>= 0 )
+        if (fecMinMvt!=null)
         {
-              msgBox("Albaran con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar");
-              return true;
+            if (Formatear.comparaFechas(pdalmace.getFechaInventario(avc_almoriE.getValorInt(), dtStat) , fecMinMvt)>= 0 )
+            {
+                  msgBox("Albaran con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar");
+                  return true;
+            }
         }
     }
     
@@ -4868,13 +4872,13 @@ public class pdalbara extends ventanaPad  implements PAD
           jf.ht.put("%a", avc_numeE.getText());
           jf.guardaMens("V4", jf.ht);
         }
-        borraAlbaran();
+        borraAlbaran(true);
         ctUp.commit();
         try
         {
           resetBloqueo(dtAdd);
         }
-        catch (Exception k)
+        catch (SQLException | ParseException k)
         {
           mensajes.mensajeAviso("Error al Quitar el bloqueo\n" + k.getMessage());
         }
@@ -4904,7 +4908,7 @@ public class pdalbara extends ventanaPad  implements PAD
     nav.pulsado = navegador.NINGUNO;
   }
 
-  void borraAlbaran() throws Exception
+  void borraAlbaran(boolean swDestruir) throws Exception
   {
      if (swEntdepos)
      {
@@ -4935,9 +4939,16 @@ public class pdalbara extends ventanaPad  implements PAD
         continue;
       borraLinea(n);
     }
-    s = "DELETE FROM v_albavec WHERE "+getCondCurrent();
-     if (dtAdd.executeUpdate(s,stUp) != 1)
-      throw new Exception("No encontrado Cabecera Albaran.\n Select: " + s);
+    if (swDestruir)
+    {
+        s = "DELETE FROM v_albavec WHERE "+getCondCurrent();
+         if (dtAdd.executeUpdate(s,stUp) != 1)
+          throw new Exception("No encontrado Cabecera Albaran.\n Select: " + s);   
+         // Borro Historicos
+        dtAdd.executeUpdate( "DELETE FROM hisalpave WHERE "+getCondCurrent(),stUp);
+        dtAdd.executeUpdate( "DELETE FROM hisallive WHERE "+getCondCurrent(),stUp);
+        dtAdd.executeUpdate( "DELETE FROM hisalcave WHERE "+getCondCurrent(),stUp);        
+    }
   }
   
   private String getCondCurrent()
@@ -4947,7 +4958,10 @@ public class pdalbara extends ventanaPad  implements PAD
         " and avc_serie = '" + avc_seriE.getText() + "'" +
         " and avc_nume = " + avc_numeE.getValorInt();
   }
-@Override
+  /**
+   * Borra un Albaran. Si se pulso SHIFT al mismo tiempo que el boton borrar, da la opcion de DESTRUIR el albaran.
+   */
+  @Override
   public void PADDelete()
   {
       try {
@@ -5028,9 +5042,7 @@ public class pdalbara extends ventanaPad  implements PAD
               activaTodo();
               return;
           }
-          copiaAlbaranNuevo(dtCon1,dtAdd,"Borrado Albaran",EU.usuario,avc_anoE.getValorInt(),
-              emp_codiE.getValorInt(),avc_seriE.getText(),avc_numeE.getValorInt());
-        
+          
           Bimpri.setEnabled(false);
           BValTar.setEnabled(false);
           Baceptar.setEnabled(true);
@@ -5048,6 +5060,8 @@ public class pdalbara extends ventanaPad  implements PAD
           Error("Error al Borrar Albarán", k);
           return;
       }
+      swPreguntaDestruir=(nav.getModifiers() & ActionEvent.SHIFT_MASK) !=0;
+      
       nav.setEnabled(false);
       mensaje("Borrar Albaran? .... ");
       Bcancelar.requestFocus();
@@ -5079,7 +5093,18 @@ public class pdalbara extends ventanaPad  implements PAD
         if (mensajes.mensajeYesNo("ANULAR BORRADO ? ", this) == mensajes.YES)
           return;
       }
-      if (jf != null)
+      boolean swDestruir=false;
+      if (swPreguntaDestruir)
+      {
+          swDestruir=mensajes.mensajeYesNo("DESTRUIR TODO RASTRO DE ESTE ALBARAN ? ", this) == mensajes.YES;
+      }
+      else
+      {
+        copiaAlbaranNuevo(dtCon1,dtAdd,"Borrado Albaran",EU.usuario,avc_anoE.getValorInt(),
+              emp_codiE.getValorInt(),avc_seriE.getText(),avc_numeE.getValorInt());
+      }
+        
+      if (jf != null )
       {
         jf.ht.clear();
         jf.ht.put("%a", avc_numeE.getText());
@@ -5087,13 +5112,13 @@ public class pdalbara extends ventanaPad  implements PAD
         jf.guardaMens("V2", jf.ht);
       }
 
-      borraAlbaran();
+      borraAlbaran(swDestruir);
       ctUp.commit();
       try
       {
         resetBloqueo(dtAdd);
       }
-      catch (Exception k)
+      catch (SQLException | ParseException k)
       {
         mensajes.mensajeAviso("Error al Quitar el bloqueo\n" + k.getMessage());
       }
