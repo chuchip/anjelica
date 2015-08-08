@@ -100,6 +100,7 @@ public class menu extends JFrame
   JMenuItem ALlisaldos = new JMenuItem();
   JMenuItem ALclUbiArt = new JMenuItem();
   JMenuItem ALconmvpr = new JMenuItem();
+  JMenuItem ALMantPartes = new JMenuItem();
   JMenuItem pdproveed = new JMenuItem();
   JMenuItem pdarticu = new JMenuItem();
   JMenuItem lisclien = new JMenuItem();
@@ -426,6 +427,13 @@ public class menu extends JFrame
         ALconmvpr_actionPerformed(e);
       }
     });
+    ALMantPartes.setText("Mant.Partes");
+    ALMantPartes.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        ALMantPartes_actionPerformed(e);
+      }
+    });
+
     clprodrec.setText("Cons.Prod.Rec");
     clprodrec.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -882,6 +890,7 @@ public class menu extends JFrame
     JPopupAlmacen.add(ALlisaldos);
     JPopupAlmacen.add(ALclUbiArt);
     JPopupAlmacen.add(ALconmvpr);
+    JPopupAlmacen.add(ALMantPartes);
     JPopupAlmacen.add(pdregalm);
     JPopupAlmacen.add(costkpar);
      JPopupAlmacen.add(trasAlma);
@@ -1721,7 +1730,12 @@ void pdreprese_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.almacen.conmvpr(menu.this,EU));
 
   }
+void ALMantPartes_actionPerformed(ActionEvent e) {
+    Hashtable ht=new Hashtable();
+    ht.put("estados", "10");
+    lanzaEjecutable(new gnu.chu.anjelica.almacen.MantPartes(menu.this,EU,ht));
 
+  }
   void pdproveed_actionPerformed(ActionEvent e) {
     Hashtable ht = new Hashtable();
     ht.put("modConsulta", "false");

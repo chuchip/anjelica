@@ -1109,14 +1109,15 @@ private String parseaSelect(boolean forUpdate) throws SQLException
       break;
     }
   }
-  if (!sw_enc)
-  {
-    MsgError = "No encontrado Nombre de Tabla en sentencia SELECT";
-    Error = true;
-    throw new SQLException("ejecSql: " + MsgError, "", -1);
-  }
-
-  nomTabla = sto.nextToken().toUpperCase();
+  nomTabla=null;
+  if (sw_enc)
+//  {
+//    MsgError = "No encontrado Nombre de Tabla en sentencia SELECT";
+//    Error = true;
+//    throw new SQLException("ejecSql: " + MsgError, "", -1);
+//  }
+//  else
+    nomTabla = sto.nextToken().toUpperCase();
   int pw;
   int pun;
   condWhere = "";

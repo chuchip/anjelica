@@ -3505,44 +3505,64 @@ CREATE TABLE anjelica.hislisstk
 	pro_indlot int not null		-- Numero Individuo		
 );
 create index  ix_hislisstk on anjelica.hislisstk  (alm_codi,hls_fecstk);
-
+--
+-- Tabla de Partes. Cabecera
+--
+--drop view v_partes;
+-- DROP TABLE anjelica.partecab;
 CREATE TABLE anjelica.partecab
 (
 	par_codi serial, -- Numero secuencial de parte
 	emp_codi int not null, -- Empresa
-	par_fecalt timestamp not null default current_timestamp, -- Fecha Creacion de parte
-	par_usuinc  varchar(15)  not null, -- Usuario Genera Incidencia (Operario sala)
-	par_usupro   varchar(15) , -- Usuario Procesa (Gerencia)
-	par_usures   varchar(15) , -- Usuario Resuelve (Oficina)
-	par_fecinc date not null, -- Fecha Inicidencia
-	par_fecpro date, -- Fecha Procesado
-	par_fecres date, -- Fecha Resuelto
-	par_estad char(1) not null, -- Estado del parte (Inicidencia/Procesar/Resuelto)	
-	par_tipo char(1) not null, -- Tipo Parte: Entrada, Devol, No-recepcion,Sala	
-	par_coment varchar(150), -- Comentario
-	par_cliprv int,	-- Cliente/Proveedor	
-	par_docano int, -- Ejercicio Documento
-	avc_docser char(1), -- Serie Alb. Venta
-	avc_docnum int -- Numero Alb. Venta
+	pac_fecalt timestamp not null default current_timestamp, -- Fecha Creacion de parte
+	pac_usuinc  varchar(15)  not null, -- Usuario Genera Incidencia (Operario sala)
+	pac_usupro   varchar(15) , -- Usuario Procesa (Gerencia)
+	pac_usures   varchar(15) , -- Usuario Resuelve (Oficina)
+	pac_fecinc date not null, -- Fecha Incidencia
+	pac_fecpro date, -- Fecha Procesado
+	pac_fecres date, -- Fecha Resuelto
+	pac_estad int not null default 1, -- Estado del parte (1. Generada 2. Procesar. 3 Cerrada)	
+	pac_tipo char(1) not null, -- Tipo Parte: Entrada, Devolucion, No-recepción,Sala	
+	pac_coment varchar(150), -- Comentario
+	pac_cliprv int,	-- Cliente/Proveedor	
+	pac_docano int, -- Ejercicio Documento
+	pac_docser char(1), -- Serie Alb. Venta
+	pac_docnum int, -- Numero Alb. Venta
+	constraint ix_partecab primary  key (par_codi)
 );
 
+--drop table  anjelica.partelin;
 create table anjelica.partelin
 (
 	par_codi int not null, -- Codigo Parte
 	pro_codi int not null,	  	-- Producto
-	pro_kilos double, -- Kilos
-	pro_unid int not null, -- Unidades.
-	pro_cajas int not null, -- Cajas
-	pro_ejelot int, -- Ejerc. Lote
+	pal_kilos float, -- Kilos
+	pal_unidad int not null, -- Unidades/Cajas
+	pro_ejelot int, -- Ejercicio Lote
 	pro_serlot char(1),	-- Serie 	
  	pro_numlot int,		-- Lote
-	pro_indlot int,	-- Numero Individuo			
-	par_accion char(1), -- (V)ertedero/(R)eutilizar/(C)ongelear
-	par_solabo smallint not null default 0, -- Hacer/Solicitar Abono? (0=No)
-	par_kilabo double, -- Kilos Abono
-	par_preabo double -- Precio Abono
+	pro_indlot int,	-- Numero Individuo		
+	pal_acsala char(1), -- Accion sugerida x sala. (V)ertedero/(R)eutilizar/(C)ongelar	
+	pal_comsal varchar(50), -- Comentario Sala sobre esta linea
+	pal_accion char(1) not null default '-', -- (V)ertedero/(R)eutilizar/(C)ongelar,(-) No definida
+	pal_coment varchar(50), -- Comentario sobre esta linea
+	pal_solabo smallint not null default 0, -- Hacer/Solicitar Abono? (0=No)
+	pal_kilabo float, -- Kilos Abono
+	pal_preabo float -- Precio Abono
 );
+create index ix_partelin on partelin(par_codi);
+alter table anjelica.partelin add constraint pal_procod foreign key (pro_codi)
+    references anjelica.v_articulo(pro_codi);
+--drop view v_partes;
+create view v_partes as select c.*,l.pro_codi,pal_kilos,pal_unidad,
+pro_ejelot,pro_serlot,pro_numlot,pro_indlot,pal_acsala, pal_accion,pal_coment,pal_solabo,pal_comsal,pal_kilabo,
+pal_preabo from anjelica.partecab as c,anjelica.partelin as l where c.par_codi=l.par_codi;
 
+--drop view v_cliprv;
+create view anjelica.v_cliprv as 
+select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.v_cliente 
+union all
+select 'C' AS tipo,prv_codi as codigo, prv_nomb as nombre from anjelica.v_proveedo
 --- Constraints tipo Foreign Key
 alter table anjelica.v_albavec add constraint avc_procl foreign key (cli_codi)
     references anjelica.clientes(cli_codi);

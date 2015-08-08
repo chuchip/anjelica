@@ -6646,7 +6646,18 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     return getNumAlb(act,dtAdd,emp_codiE.getValorInt(),avc_anoE.getValorInt(),avc_seriE.getText());
   }
-
+  /**
+   * 
+   * Devuelve Siguiente Numero de Albaran que se deberia asignar
+   * @param act Realizar SELECT FORUPDATE
+   * @param dt DatosTabla 
+   * @param empCodi Empresa
+   * @param avcAno Año
+   * @param serie Serie
+   * @return Numero de albaran
+   * @throws SQLException
+   * @throws ParseException 
+   */
   public static int getNumAlb(boolean act,DatosTabla dt,int empCodi,int avcAno,String serie) throws SQLException, ParseException
    {
      int nAlb;

@@ -1396,7 +1396,8 @@ public class CGridEditable extends Cgrid implements CQuery {
    * Machacar esta funcion si quiere controlar algo Cuando se cambie la linea
    * Es llamada cuando el grid esta disabled. Los componentes tendran el valor
    * de la ultima linea activa.
-   * @parm nRow numero de linea a procesar
+     * @param nRow numero de linea a procesar
+   * 
    */
   public void afterCambiaLineaDis(int nRow)
   {
@@ -1404,8 +1405,10 @@ public class CGridEditable extends Cgrid implements CQuery {
      grEvent.setColumna(getSelectedColumnDisab());
      grEvent.setLinea(nRow);
      grEvent.setColNueva(getSelectedColumnDisab());
-      for (int i = 0; i < grListener.size(); i++)
-          ( (GridListener) grListener.get(i)).afterCambiaLineaDis(grEvent);
+     for (Object grListener1 : grListener)
+     {
+            ((GridListener) grListener1).afterCambiaLineaDis(grEvent);
+     }
   }
 
   /**

@@ -249,6 +249,7 @@ public class ventana extends CInternalFrame implements ejecutable
    *
    * Normalmente se sustituiran en cada programa.
    */
+  @Override
   public void iniciarVentana() throws Exception
   {
   }

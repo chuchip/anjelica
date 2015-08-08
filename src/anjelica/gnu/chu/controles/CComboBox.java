@@ -753,17 +753,23 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
      if (ke.getID() == KeyEvent.KEY_PRESSED)
      {
        int pulsado=ke.getKeyCode();
-       switch (ke.getKeyCode())
+       switch (pulsado)
        {
          case KeyEvent.VK_TAB:
-           procesaTab(ke);
+           if (gridEdit!=null &&  ! ke.isShiftDown())
+                ke.setKeyCode(KeyEvent.VK_ENTER);
            super.processKeyEvent(ke);
+           if (ke.isShiftDown())
+               break;
+           ke.setKeyCode(KeyEvent.VK_TAB);
+           procesaTab(ke);
            break;
          case KeyEvent.VK_ENTER:
-//           leePesoBasc();
+         case KeyEvent.VK_SPACE:
+           super.processKeyEvent(ke);             
            procesaEnter(ke);
-           super.processKeyEvent(ke);
            break;
+             
          default:
            super.processKeyEvent(ke);
        }

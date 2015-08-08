@@ -72,7 +72,12 @@ public class pdregalm extends ventanaPad implements PAD
   CLabel cLabel1 = new CLabel();
   CTextField linPantE = new CTextField(Types.DECIMAL,"##9");
   boolean P_ADMIN=false;
-
+  
+  public pdregalm(EntornoUsuario eu, Principal p)
+  {
+      this(eu,p,null);
+  }
+    
   public pdregalm(EntornoUsuario eu, Principal p,Hashtable<String,String> ht) {
      EU=eu;
      vl=p.panel1;
@@ -82,8 +87,11 @@ public class pdregalm extends ventanaPad implements PAD
      setTitulo("Mant. Regularizaciones de Almacen");
 
      try  {
-        if (ht.get("admin") != null)
-             P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
+        if (ht!=null)
+        {
+            if (ht.get("admin") != null)
+             P_ADMIN = Boolean.parseBoolean(ht.get("admin"));   
+        }
        if(jf.gestor.apuntar(this))
            jbInit();
        else
@@ -105,8 +113,11 @@ public class pdregalm extends ventanaPad implements PAD
      eje=false;
 
      try  {
+         if (ht!=null)
+         {
           if (ht.get("admin") != null)
              P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
+         }
        jbInit();
      }
      catch (Exception e) {

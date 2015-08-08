@@ -52,10 +52,16 @@ public class EntornoUsuario implements Serializable
   public boolean debug=false;
   public String empresa=""; // Nombre de la empresa
   public int ejercicio;
+  /**
+   * Login del Usuario
+   */
   public String usuario; // Login del Usuario
   public String password;
   public String driverDB;
   public String addressDB;
+  /**
+   * Nombre completo del usuario
+   */
   public String usu_nomb; // Nombre Completo del usuario.
   public String email;
   public vlike lkEmpresa = new vlike();

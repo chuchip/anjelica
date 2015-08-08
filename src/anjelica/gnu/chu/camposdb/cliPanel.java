@@ -260,8 +260,14 @@ public class cliPanel extends CPanel
    */
   protected void afterFocusLost(boolean noError)
   {
-
+  
   }
+  /**
+   * Funcion a llmar para controlar si el estado del campo es correcto
+   * @return False si hay algun tipo de error. Si hay error realiza un requestfocus al campo
+   * @see    getMsgError() {
+   * @throws SQLException 
+   */
   public boolean controlar() throws SQLException
   {
     return controlar(COMPROBAR);
@@ -270,6 +276,15 @@ public class cliPanel extends CPanel
   {
     return Error;
   }
+  /**
+   * 
+   * Funcion a llmar para controlar si el estado del campo es correcto   
+   * @see    getMsgError() {  
+   * @param caso Que hacer en caso de error. 
+   * Si es COMPROBAR realizara un requestfocus. Si es LOSTFOCUS no.
+   * @return False si hay algun tipo de error. 
+   * @throws SQLException 
+   */
   public boolean controlar(int caso) throws SQLException
   {
     return controlar(caso,null);

@@ -197,6 +197,11 @@ public class proPanel extends CPanel
     }
 
   }
+  /**
+   * Crea un nuevo campo TextField tipo Codigo producto (Decimal, con mascara ####9)
+   * y lo devuelve (no es el codigo de producto del panel)
+   * @return Nuevo TextField Types.DECIMAL, "####9"
+   */
   public static CTextField getTextFieldCodi()
   {
       return  new CTextField(Types.DECIMAL, "####9"); 
@@ -420,6 +425,7 @@ public class proPanel extends CPanel
   {
     pro_codiE.setColumnaAlias(alias);
   }
+  
  /**
    * Establece los Campos que definen el Lote.
    * Les pone un KeyListener para que al pulsar F3 salga la ventana de ayuda
@@ -1245,9 +1251,21 @@ public class proPanel extends CPanel
   {
     aceptaNulo = acepNulo;
   }
+  /**
+   * Devuelve el textfield del codigo de producto (pro_codiE)
+   * @return CTextfield del codigo de producto (pro_codiE)
+   */
   public CTextField getTextField()
   {
     return pro_codiE;
+  }
+  /**
+   * 
+   * @return 
+   */
+  public CTextField getTextFieldNomb()
+  {
+    return pro_nombL;
   }
   public boolean getConStkInd()
   {

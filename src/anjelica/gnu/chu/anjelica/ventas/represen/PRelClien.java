@@ -4,7 +4,7 @@ package gnu.chu.anjelica.ventas.represen;
  * <p>Título: PRelClien</p>
  * <p>Descripción: Panel de relacion de clientes </p>
  * <p`>Usado por clase FichaClientes.
-* <p>Copyright: Copyright (c) 2005-2014
+* <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -30,6 +30,7 @@ import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -152,14 +153,14 @@ public class PRelClien extends CPanel {
                 cliPend++;
              if (padre.mataConsulta)
                 return;
-            Vector v=new Vector();
-            v.addElement(dt.getInt("cli_codi"));
-            v.addElement(dt.getString("cli_nomb"));
-            v.addElement(dt.getString("cli_pobl"));
-            v.addElement(dt.getString("dis_nomb"));
-            v.addElement(dt.getDate("cli_feulve"));
-            v.addElement(dt.getDate("cli_feulco"));
-            v.addElement(dt.getString("cli_estcon"));
+            ArrayList v=new ArrayList();
+            v.add(dt.getInt("cli_codi"));
+            v.add(dt.getString("cli_nomb"));
+            v.add(dt.getString("cli_pobl"));
+            v.add(dt.getString("dis_nomb"));
+            v.add(dt.getDate("cli_feulve"));
+            v.add(dt.getDate("cli_feulco"));
+            v.add(dt.getString("cli_estcon"));
             jt.addLinea(v);
         } while (dt.next());
         jt.setEnabled(true);

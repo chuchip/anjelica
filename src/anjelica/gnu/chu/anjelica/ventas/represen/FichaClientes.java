@@ -365,7 +365,7 @@ public class FichaClientes extends ventana implements PAD
   {
     iniciarFrame();
     this.setSize(732, 535);
-    this.setVersion("2014-03-02");
+    this.setVersion("2015-07-27");
     if (CONBD)
     {
       conecta();
@@ -1539,7 +1539,7 @@ public class FichaClientes extends ventana implements PAD
         mensaje("Buscando datos de cliente ... ");
 
 //    msgBox("en Buscar");
-    Vector v=new Vector();
+    ArrayList v=new ArrayList();
     v.add(cli_codiE.getStrQuery());
     v.add(cli_nombE.getStrQuery());
     v.add(cli_nomcoE.getStrQuery());
@@ -1556,7 +1556,7 @@ public class FichaClientes extends ventana implements PAD
 
     if (agente!=null)
       v.add("rep_codi = '"+agente+"'");
-
+    relClien=true;
     s=creaWhere("select c.*,d.dis_nomb from clientes as c "+
             " left join v_discrim as d on dis_tipo ='Cz' "+
             " and dis_codi = c.zon_codi ",v);
@@ -2775,6 +2775,7 @@ public class FichaClientes extends ventana implements PAD
       pCabCli.setQuery(false);
       pCabCli.setEnabled(false);
       statusBar.setEnabled(true);
+      relClien=false;
       verDatCliente(dtCli,false);
       dtAlb.select(s1);
       if (albfacE.getValor().equals("F"))
@@ -2837,6 +2838,7 @@ public class FichaClientes extends ventana implements PAD
         swBusDat=false;
         return;
       }
+      relClien=false;
       navcli.setEnabled(navegador.TODOS, true);
       Pdatcli.setQuery(false);
       Pdatcli.setEnabled(false);

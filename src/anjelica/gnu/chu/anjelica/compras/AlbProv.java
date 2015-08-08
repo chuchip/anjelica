@@ -1,10 +1,10 @@
-package gnu.chu.anjelica.ventas;
+package gnu.chu.anjelica.compras;
 
 /**
  *
- * <p>Título: AlbClien</p>
- * <p>Descripción: Ventana para mostrar los albaranes de venta de un cliente
- * <p>  Usada por  CLRankClie y MantPartes </p></p>
+ * <p>Título: AlbProv</p>
+ * <p>Descripción: Ventana para mostrar los albaranes de compra de un proveedor
+ * <p>  Usada por  MantPartes </p></p>
  * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
@@ -23,6 +23,8 @@ package gnu.chu.anjelica.ventas;
  * 
  */
 
+import gnu.chu.anjelica.pad.MantArticulos;
+import gnu.chu.anjelica.ventas.*;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.ventana;
@@ -35,26 +37,24 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 
-public class AlbClien extends ventana {
+public class AlbProv extends ventana {
     ventana padre;
     private boolean swDesc=false; // ORden en que mostrar los albaranes
-    final int JTCAB_AVCANO=1;
+    final int JTCAB_ACCANO=1;
     final int JTCAB_EMPCODI=0;
-    final int JTCAB_AVCNUME=3;
-    final int JTCAB_AVCSERIE=2;
-    int empCodi,avcAno,avcNume;
-
-  
-    String avcSerie;
+    final int JTCAB_ACCNUME=3;
+    final int JTCAB_ACCSERIE=2;
+    int empCodi,accAno,accNume;
+    String accSerie;
     
     private boolean verPrecios=true;
     /** Creates new form AlbClien */
-    public AlbClien() {
+    public AlbProv() {
         try {
             iniciarFrame();
         } catch (Exception k)
         {
-            Error("Error al iniciar AlbClien ",k);
+            Error("Error al iniciar AlbProv ",k);
         }
         this.setVersion("2015-07-27");
         statusBar = new StatusBar(this);
@@ -116,7 +116,7 @@ public class AlbClien extends ventana {
                 verAlbaran(jtCab.getSelectedRow());
             } catch (Exception k)
             {
-                Error("Error al ver datos albaranes de clientes",k);
+                Error("Error al ver datos albaranes de Proveedores",k);
             }
           }
         });
@@ -127,9 +127,9 @@ public class AlbClien extends ventana {
                 if (e.getClickCount()<2 || jtCab.isVacio())
                     return;
                 empCodi=jtCab.getValorInt(0);
-                avcAno=jtCab.getValorInt(1);
-                avcSerie=jtCab.getValString(2);
-                avcNume=jtCab.getValorInt(3);
+                accAno=jtCab.getValorInt(1);
+                accSerie=jtCab.getValString(2);
+                accNume=jtCab.getValorInt(3);
                 matar();
             }
         });
@@ -171,12 +171,11 @@ public class AlbClien extends ventana {
    */
   public void cargaDatos(String fecini,String fecfin,int cliCodi) throws Exception
   {
-     avcNume=0;
-    String s="SELECT * FROM v_albavec as c WHERE cli_codi = "+cliCodi+
-          " and avc_fecalb >= TO_DATE('"+fecini+"','dd-MM-yyyy') "+
-          " and avc_fecalb <= TO_DATE('"+fecfin+"','dd-MM-yyyy') "+
-           (EU.isRootAV()?"":" and c.div_codi > 0 ")+
-          " order by avc_fecalb "+ (swDesc?" desc":"");
+     accNume=0;
+    String s="SELECT * FROM v_albacoc as c WHERE prv_codi = "+cliCodi+
+          " and acc_fecrec >= TO_DATE('"+fecini+"','dd-MM-yyyy') "+
+          " and acc_fecrec <= TO_DATE('"+fecfin+"','dd-MM-yyyy') "+
+          " order by acc_fecrec "+ (swDesc?" desc":"");
       jtCab.setEnabled(false);
       jtCab.removeAllDatos();
       if (!dtStat.select(s))
@@ -188,15 +187,10 @@ public class AlbClien extends ventana {
       {
         ArrayList v= new ArrayList();
         v.add(dtStat.getString("emp_codi"));
-        v.add(dtStat.getString("avc_ano"));
-        v.add(dtStat.getString("avc_serie"));
-        v.add(dtStat.getString("avc_nume"));
-        v.add(dtStat.getFecha("avc_fecalb","dd-MM-yyyy"));
-        v.add(dtStat.getString("avc_kilos"));
-        if (verPrecios)
-            v.add(dtStat.getString("avc_basimp"));
-        else
-            v.add(0);
+        v.add(dtStat.getString("acc_ano"));
+        v.add(dtStat.getString("acc_serie"));
+        v.add(dtStat.getString("acc_nume"));
+        v.add(dtStat.getFecha("acc_fecrec","dd-MM-yyyy"));
         jtCab.addLinea(v);
       } while (dtStat.next());
       
@@ -210,29 +204,32 @@ public class AlbClien extends ventana {
   {
       try
       {
-          jtLin.removeAllDatos();
-          String s=pdalbara.getSqlLinList(jtCab.getValorInt(numLinea,JTCAB_AVCANO),
-                  jtCab.getValorInt(numLinea,JTCAB_EMPCODI),
-                  jtCab.getValString(numLinea,JTCAB_AVCSERIE),
-                  jtCab.getValorInt(numLinea,JTCAB_AVCNUME),
-                  true);
+          jtLin.removeAllDatos();          
+          String s= "select pro_codi,pro_nomart,sum(acl_canti) as canti, sum(acl_numcaj) as acl_numcaj, "
+              + " sum(acl_canti*acl_prcom/acl_canti) as precio from v_albacom where emp_codi="+jtCab.getValorInt(numLinea,JTCAB_EMPCODI)+
+              " AND acc_ano ="+jtCab.getValorInt(numLinea,JTCAB_ACCANO)+
+              " and acc_serie= '"+jtCab.getValString(numLinea,JTCAB_ACCSERIE)+"'"+
+              " and acc_nume="+jtCab.getValorInt(numLinea,JTCAB_ACCNUME)+
+              " group by pro_codi,pro_nomart"+
+              " order by pro_codi";
+                  
            String proNomb;
            if (dtCon1.select(s))
            {
              do
              {
                  ArrayList v = new ArrayList();
-                 proNomb = dtCon1.getString("avl_pronom");
+                 proNomb = dtCon1.getString("pro_nomart");
                  if (proNomb == null)
-                    proNomb = dtCon1.getString("pro_nomb");
+                    proNomb =  MantArticulos.getNombProd(dtCon1.getInt("pro_codi"),dtStat);
                  v.add(dtCon1.getString("pro_codi"));
                  v.add(proNomb);
-                 v.add(""+Formatear.redondea(dtCon1.getDouble("avl_canti",true), 2));
-                 v.add(dtCon1.getString("avl_unid"));
+                 v.add(""+Formatear.redondea(dtCon1.getDouble("canti",true), 2));
+                 v.add(dtCon1.getString("acl_numcaj"));
                  if (!verPrecios)
                     v.add("0");
                  else
-                    v.add(""+Formatear.redondea(dtCon1.getDouble("avl_prven",true),3));
+                    v.add(""+Formatear.redondea(dtCon1.getDouble("precio",true),3));
                  jtLin.addLinea(v);
              }  while (dtCon1.next());
              jtLin.requestFocus(0,0);
@@ -254,7 +251,7 @@ public class AlbClien extends ventana {
         java.awt.GridBagConstraints gridBagConstraints;
 
         Pprinc = new gnu.chu.controles.CPanel();
-        jtCab = new gnu.chu.controles.Cgrid(7);
+        jtCab = new gnu.chu.controles.Cgrid(5);
         jtLin = new gnu.chu.controles.Cgrid(5);
         { ArrayList v = new ArrayList();
             v.add("Prod."); // 0
@@ -282,13 +279,9 @@ public class AlbClien extends ventana {
         v1.add("Serie"); // 2
         v1.add("Albaran"); // 3
         v1.add("Fec.Alb"); // 4
-        v1.add("Kg. Alb"); // 5
-        v1.add("Imp.Alb"); // 6
         jtCab.setCabecera(v1);
-        jtCab.setAnchoColumna(new int[]{40,40,40,50,70,80,80});
-        jtCab.setAlinearColumna(new int[]{2, 2, 1,2, 1, 2, 2});
-        jtCab.setFormatoColumna(4, "---,--9.99");
-        jtCab.setFormatoColumna(5, "---,--9.99");
+        jtCab.setAnchoColumna(new int[]{40,40,40,50,70});
+        jtCab.setAlinearColumna(new int[]{2, 2, 1,2, 1});
         jtCab.setAjustarGrid(true);
         jtCab.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtCab.setMaximumSize(new java.awt.Dimension(100, 100));
@@ -354,15 +347,15 @@ public class AlbClien extends ventana {
         return empCodi;
     }
 
-    public int getAvcAno() {
-        return avcAno;
+    public int getAccAno() {
+        return accAno;
     }
 
-    public int getAvcNume() {
-        return avcNume;
+    public int getAccNume() {
+        return accNume;
     }
 
-    public String getAvcSerie() {
-        return avcSerie;
+    public String getAccSerie() {
+        return accSerie;
     }
 }

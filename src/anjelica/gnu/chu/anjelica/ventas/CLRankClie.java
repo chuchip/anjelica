@@ -321,7 +321,7 @@ public void iniciarVentana() throws Exception
        }
        catch (Exception ex)
        {
-         fatalError("Error al Cargar datos de productos",ex);
+         fatalError("Error al Cargar datos de Clientes",ex);
        }
   }
    String getStrSql(String orden)

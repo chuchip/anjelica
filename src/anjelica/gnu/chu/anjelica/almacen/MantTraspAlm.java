@@ -193,6 +193,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         this.setSize(700, 524);
         activar(false);
     }
+ 
     String getStrSql()
     {
         return "select * from v_albavec where emp_codi="+EU.em_cod+

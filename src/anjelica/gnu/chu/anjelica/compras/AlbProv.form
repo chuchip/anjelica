@@ -43,8 +43,8 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(7)"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList v1=new ArrayList();&#xa;    v1.add(&quot;Emp&quot;); // 0&#xa;    v1.add(&quot;A&#xf1;o&quot;); // 1 &#xa;    v1.add(&quot;Serie&quot;); // 2&#xa;    v1.add(&quot;Albaran&quot;); // 3&#xa;    v1.add(&quot;Fec.Alb&quot;); // 4&#xa;    v1.add(&quot;Kg. Alb&quot;); // 5&#xa;    v1.add(&quot;Imp.Alb&quot;); // 6&#xa;    jtCab.setCabecera(v1);&#xa;    jtCab.setAnchoColumna(new int[]{40,40,40,50,70,80,80});&#xa;    jtCab.setAlinearColumna(new int[]{2, 2, 1,2, 1, 2, 2});&#xa;    jtCab.setFormatoColumna(4, &quot;---,--9.99&quot;);&#xa;    jtCab.setFormatoColumna(5, &quot;---,--9.99&quot;);&#xa;    jtCab.setAjustarGrid(true);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(5)"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList v1=new ArrayList();&#xa;    v1.add(&quot;Emp&quot;); // 0&#xa;    v1.add(&quot;A&#xf1;o&quot;); // 1 &#xa;    v1.add(&quot;Serie&quot;); // 2&#xa;    v1.add(&quot;Albaran&quot;); // 3&#xa;    v1.add(&quot;Fec.Alb&quot;); // 4&#xa;    jtCab.setCabecera(v1);&#xa;    jtCab.setAnchoColumna(new int[]{40,40,40,50,70});&#xa;    jtCab.setAlinearColumna(new int[]{2, 2, 1,2, 1});&#xa;    jtCab.setAjustarGrid(true);"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

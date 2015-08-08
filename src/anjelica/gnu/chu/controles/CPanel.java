@@ -372,9 +372,13 @@ public void setAltButton(AbstractButton b)
 
  }
 
+  @Override
   public void setText(String s) {}
+  @Override
   public String getText() {return "";}
+  @Override
   public String getStrQuery() {return "";}
+  @Override
   public boolean getQuery() {return false;}
 
   public AbstractButton getButton(int tecla)
