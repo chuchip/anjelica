@@ -514,12 +514,12 @@ public class clprpeco extends ventana implements  JRDataSource
      try {
        java.util.HashMap mp = new java.util.HashMap();
        JasperReport jr;
-       mp.put("opDesgl",new Boolean(opDesgl.isSelected()));
+       mp.put("opDesgl",opDesgl.isSelected());
        mp.put("fecEntr",feeninE.getDate());
        mp.put("tla_nomb",tla_codiE.getTextCombo());
-       mp.put("pro_codi",new Integer(proiniE.getValorInt()));
+       mp.put("pro_codi",proiniE.getValorInt());
        mp.put("pro_nomb",proiniE.getTextNomb());
-       mp.put("pro_codi1",new Integer(profinE.getValorInt()));
+       mp.put("pro_codi1",profinE.getValorInt());
        mp.put("pro_nomb1",profinE.getTextNomb());
        mp.put("alm_codi",alm_codiE.getValorInt()+" -> "+alm_codiE.getTextCombo());
        mp.put("cam_codi",cam_codiE.isNull()?"":cam_codiE.getText()+" -> "+cam_codiE.getTextCombo());

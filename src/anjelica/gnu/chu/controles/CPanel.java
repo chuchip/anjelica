@@ -145,7 +145,10 @@ public void setEscButton(AbstractButton b)
 {
   setButton(java.awt.event.KeyEvent.VK_ESCAPE, b);
 }
-
+/**
+ * Define el buton al que pulsar cuando se le da a F2
+ * @param b Boton
+ */
 public void setAltButton(AbstractButton b)
 {
   setButton(java.awt.event.KeyEvent.VK_F2, b);

@@ -277,7 +277,7 @@ $BODY$
 			pro_numlot =OLD.acc_nume AND
 			pro_indlot =OLD.acp_numind;
 		GET DIAGNOSTICS nRows = ROW_COUNT;
-		if nRows = 0 and ajuDelmvt = 0 then
+		if nRows = 0 and  ajuDelmvt = 0 then
 			RAISE EXCEPTION 'No encontrado mvto a modificar. Alb. Compra';
 			RETURN null;
 		end if;
@@ -481,7 +481,7 @@ $BODY$
 			pro_indlot =OLD.pro_numind AND
 			MVT_CANTI = OLD.deo_kilos;
 		GET DIAGNOSTICS nRows = ROW_COUNT;
-		if nRows = 0  and ajuDelmvt = 0  then
+		if nRows = 0  and ajuDelmvt = 0  && OLD.deo_kilos !=0 then
 			RAISE EXCEPTION 'No encontrado Mvto a modificar. Desp.Salida Lote:% % Prod: % Indiv:%  Kilos: %',OLD.eje_nume,
 				OLD.deo_codi,OLD.pro_codi,OLD.pro_numind,OLD.deo_kilos;
 			RETURN null;
@@ -501,7 +501,7 @@ $BODY$
 			pro_indlot =OLD.pro_numind and
 			MVT_CANTI = OLD.deo_kilos;
 		GET DIAGNOSTICS nRows = ROW_COUNT;		
-		if nRows = 0 and ajuDelmvt = 0 then                 
+		if nRows = 0 and ajuDelmvt = 0  && OLD.deo_kilos !=0 then                 
 			RAISE EXCEPTION  'No encontrado Mvto a Borrar. Desp.Salida Lote:% % Prod: % Indiv:%  Kilos: %',OLD.eje_nume,
 				OLD.deo_codi,OLD.pro_codi,OLD.pro_numind,OLD.deo_kilos;
 			return null;

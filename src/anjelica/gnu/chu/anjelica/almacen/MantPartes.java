@@ -29,6 +29,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.UnknownHostException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
@@ -38,6 +39,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import net.sf.jasperreports.engine.JRResultSetDataSource;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 /**
  * Parametros: 
@@ -191,7 +196,7 @@ public class MantPartes  extends ventanaPad implements PAD
       pac_docserE.setColumnaAlias("pac_docser");
       pac_docnumE.setColumnaAlias("pac_docnum");
       
-      
+      Pcabe.setAltButton(BirGrid);
       
       activaTodo();
       activarEventos();
@@ -200,6 +205,23 @@ public class MantPartes  extends ventanaPad implements PAD
   }
   private void activarEventos()
   {
+      BirGrid.addActionListener(new ActionListener()
+      {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+           if (jt.isEnabled())
+            jt.requestFocusInicio();
+        }
+      });
+      BListar.addActionListener(new ActionListener()
+      {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+           Blistar_ActionPerformed();
+        }
+      });
       pal_solaboE.addActionListener(new ActionListener()
       {
         @Override
@@ -730,14 +752,15 @@ public class MantPartes  extends ventanaPad implements PAD
         pac_fecresE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
         pac_estadL = new gnu.chu.controles.CLabel();
         pac_estadE = new gnu.chu.controles.CComboBox();
+        BirGrid = new gnu.chu.controles.CButton();
         Plistado = new gnu.chu.controles.CPanel();
         jtList = new gnu.chu.controles.Cgrid(6);
         pac_estadL1 = new gnu.chu.controles.CLabel();
         estadoE = new gnu.chu.controles.CComboBox();
         pac_estadL2 = new gnu.chu.controles.CLabel();
-        feciniE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
+        feciniE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         pac_estadL3 = new gnu.chu.controles.CLabel();
-        fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
+        fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         BListar = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
         jt = new gnu.chu.controles.CGridEditable(15)
         {
@@ -933,6 +956,10 @@ public class MantPartes  extends ventanaPad implements PAD
         Pcabe.add(pac_estadE);
         pac_estadE.setBounds(80, 65, 120, 17);
 
+        BirGrid.setFocusable(false);
+        Pcabe.add(BirGrid);
+        BirGrid.setBounds(680, 99, 2, 2);
+
         PTabPane1.addTab("Datos", Pcabe);
 
         Plistado.setLayout(null);
@@ -971,13 +998,13 @@ public class MantPartes  extends ventanaPad implements PAD
         Plistado.add(pac_estadL2);
         pac_estadL2.setBounds(10, 2, 130, 17);
         Plistado.add(feciniE);
-        feciniE.setBounds(340, 2, 70, 17);
+        feciniE.setBounds(340, 2, 80, 17);
 
         pac_estadL3.setText("A fecha:");
         Plistado.add(pac_estadL3);
         pac_estadL3.setBounds(430, 2, 60, 17);
         Plistado.add(fecfinE);
-        fecfinE.setBounds(490, 2, 70, 17);
+        fecfinE.setBounds(490, 2, 80, 17);
 
         BListar.setText("Listar");
         Plistado.add(BListar);
@@ -1083,6 +1110,7 @@ public class MantPartes  extends ventanaPad implements PAD
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton BbuscaDoc;
     private gnu.chu.controles.CButton Bcancelar;
+    private gnu.chu.controles.CButton BirGrid;
     private gnu.chu.controles.CButton BsaltaGrid;
     private gnu.chu.controles.CTabbedPane PTabPane1;
     private gnu.chu.controles.CPanel Pcabe;
@@ -1573,6 +1601,44 @@ public class MantPartes  extends ventanaPad implements PAD
         pal_solaboE.setEnabled(editable);
         pal_kilaboE.setEditable(editable);
         pal_preaboE.setEditable(editable);        
+    }
+    
+    private void Blistar_ActionPerformed()
+    {
+     this.setEnabled(false);
+     mensaje("A esperar ... estoy generando el listado");
+     try {
+       String s="SELECT p.*,a.pro_nomb,a.pro_codi,p.*,cl.nombre  "+ 
+        " FROM v_partes AS p left join v_cliprv as cl on p.pac_cliprv=cl.codigo and tipo!=pac_tipo,"+
+         "  anjelica.v_articulo AS a WHERE "+
+        " a.pro_codi = p.pro_codi "+
+        (feciniE.isNull()?"":" and pac_fecinc >= '"+feciniE.getFechaDB()+"'")+
+        (fecfinE.isNull()?"":" and pac_fecinic <= '"+ fecfinE.getFechaDB()+"'")+
+        " and pac_estad = "+estadoE.getValor()+
+        " order by  p.par_codi ";
+     
+       ResultSet rs = dtCon1.getStatement().executeQuery(dtCon1.parseaSql(s));
+       java.util.HashMap mp = new java.util.HashMap();
+       JasperReport jr;
+       mp.put("estadoP",estadoE.getValor());
+       mp.put("estadoT",estadoE.getText());
+       mp.put("feciniP",feciniE.isNull()?null:feciniE.getDate());
+       mp.put("fecfinP",fecfinE.isNull()?null:fecfinE.getDate());
+   
+       jr = gnu.chu.print.util.getJasperReport(EU, "partes");
+      
+
+       JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
+       gnu.chu.print.util.printJasper(jp, EU);
+     
+       mensaje("");
+       mensajeErr("Listado ... generado");
+       this.setEnabled(true);       
+     }
+     catch (Exception k)
+     {
+       Error("Error al imprimir consulta", k);
+     }
     }
     private void activaFechas(boolean activo)
     {        
