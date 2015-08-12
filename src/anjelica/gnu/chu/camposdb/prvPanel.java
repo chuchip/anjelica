@@ -31,6 +31,7 @@ import javax.swing.event.*;
  */
 public class prvPanel extends CPanel
 {
+  private ayuPrv ayprv;
   private boolean error=false;
   private int prvIntern;
   boolean swControl=true;
@@ -474,22 +475,27 @@ public class prvPanel extends CPanel
    * Llama a la Ayuda de Productos.
    */
   public void consPrv()
-  {
-    final ayuPrv ayprv;
+  {    
 
     try
     {
-      ayprv = new ayuPrv(eu, vl);
-      ayprv.addInternalFrameListener(new InternalFrameAdapter()
+      if (ayprv==null)
       {
-        public void internalFrameClosing(InternalFrameEvent e)
+        ayprv = new ayuPrv(eu, vl)
         {
-          ej_consPrv(ayprv);
-        }
-      });
+             @Override
+            public void matar()
+            {
+                ej_consPrv(ayprv);
+            }
+        };
 
-      vl.add(ayprv);
-      ayprv.setLocation(25, 25);
+        if (intfr!=null)
+            intfr.getLayeredPane().add(ayprv,1);
+          else
+            vl.add(ayprv,1);
+        ayprv.setLocation(25, 25);
+      }
       ayprv.setVisible(true);
       if (intfr != null)
       {
@@ -505,7 +511,14 @@ public class prvPanel extends CPanel
         intfr.setEnabled(true);
     }
   }
-
+ @Override
+  protected void finalize() throws Throwable 
+  {
+    if (ayprv!=null)
+      ayprv.dispose();
+    ayprv=null;
+    super.finalize();
+  };
   void ej_consPrv(ayuPrv aypro)
   {
     if (aypro.consulta)
@@ -515,8 +528,8 @@ public class prvPanel extends CPanel
          prv_nombL.setText(aypro.prv_nombT);
     }
     prv_codiE.requestFocus();
-    aypro.dispose();
-
+   
+    ayprv.setVisible(false);
     if (intfr != null)
     {
       intfr.setEnabled(true);

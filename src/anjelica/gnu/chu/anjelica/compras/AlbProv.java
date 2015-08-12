@@ -138,7 +138,7 @@ public class AlbProv extends ventana {
   public void matar()
   {
     setVisible(false);
-   
+    statusBar.setEnabled(true);
     padre.setEnabled(true);
     padre.setFoco(null);
     try {

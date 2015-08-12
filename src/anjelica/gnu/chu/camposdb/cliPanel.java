@@ -549,8 +549,7 @@ public void setZona(String zonCli)
         }
       }
       catch (Exception j)
-      {
-        SystemOut.print(j);
+      {        
         if (intfr != null)
           intfr.setEnabled(true);
       }

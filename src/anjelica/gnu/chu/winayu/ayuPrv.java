@@ -7,6 +7,7 @@ import java.util.Vector;
 import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.sql.*;
+import java.util.ArrayList;
 import javax.swing.*;
 /**
  *
@@ -32,7 +33,7 @@ import javax.swing.*;
 
 public class ayuPrv extends ventana // implements  Runnable
 {
-    Vector datos=new Vector();
+    ArrayList datos=new ArrayList();
   BorderLayout bLay1 = new BorderLayout();
   String strSql="";
   public String prv_codiT="";
@@ -56,6 +57,9 @@ public class ayuPrv extends ventana // implements  Runnable
 
   /**
   *  Recibe el Entorno Usuario, el Principal
+     * @param e
+     * @param fr
+     * @param dt
   */
  public ayuPrv(EntornoUsuario e, JLayeredPane fr, DatosTabla dt)
  {
@@ -74,7 +78,6 @@ public class ayuPrv extends ventana // implements  Runnable
    catch (Exception k)
    {
      setErrorInit(true);
-     return;
    }
  }
 
@@ -111,15 +114,15 @@ public class ayuPrv extends ventana // implements  Runnable
     Pprinc.setLayout(gridBagLayout2);
 
     // Configurando el Grid.
-    Vector cabecera = new Vector();
-    cabecera.addElement("Codigo"); // 0 -- Codigo
-    cabecera.addElement("Nombre"); //1 -- Nombre
-    cabecera.addElement("Nomb. Comercial"); // 2 -- Familia
+    ArrayList cabecera = new ArrayList();
+    cabecera.add("Codigo"); // 0 -- Codigo
+    cabecera.add("Nombre"); //1 -- Nombre
+    cabecera.add("Nomb. Comercial"); // 2 -- Familia
     jt.setCabecera(cabecera);
     jt.setAnchoColumna(new int[]{56,283,283});
     jt.setFormatoColumna(0,"#####9");
     jt.alinearColumna(new int[]{2,0,0});
-    jt.ajustar(true);
+    jt.setAjustarGrid(true);
     jt.setNumRegCargar(100);
     jt.setAjustarGrid(true);
 //    jt.setIgnoraColumna(0,true);
@@ -186,11 +189,12 @@ public class ayuPrv extends ventana // implements  Runnable
     jt.panelBuscar.add(Belegir,null);//, new XYConstraints(200,0, 25, 22));
 
   }
+    @Override
   public void iniciarVentana() throws Exception
   {
      Pcons.setDefButton(Baceptar);
      Pcons.setButton(KeyEvent.VK_F4, Baceptar);
-
+     statusBar.setEnabled(true);
      prv_nombE.setColumnaAlias("prv_nomb");
      prv_nombE.setQuery(true);
      prv_nombE.requestFocusLater();
@@ -220,7 +224,7 @@ public class ayuPrv extends ventana // implements  Runnable
     {
       if (dtCon1.select(strSql, false) == false)
       {
-        mensaje(" -- NO ENCONTRADOS Proveedores con esas Condiones -- ");
+        mensaje(" -- NO ENCONTRADOS Proveedores con esas Condiciones -- ");
         return true;
       }
     }

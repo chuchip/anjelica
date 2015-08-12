@@ -136,7 +136,7 @@ public class MantPartes  extends ventanaPad implements PAD
   {
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20150805) Modo: "+P_ESTADOS);
+        this.setVersion("(20150812) Modo: "+P_ESTADOS);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -178,7 +178,8 @@ public class MantPartes  extends ventanaPad implements PAD
       prv_codiE.setAceptaNulo(false);
       cli_codiE.iniciar(dtStat, this, vl, EU);
       cli_codiE.setAceptaNulo(false);
-      
+      fecfinE.setDate(Formatear.getDateAct());
+      feciniE.setDate(Formatear.sumaDiasDate(Formatear.getDateAct(), -60));
       par_codiE.setColumnaAlias("par_codi");
       pac_fecaltE.setColumnaAlias("pac_fecalt");
       pac_usuincE.setColumnaAlias("pac_usuinc");
@@ -205,6 +206,17 @@ public class MantPartes  extends ventanaPad implements PAD
   }
   private void activarEventos()
   {
+      BRefresh.addActionListener(new ActionListener()
+      {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            if (nav.getPulsado()!=navegador.NINGUNO || swCargaList)
+                return;
+            cargaListado(estadoE.getValor());
+        }
+      });
+
       BirGrid.addActionListener(new ActionListener()
       {
         @Override
@@ -762,6 +774,7 @@ public class MantPartes  extends ventanaPad implements PAD
         pac_estadL3 = new gnu.chu.controles.CLabel();
         fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         BListar = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
+        BRefresh = new gnu.chu.controles.CButton(Iconos.getImageIcon("reload"));
         jt = new gnu.chu.controles.CGridEditable(15)
         {
             @Override
@@ -887,7 +900,7 @@ public class MantPartes  extends ventanaPad implements PAD
         BbuscaDoc.setToolTipText("Buscar documentos (F3)");
         BbuscaDoc.setFocusable(false);
         Pcabe.add(BbuscaDoc);
-        BbuscaDoc.setBounds(650, 92, 22, 22);
+        BbuscaDoc.setBounds(650, 90, 22, 22);
 
         Pusuarios.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Usuarios")));
         Pusuarios.setEnabled(false);
@@ -962,6 +975,7 @@ public class MantPartes  extends ventanaPad implements PAD
 
         PTabPane1.addTab("Datos", Pcabe);
 
+        Plistado.setAltButton(BRefresh);
         Plistado.setLayout(null);
 
         jtList.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -984,7 +998,7 @@ public class MantPartes  extends ventanaPad implements PAD
 
         pac_estadL1.setText("De fecha:");
         Plistado.add(pac_estadL1);
-        pac_estadL1.setBounds(280, 2, 60, 17);
+        pac_estadL1.setBounds(270, 1, 60, 17);
 
         estadoE.addItem("Generada", "1");
         if (P_ESTADOS>= 2)
@@ -992,23 +1006,27 @@ public class MantPartes  extends ventanaPad implements PAD
         if (P_ESTADOS>= 3)
         estadoE.addItem("Resuelta", "3");
         Plistado.add(estadoE);
-        estadoE.setBounds(150, 2, 120, 17);
+        estadoE.setBounds(150, 1, 110, 17);
 
         pac_estadL2.setText("Ver partes con estado");
         Plistado.add(pac_estadL2);
-        pac_estadL2.setBounds(10, 2, 130, 17);
+        pac_estadL2.setBounds(10, 1, 130, 17);
         Plistado.add(feciniE);
-        feciniE.setBounds(340, 2, 80, 17);
+        feciniE.setBounds(330, 1, 80, 17);
 
         pac_estadL3.setText("A fecha:");
         Plistado.add(pac_estadL3);
-        pac_estadL3.setBounds(430, 2, 60, 17);
+        pac_estadL3.setBounds(420, 1, 60, 17);
         Plistado.add(fecfinE);
-        fecfinE.setBounds(490, 2, 80, 17);
+        fecfinE.setBounds(480, 1, 80, 17);
 
         BListar.setText("Listar");
         Plistado.add(BListar);
-        BListar.setBounds(580, 0, 90, 19);
+        BListar.setBounds(610, 0, 80, 19);
+
+        BRefresh.setToolTipText("Refrescar Consulta");
+        Plistado.add(BRefresh);
+        BRefresh.setBounds(570, 1, 20, 20);
 
         PTabPane1.addTab("Listado", Plistado);
 
@@ -1081,11 +1099,11 @@ public class MantPartes  extends ventanaPad implements PAD
 
         Baceptar.setText("Aceptar");
         Ppie.add(Baceptar);
-        Baceptar.setBounds(10, 10, 90, 30);
+        Baceptar.setBounds(10, 5, 90, 30);
 
         Bcancelar.setText("Cancelar");
         Ppie.add(Bcancelar);
-        Bcancelar.setBounds(120, 10, 90, 30);
+        Bcancelar.setBounds(120, 5, 90, 30);
 
         opAdmin.setText("Modo Admin");
         opAdmin.setInheritsPopupMenu(true);
@@ -1107,6 +1125,7 @@ public class MantPartes  extends ventanaPad implements PAD
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton BListar;
+    private gnu.chu.controles.CButton BRefresh;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton BbuscaDoc;
     private gnu.chu.controles.CButton Bcancelar;
@@ -1613,7 +1632,7 @@ public class MantPartes  extends ventanaPad implements PAD
          "  anjelica.v_articulo AS a WHERE "+
         " a.pro_codi = p.pro_codi "+
         (feciniE.isNull()?"":" and pac_fecinc >= '"+feciniE.getFechaDB()+"'")+
-        (fecfinE.isNull()?"":" and pac_fecinic <= '"+ fecfinE.getFechaDB()+"'")+
+        (fecfinE.isNull()?"":" and pac_fecinc <= '"+ fecfinE.getFechaDB()+"'")+
         " and pac_estad = "+estadoE.getValor()+
         " order by  p.par_codi ";
      
