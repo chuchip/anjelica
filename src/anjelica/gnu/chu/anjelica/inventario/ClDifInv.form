@@ -457,7 +457,20 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="160" y="0" width="130" height="20"/>
+                  <AbsoluteConstraints x="30" y="0" width="130" height="20"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CButtonMenu" name="BSelec">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Seleccionar"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="BSelec.addMenu(&quot;Selecionar Todo&quot;,&quot;T&quot; );&#xa;BSelec.addMenu(&quot;Selecionar Nada&quot;,&quot;N&quot; );&#xa;BSelec.addMenu(&quot;Inv. Selec&quot;,&quot;I&quot; );"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="310" y="0" width="110" height="20"/>
                 </Constraint>
               </Constraints>
             </Component>

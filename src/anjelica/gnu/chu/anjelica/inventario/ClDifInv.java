@@ -35,6 +35,7 @@ import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
+import gnu.chu.winayu.ayuLote;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -49,8 +50,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -126,7 +125,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2015-06-30");
+        this.setVersion("2015-08-18");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -194,6 +193,14 @@ public class ClDifInv extends ventana {
           ejecutaAccion(Baccion.getValor(e.getActionCommand()));
         }
       });
+       BSelec.addActionListener(new ActionListener() {
+            @Override
+        public void actionPerformed(ActionEvent e) {
+          if (jt.isVacio())
+              return;
+           ejecutaSelecion(BSelec.getValor(e.getActionCommand()).charAt(0));
+        }
+      });
       jt.addMouseListener(new MouseAdapter() {
             @Override
           public void mouseClicked(MouseEvent e) {
@@ -209,9 +216,9 @@ public class ClDifInv extends ventana {
               if (jf==null)
                   return;
               ejecutable prog;
-              if ((prog=jf.gestor.getProceso("gnu.chu.anjelica.almacen.conmvpr"))==null)
+              if ((prog=jf.gestor.getProceso("gnu.chu.anjelica.almacen.Comvalm"))==null)
                   return;
-              gnu.chu.anjelica.almacen.conmvpr cm=(gnu.chu.anjelica.almacen.conmvpr) prog;
+              gnu.chu.anjelica.almacen.Comvalm cm=(gnu.chu.anjelica.almacen.Comvalm) prog;
               for (int n=jt.getSelectedRow();n>=0;n--)
               {
                   if (jt.getValorInt(n,JT_PROCODI)!=0)
@@ -222,6 +229,8 @@ public class ClDifInv extends ventana {
               }          
               cm.setLote(jt.getValorInt(JT_PRPPART));
               cm.setIndividuo(jt.getValorInt(JT_PRPINDI));
+              cm.setSerie(jt.getValString(JT_PRPSERI));
+              cm.setEjercicio(jt.getValorInt(JT_PRPANO));
               cm.ejecutaConsulta();
               jf.gestor.ir(cm);
           }
@@ -242,14 +251,16 @@ public class ClDifInv extends ventana {
               if (jf==null)
                   return;
               ejecutable prog;
-              if ((prog=jf.gestor.getProceso("gnu.chu.anjelica.almacen.conmvpr"))==null)
+              if ((prog=jf.gestor.getProceso("gnu.chu.anjelica.almacen.Comvalm"))==null)
                   return;
-              gnu.chu.anjelica.almacen.conmvpr cm=(gnu.chu.anjelica.almacen.conmvpr) prog;
+              gnu.chu.anjelica.almacen.Comvalm cm=(gnu.chu.anjelica.almacen.Comvalm) prog;
             
               cm.setProCodi(jtRep.getValorInt(JT_PROCODI));
                
               cm.setLote(jtRep.getValorInt(JT_PRPPART));
               cm.setIndividuo(jtRep.getValorInt(JT_PRPINDI));
+              cm.setSerie(jt.getValString(JT_PRPSERI));
+              cm.setEjercicio(jt.getValorInt(JT_PRPANO));
               cm.ejecutaConsulta();
               jf.gestor.ir(cm);
           }
@@ -1199,6 +1210,7 @@ public class ClDifInv extends ventana {
         jtRep = new gnu.chu.controles.Cgrid(11);
         Ppie = new gnu.chu.controles.CPanel();
         Baccion = new gnu.chu.controles.CButtonMenu();
+        BSelec = new gnu.chu.controles.CButtonMenu();
 
         MInsInv.setText("Ins. Inv.");
         MInsInv.setToolTipText("Insertar en control inventario");
@@ -1438,7 +1450,14 @@ public class ClDifInv extends ventana {
         Baccion.addMenu("Borrar Repetido","R");
         Baccion.setText("Elegir Accion");
         Ppie.add(Baccion);
-        Baccion.setBounds(160, 0, 130, 20);
+        Baccion.setBounds(30, 0, 130, 20);
+
+        BSelec.setText("Seleccionar");
+        BSelec.addMenu("Selecionar Todo","T" );
+        BSelec.addMenu("Selecionar Nada","N" );
+        BSelec.addMenu("Inv. Selec","I" );
+        Ppie.add(BSelec);
+        BSelec.setBounds(310, 0, 110, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1457,14 +1476,37 @@ public class ClDifInv extends ventana {
             if (jt.isVacio())
                 return;
             
-            int cciCodi=insertaInventario(jt.getSelectedRowDisab());
-            if (cciCodi>0)
-                msgBox("Realizado apunte en inventario. Apunte: "+cciCodi+" NL: "+(dtStat.getInt("lci_nume")+1));
+            String msgErr=insertaInventario(jt.getSelectedRowDisab());            
+             msgBox(msgErr==null?"Realizado apunte en inventario":msgErr);
+            
         } catch (ParseException | SQLException ex)
         {
             Error("Error al insertar registro en control inventario",ex);
         }
     }//GEN-LAST:event_MInsInvActionPerformed
+    
+    /**
+     * Comprueba si un individuo ya esta ingresado en el inventario de una fecha dada
+     * @param nl Numero de Linea del Grid jt
+     * @param proCodi
+     * @param fecha
+     * @param dt
+     * @return true si existe, false en caso contrario
+     * @throws SQLException 
+     */
+    private boolean checkRegInv(int nl,int proCodi,String fecha,String s1,DatosTabla dt) throws SQLException
+    {
+        s="select cci_codi,lci_nume  from v_coninvent where cci_feccon= '"+fecha+"'"+
+            " and pro_codi = "+proCodi+
+            " and prp_ano="+ jt.getValorInt(nl,JT_PRPANO)+
+            " and prp_seri='"+jt.getValString(nl,JT_PRPSERI)+"'"+
+            " and prp_part ="+ jt.getValorInt(nl,JT_PRPPART)+
+            " and prp_indi ="+ jt.getValorInt(nl,JT_PRPINDI)+
+            " and lci_peso > 0"+
+            s1;//" and alm_codlin  ="+ jt.getValorInt(nl,JT_ALMCODI);
+        
+       return dtCon1.select(s);
+    }
     private int borrarInventario(int nl) throws ParseException, SQLException
     {
       
@@ -1478,15 +1520,9 @@ public class ClDifInv extends ventana {
                   break;
               }
         }
-        s="select cci_codi,lci_nume  from v_coninvent where cci_feccon= '"+cci_fecconE.getFechaDB()+"'"+
-            " and pro_codi = "+proCodi+
-            " and prp_ano="+ jt.getValorInt(nl,JT_PRPANO)+
-            " and prp_seri='"+jt.getValString(nl,JT_PRPSERI)+"'"+
-            " and prp_part ="+ jt.getValorInt(nl,JT_PRPPART)+
-            " and prp_indi ="+ jt.getValorInt(nl,JT_PRPINDI)+
-            " and alm_codlin  ="+ jt.getValorInt(nl,JT_ALMCODI);
-        
-        if (!dtCon1.select(s))
+        if (! checkRegInv(nl,proCodi,cci_fecconE.getFechaDB()," and alm_codlin  ="+ jt.getValorInt(nl,JT_ALMCODI),
+            dtCon1))
+      
         {
             msgBox("No encontrado apunte en control inventario\n"+s);
             return 0;
@@ -1496,14 +1532,11 @@ public class ClDifInv extends ventana {
         dtAdd.commit();
         return nDel;
     }
-    private int insertaInventario(int nl) throws ParseException, SQLException
+    private String insertaInventario(int nl) throws ParseException, SQLException
     {
                   
             if (jt.getValorDec(nl,JT_PESOORD)<=0)
-            {
-                msgBox("Imposible insertar inventario si kilos no son positivos");
-                return 0;
-            }
+                return "Imposible insertar inventario si kilos no son positivos";
             int proCodi=jt.getValorInt(nl,JT_PROCODI);
             String proNomb=jt.getValString(nl,JT_PRONOMB);
             for (int n=nl;n>=0;n--)
@@ -1515,8 +1548,15 @@ public class ClDifInv extends ventana {
                       break;
                   }
             }
+            
             String camCodi=MantArticulos.getCamara(proCodi,dtStat);
-          
+            if (checkRegInv(nl,proCodi,cci_fecconE.getFechaDB(),"",dtCon1))
+            {                 
+                  return "Producto "+proCodi+" con Indiv "+jt.getValorInt(nl,JT_PRPANO)+
+                        jt.getValString(nl,JT_PRPSERI)+
+                        jt.getValorInt(nl,JT_PRPPART)+"-"+ jt.getValorInt(nl,JT_PRPINDI)+
+                         " ya esta introducido en este inventario";
+            }
            
             s="select cci_codi,alm_codi from v_coninvent where cci_feccon= '"+cci_fecconE.getFechaDB()+"'"+
                 " and alm_codi = "+jt.getValorInt(nl,JT_ALMCODI)+
@@ -1525,8 +1565,10 @@ public class ClDifInv extends ventana {
             {
                 if (!dtStat.select(s))
                 {
-                    msgBox("No encontrado Control de inventario para ese almacen y camara");
-                    return 0;
+                    s="select cci_codi,alm_codi from v_coninvent where cci_feccon= '"+cci_fecconE.getFechaDB()+"'"+
+                        " and alm_codi = "+jt.getValorInt(nl,JT_ALMCODI);
+                    if (! dtStat.select(s))
+                        return "No encontrado Control de inventario para ese almacen";                        
                 }
             }
             int cciCodi=dtStat.getInt("cci_codi");
@@ -1551,7 +1593,7 @@ public class ClDifInv extends ventana {
             dtAdd.setDato("alm_codlin",almCodlin);
             dtAdd.update(stUp);
             ctUp.commit();
-            return cciCodi;
+            return null;
     }
     
     private void MInsRegActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MInsRegActionPerformed
@@ -1592,6 +1634,18 @@ public class ClDifInv extends ventana {
         }
         
     }//GEN-LAST:event_MInsRegActionPerformed
+    private void ejecutaSelecion(char accion)
+    {
+      
+      int nl=jt.getRowCount();
+      for (int n = 0; n < nl; n++) 
+      {  
+          jt.setValor(accion=='T'?true:accion=='N'?false:
+              !jt.getValBoolean(n,JT_SELEC)
+              , n,JT_SELEC);
+
+      }
+    }
     private void ejecutaAccion(String accion)
     {
      
@@ -1624,12 +1678,15 @@ public class ClDifInv extends ventana {
         
         try
         {
+          String strErr="";
           for (int linea:lineas)
           {
                 switch (accion)
                 {
                     case "I":
-                        insertaInventario(linea);
+                        String s1=insertaInventario(linea);
+                        if (s1!=null)
+                            strErr+=s1+"\n";
                         break;
                     case "D":
                         insertarInvDep(linea);
@@ -1640,7 +1697,10 @@ public class ClDifInv extends ventana {
                     case "B":
                         borrarInventario(linea);
                 }
-           }
+           } 
+           if (!strErr.equals(""))
+            mensajes.mensajeExplica("Errores al procesar ordenes",strErr);
+
            msgBox("Accioiones ejectutadas sobre "+lineas.size()+" lineas seleccionadas");
         } catch (SQLException | ParseException ex)
         {
@@ -1650,12 +1710,12 @@ public class ClDifInv extends ventana {
     }
     private void insertarInvDep(int nl) throws SQLException,ParseException
     {         
-            if (jt.getValorDec(nl,JT_PESOORD)>0 && jt.getValorDec(nl,JT_PESOINV)>0)
-            {
-                msgBox("Imposible insertar inventario Anterior deposito si kilos  son positivos");
-                return;
-            }
-            double kilos=jt.getValorDec(nl,JT_PESOORD)>0?jt.getValorDec(nl,JT_PESOORD):jt.getValorDec(nl,JT_PESOINV);
+//            if (jt.getValorDec(nl,JT_PESOORD)>0 && jt.getValorDec(nl,JT_PESOINV)>0)
+//            {
+//                msgBox("Imposible insertar inventario Anterior deposito si kilos  son positivos");
+//                return;
+//            }
+            double kilos=jt.getValorDec(nl,JT_PESOORD)!=0?jt.getValorDec(nl,JT_PESOORD):jt.getValorDec(nl,JT_PESOINV);
             if (kilos<0)
                 kilos=kilos*-1;
             int proCodi=jt.getValorInt(JT_PROCODI);
@@ -1736,6 +1796,7 @@ public class ClDifInv extends ventana {
     }//GEN-LAST:event_MDelRepActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButtonMenu BSelec;
     private gnu.chu.controles.CButtonMenu Baccion;
     private gnu.chu.controles.CButtonMenu Baceptar;
     private javax.swing.JMenuItem MDelInv;
