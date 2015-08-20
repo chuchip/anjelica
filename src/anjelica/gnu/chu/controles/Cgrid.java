@@ -2154,6 +2154,11 @@ public class Cgrid extends CPanel implements Serializable
         return pos;*/
         return datosModelo.findColumn(nomcol);
     }
+    /**
+     * Poner unas orejas  de tipo Raton ;) al tableview
+     * @param v 
+     */
+    @Override
     public void addMouseListener(MouseListener v)
     {
       super.addMouseListener(v);

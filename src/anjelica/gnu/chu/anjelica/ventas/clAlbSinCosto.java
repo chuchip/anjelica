@@ -8,15 +8,18 @@ import java.sql.*;
 import java.awt.event.*;
 import java.util.*;
 import gnu.chu.Menu.*;
+import gnu.chu.interfaces.ejecutable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.*;
 import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.view.*;
 
 /**
  *
  * <p>Titulo: clAlbSinCosto</p>
  * <p>Descripción: Cons/Listado Albaranes sin costo </p>
- * <p>Copyright: Copyright (c) 2005-2009
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -34,7 +37,10 @@ import net.sf.jasperreports.view.*;
  */
 public class clAlbSinCosto extends ventana
 {
-
+  private final int  JT_EMPALB=1;
+  private final int  JT_EJEALB=2;
+  private final int  JT_SERALB=3;
+  private final int  JT_NUMALB=4;
   CPanel Pprinc = new CPanel();
   CPanel Pentra = new CPanel();
   CTextField feciniE = new CTextField(Types.DATE,"dd-MM-yyyy");
@@ -92,7 +98,7 @@ public class clAlbSinCosto extends ventana
  private void jbInit() throws Exception
  {
    iniciarFrame();
-   this.setVersion("2010-03-30s");
+   this.setVersion("2015-08-19");
    this.setSize(new Dimension(623, 442));
    conecta();
    statusBar = new StatusBar(this);
@@ -114,22 +120,22 @@ public class clAlbSinCosto extends ventana
     jt.setMaximumSize(new Dimension(444, 206));
     jt.setMinimumSize(new Dimension(444, 206));
     jt.setPreferredSize(new Dimension(444, 206));
-    Vector v = new Vector();
-    v.addElement("Fec.Alb"); // 0
-    v.addElement("Emp"); // 1
-    v.addElement("Año"); // 2
-    v.addElement("Serie"); // 3
-    v.addElement("Num."); // 4
-    v.addElement("Cliente"); // 5
-    v.addElement("Nombre"); // 6
-    v.addElement("Importe"); // 7
-    v.addElement("Conf."); //8
-    v.addElement("T.Fact."); // 9
-    v.addElement("Giro"); //10
+    ArrayList v = new ArrayList();
+    v.add("Fec.Alb"); // 0
+    v.add("Emp"); // 1
+    v.add("Año"); // 2
+    v.add("Serie"); // 3
+    v.add("Num."); // 4
+    v.add("Cliente"); // 5
+    v.add("Nombre"); // 6
+    v.add("Importe"); // 7
+    v.add("Conf."); //8
+    v.add("T.Fact."); // 9
+    v.add("Giro"); //10
 
     jt.setCabecera(v);
-    jt.setAnchoColumna(new int[]{75,30,50,30,50,60,120,80,30,40,30});
-    jt.setAlinearColumna(new int[]{1,2,2,0,2,2,0,2,1,1,1});
+    jt.setAnchoColumna(new int[]{75,30,50,25,50,60,120,80,30,40,30});
+    jt.setAlinearColumna(new int[]{1,2,2,1,2,2,0,2,1,1,1});
     jt.setFormatoColumna(7,"---,--9.99");
     jt.setFormatoColumna(8,"B-");
     jt.setFormatoColumna(10,"BSN");
@@ -138,7 +144,7 @@ public class clAlbSinCosto extends ventana
     jtLin.setMaximumSize(new Dimension(442, 119));
     jtLin.setMinimumSize(new Dimension(442, 119));
     jtLin.setPreferredSize(new Dimension(442, 119));
-    Vector v1=new Vector();
+    ArrayList v1=new ArrayList();
     Bprint.setBounds(new Rectangle(326, 24, 87, 21));
     Bprint.setMargin(new Insets(0, 0, 0, 0));
     Bprint.setText("Imprimir");
@@ -163,7 +169,7 @@ public class clAlbSinCosto extends ventana
     v1.add("Precio"); // 4
     jtLin.setCabecera(v1);
     jtLin.setAnchoColumna(new int[]{50,150,50,40,50});
-    jtLin.setAlinearColumna(new int[]{0,0,2,2,2});
+    jtLin.setAlinearColumna(new int[]{2,0,2,2,2});
     jtLin.setFormatoColumna(2,"---,--9.99");
     jtLin.setFormatoColumna(3,"---9");
     jtLin.setFormatoColumna(4,"----9.99");
@@ -210,12 +216,14 @@ public class clAlbSinCosto extends ventana
   public void activarEventos()
   {
     Bconsulta.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         Bconsulta_actionPerformed();
       }
     });
     jt.tableView.getSelectionModel().addListSelectionListener(new ListSelectionListener()
     {
+      @Override
       public void valueChanged(ListSelectionEvent e)
       {
         if (! jt.isEnabled())
@@ -225,7 +233,55 @@ public class clAlbSinCosto extends ventana
         verDatLin();
       }
     });
+    creaPopEspere();
+    jt.addMouseListener(new MouseAdapter()
+    {
+         @Override
+         public void mouseClicked(MouseEvent e) {
+             if (e.getClickCount()<2)
+                 return;
+             if (jt.isVacio() || jf==null)
+                 return;
+             msgEspere("Ejecutando consulta en Mant. Albaranes");
+             new miThread("")
+             {
+                 @Override
+                 public void run()
+                 {
+                   javax.swing.SwingUtilities.invokeLater(new Thread()
+                   {
+                       @Override
+                       public void run()
+                       {                                                   
+                            ejecutable prog;
+                            if ((prog=jf.gestor.getProceso(pdalbara.getNombreClase()))==null)
+                                return;
+                            pdalbara cm=(pdalbara) prog;
+                            if (cm.inTransation())
+                            {
+                                msgBox("Mantenimiento Albaranes de Ventas ocupado. No se puede realizar la busqueda");
+                                return;
+                            }
+                            cm.PADQuery();
+                            cm.setSerieAlbaran(jt.getValString(JT_SERALB));
+                            cm.setNumeroAlbaran(jt.getValorInt(JT_NUMALB));
+                            cm.setEjercAlbaran(jt.getValorInt(JT_EJEALB));
+                            cm.setEmpresaAlbaran(jt.getValorInt(JT_EMPALB));
+                            cm.ej_query();
+                            jf.gestor.ir(cm);
+                            resetMsgEspere();                                                         
+                       }
+                   });
+                   
+                 }
+             };
+              
+              
+
+         }
+    });
     Bprint.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
        Bprint_actionPerformed();
       }
@@ -263,6 +319,7 @@ public class clAlbSinCosto extends ventana
           " AND c.avc_fecalb <= TO_DATE('" + fecfinE.getText() +   "','dd-MM-yyyy') " +
           " and c.emp_codi>= "+empiniE.getValorInt()+
           " and c.emp_codi<= "+empfinE.getValorInt()+
+          " and c.avc_serie!='X'"+
           (opIncImp0.isSelected()?"":" and c.avc_impalb != 0 ")+
           (EU.isRootAV()?"":" and c.div_codi > 0 ");
   }

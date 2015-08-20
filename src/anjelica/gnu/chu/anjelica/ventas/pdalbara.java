@@ -647,7 +647,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-07-24" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-08-19" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -3592,9 +3592,17 @@ public class pdalbara extends ventanaPad  implements PAD
   {
       avc_numeE.setText(numAlbaran);
   }
+  public void setNumeroAlbaran(int numAlbaran)
+  {
+      avc_numeE.setValorInt(numAlbaran);
+  }
   public void setEjercAlbaran(int avcAno)
   {
       avc_anoE.setValorInt(avcAno);
+  }
+  public void setEmpresaAlbaran(int empCodi)
+  {
+      emp_codiE.setValorInt(empCodi);
   }
   public boolean inTransation()
   {
@@ -3911,7 +3919,7 @@ public class pdalbara extends ventanaPad  implements PAD
         }
       }
       if (checkEdicionAlbaran())
-      return;
+        return;
 
     pro_nombE.setEditable(true);
     avc_valoraE.setValor("0");
@@ -4173,7 +4181,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     else
     {
-        if (P_CONPEDIDO && !avc_deposE.getValor().equals("E"))
+        if (P_CONPEDIDO && !avc_deposE.getValor().equals("E") && avc_seriE.getText().equals("A"))
         {
             if (sbePanel.incPedidosAlb(dtStat, emp_codiE.getValorInt(),sbe_codiE.getValorInt()))
             {
