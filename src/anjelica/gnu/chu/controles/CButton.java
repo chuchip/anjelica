@@ -33,7 +33,7 @@ public class CButton extends JButton implements gnu.chu.interfaces.CEditable,Tab
 {
   private boolean activado = true;
   private boolean activadoParent = true;
-
+  private boolean dependePadre=true;
   public CButton()
   {
     super();
@@ -100,9 +100,24 @@ public class CButton extends JButton implements gnu.chu.interfaces.CEditable,Tab
     }
     super.setEnabled(false);
   }
-
+ /**
+     * Indica si depende del padre (normalmente un CPanel) para ponerse enabled/disabled.
+     * Normalmente cuando el padre es puesto a disabled el CTextField tambien es puesto y viceversa.
+     * 
+     * @param dependPadre 
+     */
+    public void setDependePadre(boolean dependPadre)
+    {
+      dependePadre=dependPadre;    
+    }
+    public boolean getDependePadre()
+    {
+      return dependePadre;
+    }
   public void setEnabledParent(boolean enab)
   {
+    if (! dependePadre)
+      return;
     activadoParent = enab;
     if (!enab)
     {

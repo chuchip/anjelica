@@ -107,7 +107,7 @@ public class navegador extends CPanel
   public static final int SOLCUR=195; // Solo Muestra los Cursores.
   public static final int CURYCON = 227;  //  Muestra los Cursores y el boton consultar.
   public static final int NOBOTON = 0;  //  No muestra ningun boton
-
+  public static final int SOLOEDIT = 16;
   public navegador()
   {
     this(null, null, false, NORMAL);
@@ -132,7 +132,13 @@ public class navegador extends CPanel
   {
     this(pd, tabla, addChose, NORMAL);
   }
-
+/**
+ * 
+ * @param pd
+ * @param tabla
+ * @param addChose
+ * @param modo 
+ */
   public navegador(PAD pd, DatosTabla tabla, boolean addChose, int modo)
   {
     incChose = addChose;
@@ -805,42 +811,51 @@ public class navegador extends CPanel
     else
       super.requestFocus();
   }
-  public void setEnabled(int p1, boolean p2){
+  /**
+   * Pone enabled o disabled un boton.
+   * @param boton Boton a poner Enabled o disables
+   * @param activo  Activo
+   */
+  public void setEnabled(int boton, boolean activo){
     super.setEnabled(true);
-  	switch (p1) {
+  	switch (boton) {
     	case PRIMERO:
-      	btnPrimero.setEnabled(p2);
+      	btnPrimero.setEnabled(activo);
       	break;
       case ANTERIOR:
-      	btnAnterior.setEnabled(p2);
+      	btnAnterior.setEnabled(activo);
       	break;
       case QUERY:
-      	btnQuery.setEnabled(p2);
+      	btnQuery.setEnabled(activo);
       	break;
       case EDIT:
-      	btnEdit.setEnabled(p2);
+      	btnEdit.setEnabled(activo);
       	break;
       case ADDNEW:
-      	btnAddNew.setEnabled(p2);
+      	btnAddNew.setEnabled(activo);
       	break;
       case DELETE:
-      	btnDelete.setEnabled(p2);
+      	btnDelete.setEnabled(activo);
       	break;
       case SIGUIENTE:
-      	btnSiguiente.setEnabled(p2);
+      	btnSiguiente.setEnabled(activo);
       	break;
       case ULTIMO:
-      	btnUltimo.setEnabled(p2);
+      	btnUltimo.setEnabled(activo);
       	break;
       case CHOSE:
-      	btnChose.setEnabled(p2);
+      	btnChose.setEnabled(activo);
       	break;
       case TODOS:
-        ponEnabled(p2);
+        ponEnabled(activo);
         default:
       	break;
     }
   }
+  /**
+   * No muestra el boton mandado.
+   * @param boton 
+   */
   public void removeBoton(int boton) {
   	switch (boton) {
     	case PRIMERO:

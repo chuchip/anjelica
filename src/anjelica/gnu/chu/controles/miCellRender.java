@@ -86,11 +86,14 @@ public class miCellRender extends  DefaultTableCellRenderer
 
     if (c instanceof JLabel)
     {
-      if (table.getValueAt(row, column).toString().length() * 7 >
-          table.getColumn(table.getColumnName(column)).getWidth())
-        ( (JLabel) c).setToolTipText(table.getValueAt(row, column).toString());
-      else
-        ( (JLabel) c).setToolTipText(padre.getToolTipText());
+      if (table.getValueAt(row, column)!=null)
+      {
+        if (table.getValueAt(row, column).toString().length() * 7 >
+            table.getColumn(table.getColumnName(column)).getWidth())
+          ( (JLabel) c).setToolTipText(table.getValueAt(row, column).toString());
+        else
+          ( (JLabel) c).setToolTipText(padre.getToolTipText());
+      }
     }
 
     if (fuente!=null)

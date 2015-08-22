@@ -105,7 +105,7 @@ public class LotePanel extends CPanel {
 
         pro_codiL = new gnu.chu.controles.CLabel();
         pro_codiE = new gnu.chu.camposdb.proPanel();
-        cPanel1 = new gnu.chu.controles.CPanel();
+        PLote1 = new gnu.chu.controles.CPanel();
         pro_serieL = new gnu.chu.controles.CLabel();
         pro_loteE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
         eje_numeL = new gnu.chu.controles.CLabel();
@@ -134,36 +134,36 @@ public class LotePanel extends CPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 2);
         add(pro_codiE, gridBagConstraints);
 
-        cPanel1.setMaximumSize(new java.awt.Dimension(100, 18));
-        cPanel1.setMinimumSize(new java.awt.Dimension(100, 18));
-        cPanel1.setPreferredSize(new java.awt.Dimension(100, 18));
-        cPanel1.setLayout(null);
+        PLote1.setMaximumSize(new java.awt.Dimension(100, 18));
+        PLote1.setMinimumSize(new java.awt.Dimension(100, 18));
+        PLote1.setPreferredSize(new java.awt.Dimension(100, 18));
+        PLote1.setLayout(null);
 
         pro_serieL.setText("Serie");
-        cPanel1.add(pro_serieL);
+        PLote1.add(pro_serieL);
         pro_serieL.setBounds(110, 0, 34, 15);
-        cPanel1.add(pro_loteE);
+        PLote1.add(pro_loteE);
         pro_loteE.setBounds(210, 0, 47, 17);
 
         eje_numeL.setText("Ejercicio");
-        cPanel1.add(eje_numeL);
+        PLote1.add(eje_numeL);
         eje_numeL.setBounds(0, 0, 46, 15);
-        cPanel1.add(eje_numeE);
+        PLote1.add(eje_numeE);
         eje_numeE.setBounds(60, 0, 41, 17);
 
         pro_indivL.setText("Individuo ");
-        cPanel1.add(pro_indivL);
+        PLote1.add(pro_indivL);
         pro_indivL.setBounds(270, 0, 53, 15);
-        cPanel1.add(pro_indivE);
+        PLote1.add(pro_indivE);
         pro_indivE.setBounds(330, 0, 36, 17);
 
         pro_loteL.setText("Lote");
-        cPanel1.add(pro_loteL);
+        PLote1.add(pro_loteL);
         pro_loteL.setBounds(180, 0, 34, 15);
 
         pro_serieE.setAutoNext(true);
         pro_serieE.setMayusc(true);
-        cPanel1.add(pro_serieE);
+        PLote1.add(pro_serieE);
         pro_serieE.setBounds(150, 0, 20, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -174,10 +174,10 @@ public class LotePanel extends CPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
-        add(cPanel1, gridBagConstraints);
+        add(PLote1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private gnu.chu.controles.CPanel cPanel1;
+    private gnu.chu.controles.CPanel PLote1;
     private gnu.chu.controles.CTextField eje_numeE;
     private gnu.chu.controles.CLabel eje_numeL;
     private gnu.chu.camposdb.proPanel pro_codiE;

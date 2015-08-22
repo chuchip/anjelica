@@ -142,7 +142,20 @@ public class utildesp
   }
 
 
-
+/**
+ * 
+ * @param serie
+ * @param proCodi
+ * @param empLot
+ * @param ejeLot
+ * @param proLote
+ * @param proIndi
+ * @param dtCon1
+ * @param dtStat
+ * @param EU
+ * @return boolean true si encuentra los datos del individuo
+ * @throws SQLException 
+ */
   public boolean busDatInd(String serie, int proCodi,int empLot,
                            int ejeLot, int proLote,
                            int proIndi,
@@ -158,10 +171,11 @@ public class utildesp
    * @param empLot
    * @param ejeLot
    * @param proLote
+     * @param nInd
    * @param dt1
    * @param dt2
    * @param EU
-   * @return
+   * @return  true si encuentra los datos del individuo
    * @throws java.sql.SQLException
    */
   public boolean buscaDatCompra(String serie, int proCodi,int empLot,int ejeLot,
@@ -184,7 +198,7 @@ public class utildesp
    * @param EU EntornoUsuario
    * @throws SQLException
    *
-   * @return boolean
+   * @return boolean  true si encuentra los datos del individuo
    */
     
     public boolean busDatInd(String serie, int proCodi, int empLot,
@@ -209,7 +223,7 @@ public class utildesp
    * @param EU EntornoUsuario
    * @throws SQLException
    * @throws ParseException
-   * @return boolean true si encuentra los datos de compra.
+   * @return boolean true si encuentra los datos del individuo
    */
     private boolean buscaDatosIndiv(String serie, int proCodi, int empLot,
             int ejeLot, int proLote,
@@ -742,6 +756,7 @@ public class utildesp
     stkPart.setLockIndiv(dt.getInt("stk_block")!=0);   
     stkPart.setKilos(Formatear.redondea(dt.getDouble("stp_kilact"),2));
     stkPart.setUnidades(dt.getInt("stp_unact"));
+    stkPart.setFechaCad(dt.getDate("stp_feccad"));
     return stkPart;
   }
   public void setStockPartidas(StkPartid stkPart)

@@ -1115,8 +1115,9 @@ constraint ix_albcompar primary key(acc_ano,emp_codi,acc_serie,acc_nume,acl_nuli
 -- create index ix_albcompar on v_albcompar (acc_ano,emp_codi,acc_serie,acc_nume,acp_numlin);
  create index ix_albcompar2 on v_albcompar (pro_codi,acc_ano,acc_serie,acp_numind);
 
-create or replace view v_compras as 
-select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,
+-- drop view anjelica.v_compras;
+ create or replace view anjelica.v_compras as 
+select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,c.sbe_codi,
 l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi,
 i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_fecpro,i.acp_nucrot,i.acp_painac,
 i.acp_paisac,i.acp_engpai,i.mat_codi
@@ -1129,7 +1130,8 @@ and c.acc_ano=i.acc_ano
 and c.emp_codi=i.emp_codi
 and c.acc_serie=i.acc_serie
 and c.acc_nume=i.acc_nume
-and l.acl_nulin=i.acl_nulin
+and l.acl_nulin=i.acl_nulin;
+grant select on anjelica.v_compras to public;
 
 create or replace view v_albacom as 
 select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,
@@ -1411,6 +1413,8 @@ create table anjelica.grufampro
 agr_codi int not null, -- Grupo
 fpr_codi int not null -- Familia
 );
+create index ix_grufampr1 on anjelica.grufampro (fpr_codi);
+create index ix_grufampr2 on anjelica.grufampro (agr_codi);
 --
 -- Tabla con la manera de presentar los grupos.
 --
@@ -1422,45 +1426,7 @@ create table anjelica.grufamvis
     agr_codi int not null,  -- Grupo
     gfv_padre int not null  -- Padre de la familia. 0=Raiz
 );
---
--- Tabla origen de despieces  (cabecera)
----
--- drop table v_desporig;
--- create table anjelica.v_desporig
--- (
--- eje_nume int not null,   -- Ejercicio de Despiece
--- emp_codi int not null,   -- Empresa de Despiece
--- deo_codi int not null,   -- Numero de despiece
--- tid_codi int,            -- Tipo de despiece
--- pro_codi int,            -- Producto
--- deo_ejelot int,          -- Ejercicio de Lote
--- deo_emplot int,          -- Empresa de Lote
--- deo_serlot char(1),      -- Serie de Lote
--- pro_lote int,           -- Numero de Lote
--- pro_numind int,		-- Numero de Individuo
--- deo_numdes int,		-- Numero de Despiece (Grupo)
--- deo_fecha date,		-- Fecha del despiece
--- usu_nomb varchar(20),   -- Usuario que genero el despiece
--- deo_almori int,		-- Almacen de Origen
--- deo_almdes int,		-- Almacen destino
--- deo_ejloge int,         -- Ejercicio de Lote Generado
--- deo_emloge int,         -- Empres Lote generado
--- deo_seloge char(1),     -- Serie de Lote Generado
--- deo_nuloge int,         -- Numero de Lote generado
--- deo_cerra smallint,     -- Cerrado (0: No)
--- deo_prcost float,       -- Precio costo
--- deo_kilos float,        -- Kilos
--- deo_fecalt date default  current_date,
--- deo_prusu float not null default 0,  -- Costo de Usuario (antes de regularizar costos)
--- constraint ix_desporig primary key(eje_nume,deo_codi)
--- );
--- create index ix_despori2 on v_desporig(eje_nume,deo_numdes,emp_codi);
--- create index ix_despori3 on v_desporig(pro_codi,deo_fecha,deo_almori);
--- drop table v_desporig;
---
--- Cabecera despieces
---
--- drop table desporig;
+
 create table anjelica.desporig
 (
 eje_nume int not null,   -- Ejercicio de Despiece
@@ -1769,7 +1735,7 @@ create table anjelica.grupdesp
 (
 	emp_codi int not null, -- Deprecated
 	eje_nume int not null,
-	grd_nume int not null, -- Une con el deo_numdes en v_desporig
+	grd_nume int not null, -- Une con el deo_numdes en desporig
 	grd_serie char(1) not null,
 	grd_kilo decimal(8,2) not null, -- Kilos
 	grd_unid int not null,          -- Unidades
@@ -1792,7 +1758,7 @@ create table anjelica.grupdesp
 create table anjelica.grudeshis
 (
 	eje_nume int not null,
-	grd_nume int not null, -- Une con el deo_codi en v_desporig
+	grd_nume int not null, -- Une con el deo_codi en desporig
 	grd_serie char(1) not null,
 	grd_kilo decimal(8,2) not null, -- Kilos
 	grd_unid int not null,          -- Unidades
@@ -2093,9 +2059,10 @@ create table anjelica.v_saladesp
  sde_codprov int,
  sde_orgcon varchar(15),
  sde_cercal varchar(15),
- sde_etical varchar(10)
+ sde_etical varchar(10),
+ constraint ix_saladesp primary KEY (sde_codi);
 );
-create unique index ix_saladesp on v_saladesp(sde_codi);
+
 --
 -- Paises
 --
@@ -2155,6 +2122,7 @@ create table anjelica.tipodesp
         tid_usoequ smallint not null default -1, -- Usar Productos equivalentes
         primary key (tid_codi)
 );
+create index ix_tipodes1 on tipodesp (tid_nomb);
 -- Este tipo de despiece limita al dia actual, el numero de despieces libres al
 -- numero puesto en tid_agrup
 insert into tipodesp values (9998,'DESPIECE LIBRE',0,5,'20110101',null,null);
@@ -3031,7 +2999,7 @@ create table anjelica.coninvlin
     lci_coment varchar(35),			-- Comentario
     lci_numpal varchar not null default '',	-- Numero Palet
 	alm_codlin int not null, -- Almacen (Para List. Dif. Inventario)
-  constraint ix_coninvlin primary key(emp_codi,cci_codi,lci_nume)
+  constraint ix_coninvlin primary key(cci_codi,lci_nume,emp_codi,)
 );
 create index ix_coninvl2 on coninvlin(pro_codi,prp_ano,prp_part,prp_seri,prp_indi);
 --
@@ -3508,7 +3476,7 @@ create index  ix_hislisstk on anjelica.hislisstk  (alm_codi,hls_fecstk);
 --
 -- Tabla de Partes. Cabecera
 --
---drop view v_partes;
+--drop view anjelica.v_partes;
 -- DROP TABLE anjelica.partecab;
 CREATE TABLE anjelica.partecab
 (
@@ -3521,7 +3489,8 @@ CREATE TABLE anjelica.partecab
 	pac_fecinc date not null, -- Fecha Incidencia
 	pac_fecpro date, -- Fecha Procesado
 	pac_fecres date, -- Fecha Resuelto
-	pac_estad int not null default 1, -- Estado del parte (1. Generada 2. Procesar. 3 Cerrada)	
+	pac_estad int not null default 1, -- Estado del parte (1. Generada 
+									  -- 2. Procesar. 3 Cerrada. 4 Cerrada)	
 	pac_tipo char(1) not null, -- Tipo Parte: Entrada, Devolucion, No-recepción,Sala	
 	pac_coment varchar(150), -- Comentario
 	pac_cliprv int,	-- Cliente/Proveedor	
@@ -3535,6 +3504,7 @@ CREATE TABLE anjelica.partecab
 create table anjelica.partelin
 (
 	par_codi int not null, -- Codigo Parte
+	par_linea int not null, -- Numero de Linea
 	pro_codi int not null,	  	-- Producto
 	pal_kilos float, -- Kilos
 	pal_unidad int not null, -- Unidades/Cajas
@@ -3542,34 +3512,40 @@ create table anjelica.partelin
 	pro_serlot char(1),	-- Serie 	
  	pro_numlot int,		-- Lote
 	pro_indlot int,	-- Numero Individuo		
+	pro_feccad date, -- Fecha Caducidad
 	pal_acsala char(1), -- Accion sugerida x sala. (V)ertedero/(R)eutilizar/(C)ongelar	
 	pal_comsal varchar(50), -- Comentario Sala sobre esta linea
-	pal_accion char(1) not null default '-', -- (V)ertedero/(R)eutilizar/(C)ongelar,(-) No definida
+	pal_accion char(1) not null default '-', -- (A) Acept. Dev. (N) No acept. Dev.
+											 -- (V)ertedero/(R)eutilizar/(C)ongelar,(-) No definida
 	pal_coment varchar(50), -- Comentario sobre esta linea
 	pal_solabo smallint not null default 0, -- Hacer/Solicitar Abono? (0=No)
 	pal_kilabo float, -- Kilos Abono
-	pal_preabo float -- Precio Abono
+	pal_preabo float, -- Precio Abono
+	constraint ix_partelin primary  key (par_codi,par_linea)
 );
-create index ix_partelin on partelin(par_codi);
+
 alter table anjelica.partelin add constraint pal_procod foreign key (pro_codi)
     references anjelica.v_articulo(pro_codi);
 --drop view v_partes;
-create view v_partes as select c.*,l.pro_codi,pal_kilos,pal_unidad,
-pro_ejelot,pro_serlot,pro_numlot,pro_indlot,pal_acsala, pal_accion,pal_coment,pal_solabo,pal_comsal,pal_kilabo,
+create view anjelica.v_partes as select c.*,l.par_linea,l.pro_codi,pal_kilos,pal_unidad,
+pro_ejelot,pro_serlot,pro_numlot,pro_indlot,pro_feccad,pal_acsala, pal_accion,pal_coment,pal_solabo,pal_comsal,pal_kilabo,
 pal_preabo from anjelica.partecab as c,anjelica.partelin as l where c.par_codi=l.par_codi;
-
+grant select on anjelica.v_partes to public;
 --drop view v_cliprv;
 create view anjelica.v_cliprv as 
 select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.v_cliente 
 union all
-select 'C' AS tipo,prv_codi as codigo, prv_nomb as nombre from anjelica.v_proveedo
+select 'C' AS tipo,prv_codi as codigo, prv_nomb as nombre from anjelica.v_proveedo;
+grant select on anjelica.v_cliprv to public;
 --- Constraints tipo Foreign Key
 alter table anjelica.v_albavec add constraint avc_procl foreign key (cli_codi)
     references anjelica.clientes(cli_codi);
 alter table anjelica.v_albavel add constraint avl_profk foreign key (pro_codi) 
     references anjelica.v_articulo(pro_codi);
+	
 alter table anjelica.v_articulo add constraint fam_profk
-   foreign key (emp_codi,fam_codi) references anjelica.v_famipro(fpr_codi) DEFERRABLE INITIALLY DEFERRED;
+   foreign key (fam_codi) references anjelica.v_famipro(fpr_codi) DEFERRABLE INITIALLY DEFERRED;
+   
 alter table anjelica.v_famipro add constraint grp_codfk
    foreign key (emp_codi,agr_codi) references anjelica.v_agupro(emp_codi,agr_codi)  DEFERRABLE INITIALLY DEFERRED;
 alter table anjelica.v_albacol add constraint avl_profk foreign key (pro_codi) references anjelica.v_articulo(pro_codi);

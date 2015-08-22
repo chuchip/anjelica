@@ -1,4 +1,7 @@
 package gnu.chu.anjelica.almacen;
+
+import java.util.Date;
+
 /**
  * <p>Titulo: StkPartid</p>
  * <p>Descripcion: Clase para almacen stock actual de un producto,
@@ -23,6 +26,7 @@ package gnu.chu.anjelica.almacen;
  */
 
 public class StkPartid {
+    private Date fecCad=null;
     private double kilos=0;
     private boolean indivStock;
     private boolean controlInd;
@@ -74,9 +78,22 @@ public class StkPartid {
     public void setKilos(double kilos) {
         this.kilos = kilos;
     }
-
-  
-
+    /**
+     * Establece la fecha de caducidad
+     * @param fecCad 
+     */
+    public void setFechaCad(Date fecCad)
+    {
+        this.fecCad=fecCad;
+    }
+    /**
+     * Devuelve la fecha de caducidad
+     * @return 
+     */
+    public Date getFechaCad()
+    {
+        return this.fecCad;
+    }
     public int getUnidades() {
         return unidades;
     }
