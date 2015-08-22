@@ -20,6 +20,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -28,7 +29,7 @@ import java.util.Vector;
  * <p>Título: Clmarzona</p>
  * <p>Descripción: Consulta/Listado Margenes por zonas</p>
  * <p>Created on 03-abr-2009, 18:14:38</p>
- *  <p>Copyright: Copyright (c) 2005-2011
+ *  <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -174,7 +175,7 @@ public class Clmarzona extends ventana {
     tirCodInv = pdmotregu.getTipoMotRegu(dtStat, "=");
 //    tirCodVert=pdmotregu.getTiposRegul(dtStat,"V?");
     mvtosAlm.setResetCostoStkNeg(true);
-
+    mvtosAlm.setFechasDocumento(true);
     arbolProdPanel.iniciar(dtCon1);
     activarEventos();
     feciniE.requestFocus();
@@ -520,15 +521,15 @@ public class Clmarzona extends ventana {
           double iCom,Cgrid jt)
   {
 
-    Vector v=new Vector();
-    v.addElement(""+proCodi);
-    v.addElement(proNomb);
-    v.addElement(Formatear.format(kgPro,"----,--9.99")); // Kilos Venta
-    v.addElement(Formatear.format(impPro,"----,--9.99")); //  Imp. Venta
-    v.addElement(Formatear.format(impPro/kgPro,"---9.99")); // Pr. Medio Venta.
-    v.addElement(Formatear.format((iCom==0||kCom==0?0:iCom/kCom),"---9.99")); // 5
-    v.addElement(Formatear.format(impGana/kgPro,"--,--9.99")); // 6
-    v.addElement(Formatear.format(impGana,"---,--9.99")); // 7
+    ArrayList v=new ArrayList();
+    v.add(""+proCodi);
+    v.add(proNomb);
+    v.add(Formatear.format(kgPro,"----,--9.99")); // Kilos Venta
+    v.add(Formatear.format(impPro,"----,--9.99")); //  Imp. Venta
+    v.add(Formatear.format(impPro/kgPro,"---9.99")); // Pr. Medio Venta.
+    v.add(Formatear.format((iCom==0||kCom==0?0:iCom/kCom),"---9.99")); // 5
+    v.add(Formatear.format(impGana/kgPro,"--,--9.99")); // 6
+    v.add(Formatear.format(impGana,"---,--9.99")); // 7
     jt.addLinea(v);
     try {
         if (jt.getNombre().startsWith("P"))
@@ -546,7 +547,7 @@ public class Clmarzona extends ventana {
 
   double getImpGana(int proCodi, String fecini,String fecfin,String zona,String repr) throws Exception
   {
-    boolean calculaMvtos = mvtosAlm.calculaMvtos( proCodi,dtCon1,dtStat, zona, repr);
+    mvtosAlm.calculaMvtos( proCodi,dtCon1,dtStat, zona, repr);
     kgCom = mvtosAlm.getKilosEntrada();
     impCom= mvtosAlm.getImporteEntrada();
     return mvtosAlm.getImpGana();
@@ -939,7 +940,7 @@ public class Clmarzona extends ventana {
 
         cTabbedPane1.addTab("Comentarios", cPanel1);
 
-        Pfami.setLayout(null);
+        Pfami.setLayout(new java.awt.BorderLayout());
 
         jtGru.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -947,15 +948,14 @@ public class Clmarzona extends ventana {
         jtGru.setLayout(jtGruLayout);
         jtGruLayout.setHorizontalGroup(
             jtGruLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 678, Short.MAX_VALUE)
+            .add(0, 681, Short.MAX_VALUE)
         );
         jtGruLayout.setVerticalGroup(
             jtGruLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 148, Short.MAX_VALUE)
+            .add(0, 250, Short.MAX_VALUE)
         );
 
-        Pfami.add(jtGru);
-        jtGru.setBounds(0, 0, 680, 150);
+        Pfami.add(jtGru, java.awt.BorderLayout.CENTER);
 
         cTabbedPane1.addTab("Grupos", Pfami);
 

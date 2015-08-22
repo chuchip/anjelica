@@ -100,6 +100,7 @@ public class menu extends JFrame
   JMenuItem ALlisaldos = new JMenuItem();
   JMenuItem ALclUbiArt = new JMenuItem();
   JMenuItem ALconmvpr = new JMenuItem();
+  JMenuItem ALConmvpr = new JMenuItem();
   JMenuItem ALMantPartes = new JMenuItem();
   JMenuItem pdproveed = new JMenuItem();
   JMenuItem pdarticu = new JMenuItem();
@@ -425,6 +426,12 @@ public class menu extends JFrame
     ALconmvpr.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         ALconmvpr_actionPerformed(e);
+      }
+    });
+    ALConmvpr.setText("Cons.Mvtos");
+    ALConmvpr.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        ALConmvpr_actionPerformed(e);
       }
     });
     ALMantPartes.setText("Mant.Partes");
@@ -890,6 +897,7 @@ public class menu extends JFrame
     JPopupAlmacen.add(ALlisaldos);
     JPopupAlmacen.add(ALclUbiArt);
     JPopupAlmacen.add(ALconmvpr);
+     JPopupAlmacen.add(ALConmvpr);
     JPopupAlmacen.add(ALMantPartes);
     JPopupAlmacen.add(pdregalm);
     JPopupAlmacen.add(costkpar);
@@ -1728,6 +1736,10 @@ void pdreprese_actionPerformed(ActionEvent e) {
   }
   void ALconmvpr_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.almacen.conmvpr(menu.this,EU));
+
+  }
+   void ALConmvpr_actionPerformed(ActionEvent e) {
+    lanzaEjecutable(new gnu.chu.anjelica.almacen.Comvalm(menu.this,EU));
 
   }
 void ALMantPartes_actionPerformed(ActionEvent e) {
