@@ -1169,14 +1169,12 @@ public class ActualStkPart
       s+= (controlCam ? " and cam_codi = '" + camara + "'" :
           proArtcon != 2 ? "  and pro_artcon " + (proArtcon == 0 ? "= 0" : " <> 0") : "");
      if (! resetear) // No resetear TODOS los productos
-       s+=" AND exists (select pro_codi FROM coninvlin as l, coninvcab as c "+
-         " where l.pro_codi = v_articulo.pro_codi  "+
-         " and c.cci_codi = l.cci_codi " +
-         " and c.emp_codi = l.emp_codi "+
-         " and c.emp_codi = "+empCodi+
-         (almCodi==0?"":" and c.alm_codi = "+almCodi)+
-         (controlCam ?" and c.cam_codi = '"+camara+"'":"")+
-         " and c.cci_feccon = TO_DATE('" + fecinv + "','dd-MM-yyyy') )";
+       s+=" AND exists (select pro_codi FROM coninvlin as i "+
+         " where i.pro_codi = v_articulo.pro_codi  "+
+         " and i.emp_codi = "+empCodi+
+         (almCodi==0?"":" and i.alm_codi = "+almCodi)+
+         (controlCam ?" and i.cam_codi = '"+camara+"'":"")+
+         " and i.cci_feccon = TO_DATE('" + fecinv + "','dd-MM-yyyy') )";
     }
      dtAdd.executeUpdate(s);
 

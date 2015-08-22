@@ -77,11 +77,13 @@ public class MvtosAlma
   private boolean cancelarConsulta=false;
   private double preStk,canStk;
   private int unSal,uniStk,unEnt,unVent,unCompra,unSalDes, unEntDes,unRegul;
-  private boolean swDespSalida=false,swValDesp=false;
+  private boolean swValDesp=false;
   private boolean swIgnDespIgu=false;
   private int almCodi=0;
   private int proNumind=0;
-  private int proLote=0,empCodi=0;
+  private int proLote=0,empCodi=0,ejercLote=0;
+  private String serieLote=null;
+  private boolean swFecDocumento=false;
   private boolean swSerieX=false; // Incluir Albaranes de Serie X (traspaso entre almacenes)
   private boolean swPermCostosNegat=true; // Permitir costos en negativo al calcular costos.
 
@@ -92,7 +94,7 @@ public class MvtosAlma
    * producto de entrada y salida sean iguales.
    * Por defecto es false
    * @param swIgnDespIgu
-   * @return
+   * 
    */
   public void setIgnDespIgu(boolean swIgnDespIg)
   {
@@ -142,7 +144,33 @@ public class MvtosAlma
   {
       return swSerieX;
   }
-  
+  public void setEjerLote(int ejercLote)
+  {
+      this.ejercLote=ejercLote;
+  }
+  public void setSerieLote(String serieLote)
+  {
+      if (serieLote==null)
+        this.serieLote=null;
+      else
+      {
+          if (serieLote.trim().equals("") )
+              this.serieLote=null;
+           else
+              this.serieLote=serieLote;
+      }
+  }
+  /**
+   * Indica si las fechas mandadas para limitar la consulta son las del documento
+   * o las del mvto. Por defecto son las del Mvto.
+   * En el caso de que se este buscando usando los documentos, la fecha de compra SIEMPRE se hara
+   * a traves de la de documento.
+   * @param swFecDocumento 
+   */
+  public void setFechasDocumento(boolean swFecDocumento)
+  {
+      this.swFecDocumento=swFecDocumento;
+  }
   public void setLote(int lote)
   {
       proLote=lote;
@@ -181,14 +209,8 @@ public class MvtosAlma
   {
       return almCodi;
   }
-  public void setDespSalida(boolean despSalida)
-  {
-      swDespSalida=despSalida;
-  }
-  public boolean getDespSalida()
-  {
-      return swDespSalida;
-  }
+  
+ 
   public void setIncrementarCosto(double incrementoCosto)
   {
     incCosto=incrementoCosto;
@@ -238,6 +260,16 @@ public class MvtosAlma
   public void setMvtoDesgl(boolean mvtoDesgl)
   {
       this.mvtoDesgl=mvtoDesgl;
+  }
+  /**
+   * Usar mvtos(true) o documentos(false) para las consultas. 
+   * @see setFechasDocumento() para especificar si las fechas seran limitadas por fecha doc. o fecha Mvto.
+   * 
+   * @param useMvtos  true o false
+   */
+  public void setUseMvtos(boolean useMvtos)
+  {
+      this.mvtoDesgl=!useMvtos;
   }
   /**
    * Devuelve Sentencia SQL a ejecutar para buscar los movimientos.
@@ -349,29 +381,21 @@ public class MvtosAlma
     sql+= " ORDER BY 4,1,3 desc"; // FECHA,orden y tipo
     return sql;      
   }
+  /**
+   * Devuelve la SQL para buscar los mvtos, buscando en los docuemtos.
+   * @param fecIni
+   * @param fecFin
+   * @param proCodi
+   * @return
+   * @throws ParseException 
+   */
   private String getSqlMvtAnt(String fecIni, String fecFin, int proCodi) throws ParseException
   {
     numProd=1;
     this.dateFin=Formatear.getDate(fecFin,"dd-MM-yyyy");
     
-    if (swDespSalida) // Solo saca despieces de salida.
-      return  " select 1 as orden,'DE' as sel, '+' as tipmov,'' as fecmov,"+
-          "  l.def_serlot as serie,l.pro_lote as  lote,"+
-          " l.def_kilos as canti,l.def_prcost as precio,l.pro_numind as numind,"+
-          " 0 as cliCodi,l.deo_codi  as numalb,l.def_ejelot as ejenume, "+
-          " l.def_emplot as empcodi,'0' as pro_codori "+
-          ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
-          ", l.def_numpie as unidades,1 as div_codi,alm_codi,'.' as avc_serie "+
-           ", 0 as alm_codori,0 as alm_coddes, 'N' as avc_depos "+
-          " from  v_despfin l where "+
-          " l.def_kilos <> 0 "+
-          (almCodi==0?"":" and alm_codi = "+almCodi)+
-          (proLote==0?"":" and l.pro_lote  = "+proLote)+
-          (proNumind==0?"":" and l.pro_numind = "+proNumind)+
-          " AND l.pro_codi = " + (proCodi==-1?"?":proCodi) +
-          (empCodi==0?"":" and l.emp_codi = "+empCodi)+
-          " ORDER BY 3,2 desc"; // FECHA y tipo
-    numProd=6;
+
+    numProd=5;
     String sql="";
     if (! swSoloInv)
     {
@@ -381,7 +405,7 @@ public class MvtosAlma
         " l.acl_canti as canti,l.acl_prcom as precio,0 as numind,"+
         " c.prv_codi as cliCodi,  c.acc_nume as numalb, "+
         " c.acc_ano as ejeNume,c.emp_codi as empCodi,l.pro_codi as pro_codori "+
-        ", '' as repCodi,'' as zonCodi,sbe_codi,acl_numcaj as unidades,1 as div_codi, "+
+        ", '' as repCodi,'' as zonCodi,c.sbe_codi,acl_numcaj as unidades,1 as div_codi, "+
         " l.alm_codi,'.' as avc_serie "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
         " FROM v_albacoc c,v_albacol l " + //,v_albcompar i "+
@@ -393,44 +417,44 @@ public class MvtosAlma
         (empCodi==0?"":" and c.emp_codi = "+empCodi)+
         (almCodi==0?"":" and l.alm_codi = "+almCodi)+
         (proLote==0?"":" and c.acc_nume = "+proLote)+
+        (ejercLote==0?"":" and c.acc_ano = "+ejercLote)+
+        (serieLote==null?"":" and c.acc_serie = '"+serieLote+"'")+
         " AND l.pro_codi = "+(proCodi==-1?"?":proCodi) +
         " AND c.acc_fecrec >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
         " and c.acc_fecrec <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
       else
          sql+="SELECT 1 as orden,'CO' as sel,'+' as tipmov,c.acc_fecrec as fecmov, c.acc_serie as serie,"+
         " c.acc_nume as  lote,"+
-        " i.acp_canti as canti,l.acl_prcom as precio,acp_numind as numind,"+
+        " c.acp_canti as canti,c.acl_prcom as precio,acp_numind as numind,"+
         " c.prv_codi as cliCodi,  c.acc_nume as numalb, "+
-        " c.acc_ano as ejeNume,c.emp_codi as empCodi,l.pro_codi as pro_codori "+
+        " c.acc_ano as ejeNume,c.emp_codi as empCodi,c.pro_codi as pro_codori "+
         ", '' as repCodi,'' as zonCodi,sbe_codi,acp_canind as unidades,1 as div_codi, "+
-        " l.alm_codi,'.' as avc_serie "+
+        " c.alm_codi,'.' as avc_serie "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
-        " FROM v_albacoc c,v_albacol l,v_albcompar i "+
-        " where c.emp_codi = l.emp_codi "+
-        " AND c.acc_serie = l.acc_serie "+
-        " AND c.acc_nume = l.acc_nume "+
-        " and c.acc_ano = l.acc_ano "+
-        " and c.emp_codi = i.emp_codi "+
-        " AND c.acc_serie = i.acc_serie "+
-        " AND c.acc_nume = i.acc_nume "+
-        " and c.acc_ano = i.acc_ano "+
-        " and l.acl_nulin = i.acl_nulin "+
-        " and i.acp_canti <> 0 "+
+        " FROM v_compras as c "+
+        " where c.acp_canti <> 0 "+
         (proNumind==0?"":" and acp_numind = "+proNumind)+
         (empCodi==0?"":" and c.emp_codi = "+empCodi)+
-        (almCodi==0?"":" and l.alm_codi = "+almCodi)+
+        (almCodi==0?"":" and c.alm_codi = "+almCodi)+
         (proLote==0?"":" and c.acc_nume = "+proLote)+
-        " AND l.pro_codi = "+(proCodi==-1?"?":proCodi) +
+        (ejercLote==0?"":" and c.acc_ano = "+ejercLote)+
+        (serieLote==null?"":" and c.acc_serie = '"+serieLote+"'")+
+        " AND c.pro_codi = "+(proCodi==-1?"?":proCodi) +
         " AND c.acc_fecrec >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
         " and c.acc_fecrec <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
     sql+=" UNION all"; // Albaranes de Venta
     String condAlb=  " where avl_canti <> 0 "+
           (proLote==0?"":" and avp_numpar  = "+proLote)+
           (proNumind==0?"":" and avp_numind = "+proNumind)+
+          (ejercLote==0?"":" and c.avp_ejelot = "+ejercLote)+
+          (serieLote==null?"":" and c.avp_serlot = '"+serieLote+"'")+
           (empCodi==0?"":" and c.emp_codi = "+empCodi)+
           " AND pro_codi = "+(proCodi==-1?"?":proCodi) +
-          " AND avl_fecalt::date >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
-          " and avl_fecalt::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
+          (swFecDocumento?
+                 " AND avc_fecalb >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
+                 " and avc_fecalb <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ":    
+                 " AND avl_fecalt::date >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
+                 " and avl_fecalt::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ");
 
     sql+= " select 2 as orden,'VE' as sel,'-' as tipmov,c.avl_fecalt as fecmov,"+
         "  avp_serlot  as serie,avp_numpar as  lote,"+
@@ -443,34 +467,33 @@ public class MvtosAlma
         "  from  v_albventa_detalle as c "+
         " left join  clientes as cl on cl.cli_codi = c.cli_codi "+
          condAlb+
-//         " and avl_fecalt >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+ // Solo albaranes con fecha mvto. Superior o Igual a Inicial
-          // Si almacen !=0 e incluir serie X
          (almCodi!=0 && swSerieX?" AND (alm_codori="+almCodi+" or alm_coddes="+almCodi+")":"")+
-         // Si almacen !=0 y NO  incluir serie X. No tiene mucho sentido...
-        (almCodi!=0 && ! swSerieX ?" and c.alm_codi = "+almCodi: "")+
-        // Si no se deben incluir los traspasos, quito los albaranes de serie X
-        (! swSerieX?" and c.avc_serie != 'X'":"")+
-        " UNION ALL "+
-        " select 2 as orden,'VE' as sel,'-' as tipmov,c.avc_fecalb as fecmov,"+
-        "  c.avp_serlot  as serie,c.avp_numpar as  lote,"+
-        " c.avp_canti  as canti,c.avl_prbase as precio,c.avp_numind as numind,"+
-        " c.cli_codi as cliCodi,c.avc_nume as numalb, "+
-        " c.avp_ejelot as ejeNume,c.avp_emplot as empcodi,c.pro_codi as pro_codori, "+
-        " rep_codi as repCodi,zon_codi as zonCodi "+
-        ",c.sbe_codi, avp_numuni as unidades, c.div_codi, c.alm_codori as alm_codi,c.avc_serie "+
-        ", alm_codori, alm_coddes,c.avc_depos "+
-        "  from v_albventa_detalle as c  "+
-        " left join  clientes as cl on cl.cli_codi = c.cli_codi "+
-         condAlb+
-         " and avl_fecalt::date < TO_DATE('"+fecIni+"','dd-MM-yyyy') "+ // Solo albaranes con fecha mvto. Inferior a Inicial
-          // Si almacen !=0 e incluir serie X
-         (almCodi!=0 && swSerieX?" AND (alm_codori="+almCodi+" or alm_coddes="+almCodi+")":"")+
-         // Si almacen !=0 y NO  incluir serie X. No tiene mucho sentido...
-        (almCodi!=0 && ! swSerieX ?" and c.alm_codi = "+almCodi: "")+
+         (almCodi!=0 && ! swSerieX ?" and c.alm_codi = "+almCodi: "")+
         // Si no se deben incluir los traspasos, quito los albaranes de serie X
         (! swSerieX?" and c.avc_serie != 'X'":"");
+//        " UNION ALL "+
+//        " select 2 as orden,'VE' as sel,'-' as tipmov,c.avc_fecalb as fecmov,"+
+//        "  c.avp_serlot  as serie,c.avp_numpar as  lote,"+
+//        " c.avp_canti  as canti,c.avl_prbase as precio,c.avp_numind as numind,"+
+//        " c.cli_codi as cliCodi,c.avc_nume as numalb, "+
+//        " c.avp_ejelot as ejeNume,c.avp_emplot as empcodi,c.pro_codi as pro_codori, "+
+//        " rep_codi as repCodi,zon_codi as zonCodi "+
+//        ",c.sbe_codi, avp_numuni as unidades, c.div_codi, c.alm_codori as alm_codi,c.avc_serie "+
+//        ", alm_codori, alm_coddes,c.avc_depos "+
+//        "  from v_albventa_detalle as c  "+
+//        " left join  clientes as cl on cl.cli_codi = c.cli_codi "+
+//         condAlb+
+//        " and "+ (swFecDocumento?
+//                 " avc_fecalb ":" and avl_fecalt::date ")+
+//                 "< TO_DATE('"+fecIni+"','dd-MM-yyyy') "+ // Solo albaranes con fecha mvto. Inferior a Inicial
+//          // Si almacen !=0 e incluir serie X
+//         (almCodi!=0 && swSerieX?" AND (alm_codori="+almCodi+" or alm_coddes="+almCodi+")":"")+
+//         // Si almacen !=0 y NO  incluir serie X. No tiene mucho sentido...
+//        (almCodi!=0 && ! swSerieX ?" and c.alm_codi = "+almCodi: "")+
+//        // Si no se deben incluir los traspasos, quito los albaranes de serie X
+//        (! swSerieX?" and c.avc_serie != 'X'":"");
 //        " and c.avc_serie "+(swSerieX?"":"!")+"='X'";
-      sql+=" UNION all "+ // Despieces (Salidas de Stock)
+      sql+=" UNION all "+ // Cabecera de despieces (Salidas de almacen)
         " select 2 as orden,'DS' as sel,'"+
          (swValDesp?"+":"-")+"' as tipmov ,"+
          " deo_tiempo as fecmov,"+
@@ -487,11 +510,14 @@ public class MvtosAlma
         (almCodi==0?"":" and deo_almori = "+almCodi)+
         (proLote==0?"":" and pro_lote  = "+proLote)+
         (proNumind==0?"":" and pro_numind = "+proNumind)+
-        (empCodi==0?"":" and emp_codi = "+empCodi)+
+        (ejercLote==0?"":" and deo_ejelot = "+ejercLote)+
+        (serieLote==null?"":" and deo_serlot = '"+serieLote+"'")+
+        (empCodi==0?"":" and emp_codi = "+empCodi)+        
         (accesoEmp==null || empCodi!=0?"":" and emp_codi in ("+accesoEmp+")")+
-        " AND deo_tiempo::date >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
-        " and deo_tiempo::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
-      sql+=" UNION all "+ // Despieces (Entradas)
+        " and "+(swFecDocumento?"  deo_fecha  ":
+          "  deo_tiempo::date  ")+
+          " between TO_DATE('" + fecIni + "','dd-MM-yyyy') and TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
+      sql+=" UNION all "+ // Salida de Despieces (Entradas a almacen)
        " select 1 as orden,'DE' as sel, '+' as tipmov,l.def_tiempo as fecmov,"+
        "  l.def_serlot as serie,l.pro_lote as  lote,"+
        " l.def_kilos as canti,l.def_prcost as precio,l.pro_numind as numind,"+
@@ -507,10 +533,13 @@ public class MvtosAlma
        (almCodi==0?"":" and alm_codi = "+almCodi)+
        (proLote==0?"":" and l.pro_lote  = "+proLote)+
        (proNumind==0?"":" and l.pro_numind = "+proNumind)+
+       (ejercLote==0?"":" and def_ejelot = "+ejercLote)+
+       (serieLote==null?"":" and def_serlot = '"+serieLote+"'")+
 //       (empCodi==0?"":" and c.emp_codi = "+empCodi)+
        " AND l.pro_codi = " + (proCodi==-1?"?":proCodi)  +
-       " AND l.def_tiempo::date >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
-       " and l.def_tiempo::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
+        " and "+(swFecDocumento?"  deo_fecha ":
+          " l.def_tiempo::date ")+
+       " between TO_DATE('" + fecIni + "','dd-MM-yyyy') and TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
     sql+=" UNION all "+ // Regularizaciones.
        " select 1 as orden,'RE' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov,"+
        "  r.pro_serie as serie,r.pro_nupar as  lote,"+
@@ -528,6 +557,8 @@ public class MvtosAlma
        (almCodi==0?"":" and alm_codi = "+almCodi)+
        (proLote==0?"":" and r.pro_nupar  = "+proLote)+
        (proNumind==0?"":" and r.pro_numind = "+proNumind)+
+       (ejercLote==0?"":" and eje_nume = "+ejercLote)+
+       (serieLote==null?"":" and pro_serie = '"+serieLote+"'")+
        (empCodi==0?"":" and r.emp_codi = "+empCodi)+
        (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
         " AND r.pro_codi = " + (proCodi==-1?"?":proCodi)  +
@@ -559,6 +590,8 @@ public class MvtosAlma
            (almCodi==0?"":" and alm_codi = "+almCodi)+
            (proLote==0?"":" and r.pro_nupar  = "+proLote)+
            (proNumind==0?"":" and r.pro_numind = "+proNumind)+
+           (ejercLote==0?"":" and eje_nume = "+ejercLote)+
+           (serieLote==null?"":" and pro_serie = '"+serieLote+"'")+
            (empCodi==0?"":" and r.emp_codi = "+empCodi)+
            (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
             " AND r.pro_codi = " + (proCodi==-1?"?":proCodi)  +
@@ -1333,10 +1366,15 @@ public class MvtosAlma
             v.add(Formatear.format(dt.getDouble("precio")-preStk,"---9.99"));
           else
             v.add("");
-          if (dt.getInt("alm_codori")==0)
-              v.add(dt.getInt("alm_codi"));
+          if (mvtoDesgl)
+          {
+            if ( dt.getInt("alm_codori")==0)
+                v.add(dt.getInt("alm_codi"));
+            else 
+                  v.add(dt.getInt("alm_codori")+"->"+dt.getInt("alm_coddes"));
+          }
           else
-              v.add(dt.getInt("alm_codori")+"->"+dt.getInt("alm_coddes"));
+              v.add(dt.getInt("alm_codi"));
 //          v.add(dt.getInt("alm_codi"));
           jt.addLinea(v);
         }

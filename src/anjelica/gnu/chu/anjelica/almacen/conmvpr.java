@@ -483,7 +483,6 @@ public class conmvpr extends ventana
   {
       pro_numindE.setValorInt(indiv);
   }
-  
   public void ejecutaConsulta()
   {
       Bacepta.doClick();
@@ -688,7 +687,7 @@ public class conmvpr extends ventana
     mvtosAlm.setLote(pro_loteE.getValorInt());
     mvtosAlm.setIndividuo(pro_numindE.getValorInt());
     mvtosAlm.setAlmacen(almCodi);
-    mvtosAlm.setDespSalida(opDesES.isSelected());
+  
     mvtosAlm.setSerieX(opSerieX.isSelected());
     mvtosAlm.setValorarDesp(valDesp);
     mvtosAlm.setVerRegul(opRegul.isSelected());
