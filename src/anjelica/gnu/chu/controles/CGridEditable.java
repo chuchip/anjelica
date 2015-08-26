@@ -61,8 +61,8 @@ public class CGridEditable extends Cgrid implements CQuery {
     private int antColumn = 0;
 //  int nColuT = 0;
     ArrayList campos = null;
-    ArrayList tCampo;
-    ArrayList vCampo = null; // Valores por defecto
+    ArrayList <String> tCampo;
+    ArrayList  vCampo = null; // Valores por defecto
     boolean swIniciar = false;
 //  boolean canInsertLinea= true; // Indica si se pueden insertar Nuevas Lineas
 //  boolean canBorrarLinea=true; // Indica si se pueden borrar lineas.
@@ -272,14 +272,15 @@ public class CGridEditable extends Cgrid implements CQuery {
 
   void cambiaLinea()
   {
-    if (isEnabled() && campos != null)
+    if (isEnabled() && campos != null  )
     {
       if (tableView.getSelectedRow()<0 || tableView.getSelectedColumn()<0)
         return;
       if (tableView.isCellEditable(tableView.getSelectedRow(),
                                    tableView.getSelectedColumn()))
       {
-        tableView.editCellAt(tableView.getSelectedRow(),
+        if (! tCampo.get(getSelectedColumn()).equals("C"))
+         tableView.editCellAt(tableView.getSelectedRow(),
                              tableView.getSelectedColumn());
       }
     }
@@ -399,7 +400,7 @@ public class CGridEditable extends Cgrid implements CQuery {
     int rw;
     if (tableView.isEditing())
     {
-      if (tCampo.get(colAnt).toString().compareTo("T") == 0)
+      if (tCampo.get(colAnt).equals("T"))
       {
         if (( (CTextField) campos.get(colAnt)).isEnabled() && ( (CTextField) campos.get(colAnt)).isEditable())
           ( (CTextField) campos.get(colAnt)).procesaSalir();
@@ -575,10 +576,11 @@ public class CGridEditable extends Cgrid implements CQuery {
       }
 
       if (Class.forName("gnu.chu.controles.CComboBox").isAssignableFrom(comp.
-          getClass()))
+          getClass())  )
       {
         tableView.getColumnModel().getColumn(n).setCellEditor(new
-            DefaultCellEditor( (CComboBox) v.get(n)));
+            DefaultCellEditor( (JComboBox) v.get(n)));
+        
         ( (CComboBox) comp).setGridEditable(this);
         vCampo.add( ( (CComboBox) comp).getText());
 
@@ -612,7 +614,7 @@ public class CGridEditable extends Cgrid implements CQuery {
           {
             javax.swing.SwingUtilities.invokeLater(new Thread()
             {
-                            @Override
+              @Override
               public void run()
               {
                 requestFocusSelected();
@@ -644,12 +646,7 @@ public class CGridEditable extends Cgrid implements CQuery {
             return super.stopCellEditing();
           }
           
-//          public boolean isCellEditable( EventObject e )
-//          {
-//            if (! super.isCellEditable(e))
-//                return false;
-//            return ( ((CTextField) comp).isEditable() &&  ((CTextField) comp).isEnabled());                
-//          }
+
         });
         vCampo.add( ( (CEditable) comp).getText());
         ( (CTextField) comp).setGridEditable(this);
@@ -739,7 +736,8 @@ public class CGridEditable extends Cgrid implements CQuery {
     setAntColumn(colIni);
     setAntRow(0);
     super.requestFocus(0, colNueva);
-    tableView.editCellAt(0, colNueva);
+    if (! tCampo.get(colNueva).equals("C"))
+        tableView.editCellAt(0, colNueva);
     tableView.scrollRectToVisible(tableView.getCellRect(0, colNueva, true));
     if (! this.isVacio())
       this.ponValores(0);
@@ -752,6 +750,7 @@ public class CGridEditable extends Cgrid implements CQuery {
     @Override
   public void requestFocus(int row, int col)
   {
+    int rowAnt=getSelectedRow();
     if (!isEnabled() || campos == null)
     {
       super.requestFocus(row, col);
@@ -788,27 +787,21 @@ public class CGridEditable extends Cgrid implements CQuery {
     int rowEdit = row;
     int colEdit = col1;
     try {
-        tableView.editCellAt(rowEdit, colEdit);
-        tableView.scrollRectToVisible(tableView.getCellRect(rowEdit, colEdit, true));
+        
+         if (! tCampo.get(colEdit).equals("C") || rowAnt==rowEdit)
+         {
+            tableView.editCellAt(rowEdit, colEdit);
+            tableView.scrollRectToVisible(tableView.getCellRect(rowEdit, colEdit, true));
+         }
     } catch (ArrayIndexOutOfBoundsException k)
     {
          Logger.getLogger(CGridEditable.class.getName()).log(Level.SEVERE, "Error en editCell. Row: "+rowEdit+" Col:"+colEdit, k);
     }
-
-
-/*    SwingUtilities.invokeLater(new Thread()
-    {
-      public void run()
-      {
-        tableView.editCellAt(rowEdit, colEdit);
-        tableView.scrollRectToVisible(tableView.getCellRect(rowEdit, colEdit, true));
-      }
-    });
-
-*/
   }
      /**
     * Función para eliminar la fila especificada del grid.
+    * @param fila fila  a borrar.
+    * @return true siempre
     */
     @Override
      public boolean removeLinea(int fila){
@@ -895,7 +888,7 @@ public class CGridEditable extends Cgrid implements CQuery {
   private Object actValGrid(int linea, int nCampo)
   {
     CCheckBox chT;
-    if (tCampo.get(nCampo).toString().compareTo("T") == 0)
+    if (tCampo.get(nCampo).equals("T"))
     {
       if (! ( (CTextField) campos.get(nCampo)).isEnabled() || ! ( (CTextField) campos.get(nCampo)).isEditable())
         return getValString(linea, nCampo); // No esta enabled o editable. Devuelvo el valor del grid
@@ -904,13 +897,13 @@ public class CGridEditable extends Cgrid implements CQuery {
       else
         return ( (CTextField) campos.get(nCampo)).getText();
     }
-    if (tCampo.get(nCampo).toString().compareTo("L") == 0)
+    if (tCampo.get(nCampo).equals("L"))
     {
       if (! ( (CLinkBox) campos.get(nCampo)).isEnabled() || ! ( (CLinkBox) campos.get(nCampo)).isEditable())
         return getValString(linea, nCampo); // No esta enabled o editable. Devuelvo el valor del grid
       return ( (CLinkBox) campos.get(nCampo)).getText();
     }
-    if (tCampo.get(nCampo).toString().compareTo("B") == 0)
+    if (tCampo.get(nCampo).equals("B") )
     {
       chT = ( (CCheckBox) campos.get(nCampo));
       if (!chT.isEnabled())
@@ -920,15 +913,15 @@ public class CGridEditable extends Cgrid implements CQuery {
         return chT.isSelected() ? chT.getStringSelect() : chT.getStringNoSelect();
       }
       else
-        return Boolean.valueOf(chT.isSelected());
+        return chT.isSelected();
     }
-    if (tCampo.get(nCampo).toString().compareTo("C") == 0)
+    if (tCampo.get(nCampo).equals("C") )
     {
       if (! ( (CComboBox) campos.get(nCampo)).isEnabled() )
         return getValString(linea, nCampo); // No esta enabled o editable. Devuelvo el valor del grid
       return ( (CComboBox) campos.get(nCampo)).getText();
     }
-    if (tCampo.get(nCampo).toString().compareTo("b") == 0 )
+    if (tCampo.get(nCampo).equals("b") )
     {
       if (! ( (CButton) campos.get(nCampo)).isEnabled())
            return getValString(linea, nCampo);
@@ -967,27 +960,27 @@ public class CGridEditable extends Cgrid implements CQuery {
     {
       for (int n = 0; n < nCol; n++)
       {
-        if (tCampo.get(n).toString().compareTo("T") == 0)
+        if (tCampo.get(n).equals("T"))
         {
             if (getQuery())
               ( (CTextField) campos.get(n)).resetTexto();
             else
               ( (CTextField) campos.get(n)).setText(vCampo.get(n).toString());
         }
-        if (tCampo.get(n).toString().compareTo("P") == 0)
+        if (tCampo.get(n).equals("P"))
           ( (CEditable) campos.get(n)).setText(vCampo.get(n).toString());
-        if (tCampo.get(n).toString().equals("B"))
+        if (tCampo.get(n).equals("B"))
         {
           if (Formato[n].equals("") || Formato[n].charAt(0) != 'B')
             ( (CCheckBox) campos.get(n)).setSelecion(vCampo.get(n).toString());
           else
-            ( (CCheckBox) campos.get(n)).setSelected( ( (Boolean) vCampo.get(n)).booleanValue());
+            ( (CCheckBox) campos.get(n)).setSelected( ( (Boolean) vCampo.get(n)));
         }
-        if (tCampo.get(n).toString().compareTo("C") == 0)
+        if (tCampo.get(n).equals("C"))
           ( (CComboBox) campos.get(n)).setValor(vCampo.get(n).toString());
-        if (tCampo.get(n).toString().compareTo("L") == 0)
+        if (tCampo.get(n).equals("L"))
           ( (CLinkBox) campos.get(n)).setText(vCampo.get(n).toString());
-        if (tCampo.get(n).toString().compareTo("b") == 0)
+        if (tCampo.get(n).equals("b") )
           ( (CButton) campos.get(n)).setText(vCampo.get(n).toString());
       }
     }
@@ -1067,11 +1060,11 @@ public class CGridEditable extends Cgrid implements CQuery {
       return;
     if ( ( (Component) campos.get(n)).hasFocus() && foc)
       return;
-    if (tCampo.get(n).toString().compareTo("P") == 0)
+    if (tCampo.get(n).equals("P"))
     {
       ( (CEditable) campos.get(n)).setText(getValString(linea, n).trim());
     }
-    if (tCampo.get(n).toString().compareTo("T") == 0)
+    if (tCampo.get(n).equals("T") )
     {
       if ( ( (CTextField) campos.get(n)).getTipoCampo() == Types.DECIMAL)
       {
@@ -1081,7 +1074,7 @@ public class CGridEditable extends Cgrid implements CQuery {
         ( (CEditable) campos.get(n)).setText(getValString(linea, n));
     }
 
-    if (tCampo.get(n).toString().compareTo("B") == 0)
+    if (tCampo.get(n).equals("B"))
     {
       if (Formato[n].equals("") || Formato[n].charAt(0) != 'B')
         ( (CCheckBox) campos.get(n)).setSelecion(getValString(linea, n));
@@ -1090,11 +1083,14 @@ public class CGridEditable extends Cgrid implements CQuery {
 //       if (((CCheckBox) campos.get(n)).isSelected())
         ( (CCheckBox) campos.get(n)).setSelected(getValBoolean(linea, n));
     }
-    if (tCampo.get(n).toString().compareTo("C") == 0)
-      ( (CComboBox) campos.get(n)).setValor(getValString(linea, n));
-    if (tCampo.get(n).toString().compareTo("L") == 0)
+    if (tCampo.get(n).equals("C"))
+    {
+      if (!( (CComboBox) campos.get(n)).setValor(getValString(linea, n)))
+          ( (CComboBox) campos.get(n)).setText(getValString(linea, n));
+    }
+    if (tCampo.get(n).equals("L") )
       ( (CLinkBox) campos.get(n)).setText(getValString(linea, n));
-    if (tCampo.get(n).toString().compareTo("b") == 0)
+    if (tCampo.get(n).equals("b") )
       ( (CButton) campos.get(n)).setText(getValString(linea, n));
 
   }
@@ -1261,7 +1257,7 @@ public class CGridEditable extends Cgrid implements CQuery {
     int n = 0;
     for (n = 0; n < nCol; n++)
     {
-      if (tCampo.get(n).toString().compareTo("T") == 0)
+      if (tCampo.get(n).equals("T") )
       { // Si el Campo es TextField y tiene Error y esta enabled y Editable
         if (( (CTextField) campos.get(n)).isEnabled() && ( (CTextField) campos.get(n)).isEditable())
         ( (CTextField) campos.get(n)).procesaSalir();
@@ -1288,7 +1284,7 @@ public class CGridEditable extends Cgrid implements CQuery {
   {
     if (col < 0)
         return;
-    if (tCampo.get(col).toString().equals("L"))
+    if (tCampo.get(col).equals("L"))
     {
       ( (CLinkBox) campos.get(col)).setText( ( (CLinkBox) campos.
           get(col)).getText());
@@ -1371,10 +1367,10 @@ public class CGridEditable extends Cgrid implements CQuery {
 
   public boolean isCampo(Component c)
   {
-    for (int n = 0; n < campos.size(); n++)
+    for (Object campo : campos)
     {
-      if (c == campos.get(n))
-        return true;
+        if (c == campo)
+            return true;
     }
     return false;
   }
@@ -1537,16 +1533,16 @@ public class CGridEditable extends Cgrid implements CQuery {
   {
     for (int n = 0; n < nCol; n++)
     {
-      if (tCampo.get(n).toString().compareTo("T") == 0 ||
-          tCampo.get(n).toString().compareTo("P") == 0) // Texto o Editable
+      if (tCampo.get(n).equals("T") ||
+          tCampo.get(n).equals("P") ) // Texto o Editable
         v.add(vCampo.get(n));
-      if (tCampo.get(n).toString().compareTo("B") == 0)
+      if (tCampo.get(n).equals("B") )
          v.add(vCampo.get(n));
-      if (tCampo.get(n).toString().compareTo("C") == 0) // Combo
+      if (tCampo.get(n).equals("C") ) // Combo
         v.add(vCampo.get(n));
-      if (tCampo.get(n).toString().compareTo("L") == 0) // CLinkBox
+      if (tCampo.get(n).equals("L") ) // CLinkBox
         v.add(vCampo.get(n));
-      if (tCampo.get(n).toString().compareTo("b") == 0) // Button
+      if (tCampo.get(n).equals("b")) // Button
         v.add(vCampo.get(n));
     }
   }

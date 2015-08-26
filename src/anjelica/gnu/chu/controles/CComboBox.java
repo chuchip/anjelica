@@ -46,7 +46,7 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   boolean modif=false;
   String conectaColumna="";
   private boolean actDatosDB=true;
-  private int tipoCampo=-1; //  Indica el Types de Campo - Char, decimal,date o time
+  private final int tipoCampo=-1; //  Indica el Types de Campo - Char, decimal,date o time
   String formato="";
   boolean query=false;
   boolean depPadre=true;
@@ -83,6 +83,7 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   {
     conectaColumna=col;
   }
+  @Override
   public String getColumnaAlias()
   {
     return conectaColumna;
@@ -107,6 +108,30 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
            txt=s;
      }
       return txt;
+  }
+  /**
+   * Devuelve como un List todos los posibles valores del combo
+   * @return  List de valores
+   */
+  public List getListaValores()
+  {
+      return indice;
+  }
+  /**
+   * Devuelve como una cadena todos los posibles valores del combo
+   * @return String con todos los valores posibles
+   */
+  public String getValores()
+  {
+     String s1="";
+     for (String indice1 : indice)
+     {
+          if (indice1 == null)
+              continue;
+          s1 += indice1;
+     }
+     return s1;
+     
   }
 /**
  * Carga los valores disponibles a traves de un datosTabla
@@ -268,15 +293,15 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
   /*
   * Seleciona El item que coincida con el texto enviado.
   */
-    @Override
-    public void setText(String s)
+@Override
+public void setText(String s)
+{
+    try {
+        setSelectedItem(s);
+    } catch (Exception k)
     {
-        try {
-            setSelectedItem(s);
-        } catch (Exception k)
-        {
-        }
     }
+}
 
     /**
      * Pone el campo en modo query.
@@ -406,20 +431,27 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
         
     }
   }
-  public void setValor(String s)
+  /**
+   * Pone el valor mandado al CombBox
+   * @param valor Valor a poner en el combo
+   * @return  false si no encuentra el valor en la lista de los posibles.
+   */
+  public boolean setValor(String valor)
   {
-    if (s==null)
-      return;
+    if (valor==null)
+      return false;
+  
     for (int n=0;n<indice.size();n++)
     {
       if (indice.get(n)==null)
         continue;
-      if (indice.get(n).equals(s))
+      if (indice.get(n).equals(valor))
       {
         this.setSelectedIndex(n);
-        return;
+        return true;
       }
     }
+    return false;
   }
   /**
    * Retorna el valor del combo para un texto mandado
