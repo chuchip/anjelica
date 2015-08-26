@@ -59,11 +59,12 @@ public class MantPartes  extends ventanaPad implements PAD
     boolean swModificaTodo=true;
     AlbClien alCli=null;
     AlbProv  alPrv=null;
-    final static int ESTADO_GENERADA=0;
-    final static int ESTADO_PROCDEV=1;
-    final static int ESTADO_GERENCIA=2;
-    final static int ESTADO_CERRADO=3;
-    final static int ESTADO_CANCELA=4;
+    final int ESTADO_GENERADA=0;
+    final int ESTADO_PROCDEV=1;
+    final int ESTADO_GERENCIA=2;
+    final int ESTADO_CERRADO=3;
+    final int ESTADO_CANCELA=4;
+    final int PERM_ADMIN=10;
     int proIndLot, proNumLot,proCodi,proEjeLot;
     String proSerLot;
     private boolean swCargaList=true,swCargaLin=true; // Cargando grid de listado
@@ -150,7 +151,7 @@ public class MantPartes  extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false,
             P_PERMEST==2?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20150822) Modo: "+P_PERMEST);
+        this.setVersion("(20150826) Modo: "+P_PERMEST);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -1074,9 +1075,9 @@ public class MantPartes  extends ventanaPad implements PAD
 
         pac_tipoE.addItem("Sala", "S");
         pac_tipoE.addItem("Devolucion", "D");
-        pac_tipoE.addItem("Dev.Recep", "R");
-        pac_tipoE.addItem("No-Recepcion", "N");
+        pac_tipoE.addItem("No Recep", "N");
         pac_tipoE.addItem("Entrada", "E");
+        pac_tipoE.addItem("Dev.Recep", "R");
         Pcab.add(pac_tipoE);
         pac_tipoE.setBounds(70, 25, 110, 17);
 
@@ -1391,9 +1392,9 @@ public class MantPartes  extends ventanaPad implements PAD
         tipoE.addItem("TODOS", "*");
         tipoE.addItem("Sala", "S");
         tipoE.addItem("Devolucion", "D");
-        tipoE.addItem("Dev.Recep", "R");
-        tipoE.addItem("No-Recepcion", "N");
+        tipoE.addItem("No Recep.", "N");
         tipoE.addItem("Entrada", "E");
+        tipoE.addItem("Dev.Recep", "R");
         PCondFiltro.add(tipoE);
         tipoE.setBounds(200, 2, 95, 17);
 
@@ -1707,29 +1708,30 @@ public class MantPartes  extends ventanaPad implements PAD
                         return;
                     }
                 }
-            }                                              
-              
-            if (!swModificaTodo && pac_estadE.getValorInt()<=ESTADO_GERENCIA  &&  swAccion)
+            }     
+            if (P_PERMEST!=PERM_ADMIN)
             {
-                if (pac_estadE.getValorInt()==ESTADO_GENERADA && !pac_tipoE.getValor().equals("D"))
-                    pac_estadE.setValor(ESTADO_GERENCIA);
-                else
+                if (!swModificaTodo && pac_estadE.getValorInt()<=ESTADO_GERENCIA  &&  swAccion)
                 {
-                    if (pac_estadE.getValorInt()==ESTADO_PROCDEV &&  pac_tipoE.getValor().equals("R"))
+                    if (pac_estadE.getValorInt()==ESTADO_GENERADA && !pac_tipoE.getValor().equals("D"))
                         pac_estadE.setValor(ESTADO_GERENCIA);
                     else
-                        pac_estadE.setValor(pac_estadE.getValorInt()+ 1);
+                    {
+                        if (pac_estadE.getValorInt()==ESTADO_PROCDEV &&  pac_tipoE.getValor().equals("R"))
+                            pac_estadE.setValor(ESTADO_GERENCIA);
+                        else
+                            pac_estadE.setValor(pac_estadE.getValorInt()+ 1);
+                    }
                 }
-            }
-            else
-            {
-                if (pac_estadE.getValorInt()==ESTADO_PROCDEV)
+                else
                 {
-                    pac_estadE.setValor(ESTADO_GENERADA);
-                    pac_tipoE.setValor("R");
+                    if (pac_estadE.getValorInt()==ESTADO_PROCDEV)
+                    {
+                        pac_estadE.setValor(ESTADO_GENERADA);
+                        pac_tipoE.setValor("R");
+                    }
                 }
             }
-
             resetBloqueo(dtAdd, "v_partes",par_codiE.getText());
             dtAdd.select("select * from partecab where par_codi="+par_codiE.getValorInt(),true);
             dtAdd.edit();
@@ -2109,7 +2111,7 @@ public class MantPartes  extends ventanaPad implements PAD
        mp.put("estadoP",estadoE.getValor());
        mp.put("estadoT",estadoE.getText());
        mp.put("tipoP",tipoE.getValor().equals("*")?null:tipoE.getValor());
-       mp.put("tipoT",tipoE.getValor().equals("*")?null:tipoE.getText());
+       mp.put("tipoT",tipoE.getText());
        
        mp.put("feciniP",feciniE.isNull()?null:feciniE.getDate());
        mp.put("fecfinP",fecfinE.isNull()?null:fecfinE.getDate());

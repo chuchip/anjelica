@@ -1745,7 +1745,7 @@ void pdreprese_actionPerformed(ActionEvent e) {
   }
   void ALMantPartes_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
-    ht.put("estados", "2");
+    ht.put("estados", "10");
     lanzaEjecutable(new gnu.chu.anjelica.almacen.MantPartes(menu.this,EU,ht));
   }
   

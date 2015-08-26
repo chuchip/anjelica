@@ -3491,7 +3491,7 @@ CREATE TABLE anjelica.partecab
 	pac_fecres date, -- Fecha Resuelto
 	pac_estad int not null default 1, -- Estado del parte (1. Generada 
 									  -- 2. Procesar. 3 Cerrada. 4 Cerrada)	
-	pac_tipo char(1) not null, -- Tipo Parte: Entrada, Devolucion, No-recepción,Sala	
+	pac_tipo char(1) not null, -- Tipo Parte:  (S)ala,(E)ntrada, (D)evolucion,Devol.(R)ecepionada , (N)o-recepción
 	pac_coment varchar(150), -- Comentario
 	pac_cliprv int,	-- Cliente/Proveedor	
 	pac_docano int, -- Ejercicio Documento
@@ -3513,7 +3513,7 @@ create table anjelica.partelin
  	pro_numlot int,		-- Lote
 	pro_indlot int,	-- Numero Individuo		
 	pro_feccad date, -- Fecha Caducidad
-	pal_acsala char(1), -- Accion sugerida x sala. (V)ertedero/(R)eutilizar/(C)ongelar	
+	pal_acsala char(1) default '-', -- Accion sugerida x sala. (V)ertedero/(R)eutilizar/(C)ongelar, (-)No Definida
 	pal_comsal varchar(50), -- Comentario Sala sobre esta linea
 	pal_accion char(1) not null default '-', -- (A) Acept. Dev. (N) No acept. Dev.
 											 -- (V)ertedero/(R)eutilizar/(C)ongelar,(-) No definida

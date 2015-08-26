@@ -328,7 +328,7 @@
                     </Component>
                     <Component class="gnu.chu.controles.CComboBox" name="pac_tipoE">
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pac_tipoE.addItem(&quot;Sala&quot;, &quot;S&quot;);&#xa;pac_tipoE.addItem(&quot;Devolucion&quot;, &quot;D&quot;);&#xa;pac_tipoE.addItem(&quot;Dev.Recep&quot;, &quot;R&quot;);&#xa;pac_tipoE.addItem(&quot;No-Recepcion&quot;, &quot;N&quot;);&#xa;pac_tipoE.addItem(&quot;Entrada&quot;, &quot;E&quot;);"/>
+                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pac_tipoE.addItem(&quot;Sala&quot;, &quot;S&quot;);&#xa;pac_tipoE.addItem(&quot;Devolucion&quot;, &quot;D&quot;);&#xa;pac_tipoE.addItem(&quot;No Recep&quot;, &quot;N&quot;);&#xa;pac_tipoE.addItem(&quot;Entrada&quot;, &quot;E&quot;);&#xa;pac_tipoE.addItem(&quot;Dev.Recep&quot;, &quot;R&quot;);"/>
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -918,7 +918,7 @@
                     </Component>
                     <Component class="gnu.chu.controles.CComboBox" name="tipoE">
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="tipoE.addItem(&quot;TODOS&quot;, &quot;*&quot;);&#xa;tipoE.addItem(&quot;Sala&quot;, &quot;S&quot;);&#xa;tipoE.addItem(&quot;Devolucion&quot;, &quot;D&quot;);&#xa;tipoE.addItem(&quot;Dev.Recep&quot;, &quot;R&quot;);&#xa;tipoE.addItem(&quot;No-Recepcion&quot;, &quot;N&quot;);&#xa;tipoE.addItem(&quot;Entrada&quot;, &quot;E&quot;);"/>
+                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="tipoE.addItem(&quot;TODOS&quot;, &quot;*&quot;);&#xa;tipoE.addItem(&quot;Sala&quot;, &quot;S&quot;);&#xa;tipoE.addItem(&quot;Devolucion&quot;, &quot;D&quot;);&#xa;tipoE.addItem(&quot;No Recep.&quot;, &quot;N&quot;);&#xa;tipoE.addItem(&quot;Entrada&quot;, &quot;E&quot;);&#xa;tipoE.addItem(&quot;Dev.Recep&quot;, &quot;R&quot;);"/>
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
