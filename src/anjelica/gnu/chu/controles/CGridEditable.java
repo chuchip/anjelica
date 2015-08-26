@@ -736,7 +736,8 @@ public class CGridEditable extends Cgrid implements CQuery {
     setAntColumn(colIni);
     setAntRow(0);
     super.requestFocus(0, colNueva);
-    if (! tCampo.get(colNueva).equals("C"))
+    
+    if ( tCampo !=null && ! tCampo.get(colNueva).equals("C"))
         tableView.editCellAt(0, colNueva);
     tableView.scrollRectToVisible(tableView.getCellRect(0, colNueva, true));
     if (! this.isVacio())
