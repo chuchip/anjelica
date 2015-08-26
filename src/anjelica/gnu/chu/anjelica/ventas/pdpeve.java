@@ -229,7 +229,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2015-02-11");
+    this.setVersion("2015-08-25");
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -631,23 +631,14 @@ public class pdpeve  extends ventanaPad   implements PAD
     {
         @Override
         public void keyPressed(KeyEvent ke) {
-                char c=ke.getKeyChar();
+            s=(""+ke.getKeyChar()).toUpperCase();
             
-            if (c=='K' ||c=='k' 
-               || c=='P' ||c=='p'
-               || c=='C' ||c=='c')
-                jt.requestFocusLater(jt.getSelectedRow(), jt.getSelectedColumn()+1 );
+            if ( pvl_tipoE.getValores().contains(s))
+            {
+              pvl_tipoE.setValor(s);
+              jt.requestFocusLater(jt.getSelectedRow(), jt.getSelectedColumn()+1 );
+            }
         }
-//        @Override
-//        public void keyTyped(KeyEvent ke) {
-//            char c=ke.getKeyChar();
-//            
-//            if (c=='K' ||c=='k' 
-//               || c=='P' ||c=='p'
-//               || c=='C' ||c=='c')
-//                jt.requestFocusLater(jt.getSelectedRow(), jt.getSelectedColumn()+1 );
-//        }
-
     });
     pvc_fecentE.addFocusListener(new FocusAdapter()
     {
@@ -1364,7 +1355,7 @@ public class pdpeve  extends ventanaPad   implements PAD
           v.add(pro_codiE.getNombArtCli(dtCon1.getInt("pro_codi"),
                                               cli_codiE.getValorInt()));    
          v.add(dtCon1.getDouble("pvl_canti"));
-         v.add(pvl_tipoE.getItemAt(dtCon1.getString("pvl_tipo")));
+         v.add(pvl_tipoE.getText(dtCon1.getString("pvl_tipo")));
          v.add(dtCon1.getString("pvl_precio"));
          v.add(dtCon1.getInt("pvl_precon")!=0);
          v.add(dtCon1.getString("pvl_comen"));

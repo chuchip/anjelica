@@ -1738,16 +1738,17 @@ void pdreprese_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.almacen.conmvpr(menu.this,EU));
 
   }
-   void ALConmvpr_actionPerformed(ActionEvent e) {
+  
+  void ALConmvpr_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.almacen.Comvalm(menu.this,EU));
 
   }
-void ALMantPartes_actionPerformed(ActionEvent e) {
+  void ALMantPartes_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
-    ht.put("estados", "10");
+    ht.put("estados", "2");
     lanzaEjecutable(new gnu.chu.anjelica.almacen.MantPartes(menu.this,EU,ht));
-
   }
+  
   void pdproveed_actionPerformed(ActionEvent e) {
     Hashtable ht = new Hashtable();
     ht.put("modConsulta", "false");
