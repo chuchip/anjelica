@@ -2770,7 +2770,7 @@ create table anjelica.fratraca
  eje_nume int not null, 	-- Ejercicio de la Fact.
  frt_nume int not null,		-- Numero de Factura
  frt_fecha date not null,	-- Fecha de Fact.
- frt_nufrtr varchar(20),	-- Num. Fra del Transportista.
+ frt_nufrtr varchar(25),	-- Num. Fra del Transportista.
  frt_fefrtr date,		-- Fecha Fra. del proveedor.
  tra_codi int not null,		-- Transportista
  frt_trasp int not null,	-- Traspasado a Cont.?

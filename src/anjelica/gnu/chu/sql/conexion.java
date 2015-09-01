@@ -137,7 +137,7 @@ public class conexion  implements Connection
 //    ConURL=ConURL+";user="+Usuario+";password="+PalabraPaso;
     Class.forName(Clase);
     ct= DriverManager.getConnection(ConURL,p);
-    ct.setTransactionIsolation(ct.TRANSACTION_READ_COMMITTED);
+    ct.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
     ct.setAutoCommit(false);
     nomColRowid="oid";
     driverType=POSTGRES;

@@ -23,7 +23,7 @@ import javax.swing.border.TitledBorder;
 /**
  * <p>Titulo:   PDFACTRA </p>
  * <p>Descripción: Mantenimiento FACTURAS DE Transportistas
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -65,7 +65,7 @@ public class pdfactra extends ventanaPad   implements PAD
   CPanel cPanel3 = new CPanel();
   CLabel cLabel5 = new CLabel();
   TitledBorder titledBorder2=new TitledBorder("");
-  CTextField frt_nufrtrE = new CTextField();
+  CTextField frt_nufrtrE = new CTextField(Types.CHAR,"X",25);
   CLabel cLabel6 = new CLabel();
   CTextField frt_fefrtrE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CPanel Ppie = new CPanel();
