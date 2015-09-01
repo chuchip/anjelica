@@ -52,6 +52,7 @@ public class MvtosAlma
   private boolean swIgnDespFecha=false; // Ignorar despieces de ult.fecha
   boolean swSoloInv=false; // Solo busca registros en inventarios
   boolean incInvFinal=false; // Por defecto no se incluye inventario de ult. fecha
+  boolean incInvInicial=false; // Por defecto no se incluye inventario Inicial (solo para tabla mvtos)
   private String msgStock="";
   private int deoCodiLim=0; // Numero despiece a partir del cual no considerar mas para calculos costos (incluido)
   private int sbeCodi; // Subempresa de Cliente.
@@ -63,6 +64,7 @@ public class MvtosAlma
         this.pSInv = pSInv;
     }
   private boolean swVerVenta,swVerCompra,swVerDesEnt,swVerDespSal,swVerRegul;
+  private boolean swVerPrecios=true;
   private double costoFijo=-1; 
   double impVenta,impSal=0;
   double kgSal,kgEnt=0,kgVen=0,kgCompra=0,kgRegul=0;
@@ -294,7 +296,8 @@ public class MvtosAlma
         + " mvt_cliprv as cliCodi,mvt_numdoc  as numalb,pro_ejelot as ejenume, "
         + " 1 as empcodi,'0' as pro_codori "
         + ", '' as repCodi,'' as zonCodi,0 as sbe_codi "
-        + ", mvt_unid as unidades,1 as div_codi,alm_codi,mvt_serdoc as avc_serie "
+        + ", mvt_unid as unidades,1 as div_codi,alm_codi,mvt_serdoc as avc_serie,mvt_ejedoc as ejedoc "
+        +" ,mvt_fecdoc as fecdoc "
         + ", 'N' as avc_depos "
         + " from mvtosalm where "
         + "   mvt_canti <> 0 "
@@ -327,13 +330,14 @@ public class MvtosAlma
     {
        sql+="SELECT 0 as orden,mvt_tipdoc as sel, mvt_tipo as tipmov,  "+
             " mvt_time as fecmov,"+
-            "  mvt_serdoc as serie,pro_numlot as  lote,"+
+            "  pro_serlot as serie,pro_numlot as  lote,"+
             " mvt_canti as canti,mvt_prec as precio,pro_indlot as numind,"+
-            " mvt_cliprv as cliCodi,mvt_numdoc  as numalb,pro_ejelot as ejenume, "+
+            " mvt_cliprv as cliCodi,mvt_numdoc  as numalb,pro_ejelot as ejenume, "+           
             " 1 as empcodi,'0' as pro_codori "+
-            ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
-            ", mvt_unid as unidades,1 as div_codi,alm_codi,mvt_serdoc as avc_serie "+
-             ", 'N' as avc_depos "+
+            ", '' as repCodi,'' as zonCodi,0 as sbe_codi, "+
+            " mvt_unid as unidades,1 as div_codi,alm_codi,mvt_serdoc as avc_serie,mvt_ejedoc as ejedoc, "+
+            " mvt_fecdoc as fecdoc "+
+            ", 'N' as avc_depos "+
              " from mvtosalm where "+
              "  mvt_canti <> 0 "+      
             (almCodi==0?"":" and alm_codi = "+almCodi)+
@@ -344,7 +348,7 @@ public class MvtosAlma
             " and mvt_time::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
          
     }
-    if (! incInvFinal || swSoloInv)
+    if (! incInvFinal || swSoloInv || incInvInicial)
     { // No incluir inventario final.
          numProd++;
          if (! swSoloInv)
@@ -361,7 +365,8 @@ public class MvtosAlma
            " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
            " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
            ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "+
-           ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie, "+
+           ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,0 as ejedoc"+
+           " ,r.rgs_fecha as fecdoc, "+
            " 'N' as avc_depos "+
            " FROM v_regstock r  WHERE "+         
            " tir_afestk = '='"+ // Solo Inventarios
@@ -406,7 +411,8 @@ public class MvtosAlma
         " c.prv_codi as cliCodi,  c.acc_nume as numalb, "+
         " c.acc_ano as ejeNume,c.emp_codi as empCodi,l.pro_codi as pro_codori "+
         ", '' as repCodi,'' as zonCodi,c.sbe_codi,acl_numcaj as unidades,1 as div_codi, "+
-        " l.alm_codi,'.' as avc_serie "+
+        " l.alm_codi,'.' as avc_serie,c.acc_ano as ejedoc "+
+        ", c.acc_fecrec as fecdoc "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
         " FROM v_albacoc c,v_albacol l " + //,v_albcompar i "+
         " where c.emp_codi = l.emp_codi "+
@@ -429,7 +435,8 @@ public class MvtosAlma
         " c.prv_codi as cliCodi,  c.acc_nume as numalb, "+
         " c.acc_ano as ejeNume,c.emp_codi as empCodi,c.pro_codi as pro_codori "+
         ", '' as repCodi,'' as zonCodi,sbe_codi,acp_canind as unidades,1 as div_codi, "+
-        " c.alm_codi,'.' as avc_serie "+
+        " c.alm_codi,'.' as avc_serie,c.acc_ano as ejedoc "+
+        ", c.acc_fecrec as fecdoc "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
         " FROM v_compras as c "+
         " where c.acp_canti <> 0 "+
@@ -462,7 +469,8 @@ public class MvtosAlma
         " c.cli_codi as cliCodi,avc_nume as numalb, "+
         " avp_ejelot as ejeNume,avp_emplot as empcodi,pro_codi as pro_codori, "+
         " rep_codi as repCodi,zon_codi as zonCodi "+
-        ",c.sbe_codi, avp_numuni as unidades, c.div_codi,c.alm_codori as alm_codi,avc_serie "+
+        ",c.sbe_codi, avp_numuni as unidades, c.div_codi,c.alm_codori as alm_codi,avc_serie,avc_ano as ejedoc "+
+        ", avc_fecalb as fecdoc "+
         ", alm_codori, alm_coddes,avc_depos "+
         "  from  v_albventa_detalle as c "+
         " left join  clientes as cl on cl.cli_codi = c.cli_codi "+
@@ -471,28 +479,7 @@ public class MvtosAlma
          (almCodi!=0 && ! swSerieX ?" and c.alm_codi = "+almCodi: "")+
         // Si no se deben incluir los traspasos, quito los albaranes de serie X
         (! swSerieX?" and c.avc_serie != 'X'":"");
-//        " UNION ALL "+
-//        " select 2 as orden,'VE' as sel,'-' as tipmov,c.avc_fecalb as fecmov,"+
-//        "  c.avp_serlot  as serie,c.avp_numpar as  lote,"+
-//        " c.avp_canti  as canti,c.avl_prbase as precio,c.avp_numind as numind,"+
-//        " c.cli_codi as cliCodi,c.avc_nume as numalb, "+
-//        " c.avp_ejelot as ejeNume,c.avp_emplot as empcodi,c.pro_codi as pro_codori, "+
-//        " rep_codi as repCodi,zon_codi as zonCodi "+
-//        ",c.sbe_codi, avp_numuni as unidades, c.div_codi, c.alm_codori as alm_codi,c.avc_serie "+
-//        ", alm_codori, alm_coddes,c.avc_depos "+
-//        "  from v_albventa_detalle as c  "+
-//        " left join  clientes as cl on cl.cli_codi = c.cli_codi "+
-//         condAlb+
-//        " and "+ (swFecDocumento?
-//                 " avc_fecalb ":" and avl_fecalt::date ")+
-//                 "< TO_DATE('"+fecIni+"','dd-MM-yyyy') "+ // Solo albaranes con fecha mvto. Inferior a Inicial
-//          // Si almacen !=0 e incluir serie X
-//         (almCodi!=0 && swSerieX?" AND (alm_codori="+almCodi+" or alm_coddes="+almCodi+")":"")+
-//         // Si almacen !=0 y NO  incluir serie X. No tiene mucho sentido...
-//        (almCodi!=0 && ! swSerieX ?" and c.alm_codi = "+almCodi: "")+
-//        // Si no se deben incluir los traspasos, quito los albaranes de serie X
-//        (! swSerieX?" and c.avc_serie != 'X'":"");
-//        " and c.avc_serie "+(swSerieX?"":"!")+"='X'";
+
       sql+=" UNION all "+ // Cabecera de despieces (Salidas de almacen)
         " select 2 as orden,'DS' as sel,'"+
          (swValDesp?"+":"-")+"' as tipmov ,"+
@@ -502,7 +489,8 @@ public class MvtosAlma
         " 0 as cliCodi,deo_codi as numalb,deo_ejelot as ejeNume," +
         " deo_emplot as empcodi,pro_codi as pro_codori "+
         ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
-        ", 1 as unidades,1 as div_codi,deo_almori as alm_codi,'.' as avc_serie "+
+        ", 1 as unidades,1 as div_codi,deo_almori as alm_codi,'.' as avc_serie,eje_nume as ejedoc "+
+        ", deo_fecha as fecdoc "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
         " from  v_despori where "+
         "  pro_codi = " + (proCodi==-1?"?":proCodi)  +
@@ -524,7 +512,8 @@ public class MvtosAlma
        " 0 as cliCodi,l.deo_codi  as numalb,l.def_ejelot as ejenume, "+
        " l.def_emplot as empcodi,0 as pro_codori "+
        ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
-       ", l.def_numpie as unidades,1 as div_codi,alm_codi,'.' as avc_serie "+
+       ", l.def_numpie as unidades,1 as div_codi,alm_codi,'.' as avc_serie,c.eje_nume as ejedoc "+
+       ", deo_fecha as fecdoc "+
        ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
        " from  desporig c,v_despfin l where "+
        "  c.eje_nume = l.eje_nume "+
@@ -547,7 +536,8 @@ public class MvtosAlma
        " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
        " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
        ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "+
-       ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie "+
+       ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "+
+       ", r.rgs_fecha as fecdoc "+
        ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
        " FROM v_regstock r WHERE "+       
        " rgs_kilos <> 0 "+
@@ -565,7 +555,7 @@ public class MvtosAlma
         " AND r.rgs_fecha::date >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
         " and r.rgs_fecha::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
     }
-    if (! incInvFinal || swSoloInv)
+    if (! incInvFinal || swSoloInv )
     { // No incluir inventario final.
          numProd++;
          if (! swSoloInv)
@@ -581,7 +571,8 @@ public class MvtosAlma
            " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
            " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
            ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "+
-           ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie "+
+           ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "+
+           ", r.rgs_fecha as fecdoc "+
            ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
            " FROM v_regstock r WHERE "+        
            " tir_afestk = '='"+ // Solo Inventarios
@@ -611,6 +602,10 @@ public class MvtosAlma
   public void setIncUltFechaInv(boolean incInvFinal)
   {
       this.incInvFinal=incInvFinal;
+  }
+    public void setIncIniFechaInv(boolean incInvInicial)
+  {
+      this.incInvInicial=incInvInicial;
   }
   public boolean getAcumuladosMvtos( String fecIni, String fecFin,
             int almCodi,int proCodi,int proLote, DatosTabla dt) throws SQLException,ParseException
@@ -1313,12 +1308,14 @@ public class MvtosAlma
              else
                 v.add(dt.getString("sel"));
           }
-          v.add(Formatear.format(dt.getString("precio"),
+          v.add(!swVerPrecios?"":Formatear.format(dt.getString("precio"),
                                       "---,--9.99"));
           v.add(Formatear.format(uniStk, "---,--9"));
           v.add(Formatear.format(canStk, "---,--9.99"));
-          v.add(Formatear.format(preStk+incCosto, "---,--9.99"));
-          v.add(Formatear.format(impGana, "---,--9.99"));
+          v.add(!swVerPrecios?"":Formatear.format(preStk+incCosto, "---,--9.99"));
+          v.add(!swVerPrecios?"":Formatear.format(impGana, "---,--9.99"));
+          v.add(dt.getString("ejedoc")+"-"+dt.getString("avc_serie")+"-"+dt.getString("numalb"));
+          v.add(dt.getDate("fecdoc"));
           cliNomb="";
           if (sel=='V')
           {
@@ -1341,29 +1338,28 @@ public class MvtosAlma
                   else
                     depos="*DEP* ";
                 }
-                cliNomb = "("+dt.getString("avc_serie")+dt.getString("numalb")+
-                     ")"+depos+
+                cliNomb = depos+
                      cliNomb;
                 
              }
           }
-          if (sel=='C')
+          if (sel=='C'||  sel=='D' || sel=='d' )
           {
             if (dtStat.select("select prv_nomb from v_proveedo"+
                            " where prv_codi="+dt.getInt("cliCodi")))
-            cliNomb = "("+dt.getString("numalb")+") "+ dtStat.getString("prv_nomb");
+                cliNomb =  dtStat.getString("prv_nomb");
           }
-          if (sel=='D' || sel=='d')
-            cliNomb="N. Desp: "+dt.getString("numalb");
+          
           if (sel=='R')
-               v.add(dt.getString("zonCodi",true));
+              v.add(dt.getString("zonCodi",true));
           else
-            v.add(""+dt.getInt("cliCodi",true)+" "+cliNomb);
-          v.add(dt.getString("ejenume")+"-"+dt.getString("empcodi")+"-"+
-                  dt.getString("serie")+
-                     dt.getString("lote")+"-"+dt.getString("numind") );
+              v.add(dt.getInt("cliCodi",true)+" "+cliNomb);
+          
+          v.add(dt.getString("ejenume")+"-"+
+                  dt.getString("serie")+"-"+
+                  dt.getString("lote")+"-"+dt.getString("numind") );
           if (sel=='V')
-            v.add(Formatear.format(dt.getDouble("precio")-preStk,"---9.99"));
+            v.add(!swVerPrecios?"":Formatear.format(dt.getDouble("precio")-preStk,"---9.99"));
           else
             v.add("");
           if (mvtoDesgl)
@@ -1379,18 +1375,7 @@ public class MvtosAlma
           jt.addLinea(v);
         }
       } while (dt.next());
-//      if (swDesglInd)
-//      {
-//        Iterator<String> pr = ht.keySet().iterator();
-//        while (pr.hasNext()) 
-//        {
-//              ref =  pr.next();
-//              cantiInd =  ht.get(ref);
-////              if (cantiInd!=0)
-////                System.out.println(ref+"|"+cantiInd);
-//        }
-//      }
-                //System.out.println(ref+"|"+canti);
+
       return true;
   }
 
@@ -1652,6 +1637,14 @@ public class MvtosAlma
     public void setCostoFijo(double costoFijo)
     {
         this.costoFijo=costoFijo;
+    }
+    /**
+     * Establece si mostrara los precios en el grid.
+     * @param verPrecios 
+     */
+    public void setVerPrecios(boolean verPrecios)
+    {
+        swVerPrecios=verPrecios;
     }
     /**
      * @param swVerCompra the swVerCompra to set

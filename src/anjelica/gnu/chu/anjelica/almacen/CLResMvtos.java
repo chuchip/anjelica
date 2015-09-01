@@ -2,7 +2,7 @@
  *
  * <p>Título: CLResMvtos </p>
  * <p>Descripción: Consulta Listado Resultado de Movimientos
- * @see gnu.chu.anjelica.almacen.conmvpr</p>
+ * @see gnu.chu.anjelica.almacen.Comvalm</p>
  * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por

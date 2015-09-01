@@ -1,7 +1,7 @@
 package gnu.chu.anjelica.almacen;
 /**
  *
- * <p>Titulo: conmvpr </p>
+ * <p>Titulo: Comvalm </p>
  * <p>Descripcion: Consulta Mvtos de Almacen Valorados</p>
  * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
@@ -17,7 +17,8 @@ package gnu.chu.anjelica.almacen;
  *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
  * </p>
  * @author chuchiP
- * @version 1.0
+ * @version 1.1
+ * @parameters verprecio= 0 (No)/ 1 (Si)
  */
 import gnu.chu.controles.StatusBar;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -45,22 +46,31 @@ import java.awt.event.*;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 
-/**
- *
- * @author jpuente.ext
- */
 public class Comvalm extends ventana
 {
- JPopupMenu JpopupMenu = new JPopupMenu("Filtro");
+  boolean P_VERPRECIO=false;
+  JPopupMenu JpopupMenu = new JPopupMenu("Filtro");
   private MvtosAlma mvtosAlm = new MvtosAlma();
   private boolean cancelarConsulta=false;
   String fecMov=null;
   int almCodi;
   //boolean acepNeg=false; // Aceptar Negativos (por defecto false)
   boolean valDesp=false;  // Valorar despieces 
- public Comvalm(EntornoUsuario eu, Principal p)
+  final int JT_TIPO=3;
+  final int JT_DOCUM=9;
+  final int JT_FECDOC=10;
+  final int JT_CLIPRV=11;
+  final int JT_LOTE=12;
+  final int JT_ALMACEN=14;
+  
+  public Comvalm(EntornoUsuario eu, Principal p)
+  {
+      this(eu,p,null);
+  }
+ public Comvalm(EntornoUsuario eu, Principal p,Hashtable<String,String> ht)
   {
    
     EU = eu;
@@ -69,7 +79,7 @@ public class Comvalm extends ventana
     eje = true;
 
     setTitulo("Cons. Mvtos Almacen ");
-
+    ponParametros(ht);
     try
     {
       if (jf.gestor.apuntar(this))
@@ -82,13 +92,17 @@ public class Comvalm extends ventana
            ErrorInit(e);
     }
   }
-
   public Comvalm(gnu.chu.anjelica.menu p, EntornoUsuario eu)
+  {
+      this(p,eu,null);
+  }
+  public Comvalm(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable<String,String> ht)
   {
 
     EU = eu;
     vl = p.getLayeredPane();
     setTitulo("Cons. Mvtos Almacen ");
+    ponParametros(ht);
     eje = false;
 
     try
@@ -100,7 +114,15 @@ public class Comvalm extends ventana
         ErrorInit(e);
     }
   }
-
+  
+  private void ponParametros(Hashtable<String,String> ht)
+  {
+      if (ht==null)
+          return;
+       if (ht.get("verprecio") != null)
+             P_VERPRECIO = Integer.parseInt(ht.get("verprecio"))!=0;
+      
+  }
   private void jbInit() throws Exception
   {
       iniciarFrame();
@@ -127,7 +149,8 @@ public class Comvalm extends ventana
   @Override
   public void iniciarVentana() throws Exception
   {
-        String s;
+    String s;
+    jt.setConfigurar("Comvalm", EU, dtStat);
     mvtosAlm.setAccesoEmp(empPanel.getStringAccesos(dtStat, EU.usuario,true));
     jt.setConfigurar("gnu.chu.anjelica.almacen.Comvalm",EU,dtStat);
     alm_codiE.setFormato(true);
@@ -177,8 +200,20 @@ public class Comvalm extends ventana
       Bacepta.doClick();
   }
 
-  void activarEventos()
+   void activarEventos()
   {
+     MVerDoc.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+       verDocumento();           
+      }
+    });
+     MVerStock.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        irStockPartidas(jt.getValString(JT_LOTE),pro_codiE.getValorInt(),jt.getValorInt(JT_ALMACEN));
+      }
+    });
      Breset.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -258,68 +293,107 @@ public class Comvalm extends ventana
          }
      });
      jt.addMouseListener(new MouseAdapter() {
+          @Override
           public void mouseClicked(MouseEvent e) {
               if (e.getClickCount()<2)
                   return;
-              if (jf==null)
-                  return;
-              String coment=jt.getValString(9);
-              
-              if (coment.contains("N. Desp:"))
-              {
-                  irDespiece(coment);
-                  return;
-              }
-              ejecutable prog;
-              if (jt.getValString(3).equals("VE"))
-              {
-                 if ((prog=jf.gestor.getProceso(pdalbara.getNombreClase()))==null)
-                    return;
-                 pdalbara cm=(pdalbara) prog;
-                 if (cm.inTransation())
-                 {
-                    msgBox("Mantenimiento Albaranes de Ventas ocupado. No se puede realizar la busqueda");
-                    return;
-                 }
-                 cm.PADQuery();
-                 int n=coment.indexOf("(")+1;
-                 cm.setSerieAlbaran(coment.substring(n,n+1));
-                 cm.setNumeroAlbaran(coment.substring(n+1,coment.indexOf(")")));
-              
-                 cm.ej_query();
-                 jf.gestor.ir(cm);
-              }
-              if (jt.getValString(3).equals("CO"))
-              {
-                  try {
-                      if (pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION)
-                      {
-                          if ((prog = jf.gestor.getProceso(MantAlbComPlanta.getNombreClase())) == null)
-                              return;
-                      }
-                      else
-                      {
-                          if ((prog = jf.gestor.getProceso(MantAlbComCarne.getNombreClase())) == null)
-                              return;
-                      }
-                      
-                      MantAlbCom cm = (MantAlbCom) prog;
+              verDocumento();
+  }
+      });
+  }
+  void verDocumento()
+  {
+    if (jf==null)
+        return;
+     msgEspere("Ejecutando consulta para visualizar Documento");
+     new miThread("")
+     {
+        @Override
+        public void run()
+        {
+          javax.swing.SwingUtilities.invokeLater(new Thread()
+          {
+              @Override
+              public void run()
+              { 
+                  ejecutable prog;
+                  String doc[] = jt.getValString(JT_DOCUM).split("-");
+                  if (jt.getValString(JT_TIPO).toUpperCase().startsWith("D"))
+                  {
+                      if ((prog = jf.gestor.getProceso(MantDesp.getNombreClase())) == null)
+                          return;
+                      MantDesp cm = (MantDesp) prog;
                       if (cm.inTransation())
                       {
-                          msgBox("Mantenimiento Albaranes de Compras ocupado. No se puede realizar la busqueda");
+                          msgBox("Mantenimiento Despieces ocupado. No se puede realizar la busqueda");
+                          return;
+                      }
+
+                      cm.PADQuery();
+                      cm.setEjeNume(doc[0]);
+                      cm.setDeoCodi(doc[2]);
+                      cm.ej_query();
+                      jf.gestor.ir(cm);
+                  }
+                  if (jt.getValString(JT_TIPO).startsWith("V"))
+                  {
+                      if ((prog = jf.gestor.getProceso(pdalbara.getNombreClase())) == null)
+                          return;
+                      pdalbara cm = (pdalbara) prog;
+                      if (cm.inTransation())
+                      {
+                          msgBox("Mantenimiento Albaranes de Ventas ocupado. No se puede realizar la busqueda");
                           return;
                       }
                       cm.PADQuery();
-                      int n=coment.indexOf("(")+1;
-                      cm.setAccCodi(coment.substring(n,coment.indexOf(")")));
+                      cm.setEjercAlbaran(Integer.parseInt(doc[0]));
+                      cm.setSerieAlbaran(doc[1]);
+                      cm.setNumeroAlbaran(doc[2]);
+
                       cm.ej_query();
                       jf.gestor.ir(cm);
-                  } catch (SQLException ex) {
-                      Error("Error al ir al programa",ex);
                   }
-              }   
-          }
-      });
+
+                  if (jt.getValString(JT_TIPO).startsWith("C"))
+                  {
+                      try
+                      {
+                          if (pdconfig.getTipoEmpresa(EU.em_cod, dtStat) == pdconfig.TIPOEMP_PLANTACION)
+                          {
+                              if ((prog = jf.gestor.getProceso(MantAlbComPlanta.getNombreClase())) == null)
+                                  return;
+                          } else
+                          {
+                              if ((prog = jf.gestor.getProceso(MantAlbComCarne.getNombreClase())) == null)
+                                  return;
+                          }
+
+                          MantAlbCom cm = (MantAlbCom) prog;
+                          if (cm.inTransation())
+                          {
+                              msgBox("Mantenimiento Albaranes de Compras ocupado. No se puede realizar la busqueda");
+                              return;
+                          }
+                          cm.PADQuery();
+                          cm.setEjeNume(Integer.parseInt(doc[0]));
+                          cm.setAccCodi(doc[2]);
+                          cm.ej_query();
+                          jf.gestor.ir(cm);
+                      } catch (SQLException ex)
+                      {
+                          Error("Error al ir al programa", ex);
+                      }
+                  }
+                  resetMsgEspere();
+              }
+          });
+          
+        }
+     };
+
+  
+   
+   
   }
   void  activaTodoFiltro(boolean sel)
   {
@@ -331,12 +405,11 @@ public class Comvalm extends ventana
       opInven.setSelected(sel);   
       opTrasp.setSelected(sel);   
   }
-    
-  void irDespiece(final String coment)
+  
+  void irStockPartidas(final String lote,final int proCodi,final int almCodi)
   {
-     msgEspere("Ejecutando consulta en Mant. Despieces");
-    
-     new miThread("")
+      msgEspere("Ejecutando consulta en Stock Partidas");
+        new miThread("")
      {
                 @Override
                 public void run()
@@ -347,23 +420,26 @@ public class Comvalm extends ventana
                       public void run()
                       {                   
                         ejecutable prog;
-                            if ((prog=jf.gestor.getProceso(MantDesp.getNombreClase()))==null)
-                              return;
-                            MantDesp cm=(MantDesp) prog;
-                            if (cm.inTransation())
-                            {
-                                msgBox("Mantenimiento Despieces ocupado. No se puede realizar la busqueda");
-                                return;
-                            }
-                            cm.PADQuery();
-                            cm.setDeoCodi(coment.substring(coment.indexOf(":")+1));
-                            cm.ej_query();
-                            jf.gestor.ir(cm);
+                        if ((prog=jf.gestor.getProceso(costkpar.getNombreClase()))==null)
+                          return;
+                        costkpar cm=(costkpar) prog;
+                        String lot[]=lote.split("-");
+                        cm.setEjercicio(Integer.parseInt(lot[0]));
+                        cm.setSerie(lot[1]);
+                        cm.setPartida(Integer.parseInt(lot[2]));
+                        cm.setIndividuo(Integer.parseInt(lot[3]));
+                        cm.setProducto(proCodi);
+                        cm.setAlmacen(almCodi);
+                        cm.setVerSoloConStock(false);
+                        cm.consulta0();
+                        jf.gestor.ir(cm);
+                        resetMsgEspere();
                       }
                   });
                 }
       };
   }
+  
   void buscaMvtos()
   {
     if (fecfinE.getError() || fecfinE.isNull())
@@ -428,15 +504,14 @@ public class Comvalm extends ventana
        almCodi=alm_codiE.getValorInt();
     
 
-   
-
     mvtosAlm.setPadre(this);
     mvtosAlm.setIncUltFechaInv(true);
+    mvtosAlm.setIncIniFechaInv(true);
     mvtosAlm.setLote(pro_loteE.getValorInt());
     mvtosAlm.setIndividuo(pro_numindE.getValorInt());
     mvtosAlm.setSerieLote(pro_serieE.getText());
     mvtosAlm.setEjerLote(pro_ejercE.getValorInt());
-    
+    mvtosAlm.setVerPrecios(P_VERPRECIO);
     mvtosAlm.setDesglIndiv(pro_numindE.getValorInt()>0);
     mvtosAlm.setAlmacen(almCodi);
   
@@ -462,15 +537,18 @@ public class Comvalm extends ventana
     }
 
     kgVentaE.setValorDec(mvtosAlm.getKilosVenta());
-    impVentaE.setValorDec(mvtosAlm.getImporteVenta());
-    pmVentaE.setValorDec(mvtosAlm.getImporteVenta()==0?0:mvtosAlm.getImporteVenta()/mvtosAlm.getKilosVenta());
+    impVentaE.setValorDec(!P_VERPRECIO?0:mvtosAlm.getImporteVenta());
+    pmVentaE.setValorDec(!P_VERPRECIO?0:
+        mvtosAlm.getImporteVenta()==0?0:mvtosAlm.getImporteVenta()/mvtosAlm.getKilosVenta());
 
     kgCompraE.setValorDec(mvtosAlm.getKilosEntrada());
-    impCompra1.setValorDec(mvtosAlm.getImporteEntrada());
-    pmCompraE.setValorDec(mvtosAlm.getKilosEntrada()==0?0:mvtosAlm.getImporteEntrada()/mvtosAlm.getKilosEntrada());
+    impCompra1.setValorDec(!P_VERPRECIO?0:mvtosAlm.getImporteEntrada());
+    pmCompraE.setValorDec(!P_VERPRECIO?0:
+        mvtosAlm.getKilosEntrada()==0?0:mvtosAlm.getImporteEntrada()/mvtosAlm.getKilosEntrada());
 
-    impGanaE.setValorDec(mvtosAlm.getImpGana());
-    ganKilE.setValorDec(mvtosAlm.getKilosVenta()==0?0:mvtosAlm.getImpGana()/mvtosAlm.getKilosVenta());
+    impGanaE.setValorDec(!P_VERPRECIO?0:mvtosAlm.getImpGana());
+    ganKilE.setValorDec(!P_VERPRECIO?0:
+        mvtosAlm.getKilosVenta()==0?0:mvtosAlm.getImpGana()/mvtosAlm.getKilosVenta());
 //    ganKilPorE.setValorDec((pmCompraE.getValorDec()==0  || ganKilE.getValorDec() == 0)
 //            ? 0:ganKilE.getValorDec()/ pmCompraE.getValorDec()*100 );
     kgDesEntE.setValorDec(mvtosAlm.getKilosEntDesp());
@@ -499,6 +577,7 @@ public class Comvalm extends ventana
         opInven = new javax.swing.JCheckBoxMenuItem();
         opTrasp = new javax.swing.JCheckBoxMenuItem();
         MVerStock = new javax.swing.JMenuItem();
+        MVerDoc = new javax.swing.JMenuItem();
         Pprinc = new gnu.chu.controles.CPanel();
         Pentra = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -543,7 +622,7 @@ public class Comvalm extends ventana
             Bfiltro = new gnu.chu.controles.CButton(Iconos.getImageIcon("filter"));
             opMvtos = new gnu.chu.controles.CCheckBox();
             Breset = new gnu.chu.controles.CButton(Iconos.getImageIcon("quita"));
-            jt = new gnu.chu.controles.Cgrid(13);
+            jt = new gnu.chu.controles.Cgrid(15);
             PtotalE = new gnu.chu.controles.CPanel();
             Pventas = new gnu.chu.controles.CPanel();
             cLabel11 = new gnu.chu.controles.CLabel();
@@ -608,6 +687,8 @@ public class Comvalm extends ventana
             opTrasp.setToolTipText("Traspaso entre almacenes");
 
             MVerStock.setText("Ver Stock");
+
+            MVerDoc.setText("Ver Documento");
 
             Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -732,7 +813,6 @@ public class Comvalm extends ventana
             jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
             jt.setMaximumSize(new java.awt.Dimension(102, 102));
             jt.setMinimumSize(new java.awt.Dimension(102, 102));
-            jt.setPreferredSize(new java.awt.Dimension(102, 102));
 
             ArrayList v = new ArrayList();
             v.add("Fecha"); // 0
@@ -745,19 +825,24 @@ public class Comvalm extends ventana
             v.add("Costo"); // 7
             v.add("Ganan"); // 8
             v.add("Documento");  //9
-            v.add("Ej/Em/Lo/In"); // 10
-            v.add("Gan.Kg");  // 11
-            v.add("Alm");  // 11
+            v.add("Fec.Doc");  //10
+            v.add("Cli/Prv/Otros"); // 11
+            v.add("Ej/Serie/Lote/Ind"); // 12
+            v.add("Gan.Kg");  // 13
+            v.add("Alm");  // 14
             jt.setCabecera(v);
             jt.setToolTipText("Doble click para ir a Mvto");
             jt.setAnchoColumna(new int[]
-                {76, 61, 63, 31, 58,50, 64, 65, 64,100,80,60,30});
+                {76, 65, 65, 30, 55,50, 70, 70, 64,80,70,100,80,45,30});
             jt.setAlinearColumna(new int[]
-                {1, 2, 2, 1, 2, 2,2, 2, 2,0,0,2,2});
+                {1, 2, 2, 1, 2, 2,2, 2, 2,0,1,0,0,2,2});
             jt.setFormatoColumna(0,"dd-MM-yy");
+            jt.setFormatoColumna(JT_FECDOC,"dd-MM-yy");
             jt.setMinimumSize(new Dimension(422, 282));
             jt.setPreferredSize(new Dimension(422, 282));
             jt.setAjustarGrid(true);
+            jt.setAjustarColumnas(true);
+            jt.getPopMenu().add(MVerDoc);
             jt.getPopMenu().add(MVerStock);
 
             gridBagConstraints = new java.awt.GridBagConstraints();
@@ -906,6 +991,7 @@ public class Comvalm extends ventana
     private gnu.chu.controles.CButton Bacepta;
     private gnu.chu.controles.CButton Bfiltro;
     private gnu.chu.controles.CButton Breset;
+    private javax.swing.JMenuItem MVerDoc;
     private javax.swing.JMenuItem MVerStock;
     private gnu.chu.controles.CPanel PEntra;
     private gnu.chu.controles.CPanel PEntra1;

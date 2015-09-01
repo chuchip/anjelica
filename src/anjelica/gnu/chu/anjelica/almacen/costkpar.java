@@ -302,6 +302,39 @@ public class costkpar extends ventana
       }
     });
   }
+  public void setProducto(int proCodi)
+  {
+      pro_codiE.setValorInt(proCodi);
+  }
+  public void setEjercicio(int ejeNume)
+  {
+      eje_numeE.setValorInt(ejeNume);
+  }
+  public void setSerie(String serie)
+  {
+      pro_serieE.setText(serie);
+  }
+  public void setPartida(int partida)
+  {
+      pro_nuparE.setValorInt(partida);
+  }
+  public void setIndividuo(int indiv)
+  {
+      pro_numindE.setValorInt(indiv);
+  }
+  public void setAlmacen(int almacen)
+  {
+      alm_codiE.setValorInt(almacen);
+  }
+  public void setVerSoloConStock(boolean verSoloStock)
+  {
+      opStock.setSelected(verSoloStock);
+  }
+  
+  public static String getNombreClase() {
+        return "gnu.chu.anjelica.almacen.costkpar";
+  }
+
   void editStkPart()
   {
     if (jf==null)
@@ -333,7 +366,7 @@ public class costkpar extends ventana
       }
     };
   }
-  private void consulta0()
+  public void consulta0()
   {
     this.setEnabled(false);
     jt.setEnabled(false);
