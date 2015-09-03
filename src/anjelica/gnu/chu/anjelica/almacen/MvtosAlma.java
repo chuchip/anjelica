@@ -989,7 +989,7 @@ public class MvtosAlma
             {
                 if (dt.getString("avc_serie").equals("X"))
                 { // Traspaso entre almacenes
-                    if (almCodi == 0 ||  (mvtoDesgl?dt.getInt("alm_coddes")!=almCodi:dt.getInt("alm_codi")!=almCodi))
+                    if (almCodi == 0 ||  (mvtoDesgl?dt.getInt("alm_coddes")!=almCodi:true))
                         swTraspAlm=true;
                 }
                 else 
@@ -1167,8 +1167,6 @@ public class MvtosAlma
                   }
                   if (dt.getString("avc_serie").equals("X"))
                   { // Traspaso entre almacenes
-//                    if (almCodi!=0 && dt.getInt("alm_coddes")!=almCodi && dt.getInt("alm_codori")!=almCodi )
-//                        continue; // No lo trato.
                     swTraspAlm=true;
                   }
                   if (!swTraspAlm )
@@ -1291,8 +1289,8 @@ public class MvtosAlma
           }
           else
           { // Salida
-            if (swTraspAlm)
-                 v.add(Formatear.format(dt.getString("canti"),
+            if (swTraspAlm && mvtoDesgl )
+                v.add(Formatear.format(dt.getString("canti"),
                                         "---,--9.99"));
             else
                 v.add("");
