@@ -37,8 +37,8 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(4)"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList cabecera=new ArrayList();&#xa;cabecera.add(&quot;Codigo&quot;); // 0 -- Codigo&#xa;    cabecera.add(&quot;Nombre&quot;); //1 -- Nombre&#xa;    cabecera.add(&quot;Familia&quot;); // 2 -- Familia&#xa;    cabecera.add(&quot;Descrip&quot;); // 3-- Desc. Familia&#xa;    jt.setCabecera(cabecera);&#xa;   &#xa;    jt.setAnchoColumna(new int[]{46,250,20,150});&#xa;&#xa;    jt.alinearColumna(new int[]{2,0,2,0});&#xa;    jt.setNumRegCargar(500);&#xa;    jt.setAjustarGrid(true);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(5)"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList cabecera=new ArrayList();&#xa;cabecera.add(&quot;Codigo&quot;); // 0 -- Codigo&#xa;cabecera.add(&quot;Refer&quot;); // 1-- Codigo Alfanumerico prod.&#xa;cabecera.add(&quot;Nombre&quot;); //2 -- Nombre&#xa;    cabecera.add(&quot;Familia&quot;); // 3 -- Familia&#xa;    cabecera.add(&quot;Descrip&quot;); // 4-- Desc. Familia&#xa;    &#xa;    jt.setCabecera(cabecera);&#xa;   &#xa;    jt.setAnchoColumna(new int[]{46,100,250,20,150});&#xa;&#xa;    jt.alinearColumna(new int[]{2,0,0,2,0});&#xa;    jt.setNumRegCargar(500);&#xa;    jt.setAjustarGrid(true);"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -99,11 +99,11 @@
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Grupo"/>
+                <Property name="text" type="java.lang.String" value="Refer."/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="2" y="42" width="42" height="-1"/>
+                  <AbsoluteConstraints x="172" y="42" width="42" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -116,7 +116,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="50" y="42" width="250" height="-1"/>
+                  <AbsoluteConstraints x="50" y="42" width="120" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -171,6 +171,29 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="305" y="22" width="100" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Grupo"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="2" y="42" width="42" height="-1"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="pro_codartE">
+              <Properties>
+                <Property name="mayusc" type="boolean" value="true"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,12)"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="220" y="42" width="90" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

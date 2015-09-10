@@ -436,6 +436,7 @@ alter table v_albacol add acl_dtopp float not null default 0;
 -- Tabla articulos, añadir campo para costo incrementado
 alter table v_articulo add pro_cosinc float default 0 not null;
 alter table v_articulo add pro_mancos float default 0 not null;
+alter table anjelica.v_articulo alter pro_codart set not null;
 
 -- Añadir Campo  Palet a Control Inventario
 alter table coninvlin add lci_numpal char(5);
@@ -525,3 +526,10 @@ and e.avs_serlot=p1.avp_serlot and e.pro_codi = p1.pro_codi) order by avs_nume
 -- 
 select * from v_stkpart as s where eje_nume=2011 and pro_serie='T' and pro_nupar=33185
 and not exists (select * from v_despfin as f where eje_nume=2011 and pro_lote= s.pro_nupar and s.pro_numind= f.pro_numind and f.pro_codi=s.pro_codi); 
+
+-- Poner como inactivos articulos sin mvtos ni stock.
+update v_articulo set pro_activ=0 
+where pro_activ!=0
+and pro_tiplot='V' 
+and NOT EXISTS (select PRO_CODI from mvtosalm  as m where m.pro_codi =v_articulo.pro_codi and m.mvt_fecdoc<'20150101')
+and not exists (select pro_codi from v_regstock as m where m.pro_codi =v_articulo.pro_codi and m.rgs_fecha <'20150101' )

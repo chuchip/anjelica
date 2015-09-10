@@ -204,11 +204,13 @@ class MyRenderer extends DefaultTreeCellRenderer {
 
             public void actionPerformed(ActionEvent e) {
                 Component c[]=Pvisual.getComponents();
-                for (int n=0;n<c.length;n++)
-                    Pvisual.remove(c[n]);
-                for (int n=0;n<vtree.size();n++)
+                for (Component c1 : c)
                 {
-                    DefaultTreeModel model = (DefaultTreeModel) ((JTree) vtree.get(n)).getModel();
+                    Pvisual.remove(c1);
+                }
+                for (Object vtree1 : vtree)
+                {
+                    DefaultTreeModel model = (DefaultTreeModel) ((JTree) vtree1).getModel();
                     model.setRoot(null);
                 }
                 vtree.clear();
@@ -224,11 +226,13 @@ class MyRenderer extends DefaultTreeCellRenderer {
     public void verDatosArbol() throws SQLException
     {
             Component c[]=Pvisual.getComponents();
-            for (int n=0;n<c.length;n++)
-                Pvisual.remove(c[n]);
-            for (int n=0;n<vtree.size();n++)
+            for (Component c1 : c)
             {
-                DefaultTreeModel model = (DefaultTreeModel) ((JTree) vtree.get(n)).getModel();
+                Pvisual.remove(c1);
+            }
+            for (Object vtree1 : vtree)
+            {
+                DefaultTreeModel model = (DefaultTreeModel) ((JTree) vtree1).getModel();
                 model.setRoot(null);
             }
             vtree.clear();
@@ -251,6 +255,7 @@ class MyRenderer extends DefaultTreeCellRenderer {
                final JTree jtree=new JTree();
                ToolTipManager.sharedInstance().registerComponent(jtree);
                jtree.addTreeSelectionListener(new TreeSelectionListener() {
+                @Override
                 public void valueChanged(TreeSelectionEvent e) {
                     DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                        jtree.getLastSelectedPathComponent();

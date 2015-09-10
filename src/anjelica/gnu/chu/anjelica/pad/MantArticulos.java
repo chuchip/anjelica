@@ -154,7 +154,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2015-04-21" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2015-09-03" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM v_articulo where pro_activ != 0 "+
                 " ORDER BY pro_codi";
 
@@ -795,6 +795,13 @@ public class MantArticulos extends ventanaPad  implements PAD
       pro_nombE.requestFocus();
       return false;
     }
+    if (pro_codartE.isNull())
+    {
+      mensajeErr("Introduzca Codigo Interno de Articulo ");
+      pro_codartE.setText(pro_codiE.getText());
+      pro_codartE.requestFocus();
+      return false;
+    }
     if (!fam_codiE.controla(true))
     {
       mensajeErr("Familia NO es valida");
@@ -1053,9 +1060,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     verDatos(dtCons);
   }
   void Bimpri_actionPerformed()
-   {
-     if (dtCons.getNOREG())
-       return;
+   {    
      try {
        if (dtCons.getNOREG())
        {
@@ -1244,6 +1249,22 @@ public class MantArticulos extends ventanaPad  implements PAD
          "  pro_codi = " + codProd;
 
      if (!dt.select(s))
+       return null;
+     return dt.getString("pro_nomb");
+   }
+    /**
+     * Devuelve el nombre del articulo (Codigo NO numerico)
+     * @param codArtic Codigo Producto
+     * @param dt DatosTabla sobre el que ejecutar la select
+     * @return Nombre de producto. NULL si no lo encuentra
+     * @throws SQLException
+     */
+   public static String getNombreArticulo(String codArtic, DatosTabla dt) throws SQLException
+   {
+     String s = "select pro_nomb from v_articulo  where " +
+         "  pro_codart '= " + codArtic+"'";
+
+     if (!dt.select(s))  
        return null;
      return dt.getString("pro_nomb");
    }
@@ -1523,6 +1544,8 @@ public class MantArticulos extends ventanaPad  implements PAD
         cLabel3.setText("Codigo Interno");
         Pinicio.add(cLabel3);
         cLabel3.setBounds(410, 3, 92, 20);
+
+        pro_codartE.setMayusc(true);
         Pinicio.add(pro_codartE);
         pro_codartE.setBounds(530, 3, 85, 20);
 

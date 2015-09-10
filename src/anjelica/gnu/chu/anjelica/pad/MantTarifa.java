@@ -2,7 +2,7 @@
  *
  * <p>Titulo: MantTarifa </p>
  * <p>Descripción: Mantenimiento Tarifas de Ventas</p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -27,18 +27,31 @@ import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventanaPad;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.print.PrinterException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Vector;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRResultSetDataSource;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 
 public class MantTarifa extends ventanaPad implements PAD
@@ -99,11 +112,11 @@ public class MantTarifa extends ventanaPad implements PAD
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2010-06-19" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2015-09-08" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
-      strSql = "SELECT tar_fecini,tar_fecfin,tar_codi FROM c_tarifa"+
+      strSql = "SELECT tar_fecini,tar_fecfin,tar_codi FROM tarifa"+
           " group by tar_fecini,tar_fecfin,tar_codi" +
           " order by tar_fecini,tar_codi";
       this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -122,9 +135,14 @@ public class MantTarifa extends ventanaPad implements PAD
         nav.removeBoton(navegador.EDIT);
         nav.removeBoton(navegador.DELETE);
       }
+      statusBar.add(Bimpri, new GridBagConstraints(9, 0, 1, 2, 0.0, 0.0
+                            , GridBagConstraints.EAST,
+                            GridBagConstraints.VERTICAL,
+                            new Insets(0, 5, 0, 0), 0, 0));
+
     }
     @Override
-  public void iniciarVentana() throws Exception
+    public void iniciarVentana() throws Exception
     {
       tar_feciniE.setColumnaAlias("tar_fecini");
       tar_fecfinE.setColumnaAlias("tar_fecfin");
@@ -139,14 +157,20 @@ public class MantTarifa extends ventanaPad implements PAD
 
     void activarEventos()
     {
-
+        Bimpri.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                Bimpri_actionPerformed();
+            }
+         });
 
       tar_feciniE.addFocusListener(new FocusAdapter()
       {
             @Override
         public void focusLost(FocusEvent e)
         {
-          if (tar_feciniE.getQuery() || tar_feciniE.getError())
+          if (tar_feciniE.isQuery()|| tar_feciniE.getError())
             return;
           try {
             if (!tar_feciniE.isNull())
@@ -177,10 +201,49 @@ public class MantTarifa extends ventanaPad implements PAD
       gc.setTime(fecha);
       return gc.get(GregorianCalendar.WEEK_OF_YEAR);
     }
+    void Bimpri_actionPerformed()
+   {
+     if (dtCons.getNOREG())
+       return;
+     try {
+       if (dtCons.getNOREG())
+       {
+         mensajeErr("NO HAY NINGUN PRODUCTO SELECIONADO");
+         return;
+       }
+
+       HashMap mp = new HashMap();
+      
+       mp.put("tar_feciniP", tar_feciniE.getDate());
+       mp.put("tar_fecfinP", tar_fecfinE.getDate());
+       mp.put("impRefer", opImpRef.isSelected());
+       mp.put("tar_nombP", tar_codiE.getText()); 
+       mp.put("logo", Iconos.getPathIcon() + "logotipo.jpg"); 
+       JasperReport jr;
+       jr = gnu.chu.print.util.getJasperReport(EU,"tarifa");
+   
+        s="select * from tarifa  "+
+            " where tar_codi = "+tar_codiE.getValorInt()+
+            " and tar_fecini = TO_DATE('"+tar_feciniE.getText()+"','dd-MM-yyyy') "+
+            " order by tar_linea";
+       ResultSet rs;
+
+       rs=dtCon1.getStatement().executeQuery(dtCon1.parseaSql(s));
+
+       JasperPrint jp = JasperFillManager.fillReport(jr, mp,
+           new JRResultSetDataSource(rs));
+       gnu.chu.print.util.printJasper(jp, EU);
+     }
+     catch (JRException | ParseException | SQLException | PrinterException k)
+     {
+       Error("Error al imprimir Tarifa", k);
+     }
+   }
     void irGrid()
     {
       if (nav.pulsado!=navegador.ADDNEW && nav.pulsado!=navegador.EDIT)
         return;
+      
       if (tar_feciniE.isNull() || tar_fecfinE.isNull())
       {
         tar_feciniE.requestFocus();
@@ -189,7 +252,7 @@ public class MantTarifa extends ventanaPad implements PAD
       try {
         if (nav.pulsado == navegador.ADDNEW)
         {
-          s = "SELECT * FROM c_tarifa WHERE "+
+          s = "SELECT * FROM tarifa WHERE "+
               " tar_fecini = TO_DATE('"+tar_feciniE.getText()+"','dd-MM-yyyy') "+
               " and tar_codi = " + tar_codiE.getValor();
           if (dtCon1.select(s))
@@ -207,7 +270,7 @@ public class MantTarifa extends ventanaPad implements PAD
         Baceptar.setEnabled(true);
         if (nav.pulsado==navegador.ADDNEW &&  !tar_fecopE.isNull())
         {// Copiar los datos de la anterior TARIFA
-          s = "SELECT * FROM c_tarifa WHERE " +
+          s = "SELECT * FROM tarifa WHERE " +
               " tar_fecini = TO_DATE('" + tar_fecopE.getText() +
               "','dd-MM-yyyy') " +
               " and tar_codi = " + tar_copiaE.getValor();
@@ -220,6 +283,7 @@ public class MantTarifa extends ventanaPad implements PAD
         }
         jt.setEnabled(true);
         jt.requestFocusInicio();
+        pro_codartE.resetCambio();
       } catch (Exception k)
       {
         Error("ERROR al ir al Grid",k);
@@ -233,20 +297,33 @@ public class MantTarifa extends ventanaPad implements PAD
         borDatos(fecha,tipo);
 
         int nRow = jt.getRowCount();
-        dtAdd.addNew("c_tarifa");
+        int grupo=0;
+        int animal=0;
+        dtAdd.addNew("tarifa");
         for (int n = 0; n < nRow; n++)
         {
-          if ( jt.getValorInt(n,0)==0 || jt.getValorDec(n,2)==0)
-            continue;
+          if ( jt.getValString(n,0).trim().equals(""))
+          {
+              if (jt.getValString(n,1).trim().equals(""))
+                  continue;
+              else
+                  grupo++;
+          }
+          if ( jt.getValString(n,0).trim().equals("X") && !jt.getValString(n,1).trim().equals(""))
+              animal++;
+//          if (jt.getValorDec(n,2)==0)
+//            continue;
           dtAdd.addNew();
           dtAdd.setDato("tar_fecini",tar_feciniE.getText(),"dd-MM-yyyy");
           dtAdd.setDato("tar_fecfin",tar_fecfinE.getText(),"dd-MM-yyyy");
           dtAdd.setDato("tar_linea",n);
           dtAdd.setDato("tar_codi",tar_codiE.getValor());
-          dtAdd.setDato("pro_codi",jt.getValorInt(n,0));
+          dtAdd.setDato("pro_codart",jt.getValString(n,0));
           dtAdd.setDato("pro_nomb",jt.getValString(n,1));
           dtAdd.setDato("tar_preci",jt.getValorDec(n,2));
           dtAdd.setDato("tar_comen",jt.getValString(n,3));
+          dtAdd.setDato("tar_grupo",grupo);
+          dtAdd.setDato("tar_tipo",animal);
           dtAdd.update(stUp);
         }
         ctUp.commit();
@@ -260,7 +337,7 @@ public class MantTarifa extends ventanaPad implements PAD
 
     void  borDatos(String fecha,String tipo) throws SQLException,java.text.ParseException
     {
-      s = "DELETE FROM c_tarifa " +
+      s = "DELETE FROM tarifa " +
           " WHERE tar_fecini = TO_DATE('" + fecha + "','dd-MM-yyyy') " +
           " AND tar_codi = " + tipo  ;
       stUp.executeUpdate(dtAdd.parseaSql(s));
@@ -279,14 +356,13 @@ public class MantTarifa extends ventanaPad implements PAD
       } catch (Exception k)
       {
         Error("Error al ver datos",k);
-        return;
       }
     }
 
     void verDatLin(String fecha,String tipo,String fecfin,double increm) throws Exception
     {
-      s = "SELECT pro_codi,pro_nomb,tar_preci +("+ increm +"),tar_comen " +
-          " FROM c_tarifa " +
+      s = "SELECT pro_codart,pro_nomb,tar_preci +("+ increm +"),tar_comen " +
+          " FROM tarifa " +
           " WHERE tar_fecini = TO_DATE('"+fecha+"','dd-MM-yyyy') "+
           " AND tar_codi = "+tipo+
           " order by tar_linea";
@@ -306,6 +382,7 @@ public class MantTarifa extends ventanaPad implements PAD
       jt.setDatos(dtCon1);
       jt.requestFocusInicio();
     }
+    @Override
     public void activar(boolean act)
     {
       activar(navegador.TODOS,act);
@@ -318,35 +395,37 @@ public class MantTarifa extends ventanaPad implements PAD
       Bcancelar.setEnabled(act);
       Pcabe.setEnabled(act);
     }
-
+   @Override
     public void PADPrimero()
     {
       verDatos();
     }
-
+    @Override
     public void PADAnterior()
     {
       verDatos();
     }
-
+    
+    @Override
     public void PADSiguiente()
     {
       verDatos();
     }
 
+    @Override
     public void PADUltimo()
     {
       verDatos();
     }
     @Override
-  public void PADQuery() {
-    activar(navegador.QUERY, true);
-    Pcabe.setQuery(true);
-    Pcabe.resetTexto();
-//    eje_numeE.setText(""+EU.ejercicio);
-    tar_feciniE.requestFocus();
+    public void PADQuery() {
+        activar(navegador.QUERY, true);
+        Pcabe.setQuery(true);
+        Pcabe.resetTexto();
+    //    eje_numeE.setText(""+EU.ejercicio);
+        tar_feciniE.requestFocus();
 
-  }
+    }
 
     @Override
   public void ej_query1() {
@@ -356,7 +435,7 @@ public class MantTarifa extends ventanaPad implements PAD
     v.add(tar_fecfinE.getStrQuery());
     v.add(tar_codiE.getStrQuery());
     Pcabe.setQuery(false);
-    s="SELECT tar_fecini,tar_fecfin,tar_codi FROM c_tarifa";
+    s="SELECT tar_fecini,tar_fecfin,tar_codi FROM tarifa";
     s=creaWhere(s,v);
     s+=" group by tar_fecini,tar_fecfin,tar_codi"+
         " order by tar_fecini,tar_codi";
@@ -403,9 +482,9 @@ public class MantTarifa extends ventanaPad implements PAD
     tipo=tar_codiE.getValor();
     activar(true);
     tar_fecopE.setEnabled(false);
-
-    jt.requestFocusFinal();
-    jt.mueveSigLinea(0);
+    jt.requestFocusInicioLater();
+//    jt.requestFocusFinal();
+//    jt.mueveSigLinea(0);
   }
   public void ej_edit1() {
       jt.procesaAllFoco();
@@ -469,11 +548,14 @@ public class MantTarifa extends ventanaPad implements PAD
       int nRow=jt.getRowCount();
       for (int n=0;n<nRow-1;n++)
       {
+          if (jt.getValString(n,0).equals("") || jt.getValString(n,0).equals("X"))
+                  continue;
           for (int n1=n+1;n1<nRow;n1++)
           {
-              if (jt.getValorInt(n,0)== jt.getValorInt(n1,0))
+             
+              if (jt.getValString(n,0).equals(jt.getValString(n1,0)))
               {
-                  mensajeErr("Producto: "+jt.getValorInt(n,0)+" Ya existe en linea "+n);
+                  mensajeErr("Producto: "+jt.getValString(n,0)+" Ya existe en linea "+n);
                   return n1;
               }
           }
@@ -519,14 +601,14 @@ public class MantTarifa extends ventanaPad implements PAD
 
   int cambiaLineaJT()
   {
-    if (pro_codiE.getValorInt()==0)
-      return -1; // No hay producto ... paso
+    if (pro_codartE.isNull() || pro_codartE.getText().equals("X"))
+      return -1; // No hay producto o es de tipo... paso
     try {
 
-
-      if (!pro_codiE.controla(false))
+      
+      if (!pro_codartE.controla(false))
       {
-        mensajeErr(pro_codiE.getMsgError());
+        mensajeErr(pro_codartE.getMsgError());
         return 0;
       }
 //      if (tar_preciE.getValorDec() == 0)
@@ -553,7 +635,8 @@ public class MantTarifa extends ventanaPad implements PAD
     }
     verDatos();
   }
-    @Override
+  
+  @Override
   public void afterConecta() throws SQLException, java.text.ParseException
   {
     s = "SELECT tar_codi,tar_nomb FROM tipotari WHERE tar_codori = 0" +
@@ -569,8 +652,9 @@ public class MantTarifa extends ventanaPad implements PAD
       }
       while (dtStat.next());
     }
-    pro_codiE.iniciar(dtStat, this, vl, EU);
-    pro_codiE.setProNomb(null);
+    pro_codartE.iniciar(dtStat, this, vl, EU);
+
+    pro_codartE.setProNomb(null);
   }
   public static double getPrecTar(DatosTabla dt,int proCodi, int tarCodi,java.util.Date fecAlb) throws SQLException
  {
@@ -582,7 +666,7 @@ public class MantTarifa extends ventanaPad implements PAD
    * @param proCodi int Codigo de Producto
    * @param tarCodi int Codigo de Tarifa
    * @param fecAlb String Fecha de Albaran (en formato dd-MM-yyyy)
-   * @throws Exception Error al acceder a la DB
+   * @throws SQLException Error al acceder a la DB
    * @return double Precio de Tarifa. 0 Si no encuentra tarifa para las condiciones.
    */
  public static double getPrecTar(DatosTabla dt,int proCodi, int tarCodi,String fecAlb) throws SQLException
@@ -593,7 +677,8 @@ public class MantTarifa extends ventanaPad implements PAD
      double tarIncPre = dt.getDouble("tar_incpre");
 
      s = " SELECT tar_preci,tar_fecini " +
-         " FROM c_tarifa where pro_codi = " + proCodi +
+         " FROM tarifa as t,v_articulo as ar where pro_codi = " + proCodi +
+         " and ar.pro_codart=t.pro_codart "+
          " and tar_codi = " + (dt.getInt("tar_codori") == 0 ? dt.getInt("tar_codi") :
           dt.getInt("tar_codori")) +
          " AND tar_fecini <=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
@@ -634,6 +719,7 @@ public class MantTarifa extends ventanaPad implements PAD
          return null;
      return dt.getString("tar_nomb");
  }
+ 
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -645,9 +731,12 @@ public class MantTarifa extends ventanaPad implements PAD
         java.awt.GridBagConstraints gridBagConstraints;
 
         pro_nombE = new gnu.chu.controles.CTextField();
-        pro_codiE = new gnu.chu.camposdb.proPanel();
         tar_comenG = new gnu.chu.controles.CTextField(Types.CHAR,"X",150);
         tar_preciE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
+        pro_codartE = new gnu.chu.camposdb.proPanel();
+        pro_codartE.setUsaCodigoArticulo(true);
+        pro_codartE.setText("");
+        Bimpri = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -673,11 +762,22 @@ public class MantTarifa extends ventanaPad implements PAD
                 {
                     if (col ==0)
                     {
-                        String nombArt=pro_codiE.getNombArt(pro_codiE.getText());
+                        if (! pro_codartE.hasCambio())
+                        return;
+                        String nombArt;
+                        if (pro_codartE.getText().equals("X"))
+                        {
+                            nombArt="*TIPO*";
+                        }
+                        else
+                        {
+                            nombArt=pro_codartE.getNombArt(pro_codartE.getText());
+                        }
                         if (nombArt==null)
                         jt.setValor("**PRODUCTO NO ENCONTRADO**", row, 1);
                         else
                         jt.setValor(nombArt, row, 1);
+                        pro_codartE.resetCambio();
                     }
                 }
                 catch (Exception k)
@@ -688,6 +788,7 @@ public class MantTarifa extends ventanaPad implements PAD
 
             public void afterCambiaLinea()
             {
+                pro_codartE.resetCambio();
                 //      tar_feciniG.setText(tar_feciniE.getText());
                 //      tar_fecfinG.setText(tar_fecfinE.getText());
             }
@@ -697,22 +798,22 @@ public class MantTarifa extends ventanaPad implements PAD
                 return cambiaLineaJT();
             }
         };
-        Vector cabecera = new Vector();
-        cabecera.addElement("Codigo"); // 2 -- Codigo
-        cabecera.addElement("Nombre"); //3 -- Nombre
-        cabecera.addElement("Precio"); // 4 -- Precio
-        cabecera.addElement("Coment"); // 5 -- Comentario
+        ArrayList cabecera = new ArrayList();
+        cabecera.add("Codigo"); // 2 -- Codigo
+        cabecera.add("Nombre"); //3 -- Nombre
+        cabecera.add("Precio"); // 4 -- Precio
+        cabecera.add("Coment"); // 5 -- Comentario
         jt.setCabecera(cabecera);
-        jt.setAnchoColumna(new int[]{46, 283, 60,150});
-        jt.alinearColumna(new int[] {2, 0, 2,0});
+        jt.setAnchoColumna(new int[]{86, 283, 60,150});
+        jt.alinearColumna(new int[] {0, 0, 2,0});
 
-        pro_nombE.setEnabled(false);
         try {
-            Vector v = new Vector();
-            v.addElement(pro_codiE.getFieldProCodi());
-            v.addElement(pro_nombE);
-            v.addElement(tar_preciE);
-            v.addElement(tar_comenG);
+            pro_codartE.setText("");
+            ArrayList v = new ArrayList();
+            v.add(pro_codartE.getTextField());
+            v.add(pro_nombE);
+            v.add(tar_preciE);
+            v.add(tar_comenG);
             jt.setCampos(v);
         }catch (Exception k)
         {
@@ -721,6 +822,14 @@ public class MantTarifa extends ventanaPad implements PAD
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
+        opImpRef = new gnu.chu.controles.CCheckBox();
+
+        pro_codartE.setAceptaNulo(false);
+
+        Bimpri.setToolTipText("Imprimir Tarifa");
+        Bimpri.setMaximumSize(new java.awt.Dimension(24, 24));
+        Bimpri.setMinimumSize(new java.awt.Dimension(24, 24));
+        Bimpri.setPreferredSize(new java.awt.Dimension(24, 24));
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -857,37 +966,23 @@ public class MantTarifa extends ventanaPad implements PAD
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
         Pprinc.add(jt, gridBagConstraints);
 
-        Ppie.setPreferredSize(new java.awt.Dimension(322, 30));
+        Ppie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        Ppie.setMaximumSize(new java.awt.Dimension(392, 30));
+        Ppie.setMinimumSize(new java.awt.Dimension(392, 30));
+        Ppie.setPreferredSize(new java.awt.Dimension(392, 30));
+        Ppie.setLayout(null);
 
         Baceptar.setText("Aceptar");
+        Ppie.add(Baceptar);
+        Baceptar.setBounds(10, 2, 117, 25);
 
         Bcancelar.setText("Cancelar");
+        Ppie.add(Bcancelar);
+        Bcancelar.setBounds(140, 2, 117, 25);
 
-        org.jdesktop.layout.GroupLayout PpieLayout = new org.jdesktop.layout.GroupLayout(Ppie);
-        Ppie.setLayout(PpieLayout);
-        PpieLayout.setHorizontalGroup(
-            PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PpieLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(Baceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 117, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 68, Short.MAX_VALUE)
-                .add(Bcancelar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 98, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        PpieLayout.linkSize(new java.awt.Component[] {Baceptar, Bcancelar}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        PpieLayout.setVerticalGroup(
-            PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PpieLayout.createSequentialGroup()
-                .add(2, 2, 2)
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(Baceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(Bcancelar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
-        PpieLayout.linkSize(new java.awt.Component[] {Baceptar, Bcancelar}, org.jdesktop.layout.GroupLayout.VERTICAL);
+        opImpRef.setText("Impr. Referenc.");
+        Ppie.add(opImpRef);
+        opImpRef.setBounds(273, 2, 110, 23);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -904,6 +999,7 @@ public class MantTarifa extends ventanaPad implements PAD
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
+    private gnu.chu.controles.CButton Bimpri;
     private gnu.chu.controles.CButton Bocul;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Ppie;
@@ -917,7 +1013,8 @@ public class MantTarifa extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CPanel cPanel1;
     private gnu.chu.controles.CGridEditable jt;
-    private gnu.chu.camposdb.proPanel pro_codiE;
+    private gnu.chu.controles.CCheckBox opImpRef;
+    private gnu.chu.camposdb.proPanel pro_codartE;
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CComboBox tar_codiE;
     private gnu.chu.controles.CTextField tar_comenG;

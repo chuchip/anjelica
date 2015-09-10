@@ -38,11 +38,13 @@ import javax.swing.JLayeredPane;
 
 
 public class AyuArt extends  ventana {
+   final int JT_CODART=1;
+   final int JT_NOMPRO=2;
    private int rseCodcli=0;
    private String s;
    private boolean chose=false;
    private int proCodi;
-   private String proNomb;
+   private String proNomb,proCodArt;
     
     public AyuArt() {
         initComponents();
@@ -112,6 +114,7 @@ public class AyuArt extends  ventana {
         this.chose = chose;
     }
     public int getProCodi()    {return proCodi; }
+    public String getProRefer()    {return proCodArt; }
     public String getProNomb() {return proNomb;}
     void activarEventos()
     {
@@ -123,7 +126,8 @@ public class AyuArt extends  ventana {
                 {
                     chose = true;
                     proCodi = jt.getValorInt(0);
-                    proNomb = jt.getValString(1);
+                    proCodArt=jt.getValString(JT_CODART);
+                    proNomb = jt.getValString(JT_NOMPRO);
                     matar();
                 }
             }
@@ -163,7 +167,7 @@ public class AyuArt extends  ventana {
   void Bbuscar_actionPerformed()
   {
         try {
-            s = "select pro_codi,pro_nomb,fam_codi,fpr_nomb FROM v_articulo a,v_famipro f,v_agupro as gr " +
+            s = "select pro_codi,pro_codart,pro_nomb,fam_codi,fpr_nomb FROM v_articulo a,v_famipro f,v_agupro as gr " +
                  " where a.fam_codi=f.fpr_codi "+
                  " and f.agr_codi = gr.agr_codi "+
                  (pro_activE.getValor().equals("*")?"":
@@ -172,6 +176,7 @@ public class AyuArt extends  ventana {
                   (" and pro_artcon "+(pro_congE.getValor().equals("F")?" = 0":"!= 0")))+
                   (pro_nombE.isNull()?"":" and UPPER(pro_nomb) like '%" + pro_nombE.getText() +"%'")+
                   (fam_codiE.isNull()?"":" and f.fpr_codi = "+fam_codiE.getValorInt())+
+                  (pro_codartE.isNull(true)?"":" and pro_codart like '%"+pro_codartE.getText()+"%'")+
                   (agr_codiE.isNull()?"":" and gr.agr_codi = "+agr_codiE.getValorInt());
             if (rseCodcli!=0)
             {
@@ -204,7 +209,7 @@ public class AyuArt extends  ventana {
         java.awt.GridBagConstraints gridBagConstraints;
 
         Pprinc = new gnu.chu.controles.CPanel();
-        jt = new gnu.chu.controles.Cgrid(4);
+        jt = new gnu.chu.controles.Cgrid(5);
         Pcondic = new gnu.chu.controles.CPanel();
         pro_nombL = new gnu.chu.controles.CLabel();
         pro_nombE = new gnu.chu.controles.CTextField();
@@ -215,19 +220,23 @@ public class AyuArt extends  ventana {
         pro_activE = new gnu.chu.controles.CComboBox();
         Bbuscar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
         pro_congE = new gnu.chu.controles.CComboBox();
+        cLabel3 = new gnu.chu.controles.CLabel();
+        pro_codartE = new gnu.chu.controles.CTextField(Types.CHAR,"X",12);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         ArrayList cabecera=new ArrayList();
         cabecera.add("Codigo"); // 0 -- Codigo
-        cabecera.add("Nombre"); //1 -- Nombre
-        cabecera.add("Familia"); // 2 -- Familia
-        cabecera.add("Descrip"); // 3-- Desc. Familia
+        cabecera.add("Refer"); // 1-- Codigo Alfanumerico prod.
+        cabecera.add("Nombre"); //2 -- Nombre
+        cabecera.add("Familia"); // 3 -- Familia
+        cabecera.add("Descrip"); // 4-- Desc. Familia
+
         jt.setCabecera(cabecera);
 
-        jt.setAnchoColumna(new int[]{46,250,20,150});
+        jt.setAnchoColumna(new int[]{46,100,250,20,150});
 
-        jt.alinearColumna(new int[]{2,0,2,0});
+        jt.alinearColumna(new int[]{2,0,0,2,0});
         jt.setNumRegCargar(500);
         jt.setAjustarGrid(true);
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -266,15 +275,15 @@ public class AyuArt extends  ventana {
         Pcondic.add(pro_nombE);
         pro_nombE.setBounds(50, 2, 250, 17);
 
-        cLabel1.setText("Grupo");
+        cLabel1.setText("Refer.");
         Pcondic.add(cLabel1);
-        cLabel1.setBounds(2, 42, 42, 15);
+        cLabel1.setBounds(172, 42, 42, 15);
 
         agr_codiE.setAncTexto(30);
         agr_codiE.combo.setPreferredSize(new java.awt.Dimension(352, 17));
         agr_codiE.setFormato(Types.DECIMAL,"##9");
         Pcondic.add(agr_codiE);
-        agr_codiE.setBounds(50, 42, 250, 17);
+        agr_codiE.setBounds(50, 42, 120, 17);
 
         cLabel2.setText("Familia ");
         Pcondic.add(cLabel2);
@@ -302,6 +311,14 @@ public class AyuArt extends  ventana {
         Pcondic.add(pro_congE);
         pro_congE.setBounds(305, 22, 100, 17);
 
+        cLabel3.setText("Grupo");
+        Pcondic.add(cLabel3);
+        cLabel3.setBounds(2, 42, 42, 15);
+
+        pro_codartE.setMayusc(true);
+        Pcondic.add(pro_codartE);
+        pro_codartE.setBounds(220, 42, 90, 17);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -315,6 +332,7 @@ public class AyuArt extends  ventana {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Bbuscar;
     private gnu.chu.controles.CPanel Pcondic;
@@ -322,9 +340,11 @@ public class AyuArt extends  ventana {
     private gnu.chu.controles.CLinkBox agr_codiE;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel2;
+    private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLinkBox fam_codiE;
     private gnu.chu.controles.Cgrid jt;
     private gnu.chu.controles.CComboBox pro_activE;
+    private gnu.chu.controles.CTextField pro_codartE;
     private gnu.chu.controles.CComboBox pro_congE;
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CLabel pro_nombL;

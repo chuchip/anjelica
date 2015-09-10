@@ -91,7 +91,7 @@ pro_offein date,	-- Oferta desde Fecha  -- NO UTILIZADO
 pro_offefi date,	-- Oferta hasta fecha -- NO UTILIZADO
 pro_tipiva int,		-- Tipo de IVA
 pro_costkmi int,	-- Llevar Control de Stock Minimo. (-1 si, 0. No)
-pro_codart varchar(12), -- Codigo de Articulo
+pro_codart varchar(12) not null, -- Codigo de Articulo
 pro_tarexp int, 	-- Lleva Taras Expedicion? NO UTLIZADO
 pro_coinen int,		-- Control Ind. Envase -- NO UTILIZADO
 pro_unicom varchar(2),  -- Unidades de Compra (Kg/Ud)
@@ -134,7 +134,7 @@ env_codi int not null default 0, -- Tipo de Envase
 pro_indtco int not null default 1, -- Incluye en dto. Comercial (0: No)
 constraint ix_articulo primary key(pro_codi)
 );
-
+create index ix_articul1 on v_articulo(pro_codart);
 --
 -- Tabla de Categorias
 --
@@ -1792,18 +1792,20 @@ tar_incpre float               -- Se Incrementara precio sobre tar_codori (Cant.
 -- Tablas de Tarifas
 ---
 -- drop table c_tarifa;
-create table anjelica.c_tarifa
+create table anjelica.tarifa
 (
-tar_fecini date,
-tar_fecfin date,
+tar_fecini date not null,
+tar_fecfin date not null,
 tar_codi int not null, -- Codigo de Tarifa
 tar_linea int not null, -- Linea de tarifa
-pro_codi int,
-pro_nomb char(50),
+pro_codart varchar(12) not null, -- Codigo de Articulo
+pro_nomb VARCHAR(50) not null, -- Descripcion del Articulo
 tar_preci decimal(10,2),
-tar_comen varchar(150)
+tar_comen varchar(150),
+tar_grupo smallint not null, -- Grupo de familia  (solo se usa cuando pro_codart='')
+tar_tipo smallint not null,  -- Tipo Animal (solo se usa cuando pro_codart='X')
 );
-create  index ix_tarifa on c_tarifa(tar_fecini,tar_fecfin,tar_codi,pro_codi);
+create  index ix_tari1 on anjelica.tarifa(tar_fecini,tar_fecfin,tar_codi,pro_codart);
 ---
 --- Maestro de  Almacenes
 ---
@@ -3896,4 +3898,3 @@ create trigger mvtosalm_update BEFORE UPDATE OR DELETE  on anjelica.mvtosalm for
 
 create trigger stkpart_insert BEFORE insert OR UPDATE  on anjelica.stockpart for each row   WHEN (NEW.pro_serie !='S' ) execute procedure anjelica.fn_acumstk();
 create trigger stkpart_delete BEFORE  DELETE  on anjelica.stockpart for each row WHEN (OLD.pro_serie !='S' ) execute procedure anjelica.fn_acumstk();
-

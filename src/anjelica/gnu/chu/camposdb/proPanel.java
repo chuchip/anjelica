@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLayeredPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
 
 /**
  *  Panel con el Código de Producto y Nombre de Producto.
@@ -46,6 +47,7 @@ import javax.swing.JPopupMenu;
  */
 public class proPanel extends CPanel
 {
+  private boolean usaRefArticulo=false; // Indica si debe usar Referencia del Art. (String 12)
   private String proUniVen="";
   private double pesoCajas;
   private  CodigoBarras codBarra=null;
@@ -62,7 +64,7 @@ public class proPanel extends CPanel
   private int activo;
   int sbeCodi=0;
   AyuArt aypro;
-  boolean prodEqu=false;
+  //boolean prodEqu=false;
   int proCodiAnt=0;
 //  boolean refer=false;
   int proCoinst;
@@ -217,30 +219,9 @@ public class proPanel extends CPanel
   }
   public void setProdEquiv(boolean prodEqu)
   {
-    this.prodEqu=prodEqu;
-    if (prodEqu)
-    {
-      pro_codiE.setTipoCampo(Types.CHAR);
-      pro_codiE.setFormato("X");
-      pro_codiE.setMaxLong(12);
-      pro_codiE.setMayusc(true);
-      pro_codiE.setPreferredSize(new Dimension(100, 16));
-      validate();
-      repaint();
-    }
-    else
-    {
-      pro_codiE.setTipoCampo(Types.DECIMAL);
-      pro_codiE.setFormato("####9");
-      pro_codiE.setPreferredSize(new Dimension(getAncTexto(),16));
-      validate();
-      repaint();
-    }
+    
   }
-  public boolean getProdEquiv()
-  {
-    return prodEqu;
-  }
+ 
   /**
    * Machacar si se quiere hacer algo despues de un FocusLost
    * @param correcto Indica si el valor del campo (controla devolvio true) es correcto.
@@ -819,7 +800,10 @@ public class proPanel extends CPanel
   {
     if (aypro.getChose())
     {
-      pro_codiE.setValorInt(aypro.getProCodi());
+      if (usaRefArticulo)
+         pro_codiE.setText(aypro.getProRefer());
+      else
+        pro_codiE.setValorInt(aypro.getProCodi());
       if (swControl)
         pro_nombL.setText(aypro.getProNomb());
     }
@@ -936,7 +920,7 @@ public class proPanel extends CPanel
     if (dt == null)
       return false;
     inHistorico = false;
-    if (! prodEqu)
+    if (! usaRefArticulo)
     {
       try
       {
@@ -1120,20 +1104,25 @@ public class proPanel extends CPanel
       return "";
     if (codArt.equals(""))
       return "";
-    try {
-      codArt = ""+Integer.parseInt(codArt.trim());
-    } catch (NumberFormatException k){codArt="0";}
-    if (prodEqu)
+    if (usaRefArticulo)
     {
-      s = "SELECT * FROM refproeq WHERE pro_codi= '" + codArt +"'"+
-          " and emp_codi = " + empCodi;
+      s = "SELECT * FROM v_articulo WHERE pro_codart= '" + codArt +"'"+
+          " and pro_activ!=0";
       if (! dt.select(s))
       {
         lkPrd.setColumnCount(0);
         return null;
       }
-      codArt=dt.getString("pro_nume");
+      codArt=dt.getString("pro_codi");
     }
+    else
+    {
+        try {      
+        codArt = ""+Integer.parseInt(codArt.trim());
+        } catch (NumberFormatException k){codArt="0";}
+    }
+    
+
     String proNomb=null;
     if (prvCodi!=0)     
     {
@@ -1327,6 +1316,29 @@ public class proPanel extends CPanel
   public boolean isVendible()
   {
     return getTipoLote()==MantArticulos.TIPO_VENDIBLE.charAt(0);
+  }
+  public void setUsaCodigoArticulo(boolean swUsaCodArticulo)
+  {
+    this.usaRefArticulo=swUsaCodArticulo;
+   
+    if (usaRefArticulo)
+    {
+      pro_codiE.setTipoCampo(Types.CHAR);
+      pro_codiE.setFormato("X");
+      pro_codiE.setMaxLong(12);
+      pro_codiE.setMayusc(true);
+      pro_codiE.setHorizontalAlignment(JTextField.LEFT);
+      pro_codiE.setPreferredSize(new Dimension(100, 16));
+    }
+    else
+    {
+      pro_codiE.setTipoCampo(Types.DECIMAL);
+      pro_codiE.setFormato("####9");
+      pro_codiE.setPreferredSize(new Dimension(getAncTexto(),16));
+     
+    }
+    validate();
+    repaint();
   }
   /**
    * Acepta como validos productos inactivos
