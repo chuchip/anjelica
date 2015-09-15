@@ -112,7 +112,7 @@ public class MantTarifa extends ventanaPad implements PAD
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2015-09-08" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2015-09-14" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -807,6 +807,7 @@ public class MantTarifa extends ventanaPad implements PAD
         jt.setAnchoColumna(new int[]{86, 283, 60,150});
         jt.alinearColumna(new int[] {0, 0, 2,0});
 
+        jt.setNumRegCargar(0);
         try {
             pro_codartE.setText("");
             ArrayList v = new ArrayList();
