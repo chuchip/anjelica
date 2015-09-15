@@ -119,7 +119,7 @@ pro_stock float default 0 not null,	-- Kilos actuales (Stock)
 pro_kgmin float default 0 not null,	-- Kg. Minimos en Stock
 pro_kgmax float default 0 not null,	-- Kg. Maximos en Stock
 pro_stkuni float default 0 not null,	-- Unidades Actuales (Stock)
-pro_activ int default -1 not null, -- Activo? 0 No.
+<v int default -1 not null, -- Activo? 0 No.
 pro_cadcong int default 23 not null, -- Meses de caducidad congelado
 cam_codi  char(2) not null,  -- Camara (SE BUSCA EN discriminador dis_tipo='AC')
 pro_envvac int default 0 not null, -- Envasado Vacio: 0 NO

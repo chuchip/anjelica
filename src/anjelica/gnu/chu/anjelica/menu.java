@@ -1735,8 +1735,11 @@ void pdreprese_actionPerformed(ActionEvent e) {
   }
   void ALMantPartes_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
-    ht.put("estados", "10");
+    String ret=mensajes.mensajeGetTexto("Mantenimiento Partes","Elija Tipo Mant. partes",this, "0",new String[]{"0","2","3","10"});
+    ht.put("estados", ret);
     lanzaEjecutable(new gnu.chu.anjelica.almacen.MantPartes(menu.this,EU,ht));
+    
+    
   }
   
   void pdproveed_actionPerformed(ActionEvent e) {

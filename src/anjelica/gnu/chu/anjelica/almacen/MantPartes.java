@@ -35,6 +35,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -151,7 +152,7 @@ public class MantPartes  extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false,
             P_PERMEST==2?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20150826) Modo: "+P_PERMEST);
+        this.setVersion("(20150915) Modo: "+P_PERMEST);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -219,12 +220,28 @@ public class MantPartes  extends ventanaPad implements PAD
       activaTodo();
       activarEventos();
       verDatos();
+      if (P_PERMEST==10)
+      {
+          String res=mensajes.mensajeGetTexto("Elija modo del programa", "Elija",this,"Administrador",new String[]{"Administrador","Gerencia","Oficina"});
+          switch (res)
+          {
+              case "Gerencia":
+                 P_PERMEST=ESTADO_GERENCIA;
+                 break;
+              case "Oficina":
+                 P_PERMEST=ESTADO_CERRADO;
+                 break;
+          }              
+      }
+      if (P_PERMEST==ESTADO_CERRADO)
+        estadoE.setValor(""+ESTADO_GERENCIA);
       cargaListado(estadoE.getValor());
-      if (P_PERMEST==2)
+      if (P_PERMEST==ESTADO_GERENCIA || P_PERMEST==ESTADO_CERRADO)
       {
         PTabPane1.setSelectedIndex(1); 
         nav.setEnabled(pid, eje);
       }
+      permisoL.setText(estadoE.getText(""+P_PERMEST));
   }
   private void activarEventos()
   {
@@ -612,72 +629,7 @@ public class MantPartes  extends ventanaPad implements PAD
      
      par_codiE.requestFocus();
  }
- @Override
- public void PADEdit()
- {
-        try
-        {
-            if (P_PERMEST==ESTADO_GERENCIA)
-            {
-                swModificaTodo=false;
-                if (jtList.isVacio())
-                {
-                    nav.setPulsado(navegador.NINGUNO);
-                    activaTodo();
-                    return;
-                }
-            }
-            if (P_PERMEST==ESTADO_GENERADA )
-                swModificaTodo=true;
-            if (swModificaTodo)
-                PTabPane1.setSelectedIndex(0);
-            
-            if (pac_usuincE.isNull())
-            {
-                mensajeErr("Parte no encontrado");
-                nav.setPulsado(navegador.NINGUNO);
-                activaTodo();
-                return;
-            }
-            if ( P_PERMEST == ESTADO_GENERADA && pac_estadE.getValorInt()> ESTADO_PROCDEV)
-            {
-                msgBox(("Parte no puede ser modficado con sus permisos"));
-                nav.setPulsado(navegador.NINGUNO);
-                activaTodo();
-                return;
-            }
-            
-            if (! setBloqueo(dtAdd,"v_partes", par_codiE.getText()))
-            {
-                msgBox(msgBloqueo);
-                activaTodo();
-                return;
-            }
-         
-            activar(navegador.EDIT, true);
-            if (swModificaTodo)
-            {
-                activaCamposGrid(); 
-                if (P_PERMEST== ESTADO_GENERADA)
-                    pac_tipoE.setEnabled(!pac_tipoE.getValor().equals("R") && pac_estadE.getValorInt()==ESTADO_GENERADA);
-            }
-            mensaje("Editando parte");
-            if (swModificaTodo)
-                jt.requestFocusInicio();
-            else
-            {
-                if (pac_tipoE.getValor().equals("D") && pac_estadE.getValorInt()==ESTADO_GENERADA)
-                    setAcciones(pal_accionlE, 'D');
-                else
-                    setAcciones(pal_accionlE, 'N');
-                jt1.requestFocusInicio();
-            }
-            resetCambioLote();
-        } catch (SQLException | UnknownHostException ex)
-        {
-            Error("Error al editar registro",ex);
-        } 
- }
+ 
  /**
   * Carga Combo con las diferentes acciones posibles
   * @param c CComboBox
@@ -990,6 +942,7 @@ public class MantPartes  extends ventanaPad implements PAD
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
+        permisoL = new gnu.chu.controles.CLabel();
 
         pro_codiE.setProNomb(pro_nombE);
         pro_nombE.setEnabled(false);
@@ -1250,6 +1203,7 @@ public class MantPartes  extends ventanaPad implements PAD
                 return;
             }
         }
+        jt.setNumRegCargar(0);
         jt.setAlinearColumna(new int[]{2,0,2,1,2,2,1,2,2,0,0,0,0,1,2,2});
         jt.setAnchoColumna(new int[]{70,130,50,30,50,40,60,60,60,60,150,60,130,40,50,50});
         jt.setDefButton(Baceptar);
@@ -1463,10 +1417,10 @@ public class MantPartes  extends ventanaPad implements PAD
         Pprinc.add(PTabPane1, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        Ppie.setMaximumSize(new java.awt.Dimension(240, 35));
-        Ppie.setMinimumSize(new java.awt.Dimension(240, 35));
+        Ppie.setMaximumSize(new java.awt.Dimension(440, 35));
+        Ppie.setMinimumSize(new java.awt.Dimension(440, 35));
         Ppie.setName(""); // NOI18N
-        Ppie.setPreferredSize(new java.awt.Dimension(240, 35));
+        Ppie.setPreferredSize(new java.awt.Dimension(440, 35));
         Ppie.setLayout(null);
 
         Baceptar.setText("Aceptar");
@@ -1475,7 +1429,13 @@ public class MantPartes  extends ventanaPad implements PAD
 
         Bcancelar.setText("Cancelar");
         Ppie.add(Bcancelar);
-        Bcancelar.setBounds(135, 2, 90, 30);
+        Bcancelar.setBounds(140, 2, 90, 30);
+
+        permisoL.setBackground(java.awt.Color.lightGray);
+        permisoL.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        permisoL.setOpaque(true);
+        Ppie.add(permisoL);
+        permisoL.setBounds(280, 10, 150, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1572,6 +1532,7 @@ public class MantPartes  extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel par_codiL3;
     private gnu.chu.controles.CLabel par_comentL;
     private gnu.chu.controles.CLabel par_fecaltL3;
+    private gnu.chu.controles.CLabel permisoL;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.camposdb.proPanel pro_codilE;
     private gnu.chu.controles.CTextField pro_ejelotE;
@@ -1684,14 +1645,96 @@ public class MantPartes  extends ventanaPad implements PAD
         nav.setPulsado(navegador.NINGUNO);
         verDatos();  
     }
-
+@Override
+ public void PADEdit()
+ {
+        try
+        {
+            if (P_PERMEST==ESTADO_GERENCIA)
+            {
+                swModificaTodo=false;
+                if (jtList.isVacio())
+                {
+                    msgBox("Elija un parte en la pestaña 'Listado'");
+                    PTabPane1.setSelectedIndex(1); 
+                    nav.setPulsado(navegador.NINGUNO);
+                    activaTodo();
+                    return;
+                }
+            }
+            if (P_PERMEST==ESTADO_GENERADA )
+                swModificaTodo=true;
+            if (swModificaTodo)
+                PTabPane1.setSelectedIndex(0);
+            
+            if (pac_usuincE.isNull())
+            {
+                mensajeErr("Parte no encontrado");
+                nav.setPulsado(navegador.NINGUNO);
+                activaTodo();
+                return;
+            }
+            if ( P_PERMEST == ESTADO_GENERADA && pac_estadE.getValorInt()> ESTADO_PROCDEV)
+            {
+                msgBox(("Parte no puede ser modficado con sus permisos"));
+                nav.setPulsado(navegador.NINGUNO);
+                activaTodo();
+                return;
+            }
+            
+            if (! setBloqueo(dtAdd,"v_partes", swModificaTodo?par_codiE.getText():jt1.getValString(0)))
+            {
+                msgBox(msgBloqueo);
+                activaTodo();
+                return;
+            }
+         
+            activar(navegador.EDIT, true);
+            if (swModificaTodo)
+            {
+                activaCamposGrid(); 
+                if (P_PERMEST== ESTADO_GENERADA)
+                    pac_tipoE.setEnabled(!pac_tipoE.getValor().equals("R") && pac_estadE.getValorInt()==ESTADO_GENERADA);
+            }
+            mensaje("Editando parte");
+            if (swModificaTodo)
+                jt.requestFocusInicio();
+            else
+            {
+                if (P_PERMEST== ESTADO_CERRADO && estadoE.getValorInt()==ESTADO_GERENCIA)
+                {
+                    jt1.setEnabled(false);
+                }
+                else
+                {
+                    if (pac_tipoE.getValor().equals("D") && pac_estadE.getValorInt()==ESTADO_GENERADA)
+                        setAcciones(pal_accionlE, 'D');
+                    else
+                        setAcciones(pal_accionlE, 'N');
+                }
+                jt1.requestFocusInicio();
+            }
+            resetCambioLote();
+        } catch (SQLException | UnknownHostException ex)
+        {
+            Error("Error al editar registro",ex);
+        }     
+    }
+ 
     @Override
     public void ej_edit1() {
         try
         {            
             if (! checkEntrada())
                 return;
-            
+            Date fecProd=null,fecRes=null;
+            if (P_PERMEST== ESTADO_CERRADO && !swModificaTodo && estadoE.getValorInt()==ESTADO_GERENCIA) 
+            {
+                 pac_estadE.setValor(ESTADO_CERRADO);
+                 fecRes=Formatear.getDateAct();
+            }
+            else
+            {
             boolean swAccion=true;
             int nRows= swModificaTodo?jt.getRowCount():jt1.getRowCount();
             for (int n=0;n<nRows;n++)
@@ -1708,17 +1751,24 @@ public class MantPartes  extends ventanaPad implements PAD
                         return;
                     }
                 }
-            }     
+            }  
+            
             if (P_PERMEST!=PERM_ADMIN)
             {
                 if (!swModificaTodo && pac_estadE.getValorInt()<=ESTADO_GERENCIA  &&  swAccion)
                 {
                     if (pac_estadE.getValorInt()==ESTADO_GENERADA && !pac_tipoE.getValor().equals("D"))
+                    {
+                        fecProd=Formatear.getDateAct();
                         pac_estadE.setValor(ESTADO_GERENCIA);
+                    }
                     else
                     {
                         if (pac_estadE.getValorInt()==ESTADO_PROCDEV &&  pac_tipoE.getValor().equals("R"))
+                        {
                             pac_estadE.setValor(ESTADO_GERENCIA);
+                            pac_estadE.setValor(ESTADO_GERENCIA);
+                        }
                         else
                             pac_estadE.setValor(pac_estadE.getValorInt()+ 1);
                     }
@@ -1732,10 +1782,13 @@ public class MantPartes  extends ventanaPad implements PAD
                     }
                 }
             }
-            resetBloqueo(dtAdd, "v_partes",par_codiE.getText());
+            }
+            resetBloqueo(dtAdd, "v_partes", swModificaTodo?par_codiE.getText():jt1.getValString(0),false);
             dtAdd.select("select * from partecab where par_codi="+par_codiE.getValorInt(),true);
             dtAdd.edit();
-            actualCab();
+           
+            
+            actualCab(fecProd,fecRes);
             if (swModificaTodo)
             {
                 deleteParteLin();
@@ -1762,7 +1815,7 @@ public class MantPartes  extends ventanaPad implements PAD
     public void canc_edit() {
     
         try {
-          resetBloqueo(dtAdd, "v_partes",par_codiE.getText());
+          resetBloqueo(dtAdd, "v_partes", swModificaTodo?par_codiE.getText():jt1.getValString(0));
         } catch (Exception k)
         {
           mensajes.mensajeAviso("Error al Quitar el bloqueo\n"+k.getMessage());
@@ -1852,11 +1905,11 @@ public class MantPartes  extends ventanaPad implements PAD
         dtAdd.setDato("emp_codi",EU.em_cod);
         dtAdd.setDato("pac_usuinc",EU.usuario);
         dtAdd.setDato("pac_fecinc",pac_fecincE.getDate());
-        actualCab();
+        actualCab(null,null);
         dtStat.select("SELECT lastval()");
         return dtStat.getInt(1);
     }
-    private void actualCab() throws  SQLException,ParseException
+    private void actualCab(Date fecProc,Date fecRes) throws  SQLException,ParseException
     {
         dtAdd.setDato("pac_estad",pac_estadE.getValor());
         dtAdd.setDato("pac_tipo",pac_tipoE.getValor());
@@ -1865,6 +1918,17 @@ public class MantPartes  extends ventanaPad implements PAD
         dtAdd.setDato("pac_docano",pac_docanoE.getValorInt());
         dtAdd.setDato("pac_docser",pac_docserE.getText());
         dtAdd.setDato("pac_docnum",pac_docnumE.getValorInt());
+        if (fecProc!=null)
+        {
+            dtAdd.setDato("pac_usupro",EU.usuario);
+            dtAdd.setDato("pac_fecpro",fecProc);
+        }
+        if (fecRes!=null)
+        {
+            dtAdd.setDato("pac_usures",EU.usuario);
+            dtAdd.setDato("pac_fecres",fecRes);
+        }
+        
         dtAdd.update();       
     }
     void  deleteParteLin() throws  SQLException

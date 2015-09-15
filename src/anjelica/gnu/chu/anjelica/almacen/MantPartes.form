@@ -705,7 +705,7 @@
                   </Properties>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(16)&#xa;{&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        int reCaLin=cambiaLineajt(row);&#xa;        return reCaLin;&#xa;    }&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        calcAcumulados();&#xa;    }&#xa;    protected void afterCambiaColumna(int col,int colNueva,int row)&#xa;    {&#xa;        if (col==JT_INDI)&#xa;        afterCambiaCol();&#xa;    }&#xa;    public boolean insertaLinea(int row, int col)&#xa;    {&#xa;        return  nav.getPulsado()==navegador.ADDNEW || pac_estadE.getValorInt()&lt;ESTADO_GERENCIA;&#xa;    }&#xa;    public boolean deleteLinea(int row, int col) {&#xa;        return jt.getValorInt(row,JT_PROCODI)==0  || nav.getPulsado()==navegador.ADDNEW || pac_estadE.getValorInt()==ESTADO_GENERADA;&#xa;&#xa;    }&#xa;&#xa;}"/>
-                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{ArrayList vc=new ArrayList();&#xa;vc.add(&quot;Articulo&quot;); //0&#xa;vc.add(&quot;Nombre&quot;); // 1&#xa;vc.add(&quot;Ejerc.&quot;); // 2&#xa;vc.add(&quot;Serie&quot;); // 3&#xa;vc.add(&quot;Lote&quot;); // 4&#xa;vc.add(&quot;Ind.&quot;); // 5&#xa;vc.add(&quot;Fec.Cad&quot;); // 6&#xa;vc.add(&quot;Unid&quot;); // 7&#xa;vc.add(&quot;Kilos&quot;); // 8&#xa;vc.add(&quot;Sug.&quot;); // 9&#xa;vc.add(&quot;Com.Sala&quot;); // 10&#xa;vc.add(&quot;Accion&quot;); // 11&#xa;vc.add(&quot;Comentario&quot;); // 12&#xa;vc.add(&quot;Abona&quot;); // 13&#xa;vc.add(&quot;Kil.Abo&quot;); // 14&#xa;vc.add(&quot;Pre.Abo&quot;); // 15&#xa;jt.setCabecera(vc);&#xa;ArrayList v=new ArrayList();&#xa;v.add(pro_codiE.getTextField()); // 0&#xa;v.add(pro_nombE);  // 1&#xa;v.add(pro_ejelotE); // 2&#xa;v.add(pro_serlotE); // 3&#xa;v.add(pro_numlotE); // 4&#xa;v.add(pro_indlotE); // 5&#xa;v.add(pro_feccadE); // 6&#xa;v.add(pal_unidadE); // 7&#xa;v.add(pal_kilosE); // 8&#xa;v.add(pal_acsalaE); // 9&#xa;v.add(pal_comsalE); // 10&#xa;v.add(pal_accionE); // 11&#xa;v.add(pal_comentE); // 12&#xa;v.add(pal_solaboE); // 13&#xa;v.add(pal_kilaboE); // 14&#xa;v.add(pal_preaboE); // 15&#xa;try {&#xa;jt.setCampos(v);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al iniciar campos del grid&quot;,k);&#xa;return;&#xa;}&#xa;}&#xa;jt.setAlinearColumna(new int[]{2,0,2,1,2,2,1,2,2,0,0,0,0,1,2,2});&#xa;jt.setAnchoColumna(new int[]{70,130,50,30,50,40,60,60,60,60,150,60,130,40,50,50});&#xa;jt.setDefButton(Baceptar);"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{ArrayList vc=new ArrayList();&#xa;vc.add(&quot;Articulo&quot;); //0&#xa;vc.add(&quot;Nombre&quot;); // 1&#xa;vc.add(&quot;Ejerc.&quot;); // 2&#xa;vc.add(&quot;Serie&quot;); // 3&#xa;vc.add(&quot;Lote&quot;); // 4&#xa;vc.add(&quot;Ind.&quot;); // 5&#xa;vc.add(&quot;Fec.Cad&quot;); // 6&#xa;vc.add(&quot;Unid&quot;); // 7&#xa;vc.add(&quot;Kilos&quot;); // 8&#xa;vc.add(&quot;Sug.&quot;); // 9&#xa;vc.add(&quot;Com.Sala&quot;); // 10&#xa;vc.add(&quot;Accion&quot;); // 11&#xa;vc.add(&quot;Comentario&quot;); // 12&#xa;vc.add(&quot;Abona&quot;); // 13&#xa;vc.add(&quot;Kil.Abo&quot;); // 14&#xa;vc.add(&quot;Pre.Abo&quot;); // 15&#xa;jt.setCabecera(vc);&#xa;ArrayList v=new ArrayList();&#xa;v.add(pro_codiE.getTextField()); // 0&#xa;v.add(pro_nombE);  // 1&#xa;v.add(pro_ejelotE); // 2&#xa;v.add(pro_serlotE); // 3&#xa;v.add(pro_numlotE); // 4&#xa;v.add(pro_indlotE); // 5&#xa;v.add(pro_feccadE); // 6&#xa;v.add(pal_unidadE); // 7&#xa;v.add(pal_kilosE); // 8&#xa;v.add(pal_acsalaE); // 9&#xa;v.add(pal_comsalE); // 10&#xa;v.add(pal_accionE); // 11&#xa;v.add(pal_comentE); // 12&#xa;v.add(pal_solaboE); // 13&#xa;v.add(pal_kilaboE); // 14&#xa;v.add(pal_preaboE); // 15&#xa;try {&#xa;jt.setCampos(v);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al iniciar campos del grid&quot;,k);&#xa;return;&#xa;}&#xa;}&#xa;jt.setNumRegCargar(0);&#xa;jt.setAlinearColumna(new int[]{2,0,2,1,2,2,1,2,2,0,0,0,0,1,2,2});&#xa;jt.setAnchoColumna(new int[]{70,130,50,30,50,40,60,60,60,60,150,60,130,40,50,50});&#xa;jt.setDefButton(Baceptar);"/>
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1055,14 +1055,14 @@
               </Border>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[240, 35]"/>
+              <Dimension value="[440, 35]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[240, 35]"/>
+              <Dimension value="[440, 35]"/>
             </Property>
             <Property name="name" type="java.lang.String" value="" noResource="true"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[240, 35]"/>
+              <Dimension value="[440, 35]"/>
             </Property>
           </Properties>
           <Constraints>
@@ -1091,7 +1091,21 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="135" y="2" width="90" height="30"/>
+                  <AbsoluteConstraints x="140" y="2" width="90" height="30"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="permisoL">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="c0" green="c0" id="lightGray" palette="1" red="c0" type="palette"/>
+                </Property>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="opaque" type="boolean" value="true"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="280" y="10" width="150" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

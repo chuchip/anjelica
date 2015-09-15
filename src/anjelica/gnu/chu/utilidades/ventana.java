@@ -754,7 +754,14 @@ public class ventana extends CInternalFrame implements ejecutable
     registroLock = null;
     return res;
   }
-
+  /**
+   * Quita bloqueo de un registro. Realiza un commit al final.
+   * @param dt
+   * @param tabla
+   * @param registro
+   * @return false si el registro no estaba bloqueado
+   * @throws SQLException 
+   */
   public boolean resetBloqueo(DatosTabla dt, String tabla, String registro) throws SQLException
   {
     return resetBloqueo(dt, tabla, registro, true);
