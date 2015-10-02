@@ -355,7 +355,9 @@ public class CGridEditable extends Cgrid implements CQuery {
         if (swColu)
           ( (GridListener) grListener.get(i)).cambioColumna(ev);
         else
+        {
           ( (GridListener) grListener.get(i)).cambiaLinea(ev);
+        }
     }
   }
   /**
@@ -1255,16 +1257,16 @@ public class CGridEditable extends Cgrid implements CQuery {
 
   public int cambiaLinea1(int row, int col)
   {
-    int n = 0;
+    int n;
     for (n = 0; n < nCol; n++)
     {
       if (tCampo.get(n).equals("T") )
       { // Si el Campo es TextField y tiene Error y esta enabled y Editable
         if (( (CTextField) campos.get(n)).isEnabled() && ( (CTextField) campos.get(n)).isEditable())
-        ( (CTextField) campos.get(n)).procesaSalir();
-        if ( ( (CTextField) campos.get(n)).getError() &&
-            ( (CTextField) campos.get(n)).isEnabled() &&
-            ( (CTextField) campos.get(n)).isEditable())
+            ( (CTextField) campos.get(n)).procesaSalir();
+        if (( (CTextField) campos.get(n)).getError() &&
+           ((CTextField) campos.get(n)).isEnabled() &&
+           ((CTextField) campos.get(n)).isEditable())
         {
          ( (CTextField) campos.get(n)).getMsgError();
           return n;
@@ -1297,7 +1299,7 @@ public class CGridEditable extends Cgrid implements CQuery {
   }
   /**
    * Funcion a Machacar si se quiere controlar algo cuando se cambia una columna
-   * 
+   * Se deberia usar grEvent  en vez de machacar.
    * @param col int
    * @param colNueva int
    * @param row int
@@ -1313,6 +1315,8 @@ public class CGridEditable extends Cgrid implements CQuery {
      processGridEvent(grEvent, true);
      afterCambiaColumna(col,colNueva,row);
    }
+  
+    @Override
    protected void cambiaColumna(int col,int row)
    {
        cambiaColumna(col,col,row);
@@ -1391,6 +1395,7 @@ public class CGridEditable extends Cgrid implements CQuery {
 
   /**
    * Machacar esta funcion si quiere controlar algo Cuando se cambie la linea
+   * Se deberia usar GridEvent
    * Es llamada cuando el grid esta disabled. Los componentes tendran el valor
    * de la ultima linea activa.
      * @param nRow numero de linea a procesar
@@ -1411,15 +1416,20 @@ public class CGridEditable extends Cgrid implements CQuery {
   /**
    * Esta rutina sera llamada, cada vez que se cambia la linea.
    * Si retorna >=0, NO SE CAMBIARA y se saltara al Campo devuelto.
-   * <bold>El primer campo es 0</bold>
+   * <strong>El primer campo es 0</strong>
    * Sustituirla en la definición del grid para realizar alguna acción
    * cuando se cambie de linea.
+   * Se deberia usar addGridListener(gridListener x) y tratar ahi el evento. 
+   * @ see getColError en  gnu.chu.eventos.GridEvent
+   * @param row Linea
+   * @param col Columna
    * @return campo al que ir por error. < 0 si todo ha ido bien
    * @see addGridListener
    */
 
   public int cambiaLinea(int row, int col)
   {
+      
      GridEvent grEvent=new GridEvent(this);
      grEvent.setColumna(col);
      grEvent.setLinea(row);
@@ -1556,11 +1566,20 @@ public class CGridEditable extends Cgrid implements CQuery {
    * Machacar esta función si se quiere controlar algo despues de Insertar una linea
    * insLinea = true se ha insertado una linea con F7 o el boton
    *          = false es una nueva linea al final del grid
-     * @param insLinea
+   * @return true si debe permitir insertar una nueva linea
+   * @param insLinea
    */
   public boolean afterInsertaLinea(boolean insLinea)
   {
-      return true;
+     GridEvent grEvent=new GridEvent(this);
+     grEvent.setColumna(getSelectedColumn());
+     grEvent.setLinea(getSelectedRow());
+     for (Object grListener1 : grListener)
+     {
+        if (! ((GridListener) grListener1).afterInsertaLinea(grEvent))
+            return false;
+     }
+     return true;
   }
   
   
@@ -1579,13 +1598,16 @@ public class CGridEditable extends Cgrid implements CQuery {
  * Funcion a machacar cuando se quiera hacer algo despues de borrar linea
  *
  */
+    @Override
   public void afterDeleteLinea()
   {
      GridEvent grEvent=new GridEvent(this);
      grEvent.setColumna(getSelectedColumn());
      grEvent.setLinea(getSelectedRow());
-      for (int i = 0; i < grListener.size(); i++)
-          ( (GridListener) grListener.get(i)).afterDeleteLinea(grEvent);
+     for (Object grListener1 : grListener)
+     {
+        ((GridListener) grListener1).afterDeleteLinea(grEvent);
+     }
   }
 
   Vector datosLinea()
@@ -1651,13 +1673,24 @@ public class CGridEditable extends Cgrid implements CQuery {
   }
   /**
    * Machacar clase si se desea hacer algo antes de insertar linea
+   * No se deberia machacar. Usar en su lugar addGridListener
+   * @see GridListener 
    * @param row
    * @param col
    * @return true si se puede insertar linea. false en caso contrario.
    */
   public boolean insertaLinea(int row, int col)
   {
-    return canInsertLinea;
+       if ( getQuery())
+         return false;
+        GridEvent grEvent = new GridEvent(this);
+        grEvent.setColumna(col);
+        grEvent.setLinea(row);
+        for (int i = 0; i < grListener.size(); i++) {
+            if (!((GridListener) grListener.get(i)).insertaLinea(grEvent))
+                return false;
+        }      
+        return canInsertLinea;
   }
 
   public void setCanInsertLinea(boolean insertLinea)
@@ -2000,38 +2033,55 @@ class focusAdaptGrid extends FocusAdapter
   @Override
   public void focusGained(java.awt.event.FocusEvent e)
   {
-//      try
-//      {
-//          Component c=e.getComponent();
-//          if (c==null)
-//              return;
-//          
-//          if (Class.forName("gnu.chu.controles.CComboBox").isAssignableFrom(c.getClass()))
-//          {
-//              ((CComboBox) c).setPopupVisible(false);
-//          }
-//      } catch (ClassNotFoundException ex)
-//      {
-//          Logger.getLogger(focusAdaptGrid.class.getName()).log(Level.SEVERE, null, ex);
-//      }
+      
+       if (e.getComponent() instanceof CComboBox )
+           ((CComboBox) e.getComponent()).showPopup();
+       if (padre.getTengoFoco() )
+       {
+        if (e.getOppositeComponent()==padre.tableView || e.getOppositeComponent()==null
+          || e.getOppositeComponent() == padre  )
+          return;
+        for (int n=0;n<padre.nCol;n++)
+        {
+           if (e.getOppositeComponent()==padre.campos.get(n))
+            return;
+         }
+       }
+       padre.setTengoFoco(true);
+       GridEvent grEvent=new GridEvent(padre);
+       grEvent.setFocusGained(true);
+       grEvent.setColumna(-1);
+       grEvent.setLinea(padre.getSelectedRow());
+       grEvent.setColNueva(padre.getSelectedColumn());
+       for (Object grListener1 : padre.grListener)
+       {
+            ((GridListener) grListener1).focusGained(grEvent);
+       }
+      
+//      
   }
     @Override
   public void focusLost(java.awt.event.FocusEvent e)
   {
-//    System.out.println("e: "+e.getOppositeComponent());
     if (e.getOppositeComponent()==padre.tableView || e.getOppositeComponent()==null
         || e.getOppositeComponent() == padre)
       return;
-//    if (e.getOppositeComponent() instanceof JRootPane )
-//    {
-//          padre.cambiaColumna0(nCol,nCol);
-//          return;
-//    }
+
     for (int n=0;n<padre.nCol;n++)
     {
       if (e.getOppositeComponent()==padre.campos.get(n))
         return;
     }
-    padre.cambiaColumna0(nCol,nCol);
+    padre.setTengoFoco(false);
+    GridEvent grEvent=new GridEvent(padre); 
+    grEvent.setFocusLost(true);
+    grEvent.setColumna(-1);
+    grEvent.setLinea(padre.getSelectedRow());
+    grEvent.setColNueva(padre.getSelectedColumn());
+    for (Object grListener1 : padre.grListener)
+    {
+        ((GridListener) grListener1).focusLost(grEvent);
+    }
+    
   }
 }

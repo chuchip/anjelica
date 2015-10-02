@@ -25,12 +25,47 @@ public class GridEvent extends EventObject
 {
   private int colError=-1;
   private boolean puedeBorrarLinea=true;
-
   private int col,linea,colNueva;
-
+  private boolean focusGained=false;
+  private boolean focusLost=false;
   public boolean getPuedeBorrarLinea()
   {
       return puedeBorrarLinea;
+  }
+  
+  /**
+   * Establecer a  true si el grid ha ganado foco (o sea se acaba de entrar al grid)
+   * @param focoGanado 
+   */ 
+  public void setFocusGained(boolean focoGanado)
+  {
+      focusGained=focoGanado;
+  }
+  /**
+   * Devolvera true si el grid ha ganado foco (o sea se acaba de entrar al grid)
+   * 
+   * @return  true si ha ganado el foco alguno de los campos y no viene de un campo del grid
+   */ 
+  public boolean getFocusGained()
+  {
+      return focusGained;
+  }
+  /**
+   * Establecer a  true si el grid ha ganado foco (o sea se acaba de entrar al grid)
+   * @param focoGanado 
+   */ 
+  public void setFocusLost(boolean focoPerdido)
+  {
+      focusLost=focoPerdido;
+  }
+  /**
+   * Devolvera true si el grid ha ganado foco (o sea se acaba de entrar al grid)
+   * 
+   * @return  true si ha ganado el foco alguno de los campos y no viene de un campo del grid
+   */ 
+  public boolean getFocusLost()
+  {
+      return focusLost;
   }
   /**
    * Poner despues de haber llamado a deleteLinea para que se pueda o no
@@ -71,6 +106,11 @@ public class GridEvent extends EventObject
   {
       return colError;
   }
+  /**
+   * LLamar despues de un evento de cambio linea, para establecer si 
+   * puede cambiar de linea (-1) o hay un error en la columna mandada.
+   * @param colError  Si es -1, no hay error. >=0 Columna con error.
+   */
   public void setColError(int colError)
   {
       this.colError=colError;

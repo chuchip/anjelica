@@ -45,6 +45,7 @@ import javax.swing.tree.TreeCellEditor;
 
 public class Cgrid extends CPanel implements Serializable
 {
+  private boolean  tengoFoco=false;
   private ToolTipHeader headerToolTip;
   private boolean res=false;
   private boolean activo=true;
@@ -1634,6 +1635,7 @@ public class Cgrid extends CPanel implements Serializable
 
     /**
     * Funcion para eliminar la fila seleccionada del grid.
+     * @return 
     */
      public boolean removeLinea(){
       if(tableView.getSelectedRow()==-1){
@@ -2874,7 +2876,14 @@ public class Cgrid extends CPanel implements Serializable
       });
       this.setButton(KeyEvent.VK_F8,Bborra);
     }
-
+    public boolean getTengoFoco()
+    {
+        return tengoFoco;
+    }
+    void setTengoFoco(boolean foco)
+    {
+        tengoFoco=foco;
+    }
     protected void Bborra_actionPerformed()
     {
       if (! isEnabled())
