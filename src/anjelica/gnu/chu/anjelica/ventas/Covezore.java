@@ -135,7 +135,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2013-05-20");
+   this.setVersion("2015-10-02");
    statusBar = new StatusBar(this);
  
    initComponents();
@@ -914,7 +914,7 @@ void busVenZona()
              (zon_codiE.isNull()?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
              (rep_codiE.isNull()?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'")+
              bdiscr.getCondWhere("cl")+
-             " and avc_kilos != 0 "+
+//             " and avc_kilos != 0 "+
              " and cl.cli_codi = c.cli_codi "+
              " group by c.sbe_codi,cl.rep_codi,cl.zon_codi "+
              " order by c.sbe_codi,cl.rep_codi,cl.zon_codi";
