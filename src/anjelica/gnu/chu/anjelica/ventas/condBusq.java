@@ -47,10 +47,10 @@ public class condBusq extends CPanel
   CTextField ejeIniE = new CTextField(Types.DECIMAL,"###9");
   CTextField ejeFinE = new CTextField(Types.DECIMAL,"###9");
   CLabel cLabel12 = new CLabel();
-  CLabel cLabel6 = new CLabel();
+  
   CLinkBox empIniE = new CLinkBox();
   CLabel cLabel3 = new CLabel();
-  CLinkBox empFinE = new CLinkBox();
+  
   CTextField serieFinE = new CTextField(Types.CHAR,"X",1);
   CTextField serieIniE = new CTextField(Types.CHAR,"X",1);
   CLabel cLabel4 = new CLabel();
@@ -110,14 +110,12 @@ public class condBusq extends CPanel
     cLabel11.setBounds(new Rectangle(3, 23, 72, 17));
     cLabel12.setText("A Ejercicio");
     cLabel12.setBounds(new Rectangle(184, 23, 60, 17));
-    cLabel6.setText("A Empresa");
-    cLabel6.setBounds(new Rectangle(291, 41, 70, 19));
+    
     empIniE.setAncTexto(30);
     empIniE.setBounds(new Rectangle(69, 41, 219, 19));
-    cLabel3.setText("De Empresa");
+    cLabel3.setText("Empresa");
     cLabel3.setBounds(new Rectangle(2, 41, 70, 19));
-    empFinE.setAncTexto(30);
-    empFinE.setBounds(new Rectangle(354, 41, 225, 19));
+   
     serieFinE.setMayusc(true);
     serieFinE.setBounds(new Rectangle(266, 61, 19, 17));
     serieIniE.setMayusc(true);
@@ -163,8 +161,8 @@ public class condBusq extends CPanel
     PcondCli.setBounds(new Rectangle(5, 100, 336, 66));
     titledBorder2.setTitle("Discriminadores Clientes");
     CLabel div_codiL = new CLabel("Divisa");
-    div_codiL.setBounds(new Rectangle(5, 80, 65, 18));
-    div_codiE.setBounds(new Rectangle(71, 80, 90, 18));
+    div_codiL.setBounds(new Rectangle(291, 40, 65, 18));
+    div_codiE.setBounds(new Rectangle(360, 40, 90, 18));
     
     PcondCli.setLayout(null);
     PcondPro.setBorder(titledBorder1);
@@ -191,8 +189,8 @@ public class condBusq extends CPanel
     this.add(cliIniE, null);
     this.add(cLabel2, null);
     this.add(cLabel11, null);
-    this.add(empFinE, null);
-    this.add(cLabel6, null);
+    
+
     this.add(cLabel3, null);
     this.add(cLabel4, null);
     this.add(albIniE, null);
@@ -208,6 +206,7 @@ public class condBusq extends CPanel
     this.add(fecFinE, null);
     this.add(cLabel13, null);
     this.add(fecIniE, null);
+    
     this.add(div_codiL,null);
     this.add(div_codiE,null);
     PcondCli.add(zon_codiE, null);
@@ -244,10 +243,6 @@ public class condBusq extends CPanel
     dt.select(s);
     empIniE.addDatos(dt);
 
-    empFinE.setFormato(true);
-    empFinE.setFormato(Types.DECIMAL, "#9", 2);
-    dt.select(s);
-    empFinE.addDatos(dt);
 
     proIniE.iniciar(dt,padre,layPan,eu);
     proFinE.iniciar(dt,padre,layPan,eu);
@@ -318,13 +313,6 @@ public class condBusq extends CPanel
       fecFinE.requestFocus();
       return false;
     }
-    if (empFinE.getValorInt() < empIniE.getValorInt())
-    {
-      padre.mensajeErr("Empresa Final NO puede ser inferior a la Inicial");
-      empFinE.setValorInt(empIniE.getValorInt());
-      empFinE.requestFocus();
-      return false;
-    }
     if (albFinE.getValorInt() < albIniE.getValorInt())
     {
       padre.mensajeErr("Albaran Final NO puede ser inferior al Inicial");
@@ -358,9 +346,7 @@ public class condBusq extends CPanel
     if (! fecFinE.isNull())
       condWhere+=" and a.avc_fecalb <= TO_DATE('"+fecFinE.getText()+"','dd-MM-yyyy')";
     if (empIniE.getValorInt()>0)
-      condWhere += " and a.emp_codi >= " + empIniE.getValorInt();
-    if (empFinE.getValorInt()>0)
-      condWhere += " and a.emp_codi <= " + empFinE.getValorInt();
+      condWhere += " and a.emp_codi = " + empIniE.getValorInt();
 
     if (!serieIniE.isNull(true))
       condWhere += " and a.avc_serie >= '" + serieIniE.getText()+"'";

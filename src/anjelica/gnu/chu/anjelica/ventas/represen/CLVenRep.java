@@ -23,8 +23,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRParameter;
@@ -67,7 +70,7 @@ public class CLVenRep extends ventana {
         this(eu, p, null);
     }
 
-    public CLVenRep(EntornoUsuario eu, Principal p, Hashtable ht) {
+    public CLVenRep(EntornoUsuario eu, Principal p, Hashtable<String,String> ht) {
         EU = eu;
         vl = p.panel1;
         jf = p;
@@ -76,9 +79,9 @@ public class CLVenRep extends ventana {
         try {
             if (ht != null) {
                 if (ht.get("zonaRep") != null) 
-                    ARG_ZONAREP = ht.get("zonaRep").toString();
+                    ARG_ZONAREP = ht.get("zonaRep");
                if (ht.get("modif") != null)
-                    ARG_MODIF = new Boolean(ht.get("modif").toString()).booleanValue();
+                    ARG_MODIF = Boolean.parseBoolean(ht.get("modif"));
             }
             setTitulo("Consulta Ventas Representantes");
             if (jf.gestor.apuntar(this)) {
@@ -91,7 +94,7 @@ public class CLVenRep extends ventana {
         }
     }
 
-    public CLVenRep(gnu.chu.anjelica.menu p, EntornoUsuario eu, Hashtable ht) {
+    public CLVenRep(gnu.chu.anjelica.menu p, EntornoUsuario eu, Hashtable<String,String> ht) {
         EU = eu;
         vl = p.getLayeredPane();
         eje = false;
@@ -99,10 +102,10 @@ public class CLVenRep extends ventana {
         try {
             if (ht != null) {
                 if (ht.get("zonaRep") != null) {
-                    ARG_ZONAREP = ht.get("zonaRep").toString();
+                    ARG_ZONAREP = ht.get("zonaRep");
                 }
                 if (ht.get("modif") != null)
-                    ARG_MODIF = new Boolean(ht.get("modif").toString()).booleanValue();
+                    ARG_MODIF = Boolean.parseBoolean(ht.get("modif"));
             }
             setTitulo("Consuta Ventas Representantes");
 
@@ -117,7 +120,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2010-06-12" + ARG_ZONAREP);
+        this.setVersion("2015-10-06" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -131,7 +134,7 @@ public class CLVenRep extends ventana {
         if (! ARG_MODIF)
             avl_prtariE.setEnabled(false);
         bdisc.iniciar(dtStat, this, vl, EU);
-        Vector vc = new Vector();
+        ArrayList vc = new ArrayList();
         vc.add(pro_codiE);
         vc.add(pro_nombE);
         vc.add(avl_unidE);
@@ -143,9 +146,11 @@ public class CLVenRep extends ventana {
         jtLin.setCampos(vc);
         fecIniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -15));
         fecFinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-        Baceptar.addMenu("Consultar");
-        Baceptar.addMenu("Sin Tarifa");
-        Baceptar.addMenu("Imprimir");
+        Baceptar.addMenu("Consultar","C");
+        if (ARG_MODIF)
+            Baceptar.addMenu("Sin Tarifa","T");
+        Baceptar.addMenu("Act. Tarifa","A");
+        Baceptar.addMenu("Imprimir","I");
         emp_codiE.iniciar(dtStat, this, vl, EU);
         emp_codiE.setAceptaNulo(false);
 
@@ -166,16 +171,24 @@ public class CLVenRep extends ventana {
     private void activarEventos() {
 
         Baceptar.addActionListener(new ActionListener() {
-
+            @Override
             public void actionPerformed(ActionEvent e) {
-              if (e.getActionCommand().startsWith("Impr"))
+              String indice=Baceptar.getValor(e.getActionCommand());             
+              if (indice.equals("I"))
+              {
                   imprimir();
-              else
-                consultar(e.getActionCommand().startsWith("Sin"));
+                  return;
+              }
+              if (indice.equals("T"))
+              {
+                  consultaSinTarifa();
+                  return;
+              }              
+              consultar(indice.equals("A"));
             }
         });
         jtCab.tableView.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
+            @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting() || !jtCab.isEnabled()) {
                     return;
@@ -186,6 +199,7 @@ public class CLVenRep extends ventana {
         });
         emp_codiE.addCambioListener(new CambioListener() {
 
+            @Override
             public void cambio(CambioEvent event) {
                 try {
                     pdconfig.llenaDiscr(dtCon1, rep_codiE, "CR", emp_codiE.getValorInt());
@@ -230,7 +244,7 @@ public class CLVenRep extends ventana {
             prTari = MantTarifa.getPrecTar(dtStat, dtCon1.getInt("pro_codi"),
                     dtCon1.getInt("tar_codi"), dtCon1.getFecha("avc_fecalb", "dd-MM-yyyy"));
             if (prTari != 0) {
-                s = "UPDATE  v_albavel set tar_preci = " + Formatear.Redondea(prTari, 2)
+                s = "UPDATE  v_albavel set tar_preci = " + Formatear.redondea(prTari, 2)
                         + " where   emp_codi = " + emp_codiE.getValorInt()
                         + " and pro_codi = " + dtCon1.getInt("pro_codi")
                         + " and avl_profer = 0"
@@ -275,6 +289,54 @@ public class CLVenRep extends ventana {
             s += " ORDER BY  a.avc_ano, a.avc_serie, a.avc_nume ";
             return s;
     }
+    
+    private void consultaSinTarifa() 
+    {   
+        try
+        {
+            if (!checkCond()) 
+                return;
+            guardaCambios();
+            s = "select a.pro_codi,a.pro_nomb,sum(avl_canti) as avl_canti,"
+                + "sum(avl_unid) as avl_unid,sum(avl_prven*avl_canti) as importe from v_albventa as a,clientes as cl "
+                + " WHERE  a.emp_codi = " + emp_codiE.getValorInt()
+                + getCondWhere()                   
+                + " and a.tar_preci = 0"
+                + " and  cl.cli_codi = a.cli_codi"
+                + " group by  pro_codi,pro_nomb"
+                + " order by pro_codi ";   
+            jtCab.setEnabled(false);
+            jtCab.removeAllDatos();
+            jtLin.setEnabled(false);
+            jtLin.removeAllDatos();
+            if (!dtCon1.select(s))
+            {
+                msgBox("No hay articulos sin tarifa para estas condiciones");
+                return;
+            }
+            do
+            {
+                ArrayList v = new ArrayList();
+                v.add(dtCon1.getString("pro_codi"));
+                v.add(dtCon1.getString("pro_nomb"));
+                v.add(dtCon1.getString("avl_unid"));
+                v.add(dtCon1.getString("avl_canti"));
+                v.add(dtCon1.getDouble("importe")/dtCon1.getDouble("avl_canti"));               
+                v.add("");
+                v.add("");
+                v.add("");
+                jtLin.addLinea(v); 
+            } while (dtCon1.next());
+            jtLin.requestFocusInicio();
+        } catch (Exception ex)
+        {
+            Error("Error al buscar articulos sin tarifa",ex);
+        }
+    }
+    /**
+     *
+     * @param sinTarifa  Actualiza precio de tarifa, en caso de que este a 0 (lo vuelve a buscar en tarifas)
+     */
     void consultar(boolean sinTarifa) {
         guardaCambios();
         PreparedStatement ps;
@@ -315,7 +377,7 @@ public class CLVenRep extends ventana {
             double TimpAlb = 0, TkilAlb = 0, kilAlb, TimpGan = 0, ganAlb;
             int TnumAlb = 0;
             do {
-                Vector v = new Vector();
+                ArrayList v = new ArrayList();
                 v.add(dtCon1.getString("avc_ano"));
                 v.add(dtCon1.getString("avc_serie"));
                 v.add(dtCon1.getString("avc_nume"));
@@ -375,7 +437,7 @@ public class CLVenRep extends ventana {
     }
     public int jtLinCambiaLinea(int row,int col)
     {
-        if (! avl_prtariE.isEnabled() || jtLin.isVacio())
+        if (! avl_prtariE.isEnabled() || jtLin.isVacio() || jtLin.getValString(row,7).equals(""))
             return -1;
         double avlPrven=avl_prtariE.getValorDec();
        
@@ -420,12 +482,12 @@ public class CLVenRep extends ventana {
                      dtCon1.getInt("pro_codi"),dtCon1.getDouble("avl_prven"),
                      dtCon1.getDouble("avl_prepvp"),dtCon1.getString("avl_coment",false),
                      dtCon1.getDouble("avl_profer"),dtStat);
-                Vector v = new Vector();
-                v.addElement(dtCon1.getString("pro_codi"));
-                v.addElement(dtCon1.getString("pro_nomb"));
-                v.addElement(dtCon1.getString("avl_unid"));
-                v.addElement(dtCon1.getString("avl_canti"));
-                v.addElement(dtCon1.getString("avl_prven"));
+                ArrayList v = new ArrayList();
+                v.add(dtCon1.getString("pro_codi"));
+                v.add(dtCon1.getString("pro_nomb"));
+                v.add(dtCon1.getString("avl_unid"));
+                v.add(dtCon1.getString("avl_canti"));
+                v.add(dtCon1.getString("avl_prven"));
                 double prTari = 0;
                 if (dtCon1.getDouble("avl_profer", true) == 0) {
                     prTari = dtCon1.getDouble("tar_preci", true);
@@ -433,9 +495,9 @@ public class CLVenRep extends ventana {
                  else {
                     prTari = dtCon1.getDouble("avl_profer", true);
                 }
-                v.addElement("" + prTari);
-                v.addElement("" + (dtCon1.getDouble("avl_prven") - prTari));
-                v.addElement(linAlb);
+                v.add("" + prTari);
+                v.add("" + (dtCon1.getDouble("avl_prven") - prTari));
+                v.add(linAlb);
                 jtLin.addLinea(v);
             } while (dtCon1.next());
             if (ARG_MODIF)
@@ -443,7 +505,6 @@ public class CLVenRep extends ventana {
             jtLin.requestFocusInicio();
         } catch (Exception k) {
             Error("Error al ver Lineas de albaran", k);
-            return;
         }
     }
     @Override
@@ -676,6 +737,7 @@ public class CLVenRep extends ventana {
 
     rep_codiE.setAncTexto(30);
     rep_codiE.setAncTexto(30);
+    rep_codiE.setMayusculas(true);
     Pcondic.add(rep_codiE);
     rep_codiE.setBounds(73, 37, 237, 20);
 

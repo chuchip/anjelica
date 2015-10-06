@@ -486,8 +486,7 @@ public class clvenart extends ventana implements  JRDataSource
        mp.put("fecFin", PcondBus.fecFinE.getText());
      if (PcondBus.empIniE.getValorDec() != 0)
        mp.put("empIni", PcondBus.empIniE.getText());
-     if (PcondBus.empFinE.getValorDec() != 0)
-       mp.put("empFin", PcondBus.empFinE.getText());
+     
 
      if (!PcondBus.serieIniE.isNull())
        mp.put("serieIni", PcondBus.serieIniE.getText());

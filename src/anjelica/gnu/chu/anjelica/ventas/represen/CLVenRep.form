@@ -182,6 +182,7 @@
             <Component class="gnu.chu.controles.CLinkBox" name="rep_codiE">
               <Properties>
                 <Property name="ancTexto" type="int" value="30"/>
+                <Property name="mayusculas" type="boolean" value="true"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="rep_codiE.setAncTexto(30);"/>
