@@ -506,7 +506,7 @@ public class RegCosDes extends ventana {
             nRows++;
             if (deoCodi != dtCon1.getInt("deo_codi")) 
             { // Roto Numero de despiece. Valoramos lineas.
-                actualizaMsg("Valorando despiece: " + dtCon1.getInt("deo_codi") +
+                setMensajePopEspere("Valorando despiece: " + dtCon1.getInt("deo_codi") +
                         " de fecha: " + dtCon1.getFecha("fechaMvt"),false);
                 recalcEntr(deoCodi, impTotCalc, impTotAnt);
                 swSinCosto=false;

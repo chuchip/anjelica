@@ -14,7 +14,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  *
@@ -22,7 +21,7 @@ import java.util.Iterator;
  * <p>Descripción: Clase con rutinas para calcular mvtos valorados de almacen
  * @see gnu.chu.anjelica.almacen.conmvpr</p>
  * @see gnu.chu.anjelica.margenes.colizona
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -288,6 +287,13 @@ public class MvtosAlma
         return getSqlMvtAnt(fecIni,fecFin,proCodi);    
     return getSqlMvtNuevo(fecIni,fecFin,proCodi);
   }
+  
+  /**
+   * SQL Para calcular costos (preparestatement) sobre un producto.
+   * 
+   * @param fecIni Fecha Inicial (Inventario)
+   * @return 
+   */
   private String getSqlMvtCostos(String fecIni)  {
     return "SELECT 0 as orden,mvt_tipdoc as sel, mvt_tipo as tipmov,  "
         + " mvt_time as fecmov,"
@@ -312,7 +318,8 @@ public class MvtosAlma
         + " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"
         + " r.emp_codi  as empcodi,r.pro_codi as pro_codori"
         + ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "
-        + ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie, "
+        + ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "
+        + " ,rgs_fecha as fecdoc, "
         + " 'N' as avc_depos "
         + " FROM v_regstock r  WHERE "
         + " tir_afestk = '='" // Solo Inventarios
