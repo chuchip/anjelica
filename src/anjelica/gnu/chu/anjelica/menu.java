@@ -1091,7 +1091,9 @@ public class menu extends JFrame
      {
        public void actionPerformed(ActionEvent e)
        {
-         lanzaEjecutable(new gnu.chu.anjelica.ventas.pdpeve(menu.this,EU));         
+         Hashtable ht = new Hashtable();
+         ht.put("admin", "true");
+         lanzaEjecutable(new gnu.chu.anjelica.ventas.pdpeve(menu.this,EU, ht));         
        }
      });
     
@@ -1099,7 +1101,9 @@ public class menu extends JFrame
      {
        public void actionPerformed(ActionEvent e)
        {
-         lanzaEjecutable(new gnu.chu.anjelica.ventas.clpevepr(menu.this,EU,new Hashtable()));         
+         Hashtable ht = new Hashtable();
+         ht.put("admin", "true");
+         lanzaEjecutable(new gnu.chu.anjelica.ventas.clpevepr(menu.this,EU,ht));         
        }
      });
 

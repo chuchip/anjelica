@@ -513,7 +513,7 @@ public class CLPedidVen extends  ventana
         (emp_codiE.getValorInt() == 0 ? "" : " AND c.emp_codi = " + emp_codiE.getValorInt());
 
     if (verPedidosE.getValor().equals("P"))
-      s += " AND c.avc_ano = 0";
+      s += " AND (c.avc_ano = 0 or pvc_cerra=0)";
     if (verPedidosE.getValor().equals("L"))
       s += " AND c.avc_ano != 0";
     if (!pvc_confirE.getValor().equals("*"))

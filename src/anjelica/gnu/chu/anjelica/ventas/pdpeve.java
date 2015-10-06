@@ -42,6 +42,8 @@ import java.net.UnknownHostException;
 
 public class pdpeve  extends ventanaPad   implements PAD
 {
+  
+  private boolean P_ADMIN=false;
   AyuArt aypro;
   CComboBox pcc_estadE=new CComboBox();
   CButton Bimpri=new CButton(Iconos.getImageIcon("print"));
@@ -172,7 +174,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     this(eu, p, new Hashtable());
   }
 
-  public pdpeve(EntornoUsuario eu, Principal p, Hashtable ht)
+  public pdpeve(EntornoUsuario eu, Principal p, Hashtable<String, String> ht)
   {
     EU = eu;
     vl = p.panel1;
@@ -181,12 +183,7 @@ public class pdpeve  extends ventanaPad   implements PAD
 
     try
     {
-      if (ht != null)
-      {
-//       if (ht.get("modPrecio") != null)
-//         modPrecio = Boolean.valueOf(ht.get("modPrecio").toString()).
-//             booleanValue();
-      }
+      ponParametros(ht);
       setTitulo("Mant. Pedidos de Ventas");
 
       if (jf.gestor.apuntar(this))
@@ -200,7 +197,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     }
   }
 
-  public pdpeve(gnu.chu.anjelica.menu p, EntornoUsuario eu)
+  public pdpeve(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable<String, String> ht)
   {
     EU = eu;
     vl = p.getLayeredPane();
@@ -209,6 +206,7 @@ public class pdpeve  extends ventanaPad   implements PAD
 
     try
     {
+      ponParametros(ht);
       jbInit();
     }
     catch (Exception e)
@@ -224,12 +222,20 @@ public class pdpeve  extends ventanaPad   implements PAD
   {
       return (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
   }
+  private void ponParametros(Hashtable<String, String> ht)
+  {
+      if (ht == null)
+          return;
+      if (ht.get("admin") != null)
+         P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
+
+  }
   private void jbInit() throws Exception
   {
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2015-08-25");
+    this.setVersion("2015-10-06"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -869,10 +875,23 @@ public class pdpeve  extends ventanaPad   implements PAD
       activar(navegador.EDIT, true);
       if ( avc_anoE.getValorDec() > 0 )
       {
-        msgBox("Pedido YA TIENE albaran ... IMPOSIBLE MODIFICAR");
-        nav.pulsado = navegador.NINGUNO;
-        activaTodo();
-        return;
+        if (P_ADMIN || EU.usuario.equals(usu_nombE.getText()))
+        {
+            int ret=mensajes.mensajeYesNo("Pedido ya tiene albaran.\n ¿Volver a Abrir?");
+            if (ret!=mensajes.YES)
+            {
+              nav.pulsado = navegador.NINGUNO;
+              activaTodo();
+              return; 
+            }
+        }        
+        else
+        {
+            msgBox("Pedido YA TIENE albaran ... IMPOSIBLE MODIFICAR");
+            nav.pulsado = navegador.NINGUNO;
+            activaTodo();
+            return;
+        }
       }
       if (!setBloqueo(dtAdd, "pedvenc",
                       eje_numeE.getValorInt() + "|" + emp_codiE.getValorInt() +
@@ -904,6 +923,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       pvc_verfecE.setEnabled(opVerProd.getValor().equals(""+pstockAct.VER_ULTVENTAS));
       pvl_precioE.resetCambio();
       pvc_fecentE.resetCambio();
+      pcc_estadE.setValor("P");
       jt.setEnabled(true);
       pro_codiE.getFieldBotonCons().setEnabled(true);
       cli_codiE_afterFocusLost(false);
@@ -929,6 +949,7 @@ public class pdpeve  extends ventanaPad   implements PAD
      s="select * from pedvenc where emp_codi = " + emp_codiE.getValorInt() +
           " and eje_nume= " + eje_numeE.getValorInt() +
           " and pvc_nume = " + pvc_numeE.getValorInt();
+     
      dtAdd.select(s);
      dtAdd.edit();
      actCabecera();
@@ -949,6 +970,7 @@ public class pdpeve  extends ventanaPad   implements PAD
 
  }
 
+  @Override
   public void canc_edit()
   {
     nav.pulsado=navegador.NINGUNO;
@@ -1006,6 +1028,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     cli_codiE.requestFocus();
   }
 
+  @Override
   public boolean checkAddNew()
   {
     try
@@ -1021,7 +1044,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         pvc_fecentE.requestFocus();
         return false;
       }
-      if (pcc_estadE.getValor().equals("L"))
+      if (pcc_estadE.getValor().equals("L") )
       {
           pcc_estadE.requestFocus();
           mensajeErr("Este estado solo se puede poner desde mantenimiento Albaranes venta");
@@ -1048,15 +1071,20 @@ public class pdpeve  extends ventanaPad   implements PAD
     }
     return true;
   }
+  @Override
   public void ej_addnew1()
   {
     try {
       pvc_numeE.setValorInt(getNumPed(true));
+      
       dtAdd.addNew("pedvenc");
       dtAdd.setDato("emp_codi",emp_codiE.getValorInt());
       dtAdd.setDato("eje_nume",eje_numeE.getValorInt());
       dtAdd.setDato("pvc_nume",pvc_numeE.getValorInt());
       dtAdd.setDato("pvc_impres","N"); // No impreso
+      dtAdd.setDato("avc_ano",pcc_estadE.getValor().equals("C")?-1:0 );
+      dtAdd.setDato("avc_serie","A");
+      dtAdd.setDato("avc_nume",0);
       actCabecera();
       actLinea();
       dtAdd.commit();
@@ -1152,15 +1180,14 @@ public class pdpeve  extends ventanaPad   implements PAD
     dtAdd.setDato("pvc_fecent",pvc_fecentE.getText(),"dd-MM-yyyy");
     dtAdd.setDato("pvc_comen",Formatear.strCorta(pvc_comenE.getText(),200));
     dtAdd.setDato("pvc_confir",pvc_confirE.getValor());
-    dtAdd.setDato("avc_ano",pcc_estadE.getValor().equals("C")?-1:0 );
-    dtAdd.setDato("avc_serie","A");
-    dtAdd.setDato("avc_nume",0);
+   
     dtAdd.setDato("usu_nomb",usu_nombE.getText());
     dtAdd.setDato("pvc_cerra",0); // Albaran Abierto
     dtAdd.setDato("pvc_nupecl",pvc_nupeclE.getText());
     dtAdd.update();
   }
 
+  @Override
   public void canc_addnew()
   {
     nav.pulsado=navegador.NINGUNO;
@@ -1170,6 +1197,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     mensajeErr("Creacion de Nuevo Pedido ... CANCELADO");
   }
 
+  @Override
   public void PADDelete()
   {
     try
@@ -1194,7 +1222,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       Bcancelar.setEnabled(true);
       Bcancelar.requestFocus();
     }
-    catch (Exception k)
+    catch (SQLException | UnknownHostException k)
     {
       Error("Error al Borrar registro", k);
     }
@@ -1202,6 +1230,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   }
 
 
+  @Override
   public void ej_delete1()
   {
     try
