@@ -1444,6 +1444,7 @@ public class menu extends JFrame
       ejec.guardaTamanoOriginal();
     } catch (Exception k)
     {
+      k.printStackTrace();
       SystemOut.print(k);
    }
   }
@@ -1735,8 +1736,8 @@ void pdreprese_actionPerformed(ActionEvent e) {
   }
   void ALMantPartes_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
-    String ret=mensajes.mensajeGetTexto("Mantenimiento Partes","Elija Tipo Mant. partes",this, "0",new String[]{"0","2","3","10"});
-    ht.put("estados", ret);
+    ht.put("estados", "0");
+    ht.put("admin", "true");
     lanzaEjecutable(new gnu.chu.anjelica.almacen.MantPartes(menu.this,EU,ht));
     
     

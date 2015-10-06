@@ -3491,8 +3491,8 @@ CREATE TABLE anjelica.partecab
 	pac_fecinc date not null, -- Fecha Incidencia
 	pac_fecpro date, -- Fecha Procesado
 	pac_fecres date, -- Fecha Resuelto
-	pac_estad int not null default 1, -- Estado del parte (1. Generada 
-									  -- 2. Procesar. 3 Cerrada. 4 Cerrada)	
+	pac_estad int not null default 1, -- Estado del parte (0: Generada. 1. Proc.Devolucion
+									  -- 2. Procesada. 3 Cerrada. 4 Cancelada)	
 	pac_tipo char(1) not null, -- Tipo Parte:  (S)ala,(E)ntrada, (D)evolucion,Devol.(R)ecepionada , (N)o-recepción
 	pac_coment varchar(150), -- Comentario
 	pac_cliprv int,	-- Cliente/Proveedor	
@@ -3502,6 +3502,7 @@ CREATE TABLE anjelica.partecab
 	constraint ix_partecab primary  key (par_codi)
 );
 
+-- drop table anjelica.parteabo;
 --drop table  anjelica.partelin;
 create table anjelica.partelin
 (
@@ -3515,24 +3516,45 @@ create table anjelica.partelin
  	pro_numlot int,		-- Lote
 	pro_indlot int,	-- Numero Individuo		
 	pro_feccad date, -- Fecha Caducidad
-	pal_acsala char(1) default '-', -- Accion sugerida x sala. (V)ertedero/(R)eutilizar/(C)ongelar, (-)No Definida
-	pal_comsal varchar(50), -- Comentario Sala sobre esta linea
-	pal_accion char(1) not null default '-', -- (A) Acept. Dev. (N) No acept. Dev.
+	pal_acsala char(1) default '-' check  (pal_acsala in ('V','R','C','-')), 
+			-- Accion sugerida x sala. (V)ertedero/(R)eutilizar/(C)ongelar, (-)No Definida
+	pal_comsal varchar(50), -- Comentario Sala sobre esta linea	
+	pal_accion char(1) not null default '-' check  (pal_accion in ('A','N','V','R','-')), -- (A) Acept. Dev. (N) No acept. Dev.
 											 -- (V)ertedero/(R)eutilizar/(C)ongelar,(-) No definida
 	pal_coment varchar(50), -- Comentario sobre esta linea
-	pal_solabo smallint not null default 0, -- Hacer/Solicitar Abono? (0=No)
-	pal_kilabo float, -- Kilos Abono
-	pal_preabo float, -- Precio Abono
 	constraint ix_partelin primary  key (par_codi,par_linea)
 );
 
 alter table anjelica.partelin add constraint pal_procod foreign key (pro_codi)
     references anjelica.v_articulo(pro_codi);
+
+--
+-- Accion sobre parte (Solicitar Abono o realizar abono)
+--	
+-- drop table anjelica.parteabo;
+create table anjelica.parteabo
+(
+	paa_codi serial, -- Identificador accion 
+	par_codi int not null, -- Codigo Parte
+	par_linea int not null, -- Numero de Linea
+	paa_tipo char(1) not null default 'C' check  (paa_tipo in ('C','P')), -- Tipo Abono (Cliente, Proveedor)	
+	paa_cliprv int not null, -- Cod. Cliente / Proveedor.
+	pro_codi int not null, -- Codigo de Producto
+	paa_coment varchar(50), -- Comentario sobre Abono
+	paa_kilos float, -- Kilos Abono
+	paa_precio float, -- Precio Abono
+	paa_estad smallint not null  default 0 , -- Estado de Abono (0-> Pendiente)
+	constraint ix_parteabo primary  key (paa_codi)
+);
+create index ix_partacc on anjelica.parteabo(par_codi,par_linea);
+alter table anjelica.parteabo add constraint pac_parte foreign key (par_codi,par_linea)
+    references anjelica.partelin(par_codi,par_linea);
+
 --drop view v_partes;
 create view anjelica.v_partes as select c.*,l.par_linea,l.pro_codi,pal_kilos,pal_unidad,
-pro_ejelot,pro_serlot,pro_numlot,pro_indlot,pro_feccad,pal_acsala, pal_accion,pal_coment,pal_solabo,pal_comsal,pal_kilabo,
-pal_preabo from anjelica.partecab as c,anjelica.partelin as l where c.par_codi=l.par_codi;
+pro_ejelot,pro_serlot,pro_numlot,pro_indlot,pro_feccad,pal_acsala, pal_accion,pal_coment from anjelica.partecab as c,anjelica.partelin as l where c.par_codi=l.par_codi;
 grant select on anjelica.v_partes to public;
+
 --drop view v_cliprv;
 create view anjelica.v_cliprv as 
 select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.v_cliente 

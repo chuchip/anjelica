@@ -10,7 +10,10 @@ import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.camposdb.cliPanel;
 import gnu.chu.controles.CComboBox;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.eventos.GridAdapter;
+import gnu.chu.eventos.GridEvent;
 import gnu.chu.interfaces.PAD;
+import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
@@ -49,28 +52,51 @@ import net.sf.jasperreports.engine.JasperReport;
 /**
  * Parametros: 
  * estados: Nivel de Estado a los que se pueden cambiar los partes.
- *  '10' Administrador, '0' Generar (Sala). 1. Procesada Dev.  2 Gerencia , '3' Cerrar (Oficina), 4 Cancelado
+ *   '0' Generar (Sala).  1 Gerencia , '2' Cerrar (Oficina)
+ * admin: Especifica si podra cambiar el permiso desde el programa
  * Según el estado mandado como parametro podra Modificar/Borrar los partes de estado anterior o igual.
  * @author jpuente.ext
  */
 
 public class MantPartes  extends ventanaPad implements PAD
 {
+    int parLinea;
+    int focoGrid=1;
     String s;
     boolean swModificaTodo=true;
     AlbClien alCli=null;
     AlbProv  alPrv=null;
+   
     final int ESTADO_GENERADA=0;
     final int ESTADO_PROCDEV=1;
-    final int ESTADO_GERENCIA=2;
+    final int ESTADO_PROCESADA=2;
     final int ESTADO_CERRADO=3;
     final int ESTADO_CANCELA=4;
-    final int PERM_ADMIN=10;
+    
+    final int JTABO_TIPO=0;
+    final int JTABO_PROCOD=1;
+    final int JTABO_CLIPRV=3;
+    final int JTABO_COMEN=5;
+    final int JTABO_KILOS=6;
+    final int  JTABO_PRECIO=7;
+    final int  JTABO_ID=9;
+    
+    //private final int JTLINEAS_PROCOD=2;
+    
+    private final int JTL_NUMPAR=0;
+    final int JTLINEAS_PROCOD=0;
+    private final int JTLINEAS_ACCION=2; 
+    private final int JTLINEAS_COMENT=3; 
+    final int JTLINEAS_NUMLIN=4;
     int proIndLot, proNumLot,proCodi,proEjeLot;
     String proSerLot;
-    private boolean swCargaList=true,swCargaLin=true; // Cargando grid de listado
+    private boolean swCargaList=true,swCargaLin=true,swCargaLinAbo=false; // Cargando grid de listado
   
-    private int P_PERMEST=1; // Especifica que Estados se permiten establecer
+    private int P_PERMEST=0; // Especifica que Estados se permiten establecer
+    final int PERM_INSERTAR=0;
+    final int PERM_GERENC=1;
+    final int PERM_OFICI=2;
+    private boolean P_ADMIN;
     private final int  JT_PROCODI=0;
     private final int  JT_PRONOMB=1;
     private final int JT_EJERC=2;
@@ -84,15 +110,9 @@ public class MantPartes  extends ventanaPad implements PAD
     private final int JT_COMSAL=10;
     private final int JT_ACCION=11;
     private final int JT_COMENT=12; 
-    private final int JT_SOLABO=13;
-    private final int JT_KILABO=14;
-    private final int JT_PREABO=15;
-    private final int JTL_NUMPAR=0;
-    private final int JT1_ACCION=5;
-    private final int JT1_COMENT=6; 
-    private final int JT1_SOLABO=7;
-    private final int JT1_KILABO=8;
-    private final int JT1_PREABO=9;
+    
+  
+ 
     public MantPartes() {
         initComponents();
     }
@@ -145,14 +165,17 @@ public class MantPartes  extends ventanaPad implements PAD
           return;
        if (ht.get("estados") != null)
              P_PERMEST = Integer.parseInt(ht.get("estados"));
+       if (ht.get("admin") != null)
+           P_ADMIN= ht.get("admin").equals("true");
+        
       
   }
   private void jbInit() throws Exception
   {
         nav = new navegador(this, dtCons, false,
-            P_PERMEST==2?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
+        P_PERMEST==PERM_GERENC?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20150915) Modo: "+P_PERMEST);
+        this.setVersion("(20151002) Modo: "+P_PERMEST);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -185,8 +208,10 @@ public class MantPartes  extends ventanaPad implements PAD
   }
   @Override
   public void iniciarVentana() throws Exception
-  {      
+  {            
       pro_codilE.iniciar(dtStat, this, vl, EU);
+      paa_procodE.iniciar(dtStat, this, vl, EU);
+      paa_procodE.setProNomb(paa_pronomE);
       pro_codiE.iniciar(dtStat, this, vl, EU);
       pro_codiE.setCamposLote(pro_ejelotE, pro_serlotE, pro_numlotE, pro_indlotE,pal_kilosE);
       pro_codiE.setAyudaLotes(true);
@@ -220,44 +245,130 @@ public class MantPartes  extends ventanaPad implements PAD
       activaTodo();
       activarEventos();
       verDatos();
-      if (P_PERMEST==10)
-      {
-          String res=mensajes.mensajeGetTexto("Elija modo del programa", "Elija",this,"Administrador",new String[]{"Administrador","Gerencia","Oficina"});
-          switch (res)
-          {
-              case "Gerencia":
-                 P_PERMEST=ESTADO_GERENCIA;
-                 break;
-              case "Oficina":
-                 P_PERMEST=ESTADO_CERRADO;
-                 break;
-          }              
-      }
-      if (P_PERMEST==ESTADO_CERRADO)
-        estadoE.setValor(""+ESTADO_GERENCIA);
+//      if (P_PERMEST==10)
+//      {
+//          String res=mensajes.mensajeGetTexto("Elija modo del programa", "Elija",this,"Administrador",new String[]{"Administrador","Gerencia","Oficina"});
+//          switch (res)
+//          {
+//              case "Gerencia":
+//                 P_PERMEST=ESTADO_PROCESADA;
+//                 break;
+//              case "Oficina":
+//                 P_PERMEST=ESTADO_CERRADO;
+//                 break;
+//          }              
+//      }
+      if (P_PERMEST== PERM_OFICI)
+        estadoE.setValor(""+ESTADO_PROCESADA);
+      if (P_PERMEST==PERM_INSERTAR)
+        estadoE.setValor(""+ESTADO_PROCDEV);
       cargaListado(estadoE.getValor());
-      if (P_PERMEST==ESTADO_GERENCIA || P_PERMEST==ESTADO_CERRADO)
+      if (P_PERMEST!=PERM_INSERTAR )
       {
         PTabPane1.setSelectedIndex(1); 
         nav.setEnabled(pid, eje);
       }
-      permisoL.setText(estadoE.getText(""+P_PERMEST));
+      CPermiso.setValor(+P_PERMEST);
   }
+  
   private void activarEventos()
   {
-      pal_accionlE.addKeyListener(new KeyAdapter()
-    {
-        @Override
-        public void keyPressed(KeyEvent ke) {
-            s=(""+ke.getKeyChar()).toUpperCase();
+      jtAbo.addGridListener(new GridAdapter()
+      {
+        public void cambioColumna(GridEvent event)   {
             
-            if ( pal_accionlE.getValores().contains(s))
-            {
-//                pal_accionlE.setValor(s);
-                jt1.requestFocusLater(jt1.getSelectedRow(), jt1.getSelectedColumn()+1 );
-            }
+            if (event.getColumna()==JTABO_CLIPRV)
+                afterCambiaColJTAbo(event.getLinea(),event.getColumna());
         }
+        public void cambiaLinea(GridEvent event){
+           
+              int reCaLin=cambiaLineaJTAbo(event.getLinea());
+              event.setColError(reCaLin);
+        }
+        public void afterCambiaLinea(GridEvent event){
+              if (event.getColumna()==JTABO_CLIPRV)
+                   afterCambiaColJTAbo(event.getLinea(),event.getColumna());
+                 
+        }
+       
+         @Override
+        public boolean afterInsertaLinea(GridEvent event){
+                if (jtAbo.getValorInt(event.getLinea(),  JTABO_ID)==0)
+                  ponValDefAbo(); 
+                return true;
+        }
+        public void deleteLinea(GridEvent event){
+            event.setPuedeBorrarLinea(deleteLineaJTAbo(event.getLinea()));
+        }
+        public void focusLost(GridEvent event){             
+             guardaLineaAbono( parLinea);
+        }
+         @Override
+         public void focusGained(GridEvent event){
+             focoGrid=2;
+             parLinea=jtLineas.getValorInt(JTLINEAS_NUMLIN);
+//             System.out.println("jtabo focusgained");
+            if (jtAbo.getValorInt(JTABO_ID)==0)
+                 ponValDefAbo();    
+         }
       });
+      jtLineas.addGridListener(new GridAdapter()
+      {
+          @Override
+          public void focusGained(GridEvent event){
+              focoGrid=1;
+//             System.out.println("jtLineas focusgained");
+//                
+//            jtAbo.setDefaultValor(JTABO_PROCOD, jtLineas.getValString(JTLINEAS_PROCOD));
+//            jtAbo.setDefaultValor(JTABO_PROCOD+1, jtLineas.getValString(JTLINEAS_PROCOD+1));
+//            jtAbo.setDefaultValor(0, paa_tipoE.getText(cli_codiE.isVisible()?"C":"P"));
+//            jtAbo.setDefaultValor(JTABO_CLIPRV, cli_codiE.isVisible()?cli_codiE.getText():prv_codiE.getText());
+          }   
+       
+      });
+//  
+      Bcerrar.addActionListener(new ActionListener()
+       {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            try { 
+              if (jtList.isVacio())
+                  return;              
+              cerrarIncidencia(e.getActionCommand().startsWith("Cerr")? ESTADO_CERRADO:ESTADO_CANCELA);
+              swCargaLin=true;
+              swCargaList=true;
+              jtList.removeLinea();
+              swCargaLin=false;
+              swCargaList=false;
+              verDetalleLinea();
+           } catch (SQLException ex) {
+               Error("Error al cerrar incidencia",ex);
+           }
+         }
+       });
+       CPermiso.addActionListener(new ActionListener()
+       {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            P_PERMEST=CPermiso.getValorInt();
+         }
+       });
+       BswGrid.addActionListener(new ActionListener()
+       {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            if (jtAbo.isEnabled())
+            {
+                if (focoGrid==1)
+                    jtAbo.requestFocusLater(0,JTABO_CLIPRV);
+                else
+                    jtLineas.requestFocusLater();
+            }
+         }
+       });
       pac_tipoE.addActionListener(new ActionListener()
       {
         @Override
@@ -276,16 +387,7 @@ public class MantPartes  extends ventanaPad implements PAD
             cargaListado(estadoE.getValor());
         }
       });
-      BRecepc.addActionListener(new ActionListener()
-      {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            if (nav.getPulsado()!=navegador.NINGUNO )
-                return;
-            nav.btnEdit.doClick();
-        }
-      });
+    
       BirGrid.addActionListener(new ActionListener()
       {
         @Override
@@ -303,47 +405,20 @@ public class MantPartes  extends ventanaPad implements PAD
            Blistar_ActionPerformed();
         }
       });
-      pal_solaboE.addActionListener(new ActionListener()
-      {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            if (pal_solaboE.isSelected() && pal_kilaboE.getValorDec()==0)
-            {
-                jt.setValor(pal_kilosE.getValorDec(),JT_KILABO);
-                pal_kilaboE.setValorDec(pal_kilosE.getValorDec());
-            }
-        }
-      });
-      jtList.tableView.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+    
+     
+        jtList.tableView.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (swCargaList)
+                if (swCargaLin || nav.pulsado != navegador.NINGUNO)
                     return;
                 if (e.getValueIsAdjusting()) {
                     return;
                 }
                 try
-                {   
+                {     
                      verDatos(jtList.getValorInt(0));
-                     verLineas(jtList.getValorInt(0));
-                } catch (SQLException ex)
-                {
-                Error("Error al buscar documentos disponibles",ex);
-                }
-            }
-        });
-       jt1.tableView.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (swCargaLin)
-                    return;
-                if (e.getValueIsAdjusting()) {
-                    return;
-                }
-                try
-                {                        
-                     verDatLin(jtList.getValorInt(0),jt1.getSelectedRowDisab());
+                     verLineas(jtList.getValorInt(JTL_NUMPAR));
                 } catch (SQLException ex)
                 {
                 Error("Error al buscar documentos disponibles",ex);
@@ -581,7 +656,7 @@ public class MantPartes  extends ventanaPad implements PAD
    
    pac_estadE.setEnabled(false);
    pac_fecincE.requestFocus();
-   activaCamposGrid();
+//   activaCamposGrid();
  }
  @Override
  public void PADDelete()
@@ -589,6 +664,13 @@ public class MantPartes  extends ventanaPad implements PAD
        try
         {
             PTabPane1.setSelectedIndex(0); 
+            if (!pac_fecproE.isNull())
+            {
+                msgBox("Parte ya se proceso. Imposible BORRAR.");
+                nav.setPulsado(navegador.NINGUNO);
+                activaTodo();
+                return;
+            }
             if (pac_usuincE.isNull())
             {
                 mensajeErr("Parte no encontrado");
@@ -653,16 +735,68 @@ public class MantPartes  extends ventanaPad implements PAD
         c.addItem("Cong.","C");
     }
  }
+ void ponValDefAbo()
+ {
+    paa_tipoE.setValor(cli_codiE.isVisible()?"C":"P");
+    jtAbo.setValor(paa_tipoE.getText(cli_codiE.isVisible()?"C":"P"),JTABO_TIPO);    
+    paa_procodE.setText(jtLineas.getValString(JTLINEAS_PROCOD));             
+    jtAbo.setValor(jtLineas.getValString(JTLINEAS_PROCOD),JTABO_PROCOD);
+    jtAbo.setValor(jtLineas.getValString(JTLINEAS_PROCOD+1),JTABO_PROCOD+1);
+       
+    jtAbo.setValor(cli_codiE.isVisible()?cli_codiE.getText():prv_codiE.getText(),JTABO_CLIPRV);
+    paa_cliprvE.setText(jtAbo.getValString(JTABO_CLIPRV));
+    jtAbo.setValor(cli_codiE.isVisible()?cli_codiE.getTextNomb():prv_codiE.getTextNomb(),JTABO_CLIPRV+1);
+
+ }
   @Override
   public void activaTodo()
   {
       swModificaTodo=true;
-      setAcciones(pal_accionlE, '*');
+      setAcciones(pal_accionE, '*');
       super.activaTodo();
   }
  private void calcAcumulados()
  {
     resetCambioLote();
+ }
+ /**
+  * 
+  * @param row
+  * @param col 
+  */
+ void afterCambiaColJTAbo(int row, int col)
+ {
+        try
+        {
+            if (paa_cliprvE.isNull())
+                return;
+            String nombre="**NO ENCONTRADO**";
+            s=getNombCliPrv(dtStat,paa_tipoE.getValor(),paa_cliprvE.getValorInt());
+            if (s!=null)   
+                nombre=s;
+            paa_clpvnoE.setText(nombre);
+            jtAbo.setValor(nombre,row,JTABO_CLIPRV);
+        } catch (SQLException ex)
+        {
+            Error("Error al buscar Cliente/Prv.",ex);
+        }
+         
+ }
+ /**
+  * Devuelve el nombre del cliente o prv.
+  * @return Nombre. Null si no lo encuentra
+  * @throws SQLException 
+  */
+ String getNombCliPrv(DatosTabla dt,String tipo,int cliprv) throws SQLException
+ {
+     if (tipo.equals("P"))
+       s="select prv_nomb as nombre from v_proveedo where prv_codi="+cliprv;
+     else
+       s="select cli_nomb as nombre from v_cliente where cli_codi="  +cliprv;
+                        
+      if (dt.select(s))
+          return dt.getString("nombre");
+      return null;
  }
  void afterCambiaCol()
  {
@@ -697,17 +831,114 @@ public class MantPartes  extends ventanaPad implements PAD
     
 
  }
- 
- int cambiaLineajt1(int linea) 
+ /**
+  * Borra linea de abono
+  * @param linea
+  * @return 
+  */
+ boolean deleteLineaJTAbo(int linea)
  {
-//     if (pac_tipoE.getValor().equals("D") && pac_estadE.getValorInt()==1)
-//     {// Para aceptar una devolucion o no.
-//         if ("VRC".contains(pal_accionlE.getValor())) 
-//         {
-//             mensajeErr("Elija si debe ser Devolución o no");
-//         }
-//     }
-     return -1;
+        try
+        {
+            if (jtAbo.getValorInt(linea,JTABO_ID)==0)
+                return true;
+            int nrAfected= dtAdd.executeUpdate("delete from parteabo where paa_codi= "+jtAbo.getValorInt(linea,JTABO_ID));
+            if (nrAfected==0)
+            {
+                msgBox("No encontrado parte de abono a borrar");
+                return false;
+            }  
+        } catch (SQLException ex)
+        {
+            Error("Error al borrar parte de abono", ex);           
+        }
+        return true;
+ }
+ int cambiaLineaJTAbo(int linea) 
+ {
+        try
+        {
+            if (paa_cliprvE.isNull() || paa_procodE.isNull())
+                return -1;
+            if (getNombCliPrv(dtStat,paa_tipoE.getValor(),paa_cliprvE.getValorInt())==null)
+            {
+                mensajeErr(paa_tipoE.getValor()+"  Cliente/Proveedor no es valido");
+                return JTABO_CLIPRV;
+            }
+            if (!paa_procodE.controla(false))
+            {
+                mensajeErr("Articulo NO es valido");
+                return JTABO_PROCOD;
+            }
+            if (paa_kilosE.isNull())
+            {
+                mensajeErr("Introduzca Kilos del Abono");
+                return JTABO_KILOS;
+            }
+            if (paa_precioE.isNull())
+            {
+                mensajeErr("Introduzca Precio del Abono");
+                return JTABO_PRECIO;
+            }            
+        } catch (SQLException ex)
+        {
+           Error("Error al comprobar linea abono",ex);
+        }
+        return -1;
+ }
+ /**
+  * 
+  * @param linea
+  * @return 
+  */
+ int cambiaLineaJTLineas(int linea)
+ {
+     jtAbo.salirGrid();
+//     if (cambiaLineaJTAbo(jtAbo.getSelectedRow())>0)
+//             return -1;     
+////
+     return -1;     
+ }
+ void guardaLineaAbono(int linea)
+ {
+      try
+      {
+          for (int n=0;n<jtAbo.getRowCount();n++)
+          {        
+             if (jtAbo.getValorDec(n,JTABO_KILOS)==0  )
+                 continue;
+             int rowid=jtAbo.getValorInt(n,JTABO_ID);
+             if (rowid==0)
+             {
+                 System.out.println("guard. Linea abono: "+par_codiE.getValorInt()+"-"+linea+" kg: "+jtAbo.getValorDec(n,JTABO_KILOS));
+                dtAdd.addNew("parteabo",false);
+                dtAdd.setDato("par_codi",par_codiE.getValorInt());
+                dtAdd.setDato("par_linea",linea);
+             }
+             else
+             {
+                 if (!dtAdd.select("select * from parteabo where paa_codi ="+rowid,true))
+                 {
+                     Error("No encontradas ID de abono: "+rowid,new SQLException(""));
+                 }
+                 System.out.println("Act. Linea abono con rowid: "+rowid+" parte: "+par_codiE.getValorInt()+"-"+linea+" kg: "+jtAbo.getValorDec(n,JTABO_KILOS));
+                 dtAdd.edit();
+             }
+             dtAdd.setDato("paa_tipo",paa_tipoE.getValor(jtAbo.getValString(n,JTABO_TIPO)));
+             dtAdd.setDato("paa_cliprv",jtAbo.getValorInt(n,JTABO_CLIPRV));
+             dtAdd.setDato("pro_codi",jtAbo.getValorInt(n,JTABO_PROCOD));
+             dtAdd.setDato("paa_coment",jtAbo.getValString(n,JTABO_COMEN));
+             dtAdd.setDato("paa_kilos",jtAbo.getValorDec(n,JTABO_KILOS));
+             dtAdd.setDato("paa_precio",jtAbo.getValorDec(n,JTABO_PRECIO));
+             dtAdd.update();
+             if (rowid==0)
+                jtAbo.setValor(dtAdd.select("SELECT lastval()"),n,JTABO_ID) ;
+             
+          }
+         } catch (SQLException ex)
+         {
+            Error("Error al grabar linea de parte abono",ex);  
+         }
  }
  int cambiaLineajt(int linea) 
  {
@@ -759,17 +990,6 @@ public class MantPartes  extends ventanaPad implements PAD
                 mensajeErr("Intoduzca Unidades de producto");
                 return JT_UNID;
             }
-            if (!pal_accionE.getValor().equals("-") && pal_accionE.isEnabled())
-            { // Tomada una accion.
-              if (pal_solaboE.isSelected())
-              {// Solicitado abono
-                if (pal_kilaboE.getValorDec()==0)
-                {
-                    mensajeErr("Introduzca kilos del abono");
-                    return JT_KILABO;
-                }
-              }
-            }
         } catch (SQLException k)
         {
             Error("Error al comprobar integridad linea",k);
@@ -820,27 +1040,27 @@ public class MantPartes  extends ventanaPad implements PAD
         pro_numlotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
         pro_indlotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         pal_comentE = new gnu.chu.controles.CTextField(Types.CHAR,"X",50);
-        pal_kilaboE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
-        pal_preaboE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
-        pal_solaboC = new gnu.chu.controles.CCheckBox();
+        paa_precioE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
         pal_acsalaE = new gnu.chu.controles.CComboBox();
         pal_accionE = new gnu.chu.controles.CComboBox();
         pal_comsalE = new gnu.chu.controles.CTextField(Types.CHAR,"X",50);
-        pal_solaboE = new gnu.chu.controles.CCheckBox();
         pal_uniaboE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         pro_feccadE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
         pro_codilE = new gnu.chu.camposdb.proPanel();
         pro_nomblE = new gnu.chu.controles.CTextField();
-        pal_unidadlE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        pal_kiloslE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
-        pal_kilabolE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
-        pal_preabolE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
-        pal_solabolC = new gnu.chu.controles.CCheckBox();
-        pal_accionlE = new gnu.chu.controles.CComboBox();
-        pal_solabolE = new gnu.chu.controles.CCheckBox();
-        pal_uniabolE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
+        paa_kilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
         pro_feccadlE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
-        pal_comentlE = new gnu.chu.controles.CTextField(Types.CHAR,"X",50);
+        paa_comentE = new gnu.chu.controles.CTextField(Types.CHAR,"X",50);
+        paa_tipoE = new gnu.chu.controles.CComboBox();
+        paa_estadE = new gnu.chu.controles.CCheckBox();
+        par_lineaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
+        paa_procodE = new gnu.chu.camposdb.proPanel(){
+
+        };
+        paa_pronomE = new gnu.chu.controles.CTextField();
+        paa_cliprvE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#####9");
+        paa_clpvnoE = new gnu.chu.controles.CTextField();
+        paa_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"######9");
         Pprinc = new gnu.chu.controles.CPanel();
         PTabPane1 = new gnu.chu.controles.CTabbedPane();
         Pcabe = new gnu.chu.controles.CPanel();
@@ -879,9 +1099,8 @@ public class MantPartes  extends ventanaPad implements PAD
         pac_estadL = new gnu.chu.controles.CLabel();
         pac_estadE = new gnu.chu.controles.CComboBox();
         BirGrid = new gnu.chu.controles.CButton();
-        BRecepc = new gnu.chu.controles.CButton(Iconos.getImageIcon("duplicar"));
         BsaltaGrid = new gnu.chu.controles.CButton();
-        jt = new gnu.chu.controles.CGridEditable(16)
+        jt = new gnu.chu.controles.CGridEditable(11)
         {
             @Override
             public int cambiaLinea(int row, int col)
@@ -900,7 +1119,7 @@ public class MantPartes  extends ventanaPad implements PAD
             }
             public boolean insertaLinea(int row, int col)
             {
-                return  nav.getPulsado()==navegador.ADDNEW || pac_estadE.getValorInt()<ESTADO_GERENCIA;
+                return  nav.getPulsado()==navegador.ADDNEW || pac_estadE.getValorInt()< ESTADO_PROCESADA;
             }
             public boolean deleteLinea(int row, int col) {
                 return jt.getValorInt(row,JT_PROCODI)==0  || nav.getPulsado()==navegador.ADDNEW || pac_estadE.getValorInt()==ESTADO_GENERADA;
@@ -910,15 +1129,21 @@ public class MantPartes  extends ventanaPad implements PAD
         };
         Plistado = new gnu.chu.controles.CPanel();
         jtList = new gnu.chu.controles.Cgrid(6);
-        jt1 = new gnu.chu.controles.CGridEditable(10)
+        jtLineas = new gnu.chu.controles.CGridEditable(5)
         {
-            @Override
-            public int cambiaLinea(int row, int col)
+
+            public void afterCambiaLinea()
             {
-                int reCaLin=cambiaLineajt1(row);
-                return reCaLin;
+                verDetalleLinea();
             }
-        };
+            public void afterCambiaLineaDis(int nRow)
+            {
+                verDetalleLinea();
+            }
+        }
+        ;
+        jtAbo = new gnu.chu.controles.CGridEditable(10)
+        ;
         PCondFiltro = new gnu.chu.controles.CPanel();
         pac_estadL1 = new gnu.chu.controles.CLabel();
         estadoE = new gnu.chu.controles.CComboBox();
@@ -939,10 +1164,18 @@ public class MantPartes  extends ventanaPad implements PAD
         pal_comsalE1 = new gnu.chu.controles.CTextField(Types.CHAR,"X",50);
         pal_acsalaE1 = new gnu.chu.controles.CComboBox();
         cLabel4 = new gnu.chu.controles.CLabel();
+        cLabel5 = new gnu.chu.controles.CLabel();
+        pal_kilosE1 = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
+        pal_unidadE1 = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
+        cLabel6 = new gnu.chu.controles.CLabel();
+        cLabel7 = new gnu.chu.controles.CLabel();
+        pro_feccadE1 = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
+        Bcerrar = new gnu.chu.controles.CButtonMenu();
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
-        permisoL = new gnu.chu.controles.CLabel();
+        BswGrid = new gnu.chu.controles.CButton();
+        CPermiso = new gnu.chu.controles.CComboBox();
 
         pro_codiE.setProNomb(pro_nombE);
         pro_nombE.setEnabled(false);
@@ -954,8 +1187,6 @@ public class MantPartes  extends ventanaPad implements PAD
 
         pro_serlotE.setText("A");
         pro_serlotE.setMayusc(true);
-
-        pal_solaboC.setText("cCheckBox1");
 
         pal_acsalaE.addItem("NO Def","-");
         pal_acsalaE.addItem("Vert.","V");
@@ -974,21 +1205,24 @@ public class MantPartes  extends ventanaPad implements PAD
         pro_codiE.setProNomb(pro_nombE);
         pro_nomblE.setEnabled(false);
 
-        pal_unidadlE.setText("1");
-        pal_unidadlE.setToolTipText("");
-        pal_unidadlE.setEnabled(false);
-
-        pal_kiloslE.setEnabled(false);
-
-        pal_solabolC.setText("cCheckBox1");
-
-        setAcciones(pal_accionlE,'*');
-        pal_accionE.setGridEditable(jt1);
-
-        pal_uniabolE.setText("1");
-        pal_uniabolE.setToolTipText("");
-
         pro_feccadlE.setEnabled(false);
+
+        paa_tipoE.addItem("Cliente","C");
+        paa_tipoE.addItem("Proveedor","P");
+        paa_tipoE.setGridEditable(jtAbo);
+
+        paa_estadE.setEnabled(false);
+
+        par_lineaE.setText("1");
+        par_lineaE.setToolTipText("");
+        par_lineaE.setEnabled(false);
+
+        paa_procodE.setProNomb(pro_nombE);
+        paa_pronomE.setEnabled(false);
+
+        paa_clpvnoE.setEnabled(false);
+
+        paa_codiE.setEnabled(false);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -1143,12 +1377,6 @@ public class MantPartes  extends ventanaPad implements PAD
         Pcab.add(BirGrid);
         BirGrid.setBounds(670, 90, 2, 2);
 
-        BRecepc.setToolTipText("Recepcionar Mercancia Devuelta");
-        BRecepc.setDependePadre(false);
-        BRecepc.setEnabledParent(false);
-        Pcab.add(BRecepc);
-        BRecepc.setBounds(190, 65, 30, 20);
-
         BsaltaGrid.setText("cButton1");
         Pcab.add(BsaltaGrid);
         BsaltaGrid.setBounds(660, 90, 2, 2);
@@ -1172,11 +1400,7 @@ public class MantPartes  extends ventanaPad implements PAD
             vc.add("Kilos"); // 8
             vc.add("Sug."); // 9
             vc.add("Com.Sala"); // 10
-            vc.add("Accion"); // 11
-            vc.add("Comentario"); // 12
-            vc.add("Abona"); // 13
-            vc.add("Kil.Abo"); // 14
-            vc.add("Pre.Abo"); // 15
+
             jt.setCabecera(vc);
             ArrayList v=new ArrayList();
             v.add(pro_codiE.getTextField()); // 0
@@ -1190,11 +1414,7 @@ public class MantPartes  extends ventanaPad implements PAD
             v.add(pal_kilosE); // 8
             v.add(pal_acsalaE); // 9
             v.add(pal_comsalE); // 10
-            v.add(pal_accionE); // 11
-            v.add(pal_comentE); // 12
-            v.add(pal_solaboE); // 13
-            v.add(pal_kilaboE); // 14
-            v.add(pal_preaboE); // 15
+
             try {
                 jt.setCampos(v);
             } catch (Exception k)
@@ -1204,8 +1424,8 @@ public class MantPartes  extends ventanaPad implements PAD
             }
         }
         jt.setNumRegCargar(0);
-        jt.setAlinearColumna(new int[]{2,0,2,1,2,2,1,2,2,0,0,0,0,1,2,2});
-        jt.setAnchoColumna(new int[]{70,130,50,30,50,40,60,60,60,60,150,60,130,40,50,50});
+        jt.setAlinearColumna(new int[]{2,0,2,1,2,2,1,2,2,0,0});
+        jt.setAnchoColumna(new int[]{70,130,50,30,50,40,60,60,60,60,150});
         jt.setDefButton(Baceptar);
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jt.setFormatoCampos();
@@ -1226,8 +1446,8 @@ public class MantPartes  extends ventanaPad implements PAD
         Plistado.setLayout(new java.awt.GridBagLayout());
 
         jtList.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jtList.setMaximumSize(new java.awt.Dimension(689, 150));
-        jtList.setMinimumSize(new java.awt.Dimension(689, 150));
+        jtList.setMaximumSize(new java.awt.Dimension(689, 90));
+        jtList.setMinimumSize(new java.awt.Dimension(689, 90));
 
         ArrayList v1=new ArrayList();
         v1.add("Parte"); // 0
@@ -1245,61 +1465,104 @@ public class MantPartes  extends ventanaPad implements PAD
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 2.0;
+        Plistado.add(jtList, gridBagConstraints);
+
+        {
+            ArrayList v=new ArrayList();
+            v.add("Articulo"); // 0
+            v.add("Nombre"); // 1
+            v.add("Accion"); // 2
+            v.add("Coment"); // 3
+            v.add("Lin"); //4
+            jtLineas.setCabecera(v);
+
+            ArrayList vc=new ArrayList();
+
+            vc.add(pro_codilE.getTextField());
+            vc.add(pro_nomblE);
+            vc.add(pal_accionE);
+            vc.add(pal_comentE);
+            vc.add(par_lineaE);
+            try {
+                jtLineas.setCampos(vc);
+            } catch (Exception k)
+            {
+                Error("Error al iniciar campos del grid",k);
+                return;
+            }
+            jtLineas.setFormatoCampos();
+        }
+        jtLineas.setAlinearColumna(new int[]{2,0,1,0,2});
+        jtLineas.setAnchoColumna(new int[]{50,120,70,150,20});
+        jtLineas.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtLineas.setAltButton(BswGrid);
+        jtLineas.setCanDeleteLinea(false);
+        jtLineas.setCanInsertLinea(false);
+        jtLineas.setDefButton(Baceptar);
+        jtLineas.setMaximumSize(new java.awt.Dimension(400, 90));
+        jtLineas.setMinimumSize(new java.awt.Dimension(400, 90));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        Plistado.add(jtList, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
+        Plistado.add(jtLineas, gridBagConstraints);
 
         {ArrayList vc=new ArrayList();
-            vc.add("Articulo"); //0
-            vc.add("Nombre"); // 1
-            vc.add("Fec.Cad"); // 2
-            vc.add("Unid"); // 3
-            vc.add("Kilos"); // 4
-            vc.add("Accion"); // 5
-            vc.add("Comentario"); // 6
-            vc.add("Abona"); // 7
-            vc.add("Kil.Abo"); // 8
-            vc.add("Pre.Abo"); // 9
+            vc.add("Tipo"); // 0 Tipo Abono (C/P)
+            vc.add("Articulo"); //1
+            vc.add("Descrip."); // 2
+            vc.add("Cli/Prv"); //3
+            vc.add("Nombre"); // 4
+            vc.add("Comentario"); // 5
+            vc.add("Kilos"); // 6
+            vc.add("Precio"); // 7
+            vc.add("Proc."); // 8
+            vc.add("Id");//9
 
-            jt1.setCabecera(vc);
+            jtAbo.setCabecera(vc);
             ArrayList v=new ArrayList();
-            v.add(pro_codilE.getTextField()); // 0
-            v.add(pro_nomblE);  // 1
-            v.add(pro_feccadlE); // 2
-            v.add(pal_unidadlE); // 3
-            v.add(pal_kiloslE); // 4
-            v.add(pal_accionlE); // 5
-            v.add(pal_comentlE); // 6
-            v.add(pal_solabolE); // 7
-            v.add(pal_kilabolE); // 8
-            v.add(pal_preabolE); // 9
-
+            v.add(paa_tipoE); // 0
+            v.add(paa_procodE.getTextField()); // 1
+            v.add(paa_pronomE);  // 2
+            v.add(paa_cliprvE); // 3
+            v.add(paa_clpvnoE); // 4
+            v.add(paa_comentE); // 5
+            v.add(paa_kilosE); // 6
+            v.add(paa_precioE); // 7
+            v.add(paa_estadE); // 8
+            v.add(paa_codiE); // 9
             try {
-                jt1.setCampos(v);
+                jtAbo.setCampos(v);
             } catch (Exception k)
             {
                 Error("Error al iniciar campos del grid",k);
                 return;
             }
         }
-        jt1.setAlinearColumna(new int[]{2,0,1,2,2,1,0,1,2,2});
-        jt1.setAnchoColumna(new int[]{70,130,60,30,50,60,150,30,40,60});
-        jt1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jt1.setCanDeleteLinea(false);
-        jt1.setCanInsertLinea(false);
-        jt1.setDefButton(Baceptar);
-        jt1.setMaximumSize(new java.awt.Dimension(700, 102));
-        jt1.setMinimumSize(new java.awt.Dimension(700, 102));
+        jtAbo.setAlinearColumna(new int[]{0,2,0,2,0,0,2,2,0,2});
+        jtAbo.setAnchoColumna(new int[]{50,60,100,60,100,130,60,60,50,40});
+        jtAbo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtAbo.setAltButton(BswGrid);
+        jtAbo.setDefButton(Baceptar);
+        jtAbo.setDefButton(Baceptar);
+        jtAbo.setMaximumSize(new java.awt.Dimension(400, 90));
+        jtAbo.setMinimumSize(new java.awt.Dimension(400, 90));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipady = 29;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
-        Plistado.add(jt1, gridBagConstraints);
+        Plistado.add(jtAbo, gridBagConstraints);
 
         PCondFiltro.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         PCondFiltro.setMaximumSize(new java.awt.Dimension(709, 24));
@@ -1355,6 +1618,7 @@ public class MantPartes  extends ventanaPad implements PAD
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(1, 1, 0, 0);
@@ -1362,29 +1626,29 @@ public class MantPartes  extends ventanaPad implements PAD
 
         PPie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         PPie.setEnabled(false);
-        PPie.setMaximumSize(new java.awt.Dimension(719, 27));
-        PPie.setMinimumSize(new java.awt.Dimension(719, 27));
-        PPie.setPreferredSize(new java.awt.Dimension(719, 27));
+        PPie.setMaximumSize(new java.awt.Dimension(689, 47));
+        PPie.setMinimumSize(new java.awt.Dimension(689, 47));
+        PPie.setPreferredSize(new java.awt.Dimension(689, 47));
         PPie.setLayout(null);
 
         pro_ejelotE.setValorDec(EU.ejercicio);
         PPie.add(pro_ejelotE1);
-        pro_ejelotE1.setBounds(50, 5, 40, 17);
+        pro_ejelotE1.setBounds(170, 5, 40, 17);
         PPie.add(pro_numlotE1);
-        pro_numlotE1.setBounds(92, 5, 50, 17);
+        pro_numlotE1.setBounds(210, 5, 50, 17);
 
         pro_serlotE1.setText("A");
         pro_serlotE1.setMayusc(true);
         PPie.add(pro_serlotE1);
-        pro_serlotE1.setBounds(144, 5, 20, 17);
+        pro_serlotE1.setBounds(260, 5, 20, 17);
         PPie.add(pro_indlotE1);
-        pro_indlotE1.setBounds(166, 5, 50, 17);
+        pro_indlotE1.setBounds(280, 5, 50, 17);
 
         cLabel3.setText("Consejo");
         PPie.add(cLabel3);
-        cLabel3.setBounds(220, 5, 60, 17);
+        cLabel3.setBounds(0, 25, 60, 17);
         PPie.add(pal_comsalE1);
-        pal_comsalE1.setBounds(390, 5, 320, 17);
+        pal_comsalE1.setBounds(180, 25, 500, 17);
 
         pal_acsalaE1.addItem("NO Def","-");
         pal_acsalaE1.addItem("Vert.","V");
@@ -1392,15 +1656,43 @@ public class MantPartes  extends ventanaPad implements PAD
         pal_acsalaE1.addItem("Cong.","C");
         pal_acsalaE1.setGridEditable(jt);
         PPie.add(pal_acsalaE1);
-        pal_acsalaE1.setBounds(280, 5, 90, 17);
+        pal_acsalaE1.setBounds(60, 25, 110, 17);
 
-        cLabel4.setText("Individuo");
+        cLabel4.setText("Kilos");
         PPie.add(cLabel4);
-        cLabel4.setBounds(0, 5, 50, 17);
+        cLabel4.setBounds(580, 5, 40, 17);
+
+        cLabel5.setText("Individuo");
+        PPie.add(cLabel5);
+        cLabel5.setBounds(120, 5, 50, 17);
+        PPie.add(pal_kilosE1);
+        pal_kilosE1.setBounds(620, 5, 57, 17);
+
+        pal_unidadE1.setEnabled(false);
+        PPie.add(pal_unidadE1);
+        pal_unidadE1.setBounds(540, 5, 40, 17);
+
+        cLabel6.setText("Fecha Cad.");
+        PPie.add(cLabel6);
+        cLabel6.setBounds(340, 5, 70, 17);
+
+        cLabel7.setText("Unidades ");
+        PPie.add(cLabel7);
+        cLabel7.setBounds(480, 5, 60, 17);
+        PPie.add(pro_feccadE1);
+        pro_feccadE1.setBounds(410, 5, 60, 17);
+
+        Bcerrar.addMenu("Cerrar", "C");
+        Bcerrar.addMenu("Cancelar", "X");
+        Bcerrar.setToolTipText("Cerrar o Cancelar Incidencia");
+        Bcerrar.setText("Cerrar");
+        PPie.add(Bcerrar);
+        Bcerrar.setBounds(5, 3, 100, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 1.0;
         Plistado.add(PPie, gridBagConstraints);
@@ -1430,12 +1722,14 @@ public class MantPartes  extends ventanaPad implements PAD
         Bcancelar.setText("Cancelar");
         Ppie.add(Bcancelar);
         Bcancelar.setBounds(140, 2, 90, 30);
+        Ppie.add(BswGrid);
+        BswGrid.setBounds(240, 0, 1, 1);
 
-        permisoL.setBackground(java.awt.Color.lightGray);
-        permisoL.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        permisoL.setOpaque(true);
-        Ppie.add(permisoL);
-        permisoL.setBounds(280, 10, 150, 17);
+        CPermiso.addItem("Insertar", "0");
+        CPermiso.addItem("Gerencia", "1");
+        CPermiso.addItem("Oficina", "2");
+        Ppie.add(CPermiso);
+        CPermiso.setBounds(260, 5, 140, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1452,13 +1746,15 @@ public class MantPartes  extends ventanaPad implements PAD
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton BListar;
-    private gnu.chu.controles.CButton BRecepc;
     private gnu.chu.controles.CButton BRefresh;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton BbuscaDoc;
     private gnu.chu.controles.CButton Bcancelar;
+    private gnu.chu.controles.CButtonMenu Bcerrar;
     private gnu.chu.controles.CButton BirGrid;
     private gnu.chu.controles.CButton BsaltaGrid;
+    private gnu.chu.controles.CButton BswGrid;
+    private gnu.chu.controles.CComboBox CPermiso;
     private gnu.chu.controles.CPanel PCondFiltro;
     private gnu.chu.controles.CPanel PPie;
     private gnu.chu.controles.CTabbedPane PTabPane1;
@@ -1472,14 +1768,28 @@ public class MantPartes  extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
+    private gnu.chu.controles.CLabel cLabel5;
+    private gnu.chu.controles.CLabel cLabel6;
+    private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CComboBox estadoE;
     private gnu.chu.controles.CTextField fecfinE;
     private gnu.chu.controles.CTextField feciniE;
     private javax.swing.JScrollPane jScrollPane1;
     private gnu.chu.controles.CGridEditable jt;
-    private gnu.chu.controles.CGridEditable jt1;
+    private gnu.chu.controles.CGridEditable jtAbo;
+    private gnu.chu.controles.CGridEditable jtLineas;
     private gnu.chu.controles.Cgrid jtList;
+    private gnu.chu.controles.CTextField paa_cliprvE;
+    private gnu.chu.controles.CTextField paa_clpvnoE;
+    private gnu.chu.controles.CTextField paa_codiE;
+    private gnu.chu.controles.CTextField paa_comentE;
+    private gnu.chu.controles.CCheckBox paa_estadE;
+    private gnu.chu.controles.CTextField paa_kilosE;
+    private gnu.chu.controles.CTextField paa_precioE;
+    private gnu.chu.camposdb.proPanel paa_procodE;
+    private gnu.chu.controles.CTextField paa_pronomE;
+    private gnu.chu.controles.CComboBox paa_tipoE;
     private gnu.chu.controles.CLabel pac_cliprvL;
     private gnu.chu.controles.CTextArea pac_comentE;
     private gnu.chu.controles.CTextField pac_docanoE;
@@ -1504,27 +1814,16 @@ public class MantPartes  extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField pac_usuproE;
     private gnu.chu.controles.CTextField pac_usuresE;
     private gnu.chu.controles.CComboBox pal_accionE;
-    private gnu.chu.controles.CComboBox pal_accionlE;
     private gnu.chu.controles.CComboBox pal_acsalaE;
     private gnu.chu.controles.CComboBox pal_acsalaE1;
     private gnu.chu.controles.CTextField pal_comentE;
-    private gnu.chu.controles.CTextField pal_comentlE;
     private gnu.chu.controles.CTextField pal_comsalE;
     private gnu.chu.controles.CTextField pal_comsalE1;
-    private gnu.chu.controles.CTextField pal_kilaboE;
-    private gnu.chu.controles.CTextField pal_kilabolE;
     private gnu.chu.controles.CTextField pal_kilosE;
-    private gnu.chu.controles.CTextField pal_kiloslE;
-    private gnu.chu.controles.CTextField pal_preaboE;
-    private gnu.chu.controles.CTextField pal_preabolE;
-    private gnu.chu.controles.CCheckBox pal_solaboC;
-    private gnu.chu.controles.CCheckBox pal_solaboE;
-    private gnu.chu.controles.CCheckBox pal_solabolC;
-    private gnu.chu.controles.CCheckBox pal_solabolE;
+    private gnu.chu.controles.CTextField pal_kilosE1;
     private gnu.chu.controles.CTextField pal_uniaboE;
-    private gnu.chu.controles.CTextField pal_uniabolE;
     private gnu.chu.controles.CTextField pal_unidadE;
-    private gnu.chu.controles.CTextField pal_unidadlE;
+    private gnu.chu.controles.CTextField pal_unidadE1;
     private gnu.chu.controles.CTextField par_codiE;
     private gnu.chu.controles.CLabel par_codiL;
     private gnu.chu.controles.CLabel par_codiL1;
@@ -1532,12 +1831,13 @@ public class MantPartes  extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel par_codiL3;
     private gnu.chu.controles.CLabel par_comentL;
     private gnu.chu.controles.CLabel par_fecaltL3;
-    private gnu.chu.controles.CLabel permisoL;
+    private gnu.chu.controles.CTextField par_lineaE;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.camposdb.proPanel pro_codilE;
     private gnu.chu.controles.CTextField pro_ejelotE;
     private gnu.chu.controles.CTextField pro_ejelotE1;
     private gnu.chu.controles.CTextField pro_feccadE;
+    private gnu.chu.controles.CTextField pro_feccadE1;
     private gnu.chu.controles.CTextField pro_feccadlE;
     private gnu.chu.controles.CTextField pro_indlotE;
     private gnu.chu.controles.CTextField pro_indlotE1;
@@ -1650,7 +1950,7 @@ public class MantPartes  extends ventanaPad implements PAD
  {
         try
         {
-            if (P_PERMEST==ESTADO_GERENCIA)
+            if (P_PERMEST== PERM_GERENC)
             {
                 swModificaTodo=false;
                 if (jtList.isVacio())
@@ -1662,7 +1962,7 @@ public class MantPartes  extends ventanaPad implements PAD
                     return;
                 }
             }
-            if (P_PERMEST==ESTADO_GENERADA )
+            if (P_PERMEST==PERM_INSERTAR )
                 swModificaTodo=true;
             if (swModificaTodo)
                 PTabPane1.setSelectedIndex(0);
@@ -1674,7 +1974,7 @@ public class MantPartes  extends ventanaPad implements PAD
                 activaTodo();
                 return;
             }
-            if ( P_PERMEST == ESTADO_GENERADA && pac_estadE.getValorInt()> ESTADO_PROCDEV)
+            if ( P_PERMEST == PERM_INSERTAR && pac_estadE.getValorInt()> ESTADO_PROCDEV)
             {
                 msgBox(("Parte no puede ser modficado con sus permisos"));
                 nav.setPulsado(navegador.NINGUNO);
@@ -1682,7 +1982,7 @@ public class MantPartes  extends ventanaPad implements PAD
                 return;
             }
             
-            if (! setBloqueo(dtAdd,"v_partes", swModificaTodo?par_codiE.getText():jt1.getValString(0)))
+            if (! setBloqueo(dtAdd,"v_partes", swModificaTodo?par_codiE.getText():jtAbo.getValString(0)))
             {
                 msgBox(msgBloqueo);
                 activaTodo();
@@ -1692,27 +1992,38 @@ public class MantPartes  extends ventanaPad implements PAD
             activar(navegador.EDIT, true);
             if (swModificaTodo)
             {
-                activaCamposGrid(); 
-                if (P_PERMEST== ESTADO_GENERADA)
+//                activaCamposGrid(); 
+                if (P_PERMEST== PERM_INSERTAR)
                     pac_tipoE.setEnabled(!pac_tipoE.getValor().equals("R") && pac_estadE.getValorInt()==ESTADO_GENERADA);
             }
-            mensaje("Editando parte");
+            mensaje("Editando parte...");
             if (swModificaTodo)
-                jt.requestFocusInicio();
+            {
+                if (pac_fecproE.isNull())
+                    jt.requestFocusInicio();
+                else
+                {                    
+                    jt.setEnabled(false);
+                    paa_estadE.requestFocus();
+                }
+            }
             else
             {
-                if (P_PERMEST== ESTADO_CERRADO && estadoE.getValorInt()==ESTADO_GERENCIA)
+                if (P_PERMEST== PERM_OFICI && estadoE.getValorInt()==ESTADO_PROCESADA)
                 {
-                    jt1.setEnabled(false);
+                    jtLineas.setEnabled(false);
                 }
                 else
                 {
                     if (pac_tipoE.getValor().equals("D") && pac_estadE.getValorInt()==ESTADO_GENERADA)
-                        setAcciones(pal_accionlE, 'D');
+                    {
+                        jtAbo.setEnabled(false);
+                        setAcciones(pal_accionE, 'D');
+                    }
                     else
-                        setAcciones(pal_accionlE, 'N');
-                }
-                jt1.requestFocusInicio();
+                        setAcciones(pal_accionE, 'N');
+                }                
+                jtLineas.requestFocusInicio();
             }
             resetCambioLote();
         } catch (SQLException | UnknownHostException ex)
@@ -1727,75 +2038,60 @@ public class MantPartes  extends ventanaPad implements PAD
         {            
             if (! checkEntrada())
                 return;
-            Date fecProd=null,fecRes=null;
-            if (P_PERMEST== ESTADO_CERRADO && !swModificaTodo && estadoE.getValorInt()==ESTADO_GERENCIA) 
-            {
-                 pac_estadE.setValor(ESTADO_CERRADO);
-                 fecRes=Formatear.getDateAct();
-            }
-            else
-            {
-            boolean swAccion=true;
-            int nRows= swModificaTodo?jt.getRowCount():jt1.getRowCount();
-            for (int n=0;n<nRows;n++)
-            {
-                if (swModificaTodo && jt.getValorInt(n,JT_PROCODI)==0)
-                    continue;  
-                String accion=swModificaTodo?jt.getValString(n,JT_ACCION):jt1.getValString(n,JT1_ACCION);
-                if ( accion.startsWith("NO") )
-                {
-                    swAccion=false;
-                    if (pac_estadE.getValorInt()>ESTADO_GENERADA )
-                    {
-                        mensajeErr("Accion de linea: "+n+" no definida");
-                        return;
-                    }
-                }
-            }  
-            
-            if (P_PERMEST!=PERM_ADMIN)
-            {
-                if (!swModificaTodo && pac_estadE.getValorInt()<=ESTADO_GERENCIA  &&  swAccion)
-                {
-                    if (pac_estadE.getValorInt()==ESTADO_GENERADA && !pac_tipoE.getValor().equals("D"))
-                    {
-                        fecProd=Formatear.getDateAct();
-                        pac_estadE.setValor(ESTADO_GERENCIA);
-                    }
-                    else
-                    {
-                        if (pac_estadE.getValorInt()==ESTADO_PROCDEV &&  pac_tipoE.getValor().equals("R"))
-                        {
-                            pac_estadE.setValor(ESTADO_GERENCIA);
-                            pac_estadE.setValor(ESTADO_GERENCIA);
-                        }
-                        else
-                            pac_estadE.setValor(pac_estadE.getValorInt()+ 1);
-                    }
-                }
-                else
-                {
-                    if (pac_estadE.getValorInt()==ESTADO_PROCDEV)
-                    {
-                        pac_estadE.setValor(ESTADO_GENERADA);
-                        pac_tipoE.setValor("R");
-                    }
-                }
-            }
-            }
-            resetBloqueo(dtAdd, "v_partes", swModificaTodo?par_codiE.getText():jt1.getValString(0),false);
-            dtAdd.select("select * from partecab where par_codi="+par_codiE.getValorInt(),true);
-            dtAdd.edit();
            
-            
-            actualCab(fecProd,fecRes);
-            if (swModificaTodo)
-            {
-                deleteParteLin();
-                insertaLin(par_codiE.getValorInt());
+            if (! swModificaTodo)
+            {             
+                  Date fecProc=null;
+                  boolean swAccion=true;
+                  int nRows= jtLineas.getRowCount();
+                  for (int n=0;n<nRows;n++)
+                  {                  
+                    String accion=jtLineas.getValString(n,JTLINEAS_ACCION);
+                    if ( accion.startsWith("NO") )
+                        swAccion=false;                     
+                  }
+                  if (swAccion)
+                  {
+                    if (pac_estadE.getValorInt()==ESTADO_GENERADA)
+                    {
+                        
+                        if (pac_tipoE.getValor().equals("D"))
+                          pac_estadE.setValor(ESTADO_PROCDEV);
+                        else
+                        {
+                          fecProc=Formatear.getDateAct();
+                          pac_estadE.setValor(ESTADO_PROCESADA);                    
+                        }
+                        dtAdd.select("select * from partecab where par_codi="+par_codiE.getValorInt(),true);
+                        dtAdd.edit();    
+                        dtAdd.setDato("pac_estad",pac_estadE.getValor());
+                        if (fecProc!=null)
+                        {
+                            dtAdd.setDato("pac_usupro",EU.usuario);
+                            dtAdd.setDato("pac_fecpro",fecProc);
+                        }
+                        dtAdd.update(); 
+                    }                              
+                  }                  
+                 actualizaLineas(par_codiE.getValorInt());  
             }
             else
-                actualizaLineas(par_codiE.getValorInt());
+            {
+                if (pac_tipoE.getValor().equals("D") && pac_estadE.getValorInt()==ESTADO_PROCDEV)
+                {
+                    pac_estadE.setValor(""+ESTADO_GENERADA);
+                    pac_tipoE.setValor("R");
+                }
+                dtAdd.select("select * from partecab where par_codi="+par_codiE.getValorInt(),true);
+                dtAdd.edit();                       
+                actualCab();
+                if (jt.isEnabled())
+                {
+                    deleteParteLin();
+                    insertaLin(par_codiE.getValorInt());
+                }
+            }
+            resetBloqueo(dtAdd, "v_partes", swModificaTodo?par_codiE.getText():jtAbo.getValString(0),false);
             dtAdd.commit();
             mensaje("");
             nav.pulsado=navegador.NINGUNO;
@@ -1815,7 +2111,7 @@ public class MantPartes  extends ventanaPad implements PAD
     public void canc_edit() {
     
         try {
-          resetBloqueo(dtAdd, "v_partes", swModificaTodo?par_codiE.getText():jt1.getValString(0));
+          resetBloqueo(dtAdd, "v_partes", swModificaTodo?par_codiE.getText():jtAbo.getValString(0));
         } catch (Exception k)
         {
           mensajes.mensajeAviso("Error al Quitar el bloqueo\n"+k.getMessage());
@@ -1834,7 +2130,7 @@ public class MantPartes  extends ventanaPad implements PAD
         {
             if (! checkEntrada())
                 return;
-            if (P_PERMEST==ESTADO_GENERADA && pac_tipoE.getValor().equals("R"))
+            if (P_PERMEST==PERM_INSERTAR && pac_tipoE.getValor().equals("R"))
             {
                 mensajeErr("Tipo no puede ser Devol. Recepcionada");
                 pac_tipoE.requestFocus();
@@ -1853,19 +2149,19 @@ public class MantPartes  extends ventanaPad implements PAD
     }
     private void  actualizaLineas(int id)  throws SQLException,ParseException
     {
-        int nRows=jt1.getRowCount();
+        int nRows=jtLineas.getRowCount();
 
         for (int n=0;n<nRows;n++)
         {
-            s="select * from partelin where par_codi="+id+" and par_linea="+(n+1);
+            if (jtLineas.getValorInt(n,JTLINEAS_NUMLIN)==0)
+                continue;
+            s="select * from partelin where par_codi="+id+" and par_linea="+jtLineas.getValorInt(n,JTLINEAS_NUMLIN);
             if (!dtAdd.select(s,true))
-               throw new SQLException("Error al buascar linea: "+(n+1) +" de parte: "+id);
+               throw new SQLException("En Posicion: "+n+" Error al buscar linea: "+jtLineas.getValorInt(n,JTLINEAS_NUMLIN)+" de parte: "+id);
             dtAdd.edit();
-            dtAdd.setDato("pal_accion",pal_accionE.getValor(jt1.getValString(n,JT1_ACCION)));
-            dtAdd.setDato("pal_coment",jt1.getValString(n,JT1_COMENT));
-            dtAdd.setDato("pal_solabo",jt1.getValBoolean(n,JT1_SOLABO)?-1:0);
-            dtAdd.setDato("pal_kilabo",jt1.getValorDec(n,JT1_KILABO));
-            dtAdd.setDato("pal_preabo",jt1.getValorDec(n,JT1_PREABO));
+            dtAdd.setDato("pal_accion",pal_accionE.getValor(jtLineas.getValString(n,JTLINEAS_ACCION)));
+            dtAdd.setDato("pal_coment",jtLineas.getValString(n,JTLINEAS_COMENT));
+
             dtAdd.update();
         }
     }
@@ -1890,11 +2186,11 @@ public class MantPartes  extends ventanaPad implements PAD
             dtAdd.setDato("pro_feccad",jt.getValDate(n,JT_FECCAD));
             dtAdd.setDato("pal_acsala",pal_acsalaE.getValor(jt.getValString(n,JT_ACSALA)));
             dtAdd.setDato("pal_comsal",jt.getValString(n,JT_COMSAL));
-            dtAdd.setDato("pal_accion",pal_accionE.getValor(jt.getValString(n,JT_ACCION)));
-            dtAdd.setDato("pal_coment",jt.getValString(n,JT_COMENT));
-            dtAdd.setDato("pal_solabo",jt.getValBoolean(n,JT_SOLABO)?-1:0);
-            dtAdd.setDato("pal_kilabo",jt.getValorDec(n,JT_KILABO));
-            dtAdd.setDato("pal_preabo",jt.getValorDec(n,JT_PREABO));
+//            if (nav.getPulsado()==navegador.EDIT)
+//            {
+//                dtAdd.setDato("pal_accion",pal_accionE.getValor(jt1.getValString(n,JT_ACCION)));
+//                dtAdd.setDato("pal_coment",jt1.getValString(n,JT_COMENT));                             
+//            }
             dtAdd.update();
             nl++;
         }
@@ -1905,11 +2201,11 @@ public class MantPartes  extends ventanaPad implements PAD
         dtAdd.setDato("emp_codi",EU.em_cod);
         dtAdd.setDato("pac_usuinc",EU.usuario);
         dtAdd.setDato("pac_fecinc",pac_fecincE.getDate());
-        actualCab(null,null);
+        actualCab();
         dtStat.select("SELECT lastval()");
         return dtStat.getInt(1);
     }
-    private void actualCab(Date fecProc,Date fecRes) throws  SQLException,ParseException
+    private void actualCab() throws  SQLException,ParseException
     {
         dtAdd.setDato("pac_estad",pac_estadE.getValor());
         dtAdd.setDato("pac_tipo",pac_tipoE.getValor());
@@ -1918,16 +2214,16 @@ public class MantPartes  extends ventanaPad implements PAD
         dtAdd.setDato("pac_docano",pac_docanoE.getValorInt());
         dtAdd.setDato("pac_docser",pac_docserE.getText());
         dtAdd.setDato("pac_docnum",pac_docnumE.getValorInt());
-        if (fecProc!=null)
-        {
-            dtAdd.setDato("pac_usupro",EU.usuario);
-            dtAdd.setDato("pac_fecpro",fecProc);
-        }
-        if (fecRes!=null)
-        {
-            dtAdd.setDato("pac_usures",EU.usuario);
-            dtAdd.setDato("pac_fecres",fecRes);
-        }
+//        if (fecProc!=null)
+//        {
+//            dtAdd.setDato("pac_usupro",EU.usuario);
+//            dtAdd.setDato("pac_fecpro",fecProc);
+//        }
+//        if (fecRes!=null)
+//        {
+//            dtAdd.setDato("pac_usures",EU.usuario);
+//            dtAdd.setDato("pac_fecres",fecRes);
+//        }
         
         dtAdd.update();       
     }
@@ -1965,13 +2261,13 @@ public class MantPartes  extends ventanaPad implements PAD
             pac_fecincE.requestFocus();
             return false;
         }
-        if (dias>7 && P_PERMEST==10)
+        if (dias>7 && !P_ADMIN)
         {
             mensajeErr("Fecha alta no puede ser inferior a la actual en mas de 7 dias");
             pac_fecaltE.requestFocus();
             return false;
         }
-        if ( pac_estadE.getValorInt()>ESTADO_PROCDEV && P_PERMEST==ESTADO_GENERADA)
+        if ( pac_estadE.getValorInt()>ESTADO_PROCDEV && P_PERMEST== PERM_INSERTAR)
         {
             mensajeErr("No tiene permisos para poner este tipo de estado");
             return false;
@@ -2026,19 +2322,27 @@ public class MantPartes  extends ventanaPad implements PAD
         }
         if (swModificaTodo)
         {
-            jt.salirGrid();
-            if (cambiaLineajt(jt.getSelectedRow())>0)
+            if (jt.isEnabled())
+            {
+                jt.salirGrid();
+                if (cambiaLineajt(jt.getSelectedRow())>0)
+                    return false;
+
+                int nRows=jt.getRowCount();
+                for (int n=0;n<nRows;n++)
+                {
+                    if (jt.getValorInt(n,JT_PROCODI)>0)
+                        return true;
+                }
+                mensajeErr("Introduzca alguna linea de Producto");
                 return false;
+            }
         }
         else
-            jt1.salirGrid();
-        int nRows=jt.getRowCount();
-        for (int n=0;n<nRows;n++)
         {
-            if (jt.getValorInt(n,JT_PROCODI)>0)
-                return true;
+            jtLineas.salirGrid();
         }
-        return false;
+        return true;
     }
     @Override
     public void canc_addnew() {
@@ -2108,51 +2412,59 @@ public class MantPartes  extends ventanaPad implements PAD
     public void activar(int tipo,boolean activo) {
         Baceptar.setEnabled(activo);
         Bcancelar.setEnabled(activo);
-        
-        
-        jt1.setEnabled(activo && !swModificaTodo && tipo == navegador.EDIT);
-       
-       
+        Bcerrar.setEnabled(!activo && !jtList.isVacio() && P_PERMEST>=PERM_INSERTAR);
+        jtLineas.setEnabled(activo &&  tipo == navegador.EDIT && P_PERMEST>=PERM_INSERTAR );
+        jtAbo.setEnabled(activo && tipo == navegador.EDIT && P_PERMEST>=PERM_INSERTAR );
+        CPermiso.setEnabled(!activo && P_ADMIN );           
         if (tipo==navegador.DELETE  || ! swModificaTodo )
             return;
        
-        Pcabe.setEnabled((activo || tipo==navegador.QUERY) && swModificaTodo && pac_estadE.getValorInt()<= P_PERMEST );
+        Pcabe.setEnabled((activo || tipo==navegador.QUERY) && swModificaTodo && pac_fecproE.isNull());
         pac_tipoE.setEnabled(activo);
         
         jt.setEnabled(activo && swModificaTodo && tipo != navegador.QUERY);
-      
         jtList.setEnabled(!activo);
         Pcabe.setEnabled(activo);
         pac_comentE.setEnabled(activo);        
         par_codiE.setEnabled(activo && tipo == navegador.QUERY);
         pac_estadE.setEnabled( (activo && tipo==navegador.QUERY) || 
-            (activo && P_PERMEST>ESTADO_GENERADA) );
+            (activo && P_PERMEST>PERM_INSERTAR) );
    
         activaFechas(tipo != navegador.QUERY || false);
         
     }
     
-    private void activaCamposGrid()
+    void cerrarIncidencia(int estado) throws SQLException
     {
-        boolean editable=pac_estadE.getValorInt()<ESTADO_GERENCIA;
-        pro_codiE.setEditable(editable);
-        pal_kilosE.setEditable(editable);
-        pal_unidadE.setEditable(editable);
-        pro_ejelotE.setEditable(editable);
-        pro_serlotE.setEditable(editable);
-        pro_numlotE.setEditable(editable);
-        pro_indlotE.setEditable(editable);
-        pal_acsalaE.setEnabled(editable);
-        pal_comsalE.setEditable(editable);
-      
-        editable=   P_PERMEST>pac_estadE.getValorInt();
-        
-        pal_accionE.setEnabled(editable);
-        pal_comentE.setEditable(editable);
-        pal_solaboE.setEnabled(editable);
-        pal_kilaboE.setEditable(editable);
-        pal_preaboE.setEditable(editable);        
+           dtAdd.select("select * from partecab where par_codi="+par_codiE.getValorInt(),true);
+           dtAdd.edit();    
+           dtAdd.setDato("pac_estad",estado);
+           dtAdd.setDato("pac_usures",EU.usuario);
+           dtAdd.setDato("pac_fecres",Formatear.getDateAct());
+           dtAdd.update(); 
+           dtAdd.commit();
+           msgBox("Incidencia "+(estado==ESTADO_CERRADO?"Cerrada":"Cancelada"));
     }
+//    private void activaCamposGrid()
+//    {
+//        boolean editable=pac_estadE.getValorInt()<ESTADO_PROCESADA;
+//        pro_codiE.setEditable(editable);
+//        pal_kilosE.setEditable(editable);
+//        pal_unidadE.setEditable(editable);
+//        pro_ejelotE.setEditable(editable);
+//        pro_serlotE.setEditable(editable);
+//        pro_numlotE.setEditable(editable);
+//        pro_indlotE.setEditable(editable);
+//        pal_acsalaE.setEnabled(editable);
+//        pal_comsalE.setEditable(editable);
+//      
+//        editable=   P_PERMEST>pac_estadE.getValorInt();
+//        
+//        pal_accionE.setEnabled(editable);
+//        pal_comentE.setEditable(editable);
+//
+//        paa_precioE.setEditable(editable);        
+//    }
     
     private void Blistar_ActionPerformed()
     {
@@ -2211,7 +2523,6 @@ public class MantPartes  extends ventanaPad implements PAD
             swCargaList=true;
             swCargaLin=true;
             jtList.removeAllDatos();
-            jt1.removeAllDatos();
             String s="select * from partecab where pac_estad='"+estado+"'"+
                 (tipoE.getValor().equals("*")?"":" and pac_tipo='"+tipoE.getValor()+"'")+
                 (feciniE.isNull()?"":" and pac_fecinc>='"+feciniE.getFechaDB()+"'")+
@@ -2220,11 +2531,14 @@ public class MantPartes  extends ventanaPad implements PAD
             if (! dtCon1.select(s))
             {                
                 swCargaList=false;
-                if (P_PERMEST==2)
-                {
-                    Pcab.resetTexto();
-                    jt.removeAllDatos();
-                }
+                jtLineas.removeAllDatos();
+                jtAbo.removeAllDatos();
+                Bcerrar.setEnabled(false);
+//                if (P_PERMEST==PERM_ADMIN)
+//                {
+//                    Pcab.resetTexto();
+//                    jt.removeAllDatos();
+//                }
                 return;
             }
             do
@@ -2236,15 +2550,8 @@ public class MantPartes  extends ventanaPad implements PAD
                 v.add(dtCon1.getInt("pac_cliprv"));
                 if (dtCon1.getInt("pac_cliprv")!=0)
                 {
-                    if (dtCon1.getString("pac_tipo").equals("E"))
-                       s="select prv_nomb as nombre from v_proveedo where prv_codi="+dtCon1.getInt("pac_cliprv");
-                    else
-                        s="select cli_nomb as nombre from v_cliente where cli_codi="+dtCon1.getInt("pac_cliprv");
-                        
-                    if (dtStat.select(s))
-                        v.add(dtStat.getString("nombre"));
-                    else
-                        v.add("**NO ENCONTRADO**");
+                    s=getNombCliPrv(dtStat,dtCon1.getString("pac_tipo"), dtCon1.getInt("pac_cliprv"));                   
+                    v.add(s==null?"**NO ENCONTRADO**":s);
                 }
                 else
                     v.add("");
@@ -2252,6 +2559,7 @@ public class MantPartes  extends ventanaPad implements PAD
                 jtList.addLinea(v);
             } while (dtCon1.next());
             jtList.requestFocusInicio();
+            Bcerrar.setEnabled(true);
             swCargaList=false;
             verDatos(jtList.getValorInt(JTL_NUMPAR));
             verLineas(jtList.getValorInt(JTL_NUMPAR));
@@ -2304,7 +2612,7 @@ public class MantPartes  extends ventanaPad implements PAD
         pac_usuincE.setText(dtCon1.getString("pac_usuinc"));
         pac_usuproE.setText(dtCon1.getString("pac_usupro"));
         pac_usuresE.setText(dtCon1.getString("pac_usures"));
-        BRecepc.setEnabled( pac_estadE.getValorInt()==1 && pac_tipoE.getValor().equals("D"));
+        
         swCargaList=false;
         jt.removeAllDatos();
 
@@ -2331,14 +2639,7 @@ public class MantPartes  extends ventanaPad implements PAD
             v.add(dtCon1.getString("pal_kilos"));
             v.add(pal_acsalaE.getText(dtCon1.getString("pal_acsala")));
             v.add(dtCon1.getString("pal_comsal"));
-            v.add(pal_accionE.getText(dtCon1.getString("pal_accion")));
-            v.add(dtCon1.getString("pal_coment"));
-           
-            v.add(dtCon1.getInt("pal_solabo")!=0);
-            v.add(dtCon1.getString("pal_kilabo"));
-            v.add(dtCon1.getString("pal_preabo"));
 
-            
             jt.addLinea(v);
         } while (dtCon1.next());
         jt.requestFocusInicio();
@@ -2346,46 +2647,62 @@ public class MantPartes  extends ventanaPad implements PAD
     
     private void verLineas(int parCodi) throws SQLException
     {
+        
+        swCargaLinAbo=true;
         swCargaLin=true;
-        jt1.removeAllDatos();
-
+        jtLineas.removeAllDatos();
+       
+        
         if (!dtCon1.select("select l.*,a.pro_nomb from partelin as l,v_articulo as a"+
             " where par_codi="+parCodi+
             " and l.pro_codi = a.pro_codi "+
             " order by par_linea"))
         {
             msgBox("No encontradas lineas para este PARTE");
+            jtAbo.removeAllDatos();
+            swCargaLinAbo=false;
+            swCargaLin=false;
             return;
         }
         do
         {
+          
             ArrayList v=new ArrayList();
+            
             v.add(dtCon1.getString("pro_codi"));
             v.add(dtCon1.getString("pro_nomb"));
-            v.add(dtCon1.getDate("pro_feccad"));
-            v.add(dtCon1.getString("pal_unidad"));
-            v.add(dtCon1.getString("pal_kilos"));
-           
             v.add(pal_accionE.getText(dtCon1.getString("pal_accion")));
-            v.add(dtCon1.getString("pal_coment"));           
-            v.add(dtCon1.getInt("pal_solabo")!=0);
-            v.add(dtCon1.getString("pal_kilabo"));
-            v.add(dtCon1.getString("pal_preabo"));
-           
-            jt1.addLinea(v);
+            v.add(dtCon1.getString("pal_coment"));
+            v.add(dtCon1.getString("par_linea"));
+            jtLineas.addLinea(v);
         } while (dtCon1.next());
-        jt1.requestFocus(0,0);
-        verDatLin(parCodi,jt1.getSelectedRow());
+        jtLineas.requestFocus(0,0);
+        swCargaLinAbo=false;
+        verDetalleLinea(parCodi,jtLineas.getValorInt(0, JTLINEAS_NUMLIN));
         swCargaLin=false;
     }
-    
-    void verDatLin(int parCodi,int nl) throws SQLException
+    void verDetalleLinea()
+    {        
+        try
+        {
+            if (jtLineas.isVacio() || jtLineas.getSelectedRowDisab()<0)
+                return;
+            verDetalleLinea(jtList.getValorInt(JTL_NUMPAR) ,jtLineas.getValorInt(jtLineas.getSelectedRowDisab(), JTLINEAS_NUMLIN));
+        } catch (SQLException ex)
+        {
+            Error("Error al ver detalles de linea",ex);
+        }
+    }
+    void verDetalleLinea(int parCodi,int nl) throws SQLException
     {
+        if (parCodi==0)
+            return;
+        parLinea=nl;
         if (!dtStat.select("select * from partelin "+
             " where par_codi="+parCodi+
-            " and par_linea="+ (nl+1)))
+            " and par_linea="+ nl))
         {
-            msgBox("No encontradas detalle de linea:"+nl+" para este PARTE");
+            msgBox("No encontradas detalle de linea: "+nl+" para este PARTE");
             return;
         } 
         pro_ejelotE1.setText(dtStat.getString("pro_ejelot"));
@@ -2394,5 +2711,64 @@ public class MantPartes  extends ventanaPad implements PAD
         pro_indlotE1.setText(dtStat.getString("pro_indlot"));
         pal_acsalaE1.setValor(dtStat.getString("pal_acsala"));
         pal_comsalE1.setText(dtStat.getString("pal_comsal"));
+        pal_unidadE1.setText(dtStat.getString("pal_unidad"));
+        pal_kilosE1.setText(dtStat.getString("pal_kilos"));
+       
+        verLineasAbono(parCodi,nl);
+    }
+   
+    /**
+     * Muestra las acciones sobre el parte
+     * @param parCodi
+     * @param nl Linea
+     * @throws SQLException 
+     */
+    void verLineasAbono(int parCodi,int nl) throws SQLException
+    {
+        if (swCargaLinAbo)
+            return; 
+        swCargaLinAbo=true;
+        jtAbo.setEnabled(false);
+        jtAbo.removeAllDatos();
+
+        if (! dtCon1.select("select l.*,a.pro_nomb from parteabo as l"
+            + ",v_articulo as a"+
+            " where par_codi="+parCodi+
+            " and par_linea = "+nl+
+            " and a.pro_codi = l.pro_codi "+
+            " order by paa_codi"))
+        {
+            jtAbo.setEnabled(true);
+            swCargaLinAbo=false;
+            return; // Sin partes
+        }
+        String nombre;
+        do
+        {
+            ArrayList vc=new ArrayList();
+            vc.add(paa_tipoE.getText(dtCon1.getString("paa_tipo"))); // 0 Tipo Abono (C/P)
+            vc.add(dtCon1.getString("pro_codi")); //1
+            vc.add(dtCon1.getString("pro_nomb")); //2
+            vc.add(dtCon1.getString("paa_cliprv")); //3
+            if (dtCon1.getString("paa_cliprv").equals("C"))
+                s="select cli_nomb as nombre from v_cliente where cli_codi="+dtCon1.getString("paa_cliprv");
+            else
+                s="select prv_nomb as nombre from v_proveedo where prv_codi="+dtCon1.getString("paa_cliprv");
+            if (dtStat.select(s))
+                nombre=dtStat.getString("nombre");
+            else
+                nombre="Cliente/Prv. NO ENCONTRADO";
+            vc.add(nombre); //4
+            vc.add(dtCon1.getString("paa_coment")); //5
+            vc.add(dtCon1.getDouble("paa_kilos")); //6
+            vc.add(dtCon1.getDouble("paa_precio")); //7
+            vc.add(dtCon1.getInt("paa_estad")!=0); //8
+            vc.add(dtCon1.getInt("paa_codi")); // 9
+            jtAbo.addLinea(vc);
+        } while (dtCon1.next());
+        jtAbo.setEnabled(true);
+        //jtAbo.requestFocus(0,0);
+         swCargaLinAbo=false;
+        //jtAbo.requestFocus(0,0);
     }
 }

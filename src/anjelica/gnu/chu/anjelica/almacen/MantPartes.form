@@ -59,20 +59,10 @@
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,50)"/>
       </AuxValues>
     </Component>
-    <Component class="gnu.chu.controles.CTextField" name="pal_kilaboE">
+    <Component class="gnu.chu.controles.CTextField" name="paa_precioE">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9.99&quot;)"/>
       </AuxValues>
-    </Component>
-    <Component class="gnu.chu.controles.CTextField" name="pal_preaboE">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9.99&quot;)"/>
-      </AuxValues>
-    </Component>
-    <Component class="gnu.chu.controles.CCheckBox" name="pal_solaboC">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="cCheckBox1"/>
-      </Properties>
     </Component>
     <Component class="gnu.chu.controles.CComboBox" name="pal_acsalaE">
       <AuxValues>
@@ -88,8 +78,6 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,50)"/>
       </AuxValues>
-    </Component>
-    <Component class="gnu.chu.controles.CCheckBox" name="pal_solaboE">
     </Component>
     <Component class="gnu.chu.controles.CTextField" name="pal_uniaboE">
       <Properties>
@@ -118,53 +106,9 @@
         <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pro_codiE.setProNomb(pro_nombE);"/>
       </AuxValues>
     </Component>
-    <Component class="gnu.chu.controles.CTextField" name="pal_unidadlE">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="1"/>
-        <Property name="toolTipText" type="java.lang.String" value=""/>
-        <Property name="enabled" type="boolean" value="false"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9&quot;)"/>
-      </AuxValues>
-    </Component>
-    <Component class="gnu.chu.controles.CTextField" name="pal_kiloslE">
-      <Properties>
-        <Property name="enabled" type="boolean" value="false"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;##9.99&quot;)"/>
-      </AuxValues>
-    </Component>
-    <Component class="gnu.chu.controles.CTextField" name="pal_kilabolE">
+    <Component class="gnu.chu.controles.CTextField" name="paa_kilosE">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9.99&quot;)"/>
-      </AuxValues>
-    </Component>
-    <Component class="gnu.chu.controles.CTextField" name="pal_preabolE">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9.99&quot;)"/>
-      </AuxValues>
-    </Component>
-    <Component class="gnu.chu.controles.CCheckBox" name="pal_solabolC">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="cCheckBox1"/>
-      </Properties>
-    </Component>
-    <Component class="gnu.chu.controles.CComboBox" name="pal_accionlE">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="setAcciones(pal_accionlE,&apos;*&apos;);&#xa;pal_accionE.setGridEditable(jt1);"/>
-      </AuxValues>
-    </Component>
-    <Component class="gnu.chu.controles.CCheckBox" name="pal_solabolE">
-    </Component>
-    <Component class="gnu.chu.controles.CTextField" name="pal_uniabolE">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="1"/>
-        <Property name="toolTipText" type="java.lang.String" value=""/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9&quot;)"/>
       </AuxValues>
     </Component>
     <Component class="gnu.chu.controles.CTextField" name="pro_feccadlE">
@@ -175,9 +119,60 @@
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yy&quot;)"/>
       </AuxValues>
     </Component>
-    <Component class="gnu.chu.controles.CTextField" name="pal_comentlE">
+    <Component class="gnu.chu.controles.CTextField" name="paa_comentE">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,50)"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CComboBox" name="paa_tipoE">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="paa_tipoE.addItem(&quot;Cliente&quot;,&quot;C&quot;);&#xa;paa_tipoE.addItem(&quot;Proveedor&quot;,&quot;P&quot;);&#xa;paa_tipoE.setGridEditable(jtAbo);"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CCheckBox" name="paa_estadE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="par_lineaE">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="1"/>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9&quot;)"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.camposdb.proPanel" name="paa_procodE">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.camposdb.proPanel(){&#xa;   &#xa;}"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="paa_pronomE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="paa_procodE.setProNomb(pro_nombE);"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="paa_cliprvE">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;#####9&quot;)"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="paa_clpvnoE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="paa_codiE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;######9&quot;)"/>
       </AuxValues>
     </Component>
   </NonVisualComponents>
@@ -663,20 +658,6 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CButton" name="BRecepc">
-                      <Properties>
-                        <Property name="toolTipText" type="java.lang.String" value="Recepcionar Mercancia Devuelta" postCode="BRecepc.setDependePadre(false);"/>
-                        <Property name="enabledParent" type="boolean" value="false"/>
-                      </Properties>
-                      <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(Iconos.getImageIcon(&quot;duplicar&quot;))"/>
-                      </AuxValues>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="190" y="65" width="30" height="20"/>
-                        </Constraint>
-                      </Constraints>
-                    </Component>
                     <Component class="gnu.chu.controles.CButton" name="BsaltaGrid">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="cButton1"/>
@@ -704,8 +685,8 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(16)&#xa;{&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        int reCaLin=cambiaLineajt(row);&#xa;        return reCaLin;&#xa;    }&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        calcAcumulados();&#xa;    }&#xa;    protected void afterCambiaColumna(int col,int colNueva,int row)&#xa;    {&#xa;        if (col==JT_INDI)&#xa;        afterCambiaCol();&#xa;    }&#xa;    public boolean insertaLinea(int row, int col)&#xa;    {&#xa;        return  nav.getPulsado()==navegador.ADDNEW || pac_estadE.getValorInt()&lt;ESTADO_GERENCIA;&#xa;    }&#xa;    public boolean deleteLinea(int row, int col) {&#xa;        return jt.getValorInt(row,JT_PROCODI)==0  || nav.getPulsado()==navegador.ADDNEW || pac_estadE.getValorInt()==ESTADO_GENERADA;&#xa;&#xa;    }&#xa;&#xa;}"/>
-                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{ArrayList vc=new ArrayList();&#xa;vc.add(&quot;Articulo&quot;); //0&#xa;vc.add(&quot;Nombre&quot;); // 1&#xa;vc.add(&quot;Ejerc.&quot;); // 2&#xa;vc.add(&quot;Serie&quot;); // 3&#xa;vc.add(&quot;Lote&quot;); // 4&#xa;vc.add(&quot;Ind.&quot;); // 5&#xa;vc.add(&quot;Fec.Cad&quot;); // 6&#xa;vc.add(&quot;Unid&quot;); // 7&#xa;vc.add(&quot;Kilos&quot;); // 8&#xa;vc.add(&quot;Sug.&quot;); // 9&#xa;vc.add(&quot;Com.Sala&quot;); // 10&#xa;vc.add(&quot;Accion&quot;); // 11&#xa;vc.add(&quot;Comentario&quot;); // 12&#xa;vc.add(&quot;Abona&quot;); // 13&#xa;vc.add(&quot;Kil.Abo&quot;); // 14&#xa;vc.add(&quot;Pre.Abo&quot;); // 15&#xa;jt.setCabecera(vc);&#xa;ArrayList v=new ArrayList();&#xa;v.add(pro_codiE.getTextField()); // 0&#xa;v.add(pro_nombE);  // 1&#xa;v.add(pro_ejelotE); // 2&#xa;v.add(pro_serlotE); // 3&#xa;v.add(pro_numlotE); // 4&#xa;v.add(pro_indlotE); // 5&#xa;v.add(pro_feccadE); // 6&#xa;v.add(pal_unidadE); // 7&#xa;v.add(pal_kilosE); // 8&#xa;v.add(pal_acsalaE); // 9&#xa;v.add(pal_comsalE); // 10&#xa;v.add(pal_accionE); // 11&#xa;v.add(pal_comentE); // 12&#xa;v.add(pal_solaboE); // 13&#xa;v.add(pal_kilaboE); // 14&#xa;v.add(pal_preaboE); // 15&#xa;try {&#xa;jt.setCampos(v);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al iniciar campos del grid&quot;,k);&#xa;return;&#xa;}&#xa;}&#xa;jt.setNumRegCargar(0);&#xa;jt.setAlinearColumna(new int[]{2,0,2,1,2,2,1,2,2,0,0,0,0,1,2,2});&#xa;jt.setAnchoColumna(new int[]{70,130,50,30,50,40,60,60,60,60,150,60,130,40,50,50});&#xa;jt.setDefButton(Baceptar);"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(11)&#xa;{&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        int reCaLin=cambiaLineajt(row);&#xa;        return reCaLin;&#xa;    }&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        calcAcumulados();&#xa;    }&#xa;    protected void afterCambiaColumna(int col,int colNueva,int row)&#xa;    {&#xa;        if (col==JT_INDI)&#xa;        afterCambiaCol();&#xa;    }&#xa;    public boolean insertaLinea(int row, int col)&#xa;    {&#xa;        return  nav.getPulsado()==navegador.ADDNEW || pac_estadE.getValorInt()&lt; ESTADO_PROCESADA;&#xa;    }&#xa;    public boolean deleteLinea(int row, int col) {&#xa;        return jt.getValorInt(row,JT_PROCODI)==0  || nav.getPulsado()==navegador.ADDNEW || pac_estadE.getValorInt()==ESTADO_GENERADA;&#xa;&#xa;    }&#xa;&#xa;}"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{ArrayList vc=new ArrayList();&#xa;vc.add(&quot;Articulo&quot;); //0&#xa;vc.add(&quot;Nombre&quot;); // 1&#xa;vc.add(&quot;Ejerc.&quot;); // 2&#xa;vc.add(&quot;Serie&quot;); // 3&#xa;vc.add(&quot;Lote&quot;); // 4&#xa;vc.add(&quot;Ind.&quot;); // 5&#xa;vc.add(&quot;Fec.Cad&quot;); // 6&#xa;vc.add(&quot;Unid&quot;); // 7&#xa;vc.add(&quot;Kilos&quot;); // 8&#xa;vc.add(&quot;Sug.&quot;); // 9&#xa;vc.add(&quot;Com.Sala&quot;); // 10&#xa;&#xa;jt.setCabecera(vc);&#xa;ArrayList v=new ArrayList();&#xa;v.add(pro_codiE.getTextField()); // 0&#xa;v.add(pro_nombE);  // 1&#xa;v.add(pro_ejelotE); // 2&#xa;v.add(pro_serlotE); // 3&#xa;v.add(pro_numlotE); // 4&#xa;v.add(pro_indlotE); // 5&#xa;v.add(pro_feccadE); // 6&#xa;v.add(pal_unidadE); // 7&#xa;v.add(pal_kilosE); // 8&#xa;v.add(pal_acsalaE); // 9&#xa;v.add(pal_comsalE); // 10&#xa;&#xa;try {&#xa;jt.setCampos(v);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al iniciar campos del grid&quot;,k);&#xa;return;&#xa;}&#xa;}&#xa;jt.setNumRegCargar(0);&#xa;jt.setAlinearColumna(new int[]{2,0,2,1,2,2,1,2,2,0,0});&#xa;jt.setAnchoColumna(new int[]{70,130,50,30,50,40,60,60,60,60,150});&#xa;jt.setDefButton(Baceptar);"/>
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -743,10 +724,10 @@
                       </Border>
                     </Property>
                     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[689, 150]"/>
+                      <Dimension value="[689, 90]"/>
                     </Property>
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[689, 150]"/>
+                      <Dimension value="[689, 90]"/>
                     </Property>
                   </Properties>
                   <AuxValues>
@@ -755,7 +736,7 @@
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-                      <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
+                      <GridBagConstraints gridX="0" gridY="1" gridWidth="2" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="2.0"/>
                     </Constraint>
                   </Constraints>
 
@@ -763,29 +744,70 @@
                     <Property name="useNullLayout" type="boolean" value="true"/>
                   </Layout>
                 </Container>
-                <Container class="gnu.chu.controles.CGridEditable" name="jt1">
+                <Container class="gnu.chu.controles.CGridEditable" name="jtLineas">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                         <LineBorder/>
                       </Border>
                     </Property>
+                    <Property name="altButton" type="javax.swing.AbstractButton" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                      <ComponentRef name="BswGrid"/>
+                    </Property>
                     <Property name="canDeleteLinea" type="boolean" value="false"/>
-                    <Property name="canInsertLinea" type="boolean" value="false" postCode="jt1.setDefButton(Baceptar);"/>
+                    <Property name="canInsertLinea" type="boolean" value="false"/>
+                    <Property name="defButton" type="javax.swing.AbstractButton" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                      <ComponentRef name="Baceptar"/>
+                    </Property>
                     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[700, 102]"/>
+                      <Dimension value="[400, 90]"/>
                     </Property>
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[700, 102]"/>
+                      <Dimension value="[400, 90]"/>
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(10)&#xa;{&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        int reCaLin=cambiaLineajt1(row);&#xa;        return reCaLin;&#xa;    }&#xa;}"/>
-                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{ArrayList vc=new ArrayList();&#xa;vc.add(&quot;Articulo&quot;); //0&#xa;vc.add(&quot;Nombre&quot;); // 1&#xa;vc.add(&quot;Fec.Cad&quot;); // 2&#xa;vc.add(&quot;Unid&quot;); // 3&#xa;vc.add(&quot;Kilos&quot;); // 4&#xa;vc.add(&quot;Accion&quot;); // 5&#xa;vc.add(&quot;Comentario&quot;); // 6&#xa;vc.add(&quot;Abona&quot;); // 7&#xa;vc.add(&quot;Kil.Abo&quot;); // 8&#xa;vc.add(&quot;Pre.Abo&quot;); // 9&#xa;&#xa;jt1.setCabecera(vc);&#xa;ArrayList v=new ArrayList();&#xa;v.add(pro_codilE.getTextField()); // 0&#xa;v.add(pro_nomblE);  // 1&#xa;v.add(pro_feccadlE); // 2&#xa;v.add(pal_unidadlE); // 3&#xa;v.add(pal_kiloslE); // 4&#xa;v.add(pal_accionlE); // 5&#xa;v.add(pal_comentlE); // 6&#xa;v.add(pal_solabolE); // 7&#xa;v.add(pal_kilabolE); // 8&#xa;v.add(pal_preabolE); // 9&#xa;&#xa;try {&#xa;jt1.setCampos(v);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al iniciar campos del grid&quot;,k);&#xa;return;&#xa;}&#xa;}&#xa;jt1.setAlinearColumna(new int[]{2,0,1,2,2,1,0,1,2,2});&#xa;jt1.setAnchoColumna(new int[]{70,130,60,30,50,60,150,30,40,60});"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(5)&#xa;{&#xa;   &#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        verDetalleLinea();&#xa;    }&#xa;    public void afterCambiaLineaDis(int nRow)&#xa;    {&#xa;        verDetalleLinea();&#xa;    }&#xa;}&#xa;"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{&#xa;ArrayList v=new ArrayList();&#xa;v.add(&quot;Articulo&quot;); // 0&#xa;v.add(&quot;Nombre&quot;); // 1&#xa;v.add(&quot;Accion&quot;); // 2&#xa;v.add(&quot;Coment&quot;); // 3&#xa;v.add(&quot;Lin&quot;); //4&#xa;jtLineas.setCabecera(v);&#xa;&#xa;ArrayList vc=new ArrayList();&#xa;&#xa;vc.add(pro_codilE.getTextField());&#xa;vc.add(pro_nomblE);&#xa;vc.add(pal_accionE);&#xa;vc.add(pal_comentE);&#xa;vc.add(par_lineaE);&#xa;try {&#xa;jtLineas.setCampos(vc);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al iniciar campos del grid&quot;,k);&#xa;return;&#xa;}&#xa;jtLineas.setFormatoCampos();&#xa;}&#xa;jtLineas.setAlinearColumna(new int[]{2,0,1,0,2});&#xa;jtLineas.setAnchoColumna(new int[]{50,120,70,150,20});"/>
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-                      <GridBagConstraints gridX="0" gridY="2" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="29" insetsTop="2" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
+                      <GridBagConstraints gridX="0" gridY="2" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="2" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                    <Property name="useNullLayout" type="boolean" value="true"/>
+                  </Layout>
+                </Container>
+                <Container class="gnu.chu.controles.CGridEditable" name="jtAbo">
+                  <Properties>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                        <LineBorder/>
+                      </Border>
+                    </Property>
+                    <Property name="altButton" type="javax.swing.AbstractButton" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                      <ComponentRef name="BswGrid"/>
+                    </Property>
+                    <Property name="canInsertLinea" postCode="jtAbo.setDefButton(Baceptar);"/>
+                    <Property name="defButton" type="javax.swing.AbstractButton" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                      <ComponentRef name="Baceptar"/>
+                    </Property>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[400, 90]"/>
+                    </Property>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[400, 90]"/>
+                    </Property>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(10)&#xa;"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{ArrayList vc=new ArrayList();&#xa;vc.add(&quot;Tipo&quot;); // 0 Tipo Abono (C/P)&#xa;vc.add(&quot;Articulo&quot;); //1&#xa;vc.add(&quot;Descrip.&quot;); // 2&#xa;vc.add(&quot;Cli/Prv&quot;); //3&#xa;vc.add(&quot;Nombre&quot;); // 4&#xa;vc.add(&quot;Comentario&quot;); // 5&#xa;vc.add(&quot;Kilos&quot;); // 6&#xa;vc.add(&quot;Precio&quot;); // 7&#xa;vc.add(&quot;Proc.&quot;); // 8&#xa;vc.add(&quot;Id&quot;);//9&#xa;&#xa;jtAbo.setCabecera(vc);&#xa;ArrayList v=new ArrayList();&#xa;v.add(paa_tipoE); // 0&#xa;v.add(paa_procodE.getTextField()); // 1&#xa;v.add(paa_pronomE);  // 2&#xa;v.add(paa_cliprvE); // 3&#xa;v.add(paa_clpvnoE); // 4&#xa;v.add(paa_comentE); // 5&#xa;v.add(paa_kilosE); // 6&#xa;v.add(paa_precioE); // 7&#xa;v.add(paa_estadE); // 8&#xa;v.add(paa_codiE); // 9&#xa;try {&#xa;jtAbo.setCampos(v);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al iniciar campos del grid&quot;,k);&#xa;return;&#xa;}&#xa;}&#xa;jtAbo.setAlinearColumna(new int[]{0,2,0,2,0,0,2,2,0,2});&#xa;jtAbo.setAnchoColumna(new int[]{50,60,100,60,100,130,60,60,50,40});"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                      <GridBagConstraints gridX="1" gridY="2" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="2" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="13" weightX="1.0" weightY="1.0"/>
                     </Constraint>
                   </Constraints>
 
@@ -812,7 +834,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-                      <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="1" insetsLeft="1" insetsBottom="0" insetsRight="0" anchor="11" weightX="1.0" weightY="0.0"/>
+                      <GridBagConstraints gridX="0" gridY="0" gridWidth="2" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="1" insetsLeft="1" insetsBottom="0" insetsRight="0" anchor="11" weightX="1.0" weightY="0.0"/>
                     </Constraint>
                   </Constraints>
 
@@ -937,18 +959,18 @@
                     </Property>
                     <Property name="enabled" type="boolean" value="false"/>
                     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[719, 27]"/>
+                      <Dimension value="[689, 47]"/>
                     </Property>
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[719, 27]"/>
+                      <Dimension value="[689, 47]"/>
                     </Property>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[719, 27]"/>
+                      <Dimension value="[689, 47]"/>
                     </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-                      <GridBagConstraints gridX="0" gridY="3" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="15" weightX="1.0" weightY="0.0"/>
+                      <GridBagConstraints gridX="0" gridY="3" gridWidth="2" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="15" weightX="1.0" weightY="0.0"/>
                     </Constraint>
                   </Constraints>
 
@@ -963,7 +985,7 @@
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="50" y="5" width="40" height="17"/>
+                          <AbsoluteConstraints x="170" y="5" width="40" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -973,7 +995,7 @@
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="92" y="5" width="50" height="17"/>
+                          <AbsoluteConstraints x="210" y="5" width="50" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -987,7 +1009,7 @@
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="144" y="5" width="20" height="17"/>
+                          <AbsoluteConstraints x="260" y="5" width="20" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -997,7 +1019,7 @@
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="166" y="5" width="50" height="17"/>
+                          <AbsoluteConstraints x="280" y="5" width="50" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1007,7 +1029,7 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="220" y="5" width="60" height="17"/>
+                          <AbsoluteConstraints x="0" y="25" width="60" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1017,7 +1039,7 @@
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="390" y="5" width="320" height="17"/>
+                          <AbsoluteConstraints x="180" y="25" width="500" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1027,17 +1049,94 @@
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="280" y="5" width="90" height="17"/>
+                          <AbsoluteConstraints x="60" y="25" width="110" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
                     <Component class="gnu.chu.controles.CLabel" name="cLabel4">
                       <Properties>
+                        <Property name="text" type="java.lang.String" value="Kilos"/>
+                      </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="580" y="5" width="40" height="17"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CLabel" name="cLabel5">
+                      <Properties>
                         <Property name="text" type="java.lang.String" value="Individuo"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="0" y="5" width="50" height="17"/>
+                          <AbsoluteConstraints x="120" y="5" width="50" height="17"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CTextField" name="pal_kilosE1">
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;##9.99&quot;)"/>
+                      </AuxValues>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="620" y="5" width="57" height="-1"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CTextField" name="pal_unidadE1">
+                      <Properties>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9&quot;)"/>
+                      </AuxValues>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="540" y="5" width="40" height="-1"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CLabel" name="cLabel6">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Fecha Cad."/>
+                      </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="340" y="5" width="70" height="17"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CLabel" name="cLabel7">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Unidades "/>
+                      </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="480" y="5" width="60" height="17"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CTextField" name="pro_feccadE1">
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yy&quot;)"/>
+                      </AuxValues>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="410" y="5" width="60" height="-1"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CButtonMenu" name="Bcerrar">
+                      <Properties>
+                        <Property name="toolTipText" type="java.lang.String" value="Cerrar o Cancelar Incidencia"/>
+                        <Property name="text" type="java.lang.String" value="Cerrar"/>
+                      </Properties>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="Bcerrar.addMenu(&quot;Cerrar&quot;, &quot;C&quot;);&#xa;Bcerrar.addMenu(&quot;Cancelar&quot;, &quot;X&quot;);"/>
+                      </AuxValues>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="5" y="3" width="100" height="20"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1095,17 +1194,20 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="permisoL">
-              <Properties>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="c0" green="c0" id="lightGray" palette="1" red="c0" type="palette"/>
-                </Property>
-                <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="opaque" type="boolean" value="true"/>
-              </Properties>
+            <Component class="gnu.chu.controles.CButton" name="BswGrid">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="280" y="10" width="150" height="17"/>
+                  <AbsoluteConstraints x="240" y="0" width="1" height="1"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CComboBox" name="CPermiso">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="CPermiso.addItem(&quot;Insertar&quot;, &quot;0&quot;);&#xa;CPermiso.addItem(&quot;Gerencia&quot;, &quot;1&quot;);&#xa;CPermiso.addItem(&quot;Oficina&quot;, &quot;2&quot;);"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="260" y="5" width="140" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

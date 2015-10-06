@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-08-26T10:19:25 -->
+<!-- 2015-10-05T14:40:00 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="981d85e0-7d97-4b49-849a-95ad3afdea41">
 	<property name="com.jaspersoft.studio.data.sql.tables" value="YW5qZWxpY2Eudl9hcnRpY3VsbyBBUyAsMTQ1LDIwLDEwOWU0MDEyLWIzZWQtNDk3Zi05ZTE4LWFh&#xA;NTU0NGZhOGE3MjthbmplbGljYS52X3BhcnRlcyBBUyAsMzkwLDAsYmQ0MGE4YzctMTVjNS00NzI3&#xA;LTkwYjQtNjlhNGFjMjIyMTBkOw=="/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Anjelica "/>
@@ -52,10 +52,7 @@ WHERE
 	<field name="pal_acsala" class="java.lang.String"/>
 	<field name="pal_accion" class="java.lang.String"/>
 	<field name="pal_coment" class="java.lang.String"/>
-	<field name="pal_solabo" class="java.lang.Integer"/>
 	<field name="pal_comsal" class="java.lang.String"/>
-	<field name="pal_kilabo" class="java.lang.Double"/>
-	<field name="pal_preabo" class="java.lang.Double"/>
 	<field name="pro_nomb" class="java.lang.String"/>
 	<field name="nombre" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -364,20 +361,6 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pal_comsal}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.0#">
-				<reportElement x="273" y="18" width="36" height="16" uuid="1c6584cb-ee66-4720-a020-1be9a75d6583">
-					<printWhenExpression><![CDATA[!$F{pal_accion}.equals("-")]]></printWhenExpression>
-				</reportElement>
-				<textFieldExpression><![CDATA[$F{pal_kilos}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.0#">
-				<reportElement x="168" y="18" width="80" height="16" uuid="69720c20-f5cc-4bd9-b46a-9e701f293c3b">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<printWhenExpression><![CDATA[!$F{pal_accion}.equals("-")]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{pal_solabo}==0?"NO Abonar":"Sí Abonar"]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="40" y="17" width="75" height="18" uuid="487281ee-e47c-4ae0-bcf6-c989696d217b">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -401,13 +384,6 @@ WHERE
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pal_coment}]]></textFieldExpression>
-			</textField>
-			<textField pattern="¤#,##0.00;¤-#,##0.00">
-				<reportElement x="312" y="18" width="34" height="16" uuid="c4c78504-2902-448f-9495-4a092d30d470">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<printWhenExpression><![CDATA[!$F{pal_accion}.equals("-")]]></printWhenExpression>
-				</reportElement>
-				<textFieldExpression><![CDATA[$F{pal_preabo}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
