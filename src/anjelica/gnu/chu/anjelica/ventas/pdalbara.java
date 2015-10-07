@@ -4967,7 +4967,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     if (swDestruir)
     {
-        s = "DELETE FROM v_albavec WHERE "+getCondCurrent();
+        s = "DELETE FROM v_albaveca WHERE "+getCondCurrent();
          if (dtAdd.executeUpdate(s,stUp) != 1)
           throw new Exception("No encontrado Cabecera Albaran.\n Select: " + s);   
          // Borro Historicos
@@ -4975,6 +4975,7 @@ public class pdalbara extends ventanaPad  implements PAD
         dtAdd.executeUpdate( "DELETE FROM hisallive WHERE "+getCondCurrent(),stUp);
         dtAdd.executeUpdate( "DELETE FROM hisalcave WHERE "+getCondCurrent(),stUp);        
     }
+    
   }
   
   private String getCondCurrent()
@@ -5593,7 +5594,7 @@ public class pdalbara extends ventanaPad  implements PAD
                 condWhere;
 //        debug(s);
         stUp.executeUpdate(dtAdd.getStrSelect(s));
-        ctUp.commit();
+        
       }
       else
       { // Nueva linea
@@ -7126,8 +7127,7 @@ public class pdalbara extends ventanaPad  implements PAD
         stUp.executeUpdate(s);
         s = "DELETE FROM albvenseri where avs_nume="+avsNume+
                 " and avs_numlin="+jt.getValorInt(row, 0);
-        stUp.executeUpdate(s);
-        ctUp.commit();
+        stUp.executeUpdate(s);     
         return;
     }
 //    s = "SELECT * FROM v_albvenpar " +
@@ -7182,7 +7182,7 @@ public class pdalbara extends ventanaPad  implements PAD
         " and avl_numlin = " + jt.getValorInt(row, 0);
     stUp.executeUpdate(s);
 
-    ctUp.commit();
+//    ctUp.commit();
   }
 
 /**
