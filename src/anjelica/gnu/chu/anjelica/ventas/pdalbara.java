@@ -184,6 +184,14 @@ public class pdalbara extends ventanaPad  implements PAD
   private  int JT_FECMVT=7; // Fecha Mvto.
   private int JT_NUMPALE=8; // Numero Pale
   private int JT_CODENV=9; // Codigo Envase
+  /**
+   * Precio de albaran (5)
+   */
+  private int JT_PRECIO=5;
+  /**
+   * Precio de Tarifa (6)
+   */
+  private int JT_PRETAR=6;
   private final int JTRES_PROCODI=0;
   private final int JTRES_KILOS=2;
   private final int JTRES_NL=3;
@@ -647,7 +655,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-08-19" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-10-07" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -4258,7 +4266,9 @@ public class pdalbara extends ventanaPad  implements PAD
         dtAdd.executeUpdate(s);
       }
       else
+      {
         actAlbaran();
+      }
       actProdRecicla();
       resetBloqueo(dtAdd);
       ctUp.commit();
@@ -4411,7 +4421,7 @@ public class pdalbara extends ventanaPad  implements PAD
       if (! swEntdepos)
         actAlbaran();
       else
-          ponAlbPedido();
+        ponAlbPedido();                    
       actProdRecicla();
       
       resetBloqueo(dtAdd);
@@ -4638,11 +4648,17 @@ public class pdalbara extends ventanaPad  implements PAD
         precio = jt.getValorDec(n, 5);
         prTari = jt.getValorDec(n, 6);
       }
-      if (precio == 0 && ! verPrecios) // Si el precio es 0 Y esta en modo NO mod. precio
+      if (precio == 0 && !verPrecios) // Si el precio es 0 
       { // Intento poner el precio de Tarifa en Modo Automatico
-        prTari = MantTarifa.getPrecTar(dtStat,jt.getValorInt(n, 1), tar_codiE.getValorInt(), avc_fecalbE.getText());
-        if (avc_revpreE.getValorInt()==0)
-         precio=prTari;
+        prTari=getPrecioPedido(jt.getValorInt(n, 1),dtStat);
+        if (prTari==0) // Si no existe el precio en el pedido, lo busco en la tarifa
+        {
+            prTari = MantTarifa.getPrecTar(dtStat,jt.getValorInt(n, 1), tar_codiE.getValorInt(), avc_fecalbE.getText());
+            if (avc_revpreE.getValorInt()==0)
+                 precio=prTari;
+        }
+        else
+            precio=prTari;
       }
       if (avl_prvenE.getValorDec() == 0 && dtAdd.getDouble("avl_prven") != 0)
       {
@@ -4710,12 +4726,14 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.executeUpdate("update clientes set "+
             " cli_feulve = to_date('"+avc_fecalbE.getFecha("dd-MM-yyyy")+"','dd-MM-yyyy')  "+
             " where cli_codi = "+cli_codiE.getValorInt());
-    if (getClientePedido(dtAdd,true)>0)
-    {
-      dtAdd.edit();
-      dtAdd.setDato("pvc_cerra", avc_cerraE.isSelected()?-1:0);
-      dtAdd.update();
-    }
+    ponAlbPedido();
+  
+//    if (getClientePedido(dtAdd,true)>0)
+//    {
+//      dtAdd.edit();
+//      dtAdd.setDato("pvc_cerra", avc_cerraE.isSelected()?-1:0);
+//      dtAdd.update();
+//    }
 
     if (fvc_numeE.getValorInt() > 0)
       actFactura();
@@ -5188,6 +5206,14 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     return getClientePedido(dtStat,false);
   }
+  /**
+   * Devuelve el cliente que tiene asignado un numero de pedido.
+   * @param dt
+   * @param block
+   * @return
+   * @throws SQLException
+   * @throws ParseException 
+   */
   int getClientePedido(DatosTabla dt,boolean block) throws SQLException,ParseException
   {
     s = "SELECT * FROM pedvenc WHERE emp_codi = " + emp_codiE.getValorInt() +
@@ -6783,7 +6809,12 @@ public class pdalbara extends ventanaPad  implements PAD
     // Actualiza la cabecera del pedido si la hay
     ponAlbPedido();
   }
-
+  
+/**
+ * Pone el numero de albaran al pedido y establede los precios al albaran a los del pedido.
+ * @throws ParseException
+ * @throws SQLException 
+ */
   private void ponAlbPedido() throws ParseException, SQLException
   {
     if (pvc_anoE.getValorInt()!=0)
@@ -6794,8 +6825,56 @@ public class pdalbara extends ventanaPad  implements PAD
       dtAdd.setDato("avc_nume",avc_numeE.getValorInt());
       dtAdd.setDato("avc_ano",avc_anoE.getValorInt());
       dtAdd.setDato("avc_serie",avc_seriE.getText());
+      dtAdd.setDato("pvc_cerra", avc_cerraE.isSelected()?-1:0);
       dtAdd.update(stUp);
+//      s="select distinct(l.pro_codi) as pro_codi from v_albavel as l where l.avc_ano = " + avc_anoE.getValorInt() +
+//          " and l.emp_codi = " + emp_codiE.getValorInt() +
+//          " and l.avc_nume = " + avc_numeE.getValorInt() +
+//          " and l.avc_serie = '" + avc_seriE.getText() + "'"+
+//          " and l.avl_prven = 0";
+//      if (!dtAdd.select(s))
+//          return;
+//      do
+//      {
+//          s="select pvl_precio from pedvenl as p "+
+//            " where p.pvl_precio != 0 "+
+//            " and p.pro_codi = "+dtAdd.getInt("pro_codi")+
+//            " and p.emp_codi ="+emp_codiE.getValorInt()+
+//            " and p.eje_nume = " + pvc_anoE.getValorInt() +
+//            " and p.pvc_nume = " + pvc_numeE.getValorInt();
+//          if (!dtBloq.select(s))
+//              continue;
+//          dtBloq.executeUpdate("update v_albavel set avl_prven="+dtBloq.getDouble("pvl_precio")+
+//              ", avl_profer="+dtBloq.getDouble("pvl_precio")+
+//              " where avc_ano = " + avc_anoE.getValorInt() +
+//              " and emp_codi = " + emp_codiE.getValorInt() +
+//              " and avc_nume = " + avc_numeE.getValorInt() +
+//              " and avc_serie = '" + avc_seriE.getText() + "'"+
+//              " and avl_prven = 0"+
+//              " and pro_codi = "+dtAdd.getInt("pro_codi"));
+//      } while (dtAdd.next());
     }
+  }
+  /**
+   * Devuelve el precio puesto a un producto en el pedido
+   * @param proCodi
+   * @param dt
+   * @return
+   * @throws SQLException 
+   */
+  double getPrecioPedido(int proCodi,DatosTabla dt) throws SQLException
+  {
+      if (pvc_anoE.getValorInt()==0)
+          return 0;
+      s="select pvl_precio from pedvenl as p "+
+            " where p.pvl_precio != 0 "+
+            " and p.pro_codi = "+proCodi+
+            " and p.emp_codi ="+emp_codiE.getValorInt()+
+            " and p.eje_nume = " + pvc_anoE.getValorInt() +
+            " and p.pvc_nume = " + pvc_numeE.getValorInt();
+      if (!dt.select(s))
+          return 0;
+      return dt.getDouble("pvl_precio");
   }
   void irGridDes()
   {
@@ -7773,6 +7852,16 @@ public class pdalbara extends ventanaPad  implements PAD
           return null;
       return ht;
   }
+  /**
+   * Actualizo acumulados de linea (kg y unidades) sobre el desglose de individuos
+   * Por si acaso ha fallado algo en la carga...
+   * 
+   * @param empCodi
+   * @param avcAno
+   * @param avcSerie
+   * @param avcNume
+   * @throws SQLException 
+   */
   void actAcumLinAlb(int empCodi,int avcAno,String avcSerie,int avcNume) throws SQLException
   {
        String s="select avl_numlin, sum(avl_canti) as canti, sum(avl_unid) as unid "+
@@ -8149,15 +8238,26 @@ public class pdalbara extends ventanaPad  implements PAD
               pro_nombE.setText(proNomb);
             if (!P_MODPRECIO)
               return;
+            double prPedi=getPrecioPedido(pro_codiE.getValorInt(),dtStat);       
             prLiTar = MantTarifa.getPrecTar(dtStat, pro_codiE.getValorInt(), tar_codiE.getValorInt(), avc_fecalbE.getText());
-            if (prLiTar != 0)
+            if (prLiTar != 0 || prPedi!=0)
             {
-              jt.setValor("" + prLiTar, 6);
-              if (jt.getValorDec(5) == 0 && avc_revpreE.getValorInt()==0)
-                jt.setValor("" + prLiTar, 5);
+              jt.setValor(prLiTar, JT_PRETAR);
+              
+              if (jt.getValorDec(JT_PRECIO) == 0 && prPedi!=0)
+              {
+                 jt.setValor(prPedi, JT_PRECIO);
+                 avl_prvenE.setValorDec(prPedi);
+              }
+              if (jt.getValorDec(JT_PRECIO) == 0 && avc_revpreE.getValorInt()==0 && prLiTar!=0)
+              {
+                jt.setValor(prLiTar, JT_PRECIO);
+                avl_prvenE.setValorDec(prLiTar);
+              }
+              
             }
             else
-              jt.setValor("0", 6);
+              jt.setValor("0", JT_PRETAR);
           }
         }
         catch (SQLException k)
