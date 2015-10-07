@@ -573,7 +573,7 @@ public class DatosTabla   implements Serializable
    {
 //     setSchema("anjelica");
      this.executeUpdate("SET search_path TO anjelica,public");
-     this.commit();
+//     this.commit();
    }
  }
 

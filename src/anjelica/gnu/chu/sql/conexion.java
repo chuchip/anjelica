@@ -286,13 +286,16 @@ public class conexion  implements Connection
   public CallableStatement prepareCall(String sql) throws SQLException {
     return ct.prepareCall(sql);
   }
+  @Override
   public String nativeSQL(String sql) throws SQLException {
     return ct.nativeSQL(sql);
   }
+  @Override
   public void commit() throws SQLException {
     if (!ct.getAutoCommit())
       ct.commit();
   }
+  @Override
   public void rollback() throws SQLException {
     if (!ct.getAutoCommit())
       ct.rollback();
