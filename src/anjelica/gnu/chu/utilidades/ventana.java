@@ -193,14 +193,30 @@ public class ventana extends CInternalFrame implements ejecutable
    * @return boolean si se debe reintentar
    */
   public boolean Error(String s, Throwable t) {
-         int resul = 0;
-         if (t instanceof SQLException)
-            resul = fatalError("[Anjelica] ERROR SQL "+s, (SQLException)t);
-         else if (t instanceof Exception)
-            resul = fatalError("[Anjelica] ERROR EN PROGRAMA\n" + s, (Exception)t);
-         else
-             resul = fatalError("ERROR DESCONOCIDO\n" + s, t);
-         return ((resul == PopError.REINTENTAR)?true:false);
+      try
+      {
+          if (! ctUp.getAutoCommit())
+          {
+              ctUp.rollback();
+          }
+          if (! ct.getAutoCommit())
+          {
+              ct.rollback();
+          }
+
+      } catch (SQLException ex)
+      {
+          java.util.logging.Logger.getLogger(ventana.class.getName()).log(Level.SEVERE, null, ex);
+      }
+          int resul = 0;
+          if (t instanceof SQLException)
+              resul = fatalError("[Anjelica] ERROR SQL "+s, (SQLException)t);
+          else if (t instanceof Exception)
+              resul = fatalError("[Anjelica] ERROR EN PROGRAMA\n" + s, (Exception)t);
+          else
+              resul = fatalError("ERROR DESCONOCIDO\n" + s, t);
+          return ((resul == PopError.REINTENTAR)?true:false);
+     
   }
   /**
    * Rutina de Error en el JbInit envia un mensaje de Error
