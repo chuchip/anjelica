@@ -348,6 +348,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
         avl_cantiE.setValorDec(avp_cantiE.getValorDec());
         avl_unidE.setValorDec(1);
+        ponPrecios();
 //        jt.setValor(pro_nombE.getText(),2,0);
         jt.actualizarGrid();
         if ( swEntdepos)
@@ -655,7 +656,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-10-07" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-10-08" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -4967,7 +4968,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     if (swDestruir)
     {
-        s = "DELETE FROM v_albaveca WHERE "+getCondCurrent();
+        s = "DELETE FROM v_albavec WHERE "+getCondCurrent();
          if (dtAdd.executeUpdate(s,stUp) != 1)
           throw new Exception("No encontrado Cabecera Albaran.\n Select: " + s);   
          // Borro Historicos
@@ -8147,7 +8148,31 @@ public class pdalbara extends ventanaPad  implements PAD
 
     jtDes.requestFocusLater();
   }
+  private void ponPrecios() throws SQLException
+  {
+        if (!P_MODPRECIO)
+          return;
+        double prPedi=getPrecioPedido(pro_codiE.getValorInt(),dtStat);       
+        prLiTar = MantTarifa.getPrecTar(dtStat, pro_codiE.getValorInt(), tar_codiE.getValorInt(), avc_fecalbE.getText());
+        if (prLiTar != 0 || prPedi!=0)
+        {
+          jt.setValor(prLiTar, JT_PRETAR);
 
+          if (avl_prvenE.getValorDec() == 0 && prPedi!=0)
+          {
+             jt.setValor(prPedi, JT_PRECIO);
+             avl_prvenE.setValorDec(prPedi);
+          }
+          if (avl_prvenE.getValorDec() == 0 && avc_revpreE.getValorInt()==0 && prLiTar!=0)
+          {
+            jt.setValor(prLiTar, JT_PRECIO);
+            avl_prvenE.setValorDec(prLiTar);
+          }
+
+        }
+        else
+          jt.setValor("0", JT_PRETAR);
+  }
   private void confGridCab() throws IllegalArgumentException, ClassNotFoundException 
   {
     
@@ -8236,28 +8261,8 @@ public class pdalbara extends ventanaPad  implements PAD
             jt.setValor(proNomb, row, 2);
             if (pro_nombE.isEnabled())
               pro_nombE.setText(proNomb);
-            if (!P_MODPRECIO)
-              return;
-            double prPedi=getPrecioPedido(pro_codiE.getValorInt(),dtStat);       
-            prLiTar = MantTarifa.getPrecTar(dtStat, pro_codiE.getValorInt(), tar_codiE.getValorInt(), avc_fecalbE.getText());
-            if (prLiTar != 0 || prPedi!=0)
-            {
-              jt.setValor(prLiTar, JT_PRETAR);
-              
-              if (jt.getValorDec(JT_PRECIO) == 0 && prPedi!=0)
-              {
-                 jt.setValor(prPedi, JT_PRECIO);
-                 avl_prvenE.setValorDec(prPedi);
-              }
-              if (jt.getValorDec(JT_PRECIO) == 0 && avc_revpreE.getValorInt()==0 && prLiTar!=0)
-              {
-                jt.setValor(prLiTar, JT_PRECIO);
-                avl_prvenE.setValorDec(prLiTar);
-              }
-              
-            }
-            else
-              jt.setValor("0", JT_PRETAR);
+            ponPrecios();
+          
           }
         }
         catch (SQLException k)
@@ -8265,7 +8270,7 @@ public class pdalbara extends ventanaPad  implements PAD
           Error("Error al buscar Nombre Articulo", k);
         }
       }
-
+      
         @Override
       public void afterCambiaLinea()
       {
