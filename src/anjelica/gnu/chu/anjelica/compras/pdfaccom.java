@@ -308,7 +308,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
 
    iniciarFrame();
    this.setSize(new Dimension(764, 531));
-   this.setVersion("2015-10-08 "+(modPrecio?"-Modificar Precios-":"")+
+   this.setVersion("2015-10-09 "+(modPrecio?"-Modificar Precios-":"")+
          (admin?"-ADMINISTRADOR-":"")+ (swConsulta?"-Solo Consulta-":""));
    strSql = "SELECT emp_codi,eje_nume,fcc_nume " +
        " FROM v_facaco WHERE emp_codi = " + EU.em_cod +
@@ -419,6 +419,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
    jtFra.setFormatoColumna(8,"--,--9.999");
    jtFra.setFormatoColumna(12,"##9");
    jtFra.setFormatoColumna(14,"##9");
+   jtFra.setPonValoresInFocus(true);
    acl_numcajE.setEnabled(false);
 
    jtFra.setAjustarGrid(true);
@@ -1001,7 +1002,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
    v.add(dtCon1.getString("acc_nume"));
    v.add(dtCon1.getFecha("acc_fecrec"));
    v.add(dtCon1.getString("acl_nulin"));
-   v.add(Boolean.valueOf(dtCon1.getInt("acl_totfra")==0?false:true));
+   v.add(dtCon1.getInt("acl_totfra")!=0);
    jtAlb.addLinea(v);
 }
 
@@ -1277,6 +1278,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
    mensaje("Insertando nueva factura ...");
    Tprinci.setSelectedComponent(PFactura);
    jtVto.requestFocusInicio();
+  
    jtVto.setDatosFra("C",emp_codiE.getValorInt(),0,0);
    fcc_facprvE.requestFocus();
  }
@@ -1778,12 +1780,12 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
        v.add(dtCon1.getString("fcl_prcom"));
        v.add(dtCon1.getString("fcl_tipdes")); // Tipo Descuento (%)
        v.add(dtCon1.getString("fcl_dto")); // Descuento
-       impLin=Formatear.Redondea(dtCon1.getDouble("fcl_canti")*dtCon1.getDouble("fcl_prcom"),numDec);
+       impLin=Formatear.redondea(dtCon1.getDouble("fcl_canti")*dtCon1.getDouble("fcl_prcom"),numDec);
        if (dtCon1.getString("fcl_tipdes").equals("%") && dtCon1.getDouble("fcl_dto")>0)
          impLin-= impLin*dtCon1.getDouble("fcl_dto")/100;
         else
           impLin-= dtCon1.getDouble("fcl_dto");
-        impLin=Formatear.Redondea(impLin,numDec);
+        impLin=Formatear.redondea(impLin,numDec);
         v.add(""+impLin);
          conAlb=false;
         if (dtCon1.getInt("acc_ano",true)!=0 && dtCon1.getInt("acc_nume",true)!=0)
@@ -2024,8 +2026,9 @@ int cambiaLinFra()
         return;
       }
       String numAlb;
+      
       jtFra.setEnabled(false);
-      jtFra.salirGrid();
+      jtFra.salirGrid();      
       //jtFra.requestFocusFinal();
 //    int nRow=jtAlb.getRowCount();
       for (int n = 0; n < jtAlb.getRowCount(); )
@@ -2034,16 +2037,16 @@ int cambiaLinFra()
         if (numAlb.equals(alc_numinsE.getValor()))
         {
           ArrayList v = getLinAlb(n);
-          jtFra.addLinea(v);
-          jtFra.ponValores(jtFra.getSelectedRowDisab());
+          jtFra.addLinea(v);          
           jtAlb.removeLinea(n);
           continue;
         }
         n++;
       }
-            
       jtFra.setEnabled(true);
-      jtFra.requestFocusFinal();
+      jtFra.requestFocusFinal();      
+      jtFra.ponValores(jtFra.getSelectedRow());
+
 //      jtFra.requestFocusFinal();
       actAcumFra();
     } catch (Exception k)
