@@ -308,7 +308,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
 
    iniciarFrame();
    this.setSize(new Dimension(764, 531));
-   this.setVersion("2014-02-28 "+(modPrecio?"-Modificar Precios-":"")+
+   this.setVersion("2015-10-08 "+(modPrecio?"-Modificar Precios-":"")+
          (admin?"-ADMINISTRADOR-":"")+ (swConsulta?"-Solo Consulta-":""));
    strSql = "SELECT emp_codi,eje_nume,fcc_nume " +
        " FROM v_facaco WHERE emp_codi = " + EU.em_cod +
@@ -798,6 +798,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
 
    BinsAlb.addActionListener(new ActionListener()
    {
+     @Override
      public void actionPerformed(ActionEvent e)
      {
        BinsAlb_actionPerformed();
@@ -2024,6 +2025,8 @@ int cambiaLinFra()
       }
       String numAlb;
       jtFra.setEnabled(false);
+      jtFra.salirGrid();
+      //jtFra.requestFocusFinal();
 //    int nRow=jtAlb.getRowCount();
       for (int n = 0; n < jtAlb.getRowCount(); )
       {
@@ -2038,8 +2041,10 @@ int cambiaLinFra()
         }
         n++;
       }
+            
       jtFra.setEnabled(true);
       jtFra.requestFocusFinal();
+//      jtFra.requestFocusFinal();
       actAcumFra();
     } catch (Exception k)
     {
