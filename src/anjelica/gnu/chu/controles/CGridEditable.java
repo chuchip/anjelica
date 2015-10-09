@@ -1925,6 +1925,12 @@ public class CGridEditable extends Cgrid implements CQuery {
      }
   }
   public boolean getQuery() {return query;}
+  /**
+   * Establece si se deben poner los campos del Grid a los editables cuando se realiza 
+   * un requestFocus.
+   * Por defecto es false.
+   * @param ponValInFocus 
+   */
   public void setPonValoresInFocus(boolean ponValInFocus)
   {
     ponValoresInFocus=ponValInFocus;

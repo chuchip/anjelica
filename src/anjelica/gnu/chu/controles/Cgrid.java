@@ -810,6 +810,7 @@ public class Cgrid extends CPanel implements Serializable
       datosModelo.setNumRows(0);
       addDefaultRow();
       requestFocus(0,0);
+      
       TABLAVACIA=true;
       this.validate();
       if (! isEnabled())
