@@ -2525,7 +2525,7 @@ insert into mensajes values('A2','Sin reg. Stock. Almac: %a Prod: %p Indiv: %i',
 insert into mensajes values('R1','Anulados cobros. Condiciones: %c','A');
 insert into mensajes values('EA','Enviado Email a Cliente %c con Albaran: %a','I');
 insert into mensajes values('EF','Enviado Email a Cliente %c con Factura: %a','I');
-
+insert into mensajes values('P1','Modificado Pedido Venta con Albaran asignado. Pedido: %p Albaran: %a','I');
 --
 -- Tabla de Etiquetas  (para trazabilidad y compras)
 --

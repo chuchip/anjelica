@@ -656,7 +656,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-10-08" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-10-09" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -3936,6 +3936,8 @@ public class pdalbara extends ventanaPad  implements PAD
     activar(true);
 //    Bimpri.setEnabled(false);
     avc_numeE.resetCambio();
+    pvc_numeE.resetCambio();
+    pvc_anoE.resetCambio();
     resetCambioIndividuo();
     avc_numeE.setEnabled(true);
     avc_seriE.setEnabled(true);
@@ -4949,7 +4951,8 @@ public class pdalbara extends ventanaPad  implements PAD
       }
     if (pvc_anoE.getValorInt()!=0)
     {
-      if (getClientePedido(dtAdd, true) != 0)
+      if (getCabeceraPedido(dtAdd,emp_codiE.getValorInt(),pvc_anoE.getValorInt(),pvc_numeE.getValorInt(),
+          true) != 0)
       {
         dtAdd.edit();
         dtAdd.setDato("avc_nume", 0);
@@ -5206,36 +5209,40 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   int getClientePedido() throws SQLException,ParseException
   {
-    return getClientePedido(dtStat,false);
+    return getCabeceraPedido(dtStat,emp_codiE.getValorInt(),pvc_anoE.getValorInt(),pvc_numeE.getValorInt(),false);
   }
   /**
    * Devuelve el cliente que tiene asignado un numero de pedido.
    * @param dt
    * @param block
-   * @return
+   * @return cliente que tiene asignado el pedido. 0 Si no encuentra el pedido
    * @throws SQLException
    * @throws ParseException 
    */
-  int getClientePedido(DatosTabla dt,boolean block) throws SQLException,ParseException
+  int getCabeceraPedido(DatosTabla dt,int empCodi,int pvcAno,int pvcNume,boolean block) throws SQLException
   {
-    s = "SELECT * FROM pedvenc WHERE emp_codi = " + emp_codiE.getValorInt() +
-         " and eje_nume = " + pvc_anoE.getValorInt() +
-         " and pvc_nume = " + pvc_numeE.getValorInt()+
+    s = "SELECT * FROM pedvenc WHERE emp_codi = " + empCodi+
+         " and eje_nume = " + pvcAno +
+         " and pvc_nume = " + pvcNume+
          " and pvc_confir = 'S' ";
      if (!dt.select(s,block))
        return 0;
      return dt.getInt("cli_codi");
   }
+  private boolean getPedidoAlbaran(DatosTabla dt,int empCodi,int avcAno,String avcSerie,int avcNume,boolean block) throws SQLException
+  {
+      return dt.select("SELECT * FROM pedvenc WHERE avc_ano =" + avcAno +
+      " and emp_codi = " + empCodi +
+      " and avc_serie = '" + avcSerie + "'" +
+      " and avc_nume = " + avcNume,block);
 
+  }
   private void actPedAlbaran() throws SQLException,ParseException
   {
     if (nav.pulsado != navegador.EDIT)
       return;
-    s = "SELECT * FROM pedvenc WHERE avc_ano =" + avc_anoE.getValorInt() +
-      " and emp_codi = " + emp_codiE.getValorInt() +
-      " and avc_serie = '" + avc_seriE.getText() + "'" +
-      " and avc_nume = " + avc_numeE.getValorInt();
-    if (dtAdd.select(s, true))
+    if (getPedidoAlbaran(dtAdd,emp_codiE.getValorInt(), avc_anoE.getValorInt(),avc_seriE.getText(),
+        avc_numeE.getValorInt(),true))
     {
       if (dtAdd.getInt("pvc_nume") != pvc_numeE.getValorInt() ||
           dtAdd.getInt("eje_nume") != pvc_anoE.getValorInt())
@@ -6813,15 +6820,16 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   
 /**
- * Pone el numero de albaran al pedido y establede los precios al albaran a los del pedido.
+ * Pone el numero de albaran al pedido y establece si esta cerrado o no.
  * @throws ParseException
  * @throws SQLException 
  */
-  private void ponAlbPedido() throws ParseException, SQLException
+  private void ponAlbPedido() throws  SQLException
   {
     if (pvc_anoE.getValorInt()!=0)
     { // Albaran con pedido
-      if (getClientePedido(dtAdd,true)==0)
+      if (getCabeceraPedido(dtAdd,emp_codiE.getValorInt(),pvc_anoE.getValorInt(),pvc_numeE.getValorInt(),
+          true)==0)
         return;
       dtAdd.edit();
       dtAdd.setDato("avc_nume",avc_numeE.getValorInt());
@@ -7730,8 +7738,7 @@ public class pdalbara extends ventanaPad  implements PAD
   }
 
   void cambiaEmp(int avcNumeAnt, int avcNume) throws SQLException
-  {
-    stUp.getConnection().getAutoCommit();
+  {  
     stUp.getConnection().setAutoCommit(false);
    
    
@@ -7767,6 +7774,13 @@ public class pdalbara extends ventanaPad  implements PAD
       jf.ht.clear();
       jf.ht.put("%s", s);
       jf.guardaMens("V5", jf.ht);
+    }
+    if (getPedidoAlbaran(dtAdd, Integer.parseInt(emp_codiE.getTextAnt().trim()),
+        Integer.parseInt(avc_anoE.getTextAnt().trim()),avc_seriE.getTextAnt(),
+        Integer.parseInt(avc_numeE.getTextAnt().trim()),true))
+    // Cambio el pedido de venta si procede    
+    {
+        ponAlbPedido();
     }
     ctUp.commit();
     avc_numeE.resetCambio();
@@ -8021,11 +8035,11 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     if (busAlbaran)
       s = "SELECT * FROM v_pedven " +
-      " WHERE emp_codi =  " + emp_codiE.getValorInt() +
-      " AND avc_ano = " + avc_anoE.getValorInt() +
-      " and avc_nume = " + avc_numeE.getValorInt() +
-      " and avc_serie = '"+avc_seriE.getText()+"'"+
-      " order by pvl_numlin ";
+        " WHERE emp_codi =  " + emp_codiE.getValorInt() +
+        " AND avc_ano = " + avc_anoE.getValorInt() +
+        " and avc_nume = " + avc_numeE.getValorInt() +
+        " and avc_serie = '"+avc_seriE.getText()+"'"+
+        " order by pvl_numlin ";
     else
       s = "SELECT * FROM v_pedven " +
         " WHERE emp_codi =  " + emp_codiE.getValorInt() +

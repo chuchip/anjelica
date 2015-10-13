@@ -884,6 +884,13 @@ public class pdpeve  extends ventanaPad   implements PAD
               activaTodo();
               return; 
             }
+            if (jf != null)
+            {
+                jf.ht.clear();
+                jf.ht.put("%p", eje_numeE.getValorInt()+"-"+pvc_numeE.getText());
+                jf.ht.put("%a", avc_anoE.getValorInt()+avc_serieE.getText()+avc_numeE.getValorInt());
+                jf.guardaMens("P1", jf.ht);
+             }
         }        
         else
         {
