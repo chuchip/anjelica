@@ -590,7 +590,7 @@ avl_profer float,       -- Precio Pedido
 avl_prclar float,
 avl_prepvp float,       -- Precio puesto por el tecnico
 avl_poreo float,
-avl_canbru float,
+avl_canbru float,		-- Peso bruto
 avl_anorec int,
 avl_serere varchar(1),
 numrecepcion int,
@@ -694,11 +694,12 @@ pro_codi int,			-- Producto
 avp_tiplot char(1),		-- Tipo Lote. No se USA
 avp_ejelot int,			-- Ejercicio Lote
 avp_emplot int,			-- Empresa Lote
-avp_serlot char(1), 		-- Serie de Lote
+avp_serlot char(1), 	-- Serie de Lote
 avp_numpar int,			-- Numero de Partida (Lote)
 avp_numind int,			--  Numero de Individuo
 avp_numuni float,		-- Numero de Unidades
-avp_canti decimal(9,3),         -- Kilos
+avp_canti decimal(9,3),  -- Kilos a facturar (netos)
+avp_canbru decimal(9,3), -- Cantidad brutos (Kilos)
 constraint ix_albvenpar primary key  (avc_ano,emp_codi,avc_nume,avc_serie,avl_numlin,avp_numlin)
 );
 -- DROP VIEW anjelica.v_albventa_detalle ;

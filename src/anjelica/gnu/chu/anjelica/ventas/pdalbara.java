@@ -169,6 +169,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private final int JTDES_NUMIND=7;
   private final int JTDES_KILOS=8; // Campo Kilos en grid desglose individuos
   private final int JTDES_NUMLIN=9; // Numero Linea de desglose individuos
+  private final int JTDES_KILBRU=10; // Campo Kilos en grid desglose individuos
   /**
    * Codigo de Producto (1)
    */
@@ -181,9 +182,17 @@ public class pdalbara extends ventanaPad  implements PAD
    * Kilos Linea albaran (3)
    */
   private int JT_KILOS=3; 
+  /**
+   * Unidades de Linea Albaran (4)
+   */
+  private int JT_UNID=4; 
   private  int JT_FECMVT=7; // Fecha Mvto.
   private int JT_NUMPALE=8; // Numero Pale
-  private int JT_CODENV=9; // Codigo Envase
+  //private int JT_CODENV=9; // Codigo Envase
+  /**
+   * Kilos Brutos (10)
+   */
+  private int JT_KILBRU=10; // Kilos brutos
   /**
    * Precio de albaran (5)
    */
@@ -305,7 +314,7 @@ public class pdalbara extends ventanaPad  implements PAD
   proPanel pro_codresE = new proPanel();
   CTextField pro_nomresE=new CTextField();
   CTextField avr_cantiE=new CTextField(Types.DECIMAL,"#,##9.99");
-  
+  CTextField avl_canbruE=new CTextField(Types.DECIMAL,"#,##9.99");
   proPanel pro_codiE = new proPanel()
   {
     @Override
@@ -334,7 +343,7 @@ public class pdalbara extends ventanaPad  implements PAD
         v.add(avp_numindE.getText().trim());
         v.add(avp_cantiE.getText().trim());
         v.add("1");
-       
+        v.add(avp_cantiE.getText().trim());
         if (! checkIndiv(jt.getSelectedRow(),false) || avp_cantiE.getValorDec()==0 )
         {         
           jtDes.setLinea(v);
@@ -380,6 +389,9 @@ public class pdalbara extends ventanaPad  implements PAD
   CTextField avl_unidE = new CTextField(Types.DECIMAL, "---9");
   CTextField avl_fecaltE=new CTextField();
   CTextField avl_numpalE=new CTextField(Types.DECIMAL, "##9");
+  CLabel avc_numpalL = new CLabel ("Palet");
+  CTextField avc_numpalE = new CTextField (Types.DECIMAL, "#9");
+  CCheckBox avc_numpalC = new CCheckBox ("Destarar");
   CTextField avl_prvenE = new CTextField(Types.DECIMAL, "--,--9");
   CTextField tar_preciE = new CTextField(Types.DECIMAL, "#,##9.99");
 
@@ -406,7 +418,7 @@ public class pdalbara extends ventanaPad  implements PAD
   CTextField avc_impcobE = new CTextField(Types.DECIMAL, "----,--9.99");
   CCheckBox avc_cerraE = new CCheckBox("-1", "0");
 
-  CGridEditable jtDes = new CGridEditable(10)
+  CGridEditable jtDes = new CGridEditable(11)
   {
     @Override
     public void cambiaColumna(int col, int colNueva,int row)
@@ -424,6 +436,15 @@ public class pdalbara extends ventanaPad  implements PAD
         }
         if (col == JTDES_NUMIND)
               pro_numindE_focusLost();
+        if (col == JTDES_KILOS)
+        {
+            if (avp_cantiE.hasCambio())
+            {
+               avp_cantiE.resetCambio();
+               avp_canbruE.setValorDec(avp_cantiE.getValorDec());
+               jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILBRU);
+            }
+        }
       }
       catch (SQLException k)
       {
@@ -476,6 +497,7 @@ public class pdalbara extends ventanaPad  implements PAD
   CTextField avp_serlotE = new CTextField(Types.CHAR, "X", 1);
   CTextField avp_numparE = new CTextField(Types.DECIMAL, "####9");
   CTextField avp_numindE = new CTextField(Types.DECIMAL, "###9");
+  CTextField avp_canbruE = new CTextField(Types.DECIMAL, "---,--9.99");
   CTextField avp_cantiE = new CTextField(Types.DECIMAL, "---,--9.99")
   {
       @Override
@@ -483,12 +505,28 @@ public class pdalbara extends ventanaPad  implements PAD
       {
           if (! avp_cantiE.hasCambio())
               return;          
-          if (pesoManual)
+          avp_canbruE.setValorDec(avp_cantiE.getValorDec());
+          jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILBRU);
+         
+          if (avc_numpalC.isSelected()  )
           {
-              avp_cantiE.setValorDec(avp_cantiE.getValorDec()-(avp_numuniE.getValorInt()*botonBascula.getPesoCajas()));
-              avp_cantiE.resetCambio();
+            if (avl_numpalE.getValorInt()!=0)
+            {
+                 avp_cantiE.setValorDec(avp_cantiE.getValorDec()-getTaraPalet(avl_numpalE.getValorInt()));
+                 avp_canbruE.setValorDec(avp_cantiE.getValorDec());
+                 jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILBRU);
+            }
+          } 
+          else
+          {
+            avp_cantiE.setValorDec(avp_cantiE.getValorDec()-botonBascula.getTaraBascula());  
           }
+          if (pesoManual)
+              avp_cantiE.setValorDec(avp_cantiE.getValorDec()-(avp_numuniE.getValorInt()*botonBascula.getPesoCajas()));
+          avp_cantiE.resetCambio();
+
       }
+     
   };
   CTextField avp_numlinE = new CTextField(Types.DECIMAL, "##9");
   CLabel cLabel17 = new CLabel();
@@ -684,7 +722,7 @@ public class pdalbara extends ventanaPad  implements PAD
         printE.setHorizontalTextPosition(SwingConstants.CENTER);
         printE.setBounds(new Rectangle(446, 2, 41, 19));
         PotroDat.setLayout(null);
-        cLabel33.setText("SubEmpr");
+        cLabel33.setText("Delegac.");
         cLabel33.setBounds(new Rectangle(6, 76, 62, 18));
         BmvReg.setText("Mvto.Reg (F9)");
         opAgru.setToolTipText("Ver Lineas Agrupadas");
@@ -711,23 +749,7 @@ public class pdalbara extends ventanaPad  implements PAD
         
         avp_cantiE.setEditable( P_ADMIN);
 
-        ArrayList v1 = new ArrayList();
-        v1.add("Prod"); // 0
-        v1.add("Descr."); // 1
-        v1.add("Emp"); // 2
-        v1.add("Ejer"); // 3
-        v1.add("Unid."); // 4
-        v1.add("Serie"); // 5
-        v1.add("Lote"); //6
-        v1.add("N.Ind"); // 7
-        v1.add("Kilos"); // 8
-        v1.add("NL");
-        jtDes.setCabecera(v1);
-        jtDes.setAjustarGrid(true);
-        jtDes.setAnchoColumna(new int[]{50, 200, 35, 40, 40, 35, 40, 40, 60,40});
-        jtDes.setAlinearColumna(new int[]{2, 0, 2, 2, 2, 0, 2, 2, 2,2});
-        jtDes.setFormatoColumna(8, "---,--9.99");
-        jtDes.setFormatoColumna(4, "--9");
+    
         pro_nombcE.setEnabled(false);
 
         avp_emplotE.setValorDec(EU.em_cod);
@@ -749,8 +771,23 @@ public class pdalbara extends ventanaPad  implements PAD
         avp_cantiE.setLeePesoBascula(botonBascula);
         botonBascula.setNumeroCajas(0);
         botonBascula.setPesoCajas(0);
-        
-       
+        avp_canbruE.setEnabled(false);
+        ArrayList v1 = new ArrayList();
+        v1.add("Prod"); // 0
+        v1.add("Descr."); // 1
+        v1.add("Emp"); // 2
+        v1.add("Ejer"); // 3
+        v1.add("Unid."); // 4
+        v1.add("Serie"); // 5
+        v1.add("Lote"); //6
+        v1.add("N.Ind"); // 7
+        v1.add("Kilos"); // 8
+        v1.add("NL"); // 9
+        v1.add("Kg.Bruto"); // 10
+        jtDes.setCabecera(v1);
+        jtDes.setAjustarGrid(true);
+        jtDes.setAnchoColumna(new int[]{50, 200, 30, 40, 40, 35, 40, 40, 60,20,60});
+        jtDes.setAlinearColumna(new int[]{2, 0, 2, 2, 2, 0, 2, 2, 2,2,2});
         vc1.add(pro_codicE.getTextField()); // 0
         
         vc1.add(pro_nombcE); // 1
@@ -762,8 +799,11 @@ public class pdalbara extends ventanaPad  implements PAD
         vc1.add(avp_numindE); // 7
         vc1.add(avp_cantiE); // 8
         vc1.add(avp_numlinE); // 9
+        vc1.add(avp_canbruE); // 10
         jtDes.setCampos(vc1);
        
+        
+        jtDes.setFormatoCampos();
         jtDes.setPonValoresInFocus(false);
 
         opAgru.setSelected(true);
@@ -948,17 +988,17 @@ public class pdalbara extends ventanaPad  implements PAD
         opCopia.setSelected(true);
         opCopia.setText("Imprimir Copia a Papel");
         opCopia.setBounds(new Rectangle(293, 20, 165, 17));
-        avc_almoriE.setBounds(new Rectangle(390, 75, 120, 20));
+        avc_almoriE.setBounds(new Rectangle(320, 75, 120, 20));
         avc_almoriE.setPreferredSize(new Dimension(180, 20));
         alm_codoriL.setText("Alm. Origen");
-        alm_codoriL.setBounds(new Rectangle(2, 105, 80, 18));
+        alm_codoriL.setBounds(new Rectangle(2, 95, 80, 18));
         alm_codoriE.setBounds(new Rectangle(85, 105, 200, 18));
         alm_codoriE.setEnabled(false);
         alm_coddesL.setBounds(new Rectangle(300, 105, 80, 18));
         alm_coddesE.setBounds(new Rectangle(385, 105, 200, 18));
         alm_coddesE.setEnabled(false);
         alm_coddesL.setText("Alm. Destino");
-        avc_almoriL.setBounds(new Rectangle(336, 75, 53, 18));
+        avc_almoriL.setBounds(new Rectangle(266, 75, 53, 18));
         residuosL.setText("Residuos");
         
         residuosL.setOpaque(true);
@@ -1069,8 +1109,13 @@ public class pdalbara extends ventanaPad  implements PAD
 
         avc_revpreL.setText("Revisar Precios");
         avc_deposE.setBounds(new Rectangle(215, 57, 105, 18));
-        verDepoC.setBounds(new Rectangle(530, 75, 105, 20));
+        verDepoC.setBounds(new Rectangle(450, 75, 85, 20));
         verDepoC.setPreferredSize(new Dimension(140,20));
+        avc_numpalC.setToolTipText("Destarar Palet");
+        avc_numpalC.setSelected(true);
+        avc_numpalL.setBounds(new Rectangle(548, 75, 35, 16));
+        avc_numpalE.setBounds(new Rectangle(587, 75, 25, 16));
+        avc_numpalC.setBounds(new Rectangle(615, 75, 70, 16));
         avc_revpreL.setBounds(new Rectangle(351, 80, 90, 16));
         avc_revpreE.setBounds(new Rectangle(443, 80, 121, 16));
 
@@ -1166,6 +1211,9 @@ public class pdalbara extends ventanaPad  implements PAD
                 new Insets(0, 4, 0, 4), 0, 0));
         this.getContentPane().add(Pprinc, BorderLayout.CENTER);
         Pcabe.add(verDepoC, null);
+        Pcabe.add(avc_numpalL,null);
+        Pcabe.add(avc_numpalE,null);
+        Pcabe.add(avc_numpalC,null);
         Pcabe.add(avc_deposE, null);
         Pcabe.add(fvc_serieE, null);
         Pcabe.add(Clabel1, null);
@@ -1188,7 +1236,7 @@ public class pdalbara extends ventanaPad  implements PAD
         Pped1.add(cLabel24, null);
         Pped1.add(pvc_anoE, null);
         Pped1.add(BbusPed, null);
-        sbe_nombL.setBounds(new Rectangle(104, 76, 229, 16));
+        sbe_nombL.setBounds(new Rectangle(104, 76, 149, 16));
         fvc_serieE.setBounds(new Rectangle(456, 38, 18, 16));
         Pcabe.add(sbe_nombL, null);
         Pcabe.add(avc_fecalbE, null);
@@ -1471,6 +1519,34 @@ public class pdalbara extends ventanaPad  implements PAD
         moveToFront();
         show();
         setSelected(true);
+  }
+  /**
+   * Devuelve kilos brutos pesados dentro de un palet
+   * @param numPalet
+   * @return  Kilos Brutos del palet
+   */
+  double getTaraPalet(int numPalet)
+  {
+      int nRows=jt.getRowCount();
+      int nRowDes=jtDes.getRowCount();
+      double tara=0;
+      for (int n=0;n<nRows;n++)
+      {
+          if (jt.getValorInt(n,JT_NUMPALE)!=numPalet)
+              continue;
+          if (n==jt.getSelectedRow())
+          {
+              for (int nd=0;nd<nRowDes;nd++)
+              {
+                   if (nd!=jtDes.getSelectedRow())
+                       tara+=jtDes.getValorDec(nd,JTDES_KILBRU);
+              }
+          }
+          else
+            tara+=jt.getValorDec(n,JT_KILBRU);
+      }
+      System.out.println("tara: "+tara);
+      return tara;
   }
   void checkPedidos()
   {
@@ -2969,7 +3045,7 @@ public class pdalbara extends ventanaPad  implements PAD
   public static String getSqlLinAlbEnt(int avsNume)
   {
     String s= "SELECT avs_numlin as avl_numlin,l.pro_codi, " +
-          " avs_canti as avl_canti, avs_unid as avl_unid," +
+          " avs_canti as avl_canti,avs_canti as avl_canbru avs_unid as avl_unid," +
           " a.pro_nomb,a.pro_indtco, " +
           " l.pro_nomb as avl_pronom " +
           " FROM albvenserl as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
@@ -2980,7 +3056,7 @@ public class pdalbara extends ventanaPad  implements PAD
   public static String getSqlLinAlb(String tablaLin,int ano,int empCodi,String serie,int nume)
   {
     String s= "SELECT avl_numlin,l.pro_codi, " +
-          " avl_canti, avl_unid," +
+          " avl_canti,avl_canbru, avl_unid," +
           " avl_prven,avl_prepvp,avl_profer,tar_preci,a.pro_nomb,a.pro_indtco, " +
           " l.pro_nomb as avl_pronom,avl_numpal, a.pro_tipiva,l.alm_codi,avl_coment,avl_fecalt " +
           " FROM "+tablaLin+"  as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
@@ -3010,6 +3086,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
 
     return "SELECT -1 as avl_numlin,l.pro_codi,avl_numpal,sum(avl_canti) as avl_canti, " +
+        " sum(avl_canbru) as  avl_canbru, "+
          " sum(avl_unid) as avl_unid,"+
          (modPrecio? " avl_prven,":"")+
          "tar_preci,a.pro_nomb,l.pro_nomb as avl_pronom,"
@@ -3026,6 +3103,7 @@ public class pdalbara extends ventanaPad  implements PAD
          "tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,a.pro_indtco,l.alm_codi,avl_coment,avl_numpal " +
          " UNION ALL " +
          "SELECT -1 as avl_numlin,l.pro_codi,avl_numpal,sum(avl_canti) as avl_canti, " +
+         " sum(avl_canbru) as  avl_canbru, "+
          " sum(avl_unid) as avl_unid,"+
          (modPrecio? " avl_prven,":"")+
          "tar_preci, a.pro_nomb,l.pro_nomb as avl_pronom,"
@@ -3060,6 +3138,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
 
     return "SELECT -1 as avl_numlin,l.pro_codi,avl_numpal,sum(avl_canti) as avl_canti, " +
+         " sum(avl_canbru) as  avl_canbru, "+
          " sum(avl_unid) as avl_unid,tar_preci,"+
          (modPrecio? " avl_prven,":"")+
          "a.pro_nomb,l.pro_nomb as avl_pronom,  a.pro_tipiva,a.pro_indtco " +
@@ -3074,6 +3153,7 @@ public class pdalbara extends ventanaPad  implements PAD
          " avl_numpal,tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,a.pro_indtco " +
          " UNION ALL " +
          "SELECT -1 as avl_numlin,l.pro_codi,avl_numpal,sum(avl_canti) as avl_canti, " +
+         " sum(avl_canbru) as  avl_canbru, "+
          " sum(avl_unid) as avl_unid,tar_preci,"+
          (modPrecio? " avl_prven,":"")+
          " a.pro_nomb,l.pro_nomb as avl_pronom,a.pro_tipiva,a.pro_indtco " +
@@ -3098,7 +3178,8 @@ public class pdalbara extends ventanaPad  implements PAD
   public static String getSqlLinListEnt(int avsNume)
   {
     return "SELECT -1 as avl_numlin,l.pro_codi,sum(avs_canti) as avl_canti, " +
-         " sum(avs_unid) as avl_unid,"+
+         " sum(avs_canti) as avl_canbru, "+
+         " sum(avs_unid) as avl_unid,sum(avs_canti) as avl_canbru,"+
          "a.pro_nomb,a.pro_indtco,l.pro_nomb as avl_pronom " +
          " FROM albvenserl as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
          " WHERE l.avs_nume = " + avsNume+
@@ -3213,6 +3294,7 @@ public class pdalbara extends ventanaPad  implements PAD
           swCamTipIva = true;
         v.add(agrupa?"":Formatear.getFecha(dtCon1.getTimeStamp("avl_fecalt"),"dd-MM-yy HH:mm"));
         v.add(dtCon1.getInt("avl_numpal"));
+        v.add(dtCon1.getDouble("avl_canbru"));
         tipIva = dtCon1.getInt("pro_tipiva"); // pro_codiE.getLikeProd().getDatoInt("pro_tipiva");
         jt.addLinea(v);
         if (verPrecios)
@@ -3292,6 +3374,7 @@ public class pdalbara extends ventanaPad  implements PAD
           throws  SQLException
   {
       s = "select -1 as avl_numlin,l.pro_codi, sum(p.avp_canti)  as avl_canti,"
+              + " sum(p.avp_canti) as avl_canbru, "
               + " sum(p.avp_numuni)  as avl_unid, "
               + " a.pro_nomb,l.pro_nomb as avl_pronom "
               + "from v_albavel as l  left join v_articulo as a on l.pro_codi = a.pro_codi,v_albvenpar as p "
@@ -3331,6 +3414,7 @@ public class pdalbara extends ventanaPad  implements PAD
           throws  SQLException
   {
       s ="SELECT -1 as avl_numlin,l.pro_codi,sum(l.avs_canti) as avl_canti, " +
+         " sum(l.avs_canti) as avl_canbru,"+
          " sum(l.avs_unid) as avl_unid,"+
          "a.pro_nomb,l.pro_nomb as avl_pronom " +
          " FROM albvenserc as c,albvenserl as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
@@ -3368,14 +3452,15 @@ public class pdalbara extends ventanaPad  implements PAD
                 v.add(dtCon1.getString("avl_numlin"));
                 v.add(dtCon1.getString("pro_codi"));
                 v.add(proNomb);
-                v.add("" + Formatear.redondea(dtCon1.getDouble("avl_canti", true), 2));
+                v.add(Formatear.redondea(dtCon1.getDouble("avl_canti", true), 2));
                 v.add(dtCon1.getString("avl_unid"));
                 if (verPrecios) {
                     v.add("0");
                     v.add("0");
                 }
                 v.add(""); 
-                v.add(0);
+                v.add(avc_numpalE.getValorInt());
+                v.add(Formatear.redondea(dtCon1.getDouble("avl_canbru", true), 2));
                 jt.addLinea(v);
             } while (dtCon1.next());
             jt.requestFocusInicio();
@@ -3480,6 +3565,7 @@ public class pdalbara extends ventanaPad  implements PAD
         v.add(dtCon1.getString("avp_numind"));
         v.add(dtCon1.getString("avp_canti"));
         v.add(dtCon1.getInt("avp_numlin"));
+        v.add(dtCon1.getString("avp_canbru"));
         canti= Formatear.redondea(canti+dtCon1.getDouble("avp_canti"),2);
         unid+=dtCon1.getInt("avp_numuni");
         
@@ -3529,7 +3615,7 @@ public class pdalbara extends ventanaPad  implements PAD
                              int proCodi,int numPale, String proNomb,double precio,boolean modPrecio)
   {
     return "SELECT p.pro_codi,p.pro_nomb,a.avp_emplot,a.avp_ejelot,a.avp_serlot, " +
-        " a.avp_numpar,a.avp_numind,a.avp_canti,a.avp_numuni,a.avp_numlin "+
+        " a.avp_numpar,a.avp_numind,a.avp_canti,a.avp_canbru,a.avp_numuni,a.avp_numlin "+
         " FROM "+vistaDet+" as a,v_articulo as p " +
         " WHERE "+ (empCodi==-1? " a.his_rowid = "+numAlb: " a.emp_codi = " + empCodi +
         " and a.avc_ano = " + ejeNume +
@@ -3558,7 +3644,7 @@ public class pdalbara extends ventanaPad  implements PAD
               + "a.avs_serlot as avp_serlot, "
               + " avs_numpar as avp_numpar,"
               + "avs_numind as avp_numind,"
-              + "a.avs_canti as avp_canti, 1 as avp_numuni,1 as avp_numlin"
+              + "a.avs_canti as avp_canti,a.avs_canti as avp_canbru 1 as avp_numuni,1 as avp_numlin"
               + " FROM albvenseri as a,v_articulo as p,albvenserl as l "
               + " WHERE l.avs_nume = " + avsNume
               + (nLin >= 0 ? " and l.avs_numlin = " + nLin
@@ -3576,7 +3662,7 @@ public class pdalbara extends ventanaPad  implements PAD
               + "a.avs_serlot as avp_serlot, "
               + " avs_numpar as avp_numpar,"
               + "avs_numind as avp_numind,"
-              + "a.avs_canti as avp_canti, 1 as avp_numuni,1 as avp_numlin "
+              + "a.avs_canti as avp_canti, a.avs_canti as avp_canbru, 1 as avp_numuni,1 as avp_numlin "
               + " FROM albvenseri as a,v_articulo as p,albvenserl as l,albvenserc as c "
               + " WHERE l.avs_nume = c.avs_nume "
               + " and c.emp_codi = " + empCodi
@@ -4384,7 +4470,9 @@ public class pdalbara extends ventanaPad  implements PAD
     nav.pulsado=navegador.ADDNEW;
     Bdespiece.setSelected(false);
     confAlbDep=false;
-
+    avc_numpalE.setValorInt(swUsaPalets?1:0);
+    jt.setValor(avc_numpalE.getValorInt(),JT_NUMPALE);
+    avl_numpalE.setValorInt(avc_numpalE.getValorInt());
     avsNume=0;
     mensaje("Introduciendo Nuevo Albaran ...");
   }
@@ -4644,6 +4732,7 @@ public class pdalbara extends ventanaPad  implements PAD
       dtAdd.setDato("pro_nomb", jt.getValString(n, 2));
       dtAdd.setDato("avl_canti", jt.getValorDec(n, 3));
       dtAdd.setDato("avc_cerra", avc_cerraE.isSelected()?-1:0);
+      dtAdd.setDato("avl_canbru", jt.getValorDec(n, JT_KILBRU));
       double precio = dtAdd.getDouble("avl_prven");
       double prTari = dtAdd.getDouble("tar_preci");
       if  (verPrecios)
@@ -4689,7 +4778,7 @@ public class pdalbara extends ventanaPad  implements PAD
           dtAdd.setDato("tar_preci", prTari);
       }
       dtAdd.setDato("avl_unid", jt.getValorInt(n, 4));
-      dtAdd.setDato("avl_canbru", jt.getValorDec(n, 3));
+      dtAdd.setDato("avl_canbru", jt.getValorDec(n, JT_KILBRU));
       dtAdd.setDato("avl_numpal", jt.getValorDec(n, JT_NUMPALE));
       pro_codiE.getNombArt(jt.getValString(n, 1));
       dtAdd.update(stUp);
@@ -5590,13 +5679,15 @@ public class pdalbara extends ventanaPad  implements PAD
             " and avc_nume = " + avc_numeE.getValorInt() +
             " and avl_numlin = " + jt.getValorInt(nLiGrAl, 0);
 
-        jt.setValor("" + avl_cantiE.getValorDec(), nLiGrAl, 3);
-        jt.setValor("" + avl_unidE.getValorInt(), nLiGrAl, 4);
+        jt.setValor(avl_cantiE.getValorDec(), nLiGrAl, 3);
+        jt.setValor(avl_unidE.getValorInt(), nLiGrAl, 4);
+       
         if (avc_deposE.getValor().equals("E"))
             s = "UPDATE albvenserl set avs_canti = " + avl_cantiE.getValorDec() +
                 " , avs_unid = " + avl_unidE.getValorInt() + condWhere;
         else
             s = "UPDATE v_albavel set avl_canti = " + avl_cantiE.getValorDec() +
+               " , avl_canbru = " + avl_cantiE.getValorDec()+
                " , avl_unid = " + avl_unidE.getValorInt() +
                 ", avl_numpal = "+avl_numpalE.getValorInt() +
                 condWhere;
@@ -5646,7 +5737,7 @@ public class pdalbara extends ventanaPad  implements PAD
         swEntdepos?avsNume:avc_numeE.getValorInt(),dtCon1);
  
     nLiAlb++;
-    double kilos = 0;
+    double kilos = 0,kilosBru=0;    
     int nUni = 0;
     // Busca todas las lineas desglosadas y calcula acumulados
     for (int n = 0; n < nRow; n++)
@@ -5654,15 +5745,17 @@ public class pdalbara extends ventanaPad  implements PAD
       if (!isLinDesVal(n))
         continue;
       swGuarLin = true;
-      kilos += jtDes.getValorDec(n, 8);
-      nUni += jtDes.getValorDec(n, 4);
+      kilos += jtDes.getValorDec(n, JTDES_KILOS);
+      kilosBru+=jtDes.getValorDec(n, JTDES_KILBRU);
+      nUni += jtDes.getValorDec(n, JTDES_UNID);
     }
 
     if (pro_codiE.getTipoLote()!='V'  && pro_codiE.getValorInt() > 0)
     { // Producto NO ES VENDIBLE
       jt.setValor("" + nLiAlb, nLiGrAl, 0);
-      jt.setValor("" + avl_cantiE.getValorDec(), nLiGrAl, 3);
-      jt.setValor("" + avl_unidE.getValorInt(), nLiGrAl, 4);
+      jt.setValor(avl_cantiE.getValorDec(), nLiGrAl, 3);
+      jt.setValor(avl_cantiE.getValorDec(), nLiGrAl, JT_KILBRU);
+      jt.setValor( avl_unidE.getValorInt(), nLiGrAl, 4);
       if (swEntdepos)
         guardaLinAlbEnt(nLiAlb,jt.getSelectedRow());
       else
@@ -5678,8 +5771,9 @@ public class pdalbara extends ventanaPad  implements PAD
                     emp_codiE.getValorInt()+avc_seriE.getText()+avc_numeE.getValorInt());
         }
         jt.setValor("" + nLiAlb, 0);
-        jt.setValor("" + kilos, 3);
-        jt.setValor("" + nUni, 4);
+        jt.setValor(kilos, JT_KILOS);
+        jt.setValor(kilosBru, JT_KILBRU);
+        jt.setValor("" + nUni, JT_UNID);
         if (swEntdepos)
             guardaLinAlbEnt(nLiAlb,jt.getSelectedRow());
         else
@@ -5796,7 +5890,9 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avp_numpar", avpNumpar);
     dtAdd.setDato("avp_numind", jtDes.getValorInt(nLin, 7));
     dtAdd.setDato("avp_numuni", jtDes.getValorInt(nLin, 4));
-    dtAdd.setDato("avp_canti", jtDes.getValorDec(nLin, 8));
+    dtAdd.setDato("avp_canti", jtDes.getValorDec(nLin, JTDES_KILOS));
+    dtAdd.setDato("avp_canbru", jtDes.getValorDec(nLin, JTDES_KILBRU)==0?
+        jtDes.getValorDec(nLin, JTDES_KILOS):jtDes.getValorDec(nLin, JTDES_KILBRU));
     dtAdd.update(stUp);
 //    anuStkPart(jtDes.getValorInt(nLin, JTDES_PROCODI), jtDes.getValorInt(nLin, JTDES_EJE),
 //               jtDes.getValorInt(nLin, JTDES_EMP), jtDes.getValString(nLin, JTDES_SERIE),
@@ -5881,7 +5977,8 @@ public class pdalbara extends ventanaPad  implements PAD
       dtAdd.setDato("fvl_tireta", "%");
       dtAdd.setDato("fvl_rectas", 0);
       dtAdd.setDato("fvl_reta2", 0);
-      dtAdd.setDato("fvl_canti", jt.getValorDec(nLin, 3));
+      dtAdd.setDato("fvl_canti", jt.getValorDec(nLin, JT_KILOS));
+      
       dtAdd.setDato("fvl_dto", 0);
       dtAdd.setDato("fvl_prven", 0);
       dtAdd.update(stUp);
@@ -5917,7 +6014,7 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("tiporecargotasa", "%");
     dtAdd.setDato("recargotasa", 0);
     dtAdd.setDato("recargotasa2", 0);
-    dtAdd.setDato("avl_canti", jt.getValorDec(nLin, 3));
+    dtAdd.setDato("avl_canti", jt.getValorDec(nLin, JT_KILOS));    
     dtAdd.setDato("avl_prven", 0);
     dtAdd.setDato("avl_dtolin", 0);
     dtAdd.setDato("avl_prbase", 0);
@@ -5930,7 +6027,7 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avl_prclar", 0);
     dtAdd.setDato("avl_prepvp", 0);
     dtAdd.setDato("avl_poreo", 0);
-    dtAdd.setDato("avl_canbru", jt.getValorDec(nLin, 3));
+    dtAdd.setDato("avl_canbru", jt.getValorDec(nLin, JT_KILBRU));
     dtAdd.setDato("avl_anorec", 0);
     dtAdd.setDato("avl_serere", "");
     dtAdd.setDato("numrecepcion", 0);
@@ -6043,6 +6140,12 @@ public class pdalbara extends ventanaPad  implements PAD
 
            if (avp_cantiE.getValorDec() == 0)// && avp_numparE.getValorDec() == 0)
               return -1; // Sin Kilos ... NO compruebo NADA pues ignorare la linea
+          if (avp_cantiE.hasCambio())
+          {
+               avp_cantiE.resetCambio();
+               avp_canbruE.setValorDec(avp_cantiE.getValorDec());
+               jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILBRU);
+          }
           if (swEntdepos)
           {// Entrega de deposito
               int nRow=jtDes.getRowCount();
@@ -6425,7 +6528,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     int nRow = jtDes.getRowCount();
 
-    double kilos = 0, impBim = 0;
+    double kilos = 0, impBim = 0,kilBru=0;
     int nUni = 0;
 
     for (int n = 0; n < nRow; n++)
@@ -6435,6 +6538,7 @@ public class pdalbara extends ventanaPad  implements PAD
       if (row == n)
       {
         kilos += avp_cantiE.getValorDec();
+        kilBru += jtDes.getValorDec(n, JTDES_KILBRU);
         nUni += avp_numuniE.getValorDec();
         impBim += avp_cantiE.getValorDec() * jt.getValorDec(5);
       }
@@ -6442,11 +6546,13 @@ public class pdalbara extends ventanaPad  implements PAD
       {
         kilos += jtDes.getValorDec(n, 8);
         nUni += jtDes.getValorDec(n, 4);
+        kilBru += jtDes.getValorDec(n, JTDES_KILBRU);;
         impBim += jtDes.getValorDec(n, 8) * jt.getValorDec(5);
       }
     }
-    jt.setValor("" + kilos, 3);
-    jt.setValor("" + nUni, 4);
+    jt.setValor(kilos, JT_KILOS);
+    jt.setValor(kilBru, JT_KILBRU);
+    jt.setValor(nUni, 4);
     avl_cantiE.setValorDec(kilos);
     avl_unidE.setValorDec(nUni);
     impLinE.setValorDec(impBim);
@@ -6614,6 +6720,7 @@ public class pdalbara extends ventanaPad  implements PAD
     avp_numindE.resetCambio();
     avp_numparE.resetCambio();
     pro_codicE.resetCambio();
+    avp_cantiE.resetCambio();
   }
   /**
    * Pone el valor de la cantidad segun los datos del invidividuo
@@ -6889,6 +6996,7 @@ public class pdalbara extends ventanaPad  implements PAD
   void irGridDes()
   {
       swCanti=false;
+      
       irGridDes(JTDES_LOTE);
   }
   void irGridDes(int col_desp)
@@ -6948,6 +7056,7 @@ public class pdalbara extends ventanaPad  implements PAD
           v.add("0");
           v.add("0");
           v.add("0");
+           v.add("0"); // Cantidad bruta
           jtDes.addLinea(v);
           pro_codicE.setText(pro_codiE.getText());
           jtDes.afterInsertaLinea(true);
@@ -6959,6 +7068,7 @@ public class pdalbara extends ventanaPad  implements PAD
         jtDes.requestFocus();
         jtDes.requestFocus(0, colDesp);
         jtDes.actualizarGrid();
+        
         resetCambioIndividuo();
        
         Baceptar.setEnabled(false);
@@ -7060,7 +7170,8 @@ public class pdalbara extends ventanaPad  implements PAD
     avc_impalbE.setEnabled(false);
     avc_impcobE.setEnabled(false);
     Bdespiece.setEnabled(false);    
-          
+    avc_numpalE.setEnabled(b);
+    avc_numpalC.setEnabled(b);
     emp_codiE.setEnabled(b);
     avc_anoE.setEnabled(b);
     avc_seriE.setEnabled(b);
@@ -8008,6 +8119,7 @@ public class pdalbara extends ventanaPad  implements PAD
     v.add("CP"); // 8 Confirmado Precio ?
     v.add("NL."); // 9
     v.add("Prv"); // 10
+  
     jt.setCabecera(v);
     jt.setMaximumSize(new Dimension(477, 250));
     jt.setMinimumSize(new Dimension(31, 250));
@@ -8192,11 +8304,19 @@ public class pdalbara extends ventanaPad  implements PAD
     
     JT_NUMPALE=P_MODPRECIO || P_PONPRECIO ? 8: 6;
     JT_FECMVT=JT_NUMPALE - 1;
-    JT_CODENV=JT_NUMPALE+1;
+    //JT_CODENV=JT_NUMPALE+1;
+    JT_KILBRU=JT_NUMPALE+1;
     avl_prvenE.setFormato(avl_prvenE.getFormato()+FORMDECPRECIO);
     impLinE.setFormato(impLinE.getFormato()+FORMDEC);
-    jt = new CGridEditable(P_MODPRECIO || P_PONPRECIO ? 9 : 7)
+    jt = new CGridEditable(P_MODPRECIO || P_PONPRECIO ? 10 : 8)
     {
+        @Override
+      public boolean afterInsertaLinea(boolean insLinea)
+      {
+          jt.setValor(avc_numpalE.getValorInt(),JT_NUMPALE);
+          avl_numpalE.setValorInt(avc_numpalE.getValorInt());
+          return true;
+      }
       @Override
       public boolean deleteLinea(int row, int col)
       {
@@ -8290,6 +8410,7 @@ public class pdalbara extends ventanaPad  implements PAD
       {
         antPrecio = avl_prvenE.getValorDec();
         avl_prvenE.resetCambio();
+       
         avl_numpalE.resetCambio();
         if ((nav.pulsado != navegador.EDIT && nav.pulsado != navegador.ADDNEW) || isLock)
           return;
@@ -8360,20 +8481,21 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     v.add("Fec.Mvto");
     v.add("Palet");
+    v.add("Kg.Bru"); // 11
     jt.setCabecera(v);
     if (P_MODPRECIO || P_PONPRECIO)
     {
       jt.setAnchoColumna(new int[]
-                         {30, 50, 200, 70, 40, 60, 60,100,50});
+                         {30, 50, 200, 70, 40, 60, 60,100,50,60});
       jt.setAlinearColumna(new int[]
-                           {2, 2, 0, 2, 2, 2, 2,0,2});
+                           {2, 2, 0, 2, 2, 2, 2,0,2,2});
     }
     else
     {
       jt.setAnchoColumna(new int[]
-                         {40, 50, 200, 70, 40,100,50});
+                         {40, 50, 200, 70, 40,100,50,40});
       jt.setAlinearColumna(new int[]
-                           {2, 2, 0, 2, 2,0,2});
+                           {2, 2, 0, 2, 2,0,2,2});
 
     }
     
@@ -8385,7 +8507,7 @@ public class pdalbara extends ventanaPad  implements PAD
     pro_codicE.setProNomb(null);
     tar_preciE.setEnabled(false);
     avl_fecaltE.setEnabled(false);
-  
+    avl_canbruE.setEnabled(false);
     vc.add(avl_numlinE); // 0
     vc.add(pro_codiE.getTextField()); // 1
     vc.add(pro_nombE); // 2
@@ -8399,6 +8521,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     vc.add(avl_fecaltE);
     vc.add(avl_numpalE);
+    vc.add(avl_canbruE);
     jt.setCampos(vc);
     jt.setFormatoCampos();
     jt.setAjustarGrid(true);

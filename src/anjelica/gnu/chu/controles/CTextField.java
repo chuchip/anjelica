@@ -1876,6 +1876,7 @@ String procesaTecla()
   {
     if (gridEdit!=null)
       gridEdit.procesaTab(ke);
+    afterProcesaTab();
   }
 
   protected void procesaEnter(KeyEvent ke)
@@ -1888,6 +1889,13 @@ String procesaTecla()
    * Rutina perezosa para poder hacer algo cuando  se le da al Enter
    */
   public void afterProcesaEnter()
+  {
+      
+  }
+   /**
+   * Rutina perezosa para poder hacer algo cuando  se le da al Tabulador
+   */
+  public void afterProcesaTab()
   {
       
   }

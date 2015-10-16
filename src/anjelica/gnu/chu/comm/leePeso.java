@@ -151,6 +151,7 @@ public class leePeso
         serialPort.setEventsMask(mask);//Set mask
         serialPort.addEventListener(new SerialPortEventListener()
         {
+            @Override
             public void serialEvent(SerialPortEvent event)
             {
                 try
@@ -259,20 +260,9 @@ public class leePeso
     if (! swInic)
         return 0;
     if ( serialPort==null) 
-    {
         return 0;
-//        String valor=mensajes.mensajeGetTexto("Introduzca peso de bascula", "Introduzca peso");
-//        if (valor==null)
-//            return 0;
-//        try {
-//            return Double.parseDouble(valor.trim());
-//        } catch (NumberFormatException k)
-//        {
-//            return 0;
-//        }        
-    }
-       
-       
+    if (!serialPort.isOpened()) 
+       return 0;
     try {
       String lect;
       pesoReal=-1;

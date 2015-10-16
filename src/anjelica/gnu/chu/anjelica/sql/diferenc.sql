@@ -1,3 +1,8 @@
+-- Incluyendo campo kilos brutos en detalle lineas de albaran
+alter table anjelica.v_albvenpar alter avp_canti set not null;
+alter table anjelica.v_albvenpar add avp_canbru decimal(9,3) not null default 0;
+alter table anjelica.hisalbvenpar add avp_canbru decimal(9,3) not null default 0;
+
 -- Incluido almacen en lineas de inventario control
 alter table coninvlin add alm_codlin int;
 update coninvlin set alm_codlin = (select alm_codi from coninvcab where coninvcab.cci_codi= coninvlin.cci_codi);

@@ -75,7 +75,7 @@ public class BotonBascula extends CButtonMenu{
 
         }
     }
-     public void setPesoCajas(double pesoCajas)
+    public void setPesoCajas(double pesoCajas)
     {
         this.pesoCaja=pesoCajas;
          for (int n = 0; n < numBasculas; n++) {
@@ -84,9 +84,10 @@ public class BotonBascula extends CButtonMenu{
                 ifBascula.setPesoCaja(pesoCajas);
         }
     }
+    
     public double getPesoCajas()
     {
-        return pesoCaja;
+       return  EU.getBascula().getClassleePeso(bascActiva).getPesoCaja();
     }
   void verBascula()
   {
@@ -122,6 +123,10 @@ public class BotonBascula extends CButtonMenu{
   public double getPesoBascula()
   {
      return EU.getBascula().getPesoBascula(bascActiva);
+  }
+  public double getTaraBascula()
+  {
+     return EU.getBascula().getClassleePeso(bascActiva).getTara();
   }
   public void dispose()
   {

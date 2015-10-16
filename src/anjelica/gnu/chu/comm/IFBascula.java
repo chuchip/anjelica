@@ -9,7 +9,6 @@ import java.sql.Types;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-
 public class IFBascula extends ventana
 {
     Timer temporizador; 
@@ -30,6 +29,7 @@ public class IFBascula extends ventana
         pesoCajaE.setValorDec(peso.getPesoCaja());
         taraE.setValorDec(peso.getTara());
         temporizador=new Timer(3000,new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
               leePeso();
             }
