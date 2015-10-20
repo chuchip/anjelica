@@ -499,7 +499,10 @@ avc_depos char(1) default 'N' NOT NULL, -- 'N' Normal, 'D' Deposito
  his_rowid int not null,
  constraint ix_hisalcave primary key (his_rowid)
 );
-
+--
+-- Palets usados en albaranes de venta
+--
+-- drop table anjelica.paletventa
 create table anjelica.paletventa
 (
 	avc_id int not null, -- Identificador Numero Albaran

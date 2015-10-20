@@ -1618,6 +1618,21 @@ public class pdalbara extends ventanaPad  implements PAD
       return tara;
   }
   /**
+   * Devuelve el numero de Palet Activo
+   * @return  numero de Palet Activo
+   */
+  int getNumeroPaletAcivo()
+  {
+      if (jtPalet.getValorInt(0)>0)
+          return jtPalet.getValorInt(0);
+      for (int n=jtPalet.getSelectedRow();n>=0;n--)
+      {
+           if (jtPalet.getValorInt(n,0)>0)
+            return jtPalet.getValorInt(n,0);
+      }
+      return 0;
+  }
+  /**
    *  Devuelve los acumulados de un  palet
    * @param numPalet Palet sobre el que buscar los acumulaods
    * @return  double[]. El valor 0 son los kg. brutos. El valor 1, kilos netos.
@@ -1723,7 +1738,7 @@ public class pdalbara extends ventanaPad  implements PAD
       
         return true;
   }
-  void addLineaPalet()
+  int addLineaPalet()
   {
        int nr=jtPalet.getRowCount();
        int linea=0;
@@ -1747,7 +1762,7 @@ public class pdalbara extends ventanaPad  implements PAD
        v.add(0);
        v.add(0);
        jtPalet.addLinea(v);
-             
+       return palet;
   }
   void activarEventos()
   {
@@ -1755,9 +1770,13 @@ public class pdalbara extends ventanaPad  implements PAD
       {
           @Override
           public void actionPerformed(java.awt.event.ActionEvent evt) {
-              addLineaPalet();
+              int palet=addLineaPalet();
               jtPalet.requestFocusFinalLater();
-            
+              if (jt.getValorDec(JT_KILOS)==0)
+              {
+                  jt.setValor(palet,JT_NUMPALE);
+                  avl_numpalE.setValorInt(palet);
+              }
           }
       });
       avc_deposE.addActionListener(new java.awt.event.ActionListener()
@@ -3565,7 +3584,7 @@ public class pdalbara extends ventanaPad  implements PAD
            jt.getValString(0, 2),  jt.getValorDec(0, 5));
   }
   /**
-   * Llena el grid de lineas de albaran
+   * Llena el grid de lineas de albaran. Solo para albaranes deposito.
    * @param sql Sentencia sql a ejecutar para sacar los registros a mandar.
    *
    * @throws SQLException
@@ -3590,7 +3609,7 @@ public class pdalbara extends ventanaPad  implements PAD
                     v.add("0");
                 }
                 v.add(""); 
-                v.add(dtCon1.getDouble("avl_palet", true));
+                v.add("");
                 v.add(Formatear.redondea(dtCon1.getDouble("avl_canbru", true), 2));
                 jt.addLinea(v);
             } while (dtCon1.next());
@@ -5573,6 +5592,8 @@ public class pdalbara extends ventanaPad  implements PAD
       else
       { // Acabo de meter lineas de  desglose...
         pro_numindE_focusLost();
+        avp_canbruE.setValorDec(avp_cantiE.getValorDec());
+        jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILBRU);
         jtDes.salirGrid();
         if (avp_numindE.getValorInt() != 0 || avp_numparE.getValorInt() != 0 ||
             avp_cantiE.getValorDec() != 0)
@@ -6709,6 +6730,7 @@ public class pdalbara extends ventanaPad  implements PAD
     jt.setValor(kilBru, JT_KILBRU);
     jt.setValor(nUni, 4);
     avl_cantiE.setValorDec(kilos);
+    avl_canbruE.setValorDec(kilBru);
     avl_unidE.setValorDec(nUni);
     impLinE.setValorDec(impBim);
 //    actAcumPed(jt.getRowCount());
@@ -8494,8 +8516,8 @@ public class pdalbara extends ventanaPad  implements PAD
         @Override
       public boolean afterInsertaLinea(boolean insLinea)
       {
-          jt.setValor(jtPalet.getValorInt(0),JT_NUMPALE);
-          avl_numpalE.setValorInt(jtPalet.getValorInt(0));
+          avl_numpalE.setValorInt(getNumeroPaletAcivo());
+          jt.setValor(avl_numpalE.getValorInt(),JT_NUMPALE);
           return true;
       }
       @Override

@@ -3866,7 +3866,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     try
     {
-      if (dtCons.getNOREG())
+      if (dt.getNOREG())
         return;
       
       int empCodi=dt.getInt("emp_codi");
