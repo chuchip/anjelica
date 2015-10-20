@@ -179,11 +179,11 @@ $BODY$
 			mvt_lindoc = OLD.avl_numlin and
 			mvt_canti = OLD.avp_canti;
 		GET DIAGNOSTICS nRows = ROW_COUNT;		
-		if nRows = 0  and 1 = 0 then
+		if nRows = 0  then
 			RAISE EXCEPTION 'No encontrado mvto a Borrar. Alb. Venta';
 			return null;
 		end if;
-		if nRows > 1 AND  OLD.avc_serie != 'X' then
+		if nRows > 1 AND  OLD.avc_serie != 'X' and ajuDelmvt = 0 then
 		   RAISE EXCEPTION '(Borrar)Encontrado mas de un mvto para este individuo. Alb: % % % % Producto: % Ind: % % %-%',
                             OLD.emp_codi,OLD.avc_ano,OLD.avc_nume,OLD.avc_serie,
                             OLD.pro_codi,OLD.avp_ejelot,OLD.avp_serlot, OLD.avp_numpar,OLD.avp_numind; 

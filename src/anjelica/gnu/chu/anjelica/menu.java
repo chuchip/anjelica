@@ -224,7 +224,8 @@ public class menu extends JFrame
 //      prueba1();
     }
     catch(Exception e) {
-      SystemOut.print(e);
+        e.printStackTrace();
+      
     }
 
   }
