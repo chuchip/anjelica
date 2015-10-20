@@ -142,18 +142,19 @@ public class EnviaMensajes {
             " and c.sbe_codi=2 ";
         if (dtCon1.select(s))
         {
+            System.out.println("----------------------------------------");
+            System.out.println("--  VENTAS MINORITAS DE PRODUCTOS DE MAYOR --");
+            System.out.println("------------------------------------------");
            do 
            {
-              System.out.println("----------------------------------------");
-              System.out.println("--  VENTAS MINORITAS DE PRODUCTOS DE MAYOR --");
-              System.out.println("------------------------------------------");
+             
                System.out.println("Alb: "+dtCon1.getInt("avc_ano")+
                    dtCon1.getString("avc_serie")+dtCon1.getInt("avc_nume")+" De fecha: "+
                    dtCon1.getFecha("avc_fecalb","dd-MM-yyyy")+
                    " Cliente: "+dtCon1.getInt("cli_codi")+" -> "+dtCon1.getString("cli_nomb")+
                    " Articulo: "+dtCon1.getInt("pro_codi")+" -> "+dtCon1.getString("pro_nomb")+
                    " Kg:"+dtCon1.getDouble("avl_canti"));
-           } while (dtCon1.select(s));
+           } while (dtCon1.next());
         } 
        
  }
