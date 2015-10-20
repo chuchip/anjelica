@@ -48,7 +48,7 @@ public class EnviaMensajes {
       EU.usu_nomb="SuperUsuario";
       EU.usuario=usuario;
       EU.password=passwd;
-      EU.email="cpuente@misl.es";
+      EU.email="cpuente@vacunospuente.es";
       ct=new conexion(EU);
       dtCon1=new DatosTabla(ct);
       dtStat=new DatosTabla(ct);
@@ -126,6 +126,36 @@ public class EnviaMensajes {
                  System.out.println("Albaran: "+albaran+ " ERROR: "+alb.get(albaran));
             }
        }
+        /**
+        * Busco inconsistencias en albaranes de ventas
+        * 
+        */
+        System.out.println("----------------------------------------");
+        System.out.println("--  VENTAS MINORITAS DE PRODUCTOS DE MAYOR --");
+        System.out.println("------------------------------------------");
+        s="select avc_ano,avc_serie,avc_nume,avc_fecalb,"+
+            " c.cli_codi,c.cli_nomb,v.pro_codi,v.pro_nomb,v.avl_canti"+
+            " from v_albventa as v, v_cliente as c where c.cli_codi = v.cli_codi "+
+            " and v.avc_fecalb between current_date -7 and current_date "+
+            " and v.pro_codi between 10000 and 59999  "+
+            " and v.avc_serie!='X' "+
+            " and c.sbe_codi=2 ";
+        if (dtCon1.select(s))
+        {
+           do 
+           {
+              System.out.println("----------------------------------------");
+              System.out.println("--  VENTAS MINORITAS DE PRODUCTOS DE MAYOR --");
+              System.out.println("------------------------------------------");
+               System.out.println("Alb: "+dtCon1.getInt("avc_ano")+
+                   dtCon1.getString("avc_serie")+dtCon1.getInt("avc_nume")+" De fecha: "+
+                   dtCon1.getFecha("avc_fecalb","dd-MM-yyyy")+
+                   " Cliente: "+dtCon1.getInt("cli_codi")+" -> "+dtCon1.getString("cli_nomb")+
+                   " Articulo: "+dtCon1.getInt("pro_codi")+" -> "+dtCon1.getString("pro_nomb")+
+                   " Kg:"+dtCon1.getDouble("avl_canti"));
+           } while (dtCon1.select(s));
+        } 
+       
  }
 
  public static void main(String[] args)

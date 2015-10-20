@@ -127,7 +127,7 @@ public class Comvalm extends ventana
   {
       iniciarFrame();
 
-      this.setVersion("2015-08-12");
+      this.setVersion("2015-10-18");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();

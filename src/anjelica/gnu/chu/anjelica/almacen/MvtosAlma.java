@@ -348,6 +348,8 @@ public class MvtosAlma
              " from mvtosalm where "+
              "  mvt_canti <> 0 "+      
             (almCodi==0?"":" and alm_codi = "+almCodi)+
+            (ejercLote==0?"":" and pro_ejelot = "+ejercLote)+
+            (serieLote==null?"":" and pro_serlot = '"+serieLote+"'")+
             (proLote==0?"":" and pro_numlot  = "+proLote)+
             (proNumind==0?"":" and pro_indlot = "+proNumind)+
             " AND pro_codi = " + (proCodi==-1?"?":proCodi) +
@@ -380,6 +382,8 @@ public class MvtosAlma
            " and rgs_kilos <> 0 "+
 //            " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
            (almCodi==0?"":" and alm_codi = "+almCodi)+
+           (ejercLote==0?"":" and r.eje_nume = "+ejercLote)+
+           (serieLote==null?"":" and r.pro_serie = '"+serieLote+"'")+
            (proLote==0?"":" and r.pro_nupar  = "+proLote)+
            (proNumind==0?"":" and r.pro_numind = "+proNumind)+
            (empCodi==0?"":" and r.emp_codi = "+empCodi)+
@@ -1270,7 +1274,9 @@ public class MvtosAlma
       
         if (jt!=null && !swIgnVenta)
         {  // Meter datos para cuando la consulta es en pantalla y detallada en un grid
-          if (sel == 'V' && ! swVerVenta)
+          if (swTraspAlm && ! swSerieX )
+              continue;
+          if (sel == 'V'&& !swTraspAlm  && ! swVerVenta)
             continue;
           if (sel=='C' && ! swVerCompra)
             continue;

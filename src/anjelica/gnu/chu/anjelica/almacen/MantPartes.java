@@ -921,7 +921,7 @@ public class MantPartes  extends ventanaPad implements PAD
                  {
                      Error("No encontradas ID de abono: "+rowid,new SQLException(""));
                  }
-                 System.out.println("Act. Linea abono con rowid: "+rowid+" parte: "+par_codiE.getValorInt()+"-"+linea+" kg: "+jtAbo.getValorDec(n,JTABO_KILOS));
+//                 System.out.println("Act. Linea abono con rowid: "+rowid+" parte: "+par_codiE.getValorInt()+"-"+linea+" kg: "+jtAbo.getValorDec(n,JTABO_KILOS));
                  dtAdd.edit();
              }
              dtAdd.setDato("paa_tipo",paa_tipoE.getValor(jtAbo.getValString(n,JTABO_TIPO)));
@@ -1255,7 +1255,7 @@ public class MantPartes  extends ventanaPad implements PAD
         Pcab.add(par_comentL);
         par_comentL.setBounds(210, 3, 80, 17);
 
-        pac_tipoL.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        pac_tipoL.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         pac_tipoL.setText("Tipo");
         Pcab.add(pac_tipoL);
         pac_tipoL.setBounds(10, 25, 50, 17);
@@ -2202,8 +2202,8 @@ public class MantPartes  extends ventanaPad implements PAD
         dtAdd.setDato("pac_usuinc",EU.usuario);
         dtAdd.setDato("pac_fecinc",pac_fecincE.getDate());
         actualCab();
-        dtStat.select("SELECT lastval()");
-        return dtStat.getInt(1);
+        dtAdd.select("SELECT lastval()");
+        return dtAdd.getInt(1);
     }
     private void actualCab() throws  SQLException,ParseException
     {

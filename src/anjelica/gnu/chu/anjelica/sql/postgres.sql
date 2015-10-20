@@ -360,6 +360,7 @@ create index ix_cliencamb on cliencamb(cli_codi,clc_fecha,clc_hora);
 -- drop table v_albavec;
 create table anjelica.v_albavec
 (
+avc_id serial not null,
 avc_ano int not null,
 emp_codi int not null,
 avc_serie char(1) not null,
@@ -430,6 +431,7 @@ create index albavec2 on v_albavec (cli_codi,avc_fecalb);
 -- 
 create table hisalcave
 (
+avc_id int,
 avc_ano int not null,
 emp_codi int not null,
 avc_serie char(1) not null,
@@ -497,6 +499,15 @@ avc_depos char(1) default 'N' NOT NULL, -- 'N' Normal, 'D' Deposito
  his_rowid int not null,
  constraint ix_hisalcave primary key (his_rowid)
 );
+
+create table anjelica.paletventa
+(
+	avc_id int not null, -- Identificador Numero Albaran
+	pav_nume int not null, -- Numero de Palet
+	pav_kilos float not null, -- Kilos
+	constraint ix_paletventa primary key (avc_id,pav_nume)
+);
+
 --
 -- Cabecera de  de Albaranes servidos en deposito
 --
@@ -614,6 +625,7 @@ avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes
 from v_albavel as l, v_albavec as c 
 where c.emp_codi=l.emp_codi and c.avc_ano=l.avc_ano and c.avc_serie=l.avc_serie 
 and c.avc_nume=l.avc_nume;
+grant select on anjelica.v_albventa_detalle to public;
 
 --
 -- Tabla Historico Lineas de Albaranes de Ventas
@@ -698,11 +710,11 @@ avp_serlot char(1), 	-- Serie de Lote
 avp_numpar int,			-- Numero de Partida (Lote)
 avp_numind int,			--  Numero de Individuo
 avp_numuni float,		-- Numero de Unidades
-avp_canti decimal(9,3),  -- Kilos a facturar (netos)
-avp_canbru decimal(9,3), -- Cantidad brutos (Kilos)
+avp_canti decimal(9,3) not null,  -- Kilos a facturar (netos)
+avp_canbru decimal(9,3) not null, -- Cantidad brutos (Kilos)
 constraint ix_albvenpar primary key  (avc_ano,emp_codi,avc_nume,avc_serie,avl_numlin,avp_numlin)
 );
--- DROP VIEW anjelica.v_albventa_detalle ;
+DROP VIEW anjelica.v_albventa_detalle ;
 CREATE OR REPLACE VIEW anjelica.v_albventa_detalle AS 
  SELECT c.emp_codi, c.avc_ano, c.avc_serie, c.avc_nume, c.cli_codi, 
     c.avc_clinom, c.avc_fecalb, c.usu_nomb, c.avc_tipfac, c.cli_codfa, 
@@ -713,12 +725,13 @@ CREATE OR REPLACE VIEW anjelica.v_albventa_detalle AS
     l.pro_nomb, l.avl_canti, l.avl_prven, l.avl_prbase, l.tar_preci, l.avl_unid,
     l.avl_canbru, l.avl_fecalt, l.fvl_numlin, l.avl_fecrli, c.alm_codori, 
     c.alm_coddes, p.avp_numlin, p.avp_ejelot, p.avp_emplot, p.avp_serlot, 
-    p.avp_numpar, p.avp_numind, p.avp_numuni, p.avp_canti
+    p.avp_numpar, p.avp_numind, p.avp_numuni, p.avp_canti,p.avp_canbru
    FROM anjelica.v_albavel l, anjelica.v_albavec c, anjelica.v_albvenpar p
   WHERE c.emp_codi = l.emp_codi AND c.avc_ano = l.avc_ano 
   AND c.avc_serie = l.avc_serie AND c.avc_nume = l.avc_nume AND c.emp_codi = p.emp_codi
   AND c.avc_ano = p.avc_ano AND c.avc_serie = p.avc_serie AND c.avc_nume = p.avc_nume
   AND l.avl_numlin = p.avl_numlin;
+grant select on anjelica.v_albventa_detalle to public;
 
 create index ix_albvenpa1 on v_albvenpar (avp_ejelot,avp_serlot,avp_numpar,avp_numind);
 
@@ -1804,7 +1817,7 @@ pro_nomb VARCHAR(50) not null, -- Descripcion del Articulo
 tar_preci decimal(10,2),
 tar_comen varchar(150),
 tar_grupo smallint not null, -- Grupo de familia  (solo se usa cuando pro_codart='')
-tar_tipo smallint not null,  -- Tipo Animal (solo se usa cuando pro_codart='X')
+tar_tipo smallint not null  -- Tipo Animal (solo se usa cuando pro_codart='X')
 );
 create  index ix_tari1 on anjelica.tarifa(tar_fecini,tar_fecfin,tar_codi,pro_codart);
 ---
