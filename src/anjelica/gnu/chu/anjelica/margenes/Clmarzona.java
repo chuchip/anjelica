@@ -110,7 +110,7 @@ public class Clmarzona extends ventana {
   {
       iniciarFrame();
 
-      this.setVersion("2011-07-12");
+      this.setVersion("2015-10-21");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -320,7 +320,7 @@ public class Clmarzona extends ventana {
                 + (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+sbe_codiE.getValorInt())
                 + (proCod != null ? "and l.pro_codi = " + proCod : "")
                 + " group by f.fpr_codi,p.pro_codi,P.PRO_NOMB,pro_tiplot ";
-      if (opIncVertE.isSelected())
+//      if (opIncVertE.isSelected())
         s+= " UNION"
             + " SELECT f.fpr_codi,p.pro_codi,P.PRO_NOMB, pro_tiplot,0 as avl_canti, "
             + "  0  as avl_prbase "
@@ -367,10 +367,10 @@ public class Clmarzona extends ventana {
     double impGana;
     
     fecinv=feulinE.getText();
-    mvtosAlm.setIgnoraVert(! opIncVertE.isSelected());
+    mvtosAlm.setIgnoraRegular(! opIncVertE.isSelected());
     mvtosAlm.setEmpresa(emp_codiE.getValorInt());
     mvtosAlm.setSbeCodi(sbe_codiE.getValorInt());
-
+    
     mvtosAlm.iniciarMvtos(feulinE.getText(), feciniE.getText(),fecfinE.getText(),dtCon1);
     mvtosAlm.resetMensajes();
     do
@@ -405,8 +405,8 @@ public class Clmarzona extends ventana {
           guardaFam();
           fprCodi=dtVen.getInt("fpr_codi");
         }
-        actualizaMsg("Procesando producto: "+proCodi,false);
-       
+        setMensajePopEspere("Procesando producto: "+proCodi,false);
+        
         kgPro+=dtVen.getDouble("avl_canti");
         impPro+=dtVen.getDouble("avl_prbase",true); 
     } while (dtVen.next());
@@ -456,11 +456,11 @@ public class Clmarzona extends ventana {
     }
     kgsVenE.setValorDec(kgTot);
     impVentaE.setValorDec(impTot);
-    pmVenE.setValorDec(impTot/kgTot);
+    pmVenE.setValorDec(impTot==0?0:impTot/kgTot);
 
     impGanaE.setValorDec(ganaTot);
-    ekGanaE.setValorDec(ganaTot/kgTot);
-    pmComE.setValorDec(iCoTo/kCoTo);
+    ekGanaE.setValorDec(kgTot==0?0:ganaTot/kgTot);
+    pmComE.setValorDec(kCoTo==0?0:iCoTo/kCoTo);
     verDatos("TOTAL","**TOTAL GENERAL**",kgTot,impTot,ganaTot,kCoTo,iCoTo,jt);
     s="SELECT g.agr_codi,agp_nomb,sum(mar_kilven) as mar_kilven,"
             + " sum(mar_impven) as mar_impven, "
@@ -526,9 +526,9 @@ public class Clmarzona extends ventana {
     v.add(proNomb);
     v.add(Formatear.format(kgPro,"----,--9.99")); // Kilos Venta
     v.add(Formatear.format(impPro,"----,--9.99")); //  Imp. Venta
-    v.add(Formatear.format(impPro/kgPro,"---9.99")); // Pr. Medio Venta.
+    v.add(Formatear.format(kgPro==0?0:impPro/kgPro,"---9.99")); // Pr. Medio Venta.
     v.add(Formatear.format((iCom==0||kCom==0?0:iCom/kCom),"---9.99")); // 5
-    v.add(Formatear.format(impGana/kgPro,"--,--9.99")); // 6
+    v.add(Formatear.format(kgPro==0?0:impGana/kgPro,"--,--9.99")); // 6
     v.add(Formatear.format(impGana,"---,--9.99")); // 7
     jt.addLinea(v);
     try {
@@ -687,7 +687,7 @@ public class Clmarzona extends ventana {
         Pcabe.add(emp_codiE);
         emp_codiE.setBounds(65, 2, 41, 17);
 
-        cLabel4.setText("SubEmpresa");
+        cLabel4.setText("Delegacion");
         cLabel4.setPreferredSize(new java.awt.Dimension(70, 18));
         Pcabe.add(cLabel4);
         cLabel4.setBounds(124, 2, 70, 17);
@@ -712,10 +712,10 @@ public class Clmarzona extends ventana {
         rep_codiE.setBounds(310, 48, 210, 18);
 
         opIncVertE.setSelected(true);
-        opIncVertE.setText("Incl. Vertederos");
-        opIncVertE.setToolTipText("Incluir Vertederos para calcular Margenes");
+        opIncVertE.setText("Incl. todas Reg.");
+        opIncVertE.setToolTipText("Incluir Regularizaciones Genericas");
         Pcabe.add(opIncVertE);
-        opIncVertE.setBounds(440, 67, 110, 17);
+        opIncVertE.setBounds(435, 67, 120, 17);
         opIncVertE.getAccessibleContext().setAccessibleDescription("Incluir Regularizaciones");
 
         cLabel18.setText("Seccion Art");

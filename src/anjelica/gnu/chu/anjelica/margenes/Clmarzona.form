@@ -184,7 +184,7 @@
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel4">
               <Properties>
-                <Property name="text" type="java.lang.String" value="SubEmpresa"/>
+                <Property name="text" type="java.lang.String" value="Delegacion"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[70, 18]"/>
                 </Property>
@@ -247,15 +247,15 @@
             <Component class="gnu.chu.controles.CCheckBox" name="opIncVertE">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Incl. Vertederos"/>
-                <Property name="toolTipText" type="java.lang.String" value="Incluir Vertederos para calcular Margenes"/>
+                <Property name="text" type="java.lang.String" value="Incl. todas Reg."/>
+                <Property name="toolTipText" type="java.lang.String" value="Incluir Regularizaciones Genericas"/>
               </Properties>
               <AccessibilityProperties>
                 <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value="Incluir Regularizaciones"/>
               </AccessibilityProperties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="440" y="67" width="110" height="17"/>
+                  <AbsoluteConstraints x="435" y="67" width="120" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

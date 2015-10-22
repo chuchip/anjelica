@@ -263,6 +263,8 @@ cli_email1 char(60),     -- Correo Electronico Comercial (Tarifas)
 cli_email2 char(60),     -- Correo Electronico Administr. (Facturas/Alb.)
 constraint ix_vcliente primary key(cli_codi)
 );
+create view anjelica.v_cliente as select * from anjelica.clientes;
+grant select on anjelica.v_cliente to PUBLIC;
 --
 -- Tabla de Cambios en Tabla Clientes
 ---
@@ -759,6 +761,7 @@ avp_numpar int,			-- Numero de Partida (Lote)
 avp_numind int,			--  Numero de Individuo
 avp_numuni float,		-- Numero de Unidades
 avp_canti decimal(9,3),         -- Kilos
+avp_canbru decimal(9,3),  -- Cantidad brutos (Kilos)
 his_usunom varchar(15) not null, -- Usuario que realiza el Cambio
  his_fecha timestamp not null, -- Fecha de Cambio
  his_coment varchar(100), -- Comentario sobre el Cambio
@@ -772,11 +775,11 @@ fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser
 avc_basimp,avc_kilos,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,c.his_rowid,
 avc_depos,l.avl_numlin,l.pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,tar_preci,avl_unid,
 avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,
-avp_numlin,avp_ejelot,avp_emplot,avp_serlot,avp_numpar,avp_numind,avp_numuni,avp_canti
+avp_numlin,avp_ejelot,avp_emplot,avp_serlot,avp_numpar,avp_numind,avp_numuni,avp_canti,avp_canbru
 from hisalcave as c, hisallive as l, hisalpave as p 
 where c.his_rowid=l.his_rowid and l.his_rowid=p.his_rowid
 and l.avl_numlin=p.avl_numlin;
-
+grant select on anjelica.v_halbventa_detalle to public;
 --
 -- Tabla Productos de Residiuos en albaran de ventas(MER,GRASA,etc)
 --

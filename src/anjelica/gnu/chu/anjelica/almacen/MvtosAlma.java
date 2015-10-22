@@ -47,7 +47,7 @@ public class MvtosAlma
   private String accesoEmp;
   private Date dateFin;
   private boolean swCompraNoValor,swDespNoValor;
-  private boolean swIgnVert=false;
+  private boolean swIgnRegul=false; // Ignorar reg. De secciones no suyas
   private boolean swIgnDespFecha=false; // Ignorar despieces de ult.fecha
   boolean swSoloInv=false; // Solo busca registros en inventarios
   boolean incInvFinal=false; // Por defecto no se incluye inventario de ult. fecha
@@ -236,12 +236,13 @@ public class MvtosAlma
         this.sbeCodi = sbeCodi;
   }
   /**
-   * Indica si debe ignorar vertederos al buscar los movimientos
-   * @param ignVert 
+   * Indica si debe ignorar vertederos de otras secciones 
+   * al buscar los movimientos
+   * @param ignRegul 
    */
-  public void setIgnoraVert(boolean ignVert)
+  public void setIgnoraRegular(boolean ignRegul)
   {
-       swIgnVert=ignVert;
+       swIgnRegul=ignRegul;
   }
   /**
    * Indica si se buscaran los movimientos desglosandolo. 
@@ -317,7 +318,7 @@ public class MvtosAlma
         + " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "
         + " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"
         + " r.emp_codi  as empcodi,r.pro_codi as pro_codori"
-        + ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "
+        + ", tir_tipo as repCodi,tir_nomb as zonCodi,sbe_codi as sbe_codi "
         + ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "
         + " ,rgs_fecha as fecdoc, "
         + " 'N' as avc_depos "
@@ -346,7 +347,8 @@ public class MvtosAlma
             " mvt_fecdoc as fecdoc "+
             ", 'N' as avc_depos "+
              " from mvtosalm where "+
-             "  mvt_canti <> 0 "+      
+             "  mvt_canti <> 0 "+
+           
             (almCodi==0?"":" and alm_codi = "+almCodi)+
             (ejercLote==0?"":" and pro_ejelot = "+ejercLote)+
             (serieLote==null?"":" and pro_serlot = '"+serieLote+"'")+
@@ -539,32 +541,33 @@ public class MvtosAlma
        " AND l.pro_codi = " + (proCodi==-1?"?":proCodi)  +
         " and "+(swFecDocumento?"  deo_fecha ":
           " l.def_tiempo::date ")+
-       " between TO_DATE('" + fecIni + "','dd-MM-yyyy') and TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
-    sql+=" UNION all "+ // Regularizaciones.
-       " select 1 as orden,'RE' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov,"+
-       "  r.pro_serie as serie,r.pro_nupar as  lote,"+
-       " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "+
-       " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
-       " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
-       ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "+
-       ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "+
-       ", r.rgs_fecha as fecdoc "+
-       ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
-       " FROM v_regstock r WHERE "+       
-       " rgs_kilos <> 0 "+
-       ( incInvFinal?"": " and tir_afestk != '='")+ // Sin Incluir Inventarios
-       (swIgnVert?" and tir_tipo NOT like 'V%'":"")+
-//        " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
-       (almCodi==0?"":" and alm_codi = "+almCodi)+
-       (proLote==0?"":" and r.pro_nupar  = "+proLote)+
-       (proNumind==0?"":" and r.pro_numind = "+proNumind)+
-       (ejercLote==0?"":" and eje_nume = "+ejercLote)+
-       (serieLote==null?"":" and pro_serie = '"+serieLote+"'")+
-       (empCodi==0?"":" and r.emp_codi = "+empCodi)+
-       (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
-        " AND r.pro_codi = " + (proCodi==-1?"?":proCodi)  +
-        " AND r.rgs_fecha::date >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
-        " and r.rgs_fecha::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
+       " between TO_DATE('" + fecIni + "','dd-MM-yyyy') and TO_DATE('"+fecFin+"','dd-MM-yyyy') ";   
+     sql+=" UNION all "+ // Regularizaciones.
+        " select 1 as orden,'RE' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov,"+
+        "  r.pro_serie as serie,r.pro_nupar as  lote,"+
+        " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "+
+        " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
+        " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
+        ", rep_codi as repCodi,zon_codi as zonCodi,r.sbe_codi as sbe_codi "+
+        ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "+
+        ", r.rgs_fecha as fecdoc "+
+        ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
+        " FROM v_regstock r left join  clientes as cl on cl.cli_codi = r.rgs_cliprv "        
+        + "WHERE "+       
+        " rgs_kilos <> 0 "+
+        ( incInvFinal?"": " and tir_afestk != '='")+ // Sin Incluir Inventarios      
+ //        " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
+        (almCodi==0?"":" and alm_codi = "+almCodi)+
+        (proLote==0?"":" and r.pro_nupar  = "+proLote)+
+        (proNumind==0?"":" and r.pro_numind = "+proNumind)+
+        (ejercLote==0?"":" and eje_nume = "+ejercLote)+
+        (serieLote==null?"":" and pro_serie = '"+serieLote+"'")+
+        (empCodi==0?"":" and r.emp_codi = "+empCodi)+
+        (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
+         " AND r.pro_codi = " + (proCodi==-1?"?":proCodi)  +
+         " AND r.rgs_fecha::date >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
+         " and r.rgs_fecha::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
+
     }
     if (! incInvFinal || swSoloInv )
     { // No incluir inventario final.
@@ -780,8 +783,7 @@ public class MvtosAlma
             pSInv=null;
         }
         else
-        {
-           
+        {           
             fefi = Formatear.sumaDias(fecIni, "dd-MM-yyyy", -1);
             if (fecInv.equals(fefi))
             {
@@ -947,6 +949,18 @@ public class MvtosAlma
     Double cant;
     double cantiInd=0;
     HashMap<String,Double> ht = new HashMap();
+    PreparedStatement psCli=null;
+    boolean swDiscr=false;
+    String DT_zonCodi="",DT_repCodi="";
+    int DT_sbeCodi=0;
+    if ( (repCodi!=null ||  zonCodi!=null || sbeCodi!=0))
+    {
+        swDiscr=true;
+        if (!mvtoDesgl )
+        { // Va por movimientos pero quiero discr. Zona/Repr o Seccion.
+            psCli= dtStat.getPreparedStatement("select * from v_cliente where cli_codi = ?");       
+        }
+    }
     do
     {
         if (cancelarConsulta)
@@ -961,7 +975,7 @@ public class MvtosAlma
             if  (tipMov.equals("E"))
                 tipMov="+";
             if  (tipMov.equals("S"))
-                tipMov="-";            
+                tipMov="-";
         }
         sel=dt.getString("sel").charAt(0);
         if (dt.getString("sel").equals("DE"))
@@ -1140,23 +1154,52 @@ public class MvtosAlma
 
         if (tipMov.equals("-"))
         { // Es una salida, traspaso entre almacenes o Regularizacion
-          cantiInd-= dt.getDouble("canti");
-          swIgnVenta=false;
-          if (sel=='V')
-          { // Albaran de ventas.
-            if (zonCodi!= null)
+            if (swDiscr)
             {
-              if (!dt.getString("zonCodi").toUpperCase().matches(zonCodi))
-                  swIgnVenta=true;
+                if (psCli!=null)
+                {
+                  psCli.setInt(1,dt.getInt("cli_codi"));
+                  ResultSet rsCli=psCli.executeQuery();
+                  if (! rsCli.next())
+                  {
+                    DT_zonCodi="";
+                    DT_repCodi="";
+                    DT_sbeCodi=0;
+                  }
+                  else
+                  {
+                    DT_zonCodi=rsCli.getString("zon_codi").toUpperCase();
+                    DT_repCodi=rsCli.getString("rep_codi").toUpperCase();
+                    DT_sbeCodi=rsCli.getInt("sbe_codi");
+                  }
+                }
+                else
+                {
+                    DT_zonCodi=dt.getString("zonCodi",true).toUpperCase();
+                    DT_repCodi=dt.getString("repCodi",true).toUpperCase();
+                    DT_sbeCodi=dt.getInt("sbe_codi");
+                }
             }
-            if (repCodi != null)
-            {
-              if (!dt.getString("repCodi").toUpperCase().matches(repCodi))
-                  swIgnVenta=true;
+            cantiInd-= dt.getDouble("canti");
+            swIgnVenta=false;
+            if (sel=='V' || sel=='R')
+            { // Albaran de venta o Regularizacion
+              if (zonCodi!= null && ! DT_zonCodi.equals(""))
+              {
+                if (! DT_zonCodi.matches(zonCodi))
+                    swIgnVenta=true;
+              }
+              if (repCodi != null && ! DT_repCodi.equals(""))
+              {
+                if (! DT_repCodi.matches(repCodi))
+                    swIgnVenta=true;
+              }              
+              if ( sbeCodi!=0 && DT_sbeCodi!=0 && DT_sbeCodi!=sbeCodi)
+              {
+                  if (sel!='R' || swIgnRegul)
+                      swIgnVenta=true;
+              }
             }
-            if (sbeCodi!=0 && dt.getInt("sbe_codi")!=sbeCodi)
-                swIgnVenta=true;
-          }
 
           if ((sel=='V' || sel=='R') && !swIgnVenta)
           { // Tener solo en cuenta Ventas y Regularizaciones.
@@ -1194,13 +1237,16 @@ public class MvtosAlma
               }
               else
               { // Es regularizacion
-                  if (dt.getString("repCodi").equals("VP") && dt.getInt("cliCodi")!=4 && dt.getInt("cliCodi")!=0)
-                  { // Vertedero de proveedor y NO es NO reclamada ni PENDIENTE. No influye en Ganancias
-                     msgLog+="Vertedero reclamado a proveedor "+dt.getDouble("canti", true)+
-                                   " : EN Fecha: " + dt.getFecha("fecmov")+": Producto: "+proCodi+" \n";
+//                  if (dt.getString("repCodi").equals("VP") && dt.getInt("cliCodi")!=4 && dt.getInt("cliCodi")!=0)
+//                  { // Vertedero de proveedor y NO es NO reclamada ni PENDIENTE. No influye en Ganancias
+//                     msgLog+="Vertedero reclamado a proveedor "+dt.getDouble("canti", true)+
+//                                   " : EN Fecha: " + dt.getFecha("fecmov")+": Producto: "+proCodi+" \n";
+//                  }
+//                  else
+                  {
+                    if (!swIgnVenta)
+                        impGana += dt.getDouble("canti", true) * (dt.getDouble("precio", true) - preStk);
                   }
-                  else
-                    impGana += dt.getDouble("canti", true) * (dt.getDouble("precio", true) - preStk);
               }
             }
           }
