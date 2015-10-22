@@ -235,7 +235,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2015-10-06"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2015-11-22"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -1051,7 +1051,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         pvc_fecentE.requestFocus();
         return false;
       }
-      if (pcc_estadE.getValor().equals("L") )
+      if (pcc_estadE.getValor().equals("L") && ! P_ADMIN)
       {
           pcc_estadE.requestFocus();
           mensajeErr("Este estado solo se puede poner desde mantenimiento Albaranes venta");
