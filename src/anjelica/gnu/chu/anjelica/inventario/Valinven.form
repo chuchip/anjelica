@@ -37,7 +37,7 @@
         </Property>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL, &quot;##9.99&quot;)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL, &quot;##9.9999&quot;)"/>
       </AuxValues>
     </Component>
     <Component class="gnu.chu.controles.CTextField" name="lci_numindE">
@@ -289,7 +289,7 @@
             <Property name="procInsLinea" type="boolean" value="true"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="jt.setCanInsertLinea(false);&#xa;jt.setCanDeleteLinea(false);&#xa;Vector v = new Vector();&#xa;v.addElement(&quot;Producto&quot;); // 0&#xa;v.addElement(&quot;Descripcion&quot;); // 1&#xa;v.addElement(&quot;Cantidad&quot;); // 2&#xa;v.addElement(&quot;Precio&quot;); // 3&#xa;v.addElement(&quot;N.Piezas&quot;); // 4&#xa;&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]&#xa;                       {80, 200, 60, 60, 60});&#xa;jt.setAlinearColumna(new int[]&#xa;                         {2, 0, 2, 2, 2});&#xa;jt.setFormatoColumna(2, &quot;###9.99&quot;);&#xa;jt.setFormatoColumna(3, &quot;##9.99&quot;);&#xa;jt.setFormatoColumna(4, &quot;##9&quot;);&#xa;jt.setAlinearColumna(new int[]&#xa;                         {2, 0, 2, 2, 2});&#xa;jt.setFormatoColumna(2, &quot;###9.99&quot;);&#xa;jt.setFormatoColumna(3, &quot;##9.99&quot;);&#xa;jt.setFormatoColumna(4, &quot;##9&quot;);"/>
+            <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="jt.setCanInsertLinea(false);&#xa;jt.setCanDeleteLinea(false);&#xa;Vector v = new Vector();&#xa;v.addElement(&quot;Producto&quot;); // 0&#xa;v.addElement(&quot;Descripcion&quot;); // 1&#xa;v.addElement(&quot;Cantidad&quot;); // 2&#xa;v.addElement(&quot;Precio&quot;); // 3&#xa;v.addElement(&quot;N.Piezas&quot;); // 4&#xa;&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]&#xa;                       {80, 200, 60, 60, 60});&#xa;jt.setAlinearColumna(new int[]&#xa;                         {2, 0, 2, 2, 2});"/>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(5){&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        prp_preciE.selectAll();&#xa;    }&#xa;}&#xa;"/>
           </AuxValues>
           <Constraints>

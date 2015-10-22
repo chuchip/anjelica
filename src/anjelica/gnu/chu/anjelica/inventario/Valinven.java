@@ -111,7 +111,7 @@ public class Valinven extends ventanaPad implements PAD {
         nav = new navegador(this, dtCons, false,navegador.CURYCON);
         iniciarFrame();
 
-        this.setVersion("2013-01-25" );
+        this.setVersion("2015-10-21" );
         strSql = "SELECT * FROM coninvcab where emp_codi = "+EU.em_cod+
             " order by cci_codi";
  
@@ -144,7 +144,7 @@ public class Valinven extends ventanaPad implements PAD {
         pro_codiE = new gnu.chu.camposdb.proPanel();
         pro_nombE = new gnu.chu.controles.CTextField(Types.CHAR, "X", 50);
         prp_pesoE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9.99");
-        prp_preciE = new gnu.chu.controles.CTextField(Types.DECIMAL, "##9.99");
+        prp_preciE = new gnu.chu.controles.CTextField(Types.DECIMAL, "##9.9999");
         lci_numindE = new gnu.chu.controles.CTextField(Types.DECIMAL, "##9");
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
@@ -330,14 +330,6 @@ public class Valinven extends ventanaPad implements PAD {
             {80, 200, 60, 60, 60});
         jt.setAlinearColumna(new int[]
             {2, 0, 2, 2, 2});
-        jt.setFormatoColumna(2, "###9.99");
-        jt.setFormatoColumna(3, "##9.99");
-        jt.setFormatoColumna(4, "##9");
-        jt.setAlinearColumna(new int[]
-            {2, 0, 2, 2, 2});
-        jt.setFormatoColumna(2, "###9.99");
-        jt.setFormatoColumna(3, "##9.99");
-        jt.setFormatoColumna(4, "##9");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -512,7 +504,7 @@ public class Valinven extends ventanaPad implements PAD {
     // End of variables declaration//GEN-END:variables
   private void confGrid() throws Exception
   {
-    Vector v1 = new Vector();
+    ArrayList v1 = new ArrayList();
 
     pro_codiE.iniciar(dtStat, this, vl, EU);
 
@@ -529,6 +521,7 @@ public class Valinven extends ventanaPad implements PAD {
     v1.add(prp_preciE); // 3
     v1.add(lci_numindE); // 4
     jt.setCampos(v1);
+    jt.setFormatoCampos();
   }
     @Override
   public void iniciarVentana() throws Exception
@@ -865,6 +858,8 @@ public class Valinven extends ventanaPad implements PAD {
       double importeT=0;
       do
       {
+        if (dtCon1.getDouble("lci_peso")==0)
+            continue;
         s=" SELECT ipr_prec FROM invprec where pro_codi= "+dtCon1.getInt("pro_codi")+
             " and cci_feccon =  TO_DATE('"+cci_fecconE.getText()+"','dd-MM-yyyy') ";
         if ( dtStat.select(s))

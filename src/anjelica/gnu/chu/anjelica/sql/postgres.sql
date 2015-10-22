@@ -3044,7 +3044,7 @@ create table anjelica.invprec
 (
 	cci_feccon date not null,	-- Fecha de Control
 	pro_codi int not null,		-- Producto
-	ipr_prec decimal(6,2) not null,	-- Precio de Producto
+	ipr_prec float not null,	-- Precio de Producto
 constraint ix_invprec primary key (cci_feccon,pro_codi)
 );
 --
