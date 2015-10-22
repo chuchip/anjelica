@@ -1182,21 +1182,24 @@ public class MvtosAlma
             }
             cantiInd-= dt.getDouble("canti");
             swIgnVenta=false;
+            if (sel=='R' && swIgnRegul && ! swDiscr && DT_zonCodi.equals(""))
+            { // Ignorar Regularizaciones Genericas                             
+                  swIgnVenta=true;
+            }
             if (sel=='V' || sel=='R')
-            { // Albaran de venta o Regularizacion
-              if (zonCodi!= null && ! DT_zonCodi.equals(""))
+            { // Albaran de venta o Regularizacion              
+              if (zonCodi!= null)
               {
                 if (! DT_zonCodi.matches(zonCodi))
-                    swIgnVenta=true;
+                        swIgnVenta=true;
               }
-              if (repCodi != null && ! DT_repCodi.equals(""))
+              if (repCodi != null )
               {
                 if (! DT_repCodi.matches(repCodi))
-                    swIgnVenta=true;
+                        swIgnVenta=true;
               }              
-              if ( sbeCodi!=0 && DT_sbeCodi!=0 && DT_sbeCodi!=sbeCodi)
-              {
-                  if (sel!='R' || swIgnRegul)
+              if ( sbeCodi!=0 && DT_sbeCodi!=sbeCodi)
+              {                
                       swIgnVenta=true;
               }
             }
