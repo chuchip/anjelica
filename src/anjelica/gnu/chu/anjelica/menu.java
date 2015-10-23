@@ -1736,7 +1736,10 @@ void pdreprese_actionPerformed(ActionEvent e) {
   }
   
   void ALConmvpr_actionPerformed(ActionEvent e) {
-    lanzaEjecutable(new gnu.chu.anjelica.almacen.Comvalm(menu.this,EU));
+    Hashtable<String,String> ht=new Hashtable();
+    ht.put("verprecio", "1");
+    
+    lanzaEjecutable(new gnu.chu.anjelica.almacen.Comvalm(menu.this,EU,ht));
 
   }
   void ALMantPartes_actionPerformed(ActionEvent e) {

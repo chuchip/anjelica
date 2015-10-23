@@ -156,11 +156,11 @@ public class  Formatear
   {
     return FormatChar(Num.trim(),Formatear);
   }
-  public /*synchronized */static String  FormatDecimal(double Num,String Formatear)
+  public static String  FormatDecimal(double Num,String Formatear)
   {
       return FormatDecimal(Num,Formatear,false);
   }
-  public /*synchronized */static String  FormatDecimal(double Num,String Formatear,boolean elimPunto)
+  public static String  FormatDecimal(double Num,String Formatear,boolean elimPunto)
   {
     DecimalFormat form = new DecimalFormat();
     form.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));
@@ -171,7 +171,7 @@ public class  Formatear
     return (FormatChar(Numch,Formatear,true,elimPunto));
   }
 
-  public /*synchronized*/ static String FormatChar(String Numero,String Formatear)
+  public static String FormatChar(String Numero,String Formatear)
   {
     return FormatChar(Numero,Formatear,true,false);
   }
@@ -179,229 +179,231 @@ public class  Formatear
   {
     return FormatChar(Numero,Formatear,ceroIsNull,false);
   }
-
+/**
+ * Formatea un numero con el formato mandado.
+ * Antes de formatearlo, por defecto, lo redondea.
+ * @param Numero 
+ * @param Formatear
+ * @param ceroIsNull
+ * @param elimPunto
+ * @return 
+ */
     @SuppressWarnings("static-access")
-  public static String FormatChar(String Numero,String Formatear,boolean ceroIsNull,boolean elimPunto)
+  public static String FormatChar(String Numero,String Formatear,boolean ceroIsNull, boolean elimPunto)
   {
 
-     if (Formatear==null)
-      return null;
+      if (Formatear == null)
+          return null;
 
-     if (Numero==null)
-      return null;
-     while (swFormat)
+      if (Numero == null)
+          return null;
+
+      while (swFormat)
       {
-        try
-        {
+          try
+          {
 //          System.out.println("Crack...");
-          Thread.currentThread().sleep(10);
-        }
-        catch (Exception ex) { }
+              Thread.currentThread().sleep(10);
+          } catch (Exception ex)
+          {
+          }
       }
-     swFormat=true;
+      swFormat = true;
 
-     int n,n1,pneg;
-     String text1="";
-     char letr;
-     int Ltent=1; // Longitud de parte entera sin ESPACIOS
-     String fent="";
-     String fdec="";
-     String tent="";
-     String tdec="";
+      int n, n1, pneg;
+      String text1 = "";
+      char letr;
+      int Ltent = 1; // Longitud de parte entera sin ESPACIOS
+      String fent = "";
+      String fdec = "";
+      String tent = "";
+      String tdec = "";
 
-     // Cojer la parte entera del formato
-        if (Numero.length()==0)
-        Numero="0";
+      // Cojer la parte entera del formato
+      if (Numero.length() == 0)
+          Numero = "0";
 
-     n=buscaletra(Formatear,'.',0);
-     if (n >= 0)
-     {
-        if (n==0)
-            fent="#";
-        else
-            fent=Formatear.substring(0,n); // Parte entera del formato
+      n = buscaletra(Formatear, '.', 0);
+      if (n >= 0)
+      {
+          if (n == 0)
+              fent = "#";
+          else
+              fent = Formatear.substring(0, n); // Parte entera del formato
 
-        fdec=Formatear.substring(n+1); // Parte Decimal del formato
-     }
-     else
-          fent=Formatear; // Parte entera del formato
-
+          fdec = Formatear.substring(n + 1); // Parte Decimal del formato
+      } else
+          fent = Formatear; // Parte entera del formato
 
      // Cojer la parte entera del texto entrado.
-
-
-     n=buscaletra(Numero,decimalSeparator.charAt(0));
-     if (n >= 0)
-     {
-        if (n==0)
-           tent="0";
-        else
-            tent=Numero.substring(0,n); // Parte entera del formato
-            tdec=Numero.substring(n+1); // Parte Decimal del formato
-     }
-     else
-        tent=Numero;
-
-     Ltent = tent.trim().length(); // Longitud de parte entera sin ESPACIOS
-
-         text1="";
-     int Lfent=0;
-
-     for (n=0;n<fent.length();n++)
-     {
-            if (fent.charAt(n)!=',')
-            Lfent++;
-     }
-  // Tratar la parte entera del numero tecleado.
-
-     if (tent.length() > Lfent)
-     {
-        // Error. Longitud del Campo entero superior al Formato
-      for (n=0;n<fent.length();n++)
-      text1=text1+"*";
-      if (fdec.length()>0)
+      n = buscaletra(Numero, decimalSeparator.charAt(0));
+      if (n >= 0)
       {
-        text1=text1+(elimPunto?"":decimalSeparator);
-    for (n=0;n<fdec.length();n++)
-          text1=text1+"*";
+          if (n == 0)
+              tent = "0";
+          else
+              tent = Numero.substring(0, n); // Parte entera del formato
+          tdec = Numero.substring(n + 1); // Parte Decimal del formato
+      } else
+          tent = Numero;
+
+      Ltent = tent.trim().length(); // Longitud de parte entera sin ESPACIOS
+
+      text1 = "";
+      int Lfent = 0;
+
+      for (n = 0; n < fent.length(); n++)
+      {
+          if (fent.charAt(n) != ',')
+              Lfent++;
       }
-      swFormat=false;
-      return text1;
-     }
+      // Tratar la parte entera del numero tecleado.
 
+      if (tent.length() > Lfent)
+      {
+          // Error. Longitud del Campo entero superior al Formato
+          for (n = 0; n < fent.length(); n++)
+          {
+              text1 = text1 + "*";
+          }
+          if (fdec.length() > 0)
+          {
+              text1 = text1 + (elimPunto ? "" : decimalSeparator);
+              for (n = 0; n < fdec.length(); n++)
+              {
+                  text1 = text1 + "*";
+              }
+          }
+          swFormat = false;
+          return text1;
+      }
 
-    for (n=tent.length();n<fent.length();n++)
-            text1=text1+" "; // Ajustarlo al Numero de Caracteres del Formato
+      for (n = tent.length(); n < fent.length(); n++)
+      {
+          text1 = text1 + " "; // Ajustarlo al Numero de Caracteres del Formato
+      }
+      tent = text1 + tent;
+      pneg = buscaultletra(tent, '-');
 
-    tent=text1+tent;
-    pneg=buscaultletra(tent,'-');
+      text1 = "";
 
-/*    if (pneg >=0 && tent.length() == Lfent)
-    {
-      fent="-"+fent;
-      Lfent++;
-    }
-*/
-    text1="";
+      n1 = fent.length() - 1;
+      if (fent.charAt(n1) == '#' && ceroIsNull == true)
+      {
+          if (strToLong(tent) == 0)
+              tent = space(tent.length());
+      }
+      char text2;
 
-    n1=fent.length()-1;
-    if (fent.charAt(n1)=='#' && ceroIsNull==true)
-    {
-      if (strToLong(tent)==0)
-        tent=space(tent.length());
-    }
-    char text2;
+      for (n = n1; n >= 0; n--)
+      {
+          letr = fent.charAt(n);
+          text2 = tent.charAt(n1);
+          if (text2 == '-')
+              text2 = ' ';
+          switch (letr)
+          {
+              case '9':
+              case '0':
+                  if (text2 == ' ')
+                      text1 = "0" + text1;
+                  else
+                      text1 = text2 + text1;
+                  n1--;
+                  break;
+              case '-':
+              case '#':
+                  text1 = text2 + text1;
+                  n1--;
+                  break;
+              case ',':
+                  text1 = groupSeparator + text1;
+          }
+      }
 
-     for (n=n1;n>=0;n--)
-     {
-       letr=fent.charAt(n);
-       text2=tent.charAt(n1);
-       if (text2=='-')
-            text2=' ';
-        switch (letr)
-        {
-            case '9':
-            case '0':
-              if (text2 == ' ')
-                text1 = "0" + text1;
+      tent = text1;
+      text1 = "";
+
+      // Quitar las comas de donde sea necesario
+      for (n = tent.length() - 1; n >= 0; n--)
+      {
+          if (n > 0)
+          {
+              if (tent.charAt(n) == groupSeparator.charAt(0) && tent.charAt(n - 1) == ' ')
+                  text1 = " " + text1;
               else
-                text1 = text2 + text1;
-              n1--;
-              break;
-            case '-':
-            case '#':
-              text1=text2+text1;
-              n1--;
-              break;
-            case ',':
-              text1=groupSeparator+text1;
-        }
-     }
-
-     tent=text1;
-     text1="";
-
-        // Quitar las comas de donde sea necesario
-    for (n=tent.length()-1;n>=0;n--)
-    {
-      if (n >0)
-      {
-            if (tent.charAt(n)==groupSeparator.charAt(0) && tent.charAt(n-1)== ' ')
-            text1=" "+text1;
-            else
-            text1=tent.charAt(n)+text1;
+                  text1 = tent.charAt(n) + text1;
+          } else
+              text1 = tent.charAt(n) + text1;
       }
-      else
-              text1=tent.charAt(n)+text1;
-    }
 
-     tent=text1;
-     if (pneg >= 0)
-     {
-       // Numero Negativo. Ponerle el signo donde corresponda.
-       text1 = "";
-       boolean sw_neg = true;
+      tent = text1;
+      if (pneg >= 0)
+      {
+          // Numero Negativo. Ponerle el signo donde corresponda.
+          text1 = "";
+          boolean sw_neg = true;
 
-       for (n = tent.length() - 1; n >= 0; n--)
-       {
-         if (fent.charAt(n) == '-' && sw_neg == true && tent.charAt(n) == ' ')
-         {
-           if (text1.charAt(0)==' ') // Para quitar posibles separadores.
-             text1=" -"+text1.substring(1);
-           else
-            text1 = "-" + text1;
-           sw_neg = false;
-           continue;
-         }
-         text1 = tent.charAt(n) + text1;
-       }
-       tent = text1;
-     }
-
+          for (n = tent.length() - 1; n >= 0; n--)
+          {
+              if (fent.charAt(n) == '-' && sw_neg == true && tent.charAt(n) == ' ')
+              {
+                  if (text1.charAt(0) == ' ') // Para quitar posibles separadores.
+                      text1 = " -" + text1.substring(1);
+                  else
+                      text1 = "-" + text1;
+                  sw_neg = false;
+                  continue;
+              }
+              text1 = tent.charAt(n) + text1;
+          }
+          tent = text1;
+      }
 
     // Tratar la parte decimal del Numero
+      if (fdec.compareTo("") == 0)
+      {
+          // Sin parte decimal //
+          Numero = tent;
+          swFormat = false;
+          return Numero;
+      }
+      // Con parte decimal
+      text1 = "";
+      for (n = tdec.length(); n < fdec.length(); n++)
+      {
+          text1 = text1 + " ";
+      }
 
-    if (fdec.compareTo("") == 0)
-    {
-      // Sin parte decimal //
-      Numero = tent;
+      tdec = tdec + text1;
+      text1 = "";
+
+      for (n = fdec.length() - 1; n >= 0; n--)
+      {
+          letr = fdec.charAt(n);
+          if (letr == '-')
+              letr = '#';
+
+          switch (letr)
+          {
+              case '9':
+                  if (tdec.charAt(n) == ' ')
+                      text1 = "0" + text1;
+                  else
+                      text1 = tdec.charAt(n) + text1;
+                  break;
+              case '#':
+                  text1 = tdec.charAt(n) + text1;
+                  break;
+          }
+      }
+      tdec = text1;
+      if (tdec.trim().compareTo("") == 0)
+          Numero = tent + " " + tdec;
+      else
+          Numero = tent + (elimPunto ? "" : decimalSeparator) + tdec;
       swFormat = false;
       return Numero;
-    }
-    // Con parte decimal
-    text1 = "";
-    for (n = tdec.length(); n < fdec.length(); n++)
-      text1 = text1 + " ";
-
-    tdec = tdec + text1;
-    text1 = "";
-
-    for (n = fdec.length() - 1; n >= 0; n--)
-    {
-      letr = fdec.charAt(n);
-      if (letr == '-')
-        letr = '#';
-
-      switch (letr)
-      {
-        case '9':
-          if (tdec.charAt(n) == ' ')
-            text1 = "0" + text1;
-          else
-            text1 = tdec.charAt(n) + text1;
-          break;
-        case '#':
-          text1 = tdec.charAt(n) + text1;
-          break;
-      }
-    }
-     tdec=text1;
-     if ( tdec.trim().compareTo("")==0 )
-        Numero=tent+" "+tdec;
-     else
-        Numero=tent+(elimPunto?"":decimalSeparator)+tdec;
-     swFormat=false;
-     return Numero;
   }
   /*****************************************************************************
   * Busca una letra  'l' dentro de una cadena 'c', comenzando a buscar a partir de

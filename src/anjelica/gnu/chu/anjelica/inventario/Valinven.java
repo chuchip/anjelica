@@ -258,13 +258,13 @@ public class Valinven extends ventanaPad implements PAD {
                         .add(7, 7, 7)
                         .add(alm_codiE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 194, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(opSinVal, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
+                        .add(opSinVal, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(18, 18, 18)
                         .add(cLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(usu_nombE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                        .add(usu_nombE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(Birlin, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)))
+                        .add(Birlin, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         PcabeLayout.setVerticalGroup(
@@ -301,15 +301,16 @@ public class Valinven extends ventanaPad implements PAD {
         Pprinc.add(Pcabe, gridBagConstraints);
 
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jt.setMaximumSize(new java.awt.Dimension(500, 250));
-        jt.setMinimumSize(new java.awt.Dimension(500, 250));
+        jt.setMaximumSize(new java.awt.Dimension(500, 201));
+        jt.setMinimumSize(new java.awt.Dimension(500, 201));
+        jt.setPreferredSize(new java.awt.Dimension(500, 201));
         jt.setProcInsLinea(true);
 
         org.jdesktop.layout.GroupLayout jtLayout = new org.jdesktop.layout.GroupLayout(jt);
         jt.setLayout(jtLayout);
         jtLayout.setHorizontalGroup(
             jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 498, Short.MAX_VALUE)
+            .add(0, 605, Short.MAX_VALUE)
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -333,7 +334,7 @@ public class Valinven extends ventanaPad implements PAD {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
@@ -342,115 +343,75 @@ public class Valinven extends ventanaPad implements PAD {
         Ppie.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         Ppie.setPreferredSize(new java.awt.Dimension(595, 70));
         Ppie.setQuery(true);
+        Ppie.setLayout(null);
 
         Bvalall.setText("Valorar Todo");
+        Ppie.add(Bvalall);
+        Bvalall.setBounds(2, 2, 80, 24);
 
         Bvallin.setText("Valorar Linea (F2)");
+        Ppie.add(Bvallin);
+        Bvallin.setBounds(100, 2, 100, 24);
 
         Baceptar.setText("Aceptar");
+        Ppie.add(Baceptar);
+        Baceptar.setBounds(331, 2, 90, 24);
 
         Bcancelar.setText("Cancelar");
+        Ppie.add(Bcancelar);
+        Bcancelar.setBounds(449, 2, 90, 24);
 
         opValcpre.setText("Incluir Productos ya valorados");
         opValcpre.setMaximumSize(new java.awt.Dimension(214, 18));
         opValcpre.setMinimumSize(new java.awt.Dimension(214, 18));
         opValcpre.setPreferredSize(new java.awt.Dimension(214, 18));
+        Ppie.add(opValcpre);
+        opValcpre.setBounds(13, 30, 180, 18);
 
         cci_codiE.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         cci_codiE.setBackground(Color.yellow);
         cci_codiE.setOpaque(true);
         cci_codiE.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        Ppie.add(cci_codiE);
+        cci_codiE.setBounds(482, 30, 56, 19);
 
         cLabel6.setText("Fecha Inventario");
+        Ppie.add(cLabel6);
+        cLabel6.setBounds(227, 31, 102, 15);
 
         fecinvE.setMinimumSize(new java.awt.Dimension(78, 18));
         fecinvE.setPreferredSize(new java.awt.Dimension(78, 18));
+        Ppie.add(fecinvE);
+        fecinvE.setBounds(333, 30, 131, 18);
 
         opVerDepos.setSelected(true);
         opVerDepos.setText("Ver Depositos");
+        Ppie.add(opVerDepos);
+        opVerDepos.setBounds(220, 2, 91, 17);
 
         cLabel7.setText("Unidades ");
+        Ppie.add(cLabel7);
+        cLabel7.setBounds(13, 51, 54, 17);
 
         unidTotE.setEditable(false);
+        Ppie.add(unidTotE);
+        unidTotE.setBounds(71, 50, 40, 17);
 
         cLabel8.setText("Kilos");
+        Ppie.add(cLabel8);
+        cLabel8.setBounds(180, 50, 35, 17);
 
         kilTotE.setEditable(false);
+        Ppie.add(kilTotE);
+        kilTotE.setBounds(220, 50, 80, 17);
 
         impTotE.setEditable(false);
+        Ppie.add(impTotE);
+        impTotE.setBounds(464, 50, 80, 17);
 
         cLabel9.setText("Importe");
-
-        org.jdesktop.layout.GroupLayout PpieLayout = new org.jdesktop.layout.GroupLayout(Ppie);
-        Ppie.setLayout(PpieLayout);
-        PpieLayout.setHorizontalGroup(
-            PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PpieLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(PpieLayout.createSequentialGroup()
-                                .add(Bvalall, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(Bvallin, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(opVerDepos, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                                .add(Baceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                                .add(Bcancelar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 101, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(PpieLayout.createSequentialGroup()
-                                .add(opValcpre, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(cLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 102, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(fecinvE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
-                                .add(18, 18, 18)
-                                .add(cci_codiE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(12, 12, 12)))
-                        .add(42, 42, 42))
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(cLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(unidTotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(cLabel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 35, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(kilTotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 68, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(cLabel9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 57, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(impTotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 64, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-        );
-        PpieLayout.setVerticalGroup(
-            PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PpieLayout.createSequentialGroup()
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(Bvalall, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(Bvallin, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(Baceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(Bcancelar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(opVerDepos, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(cLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(opValcpre, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(fecinvE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(cci_codiE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE))
-                .add(1, 1, 1)
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(impTotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(kilTotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(unidTotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-        );
+        Ppie.add(cLabel9);
+        cLabel9.setBounds(390, 50, 57, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -536,7 +497,9 @@ public class Valinven extends ventanaPad implements PAD {
     cam_codiE.texto.setMayusc(true);
     gnu.chu.anjelica.pad.pdconfig.llenaDiscr(dtCon1, cam_codiE, "AC", EU.em_cod);
 
-   
+    mvtosAlm.setUsaDocumentos(false);
+    mvtosAlm.setIncUltFechaInv(false);
+
 
     alm_codiE.setFormato(true);
     alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
@@ -651,14 +614,17 @@ public class Valinven extends ventanaPad implements PAD {
             @Override
       public void run()
       {
+        msgEspere("Valorando Productos..");
         valorarTodo();
+        resetMsgEspere();
+        jt.requestFocusInicioLater();
       }
     };
   }
   void valorarTodo()
   {
 
-    Thread.currentThread().setPriority(Thread.MAX_PRIORITY-1);
+    
     this.setEnabled(false);
     mensaje("Espere, por favor ... Valorando Productos");
 
@@ -669,32 +635,23 @@ public class Valinven extends ventanaPad implements PAD {
       String feulin=fecinvE.getText();
 //    String feulst, tipMov;
       mvtosAlm.iniciarMvtos(feulin, cci_fecconE.getText(),dtCon1);
-      mvtosAlm.setIncUltFechaInv(false);
-      jt.requestFocusInicio();
       jt.setEnabled(false);
+      jt.requestFocusInicio();
+      
       for (; n < nl; n++)
       {
         if (jt.getValorDec(n,3) != 0 && !opValcpre.isSelected())
           continue;
-        mensaje("Valorando Producto: "+jt.getValorInt(n, 0)+ "("+n+" de "+nl+")",false);
+        setMensajePopEspere("Valorando Producto: "+jt.getValorInt(n, 0)+ " ("+n+" de "+nl+")",false);
         mvtosAlm.calculaMvtos(jt.getValorInt(n, 0), dtCon1, dtStat, null,null);
         jt.setValor("" +  mvtosAlm.getPrecioStock(),
                     n, 3);
       }
-    
-      SwingUtilities.invokeLater(new Thread()
-      {
-        @Override
-        public void run()
-          {
-            Valinven.this.setEnabled(true);
-            jt.setEnabled(true);
-            jt.ponValores(0);
-            jt.requestFocusInicio();
-        }
-      });
+      jt.setEnabled(true);
+      
       mensaje("");
       mensajeErr("TODOS los Productos ... Valorados");
+    
     }
     catch (Exception k)
     {

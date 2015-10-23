@@ -627,7 +627,7 @@ public class lisaldos   extends ventana  implements JRDataSource
 //    activar(false);
     try
     {
-      mvtosAlm.setMvtoDesgl(false);
+      mvtosAlm.setUsaDocumentos(false);
       mvtosAlm.setIncUltFechaInv(fecsalE.getText().equals(feulinE.getText()));
       mvtosAlm.setValorarDesp(valDesp);
       mvtosAlm.setAlmacen(alm_inicE.getValorInt());

@@ -120,7 +120,14 @@ public class Comvalm extends ventana
       if (ht==null)
           return;
        if (ht.get("verprecio") != null)
+       {
+           try {
              P_VERPRECIO = Integer.parseInt(ht.get("verprecio"))!=0;
+           } catch ( NumberFormatException  x)
+           {
+               
+           }
+       }
       
   }
   private void jbInit() throws Exception

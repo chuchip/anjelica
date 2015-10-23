@@ -40,7 +40,7 @@ import java.util.HashMap;
  */
 public class MvtosAlma
 {
-  private boolean mvtoDesgl=true; // Mvto. Desglosado
+  private boolean swUsaDocumentos=false; // Usa documentos para buscar los mvtos.
   private String tiposVert="";
   private boolean swDesglInd=false; // Indica si los mvtos. se deben desglosar por individuos
   private double incCosto=0;
@@ -247,21 +247,44 @@ public class MvtosAlma
   /**
    * Indica si se buscaran los movimientos desglosandolo. 
    * Es decir buscando en albaranes de venta, compra, desp,  etc, o se buscara en la tabla mvtos.
-   * Por defecto se busca en albaranes de venta/compra y desp.
+   * Por defecto se busca en Mvtos
+   * @dprecated
    * @return true si se se busca Desglosado (Albaranes/Despieces)
    */
   public boolean getMvtoDesgl()
   {
-      return mvtoDesgl;
+      return swUsaDocumentos;
   }
+  /**
+   * Si se manda true la busqueda de mvtos se hara a traves de los albaranes y despieces (Documentos)
+   * Si se manda false la busqueda de mvtos. se hara leyendo la tabla d mvtos (lo que es el valor por defecto)
+   * @param usaDocum 
+   */
+  public void setUsaDocumentos(boolean usaDocum)
+  {
+       this.swUsaDocumentos=usaDocum;
+  }
+   /**
+   * Indica si se buscaran los movimientos desglosandolo. 
+   * Es decir buscando en albaranes de venta, compra, desp,  etc, o se buscara en la tabla mvtos.
+   * Por defecto se busca en Mvtos  
+   * @return true si se se busca Desglosado (Albaranes/Despieces)
+   */
+  public boolean getUsaDocumentos()
+  {
+      return swUsaDocumentos;
+  }
+
   /**
    * Si se manda true la busqueda de mvtos se hara a traves de los albaranes y despieces
    * Si se manda false la busqueda de mvtos. se hara leyendo la tabla d mvtos.
+   * @deprecated  setUsaDocumentos
+   * @see setUsaDocumentos
    * @param mvtoDesgl  true o false
    */
   public void setMvtoDesgl(boolean mvtoDesgl)
   {
-      this.mvtoDesgl=mvtoDesgl;
+      this.swUsaDocumentos=mvtoDesgl;
   }
   /**
    * Usar mvtos(true) o documentos(false) para las consultas. 
@@ -271,7 +294,7 @@ public class MvtosAlma
    */
   public void setUseMvtos(boolean useMvtos)
   {
-      this.mvtoDesgl=!useMvtos;
+      this.swUsaDocumentos=!useMvtos;
   }
   /**
    * Devuelve Sentencia SQL a ejecutar para buscar los movimientos.
@@ -284,7 +307,7 @@ public class MvtosAlma
    */
   public String getSqlMvt(String fecIni, String fecFin, int proCodi) throws ParseException
   {
-    if (mvtoDesgl)
+    if (swUsaDocumentos)
         return getSqlMvtAnt(fecIni,fecFin,proCodi);    
     return getSqlMvtNuevo(fecIni,fecFin,proCodi);
   }
@@ -956,7 +979,7 @@ public class MvtosAlma
     if ( (repCodi!=null ||  zonCodi!=null || sbeCodi!=0))
     {
         swDiscr=true;
-        if (!mvtoDesgl )
+        if (!swUsaDocumentos )
         { // Va por movimientos pero quiero discr. Zona/Repr o Seccion.
             psCli= dtStat.getPreparedStatement("select * from v_cliente where cli_codi = ?");       
         }
@@ -970,7 +993,7 @@ public class MvtosAlma
         unid=0;
         precio =preStk;
         tipMov=dt.getString("tipmov");
-        if (! mvtoDesgl)
+        if (! swUsaDocumentos)
         {               
             if  (tipMov.equals("E"))
                 tipMov="+";
@@ -1014,7 +1037,7 @@ public class MvtosAlma
             {
                 if (dt.getString("avc_serie").equals("X"))
                 { // Traspaso entre almacenes
-                    if (almCodi == 0 ||  (mvtoDesgl?dt.getInt("alm_coddes")!=almCodi:true))
+                    if (almCodi == 0 ||  (swUsaDocumentos?dt.getInt("alm_coddes")!=almCodi:true))
                         swTraspAlm=true;
                 }
                 else 
@@ -1033,7 +1056,7 @@ public class MvtosAlma
             }
             if (sel=='V' && dt.getString("avc_serie").equals("X"))
             { // Traspaso entre almacenes
-                if (almCodi == 0 ||  (mvtoDesgl?dt.getInt("alm_coddes")!=almCodi:dt.getInt("alm_codi")!=almCodi))
+                if (almCodi == 0 ||  (swUsaDocumentos?dt.getInt("alm_coddes")!=almCodi:dt.getInt("alm_codi")!=almCodi))
                     swTraspAlm=true;
             }
         }
@@ -1212,7 +1235,7 @@ public class MvtosAlma
             {
               if (sel=='V')
               {
-                  if ( mvtoDesgl )
+                  if ( swUsaDocumentos )
                   {
                     if (almCodi!=0 && dt.getInt("alm_coddes")!=almCodi && dt.getInt("alm_codori")!=almCodi )
                         continue; // No lo trato.
@@ -1263,7 +1286,7 @@ public class MvtosAlma
           {
                if (swTraspAlm)
                {
-                   if (mvtoDesgl)
+                   if (swUsaDocumentos)
                    {
                         if (almCodi != 0 && dt.getInt("alm_coddes")==almCodi)
                         {
@@ -1351,7 +1374,7 @@ public class MvtosAlma
           }
           else
           { // Salida
-            if (swTraspAlm && mvtoDesgl )
+            if (swTraspAlm && swUsaDocumentos )
                 v.add(Formatear.format(dt.getString("canti"),
                                         "---,--9.99"));
             else
@@ -1368,11 +1391,11 @@ public class MvtosAlma
              else
                 v.add(dt.getString("sel"));
           }
-          v.add(!swVerPrecios?"":Formatear.format(dt.getString("precio"),
+          v.add(!swVerPrecios?"":Formatear.format(Formatear.redondea(dt.getDouble("precio"),2),
                                       "---,--9.99"));
           v.add(Formatear.format(uniStk, "---,--9"));
           v.add(Formatear.format(canStk, "---,--9.99"));
-          v.add(!swVerPrecios?"":Formatear.format(preStk+incCosto, "---,--9.99"));
+          v.add(!swVerPrecios?"":Formatear.format(Formatear.redondea(preStk+incCosto,2) , "---,--9.99"));
           v.add(!swVerPrecios?"":Formatear.format(impGana, "---,--9.99"));
           v.add(dt.getString("ejedoc")+"-"+dt.getString("avc_serie")+"-"+dt.getString("numalb"));
           v.add(dt.getDate("fecdoc"));
@@ -1422,7 +1445,7 @@ public class MvtosAlma
             v.add(!swVerPrecios?"":Formatear.format(dt.getDouble("precio")-preStk,"---9.99"));
           else
             v.add("");
-          if (mvtoDesgl)
+          if (swUsaDocumentos)
           {
             if ( dt.getInt("alm_codori")==0)
                 v.add(dt.getInt("alm_codi"));
