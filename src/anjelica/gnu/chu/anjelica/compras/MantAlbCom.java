@@ -67,6 +67,9 @@ import net.sf.jasperreports.engine.*;
 
 public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSource,MantAlbCom_Interface
 {
+  CLabel bloquearL =new CLabel("Bloquear Individuos");
+  CComboBox bloquearC =new CComboBox();
+  boolean swBloquearC=true;
   ArrayList<Double> preciosGrid=new ArrayList();
   int tirCodNoAfecta=0;
   Cgrid jtHist=new Cgrid(4);
@@ -710,7 +713,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20150716)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20151026)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -929,6 +932,13 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     frt_ejercL.setBounds(new Rectangle(0, 78, 95, 16));
     frt_ejercE.setBounds(new Rectangle(100, 78, 45, 16));
     frt_numeE.setBounds(new Rectangle(150, 78, 55, 16));
+
+    
+    bloquearC.addItem("Desbloquear","D");
+    bloquearC.addItem("Bloquear","B");
+    bloquearC.setDependePadre(false);
+    bloquearL.setBounds(new Rectangle(0, 100, 155, 16));
+    bloquearC.setBounds(new Rectangle(160, 100, 105, 16));
     frt_ejercE.setEnabled(false);
     frt_numeE.setEnabled(false);
     prv_codiL.setText("Proveedor");
@@ -1301,6 +1311,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     Potros.add(frt_ejercL, null);
     Potros.add(frt_ejercE, null);
     Potros.add(frt_numeE, null);
+    Potros.add(bloquearL, null);
+    Potros.add(bloquearC, null);
     acc_totfraE.addItem("Si", "-1");
     acc_totfraE.addItem("No", "0");
     
@@ -1588,7 +1600,14 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         }
       }
     });
-
+    bloquearC.addActionListener(new ActionListener()
+    {
+            @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        bloquearC_actionPerformed();
+      }
+    });
     Bdesagr.addActionListener(new ActionListener()
     {
             @Override
@@ -1935,7 +1954,27 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           Error("Error al actualizar Descuento Pronto Pago",k);
       }
   }
-
+  
+  void bloquearC_actionPerformed()
+  {
+      try
+      {
+          if (nav.isEdicion() || swBloquearC)
+              return;
+          dtAdd.executeUpdate("update stockpart set  stk_block="+(bloquearC.getValor().equals("B")?-1:0)+
+              " where eje_nume = "+acc_anoE.getValorInt()+
+              " and pro_nupar = "+acc_numeE.getValorInt()+
+              " and pro_serie = '"+acc_serieE.getText()+"'"+
+              " and emp_codi = "+emp_codiE.getValorInt());
+          dtAdd.commit();
+          mensajeErr((bloquearC.getValor().equals("B")?" Bloqueados ":"Desbloqueados")+
+              " Registros de stock");
+      } catch (SQLException ex)
+      {
+          Error("Error al bloquear desbloquear",ex);
+      }
+          
+  }
   /**
    * Ejecutado cuando se pulsa el botón de desagrupar
    * Mueve un Individuo de Una linea del Albarán a otra.
@@ -3780,6 +3819,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     else
       alm_codiE.setEnabled(b);
 
+    bloquearC.setEnabled(!b);
     sbe_codiE.setEnabled(b);
     eje_numeE.setEnabled(b);
     pcc_numeE.setEnabled(b);
@@ -3927,6 +3967,14 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         acc_impokgE.setValorDec(dtCon1.getDouble("acc_impokg",true));
       else
         acc_impokgE.setValorDec(0);
+      swBloquearC=true;
+      bloquearC.setValor(dtCon1.select("select stk_block  from stockpart "+
+              " where eje_nume = "+acc_anoE.getValorInt()+
+              " and pro_nupar = "+acc_numeE.getValorInt()+
+              " and pro_serie = '"+acc_serieE.getText()+"'"+
+              " and emp_codi = "+emp_codiE.getValorInt()+
+              " and stK_block = 0")?"D":"B");
+      swBloquearC=false;
       if (hisRowid==0)
       {
             jtHist.setEnabled(false);

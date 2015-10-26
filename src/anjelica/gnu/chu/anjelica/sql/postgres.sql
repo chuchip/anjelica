@@ -1665,7 +1665,7 @@ create view anjelica.v_motregu as select * from anjelica.motregu;
 --
 INSERT INTO v_motregu VALUES (1, 'VERTEDERO SALA', '-', '');
 INSERT INTO v_motregu VALUES (2, 'RECLAMACION PROVEEDOR', '-', 'VP');
-INSERT INTO v_motregu VALUES (3, 'REGULARIZACI�N POSITIVA DE EXISTENCIAS', '+', '');
+INSERT INTO v_motregu VALUES (3, 'REGULARIZACIÓN POSITIVA DE EXISTENCIAS', '+', '');
 INSERT INTO v_motregu VALUES (4, 'DIFERENCIA INVENTARIO', '+', '');
 INSERT INTO v_motregu VALUES (6, 'INVENTARIO', '=', '');
 INSERT INTO v_motregu VALUES (12, 'VERTEDERO CLIENTE', '-', 'VC');

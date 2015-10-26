@@ -94,7 +94,7 @@ public class paregalm extends CPanel {
             }
         }
     };
-    CTextField rgs_prebasE = new CTextField(Types.DECIMAL, "---,--9.999");
+    CTextField rgs_prreguE = new CTextField(Types.DECIMAL, "---,--9.999");
     CLabel cLabel16 = new CLabel();
     CTextField cci_fecconE = new CTextField(Types.DATE, "dd-MM-yyyy");
     CSpinner cci_horconE = new CSpinner(new SpinnerNumberModel(0,0,23,1));
@@ -179,7 +179,7 @@ public class paregalm extends CPanel {
         stp_unactE.setBounds(new Rectangle(261, 61, 40, 16));
         pro_codiE.setAncTexto(50);
         pro_codiE.setBounds(new Rectangle(83, 21, 430, 18));
-        rgs_prebasE.setBounds(new Rectangle(445, 61, 68, 16));
+        rgs_prreguE.setBounds(new Rectangle(445, 61, 68, 16));
         cLabel16.setText("Coment.");
         cLabel16.setBounds(new Rectangle(1, 133, 56, 16));
         cci_fecconE.setBounds(new Rectangle(45, 2, 60, 16));
@@ -283,7 +283,7 @@ public class paregalm extends CPanel {
         this.add(cLabel8, null);
         this.add(pro_loteE, null);
         this.add(cLabel7, null);
-        this.add(rgs_prebasE, null);
+        this.add(rgs_prreguE, null);
         this.add(cLabel10, null);
         this.add(deo_kilosE, null);
         this.add(cLabel11, null);
@@ -564,7 +564,7 @@ public class paregalm extends CPanel {
         alm_codiE.setText(dtCon1.getString("alm_codi"));
         stp_unactE.setText(dtCon1.getString("rgs_canti"));
         deo_kilosE.setText(dtCon1.getString("rgs_kilos"));
-        rgs_prebasE.setText(dtCon1.getString("rgs_prebas"));
+        rgs_prreguE.setText(dtCon1.getString("rgs_prereg"));
         verCliPrv(dtCon1.getString("tir_tipo", true));
         if (cli_codiE.isVisible()) {
             cli_codiE.setText(dtCon1.getString("rgs_cliprv"));
@@ -611,7 +611,7 @@ public class paregalm extends CPanel {
                 pro_numindE.getValorInt(), stp_unactE.getValorInt(),
                 deo_kilosE.getValorDec(), alm_codiE.getValorInt(), tir_codiE.getValorInt(),
                 cli_codiE.isVisible() ? cli_codiE.getValorInt() : prv_codiE.getValorInt(),
-                rgs_comentE.getText(), rgs_prebasE.getValorDec(), rgs_fecresE.getDate(),
+                rgs_comentE.getText(), rgs_prreguE.getValorDec(), rgs_fecresE.getDate(),
                 rgs_clidevE.getValorInt(), sbe_codiE.getValorInt(),
                 rgs_traspE.isSelected() ? 1 : 0, rgs_recprvE.getValorInt(),
                 acc_anoE.getValorInt(), acc_serieE.getText(), acc_numeE.getValorInt(),rgsNume);
@@ -724,9 +724,9 @@ public class paregalm extends CPanel {
         dtAdd.setDato("sbe_codi", sbeCodi);
         dtAdd.setDato("rgs_partid ", 1);
         dtAdd.setDato("usu_nomb", usuNomb);
-        dtAdd.setDato("rgs_prebas", precbas);
-        dtAdd.setDato("rgs_prmeco", precbas);
-        dtAdd.setDato("rgs_prulco", precbas); // Buscamos el precio Ul.Compra ?
+        dtAdd.setDato("rgs_prebas", 0);
+        dtAdd.setDato("rgs_prmeco", 0);
+        dtAdd.setDato("rgs_prulco", 0); // Buscamos el precio Ul.Compra ?
         dtAdd.setDato("rgs_prregu", precbas);
 
         dtAdd.setDato("rgs_kilos", kilos);
@@ -945,7 +945,7 @@ public class paregalm extends CPanel {
         alm_codiE.setEnabled(b);
         stp_unactE.setEnabled(b);
         deo_kilosE.setEnabled(b);
-        rgs_prebasE.setEnabled(b);
+        rgs_prreguE.setEnabled(b);
         cli_codiE.setEnabled(b);
         rgs_comentE.setEnabled(b);
         prv_codiE.setEnabled(b);
@@ -1016,7 +1016,7 @@ public class paregalm extends CPanel {
         rgs_comentE.setText(coment);
         cli_codiE.setValorInt(cliCodi);
         prv_codiE.setValorInt(cliCodi);
-        rgs_prebasE.setValorDec(precbas);
+        rgs_prreguE.setValorDec(precbas);
         rgs_fecresE.setDate(fecres);
         rgs_clidevE.setValorInt(cliDev);
         sbe_codiE.setValorInt(sbeCodi);

@@ -101,6 +101,8 @@ import javax.swing.event.ListSelectionListener;
  
 public class pdalbara extends ventanaPad  implements PAD
 {  
+  private int avpNumparAnt=0,avpNumindAnt=0,avpEjelotAnt=0;
+  private String avpSerlotAnt="";
   private boolean swPreguntaDestruir=false; // Pregunta si se debe destruir todo rastro de un albaran
   private final char IMPR_ALB_GRAF='A';
   private final char IMPR_ALB_TEXT='a';
@@ -214,7 +216,7 @@ public class pdalbara extends ventanaPad  implements PAD
   sepAlbVen dgAlb;
   boolean isLock=false;
   CButton Bdesgl=new CButton(Iconos.getImageIcon("duplicar"));
-  int colDesp=6;
+  int colDesp=JTDES_LOTE;
 //  despVentas despAlbar=null;
   DespVenta despVenta;
   int rowDesp;
@@ -456,7 +458,7 @@ public class pdalbara extends ventanaPad  implements PAD
         Error("Error al buscar Nombre Articulo", k);
       }
     }
-@Override
+    @Override
     public int cambiaLinea(int row, int col)
     {
       return cambiaLinDes(row);
@@ -473,16 +475,18 @@ public class pdalbara extends ventanaPad  implements PAD
       pro_codicE.setText(pro_codiE.getText());
       jtDes.setValor(pro_codiE.getText(), jtDes.getSelectedRow(), 0);
       jtDes.setValor(pro_nombE.getText(), jtDes.getSelectedRow(), 1);
-      jtDes.setValor("" + EU.em_cod, jtDes.getSelectedRow(), 2);
-      jtDes.setValor("" + EU.ejercicio, jtDes.getSelectedRow(), 3);
+      jtDes.setValor( EU.em_cod, jtDes.getSelectedRow(), 2);
+      jtDes.setValor(EU.ejercicio, jtDes.getSelectedRow(), 3);
       jtDes.setValor("1", jtDes.getSelectedRow(), 4);
+   
+      ponValorLoteAnt();
       jtDes.ponValores(jtDes.getSelectedRow());
       return true;
     }
-@Override
+    @Override
     public void afterCambiaLinea()
     {
-     resetCambioIndividuo();
+         resetCambioIndividuo();
     }
   };
   CButton Birgrid = new CButton(Iconos.getImageIcon("reload"));
@@ -702,7 +706,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-10-18" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-10-26" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -1733,10 +1737,7 @@ public class pdalbara extends ventanaPad  implements PAD
             msgBox("Un albaran solo se puede modificar de Deposito a Normal o viceversa");
             return false;
         }
-        if (checkEdicionAlbaran())
-            return false;
-      
-        return true;
+        return !checkEdicionAlbaran();
   }
   int addLineaPalet()
   {
@@ -1753,15 +1754,16 @@ public class pdalbara extends ventanaPad  implements PAD
        }
        ArrayList v=new ArrayList();              
        int palet=jtPalet.getValorInt(linea,0)+1;
-       double kilos=jtPalet.getValorDec(linea,1);
+      
        if (! jtPalet.isVacio())
            jtPalet.salirGrid();
        v.add(palet);
-       v.add(kilos);
+       v.add(0);
        v.add(0);
        v.add(0);
        v.add(0);
        jtPalet.addLinea(v);
+      
        return palet;
   }
   void activarEventos()
@@ -1777,6 +1779,8 @@ public class pdalbara extends ventanaPad  implements PAD
                   jt.setValor(palet,JT_NUMPALE);
                   avl_numpalE.setValorInt(palet);
               }
+              Ptab1.setSelectedIndex(4); // Panel de Palets
+              jtPalet.requestFocusLater(jtPalet.getRowCount()-1,1);
           }
       });
       avc_deposE.addActionListener(new java.awt.event.ActionListener()
@@ -4193,6 +4197,7 @@ public class pdalbara extends ventanaPad  implements PAD
 //    pvc_anoE.setEnabled(false);
 //    pvc_numeE.setEnabled(false);
     jt.setEnabled(false);
+    jtPalet.setEnabled(false);
     mensaje("Editando Albaran ...");
     opAgru.setEnabled(false);
     if (opAgru.isSelected())
@@ -4248,6 +4253,7 @@ public class pdalbara extends ventanaPad  implements PAD
     //avc_revpreE.setEnabled(false);
     pro_codiE.setEditable(false);
     Bdespiece.setEnabled(true);
+    jtPalet.setEnabled(true);
     irGridLin();
   }  catch (Exception k)
     {
@@ -4509,7 +4515,7 @@ public class pdalbara extends ventanaPad  implements PAD
         actAlbaran();
       }
       actProdRecicla();
-      actPalets();
+      guardaPalets();
       resetBloqueo(dtAdd);
       ctUp.commit();
       activaTodo();
@@ -4578,7 +4584,10 @@ public class pdalbara extends ventanaPad  implements PAD
     avl_prvenE.setEditable(verPrecios);
     jtPalet.removeAllDatos();
     if (swUsaPalets)
+    {
         addLineaPalet();
+        pav_numeE.setValorInt(1);
+    }
     activar(true);
     
     swAvisoDto=true;
@@ -4620,6 +4629,11 @@ public class pdalbara extends ventanaPad  implements PAD
     avc_almoriE.setValor(""+ALMACEN);
     pvc_numeE.resetCambio();
     jtLinPed.removeAllDatos();
+    avpNumparAnt=0;
+    avpNumindAnt=0;
+    avpEjelotAnt=0;
+    avpSerlotAnt="";
+    isLock=false;
     Pcabped.resetCambio();
 //    opModif.setSelected(false);
     avc_valoraE.setValor("0");
@@ -4670,7 +4684,7 @@ public class pdalbara extends ventanaPad  implements PAD
       else
         ponAlbPedido();                    
       actProdRecicla();
-      actPalets();
+      guardaPalets();
       resetBloqueo(dtAdd);
       ctUp.commit();
     }
@@ -4992,22 +5006,25 @@ public class pdalbara extends ventanaPad  implements PAD
     }
   }
   
-  void actPalets() throws SQLException
+  void guardaPalets() throws SQLException
   {
       dtAdd.executeUpdate("delete from paletventa where avc_id="+avc_idE.getValorInt());
       int nr=jtPalet.getRowCount();
       for (int n=0;n<nr;n++)
       {
-          if (jtPalet.getValorInt(n,0)==0)
+          if (jtPalet.getValorInt(n,0)==0 || jtPalet.getValorDec(n,1)==0)
               continue;
           s="select * from paletventa where avc_id="+avc_idE.getValorInt()+
               " and pav_nume = "+jtPalet.getValorInt(n,0);
           
-          if (dtAdd.select(s))
-              continue;// Duplicado
-          dtAdd.executeUpdate("insert into paletventa values("+avc_idE.getValorInt()+
-              ", "+jtPalet.getValorInt(n,0)+", "+
-                  jtPalet.getValorDec(n,1)+")");
+          if (! dtAdd.select(s,true))
+          {
+              dtAdd.addNew();
+              dtAdd.setDato("avc_id",avc_idE.getValorInt());
+              dtAdd.setDato("pav_nume",jtPalet.getValorInt(n,0));
+          }
+          dtAdd.setDato("pav_kilos",jtPalet.getValorDec(n,1));
+          dtAdd.update();
       }
   }
   /**
@@ -5786,6 +5803,17 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     return -1;
   }
+  void ponValorLoteAnt()
+  {
+       if (avpNumparAnt!=0 && isEmpPlanta && jtDes.getValorInt(JTDES_LOTE)==0)
+       {
+        jtDes.setValor(avpNumparAnt,JTDES_LOTE);
+        jtDes.setValor(avpNumindAnt,JTDES_NUMIND );
+        jtDes.setValor(avpSerlotAnt,JTDES_SERIE);            
+        jtDes.setValor(avpEjelotAnt,JTDES_EJE);
+       }
+  }
+
 /**
    * Busca los datos del individuo que hay en la linea de jtDes mandada 
    * en un vector anteriormente cargado con todos los individuos existentes.
@@ -6540,6 +6568,11 @@ public class pdalbara extends ventanaPad  implements PAD
         if (!swEntdepos)
         { // No es entrega de mercancia
             StkPartid canStk=buscaPeso();
+            if (canStk.isLockIndiv())
+            { // Individuo bloqueado.
+                  mensajeErr("Individuo esta bloqueado ");
+                    return false;
+            }
             if (canStk.hasError())
                  return false;
             if (canStk.isControlExist())
@@ -6898,6 +6931,14 @@ public class pdalbara extends ventanaPad  implements PAD
     avp_numparE.resetCambio();
     pro_codicE.resetCambio();
     avp_cantiE.resetCambio();
+    if (avp_numparE.getValorInt()!=0)
+    {
+        avpEjelotAnt=avp_ejelotE.getValorInt();
+        avpNumparAnt=avp_numparE.getValorInt();
+        avpNumindAnt=avp_numindE.getValorInt();
+        avpSerlotAnt=avp_serlotE.getText();
+    }
+    
   }
   /**
    * Pone el valor de la cantidad segun los datos del invidividuo
@@ -7222,11 +7263,11 @@ public class pdalbara extends ventanaPad  implements PAD
           v.add(pro_codiE.getText());
           v.add(pro_nombE.getText());
           v.add( EU.em_cod);
-          v.add( EU.ejercicio);
+          v.add( avpEjelotAnt==0?EU.ejercicio:avpEjelotAnt);
           v.add("1");
-          v.add("A");
-          v.add("0");
-          v.add("0");
+          v.add(avpSerlotAnt);
+          v.add(isEmpPlanta?0:avpNumparAnt);
+          v.add(isEmpPlanta?0:avpNumindAnt);
           v.add("0");
           v.add("0");
            v.add("0"); // Cantidad bruta
@@ -7237,6 +7278,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
         }
         Bdespiece.setEnabled(false);
+        ponValorLoteAnt();
         jtDes.setEnabled(true);
         jtDes.requestFocus();
         jtDes.requestFocus(0, colDesp);
@@ -7304,9 +7346,15 @@ public class pdalbara extends ventanaPad  implements PAD
     pro_codicE.setText(pro_codiE.getText());
     jtDes.setValor(pro_codiE.getText(), 0, 0);
     jtDes.setValor(pro_nombE.getText(), 0, 1);
-    jtDes.setValor(""+EU.em_cod, 0, 2);
-    jtDes.setValor(""+EU.ejercicio, 0, 3);
-    jtDes.setValor("1", 0, 4);
+    jtDes.setValor(EU.em_cod, 0, JTDES_EMP);
+    jtDes.setValor(avpEjelotAnt==0?EU.ejercicio:avpEjelotAnt,0, JTDES_EJE);
+    jtDes.setValor(avpSerlotAnt,0, JTDES_SERIE);
+    if (isEmpPlanta)
+    {
+        jtDes.setValor(avpNumparAnt,0, JTDES_LOTE);
+        jtDes.setValor(avpSerlotAnt,0, JTDES_NUMIND);
+    }
+    jtDes.setValor(1, 0, JTDES_UNID);
     jtDes.ponValores(0);
     Baceptar.setEnabled(false);
     Bimpri.setEnabled(false);
