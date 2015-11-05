@@ -746,6 +746,32 @@ public class CGridEditable extends Cgrid implements CQuery {
       this.ponValores(0);
     resetCambio();
   }
+  /**
+   * Devuelve true si se esta editando un campo.
+   * @return true si se esta editando un campo.
+   */
+  public boolean isEditando()
+  {
+      return tableView.isEditing();      
+  }
+  /**
+   * Devuelve columna que se esta editando (0 es la primera)
+   * @return columna que se esta editando (0 es la primera)
+   */
+  public int getColumnaEditando()
+  {
+      return tableView.getEditingColumn();
+  }
+  /**
+   * Devuelve Linea que se esta editando (0 es la primera)
+   * @return Linea que se esta editando (0 es la primera)
+   */
+  public int getLineaEditando()
+  {
+      return tableView.getEditingRow();
+  }
+  
+  
   public void requestFocus(int col)
   {
       requestFocus(getSelectedRow(),col);
@@ -1048,54 +1074,49 @@ public class CGridEditable extends Cgrid implements CQuery {
 
   /**
    * Pone a los campos (CTextField,etc) los valores del GRID.
-   * @param n int Columna del grid de donde coger el valor
+   * @param col int Columna del grid de donde coger el valor
    * @param linea int Linea del grid de donde coger el valor
    * @param foc boolean si true NO Poner el valor si el compenente tiene el foco
    * @param salir boolean si true NO Pone el valor si n es igual a la columna selecionada.
    */
-  public void ponValores1(int n, int linea, boolean foc, boolean salir)
+  public void ponValores1(int col, int linea, boolean foc, boolean salir)
   {
-    if (getValString(n) == null)
+    if (getValString(col) == null)
       return;
-    if (this.getSelectedColumn() == n && salir)
+    if (this.getSelectedColumn() == col && salir)
       return;
-    if ( ( (Component) campos.get(n)).isEnabled() == false && !isPonValoresEnabled())
+    if ( ( (Component) campos.get(col)).isEnabled() == false && !isPonValoresEnabled())
       return;
-    if ( ( (Component) campos.get(n)).hasFocus() && foc)
+    
+    if ( ( (Component) campos.get(col)).hasFocus() && foc)
       return;
-    if (tCampo.get(n).equals("P"))
+    switch (tCampo.get(col))
     {
-      ( (CEditable) campos.get(n)).setText(getValString(linea, n).trim());
-    }
-    if (tCampo.get(n).equals("T") )
-    {
-      if ( ( (CTextField) campos.get(n)).getTipoCampo() == Types.DECIMAL)
-      {
-        ( (CTextField) campos.get(n)).setText(getValString(linea, n, true));
-      }
-      else
-        ( (CEditable) campos.get(n)).setText(getValString(linea, n));
-    }
-
-    if (tCampo.get(n).equals("B"))
-    {
-      if (Formato[n].equals("") || Formato[n].charAt(0) != 'B')
-        ( (CCheckBox) campos.get(n)).setSelecion(getValString(linea, n));
-      else
-
-//       if (((CCheckBox) campos.get(n)).isSelected())
-        ( (CCheckBox) campos.get(n)).setSelected(getValBoolean(linea, n));
-    }
-    if (tCampo.get(n).equals("C"))
-    {
-      if (!( (CComboBox) campos.get(n)).setValor(getValString(linea, n)))
-          ( (CComboBox) campos.get(n)).setText(getValString(linea, n));
-    }
-    if (tCampo.get(n).equals("L") )
-      ( (CLinkBox) campos.get(n)).setText(getValString(linea, n));
-    if (tCampo.get(n).equals("b") )
-      ( (CButton) campos.get(n)).setText(getValString(linea, n));
-
+        case "P":
+          ( (CEditable) campos.get(col)).setText(getValString(linea, col).trim());
+            break;
+        case "T":
+           if ( ( (CTextField) campos.get(col)).getTipoCampo() == Types.DECIMAL)
+             ( (CTextField) campos.get(col)).setText(getValString(linea, col, true));
+           else
+            ( (CEditable) campos.get(col)).setText(getValString(linea, col));
+           break;
+        case "B":    
+            if (Formato[col].equals("") || Formato[col].charAt(0) != 'B')
+                ( (CCheckBox) campos.get(col)).setSelecion(getValString(linea, col));
+            else
+                ( (CCheckBox) campos.get(col)).setSelected(getValBoolean(linea, col));
+            break;
+        case "C":
+            if (!( (CComboBox) campos.get(col)).setValor(getValString(linea, col)))
+                ( (CComboBox) campos.get(col)).setText(getValString(linea, col));
+            break;
+        case "L":
+           ( (CLinkBox) campos.get(col)).setText(getValString(linea, col)); 
+            break;
+        case "b":
+           ( (CButton) campos.get(col)).setText(getValString(linea, col));
+    }   
   }
 
   public void procesaTecla(KeyEvent e, CEditable comp, int columna)

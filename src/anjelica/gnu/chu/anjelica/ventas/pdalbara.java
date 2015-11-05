@@ -1755,7 +1755,7 @@ public class pdalbara extends ventanaPad  implements PAD
        ArrayList v=new ArrayList();              
        int palet=jtPalet.getValorInt(linea,0)+1;
       
-       if (! jtPalet.isVacio())
+       if (! jtPalet.isVacio() && jtPalet.isEditando())
            jtPalet.salirGrid();
        v.add(palet);
        v.add(0);
@@ -1773,7 +1773,7 @@ public class pdalbara extends ventanaPad  implements PAD
           @Override
           public void actionPerformed(java.awt.event.ActionEvent evt) {
               int palet=addLineaPalet();
-              jtPalet.requestFocusFinalLater();
+            
               if (jt.getValorDec(JT_KILOS)==0)
               {
                   jt.setValor(palet,JT_NUMPALE);
@@ -4254,6 +4254,7 @@ public class pdalbara extends ventanaPad  implements PAD
     pro_codiE.setEditable(false);
     Bdespiece.setEnabled(true);
     jtPalet.setEnabled(true);
+    
     irGridLin();
   }  catch (Exception k)
     {
