@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Título: paregalm</p>
  * <p>Descripcion: Panel para mantenimientos  Regularizaciones en almacen  </p>
- *  <p>Copyright: Copyright (c) 2005-2014
+ *  <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -564,7 +564,7 @@ public class paregalm extends CPanel {
         alm_codiE.setText(dtCon1.getString("alm_codi"));
         stp_unactE.setText(dtCon1.getString("rgs_canti"));
         deo_kilosE.setText(dtCon1.getString("rgs_kilos"));
-        rgs_prreguE.setText(dtCon1.getString("rgs_prereg"));
+        rgs_prreguE.setText(dtCon1.getString("rgs_prregu"));
         verCliPrv(dtCon1.getString("tir_tipo", true));
         if (cli_codiE.isVisible()) {
             cli_codiE.setText(dtCon1.getString("rgs_cliprv"));

@@ -129,7 +129,7 @@ public class pdregalm extends ventanaPad implements PAD
    {
      iniciarFrame();
      this.setSize(new Dimension(583, 562));
-     this.setVersion("2015-06-25 "+(P_ADMIN?"  ADMIN":""));
+     this.setVersion("2015-11-30 "+(P_ADMIN?"  ADMIN":""));
      Pprinc.setDefButton(Baceptar);
      Pprinc.setDefButtonDisable(false);
      Pprinc.setLayout(null);
@@ -245,7 +245,6 @@ public class pdregalm extends ventanaPad implements PAD
     @Override
  public void iniciarVentana() throws Exception
  {
-
    linPantE.setValorInt(ROWSGRID);
    linPantE.resetCambio();
    linPantE.setDependePadre(false);
