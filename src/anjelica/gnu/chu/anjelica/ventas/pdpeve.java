@@ -235,7 +235,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2015-11-22"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2015-11-05"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -930,7 +930,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       pvc_verfecE.setEnabled(opVerProd.getValor().equals(""+pstockAct.VER_ULTVENTAS));
       pvl_precioE.resetCambio();
       pvc_fecentE.resetCambio();
-      pcc_estadE.setValor("P");
+//      pcc_estadE.setValor("P");
       jt.setEnabled(true);
       pro_codiE.getFieldBotonCons().setEnabled(true);
       cli_codiE_afterFocusLost(false);
@@ -1089,7 +1089,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       dtAdd.setDato("eje_nume",eje_numeE.getValorInt());
       dtAdd.setDato("pvc_nume",pvc_numeE.getValorInt());
       dtAdd.setDato("pvc_impres","N"); // No impreso
-      dtAdd.setDato("avc_ano",pcc_estadE.getValor().equals("C")?-1:0 );
+      
       dtAdd.setDato("avc_serie","A");
       dtAdd.setDato("avc_nume",0);
       actCabecera();
@@ -1185,12 +1185,29 @@ public class pdpeve  extends ventanaPad   implements PAD
     dtAdd.setDato("alm_codi",alm_codiE.getValorInt());
     dtAdd.setDato("pvc_fecped","{ts '"+Formatear.getFechaAct("yyyy-MM-dd hh:mm:ss")+"'}");
     dtAdd.setDato("pvc_fecent",pvc_fecentE.getText(),"dd-MM-yyyy");
-    dtAdd.setDato("pvc_comen",Formatear.strCorta(pvc_comenE.getText(),200));
     dtAdd.setDato("pvc_confir",pvc_confirE.getValor());
-   
+    dtAdd.setDato("pvc_comen",Formatear.strCorta(pvc_comenE.getText(),200));
+    
+    if (nav.getPulsado()==navegador.EDIT)
+    {
+        if (pcc_estadE.getValor().equals("C"))
+            dtAdd.setDato("avc_ano", -1);
+        if (pcc_estadE.getValor().equals("L"))
+        { // Se quiere poner como preparado.
+            if (dtAdd.getInt("avc_ano")==0)
+                dtAdd.setDato("avc_ano", 1);
+        }
+        if (pcc_estadE.getValor().equals("P"))
+        {
+            dtAdd.setDato("avc_ano", 0);
+            dtAdd.setDato("avc_nume", 0);            
+        }
+    }
+
     dtAdd.setDato("usu_nomb",usu_nombE.getText());
     dtAdd.setDato("pvc_cerra",0); // Albaran Abierto
     dtAdd.setDato("pvc_nupecl",pvc_nupeclE.getText());
+    
     dtAdd.update();
   }
 
