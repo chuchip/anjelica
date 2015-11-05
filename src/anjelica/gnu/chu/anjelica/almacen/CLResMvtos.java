@@ -110,10 +110,7 @@ public class CLResMvtos extends ventana {
     pro_codiE.setCeroIsNull(true);
     dtPro = new DatosTabla(ct);
 //    alm_codiE.setText(""+pdconfig.getAlmVentas(EU.em_cod, dtStat));
-    pro_codiE.iniciar(dtStat, this, vl, EU);
-    tipoProdE.addItem("Congelado", "C");
-    tipoProdE.addItem("No Congelado", "N");
-    tipoProdE.addItem("Todos", "T");
+    pro_codiE.iniciar(dtStat, this, vl, EU);    
     tipoProdE.setValor("T");
     emp_codiE.iniciar(dtStat, this, vl, EU);
     emp_codiE.setAceptaNulo(true);
@@ -486,6 +483,9 @@ public class CLResMvtos extends ventana {
         Pcabe.add(cLabel2);
         cLabel2.setBounds(2, 51, 62, 18);
 
+        tipoProdE.addItem("Congelado", "C");
+        tipoProdE.addItem("No Congelado", "N");
+        tipoProdE.addItem("Todos", "T");
         tipoProdE.setMinimumSize(new java.awt.Dimension(32, 20));
         Pcabe.add(tipoProdE);
         tipoProdE.setBounds(68, 51, 142, 18);
