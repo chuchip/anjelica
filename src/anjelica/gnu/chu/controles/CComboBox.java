@@ -224,10 +224,19 @@ public class CComboBox extends JComboBox implements CEditable,CQuery
     return;
   }
 
-    @Override
+  @Override
   public void addItem(Object v)
   {
     addItem(v,v.toString());
+  }
+  
+  public void addItem(String[][] arrayValor)
+  {
+      for (String[] valores : arrayValor)
+      {      
+          addItem(valores[0],valores[1]);      
+      }
+    
   }
 /**
  * Añade un indice nuevo al comboBox

@@ -126,7 +126,7 @@
     </Component>
     <Component class="gnu.chu.controles.CComboBox" name="paa_tipoE">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="paa_tipoE.addItem(&quot;Cliente&quot;,&quot;C&quot;);&#xa;paa_tipoE.addItem(&quot;Proveedor&quot;,&quot;P&quot;);&#xa;paa_tipoE.setGridEditable(jtAbo);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="paa_tipoE.addItem(PAA_TIPO);&#xa;paa_tipoE.setGridEditable(jtAbo);"/>
       </AuxValues>
     </Component>
     <Component class="gnu.chu.controles.CCheckBox" name="paa_estadE">
@@ -323,7 +323,7 @@
                     </Component>
                     <Component class="gnu.chu.controles.CComboBox" name="pac_tipoE">
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pac_tipoE.addItem(&quot;Sala&quot;, &quot;S&quot;);&#xa;pac_tipoE.addItem(&quot;Devolucion&quot;, &quot;D&quot;);&#xa;pac_tipoE.addItem(&quot;No Recep&quot;, &quot;N&quot;);&#xa;pac_tipoE.addItem(&quot;Entrada&quot;, &quot;E&quot;);&#xa;pac_tipoE.addItem(&quot;Dev.Recep&quot;, &quot;R&quot;);"/>
+                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pac_tipoE.addItem(PAC_TIPO);"/>
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -640,7 +640,7 @@
                     </Component>
                     <Component class="gnu.chu.controles.CComboBox" name="pac_estadE">
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pac_estadE.addItem(&quot;Generada&quot;, &quot;0&quot;);&#xa;pac_estadE.addItem(&quot;Proc.Dev.&quot;, &quot;1&quot;);&#xa;pac_estadE.addItem(&quot;Procesada&quot;, &quot;2&quot;);&#xa;pac_estadE.addItem(&quot;Resuelta&quot;, &quot;3&quot;);&#xa;pac_estadE.addItem(&quot;Cancelada&quot;, &quot;4&quot;);"/>
+                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pac_estadE.addItem(PAC_ESTADO);"/>
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -686,7 +686,7 @@
                   </Properties>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(11)&#xa;{&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        int reCaLin=cambiaLineajt(row);&#xa;        return reCaLin;&#xa;    }&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        calcAcumulados();&#xa;    }&#xa;    protected void afterCambiaColumna(int col,int colNueva,int row)&#xa;    {&#xa;        if (col==JT_INDI)&#xa;        afterCambiaCol();&#xa;    }&#xa;    public boolean insertaLinea(int row, int col)&#xa;    {&#xa;        return  nav.getPulsado()==navegador.ADDNEW || pac_estadE.getValorInt()&lt; ESTADO_PROCESADA;&#xa;    }&#xa;    public boolean deleteLinea(int row, int col) {&#xa;        return jt.getValorInt(row,JT_PROCODI)==0  || nav.getPulsado()==navegador.ADDNEW || pac_estadE.getValorInt()==ESTADO_GENERADA;&#xa;&#xa;    }&#xa;&#xa;}"/>
-                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{ArrayList vc=new ArrayList();&#xa;vc.add(&quot;Articulo&quot;); //0&#xa;vc.add(&quot;Nombre&quot;); // 1&#xa;vc.add(&quot;Ejerc.&quot;); // 2&#xa;vc.add(&quot;Serie&quot;); // 3&#xa;vc.add(&quot;Lote&quot;); // 4&#xa;vc.add(&quot;Ind.&quot;); // 5&#xa;vc.add(&quot;Fec.Cad&quot;); // 6&#xa;vc.add(&quot;Unid&quot;); // 7&#xa;vc.add(&quot;Kilos&quot;); // 8&#xa;vc.add(&quot;Sug.&quot;); // 9&#xa;vc.add(&quot;Com.Sala&quot;); // 10&#xa;&#xa;jt.setCabecera(vc);&#xa;ArrayList v=new ArrayList();&#xa;v.add(pro_codiE.getTextField()); // 0&#xa;v.add(pro_nombE);  // 1&#xa;v.add(pro_ejelotE); // 2&#xa;v.add(pro_serlotE); // 3&#xa;v.add(pro_numlotE); // 4&#xa;v.add(pro_indlotE); // 5&#xa;v.add(pro_feccadE); // 6&#xa;v.add(pal_unidadE); // 7&#xa;v.add(pal_kilosE); // 8&#xa;v.add(pal_acsalaE); // 9&#xa;v.add(pal_comsalE); // 10&#xa;&#xa;try {&#xa;jt.setCampos(v);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al iniciar campos del grid&quot;,k);&#xa;return;&#xa;}&#xa;}&#xa;jt.setNumRegCargar(0);&#xa;jt.setAlinearColumna(new int[]{2,0,2,1,2,2,1,2,2,0,0});&#xa;jt.setAnchoColumna(new int[]{70,130,50,30,50,40,60,60,60,60,150});&#xa;jt.setDefButton(Baceptar);"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{&#xa;confGridArt(jt);&#xa;&#xa;ArrayList v=new ArrayList();&#xa;v.add(pro_codiE.getTextField()); // 0&#xa;v.add(pro_nombE);  // 1&#xa;v.add(pro_ejelotE); // 2&#xa;v.add(pro_serlotE); // 3&#xa;v.add(pro_numlotE); // 4&#xa;v.add(pro_indlotE); // 5&#xa;v.add(pro_feccadE); // 6&#xa;v.add(pal_unidadE); // 7&#xa;v.add(pal_kilosE); // 8&#xa;v.add(pal_acsalaE); // 9&#xa;v.add(pal_comsalE); // 10&#xa;&#xa;try {&#xa;jt.setCampos(v);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al iniciar campos del grid&quot;,k);&#xa;return;&#xa;}&#xa;}&#xa;jt.setNumRegCargar(0);&#xa;jt.setDefButton(Baceptar);"/>
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -803,7 +803,7 @@
                   </Properties>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(10)&#xa;"/>
-                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{ArrayList vc=new ArrayList();&#xa;vc.add(&quot;Tipo&quot;); // 0 Tipo Abono (C/P)&#xa;vc.add(&quot;Articulo&quot;); //1&#xa;vc.add(&quot;Descrip.&quot;); // 2&#xa;vc.add(&quot;Cli/Prv&quot;); //3&#xa;vc.add(&quot;Nombre&quot;); // 4&#xa;vc.add(&quot;Comentario&quot;); // 5&#xa;vc.add(&quot;Kilos&quot;); // 6&#xa;vc.add(&quot;Precio&quot;); // 7&#xa;vc.add(&quot;Proc.&quot;); // 8&#xa;vc.add(&quot;Id&quot;);//9&#xa;&#xa;jtAbo.setCabecera(vc);&#xa;ArrayList v=new ArrayList();&#xa;v.add(paa_tipoE); // 0&#xa;v.add(paa_procodE.getTextField()); // 1&#xa;v.add(paa_pronomE);  // 2&#xa;v.add(paa_cliprvE); // 3&#xa;v.add(paa_clpvnoE); // 4&#xa;v.add(paa_comentE); // 5&#xa;v.add(paa_kilosE); // 6&#xa;v.add(paa_precioE); // 7&#xa;v.add(paa_estadE); // 8&#xa;v.add(paa_codiE); // 9&#xa;try {&#xa;jtAbo.setCampos(v);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al iniciar campos del grid&quot;,k);&#xa;return;&#xa;}&#xa;}&#xa;jtAbo.setAlinearColumna(new int[]{0,2,0,2,0,0,2,2,0,2});&#xa;jtAbo.setAnchoColumna(new int[]{50,60,100,60,100,130,60,60,50,40});"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{&#xa;confGridAbo(jtAbo);&#xa;&#xa;ArrayList v=new ArrayList();&#xa;v.add(paa_tipoE); // 0&#xa;v.add(paa_procodE.getTextField()); // 1&#xa;v.add(paa_pronomE);  // 2&#xa;v.add(paa_cliprvE); // 3&#xa;v.add(paa_clpvnoE); // 4&#xa;v.add(paa_comentE); // 5&#xa;v.add(paa_kilosE); // 6&#xa;v.add(paa_precioE); // 7&#xa;v.add(paa_estadE); // 8&#xa;v.add(paa_codiE); // 9&#xa;try {&#xa;jtAbo.setCampos(v);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al iniciar campos del grid&quot;,k);&#xa;return;&#xa;}&#xa;}"/>
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -854,7 +854,7 @@
                     </Component>
                     <Component class="gnu.chu.controles.CComboBox" name="estadoE">
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="estadoE.addItem(&quot;Generada&quot;, &quot;0&quot;);&#xa;estadoE.addItem(&quot;Proc.Dev.&quot;, &quot;1&quot;);&#xa;estadoE.addItem(&quot;Procesada&quot;, &quot;2&quot;);&#xa;estadoE.addItem(&quot;Resuelta&quot;, &quot;3&quot;);&#xa;estadoE.addItem(&quot;Cancelada&quot;, &quot;4&quot;);"/>
+                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="estadoE.addItem(PAC_ESTADO);"/>
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -940,7 +940,7 @@
                     </Component>
                     <Component class="gnu.chu.controles.CComboBox" name="tipoE">
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="tipoE.addItem(&quot;TODOS&quot;, &quot;*&quot;);&#xa;tipoE.addItem(&quot;Sala&quot;, &quot;S&quot;);&#xa;tipoE.addItem(&quot;Devolucion&quot;, &quot;D&quot;);&#xa;tipoE.addItem(&quot;No Recep.&quot;, &quot;N&quot;);&#xa;tipoE.addItem(&quot;Entrada&quot;, &quot;E&quot;);&#xa;tipoE.addItem(&quot;Dev.Recep&quot;, &quot;R&quot;);"/>
+                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="tipoE.addItem(&quot;TODOS&quot;, &quot;*&quot;);&#xa;tipoE.addItem(PAC_TIPO);"/>
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

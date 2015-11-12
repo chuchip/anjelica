@@ -30,9 +30,11 @@ package gnu.chu.anjelica.compras;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.almacen.MantPartes;
 import gnu.chu.anjelica.almacen.paregalm;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.almacen.pdmotregu;
+import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.MantPaises;
@@ -42,6 +44,7 @@ import gnu.chu.camposdb.*;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;     
 import gnu.chu.interfaces.PAD;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.print.util;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.vlike;
@@ -67,6 +70,7 @@ import net.sf.jasperreports.engine.*;
 
 public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSource,MantAlbCom_Interface
 {
+  CButton creaIncidB = new CButton(Iconos.getImageIcon("destornillador"));
   CLabel bloquearL =new CLabel("Bloquear Individuos");
   CComboBox bloquearC =new CComboBox();
   boolean swBloquearC=true;
@@ -441,8 +445,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   CButton Bcacafe = new CButton("Cancelar",Iconos.getImageIcon("cancel"));
   CLabel cLabel20 = new CLabel();
   CComboBox acc_cerraE = new CComboBox();
-  CLabel cLabel21 = new CLabel();
-  CLabel cLabel16 = new CLabel();
+  CLabel acc_cerraL = new CLabel();
+  CLabel acc_totfraL = new CLabel();
   CComboBox acc_totfraE = new CComboBox();
   CButton Bdesagr = new CButton("F6",Iconos.getImageIcon("stock_insert"));
   CPanel PVerted = new CPanel();
@@ -602,6 +606,11 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   CLinkBox tir_codiE = new CLinkBox();
   CCheckBox rgs_traspE = new CCheckBox();
   CPanel Potros = new CPanel();
+  CPanel PIncid = new CPanel();
+  Cgrid jtIncCab = new Cgrid(4);
+  Cgrid jtIncLin = new Cgrid(11);
+  Cgrid jtIncAbo = new Cgrid(10);
+ 
   CLabel cLabel27 = new CLabel();
   GridBagLayout gridBagLayout4 = new GridBagLayout();
   sbePanel sbe_codiE = new sbePanel();
@@ -713,7 +722,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20151026)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20151112)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -749,6 +758,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     cPanel3.setLayout(null);
     fereinE.setBounds(new Rectangle(2, 4, 95, 16));
     acc_fecrecL1.setText("De Fecha Recep.");
+    
     acc_fecrecL1.setBounds(new Rectangle(1, 3, 98, 17));
     ferefiE.setBounds(new Rectangle(301, 3, 78, 16));
     acc_fecrecL2.setText("A Fecha Recep.");
@@ -766,16 +776,21 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     alm_codiE.setBounds(new Rectangle(59, 63, 304, 18));
     prv_codiL1.setToolTipText("");
 
-    acc_cerraE.setBounds(new Rectangle(469, 64, 43, 18));
-    cLabel21.setText("Cerrado");
-    cLabel21.setBounds(new Rectangle(403, 64, 54, 18));
-    cLabel16.setToolTipText("Totalmente Facturado");
-    cLabel16.setText("Facturado");
-    cLabel16.setBounds(new Rectangle(404, 44, 62, 18));
-    acc_totfraE.setBounds(new Rectangle(469, 44, 43, 18));
+    
+    acc_cerraL.setText("Cerrado");
+    acc_cerraL.setBounds(new Rectangle(368, 64, 54, 18));
+    acc_cerraE.setBounds(new Rectangle(426, 64, 43, 18));
+    acc_totfraL.setText("Totalmente Facturado");
+    creaIncidB.setToolTipText("Crear Incidencia");
+    creaIncidB.setMargin(new Insets(0,0,0,0));
+    creaIncidB.setBounds(new Rectangle(480,46,38,30));
+    
+    acc_totfraL.setBounds(new Rectangle(0, 120, 132, 18));
+    acc_totfraE.setBounds(new Rectangle(115, 140, 43, 18));
     acc_totfraE.setDependePadre(false);
     acc_cerraE.setDependePadre(false);
     alm_codiE.setDependePadre(false);
+    creaIncidB.setDependePadre(false);
     Bdesagr.setBounds(new Rectangle(204, 20, 77, 18));
     Bdesagr.setToolTipText("Desagrupar Productos");
     Bdesagr.setMargin(new Insets(0, 0, 0, 0));
@@ -824,6 +839,16 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     vertImporE.setEnabled(false);
 
     Potros.setLayout(null);
+    PIncid.setLayout(new GridBagLayout());
+    confGridIncid();
+    
+    PIncid.add(jtIncCab,new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
+            ,GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0, 0, 0, 1), 0, 0));
+    PIncid.add(jtIncLin,new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
+            ,GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(2, 0, 0, 1), 0, 0));
+    PIncid.add(jtIncAbo,new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0
+            ,GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(2, 0, 0, 1), 0, 0));
+    
     cLabel27.setText("Comentario");
     jtPed.setMaximumSize(new Dimension(755, 312));
     jtPed.setMinimumSize(new Dimension(755, 312));
@@ -1173,12 +1198,13 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     Pcabe.add(acc_serieE, null);
     Pcabe.add(acc_anoE, null);
     Pcabe.add(acc_anoL, null);
-    Pcabe.add(acc_totfraE, null);
+    Potros.add(acc_totfraE, null);
     Pcabe.add(cLabel110, null);
     Pcabe.add(sbe_codiE, null);
-    Pcabe.add(cLabel16, null);
-    Pcabe.add(cLabel21, null);
+    Potros.add(acc_totfraL, null);
+    Pcabe.add(acc_cerraL, null);
     Pcabe.add(acc_cerraE, null);
+    Pcabe.add(creaIncidB);
     Pcabe.add(cLabel4, null);
     Pcabe.add(acc_impokgE, null);
     Pcabe.add(cLabel18, null);
@@ -1226,8 +1252,10 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     Tpanel1.addTab( "Albaran",Palbar);
     Tpanel1.addTab( "Pedido",Ppedido);
     Tpanel1.addTab( "Reclamac.",PVerted);
-    Tpanel1.addTab( "Más Datos",Potros);
+    Tpanel1.addTab("Incid.", PIncid);
+    Tpanel1.addTab( "Más Datos",Potros);    
     Tpanel1.addTab("Historico", Phist);
+    
     Ppedido.add(jtPed,   new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(1, 0, 0, 0), 0, 0));
     Ppedido.add(cLabel27,   new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
@@ -1535,6 +1563,24 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 
   void activarEventos()
   {
+    jtIncCab.tableView.getSelectionModel().addListSelectionListener(new
+       ListSelectionListener()
+    {
+        @Override
+        public void valueChanged(ListSelectionEvent e)
+        {
+            try
+            {
+                if (e.getValueIsAdjusting() || !jtIncCab.isEnabled()) // && e.getFirstIndex() == e.getLastIndex())
+                    return;
+                MantPartes.verParteLineas(jtIncCab.getValorInt(0),jtIncLin,dtCon1);
+                MantPartes.verLinAbono(jtIncCab.getValorInt(0),-1,dtCon1,dtStat,jtIncAbo);
+            } catch (SQLException ex)
+            {
+                Error("Error al ver Incidencias",ex);
+            }
+        }
+    });
     jtHist.tableView.getSelectionModel().addListSelectionListener(new
        ListSelectionListener()
     {
@@ -1625,6 +1671,14 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           return;
         if (nav.pulsado == navegador.NINGUNO)
           actTotFra();
+      }
+    });
+    creaIncidB.addActionListener(new ActionListener()
+    {
+            @Override
+      public void actionPerformed(ActionEvent e)
+      {
+          creaIncidencia();
       }
     });
     acc_cerraE.addActionListener(new ActionListener()
@@ -1851,6 +1905,24 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 //        ganaFocoPrCompra();
       }
     });
+    jtIncCab.tableView.addMouseListener(new MouseAdapter()
+    {
+            @Override
+      public void mouseClicked(MouseEvent e)
+      {
+        try
+        {
+          if (jtIncCab.isVacio() || e.getClickCount()<2)
+              return;
+          irParteInc(jtIncCab.getValorInt(0));
+        }
+        catch (Exception k)
+        {
+          Error("Error al Ir a Lineas de despiece", k);
+        }
+      }
+    });
+    
     jtDes.tableView.addMouseListener(new MouseAdapter()
     {
             @Override
@@ -3973,7 +4045,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
               " and pro_nupar = "+acc_numeE.getValorInt()+
               " and pro_serie = '"+acc_serieE.getText()+"'"+
               " and emp_codi = "+emp_codiE.getValorInt()+
-              " and stK_block = 0")?"D":"B");
+              " and stk_block = 0")?"B":"D");
       swBloquearC=false;
       if (hisRowid==0)
       {
@@ -4203,6 +4275,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         verDatPedido(empCodi,eje_numeE.getValorInt(),
                      pcc_numeE.getValorInt());
         verDatRecl();
+        verDatIncid();
       }
       if (ARG_ADMIN)
         alm_codiE.setEnabled(true);
@@ -4260,6 +4333,42 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     jtRecl.resetCambio();
     actAcumVert(-1);
   }
+   void verDatIncid() throws SQLException
+  {
+    s="SELECT * FROM partecab WHERE emp_codi = "+emp_codiE.getValorInt()+
+        " and pac_tipo = 'E' "+
+        " and pac_docnum = "+acc_numeE.getValorInt()+
+        " and pac_docser = '"+acc_serieE.getText()+"'"+
+        " and pac_docano = "+acc_anoE.getValorInt()+    
+        " order by par_codi";
+    jtIncCab.setEnabled(false);
+    jtIncCab.removeAllDatos();    
+    if ( dtCon1.select(s))
+    {
+      do
+      {
+        ArrayList v = new ArrayList();
+        v.add(dtCon1.getString("par_codi"));
+        v.add(dtCon1.getFecha("pac_fecalt","dd-MM-yyyy HH:mm"));
+        v.add(dtCon1.getString("pac_usuinc"));
+        v.add(MantPartes.getDescrEstadoParte(dtCon1.getInt("pac_estad")));
+        jtIncCab.addLinea(v);
+      } while (dtCon1.next());
+      jtIncCab.requestFocus(0,0);
+      jtIncCab.setEnabled(true);
+      MantPartes.verParteLineas(jtIncCab.getValorInt(0,0),jtIncLin,dtCon1);
+      MantPartes.verLinAbono(jtIncCab.getValorInt(0,0),-1,dtCon1,dtStat,jtIncAbo);
+    }
+    else
+    {
+      jtIncLin.removeAllDatos();
+      jtIncAbo.removeAllDatos();
+    }
+    
+   
+  }
+   
+ 
   /**
    * Carga las lineas desglose en el grid jtDes
    * @param empCodi
@@ -4983,7 +5092,87 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       Error("Error al cambiar almacen", k);
     }
   }
-  
+  void irParteInc(final int numParte)
+  {
+      msgEspere("Llamando a  Programa de incidencias");
+     new miThread("")
+     {
+        @Override
+        public void run()
+        {
+          javax.swing.SwingUtilities.invokeLater(new Thread()
+          {
+              @Override
+              public void run()
+              { 
+                  ejecutable prog;                 
+                 
+                  if ((prog = jf.gestor.getProceso(MantPartes.getNombreClase())) == null)
+                     return;
+                      MantPartes cm = (MantPartes) prog;
+                      if (cm.inTransation())
+                      {
+                          msgBox("Mantenimiento Incidencias ocupado. No se puede realizar el alta");
+                         resetMsgEspere();
+                          return;
+                      }
+                      
+                      cm.PADQuery();
+                      cm.setNumeroParte(numParte);                      
+                      cm.ej_query1();
+                      jf.gestor.ir(cm);
+                  
+                      resetMsgEspere();
+              }
+          });
+          
+        }
+     };
+  }
+  /**
+   * Crear una incidenncia sobre este albaran.
+   */
+  void creaIncidencia()
+  {
+     msgEspere("Llamando a  Programa de incidencias");
+     new miThread("")
+     {
+        @Override
+        public void run()
+        {
+          javax.swing.SwingUtilities.invokeLater(new Thread()
+          {
+              @Override
+              public void run()
+              { 
+                  ejecutable prog;                 
+                 
+                  if ((prog = jf.gestor.getProceso(MantPartes.getNombreClase())) == null)
+                     return;
+                      MantPartes cm = (MantPartes) prog;
+                      if (cm.inTransation())
+                      {
+                          msgBox("Mantenimiento Incidencias ocupado. No se puede realizar el alta");
+                         resetMsgEspere();
+                          return;
+                      }
+                      
+                      cm.PADAddNew();
+                      cm.setTipoParte("E");
+                      cm.setProveedor(prv_codiE.getValorInt());
+                      cm.setDocuAno(acc_anoE.getValorInt());
+                      cm.setDocuSerie(acc_serieE.getText());
+                      cm.setDocuNume(acc_numeE.getValorInt());
+                      cm.irGrid();
+                      jf.gestor.ir(cm);
+                  
+                      resetMsgEspere();
+              }
+          });
+          
+        }
+     };
+  }
   void actTotFra()
   {
     try
@@ -6102,7 +6291,33 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        jtRecl.setValor(nombArt, row, 1);
 //       pro_nomverE.setText(nombArt);
      }
-
+     private void confGridIncid() throws Exception
+     {
+         jtIncCab.setMaximumSize(new Dimension(752, 250));
+         jtIncCab.setMinimumSize(new Dimension(752, 250));
+         jtIncCab.setPreferredSize(new Dimension(752, 250));
+         jtIncLin.setMaximumSize(new Dimension(752, 200));
+         jtIncLin.setMinimumSize(new Dimension(752, 200));
+         jtIncLin.setPreferredSize(new Dimension(752, 200));
+         jtIncAbo.setMaximumSize(new Dimension(752, 200));
+         jtIncAbo.setMinimumSize(new Dimension(752, 200));
+         jtIncAbo.setPreferredSize(new Dimension(752, 200));
+         ArrayList v = new ArrayList();
+         v.add("Parte"); // 0
+         v.add("Fecha"); // 1
+         v.add("Usuario"); // 2
+         v.add("Estado"); // 3
+         jtIncCab.setCabecera(v);
+         jtIncCab.setAlinearColumna(new int[]{2,1,0,1});
+         jtIncCab.setAnchoColumna(new int[]{50,120,120,100});
+         jtIncCab.setBuscarVisible(false);
+         jtIncLin.setBuscarVisible(false);
+         jtIncAbo.setBuscarVisible(false);
+         MantPartes.confGridArt(jtIncLin);
+         MantPartes.confGridAbo(jtIncAbo);   
+         jtIncAbo.setFormatoColumna(8,"BSN");
+     }
+     
      private void confGridRecl() throws Exception
      {
        jtRecl.setMaximumSize(new Dimension(752, 315));

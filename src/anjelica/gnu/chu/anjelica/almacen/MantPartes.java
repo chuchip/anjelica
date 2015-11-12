@@ -9,6 +9,7 @@ import gnu.chu.anjelica.ventas.AlbClien;
 import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.camposdb.cliPanel;
 import gnu.chu.controles.CComboBox;
+import gnu.chu.controles.Cgrid;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.eventos.GridAdapter;
 import gnu.chu.eventos.GridEvent;
@@ -60,6 +61,21 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class MantPartes  extends ventanaPad implements PAD
 {
+    final static String[][] PAA_TIPO={{"Cliente","C"},
+        {"Proveedor","P"} };
+    final static String[][] PAC_ESTADO={{"Generada", "0"},
+        {"Proc.Dev.", "1"},
+        {"Procesada","2"},
+        {"Resuelta", "3"},
+        {"Cancelada", "4"}
+    };
+     final static String[][] PAC_TIPO={{"Sala", "S"},
+         {  "Devolucion", "D"   },
+         {"No Recep", "N"},
+         {"Entrada", "E"},
+         {"Dev.Recep", "R"}
+     };
+    
     int parLinea;
     int focoGrid=1;
     String s;
@@ -159,6 +175,69 @@ public class MantPartes  extends ventanaPad implements PAD
             setErrorInit(true);
         }
   }
+    
+  public static String getDescrEstadoParte(int valorEstado)
+  {
+        for (String[] PAA_TIPO1 : PAC_ESTADO)
+        {
+            if (PAA_TIPO1[1].equals(""+valorEstado))
+                return PAA_TIPO1[0];
+        }
+        return "";
+  }
+  public static String getDescrEstadoSala(String valorEstadoSala)
+  {
+       for (String[] PAA_TIPO1 : PAC_TIPO)
+        {
+            if (PAA_TIPO1[1].equals(valorEstadoSala))
+                return PAA_TIPO1[0];
+        }
+        return "";    
+  }
+  public static String getNombreClase()
+  {
+      return "gnu.chu.anjelica.almacen.MantPartes";
+  }
+  public boolean inTransation()
+  {
+      return nav.isEdicion();
+  }
+  public void setTipoParte(String pacTipo)
+  {
+      pac_tipoE.setValor(pacTipo);
+  }
+  public void setProveedor(int prvCodi)
+  {
+        try
+        {
+            prv_codiE.setValorInt(prvCodi);
+            prv_codiE.controla(false, true);
+        } catch (SQLException ex)
+        {
+            Logger.getLogger(MantPartes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+  }
+  public void setNumeroParte(int numParte)
+  {
+      par_codiE.setValorInt(numParte);
+  }
+  public void setDocuAno(int docAno)
+  {
+      pac_docanoE.setValorInt(docAno);
+  }
+  public void setDocuSerie(String docSerie)
+  {
+      pac_docserE.setText(docSerie);
+  }
+  public void setDocuNume(int docNume)
+  {
+      pac_docnumE.setValorInt(docNume);
+  }
+  public void irGrid()
+  {
+   if (jt.isEnabled())
+    jt.requestFocusInicioLater();
+  }
   private void ponParametros(Hashtable<String,String> ht)
   {
       if (ht==null)
@@ -175,7 +254,7 @@ public class MantPartes  extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false,
         P_PERMEST==PERM_GERENC?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20151002) Modo: "+P_PERMEST);
+        this.setVersion("(20151112) Modo: "+P_PERMEST);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -393,8 +472,8 @@ public class MantPartes  extends ventanaPad implements PAD
         @Override
         public void actionPerformed(ActionEvent e)
         {
-           if (jt.isEnabled())
-            jt.requestFocusInicio();
+           irGrid();
+          
         }
       });
       BListar.addActionListener(new ActionListener()
@@ -642,6 +721,7 @@ public class MantPartes  extends ventanaPad implements PAD
 //       activaTodo();
 //       return;
 //   }
+   nav.setPulsado(navegador.ADDNEW);
    PTabPane1.setSelectedIndex(0);           
    resetTexto();
    
@@ -1207,8 +1287,7 @@ public class MantPartes  extends ventanaPad implements PAD
 
         pro_feccadlE.setEnabled(false);
 
-        paa_tipoE.addItem("Cliente","C");
-        paa_tipoE.addItem("Proveedor","P");
+        paa_tipoE.addItem(PAA_TIPO);
         paa_tipoE.setGridEditable(jtAbo);
 
         paa_estadE.setEnabled(false);
@@ -1260,11 +1339,7 @@ public class MantPartes  extends ventanaPad implements PAD
         Pcab.add(pac_tipoL);
         pac_tipoL.setBounds(10, 25, 50, 17);
 
-        pac_tipoE.addItem("Sala", "S");
-        pac_tipoE.addItem("Devolucion", "D");
-        pac_tipoE.addItem("No Recep", "N");
-        pac_tipoE.addItem("Entrada", "E");
-        pac_tipoE.addItem("Dev.Recep", "R");
+        pac_tipoE.addItem(PAC_TIPO);
         Pcab.add(pac_tipoE);
         pac_tipoE.setBounds(70, 25, 110, 17);
 
@@ -1365,11 +1440,7 @@ public class MantPartes  extends ventanaPad implements PAD
         Pcab.add(pac_estadL);
         pac_estadL.setBounds(0, 65, 60, 17);
 
-        pac_estadE.addItem("Generada", "0");
-        pac_estadE.addItem("Proc.Dev.", "1");
-        pac_estadE.addItem("Procesada", "2");
-        pac_estadE.addItem("Resuelta", "3");
-        pac_estadE.addItem("Cancelada", "4");
+        pac_estadE.addItem(PAC_ESTADO);
         Pcab.add(pac_estadE);
         pac_estadE.setBounds(70, 65, 110, 17);
 
@@ -1388,20 +1459,9 @@ public class MantPartes  extends ventanaPad implements PAD
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
         Pcabe.add(Pcab, gridBagConstraints);
 
-        {ArrayList vc=new ArrayList();
-            vc.add("Articulo"); //0
-            vc.add("Nombre"); // 1
-            vc.add("Ejerc."); // 2
-            vc.add("Serie"); // 3
-            vc.add("Lote"); // 4
-            vc.add("Ind."); // 5
-            vc.add("Fec.Cad"); // 6
-            vc.add("Unid"); // 7
-            vc.add("Kilos"); // 8
-            vc.add("Sug."); // 9
-            vc.add("Com.Sala"); // 10
+        {
+            confGridArt(jt);
 
-            jt.setCabecera(vc);
             ArrayList v=new ArrayList();
             v.add(pro_codiE.getTextField()); // 0
             v.add(pro_nombE);  // 1
@@ -1424,8 +1484,6 @@ public class MantPartes  extends ventanaPad implements PAD
             }
         }
         jt.setNumRegCargar(0);
-        jt.setAlinearColumna(new int[]{2,0,2,1,2,2,1,2,2,0,0});
-        jt.setAnchoColumna(new int[]{70,130,50,30,50,40,60,60,60,60,150});
         jt.setDefButton(Baceptar);
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jt.setFormatoCampos();
@@ -1514,19 +1572,9 @@ public class MantPartes  extends ventanaPad implements PAD
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
         Plistado.add(jtLineas, gridBagConstraints);
 
-        {ArrayList vc=new ArrayList();
-            vc.add("Tipo"); // 0 Tipo Abono (C/P)
-            vc.add("Articulo"); //1
-            vc.add("Descrip."); // 2
-            vc.add("Cli/Prv"); //3
-            vc.add("Nombre"); // 4
-            vc.add("Comentario"); // 5
-            vc.add("Kilos"); // 6
-            vc.add("Precio"); // 7
-            vc.add("Proc."); // 8
-            vc.add("Id");//9
+        {
+            confGridAbo(jtAbo);
 
-            jtAbo.setCabecera(vc);
             ArrayList v=new ArrayList();
             v.add(paa_tipoE); // 0
             v.add(paa_procodE.getTextField()); // 1
@@ -1546,8 +1594,6 @@ public class MantPartes  extends ventanaPad implements PAD
                 return;
             }
         }
-        jtAbo.setAlinearColumna(new int[]{0,2,0,2,0,0,2,2,0,2});
-        jtAbo.setAnchoColumna(new int[]{50,60,100,60,100,130,60,60,50,40});
         jtAbo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtAbo.setAltButton(BswGrid);
         jtAbo.setDefButton(Baceptar);
@@ -1574,11 +1620,7 @@ public class MantPartes  extends ventanaPad implements PAD
         PCondFiltro.add(pac_estadL1);
         pac_estadL1.setBounds(300, 2, 60, 17);
 
-        estadoE.addItem("Generada", "0");
-        estadoE.addItem("Proc.Dev.", "1");
-        estadoE.addItem("Procesada", "2");
-        estadoE.addItem("Resuelta", "3");
-        estadoE.addItem("Cancelada", "4");
+        estadoE.addItem(PAC_ESTADO);
         PCondFiltro.add(estadoE);
         estadoE.setBounds(50, 2, 110, 17);
 
@@ -1607,11 +1649,7 @@ public class MantPartes  extends ventanaPad implements PAD
         pac_tipoL1.setBounds(170, 2, 30, 17);
 
         tipoE.addItem("TODOS", "*");
-        tipoE.addItem("Sala", "S");
-        tipoE.addItem("Devolucion", "D");
-        tipoE.addItem("No Recep.", "N");
-        tipoE.addItem("Entrada", "E");
-        tipoE.addItem("Dev.Recep", "R");
+        tipoE.addItem(PAC_TIPO);
         PCondFiltro.add(tipoE);
         tipoE.setBounds(200, 2, 95, 17);
 
@@ -2614,35 +2652,43 @@ public class MantPartes  extends ventanaPad implements PAD
         pac_usuresE.setText(dtCon1.getString("pac_usures"));
         
         swCargaList=false;
-        jt.removeAllDatos();
-
-        if (!dtCon1.select("select l.*,a.pro_nomb from partelin as l,v_articulo as a"+
-            " where par_codi="+parCodi+
-            " and l.pro_codi = a.pro_codi "+
-            " order by par_linea"))
+        
+        if (!verParteLineas(parCodi,jt,dtCon1))
         {
             msgBox("No encontradas lineas para este PARTE");
             return;
         }
 
+        jt.requestFocusInicio();
+    }
+    
+    public static boolean verParteLineas(int parCodi,Cgrid jt,DatosTabla dt) throws SQLException
+    {
+        jt.removeAllDatos();
+        if (!dt.select("select l.*,a.pro_nomb from partelin as l,v_articulo as a"+
+            " where par_codi="+parCodi+
+            " and l.pro_codi = a.pro_codi "+
+            " order by par_linea"))
+          return false;
+
         do
         {
             ArrayList v=new ArrayList();
-            v.add(dtCon1.getString("pro_codi"));
-            v.add(dtCon1.getString("pro_nomb"));
-            v.add(dtCon1.getString("pro_ejelot"));
-            v.add(dtCon1.getString("pro_serlot"));
-            v.add(dtCon1.getString("pro_numlot"));
-            v.add(dtCon1.getString("pro_indlot"));
-            v.add(dtCon1.getDate("pro_feccad"));
-            v.add(dtCon1.getString("pal_unidad"));
-            v.add(dtCon1.getString("pal_kilos"));
-            v.add(pal_acsalaE.getText(dtCon1.getString("pal_acsala")));
-            v.add(dtCon1.getString("pal_comsal"));
+            v.add(dt.getString("pro_codi"));
+            v.add(dt.getString("pro_nomb"));
+            v.add(dt.getString("pro_ejelot"));
+            v.add(dt.getString("pro_serlot"));
+            v.add(dt.getString("pro_numlot"));
+            v.add(dt.getString("pro_indlot"));
+            v.add(dt.getDate("pro_feccad"));
+            v.add(dt.getString("pal_unidad"));
+            v.add(dt.getString("pal_kilos"));
+            v.add(getDescrEstadoSala(dt.getString("pal_acsala")));
+            v.add(dt.getString("pal_comsal"));
 
             jt.addLinea(v);
-        } while (dtCon1.next());
-        jt.requestFocusInicio();
+        } while (dt.next());
+        return true;
     }
     
     private void verLineas(int parCodi) throws SQLException
@@ -2716,7 +2762,20 @@ public class MantPartes  extends ventanaPad implements PAD
        
         verLineasAbono(parCodi,nl);
     }
-   
+    /**
+     * Devuelve el tipo de Abono
+     * @param tipoAbo
+     * @return 
+     */
+    public  static String getDescrTipoAbono(String tipoAbo)
+    {                
+        for (String[] PAA_TIPO1 : PAA_TIPO)
+        {
+            if (PAA_TIPO1[1].equals(tipoAbo))
+                return PAA_TIPO1[0];
+        }
+        return "";
+    }
     /**
      * Muestra las acciones sobre el parte
      * @param parCodi
@@ -2728,47 +2787,92 @@ public class MantPartes  extends ventanaPad implements PAD
         if (swCargaLinAbo)
             return; 
         swCargaLinAbo=true;
-        jtAbo.setEnabled(false);
-        jtAbo.removeAllDatos();
-
-        if (! dtCon1.select("select l.*,a.pro_nomb from parteabo as l"
-            + ",v_articulo as a"+
-            " where par_codi="+parCodi+
-            " and par_linea = "+nl+
-            " and a.pro_codi = l.pro_codi "+
-            " order by paa_codi"))
-        {
+        boolean swEnab=jtAbo.isEnabled();
+        if (swEnab)
+            jtAbo.setEnabled(false);
+        
+        verLinAbono(parCodi,nl,dtCon1,dtStat,jtAbo);
+        if (swEnab)
             jtAbo.setEnabled(true);
-            swCargaLinAbo=false;
-            return; // Sin partes
-        }
-        String nombre;
-        do
-        {
-            ArrayList vc=new ArrayList();
-            vc.add(paa_tipoE.getText(dtCon1.getString("paa_tipo"))); // 0 Tipo Abono (C/P)
-            vc.add(dtCon1.getString("pro_codi")); //1
-            vc.add(dtCon1.getString("pro_nomb")); //2
-            vc.add(dtCon1.getString("paa_cliprv")); //3
-            if (dtCon1.getString("paa_cliprv").equals("C"))
-                s="select cli_nomb as nombre from v_cliente where cli_codi="+dtCon1.getString("paa_cliprv");
-            else
-                s="select prv_nomb as nombre from v_proveedo where prv_codi="+dtCon1.getString("paa_cliprv");
-            if (dtStat.select(s))
-                nombre=dtStat.getString("nombre");
-            else
-                nombre="Cliente/Prv. NO ENCONTRADO";
-            vc.add(nombre); //4
-            vc.add(dtCon1.getString("paa_coment")); //5
-            vc.add(dtCon1.getDouble("paa_kilos")); //6
-            vc.add(dtCon1.getDouble("paa_precio")); //7
-            vc.add(dtCon1.getInt("paa_estad")!=0); //8
-            vc.add(dtCon1.getInt("paa_codi")); // 9
-            jtAbo.addLinea(vc);
-        } while (dtCon1.next());
-        jtAbo.setEnabled(true);
         //jtAbo.requestFocus(0,0);
          swCargaLinAbo=false;
         //jtAbo.requestFocus(0,0);
     }
+    
+    public static boolean verLinAbono(int parCodi,int nl, DatosTabla dt, DatosTabla dt1,Cgrid jt) throws SQLException
+    {
+       jt.removeAllDatos();
+       if (! dt.select("select l.*,a.pro_nomb from parteabo as l"
+            + ",v_articulo as a"+
+            " where par_codi="+parCodi+
+            (nl==-1?"":" and par_linea = "+nl)+
+            " and a.pro_codi = l.pro_codi "+
+            " order by paa_codi,par_linea"))
+            return false; // Sin partes
+        String nombre,s;
+        do
+        {
+            ArrayList vc=new ArrayList();
+            vc.add(getDescrTipoAbono(dt.getString("paa_tipo"))); // 0 Tipo Abono (C/P)
+            vc.add(dt.getString("pro_codi")); //1
+            vc.add(dt.getString("pro_nomb")); //2
+            vc.add(dt.getString("paa_cliprv")); //3
+            if (dt.getString("paa_cliprv").equals("C"))
+                s="select cli_nomb as nombre from v_cliente where cli_codi="+dt.getString("paa_cliprv");
+            else
+                s="select prv_nomb as nombre from v_proveedo where prv_codi="+dt.getString("paa_cliprv");
+            if (dt1.select(s))
+                nombre=dt1.getString("nombre");
+            else
+                nombre="Cliente/Prv. NO ENCONTRADO";
+            vc.add(nombre); //4
+            vc.add(dt.getString("paa_coment")); //5
+            vc.add(dt.getDouble("paa_kilos")); //6
+            vc.add(dt.getDouble("paa_precio")); //7
+            vc.add(dt.getInt("paa_estad")!=0); //8
+            vc.add(dt.getInt("paa_codi")); // 9
+            jt.addLinea(vc);
+        } while (dt.next());
+        return true;
+    }
+    
+    public static void confGridArt(Cgrid jt)
+    {
+        ArrayList vc=new ArrayList();
+        vc.add("Articulo"); //0
+        vc.add("Nombre"); // 1
+        vc.add("Ejerc."); // 2
+        vc.add("Serie"); // 3
+        vc.add("Lote"); // 4
+        vc.add("Ind."); // 5
+        vc.add("Fec.Cad"); // 6
+        vc.add("Unid"); // 7
+        vc.add("Kilos"); // 8
+        vc.add("Sug."); // 9
+        vc.add("Com.Sala"); // 10
+        jt.setCabecera(vc); 
+        jt.setAlinearColumna(new int[]{2,0,2,1,2,2,1,2,2,0,0});
+        jt.setAnchoColumna(new int[]{70,130,50,30,50,40,60,60,60,60,150});
+
+    }
+    
+    public static void confGridAbo(Cgrid jt)
+    {
+        ArrayList vc=new ArrayList();
+        vc.add("Tipo"); // 0 Tipo Abono (C/P)
+        vc.add("Articulo"); //1
+        vc.add("Descrip."); // 2
+        vc.add("Cli/Prv"); //3
+        vc.add("Nombre"); // 4
+        vc.add("Comentario"); // 5
+        vc.add("Kilos"); // 6
+        vc.add("Precio"); // 7
+        vc.add("Proc."); // 8
+        vc.add("Id");//9
+        jt.setCabecera(vc);
+        jt.setAlinearColumna(new int[]{0,2,0,2,0,0,2,2,0,2});
+        jt.setAnchoColumna(new int[]{50,60,100,60,100,130,60,60,50,40});
+    }
+
+
 }
