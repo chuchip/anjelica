@@ -786,7 +786,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     creaIncidB.setBounds(new Rectangle(480,46,38,30));
     
     acc_totfraL.setBounds(new Rectangle(0, 120, 132, 18));
-    acc_totfraE.setBounds(new Rectangle(115, 140, 43, 18));
+    acc_totfraE.setBounds(new Rectangle(135, 120, 43, 18));
     acc_totfraE.setDependePadre(false);
     acc_cerraE.setDependePadre(false);
     alm_codiE.setDependePadre(false);
@@ -963,7 +963,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     bloquearC.addItem("Bloquear","B");
     bloquearC.setDependePadre(false);
     bloquearL.setBounds(new Rectangle(0, 100, 155, 16));
-    bloquearC.setBounds(new Rectangle(160, 100, 105, 16));
+    bloquearC.setBounds(new Rectangle(135, 100, 105, 16));
     frt_ejercE.setEnabled(false);
     frt_numeE.setEnabled(false);
     prv_codiL.setText("Proveedor");
@@ -4045,7 +4045,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
               " and pro_nupar = "+acc_numeE.getValorInt()+
               " and pro_serie = '"+acc_serieE.getText()+"'"+
               " and emp_codi = "+emp_codiE.getValorInt()+
-              " and stk_block = 0")?"B":"D");
+              " and stk_block = 0")?"D":"B");
       swBloquearC=false;
       if (hisRowid==0)
       {
