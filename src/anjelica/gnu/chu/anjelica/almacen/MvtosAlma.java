@@ -1181,7 +1181,7 @@ public class MvtosAlma
             {
                 if (psCli!=null)
                 {
-                  psCli.setInt(1,dt.getInt("cli_codi"));
+                  psCli.setInt(1,dt.getInt("cliCodi"));
                   ResultSet rsCli=psCli.executeQuery();
                   if (! rsCli.next())
                   {
