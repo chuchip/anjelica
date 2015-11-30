@@ -134,7 +134,7 @@ public class Comvalm extends ventana
   {
       iniciarFrame();
 
-      this.setVersion("2015-10-18");
+      this.setVersion("2015-11-30");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -823,7 +823,7 @@ public class Comvalm extends ventana
 
             ArrayList v = new ArrayList();
             v.add("Fecha"); // 0
-            v.add("Entrada"); // 1
+            v.add("Entr."); // 1
             v.add("Salida"); // 2
             v.add("Tipo"); // 3
             v.add("Precio"); // 4
@@ -840,10 +840,18 @@ public class Comvalm extends ventana
             jt.setCabecera(v);
             jt.setToolTipText("Doble click para ir a Mvto");
             jt.setAnchoColumna(new int[]
-                {76, 65, 65, 30, 55,50, 70, 70, 64,80,70,100,80,45,30});
+                {110, 60, 60, 30, 55,50, 70, 55, 65,90,70,110,80,45,30});
             jt.setAlinearColumna(new int[]
                 {1, 2, 2, 1, 2, 2,2, 2, 2,0,1,0,0,2,2});
-            jt.setFormatoColumna(0,"dd-MM-yy");
+            jt.setFormatoColumna(0,"dd-MM-yy HH:mm");
+            jt.setFormatoColumna(1,"---9.99");
+            jt.setFormatoColumna(2,"---9.99");
+            jt.setFormatoColumna(4,"---9.99");
+            jt.setFormatoColumna(5,"----9");
+            jt.setFormatoColumna(6,"--,--9.9");
+            jt.setFormatoColumna(7,"--9.99");
+            jt.setFormatoColumna(8,"--,--9.99");
+            jt.setFormatoColumna(13,"---9.99");
             jt.setFormatoColumna(JT_FECDOC,"dd-MM-yy");
             jt.setMinimumSize(new Dimension(422, 282));
             jt.setPreferredSize(new Dimension(422, 282));

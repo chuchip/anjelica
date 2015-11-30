@@ -1361,26 +1361,22 @@ public class MvtosAlma
           if (sel=='V' && dt.getInt("div_codi")<=0 && ! isRootAV())
             continue;
           ArrayList v = new ArrayList();
-          v.add(dt.getDate("fecmov"));
+          v.add(dt.getTimeStamp("fecmov"));
           if (tipMov.equals("+") || tipMov.equals("="))
           {
             if (sel=='D')
-               v.add(Formatear.format(dt.getDouble("canti") * -1,
-                                           "---,--9.99"));
+               v.add(dt.getDouble("canti") * -1);
             else
-              v.add(Formatear.format(dt.getString("canti"),
-                                            "---,--9.99"));
+              v.add(dt.getString("canti"));
             v.add("");
           }
           else
           { // Salida
             if (swTraspAlm && swUsaDocumentos )
-                v.add(Formatear.format(dt.getString("canti"),
-                                        "---,--9.99"));
+                v.add(dt.getString("canti"));
             else
                 v.add("");
-            v.add(Formatear.format(dt.getString("canti"),
-                                        "---,--9.99"));
+            v.add(dt.getString("canti"));
           }
           if (dt.getString("tipmov").equals("="))
              v.add("IN");
@@ -1391,12 +1387,11 @@ public class MvtosAlma
              else
                 v.add(dt.getString("sel"));
           }
-          v.add(!swVerPrecios?"":Formatear.format(Formatear.redondea(dt.getDouble("precio"),2),
-                                      "---,--9.99"));
-          v.add(Formatear.format(uniStk, "---,--9"));
-          v.add(Formatear.format(canStk, "---,--9.99"));
-          v.add(!swVerPrecios?"":Formatear.format(Formatear.redondea(preStk+incCosto,2) , "---,--9.99"));
-          v.add(!swVerPrecios?"":Formatear.format(impGana, "---,--9.99"));
+          v.add(!swVerPrecios?"":Formatear.redondea(dt.getDouble("precio"),2));
+          v.add(uniStk);
+          v.add(canStk);
+          v.add(!swVerPrecios?"":Formatear.redondea(preStk+incCosto,2) );
+          v.add(!swVerPrecios?"":impGana);
           v.add(dt.getString("ejedoc")+"-"+dt.getString("avc_serie")+"-"+dt.getString("numalb"));
           v.add(dt.getDate("fecdoc"));
           cliNomb="";
@@ -1442,7 +1437,7 @@ public class MvtosAlma
                   dt.getString("serie")+"-"+
                   dt.getString("lote")+"-"+dt.getString("numind") );
           if (sel=='V')
-            v.add(!swVerPrecios?"":Formatear.format(dt.getDouble("precio")-preStk,"---9.99"));
+            v.add(!swVerPrecios?"":dt.getDouble("precio")-preStk);
           else
             v.add("");
           if (swUsaDocumentos)
@@ -1450,7 +1445,7 @@ public class MvtosAlma
             if ( dt.getInt("alm_codori")==0)
                 v.add(dt.getInt("alm_codi"));
             else 
-                  v.add(dt.getInt("alm_codori")+"->"+dt.getInt("alm_coddes"));
+                  v.add(dt.getInt("alm_codori")+"->"+dt.getInt("alm_coddes",true));
           }
           else
               v.add(dt.getInt("alm_codi"));
