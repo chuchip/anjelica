@@ -254,7 +254,7 @@ public class MantPartes  extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false,
         P_PERMEST==PERM_GERENC?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20151112) Modo: "+P_PERMEST);
+        this.setVersion("(20151130) Modo: "+P_PERMEST);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -869,7 +869,7 @@ public class MantPartes  extends ventanaPad implements PAD
   */
  String getNombCliPrv(DatosTabla dt,String tipo,int cliprv) throws SQLException
  {
-     if (tipo.equals("P"))
+     if (tipo.equals("E"))
        s="select prv_nomb as nombre from v_proveedo where prv_codi="+cliprv;
      else
        s="select cli_nomb as nombre from v_cliente where cli_codi="  +cliprv;
@@ -1517,7 +1517,7 @@ public class MantPartes  extends ventanaPad implements PAD
         jtList.setCabecera(v1);
         jtList.setAnchoColumna(new int[]{40,60,80,40,150,250});
         jtList.setAlinearColumna(new int[]{2,1,0,2,0,0});
-        jtList.setFormatoColumna(1,"dd-mm-yy");
+        jtList.setFormatoColumna(1,"dd-MM-yy");
         jtList.setAjustarGrid(true);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
