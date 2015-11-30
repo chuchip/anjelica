@@ -5108,12 +5108,16 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
                   ejecutable prog;                 
                  
                   if ((prog = jf.gestor.getProceso(MantPartes.getNombreClase())) == null)
-                     return;
+                  {
+                      resetMsgEspere();
+                      msgBox("Usuario sin Mantenimiento Incidencias");
+                      return;
+                  }
                       MantPartes cm = (MantPartes) prog;
                       if (cm.inTransation())
                       {
                           msgBox("Mantenimiento Incidencias ocupado. No se puede realizar el alta");
-                         resetMsgEspere();
+                          resetMsgEspere();
                           return;
                       }
                       
