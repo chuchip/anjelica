@@ -25,9 +25,6 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRParameter;
@@ -616,18 +613,18 @@ public class CLVenRep extends ventana {
         Baceptar = new gnu.chu.controles.CButtonMenu();
         bdisc = new gnu.chu.camposdb.DiscButton();
         jtCab = new gnu.chu.controles.Cgrid(11);
-        Vector v=new Vector();
-        v.addElement("Ejer"); // 0
-        v.addElement("Ser"); // 1
-        v.addElement("Num.Alb"); // 2
-        v.addElement("Fec.Alb"); // 3
-        v.addElement("Cliente"); // 4
-        v.addElement("Nomb.Cliente"); // 5
-        v.addElement("Imp.Alb"); // 6
-        v.addElement("Imp.Cob"); // 7
-        v.addElement("Kilos"); // 8
-        v.addElement("Imp.Ganan"); // 9
-        v.addElement("Tar"); // 10
+        ArrayList v=new ArrayList();
+        v.add("Ejer"); // 0
+        v.add("Ser"); // 1
+        v.add("Num.Alb"); // 2
+        v.add("Fec.Alb"); // 3
+        v.add("Cliente"); // 4
+        v.add("Nomb.Cliente"); // 5
+        v.add("Imp.Alb"); // 6
+        v.add("Imp.Cob"); // 7
+        v.add("Kilos"); // 8
+        v.add("Imp.Ganan"); // 9
+        v.add("Tar"); // 10
         jtCab.setCabecera(v);
         jtCab.setAnchoColumna(new int[]{
             40,30,50,80, 60,180,80,80,70,80,30});
@@ -645,7 +642,7 @@ public class CLVenRep extends ventana {
         }
     }
     ;
-    Vector v1=new Vector();
+    ArrayList v1=new ArrayList();
     v1.add("Prod"); //0
     v1.add("Nombre"); // 1
     v1.add("Unid"); // 2

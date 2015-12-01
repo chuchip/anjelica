@@ -337,6 +337,7 @@ public class menu extends JFrame
       }
     });
      ItemRepresen.setText("Represen");
+     ItemRepresen.add(clvenrep);
  clvenrep.setText("Ventas Repr.");
     clvenrep.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -886,7 +887,7 @@ public class menu extends JFrame
     JpopupPedVentas.add(pdpedven);
     JpopupPedVentas.add(clpevepr);
     //JpopupPedVentas.add(clpedven);
-    JpopupPedVentas.add(clvenrep);
+//    JpopupPedVentas.add(clvenrep);
     JPopupAlmacen.add(ALclstkdes);
     JPopupAlmacen.add(ALclresstock);
     JPopupAlmacen.add(ALlisaldos);
