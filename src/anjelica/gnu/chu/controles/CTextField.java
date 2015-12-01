@@ -974,6 +974,16 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
   {
     tieneCambio=hasCambio?1:0;
   }
+   /**
+    * Pone el valor antiguo de nuevo (lo coge de getCopia)
+    */
+  public void resetValor()
+  {
+      if (tipoCampo==Types.DECIMAL)
+          setValorDec(getValorDecAnt());
+      else
+        setText(getCopia());
+  }
   /**
 * Rutina que comprueba si el campo ha cambiado desde la ultima ejecucinn de
 * resetCambio.
@@ -997,16 +1007,10 @@ public boolean hasCambio()
   }
   if (tipoCampo==Types.DECIMAL)
   {
-    if (copNum==getValorDec())
-      return false;
-    else
-      return true;
+      return copNum != getValorDec();
   }
 
-  if (copia.trim().compareTo(super.getText().trim())!=0)
-       return true;
-  else
-    return false;
+  return copia.trim().compareTo(super.getText().trim())!=0;
 }
 public String getTextAnt()
 {

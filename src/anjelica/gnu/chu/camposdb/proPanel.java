@@ -179,6 +179,11 @@ public class proPanel extends CPanel
     pro_codiE.resetCambio();
     proCodiAnt=pro_codiE.getValorInt();
   }
+  public void resetValor()
+  {
+    pro_codiE.resetValor();
+  }
+  
     @Override
   public boolean hasCambio()
   {

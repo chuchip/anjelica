@@ -106,7 +106,7 @@ public class Bascula {
      } catch (Throwable k)
      {
         mensajes.mensajeAviso("Erro al Inicializar bascula "+getNombreBascula(bascula)+"\n"+k.getMessage());
-        SystemOut.print(k);
+//        SystemOut.print(k);
      }
      return 0;
    }

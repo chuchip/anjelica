@@ -234,7 +234,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2015-04-08" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2015-12-01" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -3032,8 +3032,25 @@ public class MantDesp extends ventanaPad implements PAD
                 mensajeErr("Fecha Caducidad NO valida");
                 return 0;
             }
-            if (pro_codlE.hasCambio() || def_kilosE.hasCambio() || def_feccadE.hasCambio() && pro_codlE.isNull() == false)
+            if (pro_codlE.hasCambio() || def_kilosE.hasCambio() || def_numpieE.hasCambio() ||  def_feccadE.hasCambio() && pro_codlE.isNull() == false)
             {
+                if (jtLin.getValorInt(linea,JTLIN_NUMIND)!=0)
+                {
+                        if (!ActualStkPart.checkStock(dtStat, pro_codlE.getValorInt(),
+                            deo_ejlogeE.getValorInt(), EU.em_cod,
+                            deo_selogeE.getText(), deo_nulogeE.getValorInt(),
+                            jtLin.getValorInt(linea,JTLIN_NUMIND), deo_almdesE.getValorInt(),
+                            Double.parseDouble(def_kilosE.getCopia().trim()), Integer.parseInt(def_numpieE.getCopia().trim())))
+                        {
+                            mensajeErr("Individuo ha tenido mvtos. Imposible modificar linea");
+                            def_numpieE.resetValor();
+                            pro_codlE.resetValor();
+                            def_kilosE.resetValor();
+                            
+                            return 0;
+                        }
+                
+                }
                 mensajeErr("");
                 if (!opSimular.isSelected())
                 {
@@ -3585,6 +3602,16 @@ public class MantDesp extends ventanaPad implements PAD
 
         try
         {
+            if (!ActualStkPart.checkStock(dtStat, pro_codlE.getValorInt(),
+                deo_ejlogeE.getValorInt(), EU.em_cod,
+                deo_selogeE.getText(), deo_nulogeE.getValorInt(),
+                jtLin.getValorInt(row,JTLIN_NUMIND), deo_almdesE.getValorInt(),
+                Double.parseDouble(def_kilosE.getCopia().trim()), Integer.parseInt(def_numpieE.getCopia().trim())))
+            {
+                msgBox("Individuo ha tenido mvtos. Imposible borrar linea");
+                return false;
+            }
+                
             if (borraLinDesp(jtLin.getValorInt(row, JTLIN_ORDEN)) == 0)
             {
                 msgBox("Linea de Despiece no encontrada");

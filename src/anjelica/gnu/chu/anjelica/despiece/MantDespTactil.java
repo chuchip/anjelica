@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -376,7 +378,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2015-03-31"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2015-12-01"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -869,7 +871,22 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
        if (jtSal.isVacio() || !jtSal.isEnabled() || e.getClickCount()<2)
          return;  
-         
+        try
+        {
+            if (!ActualStkPart.checkStock(dtStat, jtSal.getValorInt(JTSAL_PROCODI),
+                eje_numeE.getValorInt(), EU.em_cod,
+                SERIE, deo_codiE.getValorInt(),
+                jtSal.getValorInt( JTSAL_NUMIND), deo_almdesE.getValorInt(),
+                jtSal.getValorDec(JTSAL_KILOS),jtSal.getValorInt(JTSAL_NUMPIE)))
+            {
+                msgBox("Individuo ha tenido mvtos. Imposible editar linea");
+                return;
+            }     
+        } catch (SQLException ex)
+        {
+            Error("Error al comprobar si articulo ha tenido mvtos",ex);
+            return;
+        }
        modLinSal=true;
        nlSalE.setValorDec(jtSal.getSelectedRow());
        pro_codsalE.setText(jtSal.getValString(JTSAL_PROCODI));
@@ -2749,6 +2766,15 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    try
    {
+     if (!ActualStkPart.checkStock(dtStat, jtSal.getValorInt(row, JTSAL_PROCODI),
+                eje_numeE.getValorInt(), EU.em_cod,
+                SERIE, deo_codiE.getValorInt(),
+                jtSal.getValorInt(row, JTSAL_NUMIND), deo_almdesE.getValorInt(),
+                jtSal.getValorDec(row,JTSAL_KILOS),jtSal.getValorInt(row,JTSAL_NUMPIE)))
+     {
+                msgBox("Individuo ha tenido mvtos. Imposible borrar linea");
+                return false;
+     }
      if (borraLinDesp(eje_numeE.getValorInt(), EU.em_cod,
                       SERIE,deo_codiE.getValorInt(),jtSal.getValorInt(row, 0),
                       jtSal.getValorInt(row, 4)) != 1)
