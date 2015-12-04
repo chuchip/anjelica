@@ -1,3 +1,18 @@
+-- Quitar columna rgs_prebas de regularizaciones almacen
+drop view v_inventar;
+drop view v_regstock;
+alter table regalmacen drop  rgs_prebas;
+create view anjelica.v_regstock as select r.*,  tir_nomb, tir_afestk,  tir_tipo 
+from anjelica.regalmacen as r,anjelica.motregu as m 
+    where r.tir_codi = m.tir_codi 
+    and tir_afestk != '*' and rgs_trasp!=0;  
+grant select on anjelica.v_regstock to public;
+create view anjelica.v_inventar as select r.* 
+from anjelica.regalmacen as r,anjelica.motregu as m 
+    where r.tir_codi = m.tir_codi 
+    and tir_afestk = '=';  
+grant select on anjelica.v_inventar to public;
+---
 -- Incluyendo campo kilos brutos en detalle lineas de albaran
 alter table anjelica.v_albvenpar alter avp_canti set not null;
 alter table anjelica.v_albvenpar add avp_canbru decimal(9,3) not null default 0;

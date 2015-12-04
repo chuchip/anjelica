@@ -2431,11 +2431,10 @@ rgs_recprv smallint not null,	-- Tipo Recl. Prov.. 0 = NO es Reclamado
 				-- 4 Reclamacion Pend.
 sbe_codi  smallint not null,	-- SubEmpresa
 rgs_partid smallint not null,	-- Partida (-1 NO)
-usu_nomb varchar(20),		-- Usuario que crea la Reg.
-rgs_prebas float,		-- Precio base. No usado
-rgs_prmeco float,		-- Pr. Medio Compra. NO usado
-rgs_prulco float,		-- Pr. Ultima Compra (Precio Costo)
-rgs_prregu float,		-- Precio de Regularizacion(Usado en mvtos)
+usu_nomb varchar(20),	-- Usuario que crea la Reg.
+rgs_prmeco float,		-- Costo en la fecha Mvto. 
+rgs_prulco float,		-- Precio Ultima Entrada.
+rgs_prregu float,		-- Precio de Regularizacion
 rgs_kilos float,		-- Kilos
 rgs_clidev int not null,	-- Cliente q genero la Dev.
 rgs_kilant float not null,	-- Kilos Antiguos (NO USADO)

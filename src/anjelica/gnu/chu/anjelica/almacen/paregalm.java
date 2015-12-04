@@ -724,7 +724,7 @@ public class paregalm extends CPanel {
         dtAdd.setDato("sbe_codi", sbeCodi);
         dtAdd.setDato("rgs_partid ", 1);
         dtAdd.setDato("usu_nomb", usuNomb);
-        dtAdd.setDato("rgs_prebas", 0);
+     
         dtAdd.setDato("rgs_prmeco", 0);
         dtAdd.setDato("rgs_prulco", 0); // Buscamos el precio Ul.Compra ?
         dtAdd.setDato("rgs_prregu", precbas);
