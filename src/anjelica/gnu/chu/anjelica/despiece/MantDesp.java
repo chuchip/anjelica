@@ -4188,13 +4188,13 @@ public class MantDesp extends ventanaPad implements PAD
 
                 eje_numeL.setText("Ejercicio");
                 Pcabe.add(eje_numeL);
-                eje_numeL.setBounds(3, 2, 46, 17);
+                eje_numeL.setBounds(3, 2, 47, 17);
                 Pcabe.add(eje_numeE);
                 eje_numeE.setBounds(53, 2, 35, 17);
 
                 deo_codiL.setText("Despiece ");
                 Pcabe.add(deo_codiL);
-                deo_codiL.setBounds(98, 2, 54, 17);
+                deo_codiL.setBounds(98, 2, 56, 17);
                 Pcabe.add(deo_codiE);
                 deo_codiE.setBounds(158, 2, 41, 17);
 
@@ -4204,7 +4204,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 deo_numdesL.setText("Grupo ");
                 Pcabe.add(deo_numdesL);
-                deo_numdesL.setBounds(570, 22, 37, 17);
+                deo_numdesL.setBounds(570, 22, 39, 17);
                 Pcabe.add(deo_numdesE);
                 deo_numdesE.setBounds(610, 22, 48, 17);
 
@@ -4218,7 +4218,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel11.setText("Alm. Orig");
                 Pcabe.add(cLabel11);
-                cLabel11.setBounds(0, 22, 51, 17);
+                cLabel11.setBounds(0, 22, 53, 17);
 
                 deo_almoriE.setToolTipText("Almacen Origen");
                 deo_almoriE.setAncTexto(30);
@@ -4228,7 +4228,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel12.setText("Alm. Dest");
                 Pcabe.add(cLabel12);
-                cLabel12.setBounds(280, 22, 53, 17);
+                cLabel12.setBounds(280, 22, 55, 17);
 
                 deo_almdesE.setToolTipText("Almacen Destino");
                 deo_almdesE.setAncTexto(30);
@@ -4280,7 +4280,6 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_nulogeE.setBounds(370, 2, 40, 17);
 
                 deo_desnueE.setText("Desp. Interno");
-                deo_desnueE.setMargin(new java.awt.Insets(0, 0, 0, 0));
                 Plotgen.add(deo_desnueE);
                 deo_desnueE.setBounds(410, 2, 105, 17);
 
@@ -4289,7 +4288,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel3.setText("Estado");
                 Pcabe.add(cLabel3);
-                cLabel3.setBounds(530, 45, 37, 15);
+                cLabel3.setBounds(530, 45, 39, 14);
 
                 deo_blockE.setEnabled(false);
                 deoBlockE_addItem(deo_blockE);
@@ -4298,7 +4297,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel4.setText("Proveedor");
                 Pcabe.add(cLabel4);
-                cLabel4.setBounds(1, 70, 80, 15);
+                cLabel4.setBounds(1, 70, 80, 14);
                 Pcabe.add(prv_codiE);
                 prv_codiE.setBounds(70, 70, 340, 17);
 
@@ -4358,7 +4357,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel7.setText("Cliente");
                 Ppie.add(cLabel7);
-                cLabel7.setBounds(2, 2, 50, 15);
+                cLabel7.setBounds(2, 2, 50, 14);
 
                 Baceptar.setText("Aceptar");
                 Ppie.add(Baceptar);
@@ -4377,7 +4376,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel8.setText("Numero Copias ");
                 Ppie.add(cLabel8);
-                cLabel8.setBounds(120, 20, 100, 15);
+                cLabel8.setBounds(120, 20, 100, 14);
                 Ppie.add(numCopiasE);
                 numCopiasE.setBounds(215, 20, 40, 18);
 
@@ -4426,14 +4425,6 @@ public class MantDesp extends ventanaPad implements PAD
                     v.add("Fec.Mvto"); // 10
                     jtLin.setCabecera(v);
 
-                    jtLin.setFormatoColumna(JTLIN_KILOS, "--,---9.99");
-                    jtLin.setFormatoColumna(JTLIN_UNID, "##9");
-                    jtLin.setFormatoColumna(JTLIN_COSTO, "---9.9999");
-                    jtLin.setFormatoColumna(JTLIN_FECCAD, deo_feccadE.getFormato());
-                    jtLin.setFormatoColumna(JTLIN_NUMIND, "---9");
-                    jtLin.setFormatoColumna(JTLIN_ORDEN, "##9");
-                    jtLin.setFormatoColumna(JTLIN_NUMCAJ, "##9");
-                    jtLin.setFormatoColumna(JTLIN_PREUSU, "---9.9999");
                     jtLin.setAnchoColumna(new int[]
                         {54, 220, 70, 50, 70,90, 40, 40,40,70,100});
                     jtLin.setAlinearColumna(new int[]
@@ -4466,6 +4457,15 @@ public class MantDesp extends ventanaPad implements PAD
                     v1.add(def_preusuE); // 9
                     v1.add(def_tiempoE); // 10
                     jtLin.setCampos(v1);
+                    jtLin.setFormatoCampos();
+                    /*jtLin.setFormatoColumna(JTLIN_KILOS, "--,---9.99");
+                    jtLin.setFormatoColumna(JTLIN_UNID, "##9");
+                    jtLin.setFormatoColumna(JTLIN_COSTO, "---9.9999");
+                    jtLin.setFormatoColumna(JTLIN_FECCAD, deo_feccadE.getFormato());
+                    jtLin.setFormatoColumna(JTLIN_NUMIND, "---9");
+                    jtLin.setFormatoColumna(JTLIN_ORDEN, "##9");
+                    jtLin.setFormatoColumna(JTLIN_NUMCAJ, "##9");
+                    jtLin.setFormatoColumna(JTLIN_PREUSU, "---9.9999"); */
                     JMenu etiqueta = new JMenu("Etiqueta");
 
                     etiqueta.add(ImprEtiqMI);
@@ -4717,7 +4717,6 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cargaPSC.setSelected(true);
                 cargaPSC.setText("Carga PS");
-                cargaPSC.setMargin(new java.awt.Insets(0, 0, 0, 0));
                 Ptotal1.add(cargaPSC);
                 cargaPSC.setBounds(465, 2, 80, 17);
 
