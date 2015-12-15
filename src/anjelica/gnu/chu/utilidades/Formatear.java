@@ -1782,9 +1782,9 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
    * Devuelve un string con la fecha en formato yyyyMMddd
    * @param fecha  
    * @return String con la fecha mandada  en formato yyyyMMdd
-   * @throws ParseException
+   * 
    */
-  public static String getFechaDB(Date fecha) throws ParseException
+  public static String getFechaDB(Date fecha) 
   {
     return getFecha(fecha,"yyyyMMdd");
   }

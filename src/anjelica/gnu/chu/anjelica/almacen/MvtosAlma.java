@@ -311,7 +311,29 @@ public class MvtosAlma
         return getSqlMvtAnt(fecIni,fecFin,proCodi);    
     return getSqlMvtNuevo(fecIni,fecFin,proCodi);
   }
-  
+  /**
+   * Devuelve el inventario de un producto en una fecha determinada. Null si no encuentra registros
+   * Lo devuelve en un hasmap donde el campo indice sera 'kilos','importe','unidades' (en ese orden)
+   * @param dt DatosTabla
+   * @param proCodi Producto
+   * @param fecInv Fecha Inventario
+   * @return HashMap
+   * @throws SQLException 
+   */
+  public static HashMap<String, Double> getDatosInventario(DatosTabla dt,int proCodi,Date fecInv) throws SQLException
+  {
+       dt.select("select sum(rgs_kilos) as kilos,sum(rgs_kilos*rgs_prregu) as importe, sum(rgs_canti) as unidades "
+        + " FROM v_inventar r  WHERE  r.pro_codi =  "+proCodi+
+         " AND r.rgs_fecha::date = '" + Formatear.getFechaDB(fecInv) +"'");
+       
+       HashMap<String,Double> hm=new HashMap();
+       
+       
+       hm.put("kilos", dt.getDouble("kilos",true));
+       hm.put("importe",dt.getDouble("importe",true));
+       hm.put("unidades",dt.getDouble("unidades",true));
+       return hm;
+  }
   /**
    * SQL Para calcular costos (preparestatement) sobre un producto.
    * 
@@ -332,11 +354,11 @@ public class MvtosAlma
         + " from mvtosalm where "
         + "   mvt_canti <> 0 "
         + " AND pro_codi = ? "
-        + " AND mvt_time >= TO_DATE('" + fecIni + "','dd-MM-yyyy') "
-        + " and mvt_time <=  ? "
+        + " AND mvt_time::date >= TO_DATE('" + fecIni + "','dd-MM-yyyy') "
+        + " and mvt_time::date <=  ? "
         + " union all "
         + " select 1 as orden,'RE' as sel,'=' as tipmov,"
-        + "r.rgs_fecha as fecmov,"
+        + " r.rgs_fecha as fecmov,"
         + "  r.pro_serie as serie,r.pro_nupar as  lote,"
         + " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "
         + " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"
@@ -345,10 +367,7 @@ public class MvtosAlma
         + ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "
         + " ,rgs_fecha as fecdoc, "
         + " 'N' as avc_depos "
-        + " FROM v_regstock r  WHERE "
-        + " tir_afestk = '='" // Solo Inventarios
-        + " and rgs_kilos <> 0 "
-        + " AND r.pro_codi = ? "
+        + " FROM v_inventar r  WHERE  r.pro_codi = ? "
         + " AND r.rgs_fecha::date = TO_DATE('" + fecIni + "','dd-MM-yyyy') "
         + " ORDER BY 4,1,3 desc"; // FECHA,orden y tipo
   }
@@ -1770,6 +1789,23 @@ public class MvtosAlma
             ) throws SQLException {
             return llenaComboFecInv(dt,empCodi,ejeNume,feulinE,24);
      }
+     /**
+      * Devuelve la ultima fecha inventario inferior o igual a la mandada.
+      * @param dt Datostabla
+      * @param fecmax . Fecha maxima de inventario
+      * @param empCodi Empresa. 0 = TODAS
+      * @return Fecha Ultimo Inventario. Null si no hay ninguna
+      * @throws SQLException 
+      */
+     public static Date getFechaUltInv(DatosTabla dt, Date fecmax,int empCodi) throws SQLException
+     {
+         String s = "select max(rgs_fecha) as cci_feccon from v_inventar as r  " +               
+                "  where rgs_fecha <= '"+Formatear.getFechaDB(fecmax)+"'"+
+                (empCodi==0?"": " and  r.emp_codi = " + empCodi);
+         if (!dt.select(s))
+             return null;
+         return dt.getDate("cci_feccon");
+     }
     /**
      * Carga el combo mandado con las fechas de inventario disponibles.
      *
@@ -1785,9 +1821,8 @@ public class MvtosAlma
             ,int maxElemen) throws SQLException {
 
         String feulin;
-        String s = "select distinct(rgs_fecha) as cci_feccon from v_regstock as r  "
-                + " where r.emp_codi = " + empCodi              
-                + " and tir_afestk='=' "
+        String s = "select distinct(rgs_fecha) as cci_feccon from v_inventar as r  "
+                + (empCodi==0?"": "where r.emp_codi = " + empCodi)                            
                 + " order by cci_feccon desc ";
 
         if (dt.select(s)) {

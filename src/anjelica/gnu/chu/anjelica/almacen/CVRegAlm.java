@@ -2,9 +2,11 @@ package gnu.chu.anjelica.almacen;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -12,6 +14,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
@@ -39,6 +43,8 @@ import java.util.Hashtable;
 public class CVRegAlm extends ventana
 {
   boolean P_VERPRECIO=false;
+  DatosTabla dtAdd;
+  Date feulin;
    public CVRegAlm(EntornoUsuario eu, Principal p)
   {
       this(eu,p,null);
@@ -102,7 +108,7 @@ private void jbInit() throws Exception
   {
       iniciarFrame();
 
-      this.setVersion("2015-11-02");
+      this.setVersion("2015-12-15");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -160,6 +166,8 @@ private void jbInit() throws Exception
         ganSalE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.99");
         Bactual = new gnu.chu.controles.CButton();
         opSobreescribir = new gnu.chu.controles.CCheckBox();
+        cLabel13 = new gnu.chu.controles.CLabel();
+        numRegulE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##,##9");
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -366,12 +374,20 @@ private void jbInit() throws Exception
             }
         });
         Ppie.add(Bactual);
-        Bactual.setBounds(410, 30, 90, 24);
+        Bactual.setBounds(480, 30, 90, 24);
 
         opSobreescribir.setSelected(true);
         opSobreescribir.setText("Sobreescribir");
         Ppie.add(opSobreescribir);
-        opSobreescribir.setBounds(410, 60, 90, 17);
+        opSobreescribir.setBounds(480, 60, 90, 17);
+
+        cLabel13.setText("Número Reg:");
+        Ppie.add(cLabel13);
+        cLabel13.setBounds(410, 0, 90, 17);
+
+        numRegulE.setEditable(false);
+        Ppie.add(numRegulE);
+        numRegulE.setBounds(490, 0, 50, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -388,6 +404,7 @@ private void jbInit() throws Exception
     @Override
     public void iniciarVentana() throws Exception
     {
+        dtAdd=new DatosTabla(ctUp);
         String s = "SELECT * FROM v_motregu ORDER BY tir_codi";
         if (dtCon1.select(s)) {
             do {
@@ -400,29 +417,37 @@ private void jbInit() throws Exception
         fecfinE.setDate(Formatear.getDateAct() );
         feciniE.setDate(Formatear.sumaMesDate(Formatear.getDateAct(), -1));
     }
+    boolean checkCondiciones()
+    {
+        if (fecfinE.getError() || fecfinE.isNull())
+        {
+            mensajeErr("Fecha Final NO VALIDA");
+            return false;
+        }
+        if (feciniE.getError() || feciniE.isNull())
+        {
+            mensajeErr("Fecha Inicial NO Valida");
+            return false;
+        }
+        return true;
+    }
     private void BaceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BaceptarActionPerformed
-     if (fecfinE.getError() || fecfinE.isNull())
-     {
-       mensajeErr("Fecha Final NO VALIDA");
-       return;
-     }
-     if (feciniE.getError() || feciniE.isNull())
-     {
-       mensajeErr("Fecha Inicial NO Valida");
-       return;
-     }
+     
      try 
      {
+         if (!checkCondiciones())
+             return;
          jt.removeAllDatos();
          String s="select r.*,a.pro_nomb from v_regstock as r,v_articulo as a where rgs_fecha between '"+feciniE.getFechaDB()+"' and '"+
              fecfinE.getFechaDB()+"' "+
              " and a.pro_codi = r.pro_codi "+
              " and tir_afestk != '=' "+
              (tir_afestkE.getValor().equals("*")?"":" and tir_afestk = '"+tir_afestkE.getValor()+"'")+
-             (pro_codiE.isNull()?"":" and pro_codi = "+pro_codiE.getValorInt())+
+             (pro_codiE.isNull()?"":" and r.pro_codi = "+pro_codiE.getValorInt())+
              (pro_artconC.getValor().equals("T")?"":" and pro_artcon "+
                  (pro_artconC.getValor().equals("0")?"":"!")+"= 0" )+
-             (tir_codiE.isNull()?"":" and tir_codi = "+tir_codiE.getValorInt());
+             (tir_codiE.isNull()?"":" and tir_codi = "+tir_codiE.getValorInt())+
+             " order by tir_nomb,rgs_fecha";
          if (!dtCon1.select(s))
          {
              msgBox("No encontrados Regularizaciones para estos criterios");
@@ -430,6 +455,7 @@ private void jbInit() throws Exception
          }
          double kilEnt=0,impEnt=0, kilSal=0,impSal=0,difEnt=0,difSal=0;
          int unidEnt=0,unidSal=0;
+        
          do
          {
              ArrayList v=new ArrayList();
@@ -450,7 +476,8 @@ private void jbInit() throws Exception
                 kilEnt+=dtCon1.getDouble("rgs_kilos");
                 unidEnt+=dtCon1.getDouble("rgs_canti");
                 impEnt+=dtCon1.getDouble("rgs_kilos")*dtCon1.getDouble("rgs_prregu");
-//                difEnt+=        (dtCon1.getDouble("rgs_kilos")*dtCon1.getDouble("rgs_prregu"));
+                difEnt+= (dtCon1.getDouble("rgs_kilos")*dtCon1.getDouble("rgs_prmeco"))-
+                    (dtCon1.getDouble("rgs_kilos")*dtCon1.getDouble("rgs_prregu"));
                    
             }
             else
@@ -467,12 +494,18 @@ private void jbInit() throws Exception
          kgEntE.setValorDec(kilEnt);
          uniEntE.setValorDec(unidEnt);
          impEntE.setValorDec(impEnt);
-         ganEntE.setValorDec(impEnt);
+         ganEntE.setValorDec(difEnt);
          
          kgSalE.setValorDec(kilSal);
          uniSalE.setValorDec(unidSal);
          impSalE.setValorDec(impSal);        
-         ganSalE.setValorDec(impSal);
+         ganSalE.setValorDec(difSal);
+         
+         kgDifE.setValorDec(kilEnt-kilSal);
+         uniDifE.setValorDec(unidEnt-unidSal);
+         impDifE.setValorDec(impEnt-impSal);
+         ganDifE.setValorDec(difEnt-difSal);
+         numRegulE.setValorInt(jt.getRowCount());
          
      } catch (SQLException | ParseException k)
      {
@@ -481,7 +514,134 @@ private void jbInit() throws Exception
     }//GEN-LAST:event_BaceptarActionPerformed
 
     private void BactualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BactualActionPerformed
-        // TODO add your handling code here:
+      try
+      {         
+          if (!checkCondiciones())
+              return;
+          feulin=MvtosAlma.getFechaUltInv(dtStat,feciniE.getDate(),0);
+          String s= "SELECT mv.pro_codi,  mvt_time as fecmov,mvt_tipo as tipmov,mvt_tipdoc,mvt_numdoc, "              
+              + " mvt_canti as canti,mvt_prec as precio,mv.alm_codi "
+              + " from mvtosalm as mv, v_articulo as a where "
+              + " mvt_canti <> 0 "
+              + " and a.pro_codi = mv.pro_codi "              
+              + " and mv.pro_codi  "
+              + (pro_codiE.isNull()?" in (select distinct(pro_codi) from v_regstock"
+              + " where rgs_fecha between '"+feciniE.getFechaDB()+"' and '"+fecfinE.getFechaDB()+"') ":
+                 "  =  "+pro_codiE.getValorInt())
+              + (pro_artconC.getValor().equals("T")?"":" and pro_artcon "+
+                (pro_artconC.getValor().equals("0")?"":"!")+"= 0" )
+              + " AND mvt_time::date >= '"+ Formatear.getFechaDB(feulin)+ "'"
+              + " and mvt_time::date <=  '"+fecfinE.getFechaDB()+"'"           
+              + " ORDER BY mv.pro_codi,fecmov,tipmov"; // producto, fecha,tipo
+          if (!dtCon1.select(s))
+          {
+              msgBox("No encontrados registros con estas condiciones");
+              return;
+          }
+      } catch (SQLException | ParseException ex)
+      {
+          Error("ERROR al actualizar costos de regularización",ex);
+      }
+      new miThread("xx")
+          {
+            @Override
+            public void run()
+            {
+                msgEspere("Actualizando costos.. espere");
+                actualizarCostos();
+                resetMsgEspere();
+            }
+      };
+    }
+      
+    void actualizarCostos()
+    {
+        try {
+          int proCodi=dtCon1.getInt("pro_codi");
+          String s;
+          HashMap<String,Double> ht=MvtosAlma.getDatosInventario(dtStat,dtCon1.getInt("pro_codi"),feulin);
+          boolean swActual;
+          double kilos=ht.get("kilos");
+          double costo=ht.get("importe")/kilos;
+          if (kilos==0)
+              costo=0;
+          int nRegUpd=0;
+          int tirCodi=tir_codiE.getValorInt();
+          String tirAfeStk=tir_afestkE.getValor();
+          Date fecInicial=feciniE.getDate();
+          do
+          {
+              setMensajePopEspere("Actualizando producto: "+dtCon1.getInt("pro_codi"),false);
+              if (dtCon1.getInt("pro_codi")!=proCodi)
+              {
+                  proCodi=dtCon1.getInt("pro_codi");
+                  ht=MvtosAlma.getDatosInventario(dtStat,proCodi,feulin); 
+                  
+                  kilos=ht.get("kilos");
+                  costo=ht.get("importe")/kilos;
+                  if (kilos==0)
+                      costo=0;
+                  
+              }
+              if (dtCon1.getString("mvt_tipdoc").equals("R"))
+              {
+                  swActual=true;
+                  if (! tirAfeStk.equals("*") && !tirAfeStk.equals(dtCon1.getString("tipmov")))
+                      swActual=false;
+                  if (Formatear.comparaFechas(dtCon1.getDate("fecmov"), fecInicial)<0)
+                      swActual=false;
+                  if (swActual)
+                  {
+                    s="select tir_codi,rgs_prmeco from regalmacen where rgs_nume= "+dtCon1.getInt("mvt_numdoc");
+                    if (! dtAdd.select(s,true))
+                          swActual = false;
+                  }
+                  if (swActual)
+                  {
+                    if (tirCodi!=0  && tirCodi!=dtAdd.getInt("tir_codi"))
+                          swActual=false;                    
+                    if (dtAdd.getDouble("rgs_prmeco")!=0 && !opSobreescribir.isSelected())
+                        swActual=false;
+                  }
+                  if (swActual )
+                  {
+                      dtAdd.edit();
+                      try {
+                        dtAdd.setDato("rgs_prmeco",Formatear.redondea(costo,4));
+                      } catch (java.lang.NumberFormatException ex)
+                      {
+                          msgBox("costo erroneo: "+costo+" en articulo: "+proCodi);
+                          dtAdd.setDato("rgs_prmeco",0);
+                      }
+                      dtAdd.update();
+                      nRegUpd++;
+                  }                 
+              }
+              if (dtCon1.getString("tipmov").equals("E"))
+              {
+                double kilCalc=kilos<0.1?0:kilos;
+                if (kilCalc +dtCon1.getDouble("canti")<0.1)
+                    costo=0;
+                else
+                    costo= ((kilCalc*costo)+
+                    (dtCon1.getDouble("canti")*dtCon1.getDouble("precio")))/ (kilCalc +dtCon1.getDouble("canti")) ;
+//                System.out.println(" Articulo: "+ proCodi+" Fecha: "+dtCon1.getFecha("fecmov","dd-MM-yy HH:mm")+
+//                  " Cantidad: "+dtCon1.getDouble("canti")+" kilos: "+kilos+" Costo: "+costo);
+                kilos+=dtCon1.getDouble("canti");                               
+                
+              }
+              else
+              {                         
+                kilos-=dtCon1.getDouble("canti");               
+              }
+          } while (dtCon1.next());
+        
+          mensajeErr("Actualizados "+nRegUpd+" costos de Regularizaciones");
+          dtAdd.commit();
+      } catch (SQLException | ParseException ex )
+      {
+          Error("ERROR al actualizar costos de regularización",ex);
+      }
     }//GEN-LAST:event_BactualActionPerformed
     
    
@@ -496,6 +656,7 @@ private void jbInit() throws Exception
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
+    private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel14;
     private gnu.chu.controles.CLabel cLabel15;
     private gnu.chu.controles.CLabel cLabel17;
@@ -517,6 +678,7 @@ private void jbInit() throws Exception
     private gnu.chu.controles.CTextField kgDifE;
     private gnu.chu.controles.CTextField kgEntE;
     private gnu.chu.controles.CTextField kgSalE;
+    private gnu.chu.controles.CTextField numRegulE;
     private gnu.chu.controles.CCheckBox opSobreescribir;
     private gnu.chu.controles.CComboBox pro_artconC;
     private gnu.chu.camposdb.proPanel pro_codiE;

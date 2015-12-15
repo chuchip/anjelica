@@ -481,7 +481,7 @@ $BODY$
 			pro_indlot =OLD.pro_numind AND
 			MVT_CANTI = OLD.deo_kilos;
 		GET DIAGNOSTICS nRows = ROW_COUNT;
-		if nRows = 0  and ajuDelmvt = 0  && OLD.deo_kilos !=0 then
+		if nRows = 0  and ajuDelmvt = 0  and OLD.deo_kilos !=0 then
 			RAISE EXCEPTION 'No encontrado Mvto a modificar. Desp.Salida Lote:% % Prod: % Indiv:%  Kilos: %',OLD.eje_nume,
 				OLD.deo_codi,OLD.pro_codi,OLD.pro_numind,OLD.deo_kilos;
 			RETURN null;
@@ -501,7 +501,7 @@ $BODY$
 			pro_indlot =OLD.pro_numind and
 			MVT_CANTI = OLD.deo_kilos;
 		GET DIAGNOSTICS nRows = ROW_COUNT;		
-		if nRows = 0 and ajuDelmvt = 0  && OLD.deo_kilos !=0 then                 
+		if nRows = 0 and ajuDelmvt = 0  and OLD.deo_kilos !=0 then                 
 			RAISE EXCEPTION  'No encontrado Mvto a Borrar. Desp.Salida Lote:% % Prod: % Indiv:%  Kilos: %',OLD.eje_nume,
 				OLD.deo_codi,OLD.pro_codi,OLD.pro_numind,OLD.deo_kilos;
 			return null;
@@ -512,10 +512,36 @@ $BODY$
 	end if;	
 -- Mvtos de Regularizacion
 	if TG_TABLE_NAME = 'regalmacen' then	  
+	  if TG_OP =  'DELETE' or TG_OP =  'UPDATE' then	
+		raise notice 'BORRO/UPDT. movimiento % ',TG_OP;
+		if OLD.rgs_trasp =0 then			
+			return OLD; -- Ignoro apuntes de reg. No Traspasados.
+		end if;    	
+		SELECT tir_afestk into tipoMvto FROM anjelica.v_motregu  WHERE 
+		   tir_codi = OLD.tir_codi;
+		if not found then
+			RAISE EXCEPTION 'NO encontrado tipo Mvto %',OLD.tir_codi;
+		end if;
+		if tipoMvto='=' or tipoMvto='*' then
+			return OLD; -- Ignoro apuntes de Inventario y no traspasados
+		end if;     
+		DELETE FROM anjelica.mvtosalm  where	
+			mvt_tipdoc='R' and					
+			mvt_numdoc=OLD.rgs_nume;	
+		GET DIAGNOSTICS nRows = ROW_COUNT;		
+		if nRows = 0  and ajuDelmvt = 0 then
+			RAISE EXCEPTION 'No encontrado mvto a Borrar. Regularizacion % ',OLD.rgs_nume;
+			return null;
+		end if;	
+--		raise notice 'Inserto movimiento %',OLD;
+		if TG_OP =  'DELETE' then
+			return OLD;		
+		end if;
+	  end if;	   	  
 	  if TG_OP =  'INSERT' or TG_OP =  'UPDATE' then
 		tipoMvto='';
 		if NEW.rgs_trasp=0 then
-			tipoMvto='*';
+			tipoMvto='*'; -- No traspasado. No haremos insert.
 		end if;
 		IF tipoMvto!='*' then 
 			SELECT tir_afestk into tipoMvto FROM anjelica.v_motregu  WHERE 
@@ -523,9 +549,9 @@ $BODY$
 			if not found then
 				RAISE EXCEPTION 'NO encontrado tipo Mvto %',NEW.tir_codi;
 			end if;
---			raise notice 'Tipo De movimiento %',tipoMvto;
+			raise notice 'Tipo De movimiento % Operacion %',tipoMvto,TG_OP;
 			if tipoMvto ='='  then
-				tipoMvto='*';
+				tipoMvto='*'; -- Ignoro Regulariza. tipo Inventario
 			end if;
 			if tipoMvto='+' then
 				tipoMvto='E';
@@ -534,7 +560,8 @@ $BODY$
 				tipoMvto='S';
 			end if;
 		end if;
-		if tipoMvto != '*' then			
+		raise notice 'Insert. Tipo De movimiento % Operacion %',tipoMvto,TG_OP;		
+		if tipoMvto != '*' then				
 			INSERT INTO anjelica.mvtosalm (mvt_oper,mvt_time,
 				mvt_tipo , mvt_tipdoc , 
 				alm_codi,
@@ -567,39 +594,9 @@ $BODY$
 			 NEW.rgs_cliprv
 			);
 		end if;
-		if TG_OP = 'INSERT' then
-			return NEW;
-		end if;
+		return NEW;		
 	  end if;
-	  if TG_OP =  'DELETE' or TG_OP =  'UPDATE' then	
-		raise notice 'Inserto movimiento % TIPO %',tipoMvto,TG_OP;
-		if OLD.rgs_trasp=0 then			
-			return OLD; -- Ignoro apuntes de Inventario
-		end if;    	
-		SELECT tir_afestk into tipoMvto FROM anjelica.v_motregu  WHERE 
-		   tir_codi = OLD.tir_codi;
-		if not found then
-			RAISE EXCEPTION 'NO encontrado tipo Mvto %',OLD.tir_codi;
-		end if;
-		if tipoMvto='=' or tipoMvto='*' then
-			return OLD; -- Ignoro apuntes de Inventario
-		end if;     
-		DELETE FROM anjelica.mvtosalm  where	
-			mvt_tipdoc='R' and					
-			mvt_numdoc=OLD.rgs_nume;	
-		GET DIAGNOSTICS nRows = ROW_COUNT;		
-		if nRows = 0  and ajuDelmvt = 0 then
-			RAISE EXCEPTION 'No encontrado mvto a Borrar. Regularizacion % ',OLD.rgs_nume;
-			return null;
-		end if;	
---		raise notice 'Inserto movimiento %',OLD;
-		if TG_OP =  'DELETE' then
-			return OLD;
-		else
-			return NEW;
-		end if;
-	  end if;	   	  
-	end if;
+    end if;
 	return null;
 END;
 $BODY$

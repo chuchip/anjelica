@@ -148,7 +148,7 @@ create table anjelica.categorias_art
 insert into anjelica.categorias_art values(1,'I','Primera');
 alter table anjelica.v_articulo add constraint cat_profk
    foreign key (cat_codi) references anjelica.categorias_art(cat_codi) DEFERRABLE INITIALLY DEFERRED;
-
+grant select on  anjelica.categorias_art to public;
 --
 -- Tabla de Categorias
 --
@@ -162,6 +162,7 @@ create table anjelica.calibres_art
 insert into anjelica.calibres_art values(1,'67-82 mm','1G');
 alter table anjelica.v_articulo add constraint cal_profk
    foreign key (cal_codi) references anjelica.calibres_art(cal_codi) DEFERRABLE INITIALLY DEFERRED;
+grant select on  anjelica.calibres_art to public;   
 --
 -- Tabla  de Lotes
 --
@@ -3216,7 +3217,6 @@ insert into listados values(0,7, 'Listado Albaran Ventas (Cabecera)','cabalbve')
 insert into listados values(0,8, 'Listado Albaran Ventas (Linea)','lialbve');
 insert into listados values(0,9, 'Listado Albaran Ventas Desgl.(Linea)','lialbvedep');
 insert into listados values(0,10, 'Listado Hojas Palets','etiqPalets');
-
 --
 -- Tabla de Envases
 --
@@ -3230,8 +3230,6 @@ create table anjelica.envases
  env_peso real not null,	--  Peso del envase
  constraint ix_envases primary key (env_codi)
 );
-
-
 --
 -- Acesso a Empresas por parte de los usuarios
 --
@@ -3568,7 +3566,7 @@ create table anjelica.parteabo
 create index ix_partacc on anjelica.parteabo(par_codi,par_linea);
 alter table anjelica.parteabo add constraint pac_parte foreign key (par_codi,par_linea)
     references anjelica.partelin(par_codi,par_linea);
-
+grant select to public
 --drop view v_partes;
 create view anjelica.v_partes as select c.*,l.par_linea,l.pro_codi,pal_kilos,pal_unidad,
 pro_ejelot,pro_serlot,pro_numlot,pro_indlot,pro_feccad,pal_acsala, pal_comsal,pal_accion,pal_coment from anjelica.partecab as c,anjelica.partelin as l where c.par_codi=l.par_codi;
