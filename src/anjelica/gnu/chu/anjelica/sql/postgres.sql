@@ -1261,39 +1261,25 @@ prv_intern smallint default 0 not null, 	-- Proveedor Interno ?
 constraint ix_proveedo primary key(prv_codi)
 );
 --
--- Discriminadores
+-- Tabla generica de Discriminadores
 --
+-- Hay 3 tipos 'base' de discriminador. Cliente, Articulo y Proveedor.
+-- Luego para cada tipo se busca en la tabla configuracion, los tipos
+-- segun los campos  cfg_dispr1-4 cfg_discl1-4 y cfg_dispv1-4
+-- Ademas de esos discriminadores,en el programa pddiscrim, estan puestos a pelo 
+-- los siguientes: 
+--  Repres/Zona ->"R",    Credito -> "C,  Zona -> "z", Representante > "r", 'U' rutas.
+--  Camara -> "C"
+-- Estos discriminadores tienen sus correspondientes vistas (v_zonas, v_reprzona,v_rutas...,v_camaras)
 -- drop table v_discrim;
 create table anjelica.v_discrim
 (
 emp_codi int not null,		-- Empresa
-dis_tipo char(2) not null,      -- C*: Clientes P?: Productos
+dis_tipo char(2) not null,      -- C?: Clientes A?: Articulos, 'P?' Proveedor
 dis_codi char(2),               -- Codigos para ese tipo
 dis_nomb varchar(50),           -- Nombre
 constraint ix_discrim primary key(emp_codi,dis_tipo,dis_codi)
 );
--- create index ix_discrim on v_discrim(dis_tipo);
---
--- Tabla de tipos de discriminadores
---
--- drop table  tipodisc
---create table anjelica.tipodisc
---(
-  --dis_tipo char(2) not null,
-  --tdi_nomb varchar(15) not null, -- Nombre
-  --tdi_clase char(3) not null, -- Articulos/Clientes/Proveed.
-  --constraint ix_tipodisc primary key(dis_tipo)
---);
---insert into tipodisc values('C1','Zona/Repr','C');
---insert into tipodisc values('C2','Zona/Cred','C');
---insert into tipodisc values('A1','Inc.Lista','A');
---insert into tipodisc values('A2','Otros','A');
---insert into tipodisc values('A3','Clasif.','A');
---insert into tipodisc values('A4','Mayor/Calle','A');
---insert into tipodisc values('P1','**','P');
---insert into tipodisc values('P2','**','P');
---insert into tipodisc values('P3','Nac/Ext.','P');
---insert into tipodisc values('P4','**','P');
 --
 -- Formas de Pago
 --
@@ -2993,7 +2979,7 @@ create table anjelica.coninvcab
 	cci_codi int not null,		-- Numero de Inventario
 	usu_nomb varchar(15),		-- Usuario q. realizo el inventario
 	cci_feccon date not null,	-- Fecha de Control
-	cam_codi varchar(2) not null,	-- Codigo de Camara (Discriminador 3)
+	cam_codi varchar(2) not null,	-- Codigo de Camara (Tabla v_camaras)
 	alm_codi int not null,
 constraint ix_coninvcab primary key (emp_codi,cci_codi)
 );
@@ -3335,6 +3321,24 @@ tar_codi int not null            -- Codigo de Tarifa
 create view anjelica.v_zonas as
 select dis_codi as zon_codi,dis_nomb as zon_nomb  from v_discrim
 where dis_tipo='Cz';
+grant select on anjelica.v_zonas to public;
+--
+-- Vista para Representantes/Zona - segun discriminadores.
+create view anjelica.v_reprzona as
+select dis_codi as rep_codi,dis_nomb as rep_nomb  from v_discrim
+where dis_tipo='CR';
+grant select on anjelica.v_reprzona to public;
+-- Vistas de Credito - Segun discriminadores
+create view anjelica.v_credclien as
+select dis_codi as crc_codi,dis_nomb as crc_nomb  from v_discrim
+where dis_tipo='CC';
+grant select on anjelica.v_credclien to public;
+-- Vista de rutas - Segun discriminadores
+create view anjelica.v_rutas as
+select dis_codi as rut_codi,rut_nomb as crc_nomb  from v_discrim
+where dis_tipo='CU';
+grant select on anjelica.v_rutas to public;
+
 --
 -- Cabecera  albaranes de proveedores
 --

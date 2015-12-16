@@ -1089,7 +1089,7 @@ public class FichaClientes extends ventana implements PAD
    cli_pobleE.setMayusc(true);
    cli_pobleE.setColumnaAlias("upper(cli_poble)");
 
-   zon_codiE.setColumnaAlias("zon_codi");
+   zon_codiE.setColumnaAlias("c.zon_codi");
    rep_codiE.setColumnaAlias("rep_codi");
    if (agente!=null)
    {
@@ -1557,9 +1557,9 @@ public class FichaClientes extends ventana implements PAD
     if (agente!=null)
       v.add("rep_codi = '"+agente+"'");
     relClien=true;
-    s=creaWhere("select c.*,d.dis_nomb from clientes as c "+
-            " left join v_discrim as d on dis_tipo ='Cz' "+
-            " and dis_codi = c.zon_codi ",v);
+    s=creaWhere("select c.*,d.zon_nomb as dis_nomb from clientes as c "+
+            " left join v_zonas as d  "+
+            " on d.zon_codi = c.zon_codi ",v);
     s+=" ORDER BY cli_activ desc,cli_nomb";
 //    debug("Query: "+s);
     navcli.setEnabled(navegador.TODOS, true);

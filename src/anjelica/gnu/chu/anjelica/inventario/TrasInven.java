@@ -178,10 +178,9 @@ public class TrasInven extends ventanaPad implements PAD {
                     " and " + condWhere;
             opIncCong.setSelected(dtStat.select(s));
             jt.removeAllDatos();
-            s = "select cam_codi,dis_nomb,sum(lci_numind) as lci_numind, sum(lci_peso) as lci_peso "
+            s = "select l.cam_codi,cam_nomb,sum(lci_numind) as lci_numind, sum(lci_peso) as lci_peso "
                     + " from  coninvlin as l,coninvcab as c "
-                    + " left join v_discrim as a on c.cam_codi = a.dis_codi and c.emp_codi = a.emp_codi "
-                    + " and a.dis_tipo = 'AC' "
+                    + " left join v_camaras as a on c.cam_codi = a.cam_codi and c.emp_codi = a.emp_codi "
                     + " where " + condWhere
                     + " group by cam_codi,dis_nomb "
                     + " order by cam_codi ";

@@ -116,9 +116,9 @@ public class PRelClien extends CPanel {
     }
     public boolean getDatosCliente(DatosTabla dt) throws SQLException
     { 
-         String s="select c.*,d.dis_nomb from clientes as c "+
-                    " left join v_discrim as d on dis_tipo ='Cz' "+
-                     " and dis_codi = c.zon_codi "+
+         String s="select c.*,d.zon_nomb as dis_nomb from clientes as c "+
+                    " left join v_zonas as d on "+
+                     "  dis_codi = c.zon_codi "+
                      " where cli_codi = "+getCliente();
          
          return dt.select(s);

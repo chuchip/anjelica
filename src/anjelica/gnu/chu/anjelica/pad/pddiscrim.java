@@ -14,7 +14,7 @@ import java.awt.event.*;
  *
  * <p>Título: pddiscrim </p>
  * <p>Descripción: Mantenimiento de Discriminadores</p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -116,7 +116,7 @@ public class pddiscrim    extends ventanaPad     implements PAD
 
       iniciarFrame();
       this.setSize(new Dimension(566, 455));
-      this.setVersion("2010-07-15 " + (modConsulta ? "-SOLO LECTURA-" : ""));
+      this.setVersion("2015-12-16 " + (modConsulta ? "-SOLO LECTURA-" : ""));
 
       strSql = "SELECT distinct(dis_codi) FROM v_discrim WHERE emp_codi = "+EU.em_cod+
           " and dis_tipo like 'C%'"+ // Clientes
@@ -344,6 +344,8 @@ public class pddiscrim    extends ventanaPad     implements PAD
        dis_tipo2E.addItem("Credito","C");
        dis_tipo2E.addItem("Zona","z");
        dis_tipo2E.addItem("Representante","r");
+       dis_tipo2E.addItem("Rutas","U");
+       
      }
      if (clase.equals("pr"))
          dis_tipo2E.addItem("Camara","C");

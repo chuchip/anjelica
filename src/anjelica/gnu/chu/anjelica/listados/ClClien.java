@@ -125,8 +125,8 @@ public class ClClien extends ventana
 
     String getStrSql()
     {
-      String s = "SELECT cl.*,dis_nomb as cli_zoncren FROM clientes as cl left join  v_discrim  as d " +
-          "  on dis_tipo='CC' ANd dis_codi=cli_zoncre" +
+      String s = "SELECT cl.*,crc_nomb as cli_zoncren FROM clientes as cl left join  v_credclien  as d " +
+          "  on  ANd crc_codi=cli_zoncre" +
           " WHERE 1= 1 ";
       if (opEmail.isSelected())
           s+=" and ((cli_email1 is not null and cli_email1 != '' ) or (cli_email2 is not null and cli_email2!='')) ";
