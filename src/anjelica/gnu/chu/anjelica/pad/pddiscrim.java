@@ -336,20 +336,28 @@ public class pddiscrim    extends ventanaPad     implements PAD
      boolean enab=dis_tipo2E.isEnabled();
      dis_tipo2E.setEnabled(false);
      dis_tipo2E.removeAllItems();
-     for (int n=1;n<5;n++)
-       dis_tipo2E.addItem(lkConf.getString("cfg_dis"+clase+n),""+n);
+    
      if (clase.equals("cl"))
      {
-       dis_tipo2E.addItem("Repres/Zona","R");
-       dis_tipo2E.addItem("Credito","C");
-       dis_tipo2E.addItem("Zona","z");
-       dis_tipo2E.addItem("Representante","r");
-       dis_tipo2E.addItem("Rutas","U");
-       
+       llenaDiscr(dis_tipo2E,pdconfig.HM_CLIENTES);       
      }
      if (clase.equals("pr"))
+     {
+          llenaDiscr(dis_tipo2E,pdconfig.HM_ARTICULOS);  
          dis_tipo2E.addItem("Camara","C");
+     }
+     for (int n=1;n<5;n++)
+       dis_tipo2E.addItem(lkConf.getString("cfg_dis"+clase+n),""+n);
      dis_tipo2E.setEnabled(enab);
+   }
+   
+   private void llenaDiscr(CComboBox combo,String[][] valores)
+   {
+       int nVal=valores[0].length;
+       for (int n=0;n<nVal;n++)
+       {
+           combo.addItem(valores[0][n],valores[1][n]);
+       }
    }
     void confGrid() throws Exception {
         Vector v = new Vector();

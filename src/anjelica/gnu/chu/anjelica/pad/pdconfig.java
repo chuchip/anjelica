@@ -35,6 +35,19 @@ import javax.swing.border.*;
  */
 public class pdconfig    extends ventanaPad     implements PAD
 {
+  public final static String D_REPRZONA="CR";
+  public final static String D_CREDITO="CC";
+  public final static String D_ZONA="Cz";
+  public final static String D_REPRESENT="Cr";
+  public final static String D_RUTAS="CU";
+  public final static String D_CAMARAS="AC";
+  public final static String[][] HM_CLIENTES ={
+        {"Repr/Zona","Credito","Zona","Represent","Rutas"},
+      {"R","C","z","r","U"}
+   };
+  public final static String[][] HM_ARTICULOS ={    
+    {"Camaras"},{"C"}
+   };
   public final static int TIPOEMP_SALADESP=1; // Sala despiece
   public final static int TIPOEMP_PLANTACION=2; // Plantacion (Invernadero)
   CTextField[][] camposDisc=new CTextField[3][4];
@@ -77,7 +90,7 @@ public class pdconfig    extends ventanaPad     implements PAD
     this(eu, p, null);
   }
 
-  public pdconfig(EntornoUsuario eu, Principal p,Hashtable ht)
+  public pdconfig(EntornoUsuario eu, Principal p,Hashtable<String,String> ht)
   {
     EU = eu;
     vl = p.panel1;
@@ -89,8 +102,7 @@ public class pdconfig    extends ventanaPad     implements PAD
       if (ht != null)
       {
         if (ht.get("modConsulta") != null)
-          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-              booleanValue();
+          modConsulta = Boolean.parseBoolean(ht.get("modConsulta"));
       }
       setTitulo("Mantenimiento Configuraciones");
       if (jf.gestor.apuntar(this))
@@ -104,7 +116,7 @@ public class pdconfig    extends ventanaPad     implements PAD
     }
   }
 
-  public pdconfig(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable ht)
+  public pdconfig(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable<String,String> ht)
   {
     EU = eu;
     vl = p.getLayeredPane();
@@ -115,8 +127,7 @@ public class pdconfig    extends ventanaPad     implements PAD
       if (ht != null)
       {
         if (ht.get("modConsulta") != null)
-          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-              booleanValue();
+          modConsulta = Boolean.parseBoolean(ht.get("modConsulta"));
       }
       setTitulo("Mantenimiento Configuraciones");
       jbInit();
@@ -132,7 +143,7 @@ public class pdconfig    extends ventanaPad     implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(567, 417));
-   this.setVersion("2014-12-10 " + (modConsulta ? "-SOLO LECTURA-" : ""));
+   this.setVersion("2015-12-16 " + (modConsulta ? "-SOLO LECTURA-" : ""));
 
    strSql = "SELECT * FROM configuracion WHERE emp_codi = " + EU.em_cod +
        getOrderQuery();

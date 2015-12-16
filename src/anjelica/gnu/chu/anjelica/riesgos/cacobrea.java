@@ -372,7 +372,8 @@ public class cacobrea extends ventanaPad implements PAD
    zon_codiE.texto.setMayusc(true);
    zon_codiE.setFormato(true);
 
-   gnu.chu.anjelica.pad.pdconfig.llenaDiscr(dtCon1,zon_codiE,"CR",EU.em_cod);
+   gnu.chu.anjelica.pad.pdconfig.llenaDiscr(dtCon1,zon_codiE,
+       gnu.chu.anjelica.pad.pdconfig.D_REPRZONA,EU.em_cod);
 
    activarEventos();
    verDatos(dtCons);

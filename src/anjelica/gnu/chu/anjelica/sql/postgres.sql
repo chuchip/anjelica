@@ -3335,7 +3335,7 @@ where dis_tipo='CC';
 grant select on anjelica.v_credclien to public;
 -- Vista de rutas - Segun discriminadores
 create view anjelica.v_rutas as
-select dis_codi as rut_codi,rut_nomb as crc_nomb  from v_discrim
+select dis_codi as rut_codi,dis_nomb as rut_nomb  from v_discrim
 where dis_tipo='CU';
 grant select on anjelica.v_rutas to public;
 
