@@ -3040,7 +3040,7 @@ public class MantDesp extends ventanaPad implements PAD
                             deo_ejlogeE.getValorInt(), EU.em_cod,
                             deo_selogeE.getText(), deo_nulogeE.getValorInt(),
                             jtLin.getValorInt(linea,JTLIN_NUMIND), deo_almdesE.getValorInt(),
-                            Double.parseDouble(def_kilosE.getCopia().trim()), Integer.parseInt(def_numpieE.getCopia().trim())))
+                            def_kilosE.getCopiaDouble(), def_numpieE.getCopiaInt()))
                         {
                             mensajeErr("Individuo ha tenido mvtos. Imposible modificar linea");
                             def_numpieE.resetValor();
@@ -3606,7 +3606,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_ejlogeE.getValorInt(), EU.em_cod,
                 deo_selogeE.getText(), deo_nulogeE.getValorInt(),
                 jtLin.getValorInt(row,JTLIN_NUMIND), deo_almdesE.getValorInt(),
-                Double.parseDouble(def_kilosE.getCopia().trim()), Integer.parseInt(def_numpieE.getCopia().trim())))
+                def_kilosE.getCopiaDouble(), def_numpieE.getCopiaInt()))
             {
                 msgBox("Individuo ha tenido mvtos. Imposible borrar linea");
                 return false;

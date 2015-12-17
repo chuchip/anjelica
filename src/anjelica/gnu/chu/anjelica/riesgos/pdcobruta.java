@@ -5,6 +5,7 @@ import gnu.chu.utilidades.*;
 import gnu.chu.sql.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.pad.pdconfig;
 import java.awt.*;
 import java.util.*;
 import javax.swing.BorderFactory;
@@ -47,7 +48,7 @@ public class pdcobruta extends ventanaPad implements PAD
   CLabel cLabel2 = new CLabel();
   CTextField usu_nombE = new CTextField(Types.CHAR,"X",15);
   CLabel cLabel3 = new CLabel();
-  CLinkBox zon_codiE = new CLinkBox();
+  CLinkBox rut_codiE = new CLinkBox();
   CLabel cLabel4 = new CLabel();
   CTextField cor_ordenE = new CTextField(Types.DECIMAL,"#9");
   CButton BirGrid = new CButton();
@@ -186,22 +187,22 @@ public class pdcobruta extends ventanaPad implements PAD
     cLabel1.setBounds(new Rectangle(10, 4, 39, 18));
     cLabel2.setText("Operario");
     cLabel2.setBounds(new Rectangle(152, 4, 57, 18));
-    cLabel3.setText("Zona");
+    cLabel3.setText("Ruta");
     cLabel3.setBounds(new Rectangle(16, 26, 33, 18));
-    zon_codiE.setAncTexto(30);
-    zon_codiE.setBounds(new Rectangle(54, 26, 191, 18));
+    rut_codiE.setAncTexto(30);
+    rut_codiE.setBounds(new Rectangle(54, 26, 191, 18));
     cLabel4.setText("Orden");
     cLabel4.setBounds(new Rectangle(276, 26, 41, 18));
-    Vector v= new Vector();
-    v.addElement("Año"); // 0
-    v.addElement("Emp"); // 1
-    v.addElement("S"); // 2  serie
-    v.addElement("Factura");  // 3
-    v.addElement("Cliente"); // 4
-    v.addElement("Nombre"); // 5
-    v.addElement("Fec.Fra");// 6
-    v.addElement("Imp.Fra"); // 7
-    v.addElement("Imp.Pend"); // 8
+    ArrayList v= new ArrayList();
+    v.add("Año"); // 0
+    v.add("Emp"); // 1
+    v.add("S"); // 2  serie
+    v.add("Factura");  // 3
+    v.add("Cliente"); // 4
+    v.add("Nombre"); // 5
+    v.add("Fec.Fra");// 6
+    v.add("Imp.Fra"); // 7
+    v.add("Imp.Pend"); // 8
     cor_ordenE.setEnabled(false);
     cor_ordenE.setBounds(new Rectangle(324, 26, 33, 18));
     jt.setCabecera(v);
@@ -216,16 +217,16 @@ public class pdcobruta extends ventanaPad implements PAD
     fvc_serieE.setText("1");
     emp_codiE.setValorDec(EU.em_cod);
     fvc_anoE.setValorDec(EU.ejercicio);
-    Vector v1=new Vector();
-    v1.addElement(fvc_anoE);
-    v1.addElement(emp_codiE);
-    v1.addElement(fvc_serieE);
-    v1.addElement(fvc_numeE);
-    v1.addElement(cli_codiE);
-    v1.addElement(cli_nombE);
-    v1.addElement(fvc_fecfraE);
-    v1.addElement(fvc_sumtotE);
-    v1.addElement(fvc_imppenE);
+    ArrayList v1=new ArrayList();
+    v1.add(fvc_anoE);
+    v1.add(emp_codiE);
+    v1.add(fvc_serieE);
+    v1.add(fvc_numeE);
+    v1.add(cli_codiE);
+    v1.add(cli_nombE);
+    v1.add(fvc_fecfraE);
+    v1.add(fvc_sumtotE);
+    v1.add(fvc_imppenE);
     jt.setCampos(v1);
     jt.setColNueva(2);
     jt.setMaximumSize(new Dimension(406, 311));
@@ -267,7 +268,7 @@ public class pdcobruta extends ventanaPad implements PAD
 
     Pprinc.add(Pcabe,      new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 0, 0, 0), 0, 0));
-    Pcabe.add(zon_codiE, null);
+    Pcabe.add(rut_codiE, null);
     Pcabe.add(cLabel3, null);
     Pcabe.add(usu_nombE, null);
     Pcabe.add(cor_fechaE, null);
@@ -301,10 +302,10 @@ public class pdcobruta extends ventanaPad implements PAD
    jt.setButton(KeyEvent.VK_F4,Baceptar);
    cor_fechaE.setColumnaAlias("cor_fecha");
    usu_nombE.setColumnaAlias("usu_nomb");
-   zon_codiE.setColumnaAlias("zon_codi");
-   zon_codiE.setFormato(Types.CHAR, "XX");
-   zon_codiE.texto.setMayusc(true);
-   gnu.chu.anjelica.pad.pdconfig.llenaDiscr(dtCon1,zon_codiE,"CR",EU.em_cod);
+   rut_codiE.setColumnaAlias("zon_codi");
+   rut_codiE.setFormato(Types.CHAR, "XX");
+   rut_codiE.texto.setMayusc(true);
+   gnu.chu.anjelica.pad.pdconfig.llenaDiscr(dtCon1,rut_codiE,pdconfig.D_RUTAS,EU.em_cod);
 
    activarEventos();
    verDatos(dtCons);
@@ -335,7 +336,7 @@ public class pdcobruta extends ventanaPad implements PAD
      s="select f.*,c.cli_codi,c.cli_nomb,fr.fvc_fecfra from factruta f,clientes c,v_facvec fr "+
          " WHERE cor_fecha = TO_DATE('"+cor_fechaE.getText()+"','dd-MM-yyyy') "+
          " and usu_nomb  = '"+usu_nombE.getText()+"'"+
-         " and f.zon_codi = '"+zon_codiE.getText()+"'"+
+         " and f.zon_codi = '"+rut_codiE.getText()+"'"+
          " and cor_orden = "+cor_ordenE.getValorInt()+
          " and c.cli_codi = fr.cli_codi "+
          " and fr.fvc_ano = f.fvc_ano "+
@@ -350,7 +351,7 @@ public class pdcobruta extends ventanaPad implements PAD
      java.util.HashMap mp = new java.util.HashMap();
      mp.put("cor_fecha", cor_fechaE.getText());
      mp.put("usu_nomb", usu_nombE.getText());
-     mp.put("zon_codi", zon_codiE.getText()+"-"+zon_codiE.getTextCombo());
+     mp.put("zon_codi", rut_codiE.getText()+"-"+rut_codiE.getTextCombo());
      mp.put("cor_orden", cor_ordenE.getText());
 
      JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
@@ -424,7 +425,7 @@ public class pdcobruta extends ventanaPad implements PAD
       ArrayList v = new ArrayList();
       v.add(cor_fechaE.getStrQuery());
       v.add(usu_nombE.getStrQuery());
-      v.add(zon_codiE.getStrQuery());
+      v.add(rut_codiE.getStrQuery());
       s = "select cor_fecha,usu_nomb,zon_codi,cor_orden " +
           "  from factruta ";
       s = creaWhere(s, v, true);
@@ -525,7 +526,7 @@ public class pdcobruta extends ventanaPad implements PAD
       dtAdd.addNew("factruta");
       dtAdd.setDato("cor_fecha", cor_fechaE.getText(), "dd-MM-yyyy");
       dtAdd.setDato("usu_nomb", usu_nombE.getText());
-      dtAdd.setDato("zon_codi", zon_codiE.getText());
+      dtAdd.setDato("zon_codi", rut_codiE.getText());
       dtAdd.setDato("cor_orden", cor_ordenE.getValorInt());
       dtAdd.setDato("fvc_ano", jt.getValorInt(n, 0));
       dtAdd.setDato("emp_codi", jt.getValorInt(n, 1));
@@ -608,10 +609,10 @@ public class pdcobruta extends ventanaPad implements PAD
       usu_nombE.requestFocus();
       return false;
     }
-    if (zon_codiE.getText().trim().equals(""))
+    if (rut_codiE.getText().trim().equals(""))
     {
-      mensajeErr("Introduzca una Zona");
-      zon_codiE.requestFocus();
+      mensajeErr("Introduzca una Ruta");
+      rut_codiE.requestFocus();
       return false;
     }
     return true;
@@ -626,7 +627,7 @@ public class pdcobruta extends ventanaPad implements PAD
     s="SELECT MAX(cor_orden) as cor_orden FROM factruta "+
         " WHERE cor_fecha = TO_DATE('"+cor_fechaE.getText()+"','dd-MM-yyyy') "+
         " and usu_nomb  = '"+usu_nombE.getText()+"'"+
-        " and zon_codi = '"+zon_codiE.getText()+"'";
+        " and zon_codi = '"+rut_codiE.getText()+"'";
     dtCon1.select(s);
     return dtCon1.getInt("cor_orden",true)+1;
   }
@@ -691,7 +692,7 @@ public class pdcobruta extends ventanaPad implements PAD
   {
     cor_fechaE.setEnabled(b);
     usu_nombE.setEnabled(b);
-    zon_codiE.setEnabled(b);
+    rut_codiE.setEnabled(b);
     BirGrid.setEnabled(b);
     jt.setEnabled(b);
     Baceptar.setEnabled(b);
@@ -734,7 +735,7 @@ public class pdcobruta extends ventanaPad implements PAD
         return;
       cor_fechaE.setText(dt.getFecha("cor_fecha","dd-MM-yyyy"));
       usu_nombE.setText(dt.getString("usu_nomb"));
-      zon_codiE.setText(dt.getString("zon_codi"));
+      rut_codiE.setText(dt.getString("zon_codi"));
       cor_ordenE.setValorDec(dt.getInt("cor_orden"));
       s="select f.*,c.cli_codi,c.cli_nomb,fr.fvc_fecfra from factruta f,clientes c,v_facvec fr "+
           " WHERE cor_fecha = TO_DATE('"+dt.getFecha("cor_fecha","dd-MM-yyyy")+"','dd-MM-yyyy') "+

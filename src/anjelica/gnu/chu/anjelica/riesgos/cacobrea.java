@@ -20,8 +20,8 @@ import java.util.Date;
 *  Este programa se complementa con pdcobruta. Primero se utilizara ese y despues,
 *  cuando los representantes vuelvan con los cobros realizados se utilizara este para
 *  realizar los apuntes</p>
-* <p>Copyright: Copyright (c) 2005-2009</p>
-*  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+* <p>Copyright: Copyright (c) 2005-2015</p>
+*  <p>Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
 *  los términos de la Licencia Pública General de GNU según es publicada por
 *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
 *  o bien (según su elección) de cualquier versión posterior.
@@ -49,7 +49,7 @@ public class cacobrea extends ventanaPad implements PAD
   CLabel cLabel2 = new CLabel();
   CTextField usu_nombE = new CTextField(Types.CHAR,"X",15);
   CLabel cLabel3 = new CLabel();
-  CLinkBox zon_codiE = new CLinkBox();
+  CLinkBox rut_codiE = new CLinkBox();
   CLabel cLabel4 = new CLabel();
   CTextField cor_ordenE = new CTextField(Types.DECIMAL,"#9");
   CCheckBox cor_totcobE = new CCheckBox("S","N");
@@ -58,6 +58,7 @@ public class cacobrea extends ventanaPad implements PAD
 
   CGridEditable jt = new CGridEditable(14)
   {
+    @Override
     public void cambiaColumna(int col,int colNueva, int row)
     {
       if (col==9)
@@ -68,15 +69,17 @@ public class cacobrea extends ventanaPad implements PAD
         {
           cor_totcobE.setSelected(fvc_impcobE.getValorDec() >=
                                   jt.getValorDec(row,8));
-          jt.setValor(new Boolean(fvc_impcobE.getValorDec() >=
-                                  jt.getValorDec(row,8)),row,12);
+          jt.setValor(fvc_impcobE.getValorDec() >=
+              jt.getValorDec(row,8),row,12);
         }
       }
     }
+    @Override
     public void afterCambiaLinea()
     {
       calcSumFras();
     }
+    @Override
     public int cambiaLinea(int row, int col)
     {
       int val;
@@ -166,7 +169,7 @@ public class cacobrea extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(589, 564));
-   this.setVersion("2009-02-01");
+   this.setVersion("2015-12-16");
    Pprinc.setLayout(gridBagLayout1);
    statusBar = new StatusBar(this);
    nav = new navegador(this, dtCons, false, navegador.NORMAL);
@@ -190,28 +193,28 @@ public class cacobrea extends ventanaPad implements PAD
     cLabel1.setBounds(new Rectangle(10, 4, 39, 18));
     cLabel2.setText("Operario");
     cLabel2.setBounds(new Rectangle(152, 4, 57, 18));
-    cLabel3.setText("Zona");
+    cLabel3.setText("Ruta");
     cLabel3.setBounds(new Rectangle(16, 26, 33, 18));
-    zon_codiE.setAncTexto(30);
-    zon_codiE.setBounds(new Rectangle(54, 26, 191, 18));
+    rut_codiE.setAncTexto(30);
+    rut_codiE.setBounds(new Rectangle(54, 26, 191, 18));
     cLabel4.setText("Orden");
     cLabel4.setBounds(new Rectangle(252, 26, 41, 18));
-    Vector v= new Vector();
+    ArrayList v= new ArrayList();
 
-    v.addElement("Año"); // 0
-    v.addElement("Emp"); // 1
-    v.addElement("S"); //2
-    v.addElement("Factura");  // 3
-    v.addElement("Cliente"); // 4
-    v.addElement("Nombre"); // 5
-    v.addElement("Fec.Fra");// 6
-    v.addElement("Imp.Fra"); // 7
-    v.addElement("Imp.Pend"); // 8
-    v.addElement("T.C"); // 9
-    v.addElement("Imp.Cob."); // 10
-    v.addElement("Fec.Vto"); // 11
-    v.addElement("Cob"); // 12
-    v.addElement("Coment."); // 13
+    v.add("Año"); // 0
+    v.add("Emp"); // 1
+    v.add("S"); //2
+    v.add("Factura");  // 3
+    v.add("Cliente"); // 4
+    v.add("Nombre"); // 5
+    v.add("Fec.Fra");// 6
+    v.add("Imp.Fra"); // 7
+    v.add("Imp.Pend"); // 8
+    v.add("T.C"); // 9
+    v.add("Imp.Cob."); // 10
+    v.add("Fec.Vto"); // 11
+    v.add("Cob"); // 12
+    v.add("Coment."); // 13
     cor_ordenE.setEnabled(false);
     cor_ordenE.setBounds(new Rectangle(294, 26, 33, 18));
     jt.setCabecera(v);
@@ -234,21 +237,21 @@ public class cacobrea extends ventanaPad implements PAD
     fvc_anoE.setValorDec(EU.ejercicio);
     fvc_serieE.setMayusc(true);
     fvc_serieE.setAutoNext(true);
-    Vector v1=new Vector();
-    v1.addElement(fvc_anoE); // 0
-    v1.addElement(emp_codiE); // 1
-    v1.addElement(fvc_serieE); // 2
-    v1.addElement(fvc_numeE); // 3
-    v1.addElement(cli_codiE); // 4
-    v1.addElement(cli_nombE); // 5
-    v1.addElement(fvc_fecfraE); // 6
-    v1.addElement(fvc_sumtotE); // 7
-    v1.addElement(fvc_imppenE); // 8
-    v1.addElement(cor_tipcobE); // 9
-    v1.addElement(fvc_impcobE); // 10
-    v1.addElement(cor_fecvtoE); // 11
-    v1.addElement(cor_totcobE); // 12
-    v1.addElement(cor_comentE); // 13
+    ArrayList v1=new ArrayList();
+    v1.add(fvc_anoE); // 0
+    v1.add(emp_codiE); // 1
+    v1.add(fvc_serieE); // 2
+    v1.add(fvc_numeE); // 3
+    v1.add(cli_codiE); // 4
+    v1.add(cli_nombE); // 5
+    v1.add(fvc_fecfraE); // 6
+    v1.add(fvc_sumtotE); // 7
+    v1.add(fvc_imppenE); // 8
+    v1.add(cor_tipcobE); // 9
+    v1.add(fvc_impcobE); // 10
+    v1.add(cor_fecvtoE); // 11
+    v1.add(cor_totcobE); // 12
+    v1.add(cor_comentE); // 13
 
     jt.setMaximumSize(new Dimension(406, 311));
     jt.setMinimumSize(new Dimension(406, 311));
@@ -318,7 +321,7 @@ public class cacobrea extends ventanaPad implements PAD
 
     Pprinc.add(Pcabe,      new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 0, 0, 0), 0, 0));
-    Pcabe.add(zon_codiE, null);
+    Pcabe.add(rut_codiE, null);
     Pcabe.add(cLabel3, null);
     Pcabe.add(usu_nombE, null);
     Pcabe.add(cor_fechaE, null);
@@ -367,13 +370,13 @@ public class cacobrea extends ventanaPad implements PAD
    jt.setButton(KeyEvent.VK_F4,Baceptar);
    cor_fechaE.setColumnaAlias("cor_fecha");
    usu_nombE.setColumnaAlias("usu_nomb");
-   zon_codiE.setColumnaAlias("zon_codi");
-   zon_codiE.setFormato(Types.CHAR, "XX", 2);
-   zon_codiE.texto.setMayusc(true);
-   zon_codiE.setFormato(true);
+   rut_codiE.setColumnaAlias("zon_codi");
+   rut_codiE.setFormato(Types.CHAR, "XX", 2);
+   rut_codiE.texto.setMayusc(true);
+   rut_codiE.setFormato(true);
 
-   gnu.chu.anjelica.pad.pdconfig.llenaDiscr(dtCon1,zon_codiE,
-       gnu.chu.anjelica.pad.pdconfig.D_REPRZONA,EU.em_cod);
+   gnu.chu.anjelica.pad.pdconfig.llenaDiscr(dtCon1,rut_codiE,
+       gnu.chu.anjelica.pad.pdconfig.D_RUTAS,EU.em_cod);
 
    activarEventos();
    verDatos(dtCons);
@@ -381,6 +384,7 @@ public class cacobrea extends ventanaPad implements PAD
  void activarEventos()
  {
    BirGrid.addFocusListener(new FocusAdapter() {
+     @Override
      public void focusGained(FocusEvent e) {
        BirGrid_focusGained();
      }
@@ -393,18 +397,23 @@ public class cacobrea extends ventanaPad implements PAD
      jt.setEnabled(true);
      jt.requestFocusInicio();
  }
+ @Override
   public void PADPrimero() {
     verDatos(dtCons);
   }
+  @Override
   public void PADAnterior() {
     verDatos(dtCons);
   }
+  @Override
   public void PADSiguiente() {
     verDatos(dtCons);
   }
+  @Override
   public void PADUltimo() {
     verDatos(dtCons);
   }
+  @Override
   public void PADQuery() {
     activar(true);
     Pcabe.setQuery(true);
@@ -415,7 +424,7 @@ public class cacobrea extends ventanaPad implements PAD
     mensaje("Introduzca Condiciones de Busqueda");
     cor_fechaE.requestFocus();
   }
-
+  @Override
   public void ej_query1()
   {
     try
@@ -430,7 +439,7 @@ public class cacobrea extends ventanaPad implements PAD
       Vector v = new Vector();
       v.addElement(cor_fechaE.getStrQuery());
       v.addElement(usu_nombE.getStrQuery());
-      v.addElement(zon_codiE.getStrQuery());
+      v.addElement(rut_codiE.getStrQuery());
       v.addElement(cor_intcobE.getStrQuery());
       s = "select cor_fecha,usu_nomb,zon_codi,cor_orden " +
           "  from factruta ";
@@ -463,6 +472,7 @@ public class cacobrea extends ventanaPad implements PAD
     activaTodo();
 
   }
+  @Override
   public void canc_query() {
     Pcabe.setQuery(false);
     activaTodo();
@@ -470,6 +480,7 @@ public class cacobrea extends ventanaPad implements PAD
     mensaje("");
     mensajeErr("Consulta ... Cancelada");
   }
+  @Override
   public void PADEdit() {
     if (dtCons.getNOREG())
     {
@@ -659,15 +670,19 @@ public class cacobrea extends ventanaPad implements PAD
     }
     return true;
   }
+  @Override
   public void canc_addnew() {
   }
+  @Override
   public void PADDelete() {
   }
+  @Override
   public void ej_delete1() {
   }
+  @Override
   public void canc_delete() {
   }
-
+@Override
   public void activar(boolean b)
   {
     activar(b,navegador.QUERY);
@@ -685,7 +700,7 @@ public class cacobrea extends ventanaPad implements PAD
     cor_intcobE.setEnabled(b);
     cor_fechaE.setEnabled(b);
     usu_nombE.setEnabled(b);
-    zon_codiE.setEnabled(b);
+    rut_codiE.setEnabled(b);
 
   }
 
@@ -697,7 +712,7 @@ public class cacobrea extends ventanaPad implements PAD
         return;
       cor_fechaE.setText(dt.getFecha("cor_fecha","dd-MM-yyyy"));
       usu_nombE.setText(dt.getString("usu_nomb"));
-      zon_codiE.setText(dt.getString("zon_codi"));
+      rut_codiE.setText(dt.getString("zon_codi"));
       cor_ordenE.setValorDec(dt.getInt("cor_orden"));
       s="select f.*,c.cli_codi,c.cli_nomb,fr.fvc_fecfra "+
           " from factruta f,clientes c,v_facvec fr "+
@@ -764,7 +779,6 @@ public class cacobrea extends ventanaPad implements PAD
     } catch (Exception k)
     {
       Error("Error al ver datos",k);
-      return;
     }
   }
   void calcSumFras()
@@ -818,13 +832,13 @@ public class cacobrea extends ventanaPad implements PAD
       }
       cor_totcobE.setSelected(fvc_impcobE.getValorDec() >=
                               jt.getValorDec(row, 8));
-      jt.setValor(new Boolean(fvc_impcobE.getValorDec() >=
-                              jt.getValorDec(row, 8)), row, 12);
+      jt.setValor((fvc_impcobE.getValorDec() >=
+          jt.getValorDec(row, 8)), row, 12);
     }
     else
     {
       cor_totcobE.setSelected(false);
-      jt.setValor(new Boolean(false), row, 12);
+      jt.setValor(false, row, 12);
       jt.setValor("0", row, 10);
       fvc_impcobE.setValorDec(0);
       jt.setValor("", row, 11);

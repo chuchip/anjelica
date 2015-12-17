@@ -771,7 +771,7 @@ public class ActualStkPart
         " and alm_codi = " + almCodi;
     if (!dt.select(s))
       return false;
-    if (kilos > dt.getDouble("stp_kilact") && kilos != 0)
+    if ( Formatear.redondea(kilos,3) > Formatear.redondea(dt.getDouble("stp_kilact"),3) && kilos != 0)
       return false;
     return unids <= dt.getDouble("stp_unact") || unids == 0;
   }

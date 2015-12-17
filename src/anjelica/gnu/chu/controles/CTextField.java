@@ -1052,6 +1052,29 @@ public String getCopia(){
   return copia;
 }
 
+/**
+ * Devuelve el valor de la copia como un double.
+ * Si hay un error al pasarlo a double, devuelve 0.
+ * @return  Valor en formato 'double' del valor antiguo
+ */
+public double getCopiaDouble(){
+   try {
+    String num=copia.trim();
+    num = cambiaSimbolRev(num);
+     return Double.parseDouble(num);
+   } catch (NumberFormatException n) {
+          return 0d;
+  }
+}
+/**
+ * Devuelve el valor de la copia como un entero.
+ * Si hay un error al pasarlo a entero, devuelve 0.
+ * @return  Valor en formato 'entero' del valor antiguo
+ */
+ public int getCopiaInt(){
+      return (int)((double) getCopiaDouble());
+
+}
 String procesaTecla()
 {
   if (Character.isISOControl(tecla) || isFocusOwner() == false || ev_focus == true)
