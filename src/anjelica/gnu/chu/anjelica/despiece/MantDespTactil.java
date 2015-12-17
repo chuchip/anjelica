@@ -378,7 +378,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2015-12-01"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2015-12-17"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -877,7 +877,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
                 eje_numeE.getValorInt(), EU.em_cod,
                 SERIE, deo_codiE.getValorInt(),
                 jtSal.getValorInt( JTSAL_NUMIND), deo_almdesE.getValorInt(),
-                jtSal.getValorDec(JTSAL_KILOS),jtSal.getValorInt(JTSAL_NUMPIE)))
+                jtSal.getValorDec(JTSAL_KILOS),1))
             {
                 msgBox("Individuo ha tenido mvtos. Imposible editar linea");
                 return;
