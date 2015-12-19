@@ -91,7 +91,7 @@ public class RegCosDes extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2015-04-03");
+        this.setVersion("2015-12-17");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -350,7 +350,7 @@ public class RegCosDes extends ventana {
                 mvtosAlm.setResetCostoStkNeg(true); 
             }
             mvtosAlm.setIgnorarDespFecha(false);       
-            mvtosAlm.setMvtoDesgl(false);            
+            mvtosAlm.setUsaDocumentos(false);            
             mvtosAlm.iniciarMvtos(fecinvE.getText(), dtAdd);                      
             
             if (swRegenerar)

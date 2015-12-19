@@ -363,7 +363,7 @@ public class MvtosAlma
         + " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "
         + " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"
         + " r.emp_codi  as empcodi,r.pro_codi as pro_codori"
-        + ", tir_tipo as repCodi,tir_nomb as zonCodi,sbe_codi as sbe_codi "
+        + ", '' as repCodi,'' as zonCodi,sbe_codi as sbe_codi "
         + ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "
         + " ,rgs_fecha as fecdoc, "
         + " 'N' as avc_depos "
@@ -438,7 +438,7 @@ public class MvtosAlma
             " and r.rgs_fecha::date <"+(incInvFinal?"=":"")+
             " TO_DATE('"+fecFin+"','dd-MM-yyyy') ");
     }
-    sql+= " ORDER BY 4,1,3 desc"; // FECHA,orden y tipo
+    sql+= " ORDER BY 4,3,1 desc"; // FECHA,  tipo
     return sql;      
   }
   /**
@@ -743,7 +743,7 @@ public class MvtosAlma
       this.accesoEmp=acessoEmp;
   }
   /**
-   * 
+   * Devuelve el costo de un producto en una fecha.
    * @param proCodi
    * @param timeMvt
    * @param dtCon1

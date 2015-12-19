@@ -181,17 +181,17 @@ private void jbInit() throws Exception
         Pcabe.add(cLabel4);
         cLabel4.setBounds(10, 2, 60, 17);
         Pcabe.add(feciniE);
-        feciniE.setBounds(70, 2, 65, 17);
+        feciniE.setBounds(70, 2, 70, 17);
 
         cLabel10.setText("A Fecha");
         Pcabe.add(cLabel10);
         cLabel10.setBounds(140, 2, 50, 17);
         Pcabe.add(fecfinE);
-        fecfinE.setBounds(190, 2, 65, 17);
+        fecfinE.setBounds(190, 2, 70, 17);
 
         cLabel1.setText("Tipo");
         Pcabe.add(cLabel1);
-        cLabel1.setBounds(340, 43, 50, 15);
+        cLabel1.setBounds(340, 43, 50, 14);
 
         tir_codiE.setFormato(Types.DECIMAL,"##9");
         tir_codiE.setAncTexto(35);
@@ -227,7 +227,7 @@ private void jbInit() throws Exception
 
         cLabel3.setText("Cod.Reg.");
         Pcabe.add(cLabel3);
-        cLabel3.setBounds(10, 43, 60, 15);
+        cLabel3.setBounds(10, 43, 60, 14);
 
         tir_afestkE.addItem("Todos","*");
         tir_afestkE.addItem("Suma","+");
@@ -523,6 +523,7 @@ private void jbInit() throws Exception
               + " mvt_canti as canti,mvt_prec as precio,mv.alm_codi "
               + " from mvtosalm as mv, v_articulo as a where "
               + " mvt_canti <> 0 "
+              + " and NOT (mvt_tipdoc = 'V' and mvt_serdoc='X')"
               + " and a.pro_codi = mv.pro_codi "              
               + " and mv.pro_codi  "
               + (pro_codiE.isNull()?" in (select distinct(pro_codi) from v_regstock"
@@ -569,11 +570,13 @@ private void jbInit() throws Exception
           int tirCodi=tir_codiE.getValorInt();
           String tirAfeStk=tir_afestkE.getValor();
           Date fecInicial=feciniE.getDate();
+          setMensajePopEspere("Actualizando producto: "+dtCon1.getInt("pro_codi"),false);
           do
           {
-              setMensajePopEspere("Actualizando producto: "+dtCon1.getInt("pro_codi"),false);
+             
               if (dtCon1.getInt("pro_codi")!=proCodi)
               {
+                  setMensajePopEspere("Actualizando producto: "+dtCon1.getInt("pro_codi"),false);
                   proCodi=dtCon1.getInt("pro_codi");
                   ht=MvtosAlma.getDatosInventario(dtStat,proCodi,feulin); 
                   
@@ -625,8 +628,8 @@ private void jbInit() throws Exception
                 else
                     costo= ((kilCalc*costo)+
                     (dtCon1.getDouble("canti")*dtCon1.getDouble("precio")))/ (kilCalc +dtCon1.getDouble("canti")) ;
-//                System.out.println(" Articulo: "+ proCodi+" Fecha: "+dtCon1.getFecha("fecmov","dd-MM-yy HH:mm")+
-//                  " Cantidad: "+dtCon1.getDouble("canti")+" kilos: "+kilos+" Costo: "+costo);
+                System.out.println(" Articulo: "+ proCodi+" Fecha: "+dtCon1.getFecha("fecmov","dd-MM-yy HH:mm")+
+                  " Cantidad: "+dtCon1.getDouble("canti")+" kilos: "+kilos+" Costo: "+costo);
                 kilos+=dtCon1.getDouble("canti");                               
                 
               }

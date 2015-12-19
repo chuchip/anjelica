@@ -130,9 +130,7 @@ public class EnviaMensajes {
         * Busco inconsistencias en albaranes de ventas
         * 
         */
-        System.out.println("----------------------------------------");
-        System.out.println("--  VENTAS MINORITAS DE PRODUCTOS DE MAYOR --");
-        System.out.println("------------------------------------------");
+       
         s="select avc_ano,avc_serie,avc_nume,avc_fecalb,"+
             " c.cli_codi,c.cli_nomb,v.pro_codi,v.pro_nomb,v.avl_canti"+
             " from v_albventa as v, v_cliente as c where c.cli_codi = v.cli_codi "+

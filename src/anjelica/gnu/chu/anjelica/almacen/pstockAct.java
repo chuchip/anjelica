@@ -382,6 +382,11 @@ public class pstockAct extends CPanel
           " where pro_codi = "+proCodi;
 //    System.out.println(s);
     fefise = "";
+    if (pdc_fecpedE.getError())
+    {
+        padre.msgBox("Fecha Pedido NO es valida");
+        return;
+    }
     GregorianCalendar gc = new GregorianCalendar();
     gc.setTime(Formatear.getDate(pdc_fecpedE.getText(), "dd-MM-yyyy"));
     fefise = Formatear.sumaDias(pdc_fecpedE.getText(), "dd-MM-yyyy", 7 - gc.get(GregorianCalendar.DAY_OF_WEEK));
