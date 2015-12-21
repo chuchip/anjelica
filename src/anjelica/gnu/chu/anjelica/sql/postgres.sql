@@ -2004,7 +2004,7 @@ create table anjelica.factruta
 (
 cor_fecha date not null,
 usu_nomb varchar(15) not null,
-zon_codi varchar(2) not null,
+rut_codi varchar(2) not null, -- Modif. para que cargue rutas, en vez de zonas
 cor_orden int not null,
 fvc_ano int not null,
 emp_codi int not null,
@@ -2019,6 +2019,52 @@ cor_coment varchar(255),
 cor_intcob char(1) NOT NULL, -- Introducido en cobros (S/N)
 cor_totcob char(1) not null -- Totalmente cobrado (S/N)
 );
+--
+-- Tabla Cabecera Albaranes de ruta.
+--
+create table albrutacab
+(
+	alr_nume serial not null, -- ID
+	rut_codi char(2) not null, -- Ruta
+	usu_nomb varchar(15) not null, -- Usuario o transportista
+	alr_fecha date not null, -- Fecha de Registro
+	alr_fecsal TIMESTAMP not null, -- Fecha Salida Ruta.
+	alr_fecreg TIMESTAMP , -- Fecha Regreso ruta
+	veh_codi int, -- Vehiculo en el que se hace el transporte 
+	alr_vekmin int, -- km. Iniciales
+	alr_vekfin int, -- km. Finales
+	alr_impgas float not null default 0, -- Importe gasolina
+	alr_coment varchar(255) -- Comentarios sobre ruta.	
+ );
+ create index ix_albrutacab on albrutacab(alr_fecha);
+ --
+-- Tabla Cabecera Lineas de ruta.
+--
+create table albrutalin
+(
+	alr_nume int not null, -- ID
+	alr_orden int not null, -- Orden de carga
+	emp_codi int not null,  -- Empresa Albaran
+	avc_ano int not null, -- Ejercicio 
+	avc_serie char(1) not null, -- Serie
+	avc_nume int not null, -- Numero
+	constraint ix_albrutalin primary key (alr_nume,alr_orden)
+);
+---
+-- Tabla vehiculos
+---
+create table vehiculos
+(
+	veh_codi int not null, -- Codigo de Vehiculo
+	veh_nomb varchar(40) not null, -- Nombre de vehiculo
+	veh_marca varchar(25), -- Marca
+	veh_modelo varchar(25), -- Modelo
+	veh_matri varchar(15), -- Matricula
+	veh_anocom int, -- Año de Compra.
+	veh_kilome int, -- Kilometros actuales	
+	constraint ix_vehiculos primary key (veh_codi)
+);
+
 --
 -- MATADEROS
 --
