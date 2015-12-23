@@ -408,8 +408,10 @@ public class pdalbara extends ventanaPad  implements PAD
   CLinkBox tar_codiE = new CLinkBox();
   CLabel cLabel8 = new CLabel();
   CTextField numLinE = new CTextField(Types.DECIMAL, "##9");
-  CLabel cLabel9 = new CLabel();
+  CLabel kilosL = new CLabel();
+  CLabel unidL = new CLabel("Unidades");
   CTextField kilosE = new CTextField(Types.DECIMAL, "----,--9.99");
+  CTextField unidE = new CTextField(Types.DECIMAL, "---9");
   CLabel cLabel10 = new CLabel();
   CTextField impLinE = new CTextField(Types.DECIMAL, "----,--9");
   CLabel cLabel11 = new CLabel();
@@ -421,7 +423,7 @@ public class pdalbara extends ventanaPad  implements PAD
   CTextField impDtoE = new CTextField(Types.DECIMAL, "---,--9.99");
   CLabel cLabel15 = new CLabel();
   CTextField avc_impalbE = new CTextField(Types.DECIMAL, "----,--9.99");
-  CLabel cLabel16 = new CLabel();
+  CLabel avc_impcobL = new CLabel();
   CTextField avc_impcobE = new CTextField(Types.DECIMAL, "----,--9.99");
   CCheckBox avc_cerraE = new CCheckBox("-1", "0");
 
@@ -706,7 +708,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-10-26" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-12-22" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -888,9 +890,11 @@ public class pdalbara extends ventanaPad  implements PAD
         numLinE.setOpaque(true);
         numLinE.setPreferredSize(new Dimension(17, 17));
         numLinE.setBounds(new Rectangle(62, 2, 29, 17));
-        cLabel9.setText("Kilos");
-        cLabel9.setBounds(new Rectangle(94, 2, 31, 17));
+        kilosL.setText("Kilos");
+        kilosL.setBounds(new Rectangle(94, 2, 31, 17));
         kilosE.setBounds(new Rectangle(130, 2, 61, 17));
+        unidL.setBounds(new Rectangle(133, 21, 61, 17));
+        unidE.setBounds(new Rectangle(195, 21, 40, 17));
         cLabel10.setText("Imp. Lineas");
         cLabel10.setBounds(new Rectangle(198, 2, 65, 17));
         impLinE.setBounds(new Rectangle(266, 2, 68, 17));
@@ -932,10 +936,10 @@ public class pdalbara extends ventanaPad  implements PAD
         avc_impalbE.setFormato("----,--9.99");
         avc_impalbE.setText("");
         avc_impalbE.setBounds(new Rectangle(53, 21, 68, 17));
-        cLabel16.setRequestFocusEnabled(true);
-        cLabel16.setText("Imp. Cobrado");
-        cLabel16.setBounds(new Rectangle(133, 21, 79, 17));
-        avc_impcobE.setBounds(new Rectangle(211, 21, 69, 17));
+
+        avc_impcobL.setText("Imp. Cobrado");
+        avc_impcobL.setBounds(new Rectangle(2, 125, 79, 17));
+        avc_impcobE.setBounds(new Rectangle(87, 125, 69, 17));
         avc_cerraE.setMaximumSize(new Dimension(74, 23));
         avc_cerraE.setText("Cerrado");
         avc_cerraE.setBounds(new Rectangle(330, 57, 76, 18));
@@ -1168,14 +1172,16 @@ public class pdalbara extends ventanaPad  implements PAD
         Ppie.add(impDtoE, null);
         Ppie.add(numLinE, null);
         Ppie.add(cLabel8, null);
-        Ppie.add(cLabel9, null);
+        Ppie.add(kilosL, null);
         Ppie.add(impLinE, null);
         Ppie.add(cLabel19, null);
         Ppie.add(kilosE, null);
+        Ppie.add(unidL, null);
+        Ppie.add(unidE, null);
         Ppie.add(cLabel15, null);
         Ppie.add(avc_impalbE, null);
-        Ppie.add(cLabel16, null);
-        Ppie.add(avc_impcobE, null);
+        PotroDat.add(avc_impcobL, null);
+        PotroDat.add(avc_impcobE, null);
         Ppie.add(Birgrid, null);
         Ppie.add(eti_codiE, null);
         Ppie.add(cLabel20, null);
@@ -3128,6 +3134,7 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avc_impalb", datCab.getValDouble("avc_impalb"));
     dtAdd.setDato("avc_basimp", datCab.getValDouble("avc_basimp"));
     dtAdd.setDato("avc_kilos", datCab.getValDouble("kilos"));
+    dtAdd.setDato("avc_unid", datCab.getValInt("unidades"));
     if (! cierra)
       return;
     dtAdd.update(stUp);
@@ -3187,7 +3194,7 @@ public class pdalbara extends ventanaPad  implements PAD
   void verDatLin(DatosTabla dt, boolean agrupa, boolean incIva) throws
       Exception
   {
-    verDatLin(dt.getInt("avc_ano"), hisRowid>0?-1:dt.getInt("emp_codi"),
+    verDatLin(dt.getInt("avc_ano"),  hisRowid>0?-1:dt.getInt("emp_codi"),          
               dt.getString("avc_serie"),
               hisRowid>0?hisRowid:dt.getInt("avc_nume"), dt.getDouble("avc_impcob"), agrupa, incIva);
   }
@@ -3207,6 +3214,15 @@ public class pdalbara extends ventanaPad  implements PAD
           " order by avl_numlin ";
     return s;
   }
+  /**
+   * Recoge select de lineas de albaran, sin agrupar.
+   * @param tablaLin
+   * @param ano
+   * @param empCodi
+   * @param serie
+   * @param nume
+   * @return 
+   */
   public static String getSqlLinAlb(String tablaLin,int ano,int empCodi,String serie,int nume)
   {
     String s= "SELECT avl_numlin,l.pro_codi, " +
@@ -3214,11 +3230,13 @@ public class pdalbara extends ventanaPad  implements PAD
           " avl_prven,avl_prepvp,avl_profer,tar_preci,a.pro_nomb,a.pro_indtco, " +
           " l.pro_nomb as avl_pronom,avl_numpal, a.pro_tipiva,l.alm_codi,avl_coment,avl_fecalt " +
           " FROM "+tablaLin+"  as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
-          " WHERE l.avc_ano = " + ano +
+          " WHERE "
+         +(empCodi<0?" his_rowid ="+nume:
+           " l.avc_ano = " + ano +
           " and l.emp_codi = " + empCodi +
           " and avc_ano = " + ano +
           " and avc_nume = " + nume +
-          " and avc_serie = '" + serie + "'" +
+          " and avc_serie = '" + serie + "'") +
           " order by avl_numlin ";
     return s;
   }
@@ -3279,7 +3297,7 @@ public class pdalbara extends ventanaPad  implements PAD
       return getSqlLinList("v_albavel",ano,empCodi,serie,nume,modPrecio);
   }
   /**
-   * Sentencia SQL para listar el albarán
+   * Sentencia SQL para listar el albarán. Muestra las lineas agrupandolas
    * @param tablaLin
    * @param ano
    * @param empCodi
@@ -3390,6 +3408,7 @@ public class pdalbara extends ventanaPad  implements PAD
     double impIva = 0, kilosT = 0;
     double impReq = 0, impLin, impBim = 0;
     double impDtCom=0;
+    int unidT=0;
     impDtoCom=0;
     impDtoPP=0;
 //    avc_valoraE.setSelected(false);
@@ -3459,6 +3478,7 @@ public class pdalbara extends ventanaPad  implements PAD
           impDtCom+=dtCon1.getInt("pro_indtco")==0?0:impLin;    
         }
         kilosT += dtCon1.getDouble("avl_canti");
+        unidT +=dtCon1.getDouble("avl_unid");
       }  while (dtCon1.next());
       impBim=Formatear.redondea(impBim,NUMDEC);
       avl_prvenE.setCambio(true);
@@ -3467,6 +3487,7 @@ public class pdalbara extends ventanaPad  implements PAD
         msgBox("ALBARAN ERRONEO ... TIENE TIPOS DE IVA DIFERENTES");
       numLinE.setValorDec(nLin);
       kilosE.setValorDec(kilosT);
+      unidE.setValorInt(unidT);
       impLinE.setValorDec(impBim);
 //      double dtos=Formatear.redondea(avc_dtoppE.getValorDec() + avc_dtocomE.getValorDec(),NUMDEC);
 
@@ -7115,6 +7136,7 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avc_basimp", impLinE.getValorDec()-impDtoE.getValorDec());
     dtAdd.setDato("avc_imcob2", 0);
     dtAdd.setDato("avc_kilos", kilosE.getValorDec());
+    dtAdd.setDato("avc_unid",  unidE.getValorDec());
     dtAdd.setDato("div_codi", div_codiE.getValor());
     dtAdd.setDato("div_codi2", 1);
     dtAdd.setDato("avc_tottas", 0);
@@ -7387,6 +7409,7 @@ public class pdalbara extends ventanaPad  implements PAD
     Bcancelar.setEnabled(b);
     numLinE.setEnabled(false);
     kilosE.setEnabled(false);
+    unidE.setEnabled(false);
     impDtoE.setEnabled(false);
     impLinE.setEnabled(false);
     avc_impalbE.setEnabled(false);
@@ -8161,7 +8184,16 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     return true;
   }
-
+/**
+ * Devuelve la cabecera de un albaran
+ * @param dt DatosTabla donde dejara los datos
+ * @param empCodi
+ * @param avcAno
+ * @param avcSerie
+ * @param avcNume
+ * @return false si no encuentra el albaran. True si lo encuentra.
+ * @throws SQLException 
+ */
   public static boolean getAlbaranCab(DatosTabla dt, int empCodi,int avcAno, String avcSerie,int avcNume) throws SQLException
   {
     String s = "select * from v_albavec  WHERE avc_ano =" + avcAno +

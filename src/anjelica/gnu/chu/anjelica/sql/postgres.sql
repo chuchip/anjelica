@@ -401,9 +401,9 @@ avc_aux3 varchar(50),
 avc_impre2 float,
 avc_basimp float not null,    -- Base Imponible  (Imp.Lin - Dtos)
 avc_imcob2 float,
-avc_kilos float,       -- Suma de Kilos.
+avc_kilos float not null,       -- Suma de Kilos.
 div_codi int,		-- Divisa
-div_codi2 int,
+avc_unid int not null, -- Suma de Unidades
 avc_tottas float,
 avc_totta2 float,
 avc_apltas smallint,
@@ -474,7 +474,7 @@ avc_basimp float not null,    -- Base Imponible  (Imp.Lin - Dtos)
 avc_imcob2 float,
 avc_kilos float,       -- Suma de Kilos.
 div_codi int,		-- Divisa
-div_codi2 int,
+avp_unid int,
 avc_tottas float,
 avc_totta2 float,
 avc_apltas smallint,
@@ -624,7 +624,7 @@ create index ix_albavel3 on anjelica.v_albavel (avl_fecalt);
 create view anjelica.v_albventa as select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,
 cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
-avc_basimp,avc_kilos,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
+avc_basimp,avc_kilos,avc_unid,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
 avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,
 tar_preci,avl_unid,
 avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes 
@@ -725,7 +725,7 @@ CREATE OR REPLACE VIEW anjelica.v_albventa_detalle AS
  SELECT c.emp_codi, c.avc_ano, c.avc_serie, c.avc_nume, c.cli_codi, 
     c.avc_clinom, c.avc_fecalb, c.usu_nomb, c.avc_tipfac, c.cli_codfa, 
     c.fvc_ano, c.fvc_nume, c.avc_cerra, c.avc_impres, c.avc_fecemi, c.sbe_codi, 
-    c.avc_cobrad, c.avc_obser, c.avc_fecrca, c.avc_basimp, c.avc_kilos, 
+    c.avc_cobrad, c.avc_obser, c.avc_fecrca, c.avc_basimp, c.avc_kilos, c.avc_unid,
     c.div_codi, c.avc_impalb, c.avc_impcob, c.avc_dtopp, c.avc_dtootr, 
     c.avc_valora, c.fvc_serie, c.avc_depos, l.avl_numlin, l.pro_codi, l.avl_numpal,avl_numcaj,
     l.pro_nomb, l.avl_canti, l.avl_prven, l.avl_prbase, l.tar_preci, l.avl_unid,
@@ -773,7 +773,7 @@ create index ix_hisalpave on hisalpave  (his_rowid);
 create view anjelica.v_halbventa_detalle as 
 select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
-avc_basimp,avc_kilos,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,c.his_rowid,
+avc_basimp,avc_kilos,avc_unid,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,c.his_rowid,
 avc_depos,l.avl_numlin,l.pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,tar_preci,avl_unid,
 avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,
 avp_numlin,avp_ejelot,avp_emplot,avp_serlot,avp_numpar,avp_numind,avp_numuni,avp_canti,avp_canbru
@@ -2032,7 +2032,7 @@ create table albrutacab
 	alr_fecreg TIMESTAMP , -- Fecha Regreso ruta
 	veh_codi int, -- Vehiculo en el que se hace el transporte 
 	alr_vekmin int, -- km. Iniciales
-	alr_vekfin int, -- km. Finales
+	alr_vekmfi int, -- km. Finales
 	alr_impgas float not null default 0, -- Importe gasolina
 	alr_coment varchar(255) -- Comentarios sobre ruta.	
  );
@@ -2050,6 +2050,10 @@ create table albrutalin
 	avc_nume int not null, -- Numero
 	constraint ix_albrutalin primary key (alr_nume,alr_orden)
 );
+create view albruta as select c.*,l.alr_orden,l.emp_codi,l.avc_ano,l.avc_serie,l.avc_nume 
+from albrutacab as c, albrutalin as l 
+where c.alr_nume=c.alr_nume;
+grant select on albruta to public;
 ---
 -- Tabla vehiculos
 ---

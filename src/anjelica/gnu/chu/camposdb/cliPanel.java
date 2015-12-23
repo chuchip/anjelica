@@ -13,7 +13,7 @@ import gnu.chu.winayu.*;
  *
  * <p>Título: cliPanel</p>
  * <p>Descripción: Panel para introducir el codigo del cliente</p>
- * <p>Copyright: Copyright (c) 2005
+ * <p>Copyright: Copyright (c) 2005-2015
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los t�rminos de la Licencia P�blica General de GNU seg�n es publicada por
  *  la Free Software Foundation, bien de la versi�n 2 de dicha Licencia
@@ -665,6 +665,15 @@ public void setZona(String zonCli)
       if (cli_codiE!=null)
           cli_codiE.addFocusListener(f);      
   }
+  public CTextField getFieldCliCodi()
+  {
+      return cli_codiE;
+  }
+    public CTextField getFieldCliNomb()
+  {
+      return cli_nombL;
+  }
+
   /**
    * Quita un listener al foco. El foco se habria añadido al campo cli_codiE (CTextField)
    * @param f 

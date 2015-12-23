@@ -175,7 +175,7 @@ public void iniciarVentana() throws Exception
 //    fecIniComE.setDesplazaX(185);
 //    fecFinComE.setDesplazaX(185);
 //    pdconfig.llenaDiscr(dtStat, rep_codiE, "Cr",EU.em_cod);
-     pdconfig.llenaDiscr(dtStat, zon_codiE, "Cz",EU.em_cod);
+     pdconfig.llenaDiscr(dtStat, zon_codiE, pdconfig.D_ZONA ,EU.em_cod);
      activarEventos();
 //     cli_codiE.setText("");
      this.setEnabled(true);

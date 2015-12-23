@@ -126,6 +126,7 @@ public class actCabAlbFra
     ht.put("incIva", incIva);
     ht.put("avc_impbru", (double) 0);
     ht.put("kilos", (double) 0);
+    ht.put("unidades", (int) 0);
     ht.put("nLin", 0);
     ht.put("avc_dtocom", (double) 0);
     ht.put("avc_impdco", (double) 0);
@@ -151,6 +152,7 @@ public class actCabAlbFra
       return false; // SIN LINEAS DE ALBARAN
     double impLin;
     double kilos=0;
+    int unidades=0;
     double impBim = 0, impDtoPP = 0, impIva = 0, impReq = 0;
     double impDtCom=0,impDtoCom=0;
     
@@ -165,6 +167,7 @@ public class actCabAlbFra
                                 Formatear.redondea(dtLin.getDouble("avl_prven",true),numDecPrecio),numDec);
 
       kilos+=dtLin.getDouble("avl_canti", true);
+      unidades+=dtLin.getInt("avl_unid",true);
       impDtCom+=dtLin.getInt("pro_indtco")==0?0:impLin;    
       impBim += impLin;
       
@@ -174,6 +177,7 @@ public class actCabAlbFra
     impBim=Formatear.redondea(impBim,numDec);
     ht.put("avc_impbru", impBim);
     ht.put("kilos", Formatear.redondea(kilos,numDec));
+    ht.put("unidades", unidades);
     ht.put("nLin", nLin);
 
     if (dtopp != 0)

@@ -157,6 +157,7 @@ public class menu extends JFrame
   JMenuItem clinvcong = new JMenuItem();
    JMenuItem clresmvtos = new JMenuItem();
    JMenuItem cvregalm = new JMenuItem();
+   JMenuItem mantAlbRuta = new JMenuItem();
    JMenuItem clprodrec = new JMenuItem();
   JMenuItem pdnumerac = new JMenuItem();
   JMenuItem clvertprv = new JMenuItem();
@@ -448,6 +449,12 @@ public class menu extends JFrame
     cvregalm.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         cvregalm_actionPerformed(e);
+      }
+    });
+    mantAlbRuta.setText("Mant.Alb.Ruta");
+    mantAlbRuta.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mantAlbRuta_actionPerformed(e);
       }
     });
 
@@ -916,6 +923,7 @@ public class menu extends JFrame
      JPopupAlmacen.add(clresmvtos);
      JPopupAlmacen.add(clprodrec);
      JPopupAlmacen.add(cvregalm);
+     JPopupAlmacen.add(mantAlbRuta);
     jPopupCompras.add(albComCarne);
     jPopupCompras.add(albComPlanta);
     jPopupCompras.add(comprasItem2);
@@ -1966,6 +1974,11 @@ void pdreprese_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
     ht.put("admin","true");
     lanzaEjecutable(new gnu.chu.anjelica.almacen.CVRegAlm(menu.this,EU,ht));
+  }
+  void mantAlbRuta_actionPerformed(ActionEvent e) {
+    Hashtable ht=new Hashtable();
+    ht.put("admin","true");
+    lanzaEjecutable(new gnu.chu.anjelica.ventas.ManAlbRuta(menu.this,EU,ht));
   }
   
   void pdnumerac_actionPerformed(ActionEvent e) {
