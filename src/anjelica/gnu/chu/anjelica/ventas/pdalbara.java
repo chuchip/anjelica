@@ -262,6 +262,9 @@ public class pdalbara extends ventanaPad  implements PAD
   int swGridDes = 0;
   String s;
   CLabel residuosL=new CLabel();
+  CLabel alr_numeL=new CLabel("Ruta");
+  CTextField alr_numeE=new CTextField(Types.DECIMAL,"###, ##9");
+  CTextField alr_fecsalE=new CTextField(Types.CHAR,"X");
   CTextField pav_numeE = new CTextField(Types.DECIMAL,"#9");
   CTextField pav_kilosE = new CTextField(Types.DECIMAL,"##9.99");
   //CLabel paletL=new CLabel("Palets");
@@ -1022,7 +1025,12 @@ public class pdalbara extends ventanaPad  implements PAD
         residuosL.setBackground(Color.CYAN);
         residuosL.setHorizontalAlignment(SwingConstants.CENTER);
         residuosL.setFont(new Font("Dialog", Font.BOLD, 12));
-        residuosL.setBounds(new Rectangle(275, 125, 75, 16));
+        residuosL.setBounds(new Rectangle(415, 125, 105, 16));
+        alr_numeL.setBounds(new Rectangle(180, 125, 35, 17));
+        alr_numeE.setBounds(new Rectangle(220, 125, 63, 17));
+        alr_fecsalE.setBounds(new Rectangle(285, 125, 105, 17));
+        alr_numeE.setEnabled(false);
+        alr_fecsalE.setEnabled(false);
         ArrayList<String> vc2=new ArrayList(3);
         vc2.add("Producto");
         vc2.add("Nombre");
@@ -1221,6 +1229,9 @@ public class pdalbara extends ventanaPad  implements PAD
         PotroDat.add(alm_codoriE, null);
         PotroDat.add(alm_coddesL, null);
         PotroDat.add(residuosL,null);
+        PotroDat.add(alr_numeL,null);
+        PotroDat.add(alr_numeE,null);
+        PotroDat.add(alr_fecsalE,null);
         PotroDat.add(jtRes,null);
         
         
@@ -2962,7 +2973,17 @@ public class pdalbara extends ventanaPad  implements PAD
       }
       else
         verDatLin(dtAdd, agrupa, cli_codiE.getLikeCliente().getInt("cli_exeiva") == 0);
-      
+      s="select * from v_albruta where  avc_id = "+avc_idE.getValorInt();
+      if (dtStat.select(s))
+      {
+          alr_numeE.setValorInt(dtStat.getInt("alr_nume"));
+          alr_fecsalE.setText(dtStat.getFecha("alr_Fecsal","dd-MM-yy HH:mm"));
+      }
+      else
+      {
+          alr_numeE.resetTexto();
+          alr_fecsalE.resetTexto();
+      }
       verDatProdRec(dt.getInt("emp_codi"),dt.getInt("avc_ano"),
           dt.getString("avc_serie"),
            dt.getInt("avc_nume"));
@@ -3100,11 +3121,31 @@ public class pdalbara extends ventanaPad  implements PAD
   {
       return selCabAlb(TABLACAB,dt, avcAno, empCodi, avcSerie, avcNume, block, excepNotFound);
   }
+  /**
+   * Busca cabecera de albaran
+   * @param tablaCab
+   * @param dt
+   * @param avcAno
+   * @param empCodi
+   * @param avcSerie
+   * @param avcNume
+   * @param block
+   * @param excepNotFound
+   * @return
+   * @throws SQLException 
+   */
   public static boolean selCabAlb(String tablaCab,DatosTabla dt,int avcAno,int empCodi,String avcSerie,int avcNume,boolean block,boolean excepNotFound) throws SQLException
   {
     return AvcPanel.selCabAlb(tablaCab, dt, avcAno, empCodi, avcSerie, avcNume, block, excepNotFound);
   }
-
+  
+  public static int getIdAlbaran(DatosTabla dt,int avcAno,int empCodi,String avcSerie,int avcNume) throws SQLException
+  {
+      if (!selCabAlb(TABLACAB,dt, avcAno, empCodi, avcSerie, avcNume,false,false))
+          return -1;
+      else
+          return dt.getInt("avc_id");
+  }
   void actCabecAlb(int empCodi,int avcAno,String avcSerie,int avcNume,boolean cierra) throws SQLException
   {
     try

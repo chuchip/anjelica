@@ -116,6 +116,19 @@ public class AvcPanel extends CPanel {
     {
          return selCabAlb(tablaCab,dt,avc_anoE.getValorInt(),empCodi,avc_serieE.getText(),avc_numeE.getValorInt(),block, excepNotFound);
     }
+    /**
+     * Devuelve la cabecera del albaran o hist. Albaran
+     * @param tablaCab
+     * @param dt
+     * @param avcAno
+     * @param empCodi
+     * @param avcSerie
+     * @param avcNume
+     * @param block bloquear?
+     * @param excepNotFound lanzar exception si no encuentra el albaran
+      * @return true si encuentra el albaran. 
+     * @throws SQLException 
+     */
     public static boolean selCabAlb(String tablaCab,DatosTabla dt,int avcAno,int empCodi,String avcSerie,int avcNume,boolean block,boolean excepNotFound) throws SQLException
     {
       String sql = "SELECT * FROM "+tablaCab+" WHERE "+

@@ -2040,20 +2040,21 @@ create table albrutacab
  --
 -- Tabla Cabecera Lineas de ruta.
 --
+-- drop view v_albruta;
+-- drop table albrutalin;
 create table albrutalin
 (
 	alr_nume int not null, -- ID
 	alr_orden int not null, -- Orden de carga
-	emp_codi int not null,  -- Empresa Albaran
-	avc_ano int not null, -- Ejercicio 
-	avc_serie char(1) not null, -- Serie
-	avc_nume int not null, -- Numero
+	avc_id int not null,  -- ID. Albaran
 	constraint ix_albrutalin primary key (alr_nume,alr_orden)
 );
-create view albruta as select c.*,l.alr_orden,l.emp_codi,l.avc_ano,l.avc_serie,l.avc_nume 
-from albrutacab as c, albrutalin as l 
-where c.alr_nume=c.alr_nume;
-grant select on albruta to public;
+create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,
+al.emp_codi,al.avc_ano,al.avc_serie,al.avc_nume,al.cli_codi,al.avc_clinom,al.avc_kilos,
+al.avc_unid 
+from albrutacab as c, albrutalin as l,v_albavec as al 
+where c.alr_nume=l.alr_nume and al.avc_id = l.avc_id;
+grant select on v_albruta to public;
 ---
 -- Tabla vehiculos
 ---

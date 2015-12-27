@@ -143,7 +143,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 limpiaLinea(row);
                 return JT_NUMALB;
             }
-            String s="select * from albruta where emp_codi ="+emp_codiE.getValorInt()
+            String s="select * from v_albruta where emp_codi ="+emp_codiE.getValorInt()
                 + " and  avc_ano = "+avc_anoE.getValorInt()+
                 " and avc_serie ='"+avc_serieE.getText()+"'"+
                 " and avc_nume = "+avc_numeE.getValorInt()+
@@ -216,10 +216,9 @@ public class ManAlbRuta extends ventanaPad implements PAD
             //alr_impgasE.setValorInt(dtCon1.getInt("alr_impgas",true));
             alr_comentE.setText(dtCon1.getString("alr_coment"));
             jt.removeAllDatos();
-             if (! dtCon1.select("select l.*,c.cli_codi,c.avc_clinom,cl.cli_nomb,c.avc_kilos,c.avc_unid from albrutalin as l, v_albavec as c  left join v_cliente as cl "+
-                " on c.cli_codi = cl.cli_codi where l.emp_codi=c.emp_codi and l.avc_ano=c.avc_ano"
-                 + " and l.avc_serie = c.avc_serie and l.avc_nume=c.avc_nume "
-                 + " and alr_nume ="+dtCons.getInt("alr_nume")))
+             if (! dtCon1.select("select l.*,cl.cli_nomb from v_albruta as l "
+                 + " left join v_cliente as cl "+
+                " on l.cli_codi = cl.cli_codi where alr_nume ="+dtCons.getInt("alr_nume")))
             {
                 msgBox("No encontradas albaranes para parte ruta con ID: "+dtCons.getInt("alr_nume"));
                 return;
@@ -337,7 +336,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
        Error("Error al bloquear el registro", k);
        return;
      }
-     alr_fechaE.requestFocus();
+     alr_fechaE.resetCambio();
+     jt.requestFocusInicio();
      mensaje("MODIFICANDO registro activo ....");
   }
     @Override
@@ -1061,10 +1061,10 @@ public class ManAlbRuta extends ventanaPad implements PAD
         dtAdd.addNew("albrutalin");
         dtAdd.setDato("alr_nume",id);
         dtAdd.setDato("alr_orden",orden);
-        dtAdd.setDato("emp_codi",jt.getValorInt(nlGrid,0));
-        dtAdd.setDato("avc_ano",jt.getValorInt(nlGrid,1));
-        dtAdd.setDato("avc_serie",jt.getValString(nlGrid,2));
-        dtAdd.setDato("avc_nume",jt.getValorInt(nlGrid,3));
+        dtAdd.setDato("avc_id",pdalbara.getIdAlbaran(dtStat,
+            jt.getValorInt(nlGrid,1),jt.getValorInt(nlGrid,0),
+            jt.getValString(nlGrid,2),jt.getValorInt(nlGrid,3)));
+       
         dtAdd.update();
     }
     boolean checkCabecera() throws ParseException
@@ -1082,20 +1082,22 @@ public class ManAlbRuta extends ventanaPad implements PAD
             return false;
         }
         long nDias;
-       
-        nDias = Formatear.comparaFechas(alr_fechaE.getDate(), Formatear.getDateAct());
+        if (alr_fechaE.hasCambio())
+        {
+            nDias = Formatear.comparaFechas(alr_fechaE.getDate(), Formatear.getDateAct());
 
-        if (nDias < 0)
-        {
-            mensajeErr("Fecha de Ruta no puede ser inferior a la actual");
-            alr_fechaE.requestFocus();
-            return false;
-        }
-        if (nDias > 3)
-        {
-            mensajeErr("Fecha de Ruta no puede ser superior en mas de 3 dias a la actual.");
-            alr_fechaE.requestFocus();
-            return false;
+            if (nDias < 0 )
+            {
+                mensajeErr("Fecha de Ruta no puede ser inferior a la actual");
+                alr_fechaE.requestFocus();
+                return false;
+            }
+            if (nDias > 3)
+            {
+                mensajeErr("Fecha de Ruta no puede ser superior en mas de 3 dias a la actual.");
+                alr_fechaE.requestFocus();
+                return false;
+            }
         }
         if (!rut_codiE.controla())
         {
