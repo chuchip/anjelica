@@ -12,8 +12,7 @@ from v_albavel as l,v_articulo as ar where
               and v_albavec.avc_ano = l.avc_ano
               and v_albavec.avc_serie = l.avc_serie
               and v_albavec.avc_nume = l.avc_nume
-	      and l.pro_codi= ar.pro_codi and ar.pro_tiplot='V'),
-              avc_unid = )
+	      and l.pro_codi= ar.pro_codi and ar.pro_tiplot='V')
              where avc_fecalb >= current_date -90 
               and
               exists (select * from v_albavel as l,v_articulo as ar where v_albavec.avc_nume =l.avc_nume and v_albavec.avc_serie=l.avc_serie and v_albavec.emp_codi = l.emp_codi

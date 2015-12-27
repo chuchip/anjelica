@@ -243,7 +243,7 @@ cli_coimiv varchar(2), -- Codigo Impuesto de IVA ??
 div_codi   int, 	-- Divisa
 cli_pdtoco float, -- % Dto Comercial.
 cli_prapel float, -- % Rappel
-cli_valor float, -- No se utiliza
+rut_codi varchar(2), -- Ruta del cliente
 cli_precfi int default 0 not null, --  Poner precio Final por representante.
 cli_fecalt date not null default current_date,	-- Fecha Alta del Cliente
 cli_feulmo date, 		-- Fecha Ult. Modificacion
@@ -332,7 +332,7 @@ cli_coimiv varchar(2), -- Codigo Impuesto de IVA ??
 div_codi   int, 	-- Divisa
 cli_pdtoco float, -- % Dto Comercial.
 cli_prapel float, -- % Rappel
-cli_valor float, -- No se utiliza
+rut_codi varchar(2), -- ruta
 cli_precfi float, -- NO SE UTILIZA
 cli_fecalt date,	-- Fecha Alta del Cliente
 cli_feulmo date, 		-- Fecha Ult. Modificacion
@@ -839,7 +839,7 @@ create table anjelica.hisalbavec
     avc_imcob2 float,
     avc_impuv2 float,
     div_codi int,
-    div_codi2 int,
+    avc_unid int,
     avc_tottas float,
     avc_totta2 float,
     avc_apltas smallint,
@@ -2068,7 +2068,7 @@ create table vehiculos
 	veh_kilome int, -- Kilometros actuales	
 	constraint ix_vehiculos primary key (veh_codi)
 );
-
+grant select on vehiculos to public;
 --
 -- MATADEROS
 --

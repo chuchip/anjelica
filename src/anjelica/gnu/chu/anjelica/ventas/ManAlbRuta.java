@@ -5,23 +5,22 @@ import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
-import gnu.chu.utilidades.mensajes;
+import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventanaPad;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -268,17 +267,19 @@ public class ManAlbRuta extends ventanaPad implements PAD
     @Override
   public void PADAddNew()
   {
-    activar(true);
+    
     alr_numeE.setEnabled(false);
     mensaje("Insertar Nuevo Registro");
     
     Pcabe.resetTexto();
+    alr_comentE.resetTexto();
     usu_nombE.setText(EU.usuario);
     alr_fechaE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
     alr_fecsalE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
     usu_nombE.setText(EU.usuario);
     
     jt.removeAllDatos();
+    activar(true);
     kilosTotE.setValorDec(0);
     uniTotE.setValorDec(0);
     numAlbE.setValorDec(0);
@@ -294,8 +295,179 @@ public class ManAlbRuta extends ventanaPad implements PAD
     jt.setEnabled(false);
     Pcabe.setQuery(true);    
     Pcabe.resetTexto();
+    alr_comentE.resetTexto();
     alr_fechaE.requestFocus();
   }
+    @Override
+   public void PADEdit()
+   {
+     if (ARG_MODSALA)
+     {
+         if (usu_nombE.getText().equals(EU.usuario))
+         {
+             msgBox("No tiene permisos para editar este registro");
+              nav.pulsado = navegador.NINGUNO;
+             activaTodo();
+             return;
+         }
+     }
+     activar(true);
+     
+     try
+     {
+         if (!setBloqueo(dtAdd, "albrutacab", alr_numeE.getText()))
+         {
+             msgBox(msgBloqueo);
+             nav.pulsado = navegador.NINGUNO;
+             activaTodo();
+             return;
+         }
+         String s = "SELECT * FROM albrutacab WHERE alr_nume = " + alr_numeE.getValorInt();
+         if (!dtAdd.select(s, true))
+         {
+             mensajeErr("Registro ha sido borrado");
+             resetBloqueo(dtAdd, "albrutacab", alr_numeE.getText(), true);
+             activaTodo();
+             mensaje("");
+             return;
+         }
+
+     } catch (SQLException | UnknownHostException k)
+     {
+       Error("Error al bloquear el registro", k);
+       return;
+     }
+     alr_fechaE.requestFocus();
+     mensaje("MODIFICANDO registro activo ....");
+  }
+    @Override
+   public void PADDelete()
+   {
+     try
+     {
+         if (ARG_MODSALA)
+         {
+             if (usu_nombE.getText().equals(EU.usuario))
+             {
+                 msgBox("No tiene permisos para editar este registro");
+                 nav.pulsado = navegador.NINGUNO;
+                 activaTodo();
+                 return;
+             }
+         }
+         if (!setBloqueo(dtAdd, "albrutacab", alr_numeE.getText()))
+         {
+             msgBox(msgBloqueo);
+             nav.pulsado = navegador.NINGUNO;
+             activaTodo();
+             return;
+         }
+         String s = "SELECT * FROM albrutacab WHERE alr_nume = " + alr_numeE.getValorInt();
+         if (!dtAdd.select(s, true))
+         {
+             mensajeErr("Registro ha sido borrado");
+             resetBloqueo(dtAdd, "albrutacab", alr_numeE.getText(), true);
+             activaTodo();
+             mensaje("");
+             return;
+         }
+
+     }
+     catch (SQLException | UnknownHostException k)
+     {
+       Error("Error al bloquear el registro", k);
+       return;
+     }
+     Baceptar.setEnabled(true);
+     Bcancelar.setEnabled(true);
+     Bcancelar.requestFocus();
+     mensaje("BORRANDO Registro Activo ...");
+   }
+    @Override
+   public void ej_edit1()
+   {
+     try
+     {
+         if (!checkCabecera())
+             return;
+         jt.salirGrid();
+         if (cambiaLinJT(jt.getSelectedRow()) >= 0)
+             return;
+         int nl = jt.getRowCount();
+         int orden = 0;
+         for (int n = 0; n < nl; n++)
+         {
+             if (jt.getValorInt(n, JT_NUMALB) == 0)
+                 continue;
+
+             orden++;
+         }
+         if (orden == 0)
+         {
+             msgBox("Introduzca algun albaran para la ruta");
+             return;
+         }
+         dtAdd.edit();
+         guardaCab(alr_numeE.getValorInt());
+         // borro lineas e inserto las nuevas
+         String s="delete from albrutalin where alr_nume="+alr_numeE.getValorInt();
+         dtAdd.executeUpdate(s);
+          orden = 1;
+         for (int n = 0; n < nl; n++)
+         {
+             if (jt.getValorInt(n, JT_NUMALB) == 0)
+                 continue;
+             guardaLineas(alr_numeE.getValorInt(), orden, n);
+             orden++;
+         }
+         dtAdd.commit();
+         mensajeErr("Albaranes de ruta.. guardados");
+         resetBloqueo(dtAdd, "albrutacab", alr_numeE.getText(), false);
+         ctUp.commit();
+     }
+     catch (ParseException | SQLException ex)
+     {
+       Error("Error al Modificar datos", ex);
+       return;
+     }
+     mensaje("");
+     mensajeErr("Datos ... Modificados");
+     activaTodo();
+     verDatos();
+   }
+    @Override
+   public void canc_edit()
+   {
+     mensaje("");
+     try
+     {
+       resetBloqueo(dtAdd, "albrutacab",alr_numeE.getText(), true);
+     }
+     catch (Exception ex)
+     {
+       Error("Error al Quitar Bloqueo", ex);
+       return;
+     }
+
+     mensajeErr("Modificacion de Datos Cancelada");
+     activaTodo();
+     verDatos();
+   }
+    @Override
+  public void canc_delete()
+  {
+        mensaje("");
+        activaTodo();
+        try
+        {
+            resetBloqueo(dtAdd, "albrutacab", alr_numeE.getText(), true);
+        } catch (Exception k)
+        {
+            Error("Error al Anular bloqueo", k);
+        }
+        mensajeErr("Borrado de Datos Cancelada");
+        verDatos();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -304,6 +476,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         emp_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9");
         avc_anoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
@@ -377,9 +550,12 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        Pprinc.setLayout(null);
+        Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        Pcabe.setMaximumSize(new java.awt.Dimension(560, 140));
+        Pcabe.setMinimumSize(new java.awt.Dimension(560, 140));
+        Pcabe.setPreferredSize(new java.awt.Dimension(560, 140));
         Pcabe.setLayout(null);
 
         cLabel5.setText("Fecha");
@@ -390,6 +566,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         alr_fechaE.setPreferredSize(new java.awt.Dimension(10, 18));
         Pcabe.add(alr_fechaE);
         alr_fechaE.setBounds(50, 2, 76, 18);
+        alr_fechaE.getAccessibleContext().setAccessibleName("");
 
         cLabel6.setText("Salida Ruta");
         cLabel6.setPreferredSize(new java.awt.Dimension(52, 18));
@@ -398,15 +575,15 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         alr_fecsalE.setPreferredSize(new java.awt.Dimension(10, 18));
         Pcabe.add(alr_fecsalE);
-        alr_fecsalE.setBounds(80, 23, 76, 17);
+        alr_fecsalE.setBounds(80, 23, 76, 18);
 
         alr_fecsalH.setText("0");
         Pcabe.add(alr_fecsalH);
-        alr_fecsalH.setBounds(160, 23, 20, 17);
+        alr_fecsalH.setBounds(160, 23, 20, 18);
 
         alr_fecsalM.setText("0");
         Pcabe.add(alr_fecsalM);
-        alr_fecsalM.setBounds(190, 23, 20, 17);
+        alr_fecsalM.setBounds(190, 23, 20, 18);
 
         cLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         cLabel1.setText(":");
@@ -420,15 +597,15 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         alr_fecregE.setPreferredSize(new java.awt.Dimension(10, 18));
         Pcabe.add(alr_fecregE);
-        alr_fecregE.setBounds(420, 23, 76, 17);
+        alr_fecregE.setBounds(420, 23, 76, 18);
 
         alr_fecregH.setText("0");
         Pcabe.add(alr_fecregH);
-        alr_fecregH.setBounds(500, 23, 20, 17);
+        alr_fecregH.setBounds(500, 23, 20, 18);
 
         alr_fecregM.setText("0");
         Pcabe.add(alr_fecregM);
-        alr_fecregM.setBounds(530, 23, 20, 17);
+        alr_fecregM.setBounds(530, 23, 20, 18);
 
         cLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         cLabel2.setText(":");
@@ -437,37 +614,39 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         cLabel3.setText("Ruta");
         Pcabe.add(cLabel3);
-        cLabel3.setBounds(10, 44, 24, 15);
+        cLabel3.setBounds(10, 44, 25, 14);
 
         rut_codiE.setAncTexto(30);
         rut_codiE.setFormato(Types.CHAR, "XX");
         Pcabe.add(rut_codiE);
-        rut_codiE.setBounds(50, 44, 200, 17);
+        rut_codiE.setBounds(50, 44, 200, 18);
+        rut_codiE.getAccessibleContext().setAccessibleName("");
 
         cLabel4.setText("Vehiculo");
         Pcabe.add(cLabel4);
-        cLabel4.setBounds(260, 44, 60, 15);
+        cLabel4.setBounds(260, 44, 60, 14);
 
         usu_nombE.setAncTexto(100);
         usu_nombE.setFormato(Types.CHAR,"X",15);
         Pcabe.add(usu_nombE);
-        usu_nombE.setBounds(290, 2, 260, 17);
+        usu_nombE.setBounds(290, 2, 260, 18);
+        usu_nombE.getAccessibleContext().setAccessibleName("");
 
         cLabel8.setText("Km. Iniciales ");
         Pcabe.add(cLabel8);
-        cLabel8.setBounds(390, 70, 80, 15);
+        cLabel8.setBounds(390, 70, 80, 14);
         Pcabe.add(alr_vekminE);
-        alr_vekminE.setBounds(480, 70, 70, 17);
+        alr_vekminE.setBounds(480, 70, 70, 18);
 
         cLabel9.setText("Identificador");
         Pcabe.add(cLabel9);
-        cLabel9.setBounds(390, 110, 80, 15);
+        cLabel9.setBounds(390, 110, 80, 14);
         Pcabe.add(alr_vekmfiE);
-        alr_vekmfiE.setBounds(480, 90, 70, 17);
+        alr_vekmfiE.setBounds(480, 90, 70, 18);
 
         cLabel10.setText("Comentarios ");
         Pcabe.add(cLabel10);
-        cLabel10.setBounds(10, 70, 80, 15);
+        cLabel10.setBounds(10, 70, 80, 14);
 
         alr_comentE.setColumns(20);
         alr_comentE.setRows(5);
@@ -484,18 +663,25 @@ public class ManAlbRuta extends ventanaPad implements PAD
         veh_codiE.setAncTexto(30);
         veh_codiE.setFormato(Types.DECIMAL, "##9");
         Pcabe.add(veh_codiE);
-        veh_codiE.setBounds(320, 44, 230, 17);
+        veh_codiE.setBounds(320, 44, 230, 18);
+        veh_codiE.getAccessibleContext().setAccessibleName("");
 
         cLabel15.setText("Km. Finales");
         Pcabe.add(cLabel15);
-        cLabel15.setBounds(390, 90, 70, 15);
+        cLabel15.setBounds(390, 90, 70, 14);
         Pcabe.add(alr_numeE);
-        alr_numeE.setBounds(480, 110, 50, 17);
+        alr_numeE.setBounds(480, 110, 50, 18);
 
-        Pprinc.add(Pcabe);
-        Pcabe.setBounds(0, 0, 570, 140);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        Pprinc.add(Pcabe, gridBagConstraints);
 
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jt.setMaximumSize(new java.awt.Dimension(559, 149));
+        jt.setMinimumSize(new java.awt.Dimension(559, 149));
+        jt.setPreferredSize(new java.awt.Dimension(559, 149));
         ArrayList v=new ArrayList();
         v.add("Emp"); // 0
         v.add("Ejer."); // 1
@@ -506,7 +692,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         v.add("Unida"); // 6
         v.add("Kilos"); // 7
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{30,40,30,50,50,200,40,50});
+        jt.setAnchoColumna(new int[]{30,40,30,60,50,200,40,50});
         jt.setAlinearColumna(new int[]{2,2,1,2,2,0,2,2});
         ArrayList vc=new ArrayList();
         vc.add(emp_codiE);
@@ -525,15 +711,25 @@ public class ManAlbRuta extends ventanaPad implements PAD
             return;
         }
         jt.setFormatoCampos();
-        Pprinc.add(jt);
-        jt.setBounds(-1, 149, 560, 150);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
+        Pprinc.add(jt, gridBagConstraints);
 
         PPie.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        PPie.setMaximumSize(new java.awt.Dimension(549, 49));
+        PPie.setMinimumSize(new java.awt.Dimension(549, 49));
+        PPie.setName(""); // NOI18N
+        PPie.setPreferredSize(new java.awt.Dimension(549, 49));
         PPie.setLayout(null);
 
         cLabel12.setText("Unidades ");
         PPie.add(cLabel12);
-        cLabel12.setBounds(10, 22, 60, 15);
+        cLabel12.setBounds(10, 22, 60, 14);
 
         numAlbE.setEditable(false);
         PPie.add(numAlbE);
@@ -541,7 +737,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         cLabel13.setText("Numero Albaranes ");
         PPie.add(cLabel13);
-        cLabel13.setBounds(40, 2, 110, 15);
+        cLabel13.setBounds(40, 2, 110, 14);
 
         uniTotE.setEditable(false);
         PPie.add(uniTotE);
@@ -549,18 +745,22 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         cLabel14.setText("Kilos");
         PPie.add(cLabel14);
-        cLabel14.setBounds(130, 22, 27, 15);
+        cLabel14.setBounds(130, 22, 27, 14);
 
         kilosTotE.setEditable(false);
         PPie.add(kilosTotE);
         kilosTotE.setBounds(170, 22, 70, 17);
         PPie.add(Baceptar);
-        Baceptar.setBounds(280, 10, 90, 30);
+        Baceptar.setBounds(320, 10, 110, 30);
         PPie.add(Bcancelar);
-        Bcancelar.setBounds(400, 10, 90, 30);
+        Bcancelar.setBounds(440, 10, 110, 30);
 
-        Pprinc.add(PPie);
-        PPie.setBounds(0, 300, 550, 50);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
+        Pprinc.add(PPie, gridBagConstraints);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
@@ -641,17 +841,61 @@ public class ManAlbRuta extends ventanaPad implements PAD
         alr_fecregE.setColumnaAlias("alr_fecreg");
         alr_vekminE.setColumnaAlias("alr_vekmin");
         alr_vekmfiE.setColumnaAlias("alr_vekmfi");
+        Pcabe.setDefButton(Baceptar);
+        jt.setDefButton(Baceptar);
         activarEventos();        
         verDatos();
     }
     void activarEventos()
     {
-        
+         jt.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+              if (e.getClickCount()<2 || jt.isEnabled() || jt.isVacio()) 
+                  return;
+              verDocumento();
+            }
+      });
+    }
+    private void verDocumento() {
+        if (jf == null )
+            return;
+        msgEspere("Ejecutando consulta para visualizar Documento");
+        new miThread("")
+        {
+            @Override
+            public void run() {
+                javax.swing.SwingUtilities.invokeLater(new Thread()
+                {
+                    @Override
+                    public void run() {
+                        ejecutable prog;
+                        if ((prog = jf.gestor.getProceso(pdalbara.getNombreClase())) == null)
+                            return;
+                        pdalbara cm = (pdalbara) prog;
+                        if (cm.inTransation())
+                        {
+                            msgBox("Mantenimiento Albaranes de Ventas ocupado. No se puede realizar la busqueda");
+                            return;
+                        }
+                        cm.PADQuery();
+                        cm.setEjercAlbaran(jt.getValorInt(jt.getSelectedRowDisab(), 1));
+                        cm.setSerieAlbaran(jt.getValString(jt.getSelectedRowDisab(), 2));
+                        cm.setNumeroAlbaran(jt.getValorInt(jt.getSelectedRowDisab(), JT_NUMALB));
+
+                        cm.ej_query();
+                        jf.gestor.ir(cm);
+                        resetMsgEspere();
+                    }
+                });
+
+            }
+        };
     }
     
     @Override
     public void PADPrimero() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+           verDatos();
     }
 
     @Override
@@ -737,15 +981,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     nav.pulsado = navegador.NINGUNO;
   }
 
-    @Override
-    public void ej_edit1() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void canc_edit() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+  
 
     @Override
     public void ej_addnew1()
@@ -757,9 +993,24 @@ public class ManAlbRuta extends ventanaPad implements PAD
             jt.salirGrid();
             if (cambiaLinJT(jt.getSelectedRow())>=0)
                 return;
-            int id = guardaCab();
             int nl=jt.getRowCount();
-            int orden=1;
+            int orden=0;
+            for (int n=0;n<nl;n++)
+            {
+                if (jt.getValorInt(n,JT_NUMALB)==0)
+                    continue;
+                
+                orden++;
+            }
+            if (orden==0)
+            {
+                msgBox("Introduzca algun albaran para la ruta");
+                return;
+            }
+            dtAdd.addNew("albrutacab", false);
+            int id = guardaCab(0);
+            
+             orden=1;
             for (int n=0;n<nl;n++)
             {
                 if (jt.getValorInt(n,JT_NUMALB)==0)
@@ -775,10 +1026,16 @@ public class ManAlbRuta extends ventanaPad implements PAD
             Error("Error al guardar cabecera de ruta", ex);
         }
     }
-    
-    int guardaCab() throws SQLException,ParseException
+    /**
+     * Inserta o modifica cabecera de ruta
+     * @param id si id=0 es addnew
+     * @return
+     * @throws SQLException
+     * @throws ParseException 
+     */
+    int guardaCab(int id) throws SQLException,ParseException
     {
-        dtAdd.addNew("albrutacab", false);
+      
         dtAdd.setDato("rut_codi",rut_codiE.getText());
         dtAdd.setDato("usu_nomb",usu_nombE.getText());
         dtAdd.setDato("alr_fecha",alr_fechaE.getDate());
@@ -794,6 +1051,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
         dtAdd.setDato("alr_vekmfi",alr_vekminE.getValorDec());
         dtAdd.setDato("alr_coment",alr_comentE.getText());
         dtAdd.update();
+        if (id>0)
+            return id;
         dtAdd.select("SELECT lastval()");
         return dtAdd.getInt(1);
     }
@@ -859,19 +1118,32 @@ public class ManAlbRuta extends ventanaPad implements PAD
     
       mensaje("");
       mensajeErr("Insercion ... CANCELADA");
-    //  verDatos(dtCons);
       activaTodo();
+      verDatos();
+      
       nav.pulsado = navegador.NINGUNO;
     }
     
     @Override
     public void ej_delete1() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
-    @Override
-    public void canc_delete() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try
+        {
+            String s = "delete from albrutalin where alr_nume=" + alr_numeE.getValorInt();
+            dtBloq.executeUpdate(s);
+            dtAdd.delete(stUp);
+            resetBloqueo(dtAdd, "albrutacab", alr_numeE.getText(), false);
+            ctUp.commit();
+            rgSelect();
+        } catch (Exception ex)
+        {
+            Error("Error al borrar Registro", ex);
+        }
+
+        activaTodo();
+        verDatos();
+        mensaje("");
+        mensajeErr("Registro ... Borrado");
     }
     @Override
     public void activar(boolean b) {

@@ -221,6 +221,8 @@ public class pdclien extends ventanaPad implements PAD
     private CLabel zon_codiL = new CLabel();
     private CLinkBox zon_codiE = new CLinkBox();
     private CLabel rep_codiL = new CLabel();
+     private CLinkBox rut_codiE = new CLinkBox();
+    private CLabel rut_codiL = new CLabel("Ruta");
     private CLinkBox rep_codiE = new CLinkBox();
     private CLabel cli_feulveL = new CLabel();
     private CTextField cli_feulveE = new CTextField(Types.DATE, "dd-MM-yyyy");
@@ -232,7 +234,7 @@ public class pdclien extends ventanaPad implements PAD
     private CTextField cli_email1E = new CTextField(Types.CHAR, "X", 60);
     private CLabel cli_email2L = new CLabel();
     private CTextField cli_email2E = new CTextField(Types.CHAR, "X", 60);
-
+  
   /**
    * Constructor
    * @param eu EntornoUsuario Entorno Usuario
@@ -256,8 +258,7 @@ public class pdclien extends ventanaPad implements PAD
       if (ht != null)
       {
         if (ht.get("modConsulta") != null)
-          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-              booleanValue();
+          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString());
       }
 
       if (jf.gestor.apuntar(this))
@@ -306,7 +307,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2013-03-18");
+      this.setVersion("2015-12-27");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -596,6 +597,7 @@ public class pdclien extends ventanaPad implements PAD
       zon_codiL.setBounds(new Rectangle(0, 100, 40, 20));
       zon_codiE.setBounds(new Rectangle(65, 100, 325, 20));
       zon_codiE.setAncTexto(30);
+      rut_codiE.setAncTexto(30);
       rep_codiL.setText("Represent");
       rep_codiL.setBounds(new Rectangle(0, 125, 65, 20));
       rep_codiE.setBounds(new Rectangle(65, 125, 325, 20));
@@ -618,6 +620,8 @@ public class pdclien extends ventanaPad implements PAD
       cli_email2L.setText("Email Administ.");
       cli_email2L.setBounds(new Rectangle(1, 220, 110, 18));
       cli_email2E.setBounds(new Rectangle(115, 220, 275, 18));
+      rut_codiL.setBounds(new Rectangle(1, 240, 110, 18));
+      rut_codiE.setBounds(new Rectangle(115, 240, 275, 18));
       llenaEstCont(cli_estconE);
       this.getContentPane().add(Pprinc, BorderLayout.CENTER);
       PdatFra.setLayout(null);
@@ -769,6 +773,9 @@ public class pdclien extends ventanaPad implements PAD
         sbe_nombL.setBounds(new Rectangle(491, 151, 174, 18));
         PdatGen.add(cli_email2E, null);
         PdatGen.add(cli_email2L, null);
+        PdatGen.add(rut_codiL, null);
+        PdatGen.add(rut_codiE, null);
+        
         PdatGen.add(cli_email1E, null);
         PdatGen.add(cli_email1L, null);
         PdatGen.add(cli_estconE, null);
@@ -872,7 +879,7 @@ public class pdclien extends ventanaPad implements PAD
 
     zon_codiE.setFormato(Types.CHAR,"XX");
     rep_codiE.setFormato(Types.CHAR,"XX");
-
+    rut_codiE.setFormato(Types.CHAR,"XX");
     cli_zoncreE.setFormato(Types.CHAR,"XX");
     cli_zonrepE.setFormato(Types.CHAR,"XX");
     cli_disc1E.setFormato(Types.CHAR,"XX");
@@ -882,7 +889,8 @@ public class pdclien extends ventanaPad implements PAD
     llenaDiscr(cli_zonrepE,"CR");
     llenaDiscr(cli_zoncreE,"CC");
     
-    llenaDiscr(zon_codiE,"Cz");
+    llenaDiscr(zon_codiE,pdconfig.D_ZONA);
+    llenaDiscr(rut_codiE,pdconfig.D_RUTAS);
     MantRepres.llenaLinkBox(rep_codiE,dtCon1);
 //    llenaDiscr(rep_codiE,"Cr");
 
@@ -965,6 +973,7 @@ public class pdclien extends ventanaPad implements PAD
     cli_zonrepE.setColumnaAlias("cli_zonrep");
     cli_zoncreE.setColumnaAlias("cli_zoncre");
     zon_codiE.setColumnaAlias("zon_codi");
+    rut_codiE.setColumnaAlias("rut_codi");
     rep_codiE.setColumnaAlias("rep_codi");
     cli_disc1E.setColumnaAlias("cli_disc1");
     cli_disc2E.setColumnaAlias("cli_disc2");
@@ -1220,6 +1229,8 @@ public class pdclien extends ventanaPad implements PAD
     v.add(cli_zonrepE.getStrQuery());
     v.add(cli_zoncreE.getStrQuery());
     v.add(zon_codiE.getStrQuery());
+    v.add(rut_codiE.getStrQuery());
+    
     v.add(rep_codiE.getStrQuery());
     v.add(cli_disc1E.getStrQuery());
     v.add(cli_disc2E.getStrQuery());
@@ -1373,6 +1384,11 @@ public class pdclien extends ventanaPad implements PAD
     if (! zon_codiE.controla(true))
     {
       mensajeErr("Zona NO valida");
+      return false;
+    }
+     if (! rut_codiE.controla(true))
+    {
+      mensajeErr("Ruta NO valida");
       return false;
     }
       if (! rep_codiE.controla(true))
@@ -1616,6 +1632,7 @@ public class pdclien extends ventanaPad implements PAD
     dtAdd.setDato("cli_zonrep",cli_zonrepE.getText());
     dtAdd.setDato("cli_zoncre",cli_zoncreE.getText());
     dtAdd.setDato("zon_codi",zon_codiE.getText());
+    dtAdd.setDato("rut_codi",rut_codiE.getText());
     dtAdd.setDato("rep_codi",rep_codiE.getText());
     dtAdd.setDato("cli_activ",cli_activE.getValor());
     dtAdd.setDato("cli_gener",cli_generE.getValor());
@@ -1990,6 +2007,7 @@ public class pdclien extends ventanaPad implements PAD
       cli_zonrepE.setText(dtCon1.getString("cli_zonrep"));
       cli_zoncreE.setText(dtCon1.getString("cli_zoncre"));
       zon_codiE.setText(dtCon1.getString("zon_codi"));
+      rut_codiE.setText(dtCon1.getString("rut_codi"));
       rep_codiE.setText(dtCon1.getString("rep_codi"));
 
       cli_activE.setValor(dtCon1.getString("cli_activ"));

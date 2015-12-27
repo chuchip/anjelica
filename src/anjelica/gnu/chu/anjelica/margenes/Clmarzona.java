@@ -284,11 +284,11 @@ public class Clmarzona extends ventana {
 //    double prVen=0;
     int proCodi;
    
-    String fecini="", fecfin="";
+    String fecini, fecfin;
 
-    String zonCodi=(zon_codiE.getText().indexOf("*")>=0 ||
+    String zonCodi=(zon_codiE.getText().contains("*") ||
          zon_codiE.getText().trim().equals("")) ?null:zon_codiE.getText();
-    String repCodi=(rep_codiE.getText().indexOf("*")>=0 ||
+    String repCodi=(rep_codiE.getText().contains("*") ||
          rep_codiE.getText().trim().equals("")) ?null:rep_codiE.getText();
     jt.removeAllDatos();
     jtGru.removeAllDatos();

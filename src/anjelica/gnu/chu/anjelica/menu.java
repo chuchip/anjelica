@@ -923,7 +923,7 @@ public class menu extends JFrame
      JPopupAlmacen.add(clresmvtos);
      JPopupAlmacen.add(clprodrec);
      JPopupAlmacen.add(cvregalm);
-     JPopupAlmacen.add(mantAlbRuta);
+    
     jPopupCompras.add(albComCarne);
     jPopupCompras.add(albComPlanta);
     jPopupCompras.add(comprasItem2);
@@ -993,6 +993,7 @@ public class menu extends JFrame
     JpopupVentas.add(coVenPro);
     JpopupVentas.add(conVenZonas);
     JpopupVentas.add(CLRankClie);
+     JpopupVentas.add(mantAlbRuta);
     popupFact.add(lirelfact);
     popupFact.add(pdfactu);
     popupFact.add(genfactu);

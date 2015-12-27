@@ -1,3 +1,21 @@
+-- Añadir columna rut_codi a tabla clientes
+drop view v_cliprv;
+drop view v_cliente;
+alter table clientes rename cli_Valor to rut_codi;
+alter table clientes alter rut_codi type  varchar(2);
+
+alter table cliencamb rename cli_Valor to rut_codi;
+alter table cliencamb alter rut_codi type  varchar(2);
+
+create view anjelica.v_cliente as select * from anjelica.clientes;
+grant select on anjelica.v_cliente to PUBLIC;
+
+create view anjelica.v_cliprv as 
+select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.v_cliente 
+union all
+select 'C' AS tipo,prv_codi as codigo, prv_nomb as nombre from anjelica.v_proveedo;
+grant select on anjelica.v_cliprv to public;
+---
 -- Quitar columna rgs_prebas de regularizaciones almacen
 drop view v_inventar;
 drop view v_regstock;

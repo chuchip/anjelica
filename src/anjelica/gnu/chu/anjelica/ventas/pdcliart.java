@@ -285,7 +285,8 @@ public void ej_delete1()
   mensajeErr("Registro ... Borrado");
 }
 
-public void canc_delete()
+  @Override
+  public void canc_delete()
 {
   mensaje("");
   activaTodo();

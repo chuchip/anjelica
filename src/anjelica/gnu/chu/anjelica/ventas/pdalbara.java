@@ -708,7 +708,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-12-22" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-12-25" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -7138,7 +7138,7 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avc_kilos", kilosE.getValorDec());
     dtAdd.setDato("avc_unid",  unidE.getValorDec());
     dtAdd.setDato("div_codi", div_codiE.getValor());
-    dtAdd.setDato("div_codi2", 1);
+    
     dtAdd.setDato("avc_tottas", 0);
     dtAdd.setDato("avc_totta2", 0);
     dtAdd.setDato("avc_apltas", 0);
@@ -7371,7 +7371,7 @@ public class pdalbara extends ventanaPad  implements PAD
     jtDes.setValor(pro_nombE.getText(), 0, 1);
     jtDes.setValor(EU.em_cod, 0, JTDES_EMP);
     jtDes.setValor(avpEjelotAnt==0?EU.ejercicio:avpEjelotAnt,0, JTDES_EJE);
-    jtDes.setValor(avpSerlotAnt,0, JTDES_SERIE);
+    jtDes.setValor(avpSerlotAnt.equals("")?"A":avpSerlotAnt,0, JTDES_SERIE);
     if (isEmpPlanta)
     {
         jtDes.setValor(avpNumparAnt,0, JTDES_LOTE);

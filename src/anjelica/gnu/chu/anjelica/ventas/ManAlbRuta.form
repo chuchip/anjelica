@@ -92,9 +92,7 @@
         </Constraint>
       </Constraints>
 
-      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
-        <Property name="useNullLayout" type="boolean" value="true"/>
-      </Layout>
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
       <SubComponents>
         <Container class="gnu.chu.controles.CPanel" name="Pcabe">
           <Properties>
@@ -103,10 +101,19 @@
                 <BevelBorder/>
               </Border>
             </Property>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[560, 140]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[560, 140]"/>
+            </Property>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[560, 140]"/>
+            </Property>
           </Properties>
           <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="0" y="0" width="570" height="140"/>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="11" weightX="0.0" weightY="0.0"/>
             </Constraint>
           </Constraints>
 
@@ -133,12 +140,15 @@
                   <Dimension value="[10, 18]"/>
                 </Property>
               </Properties>
+              <AccessibilityProperties>
+                <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
+              </AccessibilityProperties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="50" y="2" width="76" height="-1"/>
+                  <AbsoluteConstraints x="50" y="2" width="76" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -166,7 +176,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="80" y="23" width="76" height="17"/>
+                  <AbsoluteConstraints x="80" y="23" width="76" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -179,7 +189,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="160" y="23" width="20" height="17"/>
+                  <AbsoluteConstraints x="160" y="23" width="20" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -192,7 +202,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="190" y="23" width="20" height="17"/>
+                  <AbsoluteConstraints x="190" y="23" width="20" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -231,7 +241,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="420" y="23" width="76" height="17"/>
+                  <AbsoluteConstraints x="420" y="23" width="76" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -244,7 +254,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="500" y="23" width="20" height="17"/>
+                  <AbsoluteConstraints x="500" y="23" width="20" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -257,7 +267,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="530" y="23" width="20" height="17"/>
+                  <AbsoluteConstraints x="530" y="23" width="20" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -286,12 +296,15 @@
               <Properties>
                 <Property name="ancTexto" type="int" value="30"/>
               </Properties>
+              <AccessibilityProperties>
+                <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
+              </AccessibilityProperties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="rut_codiE.setFormato(Types.CHAR, &quot;XX&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="50" y="44" width="200" height="-1"/>
+                  <AbsoluteConstraints x="50" y="44" width="200" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -309,13 +322,16 @@
               <Properties>
                 <Property name="ancTexto" type="int" value="100"/>
               </Properties>
+              <AccessibilityProperties>
+                <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
+              </AccessibilityProperties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CLinkBox()"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="usu_nombE.setFormato(Types.CHAR,&quot;X&quot;,15);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="290" y="2" width="260" height="-1"/>
+                  <AbsoluteConstraints x="290" y="2" width="260" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -335,7 +351,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="480" y="70" width="70" height="-1"/>
+                  <AbsoluteConstraints x="480" y="70" width="70" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -355,7 +371,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="480" y="90" width="70" height="-1"/>
+                  <AbsoluteConstraints x="480" y="90" width="70" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -406,13 +422,16 @@
               <Properties>
                 <Property name="ancTexto" type="int" value="30"/>
               </Properties>
+              <AccessibilityProperties>
+                <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
+              </AccessibilityProperties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CLinkBox()"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="veh_codiE.setFormato(Types.DECIMAL, &quot;##9&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="320" y="44" width="230" height="-1"/>
+                  <AbsoluteConstraints x="320" y="44" width="230" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -432,7 +451,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="480" y="110" width="50" height="17"/>
+                  <AbsoluteConstraints x="480" y="110" width="50" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -445,14 +464,23 @@
                 <LineBorder/>
               </Border>
             </Property>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[559, 149]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[559, 149]"/>
+            </Property>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[559, 149]"/>
+            </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(8){&#xa;@Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;      return cambiaLinJT(row);&#xa;    }&#xa;}"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Emp&quot;); // 0&#xa;v.add(&quot;Ejer.&quot;); // 1&#xa;v.add(&quot;Serie&quot;); // 2&#xa;v.add(&quot;Numero&quot;); // 3&#xa;v.add(&quot;Cliente&quot;); // 4&#xa;v.add(&quot;Nombre Cliente&quot;); // 5&#xa;v.add(&quot;Unida&quot;); // 6&#xa;v.add(&quot;Kilos&quot;); // 7&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]{30,40,30,50,50,200,40,50});&#xa;jt.setAlinearColumna(new int[]{2,2,1,2,2,0,2,2});&#xa;ArrayList vc=new ArrayList();&#xa;vc.add(emp_codiE);&#xa;vc.add(avc_anoE);&#xa;vc.add(avc_serieE);&#xa;vc.add(avc_numeE);&#xa;vc.add(cli_codiE);&#xa;vc.add(cli_nombE);&#xa;vc.add(avc_unidE);&#xa;vc.add(avc_kilosE);&#xa;try {&#xa;jt.setCampos(vc);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al poner campos en grid &quot;,k);&#xa;return;&#xa;}&#xa;jt.setFormatoCampos();"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(8){&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return cambiaLinJT(row);&#xa;    }&#xa;}"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Emp&quot;); // 0&#xa;v.add(&quot;Ejer.&quot;); // 1&#xa;v.add(&quot;Serie&quot;); // 2&#xa;v.add(&quot;Numero&quot;); // 3&#xa;v.add(&quot;Cliente&quot;); // 4&#xa;v.add(&quot;Nombre Cliente&quot;); // 5&#xa;v.add(&quot;Unida&quot;); // 6&#xa;v.add(&quot;Kilos&quot;); // 7&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]{30,40,30,60,50,200,40,50});&#xa;jt.setAlinearColumna(new int[]{2,2,1,2,2,0,2,2});&#xa;ArrayList vc=new ArrayList();&#xa;vc.add(emp_codiE);&#xa;vc.add(avc_anoE);&#xa;vc.add(avc_serieE);&#xa;vc.add(avc_numeE);&#xa;vc.add(cli_codiE);&#xa;vc.add(cli_nombE);&#xa;vc.add(avc_unidE);&#xa;vc.add(avc_kilosE);&#xa;try {&#xa;jt.setCampos(vc);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al poner campos en grid &quot;,k);&#xa;return;&#xa;}&#xa;jt.setFormatoCampos();"/>
           </AuxValues>
           <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="-1" y="149" width="560" height="150"/>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="2" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
             </Constraint>
           </Constraints>
 
@@ -467,10 +495,20 @@
                 <BevelBorder bevelType="1"/>
               </Border>
             </Property>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[549, 49]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[549, 49]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="" noResource="true"/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[549, 49]"/>
+            </Property>
           </Properties>
           <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="0" y="300" width="550" height="50"/>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="2" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="1" insetsLeft="0" insetsBottom="1" insetsRight="0" anchor="15" weightX="0.0" weightY="0.0"/>
             </Constraint>
           </Constraints>
 
@@ -497,7 +535,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="160" y="2" width="40" height="-1"/>
+                  <AbsoluteConstraints x="160" y="2" width="40" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -520,7 +558,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="70" y="22" width="40" height="-1"/>
+                  <AbsoluteConstraints x="70" y="22" width="40" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -543,21 +581,21 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="170" y="22" width="70" height="-1"/>
+                  <AbsoluteConstraints x="170" y="22" width="70" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CButton" name="Baceptar">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="280" y="10" width="90" height="30"/>
+                  <AbsoluteConstraints x="320" y="10" width="110" height="30"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CButton" name="Bcancelar">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="400" y="10" width="90" height="30"/>
+                  <AbsoluteConstraints x="440" y="10" width="110" height="30"/>
                 </Constraint>
               </Constraints>
             </Component>

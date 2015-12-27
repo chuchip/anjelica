@@ -715,17 +715,17 @@ public class Comvalm extends ventana
             Pentra.add(cLabel2);
             cLabel2.setBounds(2, 2, 70, 17);
             Pentra.add(feciniE);
-            feciniE.setBounds(340, 2, 65, 17);
+            feciniE.setBounds(335, 2, 70, 17);
 
             cLabel3.setText("Ind");
             Pentra.add(cLabel3);
             cLabel3.setBounds(650, 25, 25, 17);
             Pentra.add(fecfinE);
-            fecfinE.setBounds(460, 2, 65, 17);
+            fecfinE.setBounds(460, 2, 70, 17);
 
             cLabel4.setText("De Fecha");
             Pentra.add(cLabel4);
-            cLabel4.setBounds(195, 2, 60, 17);
+            cLabel4.setBounds(190, 2, 60, 17);
             Pentra.add(pro_codiE);
             pro_codiE.setBounds(70, 25, 300, 17);
 
@@ -775,20 +775,18 @@ public class Comvalm extends ventana
             tipfecC.addItem("Movimiento","M");
             tipfecC.addItem("Documento","D");
             Pentra.add(tipfecC);
-            tipfecC.setBounds(250, 2, 90, 20);
+            tipfecC.setBounds(245, 2, 90, 17);
 
             opStkNeg.setSelected(true);
             opStkNeg.setText("Reset Costo");
             opStkNeg.setToolTipText("Resetar Costo si Stock < 0");
-            opStkNeg.setMargin(new java.awt.Insets(0, 0, 0, 0));
             Pentra.add(opStkNeg);
             opStkNeg.setBounds(430, 45, 90, 17);
 
             opCostFij.setText("Costos Fijos");
             opCostFij.setToolTipText("Usar Costos Fijos Desp.");
-            opCostFij.setMargin(new java.awt.Insets(0, 0, 0, 0));
             Pentra.add(opCostFij);
-            opCostFij.setBounds(340, 45, 90, 19);
+            opCostFij.setBounds(340, 45, 90, 22);
 
             Bacepta.setText("Aceptar");
             Bacepta.setToolTipText("");
@@ -802,7 +800,6 @@ public class Comvalm extends ventana
             opMvtos.setSelected(true);
             opMvtos.setText("Mvtos");
             opMvtos.setToolTipText("Usar mvtos de almacen / Documentos ");
-            opMvtos.setMargin(new java.awt.Insets(0, 0, 0, 0));
             Pentra.add(opMvtos);
             opMvtos.setBounds(530, 2, 70, 17);
 

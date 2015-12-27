@@ -139,7 +139,7 @@ public class actCabAlbFra
     ht.put("avc_impree", (double) 0);
     ht.put("avc_impalb", (double) 0);
 
-    s = "SELECT l.pro_codi,sum(l.avl_canti) as avl_canti, " +
+    s = "SELECT l.pro_codi,sum(l.avl_canti) as avl_canti, sum(avl_unid) as avl_unid, " +
         " avl_prven-avl_dtolin as avl_prven,pro_tipiva,pro_indtco FROM V_ALBAVEL as l, v_articulo as a " +
         " WHERE l.avc_ano = " + avcAno +
         " and l.emp_codi = " + empCodi +
