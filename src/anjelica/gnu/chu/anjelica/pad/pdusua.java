@@ -135,7 +135,7 @@ public class pdusua extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(497, 334));
 
-    this.setVersion("2012-01-19"+(modConsulta ? "SOLO LECTURA" : ""));
+    this.setVersion("2015-12-27"+(modConsulta ? "SOLO LECTURA" : ""));
     strSql = "SELECT * FROM usuarios  ORDER BY usu_nomb ";
 
     statusBar = new StatusBar(this);
@@ -820,7 +820,8 @@ public class pdusua extends ventanaPad   implements PAD
   }
 
     public void darPermisos(String usuNomb) throws SQLException {
-        stUp.executeUpdate("grant connect ON DATABASE  anjelica TO " +usuNomb);
+        String dbName=stUp.getConnection().getCatalog();
+        stUp.executeUpdate("grant connect ON DATABASE  "+dbName +" TO " +usuNomb);
         stUp.executeUpdate("grant all on schema anjelica to  " + usuNomb);
         stUp.executeUpdate("grant all on all tables in schema anjelica to " + usuNomb);
         // Dando permisos en secuencias 
