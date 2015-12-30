@@ -1,3 +1,11 @@
+-- Cambiar fecha creacion y fecha modificacion de tabla Stock/Partidas
+drop view v_stkpart;
+alter table stockpart alter stp_feccre type timestamp;
+alter table stockpart alter stp_feccre not null default current_timestamp;
+
+ alter table stockpart alter stp_fefici type timestamp;
+
+create or replace view anjelica.v_stkpart as select * from anjelica.stockpart;
 -- Añadir columna rut_codi a tabla clientes
 drop view v_cliprv;
 drop view v_cliente;

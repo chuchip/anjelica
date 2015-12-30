@@ -411,7 +411,7 @@ public class pdinven extends ventanaPad implements PAD
           if ( jt.getValorDec(n,5)==0 || jt.getValorDec(n,6)==0)
             continue;
           pRegAlm.setRegNume(++rgsNume);
-          pRegAlm.insRegistro(rgs_fechaE.getFecha("dd-MM-yyyy"), pro_codiE.getValorInt(),
+          pRegAlm.insRegistro(rgs_fechaE.getDate(), pro_codiE.getValorInt(),
                             jt.getValorInt(n,1), jt.getValorInt(n,0),
                             jt.getValString(n,2),jt.getValorInt(n,3),
                             jt.getValorInt(n,4),jt.getValorInt(n,6),
@@ -420,7 +420,7 @@ public class pdinven extends ventanaPad implements PAD
           pRegAlm.setRegNume(++rgsNume);
 
         }
-        stkPart.regeneraStock(dtBloq,2,almCodi,rgs_fechaE.getText(),pro_codiE.getValorInt());
+        stkPart.regeneraStock(dtBloq,2,almCodi,rgs_fechaE.getDate(),pro_codiE.getValorInt());
         dtAdd.executeUpdate("update ajustedb set aju_regacu=1"); // Habilito Reg. Acum.
         ctUp.commit();
         if (jf != null)

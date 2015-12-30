@@ -37,7 +37,7 @@
 						NEW.mvt_empcod,NEW.pro_serlot,'P', NEW.pro_numlot,
                         NEW.pro_codi,NEW.pro_indlot,NEW.alm_codi,
 						unid,unid,
-						current_date,
+						current_timestamp,
                         kilos,kilos,
                         NEW.mvt_cliprv,NEW.mvt_feccad);
             else
@@ -51,7 +51,7 @@
                 UPDATE anjelica.stockpart set stp_kilact= kilos,
                         stp_unact=unid,
 						prv_codi = NEW.mvt_cliprv,
-                        stp_fefici = current_date 
+                        stp_fefici = current_timestamp 
 						WHERE   pro_codi = NEW.pro_codi and 
 						eje_nume=NEW.pro_ejelot  and 
                          pro_codi= NEW.pro_codi and
@@ -84,7 +84,7 @@
             end if;
             UPDATE anjelica.stockpart set stp_kilact= kilos,
                    stp_unact=unid,
-                   stp_fefici = current_date 
+                   stp_fefici = current_timestamp 
             WHERE  pro_codi = OLD.pro_codi and
 		   eje_nume=OLD.pro_ejelot  and 
                    pro_serie = OLD.pro_serlot and

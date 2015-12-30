@@ -711,7 +711,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-12-25" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2015-12-30" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -4640,74 +4640,81 @@ public class pdalbara extends ventanaPad  implements PAD
 @Override
   public void PADAddNew()
   {
-//    swPasLin=false;
-    swAvisoAlbRep=true;
-    if (P_PONPRECIO || P_MODPRECIO)
-     verPrecios=true;
-    avl_prvenE.setEditable(verPrecios);
-    jtPalet.removeAllDatos();
-    if (swUsaPalets)
-    {
-        addLineaPalet();
-        pav_numeE.setValorInt(1);
-    }
-    activar(true);
-    
-    swAvisoDto=true;
-    Pcabe.resetTexto();
-    jt.setEnabled(false);
+      try
+      {
+          //    swPasLin=false;
+          swAvisoAlbRep=true;
+          if (P_PONPRECIO || P_MODPRECIO)
+              verPrecios=true;
+          avl_prvenE.setEditable(verPrecios);
+          jtPalet.removeAllDatos();
+          if (swUsaPalets)
+          {
+              addLineaPalet();
+              pav_numeE.setValorInt(1);
+          }
+          activar(true);
+          
+          swAvisoDto=true;
+          Pcabe.resetTexto();
+          jt.setEnabled(false);
 //    Bimpri.setEnabled(false);
-    jt.removeAllDatos();
-    Ppie.resetTexto();
-    PotroDat.resetTexto();
-    cli_pobleE.setText("");
-    cli_codiE.resetCambio();
-    cli_codiE.requestFocus();
-    emp_codiE.setValorDec(EU.em_cod);
-    avc_anoE.setValorDec(EU.ejercicio);
-    avc_seriE.setText("A");
-    avc_fecalbE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-    avc_fecemiE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-    usu_nombE.setText(EU.usuario);
-    avc_numeE.setEnabled(false);
-    fvc_serieE.setEnabled(false);
-    fvc_anoE.setEnabled(false);
-    fvc_numeE.setEnabled(false);
-    usu_nombE.setEnabled(false);
-    avc_fecemiE.setEnabled(false);
-    tar_codiE.setEnabled(false);
-
+          jt.removeAllDatos();
+          Ppie.resetTexto();
+          PotroDat.resetTexto();
+          cli_pobleE.setText("");
+          cli_codiE.resetCambio();
+          cli_codiE.requestFocus();
+          emp_codiE.setValorDec(EU.em_cod);
+          avc_anoE.setValorDec(EU.ejercicio);
+          avc_seriE.setText("A");
+          avc_fecalbE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
+          avc_fecemiE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
+          usu_nombE.setText(EU.usuario);
+          avc_numeE.setEnabled(false);
+          fvc_serieE.setEnabled(false);
+          fvc_anoE.setEnabled(false);
+          fvc_numeE.setEnabled(false);
+          usu_nombE.setEnabled(false);
+          avc_fecemiE.setEnabled(false);
+          tar_codiE.setEnabled(false);
+          
 //    avc_cerraE.setEnabled(false);
-    avc_cerraE.setSelected(true);
-    avc_anoE.setEnabled(false);
-    Baceptar.setEnabled(false);
-    Bimpri.setEnabled(false);
-    jtDes.setEnabled(false);
-    opAgru.setEnabled(false);
-    cli_codiE.resetAlbaran();
-    jtDes.removeAllDatos();
-    pro_codiE.setEditable(true);
-    pro_nombE.setEditable(true);
-    avc_confoE.setSelected(true);
-    avc_almoriE.setValor(""+ALMACEN);
-    pvc_numeE.resetCambio();
-    jtLinPed.removeAllDatos();
-    avpNumparAnt=0;
-    avpNumindAnt=0;
-    avpEjelotAnt=0;
-    avpSerlotAnt="";
-    isLock=false;
-    Pcabped.resetCambio();
+          avc_cerraE.setSelected(true);
+          avc_anoE.setEnabled(false);
+          Baceptar.setEnabled(false);
+          Bimpri.setEnabled(false);
+          jtDes.setEnabled(false);
+          opAgru.setEnabled(false);
+          cli_codiE.resetAlbaran();
+          jtDes.removeAllDatos();
+          pro_codiE.setEditable(true);
+          pro_nombE.setEditable(true);
+          avc_confoE.setSelected(true);
+          avc_almoriE.setValor(""+ALMACEN);
+          pvc_numeE.resetCambio();
+          jtLinPed.removeAllDatos();
+          avpNumparAnt=0;
+          avpNumindAnt=0;
+          avpEjelotAnt=0;
+          avpSerlotAnt="";
+          isLock=false;
+          Pcabped.resetCambio();
 //    opModif.setSelected(false);
-    avc_valoraE.setValor("0");
-    nav.pulsado=navegador.ADDNEW;
-    Bdespiece.setSelected(false);
-    confAlbDep=false;
-    
-    jt.setValor(swUsaPalets?1:0,JT_NUMPALE);
-    avl_numpalE.setValorInt(swUsaPalets?1:0);
-    avsNume=0;
-    mensaje("Introduciendo Nuevo Albaran ...");
+          avc_valoraE.setValor("0");
+          nav.pulsado=navegador.ADDNEW;
+          Bdespiece.setSelected(false);
+          confAlbDep=false;
+          
+          jt.setValor(swUsaPalets?1:0,JT_NUMPALE);
+          avl_numpalE.setValorInt(swUsaPalets?1:0);
+          avsNume=0;
+          dtAdd.commit();
+          mensaje("Introduciendo Nuevo Albaran ...");
+      } catch (SQLException ex)
+      {
+        Error("Error al iniciar transaccion de insertar",ex);
+      }
   }
 
   @Override
@@ -5928,6 +5935,7 @@ public class pdalbara extends ventanaPad  implements PAD
    */
   void guardaLinDes(int nLiGrAl) throws Exception
   {
+     dtAdd.commit(); // Para resetear el current_timestamp
     String condWhere;
     if (pvc_numeE.isEnabled())
     {
@@ -5953,7 +5961,8 @@ public class pdalbara extends ventanaPad  implements PAD
             s = "UPDATE albvenserl set avs_canti = " + avl_cantiE.getValorDec() +
                 " , avs_unid = " + avl_unidE.getValorInt() + condWhere;
         else
-            s = "UPDATE v_albavel set avl_canti = " + avl_cantiE.getValorDec() +
+            s = "UPDATE v_albavel set avl_fecalt = current_timestamp "
+                + ", avl_canti = " + avl_cantiE.getValorDec() +
                " , avl_canbru = " + avl_cantiE.getValorDec()+
                " , avl_unid = " + avl_unidE.getValorInt() +
                 ", avl_numpal = "+avl_numpalE.getValorInt() +

@@ -43,6 +43,7 @@ import java.awt.event.FocusEvent;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.SpinnerNumberModel;
 
@@ -603,9 +604,9 @@ public class paregalm extends CPanel {
 
     public int insRegistro() throws Exception {
 
-        return insRegistro(cci_fecconE.getFecha("yyyy-MM-dd")+" "+
+        return insRegistro(Formatear.getDate(cci_fecconE.getFecha("yyyy-MM-dd")+" "+
             Formatear.format(cci_horconE.getText(),"99")+":"+
-            Formatear.format(cci_minconE.getText(),"99")
+            Formatear.format(cci_minconE.getText(),"99"),"YYYY-mm-dd HH:mm")
                 , pro_codiE.getValorInt(), EU.em_cod,
                 deo_ejelotE.getValorInt(), deo_serlotE.getText(), pro_loteE.getValorInt(),
                 pro_numindE.getValorInt(), stp_unactE.getValorInt(),
@@ -646,7 +647,7 @@ public class paregalm extends CPanel {
      * @return
      * @throws SQLException
      */
-    public int insRegistro(String fecmvto, int proCodi, int empCodi, int ejeNume,
+    public int insRegistro(Date fecmvto, int proCodi, int empCodi, int ejeNume,
             String serie, int numPar, int numInd, int unAct, double kilos,
             int almCodi, int tirCodi, int rgsCliprv, String coment,
             double precbas, java.util.Date fecres, int cliDev, int sbeCodi, int rgsTrasp,
@@ -658,7 +659,7 @@ public class paregalm extends CPanel {
                 precbas, fecres, cliDev, sbeCodi, rgsTrasp,
                 rgsRecPrv, accAno, accSerie, accNume, EU.usuario,rgsNume);
     }
-    public static int insRegStock(DatosTabla dtAdd, String fecmvto, int proCodi, int empCodi, int ejeNume,
+    public static int insRegStock(DatosTabla dtAdd, Date fecmvto, int proCodi, int empCodi, int ejeNume,
             String serie, int numPar, int numInd, int unAct, double kilos,
             int almCodi, int tirCodi, String coment,
             double precbas,String usuNomb,int rgsNume) throws SQLException {
@@ -694,7 +695,7 @@ public class paregalm extends CPanel {
      * @return
      * @throws SQLException 
      */
-    public static int insRegularizacion(DatosTabla dtAdd, String fecmvto, int proCodi, int empCodi, int ejeNume,
+    public static int insRegularizacion(DatosTabla dtAdd, Date fecmvto, int proCodi, int empCodi, int ejeNume,
             String serie, int numPar, int numInd, int unAct, double kilos,
             int almCodi, int tirCodi, int rgsCliprv, String coment,
             double precbas, java.util.Date fecres, int cliDev, int sbeCodi, int rgsTrasp,

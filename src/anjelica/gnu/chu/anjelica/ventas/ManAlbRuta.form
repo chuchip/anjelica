@@ -62,6 +62,11 @@
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;##,##9.99&quot;)"/>
       </AuxValues>
     </Component>
+    <Component class="gnu.chu.controles.CCheckBox" name="alr_repetE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
@@ -130,7 +135,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="2" width="40" height="-1"/>
+                  <AbsoluteConstraints x="2" y="2" width="40" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -161,7 +166,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="23" width="70" height="17"/>
+                  <AbsoluteConstraints x="2" y="23" width="70" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -176,7 +181,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="80" y="23" width="76" height="18"/>
+                  <AbsoluteConstraints x="80" y="23" width="70" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -241,7 +246,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="420" y="23" width="76" height="18"/>
+                  <AbsoluteConstraints x="80" y="45" width="76" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -254,7 +259,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="500" y="23" width="20" height="18"/>
+                  <AbsoluteConstraints x="160" y="45" width="20" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -267,7 +272,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="530" y="23" width="20" height="18"/>
+                  <AbsoluteConstraints x="190" y="45" width="20" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -278,7 +283,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="520" y="23" width="10" height="17"/>
+                  <AbsoluteConstraints x="180" y="23" width="10" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -288,7 +293,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="44" width="-1" height="-1"/>
+                  <AbsoluteConstraints x="230" y="23" width="40" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -304,7 +309,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="50" y="44" width="200" height="18"/>
+                  <AbsoluteConstraints x="290" y="23" width="210" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -314,7 +319,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="260" y="44" width="60" height="-1"/>
+                  <AbsoluteConstraints x="230" y="45" width="60" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -391,7 +396,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="90" y="70" width="290" height="60"/>
+                  <AbsoluteConstraints x="90" y="70" width="290" height="40"/>
                 </Constraint>
               </Constraints>
 
@@ -414,7 +419,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="340" y="23" width="80" height="17"/>
+                  <AbsoluteConstraints x="2" y="45" width="80" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -431,7 +436,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="320" y="44" width="230" height="18"/>
+                  <AbsoluteConstraints x="290" y="45" width="210" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -455,6 +460,19 @@
                 </Constraint>
               </Constraints>
             </Component>
+            <Component class="gnu.chu.controles.CButton" name="BInsAuto">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="Insertar Alb. Pend. de Ruta"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(Iconos.getImageIcon(&quot;fill&quot;))"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="510" y="23" width="30" height="24"/>
+                </Constraint>
+              </Constraints>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="gnu.chu.controles.CGridEditable" name="jt">
@@ -472,8 +490,8 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(8){&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return cambiaLinJT(row);&#xa;    }&#xa;}"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Emp&quot;); // 0&#xa;v.add(&quot;Ejer.&quot;); // 1&#xa;v.add(&quot;Serie&quot;); // 2&#xa;v.add(&quot;Numero&quot;); // 3&#xa;v.add(&quot;Cliente&quot;); // 4&#xa;v.add(&quot;Nombre Cliente&quot;); // 5&#xa;v.add(&quot;Unida&quot;); // 6&#xa;v.add(&quot;Kilos&quot;); // 7&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]{30,40,30,60,50,200,40,50});&#xa;jt.setAlinearColumna(new int[]{2,2,1,2,2,0,2,2});&#xa;ArrayList vc=new ArrayList();&#xa;vc.add(emp_codiE);&#xa;vc.add(avc_anoE);&#xa;vc.add(avc_serieE);&#xa;vc.add(avc_numeE);&#xa;vc.add(cli_codiE);&#xa;vc.add(cli_nombE);&#xa;vc.add(avc_unidE);&#xa;vc.add(avc_kilosE);&#xa;try {&#xa;jt.setCampos(vc);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al poner campos en grid &quot;,k);&#xa;return;&#xa;}&#xa;jt.setFormatoCampos();"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(9){&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return cambiaLinJT(row);&#xa;    }&#xa;}"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Emp&quot;); // 0&#xa;v.add(&quot;Ejer.&quot;); // 1&#xa;v.add(&quot;Serie&quot;); // 2&#xa;v.add(&quot;Numero&quot;); // 3&#xa;v.add(&quot;Cliente&quot;); // 4&#xa;v.add(&quot;Nombre Cliente&quot;); // 5&#xa;v.add(&quot;Unid.&quot;); // 6&#xa;v.add(&quot;Kilos&quot;); // 7&#xa;v.add(&quot;Dupl.&quot;); // 7&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]{30,40,30,60,50,200,40,50,45});&#xa;jt.setAlinearColumna(new int[]{2,2,1,2,2,0,2,2,1});&#xa;ArrayList vc=new ArrayList();&#xa;vc.add(emp_codiE);&#xa;vc.add(avc_anoE);&#xa;vc.add(avc_serieE);&#xa;vc.add(avc_numeE);&#xa;vc.add(cli_codiE);&#xa;vc.add(cli_nombE);&#xa;vc.add(avc_unidE);&#xa;vc.add(avc_kilosE);&#xa;vc.add(alr_repetE);&#xa;try {&#xa;jt.setCampos(vc);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al poner campos en grid &quot;,k);&#xa;return;&#xa;}&#xa;jt.setFormatoCampos();&#xa;jt.setFormatoColumna(JT_REPET, &quot;B-&quot;);"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

@@ -378,7 +378,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2015-12-17"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2015-12-30"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -2289,8 +2289,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
   }
   void guardaOrigDesp(int n,double kilEnt) throws Exception
   {
+    dtAdd.commit();// Para comenzar la transaccion.
     if (deo_codiE.getValorDec() == 0)
-    {
+    {     
       deo_codiE.setValorInt(guardaOrigCabDesp());
 //      pro_loteE.setValorInt(deo_codiE.getValorInt());
       activar(CABECERA,false);
@@ -2459,7 +2460,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
        if (! borrarLinSa(nlSalE.getValorInt()))
          return;
      }
-
+     dtAdd.commit();// Para comenzar la transaccion.
      int nInd = guardaLinDesp(eje_numeE.getValorInt(), EU.em_cod,
                               SERIE,
                               deo_codiE.getValorInt(), pro_codsalE.getValorInt(),
@@ -2705,25 +2706,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    dtAdd.update(stUp);
    return nInd;
  }
- /**
-  * @deprecated
-  * @param proCodi
-  * @param ejeLot
-  * @param empLot
-  * @param serLot
-  * @param numLot
-  * @param nInd
-  * @param kilos
-  * @param numPie
-  * @throws Exception 
-  */
- void insStkPart(int proCodi,int ejeLot,int empLot,String serLot,int numLot,int nInd,double kilos,int numPie) throws Exception
- {
-   stkPart.sumar(ejeLot,serLot,numLot,nInd,proCodi,deo_almdesE.getValorInt(),
-                     kilos,numPie,grd_fechaE.getText(),ActualStkPart.CREAR_SI,
-                     getPrvDesp(dtStat,EU.em_cod),grd_feccadE.getDate());
-
- }
+ 
  /**
   * Devuelve el Proveedor de Despieces para la empresa dada
   * @param dt DatosTabla

@@ -598,14 +598,15 @@ public class Cgrid extends CPanel implements Serializable
           for (h1 = 1; h1 <= nCol; h1++)
           {
             // Trunca si es un string
+              
               if (utilSql.getTipo(datTabla.getTipCampo(h1)) ==  Types.DATE)
               {
-                if (Formato[h1-1].compareTo("") != 0)
+                if (! Formato[h1-1].equals("") )
                 {
                   if (Formato[h1-1].charAt(0) == 'F')
                     v.add(datTabla.getFecha(h1, "yyyy-MM-dd"));
                   else
-                    v.add(datTabla.getFecha(h1, "dd-MM-yyyy"));
+                    v.add(datTabla.getFecha(h1, Formato[h1-1]));
                 }
                 else
                 {

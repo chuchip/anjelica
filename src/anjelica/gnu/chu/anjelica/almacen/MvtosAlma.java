@@ -298,8 +298,8 @@ public class MvtosAlma
   }
   /**
    * Devuelve Sentencia SQL a ejecutar para buscar los movimientos.
-   * @param fecIni Fecha Inico
-   * @param fecFin Fecha Final
+   * @param fecIni Fecha Inico . Formato 'dd-MM-yyyy
+   * @param fecFin Fecha Final. Formato 'dd-MM-yyyy
    * @param proCodi Producto. Si el producto es -1 pone un interrogante para utilizarlo
    *        como PreparedStatement
    * @return String con la sentencia sql
@@ -337,7 +337,7 @@ public class MvtosAlma
   /**
    * SQL Para calcular costos (preparestatement) sobre un producto.
    * 
-   * @param fecIni Fecha Inicial (Inventario)
+   * @param fecIni Fecha Inicial (Inventario)  Formato: dd-MM-yyyy
    * @return 
    */
   private String getSqlMvtCostos(String fecIni)  {
@@ -371,6 +371,14 @@ public class MvtosAlma
         + " AND r.rgs_fecha::date = TO_DATE('" + fecIni + "','dd-MM-yyyy') "
         + " ORDER BY 4,1,3 desc"; // FECHA,orden y tipo
   }
+  /**
+   * 
+   * @param fecIni  Formato: dd-MM-yyyy
+   * @param fecFin  Formato: dd-MM-yyyy
+   * @param proCodi
+   * @return
+   * @throws ParseException 
+   */
   private String getSqlMvtNuevo(String fecIni, String fecFin, int proCodi) throws ParseException
   {
     numProd=1;
@@ -443,8 +451,8 @@ public class MvtosAlma
   }
   /**
    * Devuelve la SQL para buscar los mvtos, buscando en los docuemtos.
-   * @param fecIni
-   * @param fecFin
+   * @param fecIni. Formato: dd-MM-yyyy
+   * @param fecFin Formato: dd-MM-yyyy
    * @param proCodi
    * @return
    * @throws ParseException 
@@ -800,12 +808,20 @@ public class MvtosAlma
 
         return calculaMvtos(dtCon1, dtStat, s, jt, zonCodi, repCodi, proCodi);
     }
+    public void iniciarMvtos(Date fecInv, Date fecIni, Date fecFin,
+            DatosTabla dtCon1) throws SQLException, ParseException
+    {
+        iniciarMvtos(Formatear.getFecha(fecInv, "dd-MM-yyyy"),Formatear.getFecha(fecIni, "dd-MM-yyyy"),
+            Formatear.getFecha(fecFin, "dd-MM-yyyy"),
+            dtCon1);
+    }
     /**
      * Iniciar movimientos.
      * Funcion  a llamar cuando se van a calcular Movimientos sobre diferentes
      * productos pero con las mismas condiciones.
      * LLamar despues a
      *  calculaMvtos(int proCodi,DatosTabla dtCon1,DatosTabla dtStat,String zonCodi, String repCodi)
+     * @deprecated usar iniciarMvtos(Date, Date, DatosTabla)
      * @param fecInv Fecha Inventario (Formato dd-MM-yyyy)
      * @param fecIni Fevcha Inicial (Formato dd-MM-yyyy)
      * @param fecFin Fecha Final ((Formato dd-MM-yyyy))
@@ -857,6 +873,12 @@ public class MvtosAlma
         String s = getSqlMvt(fecIni, fecFin, -1);
         pStmt=dtCon1.getPreparedStatement(s);
     }
+        public void iniciarMvtos(Date fecIni,Date fecFin,   DatosTabla dtCon1) throws SQLException,ParseException {
+        String s = getSqlMvt(Formatear.getFecha(fecIni, "dd-MM-yyyy"), 
+            Formatear.getFecha(fecFin,"dd-MM-yyyy"), -1);
+        pStmt=dtCon1.getPreparedStatement(s);
+    }
+
     /**
      * Inicia consulta sobre mvtos, usado para calcular costo en una fecha determinada.
      * @param fecIni

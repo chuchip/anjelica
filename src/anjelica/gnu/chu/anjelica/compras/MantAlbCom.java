@@ -5067,7 +5067,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
                           alm_codiE.getValorInt(), // Almacen
                           dtCon1.getDouble("acp_canti"), // Kilos
                           dtCon1.getInt("acp_canind"),  // Num. Unidades
-                          acc_fecrecE.getText(),
+                          acc_fecrecE.getDate(),
                           ActualStkPart.CREAR_SI,
                           prv_codiE.getValorInt(), // Producto
                           dtCon1.getDate("acp_feccad")   // Fecha Cad.

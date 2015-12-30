@@ -264,8 +264,8 @@ public class TrasInven extends ventanaPad implements PAD {
                 if (swInvCong)
                 {
                     stkPart.insInventCong(dtAdd,dtStat,
-                            opInsAllAlmac.isSelected()?0:alm_codiE.getValorInt(),fecinvConE.getText(),
-                       cci_fecconE.getText(),EU.usuario);
+                            opInsAllAlmac.isSelected()?0:alm_codiE.getValorInt(),fecinvConE.getDate(),
+                       cci_fecconE.getDate(),EU.usuario);
                 }
             }
             setMensajePopEspere("Actualizando Acumulados de Articulos y Stock-Partidas ...",false);
@@ -283,7 +283,7 @@ public class TrasInven extends ventanaPad implements PAD {
             if (!tipoTraspE.getValor().equals(TIPOSINSTOCKPA)) {
                 stkPart.regeneraStock(dtBloq, proArtcon,
                         opInsAllAlmac.isSelected()?0:alm_codiE.getValorInt(),
-                        cci_fecconE.getText(),0,opResetear.isSelected());
+                        cci_fecconE.getDate(),0,opResetear.isSelected());
             }
             dtBloq.executeUpdate("update almacen set alm_feulin = TO_DATE('"+cci_fecconE.getFechaDB()+"','yyyyMMdd')"+
                 (opInsAllAlmac.isSelected()?"":" where alm_codi = "+alm_codiE.getValorInt()));
@@ -381,7 +381,7 @@ public class TrasInven extends ventanaPad implements PAD {
             almCodi = dtCon1.getInt("alm_codi");
             pRegAlm.setRegNume(++rgsNume);
             try {
-                pRegAlm.insRegistro(cci_fecconE.getFecha("dd-MM-yyyy"), dtCon1.getInt("pro_codi"),
+                pRegAlm.insRegistro(cci_fecconE.getDate(), dtCon1.getInt("pro_codi"),
                         dtCon1.getInt("prp_empcod"), dtCon1.getInt("prp_ano"), dtCon1.getString("prp_seri"),
                         dtCon1.getInt("prp_part"), dtCon1.getInt("prp_indi"), dtCon1.getInt("lci_numind"),
                         dtCon1.getDouble("lci_peso"), almCodi, tirCodi, 0, "", dtCon1.getDouble("ipr_prec"),

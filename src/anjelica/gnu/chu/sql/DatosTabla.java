@@ -34,15 +34,15 @@ public class DatosTabla   implements Serializable
   private boolean camposAddNew; // Indica si en una insert se pondran los nombres de los campos.
   int fetchSize=0;
   int timeSelect=100;   // Tiempo que se tiene para ejectuar una select con UPDATE (Por Defecto: 10 Seg.)
-  Vector vecEdit=new Vector();
+  ArrayList vecEdit=new ArrayList();
   String condEdit; // Condiciones para un edit en modo update.
   int maxRows=0;
   public final static int NORMAL = 0;
   public final static int EDIT = 1;
   public final static int ADDNEW = 2;
-  Vector nullCampo = new Vector();
+  ArrayList nullCampo = new ArrayList();
   private int modSel = NORMAL;
-  Vector vecAddNew = new Vector();
+  ArrayList vecAddNew = new ArrayList();
   boolean escProc = false;
   boolean BOF = false; // Principio de la Tabla.
   boolean EOF = false; // Final de la Tabla.
@@ -197,7 +197,7 @@ public class DatosTabla   implements Serializable
 
 
  /**
-  * * Cierra el cursor establecido con la Ultima select.
+  * Cierra el cursor establecido con la Ultima select.
   * <p>
   * Cada vez que se llama a select esta cierra el Ultimo cursor.
   
@@ -450,9 +450,9 @@ public class DatosTabla   implements Serializable
 //    else
 //    {
       if (vecEdit.indexOf("" + (columna)) == -1)
-        vecEdit.addElement("" + (columna));
+        vecEdit.add("" + (columna));
 
-      vecAddNew.setElementAt(valor, columna);
+      vecAddNew.set(columna,valor);
 //    }
   }
 
@@ -1477,7 +1477,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     short i;
     try {
         if (modSel == ADDNEW || modSel==EDIT)
-            i=Short.valueOf(vecAddNew.elementAt(col-1).toString());
+            i=Short.valueOf(vecAddNew.get(col-1).toString());
         else
             i = rs.getShort(col);
      } catch (NumberFormatException | SQLException k)
@@ -1531,7 +1531,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     Long i;
     try {
         if (modSel == ADDNEW || modSel==EDIT)
-            i=Long.valueOf(vecAddNew.elementAt(col-1).toString());
+            i=Long.valueOf(vecAddNew.get(col-1).toString());
         else
             i = rs.getLong(col);
      } catch (NumberFormatException | SQLException k)
@@ -1615,12 +1615,12 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     }
     
     if (modSel == ADDNEW || modSel==EDIT)
-       if ((vecAddNew.elementAt(col-1)) instanceof Timestamp)
-         return (Timestamp) vecAddNew.elementAt(col-1);
+       if ((vecAddNew.get(col-1)) instanceof Timestamp)
+         return (Timestamp) vecAddNew.get(col-1);
        else
        {
          try {
-            return new Timestamp(Long.parseLong(vecAddNew.elementAt(col-1).toString()));
+            return new Timestamp(Long.parseLong(vecAddNew.get(col-1).toString()));
          } catch (NumberFormatException k)
          {
              return null; // No es un timestamp.
@@ -1798,7 +1798,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   public Object getObject(int col) throws SQLException
   {
     if (modSel == ADDNEW || modSel==EDIT)
-      return vecAddNew.elementAt(col-1);
+      return vecAddNew.get(col-1);
     else
       return rs.getObject(col); 
   }
@@ -1941,6 +1941,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   {
     modSel = NORMAL;
     dtb_Con.commit();
+    cerrar();
     Error = false;
   }
 
@@ -2507,19 +2508,20 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     }
 
      this.condEdit=condEdit;
-     vecEdit.removeAllElements();
-     vecAddNew.removeAllElements();
+     vecEdit.clear();
+     vecAddNew.clear();
      int n;
+     int nCol=getColumnCount();
      if (modSel==ADDNEW || NOREG)
      {
-       for (n=0;n<getNumCol();n++)
-         vecAddNew.addElement("");
+       for (n=0;n<nCol;n++)
+         vecAddNew.add("");
      }
      else
      {
        modSel = NORMAL;
-       for (n = 0; n < getNumCol(); n++)
-         vecAddNew.addElement(getObject(n + 1));
+       for (n = 0; n < nCol; n++)
+         vecAddNew.add(getObject(n + 1));
      }
      modSel=EDIT;
   }
@@ -2582,10 +2584,10 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     modSel=ADDNEW;
     this.camposAddNew=! allCampos;
     if (! allCampos)
-        vecEdit.removeAllElements();
-    vecAddNew.removeAllElements();
+        vecEdit.clear();
+    vecAddNew.clear();
     for (int n=0;n<getColumnCount();n++)
-      vecAddNew.addElement("");
+      vecAddNew.add("");
   }
    /**
    * Copia TODOS los registros activo de la select de esta tabla  a otra en un datostabla mandado.

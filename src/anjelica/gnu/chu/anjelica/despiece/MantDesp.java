@@ -234,7 +234,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2015-12-01" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2015-12-30" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -1811,53 +1811,60 @@ public class MantDesp extends ventanaPad implements PAD
 
     @Override
     public void PADAddNew() {
-        swErrCab=false;
-        proCodiB = 0;
-        utdesp.feccadE = null;
-        swMantLote = false;
-        mensaje("Introducir Nuevo Despiece");
-        nav.pulsado = navegador.ADDNEW;
-        nav.setEnabled(false);
-        jtCab.removeAllDatos();
-
-        activar(true, navegador.ADDNEW);
-        tid_codiE.setDeoCodi(null);
-        
-        Pcabe.resetTexto();
-        pro_codiE.resetCambio();
-        deo_fechaE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-        usu_nombE.setText(EU.usuario);
-        eje_numeE.setValorDec(EU.ejercicio);
-
-        deo_cerraE.setSelected(false);
-        deo_blockE.setValor("S"); // Abierto
-        deo_ejlogeE.setValorDec(EU.ejercicio);
-
-        deo_desnueE.setPulsado(false);
-        deo_desnueE.setSelected(false);
-        nIndDes = 0;
-        deo_ejelotE.setValorDec(EU.ejercicio);
-
-        deo_selogeE.setText(SERIE);
-
-        tid_codiE.setEnabled(false);
-
-        eje_numeE.setEnabled(false);
-        jtCab.setValor("" + EU.ejercicio, jtCab.getSelectedRow(), JTCAB_EJELOT);
-
-        kgDifE.setValorDec(0);
-        kgOrigE.setValorDec(0);
-        kgFinE.setValorDec(0);
-        tid_codiE.setValorDec(0);
-        deo_kilosE.setEnabled(true);
+        try
+        {
+            swErrCab=false;
+            proCodiB = 0;
+            utdesp.feccadE = null;
+            swMantLote = false;
+            mensaje("Introducir Nuevo Despiece");
+            nav.pulsado = navegador.ADDNEW;
+            nav.setEnabled(false);
+            jtCab.removeAllDatos();
+            
+            activar(true, navegador.ADDNEW);
+            tid_codiE.setDeoCodi(null);
+            
+            Pcabe.resetTexto();
+            pro_codiE.resetCambio();
+            deo_fechaE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
+            usu_nombE.setText(EU.usuario);
+            eje_numeE.setValorDec(EU.ejercicio);
+            
+            deo_cerraE.setSelected(false);
+            deo_blockE.setValor("S"); // Abierto
+            deo_ejlogeE.setValorDec(EU.ejercicio);
+            
+            deo_desnueE.setPulsado(false);
+            deo_desnueE.setSelected(false);
+            nIndDes = 0;
+            deo_ejelotE.setValorDec(EU.ejercicio);
+            
+            deo_selogeE.setText(SERIE);
+            
+            tid_codiE.setEnabled(false);
+            
+            eje_numeE.setEnabled(false);
+            jtCab.setValor("" + EU.ejercicio, jtCab.getSelectedRow(), JTCAB_EJELOT);
+            
+            kgDifE.setValorDec(0);
+            kgOrigE.setValorDec(0);
+            kgFinE.setValorDec(0);
+            tid_codiE.setValorDec(0);
+            deo_kilosE.setEnabled(true);
 //    deo_prcostE.setEnabled(false); // El costo no se puede introducir  o si?.
-        jtLin.removeAllDatos();
-        proCodTD = 0;
-        deo_lotnueE.setValor("-1");
-        opSimular.setSelected(false);
-        irGridCab();
+            jtLin.removeAllDatos();
+            proCodTD = 0;
+            deo_lotnueE.setValor("-1");
+            opSimular.setSelected(false);
+            dtAdd.commit();
+            irGridCab();
 //    jtCab.requestFocusInicio();
 //    tid_codiE.requestFocus();
+        } catch (SQLException ex)
+        {
+           Error("Error al iniciar transaccion de insertar",ex);
+        }
     }
     /**
      * Funcion para ordenar las lineas de cabecera, para que mantenga el orden de pantalla
@@ -1877,19 +1884,21 @@ public class MantDesp extends ventanaPad implements PAD
                    numLin=dtCon1.getInt("numlinMax")+1;
          }
          for (int n=0;n<jtCab.getRowCount();n++)
-         {
-            
+         {            
             if (jtCab.getValorInt(n,JTCAB_NL)==0)
                 continue;
-            s="update desorilin  set del_numlin = "+numLin+
-                (opMantFecha.isSelected()?", deo_tiempo= {d '"+deo_fechaE.getFecha("yyyy-MM-dd")+"'}":"")
-                + " where eje_nume = "+eje_numeE.getValorInt()
-                + " and deo_codi = "+deo_codiE.getValorInt()
-                + " and  del_numlin= "+jtCab.getValorInt(n,JTCAB_NL);
-            int nRows=dtAdd.executeUpdate(s);
-            if (nRows!=1)
-                throw new SQLException("Error al regenerar numeros de linea: "+s+" Lineas modificadas: "+nRows);
-            jtCab.setValor(numLin,n,JTCAB_NL);
+            if (jtCab.getValorInt(n,JTCAB_NL)!=numLin || opMantFecha.isSelected() )
+            {
+                s="update desorilin  set del_numlin = "+numLin+
+                    (opMantFecha.isSelected()?", deo_tiempo= {d '"+deo_fechaE.getFecha("yyyy-MM-dd")+"'}":"")
+                    + " where eje_nume = "+eje_numeE.getValorInt()
+                    + " and deo_codi = "+deo_codiE.getValorInt()
+                    + " and  del_numlin= "+jtCab.getValorInt(n,JTCAB_NL);
+                int nRows=dtAdd.executeUpdate(s);
+                if (nRows!=1)
+                    throw new SQLException("Error al regenerar numeros de linea: "+s+" Lineas modificadas: "+nRows);
+                jtCab.setValor(numLin,n,JTCAB_NL);
+            }
             numLin++;
         
          }
@@ -2617,7 +2626,7 @@ public class MantDesp extends ventanaPad implements PAD
                     v.add(MODPRECIO ? dtCon1.getDouble("deo_prcost") : 0);
                     v.add(verGrupo || verAgrup ? dtCon1.getInt("numUnid") : dtCon1.getInt("del_numlin"));
                     v.add(MODPRECIO ? dtCon1.getDouble("deo_preusu") : 0);
-                    v.add(verGrupo || verAgrup ? "": Formatear.getFecha(dtCon1.getTimeStamp("deo_tiempo"),"dd-MM-yy HH:mm"));
+                    v.add(verGrupo || verAgrup ? "": Formatear.getFecha(dtCon1.getTimeStamp("deo_tiempo"),"dd-MM-yy HH:mm:ss"));
                     kilos += dtCon1.getDouble("deo_kilos");
                     importe += dtCon1.getDouble("deo_kilos") * dtCon1.getDouble("deo_prcost");
                     jtCab.addLinea(v);
@@ -2698,7 +2707,7 @@ public class MantDesp extends ventanaPad implements PAD
                 v.add(dtCon1.getString("def_preusu"));
             else
                 v.add("");
-            v.add(opGrupo || opAgrup ? "": Formatear.getFecha(dtCon1.getTimeStamp("def_tiempo"),"dd-MM-yy HH:mm"));
+            v.add(opGrupo || opAgrup ? "": Formatear.getFecha(dtCon1.getTimeStamp("def_tiempo"),"dd-MM-yy HH:mm:ss"));
             jtLin.addLinea(v);
             kilos += dtCon1.getDouble("def_kilos");
             importe += dtCon1.getDouble("def_kilos") * dtCon1.getDouble("def_prcost");
@@ -2899,6 +2908,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_kilosE.setValorDec(stkPartid.getKilos());
             }
             // Procedo a guardar la linea.
+            dtAdd.commit();
             if (jtCab.getValorInt(linea, JTCAB_NL) != 0)
             { // Esta linea ya se ha guardado.
                 // Miro a ver si se ha cambiado.
@@ -2913,8 +2923,7 @@ public class MantDesp extends ventanaPad implements PAD
                     Error("Linea Entrada de Despiece no encontrada: " + s,
                         new Exception("Error al Actualizar Linea entrada"));
                     return 0;
-                }
-//           
+                }                
                 dtAdd.executeUpdate("delete from " + condS);
                 guardaDesOrig(linea);
             } else
@@ -2938,6 +2947,7 @@ public class MantDesp extends ventanaPad implements PAD
      * @throws Exception
      */
     private void guardaDesOrig(int linea) throws Exception {
+        dtAdd.commit();
         if (deo_codiE.getValorInt() == 0)
             guardaCabOrig();
         
@@ -3137,6 +3147,7 @@ public class MantDesp extends ventanaPad implements PAD
     {
         try
         {
+            dtAdd.commit(); // Para resetear el current_timestamp
             int nInd = jtLin.getValorInt(linea, JTLIN_NUMIND);
             int nOrd = jtLin.getValorInt(linea, JTLIN_ORDEN);
             tid_codiE.setEnabled(false);

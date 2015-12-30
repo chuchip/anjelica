@@ -1011,7 +1011,6 @@ public class menu extends JFrame
     jPopupVarios.add(MenuFicha);
     jPopupVarios.add(MenuLogs);
     EU=gnu.chu.Menu.LoginDB.cargaEntornoUsu();
-    EU.usuario="cpuente";EU.usu_nomb="SuperUsuario";
     EU.usuario="cpuente";
     EU.password="anjelica";
     EU.email="jpuente.ext@riojasalud.es";
@@ -1978,7 +1977,7 @@ void pdreprese_actionPerformed(ActionEvent e) {
   }
   void mantAlbRuta_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
-    ht.put("admin","true");
+    ht.put("modSala","true");
     lanzaEjecutable(new gnu.chu.anjelica.ventas.ManAlbRuta(menu.this,EU,ht));
   }
   

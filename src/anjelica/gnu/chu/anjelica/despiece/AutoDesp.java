@@ -147,7 +147,7 @@ public class AutoDesp extends ventana {
             long deoTiempo;
             Date deoFeccad=null;
             String deoSerlot;
-            String deoFecha="";
+            Date deoFecha=null;
             double deoKilos,deoPrcost;
             while (iter.hasNext())
             {
@@ -164,7 +164,7 @@ public class AutoDesp extends ventana {
                     if (! Desporig.select(dtAdd, isIcon, ejeNume, deoCodi))
                         throw new SQLException("Numero despiece: "+deoCodi+" NO encontrado");
                     deoFeccad=dtAdd.getDate("deo_feccad");
-                    deoFecha=dtAdd.getString("deo_fecha");
+                    deoFecha=dtAdd.getDate("deo_fecha");
                     prvCodi=dtAdd.getInt("prv_codi");
                     dtAdd.edit();
                     dtAdd.setDato("deo_codi",newDeoCodi);

@@ -128,7 +128,7 @@ public class ActualStkPart
    */
   public boolean sumar(int ejeNume, String serie, int lote,
                        int numind, int proCodi,
-                       int almCodi, double kilos, int unidades, String fecCre) throws
+                       int almCodi, double kilos, int unidades, Date fecCre) throws
       SQLException
   {
     return sumar(ejeNume, serie, lote, numind, proCodi, almCodi, kilos,
@@ -166,7 +166,7 @@ public class ActualStkPart
    */
   public boolean sumar(int ejeNume, String serie, int lote, int numind,
                        int proCodi,
-                       int almCodi, double kilos, int unidades, String fecMvto,
+                       int almCodi, double kilos, int unidades, Date fecMvto,
                        int creaReg,
                        int prvCodi, java.util.Date fecCaduc) throws java.sql.SQLException
   {
@@ -212,7 +212,7 @@ public class ActualStkPart
    */
   public boolean sumar(int ejeNume, String serie, int lote, int numind,
                        int proCodi,
-                       int almCodi, double kilos, int unidades, String fecMvto,
+                       int almCodi, double kilos, int unidades, Date fecMvto,
                        int creaReg,
                        int prvCodi, java.util.Date fecCaduc, boolean excep,boolean actual) throws
       java.sql.SQLException
@@ -223,7 +223,7 @@ public class ActualStkPart
    }
   private boolean suma_regen(int ejeNume, String serie, int lote, int numind,
                        int proCodi,
-                       int almCodi, double kilos, int unidades, String fecMvto,
+                       int almCodi, double kilos, int unidades, Date fecMvto,
                        int creaReg,
                        int prvCodi, java.util.Date fecCaduc, boolean excep,boolean actual) throws
       java.sql.SQLException
@@ -231,12 +231,7 @@ public class ActualStkPart
       
     int res;
     String s1;
-    if (fecMvto != null)
-    {
-      if (fecMvto.trim().equals(""))
-        fecMvto = null;
-    }
-    String stp_fefici=fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") : fecMvto;
+    String stp_fefici=fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") : Formatear.getFecha(fecMvto,"dd-MM-yyyy");
     String s = "UPDATE  stockpart set stp_kilact = "+(actual?"(":"stp_kilact + (")+kilos+")"+
         " ,stp_unact= "+(actual?"(":" stp_unact+ (")+unidades+")"+
         " ,stp_fefici = to_date('"+stp_fefici+"','dd-MM-yyyy')"  +
@@ -291,16 +286,14 @@ public class ActualStkPart
         dtAdd.setDato("pro_numind", numind);
         dtAdd.setDato("alm_codi", almCodi);
         dtAdd.setDato("stp_unini", unidStk);
+        
         dtAdd.setDato("stp_feccre",
-                      fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") :
-                      fecMvto,"dd-MM-yyyy");
+                      fecMvto == null ? "current_timestamp" :
+                      fecMvto);
         dtAdd.setDato("stp_fefici",
-                      fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") :
-                      fecMvto, "dd-MM-yyyy");
+                      fecMvto == null ? "current_timestamp" :
+                      fecMvto);
         dtAdd.setDato("stp_kilini", kilStk);
-        dtAdd.setDato("stp_fefici",
-                      fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") :
-                      fecMvto, "dd-MM-yyyy");
         dtAdd.setDato("stp_kilact", kilStk);
         dtAdd.setDato("stp_unact", unidStk);
         if (prvCodi > 0)
@@ -374,11 +367,11 @@ public class ActualStkPart
    * @return boolean
    */
   private void actAcum(int proCodi, int almCodi, double kilos, int unidades,
-                         String fecMvto,boolean actual) throws java.sql.SQLException
+                         Date fecMvto,boolean actual) throws java.sql.SQLException
   {
 
 
-    String fefici=fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") : fecMvto;
+    String fefici=fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") : Formatear.getFecha(fecMvto,"dd-MM-yyyy");
     String s="UPDATE actstkpart SET stp_kilact = "+(actual?"(":"stp_kilact + (")+kilos+")"+
         " ,stp_unact= "+(actual?"(":"stp_unact + (")+unidades +")"+
         " ,stp_fefici = to_date('"+fefici+"','dd-MM-yyyy')"+
@@ -392,11 +385,9 @@ public class ActualStkPart
       dtAdd.setDato("pro_codi", proCodi);
       dtAdd.setDato("alm_codi", almCodi);
       dtAdd.setDato("stp_feccre",
-                    fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") : fecMvto,
-                    "dd-MM-yyyy");
-      dtAdd.setDato("stp_fefici",
-                    fecMvto == null ? Fecha.getFechaSys("dd-MM-yyyy") : fecMvto,
-                    "dd-MM-yyyy");
+                    fecMvto == null ? "current_timestamp": fecMvto);
+      dtAdd.setDato("stp_fefici",  fecMvto == null ?  "current_timestamp": fecMvto
+                    );
       dtAdd.setDato("stp_kilact", kilAlmac);
       dtAdd.setDato("stp_unact", unidAlmac);
       dtAdd.update();
@@ -418,7 +409,7 @@ public class ActualStkPart
  */
   public boolean restar(int ejeNume, String serie, int lote,
                         int numind, int proCodi,
-                        int almCodi, double kilos, int unidades, String fecMvto) throws   SQLException
+                        int almCodi, double kilos, int unidades, Date fecMvto) throws   SQLException
   {
 
     return sumar(ejeNume, serie, lote, numind, proCodi, almCodi, kilos * -1,
@@ -784,7 +775,7 @@ public class ActualStkPart
     else
       return llave.substring(posIni, posFin++);
   }
-  private String getSqlMvt(int proArtcon, String fecinv, String fecsup) throws ParseException
+  private String getSqlMvt(int proArtcon, Date fecinv, Date fecsup) throws ParseException
   {
       return getSqlMvt(true,proArtcon,0,fecinv,fecsup,0,true);
   }
@@ -854,18 +845,18 @@ public class ActualStkPart
    * @param swControlInv Coge como inventario inicial uno de las tablas de control.
    * @return Sentencia SQL
    */
-  private String getSqlMvt(boolean swFecMvto,int proArtcon, int almCodi, String fecinv, String fecsup,int pro_codi,boolean swControlInv) 
+  private String getSqlMvt(boolean swFecMvto,int proArtcon, int almCodi, Date fecinv, Date fecsup,int pro_codi,boolean swControlInv) 
       throws ParseException
   {
     String condProd = "";
     if (proArtcon != 2)
       condProd = " and a.pro_artcon " + (proArtcon == 0 ? "= 0" : " <> 0");
     
-    String fecIni=fecinv;
-    String fecFin=fecsup;
+    Date fecIni=fecinv;
+    Date fecFin=fecsup;
     if (fecsup!=null)
     {
-        if (Formatear.restaDias(fecsup, fecinv)<0)   
+        if (Formatear.comparaFechas(fecsup, fecinv)<0)   
         {
            fecIni=fecsup;
            fecFin=fecinv;
@@ -962,7 +953,7 @@ public class ActualStkPart
      return this.camara;
    }
 
-   public boolean regeneraStock(DatosTabla dt,int proArtcon, int almCodi, String fecinv) throws
+   public boolean regeneraStock(DatosTabla dt,int proArtcon, int almCodi, Date fecinv) throws
        Exception
    {
      return regeneraStock(dt,proArtcon,almCodi,fecinv,0);
@@ -977,7 +968,7 @@ public class ActualStkPart
  * @return false si no hay registros a actualizar
  * @throws Exception
  */
-   public boolean regeneraStock(DatosTabla dt, int proArtcon, int almCodi, String fecinv,
+   public boolean regeneraStock(DatosTabla dt, int proArtcon, int almCodi, Date fecinv,
                                 int pro_codi) throws Exception
    {
      return regeneraStock(dt, proArtcon, almCodi, fecinv, pro_codi,true);
@@ -992,12 +983,12 @@ public class ActualStkPart
     * @return HashMap  con los registros de stocks a  la fecha dada.
     * @throws java.sql.SQLException
     */
-   public HashMap getStockControl(DatosTabla dt,int proArtcon,String fecControl,String fecFinal) throws SQLException
+   public HashMap getStockControl(DatosTabla dt,int proArtcon,Date fecControl,Date fecFinal) throws SQLException
    {
      String s;
      boolean restar=false;
      try {
-           if (Formatear.restaDias(fecFinal, fecControl)<0)   
+           if (Formatear.comparaFechas(fecFinal, fecControl)<0)   
                restar=true;
          s= getSqlMvt(proArtcon, fecControl,fecFinal);
      } catch (ParseException k1)
@@ -1025,7 +1016,7 @@ public class ActualStkPart
     * @throws Exception
     */
    private HashMap getStockInd(DatosTabla dt,int proArtcon, int almCodi,
-                                String fecinv,String fecsup,int pro_codi,
+                                Date fecinv,Date fecsup,int pro_codi,
                                 boolean swIncProd) throws SQLException
    {
 
@@ -1036,7 +1027,7 @@ public class ActualStkPart
      try {
         if (fecsup!=null)
         {
-            if (Formatear.restaDias(fecsup, fecinv)<0)   
+            if (Formatear.comparaFechas(fecsup, fecinv)<0)   
                    restar=true;         
         }
         s = getSqlMvt(true,proArtcon, almCodi, fecinv,fecsup,pro_codi,false);
@@ -1059,7 +1050,7 @@ public class ActualStkPart
     * @return HashMap
     * @throws SQLException Carga
     */
-   private HashMap getStockInd0(DatosTabla dt,String fecinv,boolean restar) throws SQLException
+   private HashMap getStockInd0(DatosTabla dt,Date fecinv,boolean restar) throws SQLException
    {
      HashMap<String,String> ht = new HashMap();
      int n = 0;
@@ -1100,7 +1091,7 @@ public class ActualStkPart
      return ht;
 }
     public boolean regeneraStock(DatosTabla dt,int proArtcon, int almCodi,
-                                String fecinv,int pro_codi,boolean resetear) throws Exception
+                                Date fecinv,int pro_codi,boolean resetear) throws Exception
    {
           return regeneraStock(dt, proArtcon, almCodi, fecinv, pro_codi, false,resetear);
    }
@@ -1119,7 +1110,7 @@ public class ActualStkPart
     * @return boolean false si no hay registros a actualizar
     */
    private boolean regeneraStock(DatosTabla dt,int proArtcon, int almCodi,
-                                String fecinv,int pro_codi,boolean controlCam,boolean resetear) throws Exception
+                                Date fecinv,int pro_codi,boolean controlCam,boolean resetear) throws Exception
    {
      HashMap ht =getStockInd(dt,proArtcon,almCodi,fecinv,null,pro_codi,controlCam);
      if (ht==null)
@@ -1193,7 +1184,7 @@ public class ActualStkPart
        datInd =new DatIndiv(key,valor);
        suma_regen(datInd.ejeNume,datInd.serie,datInd.lote,datInd.numind,
                datInd.proCodi,datInd.almCodi,datInd.canti,datInd.numuni,fecinv,
-             CREAR_SI,0,Formatear.getDate(fecinv,"dd-MM-yyyy"),false,true);
+             CREAR_SI,0,fecinv,false,true);
        n++;
        if (n % 10 == 0)
          setMensajePopEspere("Actualizando Stock ... Tratando Producto: " + datInd.proCodi);
@@ -1216,7 +1207,7 @@ public class ActualStkPart
      * @throws SQLException
      */
    public void insInventCong(DatosTabla dtAdd, DatosTabla dtStat,int almCodi,
-                                String fecinv,String fecsup,String usuNomb) throws ParseException,SQLException
+                                Date fecinv,Date fecsup,String usuNomb) throws ParseException,SQLException
    {
      HashMap<String,String> ht =getStockInd(dtStat,-1,almCodi,fecinv,fecsup,0,true);
      if (ht==null)
@@ -1277,7 +1268,7 @@ public class ActualStkPart
     * @throws Exception
     * @return boolean Si se encontraron registros para actualizar.
     */
-   private boolean regAcuProducto (DatosTabla dt, int proArtcon,String fecMvto,int proCodi) throws
+   private boolean regAcuProducto (DatosTabla dt, int proArtcon,Date fecMvto,int proCodi) throws
        Exception
    {
      String s = "select s.pro_codi,s.alm_codi,sum(stp_kilact) as stp_kilact, sum(stp_unact) as stp_unact "+

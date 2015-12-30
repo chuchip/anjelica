@@ -1597,7 +1597,7 @@ def_prcost float,	-- Precio de Costo
 def_kilos float,	-- Kilos
 def_feccad date,	-- Fecha. Caducidad
 def_preusu float not null default 0,     -- Precio de Costo introducido por el usuario
-def_tiempo timestamp default  current_date -- Fecha de Movimiento.
+def_tiempo timestamp default  current_timestamp -- Fecha de Movimiento.
 );
 create index  ix_despfin  on anjelica.v_despfin (eje_nume,deo_codi,def_orden);
 create index ix_despfin1 on anjelica.v_despfin(pro_codi, def_ejelot , def_emplot , def_serlot , pro_lote , pro_numind);
@@ -2040,16 +2040,18 @@ create table albrutacab
  --
 -- Tabla Cabecera Lineas de ruta.
 --
--- drop view v_albruta;
--- drop table albrutalin;
+ drop view v_albruta;
+ drop table albrutalin;
 create table albrutalin
 (
 	alr_nume int not null, -- ID
 	alr_orden int not null, -- Orden de carga
 	avc_id int not null,  -- ID. Albaran
+    alr_repet smallint not null default 0, -- Repetido
 	constraint ix_albrutalin primary key (alr_nume,alr_orden)
 );
-create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,
+create index ix_albrutali1 on albrutalin(avc_id);
+create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_repet,
 al.emp_codi,al.avc_ano,al.avc_serie,al.avc_nume,al.cli_codi,al.avc_clinom,al.avc_kilos,
 al.avc_unid 
 from albrutacab as c, albrutalin as l,v_albavec as al 
@@ -2070,6 +2072,7 @@ create table vehiculos
 	constraint ix_vehiculos primary key (veh_codi)
 );
 grant select on vehiculos to public;
+insert into vehiculos values(99,'PROPIO','','','',0,0);
 --
 -- MATADEROS
 --
@@ -3465,8 +3468,8 @@ create table anjelica.stockpart
 	stp_unini int,		-- Unidades Iniciales (puestas al crear
 				-- el registro)
  	stp_unact int,		-- Unidades Actuales
- 	stp_feccre date,	-- Fecha de Creacion
- 	stp_fefici date,	-- Fecha Ult. Actualizacion
+ 	stp_feccre timestamp,	-- Fecha de Creacion
+ 	stp_fefici timestamp,	-- Fecha Ult. Actualizacion
  	stp_kilini float,	-- Kilos Iniciales
 	stp_kilact float,	-- Kilos Actuales
 	prv_codi int,		-- Proveedor
@@ -3480,6 +3483,7 @@ create index ix_stkpart2 on anjelica.stockpart(pro_codi,eje_nume,pro_serie,pro_n
 
 -- alter table anjelica.v_stkpart rename to stkpart_antigua
 create view anjelica.v_stkpart as select * from anjelica.stockpart;
+grant select on anjelica.stkpart to public;
 --drop table anjelica.mvtosalm;
 create table anjelica.mvtosalm
 (	

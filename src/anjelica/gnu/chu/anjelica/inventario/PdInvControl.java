@@ -1375,7 +1375,7 @@ public class PdInvControl extends ventanaPad implements PAD
 //         }
          ActualStkPart stkPart=new ActualStkPart(dtAdd,EU.em_cod);
          HashMap ht = stkPart.getStockControl(dtCon1,cam_codiE.getText().equals("X")?1:0,
-           cci_fecoriE.getText(),cci_fecconE.getText());
+           cci_fecoriE.getDate(),cci_fecconE.getDate());
          if (ht == null || ht.isEmpty())
              return 0;
        
