@@ -371,7 +371,7 @@ public class Clmarzona extends ventana {
     mvtosAlm.setEmpresa(emp_codiE.getValorInt());
     mvtosAlm.setSbeCodi(sbe_codiE.getValorInt());
     
-    mvtosAlm.iniciarMvtos(feulinE.getText(), feciniE.getText(),fecfinE.getText(),dtCon1);
+    mvtosAlm.iniciarMvtos(feulinE.getDate(), feciniE.getDate(),fecfinE.getDate(),dtCon1);
     mvtosAlm.resetMensajes();
     do
     {

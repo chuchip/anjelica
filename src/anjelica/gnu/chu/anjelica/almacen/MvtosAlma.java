@@ -829,7 +829,7 @@ public class MvtosAlma
      * @throws SQLException
      * @throws ParseException
      */
-    public void iniciarMvtos(String fecInv, String fecIni, String fecFin,
+    void iniciarMvtos(String fecInv, String fecIni, String fecFin,
             DatosTabla dtCon1) throws SQLException, ParseException {
 
         String fefi;
@@ -1226,8 +1226,8 @@ public class MvtosAlma
                   ResultSet rsCli=psCli.executeQuery();
                   if (! rsCli.next())
                   {
-                    DT_zonCodi="";
-                    DT_repCodi="";
+                    DT_zonCodi=null;
+                    DT_repCodi=null;
                     DT_sbeCodi=0;
                   }
                   else
@@ -1246,23 +1246,26 @@ public class MvtosAlma
             }
             cantiInd-= dt.getDouble("canti");
             swIgnVenta=false;
-            if (sel=='R' && swIgnRegul && ! swDiscr && DT_zonCodi.equals(""))
-            { // Ignorar Regularizaciones Genericas                             
-                  swIgnVenta=true;
-            }
-            if (sel=='V' || sel=='R')
+            if (sel=='R' )
+            {
+                if (  swIgnRegul && swDiscr && DT_zonCodi==null)
+                { // Ignorar Regularizaciones Genericas                             
+                      swIgnVenta=true;
+                }
+             }
+            if (sel=='V' || sel=='R' && !swIgnVenta)
             { // Albaran de venta o Regularizacion              
-              if (zonCodi!= null)
+              if (DT_zonCodi!= null && zonCodi!=null)
               {
                 if (! DT_zonCodi.matches(zonCodi))
                         swIgnVenta=true;
               }
-              if (repCodi != null )
+              if (DT_repCodi != null && repCodi!=null)
               {
                 if (! DT_repCodi.matches(repCodi))
                         swIgnVenta=true;
               }              
-              if ( sbeCodi!=0 && DT_sbeCodi!=sbeCodi)
+              if ( DT_sbeCodi!=0 && sbeCodi!=0 && DT_sbeCodi!=sbeCodi)
               {                
                       swIgnVenta=true;
               }

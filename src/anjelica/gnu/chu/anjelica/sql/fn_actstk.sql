@@ -1,4 +1,4 @@
-﻿CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
+CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
   RETURNS TRIGGER AS $grabar$   
   DECLARE   
   STKNEW RECORD;

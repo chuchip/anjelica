@@ -1,7 +1,3 @@
-﻿-- Function: fn_mvtoalm()
-
--- DROP FUNCTION fn_mvtoalm();
-
 CREATE OR REPLACE FUNCTION fn_mvtoalm()
   RETURNS trigger AS
 $BODY$  
@@ -387,7 +383,14 @@ $BODY$
 			pro_indlot =OLD.pro_numind;
 		GET DIAGNOSTICS nRows = ROW_COUNT;
 		if nRows = 0  and ajuDelmvt = 0  then
-			RAISE EXCEPTION 'No encontrado Mvto a modificar. Desp. Entrada';
+                     RAISE EXCEPTION 'No encontrado Mvto a modificar. Desp. Entrada. Almacen % Despiece  % % Producto: % Ejer: % Serie:  %  Lote: %  Ind: % ',
+                            almCodi,
+                            OLD.def_ejelot,OLD.def_serlot, 
+			    OLD.pro_codi,
+                            OLD.def_ejelot,
+                            OLD.def_serlot,
+                            OLD.pro_lote,
+                            OLD.pro_numind;
 			RETURN null;
 		end if;
 		return NEW;
