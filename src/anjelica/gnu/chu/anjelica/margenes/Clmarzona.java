@@ -110,7 +110,7 @@ public class Clmarzona extends ventana {
   {
       iniciarFrame();
 
-      this.setVersion("2015-10-21");
+      this.setVersion("2016-01-04");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -129,6 +129,7 @@ public class Clmarzona extends ventana {
     emp_codiE.iniciar(dtStat, this, vl, EU);
     sbe_codiE.iniciar(dtStat, this, vl, EU);
     pro_sbecodE.iniciar(dtStat, this, vl, EU);
+    cli_codiE.iniciar(dtStat, this, vl, EU);
     feciniE.iniciar(dtStat,this,vl,EU);
     fecfinE.iniciar(dtStat,this,vl,EU);
     pro_sbecodE.setTipo("A");
@@ -316,11 +317,11 @@ public class Clmarzona extends ventana {
                     +"= "+pro_sbecodE.getValorInt())
                 + (zonCodi == null ? "" : " AND cl.zon_codi = '" + zonCodi + "'")
                 + (repCodi == null ? "" : " AND cl.rep_codi = '" + repCodi + "'")
+                + (cli_codiE.isNull() ? "" : " AND cl.cli_codi = '" + cli_codiE.getValorInt() + "'")
                 + (emp_codiE.getValorInt()==0?"": " and c.emp_codi = "+emp_codiE.getValorInt())
                 + (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+sbe_codiE.getValorInt())
                 + (proCod != null ? "and l.pro_codi = " + proCod : "")
                 + " group by f.fpr_codi,p.pro_codi,P.PRO_NOMB,pro_tiplot ";
-//      if (opIncVertE.isSelected())
         s+= " UNION"
             + " SELECT f.fpr_codi,p.pro_codi,P.PRO_NOMB, pro_tiplot,0 as avl_canti, "
             + "  0  as avl_prbase "
@@ -370,7 +371,7 @@ public class Clmarzona extends ventana {
     mvtosAlm.setIgnoraRegular(! opIncVertE.isSelected());
     mvtosAlm.setEmpresa(emp_codiE.getValorInt());
     mvtosAlm.setSbeCodi(sbe_codiE.getValorInt());
-    
+    mvtosAlm.setCliente(cli_codiE.getValorInt());
     mvtosAlm.iniciarMvtos(feulinE.getDate(), feciniE.getDate(),fecfinE.getDate(),dtCon1);
     mvtosAlm.resetMensajes();
     do
@@ -386,7 +387,8 @@ public class Clmarzona extends ventana {
            impGana = getImpGana(proCodi, fecini, fecfin, zonCodi,repCodi);
            if (proTipLot.equals("C"))
                impGana=impPro; // Si el producto es comentario. Lo pongo todo como ganancia.
-           verDatos(""+proCodi, proNomb, kgPro, impPro, impGana,kgCom,impCom,jt);
+           if (impGana!=0 || impPro!=0)
+            verDatos(""+proCodi, proNomb, kgPro, impPro, impGana,kgCom,impCom,jt);
            proNomb=dtVen.getString("pro_nomb");
            proCodi=dtVen.getInt("pro_codi");
            proTipLot=dtVen.getString("pro_tiplot");
@@ -547,6 +549,7 @@ public class Clmarzona extends ventana {
 
   double getImpGana(int proCodi, String fecini,String fecfin,String zona,String repr) throws Exception
   {
+    
     mvtosAlm.calculaMvtos( proCodi,dtCon1,dtStat, zona, repr);
     kgCom = mvtosAlm.getKilosEntrada();
     impCom= mvtosAlm.getImporteEntrada();
@@ -589,6 +592,8 @@ public class Clmarzona extends ventana {
         opExcSeccion = new gnu.chu.controles.CCheckBox();
         feciniE = new gnu.chu.camposdb.fechaCal();
         fecfinE = new gnu.chu.camposdb.fechaCal();
+        cLabel19 = new gnu.chu.controles.CLabel();
+        cli_codiE = new gnu.chu.camposdb.cliPanel();
         PPie = new gnu.chu.controles.CPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
         cLabel8 = new gnu.chu.controles.CLabel();
@@ -635,9 +640,9 @@ public class Clmarzona extends ventana {
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        Pcabe.setMaximumSize(new java.awt.Dimension(650, 88));
-        Pcabe.setMinimumSize(new java.awt.Dimension(650, 88));
-        Pcabe.setPreferredSize(new java.awt.Dimension(650, 88));
+        Pcabe.setMaximumSize(new java.awt.Dimension(650, 108));
+        Pcabe.setMinimumSize(new java.awt.Dimension(650, 108));
+        Pcabe.setPreferredSize(new java.awt.Dimension(650, 108));
         Pcabe.setLayout(null);
 
         cLabel5.setText("De Fecha");
@@ -653,17 +658,17 @@ public class Clmarzona extends ventana {
         cLabel16.setText("Zona");
         cLabel16.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel16);
-        cLabel16.setBounds(10, 48, 40, 18);
+        cLabel16.setBounds(10, 67, 40, 18);
 
         zon_codiE.setAncTexto(30);
         zon_codiE.setPreferredSize(new java.awt.Dimension(92, 18));
         Pcabe.add(zon_codiE);
-        zon_codiE.setBounds(50, 48, 210, 18);
+        zon_codiE.setBounds(50, 67, 210, 18);
 
-        cLabel1.setText("Producto");
+        cLabel1.setText("Cliente");
         cLabel1.setPreferredSize(new java.awt.Dimension(50, 18));
         Pcabe.add(cLabel1);
-        cLabel1.setBounds(12, 25, 50, 18);
+        cLabel1.setBounds(10, 47, 50, 18);
 
         pro_codiE.setPreferredSize(new java.awt.Dimension(271, 18));
         Pcabe.add(pro_codiE);
@@ -672,11 +677,11 @@ public class Clmarzona extends ventana {
         cLabel2.setText("Fecha Ult. Inv.");
         cLabel2.setPreferredSize(new java.awt.Dimension(74, 18));
         Pcabe.add(cLabel2);
-        cLabel2.setBounds(415, 25, 74, 18);
+        cLabel2.setBounds(430, 25, 90, 18);
 
         feulinE.setPreferredSize(new java.awt.Dimension(28, 18));
         Pcabe.add(feulinE);
-        feulinE.setBounds(495, 23, 120, 20);
+        feulinE.setBounds(520, 25, 120, 18);
 
         cLabel3.setText("Empresa");
         cLabel3.setPreferredSize(new java.awt.Dimension(49, 18));
@@ -699,52 +704,59 @@ public class Clmarzona extends ventana {
 
         Baceptar.setText("Aceptar");
         Pcabe.add(Baceptar);
-        Baceptar.setBounds(540, 50, 100, 29);
+        Baceptar.setBounds(540, 70, 100, 29);
 
         cLabel17.setText("Repres");
         cLabel17.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel17);
-        cLabel17.setBounds(270, 48, 40, 18);
+        cLabel17.setBounds(270, 67, 40, 18);
 
         rep_codiE.setAncTexto(30);
         rep_codiE.setPreferredSize(new java.awt.Dimension(92, 18));
         Pcabe.add(rep_codiE);
-        rep_codiE.setBounds(310, 48, 210, 18);
+        rep_codiE.setBounds(310, 67, 210, 18);
 
         opIncVertE.setSelected(true);
         opIncVertE.setText("Incl. todas Reg.");
         opIncVertE.setToolTipText("Incluir Regularizaciones Genericas");
         Pcabe.add(opIncVertE);
-        opIncVertE.setBounds(435, 67, 120, 17);
+        opIncVertE.setBounds(430, 87, 110, 18);
         opIncVertE.getAccessibleContext().setAccessibleDescription("Incluir Regularizaciones");
 
         cLabel18.setText("Seccion Art");
         cLabel18.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel18);
-        cLabel18.setBounds(10, 67, 70, 18);
+        cLabel18.setBounds(80, 87, 70, 18);
         cLabel18.getAccessibleContext().setAccessibleName("Seccion Art.");
 
         Pcabe.add(pro_sbecodE);
-        pro_sbecodE.setBounds(80, 67, 40, 17);
+        pro_sbecodE.setBounds(160, 87, 40, 18);
 
         sbe_nombL.setBackground(java.awt.Color.orange);
         sbe_nombL.setOpaque(true);
         Pcabe.add(sbe_nombL);
-        sbe_nombL.setBounds(120, 67, 200, 17);
+        sbe_nombL.setBounds(200, 87, 220, 18);
 
         opIncComent.setText("Inc.  Comentario");
         opIncComent.setToolTipText("Incluir productos tipo comentario");
         Pcabe.add(opIncComent);
         opIncComent.setBounds(532, 2, 110, 17);
 
-        opExcSeccion.setText("Excepto Seccion");
+        opExcSeccion.setText("Excepto");
         opExcSeccion.setToolTipText("Incluir todos los productos excpeto la seccion  introducida");
         Pcabe.add(opExcSeccion);
-        opExcSeccion.setBounds(330, 67, 110, 17);
+        opExcSeccion.setBounds(10, 87, 70, 18);
         Pcabe.add(feciniE);
         feciniE.setBounds(292, 2, 90, 17);
         Pcabe.add(fecfinE);
         fecfinE.setBounds(440, 2, 92, 17);
+
+        cLabel19.setText("Producto");
+        cLabel19.setPreferredSize(new java.awt.Dimension(50, 18));
+        Pcabe.add(cLabel19);
+        cLabel19.setBounds(12, 25, 50, 18);
+        Pcabe.add(cli_codiE);
+        cli_codiE.setBounds(69, 47, 430, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -896,7 +908,7 @@ public class Clmarzona extends ventana {
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 250, Short.MAX_VALUE)
+            .add(0, 230, Short.MAX_VALUE)
         );
 
         cTabbedPane1.addTab("Datos", jt);
@@ -952,7 +964,7 @@ public class Clmarzona extends ventana {
         );
         jtGruLayout.setVerticalGroup(
             jtGruLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 250, Short.MAX_VALUE)
+            .add(0, 230, Short.MAX_VALUE)
         );
 
         Pfami.add(jtGru, java.awt.BorderLayout.CENTER);
@@ -995,6 +1007,7 @@ public class Clmarzona extends ventana {
     private gnu.chu.controles.CLabel cLabel16;
     private gnu.chu.controles.CLabel cLabel17;
     private gnu.chu.controles.CLabel cLabel18;
+    private gnu.chu.controles.CLabel cLabel19;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -1008,6 +1021,7 @@ public class Clmarzona extends ventana {
     private gnu.chu.controles.CScrollPane cScrollPane1;
     private gnu.chu.controles.CScrollPane cScrollPane2;
     private gnu.chu.controles.CTabbedPane cTabbedPane1;
+    private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CTextField ekGanaE;
     private gnu.chu.camposdb.empPanel emp_codiE;
     private gnu.chu.camposdb.fechaCal fecfinE;

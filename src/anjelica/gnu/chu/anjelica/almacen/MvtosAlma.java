@@ -40,6 +40,7 @@ import java.util.HashMap;
  */
 public class MvtosAlma
 {
+  private int cliCodi=0;
   private boolean swUsaDocumentos=false; // Usa documentos para buscar los mvtos.
   private String tiposVert="";
   private boolean swDesglInd=false; // Indica si los mvtos. se deben desglosar por individuos
@@ -891,6 +892,15 @@ public class MvtosAlma
         pStmt=dtCon1.getPreparedStatement(s);
     }
     /**
+     * Establece el cliente sobre el que se deben calcular las ganancias.
+     * 
+     * @param cliCodi 
+     */
+    public void setCliente(int cliCodi)
+    {
+        this.cliCodi=cliCodi;
+    }
+    /**
      * Debera haberse llamado primero a la funcion iniciarMvtos
      * @param dtCon1
      * @param dtStat
@@ -1017,7 +1027,7 @@ public class MvtosAlma
     boolean swDiscr=false;
     String DT_zonCodi="",DT_repCodi="";
     int DT_sbeCodi=0;
-    if ( (repCodi!=null ||  zonCodi!=null || sbeCodi!=0))
+    if ( (repCodi!=null ||  zonCodi!=null || sbeCodi!=0 || cliCodi!=0))
     {
         swDiscr=true;
         if (!swUsaDocumentos )
@@ -1268,6 +1278,10 @@ public class MvtosAlma
               if ( DT_sbeCodi!=0 && sbeCodi!=0 && DT_sbeCodi!=sbeCodi)
               {                
                       swIgnVenta=true;
+              }
+              if ( dt.getInt("cliCodi")!=0 && cliCodi!=0 && cliCodi!=dt.getInt("cliCodi"))
+              {
+                   swIgnVenta=true;
               }
             }
 
