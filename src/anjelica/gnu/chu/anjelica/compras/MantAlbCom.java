@@ -3378,9 +3378,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           return;
       }
           
-    
+      dtAdd.close();
       if (! setBloqueo(dtAdd,"v_albacoc", acc_anoE.getValorInt()+"|"+emp_codiE.getValorInt()+
-                      "|"+acc_serieE.getText()+"|"+acc_numeE.getValorInt()))
+                      "|"+acc_serieE.getText()+"|"+acc_numeE.getValorInt(),false))
       {
         msgBox(msgBloqueo);
         activaTodo();

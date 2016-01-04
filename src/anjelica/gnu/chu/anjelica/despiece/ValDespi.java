@@ -634,6 +634,7 @@ public class ValDespi extends ventana {
     */
    public static void  anulaValoracionDesp(DatosTabla dt,int ejeNume,String tipoDesp,int deoCodi) throws SQLException
    {
+       
        String s = "UPDATE v_despfin SET def_prcost = 0 "+
                 " WHERE eje_nume = " + ejeNume +
                 " AND " +

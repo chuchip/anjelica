@@ -1941,7 +1941,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   {
     modSel = NORMAL;
     dtb_Con.commit();
-    cerrar();
+    //cerrar();
     Error = false;
   }
 
@@ -1980,8 +1980,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
    * @return int Numero de Columnas Afectadas
    */
   public int executeUpdate(Statement st) throws SQLException
-  {
-
+  {    
     String s = sqlUpdate;
     s = Formatear.reemplazar(s, comodin, schema);
 

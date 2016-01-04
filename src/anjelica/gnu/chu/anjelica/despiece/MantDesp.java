@@ -1585,8 +1585,9 @@ public class MantDesp extends ventanaPad implements PAD
                 msgBox("Numero de Lote esta a cero. Creo un lote nuevo");
                 ponLoteNuevo();
             }
+//            dtAdd.cerrar();
             if (!setBloqueo(dtAdd, TABLA_BLOCK, eje_numeE.getValorInt() + "|"
-                + deo_codiE.getValorInt()))
+                + deo_codiE.getValorInt(),false))
             {
                 msgBox(msgBloqueo);
                 activaTodo();
@@ -1594,6 +1595,7 @@ public class MantDesp extends ventanaPad implements PAD
             }
             copiaRegistro("Modificado desde PAD Despieces");
             deoBlockAnt=deo_blockE.getValor();
+            
 // Pongo registro a estado 'Abierto'
             s="UPDATE desporig set deo_block = 'S'"
                 + " WHERE eje_nume = " + eje_numeE.getValorInt()
@@ -1681,7 +1683,7 @@ public class MantDesp extends ventanaPad implements PAD
         utdesp.copiaDespieceNuevo(dtStat, dtAdd, coment, EU.usuario,
             eje_numeE.getValorInt(), deo_codiE.getValorInt());
 
-        dtAdd.commit();
+//        dtAdd.commit();
     }
 
     @Override
@@ -1731,6 +1733,7 @@ public class MantDesp extends ventanaPad implements PAD
         inTidCodi = false;
         try
         {
+//            dtAdd.cerrar();
             mensaje("Modificando Datos .. Espere, por favor");
             ordenarLineasCab();
             if (opMantFecha.isSelected())
@@ -1763,7 +1766,7 @@ public class MantDesp extends ventanaPad implements PAD
                     ponStockDif();
                 }
             }
-          
+            
            ValDespi.anulaValoracionDesp(dtAdd, eje_numeE.getValorInt(),
                deo_numdesE.getValorInt()==0?"D":"G",
                 deo_numdesE.getValorInt()==0?deo_codiE.getValorInt():deo_numdesE.getValorInt());
