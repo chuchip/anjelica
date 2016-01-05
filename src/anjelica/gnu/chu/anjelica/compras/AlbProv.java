@@ -210,6 +210,7 @@ public class AlbProv extends ventana {
               " AND acc_ano ="+jtCab.getValorInt(numLinea,JTCAB_ACCANO)+
               " and acc_serie= '"+jtCab.getValString(numLinea,JTCAB_ACCSERIE)+"'"+
               " and acc_nume="+jtCab.getValorInt(numLinea,JTCAB_ACCNUME)+
+              " and acl_canti != 0"+
               " group by pro_codi,pro_nomart"+
               " order by pro_codi";
                   

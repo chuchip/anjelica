@@ -722,7 +722,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20151112)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20161212)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -5116,7 +5116,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
                       MantPartes cm = (MantPartes) prog;
                       if (cm.inTransation())
                       {
-                          msgBox("Mantenimiento Incidencias ocupado. No se puede realizar el alta");
+                          msgBox("Mantenimiento Incidencias ocupado. No se puede realizar la consulta");
                           resetMsgEspere();
                           return;
                       }

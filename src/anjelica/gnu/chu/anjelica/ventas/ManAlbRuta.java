@@ -892,6 +892,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
             " order by usu_nomb";
         if (dtCon1.select(s))
             usu_nombE.addDatos(dtCon1);
+        usu_nombE.addDatos("Externo","Externo");
         s="select veh_codi,veh_nomb from vehiculos order by veh_nomb";
         if (dtCon1.select(s))
             veh_codiE.addDatos(dtCon1);

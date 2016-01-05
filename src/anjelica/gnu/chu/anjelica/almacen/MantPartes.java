@@ -224,14 +224,18 @@ public class MantPartes  extends ventanaPad implements PAD
   public void setDocuAno(int docAno)
   {
       pac_docanoE.setValorInt(docAno);
+      pac_docanoE.setEnabled(false);
   }
   public void setDocuSerie(String docSerie)
   {
       pac_docserE.setText(docSerie);
+      pac_docserE.setEnabled(false);
   }
   public void setDocuNume(int docNume)
   {
       pac_docnumE.setValorInt(docNume);
+      pac_docnumE.setEnabled(false);
+      BbuscaDoc.setEnabled(false);
   }
   public void irGrid()
   {
@@ -254,7 +258,7 @@ public class MantPartes  extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false,
         P_PERMEST==PERM_GERENC?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20151130) Modo: "+P_PERMEST);
+        this.setVersion("(20160105) Modo: "+P_PERMEST);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -297,6 +301,7 @@ public class MantPartes  extends ventanaPad implements PAD
       PPie.setEnabled(false);
       prv_codiE.iniciar(dtStat, this, vl, EU);
       prv_codiE.setAceptaNulo(false);
+
       cli_codiE.iniciar(dtStat, this, vl, EU);
       
       cli_codiE.setAceptaNulo(false);
@@ -2178,8 +2183,12 @@ public class MantPartes  extends ventanaPad implements PAD
             insertaLin(id);
             dtAdd.commit();
             msgBox("Parte insertado con identificador: "+id);
+            boolean swAlta= !BbuscaDoc.isEnabled();
             nav.pulsado=navegador.NINGUNO;
-            activaTodo();            
+            activaTodo();
+            if (swAlta)
+                matar();
+            
         } catch (ParseException | SQLException ex)
         {
             Error("Error al crear parte",ex);
@@ -2459,7 +2468,10 @@ public class MantPartes  extends ventanaPad implements PAD
        
         Pcabe.setEnabled((activo || tipo==navegador.QUERY) && swModificaTodo && pac_fecproE.isNull());
         pac_tipoE.setEnabled(activo);
-        
+        pac_docanoE.setEnabled(activo);
+        pac_docserE.setEnabled(activo);
+        pac_docnumE.setEnabled(activo);
+        BbuscaDoc.setEnabled(activo);
         jt.setEnabled(activo && swModificaTodo && tipo != navegador.QUERY);
         jtList.setEnabled(!activo);
         Pcabe.setEnabled(activo);
