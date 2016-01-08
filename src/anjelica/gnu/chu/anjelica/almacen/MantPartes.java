@@ -9,6 +9,7 @@ import gnu.chu.anjelica.ventas.AlbClien;
 import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.camposdb.cliPanel;
 import gnu.chu.controles.CComboBox;
+import gnu.chu.controles.CTextArea;
 import gnu.chu.controles.Cgrid;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.eventos.GridAdapter;
@@ -2665,7 +2666,7 @@ public class MantPartes  extends ventanaPad implements PAD
         
         swCargaList=false;
         
-        if (!verParteLineas(parCodi,jt,dtCon1))
+        if (!verParteLineas(parCodi,jt,dtCon1,pac_comentE))
         {
             msgBox("No encontradas lineas para este PARTE");
             return;
@@ -2674,7 +2675,7 @@ public class MantPartes  extends ventanaPad implements PAD
         jt.requestFocusInicio();
     }
     
-    public static boolean verParteLineas(int parCodi,Cgrid jt,DatosTabla dt) throws SQLException
+    public static boolean verParteLineas(int parCodi,Cgrid jt,DatosTabla dt,CTextArea comentE) throws SQLException
     {
         jt.removeAllDatos();
         if (!dt.select("select l.*,a.pro_nomb from partelin as l,v_articulo as a"+
@@ -2700,6 +2701,12 @@ public class MantPartes  extends ventanaPad implements PAD
 
             jt.addLinea(v);
         } while (dt.next());
+        if (comentE!=null)
+        {
+            dt.select("select pac_coment from partecab "+
+            " where par_codi="+parCodi);       
+           comentE.setText(dt.getString("pac_coment"));
+        }
         return true;
     }
     

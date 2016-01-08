@@ -1,6 +1,4 @@
 package gnu.chu.anjelica.compras;
-
-
 /**
  *
  * <p>Título: MantAlbCom</p>
@@ -10,7 +8,7 @@ package gnu.chu.anjelica.compras;
  *  AlbSinPed true/False Indica si se pueden cargar albaranes sin un pedido de compras
  * </p>
  * <p> Creado a partir pdalbaco2</p>
- *  <p>Copyright: Copyright (c) 2005-2015
+ *  <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -34,7 +32,6 @@ import gnu.chu.anjelica.almacen.MantPartes;
 import gnu.chu.anjelica.almacen.paregalm;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.almacen.pdmotregu;
-import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.MantPaises;
@@ -607,10 +604,12 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   CCheckBox rgs_traspE = new CCheckBox();
   CPanel Potros = new CPanel();
   CPanel PIncid = new CPanel();
+  javax.swing.JScrollPane pac_comentS = new javax.swing.JScrollPane();
+  private gnu.chu.controles.CTextArea pac_comentE=new CTextArea();
   Cgrid jtIncCab = new Cgrid(4);
   Cgrid jtIncLin = new Cgrid(11);
   Cgrid jtIncAbo = new Cgrid(10);
- 
+  
   CLabel cLabel27 = new CLabel();
   GridBagLayout gridBagLayout4 = new GridBagLayout();
   sbePanel sbe_codiE = new sbePanel();
@@ -841,12 +840,15 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     Potros.setLayout(null);
     PIncid.setLayout(new GridBagLayout());
     confGridIncid();
-    
+    pac_comentS.setViewportView(pac_comentE);
+    pac_comentE.setEnabled(false);
     PIncid.add(jtIncCab,new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
             ,GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0, 0, 0, 1), 0, 0));
-    PIncid.add(jtIncLin,new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
+    PIncid.add(pac_comentS,new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0
+            ,GridBagConstraints.NORTH, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 1), 0, 0));
+    PIncid.add(jtIncLin,new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0
             ,GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(2, 0, 0, 1), 0, 0));
-    PIncid.add(jtIncAbo,new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0
+    PIncid.add(jtIncAbo,new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0
             ,GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(2, 0, 0, 1), 0, 0));
     
     cLabel27.setText("Comentario");
@@ -1573,7 +1575,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
             {
                 if (e.getValueIsAdjusting() || !jtIncCab.isEnabled()) // && e.getFirstIndex() == e.getLastIndex())
                     return;
-                MantPartes.verParteLineas(jtIncCab.getValorInt(0),jtIncLin,dtCon1);
+                MantPartes.verParteLineas(jtIncCab.getValorInt(0),jtIncLin,dtCon1,pac_comentE);
                 MantPartes.verLinAbono(jtIncCab.getValorInt(0),-1,dtCon1,dtStat,jtIncAbo);
             } catch (SQLException ex)
             {
@@ -4342,6 +4344,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         " and pac_docano = "+acc_anoE.getValorInt()+    
         " order by par_codi";
     jtIncCab.setEnabled(false);
+    
     jtIncCab.removeAllDatos();    
     if ( dtCon1.select(s))
     {
@@ -4356,7 +4359,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       } while (dtCon1.next());
       jtIncCab.requestFocus(0,0);
       jtIncCab.setEnabled(true);
-      MantPartes.verParteLineas(jtIncCab.getValorInt(0,0),jtIncLin,dtCon1);
+      
+      MantPartes.verParteLineas(jtIncCab.getValorInt(0,0),jtIncLin,dtCon1,pac_comentE);
       MantPartes.verLinAbono(jtIncCab.getValorInt(0,0),-1,dtCon1,dtStat,jtIncAbo);
     }
     else
@@ -6297,9 +6301,12 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
      }
      private void confGridIncid() throws Exception
      {
-         jtIncCab.setMaximumSize(new Dimension(752, 250));
-         jtIncCab.setMinimumSize(new Dimension(752, 250));
-         jtIncCab.setPreferredSize(new Dimension(752, 250));
+         jtIncCab.setMaximumSize(new Dimension(552, 250));
+         jtIncCab.setMinimumSize(new Dimension(552, 250));
+         jtIncCab.setPreferredSize(new Dimension(552, 250));
+         pac_comentS.setMaximumSize(new Dimension(252, 250));
+         pac_comentS.setMinimumSize(new Dimension(252, 250));
+         pac_comentS.setMinimumSize(new Dimension(252, 250));
          jtIncLin.setMaximumSize(new Dimension(752, 200));
          jtIncLin.setMinimumSize(new Dimension(752, 200));
          jtIncLin.setPreferredSize(new Dimension(752, 200));
