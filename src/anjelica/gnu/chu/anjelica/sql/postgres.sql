@@ -1300,6 +1300,7 @@ primary key (fpa_codi)
 -- drop  table v_facvec;
 create table anjelica.v_facvec
 (
+fvc_id serial not null, -- Numero Identificador
 fvc_ano int not null,		-- Ejercicio de Fra.
 emp_codi int not null,		-- Empresa
 fvc_serie char(1) not null default '1', -- Serie Factura
@@ -2034,7 +2035,8 @@ create table albrutacab
 	alr_vekmin int, -- km. Iniciales
 	alr_vekmfi int, -- km. Finales
 	alr_impgas float not null default 0, -- Importe gasolina
-	alr_coment varchar(255) -- Comentarios sobre ruta.	
+	alr_coment varchar(255), -- Comentarios sobre ruta.	
+	alr_cerrad smallint not null default 0 -- Cerrada (0=NO)
  );
  create index ix_albrutacab on albrutacab(alr_fecha);
  --
@@ -2057,6 +2059,24 @@ al.avc_unid
 from albrutacab as c, albrutalin as l,v_albavec as al 
 where c.alr_nume=l.alr_nume and al.avc_id = l.avc_id;
 grant select on v_albruta to public;
+--
+--
+--
+create table anjelica.cobrosRuta
+(
+	alr_nume int not null, -- ID
+	cru_orden int not null,
+	avc_id int,  -- ID. Albaran 
+	fvc_id int,  -- ID. Factura	
+	cru_impdoc decimal(8,2) not null,	
+	cru_impcob decimal(8,2) not null,
+	cru_tipcob char(1) not null, -- Tipo Cobro
+	cru_fecvto date,
+	cru_coment varchar(255),	
+	cru_intcob smallint NOT NULL, -- Introducido en cobros (0=No)
+    cru_totcob smallint not null -- Totalmente cobrado (O=NO)
+	constraint ix_cobrosRuta primary key (alr_nume,cru_orden)
+);
 ---
 -- Tabla vehiculos
 ---

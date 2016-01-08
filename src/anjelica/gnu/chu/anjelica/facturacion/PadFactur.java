@@ -144,7 +144,7 @@ public class PadFactur extends ventanaPad   implements PAD {
        
         iniciarFrame();
 
-        this.setVersion("2015-06-19" + (MOD_CONS ? "SOLO LECTURA" : ""));
+        this.setVersion("2016-01-06" + (MOD_CONS ? "SOLO LECTURA" : ""));
         strSql = getStrSql();
         IMPFRATEXTO=EU.getValorParam("impFraTexto",IMPFRATEXTO);
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -257,6 +257,8 @@ public class PadFactur extends ventanaPad   implements PAD {
         opAgrlin = new gnu.chu.controles.CCheckBox();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
+        cLabel21 = new gnu.chu.controles.CLabel();
+        fvc_idE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##,###,##9");
 
         cTextField1.setText("cTextField1");
 
@@ -486,7 +488,7 @@ public class PadFactur extends ventanaPad   implements PAD {
 
         cLabel8.setText("Imp. Lineas");
         Ppie.add(cLabel8);
-        cLabel8.setBounds(2, 3, 72, 15);
+        cLabel8.setBounds(2, 2, 72, 15);
 
         fvc_sumlinE.setEnabled(false);
         Ppie.add(fvc_sumlinE);
@@ -556,9 +558,9 @@ public class PadFactur extends ventanaPad   implements PAD {
         Ppie.add(fvc_sumtotE);
         fvc_sumtotE.setBounds(78, 42, 75, 17);
 
-        cLabel15.setText("Tot.Cobr");
+        cLabel15.setText("Identificador");
         Ppie.add(cLabel15);
-        cLabel15.setBounds(2, 63, 67, 17);
+        cLabel15.setBounds(2, 90, 80, 17);
 
         fvc_cobradE.setEnabled(false);
         Ppie.add(fvc_cobradE);
@@ -604,6 +606,14 @@ public class PadFactur extends ventanaPad   implements PAD {
         Bcancelar.setText("Cancelar");
         Ppie.add(Bcancelar);
         Bcancelar.setBounds(300, 81, 105, 28);
+
+        cLabel21.setText("Tot.Cobr");
+        Ppie.add(cLabel21);
+        cLabel21.setBounds(2, 63, 67, 17);
+
+        fvc_idE.setEnabled(false);
+        Ppie.add(fvc_idE);
+        fvc_idE.setBounds(78, 90, 70, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -889,6 +899,7 @@ public class PadFactur extends ventanaPad   implements PAD {
      fvc_numeE.setValorDec(dt.getInt("fvc_nume"));
      fvc_anoE.setValorDec(dt.getInt("fvc_ano"));
      emp_codiE.setValorDec(dt.getInt("emp_codi"));
+    
      jt.removeAllDatos();
 
      s = "select  * from v_facvec where " +
@@ -909,6 +920,7 @@ public class PadFactur extends ventanaPad   implements PAD {
        jtCobr.removeAllDatos();
        return;
      }
+     fvc_idE.setValorDec(dtCon1.getInt("fvc_id"));
      cli_codiE.setValorInt(dtCon1.getInt("cli_codi"),dtCon1.getString("fvc_clinom",false));
 //     cli_codiE.setText(dtCon1.getString("cli_codi"));
 
@@ -2079,6 +2091,7 @@ public class PadFactur extends ventanaPad   implements PAD {
     private gnu.chu.controles.CLabel cLabel19;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel20;
+    private gnu.chu.controles.CLabel cLabel21;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel5;
@@ -2098,6 +2111,7 @@ public class PadFactur extends ventanaPad   implements PAD {
     private gnu.chu.controles.CTextField fvc_dtocomE;
     private gnu.chu.controles.CTextField fvc_dtoppE;
     private gnu.chu.controles.CTextField fvc_fecfraE;
+    private gnu.chu.controles.CTextField fvc_idE;
     private gnu.chu.controles.CTextField fvc_impcobE;
     private gnu.chu.controles.CTextField fvc_impdcoE;
     private gnu.chu.controles.CTextField fvc_impdppE;
