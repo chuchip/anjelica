@@ -3,7 +3,7 @@
 /*
  *  * <p>Titulo: GenFactur.java </p>
  * <p>Descripción: Generacion de Facturas sobre alb. de ventas</p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -80,7 +80,7 @@ import java.util.ArrayList;
  *
  */
 public class GenFactur extends ventana {
-
+  int fvcId;
   conexion ctCom;
   String fecAlb;
   int nFras;
@@ -950,7 +950,7 @@ public void iniciarVentana() throws Exception
     }
     fvcFecfra=opFecFraAlb.isSelected()?fecAlb:fvc_fecfraE.getText();
     nFras++;
-    dtAdd.addNew("v_facvec");
+    dtAdd.addNew("v_facvec",false);
     dtAdd.setDato("fvc_ano", eje_numeE.getValorInt());
     dtAdd.setDato("emp_codi", emp_codiE.getValorInt());
     dtAdd.setDato("fvc_serie",fvcSerie );
@@ -1014,6 +1014,8 @@ public void iniciarVentana() throws Exception
       dtAdd.setDato("fvc_porreq",0);
     }
     dtAdd.update(stUp);
+//    dtAdd.select("SELECT lastval()");
+//    fvcId=(dtAdd.getInt(1));
     if (esGiro)
     { // Crear Recibos en tabla v_recibo
       generaRecibos(fpaCodi,impFra);
