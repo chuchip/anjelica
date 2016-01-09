@@ -1884,7 +1884,8 @@ public class CGridEditable extends Cgrid implements CQuery {
 
   /**
    * Establece la Columna donde ira cuando se inserte una nueva linea.
-   * por defecto es igual a colIni.
+   * La primera columna es 0.
+   * por defecto es igual a colIni (0)
    *
    * @param colNue Columna donde ir
    */

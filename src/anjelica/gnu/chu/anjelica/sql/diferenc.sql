@@ -1,3 +1,15 @@
+drop view v_albruta;
+alter table anjelica.albrutacab add alr_cerrad smallint not null default 0;
+create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_repet,
+al.emp_codi,al.avc_ano,al.avc_serie,al.avc_nume,al.cli_codi,al.avc_clinom,al.avc_kilos,
+al.avc_unid 
+from albrutacab as c, albrutalin as l,v_albavec as al 
+where c.alr_nume=l.alr_nume and al.avc_id = l.avc_id;
+grant select on v_albruta to public;
+
+-- Crear campo ID en factura de ventas.
+alter table anjelica.v_facvec add  fvc_id serial not null;
+
 -- Cambiar fecha creacion y fecha modificacion de tabla Stock/Partidas
 drop view v_stkpart;
 alter table stockpart alter stp_feccre type timestamp;

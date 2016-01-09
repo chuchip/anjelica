@@ -1977,7 +1977,7 @@ void pdreprese_actionPerformed(ActionEvent e) {
   }
   void mantAlbRuta_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
-    ht.put("modSala","true");
+//    ht.put("modSala","true");
     lanzaEjecutable(new gnu.chu.anjelica.ventas.ManAlbRuta(menu.this,EU,ht));
   }
   
