@@ -58,11 +58,14 @@ public class ManAlbRuta extends ventanaPad implements PAD
 {
     private boolean ARG_MODSALA=false;
     final int JT_NUMALB=3;
-    final int JT_CLICOD=4;
-    final int JT_CLINOMB=5;
-    final int JT_KILOS=7;
-    final int JT_REPET=8;
-    final int JT_UNID=6;
+    final int JT_BULTOS=4;
+    
+    final int JT_CLICOD=5;
+    final int JT_CLINOMB=6;
+    final int JT_UNID=7;
+    final int JT_KILOS=8;
+    final int JT_REPET=9;
+ 
     public ManAlbRuta(EntornoUsuario eu, Principal p) {
         this(eu, p, null);
     }
@@ -114,7 +117,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2015-12-28 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2016-01-09 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -143,6 +146,11 @@ public class ManAlbRuta extends ventanaPad implements PAD
     {
         try
         {
+          
+            if (!avc_numeE.hasCambio() && !alr_bultosE.hasCambio())
+                return -1;
+            if (avc_numeE.hasCambio())
+                jt.setValor(false,row,JT_REPET);
             if (avc_numeE.getValorInt()==0)
             {
                 limpiaLinea(row);
@@ -162,8 +170,9 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 return JT_NUMALB;
             }
             String s;
-            if (avc_numeE.hasCambio() )
-                 jt.setValor(false,row,JT_REPET);
+            if (avc_numeE.hasCambio())
+                jt.setValor(false,row,JT_REPET);
+            
             if (! jt.getValBoolean(row,JT_REPET) )
             {
                 s="select * from v_albruta where emp_codi ="+emp_codiE.getValorInt()
@@ -180,11 +189,12 @@ public class ManAlbRuta extends ventanaPad implements PAD
                     jt.setValor(true, row, JT_REPET);
                 }
             }
-            avc_numeE.resetCambio();
+         
             if (checkLineaRepe(emp_codiE.getValorInt(),avc_anoE.getValorInt(),avc_serieE.getText(),
                 avc_numeE.getValorInt(),row ))
                 return 0;
-            
+            avc_numeE.resetCambio();
+            alr_bultosE.resetCambio();
 
             jt.setValor(dtCon1.getInt("cli_codi"),row,JT_CLICOD);
             String cliNomb=dtCon1.getString("avc_clinom").equals("")?
@@ -269,11 +279,20 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 a.add(dtCon1.getString("avc_ano"));
                 a.add(dtCon1.getString("avc_serie"));
                 a.add(dtCon1.getString("avc_nume"));
+                a.add(dtCon1.getString("alr_bultos"));
                 a.add(dtCon1.getString("cli_codi"));
                 a.add(dtCon1.getString("avc_clinom",true).equals("")?dtCon1.getString("cli_nomb"):dtCon1.getString("avc_clinom",true));
-                
-                a.add(dtCon1.getString("avc_unid"));
-                a.add(dtCon1.getString("avc_kilos"));
+  
+                if (dtCon1.getObject("alr_unid")==null)
+                { 
+                    a.add(dtCon1.getString("avc_unid"));
+                    a.add(dtCon1.getString("avc_kilos"));
+                }
+                else
+                {
+                    a.add(dtCon1.getString("alr_unid"));
+                    a.add(dtCon1.getString("alr_kilos"));
+                }
                 a.add((dtCon1.getInt("alr_repet") != 0));
                 jt.addLinea(a);                
             } while (dtCon1.next());
@@ -290,17 +309,20 @@ public class ManAlbRuta extends ventanaPad implements PAD
         double kilos=0;
         int unid=0;
         int nAlb=0;
+        int bultos=0;
         for (int n=0;n<nRow;n++)
         {
             if (jt.getValorInt(n,JT_NUMALB)==0)
                 continue;
             nAlb++;
+            bultos+=jt.getValorInt(n,JT_BULTOS);
             kilos+=jt.getValorDec(n,JT_KILOS);
             unid+=jt.getValorInt(n,JT_UNID);
         }
         kilosTotE.setValorDec(kilos);
         uniTotE.setValorInt(unid);
         numAlbE.setValorInt(nAlb);
+        bulTotE.setValorDec(bultos);
     }
     @Override
   public void PADAddNew()
@@ -374,6 +396,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
      }
      alr_numeE.setEnabled(false);
      alr_fechaE.resetCambio();
+     avc_numeE.resetCambio();
+     alr_bultosE.resetCambio();
      if (ARG_MODSALA)
      {
          jt.setEnabled(false);
@@ -550,6 +574,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         fvc_fecfraE = new gnu.chu.controles.CTextField();
         fvc_sumtotE = new gnu.chu.controles.CTextField();
         fvc_imppenE = new gnu.chu.controles.CTextField();
+        alr_bultosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -580,6 +605,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         cLabel15 = new gnu.chu.controles.CLabel();
         alr_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###,##9");
         BInsAuto = new gnu.chu.controles.CButton(Iconos.getImageIcon("fill"));
+        BirGrid = new gnu.chu.controles.CButton();
         PPie = new gnu.chu.controles.CPanel();
         cLabel12 = new gnu.chu.controles.CLabel();
         numAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
@@ -593,8 +619,10 @@ public class ManAlbRuta extends ventanaPad implements PAD
         numFrasE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         cLabel19 = new gnu.chu.controles.CLabel();
         impFrasE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.99");
+        cLabel13 = new gnu.chu.controles.CLabel();
+        bulTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         Tpanel1 = new gnu.chu.controles.CTabbedPane();
-        jt = new gnu.chu.controles.CGridEditable(9){
+        jt = new gnu.chu.controles.CGridEditable(10){
             @Override
             public int cambiaLinea(int row, int col)
             {
@@ -679,6 +707,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
     fvc_imppenE.setText("cTextField1");
 
+    alr_bultosE.setText("1");
+
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
     Pprinc.setLayout(new java.awt.GridBagLayout());
@@ -745,7 +775,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
     cLabel3.setText("Ruta");
     Pcabe.add(cLabel3);
-    cLabel3.setBounds(230, 23, 40, 15);
+    cLabel3.setBounds(230, 23, 40, 14);
 
     rut_codiE.setAncTexto(30);
     rut_codiE.setFormato(Types.CHAR, "XX");
@@ -755,7 +785,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
     cLabel4.setText("Vehiculo");
     Pcabe.add(cLabel4);
-    cLabel4.setBounds(230, 45, 60, 15);
+    cLabel4.setBounds(230, 45, 60, 14);
 
     usu_nombE.setAncTexto(100);
     usu_nombE.setFormato(Types.CHAR,"X",15);
@@ -765,19 +795,19 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
     cLabel8.setText("Km. Iniciales ");
     Pcabe.add(cLabel8);
-    cLabel8.setBounds(390, 70, 80, 15);
+    cLabel8.setBounds(390, 70, 80, 14);
     Pcabe.add(alr_vekminE);
     alr_vekminE.setBounds(480, 70, 70, 18);
 
     cLabel9.setText("Identificador");
     Pcabe.add(cLabel9);
-    cLabel9.setBounds(390, 110, 80, 15);
+    cLabel9.setBounds(390, 110, 80, 14);
     Pcabe.add(alr_vekmfiE);
     alr_vekmfiE.setBounds(480, 90, 70, 18);
 
     cLabel10.setText("Comentarios ");
     Pcabe.add(cLabel10);
-    cLabel10.setBounds(10, 70, 80, 15);
+    cLabel10.setBounds(10, 70, 80, 14);
 
     alr_comentE.setColumns(20);
     alr_comentE.setRows(5);
@@ -799,13 +829,15 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
     cLabel15.setText("Km. Finales");
     Pcabe.add(cLabel15);
-    cLabel15.setBounds(390, 90, 70, 15);
+    cLabel15.setBounds(390, 90, 70, 14);
     Pcabe.add(alr_numeE);
     alr_numeE.setBounds(480, 110, 50, 18);
 
     BInsAuto.setToolTipText("Insertar Alb. Pend. de Ruta");
     Pcabe.add(BInsAuto);
     BInsAuto.setBounds(510, 23, 30, 24);
+    Pcabe.add(BirGrid);
+    BirGrid.setBounds(540, 120, 2, 2);
 
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
@@ -823,36 +855,36 @@ public class ManAlbRuta extends ventanaPad implements PAD
     cLabel12.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     cLabel12.setText("Unid.");
     PPie.add(cLabel12);
-    cLabel12.setBounds(250, 0, 40, 15);
+    cLabel12.setBounds(260, 2, 40, 17);
 
     numAlbE.setEditable(false);
     PPie.add(numAlbE);
-    numAlbE.setBounds(80, 0, 40, 17);
+    numAlbE.setBounds(80, 2, 40, 17);
 
     uniTotE.setEditable(false);
     PPie.add(uniTotE);
-    uniTotE.setBounds(290, 0, 40, 17);
+    uniTotE.setBounds(300, 2, 40, 17);
 
     kilosTotE.setEditable(false);
     PPie.add(kilosTotE);
-    kilosTotE.setBounds(180, 0, 60, 17);
+    kilosTotE.setBounds(190, 2, 60, 17);
     PPie.add(Baceptar);
-    Baceptar.setBounds(320, 10, 110, 30);
+    Baceptar.setBounds(350, 2, 90, 30);
     PPie.add(Bcancelar);
-    Bcancelar.setBounds(440, 10, 110, 30);
+    Bcancelar.setBounds(445, 2, 95, 30);
 
     cLabel16.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     cLabel16.setText("Imp. Fras.");
     PPie.add(cLabel16);
-    cLabel16.setBounds(140, 20, 60, 17);
+    cLabel16.setBounds(120, 20, 60, 17);
 
     cLabel17.setText("Nº Facturas");
     PPie.add(cLabel17);
-    cLabel17.setBounds(3, 20, 70, 15);
+    cLabel17.setBounds(3, 20, 70, 14);
 
     cLabel18.setText("Nº Albaranes ");
     PPie.add(cLabel18);
-    cLabel18.setBounds(0, 0, 80, 15);
+    cLabel18.setBounds(0, 2, 80, 14);
 
     numFrasE.setEditable(false);
     PPie.add(numFrasE);
@@ -861,11 +893,20 @@ public class ManAlbRuta extends ventanaPad implements PAD
     cLabel19.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     cLabel19.setText("Kilos");
     PPie.add(cLabel19);
-    cLabel19.setBounds(140, 0, 40, 17);
+    cLabel19.setBounds(150, 2, 40, 17);
 
-    impFrasE.setEnabled(false);
+    impFrasE.setEditable(false);
     PPie.add(impFrasE);
-    impFrasE.setBounds(200, 20, 80, 17);
+    impFrasE.setBounds(180, 20, 70, 17);
+
+    cLabel13.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+    cLabel13.setText("Bultos");
+    PPie.add(cLabel13);
+    cLabel13.setBounds(260, 20, 40, 17);
+
+    bulTotE.setEditable(false);
+    PPie.add(bulTotE);
+    bulTotE.setBounds(300, 20, 40, 17);
 
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
@@ -882,20 +923,22 @@ public class ManAlbRuta extends ventanaPad implements PAD
     v.add("Ejer."); // 1
     v.add("Serie"); // 2
     v.add("Numero"); // 3
-    v.add("Cliente"); // 4
-    v.add("Nombre Cliente"); // 5
-    v.add("Unid."); // 6
-    v.add("Kilos"); // 7
-    v.add("Dupl."); // 7
+    v.add("Bultos"); // 4
+    v.add("Cliente"); // 5
+    v.add("Nombre Cliente"); // 6
+    v.add("Unid."); // 7
+    v.add("Kilos"); // 8
+    v.add("Dupl."); // 9
     jt.setCabecera(v);
     jt.setColNueva(3);
-    jt.setAnchoColumna(new int[]{30,40,30,60,50,200,40,50,45});
-    jt.setAlinearColumna(new int[]{2,2,1,2,2,0,2,2,1});
+    jt.setAnchoColumna(new int[]{30,40,30,60,40,50,200,40,50,45});
+    jt.setAlinearColumna(new int[]{2,2,1,2,2,2,0,2,2,1});
     ArrayList vc=new ArrayList();
     vc.add(emp_codiE);
     vc.add(avc_anoE);
     vc.add(avc_serieE);
     vc.add(avc_numeE);
+    vc.add(alr_bultosE);
     vc.add(cli_codiE);
     vc.add(cli_nombE);
     vc.add(avc_unidE);
@@ -979,10 +1022,12 @@ public class ManAlbRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CButton BInsAuto;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
+    private gnu.chu.controles.CButton BirGrid;
     private gnu.chu.controles.CPanel PPie;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CTabbedPane Tpanel1;
+    private gnu.chu.controles.CTextField alr_bultosE;
     private gnu.chu.controles.CTextArea alr_comentE;
     private gnu.chu.controles.CTextField alr_fechaE;
     private gnu.chu.controles.CTextField alr_fecregE;
@@ -1000,10 +1045,12 @@ public class ManAlbRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField avc_numeE;
     private gnu.chu.controles.CTextField avc_serieE;
     private gnu.chu.controles.CTextField avc_unidE;
+    private gnu.chu.controles.CTextField bulTotE;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
+    private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel15;
     private gnu.chu.controles.CLabel cLabel16;
     private gnu.chu.controles.CLabel cLabel17;
@@ -1043,6 +1090,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     // End of variables declaration//GEN-END:variables
    @Override
     public void iniciarVentana() throws Exception {
+        Pcabe.setAltButton(BirGrid);
         pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS ,EU.em_cod);
         String s="select usu_nomb,usu_nomco from usuarios where emp_codi= "+EU.em_cod+
             (ARG_MODSALA?" and usu_nomb='"+EU.usuario+"'":"")+
@@ -1081,13 +1129,22 @@ public class ManAlbRuta extends ventanaPad implements PAD
                   return;
               verDocumento();
             }
-      });
+         });
          BInsAuto.addActionListener(new ActionListener()
          {
               @Override
               public void actionPerformed(ActionEvent e)
               {
                   insertarAuto();
+              }
+         });
+         BirGrid.addActionListener(new ActionListener()
+         {
+              @Override
+              public void actionPerformed(ActionEvent e)
+              {
+                  if (jt.isEnabled())
+                    jt.requestFocusInicioLater();
               }
          });
     }
@@ -1358,7 +1415,11 @@ public class ManAlbRuta extends ventanaPad implements PAD
         dtAdd.setDato("avc_id",pdalbara.getIdAlbaran(dtStat,
             jt.getValorInt(nlGrid,1),jt.getValorInt(nlGrid,0),
             jt.getValString(nlGrid,2),jt.getValorInt(nlGrid,3)));
+        dtAdd.setDato("alr_bultos",jt.getValorDec(nlGrid,JT_BULTOS));
+        dtAdd.setDato("alr_kilos",jt.getValorDec(nlGrid,JT_KILOS));
+        dtAdd.setDato("alr_unid",jt.getValorDec(nlGrid,JT_UNID));
         dtAdd.setDato("alr_repet",jt.getValBoolean(nlGrid,JT_REPET)?-1:0);
+       
         dtAdd.update();
     }
     boolean checkCabecera() throws ParseException

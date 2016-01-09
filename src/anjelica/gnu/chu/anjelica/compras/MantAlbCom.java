@@ -721,7 +721,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20161212)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20160109)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -4346,6 +4346,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     jtIncCab.setEnabled(false);
     
     jtIncCab.removeAllDatos();    
+    pac_comentE.setText("");
     if ( dtCon1.select(s))
     {
       do
@@ -6301,12 +6302,12 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
      }
      private void confGridIncid() throws Exception
      {
-         jtIncCab.setMaximumSize(new Dimension(552, 250));
-         jtIncCab.setMinimumSize(new Dimension(552, 250));
-         jtIncCab.setPreferredSize(new Dimension(552, 250));
-         pac_comentS.setMaximumSize(new Dimension(252, 250));
-         pac_comentS.setMinimumSize(new Dimension(252, 250));
-         pac_comentS.setMinimumSize(new Dimension(252, 250));
+         jtIncCab.setMaximumSize(new Dimension(522, 250));
+         jtIncCab.setMinimumSize(new Dimension(522, 250));
+         jtIncCab.setPreferredSize(new Dimension(522, 250));
+         pac_comentS.setMaximumSize(new Dimension(282, 250));
+         pac_comentS.setMinimumSize(new Dimension(282, 250));
+         pac_comentS.setMinimumSize(new Dimension(282, 250));
          jtIncLin.setMaximumSize(new Dimension(752, 200));
          jtIncLin.setMinimumSize(new Dimension(752, 200));
          jtIncLin.setPreferredSize(new Dimension(752, 200));

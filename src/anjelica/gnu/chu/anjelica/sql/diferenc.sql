@@ -1,6 +1,10 @@
+-- Añadir campo kilos y unidades a lineas alb. ruta. Añadir estado a cabecera.
 drop view v_albruta;
 alter table anjelica.albrutacab add alr_cerrad smallint not null default 0;
-create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_repet,
+alter table anjelica.albrutalin add alr_bultos int  ; -- Kilos de Albaran
+alter table anjelica.albrutalin add alr_kilos float ; -- Kilos de Albaran
+alter table anjelica.albrutalin add alr_unid int; -- Unidades de Albaran smallint not null default 0;
+create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_bultos,alr_unid,alr_kilos,alr_repet,
 al.emp_codi,al.avc_ano,al.avc_serie,al.avc_nume,al.cli_codi,al.avc_clinom,al.avc_kilos,
 al.avc_unid 
 from albrutacab as c, albrutalin as l,v_albavec as al 

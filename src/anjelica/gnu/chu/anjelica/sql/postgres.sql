@@ -2049,11 +2049,14 @@ create table albrutalin
 	alr_nume int not null, -- ID
 	alr_orden int not null, -- Orden de carga
 	avc_id int not null,  -- ID. Albaran
-    alr_repet smallint not null default 0, -- Repetido
+        alr_bultos smallint not null, -- Bultos
+        alr_kilos flot not null, -- Kilos de Albaran
+        alr_unid int not null, -- Unidades de Albaran
+        alr_repet smallint not null default 0, -- Repetido
 	constraint ix_albrutalin primary key (alr_nume,alr_orden)
 );
 create index ix_albrutali1 on albrutalin(avc_id);
-create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_repet,
+create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_bultos,alr_unid,alr_kilos,alr_repet,
 al.emp_codi,al.avc_ano,al.avc_serie,al.avc_nume,al.cli_codi,al.avc_clinom,al.avc_kilos,
 al.avc_unid 
 from albrutacab as c, albrutalin as l,v_albavec as al 
