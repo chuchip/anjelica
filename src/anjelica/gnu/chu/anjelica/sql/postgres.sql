@@ -2014,8 +2014,8 @@ fvc_nume int not null,
 fvc_sumtot decimal(8,2) not null,
 fvc_imppen decimal(8,2) not null,
 fvc_impcob decimal(8,2) not null,
-cor_tipcob char(1) not null, -- Tipo Cobro
-cor_fecvto date,
+cor_tipcob char(1) not null, -- Tipo Cobro (Talon,Efectivo,Pagare)
+cor_fecvto date, --
 cor_coment varchar(255),
 cor_intcob char(1) NOT NULL, -- Introducido en cobros (S/N)
 cor_totcob char(1) not null -- Totalmente cobrado (S/N)
@@ -2049,10 +2049,10 @@ create table albrutalin
 	alr_nume int not null, -- ID
 	alr_orden int not null, -- Orden de carga
 	avc_id int not null,  -- ID. Albaran
-        alr_bultos smallint not null, -- Bultos
-        alr_kilos flot not null, -- Kilos de Albaran
-        alr_unid int not null, -- Unidades de Albaran
-        alr_repet smallint not null default 0, -- Repetido
+	alr_bultos smallint not null, -- Bultos
+	alr_kilos flot not null, -- Kilos de Albaran
+	alr_unid int not null, -- Unidades de Albaran
+	alr_repet smallint not null default 0, -- Repetido
 	constraint ix_albrutalin primary key (alr_nume,alr_orden)
 );
 create index ix_albrutali1 on albrutalin(avc_id);
@@ -2065,21 +2065,26 @@ grant select on v_albruta to public;
 --
 --
 --
-create table anjelica.cobrosRuta
+create table anjelica.cobrosruta
 (
 	alr_nume int not null, -- ID
-	cru_orden int not null,
+	cru_orden int not null, -- Orden en que se metieron las lineas
 	avc_id int,  -- ID. Albaran 
 	fvc_id int,  -- ID. Factura	
-	cru_impdoc decimal(8,2) not null,	
-	cru_impcob decimal(8,2) not null,
-	cru_tipcob char(1) not null, -- Tipo Cobro
-	cru_fecvto date,
-	cru_coment varchar(255),	
-	cru_intcob smallint NOT NULL, -- Introducido en cobros (0=No)
-    cru_totcob smallint not null -- Totalmente cobrado (O=NO)
+	cru_impdoc decimal(8,2) not null,	-- Importe a cobrar
+	cru_impcob decimal(8,2),   -- Importe Cobrado
+	cru_tipcob char(1), --  Tipo Cobro (Talon,Efectivo,Pagare)
+	cru_fecvto date, -- Vto (para talones/pagares)
+	cru_coment varchar(255), -- Comentario
+	cru_intcob smallint NOT NULL default 0, -- Introducido en cobros (0=No)
+    cru_totcob smallint not null default 0, -- Totalmente cobrado (O=NO)
 	constraint ix_cobrosRuta primary key (alr_nume,cru_orden)
 );
+create or replace view v_cobruta as select c.*,l.cru_orden,l.fvc_id,cru_impdoc,l.cru_impcob,
+fr.emp_codi,fr.fvc_ano,fr.fvc_serie,fr.fvc_nume,fr.cli_codi,fr.fvc_clinom,fvc_fecfra,fvc_sumtot
+from albrutacab as c, cobrosruta as l,v_facvec as fr
+where c.alr_nume=l.alr_nume and fr.fvc_id = l.fvc_id;
+grant select on v_cobruta to public;
 ---
 -- Tabla vehiculos
 ---

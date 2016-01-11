@@ -33,6 +33,8 @@ import gnu.chu.anjelica.pad.pdempresa;
 import gnu.chu.anjelica.pad.pdnumeracion;
 import gnu.chu.anjelica.riesgos.clFactCob;
 import gnu.chu.anjelica.ventas.actCabAlbFra;
+import static gnu.chu.anjelica.ventas.pdalbara.TABLACAB;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
 import gnu.chu.camposdb.*;
 import gnu.chu.controles.*;
 import gnu.chu.eventos.GridAdapter;
@@ -1501,13 +1503,13 @@ public class PadFactur extends ventanaPad   implements PAD {
                     fvc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
                     "|" + fvc_serieE.getValor()+fvc_numeE.getValorInt()))
       return msgBloqueo;
-    String msgErr= selectFraUpdate( fvc_anoE.getValorInt(),emp_codiE.getValorInt(),
-                                 fvc_serieE.getValor(),fvc_numeE.getValorInt(),dtAdd);
-    if (msgErr!=null)
-      resetBloqueo(dtBloq, "v_facvec",
+     if (selectFraUpdate( fvc_anoE.getValorInt(),emp_codiE.getValorInt(),
+                                 fvc_serieE.getValor(),fvc_numeE.getValorInt(),dtAdd))
+         return null;
+    resetBloqueo(dtBloq, "v_facvec",
                     fvc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
                     "|" + fvc_serieE.getValor()+fvc_numeE.getValorInt());
-    return msgErr;
+    return "Factura no encontrada";
   }
   public static String checkModif(boolean traspCont,int empCodi,int fvcAno,String fvcSerie,int fvcNume,
                                   DatosTabla dt,DatosTabla dt1) throws SQLException
@@ -1527,24 +1529,37 @@ public class PadFactur extends ventanaPad   implements PAD {
 
     if (pdejerci.isCerrado(dt, fvcAno, empCodi))
       return "Factura  es de un ejercicio YA cerrado ... IMPOSIBLE MODIFICAR";
-    return selectFraUpdate(fvcAno,empCodi,fvcSerie,fvcNume,dt1);
+    if ( selectFraUpdate(fvcAno,empCodi,fvcSerie,fvcNume,dt1))
+        return null;
+    return "Factura no encontrada";
   }
-
-  public static String selectFraUpdate(int fvcAno, int empCodi,String fvcSerie, int fvcNume, DatosTabla dt) throws
+  public static int getIdFactura(int fvcAno,int empCodi,String fvcSerie,int fvcNume,DatosTabla dt) throws SQLException
+  {
+      if (!selectFra(fvcAno, empCodi, fvcSerie, fvcNume,dt,false))
+          return -1;
+      else
+          return dt.getInt("fvc_id");
+  }
+  public static boolean selectFra(int fvcAno, int empCodi,String fvcSerie, int fvcNume, DatosTabla dt,boolean forUpdate) throws
       SQLException
   {
     if (dt==null)
-     return null;
-
+     return false;
 
     String s = "SELECT * FROM v_facvec WHERE fvc_ano =" + fvcAno +
         " and emp_codi = " + empCodi +
         " and fvc_serie ='"+fvcSerie+"'"+
         " and fvc_nume = " + fvcNume;
     if (!dt.select(s, true))
-      return "FACTURA NO encontrada .. PROBABLEMENTE se ha borrado";
-    return null;
+      return false;
+    return true;
   }
+  public static boolean selectFraUpdate(int fvcAno, int empCodi,String fvcSerie, int fvcNume, DatosTabla dt) throws
+      SQLException
+  {
+      return selectFra(fvcAno,empCodi,fvcSerie,fvcNume,dt,true);
+  }
+  @Override
   public void PADDelete()
   {
     try

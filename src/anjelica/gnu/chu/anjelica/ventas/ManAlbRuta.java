@@ -1,6 +1,7 @@
 package gnu.chu.anjelica.ventas;
 
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.facturacion.PadFactur;
 import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.StatusBar;
@@ -37,7 +38,7 @@ import java.util.Hashtable;
 * solo podra modificar partes para poner kms,vehiculo y comentarios.
 * Por defecto modSala=false
 * </p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -65,7 +66,12 @@ public class ManAlbRuta extends ventanaPad implements PAD
     final int JT_UNID=7;
     final int JT_KILOS=8;
     final int JT_REPET=9;
- 
+    final int JTFR_ANO=0;
+    final int JTFR_EMPCOD=1;
+    final int JTFR_SERIE=2;
+    final int JTFR_NUME=3;
+    final int  JTFR_IMPPEN=8;
+    
     public ManAlbRuta(EntornoUsuario eu, Principal p) {
         this(eu, p, null);
     }
@@ -79,7 +85,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         try
         {
             ponParametros(ht);
-            setTitulo("Mantenimiento Albaranes de una ruta");
+            setTitulo("Mantenimiento salidas de ruta");
             if (jf.gestor.apuntar(this))
                 jbInit();
             else
@@ -97,7 +103,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         try {
           ponParametros(ht);
-          setTitulo("Mantenimiento Albaranes de una ruta");
+          setTitulo("Mantenimiento salidas de ruta");
           jbInit();
         } catch (Exception e) {
             ErrorInit(e);
@@ -117,7 +123,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-01-09 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2016-01-11 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -262,41 +268,66 @@ public class ManAlbRuta extends ventanaPad implements PAD
             alr_vekmfiE.setValorInt(dtCon1.getInt("alr_vekmfi",true));
             //alr_impgasE.setValorInt(dtCon1.getInt("alr_impgas",true));
             alr_comentE.setText(dtCon1.getString("alr_coment"));
+            PPie.resetTexto();
+        
             jt.removeAllDatos();
-             if (! dtCon1.select("select l.*,cl.cli_nomb from v_albruta as l "
+            jtFra.removeAllDatos();
+            if ( dtCon1.select("select l.*,cl.cli_nomb from v_albruta as l "
                  + " left join v_cliente as cl "+
                 " on l.cli_codi = cl.cli_codi where alr_nume ="+dtCons.getInt("alr_nume")+
                  " order by alr_orden"))
             {
-                msgBox("No encontradas albaranes para parte ruta con ID: "+dtCons.getInt("alr_nume"));
-                return;
-            }
-             
-            do
+
+                 do
+                 {
+                     ArrayList a = new ArrayList();
+                     a.add(dtCon1.getString("emp_codi"));
+                     a.add(dtCon1.getString("avc_ano"));
+                     a.add(dtCon1.getString("avc_serie"));
+                     a.add(dtCon1.getString("avc_nume"));
+                     a.add(dtCon1.getString("alr_bultos"));
+                     a.add(dtCon1.getString("cli_codi"));
+                     a.add(dtCon1.getString("avc_clinom", true).equals("") ? dtCon1.getString("cli_nomb") : dtCon1.getString("avc_clinom", true));
+
+                     if (dtCon1.getObject("alr_unid") == null)
+                     {
+                         a.add(dtCon1.getString("avc_unid"));
+                         a.add(dtCon1.getString("avc_kilos"));
+                     } else
+                     {
+                         a.add(dtCon1.getString("alr_unid"));
+                         a.add(dtCon1.getString("alr_kilos"));
+                     }
+                     a.add((dtCon1.getInt("alr_repet") != 0));
+                     jt.addLinea(a);
+                 } while (dtCon1.next());
+                 jt.requestFocusInicio();
+             }
+             else
+                 msgBox("No encontradas albaranes para parte ruta con ID: "+dtCons.getInt("alr_nume"));
+             if ( dtCon1.select("select l.*,cl.cli_nomb from v_cobruta as l "
+                 + " left join v_cliente as cl "+
+                " on l.cli_codi = cl.cli_codi where alr_nume ="+dtCons.getInt("alr_nume")+
+                 " order by cru_orden"))
             {
-                ArrayList a=new ArrayList();
-                a.add(dtCon1.getString("emp_codi"));
-                a.add(dtCon1.getString("avc_ano"));
-                a.add(dtCon1.getString("avc_serie"));
-                a.add(dtCon1.getString("avc_nume"));
-                a.add(dtCon1.getString("alr_bultos"));
-                a.add(dtCon1.getString("cli_codi"));
-                a.add(dtCon1.getString("avc_clinom",true).equals("")?dtCon1.getString("cli_nomb"):dtCon1.getString("avc_clinom",true));
-  
-                if (dtCon1.getObject("alr_unid")==null)
-                { 
-                    a.add(dtCon1.getString("avc_unid"));
-                    a.add(dtCon1.getString("avc_kilos"));
-                }
-                else
-                {
-                    a.add(dtCon1.getString("alr_unid"));
-                    a.add(dtCon1.getString("alr_kilos"));
-                }
-                a.add((dtCon1.getInt("alr_repet") != 0));
-                jt.addLinea(a);                
-            } while (dtCon1.next());
-            jt.requestFocusInicio();
+
+                 do
+                 {
+                     ArrayList a = new ArrayList();
+                     a.add(dtCon1.getString("emp_codi"));
+                     a.add(dtCon1.getString("fvc_ano"));
+                     a.add(dtCon1.getString("fvc_serie"));
+                     a.add(dtCon1.getString("fvc_nume"));
+                     a.add(dtCon1.getString("cli_codi"));
+                     a.add(dtCon1.getString("fvc_clinom", true).equals("") ? dtCon1.getString("cli_nomb") : dtCon1.getString("avc_clinom", true));
+                     a.add(dtCon1.getFecha("fvc_fecfra","dd-MM-yyyy"));                     
+                     a.add(dtCon1.getString("fvc_sumtot"));                     
+                     a.add(dtCon1.getString("cru_impdoc"));
+                     jtFra.addLinea(a);
+                 } while (dtCon1.next());
+                 jtFra.requestFocusInicio();
+             }
+             
             actAcumul();
         } catch (SQLException ex)
         {
@@ -323,6 +354,18 @@ public class ManAlbRuta extends ventanaPad implements PAD
         uniTotE.setValorInt(unid);
         numAlbE.setValorInt(nAlb);
         bulTotE.setValorDec(bultos);
+        nRow=jtFra.getRowCount();
+        int nFra=0;
+        double impCobros=0;
+        for (int n=0;n<nRow;n++)
+        {
+            if (jtFra.getValorInt(n,JTFR_NUME)==0)
+                continue;
+            nFra++;            
+            impCobros+=jtFra.getValorDec(n,JTFR_IMPPEN);            
+        }
+        numFrasE.setValorDec(nFra);
+        impFrasE.setValorDec(impCobros);
     }
     @Override
   public void PADAddNew()
@@ -339,10 +382,12 @@ public class ManAlbRuta extends ventanaPad implements PAD
     usu_nombE.setText(EU.usuario);
     veh_codiE.setText("");
     jt.removeAllDatos();
+    jtFra.removeAllDatos();
     activar(true);
     kilosTotE.setValorDec(0);
     uniTotE.setValorDec(0);
     numAlbE.setValorDec(0);
+    Tpanel1.setSelectedIndex(0);
     alr_fechaE.requestFocus();
   }
   @Override
@@ -398,6 +443,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
      alr_fechaE.resetCambio();
      avc_numeE.resetCambio();
      alr_bultosE.resetCambio();
+     Tpanel1.setSelectedIndex(0);
      if (ARG_MODSALA)
      {
          jt.setEnabled(false);
@@ -489,6 +535,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
          {
              String s = "delete from albrutalin where alr_nume=" + alr_numeE.getValorInt();
              dtAdd.executeUpdate(s);
+             s="delete from cobrosruta where alr_nume=" + alr_numeE.getValorInt();
+             dtAdd.executeUpdate(s);
              orden = 1;
              for (int n = 0; n < nl; n++)
              {
@@ -497,6 +545,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
                  guardaLineas(alr_numeE.getValorInt(), orden, n);
                  orden++;
              }
+             insLinFac(alr_numeE.getValorInt());
          }
          dtAdd.commit();
          mensajeErr("Albaranes de ruta.. Modificados");
@@ -645,14 +694,14 @@ public class ManAlbRuta extends ventanaPad implements PAD
                     if (fvc_anoE.getValorInt() > 0 && emp_codiE.getValorInt() > 0
                         && fvc_numeE.getValorInt() > 0)
                     {
-                        if (buscaFac(fvc_anoE.getValorInt(), emp_codiE.getValorInt(),
+                        if (buscaFac(fvc_anoE.getValorInt(), fvc_empcodE.getValorInt(),
                             fvc_serieE.getText(), fvc_numeE.getValorInt()))
                     {
-                        jt.setValor(dtStat.getString("cli_codi"), row, 4);
-                        jt.setValor(dtStat.getString("cli_nomb"), row, 5);
-                        jt.setValor(dtStat.getFecha("fvc_fecfra", "dd-MM-yyyy"), row, 6);
-                        jt.setValor(dtStat.getString("fvc_sumtot"), row, 7);
-                        jt.setValor("" +
+                        jtFra.setValor(dtStat.getString("cli_codi"), row, 4);
+                        jtFra.setValor(dtStat.getString("cli_nomb"), row, 5);
+                        jtFra.setValor(dtStat.getFecha("fvc_fecfra", "dd-MM-yyyy"), row, 6);
+                        jtFra.setValor(dtStat.getString("fvc_sumtot"), row, 7);
+                        jtFra.setValor("" +
                             (dtStat.getDouble("fvc_sumtot") - dtStat.getDouble("fvc_impcob")),
                             row, 8);
                     }
@@ -669,7 +718,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
             {
                 return checkLinea(row);
             }
-            catch (Exception k)
+            catch (SQLException k)
             {
                 Error("Error al Cambiar Columna", k);
             }
@@ -697,15 +746,19 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
     alr_repetE.setEnabled(false);
 
-    fvc_clicodE.setText("cTextField1");
+    fvc_serieE.setText("1");
 
-    fvc_clinomE.setText("cTextField1");
+    fvc_empcodE.setText("1");
 
-    fvc_fecfraE.setText("cTextField1");
+    fvc_clicodE.setEnabled(false);
 
-    fvc_sumtotE.setText("cTextField1");
+    fvc_clinomE.setEnabled(false);
 
-    fvc_imppenE.setText("cTextField1");
+    fvc_fecfraE.setEnabled(false);
+
+    fvc_sumtotE.setEnabled(false);
+
+    fvc_imppenE.setEnabled(false);
 
     alr_bultosE.setText("1");
 
@@ -775,7 +828,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
     cLabel3.setText("Ruta");
     Pcabe.add(cLabel3);
-    cLabel3.setBounds(230, 23, 40, 14);
+    cLabel3.setBounds(230, 23, 40, 15);
 
     rut_codiE.setAncTexto(30);
     rut_codiE.setFormato(Types.CHAR, "XX");
@@ -785,7 +838,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
     cLabel4.setText("Vehiculo");
     Pcabe.add(cLabel4);
-    cLabel4.setBounds(230, 45, 60, 14);
+    cLabel4.setBounds(230, 45, 60, 15);
 
     usu_nombE.setAncTexto(100);
     usu_nombE.setFormato(Types.CHAR,"X",15);
@@ -795,19 +848,19 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
     cLabel8.setText("Km. Iniciales ");
     Pcabe.add(cLabel8);
-    cLabel8.setBounds(390, 70, 80, 14);
+    cLabel8.setBounds(390, 70, 80, 15);
     Pcabe.add(alr_vekminE);
     alr_vekminE.setBounds(480, 70, 70, 18);
 
     cLabel9.setText("Identificador");
     Pcabe.add(cLabel9);
-    cLabel9.setBounds(390, 110, 80, 14);
+    cLabel9.setBounds(390, 110, 80, 15);
     Pcabe.add(alr_vekmfiE);
     alr_vekmfiE.setBounds(480, 90, 70, 18);
 
     cLabel10.setText("Comentarios ");
     Pcabe.add(cLabel10);
-    cLabel10.setBounds(10, 70, 80, 14);
+    cLabel10.setBounds(10, 70, 80, 15);
 
     alr_comentE.setColumns(20);
     alr_comentE.setRows(5);
@@ -829,7 +882,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
     cLabel15.setText("Km. Finales");
     Pcabe.add(cLabel15);
-    cLabel15.setBounds(390, 90, 70, 14);
+    cLabel15.setBounds(390, 90, 70, 15);
     Pcabe.add(alr_numeE);
     alr_numeE.setBounds(480, 110, 50, 18);
 
@@ -876,19 +929,19 @@ public class ManAlbRuta extends ventanaPad implements PAD
     cLabel16.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     cLabel16.setText("Imp. Fras.");
     PPie.add(cLabel16);
-    cLabel16.setBounds(120, 20, 60, 17);
+    cLabel16.setBounds(120, 22, 60, 17);
 
     cLabel17.setText("Nº Facturas");
     PPie.add(cLabel17);
-    cLabel17.setBounds(3, 20, 70, 14);
+    cLabel17.setBounds(3, 22, 70, 17);
 
     cLabel18.setText("Nº Albaranes ");
     PPie.add(cLabel18);
-    cLabel18.setBounds(0, 2, 80, 14);
+    cLabel18.setBounds(0, 2, 80, 15);
 
     numFrasE.setEditable(false);
     PPie.add(numFrasE);
-    numFrasE.setBounds(80, 20, 40, 17);
+    numFrasE.setBounds(80, 22, 40, 17);
 
     cLabel19.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     cLabel19.setText("Kilos");
@@ -897,16 +950,16 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
     impFrasE.setEditable(false);
     PPie.add(impFrasE);
-    impFrasE.setBounds(180, 20, 70, 17);
+    impFrasE.setBounds(180, 22, 70, 17);
 
     cLabel13.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
     cLabel13.setText("Bultos");
     PPie.add(cLabel13);
-    cLabel13.setBounds(260, 20, 40, 17);
+    cLabel13.setBounds(260, 22, 40, 17);
 
     bulTotE.setEditable(false);
     PPie.add(bulTotE);
-    bulTotE.setBounds(300, 20, 40, 17);
+    bulTotE.setBounds(300, 22, 40, 17);
 
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
@@ -973,6 +1026,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
     fvc_imppenE.setEnabled(false);
     fvc_serieE.setMayusc(true);
     fvc_serieE.setAutoNext(true);
+    fvc_clicodE.setText("");
+    fvc_sumtotE.setText("");
     fvc_serieE.setText("1");
     fvc_empcodE.setValorDec(EU.em_cod);
     fvc_anoE.setValorDec(EU.ejercicio);
@@ -1115,6 +1170,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         alr_vekmfiE.setColumnaAlias("alr_vekmfi");
         Pcabe.setDefButton(Baceptar);
         jt.setDefButton(Baceptar);
+        jtFra.setDefButton(Baceptar);
         activarEventos();
         if (ARG_MODSALA && ! dtCons.getNOREG() )
                 dtCons.last();
@@ -1192,6 +1248,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 a.add(dtCon1.getString("avc_ano"));
                 a.add(dtCon1.getString("avc_serie"));
                 a.add(dtCon1.getString("avc_nume"));
+                a.add("1");
                 a.add(dtCon1.getString("cli_codi"));
                 a.add(dtCon1.getString("avc_clinom",true).equals("")?dtCon1.getString("cli_nomb"):dtCon1.getString("avc_clinom",true));
                 
@@ -1343,7 +1400,10 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 return;
             jt.salirGrid();
             if (cambiaLinJT(jt.getSelectedRow())>=0)
+            {
+                Tpanel1.setSelectedIndex(0);
                 return;
+            }
             int nl=jt.getRowCount();
             int orden=0;
             for (int n=0;n<nl;n++)
@@ -1353,15 +1413,29 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 
                 orden++;
             }
+           
+            jtFra.salirGrid();
+            if (checkLinea(jtFra.getSelectedRow())>=0)
+            {
+                Tpanel1.setSelectedIndex(1);
+                return;
+            }
+            for (int n=0;n<nl;n++)
+            {
+                if (jtFra.getValorInt(n,JTFR_NUME)==0)
+                    continue;
+                
+                orden++;
+            }
             if (orden==0)
             {
-                msgBox("Introduzca algun albaran para la ruta");
+                msgBox("Introduzca algun albaran O factura para la ruta");
                 return;
             }
             dtAdd.addNew("albrutacab", false);
             int id = guardaCab(0);
             
-             orden=1;
+            orden=1;
             for (int n=0;n<nl;n++)
             {
                 if (jt.getValorInt(n,JT_NUMALB)==0)
@@ -1369,6 +1443,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 guardaLineas(id,orden,n);
                 orden++;
             }
+            insLinFac(id);
             dtAdd.commit();
             mensajeErr("Albaranes de ruta.. guardados");
             activaTodo();
@@ -1376,6 +1451,33 @@ public class ManAlbRuta extends ventanaPad implements PAD
         {
             Error("Error al guardar cabecera de ruta", ex);
         }
+    }
+    /**
+     * Inserta las lineas de facturas mandadas a cobrar.
+     * @param orden
+     * @throws SQLException 
+     */
+    void insLinFac(int id) throws SQLException 
+    {
+        int nRow = jtFra.getRowCount();
+        int orden = 1;
+        for (int n = 0; n < nRow; n++)
+        {
+            if (jtFra.getValorInt(n, 3) == 0)
+                continue;
+            dtAdd.addNew("cobrosRuta", false);
+            dtAdd.setDato("alr_nume", id);
+            dtAdd.setDato("cru_orden", orden);
+            dtAdd.setDato("avc_id", -1);
+            dtAdd.setDato("fvc_id", PadFactur.getIdFactura(jtFra.getValorInt(n, JTFR_ANO),
+                jtFra.getValorInt(n, JTFR_EMPCOD), jtFra.getValString(n, JTFR_SERIE),
+                jtFra.getValorInt(n, JTFR_NUME), dtStat));
+            dtAdd.setDato("cru_impdoc", jtFra.getValorDec(n, JTFR_IMPPEN));
+
+            dtAdd.update(stUp);
+            orden++;
+        }
+
     }
     /**
      * Inserta o modifica cabecera de ruta
@@ -1488,6 +1590,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
         {
             String s = "delete from albrutalin where alr_nume=" + alr_numeE.getValorInt();
             dtBloq.executeUpdate(s);
+            s="delete from cobrosruta where alr_nume=" + alr_numeE.getValorInt();
+            dtBloq.executeUpdate(s);
             dtAdd.delete(stUp);
             resetBloqueo(dtAdd, "albrutacab", alr_numeE.getText(), false);
             ctUp.commit();
@@ -1509,6 +1613,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     
     public void activar(boolean b,int opcion) {
         jt.setEnabled(b);
+        jtFra.setEnabled(b);
         Pcabe.setEnabled(b);
         
         if (opcion!=navegador.QUERY)
@@ -1547,7 +1652,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     impFrasE.setValorDec(impFras);
 
   }
-  boolean buscaFac(int ejeNume,int empCodi,String serie,int numFra) throws Exception
+  boolean buscaFac(int ejeNume,int empCodi,String serie,int numFra) throws SQLException
   {
     String s="SELECT f.*,cli_nomb FROM v_facvec as f,clientes as cl "+
        "  WHERE f.emp_codi = "+empCodi+
@@ -1557,11 +1662,18 @@ public class ManAlbRuta extends ventanaPad implements PAD
         " and f.cli_codi = cl.cli_codi ";
     return dtStat.select(s);
   }
-  int checkLinea(int row) throws Exception
+  /**
+   * Comprueba si es valida una linea de la carga de facturas.
+   * @param row
+   * @return
+   * @throws SQLException 
+   */
+  
+  int checkLinea(int row) throws SQLException
   {
     if (fvc_numeE.getValorInt()==0)
       return -1;
-    if (!buscaFac(fvc_anoE.getValorInt(), emp_codiE.getValorInt(),
+    if (!buscaFac(fvc_anoE.getValorInt(), fvc_empcodE.getValorInt(),
                   fvc_serieE.getText(), fvc_numeE.getValorInt()))
     {
       mensajeErr("Factura NO ENCONTRADA");
