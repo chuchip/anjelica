@@ -4,7 +4,7 @@ package gnu.chu.anjelica.ventas.represen;
  * <p>Título: PRelClien</p>
  * <p>Descripción: Panel de relacion de clientes </p>
  * <p`>Usado por clase FichaClientes.
-* <p>Copyright: Copyright (c) 2005-2015
+* <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -118,7 +118,7 @@ public class PRelClien extends CPanel {
     { 
          String s="select c.*,d.zon_nomb as dis_nomb from clientes as c "+
                     " left join v_zonas as d on "+
-                     "  dis_codi = c.zon_codi "+
+                     "  d.zon_codi = c.zon_codi "+
                      " where cli_codi = "+getCliente();
          
          return dt.select(s);
