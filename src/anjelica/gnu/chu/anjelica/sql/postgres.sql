@@ -2080,11 +2080,13 @@ create table anjelica.cobrosruta
 	cru_fecvto date, -- Vto (para talones/pagares)
 	cru_coment varchar(255), -- Comentario
 	cru_intcob smallint NOT NULL default 0, -- Introducido en cobros (0=No)
-    cru_totcob smallint not null default 0, -- Totalmente cobrado (O=NO)
+        cru_totcob smallint not null default 0, -- Totalmente cobrado (O=NO)
 	constraint ix_cobrosRuta primary key (alr_nume,cru_orden)
 );
-create or replace view v_cobruta as select c.*,l.cru_orden,l.fvc_id,cru_impdoc,l.cru_impcob,
-fr.emp_codi,fr.fvc_ano,fr.fvc_serie,fr.fvc_nume,fr.cli_codi,fr.fvc_clinom,fvc_fecfra,fvc_sumtot
+drop view anjelica.v_cobruta;
+create or replace view anjelica.v_cobruta as select c.*,l.cru_orden,l.fvc_id,cru_impdoc,l.cru_impcob,
+fr.emp_codi,fr.fvc_ano,fr.fvc_serie,fr.fvc_nume,fr.cli_codi,fr.fvc_clinom,fvc_fecfra,fvc_sumtot,
+fvc_sumtot-fvc_impcob as fvc_imppen
 from albrutacab as c, cobrosruta as l,v_facvec as fr
 where c.alr_nume=l.alr_nume and fr.fvc_id = l.fvc_id;
 grant select on v_cobruta to public;
