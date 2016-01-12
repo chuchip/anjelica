@@ -1550,9 +1550,7 @@ public class PadFactur extends ventanaPad   implements PAD {
         " and emp_codi = " + empCodi +
         " and fvc_serie ='"+fvcSerie+"'"+
         " and fvc_nume = " + fvcNume;
-    if (!dt.select(s, true))
-      return false;
-    return true;
+    return dt.select(s, true);
   }
   public static boolean selectFraUpdate(int fvcAno, int empCodi,String fvcSerie, int fvcNume, DatosTabla dt) throws
       SQLException
