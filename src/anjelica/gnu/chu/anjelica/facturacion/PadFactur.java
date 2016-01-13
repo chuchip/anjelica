@@ -2,7 +2,7 @@
  *
  * <p>Titulo: PadFactur </p>
  * <p>Descripción: Mantenimiento Facturas de Ventas</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -146,7 +146,7 @@ public class PadFactur extends ventanaPad   implements PAD {
        
         iniciarFrame();
 
-        this.setVersion("2016-01-06" + (MOD_CONS ? "SOLO LECTURA" : ""));
+        this.setVersion("2016-01-13" + (MOD_CONS ? "SOLO LECTURA" : ""));
         strSql = getStrSql();
         IMPFRATEXTO=EU.getValorParam("impFraTexto",IMPFRATEXTO);
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -1484,12 +1484,14 @@ public class PadFactur extends ventanaPad   implements PAD {
       msgBox("Funcion NO implementada");
       activaTodo();
   }
+  @Override
   public void PADAddNew1(){}
-
+@Override
   public void ej_addnew(){}
-
+@Override
   public void ej_addnew1(){}
 
+  @Override
   public void canc_addnew(){}
 
   private String checkModif() throws Exception
@@ -1511,6 +1513,19 @@ public class PadFactur extends ventanaPad   implements PAD {
                     "|" + fvc_serieE.getValor()+fvc_numeE.getValorInt());
     return "Factura no encontrada";
   }
+  /**
+   * Comprueba si una factura se puede modificar.
+   * @param traspCont
+   * @param empCodi
+   * @param fvcAno
+   * @param fvcSerie
+   * @param fvcNume
+   * @param dt
+   * @param dt1
+   * @return NULL si se puede modificar. Un string con la razon por la que no se puede modificar
+   * en caso contrario.
+   * @throws SQLException 
+   */
   public static String checkModif(boolean traspCont,int empCodi,int fvcAno,String fvcSerie,int fvcNume,
                                   DatosTabla dt,DatosTabla dt1) throws SQLException
   {
@@ -1529,7 +1544,7 @@ public class PadFactur extends ventanaPad   implements PAD {
 
     if (pdejerci.isCerrado(dt, fvcAno, empCodi))
       return "Factura  es de un ejercicio YA cerrado ... IMPOSIBLE MODIFICAR";
-    if ( selectFraUpdate(fvcAno,empCodi,fvcSerie,fvcNume,dt1))
+    if ( selectFraUpdate(fvcAno,empCodi,fvcSerie,fvcNume,dt))
         return null;
     return "Factura no encontrada";
   }
@@ -1552,6 +1567,17 @@ public class PadFactur extends ventanaPad   implements PAD {
         " and fvc_nume = " + fvcNume;
     return dt.select(s, true);
   }
+  /**
+   * Seleciona la factura seleccionada.
+   * 
+   * @param fvcAno
+   * @param empCodi
+   * @param fvcSerie
+   * @param fvcNume
+   * @param dt
+   * @return true si la encuentra. False en caso contrario
+   * @throws SQLException 
+   */
   public static boolean selectFraUpdate(int fvcAno, int empCodi,String fvcSerie, int fvcNume, DatosTabla dt) throws
       SQLException
   {

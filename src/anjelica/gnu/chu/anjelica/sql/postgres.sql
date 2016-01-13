@@ -2084,9 +2084,9 @@ create table anjelica.cobrosruta
 	constraint ix_cobrosRuta primary key (alr_nume,cru_orden)
 );
 drop view anjelica.v_cobruta;
-create or replace view anjelica.v_cobruta as select c.*,l.cru_orden,l.fvc_id,cru_impdoc,l.cru_impcob,
-fr.emp_codi,fr.fvc_ano,fr.fvc_serie,fr.fvc_nume,fr.cli_codi,fr.fvc_clinom,fvc_fecfra,fvc_sumtot,
-fvc_sumtot-fvc_impcob as fvc_imppen
+create or replace view anjelica.v_cobruta as select c.*,l.cru_orden,l.fvc_id,cru_impdoc as fvc_imppen,
+l.cru_impcob,
+fr.emp_codi,fr.fvc_ano,fr.fvc_serie,fr.fvc_nume,fr.cli_codi,fr.fvc_clinom,fvc_fecfra,fvc_sumtot
 from albrutacab as c, cobrosruta as l,v_facvec as fr
 where c.alr_nume=l.alr_nume and fr.fvc_id = l.fvc_id;
 grant select on v_cobruta to public;

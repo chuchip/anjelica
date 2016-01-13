@@ -750,7 +750,7 @@
             <Component class="gnu.chu.controles.CButtonMenu" name="Bimpri">
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon(&quot;print&quot;))"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="Bimpri.addMenu(&quot;Fact&quot;,&quot;F&quot;);&#xa;Bimpri.addMenu(&quot;Alba.&quot;,&quot;A&quot;);&#xa;Bimpri.addMenu(&quot;Det.Albar&quot;,&quot;D&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="Bimpri.addMenu(&quot;Facturas&quot;,&quot;F&quot;);&#xa;Bimpri.addMenu(&quot;Albaranes&quot;,&quot;A&quot;);&#xa;Bimpri.addMenu(&quot;Det.Albar&quot;,&quot;D&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
