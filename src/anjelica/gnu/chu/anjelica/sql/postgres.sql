@@ -2109,7 +2109,8 @@ cor_totcob char(1) not null -- Totalmente cobrado (S/N)
 --
 -- Tabla Cabecera Albaranes de ruta.
 --
-create table albrutacab
+drop table anjelica.albrutacab;
+create table anjelica.albrutacab
 (
 	alr_nume serial not null, -- ID
 	rut_codi char(2) not null, -- Ruta
@@ -2124,13 +2125,13 @@ create table albrutacab
 	alr_coment varchar(255), -- Comentarios sobre ruta.	
 	alr_cerrad smallint not null default 0 -- Cerrada (0=NO)
  );
- create index ix_albrutacab on albrutacab(alr_fecha);
+ create index ix_albrutacab on  anjelica.albrutacab(alr_fecha);
  --
 -- Tabla Cabecera Lineas de ruta.
 --
- drop view v_albruta;
- drop table albrutalin;
-create table albrutalin
+ drop view anjelica.v_albruta;
+ drop table anjelica.albrutalin;
+create table anjelica.albrutalin
 (
 	alr_nume int not null, -- ID
 	alr_orden int not null, -- Orden de carga
@@ -2142,12 +2143,12 @@ create table albrutalin
 	alr_repet smallint not null default 0, -- Repetido
 	constraint ix_albrutalin primary key (alr_nume,alr_orden)
 );
-create index ix_albrutali1 on albrutalin(avc_id);
+create index ix_albrutali1 on anjelica.albrutalin(avc_id);
 create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_bultos,alr_palets,
 alr_unid,alr_kilos,alr_repet,
 al.emp_codi,al.avc_ano,al.avc_serie,al.avc_nume,al.cli_codi,al.avc_clinom,al.avc_kilos,
 al.avc_unid 
-from albrutacab as c, albrutalin as l,v_albavec as al 
+from anjelica.albrutacab as c, anjelica.albrutalin as l,anjelica.v_albavec as al 
 where c.alr_nume=l.alr_nume and al.avc_id = l.avc_id;
 grant select on v_albruta to public;
 

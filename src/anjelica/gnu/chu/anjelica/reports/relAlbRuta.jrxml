@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-01-13T13:52:51 -->
+<!-- 2016-01-14T10:25:46 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relAlbRuta" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="16085ab3-6a21-4d59-a4cb-6c23448b50d6">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -22,7 +22,7 @@
 	<field name="cli_nomb" class="java.lang.String"/>
 	<field name="alr_unid" class="java.lang.Integer"/>
 	<field name="alr_bultos" class="java.lang.Integer"/>
-	<field name="cli_pobl" class="java.lang.String"/>
+	<field name="cli_poble" class="java.lang.String"/>
 	<variable name="numAlb" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{avc_nume}]]></variableExpression>
 	</variable>
@@ -253,7 +253,7 @@
 					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{cli_pobl}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{cli_poble}]]></textFieldExpression>
 			</textField>
 			<textField pattern=" ###,##0" isBlankWhenNull="false">
 				<reportElement key="textField" isPrintRepeatedValues="false" mode="Opaque" x="456" y="2" width="39" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="e093ac45-87de-43f1-853d-b406426962db"/>
