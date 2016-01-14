@@ -29,7 +29,7 @@ CREATE or replace VIEW v_empresa as select emp_codi,emp_nomb ,	 -- Nombre de Emp
  emp_dirweb , -- Direccion web de la empresa 
  cop_nombre as emp_nomprv
  from empresa left join   prov_espana on emp_codpo / 1000 = cop_codi;
- grant select on v_albruta to public;
+ grant select on v_empresa to public;
 -- Añadir campo kilos y unidades a lineas alb. ruta. Añadir estado a cabecera.
 drop view v_albruta;
 alter table anjelica.albrutacab add alr_cerrad smallint not null default 0;
