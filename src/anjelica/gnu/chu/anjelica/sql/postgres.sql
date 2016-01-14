@@ -8,6 +8,63 @@
 --
 -- drop table gridajuste;
 create schema anjelica;
+create table anjelica.prov_espana(
+ cop_codi integer not null,
+ cop_nombre varchar(30) not NULL,
+ constraint ix_prov_espana primary  key (cop_codi)
+);
+insert into prov_espana values(1,'Álava (Vitoria)');
+insert into prov_espana values(2,'Albacete');
+insert into prov_espana values(3,'Alicante');
+insert into prov_espana values(4,'Almería');
+insert into prov_espana values(5,'Ávila');
+insert into prov_espana values(6,'Badajoz');
+insert into prov_espana values(7,'Baleares (Palma de Mallorca)');
+insert into prov_espana values(8,'Barcelona');
+insert into prov_espana values(9,'Burgos');
+insert into prov_espana values(10,'Cáceres');
+insert into prov_espana values(11,'Cádiz');
+insert into prov_espana values(12,'Castellón');
+insert into prov_espana values(13,'Ciudad Real');
+insert into prov_espana values(14,'Córdoba');
+insert into prov_espana values(15,'Coruña');
+insert into prov_espana values(16,'Cuenca');
+insert into prov_espana values(17,'Gerona');
+insert into prov_espana values(18,'Granada');
+insert into prov_espana values(19,'Guadalajara');
+insert into prov_espana values(20,'Guipúzcoa (San Sebastián)');
+insert into prov_espana values(21,'Huelva');
+insert into prov_espana values(22,'Huesca');
+insert into prov_espana values(23,'Jaén');
+insert into prov_espana values(24,'León');
+insert into prov_espana values(25,'Lérida');
+insert into prov_espana values(26,'La Rioja (Logroño)');
+insert into prov_espana values(27,'Lugo');
+insert into prov_espana values(28,'Madrid');
+insert into prov_espana values(29,'Málaga');
+insert into prov_espana values(30,'Murcia');
+insert into prov_espana values(31,'Navarra (Pamplona)');
+insert into prov_espana values(32,'Orense');
+insert into prov_espana values(33,'Asturias (Oviedo)');
+insert into prov_espana values(34,'Palencia');
+insert into prov_espana values(35,'Las Palmas');
+insert into prov_espana values(36,'Pontevedra');
+insert into prov_espana values(37,'Salamanca');
+insert into prov_espana values(38,'Santa Cruz de Tenerife');
+insert into prov_espana values(39,'Cantabria (Santander)');
+insert into prov_espana values(40,'Segovia');
+insert into prov_espana values(41,'Sevilla');
+insert into prov_espana values(42,'Soria');
+insert into prov_espana values(43,'Tarragona');
+insert into prov_espana values(44,'Teruel');
+insert into prov_espana values(45,'Toledo');
+insert into prov_espana values(46,'Valencia');
+insert into prov_espana values(47,'Valladolid');
+insert into prov_espana values(48,'Vizcaya (Bilbao)');
+insert into prov_espana values(49,'Zamora');
+insert into prov_espana values(50,'Zaragoza');
+insert into prov_espana values(51,'Ceuta');
+insert into prov_espana values(52,'Melilla');
 
 CREATE TABLE anjelica.gridajuste (
     emp_codi integer NOT NULL,     -- Empresa a la que pert. el usuario
@@ -1839,8 +1896,8 @@ grant select on  v_almacen to public;
 --
 -- Tabla de Empresas
 --
---drop table v_empresa;
-create table anjelica.v_empresa
+--drop table empresa;
+create table anjelica.empresa
 (
  emp_codi int not null,  -- Codigo de empresa
  emp_nomb varchar(40),	 -- Nombre de Empresa
@@ -1874,7 +1931,36 @@ create table anjelica.v_empresa
  emp_dirweb varchar(100), -- Direccion web de la empresa 
  primary key (emp_codi)
 );
-INSERT INTO v_empresa VALUES (1, 'Anjelica, S.L.', 'C/ SOFTWARE LIBRE', 'LOGRO�O', 26006, '555-12345', '555-54321', 'Z12345', 91, NULL, '', '12345/LO', '0', 11, '', '', '', '', 'S.L. FOR PRESIDENT', '', '', '', 16, 26, 1, 1, '', '', '');
+INSERT INTO empresa VALUES (1, 'Anjelica, S.L.', 'C/ SOFTWARE LIBRE', 'LOGRO�O', 26006, '555-12345', '555-54321', 'Z12345', 91, NULL, '', '12345/LO', '0', 11, '', '', '', '', 'S.L. FOR PRESIDENT', '', '', '', 16, 26, 1, 1, '', '', '');
+CREATE or replace VIEW v_empresa as select emp_codi,emp_nomb ,	 -- Nombre de Empresa
+ emp_dire,	 -- Direccion Empresa
+ emp_pobl,	 -- Poblacion Empresa
+ emp_codpo ,	    	 -- Codigo Postal
+ emp_telef ,	 -- Telefono
+ emp_fax ,	 -- FAX
+ emp_nif ,	 -- NIF
+ emp_nurgsa , -- Codigo Numero Registro Sanitario
+ emp_nomsoc , -- Nombre Social
+ pai_codi ,	    	 -- Pais por defecto
+ emp_orgcon , -- Organismo de Control.
+ emp_cercal , -- Certificacion Calidad
+ emp_labcal , -- Etiqueta Calidad
+ emp_obsfra ,--Observaciones Factura
+ emp_obsalb ,--Observaciones Albaran
+ emp_vetnom , --Nombre Veterinario
+ emp_vetnum , --Numero Veterinario
+ emp_numexp , --Numero Explotacion
+ emp_codcom ,         -- Comunidad de Empresa
+ emp_codpvi ,    	 -- Provincia de Empresa
+ emp_divimp ,         -- Divisa de Importacion
+ emp_divexp ,         -- Divisa de Exportación
+ emp_desspr , -- Destino Subproductos
+ emp_codedi , -- Codigo EDI
+ emp_regmer , -- Registro Mercantil
+ emp_dirweb , -- Direccion web de la empresa 
+ cop_nombre as emp_nomprv
+ from empresa left join   prov_espana on emp_codpo / 1000 = cop_codi;
+ grant select on v_albruta to public;
 --
 -- Numeraciones
 --

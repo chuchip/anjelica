@@ -1,4 +1,35 @@
-
+---
+-- Cambiar Tabla v_empresa por empresa y crear vista v_empresa
+alter table v_empresa rename to empresa;
+CREATE or replace VIEW v_empresa as select emp_codi,emp_nomb ,	 -- Nombre de Empresa
+ emp_dire,	 -- Direccion Empresa
+ emp_pobl,	 -- Poblacion Empresa
+ emp_codpo ,	    	 -- Codigo Postal
+ emp_telef ,	 -- Telefono
+ emp_fax ,	 -- FAX
+ emp_nif ,	 -- NIF
+ emp_nurgsa , -- Codigo Numero Registro Sanitario
+ emp_nomsoc , -- Nombre Social
+ pai_codi ,	    	 -- Pais por defecto
+ emp_orgcon , -- Organismo de Control.
+ emp_cercal , -- Certificacion Calidad
+ emp_labcal , -- Etiqueta Calidad
+ emp_obsfra ,--Observaciones Factura
+ emp_obsalb ,--Observaciones Albaran
+ emp_vetnom , --Nombre Veterinario
+ emp_vetnum , --Numero Veterinario
+ emp_numexp , --Numero Explotacion
+ emp_codcom ,         -- Comunidad de Empresa
+ emp_codpvi ,    	 -- Provincia de Empresa
+ emp_divimp ,         -- Divisa de Importacion
+ emp_divexp ,         -- Divisa de Exportación
+ emp_desspr , -- Destino Subproductos
+ emp_codedi , -- Codigo EDI
+ emp_regmer , -- Registro Mercantil
+ emp_dirweb , -- Direccion web de la empresa 
+ cop_nombre as emp_nomprv
+ from empresa left join   prov_espana on emp_codpo / 1000 = cop_codi;
+ grant select on v_albruta to public;
 -- Añadir campo kilos y unidades a lineas alb. ruta. Añadir estado a cabecera.
 drop view v_albruta;
 alter table anjelica.albrutacab add alr_cerrad smallint not null default 0;

@@ -277,7 +277,7 @@ public class pdlibrovto extends ventanaPad implements PAD
     prv_codiE.setAceptaNulo(false);
     tra_codiE.setAceptaNulo(false);
 
-    s = "SELECT emp_codi,emp_nomb FROM v_empresa ORDER BY emp_codi";
+    s = "SELECT emp_codi,emp_nomb FROM empresa ORDER BY emp_codi";
     dtStat.select(s);
     emp_codiE.addDatos(dtStat);
     emp_codiE.setFormato(Types.DECIMAL, "#9");

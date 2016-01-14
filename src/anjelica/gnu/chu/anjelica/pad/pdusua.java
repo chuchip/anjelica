@@ -251,7 +251,7 @@ public class pdusua extends ventanaPad   implements PAD
     @Override
   public void iniciarVentana() throws Exception
   {
-    s="SELECT emp_codi,emp_nomb FROM v_empresa order by emp_codi";
+    s="SELECT emp_codi,emp_nomb FROM empresa order by emp_codi";
     dtCon1.select(s);
     emp_codiE.addDatos(dtCon1);
     emp_codiE.setFormato(true);

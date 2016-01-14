@@ -130,7 +130,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-01-13 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2016-01-14 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -400,6 +400,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
     uniTotE.setValorDec(0);
     numAlbE.setValorDec(0);
     Tpanel1.setSelectedIndex(0);
+    jtFra.requestFocusInicio();
+    jt.requestFocusInicio();
     alr_fechaE.requestFocus();
   }
   @Override
@@ -1266,6 +1268,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
                       imprimir_facturas();
                   if (accion.equals("A"))
                       imprimir_albaranes();
+                  if (accion.equals("D"))
+                      imprimir_albaranes_ext();
               }
          });
     }
@@ -1797,7 +1801,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
        return;
      }
      
-     String s="select l.*,cl.cli_nomb,cl.cli_pobl from v_albruta as l "
+     String s="select l.*,cl.cli_nomb,cl.cli_poble from v_albruta as l "
                  + " left join v_cliente as cl "+
                 " on l.cli_codi = cl.cli_codi where alr_nume ="+dtCons.getInt("alr_nume")+
                  " order by alr_orden";
@@ -1817,6 +1821,35 @@ public class ManAlbRuta extends ventanaPad implements PAD
     gnu.chu.print.util.printJasper(jp, EU);
 
    } catch (SQLException | JRException | PrinterException k)
+   {
+     Error("Error al generar Listado",k);
+   }
+  }
+  void imprimir_albaranes_ext()
+  {
+      try {
+        if (dtCons.getNOREG())
+        {
+          mensajeErr("NO HAY REGISTROS ACTIVOS");
+          return;
+        }
+
+
+
+        JasperReport jr= gnu.chu.print.util.getJasperReport(EU, "relAlbRutaExt");
+        java.util.HashMap mp = new java.util.HashMap();
+        mp.put("cor_fecha", alr_fechaE.getText());
+        mp.put("usu_nomb", usu_nombE.getText());
+        mp.put("zon_codi", rut_codiE.getText()+"-"+rut_codiE.getTextCombo());
+        mp.put("cor_orden", alr_numeE.getValorInt());
+        mp.put("emp_codi", EU.em_cod);
+
+        JasperPrint jp = JasperFillManager.fillReport(jr, mp, ct);
+
+   //     JasperViewer.viewReport(jp,false);
+       gnu.chu.print.util.printJasper(jp, EU);
+
+   } catch ( JRException | PrinterException k)
    {
      Error("Error al generar Listado",k);
    }

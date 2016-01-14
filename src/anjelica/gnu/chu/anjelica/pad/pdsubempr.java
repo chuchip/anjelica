@@ -178,7 +178,7 @@ public class pdsubempr    extends ventanaPad    implements PAD
 
   {
     emp_codiE.setFormato(Types.DECIMAL, "#9");
-    s = "SELECT emp_codi,emp_nomb FROM v_empresa order by emp_codi";
+    s = "SELECT emp_codi,emp_nomb FROM empresa order by emp_codi";
     dtStat.select(s);
     emp_codiE.addDatos(dtStat);
     sbe_tipoE.addItem("Cliente", "C");

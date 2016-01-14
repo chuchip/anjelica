@@ -158,8 +158,8 @@ public class pdempresa extends ventanaPad   implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(643, 455));
-    this.setVersion("2006-04-11"+ (modConsulta ? "SOLO LECTURA" : ""));
-    strSql = "SELECT * FROM v_empresa  order by emp_codi ";
+    this.setVersion("2016-01-14"+ (modConsulta ? "SOLO LECTURA" : ""));
+    strSql = "SELECT * FROM empresa  order by emp_codi ";
 
 
     statusBar = new StatusBar(this);
@@ -396,7 +396,7 @@ public class pdempresa extends ventanaPad   implements PAD
         return;
 
       emp_codiE.setValorInt(dtCons.getInt("emp_codi"));
-      s="SELECT * FROM v_empresa WHERE emp_codi = "+emp_codiE.getValorInt();
+      s="SELECT * FROM empresa WHERE emp_codi = "+emp_codiE.getValorInt();
       if (! dtCon1.select(s))
       {
         Pprinc.resetTexto();
@@ -563,7 +563,7 @@ public class pdempresa extends ventanaPad   implements PAD
 
     v.add(emp_codiE.getStrQuery());
 
-    s = "SELECT * FROM v_empresa ";
+    s = "SELECT * FROM empresa ";
     s = creaWhere(s, v,true);
     s+=" ORDER BY emp_codi ";
     Pprinc.setQuery(false);
@@ -621,7 +621,7 @@ public class pdempresa extends ventanaPad   implements PAD
       dtAdd.edit();
       actValores(dtAdd);
       dtAdd.update(stUp);
-      resetBloqueo(dtAdd, "v_empresa",emp_codiE.getText(),false);
+      resetBloqueo(dtAdd, "empresa",emp_codiE.getText(),false);
       ctUp.commit();
     }
     catch (Throwable ex)
@@ -640,7 +640,7 @@ public class pdempresa extends ventanaPad   implements PAD
   {
     mensaje("");
     try {
-        resetBloqueo(dtAdd, "v_empresa",emp_codiE.getText(),true);
+        resetBloqueo(dtAdd, "empresa",emp_codiE.getText(),true);
     } catch (Exception ex)
     {
       Error("Error al Quitar Bloqueo", ex);
@@ -730,13 +730,13 @@ public class pdempresa extends ventanaPad   implements PAD
   {
     try
     {
-      s="SELECT * FROM v_empresa WHERE emp_codi = "+emp_codiE.getValorInt();
+      s="SELECT * FROM empresa WHERE emp_codi = "+emp_codiE.getValorInt();
       if (dtCon1.select(s))
       {
         mensajeErr("Empresa YA EXISTE");
         return;
       }
-      dtAdd.addNew("v_empresa");
+      dtAdd.addNew("empresa");
       dtAdd.setDato("emp_codi",emp_codiE.getText());
       actValores(dtAdd);
       dtAdd.update(stUp);
@@ -796,7 +796,7 @@ public class pdempresa extends ventanaPad   implements PAD
   {
     try
     {
-      if (!setBloqueo(dtAdd, "v_empresa", emp_codiE.getText() ))
+      if (!setBloqueo(dtAdd, "empresa", emp_codiE.getText() ))
       {
         msgBox(msgBloqueo);
         nav.pulsado = navegador.NINGUNO;
@@ -804,10 +804,10 @@ public class pdempresa extends ventanaPad   implements PAD
         activaTodo();
         return false;
       }
-      if (!dtAdd.select("select * from v_empresa where emp_codi = " + emp_codiE.getValorInt(), true))
+      if (!dtAdd.select("select * from empresa where emp_codi = " + emp_codiE.getValorInt(), true))
       {
         mensajeErr("Registro ha sido borrado");
-        resetBloqueo(dtAdd, "v_empresa",emp_codiE.getText(),true);
+        resetBloqueo(dtAdd, "empresa",emp_codiE.getText(),true);
         activaTodo();
         nav.pulsado = navegador.NINGUNO;
         mensaje("");
@@ -846,7 +846,7 @@ public class pdempresa extends ventanaPad   implements PAD
       }
 
       dtAdd.delete(stUp);
-      resetBloqueo(dtAdd,"v_empresa", emp_codiE.getText(),false);
+      resetBloqueo(dtAdd,"empresa", emp_codiE.getText(),false);
       ctUp.commit();
       rgSelect();
     }
@@ -865,7 +865,7 @@ public class pdempresa extends ventanaPad   implements PAD
     mensaje("");
     activaTodo();
     try {
-      resetBloqueo(dtAdd,"v_empresa", emp_codiE.getText(), true);
+      resetBloqueo(dtAdd,"empresa", emp_codiE.getText(), true);
     } catch (Exception k)
     {
       Error("Error al Anular bloqueo sobre tabla Empresa",k);
@@ -898,7 +898,7 @@ public class pdempresa extends ventanaPad   implements PAD
    */
    public static String getNombreEmpresa(DatosTabla dt, int empCodi) throws SQLException
   {
-      String s="select emp_nomb from v_empresa WHERE emp_codi = "+empCodi;      
+      String s="select emp_nomb from empresa WHERE emp_codi = "+empCodi;      
       if (! dt.select(s))
           return null;
       else
@@ -913,7 +913,7 @@ public class pdempresa extends ventanaPad   implements PAD
    */
   public static boolean checkEmpresa(DatosTabla dt,int empCodi) throws SQLException
   {
-    String s="select * from v_empresa WHERE emp_codi = "+empCodi;
+    String s="select * from empresa WHERE emp_codi = "+empCodi;
     return dt.select(s);
   }
   /**
