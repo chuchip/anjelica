@@ -41,7 +41,7 @@ create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_bultos,a
 alr_unid,alr_kilos,alr_repet,
 al.emp_codi,al.avc_ano,al.avc_serie,al.avc_nume,al.cli_codi,al.avc_clinom,al.avc_kilos,
 al.avc_unid 
-from albrutacab as c, albrutalin as l,v_albavec as al 
+from albrutacab as c, albrutalin as lstgr,v_albavec as al 
 where c.alr_nume=l.alr_nume and al.avc_id = l.avc_id;
 grant select on v_albruta to public;
 
