@@ -606,7 +606,7 @@ public class paregalm extends CPanel {
 
         return insRegistro(Formatear.getDate(cci_fecconE.getFecha("yyyy-MM-dd")+" "+
             Formatear.format(cci_horconE.getText(),"99")+":"+
-            Formatear.format(cci_minconE.getText(),"99"),"YYYY-mm-dd HH:mm")
+            Formatear.format(cci_minconE.getText(),"99"),"yyyy-MM-dd HH:mm")
                 , pro_codiE.getValorInt(), EU.em_cod,
                 deo_ejelotE.getValorInt(), deo_serlotE.getText(), pro_loteE.getValorInt(),
                 pro_numindE.getValorInt(), stp_unactE.getValorInt(),

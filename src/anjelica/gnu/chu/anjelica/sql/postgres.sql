@@ -2109,6 +2109,8 @@ cor_totcob char(1) not null -- Totalmente cobrado (S/N)
 --
 -- Tabla Cabecera Albaranes de ruta.
 --
+drop view anjelica.v_albruta;
+drop view anjelica.v_cobruta;
 drop table anjelica.albrutacab;
 create table anjelica.albrutacab
 (
@@ -2155,6 +2157,8 @@ grant select on v_albruta to public;
 --
 --
 --
+drop view anjelica.v_cobruta;
+drop table anjelica.cobrosruta;
 create table anjelica.cobrosruta
 (
 	alr_nume int not null, -- ID
@@ -2170,7 +2174,7 @@ create table anjelica.cobrosruta
         cru_totcob smallint not null default 0, -- Totalmente cobrado (O=NO)
 	constraint ix_cobrosRuta primary key (alr_nume,cru_orden)
 );
-drop view anjelica.v_cobruta;
+
 create or replace view anjelica.v_cobruta as select c.*,l.cru_orden,l.fvc_id,cru_impdoc as fvc_imppen,
 l.cru_impcob,
 fr.emp_codi,fr.fvc_ano,fr.fvc_serie,fr.fvc_nume,fr.cli_codi,fr.fvc_clinom,fvc_fecfra,fvc_sumtot

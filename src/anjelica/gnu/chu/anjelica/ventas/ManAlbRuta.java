@@ -115,7 +115,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         } catch (Exception e) {
             ErrorInit(e);
         } 
-    }
+    } 
     private void ponParametros(Hashtable<String,String> ht)
     {
         if (ht != null)
