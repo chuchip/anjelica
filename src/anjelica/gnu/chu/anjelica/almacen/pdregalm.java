@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Título: pdregalm</p>
  * <p>Descripcion: Mantenimientos de Regularizaciones en almacén (Actualiza la tabla v_regstock) </p>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -54,6 +54,8 @@ public class pdregalm extends ventanaPad implements PAD
   CLabel cLabel13 = new CLabel();
   CLinkBox tir_codiE1 = new CLinkBox();
   CLabel cLabel14 = new CLabel();
+  CTextField rgs_numeE = new CTextField(Types.DECIMAL,"##,###,##9");
+  CLabel rgs_numeL = new CLabel("Identif.");
   proPanel pro_codiE1 = new proPanel()
   {
     /**
@@ -129,7 +131,7 @@ public class pdregalm extends ventanaPad implements PAD
    {
      iniciarFrame();
      this.setSize(new Dimension(583, 562));
-     this.setVersion("2015-11-30 "+(P_ADMIN?"  ADMIN":""));
+     this.setVersion("2016-01-16 "+(P_ADMIN?"  ADMIN":""));
      Pprinc.setDefButton(Baceptar);
      Pprinc.setDefButtonDisable(false);
      Pprinc.setLayout(null);
@@ -164,7 +166,9 @@ public class pdregalm extends ventanaPad implements PAD
     cLabel14.setBounds(new Rectangle(2, 22, 57, 16));
     cLabel14.setText("Tipo Mvto.");
     pro_codiE1.setAncTexto(50);
-    pro_codiE1.setBounds(new Rectangle(60, 41, 430, 18));
+    pro_codiE1.setBounds(new Rectangle(60, 41, 300, 18));
+    rgs_numeL.setBounds(new Rectangle(363, 41, 50, 18));
+    rgs_numeE.setBounds(new Rectangle(415, 41, 80, 18));
     cLabel15.setText("Producto");
     cLabel15.setBounds(new Rectangle(2, 42, 53, 17));
     Baceptar.setMaximumSize(new Dimension(103, 24));
@@ -232,6 +236,8 @@ public class pdregalm extends ventanaPad implements PAD
     Pcond.add(tir_codiE1, null);
     Pcond.add(cLabel14, null);
     Pcond.add(pro_codiE1, null);
+    Pcond.add(rgs_numeE, null);
+    Pcond.add(rgs_numeL, null);
     Pcond.add(opVerInv, null);
     Pcond.add(fecfinE, null);
     Pcond.add(cLabel13, null);
@@ -417,6 +423,7 @@ public void ej_query()
     }
     strSql = "select * from regalmacen WHERE rgs_fecha >= to_date('" + feciniE.getText() + "','dd-MM-yyyy')" +
         " and rgs_fecha <= to_date('" + fecfinE.getText() + "','dd-MM-yyyy')" +
+        (rgs_numeE.getValorInt()!=0 ? " AND rgs_nume = " + rgs_numeE.getValorInt() : "")+
         (pro_codiE1.getValorInt() != 0 ? " AND pro_codi = " + pro_codiE1.getValorInt() : "") +
         (tir_codiE1.getValorInt() != 0 ? " AND tir_codi = " + tir_codiE1.getValorInt() : "") +
         (opVerInv.isSelected()?"": " AND tir_codi NOT IN (SELECT tir_codi FROM v_motregu WHERE tir_afestk = '=') ")+
@@ -644,6 +651,7 @@ public void ej_query()
      fecfinE.setEnabled(b);
      tir_codiE1.setEnabled(b);
      pro_codiE1.setEnabled(b);
+     rgs_numeE.setEnabled(b);
    }
    if (nav.modo == navegador.QUERY)
      return;
@@ -751,4 +759,8 @@ public void ej_query()
   {
       pRegAlm.alm_codiE.setValorInt(almac);
   }       
+  public void setNumeroRegula(int numReg)
+  {
+      rgs_numeE.setValorInt(numReg);
+  }
 }

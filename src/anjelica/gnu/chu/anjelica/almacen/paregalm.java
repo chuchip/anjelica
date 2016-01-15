@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Título: paregalm</p>
  * <p>Descripcion: Panel para mantenimientos  Regularizaciones en almacen  </p>
- *  <p>Copyright: Copyright (c) 2005-2015
+ *  <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -170,9 +170,9 @@ public class paregalm extends CPanel {
         cLabel8.setText("Individuo");
         cLabel8.setToolTipText("");
         tir_codiE.setAncTexto(30);
-        tir_codiE.setBounds(new Rectangle(237, 2, 282, 17));
-        cLabel3.setText("Tipo Mvto.");
-        cLabel3.setBounds(new Rectangle(175, 2, 57, 16));
+        tir_codiE.setBounds(new Rectangle(242, 2, 275, 17));
+        cLabel3.setText("Tipo");
+        cLabel3.setBounds(new Rectangle(195, 2, 57, 16));
         deo_ejelotE.setBounds(new Rectangle(83, 41, 33, 16));
         deo_ejelotE.setAutoNext(true);
         cLabel10.setText("Precio");
@@ -183,9 +183,9 @@ public class paregalm extends CPanel {
         rgs_prreguE.setBounds(new Rectangle(445, 61, 68, 16));
         cLabel16.setText("Coment.");
         cLabel16.setBounds(new Rectangle(1, 133, 56, 16));
-        cci_fecconE.setBounds(new Rectangle(45, 2, 60, 16));
-        cci_horconE.setBounds(new Rectangle(107,2,35,18));
-        cci_minconE.setBounds(new Rectangle(140,2,35,18));
+        cci_fecconE.setBounds(new Rectangle(40, 2, 70, 18));
+        cci_horconE.setBounds(new Rectangle(112,2,35,18));
+        cci_minconE.setBounds(new Rectangle(145,2,35,18));
         
         alm_codiE.setAncTexto(30);
         alm_codiE.setBounds(new Rectangle(59, 61, 161, 16));
@@ -194,7 +194,7 @@ public class paregalm extends CPanel {
         cLabel4.setText("Producto");
         cLabel4.setBounds(new Rectangle(26, 19, 53, 17));
         cLabel2.setText("Fecha");
-        cLabel2.setBounds(new Rectangle(7, 2, 52, 16));
+        cLabel2.setBounds(new Rectangle(1, 2, 52, 16));
         cLabel7.setText("Num. Lote");
         cLabel7.setBounds(new Rectangle(290, 41, 61, 16));
         cLabel11.setText("Almacen");

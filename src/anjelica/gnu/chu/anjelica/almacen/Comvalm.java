@@ -391,6 +391,23 @@ public class Comvalm extends ventana
                           Error("Error al ir al programa", ex);
                       }
                   }
+                  if (jt.getValString(JT_TIPO).startsWith("R"))
+                  {
+                      if ((prog = jf.gestor.getProceso(pdregalm.getNombreClase())) == null)
+                          return;
+                      pdregalm cm = (pdregalm) prog;
+                      if (cm.inTransation())
+                      {
+                          msgBox("Mantenimiento Regularizaciones Almacen ocupado. No se puede realizar la busqueda");
+                          return;
+                      }
+                      cm.PADQuery();
+                      cm.setNumeroRegula(Integer.parseInt(doc[2]));
+
+                      cm.ej_query();
+                      jf.gestor.ir(cm);
+
+                  }
                   resetMsgEspere();
               }
           });
