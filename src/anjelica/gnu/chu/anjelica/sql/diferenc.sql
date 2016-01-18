@@ -1,3 +1,7 @@
+-- Añadido congelado a accion de lineas de partes
+alter table partelin drop constraint partelin_pal_accion_check;
+alter table partelin  add constraint partelin_pal_accion_check check (pal_accion  in ('A','V','R','C','-'));
+-
 ---
 -- Cambiar Tabla v_empresa por empresa y crear vista v_empresa
 alter table v_empresa rename to empresa;
