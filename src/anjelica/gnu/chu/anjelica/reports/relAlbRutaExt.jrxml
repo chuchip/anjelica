@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-01-14T14:29:35 -->
+<!-- 2016-01-18T12:38:51 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relAlbRutaExt" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="16085ab3-6a21-4d59-a4cb-6c23448b50d6">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -82,8 +82,8 @@ order by alr_orden]]>
 	<variable name="kilosAlb" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{alr_kilos}]]></variableExpression>
 	</variable>
-	<variable name="unidAlb" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{alr_unid}]]></variableExpression>
+	<variable name="paletAlb" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{alr_palets}]]></variableExpression>
 	</variable>
 	<variable name="bultosAlb" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{alr_bultos}]]></variableExpression>
@@ -553,7 +553,7 @@ order by alr_orden]]>
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{unidAlb}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{paletAlb}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="false">
 				<reportElement key="textField" positionType="FixRelativeToBottom" mode="Opaque" x="535" y="8" width="30" height="17" forecolor="#000000" backcolor="#FFFFFF" uuid="29b61025-d937-4c59-a165-b7165b4d2ba6"/>
