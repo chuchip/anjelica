@@ -130,7 +130,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-01-14 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2016-01-18 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -209,7 +209,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
             avc_numeE.resetCambio();
             alr_bultosE.resetCambio();
             alr_paletsE.resetCambio();
-            
+            fvc_numeE.resetCambio();
             jt.setValor(dtCon1.getInt("cli_codi"),row,JT_CLICOD);
             String cliNomb=dtCon1.getString("avc_clinom").equals("")?
                 pdclien.getNombreCliente(dtStat,dtCon1.getInt("cli_codi")):dtCon1.getString("avc_clinom");
@@ -458,6 +458,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
      avc_numeE.resetCambio();
      alr_bultosE.resetCambio();
      alr_paletsE.resetCambio();
+     fvc_numeE.resetCambio();
      Tpanel1.setSelectedIndex(0);
      if (ARG_MODSALA)
      {
@@ -1744,8 +1745,11 @@ public class ManAlbRuta extends ventanaPad implements PAD
   
   int checkLinea(int row) throws SQLException
   {
+    if (! fvc_numeE.hasCambio())
+        return -1;
+    fvc_numeE.resetCambio();
     if (fvc_numeE.getValorInt()==0)
-      return -1;
+      return -1;    
     if (!buscaFac(fvc_anoE.getValorInt(), fvc_empcodE.getValorInt(),
                   fvc_serieE.getText(), fvc_numeE.getValorInt()))
     {
@@ -1754,8 +1758,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
     }
     if (dtStat.getDouble("fvc_cobrad")==-1)
     {
-      mensajeErr("Factura YA esta cobrada");
-      return 0;
+      msgBox("Factura YA esta cobrada");
+//      return 0;
     }
     return -1;
   }
