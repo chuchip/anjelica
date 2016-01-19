@@ -260,7 +260,7 @@ public class MantPartes  extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false,
         P_PERMEST==PERM_GERENC?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20160105) Modo: "+P_PERMEST);
+        this.setVersion("(20160119) Modo: "+P_PERMEST);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -2272,7 +2272,15 @@ public class MantPartes  extends ventanaPad implements PAD
             nav.pulsado=navegador.NINGUNO;
             activaTodo();
             if (swAlta)
+            {
                 matar();
+            }
+            else
+            {
+                strSql="SELECT * FROM partecab where par_codi = "+id;
+                rgSelect();
+                verDatos();
+            }
             
         } catch (ParseException | SQLException ex)
         {

@@ -130,7 +130,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-01-18 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2016-01-19 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -1520,6 +1520,9 @@ public class ManAlbRuta extends ventanaPad implements PAD
             dtAdd.commit();
             mensajeErr("Albaranes de ruta.. guardados");
             activaTodo();
+            strSql="SELECT * FROM albrutacab where alr_nume = "+id;
+            rgSelect();
+            verDatos();
         } catch (SQLException | ParseException ex )
         {
             Error("Error al guardar cabecera de ruta", ex);
