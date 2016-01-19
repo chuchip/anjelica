@@ -1,5 +1,4 @@
-
-
+package gnu.chu.anjelica.facturacion;
 /*
  *  * <p>Titulo: GenFactur.java </p>
  * <p>Descripción: Generacion de Facturas sobre alb. de ventas</p>
@@ -21,9 +20,6 @@
  * @version 1.1 Incluida serie de factura. Realizado diseño en netbeans
  * Created on 24-ene-2009, 16:43:56
  */
-
-package gnu.chu.anjelica.facturacion;
-
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.DatosIVA;
 import gnu.chu.anjelica.pad.MantArticulos;
@@ -58,27 +54,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 
-/**
- *
- * @author cpuente
- * <p>Titulo: GenFactur </p>
- * <p>Descripción: Generación de facturas de ventas sobre los albaranes</p>
- *  * <p>Copyright: Copyright (c) 2005-2012
- *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
- *  los terminos de la Licencia Pública General de GNU según es publicada por
- *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
- *  o bien (según su elección) de cualquier versión posterior.
- *  Este programa se distribuye con la esperanza de que sea útil,
- *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
- *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
- *  Véase la Licencia Pública General de GNU para más detalles.
- *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
- *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
- *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
- * </p>
- * @version 1.1 Incluida opcion de Serie de factura (01/20/2009)
- *
- */
 public class GenFactur extends ventana {
   int fvcId;
   conexion ctCom;
@@ -160,7 +135,7 @@ public class GenFactur extends ventana {
   {
     iniciarFrame();
     this.setSize(new Dimension(534, 543));
-    setVersion("2015-04-16");
+    setVersion("2016-01-19");
    
     statusBar= new StatusBar(this);
     this.getContentPane().add(statusBar,BorderLayout.SOUTH);
@@ -462,7 +437,7 @@ public void iniciarVentana() throws Exception
 
     ctUp.setAutoCommit(false);
     pdclien.llenaTipoFact(cli_tipfacE,false);
-   
+    Pprinc.setDefButton(Bconsalb);
     cli_codiE.iniciar(dtStat, this, vl, EU);
     cli_codiE1.iniciar(dtStat, this, vl, EU);
     fecfinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -662,7 +637,7 @@ public void iniciarVentana() throws Exception
    s=pdejerci.checkFecha(dtStat, eje_numeE.getValorInt(), emp_codiE.getValorInt(),fvc_fecfraE.getText());
    if (s!=null)
     {
-      msgBox(s);
+      msgBox("Atencion!!. "+s);
       fvc_fecfraE.requestFocus();
       return false;
     }
@@ -745,7 +720,7 @@ public void iniciarVentana() throws Exception
 
         s="SELECT * FROM v_albavel  "+
             " WHERE emp_codi = "+emp_codiE.getValorInt()+
-            " and avc_ano = "+eje_numeE.getValorInt()+
+            " and avc_ano = "+dtAlb.getInt("avc_ano")+
             " and avc_serie = '"+dtAlb.getString("avc_serie")+"'"+
             " and avc_nume = "+dtAlb.getInt("avc_nume")+
             " ORDER BY avl_numlin ";
@@ -764,13 +739,13 @@ public void iniciarVentana() throws Exception
 //            debug("Linea de Factura: "+nLinFra+" Albaran: "+dtAlb.getInt("avc_nume"));
             stUp.executeUpdate("update v_albavel set fvl_numlin = "+nLinFra+
                                "  where emp_codi = "+emp_codiE.getValorInt()+
-                               " and avc_ano = " + eje_numeE.getValorInt() +
+                               " and avc_ano = " + dtAlb.getInt("avc_ano") +
                                " and avc_serie = '" + dtAlb.getString("avc_serie") + "'" +
                                " and avc_nume = " + dtAlb.getInt("avc_nume") +
                                " AND avl_numlin = "+dtCon1.getInt("avl_numlin"));
 
             dtAdd.addNew("v_facvel");
-            dtAdd.setDato("eje_nume",dtCon1.getInt("avc_ano"));
+            dtAdd.setDato("eje_nume",eje_numeE.getValorInt());
             dtAdd.setDato("emp_codi",dtCon1.getInt("emp_codi"));
             dtAdd.setDato("fvc_serie",fvcSerie);
             dtAdd.setDato("fvc_nume",fvcNumfra);
@@ -796,8 +771,8 @@ public void iniciarVentana() throws Exception
           // Vuelvo a realizar la select de Lineas para calcular el importe agrupando.
           s = "SELECT pro_codi,sum(avl_canti) as avl_canti, " +
               " sum(avl_unid) as avl_unid, avl_prven,pro_nomb as pro_nomb FROM v_albavel  " +
-              " WHERE emp_codi = " + emp_codiE.getValorInt() +
-              " and avc_ano = " + eje_numeE.getValorInt() +
+              " WHERE emp_codi = " + emp_codiE.getValorInt()  +
+              " and avc_ano = " +  dtAlb.getInt("avc_ano") +
               " and avc_serie = '" + dtAlb.getString("avc_serie") + "'" +
               " and avc_nume = " + dtAlb.getInt("avc_nume") +
              " group by pro_codi,avl_prven,pro_nomb ";
@@ -814,7 +789,7 @@ public void iniciarVentana() throws Exception
           } while (dtCon1.next());
 
           s = "SELECT * FROM v_albavec WHERE emp_codi = " + emp_codiE.getValorInt() +
-              " and avc_ano = " + eje_numeE.getValorInt() +
+              " and avc_ano = " + dtAlb.getInt("avc_ano")  +
               " and avc_serie = '" + dtAlb.getString("avc_serie") + "'" +
               " and avc_nume = " + dtAlb.getInt("avc_nume");
           if (dtCon1.select(s,true))
@@ -880,7 +855,7 @@ public void iniciarVentana() throws Exception
         " ban_codi,cli_baofic,cli_badico,cli_bacuen,cl.cli_nomb,c.avc_impalb "+
         " FROM v_albavec as c,clientes cl "+
         " WHERE c.emp_codi = " +   emp_codiE.getValorInt() +
-        " AND c.avc_ano = " + eje_numeE.getValorInt() +
+        //" AND c.avc_ano = " + eje_numeE.getValorInt() +
         " and c.avc_fecalb >= to_date('" + feciniE.getText() +"','dd-MM-yyyy')" +
         " and c.avc_fecalb <= to_date('" + fecfinE.getText() +"','dd-MM-yyyy')" +
         (cli_codiE.getValorInt() == 0 ? "" : " and c.cli_codfa >= " + cli_codiE.getValorInt()) +
@@ -909,12 +884,12 @@ public void iniciarVentana() throws Exception
          " and cl.cli_giro = '"+cli_giroE.getValor()+"'":"")+
         " and cl.cli_tipfac != 'N' "+
         " and exists (select avc_ano  from v_albavel as l WHERE l.emp_codi = "+emp_codiE.getValorInt()+
-        " and l.avc_ano = "+eje_numeE.getValorInt()+
+//        " and l.avc_ano = "+eje_numeE.getValorInt()+
         " and l.avc_serie = c.avc_serie "+
         " and l.avc_nume = c.avc_nume "+
         " and l.avl_canti != 0) "+
         (exclAlb?" and not exists (select avc_nume from nofact WHERE nofact.emp_codi = c.emp_codi "+
-         " and nofact.avc_serie = c.avc_serie and nofact.avc_ano = "+eje_numeE.getValorInt()+
+         " and nofact.avc_serie = c.avc_serie and nofact.avc_ano = c.avc_ano "+
          " and nofact.avc_nume = c.avc_nume) ":"")+
          " ORDER BY "+
         (opFecFraAlb.isSelected()?
