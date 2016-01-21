@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-01-18T12:38:51 -->
+<!-- 2016-01-20T12:20:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relAlbRutaExt" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="16085ab3-6a21-4d59-a4cb-6c23448b50d6">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -413,7 +413,7 @@ order by alr_orden]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cli_nomen}]]></textFieldExpression>
 			</textField>
-			<textField pattern=" ###,##0.0" isBlankWhenNull="false">
+			<textField pattern=" ###,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" isPrintRepeatedValues="false" mode="Opaque" x="447" y="2" width="50" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="e093ac45-87de-43f1-853d-b406426962db"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
@@ -529,9 +529,10 @@ order by alr_orden]]>
 				<textFieldExpression><![CDATA[$V{numAlb}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" positionType="FixRelativeToBottom" mode="Opaque" x="445" y="8" width="48" height="17" forecolor="#000000" backcolor="#FFFFFF" uuid="cf1b664a-d20d-4357-8fb9-9f022ca746c4">
+				<reportElement key="textField" positionType="FixRelativeToBottom" mode="Opaque" x="444" y="8" width="50" height="17" forecolor="#000000" backcolor="#FFFFFF" uuid="cf1b664a-d20d-4357-8fb9-9f022ca746c4">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="2.0"/>
@@ -556,7 +557,9 @@ order by alr_orden]]>
 				<textFieldExpression><![CDATA[$V{paletAlb}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="false">
-				<reportElement key="textField" positionType="FixRelativeToBottom" mode="Opaque" x="535" y="8" width="30" height="17" forecolor="#000000" backcolor="#FFFFFF" uuid="29b61025-d937-4c59-a165-b7165b4d2ba6"/>
+				<reportElement key="textField" positionType="FixRelativeToBottom" mode="Opaque" x="533" y="8" width="30" height="17" forecolor="#000000" backcolor="#FFFFFF" uuid="29b61025-d937-4c59-a165-b7165b4d2ba6">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="2.0"/>
 					<bottomPen lineWidth="1.0"/>

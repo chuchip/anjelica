@@ -251,9 +251,7 @@ public class MantPartes  extends ventanaPad implements PAD
        if (ht.get("estados") != null)
              P_PERMEST = Integer.parseInt(ht.get("estados"));
        if (ht.get("admin") != null)
-           P_ADMIN= ht.get("admin").equals("true");
-        
-      
+           P_ADMIN= ht.get("admin").equals("true");              
   }
   private void jbInit() throws Exception
   {
@@ -2459,6 +2457,12 @@ public class MantPartes  extends ventanaPad implements PAD
                     return false;
                 }
             }
+        }
+        if (pac_comentE.getText().length()>145)
+        {
+            mensajeErr("La longitud del comentario no puede exceder los 145 caracteres");
+            pac_comentE.requestFocus();
+            return false;
         }
         if (swModificaTodo)
         {
