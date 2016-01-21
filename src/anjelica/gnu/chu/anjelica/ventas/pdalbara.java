@@ -101,6 +101,7 @@ import javax.swing.event.ListSelectionListener;
  
 public class pdalbara extends ventanaPad  implements PAD
 {  
+  private boolean CONTROL_PRO_MIN=true; // Controlar venta de prod. de minoristas a mayor. ¡¡ CHAPUZA!!
   private int avpNumparAnt=0,avpNumindAnt=0,avpEjelotAnt=0;
   private String avpSerlotAnt="";
   private boolean swPreguntaDestruir=false; // Pregunta si se debe destruir todo rastro de un albaran
@@ -6334,6 +6335,10 @@ public class pdalbara extends ventanaPad  implements PAD
       {
           mensajeErr("Producto esta marcado como INACTIVO");
           return 1;
+      }
+      if (CONTROL_PRO_MIN && pro_codiE.getValorInt()>=10000 && pro_codiE.getValorInt()<59999  && sbe_codiE.getValorInt()==2)
+      {
+          msgBox("Atencion!. Esta vendiendo un producto de mayorista a un cliente de minorista");
       }
       // Si el producto NO es vendible ( linea Comentario) se guarda directamente.
       if (pro_codiE.getTipoLote()!='V')
