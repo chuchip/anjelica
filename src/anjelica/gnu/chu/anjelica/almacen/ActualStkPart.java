@@ -878,8 +878,9 @@ public class ActualStkPart
 //                + (almCodi == 0 ? "" : " and m.alm_codi = " + almCodi)                           
                 + (pro_codi != 0 ? " and pro_codi = " + pro_codi : "")
                +  (almCodi != 0 ? " and alm_codi = "+almCodi:"")
-                + " AND mvt_time::date > TO_DATE('" + fecIni + "','dd-MM-yyyy') "
-                + (fecFin==null?"":" and mvt_time::date <= TO_DATE('" + fecFin + "','dd-MM-yyyy') ")+
+                + " AND mvt_time::date > TO_DATE('" + Formatear.getFecha(fecIni,"dd-MM-yyyy") + "','dd-MM-yyyy') "
+                + (fecFin==null?"":" and mvt_time::date <= TO_DATE('" + Formatear.getFecha(fecFin,"dd-MM-yyyy") +
+                    "','dd-MM-yyyy') ")+
                " group by mvt_tipo,alm_codi,m.pro_codi,pro_ejelot,pro_serlot,pro_numlot,pro_indlot";
                
               
@@ -900,7 +901,7 @@ public class ActualStkPart
         (pro_codi == 0 ? "" : " and r.pro_codi = " + pro_codi) +
          " and a.pro_codi = r.pro_codi " +
         condProd +
-        " AND r.cci_feccon = TO_DATE('" + fecinv + "','dd-MM-yyyy') ";
+        " AND r.cci_feccon = TO_DATE('" + Formatear.getFecha(fecinv,"dd-MM-yyyy") + "','dd-MM-yyyy') ";
     else
         s += " UNION all " + // Inventario Normal
             " select 1 as orden,  '=' as tipmov, " +
@@ -920,7 +921,7 @@ public class ActualStkPart
             " and tir_afestk = '=' "+
             " and a.pro_codi = r.pro_codi " +
             condProd +
-            " AND r.rgs_fecha = TO_DATE('" + fecinv + "','dd-MM-yyyy') ";
+            " AND r.rgs_fecha = TO_DATE('" + Formatear.getFecha(fecinv,"dd-MM-yyyy") + "','dd-MM-yyyy') ";
     s+= " order by 3"; // Ordenado por producto
     return s;
   }

@@ -95,7 +95,7 @@ public class TrasInven extends ventanaPad implements PAD {
         nav = new navegador(this, dtCons, false,navegador.CURYCON);
         iniciarFrame();
 
-        this.setVersion("2015-07-12" );
+        this.setVersion("2016-01-20" );
         strSql = "SELECT emp_codi, alm_codi, cci_feccon FROM coninvcab where emp_codi = "+EU.em_cod+
                 " group by emp_codi, alm_codi,cci_feccon "+
             " order by cci_feccon";
@@ -178,12 +178,12 @@ public class TrasInven extends ventanaPad implements PAD {
                     " and " + condWhere;
             opIncCong.setSelected(dtStat.select(s));
             jt.removeAllDatos();
-            s = "select l.cam_codi,cam_nomb,sum(lci_numind) as lci_numind, sum(lci_peso) as lci_peso "
+            s = "select c.cam_codi,cam_nomb,sum(lci_numind) as lci_numind, sum(lci_peso) as lci_peso "
                     + " from  coninvlin as l,coninvcab as c "
                     + " left join v_camaras as a on c.cam_codi = a.cam_codi and c.emp_codi = a.emp_codi "
                     + " where " + condWhere
-                    + " group by cam_codi,dis_nomb "
-                    + " order by cam_codi ";
+                    + " group by c.cam_codi,cam_nomb "
+                    + " order by c.cam_codi ";
             if (!dtCon1.select(s)) {
                 msgBox("No encontradas lineas de inventarios");
                 return;
@@ -199,7 +199,7 @@ public class TrasInven extends ventanaPad implements PAD {
                 dtStat.select(s);
                 precio = dtStat.getDouble("precio", true);
                 ArrayList v = new ArrayList();
-                v.add(dtCon1.getString("dis_nomb"));
+                v.add(dtCon1.getString("cam_nomb"));
                 v.add(dtCon1.getString("lci_numind"));
                 v.add(dtCon1.getString("lci_peso"));
                 v.add("" + precio);
