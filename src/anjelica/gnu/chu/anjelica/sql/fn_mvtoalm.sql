@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION fn_mvtoalm()
+CREATE OR REPLACE FUNCTION anjelica.fn_mvtoalm()
   RETURNS trigger AS
 $BODY$  
   DECLARE   
@@ -516,7 +516,7 @@ $BODY$
 -- Mvtos de Regularizacion
 	if TG_TABLE_NAME = 'regalmacen' then	  
 	  if TG_OP =  'DELETE' or TG_OP =  'UPDATE' then	
-		raise notice 'BORRO/UPDT. movimiento % ',TG_OP;
+		raise notice '(regalmacen) BORRO/UPDT. movimiento % ',TG_OP;
 		if OLD.rgs_trasp =0 then			
 			return OLD; -- Ignoro apuntes de reg. No Traspasados.
 		end if;    	
@@ -526,7 +526,8 @@ $BODY$
 			RAISE EXCEPTION 'NO encontrado tipo Mvto %',OLD.tir_codi;
 		end if;
 		if tipoMvto='=' or tipoMvto='*' then
-			return OLD; -- Ignoro apuntes de Inventario y no traspasados
+		        raise notice 'IGNORO MVTOS DE INVENTARIO ';
+			return NEW; -- Ignoro apuntes de Inventario y no traspasados
 		end if;     
 		DELETE FROM anjelica.mvtosalm  where	
 			mvt_tipdoc='R' and					
@@ -543,17 +544,20 @@ $BODY$
 	  end if;	   	  
 	  if TG_OP =  'INSERT' or TG_OP =  'UPDATE' then
 		tipoMvto='';
+		
 		if NEW.rgs_trasp=0 then
 			tipoMvto='*'; -- No traspasado. No haremos insert.
 		end if;
-		IF tipoMvto!='*' then 
+		
+		IF tipoMvto !='*' then 
 			SELECT tir_afestk into tipoMvto FROM anjelica.v_motregu  WHERE 
 				tir_codi = NEW.tir_codi;
 			if not found then
 				RAISE EXCEPTION 'NO encontrado tipo Mvto %',NEW.tir_codi;
 			end if;
-			raise notice 'Tipo De movimiento % Operacion %',tipoMvto,TG_OP;
+			raise notice 'regalmacen. Tipo De movimiento % Operacion %',tipoMvto,TG_OP;
 			if tipoMvto ='='  then
+				raise notice 'IGNORO MVTO TIPO INV. movimiento % Operacion %',tipoMvto,TG_OP;
 				tipoMvto='*'; -- Ignoro Regulariza. tipo Inventario
 			end if;
 			if tipoMvto='+' then
@@ -563,7 +567,7 @@ $BODY$
 				tipoMvto='S';
 			end if;
 		end if;
-		raise notice 'Insert. Tipo De movimiento % Operacion %',tipoMvto,TG_OP;		
+		raise notice 'regalmacen Insert. Tipo De movimiento % Operacion %',tipoMvto,TG_OP;		
 		if tipoMvto != '*' then				
 			INSERT INTO anjelica.mvtosalm (mvt_oper,mvt_time,
 				mvt_tipo , mvt_tipdoc , 

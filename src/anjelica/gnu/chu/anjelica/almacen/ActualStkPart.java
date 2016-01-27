@@ -921,7 +921,7 @@ public class ActualStkPart
             " and tir_afestk = '=' "+
             " and a.pro_codi = r.pro_codi " +
             condProd +
-            " AND r.rgs_fecha = TO_DATE('" + Formatear.getFecha(fecinv,"dd-MM-yyyy") + "','dd-MM-yyyy') ";
+            " AND r.rgs_fecha::date = TO_DATE('" + Formatear.getFecha(fecinv,"dd-MM-yyyy") + "','dd-MM-yyyy') ";
     s+= " order by 3"; // Ordenado por producto
     return s;
   }

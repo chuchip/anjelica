@@ -163,7 +163,7 @@ public class TrasInven extends ventanaPad implements PAD {
             alm_codiE.setValorInt(dtCons.getInt("alm_codi"));
             cci_fecconE.setText(dtCons.getFecha("cci_feccon"));
             s = "select * from regalmacen where "
-                    + "  rgs_fecha = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                    + "  rgs_fecha::date = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                     + " and tir_codi = " + tirCodi;
 
             opTrasp.setSelected(dtStat.select(s));
@@ -303,6 +303,8 @@ public class TrasInven extends ventanaPad implements PAD {
      * @throws SQLException
      */
     private void insertaRegul() throws Exception {
+        java.util.Date cciFeccon= Formatear.getDate(cci_fecconE.getFechaDB()+" 23:59:59","yyyyMMdd hh:mm:ss");
+        
         setMensajePopEspere("Insertando Regularizaciones .... A esperar tocan ;-)",false);
         // Busco los productos en Inventario agrupandolos por Individuo.
         s = "select c.alm_codi, l.pro_codi,prp_ano,l.prp_empcod,prp_seri,prp_part,prp_indi,a.pro_coinst, "
@@ -318,8 +320,8 @@ public class TrasInven extends ventanaPad implements PAD {
                // + " and ipr_prec > 0"
                 + " and l.lci_regaut =0 "  // No es apunte automatico
                 + (opInsAllAlmac.isSelected()?"": " and c.alm_codi = " + alm_codiE.getValorInt())
-                +" and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
-                + " AND i.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                +" and c.cci_feccon::date = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                + " AND i.cci_feccon::date = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                 + " and l.pro_codi = i.pro_codi "
                 + " and l.pro_codi = a.pro_codi "
                 + " group by c.alm_codi,i.ipr_prec,l.pro_codi,prp_ano, "
@@ -362,7 +364,7 @@ public class TrasInven extends ventanaPad implements PAD {
                     if (!dtStat.select(s))
                     { // No tiene apuntes posteriores.
                         dtAdd.addNew("invdepos");
-                        dtAdd.setDato("ind_fecha", cci_fecconE.getDate());
+                        dtAdd.setDato("ind_fecha", cciFeccon);
                         dtAdd.setDato("pro_codi", dtCon1.getInt("pro_codi"));
                         dtAdd.setDato("eje_nume", dtCon1.getInt("prp_ano"));
                         dtAdd.setDato("emp_codi", dtCon1.getInt("prp_empcod"));
@@ -379,16 +381,12 @@ public class TrasInven extends ventanaPad implements PAD {
                 }
             }
             almCodi = dtCon1.getInt("alm_codi");
-            pRegAlm.setRegNume(++rgsNume);
-            try {
-                pRegAlm.insRegistro(cci_fecconE.getDate(), dtCon1.getInt("pro_codi"),
+            pRegAlm.setRegNume(++rgsNume);        
+            pRegAlm.insRegistro(cciFeccon, dtCon1.getInt("pro_codi"),
                         dtCon1.getInt("prp_empcod"), dtCon1.getInt("prp_ano"), dtCon1.getString("prp_seri"),
                         dtCon1.getInt("prp_part"), dtCon1.getInt("prp_indi"), dtCon1.getInt("lci_numind"),
                         dtCon1.getDouble("lci_peso"), almCodi, tirCodi, 0, "", dtCon1.getDouble("ipr_prec"),
                         null, 0, sbeCodi, 1, 0, 0, "", 0,0);
-            } catch (ParseException ex) {
-                throw new SQLException("Error al parsear fecha \n"+ex.getMessage());
-            }
 
             if (++nReg % 10 == 0) {
                 setMensajePopEspere("Insertados: " + nReg + " Registros en Regulacion Stock", false);
@@ -418,7 +416,7 @@ public class TrasInven extends ventanaPad implements PAD {
                         + " and lci_peso <> 0 "
                         + " and cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                         + " and not exists (SELECT * FROM invprec where pro_codi = l.pro_codi "
-                        + " and cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy')) ";
+                        + " and cci_feccon::date = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy')) ";
                 if (dtCon1.select(s)) {
                     mensajeErr("Existen Productos SIN precio ("+dtCon1.getInt("pro_codi",true)+
                         " en camara "+dtCon1.getString("cam_codi",true)+")");
@@ -431,7 +429,7 @@ public class TrasInven extends ventanaPad implements PAD {
                         + " and lci_peso <> 0 "
                         + " and cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                         + " and exists (SELECT * FROM invprec where pro_codi = l.pro_codi "
-                        + " and cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy')"
+                        + " and cci_feccon::date = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy')"
                         + " and ipr_prec = 0) ";
                 if (dtCon1.select(s)) {
                     int ret=mensajes.mensajeYesNo("Existen productos sin VALORAR (" + dtCon1.getInt("pro_codi")
@@ -455,7 +453,7 @@ public class TrasInven extends ventanaPad implements PAD {
                  * Comprobar que no hay inventarios para esta fecha.
                  */
                 s = "select * from regalmacen where "
-                        + "  rgs_fecha = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                        + "  rgs_fecha::date = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                        + (opInsAllAlmac.isSelected()?"":" and alm_codi = "+alm_codiE.getValorInt())
                         + " and tir_codi = " + tirCodi;
                 
@@ -475,7 +473,7 @@ public class TrasInven extends ventanaPad implements PAD {
                     res = mensajes.mensajeYesNo("Borrar los registros existentes ?");
                     if (res == mensajes.YES) {
                         s = "delete from regalmacen where "
-                                + " rgs_fecha = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                                + " rgs_fecha::date = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                                 + " and tir_codi = " + tirCodi
                                 +(opInsAllAlmac.isSelected()?"":
                                     " and alm_codi = " + alm_codiE.getValorInt());

@@ -3719,7 +3719,7 @@ create table anjelica.partelin
 	pal_acsala char(1) default '-' check  (pal_acsala in ('V','R','C','-')), 
 			-- Accion sugerida x sala. (V)ertedero/(R)eutilizar/(C)ongelar, (-)No Definida
 	pal_comsal varchar(50), -- Comentario Sala sobre esta linea	
-	pal_accion char(1) not null default '-' check  (pal_accion in ('A','N','V','R','-')), -- (A) Acept. Dev. (N) No acept. Dev.
+	pal_accion char(1) not null default '-' check  (pal_accion in ('A','V','R','C','-')), -- (A) Acept. Dev. (N) No acept. Dev.
 											 -- (V)ertedero/(R)eutilizar/(C)ongelar,(-) No definida
 	pal_coment varchar(50), -- Comentario sobre esta linea
 	constraint ix_partelin primary  key (par_codi,par_linea)
