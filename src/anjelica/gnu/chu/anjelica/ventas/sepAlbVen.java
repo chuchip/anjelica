@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
@@ -314,10 +313,10 @@ public class sepAlbVen extends ventana
      albNumE.setEnabled(false);
 
      albFecE.setEnabled(false);
-     Vector v1=new Vector();
-     v1.addElement(albNumE);
-     v1.addElement(albFecE);
-     v1.addElement(albImpE);
+     ArrayList v1=new ArrayList();
+     v1.add(albNumE);
+     v1.add(albFecE);
+     v1.add(albImpE);
      jt.setCampos(v1);
    }
    private boolean checkCabe() throws Exception
@@ -453,7 +452,7 @@ public class sepAlbVen extends ventana
             acumAlb+= Formatear.redondea((kilos *  dtCon1.getDouble("avl_prven")),numDec);
             impLinea -= Formatear.redondea((kilos *  dtCon1.getDouble("avl_prven")),numDec);
 
-            guardaLineaDes(kilos,numUni,dtCon1.getFecha("avl_fecalt","yyyy-MM-dd"));
+            guardaLineaDes(kilos,numUni,dtCon1.getTimeStamp("avl_fecalt"));
             numUni=0; // Pongo todas las unidades al primer inidviduo
             swRotoAlb = true;
             swRotoLin = true;
@@ -473,7 +472,7 @@ public class sepAlbVen extends ventana
             acumAlb+=Formatear.redondea((kilos *  dtCon1.getDouble("avl_prven")),numDec);
             impAcum+= Formatear.redondea( (kilos *  dtCon1.getDouble("avl_prven")),numDec);
             impLinea = 0;
-            guardaLineaDes( kilos,numUni,dtCon1.getFecha("avl_fecalt","yyyy-MM-dd"));
+            guardaLineaDes( kilos,numUni,dtCon1.getTimeStamp("avl_fecalt"));
             numUni=0; // Pongo todas las unidades al primer inidviduo
           }
         }
@@ -572,7 +571,7 @@ public class sepAlbVen extends ventana
 //     impLinE.setValorDec(datCab.getValDouble("avc_impbru"));
 
    }
-   void  guardaLineaDes(double kilos,int numUni,String avlFecalt) throws Exception
+   void  guardaLineaDes(double kilos,int numUni,Timestamp avlFecalt) throws Exception
    {
      if (swRotoAlb)
        guardaCab();
@@ -599,7 +598,7 @@ public class sepAlbVen extends ventana
       dtAdd.setDato("avp_numuni", numUni);
       dtAdd.setDato("avp_canti", kilos);
       dtAdd.update();
-      String s="update mvtosalm set mvt_time = {d '"+avlFecalt+"'}"+          
+      String s="update mvtosalm set mvt_time = {ts '"+Formatear.getFecha(avlFecalt, "yyyy-MM-dd HH:mm:ss")+"'}"+          
           " where mvt_tipdoc='V' and mvt_empcod="+emp_codiE.getValorInt()+
           " and mvt_numdoc="+numAlb+
           " and mvt_serdoc = '"+avc_seriE.getText()+"'"+
