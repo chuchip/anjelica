@@ -303,7 +303,7 @@ public class TrasInven extends ventanaPad implements PAD {
      * @throws SQLException
      */
     private void insertaRegul() throws Exception {
-        java.util.Date cciFeccon= Formatear.getDate(cci_fecconE.getFechaDB()+" 23:59:59","yyyyMMdd hh:mm:ss");
+        java.util.Date cciFeccon= Formatear.getDate(cci_fecconE.getFechaDB()+" 00:00:00","yyyyMMdd hh:mm:ss");
         
         setMensajePopEspere("Insertando Regularizaciones .... A esperar tocan ;-)",false);
         // Busco los productos en Inventario agrupandolos por Individuo.

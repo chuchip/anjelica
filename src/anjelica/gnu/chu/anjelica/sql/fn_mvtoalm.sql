@@ -527,7 +527,11 @@ $BODY$
 		end if;
 		if tipoMvto='=' or tipoMvto='*' then
 		        raise notice 'IGNORO MVTOS DE INVENTARIO ';
-			return NEW; -- Ignoro apuntes de Inventario y no traspasados
+                        if TG_OP =  'DELETE' then
+                            return OLD; -- Ignoro apuntes de Inventario y no traspasados
+                        else
+                            return NEW;
+                        end if;
 		end if;     
 		DELETE FROM anjelica.mvtosalm  where	
 			mvt_tipdoc='R' and					
