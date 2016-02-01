@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package gnu.chu.anjelica.listados;
 
 import gnu.chu.Menu.Principal;
@@ -29,7 +23,24 @@ import net.sf.jasperreports.engine.JasperReport;
 
 /**
  *
- * @author jpuente.ext
+ * <p>Titulo: ClClien </p>Consulta/Listado de Maestro de Clientes.
+ *  </p>
+ * <p>Copyright: Copyright (c) 2005-2016
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,ed
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * <p>Empresa: miSL</p>
+ * @author chuchi P
+ * @version 2.0
  */
 public class ClClien extends ventana
 {
@@ -78,7 +89,7 @@ public class ClClien extends ventana
   {
       iniciarFrame();
 
-      this.setVersion("2014-04-24");
+      this.setVersion("2016-02-01");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -126,7 +137,7 @@ public class ClClien extends ventana
     String getStrSql()
     {
       String s = "SELECT cl.*,crc_nomb as cli_zoncren FROM clientes as cl left join  v_credclien  as d " +
-          "  on  ANd crc_codi=cli_zoncre" +
+          "  on  crc_codi=cli_zoncre" +
           " WHERE 1= 1 ";
       if (opEmail.isSelected())
           s+=" and ((cli_email1 is not null and cli_email1 != '' ) or (cli_email2 is not null and cli_email2!='')) ";
