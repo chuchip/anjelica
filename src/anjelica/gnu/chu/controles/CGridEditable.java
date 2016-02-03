@@ -1928,7 +1928,7 @@ public class CGridEditable extends Cgrid implements CQuery {
    {
     removeAllDatos_Cgrid();
   
-    if (isPonValoresInFocus())
+    if (isPonValoresInFocus() || ! isEnabled())
       ponValores();
     TABLAVACIA=true;
   }
@@ -1946,6 +1946,7 @@ public class CGridEditable extends Cgrid implements CQuery {
          ( (CQuery) campos.get(n)).setQuery(swQuery);
      }
   }
+    @Override
   public boolean getQuery() {return query;}
   /**
    * Establece si se deben poner los campos del Grid a los editables cuando se realiza 
