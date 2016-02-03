@@ -15,10 +15,12 @@ $BODY$
   ajuRegmvt int;
   ajuDelmvt int;
   mvtFeccad date;
+  DEBUG int ;
   BEGIN
-
+    
 -- Albaranes de Venta
-   select aju_regmvt,aju_delmvt into ajuRegmvt,ajuDelmvt from anjelica.ajustedb;
+   
+   select aju_regmvt,aju_delmvt,aju_delmvt into ajuRegmvt,ajuDelmvt,DEBUG from anjelica.ajustedb;
 	if not found then
 		RAISE EXCEPTION 'NO encontrado Ajustes DB';
 	end if;
@@ -159,8 +161,10 @@ $BODY$
 
 		return NEW;
 	    end if;
-	    if TG_OP =  'DELETE' then		  
-	       -- RAISE NOTICE  'borrando mvto de alb. venta';		      
+	    if TG_OP =  'DELETE' then	
+               if DEBUG = 1 then
+                RAISE NOTICE  'borrando mvto de alb. venta';		      
+               end if;
 	       DELETE FROM anjelica.mvtosalm  where
 			mvt_tipdoc='V' and			
 		        mvt_empcod =OLD.emp_codi and
@@ -250,7 +254,9 @@ $BODY$
 		return NEW;
 	    end if;
 	    if TG_OP =  'UPDATE' then
-		-- RAISE NOTICE 'En update de compras';
+                if DEBUG = 1 then
+                    RAISE NOTICE 'En update de compras';
+                end if;
 		update anjelica.mvtosalm set mvt_oper= TG_OP,
 			alm_codi = almCodi,
 			pro_codi  = NEW.pro_codi,
@@ -516,7 +522,9 @@ $BODY$
 -- Mvtos de Regularizacion
 	if TG_TABLE_NAME = 'regalmacen' then	  
 	  if TG_OP =  'DELETE' or TG_OP =  'UPDATE' then	
-		raise notice '(regalmacen) BORRO/UPDT. movimiento % ',TG_OP;
+                if DEBUG = 1 then
+                    raise notice '(regalmacen) BORRO/UPDT. movimiento % ',TG_OP;
+                end if;
 		if OLD.rgs_trasp =0 then			
 			return OLD; -- Ignoro apuntes de reg. No Traspasados.
 		end if;    	
@@ -526,7 +534,9 @@ $BODY$
 			RAISE EXCEPTION 'NO encontrado tipo Mvto %',OLD.tir_codi;
 		end if;
 		if tipoMvto='=' or tipoMvto='*' then
-		        raise notice 'IGNORO MVTOS DE INVENTARIO ';
+                        if DEBUG = 1 then
+                            raise notice 'IGNORO MVTOS DE INVENTARIO ';
+                        end if;
                         if TG_OP =  'DELETE' then
                             return OLD; -- Ignoro apuntes de Inventario y no traspasados
                         else
@@ -540,10 +550,10 @@ $BODY$
 		if nRows = 0  and ajuDelmvt = 0 then
 			RAISE EXCEPTION 'No encontrado mvto a Borrar. Regularizacion % ',OLD.rgs_nume;
 			return null;
-		end if;	
+		end if;	                
 --		raise notice 'Inserto movimiento %',OLD;
 		if TG_OP =  'DELETE' then
-			return OLD;		
+			return OLD; 	
 		end if;
 	  end if;	   	  
 	  if TG_OP =  'INSERT' or TG_OP =  'UPDATE' then
@@ -559,9 +569,13 @@ $BODY$
 			if not found then
 				RAISE EXCEPTION 'NO encontrado tipo Mvto %',NEW.tir_codi;
 			end if;
-			raise notice 'regalmacen. Tipo De movimiento % Operacion %',tipoMvto,TG_OP;
+                        if DEBUG = 1 then
+                            raise notice 'regalmacen. Tipo De movimiento % Operacion %',tipoMvto,TG_OP;
+                        end if;
 			if tipoMvto ='='  then
-				raise notice 'IGNORO MVTO TIPO INV. movimiento % Operacion %',tipoMvto,TG_OP;
+                                if DEBUG = 1 then
+                                    raise notice 'IGNORO MVTO TIPO INV. movimiento % Operacion %',tipoMvto,TG_OP;
+                                end if;
 				tipoMvto='*'; -- Ignoro Regulariza. tipo Inventario
 			end if;
 			if tipoMvto='+' then
@@ -571,7 +585,9 @@ $BODY$
 				tipoMvto='S';
 			end if;
 		end if;
-		raise notice 'regalmacen Insert. Tipo De movimiento % Operacion %',tipoMvto,TG_OP;		
+                if DEBUG = 1 then
+                    raise notice 'regalmacen Insert. Tipo De movimiento % Operacion %',tipoMvto,TG_OP;		
+                end if;
 		if tipoMvto != '*' then				
 			INSERT INTO anjelica.mvtosalm (mvt_oper,mvt_time,
 				mvt_tipo , mvt_tipdoc , 

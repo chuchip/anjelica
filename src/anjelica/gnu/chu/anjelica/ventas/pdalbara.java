@@ -95,12 +95,17 @@ import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
  
-public class pdalbara extends ventanaPad  implements PAD
-{  
+public class pdalbara extends ventanaPad  implements PAD  {  
+  private final int JTP_NUMLIN=10;
+  private final int JTP_PRV=11;
+  private final int JTP_UNID=5;
+  private final int JTP_FECCAD=4;
+   private final int JTP_CANMOD=6;
   private boolean CONTROL_PRO_MIN=true; // Controlar venta de prod. de minoristas a mayor. ¡¡ CHAPUZA!!
   private int avpNumparAnt=0,avpNumindAnt=0,avpEjelotAnt=0;
   private String avpSerlotAnt="";
@@ -569,7 +574,15 @@ public class pdalbara extends ventanaPad  implements PAD
   CTextField pvc_numeE = new CTextField(Types.DECIMAL, "#####9");
   CButton BbusPed = new CButton(Iconos.getImageIcon("find"));
   CPanel Pcabped = new CPanel();
-  Cgrid jtLinPed = new Cgrid(11);
+  Cgrid jtLinPed = new Cgrid(12);
+  PConfPedVen PajuPed = new PConfPedVen()
+  {
+    @Override
+    public void actualCanti(double cantidad)
+    {
+        jtLinPed.setValor(cantidad,JTP_CANMOD);
+    }
+  };
   CLabel cLabel25 = new CLabel();
 //  CTextField pvc_fecentE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CLabel cLabel26 = new CLabel();
@@ -712,7 +725,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2015-12-30" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-02-03" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -826,7 +839,8 @@ public class pdalbara extends ventanaPad  implements PAD
 
         opAgru.setSelected(true);
         conf_jtLinPed(jtLinPed);
-
+        PajuPed.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+        
         avc_deposE.addItem("Normal","N");
         avc_deposE.addItem("Deposito","D");
         avc_deposE.addItem("Entregado","E");
@@ -1116,9 +1130,12 @@ public class pdalbara extends ventanaPad  implements PAD
         usu_nombL.setBounds(new Rectangle(328, 3, 49, 16));
         cLabel29.setText("NL");
         cLabel29.setBounds(new Rectangle(478, 3, 21, 16));
-        jtLinPed.setMaximumSize(new Dimension(636, 259));
-        jtLinPed.setMinimumSize(new Dimension(636, 259));
-        jtLinPed.setPreferredSize(new Dimension(636, 259));
+        jtLinPed.setMaximumSize(new Dimension(636, 185));
+        jtLinPed.setMinimumSize(new Dimension(636, 185));
+        jtLinPed.setPreferredSize(new Dimension(636, 185));
+        PajuPed.setMaximumSize(new Dimension(636, 22));
+        PajuPed.setMinimumSize(new Dimension(636, 22));
+        PajuPed.setPreferredSize(new Dimension(636, 22));
         jScrollPane1.setBounds(new Rectangle(71, 21, 417, 35));
         usu_nompedE.setBounds(new Rectangle(373, 3, 100, 16));
         pvc_horpedE.setBounds(new Rectangle(290, 3, 35, 16));
@@ -1253,14 +1270,20 @@ public class pdalbara extends ventanaPad  implements PAD
         jScrollPane1.getViewport().add(pvc_comenE, null);
         conecta();
         iniciar(this);
+        Ppedido.add(Pcabped,
+                new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
+                GridBagConstraints.NONE,
+                new Insets(1, 0, 0, 0), 0, 0));
         Ppedido.add(jtLinPed,
                 new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.BOTH,
                 new Insets(3, 0, 2, 0), 0, 0));
-        Ppedido.add(Pcabped,
-                new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+        Ppedido.add(PajuPed,
+                new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH,
                 GridBagConstraints.NONE,
-                new Insets(1, 0, 0, 0), 12, 0));
+                new Insets(1, 0, 0, 0), 0, 0));
+
+        
         Pgrid.add(jt,
                 new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.BOTH,
@@ -1400,6 +1423,7 @@ public class pdalbara extends ventanaPad  implements PAD
                   FORMDECPRECIO+="9";
           }
           confGridCab();
+          PajuPed.iniciar(this);
           IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
           IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
           pesoManual=isEmpPlanta;
@@ -1493,6 +1517,7 @@ public class pdalbara extends ventanaPad  implements PAD
     opValora.setSelected(false);
     jtRes.setDefButton(Baceptar);
     jtPalet.setDefButton(Baceptar);
+    
     nav.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
     Pcabe.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
     Pcabe.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
@@ -1786,6 +1811,33 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   void activarEventos()
   {
+      jtLinPed.addListSelectionListener(new
+       ListSelectionListener()
+      {
+        @Override
+        public void valueChanged(ListSelectionEvent e)
+        {
+            if (e.getValueIsAdjusting() || jtLinPed.isVacio() ) // && e.getFirstIndex() == e.getLastIndex())
+                return;
+            if (! jtLinPed.isEnabled())
+            {
+                if (jtLinPed.getValString(jtLinPed.getSelectedRowDisab(),0) ==null || ! jtLinPed.getValString(jtLinPed.getSelectedRowDisab(),0).equals("P"))                                
+                    PajuPed.resetTexto();
+                else 
+                    PajuPed.setLineaPedido(jtLinPed.getValorInt(jtLinPed.getSelectedRowDisab(),JTP_NUMLIN));
+                return;
+            }
+             if (! jtLinPed.getValString(0).equals("P"))
+             {
+                 PajuPed.setEnabled(false);
+                 PajuPed.resetTexto();
+                 return;
+             }
+             PajuPed.setEnabled(true);
+             PajuPed.setLineaPedido(jtLinPed.getValorInt(JTP_NUMLIN));
+        }
+        });
+      
       avc_numpalB.addActionListener(new java.awt.event.ActionListener()
       {
           @Override
@@ -2991,10 +3043,7 @@ public class pdalbara extends ventanaPad  implements PAD
       verDatPedido(true);
       verDatPalets();
       if (hisRowid==0)
-      {
           actGridHist(dt.getInt("emp_codi"),dt.getInt("avc_ano"),dt.getString("avc_serie"),dt.getInt("avc_nume"));
-
-      }
     }
     catch (Exception k)
     {
@@ -5238,6 +5287,7 @@ public class pdalbara extends ventanaPad  implements PAD
     actImpFra();
   }
 
+  @Override
   public void canc_addnew()
   {
     try
@@ -6922,13 +6972,13 @@ public class pdalbara extends ventanaPad  implements PAD
       {
         if (jtLinPed.getValString(nLin,0).equals("A") &&
           jtLinPed.getValorInt(nLin,1)==dtCon1.getInt("pro_codi") &&
-          (opAgrPrv.isSelected() || jtLinPed.getValorInt(nLin,10)==0
-              || jtLinPed.getValorInt(nLin,10)==dtCon1.getInt("prv_codi")) &&
-          (opAgrFecha.isSelected() || jtLinPed.getValString(nLin,4).equals("")
-             || jtLinPed.getValString(nLin,4).equals(dtCon1.getFecha("stp_feccad","dd-MM-yy")))
+          (opAgrPrv.isSelected() || jtLinPed.getValorInt(nLin,JTP_PRV)==0
+              || jtLinPed.getValorInt(nLin,JTP_PRV)==dtCon1.getInt("prv_codi")) &&
+          (opAgrFecha.isSelected() || jtLinPed.getValString(nLin,JTP_FECCAD).equals("")
+             || jtLinPed.getValString(nLin,JTP_FECCAD).equals(dtCon1.getFecha("stp_feccad","dd-MM-yy")))
            )
          {
-           jtLinPed.setValor(""+(dtCon1.getDouble("avp_numuni")+jtLinPed.getValorDec(n,5)),n,5);
+           jtLinPed.setValor((dtCon1.getDouble("avp_numuni")+jtLinPed.getValorDec(n,JTP_UNID)),n,JTP_UNID);
            break;
          }
       }
@@ -6949,6 +6999,7 @@ public class pdalbara extends ventanaPad  implements PAD
       v.add(dtCon1.getString("avp_numuni"));
       v.add("");
       v.add(dtCon1.getString("avp_canti"));
+      v.add("");
       v.add(false);
       v.add("");
       if (opAgrPrv.isSelected())
@@ -7498,11 +7549,24 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       sbe_codiE.setEnabled(b);  
       BValTar.setEnabled(!b);
-      avc_dtoppE.setEnabled(b);
+      avc_dtoppE.setEnabled(b); 
       avc_dtocomE.setEnabled(b);      
     }
     if (P_ADMIN)
         avc_confoE.setEnabled(b);
+    if (b)
+    {
+        if (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT)
+        {
+            jtLinPed.setEnabled(true);
+            PajuPed.setEnabled(true);
+        }
+    }
+    else
+    {
+           jtLinPed.setEnabled(false);
+           PajuPed.setEnabled(false);
+    }
     avc_obserE.setEnabled(b);
     pvc_anoE.setEnabled(b);
     pvc_numeE.setEnabled(b);
@@ -8424,12 +8488,13 @@ public class pdalbara extends ventanaPad  implements PAD
     v.add("Desc. Prod."); // 2
     v.add("Proveed"); // 3
     v.add("Fec.Cad"); // 4
-    v.add("Cant"); // 5
-    v.add("Prec"); // 6
-    v.add("Comentario"); // 7 Comentario
-    v.add("CP"); // 8 Confirmado Precio ?
-    v.add("NL."); // 9
-    v.add("Prv"); // 10
+    v.add("C.Ped"); // 5
+    v.add("C.Mod"); // 6
+    v.add("Prec"); // 7
+    v.add("Comentario"); // 8 Comentario
+    v.add("CP"); // 9 Confirmado Precio ?
+    v.add("NL."); // 10
+    v.add("Prv"); // 11
   
     jt.setCabecera(v);
     jt.setMaximumSize(new Dimension(477, 250));
@@ -8437,13 +8502,14 @@ public class pdalbara extends ventanaPad  implements PAD
     jt.setPreferredSize(new Dimension(477, 250));
     jt.setPuntoDeScroll(50);
     jt.setAnchoColumna(new int[]
-                       {30,60, 160, 150, 90, 70, 60, 150,30,30,50});
+                       {20,50, 160, 100, 60, 45, 45,45, 150,30,30,50});
     jt.setAlinearColumna(new int[]
-                         {1, 2, 0, 0, 1, 2, 2,0,1,2,2});
+                         {1, 2, 0, 0, 1, 2, 2,2,0,1,2,2});
     jt.setFormatoColumna(5, "--,---9");
-    jt.setFormatoColumna(6, "---9.99");
+    jt.setFormatoColumna(6, "--,---9");
+    jt.setFormatoColumna(7, "---9.99");
 
-    jt.setFormatoColumna(8, "BSN");
+    jt.setFormatoColumna(9, "BSN");
   }
   void verDatPedido() throws Exception
   {
@@ -8497,6 +8563,8 @@ public class pdalbara extends ventanaPad  implements PAD
         " AND eje_nume = " + pvc_anoE.getValorInt() +
         " and pvc_nume = " + pvc_numeE.getValorInt() +
         " order by pvl_numlin ";
+    boolean isEnab=jtLinPed.isEnabled();
+    jtLinPed.setEnabled(false);
     jtLinPed.removeAllDatos();
     pvc_fecentE.resetTexto();
     usu_nompedE.resetTexto();
@@ -8512,6 +8580,8 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       if (! busAlbaran)
         mensajeErr("NO ENCONTRADOS DATOS PARA ESTE PEDIDO");
+      PajuPed.setPedido(0,0,0);
+      jtLinPed.setEnabled(isEnab);
       return;
     }
     pvc_anoE.setValorInt(dtCon1.getInt("eje_nume"));
@@ -8532,6 +8602,7 @@ public class pdalbara extends ventanaPad  implements PAD
       v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi"), dtStat));
       v.add(dtCon1.getFecha("pvl_feccad","dd-MM-yy"));
       v.add(dtCon1.getString("pvl_canti")+" "+dtCon1.getString("pvl_tipo") );
+      v.add(dtCon1.getObject("pvm_canti")==null?"":dtCon1.getString("pvm_canti"));
       if (verPrecios)
         v.add(dtCon1.getString("pvl_precio"));
       else
@@ -8541,9 +8612,17 @@ public class pdalbara extends ventanaPad  implements PAD
       v.add(dtCon1.getString("pvl_numlin"));
       v.add(dtCon1.getString("prv_codi"));
       jtLinPed.addLinea(v);
-    }    while (dtCon1.next());
+    }    while (dtCon1.next());   
     actAcumJT();
     actAcumPed(0);
+    jtLinPed.setEnabled(isEnab);    
+    jtLinPed.requestFocusInicio();
+    PajuPed.setPedido( emp_codiE.getValorInt() , pvc_anoE.getValorInt(), pvc_numeE.getValorInt());
+    if (jtLinPed.getValString(0,0).equals("P"))    
+        PajuPed.setLineaPedido(jtLinPed.getValorInt(0,JTP_NUMLIN));
+    if (nav.pulsado==navegador.ADDNEW || nav.pulsado==navegador.EDIT)
+        PajuPed.setEnabled(true);
+   
   }
 
   void actAcumJT()

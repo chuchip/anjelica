@@ -3260,14 +3260,32 @@ create table anjelica.pedvenl
  pvl_fecmod timestamp,		-- Fecha Mod. Linea Pedido
  constraint ix_pedvenl primary key(emp_codi,eje_nume,pvc_nume,pvl_numlin)
 );
-
-create or replace view v_pedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
+ --
+ -- Modificaciones sobre Pedidos Ventas
+ --
+create table anjelica.pedvenmod
+(
+ emp_codi int not null,		-- Empresa
+ eje_nume int not null,		-- Ejercicio de Pedido
+ pvc_nume int not null,		-- Numero de Pedido
+ pvl_numlin int not null,	-- Numero de Linea
+ pvm_canti float not null,  -- Nueva Cantidad
+ usu_nomb char(15) not null, -- Usuario que realiza apunte.
+ pvm_fecha  timestamp not null default CURRENT_TIMESTAMP, -- Fecha Alta/Modif.
+ constraint ox_pedvenmod primary key(emp_codi,eje_nume,pvc_nume,pvl_numlin)
+);
+create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
  pvc_fecent, pvc_comen , pvc_confir , avc_ano , avc_serie , avc_nume ,
- usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,
- pvl_numlin, pvl_kilos,pvl_unid,pvl_tipo, pro_codi,
- pvl_comen, pvl_precio ,pvl_precon ,prv_codi,pvl_feccad, pvl_fecped, pvl_fecmod  from 
- pedvenc as c, pedvenl as l where c.emp_codi=l.emp_codi
+ c.usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,
+ l.pvl_numlin, pvl_kilos,pvl_canti,pvm_canti,pvl_unid,pvl_tipo, pro_codi,
+ pvl_comen, pvl_precio ,pvl_precon ,prv_codi,pvl_feccad, pvl_fecped, pvl_fecmod,m.usu_nomb as pvm_usunom,pvm_fecha  from 
+ pedvenc as c, pedvenl as l  left join pedvenmod as m ON
+ m.emp_codi=l.emp_codi
+ and m.eje_nume= l.eje_nume and m.pvc_nume=l.pvc_nume
+ and m.pvl_numlin=l.pvl_numlin
+ where c.emp_codi=l.emp_codi
  and c.eje_nume=l.eje_nume and c.pvc_nume = l.pvc_nume ;
+grant select on anjelica.v_pedven to public;
 --
 -- Tabla Comentario de Pedidos de ventas.
 -- Utilizado SOLO por programa gnu.chu.anjelica.consCliente
@@ -3641,8 +3659,9 @@ drop table anjelica.ajustedb;
 create table anjelica.ajustedb
 (
     aju_regacu int not null, -- // Regenerar Acumulados (0 No). Usado por fn_acumstk
-	aju_regmvt int not null,  -- // Crear mvtos. Almacen (Solo para temas de testeo)
-	aju_delmvt int not null default 0
+    aju_regmvt int not null,  -- // Crear mvtos. Almacen (Solo para temas de testeo)
+    aju_delmvt int not null default 0,
+    aju_debug int not null default 0
 );
 insert into anjelica.ajustedb values(1,1,0);
 --
