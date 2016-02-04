@@ -308,7 +308,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   CTextField avc_numeE = new CTextField(Types.DECIMAL, "#####9");
   CTextField avp_numuniE = new CTextField(Types.DECIMAL, "---9");
   CLabel cLabel3 = new CLabel();
-  CTextField repiteIndE=new CTextField(Types.DECIMAL,"#9");
+//  CTextField repiteIndE=new CTextField(Types.DECIMAL,"#9");
   cliAvcPanel cli_codiE = new cliAvcPanel()
   {
       @Override
@@ -746,7 +746,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
 
         Bdesgl.setToolTipText("Desglosar Albaranes");
         // @todo poner este CTextField en el Panel.
-        repiteIndE.setValorInt(2); // No permitir crotales iguales.
+//        repiteIndE.setValorInt(2); // No permitir crotales iguales.
 //        lockE.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         lockE.setBounds(new Rectangle(644, 75, 33, 21));
         printE.setHorizontalAlignment(SwingConstants.CENTER);
@@ -7867,7 +7867,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         liTra = new listraza(new DatosTabla(ct), dtStat, dtCon1,EU,(ventana) this);
 //        liTra.setPreview(true);
       }
-      liTra.setRepiteIndiv(repiteIndE.getValorInt());
+//      liTra.setRepiteIndiv(repiteIndE.getValorInt());
       liTra.setDatosAlbaran(avc_numeE.getValorInt(), emp_codiE.getValorInt(),
                   avc_anoE.getValorInt(), avc_seriE.getText());
       int retCargaDatos=liTra.cargaDatosTraz();

@@ -169,12 +169,12 @@ public class listraza  implements JRDataSource
   {
     preview=prev;
   }
-  public void setRepiteIndiv(int numRepet)
-  {
-      if (utdes==null)
-        utdes=new utildesp();
-      utdes.setRepiteIndiv(numRepet);
-  }
+//  public void setRepiteIndiv(int numRepet)
+//  {
+//      if (utdes==null)
+//        utdes=new utildesp();
+//      utdes.setRepiteIndiv(numRepet);
+//  }
   public void setBuscaIndDesp(boolean buscaIndDesp)
   {
      if (utdes==null)
@@ -207,7 +207,7 @@ public class listraza  implements JRDataSource
     if (utdes.getRepiteIndiv()>0)
         utdes.resetIndividuos();
     utdes.setInicialesPais(true);
-    s="select a.fam_codi,a.pro_nomb,p.*,l.pro_codi as proCodAlb "+
+    s="select a.fam_codi,a.pro_nomb,p.*,l.pro_codi as proCodAlb,a.pro_numcro "+
         " from v_albvenpar as p,v_articulo as a,v_albavel as l "+
         " where p.emp_codi = "+empCodi+
         " and p.avc_ano= "+ejeNume+
@@ -233,8 +233,9 @@ public class listraza  implements JRDataSource
     do
     {
         artVenta = null;
-
-         ret=utdes.busDatInd(dtCur.getString("avp_serlot"),dtCur.getInt("pro_codi"),
+        
+        utdes.setRepiteIndiv(dtCur.getInt("pro_numcro"));
+        ret=utdes.busDatInd(dtCur.getString("avp_serlot"),dtCur.getInt("pro_codi"),
                           dtCur.getInt("avp_emplot"),
                       dtCur.getInt("avp_ejelot"),dtCur.getInt("avp_numpar"),
                       dtCur.getInt("avp_numind"),
@@ -276,11 +277,11 @@ public class listraza  implements JRDataSource
     } while (dtCur.next());
     if (!msgLog.equals(""))
     {
-        int LIMLONGITUD=100;
-        if (msgLog.length()>LIMLONGITUD)
-            msgLog=msgLog.substring(0,LIMLONGITUD-1)+" ... ";
-        if (mensajes.mensajeYesNo("Incidencias en Listado Trazabilidad\n"+ msgLog+
-                " Editar campos ? ")==mensajes.YES)
+//        int LIMLONGITUD=100;
+//        if (msgLog.length()>LIMLONGITUD)
+//            msgLog=msgLog.substring(0,LIMLONGITUD-1)+" ... ";
+        if (mensajes.mensajeExplica("Incidencias en Listado Trazabilidad", "¿ Editar campos ? ",msgLog
+                )!=null)
         {
             cargaGrid();
             return 1;

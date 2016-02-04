@@ -593,8 +593,7 @@ public class utildesp
 
   /**
     * Pone los datos como si fuera un desp. Nuestro
-    * @param fecDesp Fecha Despiece
-    * @param dt Datos Tabla para buscar nombre pais desp.
+    *
     * @throws Exception Si hay error  base datos
     */
    public void resetDespNuestro() throws Exception
@@ -1292,7 +1291,7 @@ public class utildesp
    /**
     * Permite repetir individuos  en origen de despiece
     * Por defecto es 0. Es decir no limita el numero de individuos a repetir
-    * @param repiteInd >0 : Número de Repeticiones permitidas
+    * 
     * @see resetIndividuos
     */
    public void setRepiteIndiv(int numRepiteInd)
