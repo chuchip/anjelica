@@ -2,12 +2,9 @@ package gnu.chu.anjelica.ventas;
 
 import gnu.chu.controles.CPanel;
 import gnu.chu.sql.DatosTabla;
-import gnu.chu.utilidades.ventana;
 import gnu.chu.utilidades.ventanaPad;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
@@ -78,6 +75,7 @@ public class PConfPedVen extends CPanel
                 return;
             }
             pvm_cantiE.setValorDec(dtAdd.getDouble("pvm_canti"));
+            pvm_comentE.setText(dtAdd.getString("pvm_coment"));
             usu_nombE.setText(dtAdd.getString("usu_nomb"));
             pvm_fechaE.setText(dtAdd.getFecha("pvm_fecha", "dd-MM-yyyy hh:mm"));
         } catch (SQLException ex)
@@ -86,11 +84,13 @@ public class PConfPedVen extends CPanel
         }
     }
    
+    @Override
     public void resetTexto()
     {
         if (pvm_cantiE==null)
             return;
         pvm_cantiE.resetTexto();
+        pvm_comentE.resetTexto();
         pvm_fechaE.resetTexto();
         usu_nombE.resetTexto();
     }
@@ -100,13 +100,13 @@ public class PConfPedVen extends CPanel
         if (papa==null)
             return false;
         if (papa.muerto )
-            return false;
+            return false;      
         String s= "select * from pedvenmod as p "+
             " where emp_codi ="+empCodi+
             " and eje_nume = " + pvcAno +
             " and pvc_nume = " + pvcNume+
             " and pvl_numlin= "+pvlNumlin;
-        return dtAdd.select(s,update);
+        return dtAdd.select(s,update);        
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -117,18 +117,15 @@ public class PConfPedVen extends CPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        cLabel1 = new gnu.chu.controles.CLabel();
         pvm_cantiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
         cLabel2 = new gnu.chu.controles.CLabel();
         usu_nombE = new gnu.chu.controles.CTextField();
         cLabel3 = new gnu.chu.controles.CLabel();
         pvm_fechaE = new gnu.chu.controles.CTextField();
+        cLabel4 = new gnu.chu.controles.CLabel();
+        pvm_comentE = new gnu.chu.controles.CTextField(Types.CHAR,"X",40);
 
         setLayout(null);
-
-        cLabel1.setText("Fecha");
-        add(cLabel1);
-        cLabel1.setBounds(360, 2, 40, 17);
 
         pvm_cantiE.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -136,34 +133,51 @@ public class PConfPedVen extends CPanel
             }
         });
         add(pvm_cantiE);
-        pvm_cantiE.setBounds(120, 2, 50, 17);
+        pvm_cantiE.setBounds(60, 2, 30, 17);
 
-        cLabel2.setText("Cantidad Preparada");
+        cLabel2.setText("Coment.");
         add(cLabel2);
-        cLabel2.setBounds(2, 2, 120, 17);
+        cLabel2.setBounds(100, 2, 60, 17);
 
         usu_nombE.setEnabled(false);
         add(usu_nombE);
-        usu_nombE.setBounds(240, 2, 100, 17);
+        usu_nombE.setBounds(470, 2, 90, 17);
 
         cLabel3.setText("Usuario");
         add(cLabel3);
-        cLabel3.setBounds(190, 2, 50, 17);
+        cLabel3.setBounds(420, 2, 50, 17);
 
         pvm_fechaE.setEnabled(false);
         add(pvm_fechaE);
-        pvm_fechaE.setBounds(410, 2, 120, 17);
+        pvm_fechaE.setBounds(570, 2, 110, 17);
+
+        cLabel4.setText("Cantidad");
+        add(cLabel4);
+        cLabel4.setBounds(2, 2, 60, 17);
+
+        pvm_comentE.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                pvm_comentEFocusLost(evt);
+            }
+        });
+        add(pvm_comentE);
+        pvm_comentE.setBounds(160, 2, 250, 17);
     }// </editor-fold>//GEN-END:initComponents
 
     private void pvm_cantiEFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_pvm_cantiEFocusLost
-        try
+        actualPedVen();
+     
+    }//GEN-LAST:event_pvm_cantiEFocusLost
+    void actualPedVen()
+    {
+           try
         {
             if (pvcAno==0 || pvlNumlin==0)
                 return;
             boolean swExi=buscaModPed(empCodi,pvcAno,pvcNume,pvlNumlin,true);
             
             
-            if (! swExi && pvm_cantiE.getValorDec()==0)
+            if (! swExi && pvm_cantiE.getValorDec()==0 && pvm_comentE.isNull(true))
                     return;
             if (!swExi)
             {
@@ -175,25 +189,30 @@ public class PConfPedVen extends CPanel
             }
             else
             {
-                if (pvm_cantiE.getValorDec()==dtAdd.getDouble("pvm_canti"))
-                {
+                if (pvm_cantiE.getValorDec()==dtAdd.getDouble("pvm_canti") 
+                    && pvm_comentE.getText().equals(dtAdd.getString("pvm_coment")))
+                { // NO hay cambios. No hago nada.
                     dtAdd.commit();
                     return;
                 }
                 dtAdd.edit();
             }
             dtAdd.setDato("pvm_canti",pvm_cantiE.getValorDec());
+            dtAdd.setDato("pvm_coment",pvm_comentE.getText());
             dtAdd.setDato("usu_nomb",papa.EU.usuario);
             dtAdd.setDato("pvm_fecha","current_timestamp");
             dtAdd.update();
-            papa.mensajeRapido("Actualizada Cantidad preparada en pedido ");
+            papa.mensajeRapido("Actualizada Cantidad/Comentario preparada para pedido ");
             dtAdd.commit();
             actualCanti(pvm_cantiE.getValorDec());
         } catch (SQLException ex)
         {
            papa.Error("Error al actualizar de Pedido", ex);
         }
-    }//GEN-LAST:event_pvm_cantiEFocusLost
+    }
+    private void pvm_comentEFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_pvm_comentEFocusLost
+        actualPedVen();
+    }//GEN-LAST:event_pvm_comentEFocusLost
     /**
      * Funcion a machacar para hacer algo cuando se actualize la cantidad
      * @param cantidad 
@@ -204,10 +223,11 @@ public class PConfPedVen extends CPanel
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
+    private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CTextField pvm_cantiE;
+    private gnu.chu.controles.CTextField pvm_comentE;
     private gnu.chu.controles.CTextField pvm_fechaE;
     private gnu.chu.controles.CTextField usu_nombE;
     // End of variables declaration//GEN-END:variables

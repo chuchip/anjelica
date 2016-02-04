@@ -130,7 +130,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-01-19 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2016-02-04 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -1056,6 +1056,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         Error("Error al poner campos en grid ",k);
         return;
     }
+    jt.setPonValoresInFocus(true);
     jt.setFormatoCampos();
     jt.setFormatoColumna(JT_REPET, "B-");
     Tpanel1.addTab("Albaranes", jt);
@@ -1101,6 +1102,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         return;
     }
+    jtFra.setPonValoresInFocus(true);
     jtFra.setColNueva(2);
     jtFra.setMaximumSize(new Dimension(406, 311));
     jtFra.setMinimumSize(new Dimension(406, 311));

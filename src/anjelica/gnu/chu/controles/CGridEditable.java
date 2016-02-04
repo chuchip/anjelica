@@ -1928,7 +1928,7 @@ public class CGridEditable extends Cgrid implements CQuery {
    {
     removeAllDatos_Cgrid();
   
-    if (isPonValoresInFocus() || ! isEnabled())
+    if (isPonValoresInFocus() )
       ponValores();
     TABLAVACIA=true;
   }
@@ -1967,12 +1967,17 @@ public class CGridEditable extends Cgrid implements CQuery {
   {
     ponValoresEnabled=ponValorEnab;
   }
+  /**
+   * @deprecated use isPonValoresEnabled
+   * @return 
+   */
   public boolean getPonValoresEnabled()
   {
     return isPonValoresEnabled();
   }
 
     /**
+     * Especifica si el parametro ponvaloresEnabled esta activo.
      * @return the ponValoresEnabled
      */
     public boolean isPonValoresEnabled() {

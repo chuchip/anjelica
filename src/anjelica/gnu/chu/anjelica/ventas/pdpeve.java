@@ -57,6 +57,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   CTextField pvl_numlinE=new CTextField(Types.DECIMAL,"##9");
   CTextField pro_nombE=new CTextField(Types.CHAR,"X",50);
   CTextField pvl_cantiE=new CTextField(Types.DECIMAL,"--,--9");
+  CTextField pvm_cantiE=new CTextField(Types.DECIMAL,"--,--9");
   CTextField pvl_precioE=new CTextField(Types.DECIMAL,"---,--9.99");
   CCheckBox pvl_confirE=new CCheckBox("S","N");
   CTextField pvl_comenE=new CTextField(Types.CHAR,"X",100);
@@ -105,7 +106,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     final int JT_NOMPRV=8;
     final int JT_FECCAD=9;   
     final int JT_NL=10;
-  CGridEditable jt = new CGridEditable(11)
+    final int JT_CANMOD=11;
+  CGridEditable jt = new CGridEditable(12)
   {
     @Override
     public void cambiaColumna(int col, int colNueva, int row)
@@ -274,7 +276,8 @@ public class pdpeve  extends ventanaPad   implements PAD
             v.add(prvCodi); // 2
             v.add(prv_codiE.getNombPrv("" + prvCodi)); //3
             v.add(feccad); // 4
-            v.add(0); // 10
+            v.add(0); // 10 Numero Linea.
+            v.add(0); // Cantidad Modif.
             if (jt.getValorInt(JT_PROD) == 0)
               jt.setLinea(v);
             else
@@ -508,13 +511,14 @@ public class pdpeve  extends ventanaPad   implements PAD
     v.add("Nombre Prv"); // 8
     v.add("Fec.Cad"); // 9
     v.add("NL.");// 10
+    v.add("C.Prep");// 11 -- Cantidad preparada en sala
     jt.setCabecera(v);
     jt.setMaximumSize(new Dimension(2147483647, 200));
     jt.setMinimumSize(new Dimension(31, 250));
     jt.setPreferredSize(new Dimension(477, 250));
     jt.setPuntoDeScroll(50);
-    jt.setAnchoColumna(new int[]{60,160,70,50,60,50,150,50,150,90,30});
-    jt.setAlinearColumna(new int[]{2,0,2,0,2,1,0,2,0,1,2});
+    jt.setAnchoColumna(new int[]{60,160,70,50,60,50,150,50,150,90,30,40});
+    jt.setAlinearColumna(new int[]{2,0,2,0,2,1,0,2,0,1,2,2});
     
 
     ArrayList v1=new ArrayList();
@@ -531,6 +535,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     prv_codiE.setCampoNombre(null);
     pvl_numlinE.setEnabled(false);
     prv_nombE.setEnabled(false);
+    pvm_cantiE.setEnabled(false);
     v1.add(pro_codiE.getFieldProCodi()); // 0
     v1.add(pro_nombE); // 1  
     v1.add(pvl_cantiE); // 2
@@ -542,6 +547,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     v1.add(prv_nombE); // 8
     v1.add(pvl_feccadE); // 9
     v1.add(pvl_numlinE); // 10
+    v1.add(pvm_cantiE); // Cantidad Preparada en sala
     jt.setCampos(v1);
     jt.setFormatoCampos();
     pro_codiE.getFieldBotonCons().setText("Ayuda Producto");
@@ -953,6 +959,8 @@ public class pdpeve  extends ventanaPad   implements PAD
  {
    try
    {
+       
+     dtAdd.commit();
      s="select * from pedvenc where emp_codi = " + emp_codiE.getValorInt() +
           " and eje_nume= " + eje_numeE.getValorInt() +
           " and pvc_nume = " + pvc_numeE.getValorInt();
@@ -1110,9 +1118,42 @@ public class pdpeve  extends ventanaPad   implements PAD
   private void actLinea() throws SQLException
   {
     int nRow=jt.getRowCount();
-    int nl=1;
+    
+    
     if (nav.pulsado==navegador.EDIT)
-     nl=-1;
+    { // Borro las lineas que ya no estan.    
+        s = " SELECT * FROM pedvenl WHERE emp_codi = " + emp_codiE.getValorInt() +
+          " and eje_nume= " + eje_numeE.getValorInt() +
+          " and pvc_nume = " + pvc_numeE.getValorInt() ;
+        if (dtStat.select(s,false))
+        {
+            do
+            {
+              boolean swEnc=false;
+              for (int n=0;n<nRow;n++)
+              { 
+                    if (jt.getValorInt(n, JT_NL)==dtStat.getInt("pvl_numlin"))
+                    {
+                        swEnc=true;
+                        break;
+                    }
+              }
+              if (!swEnc)
+              {
+                    dtAdd.executeUpdate(" delete FROM pedvenl WHERE emp_codi = " + emp_codiE.getValorInt() +
+                        " and eje_nume= " + eje_numeE.getValorInt() +
+                        " and pvc_nume = " + pvc_numeE.getValorInt()+
+                        " and pvl_numlin="+dtStat.getInt("pvl_numlin"));   
+                     dtAdd.executeUpdate(" delete FROM pedvenmod WHERE emp_codi = " + emp_codiE.getValorInt() +
+                        " and eje_nume= " + eje_numeE.getValorInt() +
+                        " and pvc_nume = " + pvc_numeE.getValorInt()+
+                        " and pvl_numlin="+dtStat.getInt("pvl_numlin"));    
+              }
+            } while (dtStat.next());
+        }
+    }
+    int nl=1;
+   
     for (int n=0;n<nRow;n++)
     {
       if (jt.getValorInt(n, 0) == 0)
@@ -1120,17 +1161,18 @@ public class pdpeve  extends ventanaPad   implements PAD
       s = " SELECT * FROM pedvenl WHERE emp_codi = " + emp_codiE.getValorInt() +
           " and eje_nume= " + eje_numeE.getValorInt() +
           " and pvc_nume = " + pvc_numeE.getValorInt() +
-          " and pvl_numlin = " + jt.getValorInt(n, 9);
+          " and pvl_numlin = " + jt.getValorInt(n, JT_NL);
       if (! dtAdd.select(s,true))
       {
         dtAdd.addNew();
         dtAdd.setDato("emp_codi", emp_codiE.getValorInt());
         dtAdd.setDato("eje_nume", eje_numeE.getValorInt());
         dtAdd.setDato("pvc_nume", pvc_numeE.getValorInt());
+        dtAdd.setDato("pvl_numlin", nl);
       }
       else
         dtAdd.edit();
-      dtAdd.setDato("pvl_numlin", nl);
+      
       dtAdd.setDato("pvl_canti", jt.getValorDec(n,JT_CANTI)); 
       HashMap<Integer, Double> hm= MantArticulos.getRelUnidadKilos(jt.getValorInt(n,JT_PROD),dtStat);
               
@@ -1147,7 +1189,8 @@ public class pdpeve  extends ventanaPad   implements PAD
       dtAdd.setDato("pvl_precio", jt.getValorDec(n,JT_PRECIO));
       dtAdd.setDato("pvl_precon", jt.getValBoolean(n,JT_PRECON)?-1:0);
       dtAdd.setDato("prv_codi", jt.getValorInt(n,JT_PROV));
-      dtAdd.setDato("pvl_feccad",jt.getValString(n,JT_FECCAD).trim().equals("")?null:jt.getValString(n,JT_FECCAD),"dd-MM-yy");
+      dtAdd.setDato("pvl_feccad",jt.getValString(n,JT_FECCAD).trim().equals("")?
+          null:jt.getValString(n,JT_FECCAD),"dd-MM-yy");
       if (dtAdd.getTipoUpdate()==DatosTabla.ADDNEW)
       {
         dtAdd.setDato("pvl_fecped", "{ts '"+Formatear.getFechaAct("yyyy-MM-dd hh:mm:ss")+"'}");
@@ -1155,27 +1198,10 @@ public class pdpeve  extends ventanaPad   implements PAD
       }
       else
         dtAdd.setDato("pvl_fecmod", "{ts '"+Formatear.getFechaAct("yyyy-MM-dd hh:mm:ss")+"'}");
-      dtAdd.update();
-      if (nav.pulsado==navegador.EDIT)
-        nl--;
-      else
-        nl++;
+      dtAdd.update();    
+      nl++;
     }
-     if (nav.pulsado==navegador.ADDNEW)
-       return;
-    // Borro los registros con numero de linea > 0 pues si no los he actualizado
-    // es que se han borrado.
-    s = " DELETE FROM pedvenl   WHERE emp_codi = " + emp_codiE.getValorInt() +
-       " and eje_nume= " + eje_numeE.getValorInt() +
-       " and pvc_nume = " + pvc_numeE.getValorInt() +
-       " AND pvl_numlin > 0 ";
-    dtAdd.executeUpdate(s);
-    // Pongo los registros con numero de linea a > 0
-
-    s = " UPDATE pedvenl SET pvl_numlin=pvl_numlin*-1  WHERE emp_codi = " + emp_codiE.getValorInt() +
-        " and eje_nume= " + eje_numeE.getValorInt() +
-        " and pvc_nume = " + pvc_numeE.getValorInt() ;
-    dtAdd.executeUpdate(s);
+ 
   }
 
   private void actCabecera() throws  SQLException
@@ -1396,7 +1422,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       avc_anoE.setValorDec(dtCon1.getInt("avc_ano"));
       pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
       pcc_estadE.setValor(dtCon1.getInt("avc_ano")==0?"P":dtCon1.getInt("avc_ano")>0?"L":"C" );
-      s = "SELECT * FROM pedvenl WHERE emp_codi = " + emp_codiE.getValorInt() +
+      s = "SELECT * FROM v_pedven WHERE emp_codi = " + emp_codiE.getValorInt() +
               " and eje_nume= " + eje_numeE.getValorInt() +
               " and pvc_nume = " + pvc_numeE.getValorInt();
       if (dtCon1.select(s))
@@ -1416,6 +1442,7 @@ public class pdpeve  extends ventanaPad   implements PAD
          v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi")));
          v.add(dtCon1.getFecha("pvl_feccad","dd-MM-yy"));
          v.add(dtCon1.getString("pvl_numlin"));
+         v.add(dtCon1.getString("pvm_canti"));
          jt.addLinea(v);
         }
         while (dtCon1.next());

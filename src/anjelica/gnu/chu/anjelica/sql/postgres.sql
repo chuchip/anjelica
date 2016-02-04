@@ -3321,14 +3321,16 @@ create table anjelica.pedvenmod
  pvc_nume int not null,		-- Numero de Pedido
  pvl_numlin int not null,	-- Numero de Linea
  pvm_canti float not null,  -- Nueva Cantidad
+ pvm_coment varchar(40),	-- Comentario
  usu_nomb char(15) not null, -- Usuario que realiza apunte.
  pvm_fecha  timestamp not null default CURRENT_TIMESTAMP, -- Fecha Alta/Modif.
  constraint ox_pedvenmod primary key(emp_codi,eje_nume,pvc_nume,pvl_numlin)
 );
+drop view anjelica.v_pedven;
 create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
  pvc_fecent, pvc_comen , pvc_confir , avc_ano , avc_serie , avc_nume ,
  c.usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,
- l.pvl_numlin, pvl_kilos,pvl_canti,pvm_canti,pvl_unid,pvl_tipo, pro_codi,
+ l.pvl_numlin, pvl_kilos,pvl_canti,pvm_canti,pvm_coment,pvl_unid,pvl_tipo, pro_codi,
  pvl_comen, pvl_precio ,pvl_precon ,prv_codi,pvl_feccad, pvl_fecped, pvl_fecmod,m.usu_nomb as pvm_usunom,pvm_fecha  from 
  pedvenc as c, pedvenl as l  left join pedvenmod as m ON
  m.emp_codi=l.emp_codi

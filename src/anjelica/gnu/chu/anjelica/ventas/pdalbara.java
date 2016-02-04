@@ -1133,9 +1133,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
         jtLinPed.setMaximumSize(new Dimension(636, 185));
         jtLinPed.setMinimumSize(new Dimension(636, 185));
         jtLinPed.setPreferredSize(new Dimension(636, 185));
-        PajuPed.setMaximumSize(new Dimension(636, 22));
-        PajuPed.setMinimumSize(new Dimension(636, 22));
-        PajuPed.setPreferredSize(new Dimension(636, 22));
+        PajuPed.setMaximumSize(new Dimension(736, 22));
+        PajuPed.setMinimumSize(new Dimension(736, 22));
+        PajuPed.setPreferredSize(new Dimension(736, 22));
         jScrollPane1.setBounds(new Rectangle(71, 21, 417, 35));
         usu_nompedE.setBounds(new Rectangle(373, 3, 100, 16));
         pvc_horpedE.setBounds(new Rectangle(290, 3, 35, 16));
@@ -7556,7 +7556,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         avc_confoE.setEnabled(b);
     if (b)
     {
-        if (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT)
+        if ( (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT) && ! jtLinPed.isVacio())
         {
             jtLinPed.setEnabled(true);
             PajuPed.setEnabled(true);
@@ -8489,7 +8489,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     v.add("Proveed"); // 3
     v.add("Fec.Cad"); // 4
     v.add("C.Ped"); // 5
-    v.add("C.Mod"); // 6
+    v.add("C.Pre"); // 6
     v.add("Prec"); // 7
     v.add("Comentario"); // 8 Comentario
     v.add("CP"); // 9 Confirmado Precio ?
@@ -8620,7 +8620,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     PajuPed.setPedido( emp_codiE.getValorInt() , pvc_anoE.getValorInt(), pvc_numeE.getValorInt());
     if (jtLinPed.getValString(0,0).equals("P"))    
         PajuPed.setLineaPedido(jtLinPed.getValorInt(0,JTP_NUMLIN));
-    if (nav.pulsado==navegador.ADDNEW || nav.pulsado==navegador.EDIT)
+    if (nav.pulsado==navegador.ADDNEW || nav.pulsado==navegador.EDIT && !jtLinPed.isVacio())
         PajuPed.setEnabled(true);
    
   }
