@@ -3214,6 +3214,7 @@ constraint ix_invprec primary key (cci_feccon,pro_codi)
 --
 -- Cabecera de pedidos de Ventas
 --
+--
 -- drop table anjelica.pedvenc;
 create table anjelica.pedvenc;
 (
@@ -3236,6 +3237,35 @@ create table anjelica.pedvenc;
  pvc_impres char(1) not null,	-- Listado (S/N)
  constraint ix_pedvenc primary key(emp_codi,eje_nume,pvc_nume)
 );
+--
+-- Tabla historico Pedidos de ventas.
+--
+create table anjelica.hispedvenc
+(
+ emp_codi int not null,		-- Empresa
+ eje_nume int not null,		-- Ejercicio de Pedido
+ pvc_nume int not null,		-- Numero de Pedido
+ cli_codi int not null,		-- Cliente
+ pvc_clinom varchar(40),	-- Nombre cliente.
+ alm_codi int not null,		-- Almacen
+ pvc_fecped timestamp not null,	-- Fecha de Pedido
+ pvc_fecent date not null,	-- Fecha de Entrega
+ pvc_comen varchar(200),	-- Comentario s/cabec. pedido
+ pvc_confir char(1) not null,	-- Pedido Confirmado (S/N/Cancelado)
+ avc_ano int,			-- Ejercicio del Albaran
+ avc_serie char(1) not null,	-- Serie del Albaran
+ avc_nume int not null,		-- Numero de Albaran
+ usu_nomb varchar(15) not null,	-- Usuario q. crea el pedido
+ pvc_cerra int not null,	-- Albaran Cerrado (0 NO, -1 SI)
+ pvc_nupecl varchar(20),	-- Numero pedido de Cliente
+ pvc_impres char(1) not null,	-- Listado (S/N)
+ his_usunom varchar(15) not null, -- Usuario que realiza el Cambio
+ his_fecha timestamp not null, -- Fecha de Cambio
+ his_coment varchar(100), -- Comentario sobre el Cambio
+ his_rowid serial not null,
+  constraint ix_hpedvenc primary key(his_rowid)
+ );
+ 
 ---
 --- Lineas de Pedidos de Ventas
 ---
@@ -3259,6 +3289,27 @@ create table anjelica.pedvenl
  pvl_fecped timestamp not null,	-- Fecha Creacion Linea Pedido
  pvl_fecmod timestamp,		-- Fecha Mod. Linea Pedido
  constraint ix_pedvenl primary key(emp_codi,eje_nume,pvc_nume,pvl_numlin)
+);
+create table anjelica.hispedvenl
+(
+ emp_codi int not null,		-- Empresa
+ eje_nume int not null,		-- Ejercicio de Pedido
+ pvc_nume int not null,		-- Numero de Pedido
+ pvl_numlin int not null,	-- Numero de Linea
+ pvl_kilos float not null,	-- Kilos o unidades de producto.
+ pvl_unid float not null,   -- Unidades
+ pvl_canti float not null default '0',  -- Cantidad Introducida.
+ pvl_tipo char(1) not null default 'K', -- Tipo Unidad introducida. (K/P/C)
+ pro_codi int not null,		-- Codigo de Producto
+ pvl_comen varchar(100),	-- Comentario sobre el producto
+ pvl_precio float not null,	-- Precio
+ pvl_precon int not null,	-- Precio Confirmado (0 NO)
+ prv_codi int,			-- Proveedor
+ pvl_feccad date,		-- Fecha Caducidad
+ pvl_fecped timestamp not null,	-- Fecha Creacion Linea Pedido
+ pvl_fecmod timestamp,		-- Fecha Mod. Linea Pedido
+ his_rowid int not null,
+ constraint ix_hpedvenl primary key(his_rowid,pvl_numlin)
 );
  --
  -- Modificaciones sobre Pedidos Ventas
