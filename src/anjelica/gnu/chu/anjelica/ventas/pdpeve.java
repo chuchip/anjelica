@@ -16,13 +16,14 @@ import gnu.chu.anjelica.almacen.pstockAct;
 import gnu.chu.anjelica.pad.MantArticulos;
 import net.sf.jasperreports.engine.*;
 import gnu.chu.anjelica.pad.pdconfig;
+import static gnu.chu.anjelica.ventas.pdalbara.TABLACAB;
 import gnu.chu.winayu.AyuArt;
 import java.net.UnknownHostException;
 /**
  *
  * <p>Título: pdpeve </p>
  * <p>Descripción: Mantenimiento Pedidos de Ventas. Incluye panel consulta stock de Productos</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -42,7 +43,7 @@ import java.net.UnknownHostException;
 
 public class pdpeve  extends ventanaPad   implements PAD
 {
-  
+  private int hisRowid=0;
   private boolean P_ADMIN=false;
   AyuArt aypro;
   CComboBox pcc_estadE=new CComboBox();
@@ -878,6 +879,12 @@ public class pdpeve  extends ventanaPad   implements PAD
   public void PADEdit()
   {
     try {
+      if (hisRowid!=0)
+      {
+        msgBox("Viendo albaran historico ... IMPOSIBLE MODIFICAR");
+        activaTodo();
+        return;
+      }
       activar(navegador.EDIT, true);
       if ( avc_anoE.getValorDec() > 0 )
       {
@@ -953,13 +960,39 @@ public class pdpeve  extends ventanaPad   implements PAD
  {
    return checkAddNew();
  }
- 
+ public void copiaPedidoNuevo(DatosTabla dt, DatosTabla dtUpd,String coment,String usuario, 
+          int avcAno, int empCodi,int pvcNume) throws SQLException
+  {
+      String s1="select max(his_rowid) as his_rowid from hispedvenc ";
+      dt.select(s1);
+      int rowid=dt.getInt("his_rowid",true);
+      rowid++;
+      String condAlb=" emp_codi = "+empCodi+
+         " and eje_nume = "+avcAno+
+         " and pvc_nume = "+pvcNume;
+      s1 = "select * from pedvenc WHERE "+condAlb;
+      if (dt.select(s1))
+      {
+         dtUpd.addNew("hispedvenc",false);
+         dt.copy(dtUpd,usuario, coment,rowid);    
+      }
+    
+      s1 = "select * from pedvenl WHERE "+condAlb;
+      if (dt.select(s1))
+      {
+         dtUpd.addNew("hispedvenl");
+         dt.copy(dtUpd,usuario, coment,rowid);    
+      }
+    
+      dtUpd.commit();
+  }
  @Override
  public void ej_edit1()
  {
    try
    {
-       
+     copiaPedidoNuevo(dtCon1,dtAdd,"Modificado Pedido",EU.usuario,eje_numeE.getValorInt(),
+              emp_codiE.getValorInt(),pvc_numeE.getValorInt());
      dtAdd.commit();
      s="select * from pedvenc where emp_codi = " + emp_codiE.getValorInt() +
           " and eje_nume= " + eje_numeE.getValorInt() +
@@ -1209,7 +1242,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     dtAdd.setDato("cli_codi",cli_codiE.getValorInt());
     dtAdd.setDato("pvc_clinom",cli_codiE.getTextNomb());
     dtAdd.setDato("alm_codi",alm_codiE.getValorInt());
-    dtAdd.setDato("pvc_fecped","{ts '"+Formatear.getFechaAct("yyyy-MM-dd hh:mm:ss")+"'}");
+    dtAdd.setDato("pvc_fecped","current_timestamp");
     dtAdd.setDato("pvc_fecent",pvc_fecentE.getText(),"dd-MM-yyyy");
     dtAdd.setDato("pvc_confir",pvc_confirE.getValor());
     dtAdd.setDato("pvc_comen",Formatear.strCorta(pvc_comenE.getText(),200));
@@ -1285,14 +1318,16 @@ public class pdpeve  extends ventanaPad   implements PAD
   {
     try
     {
+      copiaPedidoNuevo(dtCon1,dtAdd,"Borrado Pedido",EU.usuario,eje_numeE.getValorInt(),
+              emp_codiE.getValorInt(),pvc_numeE.getValorInt());
       s = " DELETE FROM pedvenl WHERE emp_codi = " + emp_codiE.getValorInt() +
           " and eje_nume= " + eje_numeE.getValorInt() +
           " and pvc_nume = " + pvc_numeE.getValorInt();
       dtAdd.executeUpdate(s);
-      s = "DELETE from pedvenc where emp_codi = " + emp_codiE.getValorInt() +
-          " and eje_nume= " + eje_numeE.getValorInt() +
-          " and pvc_nume = " + pvc_numeE.getValorInt();
-      dtAdd.executeUpdate(s);
+//      s = "DELETE from pedvenc where emp_codi = " + emp_codiE.getValorInt() +
+//          " and eje_nume= " + eje_numeE.getValorInt() +
+//          " and pvc_nume = " + pvc_numeE.getValorInt();
+//      dtAdd.executeUpdate(s);
       resetBloqueo(dtAdd, "pedvenc",
                    eje_numeE.getValorInt() + "|" + emp_codiE.getValorInt() +
                    "|" + pvc_numeE.getValorInt(), false);

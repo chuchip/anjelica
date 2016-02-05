@@ -80,7 +80,7 @@ CREATE TABLE anjelica.gridajuste (
 -- drop table usuarios;
 create table anjelica.usuarios
 (
-	usu_nomb varchar(15) not null,
+	usu_nomb varchar(15) not null, -- Login del usuario
 	emp_codi int not null, -- Empresa en la que trabaja el Usuario
 	eje_nume int not null, -- Ejercicio de Trabajo
 	usu_nomco varchar(100) not null, -- Nombre Completo
@@ -3262,7 +3262,7 @@ create table anjelica.hispedvenc
  his_usunom varchar(15) not null, -- Usuario que realiza el Cambio
  his_fecha timestamp not null, -- Fecha de Cambio
  his_coment varchar(100), -- Comentario sobre el Cambio
- his_rowid serial not null,
+ his_rowid int not null,
   constraint ix_hpedvenc primary key(his_rowid)
  );
  

@@ -5,6 +5,7 @@ import gnu.chu.controles.*;
 import gnu.chu.eventos.CambioEvent;
 import gnu.chu.eventos.CambioListener;
 import gnu.chu.interfaces.PAD;
+import gnu.chu.isql.utilSql;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
 import java.awt.*;
@@ -12,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -626,6 +628,7 @@ public class pdusua extends ventanaPad   implements PAD
     }
     return true;
   }
+  @Override
   public void ej_addnew1()
   {
     try
@@ -818,30 +821,11 @@ public class pdusua extends ventanaPad   implements PAD
          return false;
      return dt.getString("usu_pass").equals(Formatear.encrypt(passwd));
   }
+  
+   
+    public  void darPermisos(String usuNomb) throws SQLException {
+        utilSql.darPermisos(usuNomb,stUp,dtCon1);
 
-    public void darPermisos(String usuNomb) throws SQLException {
-        String dbName=stUp.getConnection().getCatalog();
-        stUp.executeUpdate("grant connect ON DATABASE  "+dbName +" TO " +usuNomb);
-        stUp.executeUpdate("grant all on schema anjelica to  " + usuNomb);
-        stUp.executeUpdate("grant all on all tables in schema anjelica to " + usuNomb);
-        // Dando permisos en secuencias 
-        if (dtCon1.select("SELECT c.relname FROM pg_class c WHERE c.relkind = 'S'"))
-        {
-            do
-            {
-                stUp.executeUpdate("grant all on "+dtCon1.getString("relname")+
-                    " to " + usuNomb);
-            } while (dtCon1.next());
-        }
-        // Dando permisos a las vistas.
-        if (dtCon1.select("select viewname from pg_views where schemaname in ('anjelica')"))
-        {
-            do
-            {
-                stUp.executeUpdate("grant all on "+dtCon1.getString("viewname")+
-                    " to " +  usuNomb);
-            } while (dtCon1.next());
-        }
     }
     /**
      * Funcion para comprobar si un usuario puede ejecutar programa Programas Externos en el menu

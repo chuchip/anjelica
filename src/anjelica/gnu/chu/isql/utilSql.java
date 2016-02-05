@@ -1,10 +1,13 @@
 package gnu.chu.isql;
 
+import gnu.chu.anjelica.pad.pdusua;
 import java.io.*;
 import java.util.*;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.SystemOut;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <p>Titulo: utilSql </p>
@@ -376,4 +379,49 @@ public class utilSql
     }
     bfr.close();
   }
+  
+  public static void regenerarPermisosAll(Connection ct)
+    {
+      try
+      {
+          DatosTabla dtCon1=new DatosTabla(ct);
+          DatosTabla dt=new DatosTabla(ct);
+          
+          String s="select usu_nomb from usuarios where usu_activ='S'";
+          if (!dtCon1.select(s))
+              return;
+          do
+          {
+              darPermisos(dtCon1.getString("usu_nomb"),dt.getStatement(),dt);
+          } while (dtCon1.next());
+      } catch (SQLException ex)
+      {
+          Logger.getLogger(pdusua.class.getName()).log(Level.SEVERE, null, ex);
+      }
+        
+    }
+    public static void darPermisos(String usuNomb,Statement stUp,DatosTabla dtCon1) throws SQLException {
+        String dbName=stUp.getConnection().getCatalog();
+        stUp.executeUpdate("grant connect ON DATABASE  "+dbName +" TO " +usuNomb);
+        stUp.executeUpdate("grant all on schema anjelica to  " + usuNomb);
+        stUp.executeUpdate("grant all on all tables in schema anjelica to " + usuNomb);
+        // Dando permisos en secuencias 
+        if (dtCon1.select("SELECT c.relname FROM pg_class c WHERE c.relkind = 'S'"))
+        {
+            do
+            {
+                stUp.executeUpdate("grant all on "+dtCon1.getString("relname")+
+                    " to " + usuNomb);
+            } while (dtCon1.next());
+        }
+        // Dando permisos a las vistas.
+        if (dtCon1.select("select viewname from pg_views where schemaname in ('anjelica')"))
+        {
+            do
+            {
+                stUp.executeUpdate("grant all on "+dtCon1.getString("viewname")+
+                    " to " +  usuNomb);
+            } while (dtCon1.next());
+        }
+    }
 }

@@ -24,6 +24,7 @@ package gnu.chu.logs;
  * </p>
  */
 import gnu.chu.anjelica.ventas.pdalbara;
+import gnu.chu.isql.utilSql;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.conexion;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -52,6 +53,7 @@ public class EnviaMensajes {
       ct=new conexion(EU);
       dtCon1=new DatosTabla(ct);
       dtStat=new DatosTabla(ct);
+      utilSql.regenerarPermisosAll(ct); // regenera los permisos de todos los usuarios
       String s="SELECT * FROM histmens as h, mensajes as m where men_tipo='"+ tipoMen+"'"+
               " AND him_fecha >= current_date -"+dias+
               " and h.men_codi=m.men_codi "+
