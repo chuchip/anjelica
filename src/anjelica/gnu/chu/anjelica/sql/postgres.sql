@@ -3339,7 +3339,8 @@ create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc
  where c.emp_codi=l.emp_codi
  and c.eje_nume=l.eje_nume and c.pvc_nume = l.pvc_nume ;
 grant select on anjelica.v_pedven to public;
-create or replace view anjelica.v_hispedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
+--drop view anjelica.v_hispedven;
+create or replace view anjelica.v_hispedven as select  c.his_rowid as his_rowid,c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
  pvc_fecent, pvc_comen , pvc_confir , avc_ano , avc_serie , avc_nume ,
  c.usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,
  l.pvl_numlin, pvl_kilos,pvl_canti,pvm_canti,pvm_coment,pvl_unid,pvl_tipo, pro_codi,
