@@ -16,9 +16,11 @@ import gnu.chu.anjelica.almacen.pstockAct;
 import gnu.chu.anjelica.pad.MantArticulos;
 import net.sf.jasperreports.engine.*;
 import gnu.chu.anjelica.pad.pdconfig;
-import static gnu.chu.anjelica.ventas.pdalbara.TABLACAB;
+
 import gnu.chu.winayu.AyuArt;
 import java.net.UnknownHostException;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 /**
  *
  * <p>Título: pdpeve </p>
@@ -43,6 +45,15 @@ import java.net.UnknownHostException;
 
 public class pdpeve  extends ventanaPad   implements PAD
 {
+  DatosTabla dtHist;
+  private String tablaCab="pedvenc";
+  
+  private String vistaPed="v_pedven";
+  final static String TABLACAB="pedvenc";
+
+  public final static String VISTAPED="v_pedven";
+  
+  Cgrid jtHist=new Cgrid(4);
   private int hisRowid=0;
   private boolean P_ADMIN=false;
   AyuArt aypro;
@@ -152,6 +163,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   CPanel Ppie = new CPanel();
   CScrollPane jScrollPane1 = new CScrollPane();
   CTextArea pvc_comenE = new CTextArea();
+  CTabbedPane Ptab1 = new CTabbedPane();
   pstockAct pstock;
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   CLabel cLabel10 = new CLabel();
@@ -238,7 +250,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2015-11-05"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2016-02-06"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -345,9 +357,14 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_verfecE.setEnabled(false);
     pvc_verfecE.setValorInt(pstock.getDiasVer_Cliente());
     pstock.setEmpresa(EU.em_cod);
-    pstock.setPreferredSize(new Dimension(100,320));
-    pstock.setMinimumSize(new Dimension(100,320));
-    pstock.setMaximumSize(new Dimension(100,320));
+    Ptab1.setPreferredSize(new Dimension(100,320));
+    Ptab1.setMinimumSize(new Dimension(100,320));
+    Ptab1.setMaximumSize(new Dimension(100,320));
+    Ptab1.addTab("Pedido",pstock);
+    Ptab1.addTab("Historico",jtHist);
+//    pstock.setPreferredSize(new Dimension(100,320));
+//    pstock.setMinimumSize(new Dimension(100,320));
+//    pstock.setMaximumSize(new Dimension(100,320));
     Pcabe.setBorder(BorderFactory.createRaisedBevelBorder());
     Pcabe.setMaximumSize(new Dimension(668, 75));
     Pcabe.setMinimumSize(new Dimension(668, 75));
@@ -361,7 +378,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     cLabel2.setBounds(new Rectangle(422, 3, 34, 16));
     cLabel3.setText("N. Pedido");
     cLabel3.setBounds(new Rectangle(3, 20, 57, 16));
-    cLabel4.setText("Fecha Ped.");
+    cLabel4.setText("Fec. Ped.");
     cLabel4.setBounds(new Rectangle(2, 4, 59, 16));
     cLabel6.setText("Fec.Entrega");
     cLabel6.setBounds(new Rectangle(331, 20, 67, 16));
@@ -488,7 +505,7 @@ public class pdpeve  extends ventanaPad   implements PAD
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 2), 0, 0));
     Pprinc.add(Bcancelar,        new GridBagConstraints(1, 3, 3, 1, 0.0, 0.0
             ,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-    Pprinc.add(pstock,               new GridBagConstraints(0, 1, 4, 1, 1.0, 1.0
+    Pprinc.add(Ptab1,               new GridBagConstraints(0, 1, 4, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     Pprinc.add(jt,            new GridBagConstraints(0, 2, 4, 1, 2.0, 2.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
@@ -588,12 +605,56 @@ public class pdpeve  extends ventanaPad   implements PAD
     avc_serieE.addItem("C", "C");
     avc_serieE.addItem("D", "D");
   }
-
+ private void confGridHist()
+    {
+       ArrayList vh=new ArrayList();
+       vh.add("Fecha/Hora");
+       vh.add("Usuario");
+       vh.add("Comentario");
+       vh.add("Id");
+       jtHist.setCabecera(vh);
+       jtHist.setAjustarGrid(true);
+       jtHist.setAlinearColumna(new int[]{1,0,0,2});
+       jtHist.setAnchoColumna(new int[]{90,120,200,40});
+       jtHist.setFormatoColumna(3, "####9");
+       jtHist.setFormatoColumna(0,"dd-MM-yyyy HH:mm");
+    }
+  void actGridHist(int empCodi,int pvcAno, int pvcNume) throws SQLException
+  {
+            jtHist.setEnabled(false);
+            jtHist.removeAllDatos();
+            s="SELECT * FROM hispedvenc WHERE emp_codi = "+empCodi+
+              " and eje_nume = "+pvcAno+
+              " and pvc_nume = "+pvcNume+
+              " order by  his_rowid desc";
+            if (dtCon1.select(s))
+            {
+                ArrayList v1=new ArrayList();
+                v1.add("");
+                v1.add("");
+                v1.add("** ACTUAL **");
+                v1.add(0);
+                jtHist.addLinea(v1);
+                do
+                {
+                    ArrayList v=new ArrayList();
+                    v.add(dtCon1.getTimeStamp("his_fecha"));
+                    v.add(dtCon1.getString("his_usunom"));
+                    v.add(dtCon1.getString("his_coment"));
+                    v.add(dtCon1.getInt("his_rowid"));
+                    jtHist.addLinea(v);
+                } while (dtCon1.next());
+                jtHist.requestFocus(0,0);
+                jtHist.setEnabled(true);
+            }
+  }
   @Override
   public void iniciarVentana() throws Exception
   {
     pstock.setPedidos(opPedidos.isSelected());
     pro_codiE.getFieldBotonCons().setEnabled(false);
+    dtHist=new DatosTabla(ct);
+    confGridHist();
     emp_codiE.setColumnaAlias("emp_codi");
     eje_numeE.setColumnaAlias("eje_nume");
     cli_codiE.setColumnaAlias("cli_codi");
@@ -638,8 +699,41 @@ public class pdpeve  extends ventanaPad   implements PAD
     pstock.verFamilias();
     activarEventos();  
   }
+   private void cambiaLineaHist(int rowid)
+   {
+    hisRowid=rowid;
+    if (hisRowid==0)
+    {
+        verDatos();
+        return;
+    }
+    tablaCab="hispedvenc";
+   
+    vistaPed="v_hispedven";    
+    
+    try {
+         s="SELECT * FROM "+tablaCab+" WHERE his_rowid = "+hisRowid;
+         
+        dtHist.select(s);
+        verDatos(dtHist);
+    } catch (SQLException k)
+    {
+        Error("Error al ver datos de historicos",k);
+    }
+ }
   void activarEventos()
   {
+      jtHist.tableView.getSelectionModel().addListSelectionListener(new
+       ListSelectionListener()
+    {
+        @Override
+        public void valueChanged(ListSelectionEvent e)
+        {
+            if (e.getValueIsAdjusting() || !jtHist.isEnabled()) // && e.getFirstIndex() == e.getLastIndex())
+                return;
+            cambiaLineaHist(jtHist.getValorInt(3));
+        }
+    });
     pvl_tipoE.addKeyListener(new KeyAdapter()
     {
         @Override
@@ -881,11 +975,19 @@ public class pdpeve  extends ventanaPad   implements PAD
     try {
       if (hisRowid!=0)
       {
-        msgBox("Viendo albaran historico ... IMPOSIBLE MODIFICAR");
+        msgBox("Viendo Pedido historico ... IMPOSIBLE MODIFICAR");
+        nav.pulsado = navegador.NINGUNO;
         activaTodo();
         return;
       }
       activar(navegador.EDIT, true);
+      if (avc_anoE.getValorInt()==9999)
+      {
+          msgBox("Albaran se BORRO. Imposible editar");
+          nav.pulsado = navegador.NINGUNO;
+          activaTodo();
+          return;
+      }
       if ( avc_anoE.getValorDec() > 0 )
       {
         if (P_ADMIN || EU.usuario.equals(usu_nombE.getText()))
@@ -1006,7 +1108,10 @@ public class pdpeve  extends ventanaPad   implements PAD
                  eje_numeE.getValorInt() + "|" + emp_codiE.getValorInt() +
                  "|" + pvc_numeE.getValorInt(),false);
      dtAdd.commit();
+     
      activaTodo();
+     actGridHist(emp_codiE.getValorInt(),eje_numeE.getValorInt(),
+                  pvc_numeE.getValorInt());
      mensaje("");
      mensajeErr("Pedido ... MODIFICADO");
    }
@@ -1263,7 +1368,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         }
     }
 
-    dtAdd.setDato("usu_nomb",usu_nombE.getText());
+    dtAdd.setDato("usu_nomb",EU.usuario);
     dtAdd.setDato("pvc_cerra",0); // Albaran Abierto
     dtAdd.setDato("pvc_nupecl",pvc_nupeclE.getText());
     
@@ -1285,6 +1390,13 @@ public class pdpeve  extends ventanaPad   implements PAD
   {
     try
     {
+      if (hisRowid!=0)
+      {
+        msgBox("Viendo Pedido historico ... IMPOSIBLE MODIFICAR");
+        nav.pulsado = navegador.NINGUNO;
+        activaTodo();
+        return;
+      }
       if (avc_anoE.getValorDec() > 0)
       {
         msgBox("Pedido YA TIENE albaran ... IMPOSIBLE BORRAR");
@@ -1324,10 +1436,10 @@ public class pdpeve  extends ventanaPad   implements PAD
           " and eje_nume= " + eje_numeE.getValorInt() +
           " and pvc_nume = " + pvc_numeE.getValorInt();
       dtAdd.executeUpdate(s);
-//      s = "DELETE from pedvenc where emp_codi = " + emp_codiE.getValorInt() +
-//          " and eje_nume= " + eje_numeE.getValorInt() +
-//          " and pvc_nume = " + pvc_numeE.getValorInt();
-//      dtAdd.executeUpdate(s);
+      s = "UPDATE pedvenc  set pvc_confir='C',avc_ano=9999 where emp_codi = " + emp_codiE.getValorInt() +
+          " and eje_nume= " + eje_numeE.getValorInt() +
+          " and pvc_nume = " + pvc_numeE.getValorInt();
+      dtAdd.executeUpdate(s);
       resetBloqueo(dtAdd, "pedvenc",
                    eje_numeE.getValorInt() + "|" + emp_codiE.getValorInt() +
                    "|" + pvc_numeE.getValorInt(), false);
@@ -1412,10 +1524,19 @@ public class pdpeve  extends ventanaPad   implements PAD
   {
     activar(navegador.TODOS,b);
   }
-
   void verDatos()
   {
-    if (dtCons.getNOREG())
+    tablaCab=TABLACAB;
+    
+    vistaPed=VISTAPED;
+    hisRowid=0;
+
+    verDatos(dtCons);
+    
+  }
+  void verDatos(DatosTabla dt)
+  {
+    if (dt.getNOREG())
       return;
     cli_codiE.resetTexto();
     cli_poblE.setText("");
@@ -1429,12 +1550,14 @@ public class pdpeve  extends ventanaPad   implements PAD
     Ppie.resetTexto();
     jt.removeAllDatos();
     try {
-      emp_codiE.setValorInt(dtCons.getInt("emp_codi"));
-      eje_numeE.setValorInt(dtCons.getInt("eje_nume"));
-      pvc_numeE.setValorInt(dtCons.getInt("pvc_nume"));
-      s = "SELECT * FROM pedvenc WHERE emp_codi = " + emp_codiE.getValorInt() +
+      emp_codiE.setValorInt(dt.getInt("emp_codi"));
+      eje_numeE.setValorInt(dt.getInt("eje_nume"));
+      pvc_numeE.setValorInt(dt.getInt("pvc_nume"));
+      s = "SELECT * FROM "+tablaCab+" WHERE "+
+          (hisRowid>0?" his_rowid = "+dt.getInt("his_rowid"):
+          " emp_codi = " + emp_codiE.getValorInt() +
           " and eje_nume= " + eje_numeE.getValorInt() +
-          " and pvc_nume = " + pvc_numeE.getValorInt();
+          " and pvc_nume = " + pvc_numeE.getValorInt());
       if (! dtCon1.select(s))
       {
         mensajeErr("NO ENCONTRADO PEDIDO ... SEGURAMENTE SE BORRO");
@@ -1457,9 +1580,11 @@ public class pdpeve  extends ventanaPad   implements PAD
       avc_anoE.setValorDec(dtCon1.getInt("avc_ano"));
       pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
       pcc_estadE.setValor(dtCon1.getInt("avc_ano")==0?"P":dtCon1.getInt("avc_ano")>0?"L":"C" );
-      s = "SELECT * FROM v_pedven WHERE emp_codi = " + emp_codiE.getValorInt() +
+      s = "SELECT * FROM "+vistaPed+" WHERE "+
+          (hisRowid>0?" his_rowid = "+dt.getInt("his_rowid"):
+           " emp_codi = " + emp_codiE.getValorInt() +
               " and eje_nume= " + eje_numeE.getValorInt() +
-              " and pvc_nume = " + pvc_numeE.getValorInt();
+              " and pvc_nume = " + pvc_numeE.getValorInt());
       if (dtCon1.select(s))
       {
         do
@@ -1483,6 +1608,9 @@ public class pdpeve  extends ventanaPad   implements PAD
         while (dtCon1.next());
       }
       actAcumJT();
+      if (hisRowid==0)
+        actGridHist(emp_codiE.getValorInt(),eje_numeE.getValorInt(),
+                  pvc_numeE.getValorInt());
     } catch (SQLException k)
     {
       Error("Error al Visualizar Pedidos",k);
