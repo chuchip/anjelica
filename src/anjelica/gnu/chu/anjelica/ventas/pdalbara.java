@@ -2674,12 +2674,23 @@ public class pdalbara extends ventanaPad  implements PAD  {
         };
         this.getLayeredPane().add(copeve, new Integer(1));
         
-        copeve.setLocation(5,  5);
+        copeve.setLocation(8, 2);
         copeve.iniciarVentana();
         copeve.setVisibleCabeceraVentana(false);
       }
+      if (copeve.getSize().getHeight()+50 >= this.getSize().getHeight())
+      {
+          copeve.setSize(new Dimension((int)copeve.getSize().getWidth(),
+              (int)this.getSize().getHeight()-60));
+      }
+      if (copeve.getSize().getWidth()+20 >= this.getSize().getWidth())
+      {
+          copeve.setSize(new Dimension((int)this.getSize().getWidth()-20,
+              (int)copeve.getSize().getHeight()));
+      }
       copeve.setVisible(true);
       this.setEnabled(false);
+      copeve.statusBar.setEnabled(true);
       copeve.setCliCodiText(cli_codiE.getText());
       copeve.setEmpCodiText(emp_codiE.getText());
       copeve.empCodiS=0;
