@@ -2,7 +2,7 @@
  *
  * <p>Titulo: MantTarifa </p>
  * <p>Descripción: Mantenimiento Tarifas de Ventas</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -112,7 +112,7 @@ public class MantTarifa extends ventanaPad implements PAD
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2015-09-14" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2016-02-08" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -361,7 +361,7 @@ public class MantTarifa extends ventanaPad implements PAD
 
     void verDatLin(String fecha,String tipo,String fecfin,double increm) throws Exception
     {
-      s = "SELECT pro_codart,pro_nomb,tar_preci +("+ increm +"),tar_comen " +
+      s = "SELECT pro_codart,pro_nomb,tar_preci,tar_comen " +
           " FROM tarifa " +
           " WHERE tar_fecini = TO_DATE('"+fecha+"','dd-MM-yyyy') "+
           " AND tar_codi = "+tipo+
@@ -380,6 +380,17 @@ public class MantTarifa extends ventanaPad implements PAD
       tar_nusemE.setValorDec(actFecha(tar_feciniE.getDate()));
 
       jt.setDatos(dtCon1);
+      if (increm>0)
+      { // Sumarle el incremento.
+          int nl=jt.getRowCount();
+          for (int n=0;n<nl;n++)
+          {
+              if (! jt.getValString(n,0).equals("") && !jt.getValString(n,0).equals("X") )
+              {
+                  jt.setValor(jt.getValorDec(n,2)+increm,n,2);
+              }
+          }
+      }
       jt.requestFocusInicio();
     }
     @Override
