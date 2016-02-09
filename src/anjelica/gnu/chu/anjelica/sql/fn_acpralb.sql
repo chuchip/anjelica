@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION anjelica."fn_acpralb"()
 	        mvt_ejedoc=OLD.avc_ano and
 	        mvt_numdoc=OLD.avc_nume and
 	        mvt_serdoc=OLD.avc_serie and
-		mvt_tipdoc='V' AND
+			mvt_tipdoc='V' AND
 	        mvt_lindoc=OLD.avl_numlin;	
         end if; 
         if TG_TABLE_NAME = 'v_albacol' then
@@ -33,6 +33,15 @@ CREATE OR REPLACE FUNCTION anjelica."fn_acpralb"()
 	        mvt_numdoc=OLD.acc_nume and
 	        mvt_serdoc=OLD.acc_serie and
 	        mvt_tipdoc='C';	        
+        end if;
+		 if TG_TABLE_NAME = 'v_albavec' then
+           update anjelica.mvtosalm set mvt_cliprv = NEW.cli_codi,
+			mvt_fecdoc=NEW.avc_fecalb
+            where mvt_empcod =OLD.emp_codi and
+			mvt_ejedoc=OLD.avc_ano and
+	        mvt_numdoc=OLD.avc_nume and
+	        mvt_serdoc=OLD.avc_serie and
+	        mvt_tipdoc='V';	        
         end if;
         if TG_TABLE_NAME = 'desporig' then
 --	   RAISE NOTICE  'en fn_acpralb % % %' , NEW.prv_codi,OLD.eje_nume,OLD.deo_codi ;		

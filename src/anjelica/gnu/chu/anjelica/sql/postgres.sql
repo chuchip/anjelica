@@ -4183,6 +4183,9 @@ WHERE nspname = 'public' AND relkind IN ('r', 'v');
 create trigger albvenpar_insert AFTER insert  on anjelica.v_albvenpar for each row execute procedure anjelica.fn_mvtoalm();
 create trigger albvenpar_update BEFORE UPDATE OR DELETE  on anjelica.v_albvenpar for each row execute procedure anjelica.fn_mvtoalm();
 create trigger albavel_UPDATE AFTER UPDATE  on anjelica.v_albavel for each row   WHEN (OLD.avl_prven IS DISTINCT FROM NEW.avl_prven) execute procedure anjelica.fn_acpralb();
+create trigger albavec_UPDATE AFTER UPDATE  on anjelica.v_albavec for each row  
+ WHEN (OLD.cli_codi IS DISTINCT FROM NEW.cli_codi or OLD.avc_fecalb  IS DISTINCT FROM NEW.avc_fecalb ) 
+ execute procedure anjelica.fn_acpralb();
 
 create trigger albcompar_insert AFTER insert  on anjelica.v_albcompar for each row execute procedure anjelica.fn_mvtoalm();
 create trigger albcompar_update BEFORE UPDATE OR DELETE  on anjelica.v_albcompar for each row execute procedure anjelica.fn_mvtoalm();
