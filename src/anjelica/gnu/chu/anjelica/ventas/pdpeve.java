@@ -19,6 +19,7 @@ import gnu.chu.anjelica.pad.pdconfig;
 
 import gnu.chu.winayu.AyuArt;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 /**
@@ -250,7 +251,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2016-02-06"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2016-02-09"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -1197,6 +1198,13 @@ public class pdpeve  extends ventanaPad   implements PAD
         pvc_fecentE.requestFocus();
         return false;
       }
+      
+      if (Formatear.comparaFechas(pvc_fecentE.getDate(),Formatear.getDateAct())<0)
+      {
+        mensajeErr("Fecha de Entrega NO puede ser inferior a la de hoy");
+        pvc_fecentE.requestFocus();
+        return false;
+      }
       if (pcc_estadE.getValor().equals("L") && ! P_ADMIN)
       {
           pcc_estadE.requestFocus();
@@ -1217,8 +1225,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         jt.requestFocusInicio();
         return false;
       }
-
-    } catch (SQLException k)
+    } catch (SQLException | ParseException k)
     {
       Error("Error al validar datos",k);
     }
