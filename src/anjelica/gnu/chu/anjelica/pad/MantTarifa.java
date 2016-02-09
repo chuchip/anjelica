@@ -28,6 +28,7 @@ import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventanaPad;
 import java.awt.BorderLayout;
@@ -159,6 +160,7 @@ public class MantTarifa extends ventanaPad implements PAD
     {
         Bimpri.addActionListener(new ActionListener()
         {
+            @Override
             public void actionPerformed(ActionEvent e)
             {
                 Bimpri_actionPerformed();
@@ -250,13 +252,22 @@ public class MantTarifa extends ventanaPad implements PAD
         return;
       }
       try {
-        if (nav.pulsado == navegador.ADDNEW)
+        if (nav.pulsado == navegador.ADDNEW )
         {
           s = "SELECT * FROM tarifa WHERE "+
               " tar_fecini = TO_DATE('"+tar_feciniE.getText()+"','dd-MM-yyyy') "+
               " and tar_codi = " + tar_codiE.getValor();
           if (dtCon1.select(s))
           {
+            int ret=mensajes.mensajeYesNo("Le ha dado a Tarifa nueva, pero ya existe una tarifa con estos criterios. Desea editarla");
+            if (ret!=mensajes.YES)
+            {
+                msgBox("Alta cancelada");
+                mensaje("");
+                activaTodo();
+                nav.pulsado=navegador.NINGUNO;
+                return;
+            }
             verDatLin(tar_feciniE.getText(), tar_codiE.getValor(),tar_fecfinE.getText(),0);
             jt.cargaTodo();
             fecini=tar_feciniE.getText();
@@ -271,14 +282,17 @@ public class MantTarifa extends ventanaPad implements PAD
         if (nav.pulsado==navegador.ADDNEW &&  !tar_fecopE.isNull())
         {// Copiar los datos de la anterior TARIFA
           s = "SELECT * FROM tarifa WHERE " +
-              " tar_fecini = TO_DATE('" + tar_fecopE.getText() +
-              "','dd-MM-yyyy') " +
+              " tar_fecini = TO_DATE('" + tar_fecopE.getText() +"','dd-MM-yyyy') " +
               " and tar_codi = " + tar_copiaE.getValor();
           if (dtCon1.select(s))
           {
             verDatLin(tar_fecopE.getText(), tar_copiaE.getValor(),
                       tar_fecfinE.getText(),tar_incremE.getValorDec());
             jt.cargaTodo();
+          }
+          else
+          {
+              msgBox("No encontrada tarifa de origen. Recuerde que la fecha debe ser la de inicio");
           }
         }
         jt.setEnabled(true);
