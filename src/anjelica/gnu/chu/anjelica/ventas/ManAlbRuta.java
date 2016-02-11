@@ -130,7 +130,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-02-04 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2016-02-11 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -401,7 +401,9 @@ public class ManAlbRuta extends ventanaPad implements PAD
     numAlbE.setValorDec(0);
     Tpanel1.setSelectedIndex(0);
     jtFra.requestFocusInicio();
+    jtFra.ponValores(0,false,false);
     jt.requestFocusInicio();
+    jt.ponValores(0,false,false);
     alr_fechaE.requestFocus();
   }
   @Override
@@ -541,7 +543,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
                  orden++;
              }
              jtFra.salirGrid();
-             if (checkLinea(jtFra.getSelectedRow()) >= 0)
+             if (checkLineaFra(jtFra.getSelectedRow()) >= 0)
              {
                  Tpanel1.setSelectedIndex(1);
                  return;
@@ -728,401 +730,387 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 {
                     if (col != 3)
                     return;
-                    if (fvc_anoE.getValorInt() > 0 && emp_codiE.getValorInt() > 0
-                        && fvc_numeE.getValorInt() > 0)
-                    {
-                        if (buscaFac(fvc_anoE.getValorInt(), fvc_empcodE.getValorInt(),
-                            fvc_serieE.getText(), fvc_numeE.getValorInt()))
-                    {
-                        jtFra.setValor(dtStat.getString("cli_codi"), row, 4);
-                        jtFra.setValor(dtStat.getString("cli_nomb"), row, 5);
-                        jtFra.setValor(dtStat.getFecha("fvc_fecfra", "dd-MM-yyyy"), row, 6);
-                        jtFra.setValor(dtStat.getString("fvc_sumtot"), row, 7);
-                        jtFra.setValor("" +
-                            (dtStat.getDouble("fvc_sumtot") - dtStat.getDouble("fvc_impcob")),
-                            row, 8);
-                    }
+
+                }
+                catch (Exception k)
+                {
+                    Error("Error al Cambiar Columna", k);
                 }
             }
-            catch (Exception k)
+            public int cambiaLinea(int row, int col)
             {
-                Error("Error al Cambiar Columna", k);
+                try
+                {
+                    return checkLineaFra(row);
+                }
+                catch (SQLException k)
+                {
+                    Error("Error al Cambiar Columna", k);
+                }
+                return 0;
+
             }
         }
-        public int cambiaLinea(int row, int col)
+        ;
+
+        emp_codiE.setText("1");
+
+        avc_anoE.setValorDec(EU.ejercicio);
+
+        avc_serieE.setMayusc(true);
+        avc_serieE.setAutoNext(true);
+        avc_serieE.setText("A");
+
+        cli_codiE.setEnabled(false);
+
+        cli_nombE.setEnabled(false);
+
+        avc_unidE.setEnabled(false);
+
+        avc_kilosE.setEnabled(false);
+
+        alr_repetE.setEnabled(false);
+
+        fvc_serieE.setText("1");
+
+        fvc_empcodE.setText("1");
+
+        fvc_clicodE.setEnabled(false);
+
+        fvc_clinomE.setEnabled(false);
+
+        fvc_fecfraE.setEnabled(false);
+
+        fvc_sumtotE.setEnabled(false);
+
+        fvc_imppenE.setEnabled(false);
+
+        alr_bultosE.setText("1");
+
+        alr_paletsE.setText("1");
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        Pprinc.setLayout(new java.awt.GridBagLayout());
+
+        Pcabe.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        Pcabe.setMaximumSize(new java.awt.Dimension(560, 130));
+        Pcabe.setMinimumSize(new java.awt.Dimension(560, 130));
+        Pcabe.setPreferredSize(new java.awt.Dimension(560, 130));
+        Pcabe.setLayout(null);
+
+        cLabel5.setText("Fecha");
+        cLabel5.setPreferredSize(new java.awt.Dimension(52, 18));
+        Pcabe.add(cLabel5);
+        cLabel5.setBounds(2, 2, 40, 18);
+
+        alr_fechaE.setPreferredSize(new java.awt.Dimension(10, 18));
+        Pcabe.add(alr_fechaE);
+        alr_fechaE.setBounds(50, 2, 76, 18);
+        alr_fechaE.getAccessibleContext().setAccessibleName("");
+
+        cLabel6.setText("Salida Ruta");
+        cLabel6.setPreferredSize(new java.awt.Dimension(52, 18));
+        Pcabe.add(cLabel6);
+        cLabel6.setBounds(2, 23, 70, 17);
+
+        alr_fecsalE.setPreferredSize(new java.awt.Dimension(10, 18));
+        Pcabe.add(alr_fecsalE);
+        alr_fecsalE.setBounds(80, 23, 70, 18);
+
+        alr_fecsalH.setText("0");
+        Pcabe.add(alr_fecsalH);
+        alr_fecsalH.setBounds(160, 23, 20, 18);
+
+        alr_fecsalM.setText("0");
+        Pcabe.add(alr_fecsalM);
+        alr_fecsalM.setBounds(190, 23, 20, 18);
+
+        cLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cLabel1.setText(":");
+        Pcabe.add(cLabel1);
+        cLabel1.setBounds(180, 23, 10, 17);
+
+        cLabel7.setText("Operario");
+        cLabel7.setPreferredSize(new java.awt.Dimension(52, 18));
+        Pcabe.add(cLabel7);
+        cLabel7.setBounds(230, 2, 60, 18);
+
+        alr_fecregE.setPreferredSize(new java.awt.Dimension(10, 18));
+        Pcabe.add(alr_fecregE);
+        alr_fecregE.setBounds(80, 45, 76, 18);
+
+        alr_fecregH.setText("0");
+        Pcabe.add(alr_fecregH);
+        alr_fecregH.setBounds(160, 45, 20, 18);
+
+        alr_fecregM.setText("0");
+        Pcabe.add(alr_fecregM);
+        alr_fecregM.setBounds(190, 45, 20, 18);
+
+        cLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cLabel2.setText(":");
+        Pcabe.add(cLabel2);
+        cLabel2.setBounds(180, 23, 10, 17);
+
+        cLabel3.setText("Ruta");
+        Pcabe.add(cLabel3);
+        cLabel3.setBounds(230, 23, 40, 15);
+
+        rut_codiE.setAncTexto(30);
+        rut_codiE.setFormato(Types.CHAR, "XX");
+        Pcabe.add(rut_codiE);
+        rut_codiE.setBounds(290, 23, 210, 18);
+        rut_codiE.getAccessibleContext().setAccessibleName("");
+
+        cLabel4.setText("Vehiculo");
+        Pcabe.add(cLabel4);
+        cLabel4.setBounds(230, 45, 60, 15);
+
+        usu_nombE.setAncTexto(100);
+        usu_nombE.setFormato(Types.CHAR,"X",15);
+        Pcabe.add(usu_nombE);
+        usu_nombE.setBounds(290, 2, 260, 18);
+        usu_nombE.getAccessibleContext().setAccessibleName("");
+
+        cLabel8.setText("Km. Iniciales ");
+        Pcabe.add(cLabel8);
+        cLabel8.setBounds(10, 67, 80, 17);
+        Pcabe.add(alr_vekminE);
+        alr_vekminE.setBounds(100, 67, 70, 17);
+
+        cLabel9.setText("Identificador");
+        Pcabe.add(cLabel9);
+        cLabel9.setBounds(410, 67, 80, 17);
+        Pcabe.add(alr_vekmfiE);
+        alr_vekmfiE.setBounds(270, 67, 70, 17);
+
+        alr_comentE.setColumns(20);
+        alr_comentE.setRows(5);
+        jScrollPane2.setViewportView(alr_comentE);
+
+        Pcabe.add(jScrollPane2);
+        jScrollPane2.setBounds(10, 87, 540, 40);
+
+        cLabel11.setText("Regreso Ruta");
+        cLabel11.setPreferredSize(new java.awt.Dimension(52, 18));
+        Pcabe.add(cLabel11);
+        cLabel11.setBounds(2, 45, 80, 18);
+
+        veh_codiE.setAncTexto(30);
+        veh_codiE.setFormato(Types.DECIMAL, "##9");
+        Pcabe.add(veh_codiE);
+        veh_codiE.setBounds(290, 45, 210, 18);
+        veh_codiE.getAccessibleContext().setAccessibleName("");
+
+        cLabel15.setText("Km. Finales");
+        Pcabe.add(cLabel15);
+        cLabel15.setBounds(190, 67, 70, 17);
+        Pcabe.add(alr_numeE);
+        alr_numeE.setBounds(500, 67, 50, 17);
+
+        BInsAuto.setToolTipText("Insertar Alb. Pend. de Ruta");
+        Pcabe.add(BInsAuto);
+        BInsAuto.setBounds(510, 23, 30, 24);
+        Pcabe.add(BirGrid);
+        BirGrid.setBounds(540, 120, 2, 2);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        Pprinc.add(Pcabe, gridBagConstraints);
+
+        PPie.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        PPie.setMaximumSize(new java.awt.Dimension(549, 49));
+        PPie.setMinimumSize(new java.awt.Dimension(549, 49));
+        PPie.setName(""); // NOI18N
+        PPie.setPreferredSize(new java.awt.Dimension(549, 49));
+        PPie.setLayout(null);
+
+        cLabel12.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        cLabel12.setText("Unid.");
+        PPie.add(cLabel12);
+        cLabel12.setBounds(260, 2, 40, 17);
+
+        numAlbE.setEditable(false);
+        PPie.add(numAlbE);
+        numAlbE.setBounds(80, 2, 40, 17);
+
+        uniTotE.setEditable(false);
+        PPie.add(uniTotE);
+        uniTotE.setBounds(300, 2, 40, 17);
+
+        kilosTotE.setEditable(false);
+        PPie.add(kilosTotE);
+        kilosTotE.setBounds(190, 2, 60, 17);
+        PPie.add(Baceptar);
+        Baceptar.setBounds(350, 2, 90, 28);
+        PPie.add(Bcancelar);
+        Bcancelar.setBounds(445, 2, 95, 28);
+
+        cLabel16.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        cLabel16.setText("Imp. Fras.");
+        PPie.add(cLabel16);
+        cLabel16.setBounds(130, 30, 60, 17);
+
+        cLabel17.setText("Nº Facturas");
+        PPie.add(cLabel17);
+        cLabel17.setBounds(0, 30, 70, 17);
+
+        cLabel18.setText("Nº Albaranes ");
+        PPie.add(cLabel18);
+        cLabel18.setBounds(0, 2, 80, 15);
+
+        numFrasE.setEditable(false);
+        PPie.add(numFrasE);
+        numFrasE.setBounds(80, 30, 40, 17);
+
+        cLabel19.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        cLabel19.setText("Kilos");
+        PPie.add(cLabel19);
+        cLabel19.setBounds(150, 2, 40, 17);
+
+        impFrasE.setEditable(false);
+        PPie.add(impFrasE);
+        impFrasE.setBounds(190, 30, 70, 17);
+
+        cLabel13.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        cLabel13.setText("Bultos");
+        PPie.add(cLabel13);
+        cLabel13.setBounds(360, 30, 40, 17);
+
+        bulTotE.setEditable(false);
+        PPie.add(bulTotE);
+        bulTotE.setBounds(400, 30, 40, 17);
+
+        cLabel14.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        cLabel14.setText("Palets");
+        PPie.add(cLabel14);
+        cLabel14.setBounds(450, 30, 40, 17);
+
+        palTotE.setEditable(false);
+        PPie.add(palTotE);
+        palTotE.setBounds(490, 30, 40, 17);
+
+        Bimpri.addMenu("Facturas","F");
+        Bimpri.addMenu("Albaranes","A");
+        Bimpri.addMenu("Det.Albar","D");
+        PPie.add(Bimpri);
+        Bimpri.setBounds(270, 22, 70, 24);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
+        Pprinc.add(PPie, gridBagConstraints);
+
+        jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jt.setMaximumSize(new java.awt.Dimension(559, 149));
+        jt.setMinimumSize(new java.awt.Dimension(559, 149));
+        ArrayList v=new ArrayList();
+        v.add("Emp"); // 0
+        v.add("Ejer."); // 1
+        v.add("Serie"); // 2
+        v.add("Numero"); // 3
+        v.add("Bultos"); // 4
+        v.add("Palets"); // 5
+        v.add("Cliente"); // 6
+        v.add("Nombre Cliente"); // 7
+        v.add("Unid."); // 8
+        v.add("Kilos"); // 9
+        v.add("Dupl."); // 10
+        jt.setCabecera(v);
+        jt.setColNueva(3);
+        jt.setAnchoColumna(new int[]{30,40,30,60,40,40,50,200,40,50,45});
+        jt.setAlinearColumna(new int[]{2,2,1,2,2,2,2,0,2,2,1});
+        ArrayList vc=new ArrayList();
+        vc.add(emp_codiE);
+        vc.add(avc_anoE);
+        vc.add(avc_serieE);
+        vc.add(avc_numeE);
+        vc.add(alr_bultosE);
+        vc.add(alr_paletsE);
+        vc.add(cli_codiE);
+        vc.add(cli_nombE);
+        vc.add(avc_unidE);
+        vc.add(avc_kilosE);
+        vc.add(alr_repetE);
+        try {
+            jt.setCampos(vc);
+        } catch (Exception k)
         {
-            try
-            {
-                return checkLinea(row);
-            }
-            catch (SQLException k)
-            {
-                Error("Error al Cambiar Columna", k);
-            }
-            return 0;
-
+            Error("Error al poner campos en grid ",k);
+            return;
         }
-    }
-    ;
 
-    emp_codiE.setText("1");
-
-    avc_anoE.setValorDec(EU.ejercicio);
-
-    avc_serieE.setMayusc(true);
-    avc_serieE.setAutoNext(true);
-    avc_serieE.setText("A");
-
-    cli_codiE.setEnabled(false);
-
-    cli_nombE.setEnabled(false);
-
-    avc_unidE.setEnabled(false);
-
-    avc_kilosE.setEnabled(false);
-
-    alr_repetE.setEnabled(false);
-
-    fvc_serieE.setText("1");
-
-    fvc_empcodE.setText("1");
-
-    fvc_clicodE.setEnabled(false);
-
-    fvc_clinomE.setEnabled(false);
-
-    fvc_fecfraE.setEnabled(false);
-
-    fvc_sumtotE.setEnabled(false);
-
-    fvc_imppenE.setEnabled(false);
-
-    alr_bultosE.setText("1");
-
-    alr_paletsE.setText("1");
-
-    setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-    Pprinc.setLayout(new java.awt.GridBagLayout());
-
-    Pcabe.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-    Pcabe.setMaximumSize(new java.awt.Dimension(560, 130));
-    Pcabe.setMinimumSize(new java.awt.Dimension(560, 130));
-    Pcabe.setPreferredSize(new java.awt.Dimension(560, 130));
-    Pcabe.setLayout(null);
-
-    cLabel5.setText("Fecha");
-    cLabel5.setPreferredSize(new java.awt.Dimension(52, 18));
-    Pcabe.add(cLabel5);
-    cLabel5.setBounds(2, 2, 40, 18);
-
-    alr_fechaE.setPreferredSize(new java.awt.Dimension(10, 18));
-    Pcabe.add(alr_fechaE);
-    alr_fechaE.setBounds(50, 2, 76, 18);
-    alr_fechaE.getAccessibleContext().setAccessibleName("");
-
-    cLabel6.setText("Salida Ruta");
-    cLabel6.setPreferredSize(new java.awt.Dimension(52, 18));
-    Pcabe.add(cLabel6);
-    cLabel6.setBounds(2, 23, 70, 17);
-
-    alr_fecsalE.setPreferredSize(new java.awt.Dimension(10, 18));
-    Pcabe.add(alr_fecsalE);
-    alr_fecsalE.setBounds(80, 23, 70, 18);
-
-    alr_fecsalH.setText("0");
-    Pcabe.add(alr_fecsalH);
-    alr_fecsalH.setBounds(160, 23, 20, 18);
-
-    alr_fecsalM.setText("0");
-    Pcabe.add(alr_fecsalM);
-    alr_fecsalM.setBounds(190, 23, 20, 18);
-
-    cLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-    cLabel1.setText(":");
-    Pcabe.add(cLabel1);
-    cLabel1.setBounds(180, 23, 10, 17);
-
-    cLabel7.setText("Operario");
-    cLabel7.setPreferredSize(new java.awt.Dimension(52, 18));
-    Pcabe.add(cLabel7);
-    cLabel7.setBounds(230, 2, 60, 18);
-
-    alr_fecregE.setPreferredSize(new java.awt.Dimension(10, 18));
-    Pcabe.add(alr_fecregE);
-    alr_fecregE.setBounds(80, 45, 76, 18);
-
-    alr_fecregH.setText("0");
-    Pcabe.add(alr_fecregH);
-    alr_fecregH.setBounds(160, 45, 20, 18);
-
-    alr_fecregM.setText("0");
-    Pcabe.add(alr_fecregM);
-    alr_fecregM.setBounds(190, 45, 20, 18);
-
-    cLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-    cLabel2.setText(":");
-    Pcabe.add(cLabel2);
-    cLabel2.setBounds(180, 23, 10, 17);
-
-    cLabel3.setText("Ruta");
-    Pcabe.add(cLabel3);
-    cLabel3.setBounds(230, 23, 40, 15);
-
-    rut_codiE.setAncTexto(30);
-    rut_codiE.setFormato(Types.CHAR, "XX");
-    Pcabe.add(rut_codiE);
-    rut_codiE.setBounds(290, 23, 210, 18);
-    rut_codiE.getAccessibleContext().setAccessibleName("");
-
-    cLabel4.setText("Vehiculo");
-    Pcabe.add(cLabel4);
-    cLabel4.setBounds(230, 45, 60, 15);
-
-    usu_nombE.setAncTexto(100);
-    usu_nombE.setFormato(Types.CHAR,"X",15);
-    Pcabe.add(usu_nombE);
-    usu_nombE.setBounds(290, 2, 260, 18);
-    usu_nombE.getAccessibleContext().setAccessibleName("");
-
-    cLabel8.setText("Km. Iniciales ");
-    Pcabe.add(cLabel8);
-    cLabel8.setBounds(10, 67, 80, 17);
-    Pcabe.add(alr_vekminE);
-    alr_vekminE.setBounds(100, 67, 70, 17);
-
-    cLabel9.setText("Identificador");
-    Pcabe.add(cLabel9);
-    cLabel9.setBounds(410, 67, 80, 17);
-    Pcabe.add(alr_vekmfiE);
-    alr_vekmfiE.setBounds(270, 67, 70, 17);
-
-    alr_comentE.setColumns(20);
-    alr_comentE.setRows(5);
-    jScrollPane2.setViewportView(alr_comentE);
-
-    Pcabe.add(jScrollPane2);
-    jScrollPane2.setBounds(10, 87, 540, 40);
-
-    cLabel11.setText("Regreso Ruta");
-    cLabel11.setPreferredSize(new java.awt.Dimension(52, 18));
-    Pcabe.add(cLabel11);
-    cLabel11.setBounds(2, 45, 80, 18);
-
-    veh_codiE.setAncTexto(30);
-    veh_codiE.setFormato(Types.DECIMAL, "##9");
-    Pcabe.add(veh_codiE);
-    veh_codiE.setBounds(290, 45, 210, 18);
-    veh_codiE.getAccessibleContext().setAccessibleName("");
-
-    cLabel15.setText("Km. Finales");
-    Pcabe.add(cLabel15);
-    cLabel15.setBounds(190, 67, 70, 17);
-    Pcabe.add(alr_numeE);
-    alr_numeE.setBounds(500, 67, 50, 17);
-
-    BInsAuto.setToolTipText("Insertar Alb. Pend. de Ruta");
-    Pcabe.add(BInsAuto);
-    BInsAuto.setBounds(510, 23, 30, 24);
-    Pcabe.add(BirGrid);
-    BirGrid.setBounds(540, 120, 2, 2);
-
-    gridBagConstraints = new java.awt.GridBagConstraints();
-    gridBagConstraints.gridx = 0;
-    gridBagConstraints.gridy = 0;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-    Pprinc.add(Pcabe, gridBagConstraints);
-
-    PPie.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-    PPie.setMaximumSize(new java.awt.Dimension(549, 49));
-    PPie.setMinimumSize(new java.awt.Dimension(549, 49));
-    PPie.setName(""); // NOI18N
-    PPie.setPreferredSize(new java.awt.Dimension(549, 49));
-    PPie.setLayout(null);
-
-    cLabel12.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-    cLabel12.setText("Unid.");
-    PPie.add(cLabel12);
-    cLabel12.setBounds(260, 2, 40, 17);
-
-    numAlbE.setEditable(false);
-    PPie.add(numAlbE);
-    numAlbE.setBounds(80, 2, 40, 17);
-
-    uniTotE.setEditable(false);
-    PPie.add(uniTotE);
-    uniTotE.setBounds(300, 2, 40, 17);
-
-    kilosTotE.setEditable(false);
-    PPie.add(kilosTotE);
-    kilosTotE.setBounds(190, 2, 60, 17);
-    PPie.add(Baceptar);
-    Baceptar.setBounds(350, 2, 90, 28);
-    PPie.add(Bcancelar);
-    Bcancelar.setBounds(445, 2, 95, 28);
-
-    cLabel16.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-    cLabel16.setText("Imp. Fras.");
-    PPie.add(cLabel16);
-    cLabel16.setBounds(130, 30, 60, 17);
-
-    cLabel17.setText("Nº Facturas");
-    PPie.add(cLabel17);
-    cLabel17.setBounds(0, 30, 70, 17);
-
-    cLabel18.setText("Nº Albaranes ");
-    PPie.add(cLabel18);
-    cLabel18.setBounds(0, 2, 80, 15);
-
-    numFrasE.setEditable(false);
-    PPie.add(numFrasE);
-    numFrasE.setBounds(80, 30, 40, 17);
-
-    cLabel19.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-    cLabel19.setText("Kilos");
-    PPie.add(cLabel19);
-    cLabel19.setBounds(150, 2, 40, 17);
-
-    impFrasE.setEditable(false);
-    PPie.add(impFrasE);
-    impFrasE.setBounds(190, 30, 70, 17);
-
-    cLabel13.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-    cLabel13.setText("Bultos");
-    PPie.add(cLabel13);
-    cLabel13.setBounds(360, 30, 40, 17);
-
-    bulTotE.setEditable(false);
-    PPie.add(bulTotE);
-    bulTotE.setBounds(400, 30, 40, 17);
-
-    cLabel14.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-    cLabel14.setText("Palets");
-    PPie.add(cLabel14);
-    cLabel14.setBounds(450, 30, 40, 17);
-
-    palTotE.setEditable(false);
-    PPie.add(palTotE);
-    palTotE.setBounds(490, 30, 40, 17);
-
-    Bimpri.addMenu("Facturas","F");
-    Bimpri.addMenu("Albaranes","A");
-    Bimpri.addMenu("Det.Albar","D");
-    PPie.add(Bimpri);
-    Bimpri.setBounds(270, 22, 70, 24);
-
-    gridBagConstraints = new java.awt.GridBagConstraints();
-    gridBagConstraints.gridx = 0;
-    gridBagConstraints.gridy = 2;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-    gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
-    Pprinc.add(PPie, gridBagConstraints);
-
-    jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-    jt.setMaximumSize(new java.awt.Dimension(559, 149));
-    jt.setMinimumSize(new java.awt.Dimension(559, 149));
-    ArrayList v=new ArrayList();
-    v.add("Emp"); // 0
-    v.add("Ejer."); // 1
-    v.add("Serie"); // 2
-    v.add("Numero"); // 3
-    v.add("Bultos"); // 4
-    v.add("Palets"); // 5
-    v.add("Cliente"); // 6
-    v.add("Nombre Cliente"); // 7
-    v.add("Unid."); // 8
-    v.add("Kilos"); // 9
-    v.add("Dupl."); // 10
-    jt.setCabecera(v);
-    jt.setColNueva(3);
-    jt.setAnchoColumna(new int[]{30,40,30,60,40,40,50,200,40,50,45});
-    jt.setAlinearColumna(new int[]{2,2,1,2,2,2,2,0,2,2,1});
-    ArrayList vc=new ArrayList();
-    vc.add(emp_codiE);
-    vc.add(avc_anoE);
-    vc.add(avc_serieE);
-    vc.add(avc_numeE);
-    vc.add(alr_bultosE);
-    vc.add(alr_paletsE);
-    vc.add(cli_codiE);
-    vc.add(cli_nombE);
-    vc.add(avc_unidE);
-    vc.add(avc_kilosE);
-    vc.add(alr_repetE);
-    try {
-        jt.setCampos(vc);
-    } catch (Exception k)
-    {
-        Error("Error al poner campos en grid ",k);
-        return;
-    }
-    jt.setPonValoresInFocus(true);
-    jt.setFormatoCampos();
-    jt.setFormatoColumna(JT_REPET, "B-");
-    Tpanel1.addTab("Albaranes", jt);
-
-    ArrayList vf= new ArrayList();
-    vf.add("Año"); // 0
-    vf.add("Emp"); // 1
-    vf.add("S"); // 2  serie
-    vf.add("Factura");  // 3
-    vf.add("Cliente"); // 4
-    vf.add("Nombre"); // 5
-    vf.add("Fec.Fra");// 6
-    vf.add("Imp.Fra"); // 7
-    vf.add("Imp.Pend"); // 8
-    jtFra.setCabecera(vf);
-    fvc_clicodE.setEnabled(false);
-    fvc_clinomE.setEnabled(false);
-    fvc_fecfraE.setEnabled(false);
-    fvc_sumtotE.setEnabled(false);
-    fvc_imppenE.setEnabled(false);
-    fvc_serieE.setMayusc(true);
-    fvc_serieE.setAutoNext(true);
-    fvc_clicodE.setText("");
-    fvc_sumtotE.setText("");
-    fvc_serieE.setText("1");
-    fvc_empcodE.setValorDec(EU.em_cod);
-    fvc_anoE.setValorDec(EU.ejercicio);
-    try {
-        ArrayList vf1=new ArrayList();
-        vf1.add(fvc_anoE);
-        vf1.add(fvc_empcodE);
-        vf1.add(fvc_serieE);
-        vf1.add(fvc_numeE);
-        vf1.add(fvc_clicodE);
-        vf1.add(fvc_clinomE);
-        vf1.add(fvc_fecfraE);
-        vf1.add(fvc_sumtotE);
-        vf1.add(fvc_imppenE);
-        jtFra.setCampos(vf1);
-    } catch (Exception k)
-    {
-        Error("Error al configurar grid fras.",k);
-
-        return;
-    }
-    jtFra.setPonValoresInFocus(true);
-    jtFra.setColNueva(2);
-    jtFra.setMaximumSize(new Dimension(406, 311));
-    jtFra.setMinimumSize(new Dimension(406, 311));
-    jtFra.setPreferredSize(new Dimension(406, 311));
-    jtFra.setAnchoColumna(new int[]{50,40,25,60,40,140,80,70,70});
-    jtFra.setAlinearColumna(new int[]{2,2,1,2,2,0,1,2,2});
-    jtFra.setFormatoColumna(7,"----,--9.99");
-    jtFra.setFormatoColumna(8,"----,--9.99");
-    Tpanel1.addTab("Facturas", jtFra);
-
-    gridBagConstraints = new java.awt.GridBagConstraints();
-    gridBagConstraints.gridy = 1;
-    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-    gridBagConstraints.weightx = 1.0;
-    gridBagConstraints.weighty = 1.0;
-    Pprinc.add(Tpanel1, gridBagConstraints);
-
-    getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
-
-    pack();
+        jt.setFormatoCampos();
+        jt.setFormatoColumna(JT_REPET, "B-");
+        Tpanel1.addTab("Albaranes", jt);
+
+        ArrayList vf= new ArrayList();
+        vf.add("Año"); // 0
+        vf.add("Emp"); // 1
+        vf.add("S"); // 2  serie
+        vf.add("Factura");  // 3
+        vf.add("Cliente"); // 4
+        vf.add("Nombre"); // 5
+        vf.add("Fec.Fra");// 6
+        vf.add("Imp.Fra"); // 7
+        vf.add("Imp.Pend"); // 8
+        jtFra.setCabecera(vf);
+        fvc_clicodE.setEnabled(false);
+        fvc_clinomE.setEnabled(false);
+        fvc_fecfraE.setEnabled(false);
+        fvc_sumtotE.setEnabled(false);
+        fvc_imppenE.setEnabled(false);
+        fvc_serieE.setMayusc(true);
+        fvc_serieE.setAutoNext(true);
+        fvc_clicodE.setText("");
+        fvc_sumtotE.setText("");
+        fvc_serieE.setText("1");
+        fvc_empcodE.setValorDec(EU.em_cod);
+        fvc_anoE.setValorDec(EU.ejercicio);
+        try {
+            ArrayList vf1=new ArrayList();
+            vf1.add(fvc_anoE);
+            vf1.add(fvc_empcodE);
+            vf1.add(fvc_serieE);
+            vf1.add(fvc_numeE);
+            vf1.add(fvc_clicodE);
+            vf1.add(fvc_clinomE);
+            vf1.add(fvc_fecfraE);
+            vf1.add(fvc_sumtotE);
+            vf1.add(fvc_imppenE);
+            jtFra.setCampos(vf1);
+        } catch (Exception k)
+        {
+            Error("Error al configurar grid fras.",k);
+
+            return;
+        }
+
+        jtFra.setColNueva(2);
+        jtFra.setMaximumSize(new Dimension(406, 311));
+        jtFra.setMinimumSize(new Dimension(406, 311));
+        jtFra.setPreferredSize(new Dimension(406, 311));
+        jtFra.setAnchoColumna(new int[]{50,40,25,60,40,140,80,70,70});
+        jtFra.setAlinearColumna(new int[]{2,2,1,2,2,0,1,2,2});
+        jtFra.setFormatoColumna(7,"----,--9.99");
+        jtFra.setFormatoColumna(8,"----,--9.99");
+        Tpanel1.addTab("Facturas", jtFra);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        Pprinc.add(Tpanel1, gridBagConstraints);
+
+        getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
+
+        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     
@@ -1488,7 +1476,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
             }
            
             jtFra.salirGrid();
-            if (checkLinea(jtFra.getSelectedRow())>=0)
+            if (checkLineaFra(jtFra.getSelectedRow())>=0)
             {
                 Tpanel1.setSelectedIndex(1);
                 return;
@@ -1748,13 +1736,13 @@ public class ManAlbRuta extends ventanaPad implements PAD
    * @throws SQLException 
    */
   
-  int checkLinea(int row) throws SQLException
+  int checkLineaFra(int row) throws SQLException
   {
     if (! fvc_numeE.hasCambio())
         return -1;
     fvc_numeE.resetCambio();
-    if (fvc_numeE.getValorInt()==0)
-      return -1;    
+    if (fvc_numeE.getValorInt() == 0)
+        return -1;
     if (!buscaFac(fvc_anoE.getValorInt(), fvc_empcodE.getValorInt(),
                   fvc_serieE.getText(), fvc_numeE.getValorInt()))
     {
@@ -1765,7 +1753,14 @@ public class ManAlbRuta extends ventanaPad implements PAD
     {
       msgBox("Factura YA esta cobrada");
 //      return 0;
-    }
+    }  
+    jtFra.setValor(dtStat.getString("cli_codi"), row, 4);
+    jtFra.setValor(dtStat.getString("cli_nomb"), row, 5);
+    jtFra.setValor(dtStat.getFecha("fvc_fecfra", "dd-MM-yyyy"), row, 6);
+    jtFra.setValor(dtStat.getString("fvc_sumtot"), row, 7);
+    jtFra.setValor("" +
+        (dtStat.getDouble("fvc_sumtot") - dtStat.getDouble("fvc_impcob")),
+        row, 8);
     return -1;
   }
   void imprimir_facturas()

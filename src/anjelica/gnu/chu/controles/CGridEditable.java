@@ -963,7 +963,7 @@ public class CGridEditable extends Cgrid implements CQuery {
   /**
    * Pasa los valores del grid a los campos editables (CEditable)
    */
-  private void ponValores()
+  public void ponValores()
   {
     ponValores(getSelectedRow(), true, false);
   }
