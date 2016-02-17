@@ -1585,7 +1585,7 @@ public class ActualStkPart
    * @param fecLim Date  con la fecha a partir de la q buscar el inventario.
    *        null si se quiere buscar desde el principio.
    * @throws SQLException
-   * @return String Fecha de Ultimo Inventario o Nulo si no lo encuentra.
+   * @return String Fecha de Ultimo Inventario (dd-MM-yyyy) o Nulo si no lo encuentra.
    */
   public static String getFechaUltInv(int empCodi,int ejeCodi,Date fecLim, DatosTabla dt ) throws SQLException
   {

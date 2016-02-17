@@ -27,10 +27,13 @@ package gnu.chu.anjelica.ventas;
 
 
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.pad.MantRepres;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.camposdb.empPanel;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.DatosProd;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
@@ -41,20 +44,35 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 
 public class Covezore extends ventana {
+    DatosTabla dtMarg;
+    private boolean isBuscandoMarg=false;
+    double impGanaP=0;
+    HashMap<String, Double> htGana=new HashMap();
+    private final int JT_SBECOD=10;
+    private final int JT_IMPGAN=7;
+    private final int JT_PORGAN=8;
+    private final int JT_KILVEN=6;
+    boolean cancelarConsulta=false;
+    private MvtosAlma mvtosAlm = new MvtosAlma();
     private boolean swDivCodi;
     private boolean inTransation=false;
     int cabIni=0;
@@ -66,6 +84,7 @@ public class Covezore extends ventana {
     int nAlbZ,nCliZ,nClAcZ;
     String REPRARG;
     String SBECODIARG;
+    boolean VERMARGEN=false;
     AlbVenZR alVeZo=null;
     AlbClienComp alVenComp=null;
     AlbVenPro alVePr=null;
@@ -84,7 +103,7 @@ public class Covezore extends ventana {
     this(eu, p, null);
   }
 
-  public Covezore(EntornoUsuario eu, Principal p, Hashtable ht)
+  public Covezore(EntornoUsuario eu, Principal p, Hashtable<String,String> ht)
   {
 
    EU=eu;
@@ -99,9 +118,11 @@ public class Covezore extends ventana {
      if (ht != null)
      {
        if (ht.get("repr") != null)
-         REPRARG = ht.get("repr").toString();
+         REPRARG = ht.get("repr");
        if (ht.get("sbeCodi") != null)
-         SBECODIARG = ht.get("sbeCodi").toString();
+         SBECODIARG = ht.get("sbeCodi");
+       if (ht.get("verMargen") != null)
+         VERMARGEN = Boolean.parseBoolean( ht.get("verMargen"));
      }
 
      if(jf.gestor.apuntar(this))
@@ -135,7 +156,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2015-10-02");
+   this.setVersion("2016-02-16");
    statusBar = new StatusBar(this);
  
    initComponents();
@@ -148,7 +169,8 @@ private void jbInit() throws Exception
 @Override
 public void iniciarVentana() throws Exception
 {
-    
+    dtMarg=new DatosTabla(ct);
+    Pbuscando.setVisible(false);
     opDivisa.setEnabled(EU.isRootAV());
     opDivisa.setSelected(EU.isRootAV());
     opDivisa.setToolTipText(EU.isRootAV()?"Selecionar para incluir TODAS las divisas":"");
@@ -162,7 +184,9 @@ public void iniciarVentana() throws Exception
     sbe_codiE.iniciar(dtStat, this, vl, EU);
     sbe_codiE.setAceptaNulo(true);
     sbe_codiE.setFieldEmpCodi(emp_codiE.getTextField());
-
+    
+    mvtosAlm.setResetCostoStkNeg(true);
+    mvtosAlm.setFechasDocumento(true);
     MantRepres.llenaLinkBox(rep_codiE, dtCon1);
     fecIniE.iniciar(dtStat,this,vl,EU);
     fecFinE.iniciar(dtStat, this, vl, EU);
@@ -684,6 +708,19 @@ public void iniciarVentana() throws Exception
    {
        if (! checkCondic())
             return;
+       cancelarConsulta=true;
+       
+       while (isBuscandoMarg)
+       {
+           try
+           {
+               Thread.sleep(50);
+           } catch (InterruptedException ex)
+           {
+               Error("Error al esperar margenes",ex);
+           }
+       }
+       
        new miThread("")
        {
             @Override
@@ -698,10 +735,24 @@ public void iniciarVentana() throws Exception
               mensaje("");
               mensajeErr("Consulta realizada");
               inTransation=false;
+              if (!VERMARGEN)
+                  return;
+              new miThread("")
+              {
+                  @Override
+                   public void run()
+                   {
+                     Pbuscando.setVisible(true);
+                     isBuscandoMarg=true;
+                     buscaMargenes();
+                     isBuscandoMarg=false;
+                     Pbuscando.setVisible(false);
+                   }
+              };
            }
        };
    }
-void busVenZona()
+   void busVenZona()
   {
    try
    {
@@ -717,7 +768,7 @@ void busVenZona()
      alVeZo.setSelected(true);
      this.setEnabled(false);
      this.setFoco(alVeZo);
-     alVeZo.cargaDatos( jt.getValString(0),jt.getValString(1),jt.getValorInt(8));
+     alVeZo.cargaDatos( jt.getValString(0),jt.getValString(1),jt.getValorInt(JT_SBECOD));
 
      alVeZo.setVisible(true);
    }
@@ -832,7 +883,20 @@ void busVenZona()
       alVeZo.setVisible(false);
       alVeZo.matar(false);
     }
-
+    try
+    {
+        while (isBuscandoMarg)
+        {
+            Thread.sleep(50);
+        }
+        dtMarg.close();
+    } catch (SQLException ex)
+    {
+        Logger.getLogger(Covezore.class.getName()).log(Level.SEVERE, null, ex);
+    }   catch (InterruptedException ex)
+        {
+            Logger.getLogger(Covezore.class.getName()).log(Level.SEVERE, null, ex);
+        }
     super.matar(cerrarConexion);
   }
 
@@ -864,6 +928,8 @@ void busVenZona()
             v.add(nCliL);
             v.add(impVenL);
             v.add(kgVenL);
+            v.add("");
+            v.add("");
             v.add(nClAcL);
             v.add(sbeCodi);
             datos.add(v);
@@ -886,6 +952,8 @@ void busVenZona()
         v.add(nCliS);
         v.add(impVenS);
         v.add(kgVenS);
+        v.add("");
+        v.add("");
         v.add(nClAcS);
         v.add(sbeCodi);
         datos.add(v);
@@ -939,14 +1007,210 @@ void busVenZona()
              " order by c.sbe_codi,cl.rep_codi,cl.zon_codi";
         
    }
+    /**
+     * Funcion que busca Margenes sobre los datos introducidos. Realiza la busqueda en background
+     */
+    void buscaMargenes()
+    {       
+        try {   
+           
+            cancelarConsulta=false;
+            String fecIni=fecIniE.getText();
+            String fecFin=fecFinE.getText();
+            String fecInv=ActualStkPart.getFechaUltInv(0,0,fecIniE.getDate(),dtStat);
+            Date fecInvD=Formatear.getDate(fecInv, "dd-MM-yyyy");
+            String sql = "SELECT pro_codi,mvt_tipdoc as tipdoc, mvt_tipo as tipmov,  "
+                + " mvt_time as fecmov,"
+                + " mvt_canti as canti,mvt_prec as precio,"
+                + " mvt_cliprv as cliCodi,mvt_empcod,mvt_ejedoc,mvt_serdoc,"
+                + " mvt_numdoc, "
+                + " mvt_fecdoc "
+                + " from mvtosalm where "
+                + "  mvt_canti <> 0 "
+                + " and NOT (mvt_serdoc='X' and mvt_tipdoc ='V') " // ignorar traspaso entre almacenes 
+                + " AND mvt_time::date > TO_DATE('" + fecInv + "','dd-MM-yyyy') "
+                + " and mvt_time::date <= TO_DATE('" + fecFin + "','dd-MM-yyyy') "
+                + " ORDER BY pro_codi,fecmov,tipmov";
+            PreparedStatement psAlb=  dtStat.getPreparedStatement("select c.zon_codi,c.rep_codi,a.sbe_codi "
+                + " from v_albavec as a, v_cliente  as c where c.cli_codi = a.cli_codi and a.emp_codi=  ? "
+                + " and avc_ano=? "
+                + " and avc_serie=? and avc_nume = ?");       
+            PreparedStatement psCli=  dtStat.getPreparedStatement("select c.zon_codi,c.rep_codi,c.sbe_codi "
+                + " from v v_cliente  as c where c.cli_codi = ?");
 
+            ResultSet rsCli;
+           if (!dtMarg.select(sql))
+           {
+               mensajeErr("No encontrados datos de margenes");             
+               return;
+           }
+           sql=" select sum(rgs_kilos) as kilos, sum(rgs_kilos*rgs_prregu) as importe "
+                + " FROM v_inventar  WHERE "
+                + " rgs_fecha::date = TO_DATE('" + fecInv + "','dd-MM-yyyy') "
+                + " and pro_codi = ?";
+           PreparedStatement psInv= dtStat.getPreparedStatement(sql);
+           ResultSet rsInv;
+           impGanaP=0;
+           double kilos=0,importe=0,impGana;
+           double precioCosto=0;
+           Double impGanaD;
+           String valor;
+           htGana.clear();
+        
+           int proCodi=0;
+           do
+           {
+               if (cancelarConsulta)
+                 return;
+               if (proCodi!=dtMarg.getInt("pro_codi") )
+               { // Busco Inventario inicial
+//                   System.out.println("Producto: "+proCodi+"  Ganancia: "+impGanaP);
+                   impGanaP=0;
+                   proCodi=dtMarg.getInt("pro_codi");
+                   psInv.setInt(1, proCodi);
+                   rsInv=psInv.executeQuery();   
+                   rsInv.next();
+                   kilos=rsInv.getDouble("kilos");
+                   importe=rsInv.getDouble("importe");
+                   precioCosto= kilos<=0?0:importe/kilos;
+               }
+               
+             
+               if (dtMarg.getString("tipmov").equals("E"))
+               { // Entrada
+                  kilos+=dtMarg.getDouble("canti",true);
+                  importe+= dtMarg.getDouble("canti",true)* dtMarg.getDouble("precio",true);
+                  precioCosto= kilos<=0?0:importe/kilos;
+               }
+               else              
+               { // Salida
+                   if (Formatear.comparaFechas(dtMarg.getDate("mvt_fecdoc"),fecInvD)>0)
+                   {                       
+                        if  (dtMarg.getString("tipdoc").equals("R") )
+                        {
+                           psCli.setInt(1,dtMarg.getInt("cliCodi"));
+                           rsCli=psAlb.executeQuery();   
+                           if (rsCli.next())
+                               sumaGanan(rsCli,precioCosto);
+                        }
+                        if (dtMarg.getString("tipdoc").equals("V") )
+                        {
+                             psAlb.setInt(1,dtMarg.getInt("mvt_empcod"));
+                             psAlb.setInt(2,dtMarg.getInt("mvt_ejedoc"));
+                             psAlb.setString(3,dtMarg.getString("mvt_serdoc"));
+                             psAlb.setInt(4,dtMarg.getInt("mvt_numdoc"));
+                             rsCli=psAlb.executeQuery();   
+                             if (rsCli.next())
+                                 sumaGanan(rsCli,precioCosto);
+                        }
+                   }
+                   kilos-=dtMarg.getDouble("canti",true);
+                   importe-= dtMarg.getDouble("canti",true)* precioCosto;
+               }
+               
+           } while (dtMarg.next());
+            SwingUtilities.invokeLater(new Thread()
+            {
+                @Override
+                public void run()
+                {
+                  muestraMargenes();      
+                }
+            });
+          
+        } catch (ParseException | SQLException k)
+        {
+            Error("Error al buscar margenes de ventas",k);
+        }
+        
+    }
+    void muestraMargenes()
+    {
+         Iterator<String> it=htGana.keySet().iterator();
+           int nl=jt.getRowCount();
+           String[] valorC;
+           String valor;
+           while (it.hasNext())
+           {
+               if (cancelarConsulta)
+                 return;
+               valor=it.next();
+//               System.out.println("valor : "+valor+" Ganancia: "+htGana.get(valor));
+               valorC=valor.split("-",3);
+               for (int n=0;n<nl;n++)
+               {
+                   if (jt.getValString(n,0).equals(valorC[0]) &&
+                       jt.getValString(n,1).equals(valorC[1]) &&
+                       jt.getValString(n,JT_SBECOD).equals(valorC[2]) )
+                   {
+                       jt.setValor(htGana.get(valor), n,JT_IMPGAN);
+                       break;
+                   }
+               }
+           }
+           double totRepr=0;
+           double totSec=0;
+           double totGen=0;
+           for (int n=0;n<nl;n++)
+           {
+                 if (cancelarConsulta)
+                     return;
+                   jt.setValor(jt.getValorDec(n,JT_IMPGAN)/jt.getValorDec(n,JT_KILVEN),
+                     n,JT_PORGAN);
+                   if (jt.getValString(n,0).equals("."))
+                   {
+                       jt.setValor(totSec, n,JT_IMPGAN);
+                       jt.setValor(totSec/jt.getValorDec(n,JT_KILVEN),
+                             n,JT_PORGAN);
+
+                       totSec=0;
+                       continue;
+                   }
+                   if (jt.getValString(n,1).equals("."))
+                   {
+                       jt.setValor(totRepr, n,JT_IMPGAN);
+                       jt.setValor(totRepr/jt.getValorDec(n,JT_KILVEN),
+                             n,JT_PORGAN);
+                       totRepr=0;
+                       continue;
+                   }                  
+                   totRepr+=jt.getValorDec(n,JT_IMPGAN);
+                   totSec+=jt.getValorDec(n,JT_IMPGAN);
+                   totGen+=jt.getValorDec(n,JT_IMPGAN);
+           }
+           impGananE.setValorDec(totGen);
+           porGananE.setValorDec(totGen/kilAlbE.getValorDec());
+    }
+    void sumaGanan(ResultSet rsCli,double precioCosto) throws SQLException
+    {
+        Double impGanaD;
+        double impGana;
+        if (! rep_codiE.isNull() && !rep_codiE.getText().equals(rsCli.getString("rep_codi")))
+            return;
+        if (! zon_codiE.isNull() && !zon_codiE.getText().equals(rsCli.getString("zon_codi")))
+            return;
+         if (sbe_codiE.getValorInt()!=0 && sbe_codiE.getValorInt()!=rsCli.getInt("sbe_codi"))
+            return;
+        String valor = rsCli.getString("rep_codi") + "-" + rsCli.getString("zon_codi")
+            + "-" + rsCli.getString("sbe_codi");
+
+        if ((impGanaD = htGana.get(valor)) == null)
+            impGana = 0;
+        else
+            impGana = impGanaD;
+        impGana += dtMarg.getDouble("canti", true)
+            * (dtMarg.getDouble("precio", true) - precioCosto);
+        impGanaP+=dtMarg.getDouble("canti", true)
+            * (dtMarg.getDouble("precio", true) - precioCosto);
+        htGana.put(valor, impGana);
+    }
    void buscaVentas(boolean debug)
    {
      try
      {
-       if (debug)
-         mensaje("Espere, por favor ... buscando Datos");
-       s=getStrSql(fecIniE.getText(),fecFinE.getText());
+         if (debug)
+            mensaje("Espere, por favor ... buscando Datos");
+         s=getStrSql(fecIniE.getText(),fecFinE.getText());
       
    //    debug(s);
          jt.removeAllDatos();
@@ -1006,6 +1270,8 @@ void busVenZona()
              v.add(dtCon1.getInt("cliCodiD"));
              v.add(dtCon1.getDouble("avc_basimp"));
              v.add(dtCon1.getDouble("avc_kilos"));
+             v.add("");
+             v.add("");
              v.add(nClAcZ);
              v.add(""+sbeCodi);
              datos.add(v);
@@ -1201,26 +1467,30 @@ void busVenZona()
         Pprinc = new gnu.chu.controles.CPanel();
         TPanel1 = new gnu.chu.controles.CTabbedPane();
         PPrinc = new gnu.chu.controles.CPanel();
-        jt = new gnu.chu.controles.Cgrid(9);
+        jt = new gnu.chu.controles.Cgrid(11);
         jt.setOrdenar(false);
         ArrayList v = new ArrayList();
         v.add("Repr"); //0
         v.add("Zona"); //1
         v.add("Descripcion"); // 2
-        v.add("N. Albaran"); // 3
-        v.add("N. Clientes"); // 4
+        v.add("N.Alb."); // 3
+        v.add("N.Cli."); // 4
         v.add("Importe"); // 5
         v.add("Kilos"); // 6
-        v.add("Cl.Act"); // 7
-        v.add("SE"); // 8
+        v.add("Imp.Gan"); // 7
+        v.add("Gan.kg"); // 8
+        v.add("Cl.Act"); // 9
+        v.add("SE"); // 10
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{43,43,208,51,52,78,78,48,40});
-        jt.setAlinearColumna(new int[]{0,0,0,2,2,2,2,2,2});
+        jt.setAnchoColumna(new int[]{43,43,208,45,45,78,78,60,50,35,30});
+        jt.setAlinearColumna(new int[]{0,0,0,2,2,2,2,2,2,2,2});
         jt.setFormatoColumna(3, "###9");
         jt.setFormatoColumna(4, "###9");
         jt.setFormatoColumna(5, "--,---,--9.99");
         jt.setFormatoColumna(6, "--,---,--9.99");
-        jt.setFormatoColumna(7, "###9");
+        jt.setFormatoColumna(7, "----,--9");
+        jt.setFormatoColumna(8, "--9.999");
+        jt.setFormatoColumna(9, "###9");
         Ppie = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
         numAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
@@ -1232,6 +1502,12 @@ void busVenZona()
         nClActE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
         cLabel9 = new gnu.chu.controles.CLabel();
         kilAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.99");
+        cLabel15 = new gnu.chu.controles.CLabel();
+        impGananE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.99");
+        porGananE = new gnu.chu.controles.CTextField(Types.DECIMAL,"-9.999");
+        Pbuscando = new gnu.chu.controles.CPanel();
+        cLabel14 = new gnu.chu.controles.CLabel();
+        cLabel13 = new gnu.chu.controles.CLabel();
         PCompar = new gnu.chu.controles.CPanel();
         PcabCom = new gnu.chu.controles.CPanel();
         cLabel10 = new gnu.chu.controles.CLabel();
@@ -1326,12 +1602,13 @@ void busVenZona()
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 302, Short.MAX_VALUE)
+            .add(0, 293, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 2.0;
@@ -1341,8 +1618,9 @@ void busVenZona()
 
         Ppie.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         Ppie.setEnabled(false);
-        Ppie.setMinimumSize(new java.awt.Dimension(504, 42));
-        Ppie.setPreferredSize(new java.awt.Dimension(504, 42));
+        Ppie.setMaximumSize(new java.awt.Dimension(500, 42));
+        Ppie.setMinimumSize(new java.awt.Dimension(500, 42));
+        Ppie.setPreferredSize(new java.awt.Dimension(500, 42));
         Ppie.setLayout(null);
 
         cLabel1.setText("Num.Albaranes ");
@@ -1393,17 +1671,34 @@ void busVenZona()
         Ppie.add(nClActE);
         nClActE.setBounds(430, 0, 59, 18);
 
-        cLabel9.setText("Kilos");
+        cLabel9.setText("Ganancia");
         cLabel9.setMaximumSize(new java.awt.Dimension(87, 18));
         cLabel9.setMinimumSize(new java.awt.Dimension(87, 18));
         cLabel9.setPreferredSize(new java.awt.Dimension(87, 18));
         Ppie.add(cLabel9);
-        cLabel9.setBounds(340, 20, 37, 18);
+        cLabel9.setBounds(190, 20, 60, 18);
 
         kilAlbE.setMinimumSize(new java.awt.Dimension(2, 18));
         kilAlbE.setPreferredSize(new java.awt.Dimension(2, 18));
         Ppie.add(kilAlbE);
-        kilAlbE.setBounds(380, 20, 109, 18);
+        kilAlbE.setBounds(399, 20, 90, 18);
+
+        cLabel15.setText("Kilos");
+        cLabel15.setMaximumSize(new java.awt.Dimension(87, 18));
+        cLabel15.setMinimumSize(new java.awt.Dimension(87, 18));
+        cLabel15.setPreferredSize(new java.awt.Dimension(87, 18));
+        Ppie.add(cLabel15);
+        cLabel15.setBounds(360, 20, 37, 18);
+
+        impGananE.setMinimumSize(new java.awt.Dimension(2, 18));
+        impGananE.setPreferredSize(new java.awt.Dimension(2, 18));
+        Ppie.add(impGananE);
+        impGananE.setBounds(250, 20, 70, 18);
+
+        porGananE.setMinimumSize(new java.awt.Dimension(2, 18));
+        porGananE.setPreferredSize(new java.awt.Dimension(2, 18));
+        Ppie.add(porGananE);
+        porGananE.setBounds(320, 20, 40, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1412,6 +1707,28 @@ void busVenZona()
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 0);
         PPrinc.add(Ppie, gridBagConstraints);
+
+        Pbuscando.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        Pbuscando.setMaximumSize(new java.awt.Dimension(120, 55));
+        Pbuscando.setMinimumSize(new java.awt.Dimension(120, 55));
+        Pbuscando.setPreferredSize(new java.awt.Dimension(120, 55));
+        Pbuscando.setLayout(null);
+
+        cLabel14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gnu/chu/icons/ocupado.gif"))); // NOI18N
+        Pbuscando.add(cLabel14);
+        cLabel14.setBounds(60, 0, 60, 55);
+
+        cLabel13.setForeground(java.awt.Color.blue);
+        cLabel13.setText("<html>Buscando Margenes</html>");
+        cLabel13.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        Pbuscando.add(cLabel13);
+        cLabel13.setBounds(0, 0, 70, 50);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        PPrinc.add(Pbuscando, gridBagConstraints);
 
         TPanel1.addTab("Zonas", PPrinc);
 
@@ -1823,6 +2140,7 @@ void busVenZona()
     private gnu.chu.controles.CPanel PCompar;
     private gnu.chu.controles.CPanel PGrupos;
     private gnu.chu.controles.CPanel PPrinc;
+    private gnu.chu.controles.CPanel Pbuscando;
     private gnu.chu.controles.CPanel PcabCom;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Ppie;
@@ -1835,6 +2153,9 @@ void busVenZona()
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
+    private gnu.chu.controles.CLabel cLabel13;
+    private gnu.chu.controles.CLabel cLabel14;
+    private gnu.chu.controles.CLabel cLabel15;
     private gnu.chu.controles.CLabel cLabel16;
     private gnu.chu.controles.CLabel cLabel17;
     private gnu.chu.controles.CLabel cLabel18;
@@ -1861,6 +2182,7 @@ void busVenZona()
     private gnu.chu.controles.CTextField impAlbE;
     private gnu.chu.controles.CTextField impAlbFinE;
     private gnu.chu.controles.CTextField impAlbOriE;
+    private gnu.chu.controles.CTextField impGananE;
     private gnu.chu.controles.Cgrid jt;
     private gnu.chu.controles.Cgrid jtCom;
     private gnu.chu.controles.Cgrid jtFam;
@@ -1884,6 +2206,7 @@ void busVenZona()
     private gnu.chu.controles.CTextField numCliOriE;
     private gnu.chu.controles.CCheckBox opDivisa;
     private gnu.chu.controles.CCheckBox opIncComent;
+    private gnu.chu.controles.CTextField porGananE;
     private gnu.chu.controles.CLinkBox rep_codiE;
     private gnu.chu.camposdb.sbePanel sbe_codiE;
     private gnu.chu.controles.CLinkBox zon_codiE;

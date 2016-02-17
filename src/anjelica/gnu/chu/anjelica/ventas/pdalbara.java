@@ -1819,6 +1819,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
         {
             if (e.getValueIsAdjusting() || jtLinPed.isVacio() ) // && e.getFirstIndex() == e.getLastIndex())
                 return;
+             if (jtLinPed.getValString(0)==null)
+                return;
             if (! jtLinPed.isEnabled())
             {
                 if (jtLinPed.getValString(jtLinPed.getSelectedRowDisab(),0) ==null || ! jtLinPed.getValString(jtLinPed.getSelectedRowDisab(),0).equals("P"))                                
@@ -1827,6 +1829,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
                     PajuPed.setLineaPedido(jtLinPed.getValorInt(jtLinPed.getSelectedRowDisab(),JTP_NUMLIN));
                 return;
             }
+           
              if (! jtLinPed.getValString(0).equals("P"))
              {
                  PajuPed.setEnabled(false);

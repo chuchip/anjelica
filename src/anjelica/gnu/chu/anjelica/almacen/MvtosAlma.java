@@ -40,6 +40,7 @@ import java.util.HashMap;
  */
 public class MvtosAlma
 {
+  private boolean swIncAcum=true;
   private int cliCodi=0;
   private boolean swUsaDocumentos=false; // Usa documentos para buscar los mvtos.
   private String tiposVert="";
@@ -398,8 +399,7 @@ public class MvtosAlma
             " mvt_fecdoc as fecdoc "+
             ", 'N' as avc_depos "+
              " from mvtosalm where "+
-             "  mvt_canti <> 0 "+
-           
+             "  mvt_canti <> 0 "+           
             (almCodi==0?"":" and alm_codi = "+almCodi)+
             (ejercLote==0?"":" and pro_ejelot = "+ejercLote)+
             (serieLote==null?"":" and pro_serlot = '"+serieLote+"'")+
@@ -426,13 +426,12 @@ public class MvtosAlma
            " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "+
            " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
            " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
-           ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "+
+           ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
            ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,0 as ejedoc"+
            " ,r.rgs_fecha as fecdoc, "+
            " 'N' as avc_depos "+
-           " FROM v_regstock r  WHERE "+         
-           " tir_afestk = '='"+ // Solo Inventarios
-           " and rgs_kilos <> 0 "+
+           " FROM v_inventar r  WHERE "+         
+           " rgs_kilos <> 0 "+
 //            " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
            (almCodi==0?"":" and alm_codi = "+almCodi)+
            (ejercLote==0?"":" and r.eje_nume = "+ejercLote)+
@@ -812,6 +811,10 @@ public class MvtosAlma
     public void iniciarMvtos(Date fecInv, Date fecIni, Date fecFin,
             DatosTabla dtCon1) throws SQLException, ParseException
     {
+        if (fecInv==null)
+        {// Busca Fecha Ult. Inventario anterior a la fecha Inicial
+            fecInv=ActualStkPart.getDateUltInv(fecIni,dtCon1);
+        }
         iniciarMvtos(Formatear.getFecha(fecInv, "dd-MM-yyyy"),Formatear.getFecha(fecIni, "dd-MM-yyyy"),
             Formatear.getFecha(fecFin, "dd-MM-yyyy"),
             dtCon1);
@@ -850,6 +853,7 @@ public class MvtosAlma
                 setSoloInventario(true);
             }
             String s = getSqlMvt(fecInv, fefi, -1);
+           
             numProdInv=numProd;
             pSInv = dtCon1.getPreparedStatement(s);
         }
@@ -923,9 +927,11 @@ public class MvtosAlma
           }
           resetAcumulados();
           ResultSet rs=pSInv.executeQuery();
+          swIncAcum=false;
           if (rs.next())
             calculaMvtos(rs,dtCon1,dtStat,null,null,null,proCodi);
           feulst=null;
+          swIncAcum=true;
         }
         else
             resetAcumulados();
@@ -980,6 +986,7 @@ public class MvtosAlma
   {
       return this.deoCodiLim;
   }
+ 
 /**
  * Calcula Mvtos sobre la select puesta en la variable 's'
  * Actualiza las variables preStk (@see getPrecioStock)
@@ -1035,6 +1042,7 @@ public class MvtosAlma
             psCli= dtStat.getPreparedStatement("select * from v_cliente where cli_codi = ?");       
         }
     }
+    // Comienzo del bucle sobre mvtos o documentos.
     do
     {
         if (cancelarConsulta)
@@ -1072,17 +1080,20 @@ public class MvtosAlma
         { // Se pone aqui por que al tratar los inventarios se pondra tipmov= '+'
             if (sel=='C')
             {
-               kgCompra+=dt.getDouble("canti"); // Ignoramos los Inventarios
-               unCompra+=dt.getInt("unidades");
-               if (dt.getDouble("precio")==0)
+               if (swIncAcum)
                {
-                   msgLog+="Compra con Precio 0 " +
-                         ":  Fecha: " + dt.getFecha("fecmov")+" Prod: "+ proCodi+" \n";
-                   msgCompra+="Precio 0 " +
-                         ":  Fecha: " + dt.getFecha("fecmov")+" Prod: "+ proCodi+" \n";
-                   swCompraNoValor=true;
+                    kgCompra+=dt.getDouble("canti"); // Ignoramos los Inventarios
+                    unCompra+=dt.getInt("unidades");
+                    if (dt.getDouble("precio")==0)
+                    {
+                        msgLog+="Compra con Precio 0 " +
+                              ":  Fecha: " + dt.getFecha("fecmov")+" Prod: "+ proCodi+" \n";
+                        msgCompra+="Precio 0 " +
+                              ":  Fecha: " + dt.getFecha("fecmov")+" Prod: "+ proCodi+" \n";
+                        swCompraNoValor=true;
+                    }
+                    impCompra+=dt.getDouble("precio")*dt.getDouble("canti");
                }
-               impCompra+=dt.getDouble("precio")*dt.getDouble("canti");
             }
             if (sel=='V') 
             {
@@ -1093,17 +1104,23 @@ public class MvtosAlma
                 }
                 else 
                 { // Albaran de Abono
+                   if (swIncAcum)
+                   {
                     kgVen -= dt.getDouble("canti");
                     impVenta -= dt.getDouble("canti", true) * dt.getDouble("precio", true);
                     unVent -= dt.getDouble("unidades");
-                }                    
+                   }  
+                }
             }
             
             if (!swTraspAlm)
             {
+              if (swIncAcum)
+              {
                 kgEnt+=dt.getDouble("canti"); // Ignoramos los Inventarios
                 unEnt+=dt.getInt("unidades");
                 impEnt+=dt.getDouble("precio")*dt.getDouble("canti");
+              }
             }
             if (sel=='V' && dt.getString("avc_serie").equals("X"))
             { // Traspaso entre almacenes
@@ -1115,15 +1132,21 @@ public class MvtosAlma
         {
           if (tipMov.equals("+"))
           {
-             kgRegul += dt.getDouble("canti",true);
-             unRegul +=dt.getInt("unidades",true);
-             impRegul+=dt.getDouble("canti",true)*dt.getDouble("precio",true);
+            if (swIncAcum)
+            {
+              kgRegul += dt.getDouble("canti",true);
+              unRegul +=dt.getInt("unidades",true);
+              impRegul+=dt.getDouble("canti",true)*dt.getDouble("precio",true);
+            }
           }
           else
           {
-             kgRegul -= dt.getDouble("canti",true);
-             unRegul -=dt.getInt("unidades",true);
-             impRegul-=dt.getDouble("canti",true)*dt.getDouble("precio",true);
+              if (swIncAcum)
+              {
+                kgRegul -= dt.getDouble("canti",true);
+                unRegul -=dt.getInt("unidades",true);
+                impRegul-=dt.getDouble("canti",true)*dt.getDouble("precio",true);
+              }
           }
         }
         if (tipMov.equals("="))
@@ -1309,28 +1332,28 @@ public class MvtosAlma
                   }
                   if (!swTraspAlm )
                   {
-                    kgVen += dt.getDouble("canti");
-                    impVenta += dt.getDouble("canti", true) * dt.getDouble("precio", true);
-                    unVent += dt.getDouble("unidades");
-                    if (preStk==0)
-                      msgLog+="Venta con precio stock = 0 "+
-                               " EN Fecha: " + dt.getFecha("fecmov")+": Producto: "+proCodi+" \n";
-                    impGana += dt.getDouble("canti", true) *
-                              (dt.getDouble("precio", true) - preStk);
+                    if (swIncAcum)
+                    {
+                        kgVen += dt.getDouble("canti");
+                        impVenta += dt.getDouble("canti", true) * dt.getDouble("precio", true);
+                        unVent += dt.getDouble("unidades");
+                        if (preStk==0)
+                          msgLog+="Venta con precio stock = 0 "+
+                                   " EN Fecha: " + dt.getFecha("fecmov")+": Producto: "+proCodi+" \n";
+                        impGana += dt.getDouble("canti", true) *
+                                  (dt.getDouble("precio", true) - preStk);
+                    }
                   }
               }
               else
               { // Es regularizacion
-//                  if (dt.getString("repCodi").equals("VP") && dt.getInt("cliCodi")!=4 && dt.getInt("cliCodi")!=0)
-//                  { // Vertedero de proveedor y NO es NO reclamada ni PENDIENTE. No influye en Ganancias
-//                     msgLog+="Vertedero reclamado a proveedor "+dt.getDouble("canti", true)+
-//                                   " : EN Fecha: " + dt.getFecha("fecmov")+": Producto: "+proCodi+" \n";
-//                  }
-//                  else
-                  {
                     if (!swIgnVenta)
-                        impGana += dt.getDouble("canti", true) * (dt.getDouble("precio", true) - preStk);
-                  }
+                    {
+                        if (swIncAcum)
+                        {
+                            impGana += dt.getDouble("canti", true) * (dt.getDouble("precio", true) - preStk);
+                        }
+                    }
               }
             }
           }
@@ -1391,15 +1414,21 @@ public class MvtosAlma
           swNegat=false;
         if (sel=='d')
         {
-          kgEntDes += dt.getDouble("canti",true);
-          unEntDes +=dt.getInt("unidades",true);
-          impEntDes+=dt.getDouble("canti",true)*dt.getDouble("precio",true);
+          if (swIncAcum)
+          {
+            kgEntDes += dt.getDouble("canti",true);
+            unEntDes +=dt.getInt("unidades",true);
+            impEntDes+=dt.getDouble("canti",true)*dt.getDouble("precio",true);
+          }
         }
         if (sel=='D')
-        {
-          kgSalDes += dt.getDouble("canti",true);
-          unSalDes +=dt.getInt("unidades",true);
-          impSalDes+=dt.getDouble("canti",true)*dt.getDouble("precio",true);
+        {            
+          if (swIncAcum)
+          {
+            kgSalDes += dt.getDouble("canti",true);
+            unSalDes +=dt.getInt("unidades",true);
+            impSalDes+=dt.getDouble("canti",true)*dt.getDouble("precio",true);
+          }
         }
       
         if (jt!=null && !swIgnVenta)
@@ -1536,6 +1565,7 @@ public class MvtosAlma
   }
   public void resetAcumulados()
   {
+      swIncAcum=true;
       preStk=0;
       canStk=0;
       uniStk=0;

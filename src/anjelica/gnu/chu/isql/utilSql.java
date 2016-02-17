@@ -392,7 +392,7 @@ public class utilSql
               return;
           do
           {
-              darPermisos(dtCon1.getString("usu_nomb"),dt.getStatement(),dt);
+              darPermisos(dtCon1.getString("usu_nomb"),dt.createStatement(),dt);
           } while (dtCon1.next());
       } catch (SQLException ex)
       {
