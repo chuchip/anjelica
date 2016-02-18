@@ -1895,7 +1895,9 @@ void pdreprese_actionPerformed(ActionEvent e) {
    lanzaEjecutable(new gnu.chu.anjelica.ventas.conVenProd(menu.this,EU));
   }
  void conVenZonas_actionPerformed(ActionEvent e) {
-   lanzaEjecutable(new gnu.chu.anjelica.ventas.Covezore(menu.this,EU));
+   Hashtable ht=new Hashtable();
+   ht.put("verMargen","true");
+   lanzaEjecutable(new gnu.chu.anjelica.ventas.Covezore(menu.this,EU,ht));
   }
   void lirelfact_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.facturacion.Clrelfact(menu.this,EU));

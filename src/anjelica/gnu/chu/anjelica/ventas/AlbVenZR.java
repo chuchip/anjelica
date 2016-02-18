@@ -3,7 +3,7 @@
  * <p>Título: AlbVenZR </p>
  * <p>Descripción: Muestra un desglose de  los Albaranes Vendidos en una zona/Repr.</p>
  * <p>LLamado por las clases conVenProd y conVenZonas</p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -24,13 +24,23 @@ package gnu.chu.anjelica.ventas;
 
 import com.jgoodies.looks.plastic.PlasticInternalFrameUI;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 public class AlbVenZR extends ventana {
+    private boolean swGanan=false;
+    final  static int JT_KILOS=3;
+    final  static int JT_IMPGAN=5;
+    final  static int JT_KILGAN=6;
     Covezore padre;
     conVenProd padrePro;
     String fecIni, fecFin;
@@ -42,7 +52,7 @@ public class AlbVenZR extends ventana {
         {
             Error("Error al iniciar AlbVenZR ",k);
         }
-        this.setVersion("2012-05-01");
+        this.setVersion("2016-02-18");
         statusBar = new StatusBar(this);
         initComponents();
         setResizable(false);
@@ -61,6 +71,7 @@ public class AlbVenZR extends ventana {
         dtCon1=papa.dtCon1;
         dtStat=papa.dtStat;
         padre=papa;
+        jf=padre.jf;
         activarEventos();
     }
     public void iniciar(conVenProd papa)
@@ -92,7 +103,18 @@ public class AlbVenZR extends ventana {
         }
       }
     });
-
+    jt.addMouseListener(new MouseAdapter()
+    {
+               @Override
+          public void mouseClicked(MouseEvent e) {
+            if (jt.isVacio() || !swGanan)
+              return;
+            if (e.getClickCount()<2)
+              return;
+            
+            llamaProgGana();
+          }
+    });
   }
     @Override
   public void matar()
@@ -164,25 +186,22 @@ public class AlbVenZR extends ventana {
       Error("Error al buscar albaranes de Cliente",k);
     }
   }
+  
   /**
-   * Rutina utilizada por el programa conVenZonas
-   * @param ct conexion Conexion base datos
-   * @param fecini String Fecha Inicio
-   * @param fecfin String Fecha Final
-   * @param zonCodi String Zona
-   * @param zonNomb String Nombre Zona
-   * @param serieIni String Serie Inicial
-   * @param serieFin String Serie Final
-   * @param cliCodi int Codigo de Cliente
-   * @throws Exception Si hay algun error
+   * Rutina utilizada por el programa Covezore
+   * @param repCodi
+   * @param zonCodi
+   * @param sbeCodi
+   * @param ht Datos de ganancia pasados.
+   * @throws Exception 
    */
- 
-  void cargaDatos(String repCodi, String zonCodi,int sbeCodi) throws Exception
+  void cargaDatos(String repCodi, String zonCodi,int sbeCodi,HashMap<String,Double> ht) throws Exception
   {
+    swGanan=ht!=null;
     jt.setEnabled(false);
     String s;
     s="select  c.cli_codi,cl.cli_nomb,count(distinct c.avc_nume) as cuantos,"+
-        " sum(avc_kilos) as avl_canti,sum(avc_basimp)  as  importe "+
+        " sum(avc_kilos) as avl_canti,sum(avc_basimp)  as  importe,0 as ganan,0 as kilgana "+
         " from v_albavec c,clientes cl  "+
         " where c.cli_codi = cl.cli_codi " +
         " and c.avc_fecalb >= TO_DATE('" + padre.getFechaInic() + "','dd-MM-yyyy') " +
@@ -202,13 +221,64 @@ public class AlbVenZR extends ventana {
    statusBar.setEnabled(true);
 //   this.setEnabled(true);
 //   PintrDatos.setEnabled(false);
+   
+    ponGanancia(ht,sbeCodi);
+  
+       
    jt.requestFocusInicio();
    verAlbClien();
    jt.setEnabled(true);
 //   Formatear.verAncGrid(jt);
 //   System.out.println("Ancho: "+this.getSize().getWidth());
   }
- 
+  void ponGanancia(HashMap<String,Double> ht, int sbeCodi)
+  {
+      if (ht==null)
+          return;
+      Iterator<String> it = ht.keySet().iterator();
+        int nl = jt.getRowCount();
+        String[] valorC;
+        String valor;
+        while (it.hasNext())
+        {           
+            valor = it.next();
+//               System.out.println("valor : "+valor+" Ganancia: "+htGana.get(valor));
+            valorC = valor.split("-", 2);
+            for (int n = 0; n < nl; n++)
+            {
+                if (sbeCodi ==  Integer.parseInt(valorC[0]) && jt.getValString(n, 0).equals(valorC[1]))
+                {
+                    double gananc=ht.get(valor);
+                    jt.setValor(gananc, n, JT_IMPGAN);
+                    jt.setValor(gananc/jt.getValorDec(n, JT_KILOS),n,JT_KILGAN);
+                    break;
+                }
+            }
+        }
+  }
+  
+  private void llamaProgGana()
+  {
+        try
+        {
+            
+            if (jf==null)
+                return;
+            ejecutable prog;
+            if ((prog=jf.gestor.getProceso("gnu.chu.anjelica.margenes.Clmarzona"))==null)
+                return;
+            gnu.chu.anjelica.margenes.Clmarzona cm=(gnu.chu.anjelica.margenes.Clmarzona) prog;
+            
+            cm.setFechaInicial(padre.getDateInicial());
+            cm.setFechaFinal(padre.getDateFinal());
+            cm.setCliente(jt.getValorInt(0));
+            cm.ejecutaConsulta();
+            jf.gestor.ir(cm);
+        } catch (ParseException ex)
+        {
+            padre.Error("Error al llamar programa consulta de Margenes por productos", ex);
+        }
+  }
  /**
    * LLamado por la clase   conVenProd
    * @param ct conexion Conexion a la DB
@@ -282,7 +352,7 @@ public class AlbVenZR extends ventana {
         java.awt.GridBagConstraints gridBagConstraints;
 
         Pprinc = new gnu.chu.controles.CPanel();
-        jt = new gnu.chu.controles.Cgrid(5);
+        jt = new gnu.chu.controles.Cgrid(7);
         jtAlb = new gnu.chu.controles.Cgrid(6);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
@@ -294,12 +364,16 @@ public class AlbVenZR extends ventana {
         v.add("Nombre"); // 1
         v.add("N.Alb"); // 2
         v.add("Kilos"); // 3
-        v.add("Importe"); // 4
+        v.add("Imp.Ventas"); // 4
+        v.add("Imp.Gana"); // 5
+        v.add("€/Gana"); // 6
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{50,180,42,72,84});
-        jt.setAlinearColumna(new int[]{0,0,2,2,2});
+        jt.setAnchoColumna(new int[]{50,180,42,72,84,70,50});
+        jt.setAlinearColumna(new int[]{0,0,2,2,2,2,2});
         jt.setFormatoColumna(3,"---,--9.99");
         jt.setFormatoColumna(4,"---,--9.99");
+        jt.setFormatoColumna(5,"---,--9");
+        jt.setFormatoColumna(6,"--9.999");
         jt.setAjustarGrid(true);
 
         org.jdesktop.layout.GroupLayout jtLayout = new org.jdesktop.layout.GroupLayout(jt);

@@ -67,6 +67,7 @@ public class Covezore extends ventana {
     private boolean isBuscandoMarg=false;
     double impGanaP=0;
     HashMap<String, Double> htGana=new HashMap();
+    HashMap<String, Double> htCliGana=new HashMap();
     private final int JT_SBECOD=10;
     private final int JT_IMPGAN=7;
     private final int JT_PORGAN=8;
@@ -115,15 +116,7 @@ public class Covezore extends ventana {
 
    try
    {
-     if (ht != null)
-     {
-       if (ht.get("repr") != null)
-         REPRARG = ht.get("repr");
-       if (ht.get("sbeCodi") != null)
-         SBECODIARG = ht.get("sbeCodi");
-       if (ht.get("verMargen") != null)
-         VERMARGEN = Boolean.parseBoolean( ht.get("verMargen"));
-     }
+      ponParametros(ht);
 
      if(jf.gestor.apuntar(this))
          jbInit();
@@ -136,7 +129,7 @@ public class Covezore extends ventana {
    }
  }
 
- public Covezore(gnu.chu.anjelica.menu p,EntornoUsuario eu) {
+ public Covezore(gnu.chu.anjelica.menu p,EntornoUsuario eu,Hashtable<String,String> ht) {
 
    EU=eu;
    vl=p.getLayeredPane();
@@ -144,6 +137,7 @@ public class Covezore extends ventana {
    eje=false;
 
    try  {
+     ponParametros(ht);
      jbInit();
    }
    catch (Exception e) {
@@ -151,12 +145,23 @@ public class Covezore extends ventana {
      setErrorInit(true);
    }
  }
-
+private void ponParametros(Hashtable<String,String> ht)
+{
+     if (ht != null)
+     {
+       if (ht.get("repr") != null)
+         REPRARG = ht.get("repr");
+       if (ht.get("sbeCodi") != null)
+         SBECODIARG = ht.get("sbeCodi");
+       if (ht.get("verMargen") != null)
+         VERMARGEN = Boolean.parseBoolean( ht.get("verMargen"));
+     }
+}
 private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2016-02-16");
+   this.setVersion("2016-02-18");
    statusBar = new StatusBar(this);
  
    initComponents();
@@ -768,7 +773,8 @@ public void iniciarVentana() throws Exception
      alVeZo.setSelected(true);
      this.setEnabled(false);
      this.setFoco(alVeZo);
-     alVeZo.cargaDatos( jt.getValString(0),jt.getValString(1),jt.getValorInt(JT_SBECOD));
+     alVeZo.cargaDatos( jt.getValString(0),jt.getValString(1),jt.getValorInt(JT_SBECOD),
+         isBuscandoMarg?null:htCliGana);
 
      alVeZo.setVisible(true);
    }
@@ -1053,10 +1059,10 @@ public void iniciarVentana() throws Exception
            impGanaP=0;
            double kilos=0,importe=0,impGana;
            double precioCosto=0;
-           Double impGanaD;
-           String valor;
+        //   Double impGanaD;
+           
            htGana.clear();
-        
+           htCliGana.clear();
            int proCodi=0;
            do
            {
@@ -1124,62 +1130,61 @@ public void iniciarVentana() throws Exception
         }
         
     }
-    void muestraMargenes()
-    {
-         Iterator<String> it=htGana.keySet().iterator();
-           int nl=jt.getRowCount();
-           String[] valorC;
-           String valor;
-           while (it.hasNext())
-           {
-               if (cancelarConsulta)
-                 return;
-               valor=it.next();
+    void muestraMargenes() {
+        Iterator<String> it = htGana.keySet().iterator();
+        int nl = jt.getRowCount();
+        String[] valorC;
+        String valor;
+        while (it.hasNext())
+        {
+            if (cancelarConsulta)
+                return;
+            valor = it.next();
 //               System.out.println("valor : "+valor+" Ganancia: "+htGana.get(valor));
-               valorC=valor.split("-",3);
-               for (int n=0;n<nl;n++)
-               {
-                   if (jt.getValString(n,0).equals(valorC[0]) &&
-                       jt.getValString(n,1).equals(valorC[1]) &&
-                       jt.getValString(n,JT_SBECOD).equals(valorC[2]) )
-                   {
-                       jt.setValor(htGana.get(valor), n,JT_IMPGAN);
-                       break;
-                   }
-               }
-           }
-           double totRepr=0;
-           double totSec=0;
-           double totGen=0;
-           for (int n=0;n<nl;n++)
-           {
-                 if (cancelarConsulta)
-                     return;
-                   jt.setValor(jt.getValorDec(n,JT_IMPGAN)/jt.getValorDec(n,JT_KILVEN),
-                     n,JT_PORGAN);
-                   if (jt.getValString(n,0).equals("."))
-                   {
-                       jt.setValor(totSec, n,JT_IMPGAN);
-                       jt.setValor(totSec/jt.getValorDec(n,JT_KILVEN),
-                             n,JT_PORGAN);
+            valorC = valor.split("-", 3);
+            for (int n = 0; n < nl; n++)
+            {
+                if (jt.getValString(n, 0).equals(valorC[0])
+                    && jt.getValString(n, 1).equals(valorC[1])
+                    && jt.getValString(n, JT_SBECOD).equals(valorC[2]))
+                {
+                    jt.setValor(htGana.get(valor), n, JT_IMPGAN);
+                    break;
+                }
+            }
+        }
+        double totRepr = 0;
+        double totSec = 0;
+        double totGen = 0;
+        for (int n = 0; n < nl; n++)
+        {
+            if (cancelarConsulta)
+                return;
+            jt.setValor(jt.getValorDec(n, JT_IMPGAN) / jt.getValorDec(n, JT_KILVEN),
+                n, JT_PORGAN);
+            if (jt.getValString(n, 0).equals("."))
+            {
+                jt.setValor(totSec, n, JT_IMPGAN);
+                jt.setValor(totSec / jt.getValorDec(n, JT_KILVEN),
+                    n, JT_PORGAN);
 
-                       totSec=0;
-                       continue;
-                   }
-                   if (jt.getValString(n,1).equals("."))
-                   {
-                       jt.setValor(totRepr, n,JT_IMPGAN);
-                       jt.setValor(totRepr/jt.getValorDec(n,JT_KILVEN),
-                             n,JT_PORGAN);
-                       totRepr=0;
-                       continue;
-                   }                  
-                   totRepr+=jt.getValorDec(n,JT_IMPGAN);
-                   totSec+=jt.getValorDec(n,JT_IMPGAN);
-                   totGen+=jt.getValorDec(n,JT_IMPGAN);
-           }
-           impGananE.setValorDec(totGen);
-           porGananE.setValorDec(totGen/kilAlbE.getValorDec());
+                totSec = 0;
+                continue;
+            }
+            if (jt.getValString(n, 1).equals("."))
+            {
+                jt.setValor(totRepr, n, JT_IMPGAN);
+                jt.setValor(totRepr / jt.getValorDec(n, JT_KILVEN),
+                    n, JT_PORGAN);
+                totRepr = 0;
+                continue;
+            }
+            totRepr += jt.getValorDec(n, JT_IMPGAN);
+            totSec += jt.getValorDec(n, JT_IMPGAN);
+            totGen += jt.getValorDec(n, JT_IMPGAN);
+        }
+        impGananE.setValorDec(totGen);
+        porGananE.setValorDec(totGen / kilAlbE.getValorDec());
     }
     void sumaGanan(ResultSet rsCli,double precioCosto) throws SQLException
     {
@@ -1191,18 +1196,30 @@ public void iniciarVentana() throws Exception
             return;
          if (sbe_codiE.getValorInt()!=0 && sbe_codiE.getValorInt()!=rsCli.getInt("sbe_codi"))
             return;
-        String valor = rsCli.getString("rep_codi") + "-" + rsCli.getString("zon_codi")
-            + "-" + rsCli.getString("sbe_codi");
+        
+        guardaGana(rsCli.getString("rep_codi") + "-" + rsCli.getString("zon_codi")
+            + "-" + rsCli.getString("sbe_codi"),precioCosto,htGana);
 
-        if ((impGanaD = htGana.get(valor)) == null)
+        guardaGana(rsCli.getString("sbe_codi")+"-"+dtMarg.getInt("cliCodi"),precioCosto,htCliGana);
+    
+        
+        impGanaP+=dtMarg.getDouble("canti", true)
+            * (dtMarg.getDouble("precio", true) - precioCosto);
+        
+    }
+    private void guardaGana(String valor,double precioCosto,HashMap<String, Double> ht) throws SQLException
+    {
+        Double impGanaD;
+        double impGana;
+        
+        if ((impGanaD = ht.get(valor)) == null)
             impGana = 0;
         else
             impGana = impGanaD;
         impGana += dtMarg.getDouble("canti", true)
             * (dtMarg.getDouble("precio", true) - precioCosto);
-        impGanaP+=dtMarg.getDouble("canti", true)
-            * (dtMarg.getDouble("precio", true) - precioCosto);
-        htGana.put(valor, impGana);
+        ht.put(valor, impGana);
+
     }
    void buscaVentas(boolean debug)
    {
@@ -1413,6 +1430,15 @@ public void iniciarVentana() throws Exception
        } while (dtCon1.next());
        jtFam.requestFocusInicio();
    }
+   public Date getDateInicial() throws ParseException
+   {
+       return fecIniE.getDate();
+   }
+   public Date getDateFinal() throws ParseException
+   {
+       return fecFinE.getDate();
+   }
+
    public String getFechaInic()
    {
        return fecIniE.getText();

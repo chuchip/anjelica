@@ -110,7 +110,7 @@ public class Clmarzona extends ventana {
   {
       iniciarFrame();
 
-      this.setVersion("2016-01-04");
+      this.setVersion("2016-02-18");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -184,14 +184,16 @@ public class Clmarzona extends ventana {
   void activarEventos()
   {
       popEspere_BCancelaraddActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         popEspere_BCancelarSetEnabled(false);
-        actualizaMsg("A esperar.. estoy cancelando la consulta",false);
+        setMensajePopEspere("A esperar.. estoy cancelando la consulta",false);
         cancelaConsulta=true;
       }
     });
 
     Baceptar.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         Baceptar_actionPerformed();
       }
@@ -225,7 +227,25 @@ public class Clmarzona extends ventana {
      }
     });
   }
-
+  public void setCliente(int cliCodi)
+  {
+      cli_codiE.setValorInt(cliCodi);
+  }
+  
+  public void setFechaInicial(java.util.Date fecInicio)
+  {
+      feciniE.setDate(fecInicio);
+  }
+  
+  public void setFechaFinal(java.util.Date fecFinal)
+  {
+      fecfinE.setDate(fecFinal);
+  }
+  
+  public void ejecutaConsulta()
+  {
+      Baceptar_actionPerformed();
+  }
   void  Baceptar_actionPerformed()
   {
 //      System.out.println("Ancho: "+this.getSize().width+" Alto: "+this.getSize().height);
