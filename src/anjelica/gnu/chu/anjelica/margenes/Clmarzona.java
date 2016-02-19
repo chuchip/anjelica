@@ -241,7 +241,10 @@ public class Clmarzona extends ventana {
   {
       fecfinE.setDate(fecFinal);
   }
-  
+  public void setIncluirVert(boolean incTodasReg)
+  {
+      opIncVertE.setSelected(incTodasReg);
+  }
   public void ejecutaConsulta()
   {
       Baceptar_actionPerformed();

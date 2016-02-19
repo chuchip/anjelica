@@ -17,7 +17,7 @@ import java.util.*;
  * <p>Descripción: Panel Stock Actual. Muestra el stock actual y previsible de los productos
  * en un almacen o en todos. Permite ver el total de kilos por producto y desglosandolo por
  * proveedor y fecha caducidad </p>
-* <p>Copyright: Copyright (c) 2005-2014
+* <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU seg�n es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -388,7 +388,13 @@ public class pstockAct extends CPanel
         return;
     }
     GregorianCalendar gc = new GregorianCalendar();
-    gc.setTime(Formatear.getDate(pdc_fecpedE.getText(), "dd-MM-yyyy"));
+    java.util.Date fec1=Formatear.getDate(pdc_fecpedE.getText(), "dd-MM-yyyy");
+    if (fec1==null)
+    {
+        padre.msgBox("Fecha Pedido NO es valida");
+        return;
+    }
+    gc.setTime(fec1);
     fefise = Formatear.sumaDias(pdc_fecpedE.getText(), "dd-MM-yyyy", 7 - gc.get(GregorianCalendar.DAY_OF_WEEK));
 
     padre.mensaje("Buscando productos de Familia: "+famCodi,false);

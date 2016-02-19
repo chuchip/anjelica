@@ -58,7 +58,7 @@ public class AlbVenZR extends ventana {
         setResizable(false);
         setMaximizable(false);
         setIconifiable(false);
-        this.setSize(400,440);
+        this.setSize(450,440);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         this.putClientProperty(
              PlasticInternalFrameUI.IS_PALETTE,
@@ -242,7 +242,7 @@ public class AlbVenZR extends ventana {
         while (it.hasNext())
         {           
             valor = it.next();
-//               System.out.println("valor : "+valor+" Ganancia: "+htGana.get(valor));
+//            System.out.println("valor : "+valor+" Ganancia: "+ht.get(valor));
             valorC = valor.split("-", 2);
             for (int n = 0; n < nl; n++)
             {
@@ -272,6 +272,7 @@ public class AlbVenZR extends ventana {
             cm.setFechaInicial(padre.getDateInicial());
             cm.setFechaFinal(padre.getDateFinal());
             cm.setCliente(jt.getValorInt(0));
+            cm.setIncluirVert(false);
             cm.ejecutaConsulta();
             jf.gestor.ir(cm);
         } catch (ParseException ex)
@@ -281,7 +282,7 @@ public class AlbVenZR extends ventana {
   }
  /**
    * LLamado por la clase   conVenProd
-   * @param ct conexion Conexion a la DB
+   * 
    * @param fecini String Fecha Inicio
    * @param fecfin String Fecha Final
    * @param proCodi int Codigo

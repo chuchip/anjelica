@@ -157,6 +157,7 @@ private void ponParametros(Hashtable<String,String> ht)
          VERMARGEN = Boolean.parseBoolean( ht.get("verMargen"));
      }
 }
+
 private void jbInit() throws Exception
 {
    iniciarFrame();
@@ -1021,10 +1022,10 @@ public void iniciarVentana() throws Exception
         try {   
            
             cancelarConsulta=false;
-            String fecIni=fecIniE.getText();
+            //String fecIni=fecIniE.getText();
             String fecFin=fecFinE.getText();
             String fecInv=ActualStkPart.getFechaUltInv(0,0,fecIniE.getDate(),dtStat);
-            Date fecInvD=Formatear.getDate(fecInv, "dd-MM-yyyy");
+            Date fecIniD=fecIniE.getDate();
             String sql = "SELECT pro_codi,mvt_tipdoc as tipdoc, mvt_tipo as tipmov,  "
                 + " mvt_time as fecmov,"
                 + " mvt_canti as canti,mvt_prec as precio,"
@@ -1090,16 +1091,18 @@ public void iniciarVentana() throws Exception
                }
                else              
                { // Salida
-                   if (Formatear.comparaFechas(dtMarg.getDate("mvt_fecdoc"),fecInvD)>0)
+                   String tipdoc=dtMarg.getString("tipdoc");
+                   if ( (tipdoc.equals("R") || tipdoc.equals("V")) &&
+                       Formatear.comparaFechas(dtMarg.getDate("mvt_fecdoc"),fecIniD)>=0)
                    {                       
-                        if  (dtMarg.getString("tipdoc").equals("R") )
+                        if  (tipdoc.equals("R") )
                         {
                            psCli.setInt(1,dtMarg.getInt("cliCodi"));
                            rsCli=psAlb.executeQuery();   
                            if (rsCli.next())
                                sumaGanan(rsCli,precioCosto);
                         }
-                        if (dtMarg.getString("tipdoc").equals("V") )
+                        if (tipdoc.equals("V") )
                         {
                              psAlb.setInt(1,dtMarg.getInt("mvt_empcod"));
                              psAlb.setInt(2,dtMarg.getInt("mvt_ejedoc"));
@@ -1108,6 +1111,8 @@ public void iniciarVentana() throws Exception
                              rsCli=psAlb.executeQuery();   
                              if (rsCli.next())
                                  sumaGanan(rsCli,precioCosto);
+//                             else
+//                                 System.out.println("Albaran no encontrado: "+dtMarg.getInt("mvt_numdoc"));
                         }
                    }
                    kilos-=dtMarg.getDouble("canti",true);
@@ -1187,9 +1192,7 @@ public void iniciarVentana() throws Exception
         porGananE.setValorDec(totGen / kilAlbE.getValorDec());
     }
     void sumaGanan(ResultSet rsCli,double precioCosto) throws SQLException
-    {
-        Double impGanaD;
-        double impGana;
+    {    
         if (! rep_codiE.isNull() && !rep_codiE.getText().equals(rsCli.getString("rep_codi")))
             return;
         if (! zon_codiE.isNull() && !zon_codiE.getText().equals(rsCli.getString("zon_codi")))
