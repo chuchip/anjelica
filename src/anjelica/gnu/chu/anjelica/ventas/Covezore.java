@@ -72,6 +72,7 @@ public class Covezore extends ventana {
     private final int JT_IMPGAN=7;
     private final int JT_PORGAN=8;
     private final int JT_KILVEN=6;
+    private final int JT_IMPVEN=5;
     boolean cancelarConsulta=false;
     private MvtosAlma mvtosAlm = new MvtosAlma();
     private boolean swDivCodi;
@@ -162,7 +163,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2016-02-18");
+   this.setVersion("2016-02-22");
    statusBar = new StatusBar(this);
  
    initComponents();
@@ -381,7 +382,7 @@ public void iniciarVentana() throws Exception
                  v.add(dtCon1.getDouble("avc_basimp"));
                  v.add(dtCon1.getDouble("avc_kilos"));
                  v.add(nClAcZ);
-                 v.add(""+sbeCodi);
+                 v.add(sbeCodi);
                  datos.add(v);
                  nAlbL += dtCon1.getInt("numalb");
                  nCliL += dtCon1.getInt("cliCodiD");
@@ -408,7 +409,7 @@ public void iniciarVentana() throws Exception
                { // Todavia le quedan lineas al Final
                    if (jt.getValString(nlOri,0).equals(datos.get(nlFin).get(0).toString()) &&
                                jt.getValString(nlOri,1).equals(datos.get(nlFin).get(1).toString()) &&
-                               jt.getValString(nlOri,8).equals(datos.get(nlFin).get(8).toString()))
+                               jt.getValString(nlOri,JT_SBECOD ).equals(datos.get(nlFin).get(8).toString()))
                    {
                        datCom.add(addDatos(datos,nlOri++,nlFin++));
                        continue;
@@ -420,7 +421,7 @@ public void iniciarVentana() throws Exception
                        {
                              if (jt.getValString(nlOri,0).equals(datos.get(n1).get(0).toString()) &&
                                    jt.getValString(nlOri,1).equals(datos.get(n1).get(1).toString()) &&
-                                   jt.getValString(nlOri,8).equals(datos.get(n1).get(8).toString()))
+                                   jt.getValString(nlOri,JT_SBECOD).equals(datos.get(n1).get(8).toString()))
                              {
                                 nlEnc=n1;
                                 break;
@@ -490,7 +491,7 @@ public void iniciarVentana() throws Exception
        {
          if (jt.getValString(nlOri,0).equals(datCom.get(n).get(0)) &&
                            jt.getValString(nlOri,1).equals(datCom.get(n).get(1)) &&
-                           jt.getValString(nlOri,8).equals(datCom.get(n).get(8)))
+                           jt.getValString(nlOri,JT_SBECOD).equals(datCom.get(n).get(8)))
            return true;
        }
        return false;
@@ -521,7 +522,7 @@ public void iniciarVentana() throws Exception
        v.add(jt.getValString(nlOri,6)); // 6
        v.add(kilFin); // 7
        v.add(jt.getValorDec(nlOri,6)-kilFin); // 8
-       v.add(jt.getValString(nlOri,8)); // 9
+       v.add(jt.getValString(nlOri,JT_SBECOD)); // 9
        return v;
    }
    /**
@@ -541,8 +542,8 @@ public void iniciarVentana() throws Exception
        v.add(datCom.get(nlFin).get(2).toString());
        if (nlOri>=0)
        {
-            kilFin=jt.getValorDec(nlOri,5);
-            impFin=jt.getValorDec(nlOri,6);
+            kilFin=jt.getValorDec(nlOri,JT_KILVEN);
+            impFin=jt.getValorDec(nlOri,JT_IMPVEN);
        }
        v.add(impFin);
        v.add(datCom.get(nlFin).get(5).toString());
