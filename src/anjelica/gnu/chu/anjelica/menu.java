@@ -1454,7 +1454,7 @@ public class menu extends JFrame
 //    lanzaEjecutable(new gnu.chu.isql.impExp(menu.this,EU));
   }
 
-  void lanzaEjecutable(ventana ejec)
+  public void lanzaEjecutable(ventana ejec)
   {
     ejec.setVisible(true);
     try {

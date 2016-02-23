@@ -1559,10 +1559,24 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   {
     return getDouble(col,false);
   }
+  /**
+   * Devuelve valor. 
+   * @param col Nombre de columna
+   * @param nullisCero Si es true, en el caso de que el valor es null, devuelve cero
+   * @return
+   * @throws SQLException 
+   */
   public double getDouble(String col,boolean nullisCero) throws SQLException
   {
-    return getDatoNumero(getNomCol(col),nullisCero);
+    return getDatoNumero(findColumn(col),nullisCero);
   }
+  /**
+   * 
+   * @param col Numero de columna.
+   * @param nullisCero Si es true, en el caso de que el valor es null, devuelve cero
+   * @return
+   * @throws SQLException 
+   */
   public double getDouble(int col,boolean nullisCero) throws SQLException
   {
     return getDatoNumero(col,nullisCero);
@@ -1717,7 +1731,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     if (o==null)
     {
       if (! nullisCero)
-        throw new SQLException("Valor del Campo "+col+"("+ getNomCampo(col)+") es NULL");
+        throw new SQLException("Valor del Campo "+col+"("+ getColumnName(col)+") es NULL");
       else
         return 0;
     }

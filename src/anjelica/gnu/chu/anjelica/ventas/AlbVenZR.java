@@ -23,6 +23,7 @@
 package gnu.chu.anjelica.ventas;
 
 import com.jgoodies.looks.plastic.PlasticInternalFrameUI;
+import gnu.chu.anjelica.margenes.Clmarzona;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.utilidades.ventana;
@@ -260,21 +261,27 @@ public class AlbVenZR extends ventana {
   private void llamaProgGana()
   {
         try
-        {
-            
-            if (jf==null)
-                return;
+        {    
             ejecutable prog;
-            if ((prog=jf.gestor.getProceso("gnu.chu.anjelica.margenes.Clmarzona"))==null)
-                return;
-            gnu.chu.anjelica.margenes.Clmarzona cm=(gnu.chu.anjelica.margenes.Clmarzona) prog;
-            
+            gnu.chu.anjelica.margenes.Clmarzona cm;
+            if (jf!=null)
+            {                
+                if ((prog=jf.gestor.getProceso(Clmarzona.getNombreClase()))==null)
+                    return;
+                cm= (gnu.chu.anjelica.margenes.Clmarzona) prog;
+            }
+            else
+            {
+                 cm= new gnu.chu.anjelica.margenes.Clmarzona(padre.menu,padre.EU);
+                 padre.menu.lanzaEjecutable(cm);
+            }
             cm.setFechaInicial(padre.getDateInicial());
             cm.setFechaFinal(padre.getDateFinal());
             cm.setCliente(jt.getValorInt(0));
             cm.setIncluirVert(false);
             cm.ejecutaConsulta();
-            jf.gestor.ir(cm);
+            if (jf!=null)
+                jf.gestor.ir(cm);
         } catch (ParseException ex)
         {
             padre.Error("Error al llamar programa consulta de Margenes por productos", ex);

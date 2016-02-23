@@ -25,7 +25,7 @@ public int nProc=1;
 
 
 /**
-* Aade el thread o la ventana a la tabla de procesos del sistema, esta función se llamará
+* Añade el thread o la ventana a la tabla de procesos del sistema, esta función se llamará
 * únicamente desde otros programas sobre los que ya se haya realizado un chequeo para
 * determinar su posibilidad de ejecución o como complemento de la llamada a actualización
 * de tabla de programas del menú.
@@ -176,7 +176,7 @@ ejecutable getProceso(String proceso)
     Iterator claves = tablaObjetos.values().iterator();
     Object elem;
 
-  while(claves.hasNext()) {
+     while(claves.hasNext()) {
             try {
                 elem = claves.next();
                 if ( Class.forName(proceso).isAssignableFrom(elem.getClass()))

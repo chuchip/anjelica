@@ -646,10 +646,21 @@ public class Principal extends JFrame
 //     fr.close();
 //     f.delete();
 //   }
-  public boolean canExecuteClase(String clase, String usuario) throws SQLException
+  /**
+   * Busca la clase en el menu del usuario 
+   * @param clase Clase a buscar.
+   * @param usuario Usuario donde buscar la clase
+   * @return null si no la encuentra. Clase con parametros a ejecutar.
+   * @throws SQLException 
+   */
+  public String canExecuteClase(String clase, String usuario) throws SQLException
   {
+    if (dt1.select("select mnu_prog from menus where (mnu_prog like '%"+clase+" %'"
+        + " or mnu_prog= '"+clase+"')"
+        + " and mnu_usua='"+usuario+"'"))
+        return dt1.getString("mnu_prog");
     if (pdusua.canEjecutarProgExt(usuario,dt1) )
-        return true;
-    return dt1.select("select mnu_prog from menus where mnu_prog like '%"+clase+"%' and mnu_usua='"+usuario+"'");
+        return clase;
+    return null;
   }
 }

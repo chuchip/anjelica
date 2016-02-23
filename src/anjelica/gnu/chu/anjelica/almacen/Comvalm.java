@@ -3,7 +3,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Titulo: Comvalm </p>
  * <p>Descripcion: Consulta Mvtos de Almacen Valorados</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -45,7 +45,9 @@ import gnu.chu.utilidades.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 
 
@@ -114,7 +116,10 @@ public class Comvalm extends ventana
         ErrorInit(e);
     }
   }
-  
+   public static String getNombreClase()
+   {
+     return "gnu.chu.anjelica.almacen.Comvalm";
+   }
   private void ponParametros(Hashtable<String,String> ht)
   {
       if (ht==null)
@@ -201,7 +206,18 @@ public class Comvalm extends ventana
   {
       pro_ejercE.setValorInt(ejerc);
   }
-
+  public void setFechaInicial(Date fecini)
+  {
+      feciniE.setDate(fecini);
+  }
+  public void setFechaFinal(Date fecfin)
+  {
+      fecfinE.setDate(fecfin);
+  }
+  public void setFechaInventario(Date fechaInv) throws ParseException
+  {
+      feulinE.setDate(fechaInv);
+  }
   public void ejecutaConsulta()
   {
       Bacepta.doClick();

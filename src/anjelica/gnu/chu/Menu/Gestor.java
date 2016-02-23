@@ -521,13 +521,14 @@ public class Gestor extends Thread implements Serializable
   {
     ejecutable eje=tabla.getProceso(clase);
     if (eje!=null)
-        return eje;
+        return eje; // Ya esta el proceso ejecutandose
     try {
-        if (principal.canExecuteClase(clase,principal.Usuario.usuario))
+        String claseEjec=principal.canExecuteClase(clase,principal.Usuario.usuario);
+        if (claseEjec!=null)
         {
-            principal.ejecutar(clase, "*DIRECTO*");
+            principal.ejecutar(claseEjec, "*DIRECTO*");
         }
-       return tabla.getProceso(clase);
+        return tabla.getProceso(clase);
     } catch (SQLException k)
     {
         Logger.getRootLogger().error("Error al Buscar Proceso", k);

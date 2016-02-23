@@ -74,7 +74,7 @@ public class Covezore extends ventana {
     private final int JT_KILVEN=6;
     private final int JT_IMPVEN=5;
     boolean cancelarConsulta=false;
-    private MvtosAlma mvtosAlm = new MvtosAlma();
+
     private boolean swDivCodi;
     private boolean inTransation=false;
     int cabIni=0;
@@ -99,7 +99,8 @@ public class Covezore extends ventana {
     double kgVenL = 0, impVenL = 0,kgVenS = 0, impVenS = 0;
     double kgVenT = 0, impVenT = 0;
     Hashtable<Integer,DatosProd> htArt=new Hashtable<Integer,DatosProd>();
-
+    public gnu.chu.anjelica.menu menu;
+    
   public Covezore(EntornoUsuario eu, Principal p)
   {
     this(eu, p, null);
@@ -134,6 +135,7 @@ public class Covezore extends ventana {
 
    EU=eu;
    vl=p.getLayeredPane();
+   this.menu=p;
    setTitulo("Consulta Ventas por Repr/Zonas");
    eje=false;
 
@@ -163,7 +165,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2016-02-22");
+   this.setVersion("2016-02-23");
    statusBar = new StatusBar(this);
  
    initComponents();
@@ -192,8 +194,8 @@ public void iniciarVentana() throws Exception
     sbe_codiE.setAceptaNulo(true);
     sbe_codiE.setFieldEmpCodi(emp_codiE.getTextField());
     
-    mvtosAlm.setResetCostoStkNeg(true);
-    mvtosAlm.setFechasDocumento(true);
+//    mvtosAlm.setResetCostoStkNeg(true);
+//    mvtosAlm.setFechasDocumento(true);
     MantRepres.llenaLinkBox(rep_codiE, dtCon1);
     fecIniE.iniciar(dtStat,this,vl,EU);
     fecFinE.iniciar(dtStat, this, vl, EU);
@@ -1044,7 +1046,7 @@ public void iniciarVentana() throws Exception
                 + " and avc_ano=? "
                 + " and avc_serie=? and avc_nume = ?");       
             PreparedStatement psCli=  dtStat.getPreparedStatement("select c.zon_codi,c.rep_codi,c.sbe_codi "
-                + " from v v_cliente  as c where c.cli_codi = ?");
+                + " from v_cliente as c where c.cli_codi = ?");
 
             ResultSet rsCli;
            if (!dtMarg.select(sql))
@@ -1072,7 +1074,8 @@ public void iniciarVentana() throws Exception
                  return;
                if (proCodi!=dtMarg.getInt("pro_codi") )
                { // Busco Inventario inicial
-//                   System.out.println("Producto: "+proCodi+"  Ganancia: "+impGanaP);
+//                   if (impGanaP>0.1 || impGanaP< -0.1)
+//                    System.out.println("Producto: "+proCodi+"  Ganancia: "+impGanaP);
                    impGanaP=0;
                    proCodi=dtMarg.getInt("pro_codi");
                    psInv.setInt(1, proCodi);
@@ -1087,8 +1090,11 @@ public void iniciarVentana() throws Exception
                if (dtMarg.getString("tipmov").equals("E"))
                { // Entrada
                   kilos+=dtMarg.getDouble("canti",true);
-                  importe+= dtMarg.getDouble("canti",true)* dtMarg.getDouble("precio",true);
-                  precioCosto= kilos<=0?0:importe/kilos;
+                  importe+= dtMarg.getDouble("canti",true)* dtMarg.getDouble("precio",true);      
+                  if (importe<0.1)
+                       importe=0;
+                  precioCosto= kilos<=0.1 || importe<=0.1?
+                      dtMarg.getDouble("precio",true):importe/kilos;
                }
                else              
                { // Salida
@@ -1098,10 +1104,13 @@ public void iniciarVentana() throws Exception
                    {                       
                         if  (tipdoc.equals("R") )
                         {
-                           psCli.setInt(1,dtMarg.getInt("cliCodi"));
-                           rsCli=psAlb.executeQuery();   
-                           if (rsCli.next())
-                               sumaGanan(rsCli,precioCosto);
+                           if (dtMarg.getObject("cliCodi")!=null)
+                           {
+                                psCli.setInt(1,dtMarg.getInt("cliCodi"));
+                                rsCli=psCli.executeQuery();   
+                                if (rsCli.next())
+                                    sumaGanan(rsCli,precioCosto);
+                           }
                         }
                         if (tipdoc.equals("V") )
                         {
@@ -1117,7 +1126,7 @@ public void iniciarVentana() throws Exception
                         }
                    }
                    kilos-=dtMarg.getDouble("canti",true);
-                   importe-= dtMarg.getDouble("canti",true)* precioCosto;
+                   importe-= dtMarg.getDouble("canti",true)* precioCosto;                   
                }
                
            } while (dtMarg.next());
@@ -1153,7 +1162,9 @@ public void iniciarVentana() throws Exception
                 if (jt.getValString(n, 0).equals(valorC[0])
                     && jt.getValString(n, 1).equals(valorC[1])
                     && jt.getValString(n, JT_SBECOD).equals(valorC[2]))
-                {
+                {                  
+//                   System.out.println("Repr: "+valorC[0]+
+//                            " Zona: "+valorC[1]+" ganancia: "+htGana.get(valor));
                     jt.setValor(htGana.get(valor), n, JT_IMPGAN);
                     break;
                 }
@@ -1200,10 +1211,10 @@ public void iniciarVentana() throws Exception
             return;
          if (sbe_codiE.getValorInt()!=0 && sbe_codiE.getValorInt()!=rsCli.getInt("sbe_codi"))
             return;
-        
+       
         guardaGana(rsCli.getString("rep_codi") + "-" + rsCli.getString("zon_codi")
             + "-" + rsCli.getString("sbe_codi"),precioCosto,htGana);
-
+        
         guardaGana(rsCli.getString("sbe_codi")+"-"+dtMarg.getInt("cliCodi"),precioCosto,htCliGana);
     
         
@@ -1518,7 +1529,7 @@ public void iniciarVentana() throws Exception
         jt.setFormatoColumna(4, "###9");
         jt.setFormatoColumna(5, "--,---,--9.99");
         jt.setFormatoColumna(6, "--,---,--9.99");
-        jt.setFormatoColumna(7, "----,--9");
+        jt.setFormatoColumna(7, "---,---,--9");
         jt.setFormatoColumna(8, "--9.999");
         jt.setFormatoColumna(9, "###9");
         Ppie = new gnu.chu.controles.CPanel();

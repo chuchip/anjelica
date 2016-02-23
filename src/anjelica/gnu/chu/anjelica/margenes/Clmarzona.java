@@ -1,11 +1,13 @@
 package gnu.chu.anjelica.margenes;
 
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.almacen.Comvalm;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.pad.MantRepres;
 import gnu.chu.controles.Cgrid;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.DatosProd;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -18,8 +20,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -62,7 +67,7 @@ public class Clmarzona extends ventana {
   DatosTabla dtVen,dtAdd;
   int tirCodInv=0;
 //  String tirCodVert="";
-  
+  gnu.chu.anjelica.menu menu;
   String s;
   Hashtable<Integer,DatosProd> htArt=new Hashtable<Integer,DatosProd>();
 
@@ -90,7 +95,7 @@ public class Clmarzona extends ventana {
 
   public Clmarzona(gnu.chu.anjelica.menu p, EntornoUsuario eu)
   {
-
+    this.menu=p;
     EU = eu;
     vl = p.getLayeredPane();
     setTitulo("Cons./Listado Margenes por Zonas");
@@ -226,6 +231,46 @@ public class Clmarzona extends ventana {
          }
      }
     });
+    jt.addMouseListener(new MouseAdapter()
+     {
+            @Override
+       public void mouseClicked(MouseEvent e) {
+         if (jt.isVacio())
+           return;
+         if (e.getClickCount()<2)
+           return;
+         llamaProgMvtos();
+       }
+     });
+  }
+  private void llamaProgMvtos()
+  {
+        try
+        {    
+            ejecutable prog;
+            gnu.chu.anjelica.almacen.Comvalm cm;
+            if (jf!=null)
+            {                
+                if ((prog=jf.gestor.getProceso(Comvalm.getNombreClase()))==null)
+                    return;
+                cm= (gnu.chu.anjelica.almacen.Comvalm) prog;
+            }
+            else
+            {
+                 cm= new gnu.chu.anjelica.almacen.Comvalm(menu,EU);
+                 menu.lanzaEjecutable(cm);
+            }
+            cm.setFechaInicial(feciniE.getDate());
+            cm.setFechaFinal(fecfinE.getDate());
+            cm.setFechaInventario(feulinE.getDate());
+            cm.setProCodi(jt.getValorInt(0));
+            cm.ejecutaConsulta();
+            if (jf!=null)
+                jf.gestor.ir(cm);
+        } catch (ParseException ex)
+        {
+            Error("Error al llamar programa consulta de Consulta mvtros", ex);
+        }
   }
   public void setCliente(int cliCodi)
   {
@@ -248,6 +293,14 @@ public class Clmarzona extends ventana {
   public void ejecutaConsulta()
   {
       Baceptar_actionPerformed();
+  }
+  /**
+   * 
+   * @return Nombre clase
+   */
+  public static String getNombreClase()
+  {
+      return "gnu.chu.anjelica.margenes.Clmarzona";
   }
   void  Baceptar_actionPerformed()
   {
