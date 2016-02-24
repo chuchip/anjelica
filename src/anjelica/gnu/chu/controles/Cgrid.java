@@ -2204,7 +2204,7 @@ public class Cgrid extends CPanel implements Serializable
         }
 
         if (!salir && isEnabled()) {
-            if (m.getClickCount() > 1 && m.getModifiers() == m.BUTTON1_MASK) {
+            if (m.getClickCount() > 1 && m.getModifiers() == MouseEvent.BUTTON1_MASK) {
                 if (TABLAVACIA) {
                     return;
                 }

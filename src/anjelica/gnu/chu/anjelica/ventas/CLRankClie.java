@@ -3,7 +3,7 @@ package gnu.chu.anjelica.ventas;
 /**
  * <p>Titulo: Consulta Ranking de clientes</p>
  * <p>Descripcion: Consulta/Listado de Ranking de clientes</p>
-* <p>Copyright: Copyright (c) 2005-2012
+* <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -21,13 +21,18 @@ package gnu.chu.anjelica.ventas;
  * @version 1.0
  */
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.margenes.Clmarzona;
 import gnu.chu.anjelica.pad.MantRepres;
 import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.camposdb.empPanel;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.interfaces.ejecutable;
+import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
@@ -37,21 +42,40 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 
 
 public class CLRankClie extends ventana {
+  
+  DatosTabla dtMarg;
+  private boolean VERMARGEN=true;
+  private boolean isBuscandoMarg=false;
+  double impGanaP=0;
+  HashMap<Integer, Double> htGana=new HashMap();
+  private final int JT_IMPGAN=7;
+  private final int  JT_PORGAN=8;
+  private final int  JT_KILVEN=4;
+  boolean cancelarConsulta=false;
   String REPRARG;
   String s;
   ArrayList<ArrayList> datos;
   AlbClien alCli=null;
   private String condWhere;
+  gnu.chu.anjelica.menu menu;
+  
   public CLRankClie(EntornoUsuario eu, Principal p)
   {
     this(eu, p, null);
@@ -86,8 +110,9 @@ public class CLRankClie extends ventana {
    }
  }
 
- public CLRankClie(gnu.chu.anjelica.menu p,EntornoUsuario eu) {
-
+ public CLRankClie(gnu.chu.anjelica.menu p,EntornoUsuario eu) 
+ {
+     this.menu=p;
    EU=eu;
    vl=p.getLayeredPane();
    setTitulo("Consulta Ranking Clientes");
@@ -108,7 +133,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2012-05-23");
+   this.setVersion("2016-02-24");
    statusBar = new StatusBar(this);
 
    initComponents();
@@ -117,9 +142,33 @@ private void jbInit() throws Exception
 
    conecta();
 }
+  @Override
+  public void matar(boolean cerrarConexion)
+  {
+    if (muerto)
+      return;
+   
+    try
+    {
+        while (isBuscandoMarg)
+        {
+            Thread.sleep(50);
+        }
+        dtMarg.close();
+    } catch (SQLException ex)
+    {
+        Logger.getLogger(Covezore.class.getName()).log(Level.SEVERE, null, ex);
+    }   catch (InterruptedException ex)
+        {
+            Logger.getLogger(Covezore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    super.matar(cerrarConexion);
+  }
     @Override
 public void iniciarVentana() throws Exception
 {
+    Locupado.setVisible(false);
+    dtMarg=new DatosTabla(ct);
     Pcabe.setDefButton(Baceptar.getBotonAccion());
     bdiscr.iniciar(dtStat, this, vl, EU);
     jt.tableView.setToolTipText("Doble click encima linea para detalles venta");
@@ -190,13 +239,53 @@ public void iniciarVentana() throws Exception
             {
                  if (jt.isVacio())
                     return;
+                 
                  if (e.getClickCount()<2)
                     return;
                 busAlbCli();
             }
         });
+        MmargenArt.addActionListener(new java.awt.event.ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if (jt.isVacio())
+                    return;
+                llamaProgGana();
+            }
+        });
+        
     }
-
+  private void llamaProgGana()
+  {
+        try
+        {    
+            ejecutable prog;
+            gnu.chu.anjelica.margenes.Clmarzona cm;
+            if (jf!=null)
+            {                
+                if ((prog=jf.gestor.getProceso(Clmarzona.getNombreClase()))==null)
+                    return;
+                cm= (gnu.chu.anjelica.margenes.Clmarzona) prog;
+            }
+            else
+            {
+                 cm= new gnu.chu.anjelica.margenes.Clmarzona(menu,EU);
+                 menu.lanzaEjecutable(cm);
+            }
+            cm.setFechaInicial(fecIniE.getDate());
+            cm.setFechaFinal(fecFinE.getDate());
+            cm.setCliente(jt.getValorInt(0));
+            cm.setIncluirVert(false);
+            cm.ejecutaConsulta();
+            if (jf!=null)
+                jf.gestor.ir(cm);
+        } catch (ParseException ex)
+        {
+            Error("Error al llamar programa consulta de Margenes por productos", ex);
+        }
+  }
     void feciniE_focusLost(FocusEvent e)
     {
         try
@@ -281,6 +370,8 @@ public void iniciarVentana() throws Exception
 
             v.add(dtCon1.getDouble("avc_basimp")==0?0:Formatear.Redondea(dtCon1.getDouble("avc_basimp")/impAlb*100,2));
             v.add(dtCon1.getDouble("avc_kilos")==0?0:Formatear.Redondea(dtCon1.getDouble("avc_kilos")/kilAlb*100,2));
+            v.add("");
+            v.add("");
             datos.add(v);
         } while (dtCon1.next());
         jt.setDatos(datos);
@@ -293,13 +384,243 @@ public void iniciarVentana() throws Exception
               jt.setEnabled(true);
               mensajeErr("Consulta realizada");
             }
-        });     
+        }); 
+        if (!VERMARGEN)
+            return;
+         new miThread("")
+         {
+             @Override
+             public void run() {
+                 Locupado.setVisible(true);
+                 impGananE.setVisible(false);
+                 porGananE.setVisible(false);
+//                     Pbuscando.setVisible(true);
+                 isBuscandoMarg = true;
+                 buscaMargenes();
+                 isBuscandoMarg = false;
+                 Locupado.setVisible(false);
+                 impGananE.setVisible(true);
+                 porGananE.setVisible(true);
+//                     Pbuscando.setVisible(false);
+             }
+         };
      } catch (Exception k)
      {
          Error("Error al Calcular Datos", k);
      }
    }
-   
+    /**
+     * Funcion que busca Margenes sobre los datos introducidos. Realiza la busqueda en background
+     */
+    void buscaMargenes()
+    {       
+        try {   
+           
+            cancelarConsulta=false;
+            //String fecIni=fecIniE.getText();
+            String fecFin=fecFinE.getText();
+            String fecInv=ActualStkPart.getFechaUltInv(0,0,fecIniE.getDate(),dtStat);
+            Date fecIniD=fecIniE.getDate();
+            String sql = "SELECT pro_codi,mvt_tipdoc as tipdoc, mvt_tipo as tipmov,  "
+                + " mvt_time as fecmov,"
+                + " mvt_canti as canti,mvt_prec as precio,"
+                + " mvt_cliprv as cliCodi,mvt_empcod,mvt_ejedoc,mvt_serdoc,"
+                + " mvt_numdoc, "
+                + " mvt_fecdoc "
+                + " from mvtosalm where "
+                + "  mvt_canti <> 0 "
+                + " and NOT (mvt_serdoc='X' and mvt_tipdoc ='V') " // ignorar traspaso entre almacenes 
+                + " AND mvt_time::date > TO_DATE('" + fecInv + "','dd-MM-yyyy') "
+                + " and mvt_time::date <= TO_DATE('" + fecFin + "','dd-MM-yyyy') "
+                + " ORDER BY pro_codi,fecmov,tipmov";
+            PreparedStatement psAlb=  dtStat.getPreparedStatement("select c.zon_codi,c.rep_codi,a.sbe_codi "
+                + " from v_albavec as a, v_cliente  as c where c.cli_codi = a.cli_codi and a.emp_codi=  ? "
+                + " and avc_ano=? "
+                + " and avc_serie=? and avc_nume = ?");       
+            PreparedStatement psCli=  dtStat.getPreparedStatement("select c.zon_codi,c.rep_codi,c.sbe_codi "
+                + " from v_cliente as c where c.cli_codi = ?");
+
+            ResultSet rsCli;
+           if (!dtMarg.select(sql))
+           {
+               mensajeErr("No encontrados datos de margenes");             
+               return;
+           }
+           sql=" select sum(rgs_kilos) as kilos, sum(rgs_kilos*rgs_prregu) as importe "
+                + " FROM v_inventar  WHERE "
+                + " rgs_fecha::date = TO_DATE('" + fecInv + "','dd-MM-yyyy') "
+                + " and pro_codi = ?";
+           PreparedStatement psInv= dtStat.getPreparedStatement(sql);
+           ResultSet rsInv;
+           impGanaP=0;
+           double kilos=0,importe=0,impGana;
+           double precioCosto=0;
+        //   Double impGanaD;
+           
+           htGana.clear();
+           
+           int proCodi=0;
+           do
+           {
+               if (cancelarConsulta)
+                 return;
+               if (proCodi!=dtMarg.getInt("pro_codi") )
+               { // Busco Inventario inicial
+//                   if (impGanaP>0.1 || impGanaP< -0.1)
+//                    System.out.println("Producto: "+proCodi+"  Ganancia: "+impGanaP);
+                   impGanaP=0;
+                   proCodi=dtMarg.getInt("pro_codi");
+                   psInv.setInt(1, proCodi);
+                   rsInv=psInv.executeQuery();   
+                   rsInv.next();
+                   kilos=rsInv.getDouble("kilos");
+                   importe=rsInv.getDouble("importe");
+                   precioCosto= kilos<=0?0:importe/kilos;
+               }
+               
+             
+               if (dtMarg.getString("tipmov").equals("E"))
+               { // Entrada
+                  kilos+=dtMarg.getDouble("canti",true);
+                  importe+= dtMarg.getDouble("canti",true)* dtMarg.getDouble("precio",true);      
+                  if (importe<0.1)
+                       importe=0;
+                  precioCosto= kilos<=0.1 || importe<=0.1?
+                      dtMarg.getDouble("precio",true):importe/kilos;
+               }
+               else              
+               { // Salida
+                   String tipdoc=dtMarg.getString("tipdoc");
+                   if ( (tipdoc.equals("R") || tipdoc.equals("V")) &&
+                       Formatear.comparaFechas(dtMarg.getDate("mvt_fecdoc"),fecIniD)>=0)
+                   {                       
+                        if  (tipdoc.equals("R") )
+                        {
+                           if (dtMarg.getObject("cliCodi")!=null)
+                           {
+                                psCli.setInt(1,dtMarg.getInt("cliCodi"));
+                                rsCli=psCli.executeQuery();   
+                                if (rsCli.next())
+                                    sumaGanan(rsCli,precioCosto);
+                           }
+                        }
+                        if (tipdoc.equals("V") )
+                        {
+                             psAlb.setInt(1,dtMarg.getInt("mvt_empcod"));
+                             psAlb.setInt(2,dtMarg.getInt("mvt_ejedoc"));
+                             psAlb.setString(3,dtMarg.getString("mvt_serdoc"));
+                             psAlb.setInt(4,dtMarg.getInt("mvt_numdoc"));
+                             rsCli=psAlb.executeQuery();   
+                             if (rsCli.next())
+                                 sumaGanan(rsCli,precioCosto);
+//                             else
+//                                 System.out.println("Albaran no encontrado: "+dtMarg.getInt("mvt_numdoc"));
+                        }
+                   }
+                   kilos-=dtMarg.getDouble("canti",true);
+                   importe-= dtMarg.getDouble("canti",true)* precioCosto;                   
+               }
+               
+           } while (dtMarg.next());
+            SwingUtilities.invokeLater(new Thread()
+            {
+                @Override
+                public void run()
+                {
+                  muestraMargenes();      
+                }
+            });
+          
+        } catch (ParseException | SQLException k)
+        {
+            Error("Error al buscar margenes de ventas",k);
+        }
+        
+    }
+    void muestraMargenes() {
+        Iterator<Integer> it = htGana.keySet().iterator();
+        int nl = jt.getRowCount();       
+        int valor;
+        while (it.hasNext())
+        {
+            if (cancelarConsulta)
+                return;
+            valor = it.next();
+//               System.out.println("valor : "+valor+" Ganancia: "+htGana.get(valor));
+           
+            for (int n = 0; n < nl; n++)
+            {
+                if (jt.getValorInt(n, 0)==valor)
+                {                  
+//                   System.out.println("Repr: "+valorC[0]+
+//                            " Zona: "+valorC[1]+" ganancia: "+htGana.get(valor));
+                    jt.setValor(htGana.get(valor), n, JT_IMPGAN);
+                    break;
+                }
+            }
+        }
+        double totRepr = 0;
+        double totSec = 0;
+        double totGen = 0;
+        for (int n = 0; n < nl; n++)
+        {
+            if (cancelarConsulta)
+                return;
+            jt.setValor(jt.getValorDec(n, JT_IMPGAN) / jt.getValorDec(n, JT_KILVEN),
+                n, JT_PORGAN);
+            if (jt.getValString(n, 0).equals("."))
+            {
+                jt.setValor(totSec, n, JT_IMPGAN);
+                jt.setValor(totSec / jt.getValorDec(n, JT_KILVEN),
+                    n, JT_PORGAN);
+
+                totSec = 0;
+                continue;
+            }
+            if (jt.getValString(n, 1).equals("."))
+            {
+                jt.setValor(totRepr, n, JT_IMPGAN);
+                jt.setValor(totRepr / jt.getValorDec(n, JT_KILVEN),
+                    n, JT_PORGAN);
+                totRepr = 0;
+                continue;
+            }
+            totRepr += jt.getValorDec(n, JT_IMPGAN);
+            totSec += jt.getValorDec(n, JT_IMPGAN);
+            totGen += jt.getValorDec(n, JT_IMPGAN);
+        }
+        impGananE.setValorDec(totGen);
+        porGananE.setValorDec(totGen / kilAlbE.getValorDec());
+    }
+    void sumaGanan(ResultSet rsCli,double precioCosto) throws SQLException
+    {    
+        if (! rep_codiE.isNull() && !rep_codiE.getText().equals(rsCli.getString("rep_codi")))
+            return;
+        if (! zon_codiE.isNull() && !zon_codiE.getText().equals(rsCli.getString("zon_codi")))
+            return;
+         if (sbe_codiE.getValorInt()!=0 && sbe_codiE.getValorInt()!=rsCli.getInt("sbe_codi"))
+            return;
+       
+        guardaGana(dtMarg.getInt("cliCodi"),precioCosto,htGana);
+                            
+        impGanaP+=dtMarg.getDouble("canti", true)
+            * (dtMarg.getDouble("precio", true) - precioCosto);
+        
+    }
+    private void guardaGana(int valor,double precioCosto,HashMap<Integer, Double> ht) throws SQLException
+    {
+        Double impGanaD;
+        double impGana;
+        
+        if ((impGanaD = ht.get(valor)) == null)
+            impGana = 0;
+        else
+            impGana = impGanaD;
+        impGana += dtMarg.getDouble("canti", true)
+            * (dtMarg.getDouble("precio", true) - precioCosto);
+        ht.put(valor, impGana);
+
+    }
    void busAlbCli()
    {
        try
@@ -358,6 +679,7 @@ public void iniciarVentana() throws Exception
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        MmargenArt = new javax.swing.JMenuItem();
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -376,7 +698,7 @@ public void iniciarVentana() throws Exception
         fecFinE = new gnu.chu.camposdb.fechaCal();
         cLabel18 = new gnu.chu.controles.CLabel();
         ordenE = new gnu.chu.controles.CComboBox();
-        jt = new gnu.chu.controles.Cgrid(7);
+        jt = new gnu.chu.controles.Cgrid(9);
         Ppie = new gnu.chu.controles.CPanel();
         cLabel2 = new gnu.chu.controles.CLabel();
         numCliE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
@@ -384,6 +706,12 @@ public void iniciarVentana() throws Exception
         impAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.99");
         cLabel9 = new gnu.chu.controles.CLabel();
         kilAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.99");
+        cLabel10 = new gnu.chu.controles.CLabel();
+        impGananE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.99");
+        porGananE = new gnu.chu.controles.CTextField(Types.DECIMAL,"-9.999");
+        Locupado = new gnu.chu.controles.CLabel();
+
+        MmargenArt.setText("Margen por Articulos");
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -478,15 +806,20 @@ public void iniciarVentana() throws Exception
         v.add("Kilos"); // 4
         v.add("% Imp");
         v.add("% Kg");
+        v.add("Imp.Gana");
+        v.add("Gan.Kilo");
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{43,208,50,78,78,40,40});
-        jt.setAlinearColumna(new int[]{2,0,2,2,2,2,2});
+        jt.setAnchoColumna(new int[]{43,208,50,78,78,40,40,80,60});
+        jt.setAlinearColumna(new int[]{2,0,2,2,2,2,2,2,2});
         jt.setFormatoColumna(0, "####9");
         jt.setFormatoColumna(3, "--,---,--9.99");
         jt.setFormatoColumna(4, "--,---,--9.99");
         jt.setFormatoColumna(5, "--9.99");
         jt.setFormatoColumna(6, "--9.99");
+        jt.setFormatoColumna(7, "----,--9.99");
+        jt.setFormatoColumna(8, "--9.99");
         jt.setAjustarGrid(true);
+        jt.getPopMenu().add(MmargenArt);
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout jtLayout = new javax.swing.GroupLayout(jt);
@@ -497,7 +830,7 @@ public void iniciarVentana() throws Exception
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 187, Short.MAX_VALUE)
+            .addGap(0, 192, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -512,9 +845,9 @@ public void iniciarVentana() throws Exception
 
         Ppie.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         Ppie.setEnabled(false);
-        Ppie.setMaximumSize(new java.awt.Dimension(500, 30));
-        Ppie.setMinimumSize(new java.awt.Dimension(500, 30));
-        Ppie.setPreferredSize(new java.awt.Dimension(500, 30));
+        Ppie.setMaximumSize(new java.awt.Dimension(600, 25));
+        Ppie.setMinimumSize(new java.awt.Dimension(600, 25));
+        Ppie.setPreferredSize(new java.awt.Dimension(600, 25));
         Ppie.setLayout(null);
 
         cLabel2.setText("Num. Clientes ");
@@ -527,31 +860,52 @@ public void iniciarVentana() throws Exception
         numCliE.setMinimumSize(new java.awt.Dimension(2, 18));
         numCliE.setPreferredSize(new java.awt.Dimension(2, 18));
         Ppie.add(numCliE);
-        numCliE.setBounds(90, 5, 59, 18);
+        numCliE.setBounds(90, 5, 40, 18);
 
         cLabel7.setText("Importe");
         cLabel7.setMaximumSize(new java.awt.Dimension(87, 18));
         cLabel7.setMinimumSize(new java.awt.Dimension(87, 18));
         cLabel7.setPreferredSize(new java.awt.Dimension(87, 18));
         Ppie.add(cLabel7);
-        cLabel7.setBounds(160, 5, 51, 18);
+        cLabel7.setBounds(130, 5, 51, 18);
 
         impAlbE.setMinimumSize(new java.awt.Dimension(2, 18));
         impAlbE.setPreferredSize(new java.awt.Dimension(2, 18));
         Ppie.add(impAlbE);
-        impAlbE.setBounds(220, 5, 109, 18);
+        impAlbE.setBounds(180, 5, 90, 18);
 
         cLabel9.setText("Kilos");
         cLabel9.setMaximumSize(new java.awt.Dimension(87, 18));
         cLabel9.setMinimumSize(new java.awt.Dimension(87, 18));
         cLabel9.setPreferredSize(new java.awt.Dimension(87, 18));
         Ppie.add(cLabel9);
-        cLabel9.setBounds(340, 5, 37, 18);
+        cLabel9.setBounds(280, 5, 37, 18);
 
         kilAlbE.setMinimumSize(new java.awt.Dimension(2, 18));
         kilAlbE.setPreferredSize(new java.awt.Dimension(2, 18));
         Ppie.add(kilAlbE);
-        kilAlbE.setBounds(380, 5, 109, 18);
+        kilAlbE.setBounds(320, 5, 80, 18);
+
+        cLabel10.setText("Ganancia");
+        cLabel10.setMaximumSize(new java.awt.Dimension(87, 18));
+        cLabel10.setMinimumSize(new java.awt.Dimension(87, 18));
+        cLabel10.setPreferredSize(new java.awt.Dimension(87, 18));
+        Ppie.add(cLabel10);
+        cLabel10.setBounds(410, 5, 60, 18);
+
+        impGananE.setMinimumSize(new java.awt.Dimension(2, 18));
+        impGananE.setPreferredSize(new java.awt.Dimension(2, 18));
+        Ppie.add(impGananE);
+        impGananE.setBounds(470, 5, 70, 18);
+
+        porGananE.setMinimumSize(new java.awt.Dimension(2, 18));
+        porGananE.setPreferredSize(new java.awt.Dimension(2, 18));
+        Ppie.add(porGananE);
+        porGananE.setBounds(540, 5, 40, 18);
+
+        Locupado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gnu/chu/icons/ocupado2.gif"))); // NOI18N
+        Ppie.add(Locupado);
+        Locupado.setBounds(470, 0, 120, 25);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -569,10 +923,13 @@ public void iniciarVentana() throws Exception
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButtonMenu Baceptar;
+    private gnu.chu.controles.CLabel Locupado;
+    private javax.swing.JMenuItem MmargenArt;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Ppie;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.camposdb.DiscButton bdiscr;
+    private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel16;
     private gnu.chu.controles.CLabel cLabel17;
     private gnu.chu.controles.CLabel cLabel18;
@@ -587,10 +944,12 @@ public void iniciarVentana() throws Exception
     private gnu.chu.camposdb.fechaCal fecFinE;
     private gnu.chu.camposdb.fechaCal fecIniE;
     private gnu.chu.controles.CTextField impAlbE;
+    private gnu.chu.controles.CTextField impGananE;
     private gnu.chu.controles.Cgrid jt;
     private gnu.chu.controles.CTextField kilAlbE;
     private gnu.chu.controles.CTextField numCliE;
     private gnu.chu.controles.CComboBox ordenE;
+    private gnu.chu.controles.CTextField porGananE;
     private gnu.chu.controles.CLinkBox rep_codiE;
     private gnu.chu.camposdb.sbePanel sbe_codiE;
     private gnu.chu.controles.CLinkBox zon_codiE;
