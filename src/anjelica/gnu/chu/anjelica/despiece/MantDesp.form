@@ -689,7 +689,7 @@
             <Component class="gnu.chu.camposdb.cliPanel" name="cli_codiE">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="50" y="0" width="380" height="-1"/>
+                  <AbsoluteConstraints x="50" y="0" width="350" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -742,7 +742,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="120" y="20" width="100" height="-1"/>
+                  <AbsoluteConstraints x="210" y="20" width="90" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -752,7 +752,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="215" y="20" width="40" height="18"/>
+                  <AbsoluteConstraints x="300" y="20" width="40" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -766,7 +766,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="330" y="20" width="85" height="17"/>
+                  <AbsoluteConstraints x="350" y="20" width="75" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -780,7 +780,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="260" y="20" width="70" height="17"/>
+                  <AbsoluteConstraints x="410" y="0" width="65" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -791,7 +791,14 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="423" y="20" width="50" height="17"/>
+                  <AbsoluteConstraints x="430" y="20" width="50" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CComboBox" name="eti_codiE">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="120" y="20" width="80" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -964,7 +971,7 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="30" y="2" width="320" height="17"/>
+                          <AbsoluteConstraints x="30" y="2" width="320" height="20"/>
                         </Constraint>
                       </Constraints>
                     </Component>

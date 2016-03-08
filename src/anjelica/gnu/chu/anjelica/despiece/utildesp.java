@@ -1141,6 +1141,10 @@ public class utildesp
             etiq = new etiqueta(EU);
         }
         etiq.setTipoEtiq(dtStat, EU.em_cod, TIPOETIQ);
+        if (TIPOETIQ==0)
+            logo=null;
+        else
+            logo=etiq.getLogotipo();
         CodigoBarras codBarras = new CodigoBarras(indiceEti,ejloge,seloge,nuloge,proCodi,numInd,kilos);
       
         etiq.setFechaCongelado(getFechaCongelado(proCodi, fecProd, dtStat));    

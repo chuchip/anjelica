@@ -62,6 +62,7 @@ import javax.swing.event.InternalFrameEvent;
  */
 public class MantDespTactil  extends ventanaPad implements PAD
 {
+ private gnu.chu.controles.CComboBox eti_codiE=new gnu.chu.controles.CComboBox();
 
   int tipoEmp; // Tipo Empresa (Sala Despiece o Plantacion)
   private boolean isEmpPlanta=false; // Indica si la empresa es tipo Plantacion
@@ -378,7 +379,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2016-01-11"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2016-03-08"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -511,9 +512,12 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Psalpro.setLayout(null);
     opImpEti.setText("Impr. Etiqueta");
     opImpEti.setBounds(new Rectangle(155, 5, 115, 15));
-    BrepEti.setBounds(new Rectangle(279, 3, 139, 17));
+    BrepEti.setIcon(Iconos.getImageIcon("print"));
+    BrepEti.setBounds(new Rectangle(260, 3, 45, 17));
     BrepEti.setMargin(new Insets(0, 0, 0, 0));
-    BrepEti.setText("F9 Imprimir Etiqueta");
+    BrepEti.setText("F9");
+    BrepEti.setToolTipText("Repetir Etiqueta");
+    eti_codiE.setBounds(307, 3, 95, 17);
     Psalpr1.setBorder(BorderFactory.createEtchedBorder());
     Psalpr1.setMaximumSize(new Dimension(658, 26));
     Psalpr1.setMinimumSize(new Dimension(658, 26));
@@ -712,6 +716,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Psalpr1.add(grd_unisalE, null);
     Psalpr1.add(cLabel18, null);
     Psalpr1.add(BrepEti, null);
+    Psalpr1.add(eti_codiE, null);
     Psalpr1.add(BborLiSa, null);
     Psalpr1.add(opImpEti, null);
     Pfin.add(jtSal,   new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0
@@ -846,6 +851,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
    grd_feccadE.setColumnaAlias("grd_feccad");
    tid_codiE.combo.setPreferredSize(new Dimension(350,18));
    tid_codiE.releer(); // Carga todos los despieces activos 
+   eti_codiE.setDatos(etiqueta.getReports(dtStat, EU.em_cod,0));    
+   eti_codiE.addItem("Defecto","0");
+   eti_codiE.setValor("0");
    activarEventos();
    verDatos(dtCons);
    actButton(true);
@@ -1731,6 +1739,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
 //        actButton(activ);
         if (!isEmpPlanta)
             BrepEti.setEnabled(activ);
+        eti_codiE.setEnabled(activ);
         opImpEti.setEnabled(activ);
         BborLiSa.setEnabled(activ);
         break;
@@ -2585,12 +2594,19 @@ public class MantDespTactil  extends ventanaPad implements PAD
  void imprEtiSal(int linea,boolean forzar)
  {
    try
-   {         
+   {        
+
+         
      pro_codsalE.getNombArt(jtSal.getValString(linea,JTSAL_PROCODI));
-     if (pro_codsalE.getLikeProd().isNull("pro_codeti"))
-       tipoetiq = 0;
+     if (eti_codiE.getValorInt()==0)
+     {
+        if (pro_codsalE.getLikeProd().isNull("pro_codeti"))
+          tipoetiq = 0;
+        else
+          tipoetiq = pro_codsalE.getLikeProd().getInt("pro_codeti");
+     }
      else
-       tipoetiq = pro_codsalE.getLikeProd().getInt("pro_codeti");
+         tipoetiq=eti_codiE.getValorInt();
      if (etiq == null)
         etiq = new etiqueta(EU);
      etiq.setTipoEtiq(dtStat,EU.em_cod,tipoetiq);

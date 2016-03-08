@@ -5,7 +5,7 @@ package gnu.chu.anjelica.despiece;
     * <p>Descripción: Mantenimiento de Despieces </p>
  * <p>Parametros:<br>
  * boolean admin: Modo administrador
- * int tipoEtiq: Tipo Etiqueta
+ 
  * boolean modPrecio Permite modificar precios.
  * 
  * </p>
@@ -57,6 +57,7 @@ import gnu.chu.anjelica.sql.DesorilinId;
 import gnu.chu.anjelica.sql.Desporig;
 import gnu.chu.anjelica.sql.DesporigId;
 import gnu.chu.anjelica.ventas.pdalbara;
+import static gnu.chu.anjelica.ventas.pdalbara.ETICLIENTE;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.CComboBox;
 import gnu.chu.controles.StatusBar;
@@ -110,7 +111,7 @@ public class MantDesp extends ventanaPad implements PAD
     int proCodAnt;
     double defKilAnt;
     boolean MODPRECIO = false;
-    int TIPOETIQ = 0;
+    
     private boolean verGrupo;
     private boolean AUTOLLENARDESP; // Variable cogida de tabla parametros
     private boolean DESPPENDIENTE=false;
@@ -184,9 +185,7 @@ public class MantDesp extends ventanaPad implements PAD
         try
         {
             if (ht != null)
-            {
-                if (ht.get("tipoEtiq") != null)
-                    TIPOETIQ = Integer.parseInt(ht.get("tipoEtiq"));
+            {                
                 if (ht.get("modPrecio") != null)
                     MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
                 if (ht.get("admin") != null)
@@ -212,9 +211,7 @@ public class MantDesp extends ventanaPad implements PAD
         setTitulo("Mantenimiento Despieces");
         eje = false;
         if (ht != null)
-        {
-            if (ht.get("tipoEtiq") != null)
-                TIPOETIQ = Integer.parseInt(ht.get("tipoEtiq"));
+        {          
             if (ht.get("modPrecio") != null)
                 MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
             if (ht.get("admin") != null)
@@ -234,7 +231,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2015-12-30" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2016-03-04" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -368,7 +365,9 @@ public class MantDesp extends ventanaPad implements PAD
         verDatos(dtCons);
 //    this.setEnabled(true);
         mensajeErr("");
-
+        eti_codiE.setDatos(etiqueta.getReports(dtStat, EU.em_cod,0));    
+        eti_codiE.addItem("Defecto","0");
+        eti_codiE.setValor("0");
         activar(false);
     }
 
@@ -3267,7 +3266,8 @@ public class MantDesp extends ventanaPad implements PAD
                 utdesp.setDirEmpresa(null);
             }
 
-            utdesp.imprEtiq(TIPOETIQ == 0 ? proCodeti : TIPOETIQ, dtStat, pro_codlE.getValorInt(), nombArt,
+            utdesp.imprEtiq(eti_codiE.getValorInt() == 0 ? proCodeti : eti_codiE.getValorInt(), 
+                dtStat, pro_codlE.getValorInt(), nombArt,
                 "D",
                 opSimular.isSelected() ? jtCab.getValorInt(0, JTCAB_NUMLOT) : deo_nulogeE.getValorInt(),
                 opSimular.isSelected() ? jtCab.getValString(0, JTCAB_EJELOT) : deo_ejlogeE.getText(),
@@ -3913,6 +3913,7 @@ public class MantDesp extends ventanaPad implements PAD
         opVerGrupo = new gnu.chu.controles.CCheckBox("0","-1");
         opSimular = new gnu.chu.controles.CCheckBox("0","-1");
         opVerAgrup = new gnu.chu.controles.CCheckBox();
+        eti_codiE = new gnu.chu.controles.CComboBox();
         Ptabpan = new gnu.chu.controles.CTabbedPane();
         Pgrid = new gnu.chu.controles.CPanel();
         jtLin = new gnu.chu.controles.CGridEditable(11)
@@ -4202,13 +4203,13 @@ public class MantDesp extends ventanaPad implements PAD
 
                 eje_numeL.setText("Ejercicio");
                 Pcabe.add(eje_numeL);
-                eje_numeL.setBounds(3, 2, 47, 17);
+                eje_numeL.setBounds(3, 2, 46, 17);
                 Pcabe.add(eje_numeE);
                 eje_numeE.setBounds(53, 2, 35, 17);
 
                 deo_codiL.setText("Despiece ");
                 Pcabe.add(deo_codiL);
-                deo_codiL.setBounds(98, 2, 56, 17);
+                deo_codiL.setBounds(98, 2, 54, 17);
                 Pcabe.add(deo_codiE);
                 deo_codiE.setBounds(158, 2, 41, 17);
 
@@ -4218,7 +4219,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 deo_numdesL.setText("Grupo ");
                 Pcabe.add(deo_numdesL);
-                deo_numdesL.setBounds(570, 22, 39, 17);
+                deo_numdesL.setBounds(570, 22, 37, 17);
                 Pcabe.add(deo_numdesE);
                 deo_numdesE.setBounds(610, 22, 48, 17);
 
@@ -4232,7 +4233,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel11.setText("Alm. Orig");
                 Pcabe.add(cLabel11);
-                cLabel11.setBounds(0, 22, 53, 17);
+                cLabel11.setBounds(0, 22, 51, 17);
 
                 deo_almoriE.setToolTipText("Almacen Origen");
                 deo_almoriE.setAncTexto(30);
@@ -4242,7 +4243,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel12.setText("Alm. Dest");
                 Pcabe.add(cLabel12);
-                cLabel12.setBounds(280, 22, 55, 17);
+                cLabel12.setBounds(280, 22, 53, 17);
 
                 deo_almdesE.setToolTipText("Almacen Destino");
                 deo_almdesE.setAncTexto(30);
@@ -4302,7 +4303,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel3.setText("Estado");
                 Pcabe.add(cLabel3);
-                cLabel3.setBounds(530, 45, 39, 14);
+                cLabel3.setBounds(530, 45, 37, 15);
 
                 deo_blockE.setEnabled(false);
                 deoBlockE_addItem(deo_blockE);
@@ -4311,7 +4312,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel4.setText("Proveedor");
                 Pcabe.add(cLabel4);
-                cLabel4.setBounds(1, 70, 80, 14);
+                cLabel4.setBounds(1, 70, 80, 15);
                 Pcabe.add(prv_codiE);
                 prv_codiE.setBounds(70, 70, 340, 17);
 
@@ -4367,11 +4368,11 @@ public class MantDesp extends ventanaPad implements PAD
                 Ppie.setPreferredSize(new java.awt.Dimension(559, 40));
                 Ppie.setLayout(null);
                 Ppie.add(cli_codiE);
-                cli_codiE.setBounds(50, 0, 380, 18);
+                cli_codiE.setBounds(50, 0, 350, 17);
 
                 cLabel7.setText("Cliente");
                 Ppie.add(cLabel7);
-                cLabel7.setBounds(2, 2, 50, 14);
+                cLabel7.setBounds(2, 2, 50, 15);
 
                 Baceptar.setText("Aceptar");
                 Ppie.add(Baceptar);
@@ -4390,24 +4391,26 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel8.setText("Numero Copias ");
                 Ppie.add(cLabel8);
-                cLabel8.setBounds(120, 20, 100, 14);
+                cLabel8.setBounds(210, 20, 90, 15);
                 Ppie.add(numCopiasE);
-                numCopiasE.setBounds(215, 20, 40, 18);
+                numCopiasE.setBounds(300, 20, 40, 18);
 
                 opVerGrupo.setText("Ver Grupo");
                 opVerGrupo.setToolTipText("Ver grupo de despiece");
                 Ppie.add(opVerGrupo);
-                opVerGrupo.setBounds(330, 20, 85, 17);
+                opVerGrupo.setBounds(350, 20, 75, 17);
 
                 opSimular.setText("Simular");
                 opSimular.setToolTipText("Simula despiece");
                 Ppie.add(opSimular);
-                opSimular.setBounds(260, 20, 70, 17);
+                opSimular.setBounds(410, 0, 65, 17);
 
                 opVerAgrup.setText("Agr");
                 opVerAgrup.setToolTipText("Ver Lineas agrupadas");
                 Ppie.add(opVerAgrup);
-                opVerAgrup.setBounds(423, 20, 50, 17);
+                opVerAgrup.setBounds(430, 20, 50, 17);
+                Ppie.add(eti_codiE);
+                eti_codiE.setBounds(120, 20, 80, 17);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -4587,7 +4590,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 tid_codiE.setAncTexto(40);
                 Ptipdes.add(tid_codiE);
-                tid_codiE.setBounds(30, 2, 320, 17);
+                tid_codiE.setBounds(30, 2, 320, 20);
 
                 cLabel13.setText("Tipo");
                 Ptipdes.add(cLabel13);
@@ -4887,6 +4890,7 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel eje_numeL1;
     private gnu.chu.controles.CLabel eje_numeL2;
     private gnu.chu.controles.CLabel eje_numeL3;
+    private gnu.chu.controles.CComboBox eti_codiE;
     private gnu.chu.controles.CTextField impFinE;
     private gnu.chu.controles.CTextField impOrigE;
     private gnu.chu.controles.CGridEditable jtCab;
