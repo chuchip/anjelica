@@ -255,10 +255,10 @@ public class MantPartes  extends ventanaPad implements PAD
   }
   private void jbInit() throws Exception
   {
-        nav = new navegador(this, dtCons, false,
-        P_PERMEST==PERM_GERENC?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
+        nav = new navegador(this, dtCons, false,P_ADMIN?navegador.NORMAL:
+            P_PERMEST==PERM_GERENC?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20160119) Modo: "+P_PERMEST);
+        this.setVersion("(20160314) Modo: "+P_PERMEST);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -891,7 +891,11 @@ public class MantPartes  extends ventanaPad implements PAD
   {
       swModificaTodo=true;
       setAcciones(pal_accionE, '*');
-      super.activaTodo();
+      activar(false);
+//    this.setEnabled(true);
+        navActivarAll();
+        nav.requestFocus();
+//      super.activaTodo();
   }
  private void calcAcumulados()
  {
@@ -2153,7 +2157,7 @@ public class MantPartes  extends ventanaPad implements PAD
         {            
             if (! checkEntrada())
                 return;
-           
+            
             if (!swModificaTodo)
             {
                 if (jtAbo.isEnabled())
@@ -2198,15 +2202,24 @@ public class MantPartes  extends ventanaPad implements PAD
                             dtAdd.setDato("pac_fecpro", fecProc);
                         }
                         dtAdd.update();
+                        if (!pac_estadE.getValor().equals(estadoE.getValor()))
+                        {
+                         jtList.removeLinea();
+                        }
                     }
                 }
                 actualizaLineas(par_codiE.getValorInt());
-            } else
+            }
+            else
             {
                 if (pac_tipoE.getValor().equals("D") && pac_estadE.getValorInt() == ESTADO_PROCDEV)
                 {
                     pac_estadE.setValor("" + ESTADO_GENERADA);
                     pac_tipoE.setValor("R");
+                }
+                if (!pac_estadE.getValor().equals(estadoE.getValor()))
+                {
+                 jtList.removeLinea();
                 }
                 dtAdd.select("select * from partecab where par_codi=" + par_codiE.getValorInt(), true);
                 dtAdd.edit();
@@ -2223,10 +2236,18 @@ public class MantPartes  extends ventanaPad implements PAD
             nav.pulsado = navegador.NINGUNO;
             boolean sw1 = swModificaTodo;
             activaTodo();
+            
             mensajeErr("Parte modificado correctamente");
-            verDatos();
             if (!sw1)
-                cargaListado(estadoE.getValor());
+            {
+                verDatos(jtList.getValorInt(JTL_NUMPAR));
+                verLineas(jtList.getValorInt(JTL_NUMPAR));
+            }
+            else
+                verDatos();
+           
+//            if (!sw1)
+//                cargaListado(estadoE.getValor());
         } catch (ParseException | SQLException  ex)
         {
           Error("Error al editar parte",ex);
