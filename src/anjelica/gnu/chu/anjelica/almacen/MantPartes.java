@@ -2243,6 +2243,7 @@ public class MantPartes  extends ventanaPad implements PAD
                 verDatos(jtList.getValorInt(JTL_NUMPAR));
                 verLineas(jtList.getValorInt(JTL_NUMPAR));
             }
+            
             else
                 verDatos();
            
