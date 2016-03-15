@@ -72,7 +72,9 @@ public class ManAlbRuta extends ventanaPad implements PAD
     final int JT_CLINOMB=7;
     final int JT_UNID=8;
     final int JT_KILOS=9;
-    final int JT_REPET=10;
+    final int JT_HORREP=10;
+    final int JT_COMREP=11;
+    final int JT_REPET=12;
     final int JTFR_ANO=0;
     final int JTFR_EMPCOD=1;
     final int JTFR_SERIE=2;
@@ -160,7 +162,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         try
         {
           
-            if (!avc_numeE.hasCambio() && !alr_bultosE.hasCambio() && !alr_paletsE.hasCambio())
+            if (!avc_numeE.hasCambio() && !alr_bultosE.hasCambio() && !alr_paletsE.hasCambio()  )
                 return -1;
             if (avc_numeE.hasCambio())
                 jt.setValor(false,row,JT_REPET);
@@ -210,12 +212,19 @@ public class ManAlbRuta extends ventanaPad implements PAD
             alr_bultosE.resetCambio();
             alr_paletsE.resetCambio();
             fvc_numeE.resetCambio();
+            alr_comrepE.resetCambio();
+            alr_horrepE.resetCambio();
             jt.setValor(dtCon1.getInt("cli_codi"),row,JT_CLICOD);
+            String nombCli=pdclien.getNombreCliente(dtStat,dtCon1.getInt("cli_codi"));
             String cliNomb=dtCon1.getString("avc_clinom").equals("")?
-                pdclien.getNombreCliente(dtStat,dtCon1.getInt("cli_codi")):dtCon1.getString("avc_clinom");
+                nombCli:dtCon1.getString("avc_clinom");
             jt.setValor(cliNomb,row,JT_CLINOMB);
             jt.setValor(dtCon1.getDouble("avc_kilos"),row,JT_KILOS);
             jt.setValor(dtCon1.getInt("avc_unid"),row,JT_UNID);
+            alr_horrepE.setText(dtStat.getString("cli_horenv"));
+            alr_comrepE.setText(dtStat.getString("cli_comenv"));
+            jt.setValor(dtStat.getString("cli_horenv"),row,JT_HORREP);
+            jt.setValor(dtStat.getString("cli_comenv"),row,JT_COMREP);
             actAcumul();
         } catch (SQLException ex)
         {
@@ -303,10 +312,12 @@ public class ManAlbRuta extends ventanaPad implements PAD
                          a.add(dtCon1.getString("avc_unid"));
                          a.add(dtCon1.getString("avc_kilos"));
                      } else
-                     {
+                     {  
                          a.add(dtCon1.getString("alr_unid"));
                          a.add(dtCon1.getString("alr_kilos"));
                      }
+                     a.add(dtCon1.getString("alr_horrep"));
+                     a.add(dtCon1.getString("alr_comrep"));
                      a.add((dtCon1.getInt("alr_repet") != 0));
                      jt.addLinea(a);
                  } while (dtCon1.next());
@@ -461,6 +472,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
      alr_bultosE.resetCambio();
      alr_paletsE.resetCambio();
      fvc_numeE.resetCambio();
+     alr_comrepE.resetCambio();
+     alr_horrepE.resetCambio();
      Tpanel1.setSelectedIndex(0);
      if (ARG_MODSALA)
      {
@@ -661,6 +674,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
         fvc_imppenE = new gnu.chu.controles.CTextField();
         alr_bultosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         alr_paletsE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
+        alr_horrepE = new gnu.chu.controles.CTextField(Types.CHAR,"X",50);
+        alr_comrepE = new gnu.chu.controles.CTextField(Types.CHAR,"X",80);
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -710,7 +725,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         palTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         Bimpri = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("print"));
         Tpanel1 = new gnu.chu.controles.CTabbedPane();
-        jt = new gnu.chu.controles.CGridEditable(11){
+        jt = new gnu.chu.controles.CGridEditable(13){
             @Override
             public int cambiaLinea(int row, int col)
             {
@@ -1016,11 +1031,13 @@ public class ManAlbRuta extends ventanaPad implements PAD
         v.add("Nombre Cliente"); // 7
         v.add("Unid."); // 8
         v.add("Kilos"); // 9
-        v.add("Dupl."); // 10
+        v.add("Horario"); // 10
+        v.add("Coment."); // 11
+        v.add("Dupl."); // 12
         jt.setCabecera(v);
         jt.setColNueva(3);
-        jt.setAnchoColumna(new int[]{30,40,30,60,40,40,50,200,40,50,45});
-        jt.setAlinearColumna(new int[]{2,2,1,2,2,2,2,0,2,2,1});
+        jt.setAnchoColumna(new int[]{30,40,30,60,40,40,50,200,40,50,100,120,45});
+        jt.setAlinearColumna(new int[]{2,2,1,2,2,2,2,0,2,2,0,0,1});
         ArrayList vc=new ArrayList();
         vc.add(emp_codiE);
         vc.add(avc_anoE);
@@ -1032,6 +1049,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
         vc.add(cli_nombE);
         vc.add(avc_unidE);
         vc.add(avc_kilosE);
+        vc.add(alr_horrepE);
+        vc.add(alr_comrepE);
         vc.add(alr_repetE);
         try {
             jt.setCampos(vc);
@@ -1123,6 +1142,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CTabbedPane Tpanel1;
     private gnu.chu.controles.CTextField alr_bultosE;
     private gnu.chu.controles.CTextArea alr_comentE;
+    private gnu.chu.controles.CTextField alr_comrepE;
     private gnu.chu.controles.CTextField alr_fechaE;
     private gnu.chu.controles.CTextField alr_fecregE;
     private gnu.chu.controles.CTextField alr_fecregH;
@@ -1130,6 +1150,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField alr_fecsalE;
     private gnu.chu.controles.CTextField alr_fecsalH;
     private gnu.chu.controles.CTextField alr_fecsalM;
+    private gnu.chu.controles.CTextField alr_horrepE;
     private gnu.chu.controles.CTextField alr_numeE;
     private gnu.chu.controles.CTextField alr_paletsE;
     private gnu.chu.controles.CCheckBox alr_repetE;
@@ -1582,6 +1603,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
         dtAdd.setDato("alr_palets",jt.getValorDec(nlGrid,JT_PALETS));
         dtAdd.setDato("alr_kilos",jt.getValorDec(nlGrid,JT_KILOS));
         dtAdd.setDato("alr_unid",jt.getValorDec(nlGrid,JT_UNID));
+        dtAdd.setDato("alr_horrep",jt.getValString(nlGrid,JT_HORREP));
+        dtAdd.setDato("alr_comrep",jt.getValString(nlGrid,JT_COMREP));
         dtAdd.setDato("alr_repet",jt.getValBoolean(nlGrid,JT_REPET)?-1:0);
        
         dtAdd.update();

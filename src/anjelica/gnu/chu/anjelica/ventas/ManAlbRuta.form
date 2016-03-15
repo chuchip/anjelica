@@ -134,6 +134,16 @@
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9&quot;)"/>
       </AuxValues>
     </Component>
+    <Component class="gnu.chu.controles.CTextField" name="alr_horrepE">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,50)"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="alr_comrepE">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,80)"/>
+      </AuxValues>
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
@@ -774,8 +784,8 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(11){&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return cambiaLinJT(row);&#xa;    }&#xa;}"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Emp&quot;); // 0&#xa;v.add(&quot;Ejer.&quot;); // 1&#xa;v.add(&quot;Serie&quot;); // 2&#xa;v.add(&quot;Numero&quot;); // 3&#xa;v.add(&quot;Bultos&quot;); // 4&#xa;v.add(&quot;Palets&quot;); // 5&#xa;v.add(&quot;Cliente&quot;); // 6&#xa;v.add(&quot;Nombre Cliente&quot;); // 7&#xa;v.add(&quot;Unid.&quot;); // 8&#xa;v.add(&quot;Kilos&quot;); // 9&#xa;v.add(&quot;Dupl.&quot;); // 10&#xa;jt.setCabecera(v);&#xa;jt.setColNueva(3);&#xa;jt.setAnchoColumna(new int[]{30,40,30,60,40,40,50,200,40,50,45});&#xa;jt.setAlinearColumna(new int[]{2,2,1,2,2,2,2,0,2,2,1});&#xa;ArrayList vc=new ArrayList();&#xa;vc.add(emp_codiE);&#xa;vc.add(avc_anoE);&#xa;vc.add(avc_serieE);&#xa;vc.add(avc_numeE);&#xa;vc.add(alr_bultosE);&#xa;vc.add(alr_paletsE);&#xa;vc.add(cli_codiE);&#xa;vc.add(cli_nombE);&#xa;vc.add(avc_unidE);&#xa;vc.add(avc_kilosE);&#xa;vc.add(alr_repetE);&#xa;try {&#xa;jt.setCampos(vc);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al poner campos en grid &quot;,k);&#xa;return;&#xa;}&#xa;&#xa;jt.setFormatoCampos();&#xa;jt.setFormatoColumna(JT_REPET, &quot;B-&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(13){&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return cambiaLinJT(row);&#xa;    }&#xa;}"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Emp&quot;); // 0&#xa;v.add(&quot;Ejer.&quot;); // 1&#xa;v.add(&quot;Serie&quot;); // 2&#xa;v.add(&quot;Numero&quot;); // 3&#xa;v.add(&quot;Bultos&quot;); // 4&#xa;v.add(&quot;Palets&quot;); // 5&#xa;v.add(&quot;Cliente&quot;); // 6&#xa;v.add(&quot;Nombre Cliente&quot;); // 7&#xa;v.add(&quot;Unid.&quot;); // 8&#xa;v.add(&quot;Kilos&quot;); // 9&#xa;v.add(&quot;Horario&quot;); // 10&#xa;v.add(&quot;Coment.&quot;); // 11&#xa;v.add(&quot;Dupl.&quot;); // 12&#xa;jt.setCabecera(v);&#xa;jt.setColNueva(3);&#xa;jt.setAnchoColumna(new int[]{30,40,30,60,40,40,50,200,40,50,100,120,45});&#xa;jt.setAlinearColumna(new int[]{2,2,1,2,2,2,2,0,2,2,0,0,1});&#xa;ArrayList vc=new ArrayList();&#xa;vc.add(emp_codiE);&#xa;vc.add(avc_anoE);&#xa;vc.add(avc_serieE);&#xa;vc.add(avc_numeE);&#xa;vc.add(alr_bultosE);&#xa;vc.add(alr_paletsE);&#xa;vc.add(cli_codiE);&#xa;vc.add(cli_nombE);&#xa;vc.add(avc_unidE);&#xa;vc.add(avc_kilosE);&#xa;vc.add(alr_horrepE);&#xa;vc.add(alr_comrepE);&#xa;vc.add(alr_repetE);&#xa;try {&#xa;jt.setCampos(vc);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al poner campos en grid &quot;,k);&#xa;return;&#xa;}&#xa;&#xa;jt.setFormatoCampos();&#xa;jt.setFormatoColumna(JT_REPET, &quot;B-&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">

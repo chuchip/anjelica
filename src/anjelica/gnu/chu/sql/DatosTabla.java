@@ -2641,14 +2641,12 @@ private String parseaSelect(boolean forUpdate) throws SQLException
       dtFin.modSel=NORMAL;
     }
     /**
-     * Copia el registro activo del datostabla activo al datosTabla mandado
-     * @param dtFin DatosTabla donde copiar. Debe tener una select ya realizada, y puesto en modo EDIT O ADDNEW
-     * @param usuario
-     * @param coment
-     * @param rowid
+     * Copia un registro en otro datostabla.
+     * Ese datosTabla ya debera estar en modo edit o addnew
+     * @param dtFin
      * @throws SQLException 
      */
-    public void copiaRegistro(DatosTabla dtFin,String usuario, String coment,int rowid) throws SQLException
+    public void copiaRegistro(DatosTabla dtFin) throws SQLException
     {
       int n;
       for (n=1;n<= getColumnCount();n++)
@@ -2665,6 +2663,18 @@ private String parseaSelect(boolean forUpdate) throws SQLException
             continue;
         dtFin.setDato(getColumnName(n) ,o);
       }
+    }
+    /**
+     * Copia el registro activo del datostabla activo al datosTabla mandado
+     * @param dtFin DatosTabla donde copiar. Debe tener una select ya realizada, y puesto en modo EDIT O ADDNEW
+     * @param usuario
+     * @param coment
+     * @param rowid
+     * @throws SQLException 
+     */
+    public void copiaRegistro(DatosTabla dtFin,String usuario, String coment,int rowid) throws SQLException
+    {
+      copiaRegistro(dtFin);
       if (dtFin.findColumn("his_usunom")>0 && usuario != null)
           dtFin.setDato("his_usunom",usuario);
       if (dtFin.findColumn("his_fecha")>0 )

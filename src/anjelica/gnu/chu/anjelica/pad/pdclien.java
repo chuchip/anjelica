@@ -312,7 +312,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2015-12-27");
+      this.setVersion("2016-02-15");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -1559,15 +1559,23 @@ public class pdclien extends ventanaPad implements PAD
      try
      {
        msgEspere("Actualizando datos de Clientes....");
-      
-//       dtAdd.select(s, true);
-       s = " INSERT INTO cliencamb values(" + dtAdd.getStrInsert() +
-           ", '" + EU.usuario + "'" +
-           ",TO_DATE('" + Formatear.getFechaAct("dd-MM-yyyy") + "','dd-MM-yyyy')" +
-           "," + Formatear.getFechaAct("HH.mm") +
-           ",'" + clc_comen + "')";
- //     debug(dtAdd.getStrSelect(s));
-       stUp.executeUpdate(dtAdd.getStrSelect(s));
+       s="select * from clientes where cli_codi = "+clicodiAnt;
+       dtCon1.select(s);
+       dtBloq.addNew("cliencamb");
+       dtCon1.copiaRegistro(dtBloq);
+       dtBloq.setDato("usu_nomb",EU.usuario);
+       dtBloq.setDato("clc_fecha",Formatear.getDateAct());
+       dtBloq.setDato("clc_hora",Formatear.getFechaAct("HH.mm"));
+       dtBloq.setDato("clc_comen",clc_comen);
+       dtBloq.update();
+//     
+//       s = " INSERT INTO cliencamb values(" + dtAdd.getStrInsert() +
+//           ", '" + EU.usuario + "'" +
+//           ",TO_DATE('" + Formatear.getFechaAct("dd-MM-yyyy") + "','dd-MM-yyyy')" +
+//           "," + Formatear.getFechaAct("HH.mm") +
+//           ",'" + clc_comen + "')";
+// //     debug(dtAdd.getStrSelect(s));
+//       stUp.executeUpdate(dtAdd.getStrSelect(s));
        dtAdd.edit();
        if (clicodiAnt != cli_codiE.getValorInt())
        {
@@ -2349,9 +2357,10 @@ public class pdclien extends ventanaPad implements PAD
 //    }
  public static String getNombreCliente(DatosTabla dt, int cliCodi) throws SQLException
  {
-    String s = "SELECT cli_nomb from clientes WHERE cli_codi = " + cliCodi;
+    String s = "SELECT cli_nomb,cli_horenv,cli_comenv from clientes WHERE cli_codi = " + cliCodi;
     if (! dt.select(s))
       return null;
     return dt.getString("cli_nomb");
   }
+ 
 }

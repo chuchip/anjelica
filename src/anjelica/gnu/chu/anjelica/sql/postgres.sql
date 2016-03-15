@@ -257,7 +257,7 @@ cli_poble varchar(30), -- Poblacion Entrega
 cli_codpoe int,        -- Cod. Postal Envio
 cli_telefe varchar(15), -- Telefono Envio
 cli_faxe varchar(15),	 -- Fax de Envio
-cli_horenv varhcar(50), -- Horario de Envio
+cli_horenv varchar(50), -- Horario de Envio
 cli_comenv varchar(80), -- Comentario Envio
 emp_codi int default 1 not null, -- Empresa
 cli_plzent int, 	-- Plazo de Entrega
@@ -412,7 +412,7 @@ cli_feulco date,        -- Fecha Ult. Contacto
 cli_estcon char(1) default 'N',     -- Estado de Contacto (No contacto,Ausente,Contacto, Llamar)
 cli_email1 char(60),     -- Correo Electronico Comercial (Tarifas)
 cli_email2 char(60),     -- Correo Electronico Administr. (Facturas/Alb.)
-usu_nomb varchar(15) not null, -- Usuario que realiza el Cambio
+usu_nom varchar(15) not null, -- Usuario que realiza el Cambio
 clc_fecha date not null, -- Fecha de Cambio
 clc_hora decimal(5,2) not null, -- Hora de Cambio
 clc_comen varchar(100) -- Comentario sobre el Cambio
@@ -2899,8 +2899,8 @@ create table anjelica.v_provincia
 --
 -- Cabecera de transportistas
 --
--- drop table v_transport;
-create table anjelica.v_transport
+-- drop table transportista;
+create table anjelica.transportista
 (
  tra_codi int not null,         -- Codigo de Transportista
  tra_nomb varchar(40) NOT NULL, -- Nombre del Transportista
@@ -2919,8 +2919,15 @@ create table anjelica.v_transport
  tra_porree float,		-- Porcent. a Incr. por reembolso. (Ambos Tipos)
  tra_aduori float,		-- Importe de Aduanas de Origen (Ambos Tipos Calculo)
  tra_adudes float,		-- Importe de Aduanas de Dest. (Ambos Tipos Calculo)
+ tra_tipo char(1) not null default 'C', -- Tipo Transportista. 'C': Compras. 'V' Ventas.
  constraint ix_transport primary key(tra_codi)
 );
+create view v_transport as select * from transportista where tra_tipo='C'; -- Transportista Compras
+create view v_tranpvent as select tra_codi,tra_nomb from transportista where tra_tipo='V'
+UNION
+select usu_nomb as tra_codi, usu_nomco as tra_nomb from usuarios where usu_activ='S'; -- Transportista Ventas
+grant select on  v_transport to public;
+grant select on  v_tranpvent to public;
 ---
 -- Cabecera de Descargas de Camiones
 ---
