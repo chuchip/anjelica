@@ -215,6 +215,11 @@ public class pdclien extends ventanaPad implements PAD
     CLabel emp_nombL;
     CLabel sbe_nombL;
     CLabel eti_codiL = new CLabel();
+    CLabel cli_horenvL = new CLabel("Horario");
+    CTextField cli_horenvE = new CTextField(Types.CHAR,"X",50);
+    CLabel cli_comenvL = new CLabel("Comentario");
+    CTextField cli_comenvE = new CTextField(Types.CHAR,"X",80);
+
     CLinkBox eti_codiE = new CLinkBox();
     CLabel cli_precfiL = new CLabel();
     CComboBox cli_precfiE = new CComboBox();
@@ -388,6 +393,10 @@ public class pdclien extends ventanaPad implements PAD
       eti_codiE.setAncTexto(40);
       eti_codiL.setBounds(new Rectangle(0, 150, 60, 18));
       eti_codiE.setBounds(new Rectangle(86, 150, 300, 18));
+      cli_horenvL.setBounds(new Rectangle(0, 170, 60, 18));
+      cli_horenvE.setBounds(new Rectangle(86, 170, 350, 18));
+      cli_comenvL.setBounds(new Rectangle(0, 190, 70, 18));
+      cli_comenvE.setBounds(new Rectangle(86, 190, 500, 18));
 
       cli_pdtocoL.setText("% Dto. Comercial");
       cli_pdtocoL.setBounds(new Rectangle(529, 95, 96, 18));
@@ -666,6 +675,10 @@ public class pdclien extends ventanaPad implements PAD
       PdatEnv.add(cli_faxeE, null);
       PdatEnv.add(eti_codiL, null);
       PdatEnv.add(eti_codiE, null);
+      PdatEnv.add(cli_horenvL, null);
+      PdatEnv.add(cli_horenvE, null);
+      PdatEnv.add(cli_comenvL, null);
+      PdatEnv.add(cli_comenvE, null);
 
       Tpanel.add(PdatGen, "General");
       Tpanel.add(PdatFra, "Facturacion");
@@ -1013,6 +1026,8 @@ public class pdclien extends ventanaPad implements PAD
     cli_internE.setColumnaAlias("cli_intern");
     cli_precfiE.setColumnaAlias("cli_precfi");
     eti_codiE.setColumnaAlias("eti_codi");
+    cli_horenvE.setColumnaAlias("cli_horenv");
+    cli_comenvE.setColumnaAlias("cli_comenv");
     cli_email1E.setColumnaAlias("cli_email1");
     cli_email2E.setColumnaAlias("cli_email2");
 //    cli_nurgsaE.setColumnaAlias("cli_nurgsa");
@@ -1208,6 +1223,8 @@ public class pdclien extends ventanaPad implements PAD
     v.add(cli_internE.getStrQuery());
     v.add(cli_precfiE.getStrQuery());
     v.add(eti_codiE.getStrQuery());
+    v.add(cli_comenvE.getStrQuery());
+    v.add(cli_horenvE.getStrQuery());
 //    v.add(cli_nurgsaE.getStrQuery());
     v.add(cli_telefeE.getStrQuery());
     v.add(cli_faxeE.getStrQuery());
@@ -1671,6 +1688,8 @@ public class pdclien extends ventanaPad implements PAD
     dtAdd.setDato("cli_intern",cli_internE.getValor());
     dtAdd.setDato("cli_precfi",cli_precfiE.getValor());
     dtAdd.setDato("eti_codi",eti_codiE.getValorInt());
+    dtAdd.setDato("cli_horenv",cli_horenvE.getText());
+    dtAdd.setDato("cli_comenv",cli_comenvE.getText());
     dtAdd.setDato("cli_email1",cli_email1E.getText());
     dtAdd.setDato("cli_email2",cli_email2E.getText());
 //    dtAdd.setDato("cli_nurgsa",cli_nurgsaE.getText());
@@ -2049,6 +2068,8 @@ public class pdclien extends ventanaPad implements PAD
       cli_internE.setValor(dtCon1.getString("cli_intern"));
       cli_precfiE.setValor(dtCon1.getString("cli_precfi"));
       eti_codiE.setValorInt(dtCon1.getInt("eti_codi"));
+      cli_horenvE.setText(dtCon1.getString("cli_horenv"));
+      cli_comenvE.setText(dtCon1.getString("cli_comenv"));
       cli_feulveE.setDate(dtCon1.getDate("cli_feulve"));
       cli_feulcoE.setDate(dtCon1.getDate("cli_feulco"));
       cli_estconE.setValor(dtCon1.getString("cli_estcon"));
