@@ -103,6 +103,7 @@ public class menu extends JFrame
   JMenuItem ALConmvpr = new JMenuItem();
   JMenuItem ALMantPartes = new JMenuItem();
   JMenuItem pdproveed = new JMenuItem();
+  JMenuItem pdtranspo = new JMenuItem();
   JMenuItem pdarticu = new JMenuItem();
   JMenuItem lisclien = new JMenuItem();
   JMenuItem tratclien = new JMenuItem();
@@ -462,6 +463,12 @@ public class menu extends JFrame
     pdproveed.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         pdproveed_actionPerformed(e);
+      }
+    });
+     pdtranspo.setText("Transportista");
+    pdtranspo.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        pdtranspo_actionPerformed(e);
       }
     });
     pdarticu.setText("Articulos");
@@ -952,6 +959,7 @@ public class menu extends JFrame
     JPopupPad.add(pddiscrim);
     JPopupPad.add(pdreprese);
     JPopupPad.add(pdproveed);
+    JPopupPad.add(pdtranspo);
     JPopupPad.add(pdarticu);
     JPopupPad.add(lisclien);
     JPopupPad.add(tratclien);
@@ -1774,7 +1782,9 @@ void pdreprese_actionPerformed(ActionEvent e) {
     ht.put("modConsulta", "false");
       lanzaEjecutable( new gnu.chu.anjelica.pad.pdprove(menu.this,EU,ht));
   }
-
+ void pdtranspo_actionPerformed(ActionEvent e) {
+      lanzaEjecutable( new gnu.chu.anjelica.pad.pdtransp(menu.this,EU));
+  }
   void pdarticu_actionPerformed(ActionEvent e)
   {
     Hashtable ht = new Hashtable();

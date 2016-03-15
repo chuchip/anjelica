@@ -1,3 +1,40 @@
+-- Cambiada tabla transportistas . Añadida opcion transportista Ventas
+alter table v_transport rename to transportista;
+alter table transportista add tra_tipo char(1) not null default 'C';
+create view v_transport as select * from transportista where tra_tipo='C'; -- Transportista Compras
+create view v_tranpvent as select 'T' || tra_codi as tra_codi,tra_nomb from transportista where tra_tipo='V'
+UNION
+select usu_nomb as tra_codi, usu_nomco as tra_nomb from usuarios where usu_activ='S'; -- Transportista Ventas
+grant select on  v_transport to public;
+grant select on  v_tranpvent to public;
+-- Añadidas lineas de horario reparto en cliente y en hoja de ruta.
+alter table anjelica.clientes add cli_horenv varchar(50);
+alter table anjelica.clientes add  cli_comenv varchar(80);
+
+alter table anjelica.cliencamb add cli_horenv varchar(50);
+alter table anjelica.cliencamb add  cli_comenv varchar(80);
+
+drop view anjelica.v_cliprv;
+drop view anjelica.v_cliente;
+create or replace view anjelica.v_cliente as select * from anjelica.clientes;
+grant select on anjelica.v_cliente to public;
+create view anjelica.v_cliprv as 
+select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.v_cliente 
+union all
+select 'C' AS tipo,prv_codi as codigo, prv_nomb as nombre from anjelica.v_proveedo;
+grant select on anjelica.v_cliprv to public;
+
+drop view anjelica.v_albruta;
+alter table anjelica.albrutalin add alr_horrep varchar(50);
+alter table anjelica.albrutalin add alr_comrep varchar(80);
+
+create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_bultos,alr_palets,
+alr_unid,alr_kilos,alr_horrep,alr_comrep,alr_repet,
+al.emp_codi,al.avc_ano,al.avc_serie,al.avc_nume,al.cli_codi,al.avc_clinom,al.avc_kilos,
+al.avc_unid 
+from anjelica.albrutacab as c, anjelica.albrutalin as l,anjelica.v_albavec as al 
+where c.alr_nume=l.alr_nume and al.avc_id = l.avc_id;
+grant select on v_albruta to public;
 -- Añadido congelado a accion de lineas de partes
 alter table partelin drop constraint partelin_pal_accion_check;
 alter table partelin  add constraint partelin_pal_accion_check check (pal_accion  in ('A','V','R','C','-'));

@@ -1,4 +1,4 @@
-  package gnu.chu.anjelica.compras;
+  package gnu.chu.anjelica.pad;
 
 import gnu.chu.controles.*;
 import gnu.chu.sql.*;
@@ -16,7 +16,7 @@ import javax.swing.BorderFactory;
  * <p>Título: PDTRANSP </p>
  * <p>Descripción: Mantenimiento Tabla de Transportistas</p>
  * <p>Empresa: MISL</p>
- * <p>Copyright: Copyright (c) 2005
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -30,7 +30,7 @@ import javax.swing.BorderFactory;
  *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
  * </p>
  * @author chuchiP
- * @version 1.0
+ * @version 2.0
  */
 public class pdtransp extends ventanaPad   implements PAD
 {
@@ -73,7 +73,8 @@ public class pdtransp extends ventanaPad   implements PAD
   CTextField tra_aduoriE = new CTextField(Types.DECIMAL,"###,##9.99");
   CLabel cLabel14 = new CLabel();
   CTextField tra_adudesE = new CTextField(Types.DECIMAL,"###,##9.99");
-
+  CLabel tra_tipoL = new CLabel("Tipo");
+  CComboBox tra_tipoE = new CComboBox();
   public pdtransp(EntornoUsuario eu, Principal p)
   {
     this(eu,p,null);
@@ -100,7 +101,7 @@ public class pdtransp extends ventanaPad   implements PAD
     }
   }
 
-  public pdtransp(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable ht)
+  public pdtransp(gnu.chu.anjelica.menu p, EntornoUsuario eu)
   {
     EU = eu;
     vl = p.getLayeredPane();
@@ -122,9 +123,9 @@ public class pdtransp extends ventanaPad   implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(436, 341));
-    this.setVersion("20050916");
+    this.setVersion("20160315");
 
-    strSql = "SELECT * FROM v_transport  ORDER BY tra_codi ";
+    strSql = "SELECT * FROM transportista  ORDER BY tra_codi ";
 
     statusBar = new StatusBar(this);
     conecta();
@@ -178,6 +179,10 @@ public class pdtransp extends ventanaPad   implements PAD
     cli_nifL.setText("NIF");
     cli_nifL.setBounds(new Rectangle(15, 78, 32, 17));
     tra_nifE.setBounds(new Rectangle(62, 78, 129, 17));
+    tra_tipoE.addItem("Compra","C");
+    tra_tipoE.addItem("Venta","V");
+    tra_tipoL.setBounds(new Rectangle(243, 78, 45, 17));
+    tra_tipoE.setBounds(new Rectangle(293, 78, 80, 17));
     cLabel1.setText("Vehiculo");
     cLabel2.setText("Matricula");
     cLabel6.setRequestFocusEnabled(true);
@@ -218,6 +223,8 @@ public class pdtransp extends ventanaPad   implements PAD
     Pprinc.add(cLabel5, null);
     Pprinc.add(cli_nifL, null);
     Pprinc.add(tra_nifE, null);
+    Pprinc.add(tra_tipoL, null);
+    Pprinc.add(tra_tipoE, null);
     Pprinc.add(tra_tipcalE, null);
     Pprinc.add(Ptarfija, null);
     Pprinc.add(cLabel13, null);
@@ -257,6 +264,7 @@ public class pdtransp extends ventanaPad   implements PAD
     tra_telefE.setColumnaAlias("tra_telef");
     tra_faxE.setColumnaAlias("tra_fax");
     tra_nifE.setColumnaAlias("tra_nif");
+    tra_tipoE.setColumnaAlias("tra_tipo");
     tra_vehicE.setColumnaAlias("tra_vehic");
     tra_matricE.setColumnaAlias("tra_matric");
     tra_tipcalE.setColumnaAlias("tra_tipcal");
@@ -289,7 +297,7 @@ public class pdtransp extends ventanaPad   implements PAD
       if (dtCons.getNOREG())
         return;
       tra_codiE.setText(dtCons.getString("tra_codi"));
-      s="SELECT * FROM v_transport WHERE tra_codi = '" +tra_codiE.getValorInt()+"'";
+      s="SELECT * FROM transportista WHERE tra_codi = '" +tra_codiE.getValorInt()+"'";
       if (! dtCon1.select(s))
       {
         mensajeErr("Transportista NO ENCONTRADO ... SEGURAMENTE SE BORRO");
@@ -304,6 +312,7 @@ public class pdtransp extends ventanaPad   implements PAD
       tra_telefE.setText(dtCon1.getString("tra_telef"));
       tra_faxE.setText(dtCon1.getString("tra_fax"));
       tra_nifE.setText(dtCon1.getString("tra_nif"));
+      tra_tipoE.setValor(dtCon1.getString("tra_tipo"));
       tra_vehicE.setText(dtCon1.getString("tra_vehic"));
       tra_matricE.setText(dtCon1.getString("tra_matric"));
       tra_tipcalE.setValor(dtCon1.getString("tra_tipcal"));
@@ -332,6 +341,7 @@ public class pdtransp extends ventanaPad   implements PAD
     tra_telefE.setEnabled(act);
     tra_faxE.setEnabled(act);
     tra_nifE.setEnabled(act);
+    tra_tipoE.setEnabled(act);
     tra_vehicE.setEnabled(act);
     tra_matricE.setEnabled(act);
     tra_tipcalE.setEnabled(act);
@@ -386,27 +396,28 @@ public class pdtransp extends ventanaPad   implements PAD
       return;
     }
 
-    Vector v = new Vector();
-    v.addElement(tra_nombE.getStrQuery());
-    v.addElement(tra_codiE.getStrQuery());
-    v.addElement(tra_nombE.getStrQuery());
-    v.addElement(tra_direcE.getStrQuery());
-    v.addElement(tra_poblE.getStrQuery());
-    v.addElement(tra_codposE.getStrQuery());
-    v.addElement(tra_telefE.getStrQuery());
-    v.addElement(tra_faxE.getStrQuery());
-    v.addElement(tra_nifE.getStrQuery());
-    v.addElement(tra_vehicE.getStrQuery());
-    v.addElement(tra_matricE.getStrQuery());
-    v.addElement(tra_tipcalE.getStrQuery());
-    v.addElement(tra_prebasE.getStrQuery());
-    v.addElement(tra_impkilE.getStrQuery());
-    v.addElement(tra_porsegE.getStrQuery());
-    v.addElement(tra_porreeE.getStrQuery());
-    v.addElement(tra_aduoriE.getStrQuery());
-    v.addElement(tra_adudesE.getStrQuery());
+    ArrayList v = new ArrayList();
+    v.add(tra_nombE.getStrQuery());
+    v.add(tra_codiE.getStrQuery());
+    v.add(tra_nombE.getStrQuery());
+    v.add(tra_direcE.getStrQuery());
+    v.add(tra_poblE.getStrQuery());
+    v.add(tra_codposE.getStrQuery());
+    v.add(tra_telefE.getStrQuery());
+    v.add(tra_faxE.getStrQuery());
+    v.add(tra_nifE.getStrQuery());
+    v.add(tra_tipoE.getStrQuery());
+    v.add(tra_vehicE.getStrQuery());
+    v.add(tra_matricE.getStrQuery());
+    v.add(tra_tipcalE.getStrQuery());
+    v.add(tra_prebasE.getStrQuery());
+    v.add(tra_impkilE.getStrQuery());
+    v.add(tra_porsegE.getStrQuery());
+    v.add(tra_porreeE.getStrQuery());
+    v.add(tra_aduoriE.getStrQuery());
+    v.add(tra_adudesE.getStrQuery());
 
-    s = "SELECT * FROM v_transport ";
+    s = "SELECT * FROM transportista ";
     s = creaWhere(s, v,true);
     s+=" ORDER BY tra_codi ";
     Pprinc.setQuery(false);
@@ -451,7 +462,7 @@ public class pdtransp extends ventanaPad   implements PAD
     tra_codiE.setEnabled(false);
     try
     {
-      if (!setBloqueo(dtAdd, "v_transport",tra_codiE.getText()))
+      if (!setBloqueo(dtAdd, "transportista",tra_codiE.getText()))
       {
         msgBox(msgBloqueo);
         nav.pulsado = navegador.NINGUNO;
@@ -459,10 +470,10 @@ public class pdtransp extends ventanaPad   implements PAD
         dtAdd.getConexion().rollback();
         return;
       }
-      if (! dtAdd.select("select * from v_transport where tra_codi = '"+tra_codiE.getText()+"'",true))
+      if (! dtAdd.select("select * from transportista where tra_codi = '"+tra_codiE.getText()+"'",true))
       {
         mensajeErr("Registro ha sido borrado");
-        resetBloqueo(dtAdd, "v_transport", tra_codiE.getText(),true);
+        resetBloqueo(dtAdd, "transportista", tra_codiE.getText(),true);
         activaTodo();
         mensaje("");
        return;
@@ -484,7 +495,7 @@ public class pdtransp extends ventanaPad   implements PAD
       dtAdd.edit();
       actValores(dtAdd);
       dtAdd.update(stUp);
-      resetBloqueo(dtAdd, "v_transport",tra_codiE.getText(),false);
+      resetBloqueo(dtAdd, "transportista",tra_codiE.getText(),false);
       ctUp.commit();
     }
     catch (Throwable ex)
@@ -502,7 +513,7 @@ public class pdtransp extends ventanaPad   implements PAD
   {
     mensaje("");
     try {
-      resetBloqueo(dtAdd, "v_transport", tra_codiE.getText(), true);
+      resetBloqueo(dtAdd, "transportista", tra_codiE.getText(), true);
     } catch (Exception ex)
     {
       Error("Error al Quitar Bloqueo", ex);
@@ -539,13 +550,14 @@ public class pdtransp extends ventanaPad   implements PAD
     }
     return true;
   }
+  @Override
   public void ej_addnew1()
   {
     try
     {
-      s="SELECT max(tra_codi) as tra_codi FROM v_transport";
+      s="SELECT max(tra_codi) as tra_codi FROM transportista";
       dtCon1.select(s);
-      dtAdd.addNew("v_transport");
+      dtAdd.addNew("transportista");
       tra_codiE.setValorInt(dtCon1.getInt("tra_codi",true)+1);
       dtAdd.setDato("tra_codi",tra_codiE.getValorInt());
       actValores(dtAdd);
@@ -571,6 +583,7 @@ public class pdtransp extends ventanaPad   implements PAD
     dt.setDato("tra_telef", tra_telefE.getText());
     dt.setDato("tra_fax", tra_faxE.getText());
     dt.setDato("tra_nif", tra_nifE.getText());
+    dt.setDato("tra_tipo", tra_tipoE.getValor());
     dt.setDato("tra_vehic", tra_vehicE.getText());
     dt.setDato("tra_matric", tra_matricE.getText());
     dt.setDato("tra_tipcal", tra_tipcalE.getValor());
@@ -594,18 +607,18 @@ public class pdtransp extends ventanaPad   implements PAD
     try
     {
 
-      if (!setBloqueo(dtAdd, "v_transport", tra_codiE.getText()))
+      if (!setBloqueo(dtAdd, "transportista", tra_codiE.getText()))
       {
         msgBox(msgBloqueo);
         nav.pulsado = navegador.NINGUNO;
         activaTodo();
         return;
       }
-      if (!dtAdd.select("select * from v_transport where tra_codi= '" +
+      if (!dtAdd.select("select * from transportista where tra_codi= '" +
                         tra_codiE.getText() + "'", true))
       {
         mensajeErr("Registro ha sido borrado");
-        resetBloqueo(dtAdd, "v_transport", tra_codiE.getText());
+        resetBloqueo(dtAdd, "transportista", tra_codiE.getText());
         activaTodo();
         mensaje("");
         return;
@@ -629,7 +642,7 @@ public class pdtransp extends ventanaPad   implements PAD
     try
     {
       dtAdd.delete(stUp);
-      resetBloqueo(dtAdd, "v_transport",tra_codiE.getText(),false);
+      resetBloqueo(dtAdd, "transportista",tra_codiE.getText(),false);
       ctUp.commit();
       rgSelect();
     }
@@ -642,11 +655,12 @@ public class pdtransp extends ventanaPad   implements PAD
     mensaje("");
     mensajeErr("Registro ... Borrado");
   }
+  @Override
   public void canc_delete() {
     mensaje("");
     activaTodo();
     try {
-      resetBloqueo(dtAdd, "v_transport",tra_codiE.getText(),true);
+      resetBloqueo(dtAdd, "transportista",tra_codiE.getText(),true);
     } catch (Exception k)
     {
       Error("Error al Anular bloqueo sobre tabla usuarios",k);

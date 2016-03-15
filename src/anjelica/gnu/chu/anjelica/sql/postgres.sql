@@ -257,6 +257,8 @@ cli_poble varchar(30), -- Poblacion Entrega
 cli_codpoe int,        -- Cod. Postal Envio
 cli_telefe varchar(15), -- Telefono Envio
 cli_faxe varchar(15),	 -- Fax de Envio
+cli_horenv varhcar(50), -- Horario de Envio
+cli_comenv varchar(80), -- Comentario Envio
 emp_codi int default 1 not null, -- Empresa
 cli_plzent int, 	-- Plazo de Entrega
 tar_codi int,		-- Tarifa
@@ -321,12 +323,12 @@ cli_email1 char(60),     -- Correo Electronico Comercial (Tarifas)
 cli_email2 char(60),     -- Correo Electronico Administr. (Facturas/Alb.)
 constraint ix_vcliente primary key(cli_codi)
 );
-create view anjelica.v_cliente as select * from anjelica.clientes;
+create or replace view anjelica.v_cliente as select * from anjelica.clientes;
 grant select on anjelica.v_cliente to PUBLIC;
 --
 -- Tabla de Cambios en Tabla Clientes
 ---
--- drop table cliencamb;
+drop table cliencamb;
 create table anjelica.cliencamb
 (
 cli_codi int not null,
@@ -346,6 +348,8 @@ cli_poble varchar(30), -- Poblacion Entrega
 cli_codpoe int, -- Cod. Postal Envio
 cli_telefe varchar(15), -- Telefono Envio
 cli_Faxe varchar(15), -- Fax de Envio
+cli_horenv varchar(50), -- Horario de Envio
+cli_comenv varchar(80), -- Comentario Envio
 emp_codi int, -- Empresa
 cli_plzent int, -- Plazo de Entrega
 tar_codi int, -- Tarifa
@@ -2142,12 +2146,14 @@ create table anjelica.albrutalin
 	alr_palets smallint not null default 1, -- Palets
 	alr_kilos float not null, -- Kilos de Albaran
 	alr_unid int not null, -- Unidades de Albaran
+	alr_horrep varchar(50), -- horario reparto
+	alr_comrep varchar(80), -- Comentario Reparto
 	alr_repet smallint not null default 0, -- Repetido
 	constraint ix_albrutalin primary key (alr_nume,alr_orden)
 );
 create index ix_albrutali1 on anjelica.albrutalin(avc_id);
 create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_bultos,alr_palets,
-alr_unid,alr_kilos,alr_repet,
+alr_unid,alr_kilos,alr_horrep,alr_comrep,alr_repet,
 al.emp_codi,al.avc_ano,al.avc_serie,al.avc_nume,al.cli_codi,al.avc_clinom,al.avc_kilos,
 al.avc_unid 
 from anjelica.albrutacab as c, anjelica.albrutalin as l,anjelica.v_albavec as al 

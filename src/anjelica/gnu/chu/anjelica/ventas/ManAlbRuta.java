@@ -130,7 +130,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-02-11 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2016-03-15 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -263,7 +263,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 return;
             }
             rut_codiE.setText(dtCon1.getString("rut_codi"));
-            usu_nombE.setText(dtCon1.getString("usu_nomb"));
+            tra_codiE.setValor(dtCon1.getString("usu_nomb"));
             alr_fechaE.setDate(dtCon1.getDate("alr_fecha"));
             alr_fecsalE.setDate(dtCon1.getDate("alr_fecsal"));
             alr_fecsalH.setText(dtCon1.getFecha("alr_fecsal","HH"));
@@ -388,10 +388,10 @@ public class ManAlbRuta extends ventanaPad implements PAD
     
     Pcabe.resetTexto();
     alr_comentE.resetTexto();
-    usu_nombE.setText(EU.usuario);
+    tra_codiE.setValor(EU.usuario);
     alr_fechaE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
     alr_fecsalE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-    usu_nombE.setText(EU.usuario);
+    
     veh_codiE.setText("");
     jt.removeAllDatos();
     jtFra.removeAllDatos();
@@ -422,7 +422,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     @Override
    public void PADEdit()
    {
-      if (!usu_nombE.getText().equals(EU.usuario) && ARG_MODSALA)
+      if (!tra_codiE.getValor().equals(EU.usuario) && ARG_MODSALA)
       {
         msgBox("No tiene permisos para editar este registro");
          nav.pulsado = navegador.NINGUNO;
@@ -483,7 +483,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
      {
          if (ARG_MODSALA)
          {
-             if (usu_nombE.getText().equals(EU.usuario))
+             if (tra_codiE.getValor().equals(EU.usuario))
              {
                  msgBox("No tiene permisos para editar este registro");
                  nav.pulsado = navegador.NINGUNO;
@@ -678,7 +678,6 @@ public class ManAlbRuta extends ventanaPad implements PAD
         cLabel3 = new gnu.chu.controles.CLabel();
         rut_codiE = new gnu.chu.controles.CLinkBox();
         cLabel4 = new gnu.chu.controles.CLabel();
-        usu_nombE = new gnu.chu.controles.CLinkBox();
         cLabel8 = new gnu.chu.controles.CLabel();
         alr_vekminE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#,###,##9");
         cLabel9 = new gnu.chu.controles.CLabel();
@@ -691,6 +690,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         alr_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###,##9");
         BInsAuto = new gnu.chu.controles.CButton(Iconos.getImageIcon("fill"));
         BirGrid = new gnu.chu.controles.CButton();
+        tra_codiE = new gnu.chu.controles.CComboBox();
         PPie = new gnu.chu.controles.CPanel();
         cLabel12 = new gnu.chu.controles.CLabel();
         numAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
@@ -867,12 +867,6 @@ public class ManAlbRuta extends ventanaPad implements PAD
         Pcabe.add(cLabel4);
         cLabel4.setBounds(230, 45, 60, 15);
 
-        usu_nombE.setAncTexto(100);
-        usu_nombE.setFormato(Types.CHAR,"X",15);
-        Pcabe.add(usu_nombE);
-        usu_nombE.setBounds(290, 2, 260, 18);
-        usu_nombE.getAccessibleContext().setAccessibleName("");
-
         cLabel8.setText("Km. Iniciales ");
         Pcabe.add(cLabel8);
         cLabel8.setBounds(10, 67, 80, 17);
@@ -914,6 +908,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
         BInsAuto.setBounds(510, 23, 30, 24);
         Pcabe.add(BirGrid);
         BirGrid.setBounds(540, 120, 2, 2);
+        Pcabe.add(tra_codiE);
+        tra_codiE.setBounds(290, 0, 210, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1184,30 +1180,29 @@ public class ManAlbRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField numFrasE;
     private gnu.chu.controles.CTextField palTotE;
     private gnu.chu.controles.CLinkBox rut_codiE;
+    private gnu.chu.controles.CComboBox tra_codiE;
     private gnu.chu.controles.CTextField uniTotE;
-    private gnu.chu.controles.CLinkBox usu_nombE;
     private gnu.chu.controles.CLinkBox veh_codiE;
     // End of variables declaration//GEN-END:variables
    @Override
     public void iniciarVentana() throws Exception {
         Pcabe.setAltButton(BirGrid);
         pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS ,EU.em_cod);
-        String s="select usu_nomb,usu_nomco from usuarios where emp_codi= "+EU.em_cod+
-            (ARG_MODSALA?" and usu_nomb='"+EU.usuario+"'":"")+
-            " and usu_activ = 'S' "+
-            " order by usu_nomb";
+        String s="select tra_codi,tra_nomb from v_tranpvent "+
+            (ARG_MODSALA?" where tra_codi ='"+EU.usuario+"'":"")+            
+            " order by tra_codi";
         if (dtCon1.select(s))
-            usu_nombE.addDatos(dtCon1);
-        usu_nombE.addDatos("Externo","Externo");
+            tra_codiE.addItem(dtCon1);
+        tra_codiE.addItem("Externo","Externo");
         s="select veh_codi,veh_nomb from vehiculos order by veh_nomb";
         if (dtCon1.select(s))
             veh_codiE.addDatos(dtCon1);
         if (ARG_MODSALA)
-            usu_nombE.setEnabled(false);
+            tra_codiE.setEnabled(false);
         alr_numeE.setColumnaAlias("alr_nume");
         alr_fechaE.setColumnaAlias("alr_fecha");
         rut_codiE.setColumnaAlias("rut_codi");
-        usu_nombE.setColumnaAlias("usu_nomb");
+        tra_codiE.setColumnaAlias("usu_nomb");
         veh_codiE.setColumnaAlias("veh_codi");
         alr_fecsalE.setColumnaAlias("alr_fecsal");
         alr_fecregE.setColumnaAlias("alr_fecreg");
@@ -1397,7 +1392,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
       ArrayList v = new ArrayList();
       v.add(alr_numeE.getStrQuery());
       v.add(rut_codiE.getStrQuery());
-      v.add(usu_nombE.getStrQuery());
+      v.add(tra_codiE.getStrQuery());
       v.add(alr_fechaE.getStrQuery());
       v.add(alr_fecsalE.getStrQuery());
       v.add(alr_fecregE.getStrQuery());
@@ -1556,7 +1551,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     {
       
         dtAdd.setDato("rut_codi",rut_codiE.getText());
-        dtAdd.setDato("usu_nomb",usu_nombE.getText());
+        dtAdd.setDato("usu_nomb",tra_codiE.getValor());
         dtAdd.setDato("alr_fecha",alr_fechaE.getDate());
         if (! alr_fecsalE.isNull())
             dtAdd.setDato("alr_fecsal","{ts '"+alr_fecsalE.getFecha("yyyy-MM-dd")+" "+
@@ -1628,12 +1623,12 @@ public class ManAlbRuta extends ventanaPad implements PAD
             mensajeErr("Introduzca ruta");
             return false;
         }
-        if (usu_nombE.isNull())
-        {
-            mensajeErr("Usuario NO es valido");
-            usu_nombE.requestFocus();
-            return false;
-        }
+//        if (usu_nombE.isNull())
+//        {
+//            mensajeErr("Usuario NO es valido");
+//            usu_nombE.requestFocus();
+//            return false;
+//        }
        
         return true;
     }
@@ -1695,7 +1690,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
                
         alr_fechaE.setEnabled(b);
         rut_codiE.setEnabled(b);        
-        usu_nombE.setColumnaAlias("usu_nomb");
+        tra_codiE.setColumnaAlias("usu_nomb");
         veh_codiE.setColumnaAlias("veh_codi");
         
         alr_comentE.setEnabled(b);
@@ -1782,7 +1777,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
      JasperReport jr= gnu.chu.print.util.getJasperReport(EU, "cacobrea");
      java.util.HashMap mp = new java.util.HashMap();
      mp.put("cor_fecha", alr_fechaE.getText());
-     mp.put("usu_nomb", usu_nombE.getText());
+     mp.put("usu_nomb", tra_codiE.getText());
      mp.put("zon_codi", rut_codiE.getText()+"-"+rut_codiE.getTextCombo());
      mp.put("cor_orden", alr_numeE.getText());
 
@@ -1815,7 +1810,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
      JasperReport jr= gnu.chu.print.util.getJasperReport(EU, "relAlbRuta");
      java.util.HashMap mp = new java.util.HashMap();
      mp.put("cor_fecha", alr_fechaE.getText());
-     mp.put("usu_nomb", usu_nombE.getText());
+     mp.put("usu_nomb", tra_codiE.getText());
      mp.put("zon_codi", rut_codiE.getText()+"-"+rut_codiE.getTextCombo());
      mp.put("cor_orden", alr_numeE.getText());
 
@@ -1843,7 +1838,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         JasperReport jr= gnu.chu.print.util.getJasperReport(EU, "relAlbRutaExt");
         java.util.HashMap mp = new java.util.HashMap();
         mp.put("cor_fecha", alr_fechaE.getText());
-        mp.put("usu_nomb", usu_nombE.getText());
+        mp.put("usu_nomb", tra_codiE.getText());
         mp.put("zon_codi", rut_codiE.getText()+"-"+rut_codiE.getTextCombo());
         mp.put("cor_orden", alr_numeE.getValorInt());
         mp.put("emp_codi", EU.em_cod);
