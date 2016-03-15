@@ -1397,7 +1397,7 @@ public class MantPartes  extends ventanaPad implements PAD
         Pcab.add(par_codiL);
         par_codiL.setBounds(10, 3, 50, 17);
         Pcab.add(par_codiE);
-        par_codiE.setBounds(70, 3, 50, 24);
+        par_codiE.setBounds(70, 3, 50, 17);
 
         pac_fecaltL.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         pac_fecaltL.setText("Fecha");
@@ -1429,7 +1429,7 @@ public class MantPartes  extends ventanaPad implements PAD
         Pcab.add(pac_cliprvL);
         pac_cliprvL.setBounds(0, 85, 70, 17);
         Pcab.add(cli_codiE);
-        cli_codiE.setBounds(70, 85, 370, 18);
+        cli_codiE.setBounds(70, 85, 370, 17);
         Pcab.add(prv_codiE);
         prv_codiE.setBounds(70, 85, 370, 18);
 
@@ -1437,16 +1437,16 @@ public class MantPartes  extends ventanaPad implements PAD
         Pcab.add(cLabel2);
         cLabel2.setBounds(450, 85, 70, 17);
         Pcab.add(pac_fecincE);
-        pac_fecincE.setBounds(70, 45, 70, 24);
+        pac_fecincE.setBounds(70, 45, 70, 17);
         Pcab.add(pac_docanoE);
-        pac_docanoE.setBounds(520, 85, 40, 24);
+        pac_docanoE.setBounds(520, 85, 40, 17);
 
         pac_docserE.setAutoNext(true);
         pac_docserE.setMayusc(true);
         Pcab.add(pac_docserE);
-        pac_docserE.setBounds(560, 85, 20, 24);
+        pac_docserE.setBounds(560, 85, 20, 17);
         Pcab.add(pac_docnumE);
-        pac_docnumE.setBounds(580, 85, 60, 24);
+        pac_docnumE.setBounds(580, 85, 60, 17);
 
         BbuscaDoc.setToolTipText("Buscar documentos (F3)");
         BbuscaDoc.setFocusable(false);
@@ -1463,7 +1463,7 @@ public class MantPartes  extends ventanaPad implements PAD
 
         pac_usuincE.setMinusc(true);
         Pusuarios.add(pac_usuincE);
-        pac_usuincE.setBounds(80, 20, 100, 24);
+        pac_usuincE.setBounds(80, 20, 100, 17);
 
         par_codiL2.setText("Procesado");
         Pusuarios.add(par_codiL2);
@@ -1471,7 +1471,7 @@ public class MantPartes  extends ventanaPad implements PAD
 
         pac_usuproE.setMinusc(true);
         Pusuarios.add(pac_usuproE);
-        pac_usuproE.setBounds(80, 40, 100, 24);
+        pac_usuproE.setBounds(80, 40, 100, 17);
 
         par_codiL1.setText("Resuelto");
         Pusuarios.add(par_codiL1);
@@ -1479,7 +1479,7 @@ public class MantPartes  extends ventanaPad implements PAD
 
         pac_usuresE.setMinusc(true);
         Pusuarios.add(pac_usuresE);
-        pac_usuresE.setBounds(250, 20, 100, 24);
+        pac_usuresE.setBounds(250, 20, 100, 17);
 
         Pcab.add(Pusuarios);
         Pusuarios.setBounds(10, 105, 360, 70);
@@ -1490,21 +1490,21 @@ public class MantPartes  extends ventanaPad implements PAD
 
         pac_fecaltL1.setText("Resuelto");
         Pfechas.add(pac_fecaltL1);
-        pac_fecaltL1.setBounds(150, 20, 60, 14);
+        pac_fecaltL1.setBounds(150, 20, 60, 15);
         Pfechas.add(pac_fecaltE);
-        pac_fecaltE.setBounds(75, 20, 60, 24);
+        pac_fecaltE.setBounds(75, 20, 60, 17);
 
         par_fecaltL3.setText("Alta");
         Pfechas.add(par_fecaltL3);
-        par_fecaltL3.setBounds(10, 20, 60, 14);
+        par_fecaltL3.setBounds(10, 20, 60, 15);
 
         pac_fecproL.setText("Procesado");
         Pfechas.add(pac_fecproL);
-        pac_fecproL.setBounds(10, 40, 60, 14);
+        pac_fecproL.setBounds(10, 40, 60, 15);
         Pfechas.add(pac_fecproE);
-        pac_fecproE.setBounds(75, 40, 60, 24);
+        pac_fecproE.setBounds(75, 40, 60, 17);
         Pfechas.add(pac_fecresE);
-        pac_fecresE.setBounds(210, 20, 60, 24);
+        pac_fecresE.setBounds(210, 20, 60, 17);
 
         Pcab.add(Pfechas);
         Pfechas.setBounds(390, 105, 280, 70);
@@ -1712,7 +1712,7 @@ public class MantPartes  extends ventanaPad implements PAD
 
         BListar.setText("Listar");
         PCondFiltro.add(BListar);
-        BListar.setBounds(610, 2, 80, 31);
+        BListar.setBounds(610, 2, 80, 19);
 
         BRefresh.setToolTipText("Refrescar Consulta");
         PCondFiltro.add(BRefresh);
@@ -1778,11 +1778,11 @@ public class MantPartes  extends ventanaPad implements PAD
         PPie.add(cLabel5);
         cLabel5.setBounds(120, 5, 50, 17);
         PPie.add(pal_kilosE1);
-        pal_kilosE1.setBounds(580, 5, 57, 24);
+        pal_kilosE1.setBounds(580, 5, 57, 17);
 
         pal_unidadE1.setEnabled(false);
         PPie.add(pal_unidadE1);
-        pal_unidadE1.setBounds(500, 5, 40, 24);
+        pal_unidadE1.setBounds(500, 5, 40, 17);
 
         cLabel6.setText("Caducid.");
         PPie.add(cLabel6);
@@ -1792,7 +1792,7 @@ public class MantPartes  extends ventanaPad implements PAD
         PPie.add(cLabel7);
         cLabel7.setBounds(460, 5, 35, 17);
         PPie.add(pro_feccadE1);
-        pro_feccadE1.setBounds(400, 5, 60, 24);
+        pro_feccadE1.setBounds(400, 5, 60, 17);
 
         Bcerrar.addMenu("Cerrar", "C");
         Bcerrar.addMenu("Cancelar", "X");
