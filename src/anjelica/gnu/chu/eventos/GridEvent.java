@@ -94,6 +94,10 @@ public class GridEvent extends EventObject
   {
       return linea;
   }
+  /**
+   * Devuelve la columna desde la q se movio (origen)
+   * @return 
+   */
   public int getColumna()
   {
       return col;
