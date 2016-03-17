@@ -134,7 +134,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-03-15 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2016-03-17 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -1347,7 +1347,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
             }
             String fecIni=Formatear.getFecha(Formatear.sumaDiasDate(alr_fechaE.getDate(),-7),"yyyy-MM-dd");
             String s="select c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,"
-                + "c.cli_codi,c.avc_clinom,avc_kilos,avc_unid,cl.cli_nomb from v_albavec as c,v_cliente as cl where c.cli_codi = cl.cli_codi and cl.rut_codi = '"+rut_codiE.getText()+"'"+
+                + "c.cli_codi,c.avc_clinom,avc_kilos,avc_unid,cl.cli_nomb,cli_horenv,cli_comenv from v_albavec as c,v_cliente as cl where c.cli_codi = cl.cli_codi and cl.rut_codi = '"+rut_codiE.getText()+"'"+
                 " and c.avc_fecalb between '"+fecIni+"' and '"+alr_fechaE.getFechaDB()+"'";
             if (! dtCon1.select(s))
             {
@@ -1375,6 +1375,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 
                 a.add(dtCon1.getString("avc_unid"));
                 a.add(dtCon1.getString("avc_kilos"));
+                a.add(dtCon1.getString("cli_horenv"));
+                a.add(dtCon1.getString("cli_comenv"));
                 a.add(false);
                 jt.addLinea(a);  
             } while (dtCon1.next());
