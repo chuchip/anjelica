@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
@@ -435,7 +436,37 @@ public class MantPartes  extends ventanaPad implements PAD
           }   
        
       });
-//  
+      BCerraRapido.addActionListener(new ActionListener()
+       {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            try { 
+              if (jtList.isVacio() || ! Bcerrar.isEnabled())
+                  return;              
+              cerrarIncidencia(e.getActionCommand().startsWith("Cerr")? ESTADO_CERRADO:ESTADO_CANCELA);
+              swCargaLin=true;
+              swCargaList=true;
+              jtList.removeLinea();
+              swCargaLin=false;
+              swCargaList=false;
+//              SwingUtilities.invokeLater(new Thread()
+//                   {
+//                            @Override
+//                            public void run()
+//                            {
+               verLineas(jtList.getValorInt(JTL_NUMPAR));
+//               jtList.requestFocusLater(jtList.getSelectedRow(),0);
+               jtList.requestFocusSelectedLater();
+//                            }
+//                    });
+              
+           } catch (SQLException ex) {
+               Error("Error al cerrar incidencia",ex);
+           }
+         }
+       });
+          
       Bcerrar.addActionListener(new ActionListener()
        {
          @Override
@@ -444,13 +475,23 @@ public class MantPartes  extends ventanaPad implements PAD
             try { 
               if (jtList.isVacio())
                   return;              
-              cerrarIncidencia(e.getActionCommand().startsWith("Cerr")? ESTADO_CERRADO:ESTADO_CANCELA);
+              int estado=e.getActionCommand().startsWith("Cerr")?ESTADO_CERRADO:ESTADO_CANCELA;
+              cerrarIncidencia(estado);
+              msgBox("Incidencia "+(estado==ESTADO_CERRADO?"Cerrada":"Cancelada"));
               swCargaLin=true;
               swCargaList=true;
               jtList.removeLinea();
               swCargaLin=false;
               swCargaList=false;
-              verDetalleLinea();
+//              SwingUtilities.invokeLater(new Thread()
+//                   {
+//                            @Override
+//                            public void run()
+//                            {
+               verLineas(jtList.getValorInt(JTL_NUMPAR));
+//                            }
+//                    });
+              
            } catch (SQLException ex) {
                Error("Error al cerrar incidencia",ex);
            }
@@ -1326,6 +1367,7 @@ public class MantPartes  extends ventanaPad implements PAD
         pro_feccadE1 = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
         Bcerrar = new gnu.chu.controles.CButtonMenu();
         BswGrid = new gnu.chu.controles.CButton(Iconos.getImageIcon("duplicar"));
+        BCerraRapido = new gnu.chu.controles.CButton();
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
@@ -1593,6 +1635,7 @@ public class MantPartes  extends ventanaPad implements PAD
         jtList.setAlinearColumna(new int[]{2,1,0,2,0,0});
         jtList.setFormatoColumna(1,"dd-MM-yy");
         jtList.setAjustarGrid(true);
+        jtList.setButton(KeyEvent.VK_F8, BCerraRapido);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1795,16 +1838,20 @@ public class MantPartes  extends ventanaPad implements PAD
         pro_feccadE1.setBounds(400, 5, 60, 17);
 
         Bcerrar.addMenu("Cerrar", "C");
-        Bcerrar.addMenu("Cancelar", "X");
-        Bcerrar.setToolTipText("Cerrar o Cancelar Incidencia");
-        Bcerrar.setText("Cerrar");
+        Bcerrar.addMenu("Anular Cierre", "X");
+        Bcerrar.setToolTipText("Cerrar o Anular Cierre de Incidencia");
+        Bcerrar.setText("Cerrar (F8)");
         PPie.add(Bcerrar);
         Bcerrar.setBounds(5, 3, 100, 20);
 
         BswGrid.setToolTipText("Ir o volver a lineas de abono");
         BswGrid.setDependePadre(false);
         PPie.add(BswGrid);
-        BswGrid.setBounds(660, 20, 24, 24);
+        BswGrid.setBounds(655, 20, 24, 24);
+
+        BCerraRapido.setDependePadre(false);
+        PPie.add(BCerraRapido);
+        BCerraRapido.setBounds(657, 9, 5, 5);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1860,6 +1907,7 @@ public class MantPartes  extends ventanaPad implements PAD
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BCerraRapido;
     private gnu.chu.controles.CButton BListar;
     private gnu.chu.controles.CButton BRefresh;
     private gnu.chu.controles.CButton Baceptar;
@@ -2580,6 +2628,7 @@ public class MantPartes  extends ventanaPad implements PAD
         Bcancelar.setEnabled(activo);
         BswGrid.setEnabled(false);
         Bcerrar.setEnabled(!activo && !jtList.isVacio() && P_PERMEST>=PERM_INSERTAR);
+        BCerraRapido.setEnabled(Bcerrar.isEnabled());
         jtLineas.setEnabled(activo &&  tipo == navegador.EDIT && P_PERMEST>=PERM_INSERTAR );
         jtAbo.setEnabled(false);//activo && tipo == navegador.EDIT && P_PERMEST>=PERM_INSERTAR );
         CPermiso.setEnabled(!activo && P_ADMIN );           
@@ -2613,7 +2662,7 @@ public class MantPartes  extends ventanaPad implements PAD
            dtAdd.setDato("pac_fecres",Formatear.getDateAct());
            dtAdd.update(); 
            dtAdd.commit();
-           msgBox("Incidencia "+(estado==ESTADO_CERRADO?"Cerrada":"Cancelada"));
+           
     }
 //    private void activaCamposGrid()
 //    {
@@ -2704,6 +2753,7 @@ public class MantPartes  extends ventanaPad implements PAD
                 jtLineas.removeAllDatos();
                 jtAbo.removeAllDatos();
                 Bcerrar.setEnabled(false);
+                BCerraRapido.setEnabled(false);
 //                if (P_PERMEST==PERM_ADMIN)
 //                {
 //                    Pcab.resetTexto();
@@ -2730,6 +2780,7 @@ public class MantPartes  extends ventanaPad implements PAD
             } while (dtCon1.next());
             jtList.requestFocusInicio();
             Bcerrar.setEnabled(true);
+            BCerraRapido.setEnabled(true);
             swCargaList=false;
             verDatos(jtList.getValorInt(JTL_NUMPAR));
             verLineas(jtList.getValorInt(JTL_NUMPAR));
