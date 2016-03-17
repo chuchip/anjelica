@@ -251,7 +251,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2016-02-09"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2016-03-17"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -1323,11 +1323,14 @@ public class pdpeve  extends ventanaPad   implements PAD
               
       double kilos=jt.getValorDec(n,JT_CANTI)*  (jt.getValString(n,JT_TIPCAN).equals("P")?hm.get(MantArticulos.KGXUNI):
           jt.getValString(n,JT_TIPCAN).equals("C")?hm.get(MantArticulos.KGXCAJ):1);
-      
+      double unid=(hm.get(MantArticulos.TIPVENCAJA)==1?
+          hm.get(MantArticulos.KGXCAJ):hm.get(MantArticulos.KGXUNI))==0?1:
+          kilos/
+          (hm.get(MantArticulos.TIPVENCAJA)==1?
+          hm.get(MantArticulos.KGXCAJ):hm.get(MantArticulos.KGXUNI));
     
       dtAdd.setDato("pvl_kilos", kilos);             
-      dtAdd.setDato("pvl_unid", kilos/ (hm.get(MantArticulos.TIPVENCAJA)==1?
-          hm.get(MantArticulos.KGXCAJ):hm.get(MantArticulos.KGXUNI)));
+      dtAdd.setDato("pvl_unid",unid );
       dtAdd.setDato("pvl_tipo", jt.getValString(n,JT_TIPCAN).substring(0,1));
       dtAdd.setDato("pro_codi", jt.getValorInt(n,JT_PROD));
       dtAdd.setDato("pvl_comen", jt.getValString(n,JT_COMEN));
