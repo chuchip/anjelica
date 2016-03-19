@@ -69,11 +69,13 @@ public class CGridEditable extends Cgrid implements CQuery {
 
   public CGridEditable()
   {
+    
     super();
   }
   
   public CGridEditable(int numcol)
   {    
+    setGridEditable(true);
     iniciar(numcol);
   }
   /**

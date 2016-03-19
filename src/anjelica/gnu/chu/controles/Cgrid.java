@@ -45,6 +45,7 @@ import javax.swing.tree.TreeCellEditor;
 
 public class Cgrid extends CPanel implements Serializable
 {
+  private boolean isEditable=false;
   private boolean  tengoFoco=false;
   private ToolTipHeader headerToolTip;
   private boolean res=false;
@@ -174,7 +175,7 @@ public class Cgrid extends CPanel implements Serializable
     public CScrollPane scrPanel;
 
     // Estructura de ordenación.
-    public TableSorter sorter;
+    public TableSorter sorter=null;
     // ***** final de los elementos que conforman la tabla. *****
 
     // Me indica si el contenido de la tabla estn vacio.
@@ -259,8 +260,16 @@ public class Cgrid extends CPanel implements Serializable
         for(int row=0;row<getRowCount();row++)
         {
             ArrayList datosCol=new ArrayList();
-            for (int col=0;col<getColumnCount();col++)
+            if (sorter==null)
+            {
+              for (int col=0;col<getColumnCount();col++)
+                datosCol.add(datosModelo.getValueAt(row, col));  
+            }
+            else
+            {
+             for (int col=0;col<getColumnCount();col++)
                 datosCol.add(sorter.getValueAt(row, col));
+            }
             datosSinc.add(datosCol);
         }
         datosUpd.clear();
@@ -1267,8 +1276,11 @@ public class Cgrid extends CPanel implements Serializable
         return getValor(getSelectedRow(),col);
     }
      /**
+  
+    }
+     /**
      * Devuelve el valor existente de una posicion en el grid
-     * @param fil Fila (row)
+     * @param row Fila (row)
      * @param col Columna 
      * @return  Valor. Null si la fila o o la columan estan fuera de rango.
      */
@@ -1284,7 +1296,7 @@ public class Cgrid extends CPanel implements Serializable
         if (isInTransation())
             return datosSinc.get(row).get(col);
         else
-            return sorter.getValueAt(row,col);
+            return sorter==null?datosModelo.getValueAt(row, col): sorter.getValueAt(row,col);
     }
     /**
      * Devuelve de la linea actual el valor especificado de la columna especificado
@@ -1311,7 +1323,8 @@ public class Cgrid extends CPanel implements Serializable
         if (isInTransation())
             return datosSinc.get(row).get(pos);
         else
-            return sorter.getValueAt(row,pos);
+            return  sorter==null?datosModelo.getValueAt(row,pos): sorter.getValueAt(row,pos);
+    
     }
 
     /**
@@ -1959,7 +1972,23 @@ public class Cgrid extends CPanel implements Serializable
         return false;
       return activo;
     }
-
+    /**
+     * Indica si el grid es editable. Sera editable si es una clase CGrideditable
+     * @return boolean 
+     */
+  
+    public boolean isGridEditable()
+    {
+      return isEditable;
+    }
+    /**
+     * Especifica si el es editable. Llamado por CGgridEditable
+     * @param editable 
+     */
+    void setGridEditable(boolean editable)
+    {
+      this.isEditable=editable;
+    }
     /**
      * Pone la linea que devolvera la funcion getSelectedRow cuando el grid
      * no este activo.
@@ -2726,10 +2755,11 @@ public class Cgrid extends CPanel implements Serializable
     * Creacion de los tipos de controles y columnas de la tabla.
     */
     private void crear_controles_tabla(){
-       // Creando la estructura de ordenacinn.
-       sorter = new TableSorter(datosModelo);
+       // Creando la estructura de ordenación.
+        if (!isGridEditable())
+            sorter = new TableSorter(datosModelo);
        // Creando la tabla
-       tableView = new JTable(sorter)
+       tableView = new JTable(isGridEditable()?datosModelo:sorter)
        {
          public boolean editCellAt(int row, int col, EventObject e)
          {
@@ -2838,7 +2868,7 @@ public class Cgrid extends CPanel implements Serializable
        
        // Si lo hemos especificado el grid ordenaran al picar sobre la cabecera,en
        // orden ascendente y si a la vez pulsamos SHIFT en orden descendente.
-       if (swOrden)
+       if (swOrden && sorter!=null)
          sorter.setTableHeader(headerToolTip);
 //         sorter.addMouseListenerToHeaderInTable(tableView);
 
@@ -3566,6 +3596,8 @@ public class Cgrid extends CPanel implements Serializable
    * @param ordenable true es ordenable. (valor por defecto)
    */
   public void setOrdenar(boolean ordenable) {
+      if (sorter==null)
+          return;
          if (ordenable)
              sorter.setTableHeader(tableView.getTableHeader());
          else
