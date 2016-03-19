@@ -165,7 +165,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2016-02-23");
+   this.setVersion("2016-03-19");
    statusBar = new StatusBar(this);
  
    initComponents();
@@ -1201,7 +1201,7 @@ public void iniciarVentana() throws Exception
             totGen += jt.getValorDec(n, JT_IMPGAN);
         }
         impGananE.setValorDec(totGen);
-        porGananE.setValorDec(totGen / kilAlbE.getValorDec());
+        porGananE.setValorDec(kilAlbE.getValorDec()==0?0:totGen / kilAlbE.getValorDec());
     }
     void sumaGanan(ResultSet rsCli,double precioCosto) throws SQLException
     {    
