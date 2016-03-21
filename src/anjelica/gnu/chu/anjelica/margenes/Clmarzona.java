@@ -115,7 +115,7 @@ public class Clmarzona extends ventana {
   {
       iniciarFrame();
 
-      this.setVersion("2016-02-18");
+      this.setVersion("2016-03-21");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -377,7 +377,7 @@ public class Clmarzona extends ventana {
       kgTot=0;impTot=0;ganaTot=0;
       iCoTo=0;kCoTo=0;
       resetAcumFam();
-      s = "select f.fpr_codi,p.pro_codi,P.PRO_NOMB,pro_tiplot," +
+      s = "select f.fpr_codi,p.pro_codi,P.PRO_NOMB," +
                 " sum(avl_canti) as avl_canti ,sum(avl_prbase*avl_canti) as avl_prbase "
                 + " from v_famipro f, v_articulo p,v_albavec  c,v_albavel l,clientes cl "
                 + " where c.avc_fecalb >= TO_DATE('" + fecini + "','dd-MM-yyyy') "
@@ -396,16 +396,18 @@ public class Clmarzona extends ventana {
                 + (cli_codiE.isNull() ? "" : " AND cl.cli_codi = '" + cli_codiE.getValorInt() + "'")
                 + (emp_codiE.getValorInt()==0?"": " and c.emp_codi = "+emp_codiE.getValorInt())
                 + (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+sbe_codiE.getValorInt())
+                + " and p.pro_tiplot='V' "
                 + (proCod != null ? "and l.pro_codi = " + proCod : "")
                 + " group by f.fpr_codi,p.pro_codi,P.PRO_NOMB,pro_tiplot ";
         s+= " UNION"
-            + " SELECT f.fpr_codi,p.pro_codi,P.PRO_NOMB, pro_tiplot,0 as avl_canti, "
+            + " SELECT f.fpr_codi,p.pro_codi,P.PRO_NOMB, 0 as avl_canti, "
             + "  0  as avl_prbase "
             + " from v_famipro f, v_articulo p,v_regstock as r  "
             + " where r.rgs_fecha >= TO_DATE('" + fecini + "','dd-MM-yyyy') "
             + " and r.rgs_fecha <=  TO_DATE('" + fecfin + "','dd-MM-yyyy') "
             + " and tir_codi != " + tirCodInv
 //            + " and tir_codi not in ("+tirCodVert+")"
+            + " and p.pro_tiplot='V' "
             + (proCod != null ? "and r.pro_codi = " + proCod : "")
             + (pro_sbecodE.getValorInt()==0?"": " and p.sbe_codi "+(opExcSeccion.isSelected()?"!":"")
             +"= "+pro_sbecodE.getValorInt())
@@ -425,7 +427,7 @@ public class Clmarzona extends ventana {
 
     proCodi=dtVen.getInt("pro_codi");
     String proNomb=dtVen.getString("pro_nomb");
-    String proTipLot=dtVen.getString("pro_tiplot");
+ //   String proTipLot=dtVen.getString("pro_tiplot");
     if (swCreateTableTemp)
     {
         s="CREATE  TEMP  TABLE clmarzona (fpr_codi int, "+
@@ -461,13 +463,12 @@ public class Clmarzona extends ventana {
         if (proCodi!=dtVen.getInt("pro_codi"))
         {
            impGana = getImpGana(proCodi, fecini, fecfin, zonCodi,repCodi);
-           if (proTipLot.equals("C"))
-               impGana=impPro; // Si el producto es comentario. Lo pongo todo como ganancia.
+         
            if (impGana!=0 || impPro!=0)
             verDatos(""+proCodi, proNomb, kgPro, impPro, impGana,kgCom,impCom,jt);
            proNomb=dtVen.getString("pro_nomb");
            proCodi=dtVen.getInt("pro_codi");
-           proTipLot=dtVen.getString("pro_tiplot");
+           //proTipLot=dtVen.getString("pro_tiplot");
            kgFam+=kgPro;
            impFam+=impPro;
            iCoFa+=impCom;
@@ -498,7 +499,7 @@ public class Clmarzona extends ventana {
     ganaFam+=impGana;
     guardaFam();
 
-    if (opIncVertE.isSelected())
+    if (opIncComent.isSelected())
     { // Incluir productos no de venta.
         s="select l.pro_codi,l.pro_nomb,sum(l.avl_canti) as canti,"+
             " sum(l.avl_canti* l.avl_prbase) as importe  from "+
