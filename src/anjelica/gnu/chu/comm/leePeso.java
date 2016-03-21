@@ -133,11 +133,18 @@ public class leePeso
             return;
         }
         serialPort = new SerialPort(puerto);
-        if (! serialPort.openPort())
+        try {
+            if (! serialPort.openPort())
+            {
+                 if (swDebug)
+                    System.out.println("No se pudo abrir el puerto");
+                return;
+            }
+        } catch (SerialPortException sp)
         {
-             if (swDebug)
-                System.out.println("No se pudo abrir el puerto");
-            return;
+                 if (swDebug)
+                    System.out.println("No se pudo abrir el puerto "+sp.getMessage());
+                 return;
         }
 
                 
