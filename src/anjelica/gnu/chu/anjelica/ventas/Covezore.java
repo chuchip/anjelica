@@ -7,7 +7,7 @@ package gnu.chu.anjelica.ventas;
  * <p>Puede recibir como parametros:
  * repr Representante
  * sbeCodi Seccion Empresa</p>
-* <p>Copyright: Copyright (c) 2005-2015
+* <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -58,6 +58,8 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -73,6 +75,9 @@ public class Covezore extends ventana {
     private final int JT_PORGAN=8;
     private final int JT_KILVEN=6;
     private final int JT_IMPVEN=5;
+    private final int DATSBE=10;
+    private final int DATKIL=6;
+    private final int DATIMP=5;
     boolean cancelarConsulta=false;
 
     private boolean swDivCodi;
@@ -165,7 +170,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2016-03-19");
+   this.setVersion("2016-03-25");
    statusBar = new StatusBar(this);
  
    initComponents();
@@ -251,6 +256,14 @@ public void iniciarVentana() throws Exception
        {
          BaceptarCom_actionPerformed();
        }
+     });
+     TPanel1.addChangeListener(new ChangeListener() 
+     {
+        @Override
+        public void stateChanged(ChangeEvent e)
+        {
+            Baceptar.setEnabled( (TPanel1.getSelectedIndex()!=1));
+        }
      });
      Baceptar.addActionListener(new java.awt.event.ActionListener()
      {
@@ -363,6 +376,11 @@ public void iniciarVentana() throws Exception
                  }
                  if (sbeCodi!=dtCon1.getInt("sbe_codi"))
                  {
+                     if (kgVenL!=0 || impVenL==0)
+                     {
+                       ponDatosRepr(repr,sbeCodi);
+                       repr = dtCon1.getString("rep_codi");
+                     }   
                      ponDatosSbe(sbeCodi);
                      sbeCodi=dtCon1.getInt("sbe_codi");
                  }
@@ -383,6 +401,8 @@ public void iniciarVentana() throws Exception
                  v.add(dtCon1.getInt("cliCodiD"));
                  v.add(dtCon1.getDouble("avc_basimp"));
                  v.add(dtCon1.getDouble("avc_kilos"));
+                 v.add("");
+                 v.add("");
                  v.add(nClAcZ);
                  v.add(sbeCodi);
                  datos.add(v);
@@ -411,7 +431,7 @@ public void iniciarVentana() throws Exception
                { // Todavia le quedan lineas al Final
                    if (jt.getValString(nlOri,0).equals(datos.get(nlFin).get(0).toString()) &&
                                jt.getValString(nlOri,1).equals(datos.get(nlFin).get(1).toString()) &&
-                               jt.getValString(nlOri,JT_SBECOD ).equals(datos.get(nlFin).get(8).toString()))
+                               jt.getValString(nlOri,JT_SBECOD ).equals(datos.get(nlFin).get(DATSBE).toString()))
                    {
                        datCom.add(addDatos(datos,nlOri++,nlFin++));
                        continue;
@@ -423,7 +443,7 @@ public void iniciarVentana() throws Exception
                        {
                              if (jt.getValString(nlOri,0).equals(datos.get(n1).get(0).toString()) &&
                                    jt.getValString(nlOri,1).equals(datos.get(n1).get(1).toString()) &&
-                                   jt.getValString(nlOri,JT_SBECOD).equals(datos.get(n1).get(8).toString()))
+                                   jt.getValString(nlOri,JT_SBECOD).equals(datos.get(n1).get(DATSBE).toString()))
                              {
                                 nlEnc=n1;
                                 break;
@@ -493,13 +513,13 @@ public void iniciarVentana() throws Exception
        {
          if (jt.getValString(nlOri,0).equals(datCom.get(n).get(0)) &&
                            jt.getValString(nlOri,1).equals(datCom.get(n).get(1)) &&
-                           jt.getValString(nlOri,JT_SBECOD).equals(datCom.get(n).get(8)))
+                           jt.getValString(nlOri,JT_SBECOD).equals(datCom.get(n).get(DATSBE)))
            return true;
        }
        return false;
    }
    /**
-    * Añade datos del periodo incicial.
+    * Añade datos del periodo inicial.
     * @param datCom
     * @param nlOri
     * @param nlFin
@@ -513,17 +533,17 @@ public void iniciarVentana() throws Exception
        v.add(jt.getValString(nlOri,0)); //0
        v.add(jt.getValString(nlOri,1)); //1
        v.add(jt.getValString(nlOri,2)); // 2
-       v.add(jt.getValString(nlOri,5)); // 3
+       v.add(jt.getValString(nlOri,JT_IMPVEN)); // 3
        if (nlFin>=0)
        {
-            kilFin=Double.parseDouble(datCom.get(nlFin).get(6).toString());
-            impFin=Double.parseDouble(datCom.get(nlFin).get(5).toString());
+            kilFin=Double.parseDouble(datCom.get(nlFin).get(DATKIL).toString());
+            impFin=Double.parseDouble(datCom.get(nlFin).get(DATIMP).toString());
        }
        v.add(impFin); // 4
-       v.add(jt.getValorDec(nlOri,5)-impFin); // 5
-       v.add(jt.getValString(nlOri,6)); // 6
+       v.add(jt.getValorDec(nlOri,JT_IMPVEN)-impFin); // 5
+       v.add(jt.getValString(nlOri,JT_KILVEN)); // 6
        v.add(kilFin); // 7
-       v.add(jt.getValorDec(nlOri,6)-kilFin); // 8
+       v.add(jt.getValorDec(nlOri,JT_KILVEN)-kilFin); // 8
        v.add(jt.getValString(nlOri,JT_SBECOD)); // 9
        return v;
    }
@@ -548,12 +568,12 @@ public void iniciarVentana() throws Exception
             impFin=jt.getValorDec(nlOri,JT_IMPVEN);
        }
        v.add(impFin);
-       v.add(datCom.get(nlFin).get(5).toString());
-       v.add(impFin-Double.parseDouble(datCom.get(nlFin).get(5).toString()));
+       v.add(datCom.get(nlFin).get(DATIMP).toString());
+       v.add(impFin-Double.parseDouble(datCom.get(nlFin).get(DATIMP).toString()));
        v.add(kilFin);
-       v.add(Double.parseDouble(datCom.get(nlFin).get(6).toString()));
-       v.add(kilFin-Double.parseDouble(datCom.get(nlFin).get(6).toString()));
-       v.add(datCom.get(nlFin).get(8).toString());
+       v.add(Double.parseDouble(datCom.get(nlFin).get(DATKIL).toString()));
+       v.add(kilFin-Double.parseDouble(datCom.get(nlFin).get(DATKIL).toString()));
+       v.add(datCom.get(nlFin).get(DATSBE).toString());
        return v;
    }
    void ponerFechasComp() throws SQLException,ParseException
@@ -931,17 +951,17 @@ public void iniciarVentana() throws Exception
     void ponDatosRepr(String repr,int sbeCodi) throws SQLException {
         if (jt.getValorInt(jt.getRowCount() - 1, 3) != nAlbL) {
             ArrayList v = new ArrayList();
-            v.add(repr);
-            v.add(".");
-            v.add(" Total " + MantRepres.getNombRepr(repr,dtStat));
-            v.add(nAlbL);
-            v.add(nCliL);
-            v.add(impVenL);
-            v.add(kgVenL);
-            v.add("");
-            v.add("");
-            v.add(nClAcL);
-            v.add(sbeCodi);
+            v.add(repr);//0
+            v.add("."); //1
+            v.add(" Total " + MantRepres.getNombRepr(repr,dtStat)); //2
+            v.add(nAlbL); //3
+            v.add(nCliL); //4
+            v.add(impVenL); //5
+            v.add(kgVenL); // 6
+            v.add("");//7 
+            v.add(""); //8 
+            v.add(nClAcL); //9
+            v.add(sbeCodi); //10
             datos.add(v);
         }
         nAlbS += nAlbL;
@@ -955,17 +975,17 @@ public void iniciarVentana() throws Exception
    void ponDatosSbe(int sbeCodi) throws SQLException {
 
         ArrayList v = new ArrayList();
-        v.add(".");
-        v.add(".");
-        v.add("  TOTAL DELEGACION: " + sbe_codiE.getNombSubEmpresa(dtStat,sbeCodi,0));
-        v.add(nAlbS);
-        v.add(nCliS);
-        v.add(impVenS);
-        v.add(kgVenS);
-        v.add("");
-        v.add("");
-        v.add(nClAcS);
-        v.add(sbeCodi);
+        v.add("."); //0
+        v.add("."); //1
+        v.add("  TOTAL DELEGACION: " + sbe_codiE.getNombSubEmpresa(dtStat,sbeCodi,0)); //2
+        v.add(nAlbS); //3
+        v.add(nCliS); //4
+        v.add(impVenS); //5
+        v.add(kgVenS); // 6
+        v.add(""); //7
+        v.add(""); // 8
+        v.add(nClAcS); // 9
+        v.add(sbeCodi); //10
         datos.add(v);
         nAlbT += nAlbS;
         nCliT += nCliS;
