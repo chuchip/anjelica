@@ -170,7 +170,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2016-03-25");
+   this.setVersion("2016-04-01");
    statusBar = new StatusBar(this);
  
    initComponents();
@@ -422,7 +422,7 @@ public void iniciarVentana() throws Exception
        
        ArrayList<ArrayList> datCom=new ArrayList();
        int maxLin=datos.size()>jt.getRowCount()?datos.size():jt.getRowCount();
-       for (int n=0;n<maxLin;n++)
+       while (nlOri<jt.getRowCount() || nlFin<datos.size() )
        {
            ArrayList v=new ArrayList();
            if (nlOri<jt.getRowCount())
@@ -457,6 +457,8 @@ public void iniciarVentana() throws Exception
                          }
                          continue;
                        }
+                       else
+                          datCom.add(addDatos(datos,nlOri++,-1));
                    }
                }
                if (nlOri<jt.getRowViewCount())
@@ -465,12 +467,12 @@ public void iniciarVentana() throws Exception
                }
            }
            else
-           { // Solo trato las lineas del final.
+           { // Solo trato las lineas del final (año anterior)
               if (nlFin<datos.size())
                  datCom.add(addDatos1(datos,-1,nlFin++));
            }
           // datCom.add(addDatos1(datos,-1,nlFin));
-       }
+       } 
        // Añade linea Final.
       
        numAlbOriE.setValorInt(numAlbE.getValorInt());
