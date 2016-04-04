@@ -312,7 +312,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2016-02-15");
+      this.setVersion("2016-04-04");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -1911,7 +1911,8 @@ public class pdclien extends ventanaPad implements PAD
           jt.getValString(1) + " " + jt.getValString(2);
       msgBox("En Registro de Historico de cambios ... Los datos que esta editando NO son los últimos");
     }
-//    verDatos();
+    else
+      verDatos(); // Refresco Datos.
     nav.pulsado=navegador.EDIT;
     activar(true);
     cli_codiE.setEnabled(true);
