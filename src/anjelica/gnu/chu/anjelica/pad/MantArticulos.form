@@ -335,7 +335,7 @@
                 </Component>
                 <Component class="gnu.chu.controles.CComboBox" name="pro_tiplotE">
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="pro_tiplotE.addItem(&quot;Vendible&quot;,&quot;V&quot;);&#xa;pro_tiplotE.addItem(&quot;Comentario&quot;,&quot;C&quot;);&#xa;pro_tiplotE.addItem(&quot;Deshecho&quot;,&quot;D&quot;);"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="pro_tiplotE.addItem(&quot;Vendible&quot;,&quot;V&quot;);&#xa;pro_tiplotE.addItem(&quot;Comentario&quot;,&quot;C&quot;);&#xa;pro_tiplotE.addItem(&quot;Coment. Acum.Kg&quot;,&quot;c&quot;);&#xa;pro_tiplotE.addItem(&quot;Deshecho&quot;,&quot;D&quot;);"/>
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

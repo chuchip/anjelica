@@ -725,7 +725,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-02-03" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-04-05" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
         strSql = getStrSql(null, null);
 
@@ -1190,7 +1190,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         avc_numpalB.setBounds(new Rectangle(548, 75, 40, 20));
         avc_numpalB.setToolTipText("Siguiente Palet");
 //        avc_numpalE.setBounds(new Rectangle(587, 75, 25, 16));
-        avc_numpalC.setBounds(new Rectangle(615, 75, 70, 16));
+        avc_numpalC.setBounds(new Rectangle(605, 75, 80 , 16));
         avc_revpreL.setBounds(new Rectangle(345, 80, 90, 16));
         avc_revpreE.setBounds(new Rectangle(437, 80, 100, 16));
 
@@ -3332,7 +3332,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   {
     String s= "SELECT avl_numlin,l.pro_codi, " +
           " avl_canti,avl_canbru, avl_unid," +
-          " avl_prven,avl_prepvp,avl_profer,tar_preci,a.pro_nomb,a.pro_indtco, " +
+          " avl_prven,avl_prepvp,avl_profer,tar_preci,a.pro_nomb,a.pro_indtco,pro_tiplot, " +
           " l.pro_nomb as avl_pronom,avl_numpal, a.pro_tipiva,l.alm_codi,avl_coment,avl_fecalt " +
           " FROM "+tablaLin+"  as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
           " WHERE "
@@ -3418,7 +3418,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
          " sum(avl_canbru) as  avl_canbru, "+
          " sum(avl_unid) as avl_unid,tar_preci,"+
          (modPrecio? " avl_prven,":"")+
-         "a.pro_nomb,l.pro_nomb as avl_pronom,  a.pro_tipiva,a.pro_indtco " +
+         "a.pro_nomb,l.pro_nomb as avl_pronom,  a.pro_tipiva,a.pro_indtco,a.pro_tiplot " +
          " FROM "+tablaLin +" as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
          " WHERE "+(empCodi<=0?" his_rowid ="+nume:
          " l.avc_ano = " + ano +
@@ -3426,14 +3426,14 @@ public class pdalbara extends ventanaPad  implements PAD  {
          " and l.avc_serie = '" + serie + "'" +
          " and l.avc_nume = " + nume )+
          " and l.avl_canti >= 0 " +
-         " group by l.pro_codi,"+(modPrecio?"avl_prven,":"")+
+         " group by l.pro_codi,pro_tiplot,"+(modPrecio?"avl_prven,":"")+
          " avl_numpal,tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,a.pro_indtco " +
          " UNION ALL " +
          "SELECT -1 as avl_numlin,l.pro_codi,avl_numpal,sum(avl_canti) as avl_canti, " +
          " sum(avl_canbru) as  avl_canbru, "+
          " sum(avl_unid) as avl_unid,tar_preci,"+
          (modPrecio? " avl_prven,":"")+
-         " a.pro_nomb,l.pro_nomb as avl_pronom,a.pro_tipiva,a.pro_indtco " +
+         " a.pro_nomb,l.pro_nomb as avl_pronom,a.pro_tipiva,a.pro_indtco,a.pro_tiplot " +
          " FROM "+tablaLin+" as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
 //         " and a.emp_codi = "+EU_emCod+
          " WHERE "+(empCodi<=0?" his_rowid ="+nume:
@@ -3442,7 +3442,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
          " and l.avc_serie = '" + serie + "'" +
          " and l.avc_nume = " + nume )+
          " and l.avl_canti < 0 " +
-         " group by l.pro_codi,"+(modPrecio?"avl_prven,":"")+
+         " group by l.pro_codi,pro_tiplot,"+(modPrecio?"avl_prven,":"")+
           " avl_numpal,tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,a.pro_indtco " +
          " ORDER BY 3,2";
   }
@@ -3582,8 +3582,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
           impBim += impLin;
           impDtCom+=dtCon1.getInt("pro_indtco")==0?0:impLin;    
         }
-        kilosT += dtCon1.getDouble("avl_canti");
-        unidT +=dtCon1.getDouble("avl_unid");
+        if (dtCon1.getString("pro_tiplot").equals("V") || dtCon1.getString("pro_tiplot").equals("c"))
+        {
+            kilosT += dtCon1.getDouble("avl_canti");
+            unidT +=dtCon1.getDouble("avl_unid");
+        }
       }  while (dtCon1.next());
       impBim=Formatear.redondea(impBim,NUMDEC);
       avl_prvenE.setCambio(true);

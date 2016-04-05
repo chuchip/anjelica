@@ -5,7 +5,7 @@ package gnu.chu.anjelica.pad;
  * <p>Título: MantArticulos </p>
  * <p>Descripcion: Mantenimiento Tabla de Articulos</p>
  * <p>Empresa: miSL</p>
-*  <p>Copyright: Copyright (c) 2005-2015
+*  <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -154,7 +154,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2015-09-03" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2016-04-05" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM v_articulo where pro_activ != 0 "+
                 " ORDER BY pro_codi";
 
@@ -1528,7 +1528,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         pro_activE.addItem("Pe","1");
         pro_activE.addItem("No","0");
         Pcabe.add(pro_activE);
-        pro_activE.setBounds(530, 5, 50, 20);
+        pro_activE.setBounds(530, 5, 50, 27);
 
         Pprinc.add(Pcabe);
         Pcabe.setBounds(10, 0, 600, 30);
@@ -1580,7 +1580,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel8.setText("Caducid. Fresco");
         Pinicio.add(cLabel8);
-        cLabel8.setBounds(0, 100, 88, 18);
+        cLabel8.setBounds(0, 100, 91, 18);
 
         cLabel9.setText("IVA");
         Pinicio.add(cLabel9);
@@ -1604,6 +1604,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         pro_tiplotE.addItem("Vendible","V");
         pro_tiplotE.addItem("Comentario","C");
+        pro_tiplotE.addItem("Coment. Acum.Kg","c");
         pro_tiplotE.addItem("Deshecho","D");
         Pinicio.add(pro_tiplotE);
         pro_tiplotE.setBounds(430, 50, 180, 18);
@@ -1730,7 +1731,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel25.setText("Ult. Compra");
         cPanel2.add(cLabel25);
-        cLabel25.setBounds(6, 22, 70, 15);
+        cLabel25.setBounds(6, 22, 70, 14);
 
         pro_feulcoE.setEnabled(false);
         cPanel2.add(pro_feulcoE);

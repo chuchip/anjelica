@@ -140,14 +140,14 @@ public class actCabAlbFra
     ht.put("avc_impalb", (double) 0);
 
     s = "SELECT l.pro_codi,sum(l.avl_canti) as avl_canti, sum(avl_unid) as avl_unid, " +
-        " avl_prven-avl_dtolin as avl_prven,pro_tipiva,pro_indtco FROM V_ALBAVEL as l, v_articulo as a " +
+        " avl_prven-avl_dtolin as avl_prven,pro_tipiva,pro_indtco,pro_tiplot FROM V_ALBAVEL as l, v_articulo as a " +
         " WHERE l.avc_ano = " + avcAno +
         " and l.emp_codi = " + empCodi +
         " and l.avc_serie = '" + avcSerie + "'" +
         " and l.avc_nume = " + avcNume +
         " and l.avl_canti != 0 " +
         " and l.pro_codi = a.pro_Codi " +
-        " group by l.pro_codi,avl_prven,avl_dtolin,pro_tipiva,pro_indtco ";
+        " group by l.pro_codi,avl_prven,avl_dtolin,pro_tipiva,pro_indtco,pro_tiplot ";
     if (!dtLin.select(s))
       return false; // SIN LINEAS DE ALBARAN
     double impLin;
@@ -165,9 +165,11 @@ public class actCabAlbFra
       tipIva = dtLin.getInt("pro_tipiva");
       impLin=Formatear.redondea(Formatear.redondea(dtLin.getDouble("avl_canti",true), 2) *
                                 Formatear.redondea(dtLin.getDouble("avl_prven",true),numDecPrecio),numDec);
-
-      kilos+=dtLin.getDouble("avl_canti", true);
-      unidades+=dtLin.getInt("avl_unid",true);
+      if (dtLin.getString("pro_tiplot").equals("V") || dtLin.getString("pro_tiplot").equals("c"))
+      {
+        kilos+=dtLin.getDouble("avl_canti", true);
+        unidades+=dtLin.getInt("avl_unid",true);
+      }
       impDtCom+=dtLin.getInt("pro_indtco")==0?0:impLin;    
       impBim += impLin;
       
@@ -240,16 +242,16 @@ public class actCabAlbFra
   }
   public double getValDouble(String name)
   {
-    return ( (Double) ht.get(name)).doubleValue();
+    return ( (Double) ht.get(name));
   }
 
   public double getValInt(String name)
   {
-    return ( (Integer) ht.get(name)).intValue();
+    return ( (Integer) ht.get(name));
   }
   public boolean getValBoolean(String name)
   {
-    return ( (Boolean) ht.get(name)).booleanValue();
+    return ( (Boolean) ht.get(name));
   }
 
   public boolean getCambioIva()

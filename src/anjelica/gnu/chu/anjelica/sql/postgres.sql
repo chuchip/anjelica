@@ -155,7 +155,8 @@ pro_unicom varchar(2),  -- Unidades de Compra (Kg/Ud)
 pro_feulco date,        -- Fecha Ult. Compra
 pro_prvulco int, 	-- Proveedor  Ult. Compra
 pro_fulcon date, 	-- Fecha Ult. Coste
-pro_tiplot varchar(1) not null,	-- Tipo Lote.  C -> Comentario, V-> Vendible, 'D' Desecho
+pro_tiplot varchar(1) not null,	-- Tipo Lote. (C -> Comentario No Suma. c-> Coment Suma,
+                                --  V-> Vendible, 'D' Desecho)
 pro_coexis varchar(1) not null default 'S',  -- Control Existencias (S/N)
 pro_coinst int default -1 not null,	-- Control Individuos en Stock.
 emp_codi int,		-- Empresa del Producto (DEPRECATED)
