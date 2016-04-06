@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lialbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0">
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2016-04-06T09:36:16 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lialbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0" uuid="477b1d9c-ee98-4d62-8ff7-69c661821105">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/> 
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -25,23 +27,25 @@
 	<queryString>
 		<![CDATA[SELECT avl_numpal,l.pro_codi,SUM(l.avl_canti) as avl_canti,
 sum(avl_unid) as avl_unid,
-avl_prven,l.pro_nomb FROM V_ALBAVEL l
+avl_prven,l.pro_nomb,a.pro_tiplot FROM V_ALBAVEL l, v_articulo as a
 where avc_nume=$P{avc_nume} 
 and l.emp_codi=$P{emp_codi}
 and l.avc_ano = $P{avc_ano}
 and l.avc_serie = $P{avc_serie}
+and l.pro_codi = a.pro_codi
 and avl_canti >= 0
-GROUP BY avl_numpal,l.PRO_CODI,avl_prven,l.pro_nomb
+GROUP BY avl_numpal,l.PRO_CODI,avl_prven,l.pro_nomb,pro_tiplot
 UNION ALL
 SELECT avl_numpal,l.pro_codi,SUM(l.avl_canti) as avl_canti,
 sum(avl_unid) as avl_unid,
-avl_prven,l.pro_nomb FROM V_ALBAVEL l
+avl_prven,l.pro_nomb,a.pro_tiplot FROM V_ALBAVEL l,v_articulo as a
 where avc_nume=$P{avc_nume} 
 and l.emp_codi=$P{emp_codi}
 and l.avc_ano = $P{avc_ano}
 and l.avc_serie = $P{avc_serie}
 and avl_canti < 0
-GROUP BY avl_numpal,l.PRO_CODI,avl_prven,l.pro_nomb
+and l.pro_codi = a.pro_codi
+GROUP BY avl_numpal,l.PRO_CODI,avl_prven,l.pro_nomb,pro_tiplot
 order by 1,2]]>
 	</queryString>
 	<field name="pro_codi" class="java.lang.Integer"/>
@@ -50,14 +54,15 @@ order by 1,2]]>
 	<field name="avl_prven" class="java.lang.Double"/>
 	<field name="pro_nomb" class="java.lang.String"/>
 	<field name="avl_numpal" class="java.lang.Integer"/>
+	<field name="pro_tiplot" class="java.lang.String"/>
 	<variable name="kilos" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{avl_canti}]]></variableExpression>
+		<variableExpression><![CDATA[$F{pro_tiplot}.equals("V") || $F{pro_tiplot}.equals("c")?$F{avl_canti}:0]]></variableExpression>
 	</variable>
 	<variable name="implinea" class="java.lang.Double">
 		<variableExpression><![CDATA[new Double($F{avl_canti}.doubleValue() * $F{avl_prven}.doubleValue())]]></variableExpression>
 	</variable>
 	<variable name="kilosPale" class="java.lang.Double" resetType="Group" resetGroup="numPale" calculation="Sum">
-		<variableExpression><![CDATA[$F{avl_canti}]]></variableExpression>
+		<variableExpression><![CDATA[$F{pro_tiplot}.equals("V") || $F{pro_tiplot}.equals("c")?$F{avl_canti}:0]]></variableExpression>
 	</variable>
 	<variable name="unidPale" class="java.lang.Integer" resetType="Group" resetGroup="numPale" calculation="Sum">
 		<variableExpression><![CDATA[$F{avl_unid}]]></variableExpression>
@@ -73,7 +78,7 @@ order by 1,2]]>
 			<band height="18">
 				<printWhenExpression><![CDATA[$F{avl_numpal}!=0]]></printWhenExpression>
 				<staticText>
-					<reportElement x="181" y="0" width="55" height="16"/>
+					<reportElement x="181" y="0" width="55" height="16" uuid="53081f9b-94fe-416b-b958-22e8dd1b69ec"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
@@ -83,7 +88,7 @@ order by 1,2]]>
 					<text><![CDATA[Unidades]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="35" y="0" width="63" height="16"/>
+					<reportElement x="35" y="0" width="63" height="16" uuid="40cb0fff-7402-40b6-a136-a16e40a0f227"/>
 					<box>
 						<topPen lineWidth="2.0" lineStyle="Solid"/>
 						<leftPen lineWidth="2.0" lineStyle="Solid"/>
@@ -95,7 +100,7 @@ order by 1,2]]>
 					<text><![CDATA[Total Palet]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="98" y="0" width="30" height="16"/>
+					<reportElement x="98" y="0" width="30" height="16" uuid="2c1246e8-2e68-4d60-9c5e-3bba943a1427"/>
 					<box>
 						<topPen lineWidth="2.0"/>
 						<leftPen lineWidth="0.0"/>
@@ -108,7 +113,7 @@ order by 1,2]]>
 					<textFieldExpression><![CDATA[$F{avl_numpal}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="239" y="0" width="29" height="16"/>
+					<reportElement x="239" y="0" width="29" height="16" uuid="69793ac6-5568-4e39-8825-77813c120f00"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
@@ -118,7 +123,7 @@ order by 1,2]]>
 					<textFieldExpression><![CDATA[$V{unidPale}]]></textFieldExpression>
 				</textField>
 				<textField pattern="##0.00;-##0.00">
-					<reportElement x="338" y="0" width="64" height="16"/>
+					<reportElement x="338" y="0" width="64" height="16" uuid="9782f576-a484-4e6d-ba56-c9b7b930247c"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
@@ -145,7 +150,7 @@ order by 1,2]]>
 	<detail>
 		<band height="18" splitType="Stretch">
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="4" y="0" width="42" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="4" y="0" width="42" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="40a34fc3-d1be-4643-bc6d-eba14812ab4f"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -153,13 +158,13 @@ order by 1,2]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pro_codi}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="73" y="0" width="287" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="73" y="0" width="287" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="52fc8107-83f8-4009-abb7-8c75eb1d0bfb"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -167,13 +172,13 @@ order by 1,2]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0.00;-##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="361" y="1" width="41" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="361" y="1" width="41" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="43c80234-5e14-4343-8612-ce08965e5146"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -181,13 +186,13 @@ order by 1,2]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{avl_canti}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0;-#0" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="52" y="0" width="18" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="52" y="0" width="18" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="df7b6f20-71dc-452f-a289-47506acd5692"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -195,13 +200,13 @@ order by 1,2]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{avl_unid}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0.000;-##0.000" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="406" y="0" width="38" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" mode="Opaque" x="406" y="0" width="38" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="44efb2fb-246e-4069-9545-944ceaf367eb">
 					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -211,13 +216,13 @@ order by 1,2]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{avl_prven}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="453" y="0" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField" mode="Opaque" x="453" y="0" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="9572b831-6860-42d4-82b8-9b5ff0ee08c3">
 					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -227,43 +232,43 @@ order by 1,2]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{implinea}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-1" mode="Opaque" x="50" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-1" mode="Opaque" x="50" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="eb97b273-839e-4ecc-beaa-0866c33b27e7"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-2" mode="Opaque" x="360" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-2" mode="Opaque" x="360" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="fdac0970-1e02-4b7e-98bb-b91fc0228055"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-2" mode="Opaque" x="405" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-2" mode="Opaque" x="405" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="f14281ab-6aa5-4649-8f4f-c9eafba9b869"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-3" mode="Opaque" x="447" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-3" mode="Opaque" x="447" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="4123437b-5bb0-47f3-80de-a854699f8ecb"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-2" mode="Opaque" x="526" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-2" mode="Opaque" x="526" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="cdb7d0a8-ae1a-4071-a7b4-9810446c922c"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-4" mode="Opaque" x="0" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-4" mode="Opaque" x="0" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="ea9e6851-a3e0-44d9-91d8-285f62f2dbf7"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
@@ -276,7 +281,7 @@ order by 1,2]]>
 	<pageFooter>
 		<band height="40" splitType="Stretch">
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="337" y="2" width="65" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="337" y="2" width="65" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="4d05d2b1-4ea5-4ce5-a72d-5bae235af6ae"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -284,13 +289,13 @@ order by 1,2]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{kilos}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="220" y="2" width="90" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="staticText" mode="Opaque" x="220" y="2" width="90" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b5fe0282-4b82-4f94-b35a-48e780fd5714"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -298,13 +303,13 @@ order by 1,2]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Total Kilos:]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="2" y="18" width="518" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" mode="Opaque" x="2" y="18" width="518" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="176a1aab-522c-4445-9593-a3d48711da96"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -312,25 +317,25 @@ order by 1,2]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{emp_obsalb}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-5" mode="Opaque" x="1" y="36" width="526" height="1" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-5" mode="Opaque" x="1" y="36" width="526" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="a33953c8-45bb-434e-bcc7-6e13e16de42e"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-6" mode="Opaque" x="0" y="0" width="1" height="34" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-6" mode="Opaque" x="0" y="0" width="1" height="34" forecolor="#000000" backcolor="#FFFFFF" uuid="88d3606a-68ce-46a8-a92a-44e80d18105f"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-6" mode="Opaque" x="526" y="1" width="1" height="34" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="line-6" mode="Opaque" x="526" y="1" width="1" height="34" forecolor="#000000" backcolor="#FFFFFF" uuid="2d26a0c5-9eea-4274-847c-3c80a213cf35"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>

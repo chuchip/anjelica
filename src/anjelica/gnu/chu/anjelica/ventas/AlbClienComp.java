@@ -132,8 +132,8 @@ public class AlbClienComp   extends ventana {
         " where c.cli_codi = cl.cli_codi " +
         " and c.avc_fecalb >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
         " and c.avc_fecalb <= TO_DATE('" + fecFin + "','dd-MM-yyyy') " +
-        (zonCodi.equals(".")?"":" and cl.zon_codi LIKE '" + zonCodi + "'") +
-        (repCodi.equals(".")?"":" and cl.rep_codi LIKE '" + repCodi + "'") +
+        (zonCodi.equals("__")?"":" and cl.zon_codi LIKE '" + zonCodi + "'") +
+        (repCodi.equals("__")?"":" and cl.rep_codi LIKE '" + repCodi + "'") +
         (sbeCodi==0?"":" and c.sbe_codi = "+sbeCodi)+
         (padre.getEmpresa()==0?"":" and c.emp_codi = "+padre.getEmpresa())+
         (padre.getSubEmpresa()==0?"":" and c.sbe_codi = "+padre.getSubEmpresa())+
@@ -164,8 +164,8 @@ public class AlbClienComp   extends ventana {
            " and cl.cli_codi = l.cli_codi " +
            " and l.avl_canti != 0 " +
            (padre.EU.isRootAV()?"":" and l.div_codi > 0 ")+
-           (zonCodi.equals(".")?"": " and cl.rep_codi LIKE '" + repCodi + "'" ) +
-           (zonCodi.equals(".")?"": " and cl.zon_codi LIKE '" + zonCodi + "'" ) +
+           (zonCodi.equals("__")?"": " and cl.rep_codi LIKE '" + repCodi + "'" ) +
+           (zonCodi.equals("__")?"": " and cl.zon_codi LIKE '" + zonCodi + "'" ) +
            (sbeCodi==0?"":" and l.sbe_codi = "+sbeCodi);
               
          switch (grupoE.getValor().charAt(0) )

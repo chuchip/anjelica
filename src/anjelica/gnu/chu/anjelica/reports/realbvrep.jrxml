@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-12-01T14:11:49 -->
+<!-- 2016-03-17T13:50:32 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="realbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="8" bottomMargin="8" uuid="15be4c04-c892-4864-927a-c372fb8f63fd">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -63,37 +63,37 @@ order by c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,]]>
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="36" splitType="Stretch">
+		<band height="51" splitType="Stretch">
 			<staticText>
-				<reportElement key="staticText" style="normal" mode="Opaque" x="274" y="0" width="48" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="3f1050b8-0879-4422-a398-5126fc3e82f1"/>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="274" y="10" width="48" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="3f1050b8-0879-4422-a398-5126fc3e82f1"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[De Fecha]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yy" isBlankWhenNull="true">
-				<reportElement key="textField" style="resaltado" mode="Opaque" x="322" y="0" width="73" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="1d9dedcf-d575-4cab-83f3-ee42c9c6398d"/>
+				<reportElement key="textField" style="resaltado" mode="Opaque" x="322" y="10" width="73" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="1d9dedcf-d575-4cab-83f3-ee42c9c6398d"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fecIni}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" style="normal" mode="Opaque" x="396" y="0" width="48" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="41fcafe7-127c-431e-a9c1-219f5a34d7ec"/>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="396" y="10" width="48" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="41fcafe7-127c-431e-a9c1-219f5a34d7ec"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[A Fecha]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yy" isBlankWhenNull="true">
-				<reportElement key="textField" style="resaltado" mode="Opaque" x="445" y="0" width="75" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="e97c109e-ddac-45fb-bbcc-19102dcb7cca"/>
+				<reportElement key="textField" style="resaltado" mode="Opaque" x="445" y="10" width="75" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="e97c109e-ddac-45fb-bbcc-19102dcb7cca"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fecFin}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" style="normal" mode="Opaque" x="2" y="0" width="225" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="6d7e7770-8542-4bef-8ca5-7e1364cd9b4e"/>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="2" y="10" width="225" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="6d7e7770-8542-4bef-8ca5-7e1364cd9b4e"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Dotted"/>
 					<topPen lineWidth="1.0" lineStyle="Dotted"/>
@@ -108,7 +108,7 @@ order by c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,]]>
 				<text><![CDATA[Relacion Albaran Ventas por Representante]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" style="normal" mode="Opaque" x="2" y="16" width="76" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="fa964bbb-fe98-4713-a44c-2a7901517893"/>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="2" y="26" width="76" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="fa964bbb-fe98-4713-a44c-2a7901517893"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<font isBold="true"/>
 					<paragraph lineSpacing="Single"/>
@@ -116,21 +116,21 @@ order by c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,]]>
 				<text><![CDATA[Reprentante]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" style="resaltado" mode="Opaque" x="102" y="16" width="315" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="4413d1d3-651f-4df9-bd36-97e6e5e67290"/>
+				<reportElement key="textField" style="resaltado" mode="Opaque" x="102" y="26" width="315" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="4413d1d3-651f-4df9-bd36-97e6e5e67290"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{repCodiE}+" - "+$P{repNombE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" style="normal" mode="Opaque" x="424" y="16" width="48" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="90bc9e60-4681-470f-a067-2ba9af378abb"/>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="424" y="26" width="48" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="90bc9e60-4681-470f-a067-2ba9af378abb"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Empresa]]></text>
 			</staticText>
 			<textField pattern="##0" isBlankWhenNull="true">
-				<reportElement key="textField" style="resaltado" mode="Opaque" x="474" y="16" width="61" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="ccc736f1-7b12-4ee8-99d6-3976a3fe2c4a"/>
+				<reportElement key="textField" style="resaltado" mode="Opaque" x="474" y="26" width="61" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="ccc736f1-7b12-4ee8-99d6-3976a3fe2c4a"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<paragraph lineSpacing="Single"/>
 				</textElement>
@@ -294,7 +294,7 @@ order by c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,]]>
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="16" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<staticText>
 				<reportElement key="staticText" style="normal" mode="Opaque" x="5" y="0" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b95c19ba-d395-4154-af96-73c569712b79"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
@@ -340,7 +340,7 @@ order by c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,]]>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="29" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<staticText>
 				<reportElement key="staticText-12" mode="Opaque" x="1" y="2" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5cbd424b-20da-4a16-9111-07e7c4301e58">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>

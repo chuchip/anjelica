@@ -28,7 +28,6 @@ package gnu.chu.anjelica.ventas;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.ActualStkPart;
-import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.pad.MantRepres;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.camposdb.empPanel;
@@ -50,6 +49,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -170,7 +171,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2016-04-01");
+   this.setVersion("2016-04-06");
    statusBar = new StatusBar(this);
  
    initComponents();
@@ -357,7 +358,7 @@ public void iniciarVentana() throws Exception
    
    void buscaVentasCom()
    {
-      buscaVentas(false);
+      buscaVentas(true);
       try {
         
         s=getStrSql(fecIniComE.getText(),fecFinComE.getText());
@@ -371,14 +372,14 @@ public void iniciarVentana() throws Exception
             kgVenT =  impVenT = 0;
             do {
                  if (!repr.equals(dtCon1.getString("rep_codi"))) {
-                     ponDatosRepr(repr,sbeCodi);
+                     ponDatosRepr(repr,sbeCodi, true);
                      repr = dtCon1.getString("rep_codi");
                  }
                  if (sbeCodi!=dtCon1.getInt("sbe_codi"))
                  {
                      if (kgVenL!=0 || impVenL==0)
                      {
-                       ponDatosRepr(repr,sbeCodi);
+                       ponDatosRepr(repr,sbeCodi,true);
                        repr = dtCon1.getString("rep_codi");
                      }   
                      ponDatosSbe(sbeCodi);
@@ -413,68 +414,65 @@ public void iniciarVentana() throws Exception
                  nClAcL += nClAcZ;
              } while (dtCon1.next());
 
-             ponDatosRepr(repr,sbeCodi);
+             ponDatosRepr(repr,sbeCodi,true);
              ponDatosSbe(sbeCodi);
        }
       
-       int nlOri=0;
-       int nlFin=0;
-       
+       int nlOri;       
        ArrayList<ArrayList> datCom=new ArrayList();
-       int maxLin=datos.size()>jt.getRowCount()?datos.size():jt.getRowCount();
-       while (nlOri<jt.getRowCount() || nlFin<datos.size() )
+       
+       for (nlOri=0;nlOri<jt.getRowCount();nlOri++  )
        {
            ArrayList v=new ArrayList();
-           if (nlOri<jt.getRowCount())
-           { // Le quedan linas al origen
-               if (nlFin<datos.size())
-               { // Todavia le quedan lineas al Final
-                   if (jt.getValString(nlOri,0).equals(datos.get(nlFin).get(0).toString()) &&
-                               jt.getValString(nlOri,1).equals(datos.get(nlFin).get(1).toString()) &&
-                               jt.getValString(nlOri,JT_SBECOD ).equals(datos.get(nlFin).get(DATSBE).toString()))
-                   {
-                       datCom.add(addDatos(datos,nlOri++,nlFin++));
-                       continue;
-                   }
-                   else
-                   {
-                       int nlEnc=-1;
-                       for (int n1=nlFin;n1<datos.size();n1++)
-                       {
-                             if (jt.getValString(nlOri,0).equals(datos.get(n1).get(0).toString()) &&
-                                   jt.getValString(nlOri,1).equals(datos.get(n1).get(1).toString()) &&
-                                   jt.getValString(nlOri,JT_SBECOD).equals(datos.get(n1).get(DATSBE).toString()))
-                             {
-                                nlEnc=n1;
-                                break;
-                             }
-                       }
-                       if (nlEnc>=0)
-                       {
-                         for (;nlFin<nlEnc;nlFin++)
-                         {
-                               datCom.add(addDatos1(datos,-1,nlFin));
-                         }
-                         continue;
-                       }
-                       else
-                          datCom.add(addDatos(datos,nlOri++,-1));
-                   }
-               }
-               if (nlOri<jt.getRowViewCount())
-               { // Todavia le quedan lineas al Origen
-                 datCom.add(addDatos(datos,nlOri++,-1));
-               }
-           }
-           else
-           { // Solo trato las lineas del final (año anterior)
-              if (nlFin<datos.size())
-                 datCom.add(addDatos1(datos,-1,nlFin++));
-           }
-          // datCom.add(addDatos1(datos,-1,nlFin));
+                    
+           int nlEnc=-1;
+           for (int n1=0;n1<datos.size();n1++)
+           {
+                if (jt.getValString(nlOri,0).equals(datos.get(n1).get(0).toString()) &&
+                      jt.getValString(nlOri,1).equals(datos.get(n1).get(1).toString()) &&
+                      jt.getValString(nlOri,JT_SBECOD).equals(datos.get(n1).get(DATSBE).toString()))
+                {
+                   nlEnc=n1;
+                   break;
+                }
+            }  
+            double impFin=0;
+            double kilFin=0;
+            v.add(jt.getValString(nlOri,0)); //0
+            v.add(jt.getValString(nlOri,1)); //1
+            v.add(jt.getValString(nlOri,2)); // 2
+            v.add(jt.getValString(nlOri,JT_IMPVEN)); // 3
+            if (nlEnc>=0)
+            {
+                 kilFin=Double.parseDouble(datos.get(nlEnc).get(DATKIL).toString());
+                 impFin=Double.parseDouble(datos.get(nlEnc).get(DATIMP).toString());
+                 datos.remove(nlEnc);
+            }
+            v.add(impFin); // 4
+            v.add(jt.getValorDec(nlOri,JT_IMPVEN)-impFin); // 5
+            v.add(jt.getValString(nlOri,JT_KILVEN)); // 6
+            v.add(kilFin); // 7
+            v.add(jt.getValorDec(nlOri,JT_KILVEN)-kilFin); // 8
+            v.add(jt.getValorInt(nlOri,JT_SBECOD)); // 9
+            datCom.add(v);
        } 
-       // Añade linea Final.
-      
+     
+       for (ArrayList  v: datos)
+       {
+          ArrayList v1=new ArrayList();
+          v1.add(v.get(0));
+          v1.add( v.get(1));
+          v1.add(v.get(2));
+          v1.add(0);
+          v1.add( v.get(DATIMP));          
+          v1.add( (double) v.get(DATIMP)*-1);          
+          v1.add(0);
+          v1.add(v.get(DATKIL));
+          v1.add( (double) v.get(DATKIL)*-1);
+          v1.add(v.get(DATSBE));
+          datCom.add(v1);
+       }
+       Collections.sort(datCom,new CustomComparator());
        numAlbOriE.setValorInt(numAlbE.getValorInt());
        numCliOriE.setValorInt(numCliE.getValorInt());
        impAlbOriE.setValorDec( impAlbE.getValorDec());
@@ -492,7 +490,7 @@ public void iniciarVentana() throws Exception
        jtCom.removeAllDatos();
        jtCom.setDatos(datCom);
        ArrayList v1=new ArrayList();
-       v1.add(".");v1.add(".");v1.add("TOTAL GENERAL");
+       v1.add("__");v1.add("__");v1.add("TOTAL GENERAL");
        v1.add(impAlbE.getValorDec());
        v1.add(impVenT);
        v1.add(impAlbE.getValorDec()- impVenT);
@@ -520,64 +518,8 @@ public void iniciarVentana() throws Exception
        }
        return false;
    }
-   /**
-    * Añade datos del periodo inicial.
-    * @param datCom
-    * @param nlOri
-    * @param nlFin
-    * @return 
-    */
-   ArrayList addDatos(ArrayList<ArrayList> datCom,int nlOri,int nlFin)
-   {
-       double kilFin=0;
-       double impFin=0;
-       ArrayList v=new ArrayList();
-       v.add(jt.getValString(nlOri,0)); //0
-       v.add(jt.getValString(nlOri,1)); //1
-       v.add(jt.getValString(nlOri,2)); // 2
-       v.add(jt.getValString(nlOri,JT_IMPVEN)); // 3
-       if (nlFin>=0)
-       {
-            kilFin=Double.parseDouble(datCom.get(nlFin).get(DATKIL).toString());
-            impFin=Double.parseDouble(datCom.get(nlFin).get(DATIMP).toString());
-       }
-       v.add(impFin); // 4
-       v.add(jt.getValorDec(nlOri,JT_IMPVEN)-impFin); // 5
-       v.add(jt.getValString(nlOri,JT_KILVEN)); // 6
-       v.add(kilFin); // 7
-       v.add(jt.getValorDec(nlOri,JT_KILVEN)-kilFin); // 8
-       v.add(jt.getValString(nlOri,JT_SBECOD)); // 9
-       return v;
-   }
-   /**
-    *  Añade datos del periodo Inicial
-    * @param datCom
-    * @param nlOri
-    * @param nlFin
-    * @return Añad
-    */
-   ArrayList addDatos1(ArrayList<ArrayList> datCom,int nlOri,int nlFin)
-   {
-       double kilFin=0;
-       double impFin=0;
-       ArrayList v=new ArrayList();
-       v.add(datCom.get(nlFin).get(0).toString());
-       v.add(datCom.get(nlFin).get(1).toString());
-       v.add(datCom.get(nlFin).get(2).toString());
-       if (nlOri>=0)
-       {
-            kilFin=jt.getValorDec(nlOri,JT_KILVEN);
-            impFin=jt.getValorDec(nlOri,JT_IMPVEN);
-       }
-       v.add(impFin);
-       v.add(datCom.get(nlFin).get(DATIMP).toString());
-       v.add(impFin-Double.parseDouble(datCom.get(nlFin).get(DATIMP).toString()));
-       v.add(kilFin);
-       v.add(Double.parseDouble(datCom.get(nlFin).get(DATKIL).toString()));
-       v.add(kilFin-Double.parseDouble(datCom.get(nlFin).get(DATKIL).toString()));
-       v.add(datCom.get(nlFin).get(DATSBE).toString());
-       return v;
-   }
+  
+  
    void ponerFechasComp() throws SQLException,ParseException
    {
      if (fecIniComE.isNull() && ! AnoComE.isNull())
@@ -760,7 +702,7 @@ public void iniciarVentana() throws Exception
               inTransation=true;
               msgEspere("Buscando datos...");
               swBuscaFam=false;
-              buscaVentas(true);
+              buscaVentas(false);
               swBuscaFam=true;
               resetMsgEspere();
               mensaje("");
@@ -787,7 +729,7 @@ public void iniciarVentana() throws Exception
   {
    try
    {
-     if (jt.getValString(0).equals(".") || jt.getValString(1).equals("."))
+     if (jt.getValString(0).equals("__") || jt.getValString(1).equals("__"))
          return;
      if (alVeZo == null)
      {
@@ -814,8 +756,7 @@ public void iniciarVentana() throws Exception
   {
    try
    {
-//     if (jtCom.getValString(0).equals(".") || jtCom.getValString(1).equals("."))
-//         return;
+     
      if (alVenComp == null)
      {
        alVenComp = new AlbClienComp();
@@ -950,11 +891,13 @@ public void iniciarVentana() throws Exception
        Logger.getLogger(Covezore.class.getName()).log(Level.SEVERE, null, k);
      }
    }
-    void ponDatosRepr(String repr,int sbeCodi) throws SQLException {
-        if (jt.getValorInt(jt.getRowCount() - 1, 3) != nAlbL) {
+    void ponDatosRepr(String repr,int sbeCodi,boolean incDatos) throws SQLException {
+        
+        if (incDatos)
+        {
             ArrayList v = new ArrayList();
             v.add(repr);//0
-            v.add("."); //1
+            v.add("__"); //1
             v.add(" Total " + MantRepres.getNombRepr(repr,dtStat)); //2
             v.add(nAlbL); //3
             v.add(nCliL); //4
@@ -977,8 +920,8 @@ public void iniciarVentana() throws Exception
    void ponDatosSbe(int sbeCodi) throws SQLException {
 
         ArrayList v = new ArrayList();
-        v.add("."); //0
-        v.add("."); //1
+        v.add("__"); //0
+        v.add("__"); //1
         v.add("  TOTAL DELEGACION: " + sbe_codiE.getNombSubEmpresa(dtStat,sbeCodi,0)); //2
         v.add(nAlbS); //3
         v.add(nCliS); //4
@@ -1201,7 +1144,7 @@ public void iniciarVentana() throws Exception
                 return;
             jt.setValor(jt.getValorDec(n, JT_IMPGAN) / jt.getValorDec(n, JT_KILVEN),
                 n, JT_PORGAN);
-            if (jt.getValString(n, 0).equals("."))
+            if (jt.getValString(n, 0).equals("__"))
             {
                 jt.setValor(totSec, n, JT_IMPGAN);
                 jt.setValor(totSec / jt.getValorDec(n, JT_KILVEN),
@@ -1210,7 +1153,7 @@ public void iniciarVentana() throws Exception
                 totSec = 0;
                 continue;
             }
-            if (jt.getValString(n, 1).equals("."))
+            if (jt.getValString(n, 1).equals("__"))
             {
                 jt.setValor(totRepr, n, JT_IMPGAN);
                 jt.setValor(totRepr / jt.getValorDec(n, JT_KILVEN),
@@ -1258,11 +1201,11 @@ public void iniciarVentana() throws Exception
         ht.put(valor, impGana);
 
     }
-   void buscaVentas(boolean debug)
+   void buscaVentas(boolean comparativo)
    {
      try
      {
-         if (debug)
+         if (!comparativo)
             mensaje("Espere, por favor ... buscando Datos");
          s=getStrSql(fecIniE.getText(),fecFinE.getText());
       
@@ -1273,7 +1216,7 @@ public void iniciarVentana() throws Exception
    //    rs=st.executeQuery(s);
          if (!dtCon1.select(s))
          {
-           if (debug)
+           if (!comparativo)
            {
             msgBox("No encontradas Ventas con estos criterios");
             mensaje("");
@@ -1293,14 +1236,16 @@ public void iniciarVentana() throws Exception
         do {
 
              if (!repr.equals(dtCon1.getString("rep_codi"))) {
-                 ponDatosRepr(repr,sbeCodi);
+                 ponDatosRepr(repr,sbeCodi,
+                     jt.getValorInt(jt.getRowCount() - 1, 3) != nAlbL || comparativo);
                  repr = dtCon1.getString("rep_codi");
              }
              if (sbeCodi!=dtCon1.getInt("sbe_codi"))
              {
                  if (kgVenL!=0 || impVenL==0)
                  {
-                     ponDatosRepr(repr,sbeCodi);
+                     ponDatosRepr(repr,sbeCodi,
+                         jt.getValorInt(jt.getRowCount() - 1, 3) != nAlbL || comparativo);
                      repr = dtCon1.getString("rep_codi");
                  }   
                  ponDatosSbe(sbeCodi);
@@ -1335,7 +1280,7 @@ public void iniciarVentana() throws Exception
              kgVenL += dtCon1.getDouble("avc_kilos");
              nClAcL += nClAcZ;
          } while (dtCon1.next());
-       ponDatosRepr(repr,sbeCodi);
+       ponDatosRepr(repr,sbeCodi,jt.getValorInt(jt.getRowCount() - 1, 3) != nAlbL || comparativo);
        ponDatosSbe(sbeCodi);
        jt.setDatos(datos);
        numAlbE.setValorInt(nAlbT);
@@ -1411,10 +1356,10 @@ public void iniciarVentana() throws Exception
 
          jtGru.addLinea(v);
        }  while (dtCon1.next());
-       if (debug)
+       if (! comparativo)
        {
-        mensajeErr("Busqueda ... realizada");
-        mensaje("Doble Click o F2 en Resultados Zona para Desglosar Clientes");
+            mensajeErr("Busqueda ... realizada");
+            mensaje("Doble Click o F2 en Resultados Zona para Desglosar Clientes");
        }
        llenaFamilias();
        arbolProdPanel.verDatosArbol();
@@ -2293,3 +2238,23 @@ public void iniciarVentana() throws Exception
 //    pr.setEnabled(true);
 //  }
 //}
+
+class CustomComparator implements Comparator<ArrayList> 
+{
+  
+        @Override
+            public int compare(ArrayList o1, ArrayList o2) {
+                   if (  (int)o1.get(9) == (int) o2.get(9) )
+                   {
+                        if ( ((String) o1.get(0)).equals((String)o2.get(0)))
+                        {
+                            return ( ((String) o1.get(1)).compareTo((String)o2.get(1)));
+                            
+                        }
+                        else
+                           return ( ((String) o1.get(0)).compareTo((String)o2.get(0)));                           
+                   }
+                   else 
+                       return (int) o1.get(9) -  (int) o2.get(9);
+    }
+}
