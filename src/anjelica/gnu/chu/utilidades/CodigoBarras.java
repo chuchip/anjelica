@@ -5,7 +5,7 @@ package gnu.chu.utilidades;
  * <p>Título: CodigoBarras</p>
  * <p>Descripción: Clase para almacenar el codigo de barras que se imprime en etiquetas</p>
  * <p>Created on 03-abr-2009, 18:14:38</p>
- *  <p>Copyright: Copyright (c) 2005-2014
+ *  <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -156,14 +156,15 @@ public class CodigoBarras
     {
         codBarra= indiceEti+(ejeLot.length()>2? ejeLot.substring(2):ejeLot)
                 + proSerie+
-                 Formatear.format(proLote, "99999")
-                + Formatear.format(proCodi, "99999")
-                + Formatear.format(proIndi, "999")
+                 Formatear.format(proLote, "###99").trim()
+                + Formatear.format(proCodi, "##999").trim()
+                + Formatear.format(proIndi, "#99").trim()
                 + (proKilos==0?"":Formatear.format(proKilos, "9999.99"))
-                + (cliente==0?"":""+cliente);
+                + (cliente==0?"":"C"+cliente);
         
         lote=  (ejeLot.length()>2? ejeLot.substring(2):ejeLot)
-                 + proSerie+ Formatear.format(proLote, "99999")+"/"+Formatear.format(proIndi, "999");
+                 + proSerie+  Formatear.format(proLote,"##999").trim()+"/"+
+            Formatear.format(proIndi,"#99").trim();
     }
     public CodigoBarras(String codBarras) throws NumberFormatException
     {      
