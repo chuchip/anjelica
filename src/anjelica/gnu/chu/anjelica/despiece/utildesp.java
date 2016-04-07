@@ -272,6 +272,7 @@ public class utildesp
     }
    paiEmp = dtCon1.getInt("pai_codi",true);
    empRGSA = dtCon1.getString("emp_nurgsa");
+   
    while (busca)
    {
       nVuelta++;
@@ -292,9 +293,9 @@ public class utildesp
           " and p.acc_ano = " + ejeLot +
           " and p.acc_serie = '" + serie + "'" +
           " and p.acc_nume = " + proLote +
-          " and "+(proIndi==0?"l.pro_codi ="+proCodi
-          :" p.acp_numind = " + proIndi )+
-          " and p.pro_codi = " + proCodi +
+          (proIndi==0?(proCodi!=0?"":" and p.pro_codi = " + proCodi )          
+          :" and p.acp_numind = " + proIndi )+
+          (proCodi!=0?"":" and p.pro_cosdi = " + proCodi )+
           (almCodi!=0?" and l.alm_codi = "+almCodi:"")+
           " and p.emp_codi = c.emp_codi " +
           " and p.acc_ano = c.acc_ano " +
@@ -737,7 +738,6 @@ public class utildesp
       stkPart.setControlExist(dt.getString("pro_coexis").equals("S"));
       stkPart.setKilos(Formatear.redondea(dt.getDouble("pro_stock"),2));      
       stkPart.setUnidades(dt.getInt("pro_stkuni"));
-      
       s = "SELECT * FROM V_STKPART WHERE " +
         " EJE_NUME= " + ejeLot +
         " AND EMP_CODI= " + empLot +
@@ -748,8 +748,29 @@ public class utildesp
         (almCodi!=0?" and alm_codi = "+almCodi:"");
     if (!dt.select(s))
     {
-      stkPart.setEstado(StkPartid.INDIV_NOT_FOUND);           
-      return stkPart;
+       s="select * from v_config where emp_codi="+empLot+
+           " and cfg_tipemp=2"; // Plantacion.
+       if (dt.select(s))
+       {
+           s = "SELECT * FROM V_STKPART WHERE " +
+            " EJE_NUME= " + ejeLot +
+            " AND EMP_CODI= " + empLot +
+            " AND PRO_SERIE='" + serLot + "'" +
+            " AND pro_nupar= " + numLot +
+            " and pro_numind= " + numind+          
+            (almCodi!=0?" and alm_codi = "+almCodi:"");
+           if (!dt.select(s))
+           {
+                stkPart.setEstado(StkPartid.INDIV_NOT_FOUND);           
+                return stkPart;
+            }
+       }
+       else
+       {
+            stkPart.setEstado(StkPartid.INDIV_NOT_FOUND);           
+            return stkPart;
+
+       }
     }
     stkPart.setEstado(StkPartid.INDIV_OK);     
     stkPart.setLockIndiv(dt.getInt("stk_block")!=0);   

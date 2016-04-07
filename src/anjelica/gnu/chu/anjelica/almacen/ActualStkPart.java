@@ -748,25 +748,64 @@ public class ActualStkPart
    * @throws SQLException
    * @return boolean
    */
-  public static boolean checkStock(DatosTabla dt, int proCodi, int ejeLot, int empLot,
+  public static boolean checkStock(DatosTabla dt, int proCodi, int ejeLot,int empLot,
                             String serLot, int numLot,
                             int nInd, int almCodi, double kilos, int unids) throws SQLException
   {
-    String s = "SELECT *  FROM v_stkpart " +
-        " WHERE eje_nume = " + ejeLot +
-        " AND emp_codi =  " + empLot +
-        " and pro_serie = '" + serLot + "'" +
-        " and pro_nupar = " + numLot +
-        " and pro_numind = " + nInd +
-        " and pro_codi = " + proCodi +
-        " and alm_codi = " + almCodi;
-    if (!dt.select(s))
-      return false;
+    if (! checkIndiv(dt,proCodi,ejeLot,empLot,serLot,numLot,nInd,almCodi))
+        return false;
     if ( Formatear.redondea(kilos,3) > Formatear.redondea(dt.getDouble("stp_kilact"),3) && kilos != 0)
       return false;
     return unids <= dt.getDouble("stp_unact") || unids == 0;
   }
-
+  
+  /**
+   * Comprueba si existe el registro en Stock-Partidas.
+   * @param dt
+   * @param proCodi
+   * @param ejeLot
+   * @param serLot
+   * @param numLot
+   * @param nInd
+   * @param almCodi
+   * @return false si no existe
+   * @throws SQLException 
+   */
+  public static boolean checkIndiv(DatosTabla dt, int proCodi, int ejeLot,
+                            String serLot, int numLot,
+                            int nInd, int almCodi) throws SQLException
+  {
+     return checkIndiv(dt,proCodi,ejeLot,serLot,numLot,nInd,almCodi);
+  }
+  
+  /**
+   * Comprueba si existe un individuo en stock Partidas
+   * @param dt
+   * @param proCodi
+   * @param ejeLot
+   * @param empLot
+   * @param serLot
+   * @param numLot
+   * @param nInd
+   * @param almCodi
+   * @return
+   * @throws SQLException 
+   */
+  public static boolean checkIndiv(DatosTabla dt, int proCodi, int ejeLot,int empLot,
+                            String serLot, int numLot,
+                            int nInd, int almCodi) throws SQLException
+  {
+    String s = "SELECT *  FROM v_stkpart " +
+        " WHERE eje_nume = " + ejeLot +      
+        (empLot==0?"":" and emp_codi = "+empLot)+
+        " and pro_serie = '" + serLot + "'" +
+        " and pro_nupar = " + numLot +
+        " and pro_numind = " + nInd +
+        " and pro_codi = " + proCodi +
+        (almCodi!=0?" and alm_codi = " + almCodi:"");
+     return dt.select(s);
+      
+  }
   private String getCampoLlave(String llave, int posIni)
   {
     posFin = llave.indexOf("|", posIni);

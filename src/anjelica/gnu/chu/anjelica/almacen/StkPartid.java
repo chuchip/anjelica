@@ -31,12 +31,8 @@ public class StkPartid {
     private boolean indivStock;
     private boolean controlInd;
     private int estado;
-  public final static int ARTIC_NOT_FOUND = 1; // Articulo NO encontrado
+    public final static int ARTIC_NOT_FOUND = 1; // Articulo NO encontrado
     public final static int INDIV_NOT_FOUND= 2; //"NO encontrado Partida para estos valores";
-//    public final static int INDIV_LOCK=3; // Individuo Bloqueado
-//    public final static int ARTIC_SIN_CONTROL_INDIV=4;// Articulo sin Control Individuos
-//    public final static int ARTIC_SIN_CONTROL_EXIST=5;// Articulo sin Control Exist.
-//    public final static int ARTIC_SIN_CONTROL=6;// Articulo sin Control Exist. ni indiv.
     public final static int INDIV_OK=0; // Individuo Encontrado
     private final String[] literal=new String[]{null,"Articulo NO encontrado",
         "Individuo NO encontrado en Stock-Partidas",
@@ -56,7 +52,7 @@ public class StkPartid {
     public boolean isControlExist() {
         return controlExist;
     }
-
+   
     public void setControlExist(boolean controlExist) {
         this.controlExist = controlExist;
     }

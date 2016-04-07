@@ -28,6 +28,7 @@ public class CodigoBarras
     private String codBarra,lote,indiceEti,ejeLot;
     private int proEjeLote,proLote,proCodi,proIndi;
     private boolean error=false;
+    private int cliente=0;
 
     public boolean isError() {
         return error;
@@ -102,6 +103,19 @@ public class CodigoBarras
         return codBarra;
     }
     /**
+     * Establece el codigo de cliente para ponerlo en el codigo de barras
+     * @param cliente
+     * @return 
+     */
+    public void setCliente(int cliente)
+    {
+        this.cliente=cliente;
+    }
+    public int getCliente()
+    {
+        return this.cliente;
+    }
+    /**
      * Devuelve el texto del Lote para imprimir
      * @return 
      */
@@ -145,7 +159,8 @@ public class CodigoBarras
                  Formatear.format(proLote, "99999")
                 + Formatear.format(proCodi, "99999")
                 + Formatear.format(proIndi, "999")
-                + (proKilos==0?"":Formatear.format(proKilos, "9999.99"));
+                + (proKilos==0?"":Formatear.format(proKilos, "9999.99"))
+                + (cliente==0?"":""+cliente);
         
         lote=  (ejeLot.length()>2? ejeLot.substring(2):ejeLot)
                  + proSerie+ Formatear.format(proLote, "99999")+"/"+Formatear.format(proIndi, "999");

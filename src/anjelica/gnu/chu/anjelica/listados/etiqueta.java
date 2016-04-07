@@ -11,6 +11,8 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import net.sf.jasperreports.engine.*;
 import net.sourceforge.barbecue.Barcode;
 import net.sourceforge.barbecue.BarcodeImageHandler;
@@ -43,8 +45,9 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   private final String LOGOTIPO="logotipo_bn.jpg"; // Logotipo por defecto.
   int nInd;
   int rowGrid;
-  Cgrid jt;
   
+  
+  ArrayList<ArrayList> datosInd=new ArrayList(); 
   DatosTabla dt;
   String fichEtiq;
   EntornoUsuario EU;
@@ -420,11 +423,11 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   public boolean next() throws JRException
   {
 
-    int nIndGrid=jt.getValorInt(rowGrid,MantDespTactil.JTSAL_NUMPIE);
+    int nIndGrid= (int) datosInd.get(rowGrid).get(3);
     if (nInd>=nIndGrid)
     {
-       rowGrid=getNextLinea(rowGrid);
-       if (rowGrid < 0)
+       rowGrid++;
+       if (rowGrid >= datosInd.size())
            return false;
        nextLinea(rowGrid);      
        
@@ -432,36 +435,20 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     nInd++;
     return true;
   }
-  /**
-   * Busca siguiente linea en el grid que esta marcada para imprimir.
-   * @param rowGrid
-   * @return 
-   */
-  int getNextLinea(int rowGrid)
-  {
-      int nRow=jt.getRowCount();
-      for (int n=rowGrid+1;n<nRow;n++)
-      {
-          if (jt.getValBoolean(n,MantDespTactil.JTSAL_IMPRIM))
-              return n;
-      }
-      return -1;
-          
-  }
   private void nextLinea(int rowGrid) throws JRException
   {
      
      String s = "select * from v_articulo as a, categorias_art as cat,calibres_art as cal where " +
-         "  pro_codi = " + jt.getValorInt(rowGrid,MantDespTactil.JTSAL_PROCODI)+
+         "  pro_codi = " + (int) datosInd.get(rowGrid).get(0)+
          " and a.cat_codi = cat.cat_codi "+
          " and a.cal_codi = cal.cal_codi ";
       try
       {
           if (! dt.select(s))
               throw new JRException("Articulo: "+
-                  jt.getValorInt(rowGrid,MantDespTactil.JTSAL_PROCODI)+" No encontrado Maestro");
-          codBarras.setProCodi(jt.getValorInt(rowGrid,MantDespTactil.JTSAL_PROCODI));
-          codBarras.setProIndi(jt.getValorInt(rowGrid,MantDespTactil.JTSAL_NUMIND));
+                  (int) datosInd.get(rowGrid).get(0)+" No encontrado Maestro");
+          codBarras.setProCodi((int) datosInd.get(rowGrid).get(0));
+          codBarras.setProIndi((int) datosInd.get(rowGrid).get(2));
           codBarras.initCodigoBarras();
           nInd=0;
       } catch (SQLException ex)
@@ -477,7 +464,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
       switch (campo)
       {
           case "pro_nomb":
-              return jt.getValString(rowGrid,MantDespTactil.JTSAL_PRONOMB);
+              return datosInd.get(rowGrid).get(1);                  
           case "cat_nomb":
               return dt.getString("cat_nomb") ;             
           case "cal_nomb":
@@ -496,9 +483,28 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
           throw new JRException(k);
       }
   }
-    
+   public void listarPagina(DatosTabla dt,java.util.Date fechaEnv,
+       Cgrid jt, CodigoBarras codBarras ) throws Exception
+   {
+      int nRow=(int) jt.getRowCount();
+      ArrayList<ArrayList> datosInd = new ArrayList();
+      for (int n=0;n<nRow;n++)
+      {
+          if (jt.getValBoolean(n,MantDespTactil.JTSAL_IMPRIM))
+          {
+              ArrayList lista=new ArrayList();
+              lista.add(jt.getValorInt(n,MantDespTactil.JTSAL_PROCODI));
+              lista.add(jt.getValString(n,MantDespTactil.JTSAL_PRONOMB));              
+              lista.add(jt.getValorInt(n,MantDespTactil.JTSAL_NUMIND));
+              lista.add(jt.getValorInt(n,MantDespTactil.JTSAL_NUMPIE));
+              datosInd.add(lista);
+          }
+      }
+      listarPagina(dt,fechaEnv,datosInd,codBarras);
+
+   }
   public void listarPagina(DatosTabla dt,java.util.Date fechaEnv,
-        Cgrid jt, CodigoBarras codBarras ) throws Exception
+        ArrayList<ArrayList> datosInd, CodigoBarras codBarras ) throws Exception
   { 
         
          if (jr==null || tipoEtiq!=tipEtiqOld)
@@ -506,7 +512,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
          
         this.dt=dt;
         
-        this.jt=jt;
+        this.datosInd=datosInd;
         this.codBarras=codBarras;
         tipEtiqOld=tipoEtiq;
         java.util.HashMap mp = new java.util.HashMap();
@@ -533,7 +539,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     mp.put("logotipo",img.equals("")?null:img);
 
     nInd=0;
-    rowGrid=rowGrid=getNextLinea(-1);
+    rowGrid=0;
     nextLinea(rowGrid);
     JasperPrint jp = JasperFillManager.fillReport(jr, mp,this);
     if (EU.getSimulaPrint())

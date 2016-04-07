@@ -62,6 +62,9 @@ import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.DatTrazFrame;
 import gnu.chu.anjelica.despiece.DespVenta;
+import gnu.chu.anjelica.despiece.MantDespTactil;
+import static gnu.chu.anjelica.despiece.MantDespTactil.JTSAL_IMPRIM;
+import static gnu.chu.anjelica.despiece.MantDespTactil.SERIE;
 import gnu.chu.anjelica.despiece.listraza;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
@@ -70,6 +73,8 @@ import gnu.chu.anjelica.pad.*;
 import gnu.chu.camposdb.*;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;
+import gnu.chu.eventos.GridAdapter;
+import gnu.chu.eventos.GridEvent;
 import gnu.chu.hylafax.IFFax;
 import gnu.chu.hylafax.SendFax;
 import gnu.chu.interfaces.PAD;
@@ -1811,6 +1816,13 @@ public class pdalbara extends ventanaPad  implements PAD  {
   }
   void activarEventos()
   {
+      jtPalet.addGridListener(new GridAdapter(){
+        @Override
+        public void focusLost(GridEvent event){
+            jtPalet.salirGrid();
+//            debug("palet: "+jtPalet.getValorInt(jtPalet.getSelectedRow(),0)+"peso: "+jtPalet.getValorDec(jtPalet.getSelectedRow(),1));
+        }
+      });
       jtLinPed.addListSelectionListener(new
        ListSelectionListener()
       {
@@ -6478,7 +6490,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       return -1;
   }
   /**
-   * Cambia Linea Despiece
+   * Cambia Linea Desglose (detalle individuos)
    * @param row Linea activa
    * @return < 0 si todo ha ido bien. >=0 campo de error
    */
@@ -7498,7 +7510,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     if (isEmpPlanta)
     {
         jtDes.setValor(avpNumparAnt,0, JTDES_LOTE);
-        jtDes.setValor(avpSerlotAnt,0, JTDES_NUMIND);
+        jtDes.setValor(avpNumindAnt,0, JTDES_NUMIND);
     }
     jtDes.setValor(1, 0, JTDES_UNID);
     jtDes.ponValores(0);
@@ -7773,8 +7785,46 @@ public class pdalbara extends ventanaPad  implements PAD  {
      }
      etiq.setTipoEtiq(dtStat, EU.em_cod,
                        etiCodi);
+    
       if (dtCons.getNOREG())
         return;
+      
+      String proNomb;
+      if (isEmpPlanta && etiq.getEtiquetasPorPagina()>1)
+      {
+          CodigoBarras codBarras;
+          s="select pro_codi,avp_ejelot,avp_serlot,avp_numpar,avp_numind,sum(avp_numuni) as unidades from v_albvenpar "+
+            " where emp_codi = " + emp_codiE.getValorInt() +
+            " AND avc_ano = " + avc_anoE.getValorInt() +
+            " and avc_nume = " + avc_numeE.getValorInt() +
+            " and avc_serie = '" + avc_seriE.getText() + "'"+
+            " group by pro_codi,avp_ejelot,avp_serlot,avp_numpar,avp_numind"+
+            " order by pro_codi,avp_ejelot,avp_serlot,avp_numpar,avp_numind ";
+           if (!dtCon1.select(s))
+           {
+                mensajeErr("No encontradas lineas de Partidas en este albaran");
+                return;
+           }
+           ArrayList<ArrayList> datosInd = new ArrayList();
+           do
+           {
+                proNomb = pro_codiE.getNombArt(dtCon1.getString("pro_codi"));
+                int avpNumpar=dtCon1.getInt("avp_numpar");               
+                codBarras= new CodigoBarras("D",dtCon1.getString("avp_ejelot").substring(2),
+                    dtCon1.getString("avp_serlot"),avpNumpar,1,
+                        1,  0);
+                codBarras.setCliente(cli_codiE.getValorInt());
+                     ArrayList lista=new ArrayList();
+                lista.add(dtCon1.getInt("pro_codi"));
+                lista.add(proNomb);              
+                lista.add(dtCon1.getInt("avp_numind"));
+                lista.add(dtCon1.getInt("unidades"));                
+                datosInd.add(lista);
+            } while (dtCon1.next());
+           etiq.listarPagina(dtStat,avc_fecalbE.getDate(),
+                     datosInd,codBarras);
+            return;
+      }
       s = "SELECT * FROM v_albvenpar " +
           " WHERE emp_codi = " + emp_codiE.getValorInt() +
           " AND avc_ano = " + avc_anoE.getValorInt() +
@@ -7785,7 +7835,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         mensajeErr("No encontradas lineas de Partidas en este albaran");
         return;
       }
-      String codBarras, proNomb;
+     
       do
       {
         proNomb = pro_codiE.getNombArt(dtCon1.getString("pro_codi"));
@@ -7801,7 +7851,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         
         String lote=   (avpNumpar > 9999 ? Formatear.format(avpNumpar, "99999") :
         Formatear.format(avpNumpar, "9999"));
-        codBarras = dtCon1.getString("avp_ejelot").substring(2) +
+        String codBarras = dtCon1.getString("avp_ejelot").substring(2) +
             Formatear.format(dtCon1.getString("avp_emplot"), avpNumpar > 9999?"9":"99") +
             dtCon1.getString("avp_serlot") +
             lote+
@@ -7835,7 +7885,6 @@ public class pdalbara extends ventanaPad  implements PAD  {
     }
     mensajeErr("Etiqueta ... Listada");
   }
-  
   private String getSqlListaAlb()
   {
       return "SELECT c.emp_codi as avc_empcod, c.*,cl.*" +

@@ -30,8 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -379,7 +377,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2016-03-08"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2016-04-07"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -2595,8 +2593,6 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    try
    {        
-
-         
      pro_codsalE.getNombArt(jtSal.getValString(linea,JTSAL_PROCODI));
      if (eti_codiE.getValorInt()==0)
      {
