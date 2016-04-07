@@ -44,7 +44,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
@@ -259,7 +258,7 @@ public class MantPartes  extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false,P_ADMIN?navegador.NORMAL:
             P_PERMEST==PERM_GERENC?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20160314) Modo: "+P_PERMEST);
+        this.setVersion("(20160407) Modo: "+P_PERMEST);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -404,6 +403,7 @@ public class MantPartes  extends ventanaPad implements PAD
       });
       jtAbo.addMouseListener(new MouseAdapter()
       {
+          @Override
           public void mouseClicked(MouseEvent e) {
               if (jtLineas.isEnabled() && !jtAbo.isEnabled() && e.getClickCount()>1)
               {
@@ -448,6 +448,7 @@ public class MantPartes  extends ventanaPad implements PAD
               swCargaLin=true;
               swCargaList=true;
               jtList.removeLinea();
+              verDatos(jtList.getValorInt(0));
               swCargaLin=false;
               swCargaList=false;
 //              SwingUtilities.invokeLater(new Thread()
