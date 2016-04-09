@@ -156,9 +156,11 @@ public class CodigoBarras
     {
         codBarra= indiceEti+(ejeLot.length()>2? ejeLot.substring(2):ejeLot)
                 + proSerie+
-                 Formatear.format(proLote, "###99").trim()
-                + Formatear.format(proCodi, "##999").trim()
-                + Formatear.format(proIndi, "#99").trim()
+                (proLote<=999?Formatear.format(proLote, "999")+"-":
+                Formatear.format(proLote, "99999"))+
+                (proCodi<=999?Formatear.format(proCodi, "999")+"-":
+                Formatear.format(proCodi, "99999"))            
+                + Formatear.format(proIndi, "999").trim()
                 + (proKilos==0?"":Formatear.format(proKilos, "9999.99"))
                 + (cliente==0?"":"C"+cliente);
         

@@ -7810,7 +7810,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
            {
                 proNomb = pro_codiE.getNombArt(dtCon1.getString("pro_codi"));
                 int avpNumpar=dtCon1.getInt("avp_numpar");               
-                codBarras= new CodigoBarras("D",dtCon1.getString("avp_ejelot").substring(2),
+                codBarras= new CodigoBarras("",dtCon1.getString("avp_ejelot").substring(2),
                     dtCon1.getString("avp_serlot"),avpNumpar,1,
                         1,  0);
                 codBarras.setCliente(cli_codiE.getValorInt());
