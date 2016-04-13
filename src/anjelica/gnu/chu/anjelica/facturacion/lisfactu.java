@@ -3,6 +3,7 @@ package gnu.chu.anjelica.facturacion;
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.listados.utillista;
 import gnu.chu.anjelica.menu;
+import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.pad.pdempresa;
 import gnu.chu.anjelica.riesgos.*;
@@ -1143,7 +1144,9 @@ private String buscaBanco(int banCodi) throws SQLException
      mp.put("logotipo", Iconos.getPathIcon() + "logotipo.jpg");
      mp.put("obser",null);
      mp.put("agrupa",getAgrupa()?new Integer(1):new Integer(0));
-     mp.put("empNif",pdempresa.getDatosEmpresa(dtStat, EU.em_cod).getString("emp_nif"));
+     vlike lk=  pdempresa.getDatosEmpresa(dtStat, EU.em_cod);
+     mp.put("empNif",MantPaises.getInicialesPais(lk.getInt("pai_codi"),dtStat)+
+         lk.getString("emp_nif"));
      mp.put("SUBREPORT_FILE_NAME",
             gnu.chu.print.util.getPathReport(EU,utillista.getNombList(EU.em_cod, CODLISTADO_LIN, dtStat)));
      mp.put("SB_NAME_POB",

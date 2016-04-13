@@ -636,4 +636,10 @@ public class MantPaises extends   ventanaPad  implements PAD
             return null;
         return dt.getString("pai_nomcor");
     }
+      public static String getInicialesPais(int paiCodi, DatosTabla dt) throws SQLException
+    {
+        if (! dt.select("select pai_inic from paises where pai_codi = "+paiCodi))
+            return null;
+        return dt.getString("pai_inic");
+    }
 }

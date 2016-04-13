@@ -1,6 +1,7 @@
 package gnu.chu.anjelica.ventas;
 
 import gnu.chu.anjelica.listados.utillista;
+import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.utilidades.*;
 import gnu.chu.sql.*;
 import java.sql.*;
@@ -10,6 +11,7 @@ import java.io.*;
 import gnu.chu.print.*;
 import java.text.*;
 import gnu.chu.anjelica.pad.pdconfig;
+import gnu.chu.anjelica.pad.pdempresa;
 import gnu.chu.hylafax.SendFax;
 import gnu.chu.mail.MailHtml;
 /**
@@ -171,6 +173,9 @@ public class lialbven implements JRDataSource
    mp.put("emp_obsalb", empObsAlb);
    mp.put("obser", obser==null?null:obser.trim());
    mp.put("logotipo",Iconos.getPathIcon()+"logotipo.jpg");
+   vlike lk=  pdempresa.getDatosEmpresa(dtCon1, EU.em_cod);
+   mp.put("empNif",MantPaises.getInicialesPais(lk.getInt("pai_codi"),dtCon1)+
+         lk.getString("emp_nif"));
    mp.put("avs_nume", avsNume);
    if (avsNume!=0)
    { // Busco la fecha de albaran de servicio.
