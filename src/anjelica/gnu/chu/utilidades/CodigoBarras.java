@@ -29,7 +29,10 @@ public class CodigoBarras
     private int proEjeLote,proLote,proCodi,proIndi;
     private boolean error=false;
     private int cliente=0;
-
+    private int avcAno;
+    private String avcSerie;
+    private int avcNume;
+    
     public boolean isError() {
         return error;
     }
@@ -105,7 +108,7 @@ public class CodigoBarras
     /**
      * Establece el codigo de cliente para ponerlo en el codigo de barras
      * @param cliente
-     * @return 
+     * 
      */
     public void setCliente(int cliente)
     {
@@ -154,19 +157,34 @@ public class CodigoBarras
     
     public final void initCodigoBarras()
     {
-        codBarra= indiceEti+(ejeLot.length()>2? ejeLot.substring(2):ejeLot)
+        if (indiceEti.equals("A"))
+            codBarra= indiceEti+
+                Formatear.format(avcAno, "##99").trim()+
+                avcSerie+
+                Formatear.format(avcNume, "99999")+
+                Formatear.format(proCodi, "99999")+
+                (proKilos==0?"":Formatear.format(proKilos, "9999.99"))
+                + (cliente==0?"":"C"+cliente);  
+        else
+            codBarra= indiceEti+
+                (ejeLot.length()>2? ejeLot.substring(2):ejeLot)
                 + proSerie+
-                (proLote<=999?Formatear.format(proLote, "999")+"-":
-                Formatear.format(proLote, "99999"))+
-                (proCodi<=999?Formatear.format(proCodi, "999")+"-":
-                Formatear.format(proCodi, "99999"))            
-                + Formatear.format(proIndi, "999").trim()
-                + (proKilos==0?"":Formatear.format(proKilos, "9999.99"))
-                + (cliente==0?"":"C"+cliente);
+                Formatear.format(proLote, "99999")+
+                Formatear.format(proCodi, "99999")+       
+                Formatear.format(proIndi, "999")+
+                (proKilos==0?"":Formatear.format(proKilos, "9999.99"))
+                + (cliente==0?"":"C"+cliente);  
         
         lote=  (ejeLot.length()>2? ejeLot.substring(2):ejeLot)
-                 + proSerie+  Formatear.format(proLote,"##999").trim()+"/"+
-            Formatear.format(proIndi,"#99").trim();
+                 + proSerie+  Formatear.format(proLote,"99999").trim()+"/"+
+                Formatear.format(proIndi,"#99").trim();
+    }
+    
+    public void setAlbaranVenta(int avcAno,String avcSerie,int avcNume)
+    {
+        this.avcAno=avcAno;
+        this.avcSerie=avcSerie;
+        this.avcNume=avcNume;
     }
     public CodigoBarras(String codBarras) throws NumberFormatException
     {      

@@ -1894,6 +1894,11 @@ void pdreprese_actionPerformed(ActionEvent e) {
     ht.put("modPrecio","true");
 //     ht.put("ponPrecio","true");
     ht.put("admin","true");
+    if (dtAdd.getConexion().getConURL().contains("anjelicars"))
+    {
+        ht.put("facil","true");
+        ht.put("etiAlbaran","true");
+    }
 //    ht.put("tipoEtiq",""+gnu.chu.anjelica.despiece.pddespie.NORMAL);
 
     lanzaEjecutable(new gnu.chu.anjelica.ventas.pdalbara(this,EU, ht));

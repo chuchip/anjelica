@@ -523,9 +523,32 @@ public class proPanel extends CPanel
   }
   public void llenaCampos()
   {
-    if (pro_codiE.getText().length()<17)
+    if (pro_codiE.getText().length()>6)
+    { // Posible codigo de barras
+        antesLlenaCampos();
+        String valor=pro_codiE.getText();
+
+        if (codBarra==null)
+             codBarra=new CodigoBarras(valor);
+        codBarra.setCodBarra(valor);
+        if (codBarra.isError() )
+        {
+            mensajes.mensajeAviso("Codigo Barras no es valido");
+            return;
+        }
+        prp_anoE.setValorDec(codBarra.getProEjeLote()) ;       
+        prp_serieE.setText(codBarra.getProSerie());
+        prp_partE.setValorInt(codBarra.getProLote() );
+        pro_codiE.setValorInt(codBarra.getProCodi());
+        prp_indiE.setValorInt(codBarra.getProIndi());
+        prp_pesoE.setValorDec(codBarra.getProKilos()); 
+        proCodiAnt=0;
+        pro_codiE_focusLost();
+        despuesLlenaCampos();
+    }
+    else
     {
-      if (pro_nombL.isEnabled())
+          if (pro_nombL.isEnabled())
       {
          if (pro_nombL.getGridEditable()!=null)
               return;
@@ -534,33 +557,10 @@ public class proPanel extends CPanel
       else
       {
         if (prp_anoE.getGridEditable()!=null) return;
-//              prp_anoE.getGridEditable().requestFocus(prp_anoE.getRowGrid());
-        prp_anoE.requestFocus();
+            prp_anoE.requestFocus();
       }
-      return;
-    }
-    antesLlenaCampos();
-//    System.out.println("LLenar campos");
-    String valor=pro_codiE.getText();
-    
-    if (codBarra==null)
-         codBarra=new CodigoBarras(valor);
-    codBarra.setCodBarra(valor);
-    if (codBarra.isError() )
-    {
-        mensajes.mensajeAviso("Codigo Barras no es valido");
-        return;
-    }
-    prp_anoE.setValorDec(codBarra.getProEjeLote()) ;       
-
-    prp_serieE.setText(codBarra.getProSerie());
-    prp_partE.setValorInt(codBarra.getProLote() );
-    pro_codiE.setValorInt(codBarra.getProCodi());
-    prp_indiE.setValorInt(codBarra.getProIndi());
-    prp_pesoE.setValorDec(codBarra.getProKilos()); 
-    proCodiAnt=0;
-    pro_codiE_focusLost();
-    despuesLlenaCampos();
+      
+     }
   }
  
 
