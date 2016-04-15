@@ -438,7 +438,6 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   @Override
   public boolean next() throws JRException
   {
-
     int nIndGrid= (int) datosInd.get(rowGrid).get(L_UNIDADES);
     if (nInd>=nIndGrid)
     {
@@ -507,7 +506,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
        Cgrid jt, CodigoBarras codBarras ) throws Exception
    {
       int nRow=(int) jt.getRowCount();
-      ArrayList<ArrayList> datosInd = new ArrayList();
+      ArrayList<ArrayList> dtInd = new ArrayList();
       for (int n=0;n<nRow;n++)
       {
           if (jt.getValBoolean(n,MantDespTactil.JTSAL_IMPRIM))
@@ -520,10 +519,10 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
               lista.add(codBarras.getProEjeLote());
               lista.add(codBarras.getProSerie());
               lista.add(codBarras.getProLote());
-              datosInd.add(lista);
+              dtInd.add(lista);
           }
       }
-      listarPagina(dt,fechaEnv,datosInd,codBarras);
+      listarPagina(dt,fechaEnv,dtInd,codBarras);
 
    }
   public void listarPagina(DatosTabla dt,java.util.Date fechaEnv,

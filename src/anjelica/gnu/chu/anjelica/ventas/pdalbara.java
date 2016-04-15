@@ -112,6 +112,7 @@ import javax.swing.event.ListSelectionListener;
 
  
 public class pdalbara extends ventanaPad  implements PAD  {  
+  rangoEtiquetas rangoEtiq;
   private final int JTP_NUMLIN=10;
   private final int JTP_PRV=11;
   private final int JTP_UNID=5;
@@ -175,7 +176,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   public final static int REVPRE_PCOSTO=1;
   public final static int REVPRE_PVALOR=2;
   public final static int  REVPRE_REVISA=3;
-  public final static int ETICLIENTE=-1;
+  
   private final static int FD_PRTARI=6; // Campo de Pr. tarifa en grid.
   private final static int FD_PRECIO=5; // Campo de Precio
   
@@ -200,13 +201,14 @@ public class pdalbara extends ventanaPad  implements PAD  {
   /**
    * Kilos Linea albaran (3)
    */
-  private int JT_KILOS=3; 
+  private int JT_KILOS=3;   
   /**
    * Unidades de Linea Albaran (4)
    */
   private int JT_UNID=4; 
   private  int JT_FECMVT=7; // Fecha Mvto.
   private int JT_NUMPALE=8; // Numero Pale
+  private int JT_SELLIN=10; // Numero Pale
   //private int JT_CODENV=9; // Codigo Envase
   /**
    * Kilos Brutos (10)
@@ -498,8 +500,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
     @Override
     public boolean afterInsertaLinea(boolean insLinea)
     {
-      if (swCanti || P_FACIL)
-      {   
+      if (swCanti || P_FACIL && jtDes.getValorDec(jtDes.getSelectedRow()-1, JTDES_KILOS)!=0)
+      {    
           irGridLin();
           jt.mueveSigLinea(1);          
           return false;
@@ -577,8 +579,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
   CTextField avc_dtocomE = new CTextField(Types.DECIMAL, "#9.99");
   CLabel dtComPL = new CLabel();
   CLabel cLabel19 = new CLabel();
-  CLabel cLabel20 = new CLabel();
-  CComboBox eti_codiE = new CComboBox();
+  
+
   CCheckBox avc_confoE = new CCheckBox("-1","0");
   String P_ZONA = null;
 
@@ -743,7 +745,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-04-05" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-04-15" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1025,15 +1027,6 @@ public class pdalbara extends ventanaPad  implements PAD  {
         dtComPL.setText("%");
         cLabel19.setText("Imp.Dtos");
         cLabel19.setBounds(new Rectangle(340, 2, 63, 17));
-        cLabel20.setBackground(Color.blue);
-        cLabel20.setForeground(Color.white);
-        cLabel20.setOpaque(true);
-        cLabel20.setHorizontalAlignment(SwingConstants.CENTER);
-        cLabel20.setHorizontalTextPosition(SwingConstants.CENTER);
-        cLabel20.setText("Tipo Etiqueta");
-        cLabel20.setBounds(new Rectangle(588, 3, 101, 17));
-        eti_codiE.setPreferredSize(new Dimension(202, 24));
-        eti_codiE.setBounds(new Rectangle(588, 20, 101, 17));
         avc_confoE.setSelected(true);
         avc_confoE.setText("Facturar");
         avc_confoE.setBounds(new Rectangle(590, 22, 76, 16));
@@ -1229,8 +1222,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         PotroDat.add(avc_impcobL, null);
         PotroDat.add(avc_impcobE, null);
         Ppie.add(Birgrid, null);
-        Ppie.add(eti_codiE, null);
-        Ppie.add(cLabel20, null);
+
         Ppie.add(opDispSalida, null);
         Ppie.add(cLabel210, null);
         Ppie.add(opValora, null);
@@ -1574,10 +1566,6 @@ public class pdalbara extends ventanaPad  implements PAD  {
     jtDes.setButton(KeyEvent.VK_F5, BValTar);
     Pped1.setButton(KeyEvent.VK_F3,BbusPed);
 
-    eti_codiE.setDatos(etiqueta.getReports(dtStat, EU.em_cod,0));
-    eti_codiE.addItem("Del Cliente",""+ETICLIENTE);
-    eti_codiE.addItem("Defecto","0");
-    eti_codiE.setValor("0");
 
     avc_valoraE.addItem("Valorado","-1");
     avc_valoraE.addItem("NO Valor","0");
@@ -2314,6 +2302,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
           if (!jt.isEnabled())
             irGridLin();
         }
+        else
+        {
+            if (jt.getSelectedColumn()==JT_SELLIN)
+                jt.setValor(! jt.getValBoolean(JT_SELLIN),JT_SELLIN);
+        }
       }
     });
     jt.setReqFocusEdit(true);
@@ -2955,8 +2948,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       cli_codiE.setValorInt(dtAdd.getInt("cli_codi"),dtAdd.getString("avc_clinom",false));
 //      cli_codiE.getCliNomb().setText(dtAdd.getString("avc_clinom"));
       cli_pobleE.setText(cli_codiE.getLikeCliente().getString("cli_poble"));
-      if (cli_codiE.getLikeCliente().getInt("eti_codi")!=0)
-          eti_codiE.setValor(""+ETICLIENTE);
+      
       avc_fecalbE.setText(dtAdd.getFecha("avc_fecalb", "dd-MM-yyyy"));
       verPrecios=false;
       if (P_MODPRECIO ||
@@ -3601,6 +3593,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         v.add(dtCon1.getInt("avl_numpal"));
         v.add(dtCon1.getDouble("avl_canbru"));
         tipIva = dtCon1.getInt("pro_tipiva"); // pro_codiE.getLikeProd().getDatoInt("pro_tipiva");
+        v.add(false);
         jt.addLinea(v);
         if (verPrecios)
         {
@@ -3771,6 +3764,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
                 v.add(""); 
                 v.add("");
                 v.add(Formatear.redondea(dtCon1.getDouble("avl_canbru", true), 2));
+                v.add(false);
                 jt.addLinea(v);
             } while (dtCon1.next());
             jt.requestFocusInicio();
@@ -4937,13 +4931,15 @@ public class pdalbara extends ventanaPad  implements PAD  {
       if (jt.getValorInt(row, JT_NULIAL) >= 0)
         cw += " AND avl_numlin = " + jt.getValorInt(row, JT_NULIAL);
       else
-      {
-        cw += " AND pro_codi = " + jt.getValorInt(row, JT_PROCODI) +
-            " and avl_prven = " + antPrecio+
-            " and avl_numpal = "+jt.getValorInt(row,JT_NUMPALE);
-      }
+        cw += " AND "+getCondSelecLinea(row);
       return cw;
    }
+  String getCondSelecLinea(int row)
+  {
+      return " pro_codi = " + jt.getValorInt(row, JT_PROCODI) +
+            " and avl_prven = " + antPrecio+
+            " and avl_numpal = "+jt.getValorInt(row,JT_NUMPALE);
+  }
   /**
    * Actualiza precio de albaran en una linea
    * @param row
@@ -7776,23 +7772,59 @@ public class pdalbara extends ventanaPad  implements PAD  {
     if (indice==IMPR_HOJA_TRA || indice == IMPR_ALB_TRA)
       imprHojaTraza();
     if (indice==IMPR_ETIQUETAS)
-      imprEtiq();
+      verVentanaEtiquetas();
     if (indice==IMPR_PALETS)
       imprPalets();
     this.setEnabled(true);
     mensaje("");
   }
+  void verVentanaEtiquetas()
+  {
+      try
+      {
+          if (rangoEtiq==null)
+          {
+            rangoEtiq = new rangoEtiquetas()
+            {
+                @Override
+                public void muerto()
+                {
+                   if (rangoEtiq.isAceptado())
+                       imprEtiq();
+                }
+            };
 
+            rangoEtiq.iniciar(this);
+            rangoEtiq.setLocation(this.getLocation().x+20, this.getLocation().y+20);
+            this.getLayeredPane().add(rangoEtiq,1);
+
+          }       
+          rangoEtiq.reset();
+          boolean swSelec=false;
+          for (int n=0;n<jt.getRowCount();n++)
+          {
+              if (jt.getValBoolean(n,JT_SELLIN))
+              {
+                  swSelec=true;
+                  break;
+              }
+          }
+          rangoEtiq.setLineasSelecionadas(swSelec);
+          rangoEtiq.setVisible(true);
+          rangoEtiq.setSelected(true);
+          this.setEnabled(false);
+          this.setFoco(rangoEtiq);
+      } catch (SQLException | PropertyVetoException ex)
+      {
+          Error("Error al presentar ventana parametros etiquetas",ex);
+      }
+}
   void imprEtiq()
   {
     try
     {
-//     if (nav.pulsado!=navegador.NINGUNO)
-//     {
-//         msgBox("Solo se pueden imprimir las etiquetas en modo consulta");
-//         return;
-//     }
-     int etiCodi=eti_codiE.getValorInt();
+
+     int etiCodi=rangoEtiq.getTipoEtiqueta();
      if (etiCodi < 0)
      {
          etiCodi=etiqueta.getEtiquetaCliente(dtCon1,emp_codiE.getValorInt(),
@@ -7807,7 +7839,33 @@ public class pdalbara extends ventanaPad  implements PAD  {
     
       if (dtCons.getNOREG())
         return;
-      
+      String linSelec="";
+      if (rangoEtiq.getLineasSelecionadas())
+      {
+          if (! opAgru.isSelected())
+          {
+             for (int n=0;n<jt.getRowCount();n++)
+             {
+                 if (jt.getValBoolean(n,JT_SELLIN))
+                     linSelec+=(linSelec.isEmpty()?"":",")+
+                         jt.getValorInt(n,JT_NULIAL);
+             }
+             if (! linSelec.isEmpty())
+                 linSelec="and avl_numlin IN ("+linSelec+")";
+          }
+          else
+          {
+             for (int n=0;n<jt.getRowCount();n++)
+             {
+                 if (jt.getValBoolean(n,JT_SELLIN))
+                     linSelec+=(linSelec.isEmpty()?"":") or (")+
+                         getCondSelecLinea(n);
+             }
+               if (! linSelec.isEmpty())
+                 linSelec="and  ("+linSelec+")";
+          }
+      }
+
       String proNomb;
       if (P_ETIALBARAN || etiq.getEtiquetasPorPagina()>1)
       {
@@ -7818,6 +7876,10 @@ public class pdalbara extends ventanaPad  implements PAD  {
             " AND avc_ano = " + avc_anoE.getValorInt() +
             " and avc_nume = " + avc_numeE.getValorInt() +
             " and avc_serie = '" + avc_seriE.getText() + "'"+
+            (rangoEtiq.getArticulo()==0?"":" and pro_codi ="+rangoEtiq.getArticulo())+
+            (rangoEtiq.getLineaInicial()==0?"":" and avl_numlin >="+rangoEtiq.getLineaInicial())+
+            (rangoEtiq.getLineaFinal()==0?"":" and avl_numlin <="+rangoEtiq.getLineaFinal())+  
+              linSelec+
             " group by avl_numpal,pro_codi,pro_nomb,avp_ejelot,avp_serlot,avp_numpar,avp_numind"+
             " order by avl_numpal,pro_codi,avp_ejelot,avp_serlot,avp_numpar,avp_numind ";
            if (!dtCon1.select(s))
@@ -7836,7 +7898,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
            {
                 ArrayList lista=new ArrayList();
                 lista.add(dtCon1.getInt("pro_codi")); //0
-                lista.add(dtCon1.getString("pro_nomb"));               // 1
+                lista.add(dtCon1.getString("pro_nomb"));   // 1
                 lista.add(dtCon1.getInt("avp_numind")); //2
                 lista.add(dtCon1.getInt("unidades"));    // 3
                 lista.add(dtCon1.getInt("avp_ejelot"));  // 4
@@ -7848,11 +7910,14 @@ public class pdalbara extends ventanaPad  implements PAD  {
                      datosInd,codBarras);
             return;
       }
-      s = "SELECT * FROM v_albvenpar " +
+      s = "SELECT * FROM v_albventa_detalle " +
           " WHERE emp_codi = " + emp_codiE.getValorInt() +
           " AND avc_ano = " + avc_anoE.getValorInt() +
           " and avc_nume = " + avc_numeE.getValorInt() +
-          " and avc_serie = '" + avc_seriE.getText() + "'";
+          " and avc_serie = '" + avc_seriE.getText() + "'"+
+           (rangoEtiq.getArticulo()==0?"":" and pro_codi ="+rangoEtiq.getArticulo())+
+            (rangoEtiq.getLineaInicial()==0?"":" and avl_numlin >="+rangoEtiq.getLineaInicial())+
+            (rangoEtiq.getLineaFinal()==0?"":" and avl_numlin <="+rangoEtiq.getLineaFinal());
       if (!dtCon1.select(s))
       {
         mensajeErr("No encontradas lineas de Partidas en este albaran");
@@ -8810,12 +8875,14 @@ public class pdalbara extends ventanaPad  implements PAD  {
   {
     
     JT_NUMPALE=P_MODPRECIO || P_PONPRECIO ? 8: 6;
+    
     JT_FECMVT=JT_NUMPALE - 1;
     //JT_CODENV=JT_NUMPALE+1;
     JT_KILBRU=JT_NUMPALE+1;
+    JT_SELLIN=JT_NUMPALE+2;
     avl_prvenE.setFormato(avl_prvenE.getFormato()+FORMDECPRECIO);
     impLinE.setFormato(impLinE.getFormato()+FORMDEC);
-    jt = new CGridEditable(P_MODPRECIO || P_PONPRECIO ? 10 : 8)
+    jt = new CGridEditable(P_MODPRECIO || P_PONPRECIO ? 11 : 9)
     {
         @Override
       public boolean afterInsertaLinea(boolean insLinea)
@@ -8989,20 +9056,21 @@ public class pdalbara extends ventanaPad  implements PAD  {
     v.add("Fec.Mvto");
     v.add("Palet");
     v.add("Kg.Bru"); // 11
+    v.add("Sel"); //12
     jt.setCabecera(v);
     if (P_MODPRECIO || P_PONPRECIO)
     {
       jt.setAnchoColumna(new int[]
-                         {30, 50, 200, 70, 40, 60, 60,100,50,60});
+                         {30, 50, 200, 70, 40, 60, 60,100,50,60,20});
       jt.setAlinearColumna(new int[]
-                           {2, 2, 0, 2, 2, 2, 2,0,2,2});
+                           {2, 2, 0, 2, 2, 2, 2,0,2,2,1});
     }
     else
     {
       jt.setAnchoColumna(new int[]
-                         {40, 50, 200, 70, 40,100,50,40});
+                         {40, 50, 200, 70, 40,100,50,40,20});
       jt.setAlinearColumna(new int[]
-                           {2, 2, 0, 2, 2,0,2,2});
+                           {2, 2, 0, 2, 2,0,2,2,1});
 
     }
     
@@ -9029,6 +9097,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
     vc.add(avl_fecaltE);
     vc.add(avl_numpalE);
     vc.add(avl_canbruE);
+    CCheckBox ck1=new CCheckBox();
+    ck1.setEnabled(false);
+    vc.add(ck1);
     jt.setCampos(vc);
     jt.setFormatoCampos();
     jt.setAjustarGrid(true);

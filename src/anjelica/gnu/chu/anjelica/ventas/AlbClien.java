@@ -50,12 +50,7 @@ public class AlbClien extends ventana {
     private boolean verPrecios=true;
     /** Creates new form AlbClien */
     public AlbClien() {
-        try {
-            iniciarFrame();
-        } catch (Exception k)
-        {
-            Error("Error al iniciar AlbClien ",k);
-        }
+              
         this.setVersion("2015-07-27");
         statusBar = new StatusBar(this);
         initComponents();
@@ -67,13 +62,13 @@ public class AlbClien extends ventana {
         setVisibleCabeceraVentana(false);
      
     }
-    public void iniciarFrame()
-    {
-        this.setTitle(getTitulo());
-        this.setResizable(true);
-        this.setMaximizable(true);
-        this.setIconifiable(true);
-    }
+//    public void iniciarFrame()
+//    {
+//        this.setTitle(getTitulo());
+//        this.setResizable(true);
+//        this.setMaximizable(true);
+//        this.setIconifiable(true);
+//    }
     public void iniciar(ventana papa)
     {
         dtCon1=papa.dtCon1;

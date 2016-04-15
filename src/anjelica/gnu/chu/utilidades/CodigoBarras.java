@@ -157,6 +157,13 @@ public class CodigoBarras
     
     public final void initCodigoBarras()
     {
+       if (indiceEti.equals("A") && avcAno>0)
+        codBarra= indiceEti+  Formatear.format(avcAno, "9999")
+                + avcSerie+
+                 Formatear.format(avcNume, "99999")
+                + Formatear.format(proCodi, "99999") 
+                + (cliente==0?"":"C"+cliente);             
+       else
        codBarra= indiceEti+(ejeLot.length()>2? ejeLot.substring(2):ejeLot)
                 + proSerie+
                  Formatear.format(proLote, "99999")

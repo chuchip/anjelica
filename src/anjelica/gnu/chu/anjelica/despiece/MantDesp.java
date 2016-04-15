@@ -56,8 +56,6 @@ import gnu.chu.anjelica.sql.Desorilin;
 import gnu.chu.anjelica.sql.DesorilinId;
 import gnu.chu.anjelica.sql.Desporig;
 import gnu.chu.anjelica.sql.DesporigId;
-import gnu.chu.anjelica.ventas.pdalbara;
-import static gnu.chu.anjelica.ventas.pdalbara.ETICLIENTE;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.CComboBox;
 import gnu.chu.controles.StatusBar;
