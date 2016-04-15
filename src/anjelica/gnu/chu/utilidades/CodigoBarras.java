@@ -29,7 +29,10 @@ public class CodigoBarras
     private int proEjeLote,proLote,proCodi,proIndi;
     private boolean error=false;
     private int cliente=0;
-
+    private int avcAno;
+    private String avcSerie;
+    private int avcNume;
+    
     public boolean isError() {
         return error;
     }
@@ -105,7 +108,7 @@ public class CodigoBarras
     /**
      * Establece el codigo de cliente para ponerlo en el codigo de barras
      * @param cliente
-     * @return 
+     * 
      */
     public void setCliente(int cliente)
     {
@@ -163,8 +166,15 @@ public class CodigoBarras
                 + (cliente==0?"":"C"+cliente);             
         
         lote=  (ejeLot.length()>2? ejeLot.substring(2):ejeLot)
-                 + proSerie+  Formatear.format(proLote,"##999").trim()+"/"+
-            Formatear.format(proIndi,"#99").trim();
+                 + proSerie+  Formatear.format(proLote,"99999").trim()+"/"+
+                Formatear.format(proIndi,"#99").trim();
+    }
+    
+    public void setAlbaranVenta(int avcAno,String avcSerie,int avcNume)
+    {
+        this.avcAno=avcAno;
+        this.avcSerie=avcSerie;
+        this.avcNume=avcNume;
     }
     public CodigoBarras(String codBarras) throws NumberFormatException
     {      

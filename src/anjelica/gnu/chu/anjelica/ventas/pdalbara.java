@@ -3,7 +3,13 @@ package gnu.chu.anjelica.ventas;
  *
  * <p>Titulo: pdalbara </p>
  * <p>Descripción: Mantenimiento Albaranes de Ventas</p>
- * <p>Parámetros (Respetar mayúsculas y minúsculas):
+ * <p>Parámetros (Respetar mayúsculas y minúsculas):</p>
+ * <p>- facil (true/false)
+ *  Por defecto es false. Si es true, en altas, cargara un solo individuo 
+ *  por producto y mantendra el lote/individuo</p>
+ * <p>- etiAlbaran (true/false)
+ * Por defecto, false. Si es true, las etiquetas mostraran el numero albaran en vez
+ * del numero lote/ind.</p>
  * - modPrecio (true/false)
  *   Controla si: Permite enviar Albaranes por FAX (por defecto, no se permite)
  *   Permite valorar los albaranes según precio de tarifa (botón valorar tarifas)
@@ -30,7 +36,7 @@ package gnu.chu.anjelica.ventas;
  *   Poner albarán como No facturar (conforme)
  * checkPedido: true o false, indica si se comprobara si exiten pedidos pendientes. Por defecto es true.
  *</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -262,6 +268,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
   private boolean P_ADMIN = false;
   boolean modModif = true;
   boolean P_MODPRECIO = false; // Indica si se pueden Modificar Precios
+  boolean P_FACIL= false; // Indica si esta en modo facil.
+  boolean P_ETIALBARAN= false; // Indica si la etiqueta mostrara el numero albaran en vez del lote
   boolean P_PONPRECIO = false; // Indica si se pueden Poner Precios
   boolean P_CHECKPED= true; // Comprueba si hay pedidos nuevos.
   private boolean verPrecios=false;
@@ -456,6 +464,14 @@ public class pdalbara extends ventanaPad  implements PAD  {
             if (pro_codiE.getEnvase()>0)                
                 botonBascula.setPesoCajas(pro_codiE.getPesoCajas());
             botonBascula.setNumeroCajas(avp_numuniE.getValorInt());
+            if (P_FACIL && colNueva==JTDES_SERIE) 
+            {
+                if (!avp_serlotE.isNull() && !avp_numparE.isNull() && !avp_numindE.isNull())
+                {
+                    jtDes.requestFocusLater(row, JTDES_KILOS);
+                   
+                }
+            }
         }
         if (col == JTDES_NUMIND)
               pro_numindE_focusLost();
@@ -482,7 +498,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     @Override
     public boolean afterInsertaLinea(boolean insLinea)
     {
-      if (swCanti)
+      if (swCanti || P_FACIL)
       {   
           irGridLin();
           jt.mueveSigLinea(1);          
@@ -646,22 +662,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
 
     try
     {
-      if (ht != null)
-      {
-        if (ht.get("modPrecio") != null)
-          P_MODPRECIO = Boolean.valueOf(ht.get("modPrecio"));
-        if (ht.get("ponPrecio") != null)
-          P_PONPRECIO = Boolean.parseBoolean(ht.get("ponPrecio"));
-        if (ht.get("checkPedido")!=null)
-            P_CHECKPED=Boolean.parseBoolean(ht.get("checkPedido"));
-        if (ht.get("admin") != null)
-          P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
-        if (ht.get("zona") != null)
-          P_ZONA = ht.get("zona");
-        if (ht.get("conPedido") != null)
-          P_CONPEDIDO = Boolean.parseBoolean(ht.get("conPedido"));
-
-      }
+      ponParametros(ht);
+      
      
       setTitulo("Mant. Albaranes Ventas");
       if (jf.gestor.apuntar(this))
@@ -684,19 +686,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     jf = null;
     try
     {
-      if (ht != null)
-      {
-        if (ht.get("modPrecio") != null)
-          P_MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
-        if (ht.get("ponPrecio") != null)
-          P_PONPRECIO = Boolean.parseBoolean(ht.get("ponPrecio"));
-        if (ht.get("admin") != null)
-          P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
-        if (ht.get("zona") != null)
-          P_ZONA = ht.get("zona");
-        if (ht.get("conPedido") != null)
-          P_CONPEDIDO = Boolean.parseBoolean(ht.get("conPedido"));
-      }
+      ponParametros(ht);
       
       setTitulo("Mant Albaranes Ventas");
 
@@ -707,6 +697,29 @@ public class pdalbara extends ventanaPad  implements PAD  {
       Logger.getLogger(pdalbara.class.getName()).log(Level.SEVERE, null, e);
       setErrorInit(true);
     }
+  }
+  private void ponParametros(Hashtable<String,String> ht)
+  {
+      if (ht == null)
+        return;
+    if (ht.get("modPrecio") != null)
+      P_MODPRECIO = Boolean.valueOf(ht.get("modPrecio"));
+    if (ht.get("facil") != null)
+      P_FACIL = Boolean.valueOf(ht.get("facil"));
+    if (ht.get("etiAlbaran") != null)
+      P_ETIALBARAN = Boolean.valueOf(ht.get("etiAlbaran"));
+    if (ht.get("ponPrecio") != null)
+      P_PONPRECIO = Boolean.parseBoolean(ht.get("ponPrecio"));
+    if (ht.get("checkPedido")!=null)
+        P_CHECKPED=Boolean.parseBoolean(ht.get("checkPedido"));
+    if (ht.get("admin") != null)
+      P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
+    if (ht.get("zona") != null)
+      P_ZONA = ht.get("zona");
+    if (ht.get("conPedido") != null)
+      P_CONPEDIDO = Boolean.parseBoolean(ht.get("conPedido"));
+
+      
   }
   /**
    * Pone a disabled los campos indice del albaran
@@ -731,7 +744,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
         setVersion("2016-04-05" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
-                + (P_ADMIN ? "-ADMINISTRADOR-" : ""));
+                + (P_ADMIN ? "-ADMINISTRADOR-" : "")
+            + (P_FACIL ? "-FACIL-" : "")
+             );
         strSql = getStrSql(null, null);
 
         statusBar = new StatusBar(this);
@@ -6561,7 +6576,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         //  double unid = 0;
         //  double canti = 0;
           if (!checkIndiv(row,true))
-              return 6;
+              return 6; // A lote de Producto.
          
           if (! swEntdepos)
           { // No es entrega de desposito
@@ -7507,7 +7522,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     jtDes.setValor(EU.em_cod, 0, JTDES_EMP);
     jtDes.setValor(avpEjelotAnt==0?EU.ejercicio:avpEjelotAnt,0, JTDES_EJE);
     jtDes.setValor(avpSerlotAnt.equals("")?"A":avpSerlotAnt,0, JTDES_SERIE);
-    if (isEmpPlanta)
+    if (isEmpPlanta || P_FACIL)
     {
         jtDes.setValor(avpNumparAnt,0, JTDES_LOTE);
         jtDes.setValor(avpNumindAnt,0, JTDES_NUMIND);
@@ -7523,7 +7538,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       {
         Bdespiece.setEnabled(false);
         jtDes.requestFocus();
-        jtDes.requestFocus(0,  isEmpPlanta?JTDES_UNID:JTDES_LOTE);
+        jtDes.requestFocus(0,  isEmpPlanta || P_FACIL?JTDES_UNID:JTDES_LOTE);
         resetCambioIndividuo();
       }
     });
@@ -7783,6 +7798,10 @@ public class pdalbara extends ventanaPad  implements PAD  {
          etiCodi=etiqueta.getEtiquetaCliente(dtCon1,emp_codiE.getValorInt(),
               cli_codiE.getValorInt());
      }
+     if (etiCodi==0)
+         etiCodi=etiqueta.getEtiquetaDefault(dtCon1,emp_codiE.getValorInt());
+     
+     
      etiq.setTipoEtiq(dtStat, EU.em_cod,
                        etiCodi);
     
@@ -7790,35 +7809,39 @@ public class pdalbara extends ventanaPad  implements PAD  {
         return;
       
       String proNomb;
-      if (isEmpPlanta && etiq.getEtiquetasPorPagina()>1)
+      if (P_ETIALBARAN || etiq.getEtiquetasPorPagina()>1)
       {
           CodigoBarras codBarras;
-          s="select pro_codi,avp_ejelot,avp_serlot,avp_numpar,avp_numind,sum(avp_numuni) as unidades from v_albvenpar "+
+          s="select avl_numpal,pro_codi,pro_nomb,avp_ejelot,avp_serlot,avp_numpar,avp_numind,"
+              + "sum(avp_numuni) as unidades from v_albventa_detalle "+
             " where emp_codi = " + emp_codiE.getValorInt() +
             " AND avc_ano = " + avc_anoE.getValorInt() +
             " and avc_nume = " + avc_numeE.getValorInt() +
             " and avc_serie = '" + avc_seriE.getText() + "'"+
-            " group by pro_codi,avp_ejelot,avp_serlot,avp_numpar,avp_numind"+
-            " order by pro_codi,avp_ejelot,avp_serlot,avp_numpar,avp_numind ";
+            " group by avl_numpal,pro_codi,pro_nomb,avp_ejelot,avp_serlot,avp_numpar,avp_numind"+
+            " order by avl_numpal,pro_codi,avp_ejelot,avp_serlot,avp_numpar,avp_numind ";
            if (!dtCon1.select(s))
            {
                 mensajeErr("No encontradas lineas de Partidas en este albaran");
                 return;
            }
+           codBarras= new CodigoBarras(P_ETIALBARAN?"A":"V",dtCon1.getString("avp_ejelot").substring(2),
+                dtCon1.getString("avp_serlot"),1,1,
+                    1,  0);
+           codBarras.setAlbaranVenta(avc_anoE.getValorInt(), avc_seriE.getText(),
+                avc_numeE.getValorInt());
+           codBarras.setCliente(cli_codiE.getValorInt());
            ArrayList<ArrayList> datosInd = new ArrayList();
            do
            {
-                proNomb = pro_codiE.getNombArt(dtCon1.getString("pro_codi"));
-                int avpNumpar=dtCon1.getInt("avp_numpar");               
-                codBarras= new CodigoBarras("",dtCon1.getString("avp_ejelot").substring(2),
-                    dtCon1.getString("avp_serlot"),avpNumpar,1,
-                        1,  0);
-                codBarras.setCliente(cli_codiE.getValorInt());
-                     ArrayList lista=new ArrayList();
-                lista.add(dtCon1.getInt("pro_codi"));
-                lista.add(proNomb);              
-                lista.add(dtCon1.getInt("avp_numind"));
-                lista.add(dtCon1.getInt("unidades"));                
+                ArrayList lista=new ArrayList();
+                lista.add(dtCon1.getInt("pro_codi")); //0
+                lista.add(dtCon1.getString("pro_nomb"));               // 1
+                lista.add(dtCon1.getInt("avp_numind")); //2
+                lista.add(dtCon1.getInt("unidades"));    // 3
+                lista.add(dtCon1.getInt("avp_ejelot"));  // 4
+                lista.add(dtCon1.getString("avp_serlot")); // 5
+                lista.add(dtCon1.getInt("avp_numpar")); // 6
                 datosInd.add(lista);
             } while (dtCon1.next());
            etiq.listarPagina(dtStat,avc_fecalbE.getDate(),

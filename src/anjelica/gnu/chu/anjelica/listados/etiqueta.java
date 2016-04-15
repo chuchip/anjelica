@@ -45,7 +45,14 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   private final String LOGOTIPO="logotipo_bn.jpg"; // Logotipo por defecto.
   int nInd;
   int rowGrid;
-  
+  final private int L_PROCOD=0;
+  final private int L_PRONOMB=1;
+  final private int L_AVPNUMIND=2;
+  final private int L_UNIDADES=3;
+  final private int L_AVPEJELOT=4;
+  final private int L_AVPSERLOT=5;
+  final private int L_AVPNUMLOT=6;
+
   
   ArrayList<ArrayList> datosInd=new ArrayList(); 
   DatosTabla dt;
@@ -365,7 +372,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     if (etiCodi==this.tipoEtiq)
       return true;
     if (etiCodi==0)
-      return setEtiqDefault(dt,empCodi);
+      return setEtiquetaDefault(dt,empCodi);
     dt=getDatosRep(dt,empCodi,etiCodi);
     if (dt.getNOREG())
       return false;
@@ -373,7 +380,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     
     return true;
   }
-  public boolean setEtiqDefault(DatosTabla dt,int empCodi) throws SQLException
+  public boolean setEtiquetaDefault(DatosTabla dt,int empCodi) throws SQLException
   {
     String s="SELECT * FROM etiquetas WHERE emp_codi = "+empCodi+
         " AND eti_defec= 'S'";
@@ -382,6 +389,14 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
       return false;
     setValoresEtiqueta(dt);
     return true;
+  }
+  public static int getEtiquetaDefault(DatosTabla dt,int empCodi) throws SQLException
+  {
+       String s="SELECT eti_codi FROM etiquetas WHERE emp_codi = "+empCodi+
+        " AND eti_defec= 'S'";
+    if (dt.select(s))
+        return dt.getInt("eti_codi");
+    return 0;
   }
   private void setValoresEtiqueta(DatosTabla dt) throws SQLException
   {
@@ -420,10 +435,11 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     return this.fecSacr;
   }
   
+  @Override
   public boolean next() throws JRException
   {
 
-    int nIndGrid= (int) datosInd.get(rowGrid).get(3);
+    int nIndGrid= (int) datosInd.get(rowGrid).get(L_UNIDADES);
     if (nInd>=nIndGrid)
     {
        rowGrid++;
@@ -439,7 +455,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   {
      
      String s = "select * from v_articulo as a, categorias_art as cat,calibres_art as cal where " +
-         "  pro_codi = " + (int) datosInd.get(rowGrid).get(0)+
+         "  pro_codi = " + (int) datosInd.get(rowGrid).get(L_PROCOD)+
          " and a.cat_codi = cat.cat_codi "+
          " and a.cal_codi = cal.cal_codi ";
       try
@@ -447,8 +463,11 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
           if (! dt.select(s))
               throw new JRException("Articulo: "+
                   (int) datosInd.get(rowGrid).get(0)+" No encontrado Maestro");
-          codBarras.setProCodi((int) datosInd.get(rowGrid).get(0));
-          codBarras.setProIndi((int) datosInd.get(rowGrid).get(2));
+          codBarras.setProCodi((int) datosInd.get(rowGrid).get(L_PROCOD));
+          codBarras.setProIndi((int) datosInd.get(rowGrid).get(L_AVPNUMIND));
+          codBarras.setProLote((int) datosInd.get(rowGrid).get(L_AVPNUMLOT));
+          codBarras.setProEjeLote((int) datosInd.get(rowGrid).get(L_AVPEJELOT));
+          codBarras.setProSerie((String) datosInd.get(rowGrid).get(L_AVPSERLOT));
           codBarras.initCodigoBarras();
           nInd=0;
       } catch (SQLException ex)
@@ -457,6 +476,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
       }
   }
 	
+  @Override
   public Object getFieldValue(JRField jrField) throws JRException
   {
       String campo = jrField.getName().toLowerCase();
@@ -464,13 +484,13 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
       switch (campo)
       {
           case "pro_nomb":
-              return datosInd.get(rowGrid).get(1);                  
+              return datosInd.get(rowGrid).get(L_PRONOMB);                  
           case "cat_nomb":
               return dt.getString("cat_nomb") ;             
           case "cal_nomb":
               return dt.getString("cal_nomb") ;
           case "pro_numind":
-              return (rowGrid*1000)+nInd ;
+              return datosInd.get(rowGrid).get(L_AVPNUMIND) ;
            case "codbarra":
               return codBarras.getCodBarra();
           case "pro_lote":
@@ -497,6 +517,9 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
               lista.add(jt.getValString(n,MantDespTactil.JTSAL_PRONOMB));              
               lista.add(jt.getValorInt(n,MantDespTactil.JTSAL_NUMIND));
               lista.add(jt.getValorInt(n,MantDespTactil.JTSAL_NUMPIE));
+              lista.add(codBarras.getProEjeLote());
+              lista.add(codBarras.getProSerie());
+              lista.add(codBarras.getProLote());
               datosInd.add(lista);
           }
       }
