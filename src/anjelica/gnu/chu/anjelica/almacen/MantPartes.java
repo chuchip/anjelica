@@ -1,11 +1,37 @@
 package gnu.chu.anjelica.almacen;
-
+/**
+ *
+ * <p>Título: MantPartes</p>
+ * <p>Descripción: Mantenimiento Partes de Almacen </p>
+ * Parametros: 
+ * estados: Nivel de Estado a los que se pueden cambiar los partes.
+ *   '0' Generar (Sala).  1 Gerencia , '2' Cerrar (Oficina)
+ * admin: Especifica si podra cambiar el permiso desde el programa
+ * Según el estado mandado como parametro podra Modificar/Borrar los partes de estado anterior o igual.
+ * <p>Copyright: Copyright (c) 2005-2016
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los términos de la Licencia Pública General de GNU segun es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * <p>Empresa: miSL</p>
+ * @author chuchi P
+ * @version 1.1 
+ */
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.compras.AlbProv;
 import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.ventas.AlbClien;
+import gnu.chu.anjelica.ventas.ifregalm;
 import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.camposdb.cliPanel;
 import gnu.chu.controles.CComboBox;
@@ -51,14 +77,6 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 
-/**
- * Parametros: 
- * estados: Nivel de Estado a los que se pueden cambiar los partes.
- *   '0' Generar (Sala).  1 Gerencia , '2' Cerrar (Oficina)
- * admin: Especifica si podra cambiar el permiso desde el programa
- * Según el estado mandado como parametro podra Modificar/Borrar los partes de estado anterior o igual.
- * @author jpuente.ext
- */
 
 public class MantPartes  extends ventanaPad implements PAD
 {
@@ -76,7 +94,7 @@ public class MantPartes  extends ventanaPad implements PAD
          {"Entrada", "E"},
          {"Dev.Recep", "R"}
      };
-    
+    ifregalm ifRegAlm;
     int parLinea;
 //    int focoGrid=1;
     String s;
@@ -292,6 +310,7 @@ public class MantPartes  extends ventanaPad implements PAD
   @Override
   public void iniciarVentana() throws Exception
   {            
+      jtLineas.setButton(KeyEvent.VK_F9,BmvReg);
       pro_codilE.iniciar(dtStat, this, vl, EU);
       paa_procodE.iniciar(dtStat, this, vl, EU);
       paa_procodE.setProNomb(paa_pronomE);
@@ -357,6 +376,20 @@ public class MantPartes  extends ventanaPad implements PAD
   
   private void activarEventos()
   {
+      BmvReg.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          if (CPermiso.getValorInt()==PERM_INSERTAR)
+              return;
+          if (estadoE.getValorInt()<ESTADO_PROCESADA)
+          {
+              msgBox("Solo se pueden crear regularizaciones si el estado es superior a GENERADO");
+              return;
+          }
+          BmvReg_actionPerformed();
+        }
+      });
       jtAbo.addGridListener(new GridAdapter()
       {
         @Override
@@ -561,7 +594,7 @@ public class MantPartes  extends ventanaPad implements PAD
       });
     
      
-        jtList.tableView.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      jtList.tableView.getSelectionModel().addListSelectionListener(new ListSelectionListener() {           
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (swCargaLin || nav.pulsado != navegador.NINGUNO)
@@ -667,6 +700,61 @@ public class MantPartes  extends ventanaPad implements PAD
             jt.requestFocusInicio();
         }
     });
+  }
+  void BmvReg_actionPerformed()
+  {
+    try {         
+     this.setEnabled(false);
+     if (ifRegAlm==null)
+     {
+      ifRegAlm = new ifregalm()
+       {
+         @Override
+         public void matar(boolean cerrarConexion)
+         {
+           cerrarRegAlm();
+         }
+       };
+       this.getLayeredPane().add(ifRegAlm,1);       
+       ifRegAlm.setLocation(10, 20);
+       ifRegAlm.iniciar(dtStat,dtCon1,dtAdd,this);
+     }
+     else
+       ifRegAlm.statusBar.setEnabled(true);
+     ifRegAlm.setVisible(true);    
+     ifRegAlm.reset();
+     ifRegAlm.getPanelReg().setCampos(
+         pac_fecproE.getDate(),jtLineas.getValorInt(JTLINEAS_PROCOD),
+                                        EU.em_cod,
+                                      pro_ejelotE1.getValorInt(), pro_serlotE1.getText(),pro_numlotE1.getValorInt(),
+                                      pro_indlotE1.getValorInt(),pal_unidadE1.getValorInt()*-1,
+                                      pal_kilosE1.getValorDec()*-1,
+                                      pdalmace.ALMACENPRINCIPAL,0,
+                                      pac_tipoE.getValor().equals("E")?0:cli_codiE.getValorInt(),
+                                      "Parte:"+par_codiE.getValorInt() ,0,null,0,1,1,0,0,"",0,
+                                      par_codiE.getValorInt());
+    } catch (Exception k)
+    {
+      Error("ERROR al iniciar ventana de Regularización",k);
+    }
+  }
+  void  cerrarRegAlm()
+  {
+      if (! ifRegAlm.isVisible())
+       return;
+    ifRegAlm.setVisible(false);
+    this.setEnabled(true);
+    if (ifRegAlm.getNumeroRegInsertado()>0 )
+    {
+          try {
+              msgBox("Insertado Regularización con Numero Registro: "+ifRegAlm.getNumeroRegInsertado());
+              dtAdd.commit();
+          } catch (SQLException ex) {
+              Error("Error al insertar Regularizacion",ex);
+              return;
+          }
+    }
+    jtLineas.requestFocusLater();
   }
   void irGridAbo()
   {
@@ -1261,7 +1349,7 @@ public class MantPartes  extends ventanaPad implements PAD
         Pcabe = new gnu.chu.controles.CPanel();
         Pcab = new gnu.chu.controles.CPanel();
         par_codiL = new gnu.chu.controles.CLabel();
-        par_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#####9");
+        par_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###,##9");
         pac_fecaltL = new gnu.chu.controles.CLabel();
         par_comentL = new gnu.chu.controles.CLabel();
         pac_tipoL = new gnu.chu.controles.CLabel();
@@ -1369,6 +1457,7 @@ public class MantPartes  extends ventanaPad implements PAD
         Bcerrar = new gnu.chu.controles.CButtonMenu();
         BswGrid = new gnu.chu.controles.CButton(Iconos.getImageIcon("duplicar"));
         BCerraRapido = new gnu.chu.controles.CButton();
+        BmvReg = new gnu.chu.controles.CButton();
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
@@ -1440,7 +1529,7 @@ public class MantPartes  extends ventanaPad implements PAD
         Pcab.add(par_codiL);
         par_codiL.setBounds(10, 3, 50, 17);
         Pcab.add(par_codiE);
-        par_codiE.setBounds(70, 3, 50, 17);
+        par_codiE.setBounds(70, 3, 70, 17);
 
         pac_fecaltL.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         pac_fecaltL.setText("Fecha");
@@ -1679,6 +1768,7 @@ public class MantPartes  extends ventanaPad implements PAD
         jtLineas.setCanDeleteLinea(false);
         jtLineas.setCanInsertLinea(false);
         jtLineas.setDefButton(Baceptar);
+        jtLineas.setButton(KeyEvent.VK_F9,BmvReg);
         jtLineas.setMaximumSize(new java.awt.Dimension(400, 90));
         jtLineas.setMinimumSize(new java.awt.Dimension(400, 90));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1789,16 +1879,16 @@ public class MantPartes  extends ventanaPad implements PAD
 
         pro_ejelotE.setValorDec(EU.ejercicio);
         PPie.add(pro_ejelotE1);
-        pro_ejelotE1.setBounds(170, 5, 40, 17);
+        pro_ejelotE1.setBounds(220, 2, 40, 17);
         PPie.add(pro_numlotE1);
-        pro_numlotE1.setBounds(210, 5, 50, 17);
+        pro_numlotE1.setBounds(260, 2, 50, 17);
 
         pro_serlotE1.setText("A");
         pro_serlotE1.setMayusc(true);
         PPie.add(pro_serlotE1);
-        pro_serlotE1.setBounds(260, 5, 20, 17);
+        pro_serlotE1.setBounds(310, 2, 20, 17);
         PPie.add(pro_indlotE1);
-        pro_indlotE1.setBounds(280, 5, 50, 17);
+        pro_indlotE1.setBounds(330, 2, 50, 17);
 
         cLabel3.setText("Consejo");
         PPie.add(cLabel3);
@@ -1816,27 +1906,27 @@ public class MantPartes  extends ventanaPad implements PAD
 
         cLabel4.setText("Kilos");
         PPie.add(cLabel4);
-        cLabel4.setBounds(540, 5, 35, 17);
+        cLabel4.setBounds(590, 2, 35, 17);
 
         cLabel5.setText("Individuo");
         PPie.add(cLabel5);
-        cLabel5.setBounds(120, 5, 50, 17);
+        cLabel5.setBounds(170, 2, 50, 17);
         PPie.add(pal_kilosE1);
-        pal_kilosE1.setBounds(580, 5, 57, 17);
+        pal_kilosE1.setBounds(630, 2, 57, 17);
 
         pal_unidadE1.setEnabled(false);
         PPie.add(pal_unidadE1);
-        pal_unidadE1.setBounds(500, 5, 40, 17);
+        pal_unidadE1.setBounds(550, 2, 35, 17);
 
         cLabel6.setText("Caducid.");
         PPie.add(cLabel6);
-        cLabel6.setBounds(340, 5, 55, 17);
+        cLabel6.setBounds(390, 2, 55, 17);
 
         cLabel7.setText("Unid.");
         PPie.add(cLabel7);
-        cLabel7.setBounds(460, 5, 35, 17);
+        cLabel7.setBounds(510, 2, 35, 17);
         PPie.add(pro_feccadE1);
-        pro_feccadE1.setBounds(400, 5, 60, 17);
+        pro_feccadE1.setBounds(445, 2, 60, 17);
 
         Bcerrar.addMenu("Cerrar", "C");
         Bcerrar.addMenu("Anular Cierre", "X");
@@ -1852,7 +1942,13 @@ public class MantPartes  extends ventanaPad implements PAD
 
         BCerraRapido.setDependePadre(false);
         PPie.add(BCerraRapido);
-        BCerraRapido.setBounds(657, 9, 5, 5);
+        BCerraRapido.setBounds(650, 35, 5, 5);
+
+        BmvReg.setText("Reg. F9");
+        BmvReg.setToolTipText("Crear Regularizacion sobre individuo");
+        BmvReg.setDependePadre(false);
+        PPie.add(BmvReg);
+        BmvReg.setBounds(108, 2, 60, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1916,6 +2012,7 @@ public class MantPartes  extends ventanaPad implements PAD
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CButtonMenu Bcerrar;
     private gnu.chu.controles.CButton BirGrid;
+    private gnu.chu.controles.CButton BmvReg;
     private gnu.chu.controles.CButton BsaltaGrid;
     private gnu.chu.controles.CButton BswGrid;
     private gnu.chu.controles.CComboBox CPermiso;

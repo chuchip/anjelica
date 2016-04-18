@@ -32,6 +32,7 @@ import gnu.chu.anjelica.almacen.paregalm;
 
 public class ifregalm  extends ventana
 {
+  int numRegIns=0;
   paregalm pRegAlm;
   ventana papa;
   CPanel Pinicial = new CPanel();
@@ -79,9 +80,9 @@ public class ifregalm  extends ventana
       Exception
   {
     papa = padre;
-
+    EU=padre.EU;
     ctUp=dtAdd.getConexion();
-    pRegAlm.iniciar(padre.EU, dtStat, dtAdd, padre.vl, this,dtCon1);
+    pRegAlm.iniciar(EU, dtStat, dtAdd, padre.vl, this,dtCon1);
     activarEventos();
   }
   private void activarEventos()
@@ -104,15 +105,25 @@ public class ifregalm  extends ventana
     });
 
   }
+  public int getNumeroRegInsertado()
+  {
+      return numRegIns;
+  }
+  
+  public void reset()
+  {
+      numRegIns=0;
+      pRegAlm.addNew();
+  }
   private void Baceptar_actionPerformed()
   {
     try {
       if (!pRegAlm.checkCampos())
         return;
       pRegAlm.setRegNume(0);
-      pRegAlm.insRegistro();
+      numRegIns=pRegAlm.insRegistro();
       ctUp.commit();
-      mensajeErr("Mvto. Regularizacion ... INSERTADO");
+      mensajeErr("Mvto. Regularizacion ... INSERTADO con numero: "+numRegIns);
       matar(false);
     } catch (Exception k)
     {

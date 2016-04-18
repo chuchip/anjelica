@@ -2602,7 +2602,7 @@ rgs_recprv smallint not null,	-- Tipo Recl. Prov.. 0 = NO es Reclamado
 				-- 1 Pendiente, 2 Aceptado, 3 Rechazado
 				-- 4 Reclamacion Pend.
 sbe_codi  smallint not null,	-- SubEmpresa
-rgs_partid smallint not null,	-- Partida (-1 NO)
+par_codi smallint not null,	-- Parte
 usu_nomb varchar(20),	-- Usuario que crea la Reg.
 rgs_prmeco float,		-- Costo en la fecha Mvto. 
 rgs_prulco float,		-- Precio Ultima Entrada.
@@ -2611,7 +2611,7 @@ rgs_kilos float,		-- Kilos
 rgs_clidev int not null,	-- Cliente q genero la Dev.
 rgs_kilant float not null,	-- Kilos Antiguos (NO USADO)
 rgs_trasp smallint not null default -1,   -- Traspasado (Indica si influye en Almacen)
-rgs_numer varchar(8),		-- Numerador
+rgs_numer varchar(8),		-- Numerador NO USADO
 rgs_cliprv int,			-- Codigo Cliente o Proveedor
 rgs_coment varchar(100),	-- Comentario
 rgs_fecres date,		-- Fecha Resolucion
@@ -4133,7 +4133,7 @@ LOOP
   
   INSERT INTO regalmacen (pro_codi,rgs_fecha,rgs_nume,eje_nume,emp_codi,pro_serie,
   pro_nupar,pro_numind,tir_codi, rgs_canti,alm_codi,
-   rgs_recprv,sbe_codi,rgs_partid,usu_nomb,rgs_prebas,rgs_prmeco,rgs_prulco,rgs_prregu,rgs_kilos,
+   rgs_recprv,sbe_codi,par_codi,usu_nomb,rgs_prebas,rgs_prmeco,rgs_prulco,rgs_prregu,rgs_kilos,
    rgs_clidev,rgs_kilant,rgs_trasp,rgs_numer,rgs_cliprv,rgs_coment,rgs_fecres,acc_ano,acc_serie,acc_nume) 
   values ( linalb.pro_codi,linalb.avc_fecalb,nreg,linalb.avp_ejelot,1,linalb.avp_serlot,
   linalb.avp_numpar,linalb.avp_numind,tirCodi,linalb.avp_canti,linalb.alm_codori,

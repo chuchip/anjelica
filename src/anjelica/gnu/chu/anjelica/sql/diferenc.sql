@@ -1,3 +1,6 @@
+-- Cambiar compo rgs_partid por par_codi en regalmacen
+alter table anjelica.regalmacen rename rgs_partid to par_codi;
+
 -- Cambiada tabla transportistas . Añadida opcion transportista Ventas
 alter table v_transport rename to transportista;
 alter table transportista add tra_tipo char(1) not null default 'C';

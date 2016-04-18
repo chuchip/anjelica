@@ -416,7 +416,7 @@ public class pdinven extends ventanaPad implements PAD
                             jt.getValString(n,2),jt.getValorInt(n,3),
                             jt.getValorInt(n,4),jt.getValorInt(n,6),
                             jt.getValorDec(n,5), almCodi, tirCodi,
-                            0, "", jt.getValorDec(n,7), null,0,sbeCodi,1,0,0,"",0,0);
+                            0, "", jt.getValorDec(n,7), null,0,sbeCodi,1,0,0,"",0,0,0);
           pRegAlm.setRegNume(++rgsNume);
 
         }

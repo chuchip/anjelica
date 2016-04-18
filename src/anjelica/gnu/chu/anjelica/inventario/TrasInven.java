@@ -386,7 +386,7 @@ public class TrasInven extends ventanaPad implements PAD {
                         dtCon1.getInt("prp_empcod"), dtCon1.getInt("prp_ano"), dtCon1.getString("prp_seri"),
                         dtCon1.getInt("prp_part"), dtCon1.getInt("prp_indi"), dtCon1.getInt("lci_numind"),
                         dtCon1.getDouble("lci_peso"), almCodi, tirCodi, 0, "", dtCon1.getDouble("ipr_prec"),
-                        null, 0, sbeCodi, 1, 0, 0, "", 0,0);
+                        null, 0, sbeCodi, 1, 0, 0, "", 0,0,0);
 
             if (++nReg % 10 == 0) {
                 setMensajePopEspere("Insertados: " + nReg + " Registros en Regulacion Stock", false);

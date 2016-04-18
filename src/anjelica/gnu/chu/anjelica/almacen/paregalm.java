@@ -35,6 +35,7 @@ import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.ventana;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -122,6 +123,8 @@ public class paregalm extends CPanel {
     CLabel cli_codiL1 = new CLabel();
     CCheckBox rgs_traspE = new CCheckBox();
     CLabel cLabel14 = new CLabel();
+    CLabel par_codiL= new CLabel("Parte");
+    CTextField par_codiE= new CTextField(Types.DECIMAL,"###,##9");
     CLinkBox sbe_codiE = new CLinkBox();
     CLabel cLabel15 = new CLabel();
     CComboBox rgs_recprvE = new CComboBox();
@@ -233,8 +236,10 @@ public class paregalm extends CPanel {
         cLabel14.setText("SubEmp.");
         cLabel14.setBounds(new Rectangle(6, 115, 53, 18));
         sbe_codiE.setAncTexto(25);
-
-        sbe_codiE.setBounds(new Rectangle(59, 115, 325, 16));
+        sbe_codiE.setPreferredSize(new Dimension(150,18));
+        sbe_codiE.setBounds(new Rectangle(59, 115, 200, 16));        
+        par_codiL.setBounds(new Rectangle(265, 115, 35, 16));        
+        par_codiE.setBounds(new Rectangle(305, 115, 70, 16));
         cLabel15.setToolTipText("Reclamado a Proveedor");
         cLabel15.setText("Reclamar Prv.");
         cLabel15.setBounds(new Rectangle(3, 151, 88, 16));
@@ -303,6 +308,8 @@ public class paregalm extends CPanel {
         this.add(cli_codiL1, null);
         this.add(rgs_clidevE, null);
         this.add(sbe_codiE, null);
+        this.add(par_codiL, null);
+        this.add(par_codiE, null);
         this.add(rgs_comentE, null);
         this.add(cLabel15, null);
         this.add(PdatRecl, null);
@@ -323,9 +330,9 @@ public class paregalm extends CPanel {
         this.dtStat = dtStat;
         this.dtAdd = dtAdd;
         this.vl = vl;
-        papa = padre;
-
+        papa = padre;        
         iniciar(dtCon1);
+        par_codiE.setEnabled(false);
     }
 
     /**
@@ -536,10 +543,10 @@ public class paregalm extends CPanel {
     }
 
     public boolean getDatosReg(DatosTabla dt, int rgsNume) throws SQLException {
-        String s = "SELECT r.*,m.tir_tipo FROM regalmacen as r,v_motregu as m "
+        String sql = "SELECT r.*,m.tir_tipo FROM regalmacen as r,v_motregu as m "
                 + " where rgs_nume = " + rgsNume
                 + " and r.tir_codi = m.tir_codi ";
-        return dt.select(s);
+        return dt.select(sql);
     }
     /**
      * Muestra en pantalla los datos del registro mandado
@@ -575,6 +582,7 @@ public class paregalm extends CPanel {
         }
         rgs_clidevE.setValorInt(dtCon1.getInt("rgs_clidev"));
         sbe_codiE.setText(dtCon1.getString("sbe_codi"));
+        par_codiE.setValorInt(dtCon1.getInt("par_codi"));
         rgs_traspE.setSelected(dtCon1.getInt("rgs_trasp") != 0);
         rgs_comentE.setText(dtCon1.getString("rgs_coment"));
         rgs_fecresE.setText(dtCon1.getFecha("rgs_fecres", "dd-MM-yy"));
@@ -601,7 +609,11 @@ public class paregalm extends CPanel {
         //afeStk = dtStat.getString("tir_afestk");
 //    return true;
     }
-
+    /**
+     * Inserta registro de Regularización
+     * @return Numero de registro insertado
+     * @throws Exception 
+     */
     public int insRegistro() throws Exception {
 
         return insRegistro(Formatear.getDate(cci_fecconE.getFecha("yyyy-MM-dd")+" "+
@@ -615,7 +627,8 @@ public class paregalm extends CPanel {
                 rgs_comentE.getText(), rgs_prreguE.getValorDec(), rgs_fecresE.getDate(),
                 rgs_clidevE.getValorInt(), sbe_codiE.getValorInt(),
                 rgs_traspE.isSelected() ? 1 : 0, rgs_recprvE.getValorInt(),
-                acc_anoE.getValorInt(), acc_serieE.getText(), acc_numeE.getValorInt(),rgsNume);
+                acc_anoE.getValorInt(), acc_serieE.getText(), acc_numeE.getValorInt(),rgsNume,
+                par_codiE.getValorInt());
 
     }
 
@@ -644,27 +657,28 @@ public class paregalm extends CPanel {
      * @param accSerie
      * @param accNume
      * @param rgsNume
-     * @return
+     * @param parCodi Parte Incidencias
+     * @return Numero de registro insertado
      * @throws SQLException
      */
     public int insRegistro(Date fecmvto, int proCodi, int empCodi, int ejeNume,
             String serie, int numPar, int numInd, int unAct, double kilos,
             int almCodi, int tirCodi, int rgsCliprv, String coment,
             double precbas, java.util.Date fecres, int cliDev, int sbeCodi, int rgsTrasp,
-            int rgsRecPrv, int accAno, String accSerie, int accNume,int rgsNume) throws SQLException {
+            int rgsRecPrv, int accAno, String accSerie, int accNume,int rgsNume,int parCodi) throws SQLException {
                         
         return insRegularizacion(dtAdd, fecmvto, proCodi, empCodi, ejeNume,
                 serie, numPar, numInd, unAct, kilos,
                 almCodi, tirCodi, rgsCliprv, coment,
                 precbas, fecres, cliDev, sbeCodi, rgsTrasp,
-                rgsRecPrv, accAno, accSerie, accNume, EU.usuario,rgsNume);
+                rgsRecPrv, accAno, accSerie, accNume, EU.usuario,rgsNume,parCodi);
     }
     public static int insRegStock(DatosTabla dtAdd, Date fecmvto, int proCodi, int empCodi, int ejeNume,
             String serie, int numPar, int numInd, int unAct, double kilos,
             int almCodi, int tirCodi, String coment,
             double precbas,String usuNomb,int rgsNume) throws SQLException {
         return insRegularizacion(dtAdd, fecmvto, proCodi, empCodi, ejeNume, serie, numPar, numInd, unAct, kilos, almCodi,
-                tirCodi, 0, coment, precbas, null, 0,1,1,0,0,"",0,usuNomb,rgsNume);
+                tirCodi, 0, coment, precbas, null, 0,1,1,0,0,"",0,usuNomb,rgsNume,0);
     }
     /**
      * Inserta mvto. Regularizacion
@@ -692,14 +706,14 @@ public class paregalm extends CPanel {
      * @param accSerie
      * @param accNume
      * @param usuNomb
-     * @return
+     * @return Numero de registro insertado
      * @throws SQLException 
      */
     public static int insRegularizacion(DatosTabla dtAdd, Date fecmvto, int proCodi, int empCodi, int ejeNume,
             String serie, int numPar, int numInd, int unAct, double kilos,
             int almCodi, int tirCodi, int rgsCliprv, String coment,
             double precbas, java.util.Date fecres, int cliDev, int sbeCodi, int rgsTrasp,
-            int rgsRecPrv, int accAno, String accSerie, int accNume, String usuNomb, int rgsNume) throws SQLException {
+            int rgsRecPrv, int accAno, String accSerie, int accNume, String usuNomb, int rgsNume,int parCodi) throws SQLException {
       
         if (rgsNume==0)
         {
@@ -723,7 +737,7 @@ public class paregalm extends CPanel {
         dtAdd.setDato("alm_codi", almCodi);
         dtAdd.setDato("rgs_recprv", rgsRecPrv); // Reclamado A proveedor
         dtAdd.setDato("sbe_codi", sbeCodi);
-        dtAdd.setDato("rgs_partid ", 1);
+        dtAdd.setDato("par_codi", parCodi);
         dtAdd.setDato("usu_nomb", usuNomb);
      
         dtAdd.setDato("rgs_prmeco", 0);
@@ -779,7 +793,12 @@ public class paregalm extends CPanel {
                 mensajeErr("Cliente que provoco devolucion No valido");
                 return false;
             }
-
+            if (tir_codiE.getValorInt()==0)
+            {
+                tir_codiE.requestFocus();
+                mensajeErr("Introduzca tipo de regularizacion");
+                return false;
+            }
             afeStk = actAfeStk(dtStat, tir_codiE.getValorInt());
             
             if (!afeStk.equals("=") && !afeStk.equals("*"))
@@ -805,7 +824,8 @@ public class paregalm extends CPanel {
                         if (res!=mensajes.YES)
                             return false;
                         papa.enviaMailError("Creada Regularización sobre Individuo sin stock. Producto: "+
-                                pro_codiE.getValorInt()+" Individuo:"+deo_ejelotE.getValorInt()+deo_serlotE.getText()+pro_numindE.getValorInt()+
+                                pro_codiE.getValorInt()+" Individuo:"+deo_ejelotE.getValorInt()+deo_serlotE.getText()+pro_loteE.getValorInt()+"-"+
+                                pro_numindE.getValorInt()+
                                 " en Almacen: "+alm_codiE.getValorInt());
                     }
                 }
@@ -882,6 +902,9 @@ public class paregalm extends CPanel {
     public void setSbeCodi(int sbeCodi) {
         sbe_codiE.setValorInt(sbeCodi);
     }
+    public void setParCodi(int parCodi) {
+        par_codiE.setValorInt(parCodi);
+    }
 
     public void setRgsCliDev(int rgsClidev) {
         rgs_clidevE.setValorInt(rgsClidev);
@@ -952,15 +975,17 @@ public class paregalm extends CPanel {
         prv_codiE.setEnabled(b);
         rgs_clidevE.setEnabled(b);
         sbe_codiE.setEnabled(b);
+        par_codiE.setEnabled(b);
         rgs_traspE.setEnabled(b);
         rgs_recprvE.setEnabled(b);
         PdatRecl.setEnabled(b);
     }
 
-    void addNew() {
+    public void addNew() {
         this.resetTexto();
         tir_codiE.resetCambio();
         deo_ejelotE.setValorInt(EU.ejercicio);
+        par_codiE.setEnabled(false);
         deo_serlotE.setText("A");
 //        deo_emplotE.setValorDec(EU.em_cod);
         rgs_clidevE.setEnabled(true);
@@ -972,7 +997,8 @@ public class paregalm extends CPanel {
     }
 
     void PADEdit() {
-        tir_codiE.resetCambio();
+        tir_codiE.resetCambio();        
+        par_codiE.setEnabled(false);
 //      rgs_clidevE.setEnabled(tir_codiE.getValorInt() == MantAlbComCarne.ESTPEND ||
 //              tir_codiE.getValorInt() == MantAlbComCarne.ESTACEP ||
 //              tir_codiE.getValorInt() == MantAlbComCarne.ESTRECH);
@@ -992,14 +1018,14 @@ public class paregalm extends CPanel {
             double precbas, java.util.Date fecres, int cliDev, int sbeCodi, int rgsTrasp, int rgsRecPrv) throws Exception {
         setCampos(fecmvto, proCodi, empCodi, ejeNume, serie, numPar, numInd, numUni, canti,
                 almCodi, tirCodi, cliCodi, coment, precbas, fecres,
-                cliDev, sbeCodi, rgsTrasp, rgsRecPrv, 0, "", 0);
+                cliDev, sbeCodi, rgsTrasp, rgsRecPrv, 0, "", 0,0);
 
     }
 
     public void setCampos(java.util.Date fecmvto, int proCodi, int empCodi, int ejeNume, String serie, int numPar, int numInd, int numUni, double canti,
             int almCodi, int tirCodi, int cliCodi, String coment,
             double precbas, java.util.Date fecres, int cliDev, int sbeCodi, int rgsTrasp, int rgsRecPrv,
-            int accAno, String accSerie, int accNume) throws Exception {
+            int accAno, String accSerie, int accNume,int parCodi) throws Exception {
         pro_codiE.setValorInt(proCodi);
         pro_codiE.controla(false);
 //        deo_emplotE.setValorInt(empCodi);
@@ -1021,6 +1047,7 @@ public class paregalm extends CPanel {
         rgs_fecresE.setDate(fecres);
         rgs_clidevE.setValorInt(cliDev);
         sbe_codiE.setValorInt(sbeCodi);
+        par_codiE.setValorInt(parCodi);
         rgs_traspE.setSelected(rgsTrasp != 0);
         rgs_recprvE.setValor(rgsRecPrv);
         acc_anoE.setValorInt(accAno);

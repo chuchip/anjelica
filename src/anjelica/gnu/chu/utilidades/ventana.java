@@ -199,16 +199,18 @@ public class ventana extends CInternalFrame implements ejecutable
           {
               ctUp.rollback();
           }
-          if (! ct.getAutoCommit())
+          if (ct !=null)
           {
-              ct.rollback();
+              if (! ct.getAutoCommit()) {
+                  ct.rollback();
+              }
           }
 
       } catch (SQLException ex)
       {
           java.util.logging.Logger.getLogger(ventana.class.getName()).log(Level.SEVERE, null, ex);
       }
-          int resul = 0;
+          int resul;
           if (t instanceof SQLException)
               resul = fatalError("[Anjelica] ERROR SQL "+s, (SQLException)t);
           else if (t instanceof Exception)

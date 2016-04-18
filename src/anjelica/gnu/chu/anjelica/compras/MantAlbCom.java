@@ -6598,7 +6598,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
                            alm_codiE.getValorInt(), tir_codiE.getValorInt(), prv_codiE.getValorInt(),
                            rgs_comenE.getText(),rgs_prreguE.getValorDec(),
                            rgs_fecresE.getDate(),rgs_clidevE.getValorInt(),sbe_codiE.getValorInt(),rgs_traspE.isSelected()?1:0,
-                           rgsRecprv,acc_anoE.getValorInt(),acc_serieE.getText(),acc_numeE.getValorInt());
+                           rgsRecprv,acc_anoE.getValorInt(),acc_serieE.getText(),acc_numeE.getValorInt(),0);
 
          guardaLinRecl(row);
          jtRecl.resetCambio();
