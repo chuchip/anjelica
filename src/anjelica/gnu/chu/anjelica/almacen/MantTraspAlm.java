@@ -1706,8 +1706,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         dtCon1.setDato("avc_serie", "X");
         dtCon1.setDato("avc_nume", numAlb);
         dtCon1.setDato("avl_numlin", n);
-        dtCon1.setDato("pro_codi", jt.getValorInt(n, JT_ARTIC));
-        dtCon1.setDato("avp_tiplot", "P");
+        dtCon1.setDato("pro_codi", jt.getValorInt(n, JT_ARTIC));        
         dtCon1.setDato("avp_ejelot", jt.getValorInt(n, JT_EJERC));
         dtCon1.setDato("avp_emplot", EU.em_cod);
         dtCon1.setDato("avp_serlot",  jt.getValString(n, JT_SERIE));
@@ -1715,6 +1714,8 @@ public class MantTraspAlm extends ventanaPad implements PAD
         dtCon1.setDato("avp_numind", jt.getValorInt(n, JT_INDI));
         dtCon1.setDato("avp_numuni", jt.getValorInt(n,JT_UNID));
         dtCon1.setDato("avp_canti", jt.getValorDec(n, JT_PESO));
+        dtCon1.setDato("avp_canori", jt.getValorDec(n, JT_PESO));
+        dtCon1.setDato("avp_canbru", jt.getValorDec(n, JT_PESO));
         dtCon1.update(stUp);      
         if (isAlmExt)
         {

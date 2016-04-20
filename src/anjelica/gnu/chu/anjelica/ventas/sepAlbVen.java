@@ -589,7 +589,6 @@ public class sepAlbVen extends ventana
       dtAdd.setDato("avl_numlin", nLiAlb);
       dtAdd.setDato("avp_numlin", nLiDes);
       dtAdd.setDato("pro_codi", dtCon1.getInt("pro_codi"));
-      dtAdd.setDato("avp_tiplot",dtCon1.getString("avp_tiplot"));
       dtAdd.setDato("avp_ejelot", dtCon1.getInt("avp_ejelot"));
       dtAdd.setDato("avp_emplot", dtCon1.getInt("avp_emplot"));
       dtAdd.setDato("avp_serlot", dtCon1.getString("avp_serlot"));
@@ -597,6 +596,8 @@ public class sepAlbVen extends ventana
       dtAdd.setDato("avp_numind", dtCon1.getInt("avp_numind"));
       dtAdd.setDato("avp_numuni", numUni);
       dtAdd.setDato("avp_canti", kilos);
+      dtAdd.setDato("avp_canori", kilos);
+      dtAdd.setDato("avp_canbru", kilos);
       dtAdd.update();
       String s="update mvtosalm set mvt_time = {ts '"+Formatear.getFecha(avlFecalt, "yyyy-MM-dd HH:mm:ss")+"'}"+          
           " where mvt_tipdoc='V' and mvt_empcod="+emp_codiE.getValorInt()+

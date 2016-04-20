@@ -333,7 +333,7 @@ public class clvenart extends ventana implements  JRDataSource
                v0.add("");
                v0.add("");
                v0.add("DESGLOSE");
-               v0.add(dtStat.getString("avp_tiplot"));
+               v0.add("L");
                v0.add(dtStat.getString("avp_numpar"));
                v0.add(dtStat.getString("avp_numind"));
                v0.add(dtStat.getString("avp_numuni"));
@@ -601,12 +601,11 @@ public class clvenart extends ventana implements  JRDataSource
                         agrupadoE.getValor().equals("A")?rs.getInt("avc_nume"):0);
          rs1=ct.createStatement().executeQuery(dtCon1.getStrSelect(s));
        }
-       if (campo.equals("avp_tiplot"))
-         return rs1.getString("avp_tiplot");
+    
        if (campo.equals("avp_numpar") || campo.equals("avp_numind") || campo.equals("avp_numuni"))
-         return new Integer(rs1.getInt(campo));
+         return rs1.getInt(campo);
        if (campo.equals("avp_canti") )
-         return new Double(rs1.getDouble(campo));
+         return rs1.getDouble(campo);
       return null;
     } catch (SQLException k)
     {

@@ -1,4 +1,35 @@
--- Cambiar compo rgs_partid por par_codi en regalmacen
+-- Añadido campo kilos originales en v_albvenpar
+alter table anjelica.v_albvenpar rename avp_tiplot to avp_canori;
+alter table anjelica.v_albvenpar ALTER avp_canori type decimal(9,3) USING 0;
+update anjelica.ajustedb set aju_regmvt=0;
+update anjelica.v_albvenpar set avp_canori = avp_canbru;
+alter table anjelica.v_albvenpar ALTER avp_canori   set not null;
+--  Añadido campo kilos originales en hisalpave
+alter table anjelica.hisalpave rename avp_tiplot to avp_canori;
+alter table anjelica.hisalpave ALTER avp_canori type decimal(9,3) USING 0;
+update anjelica.ajustedb set aju_regmvt=0;
+update anjelica.hisalpave set avp_canori = avp_canbru;
+alter table anjelica.hisalpave ALTER avp_canori   set not null;
+--- Actualizada vista albaran_detalle
+DROP VIEW anjelica.v_albventa_detalle ;
+CREATE OR REPLACE VIEW anjelica.v_albventa_detalle AS 
+ SELECT c.emp_codi, c.avc_ano, c.avc_serie, c.avc_nume, c.cli_codi, 
+    c.avc_clinom, c.avc_fecalb, c.usu_nomb, c.avc_tipfac, c.cli_codfa, 
+    c.fvc_ano, c.fvc_nume, c.avc_cerra, c.avc_impres, c.avc_fecemi, c.sbe_codi, 
+    c.avc_cobrad, c.avc_obser, c.avc_fecrca, c.avc_basimp, c.avc_kilos, c.avc_unid,
+    c.div_codi, c.avc_impalb, c.avc_impcob, c.avc_dtopp, c.avc_dtootr, 
+    c.avc_valora, c.fvc_serie, c.avc_depos, l.avl_numlin, l.pro_codi, l.avl_numpal,avl_numcaj,
+    l.pro_nomb, l.avl_canti, l.avl_prven, l.avl_prbase, l.tar_preci, l.avl_unid,
+    l.avl_canbru, l.avl_fecalt, l.fvl_numlin, l.avl_fecrli, c.alm_codori, 
+    c.alm_coddes, p.avp_numlin, p.avp_ejelot, p.avp_emplot, p.avp_serlot, 
+    p.avp_numpar, p.avp_numind, p.avp_numuni, p.avp_canti,p.avp_canbru,p.avp_canori
+   FROM anjelica.v_albavel l, anjelica.v_albavec c, anjelica.v_albvenpar p
+  WHERE c.emp_codi = l.emp_codi AND c.avc_ano = l.avc_ano 
+  AND c.avc_serie = l.avc_serie AND c.avc_nume = l.avc_nume AND c.emp_codi = p.emp_codi
+  AND c.avc_ano = p.avc_ano AND c.avc_serie = p.avc_serie AND c.avc_nume = p.avc_nume
+  AND l.avl_numlin = p.avl_numlin;
+grant select on anjelica.v_albventa_detalle to public;
+-- Cambiar comORIpo rgs_partid por par_codi en regalmacen
 alter table anjelica.regalmacen rename rgs_partid to par_codi;
 
 -- Cambiada tabla transportistas . Añadida opcion transportista Ventas

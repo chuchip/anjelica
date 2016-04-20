@@ -759,7 +759,7 @@ his_usunom varchar(15) not null, -- Usuario que realiza el Cambio
 );
 create index ix_hisallive on hisallive (his_rowid);
 --
--- Partidas de Albaranes de Venta
+-- Desglose de lineas Albaranes de Venta
 --
 -- drop table v_albvenpar;
 create table anjelica.v_albvenpar
@@ -771,7 +771,7 @@ avc_nume int not null,		-- Numero de Albaran
 avl_numlin int not null,	-- Numero Linea de Albaran
 avp_numlin int not null,	-- Numero Linea de Partida
 pro_codi int,			-- Producto
-avp_tiplot char(1),		-- Tipo Lote. No se USA
+avp_canori decimal(9,3) not null,		-- Kilos Originales (los leidos en la bascula sin destares)
 avp_ejelot int,			-- Ejercicio Lote
 avp_emplot int,			-- Empresa Lote
 avp_serlot char(1), 	-- Serie de Lote
@@ -793,7 +793,7 @@ CREATE OR REPLACE VIEW anjelica.v_albventa_detalle AS
     l.pro_nomb, l.avl_canti, l.avl_prven, l.avl_prbase, l.tar_preci, l.avl_unid,
     l.avl_canbru, l.avl_fecalt, l.fvl_numlin, l.avl_fecrli, c.alm_codori, 
     c.alm_coddes, p.avp_numlin, p.avp_ejelot, p.avp_emplot, p.avp_serlot, 
-    p.avp_numpar, p.avp_numind, p.avp_numuni, p.avp_canti,p.avp_canbru
+    p.avp_numpar, p.avp_numind, p.avp_numuni, p.avp_canti,p.avp_canbru,p.avp_canori,
    FROM anjelica.v_albavel l, anjelica.v_albavec c, anjelica.v_albvenpar p
   WHERE c.emp_codi = l.emp_codi AND c.avc_ano = l.avc_ano 
   AND c.avc_serie = l.avc_serie AND c.avc_nume = l.avc_nume AND c.emp_codi = p.emp_codi
@@ -816,7 +816,7 @@ avc_nume int not null,		-- Numero de Albaran
 avl_numlin int not null,	-- Numero Linea de Albaran
 avp_numlin int not null,	-- Numero Linea de Partida
 pro_codi int,			-- Producto
-avp_tiplot char(1),		-- Tipo Lote. No se USA
+avp_canori decimal(9,3) not null,		-- Tipo Lote. No se USA
 avp_ejelot int,			-- Ejercicio Lote
 avp_emplot int,			-- Empresa Lote
 avp_serlot char(1), 		-- Serie de Lote
@@ -2602,7 +2602,7 @@ rgs_recprv smallint not null,	-- Tipo Recl. Prov.. 0 = NO es Reclamado
 				-- 1 Pendiente, 2 Aceptado, 3 Rechazado
 				-- 4 Reclamacion Pend.
 sbe_codi  smallint not null,	-- SubEmpresa
-par_codi smallint not null,	-- Parte
+rgs_partid smallint not null,	-- Parte
 usu_nomb varchar(20),	-- Usuario que crea la Reg.
 rgs_prmeco float,		-- Costo en la fecha Mvto. 
 rgs_prulco float,		-- Precio Ultima Entrada.
@@ -4133,7 +4133,7 @@ LOOP
   
   INSERT INTO regalmacen (pro_codi,rgs_fecha,rgs_nume,eje_nume,emp_codi,pro_serie,
   pro_nupar,pro_numind,tir_codi, rgs_canti,alm_codi,
-   rgs_recprv,sbe_codi,par_codi,usu_nomb,rgs_prebas,rgs_prmeco,rgs_prulco,rgs_prregu,rgs_kilos,
+   rgs_recprv,sbe_codi,rgs_partid,usu_nomb,rgs_prebas,rgs_prmeco,rgs_prulco,rgs_prregu,rgs_kilos,
    rgs_clidev,rgs_kilant,rgs_trasp,rgs_numer,rgs_cliprv,rgs_coment,rgs_fecres,acc_ano,acc_serie,acc_nume) 
   values ( linalb.pro_codi,linalb.avc_fecalb,nreg,linalb.avp_ejelot,1,linalb.avp_serlot,
   linalb.avp_numpar,linalb.avp_numind,tirCodi,linalb.avp_canti,linalb.alm_codori,

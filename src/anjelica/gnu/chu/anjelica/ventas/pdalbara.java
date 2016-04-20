@@ -68,9 +68,6 @@ import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.DatTrazFrame;
 import gnu.chu.anjelica.despiece.DespVenta;
-import gnu.chu.anjelica.despiece.MantDespTactil;
-import static gnu.chu.anjelica.despiece.MantDespTactil.JTSAL_IMPRIM;
-import static gnu.chu.anjelica.despiece.MantDespTactil.SERIE;
 import gnu.chu.anjelica.despiece.listraza;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
@@ -113,6 +110,7 @@ import javax.swing.event.ListSelectionListener;
  
 public class pdalbara extends ventanaPad  implements PAD  {  
   rangoEtiquetas rangoEtiq;
+  boolean swChangePalet=false;
   private final int JTP_NUMLIN=10;
   private final int JTP_PRV=11;
   private final int JTP_UNID=5;
@@ -180,20 +178,22 @@ public class pdalbara extends ventanaPad  implements PAD  {
   private final static int FD_PRTARI=6; // Campo de Pr. tarifa en grid.
   private final static int FD_PRECIO=5; // Campo de Precio
   
-  private final int JTDES_PROCODI=0;
-  private final int JTDES_EMP=2;
-  private final int JTDES_EJE=3;
-  private final int JTDES_UNID=4;
-  private final int JTDES_SERIE=5;
-  private final int JTDES_LOTE=6;
-  private final int JTDES_NUMIND=7;
-  private final int JTDES_KILOS=8; // Campo Kilos en grid desglose individuos
-  private final int JTDES_NUMLIN=9; // Numero Linea de desglose individuos
-  private final int JTDES_KILBRU=10; // Campo Kilos en grid desglose individuos
+
+  private final int JTDES_EMP=0;
+  private final int JTDES_EJE=1;
+  private final int JTDES_UNID=2;
+  private final int JTDES_SERIE=3;
+  private final int JTDES_LOTE=4;
+  private final int JTDES_NUMIND=5;
+  private final int JTDES_KILOS=6; // Campo Kilos en grid desglose individuos
+  private final int JTDES_NUMLIN=7; // Numero Linea de desglose individuos
+  private final int JTDES_KILBRU=8; // Campo Kilos en grid desglose individuos
+  private final int JTDES_KILORI=9; // Campo Kilos en grid desglose individuos
   /**
    * Codigo de Producto (1)
    */
   private final int JT_PROCODI=1; 
+  private final int JT_PRONOMB=2; 
   /**
    * Numero Linea Albaran (0)
    */
@@ -353,19 +353,14 @@ public class pdalbara extends ventanaPad  implements PAD  {
     {
       try
       {
-        pro_codicE.setText(pro_codiE.getText());
-        pro_nombcE.setText(getNombArtCli(pro_codicE.getValorInt(),
-                                         cli_codiE.getValorInt()));
-        pro_codiE.setText(pro_codicE.getText());
-        pro_nombE.setText(pro_nombcE.getText());
-        jt.setValor(pro_codiE.getText(), 1);
-        jt.setValor(pro_nombE.getText(), 2);
+        jt.setValor(pro_codiE.getText(), JT_PROCODI);
+        jt.setValor(pro_nombE.getText(), JT_PRONOMB);
         jtDes.removeAllDatos();
-        jtDes.setValor(pro_nombE.getText(),0,2);
+//        jtDes.setValor(pro_nombE.getText(),0,2);
         avp_numuniE.setValorInt(1);
         ArrayList v = new ArrayList();
-        v.add(pro_codiE.getText().trim());
-        v.add(pro_nombcE.getText().trim());
+//        v.add(pro_codiE.getText().trim());
+//        v.add(pro_nombcE.getText().trim());
         v.add(EU.em_cod);
         v.add(avp_ejelotE.getText().trim());
         v.add("1");
@@ -374,6 +369,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         v.add(avp_numindE.getText().trim());
         v.add(avp_cantiE.getText().trim());
         v.add("1");
+        v.add(avp_cantiE.getText().trim());
         v.add(avp_cantiE.getText().trim());
         if (! checkIndiv(jt.getSelectedRow(),false) || avp_cantiE.getValorDec()==0 )
         {         
@@ -451,78 +447,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   CTextField avc_impcobE = new CTextField(Types.DECIMAL, "----,--9.99");
   CCheckBox avc_cerraE = new CCheckBox("-1", "0");
 
-  CGridEditable jtDes = new CGridEditable(11)
-  {
-    @Override
-    public void cambiaColumna(int col, int colNueva,int row)
-    {
-      try
-      {
-        if (col == JTDES_PROCODI)
-          jtDes.setValor(pro_codicE.getNombArtCli(pro_codicE.getValorInt(),
-                          cli_codiE.getValorInt()), row, 1);
-        if (col== JTDES_UNID)
-        {
-            if (pro_codiE.getEnvase()>0)                
-                botonBascula.setPesoCajas(pro_codiE.getPesoCajas());
-            botonBascula.setNumeroCajas(avp_numuniE.getValorInt());
-            if (P_FACIL && colNueva==JTDES_SERIE) 
-            {
-                if (!avp_serlotE.isNull() && !avp_numparE.isNull() && !avp_numindE.isNull())
-                {
-                    jtDes.requestFocusLater(row, JTDES_KILOS);
-                   
-                }
-            }
-        }
-        if (col == JTDES_NUMIND)
-              pro_numindE_focusLost();
-        if (col == JTDES_KILOS)
-        {
-            if (avp_cantiE.hasCambio())
-            {
-               avp_cantiE.resetCambio();
-               avp_canbruE.setValorDec(avp_cantiE.getValorDec());
-               jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILBRU);
-            }
-        }
-      }
-      catch (SQLException k)
-      {
-        Error("Error al buscar Nombre Articulo", k);
-      }
-    }
-    @Override
-    public int cambiaLinea(int row, int col)
-    {
-      return cambiaLinDes(row);
-    }
-    @Override
-    public boolean afterInsertaLinea(boolean insLinea)
-    {
-      if (swCanti || P_FACIL && jtDes.getValorDec(jtDes.getSelectedRow()-1, JTDES_KILOS)!=0)
-      {    
-          irGridLin();
-          jt.mueveSigLinea(1);          
-          return false;
-      }
-      pro_codicE.setText(pro_codiE.getText());
-      jtDes.setValor(pro_codiE.getText(), jtDes.getSelectedRow(), 0);
-      jtDes.setValor(pro_nombE.getText(), jtDes.getSelectedRow(), 1);
-      jtDes.setValor( EU.em_cod, jtDes.getSelectedRow(), 2);
-      jtDes.setValor(EU.ejercicio, jtDes.getSelectedRow(), 3);
-      jtDes.setValor("1", jtDes.getSelectedRow(), 4);
-   
-      ponValorLoteAnt();
-      jtDes.ponValores(jtDes.getSelectedRow());
-      return true;
-    }
-    @Override
-    public void afterCambiaLinea()
-    {
-         resetCambioIndividuo();
-    }
-  };
+  CGridEditable jtDes;
   CButton Birgrid = new CButton(Iconos.getImageIcon("reload"));
   CCheckBox opAgru = new CCheckBox();
 //  CButton Baceptar = new CButton();
@@ -533,14 +458,15 @@ public class pdalbara extends ventanaPad  implements PAD  {
   CComboBox opDispSalida = new CComboBox();
   CComboBox avc_valoraE = new CComboBox();
   CButton Bfincab = new CButton();
-  proPanel pro_codicE = new proPanel();
-  CTextField pro_nombcE = new CTextField(Types.CHAR, "X", 45);
+//  proPanel pro_codicE = new proPanel();
+//  CTextField pro_nombcE = new CTextField(Types.CHAR, "X", 45);
   CTextField avp_emplotE = new CTextField(Types.DECIMAL, "#9");
   CTextField avp_ejelotE = new CTextField(Types.DECIMAL, "###9");
   CTextField avp_serlotE = new CTextField(Types.CHAR, "X", 1);
   CTextField avp_numparE = new CTextField(Types.DECIMAL, "####9");
   CTextField avp_numindE = new CTextField(Types.DECIMAL, "###9");
   CTextField avp_canbruE = new CTextField(Types.DECIMAL, "---,--9.99");
+  CTextField avp_canoriE = new CTextField(Types.DECIMAL, "---,--9.99");
   CTextField avp_cantiE = new CTextField(Types.DECIMAL, "---,--9.99")
   {
       @Override
@@ -550,7 +476,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
               return;          
           avp_canbruE.setValorDec(avp_cantiE.getValorDec());
           jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILBRU);
-         
+          jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILORI);
           if (avc_numpalC.isSelected()  )
           {
             if (avl_numpalE.getValorInt()!=0)
@@ -745,7 +671,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-04-15" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-04-20" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -800,66 +726,30 @@ public class pdalbara extends ventanaPad  implements PAD  {
             new Insets(0, 5, 0, 0), 0, 0));
         
         
-        avp_cantiE.setEditable( P_ADMIN);
-
-    
-        pro_nombcE.setEnabled(false);
+        avp_cantiE.setEditable( P_ADMIN);      
 
         avp_emplotE.setValorDec(EU.em_cod);
         avp_emplotE.setEnabled(false);
         avp_ejelotE.setValorDec(EU.ejercicio);
         avp_serlotE.setText("A");
         avp_serlotE.setMayusc(true);
-        avp_numuniE.setValorDec(1);
-        ArrayList vc1 = new ArrayList();
+        avp_numuniE.setValorDec(1);       
 
         avp_ejelotE.setToolTipText("F3 Cons. Lotes Disponibles");
         avp_numuniE.setToolTipText("F3 Cons. Lotes Disponibles");
         avp_serlotE.setToolTipText("F3 Cons. Lotes Disponibles");
         avp_numparE.setToolTipText("F3 Cons. Lotes Disponibles");
         avp_numlinE.setValorInt(0);
-        pro_codicE.setEditable(false);
-        pro_nombcE.setEditable(false);
+        
         avp_numlinE.setEnabled(false);
         avp_cantiE.setLeePesoBascula(botonBascula);
         botonBascula.setNumeroCajas(0);
         botonBascula.setPesoCajas(0);
         avp_canbruE.setEnabled(false);
-        ArrayList v1 = new ArrayList();
-        v1.add("Prod"); // 0
-        v1.add("Descr."); // 1
-        v1.add("Emp"); // 2
-        v1.add("Ejer"); // 3
-        v1.add("Unid."); // 4
-        v1.add("Serie"); // 5
-        v1.add("Lote"); //6
-        v1.add("N.Ind"); // 7
-        v1.add("Kilos"); // 8
-        v1.add("NL"); // 9
-        v1.add("Kg.Bruto"); // 10
-        jtDes.setCabecera(v1);
-        jtDes.setAjustarGrid(true);
-        jtDes.setAnchoColumna(new int[]{50, 200, 30, 40, 40, 35, 40, 40, 60,20,60});
-        jtDes.setAlinearColumna(new int[]{2, 0, 2, 2, 2, 0, 2, 2, 2,2,2});
-        vc1.add(pro_codicE.getTextField()); // 0
-        
-        vc1.add(pro_nombcE); // 1
-        vc1.add(avp_emplotE); // 2
-        vc1.add(avp_ejelotE); // 3
-        vc1.add(avp_numuniE); // 4
-        vc1.add(avp_serlotE); // 5
-        vc1.add(avp_numparE); // 6
-        vc1.add(avp_numindE); // 7
-        vc1.add(avp_cantiE); // 8
-        vc1.add(avp_numlinE); // 9
-        vc1.add(avp_canbruE); // 10
-        jtDes.setCampos(vc1);
-       
-        
-        jtDes.setFormatoCampos();
-        jtDes.setPonValoresInFocus(false);
+        avp_canoriE.setEnabled(false);       
 
         opAgru.setSelected(true);
+        confGridDesg();
         conf_jtLinPed(jtLinPed);
         PajuPed.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
         
@@ -1302,8 +1192,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
                 new Insets(0, 0, 0, 0), 0, 0));
 
         Pgrid.add(jtDes,
-                new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-                GridBagConstraints.BOTH,
+                new GridBagConstraints(0, 2, 2, 1, 0.0, 1.0, GridBagConstraints.WEST,
+                GridBagConstraints.VERTICAL,
                 new Insets(0, 0, 0, 0), 0, 0));
         Pprinc.add(Ppie,
                 new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
@@ -1450,8 +1340,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
           pro_codiE.iniciar(dtStat, this, vl, EU);
           pro_codiE.setEntrada(true);
           pro_codiE.getFieldProCodi().setToolTipText("Doble click para actualizar nombre");
-          pro_codicE.iniciar(dtStat, this, vl, EU);
-          pro_codicE.setEntrada(true);
+       
           pro_codresE.iniciar(dtStat, this, vl, EU);
           emp_codiE.iniciar(dtStat,this,vl, EU);
           sbe_codiE.iniciar(dtStat,this,vl,EU);
@@ -1814,7 +1703,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
        v.add(0);
        v.add(0);
        jtPalet.addLinea(v);
-      
+       swChangePalet =true;
        return palet;
   }
   void activarEventos()
@@ -1825,6 +1714,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
             jtPalet.salirGrid();
 //            debug("palet: "+jtPalet.getValorInt(jtPalet.getSelectedRow(),0)+"peso: "+jtPalet.getValorDec(jtPalet.getSelectedRow(),1));
         }
+         @Override
+        public void cambiaLinea(GridEvent event){
+            swChangePalet =true;
+        }
+        
       });
       jtLinPed.addListSelectionListener(new
        ListSelectionListener()
@@ -2490,7 +2384,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
               vl.add(datTrazFrame);
               datTrazFrame.setLocation(this.getLocation().x, this.getLocation().y + 30);
           }
-          datTrazFrame.setDatos(jtDes.getValorInt(jtDes.getSelectedRowDisab(),JTDES_PROCODI),
+          datTrazFrame.setDatos(jt.getValorInt(JT_PROCODI),
                       jtDes.getValString(jtDes.getSelectedRowDisab(),JTDES_SERIE),
                       jtDes.getValorInt(jtDes.getSelectedRowDisab(),JTDES_EJE),
                       jtDes.getValorInt(jtDes.getSelectedRowDisab(),JTDES_LOTE),
@@ -2826,20 +2720,20 @@ public class pdalbara extends ventanaPad  implements PAD  {
   {
     if (ayuLot.consulta)
     {
-//      avp_emplotE.setValorDec(ayuLot.jt.getValorInt(0));
-      avp_ejelotE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, 1));
-      avp_serlotE.setText(ayuLot.jt.getValString(ayuLot.rowAct, 2));
-
-      avp_numparE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, 3));
-      avp_numindE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, 4));
-      avp_cantiE.setText(ayuLot.jt.getValString(ayuLot.rowAct, 5));
-//    avp_numuniE.setText("1");
-      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, 0), 2);
-      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, 1), 3);
-      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, 2), 5);
-      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, 3), 6);
-      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, 4), 7);
-      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, 5), 8);
+      avp_emplotE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, ayuLote.JT_EMP));
+      avp_ejelotE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, ayuLote.JT_EJE));
+      avp_serlotE.setText(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_SER));
+      avp_numparE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, ayuLote.JT_LOTE));
+      avp_numindE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, ayuLote.JT_IND));
+      avp_cantiE.setText(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_PESO ));
+//    
+      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_EMP), JTDES_EMP);
+      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_EJE), JTDES_EJE);
+      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_SER), JTDES_SERIE);
+      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_LOTE), JTDES_LOTE);
+      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_IND), JTDES_NUMIND);
+      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_PESO), JTDES_KILOS);
+      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_PESO), JTDES_KILBRU);
     }
     ayuLot.setVisible(false);
     this.setEnabled(true);
@@ -3859,8 +3753,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       do
       {
         ArrayList v = new ArrayList();
-        v.add(dtCon1.getString("pro_codi"));
-        v.add(dtCon1.getString("pro_nomb"));
+       
         v.add(dtCon1.getString("avp_emplot"));
         v.add(dtCon1.getString("avp_ejelot"));
         v.add(dtCon1.getString("avp_numuni"));
@@ -3870,6 +3763,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         v.add(dtCon1.getString("avp_canti"));
         v.add(dtCon1.getInt("avp_numlin"));
         v.add(dtCon1.getString("avp_canbru"));
+        v.add(dtCon1.getString("avp_canori"));
         canti= Formatear.redondea(canti+dtCon1.getDouble("avp_canti"),2);
         unid+=dtCon1.getInt("avp_numuni");
         
@@ -3919,7 +3813,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
                              int proCodi,int numPale, String proNomb,double precio,boolean modPrecio)
   {
     return "SELECT p.pro_codi,p.pro_nomb,a.avp_emplot,a.avp_ejelot,a.avp_serlot, " +
-        " a.avp_numpar,a.avp_numind,a.avp_canti,a.avp_canbru,a.avp_numuni,a.avp_numlin "+
+        " a.avp_numpar,a.avp_numind,a.avp_canti,a.avp_canbru,a.avp_canori,avp_numuni,a.avp_numlin "+
         " FROM "+vistaDet+" as a,v_articulo as p " +
         " WHERE "+ (empCodi==-1? " a.his_rowid = "+numAlb: " a.emp_codi = " + empCodi +
         " and a.avc_ano = " + ejeNume +
@@ -3948,7 +3842,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
               + "a.avs_serlot as avp_serlot, "
               + " avs_numpar as avp_numpar,"
               + "avs_numind as avp_numind,"
-              + "a.avs_canti as avp_canti,a.avs_canti as avp_canbru, 1 as avp_numuni,1 as avp_numlin"
+              + "a.avs_canti as avp_canti,a.avs_canti as avp_canbru, a.avs_canti as avp_canori,"
+              + " 1 as avp_numuni,1 as avp_numlin"
               + " FROM albvenseri as a,v_articulo as p,albvenserl as l "
               + " WHERE l.avs_nume = " + avsNume
               + (nLin >= 0 ? " and l.avs_numlin = " + nLin
@@ -3966,7 +3861,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
               + "a.avs_serlot as avp_serlot, "
               + " avs_numpar as avp_numpar,"
               + "avs_numind as avp_numind,"
-              + "a.avs_canti as avp_canti, a.avs_canti as avp_canbru, 1 as avp_numuni,1 as avp_numlin "
+              + "a.avs_canti as avp_canti, a.avs_canti as avp_canbru, a.avs_canti as avp_canori,"
+              + " 1 as avp_numuni,1 as avp_numlin "
               + " FROM albvenseri as a,v_articulo as p,albvenserl as l,albvenserc as c "
               + " WHERE l.avs_nume = c.avs_nume "
               + " and c.emp_codi = " + empCodi
@@ -5772,6 +5668,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         pro_numindE_focusLost();
         avp_canbruE.setValorDec(avp_cantiE.getValorDec());
         jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILBRU);
+        jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILORI);
         jtDes.salirGrid();
         if (avp_numindE.getValorInt() != 0 || avp_numparE.getValorInt() != 0 ||
             avp_cantiE.getValorDec() != 0)
@@ -5784,20 +5681,20 @@ public class pdalbara extends ventanaPad  implements PAD  {
           }
         }
         guardaLinDes(jt.getSelectedRow());
-        if (jt.getValorDec(3)==0 && jt.getValorInt(0)>0)
-        { // Esta linea de albaran se habia guardado pero ahora no tiene KILOS
-          mensajeErr("La suma de Kilos de los individuos  NO puede ser 0");
-          jtDes.requestFocusLater(0, 0);
-          return;
-        }
-        if (jt.getSelectedColumn() == 3 &&  ! verPrecios)
+//        if (jt.getValorDec(JT_KILOS)==0 && jt.getValorInt(JT_PROCODI)>0)
+//        { // Esta linea de albaran se habia guardado pero ahora no tiene KILOS
+//          mensajeErr("La suma de Kilos de los individuos  NO puede ser 0");
+//          jtDes.requestFocusLater(0, 0);
+//          return;
+//        }
+        if (jt.getSelectedColumn() == JT_KILOS &&  ! verPrecios)
             swGridDes++;
         jtDes.setEnabled(false);
         jt.setEnabled(true);
 
         Baceptar.setEnabled(true);
         Bimpri.setEnabled(true);
-        if (pro_codiE.getTipoLote()=='V' && jt.getValorInt(0) > 0 )
+        if (pro_codiE.getTipoLote()=='V' && jt.getValorInt(JT_PROCODI) > 0 )
         {
           pro_codiE.setEditable(false);
 //          pro_nombE.setEditable(false);
@@ -5857,7 +5754,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       {
         DatIndiv di = new DatIndiv();
         di.setAuxiliar("N"); // 0
-        di.setProducto(dtCon1.getInt("pro_codi")); 
+//        di.setProducto(dtCon1.getInt("pro_codi")); 
         di.setEjercLot(dtCon1.getInt("avp_ejelot")); // 2
         di.setLote(dtCon1.getInt("avp_numpar")); // 3
         di.setNumind(dtCon1.getInt("avp_numind")); // 4
@@ -5949,7 +5846,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
    
     for (int nLin = 0; nLin < nRows; nLin++)
     {     
-      if ( jtDes.getValorInt(nLin, JTDES_PROCODI)==v.getProducto()  && // Prod.
+      if ( //jtDes.getValorInt(nLin, JTDES_PROCODI)==v.getProducto()  && // Prod.
          jtDes.getValorInt(nLin, JTDES_EJE) == v.getEjercLot() && // ejer
           jtDes.getValString(nLin, JTDES_SERIE).equals(v.getSerie()) && // Serie
           jtDes.getValorInt(nLin, JTDES_LOTE)==v.getLote() && // Lote
@@ -5988,7 +5885,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     for (int nLin = 0; nLin < nRows; nLin++)
     {     
       DatIndiv v=datInd.get(nLin);
-      if ( jtDes.getValorInt(nRow, JTDES_PROCODI)==v.getProducto()  && // Prod.
+      if ( // jtDes.getValorInt(nRow, JTDES_PROCODI)==v.getProducto()  && // Prod.
          jtDes.getValorInt(nRow, JTDES_EJE) == v.getEjercLot() && // ejer
           jtDes.getValString(nRow, JTDES_SERIE).equals(v.getSerie()) && // Serie
           jtDes.getValorInt(nRow, JTDES_LOTE)==v.getLote() && // Lote
@@ -6235,7 +6132,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         " and avl_numlin = "+nLiAlb;
     dtAdd.select(s);
     int avpNumlin=dtAdd.getInt("avp_numlin",true)+1;
-    int avpNumpar=jtDes.getValorInt(nLin, 6);
+    int avpNumpar=jtDes.getValorInt(nLin, JTDES_LOTE);
     if (avpNumpar==0)
     {
         throw new Exception("Error interno. Numero partida invalido\n Albaran: "+emp_codiE.getValorInt()+"/"
@@ -6249,22 +6146,21 @@ public class pdalbara extends ventanaPad  implements PAD  {
     dtAdd.setDato("avc_nume", avc_numeE.getValorInt());
     dtAdd.setDato("avl_numlin", nLiAlb);
     dtAdd.setDato("avp_numlin",avpNumlin); 
-    dtAdd.setDato("pro_codi", jtDes.getValorInt(nLin, 0));
-    dtAdd.setDato("avp_tiplot", "L");
-    dtAdd.setDato("avp_ejelot", jtDes.getValorInt(nLin, 3));
-    dtAdd.setDato("avp_emplot", jtDes.getValorInt(nLin, 2));
-    dtAdd.setDato("avp_serlot", jtDes.getValString(nLin, 5));
+    dtAdd.setDato("pro_codi",pro_codiE.getValorInt());
+
+    dtAdd.setDato("avp_ejelot", jtDes.getValorInt(nLin, JTDES_EJE));
+    dtAdd.setDato("avp_emplot", jtDes.getValorInt(nLin, JTDES_EMP));
+    dtAdd.setDato("avp_serlot", jtDes.getValString(nLin, JTDES_SERIE));
     dtAdd.setDato("avp_numpar", avpNumpar);
-    dtAdd.setDato("avp_numind", jtDes.getValorInt(nLin, 7));
-    dtAdd.setDato("avp_numuni", jtDes.getValorInt(nLin, 4));
+    dtAdd.setDato("avp_numind", jtDes.getValorInt(nLin, JTDES_NUMIND));
+    dtAdd.setDato("avp_numuni", jtDes.getValorInt(nLin, JTDES_UNID));
     dtAdd.setDato("avp_canti", jtDes.getValorDec(nLin, JTDES_KILOS));
     dtAdd.setDato("avp_canbru", jtDes.getValorDec(nLin, JTDES_KILBRU)==0?
         jtDes.getValorDec(nLin, JTDES_KILOS):jtDes.getValorDec(nLin, JTDES_KILBRU));
+    dtAdd.setDato("avp_canori", jtDes.getValorDec(nLin, JTDES_KILORI)==0?
+        jtDes.getValorDec(nLin, JTDES_KILOS):jtDes.getValorDec(nLin, JTDES_KILORI));
     dtAdd.update(stUp);
-//    anuStkPart(jtDes.getValorInt(nLin, JTDES_PROCODI), jtDes.getValorInt(nLin, JTDES_EJE),
-//               jtDes.getValorInt(nLin, JTDES_EMP), jtDes.getValString(nLin, JTDES_SERIE),
-//               jtDes.getValorInt(nLin, JTDES_LOTE), jtDes.getValorInt(nLin, JTDES_NUMIND),
-//               jtDes.getValorDec(nLin, JTDES_KILOS) * 1, jtDes.getValorInt(nLin, JTDES_UNID));
+
     jtDes.setValor(avpNumlin,nLin,JTDES_NUMLIN);
   }
 
@@ -6516,6 +6412,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
                avp_cantiE.resetCambio();
                avp_canbruE.setValorDec(avp_cantiE.getValorDec());
                jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILBRU);
+               jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILORI);
           }
           if (swEntdepos)
           {// Entrega de deposito
@@ -6532,15 +6429,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
                   return JTDES_KILOS;
               }
           }
-          if (pro_codicE.getValorInt() != jt.getValorInt(1)) {
-              mensajeErr("Producto en Linea Albaran y Desglose debe ser el mismo");
-              pro_codicE.setValorInt(jt.getValorInt(1));
-              return 0;
-          }
-          if (!pro_codicE.controla(false, false)) {
-              mensajeErr(pro_codicE.getMsgError());
-              return 0;
-          }
+        
 //          if (! emp_codiE.hasAcceso(avp_emplotE.getValorInt()))
 //          {
 //              mensajeErr("Empresa no valida");
@@ -6653,7 +6542,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
                         + " and avp_ejelot = " + avp_ejelotE.getValorInt()
                         + " and avp_emplot = " + avp_emplotE.getValorInt()
                         + " and avp_numind = " + avp_numindE.getValorInt()
-                        + " and pro_codi = " + pro_codicE.getText();
+                        + " and pro_codi = " + pro_codiE.getText();
             }
             dtCon1.select(s);
             canti = dtCon1.getDouble("avp_canti", true) * -1;
@@ -6797,7 +6686,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
                       + " and p.avp_ejelot = " + avp_ejelotE.getValorInt()
                       + " and p.avp_emplot = " + avp_emplotE.getValorInt()
                       + " and p.avp_numind = " + avp_numindE.getValorInt()
-                      + " and p.pro_codi = " + pro_codicE.getText();
+                      + " and p.pro_codi = " + pro_codiE.getText();
     }
   /**
    *
@@ -7083,7 +6972,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
                                        avp_serlotE.getText(),
                                        avp_numparE.getValorInt(),
                                        avp_numindE.getValorInt(),
-                                       pro_codicE.getValorInt(),
+                                       pro_codiE.getValorInt(),
                                        avc_almoriE.getValorInt());
     if (ret.hasError())
         mensajeErr(ret.getMensaje());
@@ -7096,8 +6985,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     avp_ejelotE.resetCambio();
     avp_serlotE.resetCambio();
     avp_numindE.resetCambio();
-    avp_numparE.resetCambio();
-    pro_codicE.resetCambio();
+    avp_numparE.resetCambio();  
     avp_cantiE.resetCambio();
     if (avp_numparE.getValorInt()!=0)
     {
@@ -7116,8 +7004,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     if (avp_numparE.getValorInt() == 0 || ! jtDes.isEnabled())
       return;
     if (  !avp_ejelotE.hasCambio() && ! avp_serlotE.hasCambio()
-            && !avp_numindE.hasCambio() && !avp_numparE.hasCambio() &&
-        !pro_codicE.hasCambio())
+            && !avp_numindE.hasCambio() && !avp_numparE.hasCambio())
       return;
     resetCambioIndividuo();
     if (avp_cantiE.getValorDec() != 0 && avp_cantiE.isEditable())
@@ -7146,7 +7033,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
                         + " and avp_ejelot = " + avp_ejelotE.getValorInt()
                         + " and avp_emplot = " + avp_emplotE.getValorInt()
                         + " and avp_numind = " + avp_numindE.getValorInt()
-                        + " and pro_codi = " + pro_codicE.getText();
+                        + " and pro_codi = " + pro_codiE.getValorInt();
           dtStat.select(s);
           
           int indiv=dtStat.getInt("avp_numuni",true);
@@ -7428,9 +7315,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         if (jtDes.isVacio())
         {
 //          jtDes.removeAllDatos();
-          ArrayList v=new ArrayList();
-          v.add(pro_codiE.getText());
-          v.add(pro_nombE.getText());
+          ArrayList v=new ArrayList();        
           v.add( EU.em_cod);
           v.add( avpEjelotAnt==0?EU.ejercicio:avpEjelotAnt);
           v.add("1");
@@ -7439,9 +7324,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
           v.add(isEmpPlanta?0:avpNumindAnt);
           v.add("0");
           v.add("0");
-           v.add("0"); // Cantidad bruta
-          jtDes.addLinea(v);
-          pro_codicE.setText(pro_codiE.getText());
+          v.add("0"); // Cantidad bruta
+          v.add("0"); // Cantidad Original
+          jtDes.addLinea(v);        
           jtDes.afterInsertaLinea(true);
           jtDes.actualizarGrid(0);
 
@@ -7512,9 +7397,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     }
     jt.setEnabled(false);
     jtDes.setEnabled(true);
-    pro_codicE.setText(pro_codiE.getText());
-    jtDes.setValor(pro_codiE.getText(), 0, 0);
-    jtDes.setValor(pro_nombE.getText(), 0, 1);
+   
     jtDes.setValor(EU.em_cod, 0, JTDES_EMP);
     jtDes.setValor(avpEjelotAnt==0?EU.ejercicio:avpEjelotAnt,0, JTDES_EJE);
     jtDes.setValor(avpSerlotAnt.equals("")?"A":avpSerlotAnt,0, JTDES_SERIE);
@@ -8625,7 +8508,110 @@ public class pdalbara extends ventanaPad  implements PAD  {
 //    }
 //  }
 
- 
+  private void confGridDesg() throws IllegalArgumentException, ClassNotFoundException 
+  {
+     jtDes = new CGridEditable(10)
+    {
+    @Override
+    public void cambiaColumna(int col, int colNueva,int row)
+    {
+//       try {
+//        if (col == JTDES_PROCODI)
+//          jtDes.setValor(pro_codicE.getNombArtCli(pro_codicE.getValorInt(),
+//                          cli_codiE.getValorInt()), row, 1);
+        if (col== JTDES_UNID)
+        {
+            if (pro_codiE.getEnvase()>0)                
+                botonBascula.setPesoCajas(pro_codiE.getPesoCajas());
+            botonBascula.setNumeroCajas(avp_numuniE.getValorInt());
+            if (P_FACIL && colNueva==JTDES_SERIE) 
+            {
+                if (!avp_serlotE.isNull() && !avp_numparE.isNull() && !avp_numindE.isNull())
+                {
+                    jtDes.requestFocusLater(row, JTDES_KILOS);
+                   
+                }
+            }
+        }
+        if (col == JTDES_NUMIND)
+              pro_numindE_focusLost();
+        if (col == JTDES_KILOS)
+        {
+            if (avp_cantiE.hasCambio())
+            {
+               avp_cantiE.resetCambio();
+               avp_canbruE.setValorDec(avp_cantiE.getValorDec());
+               jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILBRU);
+               jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILORI);
+            }
+        }
+//      }
+//      catch (SQLException k)
+//      {
+//        Error("Error al buscar Nombre Articulo", k);
+//      }
+    }
+    @Override
+    public int cambiaLinea(int row, int col)
+    {
+      return cambiaLinDes(row);
+    }
+    @Override
+    public boolean afterInsertaLinea(boolean insLinea)
+    {
+      if (swCanti || P_FACIL && jtDes.getValorDec(jtDes.getSelectedRow()-1, JTDES_KILOS)!=0)
+      {    
+          irGridLin();
+          jt.mueveSigLinea(1);          
+          return false;
+      }
+     
+      jtDes.setValor( EU.em_cod, jtDes.getSelectedRow(), JTDES_EMP);
+      jtDes.setValor(EU.ejercicio, jtDes.getSelectedRow(), JTDES_EJE);
+      jtDes.setValor("1", jtDes.getSelectedRow(), JTDES_UNID);
+   
+      ponValorLoteAnt();
+      jtDes.ponValores(jtDes.getSelectedRow());
+      return true;
+    }
+    @Override
+    public void afterCambiaLinea()
+    {
+         resetCambioIndividuo();
+    }
+  };
+        ArrayList v1 = new ArrayList();    
+        v1.add("Emp"); // 0
+        v1.add("Ejer"); // 1
+        v1.add("Unid."); // 2
+        v1.add("Serie"); // 3
+        v1.add("Lote"); //4
+        v1.add("N.Ind"); // 5
+        v1.add("Kilos"); // 6
+        v1.add("NL"); // 7
+        v1.add("Kg.Bruto"); // 8
+        v1.add("Kg.Orig"); // 9
+        jtDes.setCabecera(v1);
+        jtDes.setAjustarGrid(true);
+        jtDes.setAnchoColumna(new int[]{ 30, 40, 40, 35, 40, 40, 60,20,60,60});
+        jtDes.setAlinearColumna(new int[]{ 2, 2, 2, 0, 2, 2, 2,2,2,2});      
+        ArrayList vc1 = new ArrayList();
+        vc1.add(avp_emplotE); // 0
+        vc1.add(avp_ejelotE); // 1
+        vc1.add(avp_numuniE); // 2
+        vc1.add(avp_serlotE); // 3
+        vc1.add(avp_numparE); // 4
+        vc1.add(avp_numindE); // 5
+        vc1.add(avp_cantiE); // 6
+        vc1.add(avp_numlinE); // 7
+        vc1.add(avp_canbruE); // 8
+        vc1.add(avp_canoriE); // 9
+        jtDes.setCampos(vc1);
+       
+        
+        jtDes.setFormatoCampos();
+        jtDes.setPonValoresInFocus(false);
+  }
 
   private void conf_jtLinPed(Cgrid jt) throws Exception
   {
@@ -8824,7 +8810,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
      else
        ifRegAlm.statusBar.setEnabled(true);
      ifRegAlm.setVisible(true);
-     ifRegAlm.getPanelReg().setCampos(avc_fecalbE.getDate(), pro_codicE.getValorInt(),
+     ifRegAlm.getPanelReg().setCampos(avc_fecalbE.getDate(), pro_codiE.getValorInt(),
                                         EU.em_cod,
                                       avp_ejelotE.getValorInt(), avp_serlotE.getText(),avp_numparE.getValorInt(),
                                       avp_numindE.getValorInt(),avp_numuniE.getValorInt()*-1,
@@ -8984,21 +8970,26 @@ public class pdalbara extends ventanaPad  implements PAD  {
       {
         antPrecio = avl_prvenE.getValorDec();
         avl_prvenE.resetCambio();
-       
+        if (jt.getValorInt(JT_NULIAL)==0 && pro_codiE.getValorInt()==0 && swChangePalet )
+        {
+          avl_numpalE.setValorInt(getNumeroPaletAcivo());
+          jt.setValor(avl_numpalE.getValorInt(),JT_NUMPALE);
+        }
+        swChangePalet=false;
         avl_numpalE.resetCambio();
-        if ((nav.pulsado != navegador.EDIT && nav.pulsado != navegador.ADDNEW) || isLock)
-          return;
-        pro_codiE.resetCambio();
+          pro_codiE.resetCambio();
         if (jt.getValorInt(0) > 0)
         {
           pro_codiE.setEditable(false);
-//          pro_nombE.setEditable(false);
         }
         else
         {
           pro_codiE.setEditable(true);
           pro_nombE.setEditable(true);
         }
+        if ((nav.pulsado != navegador.EDIT && nav.pulsado != navegador.ADDNEW) || isLock)
+          return;
+      
         try
         {
           pro_codiE.getNombArt(jt.getValString(1), EU.em_cod, 0,
@@ -9079,7 +9070,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     avl_prvenE.setToolTipText("F3 Consulta Ultimos Precios");
     avl_numlinE.setEnabled(false);
     pro_codiE.setProNomb(null);
-    pro_codicE.setProNomb(null);
+    
     tar_preciE.setEnabled(false);
     avl_fecaltE.setEnabled(false);
     avl_canbruE.setEnabled(false);

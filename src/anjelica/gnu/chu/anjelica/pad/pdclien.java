@@ -312,7 +312,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2016-04-04");
+      this.setVersion("2016-04-19");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -1832,6 +1832,8 @@ public class pdclien extends ventanaPad implements PAD
       sbe_codiE.setValorInt(EU.getSbeCodi());
     cli_comenT.setEnabled(false);
     cli_nombE.requestFocus();
+    cli_fecaltE.setEnabled(true);
+    cli_feulmoE.setEnabled(true);
     cli_activE.setValor("S");
     Bbusmax.setEnabled(false);
     Tpanel.setSelectedIndex(0);
