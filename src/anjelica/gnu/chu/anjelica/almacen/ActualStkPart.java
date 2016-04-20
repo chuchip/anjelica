@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
  * <p>Descripción: Clase encargada de actualizar el stock actual de TODOS los productos.
 *  A traves de sus funciones se sumaran y restaran kilos a los tabla stkpart y articulos (acumulados)
 *  </p>
- *  <p>Copyright: Copyright (c) 2005-2015
+ *  <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -286,13 +286,16 @@ public class ActualStkPart
         dtAdd.setDato("pro_numind", numind);
         dtAdd.setDato("alm_codi", almCodi);
         dtAdd.setDato("stp_unini", unidStk);
-        
-        dtAdd.setDato("stp_feccre",
-                      fecMvto == null ? "current_timestamp" :
-                      fecMvto);
-        dtAdd.setDato("stp_fefici",
-                      fecMvto == null ? "current_timestamp" :
-                      fecMvto);
+        if (fecMvto==null)
+        {
+            dtAdd.setDato("stp_feccre","current_timestamp");
+            dtAdd.setDato("stp_fefici","current_timestamp" );
+        }
+        else
+        {
+            dtAdd.setDato("stp_feccre",      fecMvto );
+            dtAdd.setDato("stp_fefici",     fecMvto);
+        }
         dtAdd.setDato("stp_kilini", kilStk);
         dtAdd.setDato("stp_kilact", kilStk);
         dtAdd.setDato("stp_unact", unidStk);

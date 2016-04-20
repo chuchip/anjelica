@@ -374,7 +374,10 @@ public class DatosTabla   implements Serializable
         setDato(columna,(String) null);
         return;
     }
-    setDato(columna, Formatear.getFecha(fecha, "dd-MM-yyyy"),
+    if (getTipCampo(columna)==Types.TIMESTAMP)
+         setDato(columna,new Timestamp(fecha.getTime()));
+    else
+        setDato(columna, Formatear.getFecha(fecha, "dd-MM-yyyy"),
             "dd-MM-yyyy");
   }
   public void setDato(String columna,Timestamp tiempo) throws SQLException
@@ -2310,7 +2313,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
    String f;
    int n;
    int tc;
-   for (n = 1; n <= getNumCol(); n++)
+   for (n = 1; n <= getColumnCount(); n++)
    {
      if (camposAddNew && vecEdit.indexOf(""+(n-1))==-1)
        continue; // Campo NO modificado
