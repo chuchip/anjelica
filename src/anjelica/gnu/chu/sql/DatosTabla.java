@@ -1098,7 +1098,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
 
   if (forUpdate)
   {
-    if (stmt1.getResultSetConcurrency()==ResultSet.CONCUR_UPDATABLE)
+//    if (stmt1.getResultSetConcurrency()==ResultSet.CONCUR_UPDATABLE)
       s = "SELECT "+sql.substring(7) + " FOR UPDATE";
   }
   // Buscamos la palabra clave FROM, lo que haya despues

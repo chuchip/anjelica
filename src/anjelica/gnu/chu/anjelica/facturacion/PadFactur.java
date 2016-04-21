@@ -1520,7 +1520,7 @@ public class PadFactur extends ventanaPad   implements PAD {
    * @param fvcAno
    * @param fvcSerie
    * @param fvcNume
-   * @param dt
+   * @param dt Cursor donde se pondra la select for update
    * @param dt1
    * @return NULL si se puede modificar. Un string con la razon por la que no se puede modificar
    * en caso contrario.

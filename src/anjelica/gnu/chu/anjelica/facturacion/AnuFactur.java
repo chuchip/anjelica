@@ -5,7 +5,7 @@ package gnu.chu.anjelica.facturacion;
  * <p>Título: Anulación de Facturas</p>
  * <p>Descripción: Anulacion  de Facturas de Ventas
  *  de ventas</p> 
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -24,6 +24,7 @@ package gnu.chu.anjelica.facturacion;
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.controles.*;
+import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -36,6 +37,7 @@ public class AnuFactur extends ventana
  CButton Bbuscar = new CButton("Buscar (F4)",Iconos.getImageIcon("check"));
    CLabel cLabel1 = new CLabel();
    CComboBox cli_tipfacE = new CComboBox();
+   DatosTabla dtAdd;
     /** Creates new form AnuFactur */
   public AnuFactur(EntornoUsuario eu, Principal p) {
     EU=eu;
@@ -200,6 +202,7 @@ public class AnuFactur extends ventana
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+  @Override
   public void iniciarVentana() throws Exception
   {
     PcondBus.setDefButton(Bbuscar);
@@ -210,6 +213,7 @@ public class AnuFactur extends ventana
     cli_tipfacE.setColumnaAlias("cli_tipfac");
     cli_tipfacE.setQuery(true);
     PcondBus.feciniE.setText("01-"+Formatear.getFechaAct("MM-yyyy"));
+    dtAdd=new DatosTabla(ctUp);
   }
   void configurarGrid() throws Exception
   {
@@ -217,17 +221,17 @@ public class AnuFactur extends ventana
     jtFra.setMinimumSize(new Dimension(680, 208));
     jtFra.setPreferredSize(new Dimension(680, 208));
     jtFra.setNumColumnas(10);
-    Vector v=new Vector();
-    v.addElement("Ejer"); // 0
-    v.addElement("Emp"); // 1
-    v.addElement("Fact."); // 2
-    v.addElement("Fec.Fra"); // 3
-    v.addElement("Cli"); // 4
-    v.addElement("Nombre Cliente"); // 5
-    v.addElement("Imp.Fra"); // 6
-    v.addElement("Tra"); // 7
-    v.addElement("INC"); // 8
-    v.addElement("A.F"); // 9 Anulada Fra
+    ArrayList v=new ArrayList();
+    v.add("Ejer"); // 0
+    v.add("Emp"); // 1
+    v.add("Fact."); // 2
+    v.add("Fec.Fra"); // 3
+    v.add("Cli"); // 4
+    v.add("Nombre Cliente"); // 5
+    v.add("Imp.Fra"); // 6
+    v.add("Tra"); // 7
+    v.add("INC"); // 8
+    v.add("A.F"); // 9 Anulada Fra
     jtFra.setCabecera(v);
 //    jtFra.setMaximumSize(new Dimension(693, 197));
 //    jtFra.setMinimumSize(new Dimension(693, 197));
@@ -425,12 +429,12 @@ public class AnuFactur extends ventana
           fvcSerie=jtFra.getValString(n,2).substring(0,1);
           fvcNume=Integer.parseInt( jtFra.getValString(n,2).substring(2));
           msgErr = PadFactur.checkModif(! jtFra.getValBoolean(n, 8),jtFra.getValorInt(n, 1),
-                                      jtFra.getValorInt(n, 0),fvcSerie,fvcNume, dtStat, dtCon1);
+                                      jtFra.getValorInt(n, 0),fvcSerie,fvcNume, dtAdd, dtStat);
           if (msgErr == null)
           {
             PadFactur.deleteFra(jtFra.getValorInt(n, 1), jtFra.getValorInt(n, 0),fvcSerie,
-                 fvcNume, dtCon1);
-            dtCon1.commit();
+                 fvcNume, dtAdd);
+            dtAdd.commit();
             jtFra.setValor(new Boolean(true),n,9);
             jtFra.setValor(new Boolean(false),n,8);
             nFras++;

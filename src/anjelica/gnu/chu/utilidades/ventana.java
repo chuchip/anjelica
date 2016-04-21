@@ -64,7 +64,7 @@ public class ventana extends CInternalFrame implements ejecutable
   public conexion ctUp; // Conexion para Updates.
   public java.sql.Statement stUp; // Statement para updates.
   public JLayeredPane vl;
-  public DatosTabla dtStat=null,dtCon1=null;
+  public DatosTabla dtStat=null,dtCon1=null,dtAdd;
   public EntornoUsuario EU;
   boolean reintentarBloqueo=false;
   public boolean muerto=false;
@@ -596,6 +596,8 @@ public class ventana extends CInternalFrame implements ejecutable
     }
     dtStat=new DatosTabla(ct);
     dtCon1=new DatosTabla(ct);
+    dtAdd=new DatosTabla(ctUp);
+    
     stUp=creaStamento();
   }
   public java.sql.Statement creaStamento() throws SQLException
