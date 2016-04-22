@@ -29,7 +29,7 @@ CREATE OR REPLACE VIEW anjelica.v_albventa_detalle AS
   AND c.avc_ano = p.avc_ano AND c.avc_serie = p.avc_serie AND c.avc_nume = p.avc_nume
   AND l.avl_numlin = p.avl_numlin;
 grant select on anjelica.v_albventa_detalle to public;
--- Cambiar comORIpo rgs_partid por par_codi en regalmacen
+-- Cambiar codigo rgs_partid por par_codi en regalmacen
 alter table anjelica.regalmacen rename rgs_partid to par_codi;
 
 -- Cambiada tabla transportistas . Añadida opcion transportista Ventas

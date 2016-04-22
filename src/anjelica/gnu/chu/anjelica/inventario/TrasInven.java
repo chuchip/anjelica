@@ -202,6 +202,7 @@ public class TrasInven extends ventanaPad implements PAD {
                 v.add(dtCon1.getString("cam_nomb"));
                 v.add(dtCon1.getString("lci_numind"));
                 v.add(dtCon1.getString("lci_peso"));
+                v.add(0);
                 v.add("" + precio);
                 jt.addLinea(v);
             } while (dtCon1.next());
@@ -341,16 +342,14 @@ public class TrasInven extends ventanaPad implements PAD {
         do {          
             if (opLeidoDep.isSelected())
             {   // Quito los individuos que esten en albaranes de deposito.
-                s="SELECT max(avc_fecalb) as avc_fecalb FROM V_albvenpar as  p, v_albavec as c "+
-                        " WHERE c.avc_depos ='D' AND c.emp_codi=p.emp_codi "+
-                        " and c.avc_ano=p.avc_ano and c.avc_serie=p.avc_serie "+
-                        " and c.avc_nume = p.avc_nume "+
-                        " and c.avc_fecalb <= to_date('"+cci_fecconE.getText()+"','dd-MM-yyyy')"+
-                        " and p.pro_codi = "+dtCon1.getInt("pro_codi")+
-                        " and p.avp_ejelot= "+dtCon1.getInt("prp_ano")+
-                        " and p.avp_serlot= '"+ dtCon1.getString("prp_seri")+ "' "+
-                        " and p.avp_numpar = "+dtCon1.getInt("prp_part")+
-                        " and p.avp_numind = "+dtCon1.getInt("prp_indi"); // No ponemos la empresa,pues esta obsoleta
+                s="SELECT max(avc_fecalb) as avc_fecalb FROM v_albventa_detalle "+
+                        " WHERE avc_depos ='D' "+
+                        " and avc_fecalb <= to_date('"+cci_fecconE.getText()+"','dd-MM-yyyy')"+
+                        " and pro_codi = "+dtCon1.getInt("pro_codi")+
+                        " and avp_ejelot= "+dtCon1.getInt("prp_ano")+
+                        " and avp_serlot= '"+ dtCon1.getString("prp_seri")+ "' "+
+                        " and avp_numpar = "+dtCon1.getInt("prp_part")+
+                        " and avp_numind = "+dtCon1.getInt("prp_indi");
                 dtStat.select(s);
                 if (dtStat.getObject("avc_fecalb")!=null)
                 { // Esta puesto en un albaran de deposito. Se ignora
@@ -360,7 +359,7 @@ public class TrasInven extends ventanaPad implements PAD {
                         " and avp_ejelot= "+dtCon1.getInt("prp_ano")+
                         " and avp_serlot= '"+ dtCon1.getString("prp_seri")+ "' "+
                         " and avp_numpar = "+dtCon1.getInt("prp_part")+
-                        " and avp_numind = "+dtCon1.getInt("prp_indi"); // No ponemos la empresa,pues esta obsoleta
+                        " and avp_numind = "+dtCon1.getInt("prp_indi"); 
                     if (!dtStat.select(s))
                     { // No tiene apuntes posteriores.
                         dtAdd.addNew("invdepos");
@@ -520,7 +519,7 @@ public class TrasInven extends ventanaPad implements PAD {
         opIncCong = new gnu.chu.controles.CCheckBox();
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
         Bcancelar = new gnu.chu.controles.CButton(Iconos.getImageIcon("cancel"));
-        jt = new gnu.chu.controles.Cgrid(4);
+        jt = new gnu.chu.controles.Cgrid(5);
         Ptraspa = new gnu.chu.controles.CPanel();
         Btraspasar = new gnu.chu.controles.CButton( Iconos.getImageIcon("save"));
         cLabel3 = new gnu.chu.controles.CLabel();
@@ -633,13 +632,15 @@ public class TrasInven extends ventanaPad implements PAD {
         v.add("Camara"); //0
         v.add("Unid"); // 1
         v.add("Kilos"); // 2
+        v.add("Kil.Depo."); // 3
         v.add("Importe"); // 3
         jt.setCabecera(v);
-        jt.setAlinearColumna(new int[]{0,2,2,2});
-        jt.setAnchoColumna(new int[]{100,50,80,100});
+        jt.setAlinearColumna(new int[]{0,2,2,2,2});
+        jt.setAnchoColumna(new int[]{100,50,80,80,100});
         jt.setFormatoColumna(1, "##,##9");
         jt.setFormatoColumna(2, "###,##9.9");
-        jt.setFormatoColumna(3, "##,###,##9.9");
+        jt.setFormatoColumna(3, "###,##9.9");
+        jt.setFormatoColumna(4, "##,###,##9.9");
         jt.setAjustarGrid(true);
         Pprinc.add(jt);
 

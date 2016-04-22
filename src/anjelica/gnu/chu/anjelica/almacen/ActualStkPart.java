@@ -1275,8 +1275,7 @@ public class ActualStkPart
        mvtos.calculaMvtos(proCodi, dtAdd, dtStat, null,null);
        difProd.put(proCodi,mvtos.getPrecioStock());
      }
-     
-     
+          
      String key,valor;
      Iterator<String> it;
      it = ht.keySet().iterator();

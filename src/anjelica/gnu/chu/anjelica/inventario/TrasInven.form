@@ -194,8 +194,8 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(4)"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Camara&quot;); //0 &#xa;v.add(&quot;Unid&quot;); // 1&#xa;v.add(&quot;Kilos&quot;); // 2&#xa;v.add(&quot;Importe&quot;); // 3&#xa;jt.setCabecera(v);&#xa;jt.setAlinearColumna(new int[]{0,2,2,2});&#xa;jt.setAnchoColumna(new int[]{100,50,80,100});&#xa;jt.setFormatoColumna(1, &quot;##,##9&quot;);&#xa;jt.setFormatoColumna(2, &quot;###,##9.9&quot;);&#xa;jt.setFormatoColumna(3, &quot;##,###,##9.9&quot;);&#xa;jt.setAjustarGrid(true);&#xa;Pprinc.add(jt);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(5)"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Camara&quot;); //0 &#xa;v.add(&quot;Unid&quot;); // 1&#xa;v.add(&quot;Kilos&quot;); // 2&#xa;v.add(&quot;Kil.Depo.&quot;); // 3&#xa;v.add(&quot;Importe&quot;); // 3&#xa;jt.setCabecera(v);&#xa;jt.setAlinearColumna(new int[]{0,2,2,2,2});&#xa;jt.setAnchoColumna(new int[]{100,50,80,80,100});&#xa;jt.setFormatoColumna(1, &quot;##,##9&quot;);&#xa;jt.setFormatoColumna(2, &quot;###,##9.9&quot;);&#xa;jt.setFormatoColumna(3, &quot;###,##9.9&quot;);&#xa;jt.setFormatoColumna(4, &quot;##,###,##9.9&quot;);&#xa;jt.setAjustarGrid(true);&#xa;Pprinc.add(jt);"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

@@ -448,6 +448,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
   CCheckBox avc_cerraE = new CCheckBox("-1", "0");
 
   CGridEditable jtDes;
+  CPanel PAlb1=new CPanel();
+      
   CButton Birgrid = new CButton(Iconos.getImageIcon("reload"));
   CCheckBox opAgru = new CCheckBox();
 //  CButton Baceptar = new CButton();
@@ -671,7 +673,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-04-20" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-04-21" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -851,14 +853,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
         cLabel12.setText("%");
         cLabel12.setBounds(new Rectangle(491, 57, 15, 16));
         rut_codiL.setText("Ruta");
-        rut_codiL.setBounds(new Rectangle(0, 160, 25, 15));
-        rut_codiE.setBounds(new Rectangle(35, 160, 45, 15));
-        rut_codiL.setBounds(new Rectangle(211, 57, 29, 16));
-        rut_codiE.setBounds(new Rectangle(237, 57, 44, 16));
+        rut_codiL.setBounds(new Rectangle(10, 57, 29, 16));
+        rut_nombE.setBounds(new Rectangle(45, 57, 200, 16));
         rut_nombE.setBackground(Color.orange);
         rut_nombE.setOpaque(true);
-        rut_nombE.setBounds(new Rectangle(85, 160, 125, 15));
-        rut_nombE.setBounds(new Rectangle(283, 57, 125, 16));
+        
         impDtoE.setBounds(new Rectangle(402, 2, 69, 17));
         cLabel15.setText("Imp.Total");
         cLabel15.setBounds(new Rectangle(1, 21, 58, 17));
@@ -874,9 +873,16 @@ public class pdalbara extends ventanaPad  implements PAD  {
         avc_cerraE.setText("Cerrado");
         avc_cerraE.setBounds(new Rectangle(330, 57, 76, 18));
         avc_cerraE.setBounds(new Rectangle(330, 57, 76, 16));
-        jtDes.setMaximumSize(new Dimension(534, 77));
-        jtDes.setMinimumSize(new Dimension(534, 77));
-        jtDes.setPreferredSize(new Dimension(534, 77));
+        jtDes.setMaximumSize(new Dimension(400, 77));
+        jtDes.setMinimumSize(new Dimension(400, 77));
+        jtDes.setPreferredSize(new Dimension(400, 77));
+        PAlb1.setPreferredSize(new Dimension(290, 77));
+        PAlb1.setMaximumSize(new Dimension(290, 77));
+        PAlb1.setMinimumSize(new Dimension(290, 77));
+        PAlb1.setLayout(null);
+        PAlb1.setBorder(BorderFactory.createRaisedBevelBorder());
+        avc_obserS.setBounds(new Rectangle(1, 16, 287, 58));
+        avc_obserL.setBounds(new Rectangle(1, 1, 76, 16));
         jtDes.setBuscarVisible(false);
         Birgrid.setBounds(new Rectangle(281, 21, 47, 17));
         Birgrid.setToolTipText("Ir a Grid");
@@ -1059,11 +1065,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
         fvc_serieE.setMayusc(true);
         cPanel2.setLayout(null);
         avc_idE.setEnabled(false);
-        avc_idL.setBounds(new Rectangle(435, 1, 20, 16));
-        avc_idE.setBounds(new Rectangle(457, 1, 80, 16));
+        avc_idL.setBounds(new Rectangle(10, 1, 20, 16));
+        avc_idE.setBounds(new Rectangle(32, 1, 80, 16));
         avc_obserL.setText("Comentarios");
-        avc_obserL.setBounds(new Rectangle(0, 1, 76, 16));
-        avc_obserS.setBounds(new Rectangle(0, 18, 538, 58));
+        
+        
         opAgrPrv.setToolTipText("Agrupar Productos con Diferentes Proveedores");
         opAgrPrv.setVerifyInputWhenFocusTarget(true);
         opAgrPrv.setText("Agrupar Proveed.");
@@ -1144,7 +1150,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         
         Ptab1.add(PotroDat, "Otros");
         Ptab1.add(jtPalet, "Palets");
-        PotroDat.add(avc_obserS, null);
+        PAlb1.add(avc_obserS, null);
         PotroDat.add(alm_codoriL, null);
         PotroDat.add(alm_codoriE, null);
         PotroDat.add(alm_coddesL, null);
@@ -1158,7 +1164,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         PotroDat.add(alm_coddesE, null);
         PotroDat.add(avc_idL, null);
         PotroDat.add(avc_idE, null);
-        PotroDat.add(avc_obserL, null);
+        PAlb1.add(avc_obserL, null);
         PotroDat.add(usu_nombE, null);
         PotroDat.add(cLabel5, null);
         PotroDat.add(avc_fecemiE, null);
@@ -1192,9 +1198,13 @@ public class pdalbara extends ventanaPad  implements PAD  {
                 new Insets(0, 0, 0, 0), 0, 0));
 
         Pgrid.add(jtDes,
-                new GridBagConstraints(0, 2, 2, 1, 0.0, 1.0, GridBagConstraints.WEST,
+                new GridBagConstraints(0, 2, 1, 1, 0.0, 1.0, GridBagConstraints.WEST,
                 GridBagConstraints.VERTICAL,
                 new Insets(0, 0, 0, 0), 0, 0));
+        Pgrid.add(PAlb1, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0, GridBagConstraints.EAST,
+                GridBagConstraints.VERTICAL,
+                new Insets(0, 0, 0, 0), 0, 0));
+
         Pprinc.add(Ppie,
                 new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
                 GridBagConstraints.HORIZONTAL,
@@ -5039,6 +5049,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     dtAdd.setDato("avc_impres",(dtAdd.getInt("avc_impres") | 2));
     dtAdd.setDato("sbe_codi",sbe_codiE.getValorInt());
     dtAdd.setDato("avc_revpre",avc_revpreE.getValor());
+    dtAdd.setDato("avc_obser", Formatear.strCorta(avc_obserE.getText(),255));
     dtAdd.update(stUp);
     // Actualizo tabla de clientes
     dtAdd.executeUpdate("update clientes set "+
@@ -5694,7 +5705,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
 
         Baceptar.setEnabled(true);
         Bimpri.setEnabled(true);
-        if (pro_codiE.getTipoLote()=='V' && jt.getValorInt(JT_PROCODI) > 0 )
+        if (pro_codiE.getTipoLote()=='V' &&  pro_codiE.getValorInt()>0  && avl_cantiE.getValorDec()!=0 )
         {
           pro_codiE.setEditable(false);
 //          pro_nombE.setEditable(false);
@@ -7157,7 +7168,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     dtAdd.setDato("avc_confo", avc_confoE.isSelected() ? -1 : 0); // Conforme
     dtAdd.setDato("avc_preiva", 0);
     dtAdd.setDato("avc_cobrad", 0);
-    dtAdd.setDato("avc_obser", Formatear.strCorta(avc_obserE.getText(),255));
+    
     dtAdd.setDato("avc_fecrca", Formatear.getFechaAct("dd-MM-yyyy"),
                   "dd-MM-yyyy");
     dtAdd.setDato("avc_almori", avc_almoriE.getValor());
@@ -8977,8 +8988,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
         }
         swChangePalet=false;
         avl_numpalE.resetCambio();
-          pro_codiE.resetCambio();
-        if (jt.getValorInt(0) > 0)
+        pro_codiE.resetCambio();
+       
+        if ((nav.pulsado != navegador.EDIT && nav.pulsado != navegador.ADDNEW) || isLock)
+          return;
+        if (pro_codiE.getValorInt()>0)
         {
           pro_codiE.setEditable(false);
         }
@@ -8987,9 +9001,6 @@ public class pdalbara extends ventanaPad  implements PAD  {
           pro_codiE.setEditable(true);
           pro_nombE.setEditable(true);
         }
-        if ((nav.pulsado != navegador.EDIT && nav.pulsado != navegador.ADDNEW) || isLock)
-          return;
-      
         try
         {
           pro_codiE.getNombArt(jt.getValString(1), EU.em_cod, 0,
