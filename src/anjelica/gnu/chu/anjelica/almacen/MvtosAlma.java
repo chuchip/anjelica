@@ -21,7 +21,7 @@ import java.util.HashMap;
  * <p>Descripción: Clase con rutinas para calcular mvtos valorados de almacen
  * @see gnu.chu.anjelica.almacen.conmvpr</p>
  * @see gnu.chu.anjelica.margenes.colizona
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -667,7 +667,11 @@ public class MvtosAlma
   {
       this.incInvFinal=incInvFinal;
   }
-    public void setIncIniFechaInv(boolean incInvInicial)
+  /**
+   * Incluir Inventarios Inicial. Por defecto es false.
+   * @param incInvInicial 
+   */
+  public void setIncIniFechaInv(boolean incInvInicial)
   {
       this.incInvInicial=incInvInicial;
   }

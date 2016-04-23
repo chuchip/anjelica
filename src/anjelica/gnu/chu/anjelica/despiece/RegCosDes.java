@@ -328,9 +328,10 @@ public class RegCosDes extends ventana {
 
                 @Override
                 public void run() {
-                    
+                    jt.tableView.setVisible(false);
                     buscaDato1();
                     resetMsgEspere();
+                    jt.tableView.setVisible(true);
                 }
             };
         } catch (SQLException k) {
@@ -348,6 +349,7 @@ public class RegCosDes extends ventana {
             if (mvtosAlm == null) {
                 mvtosAlm = new MvtosAlma();
                 mvtosAlm.setResetCostoStkNeg(true); 
+                mvtosAlm.setIncIniFechaInv(true);
             }
             mvtosAlm.setIgnorarDespFecha(false);       
             mvtosAlm.setUsaDocumentos(false);            

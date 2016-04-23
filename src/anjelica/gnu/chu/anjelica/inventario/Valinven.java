@@ -499,7 +499,7 @@ public class Valinven extends ventanaPad implements PAD {
 
     mvtosAlm.setUsaDocumentos(false);
     mvtosAlm.setIncUltFechaInv(false);
-
+    mvtosAlm.setIncIniFechaInv(true);
 
     alm_codiE.setFormato(true);
     alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
@@ -950,9 +950,9 @@ public class Valinven extends ventanaPad implements PAD {
     } catch (Exception k)
     {
       Error("ERROR AL modificar Registro",k);
-      return;
     }
   }
+ @Override
   public void canc_edit()
   {
       mensaje("");

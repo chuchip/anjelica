@@ -1481,6 +1481,7 @@ public class ValDespi extends ventana {
         mvtosAlm.setIgnorarDespFecha(true);
         mvtosAlm.setIncUltFechaInv(true);
         mvtosAlm.setEntornoUsuario(EU);
+        mvtosAlm.setIncIniFechaInv(true);
      }
      mvtosAlm.setLote(numLote);
 

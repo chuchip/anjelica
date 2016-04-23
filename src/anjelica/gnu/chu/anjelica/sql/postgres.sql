@@ -575,19 +575,18 @@ create table anjelica.paletventa
 	pav_kilos float not null, -- Kilos
 	constraint ix_paletventa primary key (avc_id,pav_nume)
 );
-
 --
 -- Cabecera de  de Albaranes servidos en deposito
 --
 create table anjelica.albvenserc
 (
-	avs_nume serial,
-	avs_fecha date not null default current_date, -- Fecha de entrega
+    avs_nume serial,
+    avs_fecha date not null default current_date, -- Fecha de entrega
     avc_ano int not null, -- Año del Albaran al que esta ligado
     emp_codi int not null,--  Empresa del Albaran al que esta ligado
     avc_serie char(1) not null, -- Serie del Albaran al que esta ligado
     avc_nume int not null, -- Numero del Albaran al que esta ligado
-	cli_codi int not null,
+    cli_codi int not null,
     constraint ix_albserc primary key(avs_nume),
     CONSTRAINT con1 CHECK ( avc_nume >0)
 );
