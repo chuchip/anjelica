@@ -72,6 +72,7 @@ public class Comvalm extends ventana
   {
       this(eu,p,null);
   }
+  
  public Comvalm(EntornoUsuario eu, Principal p,Hashtable<String,String> ht)
   {
    
@@ -139,7 +140,7 @@ public class Comvalm extends ventana
   {
       iniciarFrame();
 
-      this.setVersion("2015-11-30");
+      this.setVersion("2016-04-24");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -149,11 +150,13 @@ public class Comvalm extends ventana
       JpopupMenu.add(opTodos);
       JpopupMenu.add(opNinguno);
       JpopupMenu.add(opVentas);
+      JpopupMenu.add(opSalidaDep);
       JpopupMenu.add(opCompras);
       JpopupMenu.add(opDespEnt);
       JpopupMenu.add(opDespSal);
       JpopupMenu.add(opRegul);
       JpopupMenu.add(opInven);
+      JpopupMenu.add(opInventDep);
       JpopupMenu.add(opTrasp);
       Pentra.setDefButton(Bacepta);
   }
@@ -285,6 +288,8 @@ public class Comvalm extends ventana
     };
     opTrasp.addActionListener(al1);
     opCompras.addActionListener(al1);
+    opSalidaDep.addActionListener(al1);
+    opInventDep.addActionListener(al1);
     opVentas.addActionListener(al1);
     opDespEnt.addActionListener(al1);
     opDespSal.addActionListener(al1);
@@ -444,6 +449,8 @@ public class Comvalm extends ventana
       opRegul.setSelected(sel);     
       opInven.setSelected(sel);   
       opTrasp.setSelected(sel);   
+//      opSalidaDep.setSelected(!sel);
+//      opInventDep.setSelected(!sel);
   }
   
   void irStockPartidas(final String lote,final int proCodi,final int almCodi)
@@ -561,6 +568,10 @@ public class Comvalm extends ventana
     mvtosAlm.setVerVenta(opVentas.isSelected());
     mvtosAlm.setVerCompra(opCompras.isSelected());
     mvtosAlm.setUseMvtos(opMvtos.isSelected());
+    mvtosAlm.setIncSalidaDep(opSalidaDep.isSelected());
+    mvtosAlm.setVerSalidaDep(opSalidaDep.isSelected());
+    mvtosAlm.setIncInventDep(opInventDep.isSelected());
+    mvtosAlm.setVerInventDep(opInventDep.isSelected());
     mvtosAlm.setFechasDocumento(! tipfecC.getValor().equals("M"));
     mvtosAlm.setCostoFijo(-1);
     
@@ -618,6 +629,8 @@ public class Comvalm extends ventana
         opTrasp = new javax.swing.JCheckBoxMenuItem();
         MVerStock = new javax.swing.JMenuItem();
         MVerDoc = new javax.swing.JMenuItem();
+        opSalidaDep = new javax.swing.JCheckBoxMenuItem();
+        opInventDep = new javax.swing.JCheckBoxMenuItem();
         Pprinc = new gnu.chu.controles.CPanel();
         Pentra = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -729,6 +742,12 @@ public class Comvalm extends ventana
             MVerStock.setText("Ver Stock");
 
             MVerDoc.setText("Ver Documento");
+
+            opSalidaDep.setMnemonic('V');
+            opSalidaDep.setText("Sal.Deposito");
+
+            opInventDep.setMnemonic('V');
+            opInventDep.setText("Inv.Deposito");
 
             Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -1083,9 +1102,11 @@ public class Comvalm extends ventana
     private javax.swing.JCheckBoxMenuItem opDespEnt;
     private javax.swing.JCheckBoxMenuItem opDespSal;
     private javax.swing.JCheckBoxMenuItem opInven;
+    private javax.swing.JCheckBoxMenuItem opInventDep;
     private gnu.chu.controles.CCheckBox opMvtos;
     private javax.swing.JCheckBoxMenuItem opNinguno;
     private javax.swing.JCheckBoxMenuItem opRegul;
+    private javax.swing.JCheckBoxMenuItem opSalidaDep;
     private gnu.chu.controles.CCheckBox opStkNeg;
     private javax.swing.JCheckBoxMenuItem opTodos;
     private javax.swing.JCheckBoxMenuItem opTrasp;

@@ -40,6 +40,10 @@ import java.util.HashMap;
  */
 public class MvtosAlma
 {
+  private boolean swIncSalDep=false;// Incluir Salidas de depositos.
+  private boolean swVerSalDep=false;// Ver Salidas de depositos.
+  private boolean swIncInvDep=false;// Incluir Inventarios de depositos.
+  private boolean swVerInvDep=false;// Ver Inventarios de depositos.
   private boolean swIncAcum=true;
   private int cliCodi=0;
   private boolean swUsaDocumentos=false; // Usa documentos para buscar los mvtos.
@@ -383,11 +387,12 @@ public class MvtosAlma
    */
   private String getSqlMvtNuevo(String fecIni, String fecFin, int proCodi) throws ParseException
   {
-    numProd=1;
+    numProd=0;
     this.dateFin=Formatear.getDate(fecFin,"dd-MM-yyyy");          
     String sql="";
     if (! swSoloInv)
     {
+       numProd++;
        sql+="SELECT 0 as orden,mvt_tipdoc as sel, mvt_tipo as tipmov,  "+
             " mvt_time as fecmov,"+
             "  pro_serlot as serie,pro_numlot as  lote,"+
@@ -407,20 +412,66 @@ public class MvtosAlma
             (proNumind==0?"":" and pro_indlot = "+proNumind)+
             " AND pro_codi = " + (proCodi==-1?"?":proCodi) +
             " AND mvt_time::date >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
-            " and mvt_time::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
-         
+            " and mvt_time::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') "; 
+    }
+    if (swIncSalDep && ! swSoloInv)
+    {
+        numProd++; 
+        sql+= sql.equals("")?"":" UNION ALL "+
+            "SELECT 1 as orden,'P' as sel, '-' as tipmov,  "+
+            " avs_fecha as fecmov,"+
+            "  avs_serlot as serie,avs_numpar as  lote,"+
+            " avs_canti as canti,0 as precio,avs_numind as numind,"+
+            " cli_codi as cliCodi,avc_nume  as numalb,avs_ejelot as ejenume, "+           
+            " 1 as empcodi,0 as pro_codori "+
+            ", '' as repCodi,'' as zonCodi,0 as sbe_codi, "+
+            " avs_numuni as unidades,1 as div_codi, 1 as alm_codi,avc_serie as avc_serie,"
+            + "avc_ano as ejedoc, "+
+            " avs_fecha as fecdoc "+
+            ", 'N' as avc_depos "+
+             " from v_albvenserv where avs_fecha >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
+            " and avs_fecha <= TO_DATE('"+fecFin+"','dd-MM-yyyy') "+
+            (ejercLote==0?"":" and avs_ejelot = "+ejercLote)+
+            (serieLote==null?"":" and avs_serlot = '"+serieLote+"'")+
+            (proLote==0?"":" and avs_numpar  = "+proLote)+
+            (proNumind==0?"":" and avs_numind = "+proNumind)+
+            " AND pro_codi = " + (proCodi==-1?"?":proCodi) ;
+    }
+    if (swIncInvDep)
+    {
+        numProd++; 
+        sql+= sql.equals("")?"":" UNION ALL "+
+            " select 3 as orden,'i' as sel,'=' as tipmov,"
+             + "r.ind_fecha as fecmov,"+
+           "  r.pro_serie as serie,r.pro_nupar as  lote,"+
+           " r.ind_kilos as canti,0 as precio,r.pro_numind as numind, "+
+           " 0 as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
+           " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
+           ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
+           ", ind_numuni as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,0 as ejedoc"+
+           " ,r.ind_fecha as fecdoc, "+
+           " 'N' as avc_depos "+
+           " FROM invdepos r  WHERE "+         
+           " ind_kilos <> 0 "+
+//            " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
+           (almCodi==0?"":" and alm_codi = "+almCodi)+
+           (ejercLote==0?"":" and r.eje_nume = "+ejercLote)+
+           (serieLote==null?"":" and r.pro_serie = '"+serieLote+"'")+
+           (proLote==0?"":" and r.pro_nupar  = "+proLote)+
+           (proNumind==0?"":" and r.pro_numind = "+proNumind)+
+           (empCodi==0?"":" and r.emp_codi = "+empCodi)+
+           (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
+            " AND r.pro_codi = " + (proCodi==-1?"?":proCodi)  +
+            (swSoloInv?" AND r.ind_fecha = TO_DATE('" + fecIni + "','dd-MM-yyyy') ":
+            " AND r.ind_fecha >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
+            " and r.ind_fecha <"+(incInvFinal?"=":"")+
+            " TO_DATE('"+fecFin+"','dd-MM-yyyy') ");
     }
     if (! incInvFinal || swSoloInv || incInvInicial)
-    { // No incluir inventario final.
-         numProd++;
-         if (! swSoloInv)
-             sql+=" UNION all "; // Regularizaciones Inc. Inventario
-         else
-         {
-            numProd=1;
-            sql="";
-         }
-         sql+=" select 1 as orden,'RE' as sel,'=' as tipmov,"
+    { 
+         numProd++; 
+         sql+= sql.equals("")?"":" UNION ALL "+
+           " select 2 as orden,'RE' as sel,'=' as tipmov,"
              + "r.rgs_fecha as fecmov,"+
            "  r.pro_serie as serie,r.pro_nupar as  lote,"+
            " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "+
@@ -666,6 +717,38 @@ public class MvtosAlma
   public void setIncUltFechaInv(boolean incInvFinal)
   {
       this.incInvFinal=incInvFinal;
+  }
+  /**
+   * Incluir Salidas de albaranes de deposito (Defecto: false)
+   * @param incSalidaDep 
+   */
+  public void setIncSalidaDep(boolean incSalidaDep)
+  {
+      swIncSalDep=incSalidaDep;
+  }
+  /**
+   * Especifica si se deben ver las salidas  de deposito (Defecto: false)
+   * @param verSalidaDep 
+   */
+  public void setVerSalidaDep(boolean verSalidaDep)
+  {
+      swVerSalDep=verSalidaDep;
+  }
+  /**
+   * Incluir inventarios de deposito(Defecto: false)
+   * @param incInventDep 
+   */
+  public void setIncInventDep(boolean incInventDep)
+  {
+      swIncInvDep=incInventDep;
+  }
+  /**
+   * Especifica si se deben ver los Inventarios   de deposito (Defecto: false)
+   * @param verInventDep 
+   */
+  public void setVerInventDep(boolean verInventDep)
+  {
+      swVerInvDep=verInventDep;
   }
   /**
    * Incluir Inventarios Inicial. Por defecto es false.
@@ -1449,6 +1532,10 @@ public class MvtosAlma
             continue;
           if (sel=='R' && !swVerRegul)
             continue;
+          if (sel=='i' && !swVerInvDep)
+            continue; // No ver Inv. Deposito
+          if (sel=='P' && !swVerSalDep)
+            continue; // No ver salidas de depositos.
           if (sel=='V' && dt.getInt("div_codi")<=0 && ! isRootAV())
             continue;
           ArrayList v = new ArrayList();
@@ -1470,7 +1557,12 @@ public class MvtosAlma
             v.add(dt.getString("canti"));
           }
           if (dt.getString("tipmov").equals("="))
-             v.add("IN");
+          {
+              if (sel=='i')
+                v.add("ID");
+             else
+                v.add("IN");
+          }
           else
           {
              if(swTraspAlm)
