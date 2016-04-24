@@ -330,7 +330,7 @@
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel5">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Fecha Inv. Congelado"/>
+                <Property name="text" type="java.lang.String" value="Anterior Inventario"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -364,7 +364,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="447" y="20" width="-1" height="17"/>
+                  <AbsoluteConstraints x="420" y="20" width="-1" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

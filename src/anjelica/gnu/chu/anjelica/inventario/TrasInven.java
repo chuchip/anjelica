@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  *
  * <p>Titulo: TrasInven </p>
  * <p>Descripción: Traspasar Inventario. Inserta en tabla de regularizaciones  </p>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -341,20 +341,21 @@ public class TrasInven extends ventanaPad implements PAD {
         double kilosDeposito=0;
         do {          
             if (opLeidoDep.isSelected())
-            {   // Quito los individuos que esten en albaranes de deposito.
+            {   // Busco si ese individuo se leyo en un alb. de deposito.
                 s="SELECT max(avc_fecalb) as avc_fecalb FROM v_albventa_detalle "+
                         " WHERE avc_depos ='D' "+
-                        " and avc_fecalb <= to_date('"+cci_fecconE.getText()+"','dd-MM-yyyy')"+
+                        " and avl_fecalt < to_date('"+cci_fecconE.getText()+"','dd-MM-yyyy')"+
                         " and pro_codi = "+dtCon1.getInt("pro_codi")+
                         " and avp_ejelot= "+dtCon1.getInt("prp_ano")+
                         " and avp_serlot= '"+ dtCon1.getString("prp_seri")+ "' "+
                         " and avp_numpar = "+dtCon1.getInt("prp_part")+
                         " and avp_numind = "+dtCon1.getInt("prp_indi");
-                dtStat.select(s);
+                dtStat.select(s); 
                 if (dtStat.getObject("avc_fecalb")!=null)
-                { // Esta puesto en un albaran de deposito. Se ignora
+                { // Compruebo si no esta en un albaran posterior que no es de deposito. (Posible Abono)
                     s="SELECT avc_fecalb  FROM v_albventa_detalle "+
                         " WHERE avc_fecalb > to_date('"+dtStat.getFecha("avc_fecalb","dd-MM-yyyy")+"','dd-MM-yyyy')"+
+                        " and avc_depos != 'D' "+ 
                         " and pro_codi = "+dtCon1.getInt("pro_codi")+
                         " and avp_ejelot= "+dtCon1.getInt("prp_ano")+
                         " and avp_serlot= '"+ dtCon1.getString("prp_seri")+ "' "+
@@ -362,6 +363,7 @@ public class TrasInven extends ventanaPad implements PAD {
                         " and avp_numind = "+dtCon1.getInt("prp_indi"); 
                     if (!dtStat.select(s))
                     { // No tiene apuntes posteriores.
+                        // Por ultimo compruebo si no se ha entregado ya.
                         dtAdd.addNew("invdepos");
                         dtAdd.setDato("ind_fecha", cciFeccon);
                         dtAdd.setDato("pro_codi", dtCon1.getInt("pro_codi"));
@@ -673,11 +675,11 @@ public class TrasInven extends ventanaPad implements PAD {
         Btraspasar.setText("Traspasar");
         Btraspasar.setMargin(new Insets(0,0,0,0));
         Ptraspa.add(Btraspasar);
-        Btraspasar.setBounds(492, 49, 106, 19);
+        Btraspasar.setBounds(492, 49, 106, 31);
 
         cLabel3.setText("Tipo traspaso");
         Ptraspa.add(cLabel3);
-        cLabel3.setBounds(2, 2, 76, 18);
+        cLabel3.setBounds(2, 2, 79, 18);
 
         tipoTraspE.setMaximumSize(new java.awt.Dimension(78, 18));
         tipoTraspE.setMinimumSize(new java.awt.Dimension(78, 18));
@@ -687,7 +689,7 @@ public class TrasInven extends ventanaPad implements PAD {
 
         cLabel4.setText("Traspasar productos");
         Ptraspa.add(cLabel4);
-        cLabel4.setBounds(338, 3, 116, 15);
+        cLabel4.setBounds(338, 3, 120, 14);
 
         pro_artconE.setMaximumSize(new java.awt.Dimension(78, 18));
         pro_artconE.setMinimumSize(new java.awt.Dimension(78, 18));
@@ -699,11 +701,11 @@ public class TrasInven extends ventanaPad implements PAD {
         opResetear.setText("Poner a 0 prod. sin inventariar");
         opResetear.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Ptraspa.add(opResetear);
-        opResetear.setBounds(0, 20, 171, 17);
+        opResetear.setBounds(0, 20, 192, 17);
 
-        cLabel5.setText("Fecha Inv. Congelado");
+        cLabel5.setText("Anterior Inventario");
         Ptraspa.add(cLabel5);
-        cLabel5.setBounds(2, 50, 116, 15);
+        cLabel5.setBounds(2, 50, 105, 14);
 
         fecinvConE.setMaximumSize(new java.awt.Dimension(78, 18));
         fecinvConE.setMinimumSize(new java.awt.Dimension(78, 18));
@@ -715,7 +717,7 @@ public class TrasInven extends ventanaPad implements PAD {
         opInsAllAlmac.setText("Insertar Todos Almacenes");
         opInsAllAlmac.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Ptraspa.add(opInsAllAlmac);
-        opInsAllAlmac.setBounds(447, 20, 151, 17);
+        opInsAllAlmac.setBounds(420, 20, 171, 17);
 
         opIgnCongel.setText("Ignorar Inventario Congelado ");
         opIgnCongel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);

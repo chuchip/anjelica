@@ -673,7 +673,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-04-21" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-04-23" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1198,10 +1198,10 @@ public class pdalbara extends ventanaPad  implements PAD  {
                 new Insets(0, 0, 0, 0), 0, 0));
 
         Pgrid.add(jtDes,
-                new GridBagConstraints(0, 2, 1, 1, 0.0, 1.0, GridBagConstraints.WEST,
-                GridBagConstraints.VERTICAL,
-                new Insets(0, 0, 0, 0), 0, 0));
-        Pgrid.add(PAlb1, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0, GridBagConstraints.EAST,
+                new GridBagConstraints(0, 2, 1, 1, 2.0, 1.0, GridBagConstraints.WEST,
+                GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0)); 
+        Pgrid.add(PAlb1, new GridBagConstraints(1, 2, 1, 1, 0.0, 1.0, GridBagConstraints.EAST,
                 GridBagConstraints.VERTICAL,
                 new Insets(0, 0, 0, 0), 0, 0));
 
@@ -2823,7 +2823,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       opVerdat=true;
       if (!selCabAlb(tablaCab,dtAdd,dt.getInt("avc_ano"),
                     hisRowid>0?-1: dt.getInt("emp_codi"),dt.getString("avc_serie"),
-                        hisRowid>0?hisRowid: dt.getInt("avc_nume"),true,false))
+                        hisRowid>0?hisRowid: dt.getInt("avc_nume"),false,false))
       {
         mensajes.mensajeAviso("Registro NO encontrado ... SEGURAMENTE SE BORRO");
         Pcabe.resetTexto();
@@ -3582,6 +3582,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   {
       s = "select -1 as avl_numlin,l.pro_codi, sum(p.avp_canti)  as avl_canti,"
               + " sum(p.avp_canti) as avl_canbru, "
+              + " sum(p.avp_canori) as avp_canori, "
               + " sum(p.avp_numuni)  as avl_unid, "
               + " a.pro_nomb,l.pro_nomb as avl_pronom "
               + "from v_albavel as l  left join v_articulo as a on l.pro_codi = a.pro_codi,v_albvenpar as p "
@@ -3703,7 +3704,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
               + " p.avp_serlot as avp_serlot, "
               + " avp_numpar as avp_numpar,"
               + "avp_numind as avp_numind,"
-              + " p.avp_canti as avp_canti, p.avp_canti as avp_canbru, avp_numuni as avp_numuni,avp_numlin "
+              + " p.avp_canti as avp_canti, p.avp_canti as avp_canbru, avp_canori as avp_canori,avp_numuni as avp_numuni,avp_numlin "
               + "from v_albavel as l  left join v_articulo as a on l.pro_codi = a.pro_codi,v_albvenpar as p "
               + "where l.emp_codi=" + empCodi
               + " and l.avc_ano= " + avcAno
@@ -4163,7 +4164,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
           jf.guardaMens("V1", jf.ht);
         }
       }
-
+      avc_deposE.setEnabled(true);      
       if (pdejerci.isCerrado(dtStat, avc_anoE.getValorInt(), emp_codiE.getValorInt()) && ! swEntdepos)
       {
         if (!P_ADMIN)
@@ -4665,6 +4666,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
           avc_fecalbE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
           avc_fecemiE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
           usu_nombE.setText(EU.usuario);
+          avc_deposE.setEnabled(true);   
           avc_numeE.setEnabled(false);
           fvc_serieE.setEnabled(false);
           fvc_anoE.setEnabled(false);
@@ -5625,8 +5627,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
           BbusPed.setEnabled(false);
         }
         avp_cantiE.setEditable( P_ADMIN);
-        if (swEntdepos)
-            avp_cantiE.setEditable(false);
+//        if (swEntdepos)
+//            avp_cantiE.setEditable(false);
         if (avc_deposE.getValor().equals("N"))
         { // Es un albaran normal. Compruebo anteriores a ver si habia de deposito.
             if (! confAlbDep)
@@ -5989,12 +5991,12 @@ public class pdalbara extends ventanaPad  implements PAD  {
         guardaCab();
       }
       else
-      {
+      { // Entrega de genero en deposito
         if (avsNume==0)
         {
             if (avc_numeE.getValorInt()==0)
             {
-                if (!checkIndiv(jtDes.getSelectedRow() ,true))
+                if (!checkIndiv(jtDes.getSelectedRow() , !P_ADMIN || avp_cantiE.getValorDec()==0))
                     return;
                 ponAlbaran(lkDepo);
             }
@@ -6028,9 +6030,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
     if (pro_codiE.getTipoLote()!='V'  && pro_codiE.getValorInt() > 0)
     { // Producto NO ES VENDIBLE
       jt.setValor("" + nLiAlb, nLiGrAl, 0);
-      jt.setValor(avl_cantiE.getValorDec(), nLiGrAl, 3);
+      jt.setValor(avl_cantiE.getValorDec(), nLiGrAl, JT_KILOS);
       jt.setValor(avl_cantiE.getValorDec(), nLiGrAl, JT_KILBRU);
-      jt.setValor( avl_unidE.getValorInt(), nLiGrAl, 4);
+      jt.setValor( avl_unidE.getValorInt(), nLiGrAl, JT_UNID);
       if (swEntdepos)
         guardaLinAlbEnt(nLiAlb,jt.getSelectedRow());
       else
@@ -6117,13 +6119,13 @@ public class pdalbara extends ventanaPad  implements PAD  {
     dtAdd.setDato("avs_numlin", nLiAlb);
     dtAdd.setDato("avi_numlin", nLin);
 //    dtAdd.setDato("pro_codi", jtDes.getValorInt(nLin, 0));
-    dtAdd.setDato("avs_ejelot", jtDes.getValorInt(nLin, 3));
-    dtAdd.setDato("avs_emplot", jtDes.getValorInt(nLin, 2));
-    dtAdd.setDato("avs_serlot", jtDes.getValString(nLin, 5));
-    dtAdd.setDato("avs_numpar", jtDes.getValorInt(nLin, 6));
-    dtAdd.setDato("avs_numind", jtDes.getValorInt(nLin, 7));
-    dtAdd.setDato("avs_numuni", jtDes.getValorInt(nLin, 4));
-    dtAdd.setDato("avs_canti", jtDes.getValorDec(nLin, 8));
+    dtAdd.setDato("avs_ejelot", jtDes.getValorInt(nLin, JTDES_EJE));
+    dtAdd.setDato("avs_emplot", jtDes.getValorInt(nLin, JTDES_EMP));
+    dtAdd.setDato("avs_serlot", jtDes.getValString(nLin, JTDES_SERIE));
+    dtAdd.setDato("avs_numpar", jtDes.getValorInt(nLin, JTDES_LOTE));
+    dtAdd.setDato("avs_numind", jtDes.getValorInt(nLin, JTDES_NUMIND));
+    dtAdd.setDato("avs_numuni", jtDes.getValorInt(nLin, JTDES_UNID));
+    dtAdd.setDato("avs_canti", jtDes.getValorDec(nLin, JTDES_KILOS));
     dtAdd.update(stUp);
   }
   /**
@@ -6216,10 +6218,10 @@ public class pdalbara extends ventanaPad  implements PAD  {
     dtAdd.addNew("albvenserl");
     dtAdd.setDato("avs_nume", avsNume);
     dtAdd.setDato("avs_numlin", nLiAlb);
-    dtAdd.setDato("pro_codi", jt.getValorInt(nLin, 1));
-    dtAdd.setDato("pro_nomb", jt.getValString(nLin, 2));
-    dtAdd.setDato("avs_canti", jt.getValorDec(nLin, 3));
-    dtAdd.setDato("avs_unid", jt.getValorInt(nLin, 4));
+    dtAdd.setDato("pro_codi", jt.getValorInt(nLin, JT_PROCODI));
+    dtAdd.setDato("pro_nomb", jt.getValString(nLin, JT_PRONOMB));
+    dtAdd.setDato("avs_canti", jt.getValorDec(nLin, JT_KILOS));
+    dtAdd.setDato("avs_unid", jt.getValorInt(nLin, JT_UNID));
     dtAdd.update(stUp);
   }
   void guardaLinAlb(int nLiAlb, int nLin) throws Exception
@@ -6471,7 +6473,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
 
         //  double unid = 0;
         //  double canti = 0;
-          if (!checkIndiv(row,true))
+          if (!checkIndiv(row,!swEntdepos ||  ! P_ADMIN || avp_cantiE.getValorDec()==0 ))
               return 6; // A lote de Producto.
          
           if (! swEntdepos)
@@ -6684,20 +6686,20 @@ public class pdalbara extends ventanaPad  implements PAD  {
    */
   private String getSqlIndDepos()
     {
-          return  "SELECT c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,c.avc_almori,avp_canti"
-                      + " FROM v_albvenpar as p, v_albavec as c "
-                      + " WHERE cli_codi = " + cli_codiE.getValorInt()
-                      + " and avc_depos = 'D' "
-                      + " and p.emp_codi = c.emp_codi "
-                      + " and p.avc_ano =  c.avc_ano "
-                      + " and p.avc_serie = c.avc_serie "
-                      + " and p.avc_nume = c.avc_nume "
-                      + " and p.avp_serlot = '" + avp_serlotE.getText() + "'"
-                      + " and p.avp_numpar = " + avp_numparE.getValorInt()
-                      + " and p.avp_ejelot = " + avp_ejelotE.getValorInt()
-                      + " and p.avp_emplot = " + avp_emplotE.getValorInt()
-                      + " and p.avp_numind = " + avp_numindE.getValorInt()
-                      + " and p.pro_codi = " + pro_codiE.getText();
+        return  "SELECT c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,c.avc_almori,avp_canti"
+                    + " FROM v_albvenpar as p, v_albavec as c "
+                    + " WHERE cli_codi = " + cli_codiE.getValorInt()
+                    + " and avc_depos = 'D' "
+                    + " and p.emp_codi = c.emp_codi "
+                    + " and p.avc_ano =  c.avc_ano "
+                    + " and p.avc_serie = c.avc_serie "
+                    + " and p.avc_nume = c.avc_nume "
+                    + " and p.avp_serlot = '" + avp_serlotE.getText() + "'"
+                    + " and p.avp_numpar = " + avp_numparE.getValorInt()
+                    + " and p.avp_ejelot = " + avp_ejelotE.getValorInt()
+                    + " and p.avp_emplot = " + avp_emplotE.getValorInt()
+                    + " and p.avp_numind = " + avp_numindE.getValorInt()
+                    + " and p.pro_codi = " + pro_codiE.getText();
     }
   /**
    *
@@ -7027,7 +7029,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         s=getSqlIndDepos();
         if (dtStat.select(s))
         {
-            jtDes.setValor("" + dtStat.getDouble("avp_canti"), 8);
+            jtDes.setValor("" + dtStat.getDouble("avp_canti"), JTDES_KILOS);
             avp_cantiE.setValorDec(dtStat.getDouble("avp_canti"));
         }
       }
@@ -7061,7 +7063,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
           }
 
           avp_cantiE.setEditable( cantStk.hasControlInd() && cantStk.isControlExist() ?P_ADMIN:true);
-          jtDes.setValor(""+canti,8);
+          jtDes.setValor(canti,JTDES_KILOS);
           avp_cantiE.setValorDec(canti);
       }
     }
@@ -8597,14 +8599,14 @@ public class pdalbara extends ventanaPad  implements PAD  {
         v1.add("Unid."); // 2
         v1.add("Serie"); // 3
         v1.add("Lote"); //4
-        v1.add("N.Ind"); // 5
+        v1.add("Ind"); // 5
         v1.add("Kilos"); // 6
         v1.add("NL"); // 7
         v1.add("Kg.Bruto"); // 8
         v1.add("Kg.Orig"); // 9
         jtDes.setCabecera(v1);
         jtDes.setAjustarGrid(true);
-        jtDes.setAnchoColumna(new int[]{ 30, 40, 40, 35, 40, 40, 60,20,60,60});
+        jtDes.setAnchoColumna(new int[]{ 30, 40, 30, 30, 50, 30, 60,30,60,60});
         jtDes.setAlinearColumna(new int[]{ 2, 2, 2, 0, 2, 2, 2,2,2,2});      
         ArrayList vc1 = new ArrayList();
         vc1.add(avp_emplotE); // 0

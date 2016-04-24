@@ -815,7 +815,7 @@ avc_nume int not null,		-- Numero de Albaran
 avl_numlin int not null,	-- Numero Linea de Albaran
 avp_numlin int not null,	-- Numero Linea de Partida
 pro_codi int,			-- Producto
-avp_canori decimal(9,3) not null,		-- Tipo Lote. No se USA
+avp_canori decimal(9,3) not null,		-- Cantidad Original
 avp_ejelot int,			-- Ejercicio Lote
 avp_emplot int,			-- Empresa Lote
 avp_serlot char(1), 		-- Serie de Lote
@@ -837,7 +837,7 @@ fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser
 avc_basimp,avc_kilos,avc_unid,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,c.his_rowid,
 avc_depos,l.avl_numlin,l.pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,tar_preci,avl_unid,
 avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,
-avp_numlin,avp_ejelot,avp_emplot,avp_serlot,avp_numpar,avp_numind,avp_numuni,avp_canti,avp_canbru
+avp_numlin,avp_ejelot,avp_emplot,avp_serlot,avp_numpar,avp_numind,avp_numuni,avp_canti,avp_canbru,avp_canori
 from hisalcave as c, hisallive as l, hisalpave as p 
 where c.his_rowid=l.his_rowid and l.his_rowid=p.his_rowid
 and l.avl_numlin=p.avl_numlin;
@@ -3886,7 +3886,8 @@ references anjelica.v_albavel(emp_codi,avc_ano,avc_serie,avc_nume,avl_numlin) DE
 
 
 create view anjelica.v_albvenserv as
-SELECT a.alm_codori,a.alm_codfin,a.avc_fecha,a.sbe_codi,c.avs_nume,c.avs_fecha,c.avc_ano,c.emp_codi,c.avc_serie,c.avc_nume,
+SELECT a.alm_codori,a.alm_codfin,a.avc_fecha,a.sbe_codi,c.avs_nume,c.avs_fecha,c.avc_ano,
+c.emp_codi,c.avc_serie,c.avc_nume,
 c.cli_codi,l.avs_numlin,l.pro_codi,l.pro_nomb,l.avs_canti AS avl_canti,
 l.avs_unid,i.avi_numlin,i.avs_ejelot,i.avs_emplot,i.avs_serlot,
 i.avs_numpar,i.avs_numind,i.avs_numuni,i.avs_canti

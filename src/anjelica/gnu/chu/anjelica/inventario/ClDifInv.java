@@ -125,7 +125,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2015-08-18");
+        this.setVersion("2016-04-24");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -411,12 +411,11 @@ public class ClDifInv extends ventana {
             " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() +"','dd-MM-yyyy') "+
             (almCodi== 0 ? "" : " and c.alm_codlin = " +almCodi) +
             (camCodiE.equals("") || camCodiE.equals("--")?"":" AND P.cam_codi = '" + camCodiE + "'")+
+            (margenE.getValorDec()==0?"":
             " and  (select abs(sum(cl.LCI_PESO-cl.LCI_KGSORD)) from "+VISTA_INV+" as cl "+
             " where c.pro_codi = cl.pro_codi "+
             (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
-            " and cl.cci_feccon = TO_DATE('" + cci_fecconE.getText() +"','dd-MM-yyyy')) > "+margenE.getValorDec();
-//       s+= " GROUP BY c.cci_codi, P.cam_codi,c.PRO_CODI,p.pro_nomb,c.PRP_ANO,c.prp_empcod,c.PRP_SERI,"+
-//            " c.PRP_PART,c.PRP_INDI,c.lci_coment ";
+            " and cl.cci_feccon = TO_DATE('" + cci_fecconE.getText() +"','dd-MM-yyyy')) > "+margenE.getValorDec());
         s+=" ORDER BY c.PRO_CODI,c.PRP_PART,c.PRP_INDI";
         if (!dtCon1.select(s))
         {

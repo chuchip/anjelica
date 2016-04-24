@@ -860,10 +860,10 @@ public class DatosTabla   implements Serializable
         }
         if (! sw_sqlUpdate)
         {
-        MsgError="UpdateAll - Cursor no es FOR UPDATE";
-      Error=true;
+            MsgError="UpdateAll - Cursor no es FOR UPDATE";
+            Error=true;
             return -1;
-     }
+        }
     
     return executeUpdate("UPDATE "+nomTabla+" SET "+mod+ " WHERE "+condWhere);
   }
