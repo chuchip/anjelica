@@ -6,6 +6,7 @@ import gnu.chu.anjelica.pad.MantTarifa;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.ventas.MantPrAlb;
 import gnu.chu.anjelica.ventas.pdalbara;
+import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.eventos.CambioEvent;
 import gnu.chu.eventos.CambioListener;
@@ -117,7 +118,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2015-10-06" + ARG_ZONAREP);
+        this.setVersion("2016-04-25" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -131,6 +132,8 @@ public class CLVenRep extends ventana {
         if (! ARG_MODIF)
             avl_prtariE.setEnabled(false);
         bdisc.iniciar(dtStat, this, vl, EU);
+        CTextField avl_proferE=new CTextField();
+        avl_proferE.setEnabled(false);
         ArrayList vc = new ArrayList();
         vc.add(pro_codiE);
         vc.add(pro_nombE);
@@ -140,6 +143,7 @@ public class CLVenRep extends ventana {
         vc.add(avl_prtariE);
         vc.add(avl_gananE);
         vc.add(avl_numlinE);
+        vc.add(avl_proferE);
         jtLin.setCampos(vc);
         fecIniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -15));
         fecFinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -443,7 +447,9 @@ public class CLVenRep extends ventana {
              " and avl_numlin in ("+jtLin.getValString(row,7)+")";
         try {
 //            System.out.println("s: "+s);
-            dtAdd.executeUpdate(s);
+            int nregAfe=dtAdd.executeUpdate(s);
+            if (nregAfe==0)
+                msgBox("No se registro el precio. Revise por favor");
             dtAdd.commit();
         } catch (SQLException k)
         {
@@ -484,17 +490,11 @@ public class CLVenRep extends ventana {
                 v.add(dtCon1.getString("pro_nomb"));
                 v.add(dtCon1.getString("avl_unid"));
                 v.add(dtCon1.getString("avl_canti"));
-                v.add(dtCon1.getString("avl_prven"));
-                double prTari = 0;
-                if (dtCon1.getDouble("avl_profer", true) == 0) {
-                    prTari = dtCon1.getDouble("tar_preci", true);
-                }
-                 else {
-                    prTari = dtCon1.getDouble("avl_profer", true);
-                }
-                v.add("" + prTari);
-                v.add("" + (dtCon1.getDouble("avl_prven") - prTari));
+                v.add(dtCon1.getString("avl_prven"));               
+                v.add(dtCon1.getDouble("avl_profer", true));
+                v.add(dtCon1.getDouble("avl_prven") - dtCon1.getDouble("avl_profer", true));                
                 v.add(linAlb);
+                v.add(dtCon1.getDouble("tar_preci", true));
                 jtLin.addLinea(v);
             } while (dtCon1.next());
             if (ARG_MODIF)
@@ -507,7 +507,6 @@ public class CLVenRep extends ventana {
     @Override
     public void matar()
     {
-
         guardaCambios();
         super.matar();
     }
@@ -635,7 +634,7 @@ public class CLVenRep extends ventana {
     jtCab.setFormatoColumna(9,"----,--9.99");
     jtCab.setAlinearColumna(new int[]{2,1,2,1,2,0,2,2,2,2,2});
     jtCab.setAjustarGrid(true);
-    jtLin = new gnu.chu.controles.CGridEditable(8){
+    jtLin = new gnu.chu.controles.CGridEditable(9){
         public int cambiaLinea(int row, int col)
         {
             return jtLinCambiaLinea(row,col);
@@ -648,18 +647,19 @@ public class CLVenRep extends ventana {
     v1.add("Unid"); // 2
     v1.add("Kilos"); // 3
     v1.add("Prec"); // 4
-    v1.add("Tarifa"); // 5
+    v1.add("Pr.Repr."); // 5
     v1.add("Gananc"); // 6
     v1.add("NL"); // 7
+    v1.add("Pr.Tarifa"); // 8
     jtLin.setCabecera(v1);
-    jtLin.setAnchoColumna(new int[]{60,180,50,70,60,60,60,20});
-    jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,0});
+    jtLin.setAnchoColumna(new int[]{60,180,50,70,60,60,60,20,60});
+    jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,0,2});
     jtLin.setFormatoColumna(2,"---9");
     jtLin.setFormatoColumna(3,"---9.99");
     jtLin.setFormatoColumna(4,"--9.99");
     jtLin.setFormatoColumna(5,"--9.99");
     jtLin.setFormatoColumna(6,"--9.99");
-
+    jtLin.setFormatoColumna(8,"--9.99");
     jtLin.setCanDeleteLinea(false);
     jtLin.setCanInsertLinea(false);
     jtLin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
