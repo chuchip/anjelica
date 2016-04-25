@@ -417,7 +417,7 @@ public class MvtosAlma
     if (swIncSalDep && ! swSoloInv)
     {
         numProd++; 
-        sql+= sql.equals("")?"":" UNION ALL "+
+        sql+= (sql.equals("")?"":" UNION ALL ")+
             "SELECT 1 as orden,'P' as sel, '-' as tipmov,  "+
             " avs_fecha as fecmov,"+
             "  avs_serlot as serie,avs_numpar as  lote,"+
@@ -440,7 +440,7 @@ public class MvtosAlma
     if (swIncInvDep)
     {
         numProd++; 
-        sql+= sql.equals("")?"":" UNION ALL "+
+        sql+= (sql.equals("")?"":" UNION ALL ")+
             " select 3 as orden,'i' as sel,'=' as tipmov,"
              + "r.ind_fecha as fecmov,"+
            "  r.pro_serie as serie,r.pro_nupar as  lote,"+
@@ -470,7 +470,7 @@ public class MvtosAlma
     if (! incInvFinal || swSoloInv || incInvInicial)
     { 
          numProd++; 
-         sql+= sql.equals("")?"":" UNION ALL "+
+         sql+= (sql.equals("")?"":" UNION ALL ")+
            " select 2 as orden,'RE' as sel,'=' as tipmov,"
              + "r.rgs_fecha as fecmov,"+
            "  r.pro_serie as serie,r.pro_nupar as  lote,"+
