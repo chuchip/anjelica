@@ -353,8 +353,10 @@ public class pdalbara extends ventanaPad  implements PAD  {
     {
       try
       {
-        jt.setValor(pro_codiE.getText(), JT_PROCODI);
-        jt.setValor(pro_nombE.getText(), JT_PRONOMB);
+        jt.setValor(this.getText(), JT_PROCODI);
+        s=this.getNombArt();
+        pro_nombE.setText(s);
+        jt.setValor(s, JT_PRONOMB);
         jtDes.removeAllDatos();
 //        jtDes.setValor(pro_nombE.getText(),0,2);
         avp_numuniE.setValorInt(1);
@@ -3284,7 +3286,6 @@ public class pdalbara extends ventanaPad  implements PAD  {
    */
   public static String getSqlLinAgr(String tablaLin,int ano, int empCodi,String serie, int nume,boolean modPrecio)
   {
-
     return "SELECT -1 as avl_numlin,l.pro_codi,avl_numpal,sum(avl_canti) as avl_canti, " +
         " sum(avl_canbru) as  avl_canbru, "+
          " sum(avl_unid) as avl_unid,"+
@@ -6295,11 +6296,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
     dtAdd.setDato("avl_dtolin", 0);
     dtAdd.setDato("avl_prbase", 0);
     dtAdd.setDato("avl_ptsinc", 0);
-    dtAdd.setDato("tar_preci", jt.getValorDec(nLin, 6));
-    dtAdd.setDato("avl_unid", jt.getValorInt(nLin, 4));
+    dtAdd.setDato("tar_preci", jt.getValorDec(nLin, JT_PRETAR));
+    dtAdd.setDato("avl_unid", jt.getValorInt(nLin, JT_UNID));
     dtAdd.setDato("avl_pincre", 0);
     dtAdd.setDato("avl_pcomi", 0);
-    dtAdd.setDato("avl_profer", 0);
+    dtAdd.setDato("avl_profer", -1); // Sin precio Oferta o minimo de venta
     dtAdd.setDato("avl_prclar", 0);
     dtAdd.setDato("avl_prepvp", 0);
     dtAdd.setDato("avl_poreo", 0);

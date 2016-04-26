@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,8 +27,11 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -118,7 +122,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2016-04-25" + ARG_ZONAREP);
+        this.setVersion("2016-04-26" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -132,26 +136,11 @@ public class CLVenRep extends ventana {
         if (! ARG_MODIF)
             avl_prtariE.setEnabled(false);
         bdisc.iniciar(dtStat, this, vl, EU);
-        CTextField avl_proferE=new CTextField();
-        avl_proferE.setEnabled(false);
-        ArrayList vc = new ArrayList();
-        vc.add(pro_codiE);
-        vc.add(pro_nombE);
-        vc.add(avl_unidE);
-        vc.add(avl_kilosE);
-        vc.add(avl_precioE);
-        vc.add(avl_prtariE);
-        vc.add(avl_gananE);
-        vc.add(avl_numlinE);
-        vc.add(avl_proferE);
-        jtLin.setCampos(vc);
+                
+        
         fecIniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -15));
         fecFinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-        Baceptar.addMenu("Consultar","C");
-        if (ARG_MODIF)
-            Baceptar.addMenu("Sin Tarifa","T");
-        Baceptar.addMenu("Act. Tarifa","A");
-        Baceptar.addMenu("Imprimir","I");
+       
         emp_codiE.iniciar(dtStat, this, vl, EU);
         emp_codiE.setAceptaNulo(false);
 
@@ -174,18 +163,24 @@ public class CLVenRep extends ventana {
         Baceptar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-              String indice=Baceptar.getValor(e.getActionCommand());             
-              if (indice.equals("I"))
+              String indice=Baceptar.getValor(e.getActionCommand()); 
+              switch (indice)
               {
-                  imprimir();
-                  return;
-              }
-              if (indice.equals("T"))
-              {
-                  consultaSinTarifa();
-                  return;
-              }              
-              consultar(indice.equals("A"));
+                  case "I":                
+                    imprimir();
+                    break;
+                  case "T":
+                      consultaSinTarifa();
+                      break;
+                  case "A":
+                      actualTarifa();
+                      break;
+                  case "P":
+                      actualPrecioMin();
+                      break;
+                  default:
+                   consultar(indice.equals("S"));
+               }
             }
         });
         jtCab.tableView.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -223,20 +218,24 @@ public class CLVenRep extends ventana {
       * Actualiza las tarifas
       * @throws SQLException
       */
-    void actualTarifa() throws Exception
+    void actualTarifa() 
     {
-        s = "select cl.tar_codi,a.avc_fecalb,l.pro_codi from v_albavec as a, v_albavel as l,clientes as cl "
+        try {
+            if (!checkCond()) 
+                return;
+            
+            s = "select cl.tar_codi,a.avc_fecalb,l.pro_codi from v_albavec as a, v_albavel as l,clientes as cl "
                 + " WHERE  l.emp_codi = " + emp_codiE.getValorInt()
                 + getCondWhere()
                 + " and  a.emp_codi = " + emp_codiE.getValorInt()
                 + " and a.avc_ano = l.avc_ano  "
                 + " and a.avc_serie = l.avc_serie "
-                + " and a.avc_nume = l.avc_nume "
-                + " and l.avl_profer = 0"
+                + " and a.avc_nume = l.avc_nume "//               
                 + " and l.tar_preci = 0"
                 + " and  cl.cli_codi = a.cli_codi"
                 + " group by tar_codi,avc_fecalb, pro_codi";
         if (!dtCon1.select(s)) {
+            msgBox("No encontrados albaranes para estos criterios");
             return; // No hay albaranes sin valorar
         }
         int nLinAct = 0;
@@ -248,7 +247,6 @@ public class CLVenRep extends ventana {
                 s = "UPDATE  v_albavel set tar_preci = " + Formatear.redondea(prTari, 2)
                         + " where   emp_codi = " + emp_codiE.getValorInt()
                         + " and pro_codi = " + dtCon1.getInt("pro_codi")
-                        + " and avl_profer = 0"
                         + " and tar_preci = 0"+
                         " and exists (select * from v_albavec as a,clientes as cl  where " +
                         " avc_fecalb = to_date('" + dtCon1.getFecha("avc_fecalb") + "','dd-MM-yyyy')"
@@ -262,33 +260,77 @@ public class CLVenRep extends ventana {
                 nLinAct++;
             }
         } while (dtCon1.next());
-        if (nLinAct > 0)
-         {
-            dtAdd.commit();
+          if (nLinAct > 0)
+          {
+             dtAdd.commit();
              msgBox("Actualizadas tarifas en " + nLinAct + " Elementos");
+          }
+          else
+              msgBox("No encontradas nuevas lineas para introducir tarifas");
+        } catch (SQLException k)
+        {
+            Error("Error al Actualizar tarifas",k);            
+        } catch (ParseException ex)
+        {
+             Error("Error al Actualizar tarifas.",ex);  
         }
-           
-        
+       
     }
-    String getStrSql(boolean sinTarifa,String condWhere)
+    
+    void actualPrecioMin() 
+    {
+        try {
+            if (!checkCond()) 
+                return;
+            
+            s = "update v_albavel set avl_profer=tar_preci "
+                + " WHERE  tar_preci>0 "
+                + " and avl_profer < 0"                 
+                + " and  emp_codi = " + emp_codiE.getValorInt()+
+                  " and exists (select  from v_albavec as a,clientes as cl  where " +                      
+                        " a.emp_codi = " + emp_codiE.getValorInt()
+                        + " and a.avc_ano = v_albavel.avc_ano  "
+                        + " and a.avc_serie = v_albavel.avc_serie "+
+                        getCondWhere()+
+                         " and a.avc_nume = v_albavel.avc_nume)";                        
+
+       
+            int nLinAct = dtAdd.executeUpdate(s);
+            if (nLinAct==0) {
+                msgBox("NO existen albaranes  sin precios minimos y precio de tarifas");
+            }else
+            {
+                dtAdd.commit();
+                msgBox("Actualizados Precios minimos en " + nLinAct + " lineas");
+            }
+        } catch (SQLException k)
+        {
+            Error("Error al Actualizar Precios Minimos",k);            
+        } catch (ParseException ex)
+        {
+             Error("Error al Actualizar Precios Minimos.",ex);  
+        }       
+    }
+    
+    String getStrSql(boolean sinPrecMini,String condWhere)
     {
         s = "SELECT a.avc_ano, a.avc_serie, a.avc_nume,a.avc_fecalb,a.cli_codi, "
-                    + " cl.cli_nomb,avc_impalb,avc_impcob,cl.tar_codi  "
+                    + " cl.cli_nomb,avc_impalb,avc_impcob,cl.tar_codi,avc_kilos  "
                     + "  FROM v_albavec as a,clientes as cl "
                     + " WHERE cl.cli_codi = a.cli_codi "+
                     bdisc.getCondWhere("cl")+
                     condWhere;
-            if (sinTarifa) {
+        if (sinPrecMini) {
                 s += " and exists (select *  FROM v_albavel as l "
                         + " WHERE l.emp_codi = " + emp_codiE.getValorInt()
                         + " and a.avc_ano = l.avc_ano  "
                         + " and a.avc_serie = l.avc_serie "
                         + " and a.avc_nume = l.avc_nume "
-                        + " and l.avl_profer = 0"
-                        + " and l.tar_preci = 0)";
-            }
-            s += " ORDER BY  a.avc_ano, a.avc_serie, a.avc_nume ";
-            return s;
+                        + " and l.avl_profer < 0"
+                        + " )";
+        }
+        s += " ORDER BY  a.avc_ano, a.avc_serie, a.avc_nume ";
+        return s;
     }
     
     private void consultaSinTarifa() 
@@ -326,6 +368,7 @@ public class CLVenRep extends ventana {
                 v.add("");
                 v.add("");
                 v.add("");
+                v.add("");
                 jtLin.addLinea(v); 
             } while (dtCon1.next());
             jtLin.requestFocusInicio();
@@ -335,47 +378,36 @@ public class CLVenRep extends ventana {
         }
     }
     /**
-     *
-     * @param sinTarifa  Actualiza precio de tarifa, en caso de que este a 0 (lo vuelve a buscar en tarifas)
+     * Consulta los albaranes de ese representante. Permitiendo modificar el precio oferta (Precio Minimo Venta)
+     * 
      */
-    void consultar(boolean sinTarifa) {
+    void consultar(boolean sinPrecMinimo) {
         guardaCambios();
         PreparedStatement ps;
         ResultSet rs;
         try {
-            if (!checkCond()) 
-                return;
-            if (ARG_MODIF && sinTarifa)
-              actualTarifa();
+          
 
             jtCab.setEnabled(false);
             jtCab.removeAllDatos();
             String condWhere = getCondWhere();
-            s=getStrSql(sinTarifa,condWhere);
+            s=getStrSql(sinPrecMinimo,condWhere);
           
             if (!dtCon1.select(s)) {
                 msgBox("No encontrados albaranes con esos criterios");
                 fecIniE.requestFocus();
                 return;
             }
-            s = " SELECT sum(avl_canti*(avl_prbase-tar_preci)) as gananc,sum(avl_canti) as avl_canti  "
-                    + "  FROM v_albavel  "
-                    + " WHERE emp_codi = " + emp_codiE.getValorInt()
-                    + " and avc_ano = ?"
-                    + " and avc_serie = ? "
-                    + " and avc_nume = ?"
-                    + " and avl_profer = 0"
-                    + " union all "
-                    + "  SELECT sum(avl_canti*(avl_prbase-avl_profer)) as gananc,sum(avl_canti) as avl_canti   "
-                    + "  FROM v_albavel  "
-                    + " WHERE emp_codi = " + emp_codiE.getValorInt()
-                    + " and avc_ano = ?"
-                    + " and avc_serie = ? "
-                    + " and avc_nume = ?"
-                    + " and avl_profer != 0";
-
+            
+            s = "  SELECT sum(avl_canti*(avl_prbase-avl_profer)) as gananc   "
+                 + "  FROM v_albavel  "
+                 + " WHERE emp_codi = " + emp_codiE.getValorInt()
+                 + " and avc_ano = ?"
+                 + " and avc_serie = ? "
+                 + " and avc_nume = ?"
+                 + " and avl_profer > 0 and avl_prbase > 0";
             ps = dtStat.getPreparedStatement(s);
-            double TimpAlb = 0, TkilAlb = 0, kilAlb, TimpGan = 0, ganAlb;
+            double TimpAlb = 0, TkilAlb = 0,  TimpGan = 0, ganAlb;
             int TnumAlb = 0;
             do {
                 ArrayList v = new ArrayList();
@@ -390,29 +422,22 @@ public class CLVenRep extends ventana {
                 
                 ps.setInt(1, dtCon1.getInt("avc_ano"));
                 ps.setString(2, dtCon1.getString("avc_serie"));
-                ps.setInt(3, dtCon1.getInt("avc_nume"));
-                ps.setInt(4, dtCon1.getInt("avc_ano"));
-                ps.setString(5, dtCon1.getString("avc_serie"));
-                ps.setInt(6, dtCon1.getInt("avc_nume"));
+                ps.setInt(3, dtCon1.getInt("avc_nume"));                
+               
                 TnumAlb++;
                 TimpAlb += dtCon1.getDouble("avc_impalb");
 
                 ganAlb = 0;
-                kilAlb = 0;
+               
                 rs = ps.executeQuery();
                 rs.next();
                 if (rs.getObject("gananc") != null) {
-                    ganAlb = rs.getDouble("gananc");
-                    kilAlb += rs.getDouble("avl_canti");
+                    ganAlb = rs.getDouble("gananc");                   
                 }
-                rs.next();
-                if (rs.getObject("gananc") != null) {
-                    ganAlb += rs.getDouble("gananc");
-                    kilAlb += rs.getDouble("avl_canti");
-                }
-                TkilAlb += kilAlb;
+               
+                TkilAlb += dtCon1.getInt("avc_kilos");
                 TimpGan += ganAlb;
-                v.add("" + kilAlb);
+                v.add(dtCon1.getInt("avc_kilos"));
                 v.add("" + ganAlb); // Imp.Ganancia
                 v.add(dtCon1.getString("tar_codi"));
                 rs.next();
@@ -438,15 +463,15 @@ public class CLVenRep extends ventana {
     }
     public int jtLinCambiaLinea(int row,int col)
     {
-        if (! avl_prtariE.isEnabled() || jtLin.isVacio() || jtLin.getValString(row,7).equals(""))
+        if (! avl_proferE.isEnabled() || jtLin.isVacio() || jtLin.getValString(row,5).equals(""))
             return -1;
-        double avlPrven=avl_prtariE.getValorDec();
+        double avlPrven=avl_proferE.getValorDec();
        
         s = "UPDATE  V_albavel set avl_profer = " +avlPrven +
              " where " +condAlb +
              " and avl_numlin in ("+jtLin.getValString(row,7)+")";
         try {
-//            System.out.println("s: "+s);
+           
             int nregAfe=dtAdd.executeUpdate(s);
             if (nregAfe==0)
                 msgBox("No se registro el precio. Revise por favor");
@@ -491,8 +516,9 @@ public class CLVenRep extends ventana {
                 v.add(dtCon1.getString("avl_unid"));
                 v.add(dtCon1.getString("avl_canti"));
                 v.add(dtCon1.getString("avl_prven"));               
-                v.add(dtCon1.getDouble("avl_profer", true));
-                v.add(dtCon1.getDouble("avl_prven") - dtCon1.getDouble("avl_profer", true));                
+                v.add(dtCon1.getDouble("avl_profer"));                
+                v.add(dtCon1.getDouble("avl_profer")>0?
+                    dtCon1.getDouble("avl_prven") - dtCon1.getDouble("avl_profer"):0);
                 v.add(linAlb);
                 v.add(dtCon1.getDouble("tar_preci", true));
                 jtLin.addLinea(v);
@@ -510,7 +536,12 @@ public class CLVenRep extends ventana {
         guardaCambios();
         super.matar();
     }
-    boolean checkCond() throws Exception {
+    /**
+     * Comprueba las condiciones introducidas
+     * @return
+     * @throws ParseException 
+     */
+    boolean checkCond() throws ParseException  {
         if (!emp_codiE.controla()) {
             mensajeErr(emp_codiE.getMsgError());
             return false;
@@ -574,9 +605,9 @@ public class CLVenRep extends ventana {
             mensaje("");
             if (!gnu.chu.print.util.printJasper(jp, EU))
                  return;
-            mensajeErr("Listado Generado !!");
+            msgBox("Listado Generado !!");
 
-        } catch (Exception k) {
+        } catch (ParseException | SQLException | JRException | NumberFormatException | PrinterException k) {
             Error("Error al generar listado ", k);
         }
     }
@@ -598,6 +629,7 @@ public class CLVenRep extends ventana {
         avl_prtariE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--9.99");
         avl_gananE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--9.99");
         avl_numlinE = new gnu.chu.controles.CTextField();
+        avl_proferE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--9.99");
         Pprinc = new gnu.chu.controles.CPanel();
         Pcondic = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -647,13 +679,26 @@ public class CLVenRep extends ventana {
     v1.add("Unid"); // 2
     v1.add("Kilos"); // 3
     v1.add("Prec"); // 4
-    v1.add("Pr.Repr."); // 5
+    v1.add("Pr.Min."); // 5
     v1.add("Gananc"); // 6
     v1.add("NL"); // 7
     v1.add("Pr.Tarifa"); // 8
     jtLin.setCabecera(v1);
     jtLin.setAnchoColumna(new int[]{60,180,50,70,60,60,60,20,60});
     jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,0,2});
+    try{
+        ArrayList vc = new ArrayList();
+        vc.add(pro_codiE);
+        vc.add(pro_nombE);
+        vc.add(avl_unidE);
+        vc.add(avl_kilosE);
+        vc.add(avl_precioE);
+        vc.add(avl_proferE);
+        vc.add(avl_gananE);
+        vc.add(avl_numlinE);
+        vc.add(avl_prtariE);
+        jtLin.setCampos(vc);
+    } catch (Exception k ){Error("Error al iniciar grid",k);}
     jtLin.setFormatoColumna(2,"---9");
     jtLin.setFormatoColumna(3,"---9.99");
     jtLin.setFormatoColumna(4,"--9.99");
@@ -697,6 +742,8 @@ public class CLVenRep extends ventana {
     avl_kilosE.setEnabled(false);
 
     avl_precioE.setEnabled(false);
+
+    avl_prtariE.setEnabled(false);
 
     avl_gananE.setEnabled(false);
 
@@ -742,7 +789,17 @@ public class CLVenRep extends ventana {
     Pcondic.add(opIncCobr);
     opIncCobr.setBounds(313, 37, 93, 19);
 
-    Baceptar.setText("Ejecutar");
+    Baceptar.setText("Elegir");
+    Baceptar.addMenu("Consultar","C");
+    Baceptar.addMenu("Cons.Sin Precio","S");
+
+    if (ARG_MODIF)
+    {
+        Baceptar.addMenu("Act. Precio Min","P");
+        Baceptar.addMenu("Act. Tarifa","A");
+    }
+    Baceptar.addMenu("Sin Tarifa","T");
+    Baceptar.addMenu("Imprimir","I");
     Pcondic.add(Baceptar);
     Baceptar.setBounds(413, 34, 100, 26);
     Pcondic.add(bdisc);
@@ -887,6 +944,7 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CTextField avl_kilosE;
     private gnu.chu.controles.CTextField avl_numlinE;
     private gnu.chu.controles.CTextField avl_precioE;
+    private gnu.chu.controles.CTextField avl_proferE;
     private gnu.chu.controles.CTextField avl_prtariE;
     private gnu.chu.controles.CTextField avl_unidE;
     private gnu.chu.camposdb.DiscButton bdisc;

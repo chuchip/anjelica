@@ -40,6 +40,9 @@
       </AuxValues>
     </Component>
     <Component class="gnu.chu.controles.CTextField" name="avl_prtariE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;--9.99&quot;)"/>
       </AuxValues>
@@ -56,6 +59,11 @@
       <Properties>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="avl_proferE">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;--9.99&quot;)"/>
+      </AuxValues>
     </Component>
   </NonVisualComponents>
   <SyntheticProperties>
@@ -205,8 +213,11 @@
             </Component>
             <Component class="gnu.chu.controles.CButtonMenu" name="Baceptar">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Ejecutar"/>
+                <Property name="text" type="java.lang.String" value="Elegir"/>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Baceptar.addMenu(&quot;Consultar&quot;,&quot;C&quot;);&#xa;Baceptar.addMenu(&quot;Cons.Sin Precio&quot;,&quot;S&quot;);&#xa;&#xa;if (ARG_MODIF)&#xa;{        &#xa;    Baceptar.addMenu(&quot;Act. Precio Min&quot;,&quot;P&quot;);&#xa;    Baceptar.addMenu(&quot;Act. Tarifa&quot;,&quot;A&quot;);&#xa;}&#xa;Baceptar.addMenu(&quot;Sin Tarifa&quot;,&quot;T&quot;);&#xa;Baceptar.addMenu(&quot;Imprimir&quot;,&quot;I&quot;);"/>
+              </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="413" y="34" width="100" height="-1"/>
@@ -275,7 +286,7 @@
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(9){&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return jtLinCambiaLinea(row,col);&#xa;    }&#xa;}&#xa;"/>
-            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="ArrayList v1=new ArrayList();&#xa;v1.add(&quot;Prod&quot;); //0 &#xa;v1.add(&quot;Nombre&quot;); // 1&#xa;v1.add(&quot;Unid&quot;); // 2&#xa;v1.add(&quot;Kilos&quot;); // 3&#xa;v1.add(&quot;Prec&quot;); // 4&#xa;v1.add(&quot;Pr.Repr.&quot;); // 5 &#xa;v1.add(&quot;Gananc&quot;); // 6&#xa;v1.add(&quot;NL&quot;); // 7&#xa;v1.add(&quot;Pr.Tarifa&quot;); // 8&#xa;jtLin.setCabecera(v1);&#xa;jtLin.setAnchoColumna(new int[]{60,180,50,70,60,60,60,20,60});&#xa;jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,0,2});&#xa;jtLin.setFormatoColumna(2,&quot;---9&quot;);&#xa;jtLin.setFormatoColumna(3,&quot;---9.99&quot;);&#xa;jtLin.setFormatoColumna(4,&quot;--9.99&quot;);&#xa;jtLin.setFormatoColumna(5,&quot;--9.99&quot;);&#xa;jtLin.setFormatoColumna(6,&quot;--9.99&quot;);&#xa;jtLin.setFormatoColumna(8,&quot;--9.99&quot;);&#xa;jtLin.setCanDeleteLinea(false);&#xa;jtLin.setCanInsertLinea(false);&#xa;jtLin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));&#xa;&#xa;jtLin.setPreferredSize(new java.awt.Dimension(80, 80));&#xa;&#xa;// Code of sub-components - not shown here&#xa;&#xa;// Layout setup code - not shown here&#xa;&#xa;gridBagConstraints = new java.awt.GridBagConstraints();&#xa;gridBagConstraints.gridx = 0;&#xa;gridBagConstraints.gridy = 2;&#xa;gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;&#xa;gridBagConstraints.weightx = 1.0;&#xa;gridBagConstraints.weighty = 1.0;&#xa;gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);&#xa;Pprinc.add(jtLin, gridBagConstraints);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="ArrayList v1=new ArrayList();&#xa;v1.add(&quot;Prod&quot;); //0 &#xa;v1.add(&quot;Nombre&quot;); // 1&#xa;v1.add(&quot;Unid&quot;); // 2&#xa;v1.add(&quot;Kilos&quot;); // 3&#xa;v1.add(&quot;Prec&quot;); // 4&#xa;v1.add(&quot;Pr.Min.&quot;); // 5 &#xa;v1.add(&quot;Gananc&quot;); // 6&#xa;v1.add(&quot;NL&quot;); // 7&#xa;v1.add(&quot;Pr.Tarifa&quot;); // 8&#xa;jtLin.setCabecera(v1);&#xa;jtLin.setAnchoColumna(new int[]{60,180,50,70,60,60,60,20,60});&#xa;jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,0,2});&#xa;try{&#xa;ArrayList vc = new ArrayList();&#xa;vc.add(pro_codiE);&#xa;vc.add(pro_nombE);&#xa;vc.add(avl_unidE);&#xa;vc.add(avl_kilosE);&#xa;vc.add(avl_precioE);&#xa;vc.add(avl_proferE);&#xa;vc.add(avl_gananE);&#xa;vc.add(avl_numlinE);&#xa;vc.add(avl_prtariE);&#xa;jtLin.setCampos(vc);&#xa;} catch (Exception k ){Error(&quot;Error al iniciar grid&quot;,k);}&#xa;jtLin.setFormatoColumna(2,&quot;---9&quot;);&#xa;jtLin.setFormatoColumna(3,&quot;---9.99&quot;);&#xa;jtLin.setFormatoColumna(4,&quot;--9.99&quot;);&#xa;jtLin.setFormatoColumna(5,&quot;--9.99&quot;);&#xa;jtLin.setFormatoColumna(6,&quot;--9.99&quot;);&#xa;jtLin.setFormatoColumna(8,&quot;--9.99&quot;);&#xa;jtLin.setCanDeleteLinea(false);&#xa;jtLin.setCanInsertLinea(false);&#xa;jtLin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));&#xa;&#xa;jtLin.setPreferredSize(new java.awt.Dimension(80, 80));&#xa;&#xa;// Code of sub-components - not shown here&#xa;&#xa;// Layout setup code - not shown here&#xa;&#xa;gridBagConstraints = new java.awt.GridBagConstraints();&#xa;gridBagConstraints.gridx = 0;&#xa;gridBagConstraints.gridy = 2;&#xa;gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;&#xa;gridBagConstraints.weightx = 1.0;&#xa;gridBagConstraints.weighty = 1.0;&#xa;gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);&#xa;Pprinc.add(jtLin, gridBagConstraints);"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
