@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-12-01T14:13:49 -->
+<!-- 2016-04-26T10:56:49 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lialbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0" uuid="06cfe06a-585e-42ac-a6ff-f7da1ef9c377">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -59,8 +59,9 @@ order by 1]]>
 		<variableExpression><![CDATA[new Double($F{avl_canti}.doubleValue() * $F{avl_prven}.doubleValue())]]></variableExpression>
 	</variable>
 	<variable name="impGana" class="java.lang.Double">
-		<variableExpression><![CDATA[new Double($F{avl_canti}.doubleValue() * ($F{avl_prven}.doubleValue() -
-    ($F{avl_profer}.doubleValue()==0? $F{tar_preci}.doubleValue():$F{avl_profer}.doubleValue())))]]></variableExpression>
+		<variableExpression><![CDATA[new Double($F{avl_profer}.doubleValue()<0?0:
+	$F{avl_canti}.doubleValue() * ($F{avl_prven}.doubleValue() -
+    $F{avl_profer}.doubleValue()))]]></variableExpression>
 	</variable>
 	<variable name="TImpVen" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$V{implinea}]]></variableExpression>
@@ -274,7 +275,9 @@ order by 1]]>
 				<textFieldExpression><![CDATA[$F{avl_prven}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="435" y="1" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="f526f5ad-e87c-456b-8f36-d670152c13ee"/>
+				<reportElement key="textField" mode="Opaque" x="435" y="0" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="f526f5ad-e87c-456b-8f36-d670152c13ee">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -302,7 +305,7 @@ order by 1]]>
 				<textFieldExpression><![CDATA[$F{avl_profer}.doubleValue()==0?$F{tar_preci}:$F{avl_profer}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="490" y="2" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="dd4b3abe-c73a-450e-ac9d-9b768ba6688d"/>
+				<reportElement key="textField" mode="Opaque" x="490" y="0" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="dd4b3abe-c73a-450e-ac9d-9b768ba6688d"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
