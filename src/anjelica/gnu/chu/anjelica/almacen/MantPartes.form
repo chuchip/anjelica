@@ -1127,11 +1127,11 @@
                     </Component>
                     <Component class="gnu.chu.controles.CButtonMenu" name="Bcerrar">
                       <Properties>
-                        <Property name="toolTipText" type="java.lang.String" value="Cerrar o Anular Cierre de Incidencia"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Cerrar o Cancelar Incidencia"/>
                         <Property name="text" type="java.lang.String" value="Cerrar (F8)"/>
                       </Properties>
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="Bcerrar.addMenu(&quot;Cerrar&quot;, &quot;C&quot;);&#xa;Bcerrar.addMenu(&quot;Anular Cierre&quot;, &quot;X&quot;);"/>
+                        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="Bcerrar.addMenu(&quot;Cerrar Inc.&quot;, &quot;3&quot;);&#xa;Bcerrar.addMenu(&quot;Cancelar Inc.&quot;, &quot;4&quot;);"/>
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

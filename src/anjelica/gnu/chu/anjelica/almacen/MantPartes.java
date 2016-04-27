@@ -85,7 +85,7 @@ public class MantPartes  extends ventanaPad implements PAD
     final static String[][] PAC_ESTADO={{"Generada", "0"},
         {"Proc.Dev.", "1"},
         {"Procesada","2"},
-        {"Resuelta", "3"},
+        {"Cerrada", "3"},
         {"Cancelada", "4"}
     };
      final static String[][] PAC_TIPO={{"Sala", "S"},
@@ -276,7 +276,7 @@ public class MantPartes  extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false,P_ADMIN?navegador.NORMAL:
             P_PERMEST==PERM_GERENC?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20160407) Modo: "+P_PERMEST);
+        this.setVersion("(20160427) Modo: "+P_PERMEST);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -373,7 +373,18 @@ public class MantPartes  extends ventanaPad implements PAD
       }
       CPermiso.setValor(+P_PERMEST);
   }
-  
+  void cambiaEstadoIncidencia(int estado) throws SQLException 
+  {
+        cerrarIncidencia(estado);
+        swCargaLin=true;
+        swCargaList=true;
+        jtList.removeLinea();
+        verDatos(jtList.getValorInt(0));
+        swCargaLin=false;
+        swCargaList=false;
+        verLineas(jtList.getValorInt(JTL_NUMPAR));
+        jtList.requestFocusSelectedLater();
+  }
   private void activarEventos()
   {
       BmvReg.addActionListener(new ActionListener()
@@ -476,25 +487,9 @@ public class MantPartes  extends ventanaPad implements PAD
          {
             try { 
               if (jtList.isVacio() || ! Bcerrar.isEnabled())
-                  return;              
-              cerrarIncidencia(e.getActionCommand().startsWith("Cerr")? ESTADO_CERRADO:ESTADO_CANCELA);
-              swCargaLin=true;
-              swCargaList=true;
-              jtList.removeLinea();
-              verDatos(jtList.getValorInt(0));
-              swCargaLin=false;
-              swCargaList=false;
-//              SwingUtilities.invokeLater(new Thread()
-//                   {
-//                            @Override
-//                            public void run()
-//                            {
-               verLineas(jtList.getValorInt(JTL_NUMPAR));
-//               jtList.requestFocusLater(jtList.getSelectedRow(),0);
-               jtList.requestFocusSelectedLater();
-//                            }
-//                    });
-              
+                  return;
+              cambiaEstadoIncidencia(ESTADO_CERRADO);
+ 
            } catch (SQLException ex) {
                Error("Error al cerrar incidencia",ex);
            }
@@ -510,22 +505,8 @@ public class MantPartes  extends ventanaPad implements PAD
               if (jtList.isVacio())
                   return;              
               int estado=e.getActionCommand().startsWith("Cerr")?ESTADO_CERRADO:ESTADO_CANCELA;
-              cerrarIncidencia(estado);
+              cambiaEstadoIncidencia(estado);             
               msgBox("Incidencia "+(estado==ESTADO_CERRADO?"Cerrada":"Cancelada"));
-              swCargaLin=true;
-              swCargaList=true;
-              jtList.removeLinea();
-              swCargaLin=false;
-              swCargaList=false;
-//              SwingUtilities.invokeLater(new Thread()
-//                   {
-//                            @Override
-//                            public void run()
-//                            {
-               verLineas(jtList.getValorInt(JTL_NUMPAR));
-//                            }
-//                    });
-              
            } catch (SQLException ex) {
                Error("Error al cerrar incidencia",ex);
            }
@@ -1928,9 +1909,9 @@ public class MantPartes  extends ventanaPad implements PAD
         PPie.add(pro_feccadE1);
         pro_feccadE1.setBounds(445, 2, 60, 17);
 
-        Bcerrar.addMenu("Cerrar", "C");
-        Bcerrar.addMenu("Anular Cierre", "X");
-        Bcerrar.setToolTipText("Cerrar o Anular Cierre de Incidencia");
+        Bcerrar.addMenu("Cerrar Inc.", "3");
+        Bcerrar.addMenu("Cancelar Inc.", "4");
+        Bcerrar.setToolTipText("Cerrar o Cancelar Incidencia");
         Bcerrar.setText("Cerrar (F8)");
         PPie.add(Bcerrar);
         Bcerrar.setBounds(5, 3, 100, 20);
