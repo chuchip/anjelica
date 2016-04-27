@@ -95,7 +95,7 @@ public class TrasInven extends ventanaPad implements PAD {
         nav = new navegador(this, dtCons, false,navegador.CURYCON);
         iniciarFrame();
 
-        this.setVersion("2016-01-20" );
+        this.setVersion("2016-04-27" );
         strSql = "SELECT emp_codi, alm_codi, cci_feccon FROM coninvcab where emp_codi = "+EU.em_cod+
                 " group by emp_codi, alm_codi,cci_feccon "+
             " order by cci_feccon";
@@ -259,7 +259,7 @@ public class TrasInven extends ventanaPad implements PAD {
             setMensajePopEspere("Insertando apuntes de regularización...");
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY - 1);
             
-            if (!tipoTraspE.getValor().equals(TIPOSTOCKPARTI))
+            if (! tipoTraspE.getValor().equals(TIPOSINSTOCKPA))
             {// No es inventario tipo stock/partidas
                 insertaRegul(); // Inserta Apuntes de Regularizacion sobre inventario
                 if (swInvCong)
@@ -303,7 +303,7 @@ public class TrasInven extends ventanaPad implements PAD {
      *
      * @throws SQLException
      */
-    private void insertaRegul() throws Exception {
+    private boolean insertaRegul() throws Exception {
         java.util.Date cciFeccon= Formatear.getDate(cci_fecconE.getFechaDB()+" 00:00:00","yyyyMMdd hh:mm:ss");
         
         setMensajePopEspere("Insertando Regularizaciones .... A esperar tocan ;-)",false);
@@ -318,7 +318,9 @@ public class TrasInven extends ventanaPad implements PAD {
                 + " and c.emp_codi = " + emp_codiE.getValorInt()
                 + " and lci_peso <> 0 "
                 + (opIgnCongel.isSelected()? " and a.pro_artcon = 0":"")
-               // + " and ipr_prec > 0"
+                + (pro_artconE.getValorInt()==2?"":" and a.pro_artcon "+
+                (pro_artconE.getValorInt()==0?"":"!")+
+                 "= 0")
                 + " and l.lci_regaut =0 "  // No es apunte automatico
                 + (opInsAllAlmac.isSelected()?"": " and c.alm_codi = " + alm_codiE.getValorInt())
                 +" and c.cci_feccon::date = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
@@ -328,7 +330,11 @@ public class TrasInven extends ventanaPad implements PAD {
                 + " group by c.alm_codi,i.ipr_prec,l.pro_codi,prp_ano, "
                 + " l.prp_empcod,prp_seri,prp_part,prp_indi,pro_coinst ";
 
-        dtCon1.select(s);
+        if (!dtCon1.select(s))
+        {
+            msgBox("No encontrados articulos con estas condiciones en inventario");
+            return false;
+        }
 //  debug("(insertaRegul) s: "+dtCon1.getStrSelect());
 
         int nReg = 1;
@@ -400,16 +406,18 @@ public class TrasInven extends ventanaPad implements PAD {
             jf.guardaMens("I3", jf.ht);
         }
 //        debug("Kilos ignorados: "+kilosDeposito);
+        return true;
     }
+    
     public boolean checkTraspasar()
     {
         try {
-//            if (tipoTraspE.getValor().equals("I") && opInsAllAlmac.isSelected())
-//            {
-//                mensajeErr("No se pueden elegir TODOS Los almacenes si el tipo traspaso es Inventario ");
-//                return false;
-//            }
-            if (!tipoTraspE.getValor().equals(TIPOSTOCKPARTI)) { // No es traspaso solo STOCK-PARTIDAS
+            if (opIgnCongel.isSelected() && pro_artconE.getValorInt()==-1)
+            {
+                msgBox("No puede elegir Ignorar congelado y luego trapasar SOLO congelado");
+                return false;
+            }
+            if (!tipoTraspE.getValor().equals(TIPOSINSTOCKPA)) { // No es traspaso solo STOCK-PARTIDAS
 
                 s = "select  cci_codi,pro_codi,cam_codi from v_coninvent as l "
                         + "  where emp_codi = " + emp_codiE.getValorInt()
@@ -439,7 +447,6 @@ public class TrasInven extends ventanaPad implements PAD {
                         return false;
                 }
             }
-
 
             /**
              * Busco el tipo Mvto de Inventarios ... otra vez
@@ -476,13 +483,21 @@ public class TrasInven extends ventanaPad implements PAD {
                         s = "delete from regalmacen where "
                                 + " rgs_fecha::date = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                                 + " and tir_codi = " + tirCodi
-                                +(opInsAllAlmac.isSelected()?"":
+                                 + (pro_artconE.getValorInt()<2? " and  exists (select * from v_articulo"
+                                + " where v_articulo.pro_codi = regalmacen.pro_codi and pro_artcon "+
+                                (pro_artconE.getValorInt()==0?"":"!")
+                                 + "= 0)":"")      
+                                + (opInsAllAlmac.isSelected()?"":
                                     " and alm_codi = " + alm_codiE.getValorInt());
                         dtAdd.executeUpdate(s, stUp);
                         s = "delete from invdepos where "
-                                + " ind_fecha = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                                + " ind_fecha = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "                               
+                                + (pro_artconE.getValorInt()<2? " and  exists (select * from v_articulo"
+                                + " where v_articulo.pro_codi = invdepos.pro_codi and pro_artcon "+
+                                (pro_artconE.getValorInt()==0?"":"!")
+                                 + "= 0)":"")                            
                                 +(opInsAllAlmac.isSelected()?"":
-                                    " and alm_codi = " + alm_codiE.getValorInt());
+                                   " and alm_codi = " + alm_codiE.getValorInt());
                         dtAdd.executeUpdate(s, stUp);
                         if (jf != null) {
                             jf.ht.clear();
@@ -675,11 +690,11 @@ public class TrasInven extends ventanaPad implements PAD {
         Btraspasar.setText("Traspasar");
         Btraspasar.setMargin(new Insets(0,0,0,0));
         Ptraspa.add(Btraspasar);
-        Btraspasar.setBounds(492, 49, 106, 31);
+        Btraspasar.setBounds(492, 49, 106, 19);
 
         cLabel3.setText("Tipo traspaso");
         Ptraspa.add(cLabel3);
-        cLabel3.setBounds(2, 2, 79, 18);
+        cLabel3.setBounds(2, 2, 76, 18);
 
         tipoTraspE.setMaximumSize(new java.awt.Dimension(78, 18));
         tipoTraspE.setMinimumSize(new java.awt.Dimension(78, 18));
@@ -689,7 +704,7 @@ public class TrasInven extends ventanaPad implements PAD {
 
         cLabel4.setText("Traspasar productos");
         Ptraspa.add(cLabel4);
-        cLabel4.setBounds(338, 3, 120, 14);
+        cLabel4.setBounds(338, 3, 116, 15);
 
         pro_artconE.setMaximumSize(new java.awt.Dimension(78, 18));
         pro_artconE.setMinimumSize(new java.awt.Dimension(78, 18));
@@ -701,11 +716,11 @@ public class TrasInven extends ventanaPad implements PAD {
         opResetear.setText("Poner a 0 prod. sin inventariar");
         opResetear.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Ptraspa.add(opResetear);
-        opResetear.setBounds(0, 20, 192, 17);
+        opResetear.setBounds(0, 20, 171, 17);
 
         cLabel5.setText("Anterior Inventario");
         Ptraspa.add(cLabel5);
-        cLabel5.setBounds(2, 50, 105, 14);
+        cLabel5.setBounds(2, 50, 104, 15);
 
         fecinvConE.setMaximumSize(new java.awt.Dimension(78, 18));
         fecinvConE.setMinimumSize(new java.awt.Dimension(78, 18));
@@ -717,7 +732,7 @@ public class TrasInven extends ventanaPad implements PAD {
         opInsAllAlmac.setText("Insertar Todos Almacenes");
         opInsAllAlmac.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Ptraspa.add(opInsAllAlmac);
-        opInsAllAlmac.setBounds(420, 20, 171, 17);
+        opInsAllAlmac.setBounds(420, 20, 151, 17);
 
         opIgnCongel.setText("Ignorar Inventario Congelado ");
         opIgnCongel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
