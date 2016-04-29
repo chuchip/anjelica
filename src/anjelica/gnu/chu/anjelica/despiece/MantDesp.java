@@ -2163,16 +2163,21 @@ public class MantDesp extends ventanaPad implements PAD
         return true;
     }
 
+    @Override
     public void canc_addnew() {
         try
         {
             if (deo_codiE.getValorInt() != 0)
             {
-                if (mensajes.mensajeYesNo("VOLVER AL DESPIECE ? ", this)
-                    == mensajes.YES)
+                s=checkMvtosSalida();
+                if (s!=null)
                 {
+                    msgBox(s);
                     return;
                 }
+                if (mensajes.mensajeYesNo("VOLVER AL DESPIECE ? ", this)
+                    == mensajes.YES)
+                    return;
                 copiaRegistro("Anulada Alta de despiece");
                 jtLin.setValor("" + proCodAnt, JTLIN_PROCODI); // Restauro el valor Antiguo
                 jtLin.setValor("" + defKilAnt, JTLIN_KILOS);
@@ -2234,24 +2239,31 @@ public class MantDesp extends ventanaPad implements PAD
            
         if (swTienePrec && deo_numdesE.getValorInt()!=0 )
             return "Despiece valorado en un grupo. Imposible borrar";
-     
-        int nRow = jtLin.getRowCount();
-        for (int n = 0; n < nRow; n++)
+        // Busco lineas de salida para ver si no ha habido mvtos de Almacen
+       return checkMvtosSalida();
+    }
+    /**
+     * Comprueba mvtos salida sobre despiece en pantalla
+     * @return null si no hubo errores
+     */
+    private String checkMvtosSalida() throws SQLException
+    {
+        s="select * from v_despfin where eje_nume ="+eje_numeE.getValorInt()+
+            " and deo_codi = "+deo_codiE.getValorInt();
+        if (!dtCon1.select(s))
+            return null;
+        do 
         {
-            if (jtLin.getValorInt(n, JTLIN_PROCODI) == 0)
+            if (!MantArticulos.isVendible(dtCon1.getInt("pro_codi"), dtStat))
                 continue;
-            if (!MantArticulos.isVendible(jtLin.getValorInt(n, JTLIN_PROCODI), dtStat))
-                continue;
-            if (MvtosAlma.hasMvtosSalida(dtCon1, jtLin.getValorInt(n, JTLIN_PROCODI), EU.em_cod,
-                eje_numeE.getValorInt(),
-                deo_selogeE.getText(), deo_nulogeE.getValorInt(), jtLin.getValorInt(n, JTLIN_NUMIND),
-                jtLin.getValorDec(n, JTLIN_KILOS),
-                deo_fechaE.getText()) != 0)
-                return "Producto " + jtLin.getValorInt(n, JTLIN_PROCODI) + " con Individuo: "
-                    + jtLin.getValorInt(n, JTLIN_NUMIND)
-                    + " generado en despiece tiene mvtos de salida. Imposible BORRAR";
-
-        }
+            if (MvtosAlma.hasMvtosSalida(dtStat,dtCon1.getInt("pro_codi"), EU.em_cod,
+                dtCon1.getInt("def_ejelot"),
+                dtCon1.getString("def_serlot"),dtCon1.getInt("pro_lote"),dtCon1.getInt("pro_numind"),
+                dtCon1.getDouble("def_kilos"),deo_fechaE.getText()) != 0)
+                    return  "Producto " + dtCon1.getInt("pro_codi") + " con Individuo: "
+                        + dtCon1.getInt("pro_numind")
+                        + " generado en despiece tiene mvtos de salida. Imposible BORRAR";
+        } while (dtCon1.next());
         return null;
     }
     @Override
