@@ -652,8 +652,7 @@ ptsincremento2 float,
 preciotarifa2 float,
 precioclientearticulo2 float,
 preciopvp2 float,
-tiporecargotasa char(1), -- Siempre %
-recargotasa float,	-- Siempre 0
+tiporecargotasa char(1), -- Siempre %recargotasa float,	-- Siempre 0
 recargotasa2 float,	-- Siempre 0
 avl_canti float,	-- Cantidad de Linea
 avl_prven float,	-- precio de Venta
@@ -664,7 +663,7 @@ tar_preci float,	-- precio de tarifa
 avl_unid int,		-- Unidades
 avl_pincre float,       --
 avl_pcomi float,
-avl_profer float,       -- Precio Pedido
+avl_profer float not null,       -- Precio Pedido
 avl_prclar float,
 avl_prepvp float,       -- Precio puesto por el tecnico
 avl_poreo float,

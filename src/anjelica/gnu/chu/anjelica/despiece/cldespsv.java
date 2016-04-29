@@ -16,7 +16,7 @@ import net.sf.jasperreports.engine.*;
 /**
  * <p>Titulo: cldespsv</p>
  * <p>Descripción: Consulta/ LISTADO Despieces Sin Valorar o con descuadres</p>
- * <p>Copyright: Copyright (c) 2005-2011
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -199,6 +199,7 @@ public class cldespsv extends ventana
   void activarEventos()
   {
       MIgrasa.addActionListener(new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
            if (jt.isVacio())
                return;
@@ -209,11 +210,11 @@ public class cldespsv extends ventana
            } catch (SQLException k)
            {
                Error("Error al insertar grasa en  despiece: "+jt.getValorInt(jt.getSelectedRowDisab(),3),k);
-               return;
            }
         }
       });
       menuItem.addActionListener(new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
            if (jt.isVacio())
                return;
@@ -233,6 +234,7 @@ public class cldespsv extends ventana
       }
     });
     Baceptar.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         swElec=e.getActionCommand().charAt(0);
         buscaDatos();
@@ -665,7 +667,7 @@ public class cldespsv extends ventana
                     kilLin=rs.getDouble("def_kilos");
                     impLin=rs.getDouble("costo");
                 }
-                if (! Formatear.esIgual(kilOrig, kilLin,  (kilLin*0.02) ))
+                if (! Formatear.esIgual(kilOrig, kilLin,  (kilLin*0.01) ))
                 {
                     ArrayList v=new ArrayList();
                     v.add("D"); // 0

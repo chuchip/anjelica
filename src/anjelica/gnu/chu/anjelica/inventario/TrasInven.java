@@ -259,7 +259,7 @@ public class TrasInven extends ventanaPad implements PAD {
             setMensajePopEspere("Insertando apuntes de regularización...");
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY - 1);
             
-            if (! tipoTraspE.getValor().equals(TIPOSINSTOCKPA))
+            if (! tipoTraspE.getValor().equals(TIPOSTOCKPARTI))
             {// No es inventario tipo stock/partidas
                 insertaRegul(); // Inserta Apuntes de Regularizacion sobre inventario
                 if (swInvCong)
@@ -281,7 +281,8 @@ public class TrasInven extends ventanaPad implements PAD {
                 jf.guardaMens("I4", jf.ht);
             }
             // Ahora busco todos los movimientos y vuelvo a poner los acumulados.
-            if (!tipoTraspE.getValor().equals(TIPOSINSTOCKPA)) {
+            if (!tipoTraspE.getValor().equals(TIPOSINSTOCKPA)) 
+            {
                 stkPart.regeneraStock(dtBloq, proArtcon,
                         opInsAllAlmac.isSelected()?0:alm_codiE.getValorInt(),
                         cci_fecconE.getDate(),0,opResetear.isSelected());
@@ -417,7 +418,7 @@ public class TrasInven extends ventanaPad implements PAD {
                 msgBox("No puede elegir Ignorar congelado y luego trapasar SOLO congelado");
                 return false;
             }
-            if (!tipoTraspE.getValor().equals(TIPOSINSTOCKPA)) { // No es traspaso solo STOCK-PARTIDAS
+            if (!tipoTraspE.getValor().equals(TIPOSTOCKPARTI)) { // No es traspaso solo STOCK-PARTIDAS
 
                 s = "select  cci_codi,pro_codi,cam_codi from v_coninvent as l "
                         + "  where emp_codi = " + emp_codiE.getValorInt()

@@ -3,7 +3,7 @@
  * <p>Título: CLResMvtos </p>
  * <p>Descripción: Consulta Listado Resultado de Movimientos
  * @see gnu.chu.anjelica.almacen.Comvalm</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -197,7 +197,9 @@ public class CLResMvtos extends ventana {
           public void run()
           {
             msgEspere("Buscando datos ... ");
+            jt.tableView.setVisible(false);
             buscaDatos();
+            jt.tableView.setVisible(true); 
             resetMsgEspere();
           }
       };
@@ -209,7 +211,7 @@ public class CLResMvtos extends ventana {
        almCodi=0;
      else
        almCodi=alm_codiE.getValorInt();
-
+    
      mvtosAlm.setPadre(this);
      jt.removeAllDatos();
      setCancelarConsulta(false);
@@ -218,12 +220,11 @@ public class CLResMvtos extends ventana {
         mvtosAlm.setEmpresa(emp_codiE.getValorInt());
                
         mvtosAlm.setSbeCodi(sbe_codiE.getValorInt());
-        mvtosAlm.setMvtoDesgl(true);
+        mvtosAlm.setUsaDocumentos(true);
         boolean proCodNull=pro_codiE.isNull();
         String s = "select a.pro_codi,a.pro_nomb "+
                 " from v_articulo as a where 1=1 "+
-                (fam_codiE.isNull() ? "" : " and a.fam_codi = " + fam_codiE.getValorInt()) +
-                (alm_codiE.isNull() ? "" : " and alm_codi =" + alm_codiE.getValorInt()) +
+                (fam_codiE.isNull() ? "" : " and a.fam_codi = " + fam_codiE.getValorInt()) +               
                 (tipoProdE.getValor().equals("T") ? "" : " and a.pro_artcon " +
                 (tipoProdE.getValor().equals("N") ? "=0" : "!=0")) +
                 (proCodNull?
