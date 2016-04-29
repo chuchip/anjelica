@@ -229,7 +229,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2016-03-04" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2016-04-28" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);

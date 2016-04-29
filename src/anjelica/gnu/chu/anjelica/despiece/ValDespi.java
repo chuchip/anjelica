@@ -3,7 +3,7 @@ package gnu.chu.anjelica.despiece;
  *
  * <p>Titulo: ValDespi</p>
  * <p>Descripción: Clase para Valorar y agrupar despieces</p>
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2016
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por

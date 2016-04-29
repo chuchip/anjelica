@@ -6,7 +6,7 @@ package gnu.chu.anjelica.despiece;
  * <p>Descripcion: Serie de Funciones con Utilidades para mant. de Despiece
  * Localiza datos de trazabilidad de  un individuo en particular.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2016
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -295,7 +295,7 @@ public class utildesp
           " and p.acc_nume = " + proLote +
           (proIndi==0?(proCodi!=0?"":" and p.pro_codi = " + proCodi )          
           :" and p.acp_numind = " + proIndi )+
-          (proCodi!=0?"":" and p.pro_cosdi = " + proCodi )+
+          (proCodi!=0?"":" and p.pro_codi = " + proCodi )+
           (almCodi!=0?" and l.alm_codi = "+almCodi:"")+
           " and p.emp_codi = c.emp_codi " +
           " and p.acc_ano = c.acc_ano " +
