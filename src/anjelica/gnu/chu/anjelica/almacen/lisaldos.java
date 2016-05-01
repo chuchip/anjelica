@@ -502,7 +502,6 @@ public class lisaldos   extends ventana  implements JRDataSource
         dtInd.setAlmCodi(rs.getInt("alm_codi"));
         dtInd.setProducto(proCodi);
         dtInd.setEjercLot(rs.getInt("pro_ejelot"));
-        dtInd.setAlmCodi(rs.getInt("alm_codi"));
         dtInd.setSerie(rs.getString("pro_serlot"));
         dtInd.setLote(rs.getInt("pro_numlot"));
         dtInd.setNumind(rs.getInt("pro_indlot"));
@@ -512,7 +511,7 @@ public class lisaldos   extends ventana  implements JRDataSource
             dtInd=listIndiv.get(row);
         dtInd.setCanti((rs.getString("tipmov").equals("=")?0:dtInd.getCanti())+
             rs.getDouble("canti")* (rs.getString("tipmov").equals("S")?-1:1 ));
-         dtInd.setNumuni((rs.getString("tipmov").equals("=")?0:dtInd.getNumuni())+
+        dtInd.setNumuni((rs.getString("tipmov").equals("=")?0:dtInd.getNumuni())+
             rs.getInt("unid")* (rs.getString("tipmov").equals("S")?-1:1 ));
          if (row>=0)
              listIndiv.set(row,dtInd);
