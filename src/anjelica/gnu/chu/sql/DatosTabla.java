@@ -1914,10 +1914,10 @@ private String parseaSelect(boolean forUpdate) throws SQLException
       {
         if (! k.getMessage().contains("not found"))
         {
-        Error = true;
-        MsgError = "getNomCol: Error al buscar nombre de Columna (" + campo+ ") NO encontrada";
-        SqlException = k;
-        throw SqlException;
+            Error = true;
+            MsgError = "getNomCol: Error al buscar nombre de Columna (" + campo+ ") NO encontrada";
+            SqlException = k;
+            throw SqlException;
         }
         else
             nCol=0;

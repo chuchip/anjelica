@@ -1477,11 +1477,11 @@ public class ValDespi extends ventana {
      String fecInicStr=Formatear.getFechaVer(fecInic);
      if (mvtosAlm==null)
      {
-        mvtosAlm=new MvtosAlma();
-        mvtosAlm.setIgnorarDespFecha(true);
-        mvtosAlm.setIncUltFechaInv(true);
+        mvtosAlm=new MvtosAlma();        
+        mvtosAlm.setIncUltFechaInv(false);
         mvtosAlm.setEntornoUsuario(EU);
         mvtosAlm.setIncIniFechaInv(true);
+//        mvtosAlm.setIncluyeHora(true);
      }
      mvtosAlm.setLote(numLote);
 

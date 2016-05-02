@@ -99,6 +99,7 @@ public class menu extends JFrame
   JMenuItem ALclstkdes = new JMenuItem();
   JMenuItem ALclresstock = new JMenuItem();
   JMenuItem ALlisaldos = new JMenuItem();
+  JMenuItem ALCheckMvt = new JMenuItem();
   JMenuItem ALclUbiArt = new JMenuItem();
 
   JMenuItem ALConmvpr = new JMenuItem();
@@ -434,6 +435,7 @@ public class menu extends JFrame
     });
     ALclUbiArt.setText("CL Ubic.Art");
     ALlisaldos.setText("Listado Saldos");
+    ALCheckMvt.setText("Compr.Mvtos/Doc");
     ALConmvpr.setText("Cons.Mvtos");
     ALConmvpr.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -920,6 +922,7 @@ public class menu extends JFrame
     JPopupAlmacen.add(ALclstkdes);
     JPopupAlmacen.add(ALclresstock);
     JPopupAlmacen.add(ALlisaldos);
+    JPopupAlmacen.add(ALCheckMvt);
     JPopupAlmacen.add(ALclUbiArt);
 
      JPopupAlmacen.add(ALConmvpr);
@@ -1188,6 +1191,15 @@ public class menu extends JFrame
         ALlisaldos_actionPerformed(e);
       }
     });
+    ALCheckMvt.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        ALCheckMvt_actionPerformed(e);
+      }
+    });
+
     ALclUbiArt.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -1770,6 +1782,10 @@ void pdreprese_actionPerformed(ActionEvent e) {
   void ALlisaldos_actionPerformed(ActionEvent e) {
       
     lanzaEjecutable(new gnu.chu.anjelica.almacen.lisaldos(menu.this,EU));
+  }
+  void ALCheckMvt_actionPerformed(ActionEvent e) {
+             
+    lanzaEjecutable(new gnu.chu.anjelica.almacen.CheckMvtos(menu.this,EU));
   }
    void ALclUbiArt_actionPerformed(ActionEvent e) {
       

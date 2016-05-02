@@ -66,7 +66,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   private double kgVen,kgCom,kgReg=0;
   private CCheckBox pro_cosincE=new CCheckBox("Inc.Costo");
   MvtosAlma mvtosAlm = new MvtosAlma();
-  boolean valDesp;
+//  boolean valDesp;
   boolean cancelado=false;
   char sel='d';
   PreparedStatement ps;
@@ -103,7 +103,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   proPanel pro_codmvE = new proPanel();
   CTextField fecsalE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CLabel cLabel6 = new CLabel();
-    CCheckBox opValDesp = new CCheckBox();
+    CCheckBox opIgnDespSVal = new CCheckBox();
     private CPanel Ppie = new CPanel();
     private CLabel kilosL = new CLabel();
     private CTextField kilosE = new CTextField(Types.DECIMAL,"--,---,--9.99");
@@ -162,7 +162,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(592, 516));
-    this.setVersion("2015-05-22");
+    this.setVersion("2016-05-02");
     ifMvtos.setSize(new Dimension(475, 325));
     
     ifMvtos.setVisible(false);
@@ -173,13 +173,14 @@ public class lisaldos   extends ventana  implements JRDataSource
     fecsalE.setBounds(new Rectangle(55, 22, 79, 17));
     cLabel6.setBounds(new Rectangle(5, 22, 50, 17));
     cLabel6.setText("En Fecha");
-    opValDesp.setFocusable(false);
-    opValDesp.setBounds(new Rectangle(140, 22, 70, 17));
+    opIgnDespSVal.setSelected(true);
+    opIgnDespSVal.setFocusable(false);
+    opIgnDespSVal.setBounds(new Rectangle(140, 22, 70, 17));
     sbe_codiL.setBounds(new Rectangle(215, 22, 50, 17));
     sbe_codiE.setBounds(new Rectangle(268, 22, 40, 17));
-    opValDesp.setText("Val.Desp.");
-    opValDesp.setMargin(new Insets(0, 0, 0, 0));
-    opValDesp.setToolTipText("Considerar despieces de Salida como entradas en negativo");
+    opIgnDespSVal.setText("Ign.Desp.S/Val");
+    opIgnDespSVal.setMargin(new Insets(0, 0, 0, 0));
+    opIgnDespSVal.setToolTipText("Ignorar Despieces sin valorar para costos");
     cam_codiL.setText("Camara");
     cam_codiL.setBounds(new Rectangle(310, 22, 47, 18));
     cam_codiE.setBounds(new Rectangle(360, 22, 162, 18));
@@ -314,7 +315,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     Pdatcon.add(pro_artconE, null);
     Pdatcon.add(pro_cosincE,null );
     Pdatcon.add(alm_inicE, null);
-    Pdatcon.add(opValDesp, null);
+    Pdatcon.add(opIgnDespSVal, null);
     Pdatcon.add(sbe_codiL, null);
     Pdatcon.add(sbe_codiE, null);
     Pdatcon.add(Baceptar, null);   
@@ -620,7 +621,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   {
     msgEspere("Calculando Saldos...");
     popEspere_BCancelarSetEnabled(true);
-    valDesp=opValDesp.isSelected();
+    
     cancelado=false;
     mensaje("A esperar que estoy  buscando datitos ...");
 //    activar(false);
@@ -628,13 +629,13 @@ public class lisaldos   extends ventana  implements JRDataSource
     {
       mvtosAlm.setUsaDocumentos(false);
       mvtosAlm.setIncUltFechaInv(fecsalE.getText().equals(feulinE.getText()));
-      mvtosAlm.setValorarDesp(valDesp);
+      mvtosAlm.setIgnDespSinValor(opIgnDespSVal.isSelected());
       mvtosAlm.setAlmacen(alm_inicE.getValorInt());
       mvtosAlm.setEntornoUsuario(EU);
       mvtosAlm.setSoloInventario(fecsalE.getText().equals(feulinE.getText()));
 
       if (!alm_inicE.isNull())
-          mvtosAlm.setSerieX(true);
+          mvtosAlm.setIncluyeSerieX(true);
       mvtosAlm.iniciarMvtos(feulin,fecsalE.getText(),dtCon1);
 //      mvtosAlm.setDesglIndiv(true);
       char orden=ordenE.getValor().charAt(0);

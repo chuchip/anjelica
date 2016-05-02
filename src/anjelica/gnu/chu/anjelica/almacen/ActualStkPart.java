@@ -918,8 +918,8 @@ public class ActualStkPart
                 + condProd
                  + " and   mvt_canti <> 0 "            
 //                + (almCodi == 0 ? "" : " and m.alm_codi = " + almCodi)                           
-                + (pro_codi != 0 ? " and pro_codi = " + pro_codi : "")
-               +  (almCodi != 0 ? " and alm_codi = "+almCodi:"")
+                + (pro_codi != 0 ? " and m.pro_codi = " + pro_codi : "")
+                +  (almCodi != 0 ? " and alm_codi = "+almCodi:"")
                 + " AND mvt_time::date > TO_DATE('" + Formatear.getFecha(fecIni,"dd-MM-yyyy") + "','dd-MM-yyyy') "
                 + (fecFin==null?"":" and mvt_time::date <= TO_DATE('" + Formatear.getFecha(fecFin,"dd-MM-yyyy") +
                     "','dd-MM-yyyy') ")+
@@ -954,17 +954,16 @@ public class ActualStkPart
             " alm_codi as alm_codi,  " +
             " r.rgs_kilos as canti, " +                       
             "  rgs_canti as canind  " +
-            " FROM v_regstock r,v_articulo as a " +
+            " FROM v_inventar r,v_articulo as a " +
             " where r.emp_codi in ("+strAccesos+")"+
             " and rgs_kilos <> 0 " +
 //            " and r.rgs_trasp != 0 "+
             (pro_codi == 0 ? "" : " and r.pro_codi = " + pro_codi) +
             (almCodi==0?"":" and alm_codi = " + almCodi) +
-            " and tir_afestk = '=' "+
             " and a.pro_codi = r.pro_codi " +
             condProd +
             " AND r.rgs_fecha::date = TO_DATE('" + Formatear.getFecha(fecinv,"dd-MM-yyyy") + "','dd-MM-yyyy') ";
-    s+= " order by 3"; // Ordenado por producto
+    s+= " order by 3,1"; // Ordenado por producto
     return s;
   }
    public void setVentana(ventana papa)

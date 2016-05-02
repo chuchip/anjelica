@@ -40,6 +40,9 @@ import java.util.HashMap;
  */
 public class MvtosAlma
 {
+  private boolean incluyeHora=false; // Incluir hora a la hora de buscar mvtos.
+
+  
   private boolean swIncSalDep=false;// Incluir Salidas de depositos.
   private boolean swVerSalDep=false;// Ver Salidas de depositos.
   private boolean swIncInvDep=false;// Incluir Inventarios de depositos.
@@ -84,7 +87,7 @@ public class MvtosAlma
   private boolean cancelarConsulta=false;
   private double preStk,canStk;
   private int unSal,uniStk,unEnt,unVent,unCompra,unSalDes, unEntDes,unRegul;
-  private boolean swValDesp=false;
+  private boolean swValDesp=false; // Ignorar para costos entradas a almacen de despieces con precio = 0
   private boolean swIgnDespIgu=false;
   private int almCodi=0;
   private int proNumind=0;
@@ -96,45 +99,45 @@ public class MvtosAlma
 
   private boolean resetCostoStkNeg=true; // Si el stock es negativo, resetea costo.
 
+//  /**
+//   * Indica si debe ignorar para costos los despieces cuyo
+//   * producto de entrada y salida sean iguales.
+//   * Por defecto es false
+//   * @param swIgnDespIgu
+//   * 
+//   */
+//  public void setIgnDespIgu(boolean swIgnDespIg)
+//  {
+//     this.swIgnDespIgu= swIgnDespIg;
+//  }
+//  public boolean getIgnDespIgu()
+//  {
+//     return swIgnDespIgu;
+//  }
+//  /**
+//   * Establece si se debe ignorar en los despieces la fecha superior
+//   * Para cuando se esta valorando los despieces en si, y no se quiere que se autovaloren.
+//   * Actualmente solo usado por el programa de regeneración de costes.
+//   * @param swIgnDespFecha
+//   */
+//  public void setIgnorarDespFecha(boolean swIgnDespFecha)
+//  {
+//    this.swIgnDespFecha=swIgnDespFecha;
+//  }
+//  public boolean getIgnorarDespFecha()
+//  {
+//    return this.swIgnDespFecha;
+//  }
   /**
-   * Indica si debe ignorar para costos los despieces cuyo
-   * producto de entrada y salida sean iguales.
-   * Por defecto es false
-   * @param swIgnDespIgu
-   * 
-   */
-  public void setIgnDespIgu(boolean swIgnDespIg)
-  {
-     this.swIgnDespIgu= swIgnDespIg;
-  }
-  public boolean getIgnDespIgu()
-  {
-     return swIgnDespIgu;
-  }
-  /**
-   * Establece si se debe ignorar en los despieces la fecha superior
-   * Para cuando se esta valorando los despieces en si, y no se quiere que se autovaloren.
-   * Actualmente solo usado por el programa de regeneración de costes.
-   * @param swIgnDespFecha
-   */
-  public void setIgnorarDespFecha(boolean swIgnDespFecha)
-  {
-    this.swIgnDespFecha=swIgnDespFecha;
-  }
-  public boolean getIgnorarDespFecha()
-  {
-    return this.swIgnDespFecha;
-  }
-  /**
-   * Indica si los despieces de entrada deben considerarse como salidas en negativo
+   * Indica si se deben ignorar para costos los mvtos entrada de despiece sin valorar
    * @default false
    * @param valoraDes 
    */
-  public void setValorarDesp(boolean valoraDes)
+  public void setIgnDespSinValor(boolean valoraDes)
   {
       swValDesp=valoraDes;
   }
-  public boolean getValorarDesp()
+  public boolean getIgnDespSinValor()
   {
       return swValDesp;
   }
@@ -143,11 +146,11 @@ public class MvtosAlma
    * donde estan incluidos los traspasos entre almacenes
    * @param serieX true=si
    */
-  public void setSerieX(boolean serieX)
+  public void setIncluyeSerieX(boolean serieX)
   {
       swSerieX=serieX;
   }
-  public boolean getSerieX()
+  public boolean getIncluyeSerieX()
   {
       return swSerieX;
   }
@@ -398,7 +401,7 @@ public class MvtosAlma
             "  pro_serlot as serie,pro_numlot as  lote,"+
             " mvt_canti as canti,mvt_prec as precio,pro_indlot as numind,"+
             " mvt_cliprv as cliCodi,mvt_numdoc  as numalb,pro_ejelot as ejenume, "+           
-            " 1 as empcodi,'0' as pro_codori "+
+            " 1 as empcodi,pro_codi as pro_codori "+
             ", '' as repCodi,'' as zonCodi,0 as sbe_codi, "+
             " mvt_unid as unidades,1 as div_codi,alm_codi,mvt_serdoc as avc_serie,mvt_ejedoc as ejedoc, "+
             " mvt_fecdoc as fecdoc "+
@@ -410,9 +413,11 @@ public class MvtosAlma
             (serieLote==null?"":" and pro_serlot = '"+serieLote+"'")+
             (proLote==0?"":" and pro_numlot  = "+proLote)+
             (proNumind==0?"":" and pro_indlot = "+proNumind)+
-            " AND pro_codi = " + (proCodi==-1?"?":proCodi) +
-            " AND mvt_time::date >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
-            " and mvt_time::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') "; 
+            (!swSerieX?" and mvt_tipdoc !='X'":"")+
+            (proCodi==0?"":" AND pro_codi = " + (proCodi==-1?"?":proCodi)) +
+            " AND mvt_time::date >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+           
+            " and mvt_time::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy"+
+             (incluyeHora?"hh:mm:ss":"")+"') "; 
     }
     if (swIncSalDep && ! swSoloInv)
     {
@@ -423,7 +428,7 @@ public class MvtosAlma
             "  avs_serlot as serie,avs_numpar as  lote,"+
             " avs_canti as canti,0 as precio,avs_numind as numind,"+
             " cli_codi as cliCodi,avc_nume  as numalb,avs_ejelot as ejenume, "+           
-            " 1 as empcodi,0 as pro_codori "+
+            " 1 as empcodi,pro_codi as pro_codori "+
             ", '' as repCodi,'' as zonCodi,0 as sbe_codi, "+
             " avs_numuni as unidades,1 as div_codi, 1 as alm_codi,avc_serie as avc_serie,"
             + "avc_ano as ejedoc, "+
@@ -435,7 +440,7 @@ public class MvtosAlma
             (serieLote==null?"":" and avs_serlot = '"+serieLote+"'")+
             (proLote==0?"":" and avs_numpar  = "+proLote)+
             (proNumind==0?"":" and avs_numind = "+proNumind)+
-            " AND pro_codi = " + (proCodi==-1?"?":proCodi) ;
+            (proCodi==0?"":" AND pro_codi = " + (proCodi==-1?"?":proCodi)) ;
     }
     if (swIncInvDep)
     {
@@ -461,7 +466,7 @@ public class MvtosAlma
            (proNumind==0?"":" and r.pro_numind = "+proNumind)+
            (empCodi==0?"":" and r.emp_codi = "+empCodi)+
            (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
-            " AND r.pro_codi = " + (proCodi==-1?"?":proCodi)  +
+           (proCodi==0?"":" AND r.pro_codi = " + (proCodi==-1?"?":proCodi))  +
             (swSoloInv?" AND r.ind_fecha = TO_DATE('" + fecIni + "','dd-MM-yyyy') ":
             " AND r.ind_fecha >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
             " and r.ind_fecha <"+(incInvFinal?"=":"")+
@@ -491,7 +496,7 @@ public class MvtosAlma
            (proNumind==0?"":" and r.pro_numind = "+proNumind)+
            (empCodi==0?"":" and r.emp_codi = "+empCodi)+
            (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
-            " AND r.pro_codi = " + (proCodi==-1?"?":proCodi)  +
+           (proCodi==0?"":" AND r.pro_codi = " + (proCodi==-1?"?":proCodi))  +
             (swSoloInv?" AND r.rgs_fecha::date = TO_DATE('" + fecIni + "','dd-MM-yyyy') ":
             " AND r.rgs_fecha::date >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
             " and r.rgs_fecha::date <"+(incInvFinal?"=":"")+
@@ -591,14 +596,14 @@ public class MvtosAlma
         " left join  clientes as cl on cl.cli_codi = c.cli_codi "+
          condAlb+
          (almCodi!=0 && swSerieX?" AND (alm_codori="+almCodi+" or alm_coddes="+almCodi+")":"")+
-         (almCodi!=0 && ! swSerieX ?" and c.alm_codi = "+almCodi: "")+
+         (almCodi!=0 && ! swSerieX ?" and c.alm_coddes = "+almCodi: "")+
         // Si no se deben incluir los traspasos, quito los albaranes de serie X
         (! swSerieX?" and c.avc_serie != 'X'":"");
 
       sql+=" UNION all "+ // Cabecera de despieces (Salidas de almacen)
-        " select 2 as orden,'DS' as sel,'"+
-         (swValDesp?"+":"-")+"' as tipmov ,"+
-         " deo_tiempo as fecmov,"+
+        " select 2 as orden,'DS' as sel,"+
+        " '-' as tipmov ,"+
+        " deo_tiempo as fecmov,"+
         "  deo_serlot as serie,pro_lote as  lote,"+
         " deo_kilos as canti,deo_prcost as precio,pro_numind as numind,"+
         " 0 as cliCodi,deo_codi as numalb,deo_ejelot as ejeNume," +
@@ -607,9 +612,9 @@ public class MvtosAlma
         ", 1 as unidades,1 as div_codi,deo_almori as alm_codi,'.' as avc_serie,eje_nume as ejedoc "+
         ", deo_fecha as fecdoc "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
-        " from  v_despori where "+
-        (proCodi==0?"":"  pro_codi = " + (proCodi==-1?"?":proCodi))  +
-        " and deo_kilos <> 0 "+ 
+        " from  v_despori where "+        
+        "  deo_kilos <> 0 "+ 
+        (proCodi==0?"":" and pro_codi = " + (proCodi==-1?"?":proCodi))  +
         (almCodi==0?"":" and deo_almori = "+almCodi)+
         (proLote==0?"":" and pro_lote  = "+proLote)+
         (proNumind==0?"":" and pro_numind = "+proNumind)+
@@ -625,7 +630,7 @@ public class MvtosAlma
        "  l.def_serlot as serie,l.pro_lote as  lote,"+
        " l.def_kilos as canti,l.def_prcost as precio,l.pro_numind as numind,"+
        " 0 as cliCodi,l.deo_codi  as numalb,l.def_ejelot as ejenume, "+
-       " l.def_emplot as empcodi,0 as pro_codori "+
+       " l.def_emplot as empcodi,l.pro_codi as pro_codori "+
        ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
        ", l.def_numpie as unidades,1 as div_codi,alm_codi,'.' as avc_serie,c.eje_nume as ejedoc "+
        ", deo_fecha as fecdoc "+
@@ -829,6 +834,14 @@ public class MvtosAlma
        } while (dt.next());
        return !(kgEnt==0 && kgSal==0);
   }
+  
+    public boolean isIncluyeHora() {
+        return incluyeHora;
+    }
+
+    public void setIncluyeHora(boolean incluyeHora) {
+        this.incluyeHora = incluyeHora;
+    }
   /**
    * Define la cadena para limitar accesos a las empresas.
    * @param acessoEmp
@@ -1092,7 +1105,7 @@ public class MvtosAlma
   public boolean calculaMvtos(ResultSet rs,DatosTabla dt,DatosTabla dtStat,Cgrid jt,String zonCodi,
        String repCodi,int proCodi) throws SQLException
   {
-    boolean ignDesp;
+//    boolean ignDesp;
     boolean swErr=true;
     String tipMov;
     String cliNomb;
@@ -1135,7 +1148,7 @@ public class MvtosAlma
     {
         if (cancelarConsulta)
            return false;
-        swTraspAlm=false;
+        swTraspAlm=false; // No es traspasos entre almacenes
         canti = 0;
         unid=0;
         precio =preStk;
@@ -1147,6 +1160,7 @@ public class MvtosAlma
             if  (tipMov.equals("S"))
                 tipMov="-";
         }
+        boolean avcSerieX=dt.getString("avc_serie").equals("X");
         sel=dt.getString("sel").charAt(0);
         if (dt.getString("sel").equals("DE"))
           sel='d';
@@ -1185,36 +1199,21 @@ public class MvtosAlma
             }
             if (sel=='V') 
             {
-                if (dt.getString("avc_serie").equals("X"))
-                { // Traspaso entre almacenes
-                    if (almCodi == 0 ||  (swUsaDocumentos?dt.getInt("alm_coddes")!=almCodi:true))
-                        swTraspAlm=true;
-                }
-                else 
+                if ( !avcSerieX && swIncAcum)              
                 { // Albaran de Abono
-                   if (swIncAcum)
-                   {
                     kgVen -= dt.getDouble("canti");
                     impVenta -= dt.getDouble("canti", true) * dt.getDouble("precio", true);
                     unVent -= dt.getDouble("unidades");
-                   }  
                 }
             }
             
-            if (!swTraspAlm)
+            if (!avcSerieX || almCodi!=0) // No es serie X o trata un solo almacen
             {
-              if (swIncAcum)
-              {
-                kgEnt+=dt.getDouble("canti"); // Ignoramos los Inventarios
+                kgEnt+=dt.getDouble("canti");
                 unEnt+=dt.getInt("unidades");
                 impEnt+=dt.getDouble("precio")*dt.getDouble("canti");
-              }
             }
-            if (sel=='V' && dt.getString("avc_serie").equals("X"))
-            { // Traspaso entre almacenes
-                if (almCodi == 0 ||  (swUsaDocumentos?dt.getInt("alm_coddes")!=almCodi:dt.getInt("alm_codi")!=almCodi))
-                    swTraspAlm=true;
-            }
+           
         }
         if (sel=='R' && ! tipMov.equals("="))
         {
@@ -1252,56 +1251,64 @@ public class MvtosAlma
             else
               tipMov = "+";
         }
-
+        swPas1=false;
+        if (avcSerieX && almCodi==0)
+        {// No influye en stock
+              canti=canStk;
+              precio=preStk;
+              unid=uniStk;    
+              swPas1=true;
+        }
         if (tipMov.equals("+") )
-        { 
+        { // Trato entradas a almacen
           kg=dt.getDouble("canti");
           cantiInd+=dt.getDouble("canti");
-          cj=dt.getInt("unidades");
-          if (sel=='D')
-          {
-            kg = kg * -1;
-            cj = cj * -1;
-          }
-          swPas1=false;
-          if (swTraspAlm)
-          {
-             canti = canStk ;
-             unid = uniStk ;
-             swPas1=true;
-          }
-          else
-          {
-            canti = canStk + kg;
-            unid = uniStk + cj;
-          }
+          cj=dt.getInt("unidades");         
           
+//          if ( avcSerieX)
+//          {
+//             canti = canStk ;
+//             unid = uniStk ;
+//             swPas1=true;
+//          }
+//          else
+//          {
+//            canti = canStk + kg;
+//            unid = uniStk + cj;
+//          }
+//        
+        
           if (sel=='d')
-          { // Despiece de salida (Entrada a almacen)            
-            ignDesp=false;
-            if (deoCodiLim!=0 && dt.getInt("numalb")==deoCodiLim)
-                ignDesp=true;
-            swPas1=ignDesp;
-            if (swIgnDespFecha && Formatear.comparaFechas(dt.getDate("fecmov"), dateFin)>=0)
-                swPas1=true;
-            if (! swPas1  && ((dt.getInt("pro_codori") == proCodi &&  ! swValDesp && swIgnDespIgu) ||
-                dt.getDouble("precio") == 0))
-            {
-               if (dt.getDouble("precio") == 0)
-               {
-                   msgLog+="Despiece de entrada ignorado por tener Precio 0 " +
-                         ":  Fecha: " + dt.getFecha("fecmov")+" Prod: "+ proCodi+" \n";
-                   msgDesp+="Fecha "+dt.getFecha("fecmov")+" Kilos: "+kg+"\n";
-                   swDespNoValor=true;
-               }
-               else
-                   msgLog+="Despiece de entrada ignorado por tener mismo prod. entrada y salida " +
-                         ":  Fecha: " + dt.getFecha("fecmov")+" Prod: "+ proCodi+" \n";
-              swPas1=true; // Marco para que pase de tener en cuenta este mvto. para precio
-            }
+          { // Despiece de salida (Entrada a almacen) 
+             if (dt.getDouble("precio") == 0 && swValDesp )
+                 swPas1=true; // Ignorar despiece
+            
+//            ignDesp=false;
+//            if (deoCodiLim!=0 && dt.getInt("numalb")==deoCodiLim)
+//                ignDesp=true;
+//            swPas1=ignDesp;
+//            if (swIgnDespFecha && Formatear.comparaFechas(dt.getDate("fecmov"), dateFin)>=0)
+//                swPas1=true;
+//            if (! swPas1  && ((dt.getInt("pro_codori") == proCodi &&  ! swValDesp && swIgnDespIgu) ||
+//                dt.getDouble("precio") == 0))
+//            {
+//               if (dt.getDouble("precio") == 0)
+//               {
+//                   msgLog+="Despiece de entrada ignorado por tener Precio 0 " +
+//                         ":  Fecha: " + dt.getFecha("fecmov")+" Prod: "+ proCodi+" \n";
+//                   msgDesp+="Fecha "+dt.getFecha("fecmov")+" Kilos: "+kg+"\n";
+//                   swDespNoValor=true;
+//               }
+//               else
+//                   msgLog+="Despiece de entrada ignorado por tener mismo prod. entrada y salida " +
+//                         ":  Fecha: " + dt.getFecha("fecmov")+" Prod: "+ proCodi+" \n";
+//              swPas1=true; // Marco para que pase de tener en cuenta este mvto. para precio
+//            }
           }
           if (swPas1==false)
           {
+              canti = canStk + kg;
+              unid = uniStk + cj;
               if ((canStk < -0.1 || canti < -0.1 ) && resetCostoStkNeg )
               { // Cant. anterior y/o actual en Negativo
 //                 if (sel!='R')
@@ -1337,7 +1344,7 @@ public class MvtosAlma
             }
         }
 
-        if (tipMov.equals("-"))
+        if (tipMov.equals("-")&& !swPas1)
         { // Es una salida, traspaso entre almacenes o Regularizacion
             if (swDiscr)
             {
@@ -1409,16 +1416,13 @@ public class MvtosAlma
                     if (almCodi!=0 && dt.getInt("alm_coddes")!=almCodi && dt.getInt("alm_codori")!=almCodi )
                         continue; // No lo trato.
                   }
-                  else
-                  {
-                    if (almCodi!=0 && dt.getInt("alm_codi")!=almCodi)  
-                         continue; // No lo trato.
-                  }
-                  if (dt.getString("avc_serie").equals("X"))
-                  { // Traspaso entre almacenes
-                    swTraspAlm=true;
-                  }
-                  if (!swTraspAlm )
+//                  else
+//                  { // Redudante. Si almacen no es cero, siempre sera igual (por select)
+//                    if (almCodi!=0 && dt.getInt("alm_codi")!=almCodi)  
+//                         continue; // No lo trato.
+//                  }
+                 
+                  if (!avcSerieX )
                   {
                     if (swIncAcum)
                     {
@@ -1445,45 +1449,20 @@ public class MvtosAlma
               }
             }
           }
-          if (swTraspAlm && almCodi==0)
-          {// No influye en stock
-              canti=canStk;
-              preStk=precio;
-              unid=uniStk;          
-          }
-          else
+          if (!swPas1)
           {
-               if (swTraspAlm)
+               if (almCodi!=0 && avcSerieX && swUsaDocumentos && dt.getInt("alm_coddes")==almCodi )
                {
-                   if (swUsaDocumentos)
-                   {
-                        if (almCodi != 0 && dt.getInt("alm_coddes")==almCodi)
-                        {
-                          canti = canStk + dt.getDouble("canti",true);
-                          unid = uniStk +  dt.getInt("unidades");
-                        }
-                        else
-                        {
-                            canti = canStk - dt.getDouble("canti",true);
-                            unid = uniStk - dt.getInt("unidades");
-                        }
-                   }
-                   else
-                   {
-                        if (almCodi != 0 && dt.getInt("alm_codi")==almCodi)
-                        {
-                          canti = canStk - dt.getDouble("canti",true);
-                          unid = uniStk - dt.getInt("unidades");
-                        }
-                   }
+                    canti = canStk + dt.getDouble("canti",true);
+                    unid = uniStk +  dt.getInt("unidades");
                }
                else
-               {
-                 canti = canStk - dt.getDouble("canti",true);
-                 unid = uniStk - dt.getInt("unidades");
+               {                        
+                    canti = canStk - dt.getDouble("canti",true);
+                    unid = uniStk - dt.getInt("unidades");
                }
-          }
-         }
+           }
+         } // Fin de negativo
          if (swDesglInd)
             ht.put(ref, cantiInd);
         preStk=precio;
@@ -1521,9 +1500,9 @@ public class MvtosAlma
       
         if (jt!=null && !swIgnVenta)
         {  // Meter datos para cuando la consulta es en pantalla y detallada en un grid
-          if (swTraspAlm && ! swSerieX )
+          if (dt.getString("avc_serie").equals("X") && ! swSerieX )
               continue;
-          if (sel == 'V'&& !swTraspAlm  && ! swVerVenta)
+          if (sel == 'V'&& ! swVerVenta)
             continue;
           if (sel=='C' && ! swVerCompra)
             continue;
@@ -1566,7 +1545,7 @@ public class MvtosAlma
           }
           else
           {
-             if(swTraspAlm)
+             if(dt.getString("avc_serie").equals("X"))
                  v.add("TA");
              else
                 v.add(dt.getString("sel"));

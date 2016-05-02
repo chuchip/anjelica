@@ -60,7 +60,6 @@ public class Comvalm extends ventana
   String fecMov=null;
   int almCodi;
   //boolean acepNeg=false; // Aceptar Negativos (por defecto false)
-  boolean valDesp=false;  // Valorar despieces 
   final int JT_TIPO=3;
   final int JT_DOCUM=9;
   final int JT_FECDOC=10;
@@ -140,7 +139,7 @@ public class Comvalm extends ventana
   {
       iniciarFrame();
 
-      this.setVersion("2016-04-24");
+      this.setVersion("2016-05-02");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -562,8 +561,8 @@ public class Comvalm extends ventana
     mvtosAlm.setDesglIndiv(pro_numindE.getValorInt()>0);
     mvtosAlm.setAlmacen(almCodi);
   
-    mvtosAlm.setSerieX(opTrasp.isSelected());
-    mvtosAlm.setValorarDesp(valDesp);
+    mvtosAlm.setIncluyeSerieX(opTrasp.isSelected());
+    mvtosAlm.setIgnDespSinValor(true);
     mvtosAlm.setVerRegul(opRegul.isSelected());
     mvtosAlm.setVerVenta(opVentas.isSelected());
     mvtosAlm.setVerCompra(opCompras.isSelected());

@@ -351,7 +351,7 @@ public class RegCosDes extends ventana {
                 mvtosAlm.setResetCostoStkNeg(true); 
                 mvtosAlm.setIncIniFechaInv(true);
             }
-            mvtosAlm.setIgnorarDespFecha(false);       
+             
             mvtosAlm.setUsaDocumentos(false);            
             mvtosAlm.iniciarMvtos(fecinvE.getText(), dtAdd);                      
             
