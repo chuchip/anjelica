@@ -21,11 +21,9 @@ import java.util.Objects;
  * </p>
  * @author jpuente.ext
  */
-public class DatIndiv 
+public class DatIndiv extends DatIndivBase
 {
-    public double canti;
-    public int numuni,proCodi,ejeNume,lote,numind,almCodi;
-    public String serie;
+   
     private String auxiliar;
     int posFin;
     private int numLinea;
@@ -38,72 +36,7 @@ public class DatIndiv
         this.numLinea = numLinea;
     }
     
-    public int getNumuni() {
-        return numuni;
-    }
-
-    public void setNumuni(int numuni) {
-        this.numuni = numuni;
-    }
-
-    public int getProducto() {
-        return proCodi;
-    }
-
-    public void setProducto(int proCodi) {
-        this.proCodi = proCodi;
-    }
-
-
-
-    public int getEjercLot() {
-        return ejeNume;
-    }
-
-    public void setEjercLot(int ejeNume) {
-        this.ejeNume = ejeNume;
-    }
-
-    public int getLote() {
-        return lote;
-    }
-
-    public void setLote(int lote) {
-        this.lote = lote;
-    }
-
-    public int getNumind() {
-        return numind;
-    }
-
-    public void setNumind(int numind) {
-        this.numind = numind;
-    }
-
-    public int getAlmCodi() {
-        return almCodi;
-    }
-
-    public void setAlmCodi(int almCodi) {
-        this.almCodi = almCodi;
-    }
-
-    public String getSerie() {
-        return serie;
-    }
-
-    public void setSerie(String serie) {
-        this.serie = serie;
-    }
     
-    public void setCanti(double canti)
-    {
-        this.canti=canti;
-    }
-    public double getCanti()
-    {
-        return canti;
-    }
     public String getAuxiliar()
     {
         return auxiliar;
@@ -131,52 +64,15 @@ public class DatIndiv
        numind=Integer.parseInt(getCampoLlave(key, posFin));
        almCodi=Integer.parseInt(getCampoLlave(key, posFin));
     }
-    private String getCampoLlave(String llave, int posIni)
-  {
-    posFin = llave.indexOf("|", posIni);
-    if (posFin < 0)
-      return llave.substring(posIni);
-    else
-      return llave.substring(posIni, posFin++);
-  }
     
-    @Override
-  public boolean equals(Object obj) {
-      if ( obj instanceof  DatIndiv )
-      {
-          if (((DatIndiv)obj).getProducto()==getProducto() &&
-              ((DatIndiv)obj).getEjercLot()==getEjercLot() &&
-              ((DatIndiv)obj).getLote()==getLote() && 
-              ((DatIndiv)obj).getSerie().equals(getSerie()) &&
-              ((DatIndiv)obj).getNumind()==getNumind() && 
-              ((DatIndiv)obj).getAlmCodi()==getAlmCodi())
-              return true;
-      }
-      return false;
-      
-  }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 89 * hash + this.numuni;
-        hash = 89 * hash + this.proCodi;
-        hash = 89 * hash + this.ejeNume;
-        hash = 89 * hash + this.lote;
-        hash = 89 * hash + this.numind;
-        hash = 89 * hash + this.almCodi;
-        hash = 89 * hash + Objects.hashCode(this.serie);
-        return hash;
+    private String getCampoLlave(String llave, int posIni)
+    {
+        posFin = llave.indexOf("|", posIni);
+        if (posFin < 0)
+          return llave.substring(posIni);
+        else
+          return llave.substring(posIni, posFin++);
     }
-
-   
-    @Override
-  public String toString()
-  {
-          return getAlmCodi()+" "+getProducto() + 
-              getEjercLot()+ 
-              getSerie() +
-              getLote() +"-"+ 
-              getNumind();
-  }
+    
+  
 }

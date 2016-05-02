@@ -539,7 +539,7 @@ public class MvtosAlma
         (proLote==0?"":" and c.acc_nume = "+proLote)+
         (ejercLote==0?"":" and c.acc_ano = "+ejercLote)+
         (serieLote==null?"":" and c.acc_serie = '"+serieLote+"'")+
-        " AND l.pro_codi = "+(proCodi==-1?"?":proCodi) +
+        (proCodi==0?"":" AND l.pro_codi = "+(proCodi==-1?"?":proCodi)) +
         " AND c.acc_fecrec >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
         " and c.acc_fecrec <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
       else
@@ -560,7 +560,7 @@ public class MvtosAlma
         (proLote==0?"":" and c.acc_nume = "+proLote)+
         (ejercLote==0?"":" and c.acc_ano = "+ejercLote)+
         (serieLote==null?"":" and c.acc_serie = '"+serieLote+"'")+
-        " AND c.pro_codi = "+(proCodi==-1?"?":proCodi) +
+        (proCodi==0?"":" AND c.pro_codi = "+(proCodi==-1?"?":proCodi))+
         " AND c.acc_fecrec >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
         " and c.acc_fecrec <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
     sql+=" UNION all"; // Albaranes de Venta
@@ -570,7 +570,7 @@ public class MvtosAlma
           (ejercLote==0?"":" and c.avp_ejelot = "+ejercLote)+
           (serieLote==null?"":" and c.avp_serlot = '"+serieLote+"'")+
           (empCodi==0?"":" and c.emp_codi = "+empCodi)+
-          " AND pro_codi = "+(proCodi==-1?"?":proCodi) +
+          (proCodi==0?"":" AND pro_codi = "+(proCodi==-1?"?":proCodi)) +
           (swFecDocumento?
                  " AND avc_fecalb >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
                  " and avc_fecalb <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ":    
@@ -583,7 +583,8 @@ public class MvtosAlma
         " c.cli_codi as cliCodi,avc_nume as numalb, "+
         " avp_ejelot as ejeNume,avp_emplot as empcodi,pro_codi as pro_codori, "+
         " rep_codi as repCodi,zon_codi as zonCodi "+
-        ",c.sbe_codi, avp_numuni as unidades, c.div_codi,c.alm_codori as alm_codi,avc_serie,avc_ano as ejedoc "+
+        ",c.sbe_codi, avp_numuni as unidades, c.div_codi,c.alm_codori as alm_codi,"
+        + "avc_serie,avc_ano as ejedoc "+
         ", avc_fecalb as fecdoc "+
         ", alm_codori, alm_coddes,avc_depos "+
         "  from  v_albventa_detalle as c "+
@@ -607,7 +608,7 @@ public class MvtosAlma
         ", deo_fecha as fecdoc "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
         " from  v_despori where "+
-        "  pro_codi = " + (proCodi==-1?"?":proCodi)  +
+        (proCodi==0?"":"  pro_codi = " + (proCodi==-1?"?":proCodi))  +
         " and deo_kilos <> 0 "+ 
         (almCodi==0?"":" and deo_almori = "+almCodi)+
         (proLote==0?"":" and pro_lote  = "+proLote)+
@@ -639,7 +640,7 @@ public class MvtosAlma
        (ejercLote==0?"":" and def_ejelot = "+ejercLote)+
        (serieLote==null?"":" and def_serlot = '"+serieLote+"'")+
 //       (empCodi==0?"":" and c.emp_codi = "+empCodi)+
-       " AND l.pro_codi = " + (proCodi==-1?"?":proCodi)  +
+       (proCodi==0?"":" AND l.pro_codi = " + (proCodi==-1?"?":proCodi))  +
         " and "+(swFecDocumento?"  deo_fecha ":
           " l.def_tiempo::date ")+
        " between TO_DATE('" + fecIni + "','dd-MM-yyyy') and TO_DATE('"+fecFin+"','dd-MM-yyyy') ";   
@@ -665,7 +666,7 @@ public class MvtosAlma
         (serieLote==null?"":" and pro_serie = '"+serieLote+"'")+
         (empCodi==0?"":" and r.emp_codi = "+empCodi)+
         (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
-         " AND r.pro_codi = " + (proCodi==-1?"?":proCodi)  +
+        (proCodi==0?"":" AND r.pro_codi = " + (proCodi==-1?"?":proCodi))  +
          " AND r.rgs_fecha::date >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
          " and r.rgs_fecha::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy') ";
 
@@ -700,7 +701,7 @@ public class MvtosAlma
            (serieLote==null?"":" and pro_serie = '"+serieLote+"'")+
            (empCodi==0?"":" and r.emp_codi = "+empCodi)+
            (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
-            " AND r.pro_codi = " + (proCodi==-1?"?":proCodi)  +
+           (proCodi==0?"":" AND r.pro_codi = " + (proCodi==-1?"?":proCodi))  +
             (swSoloInv?" AND r.rgs_fecha::date = TO_DATE('" + fecIni + "','dd-MM-yyyy') ":
             " AND r.rgs_fecha::date >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
             " and r.rgs_fecha::date <"+(incInvFinal?"=":"")+
