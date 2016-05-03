@@ -680,18 +680,18 @@ constraint ix_albavel primary key (avc_ano,emp_codi,avc_nume,avc_serie,avl_numli
 create index ix_albavel2 on anjelica.v_albavel (pro_codi,avc_cerra);
 create index ix_albavel3 on anjelica.v_albavel (avl_fecalt);
 
---drop view anjelica.v_albventa;
+drop view anjelica.v_albventa;
 create view anjelica.v_albventa as select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,
 cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
 avc_basimp,avc_kilos,avc_unid,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
 avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,
 tar_preci,avl_unid,
-avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes 
+avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,avl_dtolin 
 from v_albavel as l, v_albavec as c 
 where c.emp_codi=l.emp_codi and c.avc_ano=l.avc_ano and c.avc_serie=l.avc_serie 
 and c.avc_nume=l.avc_nume;
-grant select on anjelica.v_albventa_detalle to public;
+grant select on anjelica.v_albventa to public;
 
 --
 -- Tabla Historico Lineas de Albaranes de Ventas

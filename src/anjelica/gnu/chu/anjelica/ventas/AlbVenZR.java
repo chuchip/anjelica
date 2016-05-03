@@ -317,7 +317,7 @@ public class AlbVenZR extends ventana {
   String s;
 
   s="select  c.cli_codi,cl.cli_nomb,count(distinct c.avc_nume) as cuantos,"+
-      " sum(avl_canti) as avl_canti,sum(avl_canti*avl_prven)  as  importe "+
+      " sum(avl_canti) as avl_canti,sum(avl_canti*avl_prven)  as  importe,0 as impGana,0 as porcGana "+
       " from v_albventa as c,clientes cl,v_articulo as a"+
        (grupo=='F'?", v_famipro as f ":"")+
        (grupo=='G'?", v_agupro as g,grufampro as gf ":"") +

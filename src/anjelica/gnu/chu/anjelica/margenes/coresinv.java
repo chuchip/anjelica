@@ -66,6 +66,7 @@ public class coresinv extends ventana
   Cgrid jt = new Cgrid(11);
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   CCheckBox opCong = new CCheckBox();
+  CCheckBox opIncTodo = new CCheckBox("Inc.Todo");
 
   public coresinv(EntornoUsuario eu, Principal p)
   {
@@ -110,13 +111,13 @@ public class coresinv extends ventana
   {
     iniciarFrame();
     this.setSize(new Dimension(515, 538));
-    this.setVersion("2011-07-11");
+    this.setVersion("2016-05-03");
     statusBar = new StatusBar(this);
     conecta();
     Pentdat.setBorder(BorderFactory.createLoweredBevelBorder());
-    Pentdat.setMaximumSize(new Dimension(479, 53));
-    Pentdat.setMinimumSize(new Dimension(479, 53));
-    Pentdat.setPreferredSize(new Dimension(479, 53));
+    Pentdat.setMaximumSize(new Dimension(500, 53));
+    Pentdat.setMinimumSize(new Dimension(500, 53));
+    Pentdat.setPreferredSize(new Dimension(500, 53));
     Pentdat.setLayout(null);
     jt.setMaximumSize(new Dimension(471, 288));
     jt.setMinimumSize(new Dimension(471, 288));
@@ -137,6 +138,9 @@ public class coresinv extends ventana
     kgComprasE.setEditable(false);
     kgInviniE.setEditable(false);
     kgInvfinE.setEditable(false);
+    pro_codiE.setBounds(new Rectangle(60, 25, 271, 20));
+    opIncTodo.setToolTipText("Incluir productos NO vendibles");
+    opIncTodo.setBounds(new Rectangle(335, 25, 85, 18));
     Presul.add(cLabel2, null);
     Presul.add(impVentasE, null);
     Presul.add(cLabel12, null);
@@ -163,10 +167,11 @@ public class coresinv extends ventana
     Pentdat.add(fecfinE, null);
     Pentdat.add(cLabel4, null);
     Pentdat.add(opCong, null);
-
+    Pentdat.add(opIncTodo, null);
     Pprinc.setLayout(gridBagLayout1);
-    pro_codiE.setBounds(new Rectangle(60, 25, 321, 20));
-    Vector v=new Vector();
+   
+    
+    ArrayList v=new ArrayList();
     v.add("Ref."); // 0
     v.add("Nombre"); // 1
     v.add("Imp.Ventas"); //2
@@ -212,7 +217,7 @@ public class coresinv extends ventana
     cLabel8.setBounds(new Rectangle(138, 63, 57, 20));
     gananE.setEditable(false);
     gananE.setBounds(new Rectangle(200, 63, 100, 18));
-    Baceptar.setBounds(new Rectangle(390, 23, 85, 23));
+    Baceptar.setBounds(new Rectangle(420, 23, 85, 23));
     Baceptar.setText("Aceptar");
     kgVentasE.setText("");
     kgVentasE.setBounds(new Rectangle(161, 22, 74, 18));
@@ -287,6 +292,7 @@ public class coresinv extends ventana
   void activarEventos()
   {
     Baceptar.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         if (Baceptar.getText().equals("Cancelar"))
         {
@@ -329,7 +335,8 @@ public class coresinv extends ventana
     {
       Presul.resetTexto();
       s = "select a.* from v_articulo as a  " +
-          "  where a.pro_tiplot='V' " +
+          "  where 1=1  "+
+          (opIncTodo.isSelected()?"": " and a.pro_tiplot='V' ") +
           ( !opCong.isSelected() ? " and a.pro_artcon = 0 " : "") +
           (pro_codiE.isNull() ? "" : " and pro_codi = " + pro_codiE.getValorInt()) +
           " ORDER BY pro_codi ";
@@ -410,7 +417,7 @@ public class coresinv extends ventana
         dtCon1.select(s);
         impInvFinP = dtCon1.getDouble("importe", true);
         kgInvFinP = dtCon1.getDouble("kilos", true);
-        if (kgInvFinP+kgInvIniP+kgComP+kgVen!=0)
+        if (kgInvFinP+kgInvIniP+kgComP+kgVen+impVen!=0)
         {
           ArrayList v=new ArrayList();
           v.add(dtStat.getString("pro_codi"));
@@ -468,6 +475,7 @@ public class coresinv extends ventana
   {
     fecfinE.setEnabled(enab);
     feciniE.setEnabled(enab);
+    opIncTodo.setEnabled(enab);
     opCong.setEnabled(enab);
     pro_codiE.setEnabled(enab);
     statusBar.setEnabled(enab);

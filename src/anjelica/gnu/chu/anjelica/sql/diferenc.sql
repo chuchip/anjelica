@@ -1,3 +1,5 @@
+-- Puesta linea precio oferta de albaran a not null.
+alter table anjelica.v_albavel alter avl_profer set not  null;
 -- Añadido campo kilos originales en v_albvenpar
 alter table anjelica.v_albvenpar rename avp_tiplot to avp_canori;
 alter table anjelica.v_albvenpar ALTER avp_canori type decimal(9,3) USING 0;
