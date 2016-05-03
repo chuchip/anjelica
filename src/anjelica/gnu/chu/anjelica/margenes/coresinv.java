@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.SwingConstants;
@@ -347,10 +348,9 @@ public class coresinv extends ventana
       double kgComP,impComP,kgInvIniP,impInvIniP,kgInvFinP,impInvFinP,ganaP;
       double kgVenT=0,impVenT=0,kgComT=0,impComT=0,kgInvIniT=0;
       double impInvIniT=0,kgInvFinT=0,impInvFinT=0,ganaT=0;
-      double kgVen = 0;
-      double impVen = 0;
-      double prVen = 0;
-
+      double kgVen;
+      double impVen;
+      
       jt.setEnabled(false);
       jt.panelG.setVisible(false);
       jt.removeAllDatos();
@@ -361,40 +361,15 @@ public class coresinv extends ventana
         kgComP=0;impComP=0;kgInvIniP=0;impInvIniP=0;
         kgInvFinP=0;impInvFinP=0;
 
-        s = "select c.avc_fecalb,c.avc_dtopp,l.* " +
-            " from v_albavec as c,v_albavel as l " +
-            " where c.avc_fecalb >= TO_DATE('" + feciniE.getText() +
-            "','dd-MM-yyyy') " +
-            " and c.avc_fecalb <= TO_DATE('" + fecfinE.getText() +
-            "','dd-MM-yyyy') " +
-            " and c.avc_serie >= 'A' AND c.avc_serie <='C' " +
-            " and l.emp_codi = c.emp_codi " +
-            " and c.avc_ano = l.avc_ano " +
-            " and l.avc_serie = c.avc_serie " +
-            " and c.avc_nume = l.avc_nume" +
-            " AND l.pro_codi = " + dtStat.getInt("pro_codi");
-//        debug(s);
-        kgVen = 0;
-        impVen = 0;
-        prVen = 0;
+        s = "select sum(avl_canti) as canti, sum(avl_canti*avl_prbase) as importe from v_albventa " +
+            " where avc_fecalb >= TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy') " +
+            " and avc_fecalb <= TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') " +
+            " and avc_serie != 'X' " +
+            " AND pro_codi = " + dtStat.getInt("pro_codi");
 
-//    rs=st.executeQuery(s);
-        if (dtCon1.select(s))
-        {
-
-          do
-          {
-            prVen = dtCon1.getDouble("avl_prven");
-            if (dtCon1.getDouble("avl_dtolin") != 0)
-              prVen -= prVen * (dtCon1.getDouble("avl_dtolin") / 100);
-            if (dtCon1.getDouble("avc_dtopp") != 0)
-              prVen -= prVen * (dtCon1.getDouble("avc_dtopp") / 100);
-
-            kgVen += dtCon1.getDouble("avl_canti");
-            impVen += dtCon1.getDouble("avl_canti") * prVen;
-          }
-          while (dtCon1.next());
-        }
+        dtCon1.select(s);
+        kgVen = dtCon1.getDouble("canti",true);       
+        impVen = dtCon1.getDouble("importe",true);                  
 
         s = "SELECT sum(acl_canti) as acl_canti, " +
             " sum(acl_canti*acl_prcom) as acl_prcom from v_albacoc c,v_albacol l,v_articulo p,v_proveedo pv  " +
@@ -404,10 +379,8 @@ public class coresinv extends ventana
             " and c.acc_nume = l.acc_nume " +
             " and p.pro_codi = l.pro_codi" +
             " and c.prv_codi = pv.prv_codi " +
-            "and c.acc_fecrec >= TO_DATE('" + feciniE.getText() +
-            "','dd-MM-yyyy')" +
-            " AND c.acc_fecrec <= TO_DATE('" + fecfinE.getText() +
-            "','dd-MM-yyyy') " +
+            "and c.acc_fecrec >= TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy')" +
+            " AND c.acc_fecrec <= TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') " +
             " and L.pro_codi = " + dtStat.getInt("pro_codi");
         dtCon1.select(s);
         impComP=dtCon1.getDouble("acl_prcom", true);
@@ -439,19 +412,19 @@ public class coresinv extends ventana
         kgInvFinP = dtCon1.getDouble("kilos", true);
         if (kgInvFinP+kgInvIniP+kgComP+kgVen!=0)
         {
-          Vector v=new Vector();
-          v.addElement(dtStat.getString("pro_codi"));
-          v.addElement(dtStat.getString("pro_nomb"));
-          v.addElement(Formatear.format(impVen,"--,---,--9.9"));
-          v.addElement(Formatear.format(kgVen,"----,--9.9"));
-          v.addElement(Formatear.format(impComP,"--,---,--9.9"));
-          v.addElement(Formatear.format(kgComP,"----,--9.9"));
-          v.addElement(Formatear.format(impInvIniP,"--,---,--9.9"));
-          v.addElement(Formatear.format(kgInvIniP,"----,--9.9"));
-          v.addElement(Formatear.format(impInvFinP,"--,---,--9.9"));
-          v.addElement(Formatear.format(kgInvFinP,"----,--9.9"));
+          ArrayList v=new ArrayList();
+          v.add(dtStat.getString("pro_codi"));
+          v.add(dtStat.getString("pro_nomb"));
+          v.add(Formatear.format(impVen,"--,---,--9.9"));
+          v.add(Formatear.format(kgVen,"----,--9.9"));
+          v.add(Formatear.format(impComP,"--,---,--9.9"));
+          v.add(Formatear.format(kgComP,"----,--9.9"));
+          v.add(Formatear.format(impInvIniP,"--,---,--9.9"));
+          v.add(Formatear.format(kgInvIniP,"----,--9.9"));
+          v.add(Formatear.format(impInvFinP,"--,---,--9.9"));
+          v.add(Formatear.format(kgInvFinP,"----,--9.9"));
           ganaP=(impVen- impComP) + (impInvFinP-impInvIniP);
-          v.addElement(Formatear.format(ganaP,"----,--9.9"));
+          v.add(Formatear.format(ganaP,"----,--9.9"));
           jt.addLinea(v);
           impVenT+=impVen;
           kgVenT+=kgVen;
