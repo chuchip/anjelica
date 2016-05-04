@@ -227,7 +227,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     v1.add("Precio");// 5
     jtMv.setCabecera(v1);
     jtMv.setAjustarGrid(true);
-    jtMv.setAnchoColumna(new int[]{70,50,80,70,80,70,70});
+    jtMv.setAnchoColumna(new int[]{90,50,80,70,80,70,70});
     jtMv.setAlinearColumna(new int[]{1,1,2,2,2,2,2});
     
     jtMv.setFormatoColumna(2,"---,--9.99");
@@ -555,7 +555,7 @@ public class lisaldos   extends ventana  implements JRDataSource
           do
           {
               v.clear();
-              v.add(dtCon1.getFecha("fecmov","dd-MM-yy"));
+              v.add(dtCon1.getFecha("fecmov","dd-MM-yy HH:mm"));
               switch (dtCon1.getString("tipmov"))
               {
                   case "=":
@@ -854,7 +854,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     
     if (ps==null)
     {
-       s="SELECT  mvt_tipdoc as sel, mvt_tipo as tipmov,mvt_fecdoc as fecmov, alm_codi, pro_codi,"
+       s="SELECT  mvt_tipdoc as sel, mvt_tipo as tipmov,mvt_time as fecmov, alm_codi, pro_codi,"
            + "pro_ejelot,pro_serlot,pro_numlot,pro_indlot,"+
             " "+        
             " mvt_canti as canti,mvt_prec as precio "+
