@@ -73,8 +73,7 @@ public class CLinvcong extends ventana
       if (ht != null)
       {
         if (ht.get("verCostos") != null)
-          PARAM_VERCOSTOS = Boolean.valueOf(ht.get("verCostos").toString()).
-              booleanValue();
+          PARAM_VERCOSTOS = Boolean.valueOf(ht.get("verCostos").toString());
       }
       if (jf.gestor.apuntar(this))
         jbInit();
@@ -82,8 +81,7 @@ public class CLinvcong extends ventana
         setErrorInit(true);
     }
     catch (Exception e)
-    {
-       Logger.getLogger(CLinvcong.class.getName()).log(Level.SEVERE, null, e);
+    {      
       setErrorInit(true);
     }
   }
@@ -108,8 +106,7 @@ public class CLinvcong extends ventana
       jbInit();
     }
     catch (Exception e)
-    {
-      Logger.getLogger(CLinvcong.class.getName()).log(Level.SEVERE, null, e);
+    {      
       setErrorInit(true);
     }
   }
@@ -639,7 +636,7 @@ public class CLinvcong extends ventana
               
                 if (proCodi!=dtCon1.getInt("pro_codi") )
                 {
-                    actualizaMsg("Cargando datos de consulta. Producto: "+proCodi,false);
+                    setMensajePopEspere("Cargando datos de consulta. Producto: "+proCodi,false);
                     if (nProd>1 || opSoloTot.isSelected())
                         datos.add(addSubTotal());
                     nProd=0;

@@ -147,7 +147,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2015-01-20" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2016-05-05" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -918,10 +918,10 @@ public class ValDespi extends ventana {
                boolean res;
                if (jtCab.isEnabled()) {
                    res = buscaStock(fecDesp, fecInv,
-                           jtCab.getValorInt(JTCAB_PROCODI), 0);
+                           jtCab.getValorInt(JTCAB_PROCODI), jtDesp.getValorInt(JTDES_NUMDES));
                } else {
                    res = buscaStock(fecDesp, fecInv,
-                           jtLin.getValorInt(JTLIN_PROCODI), 0);
+                           jtLin.getValorInt(JTLIN_PROCODI), jtDesp.getValorInt(JTDES_NUMDES));
                }
                if (res) {
                    if (mvtosAlm.getEntradaSinValor()) {
@@ -1243,7 +1243,7 @@ public class ValDespi extends ventana {
             } 
             boolean res = buscaStock(fecDesp, fecInv,
                                      jtCab.getValorInt(n, JTCAB_PROCODI),
-                                     0);
+                                     jtDesp.getValorInt(JTDES_NUMDES));
             if (res)
             {
                if (mvtosAlm.getEntradaSinValor())
@@ -1479,17 +1479,23 @@ public class ValDespi extends ventana {
      {
         mvtosAlm=new MvtosAlma();        
         mvtosAlm.setIncUltFechaInv(false);
+        mvtosAlm.setIgnDespSinValor(true);
         mvtosAlm.setEntornoUsuario(EU);
         mvtosAlm.setIncIniFechaInv(true);
 //        mvtosAlm.setIncluyeHora(true);
      }
-     mvtosAlm.setLote(numLote);
+     mvtosAlm.setLote(0);
 
      mvtosAlm.resetAcumulados();
      mvtosAlm.resetMensajes();
      s=mvtosAlm.getSqlMvt(fecInicStr, fecStockStr, proCodi );
     
      boolean ret=mvtosAlm.calculaMvtos( dtAdd,null, s,null,null,null,proCodi);
+     if (mvtosAlm.getCompraSinValor())
+         msgBox("Encontradas compras sin precio."+
+             mvtosAlm.getMsgCompra()+
+              " Revise costos");         
+     
      if (ret)
      {
         cantiAcu=mvtosAlm.getKilosStock();
