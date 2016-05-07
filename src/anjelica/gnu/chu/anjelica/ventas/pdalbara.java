@@ -675,7 +675,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-04-23" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-05-07" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -2489,17 +2489,30 @@ public class pdalbara extends ventanaPad  implements PAD  {
     int nRow = jt.getRowCount();
     // Actualizo las Linea de Albaran.
     try {
-    for (int n = 0; n < nRow; n++)
-    {
-      if (jt.getValorDec(n,FD_PRECIO)!=0 || jt.getValorDec(n,FD_PRTARI)==0)
-          continue;
-   //   avl_prvenE.setValorDec(jt.getValorDec(n,FD_PRTARI));
-      jt.setValor(""+jt.getValorDec(n,FD_PRTARI),n,FD_PRECIO);
-      actPrecioAlb(n,jt.getValorDec(n,FD_PRTARI));
-    }
-    if (jt.isEnabled())
-        jt.ponValores(jt.getSelectedRow());
-    mensaje("Precios de Albaran actualizados a los de Tarifa");
+        double prTari;
+        for (int n = 0; n < nRow; n++)
+        {
+            prTari = MantTarifa.getPrecTar(dtStat, jt.getValorInt(n, JT_PROCODI),
+                tar_codiE.getValorInt(), avc_fecalbE.getText());
+            jt.setValor(prTari, n, FD_PRTARI);
+
+            if (avl_prvenE.isEditable() && avl_prvenE.isEnabled() && jt.isEnabled())
+            {
+                if (jt.getValorDec(n, FD_PRECIO) == 0)
+                    jt.setValor(jt.getValorDec(n, FD_PRTARI), n, FD_PRECIO);
+                actPrecioAlb(n, jt.getValorDec(n, FD_PRTARI));
+            } else
+            {
+                String condWhere = getCondWhereActAlb(n);
+                s = "UPDATE  V_albavel set tar_preci =  " + prTari
+                    + condWhere;
+                stUp.executeUpdate(dtAdd.getStrSelect(s));
+            }
+        }
+        if (jt.isEnabled())
+            jt.ponValores(jt.getSelectedRow());
+        mensaje("Precios de Albaran actualizados a los de Tarifa");
+        dtAdd.commit();
     } catch (Exception k)
     {
         Error("Error al poner Precios de Tarifa a Precio de albaran",k);
@@ -3481,8 +3494,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
               v.add(""+Formatear.redondea(dtCon1.getDouble("avl_prven",true),NUMDECPRECIO));
               if (dtCon1.getDouble("tar_preci")==0)
               { // Si no tiene precio tarifa guardado en el alb. pongo el precio de tarifa estandard
-                v.add(""+
-                  MantTarifa.getPrecTar(dtStat,dtCon1.getInt("pro_codi"), tar_codiE.getValorInt(), avc_fecalbE.getText()));
+                v.add(MantTarifa.getPrecTar(dtStat,dtCon1.getInt("pro_codi"), tar_codiE.getValorInt(), avc_fecalbE.getText()));
               }
               else
                 v.add(dtCon1.getString("tar_preci"));
@@ -4850,7 +4862,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
             " and avl_numpal = "+jt.getValorInt(row,JT_NUMPALE);
   }
   /**
-   * Actualiza precio de albaran en una linea
+   * Actualiza precio de albaran en una linea poniendo el precio mandado
+   * @param precio precio a poner
    * @param row
    */
   void actPrecioAlb(int row,double precio) throws SQLException
@@ -4981,15 +4994,15 @@ public class pdalbara extends ventanaPad  implements PAD  {
       }
       if (precio == 0 && !verPrecios) // Si el precio es 0 
       { // Intento poner el precio de Tarifa en Modo Automatico
-        prTari=getPrecioPedido(jt.getValorInt(n, 1),dtStat);
-        if (prTari==0) // Si no existe el precio en el pedido, lo busco en la tarifa
+        double prPedido=getPrecioPedido(jt.getValorInt(n, 1),dtStat);
+        if (prPedido==0) // Si no existe el precio en el pedido, lo busco en la tarifa
         {
             prTari = MantTarifa.getPrecTar(dtStat,jt.getValorInt(n, 1), tar_codiE.getValorInt(), avc_fecalbE.getText());
             if (avc_revpreE.getValorInt()==0)
                  precio=prTari;
         }
         else
-            precio=prTari;
+            precio=prPedido;
       }
       if (avl_prvenE.getValorDec() == 0 && dtAdd.getDouble("avl_prven") != 0)
       {

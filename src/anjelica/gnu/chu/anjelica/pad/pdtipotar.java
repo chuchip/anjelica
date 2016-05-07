@@ -15,7 +15,7 @@ import gnu.chu.sql.DatosTabla;
  * <p>Titulo:   pdtipotar </p>
  * <p>Descripción: Mantenimiento de Tipos de Tarifas </p>
  * <p>Empresa: miCasa</p>
- *  <p>Copyright: Copyright (c) 2005-2012
+ *  <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -103,7 +103,7 @@ public class pdtipotar extends ventanaPad implements PAD
     {
       iniciar(502, 522);
       this.setSize(new Dimension(507, 237));
-      this.setVersion("2012-07-19");
+      this.setVersion("2016-05-07");
       strSql = "SELECT * FROM tipotari" +
           " order by tar_codi";
 
@@ -448,8 +448,15 @@ public class pdtipotar extends ventanaPad implements PAD
          return false;
        }
        if (tar_codoriE.getValorInt()==0)
-         return true;  // No depende de otra tarifa.
-
+       {
+            if (tar_incpreE.getValorDec()!=0)
+            {
+               mensajeErr("Si no tiene tarifa padre, no puede tener importe a Incrementar");
+               tar_incpreE.requestFocus();
+               return false; 
+            }
+            return true;  // No depende de otra tarifa.
+       }
        if (getNombTarifa(tar_codoriE.getValorInt(),false)==null)
        {
          mensajeErr("Código Tarifa Original NO existe");
@@ -468,6 +475,7 @@ public class pdtipotar extends ventanaPad implements PAD
          tar_incpreE.requestFocus();
          return false;
        }
+      
        return true;
      }
      /**

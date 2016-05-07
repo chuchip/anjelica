@@ -6,7 +6,6 @@ import gnu.chu.anjelica.pad.MantTarifa;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.ventas.MantPrAlb;
 import gnu.chu.anjelica.ventas.pdalbara;
-import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.eventos.CambioEvent;
 import gnu.chu.eventos.CambioListener;
@@ -14,6 +13,7 @@ import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.conexion;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -27,8 +27,6 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRException;
@@ -47,7 +45,7 @@ import net.sf.jasperreports.engine.JasperReport;
  * puestos, dando la opción de actualizarlos.
  * Created on 03-dic-2009, 22:41:09
  *
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -122,7 +120,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2016-04-26" + ARG_ZONAREP);
+        this.setVersion("2016-05-07" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -173,10 +171,16 @@ public class CLVenRep extends ventana {
                       consultaSinTarifa();
                       break;
                   case "A":
-                      actualTarifa();
+                      actualTarifa(false);
+                      break;
+                  case "A!":
+                      actualTarifa(true);
                       break;
                   case "P":
-                      actualPrecioMin();
+                      actualPrecioMin(false);
+                      break;
+                   case "P!":
+                      actualPrecioMin(true);
                       break;
                   default:
                    consultar(indice.equals("S"));
@@ -216,9 +220,10 @@ public class CLVenRep extends ventana {
     }
      /**
       * Actualiza las tarifas
+      * @param Forzar actualizar tarifa aunque ya tenga precios.
       * @throws SQLException
       */
-    void actualTarifa() 
+    void actualTarifa(boolean swForzar) 
     {
         try {
             if (!checkCond()) 
@@ -231,7 +236,7 @@ public class CLVenRep extends ventana {
                 + " and a.avc_ano = l.avc_ano  "
                 + " and a.avc_serie = l.avc_serie "
                 + " and a.avc_nume = l.avc_nume "//               
-                + " and l.tar_preci = 0"
+                +(swForzar?"": " and l.tar_preci = 0")
                 + " and  cl.cli_codi = a.cli_codi"
                 + " group by tar_codi,avc_fecalb, pro_codi";
         if (!dtCon1.select(s)) {
@@ -277,15 +282,20 @@ public class CLVenRep extends ventana {
        
     }
     
-    void actualPrecioMin() 
+    void actualPrecioMin(boolean swForzar) 
     {
         try {
             if (!checkCond()) 
                 return;
-            
+            if (swForzar)
+            {
+                int ret=mensajes.mensajePreguntar("Seguro que desea sobreescribir TODOS los precios minimos?");
+                if (ret!=mensajes.YES)
+                    return;
+            }
             s = "update v_albavel set avl_profer=tar_preci "
                 + " WHERE  tar_preci>0 "
-                + " and avl_profer < 0"                 
+                +(swForzar?"": " and avl_profer < 0" )               
                 + " and  emp_codi = " + emp_codiE.getValorInt()+
                   " and exists (select  from v_albavec as a,clientes as cl  where " +                      
                         " a.emp_codi = " + emp_codiE.getValorInt()
@@ -796,7 +806,9 @@ public class CLVenRep extends ventana {
     if (ARG_MODIF)
     {
         Baceptar.addMenu("Act. Precio Min","P");
+        Baceptar.addMenu("Forzar Act. Precio Min","P!");
         Baceptar.addMenu("Act. Tarifa","A");
+        Baceptar.addMenu("Forzar Act. Tarifa","A!");
     }
     Baceptar.addMenu("Sin Tarifa","T");
     Baceptar.addMenu("Imprimir","I");

@@ -216,7 +216,7 @@
                 <Property name="text" type="java.lang.String" value="Elegir"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Baceptar.addMenu(&quot;Consultar&quot;,&quot;C&quot;);&#xa;Baceptar.addMenu(&quot;Cons.Sin Precio&quot;,&quot;S&quot;);&#xa;&#xa;if (ARG_MODIF)&#xa;{        &#xa;    Baceptar.addMenu(&quot;Act. Precio Min&quot;,&quot;P&quot;);&#xa;    Baceptar.addMenu(&quot;Act. Tarifa&quot;,&quot;A&quot;);&#xa;}&#xa;Baceptar.addMenu(&quot;Sin Tarifa&quot;,&quot;T&quot;);&#xa;Baceptar.addMenu(&quot;Imprimir&quot;,&quot;I&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Baceptar.addMenu(&quot;Consultar&quot;,&quot;C&quot;);&#xa;Baceptar.addMenu(&quot;Cons.Sin Precio&quot;,&quot;S&quot;);&#xa;&#xa;if (ARG_MODIF)&#xa;{        &#xa;    Baceptar.addMenu(&quot;Act. Precio Min&quot;,&quot;P&quot;);&#xa;    Baceptar.addMenu(&quot;Forzar Act. Precio Min&quot;,&quot;P!&quot;);&#xa;    Baceptar.addMenu(&quot;Act. Tarifa&quot;,&quot;A&quot;);&#xa;    Baceptar.addMenu(&quot;Forzar Act. Tarifa&quot;,&quot;A!&quot;);&#xa;}&#xa;Baceptar.addMenu(&quot;Sin Tarifa&quot;,&quot;T&quot;);&#xa;Baceptar.addMenu(&quot;Imprimir&quot;,&quot;I&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
