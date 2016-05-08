@@ -1829,97 +1829,103 @@ public class ManAlbRuta extends ventanaPad implements PAD
   }
   void imprimir_facturas()
   {
-      try {
-     if (dtCons.getNOREG())
-     {
-       mensajeErr("NO HAY REGISTROS ACTIVOS");
-       return;
-     }
-     
-     String s="select f.*,c.cli_codi,c.cli_nomb,f.fvc_fecfra from v_cobruta f,clientes c "+
-         " WHERE alr_nume = "+alr_numeE.getValorInt()+
-         " and c.cli_codi = f.cli_codi "+
-         " order by cru_orden";
-     dtCon1.setStrSelect(s);
-     ResultSet rs=ct.createStatement().executeQuery(dtCon1.getStrSelect());
+      try
+      {
+          mensaje("Espere, por favor... Generando listado");
+          if (dtCons.getNOREG())
+          {
+              mensajeErr("NO HAY REGISTROS ACTIVOS");
+              return;
+          }
 
-     JasperReport jr= gnu.chu.print.util.getJasperReport(EU, "cacobrea");
-     java.util.HashMap mp = new java.util.HashMap();
-     mp.put("cor_fecha", alr_fechaE.getText());
-     mp.put("usu_nomb", tra_codiE.getText());
-     mp.put("zon_codi", rut_codiE.getText()+"-"+rut_codiE.getTextCombo());
-     mp.put("cor_orden", alr_numeE.getText());
+          String s = "select f.*,c.cli_codi,c.cli_nomb,f.fvc_fecfra from v_cobruta f,clientes c "
+              + " WHERE alr_nume = " + alr_numeE.getValorInt()
+              + " and c.cli_codi = f.cli_codi "
+              + " order by cru_orden";
+          dtCon1.setStrSelect(s);
+          ResultSet rs = ct.createStatement().executeQuery(dtCon1.getStrSelect());
 
-     JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
+          JasperReport jr = gnu.chu.print.util.getJasperReport(EU, "cacobrea");
+          java.util.HashMap mp = new java.util.HashMap();
+          mp.put("cor_fecha", alr_fechaE.getText());
+          mp.put("usu_nomb", tra_codiE.getText());
+          mp.put("zon_codi", rut_codiE.getText() + "-" + rut_codiE.getTextCombo());
+          mp.put("cor_orden", alr_numeE.getText());
 
-//     JasperViewer.viewReport(jp,false);
-    gnu.chu.print.util.printJasper(jp, EU);
-
-   } catch (SQLException | JRException | PrinterException k)
-   {
-     Error("Error al generar Listado",k);
-   }
-  }
-  void imprimir_albaranes()
-  {
-      try {
-     if (dtCons.getNOREG())
-     {
-       mensajeErr("NO HAY REGISTROS ACTIVOS");
-       return;
-     }
-     
-     String s="select l.*,cl.cli_nomb,cl.cli_poble from v_albruta as l "
-                 + " left join v_cliente as cl "+
-                " on l.cli_codi = cl.cli_codi where alr_nume ="+dtCons.getInt("alr_nume")+
-                 " order by alr_orden";
-     dtCon1.setStrSelect(s);
-     ResultSet rs=ct.createStatement().executeQuery(dtCon1.getStrSelect());
-
-     JasperReport jr= gnu.chu.print.util.getJasperReport(EU, "relAlbRuta");
-     java.util.HashMap mp = new java.util.HashMap();
-     mp.put("cor_fecha", alr_fechaE.getText());
-     mp.put("usu_nomb", tra_codiE.getText());
-     mp.put("zon_codi", rut_codiE.getText()+"-"+rut_codiE.getTextCombo());
-     mp.put("cor_orden", alr_numeE.getText());
-
-     JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
+          JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
 
 //     JasperViewer.viewReport(jp,false);
-    gnu.chu.print.util.printJasper(jp, EU);
-
-   } catch (SQLException | JRException | PrinterException k)
-   {
-     Error("Error al generar Listado",k);
-   }
+          gnu.chu.print.util.printJasper(jp, EU);
+          mensaje("");
+          mensajeErr("Listado Generado");
+      } catch (SQLException | JRException | PrinterException k)
+      {
+          Error("Error al generar Listado", k);
+      }
   }
-  void imprimir_albaranes_ext()
-  {
-      try {
-        if (dtCons.getNOREG())
+    void imprimir_albaranes() {
+        try
         {
-          mensajeErr("NO HAY REGISTROS ACTIVOS");
-          return;
+            mensaje("Espere, por favor... Generando listado");
+            if (dtCons.getNOREG())
+            {
+                mensajeErr("NO HAY REGISTROS ACTIVOS");
+                return;
+            }
+
+            String s = "select l.*,cl.cli_nomb,cl.cli_poble from v_albruta as l "
+                + " left join v_cliente as cl "
+                + " on l.cli_codi = cl.cli_codi where alr_nume =" + dtCons.getInt("alr_nume")
+                + " order by alr_orden";
+            dtCon1.setStrSelect(s);
+            ResultSet rs = ct.createStatement().executeQuery(dtCon1.getStrSelect());
+
+            JasperReport jr = gnu.chu.print.util.getJasperReport(EU, "relAlbRuta");
+            java.util.HashMap mp = new java.util.HashMap();
+            mp.put("cor_fecha", alr_fechaE.getText());
+            mp.put("usu_nomb", tra_codiE.getText());
+            mp.put("zon_codi", rut_codiE.getText() + "-" + rut_codiE.getTextCombo());
+            mp.put("cor_orden", alr_numeE.getText());
+
+            JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
+
+//     JasperViewer.viewReport(jp,false);
+            gnu.chu.print.util.printJasper(jp, EU);
+            mensaje("");
+            mensajeErr("Listado Generado");
+        } catch (SQLException | JRException | PrinterException k)
+        {
+            Error("Error al generar Listado", k);
         }
+    }
 
+    void imprimir_albaranes_ext() {
+        try
+        {
+            mensaje("Espere, por favor... Generando listado");
+            if (dtCons.getNOREG())
+            {
+                mensajeErr("NO HAY REGISTROS ACTIVOS");
+                return;
+            }
 
+            JasperReport jr = gnu.chu.print.util.getJasperReport(EU, "relAlbRutaExt");
+            java.util.HashMap mp = new java.util.HashMap();
+            mp.put("cor_fecha", alr_fechaE.getText());
+            mp.put("usu_nomb", tra_codiE.getText());
+            mp.put("zon_codi", rut_codiE.getText() + "-" + rut_codiE.getTextCombo());
+            mp.put("cor_orden", alr_numeE.getValorInt());
+            mp.put("emp_codi", EU.em_cod);
 
-        JasperReport jr= gnu.chu.print.util.getJasperReport(EU, "relAlbRutaExt");
-        java.util.HashMap mp = new java.util.HashMap();
-        mp.put("cor_fecha", alr_fechaE.getText());
-        mp.put("usu_nomb", tra_codiE.getText());
-        mp.put("zon_codi", rut_codiE.getText()+"-"+rut_codiE.getTextCombo());
-        mp.put("cor_orden", alr_numeE.getValorInt());
-        mp.put("emp_codi", EU.em_cod);
+            JasperPrint jp = JasperFillManager.fillReport(jr, mp, ct);
 
-        JasperPrint jp = JasperFillManager.fillReport(jr, mp, ct);
-
-   //     JasperViewer.viewReport(jp,false);
-       gnu.chu.print.util.printJasper(jp, EU);
-
-   } catch ( JRException | PrinterException k)
-   {
-     Error("Error al generar Listado",k);
-   }
-  }
+            //     JasperViewer.viewReport(jp,false);
+            gnu.chu.print.util.printJasper(jp, EU);
+            mensaje("");
+            mensajeErr("Listado Generado");
+        } catch (JRException | PrinterException k)
+        {
+            Error("Error al generar Listado", k);
+        }
+    }
 }

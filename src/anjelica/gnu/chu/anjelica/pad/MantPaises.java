@@ -3,7 +3,7 @@ package gnu.chu.anjelica.pad;
  *
  * <p>Titulo: MantPaises  </p>
  * <p>Descripción: Mantenimiento Paises</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia P�blica General de GNU seg�n es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -42,6 +42,7 @@ public class MantPaises extends   ventanaPad  implements PAD
 {
     boolean modConsulta=false;
     String s;
+    public final static int PAI_ESPANA=11;
    
     public MantPaises(EntornoUsuario eu, Principal p) {
         this(eu, p, null);
@@ -58,8 +59,7 @@ public class MantPaises extends   ventanaPad  implements PAD
             if (ht != null)
             {
                 if (ht.get("modConsulta") != null)
-                    modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-                        booleanValue();
+                    modConsulta = Boolean.valueOf(ht.get("modConsulta").toString());
             }
             setTitulo("Mantenimiento Paises");
             if (jf.gestor.apuntar(this))
@@ -83,8 +83,7 @@ public class MantPaises extends   ventanaPad  implements PAD
             {
                 if (ht.get("modConsulta") != null)
                 {
-                    modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-                        booleanValue();
+                    modConsulta = Boolean.valueOf(ht.get("modConsulta").toString());
                 }
             }
             setTitulo("Mantenimiento Paises");
@@ -101,7 +100,7 @@ public class MantPaises extends   ventanaPad  implements PAD
         iniciarFrame();
         this.setResizable(false);
 
-        this.setVersion("2012-01-10" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2016-05-08" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM paises  "
             + " ORDER BY pai_codi ";
 
@@ -529,6 +528,13 @@ public class MantPaises extends   ventanaPad  implements PAD
  public void PADDelete(){
      try
      {
+       if (pai_codiE.getValorInt()== EU.getLikeUsuario().getInt("pai_codi"))
+       {
+           msgBox("Pais de empresa NO se puede BORRAR");
+           nav.pulsado=navegador.NINGUNO;
+           activaTodo();
+           return;
+       }
        if (! lockRegistro())
            return;
      }
@@ -562,6 +568,7 @@ public class MantPaises extends   ventanaPad  implements PAD
      mensajeErr("Registro ... Borrado");
  }
 
+    @Override
  public void canc_delete(){
    mensaje("");
    try

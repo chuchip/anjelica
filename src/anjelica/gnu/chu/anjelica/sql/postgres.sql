@@ -9,7 +9,7 @@
 -- drop table gridajuste;
 create schema anjelica;
 create table anjelica.prov_espana(
- cop_codi integer not null,
+ cop_codi varchar(2) not null,
  cop_nombre varchar(30) not NULL,
  constraint ix_prov_espana primary  key (cop_codi)
 );
@@ -246,7 +246,7 @@ cli_nomb varchar(40), -- Nombre
 cli_nomco varchar(50), -- Nombre Comercial
 cli_direc varchar(50), -- Direccion
 cli_pobl varchar(30), -- Poblaccion
-cli_codpo int, -- Cod. Postal
+cli_codpo varchar(8), -- Cod. Postal
 cli_telef varchar(25), -- Telefono
 cli_fax varchar(15), -- Fax
 cli_nif varchar(15), -- NIF
@@ -255,7 +255,7 @@ cli_telcon varchar(15), -- Telefono Contacto
 cli_nomen varchar(50), -- Nombre Envio
 cli_diree varchar(50), -- Direccion Entrega
 cli_poble varchar(30), -- Poblacion Entrega
-cli_codpoe int,        -- Cod. Postal Envio
+cli_codpoe varchar(8),        -- Cod. Postal Envio
 cli_telefe varchar(15), -- Telefono Envio
 cli_faxe varchar(15),	 -- Fax de Envio
 cli_horenv varchar(50), -- Horario de Envio
@@ -1906,7 +1906,7 @@ create table anjelica.empresa
  emp_nomb varchar(40),	 -- Nombre de Empresa
  emp_dire varchar(40),	 -- Direccion Empresa
  emp_pobl varchar(30),	 -- Poblacion Empresa
- emp_codpo int,	    	 -- Codigo Postal
+ emp_codpo varchar(15),	    	 -- Codigo Postal
  emp_telef varchar(15),	 -- Telefono
  emp_fax varchar(15),	 -- FAX
  emp_nif varchar(12),	 -- NIF
@@ -1934,8 +1934,8 @@ create table anjelica.empresa
  emp_dirweb varchar(100), -- Direccion web de la empresa 
  primary key (emp_codi)
 );
-INSERT INTO empresa VALUES (1, 'Anjelica, S.L.', 'C/ SOFTWARE LIBRE', 'LOGRO�O', 26006, '555-12345', '555-54321', 'Z12345', 91, NULL, '', '12345/LO', '0', 11, '', '', '', '', 'S.L. FOR PRESIDENT', '', '', '', 16, 26, 1, 1, '', '', '');
-CREATE or replace VIEW v_empresa as select emp_codi,emp_nomb ,	 -- Nombre de Empresa
+INSERT INTO anjelica.empresa VALUES (1, 'Anjelica, S.L.', 'C/ SOFTWARE LIBRE', 'LOGRO�O', 26006, '555-12345', '555-54321', 'Z12345', 91, NULL, '', '12345/LO', '0', 11, '', '', '', '', 'S.L. FOR PRESIDENT', '', '', '', 16, 26, 1, 1, '', '', '');
+CREATE or replace VIEW anjelica.v_empresa as select emp_codi,emp_nomb ,	 -- Nombre de Empresa
  emp_dire,	 -- Direccion Empresa
  emp_pobl,	 -- Poblacion Empresa
  emp_codpo ,	    	 -- Codigo Postal
@@ -1962,8 +1962,8 @@ CREATE or replace VIEW v_empresa as select emp_codi,emp_nomb ,	 -- Nombre de Emp
  emp_regmer , -- Registro Mercantil
  emp_dirweb , -- Direccion web de la empresa 
  cop_nombre as emp_nomprv
- from empresa left join   prov_espana on emp_codpo / 1000 = cop_codi;
- grant select on v_albruta to public;
+ from anjelica.empresa left join   anjelica.prov_espana on substring(emp_codpo from 1 for 2)  = cop_codi;
+ grant select on anjelica.v_empresa to public;
 --
 -- Numeraciones
 --

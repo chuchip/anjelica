@@ -26,7 +26,7 @@ import javax.swing.event.*;
  * <p>Título: pdclien</p>
  * <p>Descripción: Mantenimiento de la Tabla de Clientes. Los cambios los guarda en
  * la tabla cliencamb </p>
-* <p>Copyright: Copyright (c) 2005-2014
+* <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -58,7 +58,7 @@ public class pdclien extends ventanaPad implements PAD
     CLabel cli_zonrepL = new CLabel();
     CTextField cli_poblE = new CTextField(Types.CHAR, "X", 30);
     CTextField cli_telconE = new CTextField(Types.CHAR, "X", 15);
-    CTextField cli_codpoE = new CTextField(Types.DECIMAL, "#99999");
+    CTextField cli_codpoE = new CTextField(Types.CHAR, "X",8);
     CLabel cLabel1 = new CLabel();
     CLabel cLabel35 = new CLabel();
     CLabel cLabel3 = new CLabel();
@@ -94,7 +94,7 @@ public class pdclien extends ventanaPad implements PAD
     cliPanel cli_codfaE = new cliPanel();
     CLabel cli_nomenL = new CLabel();
     CTextField cli_nomenE = new CTextField(Types.CHAR, "X", 50);
-    CTextField cli_codpoeE = new CTextField(Types.DECIMAL, "#99999");
+    CTextField cli_codpoeE = new CTextField(Types.CHAR, "X",8);
     CLabel cli_codpoeL = new CLabel();
     CPanel Pboton = new CPanel();
     CLabel cli_tipfacL = new CLabel();
@@ -312,7 +312,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2016-04-19");
+      this.setVersion("2016-05-08");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -419,7 +419,8 @@ public class pdclien extends ventanaPad implements PAD
       cli_telconE.setBounds(new Rectangle(65, 61, 129, 17));
       cli_activE.setBounds(new Rectangle(615, 61, 53, 17));
       cLabel10.setBounds(new Rectangle(564, 61, 42, 17));
-      cli_codpoE.setBounds(new Rectangle(65, 42, 50, 16));
+      cli_codpoE.setMayusc(true);
+      cli_codpoE.setBounds(new Rectangle(65, 42, 120, 16));
       cLabel33.setBounds(new Rectangle(1, 42, 61, 16));
       cLabel5.setBounds(new Rectangle(262, 42, 32, 16));
       cli_telefE.setBounds(new Rectangle(294, 42, 189, 16));
@@ -456,7 +457,8 @@ public class pdclien extends ventanaPad implements PAD
       cli_direeE.setBounds(new Rectangle(86, 52, 311, 17));
       cli_pobleL.setBounds(new Rectangle(8, 31, 59, 17));
       cli_pobleE.setBounds(new Rectangle(86, 31, 227, 17));
-      cli_codpoeE.setBounds(new Rectangle(453, 31, 50, 17));
+      cli_codpoeE.setMayusc(true);
+      cli_codpoeE.setBounds(new Rectangle(453, 31, 120, 17));
       cli_nomenE.setBounds(new Rectangle(86, 10, 417, 17));
       cLabel15.setText("Pais");
       cLabel15.setBounds(new Rectangle(0, 305, 35, 18));
@@ -1339,6 +1341,7 @@ public class pdclien extends ventanaPad implements PAD
     nav.pulsado=navegador.NINGUNO;
   }
 
+    @Override
   public boolean checkEdit()
   {
     try
@@ -1368,12 +1371,18 @@ public class pdclien extends ventanaPad implements PAD
       cli_poblE.requestFocus();
       return false;
     }
-    if (cli_codpoE.getValorInt()==0)
+  
+    if (!checkCodPostal(cli_codpoE.getText()))
     {
-      mensajeErr("Introduzca COdigo Postal del Cliente");
-      cli_codpoE.requestFocus();
-      return false;
+        cli_codpoE.requestFocus();
+        return false;
     }
+    if (!checkCodPostal(cli_codpoeE.getText()))
+    {
+        cli_codpoeE.requestFocus();
+        return false;
+    }
+        
     if (cli_direcE.isNull())
     {
       mensajeErr("Introduzca Direccion del Cliente");
@@ -1509,14 +1518,43 @@ public class pdclien extends ventanaPad implements PAD
         cli_comenT.requestFocus();
         return false;
       }
-    } catch (Exception k)
+    } catch (SQLException | ParseException | NumberFormatException k)
     {
       Error("Error al Controlar Campos",k);
     }
 
     return true;
   }
-
+  boolean checkCodPostal(String codPostal) throws SQLException
+  {
+      if (codPostal.trim().equals(""))
+      {
+          mensajeErr("Introduzca Codigo Postal del Cliente");
+          return false;
+      }
+      if (pai_codiE.getValorInt() == MantPaises.PAI_ESPANA)
+      {
+          if (!Formatear.isNumeric(codPostal))
+          {
+              mensajeErr("Codigo postal para España debe ser numerico");
+              return false;
+          } else
+          {
+              if (codPostal.length() != 5)
+              {
+                  mensajeErr("Codigo postal para España debe ser de cinco caracteres");
+                  return false;
+              }
+          }
+          s="SELECT * from  prov_espana where cop_codi='"+codPostal.substring(0,2)+"'";
+          if (!dtStat.select(s))
+          {
+              mensajeErr("Provincia NO valida para ese codigo postal");
+              return false;
+          }
+      }
+      return true;
+  }
     @Override
   public void ej_edit1()
   {
@@ -1636,7 +1674,7 @@ public class pdclien extends ventanaPad implements PAD
     dtAdd.setDato("cli_nomen",cli_nomenE.getText());
     dtAdd.setDato("cli_diree",cli_direeE.getText());
     dtAdd.setDato("cli_poble",cli_pobleE.getText());
-    dtAdd.setDato("cli_codpoe",cli_codpoeE.getValorInt());
+    dtAdd.setDato("cli_codpoe",cli_codpoeE.getText());
     dtAdd.setDato("cli_telefe",cli_telefeE.getText());
     dtAdd.setDato("cli_faxe",cli_faxeE.getText());
     dtAdd.setDato("cli_plzent",cli_plzentE.getValorInt());
@@ -1771,6 +1809,7 @@ public class pdclien extends ventanaPad implements PAD
    
     return true;
   }
+    @Override
   public void ej_addnew1()
   {
     try
@@ -1781,7 +1820,7 @@ public class pdclien extends ventanaPad implements PAD
       dtAdd.setDato("cli_fecalt",Formatear.getFechaAct("dd-MM-yyyy"),"dd-MM-yyyy");
       actDatos();
     }
-    catch (Exception k)
+    catch (SQLException | ParseException k)
     {
       Error("Error al actualizar Datos", k);
     }
@@ -1790,6 +1829,7 @@ public class pdclien extends ventanaPad implements PAD
     mensaje("");
     mensajeErr("Cliente .... INSERTADO");
   }
+    @Override
   public void canc_addnew()
   {
       activaTodo();
@@ -1799,6 +1839,7 @@ public class pdclien extends ventanaPad implements PAD
       nav.pulsado=navegador.NINGUNO;
   }
 
+    @Override
   public void activar(boolean b)
   {
     Pcabe.setEnabled(b);
@@ -1813,8 +1854,9 @@ public class pdclien extends ventanaPad implements PAD
     cli_codiE.setEnabled(b);
 //    emp_codiE.setEnabled(b);
   }
+    @Override
   public void PADQuery(){
-    nav.pulsado=nav.QUERY;
+    nav.pulsado=navegador.QUERY;
     activar(true);
     Pcabe.setQuery(true);
     PdatGen.setQuery(true);

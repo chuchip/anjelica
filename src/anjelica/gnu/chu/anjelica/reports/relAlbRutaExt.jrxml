@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-03-16T12:35:24 -->
+<!-- 2016-05-08T09:04:26 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relAlbRutaExt" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="16085ab3-6a21-4d59-a4cb-6c23448b50d6">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -26,11 +26,12 @@ cop_nombre,emp_nomb,	 -- Nombre de Empresa
  emp_telef ,	 -- Telefono
  emp_fax ,	 -- FAX
  emp_nif,	 -- NIF
- emp_nomprv,alr_horrep,alr_comrep
-from anjelica.v_albruta as a,anjelica.v_cliente as cl left join anjelica.prov_espana on cli_codpoe / 1000 = cop_codi,
-anjelica.v_empresa   as em
+ emp_nomprv,alr_horrep,alr_comrep,pai_nomb
+from anjelica.v_albruta as a,anjelica.v_cliente as cl left join anjelica.prov_espana on   cl.pai_codi=11 and substring(cli_codpoe  from 1 for 2) = cop_codi,
+anjelica.v_empresa   as em, anjelica.paises as pai
  where alr_nume=$P{cor_orden}
   and a.cli_codi=cl.cli_codi
+  and cl.pai_codi = pai.pai_codi
 and em.emp_codi = $P{emp_codi}
 order by alr_orden]]>
 	</queryString>
@@ -64,20 +65,25 @@ order by alr_orden]]>
 	<field name="cli_nomen" class="java.lang.String"/>
 	<field name="cli_diree" class="java.lang.String"/>
 	<field name="cli_poble" class="java.lang.String"/>
-	<field name="cli_codpoe" class="java.lang.Integer"/>
+	<field name="cli_codpoe" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="cli_telefe" class="java.lang.String"/>
 	<field name="cli_percon" class="java.lang.String"/>
 	<field name="cop_nombre" class="java.lang.String"/>
 	<field name="emp_nomb" class="java.lang.String"/>
 	<field name="emp_dire" class="java.lang.String"/>
 	<field name="emp_pobl" class="java.lang.String"/>
-	<field name="emp_codpo" class="java.lang.Integer"/>
+	<field name="emp_codpo" class="java.lang.String"/>
 	<field name="emp_telef" class="java.lang.String"/>
 	<field name="emp_fax" class="java.lang.String"/>
 	<field name="emp_nif" class="java.lang.String"/>
 	<field name="emp_nomprv" class="java.lang.String"/>
 	<field name="alr_horrep" class="java.lang.String"/>
 	<field name="alr_comrep" class="java.lang.String"/>
+	<field name="pai_nomb" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<variable name="numAlb" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{avc_nume}]]></variableExpression>
 	</variable>
@@ -440,7 +446,7 @@ order by alr_orden]]>
 				<textFieldExpression><![CDATA[$F{alr_bultos}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="449" y="22" width="114" height="18" uuid="ca1810ca-894f-40f1-91b9-7b17ee73ba28"/>
+				<reportElement x="460" y="40" width="105" height="18" uuid="ca1810ca-894f-40f1-91b9-7b17ee73ba28"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
@@ -482,12 +488,12 @@ order by alr_orden]]>
 				<reportElement x="281" y="22" width="28" height="18" uuid="d69a844d-9194-42f0-a6ac-f7a26534c0a8"/>
 				<textFieldExpression><![CDATA[$F{cli_codpoe}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="309" y="22" width="140" height="18" uuid="82ca5b79-fc79-4bc0-b75f-ae8b9ca6146b"/>
+			<textField isBlankWhenNull="true">
+				<reportElement key="" x="309" y="22" width="140" height="18" uuid="82ca5b79-fc79-4bc0-b75f-ae8b9ca6146b"/>
 				<textFieldExpression><![CDATA[$F{cop_nombre}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="423" y="40" width="140" height="18" uuid="36d1343c-c332-4842-ac58-75311e318db4"/>
+				<reportElement x="336" y="40" width="124" height="18" uuid="36d1343c-c332-4842-ac58-75311e318db4"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
@@ -505,7 +511,7 @@ order by alr_orden]]>
 				<text><![CDATA[Horario:]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="52" y="40" width="289" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="0315e1e3-3a2b-497b-920c-09169cd18758">
+				<reportElement key="textField" mode="Opaque" x="52" y="40" width="228" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="0315e1e3-3a2b-497b-920c-09169cd18758">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
@@ -531,11 +537,15 @@ order by alr_orden]]>
 				<text><![CDATA[Coment:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="373" y="40" width="48" height="18" uuid="1f3e4f5e-2367-45a9-bf2f-48bcef5459c9">
+				<reportElement x="286" y="40" width="48" height="18" uuid="1f3e4f5e-2367-45a9-bf2f-48bcef5459c9">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<text><![CDATA[Contacto]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="421" y="22" width="134" height="18" uuid="1b5f2197-5449-41e4-a88b-8b880ce99543"/>
+				<textFieldExpression><![CDATA[$F{pai_nomb}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>

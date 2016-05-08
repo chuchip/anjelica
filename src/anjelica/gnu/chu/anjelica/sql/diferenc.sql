@@ -1,3 +1,16 @@
+-- Cambiado codigo postal cliente a varchar(8)
+drop view anjelica.v_cliprv;
+drop view anjelica.v_cliente;
+alter table anjelica.clientes alter cli_codpo type varchar(8);
+alter table anjelica.clientes alter cli_codpoe type varchar(8);
+create or replace view anjelica.v_cliente as select * from anjelica.clientes;
+grant select on anjelica.v_cliente to PUBLIC;
+create view anjelica.v_cliprv as 
+select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.v_cliente 
+union all
+select 'C' AS tipo,prv_codi as codigo, prv_nomb as nombre from anjelica.v_proveedo;
+grant select on anjelica.v_cliprv to public;
+
 -- Puesta linea precio oferta de albaran a not null.
 alter table anjelica.v_albavel alter avl_profer set not  null;
 -- Añadido campo kilos originales en v_albvenpar
