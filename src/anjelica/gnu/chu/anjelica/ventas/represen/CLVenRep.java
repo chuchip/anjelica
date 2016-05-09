@@ -120,7 +120,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2016-05-07" + ARG_ZONAREP);
+        this.setVersion("2016-05-08" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -215,6 +215,7 @@ public class CLVenRep extends ventana {
         return " and a.avc_fecalb between TO_DATE('" + fecIniE.getFecha("dd-MM-yyyy")
                 + "','dd-MM-yyyy') and TO_DATE('" + fecFinE.getFecha("dd-MM-yyyy")
                 + "','dd-MM-yyyy') "
+                + " and cl.cli_codi = a.cli_codi "
                 + " and cl.rep_codi = '" + rep_codiE.getText() + "'"
                 + (opIncCobr.isSelected() ? " and avc_cobrad != 0" : "");
     }
@@ -226,18 +227,15 @@ public class CLVenRep extends ventana {
     void actualTarifa(boolean swForzar) 
     {
         try {
+             limpiarGrid();
             if (!checkCond()) 
                 return;
             
-            s = "select cl.tar_codi,a.avc_fecalb,l.pro_codi from v_albavec as a, v_albavel as l,clientes as cl "
-                + " WHERE  l.emp_codi = " + emp_codiE.getValorInt()
-                + getCondWhere()
-                + " and  a.emp_codi = " + emp_codiE.getValorInt()
-                + " and a.avc_ano = l.avc_ano  "
-                + " and a.avc_serie = l.avc_serie "
-                + " and a.avc_nume = l.avc_nume "//               
-                +(swForzar?"": " and l.tar_preci = 0")
-                + " and  cl.cli_codi = a.cli_codi"
+            s = "select  cl.tar_codi,a.avc_fecalb,a.pro_codi "
+                + " from v_albventa as a,clientes as cl "
+                + " WHERE  a.emp_codi = " + emp_codiE.getValorInt()
+                + getCondWhere()             
+                +(swForzar?"": " and a.tar_preci = 0")                
                 + " group by tar_codi,avc_fecalb, pro_codi";
         if (!dtCon1.select(s)) {
             msgBox("No encontrados albaranes para estos criterios");
@@ -248,11 +246,12 @@ public class CLVenRep extends ventana {
         do {
             prTari = MantTarifa.getPrecTar(dtStat, dtCon1.getInt("pro_codi"),
                     dtCon1.getInt("tar_codi"), dtCon1.getFecha("avc_fecalb", "dd-MM-yyyy"));
-            if (prTari != 0) {
+            if (prTari != 0 || swForzar) 
+            {
                 s = "UPDATE  v_albavel set tar_preci = " + Formatear.redondea(prTari, 2)
                         + " where   emp_codi = " + emp_codiE.getValorInt()
                         + " and pro_codi = " + dtCon1.getInt("pro_codi")
-                        + " and tar_preci = 0"+
+                        + (swForzar?"":" and tar_preci = 0")+
                         " and exists (select * from v_albavec as a,clientes as cl  where " +
                         " avc_fecalb = to_date('" + dtCon1.getFecha("avc_fecalb") + "','dd-MM-yyyy')"
                         + " and  a.emp_codi = " + emp_codiE.getValorInt()
@@ -281,10 +280,18 @@ public class CLVenRep extends ventana {
         }
        
     }
-    
+    void limpiarGrid()
+    {
+        guardaCambios();
+        jtLin.setEnabled(false);
+        jtCab.removeAllDatos();
+        jtLin.removeAllDatos();
+    }
     void actualPrecioMin(boolean swForzar) 
     {
         try {
+            limpiarGrid();
+            
             if (!checkCond()) 
                 return;
             if (swForzar)
@@ -301,8 +308,8 @@ public class CLVenRep extends ventana {
                         " a.emp_codi = " + emp_codiE.getValorInt()
                         + " and a.avc_ano = v_albavel.avc_ano  "
                         + " and a.avc_serie = v_albavel.avc_serie "+
-                        getCondWhere()+
-                         " and a.avc_nume = v_albavel.avc_nume)";                        
+                        " and a.avc_nume = v_albavel.avc_nume"+
+                        getCondWhere()+")";                        
 
        
             int nLinAct = dtAdd.executeUpdate(s);
@@ -327,7 +334,7 @@ public class CLVenRep extends ventana {
         s = "SELECT a.avc_ano, a.avc_serie, a.avc_nume,a.avc_fecalb,a.cli_codi, "
                     + " cl.cli_nomb,avc_impalb,avc_impcob,cl.tar_codi,avc_kilos  "
                     + "  FROM v_albavec as a,clientes as cl "
-                    + " WHERE cl.cli_codi = a.cli_codi "+
+                    + " WHERE 1=1 "+
                     bdisc.getCondWhere("cl")+
                     condWhere;
         if (sinPrecMini) {
@@ -354,8 +361,7 @@ public class CLVenRep extends ventana {
                 + "sum(avl_unid) as avl_unid,sum(avl_prven*avl_canti) as importe from v_albventa as a,clientes as cl "
                 + " WHERE  a.emp_codi = " + emp_codiE.getValorInt()
                 + getCondWhere()                   
-                + " and a.tar_preci = 0"
-                + " and  cl.cli_codi = a.cli_codi"
+                + " and a.tar_preci = 0"               
                 + " group by  pro_codi,pro_nomb"
                 + " order by pro_codi ";   
             jtCab.setEnabled(false);
@@ -464,7 +470,6 @@ public class CLVenRep extends ventana {
             verLineas();
         } catch (Exception k) {
             Error("Error al comprobar condiciones al buscar Albaranes", k);
-            return;
         }
     }
     public void guardaCambios()

@@ -251,12 +251,18 @@ public class MantTarifa extends ventanaPad implements PAD
         tar_feciniE.requestFocus();
         return;
       }
+      if (! tar_codiE.controla())
+      {
+          mensajeErr("Tipo de Tarifa NO valida");
+          tar_codiE.requestFocus();
+          return;
+      }
       try {
         if (nav.pulsado == navegador.ADDNEW )
         {
           s = "SELECT * FROM tarifa WHERE "+
               " tar_fecini = TO_DATE('"+tar_feciniE.getText()+"','dd-MM-yyyy') "+
-              " and tar_codi = " + tar_codiE.getValor();
+              " and tar_codi = " + tar_codiE.getValorInt();
           if (dtCon1.select(s))
           {
             int ret=mensajes.mensajeYesNo("Le ha dado a Tarifa nueva, pero ya existe una tarifa con estos criterios. Desea editarla");
@@ -268,10 +274,10 @@ public class MantTarifa extends ventanaPad implements PAD
                 nav.pulsado=navegador.NINGUNO;
                 return;
             }
-            verDatLin(tar_feciniE.getText(), tar_codiE.getValor(),tar_fecfinE.getText(),0);
+            verDatLin(tar_feciniE.getText(), tar_codiE.getText(),tar_fecfinE.getText(),0);
             jt.cargaTodo();
             fecini=tar_feciniE.getText();
-            tipo=tar_codiE.getValor();
+            tipo=tar_codiE.getText();
             nav.pulsado = navegador.EDIT;
             mensaje("Editando ... ");
           }
@@ -331,7 +337,7 @@ public class MantTarifa extends ventanaPad implements PAD
           dtAdd.setDato("tar_fecini",tar_feciniE.getText(),"dd-MM-yyyy");
           dtAdd.setDato("tar_fecfin",tar_fecfinE.getText(),"dd-MM-yyyy");
           dtAdd.setDato("tar_linea",n);
-          dtAdd.setDato("tar_codi",tar_codiE.getValor());
+          dtAdd.setDato("tar_codi",tar_codiE.getValorInt());
           dtAdd.setDato("pro_codart",jt.getValString(n,0));
           dtAdd.setDato("pro_nomb",jt.getValString(n,1));
           dtAdd.setDato("tar_preci",jt.getValorDec(n,2));
@@ -365,8 +371,8 @@ public class MantTarifa extends ventanaPad implements PAD
         tar_feciniE.setText(dtCons.getFecha("tar_fecini","dd-MM-yyyy"));
         tar_fecfinE.setText(dtCons.getFecha("tar_fecfin","dd-MM-yyyy"));
 
-        tar_codiE.setValor(dtCons.getString("tar_codi"));
-        verDatLin(tar_feciniE.getText(),tar_codiE.getValor(),tar_fecfinE.getText(),0);
+        tar_codiE.setText(dtCons.getString("tar_codi"));
+        verDatLin(tar_feciniE.getText(),tar_codiE.getText(),tar_fecfinE.getText(),0);
       } catch (Exception k)
       {
         Error("Error al ver datos",k);
@@ -504,7 +510,7 @@ public class MantTarifa extends ventanaPad implements PAD
 //    ejeNume=eje_numeE.getValorInt();
     jt.cargaTodo();
     fecini=tar_feciniE.getText();
-    tipo=tar_codiE.getValor();
+    tipo=tar_codiE.getText();
     activar(true);
     tar_fecopE.setEnabled(false);
     jt.requestFocusInicioLater();
@@ -563,7 +569,7 @@ public class MantTarifa extends ventanaPad implements PAD
         jt.requestFocus(row,0);
         return;
     }
-    guardaDatos(tar_feciniE.getText(),tar_codiE.getValor());
+    guardaDatos(tar_feciniE.getText(),tar_codiE.getText());
     activaTodo();
     verDatos();
     mensaje("");
@@ -600,10 +606,11 @@ public class MantTarifa extends ventanaPad implements PAD
     Bcancelar.requestFocus();
     mensaje("Borrando ....");
   }
+  @Override
   public void ej_delete1() {
     try
     {
-      borDatos(tar_feciniE.getText(), tar_codiE.getValor());
+      borDatos(tar_feciniE.getText(), tar_codiE.getText());
       ctUp.commit();
       rgSelect();
     } catch (Exception k)
@@ -668,10 +675,10 @@ public class MantTarifa extends ventanaPad implements PAD
         " ORDER BY tar_codi ";
     if (dtStat.select(s))
     {
+      tar_codiE.addDatos(dtStat, true);
+      dtStat.first();
       do
       {
-        tar_codiE.addItem(dtStat.getString("tar_nomb"),
-                          dtStat.getString("tar_codi"));
         tar_copiaE.addItem(dtStat.getString("tar_nomb"),
                           dtStat.getString("tar_codi"));
       }
@@ -771,7 +778,6 @@ public class MantTarifa extends ventanaPad implements PAD
         cLabel1 = new gnu.chu.controles.CLabel();
         tar_nusemE = new gnu.chu.controles.CTextField(Types.DECIMAL,"99");
         cLabel2 = new gnu.chu.controles.CLabel();
-        tar_codiE = new gnu.chu.controles.CComboBox();
         cPanel1 = new gnu.chu.controles.CPanel();
         cLabel3 = new gnu.chu.controles.CLabel();
         tar_fecopE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
@@ -780,6 +786,7 @@ public class MantTarifa extends ventanaPad implements PAD
         cLabel7 = new gnu.chu.controles.CLabel();
         tar_incremE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--9.99");
         Bocul = new gnu.chu.controles.CButton();
+        tar_codiE = new gnu.chu.controles.CLinkBox();
         jt = new gnu.chu.controles.CGridEditable(4) {
             public void cambiaColumna(int col,int colNueva, int row)
             {
@@ -860,9 +867,9 @@ public class MantTarifa extends ventanaPad implements PAD
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        Pcabe.setMaximumSize(new java.awt.Dimension(530, 76));
-        Pcabe.setMinimumSize(new java.awt.Dimension(530, 76));
-        Pcabe.setPreferredSize(new java.awt.Dimension(530, 76));
+        Pcabe.setMaximumSize(new java.awt.Dimension(550, 76));
+        Pcabe.setMinimumSize(new java.awt.Dimension(550, 76));
+        Pcabe.setPreferredSize(new java.awt.Dimension(550, 76));
         Pcabe.setLayout(null);
 
         cLabel5.setText("De Fecha");
@@ -887,80 +894,60 @@ public class MantTarifa extends ventanaPad implements PAD
 
         cLabel1.setText("Semana");
         Pcabe.add(cLabel1);
-        cLabel1.setBounds(277, 2, 44, 18);
+        cLabel1.setBounds(20, 30, 44, 18);
 
         tar_nusemE.setMinimumSize(new java.awt.Dimension(10, 18));
         tar_nusemE.setPreferredSize(new java.awt.Dimension(10, 18));
         Pcabe.add(tar_nusemE);
-        tar_nusemE.setBounds(325, 2, 30, 18);
+        tar_nusemE.setBounds(70, 30, 30, 18);
 
         cLabel2.setText("Tipo");
         Pcabe.add(cLabel2);
-        cLabel2.setBounds(365, 2, 24, 18);
-
-        tar_codiE.setMaximumSize(new java.awt.Dimension(160, 18));
-        tar_codiE.setMinimumSize(new java.awt.Dimension(160, 18));
-        tar_codiE.setPreferredSize(new java.awt.Dimension(160, 18));
-        Pcabe.add(tar_codiE);
-        tar_codiE.setBounds(399, 2, 122, 18);
+        cLabel2.setBounds(280, 2, 24, 18);
 
         cPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Copiar de", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
+        cPanel1.setLayout(null);
 
         cLabel3.setText("Fecha");
         cLabel3.setPreferredSize(new java.awt.Dimension(33, 18));
+        cPanel1.add(cLabel3);
+        cLabel3.setBounds(9, 16, 40, 17);
 
         tar_fecopE.setPreferredSize(new java.awt.Dimension(10, 18));
+        cPanel1.add(tar_fecopE);
+        tar_fecopE.setBounds(50, 16, 65, 17);
 
         cLabel4.setText("Tarifa");
         cLabel4.setPreferredSize(new java.awt.Dimension(33, 18));
+        cPanel1.add(cLabel4);
+        cLabel4.setBounds(120, 16, 40, 17);
 
         tar_copiaE.setMaximumSize(new java.awt.Dimension(160, 18));
         tar_copiaE.setMinimumSize(new java.awt.Dimension(160, 18));
         tar_copiaE.setPreferredSize(new java.awt.Dimension(160, 18));
+        cPanel1.add(tar_copiaE);
+        tar_copiaE.setBounds(160, 16, 165, 17);
 
-        cLabel7.setText("Incremento");
+        cLabel7.setText("Increm.");
         cLabel7.setPreferredSize(new java.awt.Dimension(64, 18));
+        cPanel1.add(cLabel7);
+        cLabel7.setBounds(330, 16, 50, 17);
 
         tar_incremE.setMinimumSize(new java.awt.Dimension(10, 18));
         tar_incremE.setPreferredSize(new java.awt.Dimension(10, 18));
-
-        org.jdesktop.layout.GroupLayout cPanel1Layout = new org.jdesktop.layout.GroupLayout(cPanel1);
-        cPanel1.setLayout(cPanel1Layout);
-        cPanel1Layout.setHorizontalGroup(
-            cPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(cPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(cLabel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(tar_fecopE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 75, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(cLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(tar_copiaE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 122, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(cLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 73, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(tar_incremE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 44, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(Bocul, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
-        );
-        cPanel1Layout.setVerticalGroup(
-            cPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(cPanel1Layout.createSequentialGroup()
-                .add(cPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(cLabel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(tar_fecopE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(cLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(tar_copiaE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(cLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(Bocul, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(tar_incremE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        cPanel1.add(tar_incremE);
+        tar_incremE.setBounds(380, 16, 50, 17);
+        cPanel1.add(Bocul);
+        Bocul.setBounds(452, 22, 2, 2);
 
         Pcabe.add(cPanel1);
-        cPanel1.setBounds(12, 26, 487, 47);
+        cPanel1.setBounds(110, 30, 435, 40);
+
+        tar_codiE.setAncTexto(30);
+        tar_codiE.setFormato(Types.DECIMAL,"##9");
+        tar_codiE.setPreferredSize(new java.awt.Dimension(162, 17));
+        Pcabe.add(tar_codiE);
+        tar_codiE.setBounds(310, 2, 230, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1042,7 +1029,7 @@ public class MantTarifa extends ventanaPad implements PAD
     private gnu.chu.controles.CCheckBox opImpRef;
     private gnu.chu.camposdb.proPanel pro_codartE;
     private gnu.chu.controles.CTextField pro_nombE;
-    private gnu.chu.controles.CComboBox tar_codiE;
+    private gnu.chu.controles.CLinkBox tar_codiE;
     private gnu.chu.controles.CTextField tar_comenG;
     private gnu.chu.controles.CComboBox tar_copiaE;
     private gnu.chu.controles.CTextField tar_fecfinE;

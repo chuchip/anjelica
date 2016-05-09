@@ -1,16 +1,48 @@
+-- Cambiado codigo postal de empresa y tabla prov_espana a varchar(8)
+ drop view anjelica.v_empresa;
+ alter table anjelica.empresa alter emp_codpo type varchar(8);
+ alter table anjelica.prov_espana alter cop_codi type varchar(2);
+ CREATE VIEW anjelica.v_empresa as select emp_codi,emp_nomb ,	 -- Nombre de Empresa
+ emp_dire,	 -- Direccion Empresa
+ emp_pobl,	 -- Poblacion Empresa
+ emp_codpo ,	    	 -- Codigo Postal
+ emp_telef ,	 -- Telefono
+ emp_fax ,	 -- FAX
+ emp_nif ,	 -- NIF
+ emp_nurgsa , -- Codigo Numero Registro Sanitario
+ emp_nomsoc , -- Nombre Social
+ pai_codi ,	    	 -- Pais por defecto
+ emp_orgcon , -- Organismo de Control.
+ emp_cercal , -- Certificacion Calidad
+ emp_labcal , -- Etiqueta Calidad
+ emp_obsfra ,--Observaciones Factura
+ emp_obsalb ,--Observaciones Albaran
+ emp_vetnom , --Nombre Veterinario
+ emp_vetnum , --Numero Veterinario
+ emp_numexp , --Numero Explotacion
+ emp_codcom ,         -- Comunidad de Empresa
+ emp_codpvi ,    	 -- Provincia de Empresa
+ emp_divimp ,         -- Divisa de Importacion
+ emp_divexp ,         -- Divisa de Exportación
+ emp_desspr , -- Destino Subproductos
+ emp_codedi , -- Codigo EDI
+ emp_regmer , -- Registro Mercantil
+ emp_dirweb , -- Direccion web de la empresa 
+ cop_nombre as emp_nomprv
+ from anjelica.empresa left join  anjelica.prov_espana on substring(emp_codpo from 1 for 2)  = cop_codi;
+ grant select on anjelica.v_empresa to public;
 -- Cambiado codigo postal cliente a varchar(8)
 drop view anjelica.v_cliprv;
 drop view anjelica.v_cliente;
 alter table anjelica.clientes alter cli_codpo type varchar(8);
 alter table anjelica.clientes alter cli_codpoe type varchar(8);
-create or replace view anjelica.v_cliente as select * from anjelica.clientes;
+create or replace view anjelica.v_cliente as select *,rut_codi as cli_valor from anjelica.clientes;
 grant select on anjelica.v_cliente to PUBLIC;
 create view anjelica.v_cliprv as 
 select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.v_cliente 
 union all
 select 'C' AS tipo,prv_codi as codigo, prv_nomb as nombre from anjelica.v_proveedo;
 grant select on anjelica.v_cliprv to public;
-
 -- Puesta linea precio oferta de albaran a not null.
 alter table anjelica.v_albavel alter avl_profer set not  null;
 -- Añadido campo kilos originales en v_albvenpar
