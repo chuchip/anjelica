@@ -675,7 +675,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-05-07" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-05-09" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -7899,13 +7899,15 @@ public class pdalbara extends ventanaPad  implements PAD  {
       mensaje("Imprimiendo Hojas de Palets ...");
             
       sqlAlb =   "SELECT c.*, cl.cli_nomb,cli_nomen,cli_diree,cli_poble,cli_codpoe "+
-          " FROM v_albventa as c,clientes cl "
+          " FROM v_albventa as c,clientes cl,v_articulo as a "
           + " WHERE c.avc_ano =" + avc_anoE.getValorInt() +
           " and c.emp_codi = " + emp_codiE.getValorInt() +
           " and c.avc_serie = '" + avc_seriE.getText() + "'" +
           " and c.avc_nume = " + avc_numeE.getValorInt() +
           " and c.cli_codi = cl.cli_codi "+
           " and avl_numpal!=0"+
+          " and c.pro_codi = a.pro_codi "+
+          " and (a.pro_tiplot = 'V' or a.pro_tiplot = 'c') "+
           " order by avl_numpal,pro_codi";
            
       if (liAlb == null)
