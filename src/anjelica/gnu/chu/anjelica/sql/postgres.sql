@@ -1638,7 +1638,7 @@ his_rowid int not null
 create table anjelica.v_despfin
 (
 eje_nume int not null,	-- Ejercicio del Despiece
-emp_codi int not null,	-- Empresa
+emp_codi int not null,	-- Empresa  (Deprecated)
 deo_codi int not null,	-- Numero de Desp.
 def_orden int not null, -- Numero Orden (Para desp. Agrupados)
 pro_codi int,		-- Producto

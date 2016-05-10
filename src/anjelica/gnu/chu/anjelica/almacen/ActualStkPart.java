@@ -1641,6 +1641,13 @@ public class ActualStkPart
     else
      return dt.getFecha("cci_feccon", "dd-MM-yyyy");
   }
+  /**
+   * Devuelve la fecha de ultimo inventario inferiro a la fecha mandada
+   * @param fecLim Fecha limite
+   * @param dt
+   * @return
+   * @throws SQLException 
+   */
   public static Date getDateUltInv(Date fecLim, DatosTabla dt ) throws SQLException
   {
       try {

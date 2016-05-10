@@ -4,7 +4,7 @@ package gnu.chu.anjelica.inventario;
  *
  * <p>Titulo: ClDifInv </p>
  * <p>Descripción: Consulta / Listado Diferencias Existencias Reales sobre las introducidas en Control </p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -945,8 +945,8 @@ public class ClDifInv extends ventana {
                     : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
                 + (LOTE <= 0 ? "" : " and pro_numlot  = " + LOTE)
                 + (PROCODI != 0 ? " and a.pro_codi = " + PROCODI : "")
-                + " AND mvt_time::date > TO_DATE('" + feulst + "','dd-MM-yyyy') "
-                + " and mvt_time::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
+                + " AND mvt_time::date >= TO_DATE('" + feulst + "','dd-MM-yyyy') "
+                + " and mvt_time::date < TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
             if (incDep)
             {
                 s += " union all " // Incluyo salidas de deposito.
@@ -965,8 +965,8 @@ public class ClDifInv extends ventana {
                     + condCamaras
                     : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
                     + condProd
-                    + " and avs_fecha > TO_DATE('" + feulst + "','dd-MM-yyyy') "
-                    + " and avs_fecha <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "
+                    + " and avs_fecha >= TO_DATE('" + feulst + "','dd-MM-yyyy') "
+                    + " and avs_fecha < TO_DATE('" + fecStockStr + "','dd-MM-yyyy') "
                     + " union all " + // Anulo Mvtos q pertenezcan  a albaranes de Deposito
                     "SELECT 0 as orden,mvt_tipdoc as sel, '+' as tipmov,  "
                     + " mvt_time as fecmov,"
@@ -990,8 +990,8 @@ public class ClDifInv extends ventana {
                     : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
                     + (LOTE <= 0 ? "" : " and pro_numlot  = " + LOTE)
                     + (PROCODI != 0 ? " and a.pro_codi = " + PROCODI : "")
-                    + " AND mvt_time::date > TO_DATE('" + feulst + "','dd-MM-yyyy') "
-                    + " and mvt_time::date <= TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
+                    + " AND mvt_time::date >= TO_DATE('" + feulst + "','dd-MM-yyyy') "
+                    + " and mvt_time::date < TO_DATE('" + fecStockStr + "','dd-MM-yyyy') ";
             }          
         }
         else

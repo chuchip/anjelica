@@ -136,6 +136,7 @@ public class CLResMvtos extends ventana {
     });
      popEspere_BCancelaraddActionListener(new ActionListener()
        {
+        @Override
         public void actionPerformed(ActionEvent e)
         {
            setCancelarConsulta(true);

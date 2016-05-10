@@ -43,7 +43,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 
+
 public class ValDespi extends ventana {
+   double impDocum=0;
+   double kgDocum=0;
+   PreparedStatement psMvt;
+   PreparedStatement psInv;
+   private ArrayList<Integer> htAvi=new ArrayList();
    private java.util.Date fecIniSem,fecFinSem;
    private String rangoSemana;
    String deoSerlot;
@@ -163,10 +169,10 @@ public class ValDespi extends ventana {
    {
       return Baceptar.isEnabled();
    }
+   
    @Override
    public void iniciarVentana() throws Exception
    {
-  
      tid_codiE.iniciar(dtStat, this, vl, EU);
      feulin=ActualStkPart.getFechaUltInv(0,0,null,dtStat);
      if (feulin == null)
@@ -191,6 +197,7 @@ public class ValDespi extends ventana {
      jtCab.setDefButton(Baceptar);
      jtLin.setDefButton(Baceptar);
      fecsupE.setDate(Formatear.sumaDiasDate(Formatear.getDateAct(),-15));
+     preparaStatements();
      activarEventos();
    }
    
@@ -915,21 +922,33 @@ public class ValDespi extends ventana {
                if (Formatear.comparaFechas(fecInv, fecDesp) > 0) {
                    fecInv = ActualStkPart.getDateUltInv(jtDesp.getValDate(rowEdit, JTDES_FECDES), dtStat);
                }
-               boolean res;
-               if (jtCab.isEnabled()) {
-                   res = buscaStock(fecDesp, fecInv,
-                           jtCab.getValorInt(JTCAB_PROCODI), jtDesp.getValorInt(JTDES_NUMDES));
-               } else {
-                   res = buscaStock(fecDesp, fecInv,
-                           jtLin.getValorInt(JTLIN_PROCODI), jtDesp.getValorInt(JTDES_NUMDES));
-               }
-               if (res) {
-                   if (mvtosAlm.getEntradaSinValor()) {
-                      msgExplica("Error al Valorar","Despieces:\n "+mvtosAlm.getMsgDesp()+"\n"+
-                              "Compras:\n "+mvtosAlm.getMsgCompra()+"\nProducto tiene entradas anteriores sin valorar."
-                              + " Cancelada valoracion" );
-                      return;
-                   }
+               if (jtCab.isEnabled()) 
+                   precAcu= getPrecioMedioDesp(jtCab.getValorInt(JTCAB_PROCODI),
+                       jtDesp.getValString(JTDES_TIPO).equals("G"),
+                       jtDesp.getValorInt(JTDES_EJER),
+                       jtDesp.getValorInt(JTDES_NUMDES), "D");
+               else
+                   precAcu= getPrecioMedioDesp(jtLin.getValorInt(JTLIN_PROCODI),
+                       jtDesp.getValString(JTDES_TIPO).equals("G"),
+                       jtDesp.getValorInt(JTDES_EJER),
+                       jtDesp.getValorInt(JTDES_NUMDES), "d");
+                   
+                  
+//                   res = buscaStock(fecDesp, fecInv,
+//                           jtCab.getValorInt(JTCAB_PROCODI), jtDesp.getValorInt(JTDES_NUMDES));
+//               } else {
+//                   res = buscaStock(fecDesp, fecInv,
+//                           jtLin.getValorInt(JTLIN_PROCODI), jtDesp.getValorInt(JTDES_NUMDES));
+//               }
+               
+               
+               if (precAcu!=0) {
+//                   if (mvtosAlm.getEntradaSinValor()) {
+//                      msgExplica("Error al Valorar","Despieces:\n "+mvtosAlm.getMsgDesp()+"\n"+
+//                              "Compras:\n "+mvtosAlm.getMsgCompra()+"\nProducto tiene entradas anteriores sin valorar."
+//                              + " Cancelada valoracion" );
+//                      return;
+//                   }
                    if (jtCab.isEnabled()) {
                        jtCab.setValor(precAcu, JTCAB_COSTO);
                        deo_prcogrE.setValorDec(precAcu);
@@ -951,7 +970,7 @@ public class ValDespi extends ventana {
                   }
               };
            } 
-       } catch (Exception k) {
+       } catch (ParseException | SQLException k) {
            Error("Error al valorar producto de despiece", k);
        }
    }
@@ -974,12 +993,13 @@ public class ValDespi extends ventana {
      rangoSemana = "BETWEEN {d '"+Formatear.getFechaDB(fecIniSem)+"'} and {d '"+
          Formatear.getFechaDB(fecFinSem)+"'}";   
    }
-    void valorarDespSel() 
-    {
+   
+   void valorarDespSel() 
+   {
         try {
             cancelaBuscaDesp=false;
             HashMap<Integer,Double>  htPro=new HashMap();
-            Double d;
+            
             int nRegVal = 0;
             double impEnt,impCostLin;
             boolean swErr,isGrupo;
@@ -1199,14 +1219,14 @@ public class ValDespi extends ventana {
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(fecDesp);
         
-        actualizaMsg("Calculando costos cabecera",false);
+        setMensajePopEspere("Calculando costos cabecera",false);
         String entSinValor="";
         int proCodi;
         double costo;
         for (int n = 0; n < nRow; n++)
         {
             proCodi=jtCab.getValorInt(n, JTCAB_PROCODI);
-            actualizaMsg("Calculando costos cabecera\n Producto: "+proCodi,false);
+            setMensajePopEspere("Calculando costos cabecera\n Producto: "+proCodi,false);
             pro_codiE.getNombArt( proCodi);
             if (! pro_codiE.isVendible())
             {
@@ -1241,20 +1261,12 @@ public class ValDespi extends ventana {
                 jtCab.setValor(costo, n,JTCAB_COSTO);
                 continue;
             } 
-            boolean res = buscaStock(fecDesp, fecInv,
-                                     jtCab.getValorInt(n, JTCAB_PROCODI),
-                                     jtDesp.getValorInt(JTDES_NUMDES));
-            if (res)
-            {
-               if (mvtosAlm.getEntradaSinValor())
-               {
-                 s="\nEncontradas entradas anteriores sin valorar de producto: "+
-                         proCodi;
-                 entSinValor+=s; 
-               }
-              else  
+            precAcu=getPrecioMedioDesp(proCodi,
+                jtDesp.getValString(JTDES_TIPO).equals("G"),
+                jtDesp.getValorInt(JTDES_EJER),                  
+                jtDesp.getValorInt(JTDES_NUMDES),"D");                
+            if (precAcu!=0)
                 jtCab.setValor(precAcu, n, JTCAB_COSTO);
-            }
             else
             {
               s="\n Valor de Costo NO encontrado para Producto: " +
@@ -1263,7 +1275,6 @@ public class ValDespi extends ventana {
 //              actualizaMsg(s,true);
               jtCab.setValor(0, n, JTCAB_COSTO);
             }
-//          }
         }
         sumTotalesCab();
         entSinValor+=calcCostoLin();
@@ -1335,24 +1346,19 @@ public class ValDespi extends ventana {
             jtLin.setValor(costo, n,JTLIN_COSTO);
             continue;
         }
-        boolean res = buscaStock(jtDesp.getValDate(rowEdit,JTDES_FECDES), fecInv,
-                       jtLin.getValorInt(n, JTLIN_PROCODI),0);
-        if (res)
-        {
-           if (mvtosAlm.getEntradaSinValor())
-           {
-            s="\nEncontradas entradas anteriores sin valorar de producto: "+
-                    jtLin.getValorInt(n, JTLIN_PROCODI);
-            entSinValor+=s;
-           }
-           else
+         precAcu=getPrecioMedioDesp(proCodi,
+                    jtDesp.getValString(JTDES_TIPO).equals("G"),
+                    jtDesp.getValorInt(JTDES_EJER),
+                    jtDesp.getValorInt(JTDES_NUMDES),"d");               
+        if (precAcu!=0)
+        {        
             jtLin.setValor("" + precAcu, n,JTLIN_COSTO );
         }
         else
         {
           s+="\n Valor de Costo NO encontrado para producto: "+jtLin.getValorInt(n, JTLIN_PROCODI);
           entSinValor+=s;
-           jtLin.setValor("0", n,JTLIN_COSTO);
+          jtLin.setValor(0,n,JTLIN_COSTO);
         }
       }
       recalcCostoLin();
@@ -1448,23 +1454,23 @@ public class ValDespi extends ventana {
     }
     impFinE.setValorDec(totLin);
   }
-//   /**
-//  * Busca Stock sobre un producto. Comprueba si el producto tiene control
-//  * individual, para buscar por numero de individuos o no.
-//  *
-//  * @param fecStock Fecha de Stock, fecha a la que queremos el valor
-//  *                 . SI es nulo es a fecha actual.
-//  * @param fecInic Fecha Inicio desde la que buscar Mvtos. Tecnicamente la fecha
-//  * del ultimo stock fisico. Si es NULO 1-1-(Año curso)
-//  * @param proCodi Codigo de Producto .. No puede ser nulo.
-//  * @param ejeNume Ejercicio de producto .. si es 0 se pondra el actual.
-//  * @param empCodi Empresa ... si es 0 se buscara en la activa.
-//  * @param serie   Serie .. si es null se buscara en todas
-//  * @param numLote si es 0 .. se buscara en todas.
-//  * @throws Exception en caso de cualquier error
-//  *
-//  * @return boolean true si encontro datos para tratar.
-//  */
+   /**
+  * Busca Stock sobre un producto. Comprueba si el producto tiene control
+  * individual, para buscar por numero de individuos o no.
+  *
+  * @param fecStock Fecha de Stock, fecha a la que queremos el valor
+  *                 . SI es nulo es a fecha actual.
+  * @param fecInic Fecha Inicio desde la que buscar Mvtos. Tecnicamente la fecha
+  * del ultimo stock fisico. Si es NULO 1-1-(Año curso)
+  * @param proCodi Codigo de Producto .. No puede ser nulo.
+  * @param ejeNume Ejercicio de producto .. si es 0 se pondra el actual.
+  * @param empCodi Empresa ... si es 0 se buscara en la activa.
+  * @param serie   Serie .. si es null se buscara en todas
+  * @param numLote si es 0 .. se buscara en todas.
+  * @throws Exception en caso de cualquier error
+  *
+  * @return boolean true si encontro datos para tratar.
+  */
  boolean buscaStock(java.util.Date fecStock, java.util.Date fecInic, int proCodi,
                      int numLote) throws Exception
  {
@@ -1482,6 +1488,7 @@ public class ValDespi extends ventana {
         mvtosAlm.setIgnDespSinValor(true);
         mvtosAlm.setEntornoUsuario(EU);
         mvtosAlm.setIncIniFechaInv(true);
+        mvtosAlm.setIgnComprasSinValor(true);
 //        mvtosAlm.setIncluyeHora(true);
      }
      mvtosAlm.setLote(0);
@@ -1491,10 +1498,12 @@ public class ValDespi extends ventana {
      s=mvtosAlm.getSqlMvt(fecInicStr, fecStockStr, proCodi );
     
      boolean ret=mvtosAlm.calculaMvtos( dtAdd,null, s,null,null,null,proCodi);
-     if (mvtosAlm.getCompraSinValor())
-         msgBox("Encontradas compras sin precio."+
-             mvtosAlm.getMsgCompra()+
-              " Revise costos");         
+     if (mvtosAlm.getCompraSinValor() && !htAvi.contains(proCodi))
+     {
+         msgBox("Encontradas compras sin precio, para producto: "+proCodi+
+             mvtosAlm.getMsgCompra()+" Revise costos");
+         htAvi.add(proCodi);
+     }
      
      if (ret)
      {
@@ -1528,6 +1537,7 @@ public class ValDespi extends ventana {
             " order by deo_codi ";
       }
    }
+   
    void cargaDespiece(int row,boolean agrupa) throws SQLException
    {
      int ejeNume=jtDesp.getValorInt(JTDES_EJER);
@@ -1612,6 +1622,133 @@ public class ValDespi extends ventana {
              (isGrupo?" f.def_numdes = " + numDesp: "f.deo_codi = "+numDesp)) +
          " group by pro_codi " +
          " order by pro_codi ";
+ }
+ 
+ void preparaStatements() throws SQLException
+ {     
+    s= "SELECT mvt_tipo, mvt_canti,mvt_prec,mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,mvt_numdoc "+
+             " from mvtosalm  "+
+             " where pro_codi =  ?" +
+             " AND mvt_time::date >= ?  "+           
+            " and mvt_time <= ? "+
+            " order by mvt_time";             
+    psMvt=dtCon1.getPreparedStatement(s);
+    s= "SELECT sum(rgs_kilos) as kilos, sum(rgs_kilos*rgs_prregu) as importe "+
+             " from v_inventar  "+
+             " where pro_codi =  ?" +
+             " AND rgs_fecha::date = ?  ";
+    psInv=dtCon1.getPreparedStatement(s);
+ }
+ private double getPrecioMedioDesp(int proCodi,boolean isGrupo, int ejerc,int deoCodi, String tipoDoc) throws SQLException
+ {
+   impDocum=0;
+   kgDocum=0;
+   if (isGrupo)
+   {
+    s="select deo_codi from desporig where eje_nume= "+ejerc+
+        " and deo_numdes ="+deoCodi;
+    if (!dtCon1.select(s))
+        return 0;
+    ArrayList<Integer> grupos=new ArrayList();
+    int nEle=0;
+    do
+    {
+        grupos.add(dtCon1.getInt("deo_codi"));
+        nEle++;
+    } while (dtCon1.next());
+    for (int n=0;n<nEle;n++)
+    {
+       getPrecioMedioDesp(proCodi,ejerc,grupos.get(n), tipoDoc);
+    }  
+    return kgDocum==0?0:impDocum/kgDocum;
+   }
+  
+   return getPrecioMedioDesp(proCodi,ejerc,deoCodi, tipoDoc);
+ }
+ /**
+  * Busca el precio Medio 
+  * @param proCodi
+  * @param ejerc
+  * @param deoCodi
+  * @param tipoDoc 'd' Entrada a Almacen (v_despfin). 'D' Salida Almacen (desorilin)
+  * @return
+  * @throws SQLException 
+  */
+ double getPrecioMedioDesp(int proCodi, int ejerc,int deoCodi, String tipoDoc) throws SQLException
+ {
+     if (tipoDoc.equals("D") )
+     {
+         s="select max(deo_tiempo) as maxTiempo, min (deo_tiempo) as minTiempo from desorilin where deo_codi="+deoCodi+
+             " and eje_nume="+ejerc+
+             " and pro_codi = "+proCodi;
+     }
+     else
+     {
+         s="select max(def_tiempo) as maxTiempo, min (def_tiempo) as minTiempo from v_despfin where deo_codi="+deoCodi+
+             " and eje_nume="+ejerc+
+             " and pro_codi = "+proCodi;         
+     }
+     dtStat.select(s);
+     Date fecha=dtStat.getTimeStamp("minTiempo");
+     if (fecha==null)
+         return 0;
+     fecInv = ActualStkPart.getDateUltInv(fecha, dtCon1);
+     if (fecInv==null)
+         return 0;
+     return getPrecioMedioEntrada(proCodi, new java.sql.Date(fecInv.getTime()),
+               dtStat.getTimeStamp("maxTiempo"),EU.em_cod,ejerc,"D",deoCodi,tipoDoc );
+ }
+ double getPrecioMedioEntrada(int proCodi,java.sql.Date fechaInv,java.sql.Timestamp timeSupMvt,int empCodi,
+     int ejerc,String serie,int deoCodi, String tipoDoc) throws SQLException
+ {
+    psInv.setInt(1, proCodi);
+    psInv.setDate(2, fechaInv);
+    ResultSet rs=psInv.executeQuery();
+    rs.next();
+    double kilos=rs.getDouble("kilos");
+    double precioMedio=rs.getDouble("kilos")==0?0:rs.getDouble("importe")/rs.getDouble("kilos");
+    double importe;
+   
+    boolean isDocumActual;
+    psMvt.setInt(1, proCodi);
+    psMvt.setDate(2, fechaInv);
+    psMvt.setTimestamp(3, timeSupMvt);
+    rs=psMvt.executeQuery();
+    if (rs.next())
+    {
+        do
+        {
+            isDocumActual=false;
+          
+            if (rs.getInt("mvt_empcod") == empCodi
+                && rs.getInt("mvt_ejedoc") == ejerc
+                && rs.getString("mvt_serdoc").equals(serie)
+                && rs.getInt("mvt_numdoc") == deoCodi)
+            { // Despiece a Valorar.
+                isDocumActual = true;
+                if (rs.getString("mvt_tipdoc").equals(tipoDoc))
+                {
+                    kgDocum += rs.getDouble("mvt_canti");
+                    impDocum += rs.getDouble("mvt_canti") * precioMedio ;
+                }
+            }
+          
+            if (rs.getString("mvt_tipo").equals("E"))
+            {
+                importe=kilos*precioMedio;
+                kilos+=rs.getDouble("mvt_canti");
+                if (rs.getDouble("mvt_prec")!=0 && ! isDocumActual)
+                {
+                    importe+= rs.getDouble("mvt_canti")* 
+                        rs.getDouble("mvt_prec") ;
+                    precioMedio=kilos==0?0:importe/kilos;
+                }
+            }
+            else
+                kilos-=rs.getDouble("mvt_canti");
+        } while (rs.next());
+    }
+    return kgDocum==0?0:impDocum/kgDocum;
  }
  void verDatLi1(String sql) throws SQLException
  {

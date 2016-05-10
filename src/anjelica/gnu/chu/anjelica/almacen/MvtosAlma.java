@@ -41,7 +41,7 @@ import java.util.HashMap;
 public class MvtosAlma
 {
   private boolean incluyeHora=false; // Incluir hora a la hora de buscar mvtos.
-
+  private boolean swIgnComprasSinValor=false;
   
   private boolean swIncSalDep=false;// Incluir Salidas de depositos.
   private boolean swVerSalDep=false;// Ver Salidas de depositos.
@@ -842,6 +842,24 @@ public class MvtosAlma
     public void setIncluyeHora(boolean incluyeHora) {
         this.incluyeHora = incluyeHora;
     }
+    /**
+     * Establece si las compras con precio 0 se deben ignorar para costos. 
+     * Por defecto es false.
+     * @param ignComprasSinValor 
+     */
+    public void setIgnComprasSinValor(boolean ignComprasSinValor)
+    {
+        swIgnComprasSinValor=ignComprasSinValor;
+    }
+    /**
+     * Devuelve si las compras con precio 0 se deben ignorar para costos. 
+     * 
+     * @return 
+     */
+    public boolean getIgnComprasSinValor()
+    {
+        return swIgnComprasSinValor;
+    }
   /**
    * Define la cadena para limitar accesos a las empresas.
    * @param acessoEmp
@@ -1127,6 +1145,8 @@ public class MvtosAlma
     // Inicializando variables.
     if (jt!=null)
        jt.removeAllDatos();
+    swDespNoValor=false;
+    swCompraNoValor=false;
     String ref="";
     Double cant;
     double cantiInd=0;
@@ -1190,6 +1210,8 @@ public class MvtosAlma
                     unCompra+=dt.getInt("unidades");
                     if (dt.getDouble("precio")==0)
                     {
+                        if (swIgnComprasSinValor)
+                            swIgnCosto=true;
                         msgLog+="Compra con Precio 0 " +
                               ":  Fecha: " + dt.getFecha("fecmov")+" Prod: "+ proCodi+" \n";
                         msgCompra+="Precio 0 " +
@@ -1269,8 +1291,12 @@ public class MvtosAlma
 
             if (sel == 'd')
             { // Despiece de salida (Entrada a almacen) 
-                if (dt.getDouble("precio") == 0 && swValDesp)
-                    swIgnCosto = true; // Ignorar costos de despiece
+                if (dt.getDouble("precio") == 0)
+                {
+                    swDespNoValor=true;
+                    if(swValDesp)
+                        swIgnCosto = true; // Ignorar costos de despiece
+                }
             }
             canti = canStk + dt.getDouble("canti");
             unid = uniStk + dt.getInt("unidades");
