@@ -288,6 +288,7 @@ public class actCabAlbFra
    * @param dtopp double
    *  @param dtoCom double
    * @param cliRecequ boolean (Cliente tiene rec.equiv)
+     * @param fecha
    * @throws SQLException
    * 
    * @return boolean
@@ -394,15 +395,15 @@ public class actCabAlbFra
         ht.put("fvc_impree", (double) 0);
       }
 
-      ht.put("fvc_sumtot", new Double(impFra));
+      ht.put("fvc_sumtot", impFra);
     }
     else
     {
-      ht.put("fvc_tipiva", new Double(0));
-      ht.put("fvc_impiva", new Double(0));
-      ht.put("fvc_tipree", new Double(0));
-      ht.put("fvc_impree", new Double(0));
-      ht.put("fvc_impalb", new Double(0));
+      ht.put("fvc_tipiva", (double) 0);
+      ht.put("fvc_impiva",(double) 0);
+      ht.put("fvc_tipree", (double) 0);
+      ht.put("fvc_impree", (double) 0);
+      ht.put("fvc_impalb", (double) 0);
     }
     return true;
   }
