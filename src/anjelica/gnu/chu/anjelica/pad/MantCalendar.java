@@ -28,6 +28,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.menu;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
+import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.mensajes;
@@ -664,5 +665,27 @@ public class MantCalendar extends ventanaPad     implements PAD  {
     mensajeErr("Modificacion de Datos ... Cancelada");
     verDatos();
     mensaje("");
+  }
+  
+  public static java.util.Date getFechaInicio(DatosTabla dt,int mes, int ano) throws SQLException
+  {
+      if (!dt.select("select * from calendario where cal_ano= "+ano+" and cal_mes="+mes))
+          return null;
+      return dt.getDate("cal_fecini");
+  }
+  public static java.util.Date getFechaFinal(DatosTabla dt,int mes, int ano) throws SQLException
+  {
+      if (!dt.select("select * from calendario where cal_ano= "+ano+" and cal_mes="+mes))
+          return null;
+      return dt.getDate("cal_fecfin");
+  }
+  
+  public static  java.util.Date getFechaFinal(DatosTabla dt,java.util.Date fecha) throws SQLException
+  {
+      return getFechaFinal(dt,Formatear.getMonth(fecha),Formatear.getYear(fecha));      
+  }
+  public static  java.util.Date getFechaInicio(DatosTabla dt,java.util.Date fecha) throws SQLException
+  {
+      return getFechaInicio(dt,Formatear.getMonth(fecha),Formatear.getYear(fecha));      
   }
 }

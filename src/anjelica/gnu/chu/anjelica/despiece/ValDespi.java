@@ -274,6 +274,7 @@ public class ValDespi extends ventana {
         });
        jtDesp.addListSelectionListener(new ListSelectionListener()
        {
+             @Override
              public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting() || !jtDesp.isEnabled())
                     return;   
@@ -1558,11 +1559,11 @@ public class ValDespi extends ventana {
    
    void cargaDespiece(int row,boolean agrupa) throws SQLException
    {
-     int ejeNume=jtDesp.getValorInt(JTDES_EJER);
-     int numdes=jtDesp.getValorInt(JTDES_NUMDES);
+     int ejeNume=jtDesp.getValorInt(row,JTDES_EJER);
+     int numdes=jtDesp.getValorInt(row,JTDES_NUMDES);
      boolean isGrupo=false;
      try {
-        isGrupo=jtDesp.getValString(JTDES_TIPO).startsWith("G");
+        isGrupo=jtDesp.getValString(row,JTDES_TIPO).equals("G");
      } catch (NullPointerException k)
      {
         enviaMailError("Error al leer grupo en cargadespiece (valdespi) "+

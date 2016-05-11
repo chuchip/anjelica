@@ -1887,10 +1887,10 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
       return "{d '"+getFecha(fecha,"yyyy-MM-dd")+"'}";
    }
   /**
-    * Devuelve un string con la fecha a partir de un date
+    * Devuelve el año de la fecha mandada
     * @param fecha Objeto Date con la fecha
-    * @param formFecFin Formato en que queremos que nos devuelva la fecha
-    * @return Fecha en formato String
+    * 
+    * @return Año de la fecha
     */
    public static int getYear(Date fecha)
    {
@@ -1898,6 +1898,19 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
        return 0;
     
      return Integer.parseInt(getFecha(fecha,"yyyy"));
+   }
+   /**
+    * Devuelve el mes de la fecha mandada
+    * @param fecha Objeto Date con la fecha
+    * 
+    * @return Año de la fecha
+    */
+   public static int getMonth(Date fecha)
+   {
+     if (fecha == null)
+       return 0;
+    
+     return Integer.parseInt(getFecha(fecha,"MM"));
    }
    /**
     * @deprecated  use getFecha

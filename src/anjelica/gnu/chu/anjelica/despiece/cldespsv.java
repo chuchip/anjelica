@@ -5,12 +5,15 @@ import gnu.chu.utilidades.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.almacen.MvtosAlma;
+import gnu.chu.anjelica.pad.MantCalendar;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.DatosTabla;
 import java.awt.*;
 import java.util.*;
 import javax.swing.BorderFactory;
 import java.awt.event.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import net.sf.jasperreports.engine.*;
 /**
@@ -40,6 +43,8 @@ public class cldespsv extends ventana
   String s;
   DatosTabla dtSta2;
   DatosTabla dtSta3;
+  CLabel mesL = new CLabel("Mes");
+  CComboBox mesE = new CComboBox();
   private char swElec;
   final private char DESCUADRE='D';
   final private char VALORAR='S';
@@ -122,10 +127,17 @@ public class cldespsv extends ventana
 
     statusBar=new StatusBar(this);
     conecta();
+    for (int n=1;n<=12;n++)
+        mesE.addItem(n);
     Pprinc.setLayout(gridBagLayout1);
-    feciniE.setBounds(new Rectangle(73, 5, 76, 18));
+    mesL.setBounds(new Rectangle(2,2,30,18));
+    mesE.setBounds(new Rectangle(38,2,40,18));
+    cLabel1.setBounds(new Rectangle(100, 5, 55, 18));
+    feciniE.setBounds(new Rectangle(160, 5, 76, 18));
     cLabel1.setText("De Fecha");
-    cLabel1.setBounds(new Rectangle(14, 5, 55, 18));
+    
+    cLabel2.setBounds(new Rectangle(250, 6, 19, 17));
+    fecfinE.setBounds(new Rectangle(275, 5, 77, 18));
     Baceptar.setBounds(new Rectangle(125, 26, 125, 24));
     Baceptar.setText("Aceptar");
     Baceptar.addMenu("Sin Valorar");
@@ -141,14 +153,14 @@ public class cldespsv extends ventana
     Baceptar.setIcon(Iconos.getImageIcon("check"));
     Baceptar.setMargin(new Insets(0, 0, 0, 0));
     cLabel2.setText("A");
-    cLabel2.setBounds(new Rectangle(193, 6, 19, 17));
+    
     PintrDatos.setBorder(BorderFactory.createRaisedBevelBorder());
-    PintrDatos.setMaximumSize(new Dimension(308, 55));
-    PintrDatos.setMinimumSize(new Dimension(308, 55));
-    PintrDatos.setPreferredSize(new Dimension(308, 55));
+    PintrDatos.setMaximumSize(new Dimension(408, 55));
+    PintrDatos.setMinimumSize(new Dimension(408, 55));
+    PintrDatos.setPreferredSize(new Dimension(408, 55));
     PintrDatos.setDefButton(Baceptar.getBotonAccion());
     PintrDatos.setLayout(null);
-    fecfinE.setBounds(new Rectangle(216, 5, 77, 18));
+    
     Pprinc.setMaximumSize(new Dimension(32767, 32767));
   
     confGrid();
@@ -156,6 +168,8 @@ public class cldespsv extends ventana
     this.getContentPane().add(Pprinc,  BorderLayout.CENTER);
     Pprinc.add(PintrDatos,    new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 0, 0, 0), 0, 0));
+    PintrDatos.add(mesL, null);
+    PintrDatos.add(mesE, null);
     PintrDatos.add(feciniE, null);
     PintrDatos.add(cLabel1, null);
     PintrDatos.add(cLabel2, null);
@@ -168,7 +182,7 @@ public class cldespsv extends ventana
 
   private void confGrid() throws Exception
   {
-    Vector v=new Vector();
+    ArrayList v=new ArrayList();
     v.add("Producto"); // 0
     v.add("Descripcion"); // 1
     v.add("Cant.Or."); // 2
@@ -190,14 +204,32 @@ public class cldespsv extends ventana
   public void iniciarVentana() throws Exception
   {
     Pprinc.setDefButton(Baceptar.getBotonAccion());
+   
+    mesE.setValor(Formatear.getMonth(Formatear.getDateAct()));
+    fecfinE.setDate(MantCalendar.getFechaFinal(dtStat, Formatear.getDateAct()));
+    feciniE.setDate(MantCalendar.getFechaInicio(dtStat, Formatear.getDateAct()));
     activarEventos();
-    fecfinE.setText(Fecha.getFechaSys("dd-MM-yyyy"));
     feciniE.requestFocus();
     jt.setEnabled(true);
   }
 
   void activarEventos()
   {
+      mesE.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+            try
+            {
+                fecfinE.setDate(MantCalendar.getFechaFinal(dtStat, mesE.getValorInt(),EU.ejercicio));
+                feciniE.setDate(MantCalendar.getFechaInicio(dtStat,  mesE.getValorInt(),EU.ejercicio));
+            } catch (SQLException ex)
+            {
+                Error("Error al buscar fechas de calendario",ex);
+            }
+      }
+      });
+               
       MIgrasa.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -242,6 +274,7 @@ public class cldespsv extends ventana
       }
     });
     jt.addMouseListener(new MouseAdapter() {
+          @Override
           public void mouseClicked(MouseEvent e) {
             if (e.getClickCount()<2)
               return;
@@ -771,7 +804,35 @@ public class cldespsv extends ventana
                     }
                } while (dtCon1.next());
            }
-          
+           // Busco despieces con fechas fuera de rango en entradas
+           s="select 'Entr' as tipo ,eje_nume,deo_codi,deo_fecha,del_numlin as linea " +
+                " from v_despori  " +
+                " where deo_fecha between TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') " +
+                " and TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy') " +
+                " and deo_tiempo::date not between TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') " +
+                " and TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy') " +
+                " union all "+
+                "select 'Salid' as tipo,eje_nume,deo_codi,deo_fecha,def_orden as linea " +
+                " from v_despsal  " +
+                " where deo_fecha between TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') " +
+                " and TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy') " +
+                " and def_tiempo::date not between TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') " +
+                " and TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy') " +                
+                " order by 1,2";
+           if (dtCon1.select(s))
+           {
+                do {
+                        ArrayList v=new ArrayList();
+                        v.add("D"); // 0
+                        v.add("Diferencia Fechas en  Desp "+dtCon1.getString("tipo"));
+                        v.add(0); // 1
+                        v.add(dtCon1.getInt("linea")); // 2
+                        v.add(dtCon1.getInt("deo_codi")); // 3
+                        v.add(dtCon1.getDate("deo_fecha")); // 4
+                        jt.addLinea(v);
+
+                } while (dtCon1.next());
+           }
            jt.requestFocusInicio();
            jt.panelG.setVisible(true);
            mensaje("");
