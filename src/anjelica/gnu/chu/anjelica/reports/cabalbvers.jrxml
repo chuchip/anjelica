@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-04-17T10:36:12 -->
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2016-05-13T07:59:39 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabalbvers" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="56" bottomMargin="20" uuid="51e0fa54-5a48-4bc8-816e-882391864480">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -38,7 +38,7 @@ order by c.emp_codi,c.avc_ano,c.avc_nume]]>
 	<field name="avc_impbru" class="java.lang.Double"/>
 	<field name="avc_dtopp" class="java.lang.Double"/>
 	<field name="cli_diree" class="java.lang.String"/>
-	<field name="cli_codpoe" class="java.lang.Integer"/>
+	<field name="cli_codpoe" class="java.lang.String"/>
 	<field name="cli_poble" class="java.lang.String"/>
 	<field name="avc_ano" class="java.lang.Integer"/>
 	<field name="cli_recequ" class="java.lang.Integer"/>

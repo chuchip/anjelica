@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-04-17T10:41:33 -->
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2016-05-13T12:46:24 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabfravers" pageWidth="595" pageHeight="842" columnWidth="543" leftMargin="30" rightMargin="22" topMargin="22" bottomMargin="30" uuid="f2dfc7fa-7c60-493c-aca9-4cc9b9e5f8b5">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -10,7 +10,7 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="normal" isDefault="true" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+	<style name="normal" isDefault="true" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 	<parameter name="SUBREPORT_FILE_NAME" class="java.lang.String">
 		<parameterDescription><![CDATA[Subreport con las lineas de Albaran]]></parameterDescription>
 	</parameter>
@@ -55,7 +55,7 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 	<field name="fvc_sumtot" class="java.lang.Double"/>
 	<field name="cli_nomb" class="java.lang.String"/>
 	<field name="cli_direc" class="java.lang.String"/>
-	<field name="cli_codpo" class="java.lang.Integer"/>
+	<field name="cli_codpo" class="java.lang.String"/>
 	<field name="cli_pobl" class="java.lang.String"/>
 	<field name="cli_recequ" class="java.lang.Integer"/>
 	<field name="fvc_impbru" class="java.lang.Double"/>

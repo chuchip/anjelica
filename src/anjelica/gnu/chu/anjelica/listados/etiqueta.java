@@ -1,6 +1,7 @@
 package gnu.chu.anjelica.listados;
 
 import gnu.chu.anjelica.despiece.MantDespTactil;
+import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.controles.Cgrid;
 import gnu.chu.print.util;
 import gnu.chu.sql.DatosTabla;
@@ -12,7 +13,8 @@ import java.awt.image.BufferedImage;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import net.sf.jasperreports.engine.*;
 import net.sourceforge.barbecue.Barcode;
 import net.sourceforge.barbecue.BarcodeImageHandler;
@@ -23,7 +25,7 @@ import net.sourceforge.barbecue.linear.code128.Code128Barcode;
  * <p>Título: etiqueta</p>
  * <p>Descripción: Utilidades varias (metodos estaticos y no) para impresion etiquetas
  * de productos.</p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -45,6 +47,8 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   private final String LOGOTIPO="logotipo_bn.jpg"; // Logotipo por defecto.
   int nInd;
   int rowGrid;
+  Locale lengua = Locale.getDefault();
+  java.util.ResourceBundle recursoLengua;
   final private int L_PROCOD=0;
   final private int L_PRONOMB=1;
   final private int L_AVPNUMIND=2;
@@ -249,6 +253,12 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
       mp.put("diremp",diremp);
     if (datmat!=null)
       mp.put("datmat",datmat);
+    ResourceBundle rsB=ResourceBundle.getBundle("gnu.chu.anjelica.locale.jasper",lengua);
+//    mensajes.mensajeAviso(rsB.getString("etiqueta.nacido"));
+      
+    
+    mp.put(JRParameter.REPORT_LOCALE,lengua);
+    mp.put(JRParameter.REPORT_RESOURCE_BUNDLE,rsB);
     String img="";
     if (logo!=null)
     {
@@ -353,11 +363,24 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
    */
   public static int getEtiquetaCliente(DatosTabla dt, int empCodi,int cliCodi) throws SQLException
   {
-      String s="SELECT eti_codi FROM clientes WHERE emp_codi = "+empCodi+
+      String s="SELECT eti_codi,pai_codi FROM clientes WHERE "+
+          (empCodi==0?" 1=1":" emp_codi = "+empCodi)+
            " and cli_codi = "+cliCodi;
       if (! dt.select(s))
           return -1;
       return dt.getInt("eti_codi");
+  }
+  public void setIdioma(Locale lengua)
+  {
+      
+      this.lengua=lengua;
+  }
+  public void setIdiomaCliente(DatosTabla dt,int empCodi, int cliCodi) throws SQLException
+  {
+      if (getEtiquetaCliente(dt,empCodi,cliCodi)>=0)
+          setIdioma(new Locale(MantPaises.getLocalePais(dt.getInt("pai_codi"), dt)));
+      else
+          setIdioma(Locale.getDefault());
   }
   /**
    * Establece el tipo de etiqueta

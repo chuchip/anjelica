@@ -889,6 +889,14 @@ public class pdempresa extends ventanaPad   implements PAD
       else
           return lkEmp;
   }
+   public static int getPais(DatosTabla dt, int empCodi) throws SQLException
+  {
+      String s="select pai_codi from v_empresa WHERE emp_codi = "+empCodi;     
+      if (!dt.select(s))
+          return 0;
+      else
+          return dt.getInt("pai_codi");
+  }
   /**
    * Busca el nombre de una empresa
    * @param dt  DatosTabla con conexion a DB 

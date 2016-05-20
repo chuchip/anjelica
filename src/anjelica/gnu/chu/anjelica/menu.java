@@ -92,6 +92,7 @@ public class menu extends JFrame
   JMenuItem PadFPA = new JMenuItem();
   JMenuItem Padclientes = new JMenuItem();
   JMenuItem PadPaises = new JMenuItem("Paises");
+  JMenuItem PadIdiomas = new JMenuItem("Idioma");
   JMenuItem MantVehi = new JMenuItem();
   JMenuItem pdconfig = new JMenuItem();
   JMenuItem pddiscrim = new JMenuItem();
@@ -403,6 +404,11 @@ public class menu extends JFrame
         PadPaises_actionPerformed(e);
       }
     });
+    PadIdiomas.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        PadIdiomas_actionPerformed(e);
+      }
+    });        
     pdconfig.setText("Configuracion");
     pdconfig.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -965,6 +971,7 @@ public class menu extends JFrame
     JPopupPad.add(PadFPA);
     JPopupPad.add(Padclientes);
     JPopupPad.add(PadPaises);
+    JPopupPad.add(PadIdiomas);
     JPopupPad.add(MantVehi);
     JPopupPad.add(pdconfig);
     JPopupPad.add(pddiscrim);
@@ -1739,6 +1746,10 @@ void limpiaDB()
     ht.put("modConsulta","false");
 
     lanzaEjecutable( new gnu.chu.anjelica.pad.MantPaises(menu.this,EU,ht));
+  }
+   void PadIdiomas_actionPerformed(ActionEvent e) {    
+
+    lanzaEjecutable( new gnu.chu.anjelica.pad.MantIdiomas(menu.this,EU));
   }
   void PadFPA_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();

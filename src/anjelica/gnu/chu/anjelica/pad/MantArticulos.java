@@ -288,6 +288,21 @@ public class MantArticulos extends ventanaPad  implements PAD
                  }
              }
          });
+         
+         jtIdiomas.addMouseListener(new MouseAdapter() {
+            @Override
+             public void mouseClicked(MouseEvent e)
+             {
+                 if (nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.ADDNEW)
+                 {
+                     if (!jtIdiomas.isEnabled())
+                     {
+                         jtIdiomas.setEnabled(true);
+                         jtIdiomas.requestFocusInicioLater();
+                     }
+                 }
+             }
+         });
           jtEquCon.addMouseListener(new MouseAdapter() {
             @Override
              public void mouseClicked(MouseEvent e)
@@ -383,13 +398,32 @@ public class MantArticulos extends ventanaPad  implements PAD
       verDatosAgru(pro_codiE.getValorInt(),pro_codiE.getValorInt(),jtExclu,"artiexcl");
       verDatosAgru(pro_codiE.getValorInt(),pro_codiE.getValorInt(),jtEqui,"artiequiv");
       verDatosAgru(pro_codiE.getValorInt(),0,jtEquCon,"artequcon");
-
+      verDatosIdiomas(pro_codiE.getValorInt());
     } catch (Exception k)
     {
       Error("Error al ver Datos",k);
     }
   }
    
+  void verDatosIdiomas(int proCodi) throws SQLException
+  {
+    jtIdiomas.removeAllDatos();
+    s=" select l.loc_codi,loc_nomb,pro_codi, pro_nomloc from anjelica.locales as l left join anjelica.articulo_locale as al on al.loc_codi=l.loc_codi and al.pro_codi="+
+         proCodi+" order by l.loc_codi";
+    if (dtCon1.select(s))
+    {
+        do
+        {
+            ArrayList v=new ArrayList();
+            v.add(dtCon1.getString("loc_codi"));
+            v.add(dtCon1.getString("loc_nomb",true));
+            v.add(dtCon1.getString("pro_nomloc",true));
+            jtIdiomas.addLinea(v);
+            
+        } while (dtCon1.next());
+    }
+    
+  }
   void verDatosAgru(int proCodIni,int proCodFin, CGridEditable jt,String tabla) throws SQLException
   {
       jt.removeAllDatos();
@@ -432,7 +466,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     jtExclu.setEnabled(act);
     jtEquCon.setEnabled(act);
     pro_coexisE.setEnabled(act);
-
+    jtIdiomas.setEnabled(act);
     pro_conmaxE.setEnabled(act);
     Pdiscrim.setEnabled(act);
 
@@ -662,12 +696,14 @@ public class MantArticulos extends ventanaPad  implements PAD
       Error("Error al bloquear el registro", k);
       return;
     }
+    jtIdiomas.setEnabled(false);
     jtEqui.setEnabled(false);
     jtExclu.setEnabled(false);
     jtEquCon.setEnabled(false);
     pro_codiE.setEnabled(false);
   }
 
+    @Override
   public void ej_edit1()
   {
     try
@@ -678,6 +714,8 @@ public class MantArticulos extends ventanaPad  implements PAD
       dtAdd.update(stUp);
       borraAgrupa(pro_codiE.getValorInt());
       insertaAgrupa(pro_codiE.getValorInt());
+      borraLengua(pro_codiE.getValorInt());
+      insertaLengua(pro_codiE.getValorInt());
       resetBloqueo(dtAdd, "v_articulo",  pro_codiE.getText(),false);
       ctUp.commit();
       verDatos(dtCons);
@@ -707,6 +745,11 @@ public class MantArticulos extends ventanaPad  implements PAD
       s="DELETE FROM artequcon WHERE pro_codini="+proCodi+" or pro_codfin ="+proCodi;
       dtAdd.executeUpdate(s);
   }
+  private void borraLengua(int proCodi) throws SQLException
+  {
+      s="DELETE FROM articulo_locale WHERE pro_codi="+proCodi;
+      dtAdd.executeUpdate(s);
+  }
   /**
    * Inserta nuevas agrupaciones para el producto. Articulos Equivalentes y excluyentes.
    * @param proCodi
@@ -718,6 +761,22 @@ public class MantArticulos extends ventanaPad  implements PAD
       insertaAgrupa1(proCodi,  jtEqui,"artiequiv");
       insertaAgrupa1(proCodi,  jtEquCon,"artequcon");
   }
+  
+  private void  insertaLengua(int proCodi) throws SQLException
+  {
+      int nRow=jtIdiomas.getRowCount();
+      for (int n=0;n< nRow;n++)
+      {
+          if (jtIdiomas.getValString(n,2).trim().equals(""))
+              continue;
+          dtAdd.addNew("articulo_locale");
+          dtAdd.setDato("pro_codi",proCodi);
+          dtAdd.setDato("loc_codi",jtIdiomas.getValString(n,0));
+          dtAdd.setDato("pro_nomloc",jtIdiomas.getValString(n,2));
+          dtAdd.update();
+      }
+  }
+  
   private void  insertaAgrupa1(int proCodi,CGridEditable jt,String tabla) throws SQLException
   {
       int nRow=jt.getRowCount();
@@ -731,6 +790,7 @@ public class MantArticulos extends ventanaPad  implements PAD
           dtAdd.update();
       }
   }
+    @Override
   public void canc_edit()
   {
     try
@@ -867,7 +927,9 @@ public class MantArticulos extends ventanaPad  implements PAD
      mensajeErr("Clasificacion NO VALIDA");
      return false;
    }
-
+   if (jtIdiomas.isEnabled())
+       jtIdiomas.salirGrid();
+   
     if (jtExclu.isEnabled())
     {
         jtExclu.salirGrid();
@@ -880,6 +942,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         if (cambiaLineaGrid(PROINCLUYE)>=0)
             return false;
     }
+   
     if (jtEquCon.isEnabled())
     {
         jtEquCon.salirGrid();
@@ -911,6 +974,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
       dtAdd.update(stUp);
       insertaAgrupa(pro_codiE.getValorInt());
+      insertaLengua(pro_codiE.getValorInt());
       ctUp.commit();
     }
     catch (Exception ex)
@@ -1021,6 +1085,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     mensaje("Borrar Registro ...");
   }
 
+    @Override
   public void ej_delete1()
   {
     try
@@ -1028,6 +1093,7 @@ public class MantArticulos extends ventanaPad  implements PAD
       dtAdd.delete(stUp);
       resetBloqueo(dtAdd, "v_articulo", pro_codiE.getText(),false);
       borraAgrupa(pro_codiE.getValorInt());
+      borraLengua(pro_codiE.getValorInt());
       ctUp.commit();
       rgSelect();
     }
@@ -1325,6 +1391,9 @@ public class MantArticulos extends ventanaPad  implements PAD
         pro_noequiE = new gnu.chu.controles.CTextField();
         pro_coeqcoE = new gnu.chu.camposdb.proPanel();
         pro_noeqcoE = new gnu.chu.controles.CTextField();
+        loc_codiE = new gnu.chu.controles.CTextField();
+        pro_nomlocE = new gnu.chu.controles.CTextField();
+        loc_nombE = new gnu.chu.controles.CTextField();
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -1417,6 +1486,8 @@ public class MantArticulos extends ventanaPad  implements PAD
         cal_codiE = new gnu.chu.controles.CLinkBox();
         cLabel29 = new gnu.chu.controles.CLabel();
         pro_indtcoE = new gnu.chu.controles.CComboBox();
+        jtIdiomas = new gnu.chu.controles.CGridEditable(3);
+        cLabel41 = new gnu.chu.controles.CLabel();
         Pexclu = new gnu.chu.controles.CPanel();
         jtExclu = new gnu.chu.controles.CGridEditable(2) {
             public void cambiaColumna(int col,int colNueva, int row)
@@ -1507,6 +1578,14 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         pro_noeqcoE.setEnabled(false);
 
+        loc_codiE.setText("cTextField1");
+        loc_codiE.setEnabled(false);
+
+        pro_nomlocE.setText("cTextField1");
+
+        loc_nombE.setText("cTextField1");
+        loc_nombE.setEnabled(false);
+
         Pprinc.setLayout(null);
 
         Pcabe.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, java.awt.Color.gray, null));
@@ -1528,7 +1607,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         pro_activE.addItem("Pe","1");
         pro_activE.addItem("No","0");
         Pcabe.add(pro_activE);
-        pro_activE.setBounds(530, 5, 50, 27);
+        pro_activE.setBounds(530, 5, 50, 20);
 
         Pprinc.add(Pcabe);
         Pcabe.setBounds(10, 0, 600, 30);
@@ -1580,7 +1659,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel8.setText("Caducid. Fresco");
         Pinicio.add(cLabel8);
-        cLabel8.setBounds(0, 100, 91, 18);
+        cLabel8.setBounds(0, 100, 88, 18);
 
         cLabel9.setText("IVA");
         Pinicio.add(cLabel9);
@@ -1731,7 +1810,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel25.setText("Ult. Compra");
         cPanel2.add(cLabel25);
-        cLabel25.setBounds(6, 22, 70, 14);
+        cLabel25.setBounds(6, 22, 70, 15);
 
         pro_feulcoE.setEnabled(false);
         cPanel2.add(pro_feulcoE);
@@ -1868,12 +1947,42 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel29.setText("Incluir Dto.Comercial");
         Pfamil.add(cLabel29);
-        cLabel29.setBounds(10, 90, 130, 18);
+        cLabel29.setBounds(10, 70, 130, 18);
 
         pro_indtcoE.addItem("No","0");
         pro_indtcoE.addItem("Si","-1");
         Pfamil.add(pro_indtcoE);
-        pro_indtcoE.setBounds(140, 90, 51, 18);
+        pro_indtcoE.setBounds(140, 70, 51, 18);
+
+        try {
+            ArrayList v=new ArrayList();
+            v.add("Idioma");
+            v.add("Descr.Idioma");
+            v.add("Descr.Producto");
+            jtIdiomas.setCabecera(v);
+            jtIdiomas.setAnchoColumna(new int[]{60,100,180});
+            jtIdiomas.setAlinearColumna(new int[]{0,0,0});
+            ArrayList vc=new ArrayList();
+            vc.add(loc_codiE);
+            vc.add(loc_nombE);
+            vc.add(pro_nomlocE);
+            jtIdiomas.setCampos(vc);
+            jtIdiomas.setCanDeleteLinea(false);
+            jtIdiomas.setCanInsertLinea(false);
+        } catch (Exception k) {Error("Error al iniciar grid de idiomas",k);}
+        jtIdiomas.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        Pfamil.add(jtIdiomas);
+        jtIdiomas.setBounds(10, 120, 610, 210);
+
+        cLabel41.setBackground(new java.awt.Color(255, 255, 0));
+        cLabel41.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cLabel41.setText("Traduciones");
+        cLabel41.setMaximumSize(new java.awt.Dimension(159, 15));
+        cLabel41.setMinimumSize(new java.awt.Dimension(159, 15));
+        cLabel41.setOpaque(true);
+        cLabel41.setPreferredSize(new java.awt.Dimension(159, 15));
+        Pfamil.add(cLabel41);
+        cLabel41.setBounds(220, 100, 159, 15);
 
         Ptab.addTab("Parametros", Pfamil);
 
@@ -2025,6 +2134,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CLabel cLabel39;
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel40;
+    private gnu.chu.controles.CLabel cLabel41;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
@@ -2041,6 +2151,9 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CGridEditable jtEquCon;
     private gnu.chu.controles.CGridEditable jtEqui;
     private gnu.chu.controles.CGridEditable jtExclu;
+    private gnu.chu.controles.CGridEditable jtIdiomas;
+    private gnu.chu.controles.CTextField loc_codiE;
+    private gnu.chu.controles.CTextField loc_nombE;
     private gnu.chu.controles.CComboBox pro_activE;
     private gnu.chu.controles.CComboBox pro_artconE;
     private gnu.chu.controles.CTextField pro_cadcongE;
@@ -2074,6 +2187,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CTextField pro_noexclE;
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CTextField pro_nomcorE;
+    private gnu.chu.controles.CTextField pro_nomlocE;
     private gnu.chu.controles.CTextField pro_numcroE;
     private gnu.chu.controles.CCheckBox pro_oblfsaE;
     private gnu.chu.camposdb.prvPanel pro_prvulcoE;
@@ -2121,6 +2235,15 @@ public class MantArticulos extends ventanaPad  implements PAD
 
      return dt.getInt("pro_indtco")!=0;
    }
+    
+    public static String getNombreProdLocale(int codProd,String idioma, DatosTabla dt) throws SQLException
+    {
+        String s="select pro_nomloc from articulo_locale where pro_codi="+codProd+
+            " and loc_codi = '"+idioma+"'";
+        if (dt.select(s))
+            return dt.getString("pro_nomloc");
+        return getNombProd(codProd, dt);
+    }
     /**
      * Devuelve el tipo de Unidad en que se vende un producto
      * Kilos, Cajas, Piezas

@@ -81,9 +81,6 @@
           </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CTextField" name="pai_nombE">
-          <Properties>
-            <Property name="mayusc" type="boolean" value="true"/>
-          </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,50)"/>
           </AuxValues>
@@ -112,17 +109,17 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="200" y="1" width="21" height="-1"/>
+              <AbsoluteConstraints x="200" y="1" width="30" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CLabel" name="cLabel5">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Estructura Crotal"/>
+            <Property name="text" type="java.lang.String" value="Idioma"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="10" y="68" width="101" height="-1"/>
+              <AbsoluteConstraints x="10" y="90" width="50" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -168,7 +165,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="232" y="95" width="103" height="34"/>
+              <AbsoluteConstraints x="230" y="120" width="103" height="34"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -181,7 +178,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="61" y="95" width="104" height="34"/>
+              <AbsoluteConstraints x="60" y="120" width="104" height="34"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -205,6 +202,27 @@
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="120" y="47" width="90" height="-1"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Estructura Crotal"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="10" y="68" width="101" height="-1"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="gnu.chu.controles.CLinkBox" name="loc_codiE">
+          <Properties>
+            <Property name="aceptaNulo" type="boolean" value="false"/>
+            <Property name="ancTexto" type="int" value="50"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="60" y="90" width="320" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>

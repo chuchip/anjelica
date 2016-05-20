@@ -37,6 +37,7 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Locale;
 
 public class MantPaises extends   ventanaPad  implements PAD
 {
@@ -100,7 +101,7 @@ public class MantPaises extends   ventanaPad  implements PAD
         iniciarFrame();
         this.setResizable(false);
 
-        this.setVersion("2016-05-08" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2016-05-19" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM paises  "
             + " ORDER BY pai_codi ";
 
@@ -115,7 +116,6 @@ public class MantPaises extends   ventanaPad  implements PAD
         navActivarAll();
         this.setSize(413, 229);
         activar(false);
-
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -143,6 +143,8 @@ public class MantPaises extends   ventanaPad  implements PAD
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
         cLabel7 = new gnu.chu.controles.CLabel();
         pai_nomcorE = new gnu.chu.controles.CTextField(Types.CHAR,"X",5);
+        cLabel8 = new gnu.chu.controles.CLabel();
+        loc_codiE = new gnu.chu.controles.CLinkBox();
 
         Pprinc.setLayout(null);
 
@@ -164,8 +166,6 @@ public class MantPaises extends   ventanaPad  implements PAD
         cLabel3.setText("Nombre Corto ");
         Pprinc.add(cLabel3);
         cLabel3.setBounds(10, 47, 90, 15);
-
-        pai_nombE.setMayusc(true);
         Pprinc.add(pai_nombE);
         pai_nombE.setBounds(60, 25, 321, 17);
 
@@ -175,11 +175,11 @@ public class MantPaises extends   ventanaPad  implements PAD
 
         pai_inicE.setMayusc(true);
         Pprinc.add(pai_inicE);
-        pai_inicE.setBounds(200, 1, 21, 17);
+        pai_inicE.setBounds(200, 1, 30, 17);
 
-        cLabel5.setText("Estructura Crotal");
+        cLabel5.setText("Idioma");
         Pprinc.add(cLabel5);
-        cLabel5.setBounds(10, 68, 101, 15);
+        cLabel5.setBounds(10, 90, 50, 15);
 
         pai_estcroE.setMayusc(true);
         Pprinc.add(pai_estcroE);
@@ -193,11 +193,11 @@ public class MantPaises extends   ventanaPad  implements PAD
 
         Bcancelar.setText("Cancelar");
         Pprinc.add(Bcancelar);
-        Bcancelar.setBounds(232, 95, 103, 34);
+        Bcancelar.setBounds(230, 120, 103, 34);
 
         Baceptar.setText("Aceptar");
         Pprinc.add(Baceptar);
-        Baceptar.setBounds(61, 95, 104, 34);
+        Baceptar.setBounds(60, 120, 104, 34);
 
         cLabel7.setText("Nombre");
         Pprinc.add(cLabel7);
@@ -206,6 +206,15 @@ public class MantPaises extends   ventanaPad  implements PAD
         pai_nomcorE.setMayusc(true);
         Pprinc.add(pai_nomcorE);
         pai_nomcorE.setBounds(120, 47, 90, 17);
+
+        cLabel8.setText("Estructura Crotal");
+        Pprinc.add(cLabel8);
+        cLabel8.setBounds(10, 68, 101, 15);
+
+        loc_codiE.setAceptaNulo(false);
+        loc_codiE.setAncTexto(50);
+        Pprinc.add(loc_codiE);
+        loc_codiE.setBounds(60, 90, 320, 17);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
@@ -222,6 +231,8 @@ public class MantPaises extends   ventanaPad  implements PAD
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
+    private gnu.chu.controles.CLabel cLabel8;
+    private gnu.chu.controles.CLinkBox loc_codiE;
     private gnu.chu.controles.CComboBox pai_activE;
     private gnu.chu.controles.CTextField pai_codiE;
     private gnu.chu.controles.CTextField pai_coisaE;
@@ -288,6 +299,12 @@ public class MantPaises extends   ventanaPad  implements PAD
         pai_inicE.requestFocus();
         return false; 
      }
+     if (loc_codiE.getError() || loc_codiE.isNull())
+     {
+        mensajeErr(" Idioma de Pais no valido");
+        loc_codiE.requestFocus();
+        return false; 
+     }
      try 
      {
       if (!pai_inicE.getText().equals(pai_inicE.getTextAnt()))
@@ -329,6 +346,7 @@ public class MantPaises extends   ventanaPad  implements PAD
         dt.setDato("pai_nomcor", pai_nomcorE.getText());
         dt.setDato("pai_activ", pai_activE.getValor());
         dt.setDato("pai_inic", pai_inicE.getText());
+        dt.setDato("loc_codi", loc_codiE.getText());
         dt.setDato("pai_coisa", pai_coisaE.getText());
         dt.setDato("pai_estcro", pai_estcroE.getText());
         dt.update();
@@ -386,17 +404,20 @@ public class MantPaises extends   ventanaPad  implements PAD
        pai_coisaE.setEnabled(b);
        pai_estcroE.setEnabled(b);
        pai_inicE.setEnabled(b);
+       loc_codiE.setEnabled(b);
        Bcancelar.setEnabled(b);
        Baceptar.setEnabled(b);
     }
     @Override
     public void iniciarVentana() throws Exception {
+        loc_codiE.addDatos(MantIdiomas.getDatos(dtCon1));
         Pprinc.setButton(KeyEvent.VK_F4, Baceptar);
         pai_codiE.setColumnaAlias("pai_codi");
         pai_nombE.setColumnaAlias("pai_nomb");
         pai_nomcorE.setColumnaAlias("pai_nomcor");        
         pai_activE.setColumnaAlias("pai_activ");
         pai_inicE.setColumnaAlias("pai_inic");
+        loc_codiE.setColumnaAlias("loc_codi");
         pai_coisaE.setColumnaAlias("pai_coisa");
         pai_estcroE.setColumnaAlias("pai_estcroE");
         
@@ -420,6 +441,7 @@ public class MantPaises extends   ventanaPad  implements PAD
             pai_nomcorE.setText(dtStat.getString("pai_nomcor"));            
             pai_activE.setValor(dtStat.getInt("pai_activ"));
             pai_inicE.setText(dtStat.getString("pai_inic"));
+            loc_codiE.setText(dtStat.getString("loc_codi"));
             pai_coisaE.setValorInt(dtStat.getInt("pai_coisa"));
             pai_estcroE.setText(dtStat.getString("pai_estcro"));
         } catch (SQLException k)
@@ -455,6 +477,7 @@ public class MantPaises extends   ventanaPad  implements PAD
     v.add(pai_nomcorE.getStrQuery());
     v.add(pai_activE.getStrQuery());
     v.add(pai_inicE.getStrQuery());
+    v.add(loc_codiE.getStrQuery());
     v.add(pai_coisaE.getStrQuery());
     v.add(pai_estcroE.getStrQuery());
     
@@ -642,11 +665,19 @@ public class MantPaises extends   ventanaPad  implements PAD
         if (! dt.select("select * from paises where pai_codi = "+paiCodi))
             return null;
         return dt.getString("pai_nomcor");
+        
     }
-      public static String getInicialesPais(int paiCodi, DatosTabla dt) throws SQLException
+    public static String getInicialesPais(int paiCodi, DatosTabla dt) throws SQLException
     {
         if (! dt.select("select pai_inic from paises where pai_codi = "+paiCodi))
             return null;
         return dt.getString("pai_inic");
     }
+    public static String getLocalePais(int paiCodi, DatosTabla dt) throws SQLException
+    {
+        if (! dt.select("select loc_codi from paises where pai_codi = "+paiCodi))
+            return null;
+        return dt.getString("loc_codi",true);
+    }
+
 }
