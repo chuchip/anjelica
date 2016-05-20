@@ -1171,6 +1171,7 @@ private String buscaBanco(int banCodi) throws SQLException
      return nFraImp;
    }
 
+  @Override
    public boolean next() throws JRException
    {
      try
@@ -1218,10 +1219,11 @@ private String buscaBanco(int banCodi) throws SQLException
        if (campo.equals("emp_codi") ||
            campo.equals("fvc_nume") ||
            campo.equals("cli_codi") ||
-           campo.equals("cli_codpo") ||
            campo.equals("cli_recequ") ||
            campo.equals("fvc_ano"))
          return dtCon1.getInt(campo);
+       if (campo.equals("cli_codpo"))
+           return dtCon1.getString("cli_codpo");
        if (campo.equals("fvc_dtocom") ||
            campo.equals("fvc_dtootr") || campo.equals("fvc_sumtot"))
          return dtCon1.getDouble(campo);

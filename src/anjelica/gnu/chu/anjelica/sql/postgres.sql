@@ -337,7 +337,7 @@ cli_nomb varchar(40), -- Nombre
 cli_nomco varchar(50), -- Nombre Comercial
 cli_direc varchar(50), -- Direccion
 cli_pobl varchar(30), -- Poblaccion
-cli_codpo int, -- Cod. Postal
+cli_codpo varchar(8), -- Cod. Postal
 cli_telef varchar(25), -- Telefono
 cli_fax varchar(15), -- Fax
 cli_nif varchar(15), -- NIF
@@ -346,7 +346,7 @@ cli_telcon varchar(15), -- Telefono Contacto
 cli_nomen varchar(50), -- Nombre Envio
 cli_diree varchar(50), -- Direccion Entrega
 cli_poble varchar(30), -- Poblacion Entrega
-cli_codpoe int, -- Cod. Postal Envio
+cli_codpoe varchar(8), -- Cod. Postal Envio
 cli_telefe varchar(15), -- Telefono Envio
 cli_Faxe varchar(15), -- Fax de Envio
 cli_horenv varchar(50), -- Horario de Envio

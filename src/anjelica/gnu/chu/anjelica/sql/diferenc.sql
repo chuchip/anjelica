@@ -62,6 +62,8 @@ drop view anjelica.v_cliprv;
 drop view anjelica.v_cliente;
 alter table anjelica.clientes alter cli_codpo type varchar(8);
 alter table anjelica.clientes alter cli_codpoe type varchar(8);
+alter table anjelica.cliencamb alter cli_codpo type varchar(8);
+alter table anjelica.cliencamb alter cli_codpoe type varchar(8);
 create or replace view anjelica.v_cliente as select *,rut_codi as cli_valor from anjelica.clientes;
 grant select on anjelica.v_cliente to PUBLIC;
 create view anjelica.v_cliprv as 

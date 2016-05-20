@@ -277,10 +277,11 @@ public class lialbven implements JRDataSource
         if (nombre.equals("avc_empcod") ||
             nombre.equals("avc_nume") ||
             nombre.equals("cli_codi") ||
-            nombre.equals("cli_codpoe") ||
             nombre.equals("cli_recequ") ||
             nombre.equals("avc_ano"))
           return rs.getInt(nombre);
+        if (nombre.equals("cli_codpoe"))
+            return rs.getString(nombre);
         if (nombre.equals("avc_fecalb"))
           return rs.getDate(jRField.getName());
         if (jRField.getName().equals("avc_impiva"))

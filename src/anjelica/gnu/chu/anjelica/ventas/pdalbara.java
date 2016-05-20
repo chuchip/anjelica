@@ -676,7 +676,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-05-09" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-05-12" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1572,7 +1572,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
               
           }
       }
-      System.out.println("Tara: "+tara);
+      debug("Tara: "+tara);
       return tara;
   }
   /**
@@ -4326,7 +4326,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     pro_codiE.setEditable(false);
     Bdespiece.setEnabled(true);
     jtPalet.setEnabled(true);
-    
+    jtPalet.requestFocusInicio();
     irGridLin();
   }  catch (Exception k)
     {
