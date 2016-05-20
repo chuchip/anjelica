@@ -1,3 +1,29 @@
+-- Locale de Pais
+alter table anjelica.paises drop loc_codi;
+alter table anjelica.paises add loc_codi varchar(5) not null default 'es_ES';
+
+-- drop table anjelica.locales;
+create table anjelica.locales
+(
+loc_codi varchar(5) not null, -- Codigo de Locale.
+loc_nomb varchar(30) not null, -- Nombre de Locale
+primary key (loc_codi)
+);
+insert into anjelica.locales values('es_ES','Español (España)');
+alter table anjelica.paises add constraint loc_codi foreign key (loc_codi)
+    references anjelica.locales(loc_codi);
+--- 
+-- Nombres de Articulos en diferentes Idiomas
+--
+--drop table anjelica.articulo_locale
+create table anjelica.articulo_locale
+(
+pro_codi int not null,
+loc_codi varchar(5) not null,
+pro_nomloc varchar(40) not null
+);
+
+
 -- Cambiado codigo postal de empresa y tabla prov_espana a varchar(8)
  drop view anjelica.v_empresa;
  alter table anjelica.empresa alter emp_codpo type varchar(8);

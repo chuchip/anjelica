@@ -291,7 +291,7 @@ cli_recequ smallint,	-- Recargo Equivalencia
 cli_agralb int,		-- Agrupar Albaranes
 cli_comen varchar(255),	-- Comentario
 cli_riesg float,	-- Riesgo Asignado a Cliente
-pai_codi int ,		-- Pais del Cliente
+pai_codi int not null ,		-- Pais del Cliente
 cue_codi varchar(12),	-- Cuenta Contable
 cli_exeiva smallint,	-- Exento de IVA
 cli_tipiva VARCHAR(2), -- Tipo de IVA
@@ -2268,9 +2268,31 @@ create table anjelica.paises
  pai_estcro VARCHAR(30),	-- Estructura Crotal (NO USADO)
  pai_coisa INT, 		-- CODIGO ISO-AECOC (NO Usado)
  pai_activ smallint not null default -1,  -- Activo
+ loc_codi varchar(5) not null default 'es_ES', -- Locale del pais
  primary key (pai_codi)
 );
 create view anjelica.v_paises as select * from paises ;
+
+-- Tabla con Locales
+create table anjelica.locales
+(
+loc_codi varchar(5) not null -- Codigo de Locale.
+loc_nomb varchar(30) not null, -- Nombre de Locale
+primary key (loc_codi)
+);
+insert into anjelica.locales values('es_ES','Español (España)');
+alter table anjelica.paises add constraint loc_codi foreign key (loc_codi)
+    references anjelica.locales(loc_codi);	
+-- drop table 	 anjelica.articulo_locale
+create table anjelica.articulo_locale
+(
+pro_codi int not null, -- Codigo Producto
+loc_codi varchar(5) not null, -- Codigo de Locale.
+pro_nomloc varchar(50) not null, -- Nombre de Articulo
+primary key (loc_codi)
+);
+
+
 ---
 -- Proveedor Sala Despiece
 ---

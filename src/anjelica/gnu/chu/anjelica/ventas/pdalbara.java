@@ -109,6 +109,7 @@ import javax.swing.event.ListSelectionListener;
 
  
 public class pdalbara extends ventanaPad  implements PAD  {  
+  int paiEmp;
   rangoEtiquetas rangoEtiq;
   boolean swChangePalet=false;
   private final int JTP_NUMLIN=10;
@@ -1391,6 +1392,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     @Override
   public void iniciarVentana() throws Exception
   {
+    paiEmp= pdempresa.getPais(dtStat,EU.em_cod);
     jtDes.getPopMenu().add(verDatTraz);
     Bdespiece.setSelected(false);
     EU.getImpresora(gnu.chu.print.util.ALBARAN);
@@ -7738,8 +7740,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
      if (etiCodi < 0)
      {
          etiCodi=etiqueta.getEtiquetaCliente(dtCon1,emp_codiE.getValorInt(),
-              cli_codiE.getValorInt());
+              cli_codiE.getValorInt());     
+         etiq.setIdiomaCliente(dtCon1,emp_codiE.getValorInt(),cli_codiE.getValorInt());
      }
+     else
+         etiq.setIdioma(Locale.getDefault());
      if (etiCodi==0)
          etiCodi=etiqueta.getEtiquetaDefault(dtCon1,emp_codiE.getValorInt());
      
@@ -7781,7 +7786,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       {
           CodigoBarras codBarras;
           s="select avl_numpal,pro_codi,pro_nomb,avp_ejelot,avp_serlot,avp_numpar,avp_numind,"
-              + "sum(avp_numuni) as unidades from v_albventa_detalle "+
+              + "sum(avp_numuni) as unidades from v_albventa_detalle as a, "+
             " where emp_codi = " + emp_codiE.getValorInt() +
             " AND avc_ano = " + avc_anoE.getValorInt() +
             " and avc_nume = " + avc_numeE.getValorInt() +
@@ -7807,7 +7812,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
            do
            {
                 ArrayList lista=new ArrayList();
-                lista.add(dtCon1.getInt("pro_codi")); //0
+                lista.add(dtCon1.getInt("pro_codi")); //0                
                 lista.add(dtCon1.getString("pro_nomb"));   // 1
                 lista.add(dtCon1.getInt("avp_numind")); //2
                 lista.add(dtCon1.getInt("unidades"));    // 3
@@ -7837,6 +7842,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
       do
       {
         proNomb = pro_codiE.getNombArt(dtCon1.getString("pro_codi"));
+        if (cli_codiE.getLikeCliente().getInt("pai_codi")!=paiEmp)
+        {
+            String idioma=MantPaises.getLocalePais(cli_codiE.getLikeCliente().getInt("pai_codi"), dtStat);
+            proNomb=MantArticulos.getNombreProdLocale(dtCon1.getInt("pro_codi"),idioma,dtStat);
+        }
         int avpNumpar=dtCon1.getInt("avp_numpar");
         utdesp.busDatInd(dtCon1.getString("avp_serlot"),
                          dtCon1.getInt("pro_codi"),
