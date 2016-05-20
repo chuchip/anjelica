@@ -606,7 +606,7 @@ public class repetiqu extends ventana
           fecrepL.setText("Fecha Recep:");
           fecrecepE.setText(utDesp.fecrecepE);
       }
-      conservarE.setText(utDesp.conservarE);
+      conservarE.setText(utDesp.getConservar());
       feccadE.setText(utDesp.feccadE);
       grd_fecpro=utDesp.getFechaProduccion();
       fecsacrE.setDate(utDesp.getFecSacrif());

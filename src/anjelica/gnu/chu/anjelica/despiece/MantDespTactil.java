@@ -999,7 +999,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
                    deo_codiE.getValorInt(),
                   pro_codsalE.getText(), pro_codsalE.getTextNomb(), utdesp.nacidoE, utdesp.cebadoE,
                   utdesp.despiezadoE, null,
-                  null, utdesp.conservarE,
+                  null, utdesp.getConservar(),
                   utdesp.sacrificadoE,
                   null,
                   grd_fechaE.getText(),grd_fechaE.getDate(),
@@ -2630,7 +2630,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
                   jtSal.getValString(linea,JTSAL_PROCODI),jtSal.getValString(linea,JTSAL_PRONOMB),
                   utdesp.nacidoE, utdesp.cebadoE, utdesp.despiezadoE,
                   utdesp.ntrazaE, jtSal.getValorDec(linea,JTSAL_KILOS) + " Kg",
-                  utdesp.conservarE, utdesp.sacrificadoE,
+                  utdesp.getConservar(), utdesp.sacrificadoE,
                   "F. Prod: " + grd_fechaE.getText(),
                   "Fec.Cad.",grd_fechaE.getDate(),grd_feccadE.getText(),utdesp.getFecSacrif());
      etiq.setPrintDialog(false);    

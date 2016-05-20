@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
 
 public class utildesp
 {
- 
+  private String idioma=null;
   private int proCodiCompra;
   private int tidCodi=0;
   private int proLoteCompra;
@@ -65,7 +65,8 @@ public class utildesp
   private Date deoFecval;
   public String fecrepL;
   public String fecrecepE;
-  public String nacidoE,cebadoE,despiezadoE,ntrazaE,conservarE,sacrificadoE;
+  public String nacidoE,cebadoE,despiezadoE,ntrazaE,sacrificadoE;
+  private String conservarE;
   public String despiezadoD;
   public String accSerie;
   public int deoAno,deoCodi,accNume,accAno;
@@ -644,19 +645,28 @@ public class utildesp
      return 0;
    return dtStat.getInt("cli_codi");
  }
+  
+  public void setIdioma(String idioma)
+  {
+      this.idioma=idioma;
+  }
   public String getConservar()
   {
       return conservarE;
   }
+  public void setConservar(String litConservar)
+  {
+         conservarE=litConservar;
+  }
   public void actualConservar(int codProd, DatosTabla dtCon1) throws SQLException
   {
-    conservarE=gnu.chu.anjelica.pad.MantArticulos.getStrConservar(codProd,dtCon1);
+    conservarE=gnu.chu.anjelica.pad.MantArticulos.getStrConservar(codProd,dtCon1,idioma);
   }
   /**
    * Devuelve fecha congelado
    * @param codProd
    * @param fecProd Fecha Produccion
-   * @param dtCon1
+   * @param dt
    * @return string "" si el producto no es congelado
    *
    * @throws SQLException
@@ -688,7 +698,7 @@ public class utildesp
    * Si el numero resultante es <=100 se pondra 101 como maximo grupo a asignar.<br>
    *  Esto es asi por mantener la compatiblidad con antiguas versiones.
    * @throws SQLException
-   * @throws ParseException
+   * 
    * @return int
    */
   public static int buscaMaxGrp(DatosTabla dt,int ejerc,int empr,int grupoInf) throws SQLException

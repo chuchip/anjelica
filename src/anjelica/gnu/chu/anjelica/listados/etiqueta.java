@@ -48,7 +48,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   int nInd;
   int rowGrid;
   Locale lengua = Locale.getDefault();
-  java.util.ResourceBundle recursoLengua;
+  
   final private int L_PROCOD=0;
   final private int L_PRONOMB=1;
   final private int L_AVPNUMIND=2;

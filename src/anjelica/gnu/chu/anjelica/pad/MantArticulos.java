@@ -42,6 +42,8 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Vector;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
@@ -2278,7 +2280,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
      return dt.getDouble("pro_cosinc");
    }
-  /**
+   /**
      * Devuelve literal para Imprimir en etiquetas dependiendo si el producto es congelado
      * o no lo es.
      * @param codProd codigo de producto
@@ -2289,18 +2291,39 @@ public class MantArticulos extends ventanaPad  implements PAD
      */
    public static String getStrConservar(int codProd, DatosTabla dt) throws SQLException
    {
-     String conservarE;
-     String s = "select pro_artcon from v_articulo  where " +
-         " pro_artcon = 0 " + // Articulo NO congelado
-         " and pro_codi = " + codProd;
+       return getStrConservar(codProd,dt,null);
+   }
+  /**
+     * Devuelve literal para Imprimir en etiquetas dependiendo si el producto es congelado
+     * o no lo es.
+     * @param codProd codigo de producto
+     * @param dt DatosTabla sobre el que ejecutar la select
+     * @param idioma 
+     * @return String con la cadena a poner en etiqueta.
+     *                null si no encuentra el producto.
+     * @throws SQLException
+     */
+   public static String getStrConservar(int codProd, DatosTabla dt, String idioma) throws SQLException
+   {
+//     String s = "select pro_artcon from v_articulo  where " +
+//         " pro_artcon = 0 " + // Articulo NO congelado
+//         " and pro_codi = " + codProd;
      Boolean b=    isCongelado(codProd,dt);
      if (b==null)
          return null;
+     if (idioma==null)
+     {
+        if (!b)
+            return   "Conservar entre 0 y 2ºC";
+        else
+            return "Conservar a -18ºC";
+     }
+    ResourceBundle rsB =ResourceBundle.getBundle("gnu.chu.anjelica.locale.jasper",
+        new Locale(idioma));
      if (!b)
-       conservarE = "Conservar entre 0 y 2ºC";
-     else
-       conservarE = "Conservar a -18ºC";
-     return conservarE;
+            return  rsB.getString("conservar.fresco");// "Conservar entre 0 y 2ºC";
+        else
+            return rsB.getString("conservar.congelado"); //"Conservar a -18ºC";
    }
    /**
     * Devuelve un  ArrayList con todos los productos equivalentes a uno dado.

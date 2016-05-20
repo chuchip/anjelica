@@ -3326,7 +3326,7 @@ public class MantDesp extends ventanaPad implements PAD
                 + deo_nulogeE.getValorInt(),
                 ""+proCodi, proNomb, utdesp.nacidoE, utdesp.cebadoE,
                 utdesp.despiezadoE, null,
-                null, utdesp.conservarE,
+                null, utdesp.getConservar(),
                 utdesp.sacrificadoE,
                 null,
                 deo_fecproE.getText(), deo_fecproE.getDate(),

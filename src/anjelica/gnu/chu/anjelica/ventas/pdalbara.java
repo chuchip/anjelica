@@ -7838,15 +7838,21 @@ public class pdalbara extends ventanaPad  implements PAD  {
         mensajeErr("No encontradas lineas de Partidas en este albaran");
         return;
       }
-     
+      boolean swExtranjero=false;
+      String idioma=null;
+      if (cli_codiE.getLikeCliente().getInt("pai_codi")!=paiEmp)
+      {
+          swExtranjero=true;
+          idioma=MantPaises.getLocalePais(cli_codiE.getLikeCliente().getInt("pai_codi"), dtStat);
+      }
+      utdesp.setIdioma(idioma);
       do
       {
         proNomb = pro_codiE.getNombArt(dtCon1.getString("pro_codi"));
-        if (cli_codiE.getLikeCliente().getInt("pai_codi")!=paiEmp)
-        {
-            String idioma=MantPaises.getLocalePais(cli_codiE.getLikeCliente().getInt("pai_codi"), dtStat);
+        
+        if (swExtranjero)
             proNomb=MantArticulos.getNombreProdLocale(dtCon1.getInt("pro_codi"),idioma,dtStat);
-        }
+            
         int avpNumpar=dtCon1.getInt("avp_numpar");
         utdesp.busDatInd(dtCon1.getString("avp_serlot"),
                          dtCon1.getInt("pro_codi"),
@@ -7878,7 +7884,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
                      dtCon1.getString("pro_codi"), proNomb,
                      utdesp.nacidoE, utdesp.cebadoE, utdesp.despiezadoE,
                      utdesp.ntrazaE, dtCon1.getDouble("avp_canti") + " Kg",
-                     utdesp.conservarE, utdesp.sacrificadoE,
+                     utdesp.getConservar(), utdesp.sacrificadoE,
                      utdesp.fecrepL + utdesp.fecrecepE,
                      "F.Cad",null,
                      utdesp.feccadE,utdesp.fecSacrE);

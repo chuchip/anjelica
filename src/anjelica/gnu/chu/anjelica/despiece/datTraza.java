@@ -101,7 +101,7 @@ public class datTraza  extends ventana
     PdatTra.despiezadoE.setText(utDesp.despiezadoE);
     PdatTra.ntrazaE.setText(utDesp.ntrazaE);
     PdatTra.fecrecepE.setText(utDesp.fecrecepE);
-    PdatTra.conservarE.setText(utDesp.conservarE);
+    PdatTra.conservarE.setText(utDesp.getConservar());
 
   }
   public utildesp getUtilDesp()
@@ -117,7 +117,7 @@ public class datTraza  extends ventana
    utDesp.despiezadoE=PdatTra.despiezadoE.getText();
    utDesp.ntrazaE=PdatTra.ntrazaE.getText();
    utDesp.fecrecepE=PdatTra.fecrecepE.getText();
-   utDesp.conservarE=PdatTra.conservarE.getText();
+   utDesp.setConservar(PdatTra.conservarE.getText());
    matar(false);
   }
 
