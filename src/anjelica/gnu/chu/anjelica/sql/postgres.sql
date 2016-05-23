@@ -2289,7 +2289,7 @@ create table anjelica.articulo_locale
 pro_codi int not null, -- Codigo Producto
 loc_codi varchar(5) not null, -- Codigo de Locale.
 pro_nomloc varchar(50) not null, -- Nombre de Articulo
-primary key (loc_codi)
+primary key (pro_codi,loc_codi)
 );
 
 

@@ -45,6 +45,8 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -827,6 +829,7 @@ public class MantArticulos extends ventanaPad  implements PAD
   {
     Pprinc.resetTexto();
     activar(true);
+    jtIdiomas.setEnabled(false);
     pro_codiE.requestFocus();
     pro_coinstE.setValor("-1");
     pro_feulcoE.setEnabled(false);
@@ -842,6 +845,13 @@ public class MantArticulos extends ventanaPad  implements PAD
     env_codiE.setValorInt(0);
     cat_codiE.setValorInt(1);
     cal_codiE.setValorInt(1);
+    try
+    {
+        verDatosIdiomas(0);
+    } catch (SQLException ex)
+    {
+        Error("Error al inicializar grid de idiomas", ex);
+    }
     mensaje("Introduzca datos del producto a insertar ...");
   }
     @Override
