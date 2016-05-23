@@ -54,6 +54,7 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class MantArticulos extends ventanaPad  implements PAD
 {
+    String idiomaEmpresa;
     final private int PROEXCLUYE=-1;
     final private int PROINCLUYE=1;
     final private int PROINCCONG=2;
@@ -156,7 +157,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2016-05-20" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2016-05-23" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM v_articulo where pro_activ != 0 "+
                 " ORDER BY pro_codi";
 
@@ -203,6 +204,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     dtStat.select("SELECT cal_codi,cal_nomb FROM calibres_art  ORDER BY cal_codi");
     cal_codiE.addDatos(dtStat);    
     
+    idiomaEmpresa=MantPaises.getLocalePais(pdempresa.getPais(dtStat, EU.em_cod),dtStat);
     pro_codetiE.addDatos("-1","Sin Etiqueta");
     s="SELECT fpr_codi,fpr_nomb FROM v_famipro "+
         " ORDER BY fpr_nomb";
@@ -410,8 +412,9 @@ public class MantArticulos extends ventanaPad  implements PAD
   void verDatosIdiomas(int proCodi) throws SQLException
   {
     jtIdiomas.removeAllDatos();
-    s=" select l.loc_codi,loc_nomb,pro_codi, pro_nomloc from anjelica.locales as l left join anjelica.articulo_locale as al on al.loc_codi=l.loc_codi and al.pro_codi="+
-         proCodi+" order by l.loc_codi";
+    s=" select l.loc_codi,loc_nomb,pro_codi, pro_nomloc"
+        + " from anjelica.locales as l left join anjelica.articulo_locale as al on al.loc_codi=l.loc_codi and al.pro_codi="+
+         proCodi+" where l.loc_codi != '"+idiomaEmpresa+ "'order by l.loc_codi";
     if (dtCon1.select(s))
     {
         do
@@ -1330,7 +1333,7 @@ public class MantArticulos extends ventanaPad  implements PAD
    public static String getNombreArticulo(String codArtic, DatosTabla dt) throws SQLException
    {
      String s = "select pro_nomb from v_articulo  where " +
-         "  pro_codart '= " + codArtic+"'";
+         "  pro_codart= '" + codArtic+"'";
 
      if (!dt.select(s))  
        return null;
@@ -2246,6 +2249,38 @@ public class MantArticulos extends ventanaPad  implements PAD
             return dt.getString("pro_nomloc");
         return getNombProd(codProd, dt);
     }
+     public static String getNombreProdLocale(String codArticulo,String idioma, DatosTabla dt) throws SQLException
+    {        
+        String s="select pro_nomloc from articulo_locale where pro_codi  in ("+getNumerosArticulo(codArticulo,dt)+")"+
+            " and loc_codi = '"+idioma+"'";
+        if (dt.select(s))
+            return dt.getString("pro_nomloc");
+        return getNombreArticulo(codArticulo, dt);
+    }
+    public static int getNumeroArticulo(String codArticulo, DatosTabla dt) throws SQLException
+   {
+     String s = "select pro_codi  from v_articulo  where " +
+         "  pro_codart = '" + codArticulo+"'";
+     if (! dt.select(s))
+        return -1;
+
+     return dt.getInt("pro_codi");
+   }
+     public static String getNumerosArticulo(String codArticulo, DatosTabla dt) throws SQLException
+   {
+     String s = "select pro_codi  from v_articulo  where " +
+         "  pro_codart = '" + codArticulo+"'";
+     if (! dt.select(s))
+        return "";
+     s="";
+     do
+     {
+         s+=s.equals("")?"":",";
+         s+=dt.getInt("pro_codi");
+     } while (dt.next());
+     
+     return s;
+   }
     /**
      * Devuelve el tipo de Unidad en que se vende un producto
      * Kilos, Cajas, Piezas

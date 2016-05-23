@@ -2276,7 +2276,7 @@ create view anjelica.v_paises as select * from paises ;
 -- Tabla con Locales
 create table anjelica.locales
 (
-loc_codi varchar(5) not null -- Codigo de Locale.
+loc_codi varchar(5) not null, -- Codigo de Locale.
 loc_nomb varchar(30) not null, -- Nombre de Locale
 primary key (loc_codi)
 );
@@ -3484,21 +3484,22 @@ create table anjelica.relsubempr
 create table anjelica.listados
 (
  emp_codi int not null,		-- Empresa (Si es 0 indica TODAS las empresas)
- emp_codi int not null,		-- Empresa (Si es 0 indica TODAS las empresas)
  lis_codi int not null,		-- Codigo Listado
  lis_nomb char(80) not null,    -- Descripcion Listado
- lis_file char(80) not null,    -- Fichero con Listado (Incluyendo .jasper)
+ lis_file char(80) not null,    -- Fichero con Listado (sin incluir .jasper)
+ lis_logo char(50), -- Si es null sera la Imagen logotipo.jpg
  constraint ix_listados primary  key (emp_codi,lis_codi)
 );
-insert into listados values(0,1,'Listado Trazabilidad','listraza');
-insert into listados values(0,2,'Listado Facturas Ventas (Cabecera)','cabfrave');
-insert into listados values(0,3,'Listado Facturas Ventas (Lineas)','lifrave');
-insert into listados values(0,5,' Listado Facturas Comentarios (PIE) ','cpfrave');
-insert into listados values(0,6,'Listado Fact. Ventas PreImpr. (Cab)','cabfravepi');
-insert into listados values(0,7, 'Listado Albaran Ventas (Cabecera)','cabalbve');
-insert into listados values(0,8, 'Listado Albaran Ventas (Linea)','lialbve');
-insert into listados values(0,9, 'Listado Albaran Ventas Desgl.(Linea)','lialbvedep');
-insert into listados values(0,10, 'Listado Hojas Palets','etiqPalets');
+insert into anjelica.listados values(0,1,'Listado Trazabilidad','listraza',null);
+insert into anjelica.listados values(0,2,'Listado Facturas Ventas (Cabecera)','cabfrave',null);
+insert into anjelica.listados values(0,3,'Listado Facturas Ventas (Lineas)','lifrave',null);
+insert into anjelica.listados values(0,5,' Listado Facturas Comentarios (PIE) ','cpfrave',null);
+insert into anjelica.listados values(0,6,'Listado Fact. Ventas PreImpr. (Cab)','cabfravepi',null);
+insert into anjelica.listados values(0,7, 'Listado Albaran Ventas (Cabecera)','cabalbve',null);
+insert into anjelica.listados values(0,8, 'Listado Albaran Ventas (Linea)','lialbve',null);
+insert into anjelica.listados values(0,9, 'Listado Albaran Ventas Desgl.(Linea)','lialbvedep',null);
+insert into anjelica.listados values(0,10, 'Listado Hojas Palets','etiqPalets',null);
+insert into anjelica.listados values(0,11,'Listado Tarifas Precios','tarifa','vp25.jpg');
 --
 -- Tabla de Envases
 --

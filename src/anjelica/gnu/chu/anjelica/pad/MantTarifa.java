@@ -22,6 +22,7 @@
 package gnu.chu.anjelica.pad;
 
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
@@ -40,6 +41,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.print.PrinterException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -48,18 +50,24 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
+import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 
 
-public class MantTarifa extends ventanaPad implements PAD
+public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 {
+  double tarIncpre;
+  String localeEmpresa;
+  boolean swLocaleEmpresa;
   String s;
   String fecini,tipo;
   boolean ARG_MODCONSULTA=false;
+  boolean swInicio=false;
   public MantTarifa(EntornoUsuario eu, Principal p)
   {
     this(eu,p,null);
@@ -113,7 +121,7 @@ public class MantTarifa extends ventanaPad implements PAD
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2016-02-08" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2016-05-23" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -136,10 +144,10 @@ public class MantTarifa extends ventanaPad implements PAD
         nav.removeBoton(navegador.EDIT);
         nav.removeBoton(navegador.DELETE);
       }
-      statusBar.add(Bimpri, new GridBagConstraints(9, 0, 1, 2, 0.0, 0.0
-                            , GridBagConstraints.EAST,
-                            GridBagConstraints.VERTICAL,
-                            new Insets(0, 5, 0, 0), 0, 0));
+//      statusBar.add(Bimpri, new GridBagConstraints(9, 0, 1, 2, 0.0, 0.0
+//                            , GridBagConstraints.EAST,
+//                            GridBagConstraints.VERTICAL,
+//                            new Insets(0, 5, 0, 0), 0, 0));
 
     }
     @Override
@@ -148,9 +156,10 @@ public class MantTarifa extends ventanaPad implements PAD
       tar_feciniE.setColumnaAlias("tar_fecini");
       tar_fecfinE.setColumnaAlias("tar_fecfin");
       tar_codiE.setColumnaAlias("tar_codi");
+      localeEmpresa=MantPaises.getLocalePais(pdempresa.getPais(dtStat, EU.em_cod),dtStat);
       activarEventos();
       activar(false);
-//      verDatos();
+//      verDatos();p
       nav.requestFocus();
       Pprinc.setDefButton(Baceptar);
 //      Pprinc.setEscButton(Bcancelar);
@@ -210,30 +219,42 @@ public class MantTarifa extends ventanaPad implements PAD
      try {
        if (dtCons.getNOREG())
        {
-         mensajeErr("NO HAY NINGUN PRODUCTO SELECIONADO");
+         msgBox("NO HAY NINGUN PRODUCTO SELECIONADO");
          return;
        }
 
        HashMap mp = new HashMap();
-      
+       swLocaleEmpresa=loc_codiE.getValor().equals(localeEmpresa);
+       swInicio=true;
+       Listados lis=  Listados.getListado(EU.em_cod, Listados.TARIFA, dtStat);
        mp.put("tar_feciniP", tar_feciniE.getDate());
        mp.put("tar_fecfinP", tar_fecfinE.getDate());
        mp.put("impRefer", opImpRef.isSelected());
-       mp.put("tar_nombP", tar_codiE.getText()); 
-       mp.put("logo", Iconos.getPathIcon() + "logotipo.jpg"); 
+       mp.put("tar_nombP", tar_impriE.getText()); 
+       mp.put("logo", lis.getPathLogo()); 
        JasperReport jr;
-       jr = gnu.chu.print.util.getJasperReport(EU,"tarifa");
-   
-        s="select * from tarifa  "+
-            " where tar_codi = "+tar_codiE.getValorInt()+
+       jr = Listados.getJasperReport(EU,lis.getNombFich());
+       s="select tar_codori,tar_incpre from tipotari where tar_codi="+tar_impriE.getValor();
+       if (!dtStat.select(s))
+       {
+           msgBox("Tarifa no encontrada");
+           return;
+       }
+       int tarCodi=tar_impriE.getValorInt();
+       tarIncpre=0;
+       if (dtStat.getInt("tar_codori")!=0)
+       {
+           tarCodi=dtStat.getInt("tar_codori");
+           tarIncpre=dtStat.getDouble("tar_incpre",true);
+       }
+       s="select * from tarifa  "+
+            " where tar_codi = "+tarCodi+
             " and tar_fecini = TO_DATE('"+tar_feciniE.getText()+"','dd-MM-yyyy') "+
             " order by tar_linea";
-       ResultSet rs;
+       
+       dtCon1.select(s);
 
-       rs=dtCon1.getStatement().executeQuery(dtCon1.parseaSql(s));
-
-       JasperPrint jp = JasperFillManager.fillReport(jr, mp,
-           new JRResultSetDataSource(rs));
+       JasperPrint jp = JasperFillManager.fillReport(jr, mp, this);
        gnu.chu.print.util.printJasper(jp, EU);
      }
      catch (JRException | ParseException | SQLException | PrinterException k)
@@ -372,6 +393,7 @@ public class MantTarifa extends ventanaPad implements PAD
         tar_fecfinE.setText(dtCons.getFecha("tar_fecfin","dd-MM-yyyy"));
 
         tar_codiE.setText(dtCons.getString("tar_codi"));
+        tar_impriE.setValor(dtCons.getString("tar_codi"));
         verDatLin(tar_feciniE.getText(),tar_codiE.getText(),tar_fecfinE.getText(),0);
       } catch (Exception k)
       {
@@ -685,7 +707,9 @@ public class MantTarifa extends ventanaPad implements PAD
       while (dtStat.next());
     }
     pro_codartE.iniciar(dtStat, this, vl, EU);
-
+    tar_impriE.setDatos(pdtipotar.getTiposTarifa(dtCon1,-1));
+    loc_codiE.setDatos(MantIdiomas.getDatos(dtAdd));
+    loc_codiE.setValor(MantPaises.getLocalePais(pdempresa.getPais(dtStat, EU.em_cod), dtCon1));
     pro_codartE.setProNomb(null);
   }
   public static double getPrecTar(DatosTabla dt,int proCodi, int tarCodi,java.util.Date fecAlb) throws SQLException
@@ -768,7 +792,6 @@ public class MantTarifa extends ventanaPad implements PAD
         pro_codartE = new gnu.chu.camposdb.proPanel();
         pro_codartE.setUsaCodigoArticulo(true);
         pro_codartE.setText("");
-        Bimpri = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -781,11 +804,11 @@ public class MantTarifa extends ventanaPad implements PAD
         cPanel1 = new gnu.chu.controles.CPanel();
         cLabel3 = new gnu.chu.controles.CLabel();
         tar_fecopE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
-        cLabel4 = new gnu.chu.controles.CLabel();
-        tar_copiaE = new gnu.chu.controles.CComboBox();
         cLabel7 = new gnu.chu.controles.CLabel();
         tar_incremE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--9.99");
         Bocul = new gnu.chu.controles.CButton();
+        cLabel8 = new gnu.chu.controles.CLabel();
+        tar_copiaE = new gnu.chu.controles.CComboBox();
         tar_codiE = new gnu.chu.controles.CLinkBox();
         jt = new gnu.chu.controles.CGridEditable(4) {
             public void cambiaColumna(int col,int colNueva, int row)
@@ -855,14 +878,15 @@ public class MantTarifa extends ventanaPad implements PAD
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
+        Bimpresion = new gnu.chu.controles.CPanel();
+        cLabel4 = new gnu.chu.controles.CLabel();
+        tar_impriE = new gnu.chu.controles.CComboBox();
+        Bimpri = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
         opImpRef = new gnu.chu.controles.CCheckBox();
+        cLabel9 = new gnu.chu.controles.CLabel();
+        loc_codiE = new gnu.chu.controles.CComboBox();
 
         pro_codartE.setAceptaNulo(false);
-
-        Bimpri.setToolTipText("Imprimir Tarifa");
-        Bimpri.setMaximumSize(new java.awt.Dimension(24, 24));
-        Bimpri.setMinimumSize(new java.awt.Dimension(24, 24));
-        Bimpri.setPreferredSize(new java.awt.Dimension(24, 24));
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -917,17 +941,6 @@ public class MantTarifa extends ventanaPad implements PAD
         cPanel1.add(tar_fecopE);
         tar_fecopE.setBounds(50, 16, 65, 17);
 
-        cLabel4.setText("Tarifa");
-        cLabel4.setPreferredSize(new java.awt.Dimension(33, 18));
-        cPanel1.add(cLabel4);
-        cLabel4.setBounds(120, 16, 40, 17);
-
-        tar_copiaE.setMaximumSize(new java.awt.Dimension(160, 18));
-        tar_copiaE.setMinimumSize(new java.awt.Dimension(160, 18));
-        tar_copiaE.setPreferredSize(new java.awt.Dimension(160, 18));
-        cPanel1.add(tar_copiaE);
-        tar_copiaE.setBounds(160, 16, 165, 17);
-
         cLabel7.setText("Increm.");
         cLabel7.setPreferredSize(new java.awt.Dimension(64, 18));
         cPanel1.add(cLabel7);
@@ -939,6 +952,17 @@ public class MantTarifa extends ventanaPad implements PAD
         tar_incremE.setBounds(380, 16, 50, 17);
         cPanel1.add(Bocul);
         Bocul.setBounds(452, 22, 2, 2);
+
+        cLabel8.setText("Tarifa");
+        cLabel8.setPreferredSize(new java.awt.Dimension(33, 18));
+        cPanel1.add(cLabel8);
+        cLabel8.setBounds(120, 16, 40, 17);
+
+        tar_copiaE.setMaximumSize(new java.awt.Dimension(160, 18));
+        tar_copiaE.setMinimumSize(new java.awt.Dimension(160, 18));
+        tar_copiaE.setPreferredSize(new java.awt.Dimension(160, 18));
+        cPanel1.add(tar_copiaE);
+        tar_copiaE.setBounds(160, 16, 165, 17);
 
         Pcabe.add(cPanel1);
         cPanel1.setBounds(110, 30, 435, 40);
@@ -967,7 +991,7 @@ public class MantTarifa extends ventanaPad implements PAD
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 272, Short.MAX_VALUE)
+            .add(0, 244, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -980,26 +1004,59 @@ public class MantTarifa extends ventanaPad implements PAD
         Pprinc.add(jt, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        Ppie.setMaximumSize(new java.awt.Dimension(392, 30));
-        Ppie.setMinimumSize(new java.awt.Dimension(392, 30));
-        Ppie.setPreferredSize(new java.awt.Dimension(392, 30));
+        Ppie.setMaximumSize(new java.awt.Dimension(392, 58));
+        Ppie.setMinimumSize(new java.awt.Dimension(392, 58));
+        Ppie.setPreferredSize(new java.awt.Dimension(392, 58));
         Ppie.setLayout(null);
 
         Baceptar.setText("Aceptar");
         Ppie.add(Baceptar);
-        Baceptar.setBounds(10, 2, 117, 25);
+        Baceptar.setBounds(10, 2, 90, 25);
 
         Bcancelar.setText("Cancelar");
         Ppie.add(Bcancelar);
-        Bcancelar.setBounds(140, 2, 117, 25);
+        Bcancelar.setBounds(10, 30, 90, 25);
 
-        opImpRef.setText("Impr. Referenc.");
-        Ppie.add(opImpRef);
-        opImpRef.setBounds(273, 2, 110, 23);
+        Bimpresion.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
+        Bimpresion.setLayout(null);
+
+        cLabel4.setText("Idioma");
+        cLabel4.setPreferredSize(new java.awt.Dimension(33, 18));
+        Bimpresion.add(cLabel4);
+        cLabel4.setBounds(10, 20, 40, 17);
+
+        tar_impriE.setMaximumSize(new java.awt.Dimension(160, 18));
+        tar_impriE.setMinimumSize(new java.awt.Dimension(160, 18));
+        tar_impriE.setPreferredSize(new java.awt.Dimension(160, 18));
+        Bimpresion.add(tar_impriE);
+        tar_impriE.setBounds(50, 2, 270, 17);
+
+        Bimpri.setText("Imprimir");
+        Bimpri.setToolTipText("Imprimir Tarifa");
+        Bimpri.setMaximumSize(new java.awt.Dimension(24, 24));
+        Bimpri.setMinimumSize(new java.awt.Dimension(24, 24));
+        Bimpri.setPreferredSize(new java.awt.Dimension(24, 24));
+        Bimpresion.add(Bimpri);
+        Bimpri.setBounds(330, 15, 80, 24);
+
+        opImpRef.setText("Impr. Ref.");
+        Bimpresion.add(opImpRef);
+        opImpRef.setBounds(240, 20, 80, 17);
+
+        cLabel9.setText("Tarifa");
+        cLabel9.setPreferredSize(new java.awt.Dimension(33, 18));
+        Bimpresion.add(cLabel9);
+        cLabel9.setBounds(10, 2, 40, 17);
+        Bimpresion.add(loc_codiE);
+        loc_codiE.setBounds(50, 20, 180, 18);
+
+        Ppie.add(Bimpresion);
+        Bimpresion.setBounds(130, 2, 420, 50);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         Pprinc.add(Ppie, gridBagConstraints);
 
@@ -1012,6 +1069,7 @@ public class MantTarifa extends ventanaPad implements PAD
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
+    private gnu.chu.controles.CPanel Bimpresion;
     private gnu.chu.controles.CButton Bimpri;
     private gnu.chu.controles.CButton Bocul;
     private gnu.chu.controles.CPanel Pcabe;
@@ -1024,8 +1082,11 @@ public class MantTarifa extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
+    private gnu.chu.controles.CLabel cLabel8;
+    private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CPanel cPanel1;
     private gnu.chu.controles.CGridEditable jt;
+    private gnu.chu.controles.CComboBox loc_codiE;
     private gnu.chu.controles.CCheckBox opImpRef;
     private gnu.chu.camposdb.proPanel pro_codartE;
     private gnu.chu.controles.CTextField pro_nombE;
@@ -1035,9 +1096,68 @@ public class MantTarifa extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField tar_fecfinE;
     private gnu.chu.controles.CTextField tar_feciniE;
     private gnu.chu.controles.CTextField tar_fecopE;
+    private gnu.chu.controles.CComboBox tar_impriE;
     private gnu.chu.controles.CTextField tar_incremE;
     private gnu.chu.controles.CTextField tar_nusemE;
     private gnu.chu.controles.CTextField tar_preciE;
     // End of variables declaration//GEN-END:variables
+   
+    @Override
+   public boolean next() throws JRException
+   {
+     try
+     {
+        if (swInicio)
+        {
+            swInicio=false;
+            return !dtCon1.getNOREG();           
+        }
+        return dtCon1.next();
+     }
+     catch (Exception k)
+     {
+       throw new JRException(k);
+     }
+   }
 
+  @Override
+   public Object getFieldValue(JRField jRField) throws JRException
+   {
+     try
+     {
+       String campo = jRField.getName().toLowerCase();
+       switch (campo)
+       {
+           case "pro_nomb":
+             if (!swLocaleEmpresa && dtCon1.getString("pro_codart").length()>1)
+                 return MantArticulos.getNombreProdLocale(dtCon1.getString("pro_codart"), loc_codiE.getValor(), dtStat);
+             else
+                return dtCon1.getString(campo);
+            case "tar_codi":
+               return dtCon1.getInt(campo);               
+            case "tar_linea":
+               return dtCon1.getInt(campo);               
+           case "tar_fecini":
+               return dtCon1.getDate(campo);
+           case "tar_fecfin":
+               return dtCon1.getDate(campo);
+           case "pro_codart":  
+               return dtCon1.getString(campo);
+           case "tar_preci":
+               return new BigDecimal(dtCon1.getDouble(campo)+tarIncpre);               
+           case "tar_comen":
+               return dtCon1.getString(campo);
+           case "tar_grupo":
+               return dtCon1.getInt(campo);
+           case "tar_tipo":
+                 return dtCon1.getInt(campo);
+           default:
+                 throw new Exception("Campo " + campo + " NO encontrado");
+       }
+     }
+     catch (Exception k)
+     {
+       throw new JRException(k);
+     }
+   }
 }

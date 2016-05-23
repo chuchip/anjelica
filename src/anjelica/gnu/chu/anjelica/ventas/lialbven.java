@@ -1,6 +1,6 @@
 package gnu.chu.anjelica.ventas;
 
-import gnu.chu.anjelica.listados.utillista;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.utilidades.*;
 import gnu.chu.sql.*;
@@ -52,10 +52,7 @@ public class lialbven implements JRDataSource
   String s;
   boolean valora;
   FileOutputStream fOut;
-  private final static int CODLISTADO_CAB=7;
-  private final static int CODLISTADO_LIN=8;
-  private final static int CODLISTADO_LINENT=9;
-  private final static int CODLISTADO_PALE=10;
+  
   
   public lialbven(DatosTabla dt,EntornoUsuario EU) throws SQLException,java.text.ParseException
   {
@@ -93,10 +90,10 @@ public class lialbven implements JRDataSource
    }
    public int imprEtiqPalets( String sqlAlb,lialbven liAlb,  DatosTabla dtCon1,EntornoUsuario EU ) throws Exception
    {
-      JasperReport jr = gnu.chu.print.util.getJasperReport(EU, utillista.getNombList(EU.
-         em_cod,  CODLISTADO_PALE, dtCon1)  );
+      Listados lis=Listados.getListado(EU.em_cod,  Listados.PALE_AVC, dtCon1);
+      JasperReport jr = gnu.chu.print.util.getJasperReport(EU,lis.getNombFich()   );
       java.util.HashMap mp = new java.util.HashMap();
-      mp.put("logotipo",Iconos.getPathIcon()+"logotipo.jpg");
+      mp.put("logotipo",Iconos.getPathIcon()+lis.getNombLogo());
                
       if (! dtCon1.select(sqlAlb))
       {
@@ -160,10 +157,8 @@ public class lialbven implements JRDataSource
    int empCodi=rs.getInt("avc_empcod");
    String avcSerie=rs.getString("avc_serie");
    int avcNume=rs.getInt("avc_nume");
-
-   JasperReport jr = gnu.chu.print.util.getJasperReport(EU, utillista.getNombList(EU.
-         em_cod,  CODLISTADO_CAB, dtCon1)
-       );
+   Listados lis=Listados.getListado(EU.em_cod,  Listados.CAB_AVC, dtCon1);
+   JasperReport jr = Listados.getJasperReport(EU, lis.getNombFich());
    java.util.HashMap mp = new java.util.HashMap();
    mp.put(JRParameter.REPORT_CONNECTION,ct);
    if (avsNume==0)
@@ -172,7 +167,7 @@ public class lialbven implements JRDataSource
      mp.put("valora", false);
    mp.put("emp_obsalb", empObsAlb);
    mp.put("obser", obser==null?null:obser.trim());
-   mp.put("logotipo",Iconos.getPathIcon()+"logotipo.jpg");
+   mp.put("logotipo",lis.getPathLogo());
    vlike lk=  pdempresa.getDatosEmpresa(dtCon1, EU.em_cod);
    mp.put("empNif",MantPaises.getInicialesPais(lk.getInt("pai_codi"),dtCon1)+
          lk.getString("emp_nif"));
@@ -189,8 +184,8 @@ public class lialbven implements JRDataSource
    }
 
     mp.put("SUBREPORT_FILE_NAME",EU.pathReport +"/"+
-        utillista.getNombList(EU.em_cod,avsNume>0?CODLISTADO_LINENT:
-            CODLISTADO_LIN, dtCon1)+".jasper");
+        Listados.getNombListado(EU.em_cod,avsNume>0?Listados.LINENT_AVC:
+            Listados.LIN_AVC, dtCon1)+".jasper");
   
       if (!getDatosAlb(rs.getInt("avc_ano"),rs.getInt("avc_empcod"),rs.getString("avc_serie"),
                      rs.getInt("avc_nume")))

@@ -1,7 +1,7 @@
 package gnu.chu.anjelica.facturacion;
 
 import gnu.chu.Menu.*;
-import gnu.chu.anjelica.listados.utillista;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.anjelica.pad.pdconfig;
@@ -57,11 +57,7 @@ public class lisfactu extends ventana  implements JRDataSource
   private boolean simular=false; // Simula el listado (para opcion de enviar fax)
   private int numFrasTratar=0; // Numero de fras a tratar
   private final static int MAX_AVISO=150; // A partir de ahi avisa de q se imprimiran demasiadas fras.
-  private final static int CODLISTADO_CAB=2;
-  private final static int CODLISTADO_CABPI=6; // CABECERA listado fra. PreImpreso
-  private final static int CODLISTADO_LIN=3;
-//  private final static int CODLISTADO_CCO=4; // Listado Comentario Cabecera
-  private final static int CODLISTADO_PCO=5; // Listado Comentario Pie
+  
   SendFax sendFax=null;
   int cliCodi,fvcAno,empCodi,fvcNume;
   String fvcSerie;
@@ -1134,23 +1130,24 @@ private String buscaBanco(int banCodi) throws SQLException
       empCodi=dtCon1.getInt("emp_codi");
       fvcSerie=dtCon1.getString("fvc_serie");
       fvcNume=dtCon1.getInt("fvc_nume");
-
-     JasperReport jr = gnu.chu.print.util.getJasperReport(EU,  utillista.getNombList(EU.
-         em_cod, getFraPreImpr()?CODLISTADO_CABPI: CODLISTADO_CAB, dtStat));
+      
+     Listados lis=  Listados.getListado(EU.em_cod, (getFraPreImpr()?Listados.CABPI_FRV: Listados.CAB_FRV), dtStat);
+     JasperReport jr = Listados.getJasperReport(EU,lis.getNombFich() );
      HashMap mp = new HashMap();
      mp.put(JRParameter.REPORT_CONNECTION, ct);
  //     mp.put("valora", new Boolean(valora));
      mp.put("emp_obsfra", empObsfra);
-     mp.put("logotipo", Iconos.getPathIcon() + "logotipo.jpg");
+     mp.put("logotipo", lis.getPathLogo());
      mp.put("obser",null);
      mp.put("agrupa",getAgrupa()?new Integer(1):new Integer(0));
      vlike lk=  pdempresa.getDatosEmpresa(dtStat, EU.em_cod);
      mp.put("empNif",MantPaises.getInicialesPais(lk.getInt("pai_codi"),dtStat)+
          lk.getString("emp_nif"));
+   
      mp.put("SUBREPORT_FILE_NAME",
-            gnu.chu.print.util.getPathReport(EU,utillista.getNombList(EU.em_cod, CODLISTADO_LIN, dtStat)));
+            gnu.chu.print.util.getPathReport(EU, Listados.getNombListado(EU.em_cod,Listados.LIN_FRV, dtStat)));
      mp.put("SB_NAME_POB",
-            gnu.chu.print.util.getPathReport(EU, utillista.getNombList(EU.em_cod, CODLISTADO_PCO, dtStat)));
+            gnu.chu.print.util.getPathReport(EU, Listados.getNombListado(EU.em_cod, Listados.PCO_FRV, dtStat)));
      swFirst = true;
      nFraImp = 1;
      rs = dtCon1.getResultSet();

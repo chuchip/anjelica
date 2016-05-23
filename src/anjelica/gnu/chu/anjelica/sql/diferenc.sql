@@ -1,3 +1,5 @@
+-- Incluida imagen de logo en tipos listado.
+alter table anjelica.listados add lis_logo varchar(50);
 -- Locale de Pais
 alter table anjelica.paises drop loc_codi;
 alter table anjelica.paises add loc_codi varchar(5) not null default 'es_ES';

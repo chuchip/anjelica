@@ -1,5 +1,6 @@
 package gnu.chu.print;
 
+import gnu.chu.anjelica.listados.Listados;
 import java.io.*;
 import gnu.chu.utilidades.*;
 import java.awt.Component;
@@ -198,21 +199,17 @@ public class util
   {
     return printJasper(jp,eu,0);
   }
-  public static JasperReport  getJasperReport(EntornoUsuario EU, String fichJasper) throws JRException
-  {
-      if (! fichJasper.endsWith(".jasper"))
-          fichJasper+= ".jasper";
-      if (EU.getPathReportAlt() != null)
-      {
-          File f=new File(EU.getPathReportAlt()+ fichJasper );
-          if (f.exists()){
-            JasperReport jr = (JasperReport) JRLoader.loadObjectFromFile(EU.getPathReportAlt() + fichJasper );
-            return jr;
-          }
-      }
-      JasperReport jr = (JasperReport) JRLoader.loadObjectFromFile(EU.pathReport + fichJasper);
-      return jr;
-  }
+  /**
+   * @deprecated usar Listados.getJasperReport(EntornoUsuario EU, String fichJasper);
+   * @param EU
+   * @param fichJasper
+   * @return
+   * @throws JRException 
+   */
+   public static JasperReport  getJasperReport(EntornoUsuario EU, String fichJasper) throws JRException
+   {
+       return Listados.getJasperReport(EU, fichJasper);
+   }
   /**
    *  Devuelve el path sobre un fichero de report
    * @param EU

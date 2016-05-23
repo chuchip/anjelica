@@ -609,4 +609,19 @@ public class pdtipotar extends ventanaPad implements PAD
         dt.select(s);
         lkbox.addDatos(dt);
      }
+     /**
+      * Carga datos tabla con Codigo Tarifa y nombre de tarifa
+      * @param dt
+      * @param tarPadre cuyo padre sea el mandado. -1 Significa TODOS
+      * @return DatosTabla con los datos
+      * @throws SQLException 
+      */
+     public static DatosTabla  getTiposTarifa(DatosTabla dt, int tarPadre ) throws SQLException
+     {
+        String s="select tar_codi,tar_nomb from tipotari where 1=1"+
+            (tarPadre>=0? " and tar_codori="+tarPadre:"")+
+          "   order by tar_nomb";
+        dt.select(s);
+        return dt;
+     }
 }

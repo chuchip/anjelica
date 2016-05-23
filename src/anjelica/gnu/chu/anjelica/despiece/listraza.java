@@ -1,5 +1,6 @@
 package gnu.chu.anjelica.despiece;
 
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.hylafax.SendFax;
 import gnu.chu.mail.MailHtml;
 import gnu.chu.print.util;
@@ -44,7 +45,7 @@ public class listraza  implements JRDataSource
   String asunto;
   boolean swListar=true;
   private  String msgLog="";
-  static final int CODLISTA=1;
+  
   DatosTabla dtStat,dtCon1,dtCur;
 //  Statement st;
 //  ResultSet rs;
@@ -331,9 +332,9 @@ public class listraza  implements JRDataSource
    }
   public void imprimir() throws Exception
   {
-    String nombJasper=gnu.chu.anjelica.listados.utillista.getNombList(empCodi,CODLISTA,dtStat);
+    Listados lis=gnu.chu.anjelica.listados.Listados.getListado(empCodi,Listados.TRAZA,dtStat);
     nElem=0;
-    JasperReport jr = gnu.chu.print.util.getJasperReport(EU, nombJasper);
+    JasperReport jr = Listados.getJasperReport(EU, lis.getNombFich());
     java.util.HashMap mp = new java.util.HashMap();
     mp.put("albaran", Formatear.format(empCodi,"99")+serie+"/"+numAlb);
 

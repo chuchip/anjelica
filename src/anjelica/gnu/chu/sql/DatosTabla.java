@@ -1747,7 +1747,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
       MsgError="Campo NO se pudo transformar a Numero";
       throw new SQLException(MsgError);
      }
-     return i.doubleValue();
+     return i;
   }
 
   private String getDatoNumer1(int col) throws SQLException
@@ -1890,8 +1890,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
    * si no lo encuentra.
    */
   public int findColumn(String campo) throws SQLException
-  {
-      int nCol;
+  {      
       if (campo == null)
       {
         MsgError = "getNomCol: Nombre de Columna es NULL";
@@ -1907,23 +1906,9 @@ private String parseaSelect(boolean forUpdate) throws SQLException
         throw SqlException;
       }
 
-      campo = campo.trim();
-      try {
-        nCol = rs.findColumn(campo);
-      } catch (SQLException k)
-      {
-        if (! k.getMessage().contains("not found"))
-        {
-            Error = true;
-            MsgError = "getNomCol: Error al buscar nombre de Columna (" + campo+ ") NO encontrada";
-            SqlException = k;
-            throw SqlException;
-        }
-        else
-            nCol=0;
-      }
-   
-      return nCol;   
+      campo = campo.trim();    
+      return rs.findColumn(campo);
+      
   }
     /**
      * Devuelve el Numero de una columna a traves de su nombre
