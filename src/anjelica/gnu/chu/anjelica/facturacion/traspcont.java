@@ -2,6 +2,7 @@ package gnu.chu.anjelica.facturacion;
 
 import gnu.chu.utilidades.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.pad.pdempresa;
 import java.awt.*;
 import java.sql.*;
 import java.util.*;
@@ -132,7 +133,7 @@ public class traspcont extends ventana
   {
     iniciarFrame();
     this.setSize(new Dimension(715, 459));
-    this.setVersion("2013-03-06");
+    this.setVersion("2016-03-05");
 
     conecta();
     statusBar= new StatusBar(this);
@@ -390,135 +391,135 @@ public class traspcont extends ventana
   }
   void listFactur()
   {
-    String opFuerzaCl="F";
-    if (CFuerzaCl.isSelected())
-        opFuerzaCl="T";
-    mensaje("Espere, por favor .. GENERANDO FICHEROS");
-    this.setEnabled(false);
-    int n=0;
-    try {
+      String opFuerzaCl = "F";
+      if (CFuerzaCl.isSelected())
+          opFuerzaCl = "T";
+      mensaje("Espere, por favor .. GENERANDO FICHEROS");
+      this.setEnabled(false);
+      int n = 0;
+      HashMap ht = new HashMap();
+      String cuenClie, factura;
       String fichero = rem_direcE.getText() + "/xdiario.dat";
-      fr = new FileWriter(fichero, false);
+      try
+      {
+
+          fr = new FileWriter(fichero, false);
 
 //      String linea1;
-      int numAsiento=numAsientoE.getValorInt();
-      String fechAsiento;
-      String cuenClie,factura;
-      int nRow=jtFra.getRowCount();
-      int nFra;
-      HashMap ht=new HashMap();
-      for (n=0;n<nRow;n++)
-      {
-        if (! jtFra.getValBoolean(n,8))
-          continue;
-        s = "SELECT c.emp_codi as fvc_empcod, c.*,cl.* FROM v_facvec as c,clientes as cl " +
-            " WHERE  c.cli_codi = cl.cli_codi " +
-            " AND c.fvc_ano = "+jtFra.getValorInt(n,0)+
-            " AND c.emp_codi = "+jtFra.getValorInt(n,1)+
-            " AND c.fvc_nume = "+jtFra.getValorInt(n,2)+
-            " order by c.emp_codi,c.fvc_ano,c.fvc_nume ";
-        dtCon1.select(s);
-        ht.put(dtCon1.getString("cli_codi"),""); // Pongo el Cliente para que realize el trasp.
-        fechAsiento=dtCon1.getFecha("fvc_fecfra","yyyyMMdd");
-        cuenClie=Formatear.ajusIzq(Formatear.format(dtCon1.getInt("cue_codi"),"###########9").trim(),12);
-        factura=dtCon1.getString("fvc_ano").substring(2)+
-            Formatear.format(dtCon1.getInt("fvc_nume"),"999999");
-        nFra=Integer.parseInt((dtCon1.getString("fvc_ano").substring(2))+""+
-                dtCon1.getInt("fvc_nume"));
-        // Asiento contra la cuenta del Cliente
-        impLinea(numAsiento,fechAsiento, cuenClie,CONTRAPART,
-                 dtCon1.getDouble("fvc_sumtot"),
-                 nFra,factura,0,0,0,0);
+          int numAsiento = numAsientoE.getValorInt();
+          String fechAsiento;
 
-        // Asiento para el Dto. Comercial
-//        if (dtCon1.getDouble("fvc_dtocom")>0)
-//          impLinea(numAsiento,fechAsiento, CUENTADTOCOM,cuenClie,
-//                   (dtCon1.getDouble("fvc_dtocom")/100)* dtCon1.getDouble("fvc_sumlin") ,
-//                   dtCon1.getInt("fvc_nume"),
-//                 factura,0,0,0,0);
-//        // Asiento  el Dto. PP
-//        if (dtCon1.getDouble("fvc_dtopp")>0)
-//          impLinea(numAsiento,fechAsiento, CUENTADTOPP,cuenClie,
-//                   (dtCon1.getDouble("fvc_dtopp")/100)* dtCon1.getDouble("fvc_sumlin") ,
-//                   dtCon1.getInt("fvc_nume"),
-//                 factura,0,0,0,0);
+          int nRow = jtFra.getRowCount();
+          int nFra;
 
-        // Asiento para el Imp. de Lineas
-//        impLinea(numAsiento,fechAsiento, CUENTABASE,cuenClie, 0,dtCon1.getInt("fvc_nume"),
-//                 factura,dtCon1.getDouble("fvc_sumlin"),0,0,0);
-        impLinea(numAsiento,fechAsiento, CUENTABASE,cuenClie, 0,
-             nFra,factura,dtCon1.getDouble("fvc_basimp"),0,0,0);
+          for (n = 0; n < nRow; n++)
+          {
+              if (!jtFra.getValBoolean(n, 8))
+                  continue;
+              s = "SELECT c.emp_codi as fvc_empcod, c.*,cl.* FROM v_facvec as c,clientes as cl "
+                  + " WHERE  c.cli_codi = cl.cli_codi "
+                  + " AND c.fvc_ano = " + jtFra.getValorInt(n, 0)
+                  + " AND c.emp_codi = " + jtFra.getValorInt(n, 1)
+                  + " AND c.fvc_nume = " + jtFra.getValorInt(n, 2)
+                  + " order by c.emp_codi,c.fvc_ano,c.fvc_nume ";
+              dtCon1.select(s);
+              ht.put(dtCon1.getString("cli_codi"), ""); // Pongo el Cliente para que realize el trasp.
+              fechAsiento = dtCon1.getFecha("fvc_fecfra", "yyyyMMdd");
+              cuenClie = Formatear.ajusIzq(Formatear.format(dtCon1.getInt("cue_codi"), "###########9").trim(), 12);
+              factura = dtCon1.getString("fvc_ano").substring(2)
+                  + Formatear.format(dtCon1.getInt("fvc_nume"), "999999");
+              nFra = Integer.parseInt((dtCon1.getString("fvc_ano").substring(2)) + ""
+                  + dtCon1.getInt("fvc_nume"));
+              // Asiento contra la cuenta del Cliente
+              impLinea(numAsiento, fechAsiento, cuenClie, CONTRAPART,
+                  dtCon1.getDouble("fvc_sumtot"),
+                  nFra, factura, 0, 0, 0, 0);
 
-        // Asiento para el IVA
-        if (dtCon1.getDouble("fvc_poriva")>0)
-        {
-          impLinea(numAsiento, fechAsiento,
-                   getCuentaIva(dtCon1.getDate("fvc_fecfra"), dtCon1.getDouble("fvc_poriva"),dtCon1.getDouble("fvc_porreq") > 0),
-                   cuenClie, 0,
-                   nFra,
-                   factura, dtCon1.getDouble("fvc_impiva"), dtCon1.getDouble("fvc_basimp"),
-                   dtCon1.getDouble("fvc_poriva"), dtCon1.getDouble("fvc_porreq"));
-        }
-        // Asiento para el Rec.Equiv.
-        if (dtCon1.getDouble("fvc_porreq")>0)
+              impLinea(numAsiento, fechAsiento, CUENTABASE, cuenClie, 0,
+                  nFra, factura, dtCon1.getDouble("fvc_basimp"), 0, 0, 0);
+
+              // Asiento para el IVA
+              if (dtCon1.getDouble("fvc_poriva") > 0)
+              {
+                  impLinea(numAsiento, fechAsiento,
+                      getCuentaIva(dtCon1.getDate("fvc_fecfra"), dtCon1.getDouble("fvc_poriva"), dtCon1.getDouble("fvc_porreq") > 0),
+                      cuenClie, 0,
+                      nFra,
+                      factura, dtCon1.getDouble("fvc_impiva"), dtCon1.getDouble("fvc_basimp"),
+                      dtCon1.getDouble("fvc_poriva"), dtCon1.getDouble("fvc_porreq"));
+              }
+              // Asiento para el Rec.Equiv.
+              if (dtCon1.getDouble("fvc_porreq") > 0)
 //            impLinea(numAsiento,fechAsiento, CUENTAREQ,cuenClie,0,dtCon1.getInt("fvc_nume"),
-          impLinea(numAsiento,fechAsiento,
-                   getCuentaReeq(dtCon1.getDate("fvc_fecfra"),dtCon1.getDouble("fvc_poriva")),cuenClie,0,
-                   nFra,
-                 factura,dtCon1.getDouble("fvc_imprec"),0,
-                 0,0);
+                  impLinea(numAsiento, fechAsiento,
+                      getCuentaReeq(dtCon1.getDate("fvc_fecfra"), dtCon1.getDouble("fvc_poriva")), cuenClie, 0,
+                      nFra,
+                      factura, dtCon1.getDouble("fvc_imprec"), 0,
+                      0, 0);
 
-        numAsiento++;
-        // Actualizo fra.
-        s = "UPDATE v_facvec SET fvc_trasp = -1 "+
-            " WHERE fvc_ano = "+jtFra.getValorInt(n,0)+
-            " AND emp_codi = "+jtFra.getValorInt(n,1)+
-            " AND fvc_nume = "+jtFra.getValorInt(n,2);
-        stUp.executeUpdate(s);
-      }
-      fr.close();
-      // Exportando Cuentas
-      String ficheroAsi = rem_direcE.getText() + "/xsubcuenta.dat";
-      fr = new FileWriter(ficheroAsi, false);
-      Iterator en= ht.keySet().iterator();
-      String l,pviNomb,cliCodi;
-      while (en.hasNext())
+              numAsiento++;
+              // Actualizo fra.
+              s = "UPDATE v_facvec SET fvc_trasp = -1 "
+                  + " WHERE fvc_ano = " + jtFra.getValorInt(n, 0)
+                  + " AND emp_codi = " + jtFra.getValorInt(n, 1)
+                  + " AND fvc_nume = " + jtFra.getValorInt(n, 2);
+              stUp.executeUpdate(s);
+          }
+          fr.close();
+      } catch (Exception k)
       {
-        cliCodi=en.next().toString();
-
-        s="SELECT * FROM clientes where cli_codi = "+cliCodi;
-        dtStat.selectInto(s,lkCli);
-        cuenClie=Formatear.ajusIzq(Formatear.format(dtStat.getInt("cue_codi"),"###########9").trim(),12);
-        s="select pvi_nomb from v_provincia as p where pai_codi = "+dtStat.getInt("pai_codi")+
-            " and pvi_codi = "+dtStat.getInt("cli_codpo")+"/1000";
-        if (! dtStat.select(s))
-          pviNomb=" PROV: "+Formatear.redondea(lkCli.getInt("cli_codpo")/1000,0)+" NO ENCONTRADA";
-        else
-          pviNomb= dtStat.getString("pvi_nomb");
-        l=cuenClie+
-            Formatear.ajusIzq(lkCli.getString("cli_nomco"),40)+
-            Formatear.ajusIzq(lkCli.getString("cli_nif"),15)+
-            Formatear.ajusIzq(lkCli.getString("cli_direc"),35)+
-            Formatear.ajusIzq(lkCli.getString("cli_pobl"),25)+
-            Formatear.ajusIzq(pviNomb,20)+
-            Formatear.ajusIzq(lkCli.getString("cli_codpo"),5)+
-            "F"+
-            Formatear.space(5)+ // Codigo de Divisa
-            opFuerzaCl+// Obligatorio ?
-            "F "; //12 TipoIVA CHAR 1 Tipo de IVA de la Sbcta. 
-        fr.write(l+FINLINEA);
-//        System.out.println("l: "+l);
+          Error("Error al Exportar Facturas\n Error en Fra: " + jtFra.getValorInt(n, 0) + "/"
+              + jtFra.getValorInt(n, 1) + "-" + jtFra.getValorInt(n, 2) + " De cliente: " + jtFra.getValorInt(n, 4), k);
+          return;
       }
-      fr.close();
-      ctUp.commit();
-      this.setEnabled(true);
-      mensaje("");
-      msgBox("Exportacion de Facturas .. TERMINADO\n Generados FIcheros:\n"+fichero+ "\n"+ficheroAsi);
-    } catch (Exception k)
-    {
-      Error("Error al Exportar Facturas\n Error en Fra: "+  jtFra.getValorInt(n,0)+"/"+
-            jtFra.getValorInt(n,1)+"-"+jtFra.getValorInt(n,2)+ " De cliente: "+jtFra.getValorInt(n,4),k);
-    }
+      // Exportando Cuentas
+      String cliCodi = "";
+      try
+      {
+          String ficheroAsi = rem_direcE.getText() + "/xsubcuenta.dat";
+          fr = new FileWriter(ficheroAsi, false);
+          Iterator en = ht.keySet().iterator();
+          String l, pviNomb;
+          while (en.hasNext())
+          {
+              cliCodi = en.next().toString();
+
+              s = "SELECT * FROM clientes where cli_codi = " + cliCodi;
+              dtStat.selectInto(s, lkCli);
+              cuenClie = Formatear.ajusIzq(Formatear.format(dtStat.getInt("cue_codi"), "###########9").trim(), 12);
+              pviNomb = "";
+              if (lkCli.getInt("pai_codi") == pdempresa.getPais(dtStat, EU.em_cod))
+              {
+                  s = "select pvi_nomb from v_provincia as p where pai_codi = " + lkCli.getInt("pai_codi")
+                      + " and pvi_codi = " + lkCli.getInt("cli_codpo") + "/1000";
+                  if (!dtStat.select(s))
+                      pviNomb = " PROV: " + Formatear.redondea(lkCli.getInt("cli_codpo") / 1000, 0) + " NO ENCONTRADA";
+                  else
+                      pviNomb = dtStat.getString("pvi_nomb");
+              }
+              l = cuenClie
+                  + Formatear.ajusIzq(lkCli.getString("cli_nomco"), 40)
+                  + Formatear.ajusIzq(lkCli.getString("cli_nif"), 15)
+                  + Formatear.ajusIzq(lkCli.getString("cli_direc"), 35)
+                  + Formatear.ajusIzq(lkCli.getString("cli_pobl"), 25)
+                  + Formatear.ajusIzq(pviNomb, 20)
+                  + Formatear.ajusIzq(lkCli.getString("cli_codpo"), 5)
+                  + "F"
+                  + Formatear.space(5) + // Codigo de Divisa
+                  opFuerzaCl +// Obligatorio ?
+                  "F "; //12 TipoIVA CHAR 1 Tipo de IVA de la Sbcta. 
+              fr.write(l + FINLINEA);
+//        System.out.println("l: "+l);
+          }
+          fr.close();
+          ctUp.commit();
+          this.setEnabled(true);
+          mensaje("");
+          msgBox("Exportacion de Facturas .. TERMINADO\n Generados FIcheros:\n" + fichero + "\n" + ficheroAsi);
+      } catch (IOException | SQLException k)
+      {
+          Error("Error al Exportar cliente \n Error en Cliente: " + cliCodi, k);
+      }
   }
 
   void impLinea(int numAsiento,String fechAsiento,String cuenta,String contra,
