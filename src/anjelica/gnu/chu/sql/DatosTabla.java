@@ -1404,7 +1404,8 @@ private String parseaSelect(boolean forUpdate) throws SQLException
       s=o.toString().trim();
     else
       s=o.toString();
-      s=s.replace('\'',' ');
+    
+    s=s.replace('\'',' ');
     return s;
   }
 
@@ -1440,11 +1441,11 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   
   public short getShort(String col) throws SQLException
   {
-    return getShort(findColumn(col));  
+    return getShort(findColumn(col,true));  
   }
   public short getShort(String col, boolean nullIsCero) throws SQLException
   {
-    return getShort(findColumn(col),nullIsCero);  
+    return getShort(findColumn(col,true),nullIsCero);  
   }
   /**
    * Devuelve el valor tipo short de la columna mandada. 
@@ -1494,11 +1495,11 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   
   public long getLong(String col) throws SQLException
   {
-    return getLong(findColumn(col));  
+    return getLong(findColumn(col,true));  
   }
   public long getLong(String col, boolean nullIsCero) throws SQLException
   {
-    return getLong(findColumn(col),nullIsCero);  
+    return getLong(findColumn(col,true),nullIsCero);  
   }
   /**
    * Devuelve el valor tipo Long de la columna mandada. 
@@ -1571,7 +1572,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
    */
   public double getDouble(String col,boolean nullisCero) throws SQLException
   {
-    return getDatoNumero(findColumn(col),nullisCero);
+    return getDatoNumero(findColumn(col,true),nullisCero);
   }
   /**
    * 
@@ -1603,11 +1604,11 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   }
   public String getFecha(String col,String frSali) throws SQLException
   {
-    return getFecha(getNomCol(col),frSali);
+    return getFecha(findColumn(col,true),frSali);
   }
   public Timestamp getTimeStamp(String col) throws SQLException
   {
-      return getTimeStamp(findColumn(col));
+      return getTimeStamp(findColumn(col,true));
   }
   /**
    * Devuelve el valor de la columna de tipo TimeStamp
@@ -1839,12 +1840,12 @@ private String parseaSelect(boolean forUpdate) throws SQLException
    */
   public  Object getDatos(String col) throws SQLException
    {
-      return getObject(getNomCol(col));
+      return getObject(findColumn(col,true));
    }
 
   public  Object getObject(String col) throws SQLException
   {
-     return getObject(getNomCol(col));
+     return getObject(findColumn(col,true));
   }
   /*
    * Recoge todos los Datos de La Linea Activa
@@ -1874,10 +1875,17 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     }
     return v;
   }
+  /**
+   * Busca el numero de columna a traves de su nombre
+   * @param campo
+   * @param throwException. Si no encuentra la columna y es true, lanza exception.
+   * @return numero de columna. 0 si no lo encuentra
+   * @throws SQLException 
+   */
    public int findColumn(String campo,boolean throwException) throws SQLException
    {
        int numCol= findColumn(campo);
-       if (numCol==0)
+       if (numCol==0 && throwException)
            throw new SQLException("Campo "+campo+ " no encontrado en query activa\n"+sql);
        return numCol;
    }
@@ -1890,7 +1898,8 @@ private String parseaSelect(boolean forUpdate) throws SQLException
    * si no lo encuentra.
    */
   public int findColumn(String campo) throws SQLException
-  {      
+  {
+      int nCol;
       if (campo == null)
       {
         MsgError = "getNomCol: Nombre de Columna es NULL";
@@ -1906,9 +1915,23 @@ private String parseaSelect(boolean forUpdate) throws SQLException
         throw SqlException;
       }
 
-      campo = campo.trim();    
-      return rs.findColumn(campo);
-      
+      campo = campo.trim();
+      try {
+        nCol = rs.findColumn(campo);
+      } catch (SQLException k)
+      {
+        if (! k.getMessage().contains("not found"))
+        {
+            Error = true;
+            MsgError = "getNomCol: Error al buscar nombre de Columna (" + campo+ ") NO encontrada";
+            SqlException = k;
+            throw SqlException;
+        }
+        else
+            nCol=0;
+      }
+   
+      return nCol;   
   }
     /**
      * Devuelve el Numero de una columna a traves de su nombre
@@ -2113,13 +2136,13 @@ private String parseaSelect(boolean forUpdate) throws SQLException
 
  public boolean isAutoIncrement(String campo) throws SQLException
  {
-   return rs.getMetaData().isAutoIncrement(getNomCol(campo));
+   return rs.getMetaData().isAutoIncrement(findColumn(campo,true));
  }
 
 
   public  int getTipCampo(String campo) throws SQLException
   {
-    return getTipCampo(getNomCol(campo));
+    return getTipCampo(findColumn(campo,true));
   }
   /***********************************************************************
     * Devuelve la Precision del campo.
@@ -2135,15 +2158,15 @@ private String parseaSelect(boolean forUpdate) throws SQLException
 
   public int getPreCampo(String campo) throws SQLException
   {
-    return getPreCampo(getNomCol(campo));
+    return getPreCampo(findColumn(campo,true));
   }
   public int getDecCampo(int n) throws SQLException
   {
     return rs.getMetaData().getScale(n);
   }
-  public int getNullCampo(String c) throws SQLException
+  public int getNullCampo(String campo) throws SQLException
   {
-    return getNullCampo(getNomCol(c));
+    return getNullCampo(findColumn(campo,true));
   }
 
   public int getNullCampo(int n) throws SQLException
@@ -2152,7 +2175,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   }
   public String getTipNomCampo(String campo) throws SQLException
   {
-    return getTipNomCampo(getNomCol(campo));
+    return getTipNomCampo(findColumn(campo,true));
   }
 
     /**********************************************************************
@@ -2167,15 +2190,21 @@ private String parseaSelect(boolean forUpdate) throws SQLException
   }
   public int getDecCampo(String campo) throws SQLException
   {
-        return getDecCampo(getNomCol(campo));
+        return getDecCampo(findColumn(campo,true));
   }
   public  int getLonCampo(int n) throws SQLException
   {
     return rs.getMetaData().getColumnDisplaySize(n);
   }
+  /**
+   * Devuelve la longitud del campo (getColumnDisplaySize)
+   * @param campo
+   * @return
+   * @throws SQLException 
+   */
   public int getLonCampo(String campo) throws SQLException
   {
-        return getLonCampo(getNomCol(campo));
+        return getLonCampo(findColumn(campo,true));
   }
 
   /**
@@ -2639,7 +2668,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
       int n;
       for (n=1;n<= getColumnCount();n++)
       {
-        if (dtFin.findColumn(getColumnName(n))==0)
+        if (dtFin.findColumn(getColumnName(n),false)==0)
             continue;
         if (getTipCampo(n)==Types.TIMESTAMP)
         {
@@ -2663,13 +2692,13 @@ private String parseaSelect(boolean forUpdate) throws SQLException
     public void copiaRegistro(DatosTabla dtFin,String usuario, String coment,int rowid) throws SQLException
     {
       copiaRegistro(dtFin);
-      if (dtFin.findColumn("his_usunom")>0 && usuario != null)
+      if (dtFin.findColumn("his_usunom",false)>0 && usuario != null)
           dtFin.setDato("his_usunom",usuario);
-      if (dtFin.findColumn("his_fecha")>0 )
+      if (dtFin.findColumn("his_fecha",false)>0 )
           dtFin.setDato("his_fecha","CURRENT_TIMESTAMP(2)");
-       if (dtFin.findColumn("his_coment")>0 && coment != null)
+       if (dtFin.findColumn("his_coment",false)>0 && coment != null)
           dtFin.setDato("his_coment",coment);
-       if (dtFin.findColumn("his_rowid")>0 && rowid != 0)
+       if (dtFin.findColumn("his_rowid",false)>0 && rowid != 0)
           dtFin.setDato("his_rowid",rowid);
       dtFin.update();
     }
