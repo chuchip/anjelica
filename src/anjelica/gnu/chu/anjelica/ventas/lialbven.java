@@ -185,7 +185,7 @@ public class lialbven implements JRDataSource
 
     mp.put("SUBREPORT_FILE_NAME",EU.pathReport +"/"+
         Listados.getNombListado(EU.em_cod,avsNume>0?Listados.LINENT_AVC:
-            Listados.LIN_AVC, dtCon1)+".jasper");
+            Listados.LIN_AVC, dtCon1));
   
       if (!getDatosAlb(rs.getInt("avc_ano"),rs.getInt("avc_empcod"),rs.getString("avc_serie"),
                      rs.getInt("avc_nume")))

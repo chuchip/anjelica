@@ -615,6 +615,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
       }
       return -1;
   }
+  @Override
   public void canc_addnew() {
     activaTodo();
     mensajeErr("Insercion de Datos ... Cancelada");

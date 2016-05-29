@@ -67,6 +67,8 @@ import net.sf.jasperreports.engine.*;
 
 public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSource,MantAlbCom_Interface
 {
+  CLabel acc_idL = new CLabel("Id");
+  CTextField acc_idE = new CTextField(Types.DECIMAL,"#,###,##9");
   CButton creaIncidB = new CButton(Iconos.getImageIcon("destornillador"));
   CLabel bloquearL =new CLabel("Bloquear Individuos");
   CComboBox bloquearC =new CComboBox();
@@ -721,7 +723,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20160109)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20160624)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -859,12 +861,15 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     pcc_comenE.setMinimumSize(new Dimension(677, 18));
     pcc_comenE.setPreferredSize(new Dimension(677, 18));
     sbe_codiE.setBounds(new Rectangle(59, 43, 52, 18));
-
     cLabel110.setBounds(new Rectangle(4, 43, 53, 18));
     cLabel110.setText("SubEmp.");
     cLabel110.setToolTipText("SubEmpresa");
 
     sbe_nombL.setBounds(new Rectangle(118, 43, 243, 18));
+    acc_idL.setBounds(new Rectangle(370, 43, 15, 18));
+    acc_idE.setBounds(new Rectangle(390, 43, 70, 18));
+    acc_idE.setEnabled(false);
+    
     cLabel28.setText("Alb. Venta");
     cLabel28.setBounds(new Rectangle(173, 84, 63, 16));
     avc_anoE.setBounds(new Rectangle(230, 84, 35, 16));
@@ -1192,6 +1197,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     Pcabe.add(cLabel28, null);
     Pcabe.add(avc_anoE, null);
     Pcabe.add(sbe_nombL, null);
+    Pcabe.add(acc_idL, null);
+    Pcabe.add(acc_idE, null);
     Pcabe.add(cLabel1, null);
     Pcabe.add(acc_numeE, null);
     Pcabe.add(Bulcabe, null);
@@ -1523,7 +1530,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     jtDes.setButton(KeyEvent.VK_F2,Birgrid);
     jtDes.setButton(KeyEvent.VK_F6,Bdesagr);
     jtDes.setButton(KeyEvent.VK_F9,BimpEti);
-
+    
+    acc_idE.setColumnaAlias("acc_id");
     acc_cerraE.setColumnaAlias("acc_cerra");
     emp_codiE.setColumnaAlias("emp_codi");
     acc_anoE.setColumnaAlias("acc_ano");
@@ -2889,7 +2897,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     sbe_codiE.setEnabled(false);
 //      sbe_codiE.setEnabled(false);
 
-    dtAdd.addNew("v_albacoc");
+    dtAdd.addNew("v_albacoc",false);
     dtAdd.setDato("acc_ano",acc_anoE.getValorInt());
     dtAdd.setDato("emp_codi",emp_codiE.getValorInt());
     dtAdd.setDato("acc_serie",acc_serieE.getText());
@@ -2908,7 +2916,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     dtAdd.setDato("sbe_codi",sbe_codiE.getValorInt());
     dtAdd.setDato("avc_ano",avc_anoE.getValorInt());
     dtAdd.setDato("avc_nume",avc_numeE.getValorInt());
-
+    dtAdd.setDato("frt_ejerc",0);
+    dtAdd.setDato("frt_nume",0);
     dtAdd.update(stUp);
     setBloqueo(dtAdd,"v_albacoc", acc_anoE.getValorInt()+"|"+emp_codiE.getValorInt()+
                    "|"+acc_serieE.getText()+"|"+acc_numeE.getValorInt(),false);
@@ -3226,6 +3235,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       return;
     }
     ArrayList v=new ArrayList();
+    v.add(acc_idE.getStrQuery());
     v.add(sbe_codiE.getStrQuery());
     v.add(emp_codiE.getStrQuery());
     v.add(acc_anoE.getStrQuery());
@@ -3431,6 +3441,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       eje_numeE.setEnabled(false);
       avc_anoE.setEnabled(false);
       avc_numeE.setEnabled(false);
+      acc_idE.setEnabled(false);
       pcc_numeE.setEnabled(false);
       BbusPed.setEnabled(false);
       if (ARG_MODPRECIO)
@@ -3607,6 +3618,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     acc_anoE.setValorDec(EU.ejercicio);
     avc_anoE.setValorDec(EU.ejercicio);
     acc_numeE.setEnabled(false);
+    acc_idE.setEnabled(false);
     avc_numeE.setEnabled(false);
     avc_anoE.setEnabled(false);
     acc_fecrecE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -3892,7 +3904,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       alm_codiE.setEnabled(!b);
     else
       alm_codiE.setEnabled(b);
-
+    acc_idE.setEnabled(b);
     bloquearC.setEnabled(!b);
     sbe_codiE.setEnabled(b);
     eje_numeE.setEnabled(b);
@@ -3992,6 +4004,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       acc_anoE.setValorDec(accAno);
       acc_serieE.setText(accSerie);
       acc_numeE.setValorDec(accNume);
+
       s="SELECT * FROM "+tablaCab+" WHERE emp_codi = "+empCodi+
           " and acc_ano = "+accAno+
           " and acc_serie = '"+accSerie+"'"+
@@ -4002,6 +4015,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         mensajes.mensajeAviso("REGISTRO NO ENCONTRADO SEGURAMENTE SE HA BORRADO");
         return;
       }
+      acc_idE.setValorInt(dtCon1.getInt("acc_id"));
       if (ARG_MODPRECIO)
         acl_porpagE.setEnabled(true);
       if (dtCon1.getInt("frt_ejerc",true)!=0)
@@ -6456,12 +6470,12 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
      {
        double kilos=0,impor=0;
        int unid=0;
-       int numVert=0;
+//       int numVert=0;
        for (int n=0;n<jtRecl.getRowCount();n++)
        {
          if (jtRecl.getValorInt(n,JTR_ARTIC)==0)
            continue;
-         numVert++;
+//         numVert++;
          if (row==n)
          {
            kilos+=rgs_kilosE.getValorDec();

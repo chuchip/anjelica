@@ -80,11 +80,13 @@ public class Listados
     }
 
     public String getNombLogo() {
+        if (nombLogo.equals(""))
+            nombLogo="logotipo.jpg";      
         return nombLogo;
     }
 
     public void setNombLogo(String nombLogo) {
-        if (nombLogo==null)
+        if (nombLogo.equals(""))
             nombLogo="logotipo.jpg";
         this.nombLogo = nombLogo;
     }

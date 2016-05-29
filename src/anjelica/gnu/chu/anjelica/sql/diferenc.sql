@@ -1,3 +1,7 @@
+-- Incluido ID en albaran de compras
+alter table v_albacoc add acc_id serial not null;
+alter table hisalcaco add acc_id int;
+
 -- Incluida imagen de logo en tipos listado.
 alter table anjelica.listados add lis_logo varchar(50);
 -- Locale de Pais

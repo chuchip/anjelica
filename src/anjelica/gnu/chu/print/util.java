@@ -220,14 +220,15 @@ public class util
    */
   public static String  getPathReport(EntornoUsuario EU, String fichJasper) throws JRException
   {
+      fichJasper+=fichJasper.endsWith(".jasper")?"":".jasper";
       if (EU.getPathReportAlt() != null)
       {
-          File f=new File(EU.getPathReportAlt()+ fichJasper + ".jasper");
+          File f=new File(EU.getPathReportAlt()+ fichJasper);          
           if (f.exists()){
-            return EU.getPathReportAlt() + fichJasper + ".jasper";
+            return EU.getPathReportAlt() + fichJasper;
           }
       }
-      return EU.pathReport + fichJasper + ".jasper";
+      return EU.pathReport + fichJasper;
   }
   public static boolean printJasper(JasperPrint jp, EntornoUsuario eu, int numCopias) throws
       JRException,PrinterException
