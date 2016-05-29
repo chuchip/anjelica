@@ -154,7 +154,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2016-05-10" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2016-05-29" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -1353,6 +1353,7 @@ public class ValDespi extends ventana {
                continue;
         }
         costo=-1;
+        String strError="";
         if (pro_codiE.getMantenerCosto())
         { // Busco costo en la semana.
             s="select def_prcost from v_despsal where pro_codi = "+proCodi
@@ -1388,7 +1389,7 @@ public class ValDespi extends ventana {
         }
         else
         {
-          s+="\n Valor de Costo NO encontrado para producto: "+jtLin.getValorInt(n, JTLIN_PROCODI);
+          s="\n Valor de Costo NO encontrado para producto: "+jtLin.getValorInt(n, JTLIN_PROCODI);
           entSinValor+=s;
           jtLin.setValor(0,n,JTLIN_COSTO);
         }
