@@ -44,6 +44,7 @@ import javax.swing.event.ListSelectionListener;
 
 
 public class ValDespi extends ventana {
+   
    double impDocum=0;
    double kgDocum=0;
    PreparedStatement psMvt;
@@ -1660,6 +1661,7 @@ public class ValDespi extends ventana {
  }
  private double getPrecioMedioDesp(int proCodi,boolean isGrupo, int ejerc,int deoCodi, String tipoDoc) throws SQLException
  {
+   
    impDocum=0;
    kgDocum=0;
    if (isGrupo)
@@ -1720,6 +1722,7 @@ public class ValDespi extends ventana {
  double getPrecioMedioEntrada(int proCodi,java.sql.Date fechaInv,java.sql.Timestamp timeSupMvt,int empCodi,
      int ejerc,String serie,int deoCodi, String tipoDoc) throws SQLException
  {
+   String msgError=null;
     psInv.setInt(1, proCodi);
     psInv.setDate(2, fechaInv);
     ResultSet rs=psInv.executeQuery();
@@ -1755,6 +1758,12 @@ public class ValDespi extends ventana {
             if (rs.getString("mvt_tipo").equals("E"))
             {
                 importe=kilos*precioMedio;
+                if (kilos<0)
+                {
+                    if (msgError==null)
+                        msgError="Producto : "+proCodi+" Stock negativo en entrada de doc: "+rs.getInt("mvt_numdoc");
+                    kilos=0;
+                }
                 kilos+=rs.getDouble("mvt_canti");
                 if (rs.getDouble("mvt_prec")!=0 && ! isDocumActual)
                 {
@@ -1767,6 +1776,8 @@ public class ValDespi extends ventana {
                 kilos-=rs.getDouble("mvt_canti");
         } while (rs.next());
     }
+    if (msgError!=null)
+        msgBox(msgError);
     return kgDocum==0?0:impDocum/kgDocum;
  }
  void verDatLi1(String sql) throws SQLException
