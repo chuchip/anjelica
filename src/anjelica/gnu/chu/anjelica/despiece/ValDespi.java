@@ -21,6 +21,7 @@ package gnu.chu.anjelica.despiece;
  */
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
@@ -967,7 +968,7 @@ public class ValDespi extends ventana {
                     @Override
                   public void run()
                   {
-                      jtDesp.tableView.setVisible(false);
+                        jtDesp.tableView.setVisible(false);
                         valorarDespSel();
                         jtDesp.tableView.setVisible(true);
                   }
@@ -1101,26 +1102,37 @@ public class ValDespi extends ventana {
                 } while (dtDesp.next());
                 s=getStrSqlFin(eje_numeE.getValorInt(),true,  
                         jtDesp.getValorInt(n,JTDES_NUMDES),isGrupo);
-                dtDesp.select(s);
-                do
+                if (!dtDesp.select(s))
+                    msgBox("Articulo "+ dtDesp.getInt("pro_codi",true)+" no encontrados en despiece: "+
+                        jtDesp.getValorInt(n,JTDES_NUMDES) );
+                else
                 {
-                  precAcu=htFin.get(dtDesp.getInt("pro_codi"));
-                  if (precAcu>0)
-                  {
-                      porc=dtDesp.getDouble("def_kilos")*precAcu/impCostLin;
-                      precAcu=impEnt * porc;
-                      precAcu=precAcu / dtDesp.getDouble("def_kilos");
-                      precAcu=Formatear.redondea(precAcu,NUMDEC_COSTO);
-                  }
-                  s = "UPDATE v_despfin SET def_prcost = " + precAcu
-                       + " WHERE eje_nume = " + eje_numeE.getValorInt()
-                       + " AND "
-                       + (isGrupo ? "def_numdes" : "deo_codi")
-                       + " = " + jtDesp.getValorInt(n, JTDES_NUMDES)
-                       + " AND pro_codi = " + dtDesp.getInt("pro_codi");
+                    do
+                    {
+                        if (htFin.get(dtDesp.getInt("pro_codi",true))== null)
+                        {
+                            msgBox("No encontrado precio de articulo "+dtDesp.getInt("pro_codi",true)+
+                                 " de despiece: "+jtDesp.getValorInt(n,JTDES_NUMDES));
+                            continue;
+                        }   
+                        precAcu = htFin.get(dtDesp.getInt("pro_codi",true));
+                        if (precAcu > 0)
+                        {
+                            porc = dtDesp.getDouble("def_kilos") * precAcu / impCostLin;
+                            precAcu = impEnt * porc;
+                            precAcu = precAcu / dtDesp.getDouble("def_kilos");
+                            precAcu = Formatear.redondea(precAcu, NUMDEC_COSTO);
+                        }
+                        s = "UPDATE v_despfin SET def_prcost = " + precAcu
+                            + " WHERE eje_nume = " + eje_numeE.getValorInt()
+                            + " AND "
+                            + (isGrupo ? "def_numdes" : "deo_codi")
+                            + " = " + jtDesp.getValorInt(n, JTDES_NUMDES)
+                            + " AND pro_codi = " + dtDesp.getInt("pro_codi");
 //        debug("update: "+s);
-                  dtAdd.executeUpdate(s);    
-                } while (dtDesp.next());
+                        dtAdd.executeUpdate(s);
+                    } while (dtDesp.next());
+                }
                  s = "select * from desporig where eje_nume = " + eje_numeE.getValorInt()
                    + " AND "
                    + (isGrupo ? "deo_numdes" : "deo_codi")
@@ -1635,18 +1647,20 @@ public class ValDespi extends ventana {
       return " select f.pro_codi as pro_codi,sum(f.def_numpie) as def_numpie, " +
          " sum(f.def_kilos) as def_kilos ,sum(f.def_prcost*f.def_kilos) as def_prcost, " +
          " avg(def_preusu) as def_preusu "+
-         " from v_despfin f where " +
-         " f.def_kilos <> 0 " +
+         " from v_despfin as f, v_articulo as ar "+
+         "where  f.def_kilos <> 0 " +
+         " and f.pro_codi = ar.pro_codi "+
+         " and ar.pro_tiplot= '"+MantArticulos.TIPO_VENDIBLE+"'"+
          " and eje_nume = " + ejeNume +
          " AND "+(! agrupa? "f.deo_codi = "+numDesp:
              (isGrupo?" f.def_numdes = " + numDesp: "f.deo_codi = "+numDesp)) +
-         " group by pro_codi " +
-         " order by pro_codi ";
+         " group by f.pro_codi " +
+         " order by f.pro_codi ";
  }
  
  void preparaStatements() throws SQLException
  {     
-    s= "SELECT mvt_tipo, mvt_canti,mvt_prec,mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,mvt_numdoc "+
+    s= "SELECT mvt_time,mvt_tipo, mvt_canti,mvt_prec,mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,mvt_numdoc "+
              " from mvtosalm  "+
              " where pro_codi =  ?" +
              " AND mvt_time::date >= ?  "+           
@@ -1758,10 +1772,11 @@ public class ValDespi extends ventana {
             if (rs.getString("mvt_tipo").equals("E"))
             {
                 importe=kilos*precioMedio;
-                if (kilos<0)
+                if (kilos<-0.01)
                 {
                     if (msgError==null)
-                        msgError="Producto : "+proCodi+" Stock negativo en entrada de doc: "+rs.getInt("mvt_numdoc");
+                        msgError="Producto : "+proCodi+" Stock negativo en entrada de fecha: "+
+                            Formatear.getFecha(rs.getTimestamp("mvt_time"),"dd-MM-yyyy HH:mm");
                     kilos=0;
                 }
                 kilos+=rs.getDouble("mvt_canti");
