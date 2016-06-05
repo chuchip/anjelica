@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-09-10T09:08:19 -->
+<!-- 2016-05-22T18:49:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tarifa" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="de66c44e-7bb8-4abd-956d-50fb34e28121">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Anjelica "/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -52,12 +52,12 @@ order by tar_linea]]>
 		<band/>
 	</background>
 	<title>
-		<band height="53">
+		<band height="105">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<frame>
-				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="70" backcolor="#006699" uuid="26e21112-e7d6-4387-ad6d-8a695ef0b38a"/>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="125" backcolor="#006699" uuid="26e21112-e7d6-4387-ad6d-8a695ef0b38a"/>
 				<staticText>
-					<reportElement x="10" y="2" width="110" height="38" forecolor="#FFFFFF" uuid="977c42a9-0279-4de6-bd10-13c97635830d">
+					<reportElement x="10" y="28" width="110" height="38" forecolor="#FFFFFF" uuid="977c42a9-0279-4de6-bd10-13c97635830d">
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					</reportElement>
 					<textElement>
@@ -66,14 +66,14 @@ order by tar_linea]]>
 					<text><![CDATA[Tarifa]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="123" y="10" width="85" height="20" forecolor="#FFFFFF" uuid="8b495b33-3923-4dbe-8bc4-ff287ce73ac3"/>
+					<reportElement x="123" y="36" width="85" height="20" forecolor="#FFFFFF" uuid="8b495b33-3923-4dbe-8bc4-ff287ce73ac3"/>
 					<textElement textAlignment="Right">
 						<font size="14" isBold="false"/>
 					</textElement>
 					<text><![CDATA[De Fecha:]]></text>
 				</staticText>
 				<textField pattern="dd/MM/yyyy">
-					<reportElement x="216" y="10" width="77" height="20" forecolor="#FFFFFF" uuid="19362571-38fb-4278-9e65-ec25a59fb32f">
+					<reportElement x="216" y="36" width="77" height="20" forecolor="#FFFFFF" uuid="19362571-38fb-4278-9e65-ec25a59fb32f">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					</reportElement>
@@ -83,14 +83,14 @@ order by tar_linea]]>
 					<textFieldExpression><![CDATA[$F{tar_fecini}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="290" y="10" width="85" height="20" forecolor="#FFFFFF" uuid="13f09050-d160-473b-8f55-e3669ebcf1b1"/>
+					<reportElement x="290" y="36" width="85" height="20" forecolor="#FFFFFF" uuid="13f09050-d160-473b-8f55-e3669ebcf1b1"/>
 					<textElement textAlignment="Right">
 						<font size="14" isBold="false"/>
 					</textElement>
 					<text><![CDATA[A Fecha:]]></text>
 				</staticText>
 				<textField pattern="dd/MM/yyyy">
-					<reportElement x="383" y="10" width="77" height="20" forecolor="#FFFFFF" uuid="f426fa9f-50b2-4530-99cf-abdbeed7047b">
+					<reportElement x="383" y="36" width="77" height="20" forecolor="#FFFFFF" uuid="f426fa9f-50b2-4530-99cf-abdbeed7047b">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					</reportElement>
@@ -100,13 +100,14 @@ order by tar_linea]]>
 					<textFieldExpression><![CDATA[$F{tar_fecfin}]]></textFieldExpression>
 				</textField>
 				<image>
-					<reportElement x="460" y="2" width="115" height="55" uuid="45fff88c-3aaa-4240-8cc0-40f40c552cda">
-						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<reportElement stretchType="RelativeToBandHeight" x="460" y="0" width="130" height="125" uuid="45fff88c-3aaa-4240-8cc0-40f40c552cda">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
 					<imageExpression><![CDATA[$P{logo}]]></imageExpression>
 				</image>
 				<textField>
-					<reportElement x="10" y="40" width="310" height="30" forecolor="#FFFFFF" uuid="70da5d73-4ca7-48c5-9e3e-78d234befc9a"/>
+					<reportElement x="10" y="66" width="310" height="30" forecolor="#FFFFFF" uuid="70da5d73-4ca7-48c5-9e3e-78d234befc9a"/>
 					<textElement>
 						<font size="16" isBold="true"/>
 					</textElement>
