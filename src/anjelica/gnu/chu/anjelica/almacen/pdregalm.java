@@ -715,12 +715,13 @@ public void ej_query()
  @Override
  public boolean checkEdit()
  {
-    return checkAddNew();
+    return pRegAlm.checkCampos();
  }
  
     @Override
  public boolean checkAddNew()
  {
+   
     return pRegAlm.checkCampos();
  }
   public static String getNombreClase()

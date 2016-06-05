@@ -1069,7 +1069,7 @@ public class ValDespi extends ventana {
                     pro_codiE.getNombArt(dtDesp.getInt("pro_codi"));
                     if (! pro_codiE.isVendible())
                     {
-                        htPro.put(dtDesp.getInt("pro_codi"), (double)0);
+                        htFin.put(dtDesp.getInt("pro_codi"),(double)0);
                         continue;
                     }
                     precAcu=getPrecioMedioDesp(dtDesp.getInt("pro_codi"), isGrupo,jtDesp.getValorInt(n,JTDES_EJER) ,
@@ -1648,10 +1648,8 @@ public class ValDespi extends ventana {
       return " select f.pro_codi as pro_codi,sum(f.def_numpie) as def_numpie, " +
          " sum(f.def_kilos) as def_kilos ,sum(f.def_prcost*f.def_kilos) as def_prcost, " +
          " avg(def_preusu) as def_preusu "+
-         " from v_despfin as f, v_articulo as ar "+
-         "where  f.def_kilos <> 0 " +
-         " and f.pro_codi = ar.pro_codi "+
-         " and ar.pro_tiplot= '"+MantArticulos.TIPO_VENDIBLE+"'"+
+         " from v_despfin as f "+
+         " where  f.def_kilos <> 0 " +
          " and eje_nume = " + ejeNume +
          " AND "+(! agrupa? "f.deo_codi = "+numDesp:
              (isGrupo?" f.def_numdes = " + numDesp: "f.deo_codi = "+numDesp)) +

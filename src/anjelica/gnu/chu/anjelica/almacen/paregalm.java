@@ -42,6 +42,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -115,7 +116,7 @@ public class paregalm extends CPanel {
     cliPanel cli_codiE = new cliPanel();
     CLabel cli_codiL = new CLabel();
 //    CTextField deo_emplotE = new CTextField(Types.DECIMAL, "#9");
-    CLabel cLabel5 = new CLabel();
+//    CLabel cLabel5 = new CLabel();
     CLabel cLabel12 = new CLabel();
     CTextField rgs_fecresE = new CTextField(Types.DATE, "dd-MM-yy");
     CLabel cLabel13 = new CLabel();
@@ -217,8 +218,8 @@ public class paregalm extends CPanel {
 //        deo_emplotE.setEnabled(false);
 //        deo_emplotE.setBounds(new Rectangle(179, 41, 21, 16));
 //        deo_emplotE.setAutoNext(true);
-        cLabel5.setText("Empresa");
-        cLabel5.setBounds(new Rectangle(129, 41, 53, 16));
+//        cLabel5.setText("Empresa");
+//        cLabel5.setBounds(new Rectangle(129, 41, 53, 16));
         cLabel12.setBounds(new Rectangle(137, 27, 128, 25));
 
         rgs_fecresE.setBounds(new Rectangle(457, 79, 56, 16));
@@ -282,7 +283,7 @@ public class paregalm extends CPanel {
         this.add(deo_serlotE, null);
         this.add(cLabel6, null);
 //        this.add(deo_emplotE, null);
-        this.add(cLabel5, null);
+//        this.add(cLabel5, null);
         this.add(deo_ejelotE, null);
         this.add(cLabel9, null);
         this.add(pro_numindE, null);
@@ -861,13 +862,30 @@ public class paregalm extends CPanel {
                     return false;
                 }
             }
+            
+            if (tir_codiE.getTextCombo().endsWith("-)") && cci_horconE.getText().equals("0") && cci_minconE.getText().equals("0") )
+            {
+                Timestamp feulmv=stkPart.getFechaUltMvt(dtStat,pro_codiE.getValorInt(),
+                            deo_ejelotE.getValorInt(),EU.em_cod,
+                            deo_serlotE.getText(),
+                            pro_loteE.getValorInt(), pro_numindE.getValorInt(),
+                            alm_codiE.getValorInt());
+                if (Formatear.comparaFechas(feulmv, cci_fecconE.getDate())>=0)
+                {
+                    cci_horconE.setText("23");
+                    cci_minconE.setText("59");
+                    mensajes.mensajeAviso("Compruebe hora de regularizacion tipo salida. Ultimo movimiento "+
+                        Formatear.getFecha(feulmv,"dd-MM-yyy HH:mm"));
+                    return false;
+                }
+                
+            }
             return true;
         } catch (Exception k) {
             papa.Error("Error al Generar Movimiento", k);
             return false;
         }
     }
-
     /**
      * Borra registro de Regularizacion. En el cursor dtADD debe
      * estar selecionando el registro a borrar (de la tabla v_regstock)

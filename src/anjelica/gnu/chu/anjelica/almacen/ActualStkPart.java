@@ -9,6 +9,7 @@ import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.ventana;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -806,8 +807,16 @@ public class ActualStkPart
         " and pro_numind = " + nInd +
         " and pro_codi = " + proCodi +
         (almCodi!=0?" and alm_codi = " + almCodi:"");
-     return dt.select(s);
-      
+     return dt.select(s);      
+  }
+  
+  public static Timestamp getFechaUltMvt(DatosTabla dt, int proCodi, int ejeLot,int empLot,
+                            String serLot, int numLot,
+                            int nInd, int almCodi) throws SQLException
+  {
+      if (!checkIndiv(dt,proCodi,ejeLot,empLot,serLot,numLot,nInd,almCodi))
+          return null;
+      return dt.getTimeStamp("stp_fefici");
   }
   private String getCampoLlave(String llave, int posIni)
   {
