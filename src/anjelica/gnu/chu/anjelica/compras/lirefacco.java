@@ -5,6 +5,7 @@ import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.listados.Listados;
 import java.awt.*;
 import java.util.*;
 import java.awt.event.*;
@@ -27,7 +28,7 @@ import javax.swing.BorderFactory;
  *  Y descomentar las siguientes:
  *    Pacum.add(BactFras, null);
  *    Pacum.add(opImpTot, null);
- * <p>Copyright: Copyright (c) 2005-2011
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -62,14 +63,14 @@ public class lirefacco  extends ventana
   CTextField acc_anoFinE = new CTextField(Types.DECIMAL, "###9");
   CTextField fcc_numeFinE = new CTextField(Types.DECIMAL, "#####9");
   CLabel cLabel4 = new CLabel();
-  prvPanel prv_codiE1 = new prvPanel();
-  CLabel cLabel5 = new CLabel();
+  
+  CLabel prv_codiL = new CLabel();
   CLabel kilosTotL = new CLabel("Kilos");
   CTextField kilosTotE = new CTextField(Types.DECIMAL,"---,--9.99");
   prvPanel prv_codiE = new prvPanel();
-  CLabel cLabel17 = new CLabel();
+  CCheckBox opIncDto = new CCheckBox("Inc. Dtos.");
   CPanel Pcriterios = new CPanel();
-  Cgrid jt = new Cgrid(11);
+  Cgrid jt = new Cgrid(12);
   CButton Bcons = new CButton("Cons.", Iconos.getImageIcon("check"));
   CPanel Pacum = new CPanel();
   GridBagLayout gridBagLayout1 = new GridBagLayout();
@@ -132,7 +133,7 @@ public class lirefacco  extends ventana
     jt.setPreferredSize(new Dimension(607, 249));
     iniciarFrame();
     this.setSize(new Dimension(629, 432));
-    this.setVersion("2011-10-06");
+    this.setVersion("2016-06-08");
 
     Pprinc.setLayout(gridBagLayout1);
 
@@ -152,14 +153,12 @@ public class lirefacco  extends ventana
    
     cLabel4.setBounds(new Rectangle(453, 4, 45, 17));
     cLabel4.setText("De Fra.");
-    prv_codiE1.setBounds(new Rectangle(77, 44, 318, 18));
-    prv_codiE1.setAncTexto(50);
-    cLabel5.setText("De Proveedor");
-    cLabel5.setBounds(new Rectangle(242, 24, 73, 16));
+    
+    prv_codiL.setText("Proveedor");
+    prv_codiL.setBounds(new Rectangle(2, 42, 63, 16));
     prv_codiE.setAncTexto(50);
-    prv_codiE.setBounds(new Rectangle(315, 24, 287, 18));
-    cLabel17.setBounds(new Rectangle(5, 44, 73, 16));
-    cLabel17.setText("A Proveedor");
+    prv_codiE.setBounds(new Rectangle(65, 42, 315, 18));
+    
     Pcriterios.setBorder(BorderFactory.createRaisedBevelBorder());
     Pcriterios.setMaximumSize(new Dimension(615, 70));
     Pcriterios.setMinimumSize(new Dimension(615, 70));
@@ -197,7 +196,7 @@ public class lirefacco  extends ventana
 
     feciniE.setBounds(new Rectangle(57, 23, 76, 17));
     cLabel1.setText("De Fecha");
-    cLabel1.setBounds(new Rectangle(5, 23, 55, 17));
+    cLabel1.setBounds(new Rectangle(2, 23, 55, 17));
     acc_anoIniE.setBounds(new Rectangle(337, 4, 43, 17));
     
     Blistar.setBounds(new Rectangle(498, 44, 106, 22));
@@ -206,8 +205,8 @@ public class lirefacco  extends ventana
     cLabel2.setBounds(new Rectangle(145, 23, 19, 17));
    
     fecfinE.setBounds(new Rectangle(158, 23, 77, 17));
-  
-   
+    opIncDto.setSelected(true);
+    opIncDto.setBounds(new Rectangle(270, 23, 150, 17));
     BactFras.setBounds(new Rectangle(481, 5, 116, 23));
     BactFras.setText("Act Imp. Fras");
 //    opImpTot.setEnabled(false);
@@ -218,20 +217,21 @@ public class lirefacco  extends ventana
     empIniL.setText("Emp.");
     empIniL.setBounds(new Rectangle(194, 5, 30, 15));
     ordenarL.setText("Ordenar");
-    ordenarL.setBounds(new Rectangle(10, 5, 50, 17));
-    ordenE.setBounds(new Rectangle(65, 5, 125, 15));
+    ordenarL.setBounds(new Rectangle(2, 5, 50, 17));
+    ordenE.setBounds(new Rectangle(60, 5, 125, 15));
     Pcriterios.add(feciniE, null);
     Pcriterios.add(empIniL, null);
     Pcriterios.add(empIniE, null);
   
     
     Pcriterios.add(fecfinE, null);
+//    Pcriterios.add(opIncDto, null);
     Pcriterios.add(cLabel1, null);
     Pcriterios.add(cLabel2, null);
     Pcriterios.add(prv_codiE, null);
-    Pcriterios.add(cLabel5, null);
-    Pcriterios.add(prv_codiE1, null);
-    Pcriterios.add(cLabel17, null);
+    Pcriterios.add(prv_codiL, null);
+ 
+   
     Pcriterios.add(Blistar, null);
     Pcriterios.add(fcc_numeFinE, null);
     Pcriterios.add(cLabel4, null);
@@ -260,7 +260,7 @@ public class lirefacco  extends ventana
     Pacum.add(cLabel12, null);
     Pacum.add(cLabel10, null);
     Pacum.add(cLabel6, null);
-    prv_codiE1.iniciar(dtStat, this, vl, EU);
+
     prv_codiE.iniciar(dtStat, this, vl, EU);
     confGrid();
   }
@@ -285,28 +285,30 @@ public class lirefacco  extends ventana
   }
   void confGrid()
   {
-    Vector v=new Vector();
-    v.addElement("Factura"); // 0
-    v.addElement("Fecha"); // 1
-    v.addElement("Prv"); // 2
-    v.addElement("Nombre Prv"); // 3
-    v.addElement("B.Impon"); // 4
-    v.addElement("IVA"); // 5
-    v.addElement("Imp.Iva"); // 6
-    v.addElement("IRPF"); // 7
-    v.addElement("Imp.IRPF"); // 8
-    v.addElement("Total"); // 9
-    v.addElement("Kilos"); // 10
+    ArrayList v=new ArrayList();
+    v.add("Factura"); // 0
+    v.add("Fecha"); // 1
+    v.add("Prv"); // 2
+    v.add("Nombre Prv"); // 3
+    v.add("Imp.Lin."); // 4
+    v.add("B.Impon"); // 5
+    v.add("IVA"); // 6
+    v.add("Imp.Iva"); // 7
+    v.add("IRPF"); // 8
+    v.add("Imp.IRPF"); // 9
+    v.add("Total"); // 10
+    v.add("Kilos"); // 11
     jt.setCabecera(v);
-    jt.setAnchoColumna(new int[]{80,70,60,160,70,40,70,40,70,80,80});
-    jt.setAlinearColumna(new int[]{2,1,2,0,2,2,2,2,2,2,2});
+    jt.setAnchoColumna(new int[]{70,55,55,160,60,70,40,70,40,70,80,80});
+    jt.setAlinearColumna(new int[]{2,1,2,0,2,2,2,2,2,2,2,2});
     jt.setFormatoColumna(4,"----,--9.99");
-    jt.setFormatoColumna(5,"9.9");
-    jt.setFormatoColumna(6,"----,--9.99");
-    jt.setFormatoColumna(7,"9.9");
-    jt.setFormatoColumna(8,"----,--9.99");
-    jt.setFormatoColumna(9,"--,---,--9.99");
-    jt.setFormatoColumna(10,"---,--9.99");
+    jt.setFormatoColumna(5,"----,--9.99");
+    jt.setFormatoColumna(6,"99.9");
+    jt.setFormatoColumna(7,"----,--9.99");
+    jt.setFormatoColumna(8,"99.9");
+    jt.setFormatoColumna(9,"----,--9.99");
+    jt.setFormatoColumna(10,"--,---,--9.99");
+    jt.setFormatoColumna(11,"---,--9.99");
   }
   void activarEventos()
   {
@@ -342,6 +344,7 @@ public class lirefacco  extends ventana
       return;
     new miThread("")
     {
+      @Override
       public void run()
       {
         consultar();
@@ -374,22 +377,25 @@ public class lirefacco  extends ventana
       ResultSet rs;
       do
       {
-        Vector v=new Vector();
-        v.addElement(""+dtCon1.getInt("emp_codi")+"/"+dtCon1.getInt("eje_nume")+"-"+dtCon1.getInt("fcc_nume"));
-        v.addElement(dtCon1.getFecha("fcc_fecfra","dd-MM-yy"));
-        v.add(dtCon1.getString("prv_codi"));
-        v.add(dtCon1.getString("prv_nomb"));
-        v.add(dtCon1.getString("fcc_basim1"));
-        v.add(dtCon1.getString("fcc_piva1"));
-        v.add(dtCon1.getString("fcc_impiv1"));
-        v.add(dtCon1.getString("fcc_pirpf1"));
-        v.add(dtCon1.getString("fcc_imirp1"));
-        v.add(dtCon1.getString("fcc_sumtot"));
         ps.setInt(1, dtCon1.getInt("emp_codi"));
         ps.setInt(2, dtCon1.getInt("eje_nume"));
         ps.setInt(3, dtCon1.getInt("fcc_nume"));
         rs=ps.executeQuery();
         rs.next();
+        
+        ArrayList v=new ArrayList();
+        v.add(""+dtCon1.getInt("emp_codi")+"/"+dtCon1.getInt("eje_nume")+"-"+dtCon1.getInt("fcc_nume"));
+        v.add(dtCon1.getFecha("fcc_fecfra","dd-MM-yy"));
+        v.add(dtCon1.getString("prv_codi"));
+        v.add(dtCon1.getString("prv_nomb"));
+        v.add(dtCon1.getString("fcc_sumlin"));
+        v.add(dtCon1.getString("fcc_basim1"));
+        v.add(dtCon1.getDouble("fcc_piva1"));
+        v.add(dtCon1.getString("fcc_impiv1"));
+        v.add(dtCon1.getString("fcc_pirpf1"));
+        v.add(dtCon1.getString("fcc_imirp1"));
+        v.add(dtCon1.getString("fcc_sumtot"));
+        
         if (rs.getObject("fcl_canti")==null)
             v.add("");
         else
@@ -425,8 +431,8 @@ public class lirefacco  extends ventana
   String getSelect()
   {
     return " SELECT f.eje_nume,f.emp_codi,fcc_nume,fcc_fecfra,f.prv_codi,pv.prv_nomb,prv_nif,"+
-       " fcc_basim1,fcc_piva1 * 100 as fcc_piva1,fcc_impiv1,"+
-       " fcc_pirpf1 * 100 as fcc_pirpf1,fcc_imirp1,fcc_sumtot "+
+       " fcc_sumlin,fcc_basim1,fcc_piva1 as fcc_piva1,fcc_impiv1,"+
+       " fcc_pirpf1  as fcc_pirpf1,fcc_imirp1,fcc_sumtot "+
        " FROM v_facaco f left join v_proveedo as pv on "+
        " pv.PRV_CODI = f.prv_codi "+
        " where 1=1 " +
@@ -435,8 +441,7 @@ public class lirefacco  extends ventana
        (acc_anoFinE.isNull()?"":" and eje_nume <= " + acc_anoFinE.getValorInt()) +
        (fcc_numeIniE.isNull()?"":" and fcc_nume >= "+fcc_numeIniE.getValorInt())+
        (fcc_numeFinE.isNull()?"":" and fcc_nume <= "+fcc_numeFinE.getValorInt())+
-       (prv_codiE.isNull()?"":" and f.prv_codi >= "+prv_codiE.getValorInt())+
-       (prv_codiE1.isNull()?"":" and f.prv_codi <= "+prv_codiE1.getValorInt())+
+       (prv_codiE.isNull()?"":" and f.prv_codi = "+prv_codiE.getValorInt())+
        " and fcc_fecfra >= to_date('" + feciniE.getText() +"','dd-MM-yyyy')" +
        " and fcc_fecfra <= to_date('" + fecfinE.getText() +"','dd-MM-yyyy')" +
        " ORDER BY "+
@@ -469,8 +474,8 @@ public class lirefacco  extends ventana
       JasperReport jr;
       mp.put("feciniE", feciniE.getText());
       mp.put("fecfinE", fecfinE.getText());
-      mp.put("empiniE", new Integer(empIniE.getValorInt()));
-      jr =  util.getJasperReport(EU, "relfacco");
+      mp.put("empiniE", empIniE.getValorInt());
+      jr =  Listados.getJasperReport(EU, "relfacco");
      
       ResultSet rs = dtCon1.getStatement().executeQuery(dtCon1.parseaSql(s));
       JasperPrint jp = JasperFillManager.fillReport(jr, mp,
@@ -639,14 +644,14 @@ public class lirefacco  extends ventana
               impLiT += Formatear.Redondea(impLin, 3);
             }       while (dtCon1.next());
           }
-          impLiT = Formatear.Redondea(impLiT, 3);
+          impLiT = Formatear.redondea(impLiT, 3);
           impLi0 = impLiT;
           if (dtCons.getDouble("fcc_dtopp") != 0)
-            impLiT -= Formatear.Redondea(impLi0 * dtCons.getDouble("fcc_dtopp") / 100, 3);
+            impLiT -= Formatear.redondea(impLi0 * dtCons.getDouble("fcc_dtopp") / 100, 3);
           if (dtCons.getDouble("fcc_dtocom") != 0)
-            impLiT -= Formatear.Redondea(impLi0 * dtCons.getDouble("fcc_dtocom") / 100, 3);
-          impIva = Formatear.Redondea(impLiT * dtCons.getDouble("fcc_piva1", true) / 100, 3);
-          impRec = Formatear.Redondea(impLiT * dtCons.getDouble("fcc_prec1", true) / 100, 3);
+            impLiT -= Formatear.redondea(impLi0 * dtCons.getDouble("fcc_dtocom") / 100, 3);
+          impIva = Formatear.redondea(impLiT * dtCons.getDouble("fcc_piva1", true) / 100, 3);
+          impRec = Formatear.redondea(impLiT * dtCons.getDouble("fcc_prec1", true) / 100, 3);
           s = "UPDATE  v_facaco SET fcc_sumlin =" + impLi0 + "," +
               " fcc_basim1 =" + impLiT + "," +
               " fcc_impiv1 =" + impIva + "," +
