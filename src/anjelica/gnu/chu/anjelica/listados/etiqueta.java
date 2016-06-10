@@ -267,9 +267,18 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     }
     else
       img=Iconos.getPathIcon()+LOGOTIPO;
-
-    mp.put("logotipo",img.equals("")?null:img);
-
+    String img2=null;
+    if (img.equals(""))
+        img=null;
+    if (img!=null)
+    {
+        int pos=img.lastIndexOf(".");
+        if (pos>0)
+            img2=img.substring(0,pos)+"_2"+img.substring(pos);
+    }
+    mp.put("logotipo",img);
+    mp.put("logotipo2",img2);
+    
     JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JREmptyDataSource());
     if (EU.getSimulaPrint())
       return;
