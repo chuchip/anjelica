@@ -33,6 +33,7 @@ import gnu.chu.anjelica.almacen.paregalm;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.despiece.utildesp;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.anjelica.pad.pdejerci;
@@ -5671,7 +5672,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
      if (dtCons.getNOREG())
        return;
      try {
-       java.util.HashMap mp = new java.util.HashMap();
+       java.util.HashMap mp = Listados.getHashMapDefault();
        JasperReport jr;
        mp.put("ejeini",acc_anoE.getText());
        mp.put("ejefin",acc_anoE.getText());
@@ -5679,7 +5680,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
        mp.put("albfin",acc_numeE.getText());
        mp.put("empcodi",emp_codiE.getText());
        mp.put("incPortes",Boolean.valueOf(opIncPortes.isSelected()));
-       jr = (JasperReport) util.getJasperReport(EU,
+       jr = (JasperReport) Listados.getJasperReport(EU,
                          (opIncDet.isSelected()?"albcodes":"lialbcom"));
 
        s = "SELECT *  FROM v_albacoc as c " +

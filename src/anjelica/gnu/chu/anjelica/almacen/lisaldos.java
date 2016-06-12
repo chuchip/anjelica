@@ -27,6 +27,7 @@ package gnu.chu.anjelica.almacen;
  *
  */
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantFamPro;
 import gnu.chu.anjelica.pad.pdconfig;
@@ -732,9 +733,9 @@ public class lisaldos   extends ventana  implements JRDataSource
       
       nLin=-1;
       imprList=true;
-      JasperReport jr = util.getJasperReport(EU, "lisaldos");
+      JasperReport jr = Listados.getJasperReport(EU, "lisaldos");
 
-      HashMap mp = new HashMap();
+      HashMap mp = Listados.getHashMapDefault();
       mp.put("fecini",feulin);
       mp.put("fecsal",fecsalE.getText());
       mp.put("ordenFam", ordenE.getValor().equals("F"));

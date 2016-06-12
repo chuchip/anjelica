@@ -11,6 +11,7 @@ import gnu.chu.anjelica.ventas.*;
 import gnu.chu.camposdb.*;
 import gnu.chu.controles.*;
 import gnu.chu.hylafax.SendFax;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.mail.IFMail;
 import gnu.chu.mail.MailHtml;
 import gnu.chu.print.*;
@@ -29,7 +30,7 @@ import net.sf.jasperreports.engine.*;
  *
  * <p>Titulo: lisfactu</p> 
  * <p>Descripción: Listado Facturas de Ventas</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -47,6 +48,7 @@ import net.sf.jasperreports.engine.*;
  */
 public class lisfactu extends ventana  implements JRDataSource
 {
+ 
   IFMail ifMail=null;
   String subject;
   String emailCC;
@@ -1133,13 +1135,14 @@ private String buscaBanco(int banCodi) throws SQLException
       
      Listados lis=  Listados.getListado(EU.em_cod, (getFraPreImpr()?Listados.CABPI_FRV: Listados.CAB_FRV), dtStat);
      JasperReport jr = Listados.getJasperReport(EU,lis.getNombFich() );
-     HashMap mp = new HashMap();
+     HashMap mp = Listados.getHashMapDefault();
      mp.put(JRParameter.REPORT_CONNECTION, ct);
  //     mp.put("valora", new Boolean(valora));
      mp.put("emp_obsfra", empObsfra);
      mp.put("logotipo", lis.getPathLogo());
      mp.put("obser",null);
      mp.put("agrupa",getAgrupa()?new Integer(1):new Integer(0));
+    
      vlike lk=  pdempresa.getDatosEmpresa(dtStat, EU.em_cod);
      mp.put("empNif",MantPaises.getInicialesPais(lk.getInt("pai_codi"),dtStat)+
          lk.getString("emp_nif"));

@@ -254,9 +254,6 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     if (datmat!=null)
       mp.put("datmat",datmat);
     ResourceBundle rsB=ResourceBundle.getBundle("gnu.chu.anjelica.locale.jasper",lengua);
-//    mensajes.mensajeAviso(rsB.getString("etiqueta.nacido"));
-      
-    
     mp.put(JRParameter.REPORT_LOCALE,lengua);
     mp.put(JRParameter.REPORT_RESOURCE_BUNDLE,rsB);
     String img="";

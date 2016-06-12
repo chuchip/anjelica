@@ -24,6 +24,7 @@ package gnu.chu.anjelica.tesoreria;
 import gnu.chu.utilidades.*;
 import gnu.chu.controles.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.listados.Listados;
 import java.awt.*;
 import javax.swing.BorderFactory;
 import gnu.chu.camposdb.*;
@@ -457,7 +458,7 @@ private String getCondWhere(boolean incFecVto)
         return;
       }
 
-      java.util.HashMap mp = new java.util.HashMap();
+      java.util.HashMap mp = Listados.getHashMapDefault();
       mp.put("feinvt",fevtiniE.getText());
       mp.put("fefivt",fevtfinE.getText());
       mp.put("lbv_origeP",lbv_origeE.getValor().equals("-")?null:lbv_origeE.getText());
@@ -469,7 +470,7 @@ private String getCondWhere(boolean incFecVto)
       mp.put("empfinP",emp_codfinE.getText());
       mp.put("pagado",lbv_pagadoE.getText());
       JasperReport jr;
-      jr = gnu.chu.print.util.getJasperReport(EU,"librovto");
+      jr = Listados.getJasperReport(EU,"librovto");
       ResultSet rs;
       rs=dtCon1.getStatement().executeQuery(dtCon1.parseaSql(s));
       JasperPrint jp = JasperFillManager.fillReport(jr, mp,new JRResultSetDataSource(rs));

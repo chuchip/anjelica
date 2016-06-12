@@ -470,7 +470,7 @@ public class lirefacco  extends ventana
       s = getSelect();
       debug("Select: " + s);
 
-      java.util.HashMap mp = new java.util.HashMap();
+      java.util.HashMap mp = Listados.getHashMapDefault();
       JasperReport jr;
       mp.put("feciniE", feciniE.getText());
       mp.put("fecfinE", fecfinE.getText());

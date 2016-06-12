@@ -20,6 +20,7 @@ package gnu.chu.anjelica.compras;
  * @version 1.2 (Incluido soporte para control de pagos)
  */
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.pdejerci;
 import gnu.chu.anjelica.sql.Albacoc;
 import gnu.chu.camposdb.empPanel;
@@ -2082,11 +2083,11 @@ int cambiaLinFra()
      if (dtCons.getNOREG())
        return;
      try {
-       java.util.HashMap mp = new java.util.HashMap();
+       java.util.HashMap mp = Listados.getHashMapDefault();
        JasperReport jr;
      nLin=-1;
 
-     jr = gnu.chu.print.util.getJasperReport(EU,"frascom");
+     jr = Listados.getJasperReport(EU,"frascom");
      JasperPrint jp = JasperFillManager.fillReport(jr, mp, this);
      gnu.chu.print.util.printJasper(jp, EU);
 

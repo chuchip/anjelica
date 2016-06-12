@@ -2,7 +2,9 @@ package gnu.chu.anjelica.facturacion;
 
 import gnu.chu.utilidades.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.controles.*;
+import gnu.chu.interfaces.ejecutable;
 import java.awt.*;
 import java.sql.*;
 import net.sf.jasperreports.engine.*;
@@ -116,9 +118,10 @@ public class lirecibos extends ventana  implements JRDataSource
 
     try {
       rs=ct.createStatement().executeQuery(dtCon1.getStrSelect(s));
-      JasperReport jr= gnu.chu.print.util.getJasperReport(EU,"recibos");
-      java.util.HashMap mp = new java.util.HashMap();
+      JasperReport jr= Listados.getJasperReport(EU,"recibos");
+      java.util.HashMap mp = Listados.getHashMapDefault();
       mp.put( "imagen",Iconos.getPathIcon()+"logotipo.jpg");
+      mp.put(JRParameter.REPORT_LOCALE,ejecutable.local);
       JasperPrint jp = JasperFillManager.fillReport(jr, mp, this);
       gnu.chu.print.util.printJasper(jp, EU);
       mensajeErr("Listado de Recibos .. TERMINADO");

@@ -25,6 +25,7 @@ package gnu.chu.anjelica.almacen;
  * @version 2.0 (Antes era traspalma)
  */
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.print.util;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -351,8 +352,8 @@ public class CLUbicArt extends ventana implements  JRDataSource
           JT_nRows=jt.getRowCount();
           java.sql.Timestamp ahora=new java.sql.Timestamp(System.currentTimeMillis());
           ahora.setTime(System.currentTimeMillis());
-          JasperReport jr = util.getJasperReport(EU,"stockPartidas");
-          java.util.HashMap mp = new java.util.HashMap();
+          JasperReport jr = Listados.getJasperReport(EU,"stockPartidas");
+          java.util.HashMap mp = Listados.getHashMapDefault();
           mp.put("alm_codi",alm_codiE.getText());
           mp.put("alm_nomb",alm_codiE.getTextCombo());
           mp.put("fechaAct",ahora);

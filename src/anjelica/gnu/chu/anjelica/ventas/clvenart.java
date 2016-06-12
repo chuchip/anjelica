@@ -6,6 +6,7 @@ import java.sql.*;
 import gnu.chu.utilidades.*;
 import java.awt.event.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.listados.Listados;
 import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
@@ -463,10 +464,10 @@ public class clvenart extends ventana implements  JRDataSource
      rs = ct.createStatement().executeQuery(dtCon1.getStrSelect());
      JasperReport jr;
      if (opDesgl.isSelected())
-       jr = gnu.chu.print.util.getJasperReport(EU,"veartclde");
+       jr = Listados.getJasperReport(EU,"veartclde");
      else
-       jr = gnu.chu.print.util.getJasperReport(EU,"veartcl");
-     java.util.HashMap mp = new java.util.HashMap();
+       jr = Listados.getJasperReport(EU,"veartcl");
+     java.util.HashMap mp = Listados.getHashMapDefault();
 
      mp.put("tipList","VENTAS POR "+tipoListE.getText()+" ("+ agrupadoE.getText()+")");
      mp.put("opAgrCl",new Boolean(tipoListE.getValor().equals("C")));

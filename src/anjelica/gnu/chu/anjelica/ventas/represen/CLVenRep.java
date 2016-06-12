@@ -1,6 +1,7 @@
 package gnu.chu.anjelica.ventas.represen;
 
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantRepres;
 import gnu.chu.anjelica.pad.MantTarifa;
 import gnu.chu.anjelica.pad.pdconfig;
@@ -603,8 +604,8 @@ public class CLVenRep extends ventana {
             s=getStrSql(false,getCondWhere());
             dtCon1.setStrSelect(s);
             ResultSet rs=ct.createStatement().executeQuery(dtCon1.getStrSelect());
-            JasperReport jr = gnu.chu.print.util.getJasperReport(EU,  "realbvrep");
-            java.util.HashMap mp = new java.util.HashMap();
+            JasperReport jr = Listados.getJasperReport(EU,  "realbvrep");
+            java.util.HashMap mp =Listados.getHashMapDefault();
             mp.put(JRParameter.REPORT_CONNECTION, ct);
             mp.put("fecIni",fecIniE.getDate());
             mp.put("fecFin",fecFinE.getDate());

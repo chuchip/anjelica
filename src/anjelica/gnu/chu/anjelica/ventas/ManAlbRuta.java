@@ -2,6 +2,7 @@ package gnu.chu.anjelica.ventas;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.facturacion.PadFactur;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.StatusBar;
@@ -1845,8 +1846,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
           dtCon1.setStrSelect(s);
           ResultSet rs = ct.createStatement().executeQuery(dtCon1.getStrSelect());
 
-          JasperReport jr = gnu.chu.print.util.getJasperReport(EU, "cacobrea");
-          java.util.HashMap mp = new java.util.HashMap();
+          JasperReport jr = Listados.getJasperReport(EU, "cacobrea");
+          java.util.HashMap mp = Listados.getHashMapDefault();
           mp.put("cor_fecha", alr_fechaE.getText());
           mp.put("usu_nomb", tra_codiE.getText());
           mp.put("zon_codi", rut_codiE.getText() + "-" + rut_codiE.getTextCombo());
@@ -1880,8 +1881,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
             dtCon1.setStrSelect(s);
             ResultSet rs = ct.createStatement().executeQuery(dtCon1.getStrSelect());
 
-            JasperReport jr = gnu.chu.print.util.getJasperReport(EU, "relAlbRuta");
-            java.util.HashMap mp = new java.util.HashMap();
+            JasperReport jr = Listados.getJasperReport(EU, "relAlbRuta");
+            java.util.HashMap mp = Listados.getHashMapDefault();
             mp.put("cor_fecha", alr_fechaE.getText());
             mp.put("usu_nomb", tra_codiE.getText());
             mp.put("zon_codi", rut_codiE.getText() + "-" + rut_codiE.getTextCombo());
@@ -1909,8 +1910,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 return;
             }
 
-            JasperReport jr = gnu.chu.print.util.getJasperReport(EU, "relAlbRutaExt");
-            java.util.HashMap mp = new java.util.HashMap();
+            JasperReport jr = Listados.getJasperReport(EU, "relAlbRutaExt");
+            java.util.HashMap mp = Listados.getHashMapDefault();
             mp.put("cor_fecha", alr_fechaE.getText());
             mp.put("usu_nomb", tra_codiE.getText());
             mp.put("zon_codi", rut_codiE.getText() + "-" + rut_codiE.getTextCombo());

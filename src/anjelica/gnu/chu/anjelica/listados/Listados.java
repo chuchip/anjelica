@@ -1,11 +1,15 @@
 package gnu.chu.anjelica.listados;
 
+import gnu.chu.interfaces.ejecutable;
 import java.sql.*;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Iconos;
 import java.io.File;
+import java.util.HashMap;
+import java.util.ResourceBundle;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.util.JRLoader;
 /*
@@ -133,5 +137,12 @@ public class Listados
     {
          return Iconos.getPathIcon() +getNombLogo();
     }
-
+    public static HashMap getHashMapDefault()
+    {
+        HashMap hm=new HashMap();
+        ResourceBundle rsB=ResourceBundle.getBundle("gnu.chu.anjelica.locale.jasper",ejecutable.local);
+        hm.put(JRParameter.REPORT_LOCALE,ejecutable.local);
+        hm.put(JRParameter.REPORT_RESOURCE_BUNDLE,rsB);
+        return hm;
+    }
 }

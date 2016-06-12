@@ -223,7 +223,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
          return;
        }
 
-       HashMap mp = new HashMap();
+       HashMap mp = Listados.getHashMapDefault();
        swLocaleEmpresa=loc_codiE.getValor().equals(localeEmpresa);
        swInicio=true;
        Listados lis=  Listados.getListado(EU.em_cod, Listados.TARIFA, dtStat);

@@ -26,6 +26,7 @@ import gnu.chu.utilidades.*;
 import gnu.chu.controles.*;
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.almacen.pdalmace;
+import gnu.chu.anjelica.listados.Listados;
 import java.util.*;
 import java.awt.*;
 import javax.swing.BorderFactory;
@@ -627,12 +628,12 @@ public class  clpevepr extends ventana  implements  JRDataSource
         linClien=0;
         jtProd.requestFocusInicio();
         swRotoProd=true;
-        java.util.HashMap mp = new java.util.HashMap();
+        java.util.HashMap mp = Listados.getHashMapDefault();
         mp.put("fecini",pvc_feciniE.getDate());
         mp.put("fecfin",pvc_fecfinE.getDate());
 
         JasperReport jr;
-        jr = gnu.chu.print.util.getJasperReport(EU, "relpevepr");
+        jr = Listados.getJasperReport(EU, "relpevepr");
 
         JasperPrint jp = JasperFillManager.fillReport(jr, mp, this);
         gnu.chu.print.util.printJasper(jp, EU);

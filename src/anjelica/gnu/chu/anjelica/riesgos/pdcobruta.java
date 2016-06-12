@@ -5,6 +5,7 @@ import gnu.chu.utilidades.*;
 import gnu.chu.sql.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.pdconfig;
 import java.awt.*;
 import java.util.*;
@@ -347,8 +348,8 @@ public class pdcobruta extends ventanaPad implements PAD
      dtCon1.setStrSelect(s);
      ResultSet rs=ct.createStatement().executeQuery(dtCon1.getStrSelect());
 
-     JasperReport jr= gnu.chu.print.util.getJasperReport(EU, "cacobrea");
-     java.util.HashMap mp = new java.util.HashMap();
+     JasperReport jr= Listados.getJasperReport(EU, "cacobrea");
+     java.util.HashMap mp = Listados.getHashMapDefault();
      mp.put("cor_fecha", cor_fechaE.getText());
      mp.put("usu_nomb", usu_nombE.getText());
      mp.put("zon_codi", rut_codiE.getText()+"-"+rut_codiE.getTextCombo());

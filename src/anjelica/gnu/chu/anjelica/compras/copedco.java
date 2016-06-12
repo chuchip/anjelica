@@ -4,6 +4,7 @@ import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.listados.Listados;
 import java.awt.*;
 import java.util.*;
 import javax.swing.BorderFactory;
@@ -544,7 +545,7 @@ public class copedco extends ventana
         return;
       }
 
-      java.util.HashMap mp = new java.util.HashMap();
+      java.util.HashMap mp = Listados.getHashMapDefault();
       mp.put("pccFecped",pcc_fecpedE.getDate());
       mp.put("pccFecrec",pcc_fecrecE.getDate());
       mp.put("pccEstad",pcc_estadE.getText());
@@ -553,7 +554,7 @@ public class copedco extends ventana
       mp.put("prvNomb",prv_codiE.getTextNomb());
       mp.put("verPrecios",new Boolean(verPrecio));
       JasperReport jr;
-      jr = gnu.chu.print.util.getJasperReport(EU, "relpedcom");
+      jr = Listados.getJasperReport(EU, "relpedcom");
 
       ResultSet rs;
 

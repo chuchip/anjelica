@@ -38,6 +38,7 @@ import gnu.chu.mail.MailHtml;
  */
 public class lialbven implements JRDataSource
 {
+  
   SendFax sendFax=null;
   actCabAlbFra datCab;
   String subject;
@@ -91,8 +92,8 @@ public class lialbven implements JRDataSource
    public int imprEtiqPalets( String sqlAlb,lialbven liAlb,  DatosTabla dtCon1,EntornoUsuario EU ) throws Exception
    {
       Listados lis=Listados.getListado(EU.em_cod,  Listados.PALE_AVC, dtCon1);
-      JasperReport jr = gnu.chu.print.util.getJasperReport(EU,lis.getNombFich()   );
-      java.util.HashMap mp = new java.util.HashMap();
+      JasperReport jr = Listados.getJasperReport(EU,lis.getNombFich()   );
+      java.util.HashMap mp =Listados.getHashMapDefault();
       mp.put("logotipo",Iconos.getPathIcon()+lis.getNombLogo());
                
       if (! dtCon1.select(sqlAlb))
@@ -159,7 +160,7 @@ public class lialbven implements JRDataSource
    int avcNume=rs.getInt("avc_nume");
    Listados lis=Listados.getListado(EU.em_cod,  Listados.CAB_AVC, dtCon1);
    JasperReport jr = Listados.getJasperReport(EU, lis.getNombFich());
-   java.util.HashMap mp = new java.util.HashMap();
+   java.util.HashMap mp = Listados.getHashMapDefault();
    mp.put(JRParameter.REPORT_CONNECTION,ct);
    if (avsNume==0)
      mp.put("valora", valora);
@@ -183,11 +184,11 @@ public class lialbven implements JRDataSource
     mp.put("avs_fecha",dtTemp.getDate("avs_fecha"));
    }
 
-    mp.put("SUBREPORT_FILE_NAME",EU.pathReport +"/"+
+   mp.put("SUBREPORT_FILE_NAME",EU.pathReport +"/"+
         Listados.getNombListado(EU.em_cod,avsNume>0?Listados.LINENT_AVC:
             Listados.LIN_AVC, dtCon1));
-  
-      if (!getDatosAlb(rs.getInt("avc_ano"),rs.getInt("avc_empcod"),rs.getString("avc_serie"),
+   
+   if (!getDatosAlb(rs.getInt("avc_ano"),rs.getInt("avc_empcod"),rs.getString("avc_serie"),
                      rs.getInt("avc_nume")))
          return 0;
    Statement st=ct.createStatement();
