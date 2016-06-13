@@ -7786,7 +7786,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       {
           CodigoBarras codBarras;
           s="select avl_numpal,pro_codi,pro_nomb,avp_ejelot,avp_serlot,avp_numpar,avp_numind,"
-              + "sum(avp_numuni) as unidades from v_albventa_detalle as a, "+
+              + "sum(avp_numuni) as unidades from v_albventa_detalle as a "+
             " where emp_codi = " + emp_codiE.getValorInt() +
             " AND avc_ano = " + avc_anoE.getValorInt() +
             " and avc_nume = " + avc_numeE.getValorInt() +
