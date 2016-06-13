@@ -8,6 +8,7 @@ import java.sql.*;
 import java.awt.event.*;
 import java.util.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.interfaces.ejecutable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
@@ -446,13 +447,13 @@ public class clAlbSinCosto extends ventana
       ResultSet rs = ct.createStatement().executeQuery(dtCon1.getStrSelect());
       JasperReport jr;
       if (tipListE.isValor("P"))
-        jr =gnu.chu.print.util.getJasperReport(EU, "clAlbSinCosto");
+        jr =Listados.getJasperReport(EU, "clAlbSinCosto");
       else if (tipListE.isValor("V"))
-        jr = gnu.chu.print.util.getJasperReport(EU, "albSinValor");
+        jr = Listados.getJasperReport(EU, "albSinValor");
       else
-         jr = gnu.chu.print.util.getJasperReport(EU,"albSinFra");
+         jr = Listados.getJasperReport(EU,"albSinFra");
 
-      java.util.HashMap mp = new java.util.HashMap();
+      java.util.HashMap mp = Listados.getHashMapDefault();
       mp.put("fechas", "DEL : " + feciniE.getText() + " AL " + fecfinE.getText());
       JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
       gnu.chu.print.util.printJasper(jp, EU);

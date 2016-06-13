@@ -25,6 +25,7 @@ package gnu.chu.anjelica.ventas;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.pdalmace;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantRepres;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.camposdb.proPanel;
@@ -394,13 +395,13 @@ public class CLPedidVen extends  ventana
         if (!iniciarCons(true))
           return;
 
-        java.util.HashMap mp = new java.util.HashMap();
+        java.util.HashMap mp = Listados.getHashMapDefault();
         mp.put("fecini",pvc_feciniE.getDate());
         mp.put("fecfin",pvc_fecfinE.getDate());
 //        mp.put("cli_zonrep",cli_zonrepE.getText());
 //        mp.put("cli_zoncre",cli_zoncreE.getText());
         JasperReport jr;
-        jr =  gnu.chu.print.util.getJasperReport(EU, "relpedven");
+        jr =  Listados.getJasperReport(EU, "relpedven");
 
         ResultSet rs;
 
@@ -457,9 +458,9 @@ public class CLPedidVen extends  ventana
           return;
         }
         ResultSet rs;
-        java.util.HashMap mp = new java.util.HashMap();
+        java.util.HashMap mp =Listados.getHashMapDefault();
         JasperReport jr;
-        jr = gnu.chu.print.util.getJasperReport(EU, "pedventas");
+        jr = Listados.getJasperReport(EU, "pedventas");
 
         rs = dtCon1.getStatement().executeQuery(dtCon1.getStrSelect());
 

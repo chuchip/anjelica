@@ -1,6 +1,7 @@
 package gnu.chu.anjelica.ventas;
 
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
 import java.awt.*;
@@ -291,11 +292,10 @@ public class clrealve extends ventana
         dtCon1.setStrSelect(sql);
         ResultSet rs = ct.createStatement().executeQuery(dtCon1.getStrSelect());
         JasperReport jr;
-        jr = gnu.chu.print.util.getJasperReport(EU, "realbve");
-        java.util.HashMap mp = new java.util.HashMap();
-
+        jr = Listados.getJasperReport(EU, "realbve");
+        java.util.HashMap mp = Listados.getHashMapDefault();
         mp.put("tipList","VENTAS ORDENADO POR "+ordenE.getText());
-        mp.put("opAgrCl",new Boolean(ordenE.getValor().equals("C")));
+        mp.put("opAgrCl", ordenE.getValor().equals("C"));
         if (!PcondBus.cliIniE.isNull())
           mp.put("cliIni",
                  PcondBus.cliIniE.getText() + " - " + PcondBus.cliIniE.getTextNomb());

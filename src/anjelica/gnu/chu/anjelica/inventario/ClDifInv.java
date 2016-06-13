@@ -24,6 +24,7 @@ package gnu.chu.anjelica.inventario;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.pdalmace;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.ejecutable;
@@ -530,8 +531,8 @@ public class ClDifInv extends ventana {
 
         ResultSet rs=ct.createStatement().executeQuery(dtCon1.getStrSelect());
 
-        JasperReport jr = gnu.chu.print.util.getJasperReport(EU, "lidiexct");
-        java.util.HashMap mp = new java.util.HashMap();
+        JasperReport jr = Listados.getJasperReport(EU, "lidiexct");
+        java.util.HashMap mp = Listados.getHashMapDefault();
         mp.put("empresa",EU.em_cod);
         mp.put("fechas", cci_fecconE.getText());
         mp.put("camara", camCodiE);

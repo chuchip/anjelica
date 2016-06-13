@@ -13,6 +13,7 @@ import gnu.chu.interfaces.*;
 import java.awt.event.*;
 import javax.swing.*;
 import gnu.chu.anjelica.almacen.pstockAct;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantArticulos;
 import net.sf.jasperreports.engine.*;
 import gnu.chu.anjelica.pad.pdconfig;
@@ -1726,9 +1727,9 @@ public class pdpeve  extends ventanaPad   implements PAD
      if (dtCons.getNOREG())
        return;
      try {
-       java.util.HashMap mp = new java.util.HashMap();
+       java.util.HashMap mp = Listados.getHashMapDefault();
        
-       JasperReport jr = gnu.chu.print.util.getJasperReport(EU,"pedventas");
+       JasperReport jr = Listados.getJasperReport(EU,"pedventas");
        s="select l.*,p.prv_nomb ,c.cli_codi,c.alm_codi,c.pvc_fecped, "+
        " c.pvc_fecent,c.usu_nomb,c.pvc_comen,al.alm_nomb, "+
        " a.pro_nomb, cl.cli_nomb,cl.cli_pobl "+

@@ -5,6 +5,7 @@ import gnu.chu.sql.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.almacen.pdalmace;
+import gnu.chu.anjelica.listados.Listados;
 import java.awt.*;
 import java.util.*;
 import javax.swing.BorderFactory;
@@ -1355,8 +1356,8 @@ public class pdpedco extends ventanaPad   implements PAD
       dtStat.select(s);
       rs = dtStat.getResultSet().getStatement().executeQuery(dtStat.
           getStrSelect());
-      JasperReport jr =  gnu.chu.print.util.getJasperReport(EU,"lipedco");
-      java.util.HashMap mp = new java.util.HashMap();
+      JasperReport jr =  Listados.getJasperReport(EU,"lipedco");
+      java.util.HashMap mp = Listados.getHashMapDefault();
       mp.put("nomusu", EU.usu_nomb);
       mp.put("subject", subject);
       mp.put("verPrecios",new Boolean(opPrecios.isSelected()));

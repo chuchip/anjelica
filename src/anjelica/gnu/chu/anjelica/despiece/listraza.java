@@ -2,6 +2,7 @@ package gnu.chu.anjelica.despiece;
 
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.hylafax.SendFax;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.mail.MailHtml;
 import gnu.chu.print.util;
 import net.sf.jasperreports.engine.*;
@@ -11,6 +12,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -36,6 +39,7 @@ import java.util.ArrayList;
 
 public class listraza  implements JRDataSource
 {
+  Locale lengua=ejecutable.local;
   int cliCodi;
   SendFax sendFax=null;
   boolean copiaPapel=true;
@@ -335,7 +339,10 @@ public class listraza  implements JRDataSource
     Listados lis=gnu.chu.anjelica.listados.Listados.getListado(empCodi,Listados.TRAZA,dtStat);
     nElem=0;
     JasperReport jr = Listados.getJasperReport(EU, lis.getNombFich());
-    java.util.HashMap mp = new java.util.HashMap();
+    java.util.HashMap mp = Listados.getHashMapDefault();
+    ResourceBundle rsB=ResourceBundle.getBundle("gnu.chu.anjelica.locale.jasper",lengua);
+    mp.put(JRParameter.REPORT_LOCALE,lengua);
+    mp.put(JRParameter.REPORT_RESOURCE_BUNDLE,rsB);
     mp.put("albaran", Formatear.format(empCodi,"99")+serie+"/"+numAlb);
 
     JasperPrint jp = JasperFillManager.fillReport(jr, mp, this);

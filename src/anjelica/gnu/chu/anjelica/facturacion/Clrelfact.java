@@ -7,7 +7,7 @@ package gnu.chu.anjelica.facturacion;
 *  Tambien tiene una opcion (deshabilitada)
 *  para volver a  generar los recibos para giros, esta opcion solo genera un giro por factura, lo
 *  cual significa que las formas de pago con mas de un vto. no funcionan correctamente.
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -24,8 +24,10 @@ package gnu.chu.anjelica.facturacion;
 * @version 1.1
 */
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.riesgos.clFactCob;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.print.util;
 import gnu.chu.sql.conexion;
 import gnu.chu.utilidades.*;
@@ -40,10 +42,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Locale;
 import net.sf.jasperreports.engine.*;
 
 
 public class Clrelfact extends ventana implements JRDataSource {
+  Locale lengua=ejecutable.local;
   boolean swCreateTable=false;
   String TABLA_TMP="lirelfac_tmp1";
   final  static  int LISTADO=1;
@@ -554,20 +558,20 @@ public class Clrelfact extends ventana implements JRDataSource {
       }
       rs=ct.createStatement().executeQuery(dtCon1.getStrSelect(s));
       if (tip_listadE.getValor().equals("R"))
-        jr = gnu.chu.print.util.getJasperReport(EU, "relfacven");
+        jr = Listados.getJasperReport(EU, "relfacven");
       else if (tip_listadE.getValor().equals("F"))
-         jr =gnu.chu.print.util.getJasperReport(EU, "relfavefp");
+         jr =Listados.getJasperReport(EU, "relfavefp");
        else if (tip_listadE.getValor().equals("FP"))
-         jr =gnu.chu.print.util.getJasperReport(EU, "relfavecp");
+         jr =Listados.getJasperReport(EU, "relfavecp");
       else // Relacion de Facturas por cliente
-        jr =gnu.chu.print.util.getJasperReport(EU, "relfavecl");
-      java.util.HashMap mp = new java.util.HashMap();
+        jr =Listados.getJasperReport(EU, "relfavecl");
+      java.util.HashMap mp = Listados.getHashMapDefault();
       mp.put("feciniE", PcondBus.feciniE.getText());
       mp.put("fecfinE", PcondBus.fecfinE.getText());
-      mp.put("empiniE", new Integer(PcondBus.empIniE.getValorInt()));
-      mp.put("empfinE", new Integer(PcondBus.empFinE.getValorInt()));
-      mp.put("opInclusive",new Boolean(opInclusive.isSelected()));
-
+      mp.put("empiniE", PcondBus.empIniE.getValorInt());
+      mp.put("empfinE", PcondBus.empFinE.getValorInt());
+      mp.put("opInclusive", opInclusive.isSelected());
+   
       JasperPrint jp;
       if (tip_listadE.getValor().equals("FP"))
       {
