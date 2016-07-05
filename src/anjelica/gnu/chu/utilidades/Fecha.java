@@ -129,7 +129,7 @@ public static String sumaDia(String fec,String frFec,int dias) {
 }
 
 /**
-*  Suma a una fecha dada los dias laborables indecados
+*  Suma a una fecha dada los dias laborables indicados
 */
 public static String sumaDiaLaborables(String fec,String frFec,int dias){
 Fecha f = new Fecha (fec,frFec,frFec);
@@ -149,8 +149,8 @@ public static String sumaMes(String fec,String frFec,int mes) {
 }
 /**
 * Suma Dias a una fecha
-* @param String Fecha inicial
-* @param int dia a sumar
+* @param fec Fecha inicial
+* @param dias dia a sumar
 * @return Fecha el resultado de la suma de dias
 */
 public static Fecha SumaFecha(String fec,int dias) {
@@ -158,9 +158,9 @@ return SumaFecha(fec,"dd-MM-yyyy",dias);
 }
 /**
 * Suma Dias a una fecha
-* @param String Fecha inicial
-* @param String Formato de recepcion
-* @param int dia a sumar
+* @param fec Fecha Inicial
+* @param frFec Formato fecha
+* @param dias Dias a sumar
 * @return Fecha el resultado de la suma de dias
 */
 public static Fecha SumaFecha(String fec,String frFec,int dias) {
@@ -604,13 +604,19 @@ public static int getDiadelAno(int dia,int mes,int ano){
 }
 
 /**
-* Funcinn que me devuelve el nnmero de dias que tiene el un ano determinado
+* Función que me devuelve el número de dias que tiene el un año determinado
+* @param ano
 **/
 public static int getDiasYear(int ano){
 if(isBisiesto(ano)) return 366;
 else return 365;
 }
-
+/**
+ * Devuelve los dias que tiene un mes
+ * @param mes
+ * @param ano
+ * @return 
+ */
 public static int getDiasMes(int mes,int ano)
 {
 if (mes > 12 || mes < 1)
@@ -635,33 +641,33 @@ if (mes > 12 || mes < 1)
 */
 public static String isValida(int dia,int mes,int ano)
 {
-String msgError;
-if (mes > 12 || mes < 1)
-    return "El mes debe estar comprendido entre 1 y 12";
- if (dia > 31 || dia < 1)
-     return "El dia debe estar comprendido entre 1 y 31";
- if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
- {
-      if (dia > 30)
-            return "El dia para el mes: "+mes+ " No puede ser superior a 30";
- }
+    String msgError;
+    if (mes > 12 || mes < 1)
+        return "El mes debe estar comprendido entre 1 y 12";
+     if (dia > 31 || dia < 1)
+         return "El dia debe estar comprendido entre 1 y 31";
+     if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
+     {
+          if (dia > 30)
+                return "El dia para el mes: "+mes+ " No puede ser superior a 30";
+     }
 
- if (mes == 2)
- {
-      if (dia > 29)
-            return "Febrero NO pude tener mns de 29 dias";
-          if (isBisiesto(ano)==false)
-    {
-              if (dia > 28)
-                return "Febrero en Ano NO bisiesto no puede tener 29 dias";
-    }
- }
+     if (mes == 2)
+     {
+          if (dia > 29)
+                return "Febrero NO pude tener mns de 29 dias";
+              if (isBisiesto(ano)==false)
+        {
+                  if (dia > 28)
+                    return "Febrero en Ano NO bisiesto no puede tener 29 dias";
+        }
+     }
 
- return null;
+     return null;
 }
 /*
 * Comprueba si un Ano es Correcto.
-* @param Ano a comprobar.
+* @param ano a comprobar.
 * @return true si el ano es bisiesto.
 */
 public static boolean isBisiesto(int ano)
@@ -670,10 +676,7 @@ public static boolean isBisiesto(int ano)
 
  if ( (ano / 100)*100 != ano)
  {
-    if ((ano / 4)*4 != ano)
-        return false;
-    else
-        return true;
+     return (ano / 4)*4 == ano;
  }
  else
  {
@@ -682,14 +685,14 @@ public static boolean isBisiesto(int ano)
        return false;
         in = in * 100;
     ano = ano - in;
-    if ((ano / 4)*4 != ano)
-        return false;
-    else
-        return true;
+    return (ano / 4)*4 == ano;
  }
 }
 /**
 * Retorna los dias que tiene un mes
+* @param  mes mes
+* @param  ano Año
+* @return int
 */
 public static int diasQueTieneElMes(int mes, int ano) {
       if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
@@ -711,8 +714,7 @@ public static int diasQueTieneElMes(int mes, int ano) {
 * @author J. Carlos Muro (12/01/2000)
 */
 public boolean isMayorQue(Date date) {
-if (0 < comparaFechas(date)) return true;
-else return false;
+    return 0 < comparaFechas(date);
 }
 
 /**
@@ -722,8 +724,7 @@ else return false;
 * @author J. Carlos Muro (12/01/2000)
 */
 public boolean isMenorQue(Date date) {
-if (0 > comparaFechas(date)) return true;
-else return false;
+    return 0 > comparaFechas(date);
 }
 
 /**
@@ -733,8 +734,7 @@ else return false;
 * @author J. Carlos Muro (12/01/2000)
 */
 public boolean equalsTo(Date date) {
-if (0 == comparaFechas(date)) return true;
-else return false;
+    return 0 == comparaFechas(date);
 }
 
 /**
@@ -744,8 +744,7 @@ else return false;
 * @author J. Carlos Muro (12/01/2000)
 */
 public boolean isMayorQue(Fecha date) {
-if (0 < comparaFechas(date.dtFecha)) return true;
-else return false;
+    return 0 < comparaFechas(date.dtFecha);
 }
 
 /**
@@ -755,8 +754,7 @@ else return false;
 * @author J. Carlos Muro (12/01/2000)
 */
 public boolean isMenorQue(Fecha date) {
-if (0 > comparaFechas(date.dtFecha)) return true;
-else return false;
+    return 0 > comparaFechas(date.dtFecha);
 }
 
 /**
@@ -765,9 +763,7 @@ else return false;
 * @return <i>true</i> Si la PRIMERA es MAYOR que la SEGUNDA
 */
 public static boolean isMayorQue(String fecIni,String fecFin,String formato){
-if (comparaFechas(fecIni,formato,fecFin,formato)>0)
-  return true;
-return false;
+return comparaFechas(fecIni,formato,fecFin,formato)>0;
 }
 
 /**
@@ -776,9 +772,7 @@ return false;
 * @return <i>true</i> Si la PRIMERA es MENOR que la SEGUNDA
 */
 public static boolean isMenorQue(String fecIni,String fecFin,String formato){
-if (comparaFechas(fecIni,formato,fecFin,formato)<0)
-  return true;
-return false;
+   return comparaFechas(fecIni,formato,fecFin,formato)<0;
 }
 
 /**
@@ -787,9 +781,7 @@ return false;
 * @return <i>true</i> Si la PRIMERA es IGUAL a la SEGUNDA
 */
 public static boolean isIgualQue(String fecIni,String fecFin,String formato){
-if (comparaFechas(fecIni,formato,fecFin,formato)==0)
-  return true;
-return false;
+   return   comparaFechas(fecIni,formato,fecFin,formato)==0;
 }
 
 /**
@@ -837,14 +829,26 @@ else return false;
 }
 
 /**
-* Este m�todo nos devuelve el d�a de la semana al que pertenece la fecha, siendo
+* Este método nos devuelve el día de la semana al que pertenece la fecha, siendo
 * 0 el Domingo, 1 el Lunes, ...., 7 el S�bado. Podemos usar las constantes
 * SUNDAY, MONDAY, ..., SATURDAY.
+     * @return 
 */
 public int getDiaSemana() {
-int dia = -1;
-GregorianCalendar gg = new GregorianCalendar(getYear(),getMes()-1,getDia());
-return gg.get(gg.DAY_OF_WEEK)-1;
+    int dia = -1;
+    GregorianCalendar gg = new GregorianCalendar(getYear(),getMes()-1,getDia());
+    return gg.get(GregorianCalendar.DAY_OF_WEEK)-1;
+}
+
+public static int getDiaSemana(Date fecha) {
+    int dia = -1;
+    Calendar c = Calendar.getInstance();
+    c.setTime(fecha);    
+    return c.get(GregorianCalendar.DAY_OF_WEEK);
+}
+public static Date getCurrentDate()
+{
+    return new Date(System.currentTimeMillis());
 }
 }
 

@@ -207,7 +207,7 @@ public class MantAlbComPlanta extends MantAlbCom
 
     try {
       if (opImpEti.isSelected())
-      imprEtiq(row, nInd);
+      imprEtiq(jt.getValString(JT_PROCOD), row, nInd);
 //    debug("guardaLinDes: row "+row+" nLiAlDe: "+nLiAlDe+" nInd: "+nInd);
        
       jtDes.setValor(""+nInd,row,DESNIND);
@@ -342,7 +342,7 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
    * @throws SQLException
    * @throws java.text.ParseException
    */
-  public void imprEtiq(int nLin,int nInd) throws SQLException,java.text.ParseException
+  public void imprEtiq(String proCodi, int nLin,int nInd) throws SQLException,java.text.ParseException
   {
     if (jtDes.getValorDec(nLin,1)<=0 )
     {
@@ -350,24 +350,24 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
       return;
     }
     CodigoBarras codBarras = new CodigoBarras("C", acc_anoE.getText() ,acc_serieE.getText() ,
-        acc_numeE.getValorInt(), jt.getValorInt(JT_PROCOD), nInd,
+        acc_numeE.getValorInt(), Integer.parseInt(proCodi.trim()), nInd,
         jtDes.getValorDec(JTD_CANTI));    
        
 
     
-    String codArt=jt.getValString(JT_PROCOD);
-    String nombArt=pro_codiE.getNombArt(codArt,emp_codiE.getValorInt());
+ 
+    String nombArt=pro_codiE.getNombArt(proCodi,emp_codiE.getValorInt());
     
     
     if (etiq == null)
       etiq = new etiqueta(EU);
 
     etiq.iniciar(codBarras.getCodBarra(), codBarras.getLote(),
-                 codArt, nombArt,                              
+                 proCodi, nombArt,                              
                  jtDes.getValString(nLin, JTD_NUMCRO),
-                 Formatear.format(jtDes.getValString(nLin, JTD_CANTI), "##9.99"),
+                 jtDes.getValorDec(nLin, JTD_CANTI),
                  jtDes.getValorInt(JTD_CANIND),
-                 "Fecha Recepcion: "+acc_fecrecE.getText()                
+                 acc_fecrecE.getDate()                
                  );
     etiq.setTipoEtiq(dtCon1,emp_codiE.getValorInt(),proCodeti);
    
@@ -382,15 +382,18 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
     }
     mensajeErr("Etiqueta ... Listada");  
   }
+   @Override
   public void copiaJtValorAnt()
   {
 
   }
+   @Override
   public void PADAddNew0()
   {
    
   }
   
+   @Override
   public ArrayList getDatosDesgl() throws SQLException
   {
       ArrayList v=new ArrayList();

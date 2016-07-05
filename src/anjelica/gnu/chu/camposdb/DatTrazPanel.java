@@ -4,7 +4,7 @@
  * <p>Descripcion: Panel para sacar los datos de trazabilidad y compra de un 
  * individuo.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2011
+ * <p>Copyright: Copyright (c) 2005-2016
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -28,6 +28,7 @@ import gnu.chu.anjelica.compras.MantAlbComPlanta;
 import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.pad.pdconfig;
+import gnu.chu.anjelica.pad.pdsaladesp;
 import gnu.chu.controles.CCheckBox;
 import gnu.chu.controles.CPanel;
 import gnu.chu.interfaces.ejecutable;
@@ -46,8 +47,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.text.ParseException;
 import javax.swing.JLayeredPane;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -88,6 +88,7 @@ public class DatTrazPanel extends CPanel {
             acp_engpaiE.addDatos(dtStat.getString("pai_codi"),dtStat.getString("pai_nomb"));
           } while (dtStat.next());
         }
+        acc_numeE.setEditable(false);
         setEditable(false); // Por defecto es solo consulta.
         activarEventos();
     }
@@ -209,6 +210,7 @@ public class DatTrazPanel extends CPanel {
     }
     /**
      * Actualiza los datos de Trazabilidad Mostrados 
+     * @throws java.sql.SQLException
      * @see setDatos
      */
     public void actualizar() throws SQLException
@@ -235,19 +237,7 @@ public class DatTrazPanel extends CPanel {
                 utDesp.busDatInd(serInd, proCodi, EU.em_cod, ejeInd,lotInd, numInd,dtCon1,dtStat,EU);
             }
         }
-        prv_codiE.setValorInt(utDesp.getPrvCodi());
-        cambioPrv();
-        acp_engpaiE.setValorInt(utDesp.getAcpEngpai());
-        acp_fecsacE.setDate(utDesp.getFecSacrif());
-        acp_nucrotE.setText(utDesp.getNumCrot());
-        acp_painacE.setValorInt(utDesp.getAcpPainac());
-        acp_paisacE.setValorInt(utDesp.getAcpPaisac());
-        avc_feccadE.setDate(utDesp.getFecCaduc());
-        avc_fecalbE.setDate(utDesp.getFecDesp());
-        conservarE.setText(utDesp.getConservar());
-        mat_codiE.setValorInt(utDesp.getMatCodi());
-        sde_codiE.setValorInt(utDesp.getSdeCodi());
-        acc_numeE.setValorInt(utDesp.getDeoCodi());
+        verDatosInd();  
     }
     
     
@@ -264,30 +254,60 @@ public class DatTrazPanel extends CPanel {
                     utDesp.getProIndiCompra(), dtCon1, dtStat, EU);
             }
         }
-      
+        verDatosInd();      
+    }
+    
+    public utildesp getUtilDespiece(boolean actual) throws ParseException, SQLException 
+    {
+        if (!actual)
+            return utDesp;
+        utDesp.setAcpEngpai(acp_engpaiE.getValorInt());
+        utDesp.setPaisEngorde(acp_engpaiE.getTextCombo());
+        utDesp.setFecSacrif(acp_fecsacE.getDate());
+        utDesp.setNumCrot(acp_nucrotE.getText());
+        utDesp.setAcpPainac(acp_painacE.getValorInt());
+        utDesp.setPaisNacimiento(acp_painacE.getTextCombo());
+        utDesp.setAcpPaisac(acp_paisacE.getValorInt());
+        utDesp.setSacrificado(acp_paisacE.getTextCombo()+ " - "+mat_codiE.getTextCombo());
+        utDesp.setFecCompra(avc_fecalbE.getDate());
+        utDesp.setConservar(conservarE.getText());
+        utDesp.setMatCodi(mat_codiE.getValorInt());
+       
+        utDesp.setSdeCodi(sde_codiE.getValorInt());
+        utDesp.setDespiezado(pdsaladesp.getNombrePais(dtStat,sde_codiE.getValorInt())+" - "+ sde_codiE.getTextCombo());
+        
+        utDesp.setCambio(false);
+        
+        return utDesp;
+    }
+    void verDatosInd()
+    {
         prv_codiE.setValorInt(utDesp.getPrvCompra());
         cambioPrv();
         acp_engpaiE.setValorInt(utDesp.getAcpEngpai());
         acp_fecsacE.setDate(utDesp.getFecSacrif());
         acp_nucrotE.setText(utDesp.getNumCrot());
         acp_painacE.setValorInt(utDesp.getAcpPainac());
-        acp_paisacE.setValorInt(utDesp.getAcpPaisac());
-        acc_numeE.setDate(utDesp.getFecCaduc());
+        acp_paisacE.setValorInt(utDesp.getAcpPaisac());       
         avc_fecalbE.setDate(utDesp.getFecCompra());
         conservarE.setText(utDesp.getConservar());
         mat_codiE.setValorInt(utDesp.getMatCodi());
         sde_codiE.setValorInt(utDesp.getSdeCodi());
         acc_numeE.setValorInt(utDesp.getProLoteCompra());
+        acc_fecprodE.setDate(utDesp.getFechaProduccion());
     }
+        
+    @Override
     public void setEditable(boolean editable)
     {
         acp_engpaiE.setEditable(editable);
         acp_fecsacE.setEditable(editable);
         acp_nucrotE.setEditable(editable);
+        acc_fecprodE.setEditable(editable);
         acp_painacE.setEditable(editable);
         acp_paisacE.setEditable(editable);
         avc_fecalbE.setEditable(editable);
-        acc_numeE.setEditable(editable);
+        
         conservarE.setEditable(editable);
         mat_codiE.setEditable(editable);
         prv_codiE.setEditable(editable);
@@ -300,26 +320,29 @@ public class DatTrazPanel extends CPanel {
     }
     public static String getRandomCrotal(String crotalBase)
     {
-         int len = crotalBase.length();
-         int numAleatorio;
-         String numCrot =crotalBase;
-            if (len > 6) {
-                numCrot = crotalBase.substring(0, len - 6);
-                len = 6;
-            } else
-                numCrot="";
-            if (len==0) len=6;
-            int numMult = 1;
-            String formato = "";
-            for (int n = 0; n < len; n++) {
-                numMult = numMult * 10;
-                formato = formato + "9";
-            }
-            numAleatorio=(int) (Math.random() * numMult)+1;
-            if (numAleatorio>=numMult)
-                numAleatorio=numMult-1;
-            numCrot = numCrot + Formatear.format(numAleatorio, formato);
-            return numCrot;
+        int len = crotalBase.length();
+        int numAleatorio;
+        String numCrot = crotalBase;
+        if (len > 6)
+        {
+            numCrot = crotalBase.substring(0, len - 6);
+            len = 6;
+        } else
+            numCrot = "";
+        if (len == 0)
+            len = 6;
+        int numMult = 1;
+        String formato = "";
+        for (int n = 0; n < len; n++)
+        {
+            numMult = numMult * 10;
+            formato = formato + "9";
+        }
+        numAleatorio = (int) (Math.random() * numMult) + 1;
+        if (numAleatorio >= numMult)
+            numAleatorio = numMult - 1;
+        numCrot = numCrot + Formatear.format(numAleatorio, formato);
+        return numCrot;
     }
 
     /**
@@ -329,7 +352,8 @@ public class DatTrazPanel extends CPanel {
     public void consMatCodi() {
         final ayuMat ayMat;
 
-        try {
+        try
+        {
             ayMat = new ayuMat(EU, papa.vl);
             ayMat.addInternalFrameListener(new InternalFrameAdapter()
             {
@@ -346,7 +370,8 @@ public class DatTrazPanel extends CPanel {
             papa.setEnabled(false);
             papa.setFoco(ayMat);
             ayMat.iniciarVentana();
-        } catch (Exception j) {
+        } catch (Exception j)
+        {
             this.setEnabled(true);
         }
     }
@@ -480,6 +505,9 @@ public class DatTrazPanel extends CPanel {
             acp_fecsacE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
             cLabel8 = new gnu.chu.controles.CLabel();
             avc_feccadE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+            acp_feccadL1 = new gnu.chu.controles.CLabel();
+            acc_fecprodE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+            acc_tipdocL = new gnu.chu.controles.CLabel();
 
             setLayout(null);
 
@@ -489,7 +517,7 @@ public class DatTrazPanel extends CPanel {
 
             cLabel2.setText("Documento");
             add(cLabel2);
-            cLabel2.setBounds(380, 40, 70, 18);
+            cLabel2.setBounds(310, 40, 70, 18);
 
             cLabel3.setText("Sacrificado");
             add(cLabel3);
@@ -521,7 +549,7 @@ public class DatTrazPanel extends CPanel {
             mat_codiE.getComboBox().setPreferredSize(new Dimension(17,150));
             mat_codiE.setAncTexto(40);
             add(mat_codiE);
-            mat_codiE.setBounds(80, 60, 370, 17);
+            mat_codiE.setBounds(80, 60, 270, 17);
 
             cLabel5.setText("Sala Desp.");
             add(cLabel5);
@@ -541,38 +569,38 @@ public class DatTrazPanel extends CPanel {
 
             cLabel7.setText("Crotal ");
             add(cLabel7);
-            cLabel7.setBounds(10, 100, 40, 18);
+            cLabel7.setBounds(10, 100, 40, 17);
 
             avc_fecalbE.setMinimumSize(new java.awt.Dimension(10, 18));
             avc_fecalbE.setPreferredSize(new java.awt.Dimension(10, 18));
             add(avc_fecalbE);
-            avc_fecalbE.setBounds(240, 120, 79, 18);
+            avc_fecalbE.setBounds(240, 120, 79, 17);
             add(conservarE);
             conservarE.setBounds(290, 100, 200, 17);
 
             cLabel9.setText("Fec. Docum");
             add(cLabel9);
-            cLabel9.setBounds(170, 120, 70, 18);
+            cLabel9.setBounds(170, 120, 70, 17);
             add(acp_nucrotE);
             acp_nucrotE.setBounds(80, 100, 200, 17);
 
-            acp_feccadL.setText("Fec. Caduc");
+            acp_feccadL.setText("Fec.Produc");
             add(acp_feccadL);
-            acp_feccadL.setBounds(10, 120, 62, 18);
+            acp_feccadL.setBounds(355, 60, 70, 18);
 
             acc_numeE.setMinimumSize(new java.awt.Dimension(10, 18));
             acc_numeE.setPreferredSize(new java.awt.Dimension(10, 18));
             add(acc_numeE);
-            acc_numeE.setBounds(450, 40, 50, 18);
+            acc_numeE.setBounds(380, 40, 50, 18);
 
             acp_fecsacL.setText("Fec. Sacrificio");
             add(acp_fecsacL);
-            acp_fecsacL.setBounds(330, 120, 80, 18);
+            acp_fecsacL.setBounds(330, 120, 80, 17);
 
             acp_fecsacE.setMinimumSize(new java.awt.Dimension(10, 18));
             acp_fecsacE.setPreferredSize(new java.awt.Dimension(10, 18));
             add(acp_fecsacE);
-            acp_fecsacE.setBounds(410, 120, 79, 18);
+            acp_fecsacE.setBounds(410, 120, 79, 17);
 
             cLabel8.setText("Cebado");
             add(cLabel8);
@@ -581,13 +609,32 @@ public class DatTrazPanel extends CPanel {
             avc_feccadE.setMinimumSize(new java.awt.Dimension(10, 18));
             avc_feccadE.setPreferredSize(new java.awt.Dimension(10, 18));
             add(avc_feccadE);
-            avc_feccadE.setBounds(80, 120, 79, 18);
+            avc_feccadE.setBounds(80, 120, 79, 17);
+
+            acp_feccadL1.setText("Fec. Caduc");
+            add(acp_feccadL1);
+            acp_feccadL1.setBounds(10, 120, 62, 17);
+
+            acc_fecprodE.setMinimumSize(new java.awt.Dimension(10, 18));
+            acc_fecprodE.setPreferredSize(new java.awt.Dimension(10, 18));
+            add(acc_fecprodE);
+            acc_fecprodE.setBounds(430, 60, 70, 18);
+
+            acc_tipdocL.setBackground(java.awt.Color.orange);
+            acc_tipdocL.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            acc_tipdocL.setText("Compra");
+            acc_tipdocL.setOpaque(true);
+            add(acc_tipdocL);
+            acc_tipdocL.setBounds(440, 40, 60, 17);
         }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CTextField acc_fecprodE;
     private gnu.chu.controles.CTextField acc_numeE;
+    private gnu.chu.controles.CLabel acc_tipdocL;
     private gnu.chu.controles.CLinkBox acp_engpaiE;
     private gnu.chu.controles.CLabel acp_feccadL;
+    private gnu.chu.controles.CLabel acp_feccadL1;
     private gnu.chu.controles.CTextField acp_fecsacE;
     private gnu.chu.controles.CLabel acp_fecsacL;
     private gnu.chu.controles.CTextField acp_nucrotE;

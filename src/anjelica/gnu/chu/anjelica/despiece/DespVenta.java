@@ -320,17 +320,17 @@ public class DespVenta extends ventana {
                     proCodeti = 0;
                  else
                     proCodeti = pro_codiE.getLikeProd().getInt("pro_codeti");
-                 utdesp.imprEtiq(proCodeti,dtCon1,pro_codiE.getValorInt(), pro_nombE.getText(),
-                    "D",
-                    pro_loteE.getValorInt(),
-                    ""+deo_ejelotE.getValorInt(), deo_serlotE.getText(),
-                    pro_numindE.getValorInt(),
-                    difkilE.getValorDec(),
-                    Formatear.getFecha( utdesp.getFecDesp(),"dd-MM-yyyy"),
-                    utdesp.getFechaProduccion(),
-                    Formatear.getFecha(utdesp.getFecCaduc(),"dd-MM-yyyy"),
-                    utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
-                    utdesp.getFecCaduc());
+//                 utdesp.imprEtiq(proCodeti,dtCon1,pro_codiE.getValorInt(), pro_nombE.getText(),
+//                    "D",
+//                    pro_loteE.getValorInt(),
+//                    ""+deo_ejelotE.getValorInt(), deo_serlotE.getText(),
+//                    pro_numindE.getValorInt(),
+//                    difkilE.getValorDec(),
+//                    Formatear.getFecha( utdesp.getFecDesp(),"dd-MM-yyyy"),
+//                    utdesp.getFechaProduccion(),
+//                    Formatear.getFecha(utdesp.getFecCaduc(),"dd-MM-yyyy"),
+//                    utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
+//                    utdesp.getFecCaduc());
             }
             else
             { // Compruebo integridad de despiece, ya q se marcara como cerrado.
@@ -1028,17 +1028,17 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                     almCodi,EU);
      utdesp.setLogotipo(null);
      utdesp.setDirEmpresa(null);
-     utdesp.imprEtiq(proCodeti,dtCon1,jt.getValorInt(linea,0), nombArt,
-                    "D",
-                    deoCodi,
-                    ""+ejeNume, SERIE,
-                    jt.getValorInt(linea,JT_NUMIND),
-                    pro_kilsalE.getValorDec(),
-                    Formatear.getFechaAct("dd-MM-yyyy"),
-                    Formatear.getDateAct(),
-                    def_feccadE.getText(),
-                    utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
-                    def_feccadE.getDate());
+//     utdesp.imprEtiq(proCodeti,dtCon1,jt.getValorInt(linea,0), nombArt,
+//                    "D",
+//                    deoCodi,
+//                    ""+ejeNume, SERIE,
+//                    jt.getValorInt(linea,JT_NUMIND),
+//                    pro_kilsalE.getValorDec(),
+//                    Formatear.getFechaAct("dd-MM-yyyy"),
+//                    Formatear.getDateAct(),
+//                    def_feccadE.getText(),
+//                    utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
+//                    def_feccadE.getDate());
       mensajeErr("Etiqueta ... Listada");
    }
    catch (Throwable ex)

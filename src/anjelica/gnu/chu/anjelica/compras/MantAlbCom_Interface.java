@@ -35,7 +35,7 @@ public interface MantAlbCom_Interface
    public  void guardaLinDes(int row,int nLiAlDe,int nLiAlb,int nInd) throws SQLException,NumberFormatException;
    public void cambioPrv(boolean forzarCambioPrv);
    public void actGridDes(int nLinAlb,int row,int nLinDes,int nInd,int nIndAnt, int nLiAlAnt) throws SQLException,java.text.ParseException;
-   public  void imprEtiq(int nLin,int nInd) throws SQLException,java.text.ParseException;
+    public void imprEtiq(String proCodi,int nLin,int nInd) throws SQLException,java.text.ParseException;
    public void copiaJtValorAnt();
    public void PADAddNew0();
    public ArrayList getDatosDesgl() throws SQLException;

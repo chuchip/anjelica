@@ -31,7 +31,7 @@ import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.CodigoBarras;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Vector;
@@ -57,7 +57,7 @@ public class utildesp
   private Date fecCadDesp;
 
   private boolean  swBuscaCompra=false;
-  private Date fecCadPrvE,fecCompraE,fecDespE,fecProdE;
+  private java.util.Date fecCadPrvE,fecCompraE,fecDespE,fecProdE;
   
  // private int deoNumdes=0;
   public boolean swDesp; // Indica si el individuo salio de un despiece
@@ -77,7 +77,7 @@ public class utildesp
   public int proCodiDes;
   boolean dtRes;
   public String feccadE=null;
-  public boolean cambio=true;
+  boolean cambio=true;
   public int prvCodi=0;
   private int acp_painac,acp_engpai,acp_paisac;
   private int mat_codi,sde_codi;
@@ -1164,7 +1164,7 @@ public class utildesp
  public void imprEtiq(int TIPOETIQ, DatosTabla dtStat,
                       int proCodi, String nombArt,  String indiceEti, int nuloge, String ejloge,
                       String seloge, int numInd,
-                      double kilos, String fecDesp, java.util.Date fecProd, String fecCad,
+                      double kilos, java.util.Date fecDesp, java.util.Date fecProd, java.util.Date fecCad,
                       java.util.Date fecSacr,java.util.Date cadProdDate) throws  Throwable
     {
         actualConservar(proCodi, dtStat);
@@ -1172,23 +1172,19 @@ public class utildesp
             etiq = new etiqueta(EU);
         }
         etiq.setTipoEtiq(dtStat, EU.em_cod, TIPOETIQ);
-        if (TIPOETIQ==0)
-            logo=null;
-        else
+//        if (TIPOETIQ==0)
+//            logo=null;
+//        else
             logo=etiq.getLogotipo();
         CodigoBarras codBarras = new CodigoBarras(indiceEti,ejloge,seloge,nuloge,proCodi,numInd,kilos);
       
-        etiq.setFechaCongelado(getFechaCongelado(proCodi, fecProd, dtStat));    
+            
         etiq.iniciar(codBarras.getCodBarra() ,codBarras.getLote() ,
                 "" + proCodi, nombArt,
                 nacidoE, cebadoE, despiezadoE,
-                ntrazaE, kilos + "Kg",
-                conservarE, sacrificadoE,
-                (etiq.getFechaCongelado().equals("")?"F.Prod: ":"F.Cong: ") + (fecProd == null ? fecDesp
-                : Formatear.getFecha(fecProd, "dd-MM-yyyy")),//"F. Desp: " + fecDesp,
-                etiq.getFechaCongelado().equals("")?"Fec.Cad":"Cad.Fresco", 
-                fecProd,
-                fecCad,etiq.getFechaCongelado().equals("")?fecSacr:null);
+                ntrazaE,kilos,
+                conservarE, sacrificadoE,fecProd,
+                fecProd,fecCad,fecSacr);
         etiq.setDatMatadero(datmat);
         etiq.setDirEmpresa(diremp);
         etiq.setLogotipo(logo);
@@ -1200,25 +1196,56 @@ public class utildesp
     public int getAcpPainac() {
         return acp_painac;
     }
-
+    public void setAcpPainac(int paisNacimiento) {
+        acp_painac=paisNacimiento;
+    }
+    public void setPaisNacimiento(String paisNacimiento)
+    {
+        nacidoE=paisNacimiento;
+    }
+    public void setPaisEngorde(String paisEngorde)
+    {
+        cebadoE=paisEngorde;
+    }
+    public void setSacrificado(String sacrificado)
+    {
+        sacrificadoE=sacrificado;
+    }
+   
+    public void setDespiezado(String despiezado)
+    {
+        this.despiezadoE=despiezado;
+    }
     public int getMatCodi() {
         return mat_codi;
     }
-
+    public void setMatCodi(int matadero) {
+         mat_codi=matadero;
+    }
     public int getSdeCodi() {
         return sde_codi;
     }
-
+   public void setSdeCodi(int salaDespiece) {
+        sde_codi=salaDespiece;
+    }
     public int getAcpEngpai() {
         return acp_engpai;
+    }
+    public void setAcpEngpai(int paisEngorde) {
+        acp_engpai=paisEngorde;
     }
 
     public int getAcpPaisac() {
         return acp_paisac;
     }
-
+    public void setAcpPaisac(int paisSacrificio) {
+        acp_paisac=paisSacrificio;
+    }
     public String getNumCrot() {
         return ntrazaE;
+    }
+    public void setNumCrot(String numCrotal) {
+         ntrazaE=numCrotal;
     }
 
     public String getMatNrgsa() {
@@ -1235,6 +1262,10 @@ public class utildesp
    public java.util.Date getFecSacrif()
    {
      return fecSacrE;
+   }
+   public void setFecSacrif(java.util.Date fechaSacrificio)
+   {
+       fecSacrE=fechaSacrificio;
    }
    public int getEjeLotCompra() {
         return ejeLotCompra;
@@ -1280,7 +1311,7 @@ public class utildesp
     * Devuelve la fecha de Caducidad del Proveedor.
     * @return fecha caducidad segun  Proveedor
     */
-    public Date getFecCadPrv() {
+    public java.util.Date getFecCadPrv() {
         return fecCadPrvE;
     }
      /**
@@ -1289,6 +1320,10 @@ public class utildesp
     */
     public Date getFecCompra() {
         return fecCompraE;
+    }
+    public void setFecCompra(java.util.Date fechaCompra)
+    {
+        fecCompraE=fechaCompra;
     }
      public Date getFecDesp() {
         return fecDespE;
@@ -1343,5 +1378,13 @@ public class utildesp
     public String getPaisEngorde()
     {
         return cebadoE;
+    }
+    public boolean hasCambio()
+    {
+        return cambio;
+    }
+    public void setCambio(boolean cambio)
+    {
+        this.cambio=cambio;
     }
 }

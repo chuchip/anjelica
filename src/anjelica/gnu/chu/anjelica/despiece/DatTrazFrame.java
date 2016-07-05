@@ -30,10 +30,13 @@ import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.sql.SQLException;
+import java.text.ParseException;
 import javax.swing.JLayeredPane;
 
 public class DatTrazFrame extends ventana {
    ventana papa;
+   boolean isInit=false;
+   
   public DatTrazFrame() {
         initComponents();
   }
@@ -71,8 +74,24 @@ public class DatTrazFrame extends ventana {
         datTrazPanel.setLotePanel(lotePanel);
         datTrazPanel.setDatosCompraCheckBox(opDatCompra);
   }
+  public void setEditable(boolean editable)
+  {
+      datTrazPanel.setEditable(editable);
+  }
+  /**
+   * Resetea datos 
+   */
+  public void resetInit()
+  {
+      isInit=false;
+  }
+  public boolean isInit()
+  {
+      return isInit;
+  }
   public void setDatos(int proCodi,String proSerie,int ejeNume,int proLote,int proNumind)
   {
+      isInit=true;
       lotePanel.setDatos(proCodi,proSerie, ejeNume, proLote, proNumind);
       datTrazPanel.setDatos(proCodi, ejeNume, proSerie, proLote, proNumind);
   }
@@ -87,7 +106,10 @@ public class DatTrazFrame extends ventana {
        toFront();
        setEnabled(true);
   }
-  
+  utildesp getUtilDespiece() throws ParseException,SQLException
+  {
+      return datTrazPanel.getUtilDespiece(true);   
+  }
   private void jbInit() throws Exception
   {
     statusBar = new StatusBar(this);

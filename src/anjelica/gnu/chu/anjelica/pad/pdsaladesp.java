@@ -17,7 +17,7 @@ import gnu.chu.sql.DatosTabla;
  *
  * <p>Título: pdsaladesp </p>
  * <p>Descripción: Mantenimiento Tabla de Salas de Despiece</p>
- * <p>Copyright: Copyright (c) 2005
+ * <p>Copyright: Copyright (c) 2005-2016
  *    Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -71,11 +71,13 @@ public class pdsaladesp extends ventanaPad   implements PAD
   CTextField sde_comenE = new CTextField(Types.CHAR,"X",50);
   CGridEditable jt = new CGridEditable(2)
   {
+    @Override
     public int cambiaLinea(int row, int col)
     {
       return checkPrv() ? -1 : 0;
     }
 
+    @Override
     public void cambiaColumna(int col,int colNueva, int row)
     {
       String nombArt;
@@ -113,10 +115,9 @@ public class pdsaladesp extends ventanaPad   implements PAD
       if (ht != null)
       {
         if (ht.get("modConsulta") != null)
-          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-              booleanValue();
+          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString());
       }
-      setTitulo("Mant. Salas de Despiece ");;
+      setTitulo("Mant. Salas de Despiece ");
 
       if (jf.gestor.apuntar(this))
         jbInit();
@@ -140,8 +141,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
       if (ht != null)
       {
         if (ht.get("modConsulta") != null)
-          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-              booleanValue();
+          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString());
       }
       setTitulo("Mant. Salas de Despiece");
       jbInit();
@@ -222,18 +222,18 @@ public class pdsaladesp extends ventanaPad   implements PAD
     sde_orgconE.setBounds(new Rectangle(78, 157, 129, 17));
     sde_comenE.setBounds(new Rectangle(78, 177, 361, 17));
     jt.setBounds(new Rectangle(2, 199, 376, 163));
-    Vector v= new Vector();
-    v.addElement("Cod.");
-    v.addElement("Nombre Proveedor");
+    ArrayList v= new ArrayList();
+    v.add("Cod.");
+    v.add("Nombre Proveedor");
     jt.setCabecera(v);
     jt.setAnchoColumna(new int[]{60,200});
     jt.setAlinearColumna(new int[]{2,0});
     jt.setAjustarGrid(true);
     prv_nombE.setEnabled(false);
     prv_codiE.setCampoNombre(null);
-    Vector c=new Vector();
-    c.addElement(prv_codiE.getTextField());
-    c.addElement(prv_nombE);
+    ArrayList c=new ArrayList();
+    c.add(prv_codiE.getTextField());
+    c.add(prv_nombE);
     jt.setCampos(c);
     sde_orgconL1.setBounds(new Rectangle(0, 178, 78, 17));
     sde_orgconL1.setText("Comentario");
@@ -274,6 +274,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
     Pprinc.add(sde_codiE, null);
   }
 
+  @Override
   public void iniciarVentana() throws Exception
   {
     Pprinc.setButton(KeyEvent.VK_F4,Baceptar);
@@ -418,21 +419,21 @@ public class pdsaladesp extends ventanaPad   implements PAD
       mensaje("Error en Criterios de busqueda");
       return;
     }
-    Vector v = new Vector();
-    v.addElement(sde_codiE.getStrQuery());
-    v.addElement(sde_nombE.getStrQuery());
-    v.addElement(sde_direcE.getStrQuery());
-    v.addElement(sde_poblE.getStrQuery());
-    v.addElement(sde_proviE.getStrQuery());
-    v.addElement(sde_codposE.getStrQuery());
-    v.addElement(sde_telefE.getStrQuery());
-    v.addElement(sde_faxE.getStrQuery());
-    v.addElement(sde_nifE.getStrQuery());
-    v.addElement(sde_nuexplE.getStrQuery());
-    v.addElement(sde_nrgsaE.getStrQuery());
-    v.addElement(sde_comenE.getStrQuery());
-    v.addElement(pai_codiE.getStrQuery());
-    v.addElement(sde_orgconE.getStrQuery());
+    ArrayList v = new ArrayList();
+    v.add(sde_codiE.getStrQuery());
+    v.add(sde_nombE.getStrQuery());
+    v.add(sde_direcE.getStrQuery());
+    v.add(sde_poblE.getStrQuery());
+    v.add(sde_proviE.getStrQuery());
+    v.add(sde_codposE.getStrQuery());
+    v.add(sde_telefE.getStrQuery());
+    v.add(sde_faxE.getStrQuery());
+    v.add(sde_nifE.getStrQuery());
+    v.add(sde_nuexplE.getStrQuery());
+    v.add(sde_nrgsaE.getStrQuery());
+    v.add(sde_comenE.getStrQuery());
+    v.add(pai_codiE.getStrQuery());
+    v.add(sde_orgconE.getStrQuery());
 
     s = "SELECT * FROM v_saladesp ";
     s = creaWhere(s, v,true);
@@ -483,9 +484,10 @@ public class pdsaladesp extends ventanaPad   implements PAD
     sde_nombE.requestFocus();
   }
 
+  @Override
   public void ej_edit1()
   {
-    jt.procesaAllFoco();
+    jt.salirGrid();
     try
     {
       dtAdd.edit(dtAdd.getCondWhere());
@@ -761,5 +763,20 @@ public class pdsaladesp extends ventanaPad   implements PAD
     }
     return true;
   }
-
+  
+  public static int getPais(DatosTabla dt, int salaDesp) throws SQLException
+  {
+      String s="select v_saladesp.pai_codi,pai_nomb from v_saladesp left join paises on paises.pai_codi=v_saladesp.pai_codi where sde_codi="+salaDesp;
+      if (!dt.select(s))
+          return 0;
+      return dt.getInt("pai_codi");      
+  }
+  
+  public static String getNombrePais(DatosTabla dt, int salaDesp) throws SQLException
+  {
+      int paiCodi=getPais(dt,salaDesp);
+      if (paiCodi==0)
+          return null;
+      return dt.getString("pai_nomb");      
+  }
 }

@@ -23,14 +23,18 @@ package gnu.chu.logs;
  *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
  * </p>
  */
+import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.isql.utilSql;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.conexion;
 import gnu.chu.utilidades.EntornoUsuario;
+import gnu.chu.utilidades.Fecha;
 import gnu.chu.utilidades.escribe;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.Hashtable;
 
 
@@ -51,10 +55,27 @@ public class EnviaMensajes {
       EU.password=passwd;
       EU.email="cpuente@vacunospuente.es";
       ct=new conexion(EU);
+      ct.setCatalog("anjelica");
       dtCon1=new DatosTabla(ct);
       dtStat=new DatosTabla(ct);
+     
+     
+      String s;
       utilSql.regenerarPermisosAll(ct); // regenera los permisos de todos los usuarios
-      String s="SELECT * FROM histmens as h, mensajes as m where men_tipo='"+ tipoMen+"'"+
+      if (Fecha.getDiaSemana(Fecha.getCurrentDate())==GregorianCalendar.MONDAY)
+      { // Solo se ejecuta los lunes
+        DatosTabla dtUpd=new DatosTabla(ct,ResultSet.CONCUR_UPDATABLE);
+    
+        s = pdclien.ponerInactivos(dtCon1,dtUpd,365,90);
+        if (s!=null)
+        {
+             System.out.println("-----------------------------------------"); 
+             System.out.println("----- CLIENTES PASADOS A INACTIVOS  -----");
+             System.out.println("-----------------------------------------"); 
+             System.out.println(s);
+        }
+      }
+      s="SELECT * FROM histmens as h, mensajes as m where men_tipo='"+ tipoMen+"'"+
               " AND him_fecha >= current_date -"+dias+
               " and h.men_codi=m.men_codi "+
               " order by him_fecha desc ,him_hora desc,men_tipo desc";
@@ -163,6 +184,11 @@ public class EnviaMensajes {
   {
     try
     {
+      if (args.length==0 )
+      {
+           new EnviaMensajes("cpuente","anjelica","C","0");
+           return;
+      }
       if (args.length!=4)
       {
             System.err.println("Se requieren 4 parametros: Usuario, Contraseña,Tipo Mensaje (C/A/I), Dias Antiguedad");

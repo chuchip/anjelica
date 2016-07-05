@@ -75,7 +75,7 @@ public class DatosTabla   implements Serializable
   String schema = ".";
   String comodin = "\uFFFD";
   public SQLException SqlException; //= new SQLException("xx");
-
+  private int cursorConcurrencia=ResultSet.CONCUR_READ_ONLY;
   private int maxEsperaBloq = 5;
   private boolean swReintentaBloq = true;
   private CEditable CEditable = null;
@@ -87,6 +87,13 @@ public class DatosTabla   implements Serializable
   public DatosTabla(conexion conexion) throws SQLException
   {
     rsOpen= false;
+    setConexion(conexion);
+  }
+  
+  public DatosTabla(conexion conexion,int cursorConcurrencia) throws SQLException
+  {
+    rsOpen= false;
+    this.cursorConcurrencia=cursorConcurrencia;
     setConexion(conexion);
   }
   /**
@@ -613,10 +620,10 @@ public class DatosTabla   implements Serializable
    Statement st;
    if (fetchSize!=0)
      st=dtb_Con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                                ResultSet.CONCUR_READ_ONLY);
+                                cursorConcurrencia);
    else
      st = dtb_Con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                                ResultSet.CONCUR_READ_ONLY);
+                                cursorConcurrencia);
    if (maxRows > 0)
      st.setMaxRows(maxRows);
    // Driver Postgresql No soporta setQueryTimeOut

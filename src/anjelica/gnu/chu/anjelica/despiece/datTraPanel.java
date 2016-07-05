@@ -6,7 +6,7 @@ import java. awt.*;
 /**
  * <p>Titulo:   datTraPanel </p>
  * <p>Descripción: Panel con campos para mostrar los datos de trazabilidad
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
 *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia

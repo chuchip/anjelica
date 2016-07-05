@@ -39,7 +39,7 @@ public class repetiqu extends ventana
   etiqueta etiq;
   String s;
   String famProd;
-  Date grd_fecpro;
+  java.util.Date grd_fecpro;
   CPanel Pprinc = new CPanel();
   proPanel pro_codiE = new proPanel();
   CLabel cLabel1 = new CLabel();
@@ -644,21 +644,20 @@ public class repetiqu extends ventana
                 deo_kilosE.getValorDec());
         java.util.Date fecCong=null;
         etiq.setNumCopias(1);
-        if (tipetiqE.getText().startsWith("INTER"))
-        {
-            fecCong=utildesp.getDateCongelado(pro_codiE.getValorInt(), fecrecepE.getDate(), dtStat);
-            etiq.setNumCopias(numEtiqE.getValorInt());
-        }
-        else
-            etiq.setFechaCongelado(utildesp.getFechaCongelado(pro_codiE.getValorInt(), fecrecepE.getDate(), dtStat));
+//        if (tipetiqE.getText().startsWith("INTER"))
+//        {
+//            fecCong=utildesp.getDateCongelado(pro_codiE.getValorInt(), fecrecepE.getDate(), dtStat);
+//            etiq.setNumCopias(numEtiqE.getValorInt());
+//        }
+//        else
+//            etiq.setFechaCongelado(utp.getFechaProduccion());
         
         etiq.iniciar(codBarras.getCodBarra() ,codBarras.getLote(),
             pro_codiE.getText(),pro_codiE.getTextNomb(),nacidoE.getText(),cebadoE.getText(),despiezadoE.getText(),
-            ntrazaE.getText(),deo_kilosE.getValorDec()+" Kg",
+            ntrazaE.getText(),deo_kilosE.getValorDec(),
             conservarE.getText(),sacrificadoE.getText(),
-            fecrepL.getText()+fecrecepE.getText(),"Fec.Cad:",grd_fecpro,
-            fecCong==null?feccadE.getText():Formatear.getFecha(fecCong, "dd-MM-yyyy") , 
-            fecsacrE.getDate());
+            fecrecepE.getDate(),fecrecepE.getDate(), fecsacrE.getDate(),
+            feccadE.getDate());
         
         etiq.listarDefec();
         if (swModo=='G')

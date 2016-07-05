@@ -2322,6 +2322,7 @@ public class pdclien extends ventanaPad implements PAD
         return;
       }
     }
+    
     public static void llenaEstCont(CComboBox cb)
     {
       cb.addItem( "Contactado","C");
@@ -2407,5 +2408,28 @@ public class pdclien extends ventanaPad implements PAD
       return null;
     return dt.getString("cli_nomb");
   }
- 
+  public static  String  ponerInactivos(DatosTabla dtSel,DatosTabla dtUpd, int diasVenta ,int diasModif) throws SQLException
+  {
+      String s = "SELECT * from clientes WHERE cli_activ = 'S' and cli_feulmo <= current_date - "+ diasModif +
+          " and cli_feulve <= current_date - "+diasVenta+
+          " and cli_intern=0 and cli_gener=0";
+      if (! dtSel.select(s))
+         return null;
+      
+      s="";
+      do
+      {         
+        dtUpd.addNew("cliencamb");
+        dtSel.copiaRegistro(dtUpd);
+        dtUpd.setDato("usu_nomb","anjelica");
+        dtUpd.setDato("clc_fecha",Formatear.getDateAct());
+        dtUpd.setDato("clc_hora",Formatear.getFechaAct("HH.mm"));
+        dtUpd.setDato("clc_comen","Dado de baja automaticamente");
+        dtUpd.update();      
+        dtUpd.executeUpdate("update clientes set cli_activ='N' where cli_codi="+dtSel.getInt("cli_codi") );
+        s+=" Cliente: "+dtSel.getInt("cli_codi")+" "+ dtSel.getString("cli_nomb")+ " ("+dtSel.getString("cli_pobl")+")\n";
+      } while (dtSel.next());
+      dtUpd.commit();
+      return s;
+  }
 }

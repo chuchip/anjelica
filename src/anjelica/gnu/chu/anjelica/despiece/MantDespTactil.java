@@ -95,7 +95,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
   CPanel Pprinc = new CPanel();
   JTabbedPane Ptabed = new JTabbedPane();
-  datTraza IFdatOr;
+//  datTraza IFdatOr;
+  DatTrazFrame datTrazFrame;
   CPanel Pconsul = new CPanel();
   
   //CTextField pro_loteE = new CTextField(Types.DECIMAL,"####9");
@@ -787,7 +788,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     cPanel1.add(cLabel14, null);
     cPanel1.add(grd_unioriE1, null);
     cPanel1.add(numPiezasL, null);
-        cPanel1.add(BmodDaIn, null);
+    cPanel1.add(BmodDaIn, null);
    
     Ptabed.add(Pfin, "Final");
     Ppie.add(Bcancelar, null);
@@ -850,8 +851,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
    tid_codiE.combo.setPreferredSize(new Dimension(350,18));
    tid_codiE.releer(); // Carga todos los despieces activos 
    eti_codiE.setDatos(etiqueta.getReports(dtStat, EU.em_cod,0));    
-   eti_codiE.addItem("Defecto","0");
+   eti_codiE.addItem("Defecto", "0");
    eti_codiE.setValor("0");
+ 
    activarEventos();
    verDatos(dtCons);
    actButton(true);
@@ -859,12 +861,13 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
  void activarEventos()
  {
+     
    BmodDaIn.addActionListener(new ActionListener()
    {
       @Override
      public void actionPerformed(ActionEvent e)
      {
-       BmodDaIn_actionPerformed();
+       mostrarDatosTraz();
      }
    });
    jtSal.addMouseListener(new MouseAdapter() {
@@ -991,7 +994,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
          return;
      }
      buscaDatInd();
-     java.util.Date fecCong=utildesp.getDateCongelado(pro_codsalE.getValorInt(), grd_fechaE.getDate(), dtStat);
+     
      etiq.iniciar(deo_codiE.getText(),
                   eje_numeE.getText() + "/" +
                    Formatear.format(EU.em_cod, "99") + "/" +
@@ -999,12 +1002,13 @@ public class MantDespTactil  extends ventanaPad implements PAD
                    deo_codiE.getValorInt(),
                   pro_codsalE.getText(), pro_codsalE.getTextNomb(), utdesp.nacidoE, utdesp.cebadoE,
                   utdesp.despiezadoE, null,
-                  null, utdesp.getConservar(),
+                  0,utdesp.getConservar(),
                   utdesp.sacrificadoE,
-                  null,
-                  grd_fechaE.getText(),grd_fechaE.getDate(),
-                  fecCong==null?grd_feccadE.getText():Formatear.getFecha(fecCong, "dd-MM-yyyy") , 
+                  grd_fechaE.getDate(),grd_fechaE.getDate(),
+                  grd_feccadE.getDate(), 
                   utdesp.fecSacrE);
+       
+
 //     new miThread("aaa")
 //     {
 //       public void run()
@@ -1248,7 +1252,18 @@ public class MantDespTactil  extends ventanaPad implements PAD
     @Override
   public void afterConecta() throws SQLException, java.text.ParseException
   {
-      dtAux=new DatosTabla(ct);
+      datTrazFrame = new DatTrazFrame(EU, vl, this)
+      {
+          @Override
+          public void matar() {
+              salirDatTraza();
+          }
+      };
+      datTrazFrame.iniciar(dtStat, dtCon1, this, vl, EU);
+      datTrazFrame.setEditable(true);
+      vl.add(datTrazFrame);
+      datTrazFrame.setLocation(this.getLocation().x, this.getLocation().y + 30);
+      dtAux = new DatosTabla(ct);
       tipoEmp=pdconfig.getTipoEmpresa(EU.em_cod, dtStat);
       isEmpPlanta=tipoEmp==pdconfig.TIPOEMP_PLANTACION;
   }
@@ -1265,7 +1280,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
     @Override
   public void PADEdit()
-  {
+  {      
     if (jtEnt.isVacio())
     {
         msgBox("Despiece VACIO. Imposible Modificar");
@@ -1377,7 +1392,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     modLinSal=false;
     jtSal.removeAllDatos();
     Pprofin.removeAll();
-   
+    datTrazFrame.resetInit();
 //    emp_codiE.setValorDec(EU.em_cod);
     eje_numeE.setValorDec(EU.ejercicio);
     grd_fechaE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -1772,6 +1787,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
         jtFin.removeAllDatos();
         jtSal.removeAllDatos();
     }
+    datTrazFrame.resetInit();
     if (dt.getNOREG())
       return;
     if (utdesp!=null)
@@ -2629,13 +2645,14 @@ public class MantDespTactil  extends ventanaPad implements PAD
      etiq.iniciar(codBarras.getCodBarra(),codBarras.getLote(),
                   jtSal.getValString(linea,JTSAL_PROCODI),jtSal.getValString(linea,JTSAL_PRONOMB),
                   utdesp.nacidoE, utdesp.cebadoE, utdesp.despiezadoE,
-                  utdesp.ntrazaE, jtSal.getValorDec(linea,JTSAL_KILOS) + " Kg",
+                  utdesp.ntrazaE, jtSal.getValorDec(linea,JTSAL_KILOS),
                   utdesp.getConservar(), utdesp.sacrificadoE,
-                  "F. Prod: " + grd_fechaE.getText(),
-                  "Fec.Cad.",grd_fechaE.getDate(),grd_feccadE.getText(),utdesp.getFecSacrif());
+                   grd_fechaE.getDate(),grd_fechaE.getDate(),
+                  pro_codsalE.isCongelado()?null:grd_feccadE.getDate(),utdesp.getFecSacrif());
      etiq.setPrintDialog(false);    
-     etiq.setFechaCongelado(utildesp.getFechaCongelado(jtSal.getValorInt(linea,JTSAL_PROCODI ),
-         grd_fechaE.getDate(), dtStat));
+    
+//     etiq.setFechaCongelado(utildesp.getFechaCongelado(jtSal.getValorInt(linea,JTSAL_PROCODI ),
+//         grd_fechaE.getDate(), dtStat));
      etiq.listarDefec();
    }
    catch (Throwable k)
@@ -2907,57 +2924,96 @@ public class MantDespTactil  extends ventanaPad implements PAD
    }
    return null;
  }
- void BmodDaIn_actionPerformed()
- {
-   try
-      {
-        if (IFdatOr == null)
-        {
-          IFdatOr = new datTraza();
-          IFdatOr.addInternalFrameListener(new InternalFrameAdapter()
+  void mostrarDatosTraz()
+  {
+      try {
+        
+         
+          if  (!datTrazFrame.isInit())
           {
-                    @Override
-            public void internalFrameClosing(InternalFrameEvent e)
-            {
-              salDatTraza();
-            }
-          });
-
-          IFdatOr.setLocation(25, 25);
-          IFdatOr.iniciarVentana();
-        }
-        vl.add(IFdatOr);
-        IFdatOr.setVisible(true);
-        IFdatOr.muerto=false;
-        IFdatOr.statusBar.setEnabled(true);
-        IFdatOr.statusBar.Bsalir.setEnabled(true);
-        IFdatOr.setClosed(false);
-
-        this.setEnabled(false);
-        this.setFoco(IFdatOr);
-        buscaDatInd();
-        IFdatOr.setUtilDesp(utdesp);
-      }
-      catch (Exception j)
+             datTrazFrame.setDatos(jtEnt.getValorInt(0,JTENT_PROCODI),
+                jtEnt.getValString(0,JTENT_SERIE),
+                jtEnt.getValorInt(0,JTENT_EJER),
+                jtEnt.getValorInt(0,JTENT_LOTE),
+                jtEnt.getValorInt(0,JTENT_NUMIND));
+             datTrazFrame.actualizar();
+          }
+                   
+           this.setEnabled(false);
+           datTrazFrame.mostrar();
+      } catch (SQLException k)
       {
-        this.setEnabled(true);
+          Error("Error a mostrar Datos de Trazabilidad",k);
       }
-    }
-
-    void salDatTraza()
+  }
+  private void salirDatTraza()
+  {
+    datTrazFrame.setVisible(false);
+    this.toFront();
+    this.setEnabled(true);
+    
+    
+    try
     {
-      IFdatOr.setVisible(false);
-      utdesp=IFdatOr.getUtilDesp();
-      this.setEnabled(true);
-      this.toFront();
-      try
-      {
-        this.setSelected(true);
-      }
-      catch (Exception k) {}
-      this.setFoco(null);
+      utdesp=datTrazFrame.getUtilDespiece();   
+      this.setSelected(true);
     }
+    catch (Exception k)
+    {}
+    
+  }
+// void BmodDaIn_actionPerformed()
+// {
+//   try
+//      {
+//        if (IFdatOr == null)
+//        {
+//          IFdatOr = new datTraza();
+//          IFdatOr.addInternalFrameListener(new InternalFrameAdapter()
+//          {
+//            @Override
+//            public void internalFrameClosing(InternalFrameEvent e)
+//            {
+//              salDatTraza();
+//            }
+//          });
+//
+//          IFdatOr.setLocation(25, 25);
+//          IFdatOr.iniciarVentana();
+//        }
+//        vl.add(IFdatOr);
+//        IFdatOr.setVisible(true);
+//        IFdatOr.muerto=false;
+//        IFdatOr.statusBar.setEnabled(true);
+//        IFdatOr.statusBar.Bsalir.setEnabled(true);
+//        IFdatOr.setClosed(false);
+//
+//        this.setEnabled(false);
+//        this.setFoco(IFdatOr);
+//        buscaDatInd();
+//        IFdatOr.setUtilDesp(utdesp);
+//      }
+//      catch (Exception j)
+//      {
+//        this.setEnabled(true);
+//      }
+//    }
 
+//    void salDatTraza()
+//    {
+//      IFdatOr.setVisible(false);
+//      utdesp=IFdatOr.getUtilDesp();
+//      this.setEnabled(true);
+//      this.toFront();
+//      try
+//      {
+//        this.setSelected(true);
+//      }
+//      catch (Exception k) {}
+//      this.setFoco(null);
+//    }
+//
+//}
 }
 class actionPerforMDT implements ActionListener
 {

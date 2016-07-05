@@ -48,7 +48,8 @@ public class Clrelalbco extends ventana {
     final private String CONSULTAR="Consultar";
     final private String LISTAR="Listar";
     String s;
-      public Clrelalbco(EntornoUsuario eu, Principal p) {
+    
+    public Clrelalbco(EntornoUsuario eu, Principal p) {
         EU = eu;
         vl = p.panel1;
         jf = p;

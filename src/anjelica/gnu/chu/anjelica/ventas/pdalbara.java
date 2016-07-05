@@ -7883,12 +7883,12 @@ public class pdalbara extends ventanaPad  implements PAD  {
                      Formatear.format(dtCon1.getString("avp_numind"), "999"),
                      dtCon1.getString("pro_codi"), proNomb,
                      utdesp.nacidoE, utdesp.cebadoE, utdesp.despiezadoE,
-                     utdesp.ntrazaE, dtCon1.getDouble("avp_canti") + " Kg",
+                     utdesp.ntrazaE, dtCon1.getDouble("avp_canti"),
                      utdesp.getConservar(), utdesp.sacrificadoE,
-                     utdesp.fecrepL + utdesp.fecrecepE,
-                     "F.Cad",null,
-                     utdesp.feccadE,utdesp.fecSacrE);
-        etiq.setFechaCongelado(utildesp.getFechaCongelado(dtCon1.getInt("pro_codi"), utdesp.getFechaProduccion(), dtStat));
+                     utdesp.getFecCompra(),
+                     utdesp.getFechaProduccion(),                     
+                     utdesp.getFecCaduc(),utdesp.fecSacrE);
+    
         etiq.listarDefec();
       } while (dtCon1.next());
 

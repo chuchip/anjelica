@@ -4,6 +4,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
+import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.anjelica.pad.pdprove;
 import gnu.chu.comm.BotonBascula;
@@ -424,7 +425,7 @@ public class MantAlbComCarne extends MantAlbCom
 
     try {
       if (opImpEti.isSelected())
-        imprEtiq(row, nInd);
+        imprEtiq(jt.getValString(JT_PROCOD), row, nInd);
 //    debug("guardaLinDes: row "+row+" nLiAlDe: "+nLiAlDe+" nInd: "+nInd);
        
       jtDes.setValor(""+nInd,row,DESNIND);
@@ -583,7 +584,7 @@ public class MantAlbComCarne extends MantAlbCom
    * @throws java.text.ParseException
    */
    @Override
-  public void imprEtiq(int nLin,int nInd) throws SQLException,java.text.ParseException
+  public void imprEtiq(String proCodi,int nLin,int nInd) throws SQLException,java.text.ParseException
   {
     if (jtDes.getValorDec(nLin,1)<=0 )
     {
@@ -591,19 +592,19 @@ public class MantAlbComCarne extends MantAlbCom
       return;
     }
     CodigoBarras codBarras = new CodigoBarras("C", 
-         acc_anoE.getText() ,
+        acc_anoE.getText() ,
         acc_serieE.getText() ,
         acc_numeE.getValorInt(),        
-        jt.getValorInt(JT_PROCOD) ,
+        Integer.parseInt(proCodi.trim()) ,
         nInd,
         jtDes.getValorDec(nLin,JTD_CANTI));
         
   
 
     String sacrificadoE,despiezadoE;
-    String nombArt,codArt;
-    codArt=jt.getValString(1);
-    nombArt=pro_codiE.getNombArt(codArt,emp_codiE.getValorInt());
+    String nombArt;
+    
+    nombArt=pro_codiE.getNombArt(proCodi,emp_codiE.getValorInt());
     int sdeCodi=0,matCodi=0;
     try {
       matCodi=Integer.parseInt(mat_codiE.getTexto(jtDes.getValString(3)));
@@ -639,27 +640,20 @@ public class MantAlbComCarne extends MantAlbCom
       etiq = new etiqueta(EU);
 
     etiq.iniciar(codBarras.getCodBarra(), codBarras.getLote(),
-                 codArt, nombArt,
+                 proCodi, nombArt,
                  mat_codiE.getTextoCombo(jtDes.getValString(nLin, JTD_PAINAC)),
                  mat_codiE.getTextoCombo(jtDes.getValString(nLin, JTD_ENGPAI)),
                  despiezadoE,
                  jtDes.getValString(nLin, JTD_NUMCRO),
-                 Formatear.format(jtDes.getValString(nLin, JTD_CANTI), "##9.99") +
-                 " Kg",
+                 jtDes.getValorDec(nLin, JTD_CANTI),
                  getConservar(jt.getValorInt(JT_PROCOD)),
-                 sacrificadoE,                
-                 jtDes.getValDate(nLin,JTD_FECPRO)==null?"":
-                   "Fec.Prod: "+jtDes.getValString(nLin,JTD_FECPRO),                 
-                 "Fec. Caduc.:",null,
-                 jtDes.getValString(nLin, 8).trim().equals("") ? null :
-                 jtDes.getValString(nLin, 8),
-                 jtDes.getValDate(nLin, JTD_FECSAC,acp_fecsacE.getFormato()));
+                 sacrificadoE,   acc_fecrecE.getDate() ,
+                 jtDes.getValDate(nLin,JTD_FECPRO) ,
+                 jtDes.getValDate(nLin,JTD_FECCAD) ,
+                 jtDes.getValDate(nLin, JTD_FECSAC));
     etiq.setTipoEtiq(dtCon1,emp_codiE.getValorInt(),proCodeti);
-    if (Formatear.comparaFechas(jtDes.getValDate(nLin,8),acc_fecrecE.getDate())>180 )
-        etiq.setFechaCongelado(""); // Si la fecha introducida es superior en mas de 180 dias a la de entrada
-                                    // no se pondra nunca la fecha de congelado.
-    else
-        etiq.setFechaCongelado(utildesp.getFechaCongelado(jt.getValorInt(1), acc_fecrecE.getDate(), dtCon1));
+   
+  
     try
     {
       etiq.listar();

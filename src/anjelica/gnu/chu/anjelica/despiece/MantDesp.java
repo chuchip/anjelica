@@ -20,7 +20,7 @@ package gnu.chu.anjelica.despiece;
  * El parametro MODPRECIO indica si se veran los precios.  Los precios NO se pueden 
  * modificar.
  * </P>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -2065,9 +2065,9 @@ public class MantDesp extends ventanaPad implements PAD
             "" + deo_ejelotE.getValorInt(), deo_serlotE.getText(),
             pro_numindE.getValorInt(),
             kgDifE.getValorDec(),
-            Formatear.getFecha(utdesp.getFecDesp(), "dd-MM-yyyy"),
+            utdesp.getFecDesp(),
             utdesp.getFechaProduccion(),
-            Formatear.getFecha(utdesp.getFecCaduc(), "dd-MM-yyyy"),
+            utdesp.getFecCaduc(),
             utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
             utdesp.getFecCaduc());
     }
@@ -3269,10 +3269,8 @@ public class MantDesp extends ventanaPad implements PAD
             if (personal == 'P')
             {
                 utdesp.setDirEmpresa(cli_codiE.getTextNomb());
-                utdesp.setLogotipo("");
             } else
             {
-                utdesp.setLogotipo(null);
                 utdesp.setDirEmpresa(null);
             }
 
@@ -3284,11 +3282,11 @@ public class MantDesp extends ventanaPad implements PAD
                 opSimular.isSelected() ? jtCab.getValString(0, JTCAB_SERLOT) : deo_selogeE.getText(),
                 opSimular.isSelected() ? jtCab.getValorInt(0, JTCAB_NUMIND) : jtLin.getValorInt(linea, JTLIN_NUMIND),
                 def_kilosE.getValorDec(),
-                deo_fechaE.getText(),
+                deo_fechaE.getDate(),
                 deo_fecproE.isNull() ? deo_fechaE.getDate() : deo_fecproE.getDate(),
-                jtLin.getValString(linea, 5),
+                jtLin.getValDate(linea, JTLIN_FECCAD),
                 utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
-                jtLin.getValDate(linea, 5));
+                jtLin.getValDate(linea, JTLIN_FECCAD));
             mensajeErr("Etiqueta ... Listada");
         } catch (Throwable ex)
         {
@@ -3326,15 +3324,15 @@ public class MantDesp extends ventanaPad implements PAD
                 + deo_nulogeE.getValorInt(),
                 ""+proCodi, proNomb, utdesp.nacidoE, utdesp.cebadoE,
                 utdesp.despiezadoE, null,
-                null, utdesp.getConservar(),
+                0, utdesp.getConservar(),
                 utdesp.sacrificadoE,
                 null,
-                deo_fecproE.getText(), deo_fecproE.getDate(),
-                fecCong==null?deo_feccadE.getText():Formatear.getFecha(fecCong, "dd-MM-yyyy") , 
+                deo_fecproE.getDate(),
+                deo_feccadE.getDate(), 
                 utdesp.fecSacrE);
             etiq.setNumCopias(numCopiasE.getValorInt());
             etiq.listar(etiqueta.ETIQINT);
-
+        
 //     this.setEnabled(true);
             mensaje("");
             mensajeErr("Etiqueta Interior ... Listada");

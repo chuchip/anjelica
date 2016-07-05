@@ -2248,7 +2248,7 @@ create table anjelica.v_saladesp
  sde_nuexpl varchar(15),
  sde_nrgsa  varchar(12), -- Numero de Registro Sanitario
  sde_comen varchar(50),
- pai_codi int,
+ pai_codi int, -- Pais de Sala de Despiece
  sde_codcom int,
  sde_codprov int,
  sde_orgcon varchar(15),

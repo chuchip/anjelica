@@ -10,10 +10,10 @@ import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Iconos;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Date;
 import java.util.ResourceBundle;
 import net.sf.jasperreports.engine.*;
 import net.sourceforge.barbecue.Barcode;
@@ -68,13 +68,14 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   String nacido;
   String cebado;
   String despiezado;
-  String litFecha;
-  String ntraza, peso, conservar, sacrificado;
-  String fecrecep;
+  
+  private String ntraza, conservar, sacrificado;
+  private double pesoN;
+  java.util.Date fecrecep;
   int numUnid;
   java.util.Date fecprod=null;
-  String feccadu=null;
-  String fecCong=null;
+  Date feccadu=null;
+  Date fecCong=null;
   java.util.Date fecSacr=null;
   public final static int NORMAL=0;
   public final static int MINI=1;
@@ -117,17 +118,17 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
 
   public void iniciar(String codbarras, String lote,String codArti,
                       String articulo,String nacido,String cebado,
-                String despiezado,String ntraza,String peso,String conservar,
-                String sacrificado,String fecrecep,Date fecSacr)
+                String despiezado,String ntraza,double pesoNumero,String conservar,
+                String sacrificado,java.util.Date fecrecep,java.util.Date fecSacr)
   {
-    iniciar(codbarras,lote,codArti,articulo,nacido,cebado,despiezado,ntraza,peso,
-            conservar,sacrificado,fecrecep, "Fec.Cad.",null,null,fecSacr);
+    iniciar(codbarras,lote,codArti,articulo,nacido,cebado,despiezado,ntraza,pesoNumero,
+            conservar,sacrificado,fecrecep,null,null,fecSacr);
   }
   public void iniciar(String codbarras, String lote,String codArti,
                       String articulo,String nacido,String cebado,
-                  String despiezado,String ntraza,String peso,String conservar,
-                  String sacrificado,String fecrecep, String litFecha,
-                  java.util.Date fecprod,String feccadu,java.util.Date fecSacr)
+                  String despiezado,String ntraza,double pesoNumero,String conservar,
+                  String sacrificado,java.util.Date fecrecep,
+                  java.util.Date fecprod,Date feccadu,  java.util.Date fecSacr)
   {
     this.codbarras=codbarras;
     this.lote=lote;
@@ -137,12 +138,13 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     this.cebado=cebado;
     this.despiezado=despiezado;
     this.ntraza=ntraza;
-    this.peso=peso;
+    
+    this.pesoN=pesoNumero;
     this.conservar=conservar;
     this.sacrificado=sacrificado;
     this.fecrecep=fecrecep;
     this.fecprod=fecprod;
-    this.litFecha=litFecha;
+    
     this.feccadu=feccadu;
     this.fecSacr=fecSacr;
   }
@@ -200,19 +202,20 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
      * @param articulo
      * @param codArti
      * @param fecrecep
-     * @param peso
+     * @param pesoNumero
      * @param ntraza
      * @param numUnid
    */
   public void iniciar(String codBarras,String lote,String codArti,
-                      String articulo,String ntraza,String peso,int numUnid, String fecrecep)
+                      String articulo,String ntraza,double pesoNumero,int numUnid, Date fecrecep)
   {
     this.codbarras=codBarras;
     this.lote=lote;
     this.codArti= codArti;
     this.articulo=articulo;   
     this.ntraza=ntraza;
-    this.peso=peso;
+    
+    this.pesoN=pesoNumero;
    
     this.fecrecep=fecrecep;
     this.numUnid=numUnid;
@@ -228,7 +231,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   public void listar(int tipEtiq,String fichEtiq,String logo) throws Throwable
   {
     if (jr==null || tipEtiq!=tipEtiqOld)
-      jr = util.getJasperReport(EU,fichEtiq);
+      jr = Listados.getJasperReport(EU,fichEtiq);
      
     tipEtiqOld=tipEtiq;
     java.util.HashMap mp = new java.util.HashMap();
@@ -241,14 +244,15 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     mp.put("cebado",cebado);
     mp.put("despiezado",despiezado);
     mp.put("ntraza",ntraza);
-    mp.put("peso",peso);
+   
+    mp.put("pesoN",pesoN);
     mp.put("conservar",conservar);
     mp.put("sacrificado",sacrificado);
     mp.put("fecrecep",fecrecep);
-    mp.put("fecprod",litFecha);
+    mp.put("fecprod",fecprod);
     mp.put("feccadu",feccadu);
     mp.put("fecSacr",fecSacr);
-    mp.put("congelado",fecCong);
+    
     if (diremp!=null)
       mp.put("diremp",diremp);
     if (datmat!=null)
@@ -450,15 +454,22 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   {
     this.fecSacr=fecSacr;
   }
-  
-  public void setFechaCongelado(String fecCong)
-  {
-    this.fecCong=fecCong;
-  }
-  public String getFechaCongelado()
-  {
-    return  fecCong;
-  }
+//  /**
+//   * Establece la fecha en que se congelo el producto
+//   * @param fecCadCong 
+//   */
+//  public void setFechaCongelado(java.util.Date fecCadCong)
+//  {
+//    this.fecCong=fecCong;
+//  }
+//  /**
+//   * Devuelve la fecha en que se congelo el producto.
+//   * @return 
+//   */
+//  public Date getFechaCongelado()
+//  {
+//    return  fecCong;
+//  }
   public java.util.Date getFecSacrif()
   {
     return this.fecSacr;

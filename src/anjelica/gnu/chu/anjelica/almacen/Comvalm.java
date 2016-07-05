@@ -786,7 +786,7 @@ public class Comvalm extends ventana
             Pentra.add(pro_loteE);
             pro_loteE.setBounds(600, 25, 40, 17);
             Pentra.add(pro_numindE);
-            pro_numindE.setBounds(670, 25, 50, 17);
+            pro_numindE.setBounds(680, 25, 40, 17);
 
             pro_serieE.setAutoNext(true);
             pro_serieE.setMayusc(true);
@@ -837,7 +837,7 @@ public class Comvalm extends ventana
             opCostFij.setText("Costos Fijos");
             opCostFij.setToolTipText("Usar Costos Fijos Desp.");
             Pentra.add(opCostFij);
-            opCostFij.setBounds(340, 45, 90, 22);
+            opCostFij.setBounds(340, 45, 90, 23);
 
             Bacepta.setText("Aceptar");
             Bacepta.setToolTipText("");

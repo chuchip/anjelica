@@ -151,6 +151,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   private JMenuItem MIchangeProd;
   private JMenuItem MIactNombre;
   private JMenuItem MIimprEtiq;
+private JMenuItem MIimprEtiqInd;
   CInternalFrame frProd= new CInternalFrame();
   CInternalFrame frChFeEn= new CInternalFrame();
   CButton BCamFeEnt = new CButton(Iconos.getImageIcon("copia"));
@@ -1563,9 +1564,11 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     MIchangeProd = new JMenuItem("Cambiar Ref.", Iconos.getImageIcon("duplicar"));
     MIactNombre =  new JMenuItem("Actual.Descr.", Iconos.getImageIcon("reload"));
     MIimprEtiq =   new JMenuItem("Impr.Etiq.", Iconos.getImageIcon("print"));
+    MIimprEtiqInd =   new JMenuItem("Impr.Etiq.", Iconos.getImageIcon("print"));
     pro_codiE.getPopMenu().add(MIchangeProd,0);
     pro_codiE.getPopMenu().add(MIactNombre,1);
     pro_codiE.getPopMenu().add(MIimprEtiq,2);
+    jtDes.getPopMenu().add(MIimprEtiqInd);
     activarEventos();
 
     activar(false);
@@ -1795,6 +1798,21 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         imprEtiLin();
       }
     });
+    MIimprEtiqInd.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+          try
+          {
+              imprEtiq(jt.getValString(JT_PROCOD),
+                  jtDes.getSelectedRowDisab(), jtDes.getValorInt(jtDes.getSelectedRowDisab(), JTD_NUMIND));
+          } catch (SQLException | ParseException ex)
+          {
+              Error("Error al imprimir etiqueta de compra",ex);
+          }
+      }
+    });
     MIchangeProd.addActionListener(new ActionListener()
     {
       @Override
@@ -1879,7 +1897,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
             jtDesRequestFocusSelected();
             return;
           }
-          imprEtiq(jtDes.getSelectedRow(), jtDes.getValorInt(0));
+          imprEtiq(jt.getValString(JT_PROCOD), jtDes.getSelectedRow(), jtDes.getValorInt(0));
           jtDesRequestFocusSelected();
         } catch (Exception k)
         {
@@ -6018,12 +6036,13 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
    {
      try {
        for (int n = 0; n < jtDes.getRowCount(); n++)
-         imprEtiq(n, jtDes.getValorInt(n, 0));
+         imprEtiq(jt.getValString(jt.getSelectedRowDisab(), JT_PROCOD), n, jtDes.getValorInt(n, JTD_NUMIND));
      } catch (Exception k)
      {
        Error("Error al imprimir etiquetas de una linea Albaran",k);
      }
    }
+   
    /**
     * Cambiar Un producto de Referencia
     * @param nLiAlb int Linea Albaran del Alb. Compra
