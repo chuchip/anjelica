@@ -64,9 +64,7 @@ public class AvcPanel extends CPanel {
     }
     public boolean isNull()
     {
-        if (avc_anoE.getValorInt()==0 || avc_serieE.isNull() || avc_numeE.getValorInt()==0)
-            return true;
-        return false;
+        return avc_anoE.getValorInt()==0 || avc_serieE.isNull() || avc_numeE.getValorInt()==0;
     }
     /**
      * Devuelve condiciones para buscar sobre los campos v_albavec o v_albavel

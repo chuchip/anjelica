@@ -11,19 +11,130 @@
 
 package gnu.chu.anjelica.compras;
 
+import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.pad.MantPaises;
+import gnu.chu.anjelica.pad.pdempresa;
+import gnu.chu.controles.StatusBar;
+import gnu.chu.interfaces.PAD;
+import gnu.chu.utilidades.EntornoUsuario;
+import gnu.chu.utilidades.navegador;
+import gnu.chu.utilidades.ventanaPad;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Vector;
 
 /**
  *
  * @author jpuente
  */
-public class MantReclPrv extends javax.swing.JInternalFrame {
+public class MantReclPrv extends ventanaPad implements PAD
+{
+  boolean ARG_MODCONSULTA=false;
+  public MantReclPrv(EntornoUsuario eu, Principal p)
+  {
+    this(eu,p,null);
+  }
 
-    /** Creates new form MantReclPrv */
-    public MantReclPrv() {
-        initComponents();
+  public MantReclPrv(EntornoUsuario eu, Principal p, Hashtable ht)
+  {
+      EU = eu;
+      vl = p.panel1;
+      jf = p;
+      eje = true;     
+
+      try
+      {
+        ponParametros(ht);
+
+        if (jf.gestor.apuntar(this))
+          jbInit();
+        else
+          setErrorInit(true);
+      }
+      catch (Exception e)
+      {
+        ErrorInit(e);
+      }
+    }
+    public MantReclPrv(gnu.chu.anjelica.menu p, EntornoUsuario eu)
+    {
+        this(p,eu,null);
+    }
+    
+    public MantReclPrv(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable ht)
+    {
+      EU = eu;
+      vl = p.getLayeredPane();
+      
+      eje = false;
+      ponParametros(ht);
+      try
+      {
+        jbInit();
+      }
+      catch (Exception e)
+      {
+        ErrorInit(e);
+      }
+    }
+    
+    
+     
+    
+    private void ponParametros(Hashtable ht)
+    {
+         setTitulo("Mant. Reclamación Proveedores"); 
+    }
+    private void jbInit() throws Exception
+    { 
+      this.setVersion("2016-05-23" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      statusBar = new StatusBar(this);
+      nav = new navegador(this,dtCons,false);
+      iniciarFrame();
+      strSql = "SELECT tar_fecini,tar_fecfin,tar_codi FROM tarifa"+
+          " group by tar_fecini,tar_fecfin,tar_codi" +
+          " order by tar_fecini,tar_codi";
+      this.getContentPane().add(nav, BorderLayout.NORTH);
+      this.getContentPane().add(statusBar, BorderLayout.SOUTH);
+      this.setPad(this);
+      navActivarAll();
+      dtCons.setLanzaDBCambio(false);
+      initComponents();
+      iniciarBotones(Baceptar, Bcancelar);
+      this.setSize(new Dimension(582,522));
+      conecta();
+      activar(false);
+      if (ARG_MODCONSULTA)
+      {
+        nav.removeBoton(navegador.ADDNEW);
+        nav.removeBoton(navegador.EDIT);
+        nav.removeBoton(navegador.DELETE);
+      }
+//      statusBar.add(Bimpri, new GridBagConstraints(9, 0, 1, 2, 0.0, 0.0
+//                            , GridBagConstraints.EAST,
+//                            GridBagConstraints.VERTICAL,
+//                            new Insets(0, 5, 0, 0), 0, 0));
+
+    }
+    @Override
+    public void iniciarVentana() throws Exception
+    {
+     
+      activarEventos();
+      activar(false);
+      acc_idE.iniciar(dtStat,this,vl,EU);
+//      verDatos();p
+      nav.requestFocus();
+      Pprinc.setDefButton(Baceptar);
+//      Pprinc.setEscButton(Bcancelar);
+    }
+
+    void activarEventos()
+    {
+        
     }
 
     /** This method is called from within the constructor to
@@ -41,7 +152,14 @@ public class MantReclPrv extends javax.swing.JInternalFrame {
         apr_implinE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9.99");
         apr_comentE = new gnu.chu.controles.CTextField(Types.CHAR,"X",40);
         Pprinc = new gnu.chu.controles.CPanel();
-        cLabel11 = new gnu.chu.controles.CLabel();
+        Pcabe = new gnu.chu.controles.CPanel();
+        cLabel1 = new gnu.chu.controles.CLabel();
+        rpv_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#,###,##9");
+        cLabel2 = new gnu.chu.controles.CLabel();
+        acc_idE = new gnu.chu.camposdb.AccPanel();
+        cLabel3 = new gnu.chu.controles.CLabel();
+        par_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#,###,##9");
+        pal_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
         jtRec = new gnu.chu.controles.CGridEditable(5);
 
         apr_estrecE.addItem("Pendiente", "P");
@@ -55,9 +173,31 @@ public class MantReclPrv extends javax.swing.JInternalFrame {
 
         Pprinc.setLayout(null);
 
-        cLabel11.setText("Reclamaciones");
-        Pprinc.add(cLabel11);
-        cLabel11.setBounds(70, 10, 160, 15);
+        Pcabe.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
+        Pcabe.setLayout(null);
+
+        cLabel1.setText("Incidencia");
+        Pcabe.add(cLabel1);
+        cLabel1.setBounds(360, 10, 70, 15);
+        Pcabe.add(rpv_codiE);
+        rpv_codiE.setBounds(130, 10, 60, 17);
+
+        cLabel2.setText("Codigo Reclamación ");
+        Pcabe.add(cLabel2);
+        cLabel2.setBounds(10, 10, 120, 15);
+        Pcabe.add(acc_idE);
+        acc_idE.setBounds(250, 10, 110, 18);
+
+        cLabel3.setText("Albaran");
+        Pcabe.add(cLabel3);
+        cLabel3.setBounds(200, 10, 50, 15);
+        Pcabe.add(par_codiE);
+        par_codiE.setBounds(420, 10, 60, 17);
+        Pcabe.add(pal_codiE);
+        pal_codiE.setBounds(482, 10, 30, 17);
+
+        Pprinc.add(Pcabe);
+        Pcabe.setBounds(10, 0, 610, 70);
 
         {
             Vector v=new Vector();
@@ -92,7 +232,7 @@ public class MantReclPrv extends javax.swing.JInternalFrame {
         );
 
         Pprinc.add(jtRec);
-        jtRec.setBounds(0, 30, 610, 100);
+        jtRec.setBounds(20, 160, 610, 100);
 
         getContentPane().add(Pprinc);
 
@@ -101,14 +241,86 @@ public class MantReclPrv extends javax.swing.JInternalFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Pprinc;
+    private gnu.chu.camposdb.AccPanel acc_idE;
     private gnu.chu.controles.CTextField apr_comentE;
     private gnu.chu.controles.CComboBox apr_estrecE;
     private gnu.chu.controles.CTextField apr_implinE;
     private gnu.chu.controles.CTextField apr_kilosE;
     private gnu.chu.controles.CTextField apr_precioE;
-    private gnu.chu.controles.CLabel cLabel11;
+    private gnu.chu.controles.CLabel cLabel1;
+    private gnu.chu.controles.CLabel cLabel2;
+    private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CGridEditable jtRec;
+    private gnu.chu.controles.CTextField pal_codiE;
+    private gnu.chu.controles.CTextField par_codiE;
+    private gnu.chu.controles.CTextField rpv_codiE;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void PADPrimero() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void PADAnterior() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void PADSiguiente() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void PADUltimo() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void ej_query1() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void canc_query() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void ej_edit1() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void canc_edit() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void ej_addnew1() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void canc_addnew() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void ej_delete1() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void canc_delete() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void activar(boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }

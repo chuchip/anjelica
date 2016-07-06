@@ -87,7 +87,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         if (ht != null)
         {
           if (ht.get("modoConsulta") != null)
-            ARG_MODCONSULTA = Boolean.valueOf(ht.get("modoConsulta").toString()).booleanValue();
+            ARG_MODCONSULTA = Boolean.parseBoolean(ht.get("modoConsulta").toString());
         }
 
         if (jf.gestor.apuntar(this))
@@ -905,7 +905,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         tar_feciniE.setMinimumSize(new java.awt.Dimension(10, 18));
         tar_feciniE.setPreferredSize(new java.awt.Dimension(10, 18));
         Pcabe.add(tar_feciniE);
-        tar_feciniE.setBounds(65, 2, 76, 18);
+        tar_feciniE.setBounds(65, 2, 70, 18);
 
         cLabel6.setText("A Fecha");
         Pcabe.add(cLabel6);
@@ -915,7 +915,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         tar_fecfinE.setMinimumSize(new java.awt.Dimension(10, 18));
         tar_fecfinE.setPreferredSize(new java.awt.Dimension(10, 18));
         Pcabe.add(tar_fecfinE);
-        tar_fecfinE.setBounds(198, 2, 75, 18);
+        tar_fecfinE.setBounds(198, 2, 70, 18);
 
         cLabel1.setText("Semana");
         Pcabe.add(cLabel1);

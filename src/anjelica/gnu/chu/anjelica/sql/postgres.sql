@@ -3867,20 +3867,19 @@ create table anjelica.reclamprv
 	rpv_kilori float not null,-- Kilos Originales
 	rpv_precio float not null, -- Abono en precio
 	rpv_precori float not null,-- Precio original
-	rpv_kilace float, -- Kilos Aceptados
-	rpv_preace float, -- Abono aceptado
-	paa_coment varchar(100),
-	rpv_estad smallint not null  default 0 , -- Estado de Abono (0-> Pendiente,1 Realizado. 2 Rechazado, 3 Parcial aceptado)
+	rpv_kilace float not null, -- Kilos Aceptados
+	rpv_preace float not null, -- Abono aceptado
+	paa_coment varchar(100), -- Comentario sobre Reclamación
+	rpv_estad smallint not null  default 0 -- Estado de Abono (0-> Pendiente,1 Realizado. 2 Rechazado)
 )
 --
---  Seguimientos parte abono
+--  Coomentarios sobre reclamaciones
 ---
-create table anjelica.seguimientoabono
-(
-   paa_codi long not null, -- Identificador accion 
-   pas_fecha timestamp not null, -- Fecha 
-   pas_coment varchar(50), -- Comentario.
-   pas_
+create table anjelica.reclamprv_notas
+(  
+   rpv_codi int not null, -- Codigo de reclamación
+   rpn_fecha timestamp not null default CURRENT_TIMESTAMP, -- Fecha 
+   rpn_coment varchar(100) -- Comentario
 );
 --drop view v_partes;
 create view anjelica.v_partes as select c.*,l.par_linea,l.pro_codi,pal_kilos,pal_unidad,

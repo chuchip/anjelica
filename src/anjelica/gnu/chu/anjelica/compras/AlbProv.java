@@ -27,12 +27,20 @@ import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.ventas.*;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -56,7 +64,7 @@ public class AlbProv extends ventana {
         {
             Error("Error al iniciar AlbProv ",k);
         }
-        this.setVersion("2015-07-27");
+        this.setVersion("2016-07-27");
         statusBar = new StatusBar(this);
         initComponents();
         setResizable(false);
@@ -67,6 +75,7 @@ public class AlbProv extends ventana {
         setVisibleCabeceraVentana(false);
      
     }
+    @Override
     public void iniciarFrame()
     {
         this.setTitle(getTitulo());
@@ -74,13 +83,15 @@ public class AlbProv extends ventana {
         this.setMaximizable(true);
         this.setIconifiable(true);
     }
-    public void iniciar(ventana papa)
+    public void iniciar(ventana papa) throws SQLException
     {
         dtCon1=papa.dtCon1;
         dtStat=papa.dtStat;
         padre=papa;
         EU=papa.EU;
+        prv_codiE.iniciar(padre.dtStat, this, padre.vl, padre.EU);
         activarEventos();
+        
     }
     public void setVerPrecios(boolean swVerPrecios)
     {
@@ -133,6 +144,20 @@ public class AlbProv extends ventana {
                 matar();
             }
         });
+        Bconsulta.addActionListener(new ActionListener()
+        {
+                @Override
+          public void actionPerformed(ActionEvent e)
+          {
+                try
+                {
+                    cargaDatos();
+                }  catch (Exception ex)
+                {
+                    padre.Error("Error al consultar albaranes",ex);
+                }
+          }
+        });
   }
     @Override
   public void matar()
@@ -155,31 +180,59 @@ public class AlbProv extends ventana {
   {
       
   }
-  public void cargaDatos(Date fecini,Date fecfin,int cliCodi) throws Exception
+  public void cargaDatos(Date fecini,Date fecfin,int prvCodi) throws Exception
   {
-      cargaDatos(Formatear.getFecha(fecini, "dd-MM-yyyy"),
-          Formatear.getFecha(fecfin, "dd-MM-yyyy"),cliCodi);
+      prv_codiE.setValorInt(prvCodi);
+      prv_codiE.controla(false);
+      feciniE.setDate(fecini);
+      fecfinE.setDate(fecfin);
+      if (prvCodi!=0)
+        cargaDatos();
   }
-      
-  
+  public void setProveedor(int prvCodi) throws SQLException
+  {
+      prv_codiE.setValorInt(prvCodi);
+  }
+  public void setEnabledProveedor(boolean enable) throws SQLException
+  {
+      prv_codiE.setEnabled(enable);
+  }
   /**
    * Busca albaranes 
-   * @param fecini Formato dd-MM-yyyy
-   * @param fecfin
-   * @param cliCodi
+   *
    * @throws Exception 
    */
-  public void cargaDatos(String fecini,String fecfin,int cliCodi) throws Exception
+  void cargaDatos() throws Exception
   {
      accNume=0;
-    String s="SELECT * FROM v_albacoc as c WHERE prv_codi = "+cliCodi+
-          " and acc_fecrec >= TO_DATE('"+fecini+"','dd-MM-yyyy') "+
-          " and acc_fecrec <= TO_DATE('"+fecfin+"','dd-MM-yyyy') "+
+     if (prv_codiE.isNull())
+     {
+         msgBox("Introduzca Proveedor");
+         prv_codiE.requestFocus();
+         return;
+     }
+     if (feciniE.isNull())
+     {
+         msgBox("Introduzca fecha Inicial");
+         feciniE.requestFocus();
+         return;
+     }
+     
+     if (fecfinE.isNull())
+     {
+         msgBox("Introduzca fecha Final");
+         fecfinE.requestFocus();
+         return;
+     }
+    String s="SELECT * FROM v_albacoc as c WHERE prv_codi = "+prv_codiE.getValorInt()+
+          " and acc_fecrec >= TO_DATE('"+feciniE.getText()+"','dd-MM-yyyy') "+
+          " and acc_fecrec <= TO_DATE('"+fecfinE.getText()+"','dd-MM-yyyy') "+
           " order by acc_fecrec "+ (swDesc?" desc":"");
       jtCab.setEnabled(false);
       jtCab.removeAllDatos();
       if (!dtStat.select(s))
-      {      
+      {   
+         msgBox("No encontrados albaranes para estas condiciones");
          jtLin.removeAllDatos();
          return;
       }
@@ -271,6 +324,14 @@ public class AlbProv extends ventana {
         jtLin.setFormatoColumna(3, "---9");
         jtLin.setFormatoColumna(4, "----9.99");
         jtLin.setAjustarGrid(true);
+        Pcondi = new gnu.chu.controles.CPanel();
+        cLabel1 = new gnu.chu.controles.CLabel();
+        prv_codiE = new gnu.chu.camposdb.prvPanel();
+        Bconsulta = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
+        cLabel2 = new gnu.chu.controles.CLabel();
+        feciniE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        cLabel3 = new gnu.chu.controles.CLabel();
+        fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -296,7 +357,7 @@ public class AlbProv extends ventana {
         );
         jtCabLayout.setVerticalGroup(
             jtCabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 149, Short.MAX_VALUE)
+            .addGap(0, 122, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -321,7 +382,7 @@ public class AlbProv extends ventana {
         );
         jtLinLayout.setVerticalGroup(
             jtLinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 123, Short.MAX_VALUE)
+            .addGap(0, 110, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -333,6 +394,51 @@ public class AlbProv extends ventana {
         gridBagConstraints.weighty = 1.0;
         Pprinc.add(jtLin, gridBagConstraints);
 
+        Pcondi.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        Pcondi.setMaximumSize(new java.awt.Dimension(50, 40));
+        Pcondi.setMinimumSize(new java.awt.Dimension(50, 40));
+        Pcondi.setPreferredSize(new java.awt.Dimension(50, 40));
+        Pcondi.setLayout(null);
+
+        cLabel1.setText("Proveedor");
+        Pcondi.add(cLabel1);
+        cLabel1.setBounds(0, 0, 70, 17);
+        Pcondi.add(prv_codiE);
+        prv_codiE.setBounds(70, 0, 320, 17);
+
+        Bconsulta.setText("Buscar");
+        Bconsulta.setToolTipText("Buscar Albaranes de este proveedor");
+        Pcondi.add(Bconsulta);
+        Bconsulta.setBounds(310, 20, 80, 18);
+
+        cLabel2.setText("De Fecha ");
+        Pcondi.add(cLabel2);
+        cLabel2.setBounds(10, 20, 60, 17);
+
+        feciniE.setMaximumSize(new java.awt.Dimension(10, 18));
+        feciniE.setMinimumSize(new java.awt.Dimension(10, 18));
+        feciniE.setPreferredSize(new java.awt.Dimension(10, 18));
+        Pcondi.add(feciniE);
+        feciniE.setBounds(70, 20, 70, 17);
+
+        cLabel3.setText("A Fecha ");
+        Pcondi.add(cLabel3);
+        cLabel3.setBounds(150, 20, 60, 17);
+
+        fecfinE.setMaximumSize(new java.awt.Dimension(10, 18));
+        fecfinE.setMinimumSize(new java.awt.Dimension(10, 18));
+        fecfinE.setPreferredSize(new java.awt.Dimension(10, 18));
+        Pcondi.add(fecfinE);
+        fecfinE.setBounds(210, 20, 70, 17);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
+        Pprinc.add(Pcondi, gridBagConstraints);
+
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
         pack();
@@ -340,9 +446,17 @@ public class AlbProv extends ventana {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton Bconsulta;
+    private gnu.chu.controles.CPanel Pcondi;
     private gnu.chu.controles.CPanel Pprinc;
+    private gnu.chu.controles.CLabel cLabel1;
+    private gnu.chu.controles.CLabel cLabel2;
+    private gnu.chu.controles.CLabel cLabel3;
+    private gnu.chu.controles.CTextField fecfinE;
+    private gnu.chu.controles.CTextField feciniE;
     private gnu.chu.controles.Cgrid jtCab;
     private gnu.chu.controles.Cgrid jtLin;
+    private gnu.chu.camposdb.prvPanel prv_codiE;
     // End of variables declaration//GEN-END:variables
   public int getEmpCodi() {
         return empCodi;

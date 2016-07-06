@@ -792,7 +792,7 @@ public class MantPartes  extends ventanaPad implements PAD
          alPrv.setLocation(this.getLocation().x+100, this.getLocation().y+80);
          alPrv.setSelected(true);
          this.setEnabled(false);
-         this.setFoco(alCli);
+         this.setFoco(alPrv);
          alPrv.cargaDatos(Formatear.sumaDiasDate(Formatear.getDateAct(),-90),
              Formatear.getDateAct(),prvCodi);
          alPrv.setVisible(true);
