@@ -1233,7 +1233,10 @@ public class proPanel extends CPanel
          return;
     pro_codiE.setEditable(edit);
   }
- 
+  public void setEnabledNombre(boolean enabled)
+  {
+      pro_nombL.setEnabled(enabled);
+  }
   /**
    * Indica si se acepta como valido dejar el campo vacio,
    * cuando es llamado a controlar.
@@ -1254,8 +1257,8 @@ public class proPanel extends CPanel
     return pro_codiE;
   }
   /**
-   * 
-   * @return 
+   * Retorna Campo del nombre del producto
+   * @return   nombre del producto
    */
   public CTextField getTextFieldNomb()
   {
