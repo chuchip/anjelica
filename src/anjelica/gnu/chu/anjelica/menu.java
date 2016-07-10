@@ -69,7 +69,8 @@ public class menu extends JFrame
   JMenuItem codegen= new JMenuItem("Cons.Desp.");
   JMenuItem recosdes= new JMenuItem("Reg.Costos Desp.");
   JMenuItem mnuCompras=new JMenuItem("Compras");
-  JMenuItem mnuAlbaCom=new JMenuItem("Albaranes Compras");
+//  JMenuItem mnuAlbaCom=new JMenuItem("Albaranes Compras");
+  JMenuItem mnuReclPrv=new JMenuItem("Recl.Prv.");
   JMenuItem pdtipdes= new JMenuItem("Tipos Desp");
   JPopupMenu JPopupAlmacen = new JPopupMenu();
   JMenuItem jMenuAlmacen = new JMenuItem();
@@ -310,6 +311,11 @@ public class menu extends JFrame
     albComCarne.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         comprasItem1_actionPerformed(e);
+      }
+    });
+     mnuReclPrv.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mnuReclPrv_actionPerformed(e);
       }
     });
     albComPlanta.setText("Albar.Planta");
@@ -949,6 +955,7 @@ public class menu extends JFrame
     
     jPopupCompras.add(albComCarne);
     jPopupCompras.add(albComPlanta);
+    jPopupCompras.add(mnuReclPrv);
     jPopupCompras.add(comprasItem2);
     jPopupCompras.add(albaPrv);
     jPopupCompras.add(conalbco);
@@ -1658,6 +1665,16 @@ void limpiaDB()
 
   }
 
+    void mnuReclPrv_actionPerformed(ActionEvent e) {
+    Hashtable ht = new Hashtable();
+     ht.put("modPrecio","true");
+////    ht.put("modConsulta","true");
+     ht.put("admin","true");
+     ht.put("AlbSinPed","true");
+
+//     ht.put("verPrecio","true");
+     lanzaEjecutable(new gnu.chu.anjelica.compras.MantReclPrv(menu.this, EU,ht));
+  }
   void comprasItem1_actionPerformed(ActionEvent e) {
     Hashtable ht = new Hashtable();
      ht.put("modPrecio","true");

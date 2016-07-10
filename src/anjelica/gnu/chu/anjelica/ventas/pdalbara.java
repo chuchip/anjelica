@@ -285,8 +285,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
   String s;
   CLabel residuosL=new CLabel();
   CLabel alr_numeL=new CLabel("Ruta");
-  CTextField alr_numeE=new CTextField(Types.DECIMAL,"###, ##9");
-  CTextField alr_fecsalE=new CTextField(Types.CHAR,"X");
+  DatRutaRepPanel rutPanelE= new DatRutaRepPanel();
+ 
   CTextField pav_numeE = new CTextField(Types.DECIMAL,"#9");
   CTextField pav_kilosE = new CTextField(Types.DECIMAL,"##9.99");
   //CLabel paletL=new CLabel("Palets");
@@ -333,9 +333,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
       afterFocusLostCli(error);
     }
   };
-  CLabel cLabel4 = new CLabel();
+  CLabel avc_fecalbL = new CLabel();
   CTextField avc_fecalbE = new CTextField(Types.DATE, "dd-MM-yyyy");
-  CLabel cLabel5 = new CLabel();
+  CLabel usu_nomb1L = new CLabel();
   CTextField usu_nombE = new CTextField(Types.CHAR, "X", 15);
   CLabel cLabel6 = new CLabel();
   CTextField avc_fecemiE = new CTextField(Types.DATE, "dd-MM-yyyy");
@@ -440,9 +440,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
   CLabel cLabel11 = new CLabel();
   CTextField avc_dtoppE = new CTextField(Types.DECIMAL, "#9.99");
   CLabel cLabel12 = new CLabel();
-  CLabel rut_codiL = new CLabel();
-  CTextField rut_codiE = new CTextField(Types.DECIMAL, "###9");
-  CLabel rut_nombE = new CLabel();
+  
+  CLabel rut_codiL = new CLabel("Ruta");  
+  CLinkBox cli_rutaE = new CLinkBox();
+
+//  CLabel rut_nombE = new CLabel();
   CTextField impDtoE = new CTextField(Types.DECIMAL, "---,--9.99");
   CLabel cLabel15 = new CLabel();
   CTextField avc_impalbE = new CTextField(Types.DECIMAL, "----,--9.99");
@@ -676,7 +678,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-05-20" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-07-10" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -786,11 +788,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
         cLabel3.setText("Cliente");
         cLabel3.setBounds(new Rectangle(3, 22, 43, 16));
         cli_codiE.setBounds(new Rectangle(51, 22, 384, 16));
-        cLabel4.setText("Fec.Alb");
-        cLabel4.setBounds(new Rectangle(321, 4, 49, 16));
+        avc_fecalbL.setText("Fec.Alb");
+        avc_fecalbL.setBounds(new Rectangle(321, 4, 49, 16));
         avc_fecalbE.setBounds(new Rectangle(369, 4, 75, 16));
-        cLabel5.setText("Usuario");
-        cLabel5.setBounds(new Rectangle(1, 80, 45, 16));
+        usu_nomb1L.setText("Usuario");
+        usu_nomb1L.setBounds(new Rectangle(1, 80, 45, 16));
         usu_nombE.setBounds(new Rectangle(49, 80, 123, 16));
         cLabel6.setText("Fec.Emision");
         cLabel6.setBounds(new Rectangle(186, 80, 68, 16));
@@ -855,12 +857,12 @@ public class pdalbara extends ventanaPad  implements PAD  {
         }
         cLabel12.setText("%");
         cLabel12.setBounds(new Rectangle(491, 57, 15, 16));
-        rut_codiL.setText("Ruta");
-        rut_codiL.setBounds(new Rectangle(10, 57, 29, 16));
-        rut_nombE.setBounds(new Rectangle(45, 57, 200, 16));
-        rut_nombE.setBackground(Color.orange);
-        rut_nombE.setOpaque(true);
         
+        rut_codiL.setBounds(new Rectangle(150, 2, 29, 16));
+        cli_rutaE.setBounds(new Rectangle(182, 2, 210, 16));
+        rutPanelE.setBounds(new Rectangle(5, 22, 500, 45));
+        rutPanelE.setEnabled(false);
+        rutPanelE.setBorder(BorderFactory.createLineBorder(Color.ORANGE));
         impDtoE.setBounds(new Rectangle(402, 2, 69, 17));
         cLabel15.setText("Imp.Total");
         cLabel15.setBounds(new Rectangle(1, 21, 58, 17));
@@ -953,11 +955,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
         residuosL.setHorizontalAlignment(SwingConstants.CENTER);
         residuosL.setFont(new Font("Dialog", Font.BOLD, 12));
         residuosL.setBounds(new Rectangle(415, 125, 105, 16));
-        alr_numeL.setBounds(new Rectangle(180, 125, 35, 17));
-        alr_numeE.setBounds(new Rectangle(220, 125, 63, 17));
-        alr_fecsalE.setBounds(new Rectangle(285, 125, 105, 17));
-        alr_numeE.setEnabled(false);
-        alr_fecsalE.setEnabled(false);
+        alr_numeL.setBounds(new Rectangle(180, 25, 35, 17));
+       
         ArrayList<String> vc2=new ArrayList(3);
         vc2.add("Producto");
         vc2.add("Nombre");
@@ -1118,8 +1117,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         Ppie.add(unidE, null);
         Ppie.add(cLabel15, null);
         Ppie.add(avc_impalbE, null);
-        PotroDat.add(avc_impcobL, null);
-        PotroDat.add(avc_impcobE, null);
+      
         Ppie.add(Birgrid, null);
 
         Ppie.add(opDispSalida, null);
@@ -1154,29 +1152,31 @@ public class pdalbara extends ventanaPad  implements PAD  {
         Ptab1.add(PotroDat, "Otros");
         Ptab1.add(jtPalet, "Palets");
         PAlb1.add(avc_obserS, null);
+        PAlb1.add(avc_obserL, null);
+        
+        PotroDat.add(avc_impcobL, null);
+        PotroDat.add(avc_impcobE, null);
         PotroDat.add(alm_codoriL, null);
         PotroDat.add(alm_codoriE, null);
         PotroDat.add(alm_coddesL, null);
         PotroDat.add(residuosL,null);
-        PotroDat.add(alr_numeL,null);
-        PotroDat.add(alr_numeE,null);
-        PotroDat.add(alr_fecsalE,null);
-        PotroDat.add(jtRes,null);
-        
+      
+        PotroDat.add(jtRes,null);        
         
         PotroDat.add(alm_coddesE, null);
         PotroDat.add(avc_idL, null);
         PotroDat.add(avc_idE, null);
-        PAlb1.add(avc_obserL, null);
+       
         PotroDat.add(usu_nombE, null);
-        PotroDat.add(cLabel5, null);
+        PotroDat.add(usu_nomb1L, null);
         PotroDat.add(avc_fecemiE, null);
         PotroDat.add(cLabel6, null);
         PotroDat.add(avc_revpreL, null);
         PotroDat.add(avc_revpreE, null);
         PotroDat.add(rut_codiL, null);
-        PotroDat.add(rut_codiE, null);
-        PotroDat.add(rut_nombE, null);
+        PotroDat.add(cli_rutaE, null);
+        PotroDat.add(rutPanelE, null);
+//        PotroDat.add(rut_nombE, null);
         avc_obserS.getViewport().add(avc_obserE, null);
         jScrollPane1.getViewport().add(pvc_comenE, null);
         conecta();
@@ -1247,7 +1247,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         fvc_serieE.setBounds(new Rectangle(456, 38, 18, 16));
         Pcabe.add(sbe_nombL, null);
         Pcabe.add(avc_fecalbE, null);
-        Pcabe.add(cLabel4, null);
+        Pcabe.add(avc_fecalbL, null);
         Pcabe.add(printE, null);
         Pcabe.add(avc_numeE, null);
         Pcabe.add(cLabel1, null);
@@ -1392,6 +1392,10 @@ public class pdalbara extends ventanaPad  implements PAD  {
     @Override
   public void iniciarVentana() throws Exception
   {
+    cli_rutaE.setAncTexto(30);
+    cli_rutaE.setFormato(Types.CHAR, "XX");
+      
+    pdconfig.llenaDiscr(dtStat, cli_rutaE, pdconfig.D_RUTAS ,EU.em_cod);      
     paiEmp= pdempresa.getPais(dtStat,EU.em_cod);
     jtDes.getPopMenu().add(verDatTraz);
     Bdespiece.setSelected(false);
@@ -1456,7 +1460,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     avc_revpreE.setColumnaAlias("avc_revpre");
     fvc_anoE.setColumnaAlias("fvc_ano");
     fvc_numeE.setColumnaAlias("fvc_nume");
-    rut_codiE.setColumnaAlias("cli_ruta");
+    cli_rutaE.setColumnaAlias("cli_ruta");
     avc_dtoppE.setColumnaAlias("avc_dtopp");
     avc_dtocomE.setColumnaAlias("avc_dtocom");
     sbe_codiE.setColumnaAlias("sbe_codi");
@@ -1672,6 +1676,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         avc_revpreE.setValor(cli_codiE.getLikeCliente().getInt("cli_precfi"));
       if ( MantTarifa.isTarifaCosto(dtStat,cli_codiE.getLikeCliente().getInt("tar_codi")) )
        avc_valoraE.setValor("1");
+      cli_rutaE.setText(cli_codiE.getLikeCliente().getString("rut_codi"));
     }
     catch (SQLException k)
     {
@@ -2884,7 +2889,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       fvc_serieE.setText(dtAdd.getString("fvc_serie"));
       fvc_numeE.setValorDec(dtAdd.getInt("fvc_nume", true));
       tar_codiE.setText(cli_codiE.getLikeCliente().getString("tar_codi"));
-//      rut_codiE.setValorDec(dt.getInt("cli_ruta"));
+      cli_rutaE.setText(dt.getString("cli_ruta"));
       avc_cerraE.setSelected(dtAdd.getInt("avc_cerra")!=0);
       avc_dtoppE.setValorDec(dtAdd.getDouble("avc_dtopp"));
       avc_dtocomE.setValorDec(dtAdd.getDouble("avc_dtocom"));
@@ -2980,17 +2985,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       }
       else
         verDatLin(dtAdd, agrupa, cli_codiE.getLikeCliente().getInt("cli_exeiva") == 0);
-      s="select * from v_albruta where  avc_id = "+avc_idE.getValorInt();
-      if (dtStat.select(s))
-      {
-          alr_numeE.setValorInt(dtStat.getInt("alr_nume"));
-          alr_fecsalE.setText(dtStat.getFecha("alr_Fecsal","dd-MM-yy HH:mm"));
-      }
-      else
-      {
-          alr_numeE.resetTexto();
-          alr_fecsalE.resetTexto();
-      }
+      rutPanelE.setRutaAlb(dtStat,avc_idE.getValorInt());
       verDatProdRec(dt.getInt("emp_codi"),dt.getInt("avc_ano"),
           dt.getString("avc_serie"),
            dt.getInt("avc_nume"));
@@ -3997,7 +3992,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       v.add(fvc_anoE.getStrQuery());
       v.add(fvc_serieE.getStrQuery());
       v.add(fvc_numeE.getStrQuery());
-      v.add(rut_codiE.getStrQuery());
+      v.add(cli_rutaE.getStrQuery());
       v.add(avc_dtoppE.getStrQuery());
       v.add(avc_dtocomE.getStrQuery());
       v.add(avc_valoraE.getStrQuery());
@@ -5052,7 +5047,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     dtAdd.setDato("avc_fecalb", avc_fecalbE.getText(), "dd-MM-yyyy");
     dtAdd.setDato("avc_tipfac",
                   cli_codiE.getLikeCliente().getString("cli_tipfac")); // Tipo Facturacion
-    dtAdd.setDato("cli_ruta", rut_codiE.getValorInt());
+    dtAdd.setDato("cli_ruta", cli_rutaE.getText());
     dtAdd.setDato("cli_codfa",
                   cli_codiE.getLikeCliente().getInt("cli_codfa"));
     dtAdd.setDato("avc_impalb", datCab.getValDouble("avc_impalb"));
@@ -7168,7 +7163,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     dtAdd.setDato("usu_nomb", usu_nombE.getText());
     dtAdd.setDato("avc_tipfac",
                   cli_codiE.getLikeCliente().getString("cli_tipfac")); // Tipo Facturacion
-    dtAdd.setDato("cli_ruta", rut_codiE.getValorInt());
+    dtAdd.setDato("cli_ruta", cli_rutaE.getText());
     dtAdd.setDato("cli_codfa",
                   cli_codiE.getLikeCliente().getInt("cli_codfa"));
     dtAdd.setDato("fvc_ano", 0);
@@ -7495,7 +7490,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     fvc_numeE.setEnabled(b);
     fvc_serieE.setEnabled(b);
     tar_codiE.setEnabled(b);
-    rut_codiE.setEnabled(b);
+    cli_rutaE.setEnabled(b);
     avc_almoriE.setEnabled(b);
     if (P_MODPRECIO)
     {

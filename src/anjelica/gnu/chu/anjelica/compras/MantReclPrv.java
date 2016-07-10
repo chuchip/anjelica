@@ -1,10 +1,6 @@
-
-
 package gnu.chu.anjelica.compras;
 
 import gnu.chu.Menu.Principal;
-import gnu.chu.anjelica.pad.MantPaises;
-import gnu.chu.anjelica.pad.pdempresa;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -15,7 +11,6 @@ import java.awt.Dimension;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
 
 /**
  *
@@ -90,10 +85,7 @@ public class MantReclPrv extends ventanaPad implements PAD
         ErrorInit(e);
       }
     }
-    
-    
-     
-    
+ 
     private void ponParametros(Hashtable ht)
     {
          setTitulo("Mant. Reclamación Proveedores"); 
@@ -104,9 +96,8 @@ public class MantReclPrv extends ventanaPad implements PAD
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
-      strSql = "SELECT tar_fecini,tar_fecfin,tar_codi FROM tarifa"+
-          " group by tar_fecini,tar_fecfin,tar_codi" +
-          " order by tar_fecini,tar_codi";
+      strSql = "SELECT *  FROM reclamprv"+
+          " order by rpv_codi";
       this.getContentPane().add(nav, BorderLayout.NORTH);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       this.setPad(this);

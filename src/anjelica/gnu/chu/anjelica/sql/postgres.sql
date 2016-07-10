@@ -436,7 +436,7 @@ avc_cofra int,
 avc_fecalb date,	 -- Fecha de Albaran
 usu_nomb varchar(20),
 avc_tipfac varchar(1),
-cli_ruta int,		-- Ruta de Cliente
+cli_ruta varchar(2),		-- Ruta de Cliente
 cli_codfa int,		-- Cliente de la Factura
 fvc_ano int,		-- Año de La Factua
 fvc_serie char(1),      -- Serie de Fra.
@@ -507,7 +507,7 @@ avc_cofra int,
 avc_fecalb date,	 -- Fecha de Albaran
 usu_nomb varchar(20),
 avc_tipfac varchar(1),
-cli_ruta int,		-- Ruta de Cliente
+cli_ruta varchar(2),		-- Ruta de Cliente
 cli_codfa int,		-- Cliente de la Factura
 fvc_ano int,		-- Año de La Factua
 fvc_serie char(1),      -- Serie de Fra.
@@ -871,7 +871,7 @@ create table anjelica.hisalbavec
     avc_fecalb date,
     usu_nomb varchar(20),
     avc_tipfac varchar(1),
-    cli_ruta int,
+    cli_ruta varchar(2),
     cli_codfa int,
     fvc_ano int,
     fvc_serie char(1),

@@ -1,3 +1,10 @@
+update anjelica.v_albavec set cli_ruta=0;
+alter table anjelica.v_albavec alter cli_ruta type varchar(2);
+update anjelica.hisalcave set cli_ruta=0;
+alter table anjelica.hisalcave alter cli_ruta type varchar(2);
+update anjelica.hisalbavec set cli_ruta=0;
+alter table anjelica.hisalbavec alter cli_ruta type varchar(2);
+
 -- Incluido ID en albaran de compras
 alter table v_albacoc add acc_id serial not null;
 alter table hisalcaco add acc_id int;
