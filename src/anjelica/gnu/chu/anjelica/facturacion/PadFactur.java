@@ -49,6 +49,21 @@ import java.awt.event.*;
 import java.sql.*;
 import java.text.*;
 import java.util.*;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
 
 public class PadFactur extends ventanaPad   implements PAD {
   double impLinDtCom;

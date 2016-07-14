@@ -2,6 +2,7 @@
 package gnu.chu.camposdb;
 
 import gnu.chu.anjelica.compras.AlbProv;
+import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.controles.CInternalFrame;
 import gnu.chu.controles.CPanel;
 import gnu.chu.sql.DatosTabla;
@@ -9,9 +10,16 @@ import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.ventana;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JLayeredPane;
 
 /*
@@ -19,7 +27,7 @@ import javax.swing.JLayeredPane;
  *
  * Panel con los campos que define un número de albaran
  * Created on 08-feb-2010, 22:59:20
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -35,6 +43,8 @@ import javax.swing.JLayeredPane;
  */
 public class AccPanel extends CPanel
 {
+    ArrayList<FocusListener> eventVector = new ArrayList();
+    private int id=0;
     private EntornoUsuario EU;
     private DatosTabla dt;
     private ventana padre;
@@ -56,6 +66,7 @@ public class AccPanel extends CPanel
        acc_numeE.setValorInt(0);
        Bconsulta.addActionListener(new ActionListener()
        {
+            @Override
             public void actionPerformed(ActionEvent e)
             {
               consulta();
@@ -71,6 +82,7 @@ public class AccPanel extends CPanel
          {
            alPrv = new AlbProv()
            {
+               @Override
                public void muerto()
                {
                    if (alPrv.getAccNume()>0)
@@ -99,6 +111,120 @@ public class AccPanel extends CPanel
        {
          padre.fatalError("Error al Cargar datos de Proveedor",ex);
        }
+  }
+    /**
+     * Establece el ID. Llena los campos Serie, ejercicio y Numero de albaran
+     * @param id 
+     */
+  public void setId(int id) throws SQLException
+  {
+      if (!getDatosAlb(id))
+      {
+          this.resetTexto();
+          return;
+      } 
+      acc_anoE.setValorInt(dt.getInt("acc_ano"));
+      acc_numeE.setValorInt(dt.getInt("acc_nume"));
+      acc_serieE.setValorInt(dt.getInt("acc_serie"));
+  }
+  @Override
+  public void addFocusListener(FocusListener fc)
+  {
+    if (eventVector.isEmpty())
+    {
+      FocusListener fa1=new FocusListener()
+      {
+          @Override
+          public void focusGained(FocusEvent e) {
+             
+          }
+
+          @Override
+          public void focusLost(FocusEvent e) {
+             if (e.isTemporary())
+                 return;
+             Component c = e.getOppositeComponent();
+             if (c != acc_anoE && c != acc_serieE && c != acc_numeE)
+                 processFocusEvent(e);
+          }
+          
+      };
+      acc_anoE.addFocusListener(fa1);
+      acc_numeE.addFocusListener(fa1);
+      acc_serieE.addFocusListener(fa1);
+    }
+    eventVector.add(fc);
+    
+  }
+   @Override
+  public void processFocusEvent(FocusEvent e)
+  {
+    super.processFocusEvent(e);
+    if (eventVector.isEmpty())
+      return;
+ 
+    for (FocusListener eventVector1 : eventVector)
+    {
+          int id = e.getID();
+          //FocusListener listener = (FocusListener) eventVector1;
+          if (eventVector1 != null)
+          {
+              switch (id)
+              {
+                  case FocusEvent.FOCUS_GAINED:
+                      eventVector1.focusGained(e);
+                      break;
+                  case FocusEvent.FOCUS_LOST:
+                      eventVector1.focusLost(e);
+                      break;
+              }
+          }
+    }
+  }
+  /**
+   * Busca los datos del albaran a traves del ID
+   * @param id
+   * @return
+   * @throws SQLException 
+   */
+  public boolean getDatosAlb(int avcId) throws SQLException
+  {
+      this.id=0;
+      String s = "SELECT * FROM v_albacoc WHERE acc_id = " + avcId;
+      if (dt.select(s))
+      {
+          this.id=avcId;
+          return true;
+      }
+      return false;
+  }
+  public boolean hasIdValido()
+  {
+      return id!=0;
+  }
+  
+  public Date getFechaAlb() throws SQLException
+  {
+    if (id==0)
+        return null;
+    else
+        return dt.getDate("acc_fecha");
+  }
+  public int getPrvAlb() throws SQLException
+  {
+    if (id==0)
+        return 0;
+    else
+        return dt.getInt("prv_codi");
+  }
+  
+    @Override
+  public void requestFocus()
+  {
+      if (acc_anoE == null)
+          super.requestFocus();
+      else
+        acc_anoE.requestFocus();
   }
     /**
      * This method is called from within the constructor to initialize the form.

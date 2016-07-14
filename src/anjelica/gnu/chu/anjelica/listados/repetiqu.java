@@ -656,8 +656,8 @@ public class repetiqu extends ventana
             pro_codiE.getText(),pro_codiE.getTextNomb(),nacidoE.getText(),cebadoE.getText(),despiezadoE.getText(),
             ntrazaE.getText(),deo_kilosE.getValorDec(),
             conservarE.getText(),sacrificadoE.getText(),
-            fecrecepE.getDate(),fecrecepE.getDate(), fecsacrE.getDate(),
-            feccadE.getDate());
+            fecrecepE.getDate(),fecrecepE.getDate(), feccadE.getDate(),
+            fecsacrE.getDate());
         
         etiq.listarDefec();
         if (swModo=='G')

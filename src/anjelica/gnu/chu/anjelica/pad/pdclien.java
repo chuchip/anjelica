@@ -294,8 +294,7 @@ public class pdclien extends ventanaPad implements PAD
       if (ht != null)
       {
         if (ht.get("modConsulta") != null)
-          modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-              booleanValue();
+          modConsulta = Boolean.parseBoolean(ht.get("modConsulta").toString());
       }
 
       jbInit();
@@ -306,7 +305,18 @@ public class pdclien extends ventanaPad implements PAD
       setErrorInit(true);
     }
   }
-
+   public static String getNombreClase()
+  {
+   return "gnu.chu.anjelica.pad.pdclien";
+  }
+  public boolean inTransation()
+  {
+      return (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
+  }
+  public void setCliente(int cliCodi)
+  {
+      cli_codiE.setValorInt(cliCodi);
+  }
   private void jbInit() throws Exception
   {
       titledBorder2 = new TitledBorder("");

@@ -359,7 +359,7 @@ public class proPanel extends CPanel
    *                  realizar sus propias select (para buscar el nombre del
    *                  representante.
    * @throws SQLException
-   * @throws java.text.ParseException
+   * 
    *
    */
   public void iniciar(DatosTabla datTabla, CInternalFrame intFrame,

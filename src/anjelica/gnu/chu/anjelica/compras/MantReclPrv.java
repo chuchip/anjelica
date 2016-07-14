@@ -8,6 +8,9 @@ import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventanaPad;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -123,6 +126,8 @@ public class MantReclPrv extends ventanaPad implements PAD
     @Override
     public void iniciarVentana() throws Exception
     {
+      prv_codiE.iniciar(dtStat, this, vl, EU);
+      prv_codiE.setEnabled(false);
       pro_codiE.iniciar(dtStat, this, vl, EU);
       pro_codiE.setEnabledNombre(true);
       activarEventos();
@@ -136,7 +141,13 @@ public class MantReclPrv extends ventanaPad implements PAD
 
     void activarEventos()
     {
-        
+        acc_idE.addFocusListener(new FocusAdapter()
+        {
+           @Override
+           public void focusLost(FocusEvent e) {
+               System.out.println("Perdido foco");
+           }   
+        });
     }
 
     /** This method is called from within the constructor to
@@ -155,8 +166,6 @@ public class MantReclPrv extends ventanaPad implements PAD
         cLabel1 = new gnu.chu.controles.CLabel();
         rpv_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#,###,##9");
         cLabel2 = new gnu.chu.controles.CLabel();
-        acc_idE = new gnu.chu.camposdb.AccPanel();
-        cLabel3 = new gnu.chu.controles.CLabel();
         par_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#,###,##9");
         pal_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
         Bincidenc = new gnu.chu.controles.CButton();
@@ -178,13 +187,18 @@ public class MantReclPrv extends ventanaPad implements PAD
         rpv_comentE = new gnu.chu.controles.CTextArea();
         cLabel11 = new gnu.chu.controles.CLabel();
         rpv_estadE = new gnu.chu.controles.CComboBox();
+        PCompra = new gnu.chu.controles.CPanel();
+        cLabel12 = new gnu.chu.controles.CLabel();
+        cLabel3 = new gnu.chu.controles.CLabel();
+        acc_idE = new gnu.chu.camposdb.AccPanel();
+        acc_fechaE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        cLabel13 = new gnu.chu.controles.CLabel();
+        prv_codiE = new gnu.chu.camposdb.prvPanel();
         jt = new gnu.chu.controles.CGridEditable(2);
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
 
         rpn_fechaE.setEnabled(false);
-
-        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
 
         Pprinc.setLayout(null);
 
@@ -193,95 +207,115 @@ public class MantReclPrv extends ventanaPad implements PAD
 
         cLabel1.setText("Estado");
         Pcabe.add(cLabel1);
-        cLabel1.setBounds(450, 22, 60, 15);
+        cLabel1.setBounds(10, 40, 50, 15);
         Pcabe.add(rpv_codiE);
-        rpv_codiE.setBounds(130, 2, 60, 17);
+        rpv_codiE.setBounds(130, 4, 60, 17);
 
         cLabel2.setText("Codigo Reclamación ");
         Pcabe.add(cLabel2);
-        cLabel2.setBounds(10, 2, 120, 15);
-        Pcabe.add(acc_idE);
-        acc_idE.setBounds(250, 2, 120, 18);
-
-        cLabel3.setText("Albaran");
-        Pcabe.add(cLabel3);
-        cLabel3.setBounds(200, 2, 50, 15);
+        cLabel2.setBounds(10, 4, 120, 17);
         Pcabe.add(par_codiE);
-        par_codiE.setBounds(440, 2, 60, 17);
+        par_codiE.setBounds(80, 22, 60, 17);
         Pcabe.add(pal_codiE);
-        pal_codiE.setBounds(505, 2, 30, 17);
+        pal_codiE.setBounds(140, 22, 30, 17);
 
         Bincidenc.setToolTipText("Buscar Incidencias");
         Pcabe.add(Bincidenc);
-        Bincidenc.setBounds(540, 2, 18, 18);
+        Bincidenc.setBounds(170, 22, 18, 18);
 
         cLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         cLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         cLabel4.setText("Comentario");
         Pcabe.add(cLabel4);
-        cLabel4.setBounds(240, 40, 330, 17);
+        cLabel4.setBounds(240, 80, 330, 17);
         Pcabe.add(pro_codiE);
-        pro_codiE.setBounds(70, 22, 370, 17);
+        pro_codiE.setBounds(80, 60, 470, 17);
 
         cLabel5.setText("Articulo");
         Pcabe.add(cLabel5);
-        cLabel5.setBounds(10, 22, 60, 15);
+        cLabel5.setBounds(10, 60, 60, 15);
         Pcabe.add(rpv_kilosE);
-        rpv_kilosE.setBounds(80, 60, 70, 17);
+        rpv_kilosE.setBounds(80, 100, 70, 17);
 
         cLabel6.setText("Original");
         Pcabe.add(cLabel6);
-        cLabel6.setBounds(10, 80, 70, 15);
+        cLabel6.setBounds(10, 120, 70, 15);
         Pcabe.add(rpv_precioE);
-        rpv_precioE.setBounds(170, 60, 40, 17);
+        rpv_precioE.setBounds(170, 100, 40, 17);
         Pcabe.add(rpv_kiloriE);
-        rpv_kiloriE.setBounds(80, 80, 70, 17);
+        rpv_kiloriE.setBounds(80, 120, 70, 17);
         Pcabe.add(rpv_precoriE);
-        rpv_precoriE.setBounds(170, 80, 40, 17);
+        rpv_precoriE.setBounds(170, 120, 40, 17);
 
         cLabel7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         cLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         cLabel7.setText("Kilos ");
         Pcabe.add(cLabel7);
-        cLabel7.setBounds(80, 40, 70, 17);
+        cLabel7.setBounds(80, 80, 70, 17);
 
         cLabel8.setText("Aceptado");
         Pcabe.add(cLabel8);
-        cLabel8.setBounds(10, 100, 70, 15);
+        cLabel8.setBounds(10, 140, 70, 15);
 
         cLabel9.setText("Solicitado");
         Pcabe.add(cLabel9);
-        cLabel9.setBounds(10, 60, 70, 15);
+        cLabel9.setBounds(10, 100, 70, 15);
         Pcabe.add(rpv_kilaceE);
-        rpv_kilaceE.setBounds(80, 100, 70, 17);
+        rpv_kilaceE.setBounds(80, 140, 70, 17);
         Pcabe.add(rpv_preaceE);
-        rpv_preaceE.setBounds(170, 100, 40, 17);
+        rpv_preaceE.setBounds(170, 140, 40, 17);
 
         cLabel10.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         cLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         cLabel10.setText("Precio");
         Pcabe.add(cLabel10);
-        cLabel10.setBounds(160, 40, 70, 17);
+        cLabel10.setBounds(160, 80, 70, 17);
 
         rpv_comentE.setColumns(20);
         rpv_comentE.setRows(5);
         jScrollPane1.setViewportView(rpv_comentE);
 
         Pcabe.add(jScrollPane1);
-        jScrollPane1.setBounds(240, 60, 330, 60);
+        jScrollPane1.setBounds(240, 100, 330, 55);
 
         cLabel11.setText("Incidencia");
         Pcabe.add(cLabel11);
-        cLabel11.setBounds(380, 2, 60, 15);
+        cLabel11.setBounds(10, 22, 60, 15);
 
         rpv_estadE.addItem("Pendiente","0");
         rpv_estadE.addItem("Realizado","1");
         rpv_estadE.addItem("Rechazado","2");
         Pcabe.add(rpv_estadE);
-        rpv_estadE.setBounds(500, 22, 70, 18);
+        rpv_estadE.setBounds(80, 40, 110, 18);
+
+        PCompra.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Compra", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Tahoma", 0, 11), java.awt.Color.orange)); // NOI18N
+        PCompra.setLayout(null);
+
+        cLabel12.setText("Fecha");
+        PCompra.add(cLabel12);
+        cLabel12.setBounds(240, 15, 40, 15);
+
+        cLabel3.setText("Proveedor");
+        PCompra.add(cLabel3);
+        cLabel3.setBounds(3, 35, 60, 15);
+        PCompra.add(acc_idE);
+        acc_idE.setBounds(70, 15, 113, 18);
+
+        acc_fechaE.setEnabled(false);
+        PCompra.add(acc_fechaE);
+        acc_fechaE.setBounds(280, 15, 71, 17);
+
+        cLabel13.setText("Documento");
+        PCompra.add(cLabel13);
+        cLabel13.setBounds(3, 15, 70, 15);
+        PCompra.add(prv_codiE);
+        prv_codiE.setBounds(70, 35, 281, 17);
+
+        Pcabe.add(PCompra);
+        PCompra.setBounds(200, 5, 370, 57);
 
         Pprinc.add(Pcabe);
-        Pcabe.setBounds(10, 0, 580, 130);
+        Pcabe.setBounds(0, 0, 580, 160);
 
         ArrayList v=new ArrayList();
         v.add("Fecha");
@@ -297,13 +331,13 @@ public class MantReclPrv extends ventanaPad implements PAD
         } catch (Exception k){Error("Error al poner campos al grid",k); }
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         Pprinc.add(jt);
-        jt.setBounds(8, 138, 580, 120);
+        jt.setBounds(0, 170, 580, 80);
         Pprinc.add(Baceptar);
         Baceptar.setBounds(130, 270, 90, 30);
         Pprinc.add(Bcancelar);
         Bcancelar.setBounds(320, 270, 90, 30);
 
-        getContentPane().add(Pprinc);
+        getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -313,12 +347,16 @@ public class MantReclPrv extends ventanaPad implements PAD
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CButton Bincidenc;
+    private gnu.chu.controles.CPanel PCompra;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Pprinc;
+    private gnu.chu.controles.CTextField acc_fechaE;
     private gnu.chu.camposdb.AccPanel acc_idE;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
+    private gnu.chu.controles.CLabel cLabel12;
+    private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -332,6 +370,7 @@ public class MantReclPrv extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField pal_codiE;
     private gnu.chu.controles.CTextField par_codiE;
     private gnu.chu.camposdb.proPanel pro_codiE;
+    private gnu.chu.camposdb.prvPanel prv_codiE;
     private gnu.chu.controles.CTextField rpn_comentE;
     private gnu.chu.controles.CTextField rpn_fechaE;
     private gnu.chu.controles.CTextField rpv_codiE;
@@ -389,10 +428,58 @@ public class MantReclPrv extends ventanaPad implements PAD
     public void ej_addnew1() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    void verDatos()
+    {
+        if (dtCons.getNOREG())
+            return;
+        try {
+            rpv_codiE.setValorInt(dtCons.getInt("rpv_codi"));
+            acc_idE.setId(dtCons.getInt("acc_id"));
+            acc_fechaE.setDate(acc_idE.getFechaAlb());
+            prv_codiE.setValorInt(acc_idE.getPrvAlb());
+            par_codiE.setValorInt(dtCons.getInt("par_codi",true));
+            pal_codiE.setValorInt(dtCons.getInt("pal_codi"));
+            pro_codiE.setText(dtCons.getString("pro_codi"));
+            rpv_comentE.setText(dtCons.getString("rpv_coment"));
 
+            jt.removeAllDatos();
+            String s="select rpn_fecha,rpn_coment from reclamprv_notas "+
+                    " where rpv_codi ="+dtCons.getInt("rpv_codi")+
+                    " order by rpn_fecha";
+            if (dtCon1.select(s))
+            {
+                do
+                {
+                    ArrayList v=new ArrayList();
+                    v.add(dtCon1.getFecha("rpn_fecha","dd-MM-yyyy HH:mm:ss"));
+                    v.add(dtCon1.getString("rpn_coment"));                  
+                    jt.addLinea(v);
+                } while (dtCon1.next());
+            }
+       
+        } catch (SQLException k)
+        {
+            Error("Error al ver datos",k);
+        }
+    }
+    @Override
+    public void PADAddNew()
+    {
+        mensaje("Dando de alta un Reclamacion a proveedor");
+        rpv_codiE.setEnabled(false);
+        Pcabe.resetTexto();
+        jt.removeAllDatos();
+        rpv_estadE.setValor("0");
+        activar(true);
+        acc_idE.requestFocus();
+    }
     @Override
     public void canc_addnew() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       activaTodo();
+       mensaje("");
+       mensajeErr("Alta CANCELADA");
+       nav.pulsado=navegador.NINGUNO;
+       verDatos();       
     }
 
     @Override
@@ -407,7 +494,11 @@ public class MantReclPrv extends ventanaPad implements PAD
 
     @Override
     public void activar(boolean b) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       
+       Pprinc.setEnabled(b);
+       rpn_comentE.setEnabled(b);
+       jt.setEnabled(b);
+       
     }
 
 }

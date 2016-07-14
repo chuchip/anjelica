@@ -1345,6 +1345,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
           dtAdd.setConexion(ctUp);
           cli_codiE.setZona(P_ZONA);
           cli_codiE.iniciar(dtStat, this, vl, EU);
+          cli_codiE.iniciar(jf);
           ifMail.iniciar(this);
           
           ifFax.iniciar(this);
@@ -1394,7 +1395,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   {
     cli_rutaE.setAncTexto(30);
     cli_rutaE.setFormato(Types.CHAR, "XX");
-      
+    
     pdconfig.llenaDiscr(dtStat, cli_rutaE, pdconfig.D_RUTAS ,EU.em_cod);      
     paiEmp= pdempresa.getPais(dtStat,EU.em_cod);
     jtDes.getPopMenu().add(verDatTraz);

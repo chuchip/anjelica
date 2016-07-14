@@ -1,15 +1,21 @@
 package gnu.chu.camposdb;
 
 
+import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.pad.pdclien;
 import java.sql.*;
 import gnu.chu.controles.*;
+import gnu.chu.interfaces.ejecutable;
+import gnu.chu.utilidades.mensajes;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 /**
  *
  * <p>Título: cliAvcPanel</p>
  * <p>Descripción: Panel para introducir el codigo del cliente con posibilidad
  *  de modificar el nombre. Usado por Mantenimiento de Albaranes y facturas de
  *  ventas.</p>
- * <p>Copyright: Copyright (c) 2006-2011
+ * <p>Copyright: Copyright (c) 2006-2016
  * Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -33,8 +39,41 @@ public class cliAvcPanel extends cliPanel
   int empCodi;
   String avcSerie;
   int avcNume=0;
-
-
+  Principal jf;
+  
+  public void iniciar(Principal principal)
+  {
+      if (principal==null)
+          return;
+      jf=principal;
+      cli_codiE.addMouseListener(new MouseAdapter()
+      {
+        @Override
+        public void mouseClicked(MouseEvent e)
+        {
+            if (!cli_codiE.isNull() && e.getClickCount()>1)
+                llamaMantClientes();
+        }
+      }); 
+  }
+  void llamaMantClientes()
+  {
+     
+             ejecutable prog;
+             if ((prog=jf.gestor.getProceso(pdclien.getNombreClase()))==null)
+                    return;
+            pdclien cm=(pdclien) prog;
+            if (cm.inTransation())
+            {
+               mensajes.mensajeAviso("Mantenimiento Clientesocupado. No se puede realizar la busqueda");
+               return;
+            }
+            cm.PADQuery();
+            
+            cm.setCliente(cli_codiE.getValorInt());
+            cm.ej_query();
+            jf.gestor.ir(cm);
+  }
   public void setAvcAno(int avc_ano)
   {
     this.avcAno = avc_ano;

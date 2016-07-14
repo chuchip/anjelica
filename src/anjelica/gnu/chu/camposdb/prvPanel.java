@@ -319,13 +319,21 @@ public class prvPanel extends CPanel
    {
      swControl=swControla;
    }
+  @Override
   public void setEditable(boolean editable)
   {
-     prv_codiE.setEditable(editable);
+      if (prv_nombL==null)
+          super.setEditable(editable);
+      else
+         prv_codiE.setEditable(editable);
   }
+  @Override
   public boolean isEditable()
   {
-      return prv_codiE.isEditable();
+        if (prv_nombL==null)
+          return super.isEditable();
+        else
+          return prv_codiE.isEditable();
   }
 
   /**
@@ -691,6 +699,8 @@ public class prvPanel extends CPanel
   
   public void setEnabledNombre(boolean enab)
   {
+    if (prv_nombL == null)
+        super.setEnabled(enab);
     prv_nombL.setEnabled(enab);
   }
   public boolean isEnabledNombre()
