@@ -418,7 +418,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(13)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(14)"/>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="try {confJTCab();} catch (Exception k){Error(&quot;Error al configurar grid cabecera&quot;,k);}"/>
           </AuxValues>
           <Constraints>

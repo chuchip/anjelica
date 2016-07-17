@@ -1907,6 +1907,7 @@ public class pdclien extends ventanaPad implements PAD
     cli_comenT.setText("");
     cli_tipivaE.setValor("1"); // Iva del 7
     cli_recequE.setValor("0");
+    pai_codiE.setValorInt(MantPaises.PAI_ESPANA);
     sbe_codiE.resetTexto();
 //   emp_codiE.setEnabled(false);
     emp_codiE.setValorInt(EU.em_cod);
@@ -2413,7 +2414,8 @@ public class pdclien extends ventanaPad implements PAD
 //    }
  public static String getNombreCliente(DatosTabla dt, int cliCodi) throws SQLException
  {
-    String s = "SELECT cli_nomb,cli_horenv,cli_comenv from clientes WHERE cli_codi = " + cliCodi;
+    String s = "SELECT cli_nomb,cli_nomen,cli_diree,cli_codpoe,cli_poble,"
+        + "cli_horenv,cli_comenv from clientes WHERE cli_codi = " + cliCodi;
     if (! dt.select(s))
       return null;
     return dt.getString("cli_nomb");

@@ -5,7 +5,7 @@
  * Description:  Pantalla de Ayuda de Clientes,    permite Consultar clientes
  * por nombre, NIF o Razon Social.
  * Siempre sera Llamado desde otro programa.
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *   Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -39,7 +39,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.JLayeredPane;
-
 
 public class AyuClientes extends ventana
 {
@@ -302,11 +301,11 @@ public class AyuClientes extends ventana
 
         Baceptar.setText("Buscar");
         Pcond.add(Baceptar);
-        Baceptar.setBounds(340, 30, 90, 30);
+        Baceptar.setBounds(330, 0, 90, 30);
 
         Bselecion.setText("Selecionar");
         Pcond.add(Bselecion);
-        Bselecion.setBounds(340, 0, 90, 24);
+        Bselecion.setBounds(330, 40, 90, 24);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

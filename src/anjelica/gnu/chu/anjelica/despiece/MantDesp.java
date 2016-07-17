@@ -3316,7 +3316,7 @@ public class MantDesp extends ventanaPad implements PAD
             buscaDatInd();
             int proCodi=jtLin.getValorInt(jtDesp.getSelectedRowDisab(), JTLIN_PROCODI);
             String proNomb=jtLin.getValString(jtDesp.getSelectedRowDisab(), JTLIN_PRONOMB);
-            java.util.Date fecCong=utildesp.getDateCongelado(proCodi, deo_fecproE.getDate(), dtStat);    
+//            java.util.Date fecCong=utildesp.getDateCongelado(proCodi, deo_fecproE.getDate(), dtStat);    
             etiq.iniciar(deo_nulogeE.getText(),
                 eje_numeE.getText() + "/"
                 + Formatear.format(EU.em_cod, "99") + "/"

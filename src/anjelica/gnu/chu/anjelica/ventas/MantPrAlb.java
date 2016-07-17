@@ -4,7 +4,7 @@
  *
  * Created on 03-dic-2009, 22:41:09
  *
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -30,6 +30,7 @@ import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.pad.pdprove;
 import gnu.chu.camposdb.proPanel;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.conexion;
 import gnu.chu.utilidades.*;
@@ -163,7 +164,7 @@ public class MantPrAlb extends ventana {
      
         iniciarFrame();
 
-        this.setVersion("2015-06-05" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
+        this.setVersion("2016-07-15" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
         
        
         initComponents();
@@ -215,6 +216,7 @@ public class MantPrAlb extends ventana {
         alm_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         avl_numlinE = new gnu.chu.controles.CTextField(Types.CHAR,"X",500);
         avl_comentE = new gnu.chu.controles.CTextField(Types.CHAR,"X",50);
+        MIrAlbaran = new javax.swing.JMenuItem();
         Pprinc = new gnu.chu.controles.CPanel();
         Pcondic = new gnu.chu.controles.CPanel();
         cLabel3 = new gnu.chu.controles.CLabel();
@@ -236,6 +238,8 @@ public class MantPrAlb extends ventana {
         rep_codiE = new gnu.chu.controles.CLinkBox();
         Bir = new gnu.chu.controles.CButton();
         Bbaja = new gnu.chu.controles.CButton();
+        cLabel17 = new gnu.chu.controles.CLabel();
+        emailC = new gnu.chu.controles.CComboBox();
         PTabPane1 = new gnu.chu.controles.CTabbedPane();
         PSelec = new gnu.chu.controles.CPanel();
         jtSelAlb = new gnu.chu.controles.Cgrid(6);
@@ -350,6 +354,9 @@ public class MantPrAlb extends ventana {
 
         avl_numlinE.setEnabled(false);
 
+        MIrAlbaran.setText("Ir Mant.Albaran");
+        MIrAlbaran.setToolTipText("Ir a Mant.Albaran Ventas");
+
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcondic.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -431,6 +438,16 @@ public class MantPrAlb extends ventana {
         Bir.setBounds(590, 60, 1, 1);
         Pcondic.add(Bbaja);
         Bbaja.setBounds(560, 60, 1, 1);
+
+        cLabel17.setText("Email");
+        Pcondic.add(cLabel17);
+        cLabel17.setBounds(280, 42, 40, 18);
+
+        emailC.addItem("TODOS", "*");
+        emailC.addItem("SI", "S");
+        emailC.addItem("NO", "N");
+        Pcondic.add(emailC);
+        emailC.setBounds(330, 42, 70, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -658,6 +675,7 @@ public class MantPrAlb extends ventana {
     }//GEN-LAST:event_BcancelarActionPerformed
     @Override
     public void iniciarVentana() throws Exception {
+        jtSelAlb.getPopMenu().add(MIrAlbaran);
         dtAdd= new DatosTabla(new conexion(EU));
         dtAlb=new DatosTabla(ct);
         dtCos1=new DatosTabla(ct);
@@ -738,6 +756,14 @@ public class MantPrAlb extends ventana {
                 Bbuscar_actionPerformed();
             }
         });
+        
+        MIrAlbaran.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                irMantAlbVenta();
+            }
+        });
         jtSelAlb.tableView.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -765,6 +791,7 @@ public class MantPrAlb extends ventana {
         jtSelAlb.addMouseListener(new MouseAdapter() {
             @Override
          public void mouseClicked(MouseEvent e) {
+            
              if (e.getClickCount()>1)// && ! jtSelAlb.isVacio() && jtSelAlb.isEnabled())
                  irLineaAlb();
          }
@@ -809,6 +836,31 @@ public class MantPrAlb extends ventana {
                }
             } 
         });
+    }
+    void irMantAlbVenta()
+    {
+         if (jtSelAlb.isVacio())
+                return;
+             ejecutable prog;
+             if ((prog=jf.gestor.getProceso(pdalbara.getNombreClase()))==null)
+                    return;
+            pdalbara cm=(pdalbara) prog;
+            if (cm.inTransation())
+            {
+               msgBox("Mantenimiento Albaranes de Ventas ocupado. No se puede realizar la busqueda");
+               return;
+            }
+            cm.PADQuery();
+            String albaran=jtSelAlb.getValString(jtSelAlb.getSelectedRow(),0);
+            int avcAno=Integer.parseInt(albaran.substring(0,4));
+            String avcSerie=albaran.substring(4,5);
+            int avcNume=Integer.parseInt(albaran.substring(5));
+            cm.setSerieAlbaran(avcSerie);
+            cm.setNumeroAlbaran(avcNume);
+            cm.setEjercAlbaran(avcAno);
+
+            cm.ej_query();
+            jf.gestor.ir(cm);
     }
     @Override
     public void matar()
@@ -1265,6 +1317,10 @@ public class MantPrAlb extends ventana {
                    + " and avc_revpre = " + avc_revpreE.getValor()
                    + " and v.cli_codi = c.cli_codi "
                    + " and v.fvc_ano + v.fvc_nume = 0 " // No mostrar albaranes facturados
+                   + (emailC.getValor().equals("*")?"":
+                     " and  c.cli_email1 || c.cli_email2 "
+                   +(emailC.getValor().equals("N")?" not ":"")
+                   +" like '%@%'") 
                    + (EU.isRootAV() ? "" : " AND v.div_codi > 0 ")
                    + " ORDER BY v.cli_codi,v.avc_fecalb";
           }
@@ -1443,6 +1499,7 @@ public class MantPrAlb extends ventana {
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CButton Bir;
     private javax.swing.JInternalFrame IFselalb;
+    private javax.swing.JMenuItem MIrAlbaran;
     private gnu.chu.controles.CPanel PLinea;
     private gnu.chu.controles.CPanel PLinea1;
     private gnu.chu.controles.CPanel PSelec;
@@ -1472,6 +1529,7 @@ public class MantPrAlb extends ventana {
     private gnu.chu.controles.CLabel cLabel14;
     private gnu.chu.controles.CLabel cLabel15;
     private gnu.chu.controles.CLabel cLabel16;
+    private gnu.chu.controles.CLabel cLabel17;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -1483,6 +1541,7 @@ public class MantPrAlb extends ventana {
     private gnu.chu.camposdb.cliPanel cli_codacE;
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CTextField diferPrecE;
+    private gnu.chu.controles.CComboBox emailC;
     private gnu.chu.camposdb.empPanel emp_codiE;
     private gnu.chu.controles.CTextField fecCostoE;
     private gnu.chu.controles.CTextField fecFinE;

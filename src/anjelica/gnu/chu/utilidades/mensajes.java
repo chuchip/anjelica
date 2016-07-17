@@ -249,7 +249,7 @@ public class mensajes {
     return o.toString();
   }
   static public String mensajeGetTexto(String msg,String title,Component comp,String valor){
-    return mensajeGetTexto(msg,title,comp,"",null);
+    return mensajeGetTexto(msg,title,comp,valor,null);
   }
   static public String mensajeGetTexto(String msg,String title,Component comp){
     return mensajeGetTexto(msg,title,comp,"");

@@ -6,7 +6,7 @@ package gnu.chu.anjelica.despiece;
  * <p>Descripción: Ventana con un grid que en conjuncion con listraza muestra y
  * permite modificar una hoja de trazabilidad.
  *  </p>
- *  <p>Copyright: Copyright (c) 2005-2011
+ *  <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -23,6 +23,7 @@ package gnu.chu.anjelica.despiece;
  * @version 1.0
  */
 
+import static gnu.chu.anjelica.compras.MantAlbCom.getRandomCrotal;
 import gnu.chu.anjelica.despiece.listraza.DatosTraza;
 import gnu.chu.controles.CGridEditable;
 import gnu.chu.controles.StatusBar;
@@ -30,12 +31,15 @@ import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Vector;
 
 public class DatosTrazaGrid extends ventana {
-
+    private final int JT_NUMCRO=4;
+    
     /** Creates new form DatosTrazaGrid */
     public DatosTrazaGrid() {
         this.setTitulo("Datos Trazabilidad");
@@ -45,11 +49,13 @@ public class DatosTrazaGrid extends ventana {
 
         statusBar = new StatusBar(this);
         initComponents();
-         this.setSize(new Dimension(740, 481));
+        this.setSize(new Dimension(740, 481));
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
     }
+    
     public void iniciarVentana(ArrayList datos )
-    {
+    {   
+        jt.panelBusqueda.setVisible(false);
         jt.setEnabled(false);
         jt.removeAllDatos();
         int nRow=datos.size();
@@ -57,7 +63,17 @@ public class DatosTrazaGrid extends ventana {
             jt.addLinea( ((DatosTraza) datos.get(n)).getVector());
         jt.setEnabled(true);
         jt.requestFocusInicio();
+        pro_loteE.addKeyListener(new KeyAdapter()
+        {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode()==KeyEvent.VK_F3)
+                    pro_loteE.setText(getRandomCrotal( pro_loteE.getText()));
+            }
+        });
     }
+    
+   
     CGridEditable getGrid()
     {
         return jt;
@@ -70,6 +86,7 @@ public class DatosTrazaGrid extends ventana {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         pro_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
         pro_nombE = new gnu.chu.controles.CTextField(Types.CHAR,"X",40);
@@ -85,6 +102,7 @@ public class DatosTrazaGrid extends ventana {
         comentE = new gnu.chu.controles.CTextField(Types.CHAR,"X",40);
         fecCaduE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
         jt = new gnu.chu.controles.CGridEditable(13);
+        BregCrotal = new gnu.chu.controles.CButton();
 
         pro_codiE.setEnabled(false);
 
@@ -101,7 +119,7 @@ public class DatosTrazaGrid extends ventana {
         v.add("Nombre"); // 1
         v.add("Indiv"); // 2
         v.add("Kilos"); // 3
-        v.add("Lote"); // 4
+        v.add("NºCrotal"); // 4
         v.add("Matadero"); // 5
         v.add("Sala Desp."); // 6
         v.add("Nacimiento"); // 7
@@ -140,20 +158,48 @@ public class DatosTrazaGrid extends ventana {
         jt.setLayout(jtLayout);
         jtLayout.setHorizontalGroup(
             jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 503, Short.MAX_VALUE)
+            .addGap(0, 543, Short.MAX_VALUE)
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 364, Short.MAX_VALUE)
+            .addGap(0, 294, Short.MAX_VALUE)
         );
 
         getContentPane().add(jt, java.awt.BorderLayout.CENTER);
 
+        BregCrotal.setText("Regenerar Crotales");
+        BregCrotal.setMaximumSize(new java.awt.Dimension(120, 20));
+        BregCrotal.setMinimumSize(new java.awt.Dimension(120, 20));
+        BregCrotal.setPreferredSize(new java.awt.Dimension(120, 20));
+        BregCrotal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BregCrotalActionPerformed(evt);
+            }
+        });
+        getContentPane().add(BregCrotal, java.awt.BorderLayout.NORTH);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void BregCrotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BregCrotalActionPerformed
+        for (int n=0;n<jt.getRowCount();n++)
+        {
+            int swRep=0;
+            for (int n1=n+1;n1<jt.getRowCount();n1++)
+            {
+                if (jt.getValString(n,JT_NUMCRO).equals(jt.getValString(n1,JT_NUMCRO)))
+                    swRep++;
+                if (swRep>1)
+                    break;
+            }
+            if (swRep>1)
+                jt.setValor(getRandomCrotal(jt.getValString(n,JT_NUMCRO)),n,JT_NUMCRO);
+        }
+    }//GEN-LAST:event_BregCrotalActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BregCrotal;
     private gnu.chu.controles.CTextField acl_kilosE;
     private gnu.chu.controles.CTextField artorigenE;
     private gnu.chu.controles.CTextField comentE;

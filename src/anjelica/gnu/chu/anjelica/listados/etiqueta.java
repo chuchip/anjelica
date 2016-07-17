@@ -44,7 +44,7 @@ import net.sourceforge.barbecue.linear.code128.Code128Barcode;
  */
 public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
 {
-  private final String LOGOTIPO="logotipo_bn.jpg"; // Logotipo por defecto.
+  public final static String LOGOTIPO="logotipo_bn.jpg"; // Logotipo por defecto.
   int nInd;
   int rowGrid;
   Locale lengua = Locale.getDefault();

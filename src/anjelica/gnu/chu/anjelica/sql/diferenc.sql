@@ -1,3 +1,16 @@
+alter table anjelica.albrutalin add cli_nomen varchar(50) ;-- Nombre Cliente 
+alter table anjelica.albrutalin add	cli_diree varchar(100) ; -- Direccion entrega
+alter table anjelica.albrutalin add cli_poble varchar(50) ; -- Poblacion entrega
+alter table anjelica.albrutalin add	cli_codpoe varchar(8); -- Cod. Postal Envio
+drop view anjelica.v_albruta;
+create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_bultos,alr_palets,
+alr_unid,alr_kilos,alr_horrep,alr_comrep,cli_nomen,cli_diree,cli_poble,cli_codpoe,alr_repet,
+al.emp_codi,al.avc_ano,al.avc_serie,al.avc_nume,al.cli_codi,al.avc_clinom,al.avc_kilos,
+al.avc_unid 
+from anjelica.albrutacab as c, anjelica.albrutalin as l,anjelica.v_albavec as al 
+where c.alr_nume=l.alr_nume and al.avc_id = l.avc_id;
+grant select on v_albruta to public;
+--
 update anjelica.v_albavec set cli_ruta=0;
 alter table anjelica.v_albavec alter cli_ruta type varchar(2);
 update anjelica.hisalcave set cli_ruta=0;

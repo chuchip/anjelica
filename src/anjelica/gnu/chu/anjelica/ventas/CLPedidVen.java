@@ -68,10 +68,11 @@ public class CLPedidVen extends  ventana
     boolean verPrecio;
     String ARG_REPCODI = "";
     String ARG_SBECODI = "";
-    private final int JTCAB_SERALB=11;
-    private final int JTCAB_NUMALB= 12;   
-    private final int JTCAB_EJEALB=10;
+    private final int JTCAB_SERALB=12;
+    private final int JTCAB_NUMALB= 13;   
+    private final int JTCAB_EJEALB=11;
     private final int JTCAB_NOMCLI=4;
+//    private final int JTCAB_POBCLI=5;
     
     public CLPedidVen(EntornoUsuario eu, Principal p) {
         this(eu, p, null);
@@ -141,7 +142,7 @@ public class CLPedidVen extends  ventana
 
         iniciarFrame();
 
-        this.setVersion("2016-07-14");
+        this.setVersion("2016-07-17");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -505,7 +506,7 @@ public class CLPedidVen extends  ventana
         if (! ejecSelect)
           return true;
    
-     s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,al.alm_nomb FROM pedvenc as c"
+     s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_poble,al.alm_nomb FROM pedvenc as c"
          + " left join v_albavec as av on c.avc_ano = av.avc_ano "
          + " and c.avc_serie= av.avc_serie and c.avc_nume =  av.avc_nume "
          + ",clientes as cl,v_almacen as al " +       
@@ -552,23 +553,24 @@ public class CLPedidVen extends  ventana
     v.add("Num.");// 2
     v.add("Cliente"); // 3
     v.add("Nombre Cliente"); // 4
-    v.add("Fec.Entrega"); // 5
-    v.add("Conf"); // 6
-    v.add("Cerr");// 7
-    v.add("Ped.Cliente"); // 8
-    v.add("Almacen");// 9
-    v.add("Ej.Alb");
-    v.add("S.Alb");
-    v.add("Num.Alb");
+    v.add("Población"); // 5
+    v.add("Fec.Entrega"); // 6
+    v.add("Conf"); // 7
+    v.add("Cerr");// 8
+    v.add("Ped.Cliente"); // 9
+    v.add("Almacen");// 10
+    v.add("Ej.Alb");//11
+    v.add("S.Alb"); //12
+    v.add("Num.Alb"); //13
     jtCabPed.setCabecera(v);
     jtCabPed.setMaximumSize(new Dimension(548, 158));
     jtCabPed.setMinimumSize(new Dimension(548, 158));
     jtCabPed.setPreferredSize(new Dimension(548, 158));
-    jtCabPed.setAnchoColumna(new int[]{26,40,49,55,150,76,30,40,80,100,40,40,60});
-    jtCabPed.setAlinearColumna(new int[]{2,2,2,2,0,1,1,1,0,0,2,1,2});
+    jtCabPed.setAnchoColumna(new int[]{26,40,49,55,150,100,76,30,40,80,100,40,40,60});
+    jtCabPed.setAlinearColumna(new int[]{2,2,2,2,0,0,1,1,1,0,0,2,1,2});
 
-    jtCabPed.setFormatoColumna(6,"BSN");
     jtCabPed.setFormatoColumna(7,"BSN");
+    jtCabPed.setFormatoColumna(8,"BSN");
   }
   private void confJtLin() throws Exception
    {
@@ -665,6 +667,7 @@ public class CLPedidVen extends  ventana
         v.add(dtCon1.getString("pvc_nume")); // 2
         v.add(dtCon1.getString("cli_codi")); // 3
         v.add(dtCon1.getObject("pvc_clinom")==null?dtCon1.getString("cli_nomb"):dtCon1.getString("pvc_clinom")); // 4
+        v.add(dtCon1.getObject("cli_poble")); // 5 
         v.add(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy")); // 5
         v.add(dtCon1.getString("pvc_confir")); // 6
         v.add(dtCon1.getInt("pvc_cerra")!=0); // 7
@@ -731,7 +734,7 @@ public class CLPedidVen extends  ventana
         cLabel22 = new gnu.chu.controles.CLabel();
         rut_codiE = new gnu.chu.controles.CLinkBox();
         jtLinPed = new gnu.chu.controles.Cgrid(11);
-        jtCabPed = new gnu.chu.controles.Cgrid(13);
+        jtCabPed = new gnu.chu.controles.Cgrid(14);
         Ppie = new gnu.chu.controles.CPanel();
         cLabel17 = new gnu.chu.controles.CLabel();
         nlE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9");

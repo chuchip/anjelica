@@ -370,10 +370,7 @@ public class listraza  implements JRDataSource
        sendFax=new SendFax(EU,dtCon1); // Inicio clase SendFax
    sendFax.setCliente(cliCodi);
    
-   sendFax.sendFax("A",empCodi,ejeNume,serie, numAlb,  numFax, fichPDF.getAbsolutePath());
-  
-
-  
+   sendFax.sendFax("A",empCodi,ejeNume,serie, numAlb,  numFax, fichPDF.getAbsolutePath()); 
   }
 
   public boolean next() throws JRException

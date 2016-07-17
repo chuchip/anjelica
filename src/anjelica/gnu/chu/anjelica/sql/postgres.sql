@@ -255,7 +255,7 @@ cli_telcon varchar(15), -- Telefono Contacto
 cli_nomen varchar(50), -- Nombre Envio
 cli_diree varchar(50), -- Direccion Entrega
 cli_poble varchar(30), -- Poblacion Entrega
-cli_codpoe varchar(8),        -- Cod. Postal Envio
+cli_codpoe varchar(8), -- Cod. Postal Envio
 cli_telefe varchar(15), -- Telefono Envio
 cli_faxe varchar(15),	 -- Fax de Envio
 cli_horenv varchar(50), -- Horario de Envio
@@ -2149,12 +2149,16 @@ create table anjelica.albrutalin
 	alr_unid int not null, -- Unidades de Albaran
 	alr_horrep varchar(50), -- horario reparto
 	alr_comrep varchar(80), -- Comentario Reparto
+	cli_nomen varchar(50) not null, -- Nombre Cliente 
+	cli_diree varchar(100) not null, -- Direccion entrega
+	cli_poble varchar(50) not null, -- Poblacion entrega
+	cli_codpoe varchar(8), -- Cod. Postal Envio
 	alr_repet smallint not null default 0, -- Repetido
 	constraint ix_albrutalin primary key (alr_nume,alr_orden)
 );
 create index ix_albrutali1 on anjelica.albrutalin(avc_id);
 create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_bultos,alr_palets,
-alr_unid,alr_kilos,alr_horrep,alr_comrep,alr_repet,
+alr_unid,alr_kilos,alr_horrep,alr_comrep,cli_nomen,cli_diree,cli_poble,cli_codpoe,alr_repet,
 al.emp_codi,al.avc_ano,al.avc_serie,al.avc_nume,al.cli_codi,al.avc_clinom,al.avc_kilos,
 al.avc_unid 
 from anjelica.albrutacab as c, anjelica.albrutalin as l,anjelica.v_albavec as al 

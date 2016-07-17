@@ -3,6 +3,7 @@ package gnu.chu.anjelica.ventas;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.facturacion.PadFactur;
 import gnu.chu.anjelica.listados.Listados;
+import static gnu.chu.anjelica.listados.etiqueta.LOGOTIPO;
 import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.StatusBar;
@@ -32,7 +33,11 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -67,17 +72,21 @@ import net.sf.jasperreports.engine.JasperReport;
 */
 public class ManAlbRuta extends ventanaPad implements PAD
 {
+    JasperReport jr=null;
     private boolean ARG_MODSALA=false;
     final int JT_NUMALB=3;
     final int JT_BULTOS=4;
     final int JT_PALETS=5;
     final int JT_CLICOD=6;
     final int JT_CLINOMB=7;
-    final int JT_UNID=8;
-    final int JT_KILOS=9;
-    final int JT_HORREP=10;
-    final int JT_COMREP=11;
-    final int JT_REPET=12;
+    final int JT_CLIDIR=8;
+    final int JT_CLICP=9;
+    final int JT_CLIPOBL=10;
+    final int JT_UNID=11;
+    final int JT_KILOS=12;
+    final int JT_HORREP=13;
+    final int JT_COMREP=14;
+    final int JT_REPET=15;
     final int JTFR_ANO=0;
     final int JTFR_EMPCOD=1;
     final int JTFR_SERIE=2;
@@ -135,7 +144,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-03-17 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2016-07-17 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -192,14 +201,22 @@ public class ManAlbRuta extends ventanaPad implements PAD
             resetCambioAlb();          
            
             jt.setValor(dtCon1.getInt("cli_codi"),row,JT_CLICOD);
-            String nombCli=pdclien.getNombreCliente(dtStat,dtCon1.getInt("cli_codi"));
+            pdclien.getNombreCliente(dtStat,dtCon1.getInt("cli_codi"));
             String cliNomb=dtCon1.getString("avc_clinom").equals("")?
-                nombCli:dtCon1.getString("avc_clinom");
+                dtStat.getString("cli_nomen"):dtCon1.getString("avc_clinom");
             jt.setValor(cliNomb,row,JT_CLINOMB);
+            jt.setValor(dtStat.getString("cli_diree"),row,JT_CLIDIR);
+            jt.setValor(dtStat.getString("cli_codpoe"),row,JT_CLICP);
+            jt.setValor(dtStat.getString("cli_poble"),row,JT_CLIPOBL);
+
             jt.setValor(dtCon1.getDouble("avc_kilos"),row,JT_KILOS);
             jt.setValor(dtCon1.getInt("avc_unid"),row,JT_UNID);
             jt.setValor(dtStat.getString("cli_horenv"),row,JT_HORREP);
             jt.setValor(dtStat.getString("cli_comenv"),row,JT_COMREP);
+            cli_nombE.setText(cliNomb);
+            cli_direeE.setText(dtStat.getString("cli_diree"));
+            cli_codpoeE.setText(dtStat.getString("cli_codpoe"));
+            cli_pobleE.setText(dtStat.getString("cli_poble"));
             alr_horrepE.setText(dtStat.getString("cli_horenv"));
             alr_comrepE.setText(dtStat.getString("cli_comenv"));
             return -2;
@@ -325,7 +342,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         
             jt.removeAllDatos();
             jtFra.removeAllDatos();
-            if ( dtCon1.select("select l.*,cl.cli_nomb from v_albruta as l "
+            if ( dtCon1.select("select l.*,cl.cli_nomen as cli_nomb,cl.cli_pobl from v_albruta as l "
                  + " left join v_cliente as cl "+
                 " on l.cli_codi = cl.cli_codi where alr_nume ="+dtCons.getInt("alr_nume")+
                  " order by alr_orden"))
@@ -341,8 +358,16 @@ public class ManAlbRuta extends ventanaPad implements PAD
                      a.add(dtCon1.getString("alr_bultos"));
                      a.add(dtCon1.getString("alr_palets"));
                      a.add(dtCon1.getString("cli_codi"));
-                     a.add(dtCon1.getString("avc_clinom", true).equals("") ? dtCon1.getString("cli_nomb") : dtCon1.getString("avc_clinom", true));
-
+                     
+                     a.add(dtCon1.getObject("cli_nomen")==null?dtCon1.getString("cli_nomb"):
+                         dtCon1.getString("cli_nomen"));
+                     a.add(dtCon1.getString("cli_diree", true));
+                     a.add(dtCon1.getString("cli_codpoe", true));
+                     a.add(dtCon1.getObject("cli_nomen")==null?dtCon1.getString("cli_pobl"):
+                         dtCon1.getString("cli_poble"));
+                                       
+                     
+                     
                      if (dtCon1.getObject("alr_unid") == null)
                      {
                          a.add(dtCon1.getString("avc_unid"));
@@ -455,8 +480,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
   }
   @Override
   public void PADQuery()
-  {
-    
+  {    
     mensaje("Introduzca Criterios de Busqueda");
     nav.pulsado = navegador.QUERY;
     activar(true);
@@ -712,6 +736,10 @@ public class ManAlbRuta extends ventanaPad implements PAD
         alr_paletsE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         alr_horrepE = new gnu.chu.controles.CTextField(Types.CHAR,"X",50);
         alr_comrepE = new gnu.chu.controles.CTextField(Types.CHAR,"X",80);
+        cli_pobleE = new gnu.chu.controles.CTextField(Types.CHAR,"X",50);
+        BimprEti = new javax.swing.JMenuItem();
+        cli_direeE = new gnu.chu.controles.CTextField(Types.CHAR,"X",100);
+        cli_codpoeE = new gnu.chu.controles.CTextField(Types.CHAR,"X",8);
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -761,7 +789,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         palTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         Bimpri = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("print"));
         Tpanel1 = new gnu.chu.controles.CTabbedPane();
-        jt = new gnu.chu.controles.CGridEditable(13){
+        jt = new gnu.chu.controles.CGridEditable(16){
             @Override
             public int cambiaLinea(int row, int col)
             {
@@ -814,8 +842,6 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         cli_codiE.setEnabled(false);
 
-        cli_nombE.setEnabled(false);
-
         avc_unidE.setEnabled(false);
 
         avc_kilosE.setEnabled(false);
@@ -839,6 +865,9 @@ public class ManAlbRuta extends ventanaPad implements PAD
         alr_bultosE.setText("1");
 
         alr_paletsE.setText("1");
+
+        BimprEti.setText("Etiqueta ");
+        BimprEti.setToolTipText("Imprimir Etiqueta Envio");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -1057,23 +1086,27 @@ public class ManAlbRuta extends ventanaPad implements PAD
         jt.setMaximumSize(new java.awt.Dimension(559, 149));
         jt.setMinimumSize(new java.awt.Dimension(559, 149));
         ArrayList v=new ArrayList();
-        v.add("Emp"); // 0
+        v.add("Em"); // 0
         v.add("Ejer."); // 1
-        v.add("Serie"); // 2
-        v.add("Numero"); // 3
-        v.add("Bultos"); // 4
-        v.add("Palets"); // 5
+        v.add("Se"); // 2
+        v.add("Num."); // 3
+        v.add("Btos"); // 4
+        v.add("Plet"); // 5
         v.add("Cliente"); // 6
         v.add("Nombre Cliente"); // 7
-        v.add("Unid."); // 8
-        v.add("Kilos"); // 9
-        v.add("Horario"); // 10
-        v.add("Coment."); // 11
-        v.add("Dupl."); // 12
+        v.add("Direccion"); // 9
+        v.add("C.P"); // 10
+        v.add("Poblacion"); // 11
+        v.add("Unid."); // 12
+        v.add("Kilos"); // 13
+        v.add("Horario"); // 14
+        v.add("Coment."); // 15
+        v.add("Dupl."); // 16
         jt.setCabecera(v);
         jt.setColNueva(3);
-        jt.setAnchoColumna(new int[]{30,40,30,60,40,40,50,200,40,50,100,120,45});
-        jt.setAlinearColumna(new int[]{2,2,1,2,2,2,2,0,2,2,0,0,1});
+        jt.setAnchoColumna(new int[]{20,40,20,40,30,30,40,200,120,40,90,40,50,100,120,45});
+        jt.setAlinearColumna(new int[]{2,2,1,2,2,2,2,0,0,0,0,2,2,0,0,1});
+
         ArrayList vc=new ArrayList();
         vc.add(emp_codiE);
         vc.add(avc_anoE);
@@ -1083,6 +1116,9 @@ public class ManAlbRuta extends ventanaPad implements PAD
         vc.add(alr_paletsE);
         vc.add(cli_codiE);
         vc.add(cli_nombE);
+        vc.add(cli_direeE);
+        vc.add(cli_codpoeE);
+        vc.add(cli_pobleE);
         vc.add(avc_unidE);
         vc.add(avc_kilosE);
         vc.add(alr_horrepE);
@@ -1098,6 +1134,14 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         jt.setFormatoCampos();
         jt.setFormatoColumna(JT_REPET, "B-");
+        jt.setToolTipHeader(0, "Empresa");
+        jt.setToolTipHeader(1, "Ejercicio");
+        jt.setToolTipHeader(2, "Serie");
+        jt.setToolTipHeader(3, "Numero Albaran");
+        jt.setToolTipHeader(JT_BULTOS, "Bultos");
+        jt.setToolTipHeader(JT_BULTOS, "Bultos");
+        jt.setToolTipHeader(JT_PALETS, "Palets");
+        jt.getPopMenu().add(BimprEti);
         Tpanel1.addTab("Albaranes", jt);
 
         ArrayList vf= new ArrayList();
@@ -1170,6 +1214,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CButton BInsAuto;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
+    private javax.swing.JMenuItem BimprEti;
     private gnu.chu.controles.CButtonMenu Bimpri;
     private gnu.chu.controles.CButton BirGrid;
     private gnu.chu.controles.CPanel PPie;
@@ -1217,7 +1262,10 @@ public class ManAlbRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CTextField cli_codiE;
+    private gnu.chu.controles.CTextField cli_codpoeE;
+    private gnu.chu.controles.CTextField cli_direeE;
     private gnu.chu.controles.CTextField cli_nombE;
+    private gnu.chu.controles.CTextField cli_pobleE;
     private gnu.chu.controles.CTextField emp_codiE;
     private gnu.chu.controles.CTextField fvc_anoE;
     private gnu.chu.controles.CTextField fvc_clicodE;
@@ -1309,7 +1357,30 @@ public class ManAlbRuta extends ventanaPad implements PAD
                     jt.requestFocusInicioLater();
               }
          });
-         
+         BimprEti.addActionListener(new ActionListener()
+         {
+              @Override
+              public void actionPerformed(ActionEvent e)
+              {
+                  if (jt.isVacio())
+                      return;
+                
+                  String res=mensajes.mensajeGetTexto("Numero Etiquetas", "Imprimir etiqueta",ManAlbRuta.this, 
+                      jt.getValString(jt.getSelectedRowDisab(),JT_BULTOS));
+                  int numEti=0;
+                  if (res==null)
+                      return;
+                  try {
+                    numEti=Integer.parseInt(res.trim());
+                  } catch (NumberFormatException ex){ return; }
+                  if (numEti<=0 || numEti>=99)
+                  {
+                      msgBox("Numero de etiquetas NO valido");
+                      return;
+                  }
+                  imprEtiqueta(alr_numeE.getValorInt(),jt.getSelectedRowDisab()+1,numEti);
+              }
+         });
          Bimpri.addActionListener(new ActionListener()
          {
               @Override
@@ -1325,7 +1396,45 @@ public class ManAlbRuta extends ventanaPad implements PAD
               }
          });
     }
-    
+    void imprEtiqueta(int alrNume,int alrOrden, int numCopias)
+    {
+        try
+        {
+            String s="select * from v_albruta where alr_nume="+alrNume+
+                " and alr_orden="+alrOrden;
+            if (!dtStat.select(s))
+            {
+                msgBox("No encontrado salida a ruta para este  Albaran");
+                return;
+            }
+            
+            if (jr==null)
+                jr = Listados.getJasperReport(EU,"etiqDireccion");
+            
+            java.util.HashMap mp = new java.util.HashMap();
+            
+            mp.put("logotipo",Iconos.getPathIcon()+LOGOTIPO);
+            mp.put("documento",dtStat.getString("emp_codi")+"-"+dtStat.getString("avc_ano")+
+                dtStat.getString("avc_serie")+dtStat.getString("avc_nume"));
+            mp.put("cli_nomen",dtStat.getString("cli_nomen"));
+            mp.put("cli_nomen",dtStat.getString("cli_nomen"));
+            mp.put("cli_diree",dtStat.getString("cli_diree"));
+            mp.put("cli_poble",dtStat.getString("cli_poble"));
+            mp.put("cli_codpoe",dtStat.getString("cli_codpoe"));
+       
+            ResourceBundle rsB=ResourceBundle.getBundle("gnu.chu.anjelica.locale.jasper",Locale.getDefault());
+            mp.put(JRParameter.REPORT_LOCALE,Locale.getDefault());
+            mp.put(JRParameter.REPORT_RESOURCE_BUNDLE,rsB);
+            
+            JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JREmptyDataSource());
+            if (EU.getSimulaPrint()) 
+                return;
+            gnu.chu.print.util.printJasper(jp, EU,numCopias);
+        } catch (JRException  | SQLException  | PrinterException ex)
+        {
+            Error("Error al imprimir etiqueta",ex);
+        }
+    }
     void insertarAuto()
     {
         try
@@ -1348,7 +1457,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
             }
             String fecIni=Formatear.getFecha(Formatear.sumaDiasDate(alr_fechaE.getDate(),-7),"yyyy-MM-dd");
             String s="select c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,"
-                + "c.cli_codi,c.avc_clinom,avc_kilos,avc_unid,cl.cli_nomb,cli_horenv,cli_comenv from v_albavec as c,v_cliente as cl where c.cli_codi = cl.cli_codi and cl.rut_codi = '"+rut_codiE.getText()+"'"+
+                + "c.cli_codi,c.avc_clinom,avc_kilos,avc_unid,cl.cli_nomen,cl.cli_diree,cl.cli_poble,"
+                + "cl.cli_codpoe,cli_horenv,cli_comenv from v_albavec as c,v_cliente as cl where c.cli_codi = cl.cli_codi and cl.rut_codi = '"+rut_codiE.getText()+"'"+
                 " and c.avc_fecalb between '"+fecIni+"' and '"+alr_fechaE.getFechaDB()+"'";
             if (! dtCon1.select(s))
             {
@@ -1372,8 +1482,10 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 a.add("1");
                 a.add("1"); // Palets
                 a.add(dtCon1.getString("cli_codi"));
-                a.add(dtCon1.getString("avc_clinom",true).equals("")?dtCon1.getString("cli_nomb"):dtCon1.getString("avc_clinom",true));
-                
+                a.add(dtCon1.getString("avc_clinom",true).equals("")?dtCon1.getString("cli_nomen"):dtCon1.getString("avc_clinom",true));
+                a.add(dtCon1.getString("cli_diree"));
+                a.add(dtCon1.getString("cli_codpoe"));
+                a.add(dtCon1.getString("cli_poble"));                
                 a.add(dtCon1.getString("avc_unid"));
                 a.add(dtCon1.getString("avc_kilos"));
                 a.add(dtCon1.getString("cli_horenv"));
@@ -1652,6 +1764,10 @@ public class ManAlbRuta extends ventanaPad implements PAD
         dtAdd.setDato("alr_unid",jt.getValorDec(nlGrid,JT_UNID));
         dtAdd.setDato("alr_horrep",jt.getValString(nlGrid,JT_HORREP));
         dtAdd.setDato("alr_comrep",jt.getValString(nlGrid,JT_COMREP));
+        dtAdd.setDato("cli_nomen",jt.getValString(nlGrid,JT_CLINOMB));
+        dtAdd.setDato("cli_diree",jt.getValString(nlGrid,JT_CLIDIR));
+        dtAdd.setDato("cli_codpoe",jt.getValString(nlGrid,JT_CLICP));
+        dtAdd.setDato("cli_poble",jt.getValString(nlGrid,JT_CLIPOBL));
         dtAdd.setDato("alr_repet",jt.getValBoolean(nlGrid,JT_REPET)?-1:0);
        
         dtAdd.update();
@@ -1745,6 +1861,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     
     public void activar(boolean b,int opcion) {
         jt.setEnabled(b);
+        BimprEti.setEnabled(!b);
         jtFra.setEnabled(b);
         Pcabe.setEnabled(b);
         
@@ -1760,8 +1877,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
                
         alr_fechaE.setEnabled(b);
         rut_codiE.setEnabled(b);        
-        tra_codiE.setColumnaAlias("usu_nomb");
-        veh_codiE.setColumnaAlias("veh_codi");
+      
         
         alr_comentE.setEnabled(b);
         Baceptar.setEnabled(b);
