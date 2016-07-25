@@ -384,6 +384,11 @@ public void setAltButton(AbstractButton b)
   @Override
   public boolean getQuery() {return false;}
 
+  /**
+   * Devuelve el boton especificado
+   * @param tecla
+   * @return 
+   */
   public AbstractButton getButton(int tecla)
  {
    return estatic.getButtonPanel(tecla,htButton, this);

@@ -482,6 +482,7 @@ public class CGridEditable extends Cgrid implements CQuery {
   {
       swOrden=false;
   }
+ 
   /**
    * Indica si se pueden ajustar el ancho de las columnas con el raton
    *

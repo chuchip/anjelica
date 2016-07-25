@@ -665,11 +665,13 @@ public class Cgrid extends CPanel implements Serializable
     }
     /**
     * Cambiar el Renderer de una columna
+     * @param colu
+     * @param tcr
     */
     public void setRenderer(int colu,miCellRender tcr)
     {
        if (colu<0 || colu>=tableView.getColumnCount()){
-            msgError="Error(setColorColumna):La columna no existe.";
+            msgError="Error(setRenderer): La columna"+colu+" no existe.";
             return;
         }
         TableColumn col=tableView.getColumn(tableView.getColumnName(colu));
@@ -3581,6 +3583,7 @@ public class Cgrid extends CPanel implements Serializable
      }
      /**
      * Devuelve la Posicion Y en la parte de arriba de la Linea activa.
+     * @return 
      */
     public int getPosY()
     {
@@ -3635,6 +3638,7 @@ public class Cgrid extends CPanel implements Serializable
           editar.add("N");
         }
       }
+      
     @Override
       public Class getColumnClass(int col) {
         return getValueAt(0,col).getClass();
@@ -3705,7 +3709,7 @@ public class Cgrid extends CPanel implements Serializable
                                                boolean isSelected,
                                                boolean expanded,
                                                boolean leaf, int row) {
-       String         stringValue = tree.convertValueToText(value, isSelected,
+       String   stringValue = tree.convertValueToText(value, isSelected,
                                            expanded, leaf, row, false);
 
        delegate.setValue(stringValue);

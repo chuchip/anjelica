@@ -1,6 +1,7 @@
 package gnu.chu.anjelica.almacen;
 
 import gnu.chu.anjelica.pad.MantTarifa;
+import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.controles.*;
 import java.awt.*;
 import java.sql.*;
@@ -267,7 +268,8 @@ public class pstockAct extends CPanel
     s = "SELECT fpr_codi,fpr_nomb FROM v_famipro  "+
         (agr_codiE.getValorInt() == 0 ? "" : " where agr_codi = " + agr_codiE.getValorInt()) +
         " order by fpr_nomb";
-    Bprimero=insFamilia(0,"*TODOS*");
+    int famCodiOri=0;
+    Bprimero=insFamilia(famCodiOri,"*TODOS*");
     if (opVerProd!=VER_ULTVENTAS)
         Bprimero=null;
     if (dtCon1.select(s))
@@ -275,13 +277,20 @@ public class pstockAct extends CPanel
       do
       {
         if (Bprimero==null)
+        {
           Bprimero=insFamilia(dtCon1.getInt("fpr_codi"),dtCon1.getString("fpr_nomb"));
+          famCodiOri=dtCon1.getInt("fpr_codi");
+        }
         else
           insFamilia(dtCon1.getInt("fpr_codi"),dtCon1.getString("fpr_nomb"));
       }   while (dtCon1.next());
     }
+    
     if (Bprimero != null)
-      Bprimero.doClick();
+    {
+      cambioFamilia(famCodiOri, Bprimero);
+//      Bprimero.doClick();
+    }
   }
 
   CToggleButton insFamilia(int fprCodi,String fprNomb) throws Exception
@@ -337,14 +346,8 @@ public class pstockAct extends CPanel
 //    {
 //      public void run()
 //      {
-        try
-        {
           verProductos0(famCodi,0);
-        }
-        catch (Exception k)
-        {
-          padre.Error("Error al Visualizar Productos de Familia: " + famCodi, k);
-        }
+     
 //
 //      }
 //    };
@@ -353,11 +356,10 @@ public class pstockAct extends CPanel
   public void verProducto(int proCodi) throws Exception
   {
     verProductos0(0,proCodi);
-  }
-  void verProductos0(int famCodi,int proCodi) throws Exception
+  } 
+  
+  public void verProductos0(int famCodi,int proCodi) throws Exception
   {
-    padre.setEnabled(false);
-    Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
     fam_codi= famCodi;
     limpiaPanel(Pprod, null);
 
@@ -366,6 +368,7 @@ public class pstockAct extends CPanel
     {
       s = "SELECT pro_codi,pro_nomb,pro_nomcor,pro_stock,pro_stkuni FROM v_articulo  " +
           " WHERE 1=1" +
+          " and pro_tiplot = 'V' "+
           (fam_codi != 0 ? " and  fam_codi = " + famCodi : "") +
           (opVerProd == VER_CONSTOCK ? " and pro_stkuni > 0 " : "") + // Solo muestro los registros con unidades
           (opVerProd == VER_ULTVENTAS ? " and pro_codi in (select distinct(pro_codi) from v_albavel l, v_albavec AS C" +
@@ -397,14 +400,14 @@ public class pstockAct extends CPanel
     gc.setTime(fec1);
     fefise = Formatear.sumaDias(pdc_fecpedE.getText(), "dd-MM-yyyy", 7 - gc.get(GregorianCalendar.DAY_OF_WEEK));
 
-    padre.mensaje("Buscando productos de Familia: "+famCodi,false);
+    padre.mensajeRapido("Buscando productos de Familia: "+famCodi);
     double precio;
     vt.clear();
     if (dtCon1.select(s))
     {
       do
       {
-        padre.mensaje("Buscando producto: "+dtCon1.getString("pro_nomcor")+ " de Familia: "+famCodi,false);
+        padre.mensajeRapido("Buscando producto: "+dtCon1.getString("pro_nomcor")+ " de Familia: "+famCodi);
         if (almCodi!=0)
         {
           s = "SELECT SUM(stp_kilact) as pro_stock,sum(stp_unact) as pro_stkuni " +
@@ -423,13 +426,16 @@ public class pstockAct extends CPanel
           unidad = dtCon1.getDouble("pro_stkuni", true);
         }
         precio=MantTarifa.getPrecTar(dtStat, dtCon1.getInt("pro_codi"), tar_codiE.getValorInt(), pdc_fecpedE.getText());
+        double ultPrecio=pdalbara.getUltimoPrecio(dtStat,dtCon1.getInt("pro_codi"),cliCodi);
         if (incPedid)
           getAcumPedid(dtCon1.getInt("pro_codi"), pdc_fecpedE.getText(),almCodi);
         CButton BProd = new CButton("<html>"+Formatear.format(dtCon1.getString("pro_codi"), "####9")+
                                    " <b>"+Formatear.ajusIzq(dtCon1.getString("pro_nomcor"), 15) +"</b><br>"+
                                      Formatear.format(unidad, "----9") +"U "+
                                      Formatear.format(stock, "--,--9") +"K "+
-                                     Formatear.format(precio,"##9.99")+"\u20AC</html>");
+                                     Formatear.format(precio,"##9.99")+"/"+
+                                     Formatear.format(ultPrecio,"##9.99")+"\u20AC"+
+                                      "</html>");
         BProd.setFont(new java.awt.Font("Courier New", 0, 11));
         BProd.setToolTipText(dtCon1.getString("pro_nomb"));
         BProd.setMargin(new Insets(0, 0, 0, 0));
@@ -471,11 +477,9 @@ public class pstockAct extends CPanel
           Sprod.getViewport().remove(PDesProd);
           Sprod.getViewport().add(Pprod, null);
         }
-        padre.mensaje("");
-        padre.mensajeErr("Productos encontrados ",false);
-        padre.setEnabled(true);
-//      }
-//    });
+        
+//        padre.mensajeErr("Productos encontrados ",false);
+//        padre.setEnabled(true);
 
   }
   /**
@@ -628,14 +632,15 @@ public class pstockAct extends CPanel
 
   void verDesglProd(final CButton bt, final int proCodi, final double precio)
   {
-    new miThread("")
-    {
-            @Override
-      public void run()
-      {
-        verDesglProd0(bt, proCodi, precio);
-      }
-    };
+//    new miThread("")
+//    {
+//            @Override
+//      public void run()
+//      {
+//        verDesglProd0(bt, proCodi, precio);
+//      }
+//    };
+      verDesglProd0(bt, proCodi, precio);
   }
   /**
    * Busca Desglose de un producto.
@@ -645,9 +650,9 @@ public class pstockAct extends CPanel
    */
   void verDesglProd0 (final CButton bt,int proCodi,double precio)
   {
-    Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-    padre.setEnabled(false);
-    padre.mensaje("Buscando Desglose producto: "+proCodi,false);
+//    Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+//    padre.setEnabled(false);
+//    padre.mensajeRapido("Buscando Desglose producto: "+proCodi);
 //    int x = 0, y = 1;
     int almCodi=alm_codiE.getValorInt();
     String fecped=pdc_fecpedE.getText();
@@ -748,7 +753,7 @@ public class pstockAct extends CPanel
       { 
         int prvCodi=dtCon1.getInt("prv_codi",true);
         String feccad=dtCon1.getFecha("feccad","dd-MM-yy");
-        String prvNomb="";
+
         limpiaPanel(PDesProd, null);
         
         vt.clear();
@@ -829,17 +834,17 @@ public class pstockAct extends CPanel
 
 //            Pprod.setVisible(false);
 //            PDesProd.setVisible(true);
-            padre.mensaje("");
-            padre.mensajeErr("Productos Desglosado ",false);
-            padre.setEnabled(true);
+           
+//            padre.mensajeErr("Productos Desglosado ",false);
+//            padre.setEnabled(true);
 //          }
 //        });
       }
       else
       {
         padre.msgBox("No encontrado desglose de Producto: " + proCodi);
-        padre.mensaje("");
-        padre.setEnabled(true);
+
+//        padre.setEnabled(true);
       }
     }
     catch (Exception k)

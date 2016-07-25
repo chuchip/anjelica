@@ -6,7 +6,7 @@ import javax.swing.*;
 /**
  *
  * <p>T�tulo: MENU </p>
- * <p>Descripci�n: Programa de entrada a Anjelica. </p>
+ * <p>Descripción: Programa de entrada a Anjelica. </p>
  * <p>Copyright: Copyright (c) 2005
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia P�blica General de GNU según es publicada por

@@ -53,7 +53,12 @@ public interface ejecutable
    * @return true si hubo un error en el constructor.
    */
   public boolean getErrorInit();
-
+  /**
+   * Devuelve true si el programa estaba ya lanzado
+   * @return 
+   */
+  public boolean isDuplicado();
+  public void setDuplicado(boolean swDuplicado);
   /**
    * Función que llamara el Menu, cuando añada las Ventanas al
    * LayeredPane.

@@ -14,7 +14,7 @@ import javax.swing.event.*;
  * <p>Título: ayuVenPro </p>
  * <p>Descripción: Muestra un Historico de ventas para un producto y un cliente</p>
  * <p>LLamado por las clases conVenProd y Covezore</p>
- * <p>Copyright: Copyright (c) 2005
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -66,9 +66,10 @@ public class ayuVenPro extends ventana
   {
     this.addInternalFrameListener(new InternalFrameAdapter()
     {
+      @Override
       public void internalFrameClosing(InternalFrameEvent e)
       {
-        precio=0;
+        
         matar();
       }
     });
@@ -76,6 +77,7 @@ public class ayuVenPro extends ventana
     {
       jt.tableView.addMouseListener(new MouseAdapter()
       {
+        @Override
         public void mouseClicked(MouseEvent m)
         {
           if (m.getClickCount() > 1 && jt.isVacio() == false)
@@ -89,9 +91,10 @@ public class ayuVenPro extends ventana
 
       jt.tableView.addKeyListener(new KeyAdapter()
       {
+        @Override
         public void keyPressed(KeyEvent e)
         {
-          if (e.getKeyCode() == e.VK_INSERT && jt.isVacio() == false)
+          if (e.getKeyCode() == KeyEvent.VK_INSERT && jt.isVacio() == false)
           {
             precio = jt.getValorDec(7);
             matar();
@@ -108,7 +111,7 @@ public class ayuVenPro extends ventana
     cPanel2.setMinimumSize(new Dimension(100, 50));
     cPanel2.setPreferredSize(new Dimension(100, 50));
 
-    Vector v= new Vector();
+    ArrayList v= new ArrayList();
     pro_codiL.setHorizontalAlignment(SwingConstants.RIGHT);
     pro_codiL.setHorizontalTextPosition(SwingConstants.LEADING);
     pro_codiL.setText("");
@@ -180,6 +183,7 @@ public class ayuVenPro extends ventana
   public void cargaDatos(conexion ct,String cliCodi,String cliNomb,String proCodi,String proNomb,
                          EntornoUsuario eu) throws Exception
   {
+    precio=0;
     dt.setConexion(ct);
     cli_codiL.setText(Formatear.format(cliCodi,"####9"));
     pro_codiL.setText(Formatear.format(proCodi,"####9"));
@@ -206,6 +210,7 @@ public class ayuVenPro extends ventana
     jt.setDatos(dt);
     javax.swing.SwingUtilities.invokeLater(new Thread()
     {
+      @Override
       public void run()
       {
         jt.requestFocusInicio();

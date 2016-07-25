@@ -68,6 +68,9 @@ public class CLPedidVen extends  ventana
     boolean verPrecio;
     String ARG_REPCODI = "";
     String ARG_SBECODI = "";
+    private final int JTCAB_EMPPED=0;
+    private final int JTCAB_EJEPED=1;
+    private final int JTCAB_NUMPED=2;
     private final int JTCAB_SERALB=12;
     private final int JTCAB_NUMALB= 13;   
     private final int JTCAB_EJEALB=11;
@@ -225,31 +228,59 @@ public class CLPedidVen extends  ventana
         }
         else
         { 
-            if (jtCabPed.getValorInt(JTCAB_EJEALB)==0)
+             if (jtCabPed.getValorInt(JTCAB_EJEALB)==0)
+             {
+                irPedido();
                 return;
-             ejecutable prog;
-             if ((prog=jf.gestor.getProceso(pdalbara.getNombreClase()))==null)
-                    return;
-            pdalbara cm=(pdalbara) prog;
-            if (cm.inTransation())
-            {
-               msgBox("Mantenimiento Albaranes de Ventas ocupado. No se puede realizar la busqueda");
-               return;
-            }
-            cm.PADQuery();
-            
-            cm.setSerieAlbaran(jtCabPed.getValString(JTCAB_SERALB));
-            cm.setNumeroAlbaran(jtCabPed.getValString(JTCAB_NUMALB));
-            cm.setEjercAlbaran(jtCabPed.getValorInt(JTCAB_EJEALB));
-
-            cm.ej_query();
-            jf.gestor.ir(cm);
+             }
+             if (jtCabPed.getSelectedRow()<=JTCAB_NUMPED)
+                irPedido();
+             else
+                irAlbaran();
+          
         }
       }
 
     });    
     }
-    
+    void irAlbaran()
+    {         
+        ejecutable prog;
+        if ((prog=jf.gestor.getProceso(pdalbara.getNombreClase()))==null)
+               return;
+       pdalbara cm=(pdalbara) prog;
+       if (cm.inTransation())
+       {
+          msgBox("Mantenimiento Albaranes de Ventas ocupado. No se puede realizar la busqueda");
+          return;
+       }
+       cm.PADQuery();
+
+       cm.setSerieAlbaran(jtCabPed.getValString(JTCAB_SERALB));
+       cm.setNumeroAlbaran(jtCabPed.getValString(JTCAB_NUMALB));
+       cm.setEjercAlbaran(jtCabPed.getValorInt(JTCAB_EJEALB));
+
+       cm.ej_query();
+       jf.gestor.ir(cm);
+    }
+    void irPedido() {
+        ejecutable prog;
+        if ((prog = jf.gestor.getProceso(pdpeve.getNombreClase())) == null)
+            return;
+        pdpeve cm = (pdpeve) prog;
+        if (cm.inTransation())
+        {
+            msgBox("Mantenimiento Pedidos de Ventas ocupado. No se puede realizar el Alta");
+            return;
+        }
+        cm.PADQuery();
+        cm.setEjercicioPedido(jtCabPed.getValorInt(JTCAB_EJEPED));
+        cm.setNumeroPedido(jtCabPed.getValorInt(JTCAB_NUMPED));
+        cm.setEmpresaPedido(jtCabPed.getValorInt(JTCAB_EMPPED));
+
+        cm.ej_query();
+        jf.gestor.ir(cm);
+    } 
     public String getCliNomb()
     {
         return jtCabPed.getValString(JTCAB_NOMCLI);
@@ -880,7 +911,7 @@ public class CLPedidVen extends  ventana
         cLabel22.setText("Ruta");
         cLabel22.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel22);
-        cLabel22.setBounds(350, 60, 40, 18);
+        cLabel22.setBounds(350, 65, 40, 18);
 
         rut_codiE.setAncTexto(30);
         rut_codiE.setPreferredSize(new java.awt.Dimension(152, 18));

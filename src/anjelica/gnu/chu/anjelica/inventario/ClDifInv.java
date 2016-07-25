@@ -22,6 +22,7 @@ package gnu.chu.anjelica.inventario;
 * @version 1.0
 */
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.almacen.Comvalm;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.listados.Listados;
@@ -217,7 +218,7 @@ public class ClDifInv extends ventana {
               if (jf==null)
                   return;
               ejecutable prog;
-              if ((prog=jf.gestor.getProceso("gnu.chu.anjelica.almacen.Comvalm"))==null)
+              if ((prog=jf.gestor.getProceso(Comvalm.getNombreClase()))==null)
                   return;
               gnu.chu.anjelica.almacen.Comvalm cm=(gnu.chu.anjelica.almacen.Comvalm) prog;
               for (int n=jt.getSelectedRow();n>=0;n--)

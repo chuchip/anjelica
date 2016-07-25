@@ -39,41 +39,9 @@ public class cliAvcPanel extends cliPanel
   int empCodi;
   String avcSerie;
   int avcNume=0;
-  Principal jf;
+ 
   
-  public void iniciar(Principal principal)
-  {
-      if (principal==null)
-          return;
-      jf=principal;
-      cli_codiE.addMouseListener(new MouseAdapter()
-      {
-        @Override
-        public void mouseClicked(MouseEvent e)
-        {
-            if (!cli_codiE.isNull() && e.getClickCount()>1)
-                llamaMantClientes();
-        }
-      }); 
-  }
-  void llamaMantClientes()
-  {
-     
-             ejecutable prog;
-             if ((prog=jf.gestor.getProceso(pdclien.getNombreClase()))==null)
-                    return;
-            pdclien cm=(pdclien) prog;
-            if (cm.inTransation())
-            {
-               mensajes.mensajeAviso("Mantenimiento Clientesocupado. No se puede realizar la busqueda");
-               return;
-            }
-            cm.PADQuery();
-            
-            cm.setCliente(cli_codiE.getValorInt());
-            cm.ej_query();
-            jf.gestor.ir(cm);
-  }
+  
   public void setAvcAno(int avc_ano)
   {
     this.avcAno = avc_ano;

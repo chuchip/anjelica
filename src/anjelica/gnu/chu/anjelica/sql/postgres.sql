@@ -590,6 +590,12 @@ create table anjelica.albvenserc
     constraint ix_albserc primary key(avs_nume),
     CONSTRAINT con1 CHECK ( avc_nume >0)
 );
+create view v_albdepserv as select sa.*,ca.avc_fecalb,ca.avc_id from albvenserc as sa, v_albavec as ca
+where ca.avc_ano=sa.avc_ano
+and  ca.emp_codi = sa.emp_codi
+and  ca.avc_serie= sa.avc_serie
+and  ca.avc_nume= sa.avc_nume;
+grant select on anjelica.v_albventa to public;
 --
 -- Lineas de  de Albaranes servidos en deposito
 --
@@ -681,7 +687,7 @@ create index ix_albavel2 on anjelica.v_albavel (pro_codi,avc_cerra);
 create index ix_albavel3 on anjelica.v_albavel (avl_fecalt);
 
 drop view anjelica.v_albventa;
-create view anjelica.v_albventa as select c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,
+create view anjelica.v_albventa as select c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,
 cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
 avc_basimp,avc_kilos,avc_unid,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,

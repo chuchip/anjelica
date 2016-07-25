@@ -75,6 +75,7 @@ public class ventana extends CInternalFrame implements ejecutable
 
   public BorderLayout borderLayout1 = new BorderLayout();
   public boolean errorInit=false; // Indica si hubo un error en el Constructor.
+  boolean duplicado=false;
   public escribe systemOut;
 
 
@@ -437,6 +438,14 @@ public class ventana extends CInternalFrame implements ejecutable
   public boolean getErrorInit()
   {
     return errorInit;
+  }
+  public boolean isDuplicado()
+  {
+    return duplicado;
+  }
+  public void setDuplicado(boolean swDuplicado)
+  {
+    duplicado=swDuplicado;
   }
 
   public void setErrorInit(boolean errInit)

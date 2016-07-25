@@ -1,10 +1,13 @@
 package gnu.chu.camposdb;
 
+import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.pad.pdclien;
 import java.sql.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import gnu.chu.controles.*;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.winayu.*;
@@ -32,6 +35,7 @@ import gnu.chu.winayu.*;
  */
 public class cliPanel extends CPanel
 {
+  Principal jf;
   private Integer peso=1;
   private boolean swControl=true;
   AyuClientes ayucli;
@@ -99,7 +103,39 @@ public class cliPanel extends CPanel
       ayucli.dispose();
     ayucli=null;
     super.finalize();
-  };
+  }
+  public void iniciar(Principal principal)
+  {
+      if (principal==null)
+          return;
+      jf=principal;
+      cli_codiE.addMouseListener(new MouseAdapter()
+      {
+        @Override
+        public void mouseClicked(MouseEvent e)
+        {
+            if (!cli_codiE.isNull() && e.getClickCount()>1)
+                llamaMantClientes();
+        }
+      }); 
+  }
+  void llamaMantClientes()
+  {
+        ejecutable prog;
+        if ((prog=jf.gestor.getProceso(pdclien.getNombreClase()))==null)
+               return;
+       pdclien cm=(pdclien) prog;
+       if (cm.inTransation())
+       {
+          mensajes.mensajeAviso("Mantenimiento Clientes ocupado. No se puede realizar la busqueda");
+          return;
+       }
+       cm.PADQuery();
+
+       cm.setCliente(cli_codiE.getValorInt());
+       cm.ej_query();
+       jf.gestor.ir(cm);
+  }
   public void setMsgError(String msgErr)
   {
     MsgError=msgErr;
@@ -173,6 +209,7 @@ public class cliPanel extends CPanel
   public boolean getBotonConsultar() {
     return botonConsultar;
   }
+  @Override
   public void requestFocus()
   {
     super.requestFocus();
@@ -296,7 +333,11 @@ public class cliPanel extends CPanel
     Error=! checkCond();
     return controlar1(caso,cliNomb);
   }
-
+  
+  public CTextField getCampoCiente()
+  {
+      return cli_codiE;
+  }
   boolean controlar1(int caso, String cliNomb) throws  SQLException
   {
     if (!Error && cli_codiE.getValorInt()!=0)

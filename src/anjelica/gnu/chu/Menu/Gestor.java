@@ -91,7 +91,7 @@ public class Gestor extends Thread implements Serializable
   /**
   * Peso máximo de los programas ejecutados por el usuario
   */
-  private final int pesoMaximo = 100;
+  private final int pesoMaximo = 200;
 
   /**
   * Tabla de procesos
@@ -141,18 +141,18 @@ public class Gestor extends Thread implements Serializable
     {
       // Busca si lleva algun parametro
       StringTokenizer sTo = new StringTokenizer(nombreClase);
-      Vector param = new Vector();
+      ArrayList<String> param = new ArrayList();
       // Guarda el Nombre de la Class
       nombreClase = sTo.nextToken();
 
       // Guarda un Array con todos los parametros
       while (sTo.hasMoreTokens())
-            param.addElement(sTo.nextToken());
+            param.add(sTo.nextToken());
 
       if (param.size() > 0) {
          Hashtable ht = new Hashtable();
          for (int i=0;i<param.size();i++) {
-             String p = param.elementAt(i).toString();
+             String p = param.get(i);
              int x = p.indexOf('=');
              if (x > 0)
                 ht.put(p.substring(0, x), p.substring(x+1));
@@ -162,8 +162,10 @@ public class Gestor extends Thread implements Serializable
 
          Object[] paramTmp = new Object[parametros.length + 1];
          int pos=0;
-         for (int i=0;i<parametros.length;i++)
-             paramTmp[pos++] = parametros[i];
+         for (Object parametro : parametros)
+         {
+              paramTmp[pos++] = parametro;
+         }
          paramTmp[pos] = ht;
          parametros = paramTmp;
       }
@@ -173,7 +175,7 @@ public class Gestor extends Thread implements Serializable
       String sPID = ""+PID;
       if (sPID.substring(sPID.length()-1).equals("1"))
          PID++;
-      if (estado.getText().indexOf("*DIRECTO*")!=-1)
+      if (estado.getText().contains("*DIRECTO*"))
           ejecutaThread(clase,estado,parametros); 
       else  
           javax.swing.SwingUtilities.invokeLater(new Hilo(this, clase, grupo, ""+PID, parametros, estado));
@@ -201,9 +203,9 @@ public class Gestor extends Thread implements Serializable
       if (c != null) {
          c.validate();
          c.repaint();
-      }
-      return;
-    } catch(Throwable e) {
+      }      
+    } catch(Throwable e)
+    {
       mensajes.mensajeAviso("Error en Programa: " + nombreClase + "\nPosiblemente el nombre este mal escrito");
       SystemOut.print(e);
       new miThread("Activando Menu ...") {
@@ -224,8 +226,7 @@ public class Gestor extends Thread implements Serializable
       if (c != null) {
          c.validate();
          c.repaint();
-      }
-      return;
+      }      
     }
   }
 
@@ -250,35 +251,40 @@ public class Gestor extends Thread implements Serializable
   * Apunta el objeto en la tabla de procesos del sistema, en el caso de que no se
   * pueda ejecutar el proceso la función devolvera falso. Si se puede ejecutar
   * añadira un eventlistener a las ventanas para detectar su finalización.
-  * @param miobjeto el objeto que se pretende ejecutar
+  * @param miObjeto el objeto que se pretende ejecutar
   * @param chequeo booleano para indicar que se realice chequeo de copias
   * @return true si el objeto puede ser ejecutado
   */
   public synchronized boolean apuntar(ejecutable miObjeto, boolean chequeo) {
     if (principal.dt1.getConexion() == null)
        return true;
-    String descripcion = miObjeto.getNombre();
+     miObjeto.setDuplicado(false);
+//    String descripcion = miObjeto.getNombre();
     int result = JOptionPane.YES_OPTION;
     String nombre = miObjeto.getClass().getName();
-    boolean matable = miObjeto.isMatable();
+   // boolean matable = miObjeto.isMatable();
     int peso = miObjeto.getPeso();
     int maxCopias = miObjeto.getMaxCopias();
     int lePID = tabla.nProc;
-    Enumeration valores = tabla.getProgramInfo();
+    Enumeration<InfoProgram> valores = tabla.getProgramInfo();
     InfoProgram elem;
     int cuenta = 1;
+    int pidAntiguo=0;
     boolean esLanzable;
 
     while(valores.hasMoreElements()) {
-      elem = (InfoProgram)valores.nextElement();
+      elem = valores.nextElement();
       if(elem.getNombre().compareTo(nombre)==0)
+      {
+        pidAntiguo=elem.getPID();
         cuenta++;
+      }
     }
 
     if (cuenta > maxCopias)
       esLanzable = false;
     else
-      esLanzable = ((peso+pesoActual) > pesoMaximo) ? false : true;
+      esLanzable = ((peso+pesoActual) <= pesoMaximo);
 
     if(esLanzable)
     {
@@ -292,16 +298,17 @@ public class Gestor extends Thread implements Serializable
       if(result == JOptionPane.YES_OPTION)
       {
         pesoActual += peso;
-        if(cuenta > 1)
-          // hay mas de una copia en circulaci�n
+        if(cuenta > 1) // hay mas de una copia en circulación          
           miObjeto.setNombre(miObjeto.getNombre()+" ("+cuenta+")");
-
         tabla.anadir(new StringBuffer().append(miObjeto.getNombre()), miObjeto,
-          new StringBuffer().append(lePID), new StringBuffer().append(nombre));
-
+            new StringBuffer().append(lePID), new StringBuffer().append(nombre));
       }
       else
+      {      
+        miObjeto.setDuplicado(true);
+        tabla.ir(""+pidAntiguo);        
         return false;
+      }
    }
    return esLanzable;
   }
@@ -325,13 +332,15 @@ public class Gestor extends Thread implements Serializable
           }
         });
         JButton bprog = new JButton(miObjeto.getNombre());
+        bprog.setHorizontalAlignment(SwingConstants.CENTER);
+        
         bprog.setToolTipText(miObjeto.getNombre());
         bprog.addActionListener(new ActionListener()
         {
           @Override
           public void actionPerformed(ActionEvent e)
           {
-            setVisible(miInternalFrame);
+            ir(miInternalFrame);
           }
         });
         bprog.setMargin(new Insets(0, 0, 0, 0));
@@ -913,7 +922,7 @@ public class Gestor extends Thread implements Serializable
       Constructor elConstructor = miClase.getConstructor(tipos);
       ejecutable bicho = (ejecutable)elConstructor.newInstance(misParametros);
       if (vl != null) {
-        if (!((ejecutable)bicho).getErrorInit())
+        if (!bicho.getErrorInit())
         {
           posicionaComponent(((Component)bicho), miClase.getName());
           ((ejecutable)bicho).setLabelEstado(estado);
@@ -947,8 +956,11 @@ public class Gestor extends Thread implements Serializable
         }
         else
         {
-          mensajes.mensajeAviso("Error al Iniciar Programa");
-          borra(bicho);
+          if (! bicho.isDuplicado())
+          {
+              mensajes.mensajeAviso("Error al Iniciar Programa");
+              borra(bicho);
+          }
         }
       }
     }

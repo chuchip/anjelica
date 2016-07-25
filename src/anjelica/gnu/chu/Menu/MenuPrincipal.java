@@ -48,23 +48,26 @@ public class MenuPrincipal extends CInternalFrame
   public CLabel Usuario = new CLabel("");
   CTextField Eleccion = new CTextField();
   CButton Anterior = new CButton("Menu Anterior", Iconos.getImageIcon("previous")) {
+    @Override
     public boolean isFocusTraversable() { return false; }
   };
   CButton Inicial = new CButton("Menu Inicial", Iconos.getImageIcon("up")) {
+    @Override
     public boolean isFocusTraversable() { return false; }
   };
   CButton Ocultar = new CButton("Ocultar Menu", Iconos.getImageIcon("fileclose")) {
+    @Override
     public boolean isFocusTraversable() { return false; }
   };
 
-  static final int nLineas = 24;
+  static final int NUMLINEAS = 24;
   int wi = 0;
   int wt = 0;
 
-  CLabel[] mnu_nuli = new CLabel[nLineas];
-  CButton[] mnu_bton = new CButton[nLineas];
-  CLabel[] mnu_acro = new CLabel[nLineas];
-  CLabel[] mnu_defi = new CLabel[nLineas];
+  CLabel[] mnu_nuli = new CLabel[NUMLINEAS];
+  CButton[] mnu_bton = new CButton[NUMLINEAS];
+  CLabel[] mnu_acro = new CLabel[NUMLINEAS];
+  CLabel[] mnu_defi = new CLabel[NUMLINEAS];
 
   conexion BaseDatos;
   DatosTabla Query;
@@ -84,7 +87,7 @@ public class MenuPrincipal extends CInternalFrame
     /**
 	*  Contiene la lineas del Menu actual
     */
-  Object LineaMenu[][]= new Object[nLineas][12];
+  Object LineaMenu[][]= new Object[NUMLINEAS][12];
 
   Font font;
 
@@ -228,7 +231,7 @@ public class MenuPrincipal extends CInternalFrame
     else
       font = new Font("", 0, 11);
 
-    for (wi = 0; wi < nLineas; wi++)
+    for (wi = 0; wi < NUMLINEAS; wi++)
     {
       mnu_nuli[wi] = new CLabel();
       mnu_bton[wi] = new CButton();
@@ -392,7 +395,7 @@ public class MenuPrincipal extends CInternalFrame
       case KeyEvent.VK_DOWN:
         do {
           b++;
-          if (b == nLineas)
+          if (b == NUMLINEAS)
             b=0;
         } while (!mnu_bton[b].isVisible());
         break;
@@ -400,14 +403,14 @@ public class MenuPrincipal extends CInternalFrame
         do {
           b--;
           if (b == -1)
-            b=nLineas-1;
+            b=NUMLINEAS-1;
         } while (!mnu_bton[b].isVisible());
         break;
       case KeyEvent.VK_LEFT:
       case KeyEvent.VK_RIGHT:
         if (!Eleccion.getText().equals(""))
            break;
-        int s = nLineas/2;
+        int s = NUMLINEAS/2;
         if (b >= s)
           if (mnu_bton[b-s].isVisible())
             b=b-s;
@@ -482,11 +485,11 @@ public class MenuPrincipal extends CInternalFrame
  public void CargarMenu()
  {
    Thread.currentThread().setPriority(8);
-   ImageIcon[] mnu_icon = new ImageIcon[nLineas];
+   ImageIcon[] mnu_icon = new ImageIcon[NUMLINEAS];
    ImageIcon icon = new ImageIcon("");
 
    // Limpia el SubMenu Actual
-   for (wi = 0; wi < nLineas; wi++)
+   for (wi = 0; wi < NUMLINEAS; wi++)
    {
      for (wt = 0; wt < 12; wt++)
      {
@@ -562,7 +565,7 @@ public class MenuPrincipal extends CInternalFrame
    }
 
    // Visualiza el SubMenu
-   for (wi = 0; wi < nLineas; wi++)
+   for (wi = 0; wi < NUMLINEAS; wi++)
    {
      if (LineaMenu[wi][0] != null)
      {
@@ -777,7 +780,7 @@ public class MenuPrincipal extends CInternalFrame
     btnActivo = btnNuevo;
     while (!mnu_bton[btnActivo].isVisible()) {
       btnActivo++;
-      if (btnActivo == nLineas) {
+      if (btnActivo == NUMLINEAS) {
         btnActivo=0;
         repeticiones++;
       }

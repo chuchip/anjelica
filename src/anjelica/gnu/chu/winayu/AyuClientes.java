@@ -156,7 +156,7 @@ public class AyuClientes extends ventana
         s+=(s.equals("")?"":"and ")+" zon_codi= '"+zon_codiE.getText()+"'";
     try
     {
-        strSql = "select cli_codi,cli_nomb,cli_nomco,cli_pobl " +
+        strSql = "select cli_codi,cli_nomco,cli_pobl,cli_nomb " +
             " FROM clientes " +
             " WHERE " + s +
             (zona==null?"":" AND cli_zonrep LIKE '"+zona+"'")+
@@ -247,11 +247,11 @@ public class AyuClientes extends ventana
         jt.setBuscarVisible(false);
         ArrayList cabecera=new ArrayList();
         cabecera.add("Codigo"); // 0
-        cabecera.add("Nombre Fiscal"); //1
-        cabecera.add("Nombre Social"); // 2
-        cabecera.add("Poblaccion"); // 3
+        cabecera.add("Nombre Social"); // 1
+        cabecera.add("Poblaccion"); // 2
+        cabecera.add("Nombre Fiscal"); //3
         jt.setCabecera(cabecera);
-        int i []= {50,300,300,300};
+        int i []= {30,200,130,200};
         jt.setAnchoColumna(i);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

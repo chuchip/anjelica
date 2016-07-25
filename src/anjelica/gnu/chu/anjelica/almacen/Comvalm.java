@@ -117,7 +117,7 @@ public class Comvalm extends ventana
     }
   }
    public static String getNombreClase()
-   {
+   {        
      return "gnu.chu.anjelica.almacen.Comvalm";
    }
   private void ponParametros(Hashtable<String,String> ht)

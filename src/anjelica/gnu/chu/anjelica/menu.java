@@ -133,6 +133,7 @@ public class menu extends JFrame
   JMenuItem clpevepr = new JMenuItem("Cons Ped.Ventas x Producto");
   JMenuItem clAlbSinCosto = new JMenuItem();
   JMenuItem pdalbara = new JMenuItem();
+  JMenuItem cldepcli = new JMenuItem();
   JMenuItem lialbara = new JMenuItem();
   JMenuItem clrelpedven = new JMenuItem();
 
@@ -597,6 +598,12 @@ public class menu extends JFrame
         pdalbara_actionPerformed(e);
       }
     });
+    cldepcli.setText("Dep.Clientes");
+    cldepcli.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        cldepcli_actionPerformed();
+      }
+    });
      lialbara.setText("List. Albaranes");
     lialbara.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -1019,6 +1026,7 @@ public class menu extends JFrame
     popupDesp.add(pdtipdes);
     JpopupVentas.add(clAlbSinCosto);
     JpopupVentas.add(pdalbara);
+    JpopupVentas.add(cldepcli);
     JpopupVentas.add(lialbara);
     JpopupPedVentas.add(clrelpedven);
      JpopupVentas.add(manpralbar);
@@ -1946,6 +1954,12 @@ void pdreprese_actionPerformed(ActionEvent e) {
 //    ht.put("tipoEtiq",""+gnu.chu.anjelica.despiece.pddespie.NORMAL);
 
     lanzaEjecutable(new gnu.chu.anjelica.ventas.pdalbara(this,EU, ht));
+  }
+  void cldepcli_actionPerformed() {
+   
+//    ht.put("tipoEtiq",""+gnu.chu.anjelica.despiece.pddespie.NORMAL);
+
+    lanzaEjecutable(new gnu.chu.anjelica.ventas.CLDepCli(this,EU));
   }
   void lialbara_actionPerformed(ActionEvent e) {
 

@@ -2873,7 +2873,10 @@ String procesaTecla()
      else
        setText(Formatear.formatearFecha(dt,Formato));
    }
-
+   /**
+    * Devuelve la fecha en el formato marcado en setFormato
+    * @return Devuelve "" si la fecha no es valida.
+    */
    public String getFecha()
    {
      try
@@ -2881,8 +2884,7 @@ String procesaTecla()
        return getFecha(getFormato());
      }
      catch (java.text.ParseException k)
-     {
-        SystemOut.print(k);
+     {       
        return "";
      }
    }

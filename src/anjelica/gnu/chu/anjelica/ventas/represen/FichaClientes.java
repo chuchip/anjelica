@@ -1200,7 +1200,6 @@ public class FichaClientes extends ventana implements PAD
                     cm.leerDatosCliente();
                     cm.irGrid();
                     jf.gestor.ir(cm);
-
           }catch (Exception k)
           {
             Error("Error al cambiar formato vista albaran ",k);
