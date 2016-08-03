@@ -149,7 +149,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
-            " order by alr_nume";
+            " order by alr_fecha,alr_nume";
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
@@ -1605,7 +1605,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
       String s = "select * from albrutacab ";
 
       s = creaWhere(s, v,  true);
-      s += " ORDER BY alr_fecha ";
+      s += " ORDER BY alr_fecha,alr_nume ";
 
       mensaje("Espere, por favor ... buscando datos");
       Pcabe.setQuery(false);      
@@ -1762,7 +1762,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         if (! alr_fecregE.isNull())
             dtAdd.setDato("alr_fecreg","{ts '"+alr_fecregE.getFecha("yyyy-MM-dd")+" "+
                 alr_fecregH.getText()+":"+alr_fecregM.getText()+"'}");
-        dtAdd.setDato("rut_codi",rut_codiE.getText());
+        
         dtAdd.setDato("veh_codi",veh_codiE.getText());
         dtAdd.setDato("alr_vekmin",alr_vekminE.getValorDec());
         dtAdd.setDato("alr_vekmfi",alr_vekmfiE.getValorDec());

@@ -78,6 +78,8 @@ public class pstockAct extends CPanel
   CComboBox alm_codiE = new CComboBox();
   private int xFam = 0;
   private int yFam = 0;
+  private boolean verPrecios=false;
+  
   public pstockAct(DatosTabla dtCon1, DatosTabla dtStat, ventana papa,int emp_codi)
   {
     padre = papa;
@@ -174,7 +176,15 @@ public class pstockAct extends CPanel
     setDiasVer_Cliente(diaslim_clientes);
     activarEventos();
   }
-
+  
+  public void setVerPrecios(boolean swVerPrecios)
+  {
+    verPrecios=swVerPrecios;
+  }
+  public boolean getVerPrecios()
+  {
+    return verPrecios;
+  }
   void activarEventos()
   {
     agr_codiE.addActionListener(new ActionListener()
@@ -426,7 +436,7 @@ public class pstockAct extends CPanel
           unidad = dtCon1.getDouble("pro_stkuni", true);
         }
         precio=MantTarifa.getPrecTar(dtStat, dtCon1.getInt("pro_codi"), tar_codiE.getValorInt(), pdc_fecpedE.getText());
-        double ultPrecio=pdalbara.getUltimoPrecio(dtStat,dtCon1.getInt("pro_codi"),cliCodi);
+        double ultPrecio=verPrecios? pdalbara.getUltimoPrecio(dtStat,dtCon1.getInt("pro_codi"),cliCodi):0;
         if (incPedid)
           getAcumPedid(dtCon1.getInt("pro_codi"), pdc_fecpedE.getText(),almCodi);
         CButton BProd = new CButton("<html>"+Formatear.format(dtCon1.getString("pro_codi"), "####9")+

@@ -1334,6 +1334,7 @@ public class CGridEditable extends Cgrid implements CQuery {
      GridEvent grEvent=new GridEvent(this);
      grEvent.setColumna(col);
      grEvent.setLinea(row);
+     grEvent.setLineaNueva(getSelectedRow());
      grEvent.setColNueva(colNueva);
 
      processGridEvent(grEvent, true);
@@ -1457,6 +1458,8 @@ public class CGridEditable extends Cgrid implements CQuery {
      GridEvent grEvent=new GridEvent(this);
      grEvent.setColumna(col);
      grEvent.setLinea(row);
+     grEvent.setLineaNueva(getSelectedRow());
+    
      grEvent.setColNueva(col);
      processGridEvent(grEvent,false);
      return grEvent.getColError();

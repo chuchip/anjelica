@@ -62,6 +62,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   Cgrid jtHist=new Cgrid(4);
   private int hisRowid=0;
   private boolean P_ADMIN=false;
+  private boolean P_VERPRECIOS=false;
   AyuArt aypro;
   CComboBox pcc_estadE=new CComboBox();
   CButton Bimpri=new CButton(Iconos.getImageIcon("print"));
@@ -88,6 +89,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   CPanel Pprinc = new CPanel();
   CPanel Pcabe = new CPanel();
   CLabel cLabel1 = new CLabel();
+  boolean swExterno;
   cliAvcPanel cli_codiE = new cliAvcPanel()
   {
     @Override
@@ -250,6 +252,8 @@ public class pdpeve  extends ventanaPad   implements PAD
           return;
       if (ht.get("admin") != null)
          P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
+       if (ht.get("verPrecios") != null)
+         P_VERPRECIOS = Boolean.parseBoolean(ht.get("verPrecios"));
 
   }
   private void jbInit() throws Exception
@@ -334,6 +338,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       }
     };
     pstock.setVerProductos(""+pstockAct.VER_ULTVENTAS);
+    pstock.setVerPrecios(P_VERPRECIOS);
     Bimpri.setMargin(new Insets(0, 0, 0, 0));
     Bimpri.setPreferredSize(new Dimension(24, 24));
     Bimpri.setMaximumSize(new Dimension(24, 24));
@@ -587,6 +592,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   public void afterConecta() throws SQLException, java.text.ParseException
   {
     cli_codiE.iniciar(dtStat, this, vl, EU);
+    cli_codiE.iniciar(jf);
     cli_codiE.setAceptaNulo(false);
     pro_codiE.iniciar(dtStat, this, vl, EU);
     pro_codiE.setAceptaInactivo(false);
@@ -1239,10 +1245,14 @@ public class pdpeve  extends ventanaPad   implements PAD
     jt.requestFocusInicio();
     cli_codiE.requestFocus();
   }
-  
+  public void setExterno(boolean externo)
+  {
+      swExterno=externo;
+  }
   @Override
   public void PADAddNew()
   {  
+      swExterno=false;
       pvc_fecentE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
       nuevoPedido();
   }
@@ -1317,7 +1327,8 @@ public class pdpeve  extends ventanaPad   implements PAD
 
       mensajeErr("Pedido ... INSERTADO");
       mensaje("");
-      nuevoPedido();
+      if (! swExterno)
+         nuevoPedido();
     } catch (Exception k)
     {
       Error("Error al Insertar Pedido",k);      

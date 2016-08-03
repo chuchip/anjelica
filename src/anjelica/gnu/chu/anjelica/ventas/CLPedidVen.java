@@ -233,7 +233,7 @@ public class CLPedidVen extends  ventana
                 irPedido();
                 return;
              }
-             if (jtCabPed.getSelectedRow()<=JTCAB_NUMPED)
+             if (jtCabPed.getSelectedColumn()<=JTCAB_NUMPED)
                 irPedido();
              else
                 irAlbaran();
@@ -297,6 +297,7 @@ public class CLPedidVen extends  ventana
            " order by p.pvl_numlin ";
        jtLinPed.removeAllDatos();
        Ppie.resetTexto();
+       nPedT.setValorDec(jtCabPed.getRowCount());
        if (! dtCon1.select(s))
        {
          msgBox("NO ENCONTRADOS DATOS PARA ESTE PEDIDO");
@@ -308,7 +309,8 @@ public class CLPedidVen extends  ventana
        pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","hh.mm"));
        pvc_comenE.setText(dtCon1.getString("pvc_comen"));
        pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
-       cli_poblE.setText(dtCon1.getString("cli_pobl"));
+       pvc_nupeclE.setText(dtCon1.getString("cli_pobl"));
+       pvc_nupeclE.setText(dtCon1.getString("pvc_nupecl"));
        do
        {
          ArrayList v=new ArrayList();
@@ -331,7 +333,7 @@ public class CLPedidVen extends  ventana
            verDatAlbaranPed(empCodi,jtCabPed.getValorInt(JTCAB_EJEALB),jtCabPed.getValString(JTCAB_SERALB),
                jtCabPed.getValorInt(JTCAB_NUMALB) );
        }
-       actAcumJT();
+//       actAcumJT();
      } catch (Exception k)
      {
        Error("Error al Ver datos de pedido",k);
@@ -404,23 +406,24 @@ public class CLPedidVen extends  ventana
       v.add(dtCon1.getString("avp_canti"));            
       v.add(""); // NL
       jtLinPed.addLinea(v);
-    } while (dtCon1.next());   
-   }
-   void actAcumJT()
-   {
-     int nRows = jtLinPed.getRowCount(),nl = 0,nu=0;
-
-     for (int n = 0; n < nRows; n++)
-     {
-       if (jtLinPed.getValorInt(n, 1) == 0 || !jtLinPed.getValString(n,0).equals("P"))
-         continue;
-       nl++;
-     }
-     nlE.setValorInt(nl);
+    } while (dtCon1.next());
     
    }
+//   void actAcumJT()
+//   {
+//     int nRows = jtLinPed.getRowCount(),nl = 0,nu=0;
+//
+//     for (int n = 0; n < nRows; n++)
+//     {
+//       if (jtLinPed.getValorInt(n, 1) == 0 || !jtLinPed.getValString(n,0).equals("P"))
+//         continue;
+//       nl++;
+//     }
+//     numPedTE.setValorInt(nl);    
+//   }
+   
    void Bimpri_actionPerformed(String accion)
-    {
+   {
 
         if (accion.startsWith("P"))
         {
@@ -650,6 +653,8 @@ public class CLPedidVen extends  ventana
       if (! iniciarCons(true))
         return;
       boolean swServ=verPedidosE.getValor().equals("S"); // A servir (tienen albaran y no esta listado)
+     
+      
       do
       {
         if (!servRutaC.getValor().equals("*"))
@@ -708,7 +713,9 @@ public class CLPedidVen extends  ventana
         v.add(dtCon1.getString("avc_serie")); // 11
         v.add(dtCon1.getString("avc_nume")); //12
         jtCabPed.addLinea(v);
+           
       } while (dtCon1.next());
+      nPedT.setValorDec(jtCabPed.getRowCount());
       if (jtCabPed.isVacio())
       {
           mensajeErr("No encontrados pedidos con estos criterios");
@@ -768,7 +775,7 @@ public class CLPedidVen extends  ventana
         jtCabPed = new gnu.chu.controles.Cgrid(14);
         Ppie = new gnu.chu.controles.CPanel();
         cLabel17 = new gnu.chu.controles.CLabel();
-        nlE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9");
+        nPedT = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
         cLabel19 = new gnu.chu.controles.CLabel();
         pvc_fecpedE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         pvc_horpedE = new gnu.chu.controles.CTextField(Types.DECIMAL, "99.99");
@@ -779,7 +786,9 @@ public class CLPedidVen extends  ventana
         pvc_comenE = new gnu.chu.controles.CTextArea();
         Bimpri = new gnu.chu.controles.CButtonMenu();
         cLabel8 = new gnu.chu.controles.CLabel();
-        cli_poblE = new gnu.chu.controles.CTextField();
+        pvc_nupeclE = new gnu.chu.controles.CTextField();
+        cLabel23 = new gnu.chu.controles.CLabel();
+        cli_poblE1 = new gnu.chu.controles.CTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -953,68 +962,77 @@ public class CLPedidVen extends  ventana
         PPrinc.add(jtCabPed, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        Ppie.setMaximumSize(new java.awt.Dimension(650, 71));
-        Ppie.setMinimumSize(new java.awt.Dimension(650, 71));
-        Ppie.setPreferredSize(new java.awt.Dimension(650, 71));
+        Ppie.setMaximumSize(new java.awt.Dimension(650, 60));
+        Ppie.setMinimumSize(new java.awt.Dimension(650, 60));
+        Ppie.setPreferredSize(new java.awt.Dimension(650, 60));
         Ppie.setLayout(null);
 
         cLabel17.setText("Usuario");
         cLabel17.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel17);
-        cLabel17.setBounds(440, 22, 50, 18);
+        cLabel17.setBounds(440, 20, 50, 18);
 
-        nlE.setEnabled(false);
-        Ppie.add(nlE);
-        nlE.setBounds(310, 2, 30, 18);
+        nPedT.setEnabled(false);
+        Ppie.add(nPedT);
+        nPedT.setBounds(305, 1, 30, 18);
 
-        cLabel19.setText("N.Lineas");
+        cLabel19.setText("Ped.Cliente ");
         cLabel19.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel19);
-        cLabel19.setBounds(230, 2, 50, 18);
+        cLabel19.setBounds(343, 1, 70, 17);
 
         pvc_fecpedE.setEnabled(false);
         Ppie.add(pvc_fecpedE);
-        pvc_fecpedE.setBounds(310, 22, 76, 18);
+        pvc_fecpedE.setBounds(305, 20, 76, 18);
 
         pvc_horpedE.setEnabled(false);
         Ppie.add(pvc_horpedE);
-        pvc_horpedE.setBounds(390, 22, 40, 18);
+        pvc_horpedE.setBounds(383, 20, 40, 18);
 
         cLabel20.setText("Fecha Pedido ");
         cLabel20.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel20);
-        cLabel20.setBounds(230, 22, 80, 18);
+        cLabel20.setBounds(225, 20, 80, 18);
 
         usu_nombE.setEnabled(false);
         Ppie.add(usu_nombE);
-        usu_nombE.setBounds(490, 22, 110, 18);
+        usu_nombE.setBounds(490, 20, 110, 18);
 
         pvc_impresE.setText("Listado ");
         pvc_impresE.setEnabled(false);
         pvc_impresE.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Ppie.add(pvc_impresE);
-        pvc_impresE.setBounds(360, 2, 70, 17);
+        pvc_impresE.setBounds(225, 40, 70, 17);
 
         pvc_comenE.setColumns(20);
         pvc_comenE.setRows(5);
         scrollarea1.setViewportView(pvc_comenE);
 
         Ppie.add(scrollarea1);
-        scrollarea1.setBounds(20, 2, 201, 60);
+        scrollarea1.setBounds(10, 0, 210, 55);
 
         Bimpri.setText("Listar");
         Bimpri.addMenu("Relacion", "R");
         Bimpri.addMenu("Pedidos", "P");
         Ppie.add(Bimpri);
-        Bimpri.setBounds(490, 0, 100, 20);
+        Bimpri.setBounds(520, 1, 80, 20);
 
         cLabel8.setText("Poblacion");
         Ppie.add(cLabel8);
-        cLabel8.setBounds(230, 40, 53, 15);
+        cLabel8.setBounds(310, 40, 60, 15);
 
-        cli_poblE.setEnabled(false);
-        Ppie.add(cli_poblE);
-        cli_poblE.setBounds(310, 40, 290, 17);
+        pvc_nupeclE.setEnabled(false);
+        Ppie.add(pvc_nupeclE);
+        pvc_nupeclE.setBounds(410, 1, 100, 17);
+
+        cLabel23.setText("Total Pedidos ");
+        cLabel23.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel23);
+        cLabel23.setBounds(225, 1, 80, 18);
+
+        cli_poblE1.setEnabled(false);
+        Ppie.add(cli_poblE1);
+        cli_poblE1.setBounds(370, 40, 230, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1048,6 +1066,7 @@ public class CLPedidVen extends  ventana
     private gnu.chu.controles.CLabel cLabel20;
     private gnu.chu.controles.CLabel cLabel21;
     private gnu.chu.controles.CLabel cLabel22;
+    private gnu.chu.controles.CLabel cLabel23;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel5;
@@ -1056,11 +1075,11 @@ public class CLPedidVen extends  ventana
     private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.camposdb.cliPanel cli_codiE;
-    private gnu.chu.controles.CTextField cli_poblE;
+    private gnu.chu.controles.CTextField cli_poblE1;
     private gnu.chu.camposdb.empPanel emp_codiE;
     private gnu.chu.controles.Cgrid jtCabPed;
     private gnu.chu.controles.Cgrid jtLinPed;
-    private gnu.chu.controles.CTextField nlE;
+    private gnu.chu.controles.CTextField nPedT;
     private gnu.chu.controles.CTextArea pvc_comenE;
     private gnu.chu.controles.CComboBox pvc_confirE;
     private gnu.chu.controles.CTextField pvc_fecfinE;
@@ -1069,6 +1088,7 @@ public class CLPedidVen extends  ventana
     private gnu.chu.controles.CTextField pvc_horpedE;
     private gnu.chu.controles.CCheckBox pvc_impresE;
     private gnu.chu.controles.CComboBox pvc_listadoE;
+    private gnu.chu.controles.CTextField pvc_nupeclE;
     private gnu.chu.controles.CLinkBox rep_codiE;
     private gnu.chu.controles.CLinkBox rut_codiE;
     private gnu.chu.camposdb.sbePanel sbe_codiE;

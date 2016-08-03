@@ -323,7 +323,7 @@ public class FichaClientes extends ventana implements PAD
        if (ht.get("agenteDef") != null)
          agenteDef = ht.get("agenteDef").toString();
        if (ht.get("supUsua") != null)
-         supUsua = Boolean.valueOf(ht.get("supUsua").toString()).booleanValue();
+         supUsua = Boolean.parseBoolean(ht.get("supUsua").toString());
      }
 
      if(jf.gestor.apuntar(this))
@@ -351,7 +351,7 @@ public class FichaClientes extends ventana implements PAD
        if (ht.get("agenteDef") != null)
          agenteDef = ht.get("agenteDef").toString();
        if (ht.get("supUsua") != null)
-         supUsua = Boolean.valueOf(ht.get("supUsua").toString()).booleanValue();
+         supUsua = Boolean.parseBoolean(ht.get("supUsua").toString());
      }
 
      jbInit();
@@ -365,7 +365,7 @@ public class FichaClientes extends ventana implements PAD
   {
     iniciarFrame();
     this.setSize(732, 535);
-    this.setVersion("2015-07-27");
+    this.setVersion("2016-07-26");
     if (CONBD)
     {
       conecta();
@@ -1161,7 +1161,7 @@ public class FichaClientes extends ventana implements PAD
    Pdatcli.resetTexto();
    pCabCli.resetTexto();
    cli_activE.setValor("S");
-   cli_codiE.requestFocus();
+   cli_nombE.requestFocus();
    if (agenteDef!=null)
        rep_codiE.setText(agenteDef);
    if (agente!=null)
@@ -1196,6 +1196,7 @@ public class FichaClientes extends ventana implements PAD
                     cm.nav.setPulsado(navegador.ADDNEW);
                     cm.nav.setEnabled(navegador.TODOS, false);
                     cm.PADAddNew();
+                    cm.setExterno(true);
                     cm.setCliente(cli_codiE.getValorInt());
                     cm.leerDatosCliente();
                     cm.irGrid();

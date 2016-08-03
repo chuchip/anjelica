@@ -74,6 +74,7 @@ import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.*;
+import gnu.chu.anjelica.sql.IndivStock;
 import gnu.chu.camposdb.*;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;
@@ -112,7 +113,7 @@ import javax.swing.event.ListSelectionListener;
 
  
 public class pdalbara extends ventanaPad  implements PAD  {  
-  
+  CButton Bdespiece=new CButton();
   int paiEmp;
   rangoEtiquetas rangoEtiq;
   boolean swChangePalet=false;
@@ -242,7 +243,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   boolean isLock=false;
   CButton Bdesgl=new CButton(Iconos.getImageIcon("duplicar"));
   int colDesp=JTDES_LOTE;
-//  despVentas despAlbar=null;
+  
   DespVenta despVenta;
   int rowDesp;
   boolean PEDIRDESP=true; // Posibilibad de pedir despice al vuelo. Se busca en mant. configuracion
@@ -573,7 +574,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   CButton BmvReg = new CButton(Iconos.getImageIcon("run"));
   CLabel cLabel31 = new CLabel();
   CComboBox div_codiE = new CComboBox();
-  CButton Bdespiece = new CButton(Iconos.getImageIcon("cuchillo"));
+  CComboBox despieceC = new CComboBox();
   CLabel lockE = new CLabel();
   CLabel printE = new CLabel();
   CPanel PotroDat = new CPanel();
@@ -683,7 +684,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-07-20" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-08-03" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -708,7 +709,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         // @todo poner este CTextField en el Panel.
 //        repiteIndE.setValorInt(2); // No permitir crotales iguales.
 //        lockE.setBorder(BorderFactory.createLineBorder(Color.black, 1));
-        lockE.setBounds(new Rectangle(644, 75, 33, 21));
+       // lockE.setBounds(new Rectangle(644, 75, 33, 21));
         printE.setHorizontalAlignment(SwingConstants.CENTER);
         printE.setHorizontalTextPosition(SwingConstants.CENTER);
         printE.setBounds(new Rectangle(446, 2, 41, 19));
@@ -867,6 +868,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         cli_rutaE.setBounds(new Rectangle(182, 2, 210, 16));
         rutPanelE.setBounds(new Rectangle(5, 22, 500, 45));
         rutPanelE.setEnabled(false);
+        
         rutPanelE.setBorder(BorderFactory.createLineBorder(Color.ORANGE));
         impDtoE.setBounds(new Rectangle(402, 2, 69, 17));
         cLabel15.setText("Imp.Total");
@@ -900,7 +902,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         Birgrid.setText("F2");
         opAgru.setMargin(new Insets(0, 0, 0, 0));
         opAgru.setText("Agrupar Lineas");
-        opAgru.setBounds(new Rectangle(187, 5, 128, 17));
+        opAgru.setBounds(new Rectangle(207, 5, 100, 17));
         Baceptar.setBounds(new Rectangle(428, 2, 112, 24));
         Baceptar.setMaximumSize(new Dimension(110, 28));
         Baceptar.setMinimumSize(new Dimension(110, 28));
@@ -909,6 +911,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         Bcancelar.setMaximumSize(new Dimension(110, 28));
         Bcancelar.setMinimumSize(new Dimension(110, 28));
         Bcancelar.setPreferredSize(new Dimension(110, 28));
+        Bdespiece.setBounds(new Rectangle(670, 2, 2, 2));
         Baceptar.setText("Aceptar (F4)");
         opValora.setMargin(new Insets(0, 0, 0, 0));
         opValora.setText("Valorado");
@@ -916,6 +919,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
         opDispSalida.setBounds(new Rectangle(485, 20, 101, 16));
         avc_valoraE.setText("Valorado");
         avc_valoraE.setBounds(new Rectangle(458, 22, 95, 16));
+        lockE.setBounds(new Rectangle(558, 22, 33, 21));
+//         lockE.setBounds(new Rectangle(644, 75, 33, 21));
         Bfincab.setBounds(new Rectangle(540, 66, 1, 1));
         cLabel17.setText("Pobl. Cliente");
         cLabel17.setBounds(new Rectangle(31, 39, 71, 16));
@@ -1092,11 +1097,13 @@ public class pdalbara extends ventanaPad  implements PAD  {
         cLabel31.setBounds(new Rectangle(521, 56, 43, 16));
 
         div_codiE.setBounds(new Rectangle(558, 56, 120, 16));
-        Bdespiece.setPreferredSize(new Dimension(32, 24));
-        Bdespiece.setToolTipText("Generar Despieces (F10)");
-        Bdespiece.setMargin(new Insets(0, 0, 0, 0));
-        Bdespiece.setBounds(new Rectangle(136, 5, 42, 17));
-
+        despieceC.setPreferredSize(new Dimension(100, 24));
+        despieceC.setToolTipText("Generar Despieces (F5)");
+        
+        despieceC.setBounds(new Rectangle(136, 5, 62, 17));
+        despieceC.addItem("NO Desp.", "N");
+        despieceC.addItem("Despiece", "D");
+        despieceC.addItem("Todo Desp.", "M");
         avc_revpreL.setText("Revisar Precios");
         avc_deposE.setBounds(new Rectangle(215, 57, 105, 18));
         verDepoC.setBounds(new Rectangle(445, 75, 110, 20));
@@ -1277,6 +1284,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
                 new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
                 GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         cPanel2.add(BmvReg, null);
+        cPanel2.add(despieceC, null);
         cPanel2.add(Bdespiece, null);
         cPanel2.add(opAgru, null);
         cPanel2.add(BValTar, null);
@@ -1400,12 +1408,12 @@ public class pdalbara extends ventanaPad  implements PAD  {
   {
     cli_rutaE.setAncTexto(30);
     cli_rutaE.setFormato(Types.CHAR, "XX");
-    
+    rutPanelE.iniciar(dtStat, dtAdd, this);
     pdconfig.llenaDiscr(dtStat, cli_rutaE, pdconfig.D_RUTAS ,EU.em_cod);      
     paiEmp= pdempresa.getPais(dtStat,EU.em_cod);
     jtDes.getPopMenu().add(verDatTraz);
     jtDes.getPopMenu().add(verMvtos);
-    Bdespiece.setSelected(false);
+    
     EU.getImpresora(gnu.chu.print.util.ALBARAN);
     dtHist=new DatosTabla(ct);
     dtPedi=new DatosTabla(ct);
@@ -1447,13 +1455,14 @@ public class pdalbara extends ventanaPad  implements PAD  {
     nav.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
     Pcabe.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
     Pcabe.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
+    jt.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
     nav.setButton(KeyEvent.VK_F5, BValTar);
     jt.setButton(KeyEvent.VK_F5, BValTar);
     Pcabe.setButton(KeyEvent.VK_F5, BValTar);
     Pcabe.setDefButton(Baceptar);
     Pcabe.setButton(KeyEvent.VK_F4, Baceptar);
     jt.setButton(KeyEvent.VK_F4, Baceptar);
-    jt.setButton(KeyEvent.VK_F10,Bdespiece);
+    jt.setButton(KeyEvent.VK_F5,Bdespiece);
    
     fvc_serieE.setColumnaAlias("fvc_serie");
     cli_codiE.setColumnaAlias("C.cli_codi");
@@ -1611,12 +1620,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
    */
   public static double getUltimoPrecio(DatosTabla dt,int proCodi,int cliCodi) throws SQLException
   {
-    String s="select max(avc_id) as avc_id from v_albventa where cli_codi="+cliCodi+" and pro_codi = "+proCodi+
-        " and avl_prven>0 and avc_fecalb>= current_date - 60";
-    dt.select(s);
-    if (dt.getInt("avc_id",true)==0)
-        return 0;
-    s="select avl_prven from v_albventa where avc_id="+dt.getInt("avc_id")+" and pro_codi = "+proCodi;
+    String s="select avl_prven from v_albventa where avc_id= (select max(avc_id) from v_albventa where cli_codi = "+cliCodi+
+        " and pro_codi= "+proCodi+" and avc_fecalb>=current_date -60)  and pro_codi="+proCodi;
     if (!dt.select(s))
         return 0;
     return dt.getDouble("avl_prven");
@@ -1854,14 +1859,22 @@ public class pdalbara extends ventanaPad  implements PAD  {
       {
           @Override
           public void mouseClicked(MouseEvent e) {
-              if (e.getClickCount() < 2 || (avcImpres & 1) == 0)
+              if (e.getClickCount() < 2 )
                   return;
               if (inTransation())
                   return;
               try
               {
-                  setAlbaranImpreso(0);
-                  msgBox("Quitada marca de listado al albaran");
+                  if ( (avcImpres & 1) == 0)
+                  {
+                      setAlbaranImpreso(1);
+                      msgBox("Puesto Albaran como impreso");
+                  }
+                  else
+                  {
+                    setAlbaranImpreso(0);
+                    msgBox("Quitada marca de listado al albaran");
+                  }
               } catch (SQLException ex)
               {
                   Error("Error al establece estado de listado a albaran", ex);
@@ -1918,23 +1931,27 @@ public class pdalbara extends ventanaPad  implements PAD  {
            Error("Error al modificar estado revisión precios",ex);
         }
       }
-    });
+    }); 
     Bdespiece.addActionListener(new ActionListener()
     {
       @Override
       public void actionPerformed(ActionEvent e)
-      {
-        if ( pro_codiE.isEditable())
-            realizaDesp();
-      }
-    });
-    Bdespiece.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-          if (!P_ADMIN)
-             avp_cantiE.setEditable(Bdespiece.isSelected());
+      {         
+          switch (despieceC.getValor())
+          {
+            case "N":
+                despieceC.setValor("D");
+                break;    
+            case "D":
+                despieceC.setValor("M");
+                break;    
+            case "M":
+                despieceC.setValor("N");
+          }
+          if (jt.isEnabled())
+              jt.requestFocusLater();
+          if (jtDes.isEnabled())
+              jtDes.requestFocusLater();
       }
     });
 
@@ -1996,14 +2013,6 @@ public class pdalbara extends ventanaPad  implements PAD  {
       public void actionPerformed(ActionEvent e)
       {
         Bdesgl_actionPerformed();
-      }
-    });
-    Bdespiece.addActionListener(new ActionListener()
-    {
-            @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        jt.requestFocusLater();
       }
     });
     BmvReg.addActionListener(new ActionListener()
@@ -2365,7 +2374,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       {
         try {
           actAcumPed(0);
-        } catch (SQLException | ParseException k)
+        } catch (SQLException k)
         {
           Error("Error al ver acumulados de Pedidos",k);
         }
@@ -2380,7 +2389,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         {
           actAcumPed(0);
         }
-        catch (SQLException | ParseException k)
+        catch (SQLException  k)
         {
           Error("Error al ver acumulados de Pedidos", k);
         }
@@ -2498,6 +2507,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   void realizaDesp()
   {
     try {
+        
         if (despVenta==null)
         {
           despVenta = new DespVenta()
@@ -2509,14 +2519,16 @@ public class pdalbara extends ventanaPad  implements PAD  {
             }
           };
           despVenta.iniciar(this);
-          vl.add(despVenta);
-          despVenta.setLocation(this.getLocation().x, this.getLocation().y + 30);
+          this.getLayeredPane().add(despVenta,1);
+          despVenta.setLocation(20,20);
          }
         this.setEnabled(false);
         despVenta.setProCodi(pro_codiE.getValorInt());
-        despVenta.mostrar();
-        
+        despVenta.setLote(avp_ejelotE.getValorInt(),avp_serlotE.getText(),
+            avp_numparE.getValorInt(),avp_numindE.getValorInt());                
         despVenta.setAlmacen(alm_codoriE.getValorInt());
+        
+        despVenta.mostrar();
       } catch (Exception k ){
           Error("Error al iniciar aplicacion despiece en ventas",k);
       }
@@ -2532,17 +2544,28 @@ public class pdalbara extends ventanaPad  implements PAD  {
     try
     {
       this.setSelected(true);
-    }
-    catch (Exception k)
-    {}
+    }  catch (Exception k) {}
     if (despVenta.isNuevoDespiece())
-    { // Nuevo despiece
-        if (despVenta.getGrid().getValorDec(despVenta.JT_KILOS)==0 || despVenta.getGrid().getValorInt(0)==0 )
-            return; // Linea no valida
-        pro_codiE.setText(despVenta.getCodBarras());
-        pro_codiE.llenaCampos();
-        //pro_codiE.setValorInt(despVenta.getGrid().getValorInt(0));
+    {   
+        IndivStock indStk=despVenta.getIndiviuoDespiece();
+        jt.setValor(indStk.getProCodi(),JT_PROCODI);
+        jt.setValor(indStk.getProNomb(),JT_PRONOMB);
+        avp_ejelotE.setValorInt(indStk.getProCodi());
+        avp_serlotE.setText(indStk.getProSerie());
+        avp_numparE.setValorInt(indStk.getProNupar());
+        avp_numindE.setValorInt(indStk.getProNumind());
+        avp_cantiE.setValorDec(indStk.getStpKilact());
+        avp_numuniE.setValorInt(indStk.getStpUnact());
+        jtDes.salirGrid();
+        if (despieceC.getValor().equals("D"))
+            despieceC.setValor("N");
     }
+    try {
+        salirLineasDesglose();
+     } catch (SQLException ex) 
+     {
+            Error("Error al guardar linea desglose albaran",ex);
+     }
   }
   /**
    * Valorar Albaran segun precios de Tarifa
@@ -3157,8 +3180,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
     }
     else
     {
-      printE.setIcon(null);
-      printE.setToolTipText("");
+      printE.setIcon(Iconos.getImageIcon("ajustar"));
+      printE.setToolTipText("No impreso");
     }
   }
   /**
@@ -4333,6 +4356,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
 
     pro_nombE.setEditable(true);
     avc_valoraE.setValor("0");
+    despieceC.setValor("N");
 //    opModif.setSelected(false);
     activar(true);
 //    Bimpri.setEnabled(false);
@@ -4413,7 +4437,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     nav.setEnabled(false);
     //avc_revpreE.setEnabled(false);
     pro_codiE.setEditable(false);
-    Bdespiece.setEnabled(true);
+   
     jtPalet.setEnabled(true);
     jtPalet.requestFocusInicio();
     irGridLin();
@@ -4803,7 +4827,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
 //    opModif.setSelected(false);
           avc_valoraE.setValor("0");
           nav.pulsado=navegador.ADDNEW;
-          Bdespiece.setSelected(false);
+          despieceC.setValor("N");
           confAlbDep=false;
           
           jt.setValor(swUsaPalets?1:0,JT_NUMPALE);
@@ -5766,7 +5790,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         Bimpri.setEnabled(true);
         jt.setEnabled(true);
         jt.requestFocusInicio();
-        Bdespiece.setEnabled(true);
+//        Bdespiece.setEnabled(true);
         pro_nombE.setText(jt.getValString(0,2)) ;
         pro_codiE.resetCambio();
         pro_codiE.setSeccionCliente(sbe_codiE.getValorInt());
@@ -5798,13 +5822,41 @@ public class pdalbara extends ventanaPad  implements PAD  {
             return;
           }
         }
+        if (jt.getValorInt(JT_NULIAL)==0 && !despieceC.getValor().equals("N"))       
+        {
+            int nRow=jtDes.getRowCount();
+            int nLin=0;
+            int linActiva=-1;
+            for (int n=0;n<nRow;n++)
+            {
+                if (isLinDesVal(n))
+                {
+                    if (linActiva<0)
+                        linActiva=n;
+                    nLin++;
+                }
+            }
+            if (nLin==1)
+            {     
+                jtDes.requestFocus(linActiva,JTDES_EMP);
+                jtDes.ponValores(linActiva);
+                realizaDesp();
+                return;
+            }
+            
+        }
+        salirLineasDesglose();
+       
+      }
+    }
+    catch (Exception k)
+    {
+      Error("Error al ir a Lineas Albaran", k);
+    }
+  }
+  void salirLineasDesglose() throws SQLException
+  {
         guardaLinDes(jt.getSelectedRow());
-//        if (jt.getValorDec(JT_KILOS)==0 && jt.getValorInt(JT_PROCODI)>0)
-//        { // Esta linea de albaran se habia guardado pero ahora no tiene KILOS
-//          mensajeErr("La suma de Kilos de los individuos  NO puede ser 0");
-//          jtDes.requestFocusLater(0, 0);
-//          return;
-//        }
         if (jt.getSelectedColumn() == JT_KILOS &&  ! verPrecios)
             swGridDes++;
         jtDes.setEnabled(false);
@@ -5822,33 +5874,18 @@ public class pdalbara extends ventanaPad  implements PAD  {
           pro_codiE.setEditable(true);
           pro_nombE.setEditable(true);
         }
-        SwingUtilities.invokeLater(new Thread()
-        {
-          @Override
-          public void run()
-          {
-            Bdespiece.setEnabled(true);
-            if (verPrecios  && jt.getSelectedColumn() == 3)
-              jt.requestFocus(jt.getSelectedRow(),5);
-            else
-              jt.requestFocusSelected();
-          }
-        });
+        if (verPrecios  && jt.getSelectedColumn() == JT_KILOS)
+            jt.requestFocusLater(jt.getSelectedRow(),5);
+        else
+            jt.requestFocusSelectedLater();      
         actAcumLin();
       }
-    }
-    catch (Exception k)
-    {
-      Error("Error al ir a Lineas Albaran", k);
-    }
-  }
-
   /**
    * Actualiza Grid de Desglose cuando se esta modificando una linea de albaran
    * que ya existia.
    * @throws Exception caso de error
    */
-  void actGridDes() throws Exception
+  void actGridDes() throws SQLException
   { 
     // Meto todas las lineas anteriores en un vector.
     ArrayList<DatIndiv> datAnt = new ArrayList();
@@ -6039,7 +6076,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
    * @param nLiGrAl int Nº de Linea de Albaran
    * @throws Exception Error en DB
    */
-  void guardaLinDes(int nLiGrAl) throws Exception
+  void guardaLinDes(int nLiGrAl) throws SQLException
   {
      dtAdd.commit(); // Para resetear el current_timestamp
     String condWhere;
@@ -6198,9 +6235,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
    * @param n int Linea del grid
    * @return boolean true si es valida.
    */
-  boolean isLinDesVal(int n)
+  boolean isLinDesVal(int nLinea)
   {
-    return !(jtDes.getValorDec(n, 8) == 0);// && jtDes.getValorDec(n, 6) == 0);
+    return !(jtDes.getValorDec(nLinea, JTDES_KILBRU) == 0);// && jtDes.getValorDec(n, 6) == 0);
   }
 
   /**
@@ -6209,7 +6246,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
    * @param nLiAlb Numero de linea de albaran.
    * @throws Exception
    */
-  void guardaLinEnt(int nLin, int nLiAlb) throws Exception
+  void guardaLinEnt(int nLin, int nLiAlb) throws SQLException
   {
     if (avsNume==0)
     {
@@ -6239,7 +6276,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
    * @param nLiAlb
    * @throws Exception
    */
-  void guardaLinDes(int nLin, int nLiAlb) throws Exception
+  void guardaLinDes(int nLin, int nLiAlb) throws SQLException
   {
     
     s="SELECT max(avp_numlin) as avp_numlin FROM v_albvenpar "
@@ -6253,7 +6290,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     int avpNumpar=jtDes.getValorInt(nLin, JTDES_LOTE);
     if (avpNumpar==0)
     {
-        throw new Exception("Error interno. Numero partida invalido\n Albaran: "+emp_codiE.getValorInt()+"/"
+        throw new SQLException("Error interno. Numero partida invalido\n Albaran: "+emp_codiE.getValorInt()+"/"
             +avc_anoE.getValorInt()+
              avc_seriE.getText()+avc_numeE.getValorInt()+" Linea desgl: "+nLin+" Lin.Alb: "+nLiAlb );
     }
@@ -6310,7 +6347,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
    * @param nLin
    * @throws Exception G
    */
-  void guardaLinAlbEnt(int nLiAlb, int nLin) throws Exception
+  void guardaLinAlbEnt(int nLiAlb, int nLin) throws SQLException
   {
     if (avsNume==0)
     {
@@ -6329,7 +6366,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     dtAdd.setDato("avs_unid", jt.getValorInt(nLin, JT_UNID));
     dtAdd.update(stUp);
   }
-  void guardaLinAlb(int nLiAlb, int nLin) throws Exception
+  void guardaLinAlb(int nLiAlb, int nLin) throws SQLException
   {
     int nLiFra = 0;
     if (fvc_numeE.getValorInt() > 0)
@@ -6475,8 +6512,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
       if (jt.getValorInt(n, 0) == 0)
         continue;
       nLin++; //= jt.getValorInt(n, 4);
-      kilosT += jt.getValorDec(n, 3);
-      impBim += jt.getValorDec(n, 3) * jt.getValorDec(n, 6);
+      kilosT += jt.getValorDec(n, JT_KILOS);
+      impBim += jt.getValorDec(n, JT_KILOS) * jt.getValorDec(n, JT_PRECIO);
     }
     numLinE.setValorDec(nLin);
     kilosE.setValorDec(kilosT);
@@ -6587,17 +6624,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
               {
                 if ( dtCon1.getDouble("stp_kilact") > avp_cantiE.getValorDec() + 0.1
                       && avp_numuniE.getValorInt() == 1) {
-                  lanzaDespVentas(row);
+//                  lanzaDespVentas(row);
                 }
-              }
-//              else
-//              {
-//                  if (avp_cantiE.getValorDec() > dtCon1.getDouble("stp_kilact"))
-//                  {
-//                      mensajeErr("No hay suficientes kilos de este individuo");
-//                      return 6;
-//                  }
-//              }
+              }       
           }
           else
           { // Es entrega de deposito.
@@ -6629,7 +6658,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
    * @param swActual Actualizar campos en grid?
    * @return false si el individuo no es valido
    */
-    private boolean checkIndiv(int row,boolean swActual) throws Exception {
+    private boolean checkIndiv(int row,boolean swActual) throws SQLException
+    {
         double unid = 0;
         double canti = 0;
         
@@ -6812,15 +6842,17 @@ public class pdalbara extends ventanaPad  implements PAD  {
    * @param row
    * @throws Exception
    */
+  /*
+
   void lanzaDespVentas(int row) throws Exception
   {
-    if (! Bdespiece.isSelected())
+    if (despieceC.getValor().equals("N"))
       return;
-/*
+
 
     if (despAlbar==null)
     {
-      despAlbar = new despVentas()
+      despAlbar = new DespVenta()
       {
         @Override
         public void matar()
@@ -6840,10 +6872,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       public void run()
       {
         try
-        {
-          int etiCodi=eti_codiE.getValorInt();
-          if (etiCodi < 0)
-              etiCodi=0;
+        {              
           despAlbar.insertaDesp(jtDes.getValorInt(row,0), jtDes.getValorInt(row,3),
                              jtDes.getValorInt(row,2),
                               jtDes.getValString(row,5), jtDes.getValorInt(row,6),
@@ -6851,15 +6880,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
                               avc_almoriE.getValorInt(), avc_fecalbE.getDate(),
                               jtDes.getValorDec(row,8),emp_codiE.getValorInt(),
                               avc_anoE.getValorInt(),
-                              eti_codiE.getValorInt());
+                              0);
 
-//          despAlbar.insertaDesp(pro_codicE.getValorInt(), avp_ejelotE.getValorInt(),
-//                                avp_emplotE.getValorInt(),
-//                                avp_serlotE.getText(), avp_numparE.getValorInt(),
-//                                avp_numindE.getValorInt(),
-//                                alm_codiE.getValorInt(), avc_fecalbE.getDate(),
-//                                avp_cantiE.getValorDec(),
-//                                eti_codiE.getValorInt());
           despAlbar.setVisible(true);
           pdalbara.this.setEnabled(false);
         }
@@ -6869,10 +6891,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
         }
       }
     });
-
- */
   }
-  /*
+  
   void salirDespiece()
   {
 //    despAlbar.setVisible(false);
@@ -6890,7 +6910,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       jtDes.setValor(""+despAlbar.getNumInd(),  rowDesp,7);
 //      avp_cantiE.setValorDec(despAlbar.getKilos());
 //      avp_numindE.setValorDec(despAlbar.getNumInd());
-      jtDes.procesaAllFoco();
+      jtDes.salirGrid();
     }
     SwingUtilities.invokeLater(new Thread()
     {
@@ -6901,7 +6921,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
       }
     });
 
-  }*/
+  }
+  */
   /**
    * Actualizar Acumulados de Linea de Desglose
    *
@@ -6923,19 +6944,19 @@ public class pdalbara extends ventanaPad  implements PAD  {
         kilos += avp_cantiE.getValorDec();
         kilBru += jtDes.getValorDec(n, JTDES_KILBRU);
         nUni += avp_numuniE.getValorDec();
-        impBim += avp_cantiE.getValorDec() * jt.getValorDec(5);
+        impBim += avp_cantiE.getValorDec() * jt.getValorDec(JT_PRECIO);
       }
       else
       {
         kilos += jtDes.getValorDec(n, 8);
         nUni += jtDes.getValorDec(n, 4);
         kilBru += jtDes.getValorDec(n, JTDES_KILBRU);;
-        impBim += jtDes.getValorDec(n, 8) * jt.getValorDec(5);
+        impBim += jtDes.getValorDec(n, JTDES_KILBRU) * jt.getValorDec(JT_PRECIO);
       }
     }
     jt.setValor(kilos, JT_KILOS);
     jt.setValor(kilBru, JT_KILBRU);
-    jt.setValor(nUni, 4);
+    jt.setValor(nUni, JT_UNID);
     avl_cantiE.setValorDec(kilos);
     avl_canbruE.setValorDec(kilBru);
     avl_unidE.setValorDec(nUni);
@@ -6948,7 +6969,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
    * @throws SQLException
    * @throws ParseException
    */
-  void actAcumPed(int proCodi) throws SQLException,ParseException
+  void actAcumPed(int proCodi) throws SQLException
   {
 
     if (pvc_numeE.getValorInt()==0 || swEntdepos)
@@ -7080,10 +7101,10 @@ public class pdalbara extends ventanaPad  implements PAD  {
   }
   /**
    * Busca el peso disponible para un individuo
-   * @return null si el
+   * @return Clase StkPartida.
    * @throws Exception
    */
-  StkPartid buscaPeso() throws Exception
+  StkPartid buscaPeso() throws SQLException
   {
     StkPartid ret = utildesp.buscaPeso(dtCon1, avp_ejelotE.getValorInt(),
                                        EU.em_cod,
@@ -7178,12 +7199,12 @@ public class pdalbara extends ventanaPad  implements PAD  {
     }
   }
 
-  int getNumAlb() throws SQLException, ParseException
+  int getNumAlb() throws SQLException
   {
     return getNumAlb(true);
   }
 
-  int getNumAlb(boolean act) throws SQLException, ParseException
+  int getNumAlb(boolean act) throws SQLException
   {
     return getNumAlb(act,dtAdd,emp_codiE.getValorInt(),avc_anoE.getValorInt(),avc_seriE.getText());
   }
@@ -7199,7 +7220,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
    * @throws SQLException
    * @throws ParseException 
    */
-  public static int getNumAlb(boolean act,DatosTabla dt,int empCodi,int avcAno,String serie) throws SQLException, ParseException
+  public static int getNumAlb(boolean act,DatosTabla dt,int empCodi,int avcAno,String serie) throws SQLException
    {
      int nAlb;
      String s = "SELECT num_serieA,num_serieB,num_serieC,num_serieD,num_serieX,num_serieY " +
@@ -7221,30 +7242,36 @@ public class pdalbara extends ventanaPad  implements PAD  {
    * Guarda cabecera de albaran de entrega
    * @throws SQLException
    */
-  void guardaCabEnt() throws SQLException,ParseException
+  void guardaCabEnt() throws SQLException
   {
-    if (avc_numeE.getValorInt()==0 )
-       throw new SQLException("Numero albaran Origen sin poner al guardar cabecera Entrega"); 
-    dtAdd.addNew("albvenserc",false);
-    dtAdd.setDato("avs_fecha", avc_fecalbE.getDate());
-    dtAdd.setDato("avc_ano", avc_anoE.getValorInt());
-    dtAdd.setDato("emp_codi", emp_codiE.getValorInt());
-    dtAdd.setDato("avc_serie", avc_seriE.getText());
-    dtAdd.setDato("avc_nume", avc_numeE.getValorInt());
-    dtAdd.setDato("cli_codi", cli_codiE.getValorInt());
-    dtAdd.update(stUp);
-    ct.commit();
-    s="SELECT  currval(pg_get_serial_sequence('albvenserc', 'avs_nume')) ";
-    ResultSet rs=dtAdd.getStatement().executeQuery(s);
-    rs.next();
-    avsNume=rs.getInt(1);
-    disableCamposIndice();
+      try
+      {
+          if (avc_numeE.getValorInt()==0 )
+              throw new SQLException("Numero albaran Origen sin poner al guardar cabecera Entrega");
+          dtAdd.addNew("albvenserc",false);
+          dtAdd.setDato("avs_fecha", avc_fecalbE.getDate());
+          dtAdd.setDato("avc_ano", avc_anoE.getValorInt());
+          dtAdd.setDato("emp_codi", emp_codiE.getValorInt());
+          dtAdd.setDato("avc_serie", avc_seriE.getText());
+          dtAdd.setDato("avc_nume", avc_numeE.getValorInt());
+          dtAdd.setDato("cli_codi", cli_codiE.getValorInt());
+          dtAdd.update(stUp);
+          ct.commit();
+          s="SELECT  currval(pg_get_serial_sequence('albvenserc', 'avs_nume')) ";
+          ResultSet rs=dtAdd.getStatement().executeQuery(s);
+          rs.next();
+          avsNume=rs.getInt(1);
+          disableCamposIndice();
+      } catch (ParseException ex)
+      {
+          throw new SQLException("Error al transformar fechas",ex);
+      }
   }
   /**
    * Guarda Cabecera del Albaran
    * @throws Exception
    */
-  void guardaCab() throws Exception
+  void guardaCab() throws SQLException
   {
     dtAdd.addNew("v_albavec",false);
     dtAdd.setDato("avc_ano", avc_anoE.getValorInt());
@@ -7411,15 +7438,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     if (pro_codiE.getTipoLote()!='V' || ! pro_codiE.isActivo())
     {
       mensajeErr("Imposible ir a Desglose");
-      SwingUtilities.invokeLater(new Thread()
-      {
-        @Override
-        public void run()
-        {
-          Bdespiece.setEnabled(true);
-          jt.requestFocusSelected();
-        }
-      });
+      jt.requestFocusSelectedLater();   
       return;
     }
 
@@ -7449,7 +7468,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
           jtDes.actualizarGrid(0);
 
         }
-        Bdespiece.setEnabled(false);
+//        Bdespiece.setEnabled(false);
         ponValorLoteAnt();
         jtDes.setEnabled(true);
         jtDes.requestFocus();
@@ -7532,8 +7551,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     {
       @Override
       public void run()
-      {
-        Bdespiece.setEnabled(false);
+      {        
         jtDes.requestFocus();
         jtDes.requestFocus(0,  isEmpPlanta || P_FACIL?JTDES_UNID:JTDES_LOTE);
         resetCambioIndividuo();
@@ -7549,6 +7567,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     verDatTraz.setEnabled(!b);
     verMvtos.setEnabled(!b);
     verDepoC.setEnabled(!b);
+    rutPanelE.setEnabledRuta(!b);
     if (! P_ADMIN)
         avc_deposE.setEnabled(b);
     Bdesgl.setEnabled(!b);
@@ -7562,8 +7581,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
     impLinE.setEnabled(false);
     avc_impalbE.setEnabled(false);
     avc_impcobE.setEnabled(false);
-    Bdespiece.setEnabled(false);    
-    
+    despieceC.setEnabled(b);    
+    Bdespiece.setEnabled(b);    
     avc_numpalB.setEnabled(b);
     avc_numpalC.setEnabled(b);
     emp_codiE.setEnabled(b);
@@ -8383,7 +8402,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       if (swProcesaEdit)
               ej_edit1();
     }
-    catch (SQLException | ParseException k)
+    catch (SQLException  k)
     {
       Error("Error al Cambiar Datos Albaran ", k);
     }
@@ -8472,7 +8491,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       cambiaEmp(numAlbAnt, numAlb);
       mensajeErr("Numero de Albaran .... CAMBIADO");
     }
-    catch (SQLException | ParseException k)
+    catch (SQLException  k)
     {
       Error("Error al Insertar Numero de Albaran", k);
     }

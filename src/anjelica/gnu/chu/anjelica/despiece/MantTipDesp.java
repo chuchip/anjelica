@@ -45,6 +45,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
   public final static int AUTO_DESPIECE=9999;
   public final static int LIBRE_DESPIECE=9998;
   public final static int CONGELADO_DESPIECE=9997;
+  public final static int DIAS_CONGELADO=720; // 30dias * 24 meses
   String s;
   boolean ARG_MODCONSULTA=false;
   final int JTSAL_CODPRO=0;

@@ -211,7 +211,7 @@ public class tidCodi2 extends CLinkBox
   /**
    * Indica si se deben mostrar los tipos de despieces inactivos
    * Por defecto es false = 0
-   * @param tidActiv  -1 ver todos. 0 Tipos despiece Activos, OTROS solo si tid_activ es mayor
+   * @param verInactivo  -1 ver todos. 0 Tipos despiece Activos, OTROS solo si tid_activ es mayor
    */
   public void setTidActiv(int verInactivo)
   {

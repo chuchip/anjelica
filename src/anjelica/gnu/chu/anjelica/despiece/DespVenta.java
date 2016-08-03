@@ -8,7 +8,7 @@ package gnu.chu.anjelica.despiece;
  *   autollenardesp para ver  si debe hacer autollenado de
  *   los productos para un tipo de despiece (por defecto, NO)
  * </p>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -33,10 +33,13 @@ import gnu.chu.anjelica.sql.Desorilin;
 import gnu.chu.anjelica.sql.DesorilinId;
 import gnu.chu.anjelica.sql.Desporig;
 import gnu.chu.anjelica.sql.DesporigId;
+import gnu.chu.anjelica.sql.IndivStock;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.CGridEditable;
 import gnu.chu.controles.Cgrid;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.eventos.GridAdapter;
+import gnu.chu.eventos.GridEvent;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.conexion;
 import gnu.chu.utilidades.CodigoBarras;
@@ -53,21 +56,21 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import javax.swing.SwingUtilities;
+import java.util.HashMap;
+import java.util.Iterator;
 
 
 public class DespVenta extends ventana {
-    private char grdBlock;
+    
+    int primeraLinea;
     Desporig desorca;
     Desorilin desorli;
     final static String TABLA_BLOCK="desporig";
-    private int proCodi=0;
+//    private int proCodi=0;
     private boolean AUTOLLENARDESP=false;
     public static final String SERIE="V";
     boolean swEdicion=false;
-    public final static int JT_ORDEN=5,JT_NUMIND=4,JT_KILOS=2,JT_UNID=3,JTLIN_NUMCAJ=8;
+    public final static int JT_PROCOD=0,JT_PRONOMB=1,JT_ORDEN=5,JT_NUMIND=4,JT_KILOS=2,JT_UNID=3,JTLIN_NUMCAJ=8;
     
     boolean nuevoDespiece=false;
     int proCodAnt;
@@ -84,6 +87,7 @@ public class DespVenta extends ventana {
 
     public DespVenta() {
         initComponents();
+       
         statusBar=new StatusBar(this);
         this.add(statusBar,BorderLayout.SOUTH);
        
@@ -92,7 +96,7 @@ public class DespVenta extends ventana {
         setIconifiable(false);
         this.setSize(500,440);
         this.setTitle("Carga Despiece desde Ventas");
-        setVersion("20120201");
+        setVersion("20160731");
     }
     /**
      * Establece el almacén donde trabajar.
@@ -127,14 +131,16 @@ public class DespVenta extends ventana {
                                                    GridBagConstraints.VERTICAL,
                                                    new Insets(0, 5, 0, 0), 0, 0));
         pro_codiE.iniciar(dtStat, this, getLayeredPane(), EU);
-        pro_codiE.setCamposLote(deo_ejelotE,deo_serlotE, pro_loteE,  pro_numindE, deo_kilosE);
-        pro_codiE.setAyudaLotes(true);
+//        pro_codiE.setCamposLote(deo_ejelotE,deo_serlotE, pro_loteE,  pro_numindE, deo_kilosE);
+//        pro_codiE.setAyudaLotes(true);
+        pro_codiE.setEnabled(false);
         pro_codsalE.iniciar(dtStat, this, getLayeredPane(), EU);
         pro_codsalE.setEntrada(true);
         pro_kilsalE.setLeePesoBascula(botonBascula);
         stkPart=new ActualStkPart(dtAdd,EU.em_cod);
         tid_codiE.iniciar(dtStat, padre, padre.vl, EU);
-        pro_codsalE.setProNomb(pro_nombE);
+        tid_codiE.setValorInt(MantTipDesp.AUTO_DESPIECE);
+//        pro_codsalE.setProNomb(pro_nombE);
         ArrayList vc=new ArrayList();
         vc.add(pro_codsalE.getFieldProCodi());
         vc.add(pro_nombE);
@@ -145,6 +151,7 @@ public class DespVenta extends ventana {
         jt.setCampos(vc);
         jt.removeAllDatos();
         jt.setButton(KeyEvent.VK_F2,BF2);
+        jt.setButton(KeyEvent.VK_F5, BcopLin);
         Pcabe.setButton(KeyEvent.VK_F2,BF2);
         jt.setButton(KeyEvent.VK_F4,Baceptar);
         AUTOLLENARDESP= EU.getValorParam("autollenardesp", AUTOLLENARDESP);
@@ -153,52 +160,68 @@ public class DespVenta extends ventana {
         activarEventos();
       //  pro_codsalE.setCamposLote(pro_ejlsalE,pro_sersalE, pro_lotsalE,  pro_indsalE, pro_kilsalE);
     }
-    public void setProCodi(int proCodi)
-    {
-        this.proCodi=proCodi;
+    public void setProCodi(int proCodi) throws SQLException
+    {        
         pro_codiE.setValorInt(proCodi);
+        
+        tid_codiE.clearArticulos();
+        tid_codiE.addArticulo(proCodi);
+        tid_codiE.releer();
     }
-    public void mostrar()
+    public void setLote(int ejeNume,String serieLote,int lote, int indiv) throws SQLException
+    {
+        deo_ejelotE.setValorInt(ejeNume);
+        deo_serlotE.setText(serieLote);
+        pro_loteE.setValorInt(lote);
+        pro_numindE.setValorInt(indiv);
+        buscaPeso();
+    }
+    public void mostrar() throws SQLException
     {
           nuevoDespiece=false;
           
           deoCodi=0;
-          Baceptar.setEnabled(false);
+          Baceptar.setEnabled(true);
+          tid_codiE.setEnabled(true);
           jt.setEnabled(false);
-          pro_codiE.resetTexto();
-          pro_loteE.resetTexto();
-          deo_ejelotE.resetTexto();
-          deo_kilosE.resetTexto();
-          deo_serlotE.resetTexto();
-          tid_codiE.resetTexto();
-          pro_numindE.resetTexto();
-          
+//          pro_codiE.resetTexto();
+//          pro_loteE.resetTexto();
+//          deo_ejelotE.resetTexto();
+//          deo_kilosE.resetTexto();
+//          deo_serlotE.resetTexto();
+//          tid_codiE.resetTexto();
+//          pro_numindE.resetTexto();
+//          
        
           Ppie.resetTexto();
           jt.removeAllDatos();
-          deo_ejelotE.setValorInt(EU.ejercicio);
-          deo_serlotE.setText("A");
-          pro_codiE.resetCambio();
-          pro_codiE.setValorInt(proCodi);
+//          deo_ejelotE.setValorInt(EU.ejercicio);
+//          deo_serlotE.setText("A");
+//          pro_codiE.resetCambio();
+//          pro_codiE.setValorInt(proCodi);
           //pro_codiE.resetCambio();
           activar(true);
           setVisible(true);
           statusBar.setEnabled(true);
           toFront();
-          setEnabled(true);
-          SwingUtilities.invokeLater(new Thread()
-          {
-            @Override
-            public void run()
-            {
-              if (pro_codiE.isNull())
-                pro_codiE.requestFocus();
-              else
-                pro_loteE.requestFocus();
-              Pcabe.setEnabled(true);
-              jt.setEnabled(false);
-            }
-          });
+//          setEnabled(true);
+          buscaPeso();
+          
+          tid_codiE.requestFocus();
+
+//          SwingUtilities.invokeLater(new Thread()
+//          {
+//            @Override
+//            public void run()
+//            {
+//              if (pro_codiE.isNull())
+//                pro_codiE.requestFocus();
+//              else
+//                pro_loteE.requestFocus();
+//              Pcabe.setEnabled(false);
+//              jt.setEnabled(false);
+//            }
+//          });
     }
     
     void pro_codiE_despuesLlenaCampos()
@@ -208,10 +231,36 @@ public class DespVenta extends ventana {
     void activarEventos()
     {
         BF2.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
 
                   irGrid();
 
+            }
+        });
+        BcopLin.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (jt.isEnabled() == false || jt.isVacio() || jt.getSelectedRow() < 1)
+                    return;
+                jt.setValor(jt.getValString(jt.getSelectedRow() - 1, 0), 0);
+                pro_codsalE.setText(jt.getValString(jt.getSelectedRow() - 1, 0));
+                jt.setValor(jt.getValString(jt.getSelectedRow() - 1, 1), 1);
+                jt.requestFocusLater(jt.getSelectedRow(), 2);
+            }
+        });
+        jt.addGridListener(new GridAdapter()
+        {
+            @Override
+            public void cambioColumna(GridEvent event)   {
+                if (event.getColumna()==0 && event.getLinea()==event.getLineaNueva())
+                    try {
+                        pro_nombE.setText(pro_codsalE.getNombArt());
+                } catch (SQLException ex) {
+                    Error("Error al buscar nombre de producto",ex);
+                }
             }
         });
         Bir.addFocusListener(new FocusAdapter() {
@@ -221,45 +270,31 @@ public class DespVenta extends ventana {
             }}
         );
 
-        tid_codiE.addFocusListener(new FocusAdapter() {
-            @Override
-             public void focusGained(FocusEvent e) {
-                 try {
-                     buscaPeso();
-                     if (!pro_codiE.hasCambio())
-                         return;
-                     pro_codiE.resetCambio();
-                     tid_codiE.addArticulo(pro_codiE.getValorInt());
-                     tid_codiE.releer();
-                } catch (SQLException k)
-                {
-                    Error("Error en focus gained de tid_codi",k);
-                }
-             }
-        });
+//        tid_codiE.addFocusListener(new FocusAdapter() {
+//            @Override
+//             public void focusGained(FocusEvent e) {
+//                 try {
+//                     buscaPeso();
+//                     if (!pro_codiE.hasCambio())
+//                         return;
+//                     pro_codiE.resetCambio();
+//                     tid_codiE.addArticulo(pro_codiE.getValorInt());
+//                     tid_codiE.releer();
+//                } catch (SQLException k)
+//                {
+//                    Error("Error en focus gained de tid_codi",k);
+//                }
+//             }
+//        });
         Baceptar.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                   guardaDespiece();
                  
             }
         });
     }
-//    /**
-//     * Llena tipos de despiece disponibles para un producto de entrada
-//     * @param proCodi
-//     */
-//    void llenaTiposDespieces(int proCodi) throws SQLException
-//    {
-//            tid_codiE.removeAllItems();
-//            String s="SELECT t.tid_codi,t.tid_nomb FROM tipodesp as t,tipdesent as e "+
-//                    " where tid_activ=2  "+ // activo y no de tactil
-//                    " and t.tid_codi = e.tid_codi "+
-//                    " and e.pro_codi = "+proCodi+
-//                    " order by t.tid_codi";
-//            dtStat.select(s);
-//            tid_codiE.addDatos(dtStat);
-//            tid_codiE.addDatos("9999","REENVASADO");
-//    }
+  
     @Override
     public boolean Error(String msg, Throwable k)
     {
@@ -279,14 +314,18 @@ public class DespVenta extends ventana {
         if (cambiaLineajtLin(jt.getSelectedRow())>=0)
             return;
         try {
-            int nRowActivas=0;
+           
             int nRow=jt.getRowCount();
+            primeraLinea=-1;
             for (int n=0;n<nRow;n++)
             {
                 if (jt.getValorInt(n,0)!=0 && jt.getValorDec(n,JT_KILOS)!=0)
-                    nRowActivas++;
+                {
+                    if (primeraLinea<0)
+                        primeraLinea=n;
+                }
             }
-            if (nRowActivas==0)
+            if (primeraLinea<0)
             {
                 mensajeErr("Introduzca alguna linea de despiece Valida");
                 return;
@@ -298,39 +337,34 @@ public class DespVenta extends ventana {
             }
             String s;
 
-            grdBlock='N';
-            if (difkilE.getValorDec() > deo_kilosE.getValorDec() * MantDesp.LIMDIF)
-            { // Supera el 2% de los kilos de entrada. NO CIERRO el despiece
-                grdBlock='S'; // Lo dejo como pendiente.
-                stkPart.ponerStock(pro_codiE.getValorInt(),deo_ejelotE.getValorInt(),
-                      empCodi,
-                      deo_serlotE.getText(), pro_loteE.getValorInt(),
-                      pro_numindE.getValorInt(), almCodi,difkilE.getValorDec(),
-                      1);
-                stkPart.setBloqueo(pro_codiE.getValorInt(),deo_ejelotE.getValorInt(),
-                      empCodi,
-                      deo_serlotE.getText(), pro_loteE.getValorInt(),
-                      pro_numindE.getValorInt(),almCodi,true);
-                   utdesp.iniciar(dtAdd,ejeNume,empCodi,almCodi,
-                     almCodi,EU);
-                 utdesp.setLogotipo(null);
-                 utdesp.setDirEmpresa(null);
-                 int proCodeti;
-                 if (pro_codiE.getLikeProd().isNull("pro_codeti"))
-                    proCodeti = 0;
-                 else
-                    proCodeti = pro_codiE.getLikeProd().getInt("pro_codeti");
-//                 utdesp.imprEtiq(proCodeti,dtCon1,pro_codiE.getValorInt(), pro_nombE.getText(),
-//                    "D",
-//                    pro_loteE.getValorInt(),
-//                    ""+deo_ejelotE.getValorInt(), deo_serlotE.getText(),
-//                    pro_numindE.getValorInt(),
-//                    difkilE.getValorDec(),
-//                    Formatear.getFecha( utdesp.getFecDesp(),"dd-MM-yyyy"),
-//                    utdesp.getFechaProduccion(),
-//                    Formatear.getFecha(utdesp.getFecCaduc(),"dd-MM-yyyy"),
-//                    utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
-//                    utdesp.getFecCaduc());
+            
+            if (difkilE.getValorDec() > deo_kilosE.getValorDec() * MantDesp.LIMDIF )               
+            { // Supera el 2% de los kilos de entrada. 
+                if (tid_codiE.getValorInt()==MantTipDesp.AUTO_DESPIECE)
+                {
+                    // Creo una linea automatica para la diferencia
+                  jt.resetCambio();
+                  jt.setEnabled(false);
+                  jt.requestFocusFinal();
+                  ArrayList v=new ArrayList();
+                  v.add(pro_codiE.getValorInt());
+                  v.add(pro_codiE.getTextNomb());
+                  v.add(difkilE.getValorDec()); // Kg
+                  v.add(1); // Unid                  
+                  v.add("0"); // N Ind.
+                  v.add("0"); // N. Orden
+                  jt.addLinea(v);                  
+                  jt.setEnabled(true);
+                  jt.requestFocusFinal();
+                  jt.ponValores(jt.getSelectedRow());
+                  pro_kilsalE.setCambio(true);
+                  cambiaLineajtLin(jt.getSelectedRow());
+                }
+                else
+                {
+                    msgBox("Faltan kilos de salida");
+                    return;
+                }
             }
             else
             { // Compruebo integridad de despiece, ya q se marcara como cerrado.
@@ -343,30 +377,26 @@ public class DespVenta extends ventana {
                 }
             }
 
-        // Actualiza la cabecera.
-       
-//            s="SELECT * FROM desporig  WHERE eje_nume = " + ejeNume +
-//                   " and deo_codi = " + deoCodi;
-//            if (! dtAdd.select(s,true))
-//                throw new SQLException("No encontrado cabecera despiece: "+deoCodi);
-//            dtAdd.edit();
-//            dtAdd.setDato("pro_codi",pro_codiE.getValorInt());
-//            dtAdd.setDato("tid_codi", tid_codiE.getValorInt());
-//            dtAdd.setDato("deo_ejelot", deo_ejelotE.getValorInt());
-//            dtAdd.setDato("deo_serlot", deo_serlotE.getText());
-//            dtAdd.setDato("pro_lote", pro_loteE.getValorInt());
-//            dtAdd.setDato("pro_numind", pro_numindE.getValorDec());
-//            dtAdd.update();
             actualCabDesp();
             resetBloqueo(dtAdd,TABLA_BLOCK, ejeNume+"|"+empCodi+
                          "|"+deoCodi,false);
             dtAdd.commit();
             nuevoDespiece=true;
-        } catch (Throwable k)
+        } catch (SQLException | ParseException k)
         {
            Error("Error al guardar despiece ",k);
         }
         matar();
+    }
+    
+    public IndivStock getIndiviuoDespiece()
+    {        
+        IndivStock idSt= new IndivStock(almCodi,jt.getValorInt(primeraLinea,JT_PROCOD),
+            deo_ejelotE.getValorInt(),pro_loteE.getValorInt(),deo_serlotE.getText(),
+            jt.getValorInt(primeraLinea,JT_NUMIND),jt.getValorInt(primeraLinea,JT_UNID),
+            jt.getValorDec(primeraLinea,JT_KILOS));
+        idSt.setProNomb(jt.getValString(primeraLinea,JT_PRONOMB));
+        return idSt;
     }
     /**
  * Llamada tanto en cambio de linea en el grid, como al guardar el registro (ej_addnew y ej_edit)
@@ -427,8 +457,8 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
    desorca.setDeoSeloge(deo_serlotE.getText());
    desorca.setDeoNuloge(pro_loteE.getValorInt());
    desorca.setDeoLotnue((short) 0);
-   desorca.setDeoCerra((short) (grdBlock=='S'?-1:0));
-   desorca.setDeoBlock( (grdBlock=='S'?"S":"N"));
+   desorca.setDeoCerra((short) -1);
+   desorca.setDeoBlock( "N");
    desorca.update(dtAdd); 
    resetBloqueo(dtAdd,TABLA_BLOCK,
                    ejeNume+
@@ -453,7 +483,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                ||  tidCodi==MantTipDesp.CONGELADO_DESPIECE)
           return null;//checkAutoDespiece(dt, jt, proCodi, unidEntrada);
 
-       Hashtable<Integer,Integer> htGru  = new Hashtable();
+       HashMap<Integer,Integer> htGru  = new HashMap();
        String s="SELECT distinct(tds_grupo) as tds_grupo FROM tipdessal  WHERE tid_codi = "+tidCodi;
        if (dt.select(s))
        {
@@ -488,12 +518,12 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
            htGru.put(dt.getInt("tds_grupo"),nEle);
          }
        }
-       Enumeration<Integer> en=htGru.keys();
+       Iterator<Integer> en=htGru.keySet().iterator();
        int grupo;
        int tdsUnid;
-       while (en.hasMoreElements())
+       while (en.hasNext())
        {
-         grupo =  en.nextElement();
+         grupo =  en.next();
          s="SELECT tds_unid,pro_codi FROM tipdessal  WHERE tid_codi = "+tidCodi+
              " and tds_grupo = " + grupo;
          dt.select(s);
@@ -559,10 +589,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
              " and deo_codi = " + deoCodi;
            if (!dtAdd.select(s))
                throw new SQLException("No encontrada cabecera despiece"+deoCodi);
-           stkPart.anuStkPart(dtAdd.getInt("pro_codi"), dtAdd.getInt("deo_ejelot"), dtAdd.getInt("deo_emplot"),
-                      dtAdd.getString("deo_serlot"), dtAdd.getInt("pro_lote"),
-                      dtAdd.getInt("pro_numind"), almCodi,dtAdd.getDouble("deo_kilos")*-1,
-                      -1);
+          
            dtAdd.executeUpdate("delete from desporig WHERE eje_nume = " + ejeNume +
              " and deo_codi = " + deoCodi);
            dtAdd.executeUpdate("delete from desorilin WHERE eje_nume = " + ejeNume +
@@ -629,18 +656,18 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
      */
     boolean checkCabecera() throws Exception
     {
-       if (!pro_codiE.controla(true))
-       {
-           mensajeErr(pro_codiE.getMsgError());
-           return false;
-       }
-       if (! buscaPeso())
-           return false;
-       if (! tid_codiE.controla())
-       {
-           mensajeErr("Tipo Despiece NO valido ");
-           return false;
-       }
+//       if (!pro_codiE.controla(true))
+//       {
+//           mensajeErr(pro_codiE.getMsgError());
+//           return false;
+//       }
+//       if (! buscaPeso())
+//           return false;
+//       if (! tid_codiE.controla())
+//       {
+//           mensajeErr("Tipo Despiece NO valido ");
+//           return false;
+//       }
        if (tid_codiE.getValorInt()==0)
        {
            mensajeErr("Introduca un tipo de despiece");
@@ -662,8 +689,8 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
     void irGrid()
     {
         try {
-            if (!jt.isEnabled())
-            {
+//            if (!jt.isEnabled())
+//            {
                if (!checkCabecera())
                 return;
                genDatEtiq();
@@ -681,17 +708,18 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                { // Primera vez que se entra
                     llenaGrid();
                }
-               activar(false);
+               tid_codiE.setEnabled(false);
+//               activar(false);
                jt.setEnabled(true);
-               jt.requestFocusInicio();
-            }
-            else
-            { // Ir a cabecera
-                activar(true);
-                tid_codiE.setEnabled(false);
-                jt.setEnabled(false);
-                pro_codiE.requestFocus();
-            }
+               jt.requestFocusInicioLater();
+//            }
+//            else
+//            { // Ir a cabecera
+//                activar(true);
+//                tid_codiE.setEnabled(false);
+//                jt.setEnabled(false);
+//                pro_codiE.requestFocus();
+//            }
         } catch (Exception k)
         {
             Error("Error en irGrid",k);
@@ -701,6 +729,8 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
      * Devuelve la sentencia SQL a ejecutar para mostrar los productos disponibles
      * como de salida para un tipo de despiece y un producto de origen dados.
      * @param tidCodi Tipo de Despiece
+     * @param pro_codi
+     * @return  string con la sentencia SQL
      * @parm pro_codi Producto de Origen.
      */
     public static String getSqlProdSal(int tidCodi,int pro_codi) 
@@ -745,6 +775,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
             mensajeErr("No encontrados articulos para este tipo de despiece");
             return;
         }
+        
         do
         {
             ArrayList v=new ArrayList();
@@ -756,18 +787,19 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
             v.add("0"); // N. Orden
             jt.addLinea(v);
         } while (dtCon1.next());   
+        
     }
     void activar(boolean b)
     {
-        statusBar.setEnabled(!b);
-        if (deoCodi!=0)
-            Baceptar.setEnabled(!b);
-        pro_codiE.setEnabled(b);
-        deo_ejelotE.setEnabled(b);
-        deo_serlotE.setEnabled(b);
-        tid_codiE.setEnabled(b);
-        pro_numindE.setEnabled(b);
-        pro_loteE.setEnabled(b);
+//        statusBar.setEnabled(!b);
+//        if (deoCodi!=0)
+//            Baceptar.setEnabled(!b);
+//        pro_codiE.setEnabled(b);
+//        deo_ejelotE.setEnabled(b);
+//        deo_serlotE.setEnabled(b);
+//        tid_codiE.setEnabled(b);
+//        pro_numindE.setEnabled(b);
+//        pro_loteE.setEnabled(b);
     }
   
     /**
@@ -908,9 +940,11 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
        }
        if (prvCodi==0)
             prvCodi=prvDespiece;
-       if (tid_codiE.getValorInt()!=MantTipDesp.AUTO_DESPIECE)
-        utdesp.setDespNuestro(Formatear.getFechaAct("dd-MM-yyyy"), dtStat);
+//       if (tid_codiE.getValorInt()!=MantTipDesp.AUTO_DESPIECE)
+//         utdesp.setDespNuestro(Formatear.getFechaAct("dd-MM-yyyy"), dtStat);
        def_feccadE.setText(utdesp.feccadE);
+       def_fecproE.setDate(utdesp.getFechaProduccion());
+       def_fecsacE.setDate(utdesp.fecSacrE);
        return true;
  }
  /**
@@ -931,26 +965,16 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                          "|"+deoCodi,false);
      }
 
-     if (nInd!=0)
+     if (nInd==0)
      { // Existe linea. Anulo stock Anterior.
-        stkPart.anuStkPart(proCodAnt,ejeNume,empCodi,SERIE,deoCodi,
-                    nInd,almCodi,defKilAnt,defUnidAnt);
-     }
-     else
-     {
-        nInd = utildesp.getMaxNumInd( dtAdd,pro_codsalE.getValorInt(), ejeNume, empCodi,
-               SERIE, deoCodi);
+        nInd = utildesp.getMaxNumInd( dtAdd,pro_codsalE.getValorInt(), deo_ejelotE.getValorInt(), empCodi,
+               deo_serlotE.getText(),  pro_loteE.getValorInt());
      }
      defOrden=guardaLinDesp(ejeNume, empCodi,
-                SERIE, deoCodi,nInd,
+                deo_serlotE.getText(), pro_loteE.getValorInt(),nInd,
                 pro_codsalE.getValorInt(),
                 pro_kilsalE.getValorDec(), pro_unidE.getValorInt(),1,
-                def_feccadE.getText(),defOrden);
-     stkPart.sumar(ejeNume, SERIE,deoCodi,nInd,pro_codsalE.getValorInt(),
-              almCodi,
-              pro_kilsalE.getValorDec(),pro_unidE.getValorInt(),
-              null,ActualStkPart.CREAR_SI,
-              prvCodi,def_feccadE.getDate());
+                def_feccadE.getText(),defOrden);    
     
      jt.setValor(""+nInd,linea,JT_NUMIND);
      jt.setValor(""+defOrden,linea,JT_ORDEN);
@@ -1028,17 +1052,17 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                     almCodi,EU);
      utdesp.setLogotipo(null);
      utdesp.setDirEmpresa(null);
-//     utdesp.imprEtiq(proCodeti,dtCon1,jt.getValorInt(linea,0), nombArt,
-//                    "D",
-//                    deoCodi,
-//                    ""+ejeNume, SERIE,
-//                    jt.getValorInt(linea,JT_NUMIND),
-//                    pro_kilsalE.getValorDec(),
-//                    Formatear.getFechaAct("dd-MM-yyyy"),
-//                    Formatear.getDateAct(),
-//                    def_feccadE.getText(),
-//                    utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
-//                    def_feccadE.getDate());
+     utdesp.imprEtiq(proCodeti,dtCon1,jt.getValorInt(linea,0), nombArt,
+                    "D",
+                    pro_loteE.getValorInt(),
+                    deo_ejelotE.getText(), deo_serlotE.getText(),
+                    jt.getValorInt(linea,JT_NUMIND),
+                    pro_kilsalE.getValorDec(),
+                    Formatear.getDateAct(),
+                    def_fecproE.getDate(),
+                    def_feccadE.getDate(),
+                    def_fecsacE.getDate(),                    
+                    def_feccadE.getDate());
       mensajeErr("Etiqueta ... Listada");
    }
    catch (Throwable ex)
@@ -1069,24 +1093,8 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
    try {
        if (defOrden==0)
            return true;
-       String s = "SELECT * FROM v_despfin " +
-           " WHERE eje_nume = " + ejeNume +
-           " and emp_codi = " +empCodi +
-           " and deo_codi = " + deoCodi +
-           " and def_orden = " + defOrden;
-       if (!dtAdd.select(s, true))
-         return false;
-
-       if (stkPart.anuStkPart(dtAdd.getInt("pro_codi"), dtAdd.getInt("def_ejelot"), dtAdd.getInt("def_emplot"),
-                      dtAdd.getString("def_serlot"), dtAdd.getInt("pro_lote"),
-                      dtAdd.getInt("pro_numind"), almCodi,dtAdd.getDouble("def_kilos"),
-                      dtAdd.getInt("def_numpie"))==0)
-       {
-         msgBox("No encontrado apunte en Stock-Partidas");
-         enviaMailError("No encontrado despiece en stock-partidas en DespVentas"+s);
-         return false;
-       }
-       s = "DELETE FROM v_despfin " +
+        
+       String s = "DELETE FROM v_despfin " +
            " WHERE eje_nume = " + + ejeNume +
            " and emp_codi = " +empCodi +
            " and deo_codi = " + deoCodi +
@@ -1193,6 +1201,11 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         difkilE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---9.99");
         cLabel9 = new gnu.chu.controles.CLabel();
         unisalE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
+        cLabel10 = new gnu.chu.controles.CLabel();
+        def_fecproE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        cLabel11 = new gnu.chu.controles.CLabel();
+        def_fecsacE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        BcopLin = new gnu.chu.controles.CButton("F5",Iconos.getImageIcon("fill"));
 
         pro_nombE.setEnabled(false);
 
@@ -1206,49 +1219,56 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        Pcabe.setMaximumSize(new java.awt.Dimension(448, 79));
-        Pcabe.setMinimumSize(new java.awt.Dimension(448, 79));
-        Pcabe.setPreferredSize(new java.awt.Dimension(448, 79));
+        Pcabe.setMaximumSize(new java.awt.Dimension(448, 62));
+        Pcabe.setMinimumSize(new java.awt.Dimension(448, 62));
+        Pcabe.setPreferredSize(new java.awt.Dimension(448, 62));
         Pcabe.setLayout(null);
 
         pro_codiE.setToolTipText("F3 Cons. Lotes Disponibles");
         Pcabe.add(pro_codiE);
-        pro_codiE.setBounds(58, 13, 374, 17);
+        pro_codiE.setBounds(60, 1, 374, 17);
 
         cLabel1.setText("Articulo");
         Pcabe.add(cLabel1);
-        cLabel1.setBounds(5, 15, 43, 15);
+        cLabel1.setBounds(10, 1, 43, 15);
 
         cLabel2.setText("Lote");
         Pcabe.add(cLabel2);
-        cLabel2.setBounds(5, 35, 40, 17);
+        cLabel2.setBounds(10, 20, 40, 17);
 
         deo_serlotE.setText("A");
+        deo_serlotE.setEnabled(false);
         deo_serlotE.setMayusc(true);
         Pcabe.add(deo_serlotE);
-        deo_serlotE.setBounds(90, 35, 18, 17);
+        deo_serlotE.setBounds(90, 20, 18, 17);
+
+        pro_loteE.setEnabled(false);
         Pcabe.add(pro_loteE);
-        pro_loteE.setBounds(110, 35, 41, 17);
+        pro_loteE.setBounds(110, 20, 41, 17);
 
         cLabel3.setText("Individuo");
         Pcabe.add(cLabel3);
-        cLabel3.setBounds(155, 35, 53, 17);
+        cLabel3.setBounds(160, 20, 53, 17);
+
+        pro_numindE.setEnabled(false);
         Pcabe.add(pro_numindE);
-        pro_numindE.setBounds(210, 35, 42, 17);
+        pro_numindE.setBounds(210, 20, 42, 17);
 
         cLabel4.setText("Kilos");
         Pcabe.add(cLabel4);
-        cLabel4.setBounds(260, 35, 36, 17);
+        cLabel4.setBounds(260, 20, 36, 17);
 
         deo_kilosE.setEnabled(false);
         Pcabe.add(deo_kilosE);
-        deo_kilosE.setBounds(300, 35, 52, 17);
+        deo_kilosE.setBounds(300, 20, 50, 17);
 
         cLabel5.setText("Tipo Despiece");
         Pcabe.add(cLabel5);
-        cLabel5.setBounds(5, 55, 87, 17);
+        cLabel5.setBounds(10, 40, 87, 17);
+
+        deo_ejelotE.setEnabled(false);
         Pcabe.add(deo_ejelotE);
-        deo_ejelotE.setBounds(40, 35, 41, 17);
+        deo_ejelotE.setBounds(40, 20, 41, 17);
 
         Bir.setText("cButton1");
         Pcabe.add(Bir);
@@ -1256,12 +1276,13 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
 
         tid_codiE.setAncTexto(40);
         Pcabe.add(tid_codiE);
-        tid_codiE.setBounds(90, 55, 340, 17);
+        tid_codiE.setBounds(90, 40, 340, 17);
 
+        cargaPSC.setSelected(true);
         cargaPSC.setText("carga PS");
         cargaPSC.setToolTipText("Carga Productos de Salida del tipo despiece");
         Pcabe.add(cargaPSC);
-        cargaPSC.setBounds(350, 35, 80, 17);
+        cargaPSC.setBounds(350, 20, 80, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1282,7 +1303,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 167, Short.MAX_VALUE)
+            .addGap(0, 179, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1295,9 +1316,10 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         Pprinc.add(jt, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        Ppie.setMaximumSize(new java.awt.Dimension(500, 36));
-        Ppie.setMinimumSize(new java.awt.Dimension(500, 36));
-        Ppie.setPreferredSize(new java.awt.Dimension(500, 36));
+        Ppie.setMaximumSize(new java.awt.Dimension(500, 40));
+        Ppie.setMinimumSize(new java.awt.Dimension(500, 40));
+        Ppie.setName(""); // NOI18N
+        Ppie.setPreferredSize(new java.awt.Dimension(530, 40));
         Ppie.setLayout(null);
 
         cLabel6.setText("Kilos");
@@ -1310,18 +1332,18 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
 
         Baceptar.setText("Aceptar");
         Ppie.add(Baceptar);
-        Baceptar.setBounds(394, 2, 99, 32);
+        Baceptar.setBounds(394, 5, 110, 30);
 
-        cLabel7.setText("Fec.Cad");
+        cLabel7.setText("Fec.Cad.");
         Ppie.add(cLabel7);
-        cLabel7.setBounds(270, 2, 60, 17);
+        cLabel7.setBounds(270, 2, 50, 17);
         Ppie.add(def_feccadE);
         def_feccadE.setBounds(320, 2, 70, 17);
 
         BF2.setText("F2");
         BF2.setToolTipText("Ir de cabecera a Lineas y viceversa");
         Ppie.add(BF2);
-        BF2.setBounds(20, 20, 30, 17);
+        BF2.setBounds(10, 20, 30, 20);
 
         cLabel8.setText("Diferenc");
         Ppie.add(cLabel8);
@@ -1339,6 +1361,22 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         Ppie.add(unisalE);
         unisalE.setBounds(120, 2, 30, 17);
 
+        cLabel10.setText("Fec. Prod.");
+        Ppie.add(cLabel10);
+        cLabel10.setBounds(100, 20, 60, 17);
+        Ppie.add(def_fecproE);
+        def_fecproE.setBounds(160, 20, 70, 17);
+
+        cLabel11.setText("Fec. Sacrificio");
+        Ppie.add(cLabel11);
+        cLabel11.setBounds(240, 20, 80, 17);
+        Ppie.add(def_fecsacE);
+        def_fecsacE.setBounds(320, 20, 70, 17);
+
+        BcopLin.setToolTipText("Copiar Linea Anterior");
+        Ppie.add(BcopLin);
+        BcopLin.setBounds(40, 20, 53, 17);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -1355,11 +1393,14 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton BF2;
     private gnu.chu.controles.CButton Baceptar;
+    private gnu.chu.controles.CButton BcopLin;
     private gnu.chu.controles.CButton Bir;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Ppie;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CLabel cLabel1;
+    private gnu.chu.controles.CLabel cLabel10;
+    private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -1370,6 +1411,8 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CCheckBox cargaPSC;
     private gnu.chu.controles.CTextField def_feccadE;
+    private gnu.chu.controles.CTextField def_fecproE;
+    private gnu.chu.controles.CTextField def_fecsacE;
     private gnu.chu.controles.CTextField def_ordenE;
     private gnu.chu.controles.CTextField deo_ejelotE;
     private gnu.chu.controles.CTextField deo_kilosE;

@@ -590,12 +590,15 @@ create table anjelica.albvenserc
     constraint ix_albserc primary key(avs_nume),
     CONSTRAINT con1 CHECK ( avc_nume >0)
 );
-create view v_albdepserv as select sa.*,ca.avc_fecalb,ca.avc_id from albvenserc as sa, v_albavec as ca
+create view anjelica.v_albdepserv as select sa.*,ca.avc_fecalb,ca.avc_id,cl.cli_nomb,cl.cli_nomco
+ from albvenserc as sa, v_albavec as ca,
+v_cliente as cl
 where ca.avc_ano=sa.avc_ano
 and  ca.emp_codi = sa.emp_codi
 and  ca.avc_serie= sa.avc_serie
-and  ca.avc_nume= sa.avc_nume;
-grant select on anjelica.v_albventa to public;
+and  ca.avc_nume= sa.avc_nume
+and sa.cli_codi = cl.cli_codi;
+grant select on anjelica.v_albdepserv to public;
 --
 -- Lineas de  de Albaranes servidos en deposito
 --

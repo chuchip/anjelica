@@ -4,6 +4,7 @@ import gnu.chu.Menu.*;
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantPaises;
+import gnu.chu.anjelica.pad.MantRepres;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.pad.pdempresa;
 import gnu.chu.anjelica.riesgos.*;
@@ -94,8 +95,8 @@ public class lisfactu extends ventana  implements JRDataSource
   CTextField eje_numeE1 = new CTextField(Types.DECIMAL,"###9");
   CLabel cLabel1 = new CLabel();
   cliPanel cli_codiE = new cliPanel();
-  CLabel cLabel2 = new CLabel();
-  cliPanel cli_codiE1 = new cliPanel();
+  CLabel rep_codiL = new CLabel("Representante");
+  CLinkBox rep_codiE = new CLinkBox();
   CTextField feciniE = new CTextField(Types.DATE, "dd-MM-yyyy");
   CLabel cLabel9 = new CLabel();
   CLabel cLabel10 = new CLabel();
@@ -194,7 +195,7 @@ public class lisfactu extends ventana  implements JRDataSource
  {
    iniciarFrame();
    this.setSize(new Dimension(600, 539));
-   setVersion("2015-02-05");
+   setVersion("2016-07-26");
 
    titledBorder2 = new TitledBorder("");
    Princ.setLayout(gridBagLayout1);
@@ -243,9 +244,9 @@ public class lisfactu extends ventana  implements JRDataSource
    empIniE.setBounds(new Rectangle(86, 41, 160, 17));
    cLabel6.setBounds(new Rectangle(249, 41, 70, 19));
    cli_codiE.setBounds(new Rectangle(86, 60, 396, 17));
-   cli_codiE1.setBounds(new Rectangle(86, 78, 396, 17));
+   rep_codiE.setBounds(new Rectangle(106, 78, 376, 17));
    cLabel1.setBounds(new Rectangle(24, 60, 64, 19));
-   cLabel2.setBounds(new Rectangle(22, 78, 64, 19));
+   rep_codiL.setBounds(new Rectangle(22, 78, 84, 19));
    Baceptar.setBounds(new Rectangle(119, 116, 116, 24));
    jt.setMaximumSize(new Dimension(497, 246));
    jt.setMinimumSize(new Dimension(497, 246));
@@ -279,19 +280,19 @@ public class lisfactu extends ventana  implements JRDataSource
     opAgrupa.setBounds(new Rectangle(448, 2, 114, 18));
     fvc_serieE.setMayusc(true);
      fvc_serie1E.setMayusc(true);
-        fvc_serieE.setBounds(new Rectangle(121, 21, 20, 17));
-        fvc_serie1E.setBounds(new Rectangle(314, 21, 21, 17));
-        this.getContentPane().add(BorderLayout.SOUTH, statusBar);
+    fvc_serieE.setBounds(new Rectangle(121, 21, 20, 17));
+    fvc_serie1E.setBounds(new Rectangle(314, 21, 21, 17));
+    this.getContentPane().add(BorderLayout.SOUTH, statusBar);
    this.getContentPane().add(Princ, BorderLayout.CENTER);
-
+   rep_codiE.setAncTexto(30);
+   rep_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
    cLabel6.setText("A Empresa");
    empIniE.setAncTexto(30);
    cLabel3.setText("De Empresa");
    empFinE.setAncTexto(30);
    cLabel7.setText("De Factura");
    cLabel8.setText("A Factura");
-   cLabel1.setText("De Cliente");
-   cLabel2.setText("A Cliente");
+   cLabel1.setText("Cliente");
    cLabel9.setText("De Fecha");
    cLabel10.setOpaque(true);
    cLabel10.setText("A Fecha");
@@ -362,8 +363,8 @@ public class lisfactu extends ventana  implements JRDataSource
    Pcond.add(cLabel6, null);
    Pcond.add(cli_codiE, null);
    Pcond.add(cLabel1, null);
-   Pcond.add(cli_codiE1, null);
-   Pcond.add(cLabel2, null);
+   Pcond.add(rep_codiL, null);
+   Pcond.add(rep_codiE, null);
    Pcond.add(PcondCli, null);
    Pcond.add(Baceptar, null);
    Pcond.add(BConsul, null);
@@ -376,6 +377,7 @@ public class lisfactu extends ventana  implements JRDataSource
    if (!dt.select("SELECT emp_obsfra FROM v_empresa WHERE emp_codi=" + EU.em_cod))
      throw new SQLException("Empresa: " + EU.em_cod + " NO ENCONTRADA");
    empObsfra = dt.getString("emp_obsfra");
+   MantRepres.llenaLinkBox(rep_codiE, dtCon1);
    margInfE.setValorDec(5.0);
    nLiCabE.setValorDec(18.0);
    margSupLE.setValorDec(2);
@@ -383,7 +385,7 @@ public class lisfactu extends ventana  implements JRDataSource
    margIzqE.setValorDec(63.0);
 
    cli_codiE.iniciar(dtStat, this, vl, EU);
-   cli_codiE1.iniciar(dtStat, this, vl, EU);
+   
    datCab = new actCabAlbFra(dtStat,EU.em_cod);
 
    fvc_serie1E.setText("1");
@@ -538,13 +540,15 @@ public class lisfactu extends ventana  implements JRDataSource
     (fvc_numeE1.getValorInt()>0?" and f.fvc_nume <= "+fvc_numeE1.getValorInt():"")+
     (eje_numeE.getValorInt()>0?" and f.fvc_ano >= "+eje_numeE.getValorInt():"")+
     (eje_numeE1.getValorInt()>0?" and f.fvc_ano <= "+eje_numeE1.getValorInt():"")+
-    (cli_codiE.getValorInt()>0?" and f.cli_codi >= "+cli_codiE.getValorInt():"")+
-    (cli_codiE1.getValorInt()>0?" and f.cli_codi <= "+cli_codiE1.getValorInt():"")+
+    (cli_codiE.getValorInt()>0?" and f.cli_codi = "+cli_codiE.getValorInt():"")+
+    (rep_codiE.isNull()?"":" and rep_codi <= '"+rep_codiE.getText()+"'")+
     (! cli_zonrepE.isNull(true) && !cli_zonrepE.getText().equals("**")?" and cl.cli_zonrep  LIKE '%"+Formatear.reemplazar(cli_zonrepE.getText(),"*","%")+"%'":"")+
     (! cli_zoncreE.isNull(true) && !cli_zoncreE.getText().equals("**")?" and cl.cli_zoncre  LIKE '%"+Formatear.reemplazar(cli_zoncreE.getText(),"*","%")+"%'":"")+
     (!cli_activE.getValor().equals("%")?" and cl.cli_activ = '"+cli_activE.getValor()+"'":"")+
     (!cli_giroE.getValor().equals("%")?" and cl.cli_giro = '"+cli_giroE.getValor()+"'":"")+
-    " and fvc_serie  between '"+fvc_serieE.getText()+"' and  '"+fvc_serie1E.getText()+"'"+
+    (fvc_serieE.isNull()?"": " and fvc_serie  >= '"+fvc_serieE.getText()+"'")+
+     (fvc_serie1E.isNull()?"": " and fvc_serie  <= '"+fvc_serie1E.getText()+"'")+
+         
     " and f.cli_codi = cl.cli_codi "+
     " and fp.fpa_codi = cl.fpa_codi ";
  }
@@ -561,18 +565,18 @@ public class lisfactu extends ventana  implements JRDataSource
      mensajeErr("La empresa inicial debe ser una empresa existente");
      return false;
    }
-   if (fvc_serieE.isNull())
-   {
-       mensajeErr("Introduzca serie inicial de la factura");
-       fvc_serieE.requestFocus();
-       return false;
-   }
-   if (fvc_serie1E.isNull())
-   {
-       mensajeErr("Introduzca serie final de la factura");
-       fvc_serie1E.requestFocus();
-       return false;
-   }
+//   if (fvc_serieE.isNull())
+//   {
+//       mensajeErr("Introduzca serie inicial de la factura");
+//       fvc_serieE.requestFocus();
+//       return false;
+//   }
+//   if (fvc_serie1E.isNull())
+//   {
+//       mensajeErr("Introduzca serie final de la factura");
+//       fvc_serie1E.requestFocus();
+//       return false;
+//   }
    s=getStrSqlCount();
    dtStat.select(s);
    numFrasTratar=dtStat.getInt("cuantos");

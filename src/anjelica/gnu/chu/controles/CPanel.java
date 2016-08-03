@@ -158,6 +158,7 @@ public void setAltButton(AbstractButton b)
    * Si llamamos con true, buscara al panel padre para coger el boton por Defecto.
    * A todos los efectos si swDisa=true y el boton esta disabled es como
    * si no habriamos puesto boton por defecto.
+     * @param swDisa
    * @default false
    */
   public void setDefButtonDisable(boolean swDisa)

@@ -35,6 +35,7 @@ import javax.swing.border.*;
  */
 public class pdconfig    extends ventanaPad     implements PAD
 {
+  public final static String RUTA_RECOGER="RR";
   public final static String D_REPRZONA="CR";
   public final static String D_CREDITO="CC";
   public final static String D_ZONA="Cz";

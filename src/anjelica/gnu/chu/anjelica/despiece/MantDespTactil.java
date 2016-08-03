@@ -532,6 +532,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     grd_kilsalE.setBounds(new Rectangle(560, 3, 73, 17));
     grd_kilsalE.setEnabled(false);
     kilsalE.setEnabled(!isEmpPlanta);
+    
     ArrayList vc=new ArrayList();
     vc.add("Producto"); // 0
     vc.add("Nombre"); // 1

@@ -25,7 +25,7 @@ public class GridEvent extends EventObject
 {
   private int colError=-1;
   private boolean puedeBorrarLinea=true;
-  private int col,linea,colNueva;
+  private int col,linea,lineaNueva,colNueva;
   private boolean focusGained=false;
   private boolean focusLost=false;
   public boolean getPuedeBorrarLinea()
@@ -52,7 +52,7 @@ public class GridEvent extends EventObject
   }
   /**
    * Establecer a  true si el grid ha ganado foco (o sea se acaba de entrar al grid)
-   * @param focoGanado 
+   * @param focoPerdido 
    */ 
   public void setFocusLost(boolean focoPerdido)
   {
@@ -86,6 +86,10 @@ public class GridEvent extends EventObject
   {
       this.linea=linea;
   }
+  public void setLineaNueva(int linea)
+  {
+      this.lineaNueva=linea;
+  }
   public void setColNueva(int colNueva)
   {
       this.colNueva=colNueva;
@@ -93,6 +97,10 @@ public class GridEvent extends EventObject
   public int getLinea()
   {
       return linea;
+  }
+  public int getLineaNueva()
+  {
+      return lineaNueva;
   }
   /**
    * Devuelve la columna desde la q se movio (origen)
