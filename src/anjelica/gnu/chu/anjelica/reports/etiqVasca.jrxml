@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-03-04T14:45:06 -->
+<!-- 2016-07-18T07:46:32 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="etiqVasca" pageWidth="263" pageHeight="226" columnWidth="226" leftMargin="35" rightMargin="2" topMargin="2" bottomMargin="2" scriptletClass="gnu.chu.anjelica.listados.etiqueta" uuid="df3a910b-cb8e-4857-8b3f-e24dadc12830">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -10,14 +10,16 @@
 	<parameter name="cebado" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="despiezado" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="ntraza" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="peso" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="pesoN" class="java.lang.Double" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
 	<parameter name="conservar" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="sacrificado" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="codbarra" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="codarti" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="fecrecep" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="fecprod" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="feccadu" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="fecrecep" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="fecprod" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="feccadu" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="logotipo" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="diremp" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["CARRETERA EL CORTIJO KM 3\n"+
@@ -93,14 +95,14 @@
 				<textFieldExpression><![CDATA[$P{nacido}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="110" y="68" width="38" height="9" forecolor="#000000" backcolor="#FFFFFF" uuid="1510053e-8269-486d-a6fa-06a3daeb924b">
+				<reportElement key="staticText" mode="Opaque" x="208" y="89" width="10" height="9" forecolor="#000000" backcolor="#FFFFFF" uuid="1510053e-8269-486d-a6fa-06a3daeb924b">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<text><![CDATA[Cebado:]]></text>
+				<text><![CDATA[Kg]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="149" y="68" width="70" height="9" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="14fe7997-ca40-4f65-a589-65bf5a7d2edd"/>
@@ -162,15 +164,15 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ntraza}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="161" y="78" width="58" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="f7310de1-2f89-4989-a4f9-cffefad1b613">
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="150" y="77" width="58" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="f7310de1-2f89-4989-a4f9-cffefad1b613">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="18" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{peso}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{pesoN}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Transparent" x="130" y="102" width="94" height="9" forecolor="#000000" backcolor="#FFFFFF" uuid="654788c1-cc52-4f99-a805-5c8decde2f48"/>
@@ -180,15 +182,15 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{conservar}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="2" y="100" width="56" height="9" forecolor="#000000" backcolor="#FFFFFF" uuid="a421cf15-1292-425d-9d90-cbfb4a4bbc31"/>
+			<textField pattern="dd-MM-yy" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Opaque" x="160" y="160" width="56" height="9" forecolor="#000000" backcolor="#FFFFFF" uuid="a421cf15-1292-425d-9d90-cbfb4a4bbc31"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fecprod}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="true">
+			<textField pattern="dd-MM-yy" isBlankWhenNull="true">
 				<reportElement key="textField" mode="Opaque" x="60" y="100" width="70" height="9" forecolor="#000000" backcolor="#FFFFFF" uuid="2b37457c-33be-4876-b444-4782608b9796"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
@@ -221,6 +223,22 @@
 					<jr:codeExpression><![CDATA[$P{codbarra}]]></jr:codeExpression>
 				</jr:barbecue>
 			</componentElement>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="2" y="100" width="56" height="9" forecolor="#000000" backcolor="#FFFFFF" uuid="a8e466fc-cc18-4bf1-b546-64b078fbadc7"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Fec. Caducidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="101" y="160" width="56" height="9" forecolor="#000000" backcolor="#FFFFFF" uuid="9e884b70-1494-4fcf-a8ab-e80aa1328672"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Fec. Produccion]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>

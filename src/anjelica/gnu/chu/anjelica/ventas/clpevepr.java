@@ -4,7 +4,7 @@ package gnu.chu.anjelica.ventas;
  *
  * <p>Título: clpevepr </p>
  * <p>Descripción: Consulta/Listado Pedidos de Ventas Agrupados por Productos</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -290,8 +290,11 @@ public class  clpevepr extends ventana  implements  JRDataSource
     proiniE.iniciar(dtStat, this, vl, EU);
     profinE.iniciar(dtStat, this, vl, EU);
 
-    pvc_feciniE.setAceptaNulo(false);
-    pvc_fecfinE.setAceptaNulo(false);
+    pvc_feciniE.setAceptaNulo(true);
+    pvc_fecfinE.setAceptaNulo(true);
+    feeninE.setAceptaNulo(true);
+    feenfiE.setAceptaNulo(true);
+    
     pdalmace.llenaCombo(alm_iniE, dtStat);
     pdalmace.llenaCombo(alm_finE, dtStat);
     alm_iniE.resetTexto();
@@ -311,8 +314,8 @@ public class  clpevepr extends ventana  implements  JRDataSource
     pvc_confirE.addItem("Si", "S");
     pvc_confirE.addItem("No", "N");
     pvc_confirE.addItem("**", "-");
-    pvc_feciniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -15));
-    pvc_fecfinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
+    feeninE.setText(Formatear.sumaDias(Formatear.getDateAct(), -15));
+    feenfiE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
     emp_codiE.setValorInt(EU.em_cod);
     activarEventos();
   }
@@ -473,16 +476,16 @@ public class  clpevepr extends ventana  implements  JRDataSource
         " ,sum(pvl_canti) as pvl_canti,pvl_tipo as pvl_tipo FROM v_pedven as  p " +
         (tla_codiE.getValorInt()==99?",v_articulo as ar ":", tilialpr as t,tilialgr as gr ");
 
-    condWhere=" where  1 = 1 "+
-        (pvc_feciniE.isNull()?"":" AND pvc_fecped >= to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')") +
-        (pvc_fecfinE.isNull()?"": " and pvc_fecped <= {ts '" + pvc_fecfinE.getFecha("yyyy-MM-dd") + " 23:59:59'}" )+
-        (feeninE.isNull()?"":" AND pvc_fecent >= to_date('" + feeninE.getText() + "','dd-MM-yyyy')") +
-        (feenfiE.isNull()?"": " and pvc_fecent <= to_date('" + feenfiE.getFecha("yyyy-MM-dd") + "','dd-MM-yyyy')")+
+    condWhere=" where   (p.avc_ano = 0 or pvc_cerra=0) "+
+        (pvc_feciniE.isNull()?"":" AND pvc_fecped >= {ts '" + pvc_feciniE.getFechaDB() + "'}") +
+        (pvc_fecfinE.isNull()?"": " and pvc_fecped::date <= {ts '" + pvc_fecfinE.getFechaDB()+"'}" )+
+        (feeninE.isNull()?"":" AND pvc_fecent >= {ts '" + feeninE.getFechaDB() + "'}") +
+        (feenfiE.isNull()?"": " and pvc_fecent <= {ts '" + feenfiE.getFechaDB() + "'}")+
         " and p.alm_codi >= " + alm_iniE.getValor() +
         " and p.alm_codi <= " + alm_finE.getValor() +
         " AND p.emp_codi = " + emp_codiE.getValorInt()+
         (pvc_confirE.getValor().equals("-")?"":" and pvc_confir = '" + pvc_confirE.getValor() + "'");
-    s=s+ condWhere+
+    s+= condWhere+
        (tla_codiE.getValorInt()==99?"  and ar.pro_codi = p.pro_codi ":
        " and p.pro_codi = t.pro_codi ")+
         (tla_codiE.getValorInt()!=99 || proiniE.getValorInt()==0?"": " and p.pro_codi >= "+proiniE.getValorInt())+
@@ -683,7 +686,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
       if (campo.equals("cli_nomb"))
         return jtCli.getValString(linClien,1);
       if (campo.equals("unidcli"))
-        return new Integer(jtCli.getValorInt(linClien,2));
+        return jtCli.getValorInt(linClien,2);
 
       throw new JRException("Campo: "+campo+ " No definido");
     }

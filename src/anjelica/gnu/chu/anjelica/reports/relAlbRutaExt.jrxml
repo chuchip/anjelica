@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-05-08T11:14:20 -->
+<!-- 2016-07-18T14:13:35 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relAlbRutaExt" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="16085ab3-6a21-4d59-a4cb-6c23448b50d6">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -18,7 +18,7 @@
 		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
-		<![CDATA[select a.*, cli_nomen,cli_diree,cl.cli_poble,cl.cli_codpoe,cli_telefe,cli_percon,
+		<![CDATA[select a.*,cli_telefe,cli_percon,
 cop_nombre,emp_nomb,	 -- Nombre de Empresa
  emp_dire ,	 -- Direccion Empresa
  emp_pobl ,	 -- Poblacion Empresa
@@ -555,9 +555,9 @@ order by alr_orden]]>
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="35" splitType="Stretch">
+		<band height="27" splitType="Stretch">
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="78" y="8" width="90" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="31b2eaa0-0c07-4186-bcfc-fc0378132157">
+				<reportElement key="staticText" mode="Opaque" x="312" y="8" width="90" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="31b2eaa0-0c07-4186-bcfc-fc0378132157">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
@@ -567,7 +567,7 @@ order by alr_orden]]>
 				<text><![CDATA[Nº Albaranes]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" positionType="FixRelativeToBottom" mode="Opaque" x="170" y="8" width="26" height="17" forecolor="#000000" backcolor="#FFFFFF" uuid="81bdae1a-6532-4f8a-a68f-f6e19b1ebc2d"/>
+				<reportElement key="textField" positionType="FixRelativeToBottom" mode="Opaque" x="404" y="8" width="26" height="17" forecolor="#000000" backcolor="#FFFFFF" uuid="81bdae1a-6532-4f8a-a68f-f6e19b1ebc2d"/>
 				<box>
 					<topPen lineWidth="2.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -619,6 +619,24 @@ order by alr_orden]]>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{bultosAlb}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="3" y="3" width="43" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="dbab14e5-f0b1-4c16-abfd-43c50f408317"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Ruta]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="53" y="3" width="245" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="6778f68e-068b-4e1b-b27b-788a056557f3">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{zon_codi}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

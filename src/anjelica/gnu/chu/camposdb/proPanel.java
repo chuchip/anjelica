@@ -472,8 +472,8 @@ public class proPanel extends CPanel
         {
           switch (e.getKeyCode())
           {
-            case KeyEvent.VK_ENTER:
-              llenaCampos();
+            case KeyEvent.VK_ENTER:                
+              llenaCampos(e);
           }
         }
       }
@@ -521,7 +521,7 @@ public class proPanel extends CPanel
   {
 
   }
-  public void llenaCampos()
+  public void llenaCampos(KeyEvent e)
   {
     if (pro_codiE.getText().length()>6)
     { // Posible codigo de barras
@@ -543,8 +543,9 @@ public class proPanel extends CPanel
         prp_indiE.setValorInt(codBarra.getProIndi());
         prp_pesoE.setValorDec(codBarra.getProKilos()); 
         proCodiAnt=0;
+        e.consume();
         pro_codiE_focusLost();
-        despuesLlenaCampos();
+        despuesLlenaCampos(e);        
     }
     else
     {
@@ -563,9 +564,19 @@ public class proPanel extends CPanel
      }
   }
  
-
- 
   /**
+   * Por si alguien quiere saber si se han llenado los campos.
+   * Es utilizada cuando se mete un código de barras en este control y se han puesto
+   * los correspondientes campos de individuo,lote, etc.
+   * Es llamada esta función después de haber rellenado los campos del código de barras
+   * y haber puesto el código del producto.
+     * @param e KeyEvent
+   */
+  protected void despuesLlenaCampos(KeyEvent e)
+  {
+    despuesLlenaCampos();
+  }
+ /**
    * Por si alguien quiere saber si se han llenado los campos.
    * Es utilizada cuando se mete un código de barras en este control y se han puesto
    * los correspondientes campos de individuo,lote, etc.
@@ -576,7 +587,6 @@ public class proPanel extends CPanel
   {
 
   }
-
   /**
    * Establece el Ancho del campo del codigo del producto
    * @param anc int

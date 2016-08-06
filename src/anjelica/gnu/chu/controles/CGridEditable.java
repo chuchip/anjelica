@@ -1484,7 +1484,7 @@ public class CGridEditable extends Cgrid implements CQuery {
     int row = getSelectedRow();
     int rw = tableView.getSelectedRow() + 1;
     if (rw >= tableView.getRowCount())
-    { // Tengo q insertar una nueva linea.
+    { // Tengo q insertar una nueva linea.      
       if (TABLAVACIA)
         TABLAVACIA = false;
       cambiaColumna0(tableView.getSelectedColumn(),tableView.getSelectedColumn(), row);
@@ -1516,20 +1516,20 @@ public class CGridEditable extends Cgrid implements CQuery {
             return;
       }
       afterCambiaLinea0();
-      requestFocusLater(rw, colNueva); 
-      SwingUtilities.invokeLater(new Thread()
-      {
-        public void run()
-        {
-          try
-          {
-            Thread.sleep(100);
-          }
-          catch (InterruptedException k)
-          {}
-          ( (Component) campos.get(colNueva)).requestFocus();
-        }
-      });
+      requestFocus(rw, colNueva); 
+//      SwingUtilities.invokeLater(new Thread()
+//      {
+//        public void run()
+//        {
+//          try
+//          {
+//            Thread.sleep(100);
+//          }
+//          catch (InterruptedException k)
+//          {}
+//          ( (Component) campos.get(colNueva)).requestFocus();
+//        }
+//      });
     }
     else // No hay que insertar una nueva linea.
       procCambiaLinea(row, row + 1, getSelectedColumn(), columna);
@@ -1677,6 +1677,9 @@ public class CGridEditable extends Cgrid implements CQuery {
    * Esta rutina sera llamda, cada vez que se inserta la linea.
    * Si retorna false, NO SE CAMBIARA.
    *
+     * @param row
+     * @param col
+     * @return 
    */
   public boolean insertaLinea1(int row, int col)
   {
@@ -1684,7 +1687,7 @@ public class CGridEditable extends Cgrid implements CQuery {
          return false;
     for (int n = 0; n < nCol; n++)
     {
-      if (tCampo.get(n).toString().compareTo("T") == 0)
+      if (tCampo.get(n).compareTo("T") == 0)
       { // Si el Campo es TextField y tiene Error y esta enabled
         if ( ( (CTextField) campos.get(n)).isEnabled() && ( (CTextField) campos.get(n)).isEditable())
           ( (CTextField) campos.get(n)).procesaSalir();

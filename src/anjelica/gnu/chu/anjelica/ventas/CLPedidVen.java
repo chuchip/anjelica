@@ -49,17 +49,23 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 
 
-public class CLPedidVen extends  ventana 
+public class CLPedidVen extends  ventana   implements  JRDataSource
 {
+    int nLineaReport;
+    boolean swImpreso=true;
     proPanel pro_codiE= new proPanel();
     prvPanel prv_codiE = new prvPanel();
     int empCodiS,ejeNumeS,pvcNumeS,cliCodiS;
@@ -145,7 +151,7 @@ public class CLPedidVen extends  ventana
 
         iniciarFrame();
 
-        this.setVersion("2016-07-17");
+        this.setVersion("2016-08-04");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -431,9 +437,7 @@ public class CLPedidVen extends  ventana
           return;
         }
       try {
-        if (!iniciarCons(true))
-          return;
-
+        swImpreso=false;
         java.util.HashMap mp = Listados.getHashMapDefault();
         mp.put("fecini",pvc_feciniE.getDate());
         mp.put("fecfin",pvc_fecfinE.getDate());
@@ -443,82 +447,102 @@ public class CLPedidVen extends  ventana
         jr =  Listados.getJasperReport(EU, "relpedven");
 
         ResultSet rs;
+        nLineaReport=0;
+//        rs=dtCon1.getStatement().executeQuery(dtCon1.getStrSelect());
 
-        rs=dtCon1.getStatement().executeQuery(dtCon1.getStrSelect());
-
-        JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
+        JasperPrint jp = JasperFillManager.fillReport(jr, mp,this);
         gnu.chu.print.util.printJasper(jp, EU);
 
          mensajeErr("Relacion Pedido Ventas ... IMPRESO ");
       }
-      catch (SQLException | ParseException | JRException | PrinterException k)
+      catch (ParseException | JRException | PrinterException k)
       {
         Error("Error al imprimir Pedido Venta", k);
       }
     }
-
+   
+    @Override
+     public boolean next() throws JRException
+     {
+        try
+        {
+            if (nLineaReport>=jtCabPed.getRowCount())
+                return false;
+           if (nLineaReport==0 || !dtCon1.next())
+           {
+            if (swImpreso )
+            {
+                s = "select l.*,p.prv_nomb ,c.cli_codi,c.alm_codi,c.pvc_fecped, "
+                    + " c.pvc_fecent,c.pvc_clinom,c.usu_nomb,c.pvc_comen,al.alm_nomb, "
+                    + " a.pro_nomb, cl.cli_nomb,cl.cli_pobl "
+                    + " from pedvenl as l left join v_proveedo p on  p.prv_codi = l.prv_codi, "
+                    + " pedvenc as c,v_articulo as a,v_almacen as al,clientes as cl "
+                    + " where  c.emp_codi = l.emp_codi "
+                    + " and c.eje_nume = l.eje_nume "
+                    + " and c.pvc_nume = l.pvc_nume "
+                    + " and l.pro_codi = a.pro_codi "
+                    + " and al.alm_codi = c.alm_codi "
+                    + " and c.cli_codi = cl.cli_codi "
+                    + " and c.alm_codi = al.alm_codi "
+                    + " and c.emp_codi =  " + jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED)
+                    + " and C.cli_codi = cl.cli_codi "
+                    + " AND C.eje_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED)
+                    + " and C.pvc_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED)
+                    + " order by pvl_numlin ";
+            }
+            else
+            {
+                s = "SELECT c.*, cl.cli_nomb,cl.cli_poble"
+                    + "  FROM pedvenc as c,v_cliente as cl "+
+                    " WHERE c.emp_codi =  "+jtCabPed.getValorInt(nLineaReport,JTCAB_EMPPED)+
+                    " and C.cli_codi = cl.cli_codi "+
+                    " AND C.eje_nume = "+jtCabPed.getValorInt(nLineaReport,JTCAB_EJEPED)+
+                    " and C.pvc_nume = "+jtCabPed.getValorInt(nLineaReport,JTCAB_NUMPED);
+            }
+            if (! dtCon1.select(s))
+            {
+                throw new JRException("Error al localizar pedido para listar. Linea: "+
+                    nLineaReport+ " Pedido: "+jtCabPed.getValorInt(nLineaReport,JTCAB_NUMPED));         
+            }
+           }
+           nLineaReport++;
+           return true;
+        } catch (SQLException ex)
+        {
+            throw new JRException("Error al buscar pedido a listar",ex);
+        }
+     }
+  
     void imprImpreso()
     {
       try
       {
-           s = "select l.*,p.prv_nomb ,c.cli_codi,c.alm_codi,c.pvc_fecped, " +
-            " c.pvc_fecent,c.usu_nomb,c.pvc_comen,al.alm_nomb, " +
-            " a.pro_nomb, cl.cli_nomb,cl.cli_pobl " +
-            " from pedvenl as l left join v_proveedo p on  p.prv_codi = l.prv_codi, " +
-            " pedvenc as c,v_articulo as a,v_almacen as al,clientes as cl " +
-            " where  c.emp_codi = l.emp_codi " +
-            " and pvc_fecent  between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +
-            " and to_date('" + pvc_fecfinE.getText() + "','dd-MM-yyyy')"  +
-            " and c.eje_nume = l.eje_nume " +
-            " and c.pvc_nume = l.pvc_nume " +
-            " and l.pro_codi = a.pro_codi " +
-            " and al.alm_codi = c.alm_codi " +
-            " and c.cli_codi = cl.cli_codi " +
-            " and c.pvc_confir = 'S' "+
-             (alm_codiE.getValorInt() == 0 ? "" : " AND c.alm_codi = " + alm_codiE.getValorInt())+
-            " and cl.cli_codi = c.cli_codi " +
-            " and c.alm_codi = al.alm_codi " +
-            (sbe_codiE.getValorInt() == 0 ? "" : " AND cl.sbe_codi = " + sbe_codiE.getValorInt())+
-            (emp_codiE.getValorInt() == 0 ? "" : " AND c.emp_codi = " + emp_codiE.getValorInt());
+        swImpreso=true;
+       
 
-        if (verPedidosE.getValor().equals("P"))
-          s += " AND avc_ano = 0";
-        if (verPedidosE.getValor().equals("L"))
-          s += " AND avc_ano != 0";
-        if (!pvc_confirE.getValor().equals("-"))
-          s += " and pvc_confir = '" + pvc_confirE.getValor() + "'";
-        if (!cli_codiE.isNull())
-          s += " AND c.cli_codi = " + cli_codiE.getValorInt();
-        if (! pvc_listadoE.getValor().equals("*"))
-          s+=" AND c.pvc_impres = '"+pvc_listadoE.getValor()+"'";
-        s += " order by c.pvc_fecent,c.cli_codi ";
-        if (! dtCon1.select(s)){
-          mensajeErr("NO hay pedidos con estas condiciones");
-          return;
-        }
-        ResultSet rs;
         java.util.HashMap mp =Listados.getHashMapDefault();
         JasperReport jr;
         jr = Listados.getJasperReport(EU, "pedventas");
 
-        rs = dtCon1.getStatement().executeQuery(dtCon1.getStrSelect());
+      
+        nLineaReport=0;
 
-        JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
+        JasperPrint jp = JasperFillManager.fillReport(jr, mp,this);
         gnu.chu.print.util.printJasper(jp, EU);
 
         mensajeErr("Relacion Pedido Ventas ... IMPRESO ");
-        dtCon1.select(s);
-        do
-        {
-          s = "update PEDVENC SET pvc_impres = 'S' WHERE emp_codi = " + dtCon1.getInt("emp_codi")+
-          " and eje_nume = " + dtCon1.getInt("eje_nume")+
-          " and pvc_nume = " +dtCon1.getInt("pvc_nume");
-          stUp.executeUpdate(s);
-        } while (dtCon1.next());
-        ctUp.commit();
+//        dtCon1.select(s);
+//        do
+//        {
+//          s = "update PEDVENC SET pvc_impres = 'S' WHERE emp_codi = " + dtCon1.getInt("emp_codi")+
+//            " and eje_nume = " + dtCon1.getInt("eje_nume")+
+//            " and pvc_nume = " +dtCon1.getInt("pvc_nume");
+//          stUp.executeUpdate(s);
+//        } while (dtCon1.next());
+//        ctUp.commit();
         mensajeErr("Pedido Ventas ... IMPRESO ");
       }
-      catch (SQLException | JRException | PrinterException k)
+      catch (JRException | PrinterException k)
       {
         Error("Error al imprimir Pedido Venta", k);
       }
@@ -1098,4 +1122,16 @@ public class CLPedidVen extends  ventana
     private gnu.chu.controles.CComboBox verPedidosE;
     private gnu.chu.controles.CLinkBox zon_codiE;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public Object getFieldValue(JRField jrf) throws JRException {
+        try
+        {
+            String campo = jrf.getName().toLowerCase();
+            return dtCon1.getObject(campo);
+        } catch (SQLException ex)
+        {
+            throw new JRException("Error al listar pedidos",ex);
+        }
+    }
 }

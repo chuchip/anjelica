@@ -356,10 +356,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
   proPanel pro_codiE = new proPanel()
   {
     @Override
-    protected void despuesLlenaCampos()
+    protected void despuesLlenaCampos(KeyEvent e)
     {
       try
       {
+        e.consume();
         jt.setValor(this.getText(), JT_PROCODI);
         s=this.getNombArt();
         pro_nombE.setText(s);
@@ -371,15 +372,15 @@ public class pdalbara extends ventanaPad  implements PAD  {
 //        v.add(pro_codiE.getText().trim());
 //        v.add(pro_nombcE.getText().trim());
         v.add(EU.em_cod);
-        v.add(avp_ejelotE.getText().trim());
+        v.add(avp_ejelotE.getValorInt());
         v.add("1");
         v.add(avp_serlotE.getText().trim());
-        v.add(avp_numparE.getText().trim());
-        v.add(avp_numindE.getText().trim());
-        v.add(avp_cantiE.getText().trim());
+        v.add(avp_numparE.getValorInt());
+        v.add(avp_numindE.getValorInt());
+        v.add(avp_cantiE.getValorDec());
         v.add("1");
-        v.add(avp_cantiE.getText().trim());
-        v.add(avp_cantiE.getText().trim());
+        v.add(avp_cantiE.getValorDec());
+        v.add(avp_cantiE.getValorDec());
         if (! checkIndiv(jt.getSelectedRow(),false) || avp_cantiE.getValorDec()==0 )
         {         
           jtDes.setLinea(v);
@@ -1759,6 +1760,34 @@ public class pdalbara extends ventanaPad  implements PAD  {
   }
   void activarEventos()
   {
+      avc_cerraE.addActionListener(new java.awt.event.ActionListener()
+      {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
+              try
+              {
+                  if (inTransation())
+                      return;
+                  if (avc_numeE.getValorInt()==0)
+                      return;
+                  dtAdd.executeUpdate("update v_albavec set avc_cerra="+(avc_cerraE.isSelected()?-1:0)+
+                      " where "+getCondCurrent());
+                  if (pvc_numeE.getValorInt()!=0)
+                  {
+                     dtAdd.executeUpdate("update pedvenc set pvc_cerra="+(avc_cerraE.isSelected()?-1:0)+
+                      " where emp_codi="+emp_codiE.getValorInt()+
+                         " and eje_nume="+pvc_anoE.getValorInt()+
+                         " and pvc_nume = "+pvc_numeE.getValorInt());
+                  }
+                  dtAdd.commit();
+                  msgBox("Tipo Albaran cambiado a "+
+                      (avc_cerraE.isSelected()?"CERRADO":"ABIERTO"));
+              } catch (SQLException ex)
+              {
+                 Error("Al cambiar estado albaran (cerrado/abierto)",ex);
+              }
+          }
+      } );
       jtPalet.addGridListener(new GridAdapter(){
         @Override
         public void focusLost(GridEvent event){
@@ -7591,7 +7620,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     avc_numeE.setEnabled(b);
     div_codiE.setEnabled(b);
     avc_fecalbE.setEnabled(b);
-    avc_cerraE.setEnabled(b);
+//    avc_cerraE.setEnabled(b);
     cli_codiE.setEnabled(b);
     usu_nombE.setEnabled(b);
     avc_fecemiE.setEnabled(b);
