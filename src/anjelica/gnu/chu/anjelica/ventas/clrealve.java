@@ -9,9 +9,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -41,6 +45,7 @@ import net.sf.jasperreports.engine.JasperReport;
  */
 public class clrealve extends ventana
 {
+  lialbven liAlb = null;
   CPanel Pprinc = new CPanel();
   condBusq PcondBus = new condBusq();
   CButton Bconsulta = new CButton("F4 Consultar",Iconos.getImageIcon("buscar"));
@@ -52,7 +57,7 @@ public class clrealve extends ventana
   CTextField numAlbE = new CTextField(Types.DECIMAL,"###9");
   CLabel cLabel3 = new CLabel();
   CTextField impAlbE = new CTextField(Types.DECIMAL,"--,---,--9.99");
-  CButton Blistar = new CButton(Iconos.getImageIcon("print"));
+  CButtonMenu Blistar = new CButtonMenu(Iconos.getImageIcon("print"));
   GridBagLayout gridBagLayout1 = new GridBagLayout();
 
   public clrealve(EntornoUsuario eu, Principal p)
@@ -143,24 +148,26 @@ public class clrealve extends ventana
     impAlbE.setEnabled(false);
     impAlbE.setEjecSonido(false);
     impAlbE.setBounds(new Rectangle(234, 4, 76, 17));
-    Bconsulta.setBounds(new Rectangle(444, 139, 132, 24));
+    Bconsulta.setBounds(new Rectangle(330, 139, 132, 24));
     Bconsulta.setMargin(new Insets(0, 0, 0, 0));
-    Blistar.setPreferredSize(new Dimension(24, 24));
-    Blistar.setMaximumSize(new Dimension(24, 24));
-    Blistar.setMinimumSize(new Dimension(24, 24));
+    Blistar.setBounds(new Rectangle(464, 139, 112, 24)  );
+    Blistar.setMargin(new Insets(0, 0, 0, 0));
+    Blistar.setText("Listar");
+    Blistar.setPreferredSize(new Dimension(200,16));
+    Blistar.addMenu("Relacion","R");
+    Blistar.addMenu("Albaran Valorado","V");
+    Blistar.addMenu("Albaran Sin Valorar","S");
     Blistar.setToolTipText("Generar Listado sobre condiciones");
 
     ordenE.setBounds(new Rectangle(483, 114, 91, 17));
-    statusBar.add(Blistar, new GridBagConstraints(8, 0, 1, 2, 0.0, 0.0,
-                GridBagConstraints.EAST,
-                 GridBagConstraints.VERTICAL,
-                 new Insets(0, 5, 0, 0), 0, 0));
+  
 
     this.getContentPane().add(statusBar, BorderLayout.SOUTH);
     this.getContentPane().add(Pprinc, BorderLayout.CENTER);
     Pprinc.add(PcondBus,   new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
     PcondBus.add(Bconsulta, null);
+    PcondBus.add(Blistar, null);
     PcondBus.add(ordenE, null);
     PcondBus.add(cLabel1, null);
     Pprinc.add(jt,   new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
@@ -202,7 +209,10 @@ public class clrealve extends ventana
             @Override
       public void actionPerformed(ActionEvent e)
       {
-        Blistar_actionPerformed();
+        if (Blistar.getValor(e.getActionCommand()).equals("R"))
+           Blistar_actionPerformed();
+        else
+           imprAlbaran(Blistar.getValor(e.getActionCommand()).equals("V"));
       }
     });
 
@@ -269,11 +279,30 @@ public class clrealve extends ventana
         condWhere+" ORDER BY  "+   (ordenE.getValor().equals("C")? "a.cli_codi,":"")+
         "a.emp_codi,a.avc_ano,a.avc_serie,a.avc_nume";
   }
+  
+  void imprAlbaran(boolean valorado)
+  {
+        try {
+            if (liAlb == null)
+              liAlb = new lialbven(dtStat, EU);
+            String s="SELECT a.emp_codi as avc_empcod, a.*,cl.*" +
+              " FROM v_albavec as a,clientes cl "+
+              " WHERE cl.cli_codi = a.cli_codi " +
+                PcondBus.getCondWhere(EU)+" ORDER BY  "+  
+                (ordenE.getValor().equals("C")? "a.cli_codi,":"")+
+                "a.emp_codi,a.avc_ano,a.avc_serie,a.avc_nume";
+            liAlb.impAlbaran(PcondBus.getEmpresa()==0?EU.em_cod:PcondBus.getEmpresa(),
+                dtStat, dtCon1, s, EU, valorado);
+       } catch (Exception ex) {
+          Error("Error al imprimir albaran",ex);
+       }
+  }
   void Blistar_actionPerformed()
   {
 
     new miThread("jjj")
     {
+      @Override
       public void run()
       {
         listar();
@@ -283,7 +312,7 @@ public class clrealve extends ventana
 
   void listar()
   {
-    mensaje("Espere .... generando Listado");
+    msgEspere("Espere .... generando Listado");
     this.setEnabled(false);
     try
     {
@@ -333,7 +362,7 @@ public class clrealve extends ventana
 
        JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
        gnu.chu.print.util.printJasper(jp, EU);
-       mensaje("");
+       resetMsgEspere();
        mensajeErr("Listado ... GENERADO");
     } catch (Exception k)
     {

@@ -1161,9 +1161,7 @@ public class menu extends JFrame
      {
        public void actionPerformed(ActionEvent e)
        {
-         Hashtable ht = new Hashtable();
-         ht.put("admin", "true");
-         lanzaEjecutable(new gnu.chu.anjelica.ventas.clpevepr(menu.this,EU,ht));         
+            clpedidven_actionPerformed(e);
        }
      });
 
@@ -1969,7 +1967,10 @@ void pdreprese_actionPerformed(ActionEvent e) {
     HashMap ht=new HashMap();
     lanzaEjecutable(new gnu.chu.anjelica.ventas.CLPedidVen(this,EU,ht));
   }
-
+  void clpedidven_actionPerformed(ActionEvent e) {
+    HashMap ht=new HashMap();
+    lanzaEjecutable(new gnu.chu.anjelica.ventas.CLPeVenPro(this,EU,ht));
+  }
  void manpralb_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
 //    ht.put("modConsulta","true");

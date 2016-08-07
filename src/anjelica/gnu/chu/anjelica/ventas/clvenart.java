@@ -16,7 +16,7 @@ import net.sf.jasperreports.engine.*;
  *
  * <p>T�tulo: clvenart </p>
  * <p>Descripción: Consulta/Listado Ventas por Cliente y Articulo</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -99,7 +99,7 @@ public class clvenart extends ventana implements  JRDataSource
    {
      iniciarFrame();
      this.setSize(new Dimension(602, 533));
-     this.setVersion("2015-05-08");
+     this.setVersion("2016-08-07");
     statusBar = new StatusBar(this);
     conecta();
     Pprinc.setLayout(gridBagLayout1);

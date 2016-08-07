@@ -322,7 +322,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2016-05-08");
+      this.setVersion("2016-08-07");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -1387,11 +1387,7 @@ public class pdclien extends ventanaPad implements PAD
         cli_codpoE.requestFocus();
         return false;
     }
-    if (!checkCodPostal(cli_codpoeE.getText()))
-    {
-        cli_codpoeE.requestFocus();
-        return false;
-    }
+
         
     if (cli_direcE.isNull())
     {
@@ -1528,6 +1524,47 @@ public class pdclien extends ventanaPad implements PAD
         cli_comenT.requestFocus();
         return false;
       }
+      if (cli_nomenE.isNull())
+      {
+          mensajeErr("Introduzca nombre de entrega");
+          cli_nomenE.setText(cli_nombE.getText());
+          cli_nomenE.requestFocus();
+          return false;
+      }
+      if (cli_pobleE.isNull())
+      {
+          mensajeErr("Introduzca Población de entrega");
+          cli_pobleE.setText(cli_poblE.getText());
+          cli_pobleE.requestFocus();
+          return false;
+      }
+      if (cli_direeE.isNull())
+      {
+          mensajeErr("Introduzca Direccion de entrega");
+          cli_direeE.setText(cli_direcE.getText());
+          cli_direeE.requestFocus();
+          return false;
+      } 
+      if (cli_codpoeE.isNull())
+      {
+          mensajeErr("Introduzca Codigo Postal de entrega");
+          cli_codpoeE.setText(cli_codpoE.getText());
+          cli_codpoeE.requestFocus();
+          return false;
+      }
+      if (!checkCodPostal(cli_codpoeE.getText()))
+      {
+        cli_codpoeE.requestFocus();
+        return false;
+      }
+      if (!cli_telefeE.isNull() && cli_telefeE.isNull())
+      {
+          mensajeErr("Introduzca Telefono Entrega de entrega");
+          cli_telefeE.setText(cli_telefeE.getText());
+          cli_telefeE.requestFocus();
+          return false;
+      }
+              
     } catch (SQLException | ParseException | NumberFormatException k)
     {
       Error("Error al Controlar Campos",k);

@@ -230,6 +230,10 @@ public class condBusq extends CPanel
     this.add(proIniE, null);
     this.add(PcondCli, null);
   }
+  public int getEmpresa()
+  {
+      return empIniE.getValorInt();
+  }
   public void iniciar(DatosTabla dt,ventana papa,JLayeredPane layPan,EntornoUsuario eu) throws Exception
   {
     padre=papa;

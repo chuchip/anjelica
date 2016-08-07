@@ -49,7 +49,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
   ventana padre=null;
   String s;
   boolean verPrecio;
-  proPanel pro_codiE= new proPanel();
+  
   prvPanel prv_codiE = new prvPanel();
   String ZONA = null;
   CPanel Pprinc = new CPanel();
@@ -57,27 +57,25 @@ public class  clpevepr extends ventana  implements  JRDataSource
   Cgrid jtProd = new Cgrid(4);
   Cgrid jtCli = new Cgrid(3);
   CLabel cLabel2 = new CLabel();
-  CTextField pvc_feciniE = new CTextField(Types.DATE, "dd-MM-yyyy");
-  CLabel cLabel3 = new CLabel();
-  CTextField pvc_fecfinE = new CTextField(Types.DATE, "dd-MM-yyyy");
-  CComboBox alm_iniE = new CComboBox();
+  
+  CComboBox alm_codiE = new CComboBox();
   CLabel cLabel14 = new CLabel();
-  CComboBox alm_finE = new CComboBox();
-  CLabel cLabel15 = new CLabel();
+  
+  
   CButton Baceptar = new CButton("<html><center>Aceptar<em>(F4)</EM></center></html>",
                                  Iconos.getImageIcon("check"));
-  CLabel cLabel6 = new CLabel();
-  CComboBox pvc_confirE = new CComboBox();
+  
+//  CComboBox pvc_confirE = new CComboBox();
   CLabel cLabel8 = new CLabel();
   CTextField emp_codiE = new CTextField(Types.DECIMAL,"#9");
-  CLabel cLabel10 = new CLabel();
+  
   CTextField feeninE = new CTextField(Types.DATE, "dd-MM-yyyy");
   CLabel cLabel4 = new CLabel();
   CLinkBox tla_codiE = new CLinkBox();
-  CLabel cLabel11 = new CLabel();
-  proPanel profinE = new proPanel();
+ 
+  
   CLabel cLabel12 = new CLabel();
-  proPanel proiniE = new proPanel();
+  proPanel pro_codiE = new proPanel();
   CLinkBox cam_codiE = new CLinkBox();
   CLabel cLabel18 = new CLabel();
   Cgrid jtPed = new Cgrid(10);
@@ -169,15 +167,15 @@ public class  clpevepr extends ventana  implements  JRDataSource
     cLabel8.setText("Empresa");
     cLabel8.setBounds(new Rectangle(565, 3, 52, 17));
 //    pvc_impresE.setBounds(new Rectangle(488, 39, 63, 16));
-    cLabel10.setText("De Fec.Pedido");
-    cLabel10.setBounds(new Rectangle(3, 42, 79, 17));
+   
     cLabel4.setText("Tipo Listado");
     cLabel4.setBounds(new Rectangle(3, 3, 75, 17));
     tla_codiE.setAncTexto(20);
-    tla_codiE.setBounds(new Rectangle(75, 3, 156, 17));
-    cLabel11.setText("A Prod.");
-    cLabel11.setBounds(new Rectangle(325, 22, 50, 17));
-    cLabel12.setText("De Prod.");
+    tla_codiE.setPreferredSize(new Dimension(150,20));
+    tla_codiE.setBounds(new Rectangle(75, 3, 200, 17));
+//    cLabel11.setText("A Prod.");
+//    cLabel11.setBounds(new Rectangle(325, 22, 50, 17));
+    cLabel12.setText("Prod.");
     cLabel12.setBounds(new Rectangle(3, 22, 54, 17));
     cam_codiE.setAncTexto(25);
     cam_codiE.setBounds(new Rectangle(333, 3, 181, 17));
@@ -195,25 +193,22 @@ public class  clpevepr extends ventana  implements  JRDataSource
                                            , GridBagConstraints.EAST,
                                            GridBagConstraints.VERTICAL,
                                            new Insets(0, 5, 0, 0), 0, 0));
-    cLabel6.setText("Conf.");
-    cLabel6.setBounds(new Rectangle(448, 63, 39, 17));
+    
     Pcondi.setMaximumSize(new Dimension(655, 89));
     Pcondi.setMinimumSize(new Dimension(655, 89));
     Pcondi.setPreferredSize(new Dimension(655, 89));
     Baceptar.setBounds(new Rectangle(528, 63, 121, 22));
-    alm_finE.setBounds(new Rectangle(289, 63, 156, 17));
-    alm_iniE.setBounds(new Rectangle(72, 63, 156, 17));
+    
+    alm_codiE.setBounds(new Rectangle(72, 63, 156, 17));
     cLabel14.setBounds(new Rectangle(3, 63, 67, 17));
-    cLabel15.setBounds(new Rectangle(229, 63, 63, 17));
-    pvc_confirE.setBounds(new Rectangle(479, 63, 46, 17));
+  
+   
     feenfiE.setBounds(new Rectangle(571, 42, 75, 18));
     feeninE.setBounds(new Rectangle(404, 42, 75, 17));
     cLabel2.setBounds(new Rectangle(317, 42, 87, 17));
-    pvc_fecfinE.setBounds(new Rectangle(235, 42, 75, 17));
-    cLabel3.setBounds(new Rectangle(160, 42, 75, 17));
-    pvc_feciniE.setBounds(new Rectangle(81, 42, 75, 17));
-    profinE.setBounds(new Rectangle(378, 22, 267, 17));
-    proiniE.setBounds(new Rectangle(54, 22, 267, 17));
+    
+   
+    pro_codiE.setBounds(new Rectangle(54, 22, 267, 17));
     emp_codiE.setBounds(new Rectangle(616, 3, 27, 17));
     this.getContentPane().add(statusBar, BorderLayout.SOUTH);
 
@@ -223,34 +218,28 @@ public class  clpevepr extends ventana  implements  JRDataSource
     Pcondi.setLayout(null);
 
     cLabel2.setText("De Fec.Entrega");
-    cLabel3.setRequestFocusEnabled(true);
-    cLabel3.setText("A Fec.Pedido");
-    cLabel14.setText("De Almacen");
-    cLabel15.setText("A Almacen");
+   
+    cLabel14.setText("Almacen");
+    
     confJtPro();
     confJtCli();
     confJtPed();
     this.getContentPane().add(Pprinc, BorderLayout.CENTER);
     Pcondi.add(tla_codiE, null);
     Pcondi.add(cLabel4, null);
-    Pcondi.add(pvc_fecfinE, null);
-    Pcondi.add(cLabel3, null);
+   
     Pcondi.add(cLabel2, null);
-    Pcondi.add(pvc_feciniE, null);
-    Pcondi.add(cLabel10, null);
-    Pcondi.add(cLabel11, null);
-    Pcondi.add(profinE, null);
+   
+  
     Pcondi.add(cLabel12, null);
-    Pcondi.add(proiniE, null);
+    Pcondi.add(pro_codiE, null);
     Pcondi.add(cLabel14, null);
-    Pcondi.add(alm_iniE, null);
-    Pcondi.add(cLabel15, null);
-    Pcondi.add(alm_finE, null);
+    Pcondi.add(alm_codiE, null);
+ 
     Pcondi.add(Baceptar, null);
     Pcondi.add(emp_codiE, null);
     Pcondi.add(cLabel8, null);
-    Pcondi.add(cLabel6, null);
-    Pcondi.add(pvc_confirE, null);
+  
     Pcondi.add(feeninE, null);
     Pcondi.add(feenfiE, null);
     Pcondi.add(cLabel5, null);
@@ -287,33 +276,18 @@ public class  clpevepr extends ventana  implements  JRDataSource
 
     gnu.chu.anjelica.pad.pdconfig.llenaDiscr(dtStat,cam_codiE,"AC",EU.em_cod);
 
-    proiniE.iniciar(dtStat, this, vl, EU);
-    profinE.iniciar(dtStat, this, vl, EU);
+    pro_codiE.iniciar(dtStat, this, vl, EU);
+   
 
-    pvc_feciniE.setAceptaNulo(true);
-    pvc_fecfinE.setAceptaNulo(true);
+   
     feeninE.setAceptaNulo(true);
     feenfiE.setAceptaNulo(true);
     
-    pdalmace.llenaCombo(alm_iniE, dtStat);
-    pdalmace.llenaCombo(alm_finE, dtStat);
-    alm_iniE.resetTexto();
-    alm_finE.setTextFin();
-//    pdalmace.llenaCombo(alm_finE, dtStat);
-//    s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_codi";
-//    dtCon1.select(s);
-//    int almIni = dtCon1.getInt("alm_codi");
-//    alm_iniE.setValor(almIni);
-//    alm_iniE.addItem(dtCon1);
-//    dtCon1.select(s);
-//    alm_finE.addItem(dtCon1);
-//    dtCon1.last();
-//    alm_finE.setValor(dtCon1.getInt("alm_codi"));
+    pdalmace.llenaCombo(alm_codiE, dtStat);
+ 
+    alm_codiE.resetTexto();
 
-
-    pvc_confirE.addItem("Si", "S");
-    pvc_confirE.addItem("No", "N");
-    pvc_confirE.addItem("**", "-");
+   
     feeninE.setText(Formatear.sumaDias(Formatear.getDateAct(), -15));
     feenfiE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
     emp_codiE.setValorInt(EU.em_cod);
@@ -436,18 +410,7 @@ public class  clpevepr extends ventana  implements  JRDataSource
   }
   private boolean iniciarCons(boolean ejecSelect) throws SQLException, ParseException
   {
-    if (pvc_feciniE.getError())
-    {
-      mensajeErr("Fecha INICIAL no es valida");
-      pvc_feciniE.requestFocus();
-      return false;
-    }
-    if (pvc_fecfinE.getError())
-    {
-      mensajeErr("Fecha FINAL no es valida");
-      pvc_feciniE.requestFocus();
-      return false;
-    }
+    
     if (feeninE.getError())
     {
       mensajeErr("Fecha Entrega INICIAL no es valida");
@@ -477,19 +440,15 @@ public class  clpevepr extends ventana  implements  JRDataSource
         (tla_codiE.getValorInt()==99?",v_articulo as ar ":", tilialpr as t,tilialgr as gr ");
 
     condWhere=" where   (p.avc_ano = 0 or pvc_cerra=0) "+
-        (pvc_feciniE.isNull()?"":" AND pvc_fecped >= {ts '" + pvc_feciniE.getFechaDB() + "'}") +
-        (pvc_fecfinE.isNull()?"": " and pvc_fecped::date <= {ts '" + pvc_fecfinE.getFechaDB()+"'}" )+
+        " and pvc_confir='S' "+
         (feeninE.isNull()?"":" AND pvc_fecent >= {ts '" + feeninE.getFechaDB() + "'}") +
         (feenfiE.isNull()?"": " and pvc_fecent <= {ts '" + feenfiE.getFechaDB() + "'}")+
-        " and p.alm_codi >= " + alm_iniE.getValor() +
-        " and p.alm_codi <= " + alm_finE.getValor() +
-        " AND p.emp_codi = " + emp_codiE.getValorInt()+
-        (pvc_confirE.getValor().equals("-")?"":" and pvc_confir = '" + pvc_confirE.getValor() + "'");
+        " and p.alm_codi = " + alm_codiE.getValor() +
+        " AND p.emp_codi = " + emp_codiE.getValorInt();
     s+= condWhere+
        (tla_codiE.getValorInt()==99?"  and ar.pro_codi = p.pro_codi ":
        " and p.pro_codi = t.pro_codi ")+
-        (tla_codiE.getValorInt()!=99 || proiniE.getValorInt()==0?"": " and p.pro_codi >= "+proiniE.getValorInt())+
-        (tla_codiE.getValorInt()!=99 || profinE.getValorInt()==0?"": " and p.pro_codi > "+profinE.getValorInt())+
+        (tla_codiE.getValorInt()!=99 || pro_codiE.getValorInt()==0?"": " and p.pro_codi = "+pro_codiE.getValorInt())+
         (tla_codiE.getValorInt()==99?"":" and gr.tla_codi = t.tla_codi "+
         " and gr.tla_orden = t.tla_orden and t.tla_codi="+tla_codiE.getValorInt())+
        " group by pvl_tipo,   "+
@@ -632,8 +591,8 @@ public class  clpevepr extends ventana  implements  JRDataSource
         jtProd.requestFocusInicio();
         swRotoProd=true;
         java.util.HashMap mp = Listados.getHashMapDefault();
-        mp.put("fecini",pvc_feciniE.getDate());
-        mp.put("fecfin",pvc_fecfinE.getDate());
+        mp.put("fecini",feeninE.getDate());
+        mp.put("fecfin",feenfiE.getDate());
 
         JasperReport jr;
         jr = Listados.getJasperReport(EU, "relpevepr");

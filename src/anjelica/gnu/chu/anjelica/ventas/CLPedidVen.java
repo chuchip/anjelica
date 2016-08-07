@@ -179,7 +179,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      sbe_codiE.setFieldEmpCodi(emp_codiE.getTextField());
      sbe_codiE.setAceptaNulo(true);
      sbe_codiE.setValorInt(0);
-     pvc_feciniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -15));
+     pvc_feciniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -7));
      pvc_fecfinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
       activarEventos();
     }
@@ -578,6 +578,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = "+sbe_codiE.getValorInt())+
         (zon_codiE.isNull()?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
         (rep_codiE.isNull()?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'")+
+        (rut_codiE.isNull()?"": " and cli_ruta ='"+rut_codiE.getText()+"'")+
         (emp_codiE.getValorInt() == 0 ? "" : " AND c.emp_codi = " + emp_codiE.getValorInt());
 
     if (verPedidosE.getValor().equals("P"))
@@ -713,14 +714,14 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
             if (! swImpres && albListadoC.getValor().equals("S"))
                 continue;
         }
-        if (!rut_codiE.isNull())
-        {
-            if (dtCon1.getObject("cli_ruta")!=null)
-            {
-                if (! rut_codiE.getText().equals(dtCon1.getString("cli_ruta")))
-                    continue;
-            }
-        }
+//        if (!rut_codiE.isNull())
+//        {
+//            if (dtCon1.getObject("cli_ruta")!=null)
+//            {
+//                if (! rut_codiE.getText().equals(dtCon1.getString("cli_ruta")))
+//                    continue;
+//            }
+//        }
         ArrayList v=new ArrayList();
         v.add(dtCon1.getString("emp_codi")); // 0
         v.add(dtCon1.getString("eje_nume")); // 1

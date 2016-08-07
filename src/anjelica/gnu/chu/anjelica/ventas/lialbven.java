@@ -263,11 +263,16 @@ public class lialbven implements JRDataSource
   {
     String nombre=jRField.getName() ;
     try {
-        if (nombre.equals("cli_nomen") ||
-            nombre.equals("cli_diree") ||
+        if ( nombre.equals("cli_nomen"))
+        {
+            if (rs.getString("avc_clinom")!=null)
+                return rs.getString("avc_clinom");
+            else
+                return rs.getString("cli_nomen");
+        }
+        if (nombre.equals("cli_diree") ||
             nombre.equals("cli_poble") ||
-            nombre.equals("avc_serie") ||
-            nombre.equals("avc_clinom") )
+            nombre.equals("avc_serie") )
           return rs.getString(nombre);
 
         if (nombre.equals("avc_empcod") ||
@@ -279,7 +284,7 @@ public class lialbven implements JRDataSource
         if (nombre.equals("cli_codpoe"))
             return rs.getString(nombre);
         if (nombre.equals("avc_fecalb"))
-          return rs.getDate(jRField.getName());
+          return rs.getDate(nombre);
         if (jRField.getName().equals("avc_impiva"))
           return (Double) ht.get(nombre);
 
