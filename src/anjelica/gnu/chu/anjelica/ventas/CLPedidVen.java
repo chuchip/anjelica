@@ -102,7 +102,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                     ARG_SBECODI = ht.get("sbeCodi");
               
             }
-            setTitulo("Cons/List. Productos Pedidos Ventas");
+            setTitulo("Cons/List.  Pedidos Ventas");
             if (jf.gestor.apuntar(this)) {
                 jbInit();
             } else {
@@ -126,7 +126,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                 if (ht.get("sbeCodi") != null)
                     ARG_SBECODI = ht.get("sbeCodi");
             }
-             setTitulo("Cons/List. Productos Pedidos de Ventas");
+             setTitulo("Cons/List.  Pedidos de Ventas");
 
             jbInit();
         } catch (Exception e) {
