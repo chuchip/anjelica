@@ -18,9 +18,13 @@ package gnu.chu.Menu;
 import gnu.chu.controles.CButton;
 import gnu.chu.controles.CLabel;
 import gnu.chu.controles.CPanel;
+import gnu.chu.controles.CPasswordField;
+import gnu.chu.sql.conexion;
+import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Fecha;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.ThreadSelected;
+import gnu.chu.utilidades.mensajes;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,6 +62,7 @@ public class BarraEstado extends CPanel
   CPanel panel2 = new CPanel();
   FlowLayout flowLayout2 = new FlowLayout();
   CButton Bsalir = new CButton(Iconos.getImageIcon("salir"));
+  CButton Block = new CButton(Iconos.getImageIcon("lock"));
 
 	/**
 	* Constructor
@@ -96,6 +101,10 @@ public class BarraEstado extends CPanel
     Bsalir.setPreferredSize(new Dimension(24, 24));
     Bsalir.setMinimumSize(new Dimension(24, 24));
     Bsalir.setToolTipText("Salir de la aplicación");
+    Block.setMaximumSize(new Dimension(24, 24));
+    Block.setPreferredSize(new Dimension(24, 24));
+    Block.setMinimumSize(new Dimension(24, 24));
+    Block.setToolTipText("Bloquear la aplicación");
     BMenu.setVerifyInputWhenFocusTarget(true);
 
     Hora.setBorder(bordeLowered);
@@ -112,9 +121,10 @@ public class BarraEstado extends CPanel
     this.add(panel2, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0
                                             , GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                                             new Insets(0, 0, 0, 0), 0, 0));
-    this.add(Bsalir,    new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0
+    this.add(Bsalir,    new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0
             ,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 0, 0));
-
+    this.add(Block,    new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 0, 0));
     this.add(Hora, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0
                                           , GridBagConstraints.EAST, GridBagConstraints.BOTH,
                                           new Insets(0, 0, 0, 0), 0, 0));
@@ -170,6 +180,43 @@ public class BarraEstado extends CPanel
       {
 //        System.out.println("saliendo...");
         MenuPri.frmPrincipal.generarEventoSalir();
+      }
+    });
+    Block.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+          String pass = "";
+          conexion ct = null;
+          CPanel panel = new CPanel();
+          panel.setLayout(new BorderLayout());
+          CLabel label = new CLabel("Introduzca su contraseña: ");
+          CPasswordField pf = new CPasswordField(10);
+          panel.add(label,BorderLayout.NORTH);
+          panel.add(pf,BorderLayout.SOUTH);
+         do 
+         {
+//        System.out.println("saliendo...");
+                         
+             int okCxl= JOptionPane.showConfirmDialog(null,panel,MenuPri.EntornoUsu.usu_nomb+" Bloqueado",JOptionPane.OK_CANCEL_OPTION,
+                 JOptionPane.PLAIN_MESSAGE);
+             if (okCxl == JOptionPane.OK_OPTION) 
+                pass = new String(pf.getPassword());
+             EntornoUsuario eu= (EntornoUsuario) MenuPri.EntornoUsu.clone();
+             eu.password=pass;
+             try {
+                ct =new conexion(eu);
+             } catch (Exception k)
+             {
+                 mensajes.mensajeUrgente("Contraseña de usuario NO valida");
+                 pass="";
+             }
+         }  while (pass.equals(""));
+         try {
+            ct.close();
+         }
+         catch (Exception k)        {      }
       }
     });
   }

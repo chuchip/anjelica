@@ -121,7 +121,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
   private final int JTP_PRV=11;
   private final int JTP_UNID=5;
   private final int JTP_FECCAD=4;
-   private final int JTP_CANMOD=6;
+  private final int JTP_CANMOD=6;
+  private final int JTP_PRECIO=7;
+  private final int JTP_PROCODI=1;
   private boolean CONTROL_PRO_MIN=true; // Controlar venta de prod. de minoristas a mayor. ¡¡ CHAPUZA!!
   private int avpNumparAnt=0,avpNumindAnt=0,avpEjelotAnt=0;
   private String avpSerlotAnt="";
@@ -584,7 +586,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   CLabel cLabel210 = new CLabel();
   CLabel sbe_nombL;
   private CTextField fvc_serieE = new CTextField(Types.CHAR,"X");
-  private CButton BValTar = new CButton();
+  private CButtonMenu BValTar = new CButtonMenu(Iconos.getImageIcon("precio"));
   CLabel avc_revpreL = new CLabel();
   CComboBox avc_revpreE = new CComboBox();
   private CComboBox avc_deposE = new CComboBox();
@@ -685,7 +687,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-08-03" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-08-13" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -847,10 +849,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
         avc_dtoppE.setToolTipText("Dto. Pronto Pago");
         avc_dtoppE.setValorDec(0.0);
         avc_dtoppE.setBounds(new Rectangle(452, 57, 39, 16));
-        BValTar.setText("Valor Tar.");
-        BValTar.setToolTipText("<F5> Valorar Albarán según precios de Tarifa");
+        BValTar.addMenu("Precio Pedido","P");
+        BValTar.addMenu("Precio Tarifa","T");
+        BValTar.setToolTipText("<F5> Poner Precios Albaran");
 
-        BValTar.setBounds(new Rectangle(315, 5, 110, 20));
+        BValTar.setBounds(new Rectangle(315, 5, 50, 20));
         BValTar.setMaximumSize(new Dimension(110, 20));
         BValTar.setMinimumSize(new Dimension(110, 20));
         BValTar.setPreferredSize(new Dimension(110, 20));
@@ -1099,7 +1102,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
 
         div_codiE.setBounds(new Rectangle(558, 56, 120, 16));
         despieceC.setPreferredSize(new Dimension(100, 24));
-        despieceC.setToolTipText("Generar Despieces (F5)");
+        despieceC.setToolTipText("Generar Despieces");
         
         despieceC.setBounds(new Rectangle(136, 5, 62, 17));
         despieceC.addItem("NO Desp.", "N");
@@ -1457,13 +1460,13 @@ public class pdalbara extends ventanaPad  implements PAD  {
     Pcabe.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
     Pcabe.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
     jt.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
-    nav.setButton(KeyEvent.VK_F5, BValTar);
-    jt.setButton(KeyEvent.VK_F5, BValTar);
-    Pcabe.setButton(KeyEvent.VK_F5, BValTar);
+    nav.setButton(KeyEvent.VK_F5, BValTar.getBotonAccion());
+    jt.setButton(KeyEvent.VK_F5, BValTar.getBotonAccion());
+    Pcabe.setButton(KeyEvent.VK_F5, BValTar.getBotonAccion());
     Pcabe.setDefButton(Baceptar);
     Pcabe.setButton(KeyEvent.VK_F4, Baceptar);
     jt.setButton(KeyEvent.VK_F4, Baceptar);
-    jt.setButton(KeyEvent.VK_F5,Bdespiece);
+    
    
     fvc_serieE.setColumnaAlias("fvc_serie");
     cli_codiE.setColumnaAlias("C.cli_codi");
@@ -1487,7 +1490,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     jt.setButton(KeyEvent.VK_F2, Birgrid);
     jtDes.setButton(KeyEvent.VK_F2, Birgrid);
     jtDes.setButton(KeyEvent.VK_F9, BmvReg);
-    jtDes.setButton(KeyEvent.VK_F5, BValTar);
+    jtDes.setButton(KeyEvent.VK_F5, BValTar.getBotonAccion());
     Pped1.setButton(KeyEvent.VK_F3,BbusPed);
 
 
@@ -1800,6 +1803,22 @@ public class pdalbara extends ventanaPad  implements PAD  {
         }
         
       });
+      jtLinPed.addMouseListener(new MouseAdapter()
+      {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+              if (e.getClickCount() < 2 || inTransation())
+                  return;
+              try {
+                if (jtLinPed.getValString(0).equals("P") && jtLinPed.getValorDec(JTP_PROCODI)>0 && jtLinPed.getValorDec(JTP_PRECIO)> 0)
+                    actPrecioPedido(jtLinPed.getValorInt(JTP_PROCODI),jtLinPed.getValorDec(JTP_PRECIO));
+              } catch (SQLException k)
+              {
+                  Error("Error al poner precio de articulo",k);
+              }
+
+          }
+      });
       jtLinPed.addListSelectionListener(new
        ListSelectionListener()
       {
@@ -2032,8 +2051,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
     {
             @Override
       public void actionPerformed(ActionEvent e)
-      {
-        BValTar_actionPerformed();
+      {       
+         valorarAlbaran(e.getActionCommand().contains("Tarifa"));
       }
     });
     Bdesgl.addActionListener(new ActionListener()
@@ -2597,44 +2616,56 @@ public class pdalbara extends ventanaPad  implements PAD  {
      }
   }
   /**
-   * Valorar Albaran segun precios de Tarifa
+   * Valorar Albaran segun precios de Tarifa o Pedidos
    * Pone a todas las linas de albaran cuyo precio sea 0, el precio de la tarifa
    * siempre y cuando esta no sea 0.
    */
-  void BValTar_actionPerformed()
-  {
-    if (avc_revpreE.getValorInt()!=0)
+  void valorarAlbaran(boolean tarifa)
+  {    
+    if (avc_revpreE.getValorInt()!=0 && tarifa)
     {
        if( mensajes.mensajeYesNo("¿ Poner precios de tarifa a albaran marcado como a revisar Precios?", this)!=mensajes.YES)
            return;
     }
+    if (!tarifa && pvc_numeE.getValorInt()==0)
+    {
+        msgBox("Albaran sin pedido");
+        return;
+    }
     int nRow = jt.getRowCount();
     // Actualizo las Linea de Albaran.
     try {
-        double prTari;
+        double precio;
         for (int n = 0; n < nRow; n++)
         {
-            prTari = MantTarifa.getPrecTar(dtStat, jt.getValorInt(n, JT_PROCODI),
+            if (tarifa)
+            {
+             precio = MantTarifa.getPrecTar(dtStat, jt.getValorInt(n, JT_PROCODI),
                 tar_codiE.getValorInt(), avc_fecalbE.getText());
-            jt.setValor(prTari, n, FD_PRTARI);
-
+             jt.setValor(precio, n, FD_PRTARI);
+             String condWhere = getCondWhereActAlb(n);
+             s = "UPDATE  V_albavel set tar_preci =  " + precio
+                    + condWhere;
+             dtAdd.executeUpdate(s);             
+            }
+            else
+              precio = getPrecioPedido(jt.getValorInt(n, JT_PROCODI),dtStat);
+                        
             if (avl_prvenE.isEditable() && avl_prvenE.isEnabled() && jt.isEnabled())
             {
                 if (jt.getValorDec(n, FD_PRECIO) == 0)
-                    jt.setValor(jt.getValorDec(n, FD_PRTARI), n, FD_PRECIO);
-                actPrecioAlb(n, jt.getValorDec(n, FD_PRTARI));
-            } else
-            {
-                String condWhere = getCondWhereActAlb(n);
-                s = "UPDATE  V_albavel set tar_preci =  " + prTari
-                    + condWhere;
-                stUp.executeUpdate(dtAdd.getStrSelect(s));
-            }
+                {
+                    if (n==jt.getSelectedRow())
+                        avl_prvenE.setValorDec(precio);
+                    jt.setValor(precio, n, FD_PRECIO);
+                    actPrecioAlb(n,precio,false);
+                }
+            } 
         }
         if (jt.isEnabled())
             jt.ponValores(jt.getSelectedRow());
-        mensaje("Precios de Albaran actualizados a los de Tarifa");
         dtAdd.commit();
+        msgBox("Precios de Albaran actualizados a "+(tarifa? "los de Tarifa":"los del Pedido"));
     } catch (Exception k)
     {
         Error("Error al poner Precios de Tarifa a Precio de albaran",k);
@@ -4975,7 +5006,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
           jf.guardaMens("V6", jf.ht);
         }
       }
-      actPrecioAlb(row,avl_prvenE.getValorDec());
+      actPrecioAlb(row,avl_prvenE.getValorDec(),true);
       avl_prvenE.resetCambio();
       avl_numpalE.resetCambio();
   }
@@ -5008,9 +5039,10 @@ public class pdalbara extends ventanaPad  implements PAD  {
   /**
    * Actualiza precio de albaran en una linea poniendo el precio mandado
    * @param precio precio a poner
+   * @param actTarifa actualizar precio tarifa
    * @param row
    */
-  void actPrecioAlb(int row,double precio) throws SQLException
+  void actPrecioAlb(int row,double precio,boolean actTarifa) throws SQLException
   {
       int nRows;
   
@@ -5088,7 +5120,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
 
       s = "UPDATE  V_albavel set avl_prven = " +avlPrven +
           ", avl_prbase = "+avlPrbase+
-          ", tar_preci =  "+prTari+
+          (actTarifa?", tar_preci =  "+prTari:"")+
           condWhere;
 //      debug("actPrecioAlb - s: "+s);
       nRows=stUp.executeUpdate(dtAdd.getStrSelect(s));
@@ -5765,6 +5797,21 @@ public class pdalbara extends ventanaPad  implements PAD  {
     }
     ponAlbPedido();
     ctUp.commit();
+  }
+  
+  void actPrecioPedido(int proCodi,double precio) throws SQLException
+  {
+      int nRow=jt.getRowCount();
+      for (int n=0;n<nRow;n++)
+      {
+          if (jt.getValorInt(JT_PROCODI)==proCodi)
+          {
+              if (n==jt.getSelectedRow())                  
+                  avl_prvenE.setValorDec(precio);
+              jt.setValor(precio,n,JT_PRECIO);
+              actPrecioAlb(n,precio,false);
+          }
+      }
   }
   /**
    * Ir a Lineas de Albaran
@@ -7435,7 +7482,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             " and p.pvc_nume = " + pvc_numeE.getValorInt();
       if (!dt.select(s))
           return 0;
-      return dt.getDouble("pvl_precio");
+      return dt.getDouble("pvl_precio")<0?0:dt.getDouble("pvl_precio");
   }
   void irGridDes()
   {

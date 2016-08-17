@@ -154,7 +154,7 @@ $BODY$
 			RAISE EXCEPTION 'No encontrado mvto a modificar. Alb. Venta';
 			RETURN null;
 		end if;
-    	if nRows > 1 then
+                if nRows > 1 and ajuDelmvt = 0  then
 			RAISE EXCEPTION '(Update)Encontrado mas de un mvto para este individuo de venta';
 			return null;
 		end if;

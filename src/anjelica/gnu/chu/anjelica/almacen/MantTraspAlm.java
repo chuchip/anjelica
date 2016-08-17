@@ -222,7 +222,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         pro_codiE.setCamposLote(deo_ejelotE,  deo_serlotE, pro_loteE,
             pro_numindE, deo_kilosE);
         pro_codiE.setAyudaLotes(true);
-        
+        jt.setButton(KeyEvent.VK_F5, Bfill);
         pdalmace.llenaCombo(alm_codifE, dtCon1,'*');
         pdalmace.llenaCombo(alm_codioE, dtCon1,'*');
         ifList.setVisible(false);
@@ -252,6 +252,27 @@ public class MantTraspAlm extends ventanaPad implements PAD
 
     private void activarEventos()
     {
+      Bfill.addActionListener(new ActionListener()
+      {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {          
+                if (jt.isEnabled() == false || jt.isVacio() || jt.getSelectedRow() < 1)
+                    return;
+                jt.setValor(jt.getValString(jt.getSelectedRow() - 1, JT_ARTIC), JT_ARTIC);
+                jt.setValor(jt.getValString(jt.getSelectedRow() - 1, JT_NOMBR), JT_NOMBR);
+                jt.setValor(jt.getValString(jt.getSelectedRow() - 1, JT_EJERC), JT_EJERC);
+                jt.setValor(jt.getValString(jt.getSelectedRow() - 1, JT_SERIE), JT_SERIE);
+                jt.setValor(jt.getValString(jt.getSelectedRow() - 1, JT_LOTE), JT_LOTE);                
+                pro_codiE.setText(jt.getValString(jt.getSelectedRow() - 1, JT_ARTIC));
+                pro_nocabE.setText(jt.getValString(jt.getSelectedRow() - 1, JT_NOMBR));
+                deo_ejelotE.setText(jt.getValString(jt.getSelectedRow() - 1, JT_EJERC));
+                deo_serlotE.setText(jt.getValString(jt.getSelectedRow() - 1, JT_SERIE));
+                pro_loteE.setText(jt.getValString(jt.getSelectedRow() - 1, JT_LOTE));
+               
+                jt.requestFocusLater(jt.getSelectedRow(), JT_INDI);
+        }
+      });
       Bcancelar1.addActionListener(new ActionListener()
       {
                @Override
@@ -1220,6 +1241,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
         kilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##,##9.99");
         Bselec = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("filter"));
         Bherr = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("configure"));
+        Bfill = new gnu.chu.controles.CButton(Iconos.getImageIcon("fill"));
 
         pro_nocabE.setEnabled(false);
 
@@ -1397,7 +1419,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
 
         Baceptar.setText("Aceptar");
         Ppie.add(Baceptar);
-        Baceptar.setBounds(350, 0, 90, 24);
+        Baceptar.setBounds(360, 0, 90, 24);
 
         Bcancelar.setText("Cancelar");
         Ppie.add(Bcancelar);
@@ -1431,6 +1453,10 @@ public class MantTraspAlm extends ventanaPad implements PAD
         Ppie.add(Bherr);
         Bherr.setBounds(280, 2, 40, 20);
 
+        Bfill.setToolTipText("Copiar Ant. Linea (F5)");
+        Ppie.add(Bfill);
+        Bfill.setBounds(330, 2, 24, 24);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -1448,6 +1474,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
     private gnu.chu.controles.CButton Baceptar1;
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CButton Bcancelar1;
+    private gnu.chu.controles.CButton Bfill;
     private gnu.chu.controles.CButtonMenu Bherr;
     private gnu.chu.controles.CButton BirGrid;
     private gnu.chu.controles.CButtonMenu Bselec;

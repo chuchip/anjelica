@@ -120,13 +120,13 @@ public class CLinvcong extends ventana
     conecta();
     initComponents();
     this.setSize(new Dimension(632, 502));
-    this.setVersion("2013-08-28");
+    this.setVersion("2016-08-16");
   }
     @Override
   public void iniciarVentana() throws Exception
   {
       filtroEmpr=empPanel.getStringAccesos(dtStat, EU.usuario,true);
-      pdalmace.llenaLinkBox(alm_codiE,dtStat);
+      pdalmace.llenaLinkBox(alm_codiE,dtStat,'*');
       alm_codiE.addDatos("0","*TODOS*");
       alm_codiE.setText("0");
       alm_codiE.setFormato(Types.DECIMAL,"#9");

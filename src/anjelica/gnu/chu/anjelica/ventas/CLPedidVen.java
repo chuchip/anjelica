@@ -151,7 +151,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2016-08-04");
+        this.setVersion("2016-08-17");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -470,42 +470,43 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                 return false;
            if (nLineaReport==0 || !dtCon1.next())
            {
-            if (swImpreso )
-            {
-                s = "select l.*,p.prv_nomb ,c.cli_codi,c.alm_codi,c.pvc_fecped, "
-                    + " c.pvc_fecent,c.pvc_clinom,c.usu_nomb,c.pvc_comen,al.alm_nomb, "
-                    + " a.pro_nomb, cl.cli_nomb,cl.cli_pobl "
-                    + " from pedvenl as l left join v_proveedo p on  p.prv_codi = l.prv_codi, "
-                    + " pedvenc as c,v_articulo as a,v_almacen as al,clientes as cl "
-                    + " where  c.emp_codi = l.emp_codi "
-                    + " and c.eje_nume = l.eje_nume "
-                    + " and c.pvc_nume = l.pvc_nume "
-                    + " and l.pro_codi = a.pro_codi "
-                    + " and al.alm_codi = c.alm_codi "
-                    + " and c.cli_codi = cl.cli_codi "
-                    + " and c.alm_codi = al.alm_codi "
-                    + " and c.emp_codi =  " + jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED)
-                    + " and C.cli_codi = cl.cli_codi "
-                    + " AND C.eje_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED)
-                    + " and C.pvc_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED)
-                    + " order by pvl_numlin ";
-            }
-            else
-            {
-                s = "SELECT c.*, cl.cli_nomb,cl.cli_poble"
-                    + "  FROM pedvenc as c,v_cliente as cl "+
-                    " WHERE c.emp_codi =  "+jtCabPed.getValorInt(nLineaReport,JTCAB_EMPPED)+
-                    " and C.cli_codi = cl.cli_codi "+
-                    " AND C.eje_nume = "+jtCabPed.getValorInt(nLineaReport,JTCAB_EJEPED)+
-                    " and C.pvc_nume = "+jtCabPed.getValorInt(nLineaReport,JTCAB_NUMPED);
-            }
-            if (! dtCon1.select(s))
-            {
-                throw new JRException("Error al localizar pedido para listar. Linea: "+
-                    nLineaReport+ " Pedido: "+jtCabPed.getValorInt(nLineaReport,JTCAB_NUMPED));         
-            }
+               if (swImpreso)
+               {
+                   s = "select l.*,p.prv_nomb ,c.cli_codi,c.alm_codi,c.pvc_fecped, "
+                       + " c.pvc_fecent,c.pvc_clinom,c.usu_nomb,c.pvc_comen,al.alm_nomb, "
+                       + " a.pro_nomb, cl.cli_nomb,cl.cli_pobl "
+                       + " from pedvenl as l left join v_proveedo p on  p.prv_codi = l.prv_codi, "
+                       + " pedvenc as c,v_articulo as a,v_almacen as al,clientes as cl "
+                       + " where  c.emp_codi = l.emp_codi "
+                       + " and c.eje_nume = l.eje_nume "
+                       + " and c.pvc_nume = l.pvc_nume "
+                       + " and l.pro_codi = a.pro_codi "
+                       + " and al.alm_codi = c.alm_codi "
+                       + " and c.cli_codi = cl.cli_codi "
+                       + " and c.alm_codi = al.alm_codi "
+                       + " and c.emp_codi =  " + jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED)
+                       + " and C.cli_codi = cl.cli_codi "
+                       + " AND C.eje_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED)
+                       + " and C.pvc_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED)
+                       + " order by pvl_numlin ";
+               } 
+               else
+               {
+                   s = "SELECT c.*, cl.cli_nomb,cl.cli_poble"
+                       + "  FROM pedvenc as c,v_cliente as cl "
+                       + " WHERE c.emp_codi =  " + jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED)
+                       + " and C.cli_codi = cl.cli_codi "
+                       + " AND C.eje_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED)
+                       + " and C.pvc_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED);
+               }
+               if (!dtCon1.select(s))
+               {
+                   throw new JRException("Error al localizar pedido para listar. Linea: "
+                       + nLineaReport + " Pedido: " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED));
+               }
+               nLineaReport++;
            }
-           nLineaReport++;
+
            return true;
         } catch (SQLException ex)
         {

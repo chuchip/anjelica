@@ -109,6 +109,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   CTextField pvc_horpedE = new CTextField(Types.DECIMAL,"99.99");
   CLabel cLabel6 = new CLabel();
   CTextField pvc_fecentE = new CTextField(Types.DATE,"dd-MM-yyyy");
+  CButton BirGrid= new CButton();
   CLabel cLabel7 = new CLabel();
   CComboBox pvc_confirE = new CComboBox();
   CLabel cLabel8 = new CLabel();
@@ -246,6 +247,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   {
       return (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
   }
+  
   private void ponParametros(Hashtable<String, String> ht)
   {
       if (ht == null)
@@ -261,7 +263,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2016-08-05"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2016-08-09"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -428,6 +430,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_fecpedE.setBounds(new Rectangle(62, 4, 81, 16));
     jScrollPane1.setBounds(new Rectangle(77, 38, 390, 35));
     pvc_fecentE.setBounds(new Rectangle(396, 20, 75, 16));
+    BirGrid.setBounds(new Rectangle(472, 20, 1, 1));
     pvc_nupeclE.setBounds(new Rectangle(225, 20, 105, 16));
     pvc_confirE.setBounds(new Rectangle(511, 20, 54, 16));
     pvc_numeE.setBounds(new Rectangle(92, 20, 50, 16));
@@ -490,6 +493,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     Pcabe.add(pvc_numeE, null);
     Pcabe.add(pvc_nupeclE, null);
     Pcabe.add(pvc_fecentE, null);
+    Pcabe.add(BirGrid, null);
     Pcabe.add(cLabel7, null);
     Pcabe.add(pvc_confirE, null);
     Pcabe.add(cLabel15, null);
@@ -740,6 +744,15 @@ public class pdpeve  extends ventanaPad   implements PAD
  }
   void activarEventos()
   {
+    BirGrid.addFocusListener(new FocusAdapter()
+    {
+      @Override
+      public void focusGained(FocusEvent e)
+      {
+          if (jt.isEnabled())
+              jt.requestFocusInicioLater();
+      }    
+    });
       jtHist.tableView.getSelectionModel().addListSelectionListener(new
        ListSelectionListener()
     {
@@ -1274,7 +1287,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         return false;
       }
       
-      if (Formatear.comparaFechas(pvc_fecentE.getDate(),Formatear.getDateAct())<0)
+      if (nav.pulsado==navegador.ADDNEW && Formatear.comparaFechas(pvc_fecentE.getDate(),Formatear.getDateAct())<0)
       {
         mensajeErr("Fecha de Entrega NO puede ser inferior a la de hoy");
         pvc_fecentE.requestFocus();

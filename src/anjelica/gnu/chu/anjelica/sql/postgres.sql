@@ -4268,3 +4268,16 @@ create trigger mvtosalm_update BEFORE UPDATE OR DELETE  on anjelica.mvtosalm for
 
 create trigger stkpart_insert BEFORE insert OR UPDATE  on anjelica.stockpart for each row   WHEN (NEW.pro_serie !='S' ) execute procedure anjelica.fn_acumstk();
 create trigger stkpart_delete BEFORE  DELETE  on anjelica.stockpart for each row WHEN (OLD.pro_serie !='S' ) execute procedure anjelica.fn_acumstk();
+
+--
+select 'A' as tipo, usu_nomb ,avc_nume,avc_serie,cl.cli_codi,cl.cli_nomb,min(avl_fecalt) as fecmin, max(avl_fecalt) as fecmax from v_albventa as a, v_cliente as cl
+where cl.cli_codi = a.cli_codi
+and avc_fecalb='20160817'
+group by usu_nomb,avc_nume,avc_serie,cl.cli_codi,cl.cli_nomb
+union all
+select 'D' as tipo,c.usu_nomb,deo_codi as avc_nume,'A' as avc_serie,c.tid_codi as cli_codi, tid_nomb as cli_nomb,
+ min(deo_tiempo) as fecmin, max(deo_tiempo) as fecmax from v_despiece as c, tipodesp as t
+where c.tid_codi=t.tid_codi and
+deo_fecha='20160817'
+group by c.usu_nomb,avc_nume,avc_serie,cli_codi,cli_nomb
+order by 2,7
