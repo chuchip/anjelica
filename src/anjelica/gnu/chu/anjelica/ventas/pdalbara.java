@@ -355,6 +355,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   CTextField pro_nomresE=new CTextField();
   CTextField avr_cantiE=new CTextField(Types.DECIMAL,"#,##9.99");
   CTextField avl_canbruE=new CTextField(Types.DECIMAL,"#,##9.99");
+  boolean swLLenaCampos=false;
   proPanel pro_codiE = new proPanel()
   {
     @Override
@@ -362,6 +363,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     {
       try
       {
+        swLLenaCampos=true;
         e.consume();
         jt.setValor(this.getText(), JT_PROCODI);
         s=this.getNombArt();
@@ -411,10 +413,22 @@ public class pdalbara extends ventanaPad  implements PAD  {
                   guardaCabEnt();
               }
         }
+        else
+        {
+            if (!despieceC.getValor().equals("N"))   
+            {
+                jtDes.requestFocus(0,JTDES_EMP);
+                jtDes.ponValores(0);
+                realizaDesp();
+                return;
+            }
+        }
+        
         guardaLinDes(jt.getSelectedRow());
         jt.mueveSigLinea(1);
         jtDes.removeAllDatos();
         actAcumLin();
+        swLLenaCampos=false;
       }
       catch (Exception k)
       {
@@ -687,7 +701,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-08-13" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-08-20" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -853,7 +867,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         BValTar.addMenu("Precio Tarifa","T");
         BValTar.setToolTipText("<F5> Poner Precios Albaran");
 
-        BValTar.setBounds(new Rectangle(315, 5, 50, 20));
+        BValTar.setBounds(new Rectangle(335, 5, 50, 20));
         BValTar.setMaximumSize(new Dimension(110, 20));
         BValTar.setMinimumSize(new Dimension(110, 20));
         BValTar.setPreferredSize(new Dimension(110, 20));
@@ -906,7 +920,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         Birgrid.setText("F2");
         opAgru.setMargin(new Insets(0, 0, 0, 0));
         opAgru.setText("Agrupar Lineas");
-        opAgru.setBounds(new Rectangle(207, 5, 100, 17));
+        opAgru.setBounds(new Rectangle(227, 5, 100, 17));
         Baceptar.setBounds(new Rectangle(428, 2, 112, 24));
         Baceptar.setMaximumSize(new Dimension(110, 28));
         Baceptar.setMinimumSize(new Dimension(110, 28));
@@ -1104,7 +1118,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         despieceC.setPreferredSize(new Dimension(100, 24));
         despieceC.setToolTipText("Generar Despieces");
         
-        despieceC.setBounds(new Rectangle(136, 5, 62, 17));
+        despieceC.setBounds(new Rectangle(136, 5, 82, 17));
         despieceC.addItem("NO Desp.", "N");
         despieceC.addItem("Despiece", "D");
         despieceC.addItem("Todo Desp.", "M");
@@ -2598,12 +2612,14 @@ public class pdalbara extends ventanaPad  implements PAD  {
         IndivStock indStk=despVenta.getIndiviuoDespiece();
         jt.setValor(indStk.getProCodi(),JT_PROCODI);
         jt.setValor(indStk.getProNomb(),JT_PRONOMB);
-        avp_ejelotE.setValorInt(indStk.getProCodi());
+        avp_ejelotE.setValorInt(indStk.getEjeNume());
         avp_serlotE.setText(indStk.getProSerie());
         avp_numparE.setValorInt(indStk.getProNupar());
         avp_numindE.setValorInt(indStk.getProNumind());
         avp_cantiE.setValorDec(indStk.getStpKilact());
         avp_numuniE.setValorInt(indStk.getStpUnact());
+        avp_canbruE.setValorDec(indStk.getStpKilact());
+        avp_canoriE.setValorDec(indStk.getStpKilact());
         jtDes.salirGrid();
         if (despieceC.getValor().equals("D"))
             despieceC.setValor("N");
@@ -2773,16 +2789,10 @@ public class pdalbara extends ventanaPad  implements PAD  {
         copeve.iniciarVentana();
         copeve.setVisibleCabeceraVentana(false);
       }
-      if (copeve.getSize().getHeight()+50 >= this.getSize().getHeight())
-      {
-          copeve.setSize(new Dimension((int)copeve.getSize().getWidth(),
-              (int)this.getSize().getHeight()-60));
-      }
-      if (copeve.getSize().getWidth()+20 >= this.getSize().getWidth())
-      {
-          copeve.setSize(new Dimension((int)this.getSize().getWidth()-20,
-              (int)copeve.getSize().getHeight()));
-      }
+     
+     copeve.setSize(new Dimension((int) this.getSize().getWidth() - 10,
+              (int) this.getSize().getHeight()- 30));
+    
       copeve.setVisible(true);
       this.setEnabled(false);
       copeve.statusBar.setEnabled(true);
@@ -4251,6 +4261,14 @@ public class pdalbara extends ventanaPad  implements PAD  {
   
   private boolean canModif() throws SQLException
   {
+      if (!P_ADMIN)
+      {
+          if (rutPanelE.getNumeroRuta()!=0)
+          {
+              msgBox("Albaran ya esta servido en una ruta. Imposible Modificar/Borrar");
+              return false;
+          }
+      }
       if (verDepoC.getValor().equals("S") || verDepoC.getValor().equals("P") )
       {
           msgBox("Elija un albaran para modificar/borrar. Debe ser el entrega o el facturado");
@@ -4461,6 +4479,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
       activaTodo();
       return;
     }
+    jt.setEnabled(true);
+    pro_codiE.setEditable(true);
+    isLock=false;
     copiaAlbaranNuevo(dtCon1,dtAdd,"Modificado Albaran",EU.usuario,avc_anoE.getValorInt(),
               emp_codiE.getValorInt(),avc_seriE.getText(),avc_numeE.getValorInt());
     jtDes.setEnabled(false);
@@ -4497,9 +4518,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
     nav.setEnabled(false);
     //avc_revpreE.setEnabled(false);
     pro_codiE.setEditable(false);
-   
-    jtPalet.setEnabled(true);
-    jtPalet.requestFocusInicio();
+    if (swUsaPalets)
+    {
+        jtPalet.setEnabled(true);
+        jtPalet.requestFocusInicio();
+    }
     irGridLin();
   }  catch (Exception k)
     {
@@ -4732,13 +4755,16 @@ public class pdalbara extends ventanaPad  implements PAD  {
       swProcesaEdit=false;
       if (!checkCli())
         return;
-
-      jt.salirGrid();
-      int nCol = cambiaLinAlb(jt.getSelectedRow());
-      if (nCol >= 0)
+      int nCol;
+      if (! jt.isVacio())
       {
-        jt.requestFocus(jt.getSelectedRow(), nCol);
-        return;
+        jt.salirGrid();
+        nCol =  jt.getSelectedRow();
+        if (nCol >= 0)
+        {
+          jt.requestFocus(jt.getSelectedRow(), nCol);
+          return;
+        }
       }
       if (jtRes.isEnabled())
       {
@@ -4820,7 +4846,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
     mensaje("");
     nav.pulsado = navegador.NINGUNO;
   }
-@Override
+  
+  @Override
   public void PADAddNew()
   {
       try
@@ -4918,7 +4945,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       jt.salirGrid();
      
       int nCol = cambiaLinAlb(jt.getSelectedRow());
-      if (nCol >= 0)
+      if (nCol >= 0 && nCol<1000)
       {
         jt.requestFocus(jt.getSelectedRow(), nCol);
         return;
@@ -5809,7 +5836,10 @@ public class pdalbara extends ventanaPad  implements PAD  {
               if (n==jt.getSelectedRow())                  
                   avl_prvenE.setValorDec(precio);
               jt.setValor(precio,n,JT_PRECIO);
+              avl_prvenE.resetCambio();
+              jt.resetCambio();
               actPrecioAlb(n,precio,false);
+              antPrecio = avl_prvenE.getValorDec();
           }
       }
   }
@@ -5949,6 +5979,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
         {
           pro_codiE.setEditable(true);
           pro_nombE.setEditable(true);
+        }
+        if (swLLenaCampos)
+        {
+            swLLenaCampos=false;
+            jt.mueveSigLinea();            
         }
         if (verPrecios  && jt.getSelectedColumn() == JT_KILOS)
             jt.requestFocusLater(jt.getSelectedRow(),5);
@@ -6304,10 +6339,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
     return dtCon1.getInt("avl_numlin", true);
   }
   /**
-   * Comprueba si una linea del grid de partidas es valida
-   * Para ello comprueba el campo 8 (kilos) y 6 (Lote) sean igual a 0
-   * Si ninguno es 0 la linea es valida.
-   *
+   * Comprueba si una linea del grid de partidas es valida para despiece
+   * Para ello comprueba si el campo KILOS BRUTOS es cero
+   *    
    * @param n int Linea del grid
    * @return boolean true si es valida.
    */
@@ -6536,13 +6570,14 @@ public class pdalbara extends ventanaPad  implements PAD  {
   {
     try
     {
+      if (pro_codiE.isNull())
+        return -1;
+
       if (pro_codiE.getText().length() > 6)
       {
         mensajeErr("Codigo de Producto .. NO VALIDO");
         return 1;
       }
-      if (pro_codiE.isNull())
-        return -1;
       if (!pro_codiE.controla(false, false,sbe_codiE.getValorInt()))
       {
         mensajeErr(pro_codiE.getMsgError());
@@ -9264,7 +9299,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
        @Override
       public boolean insertaLinea(int row, int col)
       {
-        return nav.pulsado == navegador.EDIT || nav.pulsado == navegador.ADDNEW;
+        return (nav.pulsado == navegador.EDIT || nav.pulsado == navegador.ADDNEW)  && !pro_codiE.isNull();
       }
     };
     if (P_ADMIN)

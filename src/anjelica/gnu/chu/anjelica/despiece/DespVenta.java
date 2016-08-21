@@ -46,6 +46,7 @@ import gnu.chu.utilidades.CodigoBarras;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.mensajes;
+import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -58,6 +59,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class DespVenta extends ventana {
@@ -206,8 +209,20 @@ public class DespVenta extends ventana {
           toFront();
 //          setEnabled(true);
           buscaPeso();
-          
-          tid_codiE.requestFocus();
+          new miThread("")
+          {
+              @Override
+              public void run()
+              {
+                  try
+                  {
+                      sleep(500);
+                  } catch (InterruptedException ex)
+                  {}
+                 tid_codiE.requestFocusLater();
+              }
+          };
+          tid_codiE.requestFocusLater();
 
 //          SwingUtilities.invokeLater(new Thread()
 //          {
@@ -304,15 +319,16 @@ public class DespVenta extends ventana {
      * Rutina llamada al salir del despiece, dandole al boton aceptar.
      */
     void guardaDespiece()
-    {
+    {      
+        jt.salirGrid();
+        if (cambiaLineajtLin(jt.getSelectedRow())>=0)
+            return;
+        actAcumulados();
         if (deoCodi==0)
         {
             msgBox("Introduzca alguna linea en despiece");
             return;
         }
-        jt.salirGrid();
-        if (cambiaLineajtLin(jt.getSelectedRow())>=0)
-            return;
         try {
            
             int nRow=jt.getRowCount();
@@ -338,27 +354,50 @@ public class DespVenta extends ventana {
             String s;
 
             
-            if (difkilE.getValorDec() > deo_kilosE.getValorDec() * MantDesp.LIMDIF )               
-            { // Supera el 2% de los kilos de entrada. 
-                if (tid_codiE.getValorInt()==MantTipDesp.AUTO_DESPIECE)
+            if (difkilE.getValorDec() > 0 )               
+            { // Tengo Kg. de Diferencia 
+                boolean swMer=tid_codiE.isAutoMer();
+                if (swMer || tid_codiE.getValorInt()==MantTipDesp.AUTO_DESPIECE )
                 {
-                    // Creo una linea automatica para la diferencia
-                  jt.resetCambio();
-                  jt.setEnabled(false);
-                  jt.requestFocusFinal();
-                  ArrayList v=new ArrayList();
-                  v.add(pro_codiE.getValorInt());
-                  v.add(pro_codiE.getTextNomb());
-                  v.add(difkilE.getValorDec()); // Kg
-                  v.add(1); // Unid                  
-                  v.add("0"); // N Ind.
-                  v.add("0"); // N. Orden
-                  jt.addLinea(v);                  
-                  jt.setEnabled(true);
-                  jt.requestFocusFinal();
-                  jt.ponValores(jt.getSelectedRow());
-                  pro_kilsalE.setCambio(true);
-                  cambiaLineajtLin(jt.getSelectedRow());
+                  if (swMer)
+                  {
+                    jt.resetCambio();
+                    jt.setEnabled(false);
+                    jt.requestFocusFinal();
+                    ArrayList v=new ArrayList();
+                    v.add(60); // Mer Venta
+                    v.add(pro_codiE.getTextNomb());
+                    v.add(difkilE.getValorDec()); // Kg
+                    v.add(1); // Unid                  
+                    v.add("0"); // N Ind.
+                    v.add("0"); // N. Orden
+                    jt.addLinea(v);                  
+                    jt.setEnabled(true);
+                    jt.requestFocusFinal();
+                    jt.ponValores(jt.getSelectedRow());
+                    pro_kilsalE.setCambio(true);
+                    cambiaLineajtLin(jt.getSelectedRow()); 
+                  }
+                  else
+                  {
+                      // Creo una linea automatica para la diferencia
+                    jt.resetCambio();
+                    jt.setEnabled(false);
+                    jt.requestFocusFinal();
+                    ArrayList v=new ArrayList();
+                    v.add(pro_codiE.getValorInt());
+                    v.add(pro_codiE.getTextNomb());
+                    v.add(difkilE.getValorDec()); // Kg
+                    v.add(1); // Unid                  
+                    v.add("0"); // N Ind.
+                    v.add("0"); // N. Orden
+                    jt.addLinea(v);                  
+                    jt.setEnabled(true);
+                    jt.requestFocusFinal();
+                    jt.ponValores(jt.getSelectedRow());
+                    pro_kilsalE.setCambio(true);
+                    cambiaLineajtLin(jt.getSelectedRow());
+                  }
                 }
                 else
                 {
@@ -621,6 +660,8 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
     {
 
     }
+    
+   
     /**
      * Busca el peso disponible en stock de un individiuo
      * @return
@@ -1330,7 +1371,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         Ppie.add(kilsalE);
         kilsalE.setBounds(35, 2, 50, 17);
 
-        Baceptar.setText("Aceptar");
+        Baceptar.setText("Aceptar (F4)");
         Ppie.add(Baceptar);
         Baceptar.setBounds(394, 5, 110, 30);
 

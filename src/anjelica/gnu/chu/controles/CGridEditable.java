@@ -1298,7 +1298,7 @@ public class CGridEditable extends Cgrid implements CQuery {
       }
     }
 
-    n = cambiaLinea(row, col);
+    n = cambiaLinea(row, col);  
     return n;
   }
 
@@ -1497,7 +1497,7 @@ public class CGridEditable extends Cgrid implements CQuery {
       }
 
       if ( (nColErr = cambiaLinea1(getSelectedRow(), columna)) >= 0)
-      { // Anulado
+      { // Anulado       
         requestFocusLater(tableView.getSelectedRow(), nColErr);
         return;
       }

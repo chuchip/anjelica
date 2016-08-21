@@ -2343,13 +2343,14 @@ create table anjelica.tipodesp
 (
 	tid_codi int not null, -- Codigo de Despiece
 	tid_nomb varchar(50) not null, -- Descripcion Despiece
-        tid_activ int not null,   -- Activo: 2, Solo TACTIL:1 Inactivo: 0
-        tid_agrup int not null default 0, -- Despiece de Agrupacion ? (0: NO)
-        tid_fecalt date not null, -- Fecha Alta
-        tid_feulmo date, -- Fecha Ultima Modificación
-        usu_nomb varchar(15),     -- Usuario que hizo ultima modificación
-        tid_usoequ smallint not null default -1, -- Usar Productos equivalentes
-        primary key (tid_codi)
+	tid_activ int not null,   -- Activo: 2, Solo TACTIL:1 Inactivo: 0
+	tid_agrup int not null default 0, -- Numero Max.Desp/Dia
+	tid_fecalt date not null, -- Fecha Alta
+	tid_feulmo date, -- Fecha Ultima Modificación
+	usu_nomb varchar(15),     -- Usuario que hizo ultima modificación
+	tid_usoequ smallint not null default -1, -- Usar Productos equivalentes
+	tid_merven smallint not null default 0, -- Linea Mer Venta para AutoDespiece.
+	primary key (tid_codi)
 );
 create index ix_tipodes1 on tipodesp (tid_nomb);
 -- Este tipo de despiece limita al dia actual, el numero de despieces libres al

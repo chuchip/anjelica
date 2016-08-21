@@ -263,7 +263,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2016-08-09"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2016-08-20"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -1820,21 +1820,21 @@ public class pdpeve  extends ventanaPad   implements PAD
        java.util.HashMap mp = Listados.getHashMapDefault();
        
        JasperReport jr = Listados.getJasperReport(EU,"pedventas");
-       s="select l.*,p.prv_nomb ,c.cli_codi,c.alm_codi,c.pvc_fecped, "+
-       " c.pvc_fecent,c.usu_nomb,c.pvc_comen,al.alm_nomb, "+
-       " a.pro_nomb, cl.cli_nomb,cl.cli_pobl "+
-       " from pedvenl as l left join v_proveedo p on  p.prv_codi = l.prv_codi, "+
-       " pedvenc as c,v_articulo as a,v_almacen as al,clientes as cl "+
-       " where  c.emp_codi = l.emp_codi "+
-       " and c.eje_nume = l.eje_nume "+
-       " and c.pvc_nume = l.pvc_nume "+
-       " and l.pro_codi = a.pro_codi "+
-       " and al.alm_codi = c.alm_codi "+
-       " and c.cli_codi = cl.cli_codi "+
-       " and c.emp_codi = "+emp_codiE.getValorInt()+
-       " and c.eje_nume = "+eje_numeE.getValorInt()+
-       " and c.pvc_nume = "+pvc_numeE.getValorInt()+
-       " order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin ";
+       s="select 1 as orden, l.*,p.prv_nomb ,c.cli_codi,c.alm_codi,c.pvc_fecped, "+
+        " c.pvc_fecent,c.pvc_clinom,c.usu_nomb,c.pvc_comen,al.alm_nomb, "+
+        " a.pro_nomb, cl.cli_nomb,cl.cli_pobl "+
+        " from pedvenl as l left join v_proveedo p on  p.prv_codi = l.prv_codi, "+
+        " pedvenc as c,v_articulo as a,v_almacen as al,clientes as cl "+
+        " where  c.emp_codi = l.emp_codi "+
+        " and c.eje_nume = l.eje_nume "+
+        " and c.pvc_nume = l.pvc_nume "+
+        " and l.pro_codi = a.pro_codi "+
+        " and al.alm_codi = c.alm_codi "+
+        " and c.cli_codi = cl.cli_codi "+
+        " and c.emp_codi = "+emp_codiE.getValorInt()+
+        " and c.eje_nume = "+eje_numeE.getValorInt()+
+        " and c.pvc_nume = "+pvc_numeE.getValorInt()+
+        " order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin ";
        ResultSet rs;
 
        rs=dtCon1.getStatement().executeQuery(dtStat.getStrSelect(s));

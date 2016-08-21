@@ -351,7 +351,7 @@
             </Component>
             <Component class="gnu.chu.controles.CButton" name="Baceptar">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Aceptar"/>
+                <Property name="text" type="java.lang.String" value="Aceptar (F4)"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(Iconos.getImageIcon(&quot;check&quot;))"/>

@@ -213,11 +213,17 @@ public class CodigoBarras
             error=true;
             return;
         }
-        proEjeLote=Integer.parseInt(codBarras.substring(1, 3))+2000;
-        proSerie=codBarras.substring(3,4);       
-        proLote=Integer.parseInt(codBarras.substring(4,9));
-        proCodi=Integer.parseInt( codBarras.substring(9,14));
-        proIndi=Integer.parseInt(codBarras.substring(14,17));
+        try {
+            proEjeLote=Integer.parseInt(codBarras.substring(1, 3))+2000;
+            proSerie=codBarras.substring(3,4);       
+            proLote=Integer.parseInt(codBarras.substring(4,9));
+            proCodi=Integer.parseInt( codBarras.substring(9,14));
+            proIndi=Integer.parseInt(codBarras.substring(14,17));
+        } catch ( java.lang.NumberFormatException k)
+        {
+            error=true;
+            return;
+        }
         proKilos=0;
         if (codBarras.length()>17)
         {

@@ -151,7 +151,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2016-08-17");
+        this.setVersion("2016-08-20");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -430,12 +430,16 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
    
    void Bimpri_actionPerformed(String accion)
    {
-
-        if (accion.startsWith("P"))
-        {
-          imprImpreso();
+      if (jtCabPed.isVacio())
+      {
+          msgBox("No hay pedidos para listar");
           return;
-        }
+      }
+      if (accion.startsWith("P"))
+      {
+        imprImpreso();
+        return;
+      }
       try {
         swImpreso=false;
         java.util.HashMap mp = Listados.getHashMapDefault();
@@ -466,10 +470,11 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      {
         try
         {
-            if (nLineaReport>=jtCabPed.getRowCount())
-                return false;
+        
            if (nLineaReport==0 || !dtCon1.next())
            {
+               if (nLineaReport>=jtCabPed.getRowCount())
+                return false;
                if (swImpreso)
                {
                    s = "select l.*,p.prv_nomb ,c.cli_codi,c.alm_codi,c.pvc_fecped, "
@@ -503,10 +508,10 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                {
                    throw new JRException("Error al localizar pedido para listar. Linea: "
                        + nLineaReport + " Pedido: " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED));
-               }
+               }               
                nLineaReport++;
-           }
 
+           }
            return true;
         } catch (SQLException ex)
         {
@@ -1130,6 +1135,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         try
         {
             String campo = jrf.getName().toLowerCase();
+            if (campo.equals("orden"))
+                return nLineaReport;
             return dtCon1.getObject(campo);
         } catch (SQLException ex)
         {

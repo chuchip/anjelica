@@ -160,7 +160,10 @@ public class DatRutaRepPanel extends CPanel
           this.resetTexto();
       }
     }
-    
+    public int getNumeroRuta()
+    {
+        return alr_numeE.getValorInt();
+    }
     public void setEnabledRuta(boolean enabRuta)
     {
         BSalir.setEnabled(enabRuta);

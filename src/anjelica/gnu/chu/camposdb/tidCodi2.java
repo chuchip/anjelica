@@ -101,6 +101,7 @@ public class tidCodi2 extends CLinkBox
    *
    * @return boolean -> true si todo es correcto
    */
+  @Override
     public boolean controla(boolean reqFoc) 
     {
         setError(false);
@@ -200,6 +201,14 @@ public class tidCodi2 extends CLinkBox
             addArticulo(art);
     }   
   }
+  public boolean isAutoMer() throws SQLException
+  {
+      String s="select  tid_merven from tipodesp "
+        + " WHERE tid_codi = " +getValorInt();
+      if (! dt.select(s))
+          return false;
+      return dt.getInt("tid_merven")!=0;
+  }
   public ArrayList getArticulos()
   {
       return articList;
@@ -229,6 +238,7 @@ public class tidCodi2 extends CLinkBox
    * Rellena el Combo con los Despieces seleccionados.
    * Presenta el codigo del Almacen
    * @return boolean retorna un true si todo ha sido correcto
+     * @throws java.sql.SQLException
    */
   public boolean releer() throws SQLException
   {

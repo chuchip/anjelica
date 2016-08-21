@@ -36,6 +36,7 @@ import java.awt.Dimension;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -106,7 +107,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
     }
     private void jbInit() throws Exception
     {
-      this.setVersion("2012-01-04" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2016-08-21" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -140,6 +141,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
       tid_fecaltE.setColumnaAlias("tid_fecalt");
       tid_feulmoE.setColumnaAlias("tid_feulmo");
       usu_nombE.setColumnaAlias("usu_nomb");
+      tid_agrupE.setColumnaAlias("tid_agrup");
       activarEventos();
       activar(false);
       verDatos(dtCons);
@@ -292,41 +294,45 @@ public class MantTipDesp  extends ventanaPad implements PAD
         }
         dtAdd.setDato("tid_nomb",tid_nombE.getText());
         dtAdd.setDato("tid_activ",tid_activE.getValor());
-        dtAdd.setDato("tid_agrup",tid_agrupE.isSelected()?-1:0);
+        dtAdd.setDato("tid_merven",tid_mervenE.isSelected()?-1:0);
+        dtAdd.setDato("tid_agrup",tid_agrupE.getValorInt());
         dtAdd.setDato("tid_usoequ",tid_usoequE.isSelected()?-1:0);
         dtAdd.update(stUp);
-        int nRow = jtEnt.getRowCount();
-        dtAdd.addNew("tipdesent");
-        int nl=0;
-        for (int n = 0; n < nRow; n++)
+        if (tid_codiE.getValorInt()!=LIBRE_DESPIECE)
         {
-          if ( jtEnt.getValorInt(n,0)==0)
-            continue;
-          dtAdd.addNew();
-          dtAdd.setDato("tid_codi",tid_codiE.getValorInt());
-          dtAdd.setDato("pro_codi",jtEnt.getValorInt(n,0));
-          dtAdd.setDato("tde_nuli",nl);
-          dtAdd.update(stUp);
-          nl++;
-        }
-        dtAdd.addNew("tipdessal");
-        nl = 0;
-        nRow = jtSal.getRowCount();
-        for (int n = 0; n < nRow; n++)
-        {
-          if (jtSal.getValorInt(n, 0) == 0)
-            continue;
-          dtAdd.addNew();
-          dtAdd.setDato("tid_codi", tid_codiE.getValorInt());
-          dtAdd.setDato("pro_codi", jtSal.getValorInt(n, JTSAL_CODPRO));
-          dtAdd.setDato("tds_unid", jtSal.getValorInt(n, JTSAL_UNID));
-          dtAdd.setDato("tds_costo", jtSal.getValorInt(n, JTSAL_COSTO));
-          dtAdd.setDato("tds_grupo", jtSal.getValorInt(n, JTSAL_GRUPO));
-          dtAdd.update(stUp);
-          nl++;
-        }
-        ctUp.commit();
-        mensajeErr("Datos ... Guardados");
+            int nRow = jtEnt.getRowCount();
+            dtAdd.addNew("tipdesent");
+            int nl=0;
+            for (int n = 0; n < nRow; n++)
+            {
+              if ( jtEnt.getValorInt(n,0)==0)
+                continue;
+              dtAdd.addNew();
+              dtAdd.setDato("tid_codi",tid_codiE.getValorInt());
+              dtAdd.setDato("pro_codi",jtEnt.getValorInt(n,0));
+              dtAdd.setDato("tde_nuli",nl);
+              dtAdd.update(stUp);
+              nl++;
+            }
+            dtAdd.addNew("tipdessal");
+            nl = 0;
+            nRow = jtSal.getRowCount();
+            for (int n = 0; n < nRow; n++)
+            {
+              if (jtSal.getValorInt(n, 0) == 0)
+                continue;
+              dtAdd.addNew();
+              dtAdd.setDato("tid_codi", tid_codiE.getValorInt());
+              dtAdd.setDato("pro_codi", jtSal.getValorInt(n, JTSAL_CODPRO));
+              dtAdd.setDato("tds_unid", jtSal.getValorInt(n, JTSAL_UNID));
+              dtAdd.setDato("tds_costo", jtSal.getValorInt(n, JTSAL_COSTO));
+              dtAdd.setDato("tds_grupo", jtSal.getValorInt(n, JTSAL_GRUPO));
+              dtAdd.update(stUp);
+              nl++;
+            }
+            }
+            ctUp.commit();
+            mensajeErr("Datos ... Guardados");
       } catch (Exception k)
       {
         Error("Error en La insercion de Referencias",k);
@@ -369,8 +375,8 @@ public class MantTipDesp  extends ventanaPad implements PAD
         tid_feulmoE.setDate(dtStat.getDate("tid_feulmo"));
         usu_nombE.setText(dtStat.getString("usu_nomb"));
         tid_usoequE.setSelected(dtStat.getInt("tid_usoequ")!=0);
-        tid_agrupE.setSelected(dtStat.getInt("tid_agrup")!=0);
-        verDatEnt(tid_codiE.getValorInt());
+        tid_mervenE.setSelected(dtStat.getInt("tid_merven")!=0);
+        tid_agrupE.setValorInt(dtStat.getInt("tid_agrup"));
         verDatSal(tid_codiE.getValorInt());
 
       } catch (Exception k)
@@ -449,6 +455,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
         jtSal.setEnabled(act);
       }
       tid_usoequE.setEnabled(act);
+      tid_mervenE.setEnabled(act);
       tid_agrupE.setEnabled(act);
       tid_codiE.setEnabled(act);
       Baceptar.setEnabled(act);
@@ -492,7 +499,8 @@ public class MantTipDesp  extends ventanaPad implements PAD
     Pcabe.setQuery(true);
     activar(navegador.QUERY, true);
     tid_usoequE.setEnabled(false);
-    tid_agrupE.setEnabled(false);
+    tid_mervenE.setEnabled(false);
+    
     Pcabe.resetTexto();
     jtEnt.removeAllDatos();
     jtSal.removeAllDatos();
@@ -509,13 +517,14 @@ public class MantTipDesp  extends ventanaPad implements PAD
         return;
     }
     Baceptar.setEnabled(false);
-    Vector v=new Vector();
-    v.addElement(tid_codiE.getStrQuery());
-    v.addElement(tid_nombE.getStrQuery());
-    v.addElement(tid_activE.getStrQuery());
-    v.addElement(tid_fecaltE.getStrQuery());
-    v.addElement(tid_feulmoE.getStrQuery());
-    v.addElement(usu_nombE.getStrQuery());
+    ArrayList v=new ArrayList();
+    v.add(tid_codiE.getStrQuery());
+    v.add(tid_nombE.getStrQuery());
+    v.add(tid_activE.getStrQuery());
+    v.add(tid_fecaltE.getStrQuery());
+    v.add(tid_feulmoE.getStrQuery());
+    v.add(usu_nombE.getStrQuery());
+    v.add(tid_agrupE.getStrQuery());
     Pcabe.setQuery(false);
     s="SELECT * FROM tipodesp ";
     s=creaWhere(s,v);
@@ -590,26 +599,29 @@ public class MantTipDesp  extends ventanaPad implements PAD
     jtEnt.requestFocusInicio();
   }
   public void ej_edit1() {
-     if (jtEnt.isEnabled())
+     if (tid_codiE.getValorInt()!=LIBRE_DESPIECE)
      {
-        jtEnt.salirGrid();
-        if (cambiaLineaJT()>=0)
-        {
-          jtEnt.requestFocusSelected();
-          return;
-        }
-     }
-    if (jtSal.isEnabled())
-    {
-        jtSal.salirGrid();
-        if (cambiaLineaSal() >= 0)
-        {
-          jtSal.requestFocusSelected();
-          return;
-        }
+            if (jtEnt.isEnabled())
+            {
+               jtEnt.salirGrid();
+               if (cambiaLineaJT()>=0)
+               {
+                 jtEnt.requestFocusSelected();
+                 return;
+               }
+            }
+           if (jtSal.isEnabled())
+           {
+               jtSal.salirGrid();
+               if (cambiaLineaSal() >= 0)
+               {
+                 jtSal.requestFocusSelected();
+                 return;
+               }
+           }
+           if (! checkNumLin())
+             return;
     }
-    if (! checkNumLin())
-      return;
     guardaDatos(tid_codiE.getValorInt());
     activaTodo();
 //    verDatos(dtCons);
@@ -631,27 +643,32 @@ public class MantTipDesp  extends ventanaPad implements PAD
 //    eje_numeE.setValorDec(EU.ejercicio);
     
     tid_usoequE.setSelected(true);
-    tid_agrupE.setSelected(false);
+    tid_mervenE.setSelected(false);
+    tid_agrupE.setValorInt(0);
     tid_codiE.requestFocus();
     mensaje("Insertando ....");
   }
 
   public void ej_addnew1() {
-    jtEnt.salirFoco();
+      
+    if (tid_codiE.getValorInt()!=LIBRE_DESPIECE)
+     {
+        jtEnt.actualizarGrid();
 
-    if (cambiaLineaJT()>=0)
-    {
-      jtEnt.requestFocusSelected();
-      return;
+        if (cambiaLineaJT()>=0)
+        {
+          jtEnt.requestFocusSelected();
+          return;
+        }
+        jtSal.actualizarGrid();
+        if (cambiaLineaSal() >= 0)
+        {
+          jtSal.requestFocusSelected();
+          return;
+        }
+        if (! checkNumLin())
+          return;
     }
-    jtSal.salirFoco();
-    if (cambiaLineaSal() >= 0)
-    {
-      jtSal.requestFocusSelected();
-      return;
-    }
-    if (! checkNumLin())
-      return;
     guardaDatos(-1);
     activaTodo();
 //    verDatos();
@@ -855,8 +872,6 @@ public class MantTipDesp  extends ventanaPad implements PAD
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
-        tid_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        cLabel2 = new gnu.chu.controles.CLabel();
         tid_nombE = new gnu.chu.controles.CTextField(Types.CHAR, "X", 50);
         cLabel3 = new gnu.chu.controles.CLabel();
         tid_activE = new gnu.chu.controles.CComboBox();
@@ -868,7 +883,9 @@ public class MantTipDesp  extends ventanaPad implements PAD
         usu_nombE = new gnu.chu.controles.CTextField(Types.CHAR, "X", 50);
         Bocul = new gnu.chu.controles.CButton();
         tid_usoequE = new gnu.chu.controles.CCheckBox();
-        tid_agrupE = new gnu.chu.controles.CCheckBox();
+        tid_mervenE = new gnu.chu.controles.CCheckBox();
+        cLabel8 = new gnu.chu.controles.CLabel();
+        tid_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         jtEnt = new gnu.chu.controles.CGridEditable(2){
             public void cambiaColumna(int col, int colNueva,int row)
             {
@@ -938,6 +955,8 @@ public class MantTipDesp  extends ventanaPad implements PAD
         cLabel7 = new gnu.chu.controles.CLabel();
         tid_codcopE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         Bcopiar = new gnu.chu.controles.CButton();
+        tid_agrupE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
+        cLabel9 = new gnu.chu.controles.CLabel();
 
         pro_nombE.setEnabled(false);
 
@@ -954,12 +973,6 @@ public class MantTipDesp  extends ventanaPad implements PAD
         cLabel1.setText("Tipo Despiece ");
         Pcabe.add(cLabel1);
         cLabel1.setBounds(2, 2, 81, 17);
-        Pcabe.add(tid_codiE);
-        tid_codiE.setBounds(93, 2, 39, 17);
-
-        cLabel2.setText("Descripción");
-        Pcabe.add(cLabel2);
-        cLabel2.setBounds(140, 2, 71, 17);
         Pcabe.add(tid_nombE);
         tid_nombE.setBounds(220, 2, 300, 17);
 
@@ -1006,10 +1019,15 @@ public class MantTipDesp  extends ventanaPad implements PAD
         Pcabe.add(tid_usoequE);
         tid_usoequE.setBounds(530, 2, 100, 17);
 
-        tid_agrupE.setSelected(true);
-        tid_agrupE.setText("Agrupar");
-        Pcabe.add(tid_agrupE);
-        tid_agrupE.setBounds(120, 23, 110, 17);
+        tid_mervenE.setText("Mer Venta");
+        Pcabe.add(tid_mervenE);
+        tid_mervenE.setBounds(110, 23, 80, 17);
+
+        cLabel8.setText("Descripción");
+        Pcabe.add(cLabel8);
+        cLabel8.setBounds(140, 2, 71, 17);
+        Pcabe.add(tid_codiE);
+        tid_codiE.setBounds(93, 2, 39, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1047,7 +1065,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
         );
         jtEntLayout.setVerticalGroup(
             jtEntLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 136, Short.MAX_VALUE)
+            .addGap(0, 204, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1123,29 +1141,34 @@ public class MantTipDesp  extends ventanaPad implements PAD
 
         Bcancelar.setText("Cancelar");
         Ppie.add(Bcancelar);
-        Bcancelar.setBounds(210, 0, 110, 27);
+        Bcancelar.setBounds(150, 0, 110, 27);
         Ppie.add(Bocul1);
         Bocul1.setBounds(100, 30, 2, 2);
         Ppie.add(Bocul2);
         Bocul2.setBounds(100, 30, 2, 2);
 
-        cLabel7.setText("Tipo Despiece ");
+        cLabel7.setText("Max Desp:");
         Ppie.add(cLabel7);
-        cLabel7.setBounds(340, 2, 81, 17);
+        cLabel7.setBounds(281, 3, 70, 17);
         Ppie.add(tid_codcopE);
-        tid_codcopE.setBounds(430, 2, 39, 17);
+        tid_codcopE.setBounds(510, 3, 39, 17);
 
         Bcopiar.setText("Copiar Sal.");
         Ppie.add(Bcopiar);
-        Bcopiar.setBounds(480, 0, 80, 19);
+        Bcopiar.setBounds(560, 3, 80, 19);
+        Ppie.add(tid_agrupE);
+        tid_agrupE.setBounds(350, 3, 39, 17);
+
+        cLabel9.setText("Tipo Despiece ");
+        Ppie.add(cLabel9);
+        cLabel9.setBounds(420, 3, 81, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 30);
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 15);
         Pprinc.add(Ppie, gridBagConstraints);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
@@ -1165,12 +1188,13 @@ public class MantTipDesp  extends ventanaPad implements PAD
     private gnu.chu.controles.CPanel Ppie;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CLabel cLabel1;
-    private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
+    private gnu.chu.controles.CLabel cLabel8;
+    private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CGridEditable jtEnt;
     private gnu.chu.controles.CGridEditable jtSal;
     private gnu.chu.camposdb.proPanel pro_codiE;
@@ -1181,11 +1205,12 @@ public class MantTipDesp  extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField tds_grupoE;
     private gnu.chu.controles.CTextField tds_unidE;
     private gnu.chu.controles.CComboBox tid_activE;
-    private gnu.chu.controles.CCheckBox tid_agrupE;
+    private gnu.chu.controles.CTextField tid_agrupE;
     private gnu.chu.controles.CTextField tid_codcopE;
     private gnu.chu.controles.CTextField tid_codiE;
     private gnu.chu.controles.CTextField tid_fecaltE;
     private gnu.chu.controles.CTextField tid_feulmoE;
+    private gnu.chu.controles.CCheckBox tid_mervenE;
     private gnu.chu.controles.CTextField tid_nombE;
     private gnu.chu.controles.CCheckBox tid_usoequE;
     private gnu.chu.controles.CTextField usu_nombE;
