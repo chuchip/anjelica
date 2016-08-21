@@ -377,12 +377,12 @@ public class MantTipDesp  extends ventanaPad implements PAD
         tid_usoequE.setSelected(dtStat.getInt("tid_usoequ")!=0);
         tid_mervenE.setSelected(dtStat.getInt("tid_merven")!=0);
         tid_agrupE.setValorInt(dtStat.getInt("tid_agrup"));
+        verDatEnt(tid_codiE.getValorInt());
         verDatSal(tid_codiE.getValorInt());
 
       } catch (Exception k)
       {
         Error("Error al ver datos",k);
-        return;
       }
     }
 
@@ -1021,7 +1021,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
 
         tid_mervenE.setText("Mer Venta");
         Pcabe.add(tid_mervenE);
-        tid_mervenE.setBounds(110, 23, 80, 17);
+        tid_mervenE.setBounds(110, 23, 90, 17);
 
         cLabel8.setText("Descripción");
         Pcabe.add(cLabel8);

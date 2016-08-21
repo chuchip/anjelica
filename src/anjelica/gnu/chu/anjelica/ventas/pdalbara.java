@@ -701,7 +701,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-08-20" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-08-21" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -4759,7 +4759,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
       if (! jt.isVacio())
       {
         jt.salirGrid();
-        nCol =  jt.getSelectedRow();
+        nCol=  cambiaLinAlb(jt.getSelectedRow());
+//        nCol =  jt.getSelectedRow();
         if (nCol >= 0)
         {
           jt.requestFocus(jt.getSelectedRow(), nCol);
