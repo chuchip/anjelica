@@ -2620,6 +2620,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
         avp_numuniE.setValorInt(indStk.getStpUnact());
         avp_canbruE.setValorDec(indStk.getStpKilact());
         avp_canoriE.setValorDec(indStk.getStpKilact());
+        jtDes.setValor(indStk.getStpKilact(),JTDES_KILOS);
+        jtDes.setValor(indStk.getStpKilact(),JTDES_KILBRU);
+        jtDes.setValor(indStk.getStpKilact(),JTDES_KILORI);
         jtDes.salirGrid();
         if (despieceC.getValor().equals("D"))
             despieceC.setValor("N");
@@ -5987,7 +5990,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             jt.mueveSigLinea();            
         }
         if (verPrecios  && jt.getSelectedColumn() == JT_KILOS)
-            jt.requestFocusLater(jt.getSelectedRow(),5);
+            jt.requestFocusLater(jt.getSelectedRow(),JT_KILOS);
         else
             jt.requestFocusSelectedLater();      
         actAcumLin();

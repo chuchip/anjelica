@@ -3861,11 +3861,8 @@ create table anjelica.partelin
 	pal_coment varchar(50), -- Comentario sobre esta linea
 	constraint ix_partelin primary  key (par_codi,par_linea)
 );
-
 alter table anjelica.partelin add constraint pal_procod foreign key (pro_codi)
     references anjelica.v_articulo(pro_codi);
-
-
 --
 -- Reclamaciones a proveedores. (Solicitud de abono)
 --	
@@ -3895,6 +3892,39 @@ create table anjelica.reclamprv_notas
    rpn_fecha timestamp not null default CURRENT_TIMESTAMP, -- Fecha 
    rpn_coment varchar(100) -- Comentario
 );
+--
+-- tabla tipos cortes de productos
+--
+create table cortesprod
+(
+	cpr_nume char(3) not null, -- Codigo Corte
+	cpr_descr varchar(30) not null
+);
+--
+-- tabla Animales de productos
+--
+create table animalprod
+(
+	apr_nume char(1) not null, -- Animal
+	apr_descr varchar(30) not null
+);
+--
+-- tabla Origen de productos
+--
+create table origenprod
+(
+	apr_nume char(1) not null, -- Origen
+	apr_descr varchar(30) not null
+);
+---
+-- Tabla con productos de venta
+---
+create table prodventa
+(
+	rfp_codi varchar(15) not null,
+	rfp_nomb varchar(50) not null	
+);
+
 --drop view v_partes;
 create view anjelica.v_partes as select c.*,l.par_linea,l.pro_codi,pal_kilos,pal_unidad,
 pro_ejelot,pro_serlot,pro_numlot,pro_indlot,pro_feccad,pal_acsala, pal_comsal,pal_accion,pal_coment from anjelica.partecab as c,anjelica.partelin as l where c.par_codi=l.par_codi;

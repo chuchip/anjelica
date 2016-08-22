@@ -51,6 +51,9 @@ public class conVenProd  extends ventana
   CLinkBox rep_codiE = new CLinkBox();
   CLabel cLabel18 = new CLabel();
   CLabel cLabel20 = new CLabel();
+  CLabel sbe_codiL = new CLabel("Seccion");
+  sbePanel sbe_codiE = new sbePanel();
+  CLabel sbe_nombL ;
   CLinkBox zon_codiE = new CLinkBox();
   Cgrid jt = new Cgrid(6);
   proPanel pro_codiE = new proPanel();
@@ -127,7 +130,7 @@ public class conVenProd  extends ventana
    private void jbInit() throws Exception
    {
      iniciarFrame();
-     this.setVersion("2015-05-05");
+     this.setVersion("2016-08-22");
      this.setSize(new Dimension(590,446));
      Pprinc.setLayout(gridBagLayout1);
 
@@ -172,9 +175,9 @@ public class conVenProd  extends ventana
      PintrDatos.setButton(KeyEvent.VK_F4,Baceptar);
      cLabel2.setBounds(new Rectangle(153, 3, 19, 16));
      PintrDatos.setBorder(BorderFactory.createRaisedBevelBorder());
-     PintrDatos.setMaximumSize(new Dimension(580, 53));
-     PintrDatos.setMinimumSize(new Dimension(580, 53));
-     PintrDatos.setPreferredSize(new Dimension(580, 53));
+     PintrDatos.setMaximumSize(new Dimension(580, 73));
+     PintrDatos.setMinimumSize(new Dimension(580, 73));
+     PintrDatos.setPreferredSize(new Dimension(580, 73));
      PintrDatos.setDefButton(Baceptar);
      PintrDatos.setLayout(null);
      fecfinE.setBounds(new Rectangle(176, 3, 77, 16));
@@ -195,8 +198,12 @@ public class conVenProd  extends ventana
      pro_artconE.setBounds(new Rectangle(311, 24, 70, 18));
      grupoL.setBounds(new Rectangle(385, 24, 35, 16)); 
      grupoE.setBounds(new Rectangle(422, 24, 70, 18)); 
+     sbe_codiL.setBounds(new Rectangle(2, 44, 70, 18)); 
+     sbe_codiE.setBounds(new Rectangle(75, 44, 50, 18)); 
+     sbe_nombL = sbe_codiE.creaLabelSbe();
+     sbe_nombL.setBounds(new Rectangle(128, 44, 150, 18)); 
      Baceptar.setBounds(new Rectangle(495, 22, 80, 21));
-     
+     sbe_codiE.setLabelSbe(sbe_codiE.creaLabelSbe());
      this.getContentPane().add(Pprinc, BorderLayout.CENTER);
      Pprinc.add(PintrDatos,   new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -213,6 +220,10 @@ public class conVenProd  extends ventana
      PintrDatos.add(pro_artconE, null);
      PintrDatos.add(grupoL, null);
      PintrDatos.add(grupoE, null);
+     PintrDatos.add(sbe_codiL, null);
+     PintrDatos.add(sbe_codiE, null);
+     PintrDatos.add(sbe_codiE, null);
+     PintrDatos.add(sbe_nombL, null);
     Pprinc.add(jt,   new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 2, 0, 0), 0, 0));
    }
@@ -222,6 +233,9 @@ public class conVenProd  extends ventana
    {
      jt.tableView.setToolTipText("Doble click encima linea para detalles venta");
      pro_codiE.iniciar(dtStat,this,vl,EU);
+     sbe_codiE.iniciar(dtStat, this, vl, EU);
+     sbe_codiE.setLabelSbe(sbe_nombL);
+     sbe_codiE.setValorInt(0);
      zon_codiE.getComboBox().setPreferredSize(new Dimension(250,18));
      rep_codiE.getComboBox().setPreferredSize(new Dimension(250,18));
      rep_codiE.setFormato(Types.CHAR, "XX", 2);
@@ -247,6 +261,7 @@ public class conVenProd  extends ventana
    {
      Baceptar.addActionListener(new java.awt.event.ActionListener()
      {
+       @Override
        public void actionPerformed(ActionEvent e)
        {
          Baceptar_actionPerformed(e);
@@ -353,10 +368,11 @@ public class conVenProd  extends ventana
                 (pro_artconE.getValor().equals("C")?"!=0":"=0"))+
            " and avc_serie >= 'A' AND avc_serie <='C' " +
            " and cl.cli_codi = l.cli_codi " +
+           (sbe_codiE.getValorInt()==0?"": " and cl.sbe_codi = "+sbe_codiE.getValorInt())+
            " and l.avl_canti != 0 " +
            (EU.isRootAV()?"":" and l.div_codi > 0 ")+
-           (repCodi != null ? " and l.rep_codi LIKE '" + repCodi + "'" : "") +
-           (zonCodi != null ? " and l.zon_codi LIKE '" + zonCodi + "'":"" ) ;
+           (repCodi != null ? " and cl.rep_codi LIKE '" + repCodi + "'" : "") +
+           (zonCodi != null ? " and cl.zon_codi LIKE '" + zonCodi + "'":"" ) ;
           
          switch (grupoE.getValor().charAt(0) )
          {

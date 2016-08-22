@@ -18,7 +18,7 @@ import javax.swing.border.*;
  *
  * <p>Título: pdprove</p>
  * <p>Descripción: Mantenimiento de la Tabla de Proveedores.</p>
- * <p>Copy zright: Copyright (c) 2005-2012
+ * <p>Copy zright: Copyright (c) 2005-2016
  *   Este programa es software libre. Puede redistribuirlo y/o modficarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -1324,6 +1324,8 @@ public class pdprove extends ventanaPad implements PAD
     mensajeErr("Edicion ... CANCELADA");
     nav.pulsado=navegador.NINGUNO;
   }
+  
+  @Override
   public boolean checkAddNew()
  {
    try
@@ -1331,6 +1333,21 @@ public class pdprove extends ventanaPad implements PAD
 
      if (prv_codiE.getValorInt()==0)
      {
+       if (nav.pulsado==navegador.ADDNEW)
+       {
+           int antNumero=0;
+           s="SELECT prv_codi FROM v_proveedo order by prv_codi";
+           if (dtStat.select(s))
+           {            
+             do
+             {
+                if (antNumero>0 && dtStat.getInt("prv_codi")>antNumero+1)
+                    break;
+                antNumero=dtStat.getInt("prv_codi");
+             } while (dtStat.next()); 
+            }
+           prv_codiE.setValorInt(antNumero+1);
+       }
        mensajeErr("Introduzca CODIGO de PROVEEDOR");
        prv_codiE.requestFocus();
        return false;
@@ -1353,8 +1370,8 @@ public class pdprove extends ventanaPad implements PAD
 
   public void ej_addnew1()
   {
-    jtSde.procesaAllFoco();
-    jtMat.procesaAllFoco();
+    jtSde.salirGrid();
+    jtMat.salirGrid();
     try
     {
       dtAdd.addNew("v_proveedo");
