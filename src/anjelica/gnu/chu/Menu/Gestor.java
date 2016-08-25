@@ -325,6 +325,7 @@ public class Gestor extends Thread implements Serializable
             miInternalFrame, miObjeto));
         miInternalFrame.addInternalFrameListener(new InternalFrameAdapter()
         {
+          @Override
           public void internalFrameDeiconified(InternalFrameEvent e)
           {
             miInternalFrame.requestFocus();
@@ -795,6 +796,23 @@ public class Gestor extends Thread implements Serializable
         }
       }
     }
+    if (x>principal.getWidth())
+        x=0;
+    if (y>principal.getHeight())
+        y=0;
+    if (x+width+30>principal.getWidth())
+    {
+        x=5;
+        if (x+width+30>principal.getWidth())
+            width=principal.getWidth()-25;
+    }
+    if (y+height+105>principal.getHeight())
+    {
+        y=5;
+        if (y+height+105>principal.getHeight())
+            height=principal.getHeight()-105;
+    }
+
     if (width != 0)
     {
       c.setBounds(new Rectangle(x, y, width, height));
