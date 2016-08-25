@@ -25,6 +25,7 @@ import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
 import java.awt.BorderLayout;
@@ -45,7 +46,8 @@ import javax.swing.event.ListSelectionListener;
 
 
 public class ValDespi extends ventana {
-   
+   boolean swValGrupo=false;
+   String msgError;
    double impDocum=0;
    double kgDocum=0;
    PreparedStatement psMvt;
@@ -280,6 +282,7 @@ public class ValDespi extends ventana {
              public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting() || !jtDesp.isEnabled())
                     return;   
+           
                 try {
                     jtLinCambio=false;
                     cargaDespiece(jtDesp.getSelectedRow(), agruCabC.isSelected() );
@@ -291,10 +294,30 @@ public class ValDespi extends ventana {
             }
        });
        jtDesp.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
+              
+                if (jtDesp.getSelectedColumn()==JTDES_NUMDES && e.getClickCount()>1)
+                {
+                      ejecutable prog;
+                      if ((prog = jf.gestor.getProceso(MantDesp.getNombreClase())) == null)
+                          return;
+                      MantDesp cm = (MantDesp) prog;
+                      if (cm.inTransation())
+                      {
+                          msgBox("Mantenimiento Despieces ocupado. No se puede realizar la busqueda");
+                          return;
+                      }
+
+                      cm.PADQuery();
+                      cm.setEjeNume(jtDesp.getValorInt(JTDES_EJER));
+                      cm.setDeoCodi(jtDesp.getValString(JTDES_NUMDES));
+                      cm.ej_query();
+                      jf.gestor.ir(cm);
+                      return;
+                }
                 if (!jtDesp.getValBoolean(JTDES_CER))
                     return;
-                
                 if (e.getClickCount()<2)
                 {
                     if (jtDesp.getSelectedColumn()==JTDES_SEL)
@@ -968,9 +991,11 @@ public class ValDespi extends ventana {
                     @Override
                   public void run()
                   {
+                        swValGrupo=true;
                         jtDesp.tableView.setVisible(false);
                         valorarDespSel();
                         jtDesp.tableView.setVisible(true);
+                         swValGrupo=false;
                   }
               };
            } 
@@ -1006,6 +1031,7 @@ public class ValDespi extends ventana {
             cancelaBuscaDesp=false;
             HashMap<Integer,Double>  htPro=new HashMap();
             HashMap<Integer,Double>  htFin=new HashMap();
+            ArrayList<String> msgs=new ArrayList();
             int nRegVal = 0;
             double impEnt,impCostLin;
             boolean swErr,isGrupo;
@@ -1044,6 +1070,11 @@ public class ValDespi extends ventana {
                 {
                     precAcu=getPrecioMedioDesp(dtDesp.getInt("pro_codi"), isGrupo,jtDesp.getValorInt(n,JTDES_EJER) ,
                         jtDesp.getValorInt(n,JTDES_NUMDES), "D");
+                    if (msgError!=null)
+                    {                        
+                        if (msgs.indexOf(msgError)<0)
+                            msgs.add(msgError);
+                    }
                     htPro.put(dtDesp.getInt("pro_codi"),Formatear.redondea( precAcu,NUMDEC_COSTO));
                     impEnt+=impDocum;
                     if (precAcu==0)
@@ -1074,6 +1105,11 @@ public class ValDespi extends ventana {
                     }
                     precAcu=getPrecioMedioDesp(dtDesp.getInt("pro_codi"), isGrupo,jtDesp.getValorInt(n,JTDES_EJER) ,
                         jtDesp.getValorInt(n,JTDES_NUMDES), "d");
+                    if (msgError!=null)
+                    {                        
+                        if (msgs.indexOf(msgError)<0)
+                            msgs.add(msgError);
+                    }
                     impCostLin+=impDocum;
                     htFin.put(dtDesp.getInt("pro_codi"),Formatear.redondea( precAcu,NUMDEC_COSTO));
                     if (precAcu==0)
@@ -1149,6 +1185,13 @@ public class ValDespi extends ventana {
                  numRegSelE.setValorInt(numRegSelE.getValorInt() - 1);
                  nRegVal++;
             }   
+            if (msgs.size()>0)
+            {
+                s="";
+                for (int n=0;n<msgs.size();n++)
+                    s+=msgs.get(n)+"\n";
+                mensajes.mensajeExplica("Avisos", s);
+            }
             mensajeErr("Valorados " + nRegVal + " Despieces");
             SwingUtilities.invokeLater(new Thread()
             {
@@ -1735,7 +1778,7 @@ public class ValDespi extends ventana {
  double getPrecioMedioEntrada(int proCodi,java.sql.Date fechaInv,java.sql.Timestamp timeSupMvt,int empCodi,
      int ejerc,String serie,int deoCodi, String tipoDoc) throws SQLException
  {
-   String msgError=null;
+    msgError=null;
     psInv.setInt(1, proCodi);
     psInv.setDate(2, fechaInv);
     ResultSet rs=psInv.executeQuery();
@@ -1790,7 +1833,7 @@ public class ValDespi extends ventana {
                 kilos-=rs.getDouble("mvt_canti");
         } while (rs.next());
     }
-    if (msgError!=null)
+    if (msgError!=null && !swValGrupo)
         msgBox(msgError);
     return kgDocum==0?0:impDocum/kgDocum;
  }

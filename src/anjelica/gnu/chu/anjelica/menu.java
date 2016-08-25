@@ -24,7 +24,7 @@ import java.io.IOException;
  * 
  * <p>Titulo: menu </p>
  * <p>Descripcionn: Programa utilizado para lanzar otros modulos en pruebas </p>
- * <p>Copyright: Copyright (c) 2004</p>
+ * <p>Copyright: Copyright (c) 2004-2016</p>
  * <p>Empresa: </p>
  *   Este programa es software libre. Puede redistribuirlo y/o modficarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
@@ -109,6 +109,7 @@ public class menu extends JFrame
   JMenuItem pdproveed = new JMenuItem();
   JMenuItem pdtranspo = new JMenuItem();
   JMenuItem pdarticu = new JMenuItem();
+  JMenuItem mantDisProVenta = new JMenuItem();
   JMenuItem lisclien = new JMenuItem();
   JMenuItem tratclien = new JMenuItem();
   JPopupMenu jPopupMenu2 = new JPopupMenu();
@@ -497,6 +498,12 @@ public class menu extends JFrame
     pdarticu.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         pdarticu_actionPerformed(e);
+      }
+    });
+    mantDisProVenta.setText("Discr.Prod");
+    mantDisProVenta.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mantDisProVenta_actionPerformed(e);
       }
     });
     lisclien.setText("Listado clientes");
@@ -993,6 +1000,7 @@ public class menu extends JFrame
     JPopupPad.add(pdproveed);
     JPopupPad.add(pdtranspo);
     JPopupPad.add(pdarticu);
+    JPopupPad.add(mantDisProVenta);
     JPopupPad.add(lisclien);
     JPopupPad.add(tratclien);
 
@@ -1855,6 +1863,13 @@ void pdreprese_actionPerformed(ActionEvent e) {
     Hashtable ht = new Hashtable();
     ht.put("modConsulta", "false");
     lanzaEjecutable(new gnu.chu.anjelica.pad.MantArticulos(menu.this, EU, ht));
+
+  }
+   void mantDisProVenta_actionPerformed(ActionEvent e)
+  {
+    Hashtable ht = new Hashtable();
+    ht.put("modConsulta", "false");
+    lanzaEjecutable(new gnu.chu.anjelica.pad.MantDisProVenta(menu.this, EU, ht));
 
   }
 

@@ -3895,34 +3895,30 @@ create table anjelica.reclamprv_notas
 --
 -- tabla tipos cortes de productos
 --
-create table cortesprod
+create table disproventa
 (
+	dpv_int not null, -- Tipo Discriminador. 1. Codigo Corte. 2. Animal. 3 Origen. 4 Clasif.
 	cpr_nume char(3) not null, -- Codigo Corte
 	cpr_descr varchar(30) not null
 );
---
--- tabla Animales de productos
---
-create table animalprod
-(
-	apr_nume char(1) not null, -- Animal
-	apr_descr varchar(30) not null
-);
---
--- tabla Origen de productos
---
-create table origenprod
-(
-	apr_nume char(1) not null, -- Origen
-	apr_descr varchar(30) not null
-);
 ---
--- Tabla con productos de venta
+-- Tabla con Referencias productos de venta
+-- Se codificara de la siguiente manera.
+-- X -> Animal
+-- X -> Origen. 
+-- XXX -> Codigo Corte
+-- XXX -> Clasificacion por peso. Terminara siempre con un + o -
+-- XX -> Clasificacion por calidad (A,B, P:Pistola)
+-- * -> Indica Congelado.
+-- Ejemplo: VA01330+ -> Solomillo Vaca 3.0+
+-- VG009 -> Lomo con hueso y Solomillo de Vaca Gallego
+-- LI012* -> Redondo Ternera Leche Internacional Congelado
+-- VA00925+P -> Lomo con Hueso y Sol. de vaca de 25+ de pistola
 ---
 create table prodventa
 (
-	rfp_codi varchar(15) not null,
-	rfp_nomb varchar(50) not null	
+	pve_codi varchar(15) not null, -- Referencia producto Venta
+	pve_nomb varchar(50) not null -- Nombre
 );
 
 --drop view v_partes;

@@ -19,7 +19,7 @@ import net.sf.jasperreports.view.*;
  * Permite consultar las compras realizadas de un producto
  * dentro de unas fechas.
  * Tambien permite delimitar por proveedor y por albaran.
- * <p>Copyright: Copyright (c) 2005-2009
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -116,8 +116,7 @@ public class copedco extends ventana
      if (ht != null)
      {
        if (ht.get("verPrecio") != null)
-         verPrecio = Boolean.valueOf(ht.get("verPrecio").toString()).
-             booleanValue();
+         verPrecio = Boolean.parseBoolean(ht.get("verPrecio").toString());
 
      }
      setTitulo("Consulta/Listado Pedidos Compras");

@@ -176,6 +176,7 @@ public class pddiscrim    extends ventanaPad     implements PAD
     {
       dis_tipo1E.addActionListener(new ActionListener()
       {
+        @Override
         public void actionPerformed(ActionEvent e)
         {
           try {
@@ -220,9 +221,9 @@ public class pddiscrim    extends ventanaPad     implements PAD
         }
         do
         {
-          Vector v = new Vector();
-          v.addElement(dtCon1.getString("dis_codi"));
-          v.addElement(dtCon1.getString("dis_nomb"));
+          ArrayList v = new ArrayList();
+          v.add(dtCon1.getString("dis_codi"));
+          v.add(dtCon1.getString("dis_nomb"));
           jt.addLinea(v);
         }    while (dtCon1.next());
         jt.requestFocusInicio();
@@ -232,17 +233,21 @@ public class pddiscrim    extends ventanaPad     implements PAD
       }
     }
    public void PADPrimero() {  }
+   @Override
    public void PADAnterior(){ }
+   @Override
    public void PADSiguiente(){ }
+   @Override
    public void PADUltimo(){  }
     @Override
    public void PADQuery(){}
 
-
+@Override
    public void ej_query1(){}
-
+@Override
    public void canc_query(){}
 
+  @Override
    public void PADEdit(){
      activar(true);
      mensajeErr("");
@@ -250,9 +255,10 @@ public class pddiscrim    extends ventanaPad     implements PAD
      jt.requestFocusInicio();
    }
 
+  @Override
    public void ej_edit1(){
      try {
-       jt.procesaAllFoco();
+       jt.salirGrid();
 //       if (jt.getRowCount()>1)
 //            jt.procesaAllFoco();
        if (checkLinea(jt.getSelectedRow())>=0)
@@ -299,8 +305,10 @@ public class pddiscrim    extends ventanaPad     implements PAD
     @Override
    public void PADAddNew(){}
 
+  @Override
    public void ej_addnew1(){}
 
+  @Override
    public void canc_addnew(){}
 
     @Override
@@ -320,7 +328,7 @@ public class pddiscrim    extends ventanaPad     implements PAD
      Bcancelar.setEnabled(b);
    }
 
-    @Override
+   @Override
    public void afterConecta() throws SQLException, java.text.ParseException
    {
      dis_tipo1E.addItem("CLIENTE","C cl");

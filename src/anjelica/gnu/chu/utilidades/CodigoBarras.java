@@ -191,12 +191,18 @@ public class CodigoBarras
     {
         codBarra=codBarras;
          if ( Character.isDigit(codBarras.charAt(0))) 
-            formatoAntiguo(codBarras);
+            error=formatoAntiguo(codBarras);
         else
-            formatearCodBarraNuevo(codBarras);
+            error=formatearCodBarraNuevo(codBarras);
     }
-    private void formatearCodBarraNuevo(String codBarras)
-    {
+    /**
+     * Devuelve true si hubo error.
+     * @param codBarras Codigo Barras a intentar parsear
+     * @return true si hubo error. False si todo fue bien
+     */
+    private boolean formatearCodBarraNuevo(String codBarras)
+    {      
+       
          /*
         Indice: C
      Año: 03
@@ -209,10 +215,7 @@ public class CodigoBarras
               012345678901234567890123
         */
         if (codBarras.length()<17)
-        {
-            error=true;
-            return;
-        }
+            return true;
         try {
             proEjeLote=Integer.parseInt(codBarras.substring(1, 3))+2000;
             proSerie=codBarras.substring(3,4);       
@@ -221,29 +224,24 @@ public class CodigoBarras
             proIndi=Integer.parseInt(codBarras.substring(14,17));
         } catch ( java.lang.NumberFormatException k)
         {
-            error=true;
-            return;
+            mensajes.mensajeAviso("Codigo barras (Nuevo): "+codBarras+" No es valido");
+            return true;
         }
         proKilos=0;
+        
         if (codBarras.length()>17)
-        {
             proKilos=Double.parseDouble(codBarras.substring(17,24));
-            return;
-        }      
-        error=false;
+        return false;
     }
     
-    private void formatoAntiguo(String valor)
+    /**
+     * Parsea codigo barras con formato antiguo
+     * @param valor Codigo barras a intentar parsear
+     * @return false si todo fue bien. True en caso de error.
+     */
+    private boolean formatoAntiguo(String valor)
     {    
-        if (valor.length()<23)
-        {
-            error=true;
-            return;
-        }
-        try {
-          proEjeLote=Integer.parseInt(valor.substring(0, 2))+2000;
-        } catch (NumberFormatException k){}
-    /*
+        /*
      Año: 03
      Emp: 1 o 01
      Serie: A
@@ -255,37 +253,45 @@ public class CodigoBarras
               01234567890123456789012
              
      */
+        if (valor.length()<23)
+            return true;        
+        try {
+          proEjeLote=Integer.parseInt(valor.substring(0, 2))+2000;
 
     // Localizo donde esta la Serie.
-    int posSerie=4;
-    for (int n=2;n<6;n++)
-    {
-      if (!Character.isDigit(valor.charAt(n)))
-        posSerie=n; // NO Es tipo  Digito. Hemos encontrado la serie
+        int posSerie=4;
+        for (int n=2;n<6;n++)
+        {
+          if (!Character.isDigit(valor.charAt(n)))
+            posSerie=n; // NO Es tipo  Digito. Hemos encontrado la serie
+        }
+
+        if (posSerie==4)
+        {     
+          proSerie=valor.substring(4,5);
+          proLote=Integer.parseInt(valor.substring(5,9));
+        }
+        else
+        {
+          proSerie=valor.substring(3,4);  
+          proLote=Integer.parseInt(valor.substring(4,9));
+        }
+        proCodi=Integer.parseInt(valor.substring(9,14));
+        if (valor.length()==23)
+        {
+          proIndi = Integer.parseInt(valor.substring(14,17));
+          proKilos=Double.parseDouble(valor.substring(17,23));
+        }
+        else
+        {
+          proIndi=Integer.parseInt(valor.substring(14,18));
+          proKilos=Double.parseDouble(valor.substring(18,23));
+        }
+    } catch (NumberFormatException k){        
+        mensajes.mensajeAviso("Codigo barras (Viejo): "+valor+" No es valido");
+        return true;
     }
-    
-    if (posSerie==4)
-    {     
-      proSerie=valor.substring(4,5);
-      proLote=Integer.parseInt(valor.substring(5,9));
-    }
-    else
-    {
-      proSerie=valor.substring(3,4);  
-      proLote=Integer.parseInt(valor.substring(4,9));
-    }
-    proCodi=Integer.parseInt(valor.substring(9,14));
-    if (valor.length()==23)
-    {
-      proIndi = Integer.parseInt(valor.substring(14,17));
-      proKilos=Double.parseDouble(valor.substring(17,23));
-    }
-    else
-    {
-      proIndi=Integer.parseInt(valor.substring(14,18));
-      proKilos=Double.parseDouble(valor.substring(18,23));
-    }
-    error=false;
+    return false;
   }
    
 }
