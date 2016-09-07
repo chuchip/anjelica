@@ -46,7 +46,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,65,0,0,2,124"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,66,0,0,2,124"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -97,13 +97,13 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CTextField" name="fecsupE">
+            <Component class="gnu.chu.controles.CTextField" name="fecinfE">
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yy&quot;)"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="110" y="20" width="60" height="17"/>
+                  <AbsoluteConstraints x="70" y="20" width="60" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -136,7 +136,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="300" y="20" width="51" height="17"/>
+                  <AbsoluteConstraints x="360" y="20" width="51" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -176,7 +176,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="180" y="20" width="110" height="17"/>
+                  <AbsoluteConstraints x="260" y="20" width="90" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -192,11 +192,11 @@
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel3">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Fecha Superior a "/>
+                <Property name="text" type="java.lang.String" value="A"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="20" width="-1" height="17"/>
+                  <AbsoluteConstraints x="150" y="20" width="20" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -233,20 +233,6 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CCheckBox" name="opverCerrado">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Solo Cerrados"/>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Dialog" size="11" style="1"/>
-                </Property>
-              </Properties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="360" y="20" width="110" height="17"/>
-                </Constraint>
-              </Constraints>
-            </Component>
             <Component class="gnu.chu.controles.CCheckBox" name="opVerGrupo">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
@@ -258,6 +244,36 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="430" y="2" width="90" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fecsupE">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yy&quot;)"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="170" y="20" width="60" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel13">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="De Fecha"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="10" y="20" width="60" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CComboBox" name="opCerradoC">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="opCerradoC.addItem(&quot;Cerrado&quot;, &quot;N&quot;);&#xa;opCerradoC.addItem(&quot;Abierto&quot;, &quot;S&quot;);&#xa;opCerradoC.addItem(&quot;Todos&quot;, &quot;T&quot;);"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="420" y="20" width="100" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

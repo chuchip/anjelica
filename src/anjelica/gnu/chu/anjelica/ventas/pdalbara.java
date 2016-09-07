@@ -2504,15 +2504,15 @@ public class pdalbara extends ventanaPad  implements PAD  {
     if ((prog = jf.gestor.getProceso(Comvalm.getNombreClase())) == null)
         return;
     gnu.chu.anjelica.almacen.Comvalm cm = (gnu.chu.anjelica.almacen.Comvalm) prog;
-    for (int n = jt.getSelectedRow(); n >= 0; n--)
-    {
-        if (jt.getValorInt(n, JT_PROCODI) != 0)
-        {
-            cm.setProCodi(jt.getValorInt(n, JT_PROCODI));
-            break;
-        }
-    }
-    cm.setProCodi(jt.getValorInt(JT_PROCODI));
+//    for (int n = jt.getSelectedRow(); n >= 0; n--)
+//    {
+//        if (jt.getValorInt(n, JT_PROCODI) != 0)
+//        {
+//            cm.setProCodi(jt.getValorInt(n, JT_PROCODI));
+//            break;
+//        }
+//    }
+    cm.setProCodi(jt.getValorInt(jt.getSelectedRowDisab(),JT_PROCODI));
     cm.setLote(jtDes.getValorInt(jtDes.getSelectedRowDisab(), JTDES_LOTE));
     cm.setIndividuo(jtDes.getValorInt(jtDes.getSelectedRowDisab(), JTDES_NUMIND));
     cm.setSerie(jtDes.getValString(jtDes.getSelectedRowDisab(), JTDES_SERIE));
@@ -5955,8 +5955,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             }
             
         }
-        salirLineasDesglose();
-       
+        salirLineasDesglose();       
       }
     }
     catch (Exception k)
@@ -5964,6 +5963,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       Error("Error al ir a Lineas Albaran", k);
     }
   }
+  
   void salirLineasDesglose() throws SQLException
   {
         guardaLinDes(jt.getSelectedRow());
@@ -5989,10 +5989,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
             swLLenaCampos=false;
             jt.mueveSigLinea();            
         }
-        if (verPrecios  && jt.getSelectedColumn() == JT_KILOS)
-            jt.requestFocusLater(jt.getSelectedRow(),JT_KILOS);
-        else
-            jt.requestFocusSelectedLater();      
+        jt.requestFocusLater(jt.getSelectedRow(),JT_PROCODI);
+//        if (verPrecios  && jt.getSelectedColumn() == JT_KILOS)
+//            jt.requestFocusLater(jt.getSelectedRow(),JT_KILOS);
+//        else
+//            jt.requestFocusSelectedLater();      
         actAcumLin();
       }
   /**

@@ -92,7 +92,7 @@ public class CLDepCli extends ventana
 
         iniciarFrame();
 
-        this.setVersion("2016-07-24");
+        this.setVersion("2016-08-30");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -106,6 +106,7 @@ public class CLDepCli extends ventana
     {
         fechaE.setDate(Formatear.getDateAct());
         cli_codiE.iniciar(dtStat, this, vl, EU);
+        PCabe.setDefButton(Baceptar);
         activarEventos();
     }
     
@@ -133,7 +134,18 @@ public class CLDepCli extends ventana
                     return;
 
                 irAlbaran();
+            }
+      });   
+      jtStock.addMouseListener(new MouseAdapter()
+      {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() < 2)
+                    return;
+                if (jtStock.isVacio())
+                    return;
 
+                irAlbaranStock();
             }
       });   
     }
@@ -157,6 +169,28 @@ public class CLDepCli extends ventana
     
        cm.ej_query();
        cm.setAlbaranDeposito(jtCab.getValorInt(JTCAB_ALBDEP));
+       jf.gestor.ir(cm);
+    }
+    void irAlbaranStock()
+    {         
+        if (jtStock.getValString(7).equals(""))
+            return;
+        ejecutable prog;
+        if ((prog=jf.gestor.getProceso(pdalbara.getNombreClase()))==null)
+               return;
+       pdalbara cm=(pdalbara) prog;
+       if (cm.inTransation())
+       {
+          msgBox("Mantenimiento Albaranes de Ventas ocupado. No se puede realizar la busqueda");
+          return;
+       }
+       cm.PADQuery();
+       String[] alb=jtStock.getValString(7).split("-");
+
+       cm.setSerieAlbaran(alb[1]);       
+       cm.setNumeroAlbaran(Integer.parseInt(alb[2]));
+       cm.setEjercAlbaran(Integer.parseInt(alb[0]));    
+       cm.ej_query();
        jf.gestor.ir(cm);
     }
     void verDatos()
@@ -227,9 +261,77 @@ public class CLDepCli extends ventana
     {
         
     }
-     void verInventario() throws Exception
+    
+    void verInventario() throws Exception
     {
-        
+        Ptab.setSelectedIndex(1);
+        jtStock.removeAllDatos();
+        String s="select a.*,ar.pro_nomb as art_nomb,cl.cli_nomb from v_albventa_detalle as a,v_articulo as ar,v_cliente as cl   "
+            + " where avc_fecalb <= '"+fechaE.getFechaDB()+"'"+
+            " and a.pro_codi=ar.pro_codi "+
+            " and cl.cli_codi = a.cli_codi "+
+            (cli_codiE.isNull()?"":" and a.cli_codi = "+cli_codiE.getValorInt())+
+            " and avc_depos='D'"+ // Albaranes de Deposito
+            " and  not exists(select * from v_proservdep as s "
+            + " where a.pro_codi=s.pro_codi and a.avc_nume=s.avc_nume "
+            + " and avs_fecha < '"+fechaE.getFechaDB()+"'"
+            + " and a.avc_serie=s.avc_serie and a.avc_ano=s.avc_ano"
+            + " and avs_ejelot = avp_ejelot and avs_emplot= avp_emplot"
+            + " and avs_serlot = avp_serlot and avs_numpar=avp_numpar and avs_numind=avp_numind)"
+            +" order by pro_codi,cli_codi,avc_ano,avc_serie,avc_nume";
+        if (!dtCon1.select(s))
+        {
+            msgBox("No encontrado genero en deposito con estas condiciones");
+            return;
+        }    
+        int numUni=0,nl=0;
+        double kg=0;
+        int proCodi=dtCon1.getInt("pro_codi");
+        do
+        {
+          ArrayList v= new ArrayList();
+          if (proCodi!=dtCon1.getInt("pro_codi"))
+          {
+              verAcumulado(numUni,kg,nl);
+              proCodi=dtCon1.getInt("pro_codi");
+              numUni=0;
+              kg=0;
+              nl=0;
+          }
+          v.add(dtCon1.getInt("pro_codi"));
+          v.add(dtCon1.getString("pro_nomb"));
+          v.add(dtCon1.getString("avp_ejelot")+dtCon1.getString("avp_serlot")+
+              dtCon1.getString("avp_numpar")+"-"+
+              dtCon1.getString("avp_numind"));
+          v.add(dtCon1.getInt("avl_unid"));
+          v.add(dtCon1.getDouble("avl_canti"));
+          v.add(dtCon1.getString("cli_codi"));
+          v.add(dtCon1.getString("cli_nomb"));
+          v.add(dtCon1.getString("avc_ano")+"-"+dtCon1.getString("avc_serie")+"-"+dtCon1.getString("avc_nume"));
+          v.add(dtCon1.getFecha("avc_fecalb","dd-MM-yy"));
+          numUni+=dtCon1.getInt("avl_unid");
+          kg+=dtCon1.getDouble("avl_canti");
+          nl++;
+          jtStock.addLinea(v);
+        } while (dtCon1.next());
+        verAcumulado(numUni,kg,nl);
+        mensajeErr("Consulta realizada");
+    }
+    void verAcumulado(int numUni,double kg, int nl)
+    {
+        if (nl<=1)
+            return;
+        ArrayList v=new ArrayList();
+        v.add("");
+        v.add("Total producto");
+        v.add("");
+        v.add(numUni);
+        v.add(kg);
+        v.add("");
+        v.add("");
+        v.add("");
+        v.add("");
+        jtStock.addLinea(v);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -252,9 +354,13 @@ public class CLDepCli extends ventana
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
         cLabel7 = new gnu.chu.controles.CLabel();
         fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        PPie = new gnu.chu.controles.CPanel();
+        Ptab = new gnu.chu.controles.CTabbedPane();
+        PSalida = new gnu.chu.controles.CPanel();
         jtCab = new gnu.chu.controles.Cgrid(9);
         jtLin = new gnu.chu.controles.Cgrid(5);
-        PPie = new gnu.chu.controles.CPanel();
+        cPanel2 = new gnu.chu.controles.CPanel();
+        jtStock = new gnu.chu.controles.Cgrid(9);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -302,6 +408,18 @@ public class CLDepCli extends ventana
         gridBagConstraints.gridy = 0;
         Pprinc.add(PCabe, gridBagConstraints);
 
+        PPie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        PPie.setMaximumSize(new java.awt.Dimension(500, 30));
+        PPie.setMinimumSize(new java.awt.Dimension(500, 30));
+        PPie.setPreferredSize(new java.awt.Dimension(500, 31));
+        PPie.setLayout(null);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        Pprinc.add(PPie, gridBagConstraints);
+
+        PSalida.setLayout(new java.awt.GridBagLayout());
+
         ArrayList v1=new ArrayList();
         v1.add("Fec.Alb"); // 0
         v1.add("Emp"); // 1
@@ -317,16 +435,16 @@ public class CLDepCli extends ventana
         jtCab.setAjustarGrid(true);
         jtCab.setMaximumSize(new java.awt.Dimension(100, 200));
         jtCab.setMinimumSize(new java.awt.Dimension(100, 200));
-        jtCab.setPreferredSize(new java.awt.Dimension(100, 200));
+        jtCab.setPreferredSize(new java.awt.Dimension(100, 201));
         jtCab.setAnchoColumna(new int[]{55,20,30,20,40,40,200,45,55});
         jtCab.setAlinearColumna(new int[]{1,2,2,1,2,2,0,2,1});
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        Pprinc.add(jtCab, gridBagConstraints);
+        PSalida.add(jtCab, gridBagConstraints);
 
         ArrayList v=new ArrayList();
 
@@ -336,27 +454,52 @@ public class CLDepCli extends ventana
         v.add("Unid"); // 3
         v.add("Kilos"); // 4
         jtLin.setCabecera(v);
+        jtLin.setAnchoColumna(new int[]{40,150,90,30,60});
+        jtLin.setAlinearColumna(new int[]{2,0,0,2,2});
+        jtLin.setAjustarGrid(true);
         jtLin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtLin.setMaximumSize(new java.awt.Dimension(100, 100));
         jtLin.setMinimumSize(new java.awt.Dimension(100, 100));
-        jtLin.setPreferredSize(new java.awt.Dimension(100, 100));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        Pprinc.add(jtLin, gridBagConstraints);
+        PSalida.add(jtLin, gridBagConstraints);
 
-        PPie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        PPie.setMaximumSize(new java.awt.Dimension(500, 30));
-        PPie.setMinimumSize(new java.awt.Dimension(500, 30));
-        PPie.setPreferredSize(new java.awt.Dimension(500, 31));
-        PPie.setLayout(null);
+        Ptab.addTab("Salidas", PSalida);
+
+        cPanel2.setLayout(new java.awt.BorderLayout());
+
+        {ArrayList vs=new ArrayList();
+
+            vs.add("Articulo"); // 0
+            vs.add("Descrip."); // 1
+            vs.add("Individuo"); // 2
+            vs.add("Unid"); // 3
+            vs.add("Kilos"); // 4
+            vs.add("Cliente"); // 5
+            vs.add("Nombre Cliente"); // 6
+            vs.add("Alb."); // 7
+            vs.add("Fec.Alb."); // 8
+            jtStock.setCabecera(vs);
+        }
+        jtStock.setAnchoColumna(new int[]{40,150,90,30,60,45,150,80,70});
+        jtStock.setAlinearColumna(new int[]{2,0,0,2,2,2,0,0,1});
+        jtStock.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtStock.setMaximumSize(new java.awt.Dimension(100, 100));
+        jtStock.setMinimumSize(new java.awt.Dimension(100, 100));
+        cPanel2.add(jtStock, java.awt.BorderLayout.CENTER);
+
+        Ptab.addTab("Inventario", cPanel2);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        Pprinc.add(PPie, gridBagConstraints);
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        Pprinc.add(Ptab, gridBagConstraints);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
@@ -368,16 +511,20 @@ public class CLDepCli extends ventana
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CPanel PCabe;
     private gnu.chu.controles.CPanel PPie;
+    private gnu.chu.controles.CPanel PSalida;
     private gnu.chu.controles.CPanel Pprinc;
+    private gnu.chu.controles.CTabbedPane Ptab;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
+    private gnu.chu.controles.CPanel cPanel2;
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CTextField fecfinE;
     private gnu.chu.controles.CTextField fechaE;
     private gnu.chu.controles.Cgrid jtCab;
     private gnu.chu.controles.Cgrid jtLin;
+    private gnu.chu.controles.Cgrid jtStock;
     private gnu.chu.controles.CComboBox tipoConsC;
     // End of variables declaration//GEN-END:variables
 }

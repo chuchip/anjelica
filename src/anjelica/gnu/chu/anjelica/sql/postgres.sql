@@ -629,7 +629,10 @@ create table anjelica.albvenseri
     avs_canti decimal(9,3),   -- Kilos
     constraint ix_albvenseri primary key (avs_nume,avs_numlin,avi_numlin )
 );
---
+create view anjelica.v_proservdep as select c.*,l.avs_numlin,l.pro_codi,l.pro_nomb,l.avs_canti as avl_canti,l.avs_unid,
+i.avi_numlin,avs_ejelot,avs_emplot,avs_serlot,avs_numpar,avs_numind,avs_numuni,i.avs_canti from albvenserc as c,albvenserl as l, albvenseri as i 
+where c.avs_nume = l.avs_nume and c.avs_nume = i.avs_nume and l.avs_numlin = i.avs_numlin;
+grant select on anjelica.v_proservdep to public;
 -- Tabla Lineas de Albaranes de Ventas
 ---
 -- drop table v_albavel;
@@ -1467,7 +1470,7 @@ create table anjelica.v_famipro
 emp_codi int not null,		-- Empresa (DEPRECATED)
 fpr_codi int not null,		-- Codigo de Familia del producto
 fpr_nomb varchar(30),		-- Name of Family
-agr_codi int,			-- Code of Group (DEPRECATED)
+agr_codi int,			    -- Code of Group (DEPRECATED)
 fpr_ctacom varchar(12),		-- Cuenta compras (SIN USAR)
 fpr_ctaven varchar(12),		-- Cuenta ventas  (SIN USAR)
 constraint ix_famipro primary key(fpr_codi)
@@ -1877,7 +1880,7 @@ tar_fecini date not null,
 tar_fecfin date not null,
 tar_codi int not null, -- Codigo de Tarifa
 tar_linea int not null, -- Linea de tarifa
-pro_codart varchar(12) not null, -- Codigo de Articulo
+pro_codart varchar(15) not null, -- Codigo de Articulo
 pro_nomb VARCHAR(50) not null, -- Descripcion del Articulo
 tar_preci decimal(10,2),
 tar_comen varchar(150),
@@ -3064,6 +3067,17 @@ create table anjelica.taripor
 );
 create index ix_taripor on taripor(tra_codi,tap_codi,tap_fecini);
 --
+-- Tabla COmisiones Representantes
+--
+create table anjelica.comision_represent
+(
+	avc_id int  not null, -- Numero Albaran
+	cor_linea varchar(30) not null, -- LINEA
+	cor_coment varchar(120) not null, -- Comentario
+	constraint ix_comrep primary key (avc_id,cor_linea)
+ );
+grant all on anjelica.comision_represent to public;
+--
 -- Tabla Libro de Vtos.
 --
 -- drop table  librovto;
@@ -3478,7 +3492,7 @@ create table anjelica.subempresa
  sbe_nomb char(40) not null,	-- Descripción SubEmpresa
  sbe_tipo char(1) not null default 'C', -- (C)liente, (A)rticulo
  sbe_albped smallint not null default 0, -- Indica si los alb. Deben ir sobre pedido.
- -- alm_codi int not null,		-- Almacen por defecto para esta subempresa
+ 
  constraint ix_subempr primary key (emp_codi,sbe_codi,sbe_tipo)
 );
 INSERT INTO SUBEMPRESA VALUES(1,1,'GENERAL','C',0);
@@ -3897,9 +3911,9 @@ create table anjelica.reclamprv_notas
 --
 create table disproventa
 (
-	dpv_int not null, -- Tipo Discriminador. 1. Codigo Corte. 2. Animal. 3 Origen. 4 Clasif.
-	cpr_nume char(3) not null, -- Codigo Corte
-	cpr_descr varchar(30) not null
+	dpv_tipo int not null, -- Tipo Discriminador. 1. Codigo Corte. 2. Animal. 3 Origen. 4 Clasif.
+	dpv_nume char(3) not null, -- Codigo
+	dpv_nomb varchar(30) not null -- Nombre
 );
 ---
 -- Tabla con Referencias productos de venta
@@ -3918,9 +3932,40 @@ create table disproventa
 create table prodventa
 (
 	pve_codi varchar(15) not null, -- Referencia producto Venta
-	pve_nomb varchar(50) not null -- Nombre
+	pve_nomb varchar(50) not null, -- Nombre
+	constraint ix_prodventa primary  key (pve_codi)
+);
+-- 
+-- Productos de tarifa
+--
+create table prodtarifa
+(
+	pve_codi varchar(15) not null, -- Referencia producto Venta
+	pro_codi int  not null         -- Codigo Producto	
 );
 
+--
+-- Tabla para calculos tarifas
+--
+drop table calctarifa;
+create table calctarifa
+(
+	eje_nume int not null,  -- Año
+	cta_semana int not null, -- Numero semana	
+	cta_linea int not null, -- Numero Linea
+	pve_codi varchar(15) not null, -- Referencia producto Venta
+	cta_kgexis float not null,
+	cta_prmex float not null,
+	cta_kgcomp float not null,
+	cta_prcomp float not null,
+	cta_kgprod float not null,
+	cta_prprod float not null,
+	cta_costo float not null,
+	cta_cosasi float not null,
+	constraint ix_calctarifa primary  key (eje_nume,cta_semana,cta_linea)
+);
+grant all on calctarifa to public;
+-- select 'insert into prodtarifa values(''' || pro_codart || ''',' ||  pro_codi || ');' from v_articulo where '' || pro_codi!=pro_codart
 --drop view v_partes;
 create view anjelica.v_partes as select c.*,l.par_linea,l.pro_codi,pal_kilos,pal_unidad,
 pro_ejelot,pro_serlot,pro_numlot,pro_indlot,pro_feccad,pal_acsala, pal_comsal,pal_accion,pal_coment from anjelica.partecab as c,anjelica.partelin as l where c.par_codi=l.par_codi;
@@ -3983,7 +4028,8 @@ create  view v_hisdespori as select  1 as emp_codi, c.*, 1 as deo_emloge, 1 as d
 l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcost, deo_kilos , deo_preusu,deo_tiempo
  from deorcahis as c, deorlihis as l where c.eje_nume=l.eje_nume
  and c.deo_codi= l.deo_codi and c.his_rowid=l.his_rowid;
-create  view v_despsal as select c.eje_nume,c.deo_codi,c.deo_numdes,tid_codi,deo_fecha, deo_almori,deo_almdes,deo_ejloge,deo_seloge,deo_nuloge,
+create  view v_despsal as select c.eje_nume,c.deo_codi,c.deo_numdes,tid_codi,deo_fecha, deo_almori,deo_almdes,deo_ejloge,
+deo_seloge,deo_nuloge,deo_incval,
 l.def_orden, pro_codi, def_ejelot, def_emplot, def_serlot, pro_lote,pro_numind ,def_kilos,def_numpie,def_prcost,
 def_feccad,def_preusu,def_tiempo,l.alm_codi
  from anjelica.desporig as c, anjelica.v_despfin as l where c.eje_nume=l.eje_nume
@@ -4299,12 +4345,12 @@ create trigger stkpart_delete BEFORE  DELETE  on anjelica.stockpart for each row
 --
 select 'A' as tipo, usu_nomb ,avc_nume,avc_serie,cl.cli_codi,cl.cli_nomb,min(avl_fecalt) as fecmin, max(avl_fecalt) as fecmax from v_albventa as a, v_cliente as cl
 where cl.cli_codi = a.cli_codi
-and avc_fecalb='20160817'
+and avl_fecalt::date='20160817'
 group by usu_nomb,avc_nume,avc_serie,cl.cli_codi,cl.cli_nomb
 union all
 select 'D' as tipo,c.usu_nomb,deo_codi as avc_nume,'A' as avc_serie,c.tid_codi as cli_codi, tid_nomb as cli_nomb,
  min(deo_tiempo) as fecmin, max(deo_tiempo) as fecmax from v_despiece as c, tipodesp as t
 where c.tid_codi=t.tid_codi and
-deo_fecha='20160817'
+deo_tiempo::date='20160817'
 group by c.usu_nomb,avc_nume,avc_serie,cli_codi,cli_nomb
 order by 2,7

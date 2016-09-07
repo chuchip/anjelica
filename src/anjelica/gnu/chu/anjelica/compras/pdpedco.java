@@ -17,9 +17,9 @@ import java.text.*;
 import net.sf.jasperreports.engine.*;
 import javax.swing.event.*;
  /**
- * Título: pdpedco</p>
+ * <p>Título: pdpedco</p>
  * <p>Descripción: Mantenimiento Pedidos de Compra</p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -182,7 +182,7 @@ public class pdpedco extends ventanaPad   implements PAD
   {
     this(eu,p,null);
   }
-  public pdpedco(EntornoUsuario eu, Principal p,Hashtable ht)
+  public pdpedco(EntornoUsuario eu, Principal p,Hashtable<String,String> ht)
   {
     EU = eu;
     vl = p.panel1;
@@ -191,13 +191,8 @@ public class pdpedco extends ventanaPad   implements PAD
 
     try
     {
-      if (ht != null)
-      {
-        if (ht.get("admin") != null)
-          SWADMIN = Boolean.valueOf(ht.get("admin").toString()).
-              booleanValue();
-
-      }
+      ponParametros(ht);
+     
       setTitulo("Mantenimiento Pedidos Compras");
 
 
@@ -216,7 +211,7 @@ public class pdpedco extends ventanaPad   implements PAD
   {
     this(p,eu,null);
   }
-  public pdpedco(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable ht)
+  public pdpedco(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable<String,String> ht)
   {
     EU = eu;
     vl = p.getLayeredPane();
@@ -224,9 +219,9 @@ public class pdpedco extends ventanaPad   implements PAD
 
     try
     {
+      ponParametros(ht);
       if (ht != null)
       {
-
         if (ht.get("admin") != null)
           SWADMIN = Boolean.valueOf(ht.get("admin").toString()).
               booleanValue();
@@ -240,12 +235,20 @@ public class pdpedco extends ventanaPad   implements PAD
       ErrorInit(e);
     }
   }
+  private void ponParametros(Hashtable<String,String> ht)
+  {
+      if (ht != null)
+      {
+        if (ht.get("admin") != null)
+          SWADMIN = Boolean.valueOf(ht.get("admin"));
 
+      }
+  }
   private void jbInit() throws Exception
   {
     iniciarFrame();
     this.setSize(new Dimension(760,522));
-    this.setVersion("2011-03-11"+ (SWADMIN?"(ADMINISTRADOR)":""));
+    this.setVersion("2016-08-26"+ (SWADMIN?"(ADMINISTRADOR)":""));
 
     Pprinc.setLayout(gridBagLayout1);
 
@@ -492,6 +495,23 @@ public class pdpedco extends ventanaPad   implements PAD
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
     Baceptar.setText("Aceptar (F4)");
   }
+  public static String getNombreClase()
+  {
+      return "gnu.chu.anjelica.compras.pdpedco";
+  }
+  public boolean inTransation()
+  {
+      return nav.isEdicion();
+  }
+  public void setPedido(int pccNume)
+  {
+      pcc_numeE.setValorInt(pccNume);
+  }
+  public void setEjercicio(int ejeNume)
+  {
+      eje_numeE.setValorInt(ejeNume);
+  }
+  @Override
   public void iniciarVentana() throws Exception
   {
     Pcabe.setButton(KeyEvent.VK_F4,Baceptar);
@@ -619,10 +639,12 @@ public class pdpedco extends ventanaPad   implements PAD
   {
     verDatos(dtCons);
   }
+  @Override
   public void PADUltimo()
   {
     verDatos(dtCons);
   }
+  @Override
   public void PADQuery()
   {
     activar(true);
@@ -636,6 +658,7 @@ public class pdpedco extends ventanaPad   implements PAD
       sbe_codiE.setValorInt(EU.getSbeCodi());
     acc_numeE.requestFocus();
   }
+  @Override
   public void ej_query1()
   {
     Component c = Pcabe.getErrorConf();
@@ -645,7 +668,7 @@ public class pdpedco extends ventanaPad   implements PAD
       mensajeErr("Error en condiciones Busqueda");
       return;
     }
-    Vector v = new Vector();
+    ArrayList v = new ArrayList();
     v.add(emp_codiE.getStrQuery());
     v.add(sbe_codiE.getStrQuery());
     v.add(eje_numeE.getStrQuery());
@@ -658,7 +681,7 @@ public class pdpedco extends ventanaPad   implements PAD
     v.add(pcc_estadE.getStrQuery());
     v.add(pcc_estrecE.getStrQuery());
     v.add(pcc_comenE.getStrQuery());
-    v.addElement(pcc_impporE.getStrQuery());
+    v.add(pcc_impporE.getStrQuery());
     try
     {
       Pcabe.setQuery(false);
@@ -1102,7 +1125,7 @@ public class pdpedco extends ventanaPad   implements PAD
       eje_numeE.setText(dt.getString("eje_nume"));
       pcc_numeE.setText(dt.getString("pcc_nume"));
       sbe_codiE.setText(dtCon1.getString("sbe_codi"));
-      prv_codiE.setText(dtCon1.getString("prv_codi"));
+      prv_codiE.setText(dtCon1.getString("prv_codi"),true);
       pcc_fecpedE.setText(dtCon1.getFecha("pcc_fecped","dd-MM-yyyy"));
       pcc_fecrecE.setText(dtCon1.getFecha("pcc_fecrec","dd-MM-yyyy"));
       alm_codiE.setText(dtCon1.getString("alm_codi"));

@@ -653,14 +653,15 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     mensaje("");
     mensajeErr("Borrado de Registro ... ANULADO");
   }
-
+  
+ 
   int cambiaLineaJT()
   {
     if (pro_codartE.isNull() || pro_codartE.getText().equals("X"))
       return -1; // No hay producto o es de tipo... paso
     try {
 
-      
+     
       if (!pro_codartE.controla(false))
       {
         mensajeErr(pro_codartE.getMsgError());

@@ -179,15 +179,15 @@ public class prvPanel extends CPanel
  /**
   * Establece el texto del Proveedor
   * @param prvCodi String Codigo de Proveedor
-  * @param controla boolean  llamar a Controlar ?
+  * @param swPonNombre boolean  Poner nombre al proveedor
   */
- public void setText(String prvCodi,boolean controla)
+ public void setText(String prvCodi,boolean swPonNombre)
   {
     prv_codiE.setText(prvCodi);
     try {
       if (! swControl)
         return; // Pasa de buscar y poner el nombre del producto.
-      if (!prv_codiE.isEnabled() || !prv_codiE.isEditable() || controla)
+      if (!prv_codiE.isEnabled() || !prv_codiE.isEditable() || swPonNombre)
         controla(false,true);
     } catch (Exception k)
     {

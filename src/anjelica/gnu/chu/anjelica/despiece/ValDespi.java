@@ -21,7 +21,6 @@ package gnu.chu.anjelica.despiece;
  */
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.ActualStkPart;
-import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
@@ -116,12 +115,7 @@ public class ValDespi extends ventana {
 
        try
        {
-         if (ht != null)
-         {
-           if (ht.get("modAdmin") != null)
-             ARG_ADMIN = Boolean.valueOf(ht.get("modAdmin").toString()).
-                 booleanValue();
-         }
+          ponParametros(ht);
           setTitulo("Valoracion/Agrupacion despieces");
          if (jf.gestor.apuntar(this))
             jbInit();
@@ -132,18 +126,14 @@ public class ValDespi extends ventana {
        }
    }
 
-   public ValDespi(gnu.chu.anjelica.menu p, EntornoUsuario eu, HashMap ht) {
+   public ValDespi(gnu.chu.anjelica.menu p, EntornoUsuario eu, Hashtable ht) {
         EU = eu;
         vl = p.getLayeredPane();
         eje = false;
 
         try {
-            if (ht != null) {
-                if (ht.get("modAdmin") != null) {
-                    ARG_ADMIN = Boolean.valueOf(ht.get("modAdmin").toString()).
-                            booleanValue();
-                }
-            }
+            ponParametros(ht);
+           
             setTitulo("Valoracion/Agrupacion despieces");
 
 
@@ -153,10 +143,18 @@ public class ValDespi extends ventana {
             setErrorInit(true);
         } 
    }
+   private void ponParametros(Hashtable<String,String> ht)
+   {
+        if (ht != null) {
+            if (ht.get("modAdmin") != null) {
+                ARG_ADMIN = Boolean.valueOf(ht.get("modAdmin"));
+            }
+        }
+   }
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2016-05-29" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2016-08-30" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -199,7 +197,7 @@ public class ValDespi extends ventana {
      
      jtCab.setDefButton(Baceptar);
      jtLin.setDefButton(Baceptar);
-     fecsupE.setDate(Formatear.sumaDiasDate(Formatear.getDateAct(),-15));
+     fecinfE.setDate(Formatear.sumaDiasDate(Formatear.getDateAct(),-15));
      preparaStatements();
      activarEventos();
    }
@@ -1890,7 +1888,7 @@ public class ValDespi extends ventana {
        grupoC.setValor("D");
        try
        {
-           fecsupE.setDate(Formatear.getDate("01-01-"+EU.ejercicio,"dd-MM-yyyy"));
+           fecinfE.setDate(Formatear.getDate("01-01-"+EU.ejercicio,"dd-MM-yyyy"));
        } catch (ParseException ex)
        {
            Logger.getLogger(ValDespi.class.getName()).log(Level.SEVERE, null, ex);
@@ -1905,9 +1903,15 @@ public class ValDespi extends ventana {
            eje_numeE.requestFocus();
            return;
        }
-       if (fecsupE.isNull() || fecsupE.getError())
+       if (fecinfE.isNull() || fecinfE.getError())
        {
-           mensajeErr("Introduzca una fecha Limite valida");
+           mensajeErr("Introduzca una fecha Inferior valida");
+           fecinfE.requestFocus();
+           return;
+       }
+        if (fecsupE.getError())
+       {
+           mensajeErr("Introduzca una fecha Superior valida");
            fecsupE.requestFocus();
            return;
        }
@@ -1953,12 +1957,13 @@ public class ValDespi extends ventana {
        }
        String s1="select 2 as orden,eje_nume, deo_codi, 0 as deo_numdes,"
                + " deo_fecha as fecha  from desporig as d "
-               + " where d.deo_fecha>=TO_DATE('"+fecsupE.getText()+"','dd-MM-yy')"
+               + " where d.deo_fecha>=TO_DATE('"+fecinfE.getText()+"','dd-MM-yy')"
+               +(fecsupE.isNull()?"":" and d.deo_fecha<=TO_DATE('"+fecsupE.getText()+"','dd-MM-yy')" )
                + " and d.eje_nume = "+eje_numeE.getValorInt()
                + (tid_codiE.isNull()?"":" and d.tid_codi = "+tid_codiE.getValorInt())
                + (deo_codiE.getValorInt()==0?"":" and d.eje_nume = "+eje_numeE.getValorInt()
                +" and "+(grupoC.getValor().equals("G")?" d.deo_numdes= ":" d.deo_codi = ")+deo_codiE.getValorInt())
-               + (opverCerrado.isSelected()?" and deo_block = 'N' ":"")
+               + (opCerradoC.getValor().equals("T")?"":" and deo_block = '"+opCerradoC.getValor()+"' ")
                + (grd_valorE.getValor().equals("*")?"":" and d.deo_valor = '"+grd_valorE.getValor()+"'");
        s+= s1+" and deo_numdes = 0 ";
        if (opVerGrupo.isSelected())
@@ -2115,7 +2120,7 @@ public class ValDespi extends ventana {
         Pprinc = new gnu.chu.controles.CPanel();
         Pcond = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
-        fecsupE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
+        fecinfE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
         cLabel2 = new gnu.chu.controles.CLabel();
         eje_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         deo_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#####9");
@@ -2128,8 +2133,10 @@ public class ValDespi extends ventana {
         grd_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#####9");
         cLabel12 = new gnu.chu.controles.CLabel();
         Bbuscar = new gnu.chu.controles.CButtonMenu();
-        opverCerrado = new gnu.chu.controles.CCheckBox();
         opVerGrupo = new gnu.chu.controles.CCheckBox();
+        fecsupE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
+        cLabel13 = new gnu.chu.controles.CLabel();
+        opCerradoC = new gnu.chu.controles.CComboBox();
         jtDesp = new gnu.chu.controles.Cgrid(10);
         jtCab = new gnu.chu.controles.CGridEditable(9)
         {
@@ -2195,8 +2202,8 @@ public class ValDespi extends ventana {
         cLabel1.setText("Ejercicio");
         Pcond.add(cLabel1);
         cLabel1.setBounds(10, 2, 60, 17);
-        Pcond.add(fecsupE);
-        fecsupE.setBounds(110, 20, 60, 17);
+        Pcond.add(fecinfE);
+        fecinfE.setBounds(70, 20, 60, 17);
 
         cLabel2.setText("Tipo Despiece");
         Pcond.add(cLabel2);
@@ -2206,7 +2213,7 @@ public class ValDespi extends ventana {
 
         deo_codiE.setFocusTraversalPolicyProvider(true);
         Pcond.add(deo_codiE);
-        deo_codiE.setBounds(300, 20, 51, 17);
+        deo_codiE.setBounds(360, 20, 51, 17);
 
         cLabel4.setText("Valorado");
         Pcond.add(cLabel4);
@@ -2225,16 +2232,16 @@ public class ValDespi extends ventana {
         grupoC.addItem("Despiece", "D");
         grupoC.addItem("Grupo","G");
         Pcond.add(grupoC);
-        grupoC.setBounds(180, 20, 110, 17);
+        grupoC.setBounds(260, 20, 90, 17);
 
         agrupaC.addItem("Valorar","V");
         agrupaC.addItem("Agrupar", "A");
         Pcond.add(agrupaC);
         agrupaC.setBounds(110, 2, 100, 17);
 
-        cLabel3.setText("Fecha Superior a ");
+        cLabel3.setText("A");
         Pcond.add(cLabel3);
-        cLabel3.setBounds(10, 20, 95, 17);
+        cLabel3.setBounds(150, 20, 20, 17);
         Pcond.add(grd_numeE);
         grd_numeE.setBounds(260, 2, 51, 17);
 
@@ -2248,17 +2255,23 @@ public class ValDespi extends ventana {
         Pcond.add(Bbuscar);
         Bbuscar.setBounds(380, 40, 120, 24);
 
-        opverCerrado.setSelected(true);
-        opverCerrado.setText("Solo Cerrados");
-        opverCerrado.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
-        Pcond.add(opverCerrado);
-        opverCerrado.setBounds(360, 20, 110, 17);
-
         opVerGrupo.setSelected(true);
         opVerGrupo.setText("Ver Grupos");
         opVerGrupo.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
         Pcond.add(opVerGrupo);
         opVerGrupo.setBounds(430, 2, 90, 17);
+        Pcond.add(fecsupE);
+        fecsupE.setBounds(170, 20, 60, 17);
+
+        cLabel13.setText("De Fecha");
+        Pcond.add(cLabel13);
+        cLabel13.setBounds(10, 20, 60, 17);
+
+        opCerradoC.addItem("Cerrado", "N");
+        opCerradoC.addItem("Abierto", "S");
+        opCerradoC.addItem("Todos", "T");
+        Pcond.add(opCerradoC);
+        opCerradoC.setBounds(420, 20, 100, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -2605,6 +2618,7 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
+    private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -2619,6 +2633,7 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CTextField deo_codiE;
     private gnu.chu.controles.CTextField deo_prcogrE;
     private gnu.chu.controles.CTextField eje_numeE;
+    private gnu.chu.controles.CTextField fecinfE;
     private gnu.chu.controles.CTextField fecsupE;
     private gnu.chu.controles.CTextField grd_numeE;
     private gnu.chu.controles.CComboBox grd_valorE;
@@ -2631,8 +2646,8 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CTextField kilosCabE;
     private gnu.chu.controles.CTextField kilosFinE;
     private gnu.chu.controles.CTextField numRegSelE;
+    private gnu.chu.controles.CComboBox opCerradoC;
     private gnu.chu.controles.CCheckBox opVerGrupo;
-    private gnu.chu.controles.CCheckBox opverCerrado;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.camposdb.tidCodi2 tid_codiE;
     private gnu.chu.controles.CTextField uniCabE;

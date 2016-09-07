@@ -10,6 +10,9 @@ import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.eventos.CambioEvent;
 import gnu.chu.eventos.CambioListener;
+import gnu.chu.eventos.GridAdapter;
+import gnu.chu.eventos.GridEvent;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.conexion;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -20,6 +23,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,6 +33,8 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRException;
@@ -62,10 +69,11 @@ import net.sf.jasperreports.engine.JasperReport;
  */
 public class CLVenRep extends ventana {
     String condAlb;
+    int idAlbaran;
     String ARG_ZONAREP = "";
     boolean ARG_MODIF=false;
     DatosTabla dtAdd;
-    String s;
+  
 
     public CLVenRep(EntornoUsuario eu, Principal p) {
         this(eu, p, null);
@@ -121,7 +129,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2016-05-08" + ARG_ZONAREP);
+        this.setVersion("2016-09-07" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -153,7 +161,7 @@ public class CLVenRep extends ventana {
         else
               MantRepres.llenaLinkBox(rep_codiE, dtCon1);
         dtAdd = new DatosTabla(new conexion(EU));
-
+        Pcondic.setDefButton(Baceptar.getBotonAccion());
         activarEventos();
     }
 
@@ -188,6 +196,35 @@ public class CLVenRep extends ventana {
                }
             }
         });
+        jtCab.addMouseListener(new MouseAdapter()
+        {
+              public void mouseClicked(MouseEvent e) {
+                  if (e.getClickCount()<2 || jtCab.isVacio())
+                      return;
+                  
+                  ejecutable prog;
+                  if ((prog = jf.gestor.getProceso(pdalbara.getNombreClase())) == null)
+                      return;
+                  pdalbara cm = (pdalbara) prog;
+                  if (cm.inTransation())
+                  {
+                      msgBox("Mantenimiento Albaranes de Ventas ocupado. No se puede realizar la busqueda");
+                      return;
+                  }
+                  cm.PADQuery();
+
+                  cm.setSerieAlbaran(jtCab.getValString(1));
+                  cm.setEmpresaAlbaran(emp_codiE.getValorInt());
+                  cm.setNumeroAlbaran(jtCab.getValorInt(2));
+                  cm.setEjercAlbaran(jtCab.getValorInt(0));
+
+                  cm.ej_query();
+
+                  jf.gestor.ir(cm);
+
+              }
+
+});
         jtCab.tableView.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -196,6 +233,37 @@ public class CLVenRep extends ventana {
                 }
                 guardaCambios();
                 verLineas();
+                jtCab.requestFocusSelectedLater();
+            }
+        });
+        
+        jtLin.addGridListener(new GridAdapter()
+        {
+            @Override
+            public void cambiaLinea(GridEvent event){
+                int ret=jtLinCambiaLinea(event.getLinea(), event.getColumna());
+                event.setColError(ret);
+                 try
+                {
+                    if (ret==-1)
+                        verComentario();
+                } catch (SQLException k)
+                {
+                    Error("Error al ver Comentario sobre comisiones representante", k);
+                }
+            }
+            @Override
+            public void afterCambiaLinea(GridEvent event)
+            {                
+                if (jtLin.isVacio() || ARG_MODIF)
+                    return;
+                try
+                {
+                    verComentario();
+                } catch (SQLException k)
+                {
+                    Error("Error al ver Comentario sobre comisiones representante", k);
+                }
             }
         });
         emp_codiE.addCambioListener(new CambioListener() {
@@ -232,7 +300,7 @@ public class CLVenRep extends ventana {
             if (!checkCond()) 
                 return;
             
-            s = "select  cl.tar_codi,a.avc_fecalb,a.pro_codi "
+            String s = "select  cl.tar_codi,a.avc_fecalb,a.pro_codi "
                 + " from v_albventa as a,clientes as cl "
                 + " WHERE  a.emp_codi = " + emp_codiE.getValorInt()
                 + getCondWhere()             
@@ -301,7 +369,7 @@ public class CLVenRep extends ventana {
                 if (ret!=mensajes.YES)
                     return;
             }
-            s = "update v_albavel set avl_profer=tar_preci "
+            String s = "update v_albavel set avl_profer=tar_preci "
                 + " WHERE  tar_preci>0 "
                 +(swForzar?"": " and avl_profer < 0" )               
                 + " and  emp_codi = " + emp_codiE.getValorInt()+
@@ -332,7 +400,7 @@ public class CLVenRep extends ventana {
     
     String getStrSql(boolean sinPrecMini,String condWhere)
     {
-        s = "SELECT a.avc_ano, a.avc_serie, a.avc_nume,a.avc_fecalb,a.cli_codi, "
+        String s = "SELECT a.avc_ano, a.avc_serie, a.avc_nume,a.avc_fecalb,a.cli_codi, "
                     + " cl.cli_nomb,avc_impalb,avc_impcob,cl.tar_codi,avc_kilos  "
                     + "  FROM v_albavec as a,clientes as cl "
                     + " WHERE 1=1 "+
@@ -358,7 +426,7 @@ public class CLVenRep extends ventana {
             if (!checkCond()) 
                 return;
             guardaCambios();
-            s = "select a.pro_codi,a.pro_nomb,sum(avl_canti) as avl_canti,"
+            String s = "select a.pro_codi,a.pro_nomb,sum(avl_canti) as avl_canti,"
                 + "sum(avl_unid) as avl_unid,sum(avl_prven*avl_canti) as importe from v_albventa as a,clientes as cl "
                 + " WHERE  a.emp_codi = " + emp_codiE.getValorInt()
                 + getCondWhere()                   
@@ -408,7 +476,7 @@ public class CLVenRep extends ventana {
             jtCab.setEnabled(false);
             jtCab.removeAllDatos();
             String condWhere = getCondWhere();
-            s=getStrSql(sinPrecMinimo,condWhere);
+            String s=getStrSql(sinPrecMinimo,condWhere);
           
             if (!dtCon1.select(s)) {
                 msgBox("No encontrados albaranes con esos criterios");
@@ -479,14 +547,16 @@ public class CLVenRep extends ventana {
     }
     public int jtLinCambiaLinea(int row,int col)
     {
-        if (! avl_proferE.isEnabled() || jtLin.isVacio() || jtLin.getValString(row,5).equals(""))
+        try {
+           guardaComentario(idAlbaran, jtLin.getValString(row,7),cor_comentE.getText().trim());
+        if (! avl_proferE.isEnabled() || jtLin.isVacio() || jtLin.getValString(row,5).equals("") || jtLin.getValString(row,7).trim().equals(""))
             return -1;
         double avlPrven=avl_proferE.getValorDec();
        
-        s = "UPDATE  V_albavel set avl_profer = " +avlPrven +
+        String s = "UPDATE  V_albavel set avl_profer = " +avlPrven +
              " where " +condAlb +
              " and avl_numlin in ("+jtLin.getValString(row,7)+")";
-        try {
+     
            
             int nregAfe=dtAdd.executeUpdate(s);
             if (nregAfe==0)
@@ -501,14 +571,88 @@ public class CLVenRep extends ventana {
     }
     private void getCondAlb(int row)
     {
-         condAlb= "  emp_codi = " + emp_codiE.getValorInt()
-                    + " and avc_ano = " + jtCab.getValorInt(row,0)
-                    + " and avc_nume = " + jtCab.getValorInt(row,2)
-                    + " and avc_serie = '" + jtCab.getValString(row,1) + "'";
+        try
+        {
+            condAlb= "  emp_codi = " + emp_codiE.getValorInt()
+                + " and avc_ano = " + jtCab.getValorInt(row,0)
+                + " and avc_nume = " + jtCab.getValorInt(row,2)
+                + " and avc_serie = '" + jtCab.getValString(row,1) + "'";
+            idAlbaran=pdalbara.getIdAlbaran(dtStat, jtCab.getValorInt(row,0), emp_codiE.getValorInt(),
+                jtCab.getValString(row,1),
+                jtCab.getValorInt(row,2));
+        } catch (SQLException ex)
+        {
+            Error("Error al localizar id albaran",ex);
+        }
+    }
+    
+    void guardaComentario(int avcId, String lineas,String coment)  throws SQLException
+    {
+        String s="select * from comision_represent where avc_id = "+avcId+
+            " and cor_linea='"+lineas+"'";
+        if (! dtAdd.select(s,true))
+        {
+            if (coment.equals(""))
+                return; 
+            dtAdd.addNew("comision_represent");
+            dtAdd.setDato("avc_id",avcId);
+            dtAdd.setDato("cor_linea",lineas);
+        }
+        else
+        {
+            if (coment.equals(""))
+            {
+                dtAdd.delete();
+                dtAdd.commit();
+                return; 
+            }
+            dtAdd.edit();
+        }
+        dtAdd.setDato("cor_coment",coment);
+        dtAdd.update();
+        dtAdd.commit();
+    }
+    
+    void verComentario() throws SQLException
+    {
+        verComentario(idAlbaran, jtLin.getValString(7));
+    }
+    void verComentario(int avcId, String lineas) throws SQLException
+    {
+       String s="select * from comision_represent where avc_id = "+avcId+
+            " and cor_linea='"+lineas+"'";
+        if (! dtCon1.select(s))
+           cor_comentE.resetTexto();
+        else
+            cor_comentE.setText(dtCon1.getString("cor_coment"));
+       
+    }
+    void verPedido() throws SQLException
+    {
+       jtPed.removeAllDatos();
+       String s="select p.*,a.pro_nomb,cl.tar_codi from v_cliente as cl,v_pedven p left join v_articulo as a on a.pro_codi=p.pro_codi where avc_ano="+ jtCab.getValorInt(0)+
+           " and avc_serie='"+jtCab.getValString(1)+"' and avc_nume = "+ jtCab.getValorInt(2)+
+           " and cl.cli_codi = p.cli_codi ";
+       if (! dtCon1.select(s))
+           return;
+       do
+       {
+           ArrayList v=new ArrayList();
+            v.add(dtCon1.getString("pro_codi"));
+            v.add(dtCon1.getString("pro_nomb"));
+            v.add(dtCon1.getString("pvl_unid")+dtCon1.getString("pvl_tipo"));
+            v.add(dtCon1.getString("pvl_kilos"));
+            v.add(dtCon1.getString("pvl_precio"));
+            v.add(MantTarifa.getPrecTar(dtStat, dtCon1.getInt("pro_codi"),
+                    dtCon1.getInt("tar_codi"), dtCon1.getFecha("pvc_fecent", "dd-MM-yyyy"))); 
+            v.add(dtCon1.getString("pvl_comen")); 
+            jtPed.addLinea(v);
+       } while (dtCon1.next());
     }
     void verLineas() {
         try {
-            s = pdalbara.getSqlLinAgr( jtCab.getValorInt(0), emp_codiE.getValorInt(),
+            verPedido();
+            String s = pdalbara.getSqlLinAgr( jtCab.getValorInt(0), emp_codiE.getValorInt(),
                     jtCab.getValString(1), jtCab.getValorInt(2), true);
             if (ARG_MODIF)
                 jtLin.setEnabled(false);
@@ -542,6 +686,7 @@ public class CLVenRep extends ventana {
             if (ARG_MODIF)
                 jtLin.setEnabled(true);
             jtLin.requestFocusInicio();
+            verComentario();
         } catch (Exception k) {
             Error("Error al ver Lineas de albaran", k);
         }
@@ -601,7 +746,7 @@ public class CLVenRep extends ventana {
             if (! checkCond())
                 return;
             mensaje("Espere, generando Listado");
-            s=getStrSql(false,getCondWhere());
+            String s=getStrSql(false,getCondWhere());
             dtCon1.setStrSelect(s);
             ResultSet rs=ct.createStatement().executeQuery(dtCon1.getStrSelect());
             JasperReport jr = Listados.getJasperReport(EU,  "realbvrep");
@@ -683,10 +828,7 @@ public class CLVenRep extends ventana {
     jtCab.setAlinearColumna(new int[]{2,1,2,1,2,0,2,2,2,2,2});
     jtCab.setAjustarGrid(true);
     jtLin = new gnu.chu.controles.CGridEditable(9){
-        public int cambiaLinea(int row, int col)
-        {
-            return jtLinCambiaLinea(row,col);
-        }
+
     }
     ;
     ArrayList v1=new ArrayList();
@@ -748,6 +890,38 @@ public class CLVenRep extends ventana {
     kilAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"-,---,--9.9");
     cLabel8 = new gnu.chu.controles.CLabel();
     impGanE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.9");
+    cor_comentE = new gnu.chu.controles.CTextField(Types.CHAR,"X",120);
+    jtPed = new gnu.chu.controles.CGridEditable(7)
+    ;
+    ArrayList v2=new ArrayList();
+    v2.add("Prod"); //0
+    v2.add("Nombre"); // 1
+    v2.add("Unid"); // 2
+    v2.add("Kilos"); // 3
+    v2.add("Prec"); // 4
+    v2.add("Pr.Tari"); // 5
+    v2.add("Coment."); // 6
+
+    jtPed.setCabecera(v2);
+    jtPed.setAnchoColumna(new int[]{60,180,50,70,60,60,200});
+    jtPed.setAlinearColumna(new int[]{2,0,2,2,2,2,0});
+
+    jtLin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+    jtLin.setPreferredSize(new java.awt.Dimension(80, 80));
+
+    // Code of sub-components - not shown here
+
+    // Layout setup code - not shown here
+
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 2;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.weighty = 1.0;
+    gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
+    Pprinc.add(jtLin, gridBagConstraints);
 
     pro_codiE.setEnabled(false);
 
@@ -837,11 +1011,11 @@ public class CLVenRep extends ventana {
     jtCab.setLayout(jtCabLayout);
     jtCabLayout.setHorizontalGroup(
         jtCabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-        .add(0, 628, Short.MAX_VALUE)
+        .add(0, 626, Short.MAX_VALUE)
     );
     jtCabLayout.setVerticalGroup(
         jtCabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-        .add(0, 152, Short.MAX_VALUE)
+        .add(0, 128, Short.MAX_VALUE)
     );
 
     gridBagConstraints = new java.awt.GridBagConstraints();
@@ -861,11 +1035,11 @@ public class CLVenRep extends ventana {
     jtLin.setLayout(jtLinLayout);
     jtLinLayout.setHorizontalGroup(
         jtLinLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-        .add(0, 628, Short.MAX_VALUE)
+        .add(0, 626, Short.MAX_VALUE)
     );
     jtLinLayout.setVerticalGroup(
         jtLinLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-        .add(0, 101, Short.MAX_VALUE)
+        .add(0, 98, Short.MAX_VALUE)
     );
 
     gridBagConstraints = new java.awt.GridBagConstraints();
@@ -877,77 +1051,81 @@ public class CLVenRep extends ventana {
     Pprinc.add(jtLin, gridBagConstraints);
 
     Presumen.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-    Presumen.setMaximumSize(new java.awt.Dimension(628, 30));
-    Presumen.setMinimumSize(new java.awt.Dimension(628, 30));
+    Presumen.setMaximumSize(new java.awt.Dimension(628, 40));
+    Presumen.setMinimumSize(new java.awt.Dimension(628, 40));
     Presumen.setOpaque(false);
-    Presumen.setPreferredSize(new java.awt.Dimension(628, 30));
+    Presumen.setPreferredSize(new java.awt.Dimension(628, 40));
+    Presumen.setLayout(null);
 
     cLabel2.setText("Num. Albaranes");
     cLabel2.setPreferredSize(new java.awt.Dimension(57, 17));
+    Presumen.add(cLabel2);
+    cLabel2.setBounds(12, 2, 95, 17);
 
     numAlbE.setEnabled(false);
+    Presumen.add(numAlbE);
+    numAlbE.setBounds(111, 2, 47, 17);
 
     cLabel4.setText("Importe");
     cLabel4.setPreferredSize(new java.awt.Dimension(57, 17));
+    Presumen.add(cLabel4);
+    cLabel4.setBounds(162, 2, 57, 17);
 
     impAlbE.setEnabled(false);
+    Presumen.add(impAlbE);
+    impAlbE.setBounds(223, 2, 86, 17);
 
     cLabel7.setText("Kilos");
     cLabel7.setPreferredSize(new java.awt.Dimension(57, 17));
+    Presumen.add(cLabel7);
+    cLabel7.setBounds(313, 2, 32, 17);
 
     kilAlbE.setEnabled(false);
+    Presumen.add(kilAlbE);
+    kilAlbE.setBounds(349, 2, 86, 17);
 
     cLabel8.setText("Ganancia");
     cLabel8.setPreferredSize(new java.awt.Dimension(57, 17));
+    Presumen.add(cLabel8);
+    cLabel8.setBounds(453, 2, 57, 17);
 
     impGanE.setEnabled(false);
-
-    org.jdesktop.layout.GroupLayout PresumenLayout = new org.jdesktop.layout.GroupLayout(Presumen);
-    Presumen.setLayout(PresumenLayout);
-    PresumenLayout.setHorizontalGroup(
-        PresumenLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-        .add(PresumenLayout.createSequentialGroup()
-            .addContainerGap()
-            .add(cLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 95, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-            .add(numAlbE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 47, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-            .add(cLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-            .add(impAlbE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 86, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-            .add(cLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 32, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-            .add(kilAlbE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 86, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .add(18, 18, 18)
-            .add(cLabel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-            .add(impGanE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 86, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .addContainerGap(28, Short.MAX_VALUE))
-    );
-    PresumenLayout.setVerticalGroup(
-        PresumenLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-        .add(PresumenLayout.createSequentialGroup()
-            .add(PresumenLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(cLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(numAlbE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(cLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(impAlbE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(cLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(kilAlbE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(cLabel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(impGanE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-    );
+    Presumen.add(impGanE);
+    impGanE.setBounds(514, 2, 86, 17);
+    Presumen.add(cor_comentE);
+    cor_comentE.setBounds(10, 20, 610, 17);
 
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
-    gridBagConstraints.gridy = 3;
+    gridBagConstraints.gridy = 4;
     gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
     gridBagConstraints.weightx = 1.0;
     gridBagConstraints.weighty = 1.0;
     gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
     Pprinc.add(Presumen, gridBagConstraints);
+
+    jtPed.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+    jtPed.setMaximumSize(new java.awt.Dimension(180, 100));
+    jtPed.setMinimumSize(new java.awt.Dimension(180, 100));
+
+    org.jdesktop.layout.GroupLayout jtPedLayout = new org.jdesktop.layout.GroupLayout(jtPed);
+    jtPed.setLayout(jtPedLayout);
+    jtPedLayout.setHorizontalGroup(
+        jtPedLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+        .add(0, 626, Short.MAX_VALUE)
+    );
+    jtPedLayout.setVerticalGroup(
+        jtPedLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+        .add(0, 98, Short.MAX_VALUE)
+    );
+
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 3;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.weighty = 2.0;
+    Pprinc.add(jtPed, gridBagConstraints);
 
     getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
@@ -974,6 +1152,7 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel8;
+    private gnu.chu.controles.CTextField cor_comentE;
     private gnu.chu.camposdb.empPanel emp_codiE;
     private gnu.chu.controles.CTextField fecFinE;
     private gnu.chu.controles.CTextField fecIniE;
@@ -981,6 +1160,7 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CTextField impGanE;
     private gnu.chu.controles.Cgrid jtCab;
     private gnu.chu.controles.CGridEditable jtLin;
+    private gnu.chu.controles.Cgrid jtPed;
     private gnu.chu.controles.CTextField kilAlbE;
     private gnu.chu.controles.CTextField numAlbE;
     private gnu.chu.controles.CCheckBox opIncCobr;

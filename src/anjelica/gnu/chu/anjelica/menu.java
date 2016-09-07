@@ -65,6 +65,7 @@ public class menu extends JFrame
   JPopupMenu popupMarg = new JPopupMenu("Margenes");
   JMenuItem mnuZoMarg= new JMenuItem("Por Zonas");
   JMenuItem mnuHistVen= new JMenuItem("Hist.Ventas");
+  JMenuItem mnuCalcTarifa= new JMenuItem("Calc.Tarifa");
   JMenuItem mnuInvMarg= new JMenuItem("Por Inv");
   JMenuItem codegen= new JMenuItem("Cons.Desp.");
   JMenuItem recosdes= new JMenuItem("Reg.Costos Desp.");
@@ -76,6 +77,7 @@ public class menu extends JFrame
   JMenuItem jMenuAlmacen = new JMenuItem();
   JPopupMenu jPopupCompras = new JPopupMenu();
   JMenuItem albComCarne = new JMenuItem();
+  JMenuItem clprpecoI = new JMenuItem();
   JMenuItem albComPlanta = new JMenuItem();
   JMenuItem comprasItem2 = new JMenuItem();
   JMenuItem conalbco = new JMenuItem();
@@ -313,6 +315,12 @@ public class menu extends JFrame
     albComCarne.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         comprasItem1_actionPerformed(e);
+      }
+    });
+    clprpecoI.setText("Cons.Ped.Prod");
+    clprpecoI.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        clprpecoI_actionPerformed(e);
       }
     });
      mnuReclPrv.addActionListener(new java.awt.event.ActionListener() {
@@ -977,6 +985,7 @@ public class menu extends JFrame
     jPopupCompras.add(clintalco);
     jPopupCompras.add(pdpagreal);
     jPopupCompras.add(cocaalco);
+    jPopupCompras.add(clprpecoI);
     jPopupCompras.add(clrealco);
     jPopupCompras.add(lirefacco);
     jPopupCompras.add(pdpedco);
@@ -1022,6 +1031,7 @@ public class menu extends JFrame
      popupMarg.add(mnuZoMarg) ;
      popupMarg.add(mnuInvMarg);
     popupMarg.add(mnuHistVen);
+    popupMarg.add(mnuCalcTarifa);
     popupDesp.add(despMant);
    // popupDesp.add(despTactil);
     popupDesp.add(mantDespTactil);
@@ -1195,6 +1205,15 @@ public class menu extends JFrame
          lanzaEjecutable(new gnu.chu.anjelica.margenes.CLHistVentas(menu.this,EU));
        }
      });
+     mnuCalcTarifa.addActionListener(new ActionListener()
+     {
+            @Override
+       public void actionPerformed(ActionEvent e)
+       {
+         lanzaEjecutable(new gnu.chu.anjelica.margenes.CalcTarifa(menu.this,EU));
+       }
+     });
+
     lisfactu.addActionListener(new ActionListener()
      {
        public void actionPerformed(ActionEvent e)
@@ -2139,6 +2158,14 @@ void clintalco_actionPerformed(ActionEvent e) {
      lanzaEjecutable( new gnu.chu.anjelica.compras.cocaalco(menu.this,EU));
 
   }
+  void clprpecoI_actionPerformed(ActionEvent e) {
+    Hashtable<String,String> ht=new Hashtable();
+    ht.put("verPrecio","true");
+//   ht.put("modConsulta","false");
+
+     lanzaEjecutable( new gnu.chu.anjelica.compras.clprpeco(menu.this,EU,ht));
+
+  }
 void clrelalco_actionPerformed(ActionEvent e) {
      lanzaEjecutable( new gnu.chu.anjelica.compras.Clrelalbco(menu.this,EU));
 
@@ -2187,7 +2214,7 @@ void pdgruart_actionPerformed(ActionEvent e) {
   }
   
   void Valdespi_actionPerformed(ActionEvent e) {
-       HashMap ht=new HashMap();
+       Hashtable ht=new Hashtable();
        ht.put("modAdmin","true");
        lanzaEjecutable(new gnu.chu.anjelica.despiece.ValDespi(menu.this, EU,ht));
   }

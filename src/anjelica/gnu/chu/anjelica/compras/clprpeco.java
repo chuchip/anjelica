@@ -4,6 +4,7 @@ import gnu.chu.Menu.*;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.camposdb.*;
 import gnu.chu.controles.*;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.utilidades.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -37,6 +38,8 @@ import net.sf.jasperreports.engine.*;
 
 public class clprpeco extends ventana implements  JRDataSource
 {
+     
+  boolean  swBreakAcum;
   String s;
   ResultSet rs;
   boolean verPrecio=false;
@@ -58,7 +61,7 @@ public class clprpeco extends ventana implements  JRDataSource
   CLabel cLabel9 = new CLabel();
   CLinkBox tla_codiE = new CLinkBox();
   CLinkBox emp_codiE = new CLinkBox();
-  Cgrid jt = new Cgrid(7);
+  Cgrid jt = new Cgrid(9);
   CCheckBox opDesgl = new CCheckBox();
   CButton Bimpri=new CButton(Iconos.getImageIcon("print"));
   CCheckBox opPedPend = new CCheckBox();
@@ -71,7 +74,7 @@ public class clprpeco extends ventana implements  JRDataSource
    this(eu,p,null);
  }
 
- public clprpeco(EntornoUsuario eu, Principal p, Hashtable ht)
+ public clprpeco(EntornoUsuario eu, Principal p, Hashtable<String,String> ht)
  {
    EU = eu;
    vl = p.panel1;
@@ -80,14 +83,7 @@ public class clprpeco extends ventana implements  JRDataSource
 
    try
    {
-     if (ht != null)
-     {
-
-       if (ht.get("verPrecio") != null)
-         verPrecio = Boolean.valueOf(ht.get("verPrecio").toString()).
-             booleanValue();
-
-     }
+     ponParametros(ht);
      setTitulo("Cons/List. Productos Pedidos Compras");
      if (jf.gestor.apuntar(this))
        jbInit();
@@ -105,7 +101,7 @@ public class clprpeco extends ventana implements  JRDataSource
    this(p, eu, null);
  }
 
- public clprpeco(gnu.chu.anjelica.menu p, EntornoUsuario eu, Hashtable ht)
+ public clprpeco(gnu.chu.anjelica.menu p, EntornoUsuario eu, Hashtable<String,String> ht)
  {
    EU = eu;
    vl = p.getLayeredPane();
@@ -113,13 +109,7 @@ public class clprpeco extends ventana implements  JRDataSource
 
    try
    {
-     if (ht != null)
-     {
-       if (ht.get("verPrecio") != null)
-         verPrecio = Boolean.valueOf(ht.get("verPrecio").toString()).
-             booleanValue();
-
-     }
+     ponParametros(ht);
      setTitulo("Consulta Pedidos Compras");
 
      jbInit();
@@ -129,12 +119,22 @@ public class clprpeco extends ventana implements  JRDataSource
      ErrorInit(e);
    }
  }
+ 
+ private void ponParametros(Hashtable<String,String> ht)
+ {
+     if (ht != null)
+     {
+       if (ht.get("verPrecio") != null)
+         verPrecio = Boolean.valueOf(ht.get("verPrecio"));
 
+     }
+ }
+ 
  private void jbInit() throws Exception
  {
    iniciarFrame();
    this.setSize(new Dimension(751, 510));
-   this.setVersion(" (2010-06-04)" + (verPrecio ? "- Ver Precios" : ""));
+   this.setVersion(" (2016-08-27)" + (verPrecio ? "- Ver Precios" : ""));
    statusBar = new StatusBar(this);
 
    opPedPend.setToolTipText("Ver SOLO Pedidos Pedidos Pendientes");
@@ -233,6 +233,7 @@ public class clprpeco extends ventana implements  JRDataSource
     PtipoCons.add(Baceptar, null);
  }
 
+  @Override
  public void iniciarVentana() throws Exception
  {
    s = "SELECT emp_codi,emp_nomb FROM v_empresa ORDER BY emp_nomb";
@@ -243,14 +244,15 @@ public class clprpeco extends ventana implements  JRDataSource
    emp_codiE.setAceptaNulo(false);
 
    tla_codiE.setFormato(Types.DECIMAL, "#9");
+   
    Pprinc.setButton(KeyEvent.VK_F4, Baceptar);
    int tlaCodi = 0;
    s = "SELECT tla_codi,tla_nomb FROM tilialca order by tla_codi";
-   if (dtStat.select(s))
-     tlaCodi = dtStat.getInt("tla_codi");
-   tla_codiE.addDatos(dtStat);
+   if (dtStat.select(s))     
+    tla_codiE.addDatos(dtStat);
    tla_codiE.addDatos("99", "Definido Usuario");
-   tla_codiE.setValorInt(tlaCodi);
+   
+   tla_codiE.setText("99");
    alm_codiE.setFormato(true);
    alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
    pdalmace.llenaLinkBox(alm_codiE, dtCon1,'*');
@@ -270,15 +272,33 @@ public class clprpeco extends ventana implements  JRDataSource
    profinE.iniciar(dtStat, this, vl, EU);
 
    feeninE.setText(Formatear.sumaDias(Formatear.getDateAct(),-10));
-   feenfiE.setText(Formatear.sumaDias(Formatear.getDateAct(),30));
+   feenfiE.setText(Formatear.sumaDias(Formatear.getDateAct(),3));
    emp_codiE.setValorInt(EU.em_cod);
    activarEventos();
  }
 
  void activarEventos()
  {
+    jt.addMouseListener(new MouseAdapter()
+    {
+            @Override
+      public void mouseClicked(MouseEvent e)
+      {
+        try
+        {
+          if (jt.isVacio() || e.getClickCount()<2 || jt.getValorInt(3)==0)
+              return;
+          irMantPedidos();
+        }
+        catch (Exception k)
+        {
+          Error("Error al Ir a Lineas de despiece", k);
+        }
+      }
+    });  
    Baceptar.addActionListener(new ActionListener()
    {
+     @Override
      public void actionPerformed(ActionEvent e)
      {
        Baceptar_actionPerformed();
@@ -294,7 +314,47 @@ public class clprpeco extends ventana implements  JRDataSource
   });
 
  }
-
+void irMantPedidos()
+  {
+      msgEspere("Llamando a  Programa Mant. Pedidos");
+     new miThread("")
+     {
+        @Override
+        public void run()
+        {
+          javax.swing.SwingUtilities.invokeLater(new Thread()
+          {
+              @Override
+              public void run()
+              { 
+                  ejecutable prog;                 
+                 
+                  if ((prog = jf.gestor.getProceso(pdpedco.getNombreClase())) == null)
+                  {
+                      resetMsgEspere();
+                      msgBox("Usuario sin Mantenimiento Pedidos Compras");
+                      return;
+                  }
+                      pdpedco cm = (pdpedco) prog;
+                      if (cm.inTransation())
+                      {
+                          msgBox("Mantenimiento Pedidos Compras ocupado. No se puede realizar la consulta");
+                          resetMsgEspere();
+                          return;
+                      }
+                      
+                      cm.PADQuery();
+                      cm.setPedido(jt.getValorInt(3));                      
+                      cm.ej_query1();
+                      jf.gestor.ir(cm);
+                  
+                      resetMsgEspere();
+              }
+          });
+          
+        }
+     };
+  }
  String getStrSql(int tlaCodi)
  {
    String proDisc3 = Formatear.reemplazar(cam_codiE.getText(), "*", "%").trim();
@@ -337,16 +397,20 @@ public class clprpeco extends ventana implements  JRDataSource
      return;
    new miThread("")
    {
+     @Override
      public void run()
      {
+       msgEspere("Realizando Consulta");
        consultar();
+       resetMsgEspere();
+       jt.requestFocusInicioLater();
      }
    };
  }
 
  void consultar()
  {
-   this.setEnabled(false);
+   
    mensaje("A esperar ... estoy generando el listado");
 
    int tlaCodi=tla_codiE.getValorInt();
@@ -356,98 +420,130 @@ public class clprpeco extends ventana implements  JRDataSource
    jt.removeAllDatos();
    try {
      if (! dtCon1.select(s))
-     {
-       this.setEnabled(true);
+     {       
        mensajeErr("No encontrados pedidos con estas condiciones");
        mensaje("");
        return;
      }
-     String proNomb=dtCon1.getInt("pro_codi") + " -> " + dtCon1.getString("nombart");
+     String proNomb=dtCon1.getString("nombart");
+     int proCodi=dtCon1.getInt("pro_codi");
      String proGrupo=tlaCodi==99?proNomb:dtCon1.getString("pro_desc");
-     int nLiPr=0;
+     int nLiPr=-1;
+     double impAcum=0;
      double numCaj=0;
      double cantCaj=0;
+     int nCajas;
+     double kg;   
+     double importe;
+     String tipo;
+     swBreakAcum=false;
      do
      {
-       Vector v=new Vector();
-       if (tlaCodi==99)
-       {
-            proNomb=dtCon1.getInt("pro_codi") + " -> " + dtCon1.getString("nombart");
-            if (! proGrupo.equals(proNomb))
-            {
-              if (nLiPr>1)
-                ponAcumul(numCaj,cantCaj,proGrupo);
-              proGrupo=proNomb;
-              numCaj=0;
-              cantCaj=0;
-              nLiPr=0;
-            }
-            nLiPr++;
-            if (nLiPr==1)
-              v.add(proNomb);
-            else
-              v.add("");
-      }
-       else
-       {
-         if (!proGrupo.equals(dtCon1.getString("pro_desc")))
-         {
-           if (nLiPr>1)
-             ponAcumul(numCaj, cantCaj,proGrupo);
-           proGrupo = dtCon1.getString("pro_desc");
-           numCaj = 0;
-           cantCaj = 0;
-           nLiPr=0;
-         }
-         nLiPr++;
-         if (nLiPr==1)
-           v.add(dtCon1.getString("pro_desc"));
+         ArrayList v = new ArrayList();
+         if (tlaCodi == 99)
+         {             
+             proNomb =  dtCon1.getString("nombart");
+             if (proCodi != dtCon1.getInt("pro_codi") )
+             {
+                 if (nLiPr>1 || !opDesgl.isSelected() )
+                     ponAcumul(numCaj, impAcum, cantCaj,proCodi,proGrupo);
+                 proCodi=dtCon1.getInt("pro_codi");
+                 proGrupo = proNomb;
+                 numCaj = 0;
+                 cantCaj = 0;
+                 impAcum = 0;
+                 nLiPr = 0;
+                 v.add(proCodi);
+                 v.add(proGrupo);
+             } else if (jt.isVacio() )
+             {
+                 v.add(proCodi);
+                 v.add(proNomb);
+             } else
+             {
+                 v.add("");
+                 v.add("");
+             }
+         } 
          else
-           v.add("");
-       }
-       new Integer(1).intValue();
-       v.add(dtCon1.getString("prv_nomco")); // 1
-      v.add(dtCon1.getFecha("pcl_feccad","dd-MM-yyyy")); // 2
-      if (dtCon1.getString("pcc_estad").equals("P"))
-      {
-        v.add(dtCon1.getString("pcl_nucape")); // 3
-        v.add(dtCon1.getString("pcl_cantpe")); // 4
-        if (!verPrecio)
-          v.add("");
-        else
-          v.add(""+(dtCon1.getDouble("pcl_precpe")+(dtCon1.getString("pcc_portes").equals("D")?dtCon1.getDouble("pcc_imppor"):0)) ); // 5
-        numCaj+=dtCon1.getDouble("pcl_nucape");
-        cantCaj+=dtCon1.getDouble("pcl_cantpe");
-        v.add("Pend.Conf");
-      } else if (dtCon1.getString("pcc_estad").equals("C"))
-      {
-        v.add(dtCon1.getString("pcl_nucaco")); // 3
-        v.add(dtCon1.getString("pcl_cantco")); // 4
-        if (!verPrecio)
-            v.add("");
-          else
-        v.add(""+(dtCon1.getDouble("pcl_precco")+(dtCon1.getString("pcc_portes").equals("D")?dtCon1.getDouble("pcc_imppor"):0)) ); // 5
-        numCaj+=dtCon1.getDouble("pcl_nucaco");
-        cantCaj+=dtCon1.getDouble("pcl_cantco");
-        v.add("Confir");
-      } else
-      {
-        v.add(dtCon1.getString("pcl_nucafa")); // 3
-        v.add(dtCon1.getString("pcl_cantfa")); // 4
-        if (!verPrecio)
-          v.add("");
-        else
-          v.add("" +(dtCon1.getDouble("pcl_precfa") +
-                 (dtCon1.getString("pcc_portes").equals("D") ? dtCon1.getDouble("pcc_imppor") : 0))); // 5
-        numCaj+=dtCon1.getDouble("pcl_nucafa");
-        cantCaj+=dtCon1.getDouble("pcl_cantfa");
-        v.add("Prefact");
-      }
-      if (opDesgl.isSelected())
-        jt.addLinea(v);
+         {
+             v.add("");
+             if (!proGrupo.equals(dtCon1.getString("pro_desc"))  )
+             {
+                 if (nLiPr > 1 || !opDesgl.isSelected())
+                     ponAcumul(numCaj, cantCaj, impAcum, proCodi,proGrupo);
+                 proCodi=dtCon1.getInt("pro_codi");
+                 proGrupo = dtCon1.getString("pro_desc");
+                 numCaj = 0;
+                 cantCaj = 0;
+                 impAcum = 0;
+                 nLiPr = 0;
+                 v.add("");
+                 v.add(proGrupo);                 
+             }
+             else
+             {
+                if (jt.isVacio())
+                {
+                    v.add("");
+                     v.add(proGrupo);
+                }
+                else
+                {
+                    v.add("");
+                    v.add("");
+                }
+             }
+             
+         }
+         
+         if (nLiPr<0 )
+             nLiPr=0;
+         switch (dtCon1.getString("pcc_estad"))
+         {
+             case "P":
+                 nCajas=dtCon1.getInt("pcl_nucape");           
+                 kg=dtCon1.getDouble("pcl_cantpe");        
+                 importe=dtCon1.getDouble("pcl_precpe");
+                 tipo="Pend.Conf";
+                 break;
+             case "C":
+                 nCajas=dtCon1.getInt("pcl_nucaco");           
+                 kg=dtCon1.getDouble("pcl_cantco");        
+                 importe=dtCon1.getDouble("pcl_precco");
+                 tipo="Confir";
+                 break;
+             default:
+                 nCajas=dtCon1.getInt("pcl_nucafa");           
+                 kg=dtCon1.getDouble("pcl_cantfa"); 
+                 importe=dtCon1.getDouble("pcl_precfa");
+                 tipo="Prefact";               
+         }
+         numCaj +=nCajas;
+         cantCaj += kg;
+         if (importe==0)
+            swBreakAcum=true;
+         else
+         {
+            importe+= dtCon1.getString("pcc_portes").equals("D") ? dtCon1.getDouble("pcc_imppor") : 0;         
+            impAcum += kg * importe;
+         }
+         if ((nCajas>0 || kg>0) && opDesgl.isSelected())
+         {
+            nLiPr++;
+            v.add(dtCon1.getString("prv_nomco")); // 1
+            v.add(dtCon1.getInt("pcc_nume")); // 3
+            v.add(dtCon1.getFecha("pcc_fecrec", "dd-MM-yyyy")); // 2
+            v.add(nCajas); // 3
+            v.add(kg);          
+            v.add(importe);       
+            v.add(tipo);                     
+            jt.addLinea(v);
+         }
      } while (dtCon1.next());
-     ponAcumul(numCaj, cantCaj,proGrupo);
-     this.setEnabled(true);
+     if (nLiPr>1 || !opDesgl.isSelected() )
+        ponAcumul(numCaj, impAcum, cantCaj,proCodi,proGrupo);
+     
      mensajeErr("COnsulta ... Realizada");
      mensaje("");
    } catch (SQLException k)
@@ -456,43 +552,63 @@ public class clprpeco extends ventana implements  JRDataSource
    }
  }
 
- private void ponAcumul(double numCaj, double cantCaj,String proNomb)
+ private void ponAcumul(double numCaj, double impEntr,double cantCaj,int proCodi,String proNomb)
  {
-   Vector v = new Vector();
+   ArrayList v = new ArrayList();
+   
    if (opDesgl.isSelected())
+   {
+     v.add("");
      v.add("Total Producto ...");
+   }
    else
+   {
+     v.add(proCodi);
      v.add(proNomb);
+   }
    v.add(""); // Proveedor
+   v.add(""); //Nº Ped.
    v.add(""); // Fec. Cad
-   v.add("" + numCaj);
-   v.add("" + cantCaj);
+   v.add( numCaj);
+   v.add( cantCaj);
+   if (swBreakAcum)
+       v.add("");
+   else
+       v.add( verPrecio? cantCaj==0?0:impEntr/cantCaj:0);
    v.add("");
-   v.add("");
+   swBreakAcum=false;
    jt.addLinea(v);
  }
  private void confGrid() throws Exception
  {
-   Vector v=new Vector();
-   jt.setMaximumSize(new Dimension(705, 359));
-    jt.setMinimumSize(new Dimension(705, 359));
-    jt.setPreferredSize(new Dimension(705, 359));
-    v.add("Producto"); // 0
-   v.add("Prov"); // 1
-   v.add("Fec.Cad"); // 2
-   v.add("Unid"); // 3
-   v.add("Kilos"); // 4
-   v.add("Precio"); // 5
-   v.add("Estad"); // 6
-   jt.setCabecera(v);
+     ArrayList v = new ArrayList();
+     jt.setMaximumSize(new Dimension(705, 359));
+     jt.setMinimumSize(new Dimension(705, 359));
+     jt.setPreferredSize(new Dimension(705, 359));
+     v.add("Artic"); // 0
+     v.add("Descripción"); // 1
+     v.add("Prov"); // 2
+     v.add("NºPed"); // 3
+     v.add("Fec.Ent"); // 4
+     v.add("Unid"); // 5
+     v.add("Kilos"); // 6
+     v.add("Precio"); // 7
+     v.add("Estad"); // 8
+     jt.setCabecera(v);
 
-   jt.setAnchoColumna(new int[]{130,130,80,45,55,45,50});
-   jt.setAlinearColumna(new int[]{0,0,1,2,2,2,1});
-   jt.setAjustarGrid(true);
-   jt.setFormatoColumna(3,"----9");
-   jt.setFormatoColumna(4,"----,--9.9");
-   jt.setFormatoColumna(5,"----9.99");
-   jt.setOrdenar(false);
+     jt.setAnchoColumna(new int[]
+     {
+         45,130, 130, 40, 70, 35, 55, 45, 50
+     });
+     jt.setAlinearColumna(new int[]
+     {
+         2,0, 0,2, 1, 2, 2, 2, 0
+     });
+     jt.setAjustarGrid(true);
+     jt.setFormatoColumna(5, "----9");
+     jt.setFormatoColumna(6, "----,--9.9");
+     jt.setFormatoColumna(7, "----9.99");
+   
  }
  void Bimpri_actionPerformed()
    {
@@ -542,6 +658,7 @@ public class clprpeco extends ventana implements  JRDataSource
        Error("Error al imprimir consulta", k);
      }
    }
+  @Override
    public boolean next() throws JRException
     {
       try {
@@ -552,6 +669,7 @@ public class clprpeco extends ventana implements  JRDataSource
       }
     }
 
+  @Override
     public Object getFieldValue(JRField f) throws JRException
     {
       try
@@ -566,46 +684,60 @@ public class clprpeco extends ventana implements  JRDataSource
         }
         if (campo.equals("pcl_feccad"))
           return rs.getDate("pcl_feccad");
+        if (campo.equals("pcc_fecrec"))
+          return rs.getDate("pcc_fecrec");
         if (campo.equals("prv_nomco"))
           return rs.getString("prv_nomco");
         if (campo.equals("pcl_numcaj"))
         {
-          if (rs.getString("pcc_estad").equals("P"))
-            return new Integer(rs.getInt("pcl_nucape"));
-          else if (rs.getString("pcc_estad").equals("C"))
-            return new Integer(rs.getInt("pcl_nucaco"));
-          else
-            return new Integer(rs.getInt("pcl_nucafa"));
+            switch (rs.getString("pcc_estad"))
+            {
+                case "P":
+                    return rs.getInt("pcl_nucape");
+                case "C":
+                    return rs.getInt("pcl_nucaco");
+                default:
+                    return rs.getInt("pcl_nucafa");
+            }
         }
         if (campo.equals("pcl_canti"))
         {
-          if (rs.getString("pcc_estad").equals("P"))
-            return new Double(rs.getDouble("pcl_cantpe"));
-          else if (rs.getString("pcc_estad").equals("C"))
-            return new Double(rs.getDouble("pcl_cantco"));
-          else
-            return new Double(rs.getDouble("pcl_cantfa"));
+            switch (rs.getString("pcc_estad"))
+            {
+                case "P":
+                    return rs.getDouble("pcl_cantpe");
+                case "C":
+                    return rs.getDouble("pcl_cantco");
+                default:
+                    return rs.getDouble("pcl_cantfa");
+            }
         }
         if (campo.equals("pcl_precio"))
         {
-          if (!verPrecio)
-            return new Double(0);
-          if (rs.getString("pcc_estad").equals("P"))
-            return new Double(rs.getDouble("pcl_precpe")+(rs.getString("pcc_portes").equals("D")?rs.getDouble("pcc_imppor"):0));
-          else if (rs.getString("pcc_estad").equals("C"))
-            return new Double(rs.getDouble("pcl_precco")+(rs.getString("pcc_portes").equals("D")?rs.getDouble("pcc_imppor"):0));
-          else
-            return new Double(rs.getDouble("pcl_precfa")+(rs.getString("pcc_portes").equals("D")?rs.getDouble("pcc_imppor"):0));
+            if (!verPrecio)
+                return new Double(0);
+            switch (rs.getString("pcc_estad"))
+            {
+                case "P":
+                    return rs.getDouble("pcl_precpe") + (rs.getString("pcc_portes").equals("D") ? rs.getDouble("pcc_imppor") : 0);
+                case "C":
+                    return rs.getDouble("pcl_precco") + (rs.getString("pcc_portes").equals("D") ? rs.getDouble("pcc_imppor") : 0);
+                default:
+                    return rs.getDouble("pcl_precfa") + (rs.getString("pcc_portes").equals("D") ? rs.getDouble("pcc_imppor") : 0);
 //            return new Double(rs.getDouble("pcl_precfa"));
+            }
         }
         if (campo.equals("pcc_estad"))
         {
-          if (rs.getString("pcc_estad").equals("P"))
-            return "PEND.";
-          else if (rs.getString("pcc_estad").equals("C"))
-            return "CONF";
-          else
-            return "PREFACT.";
+            switch (rs.getString("pcc_estad"))
+            {
+                case "P":
+                    return "PEND.";
+                case "C":
+                    return "CONF";
+                default:
+                    return "PREFACT.";
+            }
         }
         throw new JRException("Campo: " + campo + " NO encontrado");
       }

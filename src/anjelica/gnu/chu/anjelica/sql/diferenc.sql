@@ -1,3 +1,6 @@
+alter table tarifa alter pro_codart type varchar(15);
+alter table v_articulo alter pro_codart type varchar(15);
+
 alter table anjelica.tipodesp add tid_merven smallint not null default 0 ;-- AutoMer
 
 alter table anjelica.albrutalin add cli_nomen varchar(50) ;-- Nombre Cliente 

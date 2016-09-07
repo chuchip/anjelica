@@ -64,6 +64,7 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class CLPedidVen extends  ventana   implements  JRDataSource
 {
+    boolean swCliente=false;
     int nLineaReport;
     boolean swImpreso=true;
     proPanel pro_codiE= new proPanel();
@@ -151,7 +152,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2016-08-20");
+        this.setVersion("2016-09-05");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -569,7 +570,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         }
         if (! ejecSelect)
           return true;
-   
+     swCliente=false;
+     if (!cli_codiE.isNull())
+         swCliente=true;
      s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_poble,"
          + " cl.rut_codi, al.alm_nomb FROM pedvenc as c"
          + " left join v_albavec as av on c.avc_ano = av.avc_ano "
@@ -581,10 +584,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         " and c.pvc_confir = 'S' "+
         " and cl.cli_codi = c.cli_codi " +
         " and c.alm_codi = al.alm_codi "+     
-        (emp_codiE.getValorInt()==0?"":" and c.emp_codi = "+emp_codiE.getValorInt())+
         (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = "+sbe_codiE.getValorInt())+
-        (zon_codiE.isNull()?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
-        (rep_codiE.isNull()?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'")+
+        (zon_codiE.isNull() || swCliente?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
+        (rep_codiE.isNull() || swCliente?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'")+
 //        (rut_codiE.isNull()?"": " and rut_codi ='"+rut_codiE.getText()+"'")+
         (emp_codiE.getValorInt() == 0 ? "" : " AND c.emp_codi = " + emp_codiE.getValorInt());
 
@@ -594,7 +596,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
       s += " AND c.avc_ano != 0";
     if (!pvc_confirE.getValor().equals("*"))
       s += " and pvc_confir = '" + pvc_confirE.getValor() + "'";
-    if (!cli_codiE.isNull())
+    if (swCliente)
       s += " AND c.cli_codi = " + cli_codiE.getValorInt();
     if (! pvc_listadoE.getValor().equals("*"))
       s+=" AND c.pvc_impres = '"+pvc_listadoE.getValor()+"'";
@@ -721,7 +723,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
             if (! swImpres && albListadoC.getValor().equals("S"))
                 continue;
         }
-        if (!rut_codiE.isNull())
+        if (!rut_codiE.isNull() && !swCliente)
         {
             if (dtCon1.getObject("cli_ruta")!=null)
             {

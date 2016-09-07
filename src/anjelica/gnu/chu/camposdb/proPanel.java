@@ -47,7 +47,7 @@ import javax.swing.JTextField;
  */
 public class proPanel extends CPanel
 {
-  private boolean usaRefArticulo=false; // Indica si debe usar Referencia del Art. (String 12)
+  private boolean usaRefArticulo=false; // Indica si debe usar Referencia del Art. (String 15)
   private String proUniVen="";
   private double pesoCajas;
   private  CodigoBarras codBarra=null;
@@ -1119,26 +1119,33 @@ public class proPanel extends CPanel
       return "";
     if (codArt.equals(""))
       return "";
+    String proNomb=null;
     if (usaRefArticulo)
     {
-      s = "SELECT * FROM v_articulo WHERE pro_codart= '" + codArt +"'"+
-          " and pro_activ!=0";
-      if (! dt.select(s))
-      {
-        lkPrd.setColumnCount(0);
-        return null;
-      }
-      codArt=dt.getString("pro_codi");
+        if (!checkProdventa(codArt, dt))
+        {
+           lkPrd.setColumnCount(0);
+           return null;  
+        }
+        proNomb=dt.getString("pve_nomb");
+        s = "SELECT * FROM v_articulo WHERE pro_codart= '" + codArt +"'"+
+            " and pro_activ!=0";
+        if (! dt.select(s))
+        {
+          lkPrd.setColumnCount(0);
+          return null;
+        }
+        codArt=dt.getString("pro_codi");
     }
     else
     {
         try {      
-        codArt = ""+Integer.parseInt(codArt.trim());
+         codArt = ""+Integer.parseInt(codArt.trim());
         } catch (NumberFormatException k){codArt="0";}
     }
     
 
-    String proNomb=null;
+    
     if (prvCodi!=0)     
     {
       s="SELECT pro_nomb FROM pedicol WHERE emp_codi = "+empCodi+
@@ -1335,6 +1342,10 @@ public class proPanel extends CPanel
   {
     return getTipoLote()==MantArticulos.TIPO_VENDIBLE.charAt(0);
   }
+  public  static boolean checkProdventa(String pveCodi,DatosTabla dt) throws SQLException
+  {
+      return dt.select("select * from prodventa where pve_codi= '"+pveCodi+"'");
+  }
   public void setUsaCodigoArticulo(boolean swUsaCodArticulo)
   {
     this.usaRefArticulo=swUsaCodArticulo;
@@ -1343,10 +1354,10 @@ public class proPanel extends CPanel
     {
       pro_codiE.setTipoCampo(Types.CHAR);
       pro_codiE.setFormato("X");
-      pro_codiE.setMaxLong(12);
+      pro_codiE.setMaxLong(15);
       pro_codiE.setMayusc(true);
       pro_codiE.setHorizontalAlignment(JTextField.LEFT);
-      pro_codiE.setPreferredSize(new Dimension(100, 16));
+      pro_codiE.setPreferredSize(new Dimension(120, 16));
     }
     else
     {

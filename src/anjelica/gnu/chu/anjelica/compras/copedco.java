@@ -9,35 +9,15 @@ import java.awt.*;
 import java.util.*;
 import javax.swing.BorderFactory;
 import gnu.chu.camposdb.*;
+import gnu.chu.interfaces.ejecutable;
 import javax.swing.event.*;
 import java.awt.event.*;
 import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.view.*;
-/**
-* Consulta y Listado Pedidos de compras 
- *
- * Permite consultar las compras realizadas de un producto
- * dentro de unas fechas.
- * Tambien permite delimitar por proveedor y por albaran.
- * <p>Copyright: Copyright (c) 2005-2016
- *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
- *  los términos de la Licencia Pública General de GNU segun es publicada por
- *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
- *  o bien (según su elección) de cualquier versión posterior.
- *  Este programa se distribuye con la esperanza de que sea útil,
- *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
- *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
- *  Véase la Licencia Pública General de GNU para más detalles.
- *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
- *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
- *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
- * </p>
- * @author chuchiP
- * @version 1.1 Incluida opcion de Listar los Pedidos de Compras
- */
+
 
 public class copedco extends ventana
 {
+  boolean swExterno=false;
   String s;
   CButton Bimpri=new CButton(Iconos.getImageIcon("print"));
 
@@ -71,7 +51,7 @@ public class copedco extends ventana
    this(eu,p,null);
  }
 
- public copedco(EntornoUsuario eu, Principal p, Hashtable ht)
+ public copedco(EntornoUsuario eu, Principal p, Hashtable<String,String>  ht)
  {
    EU = eu;
    vl = p.panel1;
@@ -80,14 +60,7 @@ public class copedco extends ventana
 
    try
    {
-     if (ht != null)
-     {
-
-       if (ht.get("verPrecio") != null)
-         verPrecio = Boolean.valueOf(ht.get("verPrecio").toString()).
-             booleanValue();
-
-     }
+     ponParametros(ht);
      setTitulo("Consulta/Listado Pedidos Compras");
      if (jf.gestor.apuntar(this))
        jbInit();
@@ -105,7 +78,7 @@ public class copedco extends ventana
    this(p, eu, null);
  }
 
- public copedco(gnu.chu.anjelica.menu p, EntornoUsuario eu, Hashtable ht)
+ public copedco(gnu.chu.anjelica.menu p, EntornoUsuario eu, Hashtable<String,String>  ht)
  {
    EU = eu;
    vl = p.getLayeredPane();
@@ -113,12 +86,7 @@ public class copedco extends ventana
 
    try
    {
-     if (ht != null)
-     {
-       if (ht.get("verPrecio") != null)
-         verPrecio = Boolean.parseBoolean(ht.get("verPrecio").toString());
-
-     }
+     ponParametros(ht);
      setTitulo("Consulta/Listado Pedidos Compras");
 
      jbInit();
@@ -135,8 +103,18 @@ public class copedco extends ventana
    EU=eu;
    verPrecio=verPrec;
    modCons=true;
+   
    setTitulo("Consulta/Listado Pedidos Compras ");
    jbInit();
+ }
+ private void ponParametros(Hashtable<String,String> ht)
+ {
+     if (ht != null)
+     {
+       if (ht.get("verPrecio") != null)
+         verPrecio = Boolean.parseBoolean(ht.get("verPrecio"));
+
+     }
  }
  private void jbInit() throws Exception
  {
@@ -206,7 +184,7 @@ public class copedco extends ventana
     this.getContentPane().add(Pprinc,  BorderLayout.CENTER);
     this.getContentPane().add(statusBar,  BorderLayout.SOUTH);
 
-    Vector v=new Vector();
+    ArrayList v=new ArrayList();
     v.add("Prov"); // 0
     v.add("Nombre Prov"); // 1
     v.add("Eje"); // 2
@@ -219,7 +197,7 @@ public class copedco extends ventana
     jtCab.setCabecera(v);
     jtCab.setAlinearColumna(new int[]{2,0,2,2,1,1,1,2,0});
     jtCab.setAnchoColumna(new int[]{40,120,60,60,80,80,40,60,150});
-    Vector vl = new Vector();
+    ArrayList vl = new ArrayList();
     vl.add("Prod"); // 0
     vl.add("Nombre Prod"); // 1
     vl.add("Un.Ped."); // 2
@@ -261,6 +239,7 @@ public class copedco extends ventana
     Pprinc.add(jtLin,   new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
  }
+  @Override
  public void iniciarVentana() throws Exception
  {
    emp_codiE.iniciar(dtStat,this,vl,EU);
@@ -285,12 +264,15 @@ public class copedco extends ventana
      throw new SQLException("NO HAY NINGUNA DIVISA DEFINIDA");
    div_codiE.addItem(dtStat);
    emp_codiE.setValorInt(EU.em_cod);
+   pcc_fecpedE.setDate(Formatear.sumaDiasDate(Formatear.getDateAct(),-10));
+   pcc_fecrecE.setDate(Formatear.sumaDiasDate(Formatear.getDateAct(),5));
    activarEventos();
  }
  void activarEventos()
  {
    jtCab.tableView.getSelectionModel().addListSelectionListener(new ListSelectionListener()
     {
+      @Override
       public void valueChanged(ListSelectionEvent e)
       {
         if (jtCab.isVacio() || !jtCab.isEnabled())
@@ -302,27 +284,30 @@ public class copedco extends ventana
     });
     jtCab.addMouseListener(new MouseAdapter()
     {
+      @Override
       public void mouseClicked(MouseEvent e)
       {
-        if (e.getClickCount()<2 || jtCab.isVacio() && !modCons)
+        if (e.getClickCount()<2 || jtCab.isVacio())
           return;
         elegir();
       }
     });
     jtCab.tableView.addKeyListener(new KeyAdapter()
     {
+      @Override
       public void keyPressed(KeyEvent e)
       {
-        if (jtCab.isVacio() && !modCons)
+        if (jtCab.isVacio())
           return;
 
-        if (e.getKeyCode() == e.VK_INSERT)
+        if (e.getKeyCode() == KeyEvent.VK_INSERT)
           elegir();
       }
     });
 
     Baceptar.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Baceptar_actionPerformed();
@@ -330,6 +315,7 @@ public class copedco extends ventana
     });
     Bimpri.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Bimpri_actionPerformed();
@@ -490,11 +476,57 @@ public class copedco extends ventana
  }
  void elegir()
  {
-   ejeNume=jtCab.getValorInt(2);
-   pcoNume=jtCab.getValorInt(3);
-   prv_codiE.setText(jtCab.getValString(0));
-   matar();
+    ejeNume=jtCab.getValorInt(2);
+    pcoNume=jtCab.getValorInt(3);
+    prv_codiE.setText(jtCab.getValString(0));
+
+   if (modCons)
+     matar();
+   else
+    irMantPedidos();   
  }
+ void irMantPedidos()
+  {
+      msgEspere("Llamando a  Programa Mant. Pedidos");
+     new miThread("")
+     {
+        @Override
+        public void run()
+        {
+          javax.swing.SwingUtilities.invokeLater(new Thread()
+          {
+              @Override
+              public void run()
+              { 
+                  ejecutable prog;                 
+                 
+                  if ((prog = jf.gestor.getProceso(pdpedco.getNombreClase())) == null)
+                  {
+                      resetMsgEspere();
+                      msgBox("Usuario sin Mantenimiento Pedidos Compras");
+                      return;
+                  }
+                      pdpedco cm = (pdpedco) prog;
+                      if (cm.inTransation())
+                      {
+                          msgBox("Mantenimiento Pedidos Compras ocupado. No se puede realizar la consulta");
+                          resetMsgEspere();
+                          return;
+                      }
+                      
+                      cm.PADQuery();
+                      cm.setPedido(pcoNume);       
+                      cm.setEjercicio(ejeNume);
+                      cm.ej_query1();
+                      jf.gestor.ir(cm);
+                  
+                      resetMsgEspere();
+              }
+          });
+          
+        }
+     };
+  }
  void Bimpri_actionPerformed()
   {
     new miThread("")

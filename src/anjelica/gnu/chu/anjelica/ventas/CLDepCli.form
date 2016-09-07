@@ -147,69 +147,6 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="gnu.chu.controles.Cgrid" name="jtCab">
-          <Properties>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor" postCode="jtCab.setAjustarGrid(true);">
-              <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
-                <LineBorder/>
-              </Border>
-            </Property>
-            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[100, 200]"/>
-            </Property>
-            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[100, 200]"/>
-            </Property>
-            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[100, 200]"/>
-            </Property>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(9)"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jtCab.setAnchoColumna(new int[]{55,20,30,20,40,40,200,45,55});&#xa;jtCab.setAlinearColumna(new int[]{1,2,2,1,2,2,0,2,1});"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList v1=new ArrayList();&#xa;v1.add(&quot;Fec.Alb&quot;); // 0&#xa;v1.add(&quot;Emp&quot;); // 1&#xa;v1.add(&quot;Ejerc.&quot;); // 2&#xa;v1.add(&quot;Ser&quot;); // 3&#xa;v1.add(&quot;Num.&quot;); // 4&#xa;v1.add(&quot;Cliente&quot;); // 5&#xa;v1.add(&quot;Nombre&quot;); // 6&#xa;v1.add(&quot;N&#xba;Sal.&quot;); // 7&#xa;v1.add(&quot;Fec.Sal&quot;); // 8&#xa;jtCab.setCabecera(v1);"/>
-          </AuxValues>
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-              <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
-            </Constraint>
-          </Constraints>
-
-          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
-            <Property name="useNullLayout" type="boolean" value="true"/>
-          </Layout>
-        </Container>
-        <Container class="gnu.chu.controles.Cgrid" name="jtLin">
-          <Properties>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
-                <LineBorder/>
-              </Border>
-            </Property>
-            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[100, 100]"/>
-            </Property>
-            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[100, 100]"/>
-            </Property>
-            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[100, 100]"/>
-            </Property>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(5)"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;&#xa;v.add(&quot;Articulo&quot;); // 0&#xa;v.add(&quot;Descrip.&quot;); // 1&#xa;v.add(&quot;Individuo&quot;); // 2&#xa;v.add(&quot;Unid&quot;); // 3&#xa;v.add(&quot;Kilos&quot;); // 4&#xa;jtLin.setCabecera(v);"/>
-          </AuxValues>
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-              <GridBagConstraints gridX="0" gridY="2" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
-            </Constraint>
-          </Constraints>
-
-          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
-            <Property name="useNullLayout" type="boolean" value="true"/>
-          </Layout>
-        </Container>
         <Container class="gnu.chu.controles.CPanel" name="PPie">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -229,13 +166,138 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-              <GridBagConstraints gridX="0" gridY="3" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="0.0" weightY="0.0"/>
+              <GridBagConstraints gridX="0" gridY="6" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="0.0" weightY="0.0"/>
             </Constraint>
           </Constraints>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
+        </Container>
+        <Container class="gnu.chu.controles.CTabbedPane" name="Ptab">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="-1" gridY="5" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+          <SubComponents>
+            <Container class="gnu.chu.controles.CPanel" name="PSalida">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Salidas">
+                    <Property name="tabTitle" type="java.lang.String" value="Salidas"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+              <SubComponents>
+                <Container class="gnu.chu.controles.Cgrid" name="jtCab">
+                  <Properties>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor" postCode="jtCab.setAjustarGrid(true);">
+                      <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                        <LineBorder/>
+                      </Border>
+                    </Property>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[100, 200]"/>
+                    </Property>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[100, 200]"/>
+                    </Property>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[100, 201]"/>
+                    </Property>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(9)"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jtCab.setAnchoColumna(new int[]{55,20,30,20,40,40,200,45,55});&#xa;jtCab.setAlinearColumna(new int[]{1,2,2,1,2,2,0,2,1});"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList v1=new ArrayList();&#xa;v1.add(&quot;Fec.Alb&quot;); // 0&#xa;v1.add(&quot;Emp&quot;); // 1&#xa;v1.add(&quot;Ejerc.&quot;); // 2&#xa;v1.add(&quot;Ser&quot;); // 3&#xa;v1.add(&quot;Num.&quot;); // 4&#xa;v1.add(&quot;Cliente&quot;); // 5&#xa;v1.add(&quot;Nombre&quot;); // 6&#xa;v1.add(&quot;N&#xba;Sal.&quot;); // 7&#xa;v1.add(&quot;Fec.Sal&quot;); // 8&#xa;jtCab.setCabecera(v1);"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                      <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                    <Property name="useNullLayout" type="boolean" value="true"/>
+                  </Layout>
+                </Container>
+                <Container class="gnu.chu.controles.Cgrid" name="jtLin">
+                  <Properties>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                        <LineBorder/>
+                      </Border>
+                    </Property>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[100, 100]"/>
+                    </Property>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[100, 100]"/>
+                    </Property>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(5)"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;&#xa;v.add(&quot;Articulo&quot;); // 0&#xa;v.add(&quot;Descrip.&quot;); // 1&#xa;v.add(&quot;Individuo&quot;); // 2&#xa;v.add(&quot;Unid&quot;); // 3&#xa;v.add(&quot;Kilos&quot;); // 4&#xa;jtLin.setCabecera(v);&#xa;jtLin.setAnchoColumna(new int[]{40,150,90,30,60});&#xa;jtLin.setAlinearColumna(new int[]{2,0,0,2,2});&#xa;jtLin.setAjustarGrid(true);"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                      <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                    <Property name="useNullLayout" type="boolean" value="true"/>
+                  </Layout>
+                </Container>
+              </SubComponents>
+            </Container>
+            <Container class="gnu.chu.controles.CPanel" name="cPanel2">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Inventario">
+                    <Property name="tabTitle" type="java.lang.String" value="Inventario"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+              <SubComponents>
+                <Container class="gnu.chu.controles.Cgrid" name="jtStock">
+                  <Properties>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                        <LineBorder/>
+                      </Border>
+                    </Property>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[100, 100]"/>
+                    </Property>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[100, 100]"/>
+                    </Property>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(9)"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{ArrayList vs=new ArrayList();&#xa;&#xa;vs.add(&quot;Articulo&quot;); // 0&#xa;vs.add(&quot;Descrip.&quot;); // 1&#xa;vs.add(&quot;Individuo&quot;); // 2&#xa;vs.add(&quot;Unid&quot;); // 3&#xa;vs.add(&quot;Kilos&quot;); // 4&#xa;vs.add(&quot;Cliente&quot;); // 5&#xa;vs.add(&quot;Nombre Cliente&quot;); // 6&#xa;vs.add(&quot;Alb.&quot;); // 7&#xa;vs.add(&quot;Fec.Alb.&quot;); // 8&#xa;jtStock.setCabecera(vs);&#xa;}&#xa;jtStock.setAnchoColumna(new int[]{40,150,90,30,60,45,150,80,70});&#xa;jtStock.setAlinearColumna(new int[]{2,0,0,2,2,2,0,0,1});"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                      <BorderConstraints direction="Center"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                    <Property name="useNullLayout" type="boolean" value="true"/>
+                  </Layout>
+                </Container>
+              </SubComponents>
+            </Container>
+          </SubComponents>
         </Container>
       </SubComponents>
     </Container>
