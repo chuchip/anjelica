@@ -170,6 +170,7 @@ public class PdInvControl extends ventanaPad implements PAD
         
         activar(false);  
   }
+ @Override
  public void iniciarVentana() throws Exception
   {
     dtCab=new DatosTabla(ctUp);
@@ -186,7 +187,7 @@ public class PdInvControl extends ventanaPad implements PAD
     cam_codiE.texto.setMayusc(true);
     cam_codiE.setFormato(Types.CHAR, "XX", 2);
     gnu.chu.anjelica.pad.pdconfig.llenaDiscr(dtCon1, cam_codiE, "AC", EU.em_cod);
-
+    jt.setButton(KeyEvent.VK_F2, Bressub);
     alm_codiE.setFormato(true);
     alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
     pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
@@ -1878,11 +1879,11 @@ public class PdInvControl extends ventanaPad implements PAD
             jt.setLayout(jtLayout);
             jtLayout.setHorizontalGroup(
                 jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 763, Short.MAX_VALUE)
+                .addGap(0, 567, Short.MAX_VALUE)
             );
             jtLayout.setVerticalGroup(
                 jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 404, Short.MAX_VALUE)
+                .addGap(0, 167, Short.MAX_VALUE)
             );
 
             try {

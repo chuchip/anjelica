@@ -144,6 +144,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   private final String DSAL_EMAIL="M";
   
   double impDtoCom=0,impDtoPP=0;
+  JMenuItem MFechaAlb = new JMenuItem("Est.Fec.Alb");
   JMenuItem MFechaCab = new JMenuItem("Rest.Fec.Mvto");
   JMenuItem MAllFechaCab = new JMenuItem("Rest.Todas Fec.Mvto");
   private javax.swing.Timer temporizador; 
@@ -473,6 +474,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   CTextField avc_impalbE = new CTextField(Types.DECIMAL, "----,--9.99");
   CLabel avc_impcobL = new CLabel();
   CTextField avc_impcobE = new CTextField(Types.DECIMAL, "----,--9.99");
+  CCheckBox avc_cucomiE= new CCheckBox();
   CCheckBox avc_cerraE = new CCheckBox("-1", "0");
 
   CGridEditable jtDes;
@@ -701,7 +703,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-08-21" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-09-13" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -899,6 +901,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
         avc_impcobL.setText("Imp. Cobrado");
         avc_impcobL.setBounds(new Rectangle(2, 125, 79, 17));
         avc_impcobE.setBounds(new Rectangle(87, 125, 69, 17));
+        avc_cucomiE.setText("Desbloquear");
+        avc_cucomiE.setToolTipText("Marcar para permitir modificar albaran aunque se haya servido en una ruta");
+        avc_cucomiE.setBounds(new Rectangle(170, 125, 100, 17));
         avc_cerraE.setMaximumSize(new Dimension(74, 23));
         avc_cerraE.setText("Cerrado");
         avc_cerraE.setBounds(new Rectangle(330, 57, 76, 18));
@@ -961,6 +966,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         avc_confoE.setBounds(new Rectangle(590, 22, 76, 16));
         
         avc_confoE.setEnabled(P_ADMIN);
+        avc_cucomiE.setEnabled(P_ADMIN);
         opCopia.setSelected(true);
         opCopia.setText("Imprimir Copia a Papel");
         opCopia.setBounds(new Rectangle(293, 20, 165, 17));
@@ -1186,6 +1192,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         
         PotroDat.add(avc_impcobL, null);
         PotroDat.add(avc_impcobE, null);
+        PotroDat.add(avc_cucomiE, null);
         PotroDat.add(alm_codoriL, null);
         PotroDat.add(alm_codoriE, null);
         PotroDat.add(alm_coddesL, null);
@@ -1777,6 +1784,28 @@ public class pdalbara extends ventanaPad  implements PAD  {
   }
   void activarEventos()
   {
+      avc_cucomiE.addActionListener(new java.awt.event.ActionListener()
+      {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
+              try
+              {
+                  if (inTransation())
+                      return;
+                  if (avc_numeE.getValorInt()==0)
+                      return;
+                  dtAdd.executeUpdate("update v_albavec set avc_cucomi="+(avc_cucomiE.isSelected()?-1:0)+
+                      " where "+getCondCurrent());
+                 
+                  dtAdd.commit();
+                  msgBox("Albaran "+
+                      (avc_cucomiE.isSelected()?"DESBLOQUEADO":"NORMAL"));
+              } catch (SQLException ex)
+              {
+                 Error("Error Al cambiar Bloquear/Desbloquear Albaran",ex);
+              }
+          }
+      } );
       avc_cerraE.addActionListener(new java.awt.event.ActionListener()
       {
           @Override
@@ -1901,6 +1930,13 @@ public class pdalbara extends ventanaPad  implements PAD  {
                   Error("Error al cambiar albaran a deposito", ex);     
               }
             
+          }
+      });
+      MFechaAlb.addActionListener(new java.awt.event.ActionListener()
+      {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
+              MFechaAlbActionPerformed(jt.getSelectedRowDisab());
           }
       });
       MAllFechaCab.addActionListener(new java.awt.event.ActionListener()
@@ -3013,6 +3049,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         avc_seriE.setText(dt.getString("avc_serie"));
         avc_numeE.setValorDec(dt.getInt("avc_nume"));
         avc_idE.setValorDec(dt.getInt("avc_id",true));
+      
         jt.removeAllDatos();
         jtDes.removeAllDatos();
         nav.setEnabled(navegador.EDIT, false);
@@ -3028,6 +3065,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       avc_seriE.setText(dt.getString("avc_serie"));
       avc_numeE.setValorDec(dt.getInt("avc_nume"));
       avc_idE.setValorDec(dt.getInt("avc_id",true));
+      avc_cucomiE.setSelected(dt.getInt("avc_cucomi",true)!=0);
 //      cli_codiE.setAlbaran(dt.getInt("emp_codi"),dt.getInt("avc_ano"),
 //                           dt.getString("avc_serie"),dt.getInt("emp_codi"));
       cli_codiE.setValorInt(dtAdd.getInt("cli_codi"),dtAdd.getString("avc_clinom",false));
@@ -3719,7 +3757,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       }
       avc_impalbE.setValorDec(Formatear.redondea(impBim + impIva + impReq,NUMDEC));
       avc_impcobE.setValorDec(avcImpcob);
-
+     
       swActDesg = true;
        
       verDesgLinea(hisRowid<=0?empCodi:-1,
@@ -4266,7 +4304,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   {
       if (!P_ADMIN)
       {
-          if (rutPanelE.getNumeroRuta()!=0)
+          if (rutPanelE.getNumeroRuta()!=0 && !avc_cucomiE.isSelected())
           {
               msgBox("Albaran ya esta servido en una ruta. Imposible Modificar/Borrar");
               return false;
@@ -8307,6 +8345,35 @@ public class pdalbara extends ventanaPad  implements PAD  {
     }
   }
   /**
+   * Establece la fecha de Alta de La linea a la del albaran 
+   */
+  private void MFechaAlbActionPerformed(int nl)
+  {
+      try
+      {
+           if (opAgru.isSelected())
+            {
+                msgBox("Desagrupe las lineas para establecer fecha Albaran");
+                return;
+            }
+          String s1="update v_albavel set avl_fecalt = '"+avc_fecalbE.getFechaDB()+"'"+
+              " where avc_ano =" + avc_anoE.getValorInt() +
+              " and emp_codi = " + emp_codiE.getValorInt() +
+              " and avc_serie = '" + avc_seriE.getText() + "'" +
+              " and avc_nume = " + avc_numeE.getValorInt() +
+              " and avl_numlin = "+jt.getValorInt(nl,JT_NULIAL);
+          
+          dtAdd.executeUpdate(s1);
+          jt.setValor(avc_fecalbE.getDate(),nl,JT_FECMVT);
+          changeFecMvto(nl);
+          dtAdd.commit();
+          msgBox("Fecha Linea establecida a la del albaran");
+      } catch (Exception ex)
+      {
+          Error("Error al establecer fecha alta a la de albaran",ex);
+      }
+  }
+  /**
    * Ponea la fecha de mvto a la fecha de alta de la linea.
    * @param nl  Numero de Linea del grid (0 todas)
    */
@@ -9309,6 +9376,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     };
     if (P_ADMIN)
     {
+        jt.getPopMenu().add(MFechaAlb);
         jt.getPopMenu().add(MFechaCab);
         jt.getPopMenu().add(MAllFechaCab);
     }

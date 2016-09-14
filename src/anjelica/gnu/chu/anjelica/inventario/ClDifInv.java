@@ -127,7 +127,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2016-04-24");
+        this.setVersion("2016-09-13");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -469,15 +469,15 @@ public class ClDifInv extends ventana {
               } 
               if (lciComent==null)
               { // Comprobar si Salio en despieces
-                  s="SELECT * FROM v_despsal where  "+
+                  s="SELECT * FROM v_despori where  "+
                        " pro_codi = "+dtCon1.getInt("pro_codi")+
-                       " and def_ejelot ="+dtCon1.getInt("PRP_ANO")+
-                       " and def_serlot ='"+dtCon1.getString("PRP_SERI")+"'"+
+                       " and deo_ejelot ="+dtCon1.getInt("PRP_ANO")+
+                       " and deo_serlot ='"+dtCon1.getString("PRP_SERI")+"'"+
                        " and pro_lote ="+dtCon1.getInt("PRP_PART")+
                        " and pro_numind ="+dtCon1.getInt("PRP_INDI");
                     if (dtStat.select(s))
                       lciComent= "D: "+dtStat.getInt("deo_codi")+ "("+dtStat.getFecha("deo_fecha","dd-MM")+
-                          ")"+" "+ dtStat.getFecha("def_tiempo","dd-MM");                         
+                          ")"+" "+ dtStat.getFecha("deo_tiempo","dd-MM");                         
               }
               if (lciComent==null)
               { // Busco Compras.
@@ -494,6 +494,20 @@ public class ClDifInv extends ventana {
                                   dtStat.getString("prv_codi");
                 }
               }
+              if (lciComent==null)
+              { // Busco Parte
+                s="select par_codi,pal_comsal from v_partes where  pro_codi="+dtCon1.getInt("pro_codi")+
+                              " and pro_numlot = "+dtCon1.getInt("PRP_PART")+
+                              " and pro_serlot = '"+dtCon1.getString("PRP_SERI")+"'"+
+                              " and pro_ejelot = "+dtCon1.getInt("PRP_ANO")+
+                              " and pro_indlot = "+dtCon1.getInt("PRP_INDI");
+                if (dtStat.select(s))
+                {
+                    lciComent= "P:"+dtStat.getInt("par_codi")+" "+
+                                  dtStat.getString("pal_comsal");
+                }
+              }
+              lciComent=lciComent==null?"":lciComent;
               if (dtCon1.getDouble("lci_peso")==0)
               { // Busco si hay inventarios posteriores.
                   s="select max(cci_feccon) as cci_feccon from "+VISTA_INV+" where pro_codi="+dtCon1.getInt("pro_codi")+
@@ -511,7 +525,7 @@ public class ClDifInv extends ventana {
               if (lciComent!=null)
               {
                    s="UPDATE "+TABLA_INV_LIN+" set lci_coment = '"+
-                                lciComent+"'"+
+                                (lciComent.length()>=34?lciComent.substring(0,34):lciComent)+"'"+
                                 " where cci_codi = "+dtCon1.getInt("cci_codi")+
                                 " and pro_codi ="+dtCon1.getInt("pro_codi")+
                                 " and PRP_PART = "+dtCon1.getInt("PRP_PART")+

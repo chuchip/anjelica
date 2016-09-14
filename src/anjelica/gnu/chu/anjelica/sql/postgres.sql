@@ -475,7 +475,7 @@ avc_imprec float,
 avc_impalb float,	-- Importe Albaran (NETO Inc. Impuestos)
 avc_impcob float,	-- Importe Cobrado
 avc_impuv float,
-avc_cucomi int,
+avc_cucomi int,     -- -1 Desbloqueado. 0 Normal.
 avc_valora int,		-- 0 NO valorado -1 Si valorado
 avc_dtopp decimal(5,2),	-- Dto. Pronto Pago
 avc_dtocom decimal(5,2),-- Dto Comercial
@@ -1648,6 +1648,9 @@ deo_preusu float,
 deo_tiempo timestamp default current_timestamp,
 his_rowid int not null
 );
+-- 
+-- Lineas de despiece (Producto salida). Entrada a almacen
+-- 
 -- drop table v_despfin;
 create table anjelica.v_despfin
 (
@@ -3960,6 +3963,7 @@ create table calctarifa
 	cta_prcomp float not null,
 	cta_kgprod float not null,
 	cta_prprod float not null,
+	cta_coscal float not null,-- Costo Calculado
 	cta_costo float not null,
 	cta_cosasi float not null,
 	constraint ix_calctarifa primary  key (eje_nume,cta_semana,cta_linea)

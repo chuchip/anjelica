@@ -17,12 +17,14 @@ import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.conexion;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
@@ -68,6 +70,19 @@ import net.sf.jasperreports.engine.JasperReport;
  * </p>
  */
 public class CLVenRep extends ventana {
+    
+    final  int JTCAB_EJER=0;
+    final  int JTCAB_SERIE=1;
+    final  int JTCAB_NUMALB=2;
+    final  int JTCAB_FECALB=3;
+    final  int JTCAB_TARIFA=10;
+    final  int JTLIN_PROCODI=0;
+    final  int  JTLIN_PRECIO=4;    
+    final  int  JTLIN_PRMIN=5;    
+    
+    final int JTLIN_GANA=6;
+    final  int JTLIN_PRTAR=8;
+    boolean swGridFoco=false;
     String condAlb;
     int idAlbaran;
     String ARG_ZONAREP = "";
@@ -162,11 +177,61 @@ public class CLVenRep extends ventana {
               MantRepres.llenaLinkBox(rep_codiE, dtCon1);
         dtAdd = new DatosTabla(new conexion(EU));
         Pcondic.setDefButton(Baceptar.getBotonAccion());
+        jtCab.setButton(KeyEvent.VK_F2, BirGrid);
+        jtLin.setButton(KeyEvent.VK_F2, BirGrid);
+        jtLin.setButton(KeyEvent.VK_F5, BFill);
+        jtLin.setButton(KeyEvent.VK_F9, Btarifa);
         activarEventos();
     }
 
     private void activarEventos() {
-
+        Btarifa.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               if (jtLin.isVacio())
+                   return;
+               try
+               {
+                   double prTari = MantTarifa.getPrecTar(dtStat, jtLin.getValorInt(JTLIN_PROCODI),
+                     jtCab.getValorInt(JTCAB_TARIFA), Formatear.getFecha(jtCab.getValDate(JTCAB_FECALB),"dd-MM-yyyy"));
+                   String s = "UPDATE  v_albavel set tar_preci = " + Formatear.redondea(prTari, 2)
+                        + " where pro_codi = " + jtLin.getValorInt(JTLIN_PROCODI)+ " and "+
+                       condAlb
+                        + " and avl_numlin in (" + jtLin.getValString(7) + ")";
+                   dtAdd.executeUpdate(s);
+                   dtAdd.commit();
+                   jtLin.setValor(prTari,JTLIN_PRTAR);
+                   jtLin.requestFocusSelectedLater();
+               } catch (Exception k)
+               {
+                   Error("Error al actualizar tarifa",k);
+               }
+            }
+        });
+        BirGrid.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (swGridFoco)
+                {
+                    jtCab.requestFocusSelectedLater();                    
+                }
+                else
+                {
+                    jtLin.requestFocusLater(0,5);                    
+                }
+                swGridFoco=!swGridFoco;
+            }
+        });
+        BFill.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (jtLin.isVacio())
+                   return;
+                jtLin.setValor(jtLin.getValorDec(JTLIN_PRTAR), JTLIN_PRMIN);
+                avl_proferE.setValorDec(jtLin.getValorDec(JTLIN_PRTAR));
+                jtLin.requestFocusSelectedLater(); 
+            }
+        });
         Baceptar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -198,10 +263,11 @@ public class CLVenRep extends ventana {
         });
         jtCab.addMouseListener(new MouseAdapter()
         {
+              @Override
               public void mouseClicked(MouseEvent e) {
                   if (e.getClickCount()<2 || jtCab.isVacio())
                       return;
-                  
+                  swGridFoco=false;
                   ejecutable prog;
                   if ((prog = jf.gestor.getProceso(pdalbara.getNombreClase())) == null)
                       return;
@@ -231,6 +297,7 @@ public class CLVenRep extends ventana {
                 if (e.getValueIsAdjusting() || !jtCab.isEnabled()) {
                     return;
                 }
+                swGridFoco=false;
                 guardaCambios();
                 verLineas();
                 jtCab.requestFocusSelectedLater();
@@ -239,8 +306,18 @@ public class CLVenRep extends ventana {
         
         jtLin.addGridListener(new GridAdapter()
         {
+             @Override
+            public void cambioColumna(GridEvent event)   { 
+                int row=event.getLinea();
+                if (event.getColumna()!=JTLIN_PRMIN)
+                    return;
+                jtLin.setValor(jtLin.getValorDec(row,JTLIN_PRECIO)-
+                   avl_proferE.getValorDec(),row,JTLIN_GANA );
+            }
+
             @Override
             public void cambiaLinea(GridEvent event){
+                swGridFoco=true;
                 int ret=jtLinCambiaLinea(event.getLinea(), event.getColumna());
                 event.setColError(ret);
                  try
@@ -415,7 +492,7 @@ public class CLVenRep extends ventana {
                         + " and l.avl_profer < 0"
                         + " )";
         }
-        s += " ORDER BY  a.avc_ano, a.avc_serie, a.avc_nume ";
+        s += " ORDER BY  avc_fecalb,cli_codi ";
         return s;
     }
     
@@ -545,28 +622,27 @@ public class CLVenRep extends ventana {
     {
        jtLinCambiaLinea(jtLin.getSelectedRow(),0);
     }
-    public int jtLinCambiaLinea(int row,int col)
-    {
-        try {
-           guardaComentario(idAlbaran, jtLin.getValString(row,7),cor_comentE.getText().trim());
-        if (! avl_proferE.isEnabled() || jtLin.isVacio() || jtLin.getValString(row,5).equals("") || jtLin.getValString(row,7).trim().equals(""))
-            return -1;
-        double avlPrven=avl_proferE.getValorDec();
-       
-        String s = "UPDATE  V_albavel set avl_profer = " +avlPrven +
-             " where " +condAlb +
-             " and avl_numlin in ("+jtLin.getValString(row,7)+")";
-     
-           
-            int nregAfe=dtAdd.executeUpdate(s);
-            if (nregAfe==0)
+    public int jtLinCambiaLinea(int row, int col) {
+        try
+        {
+            guardaComentario(idAlbaran, jtLin.getValString(row, 7), cor_comentE.getText().trim());
+            if (!avl_proferE.isEnabled() || jtLin.isVacio() || jtLin.getValString(row, 5).equals("") || jtLin.getValString(row, 7).trim().equals(""))
+                return -1;
+            double avlPrven = avl_proferE.getValorDec();
+            
+            String s = "UPDATE  V_albavel set avl_profer = " + avlPrven
+                + " where " + condAlb
+                + " and avl_numlin in (" + jtLin.getValString(row, 7) + ")";
+
+            int nregAfe = dtAdd.executeUpdate(s);
+            if (nregAfe == 0)
                 msgBox("No se registro el precio. Revise por favor");
             dtAdd.commit();
         } catch (SQLException k)
         {
-            Error("Error al actualizar linea",k);
+            Error("Error al actualizar linea", k);
         }
-        mensajeErr("Precio Linea Actualizada",false);
+        mensajeErr("Precio Linea Actualizada", false);
         return -1;
     }
     private void getCondAlb(int row)
@@ -885,12 +961,15 @@ public class CLVenRep extends ventana {
     cLabel2 = new gnu.chu.controles.CLabel();
     numAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
     cLabel4 = new gnu.chu.controles.CLabel();
-    impAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.9");
+    impAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9.9");
     cLabel7 = new gnu.chu.controles.CLabel();
     kilAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"-,---,--9.9");
     cLabel8 = new gnu.chu.controles.CLabel();
-    impGanE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.9");
+    impGanE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9.9");
     cor_comentE = new gnu.chu.controles.CTextField(Types.CHAR,"X",120);
+    BirGrid = new gnu.chu.controles.CButton(Iconos.getImageIcon("reload"));
+    BFill = new gnu.chu.controles.CButton(Iconos.getImageIcon("fill"));
+    Btarifa = new gnu.chu.controles.CButton(Iconos.getImageIcon("calc"));
     jtPed = new gnu.chu.controles.CGridEditable(7)
     ;
     ArrayList v2=new ArrayList();
@@ -1064,7 +1143,7 @@ public class CLVenRep extends ventana {
 
     numAlbE.setEnabled(false);
     Presumen.add(numAlbE);
-    numAlbE.setBounds(111, 2, 47, 17);
+    numAlbE.setBounds(105, 2, 47, 17);
 
     cLabel4.setText("Importe");
     cLabel4.setPreferredSize(new java.awt.Dimension(57, 17));
@@ -1073,27 +1152,39 @@ public class CLVenRep extends ventana {
 
     impAlbE.setEnabled(false);
     Presumen.add(impAlbE);
-    impAlbE.setBounds(223, 2, 86, 17);
+    impAlbE.setBounds(210, 2, 70, 17);
 
     cLabel7.setText("Kilos");
     cLabel7.setPreferredSize(new java.awt.Dimension(57, 17));
     Presumen.add(cLabel7);
-    cLabel7.setBounds(313, 2, 32, 17);
+    cLabel7.setBounds(290, 2, 32, 17);
 
     kilAlbE.setEnabled(false);
     Presumen.add(kilAlbE);
-    kilAlbE.setBounds(349, 2, 86, 17);
+    kilAlbE.setBounds(320, 2, 70, 17);
 
     cLabel8.setText("Ganancia");
     cLabel8.setPreferredSize(new java.awt.Dimension(57, 17));
     Presumen.add(cLabel8);
-    cLabel8.setBounds(453, 2, 57, 17);
+    cLabel8.setBounds(400, 2, 57, 17);
 
     impGanE.setEnabled(false);
     Presumen.add(impGanE);
-    impGanE.setBounds(514, 2, 86, 17);
+    impGanE.setBounds(460, 2, 60, 17);
     Presumen.add(cor_comentE);
     cor_comentE.setBounds(10, 20, 610, 17);
+
+    BirGrid.setToolTipText("F2 para moverse entre Tablas");
+    Presumen.add(BirGrid);
+    BirGrid.setBounds(600, 0, 20, 20);
+
+    BFill.setToolTipText("F5 Para pasar precio Tarifa");
+    Presumen.add(BFill);
+    BFill.setBounds(560, 0, 30, 20);
+
+    Btarifa.setToolTipText("F9 Buscar Precio Tarifa");
+    Presumen.add(Btarifa);
+    Btarifa.setBounds(530, 0, 20, 20);
 
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
@@ -1131,8 +1222,12 @@ public class CLVenRep extends ventana {
 
     pack();
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BFill;
     private gnu.chu.controles.CButtonMenu Baceptar;
+    private gnu.chu.controles.CButton BirGrid;
+    private gnu.chu.controles.CButton Btarifa;
     private gnu.chu.controles.CPanel Pcondic;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CPanel Presumen;

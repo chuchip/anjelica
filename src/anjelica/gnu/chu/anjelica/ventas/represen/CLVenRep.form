@@ -285,7 +285,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(9){&#xa;   &#xa;}&#xa;"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(9){&#xa;&#xa;}&#xa;"/>
             <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="ArrayList v1=new ArrayList();&#xa;v1.add(&quot;Prod&quot;); //0 &#xa;v1.add(&quot;Nombre&quot;); // 1&#xa;v1.add(&quot;Unid&quot;); // 2&#xa;v1.add(&quot;Kilos&quot;); // 3&#xa;v1.add(&quot;Prec&quot;); // 4&#xa;v1.add(&quot;Pr.Min.&quot;); // 5 &#xa;v1.add(&quot;Gananc&quot;); // 6&#xa;v1.add(&quot;NL&quot;); // 7&#xa;v1.add(&quot;Pr.Tarifa&quot;); // 8&#xa;jtLin.setCabecera(v1);&#xa;jtLin.setAnchoColumna(new int[]{60,180,50,70,60,60,60,20,60});&#xa;jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,0,2});&#xa;try{&#xa;ArrayList vc = new ArrayList();&#xa;vc.add(pro_codiE);&#xa;vc.add(pro_nombE);&#xa;vc.add(avl_unidE);&#xa;vc.add(avl_kilosE);&#xa;vc.add(avl_precioE);&#xa;vc.add(avl_proferE);&#xa;vc.add(avl_gananE);&#xa;vc.add(avl_numlinE);&#xa;vc.add(avl_prtariE);&#xa;jtLin.setCampos(vc);&#xa;} catch (Exception k ){Error(&quot;Error al iniciar grid&quot;,k);}&#xa;jtLin.setFormatoColumna(2,&quot;---9&quot;);&#xa;jtLin.setFormatoColumna(3,&quot;---9.99&quot;);&#xa;jtLin.setFormatoColumna(4,&quot;--9.99&quot;);&#xa;jtLin.setFormatoColumna(5,&quot;--9.99&quot;);&#xa;jtLin.setFormatoColumna(6,&quot;--9.99&quot;);&#xa;jtLin.setFormatoColumna(8,&quot;--9.99&quot;);&#xa;jtLin.setCanDeleteLinea(false);&#xa;jtLin.setCanInsertLinea(false);&#xa;jtLin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));&#xa;&#xa;jtLin.setPreferredSize(new java.awt.Dimension(80, 80));&#xa;&#xa;// Code of sub-components - not shown here&#xa;&#xa;// Layout setup code - not shown here&#xa;&#xa;gridBagConstraints = new java.awt.GridBagConstraints();&#xa;gridBagConstraints.gridx = 0;&#xa;gridBagConstraints.gridy = 2;&#xa;gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;&#xa;gridBagConstraints.weightx = 1.0;&#xa;gridBagConstraints.weighty = 1.0;&#xa;gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);&#xa;Pprinc.add(jtLin, gridBagConstraints);"/>
           </AuxValues>
           <Constraints>
@@ -357,7 +357,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="111" y="2" width="47" height="17"/>
+                  <AbsoluteConstraints x="105" y="2" width="47" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -379,11 +379,11 @@
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;--,---,--9.9&quot;)"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;----,--9.9&quot;)"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="223" y="2" width="86" height="17"/>
+                  <AbsoluteConstraints x="210" y="2" width="70" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -396,7 +396,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="313" y="2" width="32" height="17"/>
+                  <AbsoluteConstraints x="290" y="2" width="32" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -409,7 +409,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="349" y="2" width="86" height="17"/>
+                  <AbsoluteConstraints x="320" y="2" width="70" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -422,7 +422,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="453" y="2" width="-1" height="17"/>
+                  <AbsoluteConstraints x="400" y="2" width="-1" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -431,11 +431,11 @@
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;--,---,--9.9&quot;)"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;---,--9.9&quot;)"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="514" y="2" width="86" height="17"/>
+                  <AbsoluteConstraints x="460" y="2" width="60" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -446,6 +446,45 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="10" y="20" width="610" height="-1"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CButton" name="BirGrid">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="F2 para moverse entre Tablas"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(Iconos.getImageIcon(&quot;reload&quot;))"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="600" y="0" width="20" height="20"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CButton" name="BFill">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="F5 Para pasar precio Tarifa"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(Iconos.getImageIcon(&quot;fill&quot;))"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="560" y="0" width="30" height="20"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CButton" name="Btarifa">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="F9 Buscar Precio Tarifa"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(Iconos.getImageIcon(&quot;calc&quot;))"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="530" y="0" width="20" height="20"/>
                 </Constraint>
               </Constraints>
             </Component>

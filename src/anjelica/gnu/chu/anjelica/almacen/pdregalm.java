@@ -31,12 +31,15 @@ import java.awt.event.*;
 import java.util.*;
 import gnu.chu.Menu.*;
 import gnu.chu.interfaces.PAD;
+import gnu.chu.interfaces.ejecutable;
 import java.text.SimpleDateFormat;
+import javax.swing.JMenuItem;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 
 public class pdregalm extends ventanaPad implements PAD
 {
+  JMenuItem MirMvto = new JMenuItem("Ver Mvtos");
   paregalm pRegAlm; // Panel Regularizaciones Almacen
   int ROWSGRID=20;
   String QfecIni,QfecFin,QproCodi,QtirCodi;
@@ -199,6 +202,8 @@ public class pdregalm extends ventanaPad implements PAD
     jt.setCabecera(v);
     jt.setAnchoColumna(new int[]{40,150,90,40,40,30,50,40,90,60,60,60,1});
     jt.setAlinearColumna(new int[]{0,0,1,2,2,1,2,2,0,2,2,2,2});
+    jt.setAjustarGrid(true);
+    jt.getPopMenu().add(MirMvto);
     pRegAlm.setPreferredSize(new Dimension(519, 172));
     pRegAlm.setMinimumSize(new Dimension(519, 172));
     pRegAlm.setBorder(BorderFactory.createRaisedBevelBorder());
@@ -279,6 +284,13 @@ public class pdregalm extends ventanaPad implements PAD
  }
  void activarEventos()
  {
+    MirMvto.addActionListener(new java.awt.event.ActionListener()
+      {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
+              mostrarMvtos(jt.getSelectedRowDisab());
+          }
+      });
    linPantE.addFocusListener(new FocusAdapter()
    {
             @Override
@@ -338,7 +350,19 @@ public class pdregalm extends ventanaPad implements PAD
      Error("Error al ir al primer Registro",k);
    }
  }
-
+ void mostrarMvtos(int linea) {
+    ejecutable prog;
+    if ((prog = jf.gestor.getProceso(Comvalm.getNombreClase())) == null)
+        return;
+    gnu.chu.anjelica.almacen.Comvalm cm = (gnu.chu.anjelica.almacen.Comvalm) prog;//   
+    cm.setProCodi(jt.getValorInt(linea,0));
+    cm.setLote(jt.getValorInt(linea, 6));
+    cm.setIndividuo(jt.getValorInt(linea, 7));
+    cm.setSerie(jt.getValString(linea, 5));
+    cm.setEjercicio(jt.getValorInt(linea, 3));
+    cm.ejecutaConsulta();
+    jf.gestor.ir(cm);
+  }
  public void PADAnterior(){
    try
    {
@@ -421,13 +445,16 @@ public void ej_query()
       fecfinE.requestFocus();
       return;
     }
-    strSql = "select * from regalmacen WHERE rgs_fecha >= to_date('" + feciniE.getText() + "','dd-MM-yyyy')" +
-        " and rgs_fecha <= to_date('" + fecfinE.getText() + "','dd-MM-yyyy')" +
-        (rgs_numeE.getValorInt()!=0 ? " AND rgs_nume = " + rgs_numeE.getValorInt() : "")+
+    if (rgs_numeE.getValorInt()!=0)
+        strSql = "select * from regalmacen WHERE rgs_nume = " + rgs_numeE.getValorInt();
+    else
+        strSql = "select * from regalmacen WHERE "        
+        + " rgs_fecha >= to_date('" + feciniE.getText() + "','dd-MM-yyyy')" +
+        " and rgs_fecha <= to_date('" + fecfinE.getText() + "','dd-MM-yyyy')" +        
         (pro_codiE1.getValorInt() != 0 ? " AND pro_codi = " + pro_codiE1.getValorInt() : "") +
         (tir_codiE1.getValorInt() != 0 ? " AND tir_codi = " + tir_codiE1.getValorInt() : "") +
-        (opVerInv.isSelected()?"": " AND tir_codi NOT IN (SELECT tir_codi FROM v_motregu WHERE tir_afestk = '=') ")+
-        " ORDER BY rgs_fecha, pro_codi,eje_nume,emp_codi,pro_serie,pro_nupar,pro_numind";
+        (opVerInv.isSelected()?"": " AND tir_codi NOT IN (SELECT tir_codi FROM v_motregu WHERE tir_afestk = '=') ");
+     strSql+=" ORDER BY rgs_fecha, pro_codi,eje_nume,emp_codi,pro_serie,pro_nupar,pro_numind";
 //    debug("strSql: "+strSql);
     if (!dtCons.select(strSql))
       mensajeErr("NO ENCONTRADOS REGISTROS CON ESTOS CRITERIOS");

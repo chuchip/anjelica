@@ -3,7 +3,10 @@ package gnu.chu.anjelica.margenes;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.MvtosAlma;
+import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.eventos.GridAdapter;
+import gnu.chu.eventos.GridEvent;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -23,6 +26,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * <p>Titulo: CalcTarifa</p>
@@ -46,6 +51,7 @@ import java.util.Hashtable;
 
 public class CalcTarifa extends ventanaPad implements PAD
 {
+    boolean swCarga=false;
     String s;
     String feulin;
     MvtosAlma mvtosAlm = new MvtosAlma();
@@ -138,8 +144,10 @@ public class CalcTarifa extends ventanaPad implements PAD
          mvtosAlm.setSoloInventario(false);
          mvtosAlm.setIncluyeSerieX(false);
          jt.setButton(KeyEvent.VK_F5, Bvalorar);
+          jt.setButton(KeyEvent.VK_F3, Bcosto);
          eje_numeE.setColumnaAlias("eje_nume");
          cta_semanaE.setColumnaAlias("cta_semana");
+         jtArt.setEnabled(false);
          verDatos();
          activarEventos();
     }
@@ -165,6 +173,26 @@ public class CalcTarifa extends ventanaPad implements PAD
                  }
              }
         });
+        Bcosto.addActionListener(new ActionListener()
+        {
+             @Override
+             public void actionPerformed(ActionEvent e)
+             {
+                     if (jt.isVacio())
+                         return;
+                     jt.salirGrid();
+                     double imporVal=(jt.getValorDec(2)* (jt.getValorDec(8)==0?jt.getValorDec(3):jt.getValorDec(8)))+
+                         (jt.getValorDec(4)*jt.getValorDec(5))+
+                         (jt.getValorDec(6)*jt.getValorDec(7));
+                     double kilosVal=jt.getValorDec(2)+jt.getValorDec(4)+jt.getValorDec(6);
+                     jt.setValor(kilosVal==0?0:Formatear.redondea(imporVal / kilosVal, 2), JT_COSTO);
+                     cta_costoE.setValorDec(kilosVal==0?0:Formatear.redondea(imporVal / kilosVal, 2));
+                    
+                     jt.requestFocusSelectedLater();
+                     //cta_cosasiE.setValorDec(Formatear.redondea(impPed/kilos,2));
+
+             }
+        });
         cta_semanaE.addFocusListener(new FocusAdapter()
         {
             @Override
@@ -181,6 +209,14 @@ public class CalcTarifa extends ventanaPad implements PAD
                 }
             }
         });
+        jt.addGridListener(new GridAdapter()
+        {
+        
+           @Override
+          public void afterCambiaLineaDis(GridEvent event){ 
+                verArticulos(jt.getValString(jt.getSelectedRowDisab(),0));
+          }
+          });
         BirGrid.addFocusListener(new FocusAdapter()
         {
            @Override
@@ -206,16 +242,16 @@ public class CalcTarifa extends ventanaPad implements PAD
         gc.setTime(Formatear.getDateAct());
         gc.set(GregorianCalendar.YEAR, eje_numeE.getValorInt());
         gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.MONDAY);
-        gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt());       
+        gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt()+1);     
         tar_feciniE.setDate(new java.util.Date(gc.getTimeInMillis()));
-        gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt()+1); 
+        gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt()+2);
         gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.SUNDAY);
         tar_fecfinE.setDate(new java.util.Date(gc.getTimeInMillis()));
-        fecStockE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-1));
+        fecStockE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4));
         fecIniProdE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-8));
         fecFinProdE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-5) );
-        fecIniPedE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-2) );
-        fecFinPedE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",3) );
+        fecIniPedE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4) );
+        fecFinPedE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",0) );
     }
     boolean llenaGrid()
     {
@@ -227,6 +263,7 @@ public class CalcTarifa extends ventanaPad implements PAD
                 msgBox("Ya existen calculos para este ejercicio y semana");
                 return false;
             }
+            swCarga=true;
             jt.setEnabled(false);
             jt.removeAllDatos();
             /** 
@@ -268,6 +305,7 @@ public class CalcTarifa extends ventanaPad implements PAD
             }
             jt.setEnabled(true);
             jt.requestFocusInicio();
+            swCarga=false;
             mensajeErr("Tarifa Calculada");
         } catch (ParseException | SQLException ex)
         {
@@ -275,6 +313,7 @@ public class CalcTarifa extends ventanaPad implements PAD
         }
         return true;
     }
+    
     void calculaCosto(int nLinea) throws SQLException, ParseException
     {
         if (feulin == null)
@@ -304,6 +343,7 @@ public class CalcTarifa extends ventanaPad implements PAD
 
             do
             {
+                
                 if (mvtosAlm.calculaMvtos(dtProd.getInt("pro_codi"), dtCon1, dtStat, null, null))
                 {
                     kilos = mvtosAlm.getKilosStock();
@@ -319,26 +359,31 @@ public class CalcTarifa extends ventanaPad implements PAD
                         dtCon1, fecIniProdE.getDate(), // Lunes Ant.
                         fecFinProdE.getDate());
                 kilosProd+=kilProd;
-                imporProd+=impProd;
+                imporProd+=impProd+(dtProd.getDouble("pro_cosinc")*kilProd);
+                kilosVal+=kilProd;
+                impStockVal+=impProd;
                 getRecepPendiente(dtProd.getInt("pro_codi"),
                     dtCon1,fecIniPedE.getDate(),// Sabado
                     fecFinPedE.getDate()); // Jueves
                 kilosPendRec+=kilPendRec;
                 imporPendRec+=ImpPendRec;
-                if (dtProd.getInt("sbe_codi") == 14) 
-                { // Producto de Producion propia                  
-                   kilosVal+=kilProd;
-                   impStockVal+= kilProd*mvtosAlm.getPrecioStock();
-                }
-                else
-                {                  
-                   kilosVal+=kilPendRec;
-                   impStockVal+= ImpPendRec;
-                }                               
+                kilosVal+=kilPendRec;
+                impStockVal+=ImpPendRec;
+
+//                if (dtProd.getInt("sbe_codi") == 14) 
+//                { // Producto de Producion propia                  
+//                   kilosVal+=kilProd;
+//                   impStockVal+= kilProd*mvtosAlm.getPrecioStock();
+//                }
+//                else
+//                {                  
+//                   kilosVal+=kilPendRec;
+//                   impStockVal+= ImpPendRec;
+//                }                               
             } while (dtProd.next());
             jt.setValor(kilStock, nLinea, 2);            
             jt.setValor(kilStock==0?0:Formatear.redondea(impStock / kilStock, 2), nLinea, 3);
-            jt.setValor(kilPendRec, nLinea, 4);
+            jt.setValor(kilosPendRec, nLinea, 4);
             jt.setValor(kilosPendRec==0?0:Formatear.redondea(imporPendRec / kilosPendRec, 2), nLinea, 5);
             jt.setValor(kilosProd, nLinea, 6);
             jt.setValor(kilosProd==0?0:Formatear.redondea(imporProd / kilosProd, 2), nLinea, 7);            
@@ -375,15 +420,15 @@ public class CalcTarifa extends ventanaPad implements PAD
     
     boolean getRecepPendiente(int proCodi, DatosTabla dt,java.util.Date fecini,java.util.Date fecfin) throws SQLException
     {
-        
+        kilPendRec=0;
+        ImpPendRec=0;
         s="select * from v_pedico where pro_codi = "+proCodi+
              " and pcc_fecrec >= to_date('" + Formatear.getFecha(fecini, "dd-MM-yyyy") + "','dd-MM-yyyy')"+
              " and pcc_fecrec <= to_date('" + Formatear.getFecha(fecfin, "dd-MM-yyyy") + "','dd-MM-yyyy')" ;
             // " and pcc_estrec = 'P'";
         if (!dt.select(s))
             return false;
-        kilPendRec=0;
-        ImpPendRec=0;
+       
         do
         {          
             switch (dtCon1.getString("pcc_estad"))
@@ -429,7 +474,9 @@ public class CalcTarifa extends ventanaPad implements PAD
         cta_prprodE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
         cta_costoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
         cta_cosasiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
+        pro_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#####9");
         cta_cosantE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
+        pro_nombE = new gnu.chu.controles.CTextField();
         Pprinc = new gnu.chu.controles.CPanel();
         PCondi = new gnu.chu.controles.CPanel();
         cLabel2 = new gnu.chu.controles.CLabel();
@@ -441,7 +488,14 @@ public class CalcTarifa extends ventanaPad implements PAD
         BirGrid = new gnu.chu.controles.CButton();
         cLabel3 = new gnu.chu.controles.CLabel();
         eje_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        jt = new gnu.chu.controles.CGridEditable(11);
+        jt = new gnu.chu.controles.CGridEditable(11)
+        {
+            public void afterCambiaLinea()
+            {
+                verArticulos(jt.getValString(0));
+            }
+        }
+        ;
         PPie = new gnu.chu.controles.CPanel();
         Bcancelar = new gnu.chu.controles.CButton();
         Baceptar = new gnu.chu.controles.CButton();
@@ -456,8 +510,13 @@ public class CalcTarifa extends ventanaPad implements PAD
         fecIniPedE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel11 = new gnu.chu.controles.CLabel();
         fecFinPedE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        opDesglo = new gnu.chu.controles.CCheckBox();
+        Bcosto = new gnu.chu.controles.CButton();
+        jtArt = new gnu.chu.controles.CGridEditable(8);
 
         pve_nombE.setEnabled(false);
+
+        pro_nombE.setEnabled(false);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -519,7 +578,7 @@ public class CalcTarifa extends ventanaPad implements PAD
         v.add("Com.Pr."); // 5
         v.add("Pro.KG"); // 6
         v.add("Pro.Pr"); // 7
-        v.add("Ant.Cos"); // 8
+        v.add("Cos.Ex"); // 8
         v.add("Costo"); // 9
         v.add("Asig."); // 10
         jt.setCabecera(v);
@@ -563,15 +622,15 @@ public class CalcTarifa extends ventanaPad implements PAD
 
         Bcancelar.setText("Cancelar");
         PPie.add(Bcancelar);
-        Bcancelar.setBounds(440, 22, 80, 19);
+        Bcancelar.setBounds(470, 20, 80, 19);
 
         Baceptar.setText("Aceptar");
         PPie.add(Baceptar);
-        Baceptar.setBounds(340, 22, 90, 19);
+        Baceptar.setBounds(370, 20, 90, 19);
 
-        Bvalorar.setText("Valorar (F5)");
+        Bvalorar.setText("Valorar F5");
         PPie.add(Bvalorar);
-        Bvalorar.setBounds(440, 2, 70, 19);
+        Bvalorar.setBounds(420, 0, 60, 19);
 
         cLabel7.setText("Fec.Stock");
         PPie.add(cLabel7);
@@ -623,12 +682,72 @@ public class CalcTarifa extends ventanaPad implements PAD
         PPie.add(fecFinPedE);
         fecFinPedE.setBounds(210, 20, 70, 17);
 
+        opDesglo.setText("Desglosar");
+        PPie.add(opDesglo);
+        opDesglo.setBounds(290, 20, 73, 17);
+
+        Bcosto.setText("Costo F3");
+        PPie.add(Bcosto);
+        Bcosto.setBounds(480, 0, 70, 19);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
         Pprinc.add(PPie, gridBagConstraints);
+
+        ArrayList va=new ArrayList();
+        va.add("Articulo");
+        va.add("Nombre");
+        va.add("Ex.KG"); // 2
+        va.add("Ex.Pr"); // 3
+        va.add("Com.KG"); // 4
+        va.add("Com.Pr."); // 5
+        va.add("Pro.KG"); // 6
+        va.add("Pro.Pr"); // 7
+        jtArt.setCabecera(va);
+        jtArt.setAnchoColumna(new int[]{120,300,60,40,60,40,60,40});
+        jtArt.setAlinearColumna(new int[]{2,0,2,2,2,2,2,2});
+        ArrayList va1=new ArrayList();
+        va1.add(pro_codiE);
+        va1.add(pro_nombE);
+        try{
+            CTextField t1=new CTextField(Types.DECIMAL,"--,--9.9");
+            t1.setEnabled(false);
+            CTextField t2=new CTextField(Types.DECIMAL,"##9.99");
+            t2.setEnabled(false);
+            CTextField t3=new CTextField(Types.DECIMAL,"--,--9.9");
+            t3.setEnabled(false);
+            CTextField t4=new CTextField(Types.DECIMAL,"##9.99");
+            t4.setEnabled(false);
+            CTextField t5=new CTextField(Types.DECIMAL,"--,--9.9");
+            t5.setEnabled(false);
+            CTextField t6=new CTextField(Types.DECIMAL,"##9.99");
+            t6.setEnabled(false);
+            va1.add(t1);
+            va1.add(t2);
+            va1.add(t3);
+            va1.add(t4);
+            va1.add(t5);
+            va1.add(t6);
+            jtArt.setCampos(va1);
+        } catch (Exception ss)
+        {
+            Error("Error al configurar grid",ss);
+        }
+        jtArt.setFormatoCampos();
+        jtArt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtArt.setMaximumSize(new java.awt.Dimension(80, 60));
+        jtArt.setMinimumSize(new java.awt.Dimension(80, 60));
+        jtArt.setProcInsLinea(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        Pprinc.add(jtArt, gridBagConstraints);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
@@ -639,6 +758,7 @@ public class CalcTarifa extends ventanaPad implements PAD
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
+    private gnu.chu.controles.CButton Bcosto;
     private gnu.chu.controles.CButton BirGrid;
     private gnu.chu.controles.CButton Bvalorar;
     private gnu.chu.controles.CPanel PCondi;
@@ -670,6 +790,10 @@ public class CalcTarifa extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField fecIniProdE;
     private gnu.chu.controles.CTextField fecStockE;
     private gnu.chu.controles.CGridEditable jt;
+    private gnu.chu.controles.CGridEditable jtArt;
+    private gnu.chu.controles.CCheckBox opDesglo;
+    private gnu.chu.controles.CTextField pro_codiE;
+    private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CTextField pve_codiE;
     private gnu.chu.controles.CTextField pve_nombE;
     private gnu.chu.controles.CTextField tar_fecfinE;
@@ -690,7 +814,71 @@ public class CalcTarifa extends ventanaPad implements PAD
     mensajeErr("");
     mensaje("Insertando ....");
   }
+    void verArticulos(String articulo)
+    {
+        if (jt.isVacio() || swCarga)
+            return;
+        try
+        {
+            if (feulin == null)
+            {
+                feulin=ActualStkPart.getFechaUltInv(EU.em_cod,EU.ejercicio,tar_fecfinE.getDate(),dtStat);
+                mvtosAlm.iniciarMvtos(feulin,fecStockE.getText(),dtStat);
+            }
 
+            String s1="select pt.pro_codi,a.pro_nomb from prodtarifa as pt, v_articulo as a where pt.pro_codi = a.pro_codi "+
+                " and pve_codi = '"+articulo+"'";
+            
+            jtArt.removeAllDatos();
+            if (! dtProd.select(s1))
+                return;
+           
+            do
+            {
+                ArrayList v=new ArrayList();
+                v.add(dtProd.getInt("pro_codi"));
+                v.add(dtProd.getString("pro_nomb"));
+                if (! opDesglo.isSelected())
+                {
+                    v.add("");
+                    v.add("");
+                    v.add("");
+                    v.add("");
+                    v.add("");
+                    v.add("");
+                }
+                else
+                {
+                    if (mvtosAlm.calculaMvtos(dtProd.getInt("pro_codi"), dtCon1, dtStat, null, null))
+                    {
+                      v.add(mvtosAlm.getKilosStock());
+                      v.add(mvtosAlm.getPrecioStock());
+                    }
+                    else
+                    {
+                        v.add(0);
+                        v.add(0);
+                    }
+                    getRecepPendiente(dtProd.getInt("pro_codi"),
+                        dtCon1,fecIniPedE.getDate(),// Sabado
+                        fecFinPedE.getDate()); // Jueves
+                    v.add(kilPendRec);
+                    v.add(kilPendRec==0?0:ImpPendRec/kilPendRec);
+                    getValorDespiece(dtProd.getInt("pro_codi"),
+                            dtCon1, fecIniProdE.getDate(), // Lunes Ant.
+                            fecFinProdE.getDate());
+                    v.add(kilProd);
+                    v.add(kilProd==0?0:impProd/kilProd);
+
+                 
+                }
+                jtArt.addLinea(v);
+            } while (dtProd.next());
+        } catch (Exception ex)
+        {
+                  Error("Error al ver articulos",ex);
+        }
+    }
     @Override
   public void ej_addnew1() {
         try
@@ -784,6 +972,7 @@ public class CalcTarifa extends ventanaPad implements PAD
                 msgBox("No encontrados calculos de tarifa");
                 return;
             }
+            swCarga=true;
             do
             {
                 ArrayList vc= new ArrayList();
@@ -795,12 +984,14 @@ public class CalcTarifa extends ventanaPad implements PAD
                 vc.add(dtCon1.getDouble("cta_prcomp"));
                 vc.add(dtCon1.getDouble("cta_kgprod"));
                 vc.add(dtCon1.getDouble("cta_prprod"));
-                vc.add(0);
+                vc.add(dtCon1.getDouble("cta_coscal"));
                 vc.add(dtCon1.getDouble("cta_costo"));
                 vc.add(dtCon1.getDouble("cta_cosasi"));
                 jt.addLinea(vc);                
             } while (dtCon1.next());
             jt.requestFocusInicio();
+            swCarga=false;
+            verArticulos(jt.getValString(0,0));
         } catch (SQLException | ParseException ex)
         {
            Error("Error al ver datos",ex);
@@ -822,6 +1013,7 @@ public class CalcTarifa extends ventanaPad implements PAD
           dtAdd.setDato("cta_prcomp",jt.getValorDec(n,5));
           dtAdd.setDato("cta_kgprod",jt.getValorDec(n,6));
           dtAdd.setDato("cta_prprod",jt.getValorDec(n,7));
+          dtAdd.setDato("cta_coscal",jt.getValorDec(n,8));
           dtAdd.setDato("cta_costo",jt.getValorDec(n,9));
           dtAdd.setDato("cta_cosasi",jt.getValorDec(n,10));
           dtAdd.update();

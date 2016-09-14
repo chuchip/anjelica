@@ -777,9 +777,9 @@ public class ActualStkPart
    */
   public static boolean checkIndiv(DatosTabla dt, int proCodi, int ejeLot,
                             String serLot, int numLot,
-                            int nInd, int almCodi) throws SQLException
+                            int nInd) throws SQLException
   {
-     return checkIndiv(dt,proCodi,ejeLot,serLot,numLot,nInd,almCodi);
+     return checkIndiv(dt,proCodi,ejeLot,1,serLot,numLot,nInd,0);
   }
   
   /**

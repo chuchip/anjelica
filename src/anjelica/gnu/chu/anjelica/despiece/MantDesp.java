@@ -3055,12 +3055,25 @@ public class MantDesp extends ventanaPad implements PAD
                             jtLin.getValorInt(linea,JTLIN_NUMIND), deo_almdesE.getValorInt(),
                             def_kilosE.getCopiaDouble(), def_numpieE.getCopiaInt()))
                         {
-                            mensajeErr("Individuo ha tenido mvtos. Imposible modificar linea");
-                            def_numpieE.resetValor();
-                            pro_codlE.resetValor();
-                            def_kilosE.resetValor();
-                            
-                            return 0;
+                            if (! ActualStkPart.checkIndiv(dtStat, pro_codlE.getValorInt(),
+                                deo_ejlogeE.getValorInt(),
+                                deo_selogeE.getText(), deo_nulogeE.getValorInt(),
+                                jtLin.getValorInt(linea,JTLIN_NUMIND)))
+                            {
+                              enviaMailError("MantDesp. Ind. No encontrado: "+ pro_codlE.getValorInt()+" Lote: "+
+                                  deo_ejlogeE.getValorInt()+
+                                  deo_selogeE.getText()+ deo_nulogeE.getValorInt()+"-"+
+                                  jtLin.getValorInt(linea,JTLIN_NUMIND));
+                                  msgBox("Individuo NO ENCONTRADO. Hay un error interno");
+                            }
+                            else
+                            {
+                                mensajeErr("Individuo ha tenido mvtos. Imposible modificar linea");
+                                def_numpieE.resetValor();
+                                pro_codlE.resetValor();
+                                def_kilosE.resetValor();
+                                return 0;
+                            }
                         }
                 
                 }
@@ -3621,6 +3634,18 @@ public class MantDesp extends ventanaPad implements PAD
                 jtLin.getValorInt(row,JTLIN_NUMIND), deo_almdesE.getValorInt(),
                 def_kilosE.getCopiaDouble(), def_numpieE.getCopiaInt()))
             {
+                if (! ActualStkPart.checkIndiv(dtStat, pro_codlE.getValorInt(),
+                deo_ejlogeE.getValorInt(),
+                deo_selogeE.getText(), deo_nulogeE.getValorInt(),
+                jtLin.getValorInt(row,JTLIN_NUMIND)))
+                {
+                     enviaMailError("MantDesp. Ind. No encontrado: "+ pro_codlE.getValorInt()+" Lote: "+
+                        deo_ejlogeE.getValorInt()+
+                        deo_selogeE.getText()+ deo_nulogeE.getValorInt()+"-"+
+                        jtLin.getValorInt(row,JTLIN_NUMIND));
+                     msgBox("Individuo NO ENCONTRADO. Hay un error interno");
+                     return true;
+                }
                 msgBox("Individuo ha tenido mvtos. Imposible borrar linea");
                 return false;
             }

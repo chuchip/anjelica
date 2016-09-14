@@ -13,8 +13,10 @@ import gnu.chu.interfaces.*;
 import java.awt.event.*;
 import javax.swing.*;
 import gnu.chu.anjelica.almacen.pstockAct;
+import gnu.chu.anjelica.compras.pdtaripor;
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantArticulos;
+import gnu.chu.anjelica.pad.MantTarifa;
 import net.sf.jasperreports.engine.*;
 import gnu.chu.anjelica.pad.pdconfig;
 
@@ -77,7 +79,8 @@ public class pdpeve  extends ventanaPad   implements PAD
   CTextField pro_nombE=new CTextField(Types.CHAR,"X",50);
   CTextField pvl_cantiE=new CTextField(Types.DECIMAL,"--,--9");
   CTextField pvm_cantiE=new CTextField(Types.DECIMAL,"--,--9");
-  CTextField pvl_precioE=new CTextField(Types.DECIMAL,"---,--9.99");
+  CTextField pvl_precioE=new CTextField(Types.DECIMAL,"---9.99");
+  CTextField tar_precioE=new CTextField(Types.DECIMAL,"--9.99");
   CCheckBox pvl_confirE=new CCheckBox("S","N");
   CTextField pvl_comenE=new CTextField(Types.CHAR,"X",100);
   CTextField pvl_dtoE=new CTextField(Types.DECIMAL,"#9.99");
@@ -123,13 +126,14 @@ public class pdpeve  extends ventanaPad   implements PAD
     final int JT_TIPCAN=3;
     final int JT_PRECIO=4;
     final int JT_PRECON=5;
-    final int JT_COMEN=6;
-    final int JT_PROV=7;
-    final int JT_NOMPRV=8;
-    final int JT_FECCAD=9;   
-    final int JT_NL=10;
-    final int JT_CANMOD=11;
-  CGridEditable jt = new CGridEditable(12)
+    final int JT_PRETAR=6;
+    final int JT_COMEN=7;
+    final int JT_PROV=8;
+    final int JT_NOMPRV=9;
+    final int JT_FECCAD=10;   
+    final int JT_NL=11;
+    final int JT_CANMOD=12;
+  CGridEditable jt = new CGridEditable(13)
   {
     @Override
     public void cambiaColumna(int col, int colNueva, int row)
@@ -137,8 +141,12 @@ public class pdpeve  extends ventanaPad   implements PAD
       try
       {
         if (col == JT_PROD)
+        {
           jt.setValor(pro_codiE.getNombArtCli(pro_codiE.getValorInt(),
                                               cli_codiE.getValorInt()), row, JT_NOMBPRO);
+          jt.setValor( MantTarifa.getPrecTar(dtStat,pro_codiE.getValorInt(), cli_codiE.getLikeCliente().getInt("tar_codi"), 
+            pvc_fecentE.getText()) , row, JT_PRETAR);
+        }
         if (col == JT_PROV)
           jt.setValor(prv_codiE.getNombPrv(prv_codiE.getText()), row, JT_NOMPRV);
         if (col==JT_PRECIO)
@@ -542,21 +550,22 @@ public class pdpeve  extends ventanaPad   implements PAD
     v.add("Desc. Prod."); // 1  
     v.add("Cant"); // 2
     v.add("Tipo");// 3
-    v.add("Precio"); // 4
+    v.add("Precio"); // 4    
     v.add("Conf"); // 5 Confirmado Precio ?
-    v.add("Comentario"); // 6 Comentario
-    v.add("Prv"); // 7
-    v.add("Nombre Prv"); // 8
-    v.add("Fec.Cad"); // 9
-    v.add("NL.");// 10
-    v.add("C.Prep");// 11 -- Cantidad preparada en sala
+    v.add("Pr.Tar."); // 6
+    v.add("Comentario"); //7 Comentario
+    v.add("Prv"); // 8
+    v.add("Nombre Prv"); // 9
+    v.add("Fec.Cad"); // 10
+    v.add("NL.");// 11
+    v.add("C.Prep");// 12 -- Cantidad preparada en sala
     jt.setCabecera(v);
-    jt.setMaximumSize(new Dimension(2147483647, 200));
-    jt.setMinimumSize(new Dimension(31, 250));
+    jt.setMaximumSize(new Dimension(477, 250));
+    jt.setMinimumSize(new Dimension(477, 250));
     jt.setPreferredSize(new Dimension(477, 250));
     jt.setPuntoDeScroll(50);
-    jt.setAnchoColumna(new int[]{60,160,70,50,60,50,150,50,150,90,30,40});
-    jt.setAlinearColumna(new int[]{2,0,2,0,2,1,0,2,0,1,2,2});
+    jt.setAnchoColumna(new int[]{50,160,45,50,45,40,45,150,50,150,80,30,40});    
+    jt.setAlinearColumna(new int[]{2, 0, 2, 0, 2, 1, 2,  0, 2,  0, 1, 2, 2});
     
 
     ArrayList v1=new ArrayList();
@@ -574,17 +583,19 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvl_numlinE.setEnabled(false);
     prv_nombE.setEnabled(false);
     pvm_cantiE.setEnabled(false);
+    tar_precioE.setEnabled(false);
     v1.add(pro_codiE.getFieldProCodi()); // 0
     v1.add(pro_nombE); // 1  
     v1.add(pvl_cantiE); // 2
     v1.add(pvl_tipoE);//3
     v1.add(pvl_precioE); // 4
     v1.add(pvl_confirE); // 5
-    v1.add(pvl_comenE); // 6
-    v1.add(prv_codiE.prv_codiE); // 7
-    v1.add(prv_nombE); // 8
-    v1.add(pvl_feccadE); // 9
-    v1.add(pvl_numlinE); // 10
+    v1.add(tar_precioE); // 6
+    v1.add(pvl_comenE); // 7
+    v1.add(prv_codiE.prv_codiE); //8
+    v1.add(prv_nombE); // 9
+    v1.add(pvl_feccadE); // 10
+    v1.add(pvl_numlinE); // 11
     v1.add(pvm_cantiE); // Cantidad Preparada en sala
     jt.setCampos(v1);
     jt.setFormatoCampos();
@@ -1244,7 +1255,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       usu_nombE.setText(EU.usuario);
       pvc_comenE.resetTexto();
       pvc_fecpedE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-      pvc_horpedE.setText(Formatear.getFechaAct("hh.ss"));
+      pvc_horpedE.setText(Formatear.getFechaAct("HH.ss"));
      
       pcc_estadE.setValor("P");
       jt.setEnabled(true);
@@ -1674,7 +1685,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       pvc_comenE.setText(dtCon1.getString("pvc_comen"));
       alm_codiE.setValor(dtCon1.getInt("alm_codi"));
       pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));
-      pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","hh.mm"));
+      pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","HH.mm"));
       usu_nombE.setText(dtCon1.getString("usu_nomb"));
       avc_numeE.setText(dtCon1.getString("avc_nume"));
       avc_serieE.setValor(dtCon1.getString("avc_serie"));
@@ -1698,6 +1709,8 @@ public class pdpeve  extends ventanaPad   implements PAD
          v.add(pvl_tipoE.getText(dtCon1.getString("pvl_tipo")));
          v.add(dtCon1.getString("pvl_precio"));
          v.add(dtCon1.getInt("pvl_precon")!=0);
+         v.add(MantTarifa.getPrecTar(dtStat,dtCon1.getInt("pro_codi"), cli_codiE.getLikeCliente().getInt("tar_codi"), 
+            pvc_fecentE.getText()));
          v.add(dtCon1.getString("pvl_comen"));
          v.add(dtCon1.getString("prv_codi"));
          v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi")));
