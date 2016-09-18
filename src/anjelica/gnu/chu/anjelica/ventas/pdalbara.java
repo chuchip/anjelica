@@ -654,7 +654,6 @@ public class pdalbara extends ventanaPad  implements PAD  {
     }
     catch (Exception e)
     {
-      Logger.getLogger(pdalbara.class.getName()).log(Level.SEVERE, null, e);
       setErrorInit(true);
     }
   }
@@ -703,7 +702,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-09-13" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-09-18" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -2648,6 +2647,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
         IndivStock indStk=despVenta.getIndiviuoDespiece();
         jt.setValor(indStk.getProCodi(),JT_PROCODI);
         jt.setValor(indStk.getProNomb(),JT_PRONOMB);
+        pro_codiE.setValorInt(indStk.getProCodi(),false);
+        pro_nombE.setText(indStk.getProNomb());
         avp_ejelotE.setValorInt(indStk.getEjeNume());
         avp_serlotE.setText(indStk.getProSerie());
         avp_numparE.setValorInt(indStk.getProNupar());
