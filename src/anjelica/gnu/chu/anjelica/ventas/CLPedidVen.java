@@ -876,11 +876,13 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         cLabel16.setBounds(480, 22, 30, 18);
 
         rep_codiE.setAncTexto(30);
+        rep_codiE.setMayusculas(true);
         rep_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
         Pcabe.add(rep_codiE);
         rep_codiE.setBounds(60, 42, 190, 18);
 
         zon_codiE.setAncTexto(30);
+        zon_codiE.setMayusculas(true);
         zon_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
         Pcabe.add(zon_codiE);
         zon_codiE.setBounds(310, 42, 200, 18);
@@ -960,6 +962,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         cLabel22.setBounds(350, 65, 40, 18);
 
         rut_codiE.setAncTexto(30);
+        rut_codiE.setMayusculas(true);
         rut_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
         Pcabe.add(rut_codiE);
         rut_codiE.setBounds(390, 65, 200, 18);

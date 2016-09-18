@@ -107,7 +107,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
     }
     private void jbInit() throws Exception
     {
-      this.setVersion("2016-08-21" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2016-09-18" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -401,9 +401,9 @@ public class MantTipDesp  extends ventanaPad implements PAD
       }
       do
       {
-        Vector v=new Vector();
-        v.addElement(dtCon1.getString("pro_codi"));
-        v.addElement(dtCon1.getString("pro_nomb"));
+        ArrayList v=new ArrayList();
+        v.add(dtCon1.getString("pro_codi"));
+        v.add(dtCon1.getString("pro_nomb"));
         jtEnt.addLinea(v);
       } while (dtCon1.next());
       jtEnt.requestFocusInicio();
@@ -431,12 +431,12 @@ public class MantTipDesp  extends ventanaPad implements PAD
     {
       do
       {
-        Vector v = new Vector();
-        v.addElement(dt.getString("pro_codi"));
-        v.addElement(dt.getString("pro_nomb"));
-        v.addElement(dt.getString("tds_unid"));
-        v.addElement(dt.getString("tds_costo"));
-        v.addElement(dt.getString("tds_grupo"));
+        ArrayList v = new ArrayList();
+        v.add(dt.getString("pro_codi"));
+        v.add(dt.getString("pro_nomb"));
+        v.add(dt.getString("tds_unid"));
+        v.add(dt.getString("tds_costo"));
+        v.add(dt.getString("tds_grupo"));
         jtSal.addLinea(v);
       }
       while (dtCon1.next());
@@ -1040,15 +1040,15 @@ public class MantTipDesp  extends ventanaPad implements PAD
             pro_codiE.iniciar(dtStat, this, vl, EU);
             pro_codiE.setProNomb(null);
             pro_codiE.setAceptaInactivo(false);
-            Vector cabecera = new Vector();
-            cabecera.addElement("Codigo"); // 0 -- Codigo Producto
-            cabecera.addElement("Nombre"); //1  -- Nombre Producto
+            ArrayList cabecera = new ArrayList();
+            cabecera.add("Codigo"); // 0 -- Codigo Producto
+            cabecera.add("Nombre"); //1  -- Nombre Producto
             jtEnt.setCabecera(cabecera);
             jtEnt.setAnchoColumna(new int[]{46, 283});
             jtEnt.alinearColumna(new int[] {2, 0});
-            Vector v = new Vector();
-            v.addElement(pro_codiE.getFieldProCodi());
-            v.addElement(pro_nombE);
+            ArrayList v = new ArrayList();
+            v.add(pro_codiE.getFieldProCodi());
+            v.add(pro_nombE);
             jtEnt.setCampos(v);
             jtEnt.setAjustarGrid(true);
             jtEnt.setAjusAncCol(true);
@@ -1082,12 +1082,12 @@ public class MantTipDesp  extends ventanaPad implements PAD
             pro_codsE.iniciar(dtStat, this, vl, EU);
             pro_codsE.setProNomb(null);
             pro_codsE.setAceptaInactivo(false);
-            Vector linea = new Vector();
-            linea.addElement("Codigo"); // 0 -- Codigo Producto
-            linea.addElement("Nombre"); //1  -- Nombre Producto
-            linea.addElement("N. Unid"); // 2  -- Unidades x unidad entrada
-            linea.addElement("Costo"); // 3 Costo Estimado
-            linea.addElement("Grupo"); // 4  -- Grupo
+            ArrayList linea = new ArrayList();
+            linea.add("Codigo"); // 0 -- Codigo Producto
+            linea.add("Nombre"); //1  -- Nombre Producto
+            linea.add("N. Unid"); // 2  -- Unidades x unidad entrada
+            linea.add("Costo"); // 3 Costo Estimado
+            linea.add("Grupo"); // 4  -- Grupo
             jtSal.setCabecera(linea);
             jtSal.setPonValoresInFocus(false);
             jtSal.setAnchoColumna(new int[] {46, 283,60,60,40});
@@ -1095,12 +1095,12 @@ public class MantTipDesp  extends ventanaPad implements PAD
             jtSal.setFormatoColumna(3, "##9.99");
             tds_unidE.setValorDec(1);
             tds_grupoE.setValorDec(1);
-            Vector vecL=new Vector();
-            vecL.addElement(pro_codsE.getFieldProCodi());//0
-            vecL.addElement(pro_nombsE); // 1
-            vecL.addElement(tds_unidE); // 2
-            vecL.addElement(tds_costoE); // 3
-            vecL.addElement(tds_grupoE); //4
+            ArrayList vecL=new ArrayList();
+            vecL.add(pro_codsE.getFieldProCodi());//0
+            vecL.add(pro_nombsE); // 1
+            vecL.add(tds_unidE); // 2
+            vecL.add(tds_costoE); // 3
+            vecL.add(tds_grupoE); //4
             jtSal.setCampos(vecL);
             jtSal.setAjustarGrid(true);
             jtSal.setAjusAncCol(true);

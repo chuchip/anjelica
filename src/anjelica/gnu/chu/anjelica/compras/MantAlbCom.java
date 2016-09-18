@@ -79,9 +79,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   Cgrid jtHist=new Cgrid(4);
   CPanel Phist=new CPanel();
   utildesp utdesp;
-  private String tablaCab="desporig";
-  private String tablaLin="desorilin";
-  private String tablaInd="v_despfin";
+  private String tablaCab="v_albacoc";
+  private String tablaLin="v_albacol";
+  private String tablaInd="v_albcompar";
   final  int JTR_ARTIC=0,  JTR_EJELOT=2,
          JTR_SERLOT=3,
          JTR_LOTE=4,
@@ -115,18 +115,19 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
    * Kilos (cantidad) 1
    */
   final int JTD_CANTI=1;
+  final int JTD_CLASI=2;
   /** 
-   * Numero Crotal 2
+   * Numero Crotal 3
    */
-  final int JTD_NUMCRO=2;
+  final int JTD_NUMCRO=3;
   /**
-   * Numero Linea del Grid de desglose 11
+   * Numero Linea del Grid de desglose 12
    */
-  int JTD_NUMLIN=11;
+  int JTD_NUMLIN=12;
   /**
-   * Cantidad de Individuos 12
+   * Cantidad de Individuos 13
    */
-  int JTD_CANIND=12;
+  int JTD_CANIND=13;
 
   private CLabel acc_dtoppL=new CLabel("Dto PP");
   private CTextField acc_dtoppE=new CTextField(Types.DECIMAL,"#9.99");
@@ -376,6 +377,7 @@ private JMenuItem MIimprEtiqInd;
   CLabel cLabel2 = new CLabel();
   CLabel cLabel3 = new CLabel();
   CTextField acp_cantiE= new CTextField(Types.DECIMAL,"--,--9.99");
+  CTextField acp_clasiE= new CTextField(Types.CHAR,"X",3);
   CTextField acp_nucrotE= new CTextField(Types.CHAR,"X",30);
  
   CButton Bulcabe = new CButton();
@@ -725,7 +727,7 @@ private JMenuItem MIimprEtiqInd;
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20160624)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20160918)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -2975,7 +2977,7 @@ private JMenuItem MIimprEtiqInd;
     for (int n = 0; n < nl; n++)
     {
       Vector v = (Vector) dat.elementAt(n);
-      if (igualInt(v.elementAt(1).toString(), jtDes.getValString(nLin, 0)) && // N� Ind.
+      if (igualInt(v.elementAt(1).toString(), jtDes.getValString(nLin, 0)) && // No Ind.
           igualDouble(v.elementAt(2).toString(), jtDes.getValString(nLin, 1))) // Cantidad
       {
         v.set(0, "E");
@@ -5668,18 +5670,18 @@ private JMenuItem MIimprEtiqInd;
 
      do
      {
-       Vector v=new Vector();
-       v.addElement(dtCon1.getString("pro_codi"));
-       v.addElement(dtCon1.getString("pro_nomb"));
-       v.addElement(dtCon1.getFecha("pcl_feccad","dd-MM-yyyy"));
-       v.addElement(dtCon1.getString("pcl_nucape"));
-       v.addElement(dtCon1.getString("pcl_cantpe"));
+       ArrayList v=new ArrayList();
+       v.add(dtCon1.getString("pro_codi"));
+       v.add(dtCon1.getString("pro_nomb"));
+       v.add(dtCon1.getFecha("pcl_feccad","dd-MM-yyyy"));
+       v.add(dtCon1.getString("pcl_nucape"));
+       v.add(dtCon1.getString("pcl_cantpe"));
        if (ARG_MODPRECIO)
-         v.addElement(dtCon1.getString("pcl_precpe"));
+         v.add(dtCon1.getString("pcl_precpe"));
        else
-         v.addElement("0");
-       v.addElement(div_codiE.getText(dtCon1.getString("div_codi")));
-       v.addElement(dtCon1.getString("pcl_comen"));
+         v.add("0");
+       v.add(div_codiE.getText(dtCon1.getString("div_codi")));
+       v.add(dtCon1.getString("pcl_comen"));
        jtPed.addLinea(v);
      } while (dtCon1.next());
      jtPed.requestFocusInicio();
@@ -5697,7 +5699,7 @@ private JMenuItem MIimprEtiqInd;
        mp.put("albini",acc_numeE.getText());
        mp.put("albfin",acc_numeE.getText());
        mp.put("empcodi",emp_codiE.getText());
-       mp.put("incPortes",Boolean.valueOf(opIncPortes.isSelected()));
+       mp.put("incPortes",opIncPortes.isSelected());
        jr = (JasperReport) Listados.getJasperReport(EU,
                          (opIncDet.isSelected()?"albcodes":"lialbcom"));
 
@@ -5725,6 +5727,7 @@ private JMenuItem MIimprEtiqInd;
      }
    }
 
+  @Override
    public boolean next() throws JRException
    {
      try
@@ -5818,6 +5821,7 @@ private JMenuItem MIimprEtiqInd;
 
    }
 
+  @Override
    public Object getFieldValue(JRField f) throws JRException
    {
        String campo=f.getName().toLowerCase();
@@ -5828,11 +5832,11 @@ private JMenuItem MIimprEtiqInd;
        if (campo.equals("acc_serie"))
          return rs.getString(campo);
        if (campo.equals("prv_codi") || campo.equals("acc_ano") || campo.equals("acc_nume"))
-         return new Integer(rs.getInt(campo));
+         return rs.getInt(campo);
        if (campo.equals("acc_impokg"))
        {
          if (opVerPrecios.isSelected())
-           return new Double(rs.getDouble(campo));
+           return rs.getDouble(campo);
          else
            return new Double(0);
        }
@@ -5854,31 +5858,31 @@ private JMenuItem MIimprEtiqInd;
        }
 
        if (campo.equals("pro_codi"))
-         return new Integer(dtBloq.getInt("pro_codi"));
+         return dtBloq.getInt("pro_codi");
        if ( campo.equals("acl_canti"))
-        return new Double(dtBloq.getDouble(campo));
+        return dtBloq.getDouble(campo);
        if (campo.equals("acl_prcom"))
        {
          if (opVerPrecios.isSelected())
-           return new Double(dtBloq.getDouble("acl_prcom")-(opIncPortes.isSelected()?0:rs.getDouble("acc_impokg")));
+           return dtBloq.getDouble("acl_prcom")-(opIncPortes.isSelected()?0:rs.getDouble("acc_impokg"));
          else
            return new Double(0);
        }
        if (campo.equals("acl_impor"))
        {
          if (opVerPrecios.isSelected())
-           return new Double(dtBloq.getDouble("acl_canti")*
-                           (dtBloq.getDouble("acl_prcom")-(opIncPortes.isSelected()?0:rs.getDouble("acc_impokg"))));
+           return dtBloq.getDouble("acl_canti")*
+               (dtBloq.getDouble("acl_prcom")-(opIncPortes.isSelected()?0:rs.getDouble("acc_impokg")));
          else
            return new Double(0);
        }
       if (campo.equals("acl_numcaj"))
-        return new Integer(dtBloq.getInt(campo));
+        return dtBloq.getInt(campo);
 
        if (campo.equals("acp_numind"))
-         return new Integer(dtAdd.getInt(campo));
+         return dtAdd.getInt(campo);
        if (campo.equals("acp_canti"))
-         return new Double(dtAdd.getDouble(campo));
+         return dtAdd.getDouble(campo);
        if (campo.equals("acp_nucrot"))
          return dtAdd.getString(campo);
        if (campo.equals("mat_nomb"))
@@ -5906,7 +5910,7 @@ private JMenuItem MIimprEtiqInd;
        if (campo.equals("pai_sacrif"))
          return getPais(dtAdd.getInt("acp_paisac"));
        if (campo.equals("cambio"))
-         return new Integer(cambio);
+         return cambio;
      }
      catch (Exception k)
      {

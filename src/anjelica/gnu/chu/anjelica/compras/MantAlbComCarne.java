@@ -4,7 +4,6 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
-import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.anjelica.pad.pdprove;
 import gnu.chu.comm.BotonBascula;
@@ -29,7 +28,7 @@ import javax.swing.event.*;
  *  admin: Modo Aministrador.
  *  AlbSinPed true/False Indica si se pueden cargar albaranes sin un pedido de compras
  * <p>Created on 03-abr-2009, 18:14:38</p>
- *  <p>Copyright: Copyright (c) 2005-2014
+ *  <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -53,52 +52,52 @@ public class MantAlbComCarne extends MantAlbCom
   
    CTextField acp_feccadE,acp_fecsacE,acp_fecproE;
    /**
-    * Codigo matadero 3
+    * Codigo matadero 4
     */   
-   final int JTD_MATCODI=3;
+   final int JTD_MATCODI=4;
    /**
-    * Sala Despiece 4
+    * Sala Despiece 5
     */
-   final int JTD_SDECODI=4;
+   final int JTD_SDECODI=5;
    /**
-    * Pais Nacimiento - 5
+    * Pais Nacimiento - 6
     */
-   final int JTD_PAINAC=5; 
+   final int JTD_PAINAC=6; 
    /**
-    * Pais Engorde 6
+    * Pais Engorde 7
     */
-   final int JTD_ENGPAI=6;
+   final int JTD_ENGPAI=7;
    /**
-    * Pais Sacrificio 7
+    * Pais Sacrificio 8
     */
-   final int JTD_PAISAC=7;
+   final int JTD_PAISAC=8;
    /**
-    * Fecha Caducicad 8
+    * Fecha Caducicad 9
     */
-   final int JTD_FECCAD=8;
+   final int JTD_FECCAD=9;
    /**
-    * Fecha Sacrificio 9
+    * Fecha Sacrificio 10
     */
-   final int JTD_FECSAC=9;
+   final int JTD_FECSAC=10;
    /**
-    * Fecha Prodcuccion 10
+    * Fecha Prodcuccion 11
     */
-   final int JTD_FECPRO=10;
+   final int JTD_FECPRO=11;
    /**
-    * Numero Linea desglose 11
+    * Numero Linea desglose 12
     */
-   int JTD_NUMLIN=11;
+   int JTD_NUMLIN=12;
    /**
-    * Numero de individuos 12
+    * Numero de individuos 13
     */
-   int JTD_CANIND=12;
+   int JTD_CANIND=13;
    
    public MantAlbComCarne(EntornoUsuario eu, Principal p) {
         super(eu, p);
    }
 
    public MantAlbComCarne(EntornoUsuario eu, Principal p, Hashtable ht) {
-        super(eu, p, ht);
+        super(eu, p, ht); 
    }
 
    public MantAlbComCarne(menu p, EntornoUsuario eu) {
@@ -131,9 +130,10 @@ public class MantAlbComCarne extends MantAlbCom
       }
      });
    }
+   @Override
   public void confGridDesglose() throws Exception
   {
-    jtDes = new CGridEditable(13)
+    jtDes = new CGridEditable(14)
     {
         @Override
         public boolean deleteLinea(int row, int col)
@@ -210,23 +210,24 @@ public class MantAlbComCarne extends MantAlbCom
     ArrayList v1 = new ArrayList();
     v1.add("N.Ind"); // 0 No. Individuo
     v1.add("Peso"); // 1
-    v1.add("Crotal"); // 2
-    v1.add("Matad"); // 3
-    v1.add("S.Desp"); //4
-    v1.add("Nacido"); // 5
-    v1.add("Cebado"); // 6
-    v1.add("Sacrif"); // 7
-    v1.add("Fec.Cad"); // 8
-    v1.add("Fec.Sac"); // 9
-    v1.add("Fec.Pro"); // 10
-    v1.add("N.Lin"); // 11
-    v1.add("C.Ind."); // 12 Cantidad de Indiv.
+    v1.add("Clas."); // 2
+    v1.add("Crotal"); // 3
+    v1.add("Matad"); // 4
+    v1.add("S.Desp"); //5
+    v1.add("Nacido"); // 6
+    v1.add("Cebado"); // 7
+    v1.add("Sacrif"); // 8
+    v1.add("Fec.Cad"); // 9
+    v1.add("Fec.Sac"); // 10
+    v1.add("Fec.Pro"); // 11
+    v1.add("N.Lin"); // 12
+    v1.add("C.Ind."); // 13 Cantidad de Indiv.
     jtDes.setCabecera(v1);
     jtDes.setMaximumSize(new Dimension(743, 168));
     jtDes.setMinimumSize(new Dimension(743, 158));
     jtDes.setPreferredSize(new Dimension(743, 168));
-    jtDes.setAnchoColumna(new int[]{50,70,120,150,150,130,130,130,80,80,80,40,40});
-    jtDes.setAlinearColumna(new int[]{2,2,0,0,0,0,0,0,1,1,1,2,2});
+    jtDes.setAnchoColumna(new int[]{50,70,30,120,150,150,130,130,130,80,80,80,40,40});
+    jtDes.setAlinearColumna(new int[]{2,2,0,0,0,0,0,0,0,1,1,1,2,2});
     botonBascula = new BotonBascula(EU,this);
     ArrayList vc1=new ArrayList();
     acp_feccadE.setText("");
@@ -255,9 +256,10 @@ public class MantAlbComCarne extends MantAlbCom
     acp_cantiE.setLeePesoBascula(botonBascula);
     acp_numlinE.setEnabled(false);
     acp_feccadE.setText("");
-
+    acp_clasiE.setMayusc(true);
     vc1.add(acp_numindE); // 0
     vc1.add(acp_cantiE); // 1
+    vc1.add(acp_clasiE); // 1
     vc1.add(acp_nucrotE); // 2
     vc1.add(mat_codiE); // 3 Matadero
     vc1.add(sde_codiE); // 4
@@ -345,7 +347,7 @@ public class MantAlbComCarne extends MantAlbCom
         if (acp_nucrotE.isNull())
         {
             mensajeErr("Es obligatorio introducir codigo crotal para este producto");
-            return 2;
+            return JTD_NUMCRO;
         }
         /*
         * @todo revisar en caso de f6. Xq falla.
@@ -401,7 +403,7 @@ public class MantAlbComCarne extends MantAlbCom
   {
 //    numIndAnt=jtDes.getValorInt(JTD_NUMIND);
 //    System.out.println("Lin. Ant: "+numIndAnt);
-    return acp_numindE.getValorInt()+""+acp_cantiE.getValorDec()+acp_nucrotE.getText()+
+    return acp_numindE.getValorInt()+""+acp_cantiE.getValorDec()+acp_clasiE.getText()+ acp_nucrotE.getText()+
         mat_codiE.getValorInt()+sde_codiE.getValorInt()+
         acp_painacE.getValorInt()+acp_engpaiE.getValorInt()+
         acp_paisacE.getValorInt()+acp_feccadE.getText()+acp_fecsacE.getText()+
@@ -409,8 +411,9 @@ public class MantAlbComCarne extends MantAlbCom
         acp_numlinE.getValorInt()+
         acp_canindE.getValorInt();
   }
+   @Override
   public void guardaUltValoresDesg(){
-   ultCeb=acp_engpaiE.getCellEditorValue().toString();
+        ultCeb=acp_engpaiE.getCellEditorValue().toString();
         ultFecCad=acp_feccadE.getText();
         ultFecSac=acp_fecsacE.getText();
         ultFecPro=acp_fecproE.getText();
@@ -429,7 +432,8 @@ public class MantAlbComCarne extends MantAlbCom
 //    debug("guardaLinDes: row "+row+" nLiAlDe: "+nLiAlDe+" nInd: "+nInd);
        
       jtDes.setValor(""+nInd,row,DESNIND);
-      guardaLinDes(nLiAlDe,nInd,jtDes.getValString(row,JTD_NUMCRO),
+      guardaLinDes(nLiAlDe,nInd,jtDes.getValString(row,JTD_CLASI),
+                 jtDes.getValString(row,JTD_NUMCRO),
                  mat_codiE.getTextoInt(jtDes.getValString(row,JTD_PAINAC,true)),
                  jtDes.getValDate(row,JTD_FECCAD),
                  mat_codiE.getTextoInt(jtDes.getValString(row,JTD_PAISAC,true)),
@@ -452,7 +456,7 @@ public class MantAlbComCarne extends MantAlbCom
     }
   }
 
-  void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
+  void guardaLinDes(int acp_numlin,int acp_numind,String acp_clasi,String acp_nucrot,
                     int acp_painac,java.util.Date acp_feccad,int acp_paisac,
                     int acp_engpai,java.util.Date acp_fecsac,java.util.Date acp_fecpro,int pro_codi,
                     int acl_nulin,int mat_codi,int sde_codi,
@@ -469,6 +473,7 @@ public class MantAlbComCarne extends MantAlbCom
     dtAdd.setDato("acp_claani", 0);
     dtAdd.setDato("acp_numind", acp_numind);
     dtAdd.setDato("pcc_nume", 0);
+     dtAdd.setDato("acp_clasi",acp_clasi);
     dtAdd.setDato("acp_nucrot",acp_nucrot);
     dtAdd.setDato("acp_painac",acp_painac);
     dtAdd.setDato("acp_feccad",acp_feccad);
@@ -541,6 +546,7 @@ public class MantAlbComCarne extends MantAlbCom
 //        throw new SQLException("NO ENCONTRADO REGISTRO EN PARTIDAS DE COMPRAS\n"+s);
     }
     if (nIndAnt==nInd && acp_cantiE.getValorDec() == dtCon1.getDouble("acp_canti") &&
+            acp_clasiE.getText().equals(dtCon1.getString("acp_clasi")) &&
             acp_nucrotE.getText().equals(dtCon1.getString("acp_nucrot")) &&
             mat_codiE.getValorInt() == dtCon1.getInt("mat_codi") &&
             sde_codiE.getValorInt() == dtCon1.getInt("sde_codi") &&
@@ -665,6 +671,7 @@ public class MantAlbComCarne extends MantAlbCom
     }
     mensajeErr("Etiqueta ... Listada");  
   }
+   @Override
   public void copiaJtValorAnt()
   {
     if (ultMat!=null)
@@ -680,6 +687,7 @@ public class MantAlbComCarne extends MantAlbCom
         jtDes.setValor("0",JTD_NUMLIN);
     }
   }
+   @Override
   public void PADAddNew0()
   {
     ultMat=null;
@@ -828,11 +836,13 @@ public class MantAlbComCarne extends MantAlbCom
             this.setEnabled(true);
         }
     }
+   @Override
     public ArrayList getDatosDesgl() throws SQLException
     {
       ArrayList v=new ArrayList();
       v.add(dtCon1.getString("acp_numind"));
       v.add(dtCon1.getString("acp_canti"));
+      v.add(dtCon1.getString("acp_clasi",true));
       v.add(dtCon1.getString("acp_nucrot"));
       s = "SELECT mat_nrgsa FROM v_matadero m "+
           " WHERE m.mat_codi = " + dtCon1.getInt("mat_codi");

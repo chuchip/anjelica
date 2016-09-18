@@ -990,6 +990,7 @@ class actionDesglProd implements ActionListener
     this.precio=precio;
     padre=papa;
   }
+  @Override
   public void actionPerformed(ActionEvent e)
   {
     if (padre.isEdit())

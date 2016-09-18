@@ -202,7 +202,7 @@ public class CLVenRep extends ventana {
                    dtAdd.commit();
                    jtLin.setValor(prTari,JTLIN_PRTAR);
                    jtLin.requestFocusSelectedLater();
-               } catch (Exception k)
+               } catch (ParseException | SQLException k)
                {
                    Error("Error al actualizar tarifa",k);
                }

@@ -55,7 +55,7 @@ public class pdpeve  extends ventanaPad   implements PAD
 {
   DatosTabla dtHist;
   private String tablaCab="pedvenc";
-  
+  ayuVenPro ayVePr = null;
   private String vistaPed="v_pedven";
   final static String TABLACAB="pedvenc";
 
@@ -271,7 +271,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2016-08-20"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2016-09-15"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -304,8 +304,9 @@ public class pdpeve  extends ventanaPad   implements PAD
             v.add(pro_codiE.getNombArt(proCodi)); // 1           
             v.add(1); // 5
             v.add(pvl_tipoE.getText(pro_codiE.getTipoUnidVenta())); // 6 Tipo Unidad
-            v.add(precio); // 7
-            v.add(precio!=0); // 8
+            v.add(0); // 7
+            v.add(0); // 8
+            v.add(precio); // Pr.Tarifa
             v.add(""); // 9
             v.add(prvCodi); // 2
             v.add(prv_codiE.getNombPrv("" + prvCodi)); //3
@@ -700,6 +701,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     avc_numeE.setColumnaAlias("avc_nume");
     Pcabe.setDefButton(Baceptar);
     jt.setDefButton(Baceptar);
+   
     boolean verDatDif=true;
     if (getLabelEstado()!=null)
     {
@@ -755,6 +757,15 @@ public class pdpeve  extends ventanaPad   implements PAD
  }
   void activarEventos()
   {
+     pvl_precioE.addKeyListener(new KeyAdapter()
+    {
+      @Override
+      public void keyPressed(KeyEvent e)
+      {
+        if (e.getKeyCode() == KeyEvent.VK_F3)
+          consPrecios();
+      }
+    });
     BirGrid.addFocusListener(new FocusAdapter()
     {
       @Override
@@ -902,6 +913,89 @@ public class pdpeve  extends ventanaPad   implements PAD
 
       }
     });
+  }
+  void consPrecios()
+  {
+    if (ayVePr == null)
+    {
+      ayVePr = new ayuVenPro(true)
+      {
+        @Override
+        public void matar()
+        {
+          ej_consPro();
+        }
+      };
+      ayVePr.setIconifiable(false);
+      this.getLayeredPane().add(ayVePr,1);
+//      vl.add(ayVePr);
+      ayVePr.setLocation(25, 25);
+    }
+    try
+    {
+
+      new miThread("")
+      {
+        @Override
+        public void run()
+        {
+          consultaPrecios();
+        }
+      };
+
+    }
+    catch (Exception ex)
+    {
+      fatalError("Error al Cargar datos de productos", ex);
+    }
+  }
+  
+  void ej_consPro()
+  {
+    if (ayVePr.precio != 0 && pvl_precioE.isEditable())
+    {
+      jt.setValor("" + ayVePr.precio, JT_PRECIO);
+      pvl_precioE.setValorDec(ayVePr.precio);
+    }
+    ayVePr.setVisible(false);
+    this.setEnabled(true);
+    this.toFront();
+    setFoco(null);
+    try
+    {
+      this.setSelected(true);
+    }
+    catch (Exception k)
+    {}
+    SwingUtilities.invokeLater(new Thread()
+    {
+      @Override
+      public void run()
+      {
+        jt.requestFocusSelected();
+      }
+    });
+  }
+  void consultaPrecios()
+  {
+    try
+    {
+      this.setFoco(ayVePr);
+      this.setEnabled(false);
+      Thread.currentThread().setPriority(Thread.MAX_PRIORITY - 1);
+      ayVePr.setVisible(true);
+      String lastMensaje=statusBar.getText();
+      mensaje("Buscando datos.. de Ultimas ventas");
+      ayVePr.cargaDatos(ct, cli_codiE.getText(), cli_codiE.getTextNomb(),
+                        jt.getValString(JT_PROD), jt.getValString(JT_NOMBPRO), EU);
+      mensaje(lastMensaje);
+      mensajeErr("Datos de Ultimas ventas... encontrados");
+    }
+    catch (Exception ex)
+    {
+      fatalError("Error al Cargar datos de productos", ex);
+    }
+
   }
     private void verAlbaranesCliente(final int cliCodi) {
         if (jf == null )

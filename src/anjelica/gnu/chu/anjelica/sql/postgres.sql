@@ -1175,7 +1175,7 @@ create table anjelica.v_albcompar
    gradograsa int,		-- NO USADO
    categoria char(1),		-- NO USADO
    pro_codi int,		-- Codigo de Producto
-   tipo_c1 varchar(10),		-- NO USADO
+   acp_clasi varchar(10),   -- Clasificación
    tipo_c2 varchar(10),		-- NO USADO
    tipo_c3 varchar(10),		-- NO USADO
    tipo_c4 varchar(10),		-- NO USADO
