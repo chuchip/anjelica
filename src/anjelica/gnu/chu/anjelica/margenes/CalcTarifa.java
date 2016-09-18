@@ -164,6 +164,7 @@ public class CalcTarifa extends ventanaPad implements PAD
                      if (jt.isVacio())
                          return;
                      jt.salirGrid();
+                     feulin=null;
                      calculaCosto(jt.getSelectedRow());
                      jt.requestFocusSelectedLater();
                      //cta_cosasiE.setValorDec(Formatear.redondea(impPed/kilos,2));
