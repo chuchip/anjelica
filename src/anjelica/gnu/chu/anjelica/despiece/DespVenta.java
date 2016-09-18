@@ -248,14 +248,11 @@ public class DespVenta extends ventana {
         BF2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                   irGrid();
-
             }
         });
         BcopLin.addActionListener(new ActionListener()
         {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (jt.isEnabled() == false || jt.isVacio() || jt.getSelectedRow() < 1)
@@ -805,6 +802,18 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
     void llenaGrid() throws SQLException
     {
 
+        if (tid_codiE.getValorInt()==MantTipDesp.AUTO_DESPIECE)
+        {
+            ArrayList v=new ArrayList();
+            v.add(pro_codiE.getValorInt());
+            v.add(pro_codiE.getTextNomb());
+            v.add("0"); // Kg
+            v.add("1"); // Unid
+            v.add("0"); // N Ind.
+            v.add("0"); // N. Orden
+            jt.addLinea(v);
+            return;
+        }
         if (tid_codiE.getValorInt()==MantTipDesp.LIBRE_DESPIECE ||  
                 ! cargaPSC.isSelected())
           return;
@@ -822,8 +831,8 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
             ArrayList v=new ArrayList();
             v.add(dtCon1.getString("pro_codi"));
             v.add(dtCon1.getString("pro_nomb"));
-            v.add("0"); // Unid
-            v.add("1"); // Kg
+            v.add("0"); // Kg
+            v.add("1"); // Unid
             v.add("0"); // N Ind.
             v.add("0"); // N. Orden
             jt.addLinea(v);
