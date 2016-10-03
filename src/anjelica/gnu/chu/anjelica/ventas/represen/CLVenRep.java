@@ -144,7 +144,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2016-09-07" + ARG_ZONAREP);
+        this.setVersion("2016-09-20" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -492,7 +492,7 @@ public class CLVenRep extends ventana {
                         + " and l.avl_profer < 0"
                         + " )";
         }
-        s += " ORDER BY  avc_fecalb,cli_codi ";
+        s += " ORDER BY  avc_fecalb,avc_ano,avc_serie,avc_nume ";
         return s;
     }
     
@@ -561,7 +561,7 @@ public class CLVenRep extends ventana {
                 return;
             }
             
-            s = "  SELECT sum(avl_canti*(avl_prbase-avl_profer)) as gananc   "
+            s = "  SELECT sum(avl_canti*(avl_prven-avl_profer)) as gananc   "
                  + "  FROM v_albavel  "
                  + " WHERE emp_codi = " + emp_codiE.getValorInt()
                  + " and avc_ano = ?"

@@ -353,14 +353,15 @@ public class Comvalm extends ventana
                       if (cm.inTransation())
                       {
                           msgBox("Mantenimiento Despieces ocupado. No se puede realizar la busqueda");
-                          return;
                       }
-
-                      cm.PADQuery();
-                      cm.setEjeNume(doc[0]);
-                      cm.setDeoCodi(doc[2]);
-                      cm.ej_query();
-                      jf.gestor.ir(cm);
+                      else
+                      {
+                        cm.PADQuery();
+                        cm.setEjeNume(doc[0]);
+                        cm.setDeoCodi(doc[2]);
+                        cm.ej_query();
+                        jf.gestor.ir(cm);
+                      }
                   }
                   if (jt.getValString(JT_TIPO).startsWith("V"))
                   {
@@ -370,15 +371,17 @@ public class Comvalm extends ventana
                       if (cm.inTransation())
                       {
                           msgBox("Mantenimiento Albaranes de Ventas ocupado. No se puede realizar la busqueda");
-                          return;
                       }
-                      cm.PADQuery();
-                      cm.setEjercAlbaran(Integer.parseInt(doc[0]));
-                      cm.setSerieAlbaran(doc[1]);
-                      cm.setNumeroAlbaran(doc[2]);
+                      else
+                      {
+                        cm.PADQuery();
+                        cm.setEjercAlbaran(Integer.parseInt(doc[0]));
+                        cm.setSerieAlbaran(doc[1]);
+                        cm.setNumeroAlbaran(doc[2]);
 
-                      cm.ej_query();
-                      jf.gestor.ir(cm);
+                        cm.ej_query();
+                        jf.gestor.ir(cm);
+                      }
                   }
 
                   if (jt.getValString(JT_TIPO).startsWith("C"))
@@ -399,13 +402,15 @@ public class Comvalm extends ventana
                           if (cm.inTransation())
                           {
                               msgBox("Mantenimiento Albaranes de Compras ocupado. No se puede realizar la busqueda");
-                              return;
                           }
-                          cm.PADQuery();
-                          cm.setEjeNume(Integer.parseInt(doc[0]));
-                          cm.setAccCodi(doc[2]);
-                          cm.ej_query();
-                          jf.gestor.ir(cm);
+                          else
+                          {
+                            cm.PADQuery();
+                            cm.setEjeNume(Integer.parseInt(doc[0]));
+                            cm.setAccCodi(doc[2]);
+                            cm.ej_query();
+                            jf.gestor.ir(cm);
+                          }
                       } catch (SQLException ex)
                       {
                           Error("Error al ir al programa", ex);
@@ -419,13 +424,15 @@ public class Comvalm extends ventana
                       if (cm.inTransation())
                       {
                           msgBox("Mantenimiento Regularizaciones Almacen ocupado. No se puede realizar la busqueda");
-                          return;
                       }
-                      cm.PADQuery();
-                      cm.setNumeroRegula(Integer.parseInt(doc[2]));
+                      else
+                      {
+                        cm.PADQuery();
+                        cm.setNumeroRegula(Integer.parseInt(doc[2]));
 
-                      cm.ej_query();
-                      jf.gestor.ir(cm);
+                        cm.ej_query();
+                        jf.gestor.ir(cm);
+                      }
 
                   }
                   resetMsgEspere();

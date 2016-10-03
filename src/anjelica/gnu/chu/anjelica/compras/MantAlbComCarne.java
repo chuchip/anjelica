@@ -613,7 +613,7 @@ public class MantAlbComCarne extends MantAlbCom
     nombArt=pro_codiE.getNombArt(proCodi,emp_codiE.getValorInt());
     int sdeCodi=0,matCodi=0;
     try {
-      matCodi=Integer.parseInt(mat_codiE.getTexto(jtDes.getValString(3)));
+      matCodi=Integer.parseInt(mat_codiE.getTexto(jtDes.getValString(JTD_MATCODI)));
     } catch (NumberFormatException k) {}
 
     s = "SELECT mat_nrgsa,pai_codi FROM v_matadero m WHERE m.mat_codi = " + matCodi;
@@ -627,7 +627,7 @@ public class MantAlbComCarne extends MantAlbCom
     else
       sacrificadoE=matCodi+" NO ENCONTRADO";
     try {
-      sdeCodi=Integer.parseInt(sde_codiE.getTexto(jtDes.getValString(nLin,4)));
+      sdeCodi=Integer.parseInt(sde_codiE.getTexto(jtDes.getValString(nLin,JTD_SDECODI)));
     } catch (NumberFormatException k) {}
 
     s = "SELECT sde_nrgsa,pai_codi FROM v_saladesp m " +

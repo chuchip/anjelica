@@ -1,4 +1,7 @@
+-- Clasificicacion Pieza.
 alter table v_albcompar rename column  tipo_c1 to acp_clasi;
+alter table hisalpaco add column  acp_clasi varchar(10):
+
 alter table tarifa alter pro_codart type varchar(15);
 alter table v_articulo alter pro_codart type varchar(15);
 

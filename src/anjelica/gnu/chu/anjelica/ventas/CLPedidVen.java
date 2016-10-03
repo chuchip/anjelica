@@ -152,7 +152,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2016-09-05");
+        this.setVersion("2016-09-28");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -574,16 +574,16 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      if (!cli_codiE.isNull())
          swCliente=true;
      s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_poble,"
-         + " cl.rut_codi, al.alm_nomb FROM pedvenc as c"
+         + " cl.rut_codi, al.rut_nomb FROM pedvenc as c"
          + " left join v_albavec as av on c.avc_ano = av.avc_ano "
          + " and c.avc_serie= av.avc_serie and c.avc_nume =  av.avc_nume "
-         + ",clientes as cl,v_almacen as al " +       
+         + ",clientes as cl,v_rutas as al " +       
         " WHERE pvc_fecent between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +
         " and  to_date('" + pvc_fecfinE.getText()  + "','dd-MM-yyyy')" +
         " and c.alm_codi >= " + alm_codiE.getValorInt() +
         " and c.pvc_confir = 'S' "+
         " and cl.cli_codi = c.cli_codi " +
-        " and c.alm_codi = al.alm_codi "+     
+        " and cl.rut_codi = al.rut_codi "+     
         (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = "+sbe_codiE.getValorInt())+
         (zon_codiE.isNull() || swCliente?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
         (rep_codiE.isNull() || swCliente?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'")+
@@ -626,7 +626,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     v.add("Conf"); // 7
     v.add("Cerr");// 8
     v.add("Ped.Cliente"); // 9
-    v.add("Almacen");// 10
+    v.add("Ruta");// 10
     v.add("Ej.Alb");//11
     v.add("S.Alb"); //12
     v.add("Num.Alb"); //13
@@ -660,12 +660,13 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      jtLinPed.setPreferredSize(new Dimension(548, 127));
      jtLinPed.setPuntoDeScroll(50);
      jtLinPed.setAnchoColumna(new int[]
-                        {20,50, 160, 50, 140, 55, 50, 50, 30, 150, 30});
+                        {20,50, 160, 50, 100, 55, 50, 50, 30, 200, 30});
      jtLinPed.setAlinearColumna(new int[]
                           {1,2, 0, 2, 0, 1, 2, 2, 1, 0, 2});
      
      jtLinPed.setFormatoColumna(7, "-,--9.99");
      jtLinPed.setFormatoColumna(8, "BSN");
+     jtLinPed.setAjustarGrid(true);
     }
     public void setCliCodiText(String cliCodi)
     {
@@ -745,7 +746,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         v.add(dtCon1.getString("pvc_confir")); // 6
         v.add(dtCon1.getInt("pvc_cerra")!=0); // 7
         v.add(dtCon1.getString("pvc_nupecl")); // 8
-        v.add(dtCon1.getString("alm_nomb")); // 9
+        v.add(dtCon1.getString("rut_nomb")); // 9
         v.add(dtCon1.getString("avc_ano")); //10
         v.add(dtCon1.getString("avc_serie")); // 11
         v.add(dtCon1.getString("avc_nume")); //12

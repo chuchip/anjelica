@@ -1368,6 +1368,7 @@ public class pdprove extends ventanaPad implements PAD
    return false;
  }
 
+  @Override
   public void ej_addnew1()
   {
     jtSde.salirGrid();

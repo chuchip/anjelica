@@ -34,7 +34,16 @@ import java.sql.Types;
 
 public class AvcPanel extends CPanel {
     EntornoUsuario EU;
-   
+    private boolean isFacturado=false;
+    
+    public boolean isFacturado()
+    {
+        return isFacturado;
+    }
+    public void setFacturado(boolean isFacturado)
+    {
+        this.isFacturado=isFacturado;
+    }
     
     public CTextField getAvc_serieE() {
         return avc_serieE;

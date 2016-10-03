@@ -51,6 +51,7 @@ import java.util.logging.Logger;
 
 public class CalcTarifa extends ventanaPad implements PAD
 {
+    double kilStock,impStock;
     boolean swCarga=false;
     String s;
     String feulin;
@@ -60,9 +61,16 @@ public class CalcTarifa extends ventanaPad implements PAD
     double kilProd,kilProd1;
     double kgPed,impPed;
     double impProd,impProd1;
-    private final int JT_COSANT=8;
+    private final int JT_KGEXI=2;
+    private final int JT_COSSTK=3;
+    private final int JT_COSEXI=8;
     private final int JT_COSTO=9;
-    private final int JT_COSASI=10;
+    private final int JT_KGCOM=4;
+    private final int JT_COSCOM=5;
+    private final int JT_KGPRO=6;
+    private final int JT_COSPRO=7;
+
+    //private final int JT_COSASI=10;
     
     public CalcTarifa(EntornoUsuario eu, Principal p)
   {
@@ -167,6 +175,7 @@ public class CalcTarifa extends ventanaPad implements PAD
                      feulin=null;
                      calculaCosto(jt.getSelectedRow());
                      jt.requestFocusSelectedLater();
+                     verArticulos(jt.getValString(jt.getSelectedRowDisab(),0));
                      //cta_cosasiE.setValorDec(Formatear.redondea(impPed/kilos,2));
                  } catch (SQLException | ParseException ex)
                  {
@@ -182,10 +191,11 @@ public class CalcTarifa extends ventanaPad implements PAD
                      if (jt.isVacio())
                          return;
                      jt.salirGrid();
-                     double imporVal=(jt.getValorDec(2)* (jt.getValorDec(8)==0?jt.getValorDec(3):jt.getValorDec(8)))+
-                         (jt.getValorDec(4)*jt.getValorDec(5))+
-                         (jt.getValorDec(6)*jt.getValorDec(7));
-                     double kilosVal=jt.getValorDec(2)+jt.getValorDec(4)+jt.getValorDec(6);
+                     double imporVal=(jt.getValorDec(JT_KGEXI)*
+                         (jt.getValorDec(JT_COSEXI)==0?jt.getValorDec(JT_COSSTK):jt.getValorDec(JT_COSEXI)))+
+                         (jt.getValorDec(JT_KGCOM)*jt.getValorDec(JT_COSCOM))+
+                         (jt.getValorDec(JT_KGPRO)*jt.getValorDec(JT_COSPRO));
+                     double kilosVal=jt.getValorDec(JT_KGEXI)+jt.getValorDec(JT_KGCOM)+jt.getValorDec(JT_KGPRO);
                      jt.setValor(kilosVal==0?0:Formatear.redondea(imporVal / kilosVal, 2), JT_COSTO);
                      cta_costoE.setValorDec(kilosVal==0?0:Formatear.redondea(imporVal / kilosVal, 2));
                     
@@ -237,6 +247,7 @@ public class CalcTarifa extends ventanaPad implements PAD
            }
          });
     }
+    
     void ponFechas() throws ParseException
     {
         GregorianCalendar gc = new GregorianCalendar();
@@ -248,12 +259,13 @@ public class CalcTarifa extends ventanaPad implements PAD
         gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt()+2);
         gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.SUNDAY);
         tar_fecfinE.setDate(new java.util.Date(gc.getTimeInMillis()));
-        fecStockE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4));
+        fecStockE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-5));
         fecIniProdE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-8));
-        fecFinProdE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-5) );
+        fecFinProdE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4) );
         fecIniPedE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4) );
         fecFinPedE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",0) );
     }
+    
     boolean llenaGrid()
     {
         try
@@ -292,7 +304,7 @@ public class CalcTarifa extends ventanaPad implements PAD
                     vc.add(0); // 5
                     vc.add(0); // 6
                     vc.add(0); // 7 
-                    vc.add(dtCon1.getDouble("cta_costo",true)); // 8
+                    vc.add(0); // 8
                     vc.add(0);
                     vc.add(0);
                     jt.addLinea(vc);
@@ -322,8 +334,8 @@ public class CalcTarifa extends ventanaPad implements PAD
             feulin=ActualStkPart.getFechaUltInv(EU.em_cod,EU.ejercicio,tar_fecfinE.getDate(),dtStat);
             mvtosAlm.iniciarMvtos(feulin,fecStockE.getText(),dtStat);
         }
-        double kilStock;
-        double impStock, impStockVal,kilosVal;
+        double impStockVal,kilosVal;
+        double kilosStock=0,imporStock=0;
         double kilosProd=0,imporProd=0;
         double kilosPendRec=0,imporPendRec=0;
         kilStock = 0;
@@ -334,43 +346,29 @@ public class CalcTarifa extends ventanaPad implements PAD
         impProd = 0;
         kilPendRec = 0;
         ImpPendRec = 0;
-
-        double kilos, importe;
+        final int SBEPROD=14; // Seccion de Produccion
+       
         s = "select t.pro_codi,pro_cosinc,sbe_codi from prodtarifa as t,v_articulo as ar "
             + " where pve_codi ='" + jt.getValString(nLinea, 0) + "'"
             + " and t.pro_codi= ar.pro_codi";
         if (dtProd.select(s))
         {
-
             do
-            {
-                
-                if (mvtosAlm.calculaMvtos(dtProd.getInt("pro_codi"), dtCon1, dtStat, null, null))
-                {
-                    kilos = mvtosAlm.getKilosStock();
-                    importe = mvtosAlm.getKilosStock()
-                        * (mvtosAlm.getPrecioStock() + dtProd.getDouble("pro_cosinc"));
-                    kilosVal+=kilos;
-                    impStockVal += jt.getValorDec(nLinea, JT_COSANT)==0?importe:
-                        (mvtosAlm.getKilosStock()*  jt.getValorDec(nLinea, JT_COSANT));
-                    impStock += importe;
-                    kilStock += kilos;
-                }
-                getValorDespiece(dtProd.getInt("pro_codi"),
-                        dtCon1, fecIniProdE.getDate(), // Lunes Ant.
-                        fecFinProdE.getDate());
+            {  
+                calculaProd(dtProd.getInt("pro_codi"),null,dtProd.getDouble("pro_cosinc"));
+                kilosStock+=kilStock;
+                imporStock+=impStock;
+                kilosVal +=kilStock;
+                impStockVal += jt.getValorDec(nLinea, JT_COSEXI)==0 || dtProd.getInt("sbe_codi")==SBEPROD ?impStock:
+                        (mvtosAlm.getKilosStock() *  jt.getValorDec(nLinea, JT_COSEXI));
+                kilosVal+=kilProd;
+                impStockVal+=impProd+(dtProd.getDouble("pro_cosinc")*kilProd);
                 kilosProd+=kilProd;
                 imporProd+=impProd+(dtProd.getDouble("pro_cosinc")*kilProd);
-                kilosVal+=kilProd;
-                impStockVal+=impProd;
-                getRecepPendiente(dtProd.getInt("pro_codi"),
-                    dtCon1,fecIniPedE.getDate(),// Sabado
-                    fecFinPedE.getDate()); // Jueves
                 kilosPendRec+=kilPendRec;
                 imporPendRec+=ImpPendRec;
                 kilosVal+=kilPendRec;
                 impStockVal+=ImpPendRec;
-
 //                if (dtProd.getInt("sbe_codi") == 14) 
 //                { // Producto de Producion propia                  
 //                   kilosVal+=kilProd;
@@ -382,8 +380,8 @@ public class CalcTarifa extends ventanaPad implements PAD
 //                   impStockVal+= ImpPendRec;
 //                }                               
             } while (dtProd.next());
-            jt.setValor(kilStock, nLinea, 2);            
-            jt.setValor(kilStock==0?0:Formatear.redondea(impStock / kilStock, 2), nLinea, 3);
+            jt.setValor(kilosStock, nLinea, 2);            
+            jt.setValor(kilosStock==0?0:Formatear.redondea(imporStock / kilosStock, 2), nLinea, 3);
             jt.setValor(kilosPendRec, nLinea, 4);
             jt.setValor(kilosPendRec==0?0:Formatear.redondea(imporPendRec / kilosPendRec, 2), nLinea, 5);
             jt.setValor(kilosProd, nLinea, 6);
@@ -401,6 +399,40 @@ public class CalcTarifa extends ventanaPad implements PAD
             }
         }
     }
+    /**
+     * Caclula costos para un producto
+     * @param proCodi
+     * @param v ArrayList a llenar
+     * @throws SQLException
+     * @throws ParseException 
+     */
+    void calculaProd(int proCodi,ArrayList v,double costoInc) throws SQLException,ParseException
+    {
+        kilStock=0;
+        impStock=0;
+        if (mvtosAlm.calculaMvtos(proCodi, dtCon1, dtStat, null, null))
+        {
+            kilStock = mvtosAlm.getKilosStock();
+            impStock = mvtosAlm.getKilosStock()
+                * (mvtosAlm.getPrecioStock() + costoInc);
+        }
+        getValorDespiece(dtProd.getInt("pro_codi"),
+            dtCon1, fecIniProdE.getDate(), // Lunes Ant.
+            fecFinProdE.getDate());
+        impProd+=(costoInc*kilProd);
+        getRecepPendiente(dtProd.getInt("pro_codi"),
+            dtCon1, fecIniPedE.getDate(),// Sabado
+            fecFinPedE.getDate()); // Jueves
+        if (v==null)
+            return;
+        v.add(kilStock);              
+        v.add(kilStock==0?0:Formatear.redondea(impStock/kilStock,2));
+        v.add(kilProd);
+        v.add(kilProd==0?0:Formatear.redondea(impProd/kilProd,2));
+        v.add(kilPendRec);
+        v.add(kilPendRec==0?0:Formatear.redondea(ImpPendRec/kilPendRec,2));
+        
+    }
     boolean getValorDespiece(int proCodi,DatosTabla dt,java.util.Date fecini,java.util.Date fecfin) throws SQLException
     {
         kilProd=0;
@@ -414,8 +446,6 @@ public class CalcTarifa extends ventanaPad implements PAD
             return false;
         kilProd=dt.getDouble("kilos",true);
         impProd=dt.getDouble("importe",true);
-//        kilProd+=kilProd1;
-//        impProd+=impProd1;
         return true;
     }
     
@@ -824,10 +854,12 @@ public class CalcTarifa extends ventanaPad implements PAD
             if (feulin == null)
             {
                 feulin=ActualStkPart.getFechaUltInv(EU.em_cod,EU.ejercicio,tar_fecfinE.getDate(),dtStat);
-                mvtosAlm.iniciarMvtos(feulin,fecStockE.getText(),dtStat);
+                if (feulin==null)
+                    return;
+                mvtosAlm.iniciarMvtos(feulin,fecStockE.getText(),dtStat);                
             }
 
-            String s1="select pt.pro_codi,a.pro_nomb from prodtarifa as pt, v_articulo as a where pt.pro_codi = a.pro_codi "+
+            String s1="select pt.pro_codi,a.pro_nomb,pro_cosinc from prodtarifa as pt, v_articulo as a where pt.pro_codi = a.pro_codi "+
                 " and pve_codi = '"+articulo+"'";
             
             jtArt.removeAllDatos();
@@ -850,28 +882,7 @@ public class CalcTarifa extends ventanaPad implements PAD
                 }
                 else
                 {
-                    if (mvtosAlm.calculaMvtos(dtProd.getInt("pro_codi"), dtCon1, dtStat, null, null))
-                    {
-                      v.add(mvtosAlm.getKilosStock());
-                      v.add(mvtosAlm.getPrecioStock());
-                    }
-                    else
-                    {
-                        v.add(0);
-                        v.add(0);
-                    }
-                    getRecepPendiente(dtProd.getInt("pro_codi"),
-                        dtCon1,fecIniPedE.getDate(),// Sabado
-                        fecFinPedE.getDate()); // Jueves
-                    v.add(kilPendRec);
-                    v.add(kilPendRec==0?0:ImpPendRec/kilPendRec);
-                    getValorDespiece(dtProd.getInt("pro_codi"),
-                            dtCon1, fecIniProdE.getDate(), // Lunes Ant.
-                            fecFinProdE.getDate());
-                    v.add(kilProd);
-                    v.add(kilProd==0?0:impProd/kilProd);
-
-                 
+                    calculaProd(dtProd.getInt("pro_codi"), v,dtProd.getDouble("pro_cosinc"));
                 }
                 jtArt.addLinea(v);
             } while (dtProd.next());

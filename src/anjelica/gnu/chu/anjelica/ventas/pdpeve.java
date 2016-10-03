@@ -13,7 +13,6 @@ import gnu.chu.interfaces.*;
 import java.awt.event.*;
 import javax.swing.*;
 import gnu.chu.anjelica.almacen.pstockAct;
-import gnu.chu.anjelica.compras.pdtaripor;
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.MantTarifa;
@@ -1087,8 +1086,9 @@ public class pdpeve  extends ventanaPad   implements PAD
   @Override
   public void ej_query1()
   {
+    
     try
-   {
+    {
      Component c = Pcabe.getErrorConf();
      if (c != null)
      {
@@ -1096,6 +1096,7 @@ public class pdpeve  extends ventanaPad   implements PAD
        c.requestFocus();
        return;
      }
+     nav.pulsado=navegador.NINGUNO;
      ArrayList v = new ArrayList();
 
      v.add(cli_codiE.getStrQuery());
@@ -1298,6 +1299,7 @@ public class pdpeve  extends ventanaPad   implements PAD
                   pvc_numeE.getValorInt());
      mensaje("");
      mensajeErr("Pedido ... MODIFICADO");
+     nav.pulsado=navegador.NINGUNO;
    }
    catch (SQLException k)
    {
@@ -1424,7 +1426,11 @@ public class pdpeve  extends ventanaPad   implements PAD
     }
     return true;
   }
-  @Override
+
+    /**
+     *
+     */
+    @Override
   public void ej_addnew1()
   {
     try {
@@ -1987,24 +1993,43 @@ public class pdpeve  extends ventanaPad   implements PAD
        boolean releer = false;
        if (cli_codiE.getLikeCliente().getInt("cli_gener")==0 && nav.getPulsado()==navegador.ADDNEW)
        {
-        s="select p.pvc_nume,p.avc_nume,avc_impres,pvc_fecent from pedvenc as p left join v_albavec as a on p.avc_ano=a.avc_ano "+
+        s="select p.eje_nume,p.pvc_nume,p.avc_ano,p.avc_serie,p.avc_nume,avc_impres,pvc_fecent from pedvenc as p left join v_albavec as a on p.avc_ano=a.avc_ano "+
             " and p.avc_nume = a.avc_nume and p.avc_serie = a.avc_serie "
             + " where p.cli_codi = "+cli_codiE.getValorInt()+
             " and pvc_fecent >= '"+ Formatear.getFechaDB(Formatear.sumaDiasDate(pvc_fecentE.getDate(),-7))+"'"+
-            " and pvc_confir!='C'";
-        if (dtStat.select(s))
-        {
-            if (dtStat.getInt("avc_nume") == 0 )
-              msgBox("Cliente ya tiene pedido "+dtStat.getInt("pvc_nume")+
-                  " en fecha: "+dtStat.getFecha("pvc_fecent","dd-MM-yy") +" sin preparar");
-            else
-            {
-               if ( (dtStat.getInt("avc_impres",true) & 1) == 0)
-                 msgBox("Cliente con albaran " + dtStat.getInt("avc_nume")+
-                      " en fecha: "+dtStat.getFecha("pvc_fecent","dd-MM-yy")+
-                     " preparado sin servir");
-            }
-        }
+            " and pvc_confir!='C'" ;
+           if (dtStat.select(s))
+           {
+               int res = -1;
+               if (dtStat.getInt("avc_nume") == 0)
+                   res = mensajes.mensajePreguntar("Cliente ya tiene pedido " + dtStat.getInt("pvc_nume")
+                       + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy") + " sin preparar. ¿ Editar pedido ?");
+               else
+               {
+                   do
+                   {
+                       if ((dtStat.getInt("avc_impres", true) & 1) == 0 && dtStat.getString("avc_serie").equals("A"))
+                       {
+                           res = mensajes.mensajePreguntar("Cliente con albaran " + dtStat.getInt("avc_nume")
+                               + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy")
+                               + " preparado sin servir. ¿ Editar Pedido ?");
+                           break;
+                       }                       
+                   } while (dtStat.next());                   
+               }
+               if (res == mensajes.YES)
+               {
+                   if (dtCons.select("select * from pedvenc where eje_nume = "+dtStat.getInt("eje_nume")
+                       + " and pvc_nume = " + dtStat.getInt("pvc_nume")))
+                   {
+                       nav.pulsado = navegador.NINGUNO;
+                       activaTodo();
+                       verDatos();
+                       nav.pulsado = navegador.EDIT;
+                       PADEdit();
+                   }
+               }
+           }
        }
            
        if (cli_codiE.getTarifa() != pstock.getTarifa())

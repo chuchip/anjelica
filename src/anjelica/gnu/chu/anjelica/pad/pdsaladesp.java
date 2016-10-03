@@ -156,7 +156,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(515, 432));
-    this.setVersion("2005-11-16"+(modConsulta?"SOLO LECTURA":""));
+    this.setVersion("2016-10-03"+(modConsulta?"SOLO LECTURA":""));
     strSql = "SELECT * FROM v_saladesp "+
         " ORDER BY sde_codi ";
 
@@ -545,14 +545,23 @@ public class pdsaladesp extends ventanaPad   implements PAD
   {
     try
     {
-      if (sde_codiE.getValorInt() == 0)
-      {
-        s = "SELECT max(sde_codi) as sde_codi  from v_saladesp";
-        dtStat.select(s);
-        sde_codiE.setValorInt(dtStat.getInt("sde_codi", true) + 1);
-        mensajeErr("Introduzca Codigo de Sala Desp. (PUESTO EL ULTIMO + 1)");
-        sde_codiE.requestFocus();
-        return false;
+      if (sde_codiE.getValorInt() == 0 && nav.pulsado==navegador.ADDNEW)
+      {     
+          int antNumero = 0;
+          String s = "SELECT sde_codi FROM v_saladesp order by sde_codi";
+          if (dtStat.select(s))
+          {
+              do
+              {
+                  if (antNumero > 0 && dtStat.getInt("sde_codi") > antNumero + 1)
+                      break;
+                  antNumero = dtStat.getInt("sde_codi");
+              } while (dtStat.next());
+          }
+          sde_codiE.setValorInt(antNumero + 1);
+          mensajeErr("Introduzca Codigo de Sala Desp. (PUESTO EL PRIMERO LIBRE)");
+          sde_codiE.requestFocus();
+          return false;
       }
 
       if (sde_nombE.isNull())

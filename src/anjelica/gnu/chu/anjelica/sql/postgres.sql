@@ -177,7 +177,7 @@ pro_stock float default 0 not null,	-- Kilos actuales (Stock)
 pro_kgmin float default 0 not null,	-- Kg. Minimos en Stock
 pro_kgmax float default 0 not null,	-- Kg. Maximos en Stock
 pro_stkuni float default 0 not null,	-- Unidades Actuales (Stock)
-<v int default -1 not null, -- Activo? 0 No.
+pro_activ int default -1 not null, -- Activo? 0 No.
 pro_cadcong int default 23 not null, -- Meses de caducidad congelado
 cam_codi  char(2) not null,  -- Camara (SE BUSCA EN discriminador dis_tipo='AC')
 pro_envvac int default 0 not null, -- Envasado Vacio: 0 NO
@@ -436,7 +436,7 @@ avc_cofra int,
 avc_fecalb date,	 -- Fecha de Albaran
 usu_nomb varchar(20),
 avc_tipfac varchar(1),
-cli_ruta varchar(2),		-- Ruta de Cliente
+cli_ruta varchar(2) not null,		-- Ruta de Cliente
 cli_codfa int,		-- Cliente de la Factura
 fvc_ano int,		-- Año de La Factua
 fvc_serie char(1),      -- Serie de Fra.
@@ -802,7 +802,7 @@ CREATE OR REPLACE VIEW anjelica.v_albventa_detalle AS
     c.avc_valora, c.fvc_serie, c.avc_depos, l.avl_numlin, l.pro_codi, l.avl_numpal,avl_numcaj,
     l.pro_nomb, l.avl_canti, l.avl_prven, l.avl_prbase, l.tar_preci, l.avl_unid,
     l.avl_canbru, l.avl_fecalt, l.fvl_numlin, l.avl_fecrli, c.alm_codori, 
-    c.alm_coddes, p.avp_numlin, p.avp_ejelot, p.avp_emplot, p.avp_serlot, 
+    c.alm_coddes, p.pro_codi as avp_procod, p.avp_numlin, p.avp_ejelot, p.avp_emplot, p.avp_serlot, 
     p.avp_numpar, p.avp_numind, p.avp_numuni, p.avp_canti,p.avp_canbru,p.avp_canori,
    FROM anjelica.v_albavel l, anjelica.v_albavec c, anjelica.v_albvenpar p
   WHERE c.emp_codi = l.emp_codi AND c.avc_ano = l.avc_ano 
@@ -1214,7 +1214,7 @@ constraint ix_albcompar primary key(acc_ano,emp_codi,acc_serie,acc_nume,acl_nuli
  create or replace view anjelica.v_compras as 
 select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,c.sbe_codi,
 l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi,
-i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_fecpro,i.acp_nucrot,i.acp_painac,
+i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_fecpro,i.acp_nucrot,i.acp_clasi,i.acp_painac,
 i.acp_paisac,i.acp_engpai,i.mat_codi
 from anjelica.v_albacoc as c,anjelica.v_albacol as l, anjelica.v_albcompar as i
 where c.acc_ano=l.acc_ano
@@ -4358,3 +4358,10 @@ where c.tid_codi=t.tid_codi and
 deo_tiempo::date='20160817'
 group by c.usu_nomb,avc_nume,avc_serie,cli_codi,cli_nomb
 order by 2,7
+--
+-- Sacar Lomos 'b'
+---
+select acc_nume,c.prv_codi,prv_nomb,pro_codi,pro_nomart, acl_comen,sum(acl_numcaj) as unidades, sum(acl_canti) as kilos from v_compras as c,v_proveedo as pv where acc_ano=2016 and acc_fecrec>='20160917' and acp_clasi != 'A' AND ACP_CLASI!=''
+and pv.prv_codi=c.prv_codi
+group by acc_nume,pro_codi,c.prv_codi,acl_comen,pro_nomart,prv_nomb
+  order by acc_nume,pro_codi

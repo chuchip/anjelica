@@ -530,8 +530,8 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(6)"/>
-                    <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="Vector v=new Vector();&#xa;        v.addElement(&quot;Albaran&quot;); // 0&#xa;        v.addElement(&quot;Fec.Alb&quot;); // 1&#xa;        v.addElement(&quot;Cliente&quot;); // 2&#xa;        v.addElement(&quot;Nombre Cliente&quot;); // 3&#xa;        v.addElement(&quot;Importe&quot;); // 4&#xa;        v.addElement(&quot;Pedido&quot;); // 5&#xa;        jtSelAlb.setCabecera(v);&#xa;        jtSelAlb.setAnchoColumna(new int[]{130,90, 60,150,80,100});&#xa;        jtSelAlb.setFormatoColumna(4,&quot;----,--9.99&quot;);&#xa;        jtSelAlb.setAlinearColumna(new int[]{0,1,2,0,2,0});"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(7)"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="Vector v=new Vector();&#xa;        v.addElement(&quot;Albaran&quot;); // 0&#xa;        v.addElement(&quot;Fec.Alb&quot;); // 1&#xa;        v.addElement(&quot;Cliente&quot;); // 2&#xa;        v.addElement(&quot;Nombre Cliente&quot;); // 3&#xa;        v.addElement(&quot;Importe&quot;); // 4&#xa;        v.addElement(&quot;Pedido&quot;); // 5&#xa;        v.addElement(&quot;Fact&quot;); // 6&#xa;        jtSelAlb.setCabecera(v);&#xa;        jtSelAlb.setAnchoColumna(new int[]{130,90, 60,150,80,100,80});&#xa;        jtSelAlb.setFormatoColumna(4,&quot;----,--9.99&quot;);&#xa;        jtSelAlb.setAlinearColumna(new int[]{0,1,2,0,2,0,0});"/>
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">

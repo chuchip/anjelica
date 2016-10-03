@@ -164,7 +164,7 @@ public class MantPrAlb extends ventana {
      
         iniciarFrame();
 
-        this.setVersion("2016-07-15" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
+        this.setVersion("2016-10-03" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
         
        
         initComponents();
@@ -242,7 +242,7 @@ public class MantPrAlb extends ventana {
         emailC = new gnu.chu.controles.CComboBox();
         PTabPane1 = new gnu.chu.controles.CTabbedPane();
         PSelec = new gnu.chu.controles.CPanel();
-        jtSelAlb = new gnu.chu.controles.Cgrid(6);
+        jtSelAlb = new gnu.chu.controles.Cgrid(7);
         Vector v=new Vector();
         v.addElement("Albaran"); // 0
         v.addElement("Fec.Alb"); // 1
@@ -250,10 +250,11 @@ public class MantPrAlb extends ventana {
         v.addElement("Nombre Cliente"); // 3
         v.addElement("Importe"); // 4
         v.addElement("Pedido"); // 5
+        v.addElement("Fact"); // 6
         jtSelAlb.setCabecera(v);
-        jtSelAlb.setAnchoColumna(new int[]{130,90, 60,150,80,100});
+        jtSelAlb.setAnchoColumna(new int[]{130,90, 60,150,80,100,80});
         jtSelAlb.setFormatoColumna(4,"----,--9.99");
-        jtSelAlb.setAlinearColumna(new int[]{0,1,2,0,2,0});
+        jtSelAlb.setAlinearColumna(new int[]{0,1,2,0,2,0,0});
         PLinea = new gnu.chu.controles.CPanel();
         jtLin = new gnu.chu.controles.CGridEditable(16){
             public int cambiaLinea(int row, int col)
@@ -732,6 +733,7 @@ public class MantPrAlb extends ventana {
             public void actionPerformed(ActionEvent e) {
                if (jtSelAlb.getSelectedRow()+1==jtSelAlb.getRowCount())
                    return;
+
                 new miThread("")
                 {
                     @Override
@@ -897,6 +899,7 @@ public class MantPrAlb extends ventana {
         cli_codacE.setValorInt(jtSelAlb.getValorInt(row,2));
         
         avc_numacE.setText(albaran);
+        avc_numacE.setFacturado(jtSelAlb.getValorInt(row,6)!=0);
         avc_fecalbE.setText(jtSelAlb.getValString(row,1));
         avc_revpracE.setEnabled(false);
         avc_revpracE.setValor(avc_revpreE.getValor());
@@ -1078,7 +1081,7 @@ public class MantPrAlb extends ventana {
         int nRow=jtLin.getRowCount();
         int nLin=jtSelAlb.getSelectedRow();
         try {
-          mvtosAlm.setMvtoDesgl(false);
+          mvtosAlm.setUseMvtos(false);
           mvtosAlm.iniciarMvtos(feulin,fecCostoE.isNull()?avc_fecalbE.getText():fecCostoE.getText(),dtCos1);
         for (int n=0;n<nRow;n++)
         {
@@ -1097,7 +1100,7 @@ public class MantPrAlb extends ventana {
                    prCosto=prec;
              jtLin.setValor(""+prCosto,n,7);
         }
-        } catch (Exception k)
+        } catch (SQLException | ParseException k)
         {
             enviaMailError("(MantPrAlb) Error al actualizar costos "+k.getMessage());
         }
@@ -1306,23 +1309,27 @@ public class MantPrAlb extends ventana {
           {
               s = "SELECT v.*,cli_nomb FROM  clientes as c, v_albavec as v "
                    + " WHERE v.emp_codi =" + emp_codiE.getValorInt()
-                   + avc_numeE.getCondWhere("v", true)
-                   + (fecIniE.isNull() ? "" :
+                   + " and v.cli_codi = c.cli_codi "
+                   + (EU.isRootAV() ? "" : " AND v.div_codi > 0 ");
+
+              if (avc_numeE.getCondWhere("v", true).equals(""))
+                  s+= (fecIniE.isNull() ? "" :
                        " and v.avc_fecalb >= to_date('" + fecIniE.getText() + "','dd-MM-yyyy')")
                    + (fecFinE.isNull() ? "" :
                        " and v.avc_fecalb <= to_date('" + fecFinE.getText() + "','dd-MM-yyyy')")
                    + (cli_codiE.isNull() ? "" :
                        " and v.cli_codi = " + cli_codiE.getValorInt())
                    + (rep_codiE.isNull()?"": " and c.rep_codi ='"+rep_codiE.getText()+"'")
-                   + " and avc_revpre = " + avc_revpreE.getValor()
-                   + " and v.cli_codi = c.cli_codi "
-                   + " and v.fvc_ano + v.fvc_nume = 0 " // No mostrar albaranes facturados
-                   + (emailC.getValor().equals("*")?"":
+                   + " and avc_revpre = " + avc_revpreE.getValor()                              
+                   +" and v.fvc_ano + v.fvc_nume = 0 "+ // No mostrar albaranes facturados
+                    (emailC.getValor().equals("*")?"":
                      " and  c.cli_email1 || c.cli_email2 "
                    +(emailC.getValor().equals("N")?" not ":"")
-                   +" like '%@%'") 
-                   + (EU.isRootAV() ? "" : " AND v.div_codi > 0 ")
-                   + " ORDER BY v.cli_codi,v.avc_fecalb";
+                   +" like '%@%'");
+              else
+                   s+= avc_numeE.getCondWhere("v", true);
+             
+              s+= " ORDER BY v.cli_codi,v.avc_fecalb";
           }
         if (!dtCon1.select(s))
         {
@@ -1350,6 +1357,7 @@ public class MantPrAlb extends ventana {
             v.add(dtCon1.getString("cli_nomb"));
             v.add(dtCon1.getString("avc_impalb"));
             v.add(pvcNume);
+            v.add(dtCon1.getInt("fvc_nume",true));
             datos.add(v);
         } while (dtCon1.next());        
         jtSelAlb.setDatos(datos);
@@ -1390,6 +1398,7 @@ public class MantPrAlb extends ventana {
      */
     private void guardaCambios(boolean agrupLin)
     {
+        
         if (jtLin.isVacio())
             return;
         //jtLin.procesaAllFoco();
@@ -1409,8 +1418,13 @@ public class MantPrAlb extends ventana {
       
        int nRows;
       
-       try {
-        
+       try 
+       {
+         if (avc_numacE.isFacturado())
+         {// Esta Facturado. No se actualizan precios
+              msgBox("Albaran facturado. NO se actualizan Precios");
+              return;
+         }
          s="select * from v_albavec where  emp_codi = " + emp_codiE.getValorInt() +
             avc_numacE.getCondWhere(null, true);
          if (!dtStat.select(s))
@@ -1427,7 +1441,7 @@ public class MantPrAlb extends ventana {
            {
                enviaMailError("Error de Aplicacion: (MantPrAlb). Lineas de albaran estan en blanco. "+
                        " Albaran: "+avc_numacE.getCondWhere(null, true));
-               msgBox("Error de Aplicacion. La linea: "+row+ " No se guardara. Intentelo de nuevo o avise a Informatica");
+               msgBox("Error de Aplicacion. La linea: "+row+ " No se guardara. Intentelo de nuevo o avise al programador");
                continue;
            }
             String condWhere = " WHERE emp_codi = " + emp_codiE.getValorInt() +

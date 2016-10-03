@@ -189,18 +189,14 @@ public class ayuVenPro extends ventana
     pro_codiL.setText(Formatear.format(proCodi,"####9"));
     cli_nombL.setText(cliNomb);
     pro_nombL.setText(proNomb);
-    s="select  c.avc_fecalb,l.emp_codi,l.avc_ano,l.avc_serie,l.avc_nume,"+
-        " sum(l.avl_canti) as avl_canti,sum(l.avl_unid) as avl_unid, "+
-        " l.avl_prbase, sum(l.avl_prbase*l.avl_canti) as avl_impor from v_albavec c,v_albavel l where  "+
-        " c.cli_codi = "+cliCodi+
-        " AND l.avc_ano = c.avc_ano " +
-        " and l.emp_Codi = c.emp_codi" +
-        " and  l.avc_Serie = c.avc_serie" +
-        " and l.avc_nume = c.avc_nume " +
-        " and l.pro_codi = "+proCodi +
-        (eu.isRootAV()?"":" and c.div_codi > 0 ")+
-        " group by c.avc_fecalb,l.emp_codi,l.avc_ano,l.avc_serie,l.avc_nume,l.avl_prbase "+
-        " order by c.avc_fecalb desc";
+    s="select  avc_fecalb,emp_codi,avc_ano,avc_serie,avc_nume,"+
+        " sum(avl_canti) as avl_canti,sum(avl_unid) as avl_unid, "+
+        " avl_prven, sum(avl_prven*avl_canti) as avl_impor from v_albventa where  "+
+        " cli_codi = "+cliCodi+
+        " and pro_codi = "+proCodi +
+        (eu.isRootAV()?"":" and div_codi > 0 ")+
+        " group by avc_fecalb,emp_codi,avc_ano,avc_serie,avc_nume,avl_prven "+
+        " order by avc_fecalb desc";
     jt.removeAllDatos();
     if (! dt.select(s))
     {

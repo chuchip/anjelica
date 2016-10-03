@@ -322,7 +322,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2016-08-07");
+      this.setVersion("2016-09-22");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -439,13 +439,17 @@ public class pdclien extends ventanaPad implements PAD
       cli_faxE.setBounds(new Rectangle(541, 42, 129, 16));
       cLabel3.setBounds(new Rectangle(1, 23, 59, 16));
       cli_poblE.setBounds(new Rectangle(65, 22, 227, 17));
+      cli_poblE.setMayusc(true);
       cLabel4.setBounds(new Rectangle(296, 20, 59, 19));
       cli_direcE.setBounds(new Rectangle(355, 20, 316, 17));
+      cli_direcE.setMayusc(true);
       cli_nomcoE.setBounds(new Rectangle(100, 1, 417, 17));
+      cli_nomcoE.setMayusc(true);
       cLabel2.setBounds(new Rectangle(209, 3, 51, 16));
       cli_codiE.setBounds(new Rectangle(87, 3, 53, 16));
       cLabel1.setBounds(new Rectangle(2, 3, 83, 16));
       cli_nombE.setBounds(new Rectangle(256, 3, 417, 16));
+      cli_nombE.setMayusc(true);
       cli_riesgE.setBounds(new Rectangle(584, 122, 83, 17));
       cli_albvalE.setBounds(new Rectangle(448, 122, 71, 18));
       cli_giroE.setBounds(new Rectangle(229, 122, 53, 18));

@@ -155,7 +155,7 @@ public class pdmatadero extends ventanaPad   implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(515, 432));
-    this.setVersion("2006-04-03"+(modConsulta?"SOLO LECTURA":""));
+    this.setVersion("2016-10-03"+(modConsulta?"SOLO LECTURA":""));
     strSql = "SELECT * FROM v_matadero "+
         " ORDER BY mat_codi ";
 
@@ -543,14 +543,23 @@ public class pdmatadero extends ventanaPad   implements PAD
     try
     {
 
-      if (mat_codiE.getValorInt()==0)
+      if (mat_codiE.getValorInt()==0 && nav.pulsado==navegador.ADDNEW)
       {
-        s = "SELECT max(mat_codi) as mat_codi  from v_matadero";
-        dtStat.select(s);
-        mat_codiE.setValorInt(dtStat.getInt("mat_codi", true) + 1);
-        mensajeErr("Introduzca Codigo de Matadero (PUESTO EL ULTIMO + 1)");
-        mat_codiE.requestFocus();
-        return false;
+          int antNumero = 0;
+          String s = "SELECT mat_codi FROM v_matadero order by mat_codi";
+          if (dtStat.select(s))
+          {
+              do
+              {
+                  if (antNumero > 0 && dtStat.getInt("mat_codi") > antNumero + 1)
+                      break;
+                  antNumero = dtStat.getInt("mat_codi");
+              } while (dtStat.next());
+          }       
+            mat_codiE.setValorInt(antNumero+ 1);
+            mensajeErr("Introduzca Codigo de Matadero (PUESTO EL PRIMERO LIBRE)");
+            mat_codiE.requestFocus();
+            return false;
       }
       if (mat_nombE.isNull())
       {
