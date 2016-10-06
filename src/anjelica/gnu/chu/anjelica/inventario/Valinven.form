@@ -178,12 +178,12 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel1">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Empresa"/>
               </Properties>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Fecha Control"/>
               </Properties>
@@ -193,7 +193,7 @@
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
               </AuxValues>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Camara"/>
               </Properties>
@@ -212,7 +212,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel4">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel4">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Almacen"/>
               </Properties>
@@ -246,7 +246,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel5">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel5">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Usuario"/>
               </Properties>
@@ -392,7 +392,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cci_codiE">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cci_codiE">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
@@ -409,7 +409,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel6">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel6">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Fecha Inventario"/>
               </Properties>
@@ -445,7 +445,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel7">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel7">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Unidades "/>
               </Properties>
@@ -468,7 +468,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel8">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Kilos"/>
               </Properties>
@@ -504,7 +504,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel9">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel9">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Importe"/>
               </Properties>

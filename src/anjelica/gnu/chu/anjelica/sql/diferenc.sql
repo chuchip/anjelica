@@ -1,3 +1,9 @@
+-- 
+alter table pedvenc add pvc_incfra char(1) not null default 'N'; -- Incluir Fra?
+alter table hispedvenc add pvc_incfra char(1) not null default 'N'; -- Incluir Fra?
+
+alter table pedvenc add pvc_comrep varchar(200);
+alter table hispedvenc add pvc_comrep varchar(200);
 -- Clasificicacion Pieza.
 alter table v_albcompar rename column  tipo_c1 to acp_clasi;
 alter table hisalpaco add column  acp_clasi varchar(10):

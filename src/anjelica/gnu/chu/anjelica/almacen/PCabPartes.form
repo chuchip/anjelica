@@ -18,7 +18,7 @@
     <Property name="useNullLayout" type="boolean" value="true"/>
   </Layout>
   <SubComponents>
-    <Component class="gnu.chu.controles.CLabel" name="par_codiL">
+    <Component class="gnu.chu.controles.pvc_comentL" name="par_codiL">
       <Properties>
         <Property name="text" type="java.lang.String" value="Parte"/>
       </Properties>
@@ -74,7 +74,7 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <Component class="gnu.chu.controles.CLabel" name="par_codiL3">
+        <Component class="gnu.chu.controles.pvc_comentL" name="par_codiL3">
           <Properties>
             <Property name="text" type="java.lang.String" value="Generador"/>
           </Properties>
@@ -97,7 +97,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.CLabel" name="par_codiL2">
+        <Component class="gnu.chu.controles.pvc_comentL" name="par_codiL2">
           <Properties>
             <Property name="text" type="java.lang.String" value="Procesado"/>
           </Properties>
@@ -120,7 +120,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.CLabel" name="par_codiL1">
+        <Component class="gnu.chu.controles.pvc_comentL" name="par_codiL1">
           <Properties>
             <Property name="text" type="java.lang.String" value="Resuelto"/>
           </Properties>
@@ -167,7 +167,7 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <Component class="gnu.chu.controles.CLabel" name="par_fecaltL1">
+        <Component class="gnu.chu.controles.pvc_comentL" name="par_fecaltL1">
           <Properties>
             <Property name="text" type="java.lang.String" value="Resuelto"/>
           </Properties>
@@ -187,7 +187,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.CLabel" name="par_fecaltL3">
+        <Component class="gnu.chu.controles.pvc_comentL" name="par_fecaltL3">
           <Properties>
             <Property name="text" type="java.lang.String" value="Creaci&#xf3;n"/>
           </Properties>
@@ -197,7 +197,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.CLabel" name="pac_fecproL">
+        <Component class="gnu.chu.controles.pvc_comentL" name="pac_fecproL">
           <Properties>
             <Property name="text" type="java.lang.String" value="Procesado"/>
           </Properties>
@@ -229,7 +229,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="gnu.chu.controles.CLabel" name="par_fecaltL2">
+    <Component class="gnu.chu.controles.pvc_comentL" name="par_fecaltL2">
       <Properties>
         <Property name="text" type="java.lang.String" value="Fecha Alta"/>
       </Properties>
@@ -249,7 +249,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CLabel" name="par_fecaltL4">
+    <Component class="gnu.chu.controles.pvc_comentL" name="par_fecaltL4">
       <Properties>
         <Property name="text" type="java.lang.String" value="Comentario"/>
       </Properties>
@@ -259,7 +259,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CLabel" name="par_fecaltL5">
+    <Component class="gnu.chu.controles.pvc_comentL" name="par_fecaltL5">
       <Properties>
         <Property name="text" type="java.lang.String" value="Tipo"/>
       </Properties>
@@ -279,7 +279,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CLabel" name="par_fecaltL6">
+    <Component class="gnu.chu.controles.pvc_comentL" name="par_fecaltL6">
       <Properties>
         <Property name="text" type="java.lang.String" value="Estado"/>
       </Properties>
@@ -309,7 +309,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="gnu.chu.controles.CLabel" name="pac_cliprvL">
+    <Component class="gnu.chu.controles.pvc_comentL" name="pac_cliprvL">
       <Properties>
         <Property name="text" type="java.lang.String" value="Proveedor"/>
       </Properties>
@@ -333,7 +333,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" value="Documento"/>
       </Properties>

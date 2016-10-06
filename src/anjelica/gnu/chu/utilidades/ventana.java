@@ -641,8 +641,16 @@ public class ventana extends CInternalFrame implements ejecutable
       m1.setIcon(Iconos.getImageIcon("status"));
       m.addActionListener(new ActionListener()
       {
+        @Override
         public void actionPerformed(ActionEvent e)
         {
+            try
+            {
+                setMaximum(false);
+            } catch (PropertyVetoException ex)
+            {
+                java.util.logging.Logger.getLogger(ventana.class.getName()).log(Level.SEVERE, null, ex);
+            }
           setSize(dOriginal);
           validate();
           repaint();
@@ -651,6 +659,7 @@ public class ventana extends CInternalFrame implements ejecutable
 
       m1.addActionListener(new ActionListener()
       {
+        @Override
         public void actionPerformed(ActionEvent e)
         {
           JOptionPane.showMessageDialog(ventana.this, getVersion(), "Version del Programa",

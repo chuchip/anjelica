@@ -57,11 +57,13 @@ public class mensajes {
   static public int mensajeYesNo(String msg) {
     return mensajeYesNo(msg, null);
   }
-
-  static public int mensajeYesNo(String msg, Component comp) {
-         int i = JOptionPane.showConfirmDialog(comp, msg, "¡¡ Atencion !!", JOptionPane.YES_NO_OPTION,
+  static public int mensajeYesNo(String titulo,String msg, Component comp) {
+         int i = JOptionPane.showConfirmDialog(comp, msg, titulo, JOptionPane.YES_NO_OPTION,
                                          JOptionPane.QUESTION_MESSAGE);
          return i;
+  }
+  static public int mensajeYesNo(String msg, Component comp) {
+       return mensajeYesNo("¡¡Atencion!!",msg,comp);
   }
   static public int mensajeYesNoCancel(String msg) {
     return mensajeYesNoCancel(msg, null);

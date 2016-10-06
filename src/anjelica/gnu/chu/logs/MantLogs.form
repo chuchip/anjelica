@@ -70,7 +70,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="fecFinL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="fecFinL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="A Fecha"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -89,7 +89,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="fecIniL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="fecIniL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="De Fecha"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -117,7 +117,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="men_codiL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="men_codiL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Codigo"/>
               </Properties>
@@ -137,7 +137,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="men_nombL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="men_nombL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Descripcion "/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -173,7 +173,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="usu_nombL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="usu_nombL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Usuario"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -192,7 +192,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="usu_tipoL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="usu_tipoL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Tipo"/>
               </Properties>

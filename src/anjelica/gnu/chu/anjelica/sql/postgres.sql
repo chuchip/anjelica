@@ -258,8 +258,8 @@ cli_poble varchar(30), -- Poblacion Entrega
 cli_codpoe varchar(8), -- Cod. Postal Envio
 cli_telefe varchar(15), -- Telefono Envio
 cli_faxe varchar(15),	 -- Fax de Envio
-cli_horenv varchar(50), -- Horario de Envio
-cli_comenv varchar(80), -- Comentario Envio
+cli_horenv varchar(50), -- Horario de Reparto
+cli_comenv varchar(80), -- Comentario Reparto
 emp_codi int default 1 not null, -- Empresa
 cli_plzent int, 	-- Plazo de Entrega
 tar_codi int,		-- Tarifa
@@ -3302,6 +3302,8 @@ create table anjelica.pedvenc;
  pvc_cerra int not null,	-- Albaran Cerrado (0 NO, -1 SI)
  pvc_nupecl varchar(20),	-- Numero pedido de Cliente
  pvc_impres char(1) not null,	-- Listado (S/N)
+ pvc_incfra char(1) not null default 'N', -- Incluir Fra?
+ pvc_comrep varchar(200),	    -- Comentario para Reparto
  constraint ix_pedvenc primary key(emp_codi,eje_nume,pvc_nume)
 );
 --

@@ -31,7 +31,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" value="Coment."/>
       </Properties>
@@ -51,7 +51,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
       <Properties>
         <Property name="text" type="java.lang.String" value="Usuario"/>
       </Properties>
@@ -71,7 +71,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CLabel" name="cLabel4">
+    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel4">
       <Properties>
         <Property name="text" type="java.lang.String" value="Cantidad"/>
       </Properties>

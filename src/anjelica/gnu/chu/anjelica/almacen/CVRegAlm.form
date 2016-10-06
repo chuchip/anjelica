@@ -55,7 +55,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel4">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel4">
               <Properties>
                 <Property name="text" type="java.lang.String" value="De Fecha"/>
               </Properties>
@@ -75,7 +75,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel10">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel10">
               <Properties>
                 <Property name="text" type="java.lang.String" value="A Fecha"/>
               </Properties>
@@ -95,7 +95,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel1">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Tipo"/>
               </Properties>
@@ -135,7 +135,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel9">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel9">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Producto"/>
               </Properties>
@@ -152,7 +152,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Tipo Prod."/>
               </Properties>
@@ -177,7 +177,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Cod.Reg."/>
               </Properties>
@@ -249,7 +249,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel11">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel11">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -278,7 +278,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel12">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel12">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -320,7 +320,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel14">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel14">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -349,7 +349,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel15">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel15">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -391,7 +391,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel17">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel17">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -420,7 +420,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel18">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel18">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -462,7 +462,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel20">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel20">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -541,7 +541,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel13">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel13">
               <Properties>
                 <Property name="text" type="java.lang.String" value="N&#xfa;mero Reg:"/>
               </Properties>

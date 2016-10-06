@@ -129,7 +129,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel1">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Proveedor"/>
               </Properties>
@@ -160,7 +160,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="De Fecha "/>
               </Properties>
@@ -191,7 +191,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="A Fecha "/>
               </Properties>

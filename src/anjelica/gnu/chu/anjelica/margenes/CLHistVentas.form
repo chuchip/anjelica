@@ -55,7 +55,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="anoL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="anoL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="A&#xf1;o"/>
               </Properties>
@@ -75,7 +75,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="mesL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="mesL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Mes"/>
               </Properties>
@@ -209,7 +209,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="kilosL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="kilosL">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="c8" red="ff" type="rgb"/>
@@ -263,7 +263,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="kilosL2">
+            <Component class="gnu.chu.controles.pvc_comentL" name="kilosL2">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="c8" red="ff" type="rgb"/>
@@ -278,7 +278,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="kilosL4">
+            <Component class="gnu.chu.controles.pvc_comentL" name="kilosL4">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="c8" red="ff" type="rgb"/>
@@ -293,7 +293,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="kilosL5">
+            <Component class="gnu.chu.controles.pvc_comentL" name="kilosL5">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="c8" red="ff" type="rgb"/>
@@ -321,7 +321,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="kilosL6">
+            <Component class="gnu.chu.controles.pvc_comentL" name="kilosL6">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="c8" red="ff" type="rgb"/>
@@ -349,7 +349,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="kilosL7">
+            <Component class="gnu.chu.controles.pvc_comentL" name="kilosL7">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="c8" red="ff" type="rgb"/>
@@ -377,7 +377,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="kilosL8">
+            <Component class="gnu.chu.controles.pvc_comentL" name="kilosL8">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="c8" red="ff" type="rgb"/>
@@ -405,7 +405,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="kilosL9">
+            <Component class="gnu.chu.controles.pvc_comentL" name="kilosL9">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="c8" red="ff" type="rgb"/>
@@ -433,7 +433,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="kilosL10">
+            <Component class="gnu.chu.controles.pvc_comentL" name="kilosL10">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="c8" red="ff" type="rgb"/>

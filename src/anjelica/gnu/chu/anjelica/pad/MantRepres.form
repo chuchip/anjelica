@@ -142,7 +142,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="rep_codiL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="rep_codiL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Representante"/>
               </Properties>
@@ -297,22 +297,22 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel20">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel20">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Cuenta Contable"/>
                   </Properties>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel21">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel21">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Direcci&#xf3;n"/>
                   </Properties>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel22">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel22">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Codigo Postal"/>
                   </Properties>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel23">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel23">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="NIF"/>
                   </Properties>
@@ -332,7 +332,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,15)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel24">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel24">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Poblaci&#xf3;n"/>
                   </Properties>
@@ -342,7 +342,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,30)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel25">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel25">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Telefono"/>
                   </Properties>
@@ -352,7 +352,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,15)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel26">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel26">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Fax"/>
                   </Properties>
@@ -367,7 +367,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,15)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel27">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel27">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Correo Electr."/>
                   </Properties>

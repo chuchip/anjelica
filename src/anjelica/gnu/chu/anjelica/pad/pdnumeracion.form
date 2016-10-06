@@ -117,12 +117,12 @@
           <SubComponents>
             <Component class="gnu.chu.camposdb.empPanel" name="emp_codiE">
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel1">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Empresa"/>
               </Properties>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Ejercicio"/>
               </Properties>
@@ -137,7 +137,7 @@
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###9&quot;)"/>
               </AuxValues>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="emp_nombL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="emp_nombL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="cLabel24"/>
               </Properties>
@@ -313,7 +313,7 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie A"/>
                   </Properties>
@@ -323,7 +323,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###,##9&quot;)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel4">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel4">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie C"/>
                   </Properties>
@@ -333,7 +333,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###,##9&quot;)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel5">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel5">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie B"/>
                   </Properties>
@@ -343,7 +343,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###,##9&quot;)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel6">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel6">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie D"/>
                   </Properties>
@@ -353,7 +353,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###,##9&quot;)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel7">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel7">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie X"/>
                   </Properties>
@@ -363,7 +363,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###,##9&quot;)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel8">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie Y"/>
                   </Properties>
@@ -433,7 +433,7 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel9">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel9">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie A"/>
                   </Properties>
@@ -443,7 +443,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###,##9&quot;)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel10">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel10">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie C"/>
                   </Properties>
@@ -453,7 +453,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###,##9&quot;)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel11">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel11">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie B"/>
                   </Properties>
@@ -463,7 +463,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###,##9&quot;)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel12">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel12">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie D"/>
                   </Properties>
@@ -548,7 +548,7 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel15">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel15">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie A"/>
                   </Properties>
@@ -558,7 +558,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###,##9&quot;)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel16">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel16">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie C"/>
                   </Properties>
@@ -568,7 +568,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###,##9&quot;)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel17">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel17">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie B"/>
                   </Properties>
@@ -578,7 +578,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###,##9&quot;)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel18">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel18">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie D"/>
                   </Properties>
@@ -588,7 +588,7 @@
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;###,##9&quot;)"/>
                   </AuxValues>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel19">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel19">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Serie Y"/>
                   </Properties>
@@ -600,22 +600,22 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel20">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel20">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Fra.Compras"/>
               </Properties>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel21">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel21">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Pedido Compras"/>
               </Properties>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel22">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel22">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Numero Remesa"/>
               </Properties>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel23">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel23">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Numero Despiece"/>
               </Properties>

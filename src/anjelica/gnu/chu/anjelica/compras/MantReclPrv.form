@@ -63,7 +63,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel1">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Estado"/>
               </Properties>
@@ -83,7 +83,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Codigo Reclamaci&#xf3;n "/>
               </Properties>
@@ -123,7 +123,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel4">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel4">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -146,7 +146,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel5">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel5">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Articulo"/>
               </Properties>
@@ -166,7 +166,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel6">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel6">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Original"/>
               </Properties>
@@ -206,7 +206,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel7">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel7">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -222,7 +222,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel8">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Aceptado"/>
               </Properties>
@@ -232,7 +232,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel9">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel9">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Solicitado"/>
               </Properties>
@@ -262,7 +262,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel10">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel10">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -298,7 +298,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel11">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel11">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Incidencia"/>
               </Properties>
@@ -338,7 +338,7 @@
                 <Property name="useNullLayout" type="boolean" value="true"/>
               </Layout>
               <SubComponents>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel12">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel12">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Fecha"/>
                   </Properties>
@@ -348,7 +348,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Proveedor"/>
                   </Properties>
@@ -378,7 +378,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel13">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel13">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Documento"/>
                   </Properties>

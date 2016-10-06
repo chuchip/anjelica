@@ -92,6 +92,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     final int JTFR_EMPCOD=1;
     final int JTFR_SERIE=2;
     final int JTFR_NUME=3;
+    final int JTFR_CLICOD=4;
     final int  JTFR_IMPPEN=8;
     
     public ManAlbRuta(EntornoUsuario eu, Principal p) {
@@ -641,6 +642,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
                  msgBox("Introduzca algun albaran O factura para la ruta");
                  return;
              }
+             if (! checkFraDeAlbaran())
+                return;
          }
          dtAdd.edit();
          guardaCab(alr_numeE.getValorInt());
@@ -1692,6 +1695,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 msgBox("Introduzca algun albaran O factura para la ruta");
                 return;
             }
+            if (! checkFraDeAlbaran())
+                return;
             dtAdd.addNew("albrutacab", false);
             int id = guardaCab(0);
             
@@ -1715,6 +1720,45 @@ public class ManAlbRuta extends ventanaPad implements PAD
         {
             Error("Error al guardar cabecera de ruta", ex);
         }
+    }
+    /**
+     * 
+     * @return Devuelve Error. true si hay error. 
+     * @throws SQLException 
+     */
+    private boolean checkFraDeAlbaran() throws SQLException
+    {
+        int nrows=jt.getRowCount();
+        int nrowfr=jtFra.getRowCount();
+        
+        String s,msg="";
+        for (int n=0;n<nrows;n++)
+        {
+            s="select pvc_incfra from pedvenc as p where avc_ano="+jt.getValorInt(n,1)+
+                " and avc_serie = '"+jt.getValString(n,2)+"'"+
+                " and avc_nume ="+jt.getValorInt(n,JT_NUMALB)+
+                " and emp_codi = "+jt.getValorInt(n,0)+
+                " and pvc_incfra = 'S'";
+            if (dtStat.select(s))
+            {
+                int cliCodi=jt.getValorInt(n,JT_CLICOD);
+                boolean swEnc=false;
+                for (int nfr=0;nfr<nrows;nfr++)
+                {
+                    if (jtFra.getValorInt(nfr,JTFR_CLICOD)==cliCodi)
+                    {
+                        swEnc=true;
+                        break;
+                    }
+                }
+                if (!swEnc)
+                    msg+="Cliente: "+jt.getValString(n,JT_CLINOMB)+" ... DEBERIA TENER FRAS\n";
+            }
+        }
+        if (msg.equals(""))
+            return true;
+        int ret=mensajes.mensajeYesNo("Deberia haber Facturas", msg+"\n ¿Continuar?",this);
+        return ret==mensajes.YES;
     }
     /**
      * Inserta las lineas de facturas mandadas a cobrar.

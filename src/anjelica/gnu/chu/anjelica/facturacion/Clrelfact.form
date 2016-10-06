@@ -55,7 +55,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel1">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Tipo Listado"/>
               </Properties>
@@ -75,7 +75,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Intervalo Fecha"/>
               </Properties>
@@ -204,7 +204,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="N&#xba; Fras"/>
               </Properties>
@@ -227,7 +227,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel4">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel4">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Bruto"/>
               </Properties>
@@ -250,7 +250,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel5">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel5">
               <Properties>
                 <Property name="text" type="java.lang.String" value="IVA"/>
               </Properties>
@@ -273,7 +273,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel6">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel6">
               <Properties>
                 <Property name="text" type="java.lang.String" value="B.I."/>
               </Properties>
@@ -296,7 +296,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel7">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel7">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Total"/>
               </Properties>
@@ -332,7 +332,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel8">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Dtos"/>
               </Properties>
@@ -342,7 +342,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel9">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel9">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Kg"/>
               </Properties>

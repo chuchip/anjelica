@@ -90,7 +90,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel1">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Articulo"/>
               </Properties>
@@ -120,7 +120,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel6">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel6">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Activo"/>
               </Properties>
@@ -164,7 +164,7 @@
                 <Property name="useNullLayout" type="boolean" value="true"/>
               </Layout>
               <SubComponents>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Descripci&#xf3;n Abreviada"/>
                   </Properties>
@@ -184,7 +184,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Codigo Interno"/>
                   </Properties>
@@ -207,7 +207,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel4">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel4">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Familia"/>
                   </Properties>
@@ -227,7 +227,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel5">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel5">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Seccion"/>
                   </Properties>
@@ -250,7 +250,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel7">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel7">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Unidades Venta"/>
                   </Properties>
@@ -280,7 +280,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel8">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Caducid. Fresco"/>
                   </Properties>
@@ -290,7 +290,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel9">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel9">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="IVA"/>
                   </Properties>
@@ -320,7 +320,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel10">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel10">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Caducid. Congelado (Meses)"/>
                   </Properties>
@@ -340,7 +340,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel11">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel11">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Tipo Articulo"/>
                   </Properties>
@@ -360,7 +360,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel12">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel12">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Etiqueta"/>
                   </Properties>
@@ -401,7 +401,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel13">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel13">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Congelado"/>
                   </Properties>
@@ -421,7 +421,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel14">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel14">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Env. Vacio"/>
                   </Properties>
@@ -441,7 +441,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel16">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel16">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="N&#xba; Crotales Iguales"/>
                   </Properties>
@@ -479,7 +479,7 @@
                     <Property name="useNullLayout" type="boolean" value="true"/>
                   </Layout>
                   <SubComponents>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel15">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel15">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Control Existencias"/>
                       </Properties>
@@ -499,7 +499,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel17">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel17">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Control Individuos"/>
                       </Properties>
@@ -519,7 +519,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel18">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel18">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Control Maximos"/>
                       </Properties>
@@ -549,7 +549,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel20">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel20">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Kilos minimos"/>
                       </Properties>
@@ -569,7 +569,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel21">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel21">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Mantener Costo "/>
                       </Properties>
@@ -579,7 +579,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel22">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel22">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Control Stock Minimo"/>
                       </Properties>
@@ -602,7 +602,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel38">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel38">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Kilos maximos"/>
                       </Properties>
@@ -622,7 +622,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="env_codiL">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="env_codiL">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Envase"/>
                       </Properties>
@@ -668,7 +668,7 @@
                     <Property name="useNullLayout" type="boolean" value="true"/>
                   </Layout>
                   <SubComponents>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel25">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel25">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Ult. Compra"/>
                       </Properties>
@@ -691,7 +691,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel27">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel27">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Ult. Coste"/>
                       </Properties>
@@ -714,7 +714,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel28">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel28">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Prov. Ult. Compra"/>
                       </Properties>
@@ -724,7 +724,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel19">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel19">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Kilos Actuales"/>
                       </Properties>
@@ -747,7 +747,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel23">
+                    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel23">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Unid. Actuales"/>
                       </Properties>
@@ -779,7 +779,7 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel26">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel26">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Unidades Compra"/>
                   </Properties>
@@ -799,7 +799,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel24">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel24">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Camara"/>
                   </Properties>
@@ -819,7 +819,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel30">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel30">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Costo A&#xf1;adido"/>
                   </Properties>
@@ -839,7 +839,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel31">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel31">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Kilos por caja"/>
                   </Properties>
@@ -859,7 +859,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel32">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel32">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Cajas por Palet"/>
                   </Properties>
@@ -879,7 +879,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="sbe_nombL">
+                <Component class="gnu.chu.controles.pvc_comentL" name="sbe_nombL">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="0" green="c8" id="orange" palette="1" red="ff" type="palette"/>
@@ -892,7 +892,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel33">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel33">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Fecha Alta"/>
                   </Properties>
@@ -915,7 +915,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel34">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel34">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Usuario"/>
                   </Properties>
@@ -938,7 +938,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel35">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel35">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Fecha Ultima Modificaci&#xf3;n"/>
                   </Properties>
@@ -961,7 +961,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel37">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel37">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Kilos por unidad"/>
                   </Properties>
@@ -1005,7 +1005,7 @@
                 <Property name="useNullLayout" type="boolean" value="true"/>
               </Layout>
               <SubComponents>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel39">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel39">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Categoria"/>
                   </Properties>
@@ -1031,7 +1031,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel40">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel40">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Clasificaci&#xf3;n"/>
                   </Properties>
@@ -1057,7 +1057,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel29">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel29">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Incluir Dto.Comercial"/>
                   </Properties>
@@ -1099,7 +1099,7 @@
                     <Property name="useNullLayout" type="boolean" value="true"/>
                   </Layout>
                 </Container>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel41">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel41">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="0" green="ff" red="ff" type="rgb"/>
@@ -1205,7 +1205,7 @@
                     <Property name="useNullLayout" type="boolean" value="true"/>
                   </Layout>
                 </Container>
-                <Component class="gnu.chu.controles.CLabel" name="cLabel36">
+                <Component class="gnu.chu.controles.pvc_comentL" name="cLabel36">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="0" green="ff" red="ff" type="rgb"/>

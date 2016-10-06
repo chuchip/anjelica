@@ -425,7 +425,7 @@ public class traspcont extends ventana
               dtCon1.select(s);
               ht.put(dtCon1.getString("cli_codi"), ""); // Pongo el Cliente para que realize el trasp.
               fechAsiento = dtCon1.getFecha("fvc_fecfra", "yyyyMMdd");
-              cuenClie = Formatear.ajusIzq(Formatear.format(dtCon1.getInt("cue_codi"), "###########9").trim(), 12);
+              cuenClie = Formatear.ajusIzq(Formatear.format(dtCon1.getInt("cue_codi",true), "###########9").trim(), 12);
               factura = dtCon1.getString("fvc_ano").substring(2)
                   + Formatear.format(dtCon1.getInt("fvc_nume"), "999999");
               nFra = Integer.parseInt((dtCon1.getString("fvc_ano").substring(2)) + ""

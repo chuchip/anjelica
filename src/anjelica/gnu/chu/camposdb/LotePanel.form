@@ -16,7 +16,7 @@
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
   <SubComponents>
-    <Component class="gnu.chu.controles.CLabel" name="pro_codiL">
+    <Component class="gnu.chu.controles.pvc_comentL" name="pro_codiL">
       <Properties>
         <Property name="text" type="java.lang.String" value="Producto"/>
       </Properties>
@@ -55,7 +55,7 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <Component class="gnu.chu.controles.CLabel" name="pro_serieL">
+        <Component class="gnu.chu.controles.pvc_comentL" name="pro_serieL">
           <Properties>
             <Property name="text" type="java.lang.String" value="Serie"/>
           </Properties>
@@ -75,7 +75,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.CLabel" name="eje_numeL">
+        <Component class="gnu.chu.controles.pvc_comentL" name="eje_numeL">
           <Properties>
             <Property name="text" type="java.lang.String" value="Ejercicio"/>
           </Properties>
@@ -95,7 +95,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.CLabel" name="pro_indivL">
+        <Component class="gnu.chu.controles.pvc_comentL" name="pro_indivL">
           <Properties>
             <Property name="text" type="java.lang.String" value="Individuo "/>
           </Properties>
@@ -115,7 +115,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.CLabel" name="pro_loteL">
+        <Component class="gnu.chu.controles.pvc_comentL" name="pro_loteL">
           <Properties>
             <Property name="text" type="java.lang.String" value="Lote"/>
           </Properties>

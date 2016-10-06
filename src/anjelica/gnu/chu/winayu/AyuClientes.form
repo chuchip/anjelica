@@ -75,7 +75,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="cli_nombL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cli_nombL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Nombre"/>
               </Properties>
@@ -95,7 +95,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cli_poblL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cli_poblL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Poblac."/>
               </Properties>
@@ -115,7 +115,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel18">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel18">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Zona"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

@@ -176,7 +176,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel1">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="De Fecha"/>
               </Properties>
@@ -186,7 +186,7 @@
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
               </AuxValues>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel2">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="A Fecha"/>
               </Properties>
@@ -206,14 +206,14 @@
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,1)"/>
               </AuxValues>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel5">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel5">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Empresa"/>
               </Properties>
             </Component>
             <Component class="gnu.chu.camposdb.empPanel" name="empIniE">
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="empNomIniE">
+            <Component class="gnu.chu.controles.pvc_comentL" name="empNomIniE">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="c8" id="orange" palette="1" red="ff" type="palette"/>
@@ -224,7 +224,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel7">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel7">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Cliente"/>
               </Properties>
@@ -233,19 +233,19 @@
             </Component>
             <Component class="gnu.chu.camposdb.fpaPanel" name="fpaCodiE">
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel6">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel6">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Forma Pago"/>
               </Properties>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel8">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Giros"/>
               </Properties>
             </Component>
             <Component class="gnu.chu.controles.CComboBox" name="cli_giroE">
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel9">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel9">
               <Properties>
                 <Property name="text" type="java.lang.String" value="De Documento"/>
               </Properties>
@@ -255,7 +255,7 @@
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;#####9&quot;)"/>
               </AuxValues>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel10">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel10">
               <Properties>
                 <Property name="text" type="java.lang.String" value="A Documento"/>
               </Properties>
@@ -379,7 +379,7 @@
                 <Property name="text" type="java.lang.String" value="Inv. Selecci&#xf3;n"/>
               </Properties>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="N. Documentos"/>
               </Properties>
@@ -392,7 +392,7 @@
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;9999&quot;)"/>
               </AuxValues>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel4">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel4">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Imp. Docum."/>
               </Properties>

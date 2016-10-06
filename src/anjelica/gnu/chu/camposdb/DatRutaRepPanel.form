@@ -18,7 +18,7 @@
     <Property name="useNullLayout" type="boolean" value="true"/>
   </Layout>
   <SubComponents>
-    <Component class="gnu.chu.controles.CLabel" name="cLabel6">
+    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel6">
       <Properties>
         <Property name="text" type="java.lang.String" value="Salida Ruta"/>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -72,7 +72,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CLabel" name="cLabel3">
+    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
       <Properties>
         <Property name="text" type="java.lang.String" value="Ruta"/>
       </Properties>
@@ -82,7 +82,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CLabel" name="cLabel7">
+    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel7">
       <Properties>
         <Property name="text" type="java.lang.String" value="Transp."/>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -95,7 +95,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CLabel" name="cLabel9">
+    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel9">
       <Properties>
         <Property name="text" type="java.lang.String" value="Id"/>
       </Properties>
@@ -129,7 +129,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel8">
       <Properties>
         <Property name="text" type="java.lang.String" value="Vuelta Ruta"/>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

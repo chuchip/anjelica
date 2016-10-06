@@ -30,7 +30,7 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel8">
           <Properties>
             <Property name="text" type="java.lang.String" value="Codigo Idioma "/>
           </Properties>
@@ -50,7 +50,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.CLabel" name="cLabel9">
+        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel9">
           <Properties>
             <Property name="text" type="java.lang.String" value="Descripcion"/>
           </Properties>

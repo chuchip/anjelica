@@ -52,7 +52,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel16">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel16">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Tipo Listado "/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -91,7 +91,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel17">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel17">
               <Properties>
                 <Property name="text" type="java.lang.String" value="De Fecha Alta"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -104,7 +104,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel18">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel18">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Zona"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -127,7 +127,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel19">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel19">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Repres"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -150,7 +150,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel20">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel20">
               <Properties>
                 <Property name="text" type="java.lang.String" value="A Fecha Alta"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -173,7 +173,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel21">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel21">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Activo"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -196,7 +196,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel22">
+            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel22">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Ordenar"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

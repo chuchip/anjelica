@@ -88,7 +88,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.CLabel" name="clv_tipoL">
+            <Component class="gnu.chu.controles.pvc_comentL" name="clv_tipoL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Tipo"/>
               </Properties>
