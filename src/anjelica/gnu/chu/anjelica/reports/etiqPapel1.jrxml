@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-04-18T21:33:54 -->
+<!-- 2016-04-14T09:33:18 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="etiqPapel1" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="279" columnSpacing="3" leftMargin="17" rightMargin="17" topMargin="45" bottomMargin="5" uuid="a8466516-6951-46b9-a4b7-79f6891ee306">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -43,20 +43,20 @@
 		<band height="193" splitType="Prevent">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<componentElement>
-				<reportElement x="109" y="126" width="159" height="31" uuid="38a9382d-be2b-400d-9faa-38ff72f409bf"/>
+				<reportElement x="98" y="126" width="159" height="31" uuid="38a9382d-be2b-400d-9faa-38ff72f409bf"/>
 				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="true" checksumRequired="false" barWidth="0" barHeight="0">
 					<jr:codeExpression><![CDATA[$F{codbarra}]]></jr:codeExpression>
 				</jr:barbecue>
 			</componentElement>
 			<staticText>
-				<reportElement x="12" y="127" width="29" height="16" uuid="51bd21f4-ca60-49ba-b543-38cc4519b832"/>
+				<reportElement x="1" y="127" width="29" height="16" uuid="51bd21f4-ca60-49ba-b543-38cc4519b832"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Lote]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="42" y="127" width="64" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="caa262f7-5cda-4350-942a-198fca785546">
+				<reportElement key="textField" mode="Opaque" x="31" y="127" width="64" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="caa262f7-5cda-4350-942a-198fca785546">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
@@ -72,53 +72,53 @@
 				<textFieldExpression><![CDATA[$F{pro_lote}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="31" y="0" width="30" height="28" uuid="6ea688b9-520f-443c-88b3-639f4f2ee61d"/>
+				<reportElement x="20" y="0" width="30" height="28" uuid="6ea688b9-520f-443c-88b3-639f4f2ee61d"/>
 				<imageExpression><![CDATA[$P{logotipo}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="71" y="0" width="186" height="20" uuid="f576d214-8d95-45f6-b649-7807d547d750"/>
+				<reportElement x="60" y="0" width="186" height="20" uuid="f576d214-8d95-45f6-b649-7807d547d750"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{emp_nomb}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="71" y="20" width="185" height="12" uuid="c9890cff-ea7d-474c-bc08-428fb2e52585"/>
+				<reportElement x="60" y="20" width="185" height="12" uuid="c9890cff-ea7d-474c-bc08-428fb2e52585"/>
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{emp_dirweb}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="172" y="46" width="20" height="12" uuid="8d51e662-8831-46b2-90dd-f659669aaeee"/>
+				<reportElement x="161" y="46" width="20" height="12" uuid="8d51e662-8831-46b2-90dd-f659669aaeee"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<text><![CDATA[C.I.F]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="198" y="46" width="61" height="12" uuid="956379b5-5804-4a63-935d-f8a0e02fcc6c"/>
+				<reportElement x="187" y="46" width="61" height="12" uuid="956379b5-5804-4a63-935d-f8a0e02fcc6c"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{emp_nif}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="86" y="32" width="167" height="12" uuid="58ade237-d064-4fcc-89a6-2034fd01b369"/>
+				<reportElement x="75" y="32" width="167" height="12" uuid="58ade237-d064-4fcc-89a6-2034fd01b369"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{emp_dire}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="73" y="45" width="88" height="13" uuid="262b699f-f683-42ec-a9a3-b92e13e79165"/>
+				<reportElement x="62" y="45" width="88" height="13" uuid="262b699f-f683-42ec-a9a3-b92e13e79165"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="8" isBold="false"/>
 				</textElement>
 				<text><![CDATA[La Rioja - España]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yy" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="78" y="95" width="62" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="8e1e8191-7c21-4621-92e6-46f011b6c3e3"/>
+				<reportElement key="textField" mode="Opaque" x="67" y="95" width="62" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="8e1e8191-7c21-4621-92e6-46f011b6c3e3"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -132,14 +132,14 @@
 				<textFieldExpression><![CDATA[$P{deo_fecha}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="26" y="95" width="50" height="12" uuid="5b780874-892b-431e-87c3-a4f63d36d4a5"/>
+				<reportElement x="15" y="95" width="50" height="12" uuid="5b780874-892b-431e-87c3-a4f63d36d4a5"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<text><![CDATA[Fecha Env.]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="75" y="79" width="39" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="ad54ef12-1071-44d9-9df9-504d5165c832"/>
+				<reportElement key="textField" mode="Opaque" x="64" y="79" width="39" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="ad54ef12-1071-44d9-9df9-504d5165c832"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -153,21 +153,21 @@
 				<textFieldExpression><![CDATA[$F{cat_nomb}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="205" y="95" width="45" height="13" uuid="1a9a2ef2-7633-4b98-bfb8-7f733542f641"/>
+				<reportElement x="194" y="95" width="45" height="13" uuid="1a9a2ef2-7633-4b98-bfb8-7f733542f641"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Jack]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="160" y="95" width="42" height="12" uuid="c7838cd2-7b11-4d70-bc8e-1e4b21c4307f"/>
+				<reportElement x="149" y="95" width="42" height="12" uuid="c7838cd2-7b11-4d70-bc8e-1e4b21c4307f"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<text><![CDATA[Variedad]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="99" y="109" width="126" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="159ce1ad-ad9a-46d7-8cd5-4d6e34f4314f"/>
+				<reportElement key="textField" mode="Opaque" x="88" y="109" width="126" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="159ce1ad-ad9a-46d7-8cd5-4d6e34f4314f"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -181,28 +181,28 @@
 				<textFieldExpression><![CDATA[$F{cal_nomb}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="26" y="79" width="49" height="13" uuid="e211c194-dbaf-4a85-b1a6-46b56de0d7bf"/>
+				<reportElement x="15" y="79" width="49" height="13" uuid="e211c194-dbaf-4a85-b1a6-46b56de0d7bf"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<text><![CDATA[Categoría]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="40" y="109" width="50" height="12" uuid="677e4bb2-b918-461e-a319-9b2f04102b2b"/>
+				<reportElement x="29" y="109" width="50" height="12" uuid="677e4bb2-b918-461e-a319-9b2f04102b2b"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<text><![CDATA[Calibre]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="160" y="79" width="90" height="13" uuid="6f4e8718-64ff-4f11-a2bb-5047786f8619"/>
+				<reportElement x="149" y="79" width="90" height="13" uuid="6f4e8718-64ff-4f11-a2bb-5047786f8619"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[La Rioja - España]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="26" y="58" width="242" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="b9ee4a3e-7dd0-46b8-b2f4-a1da14819fbf">
+				<reportElement key="textField" mode="Opaque" x="15" y="58" width="242" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="b9ee4a3e-7dd0-46b8-b2f4-a1da14819fbf">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -219,7 +219,7 @@
 				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="120" y="79" width="35" height="13" uuid="6fb8d339-4339-464b-9d19-6259546c57ef"/>
+				<reportElement x="109" y="79" width="35" height="13" uuid="6fb8d339-4339-464b-9d19-6259546c57ef"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="9"/>
 				</textElement>

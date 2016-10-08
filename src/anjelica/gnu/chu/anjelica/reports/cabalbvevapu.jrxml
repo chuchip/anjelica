@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-08-06T22:47:08 -->
+<!-- 2016-10-08T06:58:25 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabalbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="56" bottomMargin="20" uuid="8ad01048-3ed1-412c-9f75-d79db66b0206">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -811,17 +811,18 @@ Fax. 948 645590]]></text>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{avc_tipree}]]></textFieldExpression>
 				</textField>
-				<textField pattern="" isBlankWhenNull="false">
-					<reportElement key="textField-1" mode="Opaque" x="5" y="60" width="530" height="40" forecolor="#000000" backcolor="#FFFFFF" uuid="401189e6-8402-4e6f-a67f-2cd293cbc0c1">
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-1" mode="Opaque" x="5" y="60" width="530" height="40" printWhenGroupChanges="albaran" forecolor="#000000" backcolor="#FFFFFF" uuid="401189e6-8402-4e6f-a67f-2cd293cbc0c1">
 						<printWhenExpression><![CDATA[new Boolean(! $P{obser}.equals(""))]]></printWhenExpression>
 					</reportElement>
 					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{obser}]]></textFieldExpression>
