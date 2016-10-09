@@ -1869,7 +1869,8 @@ create table anjelica.tipotari
 (
 tar_codi int not null,
 tar_nomb varchar(45) not null, -- Descripcion de la tarifa
-tar_tipo char(1) not null,     -- F (Pide Expl. si se cambia precio en Alb) V - Asume Variaciones, 'C' Costo.
+tar_tipo char(1) not null,     -- 'N' No poner Precios Aut. 
+							   --  'S" Poner precios Aut.
 tar_codori int,                -- Tarifa Original (0: No depende de nadie)
 tar_incpre float               -- Se Incrementara precio sobre tar_codori (Cant. Fija, no en porcentaje)
 );
@@ -3397,7 +3398,7 @@ create table anjelica.pedvenmod
 );
 drop view anjelica.v_pedven;
 create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
- pvc_fecent, pvc_comen , pvc_confir , avc_ano , avc_serie , avc_nume ,
+ pvc_fecent, pvc_comen , pvc_comrut, pvc_confir , avc_ano , avc_serie , avc_nume ,
  c.usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,
  l.pvl_numlin, pvl_kilos,pvl_canti,pvm_canti,pvm_coment,pvl_unid,pvl_tipo, pro_codi,
  pvl_comen, pvl_precio ,pvl_precon ,prv_codi,pvl_feccad, pvl_fecped, pvl_fecmod,m.usu_nomb as pvm_usunom,pvm_fecha  from 

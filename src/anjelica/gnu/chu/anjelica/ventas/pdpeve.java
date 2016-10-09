@@ -183,7 +183,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   CScrollPane pvc_comenS = new CScrollPane();
   CTextArea pvc_comenE = new CTextArea();
   CScrollPane pvc_comalbS = new CScrollPane();
-  CTextArea pvc_comalbE = new CTextArea();
+  CTextArea pvc_comrepE = new CTextArea();
   CTabbedPane Ptab1 = new CTabbedPane();
   CPanel Pcomen = new CPanel();
   pstockAct pstock;
@@ -536,7 +536,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     Pcabe.add(cLabel16, null);
     Pcabe.add(pvc_verfecE, null);
     pvc_comenS.getViewport().add(pvc_comenE, null);
-    pvc_comalbS.getViewport().add(pvc_comalbE, null);
+    pvc_comalbS.getViewport().add(pvc_comrepE, null);
     Ppie.add(cLabel4, null);
     Ppie.add(pvc_fecpedE, null);
     Ppie.add(pvc_horpedE, null);
@@ -1088,6 +1088,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_fecentE.resetTexto();
     pvc_confirE.resetTexto();
     pvc_comenE.resetTexto();
+    
     eje_numeE.resetTexto();
     pvc_numeE.resetTexto();
     emp_codiE.resetTexto();
@@ -1360,6 +1361,7 @@ public class pdpeve  extends ventanaPad   implements PAD
           pvc_verfecE.setEnabled(opVerProd.getValor().equals("" + pstockAct.VER_ULTVENTAS));
           cli_codiE.resetTexto();
           pvc_comenE.resetTexto();
+          pvc_comrepE.resetTexto();
           pvc_nupeclE.resetTexto();
           emp_codiE.setValorDec(EU.em_cod);
           eje_numeE.setValorDec(EU.ejercicio);
@@ -1369,6 +1371,7 @@ public class pdpeve  extends ventanaPad   implements PAD
           pvl_precioE.resetCambio();
           usu_nombE.setText(EU.usuario);
           pvc_comenE.resetTexto();
+          pvc_comrepE.resetTexto();
           pvc_fecpedE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
           pvc_horpedE.setText(Formatear.getFechaAct("HH.ss"));
 
@@ -1583,7 +1586,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     dtAdd.setDato("pvc_fecent",pvc_fecentE.getText(),"dd-MM-yyyy");
     dtAdd.setDato("pvc_confir",pvc_confirE.getValor());
     dtAdd.setDato("pvc_comen",Formatear.strCorta(pvc_comenE.getText(),200));
-    
+    dtAdd.setDato("pvc_comrep",Formatear.strCorta(pvc_comrepE.getText(),200));
     if (nav.getPulsado()==navegador.EDIT)
     {
         if (pcc_estadE.getValor().equals("C"))
@@ -1737,6 +1740,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     if (modo!=navegador.QUERY)
     {
       pvc_comenE.setEnabled(b);
+      pvc_comrepE.setEnabled(b);
 //      opPedidos.setEnabled(b);
 //      opVerProd.setEnabled(b);
     }
@@ -1777,7 +1781,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_fecentE.resetTexto();
     pvc_confirE.resetTexto();
     pvc_comenE.resetTexto();
-
+    pvc_comrepE.resetTexto();
     eje_numeE.resetTexto();
     pvc_numeE.resetTexto();
     Ppie.resetTexto();
@@ -1804,6 +1808,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       pvc_fecentE.setText(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy"));
       pvc_confirE.setValor(dtCon1.getString("pvc_confir"));
       pvc_comenE.setText(dtCon1.getString("pvc_comen"));
+      pvc_comrepE.setText(dtCon1.getString("pvc_comrep"));
       pvc_incfraE.setSelected(dtCon1.getString("pvc_incfra").equals("S"));
 //      alm_codiE.setValor(dtCon1.getInt("alm_codi"));
       pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));

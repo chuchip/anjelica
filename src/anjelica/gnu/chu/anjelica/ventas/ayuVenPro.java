@@ -179,8 +179,23 @@ public class ayuVenPro extends ventana
     cPanel2.add(cli_codiL, null);
     cPanel2.add(cLabel2, null);
   }
-
   public void cargaDatos(conexion ct,String cliCodi,String cliNomb,String proCodi,String proNomb,
+                         EntornoUsuario eu) throws Exception
+  {
+      cargaDatos(ct,cliCodi,cliNomb,proCodi,proNomb,null,eu);
+  }
+    /**
+     *
+     * @param ct
+     * @param cliCodi
+     * @param cliNomb
+     * @param proCodi
+     * @param proNomb
+     * @param fecMax
+     * @param eu
+     * @throws Exception
+     */
+    public void cargaDatos(conexion ct,String cliCodi,String cliNomb,String proCodi,String proNomb,Date fecMax,
                          EntornoUsuario eu) throws Exception
   {
     precio=0;
@@ -194,6 +209,7 @@ public class ayuVenPro extends ventana
         " avl_prven, sum(avl_prven*avl_canti) as avl_impor from v_albventa where  "+
         " cli_codi = "+cliCodi+
         " and pro_codi = "+proCodi +
+        (fecMax!=null?" and avc_fecalb < {d '"+ Formatear.getFechaDB(fecMax)+"'}":"")+
         (eu.isRootAV()?"":" and div_codi > 0 ")+
         " group by avc_fecalb,emp_codi,avc_ano,avc_serie,avc_nume,avl_prven "+
         " order by avc_fecalb desc";

@@ -270,9 +270,10 @@ public class lialbven implements JRDataSource
             else
                 return rs.getString("cli_nomen");
         }
-        if (nombre.equals("cli_diree") ||
+        if (nombre.equals("cli_diree") || nombre.equals("avc_clinom") ||
             nombre.equals("cli_poble") ||
-            nombre.equals("avc_serie") )
+            nombre.equals("avc_serie") || nombre.equals("cli_horenv") || 
+            nombre.equals("cli_comenv"))
           return rs.getString(nombre);
 
         if (nombre.equals("avc_empcod") ||

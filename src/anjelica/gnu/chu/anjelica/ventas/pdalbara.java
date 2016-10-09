@@ -124,7 +124,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   private final int JTP_CANMOD=6;
   private final int JTP_PRECIO=7;
   private final int JTP_PROCODI=1;
-  private boolean CONTROL_PRO_MIN=true; // Controlar venta de prod. de minoristas a mayor. ¡¡ CHAPUZA!!
+  private boolean CONTROL_PRO_MIN=false; // Controlar venta de prod. de minoristas a mayor. ¡¡ CHAPUZA!!
   private int avpNumparAnt=0,avpNumindAnt=0,avpEjelotAnt=0;
   private String avpSerlotAnt="";
   private boolean swPreguntaDestruir=false; // Pregunta si se debe destruir todo rastro de un albaran
@@ -369,6 +369,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         jt.setValor(this.getText(), JT_PROCODI);
         s=this.getNombArt();
         pro_nombE.setText(s);
+        botonBascula.setPesoCajas(this.getPesoCajas());
         jt.setValor(s, JT_PRONOMB);
         jtDes.removeAllDatos();
 //        jtDes.setValor(pro_nombE.getText(),0,2);
@@ -702,7 +703,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-09-18" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-10-06" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1730,8 +1731,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
       sbe_codiE.setValorInt(cli_codiE.getLikeCliente().getInt("sbe_codi"));
       if (nav.pulsado==navegador.ADDNEW)
         avc_revpreE.setValor(cli_codiE.getLikeCliente().getInt("cli_precfi"));
-      if ( MantTarifa.isTarifaCosto(dtStat,cli_codiE.getLikeCliente().getInt("tar_codi")) )
-       avc_valoraE.setValor("1");
+//      if ( MantTarifa.isTarifaCosto(dtStat,cli_codiE.getLikeCliente().getInt("tar_codi")) )
+//       avc_valoraE.setValor("1");
       cli_rutaE.setText(cli_codiE.getLikeCliente().getString("rut_codi"));
     }
     catch (SQLException k)
@@ -4914,6 +4915,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
 //    Bimpri.setEnabled(false);
           jt.removeAllDatos();
           Ppie.resetTexto();
+          avc_obserE.resetTexto();
           PotroDat.resetTexto();
           cli_pobleE.setText("");
           cli_codiE.resetCambio();
@@ -5235,17 +5237,20 @@ public class pdalbara extends ventanaPad  implements PAD  {
       double prTari = dtAdd.getDouble("tar_preci");
       if  (verPrecios)
       {
-        precio = jt.getValorDec(n, 5);
-        prTari = jt.getValorDec(n, 6);
+        precio = jt.getValorDec(n, JT_PRECIO);
+        prTari = jt.getValorDec(n, JT_PRETAR);
       }
       if (precio == 0 && !verPrecios) // Si el precio es 0 
       { // Intento poner el precio de Tarifa en Modo Automatico
         double prPedido=getPrecioPedido(jt.getValorInt(n, 1),dtStat);
         if (prPedido==0) // Si no existe el precio en el pedido, lo busco en la tarifa
         {
-            prTari = MantTarifa.getPrecTar(dtStat,jt.getValorInt(n, 1), tar_codiE.getValorInt(), avc_fecalbE.getText());
-            if (avc_revpreE.getValorInt()==0)
-                 precio=prTari;
+            if (pdtipotar.getPonerPrecios(dtStat, tar_codiE.getValorInt()))
+            {
+                prTari = MantTarifa.getPrecTar(dtStat,jt.getValorInt(n, JT_PROCODI), tar_codiE.getValorInt(), avc_fecalbE.getText());
+                if (avc_revpreE.getValorInt()==0)
+                     precio=prTari;
+            }
         }
         else
             precio=prPedido;
@@ -5918,10 +5923,10 @@ public class pdalbara extends ventanaPad  implements PAD  {
                 {
                     confAlbDep=true;
                     int ret=mensajes.mensajeYesNo("Este cliente tiene un albarane de deposito en fecha: "+
-                        dtStat.getFecha("avc_fecalb")+" ¿Desea poner el albaran como de deposito ?",this);
+                        dtStat.getFecha("avc_fecalb")+" ¿Desea poner el albaran como de Entrega ?",this);
                     if (ret==mensajes.YES)
                     {
-                        avc_deposE.setValor("D");
+                        avc_deposE.setValor("E");
                         avc_deposE.requestFocus();
                         return;
                     }
@@ -7586,6 +7591,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       jt.salirGrid();
       pro_codiE.getNombArt(jt.getValString(1),EU.em_cod, 0,
                            dtStat);
+      botonBascula.setPesoCajas(pro_codiE.getPesoCajas());
     } catch (SQLException k)
     {
       Error("Error al buscar caracteristicas del producto",k);
@@ -7676,6 +7682,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
 
   void irGridDes0()
   {
+    botonBascula.setPesoCajas(pro_codiE.getPesoCajas());
     if (jt.getValorInt(0) == 0)
     {
       jtDes.removeAllDatos();
@@ -8304,7 +8311,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       { // Albaran grafico o Hoja trazabilidad + Albaran. Solo imprime y sale.
         liAlb.envAlbarFax(ct.getConnection(), dtStat, sqlAlb, EU,
                   opValora.isSelected(),null,
-                  null,true,NUMCOPIAS_ALBGRAF,avsNume);
+                  avc_obserE.getText(),true,NUMCOPIAS_ALBGRAF,avsNume);
         return;
       }
       switch (opDispSalida.getValor())
@@ -8483,7 +8490,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       String lastMensaje=statusBar.getText();
       mensaje("Buscando datos.. de Ultimas ventas");
       ayVePr.cargaDatos(ct, cli_codiE.getText(), cli_codiE.getTextNomb(),
-                        jt.getValString(1), jt.getValString(2), EU);
+                        jt.getValString(JT_PROCODI), jt.getValString(JT_PRONOMB),avc_fecalbE.getDate(), EU);
       mensaje(lastMensaje);
       mensajeErr("Datos de Ultimas ventas... encontrados");
     }
@@ -9082,7 +9089,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
     pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));
     pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped", "hh.mm"));
     pvc_comenE.setText(dtCon1.getString("pvc_comen"));
-
+    if (nav.pulsado==navegador.ADDNEW)
+       avc_obserE.setText(dtCon1.getString("pvc_comrep"));
     do
     {
       ArrayList v = new ArrayList();
@@ -9343,7 +9351,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         }
         try
         {
-          pro_codiE.getNombArt(jt.getValString(1), EU.em_cod, 0,
+          pro_codiE.getNombArt(jt.getValString(JT_PROCODI), EU.em_cod, 0,
                                dtStat);
           botonBascula.setPesoCajas(pro_codiE.getPesoCajas());
         }

@@ -113,9 +113,8 @@ public class pdtipotar extends ventanaPad implements PAD
       iniciar(this);
       Pprinc.setLayout(null);
 
-      tar_tipoE.addItem("Fijo","F");
-      tar_tipoE.addItem("Variable","V");
-      tar_tipoE.addItem("Costo","C");
+      tar_tipoE.addItem("Automat.","S");
+      tar_tipoE.addItem("No Autom.","N");
       cLabel2.setText("Tipo");
       cLabel2.setBounds(new Rectangle(9, 28, 66, 17));
 
@@ -463,12 +462,12 @@ public class pdtipotar extends ventanaPad implements PAD
          tar_codoriE.requestFocus();
          return false;
        }
-       if (! dtStat.getString("tar_tipo").equals(tar_tipoE.getValor()))
-       {
-           mensajeErr("Tipo de tarifa debe ser igual al del padre");
-           tar_tipoE.requestFocus();
-           return false;
-       }
+//       if (! dtStat.getString("tar_tipo").equals(tar_tipoE.getValor()))
+//       {
+//           mensajeErr("Tipo de tarifa debe ser igual al del padre");
+//           tar_tipoE.requestFocus();
+//           return false;
+//       }
        if (tar_incpreE.getValorDec()==0)
        {
          mensajeErr("Introduzca el importe a Incrementar");
@@ -511,6 +510,7 @@ public class pdtipotar extends ventanaPad implements PAD
      }
 
 
+  @Override
      public void canc_addnew()
      {
        mensaje("");
@@ -593,6 +593,7 @@ public class pdtipotar extends ventanaPad implements PAD
        verDatos();
      }
 
+  @Override
      public void activar(boolean b)
      {
          Baceptar.setEnabled(b);
@@ -624,4 +625,13 @@ public class pdtipotar extends ventanaPad implements PAD
         dt.select(s);
         return dt;
      }
+     public static boolean  getPonerPrecios(DatosTabla dt, int tarCodi ) throws SQLException
+     {
+         String s="select tar_tipo from tipotari where "+
+           "  tar_codori="+tarCodi;
+         if (!dt.select(s))
+             return false;
+         return dt.getString("tar_tipo").equals("S");
+     }
+     
 }

@@ -429,7 +429,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
           {
               if (! jt.getValString(n,0).equals("") && !jt.getValString(n,0).equals("X") )
               {
-                  jt.setValor(jt.getValorDec(n,2)+increm,n,2);
+                  jt.setValor(jt.getValorDec(n,2)==0?0:jt.getValorDec(n,2)+increm,n,2);
               }
           }
       }
@@ -743,7 +743,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
          " AND tar_fecfin >=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
          " order by tar_fecini";
      if (dt.select(s))
-       return dt.getDouble("tar_preci", true) + tarIncPre;
+       return dt.getDouble("tar_preci", true)==0?0:dt.getDouble("tar_preci", true) + tarIncPre;
      else
        return 0;
    }
@@ -920,7 +920,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 
         cLabel1.setText("Semana");
         Pcabe.add(cLabel1);
-        cLabel1.setBounds(20, 30, 44, 18);
+        cLabel1.setBounds(4, 30, 60, 18);
 
         tar_nusemE.setMinimumSize(new java.awt.Dimension(10, 18));
         tar_nusemE.setPreferredSize(new java.awt.Dimension(10, 18));

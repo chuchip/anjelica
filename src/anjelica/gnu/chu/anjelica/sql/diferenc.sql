@@ -4,6 +4,19 @@ alter table hispedvenc add pvc_incfra char(1) not null default 'N'; -- Incluir F
 
 alter table pedvenc add pvc_comrep varchar(200);
 alter table hispedvenc add pvc_comrep varchar(200);
+drop view anjelica.v_pedven;
+create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
+ pvc_fecent, pvc_comen , pvc_comrep, pvc_confir , avc_ano , avc_serie , avc_nume ,
+ c.usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,
+ l.pvl_numlin, pvl_kilos,pvl_canti,pvm_canti,pvm_coment,pvl_unid,pvl_tipo, pro_codi,
+ pvl_comen, pvl_precio ,pvl_precon ,prv_codi,pvl_feccad, pvl_fecped, pvl_fecmod,m.usu_nomb as pvm_usunom,pvm_fecha  from 
+ pedvenc as c, pedvenl as l  left join pedvenmod as m ON
+ m.emp_codi=l.emp_codi
+ and m.eje_nume= l.eje_nume and m.pvc_nume=l.pvc_nume
+ and m.pvl_numlin=l.pvl_numlin
+ where c.emp_codi=l.emp_codi
+ and c.eje_nume=l.eje_nume and c.pvc_nume = l.pvc_nume ;
+grant select on anjelica.v_pedven to public;
 -- Clasificicacion Pieza.
 alter table v_albcompar rename column  tipo_c1 to acp_clasi;
 alter table hisalpaco add column  acp_clasi varchar(10):
