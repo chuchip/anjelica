@@ -118,7 +118,7 @@ public class ayuVenPro extends ventana
     cli_codiL.setHorizontalAlignment(SwingConstants.RIGHT);
 
     v.add("Fecha"); // 0
-    v.add("Emp"); // 1
+    v.add("Codigo"); // 1
     v.add("Eje"); // 2
     v.add("Serie"); // 3
     v.add("Numero"); // 4
@@ -132,7 +132,7 @@ public class ayuVenPro extends ventana
     jt.setFormatoColumna(7, "---,--9.99");
     jt.setFormatoColumna(8, "--,---,--9.99");
     jt.setAlinearColumna(new int[] {0, 2,2,1,2, 2, 2, 2, 2});
-    jt.setAnchoColumna(new int[]{80,30,40,30,50,72,40,72,87});
+    jt.setAnchoColumna(new int[]{80,60,40,30,50,72,40,72,87});
     jt.setAjustarGrid(true);
     cPanel2.setLayout(null);
     cLabel1.setText("Producto");
@@ -179,6 +179,16 @@ public class ayuVenPro extends ventana
     cPanel2.add(cli_codiL, null);
     cPanel2.add(cLabel2, null);
   }
+  /**
+   * 
+   * @param ct
+   * @param cliCodi
+   * @param cliNomb
+   * @param proCodi
+   * @param proNomb
+   * @param eu
+   * @throws Exception 
+   */
   public void cargaDatos(conexion ct,String cliCodi,String cliNomb,String proCodi,String proNomb,
                          EntornoUsuario eu) throws Exception
   {
@@ -204,14 +214,15 @@ public class ayuVenPro extends ventana
     pro_codiL.setText(Formatear.format(proCodi,"####9"));
     cli_nombL.setText(cliNomb);
     pro_nombL.setText(proNomb);
-    s="select  avc_fecalb,emp_codi,avc_ano,avc_serie,avc_nume,"+
+    s="select  avc_fecalb,pro_codi,avc_ano,avc_serie,avc_nume,"+
         " sum(avl_canti) as avl_canti,sum(avl_unid) as avl_unid, "+
         " avl_prven, sum(avl_prven*avl_canti) as avl_impor from v_albventa where  "+
         " cli_codi = "+cliCodi+
-        " and pro_codi = "+proCodi +
+        " and pro_codi in (select pro_codi from v_articulo where pro_codart = (select pro_codart from v_articulo where pro_codi = "+
+        proCodi+"))"+
         (fecMax!=null?" and avc_fecalb < {d '"+ Formatear.getFechaDB(fecMax)+"'}":"")+
         (eu.isRootAV()?"":" and div_codi > 0 ")+
-        " group by avc_fecalb,emp_codi,avc_ano,avc_serie,avc_nume,avl_prven "+
+        " group by avc_fecalb,pro_codi,avc_ano,avc_serie,avc_nume,avl_prven "+
         " order by avc_fecalb desc";
     jt.removeAllDatos();
     if (! dt.select(s))
