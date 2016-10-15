@@ -1346,9 +1346,13 @@ public class proPanel extends CPanel
   {
       return dt.select("select * from prodventa where pve_codi= '"+pveCodi+"'");
   }
-  public void setUsaCodigoArticulo(boolean swUsaCodArticulo)
+  /**
+   * Especifica que se debe usar el codigo de venta del articulo. Por defecto es false
+   * @param swUsaCodVenta 
+   */
+  public void setUsaCodigoVenta(boolean swUsaCodVenta)
   {
-    this.usaRefArticulo=swUsaCodArticulo;
+    this.usaRefArticulo=swUsaCodVenta;
    
     if (usaRefArticulo)
     {
@@ -1356,6 +1360,7 @@ public class proPanel extends CPanel
       pro_codiE.setFormato("X");
       pro_codiE.setMaxLong(15);
       pro_codiE.setMayusc(true);
+      pro_codiE.setText("");
       pro_codiE.setHorizontalAlignment(JTextField.LEFT);
       pro_codiE.setPreferredSize(new Dimension(120, 16));
     }

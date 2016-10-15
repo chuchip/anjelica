@@ -86,6 +86,7 @@ public class menu extends JFrame
   JMenu ItemInventario = new JMenu();
   JMenuItem clvenrep = new JMenuItem();
   JMenuItem CLRankClie = new JMenuItem();
+  JMenuItem mantTariCliente = new JMenuItem();
   JMenuItem cargaInv = new JMenuItem();
   JMenuItem mantInv = new JMenuItem();
   JMenuItem valInv = new JMenuItem();
@@ -364,6 +365,12 @@ public class menu extends JFrame
     clvenrep.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         clvenrep_actionPerformed(e);
+      }
+    });
+     mantTariCliente.setText("Mant.Tarifa Clientes");
+    mantTariCliente.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mantTariCliente_actionPerformed(e);
       }
     });
     CLRankClie.setText("Ranking Clientes");
@@ -1052,6 +1059,7 @@ public class menu extends JFrame
     JpopupVentas.add(coVenPro);
     JpopupVentas.add(conVenZonas);
     JpopupVentas.add(CLRankClie);
+     JpopupVentas.add(mantTariCliente);
      JpopupVentas.add(mantAlbRuta);
     popupFact.add(lirelfact);
     popupFact.add(pdfactu);
@@ -1761,6 +1769,10 @@ void limpiaDB()
  void CLRankClie_actionPerformed(ActionEvent e) {
 
     lanzaEjecutable(new gnu.chu.anjelica.ventas.CLRankClie(menu.this,EU));
+  }
+  void mantTariCliente_actionPerformed(ActionEvent e) {
+
+    lanzaEjecutable(new gnu.chu.anjelica.pad.MantTariCliente(menu.this,EU));
   }
   void mantInv_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.inventario.pdinven(menu.this,EU));

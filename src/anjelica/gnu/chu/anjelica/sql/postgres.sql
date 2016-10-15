@@ -1877,7 +1877,7 @@ tar_incpre float               -- Se Incrementara precio sobre tar_codori (Cant.
 ---
 -- Tablas de Tarifas
 ---
--- drop table c_tarifa;
+-- drop table tarifa;
 create table anjelica.tarifa
 (
 tar_fecini date not null,
@@ -1892,6 +1892,22 @@ tar_grupo smallint not null, -- Grupo de familia  (solo se usa cuando pro_codart
 tar_tipo smallint not null  -- Tipo Animal (solo se usa cuando pro_codart='X')
 );
 create  index ix_tari1 on anjelica.tarifa(tar_fecini,tar_fecfin,tar_codi,pro_codart);
+---
+-- Tarifas para clientes
+---
+-- drop table taricli;
+create table anjelica.taricli
+(
+tar_fecini date not null,
+tar_fecfin date,	-- 
+cli_codi int not null, -- Codigo de Tarifa
+tar_linea int not null, -- Linea de tarifa
+pro_codart varchar(15) not null, -- Codigo de Articulo
+pro_nomb VARCHAR(50) not null, -- Descripcion del Articulo
+tar_preci decimal(10,2),
+tar_comen varchar(150),
+constraint ix_taricli primary key (tar_fecini,cli_codi,pro_codart)
+);
 ---
 --- Maestro de  Almacenes
 ---
@@ -3305,6 +3321,7 @@ create table anjelica.pedvenc;
  pvc_impres char(1) not null,	-- Listado (S/N)
  pvc_incfra char(1) not null default 'N', -- Incluir Fra?
  pvc_comrep varchar(200),	    -- Comentario para Reparto
+ pvc_depos char(1) not null default 'N', -- Deposito ?
  constraint ix_pedvenc primary key(emp_codi,eje_nume,pvc_nume)
 );
 --

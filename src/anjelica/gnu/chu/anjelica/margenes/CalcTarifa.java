@@ -259,7 +259,7 @@ public class CalcTarifa extends ventanaPad implements PAD
         gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt()+2);
         gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.SUNDAY);
         tar_fecfinE.setDate(new java.util.Date(gc.getTimeInMillis()));
-        fecStockE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-5));
+        fecStockE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4));
         fecIniProdE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-8));
         fecFinProdE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4) );
         fecIniPedE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4) );
@@ -426,12 +426,11 @@ public class CalcTarifa extends ventanaPad implements PAD
         if (v==null)
             return;
         v.add(kilStock);              
-        v.add(kilStock==0?0:Formatear.redondea(impStock/kilStock,2));
-        v.add(kilProd);
-        v.add(kilProd==0?0:Formatear.redondea(impProd/kilProd,2));
+        v.add(kilStock==0?0:Formatear.redondea(impStock/kilStock,2));       
         v.add(kilPendRec);
         v.add(kilPendRec==0?0:Formatear.redondea(ImpPendRec/kilPendRec,2));
-        
+         v.add(kilProd);
+        v.add(kilProd==0?0:Formatear.redondea(impProd/kilProd,2));
     }
     boolean getValorDespiece(int proCodi,DatosTabla dt,java.util.Date fecini,java.util.Date fecfin) throws SQLException
     {
@@ -440,7 +439,8 @@ public class CalcTarifa extends ventanaPad implements PAD
         s="select sum(def_kilos) as kilos,sum(def_kilos*def_prcost) as importe from v_despsal where pro_codi = "+proCodi+
             ((proCodi >= 10994 && proCodi<=10995) || (proCodi>=40801 && proCodi<41000) ?"": " and deo_incval='S' ")
              + " and deo_fecha >= TO_DATE('" + Formatear.getFecha(fecini, "dd-MM-yyyy") + "','dd-MM-yyyy') "
-             + " and deo_fecha <= TO_DATE('" + Formatear.getFecha(fecfin, "dd-MM-yyyy")+ "','dd-MM-yyyy') ";
+             + " and deo_fecha <= TO_DATE('" + Formatear.getFecha(fecfin, "dd-MM-yyyy")+ "','dd-MM-yyyy') "+
+             " and def_prcost > 0";
         dt.select(s);
         if (dt.getDouble("kilos",true)==0)
             return false;

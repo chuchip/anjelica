@@ -94,6 +94,11 @@ public class MantPartes  extends ventanaPad implements PAD
          {"Entrada", "E"},
          {"Dev.Recep", "R"}
      };
+     final static String[][] PAC_ACCION={{"NO Def", "-"},
+         {  "Vert.", "V"   },
+         {"Reut.", "R"},
+         {"Cong.", "C"}
+     };
     ifregalm ifRegAlm;
     int parLinea;
 //    int focoGrid=1;
@@ -214,6 +219,25 @@ public class MantPartes  extends ventanaPad implements PAD
         }
         return "";    
   }
+  
+  public static String getDescrAcccionSala(String accionSala)
+  {
+       for (String[] PAA_TIPO1 : PAC_ACCION)
+        {
+            if (PAA_TIPO1[1].equals(accionSala))
+                return PAA_TIPO1[0];
+        }
+        return "";    
+  }
+  
+  /**
+   * Para establecer el numero de parte desde fuera
+   * @param parte 
+   */
+  public void setParte(String parte)
+  {
+      par_codiE.setText(parte);
+  }
   public static String getNombreClase()
   {
       return "gnu.chu.anjelica.almacen.MantPartes";
@@ -276,7 +300,7 @@ public class MantPartes  extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false,P_ADMIN?navegador.NORMAL:
             P_PERMEST==PERM_GERENC?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20160427) Modo: "+P_PERMEST);
+        this.setVersion("(20161010) Modo: "+P_PERMEST);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -365,7 +389,7 @@ public class MantPartes  extends ventanaPad implements PAD
         estadoE.setValor(""+ESTADO_PROCESADA);
       if (P_PERMEST==PERM_INSERTAR)
         estadoE.setValor(""+ESTADO_PROCDEV);
-      cargaListado(estadoE.getValor());
+      cargaListado(estadoE.getValor(),0);
       if (P_PERMEST!=PERM_INSERTAR )
       {
         PTabPane1.setSelectedIndex(1); 
@@ -387,8 +411,29 @@ public class MantPartes  extends ventanaPad implements PAD
   }
   private void activarEventos()
   {
+      BmodEstado.addActionListener(new ActionListener()
+      {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {           
+           try
+              {
+                   PTabPane1.setSelectedIndex(1);
+//                   estadoE.setValor(pac_estadE.getValor());
+                   cargaListado(estadoE.getValor(),par_codiE.getValorInt());                   
+                   verDatos(par_codiE.getValorInt());
+              } catch (Exception ex)
+              {
+                  Error("Error al ver datos", ex);
+                  return;
+              }
+            swModificaTodo=false;
+            nav.btnEdit.doClick(); 
+        }
+      });
       BmvReg.addActionListener(new ActionListener()
       {
+        @Override
         public void actionPerformed(ActionEvent e)
         {
           if (CPermiso.getValorInt()==PERM_INSERTAR)
@@ -456,8 +501,9 @@ public class MantPartes  extends ventanaPad implements PAD
                   
           }
       }); 
-       jtLineas.addMouseListener(new MouseAdapter()
+      jtLineas.addMouseListener(new MouseAdapter()
       {
+          @Override
           public void mouseClicked(MouseEvent e) {
               if (!jtLineas.isEnabled() && jtAbo.isEnabled() && e.getClickCount()>1)
               {
@@ -552,7 +598,7 @@ public class MantPartes  extends ventanaPad implements PAD
         {
             if (nav.getPulsado()!=navegador.NINGUNO || swCargaList)
                 return;
-            cargaListado(estadoE.getValor());
+            cargaListado(estadoE.getValor(),0);
         }
       });
     
@@ -661,7 +707,7 @@ public class MantPartes  extends ventanaPad implements PAD
      {
         if (nav.getPulsado()!=navegador.NINGUNO || swCargaList)
             return;
-        cargaListado(estadoE.getValor());
+        cargaListado(estadoE.getValor(),0);
      }
     });
     
@@ -671,7 +717,7 @@ public class MantPartes  extends ventanaPad implements PAD
      {
         if (nav.getPulsado()!=navegador.NINGUNO || swCargaList)
             return;
-        cargaListado(estadoE.getValor());     
+        cargaListado(estadoE.getValor(),0);     
      }
     });
     BsaltaGrid.addFocusListener(new FocusAdapter()
@@ -1443,6 +1489,7 @@ public class MantPartes  extends ventanaPad implements PAD
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
         CPermiso = new gnu.chu.controles.CComboBox();
+        BmodEstado = new gnu.chu.controles.CButton(Iconos.getImageIcon("edit"));
 
         pro_codiE.setProNomb(pro_nombE);
         pro_nombE.setEnabled(false);
@@ -1455,10 +1502,7 @@ public class MantPartes  extends ventanaPad implements PAD
         pro_serlotE.setText("A");
         pro_serlotE.setMayusc(true);
 
-        pal_acsalaE.addItem("NO Def","-");
-        pal_acsalaE.addItem("Vert.","V");
-        pal_acsalaE.addItem("Reut.","R");
-        pal_acsalaE.addItem("Cong.","C");
+        pal_acsalaE.addItem(PAC_ACCION);
         pal_acsalaE.setGridEditable(jt);
 
         setAcciones(pal_accionE,'*');
@@ -1969,7 +2013,11 @@ public class MantPartes  extends ventanaPad implements PAD
         CPermiso.addItem("Gerencia", "1");
         CPermiso.addItem("Oficina", "2");
         Ppie.add(CPermiso);
-        CPermiso.setBounds(260, 5, 140, 17);
+        CPermiso.setBounds(240, 10, 140, 17);
+
+        BmodEstado.setToolTipText("Edicion en modo listado");
+        Ppie.add(BmodEstado);
+        BmodEstado.setBounds(390, 5, 30, 25);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1993,6 +2041,7 @@ public class MantPartes  extends ventanaPad implements PAD
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CButtonMenu Bcerrar;
     private gnu.chu.controles.CButton BirGrid;
+    private gnu.chu.controles.CButton BmodEstado;
     private gnu.chu.controles.CButton BmvReg;
     private gnu.chu.controles.CButton BsaltaGrid;
     private gnu.chu.controles.CButton BswGrid;
@@ -2704,6 +2753,7 @@ public class MantPartes  extends ventanaPad implements PAD
     }
     public void activar(int tipo,boolean activo) {
         Baceptar.setEnabled(activo);
+        BmodEstado.setEnabled(!activo);
         Bcancelar.setEnabled(activo);
         BswGrid.setEnabled(false);
         Bcerrar.setEnabled(!activo && !jtList.isVacio() && P_PERMEST>=PERM_INSERTAR);
@@ -2815,16 +2865,19 @@ public class MantPartes  extends ventanaPad implements PAD
         pac_usuresE.setEnabled(activo);
     }
     
-    private void cargaListado(String estado)
+    private void cargaListado(String estado,int parte)
     {
         try {
             swCargaList=true;
             swCargaLin=true;
             jtList.removeAllDatos();
-            String s="select * from partecab where pac_estad='"+estado+"'"+
+            String s=
+                "select * from partecab where  "+
+                (parte==0?
+                " pac_estad='"+estado+"'"+
                 (tipoE.getValor().equals("*")?"":" and pac_tipo='"+tipoE.getValor()+"'")+
                 (feciniE.isNull()?"":" and pac_fecinc>='"+feciniE.getFechaDB()+"'")+
-                (fecfinE.isNull()?"":" and pac_fecinc<='"+fecfinE.getFechaDB()+"'")+
+                (fecfinE.isNull()?"":" and pac_fecinc<='"+fecfinE.getFechaDB()+"'"):" par_codi = "+parte)+
                 " order by par_codi";
             if (! dtCon1.select(s))
             {                
@@ -2945,7 +2998,7 @@ public class MantPartes  extends ventanaPad implements PAD
             v.add(dt.getDate("pro_feccad"));
             v.add(dt.getString("pal_unidad"));
             v.add(dt.getString("pal_kilos"));
-            v.add(getDescrEstadoSala(dt.getString("pal_acsala")));
+            v.add(getDescrAcccionSala(dt.getString("pal_acsala")));
             v.add(dt.getString("pal_comsal"));
 
             jt.addLinea(v);

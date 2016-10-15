@@ -52,6 +52,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 public class FichaClientes extends ventana implements PAD
 {
+  private boolean verCobros=false; // Para no ver cobros pend.
   private boolean  swActCli=false;
   private boolean relClien=true;
   boolean mataConsulta=false;
@@ -1180,6 +1181,7 @@ public class FichaClientes extends ventana implements PAD
  void activarEventos()
  {
      realPedi.addActionListener(new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
           try{
             if (cli_codiE.isNull())
@@ -1985,6 +1987,8 @@ public class FichaClientes extends ventana implements PAD
 
   void verDatCobros(int cliCodi,int fpaCodi) throws Exception
   {
+    if (!verCobros)
+        return;
     int nAlbCob=0;
     int nFacCob=0,nTalCob=0,nDevol=0;
     double iAlbCob=0,iFacCob=0,iTalCob=0,iDevol=0;

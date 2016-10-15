@@ -23,6 +23,7 @@ package gnu.chu.anjelica.inventario;
 */
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.Comvalm;
+import gnu.chu.anjelica.almacen.MantPartes;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.listados.Listados;
@@ -69,6 +70,7 @@ public class ClDifInv extends ventana {
     private  final int  JT_PRPINDI=5;
     private  final int  JT_PESOINV=6;
     private  final int  JT_PESOORD=7;
+    private  final int  JT_COMENT=8;
     private  final int  JT_SELEC=9;
     private  final int  JT_ALMCODI=10;
     private  final int  JTR_SELEC=7;
@@ -218,23 +220,36 @@ public class ClDifInv extends ventana {
               if (jf==null)
                   return;
               ejecutable prog;
-              if ((prog=jf.gestor.getProceso(Comvalm.getNombreClase()))==null)
-                  return;
-              gnu.chu.anjelica.almacen.Comvalm cm=(gnu.chu.anjelica.almacen.Comvalm) prog;
-              for (int n=jt.getSelectedRow();n>=0;n--)
+              if (jt.getValString(JT_COMENT).startsWith("P:") && jt.getSelectedColumn()==JT_COMENT)
+              {// Parte
+                   if ((prog=jf.gestor.getProceso(MantPartes.getNombreClase()))==null)
+                    return;
+                   gnu.chu.anjelica.almacen.MantPartes cm=(gnu.chu.anjelica.almacen.MantPartes) prog;
+                   cm.PADQuery();
+                   cm.setParte( jt.getValString(JT_COMENT).substring(2,8));
+                   cm.ej_query();
+                   jf.gestor.ir(cm);
+              }
+              else
               {
-                  if (jt.getValorInt(n,JT_PROCODI)!=0)
-                  {
-                      cm.setProCodi(jt.getValorInt(n,JT_PROCODI));
-                      break;
-                  }
-              }          
-              cm.setLote(jt.getValorInt(JT_PRPPART));
-              cm.setIndividuo(jt.getValorInt(JT_PRPINDI));
-              cm.setSerie(jt.getValString(JT_PRPSERI));
-              cm.setEjercicio(jt.getValorInt(JT_PRPANO));
-              cm.ejecutaConsulta();
-              jf.gestor.ir(cm);
+                if ((prog=jf.gestor.getProceso(Comvalm.getNombreClase()))==null)
+                    return;
+                gnu.chu.anjelica.almacen.Comvalm cm=(gnu.chu.anjelica.almacen.Comvalm) prog;
+                for (int n=jt.getSelectedRow();n>=0;n--)
+                {
+                    if (jt.getValorInt(n,JT_PROCODI)!=0)
+                    {
+                        cm.setProCodi(jt.getValorInt(n,JT_PROCODI));
+                        break;
+                    }
+                }          
+                cm.setLote(jt.getValorInt(JT_PRPPART));
+                cm.setIndividuo(jt.getValorInt(JT_PRPINDI));
+                cm.setSerie(jt.getValString(JT_PRPSERI));
+                cm.setEjercicio(jt.getValorInt(JT_PRPANO));
+                cm.ejecutaConsulta();
+                jf.gestor.ir(cm);
+              }
           }
       });
     
@@ -503,7 +518,7 @@ public class ClDifInv extends ventana {
                               " and pro_indlot = "+dtCon1.getInt("PRP_INDI");
                 if (dtStat.select(s))
                 {
-                    lciComent= "P:"+dtStat.getInt("par_codi")+" "+
+                    lciComent= "P:"+Formatear.format(dtStat.getInt("par_codi"),"999999")+" "+
                                   dtStat.getString("pal_comsal");
                 }
               }
