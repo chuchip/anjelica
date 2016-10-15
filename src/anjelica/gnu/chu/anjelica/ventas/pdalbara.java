@@ -113,6 +113,12 @@ import javax.swing.event.ListSelectionListener;
 
  
 public class pdalbara extends ventanaPad  implements PAD  {  
+
+  final static String[][] DEPOSITOS = new String[][]{{"Normal","N"},
+    {"Deposito","D"},
+    {"Entregado","E"}
+  };
+  CComboBox pvc_deposE=new CComboBox();
   CButton Bdespiece=new CButton();
   int paiEmp;
   rangoEtiquetas rangoEtiq;
@@ -570,7 +576,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
   CLabel cLabel26 = new CLabel();
   CTextField pvc_fecentE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CScrollPane jScrollPane1 = new CScrollPane();
-  CLabel cLabel110 = new CLabel();
+  CLabel pvc_comenL = new CLabel();
   CTextArea pvc_comenE = new CTextArea();
   CTextField pvc_fecpedE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CLabel cLabel27 = new CLabel();
@@ -703,7 +709,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-10-06" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-10-13" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -717,7 +723,6 @@ public class pdalbara extends ventanaPad  implements PAD  {
         ifFax.setIconifiable(false);
         ifMail.setVisible(false);
         ifMail.setIconifiable(false);
-
       
         Bdesgl.setMargin(new Insets(0, 0, 0, 0));
         Bdesgl.setPreferredSize(new Dimension(24, 24));
@@ -785,9 +790,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
         conf_jtLinPed(jtLinPed);
         PajuPed.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
         
-        avc_deposE.addItem("Normal","N");
-        avc_deposE.addItem("Deposito","D");
-        avc_deposE.addItem("Entregado","E");
+        avc_deposE.addItem(DEPOSITOS);
+        pvc_deposE.addItem(DEPOSITOS);
+        pvc_deposE.setEnabled(false);
         llenaVerDepos();
         
         pro_codiE.getFieldProCodi().setToolTipText("F3 Buscar por nombre. Doble Click Restaurar Nombre Articulo");
@@ -1061,8 +1066,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
 //    pvc_fecentE.setBounds(new Rectangle(396, 20, 75, 16));
         cLabel26.setText("Fec.Entrega");
         cLabel26.setBounds(new Rectangle(4, 3, 67, 16));
-        cLabel110.setText("Comentario");
-        cLabel110.setBounds(new Rectangle(2, 21, 68, 18));
+        pvc_comenL.setText("Comentario");
+        pvc_comenL.setBounds(new Rectangle(2, 21, 68, 18));
+        pvc_deposE.setBounds(new Rectangle(2, 40, 68, 18));
         cLabel27.setText("Fecha Ped.");
         cLabel27.setBounds(new Rectangle(148, 3, 59, 16));
         cLabel111.setText("Cant");
@@ -1169,7 +1175,8 @@ public class pdalbara extends ventanaPad  implements PAD  {
         Ptab1.addTab("Pedidos", Ppedido);
         Ptab1.addTab("Historico",Phist);
         Pcabped.add(cLabel26, null);
-        Pcabped.add(cLabel110, null);
+        Pcabped.add(pvc_comenL, null);
+        Pcabped.add(pvc_deposE, null);
         Pcabped.add(cLabel29, null);
         Pcabped.add(nlE, null);
         Pcabped.add(cLabel111, null);
@@ -5934,7 +5941,18 @@ public class pdalbara extends ventanaPad  implements PAD  {
             }
         }
         if (pvc_anoE.getValorInt()!=0)
-          verDatPedido();
+        {
+           verDatPedido();
+           if (nav.pulsado==navegador.ADDNEW)
+           {
+                if (! pvc_deposE.getValor().equals("N"))
+                {
+                    msgBox("Pedido esta marcado como "+pvc_deposE.getText()+" Se pondra el albaran igual");
+                    avc_deposE.setValor(pvc_deposE.getValor());
+                }
+           }
+        }
+        
         if (nav.pulsado == navegador.EDIT)
           Bcancelar.setEnabled(false);
         if (nav.pulsado==navegador.ADDNEW)
@@ -8279,6 +8297,12 @@ public class pdalbara extends ventanaPad  implements PAD  {
 //    int nAlbImp = 0;
     try
     {
+      if (avc_deposE.getValor().equals("D") && avsNume==0)
+      { // Albaran deposito. Pedir confirmación
+          int ret=mensajes.mensajeYesNo("Albaran es de DEPOSITO. Listar seguro?");
+          if (ret!=mensajes.YES)
+              return;
+      }
 //       int empCodi,int avcAno,String avcSerie,int avcNume,DatosTabla dt
       if (checkAlbaran(emp_codiE.getValorInt(),avc_anoE.getValorInt(),avc_seriE.getText(), avc_numeE.getValorInt(),dtCon1)<0)
       {
@@ -9089,6 +9113,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));
     pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped", "hh.mm"));
     pvc_comenE.setText(dtCon1.getString("pvc_comen"));
+    pvc_deposE.setValor(dtCon1.getString("pvc_depos"));
     if (nav.pulsado==navegador.ADDNEW)
        avc_obserE.setText(dtCon1.getString("pvc_comrep"));
     do

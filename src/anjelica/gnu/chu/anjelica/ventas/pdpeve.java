@@ -65,8 +65,10 @@ public class pdpeve  extends ventanaPad   implements PAD
   private boolean P_ADMIN=false;
   private boolean P_VERPRECIOS=false;
   AyuArt aypro;
-  CLabel pcc_estadL=new CLabel("Estado");
-  CComboBox pcc_estadE=new CComboBox();
+  CLabel pvc_estadL=new CLabel("Estado");
+  CLabel pvc_deposL=new CLabel("Deposito");
+  CComboBox pvc_deposE=new CComboBox();
+  CComboBox pvc_estadE=new CComboBox();
   CButton Bimpri=new CButton(Iconos.getImageIcon("print"));
   CButton BbusProd=new CButton(Iconos.getImageIcon("buscar"));
   String s;
@@ -269,14 +271,13 @@ public class pdpeve  extends ventanaPad   implements PAD
          P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
        if (ht.get("verPrecios") != null)
          P_VERPRECIOS = Boolean.parseBoolean(ht.get("verPrecios"));
-
   }
   private void jbInit() throws Exception
   {
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2016-09-15"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2016-10-14"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -421,12 +422,15 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_comalbL.setBounds(new Rectangle(3, 60, 120, 16));    
     pvc_comalbS.setBounds(new Rectangle(3, 80, 390, 35));
     
-    pcc_estadE.addItem("Pendiente","P");
-    pcc_estadE.addItem("Preparado","L");
-    pcc_estadE.addItem("Cancelado","C");
-    pcc_estadL.setBounds(new Rectangle(3, 54, 60, 17));
-    pcc_estadE.setBounds(new Rectangle(65, 54, 138, 17));
-        
+    pvc_estadE.addItem("Pendiente","P");
+    pvc_estadE.addItem("Preparado","L");
+    pvc_estadE.addItem("Cancelado","C");
+    
+    pvc_estadL.setBounds(new Rectangle(3, 54, 60, 17));
+    pvc_estadE.setBounds(new Rectangle(65, 54, 138, 17));
+    pvc_deposE.addItem(pdalbara.DEPOSITOS);
+    pvc_deposL.setBounds(new Rectangle(210, 54, 60, 17));
+    pvc_deposE.setBounds(new Rectangle(275, 54, 138, 17));
     cLabel1.setText("Cliente");
     cLabel1.setBounds(new Rectangle(75, 3, 43, 16));
     Ppie.setBorder(BorderFactory.createRaisedBevelBorder());
@@ -520,8 +524,10 @@ public class pdpeve  extends ventanaPad   implements PAD
     Pcabe.add(cLabel15, null);
     Pcabe.add(avc_anoE, null);
     Pcabe.add(opVerProd, null);
-    Pcabe.add(pcc_estadL,null);
-    Pcabe.add(pcc_estadE,null);
+    Pcabe.add(pvc_estadL,null);
+    Pcabe.add(pvc_estadE,null);
+    Pcabe.add(pvc_deposL,null);
+    Pcabe.add(pvc_deposE,null);
     Pcabe.add(cLabel10, null);
     Pcabe.add(pvc_incfraE, null);
 //    Pcabe.add(alm_codiE, null);
@@ -1249,7 +1255,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       pvc_verfecE.setEnabled(opVerProd.getValor().equals(""+pstockAct.VER_ULTVENTAS));
       pvl_precioE.resetCambio();
       pvc_fecentE.resetCambio();
-//      pcc_estadE.setValor("P");
+//      pvc_estadE.setValor("P");
       jt.setEnabled(true);
       pro_codiE.getFieldBotonCons().setEnabled(true);
       cli_codiE_afterFocusLost(false);
@@ -1355,6 +1361,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       {
           jt.removeAllDatos();
           activar(navegador.ADDNEW, true);
+          
           pvc_incfraE.setSelected(false);
           pvc_fecentE.resetCambio();
           pvc_confirE.setValor("S");
@@ -1374,8 +1381,8 @@ public class pdpeve  extends ventanaPad   implements PAD
           pvc_comrepE.resetTexto();
           pvc_fecpedE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
           pvc_horpedE.setText(Formatear.getFechaAct("HH.ss"));
-
-          pcc_estadE.setValor("P");
+          pvc_deposE.setValor("N");
+          pvc_estadE.setValor("P");
           jt.setEnabled(true);
           pro_codiE.getFieldBotonCons().setEnabled(true);
     } catch (SQLException k)
@@ -1422,9 +1429,9 @@ public class pdpeve  extends ventanaPad   implements PAD
         pvc_fecentE.requestFocus();
         return false;
       }
-      if (pcc_estadE.getValor().equals("L") && ! P_ADMIN)
+      if (pvc_estadE.getValor().equals("L") && ! P_ADMIN)
       {
-          pcc_estadE.requestFocus();
+          pvc_estadE.requestFocus();
           mensajeErr("Este estado solo se puede poner desde mantenimiento Albaranes venta");
           return false;
       }
@@ -1579,6 +1586,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   private void actCabecera() throws  SQLException
   {
     dtAdd.setDato("cli_codi",cli_codiE.getValorInt());
+    dtAdd.setDato("pvc_depos",pvc_deposE.getValor());
     dtAdd.setDato("pvc_clinom",cli_codiE.getTextNomb());
     dtAdd.setDato("alm_codi", ALMACEN); //alm_codiE.getValorInt());
     dtAdd.setDato("pvc_incfra", pvc_incfraE.isSelected()?"S":"N"); //alm_codiE.getValorInt());
@@ -1589,14 +1597,14 @@ public class pdpeve  extends ventanaPad   implements PAD
     dtAdd.setDato("pvc_comrep",Formatear.strCorta(pvc_comrepE.getText(),200));
     if (nav.getPulsado()==navegador.EDIT)
     {
-        if (pcc_estadE.getValor().equals("C"))
+        if (pvc_estadE.getValor().equals("C"))
             dtAdd.setDato("avc_ano", -1);
-        if (pcc_estadE.getValor().equals("L"))
+        if (pvc_estadE.getValor().equals("L"))
         { // Se quiere poner como preparado.
             if (dtAdd.getInt("avc_ano")==0)
                 dtAdd.setDato("avc_ano", 1);
         }
-        if (pcc_estadE.getValor().equals("P"))
+        if (pvc_estadE.getValor().equals("P"))
         {
             dtAdd.setDato("avc_ano", 0);
             dtAdd.setDato("avc_nume", 0);            
@@ -1733,7 +1741,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     if (modo!=navegador.EDIT)    
       emp_codiE.setEnabled(b);
    
-    pcc_estadE.setEnabled(modo==navegador.EDIT && b);  
+    pvc_estadE.setEnabled(modo==navegador.EDIT && b);  
+    pvc_deposE.setEnabled(b);
     pvc_nupeclE.setEnabled(b);
     pvc_fecentE.setEnabled(b);
     pvc_confirE.setEnabled(b);
@@ -1818,7 +1827,8 @@ public class pdpeve  extends ventanaPad   implements PAD
       avc_serieE.setValor(dtCon1.getString("avc_serie"));
       avc_anoE.setValorDec(dtCon1.getInt("avc_ano"));
       pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
-      pcc_estadE.setValor(dtCon1.getInt("avc_ano")==0?"P":dtCon1.getInt("avc_ano")>0?"L":"C" );
+      pvc_estadE.setValor(dtCon1.getInt("avc_ano")==0?"P":dtCon1.getInt("avc_ano")>0?"L":"C" );
+      pvc_deposE.setValor(dtCon1.getString("pvc_depos"));
       s = "SELECT * FROM "+vistaPed+" WHERE "+
           (hisRowid>0?" his_rowid = "+dt.getInt("his_rowid"):
            " emp_codi = " + emp_codiE.getValorInt() +
