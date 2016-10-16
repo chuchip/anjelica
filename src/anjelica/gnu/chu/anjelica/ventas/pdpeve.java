@@ -147,7 +147,8 @@ public class pdpeve  extends ventanaPad   implements PAD
         {
           jt.setValor(pro_codiE.getNombArtCli(pro_codiE.getValorInt(),
                                               cli_codiE.getValorInt()), row, JT_NOMBPRO);
-          jt.setValor( MantTarifa.getPrecTar(dtStat,pro_codiE.getValorInt(), cli_codiE.getLikeCliente().getInt("tar_codi"), 
+          jt.setValor( MantTarifa.getPrecTar(dtStat,pro_codiE.getValorInt(), cli_codiE.getValorInt(),
+              cli_codiE.getLikeCliente().getInt("tar_codi"), 
             pvc_fecentE.getText()) , row, JT_PRETAR);
         }
         if (col == JT_PROV)
@@ -1846,7 +1847,8 @@ public class pdpeve  extends ventanaPad   implements PAD
          v.add(pvl_tipoE.getText(dtCon1.getString("pvl_tipo")));
          v.add(dtCon1.getString("pvl_precio"));
          v.add(dtCon1.getInt("pvl_precon")!=0);
-         v.add(MantTarifa.getPrecTar(dtStat,dtCon1.getInt("pro_codi"), cli_codiE.getLikeCliente().getInt("tar_codi"), 
+         v.add(MantTarifa.getPrecTar(dtStat,dtCon1.getInt("pro_codi"),cli_codiE.getValorInt(),
+             cli_codiE.getLikeCliente().getInt("tar_codi"), 
             pvc_fecentE.getText()));
          v.add(dtCon1.getString("pvl_comen"));
          v.add(dtCon1.getString("prv_codi"));

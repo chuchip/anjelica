@@ -10,9 +10,6 @@ import java.util.*;
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.interfaces.ejecutable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.event.*;
 import net.sf.jasperreports.engine.*;
 
@@ -344,7 +341,7 @@ public class clAlbSinCosto extends ventana
         " c.avc_impalb,c.avc_confo,cl.cli_tipfac,cl.cli_giro "+
         "  FROM v_albavec as c left join clientes as cl on  c.cli_codi = cl.cli_codi " +
           "  WHERE "+getCondWhere()+
-          " and c.avc_valora != -1 "+ // No incluir los puestos como valorados
+          " and c.avc_valora !=  "+pdalbara.AVC_VALORADO +// No incluir los puestos como valorados
           " and exists (select * from v_albavel as l,v_articulo as ar " +
           "  where c.emp_codi = l.emp_codi " +
           " and c.avc_ano = l.avc_ano " +
@@ -360,7 +357,7 @@ public class clAlbSinCosto extends ventana
          " c.avc_impalb,c.avc_confo,cl.cli_tipfac,cl.cli_giro "+
          "  FROM v_albavec as c left join clientes as cl on  c.cli_codi = cl.cli_codi " +
         "  WHERE "+getCondWhere()+
-        " and avc_valora = 0 "+
+        " and avc_valora !=  "+pdalbara.AVC_VALORADO +
          " ORDER BY c.avc_fecalb,c.cli_codi";
    else // Sin facturar
      s = "SELECT c.avc_fecalb,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,c.cli_codi,cl.cli_nomb, " +
@@ -414,7 +411,7 @@ public class clAlbSinCosto extends ventana
             " ,v_albavel as l, " +
             " v_articulo as a where " +
             " a.pro_codi = l.pro_codi " +
-            " and c.avc_valora != -1 "+ // No incluir los puestos como valorados
+            " and c.avc_valora !=  "+ pdalbara.AVC_VALORADO +// No incluir los puestos como valorados
             " and c.cli_codi = cl.cli_codi " +
             " and c.emp_codi = l.emp_codi " +
             " and c.avc_ano = l.avc_ano " +
@@ -425,12 +422,12 @@ public class clAlbSinCosto extends ventana
             " and A.pro_tiplot = 'V' " +
             " and "+getCondWhere()+
             " ORDER BY c.avc_fecalb,c.cli_codi";
-      else if (tipListE.getValor().equals("V"))
+      else if (tipListE.getValor().equals("V")) // NO Valorados
         s =
             "SELECT c.avc_fecalb,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,c.cli_codi,cl.cli_nomb " +
             "  FROM v_albavec as c  left join clientes as cl on  c.cli_codi = cl.cli_codi " +
             "  WHERE "+getCondWhere()+
-            " and avc_valora = 0 " +
+            " and avc_valora !=  " +pdalbara.AVC_VALORADO +
             " ORDER BY c.avc_fecalb,c.cli_codi";
       else
         s =

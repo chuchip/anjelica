@@ -35,8 +35,6 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRException;
@@ -75,6 +73,8 @@ public class CLVenRep extends ventana {
     final  int JTCAB_SERIE=1;
     final  int JTCAB_NUMALB=2;
     final  int JTCAB_FECALB=3;
+    final  int JTCAB_CLICOD=4;
+    final  int JTCAB_CLINOMB=5;
     final  int JTCAB_TARIFA=10;
     final  int JTLIN_PROCODI=0;
     final  int  JTLIN_PRECIO=4;    
@@ -193,6 +193,7 @@ public class CLVenRep extends ventana {
                try
                {
                    double prTari = MantTarifa.getPrecTar(dtStat, jtLin.getValorInt(JTLIN_PROCODI),
+                       jtCab.getValorInt(JTCAB_CLICOD),
                      jtCab.getValorInt(JTCAB_TARIFA), Formatear.getFecha(jtCab.getValDate(JTCAB_FECALB),"dd-MM-yyyy"));
                    String s = "UPDATE  v_albavel set tar_preci = " + Formatear.redondea(prTari, 2)
                         + " where pro_codi = " + jtLin.getValorInt(JTLIN_PROCODI)+ " and "+
@@ -377,12 +378,12 @@ public class CLVenRep extends ventana {
             if (!checkCond()) 
                 return;
             
-            String s = "select  cl.tar_codi,a.avc_fecalb,a.pro_codi "
+            String s = "select  cl.cli_codi,cl.tar_codi,a.avc_fecalb,a.pro_codi "
                 + " from v_albventa as a,clientes as cl "
                 + " WHERE  a.emp_codi = " + emp_codiE.getValorInt()
                 + getCondWhere()             
                 +(swForzar?"": " and a.tar_preci = 0")                
-                + " group by tar_codi,avc_fecalb, pro_codi";
+                + " group by cl.cli_codi,tar_codi,avc_fecalb, pro_codi";
         if (!dtCon1.select(s)) {
             msgBox("No encontrados albaranes para estos criterios");
             return; // No hay albaranes sin valorar
@@ -390,7 +391,7 @@ public class CLVenRep extends ventana {
         int nLinAct = 0;
         double prTari;
         do {
-            prTari = MantTarifa.getPrecTar(dtStat, dtCon1.getInt("pro_codi"),
+            prTari = MantTarifa.getPrecTar(dtStat, dtCon1.getInt("pro_codi"),dtCon1.getInt("cli_codi"),
                     dtCon1.getInt("tar_codi"), dtCon1.getFecha("avc_fecalb", "dd-MM-yyyy"));
             if (prTari != 0 || swForzar) 
             {
@@ -706,7 +707,8 @@ public class CLVenRep extends ventana {
     void verPedido() throws SQLException
     {
        jtPed.removeAllDatos();
-       String s="select p.*,a.pro_nomb,cl.tar_codi from v_cliente as cl,v_pedven p left join v_articulo as a on a.pro_codi=p.pro_codi where avc_ano="+ jtCab.getValorInt(0)+
+       String s="select p.*,a.pro_nomb,cl.cli_codi,"
+           + " cl.tar_codi from v_cliente as cl,v_pedven p left join v_articulo as a on a.pro_codi=p.pro_codi where avc_ano="+ jtCab.getValorInt(0)+
            " and avc_serie='"+jtCab.getValString(1)+"' and avc_nume = "+ jtCab.getValorInt(2)+
            " and cl.cli_codi = p.cli_codi ";
        if (! dtCon1.select(s))
@@ -719,7 +721,7 @@ public class CLVenRep extends ventana {
             v.add(dtCon1.getString("pvl_unid")+dtCon1.getString("pvl_tipo"));
             v.add(dtCon1.getString("pvl_kilos"));
             v.add(dtCon1.getString("pvl_precio"));
-            v.add(MantTarifa.getPrecTar(dtStat, dtCon1.getInt("pro_codi"),
+            v.add(MantTarifa.getPrecTar(dtStat, dtCon1.getInt("pro_codi"),dtCon1.getInt("cli_codi"),
                     dtCon1.getInt("tar_codi"), dtCon1.getFecha("pvc_fecent", "dd-MM-yyyy"))); 
             v.add(dtCon1.getString("pvl_comen")); 
             jtPed.addLinea(v);

@@ -986,7 +986,7 @@ public class MantPrAlb extends ventana {
                         feulVen=dtStat.getFecha("avc_fecalb","dd-MM-yy");
                         prulVen=dtStat.getString("avl_prven");
                         if (precTar==0)
-                            precTar=MantTarifa.getPrecTar(dtStat,dtAlb.getInt("pro_codi"),
+                            precTar=MantTarifa.getPrecTar(dtStat,dtAlb.getInt("pro_codi"),cli_codacE.getValorInt(),
                                 cli_codacE.getLikeCliente().getInt("tar_codi"), avc_fecalbE.getText());
                     }
                     htPrulv.put(dtAlb.getInt("pro_codi"), new precVentas(prulVen, feulVen, precTar));

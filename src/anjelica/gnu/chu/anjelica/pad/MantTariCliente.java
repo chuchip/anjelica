@@ -366,9 +366,13 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         if (dtCons.getNOREG())
           return;
         tar_feciniE.setText(dtCons.getFecha("tar_fecini","dd-MM-yyyy"));
-        tar_fecfinE.setText(dtCons.getFecha("tar_fecfin","dd-MM-yyyy"));
-
         cli_codiE.setText(dtCons.getString("cli_codi"));
+        s = "SELECT tar_fecfin " +
+          " FROM taricli " +
+          " WHERE tar_fecini = TO_DATE('"+tar_feciniE.getText()+"','dd-MM-yyyy') "+
+          " AND cli_codi = "+tipo;
+        if ( dtCon1.select(s))
+            tar_fecfinE.setDate(dtCon1.getDate("tar_fecfin"));
         
         verDatLin(tar_feciniE.getText(),cli_codiE.getText(),tar_fecfinE.getText(),0);
       } catch (Exception k)

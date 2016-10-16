@@ -395,7 +395,7 @@ div_codi   int, 	-- Divisa
 cli_pdtoco float, -- % Dto Comercial.
 cli_prapel float, -- % Rappel
 rut_codi varchar(2), -- ruta
-cli_precfi float, -- NO SE UTILIZA
+cli_precfi float, --  Indica si se deben Revisar Precios (0: No)
 cli_fecalt date,	-- Fecha Alta del Cliente
 cli_feulmo date, 		-- Fecha Ult. Modificacion
 cli_disc1 char(2), -- Discriminador1
@@ -922,7 +922,7 @@ create table anjelica.hisalbavec
     avc_impcob float,
     avc_impuv float,
     avc_cucomi int,
-    avc_valora int,
+    avc_valora int not null default 0, -- 0: No Valorado. 1 Valorado. 2. Pend. Valorar
     avc_dtopp decimal(5,2),
     avc_dtocom decimal(5,2),
     avc_dtootr decimal(5,2),
@@ -1908,6 +1908,7 @@ tar_preci decimal(10,2),
 tar_comen varchar(150),
 constraint ix_taricli primary key (tar_fecini,cli_codi,pro_codart)
 );
+grant all on  taricli to public;
 ---
 --- Maestro de  Almacenes
 ---

@@ -112,8 +112,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
  
-public class pdalbara extends ventanaPad  implements PAD  {  
-
+public class pdalbara extends ventanaPad  implements PAD  
+{  
+  public final static int AVC_NOVALORADO=0;
+  public final static int AVC_VALORADO=1;
+  public final static int AVC_REVVALOR=2;// Fue Modificado despues de valorado.
   final static String[][] DEPOSITOS = new String[][]{{"Normal","N"},
     {"Deposito","D"},
     {"Entregado","E"}
@@ -709,7 +712,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-10-13" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-10-16" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -870,8 +873,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
         avc_dtoppE.setToolTipText("Dto. Pronto Pago");
         avc_dtoppE.setValorDec(0.0);
         avc_dtoppE.setBounds(new Rectangle(452, 57, 39, 16));
-        BValTar.addMenu("Precio Pedido","P");
+
         BValTar.addMenu("Precio Tarifa","T");
+        BValTar.addMenu("Precio Pedido","P");
         BValTar.setToolTipText("<F5> Poner Precios Albaran");
 
         BValTar.setBounds(new Rectangle(335, 5, 50, 20));
@@ -945,7 +949,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         opValora.setText("Valorado");
         opValora.setBounds(new Rectangle(398, 21, 85, 16));
         opDispSalida.setBounds(new Rectangle(485, 20, 101, 16));
-        avc_valoraE.setText("Valorado");
+//        avc_valoraE.setText("Valorado");
         avc_valoraE.setBounds(new Rectangle(458, 22, 95, 16));
         lockE.setBounds(new Rectangle(558, 22, 33, 21));
 //         lockE.setBounds(new Rectangle(644, 75, 33, 21));
@@ -1522,9 +1526,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
     Pped1.setButton(KeyEvent.VK_F3,BbusPed);
 
 
-    avc_valoraE.addItem("Valorado","-1");
-    avc_valoraE.addItem("NO Valor","0");
-    avc_valoraE.addItem("Pend.Val","1");
+    avc_valoraE.addItem("Valorado",""+AVC_VALORADO);
+    avc_valoraE.addItem("NO Valor",""+AVC_NOVALORADO);
+    avc_valoraE.addItem("Rev.Valor",""+AVC_REVVALOR);
 
     avc_valoraE.setColumnaAlias("avc_valora");
     stkPart=new ActualStkPart(dtAdd,EU.em_cod);
@@ -2704,7 +2708,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
         {
             if (tarifa)
             {
-             precio = MantTarifa.getPrecTar(dtStat, jt.getValorInt(n, JT_PROCODI),
+             precio = MantTarifa.getPrecTar(dtStat, jt.getValorInt(n, JT_PROCODI),cli_codiE.getValorInt(),
                 tar_codiE.getValorInt(), avc_fecalbE.getText());
              jt.setValor(precio, n, FD_PRTARI);
              String condWhere = getCondWhereActAlb(n);
@@ -2713,8 +2717,11 @@ public class pdalbara extends ventanaPad  implements PAD  {
              dtAdd.executeUpdate(s);             
             }
             else
+            {
               precio = getPrecioPedido(jt.getValorInt(n, JT_PROCODI),dtStat);
-                        
+              if (precio<0)
+                  precio=0;
+            }           
             if (avl_prvenE.isEditable() && avl_prvenE.isEnabled() && jt.isEnabled())
             {
                 if (jt.getValorDec(n, FD_PRECIO) == 0)
@@ -3697,7 +3704,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
               v.add(""+Formatear.redondea(dtCon1.getDouble("avl_prven",true),NUMDECPRECIO));
               if (dtCon1.getDouble("tar_preci")==0)
               { // Si no tiene precio tarifa guardado en el alb. pongo el precio de tarifa estandard
-                v.add(MantTarifa.getPrecTar(dtStat,dtCon1.getInt("pro_codi"), tar_codiE.getValorInt(), avc_fecalbE.getText()));
+                v.add(MantTarifa.getPrecTar(dtStat,dtCon1.getInt("pro_codi"), cli_codiE.getValorInt(), tar_codiE.getValorInt(), avc_fecalbE.getText()));
               }
               else
                 v.add(dtCon1.getString("tar_preci"));
@@ -4409,7 +4416,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
           return;
       }
 
-      if (! P_MODPRECIO && avc_valoraE.getValor().equals("0"))
+      if (! P_MODPRECIO && avc_valoraE.getValorInt()==AVC_VALORADO)
       {
         if (jf != null)
         {
@@ -4483,7 +4490,9 @@ public class pdalbara extends ventanaPad  implements PAD  {
         return;
 
     pro_nombE.setEditable(true);
-    avc_valoraE.setValor("0");
+    if (avc_valoraE.getValorInt()==AVC_VALORADO && !P_MODPRECIO)
+        avc_valoraE.setValor(""+AVC_REVVALOR);
+    
     despieceC.setValor("N");
 //    opModif.setSelected(false);
     activar(true);
@@ -4964,7 +4973,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
           isLock=false;
           Pcabped.resetCambio();
 //    opModif.setSelected(false);
-          avc_valoraE.setValor("0");
+          avc_valoraE.setValor(""+AVC_NOVALORADO);
           nav.pulsado=navegador.ADDNEW;
           despieceC.setValor("N");
           confAlbDep=false;
@@ -5221,6 +5230,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
       return;
     int nRow = jt.getRowCount();
     // Actualizo las Linea de Albaran.
+    double prPedido;
     for (int n = 0; n < nRow; n++)
     {
       if (jt.getValorInt(n, 0) == 0)
@@ -5247,14 +5257,16 @@ public class pdalbara extends ventanaPad  implements PAD  {
         precio = jt.getValorDec(n, JT_PRECIO);
         prTari = jt.getValorDec(n, JT_PRETAR);
       }
+      prPedido=0;
       if (precio == 0 && !verPrecios) // Si el precio es 0 
       { // Intento poner el precio de Tarifa en Modo Automatico
-        double prPedido=getPrecioPedido(jt.getValorInt(n, 1),dtStat);
-        if (prPedido==0) // Si no existe el precio en el pedido, lo busco en la tarifa
+        prPedido=getPrecioPedido(jt.getValorInt(n, 1),dtStat);
+        if (prPedido<0) // Si no existe el precio en el pedido, lo busco en la tarifa
         {
             if (pdtipotar.getPonerPrecios(dtStat, tar_codiE.getValorInt()))
             {
-                prTari = MantTarifa.getPrecTar(dtStat,jt.getValorInt(n, JT_PROCODI), tar_codiE.getValorInt(), avc_fecalbE.getText());
+                prTari = MantTarifa.getPrecTar(dtStat,jt.getValorInt(n, JT_PROCODI), cli_codiE.getValorInt(),
+                    tar_codiE.getValorInt(), avc_fecalbE.getText());
                 if (avc_revpreE.getValorInt()==0)
                      precio=prTari;
             }
@@ -5279,14 +5291,16 @@ public class pdalbara extends ventanaPad  implements PAD  {
 //      if (avc_dtocomE.getValorDec()!=0)
 //          avlPrbase-=precio*(avc_dtocomE.getValorDec()/100);
 //      if (avc_dtoppE.getValorDec()!=0)
-//          avlPrbase-=precio*(avc_dtoppE.getValorDec()/100);
-      if ( verPrecios)
+//          avlPrbase-=precio*(avc_dtoppE.getValorDec()/100); 
+
+      if (verPrecios || (avc_valoraE.getValorInt()==AVC_NOVALORADO && avc_revpreE.getValorInt()==0 && prPedido>=0))
       {
-          avlPrbase=Formatear.redondea(avlPrbase,NUMDECPRECIO);
-          dtAdd.setDato("avl_prven", precio);
-          dtAdd.setDato("avl_prbase", avlPrbase);
-          dtAdd.setDato("tar_preci", prTari);
+         avlPrbase = Formatear.redondea(avlPrbase, NUMDECPRECIO);
+         dtAdd.setDato("avl_prven", precio);
+         dtAdd.setDato("avl_prbase", avlPrbase);
+         dtAdd.setDato("tar_preci", prTari);
       }
+         
       dtAdd.setDato("avl_unid", jt.getValorInt(n, 4));
       dtAdd.setDato("avl_canbru", jt.getValorDec(n, JT_KILBRU));
       dtAdd.setDato("avl_numpal", jt.getValorDec(n, JT_NUMPALE));
@@ -5319,7 +5333,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     dtAdd.setDato("avc_dtocom", avc_dtocomE.getValorDec());
     dtAdd.setDato("avc_cerra", avc_cerraE.isSelected()?-1:0);
     dtAdd.setDato("avc_confo", avc_confoE.isSelected()?-1:0);
-    dtAdd.setDato("avc_valora", P_MODPRECIO?avc_valoraE.getValor():"0"); // Se utiliza para saber si los precios son Aut. o Manuales
+    dtAdd.setDato("avc_valora", avc_valoraE.getValorInt()); // Se utiliza para saber si los precios son Aut. o Manuales
     dtAdd.setDato("avc_impres",(dtAdd.getInt("avc_impres") | 2));
     dtAdd.setDato("sbe_codi",sbe_codiE.getValorInt());
     dtAdd.setDato("avc_revpre",avc_revpreE.getValor());
@@ -7505,7 +7519,7 @@ public class pdalbara extends ventanaPad  implements PAD  {
     dtAdd.setDato("avc_impcob", 0);
     dtAdd.setDato("avc_impuv", 0);
     dtAdd.setDato("avc_cucomi", 0);
-    dtAdd.setDato("avc_valora", P_MODPRECIO?avc_valoraE.getValor():"0"); // Se utiliza para saber si los precios son aut. o Manuales
+    dtAdd.setDato("avc_valora", avc_valoraE.getValorInt()); // Se utiliza para saber si los precios son aut. o Manuales
     dtAdd.setDato("avc_dtopp", 0);
     dtAdd.setDato("avc_dtocom", 0);
     dtAdd.setDato("avc_dtootr", 0);
@@ -7569,22 +7583,25 @@ public class pdalbara extends ventanaPad  implements PAD  {
    * Devuelve el precio puesto a un producto en el pedido
    * @param proCodi
    * @param dt
-   * @return
+   * @return -1 Si no tiene precio puesto
    * @throws SQLException 
    */
   double getPrecioPedido(int proCodi,DatosTabla dt) throws SQLException
   {
       if (pvc_anoE.getValorInt()==0)
           return 0;
-      s="select pvl_precio from pedvenl as p "+
+      s="select pvl_precio,pvl_precon from pedvenl as p "+
             " where p.pvl_precio != 0 "+
             " and p.pro_codi = "+proCodi+
             " and p.emp_codi ="+emp_codiE.getValorInt()+
             " and p.eje_nume = " + pvc_anoE.getValorInt() +
             " and p.pvc_nume = " + pvc_numeE.getValorInt();
       if (!dt.select(s))
-          return 0;
-      return dt.getDouble("pvl_precio")<0?0:dt.getDouble("pvl_precio");
+          return -1;
+      if (dt.getInt("pvl_precon")==0)
+          return -1;
+      else
+          return dt.getDouble("pvl_precio");
   }
   void irGridDes()
   {
@@ -9220,13 +9237,15 @@ public class pdalbara extends ventanaPad  implements PAD  {
   {
         if (!P_MODPRECIO)
           return;
-        double prPedi=getPrecioPedido(pro_codiE.getValorInt(),dtStat);       
-        prLiTar = MantTarifa.getPrecTar(dtStat, pro_codiE.getValorInt(), tar_codiE.getValorInt(), avc_fecalbE.getText());
-        if (prLiTar != 0 || prPedi!=0)
+        double prPedi=getPrecioPedido(pro_codiE.getValorInt(),dtStat);   
+       
+        prLiTar = MantTarifa.getPrecTar(dtStat, pro_codiE.getValorInt(),
+            cli_codiE.getValorInt(),tar_codiE.getValorInt(), avc_fecalbE.getText());
+        if (prLiTar != 0 || prPedi<0)
         {
           jt.setValor(prLiTar, JT_PRETAR);
 
-          if (avl_prvenE.getValorDec() == 0 && prPedi!=0)
+          if (avl_prvenE.getValorDec() == 0 && prPedi>=0)
           {
              jt.setValor(prPedi, JT_PRECIO);
              avl_prvenE.setValorDec(prPedi);

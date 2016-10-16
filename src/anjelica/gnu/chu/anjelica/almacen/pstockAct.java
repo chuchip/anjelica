@@ -435,7 +435,8 @@ public class pstockAct extends CPanel
           stock = dtCon1.getDouble("pro_stock", true);
           unidad = dtCon1.getDouble("pro_stkuni", true);
         }
-        precio=MantTarifa.getPrecTar(dtStat, dtCon1.getInt("pro_codi"), tar_codiE.getValorInt(), pdc_fecpedE.getText());
+        precio=MantTarifa.getPrecTar(dtStat, dtCon1.getInt("pro_codi"),cliCodi,
+            tar_codiE.getValorInt(), pdc_fecpedE.getText());
         double ultPrecio=verPrecios? pdalbara.getUltimoPrecio(dtStat,dtCon1.getInt("pro_codi"),cliCodi):0;
         if (incPedid)
           getAcumPedid(dtCon1.getInt("pro_codi"), pdc_fecpedE.getText(),almCodi);

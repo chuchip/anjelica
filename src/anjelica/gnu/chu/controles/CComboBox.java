@@ -41,7 +41,7 @@ import javax.swing.*;
  * @version 1.0
  */
 public class CComboBox extends JComboBox implements CEditable,CQuery
-{
+{ 
   CGridEditable gridEdit=null;
   boolean modif=false;
   String conectaColumna="";

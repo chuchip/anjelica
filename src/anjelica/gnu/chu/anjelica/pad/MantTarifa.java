@@ -742,22 +742,37 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     loc_codiE.setValor(MantPaises.getLocalePais(pdempresa.getPais(dtStat, EU.em_cod), dtCon1));
     pro_codartE.setProNomb(null);
   }
-  public static double getPrecTar(DatosTabla dt,int proCodi, int tarCodi,java.util.Date fecAlb) throws SQLException
- {
-      return getPrecTar(dt,proCodi, tarCodi, Formatear.getFechaVer(fecAlb));
+  public static double getPrecTar(DatosTabla dt,int proCodi,int cliCodi, int tarCodi,java.util.Date fecAlb) throws SQLException
+  {
+      return getPrecTar(dt,proCodi,cliCodi, tarCodi, Formatear.getFechaVer(fecAlb));
   }
+  
   /**
-   * Devuelve el precio de tarifa para un producto y tarifa dada, en una fecha.
-   * @param dt DatosTabla para la conexion a la DB
-   * @param proCodi int Codigo de Producto
-   * @param tarCodi int Codigo de Tarifa
-   * @param fecAlb String Fecha de Albaran (en formato dd-MM-yyyy)
-   * @throws SQLException Error al acceder a la DB
-   * @return double Precio de Tarifa. 0 Si no encuentra tarifa para las condiciones.
+   * 
+   * @param dt
+   * @param proCodi Articulo
+   * @param cliCodi Cliente (0) Si es tarifa generica
+   * @param tarCodi Tarifa
+   * @param fecAlb Fecha Albaran
+   * @return
+   * @throws SQLException 
    */
- public static double getPrecTar(DatosTabla dt,int proCodi, int tarCodi,String fecAlb) throws SQLException
+ public static double getPrecTar(DatosTabla dt,int proCodi,int cliCodi, int tarCodi,String fecAlb) throws SQLException
  {
-   String s = " SELECT * FROM tipotari WHERE tar_codi = " + tarCodi;
+   String s;
+   if (cliCodi!=0)
+   {
+       s = " SELECT tar_preci,tar_fecini " +
+         " FROM taricli as t,v_articulo as ar where pro_codi = " + proCodi +
+         " and ar.pro_codart=t.pro_codart "+
+         " and cli_codi = " + cliCodi +
+         " AND tar_fecini <=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
+         " AND (tar_fecfin >=  TO_DATE('" + fecAlb + "','dd-MM-yyyy') or tar_fecfin is null) "+
+         " order by tar_fecini";
+       if (dt.select(s))
+        return dt.getDouble("tar_preci", true);       
+   }
+   s= " SELECT * FROM tipotari WHERE tar_codi = " + tarCodi;
    if (dt.select(s))
    {
      double tarIncPre = dt.getDouble("tar_incpre");
