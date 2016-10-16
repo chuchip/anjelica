@@ -5937,19 +5937,23 @@ public class pdalbara extends ventanaPad  implements PAD
         { // Es un albaran normal. Compruebo anteriores a ver si habia de deposito.
             if (! confAlbDep)
             {
-                s="select  max(avc_fecalb) as avc_fecalb from v_albavec where avc_fecalb>=current_date - 120 "+
+                s="select  max(avc_id) as avc_id from v_albavec where avc_fecalb>=current_date - 120 "+
                     " and cli_Codi = "+cli_codiE.getValorInt()+" and avc_depos= 'D' ";
                 dtStat.select(s);
-                if (dtStat.getObject("avc_fecalb")!=null)
+                if (dtStat.getObject("avc_id")!=null)
                 {
-                    confAlbDep=true;
-                    int ret=mensajes.mensajeYesNo("Este cliente tiene un albarane de deposito en fecha: "+
-                        dtStat.getFecha("avc_fecalb")+" ¿Desea poner el albaran como de Entrega ?",this);
-                    if (ret==mensajes.YES)
+                    s="select avc_fecalb from v_propenddep where avc_id="+dtStat.getInt("avc_id");
+                    if (dtStat.select(s))
                     {
-                        avc_deposE.setValor("E");
-                        avc_deposE.requestFocus();
-                        return;
+                        confAlbDep=true;
+                        int ret=mensajes.mensajeYesNo("Este cliente tiene un albarane de deposito en fecha: "+
+                            dtStat.getFecha("avc_fecalb")+" ¿Desea poner el albaran como de Entrega ?",this);
+                        if (ret==mensajes.YES)
+                        {
+                            avc_deposE.setValor("E");
+                            avc_deposE.requestFocus();
+                            return;
+                        }
                     }
                 }
             }
