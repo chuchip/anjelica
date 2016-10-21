@@ -15,6 +15,7 @@ import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventanaPad;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -47,6 +48,11 @@ import java.util.logging.Logger;
  */
 public class MantDisProVenta extends ventanaPad implements PAD
 {
+   final static String[][] DPVTIPO ={{"Corte","1"},
+        {"Animal","2"},
+        {"Origen","3"},
+        {"Clasificación","4"}
+   };
   boolean modConsulta=false;
   
   public MantDisProVenta(EntornoUsuario eu, Principal p)
@@ -105,6 +111,7 @@ public class MantDisProVenta extends ventanaPad implements PAD
   }
 
   private void jbInit() throws Exception {
+        this.setSize(new Dimension(400, 530));
         statusBar = new StatusBar(this);
         nav = new navegador(this, dtCons, false, modConsulta ? navegador.NOBOTON : navegador.BTN_EDITAR);
         iniciarFrame();
@@ -130,8 +137,8 @@ public class MantDisProVenta extends ventanaPad implements PAD
   
     private void verDatos()
     {
-      String s = "select * from v_discrim where dvp_tipo = '"+dpv_tipoE.getValorInt() +
-          " order by dvp_tipo ";
+      String s = "select * from disproventa where dpv_tipo = '"+dpv_tipoE.getValorInt() +"'"+
+          " order by dpv_tipo ";
       jt.removeAllDatos();
       try {
         if (!dtCon1.select(s))
@@ -184,8 +191,8 @@ public class MantDisProVenta extends ventanaPad implements PAD
        if (checkLinea(jt.getSelectedRow())>=0)
          return;
        
-       String s = "delete from v_discrim where "+
-           " dvp_tipo = " + dpv_tipoE.getValorInt() ;
+       String s = "delete from disproventa where "+
+           " dpv_tipo = " + dpv_tipoE.getValorInt() ;
        dtAdd.executeUpdate(s);
        
        int nRow=jt.getRowCount();
@@ -197,7 +204,7 @@ public class MantDisProVenta extends ventanaPad implements PAD
 //          debug("... Linea: "+n);
          dtAdd.addNew("disproventa");
          
-         dtAdd.setDato("dvp_tipo",dpv_tipoE.getValorInt());
+         dtAdd.setDato("dpv_tipo",dpv_tipoE.getValorInt());
          dtAdd.setDato("dpv_nume",jt.getValString(n,0));
          dtAdd.setDato("dpv_nomb",jt.getValString(n,1));
          dtAdd.update();
@@ -264,20 +271,37 @@ int checkLinea(int row)
    public void canc_delete(){}
 
   @Override
-   public void activar(boolean b) {
-     nav.setEnabled(!modConsulta);
-     dpv_tipoE.setEnabled(!modConsulta);
+   public void activar(boolean b) {   
+    
+
+//     dpv_tipoE.setEnabled(modConsulta);
      
      jt.setEnabled(b);
      Baceptar.setEnabled(b);
      Bcancelar.setEnabled(b);
    }
-
+   
+  @Override
+  public void navActivarAll()
+  {
+      if (pad != null)
+        pad.salirEnabled(true);
+      if (nav == null)
+        return;
+       if (modConsulta)
+       {
+           nav.setEnabled(false);
+           return;
+       }     
+      nav.setEnabled(navegador.TODOS, true);
+  }
   
     @Override
     public void iniciarVentana() throws Exception
     {
-      jt.setButton(KeyEvent.VK_F4,Baceptar);
+      jt.setButton(KeyEvent.VK_F4,Baceptar);      
+      activaTodo();
+      verDatos();
       activarEventos();
     }
     void activarEventos()
@@ -313,14 +337,15 @@ int checkLinea(int row)
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         dpv_numeE = new gnu.chu.controles.CTextField(Types.CHAR,"X",3);
         dpv_nombE = new gnu.chu.controles.CTextField(Types.CHAR,"X",30);
         Pprinc = new gnu.chu.controles.CPanel();
-        jt = new gnu.chu.controles.CGridEditable(2);
         Pcabe = new gnu.chu.controles.CPanel();
         clv_tipoL = new gnu.chu.controles.CLabel();
         dpv_tipoE = new gnu.chu.controles.CComboBox();
+        jt = new gnu.chu.controles.CGridEditable(2);
         PPie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
@@ -329,14 +354,39 @@ int checkLinea(int row)
 
         dpv_nombE.setMayusc(true);
 
-        Pprinc.setLayout(null);
+        Pprinc.setLayout(new java.awt.GridBagLayout());
+
+        Pcabe.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
+        Pcabe.setMaximumSize(new java.awt.Dimension(380, 26));
+        Pcabe.setMinimumSize(new java.awt.Dimension(380, 26));
+        Pcabe.setPreferredSize(new java.awt.Dimension(380, 26));
+        Pcabe.setLayout(null);
+
+        clv_tipoL.setText("Tipo");
+        Pcabe.add(clv_tipoL);
+        clv_tipoL.setBounds(80, 3, 24, 18);
+
+        dpv_tipoE.addItem(DPVTIPO);
+        Pcabe.add(dpv_tipoE);
+        dpv_tipoE.setBounds(120, 3, 160, 18);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipady = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        Pprinc.add(Pcabe, gridBagConstraints);
 
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jt.setMaximumSize(new java.awt.Dimension(380, 211));
+        jt.setMinimumSize(new java.awt.Dimension(380, 211));
+        jt.setPreferredSize(new java.awt.Dimension(380, 211));
         ArrayList v=new ArrayList();
         v.add("Cod.");
         v.add("Nombre");
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{50,200});
+        jt.setAnchoColumna(new int[]{50,250});
         jt.setAlinearColumna(new int[]{0,0});
         try{
             ArrayList vc=new ArrayList();
@@ -346,26 +396,18 @@ int checkLinea(int row)
         } catch (Exception k){
             Error("Error al iniciar grid",k);
         }
-        Pprinc.add(jt);
-        jt.setBounds(9, 39, 380, 210);
-
-        Pcabe.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        Pcabe.setLayout(null);
-
-        clv_tipoL.setText("Tipo");
-        Pcabe.add(clv_tipoL);
-        clv_tipoL.setBounds(80, 3, 24, 18);
-
-        dpv_tipoE.addItem("Corte","1");
-        dpv_tipoE.addItem("Animal","2");
-        dpv_tipoE.addItem("Origen","3");
-        Pcabe.add(dpv_tipoE);
-        dpv_tipoE.setBounds(120, 3, 130, 18);
-
-        Pprinc.add(Pcabe);
-        Pcabe.setBounds(10, 10, 380, 25);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        Pprinc.add(jt, gridBagConstraints);
 
         PPie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        PPie.setMaximumSize(new java.awt.Dimension(380, 40));
+        PPie.setMinimumSize(new java.awt.Dimension(380, 40));
+        PPie.setPreferredSize(new java.awt.Dimension(380, 40));
         PPie.setLayout(null);
 
         Baceptar.setText("Aceptar");
@@ -376,8 +418,12 @@ int checkLinea(int row)
         PPie.add(Bcancelar);
         Bcancelar.setBounds(250, 4, 90, 24);
 
-        Pprinc.add(PPie);
-        PPie.setBounds(10, 252, 380, 30);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
+        Pprinc.add(PPie, gridBagConstraints);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 

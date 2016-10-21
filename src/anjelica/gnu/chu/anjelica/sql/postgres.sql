@@ -3966,6 +3966,14 @@ create table disproventa
 	dpv_nume char(3) not null, -- Codigo
 	dpv_nomb varchar(30) not null -- Nombre
 );
+grant select on anjelica.disproventa to public;
+create view v_tipoanimal as select dpv_nume,dpv_nomb from disproventa where dpv_tipo=2;
+grant select on anjelica.v_tipoanimal to public;
+create view v_tipocorte as select dpv_nume,dpv_nomb from disproventa where dpv_tipo=1;
+grant select on anjelica.v_tipocorte to public;
+create view v_clasiprod as select dpv_nume,dpv_nomb from disproventa where dpv_tipo=4;
+grant select on anjelica.v_clasiprod to public;
+
 ---
 -- Tabla con Referencias productos de venta
 -- Se codificara de la siguiente manera.
@@ -3984,6 +3992,9 @@ create table prodventa
 (
 	pve_codi varchar(15) not null, -- Referencia producto Venta
 	pve_nomb varchar(50) not null, -- Nombre
+	pve_cong smallint default 0 not null, -- Congelado
+	pve_corte smallint default 0 not null, -- Corte 
+	pve_curac smallint default 0 not null, -- Curación
 	constraint ix_prodventa primary  key (pve_codi)
 );
 -- 

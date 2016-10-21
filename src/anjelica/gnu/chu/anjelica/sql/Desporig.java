@@ -32,6 +32,7 @@ public class Desporig  implements java.io.Serializable {
      private DesporigId id;
      private Integer tidCodi;
      private Date deoFecha;
+     private int cliCodi;
      private String usuNomb;
      private Integer deoAlmori;
      private Integer deoAlmdes;
@@ -106,7 +107,12 @@ public class Desporig  implements java.io.Serializable {
     public Date getDeoFecha() {
         return this.deoFecha;
     }
-    
+    public void setCliente(int cliente) {
+        this.cliCodi=cliente;
+    }
+    public int getCliente() {
+        return this.cliCodi;
+    }
     public void setDeoFecha(Date deoFecha) {
         this.deoFecha = deoFecha;
     }
@@ -331,6 +337,7 @@ public class Desporig  implements java.io.Serializable {
       dtAdd.setDato("deo_almori",""+getDeoAlmori());
       dtAdd.setDato("deo_almdes",""+getDeoAlmdes()); 
       dtAdd.setDato("deo_incval",getDeoIncval() );
+      dtAdd.setDato("cli_codi",getCliente() );
       if (getDeoBlock()!=null)
         dtAdd.setDato("deo_block",getDeoBlock());
       if (getDeoNumuni()!=null)

@@ -113,6 +113,7 @@ public class menu extends JFrame
   JMenuItem pdtranspo = new JMenuItem();
   JMenuItem pdarticu = new JMenuItem();
   JMenuItem mantDisProVenta = new JMenuItem();
+JMenuItem mantArticVenta = new JMenuItem();
   JMenuItem lisclien = new JMenuItem();
   JMenuItem tratclien = new JMenuItem();
   JPopupMenu jPopupMenu2 = new JPopupMenu();
@@ -519,6 +520,12 @@ public class menu extends JFrame
     mantDisProVenta.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mantDisProVenta_actionPerformed(e);
+      }
+    });
+    mantArticVenta.setText("Mant. Art.Venta");
+    mantArticVenta.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mantArticVenta_actionPerformed(e);
       }
     });
     lisclien.setText("Listado clientes");
@@ -1017,6 +1024,7 @@ public class menu extends JFrame
     JPopupPad.add(pdtranspo);
     JPopupPad.add(pdarticu);
     JPopupPad.add(mantDisProVenta);
+    JPopupPad.add(mantArticVenta);
     JPopupPad.add(lisclien);
     JPopupPad.add(tratclien);
 
@@ -1903,7 +1911,13 @@ void pdreprese_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.pad.MantDisProVenta(menu.this, EU, ht));
 
   }
+  void mantArticVenta_actionPerformed(ActionEvent e)
+  {
+    Hashtable ht = new Hashtable();
+    
+    lanzaEjecutable(new gnu.chu.anjelica.pad.MantArticVenta(menu.this, EU));
 
+  }
   void lisclien_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.listados.ClClien(menu.this, EU));
   }

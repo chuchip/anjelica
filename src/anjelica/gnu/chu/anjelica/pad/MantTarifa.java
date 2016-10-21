@@ -464,6 +464,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
       if (modo==navegador.TODOS)
         jt.setEnabled(act);
       pro_codiE.setEnabled(false);
+      tar_fechaE.setEnabled(false);
       Baceptar.setEnabled(act);
       Bcancelar.setEnabled(act);
       Pcabe.setEnabled(act);
@@ -495,6 +496,8 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         activar(navegador.QUERY, true);
         Pcabe.setQuery(true);
         pro_codiE.setEnabled(true);
+        tar_fechaE.setEnabled(true);
+        tar_fechaE.setQuery(false);
         Pcabe.resetTexto();
         
         tar_feciniE.requestFocus();
@@ -504,6 +507,12 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     @Override
   public void ej_query1()
   {
+     
+    if (Pcabe.getErrorConf()!=null)
+    {
+        msgBox("Errores en condiciones de busqueda");
+        return;
+    }
     Baceptar.setEnabled(false);
     ArrayList v=new ArrayList();
     v.add(tar_feciniE.getStrQuery());
@@ -512,7 +521,12 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     v.add(pro_codiE.getStrQuery());
     Pcabe.setQuery(false);
     s="SELECT tar_fecini,tar_fecfin,tar_codi FROM tarifa";
-    s=creaWhere(s,v);
+    if (!tar_fechaE.isNull())
+            s+=" where tar_fecini <= to_date('"+tar_fechaE.getText()+"','dd-MM-yyyy')"+
+           " and tar_fecfin >= to_date('"+tar_fechaE.getText()+"','dd-MM-yyyy')";
+    else
+        s=creaWhere(s,v,tar_fechaE.isNull());
+    
     s+=" group by tar_fecini,tar_fecfin,tar_codi"+
         " order by tar_fecini,tar_codi";
 //    debug(s);
@@ -855,6 +869,8 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         tar_codiE = new gnu.chu.controles.CLinkBox();
         cLabel10 = new gnu.chu.controles.CLabel();
         pro_codiE = new gnu.chu.camposdb.proPanel();
+        cLabel11 = new gnu.chu.controles.CLabel();
+        tar_fechaE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         jt = new gnu.chu.controles.CGridEditable(4) {
             public void cambiaColumna(int col,int colNueva, int row)
             {
@@ -952,9 +968,9 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         Pcabe.setPreferredSize(new java.awt.Dimension(550, 85));
         Pcabe.setLayout(null);
 
-        cLabel5.setText("De Fecha");
+        cLabel5.setText("Fecha");
         Pcabe.add(cLabel5);
-        cLabel5.setBounds(10, 2, 49, 18);
+        cLabel5.setBounds(10, 62, 50, 17);
 
         tar_feciniE.setMaximumSize(new java.awt.Dimension(10, 18));
         tar_feciniE.setMinimumSize(new java.awt.Dimension(10, 18));
@@ -974,7 +990,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 
         cLabel1.setText("Articulo");
         Pcabe.add(cLabel1);
-        cLabel1.setBounds(10, 62, 50, 18);
+        cLabel1.setBounds(170, 62, 50, 17);
 
         tar_nusemE.setMinimumSize(new java.awt.Dimension(10, 18));
         tar_nusemE.setPreferredSize(new java.awt.Dimension(10, 18));
@@ -1035,7 +1051,17 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 
         pro_codiE.setAncTexto(80);
         Pcabe.add(pro_codiE);
-        pro_codiE.setBounds(70, 62, 470, 17);
+        pro_codiE.setBounds(220, 62, 320, 17);
+
+        cLabel11.setText("De Fecha");
+        Pcabe.add(cLabel11);
+        cLabel11.setBounds(10, 2, 49, 18);
+
+        tar_fechaE.setMaximumSize(new java.awt.Dimension(10, 18));
+        tar_fechaE.setMinimumSize(new java.awt.Dimension(10, 18));
+        tar_fechaE.setPreferredSize(new java.awt.Dimension(10, 18));
+        Pcabe.add(tar_fechaE);
+        tar_fechaE.setBounds(60, 62, 70, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1157,6 +1183,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
+    private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -1177,6 +1204,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     private gnu.chu.controles.CTextField tar_comenG;
     private gnu.chu.controles.CComboBox tar_copiaE;
     private gnu.chu.controles.CTextField tar_fecfinE;
+    private gnu.chu.controles.CTextField tar_fechaE;
     private gnu.chu.controles.CTextField tar_feciniE;
     private gnu.chu.controles.CTextField tar_fecopE;
     private gnu.chu.controles.CComboBox tar_impriE;

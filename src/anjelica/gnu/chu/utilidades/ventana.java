@@ -548,10 +548,10 @@ public class ventana extends CInternalFrame implements ejecutable
     {
       if (v.get(n) == null) // Añadido por si acaso
         continue;
-      if (v.get(n).toString().equals(""))
+      if (v.get(n).equals(""))
         continue;
       if (s.compareTo("") == 0)
-        s = v.get(n).toString();
+        s = v.get(n);
       else
         s = s + " AND " + v.get(n);
 

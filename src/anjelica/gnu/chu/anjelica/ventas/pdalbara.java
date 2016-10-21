@@ -8183,11 +8183,8 @@ public class pdalbara extends ventanaPad  implements PAD
             Formatear.format(dtCon1.getString("avp_numind"), "999") +
             Formatear.format(dtCon1.getString("avp_canti"), "999.99");
         etiq.iniciar(codBarras,
-                     Formatear.format(dtCon1.getString("avp_ejelot"), "9999") +
-                     "/" +
-                     Formatear.format(dtCon1.getString("avp_emplot"), "99") +
-                     "/" +
-                     dtCon1.getString("avp_serlot") + "/" +
+                     Formatear.format(dtCon1.getString("avp_ejelot"), "9999") +                                        
+                     dtCon1.getString("avp_serlot") +
                      lote +
                      "/" +
                      Formatear.format(dtCon1.getString("avp_numind"), "999"),

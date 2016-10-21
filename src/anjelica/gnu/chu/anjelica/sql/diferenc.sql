@@ -1,3 +1,6 @@
+alter table desporig add cli_codi int; -- Cliente para el que se hace el despiece
+alter table deorcahis add cli_codi int; -- Cliente para el que se hace el despiece
+--
 alter table pedvenc add pvc_depos char(1) not null default 'N'; -- Deposito ?alter table pedvenc add
 alter table hispedvenc add pvc_depos char(1) not null default 'N';
 -- 
