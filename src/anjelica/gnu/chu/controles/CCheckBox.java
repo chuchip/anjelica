@@ -10,7 +10,7 @@ import gnu.chu.interfaces.*;
  *
  * <p>TÍtulo: CCheckBox </p>
  * <p>Descripción: Campo Tipo CheckBox<br>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2016
  * Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -30,6 +30,7 @@ import gnu.chu.interfaces.*;
 
 public class CCheckBox  extends JCheckBox   implements CEditable, CQuery
 {
+  private boolean dependePadre=true;
   boolean pulsado=false;
   String chSelect = "true";
   String chNoSelect = "false";
@@ -307,10 +308,25 @@ public class CCheckBox  extends JCheckBox   implements CEditable, CQuery
    {
 
    }
+    /**
+     * Indica si depende del padre (normalmente un CPanel) para ponerse enabled/disabled.
+     * Normalmente cuando el padre es puesto a disabled el CTextField tambien es puesto y viceversa.
+     * 
+     * @param dependPadre 
+     */
+    public void setDependePadre(boolean dependPadre)
+    {
+      dependePadre=dependPadre;
+    }
 
+   public boolean getDependePadre()
+   {
+      return dependePadre;
+   }
   public void setEnabledParent(boolean enab)
   {
-
+    if (! dependePadre)
+      return;
     query.setEnabled(enab);
     activadoParent = enab;
     if (!enab)
@@ -348,11 +364,13 @@ public class CCheckBox  extends JCheckBox   implements CEditable, CQuery
     return query.getQuery();
   }
 
+  @Override
   public String getStrQuery()
   {
     return query.getStrQuery();
   }
 
+  @Override
   protected void processKeyEvent(KeyEvent ke)
   {
     if (ke.getID() == KeyEvent.KEY_PRESSED)
@@ -426,6 +444,7 @@ public class CCheckBox  extends JCheckBox   implements CEditable, CQuery
     this.gridEdit = gridEdit;
   }
 
+  @Override
   public String getColumnaAlias()
   {
     return "";

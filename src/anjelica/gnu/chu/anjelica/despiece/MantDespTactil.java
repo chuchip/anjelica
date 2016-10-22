@@ -12,6 +12,7 @@ import gnu.chu.anjelica.sql.Desorilin;
 import gnu.chu.anjelica.sql.DesorilinId;
 import gnu.chu.anjelica.sql.Desporig;
 import gnu.chu.anjelica.sql.DesporigId;
+import gnu.chu.camposdb.cliPanel;
 import gnu.chu.camposdb.proPanel;
 import gnu.chu.camposdb.tidCodi2;
 import gnu.chu.comm.BotonBascula;
@@ -41,7 +42,7 @@ import javax.swing.event.InternalFrameEvent;
  *
  * <p>Titulo: MantDespTactil</p>
  * <p>Descripción: Mant. DESPIECES POR TACTIL</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -61,7 +62,7 @@ import javax.swing.event.InternalFrameEvent;
 public class MantDespTactil  extends ventanaPad implements PAD
 {
  private gnu.chu.controles.CComboBox eti_codiE=new gnu.chu.controles.CComboBox();
-
+  cliPanel cli_codiE = new cliPanel();
   int tipoEmp; // Tipo Empresa (Sala Despiece o Plantacion)
   private boolean isEmpPlanta=false; // Indica si la empresa es tipo Plantacion
   final static String TABLA_BLOCK="desporig";
@@ -298,6 +299,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
   CTextField usu_nombE = new CTextField();
   CLinkBox deo_almoriE = new CLinkBox();
   CLabel cLabel20 = new CLabel();
+  CLabel cli_codiL = new CLabel("Cliente");
   CLinkBox deo_almdesE = new CLinkBox();
   CLabel cLabel110 = new CLabel();
   JScrollPane jScrollPane1 = new JScrollPane();
@@ -378,7 +380,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2016-04-07"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2016-10-22"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -409,8 +411,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
    cLabel3.setText("Fecha Produccion");
    cLabel3.setBounds(new Rectangle(190, 2, 129, 16));
    Pcabe.setBorder(BorderFactory.createRaisedBevelBorder());
-   Pcabe.setMinimumSize(new Dimension(14, 64));
-   Pcabe.setPreferredSize(new Dimension(14, 70));
+   Pcabe.setMaximumSize(new Dimension(14, 82));
+   Pcabe.setMinimumSize(new Dimension(14, 82));
+   Pcabe.setPreferredSize(new Dimension(14, 82));
    Pcabe.setLayout(null);
    cLabel4.setText("N. Piezas");
    cLabel4.setBounds(new Rectangle(391, 2, 53, 16));
@@ -668,6 +671,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
     deo_almoriE.setBounds(new Rectangle(69, 41, 200, 19));
     cLabel20.setText("Alm.Origen");
     cLabel20.setBounds(new Rectangle(3, 41, 62, 18));
+    cli_codiL.setBounds(new Rectangle(3, 61, 62, 18));
+    cli_codiE.setBounds(new Rectangle(65, 61, 315, 18));
     deo_almdesE.setAncTexto(30);
     deo_almdesE.setBounds(new Rectangle(349, 41, 186, 19));
     cLabel110.setText("Alm.Final");
@@ -773,6 +778,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Pcabe.add(usu_nombL, null);
     Pcabe.add(deo_almdesE, null);
     Pcabe.add(cLabel20, null);
+    Pcabe.add(cli_codiL, null);
+    Pcabe.add(cli_codiE, null);
     Pcabe.add(deo_almoriE, null);
     Pcabe.add(cLabel110, null);
     Pcabe.add(cLabel23, null);
@@ -805,6 +812,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     @Override
  public void iniciarVentana() throws Exception
  {
+   cli_codiE.iniciar(dtAux,this,vl,EU);
    jtEnt.cuadrarGrid();
    jtFin.cuadrarGrid();
    jtOri.cuadrarGrid();
@@ -843,6 +851,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    deo_codiE.setColumnaAlias("deo_codi");
   // pro_loteE.setColumnaAlias("deo_numdes");
    grd_fechaE.setColumnaAlias("deo_fecha");
+   cli_codiE.setColumnaAlias("cli_codi");
    tid_codiE.setColumnaAlias("tid_codi");
    usu_nombE.setColumnaAlias("usu_nomb");
    deo_almoriE.setColumnaAlias("deo_almori");
@@ -1208,6 +1217,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
        v.add(usu_nombE.getStrQuery());
        v.add(deo_almoriE.getStrQuery());
        v.add(deo_almdesE.getStrQuery());
+       v.add(cli_codiE.getStrQuery());
 
 
        s = creaWhere(getStrSql(), v,false);
@@ -1524,6 +1534,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
   }
   void setDesorca() throws SQLException,ParseException
   {
+   desorca.setCliente(cli_codiE.getValorInt());
    desorca.setDeoFecha(grd_fechaE.getDate());
    desorca.setTidCodi(tid_codiE.getValorInt());
    desorca.setDeoFeccad(grd_feccadE.getDate());
@@ -1738,6 +1749,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
         deo_almoriE.setEnabled(activ);
         deo_almdesE.setEnabled(activ);
         usu_nombE.setEnabled(activ);
+        cli_codiE.setEnabled(activ);
         Bfincab.setEnabled(activ);
         deo_blockE.setEnabled(activ);
         break;
@@ -1814,6 +1826,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
       grd_unidE.setValorDec(dtStat.getInt("deo_numuni"));
       deo_blockE.setValor(dtStat.getString("deo_block"));
       grd_feccadE.setText(dtStat.getFecha("deo_feccad","dd-MM-yyyy"));
+      cli_codiE.setValorInt(dtStat.getInt("cli_codi",true));
+      
       s="SELECT d.*,pr.pro_nomb FROM desorilin d,v_articulo pr "+
           " WHERE d.pro_codi = pr.pro_codi "+
           " AND d.eje_nume = "+eje_numeE.getValorInt()+
