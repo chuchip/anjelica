@@ -437,6 +437,11 @@ void irMantPedidos()
      double importe;
      String tipo;
      swBreakAcum=false;
+     boolean swPonArtic=false,swPonGrupo=false;
+     if (tlaCodi == 99)
+         swPonArtic=true;
+     else
+         swPonGrupo=true;
      do
      {
          ArrayList v = new ArrayList();
@@ -453,21 +458,12 @@ void irMantPedidos()
                  cantCaj = 0;
                  impAcum = 0;
                  nLiPr = 0;
-                 v.add(proCodi);
-                 v.add(proGrupo);
-             } else if (jt.isVacio() )
-             {
-                 v.add(proCodi);
-                 v.add(proNomb);
-             } else
-             {
-                 v.add("");
-                 v.add("");
-             }
+                 swPonArtic=true;
+                
+             } 
          } 
          else
-         {
-             v.add("");
+         { // No es tipo listado 99           
              if (!proGrupo.equals(dtCon1.getString("pro_desc"))  )
              {
                  if (nLiPr > 1 || !opDesgl.isSelected())
@@ -478,23 +474,8 @@ void irMantPedidos()
                  cantCaj = 0;
                  impAcum = 0;
                  nLiPr = 0;
-                 v.add("");
-                 v.add(proGrupo);                 
-             }
-             else
-             {
-                if (jt.isVacio())
-                {
-                    v.add("");
-                     v.add(proGrupo);
-                }
-                else
-                {
-                    v.add("");
-                    v.add("");
-                }
-             }
-             
+                 swPonGrupo=true;
+             }                          
          }
          
          if (nLiPr<0 )
@@ -531,6 +512,18 @@ void irMantPedidos()
          if ((nCajas>0 || kg>0) && opDesgl.isSelected())
          {
             nLiPr++;
+            if (swPonArtic || swPonGrupo)
+            {
+                v.add(swPonArtic?"":proCodi);
+                v.add(proGrupo);
+                swPonArtic=false;
+                swPonGrupo=false;
+            }
+            else
+            {
+                v.add("");
+                v.add("");
+            }
             v.add(dtCon1.getString("prv_nomco")); // 1
             v.add(dtCon1.getInt("pcc_nume")); // 3
             v.add(dtCon1.getFecha("pcc_fecrec", "dd-MM-yyyy")); // 2

@@ -419,9 +419,9 @@ public class pdpeve  extends ventanaPad   implements PAD
     cLabel9.setBounds(new Rectangle(182, 4, 49, 16));
     pvc_comenL.setText("Comentario");
     pvc_comenL.setBounds(new Rectangle(3, 4, 120, 16));    
-    pvc_comenS.setBounds(new Rectangle(3, 20, 390, 35));
-    pvc_comalbL.setBounds(new Rectangle(3, 60, 120, 16));    
-    pvc_comalbS.setBounds(new Rectangle(3, 80, 390, 35));
+    pvc_comenS.setBounds(new Rectangle(3, 20, 390, 65));
+    pvc_comalbL.setBounds(new Rectangle(3, 90, 120, 16));    
+    pvc_comalbS.setBounds(new Rectangle(3, 110, 390, 65));
     
     pvc_estadE.addItem("Pendiente","P");
     pvc_estadE.addItem("Preparado","L");
