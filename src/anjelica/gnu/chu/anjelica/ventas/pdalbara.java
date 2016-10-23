@@ -2636,7 +2636,7 @@ public class pdalbara extends ventanaPad  implements PAD
         despVenta.setLote(avp_ejelotE.getValorInt(),avp_serlotE.getText(),
             avp_numparE.getValorInt(),avp_numindE.getValorInt());                
         despVenta.setAlmacen(alm_codoriE.getValorInt());
-        
+        despVenta.setCliente(cli_codiE.getValorInt());
         despVenta.mostrar();
       } catch (Exception k ){
           Error("Error al iniciar aplicacion despiece en ventas",k);
@@ -7601,7 +7601,17 @@ public class pdalbara extends ventanaPad  implements PAD
             " and p.eje_nume = " + pvc_anoE.getValorInt() +
             " and p.pvc_nume = " + pvc_numeE.getValorInt();
       if (!dt.select(s))
-          return -1;
+      {
+           s="select pvl_precio,pvl_precon from pedvenl as p "+
+            " where p.pvl_precio != 0 "+
+            " and p.pro_codi in (select pro_codi from v_articulo where pro_codart="+
+               " (select pro_codart from v_articulo where pro_codi= "+proCodi+"))"+
+              " and p.emp_codi ="+emp_codiE.getValorInt()+
+              " and p.eje_nume = " + pvc_anoE.getValorInt() +
+              " and p.pvc_nume = " + pvc_numeE.getValorInt();
+           if (!dt.select(s))
+            return -1;
+      }
       if (dt.getInt("pvl_precon")==0)
           return -1;
       else

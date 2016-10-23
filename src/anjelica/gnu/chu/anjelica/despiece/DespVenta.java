@@ -84,7 +84,7 @@ public class DespVenta extends ventana {
     int ejeNume,empCodi,deoCodi;
     utildesp utdesp;
     DatosTabla dtAdd;
-    int almCodi,prvCodi;
+    int almCodi,prvCodi,cliCodi;
     ActualStkPart stkPart;
 
 
@@ -99,7 +99,15 @@ public class DespVenta extends ventana {
         setIconifiable(false);
         this.setSize(500,440);
         this.setTitle("Carga Despiece desde Ventas");
-        setVersion("20160731");
+        setVersion("20161023");
+    }
+    /**
+     * Establece el cliente para el que se genera el despiece
+     * @param cliente 
+     */
+    public void setCliente(int cliente)
+    {
+        cliCodi=cliente;
     }
     /**
      * Establece el almacén donde trabajar.
@@ -1069,6 +1077,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
      desorca=new Desporig();
      deoCodi=utildesp.incNumDesp(dtAdd,EU.em_cod,ejeNume);
      desorca.setId(new DesporigId(ejeNume,deoCodi));
+     desorca.setCliente(cliCodi);
      desorca.setDeoAlmdes(almCodi);
      desorca.setDeoAlmori(almCodi);
      desorca.setDeoDesnue(tid_codiE.getValorInt()==9999?'S':'N');
