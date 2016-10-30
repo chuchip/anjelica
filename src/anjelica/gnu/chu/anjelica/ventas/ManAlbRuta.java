@@ -949,6 +949,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         cLabel3.setBounds(230, 23, 40, 17);
 
         rut_codiE.setAncTexto(30);
+        rut_codiE.setMayusculas(true);
         rut_codiE.setFormato(Types.CHAR, "XX");
         Pcabe.add(rut_codiE);
         rut_codiE.setBounds(290, 23, 210, 17);
@@ -1202,7 +1203,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
             return;
         }
 
-        jtFra.setColNueva(2);
+        jtFra.setColNueva(3);
         jtFra.setMaximumSize(new Dimension(406, 311));
         jtFra.setMinimumSize(new Dimension(406, 311));
         jtFra.setPreferredSize(new Dimension(406, 311));

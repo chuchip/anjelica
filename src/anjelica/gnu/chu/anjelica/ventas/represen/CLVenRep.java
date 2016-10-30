@@ -68,7 +68,7 @@ import net.sf.jasperreports.engine.JasperReport;
  * </p>
  */
 public class CLVenRep extends ventana {
-    
+    private boolean conComentarios=false;
     final  int JTCAB_EJER=0;
     final  int JTCAB_SERIE=1;
     final  int JTCAB_NUMALB=2;
@@ -144,7 +144,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2016-09-20" + ARG_ZONAREP);
+        this.setVersion("2016-10-26" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -236,6 +236,7 @@ public class CLVenRep extends ventana {
         Baceptar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+              conComentarios=false;
               String indice=Baceptar.getValor(e.getActionCommand()); 
               switch (indice)
               {
@@ -257,6 +258,10 @@ public class CLVenRep extends ventana {
                    case "P!":
                       actualPrecioMin(true);
                       break;
+                   case "!":
+                       conComentarios=true;
+                       consultar(false);
+                       break;
                   default:
                    consultar(indice.equals("S"));
                }
@@ -484,6 +489,10 @@ public class CLVenRep extends ventana {
                     + " WHERE 1=1 "+
                     bdisc.getCondWhere("cl")+
                     condWhere;
+        if (conComentarios)
+                s += " and exists (select *  FROM comision_represent as cr "
+                        + " WHERE cr.avc_id = a.avc_id )";
+                    
         if (sinPrecMini) {
                 s += " and exists (select *  FROM v_albavel as l "
                         + " WHERE l.emp_codi = " + emp_codiE.getValorInt()
@@ -1062,6 +1071,7 @@ public class CLVenRep extends ventana {
 
     Baceptar.setText("Elegir");
     Baceptar.addMenu("Consultar","C");
+    Baceptar.addMenu("Cons. Incid","!");
     Baceptar.addMenu("Cons.Sin Precio","S");
 
     if (ARG_MODIF)

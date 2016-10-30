@@ -33,7 +33,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * ultimos albaranes y/o facturas. Cobros realizados, importe pendiente de cobro y comentarios.
  *  </p><p>Tambien permite modificar ciertos datos de conctacto del cliente.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -2301,7 +2301,7 @@ public class FichaClientes extends ventana implements PAD
       dtBlo.executeUpdate(s);
       dtBlo.commit();
       jtCom.setValor(cpv_textE.getText(),1);
-    } catch (Exception k)
+    } catch (ParseException | SQLException k)
     {
       fatalError("Error al Insertar Comentario",k);
     }

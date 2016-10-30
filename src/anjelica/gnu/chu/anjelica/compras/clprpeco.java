@@ -514,7 +514,7 @@ void irMantPedidos()
             nLiPr++;
             if (swPonArtic || swPonGrupo)
             {
-                v.add(swPonArtic?"":proCodi);
+                v.add(swPonArtic?proCodi:"");
                 v.add(proGrupo);
                 swPonArtic=false;
                 swPonGrupo=false;

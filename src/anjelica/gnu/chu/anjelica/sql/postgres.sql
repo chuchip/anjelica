@@ -1559,6 +1559,7 @@ deo_block char(1) default 'N',  -- Abierto en tactil(S). Cerrado (N) Bloqueado (
 prv_codi int not null,   -- Proveedor
 deo_desnue char(1) default 'N' not null,   -- Despiece Nuestro (S/N)
 deo_numuni  int  not null default 0,   -- Unidades a meter como origen (Solo tactil)
+cli_codi int, -- Cliente para el que se hace el despiece
 deo_fecval timestamp,    -- Fecha de Valoracion.
 deo_usuval varchar(20),  -- Usuario q hizo valoración
 constraint ix_despori primary key(eje_nume,deo_codi)
@@ -1593,6 +1594,7 @@ create table anjelica.deorcahis
     prv_codi int not null,   -- Proveedor
     deo_desnue char(1) default 'N' not null,   -- Despiece Nuestro (S/N)
     deo_numuni int,           -- Numero de Unidades
+	cli_codi int, -- Codigo cliente
     deo_fecval timestamp,    -- Fecha de Valoracion.
     deo_usuval varchar(20),  -- Usuario q hizo valoración
     his_usunom varchar(15) not null, -- Usuario que realiza el Cambio
@@ -3469,7 +3471,7 @@ create or replace view anjelica.v_hispedven as select  c.his_rowid as his_rowid,
 grant select on anjelica.v_hispedven to public;
 --
 -- Tabla Comentario de Pedidos de ventas.
--- Utilizado SOLO por programa gnu.chu.anjelica.consCliente
+-- 
 --
 -- drop table compedven;
 create table anjelica.compedven

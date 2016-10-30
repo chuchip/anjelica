@@ -1,7 +1,7 @@
 package gnu.chu.anjelica.pad;
 /**
  *
- * <p>Título: MantIdiomas </p>
+ * <p>Título: MantArticVenta </p>
  * <p>Descripcion: Mantenimiento Articulos de Venta</p>
  * <p>Empresa: miSL</p>
 *  <p>Copyright: Copyright (c) 2005-2016
@@ -340,8 +340,8 @@ private void jbInit() throws Exception {
       try
     {
       dtAdd.edit(dtAdd.getCondWhere());
-     
-      dtAdd.setDato("loc_nomb",pve_nombE.getText());
+      actDatos();
+      
       dtAdd.update(stUp);
      
       resetBloqueo(dtAdd, "prodventa",  pve_codiE.getText(),false);
@@ -358,7 +358,13 @@ private void jbInit() throws Exception {
     nav.pulsado=navegador.NINGUNO;
     activaTodo();
     }
-
+    void actDatos() throws SQLException
+    {
+        dtAdd.setDato("pve_nomb", pve_nombE.getText());
+        dtAdd.setDato("pve_cong", pArticVenta.getValorCongelado());
+        dtAdd.setDato("pve_corte", pArticVenta.getValorCorte());
+        dtAdd.setDato("pve_curac", pArticVenta.getValorCurado());
+    }
     @Override
     public void canc_edit() {
         try
@@ -414,10 +420,7 @@ private void jbInit() throws Exception {
             mensaje("Insertando PRODUCTO ...", false);
             dtAdd.addNew("prodventa");
             dtAdd.setDato("pve_codi", pve_codiE.getText());
-            dtAdd.setDato("pve_nomb", pve_nombE.getText());
-            dtAdd.setDato("pve_cong", pArticVenta.getValorCongelado());
-            dtAdd.setDato("pve_corte", pArticVenta.getValorCorte());
-            dtAdd.setDato("pve_curac", pArticVenta.getValorCurado());
+            actDatos();
             dtAdd.update(stUp);
             ctUp.commit();
         } catch (Exception ex)

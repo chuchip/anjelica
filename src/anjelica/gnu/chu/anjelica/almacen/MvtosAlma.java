@@ -1342,7 +1342,7 @@ public class MvtosAlma
             {
                 if (psCli != null)
                 {
-                    psCli.setInt(1, dt.getInt("cliCodi"));
+                    psCli.setInt(1, dt.getInt("cliCodi",true));
                     ResultSet rsCli = psCli.executeQuery();
                     if (!rsCli.next())
                     {
@@ -1387,7 +1387,7 @@ public class MvtosAlma
                 {
                     swIgnMvto = true;
                 }
-                if (dt.getInt("cliCodi") != 0 && cliCodi != 0 && cliCodi != dt.getInt("cliCodi"))
+                if (dt.getInt("cliCodi",true) != 0 && cliCodi != 0 && cliCodi != dt.getInt("cliCodi",true))
                 {
                     swIgnMvto = true;
                 }
@@ -1566,7 +1566,7 @@ public class MvtosAlma
           if (sel=='C'||  sel=='D' || sel=='d' )
           {
             if (dtStat.select("select prv_nomb from v_proveedo"+
-                           " where prv_codi="+dt.getInt("cliCodi")))
+                           " where prv_codi="+dt.getInt("cliCodi",true)))
                 cliNomb =  dtStat.getString("prv_nomb");
           }
           

@@ -751,11 +751,11 @@ public class MantPartes  extends ventanaPad implements PAD
      ifRegAlm.setVisible(true);    
      ifRegAlm.reset();
      ifRegAlm.getPanelReg().setCampos(
-         pac_fecproE.getDate(),jtLineas.getValorInt(JTLINEAS_PROCOD),
+         pac_fecresE.getDate()==null?pac_fecproE.getDate():pac_fecresE.getDate(),jtLineas.getValorInt(JTLINEAS_PROCOD),
                                         EU.em_cod,
                                       pro_ejelotE1.getValorInt(), pro_serlotE1.getText(),pro_numlotE1.getValorInt(),
-                                      pro_indlotE1.getValorInt(),pal_unidadE1.getValorInt()*-1,
-                                      pal_kilosE1.getValorDec()*-1,
+                                      pro_indlotE1.getValorInt(),pal_unidadE1.getValorInt(),
+                                      pal_kilosE1.getValorDec(),
                                       pdalmace.ALMACENPRINCIPAL,0,
                                       pac_tipoE.getValor().equals("E")?0:cli_codiE.getValorInt(),
                                       "Parte:"+par_codiE.getValorInt() ,0,null,0,1,1,0,0,"",0,

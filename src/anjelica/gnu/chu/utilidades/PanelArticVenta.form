@@ -119,7 +119,7 @@
     </Component>
     <Component class="gnu.chu.controles.CComboBox" name="pve_congE">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pve_congE.addItem(&quot;Si&quot;,&quot;-1&quot;);&#xa;pve_congE.addItem(&quot;NO&quot;,&quot;0&quot;);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pve_congE.addItem(&quot;NO&quot;,&quot;0&quot;);&#xa;pve_congE.addItem(&quot;Si&quot;,&quot;-1&quot;);"/>
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -139,7 +139,7 @@
     </Component>
     <Component class="gnu.chu.controles.CComboBox" name="pve_corteE">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pve_corteE.addItem(&quot;Si&quot;,&quot;-1&quot;);&#xa;pve_corteE.addItem(&quot;NO&quot;,&quot;0&quot;);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pve_corteE.addItem(&quot;NO&quot;,&quot;0&quot;);&#xa;pve_corteE.addItem(&quot;Si&quot;,&quot;-1&quot;);"/>
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -159,7 +159,7 @@
     </Component>
     <Component class="gnu.chu.controles.CComboBox" name="pve_curacE">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pve_curacE.addItem(&quot;Si&quot;,&quot;-1&quot;);&#xa;pve_curacE.addItem(&quot;NO&quot;,&quot;0&quot;);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="pve_curacE.addItem(&quot;NO&quot;,&quot;0&quot;);&#xa;pve_curacE.addItem(&quot;Si&quot;,&quot;-1&quot;);"/>
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

@@ -221,7 +221,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel5">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel5">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Fecha"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -252,7 +252,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel6">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel6">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Salida Ruta"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -306,7 +306,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel1">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value=":"/>
@@ -317,7 +317,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel7">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel7">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Operario"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -371,7 +371,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel2">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value=":"/>
@@ -382,7 +382,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Ruta"/>
               </Properties>
@@ -395,6 +395,7 @@
             <Component class="gnu.chu.controles.CLinkBox" name="rut_codiE">
               <Properties>
                 <Property name="ancTexto" type="int" value="30"/>
+                <Property name="mayusculas" type="boolean" value="true"/>
               </Properties>
               <AccessibilityProperties>
                 <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
@@ -408,7 +409,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel4">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel4">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Vehiculo"/>
               </Properties>
@@ -418,7 +419,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel8">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel8">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Km. Iniciales "/>
               </Properties>
@@ -438,7 +439,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel9">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel9">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Identificador"/>
               </Properties>
@@ -478,7 +479,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel11">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel11">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Regreso Ruta"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -508,7 +509,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel15">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel15">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Km. Finales"/>
               </Properties>
@@ -585,7 +586,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel12">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel12">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="2"/>
                 <Property name="text" type="java.lang.String" value="Unid."/>
@@ -649,7 +650,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel16">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel16">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="2"/>
                 <Property name="text" type="java.lang.String" value="Importe"/>
@@ -660,7 +661,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel17">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel17">
               <Properties>
                 <Property name="text" type="java.lang.String" value="N&#xba; Facturas"/>
               </Properties>
@@ -670,7 +671,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel18">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel18">
               <Properties>
                 <Property name="text" type="java.lang.String" value="N&#xba; Albaranes "/>
               </Properties>
@@ -693,7 +694,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel19">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel19">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="2"/>
                 <Property name="text" type="java.lang.String" value="Kilos"/>
@@ -717,7 +718,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel13">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel13">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="2"/>
                 <Property name="text" type="java.lang.String" value="Bultos"/>
@@ -741,7 +742,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel14">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel14">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="2"/>
                 <Property name="text" type="java.lang.String" value="Palets"/>
@@ -834,7 +835,7 @@
             <Container class="gnu.chu.controles.CGridEditable" name="jtFra">
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(9)&#xa;{&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        calcSumFras();&#xa;    }&#xa;&#xa;    public void cambiaColumna(int col,int colNueva, int row)&#xa;    {&#xa;        try&#xa;        {&#xa;            if (col != 3)&#xa;            return;&#xa;&#xa;        }&#xa;        catch (Exception k)&#xa;        {&#xa;            Error(&quot;Error al Cambiar Columna&quot;, k);&#xa;        }&#xa;    }&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        try&#xa;        {&#xa;            return checkLineaFra(row);&#xa;        }&#xa;        catch (SQLException k)&#xa;        {&#xa;            Error(&quot;Error al Cambiar Columna&quot;, k);&#xa;        }&#xa;        return 0;&#xa;&#xa;    }&#xa;}&#xa;"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList vf= new ArrayList();&#xa;    vf.add(&quot;A&#xf1;o&quot;); // 0&#xa;    vf.add(&quot;Emp&quot;); // 1&#xa;    vf.add(&quot;S&quot;); // 2  serie&#xa;    vf.add(&quot;Factura&quot;);  // 3&#xa;    vf.add(&quot;Cliente&quot;); // 4&#xa;    vf.add(&quot;Nombre&quot;); // 5&#xa;    vf.add(&quot;Fec.Fra&quot;);// 6&#xa;    vf.add(&quot;Imp.Fra&quot;); // 7&#xa;    vf.add(&quot;Imp.Pend&quot;); // 8   &#xa;    jtFra.setCabecera(vf);&#xa;    fvc_clicodE.setEnabled(false);&#xa;    fvc_clinomE.setEnabled(false);&#xa;    fvc_fecfraE.setEnabled(false);&#xa;    fvc_sumtotE.setEnabled(false);   &#xa;    fvc_imppenE.setEnabled(false);&#xa;    fvc_serieE.setMayusc(true);&#xa;    fvc_serieE.setAutoNext(true);&#xa;    fvc_clicodE.setText(&quot;&quot;);&#xa;    fvc_sumtotE.setText(&quot;&quot;);&#xa;    fvc_serieE.setText(&quot;1&quot;);&#xa;    fvc_empcodE.setValorDec(EU.em_cod);&#xa;    fvc_anoE.setValorDec(EU.ejercicio);&#xa;try {&#xa;    ArrayList vf1=new ArrayList();&#xa;    vf1.add(fvc_anoE);&#xa;    vf1.add(fvc_empcodE);&#xa;    vf1.add(fvc_serieE);&#xa;    vf1.add(fvc_numeE);&#xa;    vf1.add(fvc_clicodE);&#xa;    vf1.add(fvc_clinomE);&#xa;    vf1.add(fvc_fecfraE);&#xa;    vf1.add(fvc_sumtotE);&#xa;    vf1.add(fvc_imppenE);&#xa;    jtFra.setCampos(vf1);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al configurar grid fras.&quot;,k);&#xa;&#xa;return;&#xa;}&#xa;    &#xa;    jtFra.setColNueva(2);&#xa;    jtFra.setMaximumSize(new Dimension(406, 311));&#xa;    jtFra.setMinimumSize(new Dimension(406, 311));&#xa;    jtFra.setPreferredSize(new Dimension(406, 311));&#xa;    jtFra.setAnchoColumna(new int[]{50,40,25,60,40,140,80,70,70});&#xa;    jtFra.setAlinearColumna(new int[]{2,2,1,2,2,0,1,2,2});&#xa;    jtFra.setFormatoColumna(7,&quot;----,--9.99&quot;);&#xa;    jtFra.setFormatoColumna(8,&quot;----,--9.99&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList vf= new ArrayList();&#xa;    vf.add(&quot;A&#xf1;o&quot;); // 0&#xa;    vf.add(&quot;Emp&quot;); // 1&#xa;    vf.add(&quot;S&quot;); // 2  serie&#xa;    vf.add(&quot;Factura&quot;);  // 3&#xa;    vf.add(&quot;Cliente&quot;); // 4&#xa;    vf.add(&quot;Nombre&quot;); // 5&#xa;    vf.add(&quot;Fec.Fra&quot;);// 6&#xa;    vf.add(&quot;Imp.Fra&quot;); // 7&#xa;    vf.add(&quot;Imp.Pend&quot;); // 8   &#xa;    jtFra.setCabecera(vf);&#xa;    fvc_clicodE.setEnabled(false);&#xa;    fvc_clinomE.setEnabled(false);&#xa;    fvc_fecfraE.setEnabled(false);&#xa;    fvc_sumtotE.setEnabled(false);   &#xa;    fvc_imppenE.setEnabled(false);&#xa;    fvc_serieE.setMayusc(true);&#xa;    fvc_serieE.setAutoNext(true);&#xa;    fvc_clicodE.setText(&quot;&quot;);&#xa;    fvc_sumtotE.setText(&quot;&quot;);&#xa;    fvc_serieE.setText(&quot;1&quot;);&#xa;    fvc_empcodE.setValorDec(EU.em_cod);&#xa;    fvc_anoE.setValorDec(EU.ejercicio);&#xa;try {&#xa;    ArrayList vf1=new ArrayList();&#xa;    vf1.add(fvc_anoE);&#xa;    vf1.add(fvc_empcodE);&#xa;    vf1.add(fvc_serieE);&#xa;    vf1.add(fvc_numeE);&#xa;    vf1.add(fvc_clicodE);&#xa;    vf1.add(fvc_clinomE);&#xa;    vf1.add(fvc_fecfraE);&#xa;    vf1.add(fvc_sumtotE);&#xa;    vf1.add(fvc_imppenE);&#xa;    jtFra.setCampos(vf1);&#xa;} catch (Exception k)&#xa;{&#xa;Error(&quot;Error al configurar grid fras.&quot;,k);&#xa;&#xa;return;&#xa;}&#xa;    &#xa;    jtFra.setColNueva(3);&#xa;    jtFra.setMaximumSize(new Dimension(406, 311));&#xa;    jtFra.setMinimumSize(new Dimension(406, 311));&#xa;    jtFra.setPreferredSize(new Dimension(406, 311));&#xa;    jtFra.setAnchoColumna(new int[]{50,40,25,60,40,140,80,70,70});&#xa;    jtFra.setAlinearColumna(new int[]{2,2,1,2,2,0,1,2,2});&#xa;    jtFra.setFormatoColumna(7,&quot;----,--9.99&quot;);&#xa;    jtFra.setFormatoColumna(8,&quot;----,--9.99&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">

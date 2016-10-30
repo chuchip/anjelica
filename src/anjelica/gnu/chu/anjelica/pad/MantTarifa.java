@@ -774,6 +774,8 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
  public static double getPrecTar(DatosTabla dt,int proCodi,int cliCodi, int tarCodi,String fecAlb) throws SQLException
  {
    String s;
+   if (fecAlb.trim().equals(""))
+       return 0;
    if (cliCodi!=0)
    {
        s = " SELECT tar_preci,tar_fecini " +

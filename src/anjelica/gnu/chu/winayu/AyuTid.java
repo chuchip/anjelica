@@ -1,15 +1,26 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * AyuTid.java
- *
- * Created on 28-oct-2011, 10:36:32
- */
 package gnu.chu.winayu;
-
+/**
+ *
+ * <p>Título: AyuTid</p>
+ * <p>Descripción: Ventana Para ayuda de tipos de despiece </p>
+ *
+ * <p>Copyright: Copyright (c) 2005-2016
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los términos de la Licencia Pública General de GNU segun es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * <p>Empresa: miSL</p>
+ * @author chuchi P
+ * @version 1.0
+ */
 import gnu.chu.controles.StatusBar;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -24,7 +35,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
-import java.util.Vector;
+import java.util.ArrayList;
 import javax.swing.JLayeredPane;
 
 /**
@@ -74,8 +85,9 @@ public class AyuTid extends ventana {
     
     initComponents();
     this.getContentPane().add(statusBar, BorderLayout.SOUTH);
-    this.setSize(new Dimension(406, 526));
+    this.setSize(new Dimension(606, 526));
   }
+    @Override
   public void iniciarVentana() throws Exception
   {
     pro_codiniE.iniciar(dtCon1, this, vl, EU);
@@ -180,7 +192,7 @@ public class AyuTid extends ventana {
         pro_codfinE = new gnu.chu.camposdb.proPanel();
         Baceptar = new gnu.chu.controles.CButton("Aceptar",Iconos.getImageIcon("check"));
         jt = new gnu.chu.controles.Cgrid(2);
-        { Vector v=new Vector();
+        { ArrayList v=new ArrayList();
             v.add("Codigo");
             v.add("Nombre");
             jt.setCabecera(v);
@@ -189,12 +201,13 @@ public class AyuTid extends ventana {
             jt.setAjustarGrid(true);
         }
 
-        Pprinc.setLayout(null);
+        Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcond.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
         Pcond.setDefButton(Baceptar);
-        Pcond.setMaximumSize(new java.awt.Dimension(399, 143));
-        Pcond.setMinimumSize(new java.awt.Dimension(399, 143));
+        Pcond.setMaximumSize(new java.awt.Dimension(399, 95));
+        Pcond.setMinimumSize(new java.awt.Dimension(399, 95));
+        Pcond.setPreferredSize(new java.awt.Dimension(399, 95));
         Pcond.setLayout(null);
 
         cLabel1.setText("Nombre");
@@ -219,13 +232,18 @@ public class AyuTid extends ventana {
         Pcond.add(Baceptar);
         Baceptar.setBounds(130, 60, 100, 30);
 
-        Pprinc.add(Pcond);
-        Pcond.setBounds(0, 354, 400, 100);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 6);
+        Pprinc.add(Pcond, gridBagConstraints);
 
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jt.setMaximumSize(new java.awt.Dimension(393, 300));
         jt.setMinimumSize(new java.awt.Dimension(393, 300));
-        jt.setPreferredSize(new java.awt.Dimension(393, 300));
 
         javax.swing.GroupLayout jtLayout = new javax.swing.GroupLayout(jt);
         jt.setLayout(jtLayout);
@@ -235,11 +253,20 @@ public class AyuTid extends ventana {
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 348, Short.MAX_VALUE)
+            .addGap(0, 397, Short.MAX_VALUE)
         );
 
-        Pprinc.add(jt);
-        jt.setBounds(0, 0, 400, 350);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 7;
+        gridBagConstraints.ipady = 50;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
+        Pprinc.add(jt, gridBagConstraints);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 

@@ -7,8 +7,25 @@ import java.sql.Types;
 
 /**
  *
- * @author cpuente
- */
+ * <p>Título: PanelArticVenta </p>
+ * <p>Descripcion: Panel de Articulos de Venta</p>
+ * <p>Empresa: miSL</p>
+*  <p>Copyright: Copyright (c) 2005-2016
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,ed
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * @author ChuchiP
+ * @version 1.0
+ */ 
 public class PanelArticVenta extends CPanel
 {
 
@@ -172,8 +189,8 @@ public class PanelArticVenta extends CPanel
         add(cLabel14);
         cLabel14.setBounds(0, 62, 60, 18);
 
-        pve_congE.addItem("Si","-1");
         pve_congE.addItem("NO","0");
+        pve_congE.addItem("Si","-1");
         add(pve_congE);
         pve_congE.setBounds(70, 82, 60, 17);
 
@@ -181,8 +198,8 @@ public class PanelArticVenta extends CPanel
         add(cLabel15);
         cLabel15.setBounds(140, 82, 50, 18);
 
-        pve_corteE.addItem("Si","-1");
         pve_corteE.addItem("NO","0");
+        pve_corteE.addItem("Si","-1");
         add(pve_corteE);
         pve_corteE.setBounds(190, 82, 60, 17);
 
@@ -190,8 +207,8 @@ public class PanelArticVenta extends CPanel
         add(cLabel16);
         cLabel16.setBounds(260, 82, 50, 18);
 
-        pve_curacE.addItem("Si","-1");
         pve_curacE.addItem("NO","0");
+        pve_curacE.addItem("Si","-1");
         add(pve_curacE);
         pve_curacE.setBounds(310, 82, 60, 17);
     }// </editor-fold>//GEN-END:initComponents

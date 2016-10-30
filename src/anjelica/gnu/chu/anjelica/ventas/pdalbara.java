@@ -282,6 +282,7 @@ public class pdalbara extends ventanaPad  implements PAD
   ayuVenPro ayVePr = null;
   CPanel Pgrid = new CPanel(new GridBagLayout());
   CPanel Ppedido = new CPanel();
+  PComClien pComClien=new PComClien() ;
   CTabbedPane Ptab1 = new CTabbedPane();
   boolean  opVerdat=false;
   double prLiTar = 0;
@@ -712,7 +713,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-10-16" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-10-30" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1177,6 +1178,7 @@ public class pdalbara extends ventanaPad  implements PAD
         Pprinc.add(Ptab1, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         Ptab1.addTab("Albaran", Pgrid);
         Ptab1.addTab("Pedidos", Ppedido);
+        Ptab1.addTab("Cliente", pComClien);
         Ptab1.addTab("Historico",Phist);
         Pcabped.add(cLabel26, null);
         Pcabped.add(pvc_comenL, null);
@@ -1197,6 +1199,7 @@ public class pdalbara extends ventanaPad  implements PAD
         Pcabped.add(opAgrFecha, null);
         
         Ptab1.add(PotroDat, "Otros");
+        //Ptab1.add(PComClie, "Comentarios");
         Ptab1.add(jtPalet, "Palets");
         PAlb1.add(avc_obserS, null);
         PAlb1.add(avc_obserL, null);
@@ -1426,6 +1429,7 @@ public class pdalbara extends ventanaPad  implements PAD
           tar_codiE.addDatos(dtStat);
           avc_deposE.setColumnaAlias("avc_depos");
           initAvcRevpreE(avc_revpreE,true);
+          pComClien.iniciar(dtCon1, this);
       } catch (IllegalArgumentException | ClassNotFoundException ex  )
       {
          Error("Error al configurar grid",ex);
@@ -1445,7 +1449,8 @@ public class pdalbara extends ventanaPad  implements PAD
     cli_rutaE.setAncTexto(30);
     cli_rutaE.setFormato(Types.CHAR, "XX");
     rutPanelE.iniciar(dtStat, dtAdd, this);
-    pdconfig.llenaDiscr(dtStat, cli_rutaE, pdconfig.D_RUTAS ,EU.em_cod);      
+    pdconfig.llenaDiscr(dtStat, cli_rutaE, pdconfig.D_RUTAS ,EU.em_cod);   
+   
     paiEmp= pdempresa.getPais(dtStat,EU.em_cod);
     jtDes.getPopMenu().add(verDatTraz);
     jtDes.getPopMenu().add(verMvtos);
@@ -3073,6 +3078,7 @@ public class pdalbara extends ventanaPad  implements PAD
         opVerdat=false;
         return;
       }
+      pComClien.mostrarComentarios(dtAdd.getInt("cli_codi"));
       nav.setEnabled(navegador.EDIT, true);
       nav.setEnabled(navegador.DELETE, true);
       avc_revpreE.setEnabled(false);
@@ -8010,6 +8016,7 @@ public class pdalbara extends ventanaPad  implements PAD
     this.setEnabled(true);
     mensaje("");
   }
+  
   void verVentanaEtiquetas()
   {
       try
