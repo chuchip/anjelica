@@ -445,7 +445,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
           {
               if (! jt.getValString(n,0).equals("") && !jt.getValString(n,0).equals("X") )
               {
-                  jt.setValor(jt.getValorDec(n,2)==0?0:jt.getValorDec(n,2)+increm,n,2);
+                  jt.setValor(jt.getValorDec(n,2)==0?0: Formatear.redondea(jt.getValorDec(n,2)+increm,2),n,2);
               }
           }
       }
@@ -600,6 +600,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     verDatos();
     mensaje("");
   }
+  @Override
   public void canc_edit() {
     activaTodo();
     mensajeErr("Modificacion de Datos ... Cancelada");

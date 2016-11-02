@@ -5,7 +5,6 @@ import gnu.chu.utilidades.*;
 import gnu.chu.sql.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
-import gnu.chu.anjelica.almacen.pdalmace;
 import java.awt.*;
 import java.util.*;
 import gnu.chu.camposdb.*;
@@ -112,12 +111,12 @@ public class pdpeve  extends ventanaPad   implements PAD
   CLabel cLabel4 = new CLabel();
   CTextField pvc_fecpedE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CTextField pvc_horpedE = new CTextField(Types.DECIMAL,"99.99");
-  CLabel cLabel6 = new CLabel();
+  CLabel pvc_fecentL = new CLabel();
   CTextField pvc_fecentE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CButton BirGrid= new CButton();
   CLabel cLabel7 = new CLabel();
   CComboBox pvc_confirE = new CComboBox();
-  CLabel cLabel8 = new CLabel();
+  CLabel pvc_nupeclL = new CLabel();
   CTextField pvc_nupeclE = new CTextField(Types.CHAR,"X",12);
   CLabel cLabel9 = new CLabel();
   CTextField usu_nombE = new CTextField(Types.CHAR,"X",20);
@@ -147,7 +146,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         {
           jt.setValor(pro_codiE.getNombArtCli(pro_codiE.getValorInt(),
                                               cli_codiE.getValorInt()), row, JT_NOMBPRO);
-          jt.setValor( MantTarifa.getPrecTar(dtStat,pro_codiE.getValorInt(), cli_codiE.getValorInt(),
+          jt.setValor(MantTarifa.getPrecTar(dtStat,pro_codiE.getValorInt(), cli_codiE.getValorInt(),
               cli_codiE.getLikeCliente().getInt("tar_codi"), 
             pvc_fecentE.getText()) , row, JT_PRETAR);
         }
@@ -409,12 +408,12 @@ public class pdpeve  extends ventanaPad   implements PAD
     cLabel3.setBounds(new Rectangle(3, 20, 57, 16));
     cLabel4.setText("Fec. Ped.");
     cLabel4.setBounds(new Rectangle(2, 4, 59, 16));
-    cLabel6.setText("Fec.Entrega");
-    cLabel6.setBounds(new Rectangle(331, 20, 67, 16));
+    pvc_fecentL.setText("Fec.Entrega");
+    
     cLabel7.setText("Conf");
     cLabel7.setBounds(new Rectangle(474, 20, 33, 16));
-    cLabel8.setText("N.Ped. Cliente");
-    cLabel8.setBounds(new Rectangle(147, 20, 77, 16));
+    pvc_nupeclL.setText("N.Ped. Cliente");
+   
     cLabel9.setText("Usuario");
     cLabel9.setBounds(new Rectangle(182, 4, 49, 16));
     pvc_comenL.setText("Comentario");
@@ -442,6 +441,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     pstock.setBorder(BorderFactory.createLineBorder(Color.black));
     conf_jt();
     BirAlbaran.setToolTipText("Busca Albaranes de este cliente");
+    BirAlbaran.setFocusable(false);
     Baceptar.setMaximumSize(new Dimension(125, 20));
     Baceptar.setMinimumSize(new Dimension(125, 20));
     Baceptar.setPreferredSize(new Dimension(125, 20));
@@ -455,9 +455,16 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_horpedE.setBounds(new Rectangle(146, 4, 35, 16));
     pvc_fecpedE.setBounds(new Rectangle(62, 4, 81, 16));
     
-    pvc_fecentE.setBounds(new Rectangle(396, 20, 75, 16));
-    BirGrid.setBounds(new Rectangle(472, 20, 1, 1));
-    pvc_nupeclE.setBounds(new Rectangle(225, 20, 105, 16));
+//    pvc_fecentL.setBounds(new Rectangle(331, 20, 67, 16));
+//    pvc_fecentE.setBounds(new Rectangle(396, 20, 75, 16));
+    pvc_fecentL.setBounds(new Rectangle(147, 20, 67, 16));
+    pvc_fecentE.setBounds(new Rectangle(218, 20, 75, 16));
+    BirGrid.setBounds(new Rectangle(295, 20, 1, 1));
+    pvc_nupeclL.setBounds(new Rectangle(2, 37, 77, 16));
+    pvc_nupeclE.setBounds(new Rectangle(80, 37, 105, 16));
+   
+
+    
     pvc_confirE.setBounds(new Rectangle(511, 20, 54, 16));
     pvc_numeE.setBounds(new Rectangle(92, 20, 50, 16));
     eje_numeE.setBounds(new Rectangle(57, 20, 33, 16));
@@ -537,8 +544,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     Pcomen.add(pvc_comenS, null);
     Pcomen.add(pvc_comalbL, null);
     Pcomen.add(pvc_comalbS, null);
-    Pcabe.add(cLabel8, null);
-    Pcabe.add(cLabel6, null);
+    Pcabe.add(pvc_nupeclL, null);
+    Pcabe.add(pvc_fecentL, null);
     Pcabe.add(opPedidos, null);
     Pcabe.add(cLabel16, null);
     Pcabe.add(pvc_verfecE, null);
@@ -708,6 +715,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   @Override
   public void iniciarVentana() throws Exception
   {
+    Pprinc.setButton(KeyEvent.VK_F2, BirGrid);
     pstock.setPedidos(opPedidos.isSelected());
     pro_codiE.getFieldBotonCons().setEnabled(false);
     dtHist=new DatosTabla(ct);
@@ -795,9 +803,16 @@ public class pdpeve  extends ventanaPad   implements PAD
       @Override
       public void focusGained(FocusEvent e)
       {
-          if (jt.isEnabled())
-              jt.requestFocusInicioLater();
+              irGrid();
       }    
+    });
+    jt.addMouseListener(new MouseAdapter()
+    {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (cli_codiE.getEnabled() && ! jt.isEnabled() && e.getClickCount()>1)
+                irGrid();
+        }
     });
       jtHist.tableView.getSelectionModel().addListSelectionListener(new
        ListSelectionListener()
@@ -1360,14 +1375,16 @@ public class pdpeve  extends ventanaPad   implements PAD
   {
       try
       {
-          jt.removeAllDatos();
+          nav.setEnabled(false);
           activar(navegador.ADDNEW, true);
-          
+          jt.setEnabled(false);
+          jt.removeAllDatos();
           pvc_incfraE.setSelected(false);
           pvc_fecentE.resetCambio();
           pvc_confirE.setValor("S");
           pvc_verfecE.setEnabled(opVerProd.getValor().equals("" + pstockAct.VER_ULTVENTAS));
           cli_codiE.resetTexto();
+          cli_codiE.resetCambio();
           pvc_comenE.resetTexto();
           pvc_comrepE.resetTexto();
           pvc_nupeclE.resetTexto();
@@ -1384,7 +1401,7 @@ public class pdpeve  extends ventanaPad   implements PAD
           pvc_horpedE.setText(Formatear.getFechaAct("HH.ss"));
           pvc_deposE.setValor("N");
           pvc_estadE.setValor("P");
-          jt.setEnabled(true);
+         
           pro_codiE.getFieldBotonCons().setEnabled(true);
     } catch (SQLException k)
     {
@@ -2007,7 +2024,83 @@ public class pdpeve  extends ventanaPad   implements PAD
    }
     public void irGrid()
     {
+        try {
+        if (nav.pulsado == navegador.QUERY)
+            return;
+        if (! cli_codiE.controlar())
+        {
+            mensajeErr("Cliente no valido");
+            return;
+        }
+        if (! cli_codiE.isActivo()) 
+        {
+            mensajeErr("Cliente NO esta activo");
+            cli_codiE.requestFocus();
+            return;
+        }
+        if (! jt.isEnabled())
+            jt.setEnabled(true);
+       
+       if (cli_codiE.hasCambio())
+       {
+           cli_codiE.resetCambio();
+       
+        if ( cli_codiE.getLikeCliente().getInt("cli_gener")==0 && nav.getPulsado()==navegador.ADDNEW)
+        {
+         s="select p.eje_nume,p.pvc_nume,p.avc_ano,p.avc_serie,p.avc_nume,avc_impres,pvc_fecent from pedvenc as p left join v_albavec as a on p.avc_ano=a.avc_ano "+
+             " and p.avc_nume = a.avc_nume and p.avc_serie = a.avc_serie "
+             + " where p.cli_codi = "+cli_codiE.getValorInt()+
+             " and pvc_fecent >= '"+ Formatear.getFechaDB(Formatear.sumaDiasDate(pvc_fecentE.getDate(),-7))+"'"+
+             " and pvc_confir!='C'"+
+             " order by avc_nume asc";
+            if (dtStat.select(s))
+            {
+                int res = -1;
+                if (dtStat.getInt("avc_nume") == 0)
+                    res = mensajes.mensajePreguntar("Cliente ya tiene pedido " + dtStat.getInt("pvc_nume")
+                        + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy") + " sin preparar. ¿ Editar pedido ?");
+                else
+                {
+                    do
+                    {
+                        if ((dtStat.getInt("avc_impres", true) & 1) == 0 && dtStat.getString("avc_serie").equals("A"))
+                        {
+                            res = mensajes.mensajePreguntar("Cliente con albaran " + dtStat.getInt("avc_nume")
+                                + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy")
+                                + " preparado sin servir. ¿ Editar Pedido ?");
+                            break;
+                        }                       
+                    } while (dtStat.next());                   
+                }
+                if (res == mensajes.YES)
+                {
+                    if (dtCons.select("select * from pedvenc where eje_nume = "+dtStat.getInt("eje_nume")
+                        + " and pvc_nume = " + dtStat.getInt("pvc_nume")))
+                    {
+                        nav.pulsado = navegador.NINGUNO;
+                        activaTodo();
+                        verDatos();
+                        nav.pulsado = navegador.EDIT;
+                        PADEdit();
+                    }
+                }
+            }
+        }
+       }   
+       if (cli_codiE.getTarifa() != pstock.getTarifa())
+         pstock.setTarifa(cli_codiE.getTarifa());
+       if (opVerProd.getValor().equals("" + pstockAct.VER_ULTVENTAS))
+         pstock.setCliente(cli_codiE.getValorInt());
+      
+      
+        
+       pstock.verFamilias();
+         
         jt.requestFocusInicioLater();
+        } catch (SQLException | ParseException k)
+        {
+            Error("Error al ir al grid",k);
+        }
     }
    public void setCliente(int cliCodi)
    {
@@ -2029,101 +2122,7 @@ public class pdpeve  extends ventanaPad   implements PAD
    {
        cli_poblE.setText(cli_codiE.getLikeCliente().getString("cli_pobl"));
        
-       boolean releer = false;
-       if (cli_codiE.getLikeCliente().getInt("cli_gener")==0 && nav.getPulsado()==navegador.ADDNEW)
-       {
-        s="select p.eje_nume,p.pvc_nume,p.avc_ano,p.avc_serie,p.avc_nume,avc_impres,pvc_fecent from pedvenc as p left join v_albavec as a on p.avc_ano=a.avc_ano "+
-            " and p.avc_nume = a.avc_nume and p.avc_serie = a.avc_serie "
-            + " where p.cli_codi = "+cli_codiE.getValorInt()+
-            " and pvc_fecent >= '"+ Formatear.getFechaDB(Formatear.sumaDiasDate(pvc_fecentE.getDate(),-7))+"'"+
-            " and pvc_confir!='C'" ;
-           if (dtStat.select(s))
-           {
-               int res = -1;
-               if (dtStat.getInt("avc_nume") == 0)
-                   res = mensajes.mensajePreguntar("Cliente ya tiene pedido " + dtStat.getInt("pvc_nume")
-                       + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy") + " sin preparar. ¿ Editar pedido ?");
-               else
-               {
-                   do
-                   {
-                       if ((dtStat.getInt("avc_impres", true) & 1) == 0 && dtStat.getString("avc_serie").equals("A"))
-                       {
-                           res = mensajes.mensajePreguntar("Cliente con albaran " + dtStat.getInt("avc_nume")
-                               + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy")
-                               + " preparado sin servir. ¿ Editar Pedido ?");
-                           break;
-                       }                       
-                   } while (dtStat.next());                   
-               }
-               if (res == mensajes.YES)
-               {
-                   if (dtCons.select("select * from pedvenc where eje_nume = "+dtStat.getInt("eje_nume")
-                       + " and pvc_nume = " + dtStat.getInt("pvc_nume")))
-                   {
-                       nav.pulsado = navegador.NINGUNO;
-                       activaTodo();
-                       verDatos();
-                       nav.pulsado = navegador.EDIT;
-                       PADEdit();
-                   }
-               }
-           }
-       }
-           
-       if (cli_codiE.getTarifa() != pstock.getTarifa())
-       {
-         pstock.setTarifa(cli_codiE.getTarifa());
-         releer = true;
-       }
-       if (opVerProd.getValor().equals("" + pstockAct.VER_ULTVENTAS))
-       {
-         pstock.setCliente(cli_codiE.getValorInt());
-         releer = true;
-       }
-       if (releer)
-       {
-           msgEspere("Buscando Productos  del cliente");
-           new miThread("")
-           {
-               @Override
-               public void run() {
-                   try
-                   {
-                       Thread.currentThread().sleep(10);
-                   } catch (InterruptedException ex)
-                   {
-                       Logger.getLogger(pdpeve.class.getName()).log(Level.SEVERE, null, ex);
-                   }
-                   try
-                   {
-                       javax.swing.SwingUtilities.invokeAndWait(new Thread()
-                       {
-                           @Override
-                           public void run() {
-                               try
-                               {
-                                   pstock.verFamilias();
-                                   resetMsgEspere();
-                                   pvc_fecentE.requestFocusLater();
-                               } catch (Exception k)
-                               {
-                                   Error("Error al ver productos de venta", k);
-                               }
-                               
-                           }
-                       });
-                   } catch (InterruptedException ex)
-                   {
-                       Logger.getLogger(pdpeve.class.getName()).log(Level.SEVERE, null, ex);
-                   } catch (InvocationTargetException ex)
-                   {
-                       Logger.getLogger(pdpeve.class.getName()).log(Level.SEVERE, null, ex);
-                   }
-
-               }
-           };         
-       }
+     
    }
    void cli_codiE_afterFocusLost(boolean error)
    {

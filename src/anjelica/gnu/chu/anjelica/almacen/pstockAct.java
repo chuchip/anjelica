@@ -269,7 +269,7 @@ public class pstockAct extends CPanel
     return false;
   }
 
-  public void verFamilias() throws Exception
+  public void verFamilias() throws SQLException
   {
     // Limpiar componentes del panel de Familias y ActionListeners de los JButton
     limpiaPanel(Pfami, btFami);
@@ -303,7 +303,7 @@ public class pstockAct extends CPanel
     }
   }
 
-  CToggleButton insFamilia(int fprCodi,String fprNomb) throws Exception
+  CToggleButton insFamilia(int fprCodi,String fprNomb) throws SQLException
   {
     CToggleButton Bfami = new CToggleButton(fprNomb);
 //        if (Bprimero == null)

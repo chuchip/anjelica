@@ -2,7 +2,7 @@
  *
  * <p>Título: CLHisVentas</p>
  * <p>Descripción: Consulta/Listado Historico ventas</p>
- *  <p>Copyright: Copyright (c) 2005-2014
+ *  <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia

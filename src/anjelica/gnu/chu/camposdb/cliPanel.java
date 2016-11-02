@@ -198,6 +198,11 @@ public class cliPanel extends CPanel
   {
     return aceptaNulo;
   }
+  public boolean isActivo() throws SQLException
+  {
+      return getLikeCliente().getString("cli_activ").toUpperCase().startsWith("S");
+  }
+   
   /**
    * Hace el boton de consultar visible
    * @param activo true = visible
@@ -531,14 +536,17 @@ public void setZona(String zonCli)
     cli_codiE.setCeroIsNull(ceroIsNull);
   }
 
+  @Override
   public void setEnabled(boolean activo) {
+   
     cli_codiE.setEnabled(activo);
     Bcons.setEnabled(activo);
   }
   public boolean getEnabled() {
     return cli_codiE.isEnabled();
   }
-
+  
+  @Override
   public void setQuery(boolean modoQuery) {
     cli_codiE.setQuery(modoQuery);
     Bcons.setEnabled(!modoQuery);
@@ -575,6 +583,7 @@ public void setZona(String zonCli)
           else
             vl.add(ayucli,peso);
         }
+        ayucli.consulta=false;
         ayucli.setVisible(true);
         if (intfr!=null)
         {
