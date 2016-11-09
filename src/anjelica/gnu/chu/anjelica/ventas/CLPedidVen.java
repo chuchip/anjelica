@@ -174,10 +174,10 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      rut_codiE.setCeroIsNull(true);
      cli_codiE.iniciar(dtStat, this, vl, EU);
      pdalmace.llenaLinkBox(alm_codiE, dtStat);
-     emp_codiE.iniciar(dtStat, this, vl, EU);
+     
      
      sbe_codiE.iniciar(dtStat, this, vl, EU);
-     sbe_codiE.setFieldEmpCodi(emp_codiE.getTextField());
+     
      sbe_codiE.setAceptaNulo(true);
      sbe_codiE.setValorInt(0);
      pvc_feciniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -7));
@@ -586,9 +586,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         " and cl.rut_codi = al.rut_codi "+     
         (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = "+sbe_codiE.getValorInt())+
         (zon_codiE.isNull() || swCliente?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
-        (rep_codiE.isNull() || swCliente?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'")+
-//        (rut_codiE.isNull()?"": " and rut_codi ='"+rut_codiE.getText()+"'")+
-        (emp_codiE.getValorInt() == 0 ? "" : " AND c.emp_codi = " + emp_codiE.getValorInt());
+        (rep_codiE.isNull() || swCliente?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'");
+;
 
     if (verPedidosE.getValor().equals("P"))
       s += " AND (c.avc_ano = 0 or pvc_cerra=0)";
@@ -625,7 +624,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     v.add("Fec.Entrega"); // 6
     v.add("Conf"); // 7
     v.add("Cerr");// 8
-    v.add("Ped.Cliente"); // 9
+    v.add("Dep?"); // 9
     v.add("Ruta");// 10
     v.add("Ej.Alb");//11
     v.add("S.Alb"); //12
@@ -634,8 +633,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     jtCabPed.setMaximumSize(new Dimension(548, 158));
     jtCabPed.setMinimumSize(new Dimension(548, 158));
     jtCabPed.setPreferredSize(new Dimension(548, 158));
-    jtCabPed.setAnchoColumna(new int[]{26,40,49,55,150,100,76,30,40,80,100,40,40,60});
-    jtCabPed.setAlinearColumna(new int[]{2,2,2,2,0,0,1,1,1,0,0,2,1,2});
+    jtCabPed.setAnchoColumna(new int[]{26,40,49,55,150,100,76,30,40,40,100,40,40,60});
+    jtCabPed.setAlinearColumna(new int[]{2,2,2,2,0,0,1,1,1,1,0,2,1,2});
 
     jtCabPed.setFormatoColumna(7,"BSN");
     jtCabPed.setFormatoColumna(8,"BSN");
@@ -672,10 +671,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     {
         cli_codiE.setText(cliCodi);
     }
-    public void setEmpCodiText(String empCodi)
-    {
-        emp_codiE.setText(empCodi);
-    }
+ 
     public void Baceptar_doClick()
     {
         Baceptar.doClick();
@@ -745,7 +741,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         v.add(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy")); // 5
         v.add(dtCon1.getString("pvc_confir")); // 6
         v.add(dtCon1.getInt("pvc_cerra")!=0); // 7
-        v.add(dtCon1.getString("pvc_nupecl")); // 8
+        v.add(dtCon1.getString("pvc_depos")); // 8
         v.add(dtCon1.getString("rut_nomb")); // 9
         v.add(dtCon1.getString("avc_ano")); //10
         v.add(dtCon1.getString("avc_serie")); // 11
@@ -782,8 +778,6 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
-        cLabel4 = new gnu.chu.controles.CLabel();
-        emp_codiE = new gnu.chu.camposdb.empPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
         sbe_codiE = new gnu.chu.camposdb.sbePanel();
         cLabel6 = new gnu.chu.controles.CLabel();
@@ -845,14 +839,6 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         Pcabe.add(cli_codiE);
         cli_codiE.setBounds(80, 22, 280, 18);
 
-        cLabel4.setText("Emp");
-        Pcabe.add(cLabel4);
-        cLabel4.setBounds(520, 42, 30, 18);
-
-        emp_codiE.setPreferredSize(new java.awt.Dimension(39, 18));
-        Pcabe.add(emp_codiE);
-        emp_codiE.setBounds(550, 42, 40, 18);
-
         cLabel5.setText("Delegación");
         Pcabe.add(cLabel5);
         cLabel5.setBounds(370, 22, 70, 18);
@@ -886,7 +872,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         zon_codiE.setMayusculas(true);
         zon_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
         Pcabe.add(zon_codiE);
-        zon_codiE.setBounds(310, 42, 200, 18);
+        zon_codiE.setBounds(310, 42, 280, 18);
 
         cLabel18.setText("Zona");
         cLabel18.setPreferredSize(new java.awt.Dimension(60, 18));
@@ -1109,7 +1095,6 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     private gnu.chu.controles.CLabel cLabel22;
     private gnu.chu.controles.CLabel cLabel23;
     private gnu.chu.controles.CLabel cLabel3;
-    private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
@@ -1117,7 +1102,6 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CTextField cli_poblE1;
-    private gnu.chu.camposdb.empPanel emp_codiE;
     private gnu.chu.controles.Cgrid jtCabPed;
     private gnu.chu.controles.Cgrid jtLinPed;
     private gnu.chu.controles.CTextField nPedT;
