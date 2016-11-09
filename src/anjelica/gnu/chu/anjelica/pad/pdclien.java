@@ -957,10 +957,11 @@ public class pdclien extends ventanaPad implements PAD
     cli_giroE.addItem("Si","S");
     cli_giroE.addItem("No","N");
 
-    cli_albvalE.addItem("Ambos",""+LISTAR_ALB_SINDEFINIR);
+    
     cli_albvalE.addItem("Si",""+LISTAR_ALB_VALORADOS);
     cli_albvalE.addItem("No",""+LISTAR_ALB_SINVALORAR);
-
+    cli_albvalE.addItem("Ambos",""+LISTAR_ALB_SINDEFINIR);
+    
     cli_agralbE.addItem("Si","-1");
     cli_agralbE.addItem("No","0");
 
