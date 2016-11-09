@@ -713,7 +713,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-10-30" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2016-11-09" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -2856,8 +2856,7 @@ public class pdalbara extends ventanaPad  implements PAD
       copeve.setVisible(true);
       this.setEnabled(false);
       copeve.statusBar.setEnabled(true);
-      copeve.setCliCodiText(cli_codiE.getText());
-      copeve.setEmpCodiText(emp_codiE.getText());
+      copeve.setCliCodiText(cli_codiE.getText());    
       copeve.empCodiS=0;
       copeve.ejeNumeS=0;
       copeve.pvcNumeS=0;
@@ -8352,6 +8351,20 @@ public class pdalbara extends ventanaPad  implements PAD
         msgBox("NO se pudo listar albaran\n"+msgBloqueo);
         verDatos(dtCons);
         return;
+      }
+      if (cli_codiE.getLikeCliente().getInt("cli_albval")==pdclien.LISTAR_ALB_VALORADOS &&
+          !opValora.isSelected())
+      {
+           int ret=mensajes.mensajeYesNo("A este Cliente se le deberia listar los albaranes valorados. Listar seguro?");
+           if (ret!=mensajes.YES)
+              return;
+      }
+      if (cli_codiE.getLikeCliente().getInt("cli_albval")==pdclien.LISTAR_ALB_SINVALORAR &&
+          opValora.isSelected())
+      {
+           int ret=mensajes.mensajeYesNo("A este Cliente se le deberia listar los albaranes sin Valorar. Listar seguro?");
+           if (ret!=mensajes.YES)
+              return;
       }
       mensaje("Imprimiendo albaran ...");
 

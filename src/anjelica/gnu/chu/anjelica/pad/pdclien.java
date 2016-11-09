@@ -49,7 +49,9 @@ public class pdclien extends ventanaPad implements PAD
     public static final char EST_NOCONT='N';
     public static final char EST_AUSENTE='A';
     public static final char EST_LLAMAR='L';
-    
+    public static final int LISTAR_ALB_VALORADOS=1;
+    public static final int LISTAR_ALB_SINVALORAR=2;
+    public static final int LISTAR_ALB_SINDEFINIR=0;
     String clc_comen;
     boolean chgCliente = true;
     String s;
@@ -322,7 +324,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2016-09-22");
+      this.setVersion("2016-11-09");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -955,9 +957,9 @@ public class pdclien extends ventanaPad implements PAD
     cli_giroE.addItem("Si","S");
     cli_giroE.addItem("No","N");
 
-    cli_albvalE.addItem("Ambos","1");
-    cli_albvalE.addItem("Si","-1");
-    cli_albvalE.addItem("No","0");
+    cli_albvalE.addItem("Ambos",""+LISTAR_ALB_SINDEFINIR);
+    cli_albvalE.addItem("Si",""+LISTAR_ALB_VALORADOS);
+    cli_albvalE.addItem("No",""+LISTAR_ALB_SINVALORAR);
 
     cli_agralbE.addItem("Si","-1");
     cli_agralbE.addItem("No","0");
