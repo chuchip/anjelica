@@ -490,6 +490,7 @@ public void setZona(String zonCli)
   {
     cli_codiE.setColumnaAlias(colAlias);
   }
+  @Override
   public String getColumnaAlias()
   {
     return cli_codiE.getColumnaAlias();

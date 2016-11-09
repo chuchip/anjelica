@@ -20,11 +20,8 @@ import gnu.chu.anjelica.pad.pdconfig;
 
 import gnu.chu.winayu.AyuArt;
 import java.awt.print.PrinterException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.UnknownHostException;
 import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 /**
@@ -1570,8 +1567,8 @@ public class pdpeve  extends ventanaPad   implements PAD
       dtAdd.setDato("pvl_canti", jt.getValorDec(n,JT_CANTI)); 
       HashMap<Integer, Double> hm= MantArticulos.getRelUnidadKilos(jt.getValorInt(n,JT_PROD),dtStat);
               
-      double kilos=jt.getValorDec(n,JT_CANTI)*  (jt.getValString(n,JT_TIPCAN).equals("P")?hm.get(MantArticulos.KGXUNI):
-          jt.getValString(n,JT_TIPCAN).equals("C")?hm.get(MantArticulos.KGXCAJ):1);
+      double kilos=jt.getValorDec(n,JT_CANTI)*  (jt.getValString(n,JT_TIPCAN).startsWith("P")?hm.get(MantArticulos.KGXUNI):
+          jt.getValString(n,JT_TIPCAN).startsWith("C")?hm.get(MantArticulos.KGXCAJ):1);
       double unid=(hm.get(MantArticulos.TIPVENCAJA)==1?
           hm.get(MantArticulos.KGXCAJ):hm.get(MantArticulos.KGXUNI))==0?1:
           kilos/

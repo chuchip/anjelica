@@ -71,7 +71,7 @@ public class sbePanel extends CPanel
     this.add(sbe_codiE,     new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
             ,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     this.add(Bcons,   new GridBagConstraints(1, 0, 1, 1, 0.0, 1.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(1, 0, 0, 0), 1, 1));
+            ,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 1, 1));
 
   }
   /**

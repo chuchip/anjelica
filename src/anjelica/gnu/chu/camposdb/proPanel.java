@@ -66,6 +66,7 @@ public class proPanel extends CPanel
   AyuArt aypro;
   //boolean prodEqu=false;
   int proCodiAnt=0;
+  String proCodArtAnt;
 //  boolean refer=false;
   int proCoinst;
   private char tipLote='-',proConExist='-';
@@ -178,6 +179,8 @@ public class proPanel extends CPanel
   {
     pro_codiE.resetCambio();
     proCodiAnt=pro_codiE.getValorInt();
+    if (usaRefArticulo)
+        proCodArtAnt=pro_codiE.getText();
   }
   public void resetValor()
   {
@@ -192,9 +195,10 @@ public class proPanel extends CPanel
 
   public void pro_codiE_focusLost()
   {
-    if (pro_codiE.getValorInt()!=proCodiAnt)
+    if (pro_codiE.getValorInt()!=proCodiAnt ||  (usaRefArticulo && pro_codiE.getText()!=proCodArtAnt))
     {
       proCodiAnt=pro_codiE.getValorInt();
+      proCodArtAnt=pro_codiE.getText();
       try
       {
         afterFocusLost(controla(false,true));
@@ -221,6 +225,7 @@ public class proPanel extends CPanel
   public void setCambio()
   {
     proCodiAnt=-1;
+    proCodArtAnt="xxx**";
   }
   public void setProdEquiv(boolean prodEqu)
   {
@@ -543,6 +548,7 @@ public class proPanel extends CPanel
         prp_indiE.setValorInt(codBarra.getProIndi());
         prp_pesoE.setValorDec(codBarra.getProKilos()); 
         proCodiAnt=0;
+        proCodArtAnt="";
         e.consume();
         pro_codiE_focusLost();
         despuesLlenaCampos(e);        

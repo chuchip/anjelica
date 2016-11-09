@@ -2580,7 +2580,7 @@ public class Cgrid extends CPanel implements Serializable
     /**
      * Indica si se deben ajustar el ancho de las columnas a la anchura del GRID automaticamente.
      * La diferencia respecto a setAjustarGrid es que esta funcion NO ajusta el
-     * tama�o del grid al Panel que lo contiene.
+     * tamaño del grid al Panel que lo contiene.
      *
      * Por defecto el valor es 'false'
      * @param aj boolean Ajustar?

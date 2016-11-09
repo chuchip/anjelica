@@ -185,7 +185,9 @@ public class MantArticulos extends ventanaPad  implements PAD
     }
     @Override
     public void iniciarVentana() throws Exception
-  {
+    { 
+        pro_codartE.iniciar(dtStat, this, vl, EU);
+        pro_codartE.setUsaCodigoVenta(true);
     Pdiscrim.iniciar(dtCon1, EU);
     Pprinc.setButton(KeyEvent.VK_F4,Baceptar);
     s="SELECT eti_codi,eti_nomb FROM etiquetas where emp_codi = "+EU.em_cod+
@@ -870,13 +872,14 @@ public class MantArticulos extends ventanaPad  implements PAD
       pro_nombE.requestFocus();
       return false;
     }
-    if (pro_codartE.isNull())
+    if (pro_codartE.isNull()  && pro_tiplotE.getValor().equals("V"))
     {
       mensajeErr("Introduzca Codigo Interno de Articulo ");
       pro_codartE.setText(pro_codiE.getText());
       pro_codartE.requestFocus();
       return false;
     }
+    
     if (!fam_codiE.controla(true))
     {
       mensajeErr("Familia NO es valida");
@@ -906,6 +909,12 @@ public class MantArticulos extends ventanaPad  implements PAD
         return false;
     }
     try {
+        if (MantArticVenta.getNombreArticulo(dtStat,pro_codartE.getText())==null && pro_tiplotE.getValor().equals("V"))
+        {
+            mensajeErr("Articulo de VENTA no existe");
+            pro_codartE.requestFocus();
+            return false;
+        }
         if (! sbe_codiE.controla())
         {
          mensajeErr("SubEmpresa  NO VALIDA");
@@ -1421,7 +1430,6 @@ public class MantArticulos extends ventanaPad  implements PAD
         cLabel2 = new gnu.chu.controles.CLabel();
         pro_nomcorE = new gnu.chu.controles.CTextField(Types.CHAR,"X",30);
         cLabel3 = new gnu.chu.controles.CLabel();
-        pro_codartE = new gnu.chu.controles.CTextField(Types.CHAR,"X",12);
         cLabel4 = new gnu.chu.controles.CLabel();
         fam_codiE = new gnu.chu.controles.CLinkBox();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -1493,6 +1501,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         pro_feulmoE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel37 = new gnu.chu.controles.CLabel();
         pro_cosincE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9.999");
+        pro_codartE = new gnu.chu.camposdb.proPanel();
         Pdiscrim = new gnu.chu.camposdb.DiscProPanel();
         Pfamil = new gnu.chu.controles.CPanel();
         cLabel39 = new gnu.chu.controles.CLabel();
@@ -1631,17 +1640,13 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel2.setText("Descripción Abreviada");
         Pinicio.add(cLabel2);
-        cLabel2.setBounds(0, 3, 135, 20);
+        cLabel2.setBounds(0, 3, 130, 20);
         Pinicio.add(pro_nomcorE);
-        pro_nomcorE.setBounds(140, 3, 201, 20);
+        pro_nomcorE.setBounds(130, 3, 201, 18);
 
-        cLabel3.setText("Codigo Interno");
+        cLabel3.setText("Artic. Venta");
         Pinicio.add(cLabel3);
-        cLabel3.setBounds(410, 3, 92, 20);
-
-        pro_codartE.setMayusc(true);
-        Pinicio.add(pro_codartE);
-        pro_codartE.setBounds(530, 3, 85, 20);
+        cLabel3.setBounds(0, 50, 70, 17);
 
         cLabel4.setText("Familia");
         Pinicio.add(cLabel4);
@@ -1653,7 +1658,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel5.setText("Seccion");
         Pinicio.add(cLabel5);
-        cLabel5.setBounds(0, 50, 51, 18);
+        cLabel5.setBounds(0, 150, 51, 18);
 
         cam_codiE.setAncTexto(30);
         cam_codiE.setFormato(Types.CHAR, "XX");
@@ -1688,20 +1693,20 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel10.setText("Caducid. Congelado (Meses)");
         Pinicio.add(cLabel10);
-        cLabel10.setBounds(160, 100, 164, 18);
+        cLabel10.setBounds(154, 100, 165, 18);
         Pinicio.add(pro_numcroE);
-        pro_numcroE.setBounds(320, 123, 35, 18);
+        pro_numcroE.setBounds(400, 125, 35, 18);
 
         cLabel11.setText("Tipo Articulo");
         Pinicio.add(cLabel11);
-        cLabel11.setBounds(350, 50, 82, 18);
+        cLabel11.setBounds(340, 0, 82, 18);
 
         pro_tiplotE.addItem("Vendible","V");
         pro_tiplotE.addItem("Comentario","C");
         pro_tiplotE.addItem("Coment. Acum.Kg","c");
         pro_tiplotE.addItem("Deshecho","D");
         Pinicio.add(pro_tiplotE);
-        pro_tiplotE.setBounds(430, 50, 180, 18);
+        pro_tiplotE.setBounds(430, 0, 180, 18);
 
         cLabel12.setText("Etiqueta");
         Pinicio.add(cLabel12);
@@ -1718,7 +1723,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         pro_oblfsaE.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         pro_oblfsaE.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Pinicio.add(pro_oblfsaE);
-        pro_oblfsaE.setBounds(0, 123, 180, 18);
+        pro_oblfsaE.setBounds(0, 125, 180, 18);
 
         cLabel13.setText("Congelado");
         Pinicio.add(cLabel13);
@@ -1740,7 +1745,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel16.setText("Nº Crotales Iguales");
         Pinicio.add(cLabel16);
-        cLabel16.setBounds(210, 123, 110, 18);
+        cLabel16.setBounds(290, 125, 110, 18);
         Pinicio.add(pro_cadcongE);
         pro_cadcongE.setBounds(320, 100, 35, 18);
 
@@ -1866,19 +1871,19 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel26.setText("Unidades Compra");
         Pinicio.add(cLabel26);
-        cLabel26.setBounds(450, 123, 100, 18);
+        cLabel26.setBounds(460, 50, 100, 18);
 
         pro_unicomE.addItem("Kg","Kg");
         pro_unicomE.addItem("Un","Un");
         pro_unicomE.addItem("**","**");
         Pinicio.add(pro_unicomE);
-        pro_unicomE.setBounds(560, 123, 51, 18);
+        pro_unicomE.setBounds(570, 50, 51, 18);
 
         cLabel24.setText("Camara");
         Pinicio.add(cLabel24);
         cLabel24.setBounds(10, 170, 60, 18);
         Pinicio.add(pro_cajpalE);
-        pro_cajpalE.setBounds(100, 146, 35, 18);
+        pro_cajpalE.setBounds(580, 125, 35, 18);
 
         cLabel30.setText("Costo Añadido");
         Pinicio.add(cLabel30);
@@ -1888,22 +1893,22 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel31.setText("Kilos por caja");
         Pinicio.add(cLabel31);
-        cLabel31.setBounds(220, 146, 80, 18);
+        cLabel31.setBounds(310, 150, 80, 18);
         Pinicio.add(pro_kgcajE);
-        pro_kgcajE.setBounds(305, 146, 50, 18);
+        pro_kgcajE.setBounds(390, 150, 50, 18);
 
         cLabel32.setText("Cajas por Palet");
         Pinicio.add(cLabel32);
-        cLabel32.setBounds(10, 146, 90, 18);
+        cLabel32.setBounds(490, 125, 90, 18);
 
         sbe_codiE.setLabelSbe(sbe_nombL);
         Pinicio.add(sbe_codiE);
-        sbe_codiE.setBounds(60, 50, 40, 17);
+        sbe_codiE.setBounds(60, 150, 40, 17);
 
         sbe_nombL.setBackground(java.awt.Color.orange);
         sbe_nombL.setOpaque(true);
         Pinicio.add(sbe_nombL);
-        sbe_nombL.setBounds(110, 50, 230, 17);
+        sbe_nombL.setBounds(100, 150, 190, 17);
 
         cLabel33.setText("Fecha Alta");
         Pinicio.add(cLabel33);
@@ -1934,6 +1939,10 @@ public class MantArticulos extends ventanaPad  implements PAD
         cLabel37.setBounds(450, 146, 100, 18);
         Pinicio.add(pro_cosincE);
         pro_cosincE.setBounds(560, 170, 50, 18);
+
+        pro_codartE.setAncTexto(70);
+        Pinicio.add(pro_codartE);
+        pro_codartE.setBounds(70, 50, 380, 18);
 
         Ptab.addTab("Inicio", Pinicio);
         Ptab.addTab("Discriminadores", Pdiscrim);
@@ -2173,7 +2182,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CComboBox pro_artconE;
     private gnu.chu.controles.CTextField pro_cadcongE;
     private gnu.chu.controles.CTextField pro_cajpalE;
-    private gnu.chu.controles.CTextField pro_codartE;
+    private gnu.chu.camposdb.proPanel pro_codartE;
     private gnu.chu.controles.CLinkBox pro_codetiE;
     private gnu.chu.controles.CTextField pro_codiE;
     private gnu.chu.camposdb.proPanel pro_coeqcoE;

@@ -90,7 +90,7 @@ private void jbInit() throws Exception {
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2016-10-20");
+        this.setVersion("2016-11-05");
         strSql = "SELECT * FROM prodventa  "+
                 " ORDER BY pve_codi";
 
@@ -193,7 +193,41 @@ private void jbInit() throws Exception {
     public void PADSiguiente() {
           verDatos(dtCons);
     }
+  @Override
+    public void PADDelete()
+    {
+        try
+        {
+            String s="select * from v_articulo where pro_codart = '"+pve_codiE+"'";
+            if (dtStat.select(s))
+            {
+                msgBox("Articulo Venta asignado en Maestro Productos ("+dtStat.getInt("pro_codi")+")");
+                nav.pulsado = navegador.NINGUNO;
+                activaTodo();
+                return;
+                
+            }
+            if (!setBloqueo(dtAdd, "prodventa", pve_codiE.getText()))
+            {
+                msgBox(msgBloqueo);
+                nav.pulsado = navegador.NINGUNO;
+                activaTodo();
+                return;
+            }
 
+            if (!dtAdd.select("select * from prodventa where pve_codi= '" + pve_codiE.getText() + "'", true))
+            {
+                mensajeErr("Registro ha sido borrado");
+                resetBloqueo(dtAdd, "prodventa", pve_codiE.getText());
+                activaTodo();
+                mensaje("");
+            }
+
+        } catch (SQLException | UnknownHostException k)
+        {
+            Error("Error al bloquear el registro", k);            
+        }
+    }
     @Override
     public void PADUltimo() {
           verDatos(dtCons);
@@ -235,7 +269,7 @@ private void jbInit() throws Exception {
   public void PADEdit()
   {
     activar(true);
-    pve_codiE.setEnabled(false);
+//    pve_codiE.setEnabled(false);
     try
     {
       if (!setBloqueo(dtAdd, "prodventa", pve_codiE.getText()))
@@ -340,6 +374,7 @@ private void jbInit() throws Exception {
       try
     {
       dtAdd.edit(dtAdd.getCondWhere());
+      
       actDatos();
       
       dtAdd.update(stUp);
@@ -360,6 +395,7 @@ private void jbInit() throws Exception {
     }
     void actDatos() throws SQLException
     {
+        dtAdd.setDato("pve_codi", pve_codiE.getText());
         dtAdd.setDato("pve_nomb", pve_nombE.getText());
         dtAdd.setDato("pve_cong", pArticVenta.getValorCongelado());
         dtAdd.setDato("pve_corte", pArticVenta.getValorCorte());
@@ -418,8 +454,7 @@ private void jbInit() throws Exception {
                 return;
             }
             mensaje("Insertando PRODUCTO ...", false);
-            dtAdd.addNew("prodventa");
-            dtAdd.setDato("pve_codi", pve_codiE.getText());
+            dtAdd.addNew("prodventa");            
             actDatos();
             dtAdd.update(stUp);
             ctUp.commit();
@@ -437,7 +472,7 @@ private void jbInit() throws Exception {
 
     @Override
     public void canc_addnew() {
-    mensaje("");
+      mensaje("");
       nav.pulsado=navegador.NINGUNO;
       activaTodo();
       mensajeErr("Insercion de Datos Cancelada");
@@ -446,21 +481,44 @@ private void jbInit() throws Exception {
 
     @Override
     public void ej_delete1() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try
+        {
+            dtAdd.delete();
+            resetBloqueo(dtAdd, "prodventa", pve_codiE.getText(), false);
+            ctUp.commit();
+            rgSelect();
+            verDatos(dtCons);
+        } catch (Throwable ex)
+        {
+            Error("Error al Modificar datos", ex);
+            return;
+        }
+        mensaje("");
+        mensajeErr("Articulo VENTA ... Borrado");
+        nav.pulsado = navegador.NINGUNO;
+        
+        activaTodo();
     }
 
     @Override
     public void canc_delete() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+          mensaje("");
+      nav.pulsado=navegador.NINGUNO;
+      activaTodo();
+      mensajeErr("Borrado  de Registro Cancelada");
+      verDatos(dtCons);     
     }
 
     @Override
     public void activar(boolean b) {
         Pprinc.setEnabled(b);
     }
-    public static DatosTabla getDatos(DatosTabla dt) throws SQLException
+  
+    public static String getNombreArticulo(DatosTabla dt,String pveCodi) throws SQLException
     {
-        dt.select("select loc_codi,loc_nomb from prodventa order by loc_codi");
-        return dt;
+        if (! dt.select("select * from prodventa where pve_codi ='"+pveCodi+"'"))
+            return null;
+        return dt.getString("pve_nomb");
     }
+    
 }

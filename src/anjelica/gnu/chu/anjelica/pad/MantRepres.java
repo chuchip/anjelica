@@ -2,7 +2,7 @@
  *
  * <p>Titulo: MantRepres  </p>
  * <p>Descripción: Mantenimiento Representantes</p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia P�blica General de GNU seg�n es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -101,7 +101,7 @@ public class MantRepres extends  ventanaPad  implements PAD {
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2010-11-10" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2016-11-07" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM represent "+
                 " ORDER BY rep_codi";
 
@@ -157,7 +157,7 @@ public class MantRepres extends  ventanaPad  implements PAD {
         rep_faxE = new gnu.chu.controles.CTextField(Types.CHAR,"X",15);
         rep_nifE = new gnu.chu.controles.CTextField(Types.CHAR,"X",15);
         cLabel27 = new gnu.chu.controles.CLabel();
-        rep_emailE = new gnu.chu.controles.CTextField(Types.CHAR,"X",15);
+        rep_emailE = new gnu.chu.controles.CTextField(Types.CHAR,"X",25);
         Pzona = new gnu.chu.controles.CPanel();
         jtZon = new gnu.chu.controles.CGridEditable(2) {
             protected void cambiaColumna(int col,int colNueva,int row)
@@ -278,107 +278,55 @@ public class MantRepres extends  ventanaPad  implements PAD {
             Bcancelar.setText("Cancelar");
 
             Pdatos.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+            Pdatos.setLayout(null);
 
             cLabel20.setText("Cuenta Contable");
+            Pdatos.add(cLabel20);
+            cLabel20.setBounds(11, 13, 91, 15);
 
             cLabel21.setText("Dirección");
+            Pdatos.add(cLabel21);
+            cLabel21.setBounds(11, 36, 91, 15);
 
             cLabel22.setText("Codigo Postal");
+            Pdatos.add(cLabel22);
+            cLabel22.setBounds(11, 82, 76, 15);
 
             cLabel23.setText("NIF");
+            Pdatos.add(cLabel23);
+            cLabel23.setBounds(344, 13, 16, 15);
+            Pdatos.add(rep_codpoE);
+            rep_codpoE.setBounds(105, 81, 49, 17);
+            Pdatos.add(rep_direcE);
+            rep_direcE.setBounds(106, 35, 392, 17);
+            Pdatos.add(cue_codiE);
+            cue_codiE.setBounds(106, 12, 150, 17);
 
             cLabel24.setText("Población");
+            Pdatos.add(cLabel24);
+            cLabel24.setBounds(11, 59, 91, 15);
+            Pdatos.add(rep_poblE);
+            rep_poblE.setBounds(106, 58, 251, 17);
 
             cLabel25.setText("Telefono");
+            Pdatos.add(cLabel25);
+            cLabel25.setBounds(11, 105, 91, 15);
+            Pdatos.add(rep_telefE);
+            rep_telefE.setBounds(106, 104, 160, 17);
 
             cLabel26.setText("Fax");
+            Pdatos.add(cLabel26);
+            cLabel26.setBounds(11, 125, 91, 15);
+            Pdatos.add(rep_faxE);
+            rep_faxE.setBounds(106, 124, 160, 17);
+            Pdatos.add(rep_nifE);
+            rep_nifE.setBounds(378, 12, 120, 17);
 
             cLabel27.setText("Correo Electr.");
-
-            org.jdesktop.layout.GroupLayout PdatosLayout = new org.jdesktop.layout.GroupLayout(Pdatos);
-            Pdatos.setLayout(PdatosLayout);
-            PdatosLayout.setHorizontalGroup(
-                PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(PdatosLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .add(PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(PdatosLayout.createSequentialGroup()
-                            .add(PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                .add(PdatosLayout.createSequentialGroup()
-                                    .add(PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                                        .add(org.jdesktop.layout.GroupLayout.LEADING, cLabel21, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .add(org.jdesktop.layout.GroupLayout.LEADING, cLabel20, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                    .add(PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                        .add(PdatosLayout.createSequentialGroup()
-                                            .add(cue_codiE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 150, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 88, Short.MAX_VALUE)
-                                            .add(cLabel23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                            .add(18, 18, 18)
-                                            .add(rep_nifE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                                        .add(rep_direcE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 392, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                                .add(PdatosLayout.createSequentialGroup()
-                                    .add(cLabel24, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
-                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                    .add(rep_poblE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 251, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(141, 141, 141)))
-                            .add(110, 110, 110))
-                        .add(PdatosLayout.createSequentialGroup()
-                            .add(cLabel22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(18, 18, 18)
-                            .add(rep_codpoE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 49, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .addContainerGap(358, Short.MAX_VALUE))
-                        .add(PdatosLayout.createSequentialGroup()
-                            .add(cLabel25, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
-                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                            .add(rep_telefE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 160, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(342, 342, 342))
-                        .add(PdatosLayout.createSequentialGroup()
-                            .add(cLabel26, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
-                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                            .add(rep_faxE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 160, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(342, 342, 342))
-                        .add(PdatosLayout.createSequentialGroup()
-                            .add(cLabel27, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
-                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                            .add(rep_emailE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 213, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(289, 289, 289))))
-            );
-            PdatosLayout.setVerticalGroup(
-                PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(PdatosLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .add(PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(cue_codiE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(cLabel23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(rep_nifE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                    .add(PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(rep_direcE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                    .add(PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(rep_poblE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                    .add(PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(rep_codpoE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                    .add(PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(rep_telefE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(3, 3, 3)
-                    .add(PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(rep_faxE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                    .add(PdatosLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel27, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(rep_emailE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(17, Short.MAX_VALUE))
-            );
+            Pdatos.add(cLabel27);
+            cLabel27.setBounds(11, 148, 91, 15);
+            Pdatos.add(rep_emailE);
+            rep_emailE.setBounds(106, 147, 213, 17);
 
             cTabbedPane1.addTab("Datos", Pdatos);
 

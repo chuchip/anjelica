@@ -2,7 +2,7 @@ package gnu.chu.winayu;
 /**
  * <p>Titulo:   AyuArt </p>
  * <p>Descripción: Ventana de ayuda para buscar productos por nombre/familia/estado.
- * <p>Copyright: (c) 2005-2015
+ * <p>Copyright: (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
 *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -165,7 +165,8 @@ public class AyuArt extends  ventana {
                  " on a.pro_codart =pv.pve_codi where 1=1 "+                 
                  (pro_activE.getValor().equals("*")?"":
                   (" and pro_activ "+(pro_activE.getValor().equals("S")?" != 0":"= 0")))+                 
-                  (pro_nombE.isNull()?"":" and UPPER(pro_nomb) like '%" + pro_nombE.getText() +"%'");
+                  (pro_nombE.isNull()?"":" and UPPER(pro_nomb) like '%" + pro_nombE.getText() +"%'")+
+                  (pro_codartE.isNull()?"":" and UPPER(pro_codart) like '%" + pro_codartE.getText() +"%'");
             ArrayList v= new ArrayList();
             v.add(pArticVenta.getCongeladoQuery());
             v.add(pArticVenta.getCuracionQuery());
@@ -211,6 +212,8 @@ public class AyuArt extends  ventana {
         pro_activE = new gnu.chu.controles.CComboBox();
         Bbuscar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
         pArticVenta = new gnu.chu.utilidades.PanelArticVenta();
+        pro_codartL = new gnu.chu.controles.CLabel();
+        pro_codartE = new gnu.chu.controles.CTextField();
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -233,11 +236,11 @@ public class AyuArt extends  ventana {
         jt.setLayout(jtLayout);
         jtLayout.setHorizontalGroup(
             jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 476, Short.MAX_VALUE)
+            .addGap(0, 490, Short.MAX_VALUE)
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 185, Short.MAX_VALUE)
+            .addGap(0, 211, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -258,25 +261,35 @@ public class AyuArt extends  ventana {
         Pcondic.setPreferredSize(new java.awt.Dimension(475, 129));
         Pcondic.setLayout(null);
 
-        pro_nombL.setText("Nombre");
+        pro_nombL.setText("Referencia");
         Pcondic.add(pro_nombL);
-        pro_nombL.setBounds(2, 2, 50, 15);
+        pro_nombL.setBounds(300, 2, 70, 17);
 
         pro_nombE.setMayusc(true);
         Pcondic.add(pro_nombE);
-        pro_nombE.setBounds(50, 2, 300, 17);
+        pro_nombE.setBounds(50, 2, 240, 17);
 
         pro_activE.addItem("Activo", "S");
         pro_activE.addItem("Todos","*");
         pro_activE.addItem("Inactivo", "N");
         Pcondic.add(pro_activE);
-        pro_activE.setBounds(360, 0, 100, 17);
+        pro_activE.setBounds(380, 80, 80, 17);
 
         Bbuscar.setText("Buscar");
         Pcondic.add(Bbuscar);
         Bbuscar.setBounds(380, 100, 85, 24);
+
+        pArticVenta.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         Pcondic.add(pArticVenta);
-        pArticVenta.setBounds(0, 20, 370, 100);
+        pArticVenta.setBounds(0, 20, 375, 105);
+
+        pro_codartL.setText("Nombre");
+        Pcondic.add(pro_codartL);
+        pro_codartL.setBounds(2, 2, 50, 17);
+
+        pro_codartE.setMayusc(true);
+        Pcondic.add(pro_codartE);
+        pro_codartE.setBounds(370, 2, 90, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -298,6 +311,8 @@ public class AyuArt extends  ventana {
     private gnu.chu.controles.Cgrid jt;
     private gnu.chu.utilidades.PanelArticVenta pArticVenta;
     private gnu.chu.controles.CComboBox pro_activE;
+    private gnu.chu.controles.CTextField pro_codartE;
+    private gnu.chu.controles.CLabel pro_codartL;
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CLabel pro_nombL;
     // End of variables declaration//GEN-END:variables
