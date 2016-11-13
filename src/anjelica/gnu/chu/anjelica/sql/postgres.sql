@@ -4044,7 +4044,7 @@ create table tipostareaope
     tto_activa smallint default -1, -- Activa ? (0:NO)
     constraint ix_tipotarope primary  key (tto_codi)
 );
-grant all on tareasoper to public;
+grant all on tipostareaope to public;
 --
 -- Tabla tareas Operarios
 ---
@@ -4054,7 +4054,7 @@ create table tareasoperarios
     tao_fecha date not null,      -- Fecha
     tao_horini varchar(4) not null, -- Hora Inicio (Formato HHMM)
     tao_horfin varchar(4),          -- Hora Final
-    tto_codi samllint not null,     -- Tipo Tarea
+    tto_codi smallint not null,     -- Tipo Tarea
     tto_coment varchar(256),        -- Comentario
     constraint ix_tareasoper primary  key (usu_codi,tao_fecha,tao_horini)
 );

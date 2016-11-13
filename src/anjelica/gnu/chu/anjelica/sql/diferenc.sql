@@ -1,3 +1,6 @@
+alter table usuarios add usu_clanum smallint not null default 0; -- Password Corta de usuario (sin encriptar)
+--alter table usuarios add constraint ix_passnum unique(usu_pasnum);
+
 alter table desporig add cli_codi int; -- Cliente para el que se hace el despiece
 alter table deorcahis add cli_codi int; -- Cliente para el que se hace el despiece
 --
@@ -11,7 +14,7 @@ alter table hispedvenc add pvc_comrep varchar(200);
 --drop view v_pedven;
 create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
  pvc_fecent, pvc_comen , pvc_comrep, pvc_confir , avc_ano , avc_serie , avc_nume ,
- c.usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,
+ c.usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,pvc_depos,
  l.pvl_numlin, pvl_kilos,pvl_canti,pvm_canti,pvm_coment,pvl_unid,pvl_tipo, l.pro_codi, ar.pro_nomb as pvl_nomart,ar.pro_codart,pve_nomb,
  pvl_comen, pvl_precio ,pvl_precon ,prv_codi,pvl_feccad, pvl_fecped, pvl_fecmod,m.usu_nomb as pvm_usunom,pvm_fecha  from 
  pedvenc as c, pedvenl as l  left join pedvenmod as m ON

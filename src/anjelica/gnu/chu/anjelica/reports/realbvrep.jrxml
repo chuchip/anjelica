@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-03-17T13:50:32 -->
+<!-- 2016-11-09T12:03:27 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="realbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="8" bottomMargin="8" uuid="15be4c04-c892-4864-927a-c372fb8f63fd">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -198,7 +198,7 @@ order by c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,]]>
 				<textFieldExpression><![CDATA[$F{cli_nomb}]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport" mode="Opaque" x="3" y="33" width="533" height="17" forecolor="#000000" backcolor="#FFFFFF" uuid="4fb9caa1-4d79-481d-b24e-f067cf6c9514"/>
+				<reportElement key="subreport" positionType="Float" mode="Opaque" x="3" y="33" width="533" height="17" forecolor="#000000" backcolor="#FFFFFF" uuid="4fb9caa1-4d79-481d-b24e-f067cf6c9514"/>
 				<subreportParameter name="avc_ano">
 					<subreportParameterExpression><![CDATA[$F{avc_ano}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -342,25 +342,25 @@ order by c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,]]>
 	<summary>
 		<band height="40" splitType="Stretch">
 			<staticText>
-				<reportElement key="staticText-12" mode="Opaque" x="1" y="2" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5cbd424b-20da-4a16-9111-07e7c4301e58">
+				<reportElement key="staticText-12" mode="Opaque" x="1" y="2" width="76" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5cbd424b-20da-4a16-9111-07e7c4301e58">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Nº Albaranes]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-18" mode="Opaque" x="74" y="2" width="28" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="75c89b84-c755-4826-b5c7-e03412cd3038"/>
+				<reportElement key="textField-18" mode="Opaque" x="80" y="2" width="28" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="75c89b84-c755-4826-b5c7-e03412cd3038"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{nalbTo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##,##0.00;-##,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-10" style="peque" mode="Opaque" x="173" y="2" width="50" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="68bf505c-8e27-4f18-a62d-c1b9e9ffb6a0"/>
+				<reportElement key="textField-10" style="peque" mode="Opaque" x="200" y="2" width="50" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="68bf505c-8e27-4f18-a62d-c1b9e9ffb6a0"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
 					<font size="10"/>
 					<paragraph lineSpacing="Single"/>
@@ -368,7 +368,7 @@ order by c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,]]>
 				<textFieldExpression><![CDATA[$V{imporT}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Band" pattern="##,##0.00;-##,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-10" style="peque" mode="Opaque" x="457" y="2" width="58" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="d3d18aa3-42e6-4632-bdbe-37a37d551918"/>
+				<reportElement key="textField-10" style="peque" mode="Opaque" x="472" y="2" width="58" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="d3d18aa3-42e6-4632-bdbe-37a37d551918"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
 					<font size="10"/>
 					<paragraph lineSpacing="Single"/>
@@ -376,31 +376,31 @@ order by c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,]]>
 				<textFieldExpression><![CDATA[new Double($V{gananT}.doubleValue()+$V{gananA}.doubleValue())]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-12" mode="Opaque" x="108" y="2" width="65" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5c4ddc67-e524-4af2-b980-bae33d32bb22"/>
+				<reportElement key="staticText-12" mode="Opaque" x="120" y="2" width="82" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5c4ddc67-e524-4af2-b980-bae33d32bb22"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Imp. Ventas]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-12" mode="Opaque" x="381" y="2" width="72" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="3d41334d-4ce6-425b-999e-fd04ff1fca8d"/>
+				<reportElement key="staticText-12" mode="Opaque" x="390" y="2" width="82" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="3d41334d-4ce6-425b-999e-fd04ff1fca8d"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Imp.Ganancia]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-12" mode="Opaque" x="240" y="3" width="63" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="0bc73f43-3f67-44b3-bf7a-03bfb988758b"/>
+				<reportElement key="staticText-12" mode="Opaque" x="260" y="2" width="70" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="0bc73f43-3f67-44b3-bf7a-03bfb988758b"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Kg.  Ventas]]></text>
 			</staticText>
 			<textField evaluationTime="Band" pattern="##,##0.00;-##,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField-10" style="peque" mode="Opaque" x="303" y="3" width="50" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="c18d9244-dab4-480b-aaf4-9b14afe8602e"/>
+				<reportElement key="textField-10" style="peque" mode="Opaque" x="330" y="2" width="50" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="c18d9244-dab4-480b-aaf4-9b14afe8602e"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
 					<font size="10"/>
 					<paragraph lineSpacing="Single"/>

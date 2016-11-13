@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -46,6 +45,9 @@ public class pdusua extends ventanaPad   implements PAD
   String s;
   CPanel Pprinc = new CPanel();
   CLabel usu_nombreL = new CLabel();
+  CLabel usu_clanumL = new CLabel ("Clave");
+  CTextField usu_clanumE = new CTextField(Types.DECIMAL,"9999");
+  int usuClanum;
   CLabel cLabel6 = new CLabel();
   CButton Bpermisos=new CButton("Perm",Iconos.getImageIcon("data-undo"));
   CLinkBox emp_codiE = new CLinkBox();
@@ -156,6 +158,8 @@ public class pdusua extends ventanaPad   implements PAD
 //    Bcancelar.setBounds(new Rectangle(228, 65, 100, 24));
     usu_nombreL.setText("Usuario");
     usu_nombreL.setBounds(new Rectangle(4, 3, 47, 18));
+    usu_clanumL.setBounds(new Rectangle(200, 3, 47, 18));
+    usu_clanumE.setBounds(new Rectangle(250, 3, 38, 18));
     cLabel6.setText("Empresa");
     cLabel6.setBounds(new Rectangle(4, 44, 58, 18));
     emp_codiE.setAncTexto(30);
@@ -215,6 +219,8 @@ public class pdusua extends ventanaPad   implements PAD
     sbe_codiE.setAncTexto(30);
     
     Pprinc.add(usu_nombreL, null);
+    Pprinc.add(usu_clanumL, null);
+    Pprinc.add(usu_clanumE, null);
     Pprinc.add(cLabel4, null);
     Pprinc.add(cLabel6, null);
     Pprinc.add(emp_codiE, null);
@@ -348,7 +354,7 @@ public class pdusua extends ventanaPad   implements PAD
         usu_nombE.setText(dtCons.getString("usu_nomb"));
         return;
       }
-
+      usu_clanumE.setValorInt(dtCon1.getInt("usu_clanum"));
       emp_codiE.setText(dtCon1.getString("emp_codi"));
       eje_numeE.setText(dtCon1.getString("eje_nume"));
       usu_nomcoE.setText(dtCon1.getString("usu_nomco"));
@@ -374,8 +380,10 @@ public class pdusua extends ventanaPad   implements PAD
     }
   }
 
+  @Override
   public void activar(boolean act)
   {
+    usu_clanumE.setEnabled(act);
     Bpermisos.setEnabled(!act);
     emp_codiE.setEnabled(act);
     sbe_codiE.setEnabled(act);
@@ -482,10 +490,12 @@ public class pdusua extends ventanaPad   implements PAD
     verDatos();
   }
 
+  @Override
   public void PADEdit()
   {
     activar(true);
     usu_nombE.setEnabled(false);
+    usuClanum=usu_clanumE.getValorInt();
     try
     {
       if (!setBloqueo(dtAdd, "usuarios",usu_nombE.getText()))
@@ -574,16 +584,19 @@ public class pdusua extends ventanaPad   implements PAD
     verDatos();
   }
 
+  @Override
   public boolean checkEdit()
   {
     return checkAddNew();
   }
 
 
+  @Override
   public void PADAddNew()
   {
     Pprinc.resetTexto();
     activar(true);
+    usuClanum=usu_clanumE.getValorInt();
     usu_puejpaE.setValor("N");
     usu_admdbE.setValor("N");
     usu_activE.setValor("S");
@@ -592,11 +605,35 @@ public class pdusua extends ventanaPad   implements PAD
     eje_numeE.setValorDec(EU.ejercicio);
     emp_codiE.setValorDec(EU.em_cod);
     sbe_codiE.setValorInt(1);
+    try {
+      s="SELECT max(usu_clanum) into usu_clanum FROM usuarios ";
+      dtCon1.select(s);
+      usu_clanumE.setValorInt(dtCon1.getInt("usu_clanum",true)+1);
+    } catch (Exception ex)
+    {
+      Error("Error al buscar siguiente clave usuario",ex);
+      return ;
+    }
     mensaje("Insertando Usuario ...");
   }
 
+  @Override
   public boolean checkAddNew()
   {
+    try {
+      s="SELECT * FROM usuarios WHERE usu_clanum = "+usu_clanumE.getValorInt()+
+          " and usu_clanum != "+usuClanum;
+      if (dtCon1.select(s))
+      {
+        mensajeErr("Clave para Usuario YA EXISTE");
+        usu_clanumE.requestFocus();
+        return false;
+      }
+    } catch (Exception ex)
+    {
+      Error("Error al comprobar datos",ex);
+      return false;
+    }
     if (usu_nombE.isNull())
     {
       mensajeErr("Introduzca Nombre de Usuario");
@@ -628,6 +665,7 @@ public class pdusua extends ventanaPad   implements PAD
     }
     return true;
   }
+  
   @Override
   public void ej_addnew1()
   {
@@ -674,6 +712,8 @@ public class pdusua extends ventanaPad   implements PAD
   }
   void actValores(DatosTabla dt) throws Exception
   {
+    
+    dt.setDato("usu_clanum", usu_clanumE.getValorInt());
     dt.setDato("usu_nomco", usu_nomcoE.getText());
     dt.setDato("eje_nume", eje_numeE.getText());
     dt.setDato("usu_email", usu_emailE.getText());

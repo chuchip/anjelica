@@ -499,7 +499,8 @@ public class CLVenRep extends ventana {
                         + " and a.avc_ano = l.avc_ano  "
                         + " and a.avc_serie = l.avc_serie "
                         + " and a.avc_nume = l.avc_nume "
-                        + " and l.avl_profer < 0"
+                        + " and l.avl_profer <= 0"
+                        + " and l.avl_canti <> 0 "
                         + " )";
         }
         s += " ORDER BY  avc_fecalb,avc_ano,avc_serie,avc_nume ";
@@ -607,10 +608,10 @@ public class CLVenRep extends ventana {
                     ganAlb = rs.getDouble("gananc");                   
                 }
                
-                TkilAlb += dtCon1.getInt("avc_kilos");
+                TkilAlb += dtCon1.getDouble("avc_kilos");
                 TimpGan += ganAlb;
-                v.add(dtCon1.getInt("avc_kilos"));
-                v.add("" + ganAlb); // Imp.Ganancia
+                v.add(dtCon1.getDouble("avc_kilos"));
+                v.add( ganAlb); // Imp.Ganancia
                 v.add(dtCon1.getString("tar_codi"));
                 rs.next();
                 jtCab.addLinea(v);
@@ -736,6 +737,7 @@ public class CLVenRep extends ventana {
             jtPed.addLinea(v);
        } while (dtCon1.next());
     }
+    
     void verLineas() {
         try {
             verPedido();

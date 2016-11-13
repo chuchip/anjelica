@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-04-06T09:36:16 -->
+<!-- 2016-10-17T13:46:34 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lialbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0" uuid="477b1d9c-ee98-4d62-8ff7-69c661821105">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -66,6 +66,9 @@ order by 1,2]]>
 	</variable>
 	<variable name="unidPale" class="java.lang.Integer" resetType="Group" resetGroup="numPale" calculation="Sum">
 		<variableExpression><![CDATA[$F{avl_unid}]]></variableExpression>
+	</variable>
+	<variable name="unidades" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{pro_tiplot}.equals("V") || $F{pro_tiplot}.equals("c")?$F{avl_unid}:0]]></variableExpression>
 	</variable>
 	<group name="numPale">
 		<groupExpression><![CDATA[$F{avl_numpal}]]></groupExpression>
@@ -295,7 +298,7 @@ order by 1,2]]>
 				<textFieldExpression><![CDATA[$V{kilos}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="220" y="2" width="90" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b5fe0282-4b82-4f94-b35a-48e780fd5714"/>
+				<reportElement key="staticText" mode="Opaque" x="52" y="2" width="73" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b5fe0282-4b82-4f94-b35a-48e780fd5714"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -306,7 +309,7 @@ order by 1,2]]>
 					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<text><![CDATA[Total Kilos:]]></text>
+				<text><![CDATA[Unidades]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="2" y="18" width="518" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="176a1aab-522c-4445-9593-a3d48711da96"/>
@@ -340,6 +343,38 @@ order by 1,2]]>
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
+			<textField pattern="###0;-###0" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="130" y="2" width="28" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="c0e7a11a-e479-4dba-a2b5-c7f13ac87ae8">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{unidades}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="260" y="2" width="77" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b9fa4222-6faf-469f-9e69-a0de385aea31">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Total Kilos]]></text>
+			</staticText>
 		</band>
 	</pageFooter>
 	<summary>

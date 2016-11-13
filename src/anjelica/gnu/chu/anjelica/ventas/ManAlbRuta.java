@@ -146,7 +146,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-07-24 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2016-10-11 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -456,8 +456,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     }
     @Override
   public void PADAddNew()
-  {
-    
+  {    
     alr_numeE.setEnabled(false);
     mensaje("Insertar Nuevo Registro");
     swOrdenado=false;
@@ -479,6 +478,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
     jtFra.ponValores(0,false,false);
     jt.requestFocusInicio();
     jt.ponValores(0,false,false);
+    jt.setEnabled(false);
+    jtFra.setEnabled(false);
     alr_fechaE.requestFocus();
   }
   @Override
@@ -1340,11 +1341,20 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         verDatos();
     }
+    
     void activarEventos()
     {
          jt.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
+              if (e.getClickCount()==1 && ! jt.isEnabled() && nav.pulsado==navegador.ADDNEW)
+              {
+                  if (! checkIrGrid())
+                        return;
+                  jt.setEnabled(true);
+                  jt.requestFocusInicioLater();
+                  return;
+              }
               if (e.getClickCount()<2 || jt.isEnabled() || jt.isVacio()) 
                   return;
               verDocumento();
@@ -1380,8 +1390,13 @@ public class ManAlbRuta extends ventanaPad implements PAD
               @Override
               public void actionPerformed(ActionEvent e)
               {
-                  if (jt.isEnabled())
+                  if (! jt.isEnabled())
+                  {
+                    jt.setEnabled(true);
+                    if (! checkIrGrid())
+                        return;
                     jt.requestFocusInicioLater();
+                  }
               }
          });
          BimprEti.addActionListener(new ActionListener()
@@ -1717,6 +1732,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
             strSql="SELECT * FROM albrutacab where alr_nume = "+id;
             rgSelect();
             verDatos();
+            nav.pulsado=navegador.NINGUNO;
         } catch (SQLException | ParseException ex )
         {
             Error("Error al guardar cabecera de ruta", ex);
@@ -1887,6 +1903,48 @@ public class ManAlbRuta extends ventanaPad implements PAD
         return true;
     }
     
+    boolean  checkIrGrid()
+    {
+        if (nav.pulsado!=navegador.ADDNEW)
+            return true;
+        
+        try{
+            if (alr_fechaE.isNull() || alr_fechaE.getError())
+            {
+                mensajeErr("Fecha ruta no valida");
+                alr_fechaE.requestFocus();
+                return false;
+            }
+              if (alr_fecsalE.isNull() || alr_fecsalE.getError())
+            {
+                mensajeErr("Fecha Salida no valida");
+                alr_fecsalE.requestFocus();
+                return false;
+            }
+            if (rut_codiE.getText().equals(""))
+            {
+                mensajeErr("Introduzca ruta");
+                rut_codiE.requestFocus();
+                return false;
+            }
+            String s="select * from albrutacab where rut_codi = '"+rut_codiE.getText()+"'"+
+                " and usu_nomb = '"+tra_codiE.getValor()+"'"+
+                " and alr_fecha = '"+alr_fechaE.getFechaDB()+"'"+
+                " and alr_fecsal = {ts '"+alr_fecsalE.getFecha("yyyy-MM-dd")+" "+
+                alr_fecsalH.getText()+":"+alr_fecsalM.getText()+"'}";
+            if (dtStat.select(s))
+            {
+                msgBox("Ruta ya existe");
+                rut_codiE.requestFocus();
+                return false;
+            }
+        } catch (Exception k)
+        {
+            Error("Error al buscar Salidas duplicadas",k);
+        }
+        return true;
+    }
+        
     @Override
     public void canc_addnew()
     {
@@ -1901,7 +1959,6 @@ public class ManAlbRuta extends ventanaPad implements PAD
     
     @Override
     public void ej_delete1() {
-
         try
         {
             String s = "delete from albrutalin where alr_nume=" + alr_numeE.getValorInt();

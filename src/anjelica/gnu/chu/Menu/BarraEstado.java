@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -203,6 +204,11 @@ public class BarraEstado extends CPanel
                  JOptionPane.PLAIN_MESSAGE);
              if (okCxl == JOptionPane.OK_OPTION) 
                 pass = new String(pf.getPassword());
+             try {
+              int passNum=Integer.parseInt(pass.trim());
+              if (passNum==MenuPri.EntornoUsu.getClaveUsuario(MenuPri.Query))
+                  break;
+             } catch (NumberFormatException | SQLException k2)         {            }
              EntornoUsuario eu= (EntornoUsuario) MenuPri.EntornoUsu.clone();
              eu.password=pass;
              try {
@@ -214,7 +220,8 @@ public class BarraEstado extends CPanel
              }
          }  while (pass.equals(""));
          try {
-            ct.close();
+            if (ct!=null)
+                ct.close();
          }
          catch (Exception k)        {      }
       }

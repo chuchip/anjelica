@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-04-26T10:56:49 -->
+<!-- 2016-11-09T12:17:51 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lialbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0" uuid="06cfe06a-585e-42ac-a6ff-f7da1ef9c377">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -69,6 +69,9 @@ order by 1]]>
 	<variable name="TImpGan" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$V{impGana}]]></variableExpression>
 	</variable>
+	<variable name="difGana" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{avl_prven}.doubleValue() -$F{avl_profer}.doubleValue()]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -79,7 +82,7 @@ order by 1]]>
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="20" splitType="Stretch">
+		<band height="21" splitType="Stretch">
 			<staticText>
 				<reportElement key="staticText" style="colhead" mode="Opaque" x="5" y="0" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="273d74f0-a67d-42a4-b28f-d4aaf56d4357"/>
 				<box>
@@ -111,7 +114,7 @@ order by 1]]>
 				<text><![CDATA[Unid]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" style="colhead" mode="Opaque" x="102" y="0" width="186" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="34e8b0bf-b140-41da-b95d-3c638cb27fda"/>
+				<reportElement key="staticText" style="colhead" mode="Opaque" x="102" y="0" width="158" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="34e8b0bf-b140-41da-b95d-3c638cb27fda"/>
 				<box>
 					<pen lineStyle="Double"/>
 					<topPen lineWidth="0.0" lineStyle="Double" lineColor="#000000"/>
@@ -126,7 +129,7 @@ order by 1]]>
 				<text><![CDATA[Nombre]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" style="colhead" mode="Opaque" x="292" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="d531864c-9caa-4489-a243-2a402471cfde"/>
+				<reportElement key="staticText" style="colhead" mode="Opaque" x="264" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="d531864c-9caa-4489-a243-2a402471cfde"/>
 				<box>
 					<pen lineStyle="Double"/>
 					<topPen lineWidth="0.0" lineStyle="Double" lineColor="#000000"/>
@@ -141,7 +144,7 @@ order by 1]]>
 				<text><![CDATA[Canti]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" style="colhead" mode="Opaque" x="340" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="cb5ff7fb-d1b6-4e03-96f4-ca5f6f0c5920"/>
+				<reportElement key="staticText" style="colhead" mode="Opaque" x="312" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="cb5ff7fb-d1b6-4e03-96f4-ca5f6f0c5920"/>
 				<box>
 					<pen lineStyle="Double"/>
 					<topPen lineWidth="0.0" lineStyle="Double" lineColor="#000000"/>
@@ -156,7 +159,7 @@ order by 1]]>
 				<text><![CDATA[Precio V.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" style="colhead" mode="Opaque" x="387" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="2295a197-7745-47c6-9bc0-d17b47aea3b9"/>
+				<reportElement key="staticText" style="colhead" mode="Opaque" x="359" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="2295a197-7745-47c6-9bc0-d17b47aea3b9"/>
 				<box>
 					<pen lineStyle="Double"/>
 					<topPen lineWidth="0.0" lineStyle="Double" lineColor="#000000"/>
@@ -171,7 +174,7 @@ order by 1]]>
 				<text><![CDATA[Precio T.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" style="colhead" mode="Opaque" x="435" y="0" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="2bf9ef71-700c-40ac-b61e-87570547acb4"/>
+				<reportElement key="staticText" style="colhead" mode="Opaque" x="407" y="0" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="2bf9ef71-700c-40ac-b61e-87570547acb4"/>
 				<box>
 					<pen lineStyle="Double"/>
 					<topPen lineWidth="0.0" lineStyle="Double" lineColor="#000000"/>
@@ -186,7 +189,7 @@ order by 1]]>
 				<text><![CDATA[Imp.Ven]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" style="colhead" mode="Opaque" x="490" y="0" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="c0c99913-da37-42b1-9a6d-80a98e2e63ba"/>
+				<reportElement key="staticText" style="colhead" mode="Opaque" x="502" y="1" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="c0c99913-da37-42b1-9a6d-80a98e2e63ba"/>
 				<box>
 					<pen lineStyle="Double"/>
 					<topPen lineWidth="0.0" lineStyle="Double" lineColor="#000000"/>
@@ -200,10 +203,25 @@ order by 1]]>
 				</textElement>
 				<text><![CDATA[Imp.Gan]]></text>
 			</staticText>
+			<staticText>
+				<reportElement key="staticText" style="colhead" mode="Opaque" x="460" y="0" width="40" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="7cee2495-b260-42c5-a61e-f1482d7870cc"/>
+				<box>
+					<pen lineStyle="Double"/>
+					<topPen lineWidth="0.0" lineStyle="Double" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Double" lineColor="#000000"/>
+					<bottomPen lineWidth="2.0" lineStyle="Double" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Difer.]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="18" splitType="Prevent">
+		<band height="23" splitType="Prevent">
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="5" y="0" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="8a132a03-4974-442c-a8bf-10534893b732"/>
 				<box>
@@ -219,7 +237,7 @@ order by 1]]>
 				<textFieldExpression><![CDATA[$F{pro_codi}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="102" y="0" width="186" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b1c84df5-9d02-4ccb-bc01-51e88b74e8d3"/>
+				<reportElement key="textField" mode="Opaque" x="102" y="0" width="158" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b1c84df5-9d02-4ccb-bc01-51e88b74e8d3"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -233,7 +251,7 @@ order by 1]]>
 				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0.00;-##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="292" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="286e6386-c7fa-45ae-b2aa-8e004e62b765"/>
+				<reportElement key="textField" mode="Opaque" x="264" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="286e6386-c7fa-45ae-b2aa-8e004e62b765"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -261,7 +279,7 @@ order by 1]]>
 				<textFieldExpression><![CDATA[$F{avl_unid}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0.00;-##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="340" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="2b7a666a-26ed-434a-bd97-5f3034caedad"/>
+				<reportElement key="textField" mode="Opaque" x="312" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="2b7a666a-26ed-434a-bd97-5f3034caedad"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -275,7 +293,7 @@ order by 1]]>
 				<textFieldExpression><![CDATA[$F{avl_prven}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="435" y="0" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="f526f5ad-e87c-456b-8f36-d670152c13ee">
+				<reportElement key="textField" mode="Opaque" x="407" y="0" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="f526f5ad-e87c-456b-8f36-d670152c13ee">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<box>
@@ -291,7 +309,7 @@ order by 1]]>
 				<textFieldExpression><![CDATA[$V{implinea}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0.00;-##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="387" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="9300518e-52b5-43b2-acc4-b453a9ece8b8"/>
+				<reportElement key="textField" mode="Opaque" x="359" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="9300518e-52b5-43b2-acc4-b453a9ece8b8"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -305,7 +323,7 @@ order by 1]]>
 				<textFieldExpression><![CDATA[$F{avl_profer}.doubleValue()==0?$F{tar_preci}:$F{avl_profer}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="490" y="0" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="dd4b3abe-c73a-450e-ac9d-9b768ba6688d"/>
+				<reportElement key="textField" mode="Opaque" x="502" y="2" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="dd4b3abe-c73a-450e-ac9d-9b768ba6688d"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -318,6 +336,20 @@ order by 1]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{impGana}]]></textFieldExpression>
 			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="462" y="1" width="38" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="dc26b047-7274-4c4e-ae87-babe4ea8ac20"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{difGana}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
@@ -327,9 +359,9 @@ order by 1]]>
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="20" splitType="Prevent">
+		<band height="18" splitType="Prevent">
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="292" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="345d3fac-35b1-4094-a8a6-9b25e87d05ac"/>
+				<reportElement key="textField" mode="Opaque" x="264" y="0" width="45" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="345d3fac-35b1-4094-a8a6-9b25e87d05ac"/>
 				<box>
 					<topPen lineWidth="2.0" lineStyle="Double"/>
 				</box>
@@ -340,7 +372,7 @@ order by 1]]>
 				<textFieldExpression><![CDATA[$V{kilos}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="248" y="0" width="40" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="a734eee8-f094-410e-9324-8ec1d9fdc2d7"/>
+				<reportElement key="staticText" mode="Opaque" x="220" y="0" width="40" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="a734eee8-f094-410e-9324-8ec1d9fdc2d7"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -354,7 +386,7 @@ order by 1]]>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="435" y="0" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b06da089-e75d-4f5f-b615-b27ef787d749"/>
+				<reportElement key="textField" mode="Opaque" x="407" y="0" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b06da089-e75d-4f5f-b615-b27ef787d749"/>
 				<box>
 					<topPen lineWidth="2.0" lineStyle="Double"/>
 				</box>
@@ -365,7 +397,7 @@ order by 1]]>
 				<textFieldExpression><![CDATA[$V{TImpVen}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="490" y="0" width="52" height="16" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="af8b00ca-3cd3-42f2-a581-d87fefc0e089"/>
+				<reportElement key="textField" mode="Opaque" x="502" y="2" width="52" height="16" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="af8b00ca-3cd3-42f2-a581-d87fefc0e089"/>
 				<box>
 					<topPen lineWidth="2.0" lineStyle="Double"/>
 				</box>

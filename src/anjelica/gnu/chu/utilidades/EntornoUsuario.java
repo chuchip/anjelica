@@ -54,7 +54,7 @@ public class EntornoUsuario implements Serializable
   public int ejercicio;
   /**
    * Login del Usuario
-   */
+   */  
   public String usuario; // Login del Usuario
   public String password;
   public String driverDB;
@@ -223,13 +223,19 @@ public class EntornoUsuario implements Serializable
    {
      try {
        if (getLikeUsuario()==null && dt!=null)
-         setLikeUsuario(gnu.chu.anjelica.pad.pdusua.getVLikeUsuario(usu_nomb,dt));
+         setLikeUsuario(gnu.chu.anjelica.pad.pdusua.getVLikeUsuario(usuario,dt));
        return getLikeUsuario().getInt("sbe_codi");
      } catch (Exception k)
      {
       SystemOut.print(k);
      }
      return 0;
+   }
+   public int getClaveUsuario(DatosTabla dt) throws SQLException
+   {
+       if (getLikeUsuario()==null && dt!=null)
+         setLikeUsuario(gnu.chu.anjelica.pad.pdusua.getVLikeUsuario(usuario,dt));
+       return getLikeUsuario().getInt("usu_clanum");
    }
    /**
     * Devuelve si el usuario es administrador de la base de datos
