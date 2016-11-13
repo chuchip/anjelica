@@ -69,6 +69,7 @@ public class Menu1 extends Principal
   JMenu herramientas = new JMenu("Herramientas");
   JMenuItem herRecar = new JMenuItem("Recargar Menu");
   CButton visualProgM = new CButton("Programas");
+  CButton visualtareasM = new CButton("Tareas");
   JMenuItem herLogs = new JMenuItem("Ver Logs");
   JMenuItem herMemoria = new JMenuItem("Memoria Sistema");
   JMenuItem herThread = new JMenuItem("Thread");
@@ -111,7 +112,9 @@ public class Menu1 extends Principal
 //    opcPantalla.add(panMotif);
 //    opcPantalla.add(panWindowsXP);
 //    opciones.add(opcPantalla);
-    herramientas.add(visualProgM);
+    
+    
+    
     herramientas.add(herLogs);
     herramientas.add(herBloq);
     herramientas.addSeparator();
@@ -125,7 +128,13 @@ public class Menu1 extends Principal
     menubar.add(herramientas);
     menubar.add(opciones);
     menubar.add(visualProgM);
-
+    JSeparator separador=new JSeparator();
+    separador.setOpaque(false);
+    
+    separador.setPreferredSize(new Dimension(30,10));
+    
+    menubar.add(separador);
+    menubar.add(visualtareasM);
     this.getContentPane().add("Center", panel1);
     this.getContentPane().add(panelSouth, BorderLayout.SOUTH);
     panelProg.setOpaque(false);
