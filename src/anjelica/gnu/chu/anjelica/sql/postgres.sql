@@ -94,9 +94,11 @@ create table anjelica.usuarios
 	sbe_codi smallint not null, -- Subempresa. Si es 0 tendra acceso a TODAS
     usu_pass varchar(80),       -- Contraseña Usuario (en SHA-1)
     usu_look varchar(3),        -- Look And Feel Usuario 
+	usu_clanum smallint not null default 0, -- Clave numerica de usuario (sin encriptar)
 	constraint ix_usuarios primary  key (usu_nomb)
 );
-insert into  usuarios VALUES('anjelica',1,2008,'Administrador de BD','anjelica@localhost.com','S','S','S',null,'N','N',1);
+insert into  usuarios VALUES('anjelica',1,2008,'Administrador de BD','anjelica@localhost.com','S','S','S',null,'N','N',1,0);
+alter table usuarios add constraint ix_passnum unique(usu_clanum);
 --
 -- Tablas con posiciones de los programas en la pantalla
 --
