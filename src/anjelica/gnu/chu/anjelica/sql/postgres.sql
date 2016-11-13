@@ -4031,6 +4031,31 @@ create table calctarifa
 	constraint ix_calctarifa primary  key (eje_nume,cta_semana,cta_linea)
 );
 grant all on calctarifa to public;
+--
+-- Tipos Tareas de Operarios
+--
+create table tipostareaope
+(
+    tto_codi smallint not null, -- Tarea Operario
+    tto_nomb varchar(50) not null, -- Descripción Tarea Operario
+    sbe_codi smallint default 0, -- Seccion de Empresa
+    tto_activa smallint default -1, -- Activa ? (0:NO)
+    constraint ix_tipotarope primary  key (tto_codi)
+);
+grant all on tareasoper to public;
+--
+-- Tabla tareas Operarios
+---
+create table tareasoperarios
+(
+    usu_codi varchar(8) not null, -- Operario
+    tao_fecha date not null,      -- Fecha
+    tao_horini varchar(4) not null, -- Hora Inicio (Formato HHMM)
+    tao_horfin varchar(4),          -- Hora Final
+    tto_codi samllint not null,     -- Tipo Tarea
+    tto_coment varchar(256),        -- Comentario
+    constraint ix_tareasoper primary  key (usu_codi,tao_fecha,tao_horini)
+);
 -- select 'insert into prodtarifa values(''' || pro_codart || ''',' ||  pro_codi || ');' from v_articulo where '' || pro_codi!=pro_codart
 --drop view v_partes;
 create view anjelica.v_partes as select c.*,l.par_linea,l.pro_codi,pal_kilos,pal_unidad,
