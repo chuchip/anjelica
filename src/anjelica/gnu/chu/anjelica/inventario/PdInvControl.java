@@ -1724,6 +1724,8 @@ public class PdInvControl extends ventanaPad implements PAD
             @Override
             public int cambiaLinea(int row, int col)
             {
+                if (pro_codiE.isNull())
+                return 0;
                 lci_numpalE.resetCambio();
                 return cambiaLineaGrid(row);
             }

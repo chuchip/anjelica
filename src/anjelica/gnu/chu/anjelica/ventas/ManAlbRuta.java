@@ -1347,17 +1347,32 @@ public class ManAlbRuta extends ventanaPad implements PAD
          jt.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-              if (e.getClickCount()==1 && ! jt.isEnabled() && nav.pulsado==navegador.ADDNEW)
+              if (! jt.isEnabled() && nav.pulsado==navegador.ADDNEW)
               {
                   if (! checkIrGrid())
                         return;
                   jt.setEnabled(true);
+                  jtFra.setEnabled(true);
                   jt.requestFocusInicioLater();
                   return;
               }
               if (e.getClickCount()<2 || jt.isEnabled() || jt.isVacio()) 
                   return;
               verDocumento();
+            }
+         });
+         jtFra.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+              if (! jtFra.isEnabled() && nav.pulsado==navegador.ADDNEW)
+              {
+                  if (! checkIrGrid())
+                        return;
+                  jt.setEnabled(true);
+                  jtFra.setEnabled(true);
+                  jtFra.requestFocusInicioLater();
+                  return;
+              }         
             }
          });
          jt.addGridListener(new GridAdapter()
@@ -1393,6 +1408,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
                   if (! jt.isEnabled())
                   {
                     jt.setEnabled(true);
+                    jtFra.setEnabled(true);
                     if (! checkIrGrid())
                         return;
                     jt.requestFocusInicioLater();

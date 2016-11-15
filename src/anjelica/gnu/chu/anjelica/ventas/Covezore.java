@@ -171,7 +171,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2016-04-06");
+   this.setVersion("2016-11-15");
    statusBar = new StatusBar(this);
  
    initComponents();
@@ -1233,11 +1233,12 @@ public void iniciarVentana() throws Exception
         int sbeCodi=dtCon1.getInt("sbe_codi");
         String repr = dtCon1.getString("rep_codi");
         datos=new ArrayList();
+        int nAlbU=0;
         do {
 
              if (!repr.equals(dtCon1.getString("rep_codi"))) {
                  ponDatosRepr(repr,sbeCodi,
-                     jt.getValorInt(jt.getRowCount() - 1, 3) != nAlbL || comparativo);
+                     nAlbU != nAlbL || comparativo);
                  repr = dtCon1.getString("rep_codi");
              }
              if (sbeCodi!=dtCon1.getInt("sbe_codi"))
@@ -1265,6 +1266,7 @@ public void iniciarVentana() throws Exception
              v.add(dtCon1.getString("zon_codi"));
              v.add(MantRepres.getNombRepr(repr,dtStat)
                      + " - " + pdconfig.getTextDiscrim(dtStat, "Cz", EU.em_cod, dtCon1.getString("zon_codi")));
+             nAlbU=dtCon1.getInt("numalb");
              v.add(dtCon1.getInt("numalb"));
              v.add(dtCon1.getInt("cliCodiD"));
              v.add(dtCon1.getDouble("avc_basimp"));

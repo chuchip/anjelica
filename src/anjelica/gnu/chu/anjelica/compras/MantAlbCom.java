@@ -259,7 +259,7 @@ private JMenuItem MIimprEtiqInd;
           return false;
         if (jt.getValorInt(row,0)==0 && !jtDes.isVacio())
         {
-            int res=mensajes.mensajeYesNo("Linea tiene individuos. Mantenerla?");
+            int res=mensajes.mensajeYesNo("Linea tiene individuos. ¿Mantenerla?");
             if (res==mensajes.YES)
                 return false;
         }       

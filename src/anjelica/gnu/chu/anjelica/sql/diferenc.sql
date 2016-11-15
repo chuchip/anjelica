@@ -27,7 +27,7 @@ create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc
 grant select on anjelica.v_pedven to public;
 -- Clasificicacion Pieza.
 alter table v_albcompar rename column  tipo_c1 to acp_clasi;
-alter table hisalpaco add column  acp_clasi varchar(10);
+alter table hisali add column  acp_clasi varchar(10);
 
 alter table tarifa alter pro_codart type varchar(15);
 alter table v_articulo alter pro_codart type varchar(15);
