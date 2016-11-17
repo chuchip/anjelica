@@ -1,6 +1,7 @@
 package gnu.chu.anjelica.listados;
 
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
@@ -23,7 +24,7 @@ import net.sf.jasperreports.engine.JasperReport;
 
 /**
  *
- * <p>Titulo: ClClien </p>Consulta/Listado de Maestro de Clientes.
+ * <p>Titulo: ClClien </p><p>Consulta/Listado de Maestro de Clientes.
  *  </p>
  * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
@@ -89,7 +90,7 @@ public class ClClien extends ventana
   {
       iniciarFrame();
 
-      this.setVersion("2016-02-01");
+      this.setVersion("2016-11-17");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -105,10 +106,11 @@ public class ClClien extends ventana
       zon_codiE.setFormato(Types.CHAR, "XX", 2);
       zon_codiE.texto.setMayusc(true);
       gnu.chu.anjelica.pad.pdclien.llenaDiscr(dtStat, zon_codiE, "Cz", EU.em_cod);
-
+      
       zon_codiE.addDatos("**", "TODOS");
       zon_codiE.setText("**");
-
+      pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS, EU.em_cod);
+      rut_codiE.setCeroIsNull(true);
       rep_codiE.setFormato(Types.CHAR, "XX", 2);
       rep_codiE.texto.setMayusc(true);
       gnu.chu.anjelica.pad.MantRepres.llenaLinkBox(rep_codiE,dtCon1);
@@ -145,6 +147,11 @@ public class ClClien extends ventana
         s += " and rep_codi  LIKE '" + Formatear.reemplazar(rep_codiE.getText(), "*", "%") + "'";
       if (!zon_codiE.isNull(true) && !zon_codiE.getText().equals("**") && !zon_codiE.getText().equals("*"))
         s += " and zon_codi  LIKE '" + Formatear.reemplazar(zon_codiE.getText(), "*", "%") + "'";
+      if (! rut_codiE.isNull())
+        s += " and cl.rut_codi  LIKE '" + Formatear.reemplazar(rut_codiE.getText(), "*", "%") + "'";
+      if (!fecvenE.isNull())
+        s+=" and cl.cli_codi in (select distinct(cli_codi) from v_albavec where avc_fecalb>= TO_DATE('" + 
+            fecvenE.getText() + "','dd-MM-yyyy'))"; 
       s += " and cli_activ  LIKE '" + cli_activE.getValor() + "'" +
           (fealinE.isNull() ? "" : " and cli_fecalt >= TO_DATE('" + fealinE.getText() + "','dd-MM-yyyy')") +
           (fealfiE.isNull() ? "" : " and cli_fecalt <= TO_DATE('" + fealfiE.getText() + "','dd-MM-yyyy')") +
@@ -337,6 +344,10 @@ public class ClClien extends ventana
         ordenE = new gnu.chu.controles.CComboBox();
         opEmail = new gnu.chu.controles.CCheckBox();
         Baceptar = new gnu.chu.controles.CButtonMenu();
+        cLabel23 = new gnu.chu.controles.CLabel();
+        fecvenE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        cLabel24 = new gnu.chu.controles.CLabel();
+        rut_codiE = new gnu.chu.controles.CLinkBox();
         CTabed = new gnu.chu.controles.CTabbedPane();
         jt = new gnu.chu.controles.Cgrid(6);
         jtRies = new gnu.chu.controles.Cgrid(10);
@@ -354,11 +365,13 @@ public class ClClien extends ventana
         cLabel16.setBounds(2, 44, 80, 17);
 
         zon_codiE.setAncTexto(30);
+        zon_codiE.setMayusculas(true);
         zon_codiE.setPreferredSize(new java.awt.Dimension(92, 18));
         Pcabe.add(zon_codiE);
         zon_codiE.setBounds(80, 2, 210, 18);
 
         rep_codiE.setAncTexto(30);
+        rep_codiE.setMayusculas(true);
         rep_codiE.setPreferredSize(new java.awt.Dimension(92, 18));
         Pcabe.add(rep_codiE);
         rep_codiE.setBounds(360, 2, 210, 18);
@@ -368,10 +381,10 @@ public class ClClien extends ventana
         Pcabe.add(cLabel17);
         cLabel17.setBounds(210, 24, 90, 17);
 
-        cLabel18.setText("Zona");
+        cLabel18.setText("Ventas Desde ");
         cLabel18.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel18);
-        cLabel18.setBounds(2, 2, 40, 18);
+        cLabel18.setBounds(0, 65, 80, 17);
 
         cli_activE.addItem("Si","S");
         cli_activE.addItem("NO", "N");
@@ -418,13 +431,30 @@ public class ClClien extends ventana
         ordenE.setBounds(270, 44, 120, 17);
 
         opEmail.setText("Con Email");
-        opEmail.setMargin(new java.awt.Insets(0, 0, 0, 0));
         Pcabe.add(opEmail);
         opEmail.setBounds(400, 44, 80, 17);
 
         Baceptar.setText("Aceptar");
         Pcabe.add(Baceptar);
-        Baceptar.setBounds(480, 44, 90, 26);
+        Baceptar.setBounds(480, 60, 90, 26);
+
+        cLabel23.setText("Zona");
+        cLabel23.setPreferredSize(new java.awt.Dimension(60, 18));
+        Pcabe.add(cLabel23);
+        cLabel23.setBounds(2, 2, 40, 18);
+        Pcabe.add(fecvenE);
+        fecvenE.setBounds(90, 65, 70, 17);
+
+        cLabel24.setText("Ruta");
+        cLabel24.setPreferredSize(new java.awt.Dimension(60, 18));
+        Pcabe.add(cLabel24);
+        cLabel24.setBounds(190, 65, 40, 18);
+
+        rut_codiE.setAncTexto(30);
+        rut_codiE.setMayusculas(true);
+        rut_codiE.setPreferredSize(new java.awt.Dimension(92, 18));
+        Pcabe.add(rut_codiE);
+        rut_codiE.setBounds(220, 65, 210, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -503,14 +533,18 @@ public class ClClien extends ventana
     private gnu.chu.controles.CLabel cLabel20;
     private gnu.chu.controles.CLabel cLabel21;
     private gnu.chu.controles.CLabel cLabel22;
+    private gnu.chu.controles.CLabel cLabel23;
+    private gnu.chu.controles.CLabel cLabel24;
     private gnu.chu.controles.CComboBox cli_activE;
     private gnu.chu.controles.CTextField fealfiE;
     private gnu.chu.controles.CTextField fealinE;
+    private gnu.chu.controles.CTextField fecvenE;
     private gnu.chu.controles.Cgrid jt;
     private gnu.chu.controles.Cgrid jtRies;
     private gnu.chu.controles.CCheckBox opEmail;
     private gnu.chu.controles.CComboBox ordenE;
     private gnu.chu.controles.CLinkBox rep_codiE;
+    private gnu.chu.controles.CLinkBox rut_codiE;
     private gnu.chu.controles.CComboBox tipolistE;
     private gnu.chu.controles.CLinkBox zon_codiE;
     // End of variables declaration//GEN-END:variables

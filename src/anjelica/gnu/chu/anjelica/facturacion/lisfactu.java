@@ -195,7 +195,7 @@ public class lisfactu extends ventana  implements JRDataSource
  {
    iniciarFrame();
    this.setSize(new Dimension(600, 539));
-   setVersion("2016-07-26");
+   setVersion("2016-11-16");
 
    titledBorder2 = new TitledBorder("");
    Princ.setLayout(gridBagLayout1);
@@ -378,6 +378,7 @@ public class lisfactu extends ventana  implements JRDataSource
      throw new SQLException("Empresa: " + EU.em_cod + " NO ENCONTRADA");
    empObsfra = dt.getString("emp_obsfra");
    MantRepres.llenaLinkBox(rep_codiE, dtCon1);
+   rep_codiE.setMayusculas(true);
    margInfE.setValorDec(5.0);
    nLiCabE.setValorDec(18.0);
    margSupLE.setValorDec(2);
@@ -541,7 +542,7 @@ public class lisfactu extends ventana  implements JRDataSource
     (eje_numeE.getValorInt()>0?" and f.fvc_ano >= "+eje_numeE.getValorInt():"")+
     (eje_numeE1.getValorInt()>0?" and f.fvc_ano <= "+eje_numeE1.getValorInt():"")+
     (cli_codiE.getValorInt()>0?" and f.cli_codi = "+cli_codiE.getValorInt():"")+
-    (rep_codiE.isNull()?"":" and rep_codi <= '"+rep_codiE.getText()+"'")+
+    (rep_codiE.isNull()?"":" and rep_codi = '"+rep_codiE.getText()+"'")+
     (! cli_zonrepE.isNull(true) && !cli_zonrepE.getText().equals("**")?" and cl.cli_zonrep  LIKE '%"+Formatear.reemplazar(cli_zonrepE.getText(),"*","%")+"%'":"")+
     (! cli_zoncreE.isNull(true) && !cli_zoncreE.getText().equals("**")?" and cl.cli_zoncre  LIKE '%"+Formatear.reemplazar(cli_zoncreE.getText(),"*","%")+"%'":"")+
     (!cli_activE.getValor().equals("%")?" and cl.cli_activ = '"+cli_activE.getValor()+"'":"")+
