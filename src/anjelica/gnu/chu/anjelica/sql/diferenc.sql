@@ -1,3 +1,11 @@
+drop view anjelica.v_coninvent;
+alter table anjelica.coninvlin add lci_numcaj smallint not null default 0;	-- Numero Caja
+create view anjelica.v_coninvent as
+select c.emp_codi,c.cci_codi,c.usu_nomb,cci_feccon, cam_codi,alm_codi,lci_nume,prp_ano, prp_empcod, prp_seri, prp_part, pro_codi, pro_nomb,
+prp_indi,lci_peso,lci_kgsord,lci_numind,lci_regaut,lci_coment,lci_numcaj,lci_numpal from coninvcab as c, coninvlin as l where
+c.emp_codi=c.emp_codi
+and c.cci_codi=l.cci_codi;
+
 alter table usuarios add usu_clanum smallint not null default 0; -- Password Corta de usuario (sin encriptar)
 --alter table usuarios add constraint ix_passnum unique(usu_pasnum);
 

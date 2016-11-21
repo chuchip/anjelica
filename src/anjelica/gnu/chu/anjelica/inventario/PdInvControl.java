@@ -8,7 +8,7 @@ package gnu.chu.anjelica.inventario;
  * con el mismo individuo,lote y peso. Por defecto, lo permite. </p>
  * <p> <em>admin=true</em> Permitira meter Generar inventario a  partir de otro.
  * Por defecto esta deshabilitada esa caracteristica. </p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -66,7 +66,8 @@ import net.sf.jasperreports.engine.JasperReport;
 public class PdInvControl extends ventanaPad implements PAD
 {
  private String condLineas="";
-  private  final int JT_NUMPAL=10;
+  private  final int JT_NUMPAL=11;
+  private  final int JT_NUMCAJ=10;
   private String condWhere;
   boolean swKilos0 = false;
   DatosTabla dtCab;
@@ -148,7 +149,7 @@ public class PdInvControl extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2015-07-03 "+(swAdmin?"Administrador":""));
+        this.setVersion("2016-11-21 "+(swAdmin?"Administrador":""));
         condWhere=" where emp_codi =  "+EU.em_cod;
         strSql = "SELECT * FROM coninvcab "+condWhere+
          "order by cci_feccon,cam_codi,alm_codi";
@@ -207,6 +208,7 @@ public class PdInvControl extends ventanaPad implements PAD
     prp_partE.setColumnaAlias("prp_part");
     prp_indiE.setColumnaAlias("prp_indi");
     lci_numpalE.setColumnaAlias("lci_numpal");
+    lci_numcajE.setColumnaAlias("lci_numcaj");
     activarEventos();
     this.setEnabled(true);
     activar(false);
@@ -538,6 +540,7 @@ public class PdInvControl extends ventanaPad implements PAD
         v.add(dtCon1.getString("prp_indi")); // 7
         v.add(dtCon1.getString("lci_peso")); // 8
         v.add(dtCon1.getString("lci_numind")); // 9
+        v.add(dtCon1.getInt("lci_numcaj",true));
         v.add(dtCon1.getString("lci_numpal"));
         jt.addLinea(v);
         n++;
@@ -577,6 +580,7 @@ public class PdInvControl extends ventanaPad implements PAD
     v.add(prp_serieE.getStrQuery());
     v.add(prp_partE.getStrQuery());
     v.add(prp_indiE.getStrQuery());
+    v.add(lci_numcajE.getStrQuery());
     v.add(lci_numpalE.getStrQuery());
        
     s = creaWhere("select distinct(cci_codi) as cci_codi from v_coninvent "+
@@ -955,6 +959,7 @@ public class PdInvControl extends ventanaPad implements PAD
     dtAdd.setDato("lci_peso", prp_pesoE.getValorDec());
     dtAdd.setDato("lci_numind", prp_numpieE.getValorDec());
     dtAdd.setDato("lci_numpal",lci_numpalE.getText());
+    dtAdd.setDato("lci_numcaj",lci_numcajE.getText());
     dtAdd.setDato("alm_codlin",alm_codiE.getValorInt());
     dtAdd.update(stUp);
     ctUp.commit();
@@ -979,6 +984,7 @@ public class PdInvControl extends ventanaPad implements PAD
     return cci_codiE.getValorInt();
   }
 
+ @Override
   public void canc_addnew()
   {
     try
@@ -1692,6 +1698,7 @@ public class PdInvControl extends ventanaPad implements PAD
         lci_numpalE = new gnu.chu.controles.CTextField(Types.CHAR, "X",4);
         Bimpri = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
         lci_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL, "#999");
+        lci_numcajE = new gnu.chu.controles.CTextField(Types.DECIMAL, "#999");
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -1709,7 +1716,7 @@ public class PdInvControl extends ventanaPad implements PAD
         cci_fecoriE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel12 = new gnu.chu.controles.CLabel();
         Bcopia = new gnu.chu.controles.CButtonMenu();
-        jt = new gnu.chu.controles.CGridEditable(11) {
+        jt = new gnu.chu.controles.CGridEditable(12) {
             @Override
             public void afterCambiaLinea()
             {
@@ -1720,13 +1727,18 @@ public class PdInvControl extends ventanaPad implements PAD
                 nlinE.setText("" + (this.getSelectedRow() + 1));
                 kgAnt= jt.getValorDec(8);
             }
-
+            @Override
+            public boolean insertaLinea(int row, int col)
+            {
+                if (getQuery())
+                return true;
+                return pro_codiE.getValorInt()!=0;
+            }
             @Override
             public int cambiaLinea(int row, int col)
             {
-                if (pro_codiE.isNull())
-                return 0;
                 lci_numpalE.resetCambio();
+                lci_numcajE.resetCambio();
                 return cambiaLineaGrid(row);
             }
 
@@ -1740,6 +1752,8 @@ public class PdInvControl extends ventanaPad implements PAD
                     jt.setText(lci_numpalE.getCopia(),jt.getSelectedRow(),JT_NUMPAL);
                     lci_numpalE.setText(lci_numpalE.getCopia());
                 }
+                jt.setValor(lci_numcajE.getCopiaInt()+1,jt.getSelectedRow(),JT_NUMCAJ);
+                lci_numcajE.setValorInt(lci_numcajE.getCopiaInt()+1);
                 return true;
                 //      jt.setValor("1",9);
             }
@@ -1900,6 +1914,7 @@ public class PdInvControl extends ventanaPad implements PAD
                 prp_serieE.setText("A");
                 prp_numpieE.setValorInt(1);
                 lci_numpalE.setText("");
+                lci_numcajE.setValorDec(0);
                 cci_codiE.setEnabled(false);
                 prp_serieE.setMayusc(true);
                 ArrayList v = new ArrayList();
@@ -1913,6 +1928,7 @@ public class PdInvControl extends ventanaPad implements PAD
                 v.add("Ind."); // 7
                 v.add("Cantidad"); // 8
                 v.add("N.Pzas"); // 9
+                v.add("Caja"); // 10
                 v.add("Palet"); // 10
                 jt.setCabecera(v);
                 Vector v1 = new Vector();
@@ -1927,14 +1943,15 @@ public class PdInvControl extends ventanaPad implements PAD
                 v1.add(prp_indiE); // 7
                 v1.add(prp_pesoE); //8
                 v1.add(prp_numpieE); // 9 Numero de Piezas
+                v1.add(lci_numcajE); // 10  Palet
                 v1.add(lci_numpalE); // 10  Palet
                 jt.setCampos(v1);
                 jt.setAjustarGrid(true);
                 jt.setAjustarColumnas(false);
                 jt.setAnchoColumna(new int[]
-                    {45, 80, 200, 40,30, 20, 40, 40, 60, 40,40});
+                    {45, 80, 200, 40,30, 20, 40, 40, 60, 40,30,40});
                 jt.setAlinearColumna(new int[]
-                    {2, 2, 0, 2,2, 0, 2, 2, 2, 2,0});
+                    {2, 2, 0, 2,2, 0, 2, 2, 2, 2,2,0});
                 jt.setFormatoCampos();
             } catch (Exception k) {
                 Error ("Error al configurar grid",k);
@@ -2077,6 +2094,7 @@ public class PdInvControl extends ventanaPad implements PAD
     private gnu.chu.controles.CGridEditable jt;
     private gnu.chu.controles.CTextField kiltotE;
     private gnu.chu.controles.CTextField kiltotE1;
+    private gnu.chu.controles.CTextField lci_numcajE;
     private gnu.chu.controles.CTextField lci_numeE;
     private gnu.chu.controles.CTextField lci_numpalE;
     private gnu.chu.controles.CTextField nlinE;

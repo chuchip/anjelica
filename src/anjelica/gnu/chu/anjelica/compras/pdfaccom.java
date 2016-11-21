@@ -751,6 +751,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
 
    verAlbaE.addActionListener(new ActionListener()
    {
+     @Override
      public void actionPerformed(ActionEvent e)
      {
        try {
@@ -764,6 +765,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
    });
    Bimpri.addActionListener(new ActionListener()
    {
+     @Override
      public void actionPerformed(ActionEvent e)
      {
        Bimpri_actionPerformed();
@@ -780,7 +782,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
 
        if (jtAlb.getSelectedColumn() == 11)
        {
-         jtAlb.setValor(Boolean.valueOf(!jtAlb.getValBoolean(11)), 11);
+         jtAlb.setValor(!jtAlb.getValBoolean(11), 11);
          ponLinAlbFact(jtAlb.getValBoolean(11));
          return;
        }
@@ -1022,12 +1024,13 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
    llenaGridAlb();
  }
 
+  @Override
  public void PADPrimero() {verDatos(dtCons);}
-
+@Override
  public void PADAnterior() {verDatos(dtCons);}
-
+@Override
  public void PADSiguiente() {verDatos(dtCons);}
-
+@Override
  public void PADUltimo() {verDatos(dtCons);}
 
     @Override

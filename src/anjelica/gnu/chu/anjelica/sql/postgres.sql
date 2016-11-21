@@ -3299,6 +3299,7 @@ create table anjelica.coninvlin
     lci_numind int not null,                    -- Numeros de Piezas
     lci_regaut smallint not null default 0,	-- Registro Automatico (0=No)
     lci_coment varchar(35),			-- Comentario
+	lci_numcaj smallint not null default 0,	-- Numero Caja
     lci_numpal varchar not null default '',	-- Numero Palet
 	alm_codlin int not null, -- Almacen (Para List. Dif. Inventario)
   constraint ix_coninvlin primary key(cci_codi,lci_nume,emp_codi,)
@@ -3309,7 +3310,7 @@ create index ix_coninvl2 on coninvlin(pro_codi,prp_ano,prp_part,prp_seri,prp_ind
 --
 create view anjelica.v_coninvent as
 select c.emp_codi,c.cci_codi,c.usu_nomb,cci_feccon, cam_codi,alm_codi,lci_nume,prp_ano, prp_empcod, prp_seri, prp_part, pro_codi, pro_nomb,
-prp_indi,lci_peso,lci_kgsord,lci_numind,lci_regaut,lci_coment,lci_numpal from coninvcab as c, coninvlin as l where
+prp_indi,lci_peso,lci_kgsord,lci_numind,lci_regaut,lci_coment,lci_numcaj,lci_numpal,alm_codlin from coninvcab as c, coninvlin as l where
 c.emp_codi=c.emp_codi
 and c.cci_codi=l.cci_codi;
 --
