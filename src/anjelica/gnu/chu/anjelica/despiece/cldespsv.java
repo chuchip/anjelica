@@ -41,7 +41,9 @@ public class cldespsv extends ventana
   String s;
   DatosTabla dtSta2;
   DatosTabla dtSta3;
+  CLabel tid_codiL=new CLabel();
   CLabel mesL = new CLabel("Mes");
+  gnu.chu.camposdb.tidCodi2 tid_codiE=new gnu.chu.camposdb.tidCodi2();
   CComboBox mesE = new CComboBox();
   private char swElec;
   final private char DESCUADRE='D';
@@ -121,7 +123,7 @@ public class cldespsv extends ventana
   {
     iniciarFrame(); 
     this.setSize(442, 448);
-    this.setVersion((P_ADMIN?"(MODO ADMINISTRADOR)":"")+"2013-10-21");
+    this.setVersion((P_ADMIN?"(MODO ADMINISTRADOR)":"")+"2016-11-30");
 
     statusBar=new StatusBar(this);
     conecta();
@@ -136,7 +138,12 @@ public class cldespsv extends ventana
     
     cLabel2.setBounds(new Rectangle(250, 6, 19, 17));
     fecfinE.setBounds(new Rectangle(275, 5, 77, 18));
-    Baceptar.setBounds(new Rectangle(125, 26, 125, 24));
+    Baceptar.setBounds(new Rectangle(275, 26, 125, 24));
+    tid_codiL.setText("Tipo Desp.");
+    tid_codiL.setBounds(new Rectangle(2, 26, 60, 18));  
+    tid_codiE.setAncTexto(40);
+    tid_codiE.setBounds(new Rectangle(65, 26, 200, 18));
+    
     Baceptar.setText("Aceptar");
     Baceptar.addMenu("Sin Valorar");
     Baceptar.addMenu("Descuadre");
@@ -173,7 +180,8 @@ public class cldespsv extends ventana
     PintrDatos.add(cLabel2, null);
     PintrDatos.add(fecfinE, null);
     PintrDatos.add(Baceptar, null);
-   
+    PintrDatos.add(tid_codiL, null);
+    PintrDatos.add(tid_codiE, null);
     Pprinc.add(jt,   new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 3, 2, 1), -89, -137));
   }
@@ -202,7 +210,8 @@ public class cldespsv extends ventana
   public void iniciarVentana() throws Exception
   {
     Pprinc.setDefButton(Baceptar.getBotonAccion());
-   
+    tid_codiE.setCeroIsNull(true);
+    tid_codiE.iniciar(dtStat, this, vl, EU);
     mesE.setValor(Formatear.getMonth(Formatear.getDateAct()));
     fecfinE.setDate(MantCalendar.getFechaFinal(dtStat, Formatear.getDateAct()));
     feciniE.setDate(MantCalendar.getFechaInicio(dtStat, Formatear.getDateAct()));
@@ -336,6 +345,7 @@ public class cldespsv extends ventana
         " and c.deo_codi = l.deo_codi " +
         " and l.def_kilos> 0 " +
         " and a.pro_tiplot = 'V' " +
+        (tid_codiE.isNull()?"":" and tid_codi="+tid_codiE.getValorInt())+
         " and def_prcost = 0 " +
 //        " UNION " +
 //        " select l.pro_codi,a.pro_nomb,def_kilos, c.deo_codi,deo_fecha " +
@@ -655,6 +665,7 @@ public class cldespsv extends ventana
             " where deo_fecha >= TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') " +
             " and deo_fecha <= TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy') " +
             " and deo_numdes = 0"+
+            (tid_codiE.isNull()?"":" and tid_codi="+tid_codiE.getValorInt())+
             " order by eje_nume, deo_codi";
           if ( dtCon1.select(s))
           {
@@ -728,6 +739,7 @@ public class cldespsv extends ventana
             " from desporig  " +
             " where deo_fecha >= TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') " +
             " and deo_fecha <= TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy') " +
+            (tid_codiE.isNull()?"":" and tid_codi="+tid_codiE.getValorInt())+
             " and deo_numdes > 0"+
             " group by eje_nume, deo_numdes"+
             " order by eje_nume, deo_numdes";
