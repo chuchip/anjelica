@@ -66,7 +66,7 @@ public class lisfactu extends ventana  implements JRDataSource
   String fvcSerie;
   boolean swFirst;
   String empObsfra;
-  ResultSet rs;
+//  ResultSet rs;
   int nFraImp;
   String msgError="";
   actCabAlbFra datCab;
@@ -103,6 +103,7 @@ public class lisfactu extends ventana  implements JRDataSource
   CTextField fecfinE = new CTextField(Types.DATE, "dd-MM-yyyy");
   CButtonMenu Baceptar = new CButtonMenu(Iconos.getImageIcon("print"));
   DatosTabla dt;
+  DatosTabla dtFra;
 
   boolean valora=true;
   CPanel Pmargen = new CPanel();
@@ -152,6 +153,7 @@ public class lisfactu extends ventana  implements JRDataSource
     this.dtStat=dtStat;
     this.dt=dt;
     this.ct=dt.getConexion();
+
     iniciarVentana();
   }
 
@@ -195,7 +197,7 @@ public class lisfactu extends ventana  implements JRDataSource
  {
    iniciarFrame();
    this.setSize(new Dimension(600, 539));
-   setVersion("2016-11-16");
+   setVersion("2016-12-02");
 
    titledBorder2 = new TitledBorder("");
    Princ.setLayout(gridBagLayout1);
@@ -377,14 +379,14 @@ public class lisfactu extends ventana  implements JRDataSource
    if (!dt.select("SELECT emp_obsfra FROM v_empresa WHERE emp_codi=" + EU.em_cod))
      throw new SQLException("Empresa: " + EU.em_cod + " NO ENCONTRADA");
    empObsfra = dt.getString("emp_obsfra");
-   MantRepres.llenaLinkBox(rep_codiE, dtCon1);
+   MantRepres.llenaLinkBox(rep_codiE, dt);
    rep_codiE.setMayusculas(true);
    margInfE.setValorDec(5.0);
    nLiCabE.setValorDec(18.0);
    margSupLE.setValorDec(2);
    margSupE.setValorDec(0.0);
    margIzqE.setValorDec(63.0);
-
+   dtFra=new DatosTabla(ct);
    cli_codiE.iniciar(dtStat, this, vl, EU);
    
    datCab = new actCabAlbFra(dtStat,EU.em_cod);
@@ -629,19 +631,19 @@ public class lisfactu extends ventana  implements JRDataSource
        int res;
        s = getStrSql();
        String cfgLifrgr=null;
-          if (accion.indexOf(PadFactur.IMPPLANO)>=0)
+          if (accion.contains(PadFactur.IMPPLANO))
           cfgLifrgr="N";
-       if (accion.indexOf(PadFactur.IMPGRAFICO)>=0)
+       if (accion.contains(PadFactur.IMPGRAFICO))
        {
            setFraPreImpr(false);
           cfgLifrgr="S";
        }
-       if (accion.indexOf(PadFactur.IMPGRAFPRE)>=0)
+       if (accion.contains(PadFactur.IMPGRAFPRE))
        {
           setFraPreImpr(true);
           cfgLifrgr="S";
        }
-       if (accion.indexOf(PadFactur.SENDMAIL)>=0)
+       if (accion.contains(PadFactur.SENDMAIL))
        {
            enviarMail();
            return;
@@ -707,7 +709,7 @@ public class lisfactu extends ventana  implements JRDataSource
    String alb, alb1;
    String proNomb;
 
-   if (!dtCon1.select(s))
+   if (!dtFra.select(s))
    {
      msgError = "NO ENCONTRADAS FACTURAS CON ESTOS CRITERIOS";
      return 0;
@@ -715,23 +717,23 @@ public class lisfactu extends ventana  implements JRDataSource
    File f = util.getFile("albfra", EU);
    fOut = new FileOutputStream(f, false);
 
-   rs = dtCon1.getResultSet();
+   //rs = dtFra.getResultSet();
    do
    {
      impVtoAc = 0;
 
-     if (!getDatosFra(dtCon1.getInt("fvc_ano"),
-          dtCon1.getInt("fvc_empcod"), dtCon1.getString("fvc_serie"),
-                      dtCon1.getInt("fvc_nume"), dtCon1.getDouble("fvc_porreq")!=0))
+     if (!getDatosFra(dtFra.getInt("fvc_ano"),
+          dtFra.getInt("fvc_empcod"), dtFra.getString("fvc_serie"),
+                      dtFra.getInt("fvc_nume"), dtFra.getDouble("fvc_porreq")!=0))
        continue;
 
-     imprCabe(dtCon1);
+     imprCabe(dtFra);
      nLinALb = 0;
      //Busco Comentarios de Cabecera.
-     String condWhereCom="and  eje_nume = "+dtCon1.getInt("fvc_ano")+
-       " and emp_codi = "+dtCon1.getInt("fvc_empcod")+
-        " and fvc_serie = '"+dtCon1.getString("fvc_serie")+"'"+
-       " and fvc_nume = "+dtCon1.getInt("fvc_nume");
+     String condWhereCom="and  eje_nume = "+dtFra.getInt("fvc_ano")+
+       " and emp_codi = "+dtFra.getInt("fvc_empcod")+
+        " and fvc_serie = '"+dtFra.getString("fvc_serie")+"'"+
+       " and fvc_nume = "+dtFra.getInt("fvc_nume");
      s="select fco_coment from facvecom where fco_tipo='C'"+ condWhereCom+
             " order by fco_numlin";
      if (dtStat.select(s))
@@ -753,7 +755,7 @@ public class lisfactu extends ventana  implements JRDataSource
                dtStat.getFecha("avc_fecalb", "dd-MM-yyyy") +
                " Albarán: " +
                Formatear.format(dtStat.getString("avc_ano"), "9999") + "/" +
-               dtCon1.getInt("fvc_empcod") + dtStat.getString("avc_serie") + "/" +
+               dtFra.getInt("fvc_empcod") + dtStat.getString("avc_serie") + "/" +
                Formatear.format(dtStat.getString("avc_nume"), "999999"));
          nLinALb++;
        }
@@ -781,7 +783,7 @@ public class lisfactu extends ventana  implements JRDataSource
        if (nLinALb >= nLiCabE.getValorInt() - 1)
        {
          println(margInfE.getValorInt() + 14 - (nLinALb - (nLiCabE.getValorInt() - 1)));
-         imprCabe(dtCon1);
+         imprCabe(dtFra);
          nLinALb = 0;
        }
      }  while (dtStat.next());
@@ -806,10 +808,10 @@ public class lisfactu extends ventana  implements JRDataSource
          impLinCom(dtStat);
      println(nLiCabE.getValorInt() - nLinALb);
      println(3);
-     nVtos = clFactCob.calDiasVto(dtCon1, dtCon1.getInt("cli_dipa1"),
-                                  dtCon1.getInt("cli_dipa2"), 0,
-                                  dtCon1.getFecha("fvc_fecfra", "dd-MM-yyyy"));
-     impVto = (dtCon1.getDouble("fvc_sumtot") - dtCon1.getDouble("fvc_impcob")) / nVtos;
+     nVtos = clFactCob.calDiasVto(dtFra, dtFra.getInt("cli_dipa1"),
+                                  dtFra.getInt("cli_dipa2"), 0,
+                                  dtFra.getFecha("fvc_fecfra", "dd-MM-yyyy"));
+     impVto = (dtFra.getDouble("fvc_sumtot") - dtFra.getDouble("fvc_impcob")) / nVtos;
      if (valora)
      {
        // Imp.Bruto
@@ -848,13 +850,13 @@ public class lisfactu extends ventana  implements JRDataSource
        else
          print("");
 
-       print(Formatear.space(3) + dtCon1.getString("fpa_nomb"));
+       print(Formatear.space(3) + dtFra.getString("fpa_nomb"));
        println(3);
-       banNomb=buscaBanco( dtCon1.getInt("ban_codi", true));
+       banNomb=buscaBanco( dtFra.getInt("ban_codi", true));
 
        print(Formatear.space(2) + Formatear.ajusIzq(banNomb, 30) +
              Formatear.space(margIzqE.getValorInt() + 7 - 32) +
-             Formatear.format(dtCon1.getDouble("fvc_sumtot"), "---,--9.99"));
+             Formatear.format(dtFra.getDouble("fvc_sumtot"), "---,--9.99"));
      }
      else
        println(1);
@@ -862,7 +864,7 @@ public class lisfactu extends ventana  implements JRDataSource
      nFraImp++;
      actualizaMsg("Imprimiendo fra: "+nFraImp+" de "+numFrasTratar,false);
    }
-   while (dtCon1.next());
+   while (dtFra.next());
    fOut.close();
    Process pr = Runtime.getRuntime().exec(EU.pathCom + EU.comPrint + " " +
                                           f.getAbsolutePath() + " " +
@@ -883,7 +885,7 @@ public class lisfactu extends ventana  implements JRDataSource
                  dt.getString("fco_coment"));
             if (nLinALb >= nLiCabE.getValorInt() - 1) {
                 println(margInfE.getValorInt() + 14 - (nLinALb - (nLiCabE.getValorInt() - 1)));
-                imprCabe(dtCon1);
+                imprCabe(dtFra);
                 nLinALb = 0;
             }
             nLinALb++;
@@ -913,10 +915,10 @@ private String buscaBanco(int banCodi) throws SQLException
    if ( simular)
     setFraListada(ejeNume,empCodi,fvcSerie,fvcNume,-1);
    boolean incIva;
-   incIva = dtCon1.getInt("cli_exeiva") == 0 && empCodi <= 90;
+   incIva = dtFra.getInt("cli_exeiva") == 0 && empCodi <= 90;
    if (!datCab.actDatosFra(ejeNume, empCodi, fvcSerie,fvcNume, incIva,
-                           rs.getDouble("fvc_dtopp"),
-                           rs.getDouble("fvc_dtocom"),
+                           dtFra.getDouble("fvc_dtopp"),
+                           dtFra.getDouble("fvc_dtocom"),
                            recEquiv ,null))
      return false;
    numLiComCab=0;
@@ -924,11 +926,11 @@ private String buscaBanco(int banCodi) throws SQLException
    numLinFra=0;
    htCab = datCab.getHashTable();
    impVtoAc = 0;
-   nVtos = clFactCob.calDiasVto(dtCon1, dtCon1.getInt("cli_dipa1"),
-                                dtCon1.getInt("cli_dipa2"), 0,
-                                dtCon1.getFecha("fvc_fecfra", "dd-MM-yyyy"));
-   banNomb = buscaBanco(dtCon1.getInt("ban_codi", true));
-   impVto = (dtCon1.getDouble("fvc_sumtot") - dtCon1.getDouble("fvc_impcob")) / nVtos;
+   nVtos = clFactCob.calDiasVto(dtFra, dtFra.getInt("cli_dipa1"),
+                                dtFra.getInt("cli_dipa2"), 0,
+                                dtFra.getFecha("fvc_fecfra", "dd-MM-yyyy"));
+   banNomb = buscaBanco(dtFra.getInt("ban_codi", true));
+   impVto = (dtFra.getDouble("fvc_sumtot") - dtFra.getDouble("fvc_impcob")) / nVtos;
    s="SELECT count(*) as cuantos FROM v_facvel "+
     " where fvc_nume= "+fvcNume+
     " and fvc_serie= '"+fvcSerie+"'"+
@@ -936,6 +938,7 @@ private String buscaBanco(int banCodi) throws SQLException
     " and eje_nume = "+ejeNume;
    dtStat.select(s);
    numLinFra=dtStat.getInt("cuantos",true);
+   
    s="SELECT count(*) as cuantos,fco_tipo FROM facvecom "+
     " where fvc_nume= "+fvcNume+
     " and fvc_serie= '"+fvcSerie+"'"+
@@ -950,7 +953,7 @@ private String buscaBanco(int banCodi) throws SQLException
             numLiComCab = dtStat.getInt("cuantos");
            if (dtStat.getString("fco_tipo").equals("P"))
             numLiComPie = dtStat.getInt("cuantos");
-       } while (dtCon1.next());
+       } while (dtStat.next());
    }
    return true;
  }
@@ -1125,18 +1128,18 @@ private String buscaBanco(int banCodi) throws SQLException
    }
    public int impFacturaJasper(String sql,boolean copiaPapel) throws Exception
    {        
-     if (!dtCon1.select(sql))
+     if (!dtFra.select(sql))
      {
        msgError="No encontradas Facturas con estos criterios";
        mensajes.mensajeAviso(msgError);
        return 0;
      }
 
-      cliCodi=dtCon1.getInt("cli_codi");
-      fvcAno=dtCon1.getInt("fvc_ano");
-      empCodi=dtCon1.getInt("emp_codi");
-      fvcSerie=dtCon1.getString("fvc_serie");
-      fvcNume=dtCon1.getInt("fvc_nume");
+      cliCodi=dtFra.getInt("cli_codi");
+      fvcAno=dtFra.getInt("fvc_ano");
+      empCodi=dtFra.getInt("emp_codi");
+      fvcSerie=dtFra.getString("fvc_serie");
+      fvcNume=dtFra.getInt("fvc_nume");
       
      Listados lis=  Listados.getListado(EU.em_cod, (getFraPreImpr()?Listados.CABPI_FRV: Listados.CAB_FRV), dtStat);
      JasperReport jr = Listados.getJasperReport(EU,lis.getNombFich() );
@@ -1158,17 +1161,17 @@ private String buscaBanco(int banCodi) throws SQLException
             gnu.chu.print.util.getPathReport(EU, Listados.getNombListado(EU.em_cod, Listados.PCO_FRV, dtStat)));
      swFirst = true;
      nFraImp = 1;
-     rs = dtCon1.getResultSet();
-     if (!getDatosFra(dtCon1.getInt("fvc_ano"), dtCon1.getInt("fvc_empcod"),
-                       dtCon1.getString("fvc_serie"),dtCon1.getInt("fvc_nume"),
-                       dtCon1.getDouble("fvc_porreq")!=0))
+//     rs = dtFra.getResultSet();
+     if (!getDatosFra(dtFra.getInt("fvc_ano"), dtFra.getInt("fvc_empcod"),
+                       dtFra.getString("fvc_serie"),dtFra.getInt("fvc_nume"),
+                       dtFra.getDouble("fvc_porreq")!=0))
      {
-         msgError="No entrado datos de fra:  "+dtCon1.getInt("fvc_ano")+"-"+
-              dtCon1.getInt("fvc_empcod")+" "+
-              dtCon1.getString("fvc_serie")+"/"+dtCon1.getInt("fvc_nume");
+         msgError="No entrado datos de fra:  "+dtFra.getInt("fvc_ano")+"-"+
+              dtFra.getInt("fvc_empcod")+" "+
+              dtFra.getString("fvc_serie")+"/"+dtFra.getInt("fvc_nume");
         return 0;
      }
-     rs.first();
+//     rs.first();
      jp = JasperFillManager.fillReport(jr, mp, this);
      if (copiaPapel)
        gnu.chu.print.util.printJasper(jp, EU);
@@ -1189,14 +1192,14 @@ private String buscaBanco(int banCodi) throws SQLException
        boolean ret;
        while (true)
        {
-         ret = rs.next();
+         ret = dtFra.next();
          if (!ret)
            return false;
-         if (getDatosFra(dtCon1.getInt("fvc_ano"), dtCon1.getInt("fvc_empcod"),
-                         dtCon1.getString("fvc_serie"), dtCon1.getInt("fvc_nume"),
-                         dtCon1.getDouble("fvc_porreq")!=0))
+         if (getDatosFra(dtFra.getInt("fvc_ano"), dtFra.getInt("fvc_empcod"),
+                         dtFra.getString("fvc_serie"), dtFra.getInt("fvc_nume"),
+                         dtFra.getDouble("fvc_porreq")!=0))
          {
-           actualizaMsg("Imprimiendo fra "+nFraImp+ " de "+numFrasTratar,false);
+             setMensajePopEspere("Imprimiendo fra "+nFraImp+ " de "+numFrasTratar,false);
            nFraImp++;
            return true;
          }
@@ -1220,20 +1223,20 @@ private String buscaBanco(int banCodi) throws SQLException
            campo.equals("cli_pobl") ||
            campo.equals("cli_nif") ||
            campo.equals("fvc_serie") )
-         return dtCon1.getString(campo);
+         return dtFra.getString(campo);
        if (campo.equals("emp_codi") ||
            campo.equals("fvc_nume") ||
            campo.equals("cli_codi") ||
            campo.equals("cli_recequ") ||
            campo.equals("fvc_ano"))
-         return dtCon1.getInt(campo);
+         return dtFra.getInt(campo);
        if (campo.equals("cli_codpo"))
-           return dtCon1.getString("cli_codpo");
+           return dtFra.getString("cli_codpo");
        if (campo.equals("fvc_dtocom") ||
            campo.equals("fvc_dtootr") || campo.equals("fvc_sumtot"))
-         return dtCon1.getDouble(campo);
+         return dtFra.getDouble(campo);
        if (campo.equals("fvc_fecfra"))
-         return rs.getDate(campo);
+         return dtFra.getDate(campo);
 
        if ( campo.equals("fvc_impbru") ||      
            campo.equals("fvc_basimp") ||
@@ -1259,7 +1262,7 @@ private String buscaBanco(int banCodi) throws SQLException
        if (campo.equals("banNomb"))
          return banNomb;
        if (campo.equals("fpa_nomb"))
-         return dtCon1.getString("fpa_nomb");
+         return dtFra.getString("fpa_nomb");
        if (campo.equals("numLinComCab"))
            return numLiComCab;
        if (campo.equals("numLinComPie"))
@@ -1285,7 +1288,7 @@ private String buscaBanco(int banCodi) throws SQLException
      if (nVtos > nVto)
      {
        if (nVto +1 == nVtos)
-         return (dtCon1.getDouble("fvc_sumtot") - dtCon1.getDouble("fvc_impcob")) - impVtoAc;
+         return (dtFra.getDouble("fvc_sumtot") - dtFra.getDouble("fvc_impcob")) - impVtoAc;
        else
        {
          impVtoAc+=impVto;
