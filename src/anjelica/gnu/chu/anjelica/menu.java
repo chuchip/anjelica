@@ -59,7 +59,7 @@ public class menu extends JFrame
   CButton Balmac = new CButton();
   CButton Briesgo = new CButton();
   CButton Bfactur = new CButton();
-
+  JMenuItem calculadora = new JMenuItem("Calculadora");
   JPopupMenu popupDesp = new JPopupMenu("PopupMenu");
   JMenuItem Mpdprvades= new JMenuItem("Precios Desp.");
   JPopupMenu popupMarg = new JPopupMenu("Margenes");
@@ -1048,6 +1048,7 @@ JMenuItem mantArticVenta = new JMenuItem();
     popupMarg.add(mnuHistVen);
     popupMarg.add(mnuCalcTarifa);
     popupDesp.add(despMant);
+    popupMarg.add(calculadora);
    // popupDesp.add(despTactil);
     popupDesp.add(mantDespTactil);
    // popupDesp.add(valdespi2);
@@ -1219,6 +1220,14 @@ JMenuItem mantArticVenta = new JMenuItem();
        public void actionPerformed(ActionEvent e)
        {
          lanzaEjecutable(new gnu.chu.anjelica.margenes.CLHistVentas(menu.this,EU));
+       }
+     });
+     calculadora.addActionListener(new ActionListener()
+     {
+            @Override
+       public void actionPerformed(ActionEvent e)
+       {
+         lanzaEjecutable(new gnu.chu.utilidades.Calculadora());
        }
      });
      mnuCalcTarifa.addActionListener(new ActionListener()

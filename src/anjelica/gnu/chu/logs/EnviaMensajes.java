@@ -32,6 +32,7 @@ import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Fecha;
 import gnu.chu.utilidades.escribe;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
@@ -149,12 +150,19 @@ public class EnviaMensajes {
                  System.out.println("Albaran: "+albaran+ " ERROR: "+alb.get(albaran));
             }
        }
-        /**
-        * Busco inconsistencias en albaranes de ventas
-        * 
-        */
        
-        s="select avc_ano,avc_serie,avc_nume,avc_fecalb,"+
+        //buscaVentasArtMayEnMin();
+       
+       
+ }
+ 
+ /**
+  * Busco Ventas de articulos clasificados como de Mayoristas a Minoristas
+  * @throws SQLException 
+  */
+ void buscaVentasArtMayEnMin() throws SQLException
+ {
+    String s="select avc_ano,avc_serie,avc_nume,avc_fecalb,"+
             " c.cli_codi,c.cli_nomb,v.pro_codi,v.pro_nomb,v.avl_canti"+
             " from v_albventa as v, v_cliente as c where c.cli_codi = v.cli_codi "+
             " and v.avc_fecalb between current_date -7 and current_date "+
@@ -177,9 +185,7 @@ public class EnviaMensajes {
                    " Kg:"+dtCon1.getDouble("avl_canti"));
            } while (dtCon1.next());
         } 
-       
- }
-
+}
  public static void main(String[] args)
   {
     try

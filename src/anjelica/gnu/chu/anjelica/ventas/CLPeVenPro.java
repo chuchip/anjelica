@@ -126,7 +126,7 @@ public class CLPeVenPro extends ventana implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2016-11-07");
+        this.setVersion("2016-12-02");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -239,10 +239,11 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         rs=ps.executeQuery();
         ArrayList v=new ArrayList();
         v.add(dtCon1.getString("pro_codart")); // 0
-        if (rs.next())
-            v.add(rs.getString("pro_codi")); // 1
-        else
-            v.add("");
+        v.add(dtCon1.getString("pro_codi",true)); // 0
+//        if (rs.next())
+//            v.add(rs.getString("pro_codi")); // 1
+//        else
+//            v.add("");
         v.add(dtCon1.getString("pve_nomb")); // 2
         v.add(dtCon1.getString("pvl_kilos")); // 3
         jtProd.addLinea(v);
@@ -310,7 +311,7 @@ public class CLPeVenPro extends ventana implements  JRDataSource
       return true; // No ejecutar select, solo comprobar campos.
 
     s = "SELECT "+
-         "pro_codart, pve_nomb " +
+         " pro_codi,pro_codart, pve_nomb " +
         " ,sum(pvl_kilos) as pvl_kilos  FROM v_pedven as  p,v_cliente as cl " ;        
 
     condWhere=" where   pvc_confir='S' "+
@@ -329,7 +330,7 @@ public class CLPeVenPro extends ventana implements  JRDataSource
    
     s+= condWhere+
         (pro_codiE.isNull()?"": " and p.pro_codart = '"+pro_codiE.getText()+"'")+       
-       " group by pro_codart ,pve_nomb "+
+       " group by pro_codi,pro_codart ,pve_nomb "+
         " order by pro_codart ";
 //     debug(s);
     jtProd.setEnabled(false);
