@@ -365,7 +365,7 @@ public class paregalm extends CPanel {
                 deo_kilosE);
         stkPart = new ActualStkPart(dtAdd, EU.em_cod);
         alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
-        pdalmace.llenaLinkBox(alm_codiE, dtStat);
+        pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
 //        s = "SELECT alm_codi,alm_nomb FROM v_almacen ORDER BY alm_codi";
 //        dtCon1.select(s);
 //        alm_codiE.addDatos(dtCon1);
