@@ -19,7 +19,7 @@ import net.sf.jasperreports.engine.*;
  * dentro de unas fechas.
  *
  * Tambien permite delimitar por proveedor y por albaran.
- *  <p>Copyright: Copyright (c) 2005-2010
+ *  <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -68,7 +68,12 @@ public class clprpeco extends ventana implements  JRDataSource
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   CTextField feenfiE = new CTextField(Types.DATE, "dd-MM-yyyy");
   CLabel cLabel11 = new CLabel();
-
+  CPanel Ppie = new CPanel(null);
+  CLabel unidadL = new CLabel("Unidades");
+  CLabel kilosL = new CLabel("Kilos");
+  CTextField unidadE = new CTextField(Types.DECIMAL,"#,##9");
+  CTextField kilosE = new CTextField(Types.DECIMAL,"###,##9.99");
+  
   public clprpeco(EntornoUsuario eu, Principal p)
  {
    this(eu,p,null);
@@ -143,7 +148,7 @@ public class clprpeco extends ventana implements  JRDataSource
     opPedPend.setText("Ped.Pendientes");
     opPedPend.setBounds(new Rectangle(373, 40, 118, 17));
     cLabel8.setToolTipText("");
-    PtipoCons.setOpaque(true);
+    
     cLabel9.setToolTipText("");
     feenfiE.setBounds(new Rectangle(279, 40, 73, 17));
     feenfiE.setFormato("dd-MM-yyyy");
@@ -191,7 +196,17 @@ public class clprpeco extends ventana implements  JRDataSource
    PtipoCons.setPreferredSize(new Dimension(728, 65));
    PtipoCons.setBorder(BorderFactory.createRaisedBevelBorder());
    PtipoCons.setLayout(null);
+   Ppie.setMaximumSize(new Dimension(400, 25));
+   Ppie.setMinimumSize(new Dimension(400, 25));
+   Ppie.setPreferredSize(new Dimension(280, 25));
+   Ppie.setBorder(BorderFactory.createLoweredBevelBorder());
+   unidadL.setBounds(new Rectangle(12, 2, 68, 17));
+   unidadE.setBounds(new Rectangle(82, 2, 48, 17));
+   kilosL.setBounds(new Rectangle(160, 2, 38, 17));
+   kilosE.setBounds(new Rectangle(200, 2, 68, 17));
    proiniE.setBounds(new Rectangle(49, 21, 224, 17));
+   unidadE.setEditable(false);
+   kilosE.setEditable(false);
    cLabel3.setText("Almacen");
    cLabel3.setBounds(new Rectangle(231, 3, 53, 17));
    cLabel10.setText("Empr.");
@@ -216,9 +231,11 @@ public class clprpeco extends ventana implements  JRDataSource
     PtipoCons.add(feeninE, null);
     PtipoCons.add(cLabel9, null);
     Pprinc.add(PtipoCons,   new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            ,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
     Pprinc.add(jt,   new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+    Pprinc.add(Ppie,   new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
     PtipoCons.add(opDesgl, null);
     PtipoCons.add(opPedPend, null);
     PtipoCons.add(proiniE, null);
@@ -231,6 +248,10 @@ public class clprpeco extends ventana implements  JRDataSource
     PtipoCons.add(feenfiE, null);
     PtipoCons.add(cLabel11, null);
     PtipoCons.add(Baceptar, null);
+    Ppie.add(unidadL,null);
+    Ppie.add(unidadE,null);
+    Ppie.add(kilosL,null);
+    Ppie.add(kilosE,null);
  }
 
   @Override
@@ -437,6 +458,7 @@ void irMantPedidos()
      double importe;
      String tipo;
      swBreakAcum=false;
+     double unidT=0,kilosT=0;
      boolean swPonArtic=false,swPonGrupo=false;
      if (tlaCodi == 99)
          swPonArtic=true;
@@ -500,6 +522,8 @@ void irMantPedidos()
                  importe=dtCon1.getDouble("pcl_precfa");
                  tipo="Prefact";               
          }
+         unidT+=nCajas;
+         kilosT+=kg;
          numCaj +=nCajas;
          cantCaj += kg;
          if (importe==0)
@@ -536,7 +560,8 @@ void irMantPedidos()
      } while (dtCon1.next());
      if (nLiPr>1 || !opDesgl.isSelected() )
         ponAcumul(numCaj, impAcum, cantCaj,proCodi,proGrupo);
-     
+     unidadE.setValorDec(unidT);
+     kilosE.setValorDec(kilosT);
      mensajeErr("COnsulta ... Realizada");
      mensaje("");
    } catch (SQLException k)
