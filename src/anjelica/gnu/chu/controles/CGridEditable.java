@@ -1393,6 +1393,14 @@ public class CGridEditable extends Cgrid implements CQuery {
    */
   public void afterCambiaLinea()
   {
+     GridEvent grEvent=new GridEvent(this);
+     grEvent.setColumna(getSelectedColumn());
+     grEvent.setLinea(getSelectedRow());
+     
+     for (Object grListener1 : grListener)
+     {
+            ((GridListener) grListener1).afterCambiaLinea(grEvent);
+     }
   }
 
   public boolean isCampo(Component c)
