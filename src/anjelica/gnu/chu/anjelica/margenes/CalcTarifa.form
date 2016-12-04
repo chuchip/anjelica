@@ -251,7 +251,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(11)&#xa;{&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        verArticulos(jt.getValString(0));&#xa;    }&#xa;}&#xa;"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(11)&#xa;{&#xa;   &#xa;}&#xa;"/>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Codigo&quot;); // 0&#xa;v.add(&quot;Nombre&quot;); // 1&#xa;v.add(&quot;Ex.KG&quot;); // 2&#xa;v.add(&quot;Ex.Pr&quot;); // 3&#xa;v.add(&quot;Com.KG&quot;); // 4&#xa;v.add(&quot;Com.Pr.&quot;); // 5&#xa;v.add(&quot;Pro.KG&quot;); // 6&#xa;v.add(&quot;Pro.Pr&quot;); // 7&#xa;v.add(&quot;Cos.Ex&quot;); // 8&#xa;v.add(&quot;Costo&quot;); // 9&#xa;v.add(&quot;Asig.&quot;); // 10&#xa;jt.setCabecera(v);&#xa;ArrayList vc=new ArrayList();&#xa;vc.add(pve_codiE);&#xa;vc.add(pve_nombE);&#xa;vc.add(cta_kgexisE);&#xa;vc.add(cta_prmexE);&#xa;vc.add(cta_kgcompE);&#xa;vc.add(cta_prcompE);&#xa;vc.add(cta_kgprodE);&#xa;vc.add(cta_prprodE);&#xa;vc.add(cta_cosantE);&#xa;vc.add(cta_costoE);&#xa;vc.add(cta_cosasiE);&#xa; &#xa;        try&#xa;        {&#xa;            jt.setCampos(vc);&#xa;        } catch (Exception k){}&#xa;&#xa;jt.setAnchoColumna(new int[]{100,250,50,40,50,40,50,50,50,50,50});&#xa;jt.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2,2,2,2});&#xa;jt.setFormatoCampos();"/>
           </AuxValues>
           <Constraints>
@@ -478,6 +478,7 @@
             </Component>
             <Component class="gnu.chu.controles.CCheckBox" name="opDesglo">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Desglosar"/>
               </Properties>
               <Constraints>

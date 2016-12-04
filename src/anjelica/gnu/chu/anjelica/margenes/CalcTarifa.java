@@ -11,6 +11,7 @@ import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.PADThread;
 import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventanaPad;
 import java.awt.BorderLayout;
@@ -26,8 +27,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 /**
  *
  * <p>Titulo: CalcTarifa</p>
@@ -222,12 +221,16 @@ public class CalcTarifa extends ventanaPad implements PAD
         });
         jt.addGridListener(new GridAdapter()
         {
-        
+            @Override
+            public void afterCambiaLinea(GridEvent event)
+            {
+                verArticulos(jt.getValString(event.getLinea(),0));
+            }
            @Override
           public void afterCambiaLineaDis(GridEvent event){ 
-                verArticulos(jt.getValString(jt.getSelectedRowDisab(),0));
+                verArticulos(jt.getValString(event.getLinea(),0));
           }
-          });
+        });
         BirGrid.addFocusListener(new FocusAdapter()
         {
            @Override
@@ -239,6 +242,14 @@ public class CalcTarifa extends ventanaPad implements PAD
                if (tar_fecfinE.hasCambio())
                {
                    tar_fecfinE.resetCambio();
+                    try {
+                        ponFechas();
+                    } catch ( ParseException  ex)
+                    {
+                        Error("Error al poner fechas",ex);
+                        return;
+                    }
+
                     if (!llenaGrid())
                         return;
                     Baceptar.setEnabled(true);                     
@@ -311,7 +322,7 @@ public class CalcTarifa extends ventanaPad implements PAD
                     nl++;
                 } while (dtCon1.next());
             }
-          
+            feulin=null;
             for (int n=0;n<nl;n++)
             {
                 calculaCosto(n);               
@@ -521,10 +532,7 @@ public class CalcTarifa extends ventanaPad implements PAD
         eje_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         jt = new gnu.chu.controles.CGridEditable(11)
         {
-            public void afterCambiaLinea()
-            {
-                verArticulos(jt.getValString(0));
-            }
+
         }
         ;
         PPie = new gnu.chu.controles.CPanel();
@@ -713,6 +721,7 @@ public class CalcTarifa extends ventanaPad implements PAD
         PPie.add(fecFinPedE);
         fecFinPedE.setBounds(210, 20, 70, 17);
 
+        opDesglo.setSelected(true);
         opDesglo.setText("Desglosar");
         PPie.add(opDesglo);
         opDesglo.setBounds(290, 20, 73, 17);
@@ -924,6 +933,17 @@ public class CalcTarifa extends ventanaPad implements PAD
     Bvalorar.setEnabled(true);
     jt.requestFocusInicioLater();
   }
+   @Override
+  public void PADDelete()
+  {
+    activar(navegador.DELETE, true);
+    feulin=null;
+    mensaje("Borrando ....");
+    
+    Baceptar.setEnabled(true);
+    Bcancelar.setEnabled(true);
+    Bcancelar.requestFocus();
+  }
     @Override
    public void ej_edit1() {
         try
@@ -1112,17 +1132,12 @@ public class CalcTarifa extends ventanaPad implements PAD
     }
 
    
-
- 
-
-    @Override
-    public void ej_delete1() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+   
     @Override
     public void canc_delete() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        activaTodo();
+        mensajeErr("Borrado de Datos ... Cancelada");        
+        mensaje("");
     }
 
     @Override
@@ -1134,9 +1149,34 @@ public class CalcTarifa extends ventanaPad implements PAD
     {
       if (modo==navegador.TODOS)
         jt.setEnabled(act);
-      Baceptar.setEnabled(act);
+      if (modo==navegador.TODOS)
+      {
+        fecStockE.setEnabled(act);
+        fecIniPedE.setEnabled(act);
+        fecIniProdE.setEnabled(act);
+        fecFinPedE.setEnabled(act);
+        fecFinProdE.setEnabled(act);
+        Bvalorar.setEnabled(act);
+        Bcosto.setEnabled(act);
+      }
+      Baceptar.setEnabled(act);        
       Bcancelar.setEnabled(act);
-      Bvalorar.setEnabled(true);
       PCondi.setEnabled(act);
+    }
+
+    @Override
+    public void ej_delete1() {
+       try
+      {
+          borrarTarifa();
+          dtAdd.commit();
+          activaTodo();
+          verDatos();
+          mensaje("");
+          mensajeErr("Calculos de Tarifa Borrados");
+      } catch (SQLException ex)
+      {
+          Error("Error al borrar tarifas", ex);
+      }
     }
 }
