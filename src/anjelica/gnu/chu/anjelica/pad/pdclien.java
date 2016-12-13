@@ -324,7 +324,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2016-11-09");
+      this.setVersion("2016-12-12");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -1467,7 +1467,27 @@ public class pdclien extends ventanaPad implements PAD
         cli_nifE.requestFocus();
         return false;
       }
-
+      
+      if (cue_codiE.getText().length()!= pdempresa.getLongCuentaCliente(dtStat,EU.em_cod))
+      {
+        mensajeErr("Longitud Cuenta contable no es correcta");
+        cue_codiE.requestFocus();
+        return false;         
+      }
+      
+      if (cue_codiE.getText().length()!= pdempresa.getLongCuentaCliente(dtStat,EU.em_cod))
+      {
+        mensajeErr("Longitud Cuenta contable no es correcta");
+        cue_codiE.requestFocus();
+        return false;         
+      }
+      if (!cue_codiE.getText().endsWith(cli_codfaE.getText().trim()))
+      {
+        mensajeErr("Cuenta contable debe terminar como el cliente a facturar");
+        cue_codiE.requestFocus();
+        return false;                  
+      }
+          
       if (!fpa_codiE.controlar())
       {
         mensajeErr("Introduzca Forma de Pago del Cliente");

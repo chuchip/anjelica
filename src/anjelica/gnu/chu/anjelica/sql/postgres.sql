@@ -1977,7 +1977,7 @@ create table anjelica.empresa
  emp_fax varchar(15),	 -- FAX
  emp_nif varchar(12),	 -- NIF
  emp_empaso int,	     -- Empresa Asociada (SIN USAR)
- emp_empcon int,	     -- Codigo Contable (SIN USAR)
+ emp_loclcc int not null default 9,    -- Longitud cuenta contable cliente
  emp_codint varchar(15), -- Codigo Interno (SIN USAR)
  emp_nurgsa varchar(12), -- Codigo Numero Registro Sanitario
  emp_nomsoc varchar(30), -- Nombre Social
@@ -2008,6 +2008,7 @@ CREATE or replace VIEW anjelica.v_empresa as select emp_codi,emp_nomb ,	 -- Nomb
  emp_telef ,	 -- Telefono
  emp_fax ,	 -- FAX
  emp_nif ,	 -- NIF
+ emp_loclcc -- Longitud campo cliente en contablidad
  emp_nurgsa , -- Codigo Numero Registro Sanitario
  emp_nomsoc , -- Nombre Social
  pai_codi ,	    	 -- Pais por defecto
@@ -4061,6 +4062,25 @@ create table tareasoperarios
     tto_coment varchar(256),        -- Comentario
     constraint ix_tareasoper primary  key (usu_codi,tao_fecha,tao_horini)
 );
+create table preciosmedios
+(
+pro_codi int not null,
+prm_costo float not null
+);
+--
+-- Tabla ajustes costos productos
+-- 
+create table costoprod
+(
+	cap_nume int not null,				-- Identificador
+	cap_linea smallint not null,		-- Linea en la carga
+	cap_fecha date not null,			-- Fecha Variacion costo
+	pro_codi int  not null,				-- Codigo Producto	
+	sbe_codi int not null default 0,	-- Sección Empresa (0:todas)	
+	cap_costo float not null,			-- Costo a Incrementar.	
+	constraint ix_costoprod primary  key (cap_nume,cap_linea)
+);
+create index ix_costopro1 on  costoprod (cap_fecha,pro_codi);
 -- select 'insert into prodtarifa values(''' || pro_codart || ''',' ||  pro_codi || ');' from v_articulo where '' || pro_codi!=pro_codart
 --drop view v_partes;
 create view anjelica.v_partes as select c.*,l.par_linea,l.pro_codi,pal_kilos,pal_unidad,

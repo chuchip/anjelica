@@ -13,7 +13,9 @@ import java.awt.event.KeyEvent;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.vlike;
 import java.net.UnknownHostException;
-
+/**
+ * @todo Incluir campo emp_loclcc en frame
+ */
 
 /**
  *
@@ -889,7 +891,16 @@ public class pdempresa extends ventanaPad   implements PAD
       else
           return lkEmp;
   }
-   public static int getPais(DatosTabla dt, int empCodi) throws SQLException
+  
+  public static int getLongCuentaCliente(DatosTabla dt, int empCodi) throws SQLException
+  {
+      String s="select emp_loclcc from v_empresa WHERE emp_codi = "+empCodi;     
+      if (! dt.select(s))
+          return -1;
+      else
+          return dt.getInt("emp_loclcc");
+  }
+  public static int getPais(DatosTabla dt, int empCodi) throws SQLException
   {
       String s="select pai_codi from v_empresa WHERE emp_codi = "+empCodi;     
       if (!dt.select(s))
