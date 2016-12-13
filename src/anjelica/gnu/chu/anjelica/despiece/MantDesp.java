@@ -2980,14 +2980,24 @@ public class MantDesp extends ventanaPad implements PAD
         try
         {
             if (def_kilosE.getValorDec() == 0)
-            {
                 return -1; // Si NO tengo Kilos paso de todo
-            }
+            
             if (def_kilosE.getValorDec() < 0)
             {
                 mensajeErr("Kilos no pueden estar en negativo");
                 return 0;
             }
+            if (def_numpieE.getValorDec()==0)
+            {
+               mensajeErr("Numero de Piezas deberia ser 1");
+               return JTLIN_UNID;
+            }
+            
+            if (def_numpieE.getValorDec()>1 && !P_ADMIN)
+            {
+               msgBox("Numero de Piezas deberia ser 1");
+               return JTLIN_UNID;
+            }   
             if (def_prcostE.getValorDec() < 0)
             {
                 mensajeErr("Precio de costo no puede estar en negativo");
@@ -2998,6 +3008,7 @@ public class MantDesp extends ventanaPad implements PAD
                 mensajeErr("Codigo de Producto NO valido");
                 return 0;
             }
+            
 //     if (! pro_codlE.isVendible())
 //     {
 //         mensajeErr("Producto NO es vendible");
@@ -4471,13 +4482,13 @@ public class MantDesp extends ventanaPad implements PAD
                     v.add("Fec.Cad"); // 5
                     v.add("N.Ind"); // 6
                     v.add("N.Lin"); // 7
-                    v.add("U/C"); // 8 Unidades Caja
+                    v.add("U/C"); // 8 Unidades por Caja
                     v.add("Pr.Usu"); // 9
                     v.add("Fec.Mvto"); // 10
                     jtLin.setCabecera(v);
 
                     jtLin.setAnchoColumna(new int[]
-                        {54, 220, 70, 50, 70,90, 40, 40,40,70,100});
+                        {54, 220, 70, 40, 70,90, 40, 40,40,70,100});
                     jtLin.setAlinearColumna(new int[]
                         {2, 0, 2, 2, 2, 1,2, 2,2,2,0});
 
