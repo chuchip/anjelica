@@ -380,7 +380,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2016-10-22"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2016-102-13"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -1087,6 +1087,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
 //     else
 //       etiq.setPrintDialog(true);
      etiq.listar(etiqueta.ETIQINT);
+     etiq.setTipoEtiq(dtStat, EU.em_cod, 0);
 //       mensaje("Imprimiendo etiqueta: " + n + " de " + netiintE.getValorInt());
 //     }
    }
@@ -1558,7 +1559,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
   public void canc_addnew() {
     if (deo_codiE.getValorInt()!=0)
     {
-      if (mensajes.mensajeYesNo("Continuar con el Alta?")==mensajes.YES)
+        String txt=
+      txt=mensajes.mensajeGetTexto(" Teclee 'ANULAR' para anular el Alta del despiece","¡¡Atencion!!");
+      if (!txt.toUpperCase().equals("ANULAR"))          
         return;
       try {
         utdesp.copiaDespieceNuevo(dtStat,dtAdd, "Anulada alta de  despiece",EU.usuario,
