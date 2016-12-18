@@ -32,7 +32,7 @@ import gnu.chu.utilidades.SystemOut;
 
 public class CInternalFrame extends javax.swing.JInternalFrame {
 
-    Component focOwer=null;
+    private Component focOwer=null;
     boolean primera=true;
     boolean swFirst=true;
     boolean swMax,swMin,swClo;
@@ -93,8 +93,9 @@ public class CInternalFrame extends javax.swing.JInternalFrame {
               height = height + 10;
            super.setSize(width, height);
     }
+    @Override
     public void setSize(Dimension d) {
-           if (System.getProperty("os.name").toUpperCase().indexOf("WIN") == -1)
+           if (!System.getProperty("os.name").toUpperCase().contains("WIN"))
               d.height = d.height + 10;
            super.setSize(d);
     }
@@ -111,13 +112,13 @@ public class CInternalFrame extends javax.swing.JInternalFrame {
     {
         if (foco==null)
       {
-        if (! b)
-          focOwer=this.getFocusOwner();
-        else
-        {
-          if (focOwer!=null)
-            focOwer.requestFocus();
-        }
+//        if (! b)
+//          focOwer=this.getFocusOwner();
+//        else
+//        {
+//          if (focOwer!=null)
+//            focOwer.requestFocus();
+//        }
         super.setSelected(b);
       }
       else
