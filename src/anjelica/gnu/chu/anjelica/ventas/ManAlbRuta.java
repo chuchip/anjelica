@@ -146,7 +146,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-10-11 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2016-12-15 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -1904,9 +1904,27 @@ public class ManAlbRuta extends ventanaPad implements PAD
                 return false;
             }
         }
+        if (alr_fecsalE.isNull() && alr_fecsalH.getValorInt()>0)
+        {
+            mensajeErr("Si introduce Hora salida. Introduzca el dia");
+            alr_fecsalE.requestFocus();
+            return false;
+        }
+         if (alr_fecregE.isNull() && alr_fecregH.getValorInt()>0)
+        {
+            mensajeErr("Si introduce Hora Regreso. Introduzca el dia");
+            alr_fecregE.requestFocus();
+            return false;
+        }
         if (!rut_codiE.controla())
         {
             mensajeErr("Introduzca ruta");
+            return false;
+        }
+        if (alr_comentE.getText().length()>250)
+        {
+            msgBox("Comentario no debe ser superior a 250 caracteres. Ha metido: "+alr_comentE.getText().length());
+            alr_comentE.requestFocus();
             return false;
         }
 //        if (usu_nombE.isNull())
