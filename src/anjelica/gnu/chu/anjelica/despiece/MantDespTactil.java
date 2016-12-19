@@ -375,7 +375,24 @@ public class MantDespTactil  extends ventanaPad implements PAD
      setErrorInit(true);
    }
  }
-
+ public static String getNombreClase() {
+        return "gnu.chu.anjelica.despiece.MantDespTactil";
+ }
+   public void setDeoCodi(String deoCodi) {
+        deo_codiE.setText(deoCodi);       
+    }
+    public void setEjeNume(String ejeNume)
+    {
+        eje_numeE.setText(ejeNume);
+    }
+    public void setEjeNume(int ejeNume)
+    {
+        eje_numeE.setValorInt(ejeNume);
+    }
+    public boolean inTransation()
+    {
+        return (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
+    }
  private void jbInit() throws Exception
  {
    iniciarFrame();

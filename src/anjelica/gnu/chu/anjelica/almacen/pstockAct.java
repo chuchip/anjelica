@@ -124,7 +124,7 @@ public class pstockAct extends CPanel
     SFami.setMaximumSize(new Dimension(32767, 24));
     SFami.setMinimumSize(new Dimension(23, 24));
     SFami.setPreferredSize(new Dimension(19, 24));
-    cLabel7.setRequestFocusEnabled(true);
+    
     cLabel7.setText("Tarifa");
     cLabel7.setBounds(new Rectangle(144, 2, 35, 16));
     tar_codiE.setAncTexto(25);
@@ -961,7 +961,17 @@ class actionProducto extends MouseAdapter
     else
     {
       if (padre.isEdit())
-        padre.insertarDesgProd(proCodi, precio, 0, "");
+      {
+        SwingUtilities.invokeLater(new Thread()
+        {
+            @Override
+            public void run()
+            {
+                padre.insertarDesgProd(proCodi, precio, 0, "");
+            }
+        });
+        
+      }
       else
         padre.verDesglProd(boton, proCodi, precio);
     }

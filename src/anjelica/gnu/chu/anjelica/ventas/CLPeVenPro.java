@@ -322,7 +322,7 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = " + alm_codiE.getValorInt())+
         (zon_codiE.isNull()?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
         (rep_codiE.isNull()?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'")+
-        (rut_codiE.isNull()?"": " and cl.rut_codi ='"+rut_codiE.getText()+"'"); 
+        (rut_codiE.isNull()?"": " and p.rut_codi ='"+rut_codiE.getText()+"'"); 
      if (verPedidosE.getValor().equals("P"))
       condWhere += " AND (p.avc_ano = 0 or pvc_cerra=0)";
     if (verPedidosE.getValor().equals("L"))
@@ -627,6 +627,7 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         cLabel22.setBounds(0, 20, 30, 18);
 
         rut_codiE.setAncTexto(30);
+        rut_codiE.setFormato(Types.CHAR,"X",2);
         rut_codiE.setMayusculas(true);
         rut_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
         Pcondi.add(rut_codiE);
@@ -673,7 +674,6 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         jtProd.setAjustarGrid(true);
         jtProd.setMaximumSize(new java.awt.Dimension(333, 200));
         jtProd.setMinimumSize(new java.awt.Dimension(333, 200));
-        jtProd.setPreferredSize(new java.awt.Dimension(333, 200));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -687,7 +687,6 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         jtCli.setAjustarGrid(true);
         jtCli.setMaximumSize(new java.awt.Dimension(322, 150));
         jtCli.setMinimumSize(new java.awt.Dimension(322, 150));
-        jtCli.setPreferredSize(new java.awt.Dimension(322, 150));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -699,7 +698,6 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         jtPed.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtPed.setMaximumSize(new java.awt.Dimension(324, 130));
         jtPed.setMinimumSize(new java.awt.Dimension(324, 130));
-        jtPed.setPreferredSize(new java.awt.Dimension(324, 130));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;

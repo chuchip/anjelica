@@ -154,7 +154,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2016-08-30" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2016-12-16" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -174,7 +174,8 @@ public class ValDespi extends ventana {
    @Override
    public void iniciarVentana() throws Exception
    {
-     tid_codiE.iniciar(dtStat, this, vl, EU);
+     tid_codfinE.iniciar(dtStat, this, vl, EU);
+     tid_codiniE.iniciar(dtStat, this, vl, EU);
      feulin=ActualStkPart.getFechaUltInv(0,0,null,dtStat);
      if (feulin == null)
         feulin = "01-01-" + EU.ejercicio; // Buscamos desde el principio del año.
@@ -1960,7 +1961,10 @@ public class ValDespi extends ventana {
                + " where d.deo_fecha>=TO_DATE('"+fecinfE.getText()+"','dd-MM-yy')"
                +(fecsupE.isNull()?"":" and d.deo_fecha<=TO_DATE('"+fecsupE.getText()+"','dd-MM-yy')" )
                + " and d.eje_nume = "+eje_numeE.getValorInt()
-               + (tid_codiE.isNull()?"":" and d.tid_codi = "+tid_codiE.getValorInt())
+               + (tid_codiniE.isNull()?"":" and d.tid_codi "+
+               (tid_codfinE.isNull()?"":">")+
+               "= "+tid_codiniE.getValorInt())
+              + (tid_codfinE.isNull()?"":" and d.tid_codi< "+tid_codfinE.getValorInt())
                + (deo_codiE.getValorInt()==0?"":" and d.eje_nume = "+eje_numeE.getValorInt()
                +" and "+(grupoC.getValor().equals("G")?" d.deo_numdes= ":" d.deo_codi = ")+deo_codiE.getValorInt())
                + (opCerradoC.getValor().equals("T")?"":" and deo_block = '"+opCerradoC.getValor()+"' ")
@@ -2126,7 +2130,7 @@ public class ValDespi extends ventana {
         deo_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#####9");
         cLabel4 = new gnu.chu.controles.CLabel();
         grd_valorE = new gnu.chu.controles.CComboBox();
-        tid_codiE = new gnu.chu.camposdb.tidCodi2();
+        tid_codfinE = new gnu.chu.camposdb.tidCodi2();
         grupoC = new gnu.chu.controles.CComboBox();
         agrupaC = new gnu.chu.controles.CComboBox();
         cLabel3 = new gnu.chu.controles.CLabel();
@@ -2137,6 +2141,8 @@ public class ValDespi extends ventana {
         fecsupE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
         cLabel13 = new gnu.chu.controles.CLabel();
         opCerradoC = new gnu.chu.controles.CComboBox();
+        tid_codiniE = new gnu.chu.camposdb.tidCodi2();
+        cLabel14 = new gnu.chu.controles.CLabel();
         jtDesp = new gnu.chu.controles.Cgrid(10);
         jtCab = new gnu.chu.controles.CGridEditable(9)
         {
@@ -2191,12 +2197,14 @@ public class ValDespi extends ventana {
         setMaximumSize(new java.awt.Dimension(636, 319));
         setMinimumSize(new java.awt.Dimension(636, 319));
 
+        Pprinc.setMinimumSize(new java.awt.Dimension(630, 292));
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcond.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        Pcond.setMaximumSize(new java.awt.Dimension(529, 65));
-        Pcond.setMinimumSize(new java.awt.Dimension(529, 65));
-        Pcond.setPreferredSize(new java.awt.Dimension(529, 65));
+        Pcond.setMaximumSize(new java.awt.Dimension(590, 65));
+        Pcond.setMinimumSize(new java.awt.Dimension(590, 65));
+        Pcond.setPreferredSize(new java.awt.Dimension(590, 65));
+        Pcond.setQuery(true);
         Pcond.setLayout(null);
 
         cLabel1.setText("Ejercicio");
@@ -2205,9 +2213,9 @@ public class ValDespi extends ventana {
         Pcond.add(fecinfE);
         fecinfE.setBounds(70, 20, 60, 17);
 
-        cLabel2.setText("Tipo Despiece");
+        cLabel2.setText("Tipo");
         Pcond.add(cLabel2);
-        cLabel2.setBounds(10, 40, 78, 15);
+        cLabel2.setBounds(10, 40, 40, 15);
         Pcond.add(eje_numeE);
         eje_numeE.setBounds(70, 2, 32, 17);
 
@@ -2225,9 +2233,9 @@ public class ValDespi extends ventana {
         Pcond.add(grd_valorE);
         grd_valorE.setBounds(380, 2, 45, 17);
 
-        tid_codiE.setAncTexto(40);
-        Pcond.add(tid_codiE);
-        tid_codiE.setBounds(100, 40, 250, 17);
+        tid_codfinE.setAncTexto(40);
+        Pcond.add(tid_codfinE);
+        tid_codfinE.setBounds(270, 40, 200, 17);
 
         grupoC.addItem("Despiece", "D");
         grupoC.addItem("Grupo","G");
@@ -2241,7 +2249,7 @@ public class ValDespi extends ventana {
 
         cLabel3.setText("A");
         Pcond.add(cLabel3);
-        cLabel3.setBounds(150, 20, 20, 17);
+        cLabel3.setBounds(250, 40, 20, 17);
         Pcond.add(grd_numeE);
         grd_numeE.setBounds(260, 2, 51, 17);
 
@@ -2253,7 +2261,7 @@ public class ValDespi extends ventana {
         Bbuscar.addMenu("Despieces");
         Bbuscar.addMenu("Albaran de Venta");
         Pcond.add(Bbuscar);
-        Bbuscar.setBounds(380, 40, 120, 24);
+        Bbuscar.setBounds(470, 40, 120, 24);
 
         opVerGrupo.setSelected(true);
         opVerGrupo.setText("Ver Grupos");
@@ -2272,6 +2280,14 @@ public class ValDespi extends ventana {
         opCerradoC.addItem("Todos", "T");
         Pcond.add(opCerradoC);
         opCerradoC.setBounds(420, 20, 100, 17);
+
+        tid_codiniE.setAncTexto(40);
+        Pcond.add(tid_codiniE);
+        tid_codiniE.setBounds(40, 40, 200, 17);
+
+        cLabel14.setText("A");
+        Pcond.add(cLabel14);
+        cLabel14.setBounds(140, 20, 20, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -2310,7 +2326,7 @@ public class ValDespi extends ventana {
         jtDesp.setLayout(jtDespLayout);
         jtDespLayout.setHorizontalGroup(
             jtDespLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 618, Short.MAX_VALUE)
+            .addGap(0, 628, Short.MAX_VALUE)
         );
         jtDespLayout.setVerticalGroup(
             jtDespLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2334,7 +2350,7 @@ public class ValDespi extends ventana {
         jtCab.setLayout(jtCabLayout);
         jtCabLayout.setHorizontalGroup(
             jtCabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 618, Short.MAX_VALUE)
+            .addGap(0, 628, Short.MAX_VALUE)
         );
         jtCabLayout.setVerticalGroup(
             jtCabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2458,7 +2474,7 @@ public class ValDespi extends ventana {
         jtLin.setLayout(jtLinLayout);
         jtLinLayout.setHorizontalGroup(
             jtLinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 618, Short.MAX_VALUE)
+            .addGap(0, 628, Short.MAX_VALUE)
         );
         jtLinLayout.setVerticalGroup(
             jtLinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2619,6 +2635,7 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel13;
+    private gnu.chu.controles.CLabel cLabel14;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -2649,7 +2666,8 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CComboBox opCerradoC;
     private gnu.chu.controles.CCheckBox opVerGrupo;
     private gnu.chu.camposdb.proPanel pro_codiE;
-    private gnu.chu.camposdb.tidCodi2 tid_codiE;
+    private gnu.chu.camposdb.tidCodi2 tid_codfinE;
+    private gnu.chu.camposdb.tidCodi2 tid_codiniE;
     private gnu.chu.controles.CTextField uniCabE;
     private gnu.chu.controles.CTextField uniFinE;
     // End of variables declaration//GEN-END:variables

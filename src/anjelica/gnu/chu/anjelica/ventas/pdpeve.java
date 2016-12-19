@@ -85,7 +85,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   CTextField pvl_prclprE=new CTextField(Types.DECIMAL,"---,--9.99");
   CTextField pvl_dtoproE=new CTextField(Types.DECIMAL,"#9.99");
   CComboBox pvl_tipoE=new CComboBox(); // Types.CHAR,"?",1
-  
+  CLabel cLabel9=new CLabel();
 //  CComboBox alm_codiE = new CComboBox();
   CPanel Pprinc = new CPanel();
   CPanel Pcabe = new CPanel();
@@ -108,14 +108,17 @@ public class pdpeve  extends ventanaPad   implements PAD
   CLabel cLabel4 = new CLabel();
   CTextField pvc_fecpedE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CTextField pvc_horpedE = new CTextField(Types.DECIMAL,"99.99");
-  CLabel pvc_fecentL = new CLabel();
+  CLabel pvc_fecentL = new CLabel("Fec.Entrega");  
   CTextField pvc_fecentE = new CTextField(Types.DATE,"dd-MM-yyyy");
+  CLabel pvc_fecpreL = new CLabel("Fec.Prepar.");
+  CTextField pvc_fecpreE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CButton BirGrid= new CButton();
   CLabel cLabel7 = new CLabel();
   CComboBox pvc_confirE = new CComboBox();
   CLabel pvc_nupeclL = new CLabel();
   CTextField pvc_nupeclE = new CTextField(Types.CHAR,"X",12);
-  CLabel cLabel9 = new CLabel();
+  CLabel rut_codiL = new CLabel("Ruta");
+  CLinkBox rut_codiE= new CLinkBox();
   CTextField usu_nombE = new CTextField(Types.CHAR,"X",20);
   CLabel pvc_comenL = new CLabel();
   CLabel pvc_comalbL = new CLabel("Comentario Ruta");
@@ -274,7 +277,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2016-10-14"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2016-12-18"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -328,7 +331,8 @@ public class pdpeve  extends ventanaPad   implements PAD
           pvl_cantiE.setValorDec(pvl_cantiE.getValorDec() + 1);
           prv_codiE.setValorInt(prvCodi);
           pvl_feccadE.setText(feccad);
-          jt.setEnabled(true);
+          if (! jt.isEnabled())
+            jt.setEnabled(true);
           pro_codiE.getFieldBotonCons().setEnabled(true);
           if (precio != 0)
           {
@@ -405,7 +409,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     cLabel3.setBounds(new Rectangle(3, 20, 57, 16));
     cLabel4.setText("Fec. Ped.");
     cLabel4.setBounds(new Rectangle(2, 4, 59, 16));
-    pvc_fecentL.setText("Fec.Entrega");
+    
     
     cLabel7.setText("Conf");
     cLabel7.setBounds(new Rectangle(474, 20, 33, 16));
@@ -452,14 +456,18 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_horpedE.setBounds(new Rectangle(146, 4, 35, 16));
     pvc_fecpedE.setBounds(new Rectangle(62, 4, 81, 16));
     
-//    pvc_fecentL.setBounds(new Rectangle(331, 20, 67, 16));
-//    pvc_fecentE.setBounds(new Rectangle(396, 20, 75, 16));
     pvc_fecentL.setBounds(new Rectangle(147, 20, 67, 16));
     pvc_fecentE.setBounds(new Rectangle(218, 20, 75, 16));
+    pvc_fecpreL.setBounds(new Rectangle(300, 20, 67, 16));
+    pvc_fecpreE.setBounds(new Rectangle(370, 20, 75, 16));
     BirGrid.setBounds(new Rectangle(295, 20, 1, 1));
     pvc_nupeclL.setBounds(new Rectangle(2, 37, 77, 16));
     pvc_nupeclE.setBounds(new Rectangle(80, 37, 105, 16));
-   
+    rut_codiE.setAncTexto(30);
+    rut_codiE.setMayusculas(true);
+    rut_codiE.setFormato(Types.CHAR,"X",2);
+    rut_codiL.setBounds(new Rectangle(190, 37, 50, 16));
+    rut_codiE.setBounds(new Rectangle(242, 37, 200, 16));
 
     
     pvc_confirE.setBounds(new Rectangle(511, 20, 54, 16));
@@ -543,6 +551,11 @@ public class pdpeve  extends ventanaPad   implements PAD
     Pcomen.add(pvc_comalbS, null);
     Pcabe.add(pvc_nupeclL, null);
     Pcabe.add(pvc_fecentL, null);
+    Pcabe.add(pvc_fecpreL, null);
+    Pcabe.add(pvc_fecpreE, null);
+    Pcabe.add(rut_codiL,null);
+    Pcabe.add(rut_codiE,null);
+
     Pcabe.add(opPedidos, null);
     Pcabe.add(cLabel16, null);
     Pcabe.add(pvc_verfecE, null);
@@ -638,6 +651,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     cli_codiE.iniciar(dtStat, this, vl, EU);
     cli_codiE.iniciar(jf);
     cli_codiE.setAceptaNulo(false);
+    pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS, EU.em_cod);
     pro_codiE.iniciar(dtStat, this, vl, EU);
     pro_codiE.setAceptaInactivo(false);
     prv_codiE.iniciar(dtStat,this,vl,EU);
@@ -712,6 +726,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   @Override
   public void iniciarVentana() throws Exception
   {
+
     Pprinc.setButton(KeyEvent.VK_F2, BirGrid);
     pstock.setPedidos(opPedidos.isSelected());
     pro_codiE.getFieldBotonCons().setEnabled(false);
@@ -723,6 +738,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_numeE.setColumnaAlias("pvc_nume");
     pvc_nupeclE.setColumnaAlias("pvc_nupecl");
     pvc_fecentE.setColumnaAlias("pvc_fecent");
+    rut_codiE.setColumnaAlias("rut_codi");
+    pvc_fecpreE.setColumnaAlias("pvc_fecpre");
     pvc_confirE.setColumnaAlias("pvc_confir");
 //    alm_codiE.setColumnaAlias("alm_codi");
     avc_anoE.setColumnaAlias("avc_ano");
@@ -1084,6 +1101,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     cli_codiE.setQuery(query);
     pvc_nupeclE.setQuery(query);
     pvc_fecentE.setQuery(query);
+    rut_codiE.setQuery(query);
+    pvc_fecpreE.setQuery(query);
     pvc_confirE.setQuery(query);
     pvc_comenE.setQuery(query);
     eje_numeE.setQuery(query);
@@ -1104,7 +1123,9 @@ public class pdpeve  extends ventanaPad   implements PAD
     cli_codiE.resetTexto();
     cli_poblE.setText("");
     pvc_nupeclE.resetTexto();
+    pvc_fecpreE.resetTexto();
     pvc_fecentE.resetTexto();
+    rut_codiE.resetTexto();
     pvc_confirE.resetTexto();
     pvc_comenE.resetTexto();
     
@@ -1142,6 +1163,8 @@ public class pdpeve  extends ventanaPad   implements PAD
      v.add(eje_numeE.getStrQuery());
      v.add(pvc_numeE.getStrQuery());
      v.add(pvc_fecentE.getStrQuery());
+     v.add(rut_codiE.getStrQuery());
+     v.add(pvc_fecpreE.getStrQuery());
      v.add(cli_codiE.getStrQuery());
      v.add(pvc_confirE.getStrQuery());
      v.add(avc_anoE.getStrQuery());
@@ -1268,6 +1291,8 @@ public class pdpeve  extends ventanaPad   implements PAD
       pvc_verfecE.setEnabled(opVerProd.getValor().equals(""+pstockAct.VER_ULTVENTAS));
       pvl_precioE.resetCambio();
       pvc_fecentE.resetCambio();
+      rut_codiE.resetCambio();
+      pvc_fecpreE.resetCambio();
 //      pvc_estadE.setValor("P");
       jt.setEnabled(true);
       pro_codiE.getFieldBotonCons().setEnabled(true);
@@ -1339,7 +1364,7 @@ public class pdpeve  extends ventanaPad   implements PAD
      mensajeErr("Pedido ... MODIFICADO");
      nav.pulsado=navegador.NINGUNO;
    }
-   catch (SQLException k)
+   catch (SQLException | ParseException k)
    {
      Error("Error al Insertar Pedido", k);
      return;
@@ -1378,6 +1403,8 @@ public class pdpeve  extends ventanaPad   implements PAD
           jt.removeAllDatos();
           pvc_incfraE.setSelected(false);
           pvc_fecentE.resetCambio();
+          rut_codiE.resetCambio();
+          pvc_fecpreE.resetCambio();
           pvc_confirE.setValor("S");
           pvc_verfecE.setEnabled(opVerProd.getValor().equals("" + pstockAct.VER_ULTVENTAS));
           cli_codiE.resetTexto();
@@ -1443,6 +1470,21 @@ public class pdpeve  extends ventanaPad   implements PAD
         mensajeErr("Fecha de Entrega NO puede ser inferior a la de hoy");
         pvc_fecentE.requestFocus();
         return false;
+      }
+      if (pvc_fecpreE.isNull())
+          pvc_fecpreE.setText(pvc_fecentE.getText());
+      if (Formatear.comparaFechas(pvc_fecentE.getDate(),pvc_fecpreE.getDate())<0)
+      {
+        mensajeErr("Fecha de preparacion no puede ser superior a la de Entrega");
+        rut_codiE.requestFocus();
+        return false;
+      }
+      if (!rut_codiE.controla())
+      {
+        mensajeErr("Ruta de entrega no es valida");
+        rut_codiE.requestFocus();
+        return false;
+          
       }
       if (pvc_estadE.getValor().equals("L") && ! P_ADMIN)
       {
@@ -1598,7 +1640,7 @@ public class pdpeve  extends ventanaPad   implements PAD
  
   }
 
-  private void actCabecera() throws  SQLException
+  private void actCabecera() throws  SQLException,ParseException
   {
     dtAdd.setDato("cli_codi",cli_codiE.getValorInt());
     dtAdd.setDato("pvc_depos",pvc_deposE.getValor());
@@ -1606,10 +1648,15 @@ public class pdpeve  extends ventanaPad   implements PAD
     dtAdd.setDato("alm_codi", ALMACEN); //alm_codiE.getValorInt());
     dtAdd.setDato("pvc_incfra", pvc_incfraE.isSelected()?"S":"N"); //alm_codiE.getValorInt());
     dtAdd.setDato("pvc_fecped","current_timestamp");
-    dtAdd.setDato("pvc_fecent",pvc_fecentE.getText(),"dd-MM-yyyy");
+    dtAdd.setDato("pvc_fecent",pvc_fecentE.getDate());
+    dtAdd.setDato("pvc_fecpre",pvc_fecpreE.getDate());
+    dtAdd.setDato("rut_codi",rut_codiE.getText());
     dtAdd.setDato("pvc_confir",pvc_confirE.getValor());
     dtAdd.setDato("pvc_comen",Formatear.strCorta(pvc_comenE.getText(),200));
     dtAdd.setDato("pvc_comrep",Formatear.strCorta(pvc_comrepE.getText(),200));
+
+    dtAdd.setDato("pvc_fecpre",pvc_fecpreE.getDate());
+    
     if (nav.getPulsado()==navegador.EDIT)
     {
         if (pvc_estadE.getValor().equals("C"))
@@ -1760,6 +1807,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_deposE.setEnabled(b);
     pvc_nupeclE.setEnabled(b);
     pvc_fecentE.setEnabled(b);
+    rut_codiE.setEnabled(b);
+    pvc_fecpreE.setEnabled(b);
     pvc_confirE.setEnabled(b);
     if (modo!=navegador.QUERY)
     {
@@ -1803,6 +1852,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     cli_poblE.setText("");
     pvc_nupeclE.resetTexto();
     pvc_fecentE.resetTexto();
+    rut_codiE.resetTexto();
+    pvc_fecpreE.resetTexto();
     pvc_confirE.resetTexto();
     pvc_comenE.resetTexto();
     pvc_comrepE.resetTexto();
@@ -1830,6 +1881,8 @@ public class pdpeve  extends ventanaPad   implements PAD
       cli_poblE.setText(cli_codiE.getLikeCliente().getString("cli_pobl"));
       pvc_nupeclE.setText(dtCon1.getString("pvc_nupecl"));
       pvc_fecentE.setText(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy"));
+      rut_codiE.setText(dtCon1.getString("rut_codi"));
+      pvc_fecpreE.setText(dtCon1.getFecha("pvc_fecpre","dd-MM-yyyy"));
       pvc_confirE.setValor(dtCon1.getString("pvc_confir"));
       pvc_comenE.setText(dtCon1.getString("pvc_comen"));
       pvc_comrepE.setText(dtCon1.getString("pvc_comrep"));
@@ -2019,86 +2072,84 @@ public class pdpeve  extends ventanaPad   implements PAD
        Error("Error al imprimir Pedido Venta", k);
      }
    }
-    public void irGrid()
-    {
-        try {
-        if (nav.pulsado == navegador.QUERY)
-            return;
-        if (! cli_codiE.controlar())
+   public void irGrid() {
+        try
         {
-            mensajeErr("Cliente no valido");
-            return;
-        }
-        if (! cli_codiE.isActivo()) 
-        {
-            mensajeErr("Cliente NO esta activo");
-            cli_codiE.requestFocus();
-            return;
-        }
-        if (! jt.isEnabled())
-            jt.setEnabled(true);
-       
-       if (cli_codiE.hasCambio())
-       {
-           cli_codiE.resetCambio();
-       
-        if ( cli_codiE.getLikeCliente().getInt("cli_gener")==0 && nav.getPulsado()==navegador.ADDNEW)
-        {
-         s="select p.eje_nume,p.pvc_nume,p.avc_ano,p.avc_serie,p.avc_nume,avc_impres,pvc_fecent from pedvenc as p left join v_albavec as a on p.avc_ano=a.avc_ano "+
-             " and p.avc_nume = a.avc_nume and p.avc_serie = a.avc_serie "
-             + " where p.cli_codi = "+cli_codiE.getValorInt()+
-             " and pvc_fecent >= '"+ Formatear.getFechaDB(Formatear.sumaDiasDate(pvc_fecentE.getDate(),-7))+"'"+
-             " and pvc_confir!='C'"+
-             " order by avc_nume asc";
-            if (dtStat.select(s))
+            if (nav.pulsado != navegador.EDIT && nav.pulsado != navegador.ADDNEW)
+                return;
+            if (!cli_codiE.controlar())
             {
-                int res = -1;
-                if (dtStat.getInt("avc_nume") == 0)
-                    res = mensajes.mensajePreguntar("Cliente ya tiene pedido " + dtStat.getInt("pvc_nume")
-                        + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy") + " sin preparar. ¿ Editar pedido ?");
-                else
+                mensajeErr("Cliente no valido");
+                return;
+            }
+            if (!cli_codiE.isActivo())
+            {
+                mensajeErr("Cliente NO esta activo");
+                cli_codiE.requestFocus();
+                return;
+            }
+            if (!jt.isEnabled())
+                jt.setEnabled(true);
+
+            if (cli_codiE.hasCambio())
+            {
+                cli_codiE.resetCambio();
+                rut_codiE.setText(cli_codiE.getLikeCliente().getString("rut_codi"));
+                if (cli_codiE.getLikeCliente().getInt("cli_gener") == 0 && nav.getPulsado() == navegador.ADDNEW)
                 {
-                    do
+                    s = "select p.eje_nume,p.pvc_nume,p.avc_ano,p.avc_serie,p.avc_nume,avc_impres,pvc_fecent from pedvenc as p left join v_albavec as a on p.avc_ano=a.avc_ano "
+                        + " and p.avc_nume = a.avc_nume and p.avc_serie = a.avc_serie "
+                        + " where p.cli_codi = " + cli_codiE.getValorInt()
+                        + " and pvc_fecent >= '" + Formatear.getFechaDB(Formatear.sumaDiasDate(pvc_fecentE.getDate(), -7)) + "'"
+                        + " and pvc_confir!='C'"
+                        + " order by avc_nume asc";
+                    if (dtStat.select(s))
                     {
-                        if ((dtStat.getInt("avc_impres", true) & 1) == 0 && dtStat.getString("avc_serie").equals("A"))
+                        int res = -1;
+                        if (dtStat.getInt("avc_nume") == 0)
+                            res = mensajes.mensajePreguntar("Cliente ya tiene pedido " + dtStat.getInt("pvc_nume")
+                                + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy") + " sin preparar. ¿ Editar pedido ?");
+                        else
                         {
-                            res = mensajes.mensajePreguntar("Cliente con albaran " + dtStat.getInt("avc_nume")
-                                + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy")
-                                + " preparado sin servir. ¿ Editar Pedido ?");
-                            break;
-                        }                       
-                    } while (dtStat.next());                   
-                }
-                if (res == mensajes.YES)
-                {
-                    if (dtCons.select("select * from pedvenc where eje_nume = "+dtStat.getInt("eje_nume")
-                        + " and pvc_nume = " + dtStat.getInt("pvc_nume")))
-                    {
-                        nav.pulsado = navegador.NINGUNO;
-                        activaTodo();
-                        verDatos();
-                        nav.pulsado = navegador.EDIT;
-                        PADEdit();
+                            do
+                            {
+                                if ((dtStat.getInt("avc_impres", true) & 1) == 0 && dtStat.getString("avc_serie").equals("A"))
+                                {
+                                    res = mensajes.mensajePreguntar("Cliente con albaran " + dtStat.getInt("avc_nume")
+                                        + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy")
+                                        + " preparado sin servir. ¿ Editar Pedido ?");
+                                    break;
+                                }
+                            } while (dtStat.next());
+                        }
+                        if (res == mensajes.YES)
+                        {
+                            if (dtCons.select("select * from pedvenc where eje_nume = " + dtStat.getInt("eje_nume")
+                                + " and pvc_nume = " + dtStat.getInt("pvc_nume")))
+                            {
+                                nav.pulsado = navegador.NINGUNO;
+                                activaTodo();
+                                verDatos();
+                                nav.pulsado = navegador.EDIT;
+                                PADEdit();
+                            }
+                        }
                     }
                 }
             }
-        }
-       }   
-       if (cli_codiE.getTarifa() != pstock.getTarifa())
-         pstock.setTarifa(cli_codiE.getTarifa());
-       if (opVerProd.getValor().equals("" + pstockAct.VER_ULTVENTAS))
-         pstock.setCliente(cli_codiE.getValorInt());
-      
-      
-        
-       pstock.verFamilias();
-         
-        jt.requestFocusInicioLater();
+            if (cli_codiE.getTarifa() != pstock.getTarifa())
+                pstock.setTarifa(cli_codiE.getTarifa());
+            if (opVerProd.getValor().equals("" + pstockAct.VER_ULTVENTAS))
+                pstock.setCliente(cli_codiE.getValorInt());
+
+            pstock.verFamilias();
+
+            jt.requestFocusInicioLater();
         } catch (SQLException | ParseException k)
         {
-            Error("Error al ir al grid",k);
+            Error("Error al ir al grid", k);
         }
-    }
+   }
    public void setCliente(int cliCodi)
    {
        cli_codiE.setValorInt(cliCodi);

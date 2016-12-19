@@ -83,6 +83,7 @@ public class MvtosAlma
   double kgEntDes=0;
   private ventana padre;
   private EntornoUsuario EU;
+  private boolean swAjusteCostos=false;
   private String msgLog="",msgDesp="",msgCompra="";
   private boolean cancelarConsulta=false;
   private double preStk,canStk;
@@ -419,6 +420,8 @@ public class MvtosAlma
             " and mvt_time::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy"+
              (incluyeHora?"hh:mm:ss":"")+"') "; 
     }
+    
+    
     if (swIncSalDep && ! swSoloInv)
     {
         numProd++; 
@@ -1182,6 +1185,8 @@ public class MvtosAlma
             if  (tipMov.equals("S"))
                 tipMov="-";
         }
+        
+       
         boolean avcSerieX=dt.getString("avc_serie").equals("X");
         sel=dt.getString("sel").charAt(0);
         if (dt.getString("sel").equals("DE"))
@@ -1442,6 +1447,7 @@ public class MvtosAlma
                 unid = uniStk - dt.getInt("unidades");
             }
          } // Fin de negativo
+        
          if (swDesglInd)
             ht.put(ref, cantiInd);
         preStk=precio;
@@ -1497,6 +1503,8 @@ public class MvtosAlma
             continue; // No ver salidas de depositos.
           if (sel=='V' && dt.getInt("div_codi")<=0 && ! isRootAV())
             continue;
+          
+          // Introduce Valores en ArrayList (mostrar en pantalla)
           ArrayList v = new ArrayList();
           v.add(dt.getTimeStamp("fecmov"));
           if (tipMov.equals("+") || tipMov.equals("="))
@@ -1595,7 +1603,7 @@ public class MvtosAlma
           jt.addLinea(v);
         }
       } while (dt.next());
-
+    
       return true;
   }
 
@@ -1790,6 +1798,22 @@ public class MvtosAlma
      if (papa!=null)
          EU=papa.EU;
   }
+  /**
+   * Establece si se deben sumar los ajustes de costos
+   * @param incAjusteCostos 
+   */
+  public void setIncAjusteCostos(boolean incAjusteCostos)
+  {
+      swAjusteCostos=incAjusteCostos;
+  }
+  public boolean getIncAjusteCostos()
+  {
+      return swAjusteCostos;
+  }
+  /**
+   * Establece la variable del entorno usuario
+   * @param eu 
+   */
   public void setEntornoUsuario(EntornoUsuario eu)
   {
     EU=eu;

@@ -404,6 +404,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   {
     if (etiCodi==this.tipoEtiq)
       return true;
+    
     if (etiCodi==0)
       return setEtiquetaDefault(dt,empCodi);
     dt=getDatosRep(dt,empCodi,etiCodi);

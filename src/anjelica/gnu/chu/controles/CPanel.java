@@ -356,6 +356,7 @@ public void setAltButton(AbstractButton b)
   * @return true si alguno de los componentes de el Tiene un Error.
   *         false si Ninguno esta en Error.
   */
+  @Override
  public Component getErrorConf()
  {
    Component[] lista = this.getComponents();
@@ -390,6 +391,7 @@ public void setAltButton(AbstractButton b)
    * @param tecla
    * @return 
    */
+  @Override
   public AbstractButton getButton(int tecla)
  {
    return estatic.getButtonPanel(tecla,htButton, this);
@@ -412,6 +414,7 @@ public void setAltButton(AbstractButton b)
        {}
      }
  }
+  @Override
  public String getColumnaAlias()
  {
    return "";

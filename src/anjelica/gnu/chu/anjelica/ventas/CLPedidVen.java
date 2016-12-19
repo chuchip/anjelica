@@ -574,7 +574,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      if (!cli_codiE.isNull())
          swCliente=true;
      s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_poble,"
-         + " cl.rut_codi, al.rut_nomb FROM pedvenc as c"
+         + " c.rut_codi, al.rut_nomb FROM pedvenc as c"
          + " left join v_albavec as av on c.avc_ano = av.avc_ano "
          + " and c.avc_serie= av.avc_serie and c.avc_nume =  av.avc_nume "
          + ",clientes as cl,v_rutas as al " +       
@@ -583,11 +583,10 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         " and c.alm_codi >= " + alm_codiE.getValorInt() +
         " and c.pvc_confir = 'S' "+
         " and cl.cli_codi = c.cli_codi " +
-        " and cl.rut_codi = al.rut_codi "+     
+        " and c.rut_codi = al.rut_codi "+     
         (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = "+sbe_codiE.getValorInt())+
         (zon_codiE.isNull() || swCliente?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
         (rep_codiE.isNull() || swCliente?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'");
-;
 
     if (verPedidosE.getValor().equals("P"))
       s += " AND (c.avc_ano = 0 or pvc_cerra=0)";
@@ -948,6 +947,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         Pcabe.add(cLabel22);
         cLabel22.setBounds(350, 65, 40, 18);
 
+        rut_codiE.setFormato(Types.CHAR,"X",2);
         rut_codiE.setAncTexto(30);
         rut_codiE.setMayusculas(true);
         rut_codiE.setPreferredSize(new java.awt.Dimension(152, 18));

@@ -3356,6 +3356,8 @@ create table anjelica.pedvenc;
  pvc_incfra char(1) not null default 'N', -- Incluir Fra?
  pvc_comrep varchar(200),	    -- Comentario para Reparto
  pvc_depos char(1) not null default 'N', -- Deposito ?
+ rut_codi varchar(2),			-- Ruta
+ pvc_fecpre date,				-- Fecha Preparación
  constraint ix_pedvenc primary key(emp_codi,eje_nume,pvc_nume)
 );
 --
@@ -3448,8 +3450,8 @@ create table anjelica.pedvenmod
  constraint ox_pedvenmod primary key(emp_codi,eje_nume,pvc_nume,pvl_numlin)
 );
 drop view anjelica.v_pedven;
-create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
- pvc_fecent, pvc_comen , pvc_comrep, pvc_confir , avc_ano , avc_serie , avc_nume ,
+create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,pvc_fecpre,
+ rut_codi,pvc_fecent, pvc_comen , pvc_comrep, pvc_confir , avc_ano , avc_serie , avc_nume ,
  c.usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,pvc_depos,
  l.pvl_numlin, pvl_kilos,pvl_canti,pvm_canti,pvm_coment,pvl_unid,pvl_tipo, l.pro_codi, ar.pro_nomb as pvl_nomart,ar.pro_codart,pve_nomb,
  pvl_comen, pvl_precio ,pvl_precon ,prv_codi,pvl_feccad, pvl_fecped, pvl_fecmod,m.usu_nomb as pvm_usunom,pvm_fecha  from 
@@ -3461,7 +3463,7 @@ create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc
  and c.eje_nume=l.eje_nume and c.pvc_nume = l.pvc_nume 
  and l.pro_codi = ar.pro_codi;
 grant select on anjelica.v_pedven to public;
-grant select on anjelica.v_pedven to public;
+
 
 --drop view anjelica.v_hispedven;
 create or replace view anjelica.v_hispedven as select  c.his_rowid as his_rowid,c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
@@ -3809,6 +3811,7 @@ create table anjelica.stockpart
 	stp_feccad date,	-- Fecha de Caducidad
 	stp_numpal sallint, -- Numero Palet
 	stp_numcaj smallint, -- Numero caja
+	cam_codi varchar(2), -- Camara en que esta ubicada
 	constraint ix_stockpart primary key (pro_codi,eje_nume,pro_serie,pro_nupar,pro_numind);
 );
 create index ix_stkpart1 on anjelica.stockpart(eje_nume,pro_serie,pro_nupar,pro_numind,pro_codi);
@@ -4006,6 +4009,7 @@ create table prodventa
 	pve_curac smallint default 0 not null, -- Curación
 	constraint ix_prodventa primary  key (pve_codi)
 );
+grant select on  anjelica.prodventa to public;
 -- 
 -- Productos de tarifa
 --
@@ -4014,7 +4018,7 @@ create table prodtarifa
 	pve_codi varchar(15) not null, -- Referencia producto Venta
 	pro_codi int  not null         -- Codigo Producto	
 );
-
+grant select on  anjelica.prodtarifa to public;
 --
 -- Tabla para calculos tarifas
 --

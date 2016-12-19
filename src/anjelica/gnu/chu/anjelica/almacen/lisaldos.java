@@ -98,7 +98,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   Cgrid jt = new Cgrid(7);
   CLabel cLabel5 = new CLabel();
   proPanel pro_codiE = new proPanel();
-  
+  CCheckBox opAjuCosto = new CCheckBox("Aj. Costos");
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   Cgrid jtMv = new Cgrid(7);
   proPanel pro_codmvE = new proPanel();
@@ -240,7 +240,9 @@ public class lisaldos   extends ventana  implements JRDataSource
     
     cLabel5.setText("Producto");
     cLabel5.setBounds(new Rectangle(4, 3, 59, 17));
-    pro_codiE.setBounds(new Rectangle(63, 2, 452, 17));
+    pro_codiE.setBounds(new Rectangle(63, 2, 380, 17));
+    opAjuCosto.setToolTipText("Incluir Ajustes Costos");
+    opAjuCosto.setBounds(new Rectangle(452, 2, 75, 17));
     Pprinc.setInputVerifier(null);
     Pdatcon.setMinimumSize(new Dimension(540, 91));
     Pdatcon.setPreferredSize(new Dimension(540, 91));
@@ -288,6 +290,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     Pdatcon.add(cLabel2, null);
     Pdatcon.add(cLabel5, null);
     Pdatcon.add(pro_codiE, null);
+    Pdatcon.add(opAjuCosto, null);
     Pdatcon.add(fecsalE, null);
     Pdatcon.add(cLabel6, null);
     Pprinc.add(jt, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -633,8 +636,9 @@ public class lisaldos   extends ventana  implements JRDataSource
       mvtosAlm.setIgnDespSinValor(opIgnDespSVal.isSelected());
       mvtosAlm.setAlmacen(alm_inicE.getValorInt());
       mvtosAlm.setEntornoUsuario(EU);
+      mvtosAlm.setIncAjusteCostos(opAjuCosto.isSelected());
       mvtosAlm.setSoloInventario(fecsalE.getText().equals(feulinE.getText()));
-
+      
       if (!alm_inicE.isNull())
           mvtosAlm.setIncluyeSerieX(true);
       mvtosAlm.iniciarMvtos(feulin,fecsalE.getText(),dtCon1);

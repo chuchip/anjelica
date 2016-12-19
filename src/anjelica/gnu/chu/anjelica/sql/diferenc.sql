@@ -1,3 +1,15 @@
+-- 
+-- Incluir Camara en Stock-partidas 
+--
+alter table  stockpart add cam_codi varchar(2);
+--
+-- Incluir ruta y fecha preparacion en Pedidos ventas
+---
+alter table pedvenc add rut_codi varchar(2);  
+alter table hispedvenc add rut_codi varchar(2) ;
+alter table pedvenc add pvc_fecpre date; 
+alter table hispedvenc add pvc_fecpre date;
+
 alter table empresa rename emp_empcon to emp_loclcc;
 update  empresa set emp_loclcc= 9;
 alter table empresa alter emp_loclcc set not null;
@@ -49,6 +61,7 @@ alter table deorcahis add cli_codi int; -- Cliente para el que se hace el despie
 --
 alter table pedvenc add pvc_depos char(1) not null default 'N'; -- Deposito ?alter table pedvenc add
 alter table hispedvenc add pvc_depos char(1) not null default 'N';
+
 -- 
 alter table pedvenc add pvc_incfra char(1) not null default 'N'; -- Incluir Fra?
 alter table hispedvenc add pvc_incfra char(1) not null default 'N'; -- Incluir Fra?
@@ -446,7 +459,7 @@ alter table anjelica.clientes alter cli_email2  type char(60);
 alter table v_proveedo add prv_intern smallint;
 update v_proveedo set prv_intern=0;
 alter table v_proveedo alter prv_intern set not null;
--- MOdificacion Cabecera Pedidos Compras
+-- MOdificacion Cabecera Pedidos Ventas
 alter table pedicoc add sbe_codi smallint;
 update pedicoc set sbe_codi=1;
 alter table pedicoc alter sbe_codi set not null;

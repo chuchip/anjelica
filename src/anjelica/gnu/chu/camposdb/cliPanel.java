@@ -96,6 +96,7 @@ public class cliPanel extends CPanel
       SystemOut.print(ex);
     }
   }
+  
   @Override
   protected void finalize() throws Throwable 
   {
@@ -217,7 +218,7 @@ public class cliPanel extends CPanel
   @Override
   public void requestFocus()
   {
-    super.requestFocus();
+//    super.requestFocus();
     cli_codiE.requestFocus();
   }
   /**
@@ -233,6 +234,7 @@ public class cliPanel extends CPanel
   {
     Bcons.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         consCli();
@@ -245,7 +247,9 @@ public class cliPanel extends CPanel
       {
         @Override
         public void focusGained(FocusEvent e)
-        {}
+        {
+            int a=1;
+        }
 
         @Override
         public void focusLost(FocusEvent e)
@@ -498,6 +502,7 @@ public void setZona(String zonCli)
   public String getMsgError() {
     return MsgError;
   }
+  @Override
   public void setText(String texto) {
 
     cli_codiE.setText(texto);

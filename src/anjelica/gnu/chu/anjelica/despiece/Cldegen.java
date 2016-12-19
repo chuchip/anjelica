@@ -2,7 +2,7 @@
  *
  * <p>Titulo: cldegen</p>
  * <p>Descripción: Consulta/Listado Despieces Generados</p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2016
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -82,7 +82,7 @@ public class Cldegen extends ventana
 
         iniciarFrame(); 
        
-        this.setVersion("2011-11-14");
+        this.setVersion("2016-12-16");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -264,6 +264,7 @@ public class Cldegen extends ventana
         condWhere= " l.eje_nume= C.EJE_NUME "
              + " and deo_fecha >= TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') "
              + " and deo_fecha <= TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy') "
+             + (opSoloValor.isSelected()?" and deo_valor = 'S'":"")
              + (opVer.getValor().equals("T") ? "" : " and c.deo_incval='" + opVer.getValor() + "' ")
              + (tid_codiE.isNull()?"":" and c.tid_codi = "+tid_codiE.getValorInt())
              + " and c.deo_codi = l.deo_codi "
@@ -386,37 +387,38 @@ public class Cldegen extends ventana
 
         Pprinc = new gnu.chu.controles.CPanel();
         Pentra = new gnu.chu.controles.CPanel();
-        cLabel1 = new gnu.chu.controles.CLabel();
+        CLabel1 = new gnu.chu.controles.CLabel();
         feciniE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
-        cLabel2 = new gnu.chu.controles.CLabel();
+        CLabel2 = new gnu.chu.controles.CLabel();
         fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
-        cLabel3 = new gnu.chu.controles.CLabel();
+        CLabel3 = new gnu.chu.controles.CLabel();
         fam_codiE = new gnu.chu.controles.CLinkBox();
-        cLabel4 = new gnu.chu.controles.CLabel();
+        CLabel4 = new gnu.chu.controles.CLabel();
         tipoProdE = new gnu.chu.controles.CComboBox();
-        cLabel8 = new gnu.chu.controles.CLabel();
+        CLabel8 = new gnu.chu.controles.CLabel();
         opVer = new gnu.chu.controles.CComboBox();
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
-        cLabel10 = new gnu.chu.controles.CLabel();
+        CLabel10 = new gnu.chu.controles.CLabel();
         grp_codiE = new gnu.chu.controles.CLinkBox();
-        cLabel11 = new gnu.chu.controles.CLabel();
+        CLabel11 = new gnu.chu.controles.CLabel();
         alm_codiE = new gnu.chu.controles.CLinkBox();
-        cLabel12 = new gnu.chu.controles.CLabel();
+        CLabel12 = new gnu.chu.controles.CLabel();
         tipoProenE = new gnu.chu.controles.CComboBox();
-        opIncReg = new gnu.chu.controles.CCheckBox();
-        cLabel13 = new gnu.chu.controles.CLabel();
+        CLabel13 = new gnu.chu.controles.CLabel();
         tid_codiE = new gnu.chu.camposdb.tidCodi2();
-        cLabel9 = new gnu.chu.controles.CLabel();
+        CLabel9 = new gnu.chu.controles.CLabel();
         fam_codiE1 = new gnu.chu.controles.CLinkBox();
-        cLabel14 = new gnu.chu.controles.CLabel();
+        CLabel14 = new gnu.chu.controles.CLabel();
         fam_codentE = new gnu.chu.controles.CLinkBox();
+        opSoloValor = new gnu.chu.controles.CCheckBox();
+        opIncReg = new gnu.chu.controles.CCheckBox();
         jtDes = new gnu.chu.controles.Cgrid(9);
         Pfinal = new gnu.chu.controles.CPanel();
-        cLabel5 = new gnu.chu.controles.CLabel();
+        CLabel5 = new gnu.chu.controles.CLabel();
         unidTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9");
-        cLabel6 = new gnu.chu.controles.CLabel();
+        CLabel6 = new gnu.chu.controles.CLabel();
         kilTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9.9");
-        cLabel7 = new gnu.chu.controles.CLabel();
+        CLabel7 = new gnu.chu.controles.CLabel();
         impTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.9");
         opDesgl = new gnu.chu.controles.CCheckBox();
         Bprint = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
@@ -431,34 +433,34 @@ public class Cldegen extends ventana
         Pentra.setQuery(true);
         Pentra.setLayout(null);
 
-        cLabel1.setText("De Fecha");
-        Pentra.add(cLabel1);
-        cLabel1.setBounds(10, 1, 55, 15);
+        CLabel1.setText("De Fecha");
+        Pentra.add(CLabel1);
+        CLabel1.setBounds(10, 1, 55, 15);
 
         feciniE.setMinimumSize(new java.awt.Dimension(2, 18));
         feciniE.setPreferredSize(new java.awt.Dimension(2, 18));
         Pentra.add(feciniE);
         feciniE.setBounds(60, 1, 79, 19);
 
-        cLabel2.setText("A Fecha");
-        cLabel2.setPreferredSize(new java.awt.Dimension(43, 18));
-        Pentra.add(cLabel2);
-        cLabel2.setBounds(160, 1, 44, 18);
+        CLabel2.setText("A Fecha");
+        CLabel2.setPreferredSize(new java.awt.Dimension(43, 18));
+        Pentra.add(CLabel2);
+        CLabel2.setBounds(160, 1, 44, 18);
         Pentra.add(fecfinE);
         fecfinE.setBounds(210, 1, 79, 19);
 
-        cLabel3.setText("Familia");
-        Pentra.add(cLabel3);
-        cLabel3.setBounds(238, 45, 38, 18);
+        CLabel3.setText("Familia");
+        Pentra.add(CLabel3);
+        CLabel3.setBounds(238, 45, 38, 18);
 
         fam_codiE.setAncTexto(30);
         fam_codiE.setFormato(Types.DECIMAL,"##9");
         Pentra.add(fam_codiE);
         fam_codiE.setBounds(283, 45, 270, 18);
 
-        cLabel4.setText("Tipo Prod. Generado");
-        Pentra.add(cLabel4);
-        cLabel4.setBounds(3, 24, 136, 18);
+        CLabel4.setText("Tipo Prod. Generado");
+        Pentra.add(CLabel4);
+        CLabel4.setBounds(3, 24, 136, 18);
 
         tipoProdE.setMinimumSize(new java.awt.Dimension(123, 18));
         tipoProdE.addItem("Todos", "T");
@@ -467,43 +469,43 @@ public class Cldegen extends ventana
         Pentra.add(tipoProdE);
         tipoProdE.setBounds(129, 24, 140, 18);
 
-        cLabel8.setText("Ver");
-        cLabel8.setPreferredSize(new java.awt.Dimension(20, 18));
-        Pentra.add(cLabel8);
-        cLabel8.setBounds(360, 1, 20, 19);
+        CLabel8.setText("Ver");
+        CLabel8.setPreferredSize(new java.awt.Dimension(20, 18));
+        Pentra.add(CLabel8);
+        CLabel8.setBounds(300, 0, 20, 19);
 
         opVer.setPreferredSize(new java.awt.Dimension(28, 18));
         opVer.addItem("Todos","T");
         opVer.addItem("Procesado","S");
         opVer.addItem("No Procesado","N");
         Pentra.add(opVer);
-        opVer.setBounds(399, 1, 140, 19);
+        opVer.setBounds(340, 0, 120, 19);
 
         Baceptar.setText("Aceptar");
         Pentra.add(Baceptar);
         Baceptar.setBounds(440, 90, 110, 27);
 
-        cLabel10.setText("Grupo");
-        Pentra.add(cLabel10);
-        cLabel10.setBounds(3, 45, 34, 18);
+        CLabel10.setText("Grupo");
+        Pentra.add(CLabel10);
+        CLabel10.setBounds(3, 45, 34, 18);
 
         grp_codiE.setAncTexto(30);
         grp_codiE.setFormato(Types.DECIMAL,"##9");
         Pentra.add(grp_codiE);
         grp_codiE.setBounds(40, 45, 190, 18);
 
-        cLabel11.setText("Almacen");
-        Pentra.add(cLabel11);
-        cLabel11.setBounds(273, 24, 48, 18);
+        CLabel11.setText("Almacen");
+        Pentra.add(CLabel11);
+        CLabel11.setBounds(273, 24, 48, 18);
 
         alm_codiE.setAncTexto(30);
         alm_codiE.setFormato(Types.DECIMAL,"##9");
         Pentra.add(alm_codiE);
         alm_codiE.setBounds(325, 24, 230, 18);
 
-        cLabel12.setText("Tipo Prod. Entrada");
-        Pentra.add(cLabel12);
-        cLabel12.setBounds(3, 67, 110, 18);
+        CLabel12.setText("Tipo Prod. Entrada");
+        Pentra.add(CLabel12);
+        CLabel12.setBounds(3, 67, 110, 18);
 
         tipoProenE.addItem("Todos", "T");
         tipoProenE.addItem("Congelado", "-1");
@@ -511,37 +513,43 @@ public class Cldegen extends ventana
         Pentra.add(tipoProenE);
         tipoProenE.setBounds(110, 67, 120, 18);
 
-        opIncReg.setText("Incluir reenvasado");
-        opIncReg.setToolTipText("Incluir productos que se generan a si mismos");
-        opIncReg.setPreferredSize(new java.awt.Dimension(83, 18));
-        Pentra.add(opIncReg);
-        opIncReg.setBounds(320, 90, 120, 18);
-
-        cLabel13.setText("Tipo  Desp");
-        Pentra.add(cLabel13);
-        cLabel13.setBounds(3, 88, 70, 18);
+        CLabel13.setText("Tipo  Desp");
+        Pentra.add(CLabel13);
+        CLabel13.setBounds(3, 88, 70, 18);
 
         tid_codiE.setAncTexto(40);
         Pentra.add(tid_codiE);
         tid_codiE.setBounds(70, 90, 240, 18);
 
-        cLabel9.setText("Familia");
-        Pentra.add(cLabel9);
-        cLabel9.setBounds(238, 45, 38, 18);
+        CLabel9.setText("Familia");
+        Pentra.add(CLabel9);
+        CLabel9.setBounds(238, 45, 38, 18);
 
         fam_codiE1.setAncTexto(30);
         fam_codiE.setFormato(Types.DECIMAL,"##9");
         Pentra.add(fam_codiE1);
         fam_codiE1.setBounds(283, 45, 255, 18);
 
-        cLabel14.setText("Familia Entrada");
-        Pentra.add(cLabel14);
-        cLabel14.setBounds(230, 67, 90, 18);
+        CLabel14.setText("Familia Entrada");
+        Pentra.add(CLabel14);
+        CLabel14.setBounds(230, 67, 90, 18);
 
         fam_codentE.setAncTexto(30);
         fam_codentE.setFormato(Types.DECIMAL,"##9");
         Pentra.add(fam_codentE);
         fam_codentE.setBounds(315, 67, 240, 18);
+
+        opSoloValor.setText("Solo Valorado");
+        opSoloValor.setToolTipText("Incluir productos que se generan a si mismos");
+        opSoloValor.setPreferredSize(new java.awt.Dimension(83, 18));
+        Pentra.add(opSoloValor);
+        opSoloValor.setBounds(320, 90, 100, 18);
+
+        opIncReg.setText("Inc. reenv.");
+        opIncReg.setToolTipText("Incluir productos que se generan a si mismos");
+        opIncReg.setPreferredSize(new java.awt.Dimension(83, 18));
+        Pentra.add(opIncReg);
+        opIncReg.setBounds(470, 0, 83, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -580,7 +588,7 @@ public class Cldegen extends ventana
         jtDes.setLayout(jtDesLayout);
         jtDesLayout.setHorizontalGroup(
             jtDesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 643, Short.MAX_VALUE)
+            .add(0, 713, Short.MAX_VALUE)
         );
         jtDesLayout.setVerticalGroup(
             jtDesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -601,15 +609,15 @@ public class Cldegen extends ventana
         Pfinal.setMinimumSize(new java.awt.Dimension(580, 25));
         Pfinal.setPreferredSize(new java.awt.Dimension(580, 25));
 
-        cLabel5.setText("Unidades");
+        CLabel5.setText("Unidades");
 
         unidTotE.setEditable(false);
 
-        cLabel6.setText("Kilos");
+        CLabel6.setText("Kilos");
 
         kilTotE.setEditable(false);
 
-        cLabel7.setText("Importe");
+        CLabel7.setText("Importe");
 
         impTotE.setEditable(false);
 
@@ -622,15 +630,15 @@ public class Cldegen extends ventana
         PfinalLayout.setHorizontalGroup(
             PfinalLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(PfinalLayout.createSequentialGroup()
-                .add(cLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(CLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(4, 4, 4)
                 .add(unidTotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 52, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(cLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(CLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(2, 2, 2)
                 .add(kilTotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 70, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(2, 2, 2)
-                .add(cLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(CLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(2, 2, 2)
                 .add(impTotE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 92, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -650,9 +658,9 @@ public class Cldegen extends ventana
                         .add(org.jdesktop.layout.GroupLayout.LEADING, kilTotE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
                         .add(org.jdesktop.layout.GroupLayout.LEADING, impTotE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
                         .add(org.jdesktop.layout.GroupLayout.LEADING, PfinalLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(cLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(cLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(cLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                            .add(CLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(CLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(CLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -671,7 +679,7 @@ public class Cldegen extends ventana
         jt.setLayout(jtLayout);
         jtLayout.setHorizontalGroup(
             jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 643, Short.MAX_VALUE)
+            .add(0, 713, Short.MAX_VALUE)
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -713,24 +721,24 @@ public class Cldegen extends ventana
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bprint;
+    private gnu.chu.controles.CLabel CLabel1;
+    private gnu.chu.controles.CLabel CLabel10;
+    private gnu.chu.controles.CLabel CLabel11;
+    private gnu.chu.controles.CLabel CLabel12;
+    private gnu.chu.controles.CLabel CLabel13;
+    private gnu.chu.controles.CLabel CLabel14;
+    private gnu.chu.controles.CLabel CLabel2;
+    private gnu.chu.controles.CLabel CLabel3;
+    private gnu.chu.controles.CLabel CLabel4;
+    private gnu.chu.controles.CLabel CLabel5;
+    private gnu.chu.controles.CLabel CLabel6;
+    private gnu.chu.controles.CLabel CLabel7;
+    private gnu.chu.controles.CLabel CLabel8;
+    private gnu.chu.controles.CLabel CLabel9;
     private gnu.chu.controles.CPanel Pentra;
     private gnu.chu.controles.CPanel Pfinal;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CLinkBox alm_codiE;
-    private gnu.chu.controles.CLabel cLabel1;
-    private gnu.chu.controles.CLabel cLabel10;
-    private gnu.chu.controles.CLabel cLabel11;
-    private gnu.chu.controles.CLabel cLabel12;
-    private gnu.chu.controles.CLabel cLabel13;
-    private gnu.chu.controles.CLabel cLabel14;
-    private gnu.chu.controles.CLabel cLabel2;
-    private gnu.chu.controles.CLabel cLabel3;
-    private gnu.chu.controles.CLabel cLabel4;
-    private gnu.chu.controles.CLabel cLabel5;
-    private gnu.chu.controles.CLabel cLabel6;
-    private gnu.chu.controles.CLabel cLabel7;
-    private gnu.chu.controles.CLabel cLabel8;
-    private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CLinkBox fam_codentE;
     private gnu.chu.controles.CLinkBox fam_codiE;
     private gnu.chu.controles.CLinkBox fam_codiE1;
@@ -743,6 +751,7 @@ public class Cldegen extends ventana
     private gnu.chu.controles.CTextField kilTotE;
     private gnu.chu.controles.CCheckBox opDesgl;
     private gnu.chu.controles.CCheckBox opIncReg;
+    private gnu.chu.controles.CCheckBox opSoloValor;
     private gnu.chu.controles.CComboBox opVer;
     private gnu.chu.camposdb.tidCodi2 tid_codiE;
     private gnu.chu.controles.CComboBox tipoProdE;

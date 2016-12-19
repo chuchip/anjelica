@@ -374,6 +374,17 @@ public class MantDesp extends ventanaPad implements PAD
     }
 
     void activarEventos() {
+        deo_codiE.addMouseListener(new MouseAdapter()
+        {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (!deo_codiE.isEnabled())
+                {
+                    irTactil();
+                }
+            }
+        });
         BvalDesp.addActionListener(new ActionListener()
         {
             @Override
@@ -451,6 +462,7 @@ public class MantDesp extends ventanaPad implements PAD
         opSimular.addActionListener(new ActionListener()
         {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 opSimular.setEnabled(false);
                 Baceptar.setEnabled(false);
@@ -2405,7 +2417,25 @@ public class MantDesp extends ventanaPad implements PAD
         verDatos(dtCons);
         nav.pulsado = navegador.NINGUNO;
     }
-
+    
+    void irTactil()
+    {        
+        ejecutable prog;
+        if ((prog = jf.gestor.getProceso(MantDespTactil.getNombreClase())) == null)
+            return;
+        MantDespTactil cm = (MantDespTactil) prog;
+        if (cm.inTransation())
+        {
+            msgBox("Mantenimiento Despieces ocupado. No se puede realizar la busqueda");
+            return;
+        }
+        cm.PADQuery();
+        cm.setEjeNume(eje_numeE.getValorInt());
+        cm.setDeoCodi(deo_codiE.getText());
+        
+        cm.ej_query();
+        jf.gestor.ir(cm);
+    }
     public void activar(boolean enab) {
         activar(enab, navegador.TODOS);
 

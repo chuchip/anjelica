@@ -214,7 +214,7 @@
             </Component>
             <Component class="gnu.chu.controles.CLinkBox" name="rut_codiE">
               <Properties>
-                <Property name="ancTexto" type="int" value="30"/>
+                <Property name="ancTexto" type="int" value="30" postCode="rut_codiE.setFormato(Types.CHAR,&quot;X&quot;,2);"/>
                 <Property name="mayusculas" type="boolean" value="true"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[152, 18]"/>

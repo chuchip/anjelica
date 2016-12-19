@@ -248,7 +248,7 @@ public class pdpedco extends ventanaPad   implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(760,522));
-    this.setVersion("2016-08-26"+ (SWADMIN?"(ADMINISTRADOR)":""));
+    this.setVersion("2016-12-14"+ (SWADMIN?"(ADMINISTRADOR)":""));
 
     Pprinc.setLayout(gridBagLayout1);
 
@@ -755,6 +755,7 @@ public class pdpedco extends ventanaPad   implements PAD
     }
     mensaje("Editando .... PEDIDO");
   }
+  @Override
   public void ej_edit1()
   {
     try  {
@@ -841,6 +842,7 @@ public class pdpedco extends ventanaPad   implements PAD
     eje_numeE.setEnabled(false);
     emp_codiE.setEnabled(true);
     pcc_numeE.setEnabled(false);
+    pcc_portesE.setValor("P");  
     mensaje("Crear nuevo pedido ...");
     eje_numeE.setValorDec(EU.ejercicio);
     emp_codiE.setValorInt(EU.em_cod);
@@ -930,7 +932,7 @@ public class pdpedco extends ventanaPad   implements PAD
       pcc_fecrecE.requestFocus();
       return false;
     }
-    jt.salirFoco();
+    jt.actualizarGrid();
     if (checkJt(jt.getSelectedRow()) >= 0)
     {
       jt.requestFocusSelected();
@@ -964,7 +966,7 @@ public class pdpedco extends ventanaPad   implements PAD
     }
     return true;
   }
-
+@Override
   public void canc_addnew()
   {
     activaTodo();
@@ -1000,6 +1002,7 @@ public class pdpedco extends ventanaPad   implements PAD
     Bcancelar.requestFocus();
   }
 
+  @Override
   public void ej_delete1()
   {
     try
@@ -1247,7 +1250,7 @@ public class pdpedco extends ventanaPad   implements PAD
     kgTotE.setValorDec(kg);
     impTotE.setValorDec(impPed);
   }
-
+@Override
   public void rgSelect() throws SQLException
   {
     super.rgSelect();
@@ -1255,12 +1258,12 @@ public class pdpedco extends ventanaPad   implements PAD
     if (!dtCons.getNOREG())
     {
       dtCons.last();
-      nav.setEnabled(nav.ULTIMO, false);
-      nav.setEnabled(nav.SIGUIENTE, false);
+      nav.setEnabled(navegador.ULTIMO, false);
+      nav.setEnabled(navegador.SIGUIENTE, false);
     }
     verDatos(dtCons);
   }
-
+@Override
   public void afterConecta() throws SQLException, java.text.ParseException
   {
     emp_codiE.iniciar(dtStat,this,vl,EU);
@@ -1383,7 +1386,7 @@ public class pdpedco extends ventanaPad   implements PAD
       java.util.HashMap mp = Listados.getHashMapDefault();
       mp.put("nomusu", EU.usu_nomb);
       mp.put("subject", subject);
-      mp.put("verPrecios",new Boolean(opPrecios.isSelected()));
+      mp.put("verPrecios", opPrecios.isSelected());
 
       String img= Iconos.getPathIcon()+"logotipo.jpg";
       mp.put("logotipo",img);

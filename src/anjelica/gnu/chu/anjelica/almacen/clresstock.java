@@ -15,8 +15,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;

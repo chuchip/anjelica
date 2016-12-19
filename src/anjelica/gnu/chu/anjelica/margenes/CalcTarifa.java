@@ -11,7 +11,6 @@ import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
-import gnu.chu.utilidades.PADThread;
 import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventanaPad;
 import java.awt.BorderLayout;
@@ -120,7 +119,7 @@ public class CalcTarifa extends ventanaPad implements PAD
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2016-05-23" );
+      this.setVersion("2016-12-14" );
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -693,7 +692,7 @@ public class CalcTarifa extends ventanaPad implements PAD
 
         cLabel9.setText("Inic. Ped");
         PPie.add(cLabel9);
-        cLabel9.setBounds(10, 22, 85, 17);
+        cLabel9.setBounds(0, 22, 60, 17);
 
         fecFinProdE.setMaximumSize(new java.awt.Dimension(10, 18));
         fecFinProdE.setMinimumSize(new java.awt.Dimension(10, 18));
@@ -927,9 +926,9 @@ public class CalcTarifa extends ventanaPad implements PAD
   public void PADEdit() {
       feulin=null;
     mensaje("Editando ....");
-    jt.setEnabled(true);
-    Baceptar.setEnabled(true);
-    Bcancelar.setEnabled(true);
+    activar(navegador.EDIT,true);
+//    Baceptar.setEnabled(true);
+//    Bcancelar.setEnabled(true);
     Bvalorar.setEnabled(true);
     jt.requestFocusInicioLater();
   }
@@ -1147,9 +1146,9 @@ public class CalcTarifa extends ventanaPad implements PAD
     }
      void activar(int modo,boolean act)
     {
-      if (modo==navegador.TODOS)
+      if (modo==navegador.TODOS  || modo==navegador.EDIT)
         jt.setEnabled(act);
-      if (modo==navegador.TODOS)
+      if (modo==navegador.TODOS || modo==navegador.ADDNEW || modo==navegador.EDIT)
       {
         fecStockE.setEnabled(act);
         fecIniPedE.setEnabled(act);
@@ -1157,7 +1156,7 @@ public class CalcTarifa extends ventanaPad implements PAD
         fecFinPedE.setEnabled(act);
         fecFinProdE.setEnabled(act);
         Bvalorar.setEnabled(act);
-        Bcosto.setEnabled(act);
+        Bcosto.setEnabled(act);        
       }
       Baceptar.setEnabled(act);        
       Bcancelar.setEnabled(act);
