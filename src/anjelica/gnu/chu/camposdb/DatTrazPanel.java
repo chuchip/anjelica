@@ -78,7 +78,7 @@ public class DatTrazPanel extends CPanel {
         this.papa=padre;
         this.EU=EU;
         prv_codiE.iniciar(dtStat, padre, layPane, EU);
-        s = "SELECT pai_codi,pai_nomb FROM v_paises ORDER BY pai_nomb";
+        s = "SELECT pai_inic,pai_nomb FROM v_paises ORDER BY pai_nomb";
         if (dtStat.select(s))
         {
           do
@@ -261,13 +261,13 @@ public class DatTrazPanel extends CPanel {
     {
         if (!actual)
             return utDesp;
-        utDesp.setAcpEngpai(acp_engpaiE.getValorInt());
+        utDesp.setAcpEngpai(acp_engpaiE.getText());
         utDesp.setPaisEngorde(acp_engpaiE.getTextCombo());
         utDesp.setFecSacrif(acp_fecsacE.getDate());
         utDesp.setNumCrot(acp_nucrotE.getText());
-        utDesp.setAcpPainac(acp_painacE.getValorInt());
+        utDesp.setAcpPainac(acp_painacE.getText());
         utDesp.setPaisNacimiento(acp_painacE.getTextCombo());
-        utDesp.setAcpPaisac(acp_paisacE.getValorInt());
+        utDesp.setAcpPaisac(acp_paisacE.getText());
         utDesp.setSacrificado(acp_paisacE.getTextCombo()+ " - "+mat_codiE.getTextCombo());
         utDesp.setFecCompra(avc_fecalbE.getDate());
         utDesp.setConservar(conservarE.getText());
@@ -284,11 +284,11 @@ public class DatTrazPanel extends CPanel {
     {
         prv_codiE.setValorInt(utDesp.getPrvCompra());
         cambioPrv();
-        acp_engpaiE.setValorInt(utDesp.getAcpEngpai());
+        acp_engpaiE.setText(utDesp.getAcpEngpai());
         acp_fecsacE.setDate(utDesp.getFecSacrif());
         acp_nucrotE.setText(utDesp.getNumCrot());
-        acp_painacE.setValorInt(utDesp.getAcpPainac());
-        acp_paisacE.setValorInt(utDesp.getAcpPaisac());       
+        acp_painacE.setText(utDesp.getAcpPainac());
+        acp_paisacE.setText(utDesp.getAcpPaisac());       
         avc_fecalbE.setDate(utDesp.getFecCompra());
         conservarE.setText(utDesp.getConservar());
         mat_codiE.setValorInt(utDesp.getMatCodi());
@@ -523,19 +523,19 @@ public class DatTrazPanel extends CPanel {
             add(cLabel3);
             cLabel3.setBounds(10, 40, 72, 15);
 
-            acp_painacE.setFormato(Types.DECIMAL,"####9",5);
+            acp_painacE.setFormato(Types.CHAR,"XX",2);
             acp_painacE.getComboBox().setPreferredSize(new Dimension(17,150));
             acp_painacE.setAncTexto(40);
             add(acp_painacE);
             acp_painacE.setBounds(80, 20, 178, 17);
 
-            acp_engpaiE.setFormato(Types.DECIMAL,"####9",5);
+            acp_engpaiE.setFormato(Types.CHAR,"XX",2);
             acp_engpaiE.getComboBox().setPreferredSize(new Dimension(17,150));
             acp_engpaiE.setAncTexto(40);
             add(acp_engpaiE);
             acp_engpaiE.setBounds(320, 20, 178, 17);
 
-            acp_paisacE.setFormato(Types.DECIMAL,"####9",5);
+            acp_paisacE.setFormato(Types.CHAR,"XX",2);
             acp_paisacE.getComboBox().setPreferredSize(new Dimension(17,150));
             acp_paisacE.setAncTexto(40);
             add(acp_paisacE);

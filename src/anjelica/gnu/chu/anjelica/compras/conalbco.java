@@ -79,9 +79,9 @@ public class conalbco extends ventana implements  JRDataSource
   CCheckBox opValora = new CCheckBox();
   CCheckBox opVerInd = new CCheckBox();
   CLabel cLabel9 = new CLabel();
-  CTextField acp_painacE = new CTextField(Types.DECIMAL,"###9");
+  CTextField acp_painacE = new CTextField(Types.CHAR,"XX",2);
   CLabel cLabel10 = new CLabel();
-  CTextField acp_paiengE = new CTextField(Types.DECIMAL,"###9");
+  CTextField acp_paiengE = new CTextField(Types.CHAR,"XX",2);
   CPanel PTraza = new CPanel();
   CLabel cLabel11 = new CLabel();
   CTextField acp_nucrotE = new CTextField();
@@ -89,7 +89,7 @@ public class conalbco extends ventana implements  JRDataSource
   CTextField mat_codiE = new CTextField(Types.DECIMAL,"####9");
   CLabel cLabel13 = new CLabel();
   CTextField sde_codiE = new CTextField(Types.DECIMAL,"####9");
-  CTextField acp_paisacE = new CTextField(Types.DECIMAL,"###9");
+  CTextField acp_paisacE = new CTextField(Types.CHAR,"XX",2);
   CLabel cLabel14 = new CLabel();
   CLabel cLabel15 = new CLabel();
   CTextField acp_feccadE = new CTextField(Types.DATE,"dd-MM-yyyy");
@@ -206,7 +206,9 @@ public class conalbco extends ventana implements  JRDataSource
     opCanti.setMargin(new Insets(0, 0, 0, 0));
     opVerTraz.setMargin(new Insets(0, 0, 0, 0));
     opVerInd.setMargin(new Insets(0, 0, 0, 0));
-
+    acp_painacE.setMayusculas(true);
+    acp_paisacE.setMayusculas(true);
+    acp_paiengE.setMayusculas(true);
     sbe_codiE.setBounds(new Rectangle(686, 38, 47, 16));
     statusBar.add(Bimpri, new GridBagConstraints(9, 0, 1, 2, 0.0, 0.0
                                                  , GridBagConstraints.EAST,
@@ -923,25 +925,25 @@ public class conalbco extends ventana implements  JRDataSource
         else
           sde_nombE.setText(sde_codiE.getText() + " NO ENCONTRADO");
       }
-      if (acp_painacE.getValorInt()!=0)
+      if (!acp_painacE.isNull())
       {
-        s = MantPaises.getNombrePais( acp_painacE.getValorInt(),dtStat);
+        s = MantPaises.getNombrePais( acp_painacE.getText(),dtStat);
         if (s!=null)
           pai_nacnomE.setText(s);
         else
           pai_nacnomE.setText("**NO ENCONTRADO**");
       }
-      if (acp_paiengE.getValorInt()!=0)
+      if (!acp_paiengE.isNull())
       {
-         s = MantPaises.getNombrePais( acp_paiengE.getValorInt(),dtStat);
+         s = MantPaises.getNombrePais( acp_paiengE.getText(),dtStat);
         if (s!=null)  
           pai_engnomE.setText(s);
         else
           pai_engnomE.setText("**NO ENCONTRADO**");
       }
-      if (acp_paisacE.getValorInt()!=0)
+      if (!acp_paisacE.isNull())
       {
-        s = MantPaises.getNombrePais( acp_paisacE.getValorInt(),dtStat);
+        s = MantPaises.getNombrePais( acp_paisacE.getText(),dtStat);
         if (s!=null)  
           pai_sacnomE.setText(s);
         else

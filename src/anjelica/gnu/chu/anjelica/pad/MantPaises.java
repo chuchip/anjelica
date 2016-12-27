@@ -648,6 +648,13 @@ public class MantPaises extends   ventanaPad  implements PAD
     {
         return dt.select("select * from paises where pai_inic = '"+paiInic+"'");
     }
+    /**
+     * Busca un Pais por sus iniciales
+     * @param paiInic
+     * @param dt
+     * @return
+     * @throws SQLException 
+     */
     public static String getNombrePais(String paiInic, DatosTabla dt) throws SQLException
     {
         if (! dt.select("select * from paises where pai_inic = '"+paiInic+"'"))

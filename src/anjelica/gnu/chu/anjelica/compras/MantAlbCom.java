@@ -123,11 +123,11 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   /**
    * Numero Linea del Grid de desglose 12
    */
-  int JTD_NUMLIN=12;
+  final int JTD_NUMLIN=12;
   /**
    * Cantidad de Individuos 13
    */
-  int JTD_CANIND=13;
+  final int JTD_CANIND=13;
 
   private CLabel acc_dtoppL=new CLabel("Dto PP");
   private CTextField acc_dtoppE=new CTextField(Types.DECIMAL,"#9.99");
@@ -3124,8 +3124,7 @@ private JMenuItem MIimprEtiqInd;
         {
             jtDes.requestFocusInicio();
            
-                copiaJtValorAnt();
-                
+                copiaJtValorAnt();                
            
             jtDes.salirFoco();
             BimpEti.setEnabled(true);
@@ -3153,8 +3152,7 @@ private JMenuItem MIimprEtiqInd;
   /**
    * Funcion llamada cada vez que se cambia despues de cambiar una linea
    * de despiece
-   */
-  
+   */  
   void afterCambiaLinDes() {
       try {
             if (jtDes.getValorInt(0) != 0) {
@@ -4140,18 +4138,24 @@ private JMenuItem MIimprEtiqInd;
         pcc_comenE.setText(dtCon1.getString("pcc_comen"));
 
         s = "SELECT pro_codi, ";
-        if (estPedi=='P')
-          s+= " pcl_precpe,"+
-             " sum(pcl_nucape) as pcl_nucape, "+
-            " sum(pcl_cantpe) as pcl_cantpe ";
-        else if (estPedi=='C')
-          s+= " pcl_precco as pcl_precpe, "+
-              " sum(pcl_nucaco) as pcl_nucape, "+
-            " sum(pcl_cantco) as pcl_cantpe ";
-        else
-          s+= " pcl_precfa as pcl_precpe, "+
-              " sum(pcl_nucafa) as pcl_nucape, "+
-            " sum(pcl_cantfa) as pcl_cantpe ";
+          switch (estPedi)
+          {
+              case 'P':
+                  s+= " pcl_precpe,"+
+                      " sum(pcl_nucape) as pcl_nucape, "+
+                      " sum(pcl_cantpe) as pcl_cantpe ";
+                  break;
+              case 'C':
+                  s+= " pcl_precco as pcl_precpe, "+
+                      " sum(pcl_nucaco) as pcl_nucape, "+
+                      " sum(pcl_cantco) as pcl_cantpe ";
+                  break;
+              default:
+                  s+= " pcl_precfa as pcl_precpe, "+
+                      " sum(pcl_nucafa) as pcl_nucape, "+
+                      " sum(pcl_cantfa) as pcl_cantpe ";
+                  break;
+          }
         s+="  FROM pedicol as l " +
             " where l.emp_codi = " + EU.em_cod +
             " AND l.eje_nume = " + eje_numeE.getValorInt() +
@@ -4486,7 +4490,8 @@ private JMenuItem MIimprEtiqInd;
     jtDes.setEnabled(false);
     swActDesg=true;
   }
-  String getPais(int pais) throws SQLException
+  
+  String getPais(String pais) throws SQLException
   {
     s=MantPaises.getNombrePais(pais, dtStat);
     if (s!=null)
@@ -5904,11 +5909,11 @@ private JMenuItem MIimprEtiqInd;
            return dtStat.getString("sde_nrgsa");
        }
        if (campo.equals("pai_nacid"))
-         return getPais(dtAdd.getInt("acp_painac"));
+         return getPais(dtAdd.getString("acp_painac"));
        if (campo.equals("pai_engor"))
-         return getPais(dtAdd.getInt("acp_engpai"));
+         return getPais(dtAdd.getString("acp_engpai"));
        if (campo.equals("pai_sacrif"))
-         return getPais(dtAdd.getInt("acp_paisac"));
+         return getPais(dtAdd.getString("acp_paisac"));
        if (campo.equals("cambio"))
          return cambio;
      }

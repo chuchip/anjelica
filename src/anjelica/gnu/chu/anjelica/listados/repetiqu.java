@@ -640,7 +640,8 @@ public class repetiqu extends ventana
         
         CodigoBarras codBarras=new CodigoBarras("R",deo_ejelotE.getText(),
                 deo_serlotE.getText(),
-                pro_loteE.getValorInt(),pro_codiE.getValorInt(),pro_numindE.getValorInt(),
+                pro_loteE.getValorInt(),pro_codiE.getValorInt(),
+                pro_numindE.getValorInt(),
                 deo_kilosE.getValorDec());
         java.util.Date fecCong=null;
         etiq.setNumCopias(1);
@@ -652,7 +653,7 @@ public class repetiqu extends ventana
 //        else
 //            etiq.setFechaCongelado(utp.getFechaProduccion());
         
-        etiq.iniciar(codBarras.getCodBarra() ,codBarras.getLote(),
+        etiq.iniciar(codBarras.getCodBarra() ,codBarras.getLote(tipetiqE.getValorInt()==etiqueta.ETIQINT),
             pro_codiE.getText(),pro_codiE.getTextNomb(),nacidoE.getText(),cebadoE.getText(),despiezadoE.getText(),
             ntrazaE.getText(),deo_kilosE.getValorDec(),
             conservarE.getText(),sacrificadoE.getText(),

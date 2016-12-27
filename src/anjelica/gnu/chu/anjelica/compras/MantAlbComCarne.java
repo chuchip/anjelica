@@ -6,6 +6,7 @@ import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.anjelica.pad.pdprove;
+import gnu.chu.camposdb.PaiPanel;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;     
 import gnu.chu.utilidades.*;
@@ -48,7 +49,12 @@ import javax.swing.event.*;
 public class MantAlbComCarne extends MantAlbCom  
 {
    String ultMat=null,ultSalDes,ultNac,ultCeb,ultSacr,ultFecCad,ultFecSac,ultFecPro;
-   CLinkBox mat_codiE,sde_codiE,acp_painacE,acp_engpaiE,acp_paisacE;
+   CLinkBox mat_codiE,sde_codiE;
+   
+   PaiPanel acp_painacE;
+   PaiPanel acp_engpaiE;
+   PaiPanel acp_paisacE;
+   
   
    CTextField acp_feccadE,acp_fecsacE,acp_fecproE;
    /**
@@ -63,34 +69,37 @@ public class MantAlbComCarne extends MantAlbCom
     * Pais Nacimiento - 6
     */
    final int JTD_PAINAC=6; 
+   final int JTD_PNACNO=7; 
    /**
-    * Pais Engorde 7
+    * Pais Engorde 8
     */
-   final int JTD_ENGPAI=7;
+   final int JTD_ENGPAI=8;
+   final int JTD_PENGNO=9;
    /**
-    * Pais Sacrificio 8
+    * Pais Sacrificio 10
     */
-   final int JTD_PAISAC=8;
+   final int JTD_PAISAC=10;
+   final int JTD_PSACNO=11;
    /**
-    * Fecha Caducicad 9
+    * Fecha Caducicad 12
     */
-   final int JTD_FECCAD=9;
+   final int JTD_FECCAD=12;
    /**
-    * Fecha Sacrificio 10
+    * Fecha Sacrificio 13
     */
-   final int JTD_FECSAC=10;
+   final int JTD_FECSAC=13;
    /**
-    * Fecha Prodcuccion 11
+    * Fecha Prodcuccion 14
     */
-   final int JTD_FECPRO=11;
+   final int JTD_FECPRO=14;
    /**
-    * Numero Linea desglose 12
+    * Numero Linea desglose 15
     */
-   int JTD_NUMLIN=12;
+   final int JTD_NUMLIN=15;
    /**
-    * Numero de individuos 13
+    * Numero de individuos 16
     */
-   int JTD_CANIND=13;
+   final int JTD_CANIND=16;
    
    public MantAlbComCarne(EntornoUsuario eu, Principal p) {
         super(eu, p);
@@ -133,7 +142,14 @@ public class MantAlbComCarne extends MantAlbCom
    @Override
   public void confGridDesglose() throws Exception
   {
-    jtDes = new CGridEditable(14)
+      acp_painacE = new PaiPanel();
+      acp_engpaiE = new PaiPanel();
+      acp_paisacE = new PaiPanel();
+      
+      acp_painacE.iniciar(dtStat, this, vl, EU);
+      acp_paisacE.iniciar(dtStat, this, vl, EU);
+      acp_engpaiE.iniciar(dtStat, this, vl, EU);
+    jtDes = new CGridEditable(17)
     {
         @Override
         public boolean deleteLinea(int row, int col)
@@ -184,28 +200,13 @@ public class MantAlbComCarne extends MantAlbCom
     
     mat_codiE=new CLinkBox();
     sde_codiE=new CLinkBox();
-    acp_painacE=new CLinkBox();
-    acp_engpaiE=new CLinkBox();
-    acp_paisacE=new CLinkBox();
       
     acp_feccadE    = new CTextField(Types.DATE,"dd-MM-yyyy");
     acp_fecsacE    = new CTextField(Types.DATE,"dd-MM-yyyy");
     acp_fecproE    = new CTextField(Types.DATE,"dd-MM-yyyy");
     acp_canindE.setValorDec(1);
     
-    s = "SELECT pai_codi,pai_nomb FROM v_paises where pai_activ!=0 ORDER BY pai_nomb";
-    if (dtStat.select(s))
-    {
-      do
-      {
-        acp_painacE.addDatos(dtStat.getString("pai_codi"),dtStat.getString("pai_nomb"));
-        acp_paisacE.addDatos(dtStat.getString("pai_codi"),dtStat.getString("pai_nomb"));
-        acp_engpaiE.addDatos(dtStat.getString("pai_codi"),dtStat.getString("pai_nomb"));
-      } while (dtStat.next());
-    }
-    acp_painacE.getComboBox().setPreferredSize(new Dimension(150,17));
-    acp_paisacE.getComboBox().setPreferredSize(new Dimension(150,17));
-    acp_engpaiE.getComboBox().setPreferredSize(new Dimension(150,17));
+
     activarEventos0();
     ArrayList v1 = new ArrayList();
     v1.add("N.Ind"); // 0 No. Individuo
@@ -214,20 +215,23 @@ public class MantAlbComCarne extends MantAlbCom
     v1.add("Crotal"); // 3
     v1.add("Matad"); // 4
     v1.add("S.Desp"); //5
-    v1.add("Nacido"); // 6
-    v1.add("Cebado"); // 7
-    v1.add("Sacrif"); // 8
-    v1.add("Fec.Cad"); // 9
-    v1.add("Fec.Sac"); // 10
-    v1.add("Fec.Pro"); // 11
-    v1.add("N.Lin"); // 12
-    v1.add("C.Ind."); // 13 Cantidad de Indiv.
+    v1.add("P.N"); // 6
+     v1.add("Nacido"); // 7
+    v1.add("P.C"); // 8
+    v1.add("Cebado"); // 9
+    v1.add("P.S"); // 10 
+    v1.add("Sacrif"); // 11
+    v1.add("Fec.Cad"); // 12
+    v1.add("Fec.Sac"); // 13
+    v1.add("Fec.Pro"); // 14
+    v1.add("N.Lin"); // 15
+    v1.add("C.Ind."); // 16 Cantidad de Indiv.
     jtDes.setCabecera(v1);
     jtDes.setMaximumSize(new Dimension(743, 168));
     jtDes.setMinimumSize(new Dimension(743, 158));
     jtDes.setPreferredSize(new Dimension(743, 168));
-    jtDes.setAnchoColumna(new int[]{50,70,30,120,150,150,130,130,130,80,80,80,40,40});
-    jtDes.setAlinearColumna(new int[]{2,2,0,0,0,0,0,0,0,1,1,1,2,2});
+    jtDes.setAnchoColumna(new int[]{50,70,30,120,150,150,30,130,30,130,30,130,80,80,80,40,40});
+    jtDes.setAlinearColumna(new int[]{2,2,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2});
     botonBascula = new BotonBascula(EU,this);
     ArrayList vc1=new ArrayList();
     acp_feccadE.setText("");
@@ -236,22 +240,12 @@ public class MantAlbComCarne extends MantAlbCom
     sde_codiE.setAncTexto(40);
     mat_codiE.setCeroIsNull(true);
     sde_codiE.setCeroIsNull(true);
-    acp_painacE.setAncTexto(40);
-    acp_painacE.setCeroIsNull(true);
-    acp_engpaiE.setAncTexto(40);
-    acp_engpaiE.setCeroIsNull(true);
-    acp_paisacE.setAncTexto(40);
-    acp_paisacE.setCeroIsNull(true);
-    sde_codiE.setFormato(true);
     sde_codiE.setFormato(Types.DECIMAL,"####9",5);
     mat_codiE.setFormato(true);
     mat_codiE.setFormato(Types.DECIMAL,"####9",5);
-    acp_painacE.setFormato(true);
-    acp_painacE.setFormato(Types.DECIMAL,"####9",5);
-    acp_engpaiE.setFormato(true);
-    acp_engpaiE.setFormato(Types.DECIMAL,"####9",5);
-    acp_paisacE.setFormato(true);
-    acp_paisacE.setFormato(Types.DECIMAL,"####9",5);
+
+   
+    
     acp_nucrotE.setToolTipText("Pulse F3 para generar Num. Crotal");
     acp_cantiE.setLeePesoBascula(botonBascula);
     acp_numlinE.setEnabled(false);
@@ -263,9 +257,12 @@ public class MantAlbComCarne extends MantAlbCom
     vc1.add(acp_nucrotE); // 2
     vc1.add(mat_codiE); // 3 Matadero
     vc1.add(sde_codiE); // 4
-    vc1.add(acp_painacE); // 5
-    vc1.add(acp_engpaiE); // 6
-    vc1.add(acp_paisacE); // 7
+    vc1.add(acp_painacE.getFieldPaiCodi()); // 5
+    vc1.add(acp_painacE.getFieldPaiNomb()); // 5
+    vc1.add(acp_engpaiE.getFieldPaiCodi()); // 6
+    vc1.add(acp_engpaiE.getFieldPaiNomb()); // 6
+    vc1.add(acp_paisacE.getFieldPaiCodi()); // 7
+    vc1.add(acp_paisacE.getFieldPaiNomb()); // 7
     vc1.add(acp_feccadE); // 8
     vc1.add(acp_fecsacE); // 9
     vc1.add(acp_fecproE); // 10
@@ -291,38 +288,39 @@ public class MantAlbComCarne extends MantAlbCom
    public int cambiaLinDesg0(int row) throws Exception
    {
     
-    if (getLinGrDes().equals(lineaAnt))
-        return -1;
+   
     if (mat_codiE.getError() && !mat_codiE.isNull())
      {
        mensajeErr("Introduzca un Codigo de Matadero  valido");
-       return 3;
+       return JTD_MATCODI;
      }
      if (sde_codiE.getError() && !sde_codiE.isNull())
      {
        mensajeErr("Introduzca un Codigo de SALA DE DESPIECE valido");
-       return 4;
+       return JTD_SDECODI;
      }
-     if (acp_painacE.getError() && !acp_painacE.isNull())
+     if (!acp_painacE.controlar(false) && !acp_painacE.isNull())
      {
        mensajeErr("Introduzca un PAIS DE NACIMIENTO");
-       return 5;
+       return JTD_PAINAC;
      }
-     if (acp_engpaiE.getError() && !acp_engpaiE.isNull())
+     if (!acp_engpaiE.controlar(false) && !acp_engpaiE.isNull())
      {
        mensajeErr("Introduzca un PAIS DE ENGORDE");
-       return 6;
+       return JTD_ENGPAI;
      }
-     if (acp_paisacE.getError() && !acp_paisacE.isNull())
+     if (!acp_paisacE.controlar(false) && !acp_paisacE.isNull())
      {
        mensajeErr("Introduzca un PAIS DE SACRIFICIO");
-       return 7;
+       return JTD_PAISAC;
      }
+      if (getLinGrDes().equals(lineaAnt))
+        return -1;
      if (acp_feccadE.isNull() || acp_feccadE.getError())
      {
        acp_feccadE.setDate(Formatear.sumaDiasDate(acc_fecrecE.getDate(),pro_codiE.getDiasCad()) );
        mensajeErr("Introduzca Fecha de Caducidad");
-       return 8;
+       return JTD_FECCAD;
      }
      if (Formatear.comparaFechas(acp_feccadE.getDate(), acc_fecrecE.getDate())<=0)
          msgBox("ATENCION Fecha Caducidad deberia ser superior a la del Albarán");
@@ -330,7 +328,7 @@ public class MantAlbComCarne extends MantAlbCom
      if (proOblfsa && ( acp_fecsacE.isNull() || acp_fecsacE.getError()))
      {
        mensajeErr("Es obligatorio introducir la Fecha Sacrificio  para este Producto");
-       return 9;
+       return JTD_FECSAC;
      }
      if (acp_fecproE.isNull() && !acp_fecsacE.isNull() && jtDes.getValorInt(row,JTD_NUMIND)==0)
      {
@@ -405,22 +403,22 @@ public class MantAlbComCarne extends MantAlbCom
 //    System.out.println("Lin. Ant: "+numIndAnt);
     return acp_numindE.getValorInt()+""+acp_cantiE.getValorDec()+acp_clasiE.getText()+ acp_nucrotE.getText()+
         mat_codiE.getValorInt()+sde_codiE.getValorInt()+
-        acp_painacE.getValorInt()+acp_engpaiE.getValorInt()+
-        acp_paisacE.getValorInt()+acp_feccadE.getText()+acp_fecsacE.getText()+
+        acp_painacE.getText()+acp_engpaiE.getText()+
+        acp_paisacE.getText()+acp_feccadE.getText()+acp_fecsacE.getText()+
         acp_fecproE.getText()+
         acp_numlinE.getValorInt()+
         acp_canindE.getValorInt();
   }
    @Override
   public void guardaUltValoresDesg(){
-        ultCeb=acp_engpaiE.getCellEditorValue().toString();
+        ultCeb=acp_engpaiE.getText();
         ultFecCad=acp_feccadE.getText();
         ultFecSac=acp_fecsacE.getText();
         ultFecPro=acp_fecproE.getText();
         ultMat=mat_codiE.getCellEditorValue().toString();
-        ultNac=acp_painacE.getCellEditorValue().toString();
-        ultSacr=acp_paisacE.getCellEditorValue().toString();
-        ultSalDes=sde_codiE.getCellEditorValue().toString();
+        ultNac=acp_painacE.getText();
+        ultSacr=acp_paisacE.getText();
+        ultSalDes=sde_codiE.getText();
   }
    @Override
   public  void guardaLinDes(int row,int nLiAlDe,int nLiAlb,int nInd) throws SQLException,NumberFormatException
@@ -434,10 +432,10 @@ public class MantAlbComCarne extends MantAlbCom
       jtDes.setValor(""+nInd,row,DESNIND);
       guardaLinDes(nLiAlDe,nInd,jtDes.getValString(row,JTD_CLASI),
                  jtDes.getValString(row,JTD_NUMCRO),
-                 mat_codiE.getTextoInt(jtDes.getValString(row,JTD_PAINAC,true)),
+                 jtDes.getValString(row,JTD_PAINAC,true),
                  jtDes.getValDate(row,JTD_FECCAD),
-                 mat_codiE.getTextoInt(jtDes.getValString(row,JTD_PAISAC,true)),
-                 mat_codiE.getTextoInt(jtDes.getValString(row,JTD_ENGPAI,true)),
+                 jtDes.getValString(row,JTD_PAISAC,true),
+                 jtDes.getValString(row,JTD_ENGPAI,true),
                  jtDes.getValDate(row,JTD_FECSAC),
                  jtDes.getValDate(row,JTD_FECPRO),
                  jt.getValorInt(JT_PROCOD), // codigo Prod. 
@@ -457,8 +455,8 @@ public class MantAlbComCarne extends MantAlbCom
   }
 
   void guardaLinDes(int acp_numlin,int acp_numind,String acp_clasi,String acp_nucrot,
-                    int acp_painac,java.util.Date acp_feccad,int acp_paisac,
-                    int acp_engpai,java.util.Date acp_fecsac,java.util.Date acp_fecpro,int pro_codi,
+                    String acp_painac,java.util.Date acp_feccad,String acp_paisac,
+                    String acp_engpai,java.util.Date acp_fecsac,java.util.Date acp_fecpro,int pro_codi,
                     int acl_nulin,int mat_codi,int sde_codi,
                     double acp_canti, int acp_canind) throws SQLException
   {
@@ -550,9 +548,9 @@ public class MantAlbComCarne extends MantAlbCom
             acp_nucrotE.getText().equals(dtCon1.getString("acp_nucrot")) &&
             mat_codiE.getValorInt() == dtCon1.getInt("mat_codi") &&
             sde_codiE.getValorInt() == dtCon1.getInt("sde_codi") &&
-            acp_painacE.getValorInt() == dtCon1.getInt("acp_painac") &&
-            acp_engpaiE.getValorInt() == dtCon1.getInt("acp_engpai") &&
-            acp_paisacE.getValorInt() == dtCon1.getInt("acp_paisac") &&
+            acp_painacE.getText().equals(dtCon1.getString("acp_painac")) &&
+            acp_engpaiE.getText().equals(dtCon1.getString("acp_engpai")) &&
+            acp_paisacE.getText().equals(dtCon1.getString("acp_paisac")) &&
             acp_feccadE.getText().equals(dtCon1.getFecha("acp_feccad","dd-MM-yyyy")) &&
             acp_fecsacE.getText().equals(dtCon1.getFecha("acp_fecsac","dd-MM-yyyy")) &&
             acp_fecproE.getText().equals(dtCon1.getFecha("acp_fecpro","dd-MM-yyyy")) &&
@@ -859,9 +857,12 @@ public class MantAlbComCarne extends MantAlbCom
         v.add(dtCon1.getInt("sde_codi") + " - S.DESP. "+dtCon1.getInt("sde_codi") +
                      " NO ENCONTRADO");
 
-      v.add(dtCon1.getInt("acp_painac")+" - "+getPais(dtCon1.getInt("acp_painac")));
-      v.add(dtCon1.getInt("acp_engpai")+" - "+getPais(dtCon1.getInt("acp_engpai")));
-      v.add(dtCon1.getInt("acp_paisac")+" - "+getPais(dtCon1.getInt("acp_paisac")));
+      v.add(dtCon1.getString("acp_painac"));
+      v.add(getPais(dtCon1.getString("acp_painac")));
+      v.add(dtCon1.getString("acp_engpai"));
+      v.add(getPais(dtCon1.getString("acp_engpai")));
+      v.add(dtCon1.getString("acp_paisac"));
+      v.add(getPais(dtCon1.getString("acp_paisac")));
       v.add(dtCon1.getFecha("acp_feccad","dd-MM-yyyy"));
       v.add(dtCon1.getFecha("acp_fecsac","dd-MM-yyyy"));
       v.add(dtCon1.getFecha("acp_fecpro","dd-MM-yyyy"));

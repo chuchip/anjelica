@@ -29,7 +29,6 @@ public interface MantAlbCom_Interface
    * @param nLiAlb int N. LINEA Alb. PARA BD
    * @param nInd int N. Individuo para BD
    * @throws SQLException error BD
-   * @throws ParseException error BD
    *
    */
    public  void guardaLinDes(int row,int nLiAlDe,int nLiAlb,int nInd) throws SQLException,NumberFormatException;

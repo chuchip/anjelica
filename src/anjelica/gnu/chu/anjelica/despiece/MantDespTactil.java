@@ -1021,12 +1021,10 @@ public class MantDespTactil  extends ventanaPad implements PAD
          return;
      }
      buscaDatInd();
-     
+    CodigoBarras codBarras = new CodigoBarras("D",eje_numeE.getText(),SERIE,
+                deo_codiE.getValorInt(),pro_codsalE.getValorInt(),0,0); 
      etiq.iniciar(deo_codiE.getText(),
-                  eje_numeE.getText() + "/" +
-                   Formatear.format(EU.em_cod, "99") + "/" +
-                   SERIE + "/" +
-                   deo_codiE.getValorInt(),
+                 codBarras.getLote(),
                   pro_codsalE.getText(), pro_codsalE.getTextNomb(), utdesp.nacidoE, utdesp.cebadoE,
                   utdesp.despiezadoE, null,
                   0,utdesp.getConservar(),

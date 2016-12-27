@@ -3319,7 +3319,7 @@ public class MantDesp extends ventanaPad implements PAD
                 proCodeti = 0;
             else         
                 proCodeti = pro_codlE.getLikeProd().getInt("pro_codeti");
-
+        
 //     debug("Nombre Articulo: "+nombArt);
             utdesp.iniciar(dtAdd, eje_numeE.getValorInt(), EU.em_cod, deo_almdesE.getValorInt(),
                 deo_almoriE.getValorInt(), EU);
@@ -3370,12 +3370,12 @@ public class MantDesp extends ventanaPad implements PAD
             buscaDatInd();
             int proCodi=jtLin.getValorInt(jtDesp.getSelectedRowDisab(), JTLIN_PROCODI);
             String proNomb=jtLin.getValString(jtDesp.getSelectedRowDisab(), JTLIN_PRONOMB);
+            CodigoBarras codBarras = new CodigoBarras("D",eje_numeE.getText(),deo_selogeE.getText(),
+                deo_nulogeE.getValorInt(),proCodi,0,0); 
+            
 //            java.util.Date fecCong=utildesp.getDateCongelado(proCodi, deo_fecproE.getDate(), dtStat);    
             etiq.iniciar(deo_nulogeE.getText(),
-                eje_numeE.getText() + "/"
-                + Formatear.format(EU.em_cod, "99") + "/"
-                + deo_selogeE.getText() + "/"
-                + deo_nulogeE.getValorInt(),
+               codBarras.getLote(),
                 ""+proCodi, proNomb, utdesp.nacidoE, utdesp.cebadoE,
                 utdesp.despiezadoE, null,
                 0, utdesp.getConservar(),

@@ -38,9 +38,7 @@ public class cliAvcPanel extends cliPanel
   int avcAno;
   int empCodi;
   String avcSerie;
-  int avcNume=0;
- 
-  
+  int avcNume=0; 
   
   public void setAvcAno(int avc_ano)
   {

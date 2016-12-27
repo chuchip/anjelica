@@ -108,7 +108,7 @@ public class CLHistVentas extends ventana {
   {
       iniciarFrame();
 
-      this.setVersion("2014-10-06"+(actual?"(Actualizar)":""));
+      this.setVersion("2016-12-27"+(actual?"(Actualizar)":""));
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -559,8 +559,8 @@ public class CLHistVentas extends ventana {
         jtSem = new gnu.chu.controles.Cgrid(8);
         Pacum = new gnu.chu.controles.CPanel();
         kilosL = new gnu.chu.controles.CLabel();
-        kilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9");
-        kilosAntE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9");
+        kilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9");
+        kilosAntE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9");
         importeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,---,--9");
         kilosL2 = new gnu.chu.controles.CLabel();
         kilosL4 = new gnu.chu.controles.CLabel();

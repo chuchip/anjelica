@@ -1,3 +1,40 @@
+alter table v_albcompar alter opcional1  type varchar(2);
+alter table v_albcompar alter opcional2  type varchar(2);
+alter table v_albcompar alter clasificacion  type varchar(2);
+
+drop trigger albcompar_update on anjelica.v_albcompar;
+update v_albcompar set opcional1 = (select pai_inic from paises where pai_codi = v_albcompar.acp_paisac) where acp_paisac>0; --and acc_ano=2016;
+
+update v_albcompar set opcional2 = (select pai_inic from paises where pai_codi = v_albcompar.acp_painac) where acp_painac>0; -- and acc_ano=2016;
+
+update v_albcompar set clasificacion = (select pai_inic from paises where pai_codi = v_albcompar.acp_engpai) where acp_engpai>0; -- and acc_ano=2016;
+
+alter table v_albcompar rename acp_paisac to acp_paisac1;
+alter table v_albcompar rename acp_painac to acp_painac1;
+alter table v_albcompar rename acp_engpai to acp_paieng1;
+alter table v_albcompar rename opcional1 to acp_paisac;
+alter table v_albcompar rename opcional2 to acp_painac;
+alter table v_albcompar rename clasificacion to acp_engpai;
+create trigger albcompar_update BEFORE UPDATE OR DELETE  on anjelica.v_albcompar for each row execute procedure anjelica.fn_mvtoalm();
+
+-- Historico Compras
+alter table hisalpaco add opcional1  varchar(2);
+alter table hisalpaco add opcional2   varchar(2);
+alter table hisalpaco alter clasificacion  type varchar(2);
+
+update hisalpaco set opcional1 = (select pai_inic from paises where pai_codi = hisalpaco.acp_paisac) where acp_paisac>0 ;
+
+update hisalpaco set opcional2 = (select pai_inic from paises where pai_codi = hisalpaco.acp_painac) where acp_painac>0 
+
+update hisalpaco set clasificacion = (select pai_inic from paises where pai_codi = hisalpaco.acp_engpai) where acp_engpai>0 ;
+
+alter table hisalpaco rename acp_paisac to acp_paisac1;
+alter table hisalpaco rename acp_painac to acp_painac1;
+alter table hisalpaco rename acp_engpai to acp_paieng1;
+alter table hisalpaco rename opcional1 to acp_paisac;
+alter table hisalpaco rename opcional2 to acp_painac;
+alter table hisalpaco rename clasificacion to acp_engpai;
+
 -- 
 -- Incluir Camara en Stock-partidas 
 --

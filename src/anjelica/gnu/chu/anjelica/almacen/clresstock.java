@@ -133,7 +133,7 @@ public class clresstock extends ventana implements  JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(760, 540));
-    this.setVersion("2015-06-11");
+    this.setVersion("2016-12-20");
     VERNEGATIVO=EU.getValorParam("verNegResStock",VERNEGATIVO);
     statusBar = new StatusBar(this);
     conecta();
@@ -454,7 +454,7 @@ public class clresstock extends ventana implements  JRDataSource
           " FROM v_pedico  " +        
           " where pro_codi = ?" +
           (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
-          " and pcc_estad = 'C' " +
+          " and pcc_estad = 'P' " +
           " AND pcc_estrec = 'P' "+
           " and pcc_fecrec <=  TO_DATE('" + fecStockE.getText() + "','dd-MM-yyyy')" +
           " group by prv_codi,pcl_feccad " +

@@ -125,7 +125,18 @@ public class CodigoBarras
     public String getLote() {
         return lote;
     }
-    
+     /**
+     * Devuelve el texto del Lote para imprimir
+     * @param incIndividuo inlcuir individuo
+     * @return 
+     */
+    public String getLote(boolean incIndividuo) 
+    {
+        if (incIndividuo)
+            return lote;
+        else
+          return getStringLote(false);
+    }
     public CodigoBarras()
     {
         
@@ -171,12 +182,16 @@ public class CodigoBarras
                 + Formatear.format(proIndi, "999")
                 + (proKilos==0?"":Formatear.format(proKilos, "9999.99"))
                 + (cliente==0?"":"C"+cliente);             
-        
-        lote=  (ejeLot.length()>2? ejeLot.substring(2):ejeLot)
-                 + proSerie+  Formatear.format(proLote,"99999").trim()+"/"+
-                Formatear.format(proIndi,"#99").trim();
+        lote=getStringLote(true);
     }
     
+    String getStringLote(boolean incIndiv)
+    {
+              return  (ejeLot.length()>2? ejeLot.substring(2):ejeLot)
+                 + proSerie+  Formatear.format(proLote,"99999").trim()+
+                 (proIndi>0 && incIndiv?"/"+ Formatear.format(proIndi,"#99").trim():"");
+
+    }
     public void setAlbaranVenta(int avcAno,String avcSerie,int avcNume)
     {
         this.avcAno=avcAno;

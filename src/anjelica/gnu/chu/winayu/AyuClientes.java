@@ -44,7 +44,7 @@ public class AyuClientes extends ventana
 {
   String zona=null;
   public boolean Error=false;
-  public String cli_codiE="";
+  private String cli_codiE="";
   public String cli_cuenE="";
   public boolean consulta=false;
   
@@ -204,13 +204,21 @@ public class AyuClientes extends ventana
   {
      cli_nombE.setText(cliNomb);
   }
+  public String getCliCodi()
+  {
+      return cli_codiE;
+  }
   public String getCliNomb()
   {
-     return cli_nombE.getText();
+     return jt.getValString(3);
   }
   public String getNombCom()
   {
      return jt.getValString(2);
+  }
+  public String getPoblacion()
+  {
+      return jt.getValString(2);
   }
   void Bcancelar_actionPerformed(ActionEvent e) {
     matar();

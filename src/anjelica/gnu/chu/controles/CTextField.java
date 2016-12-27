@@ -2048,14 +2048,17 @@ String procesaTecla()
 
     return AceptaChar(posicion,tecla);
   }
-
-  public void setMayusc(boolean v) {
-    if (v)
+  public void setMayusculas(boolean swMayusc) {
+     if (swMayusc)
       May_min = 'M';
     else {
       if (May_min == 'M')
         May_min = ' ';
     }
+  }
+     
+  public void setMayusc(boolean v) {
+      setMayusculas(v);
   }
 
   public void setMinusc(boolean v) {
@@ -2628,7 +2631,10 @@ String procesaTecla()
 
     return true;
   }
-
+  /**
+   * Devuelve true si el valor del campo esta vacio o 0 si es numerico 
+   * @return 
+   */
   public boolean isNull()
   {
     return isNull(true);

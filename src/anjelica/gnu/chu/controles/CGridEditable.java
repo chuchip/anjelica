@@ -515,7 +515,7 @@ public class CGridEditable extends Cgrid implements CQuery {
    * moviendose con el raton o con el cursor atras (SHIFT+TAB)
    * @param v Vector con JComponent. Actualmente soporta JTextField, JComboBox, JCheckBox y
    * JLinkBox
-   * @throws Exception En caso de que el numero de campos mandados o los tipos de estos
+   * @throws IllegalArgumentException En caso de que el numero de campos mandados o los tipos de estos
    * no sean correctos.
    */
   public void setCampos(ArrayList v) throws IllegalArgumentException, ClassNotFoundException
@@ -1651,10 +1651,10 @@ public class CGridEditable extends Cgrid implements CQuery {
     Vector v = new Vector();
     for (int nCampo = 0; nCampo < nCol; nCampo++)
     {
-      if (tCampo.get(nCampo).toString().compareTo("T") == 0 ||
-          tCampo.get(nCampo).toString().compareTo("P") == 0)
+      if (tCampo.get(nCampo).equals("T") ||
+          tCampo.get(nCampo).equals("P") )
         v.addElement( ( (CEditable) campos.get(nCampo)).getText());
-      if (tCampo.get(nCampo).toString().compareTo("B") == 0)
+      if (tCampo.get(nCampo).equals("B"))
       {
         if (Formato[nCampo].equals("") || Formato[nCampo].charAt(0) != 'B')
         {

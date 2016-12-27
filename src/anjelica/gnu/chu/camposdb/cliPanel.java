@@ -243,13 +243,8 @@ public class cliPanel extends CPanel
     if (swControl)
     {
 
-      cli_codiE.addFocusListener(new FocusListener()
+      cli_codiE.addFocusListener(new FocusAdapter()
       {
-        @Override
-        public void focusGained(FocusEvent e)
-        {
-            int a=1;
-        }
 
         @Override
         public void focusLost(FocusEvent e)
@@ -507,7 +502,7 @@ public void setZona(String zonCli)
 
     cli_codiE.setText(texto);
     if (! swControl)
-        return; // Pasa de buscar y poner el nombre del producto.
+        return; // Pasa de buscar y poner el nombre del 
     try {
       controlar(DBSKIP);
     } catch (Exception k)
@@ -557,6 +552,7 @@ public void setZona(String zonCli)
     cli_codiE.setQuery(modoQuery);
     Bcons.setEnabled(!modoQuery);
   }
+  @Override
   public boolean getQuery() {
     return cli_codiE.isQuery();
   }
@@ -617,8 +613,8 @@ public void setZona(String zonCli)
     evQuery=false;
     if (aycli.consulta)
     {
-      cli_codiE.setText(aycli.cli_codiE);
-       if (swControl)
+      cli_codiE.setText(aycli.getCliCodi());
+      if (swControl)
          cli_nombL.setText(aycli.getCliNomb());
       setNomComercial(aycli.getNombCom());
     }
@@ -729,7 +725,7 @@ public void setZona(String zonCli)
   {
       return cli_nombL;
   }
-
+    
   /**
    * Quita un listener al foco. El foco se habria añadido al campo cli_codiE (CTextField)
    * @param f 

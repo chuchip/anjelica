@@ -27,6 +27,7 @@ import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.listados.etiqueta;
+import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.CodigoBarras;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -79,7 +80,7 @@ public class utildesp
   public String feccadE=null;
   boolean cambio=true;
   public int prvCodi=0;
-  private int acp_painac,acp_engpai,acp_paisac;
+  private String acp_painac,acp_engpai,acp_paisac;
   private int mat_codi,sde_codi;
   private String mat_nrgsa,sde_nrgsa,acp_paisacNomb;
 // Variables Cabecera de Despiece
@@ -467,28 +468,22 @@ public class utildesp
           }
           if (swBuscaCompra)
               return true;
-          acp_painac=dtStat.getInt("acp_painac");
-          s = "SELECT pai_nomb FROM v_paises WHERE pai_codi = " +
-              dtStat.getInt("acp_painac");
-          if (!dtCon1.select(s))
+          acp_painac=dtStat.getString("acp_painac");
+          nacidoE=MantPaises.getNombrePais(acp_painac, dtCon1);         
+          if (nacidoE==null)
           {
-            msgAviso = "No encontrado PAIS NACIMIENTO: " +
-                dtStat.getInt("acp_painac");
+            msgAviso = "No encontrado PAIS NACIMIENTO: " +  acp_painac;
             nacidoE = "";
           }
-          else
-            nacidoE = dtCon1.getString("pai_nomb");
-          acp_engpai=dtStat.getInt("acp_engpai");
-          s = "SELECT pai_nomb FROM v_paises WHERE pai_codi = " +
-              dtStat.getInt("acp_engpai");
-          if (!dtCon1.select(s))
+         
+          acp_engpai=dtStat.getString("acp_engpai");
+          cebadoE=MantPaises.getNombrePais(acp_engpai, dtCon1);         
+          if (cebadoE==null)
           {
-            msgAviso = "No encontrado PAIS CEBADO: " +
-                dtStat.getInt("acp_painac");
+            msgAviso = "No encontrado PAIS CEBADO: " +  acp_engpai;
             cebadoE = "";
           }
-          else
-            cebadoE = dtCon1.getString("pai_nomb");
+         
           mat_codi = dtStat.getInt("mat_codi");
           s = "SELECT mat_nrgsa,pai_codi FROM v_matadero m WHERE m.mat_codi = " +
               dtStat.getInt("mat_codi");
@@ -507,10 +502,15 @@ public class utildesp
               sacrificadoE = (swPaisCorto?  dtCon1.getString("pai_nomcor") :dtCon1.getString("pai_nomb") )
                   + "-" + sacrificadoE;
           }
-          acp_paisac = dtStat.getInt("acp_paisac");
-          s = "select pai_nomb from v_paises where pai_codi = " + acp_paisac;
-          if (dtCon1.select(s))
-            acp_paisacNomb = dtCon1.getString("pai_nomb");
+          acp_paisac = dtStat.getString("acp_paisac");
+          acp_paisacNomb=MantPaises.getNombrePais(acp_paisac, dtCon1);      
+          
+          if (acp_paisacNomb==null)
+          {
+            msgAviso = "No encontrado PAIS Sacrificio: " +  acp_paisac;    
+            acp_paisacNomb="";
+          }
+            
           sde_codi=dtStat.getInt("sde_codi");
           if (deoDesnue)
             s = "select pai_nomb,pai_nomcor from v_paises where pai_codi = " + paiEmp;
@@ -1193,10 +1193,10 @@ public class utildesp
     }
 
 
-    public int getAcpPainac() {
+    public String getAcpPainac() {
         return acp_painac;
     }
-    public void setAcpPainac(int paisNacimiento) {
+    public void setAcpPainac(String paisNacimiento) {
         acp_painac=paisNacimiento;
     }
     public void setPaisNacimiento(String paisNacimiento)
@@ -1228,17 +1228,17 @@ public class utildesp
    public void setSdeCodi(int salaDespiece) {
         sde_codi=salaDespiece;
     }
-    public int getAcpEngpai() {
+    public String getAcpEngpai() {
         return acp_engpai;
     }
-    public void setAcpEngpai(int paisEngorde) {
+    public void setAcpEngpai(String paisEngorde) {
         acp_engpai=paisEngorde;
     }
 
-    public int getAcpPaisac() {
+    public String getAcpPaisac() {
         return acp_paisac;
     }
-    public void setAcpPaisac(int paisSacrificio) {
+    public void setAcpPaisac(String paisSacrificio) {
         acp_paisac=paisSacrificio;
     }
     public String getNumCrot() {

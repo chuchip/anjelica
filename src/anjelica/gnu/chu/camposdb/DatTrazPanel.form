@@ -18,7 +18,7 @@
     <Property name="useNullLayout" type="boolean" value="true"/>
   </Layout>
   <SubComponents>
-    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
+    <Component class="gnu.chu.controles.CLabel" name="cLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" value="Nacido"/>
       </Properties>
@@ -28,7 +28,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
+    <Component class="gnu.chu.controles.CLabel" name="cLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" value="Documento"/>
       </Properties>
@@ -38,7 +38,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
+    <Component class="gnu.chu.controles.CLabel" name="cLabel3">
       <Properties>
         <Property name="text" type="java.lang.String" value="Sacrificado"/>
       </Properties>
@@ -53,7 +53,7 @@
         <Property name="ancTexto" type="int" value="40"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="acp_painacE.setFormato(Types.DECIMAL,&quot;####9&quot;,5);&#xa;acp_painacE.getComboBox().setPreferredSize(new Dimension(17,150));"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="acp_painacE.setFormato(Types.CHAR,&quot;XX&quot;,2);&#xa;acp_painacE.getComboBox().setPreferredSize(new Dimension(17,150));"/>
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -66,7 +66,7 @@
         <Property name="ancTexto" type="int" value="40"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="acp_engpaiE.setFormato(Types.DECIMAL,&quot;####9&quot;,5);&#xa;acp_engpaiE.getComboBox().setPreferredSize(new Dimension(17,150));"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="acp_engpaiE.setFormato(Types.CHAR,&quot;XX&quot;,2);&#xa;acp_engpaiE.getComboBox().setPreferredSize(new Dimension(17,150));"/>
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -79,7 +79,7 @@
         <Property name="ancTexto" type="int" value="40"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="acp_paisacE.setFormato(Types.DECIMAL,&quot;####9&quot;,5);&#xa;acp_paisacE.getComboBox().setPreferredSize(new Dimension(17,150));"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="acp_paisacE.setFormato(Types.CHAR,&quot;XX&quot;,2);&#xa;acp_paisacE.getComboBox().setPreferredSize(new Dimension(17,150));"/>
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -87,7 +87,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel4">
+    <Component class="gnu.chu.controles.CLabel" name="cLabel4">
       <Properties>
         <Property name="text" type="java.lang.String" value="Matadero"/>
       </Properties>
@@ -110,7 +110,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel5">
+    <Component class="gnu.chu.controles.CLabel" name="cLabel5">
       <Properties>
         <Property name="text" type="java.lang.String" value="Sala Desp."/>
       </Properties>
@@ -133,7 +133,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel6">
+    <Component class="gnu.chu.controles.CLabel" name="cLabel6">
       <Properties>
         <Property name="text" type="java.lang.String" value="Proveedor "/>
       </Properties>
@@ -153,7 +153,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel7">
+    <Component class="gnu.chu.controles.CLabel" name="cLabel7">
       <Properties>
         <Property name="text" type="java.lang.String" value="Crotal "/>
       </Properties>
@@ -188,7 +188,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel9">
+    <Component class="gnu.chu.controles.CLabel" name="cLabel9">
       <Properties>
         <Property name="text" type="java.lang.String" value="Fec. Docum"/>
       </Properties>
@@ -208,7 +208,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.pvc_comentL" name="acp_feccadL">
+    <Component class="gnu.chu.controles.CLabel" name="acp_feccadL">
       <Properties>
         <Property name="text" type="java.lang.String" value="Fec.Produc"/>
       </Properties>
@@ -236,7 +236,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.pvc_comentL" name="acp_fecsacL">
+    <Component class="gnu.chu.controles.CLabel" name="acp_fecsacL">
       <Properties>
         <Property name="text" type="java.lang.String" value="Fec. Sacrificio"/>
       </Properties>
@@ -264,7 +264,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.pvc_comentL" name="cLabel8">
+    <Component class="gnu.chu.controles.CLabel" name="cLabel8">
       <Properties>
         <Property name="text" type="java.lang.String" value="Cebado"/>
       </Properties>
@@ -292,7 +292,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.pvc_comentL" name="acp_feccadL1">
+    <Component class="gnu.chu.controles.CLabel" name="acp_feccadL1">
       <Properties>
         <Property name="text" type="java.lang.String" value="Fec. Caduc"/>
       </Properties>
@@ -320,7 +320,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.pvc_comentL" name="acc_tipdocL">
+    <Component class="gnu.chu.controles.CLabel" name="acc_tipdocL">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="0" green="c8" id="orange" palette="1" red="ff" type="palette"/>

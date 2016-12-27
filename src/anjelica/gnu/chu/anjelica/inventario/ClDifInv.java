@@ -43,6 +43,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
@@ -53,6 +55,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -61,7 +65,7 @@ import net.sf.jasperreports.engine.JasperReport;
 
 
 public class ClDifInv extends ventana {
-   
+    int nLinea=0;
     private  final int  JT_PROCODI=0;
     private  final int  JT_PRONOMB=1;
     private  final int  JT_PRPANO=2;
@@ -72,7 +76,10 @@ public class ClDifInv extends ventana {
     private  final int  JT_PESOORD=7;
     private  final int  JT_COMENT=8;
     private  final int  JT_SELEC=9;
-    private  final int  JT_ALMCODI=10;
+    private  final int  JT_CAUSA=10;
+    private  final int  JT_ALMCODI=11;
+    private  final int  JT_CCICODI=12;
+    private  final int  JT_LCINUME=13;
     private  final int  JTR_SELEC=7;
     private  final int  JTR_ALMCODI=8;
     private  final int  JTR_CCICODI=9;
@@ -129,7 +136,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2016-09-13");
+        this.setVersion("2016-12-19 3");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -183,6 +190,52 @@ public class ClDifInv extends ventana {
      */
     void activarEventos()
     {
+      jt.addListSelectionListener(new ListSelectionListener ()
+      {
+         @Override
+        public void valueChanged(ListSelectionEvent e)
+        {
+            if (jt.isVacio() || e.getValueIsAdjusting() || nLinea<0)
+                return;
+            nLinea=jt.getSelectedRow();
+            lci_comentE.setText(jt.getValString(nLinea,JT_COMENT));
+            lci_causaE.setText(jt.getValString(nLinea,JT_CAUSA));
+        }
+      });
+      lci_comentE.addFocusListener(new FocusAdapter()
+      {
+           @Override
+           public void focusLost(FocusEvent e) {
+               try {
+                String s="update coninvlin  set lci_coment = '"+ lci_comentE.getText()+"'"+
+                    " where cci_codi ="+jt.getValorInt(nLinea,JT_CCICODI)+
+                    " and lci_nume="+jt.getValorInt(nLinea,JT_LCINUME);
+                dtAdd.executeUpdate(s);
+                dtAdd.commit();
+                jt.setValor(lci_comentE.getText(),nLinea,JT_COMENT);
+               } catch (SQLException k)
+               {
+                   Error("Error al actualizar comentario de Inventario",k);
+               }
+           }
+      });
+      lci_causaE.addFocusListener(new FocusAdapter()
+      {
+           @Override
+           public void focusLost(FocusEvent e) {
+               try {
+                String s="update coninvlin  set lci_causa = '"+ lci_causaE.getText()+"'"+
+                    " where cci_codi ="+jt.getValorInt(nLinea,JT_CCICODI)+
+                    " and lci_nume="+jt.getValorInt(nLinea,JT_LCINUME);
+                dtAdd.executeUpdate(s);
+                dtAdd.commit();
+                jt.setValor(lci_causaE.getText(),nLinea,JT_CAUSA);
+               } catch (SQLException k)
+               {
+                   Error("Error al actualizar causa incidencia de Inventario",k);
+               }
+           }
+      });
       Baceptar.addActionListener(new ActionListener() {
             @Override
         public void actionPerformed(ActionEvent e) {
@@ -365,13 +418,17 @@ public class ClDifInv extends ventana {
         Error("Error al Buscar Control de Inventario", ex);
         return;
       }
-
+      
       new miThread("")
       {
             @Override
         public void run()
         {
+          nLinea=-1;
           buscaDatos();
+          nLinea=0;
+          lci_comentE.setText(jt.getValString(nLinea,JT_COMENT));
+          lci_causaE.setText(jt.getValString(nLinea,JT_CAUSA));
         }
       };
     }
@@ -411,9 +468,9 @@ public class ClDifInv extends ventana {
         }
 
         setMensajePopEspere("Generando Listado ... Espere, por favor",false);
-        s="select  c.cci_codi,P.cam_codi,c.PRO_CODI,p.pro_nomb,c.PRP_ANO,"+
+        s="select  c.cci_codi,c.lci_nume,P.cam_codi,c.PRO_CODI,p.pro_nomb,c.PRP_ANO,"+
             "c.prp_empcod ,c.alm_codlin,c.PRP_SERI,"+
-            " c.PRP_PART,c.PRP_INDI,c.lci_coment, "+
+            " c.PRP_PART,c.PRP_INDI,c.lci_coment,c.lci_causa, "+
             " c.LCI_PESO as lci_peso,c.LCI_KGSORD as lci_kgsord "+
            "  from v_articulo  as p,"+VISTA_INV+" as c "+
             " where  p.pro_tiplot= 'V' "+
@@ -466,7 +523,7 @@ public class ClDifInv extends ventana {
                             //" AND avc_fecalb <= TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "+
                             " order by avc_fecalb desc "))
               { 
-                  lciComent= "V:"+dtStat.getInt("emp_codi")+"-"+dtStat.getInt("avc_ano")+
+                  lciComent= "V:"+dtStat.getInt("avc_ano")+
                                 dtStat.getString("avc_serie")+dtStat.getInt("avc_nume")+"."+
                                 dtStat.getFecha("avc_fecalb","dd-MM")+
                                 (dtStat.getString("avc_depos").equals("D")?"D":"");
@@ -496,17 +553,19 @@ public class ClDifInv extends ventana {
               }
               if (lciComent==null)
               { // Busco Compras.
-                s="select acc_fecrec,prv_codi from v_compras where  pro_codi="+dtCon1.getInt("pro_codi")+
+                s="select acc_fecrec,c.prv_codi,p.prv_nomb from v_compras as c,"+
+                              " v_proveedo as p where  pro_codi="+dtCon1.getInt("pro_codi")+
                               " and acc_nume = "+dtCon1.getInt("PRP_PART")+
                               " and acc_serie = '"+dtCon1.getString("PRP_SERI")+"'"+
                               " and acc_ano = "+dtCon1.getInt("PRP_ANO")+
                               " and acp_numind = "+dtCon1.getInt("PRP_INDI")+
+                              " and p.prv_codi = c.prv_codi"+
                              // " AND acc_fecrec > TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "+
                               " order by acc_fecrec desc ";
                 if (dtStat.select(s))
                 {
                     lciComent= "C:"+dtStat.getFecha("acc_fecrec","dd-MM")+" PRV:"+
-                                  dtStat.getString("prv_codi");
+                                  dtStat.getString("prv_nomb");
                 }
               }
               if (lciComent==null)
@@ -536,18 +595,18 @@ public class ClDifInv extends ventana {
                   if (dtStat.getObject("cci_feccon")!=null)
                     lciComent += "I:"+dtStat.getFecha("cci_feccon","dd-MM");
                   
-              }         
-              if (lciComent!=null)
+              }
+              if (dtCon1.getString("lci_coment").equals("") )
               {
-                   s="UPDATE "+TABLA_INV_LIN+" set lci_coment = '"+
-                                (lciComent.length()>=34?lciComent.substring(0,34):lciComent)+"'"+
+                s="UPDATE "+TABLA_INV_LIN+" set lci_coment = '"+
+                                (lciComent.length()>=44?lciComent.substring(0,44):lciComent)+"'"+
                                 " where cci_codi = "+dtCon1.getInt("cci_codi")+
                                 " and pro_codi ="+dtCon1.getInt("pro_codi")+
                                 " and PRP_PART = "+dtCon1.getInt("PRP_PART")+
                                 " and prp_seri = '"+dtCon1.getString("PRP_SERI")+"'"+
                                 " and prp_ano = "+dtCon1.getInt("PRP_ANO")+
                                 " and prp_indi ="+dtCon1.getInt("PRP_INDI");
-                  dtAdd.executeUpdate(s);
+                dtAdd.executeUpdate(s);
               }
         } while (dtCon1.next());
         dtAdd.commit();
@@ -618,7 +677,10 @@ public class ClDifInv extends ventana {
             v.add(dtCon1.getDouble("lci_kgsord"));
             v.add(dtCon1.getString("lci_coment"));
             v.add(false);
+            v.add(dtCon1.getString("lci_causa"));
             v.add(dtCon1.getInt("alm_codlin"));
+            v.add(dtCon1.getInt("cci_codi"));
+            v.add(dtCon1.getInt("lci_nume"));
             ar.add(v);
         } while (dtCon1.next());
         jt.setDatos(ar);
@@ -751,28 +813,40 @@ public class ClDifInv extends ventana {
             setMensajePopEspere("Tratando datos ...",true);
 //        debug("calcDatos: "+dtCon1.getStrSelect()+"\nCci_codi: "+cciCodi);
 //        debug("S: "+dtCon1.getStrSelect());
-            // Pongo a 0 los Individuos y Kgs.
-            s = "UPDATE "+TABLA_INV_LIN+" set  lci_kgsord=0,lci_coment = null "
+            // Marco los registros que automaticos como antiguos. Paso de 1  a 2 .
+            s = "UPDATE "+TABLA_INV_LIN+" set lci_regaut = 2 "
+                    + " where emp_codi = " + EU.em_cod
+                    + " and lci_regaut = 1"
+                    + (LOTE <= 0 ? "" : " and prp_part  = " + LOTE)
+                    + (PROCODI != 0 ? " and pro_codi = " + PROCODI : "")
+                    + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+ " c "
+                    + " where c.emp_codi =" + EU.em_cod
+                    + (alm_codiE.getValorInt()==0?"":" and alm_codi = "+alm_codiE.getValorInt())
+                    + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy')) ";
+            dtAdd.executeUpdate(s);
+             // Pongo a 0 los Kgs calculados
+            s = "UPDATE "+TABLA_INV_LIN+" set  lci_kgsord=0 "
                     + " where emp_codi = " + EU.em_cod
                     + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+ " c "
                     + " where c.emp_codi =" + EU.em_cod
                     + (alm_codiE.getValorInt()==0?"":" and alm_codi = "+alm_codiE.getValorInt())
                     + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy')) ";
+            dtAdd.executeUpdate(s);
             swLeeOrd = true;
             dtCon1.setSqlUpdate(s);
 //        debug("Reseteados los kilos de ordenador: "+dtCon1.getSqlUpdate());
             stUp.executeUpdate(dtCon1.getSqlUpdate());
 
             // Borro los individuos que no tenga stock real.
-            s = "DELETE FROM "+ TABLA_INV_LIN
-                    + " where emp_codi = " + EU.em_cod
-                    + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+" c where "
-                    + " c.emp_codi =" + EU.em_cod
-                    + (alm_codiE.getValorInt()==0?"":" and alm_codi = "+alm_codiE.getValorInt())
-                    + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
-                    + " ) "
-                    + " and lci_peso = 0 ";
-            dtCon1.setSqlUpdate(s);
+//            s = "DELETE FROM "+ TABLA_INV_LIN
+//                    + " where emp_codi = " + EU.em_cod
+//                    + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+" c where "
+//                    + " c.emp_codi =" + EU.em_cod
+//                    + (alm_codiE.getValorInt()==0?"":" and alm_codi = "+alm_codiE.getValorInt())
+//                    + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+//                    + " ) "
+//                    + " and lci_peso = 0 ";
+//            dtCon1.setSqlUpdate(s);
 
             stUp.executeUpdate(dtCon1.getSqlUpdate());
             /**
@@ -900,6 +974,8 @@ public class ClDifInv extends ventana {
                     dtAdd.edit(s); 
                     canOri = dtAdd.getDouble("lci_kgsord")+canti;
                     dtAdd.setDato("lci_kgsord", canOri );
+                    if (dtAdd.getInt("lci_regaut")==2)
+                        dtAdd.setDato("lci_regaut", 1);
 //                    canOri=canOri-dtAdd.getDouble("lci_peso");
                 } 
                 else
@@ -924,6 +1000,15 @@ public class ClDifInv extends ventana {
                 }
                 dtAdd.update(stUp);
             }
+              s = "DELETE FROM "+ TABLA_INV_LIN
+                    + " where emp_codi = " + EU.em_cod
+                    + " and lci_regaut = 2" // Registros antiguos
+                    + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+" c where "
+                    + " c.emp_codi =" + EU.em_cod
+                    + (alm_codiE.getValorInt()==0?"":" and alm_codi = "+alm_codiE.getValorInt())
+                    + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                    + " ) "; 
+            dtAdd.executeUpdate(s);
             ctUp.commit();
             
         } catch (Exception ex1) {
@@ -1236,11 +1321,15 @@ public class ClDifInv extends ventana {
         opDatStock = new gnu.chu.controles.CCheckBox();
         opMvtos = new gnu.chu.controles.CCheckBox();
         Ptab1 = new gnu.chu.controles.CTabbedPane();
-        jt = new gnu.chu.controles.Cgrid(11);
+        jt = new gnu.chu.controles.Cgrid(14);
         jtRep = new gnu.chu.controles.Cgrid(11);
         Ppie = new gnu.chu.controles.CPanel();
         Baccion = new gnu.chu.controles.CButtonMenu();
         BSelec = new gnu.chu.controles.CButtonMenu();
+        cLabel10 = new gnu.chu.controles.CLabel();
+        lci_comentE = new gnu.chu.controles.CTextField(Types.CHAR,"X",45);
+        cLabel11 = new gnu.chu.controles.CLabel();
+        lci_causaE = new gnu.chu.controles.CTextField(Types.CHAR,"X",30);
 
         MInsInv.setText("Ins. Inv.");
         MInsInv.setToolTipText("Insertar en control inventario");
@@ -1412,14 +1501,17 @@ public class ClDifInv extends ventana {
         v.add("K.Cal"); // 7
         v.add("Coment."); // 8
         v.add("Inc"); // 9
-        v.add("Alm"); // 10
+        v.add("Causa"); //10
+        v.add("Alm"); // 11
+        v.add("Cod");
+        v.add("NL");
         jt.setCabecera(v);
-        jt.setAjustarGrid(true);
+
         jt.setFormatoColumna(6, "---,--9.99");
         jt.setFormatoColumna(7, "---,--9.99");
         jt.setFormatoColumna(9, "BSN");
-        jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,2,0,1,2});
-        jt.setAnchoColumna(new int[]{50,150,40,30,45,40,60,60,80,30,30});
+        jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,2,0,1,0,2,2,2});
+        jt.setAnchoColumna(new int[]{50,150,40,30,45,40,60,60,80,30,80,30,20,20});
         jt.getPopMenu().add(MInsInv);
         jt.getPopMenu().add(MDelInv);
         jt.getPopMenu().add(MInsInvDep);
@@ -1433,7 +1525,7 @@ public class ClDifInv extends ventana {
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 216, Short.MAX_VALUE)
+            .addGap(0, 195, Short.MAX_VALUE)
         );
 
         Ptab1.addTab("Diferencias", jt);
@@ -1469,25 +1561,37 @@ public class ClDifInv extends ventana {
         Pgeneral.add(Ptab1, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        Ppie.setMaximumSize(new java.awt.Dimension(500, 24));
-        Ppie.setMinimumSize(new java.awt.Dimension(500, 24));
-        Ppie.setPreferredSize(new java.awt.Dimension(500, 24));
+        Ppie.setMaximumSize(new java.awt.Dimension(500, 44));
+        Ppie.setMinimumSize(new java.awt.Dimension(500, 44));
+        Ppie.setPreferredSize(new java.awt.Dimension(500, 44));
         Ppie.setLayout(null);
 
         Baccion.addMenu("Ins.Inventario","I" );
         Baccion.addMenu("Borrar Inventario","B" );
         Baccion.addMenu("Ins.Inv.Depos","D");
         Baccion.addMenu("Borrar Repetido","R");
-        Baccion.setText("Elegir Accion");
+        Baccion.setText("Accion");
         Ppie.add(Baccion);
-        Baccion.setBounds(30, 0, 130, 20);
+        Baccion.setBounds(380, 20, 110, 20);
 
         BSelec.setText("Seleccionar");
         BSelec.addMenu("Selecionar Todo","T" );
         BSelec.addMenu("Selecionar Nada","N" );
         BSelec.addMenu("Inv. Selec","I" );
         Ppie.add(BSelec);
-        BSelec.setBounds(310, 0, 110, 20);
+        BSelec.setBounds(380, 0, 110, 20);
+
+        cLabel10.setText("Causa");
+        Ppie.add(cLabel10);
+        cLabel10.setBounds(0, 20, 50, 17);
+        Ppie.add(lci_comentE);
+        lci_comentE.setBounds(60, 0, 310, 17);
+
+        cLabel11.setText("Coment.");
+        Ppie.add(cLabel11);
+        cLabel11.setBounds(2, 0, 50, 17);
+        Ppie.add(lci_causaE);
+        lci_causaE.setBounds(60, 20, 310, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1540,25 +1644,25 @@ public class ClDifInv extends ventana {
     private int borrarInventario(int nl) throws ParseException, SQLException
     {
       
-        int proCodi=jt.getValorInt(nl,JT_PROCODI);
-       
-        for (int n=nl;n>=0;n--)
-        {
-              if (jt.getValorInt(n,0)!=0)
-              {
-                  proCodi=jt.getValorInt(n,JT_PROCODI);
-                  break;
-              }
-        }
-        if (! checkRegInv(nl,proCodi,cci_fecconE.getFechaDB()," and alm_codlin  ="+ jt.getValorInt(nl,JT_ALMCODI),
-            dtCon1))
-      
-        {
-            msgBox("No encontrado apunte en control inventario\n"+s);
-            return 0;
-        }
-        int nDel=dtAdd.executeUpdate("delete from coninvlin where cci_codi ="+dtCon1.getInt("cci_codi")+
-            " and lci_nume="+dtCon1.getInt("lci_nume"));
+//        int proCodi=jt.getValorInt(nl,JT_PROCODI);
+//       
+//        for (int n=nl;n>=0;n--)
+//        {
+//              if (jt.getValorInt(n,0)!=0)
+//              {
+//                  proCodi=jt.getValorInt(n,JT_PROCODI);
+//                  break;
+//              }
+//        }
+//        if (! checkRegInv(nl,proCodi,cci_fecconE.getFechaDB()," and alm_codlin  ="+ jt.getValorInt(nl,JT_ALMCODI),
+//            dtCon1))
+//      
+//        {
+//            msgBox("No encontrado apunte en control inventario\n"+s);
+//            return 0;
+//        }
+        int nDel=dtAdd.executeUpdate("delete from coninvlin where cci_codi ="+jt.getValorInt(nl,JT_CCICODI)+
+                " and lci_nume="+jt.getValorInt(nl,JT_LCINUME)     );
         dtAdd.commit();
         return nDel;
     }
@@ -1840,6 +1944,8 @@ public class ClDifInv extends ventana {
     private gnu.chu.controles.CTabbedPane Ptab1;
     private gnu.chu.controles.CLinkBox alm_codiE;
     private gnu.chu.controles.CLabel cLabel1;
+    private gnu.chu.controles.CLabel cLabel10;
+    private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -1853,6 +1959,8 @@ public class ClDifInv extends ventana {
     private gnu.chu.controles.CComboBox feulinE;
     private gnu.chu.controles.Cgrid jt;
     private gnu.chu.controles.Cgrid jtRep;
+    private gnu.chu.controles.CTextField lci_causaE;
+    private gnu.chu.controles.CTextField lci_comentE;
     private gnu.chu.controles.CCheckBox leidoDepoC;
     private gnu.chu.controles.CTextField margenE;
     private gnu.chu.controles.CCheckBox opCalInv;

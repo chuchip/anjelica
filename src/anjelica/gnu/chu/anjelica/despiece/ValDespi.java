@@ -1964,7 +1964,7 @@ public class ValDespi extends ventana {
                + (tid_codiniE.isNull()?"":" and d.tid_codi "+
                (tid_codfinE.isNull()?"":">")+
                "= "+tid_codiniE.getValorInt())
-              + (tid_codfinE.isNull()?"":" and d.tid_codi< "+tid_codfinE.getValorInt())
+              + (tid_codfinE.isNull()?"":" and d.tid_codi<= "+tid_codfinE.getValorInt())
                + (deo_codiE.getValorInt()==0?"":" and d.eje_nume = "+eje_numeE.getValorInt()
                +" and "+(grupoC.getValor().equals("G")?" d.deo_numdes= ":" d.deo_codi = ")+deo_codiE.getValorInt())
                + (opCerradoC.getValor().equals("T")?"":" and deo_block = '"+opCerradoC.getValor()+"' ")
