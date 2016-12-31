@@ -78,16 +78,21 @@ public class DatTrazPanel extends CPanel {
         this.papa=padre;
         this.EU=EU;
         prv_codiE.iniciar(dtStat, padre, layPane, EU);
-        s = "SELECT pai_inic,pai_nomb FROM v_paises ORDER BY pai_nomb";
-        if (dtStat.select(s))
-        {
-          do
-          {
-            acp_painacE.addDatos(dtStat.getString("pai_codi"),dtStat.getString("pai_nomb"));
-            acp_paisacE.addDatos(dtStat.getString("pai_codi"),dtStat.getString("pai_nomb"));
-            acp_engpaiE.addDatos(dtStat.getString("pai_codi"),dtStat.getString("pai_nomb"));
-          } while (dtStat.next());
-        }
+        
+        acp_painacE.iniciar(dtStat, padre, layPane, EU);
+        acp_paisacE.iniciar(dtStat, padre, layPane, EU);
+        acp_engpaiE.iniciar(dtStat, padre, layPane, EU);
+        acp_painacE.setPeso(3);
+//        s = "SELECT pai_inic,pai_nomb FROM v_paises ORDER BY pai_nomb";
+//        if (dtStat.select(s))
+//        {
+//          do
+//          {
+//            
+//            acp_paisacE.addDatos(dtStat.getString("pai_inic"),dtStat.getString("pai_nomb"));
+//            acp_engpaiE.addDatos(dtStat.getString("pai_inic"),dtStat.getString("pai_nomb"));
+//          } while (dtStat.next());
+//        }
         acc_numeE.setEditable(false);
         setEditable(false); // Por defecto es solo consulta.
         activarEventos();
@@ -262,13 +267,13 @@ public class DatTrazPanel extends CPanel {
         if (!actual)
             return utDesp;
         utDesp.setAcpEngpai(acp_engpaiE.getText());
-        utDesp.setPaisEngorde(acp_engpaiE.getTextCombo());
+        utDesp.setPaisEngorde(acp_engpaiE.getTextNomb());
         utDesp.setFecSacrif(acp_fecsacE.getDate());
         utDesp.setNumCrot(acp_nucrotE.getText());
         utDesp.setAcpPainac(acp_painacE.getText());
-        utDesp.setPaisNacimiento(acp_painacE.getTextCombo());
+        utDesp.setPaisNacimiento(acp_painacE.getTextNomb());
         utDesp.setAcpPaisac(acp_paisacE.getText());
-        utDesp.setSacrificado(acp_paisacE.getTextCombo()+ " - "+mat_codiE.getTextCombo());
+        utDesp.setSacrificado(acp_paisacE.getTextNomb()+ " - "+mat_codiE.getTextCombo());
         utDesp.setFecCompra(avc_fecalbE.getDate());
         utDesp.setConservar(conservarE.getText());
         utDesp.setMatCodi(mat_codiE.getValorInt());
@@ -481,9 +486,6 @@ public class DatTrazPanel extends CPanel {
         cLabel1 = new gnu.chu.controles.CLabel();
         cLabel2 = new gnu.chu.controles.CLabel();
         cLabel3 = new gnu.chu.controles.CLabel();
-        acp_painacE = new gnu.chu.controles.CLinkBox();
-        acp_engpaiE = new gnu.chu.controles.CLinkBox();
-        acp_paisacE = new gnu.chu.controles.CLinkBox();
         cLabel4 = new gnu.chu.controles.CLabel();
         mat_codiE = new gnu.chu.controles.CLinkBox();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -508,6 +510,9 @@ public class DatTrazPanel extends CPanel {
             acp_feccadL1 = new gnu.chu.controles.CLabel();
             acc_fecprodE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
             acc_tipdocL = new gnu.chu.controles.CLabel();
+            acp_painacE = new gnu.chu.camposdb.PaiPanel();
+            acp_paisacE = new gnu.chu.camposdb.PaiPanel();
+            acp_engpaiE = new gnu.chu.camposdb.PaiPanel();
 
             setLayout(null);
 
@@ -522,24 +527,6 @@ public class DatTrazPanel extends CPanel {
             cLabel3.setText("Sacrificado");
             add(cLabel3);
             cLabel3.setBounds(10, 40, 72, 15);
-
-            acp_painacE.setFormato(Types.CHAR,"XX",2);
-            acp_painacE.getComboBox().setPreferredSize(new Dimension(17,150));
-            acp_painacE.setAncTexto(40);
-            add(acp_painacE);
-            acp_painacE.setBounds(80, 20, 178, 17);
-
-            acp_engpaiE.setFormato(Types.CHAR,"XX",2);
-            acp_engpaiE.getComboBox().setPreferredSize(new Dimension(17,150));
-            acp_engpaiE.setAncTexto(40);
-            add(acp_engpaiE);
-            acp_engpaiE.setBounds(320, 20, 178, 17);
-
-            acp_paisacE.setFormato(Types.CHAR,"XX",2);
-            acp_paisacE.getComboBox().setPreferredSize(new Dimension(17,150));
-            acp_paisacE.setAncTexto(40);
-            add(acp_paisacE);
-            acp_paisacE.setBounds(80, 40, 178, 17);
 
             cLabel4.setText("Matadero");
             add(cLabel4);
@@ -626,20 +613,26 @@ public class DatTrazPanel extends CPanel {
             acc_tipdocL.setOpaque(true);
             add(acc_tipdocL);
             acc_tipdocL.setBounds(440, 40, 60, 17);
+            add(acp_painacE);
+            acp_painacE.setBounds(80, 20, 180, 18);
+            add(acp_paisacE);
+            acp_paisacE.setBounds(80, 40, 220, 18);
+            add(acp_engpaiE);
+            acp_engpaiE.setBounds(320, 20, 180, 18);
         }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CTextField acc_fecprodE;
     private gnu.chu.controles.CTextField acc_numeE;
     private gnu.chu.controles.CLabel acc_tipdocL;
-    private gnu.chu.controles.CLinkBox acp_engpaiE;
+    private gnu.chu.camposdb.PaiPanel acp_engpaiE;
     private gnu.chu.controles.CLabel acp_feccadL;
     private gnu.chu.controles.CLabel acp_feccadL1;
     private gnu.chu.controles.CTextField acp_fecsacE;
     private gnu.chu.controles.CLabel acp_fecsacL;
     private gnu.chu.controles.CTextField acp_nucrotE;
-    private gnu.chu.controles.CLinkBox acp_painacE;
-    private gnu.chu.controles.CLinkBox acp_paisacE;
+    private gnu.chu.camposdb.PaiPanel acp_painacE;
+    private gnu.chu.camposdb.PaiPanel acp_paisacE;
     private gnu.chu.controles.CTextField avc_fecalbE;
     private gnu.chu.controles.CTextField avc_feccadE;
     private gnu.chu.controles.CLabel cLabel1;

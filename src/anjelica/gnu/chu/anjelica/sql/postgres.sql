@@ -1361,6 +1361,10 @@ prv_dtorap float,		-- Dto de Rappel
 prv_fecalt date,		-- Fecha de Alta.
 prv_feulmo date,		-- Fecha Ult. Modific.
 prv_intern smallint default 0 not null, 	-- Proveedor Interno ?
+prv_poloin smallint,	-- Posicion inicial Lote en cod.Barras interno prv
+prv_polofi smallint,	-- Posicion final Lote en cod.Barras interno prv
+prv_popein smallint,	-- Posicion inicial peso en cod.Barras interno prv
+prv_popefi smallint,	-- Posicion final peso en cod.Barras interno prv
 constraint ix_proveedo primary key(prv_codi)
 );
 --
@@ -1840,7 +1844,8 @@ create table anjelica.desproval
     eje_nume int not null,
     dpv_nusem int not null, -- Numero de Semana
     pro_codi int not null,
-    dpv_preci decimal(6,2) not null
+    dpv_preci decimal(6,2) not null,
+	dpv_preori decimal(6,2) not null
 );
 create index ix_desproval on desproval(eje_nume,dpv_nusem);
 --

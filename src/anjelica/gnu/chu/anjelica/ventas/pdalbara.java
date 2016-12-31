@@ -1748,8 +1748,9 @@ public class pdalbara extends ventanaPad  implements PAD
       if (nav.pulsado==navegador.ADDNEW)
         avc_revpreE.setValor(cli_codiE.getLikeCliente().getInt("cli_precfi"));
 //      if ( MantTarifa.isTarifaCosto(dtStat,cli_codiE.getLikeCliente().getInt("tar_codi")) )
-//       avc_valoraE.setValor("1");
-      cli_rutaE.setText(cli_codiE.getLikeCliente().getString("rut_codi"));
+//       avc_valoraE.setValor("1");      
+      cli_rutaE.setText(pvc_numeE.isNull()? cli_codiE.getLikeCliente().getString("rut_codi"):
+          pdpeve.getRuta(dtStat, emp_codiE.getValorInt(),pvc_anoE.getValorInt(), pvc_numeE.getValorInt()));
     }
     catch (SQLException k)
     {
@@ -2876,11 +2877,16 @@ public class pdalbara extends ventanaPad  implements PAD
     this.setEnabled(true);
     if (copeve.empCodiS!=0)
     {
-      pvc_anoE.setValorInt(copeve.ejeNumeS);
-      pvc_numeE.setValorInt(copeve.pvcNumeS);
-      cli_codiE.setValorInt(copeve.cliCodiS);
-      cli_codiE.getCliNomb().setText(copeve.getCliNomb());
-      afterFocusLostCli(false);
+        try {
+            pvc_anoE.setValorInt(copeve.ejeNumeS);
+            pvc_numeE.setValorInt(copeve.pvcNumeS);
+            cli_codiE.setValorInt(copeve.cliCodiS);
+            cli_codiE.getCliNomb().setText(copeve.getCliNomb());
+            cli_rutaE.setText(copeve.getRuta());
+            afterFocusLostCli(false);
+        } catch (SQLException ex) {
+           Error("Error al buscar ruta", ex);
+        }
     }
     try {
       actPedAlbaran();

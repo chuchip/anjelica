@@ -67,7 +67,7 @@ public class DatTrazFrame extends ventana {
         this.dtStat=dtStat;
         this.dtCon1=dtCon1;
         lotePanel.iniciar(dtStat, intFrame, layPan, EU);
-        datTrazPanel.iniciar(dtStat, dtCon1, papa,layPan, EU);
+        datTrazPanel.iniciar(dtStat, dtCon1, this,layPan, EU);
         datTrazPanel.setEditable(false);
         lotePanel.setEditable(false);
         datTrazPanel.setVerDatosCompra(false);
@@ -116,14 +116,14 @@ public class DatTrazFrame extends ventana {
     iniciarFrame();
     
     this.setIconifiable(false);
-    this.setResizable(false);
+    this.setResizable(true);
     this.setMaximizable(false);
     if (dtCon1 == null)
       conecta();
     initComponents();
      
     this.add(statusBar,BorderLayout.SOUTH);
-    this.setSize(new Dimension(525, 275));
+    this.setSize(new Dimension(525, 475));
   }
     /** This method is called from within the constructor to
      * initialize the form.

@@ -144,6 +144,10 @@ public class PaiPanel extends CPanel
       }
     });
   }
+  public void setPeso(int posPantalla)
+  {
+      this.peso=posPantalla;
+  }
   void consPais()
   {
       try

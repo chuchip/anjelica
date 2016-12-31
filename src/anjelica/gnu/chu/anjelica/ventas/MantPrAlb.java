@@ -1081,7 +1081,9 @@ public class MantPrAlb extends ventana {
         int nRow=jtLin.getRowCount();
         int nLin=jtSelAlb.getSelectedRow();
         try {
-          mvtosAlm.setUseMvtos(false);
+          mvtosAlm.setUseMvtos(true);
+          mvtosAlm.setIgnDespSinValor(true);
+          mvtosAlm.setIgnComprasSinValor(true);
           mvtosAlm.iniciarMvtos(feulin,fecCostoE.isNull()?avc_fecalbE.getText():fecCostoE.getText(),dtCos1);
         for (int n=0;n<nRow;n++)
         {

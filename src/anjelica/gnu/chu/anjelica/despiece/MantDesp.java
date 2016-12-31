@@ -43,10 +43,12 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.almacen.Comvalm;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.compras.MantAlbComPlanta;
+
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantArticulos;
@@ -197,8 +199,7 @@ public class MantDesp extends ventanaPad implements PAD
             }
         } catch (Exception e)
         {
-            Logger.getLogger(MantDesp.class.getName()).log(Level.SEVERE, null, e);
-            setErrorInit(true);
+            ErrorInit(e);
         }
     }
 
@@ -221,15 +222,15 @@ public class MantDesp extends ventanaPad implements PAD
             jbInit();
         } catch (Exception e)
         {
-            Logger.getLogger(MantDesp.class.getName()).log(Level.SEVERE, null, e);
-            setErrorInit(true);
+            ErrorInit(e);
+            
         }
     }
 
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2016-10-22" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2016-12-31" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -379,10 +380,8 @@ public class MantDesp extends ventanaPad implements PAD
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!deo_codiE.isEnabled())
-                {
+                if (!deo_codiE.isEnabled() && e.getClickCount()>1)
                     irTactil();
-                }
             }
         });
         BvalDesp.addActionListener(new ActionListener()
@@ -579,14 +578,20 @@ public class MantDesp extends ventanaPad implements PAD
         });
         jtCab.tableView.addMouseListener(new MouseAdapter()
         {
-
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (!jtCab.isEnabled())
-                {
                     irGridCab(e.getClickCount());
-                }
 
+            }
+        });
+        
+        jtLin.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+               if (!jtLin.isEnabled() && e.getClickCount()>1)
+                   verMvtosLinDes();
             }
         });
 
@@ -2419,23 +2424,39 @@ public class MantDesp extends ventanaPad implements PAD
     }
     
     void irTactil()
-    {        
-        ejecutable prog;
-        if ((prog = jf.gestor.getProceso(MantDespTactil.getNombreClase())) == null)
-            return;
-        MantDespTactil cm = (MantDespTactil) prog;
-        if (cm.inTransation())
+    {
+        try
         {
-            msgBox("Mantenimiento Despieces ocupado. No se puede realizar la busqueda");
-            return;
+            s="select * from desporig WHERE deo_seloge ='"+ MantDespTactil.SERIE+"'"+
+                " and deo_lotnue!=0 "+
+                " and eje_nume = "+eje_numeE.getValorInt()+
+                " and deo_codi = "+deo_codiE.getText();
+            if (! dtStat.select(s))
+            {
+                msgBox("Despiece no es tipo TACTIL");
+                return;
+            }
+            ejecutable prog;
+            if ((prog = jf.gestor.getProceso(MantDespTactil.getNombreClase())) == null)
+                return;
+            MantDespTactil cm = (MantDespTactil) prog;
+            if (cm.inTransation())
+            {
+                msgBox("Mantenimiento Despieces ocupado. No se puede realizar la busqueda");
+                return;
+            }
+            cm.PADQuery();
+            cm.setEjeNume(eje_numeE.getValorInt());
+            cm.setDeoCodi(deo_codiE.getText());
+            
+            cm.ej_query();
+            jf.gestor.ir(cm);
+        } catch (SQLException ex)
+        {
+           Error("Error al ir a Mantenimiento Tactil",ex);
         }
-        cm.PADQuery();
-        cm.setEjeNume(eje_numeE.getValorInt());
-        cm.setDeoCodi(deo_codiE.getText());
-        
-        cm.ej_query();
-        jf.gestor.ir(cm);
     }
+    @Override
     public void activar(boolean enab) {
         activar(enab, navegador.TODOS);
 
@@ -3939,6 +3960,8 @@ public class MantDesp extends ventanaPad implements PAD
         deo_tiempoE = new gnu.chu.controles.CTextField();
         MFechaCab = new javax.swing.JMenuItem();
         MFechaLin = new javax.swing.JMenuItem();
+        MVerMvtCab = new javax.swing.JMenuItem();
+        MVerMvtLin = new javax.swing.JMenuItem();
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         eje_numeL = new gnu.chu.controles.CLabel();
@@ -4265,6 +4288,20 @@ public class MantDesp extends ventanaPad implements PAD
                     }
                 });
 
+                MVerMvtCab.setText("Ver Mvtos");
+                MVerMvtCab.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        MVerMvtCabActionPerformed(evt);
+                    }
+                });
+
+                MVerMvtLin.setText("Ver Mvtos");
+                MVerMvtLin.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        MVerMvtLinActionPerformed(evt);
+                    }
+                });
+
                 Pprinc.setForeground(new java.awt.Color(255, 255, 255));
                 Pprinc.setMaximumSize(new java.awt.Dimension(669, 187));
                 Pprinc.setMinimumSize(new java.awt.Dimension(669, 187));
@@ -4582,6 +4619,7 @@ public class MantDesp extends ventanaPad implements PAD
                         jtLin.getPopMenu().add(etiqueta);
                         if (P_ADMIN)
                         jtLin.getPopMenu().add(MFechaLin);
+                        jtLin.getPopMenu().add(MVerMvtLin);
                     } catch (Exception k) { Error("Error al configurar grid lineas",k);}
 
                     javax.swing.GroupLayout jtLinLayout = new javax.swing.GroupLayout(jtLin);
@@ -4612,6 +4650,7 @@ public class MantDesp extends ventanaPad implements PAD
                 jtCab.setMinimumSize(new java.awt.Dimension(449, 109));
                 if (P_ADMIN)
                 jtCab.getPopMenu().add(MFechaCab);
+                jtCab.getPopMenu().add(MVerMvtCab);
 
                 javax.swing.GroupLayout jtCabLayout = new javax.swing.GroupLayout(jtCab);
                 jtCab.setLayout(jtCabLayout);
@@ -4885,7 +4924,41 @@ public class MantDesp extends ventanaPad implements PAD
         }
 
     }//GEN-LAST:event_MFechaLinActionPerformed
+    void verMvtosLinDes()
+    {
+        if (!jtLin.isVacio())
+            mostrarMvtos(jtLin.getValorInt(jtLin.getSelectedRowDisab(),JTLIN_PROCODI), 
+                deo_ejlogeE.getValorInt(),deo_selogeE.getText(),
+                deo_nulogeE.getValorInt(),
+                jtLin.getValorInt(jtLin.getSelectedRowDisab(),JTLIN_NUMIND));
+    }
+    private void MVerMvtLinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MVerMvtLinActionPerformed
+     verMvtosLinDes();
+    }//GEN-LAST:event_MVerMvtLinActionPerformed
 
+    private void MVerMvtCabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MVerMvtCabActionPerformed
+        if (!jtCab.isVacio())
+            mostrarMvtos(jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_PROCODI), 
+                jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_EJELOT),
+                jtCab.getValString(jtCab.getSelectedRowDisab(),JTCAB_SERLOT),
+                jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_NUMLOT),                
+                jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_NUMIND));
+    }//GEN-LAST:event_MVerMvtCabActionPerformed
+    void mostrarMvtos(int proCodi,int ejeNume,String serie, int lote,int numInd) 
+    {
+        ejecutable prog;
+        if ((prog = jf.gestor.getProceso(Comvalm.getNombreClase())) == null)
+            return;
+        gnu.chu.anjelica.almacen.Comvalm cm = (gnu.chu.anjelica.almacen.Comvalm) prog;
+    
+        cm.setProCodi(proCodi);
+        cm.setLote(lote);
+        cm.setIndividuo(numInd);
+        cm.setSerie(serie);
+        cm.setEjercicio(ejeNume);
+        cm.ejecutaConsulta();
+        jf.gestor.ir(cm);
+  }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
@@ -4897,6 +4970,8 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CButton BvalDesp;
     private javax.swing.JMenuItem MFechaCab;
     private javax.swing.JMenuItem MFechaLin;
+    private javax.swing.JMenuItem MVerMvtCab;
+    private javax.swing.JMenuItem MVerMvtLin;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Pgrid;
     private gnu.chu.controles.CPanel Phist;

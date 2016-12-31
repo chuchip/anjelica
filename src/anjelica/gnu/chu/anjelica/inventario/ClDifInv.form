@@ -106,11 +106,11 @@
           <SubComponents>
             <Component class="gnu.chu.controles.CLabel" name="cLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Almacen"/>
+                <Property name="text" type="java.lang.String" value="A"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="30" width="70" height="17"/>
+                  <AbsoluteConstraints x="250" y="30" width="10" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -141,16 +141,16 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLinkBox" name="alm_codiE">
+            <Component class="gnu.chu.controles.CLinkBox" name="alm_codiniE">
               <Properties>
                 <Property name="ancTexto" type="int" value="30"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="alm_codiE.setFormato(Types.DECIMAL, &quot;#9&quot;, 2);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="alm_codiniE.setFormato(Types.DECIMAL, &quot;#9&quot;, 2);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="80" y="30" width="310" height="17"/>
+                  <AbsoluteConstraints x="70" y="30" width="170" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -343,6 +343,29 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="10" y="130" width="130" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CLinkBox" name="alm_codfinE">
+              <Properties>
+                <Property name="ancTexto" type="int" value="30"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="alm_codfinE.setFormato(Types.DECIMAL, &quot;#9&quot;, 2);"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="260" y="30" width="170" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel12">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Almacen"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="10" y="30" width="60" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

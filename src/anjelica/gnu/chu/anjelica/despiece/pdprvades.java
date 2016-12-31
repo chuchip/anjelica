@@ -20,7 +20,7 @@ import javax.swing.BorderFactory;
  * <p>Descripción: Mantenimiento Productos Valorados para Despiece </p>
  * <p> Marca Precios FIJOS de compra para los productos
  * en una semana determinada. Utilizado en programa valoracion despieces</p>
- * <p>Copyright: Copyright (c) 2005
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -43,8 +43,9 @@ public class pdprvades extends ventanaPad implements PAD
   int ejeNume, numSem;
   CPanel Pprinc = new CPanel();
   CPanel Pcabe = new CPanel();
-  CGridEditable jt = new CGridEditable(3)
+  CGridEditable jt = new CGridEditable(4)
   {
+    @Override
     public void cambiaColumna(int col,int colNueva, int row)
     {
       try
@@ -63,9 +64,10 @@ public class pdprvades extends ventanaPad implements PAD
         Error("Error al buscar Nombre Articulo", k);
       }
     }
+    @Override
     public int cambiaLinea(int row, int col)
     {
-      return cambiaLineaJT();
+      return cambiaLineaJT(row,col);
     }
   };
 
@@ -77,6 +79,7 @@ public class pdprvades extends ventanaPad implements PAD
   proPanel pro_codiE = new proPanel();
   CTextField pro_nombE = new CTextField();
   CTextField dpv_preciE= new CTextField(Types.DECIMAL,"###9.99");
+  CTextField dpv_precoriE= new CTextField(Types.DECIMAL,"###9.99");
   CLabel cLabel2 = new CLabel();
   CTextField dpv_nusemE = new CTextField(Types.DECIMAL,"99");
   CLabel cLabel3 = new CLabel();
@@ -103,7 +106,6 @@ public class pdprvades extends ventanaPad implements PAD
       catch (Exception e)
       {
         ErrorInit(e);
-        setErrorInit(true);
       }
     }
 
@@ -122,7 +124,6 @@ public class pdprvades extends ventanaPad implements PAD
       catch (Exception e)
       {
          ErrorInit(e);
-        setErrorInit(true);
       }
     }
 
@@ -130,7 +131,7 @@ public class pdprvades extends ventanaPad implements PAD
     {
       iniciarFrame();
       this.setSize(new Dimension(482,493));
-      this.setVersion("2013-02-22");
+      this.setVersion("2016-12-30");
 
       strSql = "SELECT dpv_nusem,eje_nume FROM desproval " +
           " WHERE eje_nume = " + EU.ejercicio +
@@ -150,18 +151,20 @@ public class pdprvades extends ventanaPad implements PAD
       ArrayList cabecera = new ArrayList();
       cabecera.add("Codigo"); // 0 -- Codigo
       cabecera.add("Nombre"); //1 -- Nombre
-      cabecera.add("Precio"); // 2 -- Precio
+      cabecera.add("Pr.Fin"); // 2 -- Precio Final
+      cabecera.add("Pr.Ori"); // 2 -- Precio Orig.
       jt.setCabecera(cabecera);
-      jt.setAnchoColumna(new int[]{46, 283, 60});
-      jt.alinearColumna(new int[]   {2, 0, 2});
+      jt.setAnchoColumna(new int[]{46, 283, 60,60});
+      jt.alinearColumna(new int[]   {2, 0, 2,2});
       pro_codiE.iniciar(dtStat, this, vl, EU);
       pro_codiE.setProNomb(null);
 
       pro_nombE.setEnabled(false);
-      Vector v = new Vector();
-      v.addElement(pro_codiE.getFieldProCodi());
-      v.addElement(pro_nombE);
-      v.addElement(dpv_preciE);
+      ArrayList v = new ArrayList();
+      v.add(pro_codiE.getFieldProCodi());
+      v.add(pro_nombE);
+      v.add(dpv_preciE);
+      v.add(dpv_precoriE);
       jt.setCampos(v);
       jt.setMaximumSize(new Dimension(467, 400));
       jt.setMinimumSize(new Dimension(467, 400));
@@ -208,6 +211,7 @@ public class pdprvades extends ventanaPad implements PAD
       this.getContentPane().add(Pprinc, BorderLayout.CENTER);
     }
 
+  @Override
     public void iniciarVentana() throws Exception
     {
       dpv_nusemE.setColumnaAlias("dpv_nusem");
@@ -224,6 +228,7 @@ public class pdprvades extends ventanaPad implements PAD
     {
       jt.tableView.addMouseListener(new MouseAdapter()
       {
+        @Override
         public void mouseClicked(MouseEvent e)
         {
           if (jt.isVacio() || jt.isEnabled() == false)
@@ -233,24 +238,26 @@ public class pdprvades extends ventanaPad implements PAD
           jt.setValor(jt.getValBoolean(2) ? "N" : "S");
         }
       });
-      dpv_nusemE.addKeyListener(new KeyAdapter()
-      { 
-        public void keyPressed(KeyEvent e)
-        {
-             if ( e.getKeyCode()==  KeyEvent.VK_F1)
-             {
-                  java.util.Date fecha = mensajes.getFechaCalendario(Formatear.getDateAct());
-                  GregorianCalendar gc = new GregorianCalendar();
-                  gc.setTime(fecha);
-                  dpv_nusemE.setValorInt(gc.get(GregorianCalendar.WEEK_OF_YEAR));
-                  eje_numeE.setValorInt(gc.get(GregorianCalendar.YEAR));
-                  actFecha();
-             }
-        }
-      });
+//      dpv_nusemE.addKeyListener(new KeyAdapter()
+//      { 
+//        @Override
+//        public void keyPressed(KeyEvent e)
+//        {
+//             if ( e.getKeyCode()==  KeyEvent.VK_F1)
+//             {
+//                  java.util.Date fecha = mensajes.getFechaCalendario(Formatear.getDateAct());
+//                  GregorianCalendar gc = new GregorianCalendar();
+//                  gc.setTime(fecha);
+//                  dpv_nusemE.setValorInt(gc.get(GregorianCalendar.WEEK_OF_YEAR));
+//                  eje_numeE.setValorInt(gc.get(GregorianCalendar.YEAR));
+//                  actFecha();
+//             }
+//        }
+//      });
      
       dpv_nusemE.addFocusListener(new FocusAdapter()
       {
+        @Override
         public void focusLost(FocusEvent e)
         {
           actFecha();
@@ -258,6 +265,7 @@ public class pdprvades extends ventanaPad implements PAD
       });
       Bocul.addFocusListener(new FocusAdapter()
       {
+        @Override
         public void focusGained(FocusEvent e)
         {
           irGrid();
@@ -274,7 +282,7 @@ public class pdprvades extends ventanaPad implements PAD
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(Formatear.getDate("01-01-" + eje_numeE.getValorInt(), "dd-MM-yyyy"));
         gc.setFirstDayOfWeek(1);
-        gc.add(GregorianCalendar.WEEK_OF_YEAR, dpv_nusemE.getValorInt() - 1);
+        gc.add(GregorianCalendar.WEEK_OF_YEAR, dpv_nusemE.getValorInt() );
         gc.get(GregorianCalendar.WEEK_OF_YEAR);
         int dia = gc.get(GregorianCalendar.DAY_OF_WEEK);
         if (dia > 1)
@@ -329,7 +337,7 @@ public class pdprvades extends ventanaPad implements PAD
         dtAdd.addNew("desproval");
         for (int n = 0; n < nRow; n++)
         {
-          if ( jt.getValorInt(n,0)==0 || jt.getValorDec(n,2)==0)
+          if ( jt.getValorInt(n,0)==0 || (jt.getValorDec(n,2)==0 && jt.getValorDec(n,2)==3))
             continue;
           dtAdd.addNew();
        //   dtAdd.setDato("emp_codi",EU.em_cod);
@@ -337,6 +345,7 @@ public class pdprvades extends ventanaPad implements PAD
           dtAdd.setDato("dpv_nusem",dpv_nusemE.getValorInt());
           dtAdd.setDato("pro_codi",jt.getValorInt(n,0));
           dtAdd.setDato("dpv_preci",jt.getValorDec(n,2));
+          dtAdd.setDato("dpv_preori",jt.getValorDec(n,3));
           dtAdd.update(stUp);
         }
         ctUp.commit();
@@ -376,15 +385,16 @@ public class pdprvades extends ventanaPad implements PAD
 
     void verDatLin(int ejerc,int nusem) throws Exception
     {
-      s = "SELECT d.pro_codi,a.pro_nomb,d.dpv_preci " +
+      s = "SELECT d.pro_codi,a.pro_nomb,d.dpv_preci,dpv_preori " +
           " FROM desproval as d,v_articulo as a " +
           " WHERE dpv_nusem = " + nusem +
           " and eje_nume = " + ejerc +
-          " and a.pro_codi = d.pro_codi ";
+          " and a.pro_codi = d.pro_codi order by pro_codi";
       dtCon1.select(s);
       jt.setDatos(dtCon1);
       jt.requestFocusInicio();
     }
+  @Override
     public void activar(boolean act)
     {
       activar(navegador.TODOS,act);
@@ -397,15 +407,20 @@ public class pdprvades extends ventanaPad implements PAD
       Bcancelar.setEnabled(act);
       Pcabe.setEnabled(act);
     }
+    @Override
   public void PADPrimero() { verDatos();
   }
+  @Override
   public void PADAnterior() { verDatos();
   }
+  @Override
   public void PADSiguiente() {
     verDatos();
   }
+  @Override
   public void PADUltimo() { verDatos();
   }
+  @Override
   public void PADQuery() {
     activar(navegador.QUERY, true);
     Pcabe.setQuery(true);
@@ -414,7 +429,7 @@ public class pdprvades extends ventanaPad implements PAD
     dpv_nusemE.requestFocus();
 
   }
-
+@Override
   public void ej_query1() {
     ArrayList v=new ArrayList();
     v.add(dpv_nusemE.getStrQuery());
@@ -448,6 +463,7 @@ public class pdprvades extends ventanaPad implements PAD
 
   }
 
+  @Override
   public void canc_query() {
     Pcabe.setQuery(false);
 
@@ -457,6 +473,7 @@ public class pdprvades extends ventanaPad implements PAD
     verDatos();
   }
 
+  @Override
   public void PADEdit() {
     mensaje("Editando ....");
     ejeNume=eje_numeE.getValorInt();
@@ -464,9 +481,10 @@ public class pdprvades extends ventanaPad implements PAD
     activar(true);
     dpv_nusemE.requestFocus();
   }
+  @Override
   public void ej_edit1() {
-    jt.salirFoco();
-    if (cambiaLineaJT()>=0)
+    jt.actualizarGrid();
+    if (cambiaLineaJT(jt.getSelectedRow(),0)>=0)
     {
       jt.requestFocusSelected();
       return;
@@ -476,12 +494,14 @@ public class pdprvades extends ventanaPad implements PAD
     verDatos();
     mensaje("");
   }
+  @Override
   public void canc_edit() {
     activaTodo();
     mensajeErr("Modificacion de Datos ... Cancelada");
     verDatos();
     mensaje("");
   }
+  @Override
   public void PADAddNew() {
     Pcabe.resetTexto();
     jt.removeAllDatos();
@@ -492,11 +512,12 @@ public class pdprvades extends ventanaPad implements PAD
     mensaje("Insertando ....");
 
   }
-
+  
+  @Override
   public void ej_addnew1() {
-    jt.salirFoco();
+    jt.actualizarGrid();
 
-    if (cambiaLineaJT()>=0)
+    if (cambiaLineaJT(jt.getSelectedRow(),0)>=0)
     {
       jt.requestFocusSelected();
       return;
@@ -506,18 +527,21 @@ public class pdprvades extends ventanaPad implements PAD
     verDatos();
     mensaje("");
   }
+  @Override
   public void canc_addnew() {
     activaTodo();
     mensajeErr("Insercion de Datos ... Cancelada");
     verDatos();
     mensaje("");
   }
+  @Override
   public void PADDelete() {
     Baceptar.setEnabled(true);
     Bcancelar.setEnabled(true);
     Bcancelar.requestFocus();
     mensaje("Borrando ....");
   }
+  @Override
   public void ej_delete1() {
     try
     {
@@ -532,6 +556,7 @@ public class pdprvades extends ventanaPad implements PAD
     mensaje("");
     mensajeErr("Datos .... Borrados");
   }
+  @Override
   public void canc_delete() {
     activaTodo();
     verDatos();
@@ -539,17 +564,20 @@ public class pdprvades extends ventanaPad implements PAD
     mensajeErr("Borrado de Registro ... ANULADO");
   }
 
-  int cambiaLineaJT()
+  int cambiaLineaJT(int row, int col)
   {
     if (pro_codiE.getValorInt()==0)
       return -1; // No hay producto ... paso
     try {
-      if (!pro_codiE.controla(false))
+      if (!pro_codiE.controla(false,false))
       {
+        jt.setValor("ARTICULO NO VALIDO",row,1);
+        pro_nombE.setText("ARTICULO NO VALIDO");
         mensajeErr(pro_codiE.getMsgError());
         return 0;
       }
-      if (dpv_preciE.getValorDec() == 0)
+      jt.setValor(pro_codiE.getNombArtUltimo(), row,1);
+      if (dpv_preciE.getValorDec() == 0 && dpv_precoriE.getValorDec() ==0 )
       {
         mensajeErr("Introduzca un precio de Tarifa");
         return 1;
@@ -561,6 +589,18 @@ public class pdprvades extends ventanaPad implements PAD
     }
     return -1;
   }
+  
+   public static double getPrecioOrigen(DatosTabla dt, int proCodi,Date fecha)  throws SQLException
+   {
+      GregorianCalendar gc=new GregorianCalendar();
+      gc.setFirstDayOfWeek(1);
+      gc.setTime(fecha);
+      int semana = gc.get(GregorianCalendar.WEEK_OF_YEAR);          
+      int ano= gc.get(GregorianCalendar.YEAR);
+      if (semana>1)
+          semana--;
+      return getPrecioOrigen(dt,proCodi,ano, semana);
+   }
   /**
    * Devuelve el precio fijo para un producto en la fecha indicada.
    * -1 Si no existe precio .
@@ -570,15 +610,19 @@ public class pdprvades extends ventanaPad implements PAD
    * @return Precio fijo
    * @throws SQLException 
    */
-  public static int getPrecio(DatosTabla dt, int proCodi,Date fecha)  throws SQLException
+  public static double getPrecioFinal(DatosTabla dt, int proCodi,Date fecha)  throws SQLException
   {
       GregorianCalendar gc=new GregorianCalendar();
+      gc.setFirstDayOfWeek(1);
       gc.setTime(fecha);
       int semana = gc.get(GregorianCalendar.WEEK_OF_YEAR);
       int ano= gc.get(GregorianCalendar.YEAR);
-      return getPrecio(dt,proCodi,ano, semana);
+      if (semana>1)
+          semana--;
+
+      return getPrecioFinal(dt,proCodi,ano, semana);
   }
-  public static int getPrecio(DatosTabla dt, int proCodi,int ejeNume,int semCodi) throws SQLException
+  public static double getPrecioFinal(DatosTabla dt, int proCodi,int ejeNume,int semCodi) throws SQLException
   {
       String sql="SELECT * FROM desproval " +
           " WHERE eje_nume = " + ejeNume +
@@ -586,6 +630,16 @@ public class pdprvades extends ventanaPad implements PAD
             " and pro_codi = "+proCodi;
       if (! dt.select(sql))
           return -1;
-      return dt.getInt("dpv_preci");
+      return dt.getDouble("dpv_preci");
+  }
+  public static double getPrecioOrigen(DatosTabla dt, int proCodi,int ejeNume,int semCodi) throws SQLException
+  {
+      String sql="SELECT dpv_preori FROM desproval " +
+          " WHERE eje_nume = " + ejeNume +
+            " and dpv_nusem = "+semCodi+
+            " and pro_codi = "+proCodi;
+      if (! dt.select(sql))
+          return -1;
+      return dt.getDouble("dpv_preori");
   }
 }

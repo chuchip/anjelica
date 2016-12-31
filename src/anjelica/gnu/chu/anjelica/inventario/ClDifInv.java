@@ -38,7 +38,6 @@ import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
-import gnu.chu.winayu.ayuLote;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -65,6 +64,7 @@ import net.sf.jasperreports.engine.JasperReport;
 
 
 public class ClDifInv extends ventana {
+    String condAlmStr;
     int nLinea=0;
     private  final int  JT_PROCODI=0;
     private  final int  JT_PRONOMB=1;
@@ -127,8 +127,7 @@ public class ClDifInv extends ventana {
         try {
             jbInit();
         } catch (Exception ex) {
-            ErrorInit(ex);
-            setErrorInit(true);
+            ErrorInit(ex);         
         }
     }
 
@@ -136,7 +135,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2016-12-19 3");
+        this.setVersion("2016-12-29");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -151,17 +150,20 @@ public class ClDifInv extends ventana {
       dtAdd=new DatosTabla(ct);
       MvtosAlma.llenaComboFecInv(dtStat,EU.em_cod,EU.ejercicio,feulinE,12);
       cci_fecconE.iniciar(dtStat, this, vl, EU);
-      pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
+      pdalmace.llenaLinkBox(alm_codiniE, dtStat,'*');
+      pdalmace.llenaLinkBox(alm_codfinE, dtStat,'*');
   
 //      s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
 //          " ORDER BY alm_codi";
 //      dtStat.select(s);
 //      alm_codiE.addDatos(dtStat);
      
-      alm_codiE.addDatos("0","Todos");
-      alm_codiE.setCeroIsNull(false);
-      alm_codiE.setText("0");
-   
+      alm_codiniE.addDatos("0","Todos");
+      alm_codiniE.setCeroIsNull(false);
+      alm_codiniE.setText("0");
+      alm_codfinE.addDatos("0","Todos");
+      alm_codfinE.setCeroIsNull(false);
+      alm_codfinE.setText("0");
       s ="select MAX(cci_feccon) as cci_feccon from "+TABLA_INV_CAB +
           " where emp_codi = " + EU.em_cod ;
 
@@ -353,7 +355,7 @@ public class ClDifInv extends ventana {
       if (! pro_loteE.isNull() && PROCODI>0 )
         LOTE = pro_loteE.getValorInt();
       camCodiE=cam_codiE.getText();
-      almCodi=alm_codiE.getValorInt();
+      almCodi=alm_codiniE.getValorInt();
       jtRep.removeAllDatos();
       if (cam_codiE.getText().equals("**") || cam_codiE.getText().equals("*") || cam_codiE.getText().trim().equals(""))
         camCodiE="";
@@ -397,12 +399,17 @@ public class ClDifInv extends ventana {
                 msgBox("Individuos metidos dos veces en inventario");              
             
             }
+            condAlmStr=""+ (alm_codiniE.getValorInt()==0?"":
+                     " and alm_codi "+ 
+                     (alm_codfinE.getValorInt()==0?"":">")+
+                     "= "+alm_codiniE.getValorInt())+
+                    (alm_codfinE.getValorInt()==0?"":" and alm_codi<= "+alm_codfinE.getValorInt());
             String s2 = "SELECT c.* FROM "+VISTA_INV+" AS c " +
               " WHERE c.emp_codi =" + EU.em_cod +
               " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') " +
               (camCodiE.equals("") || camCodiE.equals("--") ? "" :
                " AND c.cam_codi = '" + camCodiE + "'") +
-              (almCodi == 0 ? "" : " and alm_codi = " + almCodi) +
+               condAlmStr+
               (usu_nombE.isNull()?"":" and usu_nomb ='"+usu_nombE.getText()+"'")+
               " ORDER BY pro_codi,prp_seri,prp_part,prp_indi ";
     //      debug("S: " + s1);
@@ -466,6 +473,11 @@ public class ClDifInv extends ventana {
             }
           }
         }
+        condAlmStr=""+ (alm_codiniE.getValorInt()==0?"":
+                     " and alm_codlin "+ 
+                     (alm_codfinE.getValorInt()==0?"":">")+
+                     "= "+alm_codiniE.getValorInt())+
+                    (alm_codfinE.getValorInt()==0?"":" and alm_codlin<= "+alm_codfinE.getValorInt());
 
         setMensajePopEspere("Generando Listado ... Espere, por favor",false);
         s="select  c.cci_codi,c.lci_nume,P.cam_codi,c.PRO_CODI,p.pro_nomb,c.PRP_ANO,"+
@@ -483,12 +495,12 @@ public class ClDifInv extends ventana {
             (LOTE>=0?" AND c.prp_part = "+LOTE:"")+
             " and c.emp_codi =" + EU.em_cod+
             " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() +"','dd-MM-yyyy') "+
-            (almCodi== 0 ? "" : " and c.alm_codlin = " +almCodi) +
+             condAlmStr +
             (camCodiE.equals("") || camCodiE.equals("--")?"":" AND P.cam_codi = '" + camCodiE + "'")+
             (margenE.getValorDec()==0?"":
             " and  (select abs(sum(cl.LCI_PESO-cl.LCI_KGSORD)) from "+VISTA_INV+" as cl "+
             " where c.pro_codi = cl.pro_codi "+
-            (almCodi == 0 ? "" : " and c.alm_codi = " + almCodi) +
+            condAlmStr+
             " and cl.cci_feccon = TO_DATE('" + cci_fecconE.getText() +"','dd-MM-yyyy')) > "+margenE.getValorDec());
         s+=" ORDER BY c.PRO_CODI,c.PRP_PART,c.PRP_INDI";
         if (!dtCon1.select(s))
@@ -625,7 +637,7 @@ public class ClDifInv extends ventana {
         mp.put("empresa",EU.em_cod);
         mp.put("fechas", cci_fecconE.getText());
         mp.put("camara", camCodiE);
-        mp.put("almacen", almCodi==0?"":alm_codiE.getText());
+        mp.put("almacen", almCodi==0?"":alm_codiniE.getText());
         JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
 
         
@@ -714,7 +726,7 @@ public class ClDifInv extends ventana {
         }
         s="select  min(cci_codi) as cci_codi"
             + " from coninvcab where  cci_feccon= TO_DATE('" +  cci_fecconE.getText() + "','dd-MM-yyyy') " 
-            + (alm_codiE.getValorInt()==0?"":" and alm_codi = "+alm_codiE.getValorInt());
+            + condAlmStr;
         dtStat.select(s);
         int cciCodi=dtStat.getInt("cci_codi",true);
         if (cciCodi==0)
@@ -740,12 +752,12 @@ public class ClDifInv extends ventana {
             TABLA_INV_CAB+" as c, "+
             TABLA_INV_LIN+" as l where"+
           " c.emp_codi=c.emp_codi"+
-          (alm_codiE.getValorInt()==0?"":" and alm_codi = "+alm_codiE.getValorInt())+
+          condAlmStr+
           " and c.cci_codi=l.cci_codi";   
          dtCon1.executeUpdate(s);
         s= " select * FROM v_inventar WHERE " +
           "  rgs_kilos <> 0"+
-          (almCodi==0?"":" and alm_codi = "+almCodi)+
+          condAlmStr+
           " AND rgs_fecha = TO_DATE('" +  cci_fecconE.getText() + "','dd-MM-yyyy') " ;
         if (!dtCon1.select(s))
             return 0;
@@ -797,7 +809,8 @@ public class ClDifInv extends ventana {
         String ref;
         Iterator<String> pr;
         String[] sArray;
-        int almCodi,proCodi = 0, ejeNume, lote, numind;
+        int almCodi,almCodFin,proCodi = 0, ejeNume, lote, numind;
+        
         String serie;
         String feulin;
         try {
@@ -814,6 +827,7 @@ public class ClDifInv extends ventana {
 //        debug("calcDatos: "+dtCon1.getStrSelect()+"\nCci_codi: "+cciCodi);
 //        debug("S: "+dtCon1.getStrSelect());
             // Marco los registros que automaticos como antiguos. Paso de 1  a 2 .
+          
             s = "UPDATE "+TABLA_INV_LIN+" set lci_regaut = 2 "
                     + " where emp_codi = " + EU.em_cod
                     + " and lci_regaut = 1"
@@ -821,7 +835,7 @@ public class ClDifInv extends ventana {
                     + (PROCODI != 0 ? " and pro_codi = " + PROCODI : "")
                     + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+ " c "
                     + " where c.emp_codi =" + EU.em_cod
-                    + (alm_codiE.getValorInt()==0?"":" and alm_codi = "+alm_codiE.getValorInt())
+                   + condAlmStr
                     + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy')) ";
             dtAdd.executeUpdate(s);
              // Pongo a 0 los Kgs calculados
@@ -829,7 +843,7 @@ public class ClDifInv extends ventana {
                     + " where emp_codi = " + EU.em_cod
                     + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+ " c "
                     + " where c.emp_codi =" + EU.em_cod
-                    + (alm_codiE.getValorInt()==0?"":" and alm_codi = "+alm_codiE.getValorInt())
+                    + condAlmStr
                     + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy')) ";
             dtAdd.executeUpdate(s);
             swLeeOrd = true;
@@ -863,20 +877,24 @@ public class ClDifInv extends ventana {
             /**
              * Guardo en un HashTable(ht) los kilos para todos los productos, según el ordenador.
              */
-            almCodi=alm_codiE.getValorInt();
+            almCodi=alm_codiniE.getValorInt();
+            almCodFin=alm_codfinE.getValorInt();
+            if (almCodFin==0)
+                almCodFin=almCodi;
             do {
-              
-                ref = dtCon1.getInt("almori")+"|"+
+                if (almCodi!=0 )
+                {                    
+                    if (dtCon1.getInt("almori") > almCodFin &&
+                        dtCon1.getInt("almori") < almCodi)
+                        continue;
+                }
+                ref = (almCodi!=0?almCodi:dtCon1.getInt("almori"))+"|"+
                     dtCon1.getInt("pro_codi") + "|" + dtCon1.getInt("eje_nume", true) + "|"                       
                         + dtCon1.getString("serie") + "|"
                         + dtCon1.getInt("lote", true) + "|"
                         + dtCon1.getInt("numind", true);                
                 cant =  ht.get(ref);
-                if (almCodi!=0)
-                {
-                    if (almCodi!= dtCon1.getInt("almori"))
-                        continue;// Ignorar apunte.
-                }
+              
                 if (cant == null) {
                     canti = 0;
                 } else {
@@ -889,12 +907,14 @@ public class ClDifInv extends ventana {
                 if (tipMov=='S')
                     tipMov='-';
                 if (tipMov=='=') {
-                    canti = dtCon1.getDouble("canti", true);
+                    
+                    canti =  (almCodi==0 ? 0:canti)+
+                        dtCon1.getDouble("canti", true);
                     totInv += dtCon1.getDouble("canti", true);
                 }
                 if (tipMov=='+') 
                 {
-                    canti = canti + dtCon1.getDouble("canti", true);
+                    canti +=  dtCon1.getDouble("canti", true);
                     if (dtCon1.getString("sel").equals("C")) {
                         totCom += dtCon1.getDouble("canti", true);
                     }
@@ -958,7 +978,8 @@ public class ClDifInv extends ventana {
                         + " AND prp_ano = " + ejeNume
                         + " and prp_empcod = " + EU.em_cod
                         + " and emp_codi = " + EU.em_cod
-                        +   " and alm_codi = "+almCodi
+                        + condAlmStr
+                       // +   " and alm_codi = "+almCodi
                         + " and cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                         + (usu_nombE.isNull()?"":" and usu_nomb ='"+usu_nombE.getText()+"'")
 //                        + (alm_codiE.getValorInt()==0?"":" and alm_codi= "+alm_codiE.getValorInt())
@@ -1005,7 +1026,7 @@ public class ClDifInv extends ventana {
                     + " and lci_regaut = 2" // Registros antiguos
                     + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+" c where "
                     + " c.emp_codi =" + EU.em_cod
-                    + (alm_codiE.getValorInt()==0?"":" and alm_codi = "+alm_codiE.getValorInt())
+                    + condAlmStr
                     + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                     + " ) "; 
             dtAdd.executeUpdate(s);
@@ -1055,6 +1076,7 @@ public class ClDifInv extends ventana {
                 + " from mvtosalm as m,v_articulo as a where "
                 + "  mvt_canti <> 0 "
                 + " and a.pro_codi = m.pro_codi "
+                + condAlmStr
 //                + (almCodi == 0 ? "" : " and m.alm_codi = " + almCodi)
                 + (camCodiE.equals("--") ? " and a.cam_codi in "
                     + condCamaras
@@ -1073,7 +1095,7 @@ public class ClDifInv extends ventana {
                     + " a.pro_codi,avs_ejelot as eje_nume,alm_codori as almori,avc_serie AS seralb "
                     + "  from v_albvenserv as al, v_articulo a "
                     + " WHERE avs_canti <> 0 "
-                    + " and a.pro_codi = al.pro_codi "
+                    + " and a.pro_codi = al.pro_codi "                    
                     + (PROCODI != 0 ? " and a.pro_codi = " + PROCODI : "")
                     + (LOTE >= 0 ? " and avs_numpar = " + LOTE : "")
 //                    + (almCodi == 0 ? "" : " and (alm_codori = " + almCodi+" or alm_coddes = "+almCodi+")")
@@ -1144,8 +1166,8 @@ public class ClDifInv extends ventana {
                 + " l.avp_canti as canti,l.avp_numind as numind, "
                 + " l.pro_codi,l.avp_ejelot as eje_nume,"
                 + "l.alm_codori as almori,l.avc_serie AS seralb "
-                + "  from v_albventa_detalle as l,v_articulo a"
-                + condAlb
+                + "  from v_albventa_detalle as l,v_articulo a"                
+                + condAlmStr
                 + " and l.avc_serie != 'X'" + // No incluir traspasos entre almacenes
                 (incDep ? " and l.avc_depos != 'D' " : ""); // No tratar los albaranes de DEPOSITO.
 
@@ -1268,6 +1290,7 @@ public class ClDifInv extends ventana {
             + " R.pro_codi, eje_nume,alm_codi as almori,'' AS seralb "
             + " FROM v_inventar r,v_articulo a WHERE "
             + " a.pro_codi =r.pro_codi "
+            + condAlmStr
 //            (almCodi == 0 ? "" : " and r.alm_codi = " + almCodi)
             + (camCodiE.equals("--") ? " and a.cam_codi in "
                 + condCamaras
@@ -1301,7 +1324,7 @@ public class ClDifInv extends ventana {
         cLabel2 = new gnu.chu.controles.CLabel();
         feulinE = new gnu.chu.controles.CComboBox();
         cLabel3 = new gnu.chu.controles.CLabel();
-        alm_codiE = new gnu.chu.controles.CLinkBox();
+        alm_codiniE = new gnu.chu.controles.CLinkBox();
         cLabel4 = new gnu.chu.controles.CLabel();
         cam_codiE = new gnu.chu.controles.CLinkBox();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -1320,6 +1343,8 @@ public class ClDifInv extends ventana {
         cci_fecconE = new gnu.chu.anjelica.inventario.PfechaInv();
         opDatStock = new gnu.chu.controles.CCheckBox();
         opMvtos = new gnu.chu.controles.CCheckBox();
+        alm_codfinE = new gnu.chu.controles.CLinkBox();
+        cLabel12 = new gnu.chu.controles.CLabel();
         Ptab1 = new gnu.chu.controles.CTabbedPane();
         jt = new gnu.chu.controles.Cgrid(14);
         jtRep = new gnu.chu.controles.Cgrid(11);
@@ -1381,9 +1406,9 @@ public class ClDifInv extends ventana {
         Pcondic.setPreferredSize(new java.awt.Dimension(440, 150));
         Pcondic.setLayout(null);
 
-        cLabel1.setText("Almacen");
+        cLabel1.setText("A");
         Pcondic.add(cLabel1);
-        cLabel1.setBounds(10, 30, 70, 17);
+        cLabel1.setBounds(250, 30, 10, 17);
 
         cLabel2.setText("Fecha Control ");
         Pcondic.add(cLabel2);
@@ -1395,10 +1420,10 @@ public class ClDifInv extends ventana {
         Pcondic.add(cLabel3);
         cLabel3.setBounds(250, 10, 80, 17);
 
-        alm_codiE.setAncTexto(30);
-        alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
-        Pcondic.add(alm_codiE);
-        alm_codiE.setBounds(80, 30, 310, 17);
+        alm_codiniE.setAncTexto(30);
+        alm_codiniE.setFormato(Types.DECIMAL, "#9", 2);
+        Pcondic.add(alm_codiniE);
+        alm_codiniE.setBounds(70, 30, 170, 17);
 
         cLabel4.setText("Usuario");
         Pcondic.add(cLabel4);
@@ -1476,6 +1501,15 @@ public class ClDifInv extends ventana {
         opMvtos.setText("Usar Mvtos.");
         Pcondic.add(opMvtos);
         opMvtos.setBounds(10, 130, 130, 17);
+
+        alm_codfinE.setAncTexto(30);
+        alm_codfinE.setFormato(Types.DECIMAL, "#9", 2);
+        Pcondic.add(alm_codfinE);
+        alm_codfinE.setBounds(260, 30, 170, 17);
+
+        cLabel12.setText("Almacen");
+        Pcondic.add(cLabel12);
+        cLabel12.setBounds(10, 30, 60, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1758,7 +1792,7 @@ public class ClDifInv extends ventana {
             cm.setIndividuo(jt.getValorInt(JT_PRPINDI));
             cm.setEjercicio(jt.getValorInt(JT_PRPANO));
             cm.setSerie(jt.getValString(JT_PRPSERI));
-            cm.setAlmacen(alm_codiE.getValorInt()==0?pdalmace.ALMACENPRINCIPAL:alm_codiE.getValorInt());
+            cm.setAlmacen(alm_codiniE.getValorInt()==0?pdalmace.ALMACENPRINCIPAL:alm_codiniE.getValorInt());
             cm.setFecha(Formatear.sumaDiasDate(cci_fecconE.getDate(),-1));
             jf.gestor.ir(cm);
         } catch (ParseException ex)
@@ -1942,10 +1976,12 @@ public class ClDifInv extends ventana {
     private gnu.chu.controles.CPanel Pgeneral;
     private gnu.chu.controles.CPanel Ppie;
     private gnu.chu.controles.CTabbedPane Ptab1;
-    private gnu.chu.controles.CLinkBox alm_codiE;
+    private gnu.chu.controles.CLinkBox alm_codfinE;
+    private gnu.chu.controles.CLinkBox alm_codiniE;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
+    private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;

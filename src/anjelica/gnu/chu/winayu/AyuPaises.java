@@ -208,9 +208,9 @@ public class AyuPaises extends ventana {
 
         pai_nombE.setMayusc(true);
         Pcond.add(pai_nombE);
-        pai_nombE.setBounds(30, 5, 290, 17);
+        pai_nombE.setBounds(30, 5, 250, 17);
         Pcond.add(Baceptar);
-        Baceptar.setBounds(325, 2, 70, 24);
+        Baceptar.setBounds(295, 2, 90, 24);
         Baceptar.getAccessibleContext().setAccessibleDescription("");
 
         gridBagConstraints = new java.awt.GridBagConstraints();

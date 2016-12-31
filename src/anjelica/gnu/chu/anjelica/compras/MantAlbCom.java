@@ -121,13 +121,13 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
    */
   final int JTD_NUMCRO=3;
   /**
-   * Numero Linea del Grid de desglose 12
-   */
-  final int JTD_NUMLIN=12;
-  /**
-   * Cantidad de Individuos 13
-   */
-  final int JTD_CANIND=13;
+    * Numero Linea desglose 15
+    */
+   final int JTD_NUMLIN=15;
+   /**
+    * Numero de individuos 16
+    */
+   final int JTD_CANIND=16;
 
   private CLabel acc_dtoppL=new CLabel("Dto PP");
   private CTextField acc_dtoppE=new CTextField(Types.DECIMAL,"#9.99");

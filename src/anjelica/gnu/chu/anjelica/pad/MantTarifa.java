@@ -383,6 +383,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
           " AND tar_codi = " + tipo  ;
       stUp.executeUpdate(dtAdd.parseaSql(s));
     }
+    
     void verDatos()
     {
       try

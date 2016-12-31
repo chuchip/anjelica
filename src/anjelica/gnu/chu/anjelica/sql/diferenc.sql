@@ -1,3 +1,15 @@
+-- Añado precio original para articulo
+alter table  desproval add dpv_preori decimal(6,2);
+update desproval set dpv_preori = 0;
+alter table desproval alter dpv_preori set not null;
+-- Añadido campos de posicion lote y peso del codigo barras prv.
+alter table v_proveedo add prv_poloin smallint;	-- Posicion inicial Lote en cod.Barras interno prv
+alter table v_proveedo add prv_polofi smallint;	-- Posicion final Lote en cod.Barras interno prv
+alter table v_proveedo addprv_popein smallint;	-- Posicion inicial peso en cod.Barras interno prv
+alter table v_proveedo add prv_popefi smallint;	-- Posicion final peso en cod.Barras interno prv
+--
+-- Cambiados paises a iniciales
+--
 alter table v_albcompar alter opcional1  type varchar(2);
 alter table v_albcompar alter opcional2  type varchar(2);
 alter table v_albcompar alter clasificacion  type varchar(2);
@@ -24,7 +36,7 @@ alter table hisalpaco alter clasificacion  type varchar(2);
 
 update hisalpaco set opcional1 = (select pai_inic from paises where pai_codi = hisalpaco.acp_paisac) where acp_paisac>0 ;
 
-update hisalpaco set opcional2 = (select pai_inic from paises where pai_codi = hisalpaco.acp_painac) where acp_painac>0 
+update hisalpaco set opcional2 = (select pai_inic from paises where pai_codi = hisalpaco.acp_painac) where acp_painac>0; 
 
 update hisalpaco set clasificacion = (select pai_inic from paises where pai_codi = hisalpaco.acp_engpai) where acp_engpai>0 ;
 

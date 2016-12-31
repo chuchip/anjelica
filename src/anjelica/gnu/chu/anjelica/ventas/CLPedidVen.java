@@ -49,14 +49,11 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
-import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -291,6 +288,15 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     public String getCliNomb()
     {
         return jtCabPed.getValString(JTCAB_NOMCLI);
+    }
+    /**
+     * Devuelve la ruta que tiene asignado un pedido.
+     * @return
+     * @throws SQLException 
+     */
+    public String getRuta() throws SQLException
+    {
+        return pdpeve.getRuta(dtCon1, empCodiS, ejeNumeS, pvcNumeS);
     }
     void verDatPed(int empCodi,int ejeNume,int pvcNume)
    {

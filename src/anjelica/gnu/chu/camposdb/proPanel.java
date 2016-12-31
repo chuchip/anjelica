@@ -47,6 +47,7 @@ import javax.swing.JTextField;
  */
 public class proPanel extends CPanel
 {
+  private String proNomb;
   private boolean usaRefArticulo=false; // Indica si debe usar Referencia del Art. (String 15)
   private String proUniVen="";
   private double pesoCajas;
@@ -870,7 +871,7 @@ public class proPanel extends CPanel
    * <p> En el Caso de que el campo no sea valido se hace un requestFocus
    *  al pro_codi </p>
    * @see getMsgError
-   * @throws Exception
+   * @throws SQLException
    * @deprecate usar controla
    * @return boolean true si el Campo es Valido.
    *         false si No lo es.
@@ -884,7 +885,7 @@ public class proPanel extends CPanel
    * <p> En el Caso de que el campo no sea valido se hace un requestFocus
    *  al pro_codi </p>
    * @see getMsgError
-   * @throws Exception
+   * @throws SQLException
    * @return boolean true si el Campo es Valido.
    *         false si No lo es.
    */
@@ -1125,7 +1126,7 @@ public class proPanel extends CPanel
       return "";
     if (codArt.equals(""))
       return "";
-    String proNomb=null;
+    String proNombVenta=null;
     if (usaRefArticulo)
     {
         if (!checkProdventa(codArt, dt))
@@ -1133,7 +1134,7 @@ public class proPanel extends CPanel
            lkPrd.setColumnCount(0);
            return null;  
         }
-        proNomb=dt.getString("pve_nomb");
+        proNombVenta=dt.getString("pve_nomb");
         s = "SELECT * FROM v_articulo WHERE pro_codart= '" + codArt +"'"+
             " and pro_activ!=0";
         if (! dt.select(s))
@@ -1159,7 +1160,7 @@ public class proPanel extends CPanel
         " and pro_codi = "+codArt+
         " order by eje_nume desc,pcc_nume desc";
       if ( dt.select(s))
-        proNomb=dt.getString("pro_nomb");
+        proNombVenta=dt.getString("pro_nomb");
     }
     s = "SELECT a.*,e.env_peso FROM v_articulo as a left join envases as e on "
         + " a.env_codi  = e.env_codi WHERE pro_codi= " + codArt;
@@ -1179,7 +1180,8 @@ public class proPanel extends CPanel
     controlIndiv=dt.getInt("pro_coinst")!=0;
     pesoCajas=dt.getDouble("env_peso",true);
     envCodi=dt.getInt("env_codi");
-    return proNomb==null?dt.getString("pro_nomb"):proNomb;
+    proNomb=dt.getString("pro_nomb");
+    return proNombVenta==null?dt.getString("pro_nomb"):proNombVenta;
   }
   public double getPesoCajas()
   {
@@ -1220,6 +1222,14 @@ public class proPanel extends CPanel
   public int getSubEmpresa()
   {
     return sbeCodi;
+  }
+  /**
+   * Devuelve el ultimo nombre de articulo consultado
+   * @return 
+   */
+  public String getNombArtUltimo()
+  {
+    return proNomb;
   }
   /**
    * Devuelve La familia del producto

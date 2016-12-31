@@ -92,14 +92,7 @@ public class MantAlbComCarne extends MantAlbCom
     * Fecha Prodcuccion 14
     */
    final int JTD_FECPRO=14;
-   /**
-    * Numero Linea desglose 15
-    */
-   final int JTD_NUMLIN=15;
-   /**
-    * Numero de individuos 16
-    */
-   final int JTD_CANIND=16;
+   
    
    public MantAlbComCarne(EntornoUsuario eu, Principal p) {
         super(eu, p);

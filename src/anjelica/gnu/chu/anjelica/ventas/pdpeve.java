@@ -277,7 +277,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2016-12-18"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2016-12-29"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -1445,6 +1445,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   {  
       swExterno=false;
       pvc_fecentE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
+      pvc_fecpreE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
       nuevoPedido();
   }
 
@@ -1683,6 +1684,12 @@ public class pdpeve  extends ventanaPad   implements PAD
   @Override
   public void canc_addnew()
   {
+    if (! jt.isVacio())
+    {
+        int ret=       mensajes.mensajeYesNo("Has PULSADO CANCELAR EL PEDIDO. CONTINUAR ALTA DE PEDIDO? ");
+        if (ret!=mensajes.NO)
+            return;
+    }
     nav.pulsado=navegador.NINGUNO;
     activaTodo();
     verDatos();
@@ -2241,6 +2248,19 @@ public class pdpeve  extends ventanaPad   implements PAD
          Error("Error al buscar datos de Producto",k);
        }
 
+     }
+     public static boolean getPedido(DatosTabla dt,int empCodi,int ejeNume,int pvcNume) throws SQLException
+     {
+            String s="select * from pedvenc where eje_nume="+ejeNume+
+                " and pvc_nume = "+pvcNume+
+                " and emp_codi = "+empCodi;
+            return  dt.select(s);
+     }
+     public static String getRuta(DatosTabla dt,int empCodi,int ejeNume,int pvcNume) throws SQLException
+     {
+       if (!getPedido(dt,empCodi,ejeNume,pvcNume))
+           return null;
+       return dt.getString("rut_codi");        
      }
 
 }

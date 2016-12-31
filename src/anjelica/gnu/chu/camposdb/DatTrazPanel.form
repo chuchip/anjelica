@@ -48,45 +48,6 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CLinkBox" name="acp_painacE">
-      <Properties>
-        <Property name="ancTexto" type="int" value="40"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="acp_painacE.setFormato(Types.CHAR,&quot;XX&quot;,2);&#xa;acp_painacE.getComboBox().setPreferredSize(new Dimension(17,150));"/>
-      </AuxValues>
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="80" y="20" width="178" height="-1"/>
-        </Constraint>
-      </Constraints>
-    </Component>
-    <Component class="gnu.chu.controles.CLinkBox" name="acp_engpaiE">
-      <Properties>
-        <Property name="ancTexto" type="int" value="40"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="acp_engpaiE.setFormato(Types.CHAR,&quot;XX&quot;,2);&#xa;acp_engpaiE.getComboBox().setPreferredSize(new Dimension(17,150));"/>
-      </AuxValues>
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="320" y="20" width="178" height="-1"/>
-        </Constraint>
-      </Constraints>
-    </Component>
-    <Component class="gnu.chu.controles.CLinkBox" name="acp_paisacE">
-      <Properties>
-        <Property name="ancTexto" type="int" value="40"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="acp_paisacE.setFormato(Types.CHAR,&quot;XX&quot;,2);&#xa;acp_paisacE.getComboBox().setPreferredSize(new Dimension(17,150));"/>
-      </AuxValues>
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="80" y="40" width="178" height="-1"/>
-        </Constraint>
-      </Constraints>
-    </Component>
     <Component class="gnu.chu.controles.CLabel" name="cLabel4">
       <Properties>
         <Property name="text" type="java.lang.String" value="Matadero"/>
@@ -332,6 +293,27 @@
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="440" y="40" width="60" height="17"/>
+        </Constraint>
+      </Constraints>
+    </Component>
+    <Component class="gnu.chu.camposdb.PaiPanel" name="acp_painacE">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+          <AbsoluteConstraints x="80" y="20" width="180" height="-1"/>
+        </Constraint>
+      </Constraints>
+    </Component>
+    <Component class="gnu.chu.camposdb.PaiPanel" name="acp_paisacE">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+          <AbsoluteConstraints x="80" y="40" width="220" height="-1"/>
+        </Constraint>
+      </Constraints>
+    </Component>
+    <Component class="gnu.chu.camposdb.PaiPanel" name="acp_engpaiE">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+          <AbsoluteConstraints x="320" y="20" width="180" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>

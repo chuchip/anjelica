@@ -22,7 +22,7 @@ import net.sf.jasperreports.engine.*;
  * dentro de unas fechas.
  *
  * Tambien permite delimitar por proveedor y por albaran.
- *  * <p>Copyright: Copyright (c) 2005-2012
+ *  * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -169,8 +169,7 @@ public class conalbco extends ventana implements  JRDataSource
     }
     catch (Exception e)
     {
-      ErrorInit(e);
-      setErrorInit(true);
+      ErrorInit(e);     
     }
   }
 
@@ -178,7 +177,7 @@ public class conalbco extends ventana implements  JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(760, 570));
-    this.setVersion("2012-10-08");
+    this.setVersion("2016-12-28");
 
     conecta();
     dtInd = new DatosTabla(ct);
@@ -603,16 +602,7 @@ public class conalbco extends ventana implements  JRDataSource
       fecfinE.requestFocus();
       return false;
     }
-    if (!pro_codiE.isNull())
-    {
-      if (pro_codiE1.isNull())
-        pro_codiE1.setText(pro_codiE.getText());
-    }
-    if (!pro_codiE1.isNull())
-    {
-      if (pro_codiE.isNull())
-        pro_codiE.setText(pro_codiE1.getText());
-    }
+   
     if (!prv_codiE.isNull())
     {
       if (prv_codiE1.isNull())
@@ -697,9 +687,12 @@ public class conalbco extends ventana implements  JRDataSource
         (opIntern.isSelected() ? "" : " and c.acc_serie!='Y'") +
         "and c.acc_fecrec >= TO_DATE('" + feciniE.getText() + "','dd-MM-yy')" +
         " AND c.acc_fecrec <= TO_DATE('" + fecfinE.getText() + "','dd-MM-yy') " +
-        (opCanti.isSelected() ? " and l.acl_canti <> 0 " : "");
-    if (!pro_codiE.isNull())
-      s += " and L.pro_codi >= " + pro_codiE.getText() + " and L.pro_codi <= " + pro_codiE1.getText();
+        (opCanti.isSelected() ? " and l.acl_canti <> 0 " : "");    
+      s +=  pro_codiE.isNull()?"":" and l.pro_codi "+
+          (pro_codiE1.isNull()?"":">")+
+          "= "+pro_codiE.getValorInt() ;
+      s +=  pro_codiE1.isNull()?"":" and l.pro_codi <="+ pro_codiE1.getValorInt() ;
+
     if (!prv_codiE.isNull())
       s += " AND c.prv_codi >= " + prv_codiE.getText() + "AND c.prv_codi <= " + prv_codiE1.getText();
     if (acc_numeE.getValorInt() != 0)
@@ -1006,17 +999,17 @@ public class conalbco extends ventana implements  JRDataSource
       mp.put("acc_fecrec1", fecfinE.getDate());
       mp.put("albini", acc_numeE.getText());
       mp.put("albfin", acc_numeE1.getText());
-      mp.put("prv_codi", new Integer(prv_codiE.getValorInt()));
-      mp.put("prv_codi1", new Integer(prv_codiE1.getValorInt()));
+      mp.put("prv_codi", prv_codiE.getValorInt());
+      mp.put("prv_codi1", prv_codiE1.getValorInt());
       mp.put("prv_nomb", prv_codiE.getTextNomb());
       mp.put("prv_nomb1", prv_codiE1.getTextNomb());
-      mp.put("pro_codi", new Integer(pro_codiE.getValorInt()));
-      mp.put("pro_codi1", new Integer(pro_codiE1.getValorInt()));
+      mp.put("pro_codi", pro_codiE.getValorInt());
+      mp.put("pro_codi1",pro_codiE1.getValorInt());
       mp.put("pro_nomb", pro_codiE.getTextNomb());
       mp.put("pro_nomb1", pro_codiE1.getTextNomb());
 
-      mp.put("incPortes", Boolean.valueOf(!opDesPorte.isSelected()));
-      mp.put("difFecha", Boolean.valueOf(opDifFecha.isSelected()));
+      mp.put("incPortes",!opDesPorte.isSelected());
+      mp.put("difFecha", opDifFecha.isSelected());
       String nombRep = "albcompr";
       if (opDifFecha.isSelected())
         nombRep = "albcompr1";
