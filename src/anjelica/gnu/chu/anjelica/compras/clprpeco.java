@@ -141,7 +141,7 @@ public class clprpeco extends ventana implements  JRDataSource
  {
    iniciarFrame();
    this.setSize(new Dimension(751, 510));
-   this.setVersion(" (2016-08-27)" + (verPrecio ? "- Ver Precios" : ""));
+   this.setVersion(" (2017-01-01)" + (verPrecio ? "- Ver Precios" : ""));
    statusBar = new StatusBar(this);
 
    opPedPend.setToolTipText("Ver SOLO Pedidos Pedidos Pendientes");
