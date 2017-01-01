@@ -2230,7 +2230,9 @@ void clrelalco_actionPerformed(ActionEvent e) {
   }
 
   void copedco_actionPerformed(ActionEvent e) {
-    lanzaEjecutable(new gnu.chu.anjelica.compras.copedco(menu.this, EU));
+    Hashtable ht=new Hashtable();
+    ht.put("verPrecio", "true");
+    lanzaEjecutable(new gnu.chu.anjelica.compras.copedco(menu.this, EU,ht));
   }
 void pdfatra_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.compras.pdfactra(menu.this, EU));

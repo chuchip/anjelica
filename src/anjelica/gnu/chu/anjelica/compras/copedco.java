@@ -1,5 +1,25 @@
 package gnu.chu.anjelica.compras;
-
+/**
+*  Consulta  Pedidos de compras
+ *
+ *
+ *  <p>Copyright: Copyright (c) 2005-2017
+ *  @param verPrecio Ver precios
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,ed
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * @author chuchiP
+ * @version 1.0
+ */
 import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
 import java.sql.*;
@@ -20,7 +40,7 @@ public class copedco extends ventana
   boolean swExterno=false;
   String s;
   CButton Bimpri=new CButton(Iconos.getImageIcon("print"));
-
+  CCheckBox opVerPrecios=new CCheckBox("Ver Precios");
   CComboBox div_codiE = new CComboBox();
   boolean verPrecio;
   CPanel Pprinc = new CPanel();
@@ -30,14 +50,14 @@ public class copedco extends ventana
   CLabel cLabel4 = new CLabel();
   prvPanel prv_codiE = new prvPanel();
   CComboBox pcc_estadE = new CComboBox();
-  CLabel cLabel7 = new CLabel();
+  CLabel pcc_estadL = new CLabel();
   CTextField pcc_fecpedE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CLabel cLabel3 = new CLabel();
   CButton Baceptar = new CButton(Iconos.getImageIcon("check"));
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   boolean modCons=false;
   int pcoNume=0,ejeNume=0;
-  CLabel cLabel1 = new CLabel();
+  CLabel pcc_estrecL = new CLabel();
   CComboBox pcc_estrecE = new CComboBox();
   CLabel cLabel2 = new CLabel();
   empPanel emp_codiE = new empPanel();
@@ -120,7 +140,7 @@ public class copedco extends ventana
  {
     iniciarFrame();
     this.setSize(new Dimension(666, 522));
-    this.setVersion(" (2008-02-01)" + (verPrecio ? "- Ver Precios" : ""));
+    this.setVersion(" (2017-01-01)" + (verPrecio ? "- Ver Precios" : ""));
     Pprinc.setLayout(gridBagLayout1);
     Pcond.setBorder(BorderFactory.createRaisedBevelBorder());
     Pcond.setMaximumSize(new Dimension(500, 49));
@@ -144,7 +164,7 @@ public class copedco extends ventana
     cLabel5.setRequestFocusEnabled(true);
     cLabel5.setToolTipText("Fecha de Pedido superior a.");
     cLabel5.setBounds(new Rectangle(191, 3, 72, 17));
-    cLabel5.setText("Fec.Ped.Sup.");
+    cLabel5.setText("De Fec.Ped.");
     pcc_fecrecE.setBounds(new Rectangle(411, 2, 74, 17));
     pcc_fecrecE.setToolTipText("Fecha Entrega Inferior A");
     sbe_codiE.setBounds(new Rectangle(141, 2, 44, 17));
@@ -160,11 +180,18 @@ public class copedco extends ventana
     cLabel4.setText("Proveedor");
     cLabel4.setBounds(new Rectangle(2, 23, 59, 17));
     prv_codiE.setAncTexto(40);
-    prv_codiE.setBounds(new Rectangle(59, 23, 326, 17));
-    cLabel7.setDoubleBuffered(false);
-    cLabel7.setText("Est. Ped");
-    cLabel7.setBounds(new Rectangle(389, 23, 57, 17));
-    cLabel3.setText("Fec.Ent.Inf.");
+    prv_codiE.setBounds(new Rectangle(59, 23, 260, 17));
+    if (verPrecio)
+        opVerPrecios.setSelected(true);
+    else
+        opVerPrecios.setEnabled(false);
+    opVerPrecios.setBounds(new Rectangle(322, 23, 85, 17));
+    
+    
+    pcc_estadL.setText("Estado");
+    pcc_estadL.setBounds(new Rectangle(410, 23, 47, 17));
+    pcc_estadE.setBounds(new Rectangle(460, 23, 80, 17));
+    cLabel3.setText("A Fec. Ped.");
     cLabel3.setBounds(new Rectangle(344, 2, 65, 17));
     Baceptar.setBounds(new Rectangle(545, 20, 107, 23));
     Baceptar.setMargin(new Insets(0, 0, 0, 0));
@@ -174,12 +201,11 @@ public class copedco extends ventana
     jtCab.setPreferredSize(new Dimension(465, 143));
     jtLin.setMaximumSize(new Dimension(468, 184));
     jtLin.setMinimumSize(new Dimension(468, 184));
-    jtLin.setPreferredSize(new Dimension(468, 184));
-    Pprinc.setInputVerifier(null);
-    pcc_estadE.setBounds(new Rectangle(447, 23, 91, 17));
+    jtLin.setPreferredSize(new Dimension(468, 184));    
+    
     pcc_fecpedE.setBounds(new Rectangle(264, 2, 74, 17));
-    cLabel1.setText("Est. Recep");
-    cLabel1.setBounds(new Rectangle(488, 2, 63, 17));
+    pcc_estrecL.setText("Recep.");
+    pcc_estrecL.setBounds(new Rectangle(490, 2, 60, 17));
     pcc_estrecE.setBounds(new Rectangle(551, 2, 99, 17));
     this.getContentPane().add(Pprinc,  BorderLayout.CENTER);
     this.getContentPane().add(statusBar,  BorderLayout.SOUTH);
@@ -222,10 +248,10 @@ public class copedco extends ventana
     Pcond.add(cLabel4, null);
     Pcond.add(Baceptar, null);
     Pcond.add(pcc_estadE, null);
-    Pcond.add(cLabel7, null);
+    Pcond.add(pcc_estadL, null);
     Pcond.add(prv_codiE, null);
     Pcond.add(pcc_estrecE, null);
-    Pcond.add(cLabel1, null);
+    Pcond.add(pcc_estrecL, null);
     Pcond.add(cLabel2, null);
     Pcond.add(pcc_fecrecE, null);
     Pcond.add(cLabel3, null);
@@ -234,6 +260,7 @@ public class copedco extends ventana
     Pcond.add(cLabel6, null);
     Pcond.add(cLabel5, null);
     Pcond.add(sbe_codiE, null);
+    Pcond.add(opVerPrecios, null);
     Pprinc.add(jtCab,   new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     Pprinc.add(jtLin,   new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0
@@ -249,7 +276,7 @@ public class copedco extends ventana
    Pcond.setButton(KeyEvent.VK_F4,Baceptar);
    prv_codiE.iniciar(dtStat,this,vl,EU);
    pcc_estadE.addItem("-----","-");
-   pcc_estadE.addItem("Pedido","N");
+   pcc_estadE.addItem("Pedido","P");
    pcc_estadE.addItem("Confirmado", "C");
    pcc_estadE.addItem("PreFacturado", "F");
 
@@ -386,15 +413,15 @@ public class copedco extends ventana
       do
       {
         Vector v=new Vector();
-        v.addElement(dtCon1.getString("prv_codi"));
-        v.addElement(dtCon1.getString("prv_nomb"));
-        v.addElement(dtCon1.getString("eje_nume"));
-        v.addElement(dtCon1.getString("pcc_nume"));
-        v.addElement(dtCon1.getFecha("pcc_fecped","dd-MM-yyyy"));
-        v.addElement(dtCon1.getFecha("pcc_fecrec","dd-MM-yyyy"));
-        v.addElement(pcc_estadE.getText(dtCon1.getString("pcc_estad")));
-        v.addElement(dtCon1.getString("acc_nume"));
-        v.addElement(dtCon1.getString("pcc_comen"));
+        v.add(dtCon1.getString("prv_codi"));
+        v.add(dtCon1.getString("prv_nomb"));
+        v.add(dtCon1.getString("eje_nume"));
+        v.add(dtCon1.getString("pcc_nume"));
+        v.add(dtCon1.getFecha("pcc_fecped","dd-MM-yyyy"));
+        v.add(dtCon1.getFecha("pcc_fecrec","dd-MM-yyyy"));
+        v.add(pcc_estadE.getText(dtCon1.getString("pcc_estad")));
+        v.add(dtCon1.getString("acc_nume"));
+        v.add(dtCon1.getString("pcc_comen"));
         jtCab.addLinea(v);
       } while (dtCon1.next());
       jtCab.setEnabled(true);
@@ -430,33 +457,21 @@ public class copedco extends ventana
 
    do
    {
-     Vector v=new Vector();
-     v.addElement(dtCon1.getString("pro_codi"));
-     v.addElement(dtCon1.getString("pro_nomb"));
-     v.addElement(dtCon1.getString("pcl_nucape"));
-     v.addElement(dtCon1.getString("pcl_cantpe"));
-     if (verPrecio)
-       v.addElement(dtCon1.getString("pcl_precpe"));
-      else
-        v.addElement("");
-     v.addElement(dtCon1.getString("pcl_nucaco"));
-     v.addElement(dtCon1.getString("pcl_cantco"));
-     if (verPrecio)
-       v.addElement(dtCon1.getString("pcl_precco"));
-     else
-       v.addElement("");
+     ArrayList v=new ArrayList();
+     v.add(dtCon1.getString("pro_codi"));
+     v.add(dtCon1.getString("pro_nomb"));
+     v.add(dtCon1.getString("pcl_nucape"));
+     v.add(dtCon1.getString("pcl_cantpe"));
+     v.add(opVerPrecios.isSelected()?dtCon1.getString("pcl_precpe"):"");
+     v.add(dtCon1.getString("pcl_nucaco"));
+     v.add(dtCon1.getString("pcl_cantco"));
+     v.add(opVerPrecios.isSelected()?dtCon1.getString("pcl_precco"):"");
 
-     v.addElement(dtCon1.getString("pcl_nucafa"));
-     v.addElement(dtCon1.getString("pcl_cantfa"));
-     if (verPrecio)
-       v.addElement(dtCon1.getString("pcl_precfa"));
-     else
-       v.addElement("");
-     if (verPrecio)
-       v.addElement(div_codiE.getText(dtCon1.getString("div_codi")));
-     else
-       v.addElement("");
-     v.addElement(dtCon1.getString("pcl_comen"));
+     v.add(dtCon1.getString("pcl_nucafa"));
+     v.add(dtCon1.getString("pcl_cantfa"));
+     v.add(opVerPrecios.isSelected()?dtCon1.getString("pcl_precfa"):"");
+     v.add(opVerPrecios.isSelected()?div_codiE.getText(dtCon1.getString("div_codi")):"");
+     v.add(dtCon1.getString("pcl_comen"));
      jtLin.addLinea(v);
    } while (dtCon1.next());
 //   jtLin.requestFocusInicio();
@@ -537,14 +552,9 @@ public class copedco extends ventana
       }
     };
   }
-
-  void listar()
+  String getStrSql()
   {
-    this.setEnabled(false);
-    mensaje("Espere ... Generando listado");
-    try
-    {
-       s = "SELECT c.*,l.*,p.prv_nomb FROM pedicoc as c,pedicol as l,v_proveedo as p " +
+             s = "SELECT c.*,l.*,p.prv_nomb FROM pedicoc as c,pedicol as l,v_proveedo as p " +
         " WHERE c.emp_codi = " + emp_codiE.getValorInt()+
         (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+sbe_codiE.getValorInt())+
         " and p.prv_codi = c.prv_codi "+
@@ -567,6 +577,17 @@ public class copedco extends ventana
       s += " AND c.pcc_estrec = '" + pcc_estrecE.getValor() + "'";
 
     s += " ORDER BY c.eje_nume,c.pcc_nume desc,l.pcl_numli";
+    return s;
+  }
+  
+  void listar()
+  {
+    this.setEnabled(false);
+    mensaje("Espere ... Generando listado");
+    try
+    {
+       s=getStrSql();
+
 
       if (!dtCon1.select(s))
       {
@@ -583,7 +604,7 @@ public class copedco extends ventana
       mp.put("pccEstrec",pcc_estrecE.getText());
       mp.put("prvCodi",prv_codiE.getText());
       mp.put("prvNomb",prv_codiE.getTextNomb());
-      mp.put("verPrecios",new Boolean(verPrecio));
+      mp.put("verPrecios", verPrecio);
       JasperReport jr;
       jr = Listados.getJasperReport(EU, "relpedcom");
 

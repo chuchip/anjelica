@@ -14,7 +14,8 @@ import javax.swing.BorderFactory;
 import net.sf.jasperreports.engine.*;
 /**
 *  Consulta Productos de Pedidos de compras
- *
+ * @parametros verPrecio Ver precios
+ * 
  * Permite consultar las compras realizadas de un producto
  * dentro de unas fechas.
  *
@@ -65,6 +66,7 @@ public class clprpeco extends ventana implements  JRDataSource
   CCheckBox opDesgl = new CCheckBox();
   CButton Bimpri=new CButton(Iconos.getImageIcon("print"));
   CCheckBox opPedPend = new CCheckBox();
+  CCheckBox opVerPrecios = new CCheckBox();
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   CTextField feenfiE = new CTextField(Types.DATE, "dd-MM-yyyy");
   CLabel cLabel11 = new CLabel();
@@ -145,8 +147,14 @@ public class clprpeco extends ventana implements  JRDataSource
    opPedPend.setToolTipText("Ver SOLO Pedidos Pedidos Pendientes");
     opPedPend.setVerifyInputWhenFocusTarget(true);
     opPedPend.setSelected(true);
-    opPedPend.setText("Ped.Pendientes");
-    opPedPend.setBounds(new Rectangle(373, 40, 118, 17));
+    opPedPend.setText("Pend.");
+    opPedPend.setBounds(new Rectangle(365, 40, 60, 17));
+    opVerPrecios.setText("Precios");
+    if (verPrecio)
+       opVerPrecios.setSelected(true);
+    else
+        opVerPrecios.setEnabled(false);
+    opVerPrecios.setBounds(new Rectangle(437, 40, 60, 17));
     cLabel8.setToolTipText("");
     
     cLabel9.setToolTipText("");
@@ -238,6 +246,7 @@ public class clprpeco extends ventana implements  JRDataSource
             ,GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
     PtipoCons.add(opDesgl, null);
     PtipoCons.add(opPedPend, null);
+    PtipoCons.add(opVerPrecios, null);
     PtipoCons.add(proiniE, null);
     PtipoCons.add(cLabel8, null);
     PtipoCons.add(profinE, null);
@@ -553,7 +562,7 @@ void irMantPedidos()
             v.add(dtCon1.getFecha("pcc_fecrec", "dd-MM-yyyy")); // 2
             v.add(nCajas); // 3
             v.add(kg);          
-            v.add(importe);       
+            v.add(opVerPrecios.isSelected()?importe:0);
             v.add(tipo);                     
             jt.addLinea(v);
          }
@@ -592,7 +601,7 @@ void irMantPedidos()
    if (swBreakAcum)
        v.add("");
    else
-       v.add( verPrecio? cantCaj==0?0:impEntr/cantCaj:0);
+       v.add( opVerPrecios.isSelected()? cantCaj==0?0:impEntr/cantCaj:0);
    v.add("");
    swBreakAcum=false;
    jt.addLinea(v);
@@ -732,7 +741,7 @@ void irMantPedidos()
         }
         if (campo.equals("pcl_precio"))
         {
-            if (!verPrecio)
+            if (!opVerPrecios.isSelected())
                 return new Double(0);
             switch (rs.getString("pcc_estad"))
             {
