@@ -713,7 +713,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2016-12-23" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-01-03" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -3534,6 +3534,7 @@ public class pdalbara extends ventanaPad  implements PAD
          " and l.avc_serie = '" + serie + "'" +
          " and l.avc_nume = " + nume +
          " and l.avl_canti >= 0 " +
+         " and a.pro_tiplot='V' "+
          " group by l.pro_codi,"+(modPrecio?"avl_prven,avl_prepvp,avl_profer,":"")+
          "tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,a.pro_indtco,l.alm_codi,avl_coment,avl_numpal " +
          " UNION ALL " +
@@ -3551,9 +3552,26 @@ public class pdalbara extends ventanaPad  implements PAD
          " and l.avc_serie = '" + serie + "'" +
          " and l.avc_nume = " + nume +
          " and l.avl_canti < 0 " +
+         " and a.pro_tiplot='V' "+
          " group by l.pro_codi,"+(modPrecio?"avl_prven,avl_prepvp,avl_profer,":"")+
          " avl_numpal,tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,a.pro_indtco,l.alm_codi,avl_coment " +
-         " ORDER BY 3,2";
+           " union all "+
+        "SELECT  avl_numlin,l.pro_codi,avl_numpal, avl_canti, " +
+         "   avl_canbru, "+
+         "  avl_unid,"+
+         (modPrecio? " avl_prven,":"")+
+         "tar_preci, a.pro_nomb,l.pro_nomb as avl_pronom,"
+        + "a.pro_tipiva,a.pro_indtco,l.alm_codi,avl_coment " +
+          (modPrecio? " ,avl_prepvp,avl_profer ":"")+
+         " FROM "+tablaLin +" as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
+         " WHERE "+(empCodi<=0?" his_rowid ="+nume:
+         " l.avc_ano = " + ano +
+         " and l.emp_codi = " + empCodi +
+         " and l.avc_serie = '" + serie + "'" +
+         " and l.avc_nume = " + nume )+
+         " and l.avl_canti >= 0 " +
+         " and a.pro_tiplot<>'V' "+
+          " ORDER BY 3,1,2";
   }
   public static String getSqlLinList(int ano, int empCodi,String serie, int nume,boolean modPrecio)
   {
@@ -3583,6 +3601,7 @@ public class pdalbara extends ventanaPad  implements PAD
          " and l.emp_codi = " + empCodi +
          " and l.avc_serie = '" + serie + "'" +
          " and l.avc_nume = " + nume )+
+         " and a.pro_tiplot='V' "+
          " and l.avl_canti >= 0 " +
          " group by l.pro_codi,pro_tiplot,"+(modPrecio?"avl_prven,":"")+
          " avl_numpal,tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,a.pro_indtco " +
@@ -3600,9 +3619,24 @@ public class pdalbara extends ventanaPad  implements PAD
          " and l.avc_serie = '" + serie + "'" +
          " and l.avc_nume = " + nume )+
          " and l.avl_canti < 0 " +
+        " and a.pro_tiplot='V' "+
          " group by l.pro_codi,pro_tiplot,"+(modPrecio?"avl_prven,":"")+
           " avl_numpal,tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,a.pro_indtco " +
-         " ORDER BY 3,2";
+        " union all "+
+        "SELECT  avl_numlin,l.pro_codi,avl_numpal,avl_canti, " +
+         "  avl_canbru, "+
+         "  avl_unid,tar_preci,"+
+         (modPrecio? " avl_prven,":"")+
+         "a.pro_nomb,l.pro_nomb as avl_pronom,  a.pro_tipiva,a.pro_indtco,a.pro_tiplot " +
+         " FROM "+tablaLin +" as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
+         " WHERE "+(empCodi<=0?" his_rowid ="+nume:
+         " l.avc_ano = " + ano +
+         " and l.emp_codi = " + empCodi +
+         " and l.avc_serie = '" + serie + "'" +
+         " and l.avc_nume = " + nume )+
+         " and l.avl_canti >= 0 " +
+        " and a.pro_tiplot<>'V' "+
+         " ORDER BY 3,1,2";
   }
   /**
    * Devuelve sentencia SQL de las lineas de albarán agrupadas por producto 

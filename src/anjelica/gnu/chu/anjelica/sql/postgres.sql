@@ -1456,7 +1456,7 @@ create table anjelica.v_facvel
  pro_codi INT ,			-- Codigo de Producto
  fvl_nompro varchar(50),	-- Descripcion del Producto
  avc_nume INT	,		-- Numero de Albaran
- avc_ano INT,			-- A�o del Albaran
+ avc_ano INT,			-- Año del Albaran
  avc_serie CHAR(1),		-- Serie del Albaran
  avc_fecalb DATE,		-- Fecha del Albaran
  fvl_prve2 FLOAT,

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-09-08T09:18:09 -->
+<!-- 2017-01-03T11:07:45 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lifrave" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0" uuid="309d66ac-fa69-446b-9a14-345d043d24a7">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -27,34 +27,45 @@
 	</parameter>
 	<parameter name="SB_NAME_POB" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
-		<![CDATA[SELECT emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,pro_codi,SUM(l.fvl_canti) as fvl_canti,
-fvl_prven,fvl_nompro FROM v_facvel l
+		<![CDATA[SELECT l.emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,l.pro_codi,SUM(l.fvl_canti) as fvl_canti,
+fvl_prven,fvl_nompro, 0 as fvl_numlin FROM v_facvel l left join v_articulo as a on l.pro_codi = a.pro_codi 
 where fvc_nume= $P{fvc_nume}
 and fvc_serie= $P{fvc_serie}
-and emp_codi= $P{emp_codi}
+and l.emp_codi= $P{emp_codi}
 and eje_nume = $P{fvc_ano}
 and fvl_canti >= 0
+and  a.pro_tiplot='V'
 and $P{agrupa}=1
-GROUP BY emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,PRO_CODI,fvl_prven,fvl_nompro
+GROUP BY l.emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,l.PRO_CODI,fvl_prven,fvl_nompro
 UNION ALL
-SELECT emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,pro_codi,SUM(l.fvl_canti) as fvl_canti,
-fvl_prven,fvl_nompro FROM v_facvel l
+SELECT l.emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,l.pro_codi,SUM(l.fvl_canti) as fvl_canti,
+fvl_prven,fvl_nompro,0 as fvl_numlin FROM v_facvel l  left join v_articulo as a on l.pro_codi = a.pro_codi 
 where fvc_nume=$P{fvc_nume}
 and fvc_serie = $P{fvc_serie}
-and emp_codi=$P{emp_codi}
+and l.emp_codi=$P{emp_codi}
 and eje_nume = $P{fvc_ano}
 and fvl_canti < 0
+and  a.pro_tiplot='V'
 and $P{agrupa}=1
-GROUP BY emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,PRO_CODI,fvl_prven,fvl_nompro
+GROUP BY l.emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,l.PRO_CODI,fvl_prven,fvl_nompro
+UNION ALL
+SELECT l.emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,l.pro_codi,l.fvl_canti as fvl_canti,
+fvl_prven,fvl_nompro,fvl_numlin FROM v_facvel l  left join v_articulo as a on l.pro_codi = a.pro_codi 
+where fvc_nume=$P{fvc_nume}
+and fvc_serie = $P{fvc_serie}
+and  l.emp_codi=$P{emp_codi}
+and eje_nume = $P{fvc_ano}
+and  a.pro_tiplot!='V'
+and $P{agrupa}=1
 union all
 SELECT emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,pro_codi,l.fvl_canti as fvl_canti,
-fvl_prven,fvl_nompro FROM v_facvel l
+fvl_prven,fvl_nompro,fvl_numlin FROM v_facvel l
 where fvc_nume= $P{fvc_nume}
 and emp_codi= $P{emp_codi}
 and eje_nume = $P{fvc_ano}
 and fvc_serie= $P{fvc_serie}
 and $P{agrupa}=0
-order by 5,4,3,2,6]]>
+order by 10,5,4,3,2,6]]>
 	</queryString>
 	<field name="emp_codi" class="java.lang.Integer"/>
 	<field name="avc_nume" class="java.lang.Integer"/>

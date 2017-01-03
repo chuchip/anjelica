@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-10-17T13:46:34 -->
+<!-- 2017-01-02T16:01:16 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lialbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0" uuid="477b1d9c-ee98-4d62-8ff7-69c661821105">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -25,7 +25,7 @@
 		<defaultValueExpression><![CDATA["A"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT avl_numpal,l.pro_codi,SUM(l.avl_canti) as avl_canti,
+		<![CDATA[SELECT -1 as avl_numlin, avl_numpal,l.pro_codi,SUM(l.avl_canti) as avl_canti,
 sum(avl_unid) as avl_unid,
 avl_prven,l.pro_nomb,a.pro_tiplot FROM V_ALBAVEL l, v_articulo as a
 where avc_nume=$P{avc_nume} 
@@ -34,9 +34,10 @@ and l.avc_ano = $P{avc_ano}
 and l.avc_serie = $P{avc_serie}
 and l.pro_codi = a.pro_codi
 and avl_canti >= 0
+and a.pro_tiplot='V' 
 GROUP BY avl_numpal,l.PRO_CODI,avl_prven,l.pro_nomb,pro_tiplot
 UNION ALL
-SELECT avl_numpal,l.pro_codi,SUM(l.avl_canti) as avl_canti,
+SELECT -1 as avl_numlin, avl_numpal,l.pro_codi,SUM(l.avl_canti) as avl_canti,
 sum(avl_unid) as avl_unid,
 avl_prven,l.pro_nomb,a.pro_tiplot FROM V_ALBAVEL l,v_articulo as a
 where avc_nume=$P{avc_nume} 
@@ -44,9 +45,20 @@ and l.emp_codi=$P{emp_codi}
 and l.avc_ano = $P{avc_ano}
 and l.avc_serie = $P{avc_serie}
 and avl_canti < 0
+and a.pro_tiplot='V' 
 and l.pro_codi = a.pro_codi
 GROUP BY avl_numpal,l.PRO_CODI,avl_prven,l.pro_nomb,pro_tiplot
-order by 1,2]]>
+UNION ALL
+SELECT  avl_numlin, avl_numpal,l.pro_codi, avl_canti,
+avl_unid,
+avl_prven,l.pro_nomb,a.pro_tiplot FROM V_ALBAVEL l,v_articulo as a
+where avc_nume=$P{avc_nume} 
+and l.emp_codi=$P{emp_codi}
+and l.avc_ano = $P{avc_ano}
+and l.avc_serie = $P{avc_serie}
+and a.pro_tiplot <> 'V' 
+and l.pro_codi = a.pro_codi
+order by 1,2,3]]>
 	</queryString>
 	<field name="pro_codi" class="java.lang.Integer"/>
 	<field name="avl_canti" class="java.lang.Double"/>

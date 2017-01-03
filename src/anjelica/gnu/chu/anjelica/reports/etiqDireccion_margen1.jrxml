@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2017-01-02T11:30:01 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="etiqDireccion" pageWidth="272" pageHeight="283" columnWidth="236" leftMargin="36" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Error" uuid="f9b24ccf-03d6-4baa-aa11-d7c50d0ccf74">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="mm"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="mm"/>
+	<parameter name="logotipo" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\cpuente\\Documents\\anjelica\\icons\\logotipo_bn.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="documento" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["01/2016A1122"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="diremp" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Polígono La Alberguería\n"+
+"C/ Angel Arina Fernández N.2\n"+
+"31230 Viana (Navarra)"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cli_nomen" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Paco y Lucia y siete mas]]></parameterDescription>
+		<defaultValueExpression><![CDATA["restaurante la pochola slu"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cli_diree" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[C Manresa 1 4a]]></parameterDescription>
+		<defaultValueExpression><![CDATA["C/ manresa 1 y otras lineas mas"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cli_poble" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Logroño La rioja]]></parameterDescription>
+		<defaultValueExpression><![CDATA["lOGROÑO LA RIOJA"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cli_codpoe" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[26007]]></parameterDescription>
+		<defaultValueExpression><![CDATA["26007"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="283" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="-1" y="162" width="216" height="31" forecolor="#000000" backcolor="#FFFFFF" uuid="a5af6dd5-79a9-44f9-99e0-c946626cde2c">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{diremp}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="120" y="151" width="22" height="11" uuid="bd89841f-f51e-4732-b317-a1f3084e2785"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Doc:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="142" y="151" width="70" height="11" uuid="03159e31-60e6-4435-a991-e4132f140877"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{documento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="-1" y="206" width="216" height="22" uuid="5c4ceec5-4f0d-4e7f-b985-a1514e0a6a49"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cli_nomen}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="150" width="108" height="12" uuid="6cc3ed9d-5adf-410c-a09b-b4d71b7933c0"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remitente]]></text>
+			</staticText>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="-1" y="229" width="213" height="22" uuid="1485f4b7-2f28-4d49-bf48-59e410e1619a">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cli_diree}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="21" y="252" width="34" height="12" uuid="3581c2e4-875a-48cb-8b22-6e525deea88e">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cli_codpoe}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="55" y="252" width="157" height="12" uuid="0bf8b663-e8d9-448a-bc23-ee38beb26a5e">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cli_poble}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-1" y="252" width="20" height="12" uuid="0bbd3a3e-4d86-4ced-b23b-304698653086"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[CP:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="194" width="215" height="12" uuid="63f64704-d6ab-4acd-9932-da11e8d4e360"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Consigna]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

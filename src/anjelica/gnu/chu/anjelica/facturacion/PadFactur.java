@@ -209,7 +209,7 @@ public class PadFactur extends ventanaPad   implements PAD {
        
         iniciarFrame();
 
-        this.setVersion("2016-12-02" + (MOD_CONS ? "SOLO LECTURA" : ""));
+        this.setVersion("2017-01-03" + (MOD_CONS ? "SOLO LECTURA" : ""));
         strSql = getStrSql();
         IMPFRATEXTO=EU.getValorParam("impFraTexto",IMPFRATEXTO);
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -1185,6 +1185,7 @@ public class PadFactur extends ventanaPad   implements PAD {
          jt.addLinea(v);
      } while (dtCon1.next());
  }
+ 
  private int getTipoIva(int proCodi) throws SQLException
  {
    if (pro_codiE.getNombArt(""+proCodi)==null)
@@ -1196,27 +1197,38 @@ public class PadFactur extends ventanaPad   implements PAD {
  private String getSqlLinFra(DatosTabla dt) throws SQLException
  {
    if (opAgrlin.isSelected())
-     return "SELECT l.pro_codi,l.fvl_nompro,fvl_prven as avl_prven,"+
+     return "SELECT  l.pro_codi,l.fvl_nompro,fvl_prven as avl_prven,"+
          " sum(fvl_canti) AS avl_canti, " +
          " 0 AS avl_unid, 0 AS avl_numlin" +
-         "  FROM   v_facvel l where " +
+         "  FROM   v_facvel l  left join v_articulo as a on l.pro_codi = a.pro_codi where " +
          " l.avc_ano = " + dt.getInt("avc_ano") +
          " and l.emp_Codi = " + dt.getInt("emp_codi") +
          " and  l.avc_Serie = '" + dt.getString("avc_Serie") + "'" +
          " and l.avc_nume = " + dt.getInt("avc_nume") +
+         " and a.pro_tiplot='V' "+
          " and l.fvl_canti >= 0 " +
          " group by l.pro_codi,l.fvl_nompro,fvl_prven " +
          " union all " +
-         "SELECT l.pro_codi,l.fvl_nompro,fvl_prven as avl_prven,sum(fvl_canti) AS avl_canti, " +
+         "SELECT  l.pro_codi,l.fvl_nompro,fvl_prven as avl_prven,sum(fvl_canti) AS avl_canti, " +
          " 0 AS avl_unid,0 AS avl_numlin " +
-         "  FROM   v_facvel l  where " +
+         "  FROM   v_facvel l  left join v_articulo as a on l.pro_codi = a.pro_codi where " +
          " l.avc_ano = " + dt.getInt("avc_ano") +
          " and l.emp_Codi = " + dt.getInt("emp_codi") +
          " and  l.avc_Serie = '" + dt.getString("avc_serie") + "'" +
          " and l.avc_nume = " + dt.getInt("avc_nume") +
          " and l.fvl_canti < 0 " +
+         " and a.pro_tiplot='V' "+
          " group by l.pro_codi,l.fvl_nompro,fvl_prven " +
-         " order by 1 ";
+           " union all " +
+          "SELECT  l.pro_codi,l.fvl_nompro,fvl_prven as avl_prven,fvl_canti AS avl_canti, " +
+         " 0 AS avl_unid,fvl_numlin as avl_numlin " +
+         "  FROM   v_facvel l  left join v_articulo as a on l.pro_codi = a.pro_codi where " +
+         " l.avc_ano = " + dt.getInt("avc_ano") +
+         " and l.emp_Codi = " + dt.getInt("emp_codi") +
+         " and  l.avc_Serie = '" + dt.getString("avc_serie") + "'" +
+         " and l.avc_nume = " + dt.getInt("avc_nume") +        
+         " and a.pro_tiplot<>'V' "+
+         " order by 6,1 "; // Numero linea  y articulo
    else
      return
          "select  l.pro_codi,l.fvl_nompro,fvl_prven as avl_prven,fvl_canti AS avl_canti, " +
@@ -1246,12 +1258,17 @@ public class PadFactur extends ventanaPad   implements PAD {
     boolean agrLin=opAgrlin.isSelected();
     Ppie.resetTexto();
     opAgrlin.setSelected(agrLin);
-    fvc_anoE.setValorDec(EU.ejercicio);
+    if (Integer.parseInt(Formatear.getFechaAct("MM"))<2)
+        fvc_anoE.setText(">="+(EU.ejercicio-1));
+    else
+        fvc_anoE.setValorDec(EU.ejercicio);
+    
     emp_codiE.setValorDec(EU.em_cod);
     fvc_numeE.requestFocus();
     mensaje("Introduzca los filtros de busqueda ...");
   }
 
+  @Override
   public void ej_query1(){
     Component c;
     if ((c=Pcabe.getErrorConf())!=null)
@@ -1542,6 +1559,7 @@ public class PadFactur extends ventanaPad   implements PAD {
 
   }
 
+  @Override
   public void PADAddNew(){
       nav.pulsado = navegador.NINGUNO;
       msgBox("Funcion NO implementada");
