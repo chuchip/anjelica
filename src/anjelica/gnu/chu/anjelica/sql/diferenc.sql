@@ -1,3 +1,45 @@
+--
+-- Añadido campo Cod.Cliente reparto
+--
+drop view v_albdepserv;
+drop view v_cliprv;
+drop view v_cliente;
+
+alter table clientes rename cli_carte  to cli_codrut; -- Codigo cliente eb rutas.
+
+alter table clientes alter cli_codrut type varchar(3); -- Codigo cliente eb rutas.
+
+alter table cliencamb rename cli_carte to cli_codrut; -- Codigo cliente eb rutas.
+alter table cliencamb alter cli_codrut type varchar(3); -- Codigo cliente eb rutas.
+
+create or replace view anjelica.v_cliente as select * from anjelica.clientes;
+grant select on anjelica.v_cliente to PUBLIC;
+create view anjelica.v_albdepserv as select sa.*,ca.avc_fecalb,ca.avc_id,cl.cli_nomb,cl.cli_nomco
+ from albvenserc as sa, v_albavec as ca,
+v_cliente as cl
+where ca.avc_ano=sa.avc_ano
+and  ca.emp_codi = sa.emp_codi
+and  ca.avc_serie= sa.avc_serie
+and  ca.avc_nume= sa.avc_nume
+and sa.cli_codi = cl.cli_codi;
+grant select on anjelica.v_albdepserv to public;
+create view anjelica.v_cliprv as 
+select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.v_cliente 
+union all
+select 'C' AS tipo,prv_codi as codigo, prv_nomb as nombre from anjelica.v_proveedo;
+grant select on anjelica.v_cliprv to public;
+
+
+
+--
+-- Añadir columna representante a albaranes venta
+--
+alter table v_albavec rename avc_rcaedi to avc_repres; -- Representante
+update v_albavec set avc_repres = (select  rep_codi from clientes as c where c.cli_codi=v_albavec.cli_codi);
+update v_albavec set avc_repres = 'MA' where avc_repres is null;
+alter table v_albavec alter avc_repres  set not null; -- Representante
+
+--
 -- Añado precio original para articulo
 alter table  desproval add dpv_preori decimal(6,2);
 update desproval set dpv_preori = 0;

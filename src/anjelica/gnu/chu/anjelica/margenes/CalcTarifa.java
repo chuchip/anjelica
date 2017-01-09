@@ -3,6 +3,7 @@ package gnu.chu.anjelica.margenes;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.MvtosAlma;
+import gnu.chu.anjelica.despiece.pdprvades;
 import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.eventos.GridAdapter;
@@ -68,7 +69,7 @@ public class CalcTarifa extends ventanaPad implements PAD
     private final int JT_KGPRO=6;
     private final int JT_COSPRO=7;
 
-    //private final int JT_COSASI=10;
+    private final int JT_COSASI=10;
     
     public CalcTarifa(EntornoUsuario eu, Principal p)
   {
@@ -160,7 +161,7 @@ public class CalcTarifa extends ventanaPad implements PAD
     
     void activarEventos()
     {
-        Bvalorar.addActionListener(new ActionListener()
+        Bcosto.addActionListener(new ActionListener()
         {
              @Override
              public void actionPerformed(ActionEvent e)
@@ -181,7 +182,7 @@ public class CalcTarifa extends ventanaPad implements PAD
                  }
              }
         });
-        Bcosto.addActionListener(new ActionListener()
+        Bvalorar.addActionListener(new ActionListener()
         {
              @Override
              public void actionPerformed(ActionEvent e)
@@ -261,13 +262,13 @@ public class CalcTarifa extends ventanaPad implements PAD
     void ponFechas() throws ParseException
     {
         GregorianCalendar gc = new GregorianCalendar();
-        gc.setTime(Formatear.getDateAct());
-        gc.set(GregorianCalendar.YEAR, eje_numeE.getValorInt());
+        gc.setTime(Formatear.getDate("01-01-"+eje_numeE.getValorInt(),"dd-MM-yyyy"));
+//        gc.set(GregorianCalendar.YEAR, eje_numeE.getValorInt());
         gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.MONDAY);
-        gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt()+1);     
+        gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt());     
         tar_feciniE.setDate(new java.util.Date(gc.getTimeInMillis()));
-        gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt()+2);
-        gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.SUNDAY);
+        gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt()+1);
+//        gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.SUNDAY);
         tar_fecfinE.setDate(new java.util.Date(gc.getTimeInMillis()));
         fecStockE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4));
         fecIniProdE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-8));
@@ -341,7 +342,7 @@ public class CalcTarifa extends ventanaPad implements PAD
     {
         if (feulin == null)
         {
-            feulin=ActualStkPart.getFechaUltInv(EU.em_cod,EU.ejercicio,tar_fecfinE.getDate(),dtStat);
+            feulin=ActualStkPart.getFechaUltInv(EU.em_cod,0,tar_fecfinE.getDate(),dtStat);
             mvtosAlm.iniciarMvtos(feulin,fecStockE.getText(),dtStat);
         }
         double impStockVal,kilosVal;
@@ -357,17 +358,23 @@ public class CalcTarifa extends ventanaPad implements PAD
         kilPendRec = 0;
         ImpPendRec = 0;
         final int SBEPROD=14; // Seccion de Produccion
-       
-        s = "select t.pro_codi,pro_cosinc,sbe_codi from prodtarifa as t,v_articulo as ar "
+        double imporStkAsi=0;
+        boolean swCostoAsi=false;
+        s = "select  t.pro_codi,pro_cosinc,sbe_codi from prodtarifa as t,v_articulo as ar "
             + " where pve_codi ='" + jt.getValString(nLinea, 0) + "'"
             + " and t.pro_codi= ar.pro_codi";
         if (dtProd.select(s))
         {
             do
             {  
+                double costo=pdprvades.getPrecioOrigen(dtCon1, dtProd.getInt("pro_codi"),
+                      eje_numeE.getValorInt(), cta_semanaE.getValorInt()-1 );
+                if (costo>0)
+                    swCostoAsi=true;
                 calculaProd(dtProd.getInt("pro_codi"),null,dtProd.getDouble("pro_cosinc"));
                 kilosStock+=kilStock;
                 imporStock+=impStock;
+                imporStkAsi=imporStkAsi+(costo<=0?impStock:kilStock*costo);
                 kilosVal +=kilStock;
                 impStockVal += jt.getValorDec(nLinea, JT_COSEXI)==0 || dtProd.getInt("sbe_codi")==SBEPROD ?impStock:
                         (mvtosAlm.getKilosStock() *  jt.getValorDec(nLinea, JT_COSEXI));
@@ -397,6 +404,9 @@ public class CalcTarifa extends ventanaPad implements PAD
             jt.setValor(kilosProd, nLinea, 6);
             jt.setValor(kilosProd==0?0:Formatear.redondea(imporProd / kilosProd, 2), nLinea, 7);            
             jt.setValor(kilosVal==0?0:Formatear.redondea(impStockVal / kilosVal, 2),nLinea, JT_COSTO);
+          
+            jt.setValor(swCostoAsi?Formatear.redondea(imporStkAsi/kilosStock,2):0,nLinea, JT_COSEXI);
+        
             if (jt.isEnabled())
             {
                 cta_prprodE.setValorDec(kilosProd==0?0:Formatear.redondea(imporProd / kilosProd, 2));
@@ -406,6 +416,7 @@ public class CalcTarifa extends ventanaPad implements PAD
                 cta_prmexE.setValorDec(kilStock==0?0:Formatear.redondea(impStock / kilStock, 2));
                 cta_kgexisE.setValorDec(kilStock);
                 cta_costoE.setValorDec(kilosVal==0?0:Formatear.redondea(impStockVal / kilosVal, 2));
+                cta_cosantE.setValorDec(swCostoAsi?Formatear.redondea(imporStkAsi/kilosStock,2):0);
             }
         }
     }
@@ -667,6 +678,7 @@ public class CalcTarifa extends ventanaPad implements PAD
         Baceptar.setBounds(370, 20, 90, 19);
 
         Bvalorar.setText("Valorar F5");
+        Bvalorar.setToolTipText("Calcula sobre valores en grid");
         PPie.add(Bvalorar);
         Bvalorar.setBounds(420, 0, 60, 19);
 
@@ -726,6 +738,7 @@ public class CalcTarifa extends ventanaPad implements PAD
         opDesglo.setBounds(290, 20, 73, 17);
 
         Bcosto.setText("Costo F3");
+        Bcosto.setToolTipText("Busca costos de nuevo en base datos");
         PPie.add(Bcosto);
         Bcosto.setBounds(480, 0, 70, 19);
 

@@ -67,7 +67,7 @@ public class AutoDesp extends ventana {
         setMaximizable(false);
         setIconifiable(false);
         this.setSize(440,170);
-        setVersion("20120105");
+        setVersion("20170103");
     }
     
     /** Creates new form AutoDesp */
@@ -78,6 +78,7 @@ public class AutoDesp extends ventana {
     public void iniciarVentana() throws Exception
     {
       Pprinc.setDefButton(Baceptar);
+      pro_codoriE.setEnabled(false);
       pro_codoriE.iniciar(dtStat, papa, vl, EU);  
       pro_codfinE.iniciar(dtStat, papa, vl, EU); 
       tid_codiE.iniciar(dtStat, papa, vl, EU);
@@ -178,9 +179,9 @@ public class AutoDesp extends ventana {
                 }
                 Desorilin.select(dtAdd, true,ejeNume,deoCodi,numLin);
                 // Guardo variables temporales
-                defEjelot=dtAdd.getInt("deo_ejelot");
-                deoSerlot=dtAdd.getString("deo_serlot");
-                proLotOri=dtAdd.getInt("pro_lote");
+                defEjelot=dtAdd.getInt("deo_ejloge");
+                deoSerlot=dtAdd.getString("deo_seloge");
+                proLotOri=dtAdd.getInt("deo_nuloge");
                 proNumind=dtAdd.getInt("pro_numind");
                 deoKilos=dtAdd.getDouble("deo_kilos");
                 deoPrcost=dtAdd.getDouble("deo_prcost");
@@ -224,11 +225,11 @@ public class AutoDesp extends ventana {
                 dtAdd.setDato("def_kilos", deoKilos); //def_kilosE.getValorDec());
                 dtAdd.setDato("def_feccad",deoFeccad);//def_kilosE.getValorDec());
                 dtAdd.copiaRegistro(dtBloq,null,null,0);
-                //Creo apunte en stock partidas.
-                stkPart.sumar(defEjelot, SERIE, proLote, proNumind, pro_codfinE.getValorInt(),
-                    dtAdd.getInt("alm_codi"),
-                    0, 0, deoFecha, ActualStkPart.CREAR_SI,
-                    prvCodi, deoFeccad);
+//                //Creo apunte en stock partidas.
+//                stkPart.sumar(defEjelot, SERIE, proLote, proNumind, pro_codfinE.getValorInt(),
+//                    dtAdd.getInt("alm_codi"),
+//                    0, 0, deoFecha, ActualStkPart.CREAR_SI,
+//                    prvCodi, deoFeccad);
             }
             dtAdd.commit();
             msgBox("Generado Nuevo despiece "+newDeoCodi);
@@ -299,8 +300,6 @@ public class AutoDesp extends ventana {
         tid_codiE.setAncTexto(50);
         Pprinc.add(tid_codiE);
         tid_codiE.setBounds(110, 20, 300, 17);
-
-        pro_codoriE.setEnabled(false);
         Pprinc.add(pro_codoriE);
         pro_codoriE.setBounds(110, 0, 300, 17);
         Pprinc.add(pro_codfinE);

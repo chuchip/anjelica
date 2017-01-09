@@ -225,7 +225,7 @@ public class listraza  implements JRDataSource
         " and l.avc_nume = p.avc_nume "+
         " and l.avc_serie = p.avc_serie  "+
         " and l.avl_numlin = p.avl_numlin "+
-        " ORDER BY p.AVL_NUMLIN,p.AVP_NUMLIN ";
+        " ORDER BY p.pro_codi,avp_ejelot,avp_serlot,avp_numpar,avp_numind ";
 
     if (! dtCur.select(s))
     {

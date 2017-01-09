@@ -248,7 +248,7 @@ public class pdpedco extends ventanaPad   implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(760,522));
-    this.setVersion("2016-12-14"+ (SWADMIN?"(ADMINISTRADOR)":""));
+    this.setVersion("2017-01-08"+ (SWADMIN?"(ADMINISTRADOR)":""));
 
     Pprinc.setLayout(gridBagLayout1);
 
@@ -688,6 +688,7 @@ public class pdpedco extends ventanaPad   implements PAD
       s = "SELECT * FROM pedicoc ";
       s = creaWhere(s, v,true);
       s += " ORDER BY emp_codi,eje_nume,pcc_nume";
+      nav.pulsado=navegador.NINGUNO;
       if (!dtCons.select(s))
       {
         mensaje("");
@@ -696,6 +697,7 @@ public class pdpedco extends ventanaPad   implements PAD
         rgSelect();
         return;
       }
+      
       mensaje("");
       strSql = s;
       rgSelect();
@@ -708,8 +710,10 @@ public class pdpedco extends ventanaPad   implements PAD
     activaTodo();
     nav.pulsado = navegador.NINGUNO;
   }
+  @Override
   public void canc_query()
   {
+    nav.pulsado=navegador.NINGUNO;
     mensajeErr("Consulta ... CANCELADA");
     mensaje("");
     Pcabe.setQuery(false);
@@ -784,6 +788,7 @@ public class pdpedco extends ventanaPad   implements PAD
         guardaLinPed(dtAdd,nLin++,n);
       }
       ctUp.commit();
+      nav.pulsado=navegador.NINGUNO;
       activaTodo();
       mensajeErr("Pedido .. MODIFICADO");
       mensaje("");
@@ -820,8 +825,10 @@ public class pdpedco extends ventanaPad   implements PAD
     dt.setDato("pcl_comen", jt.getValString(n, 13));
     dt.update(stUp);
   }
+  @Override
   public void canc_edit()
   {
+    nav.pulsado=navegador.NINGUNO;
     activaTodo();
     mensajeErr("Modificacion de Pedido ... CANCELADA");
     mensaje("");
@@ -853,6 +860,7 @@ public class pdpedco extends ventanaPad   implements PAD
     pcc_fecpedE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
     pcc_fecrecE.requestFocus();
   }
+  @Override
   public void ej_addnew1()
   {
     try
@@ -862,7 +870,7 @@ public class pdpedco extends ventanaPad   implements PAD
       if (! checkCampos())
         return;
 
-      jt.procesaAllFoco();
+      jt.salirGrid();;
       s="SELECT num_pedcom FROM v_numerac WHERE eje_nume = "+eje_numeE.getValorInt()+
           " AND emp_codi = "+emp_codiE.getValorInt();
       if (!dtAdd.select(s,true))
@@ -890,6 +898,7 @@ public class pdpedco extends ventanaPad   implements PAD
         guardaLinPed(dtAdd,nLin++,n);
       }
       ctUp.commit();
+      nav.pulsado=navegador.NINGUNO;
       activaTodo();
       if (dtCons.getNOREG())
         rgSelect();
@@ -899,7 +908,6 @@ public class pdpedco extends ventanaPad   implements PAD
     } catch (Exception k)
     {
       Error("ERROR AL insertar NUEVOS DATOS",k);
-      return;
     }
   }
 
@@ -969,6 +977,7 @@ public class pdpedco extends ventanaPad   implements PAD
 @Override
   public void canc_addnew()
   {
+    nav.pulsado=navegador.NINGUNO;
     activaTodo();
     mensajeErr("Insercion de Pedido ... CANCELADA");
     mensaje("");
@@ -1018,6 +1027,7 @@ public class pdpedco extends ventanaPad   implements PAD
           " and pcc_nume = " + pcc_numeE.getValorInt();
       stUp.executeUpdate(s);
       ctUp.commit();
+      nav.pulsado=navegador.NINGUNO;
       activaTodo();
       rgSelect();
       mensajeErr("Registro .. BORRADO");
@@ -1027,12 +1037,15 @@ public class pdpedco extends ventanaPad   implements PAD
       Error("Error al borrar Pedido",k);
     }
   }
+  @Override
   public void canc_delete()
   {
+    nav.pulsado=navegador.NINGUNO;
     activaTodo();
     mensajeErr("Borrado de Pedido ... CANCELADO");
     mensaje("");
   }
+   @Override
   public void activar(boolean b)
   {
     activar(navegador.TODOS,b);

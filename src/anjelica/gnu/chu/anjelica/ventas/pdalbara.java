@@ -25,6 +25,8 @@ package gnu.chu.anjelica.ventas;
  * del dia.
  * - zona (String)
  *   Solo muestra albaranes de clientes de una zona dada
+ * - representante (String)
+ *   Solo Muestra albaranes de clientes de un Representante dado
  * - conpedido (true/false)
  *   Permite introducir albaranes sin pedido
  * - admin (true/false)
@@ -486,6 +488,8 @@ public class pdalbara extends ventanaPad  implements PAD
   CLabel avc_impcobL = new CLabel();
   CTextField avc_impcobE = new CTextField(Types.DECIMAL, "----,--9.99");
   CCheckBox avc_cucomiE= new CCheckBox();
+  CLabel avc_represL = new CLabel("Repres.");
+  CLinkBox avc_represE = new CLinkBox();
   CCheckBox avc_cerraE = new CCheckBox("-1", "0");
 
   CGridEditable jtDes;
@@ -552,7 +556,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
   CCheckBox avc_confoE = new CCheckBox("-1","0");
   String P_ZONA = null;
-
+  String P_REPRES = null;
   boolean PERMFAX=false;
   CCheckBox opCopia = new CCheckBox();
   CComboBox avc_almoriE = new CComboBox();
@@ -686,10 +690,10 @@ public class pdalbara extends ventanaPad  implements PAD
       P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
     if (ht.get("zona") != null)
       P_ZONA = ht.get("zona");
+    if (ht.get("representante") != null)
+      P_REPRES = ht.get("representante");
     if (ht.get("conPedido") != null)
-      P_CONPEDIDO = Boolean.parseBoolean(ht.get("conPedido"));
-
-      
+      P_CONPEDIDO = Boolean.parseBoolean(ht.get("conPedido"));      
   }
   /**
    * Pone a disabled los campos indice del albaran
@@ -713,7 +717,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-01-03" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-01-09" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -747,6 +751,7 @@ public class pdalbara extends ventanaPad  implements PAD
         BmvReg.setText("Mvto.Reg (F9)");
         opAgru.setToolTipText("Ver Lineas Agrupadas");
         sbe_codiE.setBounds(new Rectangle(58, 76, 43, 18));
+        
         cLabel210.setBounds(new Rectangle(485, 3, 101, 17));
         cLabel210.setText("Disp.Salida");
         cLabel210.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -888,9 +893,9 @@ public class pdalbara extends ventanaPad  implements PAD
             avc_dtoppE.setEnabled(false);
             avc_dtocomE.setEnabled(false);
             avc_valoraE.setEnabled(false);
-            avc_revpreE.setEnabled(false);
-            sbe_codiE.setEnabled(false);
+            avc_revpreE.setEnabled(false);            
         }
+        sbe_codiE.setEnabled(P_ADMIN);           
         cLabel12.setText("%");
         cLabel12.setBounds(new Rectangle(491, 57, 15, 16));
         
@@ -914,6 +919,10 @@ public class pdalbara extends ventanaPad  implements PAD
         avc_cucomiE.setText("Desbloquear");
         avc_cucomiE.setToolTipText("Marcar para permitir modificar albaran aunque se haya servido en una ruta");
         avc_cucomiE.setBounds(new Rectangle(170, 125, 100, 17));
+        avc_represL.setBounds(new Rectangle(272, 125, 45, 17));
+        avc_represE.setEnabled(P_ADMIN);
+        avc_represE.setAncTexto(30);
+        avc_represE.setBounds(new Rectangle(320, 125, 215, 17));
         avc_cerraE.setMaximumSize(new Dimension(74, 23));
         avc_cerraE.setText("Cerrado");
         avc_cerraE.setBounds(new Rectangle(330, 57, 76, 18));
@@ -998,7 +1007,7 @@ public class pdalbara extends ventanaPad  implements PAD
         residuosL.setBackground(Color.CYAN);
         residuosL.setHorizontalAlignment(SwingConstants.CENTER);
         residuosL.setFont(new Font("Dialog", Font.BOLD, 12));
-        residuosL.setBounds(new Rectangle(415, 125, 105, 16));
+        residuosL.setBounds(new Rectangle(600, 175, 105, 16));
         alr_numeL.setBounds(new Rectangle(180, 25, 35, 17));
        
         ArrayList<String> vc2=new ArrayList(3);
@@ -1207,6 +1216,8 @@ public class pdalbara extends ventanaPad  implements PAD
         PotroDat.add(avc_impcobL, null);
         PotroDat.add(avc_impcobE, null);
         PotroDat.add(avc_cucomiE, null);
+        PotroDat.add(avc_represL, null);
+        PotroDat.add(avc_represE, null);
         PotroDat.add(alm_codoriL, null);
         PotroDat.add(alm_codoriE, null);
         PotroDat.add(alm_coddesL, null);
@@ -1358,9 +1369,10 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     String s1="SELECT * FROM "+TABLACAB+" AS c " +
         (P_ZONA != null ? ", clientes cl " : "") +
-        " WHERE 1=1 " +
+        " WHERE 1=1 " +      
         (P_ZONA != null ? " and cl.cli_codi = c.cli_codi " +
          " AND cl.zon_codi LIKE '" + P_ZONA + "'" : "") +
+        (P_REPRES==null?"": " and c.avc_repres='"+P_REPRES+"'" )+
         (EU.isRootAV() ? "" : " AND c.div_codi > 0 ");
     if (condWhere==null)
       s1+=  " and c.emp_codi = " + EU.em_cod +" and c.avc_serie != 'X' " +
@@ -1376,6 +1388,16 @@ public class pdalbara extends ventanaPad  implements PAD
   {    
       try
       {
+          avc_represE.getComboBox().setPreferredSize(new Dimension(250, 18));
+          avc_represE.setFormato(Types.CHAR, "XX", 2);
+          avc_represE.texto.setMayusc(true);
+          MantRepres.llenaLinkBox(avc_represE, P_REPRES, dtCon1);
+          cli_rutaE.setAncTexto(30);
+          cli_rutaE.setFormato(Types.CHAR, "XX");
+          rutPanelE.iniciar(dtStat, dtAdd, this);
+          pdconfig.llenaDiscr(dtStat, cli_rutaE, pdconfig.D_RUTAS, EU.em_cod);
+
+          paiEmp = pdempresa.getPais(dtStat, EU.em_cod);
           isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
           swUsaPalets=pdconfig.getUsaPalets(EU.em_cod, dtStat);
           avl_numpalE.setEnabled(swUsaPalets);
@@ -1446,12 +1468,7 @@ public class pdalbara extends ventanaPad  implements PAD
     @Override
   public void iniciarVentana() throws Exception
   {
-    cli_rutaE.setAncTexto(30);
-    cli_rutaE.setFormato(Types.CHAR, "XX");
-    rutPanelE.iniciar(dtStat, dtAdd, this);
-    pdconfig.llenaDiscr(dtStat, cli_rutaE, pdconfig.D_RUTAS ,EU.em_cod);   
    
-    paiEmp= pdempresa.getPais(dtStat,EU.em_cod);
     jtDes.getPopMenu().add(verDatTraz);
     jtDes.getPopMenu().add(verMvtos);
     
@@ -1521,6 +1538,7 @@ public class pdalbara extends ventanaPad  implements PAD
     avc_dtoppE.setColumnaAlias("avc_dtopp");
     avc_dtocomE.setColumnaAlias("avc_dtocom");
     sbe_codiE.setColumnaAlias("sbe_codi");
+    avc_represE.setColumnaAlias("avc_repres");
     pro_codiE.setCamposLote(avp_ejelotE, avp_serlotE, avp_numparE,
                             avp_numindE, avp_cantiE);
     Pcabe.setButton(KeyEvent.VK_F2, Birgrid);
@@ -1745,6 +1763,7 @@ public class pdalbara extends ventanaPad  implements PAD
       avc_dtocomE.setValorDec(cli_codiE.getLikeCliente().getDouble(
           "cli_pdtoco"));
       sbe_codiE.setValorInt(cli_codiE.getLikeCliente().getInt("sbe_codi"));
+      avc_represE.setText(cli_codiE.getLikeCliente().getString("rep_codi"));
       if (nav.pulsado==navegador.ADDNEW)
         avc_revpreE.setValor(cli_codiE.getLikeCliente().getInt("cli_precfi"));
 //      if ( MantTarifa.isTarifaCosto(dtStat,cli_codiE.getLikeCliente().getInt("tar_codi")) )
@@ -3123,6 +3142,7 @@ public class pdalbara extends ventanaPad  implements PAD
       avc_obserE.setText(dtAdd.getString("avc_obser"));
       div_codiE.setValor(dtAdd.getString("div_codi"));
       sbe_codiE.setValorInt(dtAdd.getInt("sbe_codi",true));
+      avc_represE.setText(dtAdd.getString("avc_repres"));
       alm_codoriE.setValor(dtAdd.getString("alm_codori"));
       alm_coddesE.setValor(dtAdd.getString("alm_coddes"));
       avc_deposE.setValor(dtAdd.getString("avc_depos"));
@@ -3490,7 +3510,7 @@ public class pdalbara extends ventanaPad  implements PAD
   public static String getSqlLinAlb(String tablaLin,int ano,int empCodi,String serie,int nume)
   {
     String s= "SELECT avl_numlin,l.pro_codi, " +
-          " avl_canti,avl_canbru, avl_unid," +
+          " avl_canti,avl_canbru, avl_unid,pro_tiplot," +
           " avl_prven,avl_prepvp,avl_profer,tar_preci,a.pro_nomb,a.pro_indtco,pro_tiplot, " +
           " l.pro_nomb as avl_pronom,avl_numpal, a.pro_tipiva,l.alm_codi,avl_coment,avl_fecalt " +
           " FROM "+tablaLin+"  as l left join v_articulo as a on l.pro_codi = a.pro_codi " +
@@ -3522,7 +3542,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     return "SELECT -1 as avl_numlin,l.pro_codi,avl_numpal,sum(avl_canti) as avl_canti, " +
         " sum(avl_canbru) as  avl_canbru, "+
-         " sum(avl_unid) as avl_unid,"+
+         " sum(avl_unid) as avl_unid,'V' as pro_tiplot, "+
          (modPrecio? " avl_prven,":"")+
          "tar_preci,a.pro_nomb,l.pro_nomb as avl_pronom,"
         + " a.pro_tipiva,a.pro_indtco,l.alm_codi,avl_coment " +
@@ -3540,7 +3560,7 @@ public class pdalbara extends ventanaPad  implements PAD
          " UNION ALL " +
          "SELECT -1 as avl_numlin,l.pro_codi,avl_numpal,sum(avl_canti) as avl_canti, " +
          " sum(avl_canbru) as  avl_canbru, "+
-         " sum(avl_unid) as avl_unid,"+
+         " sum(avl_unid) as avl_unid,'V' as pro_tiplot,"+
          (modPrecio? " avl_prven,":"")+
          "tar_preci, a.pro_nomb,l.pro_nomb as avl_pronom,"
         + "a.pro_tipiva,a.pro_indtco,l.alm_codi,avl_coment " +
@@ -3558,7 +3578,7 @@ public class pdalbara extends ventanaPad  implements PAD
            " union all "+
         "SELECT  avl_numlin,l.pro_codi,avl_numpal, avl_canti, " +
          "   avl_canbru, "+
-         "  avl_unid,"+
+         "  avl_unid, pro_tiplot,"+
          (modPrecio? " avl_prven,":"")+
          "tar_preci, a.pro_nomb,l.pro_nomb as avl_pronom,"
         + "a.pro_tipiva,a.pro_indtco,l.alm_codi,avl_coment " +
@@ -4205,6 +4225,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
       return (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
   }
+  
   @Override
   public void PADQuery()
   {
@@ -4773,6 +4794,13 @@ public class pdalbara extends ventanaPad  implements PAD
       mensajeErr("SubEmpresa de Cliente NO valida");
       return false;
     }
+    if (! avc_represE.controla(true))
+    {
+      mensajeErr("Representante NO valido");
+      return false;
+    }
+
+    
     if (pvc_anoE.getValorInt() != 0)
     { // Albaran sobre un pedido
       if (getClientePedido() == 0)
@@ -5361,6 +5389,7 @@ public class pdalbara extends ventanaPad  implements PAD
       dtAdd.setDato("avc_clinom",(String) null);
     else
       dtAdd.setDato("avc_clinom",cli_codiE.getTextNomb());
+    dtAdd.setDato("avc_repres",avc_represE.getText());
     dtAdd.setDato("div_codi",div_codiE.getValorInt());
     dtAdd.setDato("div_codi",div_codiE.getValorInt());
     dtAdd.setDato("cli_codi", cli_codiE.getValorInt());
@@ -7537,6 +7566,7 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avc_fecemi", avc_fecemiE.getText(), "dd-MM-yyyy"); // Fecha Emision
     dtAdd.setDato("avc_revpre", avc_revpreE.getValor()); // Revisar Precios
     dtAdd.setDato("sbe_codi", sbe_codiE.getValorInt());
+    dtAdd.setDato("avc_repres", avc_represE.getText());
     dtAdd.setDato("avc_desrec", "");
     dtAdd.setDato("alm_codori", avc_almoriE.getValorInt()); // Almacen Origen.
     dtAdd.setDato("avc_almori", avc_almoriE.getValorInt()); // Almacen Destino.
@@ -7824,8 +7854,10 @@ public class pdalbara extends ventanaPad  implements PAD
     verMvtos.setEnabled(!b);
     verDepoC.setEnabled(!b);
     rutPanelE.setEnabledRuta(!b);
-    if (! P_ADMIN)
-        avc_deposE.setEnabled(b);
+    
+    avc_deposE.setEnabled(b);
+   
+
     Bdesgl.setEnabled(!b);
     Bfincab.setEnabled(b);
     Baceptar.setEnabled(b);
@@ -7863,14 +7895,17 @@ public class pdalbara extends ventanaPad  implements PAD
     cli_rutaE.setEnabled(b);
     avc_almoriE.setEnabled(b);
     if (P_MODPRECIO)
-    {
-      sbe_codiE.setEnabled(b);  
+    {      
       BValTar.setEnabled(!b);
       avc_dtoppE.setEnabled(b); 
       avc_dtocomE.setEnabled(b);      
     }
     if (P_ADMIN)
+    {
+        avc_represE.setEnabled(b);
+        sbe_codiE.setEnabled(b); 
         avc_confoE.setEnabled(b);
+    }
     if (b)
     {
         if ( (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT) && ! jtLinPed.isVacio())

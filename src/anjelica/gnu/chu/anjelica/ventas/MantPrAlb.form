@@ -800,7 +800,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="612" y="2" width="110" height="18"/>
+                  <AbsoluteConstraints x="612" y="2" width="100" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -841,6 +841,19 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="421" y="24" width="288" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CButton" name="BPonPrecio">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="Establece precio"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(Iconos.getImageIcon(&quot;precio&quot;))"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="720" y="9" width="20" height="20"/>
                 </Constraint>
               </Constraints>
             </Component>

@@ -912,7 +912,8 @@ public class clresstock extends ventana implements  JRDataSource
           proDisc3 = null;
         String condArt = " 1 = 1 "+
           (proDisc3 == null ? "" : " and cam_codi like '%" + proDisc3 + "%'") +
-          (!proiniE.isNull() ? "  and pro_codi >= " + proiniE.getValorInt() : "") +
+          (!proiniE.isNull() ? "  and pro_codi "+(profinE.isNull()?"":">") +
+            "= " + proiniE.getValorInt() : "") +
             (!profinE.isNull() ? "  and pro_codi <= " + profinE.getValorInt() :
              "")+
            (opSoloVend.isSelected()?" and pro_tiplot = 'V'":"");

@@ -348,19 +348,44 @@ public class ClDifInv extends ventana {
         mensajeErr("Introduzca la Fecha de Control");
         return;
       }
-    
-      swConsulta=e.getActionCommand().startsWith("Consultar");
-      LOTE=-1;
-      PROCODI=pro_codiE.getValorInt();
-      if (! pro_loteE.isNull() && PROCODI>0 )
-        LOTE = pro_loteE.getValorInt();
-      camCodiE=cam_codiE.getText();
-      almCodi=alm_codiniE.getValorInt();
-      jtRep.removeAllDatos();
-      if (cam_codiE.getText().equals("**") || cam_codiE.getText().equals("*") || cam_codiE.getText().trim().equals(""))
-        camCodiE="";
       try 
       {
+        if (e.getActionCommand().startsWith("Resetear"))
+        {
+            lci_comentE.setText("");
+            lci_causaE.setText("");
+              s = "DELETE FROM "+ TABLA_INV_LIN
+                      + " where emp_codi = " + EU.em_cod
+                      + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+" c where "
+                      + " c.emp_codi =" + EU.em_cod
+                      + (alm_codiniE.getValorInt()==0?"":" and alm_codi = "+alm_codiniE.getValorInt())
+                      + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                      + " ) "
+                      + " and lci_peso = 0 ";
+              dtAdd.executeUpdate(s);
+              s = "update "+ TABLA_INV_LIN+ " set lci_coment = '', lci_causa=''"
+                      + " where emp_codi = " + EU.em_cod
+                      + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+" c where "
+                      + " c.emp_codi =" + EU.em_cod
+                      + (alm_codiniE.getValorInt()==0?"":" and alm_codi = "+alm_codiniE.getValorInt())
+                      + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                      + " ) ";                    
+              dtAdd.executeUpdate(s);              
+              dtAdd.commit();
+              msgBox("Datos de Inventario. Reseteados");
+              return;
+        }
+        swConsulta=e.getActionCommand().startsWith("Consultar");
+        LOTE=-1;
+        PROCODI=pro_codiE.getValorInt();
+        if (! pro_loteE.isNull() && PROCODI>0 )
+          LOTE = pro_loteE.getValorInt();
+        camCodiE=cam_codiE.getText();
+        almCodi=alm_codiniE.getValorInt();
+        jtRep.removeAllDatos();
+        if (cam_codiE.getText().equals("**") || cam_codiE.getText().equals("*") || cam_codiE.getText().trim().equals(""))
+          camCodiE="";
+      
         if (! opDatStock.isSelected())
         { // Busco Individuos Repetidos
             TABLA_INV_CAB="coninvcab";
@@ -1484,6 +1509,7 @@ public class ClDifInv extends ventana {
 
         Baceptar.setText("Aceptar");
         Baceptar.addMenu("Consultar");
+        Baceptar.addMenu("Resetear");
         Baceptar.addMenu("Listar");
         Pcondic.add(Baceptar);
         Baceptar.setBounds(290, 120, 130, 26);

@@ -198,9 +198,6 @@
             <Component class="gnu.chu.camposdb.sbePanel" name="sbe_codiE">
               <Properties>
                 <Property name="toolTipText" type="java.lang.String" value="Tratar solo Ventas de Subseccion introducida"/>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[29, 18]"/>
-                </Property>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

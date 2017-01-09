@@ -45,7 +45,9 @@ public class AlbVenZR extends ventana {
     Covezore padre;
     conVenProd padrePro;
     String fecIni, fecFin;
-
+    String repCodiE=null;
+    int sbeCodiE=0;
+    
     public AlbVenZR() {
         try {
             iniciarFrame();
@@ -53,7 +55,7 @@ public class AlbVenZR extends ventana {
         {
             Error("Error al iniciar AlbVenZR ",k);
         }
-        this.setVersion("2016-02-18");
+        this.setVersion("2017-01-08");
         statusBar = new StatusBar(this);
         initComponents();
         setResizable(false);
@@ -134,10 +136,12 @@ public class AlbVenZR extends ventana {
   }
   public void verAlbClien(String fecini,String fecfin) throws Exception
   {
-    String s="SELECT * FROM v_albavec as c WHERE cli_codi = "+jt.getValorInt(0)+
+    String s="SELECT * FROM v_albavec as c WHERE cli_codi = "+jt.getValorInt(0)+          
           " and avc_fecalb >= TO_DATE('"+fecini+"','dd-MM-yyyy') "+
           " and avc_fecalb <= TO_DATE('"+fecfin+"','dd-MM-yyyy') "+
            (EU.isRootAV()?"":" and c.div_codi > 0 ")+
+          (repCodiE==null?"":" and avc_repres= '"+repCodiE+"'")+
+          (sbeCodiE==0?"":" and sbe_codi= "+sbeCodiE)+
           " order by avc_fecalb ";
       jtAlb.removeAllDatos();
       if (!dtStat.select(s))
@@ -166,6 +170,8 @@ public class AlbVenZR extends ventana {
           (padre.getEmpresa()==0?"":" and c.emp_codi = "+padre.getEmpresa())+
           (padre.getSubEmpresa()==0?"":" and c.sbe_codi = "+padre.getSubEmpresa())+
            (padre.EU.isRootAV()?"":" and c.div_codi > 0 ")+
+          (repCodiE==null?"":" and avc_repres= '"+repCodiE+"'")+
+          (sbeCodiE==0?"":" and sbe_codi= "+sbeCodiE)+
           " order by avc_fecalb ";
       jtAlb.removeAllDatos();
       if (!dtStat.select(s))
@@ -198,6 +204,8 @@ public class AlbVenZR extends ventana {
    */
   void cargaDatos(String repCodi, String zonCodi,int sbeCodi,HashMap<String,Double> ht) throws Exception
   {
+    repCodiE=repCodi;
+    sbeCodiE=sbeCodi;
     swGanan=ht!=null;
     jt.setEnabled(false);
     String s;
@@ -208,7 +216,7 @@ public class AlbVenZR extends ventana {
         " and c.avc_fecalb >= TO_DATE('" + padre.getFechaInic() + "','dd-MM-yyyy') " +
         " and c.avc_fecalb <= TO_DATE('" + padre.getFechaFinal() + "','dd-MM-yyyy') " +
         " and cl.zon_codi = '" + zonCodi + "'" +
-        " and cl.rep_codi = '" + repCodi + "'" +
+        " and avc_repres = '" + repCodi + "'" +
         " and c.sbe_codi = "+sbeCodi+
         (padre.getEmpresa()==0?"":" and c.emp_codi = "+padre.getEmpresa())+
         (padre.getSubEmpresa()==0?"":" and c.sbe_codi = "+padre.getSubEmpresa())+
@@ -305,7 +313,8 @@ public class AlbVenZR extends ventana {
                        int proCodi,String zonCodi,String repCodi,
                        String serieIni,String serieFin,int cliCodi,char grupo) throws Exception
   {
-
+    repCodiE=repCodi;
+    sbeCodiE=0;
     jt.setEnabled(false);
     this.fecIni=fecini;
     this.fecFin=fecfin;
@@ -314,9 +323,9 @@ public class AlbVenZR extends ventana {
 //  pro_codiE.setText(""+proCodi);
 //  zon_codiE.setText(zonCodi);
 //  zon_nombE.setText(zonNomb);
-  String s;
+  
 
-  s="select  c.cli_codi,cl.cli_nomb,count(distinct c.avc_nume) as cuantos,"+
+  String s="select  c.cli_codi,cl.cli_nomb,count(distinct c.avc_nume) as cuantos,"+
       " sum(avl_canti) as avl_canti,sum(avl_canti*avl_prven)  as  importe,0 as impGana,0 as porcGana "+
       " from v_albventa as c,clientes cl,v_articulo as a"+
        (grupo=='F'?", v_famipro as f ":"")+
@@ -326,7 +335,7 @@ public class AlbVenZR extends ventana {
       " and c.avc_fecalb <= TO_DATE('" + fecfin + "','dd-MM-yyyy') " +
       " and c.avc_serie >= '" + serieIni + "'" +
       "  AND c.avc_serie <= '" + serieFin + "'" +
-      (repCodi==null?"":" and cl.rep_codi like '"+repCodi+"'")+
+      (repCodi==null?"":" and avc_repres like '"+repCodi+"'")+
       (cliCodi ==0?"":" and c.cli_codi = "+cliCodi)+
       (zonCodi==null?"":" AND cl.zon_codi like '" + zonCodi + "'") +
       " and a.pro_codi = c.pro_codi "+

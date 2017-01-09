@@ -493,7 +493,7 @@ public class copedco extends ventana
  {
     ejeNume=jtCab.getValorInt(2);
     pcoNume=jtCab.getValorInt(3);
-    prv_codiE.setText(jtCab.getValString(0));
+  
 
    if (modCons)
      matar();

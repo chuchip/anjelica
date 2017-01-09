@@ -150,7 +150,7 @@ pro_offein date,	-- Oferta desde Fecha  -- NO UTILIZADO
 pro_offefi date,	-- Oferta hasta fecha -- NO UTILIZADO
 pro_tipiva int,		-- Tipo de IVA
 pro_costkmi int,	-- Llevar Control de Stock Minimo. (-1 si, 0. No)
-pro_codart varchar(12) not null, -- Codigo de Articulo
+pro_codart varchar(12) not null, -- Codigo de Articulo Venta
 pro_tarexp int, 	-- Lleva Taras Expedicion? NO UTLIZADO
 pro_coinen int,		-- Control Ind. Envase -- NO UTILIZADO
 pro_unicom varchar(2),  -- Unidades de Compra (Kg/Ud)

@@ -24,6 +24,7 @@ package gnu.chu.anjelica.ventas;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.despiece.pdprvades;
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.MantTarifa;
 import gnu.chu.anjelica.pad.pdconfig;
@@ -141,7 +142,7 @@ public class MantPrAlb extends ventana {
 
          String s = "SELECT avl_numlin FROM v_albavel WHERE " +
              condWhere +
-             " and avl_canti " + (avlCanti > 0 ? " > 0" : " < 0") +
+             " and avl_canti " + (avlCanti > 0 ? " > 0" : " <= 0") +
              " AND pro_codi = " + proCodi +
              " and avl_prven = " + avlPrven +
              " and avl_prepvp = " +avlPrepvp +
@@ -283,6 +284,7 @@ public class MantPrAlb extends ventana {
         fecCostoE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel15 = new gnu.chu.controles.CLabel();
         tar_nombE = new gnu.chu.controles.CTextField();
+        BPonPrecio = new gnu.chu.controles.CButton(Iconos.getImageIcon("precio"));
 
         pro_ganancE.setEnabled(false);
 
@@ -644,7 +646,7 @@ public class MantPrAlb extends ventana {
         opAgrpLin.setText("Agrupar Lineas");
         opAgrpLin.setMargin(new java.awt.Insets(0, 0, 0, 0));
         PLinea1.add(opAgrpLin);
-        opAgrpLin.setBounds(612, 2, 110, 18);
+        opAgrpLin.setBounds(612, 2, 100, 18);
 
         cLabel14.setText("Fecha Costo");
         PLinea1.add(cLabel14);
@@ -659,6 +661,10 @@ public class MantPrAlb extends ventana {
         tar_nombE.setEnabled(false);
         PLinea1.add(tar_nombE);
         tar_nombE.setBounds(421, 24, 288, 17);
+
+        BPonPrecio.setToolTipText("Establece precio");
+        PLinea1.add(BPonPrecio);
+        BPonPrecio.setBounds(720, 9, 20, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -686,6 +692,7 @@ public class MantPrAlb extends ventana {
         jtLin.setCanInsertLinea(false);
         jtLin.setDefButton(Bbuscar);
         jtSelAlb.setButton(KeyEvent.VK_F2,Bir);
+        jtLin.setButton(KeyEvent.VK_F5,BPonPrecio);
         jtLin.setButton(KeyEvent.VK_F2,Bbaja);
         avc_numeE.iniciar(EU);
         mvtosAlm.setEntornoUsuario(EU);
@@ -720,6 +727,14 @@ public class MantPrAlb extends ventana {
         return -1;
     }
     private void activarEventos() {
+        
+        BPonPrecio.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               ponPrecio();
+            }
+        });
         Bir.addActionListener(new ActionListener()
         {
             @Override
@@ -877,6 +892,17 @@ public class MantPrAlb extends ventana {
         guardaCambios();
         super.matar();
     }
+    
+    void ponPrecio()
+    {
+        if (avl_prtecnE.isEditable() && avl_prtecnE.isEnabled())
+        {
+            jtLin.setValor(jtLin.getValorDec(7),5);
+            avl_prtecnE.setValorDec(jtLin.getValorDec(7));
+        }
+        
+        jtLin.requestFocusLater();
+    }
     void irLineaAlb()
     {
       PTabPane1.setSelectedIndex(1);
@@ -947,6 +973,8 @@ public class MantPrAlb extends ventana {
             ArrayList<ArrayList> datos = new ArrayList();
             do
             {
+                if (!dtAlb.getString("pro_tiplot").equals("V"))
+                    continue;
                 precTar=dtAlb.getDouble("tar_preci");
                 if (opAgrpLin.isSelected())
                 {
@@ -962,7 +990,7 @@ public class MantPrAlb extends ventana {
                 {
                     msgBox("No encontrado indice para editar esta linea. Consulta cancelada");
                     enviaMailError("Error al buscar indice para editar linea en MantPrAlb Albaran: "+
-                            avc_numeE.getStrQuery());
+                            avc_numeE.getStrQuery()+" Linea: "+avlNumlin);
                     return ;
                 }
                 prVenta=htPrulv.get(dtAlb.getInt("pro_codi"));
@@ -1092,10 +1120,14 @@ public class MantPrAlb extends ventana {
              Double prec=htCosto.get(jtLin.getValorInt(n,0));
              if (prec==null)
              {
-                  if (! mvtosAlm.calculaMvtos(jtLin.getValorInt(n,0), dtCos1, dtCos2, null,null))
-                        prCosto=0;
-                  else
-                        prCosto = mvtosAlm.getPrecioStock();
+                  prCosto=pdprvades.getPrecioOrigen(dtCos1,jtLin.getValorInt(n,0),avc_fecalbE.getDate());
+                  if (prCosto<=0)
+                  {
+                    if (! mvtosAlm.calculaMvtos(jtLin.getValorInt(n,0), dtCos1, dtCos2, null,null))
+                          prCosto=0;
+                    else
+                          prCosto = mvtosAlm.getPrecioStock();
+                  }
                   htCosto.put(jtLin.getValorInt(n,0), prCosto);
              }
              else
@@ -1509,6 +1541,7 @@ public class MantPrAlb extends ventana {
       //  msgBox("Guardando Cambios de Albaran "+avc_numacE.getText());
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BPonPrecio;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bbaja;
     private gnu.chu.controles.CButton Bbuscar;

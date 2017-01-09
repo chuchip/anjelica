@@ -392,7 +392,7 @@ public class Clmarzona extends ventana {
                 + (pro_sbecodE.getValorInt()==0?"": " and p.sbe_codi "+(opExcSeccion.isSelected()?"!":"")
                     +"= "+pro_sbecodE.getValorInt())
                 + (zonCodi == null ? "" : " AND cl.zon_codi = '" + zonCodi + "'")
-                + (repCodi == null ? "" : " AND cl.rep_codi = '" + repCodi + "'")
+                + (repCodi == null ? "" : " AND avc_repres = '" + repCodi + "'")
                 + (cli_codiE.isNull() ? "" : " AND cl.cli_codi = '" + cli_codiE.getValorInt() + "'")
                 + (emp_codiE.getValorInt()==0?"": " and c.emp_codi = "+emp_codiE.getValorInt())
                 + (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+sbe_codiE.getValorInt())
@@ -512,7 +512,7 @@ public class Clmarzona extends ventana {
             " and c.avc_fecalb  >= TO_DATE('" + fecini + "','dd-MM-yyyy') "+
             " and c.avc_fecalb <=  TO_DATE('" + fecfin + "','dd-MM-yyyy') "+
             (zonCodi == null ? "" : " AND cl.zon_codi = '" + zonCodi + "'") +
-             (repCodi == null ? "" : " AND cl.rep_codi = '" + repCodi + "'") +
+             (repCodi == null ? "" : " AND avc_repres  = '" + repCodi + "'") +
              (emp_codiE.getValorInt()==0?"": " and c.emp_codi = "+emp_codiE.getValorInt()) +
             (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+
                         (opExcSeccion.isSelected()?"!":"")+sbe_codiE.getValorInt()) +

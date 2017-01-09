@@ -632,6 +632,26 @@ public class pdprvades extends ventanaPad implements PAD
           return -1;
       return dt.getDouble("dpv_preci");
   }
+  /**
+   * Devuelve el precio final para el codigo de un articulo venta.
+   * @param dt
+   * @param codArt
+   * @param ejeNume
+   * @param semCodi
+   * @return
+   * @throws SQLException 
+   */
+  public static double getPrecioFinal(DatosTabla dt, String codArt,int ejeNume,int semCodi) throws SQLException
+  {
+      String sql="SELECT * FROM desproval as d,v_articulo as a " +
+          " WHERE eje_nume = " + ejeNume +
+            " and dpv_nusem = "+semCodi+
+            " and d.pro_codi = a.pro_codi "+
+            " and a.pro_codart ='"+codArt+"'";       
+      if (! dt.select(sql))
+          return -1;
+      return dt.getDouble("dpv_preci");
+  }
   public static double getPrecioOrigen(DatosTabla dt, int proCodi,int ejeNume,int semCodi) throws SQLException
   {
       String sql="SELECT dpv_preori FROM desproval " +

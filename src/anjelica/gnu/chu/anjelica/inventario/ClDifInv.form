@@ -305,7 +305,7 @@
                 <Property name="text" type="java.lang.String" value="Aceptar"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Baceptar.addMenu(&quot;Consultar&quot;);&#xa;Baceptar.addMenu(&quot;Listar&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Baceptar.addMenu(&quot;Consultar&quot;);&#xa;Baceptar.addMenu(&quot;Resetear&quot;);&#xa;Baceptar.addMenu(&quot;Listar&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

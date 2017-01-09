@@ -314,6 +314,7 @@
             <Component class="gnu.chu.controles.CButton" name="Bvalorar">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Valorar F5"/>
+                <Property name="toolTipText" type="java.lang.String" value="Calcula sobre valores en grid"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -490,6 +491,7 @@
             <Component class="gnu.chu.controles.CButton" name="Bcosto">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Costo F3"/>
+                <Property name="toolTipText" type="java.lang.String" value="Busca costos de nuevo en base datos"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

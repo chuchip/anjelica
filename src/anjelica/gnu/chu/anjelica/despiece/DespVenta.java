@@ -8,7 +8,7 @@ package gnu.chu.anjelica.despiece;
  *   autollenardesp para ver  si debe hacer autollenado de
  *   los productos para un tipo de despiece (por defecto, NO)
  * </p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -1028,7 +1028,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         nInd = utildesp.getMaxNumInd( dtAdd,pro_codsalE.getValorInt(), deo_ejelotE.getValorInt(), empCodi,
                deo_serlotE.getText(),  pro_loteE.getValorInt());
      }
-     defOrden=guardaLinDesp(ejeNume, empCodi,
+     defOrden=guardaLinDesp(deo_ejelotE.getValorInt(), empCodi,
                 deo_serlotE.getText(), pro_loteE.getValorInt(),nInd,
                 pro_codsalE.getValorInt(),
                 pro_kilsalE.getValorDec(), pro_unidE.getValorInt(),1,
