@@ -76,10 +76,7 @@ public class cliAvcPanel extends cliPanel
     setAvcNume(0);
   }
 
-  public CTextField getCliNomb()
-  {
-    return cli_nombL;
-  }
+  
     @Override
   public boolean controlar(int caso) throws SQLException
   {
@@ -104,7 +101,7 @@ public class cliAvcPanel extends cliPanel
     if (cli_codiE.isEnabled())
     {
       if (err)
-        cli_nombL.setEnabled(getLikeCliente().getInt("cli_gener") != 0);
+        getCampoNombreCliente().setEnabled(getLikeCliente().getInt("cli_gener") != 0);
     }
     return err;
   }
@@ -132,8 +129,8 @@ public class cliAvcPanel extends cliPanel
   {
     super.setEnabled(enab);
 
-    if (! enab && cli_nombL!=null)
-      cli_nombL.setEnabled(false);      
+    if (! enab && getTextNomb()!=null)
+      setEnabledNombre(false);      
 
   }
  

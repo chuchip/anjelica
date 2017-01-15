@@ -388,10 +388,16 @@ public class ActualStkPart
       dtAdd.addNew("actstkpart"); 
       dtAdd.setDato("pro_codi", proCodi);
       dtAdd.setDato("alm_codi", almCodi);
-      dtAdd.setDato("stp_feccre",
-                    fecMvto == null ? "current_timestamp": fecMvto);
-      dtAdd.setDato("stp_fefici",  fecMvto == null ?  "current_timestamp": fecMvto
-                    );
+      if (fecMvto == null )
+      {
+          dtAdd.setDato("stp_feccre","current_timestamp");
+          dtAdd.setDato("stp_fefici", "current_timestamp");
+      }
+      else
+      {
+        dtAdd.setDato("stp_feccre",  fecMvto);
+        dtAdd.setDato("stp_fefici", fecMvto);
+      }
       dtAdd.setDato("stp_kilact", kilAlmac);
       dtAdd.setDato("stp_unact", unidAlmac);
       dtAdd.update();

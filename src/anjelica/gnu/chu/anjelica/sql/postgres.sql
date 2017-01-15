@@ -326,7 +326,7 @@ cli_email1 char(60),     -- Correo Electronico Comercial (Tarifas)
 cli_email2 char(60),     -- Correo Electronico Administr. (Facturas/Alb.)
 constraint ix_vcliente primary key(cli_codi)
 );
-create or replace view anjelica.v_cliente as select * from anjelica.clientes;
+create or replace view anjelica.v_cliente as select *,cli_codrut as cli_carte,cli_codrut as cli_valor from anjelica.clientes;
 grant select on anjelica.v_cliente to PUBLIC;
 --
 -- Tabla de Cambios en Tabla Clientes
@@ -488,6 +488,7 @@ avc_rcaedi varchar(3),
 avc_nalsab varchar(15),
 avc_ncarg char(17),
 avc_nrelen varchar(17),
+avc_repres varchar(2),
 avc_depos char(1) default 'N' NOT NULL, -- 'N' Normal, 'D' Deposito
 constraint ix_albavec primary key (emp_codi,avc_ano,avc_nume,avc_serie)
 );
@@ -559,6 +560,7 @@ avc_rcaedi varchar(3),
 avc_nalsab varchar(15),
 avc_ncarg char(17),
 avc_nrelen varchar(17),
+avc_repres varchar(2),
 avc_depos char(1) default 'N' NOT NULL, -- 'N' Normal, 'D' Deposito
  his_usunom varchar(15) not null, -- Usuario que realiza el Cambio
  his_fecha timestamp not null, -- Fecha de Cambio
@@ -597,7 +599,7 @@ create table anjelica.albvenserc
 --
 create view anjelica.v_albdepserv as select sa.*,ca.avc_fecalb,ca.avc_id,cl.cli_nomb,cl.cli_nomco
  from albvenserc as sa, v_albavec as ca,
-v_cliente as cl
+clientes as cl
 where ca.avc_ano=sa.avc_ano
 and  ca.emp_codi = sa.emp_codi
 and  ca.avc_serie= sa.avc_serie
@@ -718,7 +720,7 @@ create view anjelica.v_albventa as select c.avc_id,c.emp_codi,c.avc_ano,c.avc_se
 cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
 avc_basimp,avc_kilos,avc_unid,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
-avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,
+avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,avc_repres,
 tar_preci,avl_unid,
 avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,avl_dtolin 
 from v_albavel as l, v_albavec as c 
@@ -4101,7 +4103,7 @@ grant select on anjelica.v_partes to public;
 
 --drop view v_cliprv;
 create view anjelica.v_cliprv as 
-select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.v_cliente 
+select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.clientes 
 union all
 select 'C' AS tipo,prv_codi as codigo, prv_nomb as nombre from anjelica.v_proveedo;
 grant select on anjelica.v_cliprv to public;

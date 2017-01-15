@@ -280,13 +280,9 @@ public class pdprvades extends ventanaPad implements PAD
       try
       {
         GregorianCalendar gc = new GregorianCalendar();
-        gc.setTime(Formatear.getDate("01-01-" + eje_numeE.getValorInt(), "dd-MM-yyyy"));
-        gc.setFirstDayOfWeek(1);
-        gc.add(GregorianCalendar.WEEK_OF_YEAR, dpv_nusemE.getValorInt() );
-        gc.get(GregorianCalendar.WEEK_OF_YEAR);
-        int dia = gc.get(GregorianCalendar.DAY_OF_WEEK);
-        if (dia > 1)
-          gc.add(GregorianCalendar.DAY_OF_MONTH, (dia - 2) * -1);
+        gc.setTime(Formatear.getDate("01-01-"+eje_numeE.getValorInt(),"dd-MM-yyyy"));
+        gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.MONDAY);
+        gc.set(GregorianCalendar.WEEK_OF_YEAR, dpv_nusemE.getValorInt());            
         dpv_feciniE.setText(Formatear.getFechaVer(gc.getTime()));
       }
       catch (Exception k)
@@ -592,13 +588,10 @@ public class pdprvades extends ventanaPad implements PAD
   
    public static double getPrecioOrigen(DatosTabla dt, int proCodi,Date fecha)  throws SQLException
    {
-      GregorianCalendar gc=new GregorianCalendar();
-      gc.setFirstDayOfWeek(1);
+      GregorianCalendar gc=new GregorianCalendar();    
       gc.setTime(fecha);
       int semana = gc.get(GregorianCalendar.WEEK_OF_YEAR);          
       int ano= gc.get(GregorianCalendar.YEAR);
-      if (semana>1)
-          semana--;
       return getPrecioOrigen(dt,proCodi,ano, semana);
    }
   /**

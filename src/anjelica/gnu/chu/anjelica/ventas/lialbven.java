@@ -272,7 +272,8 @@ public class lialbven implements JRDataSource
         }
         if (nombre.equals("cli_diree") || nombre.equals("avc_clinom") ||
             nombre.equals("cli_poble") ||
-            nombre.equals("avc_serie") || nombre.equals("cli_horenv") || 
+            nombre.equals("avc_serie") || nombre.equals("cli_horenv") ||  nombre.equals("cli_codrut") ||  
+            nombre.equals("rut_codi") ||  
             nombre.equals("cli_comenv"))
           return rs.getString(nombre);
 
@@ -282,7 +283,7 @@ public class lialbven implements JRDataSource
             nombre.equals("cli_recequ") ||
             nombre.equals("avc_ano"))
           return rs.getInt(nombre);
-        if (nombre.equals("cli_codpoe"))
+        if (nombre.equals("cli_codpoe") )
             return rs.getString(nombre);
         if (nombre.equals("avc_fecalb"))
           return rs.getDate(nombre);

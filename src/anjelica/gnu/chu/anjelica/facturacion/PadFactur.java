@@ -209,7 +209,7 @@ public class PadFactur extends ventanaPad   implements PAD {
        
         iniciarFrame();
 
-        this.setVersion("2017-01-03" + (MOD_CONS ? "SOLO LECTURA" : ""));
+        this.setVersion("2017-01-14" + (MOD_CONS ? "SOLO LECTURA" : ""));
         strSql = getStrSql();
         IMPFRATEXTO=EU.getValorParam("impFraTexto",IMPFRATEXTO);
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -1340,6 +1340,7 @@ public class PadFactur extends ventanaPad   implements PAD {
 
   }
 
+  @Override
   public void canc_query(){
     nav.pulsado=navegador.NINGUNO;
     mensaje("");
@@ -1374,7 +1375,7 @@ public class PadFactur extends ventanaPad   implements PAD {
       fvc_sumtotE.setEnabled(true);
       fvc_modifE.setValor("M");
       fvc_fecfraE.requestFocus();
-      cli_codiE.getCliNomb().setEnabled(cli_codiE.getLikeCliente().getInt("cli_gener") != 0);
+      cli_codiE.setEnabledNombre(cli_codiE.getLikeCliente().getInt("cli_gener") != 0);
     }
     catch (Exception k)
     {
@@ -1847,7 +1848,7 @@ public class PadFactur extends ventanaPad   implements PAD {
     BrecCobr.setEnabled(!b);
     Bprint.setEnabled(!b);
 
-    cli_codiE.getCliNomb().setEnabled(false);
+    cli_codiE.setEnabledNombre(false);
   }
   void afterFocusLostCli(boolean ok)
   {

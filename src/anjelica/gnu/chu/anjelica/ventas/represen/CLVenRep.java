@@ -175,6 +175,9 @@ public class CLVenRep extends ventana {
         }
         else
               MantRepres.llenaLinkBox(rep_codiE, dtCon1);
+        rut_codiE.setAncTexto(30);
+        rut_codiE.setFormato(Types.CHAR, "XX");          
+        pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS, EU.em_cod);
         dtAdd = new DatosTabla(new conexion(EU));
         Pcondic.setDefButton(Baceptar.getBotonAccion());
         jtCab.setButton(KeyEvent.VK_F2, BirGrid);
@@ -368,7 +371,8 @@ public class CLVenRep extends ventana {
                 + "','dd-MM-yyyy') and TO_DATE('" + fecFinE.getFecha("dd-MM-yyyy")
                 + "','dd-MM-yyyy') "
                 + " and cl.cli_codi = a.cli_codi "
-                + " and cl.rep_codi = '" + rep_codiE.getText() + "'"
+                + " and a.avc_repres = '" + rep_codiE.getText() + "'"
+                + (rut_codiE.isNull()?"": " and a.cli_ruta='"+rut_codiE.getText()+"'")
                 + (opIncCobr.isSelected() ? " and avc_cobrad != 0" : "");
     }
      /**
@@ -893,6 +897,8 @@ public class CLVenRep extends ventana {
         opIncCobr = new gnu.chu.controles.CCheckBox();
         Baceptar = new gnu.chu.controles.CButtonMenu();
         bdisc = new gnu.chu.camposdb.DiscButton();
+        cLabel9 = new gnu.chu.controles.CLabel();
+        rut_codiE = new gnu.chu.controles.CLinkBox();
         jtCab = new gnu.chu.controles.Cgrid(11);
         ArrayList v=new ArrayList();
         v.add("Ejer"); // 0
@@ -1034,9 +1040,9 @@ public class CLVenRep extends ventana {
     Pprinc.setLayout(new java.awt.GridBagLayout());
 
     Pcondic.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-    Pcondic.setMaximumSize(new java.awt.Dimension(578, 60));
-    Pcondic.setMinimumSize(new java.awt.Dimension(578, 60));
-    Pcondic.setPreferredSize(new java.awt.Dimension(578, 60));
+    Pcondic.setMaximumSize(new java.awt.Dimension(600, 60));
+    Pcondic.setMinimumSize(new java.awt.Dimension(600, 60));
+    Pcondic.setPreferredSize(new java.awt.Dimension(600, 60));
     Pcondic.setLayout(null);
 
     cLabel5.setText("De Fecha");
@@ -1053,23 +1059,23 @@ public class CLVenRep extends ventana {
 
     cLabel3.setText("Empresa");
     Pcondic.add(cLabel3);
-    cLabel3.setBounds(23, 8, 49, 20);
+    cLabel3.setBounds(1, 8, 49, 20);
     Pcondic.add(emp_codiE);
     emp_codiE.setBounds(83, 8, 60, 20);
 
-    cLabel1.setText("Repres");
+    cLabel1.setText("Ruta");
     Pcondic.add(cLabel1);
-    cLabel1.setBounds(23, 37, 50, 20);
+    cLabel1.setBounds(290, 36, 30, 17);
 
     rep_codiE.setAncTexto(30);
     rep_codiE.setAncTexto(30);
     rep_codiE.setMayusculas(true);
     Pcondic.add(rep_codiE);
-    rep_codiE.setBounds(73, 37, 237, 20);
+    rep_codiE.setBounds(50, 36, 237, 17);
 
     opIncCobr.setText("Solo cobrados");
     Pcondic.add(opIncCobr);
-    opIncCobr.setBounds(313, 37, 93, 19);
+    opIncCobr.setBounds(450, 10, 93, 19);
 
     Baceptar.setText("Elegir");
     Baceptar.addMenu("Consultar","C");
@@ -1086,9 +1092,18 @@ public class CLVenRep extends ventana {
     Baceptar.addMenu("Sin Tarifa","T");
     Baceptar.addMenu("Imprimir","I");
     Pcondic.add(Baceptar);
-    Baceptar.setBounds(413, 34, 100, 26);
+    Baceptar.setBounds(500, 32, 100, 26);
     Pcondic.add(bdisc);
-    bdisc.setBounds(479, 8, 21, 20);
+    bdisc.setBounds(550, 10, 21, 20);
+
+    cLabel9.setText("Repres");
+    Pcondic.add(cLabel9);
+    cLabel9.setBounds(1, 36, 50, 17);
+
+    rut_codiE.setAncTexto(30);
+    rut_codiE.setMayusculas(true);
+    Pcondic.add(rut_codiE);
+    rut_codiE.setBounds(320, 36, 170, 17);
 
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
@@ -1261,6 +1276,7 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel8;
+    private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CTextField cor_comentE;
     private gnu.chu.camposdb.empPanel emp_codiE;
     private gnu.chu.controles.CTextField fecFinE;
@@ -1276,5 +1292,6 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CTextField pro_codiE;
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CLinkBox rep_codiE;
+    private gnu.chu.controles.CLinkBox rut_codiE;
     // End of variables declaration//GEN-END:variables
 }

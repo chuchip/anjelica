@@ -500,11 +500,11 @@ public class MantPrAlb extends ventana {
         vl.add("PrUV.");  // 10
         vl.add("FecUV"); // 11
         vl.add("Pr.Tar.");  // 12
-        vl.add("Alm"); //13
+        vl.add("C.PM"); //13
         vl.add("Comen"); // 14
         vl.add("NL"); // 15
         jtLin.setCabecera(vl);
-        jtLin.setAnchoColumna(new int[]{45,180,25,55,45,45,45,45,5,45,45,65,45,25,130,30});
+        jtLin.setAnchoColumna(new int[]{45,180,25,55,45,45,45,45,5,45,45,65,45,35,130,30});
         jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,2,2,2,2,1,2,2,0,2});
 
         ArrayList vc=new ArrayList();
@@ -660,7 +660,7 @@ public class MantPrAlb extends ventana {
 
         tar_nombE.setEnabled(false);
         PLinea1.add(tar_nombE);
-        tar_nombE.setBounds(421, 24, 288, 17);
+        tar_nombE.setBounds(421, 24, 210, 17);
 
         BPonPrecio.setToolTipText("Establece precio");
         PLinea1.add(BPonPrecio);
@@ -1072,7 +1072,7 @@ public class MantPrAlb extends ventana {
                 v.add(prulVen); // Precio Ult. Venta.
                 v.add(feulVen); // Fec. Ult.Venta
                 v.add(""+precTar); // Precio Tarifa
-                v.add(dtAlb.getString("alm_codi")); // almacen.
+                v.add(""); // almacen.
                 v.add(dtAlb.getString("avl_coment"));
                 v.add(avlNumlin);
                 datos.add(v);
@@ -1104,6 +1104,7 @@ public class MantPrAlb extends ventana {
     private void actualCostos()
     {
 //        inActualCosto=true;
+        String prTecS="";
         double prCosto;
         HashMap<Integer,Double> htCosto = new HashMap();
         int nRow=jtLin.getRowCount();
@@ -1118,21 +1119,30 @@ public class MantPrAlb extends ventana {
             if (nLin!=jtSelAlb.getSelectedRow())
                 break;
              Double prec=htCosto.get(jtLin.getValorInt(n,0));
+             prTecS="";
              if (prec==null)
              {
+                  
                   prCosto=pdprvades.getPrecioOrigen(dtCos1,jtLin.getValorInt(n,0),avc_fecalbE.getDate());
                   if (prCosto<=0)
                   {
                     if (! mvtosAlm.calculaMvtos(jtLin.getValorInt(n,0), dtCos1, dtCos2, null,null))
                           prCosto=0;
                     else
-                          prCosto = mvtosAlm.getPrecioStock();
+                    {
+                        if (mvtosAlm.getDespiecesSinValor())
+                          prTecS="SV";
+                        prCosto = mvtosAlm.getPrecioStock();
+                    }
                   }
+                  else
+                      prTecS="PF";
                   htCosto.put(jtLin.getValorInt(n,0), prCosto);
              }
              else
                    prCosto=prec;
-             jtLin.setValor(""+prCosto,n,7);
+             jtLin.setValor(prCosto,n,7);
+             jtLin.setValor(prTecS,n,13);
         }
         } catch (SQLException | ParseException k)
         {

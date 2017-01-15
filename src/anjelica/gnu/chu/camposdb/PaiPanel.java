@@ -31,7 +31,7 @@ import gnu.chu.controles.CPanel;
 import gnu.chu.controles.CTextField;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
-import gnu.chu.winayu.AyuClientes;
+import gnu.chu.winayu.ayuClientes;
 import gnu.chu.winayu.AyuPaises;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -1,22 +1,50 @@
 --
+drop view anjelica.v_albventa;
+create view anjelica.v_albventa as select c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,
+cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
+fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
+avc_basimp,avc_kilos,avc_unid,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
+avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,avc_repres,
+tar_preci,avl_unid,
+avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,avl_dtolin 
+from v_albavel as l, v_albavec as c 
+where c.emp_codi=l.emp_codi and c.avc_ano=l.avc_ano and c.avc_serie=l.avc_serie 
+and c.avc_nume=l.avc_nume;
+grant select on anjelica.v_albventa to public;
+--
+--
+-- Cambiada ruta a 5 caracteres
+drop view v_cliente;
+alter table clientes alter cli_codrut type varchar(5);
+alter table cliencamb alter cli_codrut type varchar(5); -- Codigo cliente en rutas.
+create or replace view anjelica.v_cliente as select *,cli_codrut as cli_carte,cli_codrut as cli_valor from anjelica.clientes;
+grant select on anjelica.v_cliente to PUBLIC;
+update clientes set cli_codrut = rut_codi || cli_codrut where cli_codrut!='';
+--
+
+alter table v_albavec add avc_rcaedi varchar(2);
+--
+--
 -- Añadido campo Cod.Cliente reparto
 --
+--select cli_codi,cli_nomen,cli_poble,rut_codi,REP_CODI from clientes as cl where rut_codi ='LO'  and cli_activ='S' AND EXISTS (SELECT DISTINCT(CLI_CODI) from v_albavec as a where a.cli_codi=cl.cli_codi
+-- and a.avc_fecalb>='20160606') order by cli_codi
 drop view v_albdepserv;
 drop view v_cliprv;
 drop view v_cliente;
 
-alter table clientes rename cli_carte  to cli_codrut; -- Codigo cliente eb rutas.
+alter table clientes rename cli_carte  to cli_codrut; -- Codigo cliente en rutas.
 
-alter table clientes alter cli_codrut type varchar(3); -- Codigo cliente eb rutas.
+alter table clientes alter cli_codrut type varchar(5); -- Codigo cliente en rutas.
 
-alter table cliencamb rename cli_carte to cli_codrut; -- Codigo cliente eb rutas.
-alter table cliencamb alter cli_codrut type varchar(3); -- Codigo cliente eb rutas.
-
-create or replace view anjelica.v_cliente as select * from anjelica.clientes;
+alter table cliencamb rename cli_carte to cli_codrut; -- Codigo cliente en rutas.
+alter table cliencamb alter cli_codrut type varchar(5); -- Codigo cliente en rutas.
+update clientes set cli_codrut='' where cli_codrut = '1';
+create or replace view anjelica.v_cliente as select *,cli_codrut as cli_carte,cli_codrut as cli_valor from anjelica.clientes;
 grant select on anjelica.v_cliente to PUBLIC;
 create view anjelica.v_albdepserv as select sa.*,ca.avc_fecalb,ca.avc_id,cl.cli_nomb,cl.cli_nomco
  from albvenserc as sa, v_albavec as ca,
-v_cliente as cl
+clientes as cl
 where ca.avc_ano=sa.avc_ano
 and  ca.emp_codi = sa.emp_codi
 and  ca.avc_serie= sa.avc_serie
@@ -24,12 +52,10 @@ and  ca.avc_nume= sa.avc_nume
 and sa.cli_codi = cl.cli_codi;
 grant select on anjelica.v_albdepserv to public;
 create view anjelica.v_cliprv as 
-select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.v_cliente 
+select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.clientes 
 union all
 select 'C' AS tipo,prv_codi as codigo, prv_nomb as nombre from anjelica.v_proveedo;
 grant select on anjelica.v_cliprv to public;
-
-
 
 --
 -- Añadir columna representante a albaranes venta

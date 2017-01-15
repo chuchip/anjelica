@@ -89,7 +89,7 @@ public class pdpeve  extends ventanaPad   implements PAD
 //  CComboBox alm_codiE = new CComboBox();
   CPanel Pprinc = new CPanel();
   CPanel Pcabe = new CPanel();
-  CLabel cLabel1 = new CLabel();
+  CLabel cli_codiL = new CLabel();
   boolean swExterno;
   cliAvcPanel cli_codiE = new cliAvcPanel()
   {
@@ -193,8 +193,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   CLabel cLabel10 = new CLabel();
   CComboBox opVerProd = new CComboBox();
   CCheckBox opPedidos = new CCheckBox();
-  CLabel cLabel11 = new CLabel();
-  CTextField emp_codiE = new CTextField(Types.DECIMAL, "#9");
+//  CLabel cLabel11 = new CLabel();
   CLabel cLabel5 = new CLabel();
   CTextField nlE = new CTextField(Types.DECIMAL,"#9");
   CTextField cantE = new CTextField(Types.DECIMAL,"---9");
@@ -432,8 +431,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_deposE.addItem(pdalbara.DEPOSITOS);
     pvc_deposL.setBounds(new Rectangle(210, 54, 60, 17));
     pvc_deposE.setBounds(new Rectangle(275, 54, 138, 17));
-    cLabel1.setText("Cliente");
-    cLabel1.setBounds(new Rectangle(75, 3, 43, 16));
+    cli_codiL.setText("Cliente");
+    cli_codiL.setBounds(new Rectangle(3, 3, 43, 16));
     Ppie.setBorder(BorderFactory.createRaisedBevelBorder());
     Ppie.setMaximumSize(new Dimension(469, 24));
     Ppie.setMinimumSize(new Dimension(469, 24));
@@ -473,7 +472,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_confirE.setBounds(new Rectangle(511, 20, 54, 16));
     pvc_numeE.setBounds(new Rectangle(92, 20, 50, 16));
     eje_numeE.setBounds(new Rectangle(57, 20, 33, 16));
-    cli_codiE.setBounds(new Rectangle(118, 3, 297, 16));
+    cli_codiE.setBounds(new Rectangle(45, 3, 370, 16));
     BirAlbaran.setBounds(new Rectangle(415,3,18,18));
     cLabel10.setText("Ver Prod.");
     cli_poblL.setText("Pobl.");
@@ -490,9 +489,6 @@ public class pdpeve  extends ventanaPad   implements PAD
     opPedidos.setText("Incluir Pedidos");
     opPedidos.setToolTipText("Incluir pedidos en calculo stock actual");
     opPedidos.setBounds(new Rectangle(630, 37, 119, 17));
-    cLabel11.setText("Empr.");
-    cLabel11.setBounds(new Rectangle(3, 3, 35, 16));
-    emp_codiE.setBounds(new Rectangle(37, 3, 33, 16));
     cLabel5.setText("NL");
     cLabel5.setBounds(new Rectangle(310, 4, 21, 16));
     nlE.setToolTipText("Numero Lineas del pedido");
@@ -521,9 +517,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     Pcabe.add(cli_codiE, null);
     Pcabe.add(BirAlbaran, null);
     Pcabe.add(cli_poblL, null);
-    Pcabe.add(cLabel1, null);
-    Pcabe.add(cLabel11, null);
-    Pcabe.add(emp_codiE, null);
+    Pcabe.add(cli_codiL, null);
     Pcabe.add(avc_serieE, null);
     Pcabe.add(avc_numeE, null);
     Pcabe.add(cLabel3, null);
@@ -651,6 +645,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     cli_codiE.iniciar(dtStat, this, vl, EU);
     cli_codiE.iniciar(jf);
     cli_codiE.setAceptaNulo(false);
+    cli_codiE.setCampoReparto(true);
     pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS, EU.em_cod);
     pro_codiE.iniciar(dtStat, this, vl, EU);
     pro_codiE.setAceptaInactivo(false);
@@ -732,7 +727,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     pro_codiE.getFieldBotonCons().setEnabled(false);
     dtHist=new DatosTabla(ct);
     confGridHist();
-    emp_codiE.setColumnaAlias("emp_codi");
+  
     eje_numeE.setColumnaAlias("eje_nume");
     cli_codiE.setColumnaAlias("cli_codi");
     pvc_numeE.setColumnaAlias("pvc_nume");
@@ -1107,7 +1102,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_comenE.setQuery(query);
     eje_numeE.setQuery(query);
     pvc_numeE.setQuery(query);
-    emp_codiE.setQuery(query);
+   
     avc_anoE.setQuery(query);
     avc_serieE.setQuery(query);
     avc_numeE.setQuery(query);
@@ -1131,7 +1126,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     
     eje_numeE.resetTexto();
     pvc_numeE.resetTexto();
-    emp_codiE.resetTexto();
+  
     avc_anoE.resetTexto();
     avc_serieE.resetTexto();
     avc_numeE.resetTexto();
@@ -1159,7 +1154,7 @@ public class pdpeve  extends ventanaPad   implements PAD
      ArrayList v = new ArrayList();
 
      v.add(cli_codiE.getStrQuery());
-     v.add(emp_codiE.getStrQuery());
+     
      v.add(eje_numeE.getStrQuery());
      v.add(pvc_numeE.getStrQuery());
      v.add(pvc_fecentE.getStrQuery());
@@ -1262,7 +1257,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         }
       }
       if (!setBloqueo(dtAdd, "pedvenc",
-                      eje_numeE.getValorInt() + "|" + emp_codiE.getValorInt() +
+                      eje_numeE.getValorInt() + "|" + EU.em_cod +
                       "|" + pvc_numeE.getValorInt()))
       {
         msgBox(msgBloqueo);
@@ -1270,7 +1265,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         return;
       }
       // Busco Lineas con Numero inferior a 0 (Cuelgues anteriores)
-      s = " select *  from pedvenl where pvl_numlin<0  and emp_codi = " + emp_codiE.getValorInt() +
+      s = " select *  from pedvenl where pvl_numlin<0  and emp_codi = " + EU.em_cod  +
         " and eje_nume= " + eje_numeE.getValorInt() +
         " and pvc_nume = " + pvc_numeE.getValorInt()+ " order by pvl_numlin ";
       if (dtCon1.select(s))
@@ -1278,7 +1273,7 @@ public class pdpeve  extends ventanaPad   implements PAD
           int nl=100;          
           do
           {
-              s="update pedvenl set pvl_numlin="+nl+ " where  emp_codi = " + emp_codiE.getValorInt() +
+              s="update pedvenl set pvl_numlin="+nl+ " where  emp_codi = " + EU.em_cod +
                 " and eje_nume= " + eje_numeE.getValorInt() +
                 " and pvc_nume = " + pvc_numeE.getValorInt()+
                 " and pvl_numlin = "+dtCon1.getInt("pvl_numlin");
@@ -1342,9 +1337,9 @@ public class pdpeve  extends ventanaPad   implements PAD
    try
    {
      copiaPedidoNuevo(dtCon1,dtAdd,"Modificado Pedido",EU.usuario,eje_numeE.getValorInt(),
-              emp_codiE.getValorInt(),pvc_numeE.getValorInt());
+              EU.em_cod ,pvc_numeE.getValorInt());
      dtAdd.commit();
-     s="select * from pedvenc where emp_codi = " + emp_codiE.getValorInt() +
+     s="select * from pedvenc where emp_codi = " + EU.em_cod  +
           " and eje_nume= " + eje_numeE.getValorInt() +
           " and pvc_nume = " + pvc_numeE.getValorInt();
      
@@ -1353,12 +1348,12 @@ public class pdpeve  extends ventanaPad   implements PAD
      actCabecera();
      actLinea();
      resetBloqueo(dtAdd, "pedvenc",
-                 eje_numeE.getValorInt() + "|" + emp_codiE.getValorInt() +
+                 eje_numeE.getValorInt() + "|" + EU.em_cod  +
                  "|" + pvc_numeE.getValorInt(),false);
      dtAdd.commit();
      
      activaTodo();
-     actGridHist(emp_codiE.getValorInt(),eje_numeE.getValorInt(),
+     actGridHist(EU.em_cod ,eje_numeE.getValorInt(),
                   pvc_numeE.getValorInt());
      mensaje("");
      mensajeErr("Pedido ... MODIFICADO");
@@ -1381,7 +1376,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     try
     {
       resetBloqueo(dtAdd, "pedvenc",
-                   eje_numeE.getValorInt() + "|" + emp_codiE.getValorInt() +
+                   eje_numeE.getValorInt() + "|" + EU.em_cod  +
                    "|" + pvc_numeE.getValorInt()
                    );
     }
@@ -1412,7 +1407,7 @@ public class pdpeve  extends ventanaPad   implements PAD
           pvc_comenE.resetTexto();
           pvc_comrepE.resetTexto();
           pvc_nupeclE.resetTexto();
-          emp_codiE.setValorDec(EU.em_cod);
+        
           eje_numeE.setValorDec(EU.ejercicio);
           pvc_numeE.setValorDec(getNumPed(false));
 //      alm_codiE.setValor(""+ALMACEN);
@@ -1524,7 +1519,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       pvc_numeE.setValorInt(getNumPed(true));
       
       dtAdd.addNew("pedvenc");
-      dtAdd.setDato("emp_codi",emp_codiE.getValorInt());
+      dtAdd.setDato("emp_codi",EU.em_cod );
       dtAdd.setDato("eje_nume",eje_numeE.getValorInt());
       dtAdd.setDato("pvc_nume",pvc_numeE.getValorInt());
       dtAdd.setDato("pvc_impres","N"); // No impreso
@@ -1556,7 +1551,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     
     if (nav.pulsado==navegador.EDIT)
     { // Borro las lineas que ya no estan.    
-        s = " SELECT * FROM pedvenl WHERE emp_codi = " + emp_codiE.getValorInt() +
+        s = " SELECT * FROM pedvenl WHERE emp_codi = " + EU.em_cod  +
           " and eje_nume= " + eje_numeE.getValorInt() +
           " and pvc_nume = " + pvc_numeE.getValorInt() ;
         if (dtStat.select(s,false))
@@ -1574,11 +1569,11 @@ public class pdpeve  extends ventanaPad   implements PAD
               }
               if (!swEnc)
               {
-                    dtAdd.executeUpdate(" delete FROM pedvenl WHERE emp_codi = " + emp_codiE.getValorInt() +
+                    dtAdd.executeUpdate(" delete FROM pedvenl WHERE emp_codi = " + EU.em_cod +
                         " and eje_nume= " + eje_numeE.getValorInt() +
                         " and pvc_nume = " + pvc_numeE.getValorInt()+
                         " and pvl_numlin="+dtStat.getInt("pvl_numlin"));   
-                     dtAdd.executeUpdate(" delete FROM pedvenmod WHERE emp_codi = " + emp_codiE.getValorInt() +
+                     dtAdd.executeUpdate(" delete FROM pedvenmod WHERE emp_codi = " + EU.em_cod  +
                         " and eje_nume= " + eje_numeE.getValorInt() +
                         " and pvc_nume = " + pvc_numeE.getValorInt()+
                         " and pvl_numlin="+dtStat.getInt("pvl_numlin"));    
@@ -1592,14 +1587,14 @@ public class pdpeve  extends ventanaPad   implements PAD
     {
       if (jt.getValorInt(n, 0) == 0)
         continue;
-      s = " SELECT * FROM pedvenl WHERE emp_codi = " + emp_codiE.getValorInt() +
+      s = " SELECT * FROM pedvenl WHERE emp_codi = " + EU.em_cod  +
           " and eje_nume= " + eje_numeE.getValorInt() +
           " and pvc_nume = " + pvc_numeE.getValorInt() +
           " and pvl_numlin = " + jt.getValorInt(n, JT_NL);
       if (! dtAdd.select(s,true))
       {
         dtAdd.addNew();
-        dtAdd.setDato("emp_codi", emp_codiE.getValorInt());
+        dtAdd.setDato("emp_codi", EU.em_cod );
         dtAdd.setDato("eje_nume", eje_numeE.getValorInt());
         dtAdd.setDato("pvc_nume", pvc_numeE.getValorInt());
         dtAdd.setDato("pvl_numlin", nl);
@@ -1717,7 +1712,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         return;
       }
       if (!setBloqueo(dtAdd, "pedvenc",
-                      eje_numeE.getValorInt() + "|" + emp_codiE.getValorInt() +
+                      eje_numeE.getValorInt() + "|" + EU.em_cod +
                       "|" + pvc_numeE.getValorInt()))
       {
         msgBox(msgBloqueo);
@@ -1743,17 +1738,17 @@ public class pdpeve  extends ventanaPad   implements PAD
     try
     {
       copiaPedidoNuevo(dtCon1,dtAdd,"Borrado Pedido",EU.usuario,eje_numeE.getValorInt(),
-              emp_codiE.getValorInt(),pvc_numeE.getValorInt());
-      s = " DELETE FROM pedvenl WHERE emp_codi = " + emp_codiE.getValorInt() +
+              EU.em_cod ,pvc_numeE.getValorInt());
+      s = " DELETE FROM pedvenl WHERE emp_codi = " + EU.em_cod  +
           " and eje_nume= " + eje_numeE.getValorInt() +
           " and pvc_nume = " + pvc_numeE.getValorInt();
       dtAdd.executeUpdate(s);
-      s = "UPDATE pedvenc  set pvc_confir='C',avc_ano=9999 where emp_codi = " + emp_codiE.getValorInt() +
+      s = "UPDATE pedvenc  set pvc_confir='C',avc_ano=9999 where emp_codi = " + EU.em_cod  +
           " and eje_nume= " + eje_numeE.getValorInt() +
           " and pvc_nume = " + pvc_numeE.getValorInt();
       dtAdd.executeUpdate(s);
       resetBloqueo(dtAdd, "pedvenc",
-                   eje_numeE.getValorInt() + "|" + emp_codiE.getValorInt() +
+                   eje_numeE.getValorInt() + "|" + EU.em_cod  +
                    "|" + pvc_numeE.getValorInt(), false);
       dtAdd.commit();
       activaTodo();
@@ -1764,7 +1759,6 @@ public class pdpeve  extends ventanaPad   implements PAD
     catch (Exception k)
     {
       Error("Error al Insertar Pedido", k);
-      return;
     }
 
   }
@@ -1776,7 +1770,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     try
     {
       resetBloqueo(dtAdd, "pedvenc",
-                   eje_numeE.getValorInt() + "|" + emp_codiE.getValorInt() +
+                   eje_numeE.getValorInt() + "|" + EU.em_cod  +
                    "|" + pvc_numeE.getValorInt()
                    );
     }
@@ -1807,8 +1801,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       eje_numeE.setEnabled(b);
       pvc_numeE.setEnabled(b);
     }
-    if (modo!=navegador.EDIT)    
-      emp_codiE.setEnabled(b);
+  
    
     pvc_estadE.setEnabled(modo==navegador.EDIT && b);  
     pvc_deposE.setEnabled(b);
@@ -1869,12 +1862,12 @@ public class pdpeve  extends ventanaPad   implements PAD
     Ppie.resetTexto();
     jt.removeAllDatos();
     try {
-      emp_codiE.setValorInt(dt.getInt("emp_codi"));
+      
       eje_numeE.setValorInt(dt.getInt("eje_nume"));
       pvc_numeE.setValorInt(dt.getInt("pvc_nume"));
       s = "SELECT * FROM "+tablaCab+" WHERE "+
           (hisRowid>0?" his_rowid = "+dt.getInt("his_rowid"):
-          " emp_codi = " + emp_codiE.getValorInt() +
+          " emp_codi = " + EU.em_cod  +
           " and eje_nume= " + eje_numeE.getValorInt() +
           " and pvc_nume = " + pvc_numeE.getValorInt());
       if (! dtCon1.select(s))
@@ -1884,7 +1877,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       }
       cli_codiE.setValorInt(dtCon1.getInt("cli_codi"));
       if (dtCon1.getObject("pvc_clinom")!=null)          
-          cli_codiE.getCliNomb().setText(dtCon1.getString("pvc_clinom"));
+          cli_codiE.setNombreCliente(dtCon1.getString("pvc_clinom"));
       cli_poblE.setText(cli_codiE.getLikeCliente().getString("cli_pobl"));
       pvc_nupeclE.setText(dtCon1.getString("pvc_nupecl"));
       pvc_fecentE.setText(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy"));
@@ -1906,7 +1899,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       pvc_deposE.setValor(dtCon1.getString("pvc_depos"));
       s = "SELECT * FROM "+vistaPed+" WHERE "+
           (hisRowid>0?" his_rowid = "+dt.getInt("his_rowid"):
-           " emp_codi = " + emp_codiE.getValorInt() +
+           " emp_codi = " + EU.em_cod  +
               " and eje_nume= " + eje_numeE.getValorInt() +
               " and pvc_nume = " + pvc_numeE.getValorInt());
       if (dtCon1.select(s))
@@ -1936,7 +1929,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       }
       actAcumJT();
       if (hisRowid==0)
-        actGridHist(emp_codiE.getValorInt(),eje_numeE.getValorInt(),
+        actGridHist(EU.em_cod ,eje_numeE.getValorInt(),
                   pvc_numeE.getValorInt());
     } catch (SQLException k)
     {
@@ -1994,7 +1987,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   int getNumPed(boolean act) throws SQLException
   {
     int nAlb;
-    s = "SELECT num_pedid  FROM v_numerac WHERE emp_codi = " +  emp_codiE.getValorInt() +
+    s = "SELECT num_pedid  FROM v_numerac WHERE emp_codi = " +  EU.em_cod  +
         " and eje_nume=" + eje_numeE.getValorInt();
     if (!dtAdd.select(s, true))
       throw new SQLException("NO encontrado GUIA Numeraciones para esta Empresa\n" + s);
@@ -2057,7 +2050,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         " and l.pro_codi = a.pro_codi "+
         " and al.alm_codi = c.alm_codi "+
         " and c.cli_codi = cl.cli_codi "+
-        " and c.emp_codi = "+emp_codiE.getValorInt()+
+        " and c.emp_codi = "+EU.em_cod +
         " and c.eje_nume = "+eje_numeE.getValorInt()+
         " and c.pvc_nume = "+pvc_numeE.getValorInt()+
         " order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin ";
@@ -2067,7 +2060,7 @@ public class pdpeve  extends ventanaPad   implements PAD
 
        JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
        gnu.chu.print.util.printJasper(jp, EU);
-       s = "update PEDVENC SET pvc_impres = 'S' WHERE emp_codi = " + emp_codiE.getValorInt() +
+       s = "update PEDVENC SET pvc_impres = 'S' WHERE emp_codi = " + EU.em_cod +
            " and eje_nume = " + eje_numeE.getValorInt() +
            " and pvc_nume = " + pvc_numeE.getValorInt() ;
         dtAdd.executeUpdate(s);
@@ -2169,10 +2162,8 @@ public class pdpeve  extends ventanaPad   implements PAD
    {
        pvc_numeE.setValorInt(numPed);
    }
-   public void setEmpresaPedido(int empPedido)
-   {
-       emp_codiE.setValorInt(empPedido);
-   }
+   
+  
    public void leerDatosCliente() throws Exception
    {
        cli_poblE.setText(cli_codiE.getLikeCliente().getString("cli_pobl"));

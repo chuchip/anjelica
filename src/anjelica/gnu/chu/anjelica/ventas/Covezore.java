@@ -202,6 +202,8 @@ public void iniciarVentana() throws Exception
     
 //    mvtosAlm.setResetCostoStkNeg(true);
 //    mvtosAlm.setFechasDocumento(true);
+    rep_codiE.setFormato(Types.CHAR, "XX", 2);
+    rep_codiE.setMayusculas(true);
     MantRepres.llenaLinkBox(rep_codiE, dtCon1);
     fecIniE.iniciar(dtStat,this,vl,EU);
     fecFinE.iniciar(dtStat, this, vl, EU);
@@ -214,6 +216,8 @@ public void iniciarVentana() throws Exception
 //    fecIniComE.setDesplazaX(185);
 //    fecFinComE.setDesplazaX(185);
 //    pdconfig.llenaDiscr(dtStat, rep_codiE, "Cr",EU.em_cod);
+     zon_codiE.setFormato(Types.CHAR, "XX", 2);
+     zon_codiE.setMayusculas(true);
      pdconfig.llenaDiscr(dtStat, zon_codiE, pdconfig.D_ZONA ,EU.em_cod);
      activarEventos();
 //     cli_codiE.setText("");
@@ -355,7 +359,9 @@ public void iniciarVentana() throws Exception
        }
      });
    }
-   
+   /**
+    * Buscar Ventas comparativo
+    */
    void buscaVentasCom()
    {
       buscaVentas(true);
@@ -593,7 +599,7 @@ public void iniciarVentana() throws Exception
         try
         {
             ponerFechasComp();
-        } catch (Exception ex)
+        } catch (SQLException | ParseException ex)
         {
             Error("Error al poner fechas de comparacion", ex);
             return;
@@ -946,7 +952,7 @@ public void iniciarVentana() throws Exception
         if (opIncComent.isSelected())
           return "select sum(avc_kilos) as avc_kilos," +
                " sum(avc_basimp) as avc_basimp, count(*) as numalb,count (distinct c.cli_codi) as cliCodiD," +
-               " cl.zon_codi,cl.rep_codi,c.sbe_codi " +
+               " cl.zon_codi,avc_repres as rep_codi,c.sbe_codi " +
              " from v_albavec  c, clientes cl  " +
              " where c.avc_fecalb >= TO_DATE('" + fecini +  "','dd-MM-yyyy') " +
              " and c.avc_fecalb <= TO_DATE('" + fecfin +   "','dd-MM-yyyy') " +
@@ -955,16 +961,16 @@ public void iniciarVentana() throws Exception
              (emp_codiE.getValorInt()==0?"":" and c.emp_codi = "+emp_codiE.getValorInt())+
              (sbe_codiE.getValorInt()==0?"":" and c.sbe_codi = "+sbe_codiE.getValorInt())+
              (zon_codiE.isNull()?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
-             (rep_codiE.isNull()?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'")+
+             (rep_codiE.isNull()?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
              bdiscr.getCondWhere("cl")+
 //             " and avc_kilos != 0 "+
              " and cl.cli_codi = c.cli_codi "+
-             " group by c.sbe_codi,cl.rep_codi,cl.zon_codi "+
-             " order by c.sbe_codi,cl.rep_codi,cl.zon_codi";
+             " group by c.sbe_codi,avc_repres,cl.zon_codi "+
+             " order by c.sbe_codi,avc_repres,cl.zon_codi";
         return "select sum(avl_canti) as avc_kilos," +
                " sum(avl_canti* avl_prbase) as avc_basimp, count (distinct c.emp_codi + avc_ano +avc_nume || avc_serie) as numalb,"
              + "count (distinct c.cli_codi) as cliCodiD," +
-               " cl.zon_codi,cl.rep_codi,c.sbe_codi " +
+               " cl.zon_codi,avc_repres as rep_codi,c.sbe_codi " +
              " from v_albventa  c, clientes cl, v_articulo as ar " +
              " where c.avc_fecalb >= TO_DATE('" + fecini +  "','dd-MM-yyyy') " +
              " and c.avc_fecalb <= TO_DATE('" + fecfin +   "','dd-MM-yyyy') " +
@@ -973,13 +979,13 @@ public void iniciarVentana() throws Exception
              (emp_codiE.getValorInt()==0?"":" and c.emp_codi = "+emp_codiE.getValorInt())+
              (sbe_codiE.getValorInt()==0?"":" and c.sbe_codi = "+sbe_codiE.getValorInt())+
              (zon_codiE.isNull()?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
-             (rep_codiE.isNull()?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'")+
+             (rep_codiE.isNull()?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
             " and ar.pro_codi = c.pro_codi "+
             " and ar.pro_tiplot = 'V' "+
              bdiscr.getCondWhere("cl")+
              " and cl.cli_codi = c.cli_codi "+
-             " group by c.sbe_codi,cl.rep_codi,cl.zon_codi "+
-             " order by c.sbe_codi,cl.rep_codi,cl.zon_codi";
+             " group by c.sbe_codi,avc_repres,cl.zon_codi "+
+             " order by c.sbe_codi,avc_repres,cl.zon_codi";
         
    }
     /**
@@ -1006,7 +1012,7 @@ public void iniciarVentana() throws Exception
                 + " AND mvt_time::date > TO_DATE('" + fecInv + "','dd-MM-yyyy') "
                 + " and mvt_time::date <= TO_DATE('" + fecFin + "','dd-MM-yyyy') "
                 + " ORDER BY pro_codi,fecmov,tipmov";
-            PreparedStatement psAlb=  dtStat.getPreparedStatement("select c.zon_codi,c.rep_codi,a.sbe_codi "
+            PreparedStatement psAlb=  dtStat.getPreparedStatement("select c.zon_codi,avc_repres as rep_codi,a.sbe_codi "
                 + " from v_albavec as a, v_cliente  as c where c.cli_codi = a.cli_codi and a.emp_codi=  ? "
                 + " and avc_ano=? "
                 + " and avc_serie=? and avc_nume = ?");       

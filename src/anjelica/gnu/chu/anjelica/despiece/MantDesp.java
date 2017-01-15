@@ -79,8 +79,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
@@ -90,6 +88,7 @@ import javax.swing.event.ListSelectionListener;
 
 public class MantDesp extends ventanaPad implements PAD
 {   
+    DatosTabla dtAux;
     private boolean swErrCab=false;// Indica si la linea desglose esta en error.
     int tipoEmp; // Tipo Empresa (Sala Despiece o Plantacion)
     private boolean isEmpPlanta=false; // Indica si la empresa es tipo Plantacion
@@ -272,6 +271,7 @@ public class MantDesp extends ventanaPad implements PAD
     public void afterConecta() throws SQLException, ParseException {
         ctProd = ct;
         dtProd = new DatosTabla(ctProd);
+        dtAux  = new DatosTabla(ctProd);
         tipoEmp=pdconfig.getTipoEmpresa(EU.em_cod, dtStat);
         isEmpPlanta=tipoEmp==pdconfig.TIPOEMP_PLANTACION;
         prv_codiE.iniciar(dtProd, this, vl, EU);
@@ -322,7 +322,7 @@ public class MantDesp extends ventanaPad implements PAD
         tid_codiE.setButton(KeyEvent.VK_F4, Baceptar);
         jtCab.setDefButton(Baceptar);
         jtLin.setDefButton(Baceptar);
-        cli_codiE.iniciar(dtStat, this, vl, EU);
+        cli_codiE.iniciar(dtAux, this, vl, EU);
 
         botonBascula = new BotonBascula(EU, this);
         botonBascula.setPreferredSize(new Dimension(50, 24));
@@ -2487,7 +2487,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_almdesE.setEnabled(enab);
                 ImprEtiqMI.setEnabled(!enab);
                 cli_codiE.setEnabled(enab);
-                cli_codiE.cli_nombL.setEnabled(enab);
+                cli_codiE.setEnabledNombre(enab);
                 deo_desnueE.setEnabled(enab);
                 BsalLin.setEnabled(enab);
                 BsaltaCab.setEnabled(enab);

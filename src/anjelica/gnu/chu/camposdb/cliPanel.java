@@ -16,7 +16,7 @@ import gnu.chu.winayu.*;
  *
  * <p>Título: cliPanel</p>
  * <p>Descripción: Panel para introducir el codigo del cliente</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -38,7 +38,7 @@ public class cliPanel extends CPanel
   Principal jf;
   private Integer peso=1;
   private boolean swControl=true;
-  AyuClientes ayucli;
+  ayuClientes ayucli;
   String zona=null;
   boolean evQuery=true;
   CInternalFrame intfr = null;
@@ -47,7 +47,8 @@ public class cliPanel extends CPanel
   boolean  mascaraDB=false;
   boolean actRep=true;
   public CTextField cli_codiE= new CTextField(Types.DECIMAL,"#####9");
-  public CTextField cli_nombL= new CTextField();
+  private CTextField cli_nombE= new CTextField();
+  private CLabel cli_codrepL= new CLabel();
   public CLabel cli_nomcL=new CLabel();
   JLayeredPane vl;
   boolean eje;
@@ -56,6 +57,7 @@ public class cliPanel extends CPanel
   boolean nComercial=false; // Variable que me indica si quiero poner el nombre comercial
 
   private boolean botonConsultar = true;
+  private boolean  swMostrarCodigoReparto=false;
   boolean Error = false;
   String MsgError = "";
 
@@ -105,6 +107,8 @@ public class cliPanel extends CPanel
     ayucli=null;
     super.finalize();
   }
+  
+  
   public void iniciar(Principal principal)
   {
       if (principal==null)
@@ -159,13 +163,20 @@ public class cliPanel extends CPanel
   void jbInit() throws Exception {
 
     this.setLayout(gridBagLayout1);
-    cli_nombL.setBackground(Color.orange);
-    cli_nombL.setForeground(Color.black);
-    cli_nombL.setMaximumSize(new Dimension(313, 18));
-    cli_nombL.setMinimumSize(new Dimension(313, 18));
-    cli_nombL.setOpaque(true);
-    cli_nombL.setEnabled(false);
-    cli_nombL.setPreferredSize(new Dimension(313, 18));
+    cli_codrepL.setBackground(Color.orange);
+    cli_codrepL.setForeground(Color.black);
+    cli_codrepL.setMaximumSize(new Dimension(35, 18));
+    cli_codrepL.setMinimumSize(new Dimension(35, 18));
+    cli_codrepL.setPreferredSize(new Dimension(35, 18));
+    cli_codrepL.setOpaque(true);
+    cli_codrepL.setVisible(false);
+    cli_nombE.setBackground(Color.orange);
+    cli_nombE.setForeground(Color.black);
+    cli_nombE.setMaximumSize(new Dimension(313, 18));
+    cli_nombE.setMinimumSize(new Dimension(313, 18));
+    cli_nombE.setOpaque(true);
+    cli_nombE.setEnabled(false);
+    cli_nombE.setPreferredSize(new Dimension(313, 18));
     cli_nomcL.setBackground(new java.awt.Color(255, 255, 227));
     cli_nomcL.setOpaque(true);
     cli_nomcL.setPreferredSize(new Dimension(30, 17));
@@ -181,9 +192,11 @@ public class cliPanel extends CPanel
     cli_codiE.setQuery(false);
     this.add(cli_codiE,      new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 2), 0, 0));
-    this.add(cli_nombL,         new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0
+    this.add(cli_nombE,         new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 2), 0, 0));
     this.add(Bcons,     new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 0, 0));
+    this.add(cli_codrepL,     new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 0, 0));
     if (nComercial){
         this.add(cli_nomcL, new GridBagConstraints(3, 1, 1, 1, 1.0, 0.0
@@ -211,6 +224,21 @@ public class cliPanel extends CPanel
   public void setBotonConsultar(boolean activo) {
     Bcons.setVisible(activo);
     botonConsultar=activo;
+  }
+   /**
+   * Hace el Campo Codigo de Reparto visible
+   * Por Defecto es invisible
+   * @param activo true = visible
+   */
+  public void setCampoReparto(boolean activo)
+  {
+    cli_codrepL.setVisible(activo);
+    swMostrarCodigoReparto=activo;
+  }
+  
+  public boolean getCampoReparto()
+  {
+       return swMostrarCodigoReparto;
   }
   public boolean getBotonConsultar() {
     return botonConsultar;
@@ -346,7 +374,7 @@ public class cliPanel extends CPanel
   {
     if (!Error && cli_codiE.getValorInt()!=0)
       Error = getNombCliente(dt, cli_codiE.getValorInt(), zona) == null;
-
+    
     if (Error)
     {
       switch (caso)
@@ -356,8 +384,9 @@ public class cliPanel extends CPanel
           cli_codiE.requestFocus();
         case LOSTFOCUS:
         case DBSKIP:
-          if (cli_nombL !=null)
-             cli_nombL.setText(NOEXISTE);
+          cli_codrepL.setText("");
+          if (cli_nombE !=null)
+             cli_nombE.setText(NOEXISTE);
           setNomComercial("" + NOEXISTE);
           break;
       }
@@ -371,23 +400,36 @@ public class cliPanel extends CPanel
       {
         if (cli_codiE.getValorInt()==0)
         {
-          if (cli_nombL !=null)
-            cli_nombL.setText("");
+          cli_codrepL.setText("");
+          if (cli_nombE !=null)
+            cli_nombE.setText("");
           setNomComercial("");
         }
         else
         {
-          if (cli_nombL != null)
-            cli_nombL.setText(cliNomb == null || dt.getInt("cli_gener") == 0 ?
-                              dt.getString("cli_nomb") :
+          if (cli_nombE != null)
+          {
+            cli_nombE.setText(cliNomb == null || dt.getInt("cli_gener") == 0 ?
+                              dt.getString("cli_nomb"):
                               cliNomb);
+            cli_codrepL.setText(dt.getString("cli_codrut",true));
+          }
+          
           setNomComercial(dt.getString("cli_nomco"));
         }
       }
     }
     return true;
   }
-
+  
+  public CTextField getFieldCliNomb()
+  {
+    return cli_nombE;
+  }
+  public String getCodigoReparto()
+  {
+    return cli_codrepL.getText();
+  }
   /**
    * Comprueba condiciones Iniciales.
    * @return boolean false ERROR. true = Correcto
@@ -410,7 +452,15 @@ public class cliPanel extends CPanel
     }
     return true;
   }
-
+  
+  public CTextField getCampoNombreCliente()
+  {
+      return cli_nombE;
+  }
+  public void setNombreCliente(String nombre)
+  {
+      cli_nombE.setText(nombre);
+  }
   public String getNombCliente(DatosTabla dt,int cliCodi) throws SQLException
   {
     return getNombCliente(dt,cliCodi,zona);
@@ -521,8 +571,12 @@ public void setZona(String zonCli)
   public String getText() {
     return cli_codiE.getText();
   }
+  /**
+   * Devuelve el nombre del Cliente
+   * @return String con el nombre del Cliente
+   */
   public String getTextNomb() {
-    return cli_nombL.getText();
+    return cli_nombE.getText();
   }
  /**
   * Devuelve True si el Texto introducido es Nulo
@@ -571,7 +625,7 @@ public void setZona(String zonCli)
       {
         if (ayucli==null)
         {
-          ayucli = new AyuClientes(eu, vl, dt)
+          ayucli = new ayuClientes(eu, vl, dt)
           {
             @Override
             public void matar()
@@ -608,15 +662,16 @@ public void setZona(String zonCli)
 
   }
 
-  void ej_consCli(AyuClientes aycli)
+  void ej_consCli(ayuClientes aycli)
   {
     evQuery=false;
     if (aycli.consulta)
     {
       cli_codiE.setText(aycli.getCliCodi());
       if (swControl)
-         cli_nombL.setText(aycli.getCliNomb());
+         cli_nombE.setText(aycli.getCliNomb());
       setNomComercial(aycli.getNombCom());
+      cli_codrepL.setText(aycli.getCodigoReparto());
     }
     cli_codiE.requestFocus();
     aycli.setVisible(false);
@@ -645,7 +700,7 @@ public void setZona(String zonCli)
    {
      swControl = cli_nombE != null;
 
-     this.remove(cli_nombL);
+     this.remove(this.cli_nombE);
      this.remove(Bcons);
      if (!swControl)
        return;
@@ -655,7 +710,7 @@ public void setZona(String zonCli)
                                                GridBagConstraints.BOTH,
                                                new Insets(0, 0, 0, 0), 0, 0));
 
-     cli_nombL=cli_nombE;
+     this.cli_nombE=cli_nombE;
    }
 
   public String getNomComercial(){
@@ -665,9 +720,12 @@ public void setZona(String zonCli)
   public void setNomComercial(String nom){
     cli_nomcL.setText(nom);
   }
+  
+  
+      
   public void resetTexto(){
     super.resetTexto();
-    cli_nombL.setText("");
+    cli_nombE.setText("");
     cli_codiE.resetCambio();
   }
   public boolean hasCambio() {
@@ -721,11 +779,27 @@ public void setZona(String zonCli)
   {
       return cli_codiE;
   }
-    public CTextField getFieldCliNomb()
+  
+//  CTextField getFieldCliNomb()
+//  {
+//      return cli_nombE;
+//  }
+  /**
+   * Pone enabled o disbled el campo nombre del cliente
+   * @param enable   
+   */
+  public void  setEnabledNombre(boolean enable)
   {
-      return cli_nombL;
+      cli_nombE.setEnabled(enable);
   }
-    
+  /**
+   * Devuelve si el campo nombre de cliente esta enabled
+   * @return boolean Devuelve si el campo nombre de cliente esta enabled
+   */
+  public boolean  isEnabledNombre()
+  {
+      return cli_nombE.isEnabled();
+  }
   /**
    * Quita un listener al foco. El foco se habria añadido al campo cli_codiE (CTextField)
    * @param f 

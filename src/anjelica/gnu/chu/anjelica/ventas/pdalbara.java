@@ -1420,6 +1420,7 @@ public class pdalbara extends ventanaPad  implements PAD
           cli_codiE.setZona(P_ZONA);
           cli_codiE.iniciar(dtStat, this, vl, EU);
           cli_codiE.iniciar(jf);
+          cli_codiE.setCampoReparto(true);
           ifMail.iniciar(this);
           
           ifFax.iniciar(this);
@@ -2900,7 +2901,7 @@ public class pdalbara extends ventanaPad  implements PAD
             pvc_anoE.setValorInt(copeve.ejeNumeS);
             pvc_numeE.setValorInt(copeve.pvcNumeS);
             cli_codiE.setValorInt(copeve.cliCodiS);
-            cli_codiE.getCliNomb().setText(copeve.getCliNomb());
+            cli_codiE.setNombreCliente(copeve.getCliNomb());
             cli_rutaE.setText(copeve.getRuta());
             afterFocusLostCli(false);
         } catch (SQLException ex) {
@@ -8428,14 +8429,14 @@ public class pdalbara extends ventanaPad  implements PAD
         return;
       }
       if (cli_codiE.getLikeCliente().getInt("cli_albval")==pdclien.LISTAR_ALB_VALORADOS &&
-          !opValora.isSelected() && opDispSalida.getValor().equals(DSAL_IMPRE) )
+          !opValora.isSelected() && opDispSalida.getValor().equals(DSAL_IMPRE) && avsNume==0 )
       {
            int ret=mensajes.mensajeYesNo("A este Cliente se le deberia listar los albaranes valorados. Listar seguro?");
            if (ret!=mensajes.YES)
               return;
       }
       if (cli_codiE.getLikeCliente().getInt("cli_albval")==pdclien.LISTAR_ALB_SINVALORAR &&
-          opValora.isSelected()  && opDispSalida.getValor().equals(DSAL_IMPRE))
+          opValora.isSelected()  && opDispSalida.getValor().equals(DSAL_IMPRE)  && avsNume==0)
       {
            int ret=mensajes.mensajeYesNo("A este Cliente se le deberia listar los albaranes sin Valorar. Listar seguro?");
            if (ret!=mensajes.YES)

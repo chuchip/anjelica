@@ -16,7 +16,7 @@ import java.util.Date;
  *
  * <p>Título: actCabAlbFra</p>
  * <p>Descripción: Calcula Los Importes de los datos de cabecera para albaranes y facturas</p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -322,9 +322,11 @@ public class actCabAlbFra
         " and l.fvc_serie = '"+fvcSerie+"'"+
         " and l.fvc_nume = " + fvcNume +
         " and l.pro_codi = a.pro_Codi "+
+        // " and pro_tiplot = 'V'"+
         " group by l.avc_fecalb, l.avc_serie,l.avc_ano,l.avc_nume, l.pro_codi,fvl_prven,fvl_dto,pro_tipiva,pro_indtco ";
     if (! dtLin.select(s))
       return false; // SIN LINEAS DE Factura
+    int avcNume=dtLin.getInt("avc_nume");
     do
     {
       if (tipIva!=-1 && tipIva!=dtLin.getInt("pro_tipiva") && dtLin.getDouble("fvl_canti") != 0)
@@ -365,16 +367,16 @@ public class actCabAlbFra
     DatosIVA tipoIva=null;
     if (incIva)
     {
-     tipoIva= MantTipoIVA.getDatosIva(dtLin, tipIva,fecha);
+      tipoIva= MantTipoIVA.getDatosIva(dtLin, tipIva,fecha);
      
-      if (dtLin.select(s))
+      if (tipoIva!=null)
       {
         impIva = Formatear.redondea(impBim * tipoIva.getPorcIVA() / 100, numDec);
         if (cliRecequ )
           impReq = Formatear.redondea(impBim * tipoIva.getPorcREQ() / 100,numDec );
       }
       else
-        throw new SQLException(" Tipo de Iva " + tipIva + " NO ENCONTRADO");
+        throw new SQLException(" Tipo de Iva " + tipIva + " NO ENCONTRADO. Albaran: "+    avcNume);
     }
     double impFra = Formatear.redondea(impBim + impIva + impReq,numDec);
 

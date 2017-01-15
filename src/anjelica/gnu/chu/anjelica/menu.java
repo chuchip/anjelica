@@ -85,6 +85,7 @@ public class menu extends JFrame
 
   JMenu ItemInventario = new JMenu();
   JMenuItem clvenrep = new JMenuItem();
+  JMenuItem clventasmes = new JMenuItem();
   JMenuItem CLRankClie = new JMenuItem();
   JMenuItem mantTariCliente = new JMenuItem();
   JMenuItem cargaInv = new JMenuItem();
@@ -362,6 +363,13 @@ JMenuItem mantArticVenta = new JMenuItem();
     });
      ItemRepresen.setText("Represen");
      ItemRepresen.add(clvenrep);
+     ItemRepresen.add(clventasmes);
+      clventasmes.setText("Ventas Mes");
+    clventasmes.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        clventasmes_actionPerformed(e);
+      }
+    });
  clvenrep.setText("Ventas Repr.");
     clvenrep.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -1782,6 +1790,12 @@ void limpiaDB()
 //    ht.put("zonaRep","FV");
     ht.put("modif","true");
     lanzaEjecutable(new gnu.chu.anjelica.ventas.represen.CLVenRep(menu.this,EU,ht));
+  }
+ void clventasmes_actionPerformed(ActionEvent e) {
+    
+//    ht.put("zonaRep","FV");
+   
+    lanzaEjecutable(new gnu.chu.anjelica.ventas.CLVentasMes(menu.this,EU));
   }
  void CLRankClie_actionPerformed(ActionEvent e) {
 

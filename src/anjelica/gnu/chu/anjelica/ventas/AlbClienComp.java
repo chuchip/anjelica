@@ -315,10 +315,10 @@ public class AlbClienComp   extends ventana {
        v.add(dt.cliNomb);
        v.add(dt.kilosOri);
        v.add(dt.kilosFin);
-       v.add(dt.kilosFin-dt.kilosOri);
+       v.add(dt.kilosOri-dt.kilosFin);
        v.add(dt.impOri);
        v.add(dt.impFin);
-       v.add(dt.impFin-dt.impOri);
+       v.add(dt.impOri-dt.impFin);
        jtArt.addLinea(v);
    }
   }

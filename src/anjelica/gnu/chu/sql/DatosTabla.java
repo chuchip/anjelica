@@ -1711,7 +1711,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
       if (o == null)
         return "";
 
-      if (frSali.compareTo("") == 0)
+      if (frSali.equals(""))
         frSali = "dd-MM-yyyy";
       f = o.toString().trim();
       if (f.length()==0)

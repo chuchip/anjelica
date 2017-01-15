@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2017-01-02T16:01:16 -->
+<!-- 2017-01-09T12:44:29 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lialbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0" uuid="477b1d9c-ee98-4d62-8ff7-69c661821105">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -165,7 +165,9 @@ order by 1,2,3]]>
 	<detail>
 		<band height="18" splitType="Stretch">
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="4" y="0" width="42" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="40a34fc3-d1be-4643-bc6d-eba14812ab4f"/>
+				<reportElement key="textField" mode="Opaque" x="4" y="0" width="42" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="40a34fc3-d1be-4643-bc6d-eba14812ab4f">
+					<printWhenExpression><![CDATA[$F{pro_codi}>99]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -193,7 +195,9 @@ order by 1,2,3]]>
 				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0.00;-##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="361" y="1" width="41" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="43c80234-5e14-4343-8612-ce08965e5146"/>
+				<reportElement key="textField" mode="Opaque" x="361" y="1" width="41" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="43c80234-5e14-4343-8612-ce08965e5146">
+					<printWhenExpression><![CDATA[$F{avl_canti}!=0]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -222,7 +226,7 @@ order by 1,2,3]]>
 			</textField>
 			<textField pattern="##0.000;-##0.000" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="406" y="0" width="38" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="44efb2fb-246e-4069-9545-944ceaf367eb">
-					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{valora} && $F{avl_prven}!=0]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -235,22 +239,6 @@ order by 1,2,3]]>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{avl_prven}]]></textFieldExpression>
-			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="453" y="0" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="9572b831-6860-42d4-82b8-9b5ff0ee08c3">
-					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{implinea}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-1" mode="Opaque" x="50" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="eb97b273-839e-4ecc-beaa-0866c33b27e7"/>
@@ -271,7 +259,9 @@ order by 1,2,3]]>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-3" mode="Opaque" x="447" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="4123437b-5bb0-47f3-80de-a854699f8ecb"/>
+				<reportElement key="line-3" mode="Opaque" x="451" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="4123437b-5bb0-47f3-80de-a854699f8ecb">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
@@ -288,6 +278,23 @@ order by 1,2,3]]>
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="452" y="0" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="9572b831-6860-42d4-82b8-9b5ff0ee08c3">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{implinea}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>

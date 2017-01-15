@@ -26,7 +26,7 @@ import javax.swing.event.*;
  * <p>Título: pdclien</p>
  * <p>Descripción: Mantenimiento de la Tabla de Clientes. Los cambios los guarda en
  * la tabla cliencamb </p>
-* <p>Copyright: Copyright (c) 2005-2016
+* <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -158,8 +158,8 @@ public class pdclien extends ventanaPad implements PAD
     CLabel cLabel21 = new CLabel();
     CLabel cLabel20 = new CLabel();
     CTextField cli_libivaE = new CTextField(Types.CHAR, "X", 2);
-    CTextField cli_carteE = new CTextField(Types.CHAR, "X", 2);
-    CLabel cLabel22 = new CLabel();
+    CTextField cli_codrepE = new CTextField(Types.CHAR, "X", 5);
+    CLabel cli_codrutL = new CLabel("Cod.Reparto");
     CTextField cli_tipdocE = new CTextField(Types.CHAR, "X", 2);
     CLabel cLabel23 = new CLabel();
     CLabel cLabel24 = new CLabel();
@@ -499,9 +499,7 @@ public class pdclien extends ventanaPad implements PAD
       cLabel20.setText("Libro IVA");
       cLabel20.setBounds(new Rectangle(2, 28, 90, 19));
       cli_libivaE.setBounds(new Rectangle(102, 28, 35, 19));
-      cli_carteE.setBounds(new Rectangle(101, 221, 35, 19));
-      cLabel22.setBounds(new Rectangle(3, 221, 71, 19));
-      cLabel22.setText("Cartera");
+      
       cli_tipdocE.setBounds(new Rectangle(102, 48, 35, 19));
       cLabel23.setText("Tipo Documento");
       cLabel23.setBounds(new Rectangle(2, 48, 94, 19));
@@ -628,6 +626,8 @@ public class pdclien extends ventanaPad implements PAD
       rep_codiL.setText("Represent");
       rep_codiL.setBounds(new Rectangle(0, 125, 65, 20));
       rep_codiE.setBounds(new Rectangle(65, 125, 325, 20));
+      
+
       rep_codiE.setAncTexto(30);
       cli_feulveL.setText("Fec. Ult. Venta");
       cli_feulveL.setBounds(new Rectangle(415, 205, 90, 20));
@@ -649,6 +649,9 @@ public class pdclien extends ventanaPad implements PAD
       cli_email2E.setBounds(new Rectangle(115, 220, 275, 18));
       rut_codiL.setBounds(new Rectangle(1, 240, 110, 18));
       rut_codiE.setBounds(new Rectangle(115, 240, 275, 18));
+      cli_codrutL.setBounds(new Rectangle(410, 240, 80, 19));
+      cli_codrepE.setBounds(new Rectangle(495, 240, 50, 19));
+      cli_codrepE.setMayusc(true);
       llenaEstCont(cli_estconE);
       this.getContentPane().add(Pprinc, BorderLayout.CENTER);
       PdatFra.setLayout(null);
@@ -782,8 +785,6 @@ public class pdclien extends ventanaPad implements PAD
       PdatCon.add(cLabel27, null);
       PdatCon.add(cli_coimivE, null);
       PdatCon.add(cLabel28, null);
-      PdatCon.add(cLabel22, null);
-      PdatCon.add(cli_carteE, null);
       PdatCon.add(cli_tipivaE, null);
       PdatCon.add(cli_tipivaL1, null);
       PdatCon.add(cli_vaccomL, null);
@@ -806,7 +807,9 @@ public class pdclien extends ventanaPad implements PAD
         PdatGen.add(cli_email2L, null);
         PdatGen.add(rut_codiL, null);
         PdatGen.add(rut_codiE, null);
-        
+        PdatGen.add(cli_codrutL, null);
+        PdatGen.add(cli_codrepE,null);
+
         PdatGen.add(cli_email1E, null);
         PdatGen.add(cli_email1L, null);
         PdatGen.add(cli_estconE, null);
@@ -1017,7 +1020,7 @@ public class pdclien extends ventanaPad implements PAD
     sbe_codiE.setColumnaAlias("sbe_codi");
     cli_giroE.setColumnaAlias("cli_giro");
     cli_libivaE.setColumnaAlias("cli_libiva");
-    cli_carteE.setColumnaAlias("cli_carte");
+    cli_codrepE.setColumnaAlias("cli_codrut");
     cli_diarioE.setColumnaAlias("cli_diario");
     cli_sefacbE.setColumnaAlias("cli_sefacb");
     cli_dtoppE.setColumnaAlias("cli_dtopp");
@@ -1277,7 +1280,7 @@ public class pdclien extends ventanaPad implements PAD
     v.add(sbe_codiE.getStrQuery());
     v.add(cli_giroE.getStrQuery());
     v.add(cli_libivaE.getStrQuery());
-    v.add(cli_carteE.getStrQuery());
+    v.add(cli_codrepE.getStrQuery());
     v.add(cli_diarioE.getStrQuery());
     v.add(cli_sefacbE.getStrQuery());
     v.add(cli_dtoppE.getStrQuery());
@@ -1776,7 +1779,7 @@ public class pdclien extends ventanaPad implements PAD
     dtAdd.setDato("sbe_codi",sbe_codiE.getValorInt());
     dtAdd.setDato("cli_giro",cli_giroE.getValor());
     dtAdd.setDato("cli_libiva",cli_libivaE.getText());
-    dtAdd.setDato("cli_carte",cli_carteE.getText());
+    dtAdd.setDato("cli_codrut",cli_codrepE.getText());
     dtAdd.setDato("cli_diario",cli_diarioE.getText());
     dtAdd.setDato("cli_sefacb",cli_sefacbE.getText());
     dtAdd.setDato("cli_dtopp",cli_dtoppE.getValorDec());
@@ -2162,7 +2165,7 @@ public class pdclien extends ventanaPad implements PAD
       sbe_codiE.setValorInt(dtCon1.getInt("sbe_codi",true));
       cli_giroE.setValor(dtCon1.getString("cli_giro"));
       cli_libivaE.setText(dtCon1.getString("cli_libiva"));
-      cli_carteE.setText(dtCon1.getString("cli_carte"));
+      cli_codrepE.setText(dtCon1.getString("cli_codrut"));
       cli_diarioE.setText(dtCon1.getString("cli_diario"));
       cli_sefacbE.setText(dtCon1.getString("cli_sefacb"));
       cli_dtoppE.setText(dtCon1.getString("cli_dtopp"));

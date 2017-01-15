@@ -32,7 +32,6 @@ import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
-import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
@@ -187,7 +186,7 @@ public void iniciarVentana() throws Exception
     zon_codiE.getComboBox().setPreferredSize(new Dimension(150,18));
     rep_codiE.getComboBox().setPreferredSize(new Dimension(150,18));
 //    pdconfig.llenaDiscr(dtStat, rep_codiE, "Cr",EU.em_cod);
-    pdconfig.llenaDiscr(dtStat, zon_codiE, "Cz",EU.em_cod);
+    pdconfig.llenaDiscr(dtStat, zon_codiE, pdconfig.D_REPRESENT,EU.em_cod);
      activarEventos();
 //     cli_codiE.setText("");
      this.setEnabled(true);
@@ -736,7 +735,7 @@ public void iniciarVentana() throws Exception
         cLabel16.setText("Repres.");
         cLabel16.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel16);
-        cLabel16.setBounds(10, 0, 60, 18);
+        cLabel16.setBounds(10, 0, 50, 18);
 
         rep_codiE.setAncTexto(30);
         rep_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
@@ -751,9 +750,9 @@ public void iniciarVentana() throws Exception
         Pcabe.add(emp_codiE);
         emp_codiE.setBounds(60, 20, 40, 20);
 
-        cLabel4.setText("Delegación");
+        cLabel4.setText("SubEmpr.");
         Pcabe.add(cLabel4);
-        cLabel4.setBounds(100, 20, 70, 18);
+        cLabel4.setBounds(110, 20, 60, 18);
         Pcabe.add(sbe_codiE);
         sbe_codiE.setBounds(170, 20, 37, 20);
 
@@ -784,7 +783,7 @@ public void iniciarVentana() throws Exception
         cLabel18.setText("Zona");
         cLabel18.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel18);
-        cLabel18.setBounds(250, 0, 40, 18);
+        cLabel18.setBounds(250, 0, 30, 18);
 
         ordenE.addItem("Kilos", "K");
         ordenE.addItem("Importe","I");
