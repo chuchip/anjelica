@@ -149,7 +149,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2016-09-28");
+        this.setVersion("2017-01-15");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -583,11 +583,11 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_poble,"
          + " c.rut_codi, al.rut_nomb FROM pedvenc as c"
          + " left join v_albavec as av on c.avc_ano = av.avc_ano "
-         + " and c.avc_serie= av.avc_serie and c.avc_nume =  av.avc_nume anc av.emp_codi = c.emp_codi "
+         + " and c.avc_serie= av.avc_serie and c.avc_nume =  av.avc_nume and av.emp_codi = c.emp_codi "
          + ",clientes as cl,v_rutas as al " +       
-        " WHERE pvc_fecent between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +
-         " ane c.emp_codi = "+EU.em_cod+
+        " WHERE pvc_fecent between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +       
         " and  to_date('" + pvc_fecfinE.getText()  + "','dd-MM-yyyy')" +
+        " and c.emp_codi = "+EU.em_cod+
         " and c.alm_codi >= " + alm_codiE.getValorInt() +
         " and c.pvc_confir = 'S' "+
         " and cl.cli_codi = c.cli_codi " +
