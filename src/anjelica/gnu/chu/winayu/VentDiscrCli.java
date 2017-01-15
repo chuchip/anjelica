@@ -1,3 +1,4 @@
+package gnu.chu.winayu;
 /**
  *
  * <p>Titulo: VentDiscrCli</p>
@@ -23,9 +24,7 @@
  * @author chuchi P
  */
 
-package gnu.chu.winayu;
 
-import com.jgoodies.looks.plastic.PlasticInternalFrameUI;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.CInternalFrame;
 import gnu.chu.controles.StatusBar;

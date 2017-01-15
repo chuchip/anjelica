@@ -144,7 +144,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2016-10-26" + ARG_ZONAREP);
+        this.setVersion("2017-01-15" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -176,8 +176,11 @@ public class CLVenRep extends ventana {
         else
               MantRepres.llenaLinkBox(rep_codiE, dtCon1);
         rut_codiE.setAncTexto(30);
-        rut_codiE.setFormato(Types.CHAR, "XX");          
+        rut_codiE.setFormato(Types.CHAR, "XX");       
+        zon_codiE.setAncTexto(30);
+        zon_codiE.setFormato(Types.CHAR, "XX");        
         pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS, EU.em_cod);
+        pdconfig.llenaDiscr(dtStat, zon_codiE, pdconfig.D_ZONA, EU.em_cod);
         dtAdd = new DatosTabla(new conexion(EU));
         Pcondic.setDefButton(Baceptar.getBotonAccion());
         jtCab.setButton(KeyEvent.VK_F2, BirGrid);
@@ -372,6 +375,7 @@ public class CLVenRep extends ventana {
                 + "','dd-MM-yyyy') "
                 + " and cl.cli_codi = a.cli_codi "
                 + " and a.avc_repres = '" + rep_codiE.getText() + "'"
+                + (zon_codiE.isNull()?"": " and cl.zon_codi='"+zon_codiE.getText()+"'")
                 + (rut_codiE.isNull()?"": " and a.cli_ruta='"+rut_codiE.getText()+"'")
                 + (opIncCobr.isSelected() ? " and avc_cobrad != 0" : "");
     }
@@ -899,6 +903,8 @@ public class CLVenRep extends ventana {
         bdisc = new gnu.chu.camposdb.DiscButton();
         cLabel9 = new gnu.chu.controles.CLabel();
         rut_codiE = new gnu.chu.controles.CLinkBox();
+        cLabel10 = new gnu.chu.controles.CLabel();
+        zon_codiE = new gnu.chu.controles.CLinkBox();
         jtCab = new gnu.chu.controles.Cgrid(11);
         ArrayList v=new ArrayList();
         v.add("Ejer"); // 0
@@ -1040,42 +1046,43 @@ public class CLVenRep extends ventana {
     Pprinc.setLayout(new java.awt.GridBagLayout());
 
     Pcondic.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-    Pcondic.setMaximumSize(new java.awt.Dimension(600, 60));
-    Pcondic.setMinimumSize(new java.awt.Dimension(600, 60));
-    Pcondic.setPreferredSize(new java.awt.Dimension(600, 60));
+    Pcondic.setMaximumSize(new java.awt.Dimension(620, 50));
+    Pcondic.setMinimumSize(new java.awt.Dimension(620, 50));
+    Pcondic.setPreferredSize(new java.awt.Dimension(620, 50));
     Pcondic.setLayout(null);
 
     cLabel5.setText("De Fecha");
     Pcondic.add(cLabel5);
-    cLabel5.setBounds(163, 8, 49, 20);
+    cLabel5.setBounds(100, 2, 49, 17);
     Pcondic.add(fecIniE);
-    fecIniE.setBounds(213, 8, 76, 20);
+    fecIniE.setBounds(150, 2, 76, 17);
 
-    cLabel6.setText("A Fecha");
+    cLabel6.setText("A ");
     Pcondic.add(cLabel6);
-    cLabel6.setBounds(315, 8, 43, 20);
+    cLabel6.setBounds(230, 2, 20, 17);
     Pcondic.add(fecFinE);
-    fecFinE.setBounds(362, 8, 75, 20);
+    fecFinE.setBounds(240, 2, 75, 17);
 
-    cLabel3.setText("Empresa");
+    cLabel3.setText("Emp.");
     Pcondic.add(cLabel3);
-    cLabel3.setBounds(1, 8, 49, 20);
+    cLabel3.setBounds(1, 2, 30, 17);
     Pcondic.add(emp_codiE);
-    emp_codiE.setBounds(83, 8, 60, 20);
+    emp_codiE.setBounds(40, 2, 50, 17);
 
     cLabel1.setText("Ruta");
     Pcondic.add(cLabel1);
-    cLabel1.setBounds(290, 36, 30, 17);
+    cLabel1.setBounds(320, 2, 30, 17);
 
     rep_codiE.setAncTexto(30);
     rep_codiE.setAncTexto(30);
     rep_codiE.setMayusculas(true);
     Pcondic.add(rep_codiE);
-    rep_codiE.setBounds(50, 36, 237, 17);
+    rep_codiE.setBounds(50, 25, 190, 17);
+    rep_codiE.getAccessibleContext().setAccessibleDescription("");
 
     opIncCobr.setText("Solo cobrados");
     Pcondic.add(opIncCobr);
-    opIncCobr.setBounds(450, 10, 93, 19);
+    opIncCobr.setBounds(520, 2, 93, 17);
 
     Baceptar.setText("Elegir");
     Baceptar.addMenu("Consultar","C");
@@ -1092,18 +1099,30 @@ public class CLVenRep extends ventana {
     Baceptar.addMenu("Sin Tarifa","T");
     Baceptar.addMenu("Imprimir","I");
     Pcondic.add(Baceptar);
-    Baceptar.setBounds(500, 32, 100, 26);
+    Baceptar.setBounds(500, 20, 100, 26);
     Pcondic.add(bdisc);
-    bdisc.setBounds(550, 10, 21, 20);
+    bdisc.setBounds(470, 25, 21, 20);
 
     cLabel9.setText("Repres");
     Pcondic.add(cLabel9);
-    cLabel9.setBounds(1, 36, 50, 17);
+    cLabel9.setBounds(1, 25, 50, 17);
+    cLabel9.getAccessibleContext().setAccessibleDescription("");
 
     rut_codiE.setAncTexto(30);
     rut_codiE.setMayusculas(true);
     Pcondic.add(rut_codiE);
-    rut_codiE.setBounds(320, 36, 170, 17);
+    rut_codiE.setBounds(350, 2, 170, 17);
+
+    cLabel10.setText("Zona");
+    Pcondic.add(cLabel10);
+    cLabel10.setBounds(240, 25, 30, 17);
+    cLabel10.getAccessibleContext().setAccessibleDescription("");
+
+    zon_codiE.setAncTexto(30);
+    zon_codiE.setMayusculas(true);
+    Pcondic.add(zon_codiE);
+    zon_codiE.setBounds(270, 25, 190, 17);
+    zon_codiE.getAccessibleContext().setAccessibleDescription("");
 
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
@@ -1269,6 +1288,7 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CTextField avl_unidE;
     private gnu.chu.camposdb.DiscButton bdisc;
     private gnu.chu.controles.CLabel cLabel1;
+    private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -1293,5 +1313,6 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CLinkBox rep_codiE;
     private gnu.chu.controles.CLinkBox rut_codiE;
+    private gnu.chu.controles.CLinkBox zon_codiE;
     // End of variables declaration//GEN-END:variables
 }

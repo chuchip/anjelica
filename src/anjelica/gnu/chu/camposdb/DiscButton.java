@@ -62,6 +62,7 @@ public class DiscButton extends CButton {
         this.addActionListener(new ActionListener()
       {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 abrirVentana();
             }

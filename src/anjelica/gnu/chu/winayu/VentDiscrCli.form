@@ -121,22 +121,22 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="gnu.chu.controles.pvc_comentL" name="discrim1L">
+        <Component class="gnu.chu.controles.CLabel" name="discrim1L">
           <Properties>
             <Property name="text" type="java.lang.String" value="Discrim 1"/>
           </Properties>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="discrim2L">
+        <Component class="gnu.chu.controles.CLabel" name="discrim2L">
           <Properties>
             <Property name="text" type="java.lang.String" value="Discrim 2"/>
           </Properties>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="discrim3L">
+        <Component class="gnu.chu.controles.CLabel" name="discrim3L">
           <Properties>
             <Property name="text" type="java.lang.String" value="Discrim 3"/>
           </Properties>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="discrim4L">
+        <Component class="gnu.chu.controles.CLabel" name="discrim4L">
           <Properties>
             <Property name="text" type="java.lang.String" value="Discrim 4"/>
           </Properties>
@@ -173,7 +173,7 @@
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
           </AuxValues>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="discrim5L">
+        <Component class="gnu.chu.controles.CLabel" name="discrim5L">
           <Properties>
             <Property name="text" type="java.lang.String" value="Zona/Repr."/>
           </Properties>
@@ -186,7 +186,7 @@
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
           </AuxValues>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="discrim6L">
+        <Component class="gnu.chu.controles.CLabel" name="discrim6L">
           <Properties>
             <Property name="text" type="java.lang.String" value="Zona/Credito"/>
           </Properties>
