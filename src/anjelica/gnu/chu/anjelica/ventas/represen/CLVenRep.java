@@ -69,6 +69,8 @@ import net.sf.jasperreports.engine.JasperReport;
  */
 public class CLVenRep extends ventana {
     private boolean conComentarios=false;
+    private boolean conIncPrecio=false;
+    
     final  int JTCAB_EJER=0;
     final  int JTCAB_SERIE=1;
     final  int JTCAB_NUMALB=2;
@@ -144,7 +146,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2017-01-15" + ARG_ZONAREP);
+        this.setVersion("2017-01-16" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -243,6 +245,7 @@ public class CLVenRep extends ventana {
             @Override
             public void actionPerformed(ActionEvent e) {
               conComentarios=false;
+              conIncPrecio=false;
               String indice=Baceptar.getValor(e.getActionCommand()); 
               switch (indice)
               {
@@ -268,8 +271,12 @@ public class CLVenRep extends ventana {
                        conComentarios=true;
                        consultar(false);
                        break;
-                  default:
-                   consultar(indice.equals("S"));
+                   case "!P":                       
+                       conIncPrecio=true;
+                       consultar(false);
+                       break;
+                  default:                   
+                       consultar(indice.equals("S"));
                }
             }
         });
@@ -500,7 +507,18 @@ public class CLVenRep extends ventana {
         if (conComentarios)
                 s += " and exists (select *  FROM comision_represent as cr "
                         + " WHERE cr.avc_id = a.avc_id )";
-                    
+        
+        if (conIncPrecio) {
+                s += " and exists (select *  FROM v_albavel as l "
+                        + " WHERE l.emp_codi = " + emp_codiE.getValorInt()
+                        + " and a.avc_ano = l.avc_ano  "
+                        + " and a.avc_serie = l.avc_serie "
+                        + " and a.avc_nume = l.avc_nume "
+                        + " and ((avl_prven-avl_profer) <= "+gananMinE.getValorDec()
+                        + (gananMaxE.isNull()?")":" or (avl_prven-avl_profer) >= "+gananMaxE.getValorDec()+")")
+                        + " and l.avl_canti <> 0 "
+                        + " )";
+        }
         if (sinPrecMini) {
                 s += " and exists (select *  FROM v_albavel as l "
                         + " WHERE l.emp_codi = " + emp_codiE.getValorInt()
@@ -905,6 +923,10 @@ public class CLVenRep extends ventana {
         rut_codiE = new gnu.chu.controles.CLinkBox();
         cLabel10 = new gnu.chu.controles.CLabel();
         zon_codiE = new gnu.chu.controles.CLinkBox();
+        cLabel11 = new gnu.chu.controles.CLabel();
+        gananMinE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
+        cLabel12 = new gnu.chu.controles.CLabel();
+        gananMaxE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
         jtCab = new gnu.chu.controles.Cgrid(11);
         ArrayList v=new ArrayList();
         v.add("Ejer"); // 0
@@ -1046,9 +1068,9 @@ public class CLVenRep extends ventana {
     Pprinc.setLayout(new java.awt.GridBagLayout());
 
     Pcondic.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-    Pcondic.setMaximumSize(new java.awt.Dimension(620, 50));
-    Pcondic.setMinimumSize(new java.awt.Dimension(620, 50));
-    Pcondic.setPreferredSize(new java.awt.Dimension(620, 50));
+    Pcondic.setMaximumSize(new java.awt.Dimension(620, 70));
+    Pcondic.setMinimumSize(new java.awt.Dimension(620, 70));
+    Pcondic.setPreferredSize(new java.awt.Dimension(620, 70));
     Pcondic.setLayout(null);
 
     cLabel5.setText("De Fecha");
@@ -1082,11 +1104,12 @@ public class CLVenRep extends ventana {
 
     opIncCobr.setText("Solo cobrados");
     Pcondic.add(opIncCobr);
-    opIncCobr.setBounds(520, 2, 93, 17);
+    opIncCobr.setBounds(420, 45, 100, 17);
 
     Baceptar.setText("Elegir");
     Baceptar.addMenu("Consultar","C");
     Baceptar.addMenu("Cons. Incid","!");
+    Baceptar.addMenu("Cons.Inc.Precio","!P");
     Baceptar.addMenu("Cons.Sin Precio","S");
 
     if (ARG_MODIF)
@@ -1097,21 +1120,22 @@ public class CLVenRep extends ventana {
         Baceptar.addMenu("Forzar Act. Tarifa","A!");
     }
     Baceptar.addMenu("Sin Tarifa","T");
+
     Baceptar.addMenu("Imprimir","I");
     Pcondic.add(Baceptar);
-    Baceptar.setBounds(500, 20, 100, 26);
+    Baceptar.setBounds(520, 40, 100, 26);
     Pcondic.add(bdisc);
-    bdisc.setBounds(470, 25, 21, 20);
+    bdisc.setBounds(390, 45, 21, 20);
 
-    cLabel9.setText("Repres");
+    cLabel9.setText("Ganacia Maxima");
     Pcondic.add(cLabel9);
-    cLabel9.setBounds(1, 25, 50, 17);
+    cLabel9.setBounds(160, 45, 100, 17);
     cLabel9.getAccessibleContext().setAccessibleDescription("");
 
     rut_codiE.setAncTexto(30);
     rut_codiE.setMayusculas(true);
     Pcondic.add(rut_codiE);
-    rut_codiE.setBounds(350, 2, 170, 17);
+    rut_codiE.setBounds(350, 2, 250, 17);
 
     cLabel10.setText("Zona");
     Pcondic.add(cLabel10);
@@ -1121,14 +1145,22 @@ public class CLVenRep extends ventana {
     zon_codiE.setAncTexto(30);
     zon_codiE.setMayusculas(true);
     Pcondic.add(zon_codiE);
-    zon_codiE.setBounds(270, 25, 190, 17);
+    zon_codiE.setBounds(270, 25, 240, 17);
     zon_codiE.getAccessibleContext().setAccessibleDescription("");
 
-    gridBagConstraints = new java.awt.GridBagConstraints();
-    gridBagConstraints.gridx = 0;
-    gridBagConstraints.gridy = 0;
-    gridBagConstraints.weightx = 1.0;
-    Pprinc.add(Pcondic, gridBagConstraints);
+    cLabel11.setText("Repres");
+    Pcondic.add(cLabel11);
+    cLabel11.setBounds(1, 25, 50, 15);
+    Pcondic.add(gananMinE);
+    gananMinE.setBounds(90, 45, 40, 17);
+
+    cLabel12.setText("Ganacia Minima ");
+    Pcondic.add(cLabel12);
+    cLabel12.setBounds(0, 45, 90, 17);
+    Pcondic.add(gananMaxE);
+    gananMaxE.setBounds(260, 45, 40, 17);
+
+    Pprinc.add(Pcondic, new java.awt.GridBagConstraints());
 
     jtCab.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
     jtCab.setMaximumSize(new java.awt.Dimension(220, 130));
@@ -1289,6 +1321,8 @@ public class CLVenRep extends ventana {
     private gnu.chu.camposdb.DiscButton bdisc;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
+    private gnu.chu.controles.CLabel cLabel11;
+    private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -1301,6 +1335,8 @@ public class CLVenRep extends ventana {
     private gnu.chu.camposdb.empPanel emp_codiE;
     private gnu.chu.controles.CTextField fecFinE;
     private gnu.chu.controles.CTextField fecIniE;
+    private gnu.chu.controles.CTextField gananMaxE;
+    private gnu.chu.controles.CTextField gananMinE;
     private gnu.chu.controles.CTextField impAlbE;
     private gnu.chu.controles.CTextField impGanE;
     private gnu.chu.controles.Cgrid jtCab;
