@@ -180,8 +180,8 @@
         </Container>
         <Container class="gnu.chu.controles.Cgrid" name="jt">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(27)"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Cliente&quot;);&#xa;v.add(&quot;Nombre&quot;);&#xa;v.add(&quot;Poblacion&quot;);&#xa;v.add(&quot;1/Ant&quot;);&#xa;v.add(&quot;1/Act&quot;);&#xa;v.add(&quot;2/Ant&quot;);&#xa;v.add(&quot;2/Act&quot;);&#xa;v.add(&quot;3/Ant&quot;);&#xa;v.add(&quot;3/Act&quot;);&#xa;v.add(&quot;4/Ant&quot;);&#xa;v.add(&quot;4/Act&quot;);&#xa;v.add(&quot;5/Ant&quot;);&#xa;v.add(&quot;5/Act&quot;);&#xa;v.add(&quot;6/Ant&quot;);&#xa;v.add(&quot;6/Act&quot;);&#xa;v.add(&quot;7/Ant&quot;);&#xa;v.add(&quot;7/Act&quot;);&#xa;v.add(&quot;8/Ant&quot;);&#xa;v.add(&quot;8/Act&quot;);&#xa;v.add(&quot;9/Ant&quot;);&#xa;v.add(&quot;9/Act&quot;);&#xa;v.add(&quot;10/Ant&quot;);&#xa;v.add(&quot;10/Act&quot;);&#xa;v.add(&quot;11/Ant&quot;);&#xa;v.add(&quot;11/Act&quot;);&#xa;v.add(&quot;12/Ant&quot;);&#xa;v.add(&quot;12/Act&quot;);&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]{40,150,100,40,40,40,40,40,40,&#xa;40,40,40,40,40,40,&#xa;40,40,40,40,40,40,&#xa;40,40,40,40,40,40&#xa;});&#xa;jt.setAlinearColumna(new int[]{2,0,0,2,2,2,2,2,2,&#xa;2,2,2,2,2,2,&#xa;2,2,2,2,2,2,&#xa;2,2,2,2,2,2,&#xa;});"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(29)"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;&#xa;configurarGrid();"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

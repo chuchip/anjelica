@@ -83,6 +83,7 @@ public class VentDiscrCli extends ventana {
         pdconfig.llenaDiscr(dt, discrim4E, "C4", EU.em_cod);
         pdconfig.llenaDiscr(dt, discrim5E, "CR", EU.em_cod);
         pdconfig.llenaDiscr(dt, discrim6E, "CC", EU.em_cod);
+        pdconfig.llenaDiscr(dt, rut_codiE, pdconfig.D_RUTAS, EU.em_cod);
         activarEventos();
     }
     public void resetTexto()
@@ -106,7 +107,8 @@ public class VentDiscrCli extends ventana {
          if (aliasCliente!=null)
            if (aliasCliente.trim().equals(""))
             aliasCliente=null;
-       return (discrim1E.isNull()?"":" and "+(aliasCliente==null?"":aliasCliente+".")+"cli_disc1 like '%"+discrim1E.getText()+"%'")+
+       return (rut_codiE.isNull()?"":" and rut_codi = '"+rut_codiE.getText()+"'")+    
+              (discrim1E.isNull()?"":" and "+(aliasCliente==null?"":aliasCliente+".")+"cli_disc1 like '%"+discrim1E.getText()+"%'")+
               (discrim2E.isNull()?"":" and "+(aliasCliente==null?"":aliasCliente+".")+"cli_disc2 like '%"+discrim2E.getText()+"%'")+
               (discrim3E.isNull()?"":" and "+(aliasCliente==null?"":aliasCliente+".")+"cli_disc3 like '%"+discrim3E.getText()+"%'")+
               (discrim4E.isNull()?"":" and "+(aliasCliente==null?"":aliasCliente+".")+"cli_disc4 like '%"+discrim4E.getText()+"%'")+
@@ -137,7 +139,6 @@ public class VentDiscrCli extends ventana {
         discrim1L = new gnu.chu.controles.CLabel();
         discrim2L = new gnu.chu.controles.CLabel();
         discrim3L = new gnu.chu.controles.CLabel();
-        discrim4L = new gnu.chu.controles.CLabel();
         discrim1E = new gnu.chu.controles.CLinkBox();
         discrim2E = new gnu.chu.controles.CLinkBox();
         discrim3E = new gnu.chu.controles.CLinkBox();
@@ -147,114 +148,84 @@ public class VentDiscrCli extends ventana {
         discrim6L = new gnu.chu.controles.CLabel();
         discrim6E = new gnu.chu.controles.CLinkBox();
         bAceptar = new gnu.chu.controles.CButton("Aceptar (F4)",Iconos.getImageIcon("check"));
+        discrim4L = new gnu.chu.controles.CLabel();
+        discrim6L1 = new gnu.chu.controles.CLabel();
+        rut_codiE = new gnu.chu.controles.CLinkBox();
 
         Pprinc.setDefButton(bAceptar);
+        Pprinc.setLayout(null);
 
         discrim1L.setText("Discrim 1");
+        Pprinc.add(discrim1L);
+        discrim1L.setBounds(10, 5, 91, 17);
 
         discrim2L.setText("Discrim 2");
+        Pprinc.add(discrim2L);
+        discrim2L.setBounds(10, 25, 91, 17);
 
         discrim3L.setText("Discrim 3");
-
-        discrim4L.setText("Discrim 4");
+        Pprinc.add(discrim3L);
+        discrim3L.setBounds(10, 45, 91, 17);
 
         discrim1E.setFormato(Types.CHAR,"XX");
         discrim1E.setMayusculas(true);
         discrim1E.setAncTexto(30);
+        Pprinc.add(discrim1E);
+        discrim1E.setBounds(110, 5, 350, 18);
 
         discrim1E.setFormato(Types.CHAR,"XX");
         discrim1E.setMayusculas(true);
         discrim2E.setAncTexto(30);
+        Pprinc.add(discrim2E);
+        discrim2E.setBounds(110, 25, 350, 18);
 
         discrim1E.setFormato(Types.CHAR,"XX");
         discrim1E.setMayusculas(true);
         discrim3E.setAncTexto(30);
+        Pprinc.add(discrim3E);
+        discrim3E.setBounds(110, 45, 350, 18);
 
         discrim1E.setFormato(Types.CHAR,"XX");
         discrim1E.setMayusculas(true);
         discrim4E.setAncTexto(30);
+        Pprinc.add(discrim4E);
+        discrim4E.setBounds(110, 65, 350, 18);
 
         discrim5L.setText("Zona/Repr.");
+        Pprinc.add(discrim5L);
+        discrim5L.setBounds(10, 85, 91, 17);
 
         discrim1E.setFormato(Types.CHAR,"XX");
         discrim1E.setMayusculas(true);
         discrim5E.setAncTexto(30);
+        Pprinc.add(discrim5E);
+        discrim5E.setBounds(110, 85, 350, 18);
 
-        discrim6L.setText("Zona/Credito");
+        discrim6L.setText("Ruta");
+        Pprinc.add(discrim6L);
+        discrim6L.setBounds(10, 125, 91, 17);
 
         discrim1E.setFormato(Types.CHAR,"XX");
         discrim1E.setMayusculas(true);
         discrim6E.setAncTexto(30);
+        Pprinc.add(discrim6E);
+        discrim6E.setBounds(110, 105, 350, 18);
+        Pprinc.add(bAceptar);
+        bAceptar.setBounds(190, 150, 119, 33);
 
-        org.jdesktop.layout.GroupLayout PprincLayout = new org.jdesktop.layout.GroupLayout(Pprinc);
-        Pprinc.setLayout(PprincLayout);
-        PprincLayout.setHorizontalGroup(
-            PprincLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PprincLayout.createSequentialGroup()
-                .add(PprincLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(PprincLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(PprincLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(PprincLayout.createSequentialGroup()
-                                .add(discrim1L, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(discrim1E, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE))
-                            .add(PprincLayout.createSequentialGroup()
-                                .add(discrim2L, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(discrim2E, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE))
-                            .add(PprincLayout.createSequentialGroup()
-                                .add(discrim3L, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(discrim3E, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE))
-                            .add(PprincLayout.createSequentialGroup()
-                                .add(discrim4L, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(discrim4E, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE))
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, PprincLayout.createSequentialGroup()
-                                .add(discrim5L, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(discrim5E, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE))
-                            .add(PprincLayout.createSequentialGroup()
-                                .add(discrim6L, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(discrim6E, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE))))
-                    .add(PprincLayout.createSequentialGroup()
-                        .add(188, 188, 188)
-                        .add(bAceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 119, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        PprincLayout.setVerticalGroup(
-            PprincLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PprincLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(PprincLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(discrim1L, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(discrim1E, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(PprincLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(discrim2L, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(discrim2E, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(PprincLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(discrim3L, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(discrim3E, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(PprincLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(discrim4E, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(discrim4L, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(PprincLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(discrim5E, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(discrim5L, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(PprincLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(discrim6E, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(discrim6L, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(bAceptar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 33, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(108, Short.MAX_VALUE))
-        );
+        discrim4L.setText("Discrim 4");
+        Pprinc.add(discrim4L);
+        discrim4L.setBounds(10, 70, 91, 17);
+
+        discrim6L1.setText("Zona/Credito");
+        Pprinc.add(discrim6L1);
+        discrim6L1.setBounds(10, 105, 91, 17);
+
+        rut_codiE.setAncTexto(30);
+        rut_codiE.setMayusculas(true);
+        rut_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
+        Pprinc.add(rut_codiE);
+        rut_codiE.setBounds(110, 125, 350, 18);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
@@ -277,6 +248,8 @@ public class VentDiscrCli extends ventana {
     private gnu.chu.controles.CLabel discrim5L;
     private gnu.chu.controles.CLinkBox discrim6E;
     private gnu.chu.controles.CLabel discrim6L;
+    private gnu.chu.controles.CLabel discrim6L1;
+    private gnu.chu.controles.CLinkBox rut_codiE;
     // End of variables declaration//GEN-END:variables
 
 }

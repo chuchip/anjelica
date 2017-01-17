@@ -31,115 +31,39 @@
         </Constraint>
       </Constraints>
 
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="discrim1L" min="-2" pref="91" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="discrim1E" pref="399" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="discrim2L" min="-2" pref="91" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="discrim2E" pref="399" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="discrim3L" min="-2" pref="91" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="discrim3E" pref="399" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="discrim4L" min="-2" pref="91" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="discrim4E" pref="399" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="discrim5L" min="-2" pref="91" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="discrim5E" pref="399" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="discrim6L" min="-2" pref="91" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="discrim6E" pref="399" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="188" max="-2" attributes="0"/>
-                          <Component id="bAceptar" min="-2" pref="119" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="discrim1L" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="discrim1E" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="discrim2L" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="discrim2E" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="discrim3L" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="discrim3E" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="discrim4E" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="discrim4L" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="discrim5E" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="discrim5L" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="discrim6E" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="discrim6L" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="bAceptar" min="-2" pref="33" max="-2" attributes="0"/>
-                  <EmptySpace pref="108" max="32767" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+        <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
         <Component class="gnu.chu.controles.CLabel" name="discrim1L">
           <Properties>
             <Property name="text" type="java.lang.String" value="Discrim 1"/>
           </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="10" y="5" width="91" height="17"/>
+            </Constraint>
+          </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CLabel" name="discrim2L">
           <Properties>
             <Property name="text" type="java.lang.String" value="Discrim 2"/>
           </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="10" y="25" width="91" height="17"/>
+            </Constraint>
+          </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CLabel" name="discrim3L">
           <Properties>
             <Property name="text" type="java.lang.String" value="Discrim 3"/>
           </Properties>
-        </Component>
-        <Component class="gnu.chu.controles.CLabel" name="discrim4L">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Discrim 4"/>
-          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="10" y="45" width="91" height="17"/>
+            </Constraint>
+          </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CLinkBox" name="discrim1E">
           <Properties>
@@ -148,6 +72,11 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
           </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="110" y="5" width="350" height="18"/>
+            </Constraint>
+          </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CLinkBox" name="discrim2E">
           <Properties>
@@ -156,6 +85,11 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
           </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="110" y="25" width="350" height="18"/>
+            </Constraint>
+          </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CLinkBox" name="discrim3E">
           <Properties>
@@ -164,6 +98,11 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
           </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="110" y="45" width="350" height="18"/>
+            </Constraint>
+          </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CLinkBox" name="discrim4E">
           <Properties>
@@ -172,11 +111,21 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
           </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="110" y="65" width="350" height="18"/>
+            </Constraint>
+          </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CLabel" name="discrim5L">
           <Properties>
             <Property name="text" type="java.lang.String" value="Zona/Repr."/>
           </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="10" y="85" width="91" height="17"/>
+            </Constraint>
+          </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CLinkBox" name="discrim5E">
           <Properties>
@@ -185,11 +134,21 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
           </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="110" y="85" width="350" height="18"/>
+            </Constraint>
+          </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CLabel" name="discrim6L">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Zona/Credito"/>
+            <Property name="text" type="java.lang.String" value="Ruta"/>
           </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="10" y="125" width="91" height="17"/>
+            </Constraint>
+          </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CLinkBox" name="discrim6E">
           <Properties>
@@ -198,11 +157,55 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="discrim1E.setFormato(Types.CHAR,&quot;XX&quot;);&#xa;discrim1E.setMayusculas(true);"/>
           </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="110" y="105" width="350" height="18"/>
+            </Constraint>
+          </Constraints>
         </Component>
         <Component class="gnu.chu.controles.CButton" name="bAceptar">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(&quot;Aceptar (F4)&quot;,Iconos.getImageIcon(&quot;check&quot;))"/>
           </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="190" y="150" width="119" height="33"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="discrim4L">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Discrim 4"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="10" y="70" width="91" height="17"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="discrim6L1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Zona/Credito"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="10" y="105" width="91" height="17"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="gnu.chu.controles.CLinkBox" name="rut_codiE">
+          <Properties>
+            <Property name="ancTexto" type="int" value="30"/>
+            <Property name="mayusculas" type="boolean" value="true"/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[152, 18]"/>
+            </Property>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="110" y="125" width="350" height="18"/>
+            </Constraint>
+          </Constraints>
         </Component>
       </SubComponents>
     </Container>

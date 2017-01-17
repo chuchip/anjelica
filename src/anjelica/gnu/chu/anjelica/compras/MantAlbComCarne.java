@@ -204,7 +204,7 @@ public class MantAlbComCarne extends MantAlbCom
     ArrayList v1 = new ArrayList();
     v1.add("N.Ind"); // 0 No. Individuo
     v1.add("Peso"); // 1
-    v1.add("Clas."); // 2
+    v1.add("Lote/Clas."); //2
     v1.add("Crotal"); // 3
     v1.add("Matad"); // 4
     v1.add("S.Desp"); //5
@@ -223,7 +223,7 @@ public class MantAlbComCarne extends MantAlbCom
     jtDes.setMaximumSize(new Dimension(743, 168));
     jtDes.setMinimumSize(new Dimension(743, 158));
     jtDes.setPreferredSize(new Dimension(743, 168));
-    jtDes.setAnchoColumna(new int[]{50,70,30,120,150,150,30,130,30,130,30,130,80,80,80,40,40});
+    jtDes.setAnchoColumna(new int[]{50,70,70,120,150,150,30,130,30,130,30,130,80,80,80,40,40});
     jtDes.setAlinearColumna(new int[]{2,2,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2});
     botonBascula = new BotonBascula(EU,this);
     ArrayList vc1=new ArrayList();
@@ -424,7 +424,7 @@ public class MantAlbComCarne extends MantAlbCom
        
       jtDes.setValor(""+nInd,row,DESNIND);
       guardaLinDes(nLiAlDe,nInd,jtDes.getValString(row,JTD_CLASI),
-                 jtDes.getValString(row,JTD_NUMCRO),
+                 Formatear.cortar(jtDes.getValString(row,JTD_NUMCRO),30),
                  jtDes.getValString(row,JTD_PAINAC,true),
                  jtDes.getValDate(row,JTD_FECCAD),
                  jtDes.getValString(row,JTD_PAISAC,true),
@@ -641,7 +641,7 @@ public class MantAlbComCarne extends MantAlbCom
                  mat_codiE.getTextoCombo(jtDes.getValString(nLin, JTD_PAINAC)),
                  mat_codiE.getTextoCombo(jtDes.getValString(nLin, JTD_ENGPAI)),
                  despiezadoE,
-                 jtDes.getValString(nLin, JTD_NUMCRO),
+                 Formatear.cortar(jtDes.getValString(nLin, JTD_NUMCRO),30),
                  jtDes.getValorDec(nLin, JTD_CANTI),
                  getConservar(jt.getValorInt(JT_PROCOD)),
                  sacrificadoE,   acc_fecrecE.getDate() ,

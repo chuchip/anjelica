@@ -377,8 +377,8 @@ private JMenuItem MIimprEtiqInd;
   CLabel cLabel2 = new CLabel();
   CLabel cLabel3 = new CLabel();
   CTextField acp_cantiE= new CTextField(Types.DECIMAL,"--,--9.99");
-  CTextField acp_clasiE= new CTextField(Types.CHAR,"X",3);
-  CTextField acp_nucrotE= new CTextField(Types.CHAR,"X",30);
+  CTextField acp_clasiE= new CTextField(Types.CHAR,"X",10);
+  CTextField acp_nucrotE= new CTextField(Types.CHAR,"X",60);
  
   CButton Bulcabe = new CButton();
   CButton Birgrid = new CButton(Iconos.getImageIcon("reload"));
@@ -727,7 +727,7 @@ private JMenuItem MIimprEtiqInd;
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20160918)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20170116)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);

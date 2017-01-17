@@ -89,7 +89,7 @@ public class pdclien extends ventanaPad implements PAD
     CLabel cLabel5 = new CLabel();
     CLabel cLabel11 = new CLabel();
     CLabel cli_nifL = new CLabel();
-    CTextField cli_nifE = new CTextField(Types.CHAR, "X", 15);
+    CTextField cli_nifE = new CTextField(Types.CHAR, "X", 25);
     CPanel Pprinc = new CPanel();
     CPanel PdatEnv = new CPanel();
     CLabel cli_codfaL = new CLabel();
@@ -336,7 +336,7 @@ public class pdclien extends ventanaPad implements PAD
       cLabel11.setText("Nombre Fiscal");
       cLabel11.setBounds(new Rectangle(1, 2, 90, 16));
       cli_nifL.setText("NIF");
-      cli_nifL.setBounds(new Rectangle(502, 5, 32, 17));
+      cli_nifL.setBounds(new Rectangle(452, 5, 32, 17));
       Pprinc.setLayout(new BorderLayout());
       PdatGen.setLayout(null);
       PdatGen.setBorder(null);
@@ -467,7 +467,7 @@ public class pdclien extends ventanaPad implements PAD
       cli_dipa2E.setBounds(new Rectangle(188, 51, 25, 17));
       cli_dipa1E.setBounds(new Rectangle(68, 51, 25, 17));
       cli_tipfacE.setBounds(new Rectangle(98, 26, 128, 20));
-      cli_nifE.setBounds(new Rectangle(539, 5, 129, 17));
+      cli_nifE.setBounds(new Rectangle(470, 5, 200, 17));
       cli_codfaE.setBounds(new Rectangle(99, 5, 351, 17));
       cli_direeL.setBounds(new Rectangle(4, 52, 55, 17));
       cli_direeE.setBounds(new Rectangle(86, 52, 311, 17));

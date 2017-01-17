@@ -93,7 +93,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("20176-01-13");
+   this.setVersion("20176-01-16");
    statusBar = new StatusBar(this);
 
    initComponents();
@@ -145,15 +145,17 @@ public void iniciarVentana() throws Exception
     }
     void Baceptar_actionPerformed()
     {
-        Double[] kilos=new Double[24];
+        Double[] kilos=new Double[26];
+        Double[] total=new Double[26];
         
-        String s="select distinct(cl.cli_codi) as cli_codi from v_albavec as c,v_cliente as cl where avc_ano>="+(avc_anoE.getValorInt()-1)+
+        String s="select cl.cli_codi,cl.cli_nomb,cl.cli_pobl from v_albavec as c,v_cliente as cl where avc_ano>="+(avc_anoE.getValorInt()-1)+
             " and c.cli_codi = cl.cli_codi "+
             (rep_codiE.isNull()?"":" and rep_codi = '"+rep_codiE.getText()+"'")+
             (zon_codiE.isNull()?"":" and zon_codi = '"+zon_codiE.getText()+"'")+
             (rut_codiE.isNull()?"":" and rut_codi = '"+rut_codiE.getText()+"'")+           
 //            " and cl.cli_codi=27210"+
-            " order by cli_codi";
+            " group by cl.cli_pobl,cl.cli_nomb,cl.cli_codi"+
+            " order by cl.cli_pobl,cl.cli_nomb";
   
         try  {
             jt.removeAllDatos();
@@ -162,14 +164,30 @@ public void iniciarVentana() throws Exception
                 msgBox("No encontradas ventas para este periodo");
                 return;
             }
+            ArrayList cab=new ArrayList();
+            cab.add("Cliente");
+            cab.add("Nombre");
+            cab.add("Poblacion");
+            for (int n=0;n<26;n++)
+            {
+                total[n]=(double)0;
+            }
+            for (int n=0;n<12;n++)
+            {
+                cab.add(Formatear.format(n+1,"99")+"/"+(avc_anoE.getValorInt()-2001));
+                cab.add(Formatear.format(n+1,"99")+"/"+(avc_anoE.getValorInt()-2000));
+            }
+            cab.add("Tot."+(avc_anoE.getValorInt()-2001));
+            cab.add("Tot."+(avc_anoE.getValorInt()-2000));
+            jt.setCabecera(cab);
+            configurarGrid();
             s="select sum(avc_kilos) as kilos from v_albavec where cli_codi= ?"+
+                    (rep_codiE.isNull()?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
                     " and avc_ano = ?"+
                     " and avc_fecalb between ? and ? ";
             PreparedStatement psKilos=dtStat.getPreparedStatement(s);
             ResultSet rsKilos;
-            s="select * from v_cliente where cli_codi= ?";
-            PreparedStatement psCli=dtStat.getPreparedStatement(s);
-            ResultSet rsCli;
+           
             do
             {
                 int nAno=0;
@@ -182,6 +200,7 @@ public void iniciarVentana() throws Exception
                            return; 
                     }
                     int mes=0;
+                    kilos[24+nAno]=(double)0;
                     do
                     {
                          psKilos.setInt(1, dtCon1.getInt("cli_codi"));
@@ -191,28 +210,52 @@ public void iniciarVentana() throws Exception
                          rsKilos=psKilos.executeQuery();
                          rsKilos.next();
                          kilos[(mes*2)+nAno]=rsKilos.getDouble("kilos");
+                         kilos[24+nAno]+=rsKilos.getDouble("kilos");
                          mes++;
                     } while (dtAdd.next());
                     nAno++;                    
                 }
                 ArrayList v=new ArrayList();
-                v.add(dtCon1.getInt("cli_codi"));
-                psCli.setInt(1,dtCon1.getInt("cli_codi"));
-                rsCli=psCli.executeQuery();
-                rsCli.next();
-                v.add(rsCli.getString("cli_nomb"));
-                v.add(rsCli.getString("cli_pobl"));                
-                for (int n=0;n<24;n++)
+                v.add(dtCon1.getInt("cli_codi"));               
+                v.add(dtCon1.getString("cli_nomb"));
+                v.add(dtCon1.getString("cli_pobl"));                
+                for (int n=0;n<26;n++)
                 {
-                    v.add(Formatear.format(kilos[n],"----,--9.9"));
+                    total[n]+=kilos[n];
+                    v.add(Formatear.format(kilos[n],"----,--9.9"));                    
                 }
                 jt.addLinea(v);
             } while(dtCon1.next());
+            ArrayList v=new ArrayList();
+            v.add("");
+            v.add("");
+            v.add("Total");
+            for (int n=0;n<26;n++)
+            {
+                 v.add(Formatear.format(total[n],"----,--9.9"));       
+            }
+            jt.addLinea(v);
         } catch (SQLException  k)
         {
             Error("Error al buscar ventas",k);
         }
         
+    }
+    void configurarGrid()
+    {
+        jt.setAnchoColumna(new int[]{40,150,100,
+            55,55,55,55,55,55,
+            55,55,55,55,55,55,
+            55,55,55,55,55,55,
+            55,55,55,55,55,55,
+            55,55
+        });
+        jt.setAlinearColumna(new int[]{2,0,0,2,2,2,2,2,2,
+            2,2,2,2,2,2,
+            2,2,2,2,2,2,
+            2,2,2,2,2,2,
+            2,2
+        });
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -237,7 +280,7 @@ public void iniciarVentana() throws Exception
         sbe_codiE = new gnu.chu.camposdb.sbePanel();
         cLabel19 = new gnu.chu.controles.CLabel();
         zon_codiE = new gnu.chu.controles.CLinkBox();
-        jt = new gnu.chu.controles.Cgrid(27);
+        jt = new gnu.chu.controles.Cgrid(29);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -305,44 +348,8 @@ public void iniciarVentana() throws Exception
         Pprinc.add(Pcondi, gridBagConstraints);
 
         ArrayList v=new ArrayList();
-        v.add("Cliente");
-        v.add("Nombre");
-        v.add("Poblacion");
-        v.add("1/Ant");
-        v.add("1/Act");
-        v.add("2/Ant");
-        v.add("2/Act");
-        v.add("3/Ant");
-        v.add("3/Act");
-        v.add("4/Ant");
-        v.add("4/Act");
-        v.add("5/Ant");
-        v.add("5/Act");
-        v.add("6/Ant");
-        v.add("6/Act");
-        v.add("7/Ant");
-        v.add("7/Act");
-        v.add("8/Ant");
-        v.add("8/Act");
-        v.add("9/Ant");
-        v.add("9/Act");
-        v.add("10/Ant");
-        v.add("10/Act");
-        v.add("11/Ant");
-        v.add("11/Act");
-        v.add("12/Ant");
-        v.add("12/Act");
-        jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{40,150,100,40,40,40,40,40,40,
-            40,40,40,40,40,40,
-            40,40,40,40,40,40,
-            40,40,40,40,40,40
-        });
-        jt.setAlinearColumna(new int[]{2,0,0,2,2,2,2,2,2,
-            2,2,2,2,2,2,
-            2,2,2,2,2,2,
-            2,2,2,2,2,2,
-        });
+
+        configurarGrid();
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;

@@ -70,6 +70,7 @@ public class FichaClientes extends ventana implements PAD
   CLabel cLabel1 = new CLabel();
   CTextField cli_codiE = new CTextField(Types.DECIMAL,"####9");
   CTextField cli_nombE = new CTextField(Types.CHAR,"X",40);
+  CTextField cli_codrepE = new CTextField(Types.CHAR,"X",5);
   CLabel cLabel2 = new CLabel();
   CTextField cli_poblE = new CTextField(Types.CHAR,"X",30);
   CLabel cLabel4 = new CLabel();
@@ -463,14 +464,14 @@ public class FichaClientes extends ventana implements PAD
     jtFco.setFormatoColumna(6, "--,---,--9.99");
     jtFco.setFormatoColumna(7, "--,---,--9.99");
     jtFco.setAlinearColumna(new int[]{2,2,0,2,1,2,2,2});
-    Vector v3 = new Vector();
-    v3.addElement("Emp"); // 0
-    v3.addElement("Año"); // 1
-    v3.addElement("Serie"); // 2
-    v3.addElement("Numero"); // 3
-    v3.addElement("Fec.Vto."); // 4
-    v3.addElement("Imp.Cobro."); // 5
-    v3.addElement("Tipo Cob"); // 6
+    ArrayList v3 = new ArrayList();
+    v3.add("Emp"); // 0
+    v3.add("Año"); // 1
+    v3.add("Serie"); // 2
+    v3.add("Numero"); // 3
+    v3.add("Fec.Vto."); // 4
+    v3.add("Imp.Cobro."); // 5
+    v3.add("Tipo Cob"); // 6
 
    jtTpe.setCabecera(v3);
    jtTpe.setAnchoColumna(new int[]{33,28,30,56,75,82,83});
@@ -919,12 +920,14 @@ public class FichaClientes extends ventana implements PAD
         cLabel1.setBounds(new Rectangle(5, 0, 85, 15));
 
         cli_codiE.setBounds(new Rectangle(90, 0, 60, 18));
-
+        
         cli_codiE.setSize(new Dimension(70, 18));
         cli_codiE.setPreferredSize(new Dimension(70, 18));
         cli_codiE.setMinimumSize(new Dimension(70, 18));
         cli_nomcoE.setBounds(new Rectangle(325, 0, 385, 18));
         cli_nombE.setBounds(new Rectangle(50, 1, 390, 18));
+        cli_codrepE.setMayusculas(true);
+        cli_codrepE.setBounds(new Rectangle(442, 1, 40, 18));
         cLabel2.setText("Cliente");
         cLabel2.setBounds(new Rectangle(1, 1, 55, 18));
         cLabel2.setSize(new Dimension(55, 18));
@@ -954,6 +957,7 @@ public class FichaClientes extends ventana implements PAD
         pCabCli.add(cLabel2, null);
         pCabCli.add(cli_poblE, null);
         pCabCli.add(cli_nombE, null);
+        pCabCli.add(cli_codrepE, null);
         Pprinc.add(pCabCli, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                     new Insets(0, 0, 0, 0), 0, 20));
         cPanel9.add(Bbusalb, null);
@@ -1078,6 +1082,7 @@ public class FichaClientes extends ventana implements PAD
    cli_codiE.setColumnaAlias("cli_codi");
    cli_nombE.setMayusc(true);
    cli_nombE.setColumnaAlias("upper(cli_nomb)");
+   cli_codrepE.setColumnaAlias("cli_codrut");
    cli_nomcoE.setMayusc(true);
    cli_nomcoE.setColumnaAlias("upper(cli_nomco)");
 
@@ -1544,6 +1549,7 @@ public class FichaClientes extends ventana implements PAD
     ArrayList v=new ArrayList();
     v.add(cli_codiE.getStrQuery());
     v.add(cli_nombE.getStrQuery());
+    v.add(cli_codrepE.getStrQuery());
     v.add(cli_nomcoE.getStrQuery());
     v.add(cli_direE.getStrQuery());
     v.add(cli_direeE.getStrQuery());
@@ -1636,6 +1642,7 @@ public class FichaClientes extends ventana implements PAD
     }
     cli_codiE.setValorDec(dt.getInt("cli_codi",true));
     cli_nombE.setText(dt.getString("cli_nomb"));
+    cli_codrepE.setText(dt.getString("cli_codrut"));
     cli_nomcoE.setText(dt.getString("cli_nomco"));
 
     cli_poblE.setText(dt.getString("cli_pobl"));
@@ -2606,18 +2613,23 @@ public class FichaClientes extends ventana implements PAD
   {
     return Formatear.restaDias(fecFin, fecIni);
   }
+  @Override
   public void PADQuery() {
     activar(true);
     navcli.pulsado=navegador.QUERY;
     buscaCli();
   }
+  @Override
   public void ej_query() {
   }
+  @Override
   public void ej_query1() {
   }
+  @Override
   public void canc_query() {
     navcli.pulsado=navegador.NINGUNO;
   }
+  @Override
   public void PADEdit() {
     if (cli_codiE.getValorDec()==0)
     {
@@ -2703,25 +2715,35 @@ public class FichaClientes extends ventana implements PAD
     verDatClien(dtCli);
     navcli.pulsado=navegador.NINGUNO;
     mensajeErr("Edicion cancelada ...");
-  }
+  }  
+   @Override
   public void PADAddNew() {
   }
+   @Override
   public void ej_addnew() {
   }
+   @Override
   public void ej_addnew1() {
   }
+   @Override
   public void canc_addnew() {
   }
+   @Override
   public void PADDelete() {
   }
+   @Override
   public void ej_delete() {
   }
+   @Override
   public void ej_delete1() {
   }
+   @Override
   public void canc_delete() {
   }
+   @Override
   public void PADChose() {
   }
+  @Override
   public void activar(boolean b) {
     cli_codiE.setEnabled(b);
 //    opSoloCli.setEnabled(!b);
@@ -2737,8 +2759,10 @@ public class FichaClientes extends ventana implements PAD
         rep_codiE.setEnabled(b);
     cli_activE.setEnabled(b);
   }
+  @Override
   public void ej_Bcancelar(ActionEvent e) {
   }
+  @Override
   public void ej_Baceptar(ActionEvent e) {
   }
   void buscAlb()

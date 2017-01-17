@@ -584,9 +584,7 @@ public class CLVenRep extends ventana {
         guardaCambios();
         PreparedStatement ps;
         ResultSet rs;
-        try {
-          
-
+        try {          
             jtCab.setEnabled(false);
             jtCab.removeAllDatos();
             String condWhere = getCondWhere();

@@ -251,7 +251,7 @@ cli_pobl varchar(30), -- Poblaccion
 cli_codpo varchar(8), -- Cod. Postal
 cli_telef varchar(25), -- Telefono
 cli_fax varchar(15), -- Fax
-cli_nif varchar(15), -- NIF
+cli_nif varchar(30), -- NIF
 cli_percon varchar(30), -- Persona Contacto
 cli_telcon varchar(15), -- Telefono Contacto
 cli_nomen varchar(50), -- Nombre Envio

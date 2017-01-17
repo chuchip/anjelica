@@ -666,7 +666,13 @@ public class  Formatear
   {
     return s.length()<=anc?s:s.substring(0,anc);
   }
-
+ /**
+   * Corta un String a la anchura dada. Es decir si la longitud es mayor que
+   * anc lo deja a anc. En caso de que sea menor lo deja como esta.
+   * @param s String String a cortar
+   * @param anc int Anchura a la que cortar
+   * @return String String cortado
+   */
   public static String cortar(String s, int anc)
   {
     return strCorta(s,anc);

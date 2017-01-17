@@ -175,7 +175,7 @@ private void jbInit() throws Exception
    statusBar = new StatusBar(this);
  
    initComponents();
-   this.setSize(620,542);
+   this.setSize(720,542);
    this.getContentPane().add(statusBar, BorderLayout.SOUTH);
 
    conecta();
