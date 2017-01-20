@@ -681,6 +681,9 @@ public class MantAlbComCarne extends MantAlbCom
    @Override
   public void PADAddNew0()
   {
+    acp_painacE.resetCambio();
+    acp_paisacE.resetCambio();
+    acp_engpaiE.resetCambio();
     ultMat=null;
   }
    void ej_consMat(ayuMat ayMat)

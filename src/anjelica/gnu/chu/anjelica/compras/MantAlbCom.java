@@ -2463,6 +2463,7 @@ private JMenuItem MIimprEtiqInd;
     for (int n=0;n<jt.getRowCount();n++)
     {
       s="SELECT * FROM claslomos WHERE pro_codi = "+jt.getValorInt(n,1)+
+          " and prv_codi ="+prv_codiE.getValorInt()+
           " and cll_codi = "+cllCodi;
       if (! dtStat.select(s))
         continue; // Si el codigo Prod. no esta en Clas. Lomos no actualizo
@@ -2631,7 +2632,7 @@ private JMenuItem MIimprEtiqInd;
    * @return int Numero de Linea donde insertarla.
    * -1 si Debe insertar linea pero se le ha mandadao creaLin=false
    */
-  synchronized int getLinAutoClas(double kilos,boolean creaLin) throws SQLException,java.text.ParseException
+  private int getLinAutoClas(double kilos,boolean creaLin) throws SQLException,java.text.ParseException
   {
     if (cll_codiE.isVacio())
         llenaCllCodi();
@@ -2639,13 +2640,22 @@ private JMenuItem MIimprEtiqInd;
     int cllCodi=cll_codiE.getValorInt();
     if (!cll_codiE.isVacio())
     {
-        s = "SELECT * FROM claslomos WHERE cll_kilos <= " + kilos+
+        s = "SELECT pro_codi FROM claslomos WHERE cll_kilos <= " + kilos+
+            " and prv_codi = "+prv_codiE.getValorInt()+
             " and cll_codi = "+cllCodi+
             " order by cll_kilos desc";
-        if (dtStat.select(s))
-          proCodi = dtStat.getInt("pro_codi");
+        if (! dtStat.select(s))
+        {    
+            s = "SELECT pro_codi FROM claslomos WHERE cll_kilos <= " + kilos+
+            " and cll_codi = "+cllCodi+
+            " order by cll_kilos desc";
+            if (dtStat.select(s))
+              proCodi = dtStat.getInt("pro_codi");
+            else
+                enviaMailError("No encontrada clasificacion para prod:"+proCodi+" Kilos: "+kilos+" Alb: "+avc_numeE.getValorInt());
+        }
         else
-          enviaMailError("No encontrada clasificacion para prod:"+proCodi+" Kilos: "+kilos+" Alb: "+avc_numeE.getValorInt());
+            proCodi = dtStat.getInt("pro_codi");
     }
     else
         enviaMailError("cllCodi sigue estando vacio para prod:"+proCodi+" Alb: "+avc_numeE.getValorInt());
@@ -3618,6 +3628,7 @@ private JMenuItem MIimprEtiqInd;
     jt.removeAllDatos();
     jtDes.removeAllDatos();
     jtPed.removeAllDatos();
+    
     jtRecl.removeAllDatos();
     vertKilosE.setValorInt(0);
     vertNPiezE.setValorInt(0);
@@ -3670,6 +3681,7 @@ private JMenuItem MIimprEtiqInd;
     estIniE.setValor("P");
     estFinE.setValor("A");
 //    acl_prcomE.setEditable(true);
+   
     prv_codiE.resetCambio();
     prv_codiE.requestFocus();
     
@@ -3687,8 +3699,8 @@ private JMenuItem MIimprEtiqInd;
         return;
       if (jtDes.isEnabled() && ! swCargaAlb)
       {
-          jtDes.salirFoco();
-          jtDes.procesaAllFoco();
+          jtDes.actualizarGrid();
+          jtDes.salirGrid();
           if (! procLineaInd())
               return;
       }

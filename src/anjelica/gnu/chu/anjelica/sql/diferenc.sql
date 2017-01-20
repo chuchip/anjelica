@@ -1,7 +1,10 @@
 -- 
 -- Ampliado campo NIF a 30 Caracteres
 --
+drop view v_cliente;
 alter table clientes alter cli_nif type varchar(30);
+create or replace view anjelica.v_cliente as select *,cli_codrut as cli_carte,cli_codrut as cli_valor from anjelica.clientes;
+grant select on anjelica.v_cliente to PUBLIC;
 --
 drop view anjelica.v_albventa;
 create view anjelica.v_albventa as select c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,

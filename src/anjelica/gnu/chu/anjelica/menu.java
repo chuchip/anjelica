@@ -81,6 +81,7 @@ public class menu extends JFrame
   JMenuItem albComPlanta = new JMenuItem();
   JMenuItem comprasItem2 = new JMenuItem();
   JMenuItem conalbco = new JMenuItem();
+  JMenuItem pdclasifLomos = new JMenuItem();
    JMenuItem albaPrv = new JMenuItem("Alb.Prv");
 
   JMenu ItemInventario = new JMenu();
@@ -341,6 +342,12 @@ JMenuItem mantArticVenta = new JMenuItem();
     comprasItem2.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         comprasItem2_actionPerformed(e);
+      }
+    });
+    pdclasifLomos.setText("Mant.Clasif.Art.");
+    pdclasifLomos.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        pdclasifLomos_actionPerformed();
       }
     });
     conalbco.setText("Consultas");
@@ -1003,6 +1010,7 @@ JMenuItem mantArticVenta = new JMenuItem();
     jPopupCompras.add(comprasItem2);
     jPopupCompras.add(albaPrv);
     jPopupCompras.add(conalbco);
+    jPopupCompras.add(pdclasifLomos);
     jPopupCompras.add(clvertprv);
     jPopupCompras.add(clintalco);
     jPopupCompras.add(pdpagreal);
@@ -1773,6 +1781,9 @@ void limpiaDB()
 
   void conalbco_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.anjelica.compras.conalbco(menu.this, EU));
+  }
+  void pdclasifLomos_actionPerformed() {
+    lanzaEjecutable(new gnu.chu.anjelica.compras.pdclaslom(menu.this, EU));
   }
  void albaPrv_actionPerformed(ActionEvent e) {
      Hashtable ht = new Hashtable();

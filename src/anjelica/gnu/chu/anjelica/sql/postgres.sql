@@ -2395,6 +2395,7 @@ create table anjelica.v_prvmata
 -- drop table claslomos;
 create table anjelica.claslomos
 (
+	prv_codi int not null, -- Afecta a Proveedor (si es 0, afecta a todos)
 	cll_codi int not null, -- Codigo de Clasificacion
 	pro_codi int not null, -- Codigo de Producto
 	cll_kilos float not null -- Kilos Minimos
