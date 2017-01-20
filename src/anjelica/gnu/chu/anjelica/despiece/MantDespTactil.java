@@ -1206,6 +1206,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Pcabe.setQuery(true);
     Pcabe.resetTexto();
     grd_unidE.setEnabled(false);
+    deo_blockE.addItem("Terminado","T");
     if (Integer.parseInt(Formatear.getFechaAct("MM"))>2)
         eje_numeE.setValorInt(EU.ejercicio);
     deo_codiE.requestFocus();
@@ -1219,8 +1220,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
          Pcabe.getErrorConf().requestFocus();
          return;
        }
+       
        nav.pulsado=navegador.NINGUNO;
-
+        s=getStrSql();
        ArrayList v = new ArrayList();
        v.add(eje_numeE.getStrQuery());
        v.add(deo_codiE.getStrQuery());
@@ -1228,15 +1230,23 @@ public class MantDespTactil  extends ventanaPad implements PAD
        v.add(grd_fechaE.getStrQuery());
        v.add(grd_unidE.getStrQuery());
        v.add(tid_codiE.getStrQuery());
-       v.add(deo_blockE.getStrQuery());
+       if (!deo_blockE.getValor().equals("T"))
+        v.add(deo_blockE.getStrQuery());
+       else
+          s+=" and deo_block = 'S' and  "
+              + " deo_fecha >= current_date - 30 "
+              + "and (select sum(def_kilos) from v_despfin as f  where o.deo_codi=f.deo_codi and o.eje_nume=f.eje_nume)+3 >= "
+              + "(select sum(deo_kilos) from desorilin as f where o.deo_codi=f.deo_codi and o.eje_nume=f.eje_nume) "
+              + "and (select sum(def_kilos) from v_despfin as f  where o.deo_codi=f.deo_codi and o.eje_nume=f.eje_nume)- 3 <= "
+              + "(select sum(deo_kilos) from desorilin as f where o.deo_codi=f.deo_codi and o.eje_nume=f.eje_nume) ";
        v.add(grd_feccadE.getStrQuery());
        v.add(usu_nombE.getStrQuery());
        v.add(deo_almoriE.getStrQuery());
        v.add(deo_almdesE.getStrQuery());
        v.add(cli_codiE.getStrQuery());
-
-
-       s = creaWhere(getStrSql(), v,false);
+       deo_blockE.removeItem("Terminado");
+       
+       s = creaWhere(s, v,false);
        s += getOrderQuery();
 //       debug("Query: "+s);
        Pcabe.setQuery(false);
@@ -1301,6 +1311,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     activaTodo();
     actButton(true);
     nav.pulsado=navegador.NINGUNO;
+    deo_blockE.removeItem("Terminado");
     mensajeErr("Consulta .. cancelada");
     mensaje("");
   }
@@ -1799,7 +1810,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    */
   String getStrSql()
   { 
-    return "select * from desporig WHERE deo_seloge ='"+SERIE+"'"+
+    return "select * from desporig as o WHERE deo_seloge ='"+SERIE+"'"+
             " and deo_lotnue!=0 ";
     
   }
