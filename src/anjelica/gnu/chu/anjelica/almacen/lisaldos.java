@@ -35,6 +35,7 @@ import gnu.chu.camposdb.proPanel;
 import gnu.chu.camposdb.sbePanel;
 import gnu.chu.controles.*;
 import gnu.chu.interfaces.VirtualGrid;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.print.util;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
@@ -64,6 +65,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   ArrayList<DatIndiv>  listIndiv=new ArrayList();
   JMenuItem verIndiv = new JMenuItem("Ver Individuos", Iconos.getImageIcon("view_tree"));
   JMenuItem verMvtos = new JMenuItem("Ver Mvtos", Iconos.getImageIcon("view_tree"));
+
   private double kgVen,kgCom,kgReg=0;
   private CCheckBox pro_cosincE=new CCheckBox("Inc.Costo");
   MvtosAlma mvtosAlm = new MvtosAlma();
@@ -163,7 +165,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   {
     iniciarFrame();
     this.setSize(new Dimension(592, 516));
-    this.setVersion("2016-05-02");
+    this.setVersion("2017-01-21");
     ifMvtos.setSize(new Dimension(475, 325));
     
     ifMvtos.setVisible(false);
@@ -409,6 +411,15 @@ public class lisaldos   extends ventana  implements JRDataSource
   }
   void activarEventos()
   {
+    jt.addMouseListener(new MouseAdapter()
+      {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+              if (e.getClickCount() < 2 || jt.isVacio())
+                  return;            
+              mostrarMvtos();
+          }
+      });
     verIndiv.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -485,6 +496,20 @@ public class lisaldos   extends ventana  implements JRDataSource
       }
     });
    
+  }
+  void mostrarMvtos() {
+    ejecutable prog;
+    if ((prog = jf.gestor.getProceso(Comvalm.getNombreClase())) == null)
+        return;
+    gnu.chu.anjelica.almacen.Comvalm cm = (gnu.chu.anjelica.almacen.Comvalm) prog;
+
+    cm.setProCodi(jt.getValorInt(jt.getSelectedRowDisab(),0));
+    cm.setLote(0);
+    cm.setIndividuo(0);
+    cm.setSerie("");
+    cm.setEjercicio(0);
+    cm.ejecutaConsulta();
+    jf.gestor.ir(cm);
   }
   /**
    * Muestra los individuos desglosados en stock.
