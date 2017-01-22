@@ -128,7 +128,7 @@ public class repetiqu extends ventana
     {
       iniciarFrame();
       this.setSize(new Dimension(519,339));
-      this.setVersion("2015-05-08");
+      this.setVersion("2017-01-22");
       Pprinc.setLayout(null);
       statusBar = new StatusBar(this);
       Bindi.setBounds(new Rectangle(471, 25, 1, 1));
@@ -636,7 +636,7 @@ public class repetiqu extends ventana
         // Fin del Bucle ya tenemos todos los datos.
         mensajeErr("Espere, por favor ... Imprimiendo");
         etiq.setTipoEtiq(dtStat, EU.em_cod,
-                          Integer.parseInt(tipetiqE.getValor().trim()));
+                          tipetiqE.getValorInt());
         
         CodigoBarras codBarras=new CodigoBarras("R",deo_ejelotE.getText(),
                 deo_serlotE.getText(),
@@ -653,7 +653,8 @@ public class repetiqu extends ventana
 //        else
 //            etiq.setFechaCongelado(utp.getFechaProduccion());
         
-        etiq.iniciar(codBarras.getCodBarra() ,codBarras.getLote(tipetiqE.getValorInt()==etiqueta.ETIQINT),
+        etiq.iniciar(tipetiqE.getValorInt()!=etiqueta.ETIQINT?codBarras.getCodBarra():codBarras.getLote(false),
+            codBarras.getLote(tipetiqE.getValorInt()!=etiqueta.ETIQINT),
             pro_codiE.getText(),pro_codiE.getTextNomb(),nacidoE.getText(),cebadoE.getText(),despiezadoE.getText(),
             ntrazaE.getText(),deo_kilosE.getValorDec(),
             conservarE.getText(),sacrificadoE.getText(),

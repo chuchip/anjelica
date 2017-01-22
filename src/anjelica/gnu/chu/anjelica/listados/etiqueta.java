@@ -80,7 +80,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   public final static int NORMAL=0;
   public final static int MINI=1;
   public final static int REDUCIDA=2;
-  public final static int ETIQINT=3;
+  public final static int ETIQINT=4;
   boolean preVisual=false;
   boolean printDialog=false;
   boolean simulaPrint=false;
