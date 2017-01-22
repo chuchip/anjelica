@@ -19,7 +19,7 @@ import javax.swing.event.*;
  /**
  * <p>Título: pdpedco</p>
  * <p>Descripción: Mantenimiento Pedidos de Compra</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -57,6 +57,10 @@ public class pdpedco extends ventanaPad   implements PAD
   CTextField pcc_fecpedE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CLabel cLabel5 = new CLabel();
   CTextField pcc_fecrecE = new CTextField(Types.DATE,"dd-MM-yyyy");
+  CLabel pcc_fecconL=new CLabel("Conf:");
+  CLabel pcc_feclisL=new CLabel("List:");
+  CTextField pcc_fecconE = new CTextField(Types.DATE,"dd-MM-yy");
+  CTextField pcc_feclisE = new CTextField(Types.DATE,"dd-MM-yy");
   CTextField pcl_feccadE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CLabel cLabel4 = new CLabel();
   prvPanel prv_codiE = new prvPanel();
@@ -67,6 +71,7 @@ public class pdpedco extends ventanaPad   implements PAD
 
   CGridEditable jt = new CGridEditable(14)
   {
+    @Override
     public void cambiaColumna(int col,int colNueva, int row)
     {
       String nombArt;
@@ -160,13 +165,14 @@ public class pdpedco extends ventanaPad   implements PAD
   CTextField kgTotE = new CTextField(Types.DECIMAL,"##,##9.9");
   CLabel cLabel14 = new CLabel();
   CTextField impTotE = new CTextField(Types.DECIMAL,"###,##9.9");
-  CLabel cLabel15 = new CLabel();
-  CCheckBox opPedi = new CCheckBox();
-  CCheckBox opConf = new CCheckBox();
-  CCheckBox opFact = new CCheckBox();
+  CComboBox pcc_tiplistE = new CComboBox();
+//  CLabel cLabel15 = new CLabel();
+//  CCheckBox opPedi = new CCheckBox();
+//  CCheckBox opConf = new CCheckBox();
+//  CCheckBox opFact = new CCheckBox();
   CButton Blistar = new CButton(Iconos.getImageIcon("print"));
   GridBagLayout gridBagLayout1 = new GridBagLayout();
-  CLabel cLabel16 = new CLabel();
+  CLabel pcc_estrecL = new CLabel();
   CComboBox pcc_estrecE = new CComboBox();
   CLabel cLabel17 = new CLabel();
   CTextField pcc_impporE = new CTextField(Types.DECIMAL,"##9.999");
@@ -223,8 +229,7 @@ public class pdpedco extends ventanaPad   implements PAD
       if (ht != null)
       {
         if (ht.get("admin") != null)
-          SWADMIN = Boolean.valueOf(ht.get("admin").toString()).
-              booleanValue();
+          SWADMIN = Boolean.parseBoolean(ht.get("admin").toString());
       }
       setTitulo("Mantenimiento Pedidos Compras");
 
@@ -248,13 +253,13 @@ public class pdpedco extends ventanaPad   implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(760,522));
-    this.setVersion("2017-01-08"+ (SWADMIN?"(ADMINISTRADOR)":""));
+    this.setVersion("2017-01-22"+ (SWADMIN?"(ADMINISTRADOR)":""));
 
     Pprinc.setLayout(gridBagLayout1);
 
     statusBar = new StatusBar(this);
     nav = new navegador(this, dtCons, false, navegador.NORMAL);
-    ponItemsEstado();
+    ponItemsEstado(pcc_estadE);
     pcc_estrecE.addItem("Pendiente","P");
     pcc_estrecE.addItem("Cancelado","C");
     pcc_estrecE.addItem("Recibido","R");
@@ -332,25 +337,36 @@ public class pdpedco extends ventanaPad   implements PAD
     cLabel14.setText("Importe");
     cLabel14.setBounds(new Rectangle(345, 3, 55, 19));
     impTotE.setBounds(new Rectangle(394, 3, 97, 19));
-    cLabel15.setBackground(Color.blue);
-    cLabel15.setForeground(Color.cyan);
-    cLabel15.setMaximumSize(new Dimension(48, 17));
-    cLabel15.setOpaque(true);
-    cLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-    cLabel15.setText("Listar");
-    cLabel15.setBounds(new Rectangle(4, 25, 43, 14));
-    opPedi.setMargin(new Insets(0, 0, 0, 0));
-    opPedi.setText("Pedido");
-    opPedi.setBounds(new Rectangle(52, 25, 64, 14));
-    opConf.setMargin(new Insets(0, 0, 0, 0));
-    opConf.setSelectedIcon(null);
-    opConf.setText("Confirmado");
-    opConf.setBounds(new Rectangle(120, 25, 97, 14));
-    opFact.setMargin(new Insets(0, 0, 0, 0));
-    opFact.setText("Facturado");
-    opFact.setBounds(new Rectangle(216, 25, 82, 14));
-    Blistar.setBounds(new Rectangle(393, 23, 97, 22));
+    ponItemsEstado(pcc_tiplistE);
+    pcc_tiplistE.setPreferredSize(new Dimension(100,100));
+    pcc_tiplistE.setBounds(new Rectangle(4, 25, 80, 17));
+//    cLabel15.setBackground(Color.blue);
+//    cLabel15.setForeground(Color.cyan);
+//    cLabel15.setMaximumSize(new Dimension(48, 17));
+//    cLabel15.setOpaque(true);
+//    cLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+//    cLabel15.setText("Listar");
+//    cLabel15.setBounds(new Rectangle(4, 25, 43, 14));
+//    opPedi.setMargin(new Insets(0, 0, 0, 0));
+//    opPedi.setText("Pedido");
+//    opPedi.setBounds(new Rectangle(52, 25, 64, 14));
+//    opConf.setMargin(new Insets(0, 0, 0, 0));
+//    opConf.setSelectedIcon(null);
+//    opConf.setText("Confirmado");
+//    opConf.setBounds(new Rectangle(120, 25, 97, 14));
+//    opFact.setMargin(new Insets(0, 0, 0, 0));
+//    opFact.setText("Facturado");
+//    opFact.setBounds(new Rectangle(216, 25, 82, 14));
+    Blistar.setBounds(new Rectangle(88, 23, 87, 22));
     Blistar.setText("Listar");
+    opPrecios.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+    opPrecios.setBounds(new Rectangle(180, 25, 60, 14));
+    
+    pcc_fecconL.setBounds(new Rectangle(242, 25, 40, 17));
+    pcc_fecconE.setBounds(new Rectangle(285, 25, 60, 17));
+    pcc_feclisL.setBounds(new Rectangle(350, 25, 40, 17));
+    pcc_feclisE.setBounds(new Rectangle(403, 25, 60, 17));
+
     jt.setMaximumSize(new Dimension(745, 276));
     jt.setMinimumSize(new Dimension(745, 276));
     jt.setPreferredSize(new Dimension(745, 276));
@@ -361,8 +377,8 @@ public class pdpedco extends ventanaPad   implements PAD
     Bcancelar.setMinimumSize(new Dimension(111, 31));
     Bcancelar.setPreferredSize(new Dimension(111, 31));
     pcc_estadE.setBounds(new Rectangle(446, 26, 98, 20));
-    cLabel16.setText("Est.Rec");
-    cLabel16.setBounds(new Rectangle(568, 51, 46, 20));
+    pcc_estrecL.setText("Est.Recep.");
+    pcc_estrecL.setBounds(new Rectangle(550, 51, 75, 18));
 
     Birgrid.setBounds(new Rectangle(696, 63, 1, 1));
     pcc_estrecE.setBounds(new Rectangle(620, 51, 93, 18));
@@ -378,8 +394,8 @@ public class pdpedco extends ventanaPad   implements PAD
     pcc_impporE.setBounds(new Rectangle(651, 27, 62, 18));
     opPrecios.setMargin(new Insets(0, 0, 0, 0));
     opPrecios.setSelected(true);
-    opPrecios.setText("Ver Precios");
-    opPrecios.setBounds(new Rectangle(299, 25, 92, 14));
+    opPrecios.setText("Precios");
+   
     cLabel18.setText("Emp.");
     cLabel18.setBounds(new Rectangle(1, 5, 33, 16));
 
@@ -444,7 +460,7 @@ public class pdpedco extends ventanaPad   implements PAD
     Ptotal.add(cLabel9, null);
     Ptotal.add(npiTotE, null);
     Ptotal.add(cLabel8, null);
-    Ptotal.add(cLabel15, null);
+    
     Pprinc.add(Pcabe,   new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
     Pprinc.add(jt,  new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0
@@ -481,14 +497,17 @@ public class pdpedco extends ventanaPad   implements PAD
     Pcabe.add(cLabel4, null);
     Pcabe.add(cLabel17, null);
     Pcabe.add(pcc_estrecE, null);
-    Pcabe.add(cLabel16, null);
+    Pcabe.add(pcc_estrecL, null);
     Pcabe.add(sbe_codiE, null);
     Pcabe.add(cLabel110, null);
-    Ptotal.add(opFact, null);
+    Ptotal.add(pcc_tiplistE, null);
     Ptotal.add(Blistar, null);
     Ptotal.add(opPrecios, null);
-    Ptotal.add(opPedi, null);
-    Ptotal.add(opConf, null);
+    Ptotal.add(pcc_fecconL, null);
+    Ptotal.add(pcc_fecconE, null);
+    Ptotal.add(pcc_feclisL, null);
+    Ptotal.add(pcc_feclisE, null);
+
     Pprinc.add(Bcancelar,   new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 9, 0, 8), 0, 0));
     Pprinc.add(Baceptar,   new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0
@@ -536,15 +555,17 @@ public class pdpedco extends ventanaPad   implements PAD
     acc_serieE.setColumnaAlias("acc_serie");
     pcc_impporE.setColumnaAlias("pcc_imppor");
     pcc_portesE.setColumnaAlias("pcc_portes");
+    pcc_fecconE.setColumnaAlias("pcc_feccon");
+    pcc_feclisE.setColumnaAlias("pcc_feclis");
     activarEventos();
     verDatos(dtCons);
   }
-  void ponItemsEstado()
+  void ponItemsEstado(CComboBox combo)
   {
-    pcc_estadE.addItem("Pedido", "P");
-    pcc_estadE.addItem("Confirmado", "C");
-    pcc_estadE.addItem("PreFacturado", "F");
-    pcc_estadE.resetTexto();
+    combo.addItem("Pedido", "P");
+    combo.addItem("Confirmado", "C");
+    combo.addItem("PreFacturado", "F");
+    combo.resetTexto();
   }
   void activarEventos()
   {
@@ -654,6 +675,9 @@ public class pdpedco extends ventanaPad   implements PAD
     Pcabe.resetTexto();
     eje_numeE.setValorDec(EU.ejercicio);
     emp_codiE.setText(""+EU.em_cod);
+    pcc_fecconE.setEnabled(true);
+    pcc_feclisE.setEnabled(true);
+
     if (EU.getSbeCodi()!=0)
       sbe_codiE.setValorInt(EU.getSbeCodi());
     acc_numeE.requestFocus();
@@ -682,6 +706,8 @@ public class pdpedco extends ventanaPad   implements PAD
     v.add(pcc_estrecE.getStrQuery());
     v.add(pcc_comenE.getStrQuery());
     v.add(pcc_impporE.getStrQuery());
+    v.add(pcc_fecconE.getStrQuery());
+    v.add(pcc_feclisE.getStrQuery());
     try
     {
       Pcabe.setQuery(false);
@@ -763,6 +789,7 @@ public class pdpedco extends ventanaPad   implements PAD
   public void ej_edit1()
   {
     try  {
+      
       int nRow=jt.getRowCount();
       if (! checkCampos())
         return;
@@ -770,7 +797,8 @@ public class pdpedco extends ventanaPad   implements PAD
       s="SELECT * FROM pedicoc WHERE emp_codi = "+emp_codiE.getValorInt()+
                    " and eje_nume = "+eje_numeE.getValorInt()+
                    " and pcc_nume = "+pcc_numeE.getValorInt();
-
+      if (pcc_fecconE.isNull() && pcc_estadE.getValor().equals("C"))
+          pcc_fecconE.setDate(Formatear.getDateAct());
       dtAdd.select(s,true);
       dtAdd.edit(dtAdd.getCondWhere());
       guardaDatCab(dtAdd);
@@ -792,7 +820,7 @@ public class pdpedco extends ventanaPad   implements PAD
       activaTodo();
       mensajeErr("Pedido .. MODIFICADO");
       mensaje("");
-     actEstPed();
+      pcc_tiplistE.setValor(pcc_estadE.getValor());
     } catch (Exception k)
     {
       Error("Error al Editar Registro",k);
@@ -904,7 +932,7 @@ public class pdpedco extends ventanaPad   implements PAD
         rgSelect();
       mensajeErr("Pedido .. INSERTADO");
       mensaje("");
-      actEstPed();
+      pcc_tiplistE.setValor(pcc_estadE.getValor());
     } catch (Exception k)
     {
       Error("ERROR AL insertar NUEVOS DATOS",k);
@@ -913,6 +941,7 @@ public class pdpedco extends ventanaPad   implements PAD
 
   private void guardaDatCab(DatosTabla dt) throws SQLException, java.text.ParseException
   {
+ 
     dt.setDato("prv_codi", prv_codiE.getValorInt());
     dt.setDato("pcc_fecped", pcc_fecpedE.getText(), "dd-MM-yyyy");
     dt.setDato("pcc_fecrec", pcc_fecrecE.getText(), "dd-MM-yyyy");
@@ -922,6 +951,7 @@ public class pdpedco extends ventanaPad   implements PAD
     dt.setDato("pcc_imppor", pcc_impporE.getValorDec());
     dt.setDato("pcc_comen", pcc_comenE.getText());
     dt.setDato("pcc_portes", pcc_portesE.getValor());
+    dt.setDato("pcc_feccon", pcc_fecconE.getDate());
     dtAdd.update(stUp);
   }
   private boolean checkCampos() throws SQLException, ParseException
@@ -1061,6 +1091,8 @@ public class pdpedco extends ventanaPad   implements PAD
       jt.setEnabled(b);
       pro_codiE.resetCambio();
     }
+    pcc_fecconE.setEnabled(false);
+    pcc_feclisE.setEnabled(false);
     pcc_estrecE.setEnabled(b);
     emp_codiE.setEnabled(b);
     sbe_codiE.setEnabled(b);
@@ -1153,12 +1185,10 @@ public class pdpedco extends ventanaPad   implements PAD
       pcc_impporE.setText(dtCon1.getString("pcc_imppor"));
       pcc_portesE.setValor(dtCon1.getString("pcc_portes"));
       subject=dtCon1.getString("pcc_subjec");
-
-      opPedi.setSelected(false);
-      opFact.setSelected(false);
-      opConf.setSelected(false);
-
-      actEstPed();
+      pcc_fecconE.setDate(dtCon1.getDate("pcc_feccon"));
+      pcc_feclisE.setDate(dtCon1.getDate("pcc_feclis"));
+      pcc_tiplistE.setValor(pcc_estadE.getValor());
+      
 
       pcc_comenE.setText(dtCon1.getString("pcc_comen"));
       verDatLin(dt);
@@ -1168,15 +1198,9 @@ public class pdpedco extends ventanaPad   implements PAD
     }
   }
 
-  private void actEstPed()
-  {
-    if (pcc_estadE.getValor().equals("P"))
-      opPedi.setSelected(true);
-    if (pcc_estadE.getValor().equals("F"))
-      opFact.setSelected(true);
-    if (pcc_estadE.getValor().equals("C"))
-      opConf.setSelected(true);
-  }
+ 
+ 
+ 
   /**
    * Ver Datos Lineas del pedido
    * @param dt DatosTabla Con los datos de cabecera
@@ -1313,34 +1337,22 @@ public class pdpedco extends ventanaPad   implements PAD
         return;
 
       s =" select c.*,l.pro_codi,l.pro_nomb, l.pcl_numli,l.div_codi,l.pcl_comen,";
-      int nEle = 0;
-      if (opConf.isSelected())
+  
+      
+      switch (pcc_tiplistE.getValor())
       {
-        s +=
-            " pcl_nucaco as pcl_nucape, pcl_cantco as pcl_cantpe, pcl_precco as pcl_precpe";
-        nEle++;
+        case "C":
+         s += " pcl_nucaco as pcl_nucape, pcl_cantco as pcl_cantpe, pcl_precco as pcl_precpe"; 
+         break;
+        case "P":
+          s += "  pcl_nucape, pcl_cantpe, pcl_precpe";
+          break;
+        case "F":
+          s +=" pcl_nucafa as pcl_nucape, pcl_cantfa as pcl_cantpe, pcl_precfa as pcl_precpe";
+            
       }
-      if (opPedi.isSelected())
-      {
-        s += "  pcl_nucape, pcl_cantpe, pcl_precpe";
-        nEle++;
-      }
-      if (opFact.isSelected())
-      {
-        s +=
-            " pcl_nucafa as pcl_nucape, pcl_cantfa as pcl_cantpe, pcl_precfa as pcl_precpe";
-        nEle++;
-      }
-      if (nEle == 0)
-      {
-        mensajeErr("Escoja un tipo de Listado");
-        return;
-      }
-      if (nEle > 1)
-      {
-        mensajeErr("Solo se puede escoger un tipo de Listado");
-        return;
-      }
+     
+   
       s +=", pv.prv_nomb,pv.prv_percon from pedicoc as c,pedicol as l,v_proveedo as pv" +
           " where c.emp_codi = l.emp_codi" +
           " and c.eje_nume= l.eje_nume " +
@@ -1362,6 +1374,7 @@ public class pdpedco extends ventanaPad   implements PAD
                                  subject, this);
       msgTexto.addInternalFrameListener(new InternalFrameAdapter()
       {
+        @Override
         public void internalFrameClosing(InternalFrameEvent e)
         {
           salSubject();
@@ -1384,7 +1397,8 @@ public class pdpedco extends ventanaPad   implements PAD
         mensajeErr("Listado ... CANCELADO");
         return;
       }
-      String s1 = "UPDATE pedicoc set pcc_subjec = '" +
+      String s1 = "UPDATE pedicoc set  pcc_feclis='"+Formatear.getFechaAct("yyyyMMdd")+"'"+
+          ",pcc_subjec = '" +
           (subject.length() > 255 ? subject.substring(0, 255) : subject) +
           "' WHERE emp_codi = " + emp_codiE.getValorInt()+
           " and eje_nume= " + eje_numeE.getValorInt() +
@@ -1407,7 +1421,8 @@ public class pdpedco extends ventanaPad   implements PAD
           new JRResultSetDataSource(rs));
 
       gnu.chu.print.util.printJasper(jp, EU);
-
+      pcc_feclisE.setDate(Formatear.getDateAct());
+      mensajeErr("Listado generado");
     }
     catch (Exception k)
     {
