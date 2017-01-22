@@ -1159,13 +1159,14 @@ public class utildesp
   * @param fecCad Fecha Caducadad (String)
   * @param fecSacr Fecha Ssacrificio (Date)
   * @param cadProdDate Fecha Caducidad (Date)
+  * @param grupoLote Grupo del Lote a imprimir 
   * @throws Exception
   */
  public void imprEtiq(int TIPOETIQ, DatosTabla dtStat,
                       int proCodi, String nombArt,  String indiceEti, int nuloge, String ejloge,
                       String seloge, int numInd,
                       double kilos, java.util.Date fecDesp, java.util.Date fecProd, java.util.Date fecCad,
-                      java.util.Date fecSacr,java.util.Date cadProdDate) throws  Throwable
+                      java.util.Date fecSacr,java.util.Date cadProdDate,int grupoLote) throws  Throwable
     {
         actualConservar(proCodi, dtStat);
         if (etiq == null) {
@@ -1176,7 +1177,7 @@ public class utildesp
 //            logo=null;
 //        else
             logo=etiq.getLogotipo();
-        CodigoBarras codBarras = new CodigoBarras(indiceEti,ejloge,seloge,nuloge,proCodi,numInd,kilos);
+        CodigoBarras codBarras = new CodigoBarras(indiceEti,ejloge,seloge,nuloge,proCodi,numInd,kilos,grupoLote);
       
             
         etiq.iniciar(codBarras.getCodBarra() ,codBarras.getLote() ,

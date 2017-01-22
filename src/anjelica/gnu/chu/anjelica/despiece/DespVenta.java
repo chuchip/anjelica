@@ -1121,7 +1121,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                     def_fecproE.getDate(),
                     def_feccadE.getDate(),
                     def_fecsacE.getDate(),                    
-                    def_feccadE.getDate());
+                    def_feccadE.getDate(),0);
       mensajeErr("Etiqueta ... Listada");
    }
    catch (Throwable ex)
@@ -1340,6 +1340,8 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         cargaPSC.setSelected(true);
         cargaPSC.setText("carga PS");
         cargaPSC.setToolTipText("Carga Productos de Salida del tipo despiece");
+        cargaPSC.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cargaPSC.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Pcabe.add(cargaPSC);
         cargaPSC.setBounds(350, 20, 80, 17);
 

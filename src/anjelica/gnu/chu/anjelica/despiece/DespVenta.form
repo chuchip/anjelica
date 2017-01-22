@@ -252,6 +252,8 @@
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="carga PS"/>
                 <Property name="toolTipText" type="java.lang.String" value="Carga Productos de Salida del tipo despiece"/>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="horizontalTextPosition" type="int" value="2"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

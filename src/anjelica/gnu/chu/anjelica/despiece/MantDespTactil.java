@@ -2666,6 +2666,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
      if (etiq == null)
         etiq = new etiqueta(EU);
      etiq.setTipoEtiq(dtStat,EU.em_cod,tipoetiq);
+     etiq.setNumCopias(1);
      //@todo Implementar funcion de diferentes tipos de etiquetas en el mismo despiece
      
      if (etiq.getEtiquetasPorPagina()>1)

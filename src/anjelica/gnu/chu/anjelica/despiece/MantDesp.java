@@ -105,6 +105,7 @@ public class MantDesp extends ventanaPad implements PAD
     String serLoteB;
     double deoKilosB;
     final static String TABLA_BLOCK = "desporig";
+    final int FORZAR_LOTE=1;
     Desporig desorca;
     Desorilin desorli;
     int proCodAnt;
@@ -221,15 +222,14 @@ public class MantDesp extends ventanaPad implements PAD
             jbInit();
         } catch (Exception e)
         {
-            ErrorInit(e);
-            
+            ErrorInit(e);            
         }
     }
 
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2016-12-31" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2017-01-22" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -1190,19 +1190,21 @@ public class MantDesp extends ventanaPad implements PAD
             if (!checkCab())
                 return;
             resetCambioLineaCab();
-
-            if (!AGRUPALOTE)
+            if (nav.pulsado==navegador.ADDNEW && deo_lotnueE.getValorInt()!=FORZAR_LOTE)
             {
-                boolean isDespAgru = MantTipDesp.isDespieceAgrup(tid_codiE.getValorInt(), dtStat);
-                deo_lotnueE.setEnabled(isDespAgru);
-                deo_lotnueE.setValor(isDespAgru ? "0" : "-1");
-            } else
-            {
-                boolean isDespAgru = MantTipDesp.isDespieceAgrup(tid_codiE.getValorInt(), dtStat);
-                if (isDespAgru)
+                if (!AGRUPALOTE)
                 {
+                    boolean isDespAgru = MantTipDesp.isDespieceAgrup(tid_codiE.getValorInt(), dtStat);
                     deo_lotnueE.setEnabled(isDespAgru);
-                    deo_lotnueE.setValor("0");
+                    deo_lotnueE.setValor(isDespAgru ? "0" : "-1");
+                } else
+                {
+                    boolean isDespAgru = MantTipDesp.isDespieceAgrup(tid_codiE.getValorInt(), dtStat);
+                    if (isDespAgru)
+                    {
+                        deo_lotnueE.setEnabled(isDespAgru);
+                        deo_lotnueE.setValor("0");
+                    }
                 }
             }
             if (proCodTD == 0 || proCodTD != jtCab.getValorInt(0, JTCAB_PROCODI))
@@ -1504,7 +1506,7 @@ public class MantDesp extends ventanaPad implements PAD
         nRow=jtLin.getRowCount();
         for (int n=0;n<nRow;n++)
         {
-             guardaLinDesp(deo_ejlogeE.getValorInt(), EU.em_cod,
+             guardaLinDespFin(deo_ejlogeE.getValorInt(), EU.em_cod,
                     deo_selogeE.getText(), deo_nulogeE.getValorInt(), 
                     jtLin.getValorInt(n,JTLIN_NUMIND),
                     jtLin.getValorInt(n,JTLIN_PROCODI),
@@ -2083,7 +2085,7 @@ public class MantDesp extends ventanaPad implements PAD
             utdesp.getFechaProduccion(),
             utdesp.getFecCaduc(),
             utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
-            utdesp.getFecCaduc());
+            utdesp.getFecCaduc(),deo_numdesE.getValorInt() );
     }
 
     @Override
@@ -2480,6 +2482,9 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_codiE.setEnabled(enab);
                 usu_nombE.setEnabled(enab);                
             case navegador.ADDNEW:
+//               deo_numdesE.setEnabled(enab);
+               deo_selogeE.setEnabled(enab);
+               deo_nulogeE.setEnabled(enab);
 //        deo_blockE.setEnabled(enab);
             case navegador.EDIT:
                 cli_codiE.setEnabled(enab);
@@ -2487,7 +2492,10 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_almdesE.setEnabled(enab);
                 ImprEtiqMI.setEnabled(!enab);
                 cli_codiE.setEnabled(enab);
+//                deo_numdesE.setEnabled(enab);
                 cli_codiE.setEnabledNombre(enab);
+                deo_selogeE.setEnabled(enab);
+                deo_nulogeE.setEnabled(enab);
                 deo_desnueE.setEnabled(enab);
                 BsalLin.setEnabled(enab);
                 BsaltaCab.setEnabled(enab);
@@ -3154,7 +3162,7 @@ public class MantDesp extends ventanaPad implements PAD
                 mensajeErr("");
                 if (!opSimular.isSelected())
                 {
-                    guardaLinea(linea);
+                    guardaLineaFin(linea);
                     mensajeErr("Linea " + linea + "... Guardada");
                 }
                 if (opImpEt.isSelected() && pro_codlE.isVendible() && pro_codlE.getEtiCodi() >= 0
@@ -3233,7 +3241,7 @@ public class MantDesp extends ventanaPad implements PAD
      * Guarda lineas finales de despiece. (v_despfin)
      * @param linea
      */
-    void guardaLinea(int linea) 
+    void guardaLineaFin(int linea) 
     {
         try
         {
@@ -3245,7 +3253,7 @@ public class MantDesp extends ventanaPad implements PAD
 //     debug("En guarda Linea: "+linea);
             if (nInd == 0)
             {
-                if (getNuLiDes(true) == 1)
+                if (getNuLiDes(true) == 1 && deo_lotnueE.getValorInt()!= FORZAR_LOTE)
                 {
                     swMantLote = true;
                     if (tid_codiE.getValorInt() == MantTipDesp.AUTO_DESPIECE || tid_codiE.getValorInt() == MantTipDesp.CONGELADO_DESPIECE)
@@ -3279,7 +3287,7 @@ public class MantDesp extends ventanaPad implements PAD
                     deo_ejlogeE.getValorInt(), EU.em_cod,
                     deo_selogeE.getText(), deo_nulogeE.getValorInt());
                 utdesp.setGrupoDesp(deo_numdesE.getValorInt());
-                nOrd = guardaLinDesp(deo_ejlogeE.getValorInt(), EU.em_cod,
+                nOrd = guardaLinDespFin(deo_ejlogeE.getValorInt(), EU.em_cod,
                     deo_selogeE.getText(), deo_nulogeE.getValorInt(), nInd,
                     pro_codlE.getValorInt(),
                     def_kilosE.getValorDec(), def_numpieE.getValorInt(), def_unicajE.getValorInt(),
@@ -3300,7 +3308,7 @@ public class MantDesp extends ventanaPad implements PAD
 //                {
 //                    enviaMailError("Anulo stock partidas con producto=0"+ ventana.getCurrentStackTrace());
 //                }
-                guardaLinDesp(deo_ejlogeE.getValorInt(), EU.em_cod,
+                guardaLinDespFin(deo_ejlogeE.getValorInt(), EU.em_cod,
                     deo_selogeE.getText(), deo_nulogeE.getValorInt(), nInd,
                     pro_codlE.getValorInt(), def_kilosE.getValorDec(),
                     def_numpieE.getValorInt(), def_unicajE.getValorInt(),
@@ -3361,7 +3369,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_fecproE.isNull() ? deo_fechaE.getDate() : deo_fecproE.getDate(),
                 jtLin.getValDate(linea, JTLIN_FECCAD),
                 utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
-                jtLin.getValDate(linea, JTLIN_FECCAD));
+                jtLin.getValDate(linea, JTLIN_FECCAD),deo_numdesE.getValorInt());
             mensajeErr("Etiqueta ... Listada");
         } catch (Throwable ex)
         {
@@ -3392,10 +3400,10 @@ public class MantDesp extends ventanaPad implements PAD
             int proCodi=jtLin.getValorInt(jtDesp.getSelectedRowDisab(), JTLIN_PROCODI);
             String proNomb=jtLin.getValString(jtDesp.getSelectedRowDisab(), JTLIN_PRONOMB);
             CodigoBarras codBarras = new CodigoBarras("D",eje_numeE.getText(),deo_selogeE.getText(),
-                deo_nulogeE.getValorInt(),proCodi,0,0); 
+                deo_nulogeE.getValorInt(),proCodi,0,0,deo_numdesE.getValorInt()); 
             
 //            java.util.Date fecCong=utildesp.getDateCongelado(proCodi, deo_fecproE.getDate(), dtStat);    
-            etiq.iniciar(deo_nulogeE.getText(),
+            etiq.iniciar(codBarras.getLote(),
                codBarras.getLote(),
                 ""+proCodi, proNomb, utdesp.nacidoE, utdesp.cebadoE,
                 utdesp.despiezadoE, null,
@@ -3497,7 +3505,7 @@ public class MantDesp extends ventanaPad implements PAD
      * @return
      * @throws Exception
      */
-    int guardaLinDesp(int ejeLot, int empLot, String serLot, int numLot, int nInd,
+    int guardaLinDespFin(int ejeLot, int empLot, String serLot, int numLot, int nInd,
         int proCodi, double kilos, int numPiezas, int uniCaj, String feccad, int defOrden) throws Exception {
         utdesp.iniciar(dtAdd, eje_numeE.getValorInt(), EU.em_cod,
             deo_almdesE.getValorInt(), deo_almoriE.getValorInt(), EU);
@@ -3614,6 +3622,7 @@ public class MantDesp extends ventanaPad implements PAD
 
     void setValDesorca() throws SQLException, ParseException {
         desorca.setCliente(cli_codiE.getValorInt());
+        desorca.setDeoNumdes(deo_numdesE.getValorInt());
         desorca.setDeoFecha(deo_fechaE.getDate());
         desorca.setTidCodi(tid_codiE.getValorInt());
         desorca.setDeoFeccad(deo_feccadE.getDate());
@@ -4377,6 +4386,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 deo_lotnueE.addItem("Mantener","0");
                 deo_lotnueE.addItem("Nuevo","-1");
+                deo_lotnueE.addItem("Forzar",""+FORZAR_LOTE);
                 Plotgen.add(deo_lotnueE);
                 deo_lotnueE.setBounds(110, 2, 100, 17);
 
