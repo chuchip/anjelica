@@ -8,9 +8,7 @@ package gnu.chu.anjelica.ventas;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.pad.MantRepres;
 import gnu.chu.anjelica.pad.pdconfig;
-import gnu.chu.camposdb.empPanel;
 import gnu.chu.controles.StatusBar;
-import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
@@ -22,12 +20,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -106,7 +100,7 @@ private void jbInit() throws Exception
 public void iniciarVentana() throws Exception
 {
     
-    Pcondi.setDefButton(Baceptar);
+    Pcondi.setDefButton(Baceptar.getBotonAccion());
 
     jt.tableView.setToolTipText("Doble click encima linea para detalles venta");
    
@@ -125,6 +119,7 @@ public void iniciarVentana() throws Exception
      activarEventos();
 //     cli_codiE.setText("");
      this.setEnabled(true);
+     sbe_codiE.setValorInt(0);
 //     REPRARG="MA";
      if (REPRARG!=null)
      {
@@ -139,11 +134,11 @@ public void iniciarVentana() throws Exception
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                Baceptar_actionPerformed();
+                Baceptar_actionPerformed(e.getActionCommand());
             }
         });
     }
-    void Baceptar_actionPerformed()
+    void Baceptar_actionPerformed(String accion)
     {
         Double[] kilos=new Double[26];
         Double[] total=new Double[26];
@@ -152,7 +147,8 @@ public void iniciarVentana() throws Exception
             " and c.cli_codi = cl.cli_codi "+
             (rep_codiE.isNull()?"":" and rep_codi = '"+rep_codiE.getText()+"'")+
             (zon_codiE.isNull()?"":" and zon_codi = '"+zon_codiE.getText()+"'")+
-            (rut_codiE.isNull()?"":" and rut_codi = '"+rut_codiE.getText()+"'")+           
+            (rut_codiE.isNull()?"":" and rut_codi = '"+rut_codiE.getText()+"'")+   
+            (sbe_codiE.getValorInt()==0 ?"":" and cl.sbe_codi = '"+sbe_codiE.getText()+"'")+   
 //            " and cl.cli_codi=27210"+
             " group by cl.cli_pobl,cl.cli_nomb,cl.cli_codi"+
             " order by cl.cli_pobl,cl.cli_nomb";
@@ -181,10 +177,34 @@ public void iniciarVentana() throws Exception
             cab.add("Tot."+(avc_anoE.getValorInt()-2000));
             jt.setCabecera(cab);
             configurarGrid();
-            s="select sum(avc_kilos) as kilos from v_albavec where cli_codi= ?"+
+            switch (accion)
+            {
+                case "Comisiones":
+                     s="select sum(avl_canti*(avl_prven-avl_profer))  as kilos from v_albventa where cli_codi= ?"+
+                    (rep_codiE.isNull()?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
+                    " and avl_profer > 0 and avl_prbase > 0 "+
+                    " and avc_ano = ?"+
+                    " and avc_fecalb between ? and ? ";
+                    break;
+                case "Albaranes":
+                  s="select count(*) as kilos from v_albavec where cli_codi= ?"+
                     (rep_codiE.isNull()?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
                     " and avc_ano = ?"+
                     " and avc_fecalb between ? and ? ";
+                   break;
+                case "Clientes":
+                  s="select count(distinct(cli_codi)) as kilos from v_albavec where cli_codi= ?"+
+                    (rep_codiE.isNull()?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
+                    " and avc_ano = ?"+
+                    " and avc_fecalb between ? and ? ";
+                  break;
+                default:
+                  s="select sum(avc_kilos) as kilos from v_albavec where cli_codi= ?"+
+                    (rep_codiE.isNull()?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
+                    " and avc_ano = ?"+
+                    " and avc_fecalb between ? and ? ";
+            }
+          
             PreparedStatement psKilos=dtStat.getPreparedStatement(s);
             ResultSet rsKilos;
            
@@ -271,7 +291,6 @@ public void iniciarVentana() throws Exception
         Pcondi = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
         avc_anoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"9999");
-        Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
         cLabel16 = new gnu.chu.controles.CLabel();
         rep_codiE = new gnu.chu.controles.CLinkBox();
         cLabel18 = new gnu.chu.controles.CLabel();
@@ -280,6 +299,7 @@ public void iniciarVentana() throws Exception
         sbe_codiE = new gnu.chu.camposdb.sbePanel();
         cLabel19 = new gnu.chu.controles.CLabel();
         zon_codiE = new gnu.chu.controles.CLinkBox();
+        Baceptar = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("check"));
         jt = new gnu.chu.controles.Cgrid(29);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
@@ -292,10 +312,6 @@ public void iniciarVentana() throws Exception
         cLabel1.setBounds(10, 10, 22, 15);
         Pcondi.add(avc_anoE);
         avc_anoE.setBounds(40, 10, 40, 17);
-
-        Baceptar.setText("Aceptar");
-        Pcondi.add(Baceptar);
-        Baceptar.setBounds(470, 20, 90, 30);
 
         cLabel16.setText("Repres.");
         cLabel16.setPreferredSize(new java.awt.Dimension(60, 18));
@@ -337,6 +353,14 @@ public void iniciarVentana() throws Exception
         Pcondi.add(zon_codiE);
         zon_codiE.setBounds(290, 10, 170, 18);
 
+        Baceptar.addMenu("Kilos", "K");
+        Baceptar.addMenu("Albaranes", "A");
+        Baceptar.addMenu("Clientes", "C");
+        Baceptar.addMenu("Comisiones", "M");
+        Baceptar.setText("Consultar");
+        Pcondi.add(Baceptar);
+        Baceptar.setBounds(470, 20, 110, 26);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -368,7 +392,7 @@ public void iniciarVentana() throws Exception
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private gnu.chu.controles.CButton Baceptar;
+    private gnu.chu.controles.CButtonMenu Baceptar;
     private gnu.chu.controles.CPanel Pcondi;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CTextField avc_anoE;
