@@ -2395,7 +2395,7 @@ create table anjelica.v_prvmata
 -- drop table claslomos;
 create table anjelica.claslomos
 (
-	prv_codi int not null, -- Afecta a Proveedor (si es 0, afecta a todos)
+	prv_codi int not null default 0, -- Afecta a Proveedor (si es 0, afecta a todos)
 	cll_codi int not null, -- Codigo de Clasificacion
 	pro_codi int not null, -- Codigo de Producto
 	cll_kilos float not null -- Kilos Minimos
@@ -2509,6 +2509,8 @@ CREATE TABLE pedicoc
   pcc_subjec varchar(255),	-- Subject para imprimir en el pedido
   pcc_portes char(1),		-- Portes Pagados o Debidos
   sbe_codi smallint not null,   -- SubEmpresa
+  pcc_feccon date,			-- Fecha Confirmacion
+  pcc_feclis date, -- Fecha en que se listo
   constraint ix_pedicoc primary key(eje_nume,emp_codi,pcc_nume)
 );
 --

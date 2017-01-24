@@ -948,7 +948,7 @@ public class ActualStkPart
         "  r.prp_seri as serie,r.prp_part as  lote," +        
         "  r.prp_ano as ejeNume," +       
         " r.prp_indi as numind, "+            
-        " alm_codi as alm_codi " +
+        " alm_codi as alm_codi, " +
         " r.lci_peso as canti, " +
         " lci_numind as canind  " +   
         " FROM v_coninvent as r,v_articulo as a " +

@@ -1,3 +1,13 @@
+--
+-- Añadida fecha confirmacion y listado
+--
+alter table  pedicoc add pcc_feccon date;			-- Fecha Confirmacion
+alter table  pedicoc add  pcc_feclis date; -- Listado 
+
+--
+-- Clasificacion de Lomos por proveedores
+--
+alter claslomos add prv_codi int not null default 0;
 -- 
 -- Ampliado campo NIF a 30 Caracteres
 --

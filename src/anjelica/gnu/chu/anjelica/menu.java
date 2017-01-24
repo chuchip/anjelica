@@ -160,6 +160,7 @@ JMenuItem mantArticVenta = new JMenuItem();
   JMenuItem clriescli = new JMenuItem();
   JMenuItem MenuFicha= new JMenuItem();
   JMenuItem MenuLogs= new JMenuItem();
+  JMenuItem etiqMarcar= new JMenuItem();
   JMenuItem clcobreal = new JMenuItem();
   JMenuItem cacobrea = new JMenuItem();
     JMenuItem pdcobruta = new JMenuItem();
@@ -733,6 +734,12 @@ JMenuItem mantArticVenta = new JMenuItem();
         lanzaFichaClientes();
       }
     });
+     etiqMarcar.setText("Etiq.Marcar");
+    etiqMarcar.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        lanzaEtiqMarcar();
+      }
+    });
      MenuLogs.setText("Ver Logs");
     MenuLogs.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -1102,6 +1109,7 @@ JMenuItem mantArticVenta = new JMenuItem();
     jPopupRiesgo.add(prueba3);
     jPopupVarios.add(MenuFicha);
     jPopupVarios.add(MenuLogs);
+    jPopupVarios.add(etiqMarcar);
     EU=gnu.chu.Menu.LoginDB.cargaEntornoUsu();
     EU.usuario="cpuente";
     EU.password="anjelica";
@@ -1495,6 +1503,11 @@ JMenuItem mantArticVenta = new JMenuItem();
     ht.put("agenteDef", "MA");
     lanzaEjecutable(new FichaClientes(this,EU,ht));  
   }
+  void lanzaEtiqMarcar()
+  {
+      lanzaEjecutable(new gnu.chu.anjelica.listados.CreaEtiqMarca(this,EU));
+  }
+      
  void lanzaVerLogs()
   {
      Hashtable ht = new Hashtable();

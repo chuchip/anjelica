@@ -323,6 +323,7 @@ public class Desporig  implements java.io.Serializable {
     }
     void setDesorca(DatosTabla dtAdd) throws SQLException
     {
+//      dtAdd.setDato("deo_numdes", getDeoNumdes());
       dtAdd.setDato("deo_fecha", getDeoFecha());
       dtAdd.setDato("tid_codi", getTidCodi());
       dtAdd.setDato("deo_feccad",getDeoFeccad());

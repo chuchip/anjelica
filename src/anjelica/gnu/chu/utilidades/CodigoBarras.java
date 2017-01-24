@@ -26,7 +26,7 @@ public class CodigoBarras
 {
     
     private String codBarra,lote,indiceEti,ejeLot;
-    private int proEjeLote,proLote,proCodi,proIndi;
+    private int proEjeLote,proLote,proCodi,proIndi,grupoLote;
     private boolean error=false;
     private int cliente=0;
     private int avcAno;
@@ -47,6 +47,9 @@ public class CodigoBarras
     
     public void setLote(String lote) {
         this.lote = lote;
+    }
+  public void setGrupoLote(String grupolote) {
+        this.grupoLote = grupoLote;
     }
 
     public int getProEjeLote() {
@@ -119,7 +122,7 @@ public class CodigoBarras
         return this.cliente;
     }
     /**
-     * Devuelve el texto del Lote para imprimir
+     * Devuelve el texto del Lote para imprimir.Incluye el individuo
      * @return 
      */
     public String getLote() {
@@ -141,7 +144,7 @@ public class CodigoBarras
     {
         
     }
-   /**
+     /**
    * Inicializa la clase
    * @param ejeLot
    * @param indiceEti Primera letra a poner en la etiqueta para indicar que es 'C','D', etc.
@@ -154,6 +157,23 @@ public class CodigoBarras
    */  
     public CodigoBarras(String indiceEti,String ejeLot,String serLot,int proLote,int proCodi,
           int proNumind,double deoKilos)
+    {
+        this(indiceEti,ejeLot,serLot,proLote,proCodi,proNumind,deoKilos,0);
+    }
+   /**
+   * Inicializa la clase
+   * @param ejeLot
+   * @param indiceEti Primera letra a poner en la etiqueta para indicar que es 'C','D', etc.
+   * @param serLot
+   * @param proLote
+   * @param proCodi
+   * @param proNumind
+   * @param deoKilos
+   * @param grupoLote Grupo del Lote
+   * 
+   */  
+    public CodigoBarras(String indiceEti,String ejeLot,String serLot,int proLote,int proCodi,
+          int proNumind,double deoKilos,int grupoLote)
     {
         this.indiceEti=indiceEti;
         this.ejeLot=ejeLot;
@@ -187,9 +207,10 @@ public class CodigoBarras
     
     String getStringLote(boolean incIndiv)
     {
-              return  (ejeLot.length()>2? ejeLot.substring(2):ejeLot)
-                 + proSerie+  Formatear.format(proLote,"99999").trim()+
-                 (proIndi>0 && incIndiv?"/"+ Formatear.format(proIndi,"#99").trim():"");
+        return  (ejeLot.length()>2? ejeLot.substring(2):ejeLot)
+           + proSerie+  
+             Formatear.format(grupoLote==0?proLote:grupoLote,"99999").trim()+
+           (proIndi>0 && incIndiv?"/"+ Formatear.format(proIndi,"#99").trim():"");
 
     }
     public void setAlbaranVenta(int avcAno,String avcSerie,int avcNume)

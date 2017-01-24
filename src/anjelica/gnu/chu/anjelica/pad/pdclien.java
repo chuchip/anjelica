@@ -324,7 +324,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2016-12-12");
+      this.setVersion("2017-01-23");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -1486,9 +1486,8 @@ public class pdclien extends ventanaPad implements PAD
       }
       if (!cue_codiE.getText().endsWith(cli_codfaE.getText().trim()))
       {
-        mensajeErr("Cuenta contable debe terminar como el cliente a facturar");
+        msgBox("Cuenta contable deberia terminar como el cliente a facturar");
         cue_codiE.requestFocus();
-        return false;                  
       }
           
       if (!fpa_codiE.controlar())
