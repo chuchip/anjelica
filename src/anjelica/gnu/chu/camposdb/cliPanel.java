@@ -547,6 +547,14 @@ public void setZona(String zonCli)
   public String getMsgError() {
     return MsgError;
   }
+  /**
+   * Establece el codigo de Reparto
+   * @param codRep 
+   */
+  public void setTextReparto(String codRep)
+  {
+      cli_codrepL.setText(codRep);
+  }
   @Override
   public void setText(String texto) {
 
