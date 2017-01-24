@@ -230,7 +230,7 @@
             <Component class="gnu.chu.camposdb.DiscButton" name="bdisc">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="390" y="45" width="21" height="20"/>
+                  <AbsoluteConstraints x="600" y="20" width="21" height="20"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -243,7 +243,7 @@
               </AccessibilityProperties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="160" y="45" width="100" height="17"/>
+                  <AbsoluteConstraints x="140" y="45" width="100" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -287,11 +287,11 @@
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel11">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Repres"/>
+                <Property name="text" type="java.lang.String" value="Seccion"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="1" y="25" width="50" height="-1"/>
+                  <AbsoluteConstraints x="290" y="45" width="50" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -321,7 +321,24 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="260" y="45" width="40" height="17"/>
+                  <AbsoluteConstraints x="240" y="45" width="40" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel13">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Repres"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="1" y="25" width="50" height="-1"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.camposdb.sbePanel" name="sbe_codiE">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="340" y="45" width="40" height="19"/>
                 </Constraint>
               </Constraints>
             </Component>

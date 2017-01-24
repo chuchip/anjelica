@@ -161,7 +161,7 @@ public class CLVenRep extends ventana {
             avl_prtariE.setEnabled(false);
         bdisc.iniciar(dtStat, this, vl, EU);
                 
-        
+        sbe_codiE.iniciar(dtStat, this, vl, EU);
         fecIniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -15));
         fecFinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
        
@@ -382,6 +382,7 @@ public class CLVenRep extends ventana {
                 + "','dd-MM-yyyy') "
                 + " and cl.cli_codi = a.cli_codi "
                 + " and a.avc_repres = '" + rep_codiE.getText() + "'"
+                + (sbe_codiE.getValorInt()==0?"": " and cl.sbe_codi="+sbe_codiE.getValorInt())
                 + (zon_codiE.isNull()?"": " and cl.zon_codi='"+zon_codiE.getText()+"'")
                 + (rut_codiE.isNull()?"": " and a.cli_ruta='"+rut_codiE.getText()+"'")
                 + (opIncCobr.isSelected() ? " and avc_cobrad != 0" : "");
@@ -925,6 +926,8 @@ public class CLVenRep extends ventana {
         gananMinE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
         cLabel12 = new gnu.chu.controles.CLabel();
         gananMaxE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
+        cLabel13 = new gnu.chu.controles.CLabel();
+        sbe_codiE = new gnu.chu.camposdb.sbePanel();
         jtCab = new gnu.chu.controles.Cgrid(11);
         ArrayList v=new ArrayList();
         v.add("Ejer"); // 0
@@ -1123,11 +1126,11 @@ public class CLVenRep extends ventana {
     Pcondic.add(Baceptar);
     Baceptar.setBounds(520, 40, 100, 26);
     Pcondic.add(bdisc);
-    bdisc.setBounds(390, 45, 21, 20);
+    bdisc.setBounds(600, 20, 21, 20);
 
     cLabel9.setText("Ganacia Maxima");
     Pcondic.add(cLabel9);
-    cLabel9.setBounds(160, 45, 100, 17);
+    cLabel9.setBounds(140, 45, 100, 17);
     cLabel9.getAccessibleContext().setAccessibleDescription("");
 
     rut_codiE.setAncTexto(30);
@@ -1146,9 +1149,9 @@ public class CLVenRep extends ventana {
     zon_codiE.setBounds(270, 25, 240, 17);
     zon_codiE.getAccessibleContext().setAccessibleDescription("");
 
-    cLabel11.setText("Repres");
+    cLabel11.setText("Seccion");
     Pcondic.add(cLabel11);
-    cLabel11.setBounds(1, 25, 50, 15);
+    cLabel11.setBounds(290, 45, 50, 17);
     Pcondic.add(gananMinE);
     gananMinE.setBounds(90, 45, 40, 17);
 
@@ -1156,7 +1159,13 @@ public class CLVenRep extends ventana {
     Pcondic.add(cLabel12);
     cLabel12.setBounds(0, 45, 90, 17);
     Pcondic.add(gananMaxE);
-    gananMaxE.setBounds(260, 45, 40, 17);
+    gananMaxE.setBounds(240, 45, 40, 17);
+
+    cLabel13.setText("Repres");
+    Pcondic.add(cLabel13);
+    cLabel13.setBounds(1, 25, 50, 15);
+    Pcondic.add(sbe_codiE);
+    sbe_codiE.setBounds(340, 45, 40, 19);
 
     Pprinc.add(Pcondic, new java.awt.GridBagConstraints());
 
@@ -1321,6 +1330,7 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
+    private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -1347,6 +1357,7 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CLinkBox rep_codiE;
     private gnu.chu.controles.CLinkBox rut_codiE;
+    private gnu.chu.camposdb.sbePanel sbe_codiE;
     private gnu.chu.controles.CLinkBox zon_codiE;
     // End of variables declaration//GEN-END:variables
 }
