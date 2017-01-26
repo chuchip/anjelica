@@ -50,10 +50,10 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
 {
     String botonTexto="";
     int numHoja;
-    String[] articulos= new String[]{"20+","7 COST","8 COST.","23+","25+","28+",
+    String[] articulos= new String[]{"20+","VA108","7 COST","8 COST.","23+","25+","28+",
         "PIST.","LOMO P.+90","LOMO P.-90","8 COST SP","8C.EXTRA",
         "BOLA +60","BOLA -60","LOMO TERN.",
-        "T-BONE","108B"};
+        "T-BONE","108B","108B ESP."};
     
      public CreaEtiqMarca(EntornoUsuario eu, Principal p) {
         EU = eu;
@@ -92,7 +92,7 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2017-01-21");
+        this.setVersion("2017-01-25");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();

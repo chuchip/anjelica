@@ -1626,6 +1626,7 @@ private JMenuItem MIimprEtiqInd;
               return;
           actualDtoPP();
           acc_dtoppE.resetCambio();  
+          mensajeErr("Descuento pronto Pago actualizado");
       }
     });
    
@@ -2049,6 +2050,8 @@ private JMenuItem MIimprEtiqInd;
            actPrecioLinAlb(0,n, jt.getValorDec(n,JT_PRCOM),jt.getValBoolean(n,JT_PORPAG),
                jt.getValorDec(n,JT_DTOPP) );   
           }
+          ctUp.commit();
+         
 //          actAcuTot();
 //          actImporteAlb(dtAdd ,emp_codiE.getValorInt(),acc_anoE.getValorInt(),acc_serieE.getText(),
 //              acc_numeE.getValorInt(),imptotE.getValorDec());
@@ -5064,9 +5067,10 @@ private JMenuItem MIimprEtiqInd;
           " and acc_nume = " + acc_numeE.getValorInt() +
           " and acc_serie = '" + acc_serieE.getText() + "'" +
           (opAgrupar.isSelected()?" and pro_codi = "+jt.getValorInt(row,JT_PROCOD)+
-           "AND acl_canti "+(jt.getValorDec(row,JT_PRCOM)>=0?" >= 0":"<0"):
+           " AND acl_canti "+(jt.getValorDec(row,JT_PRCOM)>=0?" >= 0":"<0"):
           " and acl_nulin = " + jt.getValorInt(row, 0));
       stUp.executeUpdate(s);
+     
       preciosGrid.set(row, aclPrCom);
   }
   void cambiarAlmacen()

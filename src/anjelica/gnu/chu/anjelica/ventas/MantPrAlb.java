@@ -1123,7 +1123,7 @@ public class MantPrAlb extends ventana {
              if (prec==null)
              {
                   
-                  prCosto=pdprvades.getPrecioOrigen(dtCos1,jtLin.getValorInt(n,0),avc_fecalbE.getDate());
+                  prCosto=pdprvades.getPrecioValorar(dtCos1,jtLin.getValorInt(n,0),avc_fecalbE.getDate());
                   if (prCosto<=0)
                   {
                     if (! mvtosAlm.calculaMvtos(jtLin.getValorInt(n,0), dtCos1, dtCos2, null,null))

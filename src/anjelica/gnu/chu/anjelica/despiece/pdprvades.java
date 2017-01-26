@@ -43,7 +43,7 @@ public class pdprvades extends ventanaPad implements PAD
   int ejeNume, numSem;
   CPanel Pprinc = new CPanel();
   CPanel Pcabe = new CPanel();
-  CGridEditable jt = new CGridEditable(4)
+  CGridEditable jt = new CGridEditable(5)
   {
     @Override
     public void cambiaColumna(int col,int colNueva, int row)
@@ -79,7 +79,8 @@ public class pdprvades extends ventanaPad implements PAD
   proPanel pro_codiE = new proPanel();
   CTextField pro_nombE = new CTextField();
   CTextField dpv_preciE= new CTextField(Types.DECIMAL,"###9.99");
-  CTextField dpv_precoriE= new CTextField(Types.DECIMAL,"###9.99");
+  CTextField dpv_preoriE= new CTextField(Types.DECIMAL,"###9.99");
+  CTextField dpv_prevalE= new CTextField(Types.DECIMAL,"###9.99");
   CLabel cLabel2 = new CLabel();
   CTextField dpv_nusemE = new CTextField(Types.DECIMAL,"99");
   CLabel cLabel3 = new CLabel();
@@ -153,9 +154,10 @@ public class pdprvades extends ventanaPad implements PAD
       cabecera.add("Nombre"); //1 -- Nombre
       cabecera.add("Pr.Fin"); // 2 -- Precio Final
       cabecera.add("Pr.Ori"); // 2 -- Precio Orig.
+      cabecera.add("Pr.Val"); // 2 -- Precio Orig.
       jt.setCabecera(cabecera);
-      jt.setAnchoColumna(new int[]{46, 283, 60,60});
-      jt.alinearColumna(new int[]   {2, 0, 2,2});
+      jt.setAnchoColumna(new int[]{46, 283, 60,60,60});
+      jt.alinearColumna(new int[]   {2, 0, 2,2,2});
       pro_codiE.iniciar(dtStat, this, vl, EU);
       pro_codiE.setProNomb(null);
 
@@ -164,7 +166,8 @@ public class pdprvades extends ventanaPad implements PAD
       v.add(pro_codiE.getFieldProCodi());
       v.add(pro_nombE);
       v.add(dpv_preciE);
-      v.add(dpv_precoriE);
+      v.add(dpv_preoriE);
+      v.add(dpv_prevalE);
       jt.setCampos(v);
       jt.setMaximumSize(new Dimension(467, 400));
       jt.setMinimumSize(new Dimension(467, 400));
@@ -342,6 +345,7 @@ public class pdprvades extends ventanaPad implements PAD
           dtAdd.setDato("pro_codi",jt.getValorInt(n,0));
           dtAdd.setDato("dpv_preci",jt.getValorDec(n,2));
           dtAdd.setDato("dpv_preori",jt.getValorDec(n,3));
+          dtAdd.setDato("dpv_preval",jt.getValorDec(n,4));
           dtAdd.update(stUp);
         }
         ctUp.commit();
@@ -381,7 +385,7 @@ public class pdprvades extends ventanaPad implements PAD
 
     void verDatLin(int ejerc,int nusem) throws Exception
     {
-      s = "SELECT d.pro_codi,a.pro_nomb,d.dpv_preci,dpv_preori " +
+      s = "SELECT d.pro_codi,a.pro_nomb,d.dpv_preci,dpv_preori,dpv_preval " +
           " FROM desproval as d,v_articulo as a " +
           " WHERE dpv_nusem = " + nusem +
           " and eje_nume = " + ejerc +
@@ -573,7 +577,7 @@ public class pdprvades extends ventanaPad implements PAD
         return 0;
       }
       jt.setValor(pro_codiE.getNombArtUltimo(), row,1);
-      if (dpv_preciE.getValorDec() == 0 && dpv_precoriE.getValorDec() ==0 )
+      if (dpv_preciE.getValorDec() == 0 && dpv_preoriE.getValorDec() ==0  && dpv_prevalE.getValorDec() ==0 )
       {
         mensajeErr("Introduzca un precio de Tarifa");
         return 1;
@@ -655,4 +659,22 @@ public class pdprvades extends ventanaPad implements PAD
           return -1;
       return dt.getDouble("dpv_preori");
   }
+   public static double getPrecioValorar(DatosTabla dt, int proCodi,int ejeNume,int semCodi) throws SQLException
+  {
+      String sql="SELECT dpv_preval FROM desproval " +
+          " WHERE eje_nume = " + ejeNume +
+            " and dpv_nusem = "+semCodi+
+            " and pro_codi = "+proCodi;
+      if (! dt.select(sql))
+          return -1;
+      return dt.getDouble("dpv_preval");
+  }
+   public static double getPrecioValorar(DatosTabla dt, int proCodi,Date fecha)  throws SQLException
+   {
+      GregorianCalendar gc=new GregorianCalendar();    
+      gc.setTime(fecha);
+      int semana = gc.get(GregorianCalendar.WEEK_OF_YEAR);          
+      int ano= gc.get(GregorianCalendar.YEAR);
+      return getPrecioValorar(dt,proCodi,ano, semana);
+   }
 }

@@ -1,4 +1,10 @@
 --
+-- Añadido campo precio valoracion
+--
+alter table  desproval add dpv_preval decimal(6,2);
+update desproval set dpv_preval = 0;
+alter table desproval alter dpv_preval set not null;
+--
 -- Añadida fecha confirmacion y listado
 --
 alter table  pedicoc add pcc_feccon date;			-- Fecha Confirmacion
