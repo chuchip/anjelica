@@ -64,6 +64,7 @@ public class MvtosAlma
   private String msgStock="";
   private int deoCodiLim=0; // Numero despiece a partir del cual no considerar mas para calculos costos (incluido)
   private int sbeCodi; // Subempresa de Cliente.
+  private String rutCodi=null; // Ruta de Cliente.
   private int numProd,numProdInv=0; // Numero para el numero de veces q aparece el prod. en el statement
   String feulst=""; // Fecha Ultimo Stock
   private PreparedStatement pStmt=null,pSInv=null;
@@ -245,6 +246,9 @@ public class MvtosAlma
   public void setSbeCodi(int sbeCodi) {
         this.sbeCodi = sbeCodi;
   }
+  public void setRutCodi(String rutCodi) {
+        this.rutCodi = rutCodi;
+  }
   /**
    * Indica si debe ignorar vertederos de otras secciones 
    * al buscar los movimientos
@@ -357,7 +361,7 @@ public class MvtosAlma
         + " mvt_canti as canti,mvt_prec as precio,pro_indlot as numind,"
         + " mvt_cliprv as cliCodi,mvt_numdoc  as numalb,pro_ejelot as ejenume, "
         + " 1 as empcodi,'0' as pro_codori "
-        + ", '' as repCodi,'' as zonCodi,0 as sbe_codi "
+        + ", '' as repCodi,'' as zonCodi,0 as sbe_codi,'' as rut_codi "
         + ", mvt_unid as unidades,1 as div_codi,alm_codi,mvt_serdoc as avc_serie,mvt_ejedoc as ejedoc "
         +" ,mvt_fecdoc as fecdoc "
         + ", 'N' as avc_depos "
@@ -373,7 +377,7 @@ public class MvtosAlma
         + " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "
         + " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"
         + " r.emp_codi  as empcodi,r.pro_codi as pro_codori"
-        + ", '' as repCodi,'' as zonCodi,sbe_codi as sbe_codi "
+        + ", '' as repCodi,'' as zonCodi,sbe_codi as sbe_codi,'' as rut_codi "
         + ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "
         + " ,rgs_fecha as fecdoc, "
         + " 'N' as avc_depos "
@@ -403,7 +407,7 @@ public class MvtosAlma
             " mvt_canti as canti,mvt_prec as precio,pro_indlot as numind,"+
             " mvt_cliprv as cliCodi,mvt_numdoc  as numalb,pro_ejelot as ejenume, "+           
             " 1 as empcodi,pro_codi as pro_codori "+
-            ", '' as repCodi,'' as zonCodi,0 as sbe_codi, "+
+            ", '' as repCodi,'' as zonCodi,0 as sbe_codi,'' as rut_codi, "+
             " mvt_unid as unidades,1 as div_codi,alm_codi,mvt_serdoc as avc_serie,mvt_ejedoc as ejedoc, "+
             " mvt_fecdoc as fecdoc "+
             ", 'N' as avc_depos "+
@@ -432,7 +436,7 @@ public class MvtosAlma
             " avs_canti as canti,0 as precio,avs_numind as numind,"+
             " cli_codi as cliCodi,avc_nume  as numalb,avs_ejelot as ejenume, "+           
             " 1 as empcodi,pro_codi as pro_codori "+
-            ", '' as repCodi,'' as zonCodi,0 as sbe_codi, "+
+            ", '' as repCodi,'' as zonCodi,0 as sbe_codi,'' as rut_codi, "+
             " avs_numuni as unidades,1 as div_codi, 1 as alm_codi,avc_serie as avc_serie,"
             + "avc_ano as ejedoc, "+
             " avs_fecha as fecdoc "+
@@ -455,7 +459,7 @@ public class MvtosAlma
            " r.ind_kilos as canti,0 as precio,r.pro_numind as numind, "+
            " 0 as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
            " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
-           ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
+           ", '' as repCodi,'' as zonCodi,0 as sbe_codi,'' as rut_codi "+
            ", ind_numuni as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,0 as ejedoc"+
            " ,r.ind_fecha as fecdoc, "+
            " 'N' as avc_depos "+
@@ -485,7 +489,7 @@ public class MvtosAlma
            " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "+
            " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
            " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
-           ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
+           ", '' as repCodi,'' as zonCodi,0 as sbe_codi,'' as rut_codi "+
            ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,0 as ejedoc"+
            " ,r.rgs_fecha as fecdoc, "+
            " 'N' as avc_depos "+
@@ -532,7 +536,7 @@ public class MvtosAlma
         " l.acl_canti as canti,l.acl_prcom as precio,0 as numind,"+
         " c.prv_codi as cliCodi,  c.acc_nume as numalb, "+
         " c.acc_ano as ejeNume,c.emp_codi as empCodi,l.pro_codi as pro_codori "+
-        ", '' as repCodi,'' as zonCodi,c.sbe_codi,acl_numcaj as unidades,1 as div_codi, "+
+        ", '' as repCodi,'' as zonCodi,c.sbe_codi,'' as rut_codi, acl_numcaj as unidades,1 as div_codi, "+
         " l.alm_codi,'.' as avc_serie,c.acc_ano as ejedoc "+
         ", c.acc_fecrec as fecdoc "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
@@ -556,7 +560,7 @@ public class MvtosAlma
         " c.acp_canti as canti,c.acl_prcom as precio,acp_numind as numind,"+
         " c.prv_codi as cliCodi,  c.acc_nume as numalb, "+
         " c.acc_ano as ejeNume,c.emp_codi as empCodi,c.pro_codi as pro_codori "+
-        ", '' as repCodi,'' as zonCodi,sbe_codi,acp_canind as unidades,1 as div_codi, "+
+        ", '' as repCodi,'' as zonCodi,sbe_codi,'' as rut_codi,acp_canind as unidades,1 as div_codi, "+
         " c.alm_codi,'.' as avc_serie,c.acc_ano as ejedoc "+
         ", c.acc_fecrec as fecdoc "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
@@ -591,7 +595,7 @@ public class MvtosAlma
         " c.cli_codi as cliCodi,avc_nume as numalb, "+
         " avp_ejelot as ejeNume,avp_emplot as empcodi,pro_codi as pro_codori, "+
         " rep_codi as repCodi,zon_codi as zonCodi "+
-        ",c.sbe_codi, avp_numuni as unidades, c.div_codi,c.alm_codori as alm_codi,"
+        ",c.sbe_codi,'' as rut_codi, avp_numuni as unidades, c.div_codi,c.alm_codori as alm_codi,"
         + "avc_serie,avc_ano as ejedoc "+
         ", avc_fecalb as fecdoc "+
         ", alm_codori, alm_coddes,avc_depos "+
@@ -611,7 +615,7 @@ public class MvtosAlma
         " deo_kilos as canti,deo_prcost as precio,pro_numind as numind,"+
         " 0 as cliCodi,deo_codi as numalb,deo_ejelot as ejeNume," +
         " deo_emplot as empcodi,pro_codi as pro_codori "+
-        ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
+        ", '' as repCodi,'' as zonCodi,0 as sbe_codi,'' as rut_codi  "+
         ", 1 as unidades,1 as div_codi,deo_almori as alm_codi,'.' as avc_serie,eje_nume as ejedoc "+
         ", deo_fecha as fecdoc "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
@@ -634,7 +638,7 @@ public class MvtosAlma
        " l.def_kilos as canti,l.def_prcost as precio,l.pro_numind as numind,"+
        " 0 as cliCodi,l.deo_codi  as numalb,l.def_ejelot as ejenume, "+
        " l.def_emplot as empcodi,l.pro_codi as pro_codori "+
-       ", '' as repCodi,'' as zonCodi,0 as sbe_codi "+
+       ", '' as repCodi,'' as zonCodi,0 as sbe_codi,'' as rut_codi "+
        ", l.def_numpie as unidades,1 as div_codi,alm_codi,'.' as avc_serie,c.eje_nume as ejedoc "+
        ", deo_fecha as fecdoc "+
        ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
@@ -658,7 +662,7 @@ public class MvtosAlma
         " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "+
         " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
         " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
-        ", rep_codi as repCodi,zon_codi as zonCodi,r.sbe_codi as sbe_codi "+
+        ", rep_codi as repCodi,zon_codi as zonCodi,r.sbe_codi as sbe_codi, cl.rut_codi as rut_codi "+
         ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "+
         ", r.rgs_fecha as fecdoc "+
         ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
@@ -694,7 +698,7 @@ public class MvtosAlma
            " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "+
            " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
            " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
-           ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi "+
+           ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi,'' as rut_codi "+
            ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "+
            ", r.rgs_fecha as fecdoc "+
            ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
@@ -1156,9 +1160,9 @@ public class MvtosAlma
     HashMap<String,Double> ht = new HashMap();
     PreparedStatement psCli=null;
     boolean swDiscr=false;
-    String DT_zonCodi="",DT_repCodi="";
+    String DT_zonCodi="",DT_repCodi="",DT_rutCodi=null;
     int DT_sbeCodi=0;
-    if ( (repCodi!=null ||  zonCodi!=null || sbeCodi!=0 || cliCodi!=0))
+    if ( (repCodi!=null ||  zonCodi!=null || sbeCodi!=0 || cliCodi!=0 || rutCodi!=null))
     {
         swDiscr=true;
         if (!swUsaDocumentos )
@@ -1354,17 +1358,20 @@ public class MvtosAlma
                         DT_zonCodi = null;
                         DT_repCodi = null;
                         DT_sbeCodi = 0;
+                        DT_rutCodi= null;
                     } else
                     {
                         DT_zonCodi = rsCli.getString("zon_codi").toUpperCase();
                         DT_repCodi = rsCli.getString("rep_codi").toUpperCase();
                         DT_sbeCodi = rsCli.getInt("sbe_codi");
+                        DT_rutCodi= rsCli.getString("rut_codi");
                     }
                 } else
                 {
                     DT_zonCodi = dt.getString("zonCodi", true).toUpperCase();
                     DT_repCodi = dt.getString("repCodi", true).toUpperCase();
                     DT_sbeCodi = dt.getInt("sbe_codi");
+                    DT_rutCodi= dt.getString("rut_codi");
                 }
             }
             cantiInd -= dt.getDouble("canti");
@@ -1389,6 +1396,10 @@ public class MvtosAlma
                         swIgnMvto = true;
                 }
                 if (DT_sbeCodi != 0 && sbeCodi != 0 && DT_sbeCodi != sbeCodi)
+                {
+                    swIgnMvto = true;
+                }
+                if (DT_rutCodi != null && rutCodi != null && ! DT_rutCodi.equals(rutCodi))
                 {
                     swIgnMvto = true;
                 }

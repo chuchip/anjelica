@@ -5,6 +5,7 @@ import gnu.chu.anjelica.almacen.Comvalm;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.pad.MantRepres;
+import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.Cgrid;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.ejecutable;
@@ -133,13 +134,15 @@ public class Clmarzona extends ventana {
     jtGru.setNombre("Grupos");
     emp_codiE.iniciar(dtStat, this, vl, EU);
     sbe_codiE.iniciar(dtStat, this, vl, EU);
-    pro_sbecodE.iniciar(dtStat, this, vl, EU);
+    
     cli_codiE.iniciar(dtStat, this, vl, EU);
     feciniE.iniciar(dtStat,this,vl,EU);
     fecfinE.iniciar(dtStat,this,vl,EU);
-    pro_sbecodE.setTipo("A");
-    pro_sbecodE.setLabelSbe(sbe_nombL);
-    pro_sbecodE.setValorInt(0);
+    rut_codiE.setAncTexto(30);
+    rut_codiE.setFormato(Types.CHAR, "XX");       
+    rut_codiE.setMayusculas(true);
+    zon_codiE.setAncTexto(30);
+    pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS, EU.em_cod);
     sbe_codiE.setFieldEmpCodi(emp_codiE.getTextField());
     emp_codiE.setValorInt(0);
     sbe_codiE.setValorInt(0);
@@ -389,8 +392,7 @@ public class Clmarzona extends ventana {
                 + " and cl.cli_codi = c.cli_codi "
                 + " and f.fpr_codi = p.fam_codi "
                 + " and p.pro_codi = l.pro_codi "
-                + (pro_sbecodE.getValorInt()==0?"": " and p.sbe_codi "+(opExcSeccion.isSelected()?"!":"")
-                    +"= "+pro_sbecodE.getValorInt())
+                + (rut_codiE.getText().equals("")?"": " and cl.rut_codi = '"+rut_codiE.getText()+"'")
                 + (zonCodi == null ? "" : " AND cl.zon_codi = '" + zonCodi + "'")
                 + (repCodi == null ? "" : " AND avc_repres = '" + repCodi + "'")
                 + (cli_codiE.isNull() ? "" : " AND cl.cli_codi = '" + cli_codiE.getValorInt() + "'")
@@ -408,9 +410,7 @@ public class Clmarzona extends ventana {
             + " and tir_codi != " + tirCodInv
 //            + " and tir_codi not in ("+tirCodVert+")"
             + " and p.pro_tiplot='V' "
-            + (proCod != null ? "and r.pro_codi = " + proCod : "")
-            + (pro_sbecodE.getValorInt()==0?"": " and p.sbe_codi "+(opExcSeccion.isSelected()?"!":"")
-            +"= "+pro_sbecodE.getValorInt())
+            + (proCod != null ? "and r.pro_codi = " + proCod : "")          
             + " and p.pro_codi = r.pro_codi "
             + " and f.fpr_codi = p.fam_codi ";
       s+=" order by 1,2 ";
@@ -450,6 +450,7 @@ public class Clmarzona extends ventana {
     mvtosAlm.setEmpresa(emp_codiE.getValorInt());
     mvtosAlm.setSbeCodi(sbe_codiE.getValorInt());
     mvtosAlm.setCliente(cli_codiE.getValorInt());
+    mvtosAlm.setRutCodi(rut_codiE.isNull()?(String) null:rut_codiE.getText());
     mvtosAlm.iniciarMvtos(feulinE.getDate(), feciniE.getDate(),fecfinE.getDate(),dtCon1);
     mvtosAlm.resetMensajes();
     do
@@ -514,8 +515,7 @@ public class Clmarzona extends ventana {
             (zonCodi == null ? "" : " AND cl.zon_codi = '" + zonCodi + "'") +
              (repCodi == null ? "" : " AND avc_repres  = '" + repCodi + "'") +
              (emp_codiE.getValorInt()==0?"": " and c.emp_codi = "+emp_codiE.getValorInt()) +
-            (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+
-                        (opExcSeccion.isSelected()?"!":"")+sbe_codiE.getValorInt()) +
+            (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+ sbe_codiE.getValorInt()) +
             (proCod != null ? "and l.pro_codi = " + proCod : "") +
             " and p.pro_codi = l.pro_codi "+
             " and p.pro_tiplot!='V' "+
@@ -662,15 +662,13 @@ public class Clmarzona extends ventana {
         cLabel17 = new gnu.chu.controles.CLabel();
         rep_codiE = new gnu.chu.controles.CLinkBox();
         opIncVertE = new gnu.chu.controles.CCheckBox();
-        cLabel18 = new gnu.chu.controles.CLabel();
-        pro_sbecodE = new gnu.chu.camposdb.sbePanel();
-        sbe_nombL = new gnu.chu.controles.CLabel();
         opIncComent = new gnu.chu.controles.CCheckBox();
-        opExcSeccion = new gnu.chu.controles.CCheckBox();
         feciniE = new gnu.chu.camposdb.fechaCal();
         fecfinE = new gnu.chu.camposdb.fechaCal();
         cLabel19 = new gnu.chu.controles.CLabel();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
+        cLabel20 = new gnu.chu.controles.CLabel();
+        rut_codiE = new gnu.chu.controles.CLinkBox();
         PPie = new gnu.chu.controles.CPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
         cLabel8 = new gnu.chu.controles.CLabel();
@@ -732,10 +730,10 @@ public class Clmarzona extends ventana {
         Pcabe.add(cLabel6);
         cLabel6.setBounds(390, 2, 44, 17);
 
-        cLabel16.setText("Zona");
+        cLabel16.setText("Ruta");
         cLabel16.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel16);
-        cLabel16.setBounds(10, 67, 40, 18);
+        cLabel16.setBounds(80, 87, 40, 17);
 
         zon_codiE.setAncTexto(30);
         zon_codiE.setPreferredSize(new java.awt.Dimension(92, 18));
@@ -775,7 +773,6 @@ public class Clmarzona extends ventana {
         cLabel4.setBounds(124, 2, 70, 17);
 
         sbe_codiE.setToolTipText("Tratar solo Ventas de Subseccion introducida");
-        sbe_codiE.setPreferredSize(new java.awt.Dimension(29, 18));
         Pcabe.add(sbe_codiE);
         sbe_codiE.setBounds(198, 2, 38, 17);
 
@@ -800,29 +797,10 @@ public class Clmarzona extends ventana {
         opIncVertE.setBounds(430, 87, 110, 18);
         opIncVertE.getAccessibleContext().setAccessibleDescription("Incluir Regularizaciones");
 
-        cLabel18.setText("Seccion Art");
-        cLabel18.setPreferredSize(new java.awt.Dimension(60, 18));
-        Pcabe.add(cLabel18);
-        cLabel18.setBounds(80, 87, 70, 18);
-        cLabel18.getAccessibleContext().setAccessibleName("Seccion Art.");
-
-        Pcabe.add(pro_sbecodE);
-        pro_sbecodE.setBounds(160, 87, 40, 18);
-
-        sbe_nombL.setBackground(java.awt.Color.orange);
-        sbe_nombL.setOpaque(true);
-        Pcabe.add(sbe_nombL);
-        sbe_nombL.setBounds(200, 87, 220, 18);
-
         opIncComent.setText("Inc.  Comentario");
         opIncComent.setToolTipText("Incluir productos tipo comentario");
         Pcabe.add(opIncComent);
         opIncComent.setBounds(532, 2, 110, 17);
-
-        opExcSeccion.setText("Excepto");
-        opExcSeccion.setToolTipText("Incluir todos los productos excpeto la seccion  introducida");
-        Pcabe.add(opExcSeccion);
-        opExcSeccion.setBounds(10, 87, 70, 18);
         Pcabe.add(feciniE);
         feciniE.setBounds(292, 2, 90, 17);
         Pcabe.add(fecfinE);
@@ -834,6 +812,16 @@ public class Clmarzona extends ventana {
         cLabel19.setBounds(12, 25, 50, 18);
         Pcabe.add(cli_codiE);
         cli_codiE.setBounds(69, 47, 430, 18);
+
+        cLabel20.setText("Zona");
+        cLabel20.setPreferredSize(new java.awt.Dimension(60, 18));
+        Pcabe.add(cLabel20);
+        cLabel20.setBounds(10, 67, 40, 18);
+
+        rut_codiE.setAncTexto(30);
+        rut_codiE.setPreferredSize(new java.awt.Dimension(92, 18));
+        Pcabe.add(rut_codiE);
+        rut_codiE.setBounds(120, 87, 270, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1083,9 +1071,9 @@ public class Clmarzona extends ventana {
     private gnu.chu.controles.CLabel cLabel15;
     private gnu.chu.controles.CLabel cLabel16;
     private gnu.chu.controles.CLabel cLabel17;
-    private gnu.chu.controles.CLabel cLabel18;
     private gnu.chu.controles.CLabel cLabel19;
     private gnu.chu.controles.CLabel cLabel2;
+    private gnu.chu.controles.CLabel cLabel20;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel5;
@@ -1110,16 +1098,14 @@ public class Clmarzona extends ventana {
     private gnu.chu.controles.Cgrid jt;
     private gnu.chu.controles.Cgrid jtGru;
     private gnu.chu.controles.CTextField kgsVenE;
-    private gnu.chu.controles.CCheckBox opExcSeccion;
     private gnu.chu.controles.CCheckBox opIncComent;
     private gnu.chu.controles.CCheckBox opIncVertE;
     private gnu.chu.controles.CTextField pmComE;
     private gnu.chu.controles.CTextField pmVenE;
     private gnu.chu.camposdb.proPanel pro_codiE;
-    private gnu.chu.camposdb.sbePanel pro_sbecodE;
     private gnu.chu.controles.CLinkBox rep_codiE;
+    private gnu.chu.controles.CLinkBox rut_codiE;
     private gnu.chu.camposdb.sbePanel sbe_codiE;
-    private gnu.chu.controles.CLabel sbe_nombL;
     private gnu.chu.controles.CTextArea stockE;
     private gnu.chu.controles.CLinkBox zon_codiE;
     // End of variables declaration//GEN-END:variables
