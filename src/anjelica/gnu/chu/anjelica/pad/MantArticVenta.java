@@ -4,7 +4,7 @@ package gnu.chu.anjelica.pad;
  * <p>Título: MantArticVenta </p>
  * <p>Descripcion: Mantenimiento Articulos de Venta</p>
  * <p>Empresa: miSL</p>
-*  <p>Copyright: Copyright (c) 2005-2016
+*  <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -26,7 +26,6 @@ import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
-import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventanaPad;
 import java.awt.BorderLayout;
@@ -90,7 +89,7 @@ private void jbInit() throws Exception {
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2016-11-05");
+        this.setVersion("2017-01-29");
         strSql = "SELECT * FROM prodventa  "+
                 " ORDER BY pve_codi";
 
@@ -137,6 +136,8 @@ private void jbInit() throws Exception {
         pArticVenta = new gnu.chu.utilidades.PanelArticVenta();
 
         Pprinc.setLayout(null);
+
+        pve_codiE.setMayusc(true);
         Pprinc.add(pve_codiE);
         pve_codiE.setBounds(100, 10, 110, 18);
 

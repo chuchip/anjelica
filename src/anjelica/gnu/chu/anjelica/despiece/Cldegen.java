@@ -25,6 +25,7 @@ import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.pad.MantTarifa;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.DatosTabla;
 import java.awt.*;
@@ -32,6 +33,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.ParseException;
 import java.util.Vector;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -142,6 +144,7 @@ public class Cldegen extends ventana
     private void activarEventos() {
         Baceptar.addActionListener(new ActionListener()
         {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 buscaDatos();
             }
@@ -150,6 +153,7 @@ public class Cldegen extends ventana
         
         jt.addListSelectionListener(new ListSelectionListener ()
         {
+             @Override
              public void valueChanged(ListSelectionEvent e)
              {
                  if (e.getValueIsAdjusting()) // && e.getFirstIndex() == e.getLastIndex())
@@ -167,12 +171,11 @@ public class Cldegen extends ventana
         });
         
        jtDes.addMouseListener(new MouseAdapter() {
+          @Override
           public void mouseClicked(MouseEvent e) {
               if (e.getClickCount()<2)
                   return;
-              if (jf==null)
-                  return;
-              if (jtDes.isVacio() )
+              if (jtDes.isVacio() || jf==null )
                   return;
               ejecutable prog;
               if ((prog=jf.gestor.getProceso("gnu.chu.anjelica.despiece.MantDesp"))==null)
@@ -218,6 +221,13 @@ public class Cldegen extends ventana
                         public void run()
                         {
                             jt.setDatos(dtCon1);
+                            try {
+                                buscaTarifa();
+                            } catch (SQLException | ParseException k)
+                            {
+                                Error("Error al buscar tarifa",k);
+                                return;
+                            }
                             jt.requestFocusInicio();
                             jt.setEnabled(true);
                             int rowCount=jt.getRowCount();
@@ -253,11 +263,27 @@ public class Cldegen extends ventana
                 jt.panelG.setVisible(true);
                 return false;
             }
-        } catch (SQLException k) {
+           
+        } catch (SQLException k ) {
             Error("Error al Buscar datos", k);
             return false;
         }
         return true;
+    }
+    /**
+     * Busca Precios tarifa
+     * @throws SQLException 
+     */
+    private void buscaTarifa() throws SQLException,ParseException
+    {
+        int nRow=jt.getRowCount();
+        int TARIFA_MAYOR=2;
+        for (int n=0;n<nRow;n++)
+        {
+            jt.setValor(
+            MantTarifa.getPrecTar(dtStat,jt.getValorInt(n,0) ,0,TARIFA_MAYOR, feciniE.getDate()),
+                n,6);
+        }
     }
     private String getStrSelect() {
         fam_codentE.isNull();
@@ -285,7 +311,9 @@ public class Cldegen extends ventana
         
         s = "select l.pro_codi,a.pro_nomb,sum(def_kilos) as kilos,"
              + " sum (def_numpie) as def_numpie, "
-             + " sum(def_kilos*def_prcost) as costo,sum(def_kilos*def_prcost)/sum(def_kilos) as imp "
+             + " sum(def_kilos* (def_prcost"+(opIncCosto.isSelected()?"+ pro_cosinc":"")+")"
+             + " ) as costo,sum(def_kilos* (def_prcost"+(opIncCosto.isSelected()?"+ pro_cosinc":"")+")"
+            + " )/sum(def_kilos) as imp,0 as precTarifa "
              + " from v_despfin l ,desporig c,v_articulo a "
              + (grp_codiE.isNull() ?"":", v_famipro as fp ")
              + " where "+condWhere
@@ -412,6 +440,7 @@ public class Cldegen extends ventana
         fam_codentE = new gnu.chu.controles.CLinkBox();
         opSoloValor = new gnu.chu.controles.CCheckBox();
         opIncReg = new gnu.chu.controles.CCheckBox();
+        opIncCosto = new gnu.chu.controles.CCheckBox();
         jtDes = new gnu.chu.controles.Cgrid(9);
         Pfinal = new gnu.chu.controles.CPanel();
         CLabel5 = new gnu.chu.controles.CLabel();
@@ -422,7 +451,7 @@ public class Cldegen extends ventana
         impTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.9");
         opDesgl = new gnu.chu.controles.CCheckBox();
         Bprint = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
-        jt = new gnu.chu.controles.Cgrid(6);
+        jt = new gnu.chu.controles.Cgrid(7);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -451,23 +480,23 @@ public class Cldegen extends ventana
 
         CLabel3.setText("Familia");
         Pentra.add(CLabel3);
-        CLabel3.setBounds(238, 45, 38, 18);
+        CLabel3.setBounds(238, 42, 38, 18);
 
         fam_codiE.setAncTexto(30);
         fam_codiE.setFormato(Types.DECIMAL,"##9");
         Pentra.add(fam_codiE);
-        fam_codiE.setBounds(283, 45, 270, 18);
+        fam_codiE.setBounds(283, 42, 270, 18);
 
         CLabel4.setText("Tipo Prod. Generado");
         Pentra.add(CLabel4);
-        CLabel4.setBounds(3, 24, 136, 18);
+        CLabel4.setBounds(3, 22, 136, 18);
 
         tipoProdE.setMinimumSize(new java.awt.Dimension(123, 18));
         tipoProdE.addItem("Todos", "T");
         tipoProdE.addItem("Congelado", "-1");
         tipoProdE.addItem("No Congelado", "0");
         Pentra.add(tipoProdE);
-        tipoProdE.setBounds(129, 24, 140, 18);
+        tipoProdE.setBounds(129, 22, 140, 18);
 
         CLabel8.setText("Ver");
         CLabel8.setPreferredSize(new java.awt.Dimension(20, 18));
@@ -476,10 +505,10 @@ public class Cldegen extends ventana
 
         opVer.setPreferredSize(new java.awt.Dimension(28, 18));
         opVer.addItem("Todos","T");
-        opVer.addItem("Procesado","S");
-        opVer.addItem("No Procesado","N");
+        opVer.addItem("Produccion","S");
+        opVer.addItem("Despieces","N");
         Pentra.add(opVer);
-        opVer.setBounds(340, 0, 120, 19);
+        opVer.setBounds(340, 0, 110, 19);
 
         Baceptar.setText("Aceptar");
         Pentra.add(Baceptar);
@@ -487,69 +516,84 @@ public class Cldegen extends ventana
 
         CLabel10.setText("Grupo");
         Pentra.add(CLabel10);
-        CLabel10.setBounds(3, 45, 34, 18);
+        CLabel10.setBounds(3, 42, 34, 18);
 
         grp_codiE.setAncTexto(30);
         grp_codiE.setFormato(Types.DECIMAL,"##9");
         Pentra.add(grp_codiE);
-        grp_codiE.setBounds(40, 45, 190, 18);
+        grp_codiE.setBounds(40, 42, 190, 18);
 
         CLabel11.setText("Almacen");
         Pentra.add(CLabel11);
-        CLabel11.setBounds(273, 24, 48, 18);
+        CLabel11.setBounds(273, 22, 48, 18);
 
         alm_codiE.setAncTexto(30);
         alm_codiE.setFormato(Types.DECIMAL,"##9");
         Pentra.add(alm_codiE);
-        alm_codiE.setBounds(325, 24, 230, 18);
+        alm_codiE.setBounds(325, 22, 230, 18);
 
         CLabel12.setText("Tipo Prod. Entrada");
         Pentra.add(CLabel12);
-        CLabel12.setBounds(3, 67, 110, 18);
+        CLabel12.setBounds(3, 62, 110, 18);
 
         tipoProenE.addItem("Todos", "T");
         tipoProenE.addItem("Congelado", "-1");
         tipoProenE.addItem("No Congelado", "0");
         Pentra.add(tipoProenE);
-        tipoProenE.setBounds(110, 67, 120, 18);
+        tipoProenE.setBounds(110, 62, 120, 18);
 
         CLabel13.setText("Tipo  Desp");
         Pentra.add(CLabel13);
-        CLabel13.setBounds(3, 88, 70, 18);
+        CLabel13.setBounds(3, 82, 70, 18);
 
         tid_codiE.setAncTexto(40);
+        tid_codiE.getComboBox().setPreferredSize(new Dimension(400,18));
         Pentra.add(tid_codiE);
-        tid_codiE.setBounds(70, 90, 240, 18);
+        tid_codiE.setBounds(70, 82, 240, 18);
 
         CLabel9.setText("Familia");
         Pentra.add(CLabel9);
-        CLabel9.setBounds(238, 45, 38, 18);
+        CLabel9.setBounds(238, 42, 38, 18);
 
         fam_codiE1.setAncTexto(30);
         fam_codiE.setFormato(Types.DECIMAL,"##9");
         Pentra.add(fam_codiE1);
-        fam_codiE1.setBounds(283, 45, 255, 18);
+        fam_codiE1.setBounds(283, 42, 255, 18);
 
         CLabel14.setText("Familia Entrada");
         Pentra.add(CLabel14);
-        CLabel14.setBounds(230, 67, 90, 18);
+        CLabel14.setBounds(230, 62, 90, 18);
 
         fam_codentE.setAncTexto(30);
         fam_codentE.setFormato(Types.DECIMAL,"##9");
         Pentra.add(fam_codentE);
-        fam_codentE.setBounds(315, 67, 240, 18);
+        fam_codentE.setBounds(315, 62, 240, 18);
 
-        opSoloValor.setText("Solo Valorado");
+        opSoloValor.setText("Solo Valorados");
         opSoloValor.setToolTipText("Incluir productos que se generan a si mismos");
         opSoloValor.setPreferredSize(new java.awt.Dimension(83, 18));
+        opSoloValor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                opSoloValorActionPerformed(evt);
+            }
+        });
         Pentra.add(opSoloValor);
-        opSoloValor.setBounds(320, 90, 100, 18);
+        opSoloValor.setBounds(320, 100, 120, 18);
+        opSoloValor.getAccessibleContext().setAccessibleName("Inc.Costo Prod.");
 
         opIncReg.setText("Inc. reenv.");
         opIncReg.setToolTipText("Incluir productos que se generan a si mismos");
         opIncReg.setPreferredSize(new java.awt.Dimension(83, 18));
         Pentra.add(opIncReg);
-        opIncReg.setBounds(470, 0, 83, 18);
+        opIncReg.setBounds(463, 0, 90, 18);
+
+        opIncCosto.setSelected(true);
+        opIncCosto.setText("Inc. Costo Producc");
+        opIncCosto.setToolTipText("Incluir Costo de Produccion");
+        opIncCosto.setActionCommand("");
+        opIncCosto.setPreferredSize(new java.awt.Dimension(83, 18));
+        Pentra.add(opIncCosto);
+        opIncCosto.setBounds(320, 82, 120, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -693,13 +737,15 @@ public class Cldegen extends ventana
         v.add("Unid"); // 3
         v.add("Importe"); // 4
         v.add("Costo"); // 5
+        v.add("Tarifa"); // 6
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{50,200,60,40,70,60});
-        jt.setAlinearColumna(new int[]{0,0,2,2,2,2});
+        jt.setAnchoColumna(new int[]{50,200,60,40,70,60,40});
+        jt.setAlinearColumna(new int[]{0,0,2,2,2,2,2});
         jt.setFormatoColumna(2,"---,--9.99");
         jt.setFormatoColumna(3,"--,--9");
         jt.setFormatoColumna(4,"----,--9.99");
         jt.setFormatoColumna(5,"--9.9999");
+        jt.setFormatoColumna(6,"#9.99");
         jt.setAjustarGrid(true);
 
         jt.setNumRegCargar(0);
@@ -716,6 +762,10 @@ public class Cldegen extends ventana
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void opSoloValorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_opSoloValorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_opSoloValorActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -750,6 +800,7 @@ public class Cldegen extends ventana
     private gnu.chu.controles.Cgrid jtDes;
     private gnu.chu.controles.CTextField kilTotE;
     private gnu.chu.controles.CCheckBox opDesgl;
+    private gnu.chu.controles.CCheckBox opIncCosto;
     private gnu.chu.controles.CCheckBox opIncReg;
     private gnu.chu.controles.CCheckBox opSoloValor;
     private gnu.chu.controles.CComboBox opVer;

@@ -196,7 +196,7 @@ public class proPanel extends CPanel
 
   public void pro_codiE_focusLost()
   {
-    if (pro_codiE.getValorInt()!=proCodiAnt ||  (usaRefArticulo && pro_codiE.getText()!=proCodArtAnt))
+    if (pro_codiE.getValorInt()!=proCodiAnt ||  (usaRefArticulo &&  !pro_codiE.getText().equals(proCodArtAnt)))
     {
       proCodiAnt=pro_codiE.getValorInt();
       proCodArtAnt=pro_codiE.getText();
@@ -278,7 +278,6 @@ public class proPanel extends CPanel
         controla(false,true);
     } catch (Exception k)
     {
-      k.printStackTrace();
     }
   }
 
@@ -299,11 +298,13 @@ public class proPanel extends CPanel
   {
     swControl=swControla;
   }
+  @Override
   public String getStrQuery()
   {
     return pro_codiE.getStrQuery();
   }
 
+  @Override
   public void setQuery(boolean query)
   {
     pro_codiE.setQuery(query);
@@ -320,6 +321,7 @@ public class proPanel extends CPanel
    * Devuelve el Codigo Producto
    * ej: 01002
    */
+  @Override
   public String getText()
   {
     return pro_codiE.getText();
@@ -396,10 +398,7 @@ public class proPanel extends CPanel
    */
   public void setProNomb(CTextField pro_nombE)
   {
-    if (pro_nombE==null)
-      swControl = false;
-    else
-      swControl = true;
+    swControl = pro_nombE != null;
 
     this.remove(pro_nombL);
     this.remove(Bcons);

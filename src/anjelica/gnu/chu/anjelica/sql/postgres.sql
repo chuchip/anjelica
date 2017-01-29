@@ -1549,7 +1549,7 @@ create table anjelica.desporig
 eje_nume int not null,   -- Ejercicio de Despiece
 deo_codi int not null,   -- Numero de despiece
 tid_codi int,            -- Tipo de despiece
-deo_fecha date,		-- Fecha del despiece
+deo_fecha date not null,	-- Fecha del despiece
 usu_nomb varchar(20),   -- Usuario que genero el despiece (LOGIN)
 deo_almori int,		-- Almacen de Origen
 deo_almdes int,		-- Almacen destino
