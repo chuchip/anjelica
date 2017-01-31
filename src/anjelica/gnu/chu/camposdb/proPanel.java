@@ -1150,7 +1150,6 @@ public class proPanel extends CPanel
         } catch (NumberFormatException k){codArt="0";}
     }
     
-
     
     if (prvCodi!=0)     
     {

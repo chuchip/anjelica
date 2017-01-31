@@ -716,7 +716,7 @@ create index ix_albavel2 on anjelica.v_albavel (pro_codi,avc_cerra);
 create index ix_albavel3 on anjelica.v_albavel (avl_fecalt);
 
 drop view anjelica.v_albventa;
-create view anjelica.v_albventa as select c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,
+create view anjelica.v_albventa as select c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,avc_dtocom,
 cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
 avc_basimp,avc_kilos,avc_unid,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,

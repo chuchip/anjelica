@@ -229,7 +229,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2017-01-22" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2017-01-31" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -2703,7 +2703,8 @@ public class MantDesp extends ventanaPad implements PAD
                     kilos += dtCon1.getDouble("deo_kilos");
                     importe += dtCon1.getDouble("deo_kilos") * dtCon1.getDouble("deo_prcost");
                     jtCab.addLinea(v);
-                    nLin += dtCon1.getInt("numUnid");
+                    if (pro_codiE.isVendible())
+                        nLin += dtCon1.getInt("numUnid");
                 } while (dtCon1.next());
               jtCab.requestFocusInicio();
             }
@@ -3782,7 +3783,8 @@ public class MantDesp extends ventanaPad implements PAD
      * Actualiza Total de kilos
      * @param grid Número de grid a actualizar (0: TODOS)
      */
-    void actKilos(int grid) {
+    void actKilos(int grid) throws SQLException
+    {
         int nRow = jtCab.getRowCount();
         double kg = 0;
         int nLin = 0;
@@ -3791,10 +3793,9 @@ public class MantDesp extends ventanaPad implements PAD
             for (int n = 0; n < nRow; n++)
             {
                 if (jtCab.getValorInt(n, JTCAB_PROCODI) == 0)
-                {
                     continue;
-                }
-                nLin++;
+                if (MantArticulos.isVendible(jtCab.getValorInt(n, JTCAB_PROCODI) , dtStat))
+                    nLin++;
                 kg += jtCab.getValorDec(n, JTCAB_KILOS);
             }
             kgOrigE.setValorDec(kg);
@@ -3808,9 +3809,7 @@ public class MantDesp extends ventanaPad implements PAD
             for (int n = 0; n < nRow; n++)
             {
                 if (jtLin.getValorDec(n, JTLIN_KILOS) == 0)
-                {
                     continue;
-                }
                 kg += jtLin.getValorDec(n, JTLIN_KILOS);
                 nLin++;
             }
@@ -4039,7 +4038,12 @@ public class MantDesp extends ventanaPad implements PAD
                     jtLin.setValor(deo_feccadE.getText(),JTLIN_FECCAD);
                     def_feccadE.setText(deo_feccadE.getText());
                 }
-                actKilos(JTLIN_GRID);
+                try {
+                    actKilos(JTLIN_GRID);
+                } catch (SQLException k)
+                {
+                    Error("Error al actualizar kilos grid",k);
+                }
             }
             @Override
             public boolean afterInsertaLinea(boolean ins)
@@ -4124,9 +4128,10 @@ public class MantDesp extends ventanaPad implements PAD
                 @Override
                 public void afterCambiaLinea()
                 {
-                    actKilos(JTCAB_GRID);
-                    resetCambioLineaCab();
+
                     try {
+                        actKilos(JTCAB_GRID);
+                        resetCambioLineaCab();
                         pro_codiE.getNombArt(); // Actualizo datos de Producto
                     } catch (SQLException k){
                         Error("Error al actualizar propiedades articulo",k);

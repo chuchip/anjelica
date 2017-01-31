@@ -51,7 +51,7 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
     String botonTexto="";
     int numHoja;
     String[] articulos= new String[]{"20+","VA108","7 COST","8 COST.","23+","25+","28+",
-        "PIST.","LOMO P.+90","LOMO P.-90","8 COST SP","8C.EXTRA",
+        "PIST.","LNP","LOMO P.-90","8 COST SP","8C.EXTRA",
         "BOLA +60","BOLA -60","LOMO TERN.",
         "T-BONE","108B","108B ESP."};
     

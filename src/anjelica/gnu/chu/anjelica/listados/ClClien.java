@@ -16,7 +16,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -118,6 +121,7 @@ public class ClClien extends ventana
       rep_codiE.setText("**");
       Baceptar.addMenu("Consultar");
       Baceptar.addMenu("Listar");
+      Baceptar.addMenu("Ficha");
       activarEventos();
   }
   void activarEventos()
@@ -129,8 +133,13 @@ public class ClClien extends ventana
         {
           if (e.getActionCommand().equals("Listar"))          
             Blista_actionPerformed(e);
-          else
-            Bcons_actionPerformed();
+          else 
+          {
+              if (e.getActionCommand().equals("Ficha"))          
+                  imprimirFicha();
+              else
+                 Bcons_actionPerformed();
+          }
         }
       });
       
@@ -262,7 +271,35 @@ public class ClClien extends ventana
         Error("Error al Buscar Datos", k);
       }
     }
-
+  void imprimirFicha()
+  {
+       try
+       {
+           if (!checkCondiciones())
+               return;
+           mensaje("Espere ... generando Listado");
+           String s=getStrSql();
+           dtCon1.setStrSelect(s);
+           ResultSet rs=ct.createStatement().executeQuery(dtCon1.getStrSelect());
+           JasperReport jr;
+           jr = Listados.getJasperReport(EU, "fichaCliente");
+           
+           java.util.HashMap mp = new java.util.HashMap();
+           mp.put("detalleReport",EU.pathReport +"/fichaClienteDet.jasper");
+           mp.put("subReport",EU.pathReport +"/fichaClienteAlb.jasper");
+           mp.put(JRParameter.REPORT_CONNECTION,ct);
+           JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
+           if (!gnu.chu.print.util.printJasper(jp, EU)) {
+               mensaje("");
+               this.setEnabled(true);
+               return;
+           }
+           mensaje("");
+       } catch (SQLException | JRException | PrinterException ex)
+       {
+         Error("Error al imprimir ficha clientes",ex);
+       }
+  }
   void Blista_actionPerformed(ActionEvent e) {
       if (!checkCondiciones())
         return;

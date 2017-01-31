@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2017-01-31T19:17:54 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fichaClienteDet" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a30f4e35-157d-4e20-bbbf-54b01488d929">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Anjelica "/>
+	<parameter name="ejeNume" class="java.lang.Integer"/>
+	<parameter name="pvcNume" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select a.pro_codi,pro_nomb,pvl_canti,pvl_tipo,pvl_precio, pvl_comen
+from  anjelica.v_pedven as v left join anjelica.v_articulo as a on a.pro_codi=v.pro_codi where 
+eje_nume = $P{ejeNume} and
+pvc_nume = $P{pvcNume}
+limit 5]]>
+	</queryString>
+	<field name="pro_codi" class="java.lang.Integer"/>
+	<field name="pro_nomb" class="java.lang.String"/>
+	<field name="pvl_canti" class="java.lang.Double"/>
+	<field name="pvl_tipo" class="java.lang.String"/>
+	<field name="pvl_precio" class="java.lang.Double"/>
+	<field name="pvl_comen" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<textField>
+				<reportElement x="10" y="0" width="80" height="17" uuid="2788db5f-4888-468b-b7fe-728091a826d5"/>
+				<textFieldExpression><![CDATA[$F{pro_codi}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="18" width="320" height="17" uuid="3847dd16-4e2c-4e4f-9504-e1e612decd2e"/>
+				<textFieldExpression><![CDATA[$F{pvl_comen}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="366" y="0" width="20" height="17" uuid="411c8b4e-fbb6-4d39-a579-f6eee5f13762"/>
+				<textFieldExpression><![CDATA[$F{pvl_tipo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="230" height="17" uuid="5decd362-4149-42c5-a5cf-071297341e49"/>
+				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##0">
+				<reportElement x="334" y="0" width="30" height="17" uuid="3364d0f6-0195-43cc-a7b9-6c1a502d33b1">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{pvl_canti}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="391" y="0" width="40" height="17" uuid="974be0a0-68dc-452c-94ee-35db80fc7d88">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{pvl_precio}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

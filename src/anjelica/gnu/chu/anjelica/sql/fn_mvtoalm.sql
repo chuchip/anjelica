@@ -9,6 +9,7 @@ $BODY$
   cuantos int;
   tipoMvto char(1);
   mvtPrven numeric;
+  mvtDtoCom numeric;
   mvtFecdoc date;
   mvtFecmvt timestamp;
   mvtCliprv int;
@@ -33,19 +34,15 @@ $BODY$
 	end if;
 	if TG_TABLE_NAME = 'v_albvenpar' then
 	   if TG_OP =  'INSERT' OR TG_OP = 'UPDATE' then
-	     select l.avl_prven,c.avc_fecalb,l.avl_fecalt,alm_codori,
-	          alm_coddes, alm_codi,c.cli_codi
+	     select avl_prven,avc_fecalb,avl_fecalt,alm_codori,
+	          alm_coddes, alm_codi,cli_codi
 		 into mvtPrven,mvtFecdoc,mvtFecmvt,almOrig,almFinal,almCodi,mvtCliprv
-	         from anjelica.v_albavel as l,anjelica.v_albavec as c where 
-			c.emp_codi=l.emp_codi and
-			c.avc_ano=l.avc_ano and
-			c.avc_nume=l.avc_nume and
-			c.avc_serie=l.avc_serie and
-                        l.avl_numlin = NEW.avl_numlin and
-			c.emp_codi=NEW.emp_codi and
-			c.avc_ano=NEW.avc_ano and
-			c.avc_nume=NEW.avc_nume and
-			c.avc_serie=NEW.avc_serie;
+	         from anjelica.v_albventa where 
+			avl_numlin = NEW.avl_numlin and
+			emp_codi=NEW.emp_codi and
+			avc_ano=NEW.avc_ano and
+			avc_nume=NEW.avc_nume and
+			avc_serie=NEW.avc_serie;
 		if not found then
 			RAISE EXCEPTION 'NO encontrada cabecera o linea de albaran venta';
 		end if;

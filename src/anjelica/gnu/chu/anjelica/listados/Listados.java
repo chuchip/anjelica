@@ -107,9 +107,8 @@ public class Listados
       s="SELECT * FROM listados WHERE emp_codi = 0"+ // Busco para empresa General
           " and lis_codi = "+codList;
       if (dtStat.select(s))
-      {
         return new Listados(empCodi,codList,dtStat.getString("lis_file"),dtStat.getString("lis_logo"));
-      }
+      
       throw new SQLException("NO encontrado codigo Listado: "+codList+ " en Empresa: "+empCodi);
     }
     public  static String getNombListado(int empCodi,int codList, DatosTabla dtStat) throws SQLException

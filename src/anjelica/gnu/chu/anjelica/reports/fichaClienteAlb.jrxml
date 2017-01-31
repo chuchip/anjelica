@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2017-01-31T19:47:08 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fichaClienteDet" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a30f4e35-157d-4e20-bbbf-54b01488d929">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Anjelica "/>
+	<parameter name="cliCodi" class="java.lang.Integer"/>
+	<parameter name="avcAno" class="java.lang.Integer"/>
+	<parameter name="avcNume" class="java.lang.Integer"/>
+	<parameter name="avcSerie" class="java.lang.Integer"/>
+	<parameter name="detalleReport" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[select eje_nume,pvc_nume,pvc_fecent
+from  anjelica.pedvenc as v where
+cli_codi = $P{cliCodi}
+order by pvc_fecent desc
+limit 5]]>
+	</queryString>
+	<field name="eje_nume" class="java.lang.Integer"/>
+	<field name="pvc_nume" class="java.lang.Integer"/>
+	<field name="pvc_fecent" class="java.sql.Date"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="20" width="544" height="10" uuid="7c049938-6567-42a2-88ff-9f9b8c390a82">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<subreportParameter name="ejeNume">
+					<subreportParameterExpression><![CDATA[$F{eje_nume}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="pvcNume">
+					<subreportParameterExpression><![CDATA[$F{pvc_nume}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{detalleReport}]]></subreportExpression>
+			</subreport>
+			<textField pattern="M/d/yy">
+				<reportElement x="237" y="-1" width="70" height="16" uuid="bb651ad9-c4e7-4207-87f0-4378696a6846"/>
+				<textFieldExpression><![CDATA[$F{pvc_fecent}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="40" y="0" width="30" height="15" uuid="89dac280-ee95-4f9c-9c52-0b76014547de"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{eje_nume}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="70" y="0" width="60" height="15" uuid="c9b9ac20-b2c4-4dee-ba0c-56c944698b63"/>
+				<textFieldExpression><![CDATA[$F{pvc_nume}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="167" y="-2" width="70" height="18" uuid="e3a8a9a9-c7bb-4240-a1a1-6b74a79c5deb"/>
+				<text><![CDATA[Fecha Entrega]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="16" width="540" height="1" uuid="8f088797-1678-4597-84f1-7dac78bd6fdb">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="1" width="40" height="15" uuid="46cf6870-eafa-4a58-8fd7-28ff15e38a09">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Pedido]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
