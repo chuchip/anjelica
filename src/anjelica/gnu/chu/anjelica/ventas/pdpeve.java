@@ -2093,6 +2093,10 @@ public class pdpeve  extends ventanaPad   implements PAD
 
             if (cli_codiE.hasCambio())
             {
+                 if (!cli_codiE.isServir())
+                 {
+                    msgBox("ATENCION!. Cliente esta marcado como para no servir");  
+                 }
                 cli_codiE.resetCambio();
                 rut_codiE.setText(cli_codiE.getLikeCliente().getString("rut_codi"));
                 if (cli_codiE.getLikeCliente().getInt("cli_gener") == 0 && nav.getPulsado() == navegador.ADDNEW)

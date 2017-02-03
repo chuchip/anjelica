@@ -324,6 +324,7 @@ cli_feulco date,        -- Fecha Ult. Contacto
 cli_estcon char(1) default 'N',     -- Estado de Contacto (No contacto,Ausente,Contacto, Llamar)
 cli_email1 char(60),     -- Correo Electronico Comercial (Tarifas)
 cli_email2 char(60),     -- Correo Electronico Administr. (Facturas/Alb.)
+cli_servir smallint default -1 not null, --  Puede servir?. 0 NO 
 constraint ix_vcliente primary key(cli_codi)
 );
 create or replace view anjelica.v_cliente as select *,cli_codrut as cli_carte,cli_codrut as cli_valor from anjelica.clientes;
@@ -419,6 +420,7 @@ usu_nom varchar(15) not null, -- Usuario que realiza el Cambio
 clc_fecha date not null, -- Fecha de Cambio
 clc_hora decimal(5,2) not null, -- Hora de Cambio
 clc_comen varchar(100) -- Comentario sobre el Cambio
+cli_servir smallint default -1 not null, --  Puede servir?. 0 NO 
 );
 create index ix_cliencamb on cliencamb(cli_codi,clc_fecha,clc_hora);
 --
@@ -3411,6 +3413,8 @@ create table anjelica.pedvenl
 (
  emp_codi int not null,		-- Empresa
  eje_nume int not null,		-- Ejercicio de Pedido
+ pvc_nume int not null,		-- Numero de Pedido
+ pvc_nume int not null,		-- Numero de Pedido
  pvc_nume int not null,		-- Numero de Pedido
  pvl_numlin int not null,	-- Numero de Linea
  pvl_kilos float not null,	-- Kilos o unidades de producto.

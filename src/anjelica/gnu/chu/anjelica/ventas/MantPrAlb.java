@@ -1110,40 +1110,40 @@ public class MantPrAlb extends ventana {
         int nRow=jtLin.getRowCount();
         int nLin=jtSelAlb.getSelectedRow();
         try {
-          mvtosAlm.setUseMvtos(true);
-          mvtosAlm.setIgnDespSinValor(true);
-          mvtosAlm.setIgnComprasSinValor(true);
-          mvtosAlm.iniciarMvtos(feulin,fecCostoE.isNull()?avc_fecalbE.getText():fecCostoE.getText(),dtCos1);
-        for (int n=0;n<nRow;n++)
-        {
-            if (nLin!=jtSelAlb.getSelectedRow())
-                break;
-             Double prec=htCosto.get(jtLin.getValorInt(n,0));
-             prTecS="";
-             if (prec==null)
-             {
-                  
-                  prCosto=pdprvades.getPrecioValorar(dtCos1,jtLin.getValorInt(n,0),avc_fecalbE.getDate());
-                  if (prCosto<=0)
-                  {
-                    if (! mvtosAlm.calculaMvtos(jtLin.getValorInt(n,0), dtCos1, dtCos2, null,null))
-                          prCosto=0;
-                    else
-                    {
-                        if (mvtosAlm.getDespiecesSinValor())
-                          prTecS="SV";
-                        prCosto = mvtosAlm.getPrecioStock();
-                    }
-                  }
-                  else
-                      prTecS="PF";
-                  htCosto.put(jtLin.getValorInt(n,0), prCosto);
-             }
-             else
-                   prCosto=prec;
-             jtLin.setValor(prCosto,n,7);
-             jtLin.setValor(prTecS,n,13);
-        }
+            mvtosAlm.setUseMvtos(true);
+            mvtosAlm.setIgnDespSinValor(true);
+            mvtosAlm.setIgnComprasSinValor(true);
+            mvtosAlm.iniciarMvtos(feulin,fecCostoE.isNull()?avc_fecalbE.getText():fecCostoE.getText(),dtCos1);
+            for (int n=0;n<nRow;n++)
+            {
+                if (nLin!=jtSelAlb.getSelectedRow())
+                    break;
+                 Double prec=htCosto.get(jtLin.getValorInt(n,0));
+                 prTecS="";
+                 if (prec==null)
+                 {
+
+                      prCosto=pdprvades.getPrecioValorar(dtCos1,jtLin.getValorInt(n,0),avc_fecalbE.getDate());
+                      if (prCosto<=0)
+                      {
+                        if (! mvtosAlm.calculaMvtos(jtLin.getValorInt(n,0), dtCos1, dtCos2, null,null))
+                              prCosto=0;
+                        else
+                        {
+                            if (mvtosAlm.getDespiecesSinValor())
+                              prTecS="SV";
+                            prCosto = mvtosAlm.getPrecioStock()+MantArticulos.getCostoIncrementar(dtCos1,jtLin.getValorInt(n,0));
+                        }
+                      }
+                      else
+                          prTecS="PF";
+                      htCosto.put(jtLin.getValorInt(n,0), prCosto);
+                 }
+                 else
+                       prCosto=prec;
+                 jtLin.setValor(prCosto,n,7);
+                 jtLin.setValor(prTecS,n,13);
+            }
         } catch (SQLException | ParseException k)
         {
             enviaMailError("(MantPrAlb) Error al actualizar costos "+k.getMessage());

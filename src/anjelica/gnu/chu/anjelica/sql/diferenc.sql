@@ -1,3 +1,8 @@
+drop view v_cliente;
+alter table clientes   add cli_servir smallint default 1 not null;
+create or replace view anjelica.v_cliente as select *,cli_codrut as cli_carte,cli_codrut as cli_valor from anjelica.clientes;
+grant select on anjelica.v_cliente to PUBLIC;
+alter table cliencamb   add cli_servir smallint default 1 not null;
 --
 -- Añadido campo precio valoracion
 --

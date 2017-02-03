@@ -230,6 +230,8 @@ public class pdclien extends ventanaPad implements PAD
     private CLabel rep_codiL = new CLabel();
      private CLinkBox rut_codiE = new CLinkBox();
     private CLabel rut_codiL = new CLabel("Ruta");
+    private CLabel cli_servirL = new CLabel("Servir");
+    private CComboBox cli_servirE = new CComboBox();
     private CLinkBox rep_codiE = new CLinkBox();
     private CLabel cli_feulveL = new CLabel();
     private CTextField cli_feulveE = new CTextField(Types.DATE, "dd-MM-yyyy");
@@ -324,7 +326,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2017-01-23");
+      this.setVersion("2017-02-02");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -649,6 +651,8 @@ public class pdclien extends ventanaPad implements PAD
       cli_email2E.setBounds(new Rectangle(115, 220, 275, 18));
       rut_codiL.setBounds(new Rectangle(1, 240, 110, 18));
       rut_codiE.setBounds(new Rectangle(115, 240, 275, 18));
+      cli_servirL.setBounds(new Rectangle(1, 260, 110, 18));
+      cli_servirE.setBounds(new Rectangle(115, 260, 75, 18));
       cli_codrutL.setBounds(new Rectangle(410, 240, 80, 19));
       cli_codrepE.setBounds(new Rectangle(495, 240, 50, 19));
       cli_codrepE.setMayusc(true);
@@ -807,6 +811,8 @@ public class pdclien extends ventanaPad implements PAD
         PdatGen.add(cli_email2L, null);
         PdatGen.add(rut_codiL, null);
         PdatGen.add(rut_codiE, null);
+        PdatGen.add(cli_servirL, null);
+        PdatGen.add(cli_servirE, null);
         PdatGen.add(cli_codrutL, null);
         PdatGen.add(cli_codrepE,null);
 
@@ -888,11 +894,14 @@ public class pdclien extends ventanaPad implements PAD
     sbe_nombL=sbe_codiE.creaLabelSbe();
     sbe_codiE.setLabelSbe(sbe_nombL);
   }
+    @Override
   public void iniciarVentana() throws Exception
   {
     cli_precfiE.addItem("No","0");
     cli_precfiE.addItem("Si","1");
-
+    cli_servirE.addItem("Si","1");
+    cli_servirE.addItem("No","0");
+    
     eti_codiE.addDatos(etiqueta.getReports(dtStat,EU.em_cod,1));
     eti_codiE.setFormato(Types.DECIMAL,"###9",4);
 
@@ -1814,6 +1823,7 @@ public class pdclien extends ventanaPad implements PAD
     dtAdd.setDato("cli_comenv",cli_comenvE.getText());
     dtAdd.setDato("cli_email1",cli_email1E.getText());
     dtAdd.setDato("cli_email2",cli_email2E.getText());
+    dtAdd.setDato("cli_servir",cli_servirE.getValorInt());
 //    dtAdd.setDato("cli_nurgsa",cli_nurgsaE.getText());
     dtAdd.update(stUp);
     ctUp.commit();
@@ -2160,6 +2170,7 @@ public class pdclien extends ventanaPad implements PAD
       rep_codiE.setText(dtCon1.getString("rep_codi"));
 
       cli_activE.setValor(dtCon1.getString("cli_activ"));
+      cli_servirE.setValor(dtCon1.getInt("cli_servir"));
       cli_generE.setValor(dtCon1.getString("cli_gener"));
       sbe_codiE.setValorInt(dtCon1.getInt("sbe_codi",true));
       cli_giroE.setValor(dtCon1.getString("cli_giro"));
@@ -2396,7 +2407,6 @@ public class pdclien extends ventanaPad implements PAD
       } catch (Exception k)
       {
         Error("Error al llenar Grid de Cambios de Clientes",k);
-        return;
       }
     }
     
@@ -2486,6 +2496,7 @@ public class pdclien extends ventanaPad implements PAD
       return null;
     return dt.getString("cli_nomb");
   }
+
   public static  String  ponerInactivos(DatosTabla dtSel,DatosTabla dtUpd, int diasVenta ,int diasModif) throws SQLException
   {
       String s = "SELECT * from clientes WHERE cli_activ = 'S' and cli_feulmo <= current_date - "+ diasModif +

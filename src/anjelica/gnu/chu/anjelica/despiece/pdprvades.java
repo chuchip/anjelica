@@ -20,7 +20,7 @@ import javax.swing.BorderFactory;
  * <p>Descripción: Mantenimiento Productos Valorados para Despiece </p>
  * <p> Marca Precios FIJOS de compra para los productos
  * en una semana determinada. Utilizado en programa valoracion despieces</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -589,14 +589,27 @@ public class pdprvades extends ventanaPad implements PAD
     }
     return -1;
   }
-  
+  /**
+   * Devuelve la semana y el año para una fecha dada
+   * @param fecha
+   * @return  Dimension. Width sera el año. heigh sera la semana
+   */
+  public static Dimension getAnoySemana(Date fecha)
+  {
+      GregorianCalendar gc=new GregorianCalendar();
+      gc.setFirstDayOfWeek(1);
+      gc.setTime(fecha);
+      int semana = gc.get(GregorianCalendar.WEEK_OF_YEAR);
+      int ano= gc.get(GregorianCalendar.YEAR);
+//      if (semana>1)
+//          semana--;
+      return new Dimension(ano,semana);
+  }
    public static double getPrecioOrigen(DatosTabla dt, int proCodi,Date fecha)  throws SQLException
    {
-      GregorianCalendar gc=new GregorianCalendar();    
-      gc.setTime(fecha);
-      int semana = gc.get(GregorianCalendar.WEEK_OF_YEAR);          
-      int ano= gc.get(GregorianCalendar.YEAR);
-      return getPrecioOrigen(dt,proCodi,ano, semana);
+      Dimension d=getAnoySemana(fecha); 
+    
+      return getPrecioOrigen(dt,proCodi,d.width, d.height);
    }
   /**
    * Devuelve el precio fijo para un producto en la fecha indicada.
@@ -609,19 +622,13 @@ public class pdprvades extends ventanaPad implements PAD
    */
   public static double getPrecioFinal(DatosTabla dt, int proCodi,Date fecha)  throws SQLException
   {
-      GregorianCalendar gc=new GregorianCalendar();
-      gc.setFirstDayOfWeek(1);
-      gc.setTime(fecha);
-      int semana = gc.get(GregorianCalendar.WEEK_OF_YEAR);
-      int ano= gc.get(GregorianCalendar.YEAR);
-      if (semana>1)
-          semana--;
-
-      return getPrecioFinal(dt,proCodi,ano, semana);
+      Dimension d=getAnoySemana(fecha); 
+    
+      return getPrecioFinal(dt,proCodi,d.width, d.height);     
   }
   public static double getPrecioFinal(DatosTabla dt, int proCodi,int ejeNume,int semCodi) throws SQLException
   {
-      String sql="SELECT * FROM desproval " +
+      String sql="SELECT dpv_preci FROM desproval " +
           " WHERE eje_nume = " + ejeNume +
             " and dpv_nusem = "+semCodi+
             " and pro_codi = "+proCodi;
@@ -640,7 +647,7 @@ public class pdprvades extends ventanaPad implements PAD
    */
   public static double getPrecioFinal(DatosTabla dt, String codArt,int ejeNume,int semCodi) throws SQLException
   {
-      String sql="SELECT * FROM desproval as d,v_articulo as a " +
+      String sql="SELECT dpv_preci FROM desproval as d,v_articulo as a " +
           " WHERE eje_nume = " + ejeNume +
             " and dpv_nusem = "+semCodi+
             " and d.pro_codi = a.pro_codi "+

@@ -216,7 +216,15 @@ public class cliPanel extends CPanel
   {
       return getLikeCliente().getString("cli_activ").toUpperCase().startsWith("S");
   }
-   
+  /**
+   * Devuelve si a un cliente se le puede servir o no.
+   * @return true si se le puede servir 
+   * @throws SQLException 
+   */
+  public boolean isServir() throws SQLException
+  {
+      return getLikeCliente().getInt("cli_servir")!=0;
+  }
   /**
    * Hace el boton de consultar visible
    * @param activo true = visible

@@ -6001,6 +6001,10 @@ public class pdalbara extends ventanaPad  implements PAD
 //        swPasLin=true;
         if (nav.pulsado!=navegador.EDIT)
         {
+          if (!cli_codiE.isServir())
+          {
+              msgBox("ATENCIO CLIENTE ESTA MARCADO COMO NO SERVIBLE. NO SE PODRA IMPRIMIR");
+          }
           pvc_anoE.setEnabled(false);
           pvc_numeE.setEnabled(false);
           BbusPed.setEnabled(false);
@@ -8407,7 +8411,7 @@ public class pdalbara extends ventanaPad  implements PAD
 //    int nAlbImp = 0;
     try
     {
-      if (avc_deposE.getValor().equals("D") && avsNume==0)
+      if (avc_deposE.getValor().equals("D") && avsNume==0 && opDispSalida.getValor().equals(DSAL_IMPRE))
       { // Albaran deposito. Pedir confirmación
           int ret=mensajes.mensajeYesNo("Albaran es de DEPOSITO. Listar seguro?");
           if (ret!=mensajes.YES)
@@ -8427,6 +8431,12 @@ public class pdalbara extends ventanaPad  implements PAD
         msgBox("NO se pudo listar albaran\n"+msgBloqueo);
         verDatos(dtCons);
         return;
+      }
+      if (opDispSalida.getValor().equals(DSAL_IMPRE) && !cli_codiE.isServir())
+      {
+        msgBox("CLIENTE ESTA MARCADO COMO NO SERVIBLE. IMPOSIBLE IMPRIMIR");
+        verDatos(dtCons);
+        return;          
       }
       if (cli_codiE.getLikeCliente().getInt("cli_albval")==pdclien.LISTAR_ALB_VALORADOS &&
           !opValora.isSelected() && opDispSalida.getValor().equals(DSAL_IMPRE) && avsNume==0 )
