@@ -52,7 +52,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="10" width="-1" height="-1"/>
+                  <AbsoluteConstraints x="10" y="5" width="-1" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -62,7 +62,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="40" y="10" width="40" height="-1"/>
+                  <AbsoluteConstraints x="40" y="5" width="40" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -126,14 +126,14 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="100" y="10" width="90" height="18"/>
+                  <AbsoluteConstraints x="100" y="5" width="90" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.camposdb.sbePanel" name="sbe_codiE">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="190" y="10" width="37" height="20"/>
+                  <AbsoluteConstraints x="190" y="5" width="37" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -146,20 +146,21 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="260" y="10" width="30" height="-1"/>
+                  <AbsoluteConstraints x="260" y="5" width="30" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CLinkBox" name="zon_codiE">
               <Properties>
                 <Property name="ancTexto" type="int" value="30"/>
+                <Property name="mayusculas" type="boolean" value="true"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[152, 18]"/>
                 </Property>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="290" y="10" width="170" height="18"/>
+                  <AbsoluteConstraints x="290" y="5" width="170" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -173,7 +174,21 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="470" y="20" width="110" height="-1"/>
+                  <AbsoluteConstraints x="470" y="30" width="110" height="-1"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opReprAlb">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Repr. Albaran"/>
+                <Property name="toolTipText" type="java.lang.String" value="Forzar Representante de Albaran"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="opReprAlbActionPerformed"/>
+              </Events>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="470" y="5" width="100" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

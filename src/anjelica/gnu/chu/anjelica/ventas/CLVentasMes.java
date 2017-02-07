@@ -145,9 +145,9 @@ public void iniciarVentana() throws Exception
         
         String s="select cl.cli_codi,cl.cli_nomb,cl.cli_pobl from v_albavec as c,v_cliente as cl where avc_ano>="+(avc_anoE.getValorInt()-1)+
             " and c.cli_codi = cl.cli_codi "+
-            (rep_codiE.isNull()?"":" and rep_codi = '"+rep_codiE.getText()+"'")+
-            (zon_codiE.isNull()?"":" and zon_codi = '"+zon_codiE.getText()+"'")+
-            (rut_codiE.isNull()?"":" and rut_codi = '"+rut_codiE.getText()+"'")+   
+            (rep_codiE.isNull()?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'")+
+            (zon_codiE.isNull()?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
+            (rut_codiE.isNull()?"":" and cl.rut_codi = '"+rut_codiE.getText()+"'")+   
             (sbe_codiE.getValorInt()==0 ?"":" and cl.sbe_codi = '"+sbe_codiE.getText()+"'")+   
 //            " and cl.cli_codi=27210"+
             " group by cl.cli_pobl,cl.cli_nomb,cl.cli_codi"+
@@ -181,26 +181,26 @@ public void iniciarVentana() throws Exception
             {
                 case "Comisiones":
                      s="select sum(avl_canti*(avl_prven-avl_profer))  as kilos from v_albventa where cli_codi= ?"+
-                    (rep_codiE.isNull()?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
+                    (rep_codiE.isNull() || ! opReprAlb.isSelected() ?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
                     " and avl_profer > 0 and avl_prbase > 0 "+
                     " and avc_ano = ?"+
                     " and avc_fecalb between ? and ? ";
                     break;
                 case "Albaranes":
                   s="select count(*) as kilos from v_albavec where cli_codi= ?"+
-                    (rep_codiE.isNull()?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
+                    (rep_codiE.isNull() || ! opReprAlb.isSelected() ?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
                     " and avc_ano = ?"+
                     " and avc_fecalb between ? and ? ";
                    break;
                 case "Clientes":
                   s="select count(distinct(cli_codi)) as kilos from v_albavec where cli_codi= ?"+
-                    (rep_codiE.isNull()?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
+                    (rep_codiE.isNull() || ! opReprAlb.isSelected() ?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
                     " and avc_ano = ?"+
                     " and avc_fecalb between ? and ? ";
                   break;
                 default:
                   s="select sum(avc_kilos) as kilos from v_albavec where cli_codi= ?"+
-                    (rep_codiE.isNull()?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
+                    (rep_codiE.isNull() || ! opReprAlb.isSelected()?"":" and avc_repres = '"+rep_codiE.getText()+"'")+
                     " and avc_ano = ?"+
                     " and avc_fecalb between ? and ? ";
             }
@@ -300,6 +300,7 @@ public void iniciarVentana() throws Exception
         cLabel19 = new gnu.chu.controles.CLabel();
         zon_codiE = new gnu.chu.controles.CLinkBox();
         Baceptar = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("check"));
+        opReprAlb = new gnu.chu.controles.CCheckBox();
         jt = new gnu.chu.controles.Cgrid(29);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
@@ -309,9 +310,9 @@ public void iniciarVentana() throws Exception
 
         cLabel1.setText("Año");
         Pcondi.add(cLabel1);
-        cLabel1.setBounds(10, 10, 22, 15);
+        cLabel1.setBounds(10, 5, 22, 17);
         Pcondi.add(avc_anoE);
-        avc_anoE.setBounds(40, 10, 40, 17);
+        avc_anoE.setBounds(40, 5, 40, 17);
 
         cLabel16.setText("Repres.");
         cLabel16.setPreferredSize(new java.awt.Dimension(60, 18));
@@ -339,19 +340,20 @@ public void iniciarVentana() throws Exception
 
         cLabel4.setText("Subempresa");
         Pcondi.add(cLabel4);
-        cLabel4.setBounds(100, 10, 90, 18);
+        cLabel4.setBounds(100, 5, 90, 17);
         Pcondi.add(sbe_codiE);
-        sbe_codiE.setBounds(190, 10, 37, 20);
+        sbe_codiE.setBounds(190, 5, 37, 17);
 
         cLabel19.setText("Zona");
         cLabel19.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcondi.add(cLabel19);
-        cLabel19.setBounds(260, 10, 30, 18);
+        cLabel19.setBounds(260, 5, 30, 17);
 
         zon_codiE.setAncTexto(30);
+        zon_codiE.setMayusculas(true);
         zon_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
         Pcondi.add(zon_codiE);
-        zon_codiE.setBounds(290, 10, 170, 18);
+        zon_codiE.setBounds(290, 5, 170, 17);
 
         Baceptar.addMenu("Kilos", "K");
         Baceptar.addMenu("Albaranes", "A");
@@ -359,7 +361,17 @@ public void iniciarVentana() throws Exception
         Baceptar.addMenu("Comisiones", "M");
         Baceptar.setText("Consultar");
         Pcondi.add(Baceptar);
-        Baceptar.setBounds(470, 20, 110, 26);
+        Baceptar.setBounds(470, 30, 110, 26);
+
+        opReprAlb.setText("Repr. Albaran");
+        opReprAlb.setToolTipText("Forzar Representante de Albaran");
+        opReprAlb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                opReprAlbActionPerformed(evt);
+            }
+        });
+        Pcondi.add(opReprAlb);
+        opReprAlb.setBounds(470, 5, 100, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -390,6 +402,10 @@ public void iniciarVentana() throws Exception
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void opReprAlbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_opReprAlbActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_opReprAlbActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButtonMenu Baceptar;
@@ -402,6 +418,7 @@ public void iniciarVentana() throws Exception
     private gnu.chu.controles.CLabel cLabel19;
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.Cgrid jt;
+    private gnu.chu.controles.CCheckBox opReprAlb;
     private gnu.chu.controles.CLinkBox rep_codiE;
     private gnu.chu.controles.CLinkBox rut_codiE;
     private gnu.chu.camposdb.sbePanel sbe_codiE;
