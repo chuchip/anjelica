@@ -867,6 +867,8 @@ public class pdpedco extends ventanaPad   implements PAD
   {
     nRow=-1;
     Pcabe.resetTexto();
+    pcc_fecconE.resetTexto();
+    pcc_feclisE.resetTexto();
     pcc_comenE.resetTexto();
     jt.removeAllDatos();
     jt.requestFocusInicio();
@@ -898,12 +900,13 @@ public class pdpedco extends ventanaPad   implements PAD
       if (! checkCampos())
         return;
 
-      jt.salirGrid();;
+      jt.salirGrid();
       s="SELECT num_pedcom FROM v_numerac WHERE eje_nume = "+eje_numeE.getValorInt()+
           " AND emp_codi = "+emp_codiE.getValorInt();
       if (!dtAdd.select(s,true))
         throw new Exception("No encontrado guia de NUMERACIONES\n"+s);
-
+      if (pcc_estadE.getValor().equals("C"))
+          pcc_fecconE.setDate(Formatear.getDateAct());
       pcc_numeE.setValorDec(dtAdd.getInt("num_pedcom",true)+1);
       dtAdd.edit();
 //      dtAdd.setDato("num_pedcom",pcc_numeE.getValorInt());
