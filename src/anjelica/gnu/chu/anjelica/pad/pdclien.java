@@ -326,7 +326,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2017-02-02");
+      this.setVersion("2017-02-06");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -1061,6 +1061,7 @@ public class pdclien extends ventanaPad implements PAD
     cli_comenvE.setColumnaAlias("cli_comenv");
     cli_email1E.setColumnaAlias("cli_email1");
     cli_email2E.setColumnaAlias("cli_email2");
+    cli_servirE.setColumnaAlias("cli_servir");
 //    cli_nurgsaE.setColumnaAlias("cli_nurgsa");
 //    jt.getPopMenu().add(copiaCliente,0);
     activaTodo();
@@ -1316,6 +1317,7 @@ public class pdclien extends ventanaPad implements PAD
     v.add(cli_feulmoE.getStrQuery());
     v.add(cli_email1E.getStrQuery());
     v.add(cli_email2E.getStrQuery());
+    v.add(cli_servirE.getStrQuery());
     Pcabe.setQuery(false);
     PdatGen.setQuery(false);
     PdatEnv.setQuery(false);
