@@ -35,14 +35,12 @@ import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 
 /**
  *
  * <p>Titulo: MantDespTactil</p>
  * <p>Descripción: Mant. DESPIECES POR TACTIL</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -63,6 +61,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
 {
  private gnu.chu.controles.CComboBox eti_codiE=new gnu.chu.controles.CComboBox();
   cliPanel cli_codiE = new cliPanel();
+  CLabel deo_incvalL=new CLabel("Produccion");
+  CComboBox deo_incvalE=new CComboBox();
   int tipoEmp; // Tipo Empresa (Sala Despiece o Plantacion)
   private boolean isEmpPlanta=false; // Indica si la empresa es tipo Plantacion
   final static String TABLA_BLOCK="desporig";
@@ -323,7 +323,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
   {
     this(eu,p,null);
   }
-  public MantDespTactil(EntornoUsuario eu, Principal p,Hashtable ht)
+  public MantDespTactil(EntornoUsuario eu, Principal p,Hashtable<String,String> ht)
   {
     EU = eu;
     vl = p.panel1;
@@ -337,8 +337,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
       if (ht!=null)
       {
         if (ht.get("admin") != null)
-          PARAM_ADMIN = Boolean.valueOf(ht.get("admin").toString()).
-              booleanValue();
+          PARAM_ADMIN = Boolean.parseBoolean(ht.get("admin"));
       }
       if (jf.gestor.apuntar(this))
         jbInit();
@@ -348,11 +347,10 @@ public class MantDespTactil  extends ventanaPad implements PAD
     catch (Exception e)
     {
       ErrorInit(e);
-      setErrorInit(true);
     }
   }
 
- public MantDespTactil(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable ht)
+ public MantDespTactil(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable<String,String> ht)
  {
    EU = eu;
    vl = p.getLayeredPane();
@@ -361,8 +359,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    if (ht!=null)
    {
         if (ht.get("admin") != null)
-          PARAM_ADMIN = Boolean.valueOf(ht.get("admin").toString()).
-              booleanValue();
+          PARAM_ADMIN = Boolean.parseBoolean(ht.get("admin"));
    }
 
    try
@@ -397,7 +394,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2016-102-13"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2017-02-14"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -413,7 +410,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    grd_unioriE.setEnabled(false);
    grd_unioriE.setBounds(new Rectangle(228, 2, 44, 17));
    deo_blockE.setEnabled(false);
-   
+  
    grd_unifinE.setEnabled(false);
    grd_unifinE.setBounds(new Rectangle(226, 1, 44, 17));
    grd_kilfinE.setEnabled(false);
@@ -421,7 +418,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    grd_kilorgE.setEnabled(false);
    grd_kilorgE.setBounds(new Rectangle(383, 2, 93, 17));
    grd_kilorgE1.setEnabled(false);
-
+   deo_incvalE.setEnabled(PARAM_ADMIN);
    Pconsul.setLayout(gridBagLayout2);
     
    cLabel3.setToolTipText("");
@@ -690,6 +687,10 @@ public class MantDespTactil  extends ventanaPad implements PAD
     cLabel20.setBounds(new Rectangle(3, 41, 62, 18));
     cli_codiL.setBounds(new Rectangle(3, 61, 62, 18));
     cli_codiE.setBounds(new Rectangle(65, 61, 315, 18));
+    deo_incvalE.addItem("No","N");
+    deo_incvalE.addItem("Si","S");
+    deo_incvalL.setBounds(new Rectangle(385, 61, 70, 18));
+    deo_incvalE.setBounds(new Rectangle(458, 61, 50, 18));
     deo_almdesE.setAncTexto(30);
     deo_almdesE.setBounds(new Rectangle(349, 41, 186, 19));
     cLabel110.setText("Alm.Final");
@@ -797,6 +798,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Pcabe.add(cLabel20, null);
     Pcabe.add(cli_codiL, null);
     Pcabe.add(cli_codiE, null);
+    Pcabe.add(deo_incvalL, null);
+    Pcabe.add(deo_incvalE, null);
     Pcabe.add(deo_almoriE, null);
     Pcabe.add(cLabel110, null);
     Pcabe.add(cLabel23, null);
@@ -866,6 +869,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    MantDesp.deoBlockE_addItem(deo_blockE);
    eje_numeE.setColumnaAlias("eje_nume");
    deo_codiE.setColumnaAlias("deo_codi");
+   deo_incvalE.setColumnaAlias("deo_incval");
   // pro_loteE.setColumnaAlias("deo_numdes");
    grd_fechaE.setColumnaAlias("deo_fecha");
    cli_codiE.setColumnaAlias("cli_codi");
@@ -880,7 +884,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    eti_codiE.setDatos(etiqueta.getReports(dtStat, EU.em_cod,0));    
    eti_codiE.addItem("Defecto", "0");
    eti_codiE.setValor("0");
- 
+   deo_incvalE.setEnabled(false);
    activarEventos();
    verDatos(dtCons);
    actButton(true);
@@ -1205,6 +1209,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Bcancelar.setEnabled(true);
     Pcabe.setQuery(true);
     Pcabe.resetTexto();
+    deo_incvalE.setEnabled(true);
     grd_unidE.setEnabled(false);
     deo_blockE.addItem("Terminado","T");
     if (Integer.parseInt(Formatear.getFechaAct("MM"))>2)
@@ -1230,6 +1235,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
        v.add(grd_fechaE.getStrQuery());
        v.add(grd_unidE.getStrQuery());
        v.add(tid_codiE.getStrQuery());
+       v.add(deo_incvalE.getStrQuery());
        if (!deo_blockE.getValor().equals("T"))
         v.add(deo_blockE.getStrQuery());
        else
@@ -1577,7 +1583,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    desorca.setDeoAlmdes(deo_almdesE.getValorInt());
    desorca.setDeoBlock(deo_blockE.getValor());
    desorca.setDeoNumuni(grd_unidE.getValorInt());
-   desorca.setDeoIncval("S");
+   desorca.setDeoIncval(deo_incvalE.getValor());
    desorca.setDeoValor("N");
   }
   
@@ -1585,8 +1591,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
   public void canc_addnew() {
     if (deo_codiE.getValorInt()!=0)
     {
-        String txt=
-      txt=mensajes.mensajeGetTexto(" Teclee 'ANULAR' para anular el Alta del despiece","¡¡Atencion!!");
+      String txt=
+         mensajes.mensajeGetTexto(" Teclee 'ANULAR' para anular el Alta del despiece","¡¡Atencion!!");
       if (!txt.toUpperCase().equals("ANULAR"))          
         return;
       try {
@@ -1761,7 +1767,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
       activar(CABECERA, activ);
       activar(ENTRADA, activ);
       activar(SALIDA, activ);
-     
+      if (!activ || PARAM_ADMIN)
+            deo_incvalE.setEnabled(activ);
       grd_feccadE.setEnabled(activ);
       Baceptar.setEnabled(activ);
       Bcancelar.setEnabled(activ);
@@ -1769,6 +1776,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     switch (modo)
     {
       case CABECERA:
+       
         deo_codiE.setEnabled(activ);
         eje_numeE.setEnabled(activ);
         deo_codiE.setEnabled(activ);
@@ -1856,7 +1864,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
       deo_blockE.setValor(dtStat.getString("deo_block"));
       grd_feccadE.setText(dtStat.getFecha("deo_feccad","dd-MM-yyyy"));
       cli_codiE.setValorInt(dtStat.getInt("cli_codi",true));
-      
+      deo_incvalE.setValor(dtStat.getString("deo_incval"));
       s="SELECT d.*,pr.pro_nomb FROM desorilin d,v_articulo pr "+
           " WHERE d.pro_codi = pr.pro_codi "+
           " AND d.eje_nume = "+eje_numeE.getValorInt()+
@@ -2528,6 +2536,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
          return;
      }
      dtAdd.commit();// Para comenzar la transaccion.
+    
      int nInd = guardaLinDesp(eje_numeE.getValorInt(), EU.em_cod,
                               SERIE,
                               deo_codiE.getValorInt(), pro_codsalE.getValorInt(),
@@ -2758,6 +2767,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
      dtAdd.setDato("usu_nomb", defUsunom);
      dtAdd.setDato("def_cerra",-1);
      dtAdd.setDato("def_prcost",0);
+     dtAdd.setDato("def_tippro",deo_incvalE.getValor());     
      dtAdd.setDato("def_tiempo",   "current_timestamp");
    }
    else // NO SE DEBERIA DAR NUNCA ESTE CASO. 
@@ -2810,8 +2820,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  }
  
  private void actButton(boolean activ)
- {    
-  
+ {      
    Iterator <CButton> en=htProd.values().iterator();
    while (en.hasNext())
    {

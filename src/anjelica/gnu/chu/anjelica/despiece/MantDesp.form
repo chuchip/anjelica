@@ -555,7 +555,7 @@
             <Component class="gnu.chu.camposdb.prvPanel" name="prv_codiE">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="70" y="70" width="340" height="-1"/>
+                  <AbsoluteConstraints x="70" y="70" width="320" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -576,21 +576,21 @@
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel5">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Fec Prod"/>
+                <Property name="text" type="java.lang.String" value="Fec.Produc."/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="420" y="70" width="50" height="17"/>
+                  <AbsoluteConstraints x="400" y="70" width="70" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel6">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Fec Cad"/>
+                <Property name="text" type="java.lang.String" value="Fec. Cad."/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="540" y="70" width="50" height="17"/>
+                  <AbsoluteConstraints x="540" y="70" width="60" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -605,7 +605,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="595" y="70" width="64" height="17"/>
+                  <AbsoluteConstraints x="600" y="70" width="64" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -639,19 +639,6 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CCheckBox" name="deo_incvalE">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Procesado"/>
-              </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CCheckBox(&quot;S&quot;,&quot;N&quot;)"/>
-              </AuxValues>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="550" y="2" width="80" height="17"/>
-                </Constraint>
-              </Constraints>
-            </Component>
             <Component class="gnu.chu.controles.CCheckBox" name="opMantFecha">
               <Properties>
                 <Property name="text" type="java.lang.String" value="MF"/>
@@ -675,18 +662,18 @@
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel7">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Cliente"/>
+                <Property name="text" type="java.lang.String" value="Produccion"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="90" width="50" height="-1"/>
+                  <AbsoluteConstraints x="400" y="90" width="70" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.camposdb.cliPanel" name="cli_codiE">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="60" y="90" width="410" height="17"/>
+                  <AbsoluteConstraints x="60" y="90" width="330" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -700,7 +687,27 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="590" y="90" width="65" height="17"/>
+                  <AbsoluteConstraints x="590" y="90" width="80" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel22">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Cliente"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="10" y="90" width="50" height="-1"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CComboBox" name="deo_incvalE">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="deo_incvalE.addItem(&quot;No&quot;,&quot;N&quot;);&#xa;deo_incvalE.addItem(&quot;Si&quot;,&quot;S&quot;);"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="470" y="90" width="60" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

@@ -229,7 +229,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2017-01-31" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2017-02-14" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -310,6 +310,8 @@ public class MantDesp extends ventanaPad implements PAD
         jtLin.cuadrarGrid();
         utdesp = new utildesp();
         opMantFecha.setEnabled(P_ADMIN);
+        deo_incvalE.setEnabled(P_ADMIN);
+        deo_cerraE.setEnabled(P_ADMIN);
         Pcabe.setDefButton(Baceptar);
         Pcabe.setEscButton(Bcancelar);
         Pcabe.setAltButton(BirGrid);
@@ -342,6 +344,7 @@ public class MantDesp extends ventanaPad implements PAD
 
 //    jtLin.tableView.getColumnModel().getColumn(n).setIdentifier(null);
 //    emp_codiE.setColumnaAlias("emp_codi");
+        deo_incvalE.setColumnaAlias("deo_incval");
         eje_numeE.setColumnaAlias("eje_nume");
         deo_fechaE.setColumnaAlias("deo_fecha");
         deo_codiE.setColumnaAlias("deo_codi");
@@ -1424,6 +1427,7 @@ public class MantDesp extends ventanaPad implements PAD
         v.add(deo_nulogeE.getStrQuery());
         v.add(usu_nombE.getStrQuery());
         v.add(cli_codiE.getStrQuery());
+        v.add(deo_incvalE.getStrQuery());
         s = creaWhere(getStrSql(), v, false);
         s += getOrderQuery();
 //       debug("Query: "+s);
@@ -2624,7 +2628,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_codiE.setValorInt(dtStat.getInt("deo_codi"));
                 deo_numdesE.setValorDec(dtStat.getInt("deo_numdes", true));
                 deo_blockE.setValor(dtStat.getString("deo_block"));
-                deo_incvalE.setSelecion(dtStat.getString("deo_incval"));
+                deo_incvalE.setValor(dtStat.getString("deo_incval"));
                 deo_fechaE.setDate(dtStat.getDate("deo_fecha"));
                 deo_desnueE.setSelected(dtStat.getString("deo_desnue", true).equals("S"));
                 deo_feccadE.setText(dtStat.getFecha("deo_feccad", "dd-MM-yyyy"));
@@ -3510,7 +3514,7 @@ public class MantDesp extends ventanaPad implements PAD
         int proCodi, double kilos, int numPiezas, int uniCaj, String feccad, int defOrden) throws Exception {
         utdesp.iniciar(dtAdd, eje_numeE.getValorInt(), EU.em_cod,
             deo_almdesE.getValorInt(), deo_almoriE.getValorInt(), EU);
-
+        utdesp.setTipoProduccion(deo_incvalE.getValor());
         return utdesp.guardaLinDesp(ejeLot, empLot, serLot, numLot, nInd, deo_codiE.getValorInt(), proCodi,
             kilos, numPiezas, feccad, defOrden, uniCaj,
             MODPRECIO ? def_prcostE.getValorDec() : 0,
@@ -3637,7 +3641,7 @@ public class MantDesp extends ventanaPad implements PAD
         desorca.setDeoAlmdes(deo_almdesE.getValorInt());
         desorca.setDeoLotnue(new Short(deo_lotnueE.getValor()));
         desorca.setDeoCerra(new Short(deo_cerraE.getSelecion()));
-        desorca.setDeoIncval(deo_incvalE.getSelecion());
+        desorca.setDeoIncval(deo_incvalE.getValor());
         desorca.setDeoBlock(deo_blockE.getValor());
         desorca.setDeoValor("N");
     }
@@ -4005,12 +4009,13 @@ public class MantDesp extends ventanaPad implements PAD
         BsaltaCab = new gnu.chu.controles.CButton();
         usu_nombE = new gnu.chu.controles.CTextField();
         cLabel9 = new gnu.chu.controles.CLabel();
-        deo_incvalE = new gnu.chu.controles.CCheckBox("S","N");
         opMantFecha = new gnu.chu.controles.CCheckBox();
         cLabel10 = new gnu.chu.controles.CLabel();
         cLabel7 = new gnu.chu.controles.CLabel();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
         opSimular = new gnu.chu.controles.CCheckBox("0","-1");
+        cLabel22 = new gnu.chu.controles.CLabel();
+        deo_incvalE = new gnu.chu.controles.CComboBox();
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
@@ -4437,23 +4442,23 @@ public class MantDesp extends ventanaPad implements PAD
                 Pcabe.add(deo_blockE);
                 deo_blockE.setBounds(570, 45, 90, 17);
                 Pcabe.add(prv_codiE);
-                prv_codiE.setBounds(70, 70, 340, 17);
+                prv_codiE.setBounds(70, 70, 320, 17);
 
                 deo_fecproE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_fecproE);
                 deo_fecproE.setBounds(470, 70, 64, 17);
 
-                cLabel5.setText("Fec Prod");
+                cLabel5.setText("Fec.Produc.");
                 Pcabe.add(cLabel5);
-                cLabel5.setBounds(420, 70, 50, 17);
+                cLabel5.setBounds(400, 70, 70, 17);
 
-                cLabel6.setText("Fec Cad");
+                cLabel6.setText("Fec. Cad.");
                 Pcabe.add(cLabel6);
-                cLabel6.setBounds(540, 70, 50, 17);
+                cLabel6.setBounds(540, 70, 60, 17);
 
                 deo_feccadE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_feccadE);
-                deo_feccadE.setBounds(595, 70, 64, 17);
+                deo_feccadE.setBounds(600, 70, 64, 17);
 
                 BsaltaCab.setText("cButton1");
                 Pcabe.add(BsaltaCab);
@@ -4467,10 +4472,6 @@ public class MantDesp extends ventanaPad implements PAD
                 Pcabe.add(cLabel9);
                 cLabel9.setBounds(330, 2, 50, 17);
 
-                deo_incvalE.setText("Procesado");
-                Pcabe.add(deo_incvalE);
-                deo_incvalE.setBounds(550, 2, 80, 17);
-
                 opMantFecha.setText("MF");
                 opMantFecha.setToolTipText("Mantener Fecha Despiece en Mvtos");
                 Pcabe.add(opMantFecha);
@@ -4480,16 +4481,25 @@ public class MantDesp extends ventanaPad implements PAD
                 Pcabe.add(cLabel10);
                 cLabel10.setBounds(1, 70, 70, 15);
 
-                cLabel7.setText("Cliente");
+                cLabel7.setText("Produccion");
                 Pcabe.add(cLabel7);
-                cLabel7.setBounds(10, 90, 50, 15);
+                cLabel7.setBounds(400, 90, 70, 15);
                 Pcabe.add(cli_codiE);
-                cli_codiE.setBounds(60, 90, 410, 17);
+                cli_codiE.setBounds(60, 90, 330, 17);
 
                 opSimular.setText("Simular");
                 opSimular.setToolTipText("Simula despiece");
                 Pcabe.add(opSimular);
-                opSimular.setBounds(590, 90, 65, 17);
+                opSimular.setBounds(590, 90, 80, 17);
+
+                cLabel22.setText("Cliente");
+                Pcabe.add(cLabel22);
+                cLabel22.setBounds(10, 90, 50, 15);
+
+                deo_incvalE.addItem("No","N");
+                deo_incvalE.addItem("Si","S");
+                Pcabe.add(deo_incvalE);
+                deo_incvalE.setBounds(470, 90, 60, 17);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -5009,6 +5019,7 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel cLabel19;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel20;
+    private gnu.chu.controles.CLabel cLabel22;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
@@ -5039,7 +5050,7 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField deo_feccadE;
     private gnu.chu.controles.CTextField deo_fechaE;
     private gnu.chu.controles.CTextField deo_fecproE;
-    private gnu.chu.controles.CCheckBox deo_incvalE;
+    private gnu.chu.controles.CComboBox deo_incvalE;
     private gnu.chu.controles.CTextField deo_kilosE;
     private gnu.chu.controles.CComboBox deo_lotnueE;
     private gnu.chu.controles.CTextField deo_nulogeE;

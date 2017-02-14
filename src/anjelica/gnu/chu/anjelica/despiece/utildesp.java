@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 
 public class utildesp
 {
+  private String tipoProduc="N";
   private String idioma=null;
   private int proCodiCompra;
   private int tidCodi=0;
@@ -875,8 +876,9 @@ public class utildesp
    * Busca  nuevo Individuo en despiece.
    * Hace que busque en otros productos de entrada en despieces, cuando
    * el individuo ya ha sido elegido más de repiteIndiv
+     * @param buscaIndDesp
   *  @see setRepiteIndiv
-   * @return
+   * 
    */
     public void setBuscaIndDesp(boolean buscaIndDesp) {
         this.buscaIndDesp = buscaIndDesp;
@@ -889,6 +891,18 @@ public class utildesp
   {
     return guardaLinDesp(ejeLot, empLot, serLot, numLot, nInd, numDesp,proCodi, kilos, numPie,feccad,defOrden,uniCaj, precCost,
                          defCerra);
+  }
+  /**
+   * Establece si la linea de despiece es tipo produccion o no. (Defecto es 'N')
+   * @param tipoProdu 
+   */
+  public void setTipoProduccion(String tipoProdu)
+  {
+      this.tipoProduc=tipoProdu;
+  }
+   public void setTipoProduccion(boolean tipoProdu)
+  {
+      this.tipoProduc=tipoProdu?"S":"N";
   }
 /**
  * Guarda una linea de salida del despiece
@@ -951,6 +965,7 @@ public class utildesp
      dtAdd.setDato("def_unicaj",uniCaj);
      dtAdd.setDato("def_cerra",defCerra);
      dtAdd.setDato("def_prcost",precCost);
+     dtAdd.setDato("def_tippro",tipoProduc);
      dtAdd.setDato("def_tiempo", "current_timestamp");
    }
    else

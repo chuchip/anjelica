@@ -1050,6 +1050,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
    utdesp.iniciar(dtAdd,ejeNume,empCodi,
                   almCodi,almCodi,EU);
    utdesp.setGrupoDesp(0);
+   utdesp.setTipoProduccion(false);
    return utdesp.guardaLinDesp(ejeLot,empLot,serLot,numLot,nInd,deoCodi,proCodi,
                                  kilos,numPiezas,feccad,defOrden,uniCaj,
                                  0,
