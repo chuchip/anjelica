@@ -21,6 +21,7 @@ package gnu.chu.anjelica.listados;
 * @version 1.0
 */
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.controles.CButton;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -35,6 +36,8 @@ import java.awt.print.PrinterException;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
@@ -127,7 +130,7 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
     {
         botonTexto=texto;
         pro_nombE.setText(texto+" "+opMer.getText());
-        numEtiquE.setValorInt(1);
+//        numEtiquE.setValorInt(1);
         numEtiquE.requestFocus();
     }
     @Override
@@ -222,15 +225,17 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
         pro_nombE = new gnu.chu.controles.CTextField(Types.CHAR,"X",15);
         opImpNomb = new gnu.chu.controles.CCheckBox();
         opMer = new gnu.chu.controles.CComboBox();
+        cli_codrepE = new gnu.chu.controles.CTextField(Types.CHAR,"X",5);
+        cli_codiL1 = new gnu.chu.controles.CLabel();
 
         Pprinc.setLayout(null);
 
-        cli_codiL.setText("Cliente");
+        cli_codiL.setText("Cod. Cliente");
         cli_codiL.setPreferredSize(new java.awt.Dimension(39, 18));
         Pprinc.add(cli_codiL);
-        cli_codiL.setBounds(10, 10, 39, 18);
+        cli_codiL.setBounds(10, 20, 80, 18);
         Pprinc.add(cli_codiE);
-        cli_codiE.setBounds(60, 10, 480, 18);
+        cli_codiE.setBounds(90, 20, 450, 17);
 
         Pbotones.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
         Pbotones.setLayout(null);
@@ -268,10 +273,39 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
         Pprinc.add(opMer);
         opMer.setBounds(10, 135, 110, 17);
 
+        cli_codrepE.setMayusc(true);
+        cli_codrepE.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cli_codrepEFocusLost(evt);
+            }
+        });
+        Pprinc.add(cli_codrepE);
+        cli_codrepE.setBounds(90, 0, 40, 17);
+
+        cli_codiL1.setText("Cod. Reparto");
+        cli_codiL1.setPreferredSize(new java.awt.Dimension(39, 18));
+        Pprinc.add(cli_codiL1);
+        cli_codiL1.setBounds(10, 0, 80, 18);
+
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cli_codrepEFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cli_codrepEFocusLost
+        try
+        {
+            if (! cli_codrepE.hasCambio())
+                return;
+            cli_codrepE.resetCambio();
+            int cliCodi=pdclien.getCodigoCliente(dtStat,cli_codrepE.getText());
+            if (cliCodi>0)
+                cli_codiE.setValorInt(cliCodi);
+        } catch (SQLException ex)
+        {
+            Error("Error al buscar cliente a partir del codigo", ex);
+        }
+    }//GEN-LAST:event_cli_codrepEFocusLost
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -282,6 +316,8 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CLabel cli_codiL;
+    private gnu.chu.controles.CLabel cli_codiL1;
+    private gnu.chu.controles.CTextField cli_codrepE;
     private gnu.chu.controles.CTextField numEtiquE;
     private gnu.chu.controles.CCheckBox opImpNomb;
     private gnu.chu.controles.CComboBox opMer;
