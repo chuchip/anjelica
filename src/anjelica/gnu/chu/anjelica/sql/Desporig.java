@@ -287,7 +287,7 @@ public class Desporig  implements java.io.Serializable {
        this.deoNumdes = dt.getInt("deo_numdes");
        this.deoFeccad = dt.getDate("deo_Feccad");
        this.deoFecpro = dt.getDate("deo_fecpro");
-       this.deoIncval = dt.getString("deoIncval");
+       this.deoIncval = dt.getString("deo_incval");
        this.deoValor = dt.getString("deo_Valor");
        this.deoBlock = dt.getString("deo_Block");
        this.prvCodi = dt.getInt("prv_Codi");

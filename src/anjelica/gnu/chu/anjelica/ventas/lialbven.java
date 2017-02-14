@@ -166,13 +166,14 @@ public class lialbven implements JRDataSource
      mp.put("valora", valora);
    else
      mp.put("valora", false);
-   mp.put("emp_obsalb", empObsAlb);
+   mp.put("emp_obsalb", rs.getString("avc_serie").equals("D")?"":empObsAlb);
    mp.put("obser", obser==null?null:obser.trim());
    mp.put("logotipo",lis.getPathLogo());
    vlike lk=  pdempresa.getDatosEmpresa(dtCon1, EU.em_cod);
    mp.put("empNif",MantPaises.getInicialesPais(lk.getInt("pai_codi"),dtCon1)+
          lk.getString("emp_nif"));
    mp.put("avs_nume", avsNume);
+  
    if (avsNume!=0)
    { // Busco la fecha de albaran de servicio.
     DatosTabla dtTemp=new DatosTabla(ct);

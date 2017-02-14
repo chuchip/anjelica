@@ -4446,11 +4446,11 @@ public class MantDesp extends ventanaPad implements PAD
 
                 deo_fecproE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_fecproE);
-                deo_fecproE.setBounds(470, 70, 64, 17);
+                deo_fecproE.setBounds(465, 70, 70, 17);
 
                 cLabel5.setText("Fec.Produc.");
                 Pcabe.add(cLabel5);
-                cLabel5.setBounds(400, 70, 70, 17);
+                cLabel5.setBounds(395, 70, 70, 17);
 
                 cLabel6.setText("Fec. Cad.");
                 Pcabe.add(cLabel6);
@@ -4458,7 +4458,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 deo_feccadE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_feccadE);
-                deo_feccadE.setBounds(600, 70, 64, 17);
+                deo_feccadE.setBounds(595, 70, 70, 17);
 
                 BsaltaCab.setText("cButton1");
                 Pcabe.add(BsaltaCab);

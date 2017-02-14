@@ -327,6 +327,17 @@
                 </Constraint>
               </Constraints>
             </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opIgnRepAlb">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ignorar Rep. Alb"/>
+                <Property name="toolTipText" type="java.lang.String" value="Ignorar representante de Albaran"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="520" y="47" width="110" height="18"/>
+                </Constraint>
+              </Constraints>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="gnu.chu.controles.CPanel" name="PPie">

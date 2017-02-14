@@ -394,7 +394,8 @@ public class Clmarzona extends ventana {
                 + " and p.pro_codi = l.pro_codi "
                 + (rut_codiE.getText().equals("")?"": " and cl.rut_codi = '"+rut_codiE.getText()+"'")
                 + (zonCodi == null ? "" : " AND cl.zon_codi = '" + zonCodi + "'")
-                + (repCodi == null ? "" : " AND avc_repres = '" + repCodi + "'")
+                + (repCodi == null ? "" : " and "+
+                (opIgnRepAlb.isSelected()?" rep_codi ": " avc_repres ") + "= '"+repCodi + "'")
                 + (cli_codiE.isNull() ? "" : " AND cl.cli_codi = '" + cli_codiE.getValorInt() + "'")
                 + (emp_codiE.getValorInt()==0?"": " and c.emp_codi = "+emp_codiE.getValorInt())
                 + (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+sbe_codiE.getValorInt())
@@ -513,7 +514,8 @@ public class Clmarzona extends ventana {
             " and c.avc_fecalb  >= TO_DATE('" + fecini + "','dd-MM-yyyy') "+
             " and c.avc_fecalb <=  TO_DATE('" + fecfin + "','dd-MM-yyyy') "+
             (zonCodi == null ? "" : " AND cl.zon_codi = '" + zonCodi + "'") +
-             (repCodi == null ? "" : " AND avc_repres  = '" + repCodi + "'") +
+            (repCodi == null ? "" : " and "+
+             (opIgnRepAlb.isSelected()?" rep_codi ": " avc_repres ") + "= '"+repCodi + "'")+
              (emp_codiE.getValorInt()==0?"": " and c.emp_codi = "+emp_codiE.getValorInt()) +
             (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+ sbe_codiE.getValorInt()) +
             (proCod != null ? "and l.pro_codi = " + proCod : "") +
@@ -669,6 +671,7 @@ public class Clmarzona extends ventana {
         cli_codiE = new gnu.chu.camposdb.cliPanel();
         cLabel20 = new gnu.chu.controles.CLabel();
         rut_codiE = new gnu.chu.controles.CLinkBox();
+        opIgnRepAlb = new gnu.chu.controles.CCheckBox();
         PPie = new gnu.chu.controles.CPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
         cLabel8 = new gnu.chu.controles.CLabel();
@@ -822,6 +825,11 @@ public class Clmarzona extends ventana {
         rut_codiE.setPreferredSize(new java.awt.Dimension(92, 18));
         Pcabe.add(rut_codiE);
         rut_codiE.setBounds(120, 87, 270, 17);
+
+        opIgnRepAlb.setText("Ignorar Rep. Alb");
+        opIgnRepAlb.setToolTipText("Ignorar representante de Albaran");
+        Pcabe.add(opIgnRepAlb);
+        opIgnRepAlb.setBounds(520, 47, 110, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1098,6 +1106,7 @@ public class Clmarzona extends ventana {
     private gnu.chu.controles.Cgrid jt;
     private gnu.chu.controles.Cgrid jtGru;
     private gnu.chu.controles.CTextField kgsVenE;
+    private gnu.chu.controles.CCheckBox opIgnRepAlb;
     private gnu.chu.controles.CCheckBox opIncComent;
     private gnu.chu.controles.CCheckBox opIncVertE;
     private gnu.chu.controles.CTextField pmComE;

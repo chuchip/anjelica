@@ -307,14 +307,12 @@ public class pdprove extends ventanaPad implements PAD
  }
 
 
-
-
   private void jbInit() throws Exception
   {
     titledBorder2 = new TitledBorder("");
     iniciarFrame();
     setSize(new Dimension(688,500));
-    this.setVersion("2008-03-10");
+    this.setVersion("2017-02-14");
     strSql = "SELECT * FROM v_proveedo where emp_codi = "+EU.em_cod+" ORDER BY prv_codi ";
 
     statusBar = new StatusBar(this);
@@ -765,6 +763,7 @@ public class pdprove extends ventanaPad implements PAD
     Baceptar.setText("Aceptar F4");
   }
 
+  @Override
   public void iniciarVentana() throws Exception
   {
     mat_codiE.setMatNomb(null);
@@ -772,9 +771,9 @@ public class pdprove extends ventanaPad implements PAD
     sde_codiE.setMatNomb(null);
     sde_codiE.iniciar(dtStat,this,vl,EU);
 
-    prv_internE.addItem("Si","1");
+    
     prv_internE.addItem("No","0");
-
+    prv_internE.addItem("Si","1");
 
     prv_codfacE.iniciar(dtStat,this,vl,EU);
     fpa_codiE.iniciar(dtStat,this,vl,EU);

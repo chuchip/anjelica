@@ -1,3 +1,7 @@
+-- Incluido campo para controlar si producto salida es tipo Produccion
+alter table v_despfin add def_tippro char(1) not null default 'N' ;
+alter table desfinhis  add def_tippro char(1) not null default 'N' ;
+-- Añadido campo servir a Cliente
 drop view v_cliente;
 alter table clientes   add cli_servir smallint default 1 not null;
 create or replace view anjelica.v_cliente as select *,cli_codrut as cli_carte,cli_codrut as cli_valor from anjelica.clientes;

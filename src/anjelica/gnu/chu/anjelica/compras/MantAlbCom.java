@@ -366,8 +366,10 @@ private JMenuItem MIimprEtiqInd;
   CTextField acl_comenE = new CTextField(Types.CHAR,"X",50);
 
   CPanel Ptotal = new CPanel();
-  CLabel cLabel10 = new CLabel();
+  CLabel acc_imporL = new CLabel();
   CLabel cLabel8 = new CLabel();
+  CLabel nunidtL=new CLabel("Unid");
+  CTextField nunidtE=new CTextField(Types.DECIMAL,"---9");
   CTextField imptotE = new CTextField(Types.DECIMAL,"----,--9.99");
   CTextField kilosE = new CTextField(Types.DECIMAL,"---,--9.99");
   CLabel cLabel9 = new CLabel();
@@ -727,7 +729,7 @@ private JMenuItem MIimprEtiqInd;
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20170116)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20170214)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -796,7 +798,7 @@ private JMenuItem MIimprEtiqInd;
     acc_cerraE.setDependePadre(false);
     alm_codiE.setDependePadre(false);
     creaIncidB.setDependePadre(false);
-    Bdesagr.setBounds(new Rectangle(204, 20, 77, 18));
+    
     Bdesagr.setToolTipText("Desagrupar Productos");
     Bdesagr.setMargin(new Insets(0, 0, 0, 0));
     Bdesagr.setText("F6");
@@ -895,7 +897,7 @@ private JMenuItem MIimprEtiqInd;
     Bimpri.setToolTipText("Imprimir Albaran");
     opVerPrecios.setSelected(true);
     opVerPrecios.setText("Ver Precios");
-    opVerPrecios.setBounds(new Rectangle(102, 24, 100, 14));
+    
 
     cPanel2.setLayout(null);
     cLabel19.setText("Producto");
@@ -999,24 +1001,29 @@ private JMenuItem MIimprEtiqInd;
     Ptotal.setMinimumSize(new Dimension(540, 40));
     Ptotal.setPreferredSize(new Dimension(540, 40));
     Ptotal.setLayout(null);
-    cLabel10.setText("Imp. Lineas");
+    acc_imporL.setText("Imp. Lineas");
     cLabel8.setText("N. Lin");
     cLabel8.setBounds(new Rectangle(344, 2, 38, 17));
     cLabel9.setText("Kilos");
-    cLabel10.setToolTipText("");
-    cLabel10.setText("Importe");
-    cLabel10.setBounds(new Rectangle(566, 2, 47, 17));
+    acc_imporL.setToolTipText("");
+    acc_imporL.setText("Importe");
+    acc_imporL.setBounds(new Rectangle(566, 2, 47, 17));
     cLabel9.setText("Kilos");
     cLabel9.setBounds(new Rectangle(252, 2, 31, 17));
-    imptotE.setMinimumSize(new Dimension(4, 21));
+   
     imptotE.setEnabled(false);
     imptotE.setBounds(new Rectangle(613, 2, 57, 17));
     kilosE.setEnabled(false);
     kilosE.setBounds(new Rectangle(279, 2, 61, 17));
+    
     nLinE.setEnabled(false);
     nLinE.setBounds(new Rectangle(381, 2, 40, 17));
     kilostE.setEnabled(false);
+    nunidtE.setEnabled(false);
     kilostE.setBounds(new Rectangle(503, 2, 61, 17));
+    nunidtL.setBounds(new Rectangle(685, 2, 30, 17));
+    nunidtE.setBounds(new Rectangle(717, 2, 41, 17));
+    
     cLabel11.setText("Kilos");
     cLabel11.setBounds(new Rectangle(473, 2, 31, 17));
     cLabel2.setBackground(Color.red);
@@ -1034,19 +1041,27 @@ private JMenuItem MIimprEtiqInd;
     cLabel3.setForeground(Color.yellow);
     cLabel3.setBackground(Color.red);
     Bulcabe.setBounds(new Rectangle(564, 92, 2, 2));
-    Birgrid.setBounds(new Rectangle(607, 20, 56, 17));
+   
     Birgrid.setToolTipText("Ir a Grid");
     Birgrid.setMargin(new Insets(0, 0, 0, 0));
     Birgrid.setText("F2");
     opImpEti.setSelected(true);
-    opImpEti.setText("Impr. Etiq.");
-    opImpEti.setBounds(new Rectangle(446, 20, 101, 17));
-    BimpEti.setBounds(new Rectangle(548, 21, 58, 17));
+    opImpEti.setText("Impr.Etiq.");
+    
+    
     BimpEti.setToolTipText("Imprimir Etiqueta");
     BimpEti.setMargin(new Insets(0, 0, 0, 0));
-    opAutoClas.setText("Clasif. Productos");
-    opAutoClas.setBounds(new Rectangle(321, 20, 126, 16));
-    acc_copvfaE.setBounds(new Rectangle(99, 32, 462, 18));
+    opAutoClas.setText("Auto Clasif.");
+    acc_copvfaE.setBounds(new Rectangle(99, 32, 462, 17));
+    opVerPrecios.setBounds(new Rectangle(102, 24, 80, 17));
+    Bdesagr.setBounds(new Rectangle(182, 20, 57, 18));
+    cll_codiE.setBounds(new Rectangle(244, 20, 36, 16));
+    opAutoClas.setBounds(new Rectangle(282, 20, 80, 17));
+    opIncPortes.setBounds(new Rectangle(370, 20, 75, 17));
+    opImpEti.setBounds(new Rectangle(447, 20, 70, 17));
+    BimpEti.setBounds(new Rectangle(520, 20, 55, 17));
+    Birgrid.setBounds(new Rectangle(580, 20, 40, 17));
+    opAgrupar.setBounds(new Rectangle(625, 20, 92, 17));
     acc_copvfaE.setAncTexto(50);
     prv_codiL1.setText("Prov. a Facturar");
     prv_codiL1.setBounds(new Rectangle(1, 32, 94, 18));
@@ -1091,9 +1106,9 @@ private JMenuItem MIimprEtiqInd;
     dif_kgsE.setEnabled(false);
     dif_kgsE.setBounds(new Rectangle(117, 47, 61, 15));
     dif_porcE.setEnabled(false);
-    opAgrupar.setText("Agr. Prod.");
+    opAgrupar.setText("Agr.Prod.");
     opAgrupar.setSelected(true);
-    opAgrupar.setBounds(new Rectangle(665, 20, 89, 17));
+   
     cLabel13.setText("Recepcion");
     cLabel13.setBounds(new Rectangle(3, 17, 67, 15));
     cLabel13.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -1161,7 +1176,7 @@ private JMenuItem MIimprEtiqInd;
     dif_porcE.setText("");
     dif_porcE.setEnabled(false);
 
-    cll_codiE.setBounds(new Rectangle(285, 20, 36, 16));
+    
     cLabel12.setText("Portes");
     cLabel12.setBounds(new Rectangle(637, 3, 39, 16));
 
@@ -1173,8 +1188,8 @@ private JMenuItem MIimprEtiqInd;
     opIncPortes.setToolTipText("Inc. Portes en precios");
     opIncPortes.setMargin(new Insets(0, 0, 0, 0));
     opIncPortes.setSelected(true);
-    opIncPortes.setText("Inc. Portes");
-    opIncPortes.setBounds(new Rectangle(671, 2, 89, 17));
+    opIncPortes.setText("Inc.Portes");
+   
     this.getContentPane().add(Pprinc, BorderLayout.CENTER);
     Pprinc.add(Pcabe,    new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
@@ -1213,6 +1228,7 @@ private JMenuItem MIimprEtiqInd;
     Pcabe.add(acc_anoL, null);
     Potros.add(acc_totfraE, null);
     Pcabe.add(cLabel110, null);
+    
     Pcabe.add(sbe_codiE, null);
     Potros.add(acc_totfraL, null);
     Pcabe.add(acc_cerraL, null);
@@ -1278,6 +1294,8 @@ private JMenuItem MIimprEtiqInd;
     
 
     Ptotal.add(opAgrupar, null);
+    Ptotal.add(nunidtL, null);
+    Ptotal.add(nunidtE, null);
     Ptotal.add(opImpEti, null);
     Ptotal.add(BimpEti, null);
     Ptotal.add(Birgrid, null);
@@ -1292,7 +1310,7 @@ private JMenuItem MIimprEtiqInd;
     Ptotal.add(cLabel3, null);
     Ptotal.add(cLabel11, null);
     Ptotal.add(kilostE, null);
-    Ptotal.add(cLabel10, null);
+    Ptotal.add(acc_imporL, null);
     Ptotal.add(Bcancelar, null);
     Ptotal.add(Baceptar, null);
     Ptotal.add(opVerPrecios, null);
@@ -2438,9 +2456,11 @@ private JMenuItem MIimprEtiqInd;
   private void actAcuTot()
   {
     int nCol=jt.getRowCount();
+    int unidT=0;
     double kilosT=0,impTot=0,impLin;
     for (int n=0;n<nCol;n++)
     {
+      unidT+=jt.getValorInt(n,JT_CANIND);
       kilosT+=jt.getValorDec(n,JT_KILALB);
       impLin=jt.getValorDec(n,JT_PRCOM);
       if (opIncPortes.isSelected() && ! acl_porpagE.isSelected())
@@ -2452,6 +2472,7 @@ private JMenuItem MIimprEtiqInd;
     }
     kilostE.setValorDec(kilosT);
     imptotE.setValorDec(impTot);
+    nunidtE.setValorDec(unidT);
   }
   /**
    * Actualizar Acumulados de Lineas de albaran cuando se pone la opcion
@@ -3139,7 +3160,7 @@ private JMenuItem MIimprEtiqInd;
            
                 copiaJtValorAnt();                
            
-            jtDes.salirFoco();
+            jtDes.actualizarGrid();
             BimpEti.setEnabled(true);
             kgIndivAnt=acp_cantiE.getValorDec();
             afterCambiaLinDes();
@@ -3155,6 +3176,7 @@ private JMenuItem MIimprEtiqInd;
         public void run()
         {
             jtDes.requestFocusFinal();
+            jtDes.mueveSigLinea(1);
             afterCambiaLinDes();
             BimpEti.setEnabled(true);         
             swCargaLin=false;
@@ -4234,6 +4256,7 @@ private JMenuItem MIimprEtiqInd;
 //      double tipIva = -1;
       double kilosT = 0;
       double impLin = 0;
+      int unidT=0;
       opBloquea.setSelected(false);
       double impLinAct;
       double accDtopp=0;
@@ -4310,6 +4333,8 @@ private JMenuItem MIimprEtiqInd;
             impLin += dtCon1.getDouble("acl_canti",true) * (dtCon1.getDouble("acl_prcom",true)-
                 (incPortes?0:acc_impokgE.getValorDec()));
           kilosT += dtCon1.getDouble("acl_canti",true);
+          unidT += dtCon1.getInt("acl_numcaj",true);
+          
         }  while (dtCon1.next());
         acl_prcomE.resetCambio();
         acl_dtoppE.resetCambio();
@@ -4321,6 +4346,7 @@ private JMenuItem MIimprEtiqInd;
 //      numLinE.setValorDec(nLin);
         kilostE.setValorDec(kilosT);
         imptotE.setValorDec(impLin);
+        nunidtE.setValorInt(unidT);
         swActDesg = true;
         getNomArtPed(jt.getValorInt(0,JT_PROCOD),eje_numeE.getValorInt(),pcc_numeE.getValorInt());
         double prCompra= preciosGrid.get(0);

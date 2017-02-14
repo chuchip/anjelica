@@ -326,7 +326,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2017-02-06");
+      this.setVersion("2017-02-09");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -2498,7 +2498,20 @@ public class pdclien extends ventanaPad implements PAD
       return null;
     return dt.getString("cli_nomb");
   }
-
+ /**
+  * Devuelve el codigo del cliente a partir del codigo de reparto
+  * @param dt
+  * @param cli_codrep
+  * @return cliCodi 0 Si no encuentra nada
+  * @throws SQLException 
+  */
+ public static int getCodigoCliente(DatosTabla dt, String cli_codrep) throws SQLException
+ {
+    String s = "SELECT cli_codi from clientes WHERE cli_codrut = '" + cli_codrep+"'";
+    if (! dt.select(s))
+      return 0;
+    return dt.getInt("cli_codi");
+  }
   public static  String  ponerInactivos(DatosTabla dtSel,DatosTabla dtUpd, int diasVenta ,int diasModif) throws SQLException
   {
       String s = "SELECT * from clientes WHERE cli_activ = 'S' and cli_feulmo <= current_date - "+ diasModif +

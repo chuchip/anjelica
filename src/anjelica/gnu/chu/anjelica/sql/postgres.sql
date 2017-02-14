@@ -1563,7 +1563,7 @@ deo_lotnue smallint,    -- Lote Nuevo (0: No, -1 SI)
 deo_numdes int not null default 0,       -- Numero Grupo de despiece
 deo_feccad date,        -- Fecha Caducidad
 deo_fecpro date,        -- Fecha Producion
-deo_incval char(1) not null default 'N',    -- Marcado como procesado (S/N)
+deo_incval char(1) not null default 'N',    -- Marcado como produccion (S/N)
 deo_valor char(1) not null default 'N',     -- Valorado (S/N)
 deo_block char(1) default 'N',  -- Abierto en tactil(S). Cerrado (N) Bloqueado (B) ?
 prv_codi int not null,   -- Proveedor
@@ -1714,13 +1714,15 @@ def_prcost float,	-- Precio de Costo
 def_kilos float,	-- Kilos
 def_feccad date,	-- Fecha. Caducidad
 def_preusu float not null default 0,     -- Precio de Costo introducido por el usuario
-def_tiempo timestamp default  current_timestamp -- Fecha de Movimiento.
+def_tiempo timestamp default  current_timestamp, -- Fecha de Movimiento.
+def_tippro char(1) not null default 'N' -- Tipo Produccion
 );
 create index  ix_despfin  on anjelica.v_despfin (eje_nume,deo_codi,def_orden);
 create index ix_despfin1 on anjelica.v_despfin(pro_codi, def_ejelot , def_emplot , def_serlot , pro_lote , pro_numind);
 create index ix_despfin2 on anjelica.v_despfin(def_tiempo);
 --
--- Lineas (entrada a almacen) de despiece
+-- Historico Lineas (entrada a almacen) de despiece (Cambios en v_despfin)
+---
 create table anjelica.desfinhis
 (
 eje_nume int not null,	-- Ejercicio del Despiece
@@ -1744,6 +1746,7 @@ def_prcost float,	-- Precio de Costo
 def_kilos float,	-- Kilos
 def_feccad date,	-- Fecha. Caducidad
 def_preusu float not null default 0,     -- Precio de Costo introducido por el usuario
+def_tippro char(1) not null default 'N' ,
 def_tiempo date default  current_date,
  his_rowid int not null
 );

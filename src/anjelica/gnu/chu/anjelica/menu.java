@@ -1983,7 +1983,9 @@ void pdreprese_actionPerformed(ActionEvent e) {
 
   
   void mantDespTactil_actionPerformed(ActionEvent e) {
-    lanzaEjecutable(new gnu.chu.anjelica.despiece.MantDespTactil(menu.this,EU,null));
+      Hashtable ht=new Hashtable();
+    ht.put("admin","true"); 
+    lanzaEjecutable(new gnu.chu.anjelica.despiece.MantDespTactil(menu.this,EU,ht));
 
   }
   void pdgrupro_actionPerformed(ActionEvent e) {
