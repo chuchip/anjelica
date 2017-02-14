@@ -146,7 +146,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2017-01-16" + ARG_ZONAREP);
+        this.setVersion("2017-02-14" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -167,7 +167,7 @@ public class CLVenRep extends ventana {
        
         emp_codiE.iniciar(dtStat, this, vl, EU);
         emp_codiE.setAceptaNulo(false);
-
+        sbe_codiE.setValorInt(0);
         rep_codiE.setFormato(Types.CHAR, "XX",2);
         
         if (! ARG_ZONAREP.equals(""))
@@ -515,7 +515,7 @@ public class CLVenRep extends ventana {
                         + " and a.avc_ano = l.avc_ano  "
                         + " and a.avc_serie = l.avc_serie "
                         + " and a.avc_nume = l.avc_nume "
-                        + " and ((avl_prven-avl_profer) <= "+gananMinE.getValorDec()
+                        + (gananMinE.isNull()? "( and (1=1 ":" and ((avl_prven-avl_profer) <= "+gananMinE.getValorDec())
                         + (gananMaxE.isNull()?")":" or (avl_prven-avl_profer) >= "+gananMaxE.getValorDec()+")")
                         + " and l.avl_canti <> 0 "
                         + " )";
