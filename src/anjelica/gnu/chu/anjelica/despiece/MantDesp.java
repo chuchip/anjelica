@@ -79,6 +79,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
@@ -378,6 +380,13 @@ public class MantDesp extends ventanaPad implements PAD
     }
 
     void activarEventos() {
+        BForzarProd.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                forzarProd();
+            }
+        });
         deo_codiE.addMouseListener(new MouseAdapter()
         {
 
@@ -2428,7 +2437,21 @@ public class MantDesp extends ventanaPad implements PAD
         verDatos(dtCons);
         nav.pulsado = navegador.NINGUNO;
     }
-    
+    void forzarProd()
+    {
+        try
+        {
+            String s="update v_despfin set def_tippro= '"+deo_incvalE.getValor()+"'"+
+                " where eje_nume = "+eje_numeE.getValorInt()+
+                " and deo_codi = "+deo_codiE.getText();
+            int nRows=dtAdd.executeUpdate(s);
+            dtAdd.commit();
+            msgBox(nRows+" Lineas Actualizada");
+        } catch (SQLException ex)
+        {
+            Error("Error al actualizar estado produccion", ex);
+        }
+    }
     void irTactil()
     {
         try
@@ -4016,6 +4039,7 @@ public class MantDesp extends ventanaPad implements PAD
         opSimular = new gnu.chu.controles.CCheckBox("0","-1");
         cLabel22 = new gnu.chu.controles.CLabel();
         deo_incvalE = new gnu.chu.controles.CComboBox();
+        BForzarProd = new gnu.chu.controles.CButton(Iconos.getImageIcon("insertar"));
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
@@ -4501,6 +4525,10 @@ public class MantDesp extends ventanaPad implements PAD
                 Pcabe.add(deo_incvalE);
                 deo_incvalE.setBounds(470, 90, 60, 17);
 
+                BForzarProd.setToolTipText("Forzar Todos individuos a Produccion");
+                Pcabe.add(BForzarProd);
+                BForzarProd.setBounds(540, 90, 24, 18);
+
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 0;
@@ -4985,6 +5013,7 @@ public class MantDesp extends ventanaPad implements PAD
         jf.gestor.ir(cm);
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BForzarProd;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CButton BcopLin;
