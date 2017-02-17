@@ -163,7 +163,7 @@ public class MantTraspAlm extends ventanaPad implements PAD
                     Boolean.parseBoolean(ht.get("admin"));
     }
     private void jbInit() throws Exception {      
-        setVersion("2015-06-29 "+ (ARG_ADMIN?"ADMIN":""));
+        setVersion("2017-02-17 "+ (ARG_ADMIN?"ADMIN":""));
   
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
@@ -1855,6 +1855,14 @@ public class MantTraspAlm extends ventanaPad implements PAD
           for ( n=0;n<nEle;n++)
           {
             ArrayList<String> lin=al.get(n);
+             if (lin.size()<=7)
+                lin.add("1");
+            if (lin.size()<=8)
+                lin.add("0");
+            if (lin.size()<=9)
+                lin.add("0");
+            if (lin.size()<=10)
+                lin.add("S");
             if (! checkStock(Integer.parseInt(lin.get(JT_ARTIC)),
                 Integer.parseInt(lin.get(JT_EJERC)),
                  EU.em_cod,
@@ -1869,6 +1877,8 @@ public class MantTraspAlm extends ventanaPad implements PAD
             }
             if (lin.get(JT_PESO).contains(","))
                    lin.set(JT_PESO,lin.get(JT_PESO).replace(',','.'));
+           
+            
             jt.addLinea(lin);
           }
           jt.setEnabled(true);
