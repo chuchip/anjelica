@@ -161,6 +161,7 @@ JMenuItem mantArticVenta = new JMenuItem();
   JMenuItem MenuFicha= new JMenuItem();
   JMenuItem MenuLogs= new JMenuItem();
   JMenuItem etiqMarcar= new JMenuItem();
+  JMenuItem precioMedio= new JMenuItem();
   JMenuItem clcobreal = new JMenuItem();
   JMenuItem cacobrea = new JMenuItem();
     JMenuItem pdcobruta = new JMenuItem();
@@ -734,6 +735,12 @@ JMenuItem mantArticVenta = new JMenuItem();
         lanzaFichaClientes();
       }
     });
+    precioMedio.setText("Precios Medios");
+    precioMedio.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        lanzaPreciosMedios();
+      }
+    });
      etiqMarcar.setText("Etiq.Marcar");
     etiqMarcar.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -1110,6 +1117,7 @@ JMenuItem mantArticVenta = new JMenuItem();
     jPopupVarios.add(MenuFicha);
     jPopupVarios.add(MenuLogs);
     jPopupVarios.add(etiqMarcar);
+    jPopupVarios.add(precioMedio);
     EU=gnu.chu.Menu.LoginDB.cargaEntornoUsu();
     EU.usuario="cpuente";
     EU.password="anjelica";
@@ -1507,7 +1515,11 @@ JMenuItem mantArticVenta = new JMenuItem();
   {
       lanzaEjecutable(new gnu.chu.anjelica.listados.CreaEtiqMarca(this,EU));
   }
-      
+  void lanzaPreciosMedios()
+  {
+      lanzaEjecutable(new gnu.chu.anjelica.margenes.MantPreMedios(this,EU));
+  }
+       
  void lanzaVerLogs()
   {
      Hashtable ht = new Hashtable();
