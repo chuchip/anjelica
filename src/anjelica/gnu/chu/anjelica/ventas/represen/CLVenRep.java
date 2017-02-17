@@ -515,7 +515,7 @@ public class CLVenRep extends ventana {
                         + " and a.avc_ano = l.avc_ano  "
                         + " and a.avc_serie = l.avc_serie "
                         + " and a.avc_nume = l.avc_nume "
-                        + (gananMinE.isNull()? "( and (1=1 ":" and ((avl_prven-avl_profer) <= "+gananMinE.getValorDec())
+                        + (gananMinE.isNull()? "and (1!=1 ":" and ((avl_prven-avl_profer) <= "+gananMinE.getValorDec())
                         + (gananMaxE.isNull()?")":" or (avl_prven-avl_profer) >= "+gananMaxE.getValorDec()+")")
                         + " and l.avl_canti <> 0 "
                         + " )";
