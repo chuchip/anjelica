@@ -87,7 +87,7 @@ public class MantPreMedios extends ventana
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2017-02-15" );
+      this.setVersion("2017-02-19" );
       statusBar = new StatusBar(this);
       
       iniciarFrame();
@@ -220,6 +220,14 @@ public class MantPreMedios extends ventana
               v.add(lomo);
               v.add(MantArticulos.getNombProd(lomo, dtStat));
               v.add(dtCon1.getDouble("kilos",true));
+              s="select sum(acl_canti) as kilos,sum(acl_canti*acl_prcom) as importe from v_albacom where  acc_fecrec between '"+fecIniComE.getFechaDB()+
+                  "' and '"+ fecFinComE.getFechaDB()+"'"+
+                   " and (pro_codi="+codigo1+
+                   " or pro_codi= "+codigo2+")";
+              
+              dtCon1.select(s);
+              v.add(dtCon1.getDouble("kilos",true));
+              v.add(dtCon1.getDouble("kilos",true)==0?0:dtCon1.getDouble("importe",true)/dtCon1.getDouble("kilos",true));
               jt1.addLinea(v);
            }
            
@@ -264,7 +272,7 @@ public class MantPreMedios extends ventana
         BirGrid = new gnu.chu.controles.CButton();
         cLabel3 = new gnu.chu.controles.CLabel();
         eje_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        jt1 = new gnu.chu.controles.Cgrid(3);
+        jt1 = new gnu.chu.controles.Cgrid(5);
         jt = new gnu.chu.controles.Cgrid(7);
         PPie = new gnu.chu.controles.CPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
@@ -322,12 +330,15 @@ public class MantPreMedios extends ventana
         ArrayList v1=new ArrayList();
         v1.add("Producto");
         v1.add("Nombre");
-        v1.add("Kilos"); // 0
-
+        v1.add("Kil.Inv."); // 0
+        v1.add("Kil.Compra"); // 0
+        v1.add("Prec.Compra"); // 0
         jt1.setCabecera(v1);
-        jt1.setAnchoColumna(new int[]{50,200,70});
-        jt1.setAlinearColumna(new int[]{0,0,2});
-        jt1.setFormatoColumna(2, "##9.99");
+        jt1.setAnchoColumna(new int[]{50,200,70,70,60});
+        jt1.setAlinearColumna(new int[]{0,0,2,2,2});
+        jt1.setFormatoColumna(2, "##,##9.99");
+        jt1.setFormatoColumna(3, "##,##9.99");
+        jt1.setFormatoColumna(4, "--,--9.999");
         jt1.setAjustarGrid(true);
 
         gridBagConstraints = new java.awt.GridBagConstraints();

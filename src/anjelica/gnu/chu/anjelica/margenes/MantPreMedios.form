@@ -153,8 +153,8 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(3)"/>
-            <AuxValue name="JavaCodeGenerator_LayoutCodePost" type="java.lang.String" value="ArrayList v1=new ArrayList();&#xa;v1.add(&quot;Producto&quot;);&#xa;v1.add(&quot;Nombre&quot;);&#xa;v1.add(&quot;Kilos&quot;); // 0&#xa;&#xa;jt1.setCabecera(v1);&#xa;jt1.setAnchoColumna(new int[]{50,200,70});&#xa;jt1.setAlinearColumna(new int[]{0,0,2});&#xa;jt1.setFormatoColumna(2, &quot;##9.99&quot;);&#xa;jt1.setAjustarGrid(true);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(5)"/>
+            <AuxValue name="JavaCodeGenerator_LayoutCodePost" type="java.lang.String" value="ArrayList v1=new ArrayList();&#xa;v1.add(&quot;Producto&quot;);&#xa;v1.add(&quot;Nombre&quot;);&#xa;v1.add(&quot;Kil.Inv.&quot;); // 0&#xa;v1.add(&quot;Kil.Compra&quot;); // 0&#xa;v1.add(&quot;Prec.Compra&quot;); // 0&#xa;jt1.setCabecera(v1);&#xa;jt1.setAnchoColumna(new int[]{50,200,70,70,60});&#xa;jt1.setAlinearColumna(new int[]{0,0,2,2,2});&#xa;jt1.setFormatoColumna(2, &quot;##,##9.99&quot;);&#xa;jt1.setFormatoColumna(3, &quot;##,##9.99&quot;);&#xa;jt1.setFormatoColumna(4, &quot;--,--9.999&quot;);&#xa;jt1.setAjustarGrid(true);"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
