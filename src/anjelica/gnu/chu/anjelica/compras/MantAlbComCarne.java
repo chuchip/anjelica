@@ -413,6 +413,15 @@ public class MantAlbComCarne extends MantAlbCom
         ultSacr=acp_paisacE.getText();
         ultSalDes=sde_codiE.getText();
   }
+  /**
+   * 
+   * @param row
+   * @param nLiAlDe
+   * @param nLiAlb
+   * @param nInd
+   * @throws SQLException
+   * @throws NumberFormatException 
+   */
    @Override
   public  void guardaLinDes(int row,int nLiAlDe,int nLiAlb,int nInd) throws SQLException,NumberFormatException
   {
@@ -446,7 +455,26 @@ public class MantAlbComCarne extends MantAlbCom
       throw new SQLException("Error al Parsear fechas",k);
     }
   }
-
+/**
+ * Guarda Linea de despiece en la base de datos.
+ * @param acp_numlin
+ * @param acp_numind
+ * @param acp_clasi
+ * @param acp_nucrot
+ * @param acp_painac
+ * @param acp_feccad
+ * @param acp_paisac
+ * @param acp_engpai
+ * @param acp_fecsac
+ * @param acp_fecpro
+ * @param pro_codi
+ * @param acl_nulin
+ * @param mat_codi
+ * @param sde_codi
+ * @param acp_canti
+ * @param acp_canind
+ * @throws SQLException 
+ */
   void guardaLinDes(int acp_numlin,int acp_numind,String acp_clasi,String acp_nucrot,
                     String acp_painac,java.util.Date acp_feccad,String acp_paisac,
                     String acp_engpai,java.util.Date acp_fecsac,java.util.Date acp_fecpro,int pro_codi,
@@ -478,7 +506,9 @@ public class MantAlbComCarne extends MantAlbCom
     dtAdd.setDato("acp_canti", acp_canti);
     dtAdd.setDato("acp_canind", acp_canind);
     dtAdd.update(stUp);
+    
   }
+   @Override
   public void cambioPrv(boolean forzarCambioPrv)
   {
     try {
@@ -514,11 +544,12 @@ public class MantAlbComCarne extends MantAlbCom
    * @param nInd int Numero Individuo
    * @param nLiAlAnt int Numero Linea Anterior
    * @param nIndAnt Numero Individuo anterior
+     * @return true si 
    * @throws SQLException
    * @throws ParseException
    */
    @Override
-  public void actGridDes(int nLinAlb,int row,int nLinDes,int nInd,int nIndAnt, int nLiAlAnt) throws SQLException,java.text.ParseException
+  public boolean actGridDes(int nLinAlb,int row,int nLinDes,int nInd,int nIndAnt, int nLiAlAnt) throws SQLException,java.text.ParseException
   {
     s = "SELECT * FROM v_albcompar "+
         " WHERE emp_codi = " +emp_codiE.getValorInt() +
@@ -531,8 +562,9 @@ public class MantAlbComCarne extends MantAlbCom
     { // No lo encuentro por Num. Linea. Pruebo por Num. Individuo
       if (! getIndAlbcompar(nLiAlAnt, nIndAnt,dtCon1))
       {
-        aviso("pdalbaco: (NO encontrado Individuo en desglose de Alb. Compras)\n" +s);
-        return;
+        msgBox("NO encontrado Individuo en desglose de Alb. Compras)\n" +s);
+        enviaMailError("NO encontrado Individuo en desglose de Alb. Compras)\n" +s);
+        return false;
       }
 //        throw new SQLException("NO ENCONTRADO REGISTRO EN PARTIDAS DE COMPRAS\n"+s);
     }
@@ -548,7 +580,7 @@ public class MantAlbComCarne extends MantAlbCom
             acp_fecsacE.getText().equals(dtCon1.getFecha("acp_fecsac","dd-MM-yyyy")) &&
             acp_fecproE.getText().equals(dtCon1.getFecha("acp_fecpro","dd-MM-yyyy")) &&
             acp_canindE.getValorInt() == dtCon1.getInt("acp_canind"))
-          return; // Son iguales
+          return true; // Son iguales
 
     nIndAnt=dtCon1.getInt("acp_numind");
     nLinDes=dtCon1.getInt("acp_numlin");
@@ -572,6 +604,7 @@ public class MantAlbComCarne extends MantAlbCom
     nLinDes=getNumLinDes(nLinAlb);
     guardaLinDes(row,nLinDes, nLinAlb,nIndiv);
     ctUp.commit();
+    return true;
   }
    /**
    * Imprime etiqueta

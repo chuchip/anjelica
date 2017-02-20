@@ -165,7 +165,12 @@ public class MantAlbComPlanta extends MantAlbCom
     jtDes.setCampos(vc1);
     jtDes.setFormatoCampos();
   }
-  
+  /**
+   * Comprueba linea desglose
+   * @param row
+   * @return
+   * @throws Exception 
+   */
    public int cambiaLinDesg0(int row) throws Exception
    {
    
@@ -188,7 +193,11 @@ public class MantAlbComPlanta extends MantAlbCom
     
      return -1;
   }
-   
+  /**
+   * Devuelve cadena identificadora Linea desglose
+   * @return 
+   */
+   @Override
   public String getLinGrDes()
   {
     numIndAnt=jtDes.getValorInt(JTD_NUMIND);
@@ -198,10 +207,12 @@ public class MantAlbComPlanta extends MantAlbCom
         acp_numlinE.getValorInt()+
         acp_canindE.getValorInt();
   }
+   @Override
   public void guardaUltValoresDesg(){
    ultFecCad=acp_feccadE.getText();        
    ultFecPro=acp_fecproE.getText();
   }
+   @Override
   public  void guardaLinDes(int row,int nLiAlDe,int nLiAlb,int nInd) throws SQLException,NumberFormatException
   {
 
@@ -287,7 +298,7 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
    * @throws SQLException
    * @throws ParseException
    */
-  public void actGridDes(int nLinAlb,int row,int nLinDes,int nInd,int nIndAnt, int nLiAlAnt) throws SQLException,java.text.ParseException
+  public boolean actGridDes(int nLinAlb,int row,int nLinDes,int nInd,int nIndAnt, int nLiAlAnt) throws SQLException,java.text.ParseException
   {
     s = "SELECT * FROM v_albcompar "+
         " WHERE emp_codi = " +emp_codiE.getValorInt() +
@@ -301,8 +312,8 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
       if (! getIndAlbcompar(nLiAlAnt, nIndAnt,dtCon1))
       {
         aviso("pdalbaco: (NO encontrado Individuo en desglose de Alb. Compras)\n" +s);
-        return;
-      }
+        return false;
+      } 
 //        throw new SQLException("NO ENCONTRADO REGISTRO EN PARTIDAS DE COMPRAS\n"+s);
     }
     if (nIndAnt==nInd && acp_cantiE.getValorDec() == dtCon1.getDouble("acp_canti") &&
@@ -310,7 +321,7 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
             acp_feccadE.getText().equals(dtCon1.getFecha("acp_feccad","dd-MM-yyyy")) &&            
             acp_fecproE.getText().equals(dtCon1.getFecha("acp_fecpro","dd-MM-yyyy")) &&
             acp_canindE.getValorInt() == dtCon1.getInt("acp_canind"))
-          return; // Son iguales
+          return false; // Son iguales
 
     nIndAnt=dtCon1.getInt("acp_numind");
     nLinDes=dtCon1.getInt("acp_numlin");
@@ -334,6 +345,7 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
     nLinDes=getNumLinDes(nLinAlb);
     guardaLinDes(row,nLinDes, nLinAlb,nIndiv);
     ctUp.commit();
+    return true;
   }
    /**
    * Imprime etiqueta

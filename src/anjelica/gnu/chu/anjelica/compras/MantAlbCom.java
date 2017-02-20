@@ -8,7 +8,7 @@ package gnu.chu.anjelica.compras;
  *  AlbSinPed true/False Indica si se pueden cargar albaranes sin un pedido de compras
  * </p>
  * <p> Creado a partir pdalbaco2</p>
- *  <p>Copyright: Copyright (c) 2005-2016
+ *  <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -51,6 +51,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
 import java.net.UnknownHostException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -2441,7 +2442,7 @@ private JMenuItem MIimprEtiqInd;
                          false,
                          jt.getValorInt(JT_PROCOD),jt.getValorDec(JT_KILALB),prCompra);
           }
-          catch (Exception k)
+          catch (SQLException | ParseException k)
           {
             Error("Error al Actualizar Acumulados de Lomos", k);
           }
@@ -2451,7 +2452,7 @@ private JMenuItem MIimprEtiqInd;
       return true;
   }
   /**
-   * Actualiza acumulados
+   * Actualiza acumulados Totales
    */
   private void actAcuTot()
   {
@@ -2558,17 +2559,19 @@ private JMenuItem MIimprEtiqInd;
 
         if (!linea.equals(lineaAnt))
         { // Hubo cambios
-            lineaAnt = linea;
+           
 //        jtDes.procesaAllFoco(row);
             try
             {
-                guardaLinDes(row);
+                if (!guardaLinDes(row))
+                    return JTD_CANTI;
             } catch (NumberFormatException k1)
             {
                 msgBox("Datos introducidos NO VALIDOS");
                 return 0;
             }
             guardaUltValoresDesg();
+            lineaAnt = linea;
         }
     } catch (Exception k)
     {
@@ -2584,6 +2587,7 @@ private JMenuItem MIimprEtiqInd;
    */
   void actAcuLiAlb()
   {
+  
     int nRow=jtDes.getRowCount();
     int nInd=0;
     double kilos=0;
@@ -2752,7 +2756,7 @@ private JMenuItem MIimprEtiqInd;
    * @throws java.net.UnknownHostException error en SetBloqueo
    * @param row Linea en el grid que estoy tratando
    */
-  void guardaLinDes(int row) throws SQLException,java.text.ParseException,java.net.UnknownHostException,NumberFormatException
+  boolean guardaLinDes(int row) throws SQLException,java.text.ParseException,java.net.UnknownHostException,NumberFormatException
   {
     if (acc_numeE.getValorInt() == 0)
       guardaCab();
@@ -2826,7 +2830,10 @@ private JMenuItem MIimprEtiqInd;
       guardaLinDes(row, nLiAlDe, nLiAlb, nIndiv);
     }
     else // Ya existia el numero de individuo
-      actGridDes(nLiAlb,row,jtDes.getValorInt(row,JTD_NUMLIN),jtDes.getValorInt(row,DESNIND),numIndAnt, nLiAlAnt);
+    {
+      if (!actGridDes(nLiAlb,row,jtDes.getValorInt(row,JTD_NUMLIN),jtDes.getValorInt(row,DESNIND),numIndAnt, nLiAlAnt))
+          return false;
+    }
 
     jt.setValor( nLiAlb, 0);
     if (! swAutoClas ||  cll_codiE.isNull())
@@ -2837,11 +2844,14 @@ private JMenuItem MIimprEtiqInd;
     else
       actAcuLomos();
 
-    actAcuPro(jt.getValorInt(1));
+    actAcuPro(jt.getValorInt(JT_PROCOD));
     dif_unidE.setValorDec(alc_unidE.getValorInt() - pcl_unidE.getValorInt());
     dif_kgsE.setValorDec(alc_kgsE.getValorDec() - pcl_kgsE.getValorDec());
     dif_porcE.setValorDec(pcl_kgsE.getValorDec()!=0?dif_kgsE.getValorDec() / pcl_kgsE.getValorDec() * 100:0);
     ctUp.commit();
+    actAcumDatabase();
+    actAcuTot();
+    return true;
   }
   /**
    * Devuelve Proximo Numera linea de Desglose para una linea de ALBARAN
@@ -5600,11 +5610,34 @@ private JMenuItem MIimprEtiqInd;
     return nombArt;
   }
   /**
-   * Actualizar Acumulados de Producto
+   * Actualiza Acumulados segun Base de datos
+   * @throws SQLException 
+   */
+  void actAcumDatabase() throws SQLException
+  {
+    s="select sum(acp_canti) as kilos,sum(acp_canind) as unid from v_albcompar"
+        + " where emp_codi= "+emp_codiE.getValorInt()+
+        " and acc_nume= "+acc_numeE.getValorInt()+ 
+        " and acc_ano= "+acc_anoE.getValorInt()+
+        " and pro_codi= ?"; //+jt.getValorInt(n,JT_PROCOD);
+    PreparedStatement ps1= dtStat.getPreparedStatement(s);
+    ResultSet rs;
+    int nRow = jt.getRowCount();
+    for (int n = 0; n < nRow; n++)
+    {
+        ps1.setInt(1, jt.getValorInt(n,JT_PROCOD));
+        rs=ps1.executeQuery();
+        rs.next();
+        jt.setValor(rs.getDouble("kilos"),n,JT_KILALB);
+        jt.setValor(rs.getDouble("unid"),n,JT_CANIND);
+    }
+  }
+  /**
+   * Actualizar Acumulados de Producto en las lineas
    * @param proCodi int Codigo de Producto
    */
   void actAcuPro(int proCodi)
-  {
+  { 
     int nRow = jt.getRowCount();
     int unid = 0;
     double kg = 0;
@@ -5612,8 +5645,8 @@ private JMenuItem MIimprEtiqInd;
     {
       if (jt.getValorInt(n, 1) == proCodi)
       {
-        unid += jt.getValorInt(n, 3);
-        kg += jt.getValorDec(n, 4);
+        unid += jt.getValorInt(n, JT_CANIND);
+        kg += jt.getValorDec(n, JT_KILALB);
       }
     }
     alc_unidE.setValorDec(unid);
@@ -5634,15 +5667,21 @@ private JMenuItem MIimprEtiqInd;
   void actAcuPed(int proCodi) throws Exception
   {
     s="SELECT ";
-    if (estPedi == 'P')
-      campPedi = " sum(pcl_nucape) as pcl_nucape, " +
-          " sum(pcl_cantpe) as pcl_cantpe ";
-    else if (estPedi == 'C')
-      campPedi= " sum(pcl_nucaco) as pcl_nucape, " +
-          " sum(pcl_cantco) as pcl_cantpe ";
-    else
-      campPedi = " sum(pcl_nucafa) as pcl_nucape, " +
-          " sum(pcl_cantfa) as pcl_cantpe ";
+      switch (estPedi)
+      {
+          case 'P':
+              campPedi = " sum(pcl_nucape) as pcl_nucape, " +
+                  " sum(pcl_cantpe) as pcl_cantpe ";
+              break;
+          case 'C':
+              campPedi= " sum(pcl_nucaco) as pcl_nucape, " +
+                  " sum(pcl_cantco) as pcl_cantpe ";
+              break;
+          default:
+              campPedi = " sum(pcl_nucafa) as pcl_nucape, " +
+                  " sum(pcl_cantfa) as pcl_cantpe ";
+              break;
+      }
 
     s += campPedi+" FROM pedicol WHERE emp_codi = " + EU.em_cod +
         " and eje_nume = " + eje_numeE.getValorDec() +
