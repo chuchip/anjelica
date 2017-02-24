@@ -93,7 +93,7 @@ public class ClClien extends ventana
   {
       iniciarFrame();
 
-      this.setVersion("2016-11-17");
+      this.setVersion("2017-02-24");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -161,6 +161,7 @@ public class ClClien extends ventana
       if (!fecvenE.isNull())
         s+=" and cl.cli_codi in (select distinct(cli_codi) from v_albavec where avc_fecalb>= TO_DATE('" + 
             fecvenE.getText() + "','dd-MM-yyyy'))"; 
+      s += cli_servirE.getValor().equals("%")?"": " and cli_servir  = " + cli_servirE.getValor();
       s += " and cli_activ  LIKE '" + cli_activE.getValor() + "'" +
           (fealinE.isNull() ? "" : " and cli_fecalt >= TO_DATE('" + fealinE.getText() + "','dd-MM-yyyy')") +
           (fealfiE.isNull() ? "" : " and cli_fecalt <= TO_DATE('" + fealfiE.getText() + "','dd-MM-yyyy')") +
@@ -385,6 +386,8 @@ public class ClClien extends ventana
         fecvenE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel24 = new gnu.chu.controles.CLabel();
         rut_codiE = new gnu.chu.controles.CLinkBox();
+        cLabel25 = new gnu.chu.controles.CLabel();
+        cli_servirE = new gnu.chu.controles.CComboBox();
         CTabed = new gnu.chu.controles.CTabbedPane();
         jt = new gnu.chu.controles.Cgrid(6);
         jtRies = new gnu.chu.controles.Cgrid(10);
@@ -469,29 +472,41 @@ public class ClClien extends ventana
 
         opEmail.setText("Con Email");
         Pcabe.add(opEmail);
-        opEmail.setBounds(400, 44, 80, 17);
+        opEmail.setBounds(150, 65, 80, 17);
 
         Baceptar.setText("Aceptar");
         Pcabe.add(Baceptar);
-        Baceptar.setBounds(480, 60, 90, 26);
+        Baceptar.setBounds(480, 63, 90, 26);
 
         cLabel23.setText("Zona");
         cLabel23.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel23);
         cLabel23.setBounds(2, 2, 40, 18);
         Pcabe.add(fecvenE);
-        fecvenE.setBounds(90, 65, 70, 17);
+        fecvenE.setBounds(80, 65, 70, 17);
 
         cLabel24.setText("Ruta");
         cLabel24.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel24);
-        cLabel24.setBounds(190, 65, 40, 18);
+        cLabel24.setBounds(240, 65, 30, 18);
 
         rut_codiE.setAncTexto(30);
         rut_codiE.setMayusculas(true);
         rut_codiE.setPreferredSize(new java.awt.Dimension(92, 18));
         Pcabe.add(rut_codiE);
-        rut_codiE.setBounds(220, 65, 210, 18);
+        rut_codiE.setBounds(270, 65, 210, 18);
+
+        cLabel25.setText("Servir");
+        cLabel25.setPreferredSize(new java.awt.Dimension(60, 18));
+        Pcabe.add(cLabel25);
+        cLabel25.setBounds(430, 44, 40, 17);
+
+        cli_servirE.addItem("Si","1");
+        cli_servirE.addItem("No","0");
+        cli_servirE.addItem("No!","2");
+        cli_servirE.addItem("TODOS","%");
+        Pcabe.add(cli_servirE);
+        cli_servirE.setBounds(490, 44, 80, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -572,7 +587,9 @@ public class ClClien extends ventana
     private gnu.chu.controles.CLabel cLabel22;
     private gnu.chu.controles.CLabel cLabel23;
     private gnu.chu.controles.CLabel cLabel24;
+    private gnu.chu.controles.CLabel cLabel25;
     private gnu.chu.controles.CComboBox cli_activE;
+    private gnu.chu.controles.CComboBox cli_servirE;
     private gnu.chu.controles.CTextField fealfiE;
     private gnu.chu.controles.CTextField fealinE;
     private gnu.chu.controles.CTextField fecvenE;
