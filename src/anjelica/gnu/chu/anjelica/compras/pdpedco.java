@@ -677,7 +677,7 @@ public class pdpedco extends ventanaPad   implements PAD
     emp_codiE.setText(""+EU.em_cod);
     pcc_fecconE.setEnabled(true);
     pcc_feclisE.setEnabled(true);
-
+    pcc_portesE.setQuery(true);
     if (EU.getSbeCodi()!=0)
       sbe_codiE.setValorInt(EU.getSbeCodi());
     acc_numeE.requestFocus();
@@ -702,6 +702,7 @@ public class pdpedco extends ventanaPad   implements PAD
     v.add(pcc_fecpedE.getStrQuery());
     v.add(pcc_fecrecE.getStrQuery());
     v.add(alm_codiE.getStrQuery());
+    v.add(pcc_portesE.getStrQuery());    
     v.add(pcc_estadE.getStrQuery());
     v.add(pcc_estrecE.getStrQuery());
     v.add(pcc_comenE.getStrQuery());

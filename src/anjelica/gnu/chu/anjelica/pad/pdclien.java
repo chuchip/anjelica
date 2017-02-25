@@ -326,7 +326,7 @@ public class pdclien extends ventanaPad implements PAD
       titledBorder2 = new TitledBorder("");
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2017-02-09");
+      this.setVersion("2017-02-24");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -901,7 +901,7 @@ public class pdclien extends ventanaPad implements PAD
     cli_precfiE.addItem("Si","1");
     cli_servirE.addItem("Si","1");
     cli_servirE.addItem("No","0");
-    
+    cli_servirE.addItem("No!","2");
     eti_codiE.addDatos(etiqueta.getReports(dtStat,EU.em_cod,1));
     eti_codiE.setFormato(Types.DECIMAL,"###9",4);
 

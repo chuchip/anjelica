@@ -445,7 +445,7 @@ public class copedco extends ventana
  void cambiaPedido() throws Exception
  {
    jtLin.removeAllDatos();
-   s="SELECT * FROM pedicol WHERE emp_codi = "+EU.em_cod+
+   s="SELECT * FROM v_pedico WHERE emp_codi = "+EU.em_cod+
        " and eje_nume = "+jtCab.getValorInt(2)+
        " and pcc_nume = "+jtCab.getValorInt(3)+
        " order by pcl_numli";
@@ -462,14 +462,17 @@ public class copedco extends ventana
      v.add(dtCon1.getString("pro_nomb"));
      v.add(dtCon1.getString("pcl_nucape"));
      v.add(dtCon1.getString("pcl_cantpe"));
-     v.add(opVerPrecios.isSelected()?dtCon1.getString("pcl_precpe"):"");
+     v.add(opVerPrecios.isSelected()?dtCon1.getDouble("pcl_precpe")+
+         (dtCon1.getString("pcc_portes").equals("D")?dtCon1.getDouble("pcc_imppor"):0):"");
      v.add(dtCon1.getString("pcl_nucaco"));
      v.add(dtCon1.getString("pcl_cantco"));
-     v.add(opVerPrecios.isSelected()?dtCon1.getString("pcl_precco"):"");
+     v.add(opVerPrecios.isSelected()?dtCon1.getString("pcl_precco")+
+         (dtCon1.getString("pcc_portes").equals("D")?dtCon1.getDouble("pcc_imppor"):0):"");
 
      v.add(dtCon1.getString("pcl_nucafa"));
      v.add(dtCon1.getString("pcl_cantfa"));
-     v.add(opVerPrecios.isSelected()?dtCon1.getString("pcl_precfa"):"");
+     v.add(opVerPrecios.isSelected()?dtCon1.getString("pcl_precfa")+
+           (dtCon1.getString("pcc_portes").equals("D")?dtCon1.getDouble("pcc_imppor"):0):"");
      v.add(opVerPrecios.isSelected()?div_codiE.getText(dtCon1.getString("div_codi")):"");
      v.add(dtCon1.getString("pcl_comen"));
      jtLin.addLinea(v);
@@ -537,8 +540,7 @@ public class copedco extends ventana
                   
                       resetMsgEspere();
               }
-          });
-          
+          });          
         }
      };
   }

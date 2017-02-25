@@ -141,7 +141,7 @@ public class clprpeco extends ventana implements  JRDataSource
  {
    iniciarFrame();
    this.setSize(new Dimension(751, 510));
-   this.setVersion(" (2017-01-01)" + (verPrecio ? "- Ver Precios" : ""));
+   this.setVersion(" (2017-02-24)" + (verPrecio ? "- Ver Precios" : ""));
    statusBar = new StatusBar(this);
 
    opPedPend.setToolTipText("Ver SOLO Pedidos Pedidos Pendientes");
@@ -483,6 +483,7 @@ void irMantPedidos()
              {
                  if (nLiPr>1 || !opDesgl.isSelected() )
                      ponAcumul(numCaj, impAcum, cantCaj,proCodi,proGrupo);
+                 swBreakAcum=false;
                  proCodi=dtCon1.getInt("pro_codi");
                  proGrupo = proNomb;
                  numCaj = 0;
@@ -536,7 +537,10 @@ void irMantPedidos()
          numCaj +=nCajas;
          cantCaj += kg;
          if (importe==0)
-            swBreakAcum=true;
+         {
+            if (nCajas>0 || kg>0)
+                swBreakAcum=true;
+         }
          else
          {
             importe+= dtCon1.getString("pcc_portes").equals("D") ? dtCon1.getDouble("pcc_imppor") : 0;         

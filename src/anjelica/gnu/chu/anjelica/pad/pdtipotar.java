@@ -15,7 +15,7 @@ import gnu.chu.sql.DatosTabla;
  * <p>Titulo:   pdtipotar </p>
  * <p>Descripción: Mantenimiento de Tipos de Tarifas </p>
  * <p>Empresa: miCasa</p>
- *  <p>Copyright: Copyright (c) 2005-2016
+ *  <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -450,9 +450,9 @@ public class pdtipotar extends ventanaPad implements PAD
        {
             if (tar_incpreE.getValorDec()!=0)
             {
-               mensajeErr("Si no tiene tarifa padre, no puede tener importe a Incrementar");
-               tar_incpreE.requestFocus();
-               return false; 
+               msgBox("Como no tiene  tarifa padre el incremento se considerara sobre costo");
+//               tar_incpreE.requestFocus();
+//               return false; 
             }
             return true;  // No depende de otra tarifa.
        }
@@ -633,5 +633,27 @@ public class pdtipotar extends ventanaPad implements PAD
              return false;
          return dt.getString("tar_tipo").equals("S");
      }
-     
+     /**
+      * Devuelve la tarifa base
+      * @param dt
+      * @param empCodi
+      * @return int con tarifa base
+      * @throws SQLException  Si no encuentra tarifa base o error en DB.
+      */
+     public static int getTarifaBase(DatosTabla dt, int empCodi) throws SQLException
+     {
+        String s="select cfg_tarini from configuracion where emp_codi = "+empCodi;  
+        if (!dt.select(s))
+             throw new SQLException ("Tarifa base no encontrada para empresa: "+empCodi);
+         return dt.getInt("cfg_tarini");
+     }
+     public static double getIncrementoTarifa(DatosTabla dt,int tarCodi) throws SQLException
+     {
+        String s="select tar_incpre from tipotari where "+
+             "  tar_codi ="+tarCodi;
+        if (!dt.select(s))
+             throw new SQLException ("Tarifa  "+tarCodi+ " no encontrada");
+        return dt.getDouble("tar_incpre");
+
+     }
 }

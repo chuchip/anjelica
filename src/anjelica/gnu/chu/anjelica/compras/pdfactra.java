@@ -23,7 +23,7 @@ import javax.swing.border.TitledBorder;
 /**
  * <p>Titulo:   PDFACTRA </p>
  * <p>Descripción: Mantenimiento FACTURAS DE Transportistas
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -282,7 +282,7 @@ public class pdfactra extends ventanaPad   implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(775, 530));
-   this.setVersion("20141113 "+(modPrecio?"-Modificar Precios-":"")+
+   this.setVersion("20170223 "+(modPrecio?"-Modificar Precios-":"")+
          (admin?"-ADMINISTRADOR-":"")+")");
 
    strSql = "SELECT emp_codi,eje_nume,frt_nume " +
@@ -1099,8 +1099,8 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
          return false;
        }
      }
-     jtFra.salirFoco();
-     jtFra.procesaAllFoco();
+     jtFra.actualizarGrid();
+     jtFra.salirGrid();
 
      if (cambiaLinAlb()>=0)
        return false;
@@ -1648,6 +1648,9 @@ int cambiaLinAlb()
 }
 int cambiaLinAlb(int row)
 {
+  if (! frt_numalbE.hasCambio())
+      return -1 ; // Sin cambios
+  frt_numalbE.resetCambio();
   if (frl_cantiE.getValorDec()==0)
      return -1;
    if (tap_codiE.getValorInt()==0)
@@ -1863,19 +1866,19 @@ int cambiaLinAlb(int row)
 
   private void confGrid() throws Exception
   {
-    Vector v = new Vector();
-    v.addElement("A/C/N"); // 0
-    v.addElement("Ejerc"); // 1
-    v.addElement("Serie"); // 2
-    v.addElement("Albaran"); // 3
-    v.addElement("NL.Cam"); // 4
-    v.addElement("Fec.Alb."); // 5
-    v.addElement("Kilos Alb"); // 6
-    v.addElement("Kilos Fra"); // 7
-    v.addElement("Tarifa"); // 8 (Tarifa Portes)
-    v.addElement("Imp.Trans"); // 9
-    v.addElement("Proveedor"); // 10
-    v.addElement("NL"); // 11
+    ArrayList v = new ArrayList();
+    v.add("A/C/N"); // 0
+    v.add("Ejerc"); // 1
+    v.add("Serie"); // 2
+    v.add("Albaran"); // 3
+    v.add("NL.Cam"); // 4
+    v.add("Fec.Alb."); // 5
+    v.add("Kilos Alb"); // 6
+    v.add("Kilos Fra"); // 7
+    v.add("Tarifa"); // 8 (Tarifa Portes)
+    v.add("Imp.Trans"); // 9
+    v.add("Proveedor"); // 10
+    v.add("NL"); // 11
     jtFra.setCabecera(v);
     jtFra.setAlinearColumna(new int[]
                             {1, 2, 1, 2, 2, 1, 2, 2, 2, 2, 0,2});
@@ -1904,7 +1907,7 @@ int cambiaLinAlb(int row)
     dcl_numliE.setEnabled(false);
     acc_fecalbE.setEnabled(false);
     frl_canalbE.setEnabled(false);
-    tap_imporE.setEnabled(false);
+    tap_imporE.setEnabled(true);
     prv_codiE.setEnabled(false);
     vc.add(frt_alccamE); //0
     vc.add(dcc_ejerE); //1
@@ -1920,14 +1923,14 @@ int cambiaLinAlb(int row)
     vc.add(frt_numliE); // 11
     jtFra.setCampos(vc);
 
-    Vector v1 = new Vector();
-    v1.addElement("Eje."); // 0
-    v1.addElement("Serie"); // 1
-    v1.addElement("Alb."); // 2
-    v1.addElement("Fec.Alb"); // 3
-    v1.addElement("Kilos"); // 4
-    v1.addElement("Prv."); // 5
-    v1.addElement("Nombre Proveedor"); // 6
+    ArrayList v1 = new ArrayList();
+    v1.add("Eje."); // 0
+    v1.add("Serie"); // 1
+    v1.add("Alb."); // 2
+    v1.add("Fec.Alb"); // 3
+    v1.add("Kilos"); // 4
+    v1.add("Prv."); // 5
+    v1.add("Nombre Proveedor"); // 6
     jtAlb.setCabecera(v1);
 
     jtAlb.setAlinearColumna(new int[]{2, 1, 2, 1, 2,2,0});

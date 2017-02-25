@@ -2,7 +2,7 @@
  *
  * <p>Titulo: MantTarifa </p>
  * <p>Descripción: Mantenimiento Tarifas de Ventas</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -118,7 +118,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2016-10-11" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2017-02-23" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -764,7 +764,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
   }
   
   /**
-   * 
+   * Devuelve el precio de tarifa para un producto y/o cliente en una fecha dada
    * @param dt
    * @param proCodi Articulo
    * @param cliCodi Cliente (0) Si es tarifa generica
@@ -793,7 +793,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
    s= " SELECT * FROM tipotari WHERE tar_codi = " + tarCodi;
    if (dt.select(s))
    {
-     double tarIncPre = dt.getDouble("tar_incpre");
+     double tarIncPre = dt.getInt("tar_codori")==0?0:dt.getDouble("tar_incpre");
 
      s = " SELECT tar_preci,tar_fecini " +
          " FROM tarifa as t,v_articulo as ar where pro_codi = " + proCodi +

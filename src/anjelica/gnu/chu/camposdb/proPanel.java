@@ -1201,6 +1201,11 @@ public class proPanel extends CPanel
   {
     return famCodi;
   }
+  /**
+   * mantener costo (usado en Valoracion despieces)
+   * @return true si se debe mantener costo (normalmente no se mantiene)
+   * @throws SQLException 
+   */
   public boolean getMantenerCosto() throws SQLException
   {
       return lkPrd.getInt("pro_mancos")!=0;

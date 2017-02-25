@@ -57,6 +57,7 @@ public class menu extends JFrame
   CButton Bpad = new CButton();
   CButton Bmargen = new CButton();
   CButton Balmac = new CButton();
+  CButton BTiempos = new CButton();
   CButton Briesgo = new CButton();
   CButton Bfactur = new CButton();
   JMenuItem calculadora = new JMenuItem("Calculadora");
@@ -84,7 +85,9 @@ public class menu extends JFrame
   JMenuItem pdclasifLomos = new JMenuItem();
    JMenuItem albaPrv = new JMenuItem("Alb.Prv");
 
-  JMenu ItemInventario = new JMenu();
+  JMenuItem ItemInventario = new JMenuItem();
+  JPopupMenu menuTiempos = new JPopupMenu();
+  JMenuItem mantTiemPed = new JMenuItem("Tiempo Pedidos");
   JMenuItem clvenrep = new JMenuItem();
   JMenuItem clventasmes = new JMenuItem();
   JMenuItem CLRankClie = new JMenuItem();
@@ -300,17 +303,24 @@ JMenuItem mantArticVenta = new JMenuItem();
     Bmargen.setBounds(new Rectangle(462, 2, 67, 18));
     Bmargen.setMargin(new Insets(0, 0, 0, 0));
     Bmargen.setText("Margenes");
+    
+    
+    
     Balmac.setBounds(new Rectangle(533, 2, 60, 18));
     Balmac.setMargin(new Insets(0, 0, 0, 0));
     Balmac.setSelectedIcon(null);
     Balmac.setText("Almacen");
-    Briesgo.setBounds(new Rectangle(596, 4, 62, 16));
+    Briesgo.setBounds(new Rectangle(596, 4, 52, 16));
     Briesgo.setToolTipText("");
     Briesgo.setMargin(new Insets(0, 0, 0, 0));
     Briesgo.setText("Riesgos");
-    Bfactur.setBounds(new Rectangle(662, 3, 62, 16));
+    Bfactur.setBounds(new Rectangle(650, 3, 50, 16));
     Bfactur.setMargin(new Insets(0, 0, 0, 0));
     Bfactur.setText("Factur.");
+    BTiempos.setBounds(new Rectangle(705, 2, 50, 18));
+    BTiempos.setMargin(new Insets(0, 0, 0, 0));
+    BTiempos.setSelectedIcon(null);
+    BTiempos.setText("Tiempos");
    jMenuAlmacen.setText("Mant.Almac");
     jMenuAlmacen.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -979,6 +989,7 @@ JMenuItem mantArticVenta = new JMenuItem();
     
     this.getContentPane().add(Pprinc,  BorderLayout.CENTER);
     this.getContentPane().add(Pmenu, BorderLayout.NORTH);
+    Pmenu.add(BTiempos, null);
     Pmenu.add(Bvarios, null);
     Pmenu.add(BPedVen, null);
     Pmenu.add(BvenZona, null);
@@ -986,11 +997,13 @@ JMenuItem mantArticVenta = new JMenuItem();
     Pmenu.add(Bpad, null);
     Pmenu.add(Bmargen, null);
     Pmenu.add(Balmac, null);
+    
     Pmenu.add(Briesgo, null);
     Pmenu.add(Bfactur, null);
     Pmenu.add(Balbcom, null);
+    menuTiempos.add(mantTiemPed);
     JPopupAlmacen.add(jMenuAlmacen);
-    JPopupAlmacen.add(ItemInventario);
+//    JPopupAlmacen.add(ItemInventario);
     JpopupVentas.add(ItemRepresen);
     JpopupPedVentas.add(pdpedven);
     JpopupPedVentas.add(clpevepr);
@@ -1214,6 +1227,14 @@ JMenuItem mantArticVenta = new JMenuItem();
 
   void activarEventos()
   {
+      
+    mantTiemPed.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+         HashMap <String,String> ht = new HashMap();
+         ht.put("admin", "true");
+        lanzaEjecutable(new gnu.chu.anjelica.tiempos.MantTiemPedidos(menu.this,EU,ht));   
+      }
+    });
      pdpedven.addActionListener(new ActionListener()
      {
        public void actionPerformed(ActionEvent e)
@@ -1327,6 +1348,14 @@ JMenuItem mantArticVenta = new JMenuItem();
       public void actionPerformed(ActionEvent e)
       {
         Balmac_actionPerformed();
+
+      }
+    });
+    BTiempos.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        BTiempos_actionPerformed();
 
       }
     });
@@ -1570,7 +1599,10 @@ JMenuItem mantArticVenta = new JMenuItem();
 //      lanzaEjecutable(new gnu.chu.anjelica.facturacion.lirelfact(menu.this,EU));
 //      lanzaEjecutable(new gnu.chu.anjelica.facturacion.traspcont(menu.this,EU));
   }
-
+  void BTiempos_actionPerformed()
+  {
+    menuTiempos.show(BTiempos,0,10);
+  }
   void Balmac_actionPerformed()
   {
    

@@ -214,7 +214,8 @@ public class cliPanel extends CPanel
   }
   public boolean isActivo() throws SQLException
   {
-      return getLikeCliente().getString("cli_activ").toUpperCase().startsWith("S");
+      return getLikeCliente().getString("cli_activ").toUpperCase().startsWith("S")
+          && !isNoServirForzado();
   }
   /**
    * Devuelve si a un cliente se le puede servir o no.
@@ -223,7 +224,16 @@ public class cliPanel extends CPanel
    */
   public boolean isServir() throws SQLException
   {
-      return getLikeCliente().getInt("cli_servir")!=0;
+      return getLikeCliente().getInt("cli_servir")==1;
+  }
+  /**
+   * Devuelve si a un cliente se le puede servir o no.
+   * @return true si no se le debe ni cargar pedidos.
+   * @throws SQLException 
+   */
+  public boolean isNoServirForzado() throws SQLException
+  {
+      return getLikeCliente().getInt("cli_servir")==2;
   }
   /**
    * Hace el boton de consultar visible
@@ -608,8 +618,7 @@ public void setZona(String zonCli)
   }
 
   @Override
-  public void setEnabled(boolean activo) {
-   
+  public void setEnabled(boolean activo) {   
     cli_codiE.setEnabled(activo);
     Bcons.setEnabled(activo);
   }
@@ -717,15 +726,15 @@ public void setZona(String zonCli)
      swControl = cli_nombE != null;
 
      this.remove(this.cli_nombE);
-     this.remove(Bcons);
+     
      if (!swControl)
        return;
+     this.remove(Bcons);
      this.remove(cli_codiE);
      this.add(cli_codiE, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0
                                                , GridBagConstraints.WEST,
                                                GridBagConstraints.BOTH,
                                                new Insets(0, 0, 0, 0), 0, 0));
-
      this.cli_nombE=cli_nombE;
    }
 

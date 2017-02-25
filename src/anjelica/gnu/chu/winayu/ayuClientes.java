@@ -29,6 +29,7 @@ import gnu.chu.controles.StatusBar;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -37,9 +38,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLayeredPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class ayuClientes extends ventana
 {
@@ -142,6 +148,39 @@ public class ayuClientes extends ventana
       }
 
     });
+    jt.addListSelectionListener(new ListSelectionListener()
+    {
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            if (e.getValueIsAdjusting() ||  jt.isVacio() || ! jt.isEnabled()) // && e.getFirstIndex() == e.getLastIndex())
+                    return;
+            verComentario();
+            
+        }
+    });
+    
+  }
+  void verComentario()
+  {
+      try
+      {
+          clc_comenE.resetTexto();
+          clc_horaE.resetTexto();
+          clc_fechaE.resetTexto();
+          String s="select clc_comen,clc_fecha,clc_hora from cliencamb where cli_codi = "+
+              jt.getValorInt(jt.getSelectedRowDisab(),0)+
+              " order by clc_fecha desc,clc_hora desc";
+          if (dtCon1.select(s))
+          {
+              clc_comenE.setText(dtCon1.getString("clc_comen"));
+              clc_fechaE.setDate(dtCon1.getDate("clc_fecha"));
+              clc_horaE.setValorDec(dtCon1.getDouble("clc_hora"));
+          }
+      } catch (SQLException ex)
+      {
+          mensajes.mensajeUrgente("Error en base de datos al buscar cambios");
+      }
+          
   }
   public void Bbuscar_actionPerformed() {
     String s,strSql;
@@ -176,9 +215,12 @@ public class ayuClientes extends ventana
           cli_nombE.requestFocus();
           return;
         }
-        
+        jt.setEnabled(false);
+        jt.setNumRegCargar(0);
         jt.setDatos(dtCon1);
         jt.requestFocusInicio();
+        jt.setEnabled(true);
+        verComentario();
         mensajeErr("Consulta de clientes, realizada");
       } catch (Exception k)
       {
@@ -258,6 +300,10 @@ public class ayuClientes extends ventana
         Bselecion = new gnu.chu.controles.CButton(Iconos.getImageIcon("choose"));
         cli_poblL1 = new gnu.chu.controles.CLabel();
         cli_codrepE = new gnu.chu.controles.CTextField(Types.CHAR,"X",5);
+        cLabel19 = new gnu.chu.controles.CLabel();
+        clc_comenE = new gnu.chu.controles.CTextField();
+        clc_fechaE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
+        clc_horaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"99.99");
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -305,10 +351,13 @@ public class ayuClientes extends ventana
         Pcond.add(cli_poblE);
         cli_poblE.setBounds(50, 22, 160, 17);
 
-        cLabel18.setText("Zona");
+        cLabel18.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        cLabel18.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cLabel18.setText("Cambio");
+        cLabel18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         cLabel18.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcond.add(cLabel18);
-        cLabel18.setBounds(10, 40, 40, 18);
+        cLabel18.setBounds(440, 17, 90, 18);
 
         zon_codiE.setAncTexto(30);
         zon_codiE.setMayusculas(true);
@@ -324,11 +373,11 @@ public class ayuClientes extends ventana
 
         Baceptar.setText("Buscar");
         Pcond.add(Baceptar);
-        Baceptar.setBounds(350, 10, 90, 30);
+        Baceptar.setBounds(350, 3, 90, 30);
 
         Bselecion.setText("Selecionar");
         Pcond.add(Bselecion);
-        Bselecion.setBounds(350, 40, 90, 24);
+        Bselecion.setBounds(350, 33, 90, 24);
 
         cli_poblL1.setText("Poblac.");
         Pcond.add(cli_poblL1);
@@ -337,6 +386,23 @@ public class ayuClientes extends ventana
         cli_codrepE.setMayusc(true);
         Pcond.add(cli_codrepE);
         cli_codrepE.setBounds(290, 20, 40, 17);
+
+        cLabel19.setText("Zona");
+        cLabel19.setPreferredSize(new java.awt.Dimension(60, 18));
+        Pcond.add(cLabel19);
+        cLabel19.setBounds(10, 40, 40, 18);
+
+        clc_comenE.setEnabled(false);
+        Pcond.add(clc_comenE);
+        clc_comenE.setBounds(10, 60, 520, 17);
+
+        clc_fechaE.setEnabled(false);
+        Pcond.add(clc_fechaE);
+        clc_fechaE.setBounds(440, 38, 55, 17);
+
+        clc_horaE.setEnabled(false);
+        Pcond.add(clc_horaE);
+        clc_horaE.setBounds(497, 38, 35, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -361,6 +427,10 @@ public class ayuClientes extends ventana
     private gnu.chu.controles.CPanel Pcond;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CLabel cLabel18;
+    private gnu.chu.controles.CLabel cLabel19;
+    private gnu.chu.controles.CTextField clc_comenE;
+    private gnu.chu.controles.CTextField clc_fechaE;
+    private gnu.chu.controles.CTextField clc_horaE;
     private gnu.chu.controles.CComboBox cli_activE;
     private gnu.chu.controles.CTextField cli_codrepE;
     private gnu.chu.controles.CTextField cli_nombE;

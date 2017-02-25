@@ -717,7 +717,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-01-09" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-02-20" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -4725,10 +4725,9 @@ public class pdalbara extends ventanaPad  implements PAD
       mensajeErr(cli_codiE.getMsgError());
       return false;
     }
-    if (!cli_codiE.getLikeCliente().getString("cli_activ").toUpperCase().
-        startsWith("S"))
+    if (! cli_codiE.isActivo())
     {
-      mensajeErr("CLIENTE NO ESTA MARCADO COMO ACTIVO");
+      mensajeErr("CLIENTE NO ESTA MARCADO COMO ACTIVO O ESTA FORZADO A NO SERVIR");
       cli_codiE.requestFocus();
       return false;
     }
@@ -5913,7 +5912,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
   void irGrid()
   {
-    if (!jt.isEnabled())
+    if (!jt.isEnabled()  )
       irGridLin();
     else
       irGridDes();
@@ -5994,7 +5993,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     try
     {
-      if (!jtDes.isEnabled())
+      if (!jtDes.isEnabled() || jt.isVacio())
       { // Se supone que entro desde padaddnew o padedit
         if (! checkCli())
           return;

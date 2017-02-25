@@ -730,7 +730,7 @@ private JMenuItem MIimprEtiqInd;
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20170214)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20170225)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -5619,13 +5619,13 @@ private JMenuItem MIimprEtiqInd;
         + " where emp_codi= "+emp_codiE.getValorInt()+
         " and acc_nume= "+acc_numeE.getValorInt()+ 
         " and acc_ano= "+acc_anoE.getValorInt()+
-        " and pro_codi= ?"; //+jt.getValorInt(n,JT_PROCOD);
+        " and acl_nulin = ?"; //+jt.getValorInt(n,JT_PROCOD);
     PreparedStatement ps1= dtStat.getPreparedStatement(s);
     ResultSet rs;
     int nRow = jt.getRowCount();
     for (int n = 0; n < nRow; n++)
     {
-        ps1.setInt(1, jt.getValorInt(n,JT_PROCOD));
+        ps1.setInt(1, jt.getValorInt(n,JT_NLIN));
         rs=ps1.executeQuery();
         rs.next();
         jt.setValor(rs.getDouble("kilos"),n,JT_KILALB);

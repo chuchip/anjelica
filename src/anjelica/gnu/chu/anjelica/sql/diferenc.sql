@@ -1,3 +1,9 @@
+--
+-- Incluido tipo tarifa maestro en configuracion
+--
+alter table v_config add cfg_tarini smallint not null default 2;
+alter table tipotari add constraint  ix_tipotari unique(tar_codi);
+
 -- Incluido campo para controlar si producto salida es tipo Produccion
 alter table v_despfin add def_tippro char(1) not null default 'N' ;
 alter table desfinhis  add def_tippro char(1) not null default 'N' ;

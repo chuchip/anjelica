@@ -276,7 +276,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2016-12-29"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2017-02-20"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -1454,6 +1454,11 @@ public class pdpeve  extends ventanaPad   implements PAD
         mensajeErr(cli_codiE.getMsgError());
         return false;
       }
+      if (!cli_codiE.isActivo())
+      {
+        mensajeErr("Cliente NO esta activo o esta forzado a no Servir");
+        return false;
+      }
       if (pvc_fecentE.getError() || pvc_fecentE.isNull())
       {
         mensajeErr("Fecha de Entrega NO valida");
@@ -1516,6 +1521,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   public void ej_addnew1()
   {
     try {
+      
       pvc_numeE.setValorInt(getNumPed(true));
       
       dtAdd.addNew("pedvenc");
@@ -2084,7 +2090,7 @@ public class pdpeve  extends ventanaPad   implements PAD
             }
             if (!cli_codiE.isActivo())
             {
-                mensajeErr("Cliente NO esta activo");
+                mensajeErr("Cliente NO esta activo O esta forzado a no Servir");
                 cli_codiE.requestFocus();
                 return;
             }

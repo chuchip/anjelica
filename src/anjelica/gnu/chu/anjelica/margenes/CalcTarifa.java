@@ -487,15 +487,18 @@ public class CalcTarifa extends ventanaPad implements PAD
             {
                 case "P":
                     kgPed = dtCon1.getDouble("pcl_cantpe");
-                    impPed = dtCon1.getDouble("pcl_precpe");
+                    impPed = dtCon1.getDouble("pcl_precpe")+
+                        (dtCon1.getString("pcc_portes").equals("D")?dtCon1.getDouble("pcc_imppor"):0);
                     break;
                 case "C":
                     kgPed = dtCon1.getDouble("pcl_cantco");
-                    impPed = dtCon1.getDouble("pcl_precco");
+                    impPed = dtCon1.getDouble("pcl_precco")+
+                        (dtCon1.getString("pcc_portes").equals("D")?dtCon1.getDouble("pcc_imppor"):0);
                     break;
                 default:
                     kgPed = dtCon1.getDouble("pcl_cantfa");
-                    impPed = dtCon1.getDouble("pcl_precfa");
+                    impPed = dtCon1.getDouble("pcl_precfa")+
+                        (dtCon1.getString("pcc_portes").equals("D")?dtCon1.getDouble("pcc_imppor"):0);
             }
             kilPendRec+=kgPed;
             ImpPendRec+=kgPed*impPed;            
@@ -737,7 +740,7 @@ public class CalcTarifa extends ventanaPad implements PAD
         PPie.add(opDesglo);
         opDesglo.setBounds(290, 20, 73, 17);
 
-        Bcosto.setText("Costo F3");
+        Bcosto.setText("Act DB F3");
         Bcosto.setToolTipText("Busca costos de nuevo en base datos");
         PPie.add(Bcosto);
         Bcosto.setBounds(480, 0, 70, 19);

@@ -21,7 +21,9 @@ package gnu.chu.anjelica.despiece;
  */
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.pad.MantTarifa;
 import gnu.chu.anjelica.pad.pdconfig;
+import gnu.chu.anjelica.pad.pdtipotar;
 import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.ejecutable;
@@ -45,6 +47,9 @@ import javax.swing.event.ListSelectionListener;
 
 
 public class ValDespi extends ventana {
+   int TARIFA_MAYOR;
+   double DTO_TARIFA_MAYOR;
+   private boolean swCostoBloq=false;
    boolean swValGrupo=false;
    String msgError;
    double impDocum=0;
@@ -154,7 +159,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2016-12-16" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2017-02-26" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -177,6 +182,8 @@ public class ValDespi extends ventana {
      tid_codfinE.iniciar(dtStat, this, vl, EU);
      tid_codiniE.iniciar(dtStat, this, vl, EU);
      feulin=ActualStkPart.getFechaUltInv(0,0,null,dtStat);
+     TARIFA_MAYOR=pdtipotar.getTarifaBase(dtStat, EU.em_cod);
+     DTO_TARIFA_MAYOR=pdtipotar.getIncrementoTarifa(dtStat,TARIFA_MAYOR);
      if (feulin == null)
         feulin = "01-01-" + EU.ejercicio; // Buscamos desde el principio del año.
      
@@ -933,12 +940,16 @@ public class ValDespi extends ventana {
 
     
   }
+  /**
+   * Pulsado boton de valorar.
+   */
    void BValorar_ActionPerformed()
    {
        try {
            if (jtDesp.isVacio()) 
                return;
-           
+           if (fecIniSem==null)
+               calcFechaCostos(jtDesp.getValDate(rowEdit, JTDES_FECDES));
            if (Baceptar.isEnabled()) 
            {
                fecInv = Formatear.getDate(feulin, "dd-MM-yyyy");
@@ -946,6 +957,7 @@ public class ValDespi extends ventana {
                if (Formatear.comparaFechas(fecInv, fecDesp) > 0) {
                    fecInv = ActualStkPart.getDateUltInv(jtDesp.getValDate(rowEdit, JTDES_FECDES), dtStat);
                }
+              
                if (jtCab.isEnabled()) 
                {
                    precAcu=pdprvades.getPrecioOrigen(dtStat, jtCab.getValorInt(JTCAB_PROCODI), fecIniSem);
@@ -953,28 +965,24 @@ public class ValDespi extends ventana {
                     precAcu= getPrecioMedioDesp(jtCab.getValorInt(JTCAB_PROCODI),
                        jtDesp.getValString(JTDES_TIPO).equals("G"),
                        jtDesp.getValorInt(JTDES_EJER),
-                       jtDesp.getValorInt(JTDES_NUMDES), "D",true);
+                       jtDesp.getValorInt(JTDES_NUMDES), "D");
                }
                else
                {
-                   precAcu=pdprvades.getPrecioFinal(dtStat, jtCab.getValorInt(JTCAB_PROCODI), fecIniSem);
+                   precAcu=getPrecioFinal(dtStat, jtLin.getValorInt(JTLIN_PROCODI), fecIniSem);
+                   
                    if (precAcu<=0)
+                   {
                        precAcu= getPrecioMedioDesp(jtLin.getValorInt(JTLIN_PROCODI),
                         jtDesp.getValString(JTDES_TIPO).equals("G"),
                         jtDesp.getValorInt(JTDES_EJER),
-                        jtDesp.getValorInt(JTDES_NUMDES), "d",false);
+                        jtDesp.getValorInt(JTDES_NUMDES), "d");
+                   }
                 }
-                   
-                  
-//                   res = buscaStock(fecDesp, fecInv,
-//                           jtCab.getValorInt(JTCAB_PROCODI), jtDesp.getValorInt(JTDES_NUMDES));
-//               } else {
-//                   res = buscaStock(fecDesp, fecInv,
-//                           jtLin.getValorInt(JTLIN_PROCODI), jtDesp.getValorInt(JTDES_NUMDES));
-//               }
+      
                
-               
-               if (precAcu!=0) {
+               if (precAcu!=0)
+               {
 //                   if (mvtosAlm.getEntradaSinValor()) {
 //                      msgExplica("Error al Valorar","Despieces:\n "+mvtosAlm.getMsgDesp()+"\n"+
 //                              "Compras:\n "+mvtosAlm.getMsgCompra()+"\nProducto tiene entradas anteriores sin valorar."
@@ -986,6 +994,7 @@ public class ValDespi extends ventana {
                        deo_prcogrE.setValorDec(precAcu);
                    } else {
                        jtLin.setValor(precAcu, JTLIN_COSTO);
+                       jtLin.setValor(swCostoBloq,JTLIN_COSBLO);
                        def_prcostE.setValorDec(precAcu);
                    }
                }
@@ -1018,7 +1027,7 @@ public class ValDespi extends ventana {
           fecInv= ActualStkPart.getDateUltInv(jtDesp.getValDate(rowEdit,JTDES_FECDES),dtStat);
    }
    
-   void calcFechaCostos(Date fecDesp) throws Exception
+   void calcFechaCostos(Date fecDesp) //throws Exception
    {
      GregorianCalendar gc=new GregorianCalendar();
      
@@ -1076,7 +1085,7 @@ public class ValDespi extends ventana {
                 do
                 {
                     precAcu=getPrecioMedioDesp(dtDesp.getInt("pro_codi"), isGrupo,jtDesp.getValorInt(n,JTDES_EJER) ,
-                        jtDesp.getValorInt(n,JTDES_NUMDES), "D",true);
+                        jtDesp.getValorInt(n,JTDES_NUMDES), "D");
                     if (msgError!=null)
                     {                        
                         if (msgs.indexOf(msgError)<0)
@@ -1111,7 +1120,7 @@ public class ValDespi extends ventana {
                         continue;
                     }
                     precAcu=getPrecioMedioDesp(dtDesp.getInt("pro_codi"), isGrupo,jtDesp.getValorInt(n,JTDES_EJER) ,
-                        jtDesp.getValorInt(n,JTDES_NUMDES), "d",false);
+                        jtDesp.getValorInt(n,JTDES_NUMDES), "d");
                     if (msgError!=null)
                     {                        
                         if (msgs.indexOf(msgError)<0)
@@ -1350,7 +1359,7 @@ public class ValDespi extends ventana {
             precAcu=getPrecioMedioDesp(proCodi,
                 jtDesp.getValString(JTDES_TIPO).equals("G"),
                 jtDesp.getValorInt(JTDES_EJER),                  
-                jtDesp.getValorInt(JTDES_NUMDES),"D",false);                
+                jtDesp.getValorInt(JTDES_NUMDES),"D");                
             if (precAcu!=0)
                 jtCab.setValor(precAcu, n, JTCAB_COSTO);
             else
@@ -1421,7 +1430,7 @@ public class ValDespi extends ventana {
             if (dtStat.select(s)) 
                costo=dtStat.getDouble("def_prcost");
             if (costo<0)
-               costo=pdprvades.getPrecioFinal(dtStat, proCodi, fecIniSem);
+               costo= getPrecioFinal(dtStat, proCodi, fecIniSem);
             if (costo<0)
             {
                 s="\nNO Encontrados DESPIECES anteriores para producto: "+proCodi;
@@ -1432,16 +1441,17 @@ public class ValDespi extends ventana {
             jtLin.setValor(costo, n,JTLIN_COSTO);
             continue;
         }
-        costo=pdprvades.getPrecioFinal(dtStat, proCodi, fecIniSem);
+        costo=getPrecioFinal(dtStat, proCodi, fecIniSem);
         if (costo>0)
         {
             jtLin.setValor(costo, n,JTLIN_COSTO);
+            jtLin.setValor(swCostoBloq, n,JTLIN_COSBLO);
             continue;
         }
-         precAcu=getPrecioMedioDesp(proCodi,
+        precAcu=getPrecioMedioDesp(proCodi,
                     jtDesp.getValString(JTDES_TIPO).equals("G"),
                     jtDesp.getValorInt(JTDES_EJER),
-                    jtDesp.getValorInt(JTDES_NUMDES),"d",false);               
+                    jtDesp.getValorInt(JTDES_NUMDES),"d");               
         if (precAcu!=0)
         {        
             jtLin.setValor("" + precAcu, n,JTLIN_COSTO );
@@ -1456,6 +1466,19 @@ public class ValDespi extends ventana {
       recalcCostoLin();
       return entSinValor;
   }
+  double getPrecioFinal(DatosTabla dt,int proCodi, Date  fecIniSem) throws SQLException
+  {
+      swCostoBloq=false;
+      double costo= pdprvades.getPrecioFinal(dt, proCodi, fecIniSem);
+      if (costo>0)
+      {
+          swCostoBloq=true;
+          return costo;
+      }
+      costo=MantTarifa.getPrecTar(dt,proCodi ,0,TARIFA_MAYOR, fecIniSem);
+      return costo==0?0:costo-DTO_TARIFA_MAYOR;
+  }
+      
   /**
    * Recalcular Costo de Lineas (Despiece de Salida)
    */
@@ -1731,33 +1754,42 @@ public class ValDespi extends ventana {
              " AND rgs_fecha::date = ?  ";
     psInv=dtCon1.getPreparedStatement(s);
  }
- 
- private double getPrecioMedioDesp(int proCodi,boolean isGrupo, int ejerc,int deoCodi, String tipoDoc,boolean swOrig) throws SQLException
+ /**
+  * Devuelve el precio medio de despiece para un producto 
+  * @param proCodi Producto
+  * @param isGrupo esGrupo
+  * @param ejerc Ejercicio
+  * @param deoCodi Despiece
+  * @param tipoDoc 'd' Entrada a Almacen (v_despfin). 'D' Salida Almacen (desorilin) 
+  * @return
+  * @throws SQLException 
+  */
+ private double getPrecioMedioDesp(int proCodi,boolean isGrupo, int ejerc,int deoCodi, String tipoDoc) throws SQLException
  {
    
    impDocum=0;
    kgDocum=0;
    if (isGrupo)
    {
-    s="select deo_codi from desporig where eje_nume= "+ejerc+
-        " and deo_numdes ="+deoCodi;
-    if (!dtCon1.select(s))
-        return 0;
-    ArrayList<Integer> grupos=new ArrayList();
-    int nEle=0;
-    do
-    {
-        grupos.add(dtCon1.getInt("deo_codi"));
-        nEle++;
-    } while (dtCon1.next());
-    for (int n=0;n<nEle;n++)
-    {
-       getPrecioMedioDesp(proCodi,ejerc,grupos.get(n), tipoDoc,swOrig);
-    }  
-    return kgDocum==0?0:impDocum/kgDocum;
+        s="select deo_codi from desporig where eje_nume= "+ejerc+
+            " and deo_numdes ="+deoCodi;
+        if (!dtCon1.select(s))
+            return 0;
+        ArrayList<Integer> grupos=new ArrayList();
+        int nEle=0;
+        do
+        {
+            grupos.add(dtCon1.getInt("deo_codi"));
+            nEle++;
+        } while (dtCon1.next());
+        for (int n=0;n<nEle;n++)
+        {
+           getPrecioMedioDesp(proCodi,ejerc,grupos.get(n), tipoDoc);
+        }  
+        return kgDocum==0?0:impDocum/kgDocum;
    }
   
-   return getPrecioMedioDesp(proCodi,ejerc,deoCodi, tipoDoc,swOrig);
+   return getPrecioMedioDesp(proCodi,ejerc,deoCodi, tipoDoc);
  }
  
  /**
@@ -1765,11 +1797,11 @@ public class ValDespi extends ventana {
   * @param proCodi
   * @param ejerc
   * @param deoCodi
-  * @param tipoDoc 'd' Entrada a Almacen (v_despfin). 'D' Salida Almacen (desorilin)
+  * @param tipoDoc 'd' Entrada a Almacen (v_despfin). 'D' Salida Almacen (desorilin)  
   * @return
   * @throws SQLException 
   */
- double getPrecioMedioDesp(int proCodi, int ejerc,int deoCodi, String tipoDoc,boolean swOrig) throws SQLException
+ double getPrecioMedioDesp(int proCodi, int ejerc,int deoCodi, String tipoDoc) throws SQLException
  {
      if (tipoDoc.equals("D") )
      {
@@ -1793,6 +1825,19 @@ public class ValDespi extends ventana {
      return getPrecioMedioEntrada(proCodi, new java.sql.Date(fecInv.getTime()),
                dtStat.getTimeStamp("maxTiempo"),EU.em_cod,ejerc,"D",deoCodi,tipoDoc );
  }
+ /**
+  * 
+  * @param proCodi
+  * @param fechaInv
+  * @param timeSupMvt
+  * @param empCodi
+  * @param ejerc
+  * @param serie
+  * @param deoCodi
+  * @param tipoDoc
+  * @return
+  * @throws SQLException 
+  */
  double getPrecioMedioEntrada(int proCodi,java.sql.Date fechaInv,java.sql.Timestamp timeSupMvt,int empCodi,
      int ejerc,String serie,int deoCodi, String tipoDoc) throws SQLException
  {

@@ -17,6 +17,7 @@ import javax.swing.event.*;
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantRepres;
+import gnu.chu.camposdb.cliPanel;
 import java.text.ParseException;
 import java.util.Date;
 import org.jfree.chart.ChartFactory;
@@ -68,7 +69,7 @@ public class FichaClientes extends ventana implements PAD
   CPanel pGrNorth = new CPanel();
   CPanel pGrSouth = new CPanel();
   CLabel cLabel1 = new CLabel();
-  CTextField cli_codiE = new CTextField(Types.DECIMAL,"####9");
+  cliPanel cli_codiE = new cliPanel();
   CTextField cli_nombE = new CTextField(Types.CHAR,"X",40);
   CTextField cli_codrepE = new CTextField(Types.CHAR,"X",5);
   CLabel cLabel2 = new CLabel();
@@ -367,7 +368,7 @@ public class FichaClientes extends ventana implements PAD
   {
     iniciarFrame();
     this.setSize(732, 535);
-    this.setVersion("2016-07-26");
+    this.setVersion("2017-02-20");
     if (CONBD)
     {
       conecta();
@@ -404,7 +405,9 @@ public class FichaClientes extends ventana implements PAD
     zon_codiE.setAncTexto(30);
     cLabel9.setText("Repr.");
     cLabel9.setBounds(new Rectangle(210, 80, 34, 18));
-
+    cli_codiE.iniciar(dtStat,this,vl,EU);
+    cli_codiE.setCliNomb(null);
+    cli_codiE.setEnabled(true);
     rep_codiE.setAncTexto(30);
     rep_codiE.setBounds(new Rectangle(240, 80, 166, 18));
     cLabel10.setText("Activo");
@@ -860,7 +863,7 @@ public class FichaClientes extends ventana implements PAD
     cLabel34.setText("Coment");
     cLabel34.setBounds(new Rectangle(415, 60, 47, 14));
     cli_comenE.setBounds(new Rectangle(455, 60, 247, 17));
-    Vector vCom=new Vector();
+    ArrayList vCom=new ArrayList();
     vCom.add("Fecha");
     vCom.add("Comentario");
     jtCom.setCabecera(vCom);
@@ -1162,6 +1165,7 @@ public class FichaClientes extends ventana implements PAD
    cli_codiE.setError(false);
    Pdatcli.setQuery(true);
    pCabCli.setQuery(true);
+   cli_codiE.setEnabled(true);
 //   zon_codiE.combo.setEnabled(true);
 //   rep_codiE.combo.setEnabled(true);
    Pdatcli.resetTexto();
@@ -1640,7 +1644,7 @@ public class FichaClientes extends ventana implements PAD
         pRelClien.resetTexo();
       return;
     }
-    cli_codiE.setValorDec(dt.getInt("cli_codi",true));
+    cli_codiE.setValorInt(dt.getInt("cli_codi",true));
     cli_nombE.setText(dt.getString("cli_nomb"));
     cli_codrepE.setText(dt.getString("cli_codrut"));
     cli_nomcoE.setText(dt.getString("cli_nomco"));
@@ -2585,6 +2589,7 @@ public class FichaClientes extends ventana implements PAD
          }
   }
 
+  @Override
   public void PADUltimo()
   {
     try
@@ -2631,7 +2636,7 @@ public class FichaClientes extends ventana implements PAD
   }
   @Override
   public void PADEdit() {
-    if (cli_codiE.getValorDec()==0)
+    if (cli_codiE.getValorInt()==0)
     {
       activar(true);
       mensajeErr("NO HAY REGISTROS ACTIVOS");

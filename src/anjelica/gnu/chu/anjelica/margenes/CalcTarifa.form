@@ -490,7 +490,7 @@
             </Component>
             <Component class="gnu.chu.controles.CButton" name="Bcosto">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Costo F3"/>
+                <Property name="text" type="java.lang.String" value="Act DB F3"/>
                 <Property name="toolTipText" type="java.lang.String" value="Busca costos de nuevo en base datos"/>
               </Properties>
               <Constraints>

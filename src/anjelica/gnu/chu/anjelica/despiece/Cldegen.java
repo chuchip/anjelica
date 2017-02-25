@@ -2,7 +2,7 @@
  *
  * <p>Titulo: cldegen</p>
  * <p>Descripción: Consulta/Listado Despieces Generados</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -25,7 +25,9 @@ import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
+import gnu.chu.anjelica.compras.pdtaripor;
 import gnu.chu.anjelica.pad.MantTarifa;
+import gnu.chu.anjelica.pad.pdtipotar;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.DatosTabla;
 import java.awt.*;
@@ -42,6 +44,7 @@ import net.sf.jasperreports.engine.*;
 
 public class Cldegen extends ventana
 {
+    int TARIFA_MAYOR;
     utildesp utdesp;
     DatosTabla dtDesp,dtAux;
     String condWhere;
@@ -100,7 +103,7 @@ public class Cldegen extends ventana
        
         fecfinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
         feciniE.setText(Formatear.sumaDias(new Date(System.currentTimeMillis()), -7));
-        
+        TARIFA_MAYOR=pdtipotar.getTarifaBase(dtAdd, EU.em_cod);
 //        emp_codiE.setValorInt(EU.em_cod);
         llenaCombos();
         utdesp =new utildesp();
@@ -277,11 +280,12 @@ public class Cldegen extends ventana
     private void buscaTarifa() throws SQLException,ParseException
     {
         int nRow=jt.getRowCount();
-        int TARIFA_MAYOR=2;
+        
         for (int n=0;n<nRow;n++)
         {
             jt.setValor(
-            MantTarifa.getPrecTar(dtStat,jt.getValorInt(n,0) ,0,TARIFA_MAYOR, feciniE.getDate()),
+            MantTarifa.getPrecTar(dtStat,jt.getValorInt(n,0) ,0,TARIFA_MAYOR, 
+                Formatear.sumaDias(feciniE.getDate(),7)),
                 n,6);
         }
     }

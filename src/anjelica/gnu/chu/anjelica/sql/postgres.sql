@@ -324,7 +324,7 @@ cli_feulco date,        -- Fecha Ult. Contacto
 cli_estcon char(1) default 'N',     -- Estado de Contacto (No contacto,Ausente,Contacto, Llamar)
 cli_email1 char(60),     -- Correo Electronico Comercial (Tarifas)
 cli_email2 char(60),     -- Correo Electronico Administr. (Facturas/Alb.)
-cli_servir smallint default -1 not null, --  Puede servir?. 0 NO 
+cli_servir smallint default -1 not null, --  Puede servir?. 0 NO . 1 Si. 2: No! (no podra cargar pedidos ni alb.)
 constraint ix_vcliente primary key(cli_codi)
 );
 create or replace view anjelica.v_cliente as select *,cli_codrut as cli_carte,cli_codrut as cli_valor from anjelica.clientes;
@@ -1161,6 +1161,7 @@ acl_prstk decimal(9,3) not null, -- Precio Para Inventarios
 acl_dtopp float not null default 0,
 his_rowid int not null
 );
+ create index ix_hisallico on hisallico   (his_rowid,acl_nulin);
 --
 -- Partidas de los Albaranes de Compras. Detalle de los individuos
 -- Su equivalente en  historico es hisalpaco
@@ -1225,7 +1226,7 @@ create table anjelica.v_albcompar
    precinto4 int ,		-- NO USADO
    acp_canind int ,		-- Cant.de Individuos
    mat_codi int,		-- Codigo de Matadero
-   acl_nulin int,		-- Numero de Linea del Albaran
+   acl_nulin int not null,	-- Numero de Linea del Albaran
    traspasado smallint,		-- NO USADO
    sde_codi int,		-- Codigo Sala Despiece
    aux_1 varchar(50),		-- NO USADO
@@ -1263,7 +1264,7 @@ grant select on anjelica.v_compras to public;
 
 create or replace view v_albacom as 
 select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,
-l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi
+l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi
 from anjelica.v_albacoc as c,anjelica.v_albacol as l, anjelica
 where c.acc_ano=l.acc_ano
 and c.emp_codi=l.emp_codi
@@ -1300,6 +1301,7 @@ create table anjelica.hisalpaco
    acp_canti float,		-- Kilos
    his_rowid int not null
 );
+ create index ix_hisalpaco on hisalpaco   (his_rowid,acl_nulin);
 --
 -- Proveedores
 --
@@ -1911,12 +1913,13 @@ create table anjelica.grudeshis
 -- drop table tipotari;
 create table anjelica.tipotari
 (
-tar_codi int not null,
+tar_codi int not null,		   -- Codigo de Tarifa
 tar_nomb varchar(45) not null, -- Descripcion de la tarifa
 tar_tipo char(1) not null,     -- 'N' No poner Precios Aut. 
 							   --  'S" Poner precios Aut.
-tar_codori int,                -- Tarifa Original (0: No depende de nadie)
-tar_incpre float               -- Se Incrementara precio sobre tar_codori (Cant. Fija, no en porcentaje)
+tar_codori int not null default 0,    -- Tarifa Original (0: No depende de nadie)
+tar_incpre float not null default 0,   -- Se Incrementara precio sobre tar_codori (Cant. Fija, no en porcentaje)
+constraint ix_tipotari primary key (tar_codi)
 );
 ---
 -- Tablas de Tarifas
@@ -3239,6 +3242,7 @@ create table anjelica.configuracion
   cli_codi   int    not null,      -- Cliente para uso Interno (Traspaso almacenes)
   cfg_tipemp int    not null default 1, -- Tipo de Empresa (1. Carnica, 2. Plantación)
   cfg_palven int not null default 1, -- Usa Palets en Ventas. 
+  cfg_tarini int not null default 2, -- Tarifa Inicial
   constraint ix_config primary key (emp_codi)
 );
 insert into configuracion values(1,1,1,2,1,1,9999,
@@ -4496,9 +4500,26 @@ deo_tiempo::date='20160817'
 group by c.usu_nomb,avc_nume,avc_serie,cli_codi,cli_nomb
 order by 2,7
 --
+-- Estudios de vap
+--
+select 'A' as tipo, usu_nomb ,avc_nume,avc_serie,cl.cli_codi,cl.rut_codi,cl.cli_nomb,min(avl_fecalt) as fecmin, max(avl_fecalt) as fecmax from v_albventa as a, v_cliente as cl
+where cl.cli_codi = a.cli_codi
+and cl.sbe_codi=2
+and avl_fecalt::date='20170222'
+group by usu_nomb,avc_nume,avc_serie,cl.rut_codi,cl.cli_codi,cl.cli_nomb
+order by 2,7
+
+--
 -- Sacar Lomos 'b'
 ---
 select acc_nume,c.prv_codi,prv_nomb,pro_codi,pro_nomart, acl_comen,sum(acl_numcaj) as unidades, sum(acl_canti) as kilos from v_compras as c,v_proveedo as pv where acc_ano=2016 and acc_fecrec>='20160917' and acp_clasi != 'A' AND ACP_CLASI!=''
 and pv.prv_codi=c.prv_codi
 group by acc_nume,pro_codi,c.prv_codi,acl_comen,pro_nomart,prv_nomb
   order by acc_nume,pro_codi
+ --
+ -- Sacar clientes
+ --
+ select cl.cli_codi,cl.cli_nomb,cl.cli_pobl,max(avc_fecalb) from clientes as cl, v_albavec as a  where cl.rep_codi='SE' and cl.ZON_codi='RA' AND cl.CLI_aCTIV='S'
+and avc_fecalb>='20160901' and cl.cli_codi=a.cli_codi
+group by cl.cli_codi,cl.cli_nomb,cl.cli_pobl
+order by cli_pobl
