@@ -30,6 +30,8 @@ import gnu.chu.camposdb.prvPanel;
 import gnu.chu.controles.CCheckBox;
 import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.eventos.GridAdapter;
+import gnu.chu.eventos.GridEvent;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
@@ -48,8 +50,6 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
@@ -60,6 +60,8 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class MantTiemPedidos extends  ventana   implements  JRDataSource
 {
+    boolean inCambio=true;
+    String usuNomAnt;
     boolean swCliente=false;
     int nLineaReport;
     boolean swImpreso=true;
@@ -71,14 +73,17 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
     boolean verPrecio;
     String ARG_REPCODI = "";
     String ARG_SBECODI = "";
-    private final int JTCAB_TIEMPO=0;
-    private final int JTCAB_EMPPED=1;
-    private final int JTCAB_EJEPED=2;
-    private final int JTCAB_NUMPED=3;
-    private final int JTCAB_SERALB=13;
-    private final int JTCAB_NUMALB= 14;   
-    private final int JTCAB_EJEALB=12;
-    private final int JTCAB_NOMCLI=5;
+    private final int JTCAB_USUA=0;
+    private final int JTCAB_TIEMPO=1;    
+    private final int JTCAB_EMPPED=2;
+    private final int JTCAB_EJEPED=3;
+    private final int JTCAB_NUMPED=4;
+    private final int JTCAB_NOMCLI=6;
+    private final int JTCAB_EJEALB=13;
+    private final int JTCAB_SERALB=14;
+    private final int JTCAB_NUMALB= 15;   
+    
+    
 //    private final int JTCAB_POBCLI=5;
     
     public MantTiemPedidos(EntornoUsuario eu, Principal p) {
@@ -149,7 +154,7 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2017-01-15");
+        this.setVersion("2017-03-02");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -201,20 +206,25 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
             Baceptar_actionPerformed();
           }
         });
-      jtCabPed.addListSelectionListener(new ListSelectionListener()
+     jtCabPed.addGridListener(new GridAdapter()
      {
-      @Override
-      public void valueChanged(ListSelectionEvent e)
-      {
-        if (e.getValueIsAdjusting() || ! jtCabPed.isEnabled() || jtCabPed.isVacio() ) // && e.getFirstIndex() == e.getLastIndex())
-          return;
-         verDatPed(jtCabPed.getValorInt(JTCAB_EMPPED),
-          jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED));
-        
-//      System.out.println(" Row "+getValString(0,5)+ " - "+getValString(1,5));
-
-      }
-    });
+         @Override
+          public void cambiaLinea(GridEvent event){
+              guardaDatos();
+          }
+           @Override
+          public void afterCambiaLinea(GridEvent event){
+//              if (tit_usunomE.getText().equals(""))
+//              {
+//                tit_usunomE.setText(usuNomAnt);
+//                jtCabPed.setValor(usuNomAnt,JTCAB_USUA);
+//              }
+              verDatPed(jtCabPed.getValorInt(JTCAB_EMPPED),
+                jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED));
+          }
+     });
+     
+     
   
     jtCabPed.addMouseListener(new MouseAdapter()
     {
@@ -301,6 +311,45 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
     {
         return pdpeve.getRuta(dtCon1, empCodiS, ejeNumeS, pvcNumeS);
     }
+    
+    void guardaDatos()
+    {
+        if (inCambio)
+            return;
+        try
+        {
+            
+            int pvcId=pdpeve.getIdPedido(dtStat,jtCabPed.getValorInt(JTCAB_EMPPED),
+                jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED));
+            if ( pvcId<0)
+                throw new SQLException("Error al Buscar pedido "+jtCabPed.getValorInt(JTCAB_EMPPED)+
+                    "-"+jtCabPed.getValorInt(JTCAB_EJEPED)+"-"+jtCabPed.getValorInt(JTCAB_NUMPED));
+            if (tit_usunomE.getText().equals("") && tit_tiempoE.getValorInt()>0)
+            {
+                jtCabPed.setValor(usuNomAnt,JTCAB_USUA);
+                tit_usunomE.setText(usuNomAnt);
+            }
+            usuNomAnt=tit_usunomE.getText();
+            s="Select * from tiempostarea where tit_tipdoc = 'P' and tit_id="+pvcId;
+            if (!dtAdd.select(s,true))
+            {
+                dtAdd.addNew();
+                dtAdd.setDato("usu_nomb",tit_usunomE.getText());
+                dtAdd.setDato("tit_tipdoc","P");
+                dtAdd.setDato("tit_id",pvcId);
+            }
+            else
+                dtAdd.edit();
+            dtAdd.setDato("usu_nomb",tit_usunomE.getText());
+            dtAdd.setDato("tit_tiempo",tit_tiempoE.getValorInt());
+            dtAdd.update();
+            dtAdd.commit();
+            mensajeRapido("Guardado Registo");
+        } catch (SQLException ex)
+        {
+            Error("Error al actualizar tiempo de pedido",ex);
+        }
+    }
     void verDatPed(int empCodi,int ejeNume,int pvcNume)
    {
      try
@@ -324,7 +373,7 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
        pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));
        pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","hh.mm"));
        pvc_comenE.setText(dtCon1.getString("pvc_comen"));
-       pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
+       
        
        pvc_nupeclE.setText(dtCon1.getString("pvc_nupecl"));
        do
@@ -350,10 +399,17 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
                jtCabPed.getValorInt(JTCAB_NUMALB) );
        }
        int nRows=jtCabPed.getRowCount();
-       int totMin=0;
+       int totMin=0,numReg=0;
        for (int n=0;n<nRows;n++)
-           totMin+=jtCabPed.getValorInt(n,JTCAB_TIEMPO);
-       minuPrepE.setValorDec(totMin);
+       {
+           if (jtCabPed.getValorInt(n,JTCAB_TIEMPO)>0)
+           {
+               numReg++;
+               totMin+=jtCabPed.getValorInt(n,JTCAB_TIEMPO);
+           }
+       }
+       tit_numregE.setValorDec(numReg);
+       tiemTotalE.setValorDec(totMin);
 //       actAcumJT();
      } catch (Exception k)
      {
@@ -630,29 +686,30 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
   private void confJTCab()
   {
     ArrayList v=new ArrayList();
-    
-    v.add("Tiempo"); //0
-    v.add("Em"); // 1
-    v.add("Eje."); // 2
-    v.add("Num.");// 3
-    v.add("Cliente"); // 4
-    v.add("Nombre Cliente"); // 5
-    v.add("Población"); // 6
-    v.add("Fec.Entrega"); // 7
-    v.add("Conf"); // 8
-    v.add("Cerr");// 9
-    v.add("Dep?"); // 10
-    v.add("Ruta");// 11
-    v.add("Ej.Alb");//12
-    v.add("S.Alb"); //13
-    v.add("Num.Alb"); //14
+    v.add("Usuario"); //0
+    v.add("Tiempo"); //1
+    v.add("Em"); // 2
+    v.add("Eje."); // 3
+    v.add("Num.");// 4
+    v.add("Cliente"); // 5
+    v.add("Nombre Cliente"); // 6
+    v.add("Población"); // 7
+    v.add("Fec.Entrega"); // 8
+    v.add("Conf"); // 9
+    v.add("Cerr");// 10
+    v.add("Dep?"); // 11
+    v.add("Ruta");// 12
+    v.add("Ej.Alb");//13
+    v.add("S.Alb"); //14
+    v.add("Num.Alb"); // 15
     
     jtCabPed.setCabecera(v);
     ArrayList v1=new ArrayList();
-    v1.add(pvc_tiepreE);
+    v1.add(tit_usunomE);
+    v1.add(tit_tiempoE);
     for (int n=0;n<14;n++)
     {
-        if (n==7 || n==8 )
+        if (n==8 || n==9 )
         {
             CCheckBox cc=new CCheckBox();
             cc.setEnabled(false);            
@@ -675,8 +732,8 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
     jtCabPed.setMaximumSize(new Dimension(548, 158));
     jtCabPed.setMinimumSize(new Dimension(548, 158));
     jtCabPed.setPreferredSize(new Dimension(548, 158));
-    jtCabPed.setAnchoColumna(new int[]{30,26,40,49,55,150,100,76,30,40,40,100,40,40,60});
-    jtCabPed.setAlinearColumna(new int[]{0,2,2,2,2,0,0,1,1,1,1,0,2,1,2});
+    jtCabPed.setAnchoColumna(new int[]{80,30,26,40,49,55,150,100,76,30,40,40,100,40,40,60});
+    jtCabPed.setAlinearColumna(new int[]{0,2,2,2,2,2,0,0,1,1,1,1,0,2,1,2});
     
     jtCabPed.setFormatoCampos();
     jtCabPed.setCanDeleteLinea(false);
@@ -725,9 +782,13 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
     {
     try
     {
-      if (! iniciarCons(true))
-        return;
-      boolean swServ=verPedidosE.getValor().equals("S"); // A servir (tienen albaran y no esta listado)
+        if (! jtCabPed.isVacio())
+            guardaDatos();
+        inCambio=true;
+        usuNomAnt=EU.usuario;
+        if (! iniciarCons(true))
+          return;
+        boolean swServ=verPedidosE.getValor().equals("S"); // A servir (tienen albaran y no esta listado)
      
       
       do
@@ -776,7 +837,27 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
                     continue;
         }
         ArrayList v=new ArrayList();
-        v.add(0);
+        int pvcId=pdpeve.getIdPedido(dtStat, dtCon1.getInt("emp_codi"), dtCon1.getInt("eje_nume"), 
+            dtCon1.getInt("pvc_nume"));
+        if (pvcId<0)
+        {
+            v.add("");
+            v.add(0);
+        }
+        else
+        {
+             s="Select * from tiempostarea where tit_tipdoc = 'P' and tit_id="+pvcId;
+             if (!dtStat.select(s))
+             {
+                v.add("");
+                v.add(0);  
+             }
+             else
+             {
+                v.add(dtStat.getString("usu_nomb"));
+                v.add(dtStat.getInt("tit_tiempo"));
+             }
+        }
         v.add(dtCon1.getString("emp_codi")); // 0
         v.add(dtCon1.getString("eje_nume")); // 1
         v.add(dtCon1.getString("pvc_nume")); // 2
@@ -804,6 +885,9 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
       jtCabPed.setEnabled(true);
       verDatPed(jtCabPed.getValorInt(JTCAB_EMPPED),
           jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED));
+      jtCabPed.requestFocusInicio();
+      inCambio=false;
+      
     }
     catch (SQLException | ParseException k)
     {
@@ -820,7 +904,8 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        pvc_tiepreE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#99");
+        tit_tiempoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#99");
+        tit_usunomE = new gnu.chu.controles.CTextField(Types.CHAR,"X",15);
         PPrinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -857,7 +942,6 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
         pvc_horpedE = new gnu.chu.controles.CTextField(Types.DECIMAL, "99.99");
         cLabel20 = new gnu.chu.controles.CLabel();
         usu_nombE = new gnu.chu.controles.CTextField();
-        pvc_impresE = new gnu.chu.controles.CCheckBox();
         scrollarea1 = new javax.swing.JScrollPane();
         pvc_comenE = new gnu.chu.controles.CTextArea();
         Bimpri = new gnu.chu.controles.CButtonMenu();
@@ -865,9 +949,15 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
         cLabel23 = new gnu.chu.controles.CLabel();
         cLabel24 = new gnu.chu.controles.CLabel();
         cLabel25 = new gnu.chu.controles.CLabel();
-        minuPrepE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        tiemTotalE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        cLabel26 = new gnu.chu.controles.CLabel();
+        tiu_usunomL = new gnu.chu.controles.CTextField();
+        cLabel27 = new gnu.chu.controles.CLabel();
+        tit_numregE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
         jtLinPed = new gnu.chu.controles.Cgrid(11);
-        jtCabPed = new gnu.chu.controles.CGridEditable(15);
+        jtCabPed = new gnu.chu.controles.CGridEditable(16);
+
+        tit_usunomE.setText("cTextField1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -1011,10 +1101,10 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
         Ppie.setPreferredSize(new java.awt.Dimension(650, 60));
         Ppie.setLayout(null);
 
-        cLabel17.setText("Usuario");
+        cLabel17.setText("N.Docs");
         cLabel17.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel17);
-        cLabel17.setBounds(440, 20, 50, 18);
+        cLabel17.setBounds(520, 40, 50, 18);
 
         nPedT.setEnabled(false);
         Ppie.add(nPedT);
@@ -1036,17 +1126,11 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
         cLabel20.setText("Minutos");
         cLabel20.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel20);
-        cLabel20.setBounds(330, 40, 60, 18);
+        cLabel20.setBounds(230, 40, 60, 18);
 
         usu_nombE.setEnabled(false);
         Ppie.add(usu_nombE);
         usu_nombE.setBounds(490, 20, 110, 18);
-
-        pvc_impresE.setText("Listado ");
-        pvc_impresE.setEnabled(false);
-        pvc_impresE.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        Ppie.add(pvc_impresE);
-        pvc_impresE.setBounds(225, 40, 70, 17);
 
         pvc_comenE.setColumns(20);
         pvc_comenE.setRows(5);
@@ -1080,9 +1164,27 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
         Ppie.add(cLabel25);
         cLabel25.setBounds(225, 20, 80, 18);
 
-        minuPrepE.setEnabled(false);
-        Ppie.add(minuPrepE);
-        minuPrepE.setBounds(390, 40, 40, 18);
+        tiemTotalE.setEnabled(false);
+        Ppie.add(tiemTotalE);
+        tiemTotalE.setBounds(290, 40, 40, 18);
+
+        cLabel26.setText("Usuario");
+        cLabel26.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel26);
+        cLabel26.setBounds(440, 20, 50, 18);
+
+        tiu_usunomL.setEnabled(false);
+        Ppie.add(tiu_usunomL);
+        tiu_usunomL.setBounds(400, 40, 110, 18);
+
+        cLabel27.setText("Usuario");
+        cLabel27.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel27);
+        cLabel27.setBounds(350, 40, 50, 18);
+
+        tit_numregE.setEnabled(false);
+        Ppie.add(tit_numregE);
+        tit_numregE.setBounds(570, 40, 40, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1145,6 +1247,8 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
     private gnu.chu.controles.CLabel cLabel23;
     private gnu.chu.controles.CLabel cLabel24;
     private gnu.chu.controles.CLabel cLabel25;
+    private gnu.chu.controles.CLabel cLabel26;
+    private gnu.chu.controles.CLabel cLabel27;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
@@ -1153,7 +1257,6 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CGridEditable jtCabPed;
     private gnu.chu.controles.Cgrid jtLinPed;
-    private gnu.chu.controles.CTextField minuPrepE;
     private gnu.chu.controles.CTextField nPedT;
     private gnu.chu.controles.CTextArea pvc_comenE;
     private gnu.chu.controles.CComboBox pvc_confirE;
@@ -1161,15 +1264,18 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
     private gnu.chu.controles.CTextField pvc_feciniE;
     private gnu.chu.controles.CTextField pvc_fecpedE;
     private gnu.chu.controles.CTextField pvc_horpedE;
-    private gnu.chu.controles.CCheckBox pvc_impresE;
     private gnu.chu.controles.CComboBox pvc_listadoE;
     private gnu.chu.controles.CTextField pvc_nupeclE;
-    private gnu.chu.controles.CTextField pvc_tiepreE;
     private gnu.chu.controles.CLinkBox rep_codiE;
     private gnu.chu.controles.CLinkBox rut_codiE;
     private gnu.chu.camposdb.sbePanel sbe_codiE;
     private javax.swing.JScrollPane scrollarea1;
     private gnu.chu.controles.CComboBox servRutaC;
+    private gnu.chu.controles.CTextField tiemTotalE;
+    private gnu.chu.controles.CTextField tit_numregE;
+    private gnu.chu.controles.CTextField tit_tiempoE;
+    private gnu.chu.controles.CTextField tit_usunomE;
+    private gnu.chu.controles.CTextField tiu_usunomL;
     private gnu.chu.controles.CTextField usu_nombE;
     private gnu.chu.controles.CComboBox verPedidosE;
     private gnu.chu.controles.CLinkBox zon_codiE;

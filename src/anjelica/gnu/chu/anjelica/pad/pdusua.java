@@ -606,7 +606,7 @@ public class pdusua extends ventanaPad   implements PAD
     emp_codiE.setValorDec(EU.em_cod);
     sbe_codiE.setValorInt(1);
     try {
-      s="SELECT max(usu_clanum) into usu_clanum FROM usuarios ";
+      s="SELECT max(usu_clanum) as  usu_clanum FROM usuarios ";
       dtCon1.select(s);
       usu_clanumE.setValorInt(dtCon1.getInt("usu_clanum",true)+1);
     } catch (Exception ex)

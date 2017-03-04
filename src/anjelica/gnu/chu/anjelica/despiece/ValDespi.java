@@ -2025,10 +2025,11 @@ public class ValDespi extends ventana {
                + " where d.deo_fecha>=TO_DATE('"+fecinfE.getText()+"','dd-MM-yy')"
                +(fecsupE.isNull()?"":" and d.deo_fecha<=TO_DATE('"+fecsupE.getText()+"','dd-MM-yy')" )
                + " and d.eje_nume = "+eje_numeE.getValorInt()
-               + (tid_codiniE.isNull()?"":" and d.tid_codi "+
+               + (tid_codiniE.isNull()?"":" and d.tid_codi "+               
                (tid_codfinE.isNull()?"":">")+
                "= "+tid_codiniE.getValorInt())
               + (tid_codfinE.isNull()?"":" and d.tid_codi<= "+tid_codfinE.getValorInt())
+               + (opProduc.getValor().equals("*")?"": " and deo_incval = '"+opProduc.getValor()+"'")
                + (deo_codiE.getValorInt()==0?"":" and d.eje_nume = "+eje_numeE.getValorInt()
                +" and "+(grupoC.getValor().equals("G")?" d.deo_numdes= ":" d.deo_codi = ")+deo_codiE.getValorInt())
                + (opCerradoC.getValor().equals("T")?"":" and deo_block = '"+opCerradoC.getValor()+"' ")
@@ -2057,9 +2058,9 @@ public class ValDespi extends ventana {
    
          PreparedStatement ps1,ps2,ps3,ps4;
          ResultSet rs;
-         ps1=ct.prepareStatement("select sum(deo_kilos) as deo_kilos from v_despori as d  "+
+         ps1=ct.prepareStatement("select sum(deo_kilos) as deo_kilos,count(*) as deo_unid from v_despori as d  "+
                  " where eje_nume= ? and deo_codi=? ");
-         ps2=ct.prepareStatement("select sum(deo_kilos) as deo_kilos from v_despori as d  "+
+         ps2=ct.prepareStatement("select sum(deo_kilos) as deo_kilos,count(*) as deo_unid from v_despori as d  "+
                  " where eje_nume= ? and deo_numdes=? ");
          ps3=ct.prepareStatement("select d.*,tid_nomb from desporig as d left join tipodesp on tipodesp.tid_codi = d.tid_codi  "+
                  " where eje_nume= ? and deo_codi=? ");
@@ -2067,7 +2068,7 @@ public class ValDespi extends ventana {
                  " where eje_nume= ? and deo_numdes= ? order by deo_codi");
          
          double deoKilos;
-         int nRegSel=0;
+         int nRegSel=0,deoUnid;
          boolean sel;
          ArrayList<ArrayList> lista=new ArrayList();
          do
@@ -2112,6 +2113,7 @@ public class ValDespi extends ventana {
              }
              rs.next();
              deoKilos=rs.getDouble("deo_kilos");
+             deoUnid=rs.getInt("deo_unid");
              if (dtCon1.getInt("deo_codi")!=0)
              {
 //                 System.out.println("Usando ps3");
@@ -2145,6 +2147,7 @@ public class ValDespi extends ventana {
                   nRegSel++;
              v.add(sel);
              v.add(rs.getString("deo_block").equals("N"));
+             v.add(deoUnid);
              lista.add(v);
          } while (dtCon1.next());
          if (lista.isEmpty())
@@ -2207,7 +2210,8 @@ public class ValDespi extends ventana {
         opCerradoC = new gnu.chu.controles.CComboBox();
         tid_codiniE = new gnu.chu.camposdb.tidCodi2();
         cLabel14 = new gnu.chu.controles.CLabel();
-        jtDesp = new gnu.chu.controles.Cgrid(10);
+        opProduc = new gnu.chu.controles.CComboBox();
+        jtDesp = new gnu.chu.controles.Cgrid(11);
         jtCab = new gnu.chu.controles.CGridEditable(9)
         {
             @Override
@@ -2265,9 +2269,9 @@ public class ValDespi extends ventana {
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcond.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        Pcond.setMaximumSize(new java.awt.Dimension(590, 65));
-        Pcond.setMinimumSize(new java.awt.Dimension(590, 65));
-        Pcond.setPreferredSize(new java.awt.Dimension(590, 65));
+        Pcond.setMaximumSize(new java.awt.Dimension(595, 65));
+        Pcond.setMinimumSize(new java.awt.Dimension(595, 65));
+        Pcond.setPreferredSize(new java.awt.Dimension(595, 65));
         Pcond.setQuery(true);
         Pcond.setLayout(null);
 
@@ -2353,6 +2357,12 @@ public class ValDespi extends ventana {
         Pcond.add(cLabel14);
         cLabel14.setBounds(140, 20, 20, 17);
 
+        opProduc.addItem("Todos","*");
+        opProduc.addItem("Produc.","S");
+        opProduc.addItem("Desp.","N");
+        Pcond.add(opProduc);
+        opProduc.setBounds(520, 2, 70, 17);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -2371,10 +2381,11 @@ public class ValDespi extends ventana {
             v.add("Proc"); // 7 Procesado
             v.add("Sel"); // / 8 selecionado
             v.add("Cer"); // 9 Cerrado
+            v.add("Unid"); // 10 Kilos Desp (entrada)
             jtDesp.setCabecera(v);
         }
-        jtDesp.setAlinearColumna(new int[]{2,1,2,1,0,2,1,1,1,1});
-        jtDesp.setAnchoColumna(new int[]{50,40,70,80,200,70,40,40,30,20});
+        jtDesp.setAlinearColumna(new int[]{2,1,2,1,0,2,1,1,1,1,2});
+        jtDesp.setAnchoColumna(new int[]{50,40,70,80,200,70,40,40,30,20,40});
         jtDesp.setFormatoColumna(JTDES_FECDES, "dd-MM-yy");
         jtDesp.setFormatoColumna(JTDES_KILOS , "##,##9.9");
         jtDesp.setFormatoColumna(JTDES_VAL, "BSN");
@@ -2728,6 +2739,7 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CTextField kilosFinE;
     private gnu.chu.controles.CTextField numRegSelE;
     private gnu.chu.controles.CComboBox opCerradoC;
+    private gnu.chu.controles.CComboBox opProduc;
     private gnu.chu.controles.CCheckBox opVerGrupo;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.camposdb.tidCodi2 tid_codfinE;

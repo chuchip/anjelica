@@ -6,7 +6,7 @@ import gnu.chu.utilidades.ventanaPad;
  *
  * <p>Título: MantTiempos </p>
  * <p>Descripción: Mantenimiento Tiempos y tareas de usuarios</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia

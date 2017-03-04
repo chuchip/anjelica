@@ -492,6 +492,7 @@ avc_ncarg char(17),
 avc_nrelen varchar(17),
 avc_repres varchar(2),
 avc_depos char(1) default 'N' NOT NULL, -- 'N' Normal, 'D' Deposito
+
 constraint ix_albavec primary key (emp_codi,avc_ano,avc_nume,avc_serie)
 );
 create index albavec1 on v_albavec (avc_fecalb,cli_codi);
@@ -1628,7 +1629,7 @@ pro_codi int,            -- Producto
 deo_ejelot int,          -- Ejercicio de Lote
 deo_serlot char(1),      -- Serie de Lote
 pro_lote int,           -- Numero de Lote
-pro_numind int,		-- Numero de Individuo
+pro_numind int,	        -- Numero de Individuo
 deo_prcost float,       -- Precio costo
 deo_kilos float,        -- Kilos
 deo_preusu float not null default 0,  -- Costo de Usuario (antes de regularizar costos)
@@ -3475,7 +3476,7 @@ create table anjelica.pedvenmod
  constraint ox_pedvenmod primary key(emp_codi,eje_nume,pvc_nume,pvl_numlin)
 );
 drop view anjelica.v_pedven;
-create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,pvc_fecpre,
+create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , c.pvc_id,cli_codi , alm_codi, pvc_fecped,pvc_fecpre,
  rut_codi,pvc_fecent, pvc_comen , pvc_comrep, pvc_confir , avc_ano , avc_serie , avc_nume ,
  c.usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,pvc_depos,
  l.pvl_numlin, pvl_kilos,pvl_canti,pvm_canti,pvm_coment,pvl_unid,pvl_tipo, l.pro_codi, ar.pro_nomb as pvl_nomart,ar.pro_codart,pve_nomb,
@@ -3491,7 +3492,7 @@ grant select on anjelica.v_pedven to public;
 
 
 --drop view anjelica.v_hispedven;
-create or replace view anjelica.v_hispedven as select  c.his_rowid as his_rowid,c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
+create or replace view anjelica.v_hispedven as select  c.his_rowid as his_rowid,c.emp_codi,c.eje_nume, c.pvc_nume , pvc_id, cli_codi , alm_codi, pvc_fecped,
  pvc_fecent, pvc_comen , pvc_confir , avc_ano , avc_serie , avc_nume ,
  c.usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,
  l.pvl_numlin, pvl_kilos,pvl_canti,pvm_canti,pvm_coment,pvl_unid,pvl_tipo, pro_codi,
@@ -4115,7 +4116,18 @@ create index ix_costopro1 on  costoprod (cap_fecha,pro_codi);
 create view anjelica.v_partes as select c.*,l.par_linea,l.pro_codi,pal_kilos,pal_unidad,
 pro_ejelot,pro_serlot,pro_numlot,pro_indlot,pro_feccad,pal_acsala, pal_comsal,pal_accion,pal_coment from anjelica.partecab as c,anjelica.partelin as l where c.par_codi=l.par_codi;
 grant select on anjelica.v_partes to public;
-
+--
+-- Tabla Tiempos preparacion pedidos/Despieces
+-- 
+create table tiempostarea
+(
+	usu_nomb varchar(15) not null,	    -- Usuario
+	tit_tipdoc char(1) not null,		-- "Pedido","D" Despiece
+	tit_id int not null,				-- Identificador documento
+	tit_tiempo float not null, 			-- Tiempo Identificador	
+	constraint ix_tiempostarea primary  key (tit_tipdoc,tit_id)
+);
+grant all on anjelica.tiempostarea to public;
 --drop view v_cliprv;
 create view anjelica.v_cliprv as 
 select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.clientes 

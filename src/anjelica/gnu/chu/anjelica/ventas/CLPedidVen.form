@@ -575,16 +575,6 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel8">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Poblacion"/>
-              </Properties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="310" y="40" width="60" height="-1"/>
-                </Constraint>
-              </Constraints>
-            </Component>
             <Component class="gnu.chu.controles.CTextField" name="pvc_nupeclE">
               <Properties>
                 <Property name="enabled" type="boolean" value="false"/>
@@ -605,16 +595,6 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="225" y="1" width="80" height="18"/>
-                </Constraint>
-              </Constraints>
-            </Component>
-            <Component class="gnu.chu.controles.CTextField" name="cli_poblE1">
-              <Properties>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="370" y="40" width="230" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>

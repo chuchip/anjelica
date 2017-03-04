@@ -1,7 +1,9 @@
+alter table pedvenc add pvc_id serial;
+alter table hispedvenc add pvc_id serial;
 --
 -- Incluido tipo tarifa maestro en configuracion
 --
-alter table v_config add cfg_tarini smallint not null default 2;
+alter table configuracion add cfg_tarini smallint not null default 2;
 alter table tipotari add constraint  ix_tipotari unique(tar_codi);
 
 -- Incluido campo para controlar si producto salida es tipo Produccion

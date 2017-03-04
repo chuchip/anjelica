@@ -1,3 +1,4 @@
+package gnu.chu.anjelica.ventas;
 /*
  *<p>Titulo: CLVenRep </p>
  * <p>Descripción: Consulta Listado Ventas a Representantes</p>
@@ -21,7 +22,7 @@
  *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
  * </p>
  */
-package gnu.chu.anjelica.ventas;
+
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.pdalmace;
@@ -323,7 +324,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
        pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","hh.mm"));
        pvc_comenE.setText(dtCon1.getString("pvc_comen"));
        pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
-       pvc_nupeclE.setText(dtCon1.getString("cli_pobl"));
+       
        pvc_nupeclE.setText(dtCon1.getString("pvc_nupecl"));
        do
        {
@@ -588,8 +589,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         " WHERE pvc_fecent between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +       
         " and  to_date('" + pvc_fecfinE.getText()  + "','dd-MM-yyyy')" +
         " and c.emp_codi = "+EU.em_cod+
-        " and c.alm_codi >= " + alm_codiE.getValorInt() +
-        " and c.pvc_confir = 'S' "+
+        " and c.alm_codi >= " + alm_codiE.getValorInt() +       
         " and cl.cli_codi = c.cli_codi " +
         " and c.rut_codi = al.rut_codi "+     
         (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = "+sbe_codiE.getValorInt())+
@@ -824,10 +824,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         scrollarea1 = new javax.swing.JScrollPane();
         pvc_comenE = new gnu.chu.controles.CTextArea();
         Bimpri = new gnu.chu.controles.CButtonMenu();
-        cLabel8 = new gnu.chu.controles.CLabel();
         pvc_nupeclE = new gnu.chu.controles.CTextField();
         cLabel23 = new gnu.chu.controles.CLabel();
-        cli_poblE1 = new gnu.chu.controles.CTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -1052,10 +1050,6 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         Ppie.add(Bimpri);
         Bimpri.setBounds(520, 1, 80, 20);
 
-        cLabel8.setText("Poblacion");
-        Ppie.add(cLabel8);
-        cLabel8.setBounds(310, 40, 60, 15);
-
         pvc_nupeclE.setEnabled(false);
         Ppie.add(pvc_nupeclE);
         pvc_nupeclE.setBounds(410, 1, 100, 17);
@@ -1064,10 +1058,6 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         cLabel23.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel23);
         cLabel23.setBounds(225, 1, 80, 18);
-
-        cli_poblE1.setEnabled(false);
-        Ppie.add(cli_poblE1);
-        cli_poblE1.setBounds(370, 40, 230, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1106,10 +1096,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
-    private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.camposdb.cliPanel cli_codiE;
-    private gnu.chu.controles.CTextField cli_poblE1;
     private gnu.chu.controles.Cgrid jtCabPed;
     private gnu.chu.controles.Cgrid jtLinPed;
     private gnu.chu.controles.CTextField nPedT;

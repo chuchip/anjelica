@@ -11,6 +11,8 @@ import java.awt.event.*;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 
 /**
@@ -18,8 +20,8 @@ import javax.swing.BorderFactory;
  * <p>Título:   pdprvades
  *
  * <p>Descripción: Mantenimiento Productos Valorados para Despiece </p>
- * <p> Marca Precios FIJOS de compra para los productos
- * en una semana determinada. Utilizado en programa valoracion despieces</p>
+ * <p> Marca Precios FIJOS de compra y ventas para los productos
+ * en una semana determinada. Utilizado en programa valoracion despieces y Precios Medios</p>
  * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
@@ -73,7 +75,7 @@ public class pdprvades extends ventanaPad implements PAD
 
   String s;
   CTextField dpv_feciniE = new CTextField(Types.DATE, "dd-MM-yyyy");
-  CLabel cLabel1 = new CLabel();
+  CLabel dpv_feciniL = new CLabel();
 //  CButton Baceptar = new CButton();
 //  CButton Bcancelar = new CButton();
   proPanel pro_codiE = new proPanel();
@@ -87,7 +89,8 @@ public class pdprvades extends ventanaPad implements PAD
   CTextField eje_numeE = new CTextField(Types.DECIMAL,"9999");
   CButton Bocul = new CButton();
   GridBagLayout gridBagLayout1 = new GridBagLayout();
-
+  CButton BCopia = new CButton(Iconos.getImageIcon("copia"));
+  
     public pdprvades(EntornoUsuario eu, Principal p)
     {
       EU = eu;
@@ -132,7 +135,7 @@ public class pdprvades extends ventanaPad implements PAD
     {
       iniciarFrame();
       this.setSize(new Dimension(482,493));
-      this.setVersion("2016-12-30");
+      this.setVersion("2017-02-27");
 
       strSql = "SELECT dpv_nusem,eje_nume FROM desproval " +
           " WHERE eje_nume = " + EU.ejercicio +
@@ -182,27 +185,31 @@ public class pdprvades extends ventanaPad implements PAD
       Bcancelar.setMaximumSize(new Dimension(100, 26));
       Bcancelar.setMinimumSize(new Dimension(100, 26));
       Bcancelar.setPreferredSize(new Dimension(100, 26));
-      dpv_feciniE.setBounds(new Rectangle(247, 5, 81, 15));
+      
       dpv_feciniE.setEnabled(false);
-      cLabel1.setText("Fecha");
-      cLabel1.setBounds(new Rectangle(211, 5, 35, 15));
+      dpv_feciniL.setText("Fecha");
+      dpv_feciniL.setBounds(new Rectangle(200, 5, 35, 15));
+      dpv_feciniE.setBounds(new Rectangle(235, 5, 75, 15));
+      BCopia.setBounds(new Rectangle(315, 5, 18, 18));
       cLabel2.setText("Semana");
       cLabel2.setBounds(new Rectangle(104, 5, 45, 15));
       dpv_nusemE.setBounds(new Rectangle(150, 5, 24, 15));
       cLabel3.setText("Ejercicio");
       cLabel3.setBounds(new Rectangle(7, 5, 52, 15));
       eje_numeE.setBounds(new Rectangle(56, 5, 41, 15));
-      Bocul.setBounds(new Rectangle(178, 7, 1, 1));
+      Bocul.setBounds(new Rectangle(350, 7, 1, 1));
       Pprinc.setInputVerifier(null);
       this.getContentPane().add(nav, BorderLayout.NORTH);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       Pcabe.add(dpv_feciniE, null);
-      Pcabe.add(cLabel1, null);
+      Pcabe.add(dpv_feciniL, null);
       Pcabe.add(cLabel3, null);
       Pcabe.add(eje_numeE, null);
       Pcabe.add(cLabel2, null);
       Pcabe.add(dpv_nusemE, null);
       Pcabe.add(Bocul, null);
+      Pcabe.add(BCopia, null);
+      
       Pprinc.add(Bcancelar,     new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0
             ,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 70), 0, 0));
       Pprinc.add(Baceptar,   new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
@@ -229,6 +236,13 @@ public class pdprvades extends ventanaPad implements PAD
 
     void activarEventos()
     {
+      BCopia.addActionListener(new ActionListener()
+      {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              copiaTarifa();
+          }
+      });
       jt.tableView.addMouseListener(new MouseAdapter()
       {
         @Override
@@ -275,7 +289,27 @@ public class pdprvades extends ventanaPad implements PAD
         }
       });
     }
-
+    
+    void copiaTarifa()
+    {
+      try
+      {
+          int  nusem=dpv_nusemE.getValorInt()==1?52:dpv_nusemE.getValorInt()-1;
+          int  ejNume=eje_numeE.getValorInt()- (nusem==52?1:0);
+          s = "SELECT d.pro_codi,a.pro_nomb,d.dpv_preci,dpv_preori,dpv_preval " +
+            " FROM desproval as d,v_articulo as a " +
+            " WHERE dpv_nusem = " + nusem +
+            " and eje_nume = " + ejNume +
+            " and a.pro_codi = d.pro_codi order by pro_codi";
+          dtCon1.select(s);
+          jt.setDatos(dtCon1);
+          jt.requestFocusInicio();
+          irGrid();
+      } catch (SQLException ex)
+      {
+         Error("Error al copiar tarifa",ex);
+      }
+    }
     void actFecha()
     {
       if (dpv_nusemE.getValorInt() == 0 || eje_numeE.getValorInt() == 0)

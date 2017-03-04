@@ -85,7 +85,7 @@ public class menu extends JFrame
   JMenuItem pdclasifLomos = new JMenuItem();
    JMenuItem albaPrv = new JMenuItem("Alb.Prv");
 
-  JMenuItem ItemInventario = new JMenuItem();
+  JMenu ItemInventario = new JMenu();
   JPopupMenu menuTiempos = new JPopupMenu();
   JMenuItem mantTiemPed = new JMenuItem("Tiempo Pedidos");
   JMenuItem clvenrep = new JMenuItem();
@@ -1003,7 +1003,7 @@ JMenuItem mantArticVenta = new JMenuItem();
     Pmenu.add(Balbcom, null);
     menuTiempos.add(mantTiemPed);
     JPopupAlmacen.add(jMenuAlmacen);
-//    JPopupAlmacen.add(ItemInventario);
+   JPopupAlmacen.add(ItemInventario);
     JpopupVentas.add(ItemRepresen);
     JpopupPedVentas.add(pdpedven);
     JpopupPedVentas.add(clpevepr);

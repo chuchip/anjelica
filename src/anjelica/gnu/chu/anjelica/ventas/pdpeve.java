@@ -17,6 +17,8 @@ import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.MantTarifa;
 import net.sf.jasperreports.engine.*;
 import gnu.chu.anjelica.pad.pdconfig;
+import static gnu.chu.anjelica.ventas.pdalbara.TABLACAB;
+import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
 
 import gnu.chu.winayu.AyuArt;
 import java.awt.print.PrinterException;
@@ -84,6 +86,8 @@ public class pdpeve  extends ventanaPad   implements PAD
   CTextField pvl_dtoE=new CTextField(Types.DECIMAL,"#9.99");
   CTextField pvl_prclprE=new CTextField(Types.DECIMAL,"---,--9.99");
   CTextField pvl_dtoproE=new CTextField(Types.DECIMAL,"#9.99");
+  CLabel pvc_idL = new CLabel ("Id");
+  CTextField pvc_idE = new CTextField (Types.DECIMAL,"###,##9");
   CComboBox pvl_tipoE=new CComboBox(); // Types.CHAR,"?",1
   CLabel cLabel9=new CLabel();
 //  CComboBox alm_codiE = new CComboBox();
@@ -103,6 +107,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   CLabel cli_poblE = new CLabel();
   CLabel cli_poblL = new CLabel();
   CLabel cLabel3 = new CLabel();
+  
   CTextField eje_numeE = new CTextField(Types.DECIMAL,"###9");
   CTextField pvc_numeE = new CTextField(Types.DECIMAL,"#####9");
   CLabel cLabel4 = new CLabel();
@@ -276,7 +281,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2017-02-20"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2017-03-02"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -472,6 +477,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_confirE.setBounds(new Rectangle(511, 20, 54, 16));
     pvc_numeE.setBounds(new Rectangle(92, 20, 50, 16));
     eje_numeE.setBounds(new Rectangle(57, 20, 33, 16));
+   
     cli_codiE.setBounds(new Rectangle(45, 3, 370, 16));
     BirAlbaran.setBounds(new Rectangle(415,3,18,18));
     cLabel10.setText("Ver Prod.");
@@ -498,7 +504,9 @@ public class pdpeve  extends ventanaPad   implements PAD
     cLabel13.setBounds(new Rectangle(365, 4, 33, 16));
     cLabel13.setText("Cant");
 //    cLabel14.setText("Almacen");
-    pvc_incfraE.setBounds(new Rectangle(468, 37, 91, 16));
+    pvc_incfraE.setBounds(new Rectangle(448, 37, 71, 16));
+    pvc_idL.setBounds(new Rectangle(535, 37, 20, 16));
+    pvc_idE.setBounds(new Rectangle(550, 37, 80, 16));
 //    alm_codiE.setBounds(new Rectangle(522, 37, 116, 16));
     cLabel15.setText("Albaran");
     cLabel15.setBounds(new Rectangle(569, 20, 50, 16));
@@ -537,6 +545,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     Pcabe.add(pvc_deposE,null);
     Pcabe.add(cLabel10, null);
     Pcabe.add(pvc_incfraE, null);
+    Pcabe.add(pvc_idL, null);
+    Pcabe.add(pvc_idE, null);
 //    Pcabe.add(alm_codiE, null);
 //    Pcabe.add(cLabel14, null);
     Pcomen.add(pvc_comenL, null);
@@ -727,7 +737,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     pro_codiE.getFieldBotonCons().setEnabled(false);
     dtHist=new DatosTabla(ct);
     confGridHist();
-  
+    pvc_idE.setColumnaAlias("pvc_id");
     eje_numeE.setColumnaAlias("eje_nume");
     cli_codiE.setColumnaAlias("cli_codi");
     pvc_numeE.setColumnaAlias("pvc_nume");
@@ -1094,6 +1104,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   void setPanelQuery(boolean query)
   {
     cli_codiE.setQuery(query);
+    pvc_idE.setQuery(query);
     pvc_nupeclE.setQuery(query);
     pvc_fecentE.setQuery(query);
     rut_codiE.setQuery(query);
@@ -1123,7 +1134,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     rut_codiE.resetTexto();
     pvc_confirE.resetTexto();
     pvc_comenE.resetTexto();
-    
+    pvc_idE.resetTexto();
     eje_numeE.resetTexto();
     pvc_numeE.resetTexto();
   
@@ -1154,7 +1165,7 @@ public class pdpeve  extends ventanaPad   implements PAD
      ArrayList v = new ArrayList();
 
      v.add(cli_codiE.getStrQuery());
-     
+      v.add(pvc_idE.getStrQuery());
      v.add(eje_numeE.getStrQuery());
      v.add(pvc_numeE.getStrQuery());
      v.add(pvc_fecentE.getStrQuery());
@@ -1524,7 +1535,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       
       pvc_numeE.setValorInt(getNumPed(true));
       
-      dtAdd.addNew("pedvenc");
+      dtAdd.addNew("pedvenc",false);
       dtAdd.setDato("emp_codi",EU.em_cod );
       dtAdd.setDato("eje_nume",eje_numeE.getValorInt());
       dtAdd.setDato("pvc_nume",pvc_numeE.getValorInt());
@@ -1804,6 +1815,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         pro_codiE.getFieldBotonCons().setEnabled(b);
         Ppie.setEnabled(b);        
       }
+      pvc_idE.setEnabled(b);
       eje_numeE.setEnabled(b);
       pvc_numeE.setEnabled(b);
     }
@@ -1854,6 +1866,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   {
     if (dt.getNOREG())
       return;
+    pvc_idE.resetTexto();
     cli_codiE.resetTexto();
     cli_poblE.setText("");
     pvc_nupeclE.resetTexto();
@@ -1899,9 +1912,10 @@ public class pdpeve  extends ventanaPad   implements PAD
       usu_nombE.setText(dtCon1.getString("usu_nomb"));
       avc_numeE.setText(dtCon1.getString("avc_nume"));
       avc_serieE.setValor(dtCon1.getString("avc_serie"));
-      avc_anoE.setValorDec(dtCon1.getInt("avc_ano"));
+      avc_anoE.setValorDec(dtCon1.getInt("avc_ano",true));
+      pvc_idE.setValorInt(dtCon1.getInt("pvc_id"));
       pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
-      pvc_estadE.setValor(dtCon1.getInt("avc_ano")==0?"P":dtCon1.getInt("avc_ano")>0?"L":"C" );
+      pvc_estadE.setValor(dtCon1.getInt("avc_ano",true)==0?"P":dtCon1.getInt("avc_ano",true)>0?"L":"C" );
       pvc_deposE.setValor(dtCon1.getString("pvc_depos"));
       s = "SELECT * FROM "+vistaPed+" WHERE "+
           (hisRowid>0?" his_rowid = "+dt.getInt("his_rowid"):
@@ -2263,5 +2277,20 @@ public class pdpeve  extends ventanaPad   implements PAD
            return null;
        return dt.getString("rut_codi");        
      }
-
+     /**
+      * Devuelve el identificador de un pedido
+      * @param dt
+      * @param empCodi Empresa
+      * @param pvcAno Año
+      * @param pvcNume Numero Pedido
+      * @return Identificador pedido. -1 Si no lo encuentra
+      * @throws SQLException 
+      */
+    public static int getIdPedido(DatosTabla dt,int empCodi,int pvcAno,int pvcNume) throws SQLException
+    {
+        if (!getPedido(dt, empCodi,  pvcAno, pvcNume))
+            return -1;
+        else
+            return dt.getInt("pvc_id");
+    }
 }
