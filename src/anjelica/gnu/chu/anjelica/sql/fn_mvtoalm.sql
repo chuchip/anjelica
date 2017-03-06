@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION anjelica.fn_mvtoalm()
+﻿CREATE OR REPLACE FUNCTION anjelica.fn_mvtoalm()
   RETURNS trigger AS
 $BODY$  
   DECLARE   
@@ -35,8 +35,8 @@ $BODY$
 	if TG_TABLE_NAME = 'v_albvenpar' then
 	   if TG_OP =  'INSERT' OR TG_OP = 'UPDATE' then
 	     select avl_prven,avc_fecalb,avl_fecalt,alm_codori,
-	          alm_coddes, alm_codi,cli_codi
-		 into mvtPrven,mvtFecdoc,mvtFecmvt,almOrig,almFinal,almCodi,mvtCliprv
+	          alm_coddes,cli_codi
+		 into mvtPrven,mvtFecdoc,mvtFecmvt,almOrig,almFinal,mvtCliprv
 	         from anjelica.v_albventa where 
 			avl_numlin = NEW.avl_numlin and
 			emp_codi=NEW.emp_codi and
@@ -46,6 +46,7 @@ $BODY$
 		if not found then
 			RAISE EXCEPTION 'NO encontrada cabecera o linea de albaran venta';
 		end if;
+		almCodi=almOrig;
 	   end if;
 	   if TG_OP =  'INSERT' then
 		if  NEW.avc_serie = 'X' THEN
@@ -239,15 +240,15 @@ $BODY$
 			mvt_canti, mvt_unid , mvt_prec,mvt_cliprv,mvt_feccad )
 		values 		
 		(
-		TG_OP,
-		mvtFecdoc,
---		current_timestamp,
-		'E','C',almCodi,mvtFecdoc,
-		NEW.emp_codi,NEW.acc_ano,NEW.acc_serie,
-		NEW.acc_nume,	NEW.acl_nulin,	NEW.pro_codi,
-		NEW.acc_ano,	NEW.acc_serie,	NEW.acc_nume,
-		NEW.acp_numind,	NEW.acp_canti,	NEW.acp_canind,
-		mvtPrven,  mvtCliprv,   NEW.acp_feccad);
+		TG_OP,current_timestamp,
+		'E','C',
+		almCodi,
+		mvtFecdoc,NEW.emp_codi,NEW.acc_ano,
+		NEW.acc_serie,	NEW.acc_nume,	NEW.acl_nulin,	
+		NEW.pro_codi,	
+		NEW.acc_ano,	NEW.acc_serie,
+		NEW.acc_nume,	NEW.acp_numind,	
+		NEW.acp_canti,	NEW.acp_canind,	mvtPrven,  mvtCliprv,   NEW.acp_feccad);
 		return NEW;
 	    end if;
 	    if TG_OP =  'UPDATE' then
@@ -343,11 +344,8 @@ $BODY$
 		current_timestamp,
 		'E','d',
 		NEW.alm_codi,
-		mvtFecdoc,
-		NEW.emp_codi,
-		NEW.eje_nume,
-		'D',
-		NEW.deo_codi,
+		mvtFecdoc,NEW.emp_codi,NEW.eje_nume,
+		'D',NEW.deo_codi,
 		NEW.def_orden,
 		NEW.pro_codi,
 		NEW.def_ejelot,

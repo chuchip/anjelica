@@ -1,3 +1,19 @@
+--
+-- Incluida fecha alta en v_albcompar
+--
+alter table v_albcompar drop  acp_fecalt;
+alter table v_albcompar add  acp_fecalt  timestamp not null  default current_timestamp;
+--
+-- Incluido comision por kg. y kilos de portes en albaranes de compras
+--
+alter table v_albacoc add  acc_imcokg float not null default 0; 		-- Importe de Comisiones / Kg
+alter table hisalcaco add  acc_imcokg float not null default 0; 		-- Importe de Comisiones / Kg
+alter table v_albacoc add  acc_kilpor int ; 		-- Kg. de portes
+alter table hisalcaco add  acc_kilpor int ;		-- Kg. de Portes.
+update v_albacoc set acc_kilpor=0;
+update hisalcaco set acc_kilpor=0;
+-- 
+-- Añadido numero serie a pedidos venta
 alter table pedvenc add pvc_id serial;
 alter table hispedvenc add pvc_id serial;
 --

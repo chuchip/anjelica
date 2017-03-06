@@ -43,7 +43,6 @@ import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;     
 import gnu.chu.interfaces.PAD;
 import gnu.chu.interfaces.ejecutable;
-import gnu.chu.print.util;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.vlike;
 import gnu.chu.utilidades.*;
@@ -200,7 +199,8 @@ private JMenuItem MIimprEtiqInd;
   CLabel frt_ejercL=new CLabel("Factura Transp");
   CTextField frt_ejercE = new CTextField(Types.DECIMAL,"###9");
   CTextField frt_numeE = new CTextField(Types.DECIMAL,"#####9");
-
+  CLabel  acc_kilporL = new CLabel("Kg.Portes");
+  CTextField acc_kilporE = new CTextField(Types.DECIMAL,"#####9");
   CLabel prv_codiL = new CLabel();
   prvPanel prv_codiE = new prvPanel()
   {
@@ -218,7 +218,8 @@ private JMenuItem MIimprEtiqInd;
   CTextField acc_obserE = new CTextField(Types.CHAR,"X",255);
   CComboBox alm_codiE= new CComboBox();
   CCheckBox acl_porpagE = new CCheckBox("0","-1");
-
+  Cgrid jtClasi = new Cgrid(5);
+    
   CGridEditable jt = new CGridEditable(16)
   {
         @Override
@@ -280,13 +281,13 @@ private JMenuItem MIimprEtiqInd;
       try
       {
         if (nav.pulsado != navegador.ADDNEW && nav.pulsado!=navegador.EDIT)
-        {
+        {          
           if (ARG_MODPRECIO)
           {
-              if (col==JT_PRCOM || col==JT_DTOPP )
+              if (col==JT_PRCOM )
                 actPrecio(col,row);
-              if (col==JT_PORPAG && acl_porpagE.isEnabled())
-                actPortesPag(row);
+//              if (col==JT_PORPAG && acl_porpagE.isEnabled())
+//                actPortesPag(row);
           }
       
           if (col==JT_COMENT)
@@ -308,7 +309,7 @@ private JMenuItem MIimprEtiqInd;
             MIactNombreProd(row);
           }
         }
-        if (colNueva == JT_PRCOM)
+        if (colNueva == JT_PRCOM && col!=JT_PRCOM)
             ganaFocoPrCompra();
         
       }
@@ -429,7 +430,10 @@ private JMenuItem MIimprEtiqInd;
   CComboBox cll_codiE = new CComboBox();
   CLabel cLabel12 = new CLabel();
   CComboBox acc_portesE = new CComboBox();
-  CLabel cLabel18 = new CLabel();
+  CLabel acc_imcokgL = new CLabel("Comision");
+  CTextField acc_imcokgE = new CTextField(Types.DECIMAL,"##9.999");
+  
+  CLabel acc_impokgL = new CLabel();
   CTextField acc_impokgE = new CTextField(Types.DECIMAL,"##9.999");
   CCheckBox opIncPortes = new CCheckBox();
   CCheckBox opVerPrecios = new CCheckBox();
@@ -730,7 +734,7 @@ private JMenuItem MIimprEtiqInd;
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20170225)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20170305)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -794,7 +798,9 @@ private JMenuItem MIimprEtiqInd;
     creaIncidB.setBounds(new Rectangle(480,46,38,30));
     
     acc_totfraL.setBounds(new Rectangle(0, 120, 132, 18));
+    
     acc_totfraE.setBounds(new Rectangle(135, 120, 43, 18));
+    jtClasi.setBounds(new Rectangle(235, 120, 500, 150));
     acc_totfraE.setDependePadre(false);
     acc_cerraE.setDependePadre(false);
     alm_codiE.setDependePadre(false);
@@ -884,6 +890,7 @@ private JMenuItem MIimprEtiqInd;
     acc_dtoppL.setBounds(new Rectangle(320,84,35,16));
     acc_dtoppE.setBounds(new Rectangle(357,84,38,16));
     acc_dtoppE.setDependePadre(false);
+    acc_imcokgE.setDependePadre(false);
     vl.add(frProd,new Integer(1));
     vl.add(frChFeEn,new Integer(1));
     opImpEti.setSelected(true);
@@ -984,6 +991,8 @@ private JMenuItem MIimprEtiqInd;
     prv_codiL.setBounds(new Rectangle(1, 23, 66, 18));
     prv_codiE.setBounds(new Rectangle(59, 23, 432, 18));
     prv_codiE.setAncTexto(50);
+    acc_kilporL.setBounds(new Rectangle(505, 23, 60, 18));
+    acc_kilporE.setBounds(new Rectangle(568, 23, 60, 18));
     fcc_numeL.setText("Fra.");
     fcc_numeL.setBounds(new Rectangle(531, 3, 28, 16));
     acc_obserL.setText("Observ.");
@@ -1080,7 +1089,7 @@ private JMenuItem MIimprEtiqInd;
 
     Ppedi.setBorder(BorderFactory.createLoweredBevelBorder());
     Ppedi.setInputVerifier(null);
-    Ppedi.setBounds(new Rectangle(525, 27, 229, 66));
+    Ppedi.setBounds(new Rectangle(325, 53, 229, 66));
     Ppedi.setLayout(null);
     cLabel5.setBackground(Color.red);
     cLabel5.setForeground(Color.white);
@@ -1182,10 +1191,13 @@ private JMenuItem MIimprEtiqInd;
     cLabel12.setBounds(new Rectangle(637, 3, 39, 16));
 
     acc_portesE.setBounds(new Rectangle(676, 3, 79, 17));
-    cLabel18.setText("Portes/Kg");
-    cLabel18.setBounds(new Rectangle(395, 83, 62, 16));
-    acc_impokgE.setBounds(new Rectangle(458, 83, 54, 16));
+    acc_impokgL.setText("Portes/Kg");
+    acc_impokgL.setBounds(new Rectangle(400, 83, 62, 16));
+    acc_impokgE.setBounds(new Rectangle(463, 83, 54, 16));
 
+    acc_imcokgL.setBounds(new Rectangle(535, 83, 62, 16));
+    acc_imcokgE.setBounds(new Rectangle(595, 83, 54, 16));
+   
     opIncPortes.setToolTipText("Inc. Portes en precios");
     opIncPortes.setMargin(new Insets(0, 0, 0, 0));
     opIncPortes.setSelected(true);
@@ -1227,17 +1239,19 @@ private JMenuItem MIimprEtiqInd;
     Pcabe.add(acc_serieE, null);
     Pcabe.add(acc_anoE, null);
     Pcabe.add(acc_anoL, null);
-    Potros.add(acc_totfraE, null);
+   
     Pcabe.add(cLabel110, null);
     
     Pcabe.add(sbe_codiE, null);
-    Potros.add(acc_totfraL, null);
+
     Pcabe.add(acc_cerraL, null);
     Pcabe.add(acc_cerraE, null);
     Pcabe.add(creaIncidB);
     Pcabe.add(cLabel4, null);
     Pcabe.add(acc_impokgE, null);
-    Pcabe.add(cLabel18, null);
+    Pcabe.add(acc_impokgL, null);
+    Pcabe.add(acc_imcokgE, null);
+    Pcabe.add(acc_imcokgL, null);
     Pcabe.add(pcc_numeE, null);
     Pcabe.add(eje_numeE, null);
     Pcabe.add(BbusPed, null);
@@ -1254,6 +1268,7 @@ private JMenuItem MIimprEtiqInd;
     v2.add("Mon."); // 6
     v2.add("Coment"); // 7
     jtPed.setCabecera(v2);
+  
     jtPed.setAnchoColumna(new int[]
                        {60, 200,80, 46, 60, 55,  80, 150});
     jtPed.setAlinearColumna(new int[]
@@ -1263,6 +1278,20 @@ private JMenuItem MIimprEtiqInd;
     jtPed.setFormatoColumna(4, "###,##9.99");
     jtPed.setFormatoColumna(5, "##9.99");
     jtPed.setAjustarColumnas(false);
+    ArrayList vc= new ArrayList();
+    vc.add("Producto"); // 0
+    vc.add("Nombre"); // 1
+    vc.add("Clasif"); // 2
+    vc.add("Kilos"); // 4
+    vc.add("Unid."); // 3
+    jtClasi.setCabecera(vc);
+    jtClasi.setAnchoColumna(new int[]
+                       {60, 200,80, 65, 40});
+    jtClasi.setAlinearColumna(new int[]
+                         {2, 0, 0,2, 2});
+    jtClasi.setFormatoColumna(4, "#,##9");
+    jtClasi.setFormatoColumna(3, "###,##9.99");
+    jtClasi.setBuscarVisible(false);
 //    Ppedido.setVisible(false);
     Phist.setLayout(new java.awt.BorderLayout());
     Phist.add(jtHist, java.awt.BorderLayout.CENTER);
@@ -1326,9 +1355,14 @@ private JMenuItem MIimprEtiqInd;
     Pcabe.add(cLabel12, null);
     Pcabe.add(emp_codiL, null);
     Pcabe.add(prv_codiE, null);
+    Pcabe.add(acc_kilporL, null);
+    Pcabe.add(acc_kilporE, null);
     Pcabe.add(cLabel20, null);
     Pcabe.add(alm_codiE, null);
-    Pcabe.add(Ppedi, null);
+    Potros.add(Ppedi, null);
+    Potros.add(acc_totfraL, null);
+     Potros.add(acc_totfraE, null);
+    Potros.add(jtClasi, null);
     frProd.getContentPane().add(cPanel2, BorderLayout.CENTER);
     cPanel2.add(cLabel19, null);
     cPanel2.add(pro_codcamE, null);
@@ -1569,10 +1603,11 @@ private JMenuItem MIimprEtiqInd;
     fcc_numeE.setColumnaAlias("fcc_nume");
     acc_obserE.setColumnaAlias("acc_obser");
     acc_impokgE.setColumnaAlias("acc_impokg");
+    acc_imcokgE.setColumnaAlias("acc_imcokg");
     acc_portesE.setColumnaAlias("acc_portes");
     acc_totfraE.setColumnaAlias("acc_totfra");
     sbe_codiE.setColumnaAlias("sbe_codi");
-   
+    acc_kilporE.setColumnaAlias("sbe_codi");
     s = "SELECT div_codi,div_codedi FROM v_divisa order by div_codedi";
     if (!dtStat.select(s))
       throw new SQLException("NO HAY NINGUNA DIVISA DEFINIDA");
@@ -1641,14 +1676,25 @@ private JMenuItem MIimprEtiqInd;
       @Override
       public void focusLost(FocusEvent e)
       {
-          if (!acc_dtoppE.hasCambio() || nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.DELETE)
+          if (!acc_dtoppE.hasCambio() || nav.isEdicion() )
               return;
           actualDtoPP();
           acc_dtoppE.resetCambio();  
           mensajeErr("Descuento pronto Pago actualizado");
       }
     });
-   
+    acc_imcokgE.addFocusListener(new FocusAdapter()
+    {
+      @Override
+      public void focusLost(FocusEvent e)
+      {
+          if (!acc_imcokgE.hasCambio() || nav.isEdicion() )
+              return;
+          actualComision();
+          acc_imcokgE.resetCambio();  
+          mensajeErr("Descuento pronto Pago actualizado");
+      }
+    });
     acc_serieE.addFocusListener(new FocusAdapter()
     {
 
@@ -1878,6 +1924,7 @@ private JMenuItem MIimprEtiqInd;
       public void actionPerformed(ActionEvent e)
       {
         verDatos(dtCons);
+        
       }
     });
     opIncPortes.addActionListener(new ActionListener()
@@ -2052,6 +2099,12 @@ private JMenuItem MIimprEtiqInd;
   }
   private void actualDtoPP()
   {
+      if (imptotE.getValorDec()==0)
+      { 
+          msgBox("NO se puede cambiar el Dto. PP si el importe es 0");
+          acc_dtoppE.setValorDec(acc_dtoppE.getValorDecAnt());
+          return;
+      }
       int res=mensajes.mensajeYesNo("Poner un "+acc_dtoppE.getValorDec()+" de Dto PP ?");
       if (res!=mensajes.YES)
       {
@@ -2060,26 +2113,57 @@ private JMenuItem MIimprEtiqInd;
           return;
       }
       try 
-      {
-          int nRow=jt.getRowCount();
-          for (int n=0;n<nRow;n++)
-          {
-           jt.setValor(acc_dtoppE.getValorDec(),n,JT_DTOPP);
-           acl_dtoppE.setValorDec(acc_dtoppE.getValorDec());
-           actPrecioLinAlb(0,n, jt.getValorDec(n,JT_PRCOM),jt.getValBoolean(n,JT_PORPAG),
-               jt.getValorDec(n,JT_DTOPP) );   
-          }
-          ctUp.commit();
-         
-//          actAcuTot();
-//          actImporteAlb(dtAdd ,emp_codiE.getValorInt(),acc_anoE.getValorInt(),acc_serieE.getText(),
-//              acc_numeE.getValorInt(),imptotE.getValorDec());
+      {          
+          s="update v_albacol  set acl_dtopp = "+acc_dtoppE.getValorDec()+
+            " where  acc_ano = " + acc_anoE.getValorInt() +
+            " and emp_codi = " + emp_codiE.getValorInt() +
+            " and acc_nume = " + acc_numeE.getValorInt() +
+            " and acc_serie = '" + acc_serieE.getText() + "'";
+          dtAdd.executeUpdate(s);                
+          ctUp.commit();      
+          verDatos(dtCons);
       } catch (SQLException k)
       {
           Error("Error al actualizar Descuento Pronto Pago",k);
       }
   }
   
+  private void actualComision()
+  {
+   
+      int res=mensajes.mensajeYesNo("Poner un "+acc_imcokgE.getValorDec()+" de Comision ?");
+      if (res!=mensajes.YES)
+      {
+          mensajeErr("Mantenida Comision anterior");
+          acc_imcokgE.setValorDec(acc_imcokgE.getValorDecAnt());
+          return;
+      }
+      try 
+      {
+       s="update v_albacol  set acl_prcom= acl_prcom+"+
+           ( acc_imcokgE.getValorDec()-acc_imcokgE.getValorDecAnt())+           
+            " where  acc_ano = " + acc_anoE.getValorInt() +
+            " and emp_codi = " + emp_codiE.getValorInt() +
+            " and acc_nume = " + acc_numeE.getValorInt() +
+            " and acc_serie = '" + acc_serieE.getText() + "'";
+       dtAdd.executeUpdate(s);
+        s = "UPDATE v_albacoc SET acc_imcokg = " + acc_imcokgE.getValorDec() +
+          " WHERE acc_ano = " + acc_anoE.getValorInt() +
+          " and emp_codi = " + emp_codiE.getValorInt() +
+          " and acc_nume = " + acc_numeE.getValorInt() +
+          " and acc_serie = '" + acc_serieE.getText() + "'";
+        dtAdd.executeUpdate(s);       
+        dtAdd.commit();
+        verDatos(dtCons);
+        mensajeErr("Actualizado Importe Comision");
+//          actAcuTot();
+//          actImporteAlb(dtAdd ,emp_codiE.getValorInt(),acc_anoE.getValorInt(),acc_serieE.getText(),
+//              acc_numeE.getValorInt(),imptotE.getValorDec());
+      } catch (SQLException k)
+      {
+          Error("Error al actualizar Importe Comision",k);
+      }
+  }
   void bloquearC_actionPerformed()
   {
       try
@@ -2463,12 +2547,7 @@ private JMenuItem MIimprEtiqInd;
     {
       unidT+=jt.getValorInt(n,JT_CANIND);
       kilosT+=jt.getValorDec(n,JT_KILALB);
-      impLin=jt.getValorDec(n,JT_PRCOM);
-      if (opIncPortes.isSelected() && ! acl_porpagE.isSelected())
-          impLin-=acc_impokgE.getValorDec(); // Saco el precio sin portes
-      impLin-=impLin*jt.getValorDec(n,JT_DTOPP)/100;
-      if (opIncPortes.isSelected() && ! acl_porpagE.isSelected())
-          impLin+=acc_impokgE.getValorDec();// Le vuelvo a sumar los portes.
+      impLin=getPrecioEdicion(n, acc_imcokgE.getValorDec());             
       impTot+=impLin* jt.getValorDec(n,JT_KILALB);
     }
     kilostE.setValorDec(kilosT);
@@ -2795,7 +2874,9 @@ private JMenuItem MIimprEtiqInd;
         kgFac = dtStat.getDouble("acl_canfac",true); // Kilos Facturados
         if (ARG_MODPRECIO)
         {
-          prLiAlb=dtStat.getDouble("acl_prcom"); //+acc_impokgE.getValorDec();
+            
+          prLiAlb= setPrecioCompra(0,dtStat.getDouble("acl_prcom"),acc_impokgE.getValorDec(),
+              acc_imcokgE.getValorDec()); 
           dtopp  = dtStat.getDouble("acl_dtopp");
         }
 //        borraRegLinAlb(jt.getValorInt(0));
@@ -2890,7 +2971,7 @@ private JMenuItem MIimprEtiqInd;
      * @param nCaja int Numero de Cajas
      * @param kilos double Kilos
      * @param kgFac double Kilos  Facturados
-     * @param prLiAlb double Precio Linea Albaran
+     * @param prLiAlb double Precio Linea Albaran (con portes y comisiones si es necesario)
      * @param kgRec double Kilos recepcionados
      * @param precStk double Precio de Stock (0 excepto para traspasos entre subempresas)
      * @param coment String Comentarios
@@ -2976,6 +3057,7 @@ private JMenuItem MIimprEtiqInd;
     dtAdd.setDato("acc_obser",acc_obserE.getText());
     dtAdd.setDato("acc_portes",acc_portesE.getValor());
     dtAdd.setDato("acc_impokg",acc_impokgE.getValorDec());
+    dtAdd.setDato("acc_imcokg",acc_imcokgE.getValorDec());
     dtAdd.setDato("acc_cerra",0); // Lo marco como NO cerrado
     dtAdd.setDato("acc_totfra",0); // NO facturado
     dtAdd.setDato("sbe_codi",sbe_codiE.getValorInt());
@@ -3128,7 +3210,7 @@ private JMenuItem MIimprEtiqInd;
         proOblfsa=false;
       else
         proOblfsa=pro_codiE.getLikeProd().getInt("pro_oblfsa")!=0;
-      proNumcro=pro_codiE.getLikeProd().getInt("pro_numcro");
+      proNumcro= pro_codiE.getNumeroCrotales();
 
      
       if (llenaCllCodi())
@@ -3312,9 +3394,11 @@ private JMenuItem MIimprEtiqInd;
     v.add(fcc_numeE.getStrQuery());
     v.add(acc_obserE.getStrQuery());
     v.add(acc_impokgE.getStrQuery());
+    v.add(acc_imcokgE.getStrQuery());
     v.add(acc_portesE.getStrQuery());
     v.add(acc_cerraE.getStrQuery());
     v.add(acc_totfraE.getStrQuery());
+    v.add(acc_kilporE.getStrQuery());
     try
     {
       Pcabe.setQuery(false);
@@ -3335,6 +3419,7 @@ private JMenuItem MIimprEtiqInd;
         return;
       }
       strSql = s;
+      nav.pulsado=navegador.NINGUNO;
       rgSelect();
       this.setEnabled(true);
       mensaje("");
@@ -3346,8 +3431,9 @@ private JMenuItem MIimprEtiqInd;
     }
     activaTodo();
     activaModPrecio();
-    nav.pulsado=navegador.NINGUNO;
+    
   }
+  
   void activaModPrecio()
   {
     if (ARG_MODPRECIO &&  fcc_numeE.getValorInt() == 0)
@@ -3462,9 +3548,8 @@ private JMenuItem MIimprEtiqInd;
         activaTodo();
         return;
       }
-
-      if (opAgrupar.isSelected() || opIncPortes.isSelected())
-        verDatos(dtCons,false,false);
+      
+      verDatos(dtCons,false,false);
       s = "SELECT * FROM V_albacoc WHERE acc_ano =" + acc_anoE.getValorInt() +
           " and emp_codi = " + emp_codiE.getValorInt() +
           " and acc_serie = '" + acc_serieE.getText() + "'" +
@@ -3494,6 +3579,7 @@ private JMenuItem MIimprEtiqInd;
         acc_portesE.setEnabled(false);
       copiaAlbaranNuevo(dtCon1,dtAdd,"Modificado Albaran",EU.usuario,acc_anoE.getValorInt(),
               emp_codiE.getValorInt(),acc_serieE.getText(),acc_numeE.getValorInt());
+      acl_prcomE.setEditable(true);
       acc_numeE.setEnabled(false);
       acc_serieE.setEnabled(false);
       acc_anoE.setEnabled(false);
@@ -3970,6 +4056,7 @@ private JMenuItem MIimprEtiqInd;
       alm_codiE.setEnabled(!b);
     else
       alm_codiE.setEnabled(b);
+   
     acc_idE.setEnabled(b);
     bloquearC.setEnabled(!b);
     sbe_codiE.setEnabled(b);
@@ -3991,7 +4078,9 @@ private JMenuItem MIimprEtiqInd;
     avc_anoE.setEnabled(b);
     avc_numeE.setEnabled(b);
     if (!b || nav.pulsado==navegador.QUERY)
+    {
       acc_impokgE.setEnabled(b);
+    }
     acc_fecrecE.setEnabled(b);
     usu_nombE.setEnabled(b);
     prv_codiE.setEnabled(b);
@@ -4009,6 +4098,7 @@ private JMenuItem MIimprEtiqInd;
     
     pro_codiE.setEditable(false);
     alm_codiE.setEnabled(false);
+    acl_dtoppE.setEditable(b);
     if (ARG_MODPRECIO)
         acl_porpagE.setEnabled(false);
     acl_cantiE.setEnabled(false);
@@ -4053,7 +4143,12 @@ private JMenuItem MIimprEtiqInd;
       condHist="";
       verDatos(dt,opAgrupar.isSelected(),opIncPortes.isSelected());
   }
-
+    /**
+     * 
+     * @param dt
+     * @param agruLin
+     * @param incPortes Incluir Portes y Comision en Precio.
+     */
   void verDatos(DatosTabla dt,boolean agruLin,boolean incPortes)
   {
     try
@@ -4091,6 +4186,7 @@ private JMenuItem MIimprEtiqInd;
       }
       prv_codiE.setText(dtCon1.getString("prv_codi"));
       prv_codiE.controla(false);
+      acc_imcokgE.setValorDec(dtCon1.getDouble("acc_imcokg"));
       acc_copvfaE.setText(dtCon1.getString("acc_copvfa"));
       acc_fecrecE.setText(dtCon1.getFecha("acc_fecrec", "dd-MM-yyyy"));
       usu_nombE.setText(dtCon1.getString("usu_nomb"));
@@ -4101,6 +4197,7 @@ private JMenuItem MIimprEtiqInd;
       frt_ejercE.setValorInt(dtCon1.getInt("frt_ejerc",true));
       frt_numeE.setValorInt(dtCon1.getInt("frt_nume",true));
       sbe_codiE.setValorInt(dtCon1.getInt("sbe_codi"));
+      acc_kilporE.setValorInt(dtCon1.getInt("acc_kilpor",true));
       avc_anoE.setValorInt(dtCon1.getInt("avc_ano",true));
       avc_numeE.setValorInt(dtCon1.getInt("avc_nume",true));
       acc_totfraE.setEnabled(false);
@@ -4118,9 +4215,15 @@ private JMenuItem MIimprEtiqInd;
       }
 
       if (opVerPrecios.isSelected())
+      {
         acc_impokgE.setValorDec(dtCon1.getDouble("acc_impokg",true));
+        acc_imcokgE.setValorDec(dtCon1.getDouble("acc_imcokg",true));
+      }
       else
+      {
         acc_impokgE.setValorDec(0);
+        acc_imcokgE.setValorDec(0);
+      }
       swBloquearC=true;
       bloquearC.setValor(dtCon1.select("select stk_block  from stockpart "+
               " where eje_nume = "+acc_anoE.getValorInt()+
@@ -4294,13 +4397,18 @@ private JMenuItem MIimprEtiqInd;
           if (dtCon1.getDouble("acl_prcom",true)!=0)
             opBloquea.setSelected(true);
           preciosGrid.add(dtCon1.getDouble("acl_prcom",true));
-          impLinAct=opVerPrecios.isSelected()?
-                ( dtCon1.getDouble("acl_dtopp")==0?dtCon1.getDouble("acl_prcom",true):
-                 (dtCon1.getDouble("acl_prcom",true)-acc_impokgE.getValorDec())/(1- (dtCon1.getDouble("acl_dtopp")/100) )+acc_impokgE.getValorDec())
-                - (incPortes?0:acc_impokgE.getValorDec())
-                 :0;
+          if (nav.isEdicion() )
+              impLinAct=dtCon1.getDouble("acl_prcom",true)-
+                  (acc_imcokgE.getValorDec()+
+                   (dtCon1.getInt("acl_porpag")==0?acc_impokgE.getValorDec():0));
+          else
+            impLinAct= getPrecioCompra(dtCon1.getDouble("acl_dtopp",true), dtCon1.getDouble("acl_prcom",true), 
+                  acc_impokgE.getValorDec(),acc_imcokgE.getValorDec())-
+                   (!incPortes?acc_imcokgE.getValorDec()+
+                   (dtCon1.getInt("acl_porpag")==0?acc_impokgE.getValorDec():0):0)                
+                ;
           
-          v.add(impLinAct);
+          v.add(opVerPrecios.isSelected()? impLinAct:0);
           v.add(dtCon1.getString("acl_kgrec"));
           nucape=0;
           cantpe=0;
@@ -4339,23 +4447,25 @@ private JMenuItem MIimprEtiqInd;
           if (dtCon1.getDouble("acl_dtopp")!=0)
             accDtopp=dtCon1.getDouble("acl_dtopp");
           jt.addLinea(v);
-          if (opVerPrecios.isSelected())
-            impLin += dtCon1.getDouble("acl_canti",true) * (dtCon1.getDouble("acl_prcom",true)-
-                (incPortes?0:acc_impokgE.getValorDec()));
+          
+          impLin += impLinAct;
           kilosT += dtCon1.getDouble("acl_canti",true);
           unidT += dtCon1.getInt("acl_numcaj",true);
           
         }  while (dtCon1.next());
         acl_prcomE.resetCambio();
         acl_dtoppE.resetCambio();
+        acc_imcokgE.resetCambio();
         acc_dtoppE.setValorDec(accDtopp);
+        
         activaModPrecio();
 
         jt.requestFocusInicio();
+        acl_prcomE.setEditable(!opAgrupar.isSelected());
         jt.setEnabled(true);
 //      numLinE.setValorDec(nLin);
         kilostE.setValorDec(kilosT);
-        imptotE.setValorDec(impLin);
+        imptotE.setValorDec(opVerPrecios.isSelected()?impLin:0);
         nunidtE.setValorInt(unidT);
         swActDesg = true;
         getNomArtPed(jt.getValorInt(0,JT_PROCOD),eje_numeE.getValorInt(),pcc_numeE.getValorInt());
@@ -4368,6 +4478,7 @@ private JMenuItem MIimprEtiqInd;
                      pcc_numeE.getValorInt());
         verDatRecl();
         verDatIncid();
+        verDatClasi();
       }
       if (ARG_ADMIN)
         alm_codiE.setEnabled(true);
@@ -4378,7 +4489,64 @@ private JMenuItem MIimprEtiqInd;
       Error("Error al Ver Datos de Albaran", k);
     }
   }
-
+  
+  /**
+   * Devuelve el precio de compra para mostrar en pantalla. 
+   * Este incluira el DTO pronto Pago que no esta incluido en valor de la base de datos
+   * 
+   * @param dtopp
+   * @param prCompra Como esta en la base de datos
+   * @param impPortes
+   * @param impComision
+   * @return 
+   */
+  double  getPrecioCompra(double dtopp,double prCompra,double impPortes,double impComision)
+  {
+      return  dtopp==0?prCompra: prCompra - ((prCompra - impPortes - impComision) * (dtopp/100));
+  }
+  /**
+   * Devuelve el precio para la factura
+   * @param dtopp Dto PP 
+   * @param prCompra Como esta en la base de datos
+   * @param impPortes Portes
+   * @param impComision Comision
+   * @return 
+   */
+  public static double getPrecioFra(double dtopp,double prCompra,double impPortes,double impComision)
+  {
+      return  prCompra - impPortes - impComision -
+          ((prCompra - impPortes - impComision) * (dtopp/100));
+  }
+  /**
+   * Devuelve el precio de compra a partir del precio compra en ediccion.
+   * Sera el que se ponga en la DB.
+   * @param dtopp
+   * @param prCompraEdicion
+   * @param impPortes
+   * @param impComision
+   * @return 
+   */
+  double setPrecioCompra(double dtopp,double prCompraEdicion,double impPortes,double impComision)
+  {
+      return prCompraEdicion+impPortes+impComision;
+  }
+  /**
+   * Sobre lo que se muestra en pantalla, saca lo que hay en la db
+   * @param row Linea
+   * @param impComi importe comisiones 
+   * @return 
+   */
+  double  getPrecioEdicion(int row,double impComi)
+  {
+      double dtoPortes=!opIncPortes.isSelected()?0:
+          (jt.getValBoolean(row,JT_PORPAG)?0:acc_impokgE.getValorDec())+
+          impComi;
+          
+      double impDto=(jt.getValorDec(row,JT_PRCOM)  - dtoPortes) / (1 - ( jt.getValorDec(row,JT_DTOPP)/100));
+          //acl_dtoppE.getValorDec()/100));
+          
+      return  impDto + dtoPortes;
+  }
   /**
    * Ver Datos de Reclamación
    * @throws SQLException Error conexión base de datos
@@ -4424,6 +4592,32 @@ private JMenuItem MIimprEtiqInd;
     jtRecl.requestFocusInicio();
     jtRecl.resetCambio();
     actAcumVert(-1);
+  }
+  
+  void verDatClasi()  throws SQLException
+  {
+     s="SELECT a.pro_codi,ar.pro_nomb,acp_clasi, "
+         + "sum(acp_canti) as kilos, sum(acp_canind) as indiv FROM v_albcompar as a,v_articulo as ar WHERE a.emp_codi = "+emp_codiE.getValorInt()+       
+        " and acc_nume = "+acc_numeE.getValorInt()+
+        " and acc_serie = '"+acc_serieE.getText()+"'"+
+        " and acc_ano = "+acc_anoE.getValorInt()+    
+        " and a.pro_codi = ar.pro_codi "+
+        " group by a.pro_codi,ar.pro_nomb,acp_clasi"+
+        " order by a.pro_codi,acp_clasi ";
+     jtClasi.removeAllDatos();
+    if ( dtCon1.select(s))
+    {
+      do
+      {
+        ArrayList v = new ArrayList();
+        v.add(dtCon1.getInt("pro_codi"));
+        v.add(dtCon1.getString("pro_nomb"));
+        v.add(dtCon1.getString("acp_clasi"));
+        v.add(dtCon1.getDouble("kilos"));
+        v.add(dtCon1.getDouble("indiv"));
+        jtClasi.addLinea(v);
+      } while (dtCon1.next());
+    }
   }
    void verDatIncid() throws SQLException
   {
@@ -4728,7 +4922,11 @@ private JMenuItem MIimprEtiqInd;
        jtDes.setValor(jtDes.getValString(rowOri,n),rowFin,n);
     jtDes.ponValores(rowFin);
   }
-
+  /**
+   * Llamada cuando se cambia de linea en el grid (en modo edicion)
+   * @param linea
+   * @return 
+   */
   int cambiaLinAlb(int linea)
   {
     try
@@ -4775,8 +4973,8 @@ private JMenuItem MIimprEtiqInd;
             kgFac = dtStat.getDouble("acl_canfac", true); // Kilos Facturados
             if (ARG_MODPRECIO)
             {
-              prLiAlb = dtStat.getDouble("acl_prcom") + acc_impokgE.getValorDec()-
-                 (dtStat.getDouble("acl_prcom") * acl_dtoppE.getValorDec() /100);
+              prLiAlb = setPrecioCompra(acl_dtoppE.getValorDec(),dtStat.getDouble("acl_prcom"),
+                  acl_porpagE.isSelected()?0:acc_impokgE.getValorDec(), acc_imcokgE.getValorDec());                 
               dtopp = acl_dtoppE.getValorDec();
             }
 //            borraRegLinAlb(nLiAlb);
@@ -4786,7 +4984,7 @@ private JMenuItem MIimprEtiqInd;
           nLiAlb=getNextLinAlb();
 
         guardaLinAlb(nLiAlb, jt.getSelectedRow(), acl_numcajE.getValorInt(),
-                     acl_cantiE.getValorDec(), kgFac, prLiAlb,
+                      acl_cantiE.getValorDec(), kgFac, prLiAlb,
                      acl_kgrecE.getValorDec(), acl_comenE.getText(),dtopp);
         jt.setValor(""+nLiAlb,0);
         ctUp.commit();
@@ -4806,11 +5004,11 @@ private JMenuItem MIimprEtiqInd;
     return 0;
   }
   /**
-   * Actualiza todos los datos el albarán.
+   * Actualiza todos los datos del albarán.
    * @return
    * @throws Exception
    */
-  boolean actAlbaran() throws Exception
+  boolean actAlbaran() throws SQLException
   {
     swCambioPrv=false;
    
@@ -4870,6 +5068,11 @@ private JMenuItem MIimprEtiqInd;
 //      actAcumFra(emp_codiE.getValorInt(),frtEjer,frtNume);
     return true;
   }
+  /**
+   * Actualizar datos de linea de albaran
+   * @param n
+   * @throws SQLException 
+   */
   void actDatosLinAlb(int n) throws SQLException 
   {
       String nombArt = pro_codiE.getNombArt(jt.getValString(n,1), EU.em_cod);
@@ -4889,8 +5092,11 @@ private JMenuItem MIimprEtiqInd;
       dtAdd.setDato("acl_canti",jt.getValorDec(n,JT_KILALB));
       if (ARG_MODPRECIO)
       {
-        dtAdd.setDato("acl_prcom", jt.getValorDec(n,JT_PRCOM)- (jt.getValorDec(n,JT_PRCOM)*jt.getValorDec(n,JT_DTOPP)/100) +
-            acc_impokgE.getValorDec());
+        dtAdd.setDato("acl_prcom", 
+            setPrecioCompra(0, jt.getValorDec(n,JT_PRCOM),
+                jt.getValBoolean(n,JT_PORPAG)?0:acc_impokgE.getValorDec(),
+                acc_imcokgE.getValorDec())
+            );
         dtAdd.setDato("acl_dtopp", jt.getValorDec(n,JT_DTOPP));
       }
 
@@ -4900,6 +5106,7 @@ private JMenuItem MIimprEtiqInd;
       dtAdd.setDato("acl_comen",jt.getValString(n,13));
       dtAdd.setDato("acl_porpag ",jt.getValBoolean(n,14)?-1:0);
       dtAdd.setDato("acl_totfra",acc_totfraE.getValor());
+      
       dtAdd.update(stUp);
       s="UPDATE v_articulo SET pro_feulco = TO_DATE('"+acc_fecrecE.getText()+"','dd-MM-yyyy'),"+
         " pro_prvulco = "+prv_codiE.getValorInt()+
@@ -4964,11 +5171,13 @@ private JMenuItem MIimprEtiqInd;
     dtAdd.setDato("acc_cerra",acc_cerraE.getValor());
     dtAdd.setDato("acc_totfra",acc_totfraE.getValor());
     dtAdd.setDato("sbe_codi",sbe_codiE.getValorInt());
+    dtAdd.setDato("acc_kilpor",acc_kilporE.getValorInt());
 //    dtAdd.setDato("acc_totfra",acc_totfraE.getValor());
     if (ARG_MODPRECIO)
     {
       dtAdd.setDato("acc_portes", acc_portesE.getValor());
       dtAdd.setDato("acc_impokg", acc_impokgE.getValorDec());
+      dtAdd.setDato("acc_imcokg", acc_imcokgE.getValorDec());
     }
     dtAdd.update(stUp);
   }
@@ -5015,8 +5224,9 @@ private JMenuItem MIimprEtiqInd;
     }
 
   }
+  
   /**
-   * Usada cuando se cambia el importe de la linea sin estar en edición.
+   * Usada cuando se cambia el precio del producto sin estar en edición.
    * @param col Columna del grid
    * @param row Linea del grid
    */
@@ -5042,15 +5252,24 @@ private JMenuItem MIimprEtiqInd;
           jt.setValor(acl_dtoppE.getValorDec(),row,JT_DTOPP);
           return;
       }
+    
+      
+      double prCompra=0;
+      prCompra=actPrecioLinAlb(col,row,
+          acl_prcomE.getValorDec(),acl_porpagE.isSelected(), acl_dtoppE.getValorDec());      
+//      prCompra=setPrecioCompra(0,
+//              acl_prcomE.getValorDec(),
+//              opIncPortes.isSelected()? acc_impokgE.getValorDec():(double)0,
+//              acc_imcokgE.getValorDec());
+
+      prCompra=getPrecioCompra(acl_dtoppE.getValorDec(), prCompra, 
+                  acc_impokgE.getValorDec(),acc_imcokgE.getValorDec())-
+                   (!opIncPortes.isSelected()?acc_imcokgE.getValorDec()+
+                   (! jt.getValBoolean(row,JT_PORPAG)?acc_impokgE.getValorDec():0):0) ;
+          
+      acl_prcomE.setValorDec(prCompra);    
       acl_prcomE.resetCambio();
       acl_dtoppE.resetCambio();
-      actPrecioLinAlb(col,row,acl_prcomE.getValorDec(),acl_porpagE.isSelected(), acl_dtoppE.getValorDec());
-     
-      if (opIncPortes.isSelected() && !acl_porpagE.isSelected() && col==JT_PRCOM)
-       // Me han modificado el precio y esta marcado q se sumen los portes. 
-         acl_prcomE.setValorDec(acl_prcomE.getValorDec()+acc_impokgE.getValorDec());
-         
-    
       jt.setValor(acl_prcomE.getValorDec(),row,JT_PRCOM);
 //      actAcuTot();
 //      actImporteAlb(dtAdd ,emp_codiE.getValorInt(),acc_anoE.getValorInt(),acc_serieE.getText(),acc_numeE.getValorInt(),
@@ -5069,7 +5288,7 @@ private JMenuItem MIimprEtiqInd;
              jf.guardaMens("CD", jf.ht);
           }
       }
-    } catch (Exception k)
+    } catch (SQLException | ParseException k)
     {
       Error("Error al actualizar PRECIO ALBARAN",k);
     }
@@ -5078,22 +5297,25 @@ private JMenuItem MIimprEtiqInd;
    * Actualiza precio linea albarán
    * @param col
    * @param row
-   * @param aclPrCom
+   * @param aclPrCom Precio Compra sin portes ni comisiones (como esta en la DB)
    * @param aclPorpag
    * @param aclDtopp
+   * @return devuelve precio compra metido en DB
    * @throws SQLException 
    */
-  void actPrecioLinAlb(int col,int row,double aclPrCom,boolean aclPorpag,double aclDtopp ) throws SQLException
+  double actPrecioLinAlb(int col,int row,double aclPrCom,boolean aclPorpag,double aclDtopp ) throws SQLException
   {
       double impPortes=aclPorpag?0:acc_impokgE.getValorDec();
-
+/**
       if (col!=JT_PRCOM)
       { // Me han modificado el dto 
          if (opIncPortes.isSelected() && !aclPorpag) 
-            aclPrCom-=acc_impokgE.getValorDec(); //  Se incluyen portes en costo y los portes no son pagados
+            aclPrCom-=acc_impokgE.getValorDec()-acc_imcokgE.getValorDec();
+            //  Se incluyen portes en costo y los portes no son pagados
       }
-      aclPrCom-= (aclPrCom*aclDtopp/100); // Le quito el DTO PP
-      aclPrCom+=impPortes; // Si no se estan viendo los portes en pantalla.
+ **/
+//      aclPrCom = (aclPrCom*aclDtopp/100); // Le quito el DTO PP
+      aclPrCom= setPrecioCompra(aclDtopp, aclPrCom, impPortes,acc_imcokgE.getValorDec()); 
  
       aclPrCom=Formatear.redondea(aclPrCom,3);
       s = "UPDATE v_albacol SET acl_prcom = " +aclPrCom +
@@ -5101,13 +5323,12 @@ private JMenuItem MIimprEtiqInd;
           " WHERE acc_ano = " + acc_anoE.getValorInt() +
           " and emp_codi = " + emp_codiE.getValorInt() +
           " and acc_nume = " + acc_numeE.getValorInt() +
-          " and acc_serie = '" + acc_serieE.getText() + "'" +
-          (opAgrupar.isSelected()?" and pro_codi = "+jt.getValorInt(row,JT_PROCOD)+
-           " AND acl_canti "+(jt.getValorDec(row,JT_PRCOM)>=0?" >= 0":"<0"):
-          " and acl_nulin = " + jt.getValorInt(row, 0));
+          " and acc_serie = '" + acc_serieE.getText() + "'" +       
+          " and acl_nulin = " + jt.getValorInt(row, 0);
       stUp.executeUpdate(s);
      
       preciosGrid.set(row, aclPrCom);
+      return aclPrCom;
   }
   void cambiarAlmacen()
   {
@@ -5362,7 +5583,9 @@ private JMenuItem MIimprEtiqInd;
    * Actualiza columna Portes pagados
    * @param row 
    */
+  /**
   private  void actPortesPag(int row)
+     
   {
      try
     {
@@ -5394,6 +5617,7 @@ private JMenuItem MIimprEtiqInd;
       Error("Error al actualizar Portes Pagados en Linea Albaran", k);
     }  
   }
+  **/
   void BbusPed_actionPerformed()
   {
     try
@@ -5501,18 +5725,24 @@ private JMenuItem MIimprEtiqInd;
     }
 
     s = "SELECT pro_codi,pcl_comen, ";
-    if (estPedi == 'P')
-      campPedi = " pcl_precpe," +
-          " pcl_nucape as pcl_nucape, " +
-          " pcl_cantpe as pcl_cantpe ";
-    else if (estPedi == 'C')
-      campPedi= " pcl_precco as pcl_precpe, " +
-          " pcl_nucaco as pcl_nucape, " +
-          " pcl_cantco as pcl_cantpe ";
-    else
-      campPedi = " pcl_precfa as pcl_precpe, " +
-          " pcl_nucafa as pcl_nucape, " +
-          " pcl_cantfa as pcl_cantpe ";
+      switch (estPedi)
+      {
+          case 'P':
+              campPedi = " pcl_precpe," +
+                  " pcl_nucape as pcl_nucape, " +
+                  " pcl_cantpe as pcl_cantpe ";
+              break;
+          case 'C':
+              campPedi= " pcl_precco as pcl_precpe, " +
+                  " pcl_nucaco as pcl_nucape, " +
+                  " pcl_cantco as pcl_cantpe ";
+              break;
+          default:
+              campPedi = " pcl_precfa as pcl_precpe, " +
+                  " pcl_nucafa as pcl_nucape, " +
+                  " pcl_cantfa as pcl_cantpe ";
+              break;
+      }
     s += campPedi+"  FROM pedicol as l " +
         " where l.emp_codi = " + EU.em_cod +
         " AND l.eje_nume = " + eje_numeE.getValorInt() +
@@ -5856,21 +6086,21 @@ private JMenuItem MIimprEtiqInd;
          {
            s = "SELECT acl_nulin,l.pro_codi,l.pro_nomart, " +
                " acl_canti, acl_numcaj,acl_kgrec," +
-               " acl_prcom " +
+               " acl_prcom,acl_dtopp,acl_porpag " +
                " FROM v_albacol as l " +
                " where " + condWhere +
                " order by acl_nulin ";
          }
          else
          {
-           condWhere = "SELECT 0 AS acl_nulin,pro_codi,acl_prcom, " +
+           condWhere = "SELECT 0 AS acl_nulin,pro_codi,acl_prcom,acl_dtopp ,acl_porpag, " +
                "sum(acl_canti) as acl_canti, sum(acl_numcaj) as acl_numcaj " +
                " FROM v_albacol AS l WHERE " + condWhere;
            s = condWhere + " AND l.acl_canti >= 0" +
-               " GROUP BY pro_codi,acl_prcom" +
+               " GROUP BY pro_codi,acl_prcom,acl_dtopp,acl_porpag " +
                " UNION " +
                condWhere + " AND l.acl_canti < 0 " +
-               " GROUP BY pro_codi,acl_prcom" +
+               " GROUP BY pro_codi,acl_prcom,acl_dtopp,acl_porpag " +
                " ORDER BY 2";
          }
 
@@ -5950,7 +6180,10 @@ private JMenuItem MIimprEtiqInd;
        if (campo.equals("acl_prcom"))
        {
          if (opVerPrecios.isSelected())
-           return dtBloq.getDouble("acl_prcom")-(opIncPortes.isSelected()?0:rs.getDouble("acc_impokg"));
+              return getPrecioCompra(dtBloq.getDouble("acl_dtopp",true), dtBloq.getDouble("acl_prcom",true), 
+                  acc_impokgE.getValorDec(),acc_imcokgE.getValorDec())-
+                   (!opIncPortes.isSelected()?acc_imcokgE.getValorDec()+
+                   (dtBloq.getInt("acl_porpag")==0?acc_impokgE.getValorDec():0):0) ;         
          else
            return new Double(0);
        }

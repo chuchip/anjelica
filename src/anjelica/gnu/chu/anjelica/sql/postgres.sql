@@ -1060,6 +1060,7 @@ fcc_nume int,			-- Numero de Fra.
 acc_obser varchar(255),
 acc_portes char(1) not null,	-- Portes Pagados/Debidos
 acc_impokg float,		-- Importe de Porte/Kg.
+acc_imcokg float not null default 0, 		-- Importe de COmisiones / Kg
 frt_ejerc int not null,		-- Ejercicio Fra. de transp.
 frt_nume int not null,		-- Fra. de Transportista
 acc_cerra int not null,		-- Albaran Cerrado (0 NO -1 Si)
@@ -1090,6 +1091,7 @@ fcc_nume int,			-- Numero de Fra.
 acc_obser varchar(255),
 acc_portes char(1) not null,	-- Portes Pagados/Debidos
 acc_impokg float,		-- Importe de Porte/Kg.
+acc_imcokg float not null default 0, 		-- Importe de COmisiones / Kg
 frt_ejerc int not null,		-- Ejercicio Fra. de transp.
 frt_nume int not null,		-- Fra. de Transportista
 acc_cerra int not null,		-- Albaran Cerrado (0 NO -1 Si)
@@ -1149,17 +1151,17 @@ pro_codi int,			-- Codigo Producto
 pro_nomart varchar(50),
 acl_numcaj int,			--- Numero de Unidades
 acl_tipdes char(1),		-- Tipo descuento (%)
-acl_porpag smallint,		-- Porte pagado (0 NO,-1: Si)
+acl_porpag smallint,	-- Porte pagado (0 NO,-1: Si)
 alm_codi int,			-- Almacen.
 acl_canti decimal(9,3),		-- Cantidad Recibida
 acl_kgrec decimal(9,3),		-- Kg. de Recorte
-acl_prcom decimal(9,3),		-- Precio de Compra
+acl_prcom decimal(9,3),		-- Precio de Compra. 
 acl_canfac float,		-- Cantidad YA Facturada
 acl_comen varchar(50),
 acc_cerra smallint,		-- Albaran Cerrado (0 = NO)
 acl_totfra smallint not null,	-- Linea Totalmente Fact. (0 = No)
 acl_prstk decimal(9,3) not null, -- Precio Para Inventarios
-acl_dtopp float not null default 0,
+acl_dtopp float not null default 0, -- Dto PP. Normalmente es el mismo de cabecera
 his_rowid int not null
 );
  create index ix_hisallico on hisallico   (his_rowid,acl_nulin);

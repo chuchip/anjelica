@@ -343,7 +343,7 @@ public class MantAlbComCarne extends MantAlbCom
         /*
         * @todo revisar en caso de f6. Xq falla.
         */
-        int numCrotal=getNumCrotal(acp_nucrotE.getText(),numIndAnt,jt.getValorInt(1));
+        int numCrotal=getNumCrotal(acp_nucrotE.getText(),numIndAnt,jt.getValorInt(JT_PROCOD));
         if (numCrotal>= proNumcro)
         {
             mensajeErr("No puede haber mas de "+proNumcro+"  numeros de crotal iguales");
@@ -482,7 +482,7 @@ public class MantAlbComCarne extends MantAlbCom
                     double acp_canti, int acp_canind) throws SQLException
   {
 
-    dtAdd.addNew("v_albcompar");
+    dtAdd.addNew("v_albcompar",false);
     dtAdd.setDato("acc_ano",acc_anoE.getValorInt());
     dtAdd.setDato("emp_codi",emp_codiE.getValorInt());
     dtAdd.setDato("acc_serie",acc_serieE.getText());

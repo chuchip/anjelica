@@ -14,7 +14,6 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -282,7 +281,7 @@ public class pdfactra extends ventanaPad   implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(775, 530));
-   this.setVersion("20170223 "+(modPrecio?"-Modificar Precios-":"")+
+   this.setVersion("20170305 "+(modPrecio?"-Modificar Precios-":"")+
          (admin?"-ADMINISTRADOR-":"")+")");
 
    strSql = "SELECT emp_codi,eje_nume,frt_nume " +
@@ -716,19 +715,13 @@ public class pdfactra extends ventanaPad   implements PAD
    swLlenaAlb=true;
    jtAlb.removeAllDatos();
    s="SELECT c.acc_ano,c.acc_serie,c.acc_nume,c.acc_fecrec,c.prv_codi,pv.prv_nomb, "+
-       " sum(acl_canti) as acl_canti "+
-       " FROM v_albacol as l, v_albacoc as c,v_proveedo pv "+
+       " acc_kilpor as acl_canti "+
+       " FROM v_albacoc as c,v_proveedo pv "+
         " WHERE c.emp_codi = "+EU.em_cod+
-        " and l.emp_codi = "+EU.em_cod+
         " and pv.emp_codi = "+EU.em_cod+
-        " and l.acl_porpag = 0 "+
-        " and pv.prv_codi = c.prv_codi "+
-        " and c.acc_ano = l.acc_ano "+
-        " and c.acc_nume = l.acc_nume "+
-        " and c.acc_serie = l.acc_serie "+
+        " and pv.prv_codi = c.prv_codi "+     
        " AND c.frt_nume = 0  "+
-       " and c.acc_portes = 'D' "+
-       " group by c.acc_ano,c.acc_serie,c.acc_nume,c.acc_fecrec,c.prv_codi,pv.prv_nomb "+
+       " and c.acc_portes = 'D' "+      
        " order by c.acc_ano desc,c.acc_serie,c.acc_nume desc ";
 
    if (! dtCon1.select(s))
@@ -1155,6 +1148,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
    return true;
  }
 
+  @Override
  public void ej_addnew1()
  {
    mensaje("Espere, por favor .. Insertando Factura");

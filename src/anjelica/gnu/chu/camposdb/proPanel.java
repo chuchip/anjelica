@@ -50,6 +50,7 @@ public class proPanel extends CPanel
   private String proNomb;
   private boolean usaRefArticulo=false; // Indica si debe usar Referencia del Art. (String 15)
   private String proUniVen="";
+  private int proNumCrot=0;
   private double pesoCajas;
   private  CodigoBarras codBarra=null;
   private int envCodi=0;
@@ -1165,7 +1166,7 @@ public class proPanel extends CPanel
     dt.selectInto(s,lkPrd);
     if (dt.getNOREG())
       return null;
-    
+    proNumCrot=dt.getInt("pro_numcro");
     proUniVen=dt.getString("pro_univen");
     camCodi= dt.getString("cam_codi");
     sbeCodi=dt.getInt("sbe_codi");
@@ -1180,6 +1181,13 @@ public class proPanel extends CPanel
     envCodi=dt.getInt("env_codi");
     proNomb=dt.getString("pro_nomb");
     return proNombVenta==null?dt.getString("pro_nomb"):proNombVenta;
+  }
+  /**
+   * Devuelve el numero de crotales iguales que puede tener el articulo
+   */
+  public int getNumeroCrotales()
+  {
+      return proNumCrot;
   }
   public double getPesoCajas()
   {

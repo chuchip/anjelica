@@ -2,7 +2,7 @@ package gnu.chu.anjelica.compras;
 /**
  * <p>Titulo:   PDFACCOM </p>
  * <p>Descripción: Mantenimiento FACTURAS DE COMPRAS
- * <p>Copyright: (c) 2005-2012
+ * <p>Copyright: (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
 *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -309,7 +309,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
 
    iniciarFrame();
    this.setSize(new Dimension(764, 531));
-   this.setVersion("2015-10-09 "+(modPrecio?"-Modificar Precios-":"")+
+   this.setVersion("2017-03-05 "+(modPrecio?"-Modificar Precios-":"")+
          (admin?"-ADMINISTRADOR-":"")+ (swConsulta?"-Solo Consulta-":""));
    strSql = "SELECT emp_codi,eje_nume,fcc_nume " +
        " FROM v_facaco WHERE emp_codi = " + EU.em_cod +
@@ -949,7 +949,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
    alc_numinsE.setEnabled(false);
    alc_numinsE.removeAllItems();
    jtAlb.removeAllDatos();
-   s="SELECT c.acc_impokg, c.acc_fecrec, l.*,p.pro_nomb "+
+   s="SELECT c.acc_impokg,c.acc_imcokg, c.acc_fecrec, l.*,p.pro_nomb "+
        " FROM v_albacoc as c, v_albacol as l,v_articulo as p "+
       "  WHERE c.emp_codi = "+emp_codiE.getValorInt()+
        " AND l.emp_codi = "+emp_codiE.getValorInt()+
@@ -997,9 +997,13 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
   else
     v.add(dtCon1.getString("pro_nomart"));
    v.add(dtCon1.getString("acl_numcaj"));
-   v.add(""+(dtCon1.getDouble("acl_canti",true)-dtCon1.getDouble("acl_canfac",true)));
-   v.add(""+(dtCon1.getDouble("acl_prcom",true)-dtCon1.getDouble("acc_impokg",true)));
-   v.add(""+ ((dtCon1.getDouble("acl_canti")-dtCon1.getDouble("acl_canfac"))*(dtCon1.getDouble("acl_prcom",true)-dtCon1.getDouble("acc_impokg",true))));
+   v.add(dtCon1.getDouble("acl_canti",true)-dtCon1.getDouble("acl_canfac",true));
+   double precio= MantAlbCom.getPrecioFra(dtCon1.getDouble("acl_dtopp",true),
+       dtCon1.getDouble("acl_prcom",true),
+       dtCon1.getInt("acl_porpag")==0?dtCon1.getDouble("acc_impokg",true):0,       
+       dtCon1.getDouble("acc_imcokg"));
+   v.add(precio);   
+   v.add((dtCon1.getDouble("acl_canti")-dtCon1.getDouble("acl_canfac"))*precio);
    v.add(dtCon1.getString("acc_serie"));
    v.add(dtCon1.getString("acc_ano"));
    v.add(dtCon1.getString("acc_nume"));
