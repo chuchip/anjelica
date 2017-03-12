@@ -16,6 +16,7 @@ update hisalcaco set acc_kilpor=0;
 -- Añadido numero serie a pedidos venta
 alter table pedvenc add pvc_id serial;
 alter table hispedvenc add pvc_id serial;
+grant all on pedvenc_pvc_id_seq to public;
 --
 -- Incluido tipo tarifa maestro en configuracion
 --

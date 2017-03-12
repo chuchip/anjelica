@@ -295,7 +295,8 @@ public class Cldegen extends ventana
              + " and deo_fecha >= TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') "
              + " and deo_fecha <= TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy') "
              + (opSoloValor.isSelected()?" and deo_valor = 'S'":"")
-             + (opVer.getValor().equals("T") ? "" : " and c.deo_incval='" + opVer.getValor() + "' ")
+             + (opVer.getValor().equals("S") ?  " and (l.def_tippro='S' or c.deo_incval='S') ":"")
+            + (opVer.getValor().equals("N") ?  " and (l.def_tippro='N' AND c.deo_incval='N') ":"")
              + (tid_codiE.isNull()?"":" and c.tid_codi = "+tid_codiE.getValorInt())
              + " and c.deo_codi = l.deo_codi "
              + " and l.def_kilos > 0 "

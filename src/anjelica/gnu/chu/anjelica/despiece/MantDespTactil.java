@@ -18,6 +18,7 @@ import gnu.chu.camposdb.tidCodi2;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;
 import gnu.chu.interfaces.PAD;
+import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
 import gnu.chu.winayu.ayuLote;
@@ -892,7 +893,32 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
  void activarEventos()
  {
-     
+    deo_codiE.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+              
+                if (deo_codiE.getValorInt()>0 && e.getClickCount()>1)
+                {
+                      ejecutable prog;
+                      if ((prog = jf.gestor.getProceso(MantDesp.getNombreClase())) == null)
+                          return;
+                      MantDesp cm = (MantDesp) prog;
+                      if (cm.inTransation())
+                      {
+                          msgBox("Mantenimiento Despieces ocupado. No se puede realizar la busqueda");
+                          return;
+                      }
+
+                      cm.PADQuery();
+                      cm.setEjeNume(eje_numeE.getValorInt());
+                      cm.setDeoCodi(deo_codiE.getText());
+                      cm.ej_query();
+                      jf.gestor.ir(cm);
+                }
+               
+            }
+       });
+       
    BmodDaIn.addActionListener(new ActionListener()
    {
       @Override

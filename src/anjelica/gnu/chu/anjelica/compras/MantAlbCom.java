@@ -734,7 +734,7 @@ private JMenuItem MIimprEtiqInd;
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20170305)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20170307)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -6190,8 +6190,13 @@ private JMenuItem MIimprEtiqInd;
        if (campo.equals("acl_impor"))
        {
          if (opVerPrecios.isSelected())
-           return dtBloq.getDouble("acl_canti")*
-               (dtBloq.getDouble("acl_prcom")-(opIncPortes.isSelected()?0:rs.getDouble("acc_impokg")));
+         {
+           double precio=getPrecioCompra(dtBloq.getDouble("acl_dtopp",true), dtBloq.getDouble("acl_prcom",true), 
+                  acc_impokgE.getValorDec(),acc_imcokgE.getValorDec())-
+                   (!opIncPortes.isSelected()?acc_imcokgE.getValorDec()+
+                   (dtBloq.getInt("acl_porpag")==0?acc_impokgE.getValorDec():0):0) ;
+           return dtBloq.getDouble("acl_canti") * precio ;
+         }
          else
            return new Double(0);
        }

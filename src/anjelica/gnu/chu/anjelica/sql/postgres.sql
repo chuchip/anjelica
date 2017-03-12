@@ -1227,7 +1227,7 @@ create table anjelica.v_albcompar
    precinto2 int,		-- NO USADO
    precinto3 int ,		-- NO USADO
    precinto4 int ,		-- NO USADO
-   acp_canind int ,		-- Cant.de Individuos
+   acp_canind int ,		-- Cant.de Individuos (normalmente 1)
    mat_codi int,		-- Codigo de Matadero
    acl_nulin int not null,	-- Numero de Linea del Albaran
    traspasado smallint,		-- NO USADO
@@ -4500,40 +4500,3 @@ create trigger mvtosalm_update BEFORE UPDATE OR DELETE  on anjelica.mvtosalm for
 
 create trigger stkpart_insert BEFORE insert OR UPDATE  on anjelica.stockpart for each row   WHEN (NEW.pro_serie !='S' ) execute procedure anjelica.fn_acumstk();
 create trigger stkpart_delete BEFORE  DELETE  on anjelica.stockpart for each row WHEN (OLD.pro_serie !='S' ) execute procedure anjelica.fn_acumstk();
-
---
-select 'A' as tipo, usu_nomb ,avc_nume,avc_serie,cl.cli_codi,cl.cli_nomb,min(avl_fecalt) as fecmin, max(avl_fecalt) as fecmax from v_albventa as a, v_cliente as cl
-where cl.cli_codi = a.cli_codi
-and avl_fecalt::date='20160817'
-group by usu_nomb,avc_nume,avc_serie,cl.cli_codi,cl.cli_nomb
-union all
-select 'D' as tipo,c.usu_nomb,deo_codi as avc_nume,'A' as avc_serie,c.tid_codi as cli_codi, tid_nomb as cli_nomb,
- min(deo_tiempo) as fecmin, max(deo_tiempo) as fecmax from v_despiece as c, tipodesp as t
-where c.tid_codi=t.tid_codi and
-deo_tiempo::date='20160817'
-group by c.usu_nomb,avc_nume,avc_serie,cli_codi,cli_nomb
-order by 2,7
---
--- Estudios de vap
---
-select 'A' as tipo, usu_nomb ,avc_nume,avc_serie,cl.cli_codi,cl.rut_codi,cl.cli_nomb,min(avl_fecalt) as fecmin, max(avl_fecalt) as fecmax from v_albventa as a, v_cliente as cl
-where cl.cli_codi = a.cli_codi
-and cl.sbe_codi=2
-and avl_fecalt::date='20170222'
-group by usu_nomb,avc_nume,avc_serie,cl.rut_codi,cl.cli_codi,cl.cli_nomb
-order by 2,7
-
---
--- Sacar Lomos 'b'
----
-select acc_nume,c.prv_codi,prv_nomb,pro_codi,pro_nomart, acl_comen,sum(acl_numcaj) as unidades, sum(acl_canti) as kilos from v_compras as c,v_proveedo as pv where acc_ano=2016 and acc_fecrec>='20160917' and acp_clasi != 'A' AND ACP_CLASI!=''
-and pv.prv_codi=c.prv_codi
-group by acc_nume,pro_codi,c.prv_codi,acl_comen,pro_nomart,prv_nomb
-  order by acc_nume,pro_codi
- --
- -- Sacar clientes
- --
- select cl.cli_codi,cl.cli_nomb,cl.cli_pobl,max(avc_fecalb) from clientes as cl, v_albavec as a  where cl.rep_codi='SE' and cl.ZON_codi='RA' AND cl.CLI_aCTIV='S'
-and avc_fecalb>='20160901' and cl.cli_codi=a.cli_codi
-group by cl.cli_codi,cl.cli_nomb,cl.cli_pobl
-order by cli_pobl

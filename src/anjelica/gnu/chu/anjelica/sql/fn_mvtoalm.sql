@@ -324,7 +324,7 @@ $BODY$
 			eje_nume=NEW.eje_nume and
 			deo_codi=NEW.deo_codi;
 		if not found then
-			RAISE EXCEPTION 'NO encontrada cabecera Despiece Entrada';
+			RAISE EXCEPTION 'NO encontrada cabecera Despiece Entrada. Despiece %',NEW.deo_codi;
 		end if;
 	   end if;
 	   if TG_OP =  'INSERT' then			
