@@ -48,8 +48,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 public class ayuClientes extends ventana
-{
-  
+{  
   private final int JT_NOMCOM=1;
   private final int JT_POBL=2;
   private final int JT_REPART=3;
@@ -72,6 +71,7 @@ public class ayuClientes extends ventana
     eje = false;
     if (dt!=null)
       dtCon1=dt;
+  
     try
     {
       jbInit();
@@ -209,6 +209,7 @@ public class ayuClientes extends ventana
             (cli_codrepE.isNull()?"":" AND cli_codrut like '%"+cli_codrepE.getText()+"%'")+
             " order by cli_nomb";
 //        debug("AyuCli: "+strSql);
+        jt.removeAllDatos();
         if (! dtCon1.select(strSql))
         {
           msgBox("NO encontrados CLIENTES con estos criterios");
@@ -216,8 +217,19 @@ public class ayuClientes extends ventana
           return;
         }
         jt.setEnabled(false);
-        jt.setNumRegCargar(0);
-        jt.setDatos(dtCon1);
+        ArrayList vd=new ArrayList();
+        do
+        {
+            ArrayList v=new ArrayList();
+            v.add(dtCon1.getString("cli_codi"));
+            v.add(dtCon1.getString("cli_nomco"));
+            v.add(dtCon1.getString("cli_pobl"));
+            v.add(dtCon1.getString("cli_codrut"));
+            v.add(dtCon1.getString("cli_nomb"));
+            vd.add(v);
+        } while (dtCon1.next());
+        jt.setDatos(vd);
+//        jt.setDatos(dtCon1);
         jt.requestFocusInicio();
         jt.setEnabled(true);
         verComentario();
