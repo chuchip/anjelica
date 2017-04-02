@@ -1497,14 +1497,16 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
         if (! dtAdd.select(s,true))
           throw new Exception("NO encontrado registro Linea Albaran.\n"+s);
        double prCompra=dtAdd.getDouble("acl_prcom")- 
-           (dtAdd.getInt("acl_porpag")==0?dtStat.getDouble("acc_impokg"):0);
-       prCompra=prCompra / (1 - (dtAdd.getDouble("acl_dtopp")/100)); // Dejo costo de linea 'limpio'
-       prCompra-=prCompra*fcc_dtoppE.getValorDec()/100; // Le quito el nuevo dto pp
-       prCompra+=dtAdd.getInt("acl_porpag")==0?dtStat.getDouble("acc_impokg"):0; // Le sumo los portes.
+           (dtAdd.getInt("acl_porpag")==0?dtStat.getDouble("acc_impokg"):0)-
+           dtStat.getDouble("acc_imcokg");
+           
+//       prCompra=prCompra / (1 - (dtAdd.getDouble("acl_dtopp")/100)); // Dejo costo de linea 'limpio'
+//       prCompra-=prCompra*fcc_dtoppE.getValorDec()/100; // Le quito el nuevo dto pp
+//       prCompra+=dtAdd.getInt("acl_porpag")==0?dtStat.getDouble("acc_impokg"):0; // Le sumo los portes.
        dtAdd.edit(dtAdd.getCondWhere());
        dtAdd.setDato("acl_canfac",dtAdd.getDouble("acl_canfac")+jtFra.getValorDec(n,2));
        dtAdd.setDato("acl_dtopp",fcc_dtoppE.getValorDec());
-       dtAdd.setDato("acl_prcom",prCompra);
+//       dtAdd.setDato("acl_prcom",prCompra);
        dtAdd.update(stUp);
        Albacoc fc=new Albacoc(jtFra.getValorInt(n,11),jtFra.getValorInt(n,10),jtFra.getValString(n,9));
        if (v.indexOf(fc)==-1)
