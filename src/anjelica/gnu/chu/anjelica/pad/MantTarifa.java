@@ -65,6 +65,8 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
   boolean ARG_MODCONSULTA=false;
   boolean swInicio=false;
   boolean swVerArtic=false;
+  final static int JT_COMREP=4;
+  
   public MantTarifa(EntornoUsuario eu, Principal p)
   {
     this(eu,p,null);
@@ -363,6 +365,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
           dtAdd.setDato("pro_nomb",jt.getValString(n,1));
           dtAdd.setDato("tar_preci",jt.getValorDec(n,2));
           dtAdd.setDato("tar_comen",jt.getValString(n,3));
+          dtAdd.setDato("tar_comrep",jt.getValorDec(n,JT_COMREP));
           dtAdd.setDato("tar_grupo",grupo);
           dtAdd.setDato("tar_tipo",animal);
           dtAdd.update(stUp);
@@ -418,7 +421,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     }
     void verDatLin(String fecha,String tipo,String fecfin,double increm) throws Exception
     {
-      s = "SELECT pro_codart,pro_nomb,tar_preci,tar_comen " +
+      s = "SELECT pro_codart,pro_nomb,tar_preci,tar_comen,tar_comrep " +
           " FROM tarifa " +
           " WHERE tar_fecini = TO_DATE('"+fecha+"','dd-MM-yyyy') "+
           " AND tar_codi = "+tipo+
@@ -853,6 +856,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         tar_comenG = new gnu.chu.controles.CTextField(Types.CHAR,"X",150);
         tar_preciE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
         pro_codartE = new gnu.chu.camposdb.proPanel();
+        tar_comrepE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9.99");
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -875,7 +879,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         pro_codiE = new gnu.chu.camposdb.proPanel();
         cLabel11 = new gnu.chu.controles.CLabel();
         tar_fechaE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
-        jt = new gnu.chu.controles.CGridEditable(4) {
+        jt = new gnu.chu.controles.CGridEditable(5) {
             public void cambiaColumna(int col,int colNueva, int row)
             {
                 try
@@ -932,9 +936,10 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         cabecera.add("Nombre"); //1-- Nombre
         cabecera.add("Precio"); // 2 -- Precio
         cabecera.add("Coment"); // 3 -- Comentario
+        cabecera.add("Com.Rep"); // 4 -- Comision Repr.
         jt.setCabecera(cabecera);
-        jt.setAnchoColumna(new int[]{86, 283, 60,150});
-        jt.alinearColumna(new int[] {0, 0, 2,0});
+        jt.setAnchoColumna(new int[]{86, 283, 60,150,60});
+        jt.alinearColumna(new int[] {0, 0, 2,0,2});
 
         jt.setNumRegCargar(0);
         try {
@@ -944,11 +949,13 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
             v.add(pro_nombE);
             v.add(tar_preciE);
             v.add(tar_comenG);
+            v.add(tar_comrepE);
             jt.setCampos(v);
         }catch (Exception k)
         {
             Error("Error al iniciar el grid",k);
         }
+        jt.setFormatoCampos();
         jtArt = new gnu.chu.controles.Cgrid(2);
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
@@ -1206,6 +1213,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CLinkBox tar_codiE;
     private gnu.chu.controles.CTextField tar_comenG;
+    private gnu.chu.controles.CTextField tar_comrepE;
     private gnu.chu.controles.CComboBox tar_copiaE;
     private gnu.chu.controles.CTextField tar_fecfinE;
     private gnu.chu.controles.CTextField tar_fechaE;
