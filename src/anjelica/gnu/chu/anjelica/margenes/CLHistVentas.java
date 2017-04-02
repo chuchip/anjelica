@@ -1,8 +1,8 @@
 /**
  *
  * <p>Título: CLHisVentas</p>
- * <p>Descripción: Consulta/Listado Historico ventas</p>
- *  <p>Copyright: Copyright (c) 2005-2016
+ * <p>Descripción: Conasulta/Listado Historico ventas</p>
+ *  <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -47,7 +47,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 public class CLHistVentas extends ventana {
- 
+  private int DIVCODI=1;
   private  Date fecIniMes,fecFinMes,fecIniMesAnt,fecFinMesAnt; 
   String s;
   DatosTabla dtAdd;
@@ -121,6 +121,8 @@ public class CLHistVentas extends ventana {
   @Override
   public void iniciarVentana() throws Exception
   {
+    if (EU.isRootAV())
+        DIVCODI=0;
     dtAdd=new DatosTabla(ctUp);
     anoE.setValorInt(EU.ejercicio);
     activarEventos();
@@ -341,7 +343,8 @@ public class CLHistVentas extends ventana {
         s="select sum("+(swTodo?"hve_kilven":"hve_kiveav")+") as hve_kilven,"+
             " sum("+(swTodo?"hve_impven":"hve_imveav")+") as hve_impven "
                 + " from histventas where hve_fecini >= to_date(' "+Formatear.getFecha(fecIni, "dd-MM-yyyy") +"','dd-MM-yyyy') "
-                + " and hve_fecfin <= to_date(' "+Formatear.getFecha(fecFin, "dd-MM-yyyy") +"','dd-MM-yyyy') ";
+                + " and hve_fecfin <= to_date(' "+Formatear.getFecha(fecFin, "dd-MM-yyyy") +"','dd-MM-yyyy') "
+                + " and div_codi = "+DIVCODI;
          dtStat.select(s);
 
          v.add(Formatear.getFecha(fecIni, "dd-MM-yyyy"));
@@ -379,6 +382,7 @@ public class CLHistVentas extends ventana {
                " sum(avl_canti* avl_prbase) as avc_basimp " +
              " from v_albventa as c, v_articulo as a " +
              " where c.avc_serie >='A' and c.avc_serie <='C' "+
+             " and c.div_codi >= "+DIVCODI+
              " and c.pro_codi = a.pro_codi "+
              " and a.pro_tiplot = 'V' "+
              " and c.avc_fecalb >= TO_DATE('" + Formatear.getFecha(fecIni, "dd-MM-yyyy") +  "','dd-MM-yyyy') " +
@@ -386,12 +390,14 @@ public class CLHistVentas extends ventana {
         actualDatos1(s,fecIni,fecFin,false);
              
   }
+  
   void actualDatos(Date fecIni,Date fecFin) throws SQLException
   {
     s="select sum(avc_kilos) as avc_kilos," +
                " sum(avc_basimp) as avc_basimp  " +
              " from v_albavec  c  " +
              " where c.avc_serie >='A' and c.avc_serie <='C' "+
+            " and c.div_codi >= "+DIVCODI+
              " and c.avc_fecalb >= TO_DATE('" + Formatear.getFecha(fecIni, "dd-MM-yyyy") +  "','dd-MM-yyyy') " +
              " and c.avc_fecalb <= TO_DATE('" + Formatear.getFecha(fecFin, "dd-MM-yyyy") +   "','dd-MM-yyyy') " ;
     actualDatos1(s,fecIni,fecFin,true);
@@ -408,12 +414,14 @@ public class CLHistVentas extends ventana {
   {
     dtStat.select(s);
     s="select * from histventas WHERE hve_fecini = TO_DATE('" + Formatear.getFecha(fecIni, "dd-MM-yyyy") +  "','dd-MM-yyyy') "+
-      " and hve_fecfin <= TO_DATE('" + Formatear.getFecha(fecFin, "dd-MM-yyyy") +   "','dd-MM-yyyy') ";
+      " and hve_fecfin <= TO_DATE('" + Formatear.getFecha(fecFin, "dd-MM-yyyy") +   "','dd-MM-yyyy') "+
+      " and div_codi = "+DIVCODI;
     if (dtAdd.select(s,true))
         dtAdd.edit();
     else
     {
         dtAdd.addNew("histventas");
+        dtAdd.setDato("div_codi",DIVCODI);
         dtAdd.setDato("hve_fecini",fecIni);
         dtAdd.setDato("hve_fecfin",fecFin);
     }
@@ -528,7 +536,8 @@ public class CLHistVentas extends ventana {
        " sum("+(swTodo?"hve_impven":"hve_imveav")+") as hve_impven,"
                 + " sum(hve_impgan) as hve_impgan "
                 + " from histventas where hve_fecini >= "+fecini+
-                " and hve_fecfin <= "+fecfin;
+                " and hve_fecfin <= "+fecfin+
+                " and div_codi = "+DIVCODI;
         dtStat.select(s);
 
         v.add(dtStat.getDouble("hve_kilven",true));
@@ -580,8 +589,8 @@ public class CLHistVentas extends ventana {
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        Pcabe.setMaximumSize(new java.awt.Dimension(305, 26));
-        Pcabe.setMinimumSize(new java.awt.Dimension(305, 26));
+        Pcabe.setMaximumSize(new java.awt.Dimension(505, 26));
+        Pcabe.setMinimumSize(new java.awt.Dimension(505, 26));
         Pcabe.setPreferredSize(new java.awt.Dimension(305, 26));
         Pcabe.setLayout(null);
 

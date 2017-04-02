@@ -1701,6 +1701,13 @@ private String parseaSelect(boolean forUpdate) throws SQLException
       col++;
     return rs.getDate(col);
   }
+  /**
+   * Devuelve el valor del campo como String, representando la fecha.
+   * @param col Columna
+   * @param frSali Formato Salida.
+   * @return fecha en el formato elegido. Si el campo es null, devuelve ""
+   * @throws SQLException 
+   */
   public String getFecha(int col, String frSali) throws SQLException
   {
     try

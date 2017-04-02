@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Titulo: lisaldos </p>
  * <p>Descripción: Listado de Saldos </p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -519,7 +519,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   {
     listIndiv.clear();
     
-    s=getStrSql(proCodi, feulinE.getValor(),fecsalE.getText());
+    iniciarStatement(proCodi, feulinE.getValor(),fecsalE.getText());
     rs = ps.executeQuery();
     if (!rs.next())
         msgBox("No encontrados invidivuos");
@@ -573,7 +573,7 @@ public class lisaldos   extends ventana  implements JRDataSource
       ArrayList v = new ArrayList();
       try
       {
-          getStrSql(proCodi, feulin, fecinv);
+          iniciarStatement(proCodi, feulin, fecinv);
 //   debug("verMvtos: "+s);
           rs = ps.executeQuery();
           if (!rs.next())
@@ -879,12 +879,12 @@ public class lisaldos   extends ventana  implements JRDataSource
   }
   
 
-  String getStrSql(int proCodi, String fecini, String fecfin) throws SQLException
+  private void iniciarStatement(int proCodi, String fecini, String fecfin) throws SQLException
   {
     
     if (ps==null)
     {
-       s="SELECT  mvt_tipdoc as sel, mvt_tipo as tipmov,mvt_time as fecmov, alm_codi, pro_codi,"
+       String sql="SELECT  mvt_tipdoc as sel, mvt_tipo as tipmov,mvt_time as fecmov, alm_codi, pro_codi,"
            + "pro_ejelot,pro_serlot,pro_numlot,pro_indlot,"+
             " "+        
             " mvt_canti as canti,mvt_prec as precio "+
@@ -907,12 +907,11 @@ public class lisaldos   extends ventana  implements JRDataSource
           " AND r.pro_codi = ? " +
           " AND r.rgs_fecha::date >= TO_DATE('" + fecini + "','dd-MM-yyyy') " +
           " and r.rgs_fecha::date <= TO_DATE('" + fecfin + "','dd-MM-yyyy') ";
-      s += " ORDER BY 3,2 desc"; // FECHA y tipo
-      ps=dtCon1.getConexion().prepareStatement(dtCon1.getStrSelect(s));
+      sql += " ORDER BY 3,2 desc"; // FECHA y tipo
+      ps=dtCon1.getConexion().prepareStatement(dtCon1.getStrSelect(sql));
     }
     ps.setInt(1,proCodi);
     ps.setInt(2,proCodi);   
-    return s;
   }
 
     @Override

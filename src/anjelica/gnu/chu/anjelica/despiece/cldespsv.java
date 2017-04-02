@@ -733,6 +733,25 @@ public class cldespsv extends ventana
                 }
             } while (dtCon1.next());
            }
+          /**
+            * Busco lineas Huerfanas            
+            */
+           s="select * from v_Despfin as f  where def_tiempo::date >=  TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') "+
+              "  and not exists (select * from desporig as o where o.eje_nume=f.eje_nume and f.deo_codi = o.deo_codi)";
+           if (dtCon1.select(s))
+           {
+               do
+               {
+                    ArrayList v=new ArrayList();
+                    v.add(dtCon1.getInt("pro_codi")); // 0
+                    v.add("Hijos huerfanos.Desp. Ind: "+dtCon1.getInt("pro_numind"));
+                    v.add(0); // 1
+                    v.add(dtCon1.getInt("def_kilos")); // 2
+                    v.add(dtCon1.getInt("deo_codi")); // 3
+                    v.add(dtCon1.getDate("def_tiempo")); // 4
+                    jt.addLinea(v);
+               } while (dtCon1.next());
+           }
            mensaje("Espere, Buscando grupos descuadrados...");
            // Buscamos por grupos
            s="select eje_nume,deo_numdes " +
@@ -843,6 +862,7 @@ public class cldespsv extends ventana
 
                 } while (dtCon1.next());
            }
+           
            jt.requestFocusInicio();
            jt.panelG.setVisible(true);
            mensaje("");

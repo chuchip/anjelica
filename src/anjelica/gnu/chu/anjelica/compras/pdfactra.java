@@ -42,6 +42,11 @@ import javax.swing.border.TitledBorder;
 
 public class pdfactra extends ventanaPad   implements PAD
 {
+  final static int JTALB_KGPOR=7;
+  final static int JTALB_KGALB=4;
+  final static int  JTFRA_KGALB=6;
+  final static int  JTFRA_KGFRA=7;
+  final static int  JTFRA_IMPLIN=9;
   int nLiFra=0;
   boolean swLlenaAlb=false; // Indica si ya se ha llenado una vez el grid de Albaranes.
   CTextField prv_codiE = new CTextField();
@@ -104,7 +109,7 @@ public class pdfactra extends ventanaPad   implements PAD
 
   CGridEditable jtFra = new CGridEditable(12)
   {
-
+ @Override
     public void cambiaColumna(int col,int colNueva, int row)
     {
       try
@@ -114,6 +119,7 @@ public class pdfactra extends ventanaPad   implements PAD
         Error("Error en Cambia columna de JtFra",k);
       }
     }
+     @Override
     public boolean deleteLinea(int row, int col)
     {
       try {
@@ -124,7 +130,7 @@ public class pdfactra extends ventanaPad   implements PAD
       }
       return true;
     }
-
+ @Override
     public void afterDeleteLinea()
     {
       try
@@ -136,11 +142,12 @@ public class pdfactra extends ventanaPad   implements PAD
         Error("Error al Actualizar Acumulado Factura", k);
       }
     }
-
+ @Override
     public int cambiaLinea(int row, int col)
     {
       return cambiaLinAlb(row);
     }
+    @Override
     public void afterCambiaLinea()
     {
       try
@@ -149,7 +156,6 @@ public class pdfactra extends ventanaPad   implements PAD
       } catch (Exception k)
       {
         Error("Error al Actualizar Acumulado de Factura",k);
-        return;
       }
     }
   };
@@ -157,8 +163,9 @@ public class pdfactra extends ventanaPad   implements PAD
   CPanel PFactura = new CPanel();
   CPanel Palbcom = new CPanel();
   BorderLayout borderLayout1 = new BorderLayout();
-  Cgrid jtAlb = new Cgrid(7)
+  Cgrid jtAlb = new Cgrid(8)
   {
+    @Override
     protected void Binser_actionPerformed(boolean b)
     {
       try {
@@ -259,11 +266,9 @@ public class pdfactra extends ventanaPad   implements PAD
      {
 
        if (ht.get("modPrecio") != null)
-         modPrecio = Boolean.valueOf(ht.get("modPrecio").toString()).
-             booleanValue();
+         modPrecio = Boolean.parseBoolean(ht.get("modPrecio").toString());
        if (ht.get("admin") != null)
-         admin = Boolean.valueOf(ht.get("admin").toString()).
-             booleanValue();
+         admin = Boolean.parseBoolean(ht.get("admin").toString());
        if (admin)
          modPrecio=true;
      }
@@ -281,7 +286,7 @@ public class pdfactra extends ventanaPad   implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(775, 530));
-   this.setVersion("20170305 "+(modPrecio?"-Modificar Precios-":"")+
+   this.setVersion("20170313s "+(modPrecio?"-Modificar Precios-":"")+
          (admin?"-ADMINISTRADOR-":"")+")");
 
    strSql = "SELECT emp_codi,eje_nume,frt_nume " +
@@ -591,6 +596,7 @@ public class pdfactra extends ventanaPad   implements PAD
 
    jtAlb.addMouseListener(new MouseAdapter()
    {
+     @Override
      public void mouseClicked(MouseEvent e)
      {
        if (! jtAlb.isEnabled() || jtAlb.isVacio() || e.getClickCount()<2)
@@ -600,6 +606,7 @@ public class pdfactra extends ventanaPad   implements PAD
    });
    BirGrid.addFocusListener(new FocusAdapter()
    {
+     @Override
      public void focusGained(FocusEvent e)
      {
        irGridFra();
@@ -714,15 +721,32 @@ public class pdfactra extends ventanaPad   implements PAD
      return;
    swLlenaAlb=true;
    jtAlb.removeAllDatos();
-   s="SELECT c.acc_ano,c.acc_serie,c.acc_nume,c.acc_fecrec,c.prv_codi,pv.prv_nomb, "+
-       " acc_kilpor as acl_canti "+
-       " FROM v_albacoc as c,v_proveedo pv "+
+   
+   s="SELECT c.acc_ano,c.acc_serie,c.acc_nume,c.acc_fecrec,c.prv_codi,pv.prv_nomb,acc_kilpor, "+
+       " sum(acl_canti) as acl_canti "+
+       " FROM v_albacol as l, v_albacoc as c,v_proveedo pv "+
         " WHERE c.emp_codi = "+EU.em_cod+
+        " and l.emp_codi = "+EU.em_cod+
         " and pv.emp_codi = "+EU.em_cod+
-        " and pv.prv_codi = c.prv_codi "+     
+        " and l.acl_porpag = 0 "+
+        " and pv.prv_codi = c.prv_codi "+
+        " and c.acc_ano = l.acc_ano "+
+        " and c.acc_nume = l.acc_nume "+
+        " and c.acc_serie = l.acc_serie "+
        " AND c.frt_nume = 0  "+
-       " and c.acc_portes = 'D' "+      
+       " and c.acc_portes = 'D' "+
+       " group by c.acc_ano,c.acc_serie,c.acc_nume,c.acc_fecrec,c.prv_codi,pv.prv_nomb,acc_kilpor "+
        " order by c.acc_ano desc,c.acc_serie,c.acc_nume desc ";
+//
+//   s="SELECT c.acc_ano,c.acc_serie,c.acc_nume,c.acc_fecrec,c.prv_codi,pv.prv_nomb, "+
+//       " acc_kilpor as acl_canti "+
+//       " FROM v_albacoc as c,v_proveedo pv "+
+//        " WHERE c.emp_codi = "+EU.em_cod+
+//        " and pv.emp_codi = "+EU.em_cod+
+//        " and pv.prv_codi = c.prv_codi "+     
+//       " AND c.frt_nume = 0  "+
+//       " and c.acc_portes = 'D' "+      
+//       " order by c.acc_ano desc,c.acc_serie,c.acc_nume desc ";
 
    if (! dtCon1.select(s))
    {
@@ -750,6 +774,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
   v.add(dtCon1.getString("acl_canti"));
   v.add(dtCon1.getString("prv_codi"));
   v.add(dtCon1.getString("prv_nomb"));
+  v.add(dtCon1.getString("acc_kilpor"));
   jtAlb.addLinea(v);
 }
 
@@ -1542,10 +1567,11 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
        fecalb="";
        prvCodi="";
        k=0;
+      // kgPortes=0;
        frtAlccam=dtCon1.getString("frt_alccam");
        if (frtAlccam.equals("A"))
        {
-         s = "SELECT c.acc_fecrec,c.prv_codi,pv.prv_nomb,sum(acl_canti) as acl_canti " +
+         s = "SELECT c.acc_fecrec,c.prv_codi,pv.prv_nomb, sum(acl_canti) as acl_canti " +
              " FROM v_albacol as l, v_albacoc as c,v_proveedo as pv " +
              " WHERE C.emp_codi = "+emp_codiE.getValorInt()+
              " and l.emp_codi = "+emp_codiE.getValorInt()+
@@ -1559,12 +1585,13 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
              " and l.acl_porpag =0 "+
              " and c.acc_portes = 'D' "+
              " and c.prv_codi = pv.prv_codi "+
-              " group by c.acc_fecrec,c.prv_codi,pv.prv_nomb ";
+              " group by c.acc_fecrec,c.prv_codi,pv.prv_nomb";
          if (dtStat.select(s))
          {
            fecalb=dtStat.getFecha("acc_fecrec","dd-MM-yyyy");
            prvCodi=dtStat.getInt("prv_codi")+"-"+dtStat.getString("prv_nomb");
            k=dtStat.getDouble("acl_canti");
+//           kgPortes=dtStat.getDouble("acc_kilpor");
            kgAlb+=k;
          }
          else
@@ -1576,7 +1603,8 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
        v.add(dtCon1.getString("frt_numalb"));
        v.add(dtCon1.getString("dcl_numli"));
        v.add(fecalb); // Fecha Alb.
-       v.add(""+k);
+       v.add(k);
+       
        v.add(dtCon1.getString("frl_canti"));
        v.add(dtCon1.getString("tap_codi"));
        v.add(dtCon1.getString("tap_impor"));
@@ -1617,7 +1645,7 @@ void insLinAlb(int row) throws Exception
 {
   if (jtFra.getValString(row,0,true).startsWith("Alb"))
   {
-    s = "SELECT c.acc_ano,c.acc_serie,c.acc_nume,c.acc_fecrec,c.prv_codi,pv.prv_nomb,sum(acl_canti) as acl_canti " +
+    s = "SELECT c.acc_ano,c.acc_serie,c.acc_nume,c.acc_fecrec,c.prv_codi,pv.prv_nomb,sum(acl_canti) as acl_canti,acc_kilpor " +
         " FROM v_albacol as l, v_albacoc as c,v_proveedo as pv " +
         " WHERE c.emp_codi = " + EU.em_cod +
         " and l.emp_codi = " + EU.em_cod +
@@ -1629,7 +1657,7 @@ void insLinAlb(int row) throws Exception
         " AND c.acc_ano = " + jtFra.getValorInt(row, 1) +
         " and c.acc_serie = '" + jtFra.getValString(row, 2) + "'" +
         " and c.acc_nume= " + jtFra.getValorInt(row, 3) +
-        " group by c.acc_ano,c.acc_serie,c.acc_nume,c.acc_fecrec,c.prv_codi,pv.prv_nomb ";
+        " group by c.acc_ano,c.acc_serie,c.acc_nume,c.acc_fecrec,c.prv_codi,pv.prv_nomb,acc_kilpor ";
 
     if (!dtCon1.select(s))
       return; // No existe Linea para ese Albaran
@@ -1731,12 +1759,12 @@ int cambiaLinAlb(int row)
     v.add(jtAlb.getValString(row, 2)); // Alb.
     v.add("0"); // Alb.
     v.add(jtAlb.getValString(row, 3)); // Fec.Alb
-    v.add(jtAlb.getValString(row, 4)); // Kg. Alb.
-    v.add(jtAlb.getValString(row, 4)); // Kg. Fra
+    v.add(jtAlb.getValString(row, JTALB_KGALB)); // Kg. Alb.
+    v.add(jtAlb.getValString(row, JTALB_KGPOR)); // Kg. Fra
     v.add(tap_codiE.getText()); // Tarifa
     impTra = getImporteTra(tra_codiE.getValorInt(),
                            tap_codiE.getValorInt(),
-                           jtAlb.getValorDec(row, 4));
+                           jtAlb.getValorDec(row, JTALB_KGPOR));
     v.add(""+impTra); // Importe Portes
     v.add(jtAlb.getValString(row,5)+"-"+jtAlb.getValString(row,6));
     v.add("0"); // N. Linea
@@ -1757,7 +1785,7 @@ int cambiaLinAlb(int row)
          " and tap_fecini <= to_date('" + frt_fefrtrE.getText() + "','dd-MM-yyyy')" +
          " and tap_fecfin >= to_date('" + frt_fefrtrE.getText() +"','dd-MM-yyyy')";
 
-    int n=0;
+    int n;
     int nRow=jtFra.getRowCount();
     double kilos = 0,kilAlb=0;
     int nLin = 0;
@@ -1767,13 +1795,13 @@ int cambiaLinAlb(int row)
     {
       for (n = 0; n < nRow; n++)
       {
-        if (jtFra.getValorDec(n, 7) == 0)
+        if (jtFra.getValorDec(n, JTFRA_KGALB) == 0)
           continue;
         if (jtFra.getValString(n,0).startsWith("A"))
-          kilAlb += jtFra.getValorDec(n, 6);
-        kilos += jtFra.getValorDec(n, 7);
+          kilAlb += jtFra.getValorDec(n, JTFRA_KGALB);
+        kilos += jtFra.getValorDec(n, JTFRA_KGFRA);
         nLin++;
-        impLin=jtFra.getValorDec(n,9);
+        impLin=jtFra.getValorDec(n,JTFRA_IMPLIN);
         impLiT+=impLin;
       }
       frt_kglinE.setValorDec(kilos);
@@ -1803,11 +1831,11 @@ int cambiaLinAlb(int row)
         impLiT -= impLi0 * frt_dtoppE.getValorDec() / 100;
       if (frt_dtocomE.getValorDec() != 0)
         impLiT -= impLi0 * frt_dtocomE.getValorDec() / 100;
-      impLiT = Formatear.Redondea(impLiT, numDec);
+      impLiT = Formatear.redondea(impLiT, numDec);
       frt_basimpE.setValorDec(impLiT);
-      frt_impiva.setValorDec(Formatear.Redondea(impLiT * frt_pivaE.getValorDec() /
+      frt_impiva.setValorDec(Formatear.redondea(impLiT * frt_pivaE.getValorDec() /
                                                 100, numDec));
-      frt_impreeE.setValorDec(Formatear.Redondea(impLiT *
+      frt_impreeE.setValorDec(Formatear.redondea(impLiT *
                                                  frt_preequE.getValorDec() /
                                                  100, numDec));
       double impAnt=frt_imptotE.getValorDec();
@@ -1836,6 +1864,7 @@ int cambiaLinAlb(int row)
 
   }
 
+  @Override
   public void matar(boolean cerrarConexion)
   {
     super.matar(cerrarConexion);
@@ -1922,15 +1951,17 @@ int cambiaLinAlb(int row)
     v1.add("Serie"); // 1
     v1.add("Alb."); // 2
     v1.add("Fec.Alb"); // 3
-    v1.add("Kilos"); // 4
+    v1.add("Kil.Alb."); // 4
     v1.add("Prv."); // 5
     v1.add("Nombre Proveedor"); // 6
+    v1.add("Kil.Portes"); // 7
     jtAlb.setCabecera(v1);
 
-    jtAlb.setAlinearColumna(new int[]{2, 1, 2, 1, 2,2,0});
-    jtAlb.setAnchoColumna(new int[] {50, 60, 80, 90, 90,60,150});
+    jtAlb.setAlinearColumna(new int[]{2, 1, 2, 1, 2,2,0,2});
+    jtAlb.setAnchoColumna(new int[] {50, 60, 80, 90, 90,60,150,80});
     jtAlb.setAjustarGrid(true);
     jtAlb.setFormatoColumna(4, "---,--9.99");
+    jtAlb.setFormatoColumna(7, "---,--9.99");
 
   }
 

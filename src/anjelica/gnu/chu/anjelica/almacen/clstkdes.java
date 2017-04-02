@@ -46,6 +46,7 @@ import javax.swing.border.TitledBorder;
  */
 public class clstkdes extends ventana
 {
+  Date fecSacri;
   private String filtroEmpr;
   ventana ifPru=new ventana();
   proPanel pro_codiE=new proPanel();
@@ -67,11 +68,12 @@ public class clstkdes extends ventana
   CButton Bconsulta = new CButton("Aceptar (F4)",Iconos.getImageIcon("check"));
   CLabel cLabel1 = new CLabel();
   prvPanel prviniE = new prvPanel();
-  CLabel cLabel4 = new CLabel();
+  CLabel fecainL = new CLabel();
   CTextField fecainE = new CTextField(Types.DATE, "dd-MM-yyyy");
+  CCheckBox opAgruPrv = new CCheckBox("Agrup. Prv");
   CLabel cLabel5 = new CLabel();
   CTextField fecafinE = new CTextField(Types.DATE, "dd-MM-yyyy");
-  Cgrid jt = new Cgrid(7);
+  Cgrid jt = new Cgrid(8);
   proPanel profinE = new proPanel();
   CLabel cLabel6 = new CLabel();
   CLabel cLabel7 = new CLabel();
@@ -162,10 +164,9 @@ public class clstkdes extends ventana
     cLabel1.setBounds(new Rectangle(5, 22, 51, 18));
     prviniE.setText("");
     prviniE.setBounds(new Rectangle(57, 22, 240, 18));
-    cLabel4.setText("De Fec.Cad. ");
-    cLabel4.setBounds(new Rectangle(4, 62, 72, 18));
-    fecainE.setOpaque(true);
-    fecainE.setText("De Fec. Cad. ");
+    fecainL.setText("De Fec.Cad. ");
+    fecainL.setBounds(new Rectangle(4, 62, 72, 18));
+    opAgruPrv.setBounds(new Rectangle(4, 82, 82, 18));      
     fecainE.setBounds(new Rectangle(75, 62, 81, 18));
     cLabel5.setText("A Fec.Cad. ");
     cLabel5.setBounds(new Rectangle(190, 62, 64, 18));
@@ -196,14 +197,17 @@ public class clstkdes extends ventana
     v.add("Proveedor"); // 2
     v.add("Nombre Prv"); // 3
     v.add("Fec.Cad"); // 4
-    v.add("Kilos"); // 5
-    v.add("Unidades"); // 6
+    v.add("Fec.Sac."); // 5
+    v.add("Kilos"); // 6
+    v.add("Unidades"); // 7
     jt.setCabecera(v);
-    jt.setAnchoColumna(new int[]{70,150,60,150,90,80,80});
-    jt.setAlinearColumna(new int[]{2,0,2,0,1,2,2});
+    jt.setAnchoColumna(new int[]{70,150,60,150,90,90,80,80});
+    jt.setAlinearColumna(new int[]{2,0,2,0,1,1,2,2});
     jt.setAjustarGrid(true);
-    jt.setFormatoColumna(5,"----,--9.9");
-    jt.setFormatoColumna(6,"---,--9");
+    jt.setFormatoColumna(4,"dd/MM/yyyy");
+    jt.setFormatoColumna(5,"dd/MM/yyyy");
+    jt.setFormatoColumna(6,"----,--9.9");
+    jt.setFormatoColumna(7,"---,--9");
     this.getContentPane().add(statusBar,BorderLayout.SOUTH);
     this.getContentPane().add(Pprinc,  BorderLayout.CENTER);
     Pcons.add(proiniE, null);
@@ -213,7 +217,8 @@ public class clstkdes extends ventana
     Pcons.add(cLabel7, null);
     Pcons.add(prviniE, null);
     Pcons.add(cLabel1, null);
-    Pcons.add(cLabel4, null);
+    Pcons.add(fecainL, null);
+    Pcons.add(opAgruPrv, null);
     Pcons.add(fecainE, null);
     Pprinc.add(jt,   new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
@@ -289,6 +294,7 @@ public class clstkdes extends ventana
   void activarEventos()
   {
     Bconsulta.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         Bconsulta_actionPerformed();
       }
@@ -339,6 +345,7 @@ public class clstkdes extends ventana
     if (fecfinE.isNull() || fecfinE.getError())
     {
       mensajeErr("Fecha de Stock no es Valida");
+      fecfinE.setDate(Formatear.getDateAct());
       fecfinE.requestFocus();
       return;
     }
@@ -421,25 +428,30 @@ public class clstkdes extends ventana
                    dtCon1.getString("canind", true));
             if (buscaDatPrv())
               htPrv.put(llave, dtCon1.getString("pro_codi") + "|" +
-                        dtStat.getString("prv_codi") + "|" +
-                        dtStat.getFecha("feccad", "dd-MM-yyyy"));
+                        (opAgruPrv.isSelected()?"0":dtStat.getString("prv_codi")) + "|" +
+                        dtStat.getFecha("feccad", "dd-MM-yyyy")+
+                        "|"+Formatear.getFecha(fecSacri, "dd-MM-yyyy"));
             else
-              htPrv.put(llave, dtCon1.getString("pro_codi") + "|0|");
+              htPrv.put(llave, dtCon1.getString("pro_codi") + "|0||");
             continue;
           }
         }
         if (tipMov.equals("+"))
         {
           if (!dtCon1.getString("sel").equals("R"))
-            htPrv.put(llave, dtCon1.getString("pro_codi")+"|"+dtCon1.getString("prv_codi")+"|"+dtCon1.getFecha("feccad","dd-MM-yyyy"));
+            htPrv.put(llave, dtCon1.getString("pro_codi")+"|"+
+                (opAgruPrv.isSelected()?"0":dtCon1.getString("prv_codi"))+
+                "|"+dtCon1.getFecha("feccad","dd-MM-yyyy")+
+                "|"+Formatear.sumaDias(dtCon1.getFecha("feccad","dd-MM-yyyy"),"dd-MM-yyyy",-30));
           else
           {
             if (buscaDatPrv())
               htPrv.put(llave, dtCon1.getString("pro_codi") + "|" +
-                   dtStat.getString("prv_codi") + "|" +
-                   dtStat.getFecha("feccad", "dd-MM-yyyy"));
+                   (opAgruPrv.isSelected()?"0":dtStat.getString("prv_codi")) + "|" +
+                   dtStat.getFecha("feccad", "dd-MM-yyyy")+
+                   "|"+Formatear.getFecha(fecSacri, "dd-MM-yyyy"));
             else
-               htPrv.put(llave, dtCon1.getString("pro_codi") + "|0|");
+               htPrv.put(llave, dtCon1.getString("pro_codi") + "|0||");
           }
           if ((o=ht.get(llave))==null)
             ht.put(llave, dtCon1.getString("canti",true)+"|"+dtCon1.getString("canind",true));
@@ -502,14 +514,17 @@ public class clstkdes extends ventana
         if (n % 10 == 0)
           mensajeErr("Buscando Prov.. Tratando Producto: "+proCodi,false);
 
-        // Busco Proveedor/Fec.Cad. en htPrv
+        // Busco Proveedor/Fec.Cad./Fec.Sacr en htPrv
         valor=htPrv.get(key);
         if (valor==null)
         {
           if (buscaDatPrv(key,proCodi))
-            llave=proCodi+"|"+dtStat.getString("prv_codi")+"|"+dtStat.getFecha("feccad","dd-MM-yyyy");
+            llave=proCodi+"|"+
+                (opAgruPrv.isSelected()?"0":dtStat.getString("prv_codi"))
+                +"|"+dtStat.getFecha("feccad","dd-MM-yyyy")
+                +"|"+Formatear.sumaDias(dtCon1.getFecha("feccad","dd-MM-yyyy"),"dd-MM-yyyy",-30);
           else
-            llave= proCodi+"|0|";
+            llave= proCodi+"|0||";
         }
         else
           llave=valor.toString();
@@ -540,17 +555,23 @@ public class clstkdes extends ventana
         numuni=Double.parseDouble(getCampoLlave(valor.toString(),posFin));
         if (canti+numuni==0)
           continue;
-        Vector v=new Vector();
+        ArrayList v=new ArrayList();
         v.add(getProdLlave(llave)); // 0
         v.add(pro_codiE.getNombArtCli(Integer.parseInt(getProdLlave(llave)),0,EU.em_cod,dtStat)); // 1
         prvCodi=Integer.parseInt(getCampoLlave(llave,posFin));
         v.add(""+prvCodi); // 2
         v.add(prv_codiE.getNombPrv(""+prvCodi,dtStat)); // 3
-        v.add(getCampoLlave(llave,posFin)); // 4
+        Date fecCadu=Formatear.getDate(getCampoLlave(llave,posFin),"dd-MM-yyyy");
+        if (Formatear.comparaFechas(fecCadu, fecainE.getDate())>=0 )
+            continue; // Fecha cad. Inf. a la inicial
+        v.add(fecCadu); // 4
+        v.add(Formatear.getDate(getCampoLlave(llave,posFin),"dd-MM-yyyy")); // 6 Fec.Sacr.
         key=htGrp.get(key);
         llave=key.toString();
-        v.add(""+canti); // 5
-        v.add(""+numuni); // 6
+        v.add(canti); // 6
+        v.add(numuni); // 7
+        if (numuni<=0)
+            continue;
         jt.addLinea(v);
 //        System.out.println(key+" : "+htGrp.get(key));
       }
@@ -567,8 +588,9 @@ public class clstkdes extends ventana
     String condArt = (proDisc3 == null ? "" :" and a.cam_codi like '%" + proDisc3 + "%'") +
         (proDisc4 == null ? "" :
          " and a.pro_disc4 like '%" + proDisc4 + "%'") +
-        " and a.pro_codi > 99 "+
-        (!proiniE.isNull() ? "  and a.PRo_codi >= " + proiniE.getValorInt() :"") +
+        " and a.pro_tiplot = 'V' "+
+        (!proiniE.isNull() ? "  and a.PRo_codi "+
+        (profinE.isNull()?"":">")+"= " + proiniE.getValorInt() :"") +
         (!profinE.isNull() ? "  and a.PRo_codi <= " + profinE.getValorInt() :
          "");
     String sql;
@@ -682,6 +704,7 @@ public class clstkdes extends ventana
 
   private boolean buscaDatPrv(String empCodi,String ejeNume,String proCodi,String serie,String lote,String numind) throws SQLException,java.text.ParseException
   {
+    fecSacri=null;
     s = " select prv_codi as prv_codi, deo_feccad as feccad" +
         " from  v_despfin as l,desporig as c where " +
         "  l.def_emplot = " + empCodi +
@@ -694,7 +717,7 @@ public class clstkdes extends ventana
         " and l.deo_codi = c.deo_codi ";
     if (!dtStat.select(s))
     {
-      s = " select prv_codi as prv_codi, l.acp_feccad as feccad" +
+      s = " select prv_codi as prv_codi, l.acp_feccad as feccad,l.acp_fecsac" +
           " from  v_albcompar as l,v_albacoc as g where " +
           "  l.emp_codi = " + empCodi +
           " and l.acc_ano = " + ejeNume +
@@ -706,10 +729,14 @@ public class clstkdes extends ventana
           " and l.emp_codi = g.emp_codi " +
           " and l.acc_serie = g.acc_serie" +
           " and l.acc_nume = g.acc_nume";
-      dtStat.select(s);
+      if (dtStat.select(s))
+          fecSacri=dtStat.getDate("acp_fecsac");
     }
+    else
+        fecSacri=Formatear.sumaDiasDate(dtStat.getDate("feccad"),-30);
     return !dtStat.getNOREG();
   }
+  @Override
   public void matar(boolean cerrarConexion)
   {
     if (!muerto)

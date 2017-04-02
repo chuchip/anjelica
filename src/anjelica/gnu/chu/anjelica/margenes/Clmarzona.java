@@ -453,6 +453,7 @@ public class Clmarzona extends ventana {
     mvtosAlm.setCliente(cli_codiE.getValorInt());
     mvtosAlm.setRutCodi(rut_codiE.isNull()?(String) null:rut_codiE.getText());
     mvtosAlm.iniciarMvtos(feulinE.getDate(), feciniE.getDate(),fecfinE.getDate(),dtCon1);
+//    mvtosAlm.setIgnoraRepAlb(opIgnRepAlb.isSelected());
     mvtosAlm.resetMensajes();
     do
     {
@@ -826,6 +827,7 @@ public class Clmarzona extends ventana {
         Pcabe.add(rut_codiE);
         rut_codiE.setBounds(120, 87, 270, 17);
 
+        opIgnRepAlb.setSelected(true);
         opIgnRepAlb.setText("Ignorar Rep. Alb");
         opIgnRepAlb.setToolTipText("Ignorar representante de Albaran");
         Pcabe.add(opIgnRepAlb);

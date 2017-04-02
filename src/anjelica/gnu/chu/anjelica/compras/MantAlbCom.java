@@ -734,7 +734,7 @@ private JMenuItem MIimprEtiqInd;
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20170307)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20170328)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -2612,7 +2612,11 @@ private JMenuItem MIimprEtiqInd;
         }
         if (acp_cantiE.getValorDec() == 0 && jtDes.getValorInt(row, DESNIND) == 0)
             return -1;
-
+        if (acp_cantiE.getValorDec() == 0)
+        {
+            mensajeErr("Si tiene individuo no se puede dejar el peso a 0. Borre el individuo");
+            return 0;
+        }
         int ret = cambiaLinDesg0(row);
         if (ret >= 0)
             return ret;

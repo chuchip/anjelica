@@ -37,6 +37,7 @@ import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.compras.MantAlbComPlanta;
 import gnu.chu.anjelica.despiece.MantDesp;
+import gnu.chu.anjelica.listados.repetiqu;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.camposdb.empPanel;
@@ -239,6 +240,12 @@ public class Comvalm extends ventana
         irStockPartidas(jt.getValString(JT_LOTE),pro_codiE.getValorInt(),jt.getValorInt(JT_ALMACEN));
       }
     });
+     MImprEtiq.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        imprEtiquetas(jt.getValString(JT_LOTE),pro_codiE.getValorInt(),jt.getValorInt(JT_ALMACEN));
+      }
+    });
      Breset.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -391,11 +398,17 @@ public class Comvalm extends ventana
                           if (pdconfig.getTipoEmpresa(EU.em_cod, dtStat) == pdconfig.TIPOEMP_PLANTACION)
                           {
                               if ((prog = jf.gestor.getProceso(MantAlbComPlanta.getNombreClase())) == null)
+                              {
+                                  resetMsgEspere();
                                   return;
+                              }
                           } else
                           {
                               if ((prog = jf.gestor.getProceso(MantAlbComCarne.getNombreClase())) == null)
+                              {
+                                  resetMsgEspere();
                                   return;
+                              }
                           }
 
                           MantAlbCom cm = (MantAlbCom) prog;
@@ -419,7 +432,10 @@ public class Comvalm extends ventana
                   if (jt.getValString(JT_TIPO).startsWith("R"))
                   {
                       if ((prog = jf.gestor.getProceso(pdregalm.getNombreClase())) == null)
+                      {
+                          resetMsgEspere();
                           return;
+                      }
                       pdregalm cm = (pdregalm) prog;
                       if (cm.inTransation())
                       {
@@ -458,7 +474,41 @@ public class Comvalm extends ventana
 //      opSalidaDep.setSelected(!sel);
 //      opInventDep.setSelected(!sel);
   }
-  
+  void imprEtiquetas(final String lote,final int proCodi,final int almCodi)
+  {
+       msgEspere("Ejecutando listado etiquetas...");
+       new miThread("")
+       {
+                @Override
+                public void run()
+                {
+                  javax.swing.SwingUtilities.invokeLater(new Thread()
+                  {
+                      @Override
+                      public void run()
+                      {                   
+                        ejecutable prog;
+                        if ((prog=jf.gestor.getProceso(repetiqu.getNombreClase()))==null)
+                        {
+                           resetMsgEspere();
+                          return;
+                        }
+                        repetiqu cm=(repetiqu) prog;
+                        String lot[]=lote.split("-");
+                        cm.setEjercicio(Integer.parseInt(lot[0]));
+                        cm.setSerie(lot[1]);
+                        cm.setPartida(Integer.parseInt(lot[2]));
+                        cm.setIndividuo(Integer.parseInt(lot[3]));
+                        cm.setProducto(proCodi);                       
+                     
+                        cm.consulta0();
+                        jf.gestor.ir(cm);
+                        resetMsgEspere();
+                      }
+                  });
+                }
+      };
+  }  
   void irStockPartidas(final String lote,final int proCodi,final int almCodi)
   {
       msgEspere("Ejecutando consulta en Stock Partidas");
@@ -474,7 +524,10 @@ public class Comvalm extends ventana
                       {                   
                         ejecutable prog;
                         if ((prog=jf.gestor.getProceso(costkpar.getNombreClase()))==null)
+                        {
+                           resetMsgEspere();
                           return;
+                        }
                         costkpar cm=(costkpar) prog;
                         String lot[]=lote.split("-");
                         cm.setEjercicio(Integer.parseInt(lot[0]));
@@ -637,6 +690,7 @@ public class Comvalm extends ventana
         MVerDoc = new javax.swing.JMenuItem();
         opSalidaDep = new javax.swing.JCheckBoxMenuItem();
         opInventDep = new javax.swing.JCheckBoxMenuItem();
+        MImprEtiq = new javax.swing.JMenuItem();
         Pprinc = new gnu.chu.controles.CPanel();
         Pentra = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -754,6 +808,8 @@ public class Comvalm extends ventana
 
             opInventDep.setMnemonic('V');
             opInventDep.setText("Inv.Deposito");
+
+            MImprEtiq.setText("Impr. Etiqueta");
 
             Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -914,6 +970,7 @@ public class Comvalm extends ventana
             jt.setAjustarColumnas(true);
             jt.getPopMenu().add(MVerDoc);
             jt.getPopMenu().add(MVerStock);
+            jt.getPopMenu().add(MImprEtiq);
 
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
@@ -1061,6 +1118,7 @@ public class Comvalm extends ventana
     private gnu.chu.controles.CButton Bacepta;
     private gnu.chu.controles.CButton Bfiltro;
     private gnu.chu.controles.CButton Breset;
+    private javax.swing.JMenuItem MImprEtiq;
     private javax.swing.JMenuItem MVerDoc;
     private javax.swing.JMenuItem MVerStock;
     private gnu.chu.controles.CPanel PEntra;

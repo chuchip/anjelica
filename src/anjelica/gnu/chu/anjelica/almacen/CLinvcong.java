@@ -1,5 +1,5 @@
-
 package gnu.chu.anjelica.almacen;
+
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.MantTipDesp;

@@ -43,3 +43,11 @@ v_despfin.def_serlot = s.pro_serie and
 v_despfin.pro_lote= s.pro_nupar and
 v_despfin.pro_numind=s.pro_numind and stp_unact=1)
 --order by deo_codi
+--
+--  Sacar comisiones de representantes en un albaran
+--
+select PRO_CODI,AVL_PRVEN, AVL_PROFER,TAR_PRECI from v_albavel where emp_codi=1 and avc_ano=2016 and avc_nume=11361 and avc_serie='A'
+--
+-- Sacar precio entrada de  produccion en unas fechas
+--
+select sum(deo_kilos* deo_prcost)/ sum(deo_kilos) from v_despori where deo_incval='S' and deo_fecha between '20170306' and '20170312'

@@ -1810,6 +1810,8 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
    */
   public static String getFechaVer(java.util.Date fecha)
    {
+     if (fecha==null)
+         return "";
      GregorianCalendar gcal = new GregorianCalendar();
      gcal.setTime(fecha);
      return Formatear.format(gcal.get(GregorianCalendar.DAY_OF_MONTH), "00")+"-"+

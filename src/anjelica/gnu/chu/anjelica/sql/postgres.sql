@@ -1251,7 +1251,7 @@ constraint ix_albcompar primary key(acc_ano,emp_codi,acc_serie,acc_nume,acl_nuli
  create or replace view anjelica.v_compras as 
 select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,c.sbe_codi,
 l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi,
-i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_fecpro,i.acp_nucrot,i.acp_clasi,i.acp_painac,
+i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_fecpro,i.acp_nucrot,i.acp_clasi,i.acp_painac,i.sde_codi,
 i.acp_paisac,i.acp_engpai,i.mat_codi
 from anjelica.v_albacoc as c,anjelica.v_albacol as l, anjelica.v_albcompar as i
 where c.acc_ano=l.acc_ano
@@ -2390,7 +2390,7 @@ primary key (pro_codi,loc_codi)
 -- DROP TABLE v_prvsade;
 create TABLE v_prvsade
 (
-prv_codi int not null,  --- Cod. Proveedor
+prv_codi int not null,   --- Cod. Proveedor
 sde_codi int not null	--- Codigo de Sala de Despieze
 );
 ---
@@ -3814,6 +3814,7 @@ create table anjelica.histventas
     hve_impven float,        -- Importe Ventas
     hve_kiveav float,        -- Kilos Venta Articulos Vendibles
     hve_imveav float,        -- Importe de Venta Articulos Vendibles
+	div_codi int not null default 1, -- Divisa
 );
 -- alter table anjelica.v_stkpart rename to stkpart_old;
 -- drop table anjelica.stockpart;
@@ -4127,7 +4128,7 @@ create table tiempostarea
 	tit_tipdoc char(1) not null,		-- "Pedido","D" Despiece
 	tit_id int not null,				-- Identificador documento
 	tit_tiempo float not null, 			-- Tiempo Identificador	
-	constraint ix_tiempostarea primary  key (tit_tipdoc,tit_id)
+	constraint ix_tiempostarea primary  key (usu_nomb,tit_tipdoc,tit_id)
 );
 grant all on anjelica.tiempostarea to public;
 --drop view v_cliprv;

@@ -1,12 +1,13 @@
 package gnu.chu.anjelica.almacen;
 
+import java.util.Date;
 import java.util.Objects;
 
 /**
   <p> Descripción: Clase para almacenar los datos de un individuo mandados a traves de 
  * HashMap.
- * Usada por actStkPart y PdInvControl</p>
- * <p>Copyright: Copyright (c) 2005-2013
+ * Usada por actStkPart y PdInvControl, lisaldos</p>
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -25,10 +26,11 @@ public class DatIndivBase
 {
     public double canti;
     public int numuni,proCodi,ejeNume,lote,numind,almCodi;
+    
     public String serie;
    
 
- 
+  
     public int getNumuni() {
         return numuni;
     }
@@ -95,7 +97,7 @@ public class DatIndivBase
     {
         return canti;
     }
-   
+    
     public DatIndivBase()
     {
         

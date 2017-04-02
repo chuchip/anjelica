@@ -1,12 +1,12 @@
 package gnu.chu.anjelica.almacen;
 
-import java.util.Objects;
+import java.util.Date;
 
 /**
   <p> Descripción: Clase para almacenar los datos de un individuo mandados a traves de 
  * HashMap.
  * Usada por actStkPart y PdInvControl</p>
- * <p>Copyright: Copyright (c) 2005-2013
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -23,7 +23,8 @@ import java.util.Objects;
  */
 public class DatIndiv extends DatIndivBase
 {
-   
+    private Date fecCaduc, fecSacrif;
+    private int prvCodi=0;
     private String auxiliar;
     int posFin;
     private int numLinea;
@@ -36,7 +37,15 @@ public class DatIndiv extends DatIndivBase
         this.numLinea = numLinea;
     }
     
-    
+    public void setProveedor(int codProveed)
+    {
+        prvCodi=codProveed;
+    }
+    public int  getProveedor()
+    {
+        return prvCodi;
+    }
+
     public String getAuxiliar()
     {
         return auxiliar;
@@ -49,8 +58,29 @@ public class DatIndiv extends DatIndivBase
     {
         
     }
-   
+     public void setFechaCaducidad(Date fecCad)
+    {
+        fecCaduc=fecCad;
+    }
     
+    public Date getFechaCaducidad()
+    {
+        return fecCaduc;
+    }
+     public void setFechaSacrificio(Date fecSacr)
+    {
+        fecSacrif=fecSacr;
+    }
+    
+    public Date getFechaSacrificio()
+    {
+        return fecSacrif;
+    }
+    /**
+     * Almacena los datos de un individuo.
+     * @param key datos  del individuo, separados por Pipes (|). 
+     * @param valor Valores del individuo (Cantidad y Numero Indiv.) separados por pipes.
+     */
     public DatIndiv(String key,String valor)
     {
        canti = Double.parseDouble(getCampoLlave(valor, 0));

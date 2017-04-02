@@ -16,7 +16,7 @@ import gnu.chu.anjelica.despiece.utildesp;
  * mostrar. Permite elegir diferentes tipos de etiqueta.
  * La opcion de generar el inventario esta obsoleta y deshabilitada.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2015</p>
+ * <p>Copyright: Copyright (c) 2005-20175</p>
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -123,7 +123,30 @@ public class repetiqu extends ventana
               ErrorInit(e);
       }
     }
-
+   public static String getNombreClase()
+   {        
+     return "gnu.chu.anjelica.listados.repetiqu";
+   }
+   public void setEjercicio(int ejerc)
+   {
+       deo_ejelotE.setValorInt(ejerc);
+   }
+   public void setSerie(String serie)
+   {
+       deo_serlotE.setText(serie);
+   }
+   public void setPartida(int partida)
+   {
+       pro_loteE.setValorInt(partida);
+   }
+   public void  setIndividuo(int indiv)
+   {
+       pro_numindE.setValorInt(indiv);       
+   }
+   public void setProducto(int producto)
+   {
+       pro_codiE.setValorInt(producto);
+   }
     private void jbInit() throws Exception
     {
       iniciarFrame();
@@ -475,7 +498,20 @@ public class repetiqu extends ventana
 
       mensajeErr("Activado Modo ... Generar");
     }
-
+    public void consulta0()
+    {
+        try
+        {
+            if (buscaPeso())
+            {
+                deo_kilosE.setValorDec(dtCon1.getDouble("stp_kilact"));
+            }
+            verDatos();
+        } catch (SQLException k)
+        {
+            Error("Error al buscar datos", k);
+        }
+    }
     void Bindi_actionPerformed()
     {
       try {
@@ -538,6 +574,7 @@ public class repetiqu extends ventana
       }
       new miThread("")
       {
+        @Override
         public void run()
         {
           verDatos();

@@ -1,3 +1,4 @@
+alter table histventas add div_codi int not null default 1;
 --
 -- Incluida fecha alta en v_albcompar
 --

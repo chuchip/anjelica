@@ -8,7 +8,7 @@ package gnu.chu.anjelica.almacen;
  *   '0' Generar (Sala).  1 Gerencia , '2' Cerrar (Oficina)
  * admin: Especifica si podra cambiar el permiso desde el programa
  * Según el estado mandado como parametro podra Modificar/Borrar los partes de estado anterior o igual.
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -80,6 +80,7 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class MantPartes  extends ventanaPad implements PAD
 {
+    int nLinReg=0;
     final static String[][] PAA_TIPO={{"Cliente","C"},
         {"Proveedor","P"} };
     final static String[][] PAC_ESTADO={{"Generada", "0"},
@@ -300,7 +301,7 @@ public class MantPartes  extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false,P_ADMIN?navegador.NORMAL:
             P_PERMEST==PERM_GERENC?navegador.SOLOEDIT | navegador.CURYCON :navegador.NORMAL);
         statusBar = new StatusBar(this);
-        this.setVersion("(20161010) Modo: "+P_PERMEST);
+        this.setVersion("(20170325) Modo: "+P_PERMEST);
         iniciarFrame();
 
         this.getContentPane().add(nav, BorderLayout.NORTH);
@@ -750,8 +751,10 @@ public class MantPartes  extends ventanaPad implements PAD
        ifRegAlm.statusBar.setEnabled(true);
      ifRegAlm.setVisible(true);    
      ifRegAlm.reset();
+     nLinReg=jtLineas.getSelectedRowDisab();
      ifRegAlm.getPanelReg().setCampos(
-         pac_fecresE.getDate()==null?pac_fecproE.getDate():pac_fecresE.getDate(),jtLineas.getValorInt(JTLINEAS_PROCOD),
+         pac_fecresE.getDate()==null? (pac_fecproE.getDate()==null?pac_fecaltE.getDate():pac_fecproE.getDate())
+             :pac_fecresE.getDate(),jtLineas.getValorInt(JTLINEAS_PROCOD),
                                         EU.em_cod,
                                       pro_ejelotE1.getValorInt(), pro_serlotE1.getText(),pro_numlotE1.getValorInt(),
                                       pro_indlotE1.getValorInt(),pal_unidadE1.getValorInt(),
@@ -781,7 +784,7 @@ public class MantPartes  extends ventanaPad implements PAD
               return;
           }
     }
-    jtLineas.requestFocusLater();
+    jtLineas.requestFocusLater(nLinReg,0);
   }
   void irGridAbo()
   {
@@ -1327,6 +1330,7 @@ public class MantPartes  extends ventanaPad implements PAD
                 if (deoUnid<1)
                 return;
                 jt.procesaAllFoco();
+                jt.mueveSigLinea(0);
             }
             public void afterSalirLote(ayuLote ayuLot)
             {
@@ -1339,6 +1343,7 @@ public class MantPartes  extends ventanaPad implements PAD
                     jt.setValor(ayuLot.jt.getValString(ayuLot.rowAct,ayuLote.JT_PESO),JT_PESO);
                     jt.setValor(ayuLot.jt.getValString(ayuLot.rowAct,ayuLote.JT_NUMUNI),JT_UNID);
                     jt.resetCambio();
+
                 }
             }
         };

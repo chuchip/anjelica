@@ -329,6 +329,7 @@
             </Component>
             <Component class="gnu.chu.controles.CCheckBox" name="opIgnRepAlb">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Ignorar Rep. Alb"/>
                 <Property name="toolTipText" type="java.lang.String" value="Ignorar representante de Albaran"/>
               </Properties>
