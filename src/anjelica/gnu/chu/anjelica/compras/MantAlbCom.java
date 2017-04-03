@@ -2331,6 +2331,12 @@ private JMenuItem MIimprEtiqInd;
       mensajeErr(prv_codiE.getMsgError());
       return false;
     }
+    
+    if (! prv_codiE.isActivo())
+    {
+        mensajeErr("Proveedor NO esta activo");
+        return false;
+    }
     s = pdejerci.checkFecha(dtStat, acc_anoE.getValorInt(), emp_codiE.getValorInt(), acc_fecrecE.getText());
     if (s != null)
     {

@@ -44,7 +44,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel1">
           <Properties>
             <Property name="text" type="java.lang.String" value="De fecha Alb."/>
           </Properties>
@@ -69,7 +69,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel2">
           <Properties>
             <Property name="text" type="java.lang.String" value="A fecha Albaran"/>
           </Properties>
@@ -94,7 +94,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel3">
           <Properties>
             <Property name="text" type="java.lang.String" value="De Albar&#xe1;n"/>
           </Properties>
@@ -119,7 +119,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel4">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel4">
           <Properties>
             <Property name="text" type="java.lang.String" value="A Albaran"/>
           </Properties>
@@ -154,7 +154,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel5">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel5">
           <Properties>
             <Property name="text" type="java.lang.String" value="De Cliente"/>
           </Properties>
@@ -171,7 +171,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel6">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel6">
           <Properties>
             <Property name="text" type="java.lang.String" value="A Cliente"/>
           </Properties>
@@ -188,7 +188,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel7">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel7">
           <Properties>
             <Property name="text" type="java.lang.String" value="De serie Alb."/>
           </Properties>
@@ -205,7 +205,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel8">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel8">
           <Properties>
             <Property name="text" type="java.lang.String" value="A serie Alb."/>
           </Properties>
@@ -222,7 +222,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel9">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel9">
           <Properties>
             <Property name="text" type="java.lang.String" value="Empresa"/>
           </Properties>
@@ -242,7 +242,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel10">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel10">
           <Properties>
             <Property name="text" type="java.lang.String" value="Ejercicio"/>
           </Properties>
@@ -267,7 +267,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel11">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel11">
           <Properties>
             <Property name="text" type="java.lang.String" value="Fecha Facturas"/>
           </Properties>
@@ -292,7 +292,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel12">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel12">
           <Properties>
             <Property name="text" type="java.lang.String" value="Numero Factura"/>
           </Properties>
@@ -317,7 +317,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel13">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel13">
           <Properties>
             <Property name="text" type="java.lang.String" value="Tipo Facturacion"/>
           </Properties>
@@ -359,7 +359,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel14">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel14">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Agente/Zona"/>
               </Properties>
@@ -379,7 +379,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel15">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel15">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Zona/Cdto"/>
               </Properties>
@@ -399,7 +399,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel16">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel16">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Activo"/>
               </Properties>
@@ -416,7 +416,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel17">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel17">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Giros"/>
               </Properties>
@@ -459,7 +459,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel18">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel18">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Num. Albaranes"/>
               </Properties>
@@ -485,7 +485,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel19">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel19">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Importe"/>
               </Properties>
@@ -539,7 +539,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="gnu.chu.controles.pvc_comentL" name="cLabel20">
+        <Component class="gnu.chu.controles.CLabel" name="cLabel20">
           <Properties>
             <Property name="text" type="java.lang.String" value="Serie Factura"/>
           </Properties>

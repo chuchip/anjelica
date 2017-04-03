@@ -1843,6 +1843,7 @@ public class pdalbara extends ventanaPad  implements PAD
               }
           }
       } );
+      
       avc_cerraE.addActionListener(new java.awt.event.ActionListener()
       {
           @Override
@@ -3018,14 +3019,8 @@ public class pdalbara extends ventanaPad  implements PAD
     catch (PropertyVetoException k)
     {}
     this.setFoco(null);
-    SwingUtilities.invokeLater(new Thread()
-    {
-       @Override
-      public void run()
-      {
-        jtDes.requestFocus(jtDes.getSelectedRow(), 8);
-      }
-    });
+    jtDes.requestFocusLater(jtDes.getSelectedRow(),JTDES_KILBRU);
+
   }
 
   @Override

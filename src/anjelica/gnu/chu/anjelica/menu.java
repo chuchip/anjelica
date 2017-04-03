@@ -74,6 +74,7 @@ public class menu extends JFrame
 //  JMenuItem mnuAlbaCom=new JMenuItem("Albaranes Compras");
   JMenuItem mnuReclPrv=new JMenuItem("Recl.Prv.");
   JMenuItem pdtipdes= new JMenuItem("Tipos Desp");
+  JMenuItem manInvProd= new JMenuItem("Mant.Inv. Prod.");
   JPopupMenu JPopupAlmacen = new JPopupMenu();
   JMenuItem jMenuAlmacen = new JMenuItem();
   JPopupMenu jPopupCompras = new JPopupMenu();
@@ -980,6 +981,11 @@ JMenuItem mantArticVenta = new JMenuItem();
         pdtipdes_actionPerformed(e);
       }
     });
+      manInvProd.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        manInvProd_actionPerformed(e);
+      }
+    });
     prueba3.setText("Prueba3");
     prueba3.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -1101,6 +1107,7 @@ JMenuItem mantArticVenta = new JMenuItem();
     popupDesp.add(codegen);
     popupDesp.add(recosdes);
     popupDesp.add(pdtipdes);
+    popupDesp.add(manInvProd);
     JpopupVentas.add(clAlbSinCosto);
     JpopupVentas.add(pdalbara);
     JpopupVentas.add(cldepcli);
@@ -2360,6 +2367,12 @@ void pdgruart_actionPerformed(ActionEvent e) {
  //   lanzaEjecutable(new gnu.chu.anjelica.despiece.codegen(menu.this, EU));
     lanzaEjecutable(new gnu.chu.anjelica.despiece.MantTipDesp(menu.this, EU));
   }
+   void manInvProd_actionPerformed(ActionEvent e)
+   {
+       Hashtable ht=new Hashtable();
+       ht.put("admin","true");
+       lanzaEjecutable(new gnu.chu.anjelica.despiece.MantInvProduc(menu.this, EU,ht));
+   }
   void prueba3_actionPerformed(ActionEvent e) {
     lanzaEjecutable(new gnu.chu.pruebas.pru3(menu.this,EU));
   }

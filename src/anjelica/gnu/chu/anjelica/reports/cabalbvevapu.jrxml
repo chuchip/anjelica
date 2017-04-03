@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2017-01-14T13:13:33 -->
+<!-- 2017-02-09T20:29:40 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabalbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="56" bottomMargin="20" uuid="8ad01048-3ed1-412c-9f75-d79db66b0206">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -24,6 +24,10 @@
 	<parameter name="empNif" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA["ESB2613259"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imprObser" class="java.lang.Boolean">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[select c.*,cl.* from v_albavec as c,clientes as cl
@@ -966,6 +970,9 @@ Fax. 948 645590]]></text>
 				</subreportParameter>
 				<subreportParameter name="avs_fecha">
 					<subreportParameterExpression><![CDATA[$P{avs_fecha}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="imprObser">
+					<subreportParameterExpression><![CDATA[$P{imprObser}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_FILE_NAME}]]></subreportExpression>

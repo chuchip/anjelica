@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-04-16T13:34:18 -->
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2017-01-16T19:55:07 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabfravepi" pageWidth="595" pageHeight="842" columnWidth="543" leftMargin="30" rightMargin="22" topMargin="22" bottomMargin="20" uuid="c6fbf972-aefb-4fe7-9ae6-6d52c448b40a">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="normal" isDefault="true" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+	<style name="normal" isDefault="true" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 	<parameter name="SUBREPORT_FILE_NAME" class="java.lang.String">
 		<parameterDescription><![CDATA[Subreport con las lineas de Albaran]]></parameterDescription>
 	</parameter>
@@ -366,7 +366,7 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Vacunos Puente, S.L.U]]></text>
 				</staticText>
@@ -379,7 +379,7 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[NIF:]]></text>
 				</staticText>
@@ -454,7 +454,7 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Viene de la página anterior]]></text>
 			</staticText>
@@ -718,7 +718,7 @@ C.E.E-]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
-					<font fontName="Arial" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="Arial" isBold="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[TOTAL FRA.]]></text>

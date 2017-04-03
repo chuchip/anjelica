@@ -1937,6 +1937,7 @@ tar_linea int not null, -- Linea de tarifa
 pro_codart varchar(15) not null, -- Codigo de Articulo
 pro_nomb VARCHAR(50) not null, -- Descripcion del Articulo
 tar_preci decimal(10,2),
+tar_comrep float default 0 not null,   -- Comision Representantes
 tar_comen varchar(150),
 tar_grupo smallint not null, -- Grupo de familia  (solo se usa cuando pro_codart='')
 tar_tipo smallint not null  -- Tipo Animal (solo se usa cuando pro_codart='X')
@@ -1955,6 +1956,7 @@ tar_linea int not null, -- Linea de tarifa
 pro_codart varchar(15) not null, -- Codigo de Articulo
 pro_nomb VARCHAR(50) not null, -- Descripcion del Articulo
 tar_preci decimal(10,2),
+tar_comrep float default 0 not null,   -- Comision Representantes
 tar_comen varchar(150),
 constraint ix_taricli primary key (tar_fecini,cli_codi,pro_codart)
 );
@@ -3294,13 +3296,13 @@ insert into parametros values('*','despPend','Permite dejar despieces pendientes
 -- drop table coninvcab;
 create table anjelica.coninvcab
 (
-	emp_codi int not null, 		-- Empresa
+	emp_codi int not null, 		-- Empresa (Deprecated)
 	cci_codi int not null,		-- Numero de Inventario
 	usu_nomb varchar(15),		-- Usuario q. realizo el inventario
 	cci_feccon date not null,	-- Fecha de Control
 	cam_codi varchar(2) not null,	-- Codigo de Camara (Tabla v_camaras)
-	alm_codi int not null,
-constraint ix_coninvcab primary key (emp_codi,cci_codi)
+	alm_codi int not null, 	-- Almacen
+    constraint ix_coninvcab primary key (emp_codi,cci_codi)
 );
 create index ix_coninvcab1 on coninvcab(cci_feccon,emp_codi);
 --
@@ -3339,7 +3341,49 @@ select c.emp_codi,c.cci_codi,c.usu_nomb,cci_feccon, cam_codi,alm_codi,lci_nume,p
 prp_indi,lci_peso,lci_kgsord,lci_numind,lci_regaut,lci_coment, lci_causa,lci_numcaj,lci_numpal,alm_codlin from coninvcab as c, coninvlin as l where
 c.emp_codi=c.emp_codi
 and c.cci_codi=l.cci_codi;
-grant select on  v_config to public;
+grant select on  v_coninvent to public;
+----
+-- Tabla Cabecera Inventarios  piezas producción
+--
+--drop table anjelica.cinvproduc;
+create table anjelica.cinvproduc
+(	
+	cip_codi int not null,			-- Numero de Inventario
+	usu_nomb varchar(15) not null,	-- Usuario q. realizo el inventario
+	cip_fecinv date not null,		-- Fecha de Inventario
+	cam_codi varchar(2) not null,	-- Codigo de Camara (Tabla v_camaras)
+	alm_codi int not null, 			-- Almacen
+	cip_coment varchar(100),			-- Comentario
+    constraint ix_cinvproduc primary key (cip_codi)
+);
+create index ix_cinvproduc1 on cinvproduc(cip_fecinv);
+--
+-- Lineas  Inventarios  piezas producción
+--
+-- drop table linvproduc;
+create table anjelica.linvproduc
+(   
+    cip_codi int not null,			-- Numero de Inventario
+    lip_numlin int not null,			-- Numero de Linea
+    prp_ano  int not null,      		-- Ejercicio del lote
+    prp_seri char(1) not null,			-- Serie del Lote
+    prp_part int not null,			-- Partida
+    pro_codi int not null,			-- Producto    
+    prp_indi int not null,          -- Individuo de Lote	
+    prp_peso decimal(6,2) not null,		-- Peso de inventario
+	prv_codi int not null,			-- Prvoveedor
+	prp_fecsac date not null,		-- Fecha Sacrificio
+	lip_fecalt timestamp not  null default current_timestamp,
+  constraint ix_linvproduc primary key(cip_codi,lip_numlin)
+);
+create index ix_linvproduc2 on linvproduc(pro_codi,prp_ano,prp_part,prp_seri,prp_indi);
+
+create view anjelica.v_invproduc as
+select c.cip_codi,c.usu_nomb,cip_fecinv, c.cam_codi,c.alm_codi,lip_numlin,prp_ano, prp_seri, prp_part, l.pro_codi, a.pro_nomb,
+prp_indi,prp_peso,l.prv_codi,prv_nomb,prp_fecsac,lip_fecalt from cinvproduc as c, linvproduc as l left join v_articulo as a on l.pro_codi=a.pro_codi
+left join v_proveedo as pv on l.prv_codi = pv.prv_codi where
+ c.cip_codi=l.cip_codi;
+grant select on  v_invproduc to public;
 --
 -- Vista para selecionar los diferentes tipos de camaras
 create view anjelica.v_camaras as

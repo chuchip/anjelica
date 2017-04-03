@@ -32,7 +32,7 @@ import javax.swing.event.*;
 public class prvPanel extends CPanel
 {
   private ayuPrv ayprv;
-  private boolean error=false;
+  private boolean error=false,prvActiv=true;
   private int prvIntern;
   boolean swControl=true;
   int prvCodi=0;
@@ -630,9 +630,11 @@ public class prvPanel extends CPanel
         prv_codiE.requestFocus();
       msgError = "** Proveedor NO Encontrado**";
       return false;
-    }
+    }   
+    
     if (ponNombre)
       prv_nombL.setText(s);
+    
     afterControla();
     return true;
   }
@@ -651,13 +653,22 @@ public class prvPanel extends CPanel
     prvIntern=0;
     if (codPrv.trim().equals(""))
       return null;
-    String s = "SELECT prv_nomb,fpa_codi,prv_intern FROM v_proveedo WHERE prv_codi= " + codPrv;
+    String s = "SELECT prv_activ,prv_nomb,fpa_codi,prv_intern FROM v_proveedo WHERE prv_codi= " + codPrv;
     dt.select(s);
     if (dt.getNOREG())
       return null;
     fpaCodi=dt.getInt("fpa_codi",true);
     prvIntern=dt.getInt("prv_intern",true);
+    prvActiv=dt.getString("prv_activ").equals("S");
     return dt.getString("prv_nomb");
+  }
+  /**
+   * Indica si el prvoeedor esta activo
+   * @return 
+   */
+  public boolean isActivo()
+  {
+      return prvActiv;
   }
   public boolean isInterno()
   {

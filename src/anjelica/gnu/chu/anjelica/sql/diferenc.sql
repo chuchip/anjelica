@@ -1,3 +1,9 @@
+
+alter table  tarifa add tar_comrep float default 0 not null;   -- Comision Representantes
+alter table  taricli add tar_comrep float default 0 not null;   -- Comision Representantes
+--
+-- Añadida divisa en historico ventas
+--
 alter table histventas add div_codi int not null default 1;
 --
 -- Incluida fecha alta en v_albcompar
