@@ -300,6 +300,19 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     {
         return pdpeve.getRuta(dtCon1, empCodiS, ejeNumeS, pvcNumeS);
     }
+    public String getSerieAlbaran() 
+    {
+        return jtCabPed.getValString(JTCAB_SERALB);
+    }
+     public int getEjercicioAlbaran() 
+    {
+        return jtCabPed.getValorInt(JTCAB_EJEALB);
+    }
+    public int getNumeroAlbaran() 
+    {
+        return jtCabPed.getValorInt(JTCAB_NUMALB);
+    }
+
     void verDatPed(int empCodi,int ejeNume,int pvcNume)
    {
      try

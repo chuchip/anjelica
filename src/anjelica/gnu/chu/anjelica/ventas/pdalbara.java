@@ -717,7 +717,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-02-20" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-04-06" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -2905,6 +2905,15 @@ public class pdalbara extends ventanaPad  implements PAD
             cli_codiE.setNombreCliente(copeve.getCliNomb());
             cli_rutaE.setText(copeve.getRuta());
             afterFocusLostCli(false);
+            if (nav.pulsado==navegador.ADDNEW && copeve.getNumeroAlbaran()!=0)
+            {
+                if (getAlbaranCab(dtCons, EU.em_cod, copeve.getEjercicioAlbaran(), copeve.getSerieAlbaran(), copeve.getNumeroAlbaran()))
+                {
+                    verDatos(dtCons);
+                    PADEdit();
+                    return;
+                }
+            }
         } catch (SQLException ex) {
            Error("Error al buscar ruta", ex);
         }
