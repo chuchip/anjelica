@@ -17,7 +17,7 @@ import net.sf.jasperreports.engine.*;
 /**
  * <p>Titulo: cldespsv</p>
  * <p>Descripción: Consulta/ LISTADO Despieces Sin Valorar o con descuadres</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -42,13 +42,17 @@ public class cldespsv extends ventana
   DatosTabla dtSta2;
   DatosTabla dtSta3;
   CLabel tid_codiL=new CLabel();
+  CLabel tid_codfinL=new CLabel();
   CLabel mesL = new CLabel("Mes");
   gnu.chu.camposdb.tidCodi2 tid_codiE=new gnu.chu.camposdb.tidCodi2();
+  gnu.chu.camposdb.tidCodi2 tid_codfinE=new gnu.chu.camposdb.tidCodi2();
   CComboBox mesE = new CComboBox();
   private char swElec;
   final private char DESCUADRE='D';
+  final private char FECHAS='F';
   final private char VALORAR='S';
-  final private char GRUPO_DESC='G';
+  final private char COSTO='C';
+  
   final private char LISTAR='L';
   CPanel Pprinc = new CPanel();
   CTextField feciniE = new CTextField(Types.DATE, "dd-MM-yyyy");
@@ -123,7 +127,7 @@ public class cldespsv extends ventana
   {
     iniciarFrame(); 
     this.setSize(442, 448);
-    this.setVersion((P_ADMIN?"(MODO ADMINISTRADOR)":"")+"2016-11-30");
+    this.setVersion((P_ADMIN?"(MODO ADMINISTRADOR)":"")+"2017-04-07");
 
     statusBar=new StatusBar(this);
     conecta();
@@ -141,12 +145,19 @@ public class cldespsv extends ventana
     Baceptar.setBounds(new Rectangle(275, 26, 125, 24));
     tid_codiL.setText("Tipo Desp.");
     tid_codiL.setBounds(new Rectangle(2, 26, 60, 18));  
+    tid_codfinL.setText("A Tipo");
+    tid_codfinL.setBounds(new Rectangle(2, 46, 60, 18));  
     tid_codiE.setAncTexto(40);
+    tid_codfinE.setAncTexto(40);
     tid_codiE.setBounds(new Rectangle(65, 26, 200, 18));
+    tid_codfinE.setBounds(new Rectangle(65, 46, 200, 18));
     
     Baceptar.setText("Aceptar");
+    
+    Baceptar.addMenu("Dif. Kilos");
+    Baceptar.addMenu("Costo Desc");
     Baceptar.addMenu("Sin Valorar");
-    Baceptar.addMenu("Descuadre");
+    Baceptar.addMenu("Fecha Desc.");
 //    Baceptar.addMenu("Grupos Desc.");
     Baceptar.addMenu("Listar Descuadres");
     if (P_ADMIN)
@@ -160,9 +171,9 @@ public class cldespsv extends ventana
     cLabel2.setText("A");
     
     PintrDatos.setBorder(BorderFactory.createRaisedBevelBorder());
-    PintrDatos.setMaximumSize(new Dimension(408, 55));
-    PintrDatos.setMinimumSize(new Dimension(408, 55));
-    PintrDatos.setPreferredSize(new Dimension(408, 55));
+    PintrDatos.setMaximumSize(new Dimension(408, 75));
+    PintrDatos.setMinimumSize(new Dimension(408, 75));
+    PintrDatos.setPreferredSize(new Dimension(408, 75));
     PintrDatos.setDefButton(Baceptar.getBotonAccion());
     PintrDatos.setLayout(null);
     
@@ -182,6 +193,9 @@ public class cldespsv extends ventana
     PintrDatos.add(Baceptar, null);
     PintrDatos.add(tid_codiL, null);
     PintrDatos.add(tid_codiE, null);
+    PintrDatos.add(tid_codfinL, null);
+    PintrDatos.add(tid_codfinE, null);
+
     Pprinc.add(jt,   new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 3, 2, 1), -89, -137));
   }
@@ -393,14 +407,18 @@ public class cldespsv extends ventana
               switch (swElec)
               {
                   case DESCUADRE:
-                      buscaDespDesc();
+                      buscaDespDesc('K');
+                      break;
+                   case COSTO:
+                      buscaDespDesc('C');
+                      break;
+                   case FECHAS:
+                      buscaFechas();
                       break;
                   case VALORAR:
                       buscaDespSinValorar();
                       break;
-                  case GRUPO_DESC:
-                      buscaDespDescGrupo();
-                      break;
+                
                   case LISTAR:
                       imprimir();
               }
@@ -542,6 +560,7 @@ public class cldespsv extends ventana
   /**
    * Buscar despieces descuadrados antiguos por grupo
    */
+    /**
     void buscaDespDescGrupo()
     {
        jt.removeAllDatos();
@@ -642,11 +661,13 @@ public class cldespsv extends ventana
         }
 
     }
+    */
     /**
      * Busca despieces descuadrados
+     * @parametr tipo Indica si se deben buscar despieces por kilos o por costo
      * Comprueba que los kilos y el importe  de entrada y salida coincidan.
      */
-    void buscaDespDesc()
+    void buscaDespDesc(char tipo)
     {
        jt.panelG.setVisible(false);
        jt.removeAllDatos();
@@ -665,11 +686,14 @@ public class cldespsv extends ventana
             " where deo_fecha >= TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') " +
             " and deo_fecha <= TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy') " +
             " and deo_numdes = 0"+
-            (tid_codiE.isNull()?"":" and tid_codi="+tid_codiE.getValorInt())+
+            " and not (deo_seloge = '"+MantDespTactil.SERIE+"' and deo_lotnue!=0 and deo_block ='S' )" + // no buscar abiertos en tactil               
+            (tid_codiE.isNull()?"":" and tid_codi "+(tid_codfinE.isNull()?"":"<")+
+               "="+tid_codiE.getValorInt())+
+            (tid_codfinE.isNull()?"":" and tid_codi<="+tid_codfinE.getValorInt())+   
             " order by eje_nume, deo_codi";
           if ( dtCon1.select(s))
           {
-           s="select sum(deo_kilos) as deo_kilos,sum(deo_kilos*deo_prcost) as costo from desorilin "+
+           s="select sum(deo_kilos) as deo_kilos,sum(deo_kilos*deo_prcost) as costo from desorilin "+               
                " where eje_nume = ? "+
                " and deo_codi = ? ";
            psOrig=dtStat.getPreparedStatement(s);
@@ -709,7 +733,7 @@ public class cldespsv extends ventana
                     kilLin=rs.getDouble("def_kilos");
                     impLin=rs.getDouble("costo");
                 }
-                if (! Formatear.esIgual(kilOrig, kilLin,  (kilLin*0.01) ))
+                if (! Formatear.esIgual(kilOrig, kilLin,  (kilLin*0.01) ) && tipo=='K')
                 {
                     ArrayList v=new ArrayList();
                     v.add("D"); // 0
@@ -720,7 +744,7 @@ public class cldespsv extends ventana
                     v.add(dtCon1.getDate("deo_fecha")); // 4
                     jt.addLinea(v);
                 }
-                if (! Formatear.esIgual(impOrig, impLin,  (impLin*0.02) ))
+                if (! Formatear.esIgual(impOrig, impLin,  (impLin*0.02) ) && tipo=='C')
                 {
                     ArrayList v=new ArrayList();
                     v.add("D");
@@ -733,24 +757,27 @@ public class cldespsv extends ventana
                 }
             } while (dtCon1.next());
            }
+           if (tipo=='K')
+           {
           /**
             * Busco lineas Huerfanas            
             */
-           s="select * from v_Despfin as f  where def_tiempo::date >=  TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') "+
-              "  and not exists (select * from desporig as o where o.eje_nume=f.eje_nume and f.deo_codi = o.deo_codi)";
-           if (dtCon1.select(s))
-           {
-               do
-               {
-                    ArrayList v=new ArrayList();
-                    v.add(dtCon1.getInt("pro_codi")); // 0
-                    v.add("Hijos huerfanos.Desp. Ind: "+dtCon1.getInt("pro_numind"));
-                    v.add(0); // 1
-                    v.add(dtCon1.getInt("def_kilos")); // 2
-                    v.add(dtCon1.getInt("deo_codi")); // 3
-                    v.add(dtCon1.getDate("def_tiempo")); // 4
-                    jt.addLinea(v);
-               } while (dtCon1.next());
+            s="select * from v_despfin as f  where def_tiempo::date >=  TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') "+
+               "  and not exists (select * from desporig as o where o.eje_nume=f.eje_nume and f.deo_codi = o.deo_codi)";
+            if (dtCon1.select(s))
+            {
+                do
+                {
+                     ArrayList v=new ArrayList();
+                     v.add(dtCon1.getInt("pro_codi")); // 0
+                     v.add("Hijos huerfanos.Desp. Ind: "+dtCon1.getInt("pro_numind"));
+                     v.add(0); // 1
+                     v.add(dtCon1.getInt("def_kilos")); // 2
+                     v.add(dtCon1.getInt("deo_codi")); // 3
+                     v.add(dtCon1.getDate("def_tiempo")); // 4
+                     jt.addLinea(v);
+                } while (dtCon1.next());
+            }
            }
            mensaje("Espere, Buscando grupos descuadrados...");
            // Buscamos por grupos
@@ -758,7 +785,10 @@ public class cldespsv extends ventana
             " from desporig  " +
             " where deo_fecha >= TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') " +
             " and deo_fecha <= TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy') " +
-            (tid_codiE.isNull()?"":" and tid_codi="+tid_codiE.getValorInt())+
+            " and not (deo_seloge = '"+MantDespTactil.SERIE+"' and deo_lotnue!=0 and deo_block ='S' )" + // no buscar abiertos en tactil                       
+            (tid_codiE.isNull()?"":" and tid_codi "+(tid_codfinE.isNull()?"":"<")+
+               "="+tid_codiE.getValorInt())+
+            (tid_codfinE.isNull()?"":" and tid_codi<="+tid_codfinE.getValorInt())+   
             " and deo_numdes > 0"+
             " group by eje_nume, deo_numdes"+
             " order by eje_nume, deo_numdes";
@@ -809,7 +839,7 @@ public class cldespsv extends ventana
                         kilLin=rs.getDouble("kilos");
                         impLin=rs.getDouble("costo");
                     }
-                    if (! Formatear.esIgual(kilOrig, kilLin,  (kilLin*0.02) ))
+                    if (! Formatear.esIgual(kilOrig, kilLin,  (kilLin*0.02) )  && tipo=='K')
                     {
                         ArrayList v=new ArrayList();
                         v.add("G");
@@ -820,7 +850,7 @@ public class cldespsv extends ventana
                         v.add(""); // 4
                         jt.addLinea(v);
                     }
-                    if (! Formatear.esIgual(impOrig, impLin,  (impLin*0.02) ))
+                    if (! Formatear.esIgual(impOrig, impLin,  (impLin*0.02) ) && tipo == 'C')
                     {
                         ArrayList v=new ArrayList();
                         v.add("G");
@@ -834,7 +864,30 @@ public class cldespsv extends ventana
                } while (dtCon1.next());
            }
            // Busco despieces con fechas fuera de rango en entradas
-           s="select 'Entr' as tipo ,eje_nume,deo_codi,deo_fecha,del_numlin as linea " +
+          
+           
+           jt.requestFocusInicio();
+           jt.panelG.setVisible(true);
+           mensaje("");
+           if (jt.isVacio())
+             msgBox("No encontrados despieces entre estas fechas");
+         
+           mensajeErr("Consulta despieces descuadrados ... terminada");
+           this.setEnabled(true);
+           jt.setEnabled(true);
+       } catch (SQLException k)
+       {
+              Error("Error al Generar el Listado", k);
+       }
+    }
+    void buscaFechas()
+    {
+       try 
+       {
+         jt.panelG.setVisible(false);
+         jt.removeAllDatos();
+         this.setEnabled(false);
+         s="select 'Entr' as tipo ,eje_nume,deo_codi,deo_fecha,del_numlin as linea " +
                 " from v_despori  " +
                 " where deo_fecha between TO_DATE('" + feciniE.getText() + "','dd-MM-yyyy') " +
                 " and TO_DATE('" + fecfinE.getText() + "','dd-MM-yyyy') " +
@@ -862,19 +915,18 @@ public class cldespsv extends ventana
 
                 } while (dtCon1.next());
            }
-           
            jt.requestFocusInicio();
            jt.panelG.setVisible(true);
-           mensaje("");
-           if (jt.isVacio())
-             msgBox("No encontrados despieces entre estas fechas");
-         
-           mensajeErr("Consulta despieces descuadrados ... terminada");
            this.setEnabled(true);
            jt.setEnabled(true);
+           mensaje("");
+           if (jt.isVacio())
+             msgBox("No encontrados despieces con incidencias fechas");
+           else
+             mensajeErr("Despieces con diferentes fechas encontrados");
        } catch (SQLException k)
        {
-              Error("Error al Generar el Listado", k);
+              Error("Error al buscar despiece en diferentes fechas", k);
        }
     }
     /**

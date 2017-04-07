@@ -159,7 +159,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2017-02-26" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2017-04-07" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -754,6 +754,8 @@ public class ValDespi extends ventana {
     void editar(int row) {
         if (jtDesp.isVacio() || ! jtDesp.isEnabled())
             return;
+        if (kilosCabE.getValorDec()!=kilosFinE.getValorDec())
+            msgBox("Atencion kilos difieren entre entrada y salida");
         rowEdit = row;
 //        if (jtDesp.getValString(rowEdit,JTDES_TIPO).equals("D"))
 //        { // Si el despiece esta metido en un grupo No permito valorarlo
@@ -1101,6 +1103,15 @@ public class ValDespi extends ventana {
                 } while (dtDesp.next());
                 if (swErr)
                     continue;
+                s= "SELECT sum(def_kilos) as kilos FROM v_despsal " +
+                    " WHERE eje_nume = " + jtDesp.getValorInt(n,JTDES_EJER) +
+                    " AND "+ (isGrupo?" deo_numdes = ":" deo_codi = ") + jtDesp.getValorInt(n,JTDES_NUMDES);
+                dtDesp.select(s);
+                if (Formatear.redondea(dtDesp.getDouble("kilos",true),2)!= jtDesp.getValorDec(n,JTDES_KILOS))
+                {
+                    msgAviso += "\nDespiece: " + jtDesp.getValorInt(n, JTDES_NUMDES)+" DIFERENCIA KILOS";
+                    continue;
+                }
                 s= "SELECT distinct(pro_codi) FROM v_despsal " +
                     " WHERE eje_nume = " + jtDesp.getValorInt(n,JTDES_EJER) +
                     " AND "+ (isGrupo?" deo_numdes = ":" deo_codi = ") + jtDesp.getValorInt(n,JTDES_NUMDES);
@@ -1110,6 +1121,7 @@ public class ValDespi extends ventana {
                     msgAviso += "\nDespiece: " + jtDesp.getValorInt(n, JTDES_NUMDES)+" SIN LINEAS FINALES";
                     continue;
                 }
+                
                 impCostLin=0;
                 do
                 {
@@ -2387,7 +2399,7 @@ public class ValDespi extends ventana {
         jtDesp.setAlinearColumna(new int[]{2,1,2,1,0,2,1,1,1,1,2});
         jtDesp.setAnchoColumna(new int[]{50,40,70,80,200,70,40,40,30,20,40});
         jtDesp.setFormatoColumna(JTDES_FECDES, "dd-MM-yy");
-        jtDesp.setFormatoColumna(JTDES_KILOS , "##,##9.9");
+        jtDesp.setFormatoColumna(JTDES_KILOS , "##,##9.99");
         jtDesp.setFormatoColumna(JTDES_VAL, "BSN");
         jtDesp.setFormatoColumna(JTDES_PROC, "BSN");
         jtDesp.setFormatoColumna(JTDES_SEL, "BSN");
