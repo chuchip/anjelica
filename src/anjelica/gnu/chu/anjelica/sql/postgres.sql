@@ -192,6 +192,7 @@ cat_codi int not null default 1, -- Categoria Articulo
 cal_codi int not null default 1, -- Calibres
 env_codi int not null default 0, -- Tipo de Envase
 pro_indtco int not null default 1, -- Incluye en dto. Comercial (0: No)
+pro_codequ int,		-- Producto equivalente.
 constraint ix_articulo primary key(pro_codi)
 );
 create index ix_articul1 on v_articulo(pro_codart);
@@ -3353,7 +3354,8 @@ create table anjelica.cinvproduc
 	cip_fecinv date not null,		-- Fecha de Inventario
 	cam_codi varchar(2) not null,	-- Codigo de Camara (Tabla v_camaras)
 	alm_codi int not null, 			-- Almacen
-	cip_coment varchar(100),			-- Comentario
+	tid_codi int not null default 0,-- Tipo Despiece
+	cip_coment varchar(100),			-- Comentario	
     constraint ix_cinvproduc primary key (cip_codi)
 );
 create index ix_cinvproduc1 on cinvproduc(cip_fecinv);

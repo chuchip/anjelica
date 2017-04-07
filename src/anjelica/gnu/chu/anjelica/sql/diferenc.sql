@@ -1,4 +1,52 @@
+ALTER TABLE linvproduc ADD pai_codi varchar(3); -- Pais
+--
+-- Añadido codigo articulo equivalente
+--
+alter table v_articulo add pro_codequ int ;
+---
 
+ALTER TABLE cinvproduc ADD tid_codi int not null default 0; -- Tipo Despiece
+create table anjelica.cinvproduc
+(	
+	cip_codi int not null,			-- Numero de Inventario
+	usu_nomb varchar(15) not null,	-- Usuario q. realizo el inventario
+	cip_fecinv date not null,		-- Fecha de Inventario
+	cam_codi varchar(2) not null,	-- Codigo de Camara (Tabla v_camaras)
+	alm_codi int not null, 			-- Almacen
+	cip_coment varchar(100),			-- Comentario
+    constraint ix_cinvproduc primary key (cip_codi)
+);
+create index ix_cinvproduc1 on cinvproduc(cip_fecinv);
+--
+-- Lineas  Inventarios  piezas producción
+--
+-- drop table linvproduc;
+create table anjelica.linvproduc
+(   
+    cip_codi int not null,			-- Numero de Inventario
+    lip_numlin int not null,			-- Numero de Linea
+    prp_ano  int not null,      		-- Ejercicio del lote
+    prp_seri char(1) not null,			-- Serie del Lote
+    prp_part int not null,			-- Partida
+    pro_codi int not null,			-- Producto    
+    prp_indi int not null,          -- Individuo de Lote	
+    prp_peso decimal(6,2) not null,		-- Peso de inventario
+	prv_codi int not null,			-- Prvoveedor
+	prp_fecsac date not null,		-- Fecha Sacrificio
+	lip_fecalt timestamp not  null default current_timestamp,
+  constraint ix_linvproduc primary key(cip_codi,lip_numlin)
+);
+create index ix_linvproduc2 on linvproduc(pro_codi,prp_ano,prp_part,prp_seri,prp_indi);
+
+create view anjelica.v_invproduc as
+select c.cip_codi,c.usu_nomb,cip_fecinv, c.cam_codi,c.alm_codi,c.tid_codi,c.cip_coment,lip_numlin,prp_ano, prp_seri, prp_part, l.pro_codi, a.pro_nomb,
+prp_indi,prp_peso,l.prv_codi,prv_nomb,prp_fecsac,pai_codi,lip_fecalt from cinvproduc as c, linvproduc as l left join v_articulo as a on l.pro_codi=a.pro_codi
+left join v_proveedo as pv on l.prv_codi = pv.prv_codi where
+ c.cip_codi=l.cip_codi;
+grant select on  v_invproduc to public;
+--
+-- Incluyir en tarifa la comision de los representantes
+--
 alter table  tarifa add tar_comrep float default 0 not null;   -- Comision Representantes
 alter table  taricli add tar_comrep float default 0 not null;   -- Comision Representantes
 --
