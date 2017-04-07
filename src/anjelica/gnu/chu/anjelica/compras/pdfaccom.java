@@ -309,7 +309,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
 
    iniciarFrame();
    this.setSize(new Dimension(764, 531));
-   this.setVersion("2017-03-05 "+(modPrecio?"-Modificar Precios-":"")+
+   this.setVersion("2017-04-02 "+(modPrecio?"-Modificar Precios-":"")+
          (admin?"-ADMINISTRADOR-":"")+ (swConsulta?"-Solo Consulta-":""));
    strSql = "SELECT emp_codi,eje_nume,fcc_nume " +
        " FROM v_facaco WHERE emp_codi = " + EU.em_cod +
@@ -1488,7 +1488,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
            " and acc_serie = '" + jtFra.getValString(n, 9) + "'";
        if (!dtStat.select(s))
          throw new Exception("NO encontrado registro Cabecera Albaran.\n" + s);
-       s="SELECT acl_canfac,acl_prcom,acl_dtopp,acl_porpag "+
+       s="SELECT acl_canfac,acl_prcom,acl_dtopp,acl_porpag  "+
               " FROM v_albacol WHERE emp_codi = "+emp_codiE.getValorInt()+
               " and acc_ano = "+jtFra.getValorInt(n,10)+
               " and acc_nume = "+jtFra.getValorInt(n,11)+
@@ -1496,9 +1496,9 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
               " and acl_nulin = "+jtFra.getValorInt(n,14);
         if (! dtAdd.select(s,true))
           throw new Exception("NO encontrado registro Linea Albaran.\n"+s);
-       double prCompra=dtAdd.getDouble("acl_prcom")- 
-           (dtAdd.getInt("acl_porpag")==0?dtStat.getDouble("acc_impokg"):0)-
-           dtStat.getDouble("acc_imcokg");
+//       double prCompra=dtAdd.getDouble("acl_prcom")- 
+//           (dtAdd.getInt("acl_porpag")==0?dtStat.getDouble("acc_impokg"):0)-
+//           dtStat.getDouble("acc_imcokg");
            
 //       prCompra=prCompra / (1 - (dtAdd.getDouble("acl_dtopp")/100)); // Dejo costo de linea 'limpio'
 //       prCompra-=prCompra*fcc_dtoppE.getValorDec()/100; // Le quito el nuevo dto pp
