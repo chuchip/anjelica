@@ -1034,7 +1034,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="10" y="40" width="80" height="18"/>
+                      <AbsoluteConstraints x="10" y="30" width="80" height="18"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -1050,17 +1050,17 @@
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="100" y="40" width="270" height="18"/>
+                      <AbsoluteConstraints x="100" y="30" width="270" height="18"/>
                     </Constraint>
                   </Constraints>
                 </Component>
                 <Component class="gnu.chu.controles.CLabel" name="cLabel29">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Incluir Dto.Comercial"/>
+                    <Property name="text" type="java.lang.String" value="Cod. Padre"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="10" y="70" width="130" height="18"/>
+                      <AbsoluteConstraints x="10" y="72" width="80" height="18"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -1070,7 +1070,7 @@
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="140" y="70" width="51" height="18"/>
+                      <AbsoluteConstraints x="140" y="50" width="51" height="18"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -1117,6 +1117,23 @@
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="220" y="100" width="-1" height="-1"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CLabel" name="cLabel42">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Incluir Dto.Comercial"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="10" y="50" width="130" height="18"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.camposdb.proPanel" name="pro_codequE">
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="100" y="72" width="380" height="17"/>
                     </Constraint>
                   </Constraints>
                 </Component>

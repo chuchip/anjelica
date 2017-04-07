@@ -159,7 +159,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2016-05-23" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2017-04-04" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM v_articulo where pro_activ != 0 "+
                 " ORDER BY pro_codi";
 
@@ -187,6 +187,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     public void iniciarVentana() throws Exception
     { 
         pro_codartE.iniciar(dtStat, this, vl, EU);
+        pro_codequE.iniciar(dtStat, this, vl, EU);
         pro_codartE.setUsaCodigoVenta(true);
     Pdiscrim.iniciar(dtCon1, EU);
     Pprinc.setButton(KeyEvent.VK_F4,Baceptar);
@@ -403,6 +404,7 @@ public class MantArticulos extends ventanaPad  implements PAD
       usu_nombE.setText(dtCon1.getString("usu_nomb"));
       cat_codiE.setValorDec(dtCon1.getInt("cat_codi"));
       cal_codiE.setValorDec(dtCon1.getInt("cal_codi"));
+      pro_codequE.setValorInt(dtCon1.getInt("pro_codequ",true));
       verDatosAgru(pro_codiE.getValorInt(),pro_codiE.getValorInt(),jtExclu,"artiexcl");
       verDatosAgru(pro_codiE.getValorInt(),pro_codiE.getValorInt(),jtEqui,"artiequiv");
       verDatosAgru(pro_codiE.getValorInt(),0,jtEquCon,"artequcon");
@@ -477,6 +479,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_coexisE.setEnabled(act);
     jtIdiomas.setEnabled(act);
     pro_conmaxE.setEnabled(act);
+    pro_codequE.setEnabled(act);
     Pdiscrim.setEnabled(act);
 
     sbe_codiE.setEnabled(act);
@@ -1057,6 +1060,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     dt.setDato("cal_codi",cal_codiE.getValorInt());
     dt.setDato("pro_oblfsa",pro_oblfsaE.isSelected()?1:0);
     dt.setDato("usu_nomb",EU.usuario);
+    dt.setDato("pro_codequ",pro_codequE.isNull()?null:pro_codequE.getValorInt());
   }
     @Override
   public void canc_addnew()
@@ -1512,6 +1516,8 @@ public class MantArticulos extends ventanaPad  implements PAD
         pro_indtcoE = new gnu.chu.controles.CComboBox();
         jtIdiomas = new gnu.chu.controles.CGridEditable(3);
         cLabel41 = new gnu.chu.controles.CLabel();
+        cLabel42 = new gnu.chu.controles.CLabel();
+        pro_codequE = new gnu.chu.camposdb.proPanel();
         Pexclu = new gnu.chu.controles.CPanel();
         jtExclu = new gnu.chu.controles.CGridEditable(2) {
             public void cambiaColumna(int col,int colNueva, int row)
@@ -1961,22 +1967,22 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel40.setText("Clasificación");
         Pfamil.add(cLabel40);
-        cLabel40.setBounds(10, 40, 80, 18);
+        cLabel40.setBounds(10, 30, 80, 18);
 
         cal_codiE.setAncTexto(40);
         cal_codiE.setPreferredSize(new java.awt.Dimension(122, 17));
         cal_codiE.setFormato(Types.DECIMAL,"###9");;
         Pfamil.add(cal_codiE);
-        cal_codiE.setBounds(100, 40, 270, 18);
+        cal_codiE.setBounds(100, 30, 270, 18);
 
-        cLabel29.setText("Incluir Dto.Comercial");
+        cLabel29.setText("Cod. Padre");
         Pfamil.add(cLabel29);
-        cLabel29.setBounds(10, 70, 130, 18);
+        cLabel29.setBounds(10, 72, 80, 18);
 
         pro_indtcoE.addItem("No","0");
         pro_indtcoE.addItem("Si","-1");
         Pfamil.add(pro_indtcoE);
-        pro_indtcoE.setBounds(140, 70, 51, 18);
+        pro_indtcoE.setBounds(140, 50, 51, 18);
 
         try {
             ArrayList v=new ArrayList();
@@ -2007,6 +2013,12 @@ public class MantArticulos extends ventanaPad  implements PAD
         cLabel41.setPreferredSize(new java.awt.Dimension(159, 15));
         Pfamil.add(cLabel41);
         cLabel41.setBounds(220, 100, 159, 15);
+
+        cLabel42.setText("Incluir Dto.Comercial");
+        Pfamil.add(cLabel42);
+        cLabel42.setBounds(10, 50, 130, 18);
+        Pfamil.add(pro_codequE);
+        pro_codequE.setBounds(100, 72, 380, 17);
 
         Ptab.addTab("Parametros", Pfamil);
 
@@ -2159,6 +2171,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel40;
     private gnu.chu.controles.CLabel cLabel41;
+    private gnu.chu.controles.CLabel cLabel42;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
@@ -2183,6 +2196,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CTextField pro_cadcongE;
     private gnu.chu.controles.CTextField pro_cajpalE;
     private gnu.chu.camposdb.proPanel pro_codartE;
+    private gnu.chu.camposdb.proPanel pro_codequE;
     private gnu.chu.controles.CLinkBox pro_codetiE;
     private gnu.chu.controles.CTextField pro_codiE;
     private gnu.chu.camposdb.proPanel pro_coeqcoE;
@@ -2397,5 +2411,13 @@ public class MantArticulos extends ventanaPad  implements PAD
            al.add(dt.getInt("pro_codini")==proCodi?dt.getInt("pro_codfin"):dt.getInt("pro_codini"));
        } while (dt.next());
        return al;
+    }
+    public static int getProductoPadre(int codProd, DatosTabla dt) throws SQLException
+    {
+        String s = "select pro_codequ  from v_articulo  where "
+            + "  pro_codi = " + codProd;
+        if (!dt.select(s))
+            return codProd;
+        return dt.getObject("pro_codequ")==null?codProd:dt.getInt("pro_codequ");
     }
 }
