@@ -16,6 +16,7 @@ import gnu.chu.camposdb.cliPanel;
 import gnu.chu.camposdb.proPanel;
 import gnu.chu.camposdb.tidCodi2;
 import gnu.chu.comm.BotonBascula;
+import gnu.chu.comm.leePeso;
 import gnu.chu.controles.*;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.interfaces.ejecutable;
@@ -305,6 +306,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
   CLabel cLabel110 = new CLabel();
   JScrollPane jScrollPane1 = new JScrollPane();
   CButton BborLiSa = new CButton(Iconos.getImageIcon("delete-row"));
+  CButton BDuplLinea = new CButton("F5",Iconos.getImageIcon("fill"));
   CLabel def_numpiL = new CLabel();
   CTextField def_numpiE = new CTextField(Types.DECIMAL,"--9");
   CLabel def_numliL = new CLabel();
@@ -577,7 +579,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
                                                GridBagConstraints.VERTICAL,
                                                new Insets(0, 5, 0, 0), 0, 0));
     pro_kilenE.setLeePesoBascula(botonBascula);
-    
+
     pro_kilenE.setToolTipText("Pulsa F1 para recoger el peso de la bascula");
     emp_codenE.setValorInt(EU.em_cod);
     emp_codenE.setEnabled(false);
@@ -702,11 +704,13 @@ public class MantDespTactil  extends ventanaPad implements PAD
     jScrollPane1.setMinimumSize(new Dimension(661, 140));
     jScrollPane1.setPreferredSize(new Dimension(661, 140));
     jScrollPane1.setRequestFocusEnabled(true);
-    BborLiSa.setBounds(new Rectangle(6, 3, 147, 20));
-    BborLiSa.setMaximumSize(new Dimension(90, 29));
+    BborLiSa.setBounds(new Rectangle(6, 3, 65, 20));
+    BDuplLinea.setBounds(new Rectangle(75, 3, 65, 20));
+//    BborLiSa.setMaximumSize(new Dimension(90, 29));
     BborLiSa.setMargin(new Insets(0, 0, 0, 0));
-    BborLiSa.setText("F8 Borrar Linea");
-   
+    BborLiSa.setText("F8");
+    BborLiSa.setToolTipText("Borrar Linea");
+    BDuplLinea.setToolTipText("Copiar Linea Anterior");
     Bsalkil.setBounds(new Rectangle(648, 8, 2, 2));
     kilsalE.setLeePesoBascula(botonBascula);
     kilsalE.setToolTipText("Pulsa F1 para leer el peso de la bascula");
@@ -742,6 +746,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Psalpr1.add(BrepEti, null);
     Psalpr1.add(eti_codiE, null);
     Psalpr1.add(BborLiSa, null);
+    Psalpr1.add(BDuplLinea, null);
     Psalpr1.add(opImpEti, null);
     Pfin.add(jtSal,   new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 2), 0, 0));
@@ -756,8 +761,11 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Psalpro.add(Bsalkil, null);
     Psalpro.add(def_numliL, null);
     Psalpro.add(nlSalE, null);
-    Psalpro.add(def_usunomL, null);
-    Psalpro.add(def_usunomE, null);
+    if (isEmpPlanta)
+    {
+        Psalpro.add(def_usunomL, null);
+        Psalpro.add(def_usunomE, null);
+    }
     Pfin.add(Psalpr1,   new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 2, 0), 0, 0));
     Pconsul.add(jtOri,   new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
@@ -843,6 +851,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    gnu.chu.Menu.LoginDB.iniciarLKEmpresa(EU,dtStat);
    pro_codenE.setAyudaLotes(true);
    Pcabe.setButton(KeyEvent.VK_F4,Baceptar);
+   
    utdesp =new utildesp();
    pro_codsalE.iniciar(dtStat, this, vl, EU);
    pro_codsalE.setEnabled(false);
@@ -852,9 +861,13 @@ public class MantDespTactil  extends ventanaPad implements PAD
    tid_codiE.setIncluirEstaticos(false);
    jtSal.setButton(KeyEvent.VK_F8,BborLiSa);
    jtSal.setButton(KeyEvent.VK_F9,BrepEti);
-
+   jtSal.setButton(KeyEvent.VK_F5,BDuplLinea);
+   jtSal.setButton(KeyEvent.VK_F4,Baceptar);
+   
+   Pfin.setButton(KeyEvent.VK_F4,Baceptar);
    Pfin.setButton(KeyEvent.VK_F8,BborLiSa);
    Pfin.setButton(KeyEvent.VK_F9,BrepEti);
+   Pfin.setButton(KeyEvent.VK_F5,BDuplLinea);
    pdalmace.llenaLinkBox(deo_almoriE, dtCon1);
    pdalmace.llenaLinkBox(deo_almdesE, dtCon1);
 //   s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
@@ -893,6 +906,13 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
  void activarEventos()
  {
+    BDuplLinea.addActionListener(new ActionListener()
+    {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            duplicaLinea();
+        }
+    });
     deo_codiE.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -965,7 +985,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
        if (isEmpPlanta)
            def_numpiE.requestFocusLater();
        else
-            kilsalE.requestFocusLater();
+           kilsalE.requestFocusLater();
      }
    });
    BborLiSa.addActionListener(new ActionListener() {
@@ -1831,6 +1851,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
         eti_codiE.setEnabled(activ);
         opImpEti.setEnabled(activ);
         BborLiSa.setEnabled(activ);
+        BDuplLinea.setEnabled(activ);
         break;
       case ENTRADA:
         jtEnt.setEnabled(activ);
@@ -2549,8 +2570,12 @@ public class MantDespTactil  extends ventanaPad implements PAD
    }
    if (kilsalE.getValorDec()==0 && ! isEmpPlanta)
    {
-     mensajeErr("Introduzca Kilos de Salida");
-     return;
+     kilsalE.leePesoBasc(0);
+     if (kilsalE.getValorDec()==0)
+     {
+        mensajeErr("Introduzca Kilos de Salida");
+        return;
+     }
    }
    kilsalE.resetCambio();
    def_usunomE.resetCambio();
@@ -3003,6 +3028,19 @@ public class MantDespTactil  extends ventanaPad implements PAD
      }
    }
    return null;
+ }
+ void duplicaLinea()
+ {
+   pro_codsalE.setText(jtSal.getValString(0));
+   def_numpiE.setText("1");
+   nlSalE.setText("");
+   modLinSal=false;
+   kilsalE.resetTexto();
+   kilsalE.setCambio(true); 
+   if (isEmpPlanta)
+    def_numpiE.requestFocus();
+   else
+     kilsalE.requestFocus();
  }
   void mostrarDatosTraz()
   {
