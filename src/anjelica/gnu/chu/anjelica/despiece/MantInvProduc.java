@@ -72,6 +72,7 @@ import net.sf.jasperreports.engine.JasperReport;
  */
 public class MantInvProduc extends ventanaPad implements PAD
 {
+  Date fecSacr,fecCaduc,fecProduc;
   utildesp utdesp;
   private final String CAMDEFECTO="LR";
   private final int JT_NUMLIN=0;
@@ -85,9 +86,11 @@ public class MantInvProduc extends ventanaPad implements PAD
   private final int JT_PRVCOD=8;
   private final int JT_PRVNOMB=9;
   private final int JT_FECSAC=10;
-  private final int  JT_PAINAC=11;
+  private final int JT_FECCAD=11;
+  private final int JT_FECPRO=12;
+  private final int  JT_PAINAC=13;
   private ayuLote ayuLot = null;
- private String condLineas="";
+  private String condLineas="";
   private String condWhere="where 1=1 ";
   boolean swKilos0 = false;
   DatosTabla dtCab;
@@ -161,7 +164,7 @@ public class MantInvProduc extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2017-04-03 "+(swAdmin?"Administrador":""));
+        this.setVersion("2017-04-14 "+(swAdmin?"Administrador":""));
        
         strSql = "SELECT * FROM cinvproduc "+
          "order by cip_fecinv,cam_codi,alm_codi";
@@ -203,6 +206,11 @@ public class MantInvProduc extends ventanaPad implements PAD
     alm_codiE.setFormato(true);
     alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
     pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
+    s = "SELECT tla_codi,tla_nomb FROM tilialca order by tla_codi";
+    dtStat.select(s);      
+    tla_codiE.addDatos(dtStat);
+    tla_codiE.addDatos("99", "Definido Usuario");
+    tla_codiE.setValorInt(99);
 //    s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
 //        " ORDER BY alm_codi";
 //    dtStat.select(s);
@@ -234,6 +242,51 @@ public class MantInvProduc extends ventanaPad implements PAD
 
   void activarEventos()
   {
+    diasRedon.addFocusListener(new FocusAdapter()
+    {
+       @Override
+       public void focusLost(FocusEvent e) {
+           try {
+              verDatosGrupo();
+           } catch (SQLException | ParseException k)
+           {
+               Error("Error al mostrar datos agrupados",k);
+           }
+       }
+    });
+    opIgnPrv.addActionListener(new ActionListener()
+    {
+       @Override
+       public void actionPerformed(ActionEvent e){
+           try {
+              verDatosGrupo();
+           } catch (SQLException | ParseException k)
+           {
+               Error("Error al mostrar datos agrupados",k);
+           }
+       }
+    });
+    ordenFechaC.addActionListener(new ActionListener()
+    {
+       @Override
+       public void actionPerformed(ActionEvent e){
+           try {
+              verDatosGrupo();
+           } catch (SQLException | ParseException k)
+           {
+               Error("Error al mostrar datos agrupados",k);
+           }
+       }
+    });
+    BRegLin.addActionListener(new ActionListener()
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            regenerarLineas();
+            msgBox("Datos Trazabilidad Regenerados");
+        }
+     });
     Bimpri.addActionListener(new ActionListener()
     {
         @Override
@@ -332,6 +385,39 @@ public class MantInvProduc extends ventanaPad implements PAD
 
       }
     });
+  }
+  void regenerarLineas()
+  {
+      try {
+          int nRows = jt.getRowCount();
+          for (int n = 0; n < nRows; n++)
+          {
+              buscaPeso(jt.getValorInt(n, JT_PRPEJE), jt.getValString(n, JT_PRPSER), jt.getValorInt(n, JT_PRPPART),
+                  jt.getValorInt(n, JT_PRPIND), jt.getValorInt(n, JT_PROCOD), alm_codiE.getValorInt(), n,false);
+               s="SELECT * FROM linvproduc WHERE cip_codi = "+cip_codiE.getValorInt()+
+                    " and lip_numlin = "+jt.getValorInt(n,JT_NUMLIN);
+              if (!dtAdd.select(s, true))
+              {
+                  msgBox("Linea de INVENTARIO no encontrada para modificar");
+                  continue;
+              }
+              dtAdd.edit();
+
+              dtAdd.setDato("prp_peso", jt.getValorDec(n, JT_PRPPESO));
+              dtAdd.setDato("prv_codi", jt.getValorInt(n, JT_PRVCOD));
+              dtAdd.setDato("prp_fecsac", jt.getValDate(n, JT_FECSAC));
+              dtAdd.setDato("prp_feccad", jt.getValDate(n, JT_FECCAD));              
+              dtAdd.setDato("prp_fecpro", jt.getValDate(n, JT_FECPRO));
+              dtAdd.setDato("pai_codi", jt.getValString(n, JT_PAINAC));              
+              dtAdd.update(stUp);
+          }
+          ctUp.commit();
+      }catch (SQLException | ParseException k)
+      {
+          Error("Error al buscar Peso", k);
+      }
+   
+      
   }
  /**
    * Consulta Lotes Disponibles de Productos.
@@ -437,30 +523,50 @@ public class MantInvProduc extends ventanaPad implements PAD
   
   boolean buscaPeso(int linea)
   {
+      try
+      {
+          return buscaPeso(prp_anoE.getValorInt(),
+              prp_serieE.getText(),
+              prp_partE.getValorInt(),
+              prp_indiE.getValorInt(),
+              pro_codiE.getValorInt(),
+              alm_codiE.getValorInt(), linea,true);
+      } catch (SQLException | ParseException k)
+      {
+          Error("Error al buscar Peso", k);
+          return false;
+      }
+   
+  }
+  boolean buscaPeso(int ano,String serie,int partida,int indiv,int codProd,int almCodi,int linea,boolean ponPeso) throws SQLException,ParseException
+  {
     try
     {
           if (utdesp==null)
             utdesp = new utildesp();
-        StkPartid stkPart = utildesp.buscaPeso(dtCon1, prp_anoE.getValorInt(),
+        StkPartid stkPart = utildesp.buscaPeso(dtCon1, ano,
                                        EU.em_cod,
-                                       prp_serieE.getText(),
-                                       prp_partE.getValorInt(),
-                                       prp_indiE.getValorInt(),
-                                       pro_codiE.getValorInt(),
-                                       alm_codiE.getValorInt());
+                                       serie,
+                                       partida,
+                                       indiv,
+                                       codProd,
+                                       almCodi);
         if (stkPart.hasError())
         {
             mensajeErr(stkPart.getMensaje());
             return false;
         }
-        prp_pesoE.setValorDec(stkPart.getKilos());
-        jt.setValor(stkPart.getKilos(),linea,JT_PRPPESO);
+        if (ponPeso)
+        {
+            jt.setValor(stkPart.getKilos(),linea,JT_PRPPESO);
+            prp_pesoE.setValorDec(stkPart.getKilos());
+        }
         utdesp.setStockPartidas(stkPart);
-          if (!utdesp.busDatInd(prp_serieE.getText(),pro_codiE.getValorInt(),EU.em_cod,            
-            prp_anoE.getValorInt(),
-            prp_partE.getValorInt(),
-            prp_indiE.getValorInt(), // N. Ind.
-            alm_codiE.getValorInt(),
+          if (!utdesp.busDatInd(serie,codProd,EU.em_cod,            
+            ano,
+            partida,
+            indiv, // N. Ind.
+            almCodi,
             dtCon1, dtStat, EU))
         {
             mensajeErr(utdesp.getMsgAviso());
@@ -468,12 +574,17 @@ public class MantInvProduc extends ventanaPad implements PAD
         }
         jt.setValor(utdesp.getFecSacrif()==null?Formatear.getDate("01-01-2000", "dd-MM-yyyy"):
             utdesp.getFecSacrif(),linea,JT_FECSAC);
+        jt.setValor(utdesp.getFecCaduc()==null?Formatear.getDate("01-01-2000", "dd-MM-yyyy"):
+            utdesp.getFecCaduc(),linea,JT_FECCAD);
+        jt.setValor(utdesp.getFechaProduccion()==null?Formatear.getDate("01-01-2000", "dd-MM-yyyy"):
+            utdesp.getFechaProduccion(),linea,JT_FECPRO);
+
         jt.setValor(utdesp.getPrvCompra(),linea,JT_PRVCOD);
         jt.setValor( pdprove.getNombPrv(utdesp.getPrvCompra(), dtStat),linea,JT_PRVNOMB);
         jt.setValor(utdesp.getAcpPainac(),linea,JT_PAINAC);
         return true;
     }
-    catch (Exception k)
+    catch (SQLException | ParseException k)
     {
       Error("Error al buscar Peso", k);
       return false;
@@ -552,7 +663,7 @@ public class MantInvProduc extends ventanaPad implements PAD
       
       jt.setEnabled(false);
       jt.removeAllDatos();
-      jtRes.removeAllDatos();
+      
       s = "select  * from cinvproduc where  cip_codi = " + dt.getInt("cip_codi");
       if (!dtCon1.select(s))
       {
@@ -586,14 +697,16 @@ public class MantInvProduc extends ventanaPad implements PAD
         v.add(dtCon1.getString("pro_codi")); // 1
         v.add(dtCon1.getString("pro_nomb")); // 2 
         v.add(dtCon1.getString("prp_ano")); // 3        
-        v.add(dtCon1.getString("prp_seri")); // 5  
-        v.add(dtCon1.getString("prp_part")); // 6 
-        v.add(dtCon1.getString("prp_indi")); // 7
-        v.add(dtCon1.getString("prp_peso")); // 8
-        v.add(dtCon1.getString("prv_codi")); // 9
+        v.add(dtCon1.getString("prp_seri")); // 4 
+        v.add(dtCon1.getString("prp_part")); // 5 
+        v.add(dtCon1.getString("prp_indi")); // 6
+        v.add(dtCon1.getString("prp_peso")); // 7
+        v.add(dtCon1.getString("prv_codi")); // 8
         v.add(dtCon1.getString("prv_nomb")); // 9
-        v.add(dtCon1.getDate("prp_fecsac")); // 9
-        v.add(dtCon1.getString("pai_codi")); // 9
+        v.add(dtCon1.getDate("prp_fecsac")); // 10
+        v.add(dtCon1.getDate("prp_feccad")); // 11
+        v.add(dtCon1.getDate("prp_fecpro")); // 12
+        v.add(dtCon1.getString("pai_codi")); // 13
         v.add(dtCon1.getFecha("lip_fecalt","dd-MM-yy HH:mm")); // 9
         jt.addLinea(v);
         n++;
@@ -601,8 +714,19 @@ public class MantInvProduc extends ventanaPad implements PAD
       jt.tableView.setVisible(true);
       
       jt.requestFocusInicio();
-      calcDatosGrupo();
-     
+      verDatosGrupo();
+   
+      calcTotales(true);
+    }
+    catch (SQLException | ParseException k)
+    {
+      Error("Error al visualizar datos", k);
+    }
+  }
+  void verDatosGrupo() throws SQLException,ParseException
+  {
+      jtRes.removeAllDatos();
+     calcDatosGrupo();     
      
       do{          
         ArrayList v = new ArrayList();
@@ -613,20 +737,16 @@ public class MantInvProduc extends ventanaPad implements PAD
         v.add(dtAdd.getString("prv_codi")); // 9
         v.add(dtAdd.getString("prv_nomb")); // 9
         v.add(dtAdd.getDate("prp_fecsac")); // 9
+        v.add(dtAdd.getDate("prp_feccad")); // 9
+        v.add(dtAdd.getDate("prp_fecpro")); // 9
         v.add(dtAdd.getString("pai_codi")); // 9
         jtRes.addLinea(v);
       } while (dtAdd.next());
-      calcTotales(true);
+      
       dtAdd.executeUpdate("drop table invprdtmp ");
       dtAdd.commit();
-    }
-    catch (SQLException k)
-    {
-      Error("Error al visualizar datos", k);
-    }
   }
-  
-  void calcDatosGrupo() throws SQLException
+  void calcDatosGrupo() throws SQLException,ParseException
   {
        s="create temp table invprdtmp ("
           + " cuantos int,"
@@ -636,40 +756,72 @@ public class MantInvProduc extends ventanaPad implements PAD
           + " prv_codi int,"
           + " prv_nomb varchar(50),"
           + " prp_fecsac date,"
+          + " prp_feccad date,"
+          + " prp_fecpro date,"
            + "pai_codi varchar(2))";
       dtAdd.executeUpdate(s);
-      s = "select  count(*) as cuantos,sum(prp_peso) as peso, pro_codi,pro_nomb,prv_codi,prv_nomb,prp_fecsac,pai_codi from v_invproduc where  cip_codi = " + cip_codiE.getValorInt() +
+      String ordenFecha=ordenFechaC.getValor().equals("C")?"prp_feccad":ordenFechaC.getValor().equals("P")?"prp_fecpro":"prp_fecsac";
+      s = "select  count(*) as cuantos,sum(prp_peso) as peso, "
+          + "pro_codi,pro_nomb,prv_codi,prv_nomb,prp_feccad,prp_fecpro,prp_fecsac,pai_codi from v_invproduc where  cip_codi = " + cip_codiE.getValorInt() +
           condLineas+
-          " group by pro_codi,pro_nomb,prv_codi,prv_nomb,prp_fecsac,pai_codi "+
-          " ORDER BY prp_fecsac,pro_codi,prv_codi ";
+          " group by pro_codi,pro_nomb,prv_codi,prv_nomb,prp_fecsac,prp_feccad,prp_fecpro,pai_codi "+
+          " ORDER BY "+ ordenFecha;
       dtCon1.select(s);
       int redondeo=diasRedon.getValorInt();
       int proCodi;
+      boolean ignPrv=opIgnPrv.isSelected();
+      fecSacr= dtCon1.getDate("prp_fecsac");
+      fecCaduc= dtCon1.getDate("prp_feccad");
+      fecProduc= dtCon1.getDate("prp_fecpro");
       do
       {    
         dtAdd.addNew("invprdtmp");
         dtAdd.setDato("cuantos",dtCon1.getDouble("cuantos"));
         dtAdd.setDato("peso",dtCon1.getDouble("peso"));
         proCodi=MantArticulos.getProductoPadre(dtCon1.getInt("pro_codi"),dtStat);
+      
         dtAdd.setDato("pro_codi",proCodi);
         dtAdd.setDato("pro_nomb",MantArticulos.getNombProd(proCodi, dtStat));
-        dtAdd.setDato("prv_codi",dtCon1.getString("prv_codi"));
-        dtAdd.setDato("prv_nomb",dtCon1.getString("prv_nomb"));
-        GregorianCalendar gc=new GregorianCalendar();
-        gc.setTime(dtCon1.getDate("prp_fecsac"));
-        int dia=gc.get(GregorianCalendar.DAY_OF_YEAR);
-        dia= dia/ redondeo;
-        dia=dia*redondeo ;
-        gc.set(GregorianCalendar.DAY_OF_YEAR,dia);
-        dtAdd.setDato("prp_fecsac",gc.getTime());
-        dtAdd.setDato("pai_codi",dtCon1.getString("pai_codi"));
+        if (ignPrv)
+        {
+            dtAdd.setDato("prv_codi","0");
+            dtAdd.setDato("prv_nomb","");   
+        }
+        else
+        {
+            dtAdd.setDato("prv_codi",dtCon1.getString("prv_codi"));
+            dtAdd.setDato("prv_nomb",dtCon1.getString("prv_nomb"));
+        }
+       
+        fecSacr=redondeaFecha(redondeo,dtCon1.getDate("prp_fecsac"),fecSacr);       
+        fecCaduc=redondeaFecha(redondeo,dtCon1.getDate("prp_feccad"),fecCaduc);
+        fecProduc=redondeaFecha(redondeo,dtCon1.getDate("prp_fecpro"),fecProduc);
+        dtAdd.setDato("prp_fecsac",fecSacr);
+        dtAdd.setDato("prp_feccad",fecCaduc);
+        dtAdd.setDato("prp_fecpro",fecProduc);
+        if (ignPrv)
+            dtAdd.setDato("pai_codi","");
+        else
+            dtAdd.setDato("pai_codi",dtCon1.getString("pai_codi"));
         dtAdd.update();
       } while (dtCon1.next());
-       s="select sum(cuantos) as cuantos, sum(peso) as peso,pro_codi,pro_nomb,prv_codi,prv_nomb,prp_fecsac,pai_codi "
+      
+       s="select sum(cuantos) as cuantos, sum(peso) as peso,pro_codi,pro_nomb,prv_codi,prv_nomb,prp_feccad, prp_fecpro,prp_fecsac,pai_codi "
           + "  from invprdtmp "
-          + " group by pro_codi,pro_nomb,prv_codi,prv_nomb,prp_fecsac,pai_codi "
-          + " ORDER BY pro_codi,prp_fecsac,prv_codi";
+          + " group by pro_codi,pro_nomb,prv_codi,prv_nomb,prp_fecsac,prp_feccad,prp_fecpro, pai_codi "
+          + " ORDER BY pro_codi,"+ordenFecha+",prv_codi";
       dtAdd.select(s);
+  }
+  private Date redondeaFecha(int redondeo, Date fecha,Date ultFecha) throws ParseException
+  {
+      if (fecha==null)
+          fecha=Formatear.getDate("01-01-2000", "dd-MM-yyyy");
+      if (ultFecha==null)
+          ultFecha=Formatear.getDate("01-01-2000", "dd-MM-yyyy");
+      int dias=Math.abs((int)Formatear.comparaFechas(fecha, ultFecha));
+      if (dias>redondeo)
+          return fecha;      
+      return ultFecha;
   }
     @Override
   public void ej_query1()
@@ -1031,9 +1183,11 @@ public class MantInvProduc extends ventanaPad implements PAD
     dtAdd.setDato("prp_part", prp_partE.getValorInt());
     dtAdd.setDato("pro_codi", pro_codiE.getValorInt()); 
     dtAdd.setDato("prp_indi", prp_indiE.getValorInt());
-    dtAdd.setDato("prp_peso", prp_pesoE.getValorDec());    
+    dtAdd.setDato("prp_peso", jt.getValorDec(row,JT_PRPPESO));    
     dtAdd.setDato("prv_codi", jt.getValorInt(row,JT_PRVCOD));
     dtAdd.setDato("prp_fecsac",jt.getValDate(row,JT_FECSAC));
+    dtAdd.setDato("prp_fecsac",jt.getValDate(row,JT_FECCAD));
+    dtAdd.setDato("prp_fecpro",jt.getValDate(row,JT_FECPRO));
     dtAdd.setDato("pai_codi",jt.getValString(row,JT_PAINAC));
     dtAdd.setDato("lip_fecalt","current_timestamp");
     dtAdd.update(stUp);
@@ -1361,6 +1515,8 @@ public class MantInvProduc extends ventanaPad implements PAD
         prv_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#####9");
         prv_nombE = new gnu.chu.controles.CTextField(Types.CHAR,"X");
         pai_codiE = new gnu.chu.controles.CTextField();
+        prp_feccadE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        prp_fecproE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -1377,7 +1533,7 @@ public class MantInvProduc extends ventanaPad implements PAD
         tid_codiE = new gnu.chu.camposdb.tidCodi2();
         cLabel13 = new gnu.chu.controles.CLabel();
         PtabPane1 = new gnu.chu.controles.CTabbedPane();
-        jt = new gnu.chu.controles.CGridEditable(13) {
+        jt = new gnu.chu.controles.CGridEditable(15) {
             @Override
             public void afterCambiaLinea()
             {
@@ -1423,7 +1579,16 @@ public class MantInvProduc extends ventanaPad implements PAD
                 return true;
             }}
             ;
-            jtRes = new gnu.chu.controles.Cgrid(8);
+            PGrupo = new gnu.chu.controles.CPanel();
+            jtRes = new gnu.chu.controles.Cgrid(10);
+            PDatGrupo = new gnu.chu.controles.CPanel();
+            cLabel12 = new gnu.chu.controles.CLabel();
+            diasRedon = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9");
+            cLabel15 = new gnu.chu.controles.CLabel();
+            ordenFechaC = new gnu.chu.controles.CComboBox();
+            cLabel16 = new gnu.chu.controles.CLabel();
+            tla_codiE = new gnu.chu.controles.CLinkBox();
+            opIgnPrv = new gnu.chu.controles.CCheckBox();
             Ppie = new gnu.chu.controles.CPanel();
             PAcum = new gnu.chu.controles.CPanel();
             cLabel2 = new gnu.chu.controles.CLabel();
@@ -1442,16 +1607,13 @@ public class MantInvProduc extends ventanaPad implements PAD
             Bkilos0 = new gnu.chu.controles.CButton("F6",Iconos.getImageIcon("stock_insert"));
             cLabel11 = new gnu.chu.controles.CLabel();
             nlinE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
-            cLabel12 = new gnu.chu.controles.CLabel();
             usu_nombE = new gnu.chu.controles.CTextField(Types.CHAR, "X", 15);
             cLabel14 = new gnu.chu.controles.CLabel();
-            diasRedon = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9");
+            BRegLin = new gnu.chu.controles.CButton();
 
             prp_empcodE.setToolTipText("");
 
             prp_serieE.setText("A");
-
-            prp_pesoE.setEnabled(false);
 
             Bimpri.setToolTipText("Imprimir Registro Activo");
 
@@ -1466,6 +1628,10 @@ public class MantInvProduc extends ventanaPad implements PAD
             prv_nombE.setEnabled(false);
 
             pai_codiE.setEnabled(false);
+
+            prp_feccadE.setEnabled(false);
+
+            prp_fecproE.setEnabled(false);
 
             Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -1545,11 +1711,11 @@ public class MantInvProduc extends ventanaPad implements PAD
             jt.setLayout(jtLayout);
             jtLayout.setHorizontalGroup(
                 jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 962, Short.MAX_VALUE)
+                .addGap(0, 1187, Short.MAX_VALUE)
             );
             jtLayout.setVerticalGroup(
                 jtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 167, Short.MAX_VALUE)
+                .addGap(0, 201, Short.MAX_VALUE)
             );
 
             try {
@@ -1575,8 +1741,10 @@ public class MantInvProduc extends ventanaPad implements PAD
                 v.add("Prv"); // 8
                 v.add("Nombre Prv"); // 9
                 v.add("Fec.Sacr."); // 10
-                v.add("Pais"); // 11
-                v.add("Fec.Alta"); // 12
+                v.add("Fec.Cad."); // 11
+                v.add("Fec.Pro."); // 12
+                v.add("Pais"); // 13
+                v.add("Fec.Alta"); // 14
                 jt.setCabecera(v);
                 Vector v1 = new Vector();
 
@@ -1591,20 +1759,24 @@ public class MantInvProduc extends ventanaPad implements PAD
                 v1.add(prv_codiE); // 8  Proveedor
                 v1.add(prv_nombE); // 9 Nombre Proveedor
                 v1.add(prp_fecsacE); // 10  Fecha Sacrificio
+                v1.add(prp_feccadE); // 10  Fecha Cad.
+                v1.add(prp_fecproE); // 10  Fecha Cad.
                 v1.add(pai_codiE); // Pais Origen
                 v1.add(lip_fecaltE); //11  Fecha Alta Linea
                 jt.setCampos(v1);
                 jt.setAjustarGrid(true);
                 jt.setAjustarColumnas(false);
                 jt.setAnchoColumna(new int[]
-                    {30,45, 200, 40, 30, 50, 40, 50, 50,150,70,40,80});
+                    {30,45, 200, 40, 30, 50, 40, 50, 50,150,70,70,70,40,80});
                 jt.setAlinearColumna(new int[]
-                    {2,2, 0, 2,0, 2, 2, 2, 2, 0,1,0,0});
+                    {2,2, 0, 2,0, 2, 2, 2, 2, 0,1,1,1,0,0});
                 jt.setFormatoCampos();
             } catch (Exception k) {
                 Error ("Error al configurar grid",k);
             }
             PtabPane1.addTab("Datos", jt);
+
+            PGrupo.setLayout(new java.awt.GridBagLayout());
 
             ArrayList vr=new ArrayList();
             vr.add("Producto"); // 0
@@ -1614,13 +1786,82 @@ public class MantInvProduc extends ventanaPad implements PAD
             vr.add("Prv"); // 4
             vr.add("Nombre Prv"); // 5
             vr.add("Fec.Sacr."); // 6
-            vr.add("Pais"); // 7
+            vr.add("Fec.Cad."); // 7
+            vr.add("Fec.Pro."); // 8
+            vr.add("Pais"); // 9
             jtRes.setCabecera(vr);
-            jtRes.setAlinearColumna(new int[]{2,0,2,2,2,0,1,0});
-            jtRes.setAnchoColumna(new int[]{60,200,40,50,50,150,70,40});
+            jtRes.setAlinearColumna(new int[]{2,0,2,2,2,0,1,1,1,0});
+            jtRes.setAnchoColumna(new int[]{60,200,40,50,50,150,60,60,60,40});
             jtRes.setFormatoColumna(2, "###9");
             jtRes.setFormatoColumna(3, "##,##9.99");
-            PtabPane1.addTab("Resumen", jtRes);
+            jtRes.setFormatoColumna(6, "dd-MM-yy");
+            jtRes.setFormatoColumna(7, "dd-MM-yy");
+            jtRes.setFormatoColumna(8, "dd-MM-yy");
+            jtRes.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+            jtRes.setAjustarGrid(true);
+            jtRes.setMaximumSize(new java.awt.Dimension(100, 100));
+            jtRes.setMinimumSize(new java.awt.Dimension(100, 100));
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 0;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+            gridBagConstraints.ipadx = 1;
+            gridBagConstraints.ipady = 1;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+            gridBagConstraints.weightx = 1.0;
+            gridBagConstraints.weighty = 1.0;
+            PGrupo.add(jtRes, gridBagConstraints);
+
+            PDatGrupo.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+            PDatGrupo.setMaximumSize(new java.awt.Dimension(579, 42));
+            PDatGrupo.setMinimumSize(new java.awt.Dimension(579, 42));
+            PDatGrupo.setPreferredSize(new java.awt.Dimension(579, 42));
+            PDatGrupo.setLayout(null);
+
+            cLabel12.setText("Tipo Listado");
+            cLabel12.setPreferredSize(new java.awt.Dimension(52, 18));
+            PDatGrupo.add(cLabel12);
+            cLabel12.setBounds(288, 0, 70, 17);
+
+            diasRedon.setText("3");
+            diasRedon.setToolTipText("Dias a Redondear ");
+            PDatGrupo.add(diasRedon);
+            diasRedon.setBounds(70, 2, 30, 17);
+
+            cLabel15.setText("Redondeo");
+            cLabel15.setPreferredSize(new java.awt.Dimension(52, 18));
+            PDatGrupo.add(cLabel15);
+            cLabel15.setBounds(10, 2, 60, 17);
+
+            ordenFechaC.addItem("Sacrif.","S");
+            ordenFechaC.addItem("Caduc.","C");
+            ordenFechaC.addItem("Produc.","P");
+            PDatGrupo.add(ordenFechaC);
+            ordenFechaC.setBounds(190, 0, 90, 17);
+
+            cLabel16.setText("Orden Fecha");
+            cLabel16.setPreferredSize(new java.awt.Dimension(52, 18));
+            PDatGrupo.add(cLabel16);
+            cLabel16.setBounds(110, 2, 80, 17);
+
+            tla_codiE.setFormato(Types.DECIMAL, "#9");
+            tla_codiE.setAncTexto(30);
+            PDatGrupo.add(tla_codiE);
+            tla_codiE.setBounds(360, 0, 210, 17);
+
+            opIgnPrv.setText("Ignorar Proveedor");
+            PDatGrupo.add(opIgnPrv);
+            opIgnPrv.setBounds(10, 20, 130, 17);
+
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 1;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+            gridBagConstraints.weightx = 1.0;
+            gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
+            PGrupo.add(PDatGrupo, gridBagConstraints);
+
+            PtabPane1.addTab("Resumen", PGrupo);
 
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
@@ -1705,21 +1946,16 @@ public class MantInvProduc extends ventanaPad implements PAD
             Bkilos0.setText("F6");
             Bkilos0.setToolTipText("Insertar linea con kilos =0");
             Ppie.add(Bkilos0);
-            Bkilos0.setBounds(80, 42, 50, 20);
+            Bkilos0.setBounds(80, 40, 50, 20);
 
             cLabel11.setText("Nº Lin");
             Ppie.add(cLabel11);
-            cLabel11.setBounds(150, 42, 40, 17);
+            cLabel11.setBounds(210, 40, 40, 17);
 
             nlinE.setEditable(false);
             nlinE.setBackground(new java.awt.Color(0, 255, 255));
             Ppie.add(nlinE);
-            nlinE.setBounds(190, 42, 40, 17);
-
-            cLabel12.setText("Redondeo");
-            cLabel12.setPreferredSize(new java.awt.Dimension(52, 18));
-            Ppie.add(cLabel12);
-            cLabel12.setBounds(20, 60, 70, 17);
+            nlinE.setBounds(250, 40, 40, 17);
 
             usu_nombE.setEnabled(false);
             Ppie.add(usu_nombE);
@@ -1730,10 +1966,10 @@ public class MantInvProduc extends ventanaPad implements PAD
             Ppie.add(cLabel14);
             cLabel14.setBounds(150, 60, 50, 17);
 
-            diasRedon.setText("3");
-            diasRedon.setToolTipText("Dias a Redondear ");
-            Ppie.add(diasRedon);
-            diasRedon.setBounds(80, 60, 30, 17);
+            BRegLin.setText("Regen.");
+            BRegLin.setToolTipText("Regenerar Datos Trazabilidad");
+            Ppie.add(BRegLin);
+            BRegLin.setBounds(150, 40, 50, 20);
 
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
@@ -1746,6 +1982,7 @@ public class MantInvProduc extends ventanaPad implements PAD
             pack();
         }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BRegLin;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CButton Bgrupo;
@@ -1755,6 +1992,8 @@ public class MantInvProduc extends ventanaPad implements PAD
     private gnu.chu.controles.CButton Bressub;
     private gnu.chu.controles.CPanel PAcum;
     private gnu.chu.controles.CPanel PAcum1;
+    private gnu.chu.controles.CPanel PDatGrupo;
+    private gnu.chu.controles.CPanel PGrupo;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Ppie;
     private gnu.chu.controles.CPanel Pprinc;
@@ -1765,6 +2004,8 @@ public class MantInvProduc extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel14;
+    private gnu.chu.controles.CLabel cLabel15;
+    private gnu.chu.controles.CLabel cLabel16;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -1787,11 +2028,15 @@ public class MantInvProduc extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField nlinE;
     private gnu.chu.controles.CTextField numpesE;
     private gnu.chu.controles.CTextField numpesE1;
+    private gnu.chu.controles.CCheckBox opIgnPrv;
+    private gnu.chu.controles.CComboBox ordenFechaC;
     private gnu.chu.controles.CTextField pai_codiE;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CTextField prp_anoE;
     private gnu.chu.controles.CTextField prp_empcodE;
+    private gnu.chu.controles.CTextField prp_feccadE;
+    private gnu.chu.controles.CTextField prp_fecproE;
     private gnu.chu.controles.CTextField prp_fecsacE;
     private gnu.chu.controles.CTextField prp_indiE;
     private gnu.chu.controles.CTextField prp_partE;
@@ -1800,6 +2045,7 @@ public class MantInvProduc extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField prv_codiE;
     private gnu.chu.controles.CTextField prv_nombE;
     private gnu.chu.camposdb.tidCodi2 tid_codiE;
+    private gnu.chu.controles.CLinkBox tla_codiE;
     private gnu.chu.controles.CTextField usu_nombE;
     // End of variables declaration//GEN-END:variables
 }
