@@ -524,11 +524,41 @@
                     </Component>
                     <Component class="gnu.chu.controles.CCheckBox" name="opIgnPrv">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Ignorar Proveedor"/>
+                        <Property name="text" type="java.lang.String" value="Ignorar Prov."/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="10" y="20" width="130" height="17"/>
+                          <AbsoluteConstraints x="10" y="20" width="120" height="17"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CCheckBox" name="opIgnFecProd">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Ignorar Fec.Prod"/>
+                      </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="360" y="20" width="130" height="17"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CCheckBox" name="opIgnPais">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Ignorar Pais"/>
+                      </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="140" y="20" width="90" height="17"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CCheckBox" name="opIgnFecSac">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Ignorar Fec. Sacr"/>
+                      </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="240" y="20" width="120" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>

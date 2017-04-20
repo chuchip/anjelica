@@ -1188,7 +1188,7 @@ create table anjelica.v_albcompar
    dre_nume int ,                  -- Numero de Datos Registro 
    dib varchar(50),                 -- NO USADO
    acp_nucrot varchar(30),	-- Numero de Crotal
-   acp_painac int,		-- Pais de Nacimiento
+   acp_painac char(2),		-- Pais de Nacimiento
    dibnacimientocomunidad int,	-- NO USADO
    dibnacimientoprovincia int,  -- NO USADO
    acp_feccad date,		-- Fecha Caducidad
@@ -1196,7 +1196,7 @@ create table anjelica.v_albcompar
    dibraza int,			-- NO USADO
    ncrotal2 varchar(30),	-- NO USADO
    ncrotal3 varchar(30),	-- NO USADO
-   acp_paisac int,		-- Pais de Sacrificio
+   acp_paisac char(2),		-- Pais de Sacrificio
    sacrificiocomunidad int,	-- NO USADO
    sacrificioprovincia int,	-- NO USADO
    acp_fecsac date,		-- Fecha de Sacrificio
@@ -1238,7 +1238,7 @@ create table anjelica.v_albcompar
    aux_3 varchar(50),		-- NO USADO
    precio float,		-- NO USADO
    precio2 float,		-- NO USADO
-   acp_engpai int,		-- Pais de Engorde
+   acp_engpai char(2),		-- Pais de Engorde
    acp_canti float,		-- Kilos
    pesomediacanal1 float,		-- NO USADO
    pesomediacanal2 float,		-- NO USADO
@@ -1269,7 +1269,7 @@ grant select on anjelica.v_compras to public;
 create or replace view v_albacom as 
 select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,
 l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi
-from anjelica.v_albacoc as c,anjelica.v_albacol as l, anjelica
+from anjelica.v_albacoc as c,anjelica.v_albacol as l
 where c.acc_ano=l.acc_ano
 and c.emp_codi=l.emp_codi
 and c.acc_serie=l.acc_serie
@@ -1289,9 +1289,9 @@ create table anjelica.hisalpaco
    acp_numind int,		-- Numero de Ind.
    pcc_nume int ,		-- Numero de Pedido (NO USADO)
    acp_nucrot varchar(30),	-- Numero de Crotal
-   acp_painac int,		-- Pais de Nacimiento
+   acp_painac char(2),		-- Pais de Nacimiento
    acp_feccad date,		-- Fecha Caducidad
-   acp_paisac int,		-- Pais de Sacrificio
+   acp_paisac char(2),		-- Pais de Sacrificio
    acp_fecsac date,		-- Fecha de Sacrificio
    acp_fecpro date,             -- Fecha de Produccion
    observaciones varchar(255),
@@ -1301,7 +1301,7 @@ create table anjelica.hisalpaco
    mat_codi int,		-- Codigo de Matadero
    acl_nulin int,		-- Numero de Linea del Albaran
    sde_codi int,		-- Codigo Sala Despiece
-   acp_engpai int,		-- Pais de Engorde
+   acp_engpai char(2),		-- Pais de Engorde
    acp_canti float,		-- Kilos
    his_rowid int not null
 );
@@ -2313,7 +2313,7 @@ create table anjelica.v_matadero
  mat_nuexpl VARCHAR(15),	-- Numero de Explotacion
  mat_nrgsa  VARCHAR(12),	-- Num. Reg. Sanitario
  mat_comen  VARCHAR(50),	-- Observaciones
- pai_codi int,			-- Pais
+ pai_codi int not null,		-- Pais
  mat_codcom int,		-- Cod. Comunidad  (NO USADO)
  mat_codprov int,		-- Cod. Provincia  (NO USADO)
  mat_orgcon  VARCHAR(15),	-- Organismo Control
@@ -3153,7 +3153,7 @@ create table anjelica.comision_represent
 	avc_id int  not null, -- Numero Albaran
 	cor_linea varchar(30) not null, -- LINEA
 	cor_coment varchar(120) not null, -- Comentario
-	constraint ix_comrep primary key (avc_id,cor_linea)
+	constraint ix_comrep primary key (avc_id,cor_linea)f
  );
 grant all on anjelica.comision_represent to public;
 --
@@ -3375,6 +3375,8 @@ create table anjelica.linvproduc
     prp_peso decimal(6,2) not null,		-- Peso de inventario
 	prv_codi int not null,			-- Prvoveedor
 	prp_fecsac date not null,		-- Fecha Sacrificio
+	prp_feccad date ,				-- Fecha Cad.
+	prp_fecpro date ,				-- Fecha Produccion.
 	lip_fecalt timestamp not  null default current_timestamp,
   constraint ix_linvproduc primary key(cip_codi,lip_numlin)
 );
@@ -3382,7 +3384,7 @@ create index ix_linvproduc2 on linvproduc(pro_codi,prp_ano,prp_part,prp_seri,prp
 
 create view anjelica.v_invproduc as
 select c.cip_codi,c.usu_nomb,cip_fecinv, c.cam_codi,c.alm_codi,lip_numlin,prp_ano, prp_seri, prp_part, l.pro_codi, a.pro_nomb,
-prp_indi,prp_peso,l.prv_codi,prv_nomb,prp_fecsac,lip_fecalt from cinvproduc as c, linvproduc as l left join v_articulo as a on l.pro_codi=a.pro_codi
+prp_indi,prp_peso,l.prv_codi,prv_nomb,prp_fecsac,prp_feccad,prp_fecpro,lip_fecalt,l.pai_codi from cinvproduc as c, linvproduc as l left join v_articulo as a on l.pro_codi=a.pro_codi
 left join v_proveedo as pv on l.prv_codi = pv.prv_codi where
  c.cip_codi=l.cip_codi;
 grant select on  v_invproduc to public;
@@ -3883,10 +3885,19 @@ create table anjelica.stockpart
  	stp_kilini float,	-- Kilos Iniciales
 	stp_kilact float,	-- Kilos Actuales
 	prv_codi int,		-- Proveedor
-	stp_feccad date,	-- Fecha de Caducidad
+	stp_feccad date,	-- Fecha de Caducidad	
 	stp_numpal sallint, -- Numero Palet
 	stp_numcaj smallint, -- Numero caja
 	cam_codi varchar(2), -- Camara en que esta ubicada
+	stp_fecpro date,	 -- Fecha Produccion.
+	stp_nucrot varchar(30), -- Numeo Crotal
+	stp_painac char(2),		 -- Pais de Nacimiento
+	stp_engpai char(2),		-- Pais de engorde
+	stp_paisac char(2),		-- Pais de Sacrificio
+	stp_fecsac date,	-- Fecha Sacrificio
+	mat_codi int,		-- Matadero
+	sde_codi int,		-- Sala despiece
+	stp_traaut smallint default 1 not null,-- Trazabilidad Automatica.
 	constraint ix_stockpart primary key (pro_codi,eje_nume,pro_serie,pro_nupar,pro_numind);
 );
 create index ix_stkpart1 on anjelica.stockpart(eje_nume,pro_serie,pro_nupar,pro_numind,pro_codi);
@@ -3903,6 +3914,7 @@ create table anjelica.mvtosalm
 	mvt_tipo char(1) not null default 'S', -- Entrada o Salida
 	mvt_tipdoc char(1) not null, -- C (Alb. Compra), V (Alb.Venta), R (Regulariz), Despiece Entrada a alm.(d), Desp. Salida (D)
     alm_codi int not null,             -- Almacen
+	cam_codi varchar(2),		   -- Camara (para movimientos entre camaras)
 	mvt_fecdoc date not null,	   -- Fecha del Documento
 	mvt_empcod int not null default 1, -- Empresa del Documento.
 	mvt_ejedoc int not null, -- Ejercicio del Documento.
@@ -3917,8 +3929,8 @@ create table anjelica.mvtosalm
 	mvt_canti float not null, -- Cantidad
 	mvt_unid int not null,    -- Unidades
 	mvt_prec float,		 -- Precio
-    mvt_cliprv int,          -- Cliente / Proveedor.
-    mvt_feccad date          -- Fecha Caducidad del Indiv.
+        mvt_cliprv int,          -- Cliente / Proveedor.
+        mvt_feccad date          -- Fecha Caducidad del Indiv.
 );
 CREATE INDEX ix_mvtalm1 on anjelica.mvtosalm(mvt_tipdoc,mvt_fecdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc);
 CREATE INDEX ix_mvtalm2 on anjelica.mvtosalm(pro_codi,pro_ejelot,pro_serlot,pro_numlot,pro_indlot,mvt_time);

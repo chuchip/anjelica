@@ -939,7 +939,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         cabecera.add("Com.Rep"); // 4 -- Comision Repr.
         jt.setCabecera(cabecera);
         jt.setAnchoColumna(new int[]{86, 283, 60,150,60});
-        jt.alinearColumna(new int[] {0, 0, 2,0,2});
+        jt.setAlinearColumna(new int[] {0, 0, 2,0,2});
 
         jt.setNumRegCargar(0);
         try {

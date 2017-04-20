@@ -54,8 +54,10 @@ public class clresstock extends ventana implements  JRDataSource
   PreparedStatement pst,pst1,pst2;
   boolean swPanel = true;
   DatosTabla dtAux, dtAux1;
-  double cantS, cantT,cantC,cantV;
+  double cantC,cantV;
   double cantTS,cantTC,cantTV;
+  double kilosT;
+  int unidT;
   String s;
   CPanel Pprinc = new CPanel();
   CPanel PtipoCons = new CPanel();
@@ -70,11 +72,14 @@ public class clresstock extends ventana implements  JRDataSource
   CComboBox tla_vekgcaE = new CComboBox();
   CLabel cLabel6 = new CLabel();
   CTextField tla_nuliprE = new CTextField(Types.DECIMAL, "#9");
+  CComboBox opVerFecC=new CComboBox();
+  CLabel opVerFecL=new CLabel("Fecha");
   CLabel cLabel7 = new CLabel();
   CTextField tla_diagfeE = new CTextField(Types.DECIMAL, "#9");
   CLabel cLabel9 = new CLabel();
   CTextField fecStockE = new CTextField(Types.DATE, "dd-MM-yyyy");
   CCheckBox opIncPedE = new CCheckBox();
+  CCheckBox opIncPrvE= new CCheckBox();
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   CLabel cLabel3 = new CLabel();
   CLinkBox alm_codiE = new CLinkBox();
@@ -168,24 +173,32 @@ public class clresstock extends ventana implements  JRDataSource
     Pgrids.setLayout(gridBagLayout1);
     cLabel5.setText("Ver");
     cLabel5.setBounds(new Rectangle(239, 2, 31, 17));
-    tla_vekgcaE.setBounds(new Rectangle(264, 3, 96, 17));
-    cLabel6.setText("No. Lineas P/Prod.");
-    cLabel6.setBounds(new Rectangle(373, 3, 101, 17));
-    tla_nuliprE.setBounds(new Rectangle(473, 2, 27, 17));
-    cLabel7.setText("Agrupar Fec. Cad.");
-    cLabel7.setBounds(new Rectangle(1, 23, 106, 17));
-    tla_diagfeE.setBounds(new Rectangle(107, 23, 26, 17));
-    cLabel9.setText("Fec.Stock");
-    cLabel9.setBounds(new Rectangle(139, 23, 60, 17));
-    fecStockE.setSelectionEnd(10);
-    fecStockE.setFormato("dd-MM-yyyy");
-    fecStockE.setBounds(new Rectangle(196, 23, 73, 17));
+    tla_vekgcaE.setBounds(new Rectangle(264, 3, 70, 17));
+    cLabel6.setText("Lin.Prod");
+    cLabel6.setBounds(new Rectangle(335, 3, 50, 17));
+    tla_nuliprE.setBounds(new Rectangle(387, 2, 20, 17));
+    opVerFecL.setBounds(new Rectangle(410, 2, 40, 17));
+    opVerFecC.addItem("Caduc.","C");
+    opVerFecC.addItem("Sacr.","S");
+    opVerFecC.setBounds(new Rectangle(452, 2, 65, 17));
+    cLabel3.setText("Alm.");
+    cLabel3.setBounds(new Rectangle(524, 3, 40, 17));
+    alm_codiE.setAncTexto(30);
+    alm_codiE.setBounds(new Rectangle(565, 3, 190, 17));
+
+    cLabel7.setText("Dias");
+    cLabel7.setBounds(new Rectangle(1, 23, 30, 17));
+    tla_diagfeE.setBounds(new Rectangle(31, 23, 26, 17));
+    cLabel9.setText("Stock");
+    cLabel9.setBounds(new Rectangle(58, 23, 40, 17));
+    
+    fecStockE.setFormato("dd-MM-yy");
+    fecStockE.setBounds(new Rectangle(100, 23, 60, 17));
+    opIncPrvE.setText("Inc.Prv");
+    opIncPrvE.setToolTipText("Incluir Prv. en consulta");
+    opIncPrvE.setBounds(new Rectangle(162, 23, 60, 17));
     opIncPedE.setText("Inc.Pedidos");
     opIncPedE.setBounds(new Rectangle(275, 23, 90, 17));
-    cLabel3.setText("Almacen");
-    cLabel3.setBounds(new Rectangle(504, 3, 57, 17));
-    alm_codiE.setAncTexto(30);
-    alm_codiE.setBounds(new Rectangle(554, 3, 190, 17));
 
     profinE.setBounds(new Rectangle(362, 43, 267, 17));
     proiniE.setBounds(new Rectangle(52, 43, 267, 17));
@@ -219,6 +232,7 @@ public class clresstock extends ventana implements  JRDataSource
     PtipoCons.add(Baceptar, null);
     PtipoCons.add(cLabel7, null);
     PtipoCons.add(opIncPedE, null);
+    PtipoCons.add(opIncPrvE, null);
     PtipoCons.add(cLabel10, null);
     PtipoCons.add(sbe_codiE, null);
     PtipoCons.add(tla_diagfeE, null);
@@ -229,6 +243,9 @@ public class clresstock extends ventana implements  JRDataSource
     PtipoCons.add(alm_codiE, null);
     PtipoCons.add(cLabel3, null);
     PtipoCons.add(tla_nuliprE, null);
+    PtipoCons.add(opVerFecL, null);
+    PtipoCons.add(opVerFecC, null);
+    
     PtipoCons.add(cLabel6, null);
     PtipoCons.add(tla_vekgcaE, null);
     PtipoCons.add(cLabel1, null);
@@ -244,16 +261,17 @@ public class clresstock extends ventana implements  JRDataSource
     dtAux = new DatosTabla(dtCon1.getConexion());
     dtAux1 = new DatosTabla(dtCon1.getConexion());
     Pprinc.setButton(KeyEvent.VK_F4, Baceptar);
-    int tlaCodi=0;
+   
     s = "SELECT tla_codi,tla_nomb FROM tilialca order by tla_codi";
-    if (dtStat.select(s))
-      tlaCodi=dtStat.getInt("tla_codi");
+    dtStat.select(s);      
     tla_codiE.addDatos(dtStat);
     tla_codiE.addDatos("99", "Definido Usuario");
     tla_codiE.setValorInt(99);
     
+    tla_vekgcaE.addItem("Ambos", "A");
     tla_vekgcaE.addItem("Kilos", "K");
     tla_vekgcaE.addItem("Unid", "U");
+
     alm_codiE.setFormato(true);
     alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
     pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
@@ -371,39 +389,57 @@ public class clresstock extends ventana implements  JRDataSource
       int proCodi;
       long redondeo = tla_diagfeE.getValorLong() * 1000 * 60 * 60 * 24; //  1000 Ms * 60 Segundos * 60 Minutos * 24 Horas
       long fecCad;
-      String llave;
+      char opVerDatos=tla_vekgcaE.getValor().charAt(0);
       java.util.Date dt;
-      boolean verKilos = tla_vekgcaE.getValor().equals("K");
+      boolean opIncPrv=opIncPrvE.isSelected();
       productos.clear();
       grids.clear();
-      String result;
+      DatProducto result;
       ArrayList vc = new ArrayList();
       vc.add("Proveed");
       vc.add("Fecha");
-      vc.add("Cantid.");
-      int[] ancGrid ;
-      int[]alineaGrid;
+      ArrayList<Integer> ancGrid = new ArrayList();
+      ancGrid.add(95);
+      ancGrid.add(60);
+      ArrayList<Integer> alineaGrid = new ArrayList();
+      alineaGrid.add(0);
+      alineaGrid.add(1);
+      
+      if (opVerDatos=='U' || opVerDatos=='A')
+      {
+        ancGrid.add(35);
+        alineaGrid.add(2);
+        vc.add("Unid");
+        
+      }
+      if (opVerDatos=='K' || opVerDatos=='A')
+      {
+        ancGrid.add(45);
+        alineaGrid.add(2);
+        vc.add("Kilos");
+      }
+      
       if (opIncPedE.isSelected())
       {
         vc.add("Stock");
         vc.add("Comp");
         vc.add("Vent");
-        ancGrid = new int[]  {95, 60, 45,45,45,45};
-        alineaGrid = new int[] {  0, 1, 2,2,2,2};
+        ancGrid.add(45);
+        ancGrid.add(45);
+        ancGrid.add(45);        
+        alineaGrid.add(2);
+        alineaGrid.add(2);
+        alineaGrid.add(2);        
       }
-      else
-      {
-        ancGrid = new int[]  {95, 60, 55};
-        alineaGrid = new int[] {  0, 1, 2};
-      }
+    
       s="SELECT sum(stp_unact) as unidades,SUM(stp_kilact) as cantidad," +
             " prv_codi, stp_feccad as feccad " +
             " FROM v_stkpart where pro_codi = ?" +
             (VERNEGATIVO?
                 "  and (stp_kilact > 0.49 or stp_kilact < -0.49)"+
-                (verKilos?"":" and stp_unact != 0 "):
+                (opVerDatos=='K'?"":" and stp_unact != 0 "):
                 "   and stp_kilact > 0.49 "+
-                (verKilos?"":" and stp_unact >0 ")) +
+                (opVerDatos=='K'?"":" and stp_unact >0 ")) +
             " and eje_nume > 0 " +
             (almCodi == 0 ? "" : " and alm_codi = " + almCodi)+
             " group by prv_codi,stp_feccad";
@@ -534,20 +570,27 @@ public class clresstock extends ventana implements  JRDataSource
 
 //        if (! buscaGrupo(tlaCodi,empCodi,dtCon1.getInt("pro_codi"),almCodi))
 //          continue;
-        Cgrid jt = new Cgrid(opIncPedE.isSelected() ? 6 : 3);
+        Cgrid jt = new Cgrid( ancGrid.size());
 //        Cgrid jt = new Cgrid(3);
         jt.setCabecera(vc);
         jt.setAnchoColumna(ancGrid );
         jt.setAlinearColumna(alineaGrid);
         String formCanti="--,--9";
-        if (tla_vekgcaE.getValor().equals("K"))
-               formCanti="-,--9.9";
-        jt.setFormatoColumna(2, formCanti);
+        int nCol=2;
+        if (opVerDatos=='U' || opVerDatos=='A')
+            jt.setFormatoColumna(nCol++, formCanti);
+        if (opVerDatos=='K' || opVerDatos=='A')
+        {
+              formCanti="-,--9.9";
+              jt.setFormatoColumna(nCol, formCanti);
+        }
+        
+        
         if (opIncPedE.isSelected())
         {
-          jt.setFormatoColumna(3, formCanti);
-          jt.setFormatoColumna(4,formCanti);
-          jt.setFormatoColumna(5, formCanti);
+          jt.setFormatoColumna(nCol++, formCanti);
+          jt.setFormatoColumna(nCol++,formCanti);
+          jt.setFormatoColumna(nCol++, formCanti);
         }
         CLabel pro_descL = new CLabel();
         pro_descL.setText((tlaCodi == 99?dtCon1.getInt("pro_codi")+" -> ":"")+ dtCon1.getString("pro_desc"));
@@ -561,7 +604,8 @@ public class clresstock extends ventana implements  JRDataSource
         jt.setMinimumSize(new Dimension(236, 128));
         jt.setPreferredSize(new Dimension(236, 128));
         jt.setBuscarVisible(false);
-        HashMap <String,String> hm = new HashMap();
+        double cantS;
+        ArrayList<DatProducto> hm = new ArrayList();
 
         do
         { // Para cada producto busca el stock
@@ -590,15 +634,23 @@ public class clresstock extends ventana implements  JRDataSource
               }
 //               debug("prv: "+dtAux1.getString("prv_codi")+" fecCad: "+
 //                     Formatear.formatearFecha(new java.util.Date(fecCad),"dd-MM-yyyy")+" dt: "+dtAux1.getFecha("feccad","dd-MM-yyyy"));
-
-              llave = fecCad + "/" + dtAux1.getInt("prv_codi", true);
-              if ( (result = hm.get(llave)) == null)
-                hm.put(llave, verKilos ? dtAux1.getString("cantidad") : dtAux1.getString("unidades"));
-              else
+              DatProducto dtProd=new DatProducto(proCodi, 
+                  opIncPrv?dtAux1.getInt("prv_codi"):0, fecCad);
+             
+            
+              int pos;
+              if (  (pos =hm.indexOf(dtProd)) == -1)
               {
-                cutValString(result);
-                cantS += verKilos ? dtAux1.getDouble("cantidad") : dtAux1.getDouble("unidades");
-                hm.put(llave, cantS + ":" + cantC + ":" + cantV);
+                dtProd.setKilos(dtAux1.getDouble("cantidad"));
+                dtProd.setUnidades(dtAux1.getInt("unidades"));
+                hm.add(dtProd);
+              }
+              else
+              {   
+                result=hm.get(pos);
+                result.addKilos( dtAux1.getDouble("cantidad"));
+                result.addUnidades( dtAux1.getInt("unidades"));             
+                hm.add(result);
               }
             }  while (dtAux1.next());
             
@@ -624,73 +676,97 @@ public class clresstock extends ventana implements  JRDataSource
                     dt = dtAux1.getDate("feccad");
                   fecCad = dt.getTime();
                 }
-                llave = fecCad + "/" + dtAux1.getInt("prv_codi", true);
-                cantV=0;
-                cantC=0;
-                cantS=0;
-                if ( (result = hm.get(llave)) != null)
-                  cutValString(result);
-                cantC+=verKilos ? dtAux1.getDouble("cantCompr") : dtAux1.getDouble("unidCompr");
-                cantV+= verKilos? dtAux1.getDouble("cantVent") : dtAux1.getDouble("unidVent");
-                hm.put(llave,cantS+":"+cantC+":"+cantV);
+                DatProducto dtProd=new DatProducto(proCodi,opIncPrv?dtAux1.getInt("prv_codi"):0, fecCad);
+              
+                int pos;
+                if (  (pos =hm.indexOf(dtProd)) == -1)
+                {
+                    
+//                cantC+=verKilos ? dtAux1.getDouble("cantCompr") : dtAux1.getDouble("unidCompr");
+//                cantV+= verKilos? dtAux1.getDouble("cantVent") : dtAux1.getDouble("unidVent");
+                hm.add(dtProd);
+                }
               } while (dtAux1.next());
             }
           }
         } while (dtAux.next());
 
-        Iterator it = hm.keySet().iterator();
-        SortedSet set = new TreeSet();
+        Iterator<DatProducto> it = hm.iterator();
+        SortedSet<DatProducto> set = new TreeSet();
 
         // Cargo el SortedSet
         while (it.hasNext())
         {
-          s = it.next().toString();
-          set.add(s);
+          result = it.next();
+          set.add(result);
         }
 
-        cantT=0;cantTS=0;
+        unidT=0;kilosT=0;cantTS=0;
         cantTV=0;cantTC = 0;
         it = set.iterator();
         while (it.hasNext())
         {
-          s = it.next().toString();
+          result = it.next();
           ArrayList v = new ArrayList();
-          n = s.indexOf("/");
-          prv = Integer.parseInt(s.substring(n + 1));
-          llave = pdprove.getNombPrv(Integer.parseInt(s.substring(n + 1)), dtStat);
-          if (llave == null)
-            v.add("PRV." + prv + " ERROR");
+          if (opIncPrv)
+          {
+            s=pdprove.getNombPrv(result.getProveedor(), dtStat);
+            if (s == null)
+              v.add("PRV." + result.getProveedor() + " ERROR");
+            else
+              v.add(s); // Proveedor          
+          }
           else
-            v.add(llave); // Proveedor
-          if (Long.parseLong(s.substring(0, n)) == 0)
-            v.add("");
-          else
-            v.add(Formatear.getFecha(new java.util.Date(
-                Long.parseLong(s.substring(0, n))), "dd-MM-yy"));
-          cutValString(hm.get(s));
+              v.add("");
+           v.add(Formatear.getFecha(new java.util.Date(
+                result.getFecha()), "dd-MM-yy"));
+        
+            
+          if (opVerDatos=='U' || opVerDatos=='A')
+          {
+            cantS=result.getUnidades()+result.getUnidadesCompra()-result.getUnidadesVenta();
+            v.add(cantS);
+            unidT+=cantS;
+          }
+          if (opVerDatos=='K' || opVerDatos=='A')
+          {
+            cantS=result.getKilos()+result.getKilos()-result.getKilosVenta();
+            v.add(cantS);
+            kilosT+=cantS;
+          }
           if (opIncPedE.isSelected())
-          {
-            v.add(""+(cantS+cantC-cantV));
-            cantTS+=cantS;
-            cantTC+=+cantC;
-            cantTV+=cantV;
-            v.add(""+cantS);
-            v.add(""+cantC);
-            v.add(""+cantV);
-          }
-          else
-          {
-            v.add(""+cantS);
-          }
-          cantT += cantS+cantC-cantV;
+          {            
+            if (opVerDatos=='U')
+            {
+               v.add(result.getUnidades());
+               v.add(result.getUnidadesCompra());
+               v.add(result.getUnidadesVenta());
+               cantTS+=result.getUnidades();
+               cantC+=result.getUnidadesCompra();
+               cantTV+=result.getUnidadesVenta();
+            }     
+             if (opVerDatos=='K' )
+            {
+               v.add(result.getKilos());
+               v.add(result.getKilosCompra());
+               v.add(result.getKilosVenta());
+               cantTS+=result.getKilos();
+               cantC+=result.getKilosCompra();
+               cantTV+=result.getKilosVenta();
+
+            }    
+          }        
           jt.addLinea(v);
         }
         if (maxLinGrid<jt.getRowCount())
           maxLinGrid=jt.getRowCount();
         ArrayList v = new ArrayList();
         v.add("TOTAL"); // Proveedor
-        v.add(""); // Fec. Caducidad
-        v.add("" + cantT); // Kilos o Unidades Totales
+        v.add(""); // Fec. Caducidad     
+        if (opVerDatos=='U' || opVerDatos=='A')
+            v.add(unidT); // Unidades Totales
+        if (opVerDatos=='K' || opVerDatos=='A')
+            v.add(kilosT); // Kilos  Totales
         if (opIncPedE.isSelected())
         {
           v.add( cantTS);
@@ -726,31 +802,7 @@ public class clresstock extends ventana implements  JRDataSource
    
 
   }
-  /**
-   * Trozea un string con 3 partes en formato
-   * CANTIDAD_STOCK:CANT_PED_COMPRAS:CANT_PED_VENTAS
-   * dejandolo en las vaiables globales cantS,cantP,cantV respectivamente.
-   * El string NO puede ser null.
-   *
-   * @param s String String a trocear
-   */
-  private void cutValString(String s)
-  {
-    n = s.indexOf(":");
-    if (n < 0)
-    {
-      cantS = Double.parseDouble(s);
-      cantC = 0;
-      cantV = 0;
-    }
-    else
-    {
-      cantS = Double.parseDouble(s.substring(0, n));
-      n1 = s.indexOf(":", n + 1);
-      cantC = Double.parseDouble(s.substring(n + 1, n1));
-      cantV = Double.parseDouble(s.substring(n1 + 1));
-    }
-  }
+
 
   void Blistar_actionPerformed()
   {
@@ -769,12 +821,12 @@ public class clresstock extends ventana implements  JRDataSource
   {
       try
       {
-          //    if (opIncPedE.isSelected() && tla_vekgcaE.getValor().equals("K"))
-//    {
-//        mensajeErr("No se puede incluir Pedidos si se desea sacar kilos");
-//        tla_vekgcaE.requestFocus();
-//        return false;
-//    }
+          if (opIncPedE.isSelected() && tla_vekgcaE.getValor().equals("A"))
+          {
+              mensajeErr("No se puede incluir Pedidos si se desea sacar Unid. y Kilos");
+              tla_vekgcaE.requestFocus();
+              return false;
+          }
           if (fecStockE.isNull())
           {
               mensajeErr("Introduzca Fecha de Stock");
@@ -955,5 +1007,124 @@ public class clresstock extends ventana implements  JRDataSource
     return true;
   }
 }
+class DatProducto implements Comparable<DatProducto>
+{
+    int proCodi, prvCodi;
+    long fecha;
+    double kilos=0,kilosCompra=0,kilosVenta=0;
+    int unidad=0,unidCompra=0,unidVenta=0;
+    public DatProducto(int proCodi,int prvCodi,long fecha)
+    {
+        this.proCodi=proCodi;
+        this.prvCodi=prvCodi;
+        this.fecha=fecha;
+    }
+    
+    public void setKilos(double kilos)
+    {
+        this.kilos=kilos;
+    }
+    public void setUnidades(int unidad)
+    {
+        this.unidad=unidad;
+    }
+    public double getKilos()
+    {
+        return this.kilos;
+    }
+    public int getUnidades()
+    {
+        return this.unidad;
+    }
+    public void addKilos(double kilos)
+    {
+        this.kilos+=kilos;
+    }
+     public void addUnidades(int unid)
+    {
+        this.unidad+=unid;
+    }
+    public int getProducto()
+    {
+        return proCodi;
+    }
+    public int getProveedor()
+    {
+        return prvCodi;
+    }
+    public long getFecha()
+    {
+        return fecha;
+    }
+    public void setKilosCompra(double kilCompra)
+    {
+        kilosCompra=kilCompra;
+    }
+    public void setKilosVenta(double kilVenta)
+    {
+        kilosVenta=kilVenta;
+    }
+    public void setUnidadesCompra(int unidad)
+    {
+        this.unidCompra=unidad;
+    }
+    public void setUnidadesVenta(int unidad)
+    {
+        this.unidVenta=unidad;
+    }
+    public double getKilosCompra()
+    {
+        return kilosCompra;
+    }
+    public double getKilosVenta()
+    {
+        return kilosVenta;
+    }
+    public int getUnidadesCompra()
+    {
+        return this.unidCompra;
+    }
+    public int getUnidadesVenta()
+    {
+        return this.unidVenta;
+    }
+    @Override
+    public boolean equals(Object obj) {
+      if ( obj instanceof  DatIndivBase )
+      {
+          if (((DatProducto)obj).getProducto()==getProducto() &&
+              ((DatProducto)obj).getProveedor()==getProveedor() &&
+              ((DatProducto)obj).getFecha()==getFecha()      )
+              return true;
+      }
+      return false;
+      
+  }
+     @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + getProducto();
+        hash = 89 * hash + getProveedor();
+        hash = 89 * hash + (int) this.getFecha();      
+        return hash;
+    }
 
+   
+    @Override
+  public String toString()
+  {
+          return getProducto()+" "+getProveedor() +"-"+
+              this.getFecha(); 
+  }
+
+    @Override
+    public int compareTo(DatProducto o) {
+        if (o.getFecha()>getFecha() || o.getProveedor()>getProveedor())
+            return 1;
+         if (o.getFecha()<getFecha() || o.getProveedor()<getProveedor())
+            return -1;
+        return 0;
+
+    }
+}
 

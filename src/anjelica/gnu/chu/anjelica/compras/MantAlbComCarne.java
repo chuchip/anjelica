@@ -5,7 +5,9 @@ import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantPaises;
+import gnu.chu.anjelica.pad.pdmatadero;
 import gnu.chu.anjelica.pad.pdprove;
+import gnu.chu.anjelica.pad.pdsaladesp;
 import gnu.chu.camposdb.PaiPanel;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;     
@@ -639,40 +641,50 @@ public class MantAlbComCarne extends MantAlbCom
     try {
       matCodi=Integer.parseInt(mat_codiE.getTexto(jtDes.getValString(JTD_MATCODI)));
     } catch (NumberFormatException k) {}
-
-    s = "SELECT mat_nrgsa,pai_codi FROM v_matadero m WHERE m.mat_codi = " + matCodi;
-    if (dtCon1.select(s))
-    {
-      sacrificadoE =  dtCon1.getString("mat_nrgsa");
-      s = MantPaises.getNombrePais(dtCon1.getInt("pai_codi"), dtCon1);
-      if (s!=null)
-        sacrificadoE=s + "-" +sacrificadoE;
-    }
-    else
-      sacrificadoE=matCodi+" NO ENCONTRADO";
+    sacrificadoE = pdmatadero.getRegistroSanitario(dtCon1, matCodi, false);
+//    s = "SELECT mat_nrgsa,pai_codi FROM v_matadero m WHERE m.mat_codi = " + matCodi;
+//    if (dtCon1.select(s))
+//    {
+//      sacrificadoE =  dtCon1.getString("mat_nrgsa");
+//      s = MantPaises.getNombrePais(dtCon1.getInt("pai_codi"), dtCon1);
+//      if (s!=null)
+//        sacrificadoE=s + "-" +sacrificadoE;
+//    }
+//    else
+//      sacrificadoE=matCodi+" NO ENCONTRADO";
     try {
       sdeCodi=Integer.parseInt(sde_codiE.getTexto(jtDes.getValString(nLin,JTD_SDECODI)));
     } catch (NumberFormatException k) {}
-
-    s = "SELECT sde_nrgsa,pai_codi FROM v_saladesp m " +
-        " WHERE m.sde_codi = " + sdeCodi;
-    if (dtCon1.select(s))
-    {
-      despiezadoE = dtCon1.getString("sde_nrgsa");
-      s = MantPaises.getNombrePais(dtCon1.getInt("pai_codi"), dtCon1);
-      if (s!=null)
-        despiezadoE = s + "-" + despiezadoE;
-    }
-    else
-      despiezadoE = sdeCodi + " NO ENCONTRADO";
+    despiezadoE=pdsaladesp.getRegistroSanitario(dtCon1, sdeCodi, false);
+//    s = "SELECT sde_nrgsa,pai_codi FROM v_saladesp m " +
+//        " WHERE m.sde_codi = " + sdeCodi;
+//    if (dtCon1.select(s))
+//    {
+//      despiezadoE = dtCon1.getString("sde_nrgsa");
+//      s = MantPaises.getNombrePais(dtCon1.getInt("pai_codi"), dtCon1);
+//      if (s!=null)
+//        despiezadoE = s + "-" + despiezadoE;
+//    }
+//    else
+//      despiezadoE = sdeCodi + " NO ENCONTRADO";
 
     if (etiq == null)
       etiq = new etiqueta(EU);
+    String paisNacido=MantPaises.getNombrePais(jtDes.getValString(nLin, JTD_PAINAC), dtCon1);
+    if (paisNacido==null)
+        paisNacido="Pais "+jtDes.getValString(nLin, JTD_PAINAC)+" NO encontrado";
+    String paisEngorde=MantPaises.getNombrePais(jtDes.getValString(nLin, JTD_ENGPAI), dtCon1);
+    if (paisEngorde==null)
+        paisEngorde="Pais "+jtDes.getValString(nLin, JTD_ENGPAI)+" NO encontrado";
 
+    String paisSacrificio=MantPaises.getNombrePais(jtDes.getValString(nLin, JTD_PAISAC), dtCon1);
+    if (paisSacrificio==null)
+        paisSacrificio="Pais "+jtDes.getValString(nLin, JTD_PAISAC)+" NO encontrado";
+    
     etiq.iniciar(codBarras.getCodBarra(), codBarras.getLote(),
                  proCodi, nombArt,
-                 mat_codiE.getTextoCombo(jtDes.getValString(nLin, JTD_PAINAC)),
-                 mat_codiE.getTextoCombo(jtDes.getValString(nLin, JTD_ENGPAI)),
+                 paisNacido,
+                 paisEngorde,
                  despiezadoE,
                  Formatear.cortar(jtDes.getValString(nLin, JTD_NUMCRO),30),
                  jtDes.getValorDec(nLin, JTD_CANTI),

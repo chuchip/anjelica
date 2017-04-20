@@ -2089,7 +2089,16 @@ public class Cgrid extends CPanel implements Serializable
     {
       setAnchoColumna(columna,ancho);
     }
-
+    
+    public void setAnchoColumna(ArrayList<Integer> anchuras)
+    {
+        int anc[]=new int[anchuras.size()];
+        int n=0;
+        for (int number : anchuras) {
+                anc[n++]=number;
+        }  
+        setAnchoColumna(anc);
+    }
     /**
     * Ajusta el ancho de la columna al valor indicado.
     * @param anchuras ancho de todas las columnas del grid en pixels.
@@ -2514,7 +2523,7 @@ public class Cgrid extends CPanel implements Serializable
         return -1;
     }
     // Para todas las columnas.
-    public void alinearColumna(int[] alineacion){
+    private void alinearColumna(int[] alineacion){
        if (alineacion.length != tableView.getColumnCount()){
           msgError="Error(alinearColumna):Nnmero de columnas errnneo";
           return;
@@ -2524,7 +2533,14 @@ public class Cgrid extends CPanel implements Serializable
           alinearColumna(i,alineacion[i]);
        }
     };
-
+    public void setAlinearColumna(ArrayList<Integer> alineacion){
+         int anc[]=new int[alineacion.size()];
+        int n=0;
+        for (int number : alineacion) {
+                anc[n++]=number;
+        }  
+        alinearColumna(anc);      
+    }
     public void setAlinearColumna(int[] alineacion){
        alinearColumna(alineacion);
     }

@@ -103,7 +103,7 @@ public class pdprodnue extends ventanaPad implements PAD
     jt.setCabecera(cabecera);
     int i []= {46,283,49,54};
     jt.setAnchoColumna(i);
-    jt.alinearColumna(new int[]{1,0,1,1,0});
+    jt.setAlinearColumna(new int[]{1,0,1,1,0});
     jt.setAjustarGrid(true);
     jt.setFormatoColumna(2,"BSN");
     jt.resetRenderer(2);

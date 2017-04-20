@@ -306,7 +306,6 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
               break;
             case KeyEvent.VK_F1:
               pulsadaF1();
-             
               break;
             case KeyEvent.VK_ESCAPE:
             case KeyEvent.VK_F2:
@@ -447,6 +446,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
     return false;
   }
 
+  @Override
   public void setQuery(boolean b)
   {
     query=b;

@@ -1,5 +1,6 @@
 package gnu.chu.anjelica.despiece;
 
+import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.hylafax.SendFax;
 import gnu.chu.interfaces.ejecutable;
@@ -39,6 +40,7 @@ import java.util.ResourceBundle;
 
 public class listraza  implements JRDataSource
 {
+  boolean cargaGrid=false;
   Locale lengua=ejecutable.local;
   int cliCodi;
   SendFax sendFax=null;
@@ -72,15 +74,16 @@ public class listraza  implements JRDataSource
       String ntrazaE,nacidoE,sacrificadoE,despiezadoE,cebadoE;
       String artVenta,pro_nomb,avp_serlot,msgLog;
       Double avp_canti;
-      Integer proCodi,avp_numpar,avp_numind;
+      Integer proCodi,avp_ejelot,avp_numpar,avp_numind,alm_codi;
       java.util.Date fecSacrE,fecCaduE;
+      
 
       DatosTraza(String ntrazaE,String nacidoE,String sacrificadoE,
               String despiezadoE,String cebadoE,
             String artVenta,java.util.Date fecSacrE,java.util.Date fecCaduE,
             String pro_nomb,
             Double avp_canti,Integer avp_numind,Integer avp_numpar,String avp_serlot,
-            Integer proCodi,String msgLog)
+            Integer proCodi,Integer avp_ejelot,Integer alm_codi,String msgLog)
       {
           this.ntrazaE=ntrazaE;
           this.nacidoE=nacidoE;
@@ -97,7 +100,10 @@ public class listraza  implements JRDataSource
           this.avp_serlot=avp_serlot;
           this.msgLog=msgLog;
           this.proCodi=proCodi;
+          this.alm_codi=alm_codi;
+          this.avp_ejelot=avp_ejelot;
       }
+    
       public Object getCampo(String namField)
       {
        if (namField.equals("crotal"))
@@ -134,7 +140,7 @@ public class listraza  implements JRDataSource
           ArrayList v=new ArrayList();
           v.add(proCodi);
           v.add(pro_nomb);
-          v.add(avp_serlot+" "+avp_numpar+"-"+avp_numind);
+          v.add(avp_ejelot+avp_serlot+" "+avp_numpar+"-"+avp_numind);
           v.add(avp_canti);
           v.add(ntrazaE);
           v.add(sacrificadoE);
@@ -197,6 +203,10 @@ public class listraza  implements JRDataSource
   {
       this.cliCodi=cliCodi;
   }
+  public void setEditarGrid(boolean cargaGrid)
+  {
+      this.cargaGrid=cargaGrid;
+  }
   /**
    * Carga datos de trazabilidad
    * @return 0 si todo ha ido bien. 1 Si se han editado los datos. -1 en caso de error.
@@ -212,19 +222,14 @@ public class listraza  implements JRDataSource
     if (utdes.getRepiteIndiv()>0)
         utdes.resetIndividuos();
     utdes.setInicialesPais(true);
-    s="select a.fam_codi,a.pro_nomb,p.*,l.pro_codi as proCodAlb,a.pro_numcro "+
-        " from v_albvenpar as p,v_articulo as a,v_albavel as l "+
+    s="select a.fam_codi,a.pro_nomb,p.*,p.pro_codi as proCodAlb,a.pro_numcro,p.alm_codori as alm_codi "+
+        " from v_albventa_detalle as p,v_articulo as a "+
         " where p.emp_codi = "+empCodi+
         " and p.avc_ano= "+ejeNume+
         " and p.avc_nume="+numAlb+
         " and p.avc_serie = '"+serie+"'"+
         " and avp_canti != 0 "+
-        " and p.pro_codi=a.pro_codi "+
-        " and l.emp_codi = p.emp_codi "+
-        " and l.avc_ano = p.avc_ano  "+
-        " and l.avc_nume = p.avc_nume "+
-        " and l.avc_serie = p.avc_serie  "+
-        " and l.avl_numlin = p.avl_numlin "+
+        " and p.pro_codi=a.pro_codi "+        
         " ORDER BY p.pro_codi,avp_ejelot,avp_serlot,avp_numpar,avp_numind ";
 
     if (! dtCur.select(s))
@@ -240,10 +245,11 @@ public class listraza  implements JRDataSource
         artVenta = null;
         
         utdes.setRepiteIndiv(dtCur.getInt("pro_numcro"));
-        ret=utdes.busDatInd(dtCur.getString("avp_serlot"),dtCur.getInt("pro_codi"),
+        ret=utdes.busDatInd(
+            dtCur.getString("avp_serlot"),dtCur.getInt("pro_codi"),
                           dtCur.getInt("avp_emplot"),
                       dtCur.getInt("avp_ejelot"),dtCur.getInt("avp_numpar"),
-                      dtCur.getInt("avp_numind"),
+                      dtCur.getInt("avp_numind"),dtCur.getInt("alm_codi"),
                       dtCon1,dtStat,EU);
         msgLogL=utdes.getMsgAviso();
         if (msgLogL != null) {
@@ -270,23 +276,24 @@ public class listraza  implements JRDataSource
                 dtCur.getString("pro_nomb");
         }
         DatosTraza dtTraza=new DatosTraza(utdes.ntrazaE,
-                utdes.nacidoE,utdes.sacrificadoE,utdes.despiezadoE,utdes.cebadoE,
+                utdes.paisNacimientoNombre,utdes.sacrificadoE,utdes.despiezadoE,utdes.paisEngordeNombre,
                 artVenta,  utdes.getFecSacrif() ,utdes.getFecCaduc(), dtCur.getString("pro_nomb"),
                 dtCur.getDouble("avp_canti"),
                 dtCur.getInt("avp_numind"),
                 dtCur.getInt("avp_numpar"),
                 dtCur.getString("avp_serlot"),
-                dtCur.getInt("pro_codi"),msgLogL
+                dtCur.getInt("pro_codi"), dtCur.getInt("avp_ejelot"),dtCur.getInt("alm_codi"),msgLogL
                 );
         datos.add(dtTraza);
     } while (dtCur.next());
+    if (cargaGrid)
+    {
+        cargaGrid();
+        return 1;
+    }
     if (!msgLog.equals(""))
     {
-//        int LIMLONGITUD=100;
-//        if (msgLog.length()>LIMLONGITUD)
-//            msgLog=msgLog.substring(0,LIMLONGITUD-1)+" ... ";
-        if (mensajes.mensajeExplica("Incidencias en Listado Trazabilidad", "¿ Editar campos ? ",msgLog
-                )!=null)
+        if (mensajes.mensajeExplica("Incidencias en Listado Trazabilidad", "¿ Editar campos ? ",msgLog )!=null)
         {
             cargaGrid();
             return 1;
@@ -382,6 +389,7 @@ public class listraza  implements JRDataSource
         return true;
   }
 
+  @Override
   public Object getFieldValue(JRField jRField) throws JRException
   {
       namField=jRField.getName();
@@ -442,7 +450,20 @@ public class listraza  implements JRDataSource
                    dtGrid.getGrid().getValDate(n,10),
                    dtGrid.getGrid().getValDate(n,12)
                    );
+            if (dtGrid.isCambioCrotal())
+            {
+                if (ActualStkPart.checkIndiv(dtStat, dtTrz.proCodi,dtTrz.avp_ejelot,dtTrz.avp_serlot,dtTrz.avp_numpar,dtTrz.avp_numind))
+                {
+                    dtStat.edit();
+                    dtStat.setDato("stp_nucrot",dtGrid.getGrid().getValString(n,4));
+                    dtStat.setDato("stp_traaut",0);
+                    dtStat.setDato("stp_fefici","current_timestamp");
+                    dtStat.update();
+                }
+            }
+                        
         }
+        dtStat.commit();
         if (swListar)
             imprimir();
       } catch (Exception k)

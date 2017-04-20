@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import gnu.chu.controles.*;
 import gnu.chu.camposdb.*;
 import gnu.chu.sql.DatosTabla;
+import java.net.UnknownHostException;
 
 /**
  *
@@ -703,7 +704,7 @@ public class pdmatadero extends ventanaPad   implements PAD
         return false;
       }
     }
-    catch (Exception k)
+    catch (SQLException | UnknownHostException k)
     {
       Error("Error al bloquear el registro", k);
       return false;
@@ -732,6 +733,7 @@ public class pdmatadero extends ventanaPad   implements PAD
     mensaje("");
     mensajeErr("Registro ... Borrado");
   }
+  @Override
   public void canc_delete()
   {
     try
@@ -770,5 +772,34 @@ public class pdmatadero extends ventanaPad   implements PAD
     }
     return true;
   }
-
+  /**
+   * Devuelve el pais del matadero
+   * @param dt
+   * @param matCodi
+   * @return 0 si no encuentra el matadero o el pais esta a null
+   * @throws SQLException 
+   */
+  public static int getPaisMatadero(DatosTabla dt,int matCodi) throws SQLException
+  {
+       String s="select pai_codi,mat_nrgsa from v_matadero where mat_codi ="+matCodi;
+       if (!dt.select(s))
+           return 0;
+       return dt.getInt("pai_codi",true);
+  }
+  public static boolean getDatosMatadero(DatosTabla dt,int matCodi) throws SQLException
+  {
+       String s="select * from v_matadero where mat_codi ="+matCodi;
+       return dt.select(s);
+  }
+  public static String getRegistroSanitario(DatosTabla dt,int matCodi,boolean swPaisCorto) throws SQLException
+  {
+      if (!getDatosMatadero(dt,matCodi))
+          return "**Matadero "+matCodi+" NO Encontrado**";
+      String numRegSanitario=dt.getString("mat_nrgsa");
+      String s = "select pai_nomb,pai_nomcor from v_paises where pai_codi = " +dt.getInt("pai_codi");
+      if (dt.select(s))
+          numRegSanitario = (swPaisCorto?  dt.getString("pai_nomcor") :dt.getString("pai_nomb") )
+              + "-" + numRegSanitario;
+       return numRegSanitario;
+  }
 }

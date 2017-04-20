@@ -397,7 +397,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2017-02-14"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2017-04-20"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -1075,11 +1075,12 @@ public class MantDespTactil  extends ventanaPad implements PAD
                 deo_codiE.getValorInt(),pro_codsalE.getValorInt(),0,0); 
      etiq.iniciar(deo_codiE.getText(),
                  codBarras.getLote(),
-                  pro_codsalE.getText(), pro_codsalE.getTextNomb(), utdesp.nacidoE, utdesp.cebadoE,
+                  pro_codsalE.getText(), pro_codsalE.getTextNomb(),
+                  utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre,
                   utdesp.despiezadoE, null,
                   0,utdesp.getConservar(),
                   utdesp.sacrificadoE,
-                  grd_fechaE.getDate(),grd_fechaE.getDate(),
+                  null,grd_fechaE.getDate(),
                   grd_feccadE.getDate(), 
                   utdesp.fecSacrE);
        
@@ -2749,10 +2750,10 @@ public class MantDespTactil  extends ventanaPad implements PAD
                  
      etiq.iniciar(codBarras.getCodBarra(),codBarras.getLote(),
                   jtSal.getValString(linea,JTSAL_PROCODI),jtSal.getValString(linea,JTSAL_PRONOMB),
-                  utdesp.nacidoE, utdesp.cebadoE, utdesp.despiezadoE,
+                  utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre, utdesp.despiezadoE,
                   utdesp.ntrazaE, jtSal.getValorDec(linea,JTSAL_KILOS),
                   utdesp.getConservar(), utdesp.sacrificadoE,
-                   grd_fechaE.getDate(),grd_fechaE.getDate(),
+                   null,grd_fechaE.getDate(),
                   pro_codsalE.isCongelado()?null:grd_feccadE.getDate(),utdesp.getFecSacrif());
      etiq.setPrintDialog(false);    
     

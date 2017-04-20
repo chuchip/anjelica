@@ -142,6 +142,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private final char IMPR_ALB_GRAF='A';
   private final char IMPR_ALB_TEXT='a';
   private final char IMPR_HOJA_TRA='T';
+  private final char IMPR_HOJA_TRAF='1';
   /**
    * hoja Traz + Albaran
    */
@@ -1500,7 +1501,7 @@ public class pdalbara extends ventanaPad  implements PAD
     if (IMPALBTEXTO)   
         Bimpri.addMenu("Alb Texto", ""+IMPR_ALB_TEXT);    
     Bimpri.addMenu("H.Traz.", ""+IMPR_HOJA_TRA );
-    
+    Bimpri.addMenu("H.Traz.Edic", ""+IMPR_HOJA_TRAF );
     Bimpri.addMenu("Alb/H.Traz", ""+IMPR_ALB_TRA);
        
     Bimpri.addMenu("Palets", ""+IMPR_PALETS);
@@ -8089,8 +8090,8 @@ public class pdalbara extends ventanaPad  implements PAD
     if (indice==IMPR_ALB_GRAF || indice == IMPR_ALB_TEXT
         || indice== IMPR_ALB_TRA )
       imprAlbar(indice);
-    if (indice==IMPR_HOJA_TRA || indice == IMPR_ALB_TRA)
-      imprHojaTraza();
+    if (indice==IMPR_HOJA_TRA || indice==IMPR_HOJA_TRAF  || indice == IMPR_ALB_TRA)
+      imprHojaTraza(indice==IMPR_HOJA_TRAF);
     if (indice==IMPR_ETIQUETAS)
       verVentanaEtiquetas();
     if (indice==IMPR_PALETS)
@@ -8288,7 +8289,7 @@ public class pdalbara extends ventanaPad  implements PAD
                      "/" +
                      Formatear.format(dtCon1.getString("avp_numind"), "999"),
                      dtCon1.getString("pro_codi"), proNomb,
-                     utdesp.nacidoE, utdesp.cebadoE, utdesp.despiezadoE,
+                     utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre, utdesp.despiezadoE,
                      utdesp.ntrazaE, dtCon1.getDouble("avp_canti"),
                      utdesp.getConservar(), utdesp.sacrificadoE,
                      utdesp.getFecCompra(),
@@ -8345,7 +8346,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     
   }
-  void imprHojaTraza()
+  void imprHojaTraza(boolean edicion)
   {
     try
     {
@@ -8358,6 +8359,7 @@ public class pdalbara extends ventanaPad  implements PAD
 //      liTra.setRepiteIndiv(repiteIndE.getValorInt());
       liTra.setDatosAlbaran(avc_numeE.getValorInt(), emp_codiE.getValorInt(),
                   avc_anoE.getValorInt(), avc_seriE.getText());
+      liTra.setEditarGrid(edicion);
       int retCargaDatos=liTra.cargaDatosTraz();
       if (retCargaDatos<0)
       {

@@ -226,7 +226,7 @@ public class AyuArt extends  ventana {
 
         jt.setAnchoColumna(new int[]{60,120,300});
 
-        jt.alinearColumna(new int[]{2,0,0});
+        jt.setAlinearColumna(new int[]{2,0,0});
         jt.setNumRegCargar(500);
         jt.setAjustarGrid(true);
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));

@@ -1,4 +1,8 @@
-﻿CREATE OR REPLACE FUNCTION anjelica.fn_mvtoalm()
+-- Function: fn_mvtoalm()
+
+-- DROP FUNCTION fn_mvtoalm();
+
+CREATE OR REPLACE FUNCTION fn_mvtoalm()
   RETURNS trigger AS
 $BODY$  
   DECLARE   

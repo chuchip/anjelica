@@ -23,6 +23,7 @@ import java.util.Date;
  */
 public class DatIndiv extends DatIndivBase
 {
+
     private Date fecCaduc, fecSacrif;
     private int prvCodi=0;
     private String auxiliar;
@@ -45,7 +46,7 @@ public class DatIndiv extends DatIndivBase
     {
         return prvCodi;
     }
-
+   
     public String getAuxiliar()
     {
         return auxiliar;

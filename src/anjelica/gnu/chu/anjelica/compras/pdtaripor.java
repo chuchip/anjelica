@@ -139,7 +139,7 @@ public class pdtaripor extends ventanaPad implements PAD
       cabecera.add("Kilos/Fijo"); // 2 -- Kilos o Fijo
       jt.setCabecera(cabecera);
       jt.setAnchoColumna(new int[]      {90, 90, 80});
-      jt.alinearColumna(new int[]      {2, 2, 1});
+      jt.setAlinearColumna(new int[]      {2, 2, 1});
      
       tap_fijkilE.setAdmiteCar(CTextField.CHAR_LIMIT);
       tap_fijkilE.setStrCarEsp("KF");

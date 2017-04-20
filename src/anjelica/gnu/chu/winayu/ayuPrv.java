@@ -121,7 +121,7 @@ public class ayuPrv extends ventana // implements  Runnable
     jt.setCabecera(cabecera);
     jt.setAnchoColumna(new int[]{56,283,283});
     jt.setFormatoColumna(0,"#####9");
-    jt.alinearColumna(new int[]{2,0,0});
+    jt.setAlinearColumna(new int[]{2,0,0});
     jt.setAjustarGrid(true);
     jt.setNumRegCargar(100);
     jt.setAjustarGrid(true);

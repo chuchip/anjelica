@@ -1,6 +1,5 @@
 package gnu.chu.anjelica.almacen;
 
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -25,19 +24,19 @@ import java.util.Objects;
 public class DatIndivBase 
 {
     public double canti;
-    public int numuni,proCodi,ejeNume,lote,numind,almCodi;
+    int proCodi,ejeNume,lote,numind,almCodi,numuni;    
     
-    public String serie;
+    String serie;
    
 
   
-    public int getNumuni() {
-        return numuni;
-    }
-
-    public void setNumuni(int numuni) {
-        this.numuni = numuni;
-    }
+//    public int getNumuni() {
+//        return numuni;
+//    }
+//
+//    public void setNumuni(int numuni) {
+//        this.numuni = numuni;
+//    }
 
     public int getProducto() {
         return proCodi;
@@ -68,7 +67,7 @@ public class DatIndivBase
     public int getNumind() {
         return numind;
     }
-
+    
     public void setNumind(int numind) {
         this.numind = numind;
     }
@@ -122,7 +121,6 @@ public class DatIndivBase
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 89 * hash + this.numuni;
         hash = 89 * hash + this.proCodi;
         hash = 89 * hash + this.ejeNume;
         hash = 89 * hash + this.lote;
@@ -142,4 +140,12 @@ public class DatIndivBase
               getLote() +"-"+ 
               getNumind();
   }
+   public int getNumuni()
+    {
+        return numuni;
+    }
+   public void setNumuni(int unidades)
+   {
+       numuni=unidades;
+   }
 }

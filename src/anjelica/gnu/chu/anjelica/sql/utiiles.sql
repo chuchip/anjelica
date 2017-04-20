@@ -51,3 +51,16 @@ select PRO_CODI,AVL_PRVEN, AVL_PROFER,TAR_PRECI from v_albavel where emp_codi=1 
 -- Sacar precio entrada de  produccion en unas fechas
 --
 select sum(deo_kilos* deo_prcost)/ sum(deo_kilos) from v_despori where deo_incval='S' and deo_fecha between '20170306' and '20170312'
+---
+-- Sacar comisiones represnentas con ciertos comentarios
+--
+select  c.cli_codi,cl.cli_nomb,avc_nume,avc_fecalb,pro_codi,pro_nomb,avl_prven,tar_preci from v_albventa as c, v_cliente as cl where avc_fecalb>='20170310' 
+and c.cli_codi = cl.cli_codi and  exists(select avc_id from comision_represent as co  where 
+co.avc_id= c.avc_id and (cor_coment like '%encima%' or cor_coment like '%Encima&')) order by c.cli_codi,avc_nume
+
+--
+-- Insertar en inventario control sobre inventario produccion
+--
+ insert into coninvlin 
+select  1 as emp_codi,6393 as cci_codi,(cip_codi*100)+ lip_numlin, prp_ano,1,prp_seri,prp_part,pro_codi,'' as pro_nomb,prp_indi,prp_peso,0 as lci_kgsord,1 as lci_numind,
+0 as lci_regaut,'cip_codi=12' as lci_coment,'' as lci_numpal,1 as alm_codlin,1 as lci_numcaj,'' as lci_causa from linvproduc where cip_codi>=10

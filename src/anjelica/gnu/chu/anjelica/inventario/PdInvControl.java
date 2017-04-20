@@ -1404,31 +1404,31 @@ public class PdInvControl extends ventanaPad implements PAD
             valor = (ht.get(key)).toString();
 
             datInd =new DatIndiv(key,valor);
-            if (datInd.canti<=0 || datInd.numuni<=0)
+            if (datInd.canti<=0 || datInd.getNumuni()<=0)
                 continue;
-            if (! lAlm.containsKey(datInd.almCodi))
+            if (! lAlm.containsKey(datInd.getAlmCodi()))
             {
-              cciCodi=insCabInv(cci_fecconE.getDate(),datInd.almCodi);
+              cciCodi=insCabInv(cci_fecconE.getDate(),datInd.getAlmCodi());
               nl=1;
             }   
             dtAdd.addNew("coninvlin");
             dtAdd.setDato("emp_codi", EU.em_cod);
             dtAdd.setDato("cci_codi", cciCodi);
             dtAdd.setDato("lci_nume", nl);
-            dtAdd.setDato("prp_ano", datInd.ejeNume);
+            dtAdd.setDato("prp_ano", datInd.getEjercLot());
             dtAdd.setDato("prp_empcod",EU.em_cod);
-            dtAdd.setDato("prp_seri", datInd.serie);
-            dtAdd.setDato("prp_part", datInd.lote);
-            dtAdd.setDato("pro_codi", datInd.proCodi);
+            dtAdd.setDato("prp_seri", datInd.getSerie());
+            dtAdd.setDato("prp_part", datInd.getLote());
+            dtAdd.setDato("pro_codi", datInd.getProducto());
             dtAdd.setDato("pro_nomb", "");
-            dtAdd.setDato("prp_indi", datInd.numind);
-            dtAdd.setDato("lci_peso", datInd.canti);
-            dtAdd.setDato("lci_numind", datInd.numuni);
+            dtAdd.setDato("prp_indi", datInd.getNumind());
+            dtAdd.setDato("lci_peso", datInd.getCanti());
+            dtAdd.setDato("lci_numind", datInd.getNumuni());
             dtAdd.setDato("lci_numpal",0);
-            dtAdd.setDato("alm_codlin",datInd.almCodi);
+            dtAdd.setDato("alm_codlin",datInd.getAlmCodi());
 
             dtAdd.update(stUp);  
-            lAlm.put(datInd.almCodi,new Dimension(cciCodi,++nl));
+            lAlm.put(datInd.getAlmCodi(),new Dimension(cciCodi,++nl));
           }
           dtAdd.commit();
        

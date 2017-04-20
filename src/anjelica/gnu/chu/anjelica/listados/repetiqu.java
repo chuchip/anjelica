@@ -16,7 +16,7 @@ import gnu.chu.anjelica.despiece.utildesp;
  * mostrar. Permite elegir diferentes tipos de etiqueta.
  * La opcion de generar el inventario esta obsoleta y deshabilitada.
  * </p>
- * <p>Copyright: Copyright (c) 2005-20175</p>
+ * <p>Copyright: Copyright (c) 2005-2017</p>
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -628,8 +628,8 @@ public class repetiqu extends ventana
         msgBox(utDesp.getMsgAviso());
         return false;
       }
-      nacidoE.setText(utDesp.nacidoE);
-      cebadoE.setText(utDesp.cebadoE);
+      nacidoE.setText(utDesp.paisNacimientoNombre);
+      cebadoE.setText(utDesp.paisEngordeNombre);
       sacrificadoE.setText(utDesp.sacrificadoE);
       despiezadoE.setText(utDesp.despiezadoE);
       ntrazaE.setText(utDesp.ntrazaE);

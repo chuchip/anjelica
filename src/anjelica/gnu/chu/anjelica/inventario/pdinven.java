@@ -178,21 +178,21 @@ public class pdinven extends ventanaPad implements PAD
       importeE.setEnabled(false);
       lineasE.setEnabled(false);
 
-      Vector cabecera = new Vector();
-      cabecera.addElement("Ejer."); // 0 -- Ejerc.
-      cabecera.addElement("Emp"); //1 -- Emp.
-      cabecera.addElement("Serie"); // 2 -- Serie
-      cabecera.addElement("Lote"); // 3 -- Lote
-      cabecera.addElement("Ind"); // 4 -- Indiv.
-      cabecera.addElement("Kgs"); // 5 -- Kgs.
-      cabecera.addElement("Un."); // 6 Unid.
-      cabecera.addElement("Precio"); // 7 -- Precio
+      ArrayList cabecera = new ArrayList();
+      cabecera.add("Ejer."); // 0 -- Ejerc.
+      cabecera.add("Emp"); //1 -- Emp.
+      cabecera.add("Serie"); // 2 -- Serie
+      cabecera.add("Lote"); // 3 -- Lote
+      cabecera.add("Ind"); // 4 -- Indiv.
+      cabecera.add("Kgs"); // 5 -- Kgs.
+      cabecera.add("Un."); // 6 Unid.
+      cabecera.add("Precio"); // 7 -- Precio
 
       jt.setCabecera(cabecera);
       jt.setMinimumSize(new Dimension(468, 401));
       jt.setAnchoColumna(new int[]
                          {50, 50, 60, 80, 80, 100, 60, 100});
-      jt.alinearColumna(new int[]
+      jt.setAlinearColumna(new int[]
                         {2, 2, 0, 2, 2, 2, 2, 2});
       Vector v1 = new Vector();
       cLabel3.setText("Almacen");

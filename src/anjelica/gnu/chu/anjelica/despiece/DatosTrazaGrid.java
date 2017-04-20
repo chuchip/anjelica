@@ -6,7 +6,7 @@ package gnu.chu.anjelica.despiece;
  * <p>Descripción: Ventana con un grid que en conjuncion con listraza muestra y
  * permite modificar una hoja de trazabilidad.
  *  </p>
- *  <p>Copyright: Copyright (c) 2005-2016
+ *  <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -39,7 +39,7 @@ import java.util.Vector;
 
 public class DatosTrazaGrid extends ventana {
     private final int JT_NUMCRO=4;
-    
+    private boolean cambioCrotal=false;
     /** Creates new form DatosTrazaGrid */
     public DatosTrazaGrid() {
         this.setTitulo("Datos Trazabilidad");
@@ -68,7 +68,10 @@ public class DatosTrazaGrid extends ventana {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode()==KeyEvent.VK_F3)
+                {
                     pro_loteE.setText(getRandomCrotal( pro_loteE.getText()));
+                    cambioCrotal=true;
+                }
             }
         });
     }
@@ -193,10 +196,16 @@ public class DatosTrazaGrid extends ventana {
                     break;
             }
             if (swRep>1)
+            {
                 jt.setValor(getRandomCrotal(jt.getValString(n,JT_NUMCRO)),n,JT_NUMCRO);
+                cambioCrotal=true;
+            }
         }
     }//GEN-LAST:event_BregCrotalActionPerformed
-
+    public boolean isCambioCrotal()
+    {
+        return cambioCrotal;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton BregCrotal;

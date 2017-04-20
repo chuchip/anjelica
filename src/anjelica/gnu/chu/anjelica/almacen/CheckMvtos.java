@@ -379,7 +379,8 @@ class DatIndivMvto extends DatIndivBase
 {
     int numunid2=0;
     double canti2=0;
-
+   
+    
     public int getNumuni2() {
         return numunid2;
     }

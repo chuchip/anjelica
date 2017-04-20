@@ -10,7 +10,6 @@ import javax.swing.SwingConstants;
 import java.sql.Types;
 import javax.swing.event.*;
 import gnu.chu.anjelica.despiece.utildesp;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
 import gnu.chu.anjelica.compras.PDetComp;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -79,6 +78,7 @@ public class lotVenPro extends ventana
   boolean iniciado=false;
   CCheckBox swCompraInt = new CCheckBox();
   private CButton Bescape=new CButton();
+  
   public lotVenPro(ventana padre)
   {
     try
@@ -280,6 +280,7 @@ public class lotVenPro extends ventana
     jt.tableView.getSelectionModel().addListSelectionListener(new
         ListSelectionListener()
     {
+      @Override
       public void valueChanged(ListSelectionEvent e)
       {
         try {

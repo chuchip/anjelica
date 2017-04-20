@@ -762,7 +762,7 @@ public class ActualStkPart
                             String serLot, int numLot,
                             int nInd, int almCodi, double kilos, int unids) throws SQLException
   {
-    if (! checkIndiv(dt,proCodi,ejeLot,empLot,serLot,numLot,nInd,almCodi))
+    if (! checkIndiv(dt,proCodi,ejeLot,empLot,serLot,numLot,nInd,almCodi,false))
         return false;
     if ( Formatear.redondea(kilos,3) > Formatear.redondea(dt.getDouble("stp_kilact"),3) && kilos != 0)
       return false;
@@ -785,7 +785,7 @@ public class ActualStkPart
                             String serLot, int numLot,
                             int nInd) throws SQLException
   {
-     return checkIndiv(dt,proCodi,ejeLot,1,serLot,numLot,nInd,0);
+     return checkIndiv(dt,proCodi,ejeLot,1,serLot,numLot,nInd,0,false);
   }
   
   /**
@@ -798,14 +798,15 @@ public class ActualStkPart
    * @param numLot
    * @param nInd
    * @param almCodi
+   * @param lock bloquear registro
    * @return
    * @throws SQLException 
    */
   public static boolean checkIndiv(DatosTabla dt, int proCodi, int ejeLot,int empLot,
                             String serLot, int numLot,
-                            int nInd, int almCodi) throws SQLException
+                            int nInd, int almCodi,boolean lock) throws SQLException
   {
-    String s = "SELECT *  FROM v_stkpart " +
+    String s = "SELECT *  FROM stockpart " +
         " WHERE eje_nume = " + ejeLot +      
         (empLot==0?"":" and emp_codi = "+empLot)+
         " and pro_serie = '" + serLot + "'" +
@@ -813,14 +814,14 @@ public class ActualStkPart
         " and pro_numind = " + nInd +
         " and pro_codi = " + proCodi +
         (almCodi!=0?" and alm_codi = " + almCodi:"");
-     return dt.select(s);      
+     return dt.select(s,lock);      
   }
   
   public static Timestamp getFechaUltMvt(DatosTabla dt, int proCodi, int ejeLot,int empLot,
                             String serLot, int numLot,
                             int nInd, int almCodi) throws SQLException
   {
-      if (!checkIndiv(dt,proCodi,ejeLot,empLot,serLot,numLot,nInd,almCodi))
+      if (!checkIndiv(dt,proCodi,ejeLot,empLot,serLot,numLot,nInd,almCodi,false))
           return null;
       return dt.getTimeStamp("stp_fefici");
   }

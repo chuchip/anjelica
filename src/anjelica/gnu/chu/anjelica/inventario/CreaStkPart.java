@@ -228,7 +228,7 @@ public class CreaStkPart extends ventana
      }
      if (dtCon1.getNOREG())
      {
-       dtCon1.addNew("stockpart");
+       dtCon1.addNew("stockpart",false);
        edAdd="ADDNEW";
        dtCon1.setDato("eje_nume",deo_ejelotE.getValorInt());
        dtCon1.setDato("emp_codi",deo_emplotE.getValorInt());

@@ -1894,6 +1894,32 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
     {
       return "{d '"+getFecha(fecha,"yyyy-MM-dd")+"'}";
    }
+   /**
+    * Devuelve el dia de la fecha mandada
+    * @param fecha Objeto Date con la fecha
+    * 
+    * @return Año de la fecha
+    */
+   public static int getDay(Date fecha)
+   {
+     if (fecha == null)
+       return 0;
+    
+     return Integer.parseInt(getFecha(fecha,"dd"));
+   }
+   public static Date getDate2000(Date fecha)
+   {
+      try
+      {
+          return Formatear.getYear(fecha)<2000?
+              Formatear.getDate(Formatear.getFecha(fecha,"dd-MM-")+ (2000+Formatear.getYear(fecha)),"dd-MM-yyyy"):
+              fecha;
+      } catch (ParseException ex)
+      {
+//          Logger.getLogger(Formatear.class.getName()).log(Level.SEVERE, null, ex);
+          return null;
+      }
+   }
   /**
     * Devuelve el año de la fecha mandada
     * @param fecha Objeto Date con la fecha

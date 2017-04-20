@@ -37,7 +37,7 @@ import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.compras.MantAlbComPlanta;
 import gnu.chu.anjelica.despiece.MantDesp;
-import gnu.chu.anjelica.listados.repetiqu;
+import gnu.chu.anjelica.listados.RepEtiqueta;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.camposdb.empPanel;
@@ -488,12 +488,12 @@ public class Comvalm extends ventana
                       public void run()
                       {                   
                         ejecutable prog;
-                        if ((prog=jf.gestor.getProceso(repetiqu.getNombreClase()))==null)
+                        if ((prog=jf.gestor.getProceso(RepEtiqueta.getNombreClase()))==null)
                         {
                            resetMsgEspere();
                           return;
                         }
-                        repetiqu cm=(repetiqu) prog;
+                        RepEtiqueta cm=(RepEtiqueta) prog;
                         String lot[]=lote.split("-");
                         cm.setEjercicio(Integer.parseInt(lot[0]));
                         cm.setSerie(lot[1]);

@@ -175,7 +175,7 @@ public class pdclaslom extends ventanaPad implements PAD
       cabecera.add("Kilos Min"); // 2 -- Kilos
       jt.setCabecera(cabecera);
       jt.setAnchoColumna(new int[]{66, 283, 80});
-      jt.alinearColumna(new int[] {2, 0, 2});
+      jt.setAlinearColumna(new int[] {2, 0, 2});
       pro_codiE.iniciar(dtStat, this, vl, EU);
       pro_codiE.setProNomb(null);
 

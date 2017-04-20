@@ -1045,7 +1045,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
             cabecera.add("Nombre"); //1  -- Nombre Producto
             jtEnt.setCabecera(cabecera);
             jtEnt.setAnchoColumna(new int[]{46, 283});
-            jtEnt.alinearColumna(new int[] {2, 0});
+            jtEnt.setAlinearColumna(new int[] {2, 0});
             ArrayList v = new ArrayList();
             v.add(pro_codiE.getFieldProCodi());
             v.add(pro_nombE);
@@ -1091,7 +1091,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
             jtSal.setCabecera(linea);
             jtSal.setPonValoresInFocus(false);
             jtSal.setAnchoColumna(new int[] {46, 283,60,60,40});
-            jtSal.alinearColumna(new int[] {2, 0,2,2,2});
+            jtSal.setAlinearColumna(new int[] {2, 0,2,2,2});
             jtSal.setFormatoColumna(3, "##9.99");
             tds_unidE.setValorDec(1);
             tds_grupoE.setValorDec(1);

@@ -3,12 +3,22 @@ CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
   DECLARE   
   STKNEW RECORD;
   STKOLD RECORD;
+  acpFecpro DATE;
+  acpNucrot CHAR(30);
+  acpPainac char(2);
+  mvtFeccad DATE;
+  acpPaisac char(2);
+  acpFecsac DATE;
+  matCodi int;
+  sdeCodi int;
+  acpEngpai char(2);  
+  camCodi char(2);
   kilos float;
   unid int;
   BEGIN
         kilos=0;
         unid=0;      
-		
+	
         if TG_OP =  'INSERT' or TG_OP =  'UPDATE' then 
             select * INTO STKNEW FROM  anjelica.stockpart where 
                 pro_codi= NEW.pro_codi and
@@ -20,17 +30,49 @@ CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
             if STKNEW is  null then
                 kilos=NEW.mvt_canti;
                 unid=NEW.mvt_unid;
-                if NEW.mvt_tipo='S' then
+                if NEW.mvt_tipo = 'S' then
                         kilos=kilos*-1;
                         unid= unid * -1;
                 end if;
+				select cam_codi INTO  camCodi FROM  anjelica.v_articulo where 
+					pro_codi= NEW.pro_codi;
+                
+				acpFecpro=null;
+				acpNucrot=null;
+				acpPainac=null;
+				mvtFeccad=NEW.mvt_feccad;
+				acpPaisac=null;
+				acpFecsac=null;
+				matCodi=null;
+				sdeCodi=null;
+				acpEngpai=null;
+				if NEW.mvt_tipdoc = 'C' then
+					
+					select acp_fecpro,acp_nucrot,acp_painac,acp_feccad,acp_paisac,acp_fecsac,mat_codi,sde_codi,acp_engpai 
+					into acpFecpro,acpNucrot,acpPainac,mvtFeccad,acpPaisac,acpFecsac,matCodi,sdeCodi,acpEngpai 
+						from anjelica.v_albcompar where 
+						pro_codi=NEW.pro_codi -- Codigo de producto.
+						and NEW.pro_ejelot=acc_ano
+						and NEW.pro_serlot=acc_serie
+						and NEW.pro_numlot=acc_nume
+						and NEW.pro_indlot=acp_numind;
+					RAISE NOTICE 'buscando registro en compras. Fec.Cad %',mvtFeccad;
+				end if;
                 insert into anjelica.stockpart (eje_nume,
                     emp_codi,pro_serie, stp_tiplot,pro_nupar,                    
                     pro_codi,pro_numind,alm_codi,
                     stp_unini,stp_unact,
                     stp_feccre,
 					stp_kilini,stp_kilact,
-					prv_codi,stp_feccad) 
+					prv_codi,stp_feccad,cam_codi,
+					stp_fecpro ,	 -- Fecha Produccion.
+					stp_nucrot, -- Numeo Crotal
+					stp_painac ,		 -- Pais de Nacimiento
+					stp_engpai ,		-- Pais de engorde
+					stp_paisac ,		-- Pais de Sacrificio
+					stp_fecsac ,	-- Fecha Sacrificio					
+					mat_codi ,		-- Matadero
+					sde_codi )		-- Sala despiece
                  values
                  (
                         NEW.pro_ejelot, 
@@ -39,7 +81,8 @@ CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
 						unid,unid,
 						current_timestamp,
                         kilos,kilos,
-                        NEW.mvt_cliprv,NEW.mvt_feccad);
+                        NEW.mvt_cliprv,mvtFeccad,camCodi,
+						acpFecpro,acpNucrot,acpPainac,acpEngpai,acpPaisac,acpFecsac,matCodi,sdeCodi);
             else
                 if NEW.mvt_tipo='E' then
                    kilos=STKNEW.stp_kilact+NEW.mvt_canti;
@@ -71,7 +114,7 @@ CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
                 pro_numind  = OLD.pro_indlot and
                 alm_codi = OLD.alm_codi;     
 	    if STKOLD is null then
-		RAISE EXCEPTION 'No encontrado Apunte stock anterior Almacen:% Art: % Individuo:% % %-%',OLD.alm_codi,
+			RAISE EXCEPTION 'No encontrado Apunte stock anterior Almacen:% Art: % Individuo:% % %-%',OLD.alm_codi,
 			OLD.pro_codi,OLD.pro_ejelot,OLD.pro_serlot,OLD.pro_numlot,OLD.pro_indlot;
 		return null;
 	    end if;
@@ -86,16 +129,16 @@ CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
                    stp_unact=unid,
                    stp_fefici = current_timestamp 
             WHERE  pro_codi = OLD.pro_codi and
-		   eje_nume=OLD.pro_ejelot  and 
+				   eje_nume=OLD.pro_ejelot  and 
                    pro_serie = OLD.pro_serlot and
                    pro_nupar = OLD.pro_numlot and
                    pro_numind  = OLD.pro_indlot AND
                    alm_codi = OLD.alm_codi;
              --RAISE NOTICE  'Saliendo de fn_acstk1 % ',OLD;
              if TG_OP = 'UPDATE' then
-		RETURN NEW;
-	     end if;
-	     RETURN OLD;
+				RETURN NEW;
+			 end if;
+			 RETURN OLD;
         end if;
         
 	return NEW;

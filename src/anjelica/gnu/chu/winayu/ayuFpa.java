@@ -124,7 +124,7 @@ public class ayuFpa extends ventana implements  Runnable
     int i []= {46,283,50,50,50,40};
     jt.setAnchoColumna(i);
     int a[]= {1,0,2,2,2,1};
-    jt.alinearColumna(a);
+    jt.setAlinearColumna(a);
     jt.ajustar(true);
     jt.setNumRegCargar(100);
 

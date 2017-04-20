@@ -788,4 +788,28 @@ public class pdsaladesp extends ventanaPad   implements PAD
           return null;
       return dt.getString("pai_nomb");      
   }
+  public static boolean getDatosSalaDesp(DatosTabla dt,int sdeCodi) throws SQLException
+  {
+       String s="select * from v_saladesp where sde_codi ="+sdeCodi;
+       return dt.select(s);
+  }
+  /**
+   * Busca Registro Sanitario de sala desp. Devuelve Nombre Pais + Reg. sanitario 
+   * @param dt
+   * @param sdeCodi
+   * @param swPaisCorto
+   * @return
+   * @throws SQLException 
+   */
+  public static String getRegistroSanitario(DatosTabla dt,int sdeCodi,boolean swPaisCorto) throws SQLException
+  {
+      if (!getDatosSalaDesp(dt,sdeCodi))
+          return "**Sala Despiece "+sdeCodi+" NO Encontrada**";
+      String numRegSanitario=dt.getString("sde_nrgsa");
+      String s = "select pai_nomb,pai_nomcor from v_paises where pai_codi = " +dt.getInt("pai_codi");
+      if (dt.select(s))
+          numRegSanitario = (swPaisCorto?  dt.getString("pai_nomcor") :dt.getString("pai_nomb") )
+              + "-" + numRegSanitario;
+       return numRegSanitario;
+  }
 }

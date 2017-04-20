@@ -2197,7 +2197,7 @@ void pdreprese_actionPerformed(ActionEvent e) {
 
   }
    void repeti_actionPerformed(ActionEvent e) {
-   lanzaEjecutable(new gnu.chu.anjelica.listados.repetiqu(menu.this,EU));
+   lanzaEjecutable(new gnu.chu.anjelica.listados.RepEtiqueta(menu.this,EU));
 
   }
  void clstkfeca_actionPerformed(ActionEvent e) {

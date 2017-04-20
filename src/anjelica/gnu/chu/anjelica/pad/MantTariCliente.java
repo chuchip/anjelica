@@ -117,7 +117,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2016-05-23" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2017-04-07" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -341,7 +341,8 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
           dtAdd.setDato("pro_codart",jt.getValString(n,0));
           dtAdd.setDato("pro_nomb",jt.getValString(n,1));
           dtAdd.setDato("tar_preci",jt.getValorDec(n,2));
-          dtAdd.setDato("tar_comen",jt.getValString(n,3));         
+          dtAdd.setDato("tar_comen",jt.getValString(n,3));   
+          dtAdd.setDato("tar_comrep",jt.getValorDec(n,4)); 
           dtAdd.update(stUp);
         }
         ctUp.commit();
@@ -383,7 +384,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
 
     void verDatLin(String fecha,String tipo,String fecfin,double increm) throws Exception
     {
-      s = "SELECT pro_codart,pro_nomb,tar_preci,tar_comen " +
+      s = "SELECT pro_codart,pro_nomb,tar_preci,tar_comen,tar_comrep " +
           " FROM taricli " +
           " WHERE tar_fecini = TO_DATE('"+fecha+"','dd-MM-yyyy') "+
           " AND cli_codi = "+tipo+
@@ -770,6 +771,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         tar_comenG = new gnu.chu.controles.CTextField(Types.CHAR,"X",150);
         tar_preciE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
         pro_codartE = new gnu.chu.camposdb.proPanel();
+        tar_comrepE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9.99");
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -781,7 +783,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         pro_codiE = new gnu.chu.camposdb.proPanel();
         Bocul = new gnu.chu.controles.CButton();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
-        jt = new gnu.chu.controles.CGridEditable(4) {
+        jt = new gnu.chu.controles.CGridEditable(5) {
             public void cambiaColumna(int col,int colNueva, int row)
             {
                 try
@@ -831,9 +833,10 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         cabecera.add("Nombre"); //3 -- Nombre
         cabecera.add("Precio"); // 4 -- Precio
         cabecera.add("Coment"); // 5 -- Comentario
+        cabecera.add("Comis."); // 4 -- Precio
         jt.setCabecera(cabecera);
-        jt.setAnchoColumna(new int[]{86, 283, 60,150});
-        jt.alinearColumna(new int[] {0, 0, 2,0});
+        jt.setAnchoColumna(new int[]{86, 283, 60,150,60});
+        jt.setAlinearColumna(new int[] {0, 0, 2,0,2});
 
         jt.setNumRegCargar(0);
         try {
@@ -843,6 +846,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
             v.add(pro_nombE);
             v.add(tar_preciE);
             v.add(tar_comenG);
+            v.add(tar_comrepE);
             jt.setCampos(v);
         }catch (Exception k)
         {
@@ -1009,6 +1013,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CTextField tar_comenG;
+    private gnu.chu.controles.CTextField tar_comrepE;
     private gnu.chu.controles.CTextField tar_fecfinE;
     private gnu.chu.controles.CTextField tar_feciniE;
     private gnu.chu.controles.CTextField tar_preciE;

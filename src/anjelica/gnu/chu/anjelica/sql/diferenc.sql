@@ -1,4 +1,19 @@
 ALTER TABLE linvproduc ADD pai_codi varchar(3); -- Pais
+ALTER TABLE linvproduc ADD prp_fecpro date ; -- Fecha Prod.
+-- 
+-- Incluidos campos trazabilidad en stockpartidas
+--
+alter table stockpart add cam_codi varchar(2);
+alter table stockpart add stp_fecpro date;	 -- Fecha Produccion.
+alter table stockpart add stp_nucrot varchar(30); -- Numero Crotal
+alter table stockpart add stp_painac char(2);	 -- Pais de Nacimiento
+alter table stockpart add stp_engpai char(2) ;		-- Pais de engorde
+alter table stockpart add stp_paisac char(2);		-- Pais de Sacrificio
+alter table stockpart add stp_fecsac date;	-- Fecha Sacrificio
+alter table stockpart add mat_codi int;		-- Matadero
+alter table stockpart add sde_codi int;		-- Sala despiece
+alter table stockpart add stp_traaut smallint default 1 not null;
+
 --
 -- Añadido codigo articulo equivalente
 --

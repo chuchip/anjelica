@@ -7278,7 +7278,7 @@ private JMenuItem MIimprEtiqInd;
 //                 guardaLinDes(nLinDes++, acp_numind++,
 //                              utdes.getNumCrot(),
 //                              utdes.getAcpPainac(), Formatear.getDate(utdes.feccadE, "dd-MM-yyyy"),
-//                              utdes.getAcpPaisac(), utdes.getAcpEngpai(),
+//                              utdes.setPaisSacrificioCodigo(), utdes.getPaisEngordeCodigo(),
 //                              utdes.fecSacrE,
 //                              utdes.getFechaProduccion(),
 //                              dtInd.getInt("pro_codi"), nLin, utdes.getMatCodi(),

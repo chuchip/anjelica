@@ -160,7 +160,7 @@ public class pdprvades extends ventanaPad implements PAD
       cabecera.add("Pr.Val"); // 2 -- Precio Orig.
       jt.setCabecera(cabecera);
       jt.setAnchoColumna(new int[]{46, 283, 60,60,60});
-      jt.alinearColumna(new int[]   {2, 0, 2,2,2});
+      jt.setAlinearColumna(new int[]   {2, 0, 2,2,2});
       pro_codiE.iniciar(dtStat, this, vl, EU);
       pro_codiE.setProNomb(null);
 

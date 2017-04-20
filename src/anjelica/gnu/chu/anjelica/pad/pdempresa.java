@@ -891,7 +891,7 @@ public class pdempresa extends ventanaPad   implements PAD
       else
           return lkEmp;
   }
-  
+ 
   public static int getLongCuentaCliente(DatosTabla dt, int empCodi) throws SQLException
   {
       String s="select emp_loclcc from v_empresa WHERE emp_codi = "+empCodi;     

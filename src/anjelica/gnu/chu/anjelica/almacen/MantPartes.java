@@ -1,6 +1,6 @@
 package gnu.chu.anjelica.almacen;
 /**
- *
+ * 
  * <p>Título: MantPartes</p>
  * <p>Descripción: Mantenimiento Partes de Almacen </p>
  * Parametros: 

@@ -15,18 +15,21 @@ $BODY$
   BEGIN
 	    swUpd=0;
         kilos=0;
-        unid=0;      
+        unid=0;   
+		if TG_OP = 'DELETE' and OLD.stp_kilact = 0 then
+			return OLD; -- Es borrar y kilos 0 . Ignoro
+		end if;
         select aju_regacu into ajuRegacu from anjelica.ajustedb;
-	if not found then
-		RAISE EXCEPTION 'NO encontrado Ajustes DB';
-	end if;
-	if ajuRegacu = 0 then
-		if TG_OP = 'UPDATE' or TG_OP  ='INSERT' then
-		  RETURN NEW;
-		else
-		  return OLD;
-		end if;        	
-	end if;
+		if not found then
+			RAISE EXCEPTION 'NO encontrado Ajustes DB';
+		end if;
+		if ajuRegacu = 0 then
+			if TG_OP = 'UPDATE' or TG_OP  ='INSERT' then
+			  RETURN NEW;
+			else
+			  return OLD;
+			end if;        	
+		end if;
         if TG_OP =  'INSERT' or TG_OP =  'UPDATE' then 
 	    --RAISE NOTICE  'En Act. Stk Serie % ',NEW.pro_serie ;
 	    if NEW.pro_serie = 'S' then
@@ -93,7 +96,7 @@ $BODY$
             WHERE  pro_codi = OLD.pro_codi  and
                    alm_codi = OLD.alm_codi;
 	    -- RAISE NOTICE  'Act. Stk con serie S articulo viejo % Kilos: % ',OLD.pro_codi,kilos;	
-	    select sum(stp_unact),sum(stp_kilact) into unid,kilos  from anjelica.actstkpart
+	    select sum(stp_unact),sum(stp_kilact) into unid,kilos  from anjelica.	actstkpart
 			where pro_codi = OLD.pro_codi ;
 	    UPDATE anjelica.v_articulo set pro_stkuni=unid,pro_stock=kilos
 			where pro_codi=OLD.pro_codi;   

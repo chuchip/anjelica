@@ -249,6 +249,7 @@ public void setAltButton(AbstractButton b)
   * Funcion que me pone en blanco los controles que implementan CEditable
   * a un valor por defecto
   */
+  @Override
  public void resetTexto()
  {
    Component[] lista = this.getComponents();
@@ -271,9 +272,9 @@ public void setAltButton(AbstractButton b)
      catch (Exception k)
      {}
    }
-   return;
  }
 
+  @Override
  public void resetCambio()
  {
    Component[] lista = this.getComponents();

@@ -93,6 +93,7 @@ public class PaiPanel extends CPanel
   public boolean getBotonConsultar() {
     return botonConsultar;
   }
+    @Override
   public void setQuery(boolean modoQuery) {
     pai_codiE.setQuery(modoQuery);
     //Bcons.setEnabled(!modoQuery);
@@ -325,6 +326,7 @@ public class PaiPanel extends CPanel
         gridBagConstraints.weighty = 1.0;
         add(pai_nombE, gridBagConstraints);
 
+        Bcons.setFocusable(false);
         Bcons.setMaximumSize(new java.awt.Dimension(20, 18));
         Bcons.setMinimumSize(new java.awt.Dimension(20, 18));
         Bcons.setPreferredSize(new java.awt.Dimension(20, 18));

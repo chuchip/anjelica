@@ -119,7 +119,7 @@ public class ayuSde extends ventana
     int i []= {46,283,283};
     jt.setAnchoColumna(i);
     int a[]= {1,0,0};
-    jt.alinearColumna(a);
+    jt.setAlinearColumna(a);
     jt.setAjustarColumnas(true);
     jt.setNumRegCargar(100);
     jt.setAjustarGrid(true);

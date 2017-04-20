@@ -3431,7 +3431,7 @@ public class MantDesp extends ventanaPad implements PAD
 //            java.util.Date fecCong=utildesp.getDateCongelado(proCodi, deo_fecproE.getDate(), dtStat);    
             etiq.iniciar(codBarras.getLote(),
                codBarras.getLote(),
-                ""+proCodi, proNomb, utdesp.nacidoE, utdesp.cebadoE,
+                ""+proCodi, proNomb, utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre,
                 utdesp.despiezadoE, null,
                 0, utdesp.getConservar(),
                 utdesp.sacrificadoE,

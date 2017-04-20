@@ -41,7 +41,7 @@
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(3)"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList cabecera=new ArrayList();&#xa;cabecera.add(&quot;Codigo&quot;); // 0 -- Codigo&#xa;cabecera.add(&quot;Refer&quot;); // 1-- Codigo Alfanumerico prod.&#xa;cabecera.add(&quot;Nombre&quot;); //2 -- Nombre&#xa;   &#xa;    &#xa;    jt.setCabecera(cabecera);&#xa;   &#xa;    jt.setAnchoColumna(new int[]{60,120,300});&#xa;&#xa;    jt.alinearColumna(new int[]{2,0,0});&#xa;    jt.setNumRegCargar(500);&#xa;    jt.setAjustarGrid(true);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList cabecera=new ArrayList();&#xa;cabecera.add(&quot;Codigo&quot;); // 0 -- Codigo&#xa;cabecera.add(&quot;Refer&quot;); // 1-- Codigo Alfanumerico prod.&#xa;cabecera.add(&quot;Nombre&quot;); //2 -- Nombre&#xa;   &#xa;    &#xa;    jt.setCabecera(cabecera);&#xa;   &#xa;    jt.setAnchoColumna(new int[]{60,120,300});&#xa;&#xa;    jt.setAlinearColumna(new int[]{2,0,0});&#xa;    jt.setNumRegCargar(500);&#xa;    jt.setAjustarGrid(true);"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
