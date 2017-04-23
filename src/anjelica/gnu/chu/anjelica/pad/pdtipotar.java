@@ -45,6 +45,8 @@ public class pdtipotar extends ventanaPad implements PAD
   CTextField tar_nomoriL = new CTextField();
   CLabel cLabel4 = new CLabel();
   CTextField tar_incpreE = new CTextField(Types.DECIMAL,"#9.99");
+  CLabel tar_comrepL = new CLabel("Comision");
+  CTextField tar_comrepE = new CTextField(Types.DECIMAL,"#9.999");
 
   public pdtipotar(EntornoUsuario eu, Principal p)
   {
@@ -103,7 +105,7 @@ public class pdtipotar extends ventanaPad implements PAD
     {
       iniciar(502, 522);
       this.setSize(new Dimension(507, 237));
-      this.setVersion("2016-05-07");
+      this.setVersion("2017-04-23");
       strSql = "SELECT * FROM tipotari" +
           " order by tar_codi";
 
@@ -126,11 +128,14 @@ public class pdtipotar extends ventanaPad implements PAD
     tar_nomoriL.setBounds(new Rectangle(131, 52, 358, 17));
       cLabel4.setText("Incrementar ");
     cLabel4.setBounds(new Rectangle(9, 74, 71, 17));
-      Baceptar.setBounds(new Rectangle(74, 101, 110, 29));
+    tar_incpreE.setBounds(new Rectangle(81, 74, 43, 17));
+    tar_comrepL.setBounds(new Rectangle(150, 74, 100, 17));
+    tar_comrepE.setBounds(new Rectangle(210, 74, 50, 17));
+    Baceptar.setBounds(new Rectangle(74, 101, 110, 29));
     Baceptar.setText("Aceptar");
       Bcancelar.setBounds(new Rectangle(257, 101, 110, 29));
     Bcancelar.setText("Cancelar");
-      tar_incpreE.setBounds(new Rectangle(81, 74, 43, 17));
+      
     tar_codoriE.setBounds(new Rectangle(81, 52, 45, 17));
     tar_tipoE.setBounds(new Rectangle(81, 28, 125, 20));
     tar_nombE.setBounds(new Rectangle(131, 7, 358, 17));
@@ -149,6 +154,8 @@ public class pdtipotar extends ventanaPad implements PAD
       Pprinc.add(tar_nomoriL, null);
       Pprinc.add(cLabel4, null);
       Pprinc.add(tar_incpreE, null);
+      Pprinc.add(tar_comrepL, null);
+      Pprinc.add(tar_comrepE, null);
       Pprinc.add(Bcancelar, null);
       Pprinc.add(Baceptar, null);
 
@@ -163,6 +170,7 @@ public class pdtipotar extends ventanaPad implements PAD
       tar_tipoE.setColumnaAlias("tar_tipo");
       tar_codoriE.setColumnaAlias("tar_codori");
       tar_incpreE.setColumnaAlias("tar_incpre");
+      tar_comrepE.setColumnaAlias("tar_comrep");
       activarEventos();
       activaTodo();
       verDatos();
@@ -218,6 +226,7 @@ public class pdtipotar extends ventanaPad implements PAD
         else
           getNombTarifa(tar_codoriE.getValorInt(), true);
         tar_incpreE.setValorDec(dtCon1.getDouble("tar_incpre"));
+        tar_comrepE.setValorDec(dtCon1.getDouble("tar_comrep"));
       }
       catch (Exception k)
       {
@@ -266,6 +275,7 @@ public class pdtipotar extends ventanaPad implements PAD
        v.add(tar_tipoE.getStrQuery());
        v.add(tar_codoriE.getStrQuery());
        v.add(tar_incpreE.getStrQuery());
+        v.add(tar_comrepE.getStrQuery());
 
        String s = "SELECT * FROM tipotari ";
        s = creaWhere(s, v, true);
@@ -474,6 +484,7 @@ public class pdtipotar extends ventanaPad implements PAD
          tar_incpreE.requestFocus();
          return false;
        }
+    
       
        return true;
      }
@@ -507,6 +518,7 @@ public class pdtipotar extends ventanaPad implements PAD
        dt.setDato("tar_tipo", tar_tipoE.getValor());
        dt.setDato("tar_codori",tar_codoriE.getValorInt());
        dt.setDato("tar_incpre",tar_incpreE.getValorDec());
+       dt.setDato("tar_comrep",tar_comrepE.getValorDec());
      }
 
 
@@ -603,6 +615,7 @@ public class pdtipotar extends ventanaPad implements PAD
          tar_tipoE.setEnabled(b);
          tar_codoriE.setEnabled(b);
          tar_incpreE.setEnabled(b);
+         tar_comrepE.setEnabled(b);
      }
      public static void llenaLinkBox(CLinkBox lkbox, DatosTabla dt ) throws SQLException
      {

@@ -120,7 +120,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2017-02-23" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2017-04-23" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -742,7 +742,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
   @Override
   public void afterConecta() throws SQLException, java.text.ParseException
   {
-    s = "SELECT tar_codi,tar_nomb FROM tipotari WHERE tar_codori = 0" +
+    s = "SELECT tar_codi,tar_nomb FROM tipotari " +
         " ORDER BY tar_codi ";
     if (dtStat.select(s))
     {
@@ -782,7 +782,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
    if (fecAlb.trim().equals(""))
        return 0;
    if (cliCodi!=0)
-   {
+   { // Busco tarifa especifica para cliente
        s = " SELECT tar_preci,tar_fecini " +
          " FROM taricli as t,v_articulo as ar where pro_codi = " + proCodi +
          " and ar.pro_codart=t.pro_codart "+
@@ -793,16 +793,31 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
        if (dt.select(s))
         return dt.getDouble("tar_preci", true);       
    }
+   /** 
+    * Busco precio para el producto en tarifa mandada
+    */
+    s = " SELECT tar_preci,tar_fecini " +
+         " FROM tarifa as t,v_articulo as ar where pro_codi = " + proCodi +
+         " and ar.pro_codart=t.pro_codart "+
+         " and tar_codi = " + tarCodi +
+         " AND tar_fecini <=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
+         " AND tar_fecfin >=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
+         " order by tar_fecini";
+    if (dt.select(s))
+      return dt.getDouble("tar_preci", true);  
+    /**
+     * Busco precio en tarifa padre (si la hay)
+     */
    s= " SELECT * FROM tipotari WHERE tar_codi = " + tarCodi;
    if (dt.select(s))
    {
+     
      double tarIncPre = dt.getInt("tar_codori")==0?0:dt.getDouble("tar_incpre");
 
      s = " SELECT tar_preci,tar_fecini " +
          " FROM tarifa as t,v_articulo as ar where pro_codi = " + proCodi +
          " and ar.pro_codart=t.pro_codart "+
-         " and tar_codi = " + (dt.getInt("tar_codori") == 0 ? dt.getInt("tar_codi") :
-          dt.getInt("tar_codori")) +
+         " and tar_codi = " +  dt.getInt("tar_codori") +
          " AND tar_fecini <=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
          " AND tar_fecfin >=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
          " order by tar_fecini";
