@@ -45,6 +45,11 @@ import net.sf.jasperreports.engine.*;
 public class Cldegen extends ventana
 {
     int TARIFA_MAYOR;
+    final private int JT_PROCOD=0;
+    final private int JT_PRTARIFA=6;
+    final private int JT_KGVENTA=7;
+    final private int JT_PRVENTA=8;
+    
     utildesp utdesp;
     DatosTabla dtDesp,dtAux;
     String condWhere;
@@ -87,7 +92,7 @@ public class Cldegen extends ventana
 
         iniciarFrame(); 
        
-        this.setVersion("2016-12-16");
+        this.setVersion("2017-04-23");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -226,6 +231,7 @@ public class Cldegen extends ventana
                             jt.setDatos(dtCon1);
                             try {
                                 buscaTarifa();
+                                buscaVenta();
                             } catch (SQLException | ParseException k)
                             {
                                 Error("Error al buscar tarifa",k);
@@ -286,7 +292,27 @@ public class Cldegen extends ventana
             jt.setValor(
             MantTarifa.getPrecTar(dtStat,jt.getValorInt(n,0) ,0,TARIFA_MAYOR, 
                 Formatear.sumaDias(feciniE.getDate(),7)),
-                n,6);
+                n,JT_PRTARIFA);
+        }
+    }
+    private void buscaVenta() throws SQLException,ParseException
+    {
+        int nRow=jt.getRowCount();
+        String s="SELECT sum(avl_canti) as canti,sum(avl_canti*avl_prbase) as importe FROM v_albventa where pro_codi=?"+
+            " and avc_fecalb between to_date('"+
+            Formatear.sumaDias(feciniE.getDate(),7)+"','dd-MM-yyyy')"+ 
+            " and to_date('"+Formatear.sumaDias(fecfinE.getDate(),7)+"','dd-MM-yyyy')";
+        PreparedStatement ps1=dtStat.getPreparedStatement(s);
+        ResultSet rs;
+        double importe;
+        for (int n=0;n<nRow;n++)
+        {
+            ps1.setInt(1, jt.getValorInt(n,JT_PROCOD));
+            rs=ps1.executeQuery();
+            rs.next();
+            importe=rs.getDouble("canti")==0?0: rs.getDouble("importe")/  rs.getDouble("canti");
+            jt.setValor( rs.getDouble("canti"),n,JT_KGVENTA);
+            jt.setValor( importe,n,JT_PRVENTA);
         }
     }
     private String getStrSelect() {
@@ -318,7 +344,7 @@ public class Cldegen extends ventana
              + " sum (def_numpie) as def_numpie, "
              + " sum(def_kilos* (def_prcost"+(opIncCosto.isSelected()?"+ pro_cosinc":"")+")"
              + " ) as costo,sum(def_kilos* (def_prcost"+(opIncCosto.isSelected()?"+ pro_cosinc":"")+")"
-            + " )/sum(def_kilos) as imp,0 as precTarifa "
+            + " )/sum(def_kilos) as imp,0 as precTarifa,0 as kgVenta,0 as prVenta "
              + " from v_despfin l ,desporig c,v_articulo a "
              + (grp_codiE.isNull() ?"":", v_famipro as fp ")
              + " where "+condWhere
@@ -456,7 +482,7 @@ public class Cldegen extends ventana
         impTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.9");
         opDesgl = new gnu.chu.controles.CCheckBox();
         Bprint = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
-        jt = new gnu.chu.controles.Cgrid(7);
+        jt = new gnu.chu.controles.Cgrid(9);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -574,6 +600,7 @@ public class Cldegen extends ventana
         Pentra.add(fam_codentE);
         fam_codentE.setBounds(315, 62, 240, 18);
 
+        opSoloValor.setSelected(true);
         opSoloValor.setText("Solo Valorados");
         opSoloValor.setToolTipText("Incluir productos que se generan a si mismos");
         opSoloValor.setPreferredSize(new java.awt.Dimension(83, 18));
@@ -743,14 +770,18 @@ public class Cldegen extends ventana
         v.add("Importe"); // 4
         v.add("Costo"); // 5
         v.add("Tarifa"); // 6
+        v.add("Kg.Venta"); // 7
+        v.add("Pr.Venta"); // 8
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{50,200,60,40,70,60,40});
-        jt.setAlinearColumna(new int[]{0,0,2,2,2,2,2});
+        jt.setAnchoColumna(new int[]{50,200,60,40,70,60,40,45,45});
+        jt.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2,2});
         jt.setFormatoColumna(2,"---,--9.99");
         jt.setFormatoColumna(3,"--,--9");
         jt.setFormatoColumna(4,"----,--9.99");
         jt.setFormatoColumna(5,"--9.9999");
-        jt.setFormatoColumna(6,"#9.99");
+        jt.setFormatoColumna(JT_PRTARIFA,"#9.99");
+        jt.setFormatoColumna(JT_KGVENTA,"--9.9");
+        jt.setFormatoColumna(JT_PRVENTA,"--9.99");
         jt.setAjustarGrid(true);
 
         jt.setNumRegCargar(0);
