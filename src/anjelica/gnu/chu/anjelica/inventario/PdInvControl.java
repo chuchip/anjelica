@@ -8,7 +8,7 @@ package gnu.chu.anjelica.inventario;
  * con el mismo individuo,lote y peso. Por defecto, lo permite. </p>
  * <p> <em>admin=true</em> Permitira meter Generar inventario a  partir de otro.
  * Por defecto esta deshabilitada esa caracteristica. </p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -29,6 +29,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.DatIndiv;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.pdalmace;
+import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
@@ -274,10 +275,19 @@ public class PdInvControl extends ventanaPad implements PAD
       {
             try
             {
-                if (e.getActionCommand().equals("Copiar"))
-                    Bcopia_addActionPerformed();
-                else
-                    fusionar();
+                String accion=Bcopia.getValor(e.getActionCommand());
+                switch (accion)
+                {
+                    case "U":
+                        fusionar();
+                        break;
+                    case "I":
+                        importar();
+                        return;
+                    default:
+                        Bcopia_addActionPerformed();
+                }
+               
                 msgBox("Generado Inventario en fecha: "+cci_fecconE.getText());
                 activaTodo();
                 nav.pulsado = navegador.NINGUNO;
@@ -921,7 +931,7 @@ public class PdInvControl extends ventanaPad implements PAD
     return -1;
   }
 
-  int insLineaInv(int nl) throws Exception
+  int insLineaInv(int nl) throws SQLException, ParseException
   {
     if (cci_codiE.getValorInt()==0)
       insCabInv(cci_fecconE.getDate(),alm_codiE.getValorInt());
@@ -1175,6 +1185,65 @@ public class PdInvControl extends ventanaPad implements PAD
            " AND c.deo_tiempo <= {d '" + cci_fecconE.getFechaDB() + "'} "+
            " AND c.deo_tiempo > {d '" + cci_fecoriE.getFechaDB() + "'} ";
           return dtStat.select(s);
+    }
+    boolean importar() throws SQLException, ParseException 
+    {
+        if (cci_fecoriE.isNull())
+        {
+            msgBox("Introduzca fecha origen");
+            cci_fecoriE.requestFocus();
+            return false;
+        }
+        if (nav.pulsado==navegador.EDIT)
+        {
+            s="select * from v_invproduc where cip_fecinv = '"+cci_fecoriE.getFechaDB()+"'"+
+                " and cam_codi = '"+cam_codiE.getText()+"'"+
+                " and alm_codi = "+alm_codiE.getValorInt()+
+                " order by lip_numlin";
+            if (!dtCon1.select(s))
+            {
+                msgBox("No encontrado ningun inventario produccion con esa fecha para esta camara");
+                return false; 
+            }
+            int lciNume=0;           
+            jt.setEnabled(false);
+            prp_numpieE.setValorInt(1);
+            lci_numcajE.setValorDec(0);
+            lci_numpalE.setText("IP");
+           
+            do
+            {
+                ArrayList v=new ArrayList();
+                pro_codiE.setText(dtCon1.getString("pro_codi"));
+                pro_nombE.setText(dtCon1.getString("pro_nomb"));
+                prp_anoE.setValorInt(dtCon1.getInt("prp_ano"));
+                prp_serieE.setText(dtCon1.getString("prp_seri"));
+                prp_partE.setValorDec(dtCon1.getInt("prp_part"));
+                prp_indiE.setValorDec(dtCon1.getInt("prp_indi"));
+                prp_pesoE.setValorDec(dtCon1.getDouble("prp_peso"));
+                
+                
+                lciNume=insLineaInv(0);
+                v.add(lciNume); // 0
+                v.add(dtCon1.getString("pro_codi")); // 1
+                v.add(dtCon1.getString("pro_nomb")); // 2 
+                v.add(dtCon1.getString("prp_ano")); // 3
+                v.add(1); // 4
+                v.add(dtCon1.getString("prp_seri")); // 5  
+                v.add(dtCon1.getString("prp_part")); // 6 
+                v.add(dtCon1.getString("prp_indi")); // 7
+                v.add(dtCon1.getString("prp_peso")); // 8
+                v.add(1); // 9
+                v.add(0);
+                v.add("IP");
+                jt.addLinea(v);
+            } while (dtCon1.next());
+            jt.setEnabled(true);
+
+        }
+        msgBox("Insertado inventario produccion");
+        return true;
+
     }
     /**
      * Fusiona el inventario de una fecha con el de otra.
@@ -1876,8 +1945,10 @@ public class PdInvControl extends ventanaPad implements PAD
             cLabel12.setBounds(350, 22, 80, 17);
 
             Bcopia.setText("Varios");
-            Bcopia.addMenu("Copiar");
-            Bcopia.addMenu("Unifica");
+            Bcopia.addMenu("Aceptar","A");
+            Bcopia.addMenu("Copiar","C");
+            Bcopia.addMenu("Unifica","U");
+            Bcopia.addMenu("Importa","I");
             Pcabe.add(Bcopia);
             Bcopia.setBounds(510, 20, 90, 26);
 
