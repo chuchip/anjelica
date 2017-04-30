@@ -20,6 +20,7 @@
     <Component class="gnu.chu.controles.CTextField" name="prp_empcodE">
       <Properties>
         <Property name="toolTipText" type="java.lang.String" value=""/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL, &quot;#9&quot;)"/>
@@ -134,7 +135,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,-123,0,0,4,-70"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,-123,0,0,2,-15"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -370,7 +371,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="1187" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="730" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -407,7 +408,7 @@
                   </Properties>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(10)"/>
-                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList vr=new ArrayList(); &#xa;vr.add(&quot;Producto&quot;); // 0&#xa;vr.add(&quot;Descripcion&quot;); // 1&#xa;vr.add(&quot;N&#xba;Pzas&quot;); // 2&#xa;vr.add(&quot;Kilos&quot;); // 3&#xa;vr.add(&quot;Prv&quot;); // 4&#xa;vr.add(&quot;Nombre Prv&quot;); // 5&#xa;vr.add(&quot;Fec.Sacr.&quot;); // 6&#xa;vr.add(&quot;Fec.Cad.&quot;); // 7&#xa;vr.add(&quot;Fec.Pro.&quot;); // 8&#xa;vr.add(&quot;Pais&quot;); // 9&#xa;jtRes.setCabecera(vr);&#xa;jtRes.setAlinearColumna(new int[]{2,0,2,2,2,0,1,1,1,0});&#xa;jtRes.setAnchoColumna(new int[]{60,200,40,50,50,150,60,60,60,40});&#xa;jtRes.setFormatoColumna(2, &quot;###9&quot;);&#xa;jtRes.setFormatoColumna(3, &quot;##,##9.99&quot;);&#xa;jtRes.setFormatoColumna(6, &quot;dd-MM-yy&quot;);&#xa;jtRes.setFormatoColumna(7, &quot;dd-MM-yy&quot;);&#xa;jtRes.setFormatoColumna(8, &quot;dd-MM-yy&quot;);"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList vr=new ArrayList(); &#xa;vr.add(&quot;Producto&quot;); // 0&#xa;vr.add(&quot;Descripcion&quot;); // 1&#xa;vr.add(&quot;N&#xba;Pzas&quot;); // 2&#xa;vr.add(&quot;Kilos&quot;); // 3&#xa;vr.add(&quot;Prv&quot;); // 4&#xa;vr.add(&quot;Nombre Prv&quot;); // 5&#xa;vr.add(&quot;Fec.Sacr.&quot;); // 6&#xa;vr.add(&quot;Fec.Cad.&quot;); // 7&#xa;vr.add(&quot;Fec.Pro.&quot;); // 8&#xa;vr.add(&quot;Pais&quot;); // 9&#xa;jtRes.setCabecera(vr);&#xa;jtRes.setAlinearColumna(new int[]{2,0,2,2,2,0,1,1,1,0});&#xa;jtRes.setAnchoColumna(new int[]{60,200,40,50,50,150,60,60,60,40});&#xa;jtRes.setFormatoColumna(2, &quot;###9&quot;);&#xa;jtRes.setFormatoColumna(3, &quot;##,##9.99&quot;);&#xa;jtRes.setFormatoColumna(6, &quot;dd-MM-yyyy&quot;);&#xa;jtRes.setFormatoColumna(7, &quot;dd-MM-yyyy&quot;);&#xa;jtRes.setFormatoColumna(8, &quot;dd-MM-yyyy&quot;);"/>
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -524,51 +525,80 @@
                     </Component>
                     <Component class="gnu.chu.controles.CCheckBox" name="opIgnPrv">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Ignorar Prov."/>
+                        <Property name="text" type="java.lang.String" value="Prov."/>
+                        <Property name="toolTipText" type="java.lang.String" value="Ignorar Proveedor"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="10" y="20" width="120" height="17"/>
+                          <AbsoluteConstraints x="1" y="20" width="60" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
                     <Component class="gnu.chu.controles.CCheckBox" name="opIgnFecProd">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Ignorar Fec.Prod"/>
+                        <Property name="text" type="java.lang.String" value="F.Prod."/>
+                        <Property name="toolTipText" type="java.lang.String" value="Ignorar Fecha Produccion"/>
                       </Properties>
+                      <AccessibilityProperties>
+                        <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value=""/>
+                      </AccessibilityProperties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="320" y="20" width="120" height="17"/>
+                          <AbsoluteConstraints x="190" y="20" width="70" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
                     <Component class="gnu.chu.controles.CCheckBox" name="opIgnPais">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Ignorar Pais"/>
+                        <Property name="text" type="java.lang.String" value="Pais"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Ignorar Pais"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="110" y="20" width="90" height="17"/>
+                          <AbsoluteConstraints x="70" y="20" width="50" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
                     <Component class="gnu.chu.controles.CCheckBox" name="opIgnFecSac">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Ignorar Fec. Sacr"/>
+                        <Property name="text" type="java.lang.String" value="F.Sacr."/>
+                        <Property name="toolTipText" type="java.lang.String" value="Ignorar Fecha Sacrificio"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="200" y="20" width="120" height="17"/>
+                          <AbsoluteConstraints x="120" y="20" width="70" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="gnu.chu.controles.CCheckBox" name="opIgnDesp">
+                    <Component class="gnu.chu.controles.CCheckBox" name="opSoloStock">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="solo con Stock"/>
+                        <Property name="text" type="java.lang.String" value="Solo Stock"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="450" y="20" width="120" height="17"/>
+                          <AbsoluteConstraints x="390" y="20" width="80" height="17"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CCheckBox" name="opIgnRepet">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Ign. Repet."/>
+                        <Property name="toolTipText" type="java.lang.String" value="Ignorar Repetidos"/>
+                      </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="480" y="20" width="90" height="17"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="gnu.chu.controles.CCheckBox" name="opIgnFecCad">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="F.Cad"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Ignorar Fecha Caducidad"/>
+                      </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="260" y="20" width="70" height="17"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -874,6 +904,16 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="150" y="40" width="50" height="20"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CButton" name="BImportar">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Importar"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="40" y="62" width="80" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

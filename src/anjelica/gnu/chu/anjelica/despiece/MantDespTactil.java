@@ -16,7 +16,6 @@ import gnu.chu.camposdb.cliPanel;
 import gnu.chu.camposdb.proPanel;
 import gnu.chu.camposdb.tidCodi2;
 import gnu.chu.comm.BotonBascula;
-import gnu.chu.comm.leePeso;
 import gnu.chu.controles.*;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.interfaces.ejecutable;
@@ -61,6 +60,7 @@ import javax.swing.SwingConstants;
  */
 public class MantDespTactil  extends ventanaPad implements PAD
 {
+    private final int PROCIERRE=99;
  private gnu.chu.controles.CComboBox eti_codiE=new gnu.chu.controles.CComboBox();
   cliPanel cli_codiE = new cliPanel();
   CLabel deo_incvalL=new CLabel("Produccion");
@@ -255,6 +255,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
   CPanel cPanel4 = new CPanel();
   CPanel Ppie = new CPanel();
   CButton Bfincab = new CButton();
+  CButton BcerrDesp = new CButton( "Cerrar",Iconos.getImageIcon("lock"));
 //  CButton Baceptar = new CButton(Iconos.getImageIcon("ibr3.jpg"));
 //  CButton Bcancelar = new CButton();
 
@@ -397,7 +398,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2017-04-20"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2017-04-26"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -674,6 +675,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Ppie.setLayout(null);
     Baceptar.setBounds(new Rectangle(100, 1, 100, 26));
     Baceptar.setText("Aceptar");
+    BcerrDesp.setBounds(new Rectangle(200, 1, 100, 26));
     Bcancelar.setBounds(new Rectangle(310, 1, 100, 26));
     Bcancelar.setMaximumSize(new Dimension(81, 29));
     Bcancelar.setMinimumSize(new Dimension(81, 29));
@@ -829,6 +831,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
    
     Ptabed.add(Pfin, "Final");
     Ppie.add(Bcancelar, null);
+    if (PARAM_ADMIN)
+        Ppie.add(BcerrDesp, null);
     Ppie.add(Baceptar, null);
     
     Ppie.add(Bimpetin, null);
@@ -906,6 +910,13 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
  void activarEventos()
  {
+    BcerrDesp.addActionListener(new ActionListener()
+    {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            cerrarDespiece();
+        }
+    });
     BDuplLinea.addActionListener(new ActionListener()
     {
         @Override
@@ -1555,7 +1566,10 @@ public class MantDespTactil  extends ventanaPad implements PAD
           {
               int res=mensajes.mensajeYesNo(msgErr+"\n Cerrar de todos modos ? ");
               if (res!=mensajes.YES)
+              {
+                deo_blockE.setValor("S");
                 return;
+              }
               if (jf != null)
               {
                 jf.ht.clear();
@@ -1819,6 +1833,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
       grd_feccadE.setEnabled(activ);
       Baceptar.setEnabled(activ);
       Bcancelar.setEnabled(activ);
+      BcerrDesp.setEnabled(!activ);
     }
     switch (modo)
     {
@@ -2147,14 +2162,16 @@ public class MantDespTactil  extends ventanaPad implements PAD
          mensajeErr("Producto NO esta ACTIVO");
          return 0;
       }
-      s="SELECT * FROM TIPDESENT WHERE tid_codi = "+tid_codiE.getValorInt()+
-          " and pro_codi = "+pro_codenE.getValorInt();
-      if (! dtStat.select(s))
+      if (pro_codenE.getValorInt()!=PROCIERRE)
       {
-        mensajeErr("Producto "+pro_codenE.getValorInt()+ " NO ENCONTRADO EN TIPO DESPIECE");
-        return JTENT_PROCODI;
+        s="SELECT * FROM TIPDESENT WHERE tid_codi = "+tid_codiE.getValorInt()+
+            " and pro_codi = "+pro_codenE.getValorInt();
+        if (! dtStat.select(s))
+        {
+          mensajeErr("Producto "+pro_codenE.getValorInt()+ " NO ENCONTRADO EN TIPO DESPIECE");
+          return JTENT_PROCODI;
+        }
       }
-
       if (eje_numenE.getValorInt() == 0 && pro_codenE.hasControlIndiv())
       {
         mensajeErr("Introduzca Ejercicio de Lote");
@@ -2981,12 +2998,13 @@ public class MantDespTactil  extends ventanaPad implements PAD
    int nEle;
    for (int n=0;n<nRow;n++)
    {
-     if (MantArticulos.getTipoProd(jtSal.getValorInt(n,0),dtStat).equals("D"))
-         continue; // Es de deshecho.
+     if (jtSal.getValorInt(n, 0)==PROCIERRE || MantArticulos.getTipoProd(jtSal.getValorInt(n,0),dtStat).equals("D"))
+         continue; // Es de deshecho. o producto cierre
      s="SELECT tds_grupo FROM tipdessal  WHERE tid_codi = "+tid_codiE.getValorInt()+
          " and pro_codi = "+jtSal.getValorInt(n,0);
-     if (! dtStat.select(s))
+     if (! dtStat.select(s) )
      { // Quizas es un producto equivalente.
+           
        s="SELECT tds_grupo FROM tipdessal  WHERE tid_codi = "+tid_codiE.getValorInt()+
          " and (pro_codi in (select pro_codini from artiequiv where pro_codfin = "+
                jtSal.getValorInt(n, 0)+") "+
@@ -3029,6 +3047,41 @@ public class MantDespTactil  extends ventanaPad implements PAD
      }
    }
    return null;
+ }
+ /**
+  * Cerrar despiece.
+  */
+ void cerrarDespiece()
+ {
+    if (!deo_blockE.getValor().equals("S"))
+        return;
+    if (kildifE.getValorDec() < -3)
+    {
+        msgBox("Kilos diferencia son mayor de 3");
+        return;
+    }
+    if (kildifE.getValorDec() > 0)
+    {
+        msgBox("Sobran kilos en la salida");
+        return;
+    }
+    nav.setPulsado(navegador.EDIT);
+    nav.setEnabled(false);
+    PADEdit();
+    grd_unidE.setValorDec(grd_unioriE1.getValorInt());
+    deo_blockE.setValor("N");
+    if (kildifE.getValorDec()<0)
+    {
+        pro_codsalE.setValorInt(PROCIERRE);
+        def_numpiE.setText("1");
+        nlSalE.setText("");
+        modLinSal=false;
+        kilsalE.resetTexto();
+        kilsalE.setCambio(true); 
+        kilsalE.setValorDec(kildifE.getValorDec()*-1);
+        Bsalkil_focusGained();
+    }
+    ej_edit1();    
  }
  void duplicaLinea()
  {
