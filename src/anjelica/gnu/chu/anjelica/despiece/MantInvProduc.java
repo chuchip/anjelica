@@ -1262,7 +1262,7 @@ public class MantInvProduc extends ventanaPad implements PAD
     dtAdd.setDato("prp_part", prp_partE.getValorInt());
     dtAdd.setDato("pro_codi", pro_codiE.getValorInt()); 
     dtAdd.setDato("prp_indi", prp_indiE.getValorInt());
-    dtAdd.setDato("prp_peso",row<0?0: jt.getValorDec(row,JT_PRPPESO));    
+    dtAdd.setDato("prp_peso",row<0?prp_pesoE.getValorDec(): jt.getValorDec(row,JT_PRPPESO));    
     dtAdd.setDato("prv_codi", row<0?0:jt.getValorInt(row,JT_PRVCOD));
     dtAdd.setDato("prp_feccad",row<0?FECHANULA:jt.getValDate(row,JT_FECCAD));
     dtAdd.setDato("prp_fecpro",row<0?FECHANULA:jt.getValDate(row,JT_FECPRO));
@@ -1488,6 +1488,7 @@ public class MantInvProduc extends ventanaPad implements PAD
                 prp_serieE.setText(dtCon1.getString("prp_seri"));
                 prp_partE.setValorDec(dtCon1.getInt("prp_part"));
                 prp_indiE.setValorDec(dtCon1.getInt("prp_indi"));
+                
                 prp_pesoE.setValorDec(dtCon1.getDouble("lci_peso"));
                 
                 ArrayList v=new ArrayList();
