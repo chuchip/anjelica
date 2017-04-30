@@ -300,8 +300,8 @@ public class clvenart extends ventana implements  JRDataSource
          v.add(dtCon1.getString("pro_nomb"));
          v.add(dtCon1.getString("avl_unid"));
          v.add(dtCon1.getString("avl_canti"));
-         v.add(""+(dtCon1.getDouble("avl_canti")/dtCon1.getInt("avl_unid")));
-         v.add(""+dtCon1.getDouble("importe")/dtCon1.getDouble("avl_canti"));
+         v.add(dtCon1.getDouble("avl_canti")/dtCon1.getInt("avl_unid"));
+         v.add(dtCon1.getDouble("importe")/dtCon1.getDouble("avl_canti"));
          v.add(""+dtCon1.getDouble("importe"));
          jt.addLinea(v);
          if (tipoListE.getValor().equals("C"))

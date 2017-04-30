@@ -55,27 +55,27 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel6">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel6">
               <Properties>
-                <Property name="text" type="java.lang.String" value="De Fecha"/>
+                <Property name="text" type="java.lang.String" value="De Fec. Alb"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="0" y="2" width="60" height="18"/>
+                  <AbsoluteConstraints x="0" y="2" width="70" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CTextField" name="fechaE">
+            <Component class="gnu.chu.controles.CTextField" name="feciniE">
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="70" y="2" width="76" height="18"/>
+                  <AbsoluteConstraints x="70" y="2" width="76" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel10">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel10">
               <Properties>
                 <Property name="text" type="java.lang.String" value="De Cliente"/>
               </Properties>
@@ -92,23 +92,26 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Tipo"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="310" y="2" width="40" height="17"/>
+                  <AbsoluteConstraints x="270" y="0" width="40" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CComboBox" name="tipoConsC">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tipoConsCActionPerformed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="tipoConsC.addItem(&quot;Salidas&quot;,&quot;S&quot;);&#xa;tipoConsC.addItem(&quot;Entradas&quot;,&quot;E&quot;);&#xa;tipoConsC.addItem(&quot;Inventario&quot;,&quot;I&quot;);&#xa;//tipoConsC.addItem(&quot;Movimientos&quot;,&quot;M&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="360" y="2" width="120" height="17"/>
+                  <AbsoluteConstraints x="310" y="0" width="90" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -125,13 +128,13 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel7">
+            <Component class="gnu.chu.controles.CLabel" name="cLabel7">
               <Properties>
-                <Property name="text" type="java.lang.String" value="A Fecha"/>
+                <Property name="text" type="java.lang.String" value="A "/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="160" y="2" width="50" height="17"/>
+                  <AbsoluteConstraints x="160" y="2" width="20" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -141,7 +144,27 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="210" y="2" width="76" height="17"/>
+                  <AbsoluteConstraints x="180" y="0" width="76" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel8">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Fec. Inv."/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="420" y="0" width="50" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="fecInvE">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="470" y="0" width="76" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -283,7 +306,7 @@
                   </Properties>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(9)"/>
-                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{ArrayList vs=new ArrayList();&#xa;&#xa;vs.add(&quot;Articulo&quot;); // 0&#xa;vs.add(&quot;Descrip.&quot;); // 1&#xa;vs.add(&quot;Individuo&quot;); // 2&#xa;vs.add(&quot;Unid&quot;); // 3&#xa;vs.add(&quot;Kilos&quot;); // 4&#xa;vs.add(&quot;Cliente&quot;); // 5&#xa;vs.add(&quot;Nombre Cliente&quot;); // 6&#xa;vs.add(&quot;Alb.&quot;); // 7&#xa;vs.add(&quot;Fec.Alb.&quot;); // 8&#xa;jtStock.setCabecera(vs);&#xa;}&#xa;jtStock.setAnchoColumna(new int[]{40,150,90,30,60,45,150,80,70});&#xa;jtStock.setAlinearColumna(new int[]{2,0,0,2,2,2,0,0,1});"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="{ArrayList vs=new ArrayList();&#xa;&#xa;vs.add(&quot;Articulo&quot;); // 0&#xa;vs.add(&quot;Descrip.&quot;); // 1&#xa;vs.add(&quot;Individuo&quot;); // 2&#xa;vs.add(&quot;Unid&quot;); // 3&#xa;vs.add(&quot;Kilos&quot;); // 4&#xa;vs.add(&quot;Cliente&quot;); // 5&#xa;vs.add(&quot;Nombre Cliente&quot;); // 6&#xa;vs.add(&quot;Alb.&quot;); // 7&#xa;vs.add(&quot;Fec.Alb.&quot;); // 8&#xa;jtStock.setCabecera(vs);&#xa;}&#xa;jtStock.setAnchoColumna(new int[]{40,150,90,30,60,45,150,80,70});&#xa;jtStock.setAlinearColumna(new int[]{2,0,0,2,2,2,0,0,1});&#xa;jtStock.setFormatoColumna(4,&quot;##,##9.99&quot;);"/>
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">

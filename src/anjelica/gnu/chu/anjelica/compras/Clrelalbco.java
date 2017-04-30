@@ -13,6 +13,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -86,7 +88,7 @@ public class Clrelalbco extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2014-12-02");
+        this.setVersion("2017-04-25");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -214,6 +216,14 @@ public class Clrelalbco extends ventana {
     void consulta1()
     {
         try {
+            s="select acl_canti, acl_prcom,acl_dtopp,acl_porpag from v_albacol"+
+                       " WHERE acc_ano= ? "+
+                       " and emp_codi = ?"+
+                       " and acc_serie = ?"+
+                       " and acc_nume = ? ";                       
+            
+            PreparedStatement ps=dtCon1.getPreparedStatement(s);
+            ResultSet rs;
             boolean ordenPrv=ordenE.getValor().equals("P");
             s = "SELECT c.*,pv.prv_nomb FROM v_albacoc as c left join v_proveedo as pv on c.prv_codi = pv.prv_codi "
                     + " WHERE c.emp_codi = " + EU.em_cod
@@ -236,12 +246,17 @@ public class Clrelalbco extends ventana {
             int prvAntiguo=dtCon1.getInt("prv_codi");
             String prvNombAnt=dtCon1.getString("prv_nomb");
             int nAlbPrv=0;
+            double importe,impLinea;
+            double kilos;      
+            boolean incDtoPP=opIncDtoPP.isSelected();
+            boolean incDtoCom=opIncDtoCom.isSelected();
+            boolean incPortes=opIncPortes.isSelected();
             do
             {
                 if (! dtCon1.getFecha("acc_fecrec").equals("fechaAlb"))
                 {
                  fechaAlb=dtCon1.getFecha("acc_fecrec");
-                 actualizaMsg("Tratando albaran de fecha: "+dtCon1.getFecha("acc_fecrec"),false);
+                 setMensajePopEspere("Tratando albaran de fecha: "+dtCon1.getFecha("acc_fecrec"),false);
                 }
                 if (ordenPrv && prvAntiguo!=dtCon1.getInt("prv_codi") && ordenPrv)
                 {
@@ -263,24 +278,35 @@ public class Clrelalbco extends ventana {
                 v.add(dtCon1.getFecha("acc_fecrec"));
                 v.add(dtCon1.getString("prv_codi"));
                 v.add(dtCon1.getString("prv_nomb"));
-                s="select sum(acl_canti) as acl_canti, sum((acl_prcom" +
-                       (opIncPortes.isSelected()?"":"-"+dtCon1.getDouble("acc_impokg"))+
-                       ") * acl_canti) as acl_prcom from v_albacol"+
-                       " WHERE acc_ano= "+dtCon1.getInt("acc_ano")+
-                       (emp_codiE.getValorInt()==0?"":" and emp_codi = "+emp_codiE.getValorInt())+
-                       " and acc_serie = '"+dtCon1.getString("acc_serie")+"'"+
-                       " and acc_nume = "+dtCon1.getInt("acc_nume");
-                dtStat.select(s);
-                v.add(""+dtStat.getDouble("acl_prcom",true));
-                v.add(""+dtStat.getDouble("acl_canti",true));
+                ps.setInt(1, dtCon1.getInt("acc_ano"));
+                ps.setInt(2, dtCon1.getInt("emp_codi"));
+                ps.setString(3, dtCon1.getString("acc_serie"));
+                ps.setInt(4, dtCon1.getInt("acc_nume"));
+                rs=ps.executeQuery();
+                
+                importe=0;
+                kilos=0;
+                while (rs.next())
+                {
+                    impLinea=getPrecioEdicion(rs.getDouble("acl_prcom"),
+                        incDtoCom, dtCon1.getDouble("acc_imcokg"),
+                        incPortes,
+                        rs.getInt("acl_porpag")!=0?0:dtCon1.getDouble("acc_impokg",true),
+                        incDtoPP, rs.getDouble("acl_dtopp") );
+                    importe+= impLinea*rs.getDouble("acl_canti");
+                    kilos+=rs.getDouble("acl_canti");
+                }
+//                importe=kilos==0?0:importe/kilos;
+                v.add(importe);
+                v.add(kilos);
                 if (ordenPrv)
                 {
-                    cantiP+=dtStat.getDouble("acl_canti",true);
-                    imporP+=dtStat.getDouble("acl_prcom",true);
+                    cantiP+=kilos;
+                    imporP+=importe;
                     nAlbPrv++;
                 }
-                impAlb+=dtStat.getDouble("acl_prcom",true);
-                kgAlb+=dtStat.getDouble("acl_canti",true);
+                impAlb+=importe;
+                kgAlb+=kilos;
                 s = "select sum(fcl_canti) as fcl_canti,sum(fcl_canti*fcl_prcom -((fcl_prcom*fcl_dto)/100)) as fcl_prcom" +
                         " from v_facaco as c, v_falico as l "
                         + "  WHERE  c.emp_codi = l.emp_codi "
@@ -323,6 +349,14 @@ public class Clrelalbco extends ventana {
             Error("Error al consultar datos", k);
         }
     }
+    public double getPrecioEdicion(double impDB, boolean incComi,double impComi, boolean incPortes,
+        double impPortes,boolean incDtoPP,double dtoPP)
+    {       
+       double dtoPortes=impPortes+impComi;        
+       double impDtoPP =  ((impDB  - dtoPortes) / (1 - ( dtoPP/100)))- (impDB  - dtoPortes) ;
+            
+       return  impDB -  (incPortes?0:impPortes) - (incComi?0:impComi) - (incDtoPP?impDtoPP:0) ;
+  }
     private void impTotPrv(int prvCodi,String prvNomb,double cantiP,double imporP)
     {
         ArrayList v1=new ArrayList();
@@ -385,6 +419,8 @@ public class Clrelalbco extends ventana {
         ordenE = new gnu.chu.controles.CComboBox();
         opRecFra = new gnu.chu.controles.CCheckBox();
         opIncPortes = new gnu.chu.controles.CCheckBox();
+        opIncDtoCom = new gnu.chu.controles.CCheckBox();
+        opIncDtoPP = new gnu.chu.controles.CCheckBox();
         jt = new gnu.chu.controles.Cgrid(8);
         Ppie = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -485,6 +521,18 @@ public class Clrelalbco extends ventana {
         opIncPortes.setToolTipText("Incluir Portes");
         Pentra.add(opIncPortes);
         opIncPortes.setBounds(460, 30, 100, 16);
+
+        opIncDtoCom.setSelected(true);
+        opIncDtoCom.setText("Incluir Dto Comision");
+        opIncDtoCom.setToolTipText("Considerar importe no fact. si la fra no se recibio en el periodo introducido");
+        Pentra.add(opIncDtoCom);
+        opIncDtoCom.setBounds(110, 90, 130, 16);
+
+        opIncDtoPP.setSelected(true);
+        opIncDtoPP.setText("Incluir Dto PP");
+        opIncDtoPP.setToolTipText("Considerar importe no fact. si la fra no se recibio en el periodo introducido");
+        Pentra.add(opIncDtoPP);
+        opIncDtoPP.setBounds(0, 90, 100, 16);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -680,6 +728,8 @@ public class Clrelalbco extends ventana {
     private gnu.chu.controles.Cgrid jt;
     private gnu.chu.controles.CTextField kgAlbE;
     private gnu.chu.controles.CTextField numAlbE;
+    private gnu.chu.controles.CCheckBox opIncDtoCom;
+    private gnu.chu.controles.CCheckBox opIncDtoPP;
     private gnu.chu.controles.CCheckBox opIncPortes;
     private gnu.chu.controles.CCheckBox opMosDet;
     private gnu.chu.controles.CCheckBox opRecFra;

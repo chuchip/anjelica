@@ -1,6 +1,7 @@
 package gnu.chu.anjelica.almacen;
 
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.pdprove;
 import gnu.chu.camposdb.proPanel;
 import gnu.chu.camposdb.sbePanel;
@@ -15,6 +16,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
@@ -25,7 +28,7 @@ import net.sf.jasperreports.engine.*;
  * <p>Título: clresstock </p>
  * <p>Descripción: Consulta/Listado Resumen de stock desglosandolo
  * por proveedor y fecha de caducidad</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -44,7 +47,7 @@ import net.sf.jasperreports.engine.*;
  */
 public class clresstock extends ventana implements  JRDataSource
 {
-  
+  Date fecSacr  ;
   int n,n1,tlaNulipr;
   ArrayList productos = new ArrayList();
   ArrayList grids=new ArrayList();
@@ -197,6 +200,7 @@ public class clresstock extends ventana implements  JRDataSource
     opIncPrvE.setText("Inc.Prv");
     opIncPrvE.setToolTipText("Incluir Prv. en consulta");
     opIncPrvE.setBounds(new Rectangle(162, 23, 60, 17));
+    opIncPrvE.setSelected(true);
     opIncPedE.setText("Inc.Pedidos");
     opIncPedE.setBounds(new Rectangle(275, 23, 90, 17));
 
@@ -367,7 +371,7 @@ public class clresstock extends ventana implements  JRDataSource
     };
   }
 
-  void consulta()
+  void consulta() 
   {  
     Pgrids.removeAll();
     int tlaCodi = tla_codiE.getValorInt();
@@ -387,8 +391,8 @@ public class clresstock extends ventana implements  JRDataSource
       int posY = 0;
       int prv;
       int proCodi;
-      long redondeo = tla_diagfeE.getValorLong() * 1000 * 60 * 60 * 24; //  1000 Ms * 60 Segundos * 60 Minutos * 24 Horas
-      long fecCad;
+      int redondeo = tla_diagfeE.getValorInt();
+      Date fecCad;
       char opVerDatos=tla_vekgcaE.getValor().charAt(0);
       java.util.Date dt;
       boolean opIncPrv=opIncPrvE.isSelected();
@@ -433,7 +437,7 @@ public class clresstock extends ventana implements  JRDataSource
       }
     
       s="SELECT sum(stp_unact) as unidades,SUM(stp_kilact) as cantidad," +
-            " prv_codi, stp_feccad as feccad " +
+            " prv_codi,  pro_nupar, stp_feccad as feccad " +
             " FROM v_stkpart where pro_codi = ?" +
             (VERNEGATIVO?
                 "  and (stp_kilact > 0.49 or stp_kilact < -0.49)"+
@@ -442,12 +446,12 @@ public class clresstock extends ventana implements  JRDataSource
                 (opVerDatos=='K'?"":" and stp_unact >0 ")) +
             " and eje_nume > 0 " +
             (almCodi == 0 ? "" : " and alm_codi = " + almCodi)+
-            " group by prv_codi,stp_feccad";
+            " group by prv_codi,pro_nupar,stp_feccad";
       if (opIncPedE.isSelected())
       {
         s+=" union all "+
            " select sum(acp_canind)*-1 as unidades,sum(acp_canti)*-1 as cantidad,  "+
-            " c.prv_codi , acp_feccad as feccad "+
+            " c.prv_codi ,0 as pro_nupar, acp_feccad as feccad "+
             " from v_compras as c"+          
             " where pro_codi = ?"+            
             " AND c.acc_cerra = 0 "+ // No estan cerradas las lineas
@@ -458,11 +462,11 @@ public class clresstock extends ventana implements  JRDataSource
             " and p.acc_ano = c.acc_ano "+
             " and p.acc_serie = c.acc_serie "+
             " and p.acc_nume = c.acc_nume) "+
-            " group by prv_codi,acp_feccad "+
+            " group by prv_codi,pro_nupar,acp_feccad "+
             " UNION ALL " +
 // Albaranes Ventas sin CERRAR Y con pedidos
             " select sum(avp_numuni) as unidades,sum(avp_canti) as cantidad, " +
-            " s.prv_codi, s.stp_feccad as feccad " +
+            " s.prv_codi,0 as pro_nupar, s.stp_feccad as feccad " +
             " from v_albventa_detalle as a,v_stkpart as s " +
             " WHERE  s.eje_nume = a.avp_ejelot " +
             " and s.emp_codi = a.avp_emplot " +
@@ -478,7 +482,7 @@ public class clresstock extends ventana implements  JRDataSource
             " and p.avc_ano = a.avc_ano " +
             " and p.avc_serie = a.avc_serie " +
             " and p.avc_nume = a.avc_nume) " +
-            " group by s.prv_codi, s.stp_feccad ";
+            " group by s.prv_codi, pro_nupar,s.stp_feccad ";
       } // Fin de incluir pedidos
 //      debug("s: "+s);
       pst = ct.prepareStatement(s);
@@ -606,7 +610,7 @@ public class clresstock extends ventana implements  JRDataSource
         jt.setBuscarVisible(false);
         double cantS;
         ArrayList<DatProducto> hm = new ArrayList();
-
+       
         do
         { // Para cada producto busca el stock
           proCodi=tlaCodi == 99 ? dtCon1.getInt("pro_codi") : dtAux.getInt("pro_codi");
@@ -619,23 +623,15 @@ public class clresstock extends ventana implements  JRDataSource
           dtAux1.setResultSet(pst.executeQuery());
           if (dtAux1.next())
           { // Busco stock agrupandolo por prv. y fecha cad.
+            fecSacr=dtAux1.getDate("feccad");
             do
             {
-              if (dtAux1.getDate("feccad") == null)
-                fecCad = 0;
-              else
-              {
-                if (redondeo > 0)
-                  dt = new java.util.Date( ( (long) (dtAux1.getDate("feccad").getTime() / redondeo)) *
-                                          redondeo);
-                else
-                  dt = dtAux1.getDate("feccad");
-                fecCad = dt.getTime();
-              }
+              fecCad=redondeaFecha(redondeo,dtAux1.getDate("feccad"),fecSacr);
+           
 //               debug("prv: "+dtAux1.getString("prv_codi")+" fecCad: "+
 //                     Formatear.formatearFecha(new java.util.Date(fecCad),"dd-MM-yyyy")+" dt: "+dtAux1.getFecha("feccad","dd-MM-yyyy"));
               DatProducto dtProd=new DatProducto(proCodi, 
-                  opIncPrv?dtAux1.getInt("prv_codi"):0, fecCad);
+                  opIncPrv?dtAux1.getInt("prv_codi"):dtAux1.getInt("pro_nupar"), fecCad.getTime() );
              
             
               int pos;
@@ -665,18 +661,8 @@ public class clresstock extends ventana implements  JRDataSource
                 continue;
               do
               {
-                if (dtAux1.getDate("feccad") == null)
-                  fecCad = 0;
-                else
-                {
-                  if (redondeo > 0)
-                    dt = new java.util.Date( ( (long) (dtAux1.getDate("feccad").getTime() /
-                        redondeo)) *   redondeo);
-                  else
-                    dt = dtAux1.getDate("feccad");
-                  fecCad = dt.getTime();
-                }
-                DatProducto dtProd=new DatProducto(proCodi,opIncPrv?dtAux1.getInt("prv_codi"):0, fecCad);
+              
+                DatProducto dtProd=new DatProducto(proCodi,opIncPrv?dtAux1.getInt("prv_codi"):dtAux1.getInt("pro_nupar"),0);
               
                 int pos;
                 if (  (pos =hm.indexOf(dtProd)) == -1)
@@ -715,9 +701,9 @@ public class clresstock extends ventana implements  JRDataSource
               v.add("PRV." + result.getProveedor() + " ERROR");
             else
               v.add(s); // Proveedor          
-          }
+          }         
           else
-              v.add("");
+              v.add(result.getProveedor());
            v.add(Formatear.getFecha(new java.util.Date(
                 result.getFecha()), "dd-MM-yy"));
         
@@ -730,7 +716,7 @@ public class clresstock extends ventana implements  JRDataSource
           }
           if (opVerDatos=='K' || opVerDatos=='A')
           {
-            cantS=result.getKilos()+result.getKilos()-result.getKilosVenta();
+            cantS=result.getKilos()+result.getKilosCompra()-result.getKilosVenta();
             v.add(cantS);
             kilosT+=cantS;
           }
@@ -798,12 +784,25 @@ public class clresstock extends ventana implements  JRDataSource
     catch (SQLException | NumberFormatException k)
     {
       Error("Error al Buscar datos", k);
-    }
+    } catch (ParseException ex)
+      {
+          Logger.getLogger(clresstock.class.getName()).log(Level.SEVERE, null, ex);
+      }
    
 
   }
 
-
+  private Date redondeaFecha(int redondeo, Date fecha,Date ultFecha) throws ParseException
+  {
+      if (fecha==null)
+          fecha=Formatear.getDate("01-01-2000", "dd-MM-yyyy");
+      if (ultFecha==null)
+          ultFecha=Formatear.getDate("01-01-2000", "dd-MM-yyyy");
+      int dias=Math.abs((int)Formatear.comparaFechas(fecha, ultFecha));
+      if (dias>redondeo)
+          return fecha;      
+      return ultFecha;
+  }
   void Blistar_actionPerformed()
   {
     if (! checkCond()) return;
@@ -856,7 +855,7 @@ public class clresstock extends ventana implements  JRDataSource
       else
         tlaNulipr=maxLinGrid;
       String report=opIncPedE.isSelected()?"resstock_d":"resstock";
-      JasperReport jr=gnu.chu.print.util.getJasperReport(EU,  report);
+      JasperReport jr=Listados.getJasperReport(EU,  report);
       numProd=-1;
       linGrid=999;
       java.util.HashMap mp = new java.util.HashMap();
@@ -1009,7 +1008,7 @@ public class clresstock extends ventana implements  JRDataSource
 }
 class DatProducto implements Comparable<DatProducto>
 {
-    int proCodi, prvCodi;
+    int proCodi, prvCodi,lote;
     long fecha;
     double kilos=0,kilosCompra=0,kilosVenta=0;
     int unidad=0,unidCompra=0,unidVenta=0;
@@ -1017,9 +1016,17 @@ class DatProducto implements Comparable<DatProducto>
     {
         this.proCodi=proCodi;
         this.prvCodi=prvCodi;
+
         this.fecha=fecha;
     }
-    
+    public void setLote(int lote)
+    {
+        this.lote=lote;
+    }
+    public int getLote()
+    {
+        return lote;
+    }
     public void setKilos(double kilos)
     {
         this.kilos=kilos;
@@ -1114,16 +1121,16 @@ class DatProducto implements Comparable<DatProducto>
   public String toString()
   {
           return getProducto()+" "+getProveedor() +"-"+
-              this.getFecha(); 
+              this.getFecha();//+"K"+this.getKilos(); 
   }
 
     @Override
     public int compareTo(DatProducto o) {
-        if (o.getFecha()>getFecha() || o.getProveedor()>getProveedor())
+        if (o.getFecha()>getFecha() || o.getProveedor()>getProveedor() )
             return 1;
          if (o.getFecha()<getFecha() || o.getProveedor()<getProveedor())
             return -1;
-        return 0;
+        return 1;
 
     }
 }

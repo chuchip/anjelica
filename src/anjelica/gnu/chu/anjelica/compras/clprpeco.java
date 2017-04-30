@@ -20,7 +20,7 @@ import net.sf.jasperreports.engine.*;
  * dentro de unas fechas.
  *
  * Tambien permite delimitar por proveedor y por albaran.
- *  <p>Copyright: Copyright (c) 2005-2016
+ *  <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -38,8 +38,7 @@ import net.sf.jasperreports.engine.*;
  */
 
 public class clprpeco extends ventana implements  JRDataSource
-{
-     
+{     
   boolean  swBreakAcum;
   String s;
   ResultSet rs;
@@ -439,8 +438,7 @@ void irMantPedidos()
  }
 
  void consultar()
- {
-   
+ {   
    mensaje("A esperar ... estoy generando el listado");
 
    int tlaCodi=tla_codiE.getValorInt();

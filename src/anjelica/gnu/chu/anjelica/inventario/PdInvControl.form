@@ -319,10 +319,10 @@
             </Component>
             <Component class="gnu.chu.controles.CButtonMenu" name="Bcopia">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Varios"/>
+                <Property name="text" type="java.lang.String" value="Utiles"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Bcopia.addMenu(&quot;Aceptar&quot;,&quot;A&quot;);&#xa;Bcopia.addMenu(&quot;Copiar&quot;,&quot;C&quot;);&#xa;Bcopia.addMenu(&quot;Unifica&quot;,&quot;U&quot;);&#xa;Bcopia.addMenu(&quot;Importa&quot;,&quot;I&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Bcopia.addMenu(&quot;Aceptar&quot;,&quot;A&quot;);&#xa;Bcopia.addMenu(&quot;Copiar&quot;,&quot;C&quot;);&#xa;Bcopia.addMenu(&quot;Trasladar&quot;,&quot;M&quot;);&#xa;Bcopia.addMenu(&quot;Unifica&quot;,&quot;U&quot;);&#xa;Bcopia.addMenu(&quot;Importa&quot;,&quot;I&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

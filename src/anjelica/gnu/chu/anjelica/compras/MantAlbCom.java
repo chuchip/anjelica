@@ -4510,7 +4510,7 @@ private JMenuItem MIimprEtiqInd;
    * @param impComision
    * @return 
    */
-  double  getPrecioCompra(double dtopp,double prCompra,double impPortes,double impComision)
+  public static double  getPrecioCompra(double dtopp,double prCompra,double impPortes,double impComision)
   {
       return  dtopp==0?prCompra: prCompra - ((prCompra - impPortes - impComision) * (dtopp/100));
   }
@@ -4556,7 +4556,7 @@ private JMenuItem MIimprEtiqInd;
           //acl_dtoppE.getValorDec()/100));
           
       return  impDto + dtoPortes;
-  }
+  } 
   /**
    * Ver Datos de Reclamación
    * @throws SQLException Error conexión base de datos

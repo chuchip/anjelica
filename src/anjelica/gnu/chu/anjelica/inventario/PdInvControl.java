@@ -29,7 +29,6 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.DatIndiv;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.pdalmace;
-import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
@@ -49,6 +48,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -282,13 +282,15 @@ public class PdInvControl extends ventanaPad implements PAD
                         fusionar();
                         break;
                     case "I":
-                        importar();
+                        importaInvProduc();
                         return;
+                    case "M":
+                        moverInventario();
+                        break;
                     default:
-                        Bcopia_addActionPerformed();
+                        copiarInventario();
                 }
                
-                msgBox("Generado Inventario en fecha: "+cci_fecconE.getText());
                 activaTodo();
                 nav.pulsado = navegador.NINGUNO;
             } catch (Exception ex)
@@ -567,7 +569,28 @@ public class PdInvControl extends ventanaPad implements PAD
       Error("Error al visualizar datos", k);
     }
   }
-
+  public void setProducto(int proCodi)
+  {
+      pro_codiE.setValorInt(proCodi);
+  }
+  
+  public void setEjercicio(int ejerc)
+  {
+      prp_anoE.setValorInt(ejerc);
+  }
+  public void setSerie(String serie)
+  {
+      prp_serieE.setText(serie);
+  }
+  public void setLote(int lote)
+  {
+      prp_partE.setValorInt(lote);
+  }
+  public void setIndividuo(int indiv)
+  {
+      prp_indiE.setValorInt(indiv);
+  }
+ 
     @Override
   public void ej_query1()
   {
@@ -1186,8 +1209,26 @@ public class PdInvControl extends ventanaPad implements PAD
            " AND c.deo_tiempo > {d '" + cci_fecoriE.getFechaDB() + "'} ";
           return dtStat.select(s);
     }
-    boolean importar() throws SQLException, ParseException 
+    
+    PreparedStatement getPreparedInventario(DatosTabla dt,String fecori,int almCodi) throws SQLException
     {
+        String s="select * from v_coninvent where cci_feccon = '"+fecori+"'"+
+                " and alm_codi = "+almCodi+
+                " and pro_codi = ?"+
+                " and prp_ano = ?"+
+                " and prp_seri = ?"+
+                " and prp_part = ? "+
+                " and prp_indi = ?";
+        return dtStat.getPreparedStatement(s);
+    }
+    
+    boolean importaInvProduc() throws SQLException, ParseException 
+    {
+         if (nav.pulsado==navegador.EDIT)
+         {
+             msgBox("Importacion solo se puede hacer en Modo Edicion");
+             return false;
+         }
         if (cci_fecoriE.isNull())
         {
             msgBox("Introduzca fecha origen");
@@ -1196,6 +1237,9 @@ public class PdInvControl extends ventanaPad implements PAD
         }
         if (nav.pulsado==navegador.EDIT)
         {
+            PreparedStatement ps=getPreparedInventario(dtStat,cci_fecconE.getFechaDB(),alm_codiE.getValorInt());           
+           
+            ResultSet rs;
             s="select * from v_invproduc where cip_fecinv = '"+cci_fecoriE.getFechaDB()+"'"+
                 " and cam_codi = '"+cam_codiE.getText()+"'"+
                 " and alm_codi = "+alm_codiE.getValorInt()+
@@ -1205,15 +1249,23 @@ public class PdInvControl extends ventanaPad implements PAD
                 msgBox("No encontrado ningun inventario produccion con esa fecha para esta camara");
                 return false; 
             }
-            int lciNume=0;           
+            int lciNume;           
             jt.setEnabled(false);
             prp_numpieE.setValorInt(1);
             lci_numcajE.setValorDec(0);
             lci_numpalE.setText("IP");
            
             do
-            {
+            {                
                 ArrayList v=new ArrayList();
+                ps.setInt(1, dtCon1.getInt("pro_codi"));
+                ps.setInt(2, dtCon1.getInt("prp_ano"));
+                ps.setString(3, dtCon1.getString("prp_seri"));
+                ps.setInt(4, dtCon1.getInt("prp_part"));
+                ps.setInt(5, dtCon1.getInt("prp_indi"));
+                rs=ps.executeQuery();
+                if (rs.next())
+                    continue; // ya existe ese individuo.
                 pro_codiE.setText(dtCon1.getString("pro_codi"));
                 pro_nombE.setText(dtCon1.getString("pro_nomb"));
                 prp_anoE.setValorInt(dtCon1.getInt("prp_ano"));
@@ -1228,7 +1280,7 @@ public class PdInvControl extends ventanaPad implements PAD
                 v.add(dtCon1.getString("pro_codi")); // 1
                 v.add(dtCon1.getString("pro_nomb")); // 2 
                 v.add(dtCon1.getString("prp_ano")); // 3
-                v.add(1); // 4
+                v.add(EU.em_cod); // 4
                 v.add(dtCon1.getString("prp_seri")); // 5  
                 v.add(dtCon1.getString("prp_part")); // 6 
                 v.add(dtCon1.getString("prp_indi")); // 7
@@ -1261,7 +1313,7 @@ public class PdInvControl extends ventanaPad implements PAD
     void fusionar() throws SQLException, ParseException
     {
      
-      int cciCodi=Bcopia_addActionPerformed();
+      int cciCodi=moverInventario();
       if (cciCodi==0)
           return;
 
@@ -1430,12 +1482,79 @@ public class PdInvControl extends ventanaPad implements PAD
 
       
     }
+    public boolean inTransation()
+    {
+        return (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
+    }
+    
+    int copiarInventario() throws SQLException, ParseException
+    {
+       if (!checkCabecera())
+          return 0;
+       if (cci_fecoriE.isNull())
+           return 0;
+        s="select * from v_coninvent where alm_codi ="+alm_codiE.getValorInt()+
+           " and cam_codi = '"+cam_codiE.getText()+"'"+
+           " and cci_feccon = '"+cci_fecoriE.getFechaDB()+"'";
+       if (!dtCon1.select(s))
+       {
+           msgBox("No encontrado inventario en esa fecha");
+           return 0;
+       }
+       PreparedStatement ps=getPreparedInventario(dtStat, cci_fecconE.getFechaDB(),alm_codiE.getValorInt());
+       ResultSet rs;
+     
+       int cciCodi=cci_codiE.getValorInt();
+       int nl=1;
+       if (cciCodi==0)
+              cciCodi=insCabInv(cci_fecconE.getDate(),alm_codiE.getValorInt());
+       else
+       {
+           s="select max(lci_nume) as lciNume from coninvlin where cci_codi= "+cci_codiE.getValorInt()+
+               " and emp_codi="+EU.em_cod;
+           dtStat.select(s);
+           nl=dtStat.getInt("lciNume",true)+1;
+        }
+       do
+       {
+            ps.setInt(1, dtCon1.getInt("pro_codi"));
+            ps.setInt(2, dtCon1.getInt("prp_ano"));
+            ps.setString(3, dtCon1.getString("prp_seri"));
+            ps.setInt(4, dtCon1.getInt("prp_part"));
+            ps.setInt(5, dtCon1.getInt("prp_indi"));
+            rs=ps.executeQuery();
+            if (rs.next())
+               continue; // ya existe ese individuo.
+            dtAdd.addNew("coninvlin");
+            dtAdd.setDato("emp_codi", EU.em_cod);
+            dtAdd.setDato("cci_codi", cciCodi);
+            dtAdd.setDato("lci_nume", nl++);
+            dtAdd.setDato("prp_ano", dtCon1.getInt("prp_ano"));
+            dtAdd.setDato("prp_empcod",EU.em_cod);
+            dtAdd.setDato("prp_seri", dtCon1.getString("prp_seri"));
+            dtAdd.setDato("prp_part", dtCon1.getInt("prp_part"));
+            dtAdd.setDato("pro_codi", dtCon1.getInt("pro_codi"));
+            dtAdd.setDato("pro_nomb", dtCon1.getString("pro_nomb"));
+            dtAdd.setDato("prp_indi", dtCon1.getInt("prp_indi"));
+            dtAdd.setDato("lci_peso", dtCon1.getDouble("lci_peso"));
+            dtAdd.setDato("lci_numind", dtCon1.getInt("lci_numind"));
+            dtAdd.setDato("lci_numpal",dtCon1.getString("lci_numind"));
+            dtAdd.setDato("alm_codlin",dtCon1.getString("alm_codlin"));
+
+            dtAdd.update(stUp);  
+            
+       } while (dtCon1.next());
+        msgBox("Inventario copiado a fecha: "+cci_fecconE.getText());
+       rgSelect();
+       verDatos(dtCons);
+       return cciCodi;
+    }
     /** 
      * Generar inventario a partir de otro anterior.
      * @return int numero de registro en inventario generado.
      *  si no se genera el invetnario por cualquier error, se devuelve 0.
      */
-    int Bcopia_addActionPerformed() throws SQLException, ParseException
+    int moverInventario() throws SQLException, ParseException
     {
        if (!checkCabecera())
         return 0;
@@ -1450,7 +1569,7 @@ public class PdInvControl extends ventanaPad implements PAD
 //            return 0;
 //         }
          ActualStkPart stkPart=new ActualStkPart(dtAdd,EU.em_cod);
-         HashMap ht = stkPart.getStockControl(dtCon1,cam_codiE.getText().equals("X")?1:0,
+         HashMap ht = stkPart.getStockControl(dtCon1,cam_codiE.getText().equals("X")?1:0,alm_codiE.getValorInt(),
            cci_fecoriE.getDate(),cci_fecconE.getDate());
          if (ht == null || ht.isEmpty())
              return 0;
@@ -1944,9 +2063,10 @@ public class PdInvControl extends ventanaPad implements PAD
             Pcabe.add(cLabel12);
             cLabel12.setBounds(350, 22, 80, 17);
 
-            Bcopia.setText("Varios");
+            Bcopia.setText("Utiles");
             Bcopia.addMenu("Aceptar","A");
             Bcopia.addMenu("Copiar","C");
+            Bcopia.addMenu("Trasladar","M");
             Bcopia.addMenu("Unifica","U");
             Bcopia.addMenu("Importa","I");
             Pcabe.add(Bcopia);

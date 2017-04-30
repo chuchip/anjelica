@@ -1,3 +1,12 @@
+--
+-- Tipos tarifas. Incluida comision representante
+--
+alter table tipotari add tar_comrep float;				-- Comision Repres.
+update tipotari set tar_comrep=0;
+alter table tipotari alter tar_comrep set not null;			-- Comision Repres.
+--
+-- Incluido pais en lineas inventario
+--
 ALTER TABLE linvproduc ADD pai_codi varchar(3); -- Pais
 ALTER TABLE linvproduc ADD prp_fecpro date ; -- Fecha Prod.
 -- 

@@ -191,7 +191,7 @@ usu_nomb varchar(15) not null,-- Usuario que hizo la ult. modific. o alta
 cat_codi int not null default 1, -- Categoria Articulo
 cal_codi int not null default 1, -- Calibres
 env_codi int not null default 0, -- Tipo de Envase
-pro_indtco int not null default 1, -- Incluye en dto. Comercial (0: No)
+pro_indtco int not null default 1, -- Influye en dto. Comercial (0: No)
 pro_codequ int,		-- Producto equivalente.
 constraint ix_articulo primary key(pro_codi)
 );
@@ -695,7 +695,7 @@ tiporecargotasa char(1), -- Siempre %recargotasa float,	-- Siempre 0
 recargotasa2 float,	-- Siempre 0
 avl_canti float,	-- Cantidad de Linea
 avl_prven float,	-- precio de Venta
-avl_dtolin float,	-- Dto en Linea (En Euros)
+avl_dtolin float default 0,	-- Dto en Linea (En Euros) 
 avl_prbase float,       -- Precio Final de Linea ((prven - dtolin) - ((prven-dtolin)*(dtocom+dtopp))
 avl_ptsinc float,
 tar_preci float,	-- precio de tarifa
@@ -1917,12 +1917,12 @@ create table anjelica.grudeshis
 -- drop table tipotari;
 create table anjelica.tipotari
 (
-tar_codi int not null,		   -- Codigo de Tarifa
-tar_nomb varchar(45) not null, -- Descripcion de la tarifa
-tar_tipo char(1) not null,     -- 'N' No poner Precios Aut. 
-							   --  'S" Poner precios Aut.
-tar_codori int not null default 0,    -- Tarifa Original (0: No depende de nadie)
-tar_incpre float not null default 0,   -- Se Incrementara precio sobre tar_codori (Cant. Fija, no en porcentaje)
+tar_codi int not null,					-- Codigo de Tarifa
+tar_nomb varchar(45) not null,			-- Descripcion de la tarifa
+tar_tipo char(1) not null,				-- Tipo Tarifa: 'N' No poner Precios Aut,'S' Poner precios Aut.
+tar_codori int not null default 0,		-- Tarifa Original (0: No depende de nadie)
+tar_incpre float not null default 0,	-- Se Incrementara precio sobre tar_codori (Cant. Fija, no en porcentaje)
+tar_comrep float not null,				-- Comision Repres.
 constraint ix_tipotari primary key (tar_codi)
 );
 ---
@@ -3316,7 +3316,7 @@ create table anjelica.coninvlin
     cci_codi int not null,			-- Numero de Inventario
     lci_nume int not null,			-- Numero de Linea
     prp_ano  int not null,      		-- Ejercicio del lote
-    prp_empcod int not null,			-- Empresa del Lote
+    prp_empcod int not null,			-- Empresa del Lote 
     prp_seri char(1) not null,			-- Serie del Lote
     prp_part int not null,			-- Partida
     pro_codi int not null,			-- Producto

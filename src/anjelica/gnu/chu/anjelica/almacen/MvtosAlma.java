@@ -369,7 +369,7 @@ public class MvtosAlma
         + "   mvt_canti <> 0 "
         + " AND pro_codi = ? "
         + " AND mvt_time::date >= TO_DATE('" + fecIni + "','dd-MM-yyyy') "
-        + " and mvt_time::date <=  ? "
+        + " and mvt_time <=  ? "
         + " union all "
         + " select 1 as orden,'RE' as sel,'=' as tipmov,"
         + " r.rgs_fecha as fecmov,"
@@ -1004,7 +1004,7 @@ public class MvtosAlma
         String s = getSqlMvt(fecIni, fecFin, -1);
         pStmt=dtCon1.getPreparedStatement(s);
     }
-        public void iniciarMvtos(Date fecIni,Date fecFin,   DatosTabla dtCon1) throws SQLException,ParseException {
+    public void iniciarMvtos(Date fecIni,Date fecFin,   DatosTabla dtCon1) throws SQLException,ParseException {
         String s = getSqlMvt(Formatear.getFecha(fecIni, "dd-MM-yyyy"), 
             Formatear.getFecha(fecFin,"dd-MM-yyyy"), -1);
         pStmt=dtCon1.getPreparedStatement(s);

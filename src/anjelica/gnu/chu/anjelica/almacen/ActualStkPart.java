@@ -833,9 +833,10 @@ public class ActualStkPart
     else
       return llave.substring(posIni, posFin++);
   }
-  private String getSqlMvt(int proArtcon, Date fecinv, Date fecsup) throws ParseException
+  
+  private String getSqlMvtInvControl(int proArtcon, int almCodi,Date fecinv, Date fecsup) throws ParseException
   {
-      return getSqlMvt(true,proArtcon,0,fecinv,fecsup,0,true);
+      return getSqlMvt(true,proArtcon,almCodi,fecinv,fecsup,0,true);
   }
 
 //  public static String getSqlMvtSalida(boolean swFecMvto, int almCodi, String fecinv, String fecsup,int pro_codi,String condProd)
@@ -1041,14 +1042,14 @@ public class ActualStkPart
     * @return HashMap  con los registros de stocks a  la fecha dada.
     * @throws java.sql.SQLException
     */
-   public HashMap getStockControl(DatosTabla dt,int proArtcon,Date fecControl,Date fecFinal) throws SQLException
+   public HashMap getStockControl(DatosTabla dt,int proArtcon,int almCodi,Date fecControl,Date fecFinal) throws SQLException
    {
      String s;
      boolean restar=false;
      try {
            if (Formatear.comparaFechas(fecFinal, fecControl)<0)   
                restar=true;
-         s= getSqlMvt(proArtcon, fecControl,fecFinal);
+         s= getSqlMvtInvControl(proArtcon, almCodi,fecControl,fecFinal);
      } catch (ParseException k1)
      {
          throw new SQLException("Error al montar select ",k1);

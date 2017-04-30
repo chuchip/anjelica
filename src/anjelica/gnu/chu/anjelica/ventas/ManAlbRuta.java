@@ -53,7 +53,7 @@ import net.sf.jasperreports.engine.JasperReport;
 * solo podra modificar partes para poner kms,vehiculo y comentarios.
 * Por defecto modSala=false
 * </p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -403,7 +403,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
                      a.add(dtCon1.getString("fvc_serie"));
                      a.add(dtCon1.getString("fvc_nume"));
                      a.add(dtCon1.getString("cli_codi"));
-                     a.add(dtCon1.getString("fvc_clinom", true).equals("") ? dtCon1.getString("cli_nomb") : dtCon1.getString("avc_clinom", true));
+                     a.add(dtCon1.getString("fvc_clinom", true).equals("") ? dtCon1.getString("cli_nomb") : dtCon1.getString("fvc_clinom", true));
                      a.add(dtCon1.getFecha("fvc_fecfra","dd-MM-yyyy"));                     
                      a.add(dtCon1.getString("fvc_sumtot"));                     
                      a.add(dtCon1.getString("fvc_imppen"));

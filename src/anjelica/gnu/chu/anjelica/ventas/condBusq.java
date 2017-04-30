@@ -292,7 +292,7 @@ public class condBusq extends CPanel
   }
   boolean checkCampos() throws java.text.ParseException
   {
-    if (cliFinE.getValorInt()<cliIniE.getValorInt())
+    if (cliFinE.getValorInt()<cliIniE.getValorInt() && cliFinE.getValorInt()>0)
     {
       padre.mensajeErr("Codigo Final de Cliente Incorrecto");
       cliFinE.setValorInt(cliIniE.getValorInt());
@@ -338,7 +338,7 @@ public class condBusq extends CPanel
   {
     String condWhere="";
     if (!cliIniE.isNull())
-      condWhere += " and cl.cli_codi >= " + cliIniE.getValorInt();
+      condWhere += " and cl.cli_codi "+(cliFinE.isNull()?"":">") + "= "+cliIniE.getValorInt();
     if (!cliFinE.isNull())
       condWhere += " and cl.cli_codi <= " + cliFinE.getValorInt();
     if (ejeIniE.getValorInt()>0)
@@ -358,7 +358,8 @@ public class condBusq extends CPanel
       condWhere +=  " and a.avc_serie <= '" + serieFinE.getText()+"'";
 
     if (albIniE.getValorInt()>0)
-      condWhere += " and a.avc_nume >= " + albIniE.getValorInt();
+      condWhere += " and a.avc_nume "+(albFinE.getValorInt()>0?">":"")+
+          "= " + albIniE.getValorInt();
     if (albFinE.getValorInt()>0)
       condWhere += " and a.avc_nume <= " + albFinE.getValorInt();
     if (verProd)

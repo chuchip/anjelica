@@ -104,9 +104,11 @@ public class CLDepCli extends ventana
     @Override
     public void iniciarVentana() throws Exception 
     {
-        fechaE.setDate(Formatear.getDateAct());
+        feciniE.setDate(Formatear.getDateAct());
+        fecInvE.setDate(Formatear.getDateAct());
         cli_codiE.iniciar(dtStat, this, vl, EU);
         PCabe.setDefButton(Baceptar);
+        
         activarEventos();
     }
     
@@ -198,16 +200,26 @@ public class CLDepCli extends ventana
         try
         {
             tipoConsulta=tipoConsC.getValor();
-            if (fechaE.isNull())
+            if (feciniE.isNull())
             {
                 mensajeErr("Introduzca Fecha Inicio");
-                fechaE.requestFocus();
+                feciniE.requestFocus();
                 return;
             }
             if (!tipoConsulta.equals("I"))
             {
+               
                 if (fecfinE.isNull())
-                    fecfinE.setText(fechaE.getText());
+                    fecfinE.setText(feciniE.getText());
+            }
+            else
+            {
+                 if (fecInvE.isNull())
+                {
+                    mensajeErr("Introduzca Fecha Inventario");
+                    fecInvE.requestFocus();
+                    return;
+                }
             }
             switch (tipoConsulta)
             {
@@ -229,7 +241,7 @@ public class CLDepCli extends ventana
     }   
     void verSalidas() throws Exception
     {
-        String s="select * from v_albdepserv   where avs_fecha between '"+fechaE.getFechaDB()+
+        String s="select * from v_albdepserv   where avs_fecha between '"+feciniE.getFechaDB()+
             "' and '"+fecfinE.getFechaDB()+"'"+
             (cli_codiE.isNull()?"":" and cli_codi = "+cli_codiE.getValorInt())+
             " order by avs_fecha";
@@ -267,18 +279,19 @@ public class CLDepCli extends ventana
         Ptab.setSelectedIndex(1);
         jtStock.removeAllDatos();
         String s="select a.*,ar.pro_nomb as art_nomb,cl.cli_nomb from v_albventa_detalle as a,v_articulo as ar,v_cliente as cl   "
-            + " where avc_fecalb <= '"+fechaE.getFechaDB()+"'"+
-            " and a.pro_codi=ar.pro_codi "+
+            + " where  a.pro_codi=ar.pro_codi "+
             " and cl.cli_codi = a.cli_codi "+
+            (feciniE.isNull()?"":" and avc_fecalb >='"+feciniE.getFechaDB()+"'")+
+            (fecfinE.isNull()?"":" and avc_fecalb <='"+fecfinE.getFechaDB()+"'")+
             (cli_codiE.isNull()?"":" and a.cli_codi = "+cli_codiE.getValorInt())+
             " and avc_depos='D'"+ // Albaranes de Deposito
             " and  not exists(select * from v_proservdep as s "
             + " where a.pro_codi=s.pro_codi and a.avc_nume=s.avc_nume "
-            + " and avs_fecha < '"+fechaE.getFechaDB()+"'"
+            + " and avs_fecha < '"+fecInvE.getFechaDB()+"'"
             + " and a.avc_serie=s.avc_serie and a.avc_ano=s.avc_ano"
             + " and avs_ejelot = avp_ejelot and avs_emplot= avp_emplot"
             + " and avs_serlot = avp_serlot and avs_numpar=avp_numpar and avs_numind=avp_numind)"
-            +" order by pro_codi,cli_codi,avc_ano,avc_serie,avc_nume";
+            +" order by cli_codi,pro_codi,avc_ano,avc_serie,avc_nume";
         if (!dtCon1.select(s))
         {
             msgBox("No encontrado genero en deposito con estas condiciones");
@@ -286,13 +299,29 @@ public class CLDepCli extends ventana
         }    
         int numUni=0,nl=0;
         double kg=0;
+         int numUniCl=0,nlCl=0;
+        double kgCl=0;
         int proCodi=dtCon1.getInt("pro_codi");
+        int cliCodi=dtCon1.getInt("cli_codi");
         do
         {
           ArrayList v= new ArrayList();
+          if (cliCodi!=dtCon1.getInt("cli_codi"))
+          {
+              verAcumulado("Producto:",numUni,kg,nl);
+              verAcumulado("Cliente:",numUniCl,kgCl,nlCl-nl);
+              cliCodi=dtCon1.getInt("cli_codi");
+              proCodi=dtCon1.getInt("pro_codi");
+              numUniCl=0;
+              kgCl=0;
+              nlCl=0;
+              numUni=0;
+              kg=0;
+              nl=0;
+          }
           if (proCodi!=dtCon1.getInt("pro_codi"))
           {
-              verAcumulado(numUni,kg,nl);
+              verAcumulado("Producto:",numUni,kg,nl);
               proCodi=dtCon1.getInt("pro_codi");
               numUni=0;
               kg=0;
@@ -311,19 +340,22 @@ public class CLDepCli extends ventana
           v.add(dtCon1.getFecha("avc_fecalb","dd-MM-yy"));
           numUni+=dtCon1.getInt("avl_unid");
           kg+=dtCon1.getDouble("avl_canti");
+          kgCl+=dtCon1.getDouble("avl_canti");
+          numUniCl+=dtCon1.getInt("avl_unid");
           nl++;
+          nlCl++;
           jtStock.addLinea(v);
         } while (dtCon1.next());
-        verAcumulado(numUni,kg,nl);
+        verAcumulado("Producto:",numUni,kg,nl);
         mensajeErr("Consulta realizada");
     }
-    void verAcumulado(int numUni,double kg, int nl)
+    void verAcumulado(String total,int numUni,double kg, int nl)
     {
         if (nl<=1)
             return;
         ArrayList v=new ArrayList();
         v.add("");
-        v.add("Total producto");
+        v.add("Total "+total);
         v.add("");
         v.add(numUni);
         v.add(kg);
@@ -346,7 +378,7 @@ public class CLDepCli extends ventana
         Pprinc = new gnu.chu.controles.CPanel();
         PCabe = new gnu.chu.controles.CPanel();
         cLabel6 = new gnu.chu.controles.CLabel();
-        fechaE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        feciniE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel10 = new gnu.chu.controles.CLabel();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -354,6 +386,8 @@ public class CLDepCli extends ventana
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
         cLabel7 = new gnu.chu.controles.CLabel();
         fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        cLabel8 = new gnu.chu.controles.CLabel();
+        fecInvE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         PPie = new gnu.chu.controles.CPanel();
         Ptab = new gnu.chu.controles.CTabbedPane();
         PSalida = new gnu.chu.controles.CPanel();
@@ -370,11 +404,11 @@ public class CLDepCli extends ventana
         PCabe.setPreferredSize(new java.awt.Dimension(549, 51));
         PCabe.setLayout(null);
 
-        cLabel6.setText("De Fecha");
+        cLabel6.setText("De Fec. Alb");
         PCabe.add(cLabel6);
-        cLabel6.setBounds(0, 2, 60, 18);
-        PCabe.add(fechaE);
-        fechaE.setBounds(70, 2, 76, 18);
+        cLabel6.setBounds(0, 2, 70, 17);
+        PCabe.add(feciniE);
+        feciniE.setBounds(70, 2, 76, 17);
 
         cLabel10.setText("De Cliente");
         PCabe.add(cLabel10);
@@ -384,24 +418,35 @@ public class CLDepCli extends ventana
 
         cLabel1.setText("Tipo");
         PCabe.add(cLabel1);
-        cLabel1.setBounds(310, 2, 40, 17);
+        cLabel1.setBounds(270, 0, 40, 17);
 
         tipoConsC.addItem("Salidas","S");
         tipoConsC.addItem("Entradas","E");
         tipoConsC.addItem("Inventario","I");
         //tipoConsC.addItem("Movimientos","M");
+        tipoConsC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tipoConsCActionPerformed(evt);
+            }
+        });
         PCabe.add(tipoConsC);
-        tipoConsC.setBounds(360, 2, 120, 17);
+        tipoConsC.setBounds(310, 0, 90, 17);
 
         Baceptar.setText("Aceptar");
         PCabe.add(Baceptar);
         Baceptar.setBounds(440, 22, 100, 24);
 
-        cLabel7.setText("A Fecha");
+        cLabel7.setText("A ");
         PCabe.add(cLabel7);
-        cLabel7.setBounds(160, 2, 50, 17);
+        cLabel7.setBounds(160, 2, 20, 17);
         PCabe.add(fecfinE);
-        fecfinE.setBounds(210, 2, 76, 17);
+        fecfinE.setBounds(180, 0, 76, 17);
+
+        cLabel8.setText("Fec. Inv.");
+        PCabe.add(cLabel8);
+        cLabel8.setBounds(420, 0, 50, 17);
+        PCabe.add(fecInvE);
+        fecInvE.setBounds(470, 0, 76, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -487,6 +532,7 @@ public class CLDepCli extends ventana
         }
         jtStock.setAnchoColumna(new int[]{40,150,90,30,60,45,150,80,70});
         jtStock.setAlinearColumna(new int[]{2,0,0,2,2,2,0,0,1});
+        jtStock.setFormatoColumna(4,"##,##9.99");
         jtStock.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtStock.setMaximumSize(new java.awt.Dimension(100, 100));
         jtStock.setMinimumSize(new java.awt.Dimension(100, 100));
@@ -506,6 +552,10 @@ public class CLDepCli extends ventana
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void tipoConsCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoConsCActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tipoConsCActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
@@ -518,10 +568,12 @@ public class CLDepCli extends ventana
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
+    private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CPanel cPanel2;
     private gnu.chu.camposdb.cliPanel cli_codiE;
+    private gnu.chu.controles.CTextField fecInvE;
     private gnu.chu.controles.CTextField fecfinE;
-    private gnu.chu.controles.CTextField fechaE;
+    private gnu.chu.controles.CTextField feciniE;
     private gnu.chu.controles.Cgrid jtCab;
     private gnu.chu.controles.Cgrid jtLin;
     private gnu.chu.controles.Cgrid jtStock;
