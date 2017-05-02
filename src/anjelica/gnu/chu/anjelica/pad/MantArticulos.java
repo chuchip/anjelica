@@ -1631,13 +1631,13 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel6.setText("Activo");
         Pcabe.add(cLabel6);
-        cLabel6.setBounds(480, 5, 43, 20);
+        cLabel6.setBounds(480, 5, 40, 20);
 
         pro_activE.addItem("Si","-1");
-        pro_activE.addItem("Pe","1");
+        pro_activE.addItem("Ventas","1");
         pro_activE.addItem("No","0");
         Pcabe.add(pro_activE);
-        pro_activE.setBounds(530, 5, 50, 20);
+        pro_activE.setBounds(520, 5, 70, 20);
 
         Pprinc.add(Pcabe);
         Pcabe.setBounds(10, 0, 600, 30);

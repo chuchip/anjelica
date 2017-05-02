@@ -150,7 +150,7 @@ public class PdInvControl extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-11-21 "+(swAdmin?"Administrador":""));
+        this.setVersion("2017-05-01 "+(swAdmin?"Administrador":""));
         condWhere=" where emp_codi =  "+EU.em_cod;
         strSql = "SELECT * FROM coninvcab "+condWhere+
          "order by cci_feccon,cam_codi,alm_codi";
@@ -998,7 +998,13 @@ public class PdInvControl extends ventanaPad implements PAD
     ctUp.commit();
     return nl;
   }
-
+/**
+ * inserta cabecera inventario
+ * @param cciFeccon
+ * @param almCodi
+ * @return
+ * @throws SQLException 
+ */
   int insCabInv(Date cciFeccon,int almCodi) throws SQLException
   {
     s = "SELECT MAX(cci_codi) as cci_codi from coninvcab ";
@@ -1514,7 +1520,8 @@ public class PdInvControl extends ventanaPad implements PAD
                " and emp_codi="+EU.em_cod;
            dtStat.select(s);
            nl=dtStat.getInt("lciNume",true)+1;
-        }
+       }
+       
        do
        {
             ps.setInt(1, dtCon1.getInt("pro_codi"));
@@ -1540,11 +1547,12 @@ public class PdInvControl extends ventanaPad implements PAD
             dtAdd.setDato("lci_numind", dtCon1.getInt("lci_numind"));
             dtAdd.setDato("lci_numpal",dtCon1.getString("lci_numind"));
             dtAdd.setDato("alm_codlin",dtCon1.getString("alm_codlin"));
-
             dtAdd.update(stUp);  
             
        } while (dtCon1.next());
-        msgBox("Inventario copiado a fecha: "+cci_fecconE.getText());
+       dtAdd.commit();
+       msgBox(nl+" Lineas de Inventario: "+cci_fecoriE.getText()+" copiado a fecha: "+cci_fecconE.getText());
+        
        rgSelect();
        verDatos(dtCons);
        return cciCodi;

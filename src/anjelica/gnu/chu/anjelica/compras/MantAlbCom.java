@@ -28,6 +28,7 @@ package gnu.chu.anjelica.compras;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.almacen.Comvalm;
 import gnu.chu.anjelica.almacen.MantPartes;
 import gnu.chu.anjelica.almacen.paregalm;
 import gnu.chu.anjelica.almacen.pdalmace;
@@ -152,7 +153,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   private JMenuItem MIchangeProd;
   private JMenuItem MIactNombre;
   private JMenuItem MIimprEtiq;
-private JMenuItem MIimprEtiqInd;
+  private JMenuItem MIimprEtiqInd;
+  private JMenuItem MIVerMvtos;
   CInternalFrame frProd= new CInternalFrame();
   CInternalFrame frChFeEn= new CInternalFrame();
   CButton BCamFeEnt = new CButton(Iconos.getImageIcon("copia"));
@@ -1539,6 +1541,7 @@ private JMenuItem MIimprEtiqInd;
     gnu.chu.anjelica.pad.pdnumeracion.llenaSeriesAlbCom(acc_serieE);
     prv_codiE.iniciar(dtStat, this, vl, EU);
     acc_copvfaE.iniciar(dtStat, this, vl, EU);
+    pro_codiE.setEntrada(true);
     pro_codiE.iniciar(dtStat, this, vl, EU);
     pro_codverE.iniciar(dtStat, this, vl, EU);
     rgs_clidevE.setCliNomb(null);
@@ -1621,10 +1624,12 @@ private JMenuItem MIimprEtiqInd;
     MIactNombre =  new JMenuItem("Actual.Descr.", Iconos.getImageIcon("reload"));
     MIimprEtiq =   new JMenuItem("Impr.Etiq.", Iconos.getImageIcon("print"));
     MIimprEtiqInd =   new JMenuItem("Impr.Etiq.", Iconos.getImageIcon("print"));
+    MIVerMvtos =   new JMenuItem("Ver Mvto.", Iconos.getImageIcon("find"));
     pro_codiE.getPopMenu().add(MIchangeProd,0);
     pro_codiE.getPopMenu().add(MIactNombre,1);
     pro_codiE.getPopMenu().add(MIimprEtiq,2);
     jtDes.getPopMenu().add(MIimprEtiqInd);
+    jtDes.getPopMenu().add(MIVerMvtos);
     activarEventos();
 
     activar(false);
@@ -1864,6 +1869,24 @@ private JMenuItem MIimprEtiqInd;
       public void actionPerformed(ActionEvent e)
       {
         imprEtiLin();
+      }
+    });
+    MIVerMvtos.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {      
+            ejecutable prog;
+            if ((prog = jf.gestor.getProceso(Comvalm.getNombreClase())) == null)
+                return;
+            gnu.chu.anjelica.almacen.Comvalm cm = (gnu.chu.anjelica.almacen.Comvalm) prog;
+            cm.setProCodi(jt.getValorInt(jt.getSelectedRowDisab(),JT_PROCOD));
+            cm.setLote(acc_numeE.getValorInt());
+            cm.setIndividuo(jtDes.getValorInt(jtDes.getSelectedRowDisab(), JTD_NUMIND));
+            cm.setSerie(acc_serieE.getText());
+            cm.setEjercicio(acc_anoE.getValorInt());
+            cm.ejecutaConsulta();
+            jf.gestor.ir(cm);  
       }
     });
     MIimprEtiqInd.addActionListener(new ActionListener()

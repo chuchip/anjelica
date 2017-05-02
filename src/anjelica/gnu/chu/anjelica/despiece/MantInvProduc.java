@@ -1510,6 +1510,7 @@ public class MantInvProduc extends ventanaPad implements PAD
                 v.add(""); // 14 fec.alta
                 jt.addLinea(v);
             } while (dtCon1.next());
+            dtAdd.commit();
             jt.setEnabled(true);           
        } catch (SQLException | ParseException k)
        {

@@ -1428,7 +1428,7 @@ public class pdalbara extends ventanaPad  implements PAD
           ifFax.getCliField().setPeso(1);
           ifFax.setCopiaPapel(true);
           pro_codiE.iniciar(dtStat, this, vl, EU);
-          pro_codiE.setEntrada(true);
+          pro_codiE.setEntrada(false);
           pro_codiE.getFieldProCodi().setToolTipText("Doble click para actualizar nombre");
        
           pro_codresE.iniciar(dtStat, this, vl, EU);

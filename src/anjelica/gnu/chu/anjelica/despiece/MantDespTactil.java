@@ -398,7 +398,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2017-04-26"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2017-05-02"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -1429,7 +1429,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
       utdesp.copiaDespieceNuevo(dtStat,dtAdd, "EDITANDO despiece TACTIL",EU.usuario,
               eje_numeE.getValorInt(),deo_codiE.getValorInt());
       dtAdd.commit();
-      
+      verProTipDes(tid_codiE.getValorInt());
+      actAcumSal();
     } catch (SQLException | UnknownHostException k)
     {
         Error("Error al realizar copia de registro actual",k);
@@ -1593,6 +1594,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
                    eje_numeE.getValorInt() +
                    "|" + deo_codiE.getValorInt(),true);
       ctUp.commit();
+      verProdSalida(eje_numeE.getValorInt(), deo_codiE.getValorInt());
+      actAcumSal();
+
     } catch (Exception k)
     {
       Error("Error al actualizar dato de Despiece",k);
@@ -1966,7 +1970,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
         grd_kilorgE.setValorDec(kgLiOr);
         kildifE.setValorDec(grd_kilsalE.getValorDec()-grd_kilorgE1.getValorDec());
 
-        verProTipDes(tid_codiE.getValorInt());
+        verProdSalida(eje_numeE.getValorInt(),deo_codiE.getValorInt());
         verLinSal(EU.em_cod,eje_numeE.getValorInt(),deo_codiE.getValorInt());
       }
     } catch (Exception k)
@@ -2020,14 +2024,40 @@ public class MantDespTactil  extends ventanaPad implements PAD
     jtSal.requestFocusInicio();
   }
   /**
+   * 
+   * @param ejeNume
+   * @param deoCodi
+   * @throws Exception 
+   */
+  void verProdSalida(int ejeNume,int deoCodi) throws Exception
+  {
+     Pprofin.removeAll();
+     htProd.clear();
+     x=0;
+     y=0;
+     s = "SELECT distinct(d.pro_codi) FROM v_despfin d " +
+        " WHERE d.emp_codi = " + EU.em_cod +        
+        " AND d.eje_nume = " + ejeNume+
+        " AND d.deo_codi = " + deoCodi+
+        " ORDER BY d.pro_codi";
+     if (!dtCon1.select(s))
+         return;
+     do
+     {
+        ponBoton(dtCon1.getInt("pro_codi"));
+     } while (dtCon1.next());
+     
+  }
+  /**
    * Carga en el panel los productos para los tipos de despiece.
    * Muestra tanto los que aparecen en tipdessal como los equivalentes a estos
    * y los productos sin venta.
    * 
    * @param tidCodi
+  
    * @throws Exception 
    */
-  void verProTipDes(int tidCodi) throws Exception
+  void verProTipDes(int tidCodi) throws SQLException
   {
     s="select * from tipdessal WHERE tid_codi="+tidCodi+" order by tds_grupo,pro_codi";
     Pprofin.removeAll();

@@ -126,17 +126,17 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="480" y="5" width="43" height="20"/>
+                  <AbsoluteConstraints x="480" y="5" width="40" height="20"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CComboBox" name="pro_activE">
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="pro_activE.addItem(&quot;Si&quot;,&quot;-1&quot;); &#xa;pro_activE.addItem(&quot;Pe&quot;,&quot;1&quot;); &#xa;pro_activE.addItem(&quot;No&quot;,&quot;0&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="pro_activE.addItem(&quot;Si&quot;,&quot;-1&quot;); &#xa;pro_activE.addItem(&quot;Ventas&quot;,&quot;1&quot;); &#xa;pro_activE.addItem(&quot;No&quot;,&quot;0&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="530" y="5" width="50" height="-1"/>
+                  <AbsoluteConstraints x="520" y="5" width="70" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>

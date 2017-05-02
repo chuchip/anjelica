@@ -1403,7 +1403,7 @@ public class proPanel extends CPanel
   }
   /**
    * Acepta como validos productos inactivos
-   * True aceptara como validos los productos innactivos.
+   * True aceptara como validos los productos inactivos. Por defecto es true
    * @param aceptInact  
    */
   public void setAceptaInactivo(boolean aceptInact)
@@ -1434,6 +1434,7 @@ public class proPanel extends CPanel
    * la funcion isActivo devolvera false si el valor de pro_activ>0
    * Usado para marcar un producto como inactivo pero que todavia tiene stock y
    * en salidas debe poder ser usado.
+   * @param isEntrada 
    */
   public void setEntrada(boolean isEntrada)
   {

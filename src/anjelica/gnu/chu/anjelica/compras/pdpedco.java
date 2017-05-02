@@ -1124,6 +1124,11 @@ public class pdpedco extends ventanaPad   implements PAD
         mensajeErr("Codigo de Producto .. No valido");
         return 0;
       }
+      if (!pro_codiE.isActivo())
+      {
+        mensajeErr("Producto .. No esta activo");
+        return 0;
+      }
       if (pcl_feccadE.isNull())
       {
         mensajeErr("Introduzca una fecha de Caducidad");
@@ -1142,7 +1147,7 @@ public class pdpedco extends ventanaPad   implements PAD
 //      if (pcl_cantcoE.getValorDec()+pcl_nucacoE.getValorDec()+pcl_cantpeE.getValorDec()+pcl_nucapeE.getValorDec()+
 //          pcl_cantfaE.getValorDec()+pcl_nucafaE.getValorDec() == 0)
       {
-        mensajeErr("Introduzca el N�mero de Unidades (El Peso es opcional)");
+        mensajeErr("Introduzca el Número de Unidades (El Peso es opcional)");
         return 0;
       }
 
@@ -1321,6 +1326,7 @@ public class pdpedco extends ventanaPad   implements PAD
 //    s = "SELECT alm_codi,alm_nomb FROM v_almacen order by alm_nomb ";
 //    dtStat.select(s);
 //    alm_codiE.addDatos(dtStat);
+    pro_codiE.setEntrada(true);
     pro_codiE.iniciar(dtStat, this, vl, EU);
 //    pro_codiE.setProdEquiv(true);
     pro_codiE.setProNomb(null);
