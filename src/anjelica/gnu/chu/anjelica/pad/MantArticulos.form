@@ -1004,11 +1004,11 @@
               <SubComponents>
                 <Component class="gnu.chu.controles.CLabel" name="cLabel39">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Categoria"/>
+                    <Property name="text" type="java.lang.String" value="Incremento Tarifa"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="10" y="10" width="60" height="18"/>
+                      <AbsoluteConstraints x="470" y="70" width="110" height="18"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -1060,7 +1060,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="10" y="72" width="80" height="18"/>
+                      <AbsoluteConstraints x="10" y="70" width="70" height="17"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -1133,7 +1133,67 @@
                 <Component class="gnu.chu.camposdb.proPanel" name="pro_codequE">
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="100" y="72" width="380" height="17"/>
+                      <AbsoluteConstraints x="80" y="70" width="380" height="17"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CLabel" name="cLabel43">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Categoria"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="10" y="10" width="60" height="18"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CTextField" name="pro_kgmiunE">
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;##9.9&quot;)"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="420" y="50" width="40" height="18"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CLabel" name="cLabel44">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Kg. Max. Unidad"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="490" y="50" width="90" height="18"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CTextField" name="pro_kgmaunE">
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;##9.9&quot;)"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="580" y="50" width="40" height="18"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CLabel" name="cLabel45">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Kg. Min. Unidad"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="320" y="50" width="90" height="18"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CTextField" name="pro_cointaE">
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;##9.9&quot;)"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="580" y="70" width="40" height="18"/>
                     </Constraint>
                   </Constraints>
                 </Component>

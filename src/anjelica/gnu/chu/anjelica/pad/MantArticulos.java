@@ -405,6 +405,9 @@ public class MantArticulos extends ventanaPad  implements PAD
       cat_codiE.setValorDec(dtCon1.getInt("cat_codi"));
       cal_codiE.setValorDec(dtCon1.getInt("cal_codi"));
       pro_codequE.setValorInt(dtCon1.getInt("pro_codequ",true));
+      pro_kgmiunE.setValorDec(dtCon1.getDouble("pro_kgmiun",true));
+      pro_kgmaunE.setValorDec(dtCon1.getDouble("pro_kgmaun",true));
+      pro_cointaE.setValorDec(dtCon1.getDouble("pro_cointa",true));
       verDatosAgru(pro_codiE.getValorInt(),pro_codiE.getValorInt(),jtExclu,"artiexcl");
       verDatosAgru(pro_codiE.getValorInt(),pro_codiE.getValorInt(),jtEqui,"artiequiv");
       verDatosAgru(pro_codiE.getValorInt(),0,jtEquCon,"artequcon");
@@ -480,6 +483,9 @@ public class MantArticulos extends ventanaPad  implements PAD
     jtIdiomas.setEnabled(act);
     pro_conmaxE.setEnabled(act);
     pro_codequE.setEnabled(act);
+    pro_cointaE.setEnabled(act);
+    pro_kgmiunE.setEnabled(act);
+    pro_kgmaunE.setEnabled(act);
     Pdiscrim.setEnabled(act);
 
     sbe_codiE.setEnabled(act);
@@ -1061,6 +1067,9 @@ public class MantArticulos extends ventanaPad  implements PAD
     dt.setDato("pro_oblfsa",pro_oblfsaE.isSelected()?1:0);
     dt.setDato("usu_nomb",EU.usuario);
     dt.setDato("pro_codequ",pro_codequE.isNull()?null:pro_codequE.getValorInt());
+    dt.setDato("pro_kgmiun",pro_kgmiunE.isNull()?null:pro_kgmiunE.getValorDec());
+    dt.setDato("pro_kgmaun",pro_kgmiunE.isNull()?null:pro_kgmaunE.getValorDec());
+    dt.setDato("pro_cointa",pro_kgmiunE.isNull()?null:pro_cointaE.getValorDec());
   }
     @Override
   public void canc_addnew()
@@ -1518,6 +1527,12 @@ public class MantArticulos extends ventanaPad  implements PAD
         cLabel41 = new gnu.chu.controles.CLabel();
         cLabel42 = new gnu.chu.controles.CLabel();
         pro_codequE = new gnu.chu.camposdb.proPanel();
+        cLabel43 = new gnu.chu.controles.CLabel();
+        pro_kgmiunE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.9");
+        cLabel44 = new gnu.chu.controles.CLabel();
+        pro_kgmaunE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.9");
+        cLabel45 = new gnu.chu.controles.CLabel();
+        pro_cointaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.9");
         Pexclu = new gnu.chu.controles.CPanel();
         jtExclu = new gnu.chu.controles.CGridEditable(2) {
             public void cambiaColumna(int col,int colNueva, int row)
@@ -1955,9 +1970,9 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         Pfamil.setLayout(null);
 
-        cLabel39.setText("Categoria");
+        cLabel39.setText("Incremento Tarifa");
         Pfamil.add(cLabel39);
-        cLabel39.setBounds(10, 10, 60, 18);
+        cLabel39.setBounds(470, 70, 110, 18);
 
         cat_codiE.setAncTexto(40);
         cat_codiE.setPreferredSize(new java.awt.Dimension(122, 17));
@@ -1977,7 +1992,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel29.setText("Cod. Padre");
         Pfamil.add(cLabel29);
-        cLabel29.setBounds(10, 72, 80, 18);
+        cLabel29.setBounds(10, 70, 70, 17);
 
         pro_indtcoE.addItem("No","0");
         pro_indtcoE.addItem("Si","-1");
@@ -2018,7 +2033,25 @@ public class MantArticulos extends ventanaPad  implements PAD
         Pfamil.add(cLabel42);
         cLabel42.setBounds(10, 50, 130, 18);
         Pfamil.add(pro_codequE);
-        pro_codequE.setBounds(100, 72, 380, 17);
+        pro_codequE.setBounds(80, 70, 380, 17);
+
+        cLabel43.setText("Categoria");
+        Pfamil.add(cLabel43);
+        cLabel43.setBounds(10, 10, 60, 18);
+        Pfamil.add(pro_kgmiunE);
+        pro_kgmiunE.setBounds(420, 50, 40, 18);
+
+        cLabel44.setText("Kg. Max. Unidad");
+        Pfamil.add(cLabel44);
+        cLabel44.setBounds(490, 50, 90, 18);
+        Pfamil.add(pro_kgmaunE);
+        pro_kgmaunE.setBounds(580, 50, 40, 18);
+
+        cLabel45.setText("Kg. Min. Unidad");
+        Pfamil.add(cLabel45);
+        cLabel45.setBounds(320, 50, 90, 18);
+        Pfamil.add(pro_cointaE);
+        pro_cointaE.setBounds(580, 70, 40, 18);
 
         Ptab.addTab("Parametros", Pfamil);
 
@@ -2172,6 +2205,9 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CLabel cLabel40;
     private gnu.chu.controles.CLabel cLabel41;
     private gnu.chu.controles.CLabel cLabel42;
+    private gnu.chu.controles.CLabel cLabel43;
+    private gnu.chu.controles.CLabel cLabel44;
+    private gnu.chu.controles.CLabel cLabel45;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
@@ -2204,6 +2240,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.camposdb.proPanel pro_coexclE;
     private gnu.chu.controles.CComboBox pro_coexisE;
     private gnu.chu.controles.CComboBox pro_coinstE;
+    private gnu.chu.controles.CTextField pro_cointaE;
     private gnu.chu.controles.CComboBox pro_conmaxE;
     private gnu.chu.controles.CTextField pro_cosincE;
     private gnu.chu.controles.CComboBox pro_costkmiE;
@@ -2216,8 +2253,10 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CTextField pro_fulconE;
     private gnu.chu.controles.CComboBox pro_indtcoE;
     private gnu.chu.controles.CTextField pro_kgcajE;
+    private gnu.chu.controles.CTextField pro_kgmaunE;
     private gnu.chu.controles.CTextField pro_kgmaxE;
     private gnu.chu.controles.CTextField pro_kgminE;
+    private gnu.chu.controles.CTextField pro_kgmiunE;
     private gnu.chu.controles.CTextField pro_kguniE;
     private gnu.chu.controles.CComboBox pro_mancosE;
     private gnu.chu.controles.CTextField pro_noeqcoE;
@@ -2397,6 +2436,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     * Devuelve un  ArrayList con todos los productos equivalentes a uno dado.
     * Si no tiene productos equivalentes devolvera NULL
     * @param proCodi Producto
+    * @param dt
     * @return arrayList
     * @throws SQLException 
     */
