@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-07-27T07:03:02 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="etiqVasca" pageWidth="263" pageHeight="226" columnWidth="226" leftMargin="35" rightMargin="2" topMargin="2" bottomMargin="2" scriptletClass="gnu.chu.anjelica.listados.etiqueta" uuid="df3a910b-cb8e-4857-8b3f-e24dadc12830">
+<!-- 2017-04-11T11:31:52 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="etiqVasca" pageWidth="263" pageHeight="226" columnWidth="259" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" scriptletClass="gnu.chu.anjelica.listados.etiqueta" uuid="df3a910b-cb8e-4857-8b3f-e24dadc12830">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="lote" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="articulo" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="nacido" class="java.lang.String" isForPrompting="false"/>

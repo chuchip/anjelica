@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-08-11T10:04:03 -->
+<!-- 2017-05-14T18:04:02 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="etiqInt" pageWidth="226" pageHeight="283" columnWidth="221" leftMargin="5" rightMargin="0" topMargin="2" bottomMargin="2" scriptletClass="gnu.chu.anjelica.listados.etiqueta" uuid="94789e88-b7ed-40cb-bc2b-db896441ae99">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.zoom" value="1.771561000000001"/>
@@ -40,7 +40,7 @@
 		<band height="278">
 			<property name="com.jaspersoft.studio.unit.height" value="mm"/>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Transparent" x="70" y="173" width="89" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="b3a58b6a-c19d-4334-93e2-db7abd9ff7f7"/>
+				<reportElement key="textField" mode="Transparent" x="37" y="170" width="89" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="b3a58b6a-c19d-4334-93e2-db7abd9ff7f7"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
@@ -176,7 +176,7 @@
 				<textFieldExpression><![CDATA[$P{articulo}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="36" y="173" width="27" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="7b63b4ae-bd7b-493a-b166-4315462efa63">
+				<reportElement key="staticText" mode="Opaque" x="3" y="170" width="27" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="7b63b4ae-bd7b-493a-b166-4315462efa63">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -186,6 +186,13 @@
 				</textElement>
 				<text><![CDATA[Lote]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="155" y="170" width="58" height="14" uuid="39c21aa3-ffd2-4f87-981c-1935cc7334a1"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{codarti}]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnHeader>
 	<detail>
