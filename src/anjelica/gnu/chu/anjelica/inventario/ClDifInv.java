@@ -135,7 +135,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2016-12-29");
+        this.setVersion("2017-05-14");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -517,7 +517,7 @@ public class ClDifInv extends ventana {
                     (alm_codfinE.getValorInt()==0?"":" and alm_codlin<= "+alm_codfinE.getValorInt());
 
         setMensajePopEspere("Generando Listado ... Espere, por favor",false);
-        s="select  c.cci_codi,c.lci_nume,P.cam_codi,c.PRO_CODI,p.pro_nomb,c.PRP_ANO,"+
+        s="select prp_empcod, c.cci_codi,c.lci_nume,P.cam_codi,c.PRO_CODI,p.pro_nomb,c.PRP_ANO,"+
             " c.alm_codlin,c.PRP_SERI,"+
             " c.PRP_PART,c.PRP_INDI,c.lci_coment,c.lci_causa, "+
             " c.LCI_PESO as lci_peso,c.LCI_KGSORD as lci_kgsord "+
@@ -889,8 +889,7 @@ public class ClDifInv extends ventana {
 
             // Borro los individuos que no tenga stock real, ni comentarios
             s = "DELETE FROM "+ TABLA_INV_LIN
-                    + " where emp_codi = " + EU.em_cod
-                    + " and prp_empcod =0 "
+                    + " where emp_codi = " + EU.em_cod                 
                     + " and  cci_codi IN (SELECT cci_codi from "+TABLA_INV_CAB+" c where "
                     + " c.emp_codi =" + EU.em_cod
                     + condAlmStr
