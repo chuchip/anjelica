@@ -192,7 +192,10 @@ cat_codi int not null default 1, -- Categoria Articulo
 cal_codi int not null default 1, -- Calibres
 env_codi int not null default 0, -- Tipo de Envase
 pro_indtco int not null default 1, -- Influye en dto. Comercial (0: No)
-pro_codequ int,		-- Producto equivalente.
+pro_codequ int,		-- Producto Equivalente Padre
+pro_kgmiun float , -- kg. Minimo Unidad.
+pro_kgmaun float , -- kg. Maximo Unidad.
+pro_cointa flota , -- Costo a Incrementar en Tarifa
 constraint ix_articulo primary key(pro_codi)
 );
 create index ix_articul1 on v_articulo(pro_codart);

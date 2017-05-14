@@ -1,3 +1,6 @@
+alter table v_articulo add pro_kgmiun float; -- kg. Minimo Unidad.
+alter table v_articulo add pro_kgmaun float; -- kg. Maximo Unidad.
+alter table v_articulo add pro_cointa float; -- Costo a Incrementar en Tarifa
 --
 -- Tipos tarifas. Incluida comision representante
 --

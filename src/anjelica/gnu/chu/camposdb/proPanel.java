@@ -197,17 +197,24 @@ public class proPanel extends CPanel
 
   public void pro_codiE_focusLost()
   {
-    if (pro_codiE.getValorInt()!=proCodiAnt ||  (usaRefArticulo &&  !pro_codiE.getText().equals(proCodArtAnt)))
-    {
-      proCodiAnt=pro_codiE.getValorInt();
-      proCodArtAnt=pro_codiE.getText();
-      try
+      if (pro_codiE.getValorInt() != proCodiAnt || (usaRefArticulo && !pro_codiE.getText().equals(proCodArtAnt)))
       {
-        afterFocusLost(controla(false,true));
+          try
+          {
+              if (usaRefArticulo && pro_codiE.getValorInt() > 0)
+              {
+                  String codvent = MantArticulos.getCodigoVenta(pro_codiE.getValorInt(), dt);
+                  if (codvent != null)
+                      pro_codiE.setText(codvent);
+              }
+              proCodiAnt = pro_codiE.getValorInt();
+              proCodArtAnt = pro_codiE.getText();
+
+              afterFocusLost(controla(false, true));
+          } catch (SQLException k)
+          {
+          }
       }
-      catch (SQLException k)
-      {}
-    }
 
   }
   /**
