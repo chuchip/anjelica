@@ -89,7 +89,7 @@ private void jbInit() throws Exception {
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2017-01-29");
+        this.setVersion("2017-05-09");
         strSql = "SELECT * FROM prodventa  "+
                 " ORDER BY pve_codi";
 
@@ -144,6 +144,8 @@ private void jbInit() throws Exception {
         cLabel9.setText("Descripcion");
         Pprinc.add(cLabel9);
         cLabel9.setBounds(10, 154, 70, 17);
+
+        pve_nombE.setMayusc(true);
         Pprinc.add(pve_nombE);
         pve_nombE.setBounds(80, 154, 300, 17);
 
@@ -223,7 +225,7 @@ private void jbInit() throws Exception {
                 activaTodo();
                 mensaje("");
             }
-
+            activar(true);
         } catch (SQLException | UnknownHostException k)
         {
             Error("Error al bloquear el registro", k);            
@@ -512,7 +514,15 @@ private void jbInit() throws Exception {
 
     @Override
     public void activar(boolean b) {
-        Pprinc.setEnabled(b);
+        Baceptar.setEnabled(b);
+        Bcancelar.setEnabled(b);
+        if (nav.pulsado==navegador.DELETE && b)
+            return;
+       
+        pve_codiE.setEnabled(b);
+       
+        pArticVenta.setEnabled(b);
+        pve_nombE.setEnabled(b);
     }
   
     public static String getNombreArticulo(DatosTabla dt,String pveCodi) throws SQLException

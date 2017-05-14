@@ -5,7 +5,7 @@ package gnu.chu.anjelica.pad;
  * <p>Título: MantArticulos </p>
  * <p>Descripcion: Mantenimiento Tabla de Articulos</p>
  * <p>Empresa: miSL</p>
-*  <p>Copyright: Copyright (c) 2005-2016
+*  <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -1356,8 +1356,8 @@ public class MantArticulos extends ventanaPad  implements PAD
      return dt.getString("pro_nomb");
    }
     /**
-     * Devuelve el nombre del articulo (Codigo NO numerico)
-     * @param codArtic Codigo Producto
+     * Devuelve el nombre del articulo (Descripcion)
+     * @param codArtic Codigo de venta del articulo
      * @param dt DatosTabla sobre el que ejecutar la select
      * @return Nombre de producto. NULL si no lo encuentra
      * @throws SQLException
@@ -1380,13 +1380,28 @@ public class MantArticulos extends ventanaPad  implements PAD
     */
    public static String getTipoProd(int codProd, DatosTabla dt) throws SQLException
    {
-     String s = "select pro_tiplot from v_articulo  where " +
+     String s = "select pro_tiplot,pro_codart,pro_cointa from v_articulo  where " +
          "  pro_codi = " + codProd;
      if (!dt.select(s))
        return null;
      return dt.getString("pro_tiplot");
    }
-   
+   /**
+    * Devuelve el codigo venta.
+    * En el datos tabla deja pro_tiplot,pro_codart,pro_cointa
+    * @param codProd codigo Producto
+    * @param dt Datostabla
+    * @return Codigo Venta
+    * @throws SQLException 
+    */
+   public static String getCodigoVenta(int codProd, DatosTabla dt) throws SQLException
+   {
+       String codart=getTipoProd(codProd,dt);
+       if (codart==null)
+           return null;
+       else
+           return dt.getString("pro_codart");
+   }
    public static boolean hasControlExist(int codProd, DatosTabla dt) throws SQLException
    {
      String s = "select pro_coexis from v_articulo  where " +
@@ -1532,7 +1547,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         cLabel44 = new gnu.chu.controles.CLabel();
         pro_kgmaunE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.9");
         cLabel45 = new gnu.chu.controles.CLabel();
-        pro_cointaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.9");
+        pro_cointaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--9.99");
         Pexclu = new gnu.chu.controles.CPanel();
         jtExclu = new gnu.chu.controles.CGridEditable(2) {
             public void cambiaColumna(int col,int colNueva, int row)

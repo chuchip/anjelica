@@ -773,7 +773,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
    * @param cliCodi Cliente (0) Si es tarifa generica
    * @param tarCodi Tarifa
    * @param fecAlb Fecha Albaran
-   * @return
+   * @return 0 si no encuentra la tarifa
    * @throws SQLException 
    */
  public static double getPrecTar(DatosTabla dt,int proCodi,int cliCodi, int tarCodi,String fecAlb) throws SQLException
@@ -781,50 +781,100 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
    String s;
    if (fecAlb.trim().equals(""))
        return 0;
+   String codVenta=MantArticulos.getCodigoVenta(proCodi,dt);
+  
+   if (codVenta==null)
+       return 0;
+    
+   String codVentaOri=codVenta;
+   boolean isCodCorte=false;
+   double proCointa=dt.getDouble("pro_cointa",true);
+   if (codVenta.endsWith("/"))
+   { // Es producto corte. Busco padre
+         codVentaOri=codVenta.substring(0,codVenta.length()-1);
+         isCodCorte=true;
+   }
    if (cliCodi!=0)
    { // Busco tarifa especifica para cliente
        s = " SELECT tar_preci,tar_fecini " +
-         " FROM taricli as t,v_articulo as ar where pro_codi = " + proCodi +
-         " and ar.pro_codart=t.pro_codart "+
+         " FROM taricli as t "+
+         " where pro_codart= '"+codVenta+"'"+
          " and cli_codi = " + cliCodi +
          " AND tar_fecini <=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
          " AND (tar_fecfin >=  TO_DATE('" + fecAlb + "','dd-MM-yyyy') or tar_fecfin is null) "+
          " order by tar_fecini";
        if (dt.select(s))
-        return dt.getDouble("tar_preci", true);       
+        return dt.getDouble("tar_preci", true);  
+       if (isCodCorte)
+       { // Busco el codigo original
+           s = " SELECT tar_preci,tar_fecini " +
+             " FROM taricli as t "+
+             " where pro_codart= '"+codVentaOri+"'"+
+             " and cli_codi = " + cliCodi +
+             " AND tar_fecini <=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
+             " AND (tar_fecfin >=  TO_DATE('" + fecAlb + "','dd-MM-yyyy') or tar_fecfin is null) "+
+             " order by tar_fecini";
+            if (dt.select(s))
+             return dt.getDouble("tar_preci", true)+ proCointa;  
+       }
    }
    /** 
     * Busco precio para el producto en tarifa mandada
     */
     s = " SELECT tar_preci,tar_fecini " +
-         " FROM tarifa as t,v_articulo as ar where pro_codi = " + proCodi +
-         " and ar.pro_codart=t.pro_codart "+
+         " FROM tarifa as t "+
+         " where pro_codart= '"+codVenta+"'"+
          " and tar_codi = " + tarCodi +
          " AND tar_fecini <=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
          " AND tar_fecfin >=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
          " order by tar_fecini";
     if (dt.select(s))
       return dt.getDouble("tar_preci", true);  
+    if (isCodCorte)
+    { // Es producto corte. Busco padre
+         s = " SELECT tar_preci,tar_fecini   " +
+         " FROM tarifa as t "+
+         " where pro_codart= '"+codVentaOri+"'"+
+         " and tar_codi = " +  tarCodi +
+         " AND tar_fecini <=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
+         " AND tar_fecfin >=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
+         " order by tar_fecini";
+         if (dt.select(s))
+          return dt.getDouble("tar_preci", true)+ proCointa;  
+    }
     /**
      * Busco precio en tarifa padre (si la hay)
      */
-   s= " SELECT * FROM tipotari WHERE tar_codi = " + tarCodi;
+   s= " SELECT * FROM tipotari WHERE tar_codi = " + tarCodi+
+       " and tar_codori > 0";
    if (dt.select(s))
    {
      
-     double tarIncPre = dt.getInt("tar_codori")==0?0:dt.getDouble("tar_incpre");
-
+     double tarIncPre = dt.getDouble("tar_incpre");
+     int tarCodOri= dt.getInt("tar_codori");
      s = " SELECT tar_preci,tar_fecini " +
-         " FROM tarifa as t,v_articulo as ar where pro_codi = " + proCodi +
-         " and ar.pro_codart=t.pro_codart "+
-         " and tar_codi = " +  dt.getInt("tar_codori") +
+         " FROM tarifa as t " +
+         " where pro_codart= '"+codVenta+"'"+
+         " and tar_codi = " +  tarCodOri +
          " AND tar_fecini <=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
          " AND tar_fecfin >=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
          " order by tar_fecini";
      if (dt.select(s))
-       return dt.getDouble("tar_preci", true)==0?0:dt.getDouble("tar_preci", true) + tarIncPre;
-     else
-       return 0;
+       return dt.getDouble("tar_preci", true)==0?0:dt.getDouble("tar_preci", true) +
+           tarIncPre;
+     if (isCodCorte)
+     {
+          s = " SELECT tar_preci,tar_fecini  " +
+         " FROM tarifa as t  where pro_codart = '" + codVentaOri +"'"+
+         " and tar_codi = " + tarCodOri +
+         " AND tar_fecini <=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
+         " AND tar_fecfin >=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
+         " order by tar_fecini";
+         if (dt.select(s))
+             return dt.getDouble("tar_preci", true)==0?0:dt.getDouble("tar_preci", true) +
+                 proCointa+
+                 tarIncPre; 
+     }
    }
    return 0;
  }
