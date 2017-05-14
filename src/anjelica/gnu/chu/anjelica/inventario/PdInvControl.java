@@ -97,11 +97,9 @@ public class PdInvControl extends ventanaPad implements PAD
       if (ht != null)
       {
         if (ht.get("repLineas") != null)
-          swRepLineas = Boolean.valueOf(ht.get("repLineas").toString()).
-              booleanValue();
-          if (ht.get("admin") != null)
-            swAdmin = Boolean.valueOf(ht.get("admin").toString()).
-              booleanValue();
+          swRepLineas = Boolean.parseBoolean(ht.get("repLineas").toString());
+        if (ht.get("admin") != null)
+            swAdmin = Boolean.valueOf(ht.get("admin").toString());
       }
 
       if (jf.gestor.apuntar(this))
@@ -129,11 +127,9 @@ public class PdInvControl extends ventanaPad implements PAD
       if (ht != null)
       {
           if (ht.get("repLineas") != null)
-            swRepLineas = Boolean.valueOf(ht.get("repLineas").toString()).
-                booleanValue();
+            swRepLineas = Boolean.valueOf(ht.get("repLineas").toString());
            if (ht.get("admin") != null)
-            swAdmin = Boolean.valueOf(ht.get("admin").toString()).
-              booleanValue();
+            swAdmin = Boolean.valueOf(ht.get("admin").toString());
       }
       jbInit();
     }
