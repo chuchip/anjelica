@@ -168,7 +168,7 @@ public class MantInvProduc extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         FECHANULA=Formatear.getDate("01-01-2000", "dd-MM-yyyy");
         iniciarFrame();
-        this.setVersion("2017-04-29 "+(swAdmin?"Administrador":""));
+        this.setVersion("2017-06-16 "+(swAdmin?"Administrador":""));
        
         strSql = "SELECT * FROM cinvproduc "+
          "order by cip_fecinv,cam_codi,alm_codi";
@@ -356,7 +356,14 @@ public class MantInvProduc extends ventanaPad implements PAD
       }
     });
    
-
+    Birlin.addFocusListener(new FocusAdapter()
+    {
+            @Override
+      public void focusGained(FocusEvent e)
+      {
+        Birlin.doClick();
+      }
+    });
     Birlin.addActionListener(new ActionListener()
     {
             @Override
@@ -1671,11 +1678,11 @@ public class MantInvProduc extends ventanaPad implements PAD
         cam_codiE = new gnu.chu.controles.CLinkBox();
         cLabel9 = new gnu.chu.controles.CLabel();
         alm_codiE = new gnu.chu.controles.CLinkBox();
-        Birlin = new gnu.chu.controles.CButton();
         cLabel8 = new gnu.chu.controles.CLabel();
         cip_comentE = new gnu.chu.controles.CTextField(Types.CHAR,"X",95);
         cip_fecinvE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         tid_codiE = new gnu.chu.camposdb.tidCodi2();
+        Birlin = new gnu.chu.controles.CButton();
         cLabel13 = new gnu.chu.controles.CLabel();
         PtabPane1 = new gnu.chu.controles.CTabbedPane();
         jt = new gnu.chu.controles.CGridEditable(15) {
@@ -1833,8 +1840,6 @@ public class MantInvProduc extends ventanaPad implements PAD
             alm_codiE.combo.setPreferredSize(new Dimension(200,17));
             Pcabe.add(alm_codiE);
             alm_codiE.setBounds(460, 2, 200, 17);
-            Pcabe.add(Birlin);
-            Birlin.setBounds(665, 30, 2, 1);
 
             cLabel8.setText("Camara");
             cLabel8.setPreferredSize(new java.awt.Dimension(52, 18));
@@ -1848,6 +1853,8 @@ public class MantInvProduc extends ventanaPad implements PAD
             tid_codiE.setAncTexto(40);
             Pcabe.add(tid_codiE);
             tid_codiE.setBounds(80, 22, 240, 17);
+            Pcabe.add(Birlin);
+            Birlin.setBounds(665, 20, 10, 20);
 
             cLabel13.setText("Fecha");
             cLabel13.setPreferredSize(new java.awt.Dimension(52, 18));
