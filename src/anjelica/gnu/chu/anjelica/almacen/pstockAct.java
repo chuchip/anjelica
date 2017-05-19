@@ -166,7 +166,7 @@ public class pstockAct extends CPanel
     tar_codiE.setFormato(true);
     pdc_fecpedE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
     pdc_fecpedE.resetCambio();
-    tar_codiE.setFormato(Types.DECIMAL, "9", 1);
+    tar_codiE.setFormato(Types.DECIMAL, "#9", 1);
 
     s = "SELECT tar_codi,tar_nomb FROM tipotari " +
         " ORDER BY tar_codi ";

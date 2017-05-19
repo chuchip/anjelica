@@ -895,6 +895,7 @@ public class ClDifInv extends ventana {
                     + condAlmStr
                     + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                     + " ) "
+                    + " and prp_empcod = 0 "  // Sin comentario
                     + " and lci_peso = 0 ";
             dtCon1.setSqlUpdate(s);
 

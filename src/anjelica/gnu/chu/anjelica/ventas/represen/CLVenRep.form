@@ -219,7 +219,7 @@
                 <Property name="text" type="java.lang.String" value="Elegir"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Baceptar.addMenu(&quot;Consultar&quot;,&quot;C&quot;);&#xa;Baceptar.addMenu(&quot;Cons. Incid&quot;,&quot;!&quot;);&#xa;Baceptar.addMenu(&quot;Cons.Inc.Precio&quot;,&quot;!P&quot;);&#xa;Baceptar.addMenu(&quot;Cons.Sin Precio&quot;,&quot;S&quot;);&#xa;&#xa;if (ARG_MODIF)&#xa;{        &#xa;    Baceptar.addMenu(&quot;Act. Precio Min&quot;,&quot;P&quot;);&#xa;    Baceptar.addMenu(&quot;Forzar Act. Precio Min&quot;,&quot;P!&quot;);&#xa;    Baceptar.addMenu(&quot;Act. Tarifa&quot;,&quot;A&quot;);&#xa;    Baceptar.addMenu(&quot;Forzar Act. Tarifa&quot;,&quot;A!&quot;);&#xa;}&#xa;Baceptar.addMenu(&quot;Sin Tarifa&quot;,&quot;T&quot;);&#xa;&#xa;Baceptar.addMenu(&quot;Imprimir&quot;,&quot;I&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Baceptar.addMenu(&quot;Consultar&quot;,&quot;C&quot;);&#xa;Baceptar.addMenu(&quot;Cons. Incid&quot;,&quot;!&quot;);&#xa;Baceptar.addMenu(&quot;Cons.Sin Precio&quot;,&quot;S&quot;);&#xa;&#xa;if (ARG_MODIF)&#xa;{        &#xa;    Baceptar.addMenu(&quot;Act. Precio Min&quot;,&quot;P&quot;);&#xa;    Baceptar.addMenu(&quot;Forzar Act. Precio Min&quot;,&quot;P!&quot;);&#xa;    Baceptar.addMenu(&quot;Act. Tarifa&quot;,&quot;A&quot;);&#xa;    Baceptar.addMenu(&quot;Forzar Act. Tarifa&quot;,&quot;A!&quot;);&#xa;}&#xa;Baceptar.addMenu(&quot;Sin Tarifa&quot;,&quot;T&quot;);&#xa;&#xa;Baceptar.addMenu(&quot;Imprimir&quot;,&quot;I&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -231,19 +231,6 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="600" y="20" width="21" height="20"/>
-                </Constraint>
-              </Constraints>
-            </Component>
-            <Component class="gnu.chu.controles.CLabel" name="cLabel9">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Ganacia Maxima"/>
-              </Properties>
-              <AccessibilityProperties>
-                <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value=""/>
-              </AccessibilityProperties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="140" y="45" width="100" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -301,17 +288,17 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="90" y="45" width="40" height="17"/>
+                  <AbsoluteConstraints x="150" y="45" width="40" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel12">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Ganacia Minima "/>
+                <Property name="text" type="java.lang.String" value="Y"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="0" y="45" width="90" height="17"/>
+                  <AbsoluteConstraints x="200" y="45" width="20" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -321,7 +308,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="240" y="45" width="40" height="17"/>
+                  <AbsoluteConstraints x="220" y="45" width="40" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -339,6 +326,26 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="340" y="45" width="40" height="19"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CComboBox" name="gananOpcC">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="gananOpcC.addItem(&quot;&quot;,&quot; &quot;);&#xa;gananOpcC.addItem(&quot;Mayor&quot;,&quot;&gt;&quot;);&#xa;gananOpcC.addItem(&quot;Menor&quot;,&quot;&lt;&quot;);&#xa;gananOpcC.addItem(&quot;Entre&quot;,&quot;E&quot;);"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="50" y="45" width="90" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel14">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ganacia "/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="0" y="45" width="50" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

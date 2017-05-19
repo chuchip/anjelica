@@ -17,8 +17,6 @@ import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.MantTarifa;
 import net.sf.jasperreports.engine.*;
 import gnu.chu.anjelica.pad.pdconfig;
-import static gnu.chu.anjelica.ventas.pdalbara.TABLACAB;
-import static gnu.chu.anjelica.ventas.pdalbara.selCabAlb;
 
 import gnu.chu.winayu.AyuArt;
 import java.awt.print.PrinterException;
@@ -1470,6 +1468,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         mensajeErr("Cliente NO esta activo o esta forzado a no Servir");
         return false;
       }
+    
       if (pvc_fecentE.getError() || pvc_fecentE.isNull())
       {
         mensajeErr("Fecha de Entrega NO valida");
@@ -2116,6 +2115,7 @@ public class pdpeve  extends ventanaPad   implements PAD
                  if (!cli_codiE.isServir())
                  {
                     msgBox("ATENCION!. Cliente esta marcado como para no servir");  
+                    pvc_incfraE.setSelected(true);
                  }
                 cli_codiE.resetCambio();
                 rut_codiE.setText(cli_codiE.getLikeCliente().getString("rut_codi"));
@@ -2190,9 +2190,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   
    public void leerDatosCliente() throws Exception
    {
-       cli_poblE.setText(cli_codiE.getLikeCliente().getString("cli_pobl"));
-       
-     
+      cli_poblE.setText(cli_codiE.getLikeCliente().getString("cli_pobl"));            
    }
    void cli_codiE_afterFocusLost(boolean error)
    {

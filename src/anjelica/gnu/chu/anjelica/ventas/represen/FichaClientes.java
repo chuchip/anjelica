@@ -34,7 +34,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * ultimos albaranes y/o facturas. Cobros realizados, importe pendiente de cobro y comentarios.
  *  </p><p>Tambien permite modificar ciertos datos de conctacto del cliente.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -435,15 +435,15 @@ public class FichaClientes extends ventana implements PAD
     jtAlb.setAlinearColumna(new int[]{0,0,2,2,2,2,2});
     jtAlb.setBounds(new Rectangle(0, 195, 710, 155));
     jtAlb.setConfigurar("gnu.chu.anjelica.consCliente",EU,dtStat);
-    Vector v1=new Vector();
-    v1.addElement("Emp"); // 0
-    v1.addElement("Año"); // 1
-    v1.addElement("Serie"); // 2
-    v1.addElement("Numero"); // 3
-    v1.addElement("Fec.Alb."); // 4
-    v1.addElement("Imp.Alb."); // 5
-    v1.addElement("Imp.Cob"); // 6
-    v1.addElement("Imp.Pend"); // 7
+    ArrayList v1=new ArrayList();
+    v1.add("Emp"); // 0
+    v1.add("Año"); // 1
+    v1.add("Serie"); // 2
+    v1.add("Numero"); // 3
+    v1.add("Fec.Alb."); // 4
+    v1.add("Imp.Alb."); // 5
+    v1.add("Imp.Cob"); // 6
+    v1.add("Imp.Pend"); // 7
 
     jtAco.setCabecera(v1);
     jtAco.setAnchoColumna(new int[]{33,28,30,56,75,82,83,83});
@@ -451,15 +451,15 @@ public class FichaClientes extends ventana implements PAD
     jtAco.setFormatoColumna(6,"--,---,--9.99");
     jtAco.setFormatoColumna(7,"--,---,--9.99");
     jtAco.setAlinearColumna(new int[]{2,2,0,2,1,2,2,2});
-    Vector v2 = new Vector();
-    v2.addElement("Emp"); // 0
-    v2.addElement("Año"); // 1
-    v2.addElement("Serie"); // 2
-    v2.addElement("Numero"); // 3
-    v2.addElement("Fec.Fra."); // 4
-    v2.addElement("Imp.Alb."); // 5
-    v2.addElement("Imp.Cob"); // 6
-    v2.addElement("Imp.Pend"); // 7
+    ArrayList v2 = new ArrayList();
+    v2.add("Emp"); // 0
+    v2.add("Año"); // 1
+    v2.add("Serie"); // 2
+    v2.add("Numero"); // 3
+    v2.add("Fec.Fra."); // 4
+    v2.add("Imp.Alb."); // 5
+    v2.add("Imp.Cob"); // 6
+    v2.add("Imp.Pend"); // 7
 
     jtFco.setCabecera(v2);
     jtFco.setAnchoColumna(new int[]{33,28,30,56,75,82,83,83});
@@ -681,10 +681,17 @@ public class FichaClientes extends ventana implements PAD
     cob_cresobE.setForeground(Color.white);
     cob_cresobE.setDisabledTextColor(Color.white);
     cob_cresobE.setBounds(new Rectangle(619, 23, 71, 17));
-    jtAco.setPreferredSize(new Dimension(400, 5));
-
-    jtFco.setPreferredSize(new Dimension(400, 5));
-
+    jtAco.setPreferredSize(new Dimension(400,5));
+    jtAco.setMinimumSize(new Dimension(400,5));
+    jtAco.setMaximumSize(new Dimension(400, 5));
+   
+    jtFco.setPreferredSize(new Dimension(400,5));
+    jtFco.setMinimumSize(new Dimension(400,5));
+    jtFco.setMaximumSize(new Dimension(400, 5));
+    jtTpe.setPreferredSize(new Dimension(400,5));      
+    jtTpe.setMinimumSize(new Dimension(400,5));
+    jtTpe.setMaximumSize(new Dimension(400, 5));
+        
     cPanel3.setBorder(BorderFactory.createRaisedBevelBorder());
     cPanel3.setPreferredSize(new Dimension(580, 104));
 
@@ -1056,7 +1063,7 @@ public class FichaClientes extends ventana implements PAD
                     new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTH,
                                            GridBagConstraints.BOTH,
                                            new Insets(0, 0, 0, 0), 0, 0));
-        jtAco.add(cPanel4, BorderLayout.SOUTH);
+        jtAco.add(cPanel4,  BorderLayout.SOUTH);
         Pcobros.add(cPanel2, BorderLayout.NORTH);
         cPanel5.add(cLabel19, null);
         cPanel5.add(cob_frapeiE, null);
@@ -1998,8 +2005,7 @@ public class FichaClientes extends ventana implements PAD
 
   void verDatCobros(int cliCodi,int fpaCodi) throws Exception
   {
-    if (!verCobros)
-        return;
+    
     int nAlbCob=0;
     int nFacCob=0,nTalCob=0,nDevol=0;
     double iAlbCob=0,iFacCob=0,iTalCob=0,iDevol=0;
@@ -2030,15 +2036,15 @@ public class FichaClientes extends ventana implements PAD
       {
         if (mataConsulta)
             return;
-        Vector v = new Vector();
-        v.addElement(dtCob.getString("emp_codi"));
-        v.addElement(dtCob.getString("avc_ano"));
-        v.addElement(dtCob.getString("avc_serie"));
-        v.addElement(dtCob.getString("avc_nume"));
-        v.addElement(dtCob.getFecha("avc_fecalb","dd-MM-yyyy"));
-        v.addElement(dtCob.getString("avc_impalb"));
-        v.addElement(dtCob.getString("avc_impcob"));
-        v.addElement("" + (dtCob.getDouble("avc_impalb") - dtCob.getDouble("avc_impcob")));
+        ArrayList v = new ArrayList();
+        v.add(dtCob.getString("emp_codi"));
+        v.add(dtCob.getString("avc_ano"));
+        v.add(dtCob.getString("avc_serie"));
+        v.add(dtCob.getString("avc_nume"));
+        v.add(dtCob.getFecha("avc_fecalb","dd-MM-yyyy"));
+        v.add(dtCob.getString("avc_impalb"));
+        v.add(dtCob.getString("avc_impcob"));
+        v.add(dtCob.getDouble("avc_impalb") - dtCob.getDouble("avc_impcob"));
         if (dtCob.getDouble("avc_impcob")>=0)
         {
           nAlbCob++;
@@ -2055,6 +2061,8 @@ public class FichaClientes extends ventana implements PAD
       jtAco.requestFocus(0,0);
       jtAco.setEnabled(true);
     }
+    if (verCobros)
+    {
     s = "SELECT  * FROM v_facvec WHERE "+
         " cli_codi = "+cliCodi+
        " AND fvc_cobrad = 0 " +
@@ -2144,6 +2152,7 @@ public class FichaClientes extends ventana implements PAD
      while (dtCob.next());
      jtTpe.requestFocus(0,0);
      jtTpe.setEnabled(true);
+   }
    }
    cob_talcaiE.setValorDec(iTalCob);
    cob_talcanE.setValorDec(nTalCob);

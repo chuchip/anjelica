@@ -39,7 +39,7 @@ import java.awt.event.KeyEvent;
  */
 
 public class lotVenPro extends ventana
-{
+{ 
   boolean swSelected=false;
   utildesp utDesp;
   String s;

@@ -146,7 +146,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2017-02-14" + ARG_ZONAREP);
+        this.setVersion("2017-04-17" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -270,11 +270,7 @@ public class CLVenRep extends ventana {
                    case "!":
                        conComentarios=true;
                        consultar(false);
-                       break;
-                   case "!P":                       
-                       conIncPrecio=true;
-                       consultar(false);
-                       break;
+                       break;                
                   default:                   
                        consultar(indice.equals("S"));
                }
@@ -509,14 +505,16 @@ public class CLVenRep extends ventana {
                 s += " and exists (select *  FROM comision_represent as cr "
                         + " WHERE cr.avc_id = a.avc_id )";
         
-        if (conIncPrecio) {
+        if (!gananOpcC.getValor().equals("")) {
                 s += " and exists (select *  FROM v_albavel as l "
                         + " WHERE l.emp_codi = " + emp_codiE.getValorInt()
                         + " and a.avc_ano = l.avc_ano  "
                         + " and a.avc_serie = l.avc_serie "
                         + " and a.avc_nume = l.avc_nume "
-                        + (gananMinE.isNull()? "and (1!=1 ":" and ((avl_prven-avl_profer) <= "+gananMinE.getValorDec())
-                        + (gananMaxE.isNull()?")":" or (avl_prven-avl_profer) >= "+gananMaxE.getValorDec()+")")
+                        + (gananOpcC.getValor().equals(">")?"  and (avl_prven-avl_profer) > "+gananMinE.getValorDec():"")
+                        +(gananOpcC.getValor().equals("<")?"  and (avl_prven-avl_profer) < "+gananMinE.getValorDec():"")                        
+                        + (gananOpcC.getValor().equals("E")?"  and (avl_prven-avl_profer)  between  "+
+                            gananMinE.getValorDec() +" and "+gananMaxE.getValorDec():"")
                         + " and l.avl_canti <> 0 "
                         + " )";
         }
@@ -918,7 +916,6 @@ public class CLVenRep extends ventana {
         opIncCobr = new gnu.chu.controles.CCheckBox();
         Baceptar = new gnu.chu.controles.CButtonMenu();
         bdisc = new gnu.chu.camposdb.DiscButton();
-        cLabel9 = new gnu.chu.controles.CLabel();
         rut_codiE = new gnu.chu.controles.CLinkBox();
         cLabel10 = new gnu.chu.controles.CLabel();
         zon_codiE = new gnu.chu.controles.CLinkBox();
@@ -928,6 +925,8 @@ public class CLVenRep extends ventana {
         gananMaxE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
         cLabel13 = new gnu.chu.controles.CLabel();
         sbe_codiE = new gnu.chu.camposdb.sbePanel();
+        gananOpcC = new gnu.chu.controles.CComboBox();
+        cLabel14 = new gnu.chu.controles.CLabel();
         jtCab = new gnu.chu.controles.Cgrid(11);
         ArrayList v=new ArrayList();
         v.add("Ejer"); // 0
@@ -1110,7 +1109,6 @@ public class CLVenRep extends ventana {
     Baceptar.setText("Elegir");
     Baceptar.addMenu("Consultar","C");
     Baceptar.addMenu("Cons. Incid","!");
-    Baceptar.addMenu("Cons.Inc.Precio","!P");
     Baceptar.addMenu("Cons.Sin Precio","S");
 
     if (ARG_MODIF)
@@ -1127,11 +1125,6 @@ public class CLVenRep extends ventana {
     Baceptar.setBounds(520, 40, 100, 26);
     Pcondic.add(bdisc);
     bdisc.setBounds(600, 20, 21, 20);
-
-    cLabel9.setText("Ganacia Maxima");
-    Pcondic.add(cLabel9);
-    cLabel9.setBounds(140, 45, 100, 17);
-    cLabel9.getAccessibleContext().setAccessibleDescription("");
 
     rut_codiE.setAncTexto(30);
     rut_codiE.setMayusculas(true);
@@ -1153,19 +1146,30 @@ public class CLVenRep extends ventana {
     Pcondic.add(cLabel11);
     cLabel11.setBounds(290, 45, 50, 17);
     Pcondic.add(gananMinE);
-    gananMinE.setBounds(90, 45, 40, 17);
+    gananMinE.setBounds(150, 45, 40, 17);
 
-    cLabel12.setText("Ganacia Minima ");
+    cLabel12.setText("Y");
     Pcondic.add(cLabel12);
-    cLabel12.setBounds(0, 45, 90, 17);
+    cLabel12.setBounds(200, 45, 20, 17);
     Pcondic.add(gananMaxE);
-    gananMaxE.setBounds(240, 45, 40, 17);
+    gananMaxE.setBounds(220, 45, 40, 17);
 
     cLabel13.setText("Repres");
     Pcondic.add(cLabel13);
     cLabel13.setBounds(1, 25, 50, 15);
     Pcondic.add(sbe_codiE);
     sbe_codiE.setBounds(340, 45, 40, 19);
+
+    gananOpcC.addItem(""," ");
+    gananOpcC.addItem("Mayor",">");
+    gananOpcC.addItem("Menor","<");
+    gananOpcC.addItem("Entre","E");
+    Pcondic.add(gananOpcC);
+    gananOpcC.setBounds(50, 45, 90, 17);
+
+    cLabel14.setText("Ganacia ");
+    Pcondic.add(cLabel14);
+    cLabel14.setBounds(0, 45, 50, 17);
 
     Pprinc.add(Pcondic, new java.awt.GridBagConstraints());
 
@@ -1331,6 +1335,7 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel13;
+    private gnu.chu.controles.CLabel cLabel14;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -1338,13 +1343,13 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel8;
-    private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CTextField cor_comentE;
     private gnu.chu.camposdb.empPanel emp_codiE;
     private gnu.chu.controles.CTextField fecFinE;
     private gnu.chu.controles.CTextField fecIniE;
     private gnu.chu.controles.CTextField gananMaxE;
     private gnu.chu.controles.CTextField gananMinE;
+    private gnu.chu.controles.CComboBox gananOpcC;
     private gnu.chu.controles.CTextField impAlbE;
     private gnu.chu.controles.CTextField impGanE;
     private gnu.chu.controles.Cgrid jtCab;

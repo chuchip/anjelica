@@ -953,6 +953,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
                     {
                         if (! pro_codartE.hasCambio())
                         return;
+                        pro_codartE.pro_codiE_focusLost();
                         String nombArt;
                         if (pro_codartE.getText().equals("X"))
                         {
