@@ -229,7 +229,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2017-02-14" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2017-05-19" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -892,7 +892,7 @@ public class MantDesp extends ventanaPad implements PAD
                 return;
             }
         }
-    
+        
         jtCab.setEnabled(true);
         
         if (uniFinE.getValorInt() == 0)
@@ -1069,6 +1069,7 @@ public class MantDesp extends ventanaPad implements PAD
             if (utdesp.feccadE != null)
                 deo_feccadE.setText(utdesp.feccadE);
         }
+     
         if (deo_fecproE.isNull())
         {
             if (utdesp.getFechaProduccion() != null)
@@ -1078,6 +1079,13 @@ public class MantDesp extends ventanaPad implements PAD
         if (deo_feccadE.isNull() && reset)
         {
             mensajeErr("Introduzca Fecha de Caducidad");
+            deo_feccadE.requestFocusLater();
+            return false;
+        }
+        
+        if (Formatear.comparaFechas(deo_feccadE.getDate(), deo_fecproE.getDate()) < 7)
+        {
+            mensajeErr("Fecha Despiece debe ser superior en más de siete dias a la producion");
             deo_feccadE.requestFocusLater();
             return false;
         }

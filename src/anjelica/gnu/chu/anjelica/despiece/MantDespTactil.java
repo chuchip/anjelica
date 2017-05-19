@@ -398,7 +398,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2017-05-02"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2017-05-19"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -1224,6 +1224,11 @@ public class MantDespTactil  extends ventanaPad implements PAD
        eje_numeE.requestFocus();
        return;
      }
+     if (! checkFechaCad())
+     {
+          grd_feccadE.requestFocus();
+          return;
+     }
    } catch (ParseException | SQLException k)
    {
      Error("Error al Ir al grid de Entrada",k);
@@ -1235,6 +1240,21 @@ public class MantDespTactil  extends ventanaPad implements PAD
    jtEnt.afterCambiaLinea();
    if (jtEnt.isVacio())
      pdf_jtEnt();
+ }
+ 
+ boolean checkFechaCad() throws ParseException
+ {
+     if ( grd_feccadE.getError() || grd_feccadE.isNull())
+     {
+       mensajeErr("Fecha Caducidad .. Incorrecta");
+       return false;
+     }
+     if (Formatear.comparaFechas(grd_feccadE.getDate(), grd_fechaE.getDate()) < 7)
+     {
+         mensajeErr("Fecha Despiece debe ser superior en más de siete dias a la producion");
+         return false;
+     }
+     return true;
  }
     @Override
   public void PADPrimero() {
@@ -1527,16 +1547,13 @@ public class MantDespTactil  extends ventanaPad implements PAD
       mensajeErr("Introduzca alguna Linea de Entrada");
       return;
     }
-    if ( grd_feccadE.getError())
-    {
-      mensajeErr("Fecha Caducidad .. Incorrecta");
-      return;
-    }
+  
     if (deo_blockE.getValor().equals("B") && ! EU.isRootAV())
     {
         msgBox("Estado NO puede ser  Bloqueado");
         return;
     }
+   
     jtEnt.ponValores(jtEnt.getSelectedRow());
 
     int nCol;
@@ -1553,6 +1570,11 @@ public class MantDespTactil  extends ventanaPad implements PAD
     }
     try
     {
+      if (! checkFechaCad())
+      {
+              grd_feccadE.requestFocus();
+              return;
+      }
       if (deo_blockE.getValor().equals("N"))
       {
         String msgErr;
@@ -2606,6 +2628,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    if (! kilsalE.hasCambio() && ! def_usunomE.hasCambio() && ! def_numpiE.hasCambio()  )
        return;
+
    if (pro_codsalE.isNull())
    {
      mensajeErr("Introduzca Código de Producto");
@@ -2629,6 +2652,11 @@ public class MantDespTactil  extends ventanaPad implements PAD
    def_usunomE.resetCambio();
    def_numpiE.resetCambio();
    try {
+     if (! checkFechaCad())
+     {
+          grd_feccadE.requestFocus();
+          return;
+     }
      if (modLinSal)
      {
        if (! borrarLinSa(nlSalE.getValorInt()))
