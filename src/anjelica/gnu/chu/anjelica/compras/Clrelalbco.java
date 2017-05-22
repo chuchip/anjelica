@@ -428,9 +428,9 @@ public class Clrelalbco extends ventana {
         cLabel4 = new gnu.chu.controles.CLabel();
         impFraE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.99");
         cLabel5 = new gnu.chu.controles.CLabel();
-        kgAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9.99");
+        kgAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.9");
         cLabel6 = new gnu.chu.controles.CLabel();
-        KgFraE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9.99");
+        KgFraE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.9");
         cLabel7 = new gnu.chu.controles.CLabel();
         impPenE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.99");
         cLabel8 = new gnu.chu.controles.CLabel();
@@ -575,7 +575,7 @@ public class Clrelalbco extends ventana {
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 331, Short.MAX_VALUE)
+            .add(0, 329, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -588,105 +588,70 @@ public class Clrelalbco extends ventana {
         Pprinc.add(jt, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        Ppie.setMaximumSize(new java.awt.Dimension(574, 63));
+        Ppie.setMinimumSize(new java.awt.Dimension(574, 63));
+        Ppie.setPreferredSize(new java.awt.Dimension(574, 63));
+        Ppie.setLayout(null);
 
         cLabel1.setText("Importe Albaranes");
         cLabel1.setPreferredSize(new java.awt.Dimension(105, 18));
+        Ppie.add(cLabel1);
+        cLabel1.setBounds(2, 2, 105, 18);
 
         impAlbE.setEnabled(false);
         impAlbE.setPreferredSize(new java.awt.Dimension(73, 18));
+        Ppie.add(impAlbE);
+        impAlbE.setBounds(111, 3, 85, 18);
 
         cLabel4.setText("Importe Facturado");
         cLabel4.setPreferredSize(new java.awt.Dimension(105, 18));
+        Ppie.add(cLabel4);
+        cLabel4.setBounds(2, 27, 105, 18);
 
         impFraE.setEnabled(false);
         impFraE.setPreferredSize(new java.awt.Dimension(73, 18));
+        Ppie.add(impFraE);
+        impFraE.setBounds(111, 28, 85, 18);
 
         cLabel5.setText("Kilos Albaranes");
         cLabel5.setPreferredSize(new java.awt.Dimension(105, 18));
+        Ppie.add(cLabel5);
+        cLabel5.setBounds(207, 2, 90, 18);
 
         kgAlbE.setEnabled(false);
         kgAlbE.setPreferredSize(new java.awt.Dimension(73, 18));
+        Ppie.add(kgAlbE);
+        kgAlbE.setBounds(308, 3, 73, 18);
 
         cLabel6.setText("Kilos Facturados");
         cLabel6.setPreferredSize(new java.awt.Dimension(105, 18));
+        Ppie.add(cLabel6);
+        cLabel6.setBounds(200, 27, 105, 18);
 
         KgFraE.setEnabled(false);
         KgFraE.setPreferredSize(new java.awt.Dimension(73, 18));
+        Ppie.add(KgFraE);
+        KgFraE.setBounds(308, 28, 73, 18);
 
         cLabel7.setText("Importe Pend");
         cLabel7.setPreferredSize(new java.awt.Dimension(105, 18));
+        Ppie.add(cLabel7);
+        cLabel7.setBounds(385, 2, 88, 18);
 
         impPenE.setEnabled(false);
         impPenE.setPreferredSize(new java.awt.Dimension(73, 18));
+        Ppie.add(impPenE);
+        impPenE.setBounds(477, 3, 85, 18);
 
         cLabel8.setText("Num.Albaranes");
         cLabel8.setPreferredSize(new java.awt.Dimension(105, 18));
+        Ppie.add(cLabel8);
+        cLabel8.setBounds(385, 27, 90, 18);
 
         numAlbE.setEnabled(false);
         numAlbE.setPreferredSize(new java.awt.Dimension(73, 18));
-
-        org.jdesktop.layout.GroupLayout PpieLayout = new org.jdesktop.layout.GroupLayout(Ppie);
-        Ppie.setLayout(PpieLayout);
-        PpieLayout.setHorizontalGroup(
-            PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PpieLayout.createSequentialGroup()
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(cLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(impAlbE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(cLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(impFraE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(11, 11, 11)
-                        .add(cLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 90, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(kgAlbE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(PpieLayout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(cLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(3, 3, 3)
-                        .add(KgFraE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(cLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 88, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(impPenE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(cLabel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 90, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(numAlbE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 42, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        PpieLayout.setVerticalGroup(
-            PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PpieLayout.createSequentialGroup()
-                .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(PpieLayout.createSequentialGroup()
-                        .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(cLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                .add(impAlbE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(cLabel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(kgAlbE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                .add(impFraE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(cLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(KgFraE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(cLabel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(numAlbE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(cLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                    .add(PpieLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(cLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(impPenE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(14, Short.MAX_VALUE))
-        );
+        Ppie.add(numAlbE);
+        numAlbE.setBounds(479, 28, 42, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
