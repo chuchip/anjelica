@@ -718,7 +718,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-04-06" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-05-22" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -2142,6 +2142,7 @@ public class pdalbara extends ventanaPad  implements PAD
       public void actionPerformed(ActionEvent e)
       {       
          valorarAlbaran(e.getActionCommand().contains("Tarifa"));
+         jt.requestFocusSelectedLater();
       }
     });
     Bdesgl.addActionListener(new ActionListener()
@@ -2754,17 +2755,26 @@ public class pdalbara extends ventanaPad  implements PAD
             {
                 if (jt.getValorDec(n, FD_PRECIO) == 0)
                 {
+                    antPrecio=0;
                     if (n==jt.getSelectedRow())
+                    {
                         avl_prvenE.setValorDec(precio);
+                        avl_prvenE.resetCambio();
+                    }
                     jt.setValor(precio, n, FD_PRECIO);
                     actPrecioAlb(n,precio,false);
+                    if (n==jt.getSelectedRow())
+                    {
+                        antPrecio=precio;
+                    }
+
                 }
             } 
         }
         if (jt.isEnabled())
             jt.ponValores(jt.getSelectedRow());
         dtAdd.commit();
-        msgBox("Precios de Albaran actualizados a "+(tarifa? "los de Tarifa":"los del Pedido"));
+         mensajeErr("Precios de Albaran actualizados a "+(tarifa? "los de Tarifa":"los del Pedido"));
     } catch (Exception k)
     {
         Error("Error al poner Precios de Tarifa a Precio de albaran",k);
@@ -4568,6 +4578,7 @@ public class pdalbara extends ventanaPad  implements PAD
     despieceC.setValor("N");
 //    opModif.setSelected(false);
     activar(true);
+    BValTar.setEnabled(true);
 //    Bimpri.setEnabled(false);
     avc_numeE.resetCambio();
     pvc_numeE.resetCambio();
