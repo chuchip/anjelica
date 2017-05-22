@@ -882,7 +882,7 @@ public class pdalbara extends ventanaPad  implements PAD
         avc_dtoppE.setBounds(new Rectangle(452, 57, 39, 16));
 
         BValTar.addMenu("Precio Tarifa","T");
-        BValTar.addMenu("Precio Pedido","P");
+        BValTar.addMenu("Resetear Precios","P");
         BValTar.setToolTipText("<F5> Poner Precios Albaran");
 
         BValTar.setBounds(new Rectangle(335, 5, 50, 20));
@@ -2141,7 +2141,7 @@ public class pdalbara extends ventanaPad  implements PAD
             @Override
       public void actionPerformed(ActionEvent e)
       {       
-         valorarAlbaran(e.getActionCommand().contains("Tarifa"));
+         valorarAlbaran(!e.getActionCommand().contains("Tarifa"));
          jt.requestFocusSelectedLater();
       }
     });
@@ -2716,17 +2716,18 @@ public class pdalbara extends ventanaPad  implements PAD
    * Valorar Albaran segun precios de Tarifa o Pedidos
    * Pone a todas las linas de albaran cuyo precio sea 0, el precio de la tarifa
    * siempre y cuando esta no sea 0.
+   * @param resetear si es true, pondra todos los precios a 0
    */
-  void valorarAlbaran(boolean tarifa)
+  void valorarAlbaran(boolean resetear)
   {    
-    if (avc_revpreE.getValorInt()!=0 && tarifa)
+//    if (avc_revpreE.getValorInt()!=0 && !resetear)
+//    {
+//       if( mensajes.mensajeYesNo("¿ Poner precios de tarifa a albaran marcado como a revisar Precios?", this)!=mensajes.YES)
+//           return;
+//    }
+    if (!avl_prvenE.isEditable() ||  !avl_prvenE.isEnabled() || !jt.isEnabled())
     {
-       if( mensajes.mensajeYesNo("¿ Poner precios de tarifa a albaran marcado como a revisar Precios?", this)!=mensajes.YES)
-           return;
-    }
-    if (!tarifa && pvc_numeE.getValorInt()==0)
-    {
-        msgBox("Albaran sin pedido");
+        msgBox("Campo Precio no editable");
         return;
     }
     int nRow = jt.getRowCount();
@@ -2734,47 +2735,49 @@ public class pdalbara extends ventanaPad  implements PAD
     try {
         double precio;
         for (int n = 0; n < nRow; n++)
-        {
-            if (tarifa)
+        {         
+            if (resetear)                
             {
-             precio = MantTarifa.getPrecTar(dtStat, jt.getValorInt(n, JT_PROCODI),cli_codiE.getValorInt(),
-                tar_codiE.getValorInt(), avc_fecalbE.getText());
-             jt.setValor(precio, n, FD_PRTARI);
-             String condWhere = getCondWhereActAlb(n);
-             s = "UPDATE  V_albavel set tar_preci =  " + precio
-                    + condWhere;
-             dtAdd.executeUpdate(s);             
+                if (jt.getValorDec(n, FD_PRECIO) == 0)
+                    continue;
+                precio=0;
             }
             else
             {
-              precio = getPrecioPedido(jt.getValorInt(n, JT_PROCODI),dtStat);
-              if (precio<0)
-                  precio=0;
-            }           
-            if (avl_prvenE.isEditable() && avl_prvenE.isEnabled() && jt.isEnabled())
-            {
-                if (jt.getValorDec(n, FD_PRECIO) == 0)
-                {
-                    antPrecio=0;
-                    if (n==jt.getSelectedRow())
-                    {
-                        avl_prvenE.setValorDec(precio);
-                        avl_prvenE.resetCambio();
-                    }
-                    jt.setValor(precio, n, FD_PRECIO);
-                    actPrecioAlb(n,precio,false);
-                    if (n==jt.getSelectedRow())
-                    {
-                        antPrecio=precio;
-                    }
-
+                if (jt.getValorDec(n, FD_PRECIO) != 0)
+                    continue;
+                precio = getPrecioPedido(jt.getValorInt(n, JT_PROCODI),dtStat);
+                if (precio<=0 && avc_revpreE.getValorInt()==0)
+                { // Solo pone precio tarifa si esta marcado como revisar NO.
+                 precio = MantTarifa.getPrecTar(dtStat, jt.getValorInt(n, JT_PROCODI),cli_codiE.getValorInt(),
+                    tar_codiE.getValorInt(), avc_fecalbE.getText());
+                 jt.setValor(precio, n, FD_PRTARI);
+                 String condWhere = getCondWhereActAlb(n);
+                 s = "UPDATE  V_albavel set tar_preci =  " + precio
+                        + condWhere;
+                 dtAdd.executeUpdate(s);             
                 }
-            } 
+                if (precio<0)
+                    precio=0;
+            }
+            antPrecio=jt.getValorDec(n, FD_PRECIO);
+            if (n==jt.getSelectedRow())
+            {
+                avl_prvenE.setValorDec(precio);
+                avl_prvenE.resetCambio();
+            }
+            jt.setValor(precio, n, FD_PRECIO);
+            actPrecioAlb(n,precio,false);
+            if (n==jt.getSelectedRow())
+                antPrecio=precio;
         }
         if (jt.isEnabled())
             jt.ponValores(jt.getSelectedRow());
         dtAdd.commit();
-         mensajeErr("Precios de Albaran actualizados a "+(tarifa? "los de Tarifa":"los del Pedido"));
+        if (resetear)
+            mensajeErr("Precios de Albaran puestos a 0");
+        else
+            mensajeErr("Precios de Albaran actualizados a los de Tarifa y/o  Pedido");
     } catch (Exception k)
     {
         Error("Error al poner Precios de Tarifa a Precio de albaran",k);
