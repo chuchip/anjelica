@@ -47,6 +47,8 @@ public class pdtipotar extends ventanaPad implements PAD
   CTextField tar_incpreE = new CTextField(Types.DECIMAL,"#9.99");
   CLabel tar_comrepL = new CLabel("Comision");
   CTextField tar_comrepE = new CTextField(Types.DECIMAL,"#9.999");
+  CLabel tar_coreinL = new CLabel("Comision Inf.");
+  CTextField tar_coreinE = new CTextField(Types.DECIMAL,"#9.999");
 
   public pdtipotar(EntornoUsuario eu, Principal p)
   {
@@ -105,7 +107,7 @@ public class pdtipotar extends ventanaPad implements PAD
     {
       iniciar(502, 522);
       this.setSize(new Dimension(507, 237));
-      this.setVersion("2017-04-23");
+      this.setVersion("2017-05-22");
       strSql = "SELECT * FROM tipotari" +
           " order by tar_codi";
 
@@ -131,6 +133,8 @@ public class pdtipotar extends ventanaPad implements PAD
     tar_incpreE.setBounds(new Rectangle(81, 74, 43, 17));
     tar_comrepL.setBounds(new Rectangle(150, 74, 100, 17));
     tar_comrepE.setBounds(new Rectangle(210, 74, 50, 17));
+    tar_coreinL.setBounds(new Rectangle(265, 74, 120, 17));
+    tar_coreinE.setBounds(new Rectangle(388, 74, 50, 17));
     Baceptar.setBounds(new Rectangle(74, 101, 110, 29));
     Baceptar.setText("Aceptar");
       Bcancelar.setBounds(new Rectangle(257, 101, 110, 29));
@@ -156,6 +160,9 @@ public class pdtipotar extends ventanaPad implements PAD
       Pprinc.add(tar_incpreE, null);
       Pprinc.add(tar_comrepL, null);
       Pprinc.add(tar_comrepE, null);
+      Pprinc.add(tar_coreinL, null);
+      Pprinc.add(tar_coreinE, null);
+
       Pprinc.add(Bcancelar, null);
       Pprinc.add(Baceptar, null);
 
@@ -171,6 +178,7 @@ public class pdtipotar extends ventanaPad implements PAD
       tar_codoriE.setColumnaAlias("tar_codori");
       tar_incpreE.setColumnaAlias("tar_incpre");
       tar_comrepE.setColumnaAlias("tar_comrep");
+      tar_coreinE.setColumnaAlias("tar_corein");
       activarEventos();
       activaTodo();
       verDatos();
@@ -227,6 +235,7 @@ public class pdtipotar extends ventanaPad implements PAD
           getNombTarifa(tar_codoriE.getValorInt(), true);
         tar_incpreE.setValorDec(dtCon1.getDouble("tar_incpre"));
         tar_comrepE.setValorDec(dtCon1.getDouble("tar_comrep"));
+        tar_coreinE.setValorDec(dtCon1.getDouble("tar_corein"));
       }
       catch (Exception k)
       {
@@ -275,8 +284,8 @@ public class pdtipotar extends ventanaPad implements PAD
        v.add(tar_tipoE.getStrQuery());
        v.add(tar_codoriE.getStrQuery());
        v.add(tar_incpreE.getStrQuery());
-        v.add(tar_comrepE.getStrQuery());
-
+       v.add(tar_comrepE.getStrQuery());
+       v.add(tar_coreinE.getStrQuery());
        String s = "SELECT * FROM tipotari ";
        s = creaWhere(s, v, true);
        s += " ORDER BY tar_codi ";
@@ -519,6 +528,7 @@ public class pdtipotar extends ventanaPad implements PAD
        dt.setDato("tar_codori",tar_codoriE.getValorInt());
        dt.setDato("tar_incpre",tar_incpreE.getValorDec());
        dt.setDato("tar_comrep",tar_comrepE.getValorDec());
+       dt.setDato("tar_corein",tar_coreinE.getValorDec());
      }
 
 
@@ -616,6 +626,7 @@ public class pdtipotar extends ventanaPad implements PAD
          tar_codoriE.setEnabled(b);
          tar_incpreE.setEnabled(b);
          tar_comrepE.setEnabled(b);
+         tar_coreinE.setEnabled(b);
      }
      public static void llenaLinkBox(CLinkBox lkbox, DatosTabla dt ) throws SQLException
      {
@@ -668,5 +679,35 @@ public class pdtipotar extends ventanaPad implements PAD
              throw new SQLException ("Tarifa  "+tarCodi+ " no encontrada");
         return dt.getDouble("tar_incpre");
 
+     }
+     /**
+      * Devuelve la comision del representante para esta tarifa
+      * @param dt
+      * @param tarCodi
+      * @return comision del representante 
+      * @throws SQLException 
+      */
+     public static double getComisionTarifa(DatosTabla dt,int tarCodi) throws SQLException
+     {
+        String s="select tar_comrep from tipotari where "+
+             "  tar_codi ="+tarCodi;
+        if (!dt.select(s))
+             throw new SQLException ("Tarifa  "+tarCodi+ " no encontrada");
+        return dt.getDouble("tar_comrep");
+     }
+     /**
+      * Devuelve la comision de esta tarifa cuando esta por debajo tarifa
+      * @param dt
+      * @param tarCodi
+      * @return
+      * @throws SQLException 
+      */
+     public static double getComisionTarifaInf(DatosTabla dt,int tarCodi) throws SQLException
+     {
+        String s="select tar_corein from tipotari where "+
+             "  tar_codi ="+tarCodi;
+        if (!dt.select(s))
+             throw new SQLException ("Tarifa  "+tarCodi+ " no encontrada");
+        return dt.getDouble("tar_corein");
      }
 }
