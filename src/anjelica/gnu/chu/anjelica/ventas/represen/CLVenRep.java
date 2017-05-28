@@ -5,6 +5,7 @@ import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantRepres;
 import gnu.chu.anjelica.pad.MantTarifa;
 import gnu.chu.anjelica.pad.pdconfig;
+import gnu.chu.anjelica.pad.pdtipotar;
 import gnu.chu.anjelica.ventas.MantPrAlb;
 import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.controles.StatusBar;
@@ -35,6 +36,8 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRException;
@@ -146,7 +149,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2017-04-17" + ARG_ZONAREP);
+        this.setVersion("2017-05-22" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -234,11 +237,35 @@ public class CLVenRep extends ventana {
         BFill.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (jtLin.isVacio())
-                   return;
-                jtLin.setValor(jtLin.getValorDec(JTLIN_PRTAR), JTLIN_PRMIN);
-                avl_proferE.setValorDec(jtLin.getValorDec(JTLIN_PRTAR));
-                jtLin.requestFocusSelectedLater(); 
+                try
+                {
+                    if (jtLin.isVacio() || jtLin.getValorDec(JTLIN_PRTAR)==0) 
+                        return;                    
+                    double prMin,comRep;
+                    
+                    if (jtLin.getValorDec(JTLIN_PRTAR)>jtLin.getValorDec(JTLIN_PRECIO) )
+                    { // Precio tarifa superior o igual a precio venta
+                        comRep= pdtipotar.getComisionTarifaInf(dtStat,jtCab.getValorInt(JTCAB_TARIFA));
+                        if (comRep==0)
+                            return; 
+                        prMin=jtLin.getValorDec(JTLIN_PRECIO)-comRep;
+                    }
+                    else
+                    {
+                        comRep= pdtipotar.getComisionTarifa(dtStat,jtCab.getValorInt(JTCAB_TARIFA));
+                        if (comRep==0 )
+                            return;
+                        prMin=jtLin.getValorDec(JTLIN_PRECIO)-comRep;
+                    }                                      
+                    jtLin.setValor(prMin, JTLIN_PRMIN); 
+                    avl_proferE.setValorDec(prMin);
+                    jtLin.setValor(jtLin.getValorDec(JTLIN_PRECIO)-
+                        prMin,JTLIN_GANA );
+                    jtLin.requestFocusSelectedLater();
+                } catch (SQLException ex)
+                {
+                    Error("Error al buscar precio tarifa",ex);
+                }
             }
         });
         Baceptar.addActionListener(new ActionListener() {
@@ -377,10 +404,10 @@ public class CLVenRep extends ventana {
                 + "','dd-MM-yyyy') and TO_DATE('" + fecFinE.getFecha("dd-MM-yyyy")
                 + "','dd-MM-yyyy') "
                 + " and cl.cli_codi = a.cli_codi "
-                + " and a.avc_repres = '" + rep_codiE.getText() + "'"
+                + "and "+(opReprCli.isSelected()?"cl.rep_codi = ":"a.avc_repres = ") +"'"+ rep_codiE.getText() + "'"
                 + (sbe_codiE.getValorInt()==0?"": " and cl.sbe_codi="+sbe_codiE.getValorInt())
                 + (zon_codiE.isNull()?"": " and cl.zon_codi='"+zon_codiE.getText()+"'")
-                + (rut_codiE.isNull()?"": " and a.cli_ruta='"+rut_codiE.getText()+"'")
+                + (rut_codiE.isNull()?"": " and cl.cli_ruta='"+rut_codiE.getText()+"'")
                 + (opIncCobr.isSelected() ? " and avc_cobrad != 0" : "");
     }
      /**
@@ -464,26 +491,54 @@ public class CLVenRep extends ventana {
                 if (ret!=mensajes.YES)
                     return;
             }
-            String s = "update v_albavel set avl_profer=tar_preci "
-                + " WHERE  tar_preci>0 "
+            PreparedStatement ps=dtAdd.getPreparedStatement("update v_albavel set avl_profer= ? where"+
+                " emp_codi = "+emp_codiE.getValorInt()+
+                " and avc_ano = ? "+
+                " and avc_serie = ?"+
+                " and avc_nume = ?"+                
+                " and avl_numlin = ?");
+            
+            String s="select a.*,tar_comrep,tar_corein from v_albventa as a,v_cliente as cl, tipotari as ta "           
+                + " WHERE   "
+                + " cl.tar_codi = ta.tar_codi "
+                + " and tar_preci>0 "
                 +(swForzar?"": " and avl_profer < 0" )               
-                + " and  emp_codi = " + emp_codiE.getValorInt()+
-                  " and exists (select  from v_albavec as a,clientes as cl  where " +                      
-                        " a.emp_codi = " + emp_codiE.getValorInt()
-                        + " and a.avc_ano = v_albavel.avc_ano  "
-                        + " and a.avc_serie = v_albavel.avc_serie "+
-                        " and a.avc_nume = v_albavel.avc_nume"+
-                        getCondWhere()+")";                        
-
-       
-            int nLinAct = dtAdd.executeUpdate(s);
-            if (nLinAct==0) {
-                msgBox("NO existen albaranes  sin precios minimos y precio de tarifas");
-            }else
+                + " and  a.emp_codi = " + emp_codiE.getValorInt()+            
+                getCondWhere();                       
+            if (!dtCon1.select(s,true))
             {
+                msgBox("NO existen albaranes  sin precios minimos y precio de tarifas");
+                return;
+            }
+            double nLinAct=0;
+            double comRep,prMin;
+            do
+            {
+                     if (dtCon1.getDouble("tar_preci")>dtCon1.getDouble("avl_prven") )
+                    { // Precio tarifa superior o igual a precio venta
+                        comRep=dtCon1.getDouble("tar_corein");
+                        if (comRep==0)
+                            continue; 
+                        prMin=dtCon1.getDouble("avl_prven")-comRep;
+                    }
+                    else
+                    {
+                        comRep= dtCon1.getDouble("tar_comrep");
+                        if (comRep==0 )
+                            continue; 
+                        prMin=dtCon1.getDouble("avl_prven")-comRep;
+                    }                                      
+                    ps.setDouble(1, prMin);
+                    ps.setInt(2, dtCon1.getInt("avc_ano"));
+                    ps.setString(3, dtCon1.getString("avc_serie"));
+                    ps.setInt(4, dtCon1.getInt("avc_nume"));
+                    ps.setInt(5, dtCon1.getInt("avl_numlin"));
+                    ps.executeUpdate();
+                    nLinAct++;
+            } while (dtCon1.next());
+
                 dtAdd.commit();
                 msgBox("Actualizados Precios minimos en " + nLinAct + " lineas");
-            }
         } catch (SQLException k)
         {
             Error("Error al Actualizar Precios Minimos",k);            
@@ -751,8 +806,8 @@ public class CLVenRep extends ventana {
            ArrayList v=new ArrayList();
             v.add(dtCon1.getString("pro_codi"));
             v.add(dtCon1.getString("pro_nomb"));
-            v.add(dtCon1.getString("pvl_unid")+dtCon1.getString("pvl_tipo"));
-            v.add(dtCon1.getString("pvl_kilos"));
+            v.add(Formatear.redondea(dtCon1.getDouble("pvl_canti"),2)+" "+dtCon1.getString("pvl_tipo"));
+//            v.add(dtCon1.getString("pvl_kilos"));
             v.add(dtCon1.getString("pvl_precio"));
             v.add(MantTarifa.getPrecTar(dtStat, dtCon1.getInt("pro_codi"),dtCon1.getInt("cli_codi"),
                     dtCon1.getInt("tar_codi"), dtCon1.getFecha("pvc_fecent", "dd-MM-yyyy"))); 
@@ -927,6 +982,7 @@ public class CLVenRep extends ventana {
         sbe_codiE = new gnu.chu.camposdb.sbePanel();
         gananOpcC = new gnu.chu.controles.CComboBox();
         cLabel14 = new gnu.chu.controles.CLabel();
+        opReprCli = new gnu.chu.controles.CCheckBox();
         jtCab = new gnu.chu.controles.Cgrid(11);
         ArrayList v=new ArrayList();
         v.add("Ejer"); // 0
@@ -1017,21 +1073,22 @@ public class CLVenRep extends ventana {
     BirGrid = new gnu.chu.controles.CButton(Iconos.getImageIcon("reload"));
     BFill = new gnu.chu.controles.CButton(Iconos.getImageIcon("fill"));
     Btarifa = new gnu.chu.controles.CButton(Iconos.getImageIcon("calc"));
-    jtPed = new gnu.chu.controles.CGridEditable(7)
+    jtPed = new gnu.chu.controles.CGridEditable(6)
     ;
     ArrayList v2=new ArrayList();
     v2.add("Prod"); //0
     v2.add("Nombre"); // 1
-    v2.add("Unid"); // 2
-    v2.add("Kilos"); // 3
-    v2.add("Prec"); // 4
-    v2.add("Pr.Tari"); // 5
-    v2.add("Coment."); // 6
+    v2.add("Ped."); // 2
+    v2.add("Prec"); // 3
+    v2.add("Pr.Tari"); // 4
+    v2.add("Coment."); // 5
 
     jtPed.setCabecera(v2);
-    jtPed.setAnchoColumna(new int[]{60,180,50,70,60,60,200});
-    jtPed.setAlinearColumna(new int[]{2,0,2,2,2,2,0});
+    jtPed.setAnchoColumna(new int[]{60,180,50,60,60,250});
+    jtPed.setAlinearColumna(new int[]{2,0,2,2,2,0});
 
+    jtPed.setFormatoColumna(3, "--,--9.99");
+    jtPed.setFormatoColumna(4, "##9.99");
     jtLin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
     jtLin.setPreferredSize(new java.awt.Dimension(80, 80));
@@ -1102,9 +1159,9 @@ public class CLVenRep extends ventana {
     rep_codiE.setBounds(50, 25, 190, 17);
     rep_codiE.getAccessibleContext().setAccessibleDescription("");
 
-    opIncCobr.setText("Solo cobrados");
+    opIncCobr.setText("Cobrados");
     Pcondic.add(opIncCobr);
-    opIncCobr.setBounds(420, 45, 100, 17);
+    opIncCobr.setBounds(510, 22, 80, 17);
 
     Baceptar.setText("Elegir");
     Baceptar.addMenu("Consultar","C");
@@ -1144,7 +1201,7 @@ public class CLVenRep extends ventana {
 
     cLabel11.setText("Seccion");
     Pcondic.add(cLabel11);
-    cLabel11.setBounds(290, 45, 50, 17);
+    cLabel11.setBounds(270, 45, 50, 17);
     Pcondic.add(gananMinE);
     gananMinE.setBounds(150, 45, 40, 17);
 
@@ -1158,7 +1215,7 @@ public class CLVenRep extends ventana {
     Pcondic.add(cLabel13);
     cLabel13.setBounds(1, 25, 50, 15);
     Pcondic.add(sbe_codiE);
-    sbe_codiE.setBounds(340, 45, 40, 19);
+    sbe_codiE.setBounds(320, 45, 40, 19);
 
     gananOpcC.addItem(""," ");
     gananOpcC.addItem("Mayor",">");
@@ -1170,6 +1227,11 @@ public class CLVenRep extends ventana {
     cLabel14.setText("Ganacia ");
     Pcondic.add(cLabel14);
     cLabel14.setBounds(0, 45, 50, 17);
+
+    opReprCli.setText("Forzar Repr.");
+    opReprCli.setToolTipText("Coger Repr. de Cliente");
+    Pcondic.add(opReprCli);
+    opReprCli.setBounds(360, 45, 90, 17);
 
     Pprinc.add(Pcondic, new java.awt.GridBagConstraints());
 
@@ -1358,6 +1420,7 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CTextField kilAlbE;
     private gnu.chu.controles.CTextField numAlbE;
     private gnu.chu.controles.CCheckBox opIncCobr;
+    private gnu.chu.controles.CCheckBox opReprCli;
     private gnu.chu.controles.CTextField pro_codiE;
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CLinkBox rep_codiE;

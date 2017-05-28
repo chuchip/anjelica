@@ -1,10 +1,13 @@
 package gnu.chu.anjelica.almacen;
 
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.compras.MantAlbCom;
+import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.MantTipDesp;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.pad.MantFamPro;
+import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.camposdb.empPanel;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.controles.miCellRender;
@@ -18,13 +21,12 @@ import java.awt.Dimension;
 import java.awt.event.*;
 import java.sql.Types;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 /**
  *   Consulta Listado de Stock Agrupandolos por fecha caducidad.
  *   Saca los datos de la tabla de stock-partidas (v_stkpart)
  *
- *  <p>  Copyright: Copyright (c) 2005-2012
+ *  <p>  Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -54,7 +56,9 @@ public class CLinvcong extends ventana
   private double kilAct,kilTot,impAct,impTot;
   private int nDiasAgr;
   boolean PARAM_VERCOSTOS=false;
-  
+  private final int JT_NUMDES=14;
+  private final int JT_PROCODI=0;
+  private final int JT_LOTE=3;
   public CLinvcong(EntornoUsuario eu, Principal p)
   {
       this(eu,p, null);
@@ -171,17 +175,42 @@ public class CLinvcong extends ventana
             popEspere_BCancelarSetEnabled(false);
         }
        });
+       MVerMvtos.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+         verMvtos();           
+        }
+      });
        jt.addMouseListener(new MouseAdapter() {
             @Override
           public void mouseClicked(MouseEvent e) {
+            
             if (e.getClickCount()<2)
                 return;
             if (jf==null)
                 return;
-            
+          
             ejecutable prog;
+            if (jt.getValString(JT_NUMDES).startsWith("C"))
+            {
+                if ((prog=jf.gestor.getProceso(MantAlbComCarne.getNombreClase()))==null)
+                     return;
+                MantAlbCom cm = (MantAlbCom) prog;
+                if (cm.inTransation())
+                {
+                    msgBox("Mantenimiento Albaranes de Compras ocupado. No se puede realizar la busqueda");
+                    return;
+                }
+                cm.PADQuery();
+                cm.setEjeNume(Integer.parseInt(jt.getValString(JT_NUMDES).substring(2,jt.getValString(JT_NUMDES).indexOf("/"))));
+                cm.setAccSerie(jt.getValString(JT_NUMDES).substring(1,2));
+                cm.setAccCodi(jt.getValString(JT_NUMDES).substring(jt.getValString(JT_NUMDES).indexOf("/")+1));
+                cm.ej_query();
+                jf.gestor.ir(cm);
+                return;
+            }
             if ((prog=jf.gestor.getProceso(MantDesp.getNombreClase()))==null)
-            return;
+                 return;
             MantDesp cm=(MantDesp) prog;
             if (cm.inTransation())
             {
@@ -189,8 +218,8 @@ public class CLinvcong extends ventana
                 return;
             }
             cm.PADQuery();
-            cm.setEjeNume(jt.getValString(12).substring(0,jt.getValString(12).indexOf("/")));
-            cm.setDeoCodi(jt.getValString(12).substring(jt.getValString(12).indexOf("/")+1));
+            cm.setEjeNume(jt.getValString(JT_NUMDES).substring(1,jt.getValString(JT_NUMDES).indexOf("/")));
+            cm.setDeoCodi(jt.getValString(JT_NUMDES).substring(jt.getValString(JT_NUMDES).indexOf("/")+1));
             cm.ej_query();
             jf.gestor.ir(cm); 
           }
@@ -210,6 +239,31 @@ public class CLinvcong extends ventana
 //                feciniE.setDate( );
            }
       } );
+   }
+   void verMvtos()
+   {
+         if (jf==null)
+                return;
+         ejecutable prog;
+            if ((prog = jf.gestor.getProceso(Comvalm.getNombreClase())) == null)
+                return;
+            gnu.chu.anjelica.almacen.Comvalm cm = (gnu.chu.anjelica.almacen.Comvalm) prog;
+            for (int n=jt.getSelectedRow();n>=0;n--)
+             {
+                 if (jt.getValorInt(n,JT_PROCODI)!=0)
+                 {
+                     cm.setProCodi(jt.getValorInt(n,JT_PROCODI));
+                     break;
+                 }
+             }
+            String[] valores= jt.getValString(JT_LOTE).split("-");
+            cm.setEjercicio(Integer.parseInt(valores[0]));
+            cm.setSerie(valores[1]);
+            cm.setLote(Integer.parseInt(valores[2]));
+            cm.setIndividuo(Integer.parseInt(valores[3]));
+                        
+            cm.ejecutaConsulta();
+            jf.gestor.ir(cm);  
    }
    void ponFechas(int semana) throws Exception
    {
@@ -243,6 +297,7 @@ public class CLinvcong extends ventana
         java.awt.GridBagConstraints gridBagConstraints;
 
         cTextField1 = new gnu.chu.controles.CTextField();
+        MVerMvtos = new javax.swing.JMenuItem();
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
@@ -264,6 +319,9 @@ public class CLinvcong extends ventana
         cLabel11 = new gnu.chu.controles.CLabel();
         ordenE = new gnu.chu.controles.CComboBox();
         opSoloTot = new gnu.chu.controles.CCheckBox();
+        cLabel12 = new gnu.chu.controles.CLabel();
+        pro_loteE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
+        opDesgInd = new gnu.chu.controles.CCheckBox();
         jt = new gnu.chu.controles.Cgrid(15);
         Ppie = new gnu.chu.controles.CPanel();
         cLabel6 = new gnu.chu.controles.CLabel();
@@ -274,6 +332,8 @@ public class CLinvcong extends ventana
         impTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9.99");
 
         cTextField1.setText("cTextField1");
+
+        MVerMvtos.setText("Ver Mvtos");
 
         Pprinc.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         Pprinc.setLayout(new java.awt.GridBagLayout());
@@ -295,33 +355,33 @@ public class CLinvcong extends ventana
 
         alm_codiE.setAncTexto(30);
         Pcabe.add(alm_codiE);
-        alm_codiE.setBounds(71, 2, 200, 17);
+        alm_codiE.setBounds(60, 22, 200, 17);
 
         cLabel1.setText("Almacen");
         Pcabe.add(cLabel1);
-        cLabel1.setBounds(10, 2, 48, 17);
+        cLabel1.setBounds(0, 22, 48, 17);
 
         cLabel3.setText("Producto ");
         Pcabe.add(cLabel3);
-        cLabel3.setBounds(10, 22, 60, 17);
+        cLabel3.setBounds(2, 2, 53, 17);
 
-        cLabel4.setText("Kilos Minimos");
+        cLabel4.setText("Lote");
         Pcabe.add(cLabel4);
-        cLabel4.setBounds(440, 2, 90, 17);
+        cLabel4.setBounds(380, 22, 40, 17);
         cLabel4.getAccessibleContext().setAccessibleName("Con mas de");
 
         Pcabe.add(kilminE);
         kilminE.setBounds(530, 2, 43, 17);
         Pcabe.add(pro_codiE);
-        pro_codiE.setBounds(70, 22, 350, 17);
+        pro_codiE.setBounds(60, 2, 270, 17);
 
-        cLabel8.setText("Dias Agrupar");
+        cLabel8.setText("Dias Agr.");
         Pcabe.add(cLabel8);
-        cLabel8.setBounds(290, 2, 80, 17);
+        cLabel8.setBounds(340, 2, 50, 17);
 
-        numDiasAgrE.setText("3");
+        numDiasAgrE.setText("0");
         Pcabe.add(numDiasAgrE);
-        numDiasAgrE.setBounds(370, 2, 20, 17);
+        numDiasAgrE.setBounds(400, 2, 20, 17);
 
         cPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Limitar fechas"));
         cPanel1.setLayout(null);
@@ -356,9 +416,21 @@ public class CLinvcong extends ventana
         Pcabe.add(ordenE);
         ordenE.setBounds(350, 50, 90, 20);
 
-        opSoloTot.setText("Solo totales");
+        opSoloTot.setText("Solo Totales");
         Pcabe.add(opSoloTot);
-        opSoloTot.setBounds(450, 22, 120, 18);
+        opSoloTot.setBounds(270, 22, 90, 18);
+
+        cLabel12.setText("Kilos Minimos");
+        Pcabe.add(cLabel12);
+        cLabel12.setBounds(440, 2, 90, 17);
+        Pcabe.add(pro_loteE);
+        pro_loteE.setBounds(420, 22, 50, 17);
+
+        opDesgInd.setSelected(true);
+        opDesgInd.setText("Deg. Indiv.");
+        opDesgInd.setToolTipText("Desglosar Individuos");
+        Pcabe.add(opDesgInd);
+        opDesgInd.setBounds(480, 22, 90, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -386,6 +458,7 @@ public class CLinvcong extends ventana
         jt.setCabecera(v);
         jt.setAlinearColumna(new int[]{0,0,0,0,2,2,1,1,2,1,1,2,2,2,2});
         jt.setAnchoColumna(new int[]{40,150,130,70,40,60,70,70,50,70,70,50,70,90,50});
+        jt.getPopMenu().add(MVerMvtos);
         jt.setFormatoColumna(6, "dd-MM-yy");
         jt.setFormatoColumna(7, "dd-MM-yy");
         jt.setFormatoColumna(9, "dd-MM-yy");
@@ -574,21 +647,21 @@ public class CLinvcong extends ventana
         activar(false);
         nDiasAgr=numDiasAgrE.getValorInt();
        
-        String s = "select r.pro_codi,fam_codi,r.eje_nume,r.pro_serie,r.pro_nupar,"
-                + " sum(stp_kilact) as stp_kilact, " +
-                " sum(stp_unact) as stp_unact "+
+        String s = "select r.pro_codi,fam_codi,r.eje_nume,r.pro_serie,r.pro_nupar,r.pro_numind, "
+                + " stp_kilact, " +
+                "   stp_unact "+
                 " from v_stkpart as r,v_articulo as a where  a.pro_artcon !=0 "+
                 (alm_codiE.isNull() ? "" : " and r.alm_codi =" + alm_codiE.getValorInt()) +
                 (pro_codiE.isNull()?"":" and a.pro_codi = "+pro_codiE.getValorInt())+
+                (pro_loteE.isNull()?"":" and pro_nupar = "+pro_loteE.getValorInt())+
                 (filtroEmpr==null?"":" and r.emp_codi in ("+filtroEmpr+")")+
                 " and stp_tiplot != 'S' "+ // Quito los registros de Acumulados
                 " and a.pro_codi = r.pro_codi " +
-                " and a.pro_tiplot = 'V' "+ // Solo Prod. Vendibles
-                " group by a.fam_codi,r.pro_codi,r.eje_nume,r.pro_serie,r.pro_nupar " +
-                "having sum(stp_kilact) > "+(kilminE.getValorDec() == 0 ? "1" :  kilminE.getValorDec()) +
+                " and a.pro_tiplot = 'V' "+ // Solo Prod. Vendibles              
+                " and stp_kilact > "+(kilminE.getValorDec() == 0 ? "1" :  kilminE.getValorDec()) +
                 " order by "+
                 (ordenE.getValor().equals("F")?"fam_codi,":"")+
-                " pro_codi,eje_nume,pro_serie, pro_nupar ";
+                " pro_codi,eje_nume,pro_serie, pro_nupar,pro_numind ";
         try 
         {
       //      System.out.println("s:" + s);
@@ -665,7 +738,7 @@ public class CLinvcong extends ventana
                 {
                    if (!utdesp.busDatInd(dtCon1.getString("pro_serie"),proCodi,
                         EU.em_cod, dtCon1.getInt("eje_nume"), dtCon1.getInt("pro_nupar"),
-                        0,dtDesp,dtStat, EU))
+                        dtCon1.getInt("pro_numind"),dtDesp,dtStat, EU))
                    {
                         prvNomb="*DESCONOCIDO*";
                         precCompra=0;
@@ -703,7 +776,7 @@ public class CLinvcong extends ventana
                     Formatear.comparaFechas(fecCadCong,fecDesp);
                 if (diasCong<32)
                     fecCadCong=Formatear.sumaDiasDate(fecCadCong, 23*30); // Le sumo 23 Meses.
-                    diasCong=Formatear.comparaFechas(fecCadCong, Formatear.getDateAct());
+                diasCong=Formatear.comparaFechas(fecCadCong, Formatear.getDateAct());
                 if (! feciniE.isNull())
                 {
                     if (fecDesp==null)
@@ -734,8 +807,9 @@ public class CLinvcong extends ventana
                     }
 
                     v.add(prvNomb); // Proveedor
-                    v.add(agruFec?"":dtCon1.getString("eje_nume")+dtCon1.getString("pro_serie")+dtCon1.getString("pro_nupar"));
-
+                    v.add(agruFec?"":dtCon1.getString("eje_nume")+"-"+dtCon1.getString("pro_serie")+"-"+
+                        dtCon1.getString("pro_nupar")+"-"+
+                        dtCon1.getInt("pro_numind"));
                     v.add(dtCon1.getInt("stp_unact"));
                     v.add(dtCon1.getDouble("stp_kilact"));
                     v.add(agruFec?dtCon1.getDate("feccom"):utdesp.getFecCompra());
@@ -746,7 +820,9 @@ public class CLinvcong extends ventana
                     v.add(fecCadCong==null?"":diasCong);
                     v.add(PARAM_VERCOSTOS?precCompra:0);
                     v.add(PARAM_VERCOSTOS?precCompra*dtCon1.getDouble("stp_kilact"):0);
-                    v.add(agruFec?0:utdesp.getEjeDesp()+"/"+utdesp.getDeoCodi());
+                    v.add(agruFec?0:
+                        utdesp.getEjeDesp()==0?"C"+utdesp.getAccSerie()+utdesp.getAccAno()+"/"+
+                            utdesp.getAccNume() :"D"+utdesp.getEjeDesp()+"/"+utdesp.getDeoCodi());
                     datos.add(v);
                 }
                 nProd++;
@@ -783,6 +859,7 @@ public class CLinvcong extends ventana
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
+    private javax.swing.JMenuItem MVerMvtos;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Ppie;
     private gnu.chu.controles.CPanel Pprinc;
@@ -790,6 +867,7 @@ public class CLinvcong extends ventana
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
+    private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -807,9 +885,11 @@ public class CLinvcong extends ventana
     private gnu.chu.controles.CTextField kilTotE;
     private gnu.chu.controles.CTextField kilminE;
     private gnu.chu.controles.CTextField numDiasAgrE;
+    private gnu.chu.controles.CCheckBox opDesgInd;
     private gnu.chu.controles.CCheckBox opSoloTot;
     private gnu.chu.controles.CComboBox ordenE;
     private gnu.chu.camposdb.proPanel pro_codiE;
+    private gnu.chu.controles.CTextField pro_loteE;
     private gnu.chu.controles.CTextField semanaE;
     private gnu.chu.controles.CTextField uniTotE;
     // End of variables declaration//GEN-END:variables

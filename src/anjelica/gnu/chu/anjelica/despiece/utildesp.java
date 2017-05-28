@@ -369,42 +369,30 @@ public class utildesp
         return false;
       }
       // Primero busco en Compras el Individuo mandado.
-      s = "select p.*,c.acc_fecrec,c.prv_codi,c.acc_serie,c.acc_nume,"+
-          " l.acl_prcom+c.acc_impokg as prcom  "+
-         " from  v_albcompar p,v_albacoc c,v_albacol as l " +
-          " WHERE p.emp_codi = " + empLot +
-          " and p.acc_ano = " + ejeLot +
-          " and p.acc_serie = '" + serie + "'" +
-          " and p.acc_nume = " + proLote +
-          (proIndi==0?(proCodi!=0?"":" and p.pro_codi = " + proCodi )          
-          :" and p.acp_numind = " + proIndi )+
-          (proCodi!=0?"":" and p.pro_codi = " + proCodi )+
-          (almCodi!=0?" and l.alm_codi = "+almCodi:"")+
-          " and p.emp_codi = c.emp_codi " +
-          " and p.acc_ano = c.acc_ano " +
-          " and p.acc_serie = c.acc_serie " +
-          " and p.acc_nume = c.acc_nume "+
-          " and c.emp_codi = l.emp_codi " +
-          " and c.acc_ano = l.acc_ano " +
-          " and c.acc_serie = l.acc_serie " +
-          " and c.acc_nume = l.acc_nume "+
-          " and p.acl_nulin = l.acl_nulin ";
+      s = "select *, acl_prcom  as prcom  "+
+         " from  v_compras " +
+          " WHERE acc_ano = " + ejeLot +
+          (empLot==0?"": " and emp_codi = " + empLot )+          
+          " and acc_serie = '" + serie + "'" +
+          " and acc_nume = " + proLote +
+          (proIndi==0?(proCodi!=0?"":" and pro_codi = " + proCodi )          
+          :" and acp_numind = " + proIndi )+
+          (proCodi!=0?"":" and pro_codi = " + proCodi )+
+          (almCodi!=0?" and alm_codi = "+almCodi:"");
 
       dtRes=dtStat.select(s);
       if (!dtRes )
       {
         // No encontrado individuo  en compras, lo busco en salidas de despieces
-        s = "SELECT df.*,de.tid_codi,de.deo_desnue FROM v_despfin as df,desporig as de "+
-            " WHERE df.pro_codi = " + proCodi +
-            " and df.def_ejelot = " + ejeLot +
-            " and df.def_serlot = '" + serie + "'" +
-            " and df.pro_lote = " + proLote +
-            " and "+(proIndi==0?"df.pro_codi= "+proCodi
-            :" df.pro_numind = " + proIndi)+
-            (almCodi!=0?" and de.deo_almdes = "+almCodi:"")+
-            " and df.eje_nume = de.eje_nume "+
-            " and df.deo_codi = de.deo_codi "+
-            " order by df.def_tiempo desc";
+        s = "SELECT * FROM v_despsal "+
+            " WHERE pro_codi = " + proCodi +
+            " and def_ejelot = " + ejeLot +
+            " and def_serlot = '" + serie + "'" +
+            " and pro_lote = " + proLote +
+            " and "+(proIndi==0?" pro_codi= "+proCodi
+            :" pro_numind = " + proIndi)+
+            (almCodi!=0?" and deo_almdes = "+almCodi:"")+
+            " order by def_tiempo desc";
         if (!dtCon1.select(s))
         {
           msgAviso = "No encontrado origen de Individuo en Compras o Despieces";
@@ -492,6 +480,9 @@ public class utildesp
       }
       else
       { // Encontrado en Compras.
+          accNume=dtStat.getInt("acc_nume");
+          accAno=dtStat.getInt("acc_ano");
+          accSerie=dtStat.getString("acc_serie");
           proCodiCompra=proCodi;
           proLoteCompra=proLote;
           proSerieCompra=serie;
@@ -1132,10 +1123,26 @@ public class utildesp
  {
      return deoAno;
  }
+ /**
+  * Devuelve numero de serie compra producto origen
+  * @return Numero Serie Albaran Compra
+  */
+ public String getAccSerie()
+ {
+     return accSerie;
+ }
+  /**
+  * Devuelve numero de albaran compra producto origen
+  * @return Numero Albaran Compra
+  */
  public int getAccNume()
  {
      return accNume;
  }
+  /**
+  * Devuelve ejercicio del albaran compra producto origen
+  * @return  ejercicio del albaran compra
+  */
  public int getAccAno()
  {
      return accAno;
@@ -1150,8 +1157,9 @@ public class utildesp
  }
  /**
   * Establece que los despieces solo se deben de buscar del tipo mandado.
-  * Eso influye solo para  costos, si el despice no es de costo, ignorara el costo.
+  * Eso influye solo para  costos, si el despiece no es de costo, ignorara el costo.
   * Por defecto se buscara el ultimo despiece de cualquier tipo
+  * Usado para saber cuando se metio un producto a congelar.
   * @param tidCodi 
   */
  public void setTidCodi(int tidCodi)

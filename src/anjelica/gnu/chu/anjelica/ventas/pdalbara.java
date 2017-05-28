@@ -2768,11 +2768,13 @@ public class pdalbara extends ventanaPad  implements PAD
             }
             jt.setValor(precio, n, FD_PRECIO);
             actPrecioAlb(n,precio,false);
-            if (n==jt.getSelectedRow())
-                antPrecio=precio;
+           
         }
         if (jt.isEnabled())
-            jt.ponValores(jt.getSelectedRow());
+        {
+            jt.ponValores(jt.getSelectedRow());            
+            antPrecio=avl_prvenE.getValorDec();
+        }
         dtAdd.commit();
         if (resetear)
             mensajeErr("Precios de Albaran puestos a 0");
@@ -4581,7 +4583,8 @@ public class pdalbara extends ventanaPad  implements PAD
     despieceC.setValor("N");
 //    opModif.setSelected(false);
     activar(true);
-    BValTar.setEnabled(true);
+    if (P_MODPRECIO)        
+        BValTar.setEnabled(true);
 //    Bimpri.setEnabled(false);
     avc_numeE.resetCambio();
     pvc_numeE.resetCambio();

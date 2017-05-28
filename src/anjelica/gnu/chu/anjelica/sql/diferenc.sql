@@ -1,3 +1,16 @@
+-- Para insercion tarifa
+create table tarifa_origen 
+(
+pro_codi int,
+tar_precio float
+);
+--
+-- Incluye comision por debajo tarifa
+alter table tipotari add tar_corein float;				-- Comision Repres. Inferior
+update tipotari set tar_corein=0;
+alter table tipotari alter tar_corein set not null;			-- Comision Repres. Inferior
+--
+-- 
 alter table v_articulo add pro_kgmiun float; -- kg. Minimo Unidad.
 alter table v_articulo add pro_kgmaun float; -- kg. Maximo Unidad.
 alter table v_articulo add pro_cointa float; -- Costo a Incrementar en Tarifa

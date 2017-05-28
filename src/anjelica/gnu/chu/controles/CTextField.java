@@ -411,6 +411,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
       } catch (ParseException ex)
       {
           Logger.getLogger(CTextField.class.getName()).log(Level.SEVERE, null, ex);
+          return;
       }
       if (fecha==null)
           return;

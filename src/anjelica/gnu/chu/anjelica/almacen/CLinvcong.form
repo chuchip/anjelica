@@ -7,6 +7,11 @@
         <Property name="text" type="java.lang.String" value="cTextField1"/>
       </Properties>
     </Component>
+    <Component class="javax.swing.JMenuItem" name="MVerMvtos">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Ver Mvtos"/>
+      </Properties>
+    </Component>
   </NonVisualComponents>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -93,7 +98,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="71" y="2" width="200" height="17"/>
+                  <AbsoluteConstraints x="60" y="22" width="200" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -103,7 +108,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="2" width="-1" height="17"/>
+                  <AbsoluteConstraints x="0" y="22" width="-1" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -113,20 +118,20 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="22" width="60" height="17"/>
+                  <AbsoluteConstraints x="2" y="2" width="-1" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel4">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Kilos Minimos"/>
+                <Property name="text" type="java.lang.String" value="Lote"/>
               </Properties>
               <AccessibilityProperties>
                 <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Con mas de"/>
               </AccessibilityProperties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="440" y="2" width="90" height="17"/>
+                  <AbsoluteConstraints x="380" y="22" width="40" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -143,30 +148,30 @@
             <Component class="gnu.chu.camposdb.proPanel" name="pro_codiE">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="70" y="22" width="350" height="17"/>
+                  <AbsoluteConstraints x="60" y="2" width="270" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel8">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Dias Agrupar"/>
+                <Property name="text" type="java.lang.String" value="Dias Agr."/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="290" y="2" width="80" height="17"/>
+                  <AbsoluteConstraints x="340" y="2" width="50" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CTextField" name="numDiasAgrE">
               <Properties>
-                <Property name="text" type="java.lang.String" value="3"/>
+                <Property name="text" type="java.lang.String" value="0"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;#9&quot;)"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="370" y="2" width="20" height="17"/>
+                  <AbsoluteConstraints x="400" y="2" width="20" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -272,11 +277,43 @@
             </Component>
             <Component class="gnu.chu.controles.CCheckBox" name="opSoloTot">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Solo totales"/>
+                <Property name="text" type="java.lang.String" value="Solo Totales"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="450" y="22" width="120" height="18"/>
+                  <AbsoluteConstraints x="270" y="22" width="90" height="18"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CLabel" name="cLabel12">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Kilos Minimos"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="440" y="2" width="90" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="pro_loteE">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;####9&quot;)"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="420" y="22" width="50" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opDesgInd">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Deg. Indiv."/>
+                <Property name="toolTipText" type="java.lang.String" value="Desglosar Individuos"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="480" y="22" width="90" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -298,7 +335,7 @@
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(15)"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList v = new ArrayList();&#xa;      v.add(&quot;Prod&quot;); // 0&#xa;      v.add(&quot;Nombre&quot;); // 1 Producto&#xa;      v.add(&quot;Proveed&quot;); //  2 Proveedor&#xa;      v.add(&quot;Lote&quot;); // 3&#xa;      v.add(&quot;Unid.&quot;); // 4&#xa;      v.add(&quot;Kilos&quot;); // 5&#xa;      v.add(&quot;Fec.Com&quot;); // 6&#xa;      v.add(&quot;Fec.Cad&quot;); // 7&#xa;      v.add(&quot;D.Cad&quot;); // 8&#xa;      v.add(&quot;Fec.Cong&quot;); // 9&#xa;      v.add(&quot;F.Cad.C.&quot;); // 10&#xa;      v.add(&quot;D.Cong&quot;); // 11&#xa;      v.add(&quot;Costo&quot;); // 12&#xa;      v.add(&quot;Importe&quot;); //13&#xa;      v.add(&quot;N.Desp&quot;);// 14&#xa;      jt.setCabecera(v);&#xa;      jt.setAlinearColumna(new int[]{0,0,0,0,2,2,1,1,2,1,1,2,2,2,2});&#xa;      jt.setAnchoColumna(new int[]{40,150,130,70,40,60,70,70,50,70,70,50,70,90,50});&#xa;      jt.setFormatoColumna(6, &quot;dd-MM-yy&quot;);&#xa;      jt.setFormatoColumna(7, &quot;dd-MM-yy&quot;);&#xa;      jt.setFormatoColumna(9, &quot;dd-MM-yy&quot;);&#xa;      jt.setFormatoColumna(10, &quot;dd-MM-yy&quot;);&#xa;jt.setFormatoColumna(8, &quot;---9&quot;);&#xa;jt.setFormatoColumna(11, &quot;---9&quot;);&#xa;jt.setFormatoColumna(5, &quot;---,--9.99&quot;);&#xa;jt.setFormatoColumna(12, &quot;##9.99&quot;);&#xa;jt.setFormatoColumna(13, &quot;--,--9.99&quot;);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList v = new ArrayList();&#xa;      v.add(&quot;Prod&quot;); // 0&#xa;      v.add(&quot;Nombre&quot;); // 1 Producto&#xa;      v.add(&quot;Proveed&quot;); //  2 Proveedor&#xa;      v.add(&quot;Lote&quot;); // 3&#xa;      v.add(&quot;Unid.&quot;); // 4&#xa;      v.add(&quot;Kilos&quot;); // 5&#xa;      v.add(&quot;Fec.Com&quot;); // 6&#xa;      v.add(&quot;Fec.Cad&quot;); // 7&#xa;      v.add(&quot;D.Cad&quot;); // 8&#xa;      v.add(&quot;Fec.Cong&quot;); // 9&#xa;      v.add(&quot;F.Cad.C.&quot;); // 10&#xa;      v.add(&quot;D.Cong&quot;); // 11&#xa;      v.add(&quot;Costo&quot;); // 12&#xa;      v.add(&quot;Importe&quot;); //13&#xa;      v.add(&quot;N.Desp&quot;);// 14&#xa;      jt.setCabecera(v);&#xa;      jt.setAlinearColumna(new int[]{0,0,0,0,2,2,1,1,2,1,1,2,2,2,2});&#xa;      jt.setAnchoColumna(new int[]{40,150,130,70,40,60,70,70,50,70,70,50,70,90,50});&#xa;      jt.getPopMenu().add(MVerMvtos);&#xa;      jt.setFormatoColumna(6, &quot;dd-MM-yy&quot;);&#xa;      jt.setFormatoColumna(7, &quot;dd-MM-yy&quot;);&#xa;      jt.setFormatoColumna(9, &quot;dd-MM-yy&quot;);&#xa;      jt.setFormatoColumna(10, &quot;dd-MM-yy&quot;);&#xa;jt.setFormatoColumna(8, &quot;---9&quot;);&#xa;jt.setFormatoColumna(11, &quot;---9&quot;);&#xa;jt.setFormatoColumna(5, &quot;---,--9.99&quot;);&#xa;jt.setFormatoColumna(12, &quot;##9.99&quot;);&#xa;jt.setFormatoColumna(13, &quot;--,--9.99&quot;);"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

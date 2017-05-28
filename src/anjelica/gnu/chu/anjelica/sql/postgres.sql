@@ -727,7 +727,7 @@ create view anjelica.v_albventa as select c.avc_id,c.emp_codi,c.avc_ano,c.avc_se
 cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
 avc_basimp,avc_kilos,avc_unid,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
-avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_profer,avl_prbase,avc_repres,
+avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_profer,avl_prbase,avc_repres,cli_ruta,
 tar_preci,avl_unid,
 avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,avl_dtolin 
 from v_albavel as l, v_albavec as c 
@@ -1926,6 +1926,7 @@ tar_tipo char(1) not null,				-- Tipo Tarifa: 'N' No poner Precios Aut,'S' Poner
 tar_codori int not null default 0,		-- Tarifa Original (0: No depende de nadie)
 tar_incpre float not null default 0,	-- Se Incrementara precio sobre tar_codori (Cant. Fija, no en porcentaje)
 tar_comrep float not null,				-- Comision Repres.
+tar_corein float not null ,				-- Comision Repres. por debajo
 constraint ix_tipotari primary key (tar_codi)
 );
 ---
@@ -4252,10 +4253,10 @@ l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcos
 create  view v_despsal as select c.eje_nume,c.deo_codi,c.deo_numdes,tid_codi,deo_fecha, deo_almori,deo_almdes,deo_ejloge,
 deo_seloge,deo_nuloge,deo_incval,
 l.def_orden, pro_codi, def_ejelot, def_emplot, def_serlot, pro_lote,pro_numind ,def_kilos,def_numpie,def_prcost,
-def_feccad,def_preusu,def_tiempo,l.alm_codi
+def_feccad,def_preusu,def_tiempo,l.alm_codi,deo_desnue
  from anjelica.desporig as c, anjelica.v_despfin as l where c.eje_nume=l.eje_nume
  and c.deo_codi= l.deo_codi;
- 
+grant select on  anjelica.v_despsal to public;
 create  view v_despiece as select  1 as emp_codi, c.*, g.grd_serie,g.grd_kilo,grd_unid,grd_prmeco,grd_incval,
 grd_valor,grd_block,grd_feccad,g.prv_codi as grd_prvcod,grd_desnue,grd_fecpro,grd_fecha,
 1 as deo_emloge, 1 as deo_emplot ,

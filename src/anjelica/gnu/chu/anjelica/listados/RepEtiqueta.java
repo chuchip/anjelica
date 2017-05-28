@@ -3,15 +3,12 @@ package gnu.chu.anjelica.listados;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.pdalmace;
-import gnu.chu.anjelica.despiece.datTraPanel;
 import gnu.chu.anjelica.despiece.utildesp;
-import gnu.chu.anjelica.pad.pdprove;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.utilidades.CodigoBarras;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
-import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
 import gnu.chu.winayu.ayuLote;
 import java.awt.BorderLayout;
@@ -94,7 +91,7 @@ public class RepEtiqueta extends ventana
 
         iniciarFrame();
 
-        this.setVersion("2016-07-01");
+        this.setVersion("2017-05-26");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -444,7 +441,8 @@ public class RepEtiqueta extends ventana
     {
       try
       {
-        
+       
+
         // Fin del Bucle ya tenemos todos los datos.
         mensajeErr("Espere, por favor ... Imprimiendo");
         etiq.setTipoEtiq(dtStat, EU.em_cod,
@@ -459,6 +457,16 @@ public class RepEtiqueta extends ventana
         etiq.setNumCopias(1);
 
         utDesp= trazPanel.getUtilDespiece(true);
+         if ( utDesp.getFechaProduccion() != null && Formatear.comparaFechas(utDesp.getFecCaduc() , utDesp.getFechaProduccion() )<10)
+        {
+            msgBox("Fecha caducidad debe ser superior en 10 dias a fecha produccion");
+            return;
+        }
+        if (utDesp.getFecSacrif()!=null && Formatear.comparaFechas(utDesp.getFechaProduccion(),utDesp.getFecSacrif() )<0)
+        {
+            msgBox("Fecha Sacrificio debe ser inferior a fecha produccion");
+            return;
+        }
         if (guardar && trazPanel.hasCambio())
             utDesp.actualTrazabilidad(dtAdd);
         etiq.iniciar(tipetiqE.getValorInt()!=etiqueta.ETIQINT?codBarras.getCodBarra():codBarras.getLote(false),

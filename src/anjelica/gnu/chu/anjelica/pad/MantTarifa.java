@@ -42,11 +42,17 @@ import java.awt.print.PrinterException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
@@ -120,7 +126,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2017-04-23" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2017-05-22" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -169,6 +175,15 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 
     void activarEventos()
     {
+        BTexto.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                BTexto_actionPerformed();
+            }
+         });
+        
         Bimpri.addActionListener(new ActionListener()
         {
             @Override
@@ -213,6 +228,99 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
       GregorianCalendar gc = new GregorianCalendar();
       gc.setTime(fecha);
       return gc.get(GregorianCalendar.WEEK_OF_YEAR);
+    }
+    
+    void BTexto_actionPerformed()
+    {
+         String s=mensajes.mensajeExplica("Copie y pegue", "Codigo:Precio","");
+         if (s==null)
+             return;
+         int nLen=s.length();
+         int modo=0; // Buscando codigo producto
+         int inicProd,finProd;
+         int codProd=0;
+         double precio;
+        
+        DecimalFormatSymbols symbols=DecimalFormatSymbols.getInstance();
+        char sep=symbols.getDecimalSeparator();
+        NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+         for (int n=0;n<nLen;n++)
+         {
+            if (modo==0)
+            {              
+              if (Character.isDigit(s.charAt(n)) )
+              {
+                  inicProd=n;
+                  finProd=0;
+                  for (;n<nLen;n++)
+                  {
+//                      if (!Character.isAlphabetic(s.charAt(n)))
+//                          break;
+                      if (s.charAt(n)==':')
+                      {
+                          finProd=n;
+                          break;
+                      }
+                  }
+                  if (finProd>0)
+                  {
+                      codProd=Integer.valueOf(s.substring(inicProd,finProd).trim());
+                      modo=1; // Buscando precio
+                      continue;
+                  }
+              }
+            }
+            if (modo==1)
+            { // Buscando precio
+                 if (!Character.isDigit(s.charAt(n)) )
+                 {
+                     modo=0;
+                     continue;
+                 }
+//                if (!Character.isAlphabetic(s.charAt(n)))
+//                { 
+//                    modo=0;
+//                    continue;
+//                }
+            
+                  inicProd=n;
+                  finProd=0;
+                  for (;n<nLen;n++)
+                  {
+//                      if (!Character.isAlphabetic(s.charAt(n)))
+//                          break;
+                     if (!Character.isDigit(s.charAt(n)) && s.charAt(n)!=sep)
+                      {
+                          finProd=n;
+                          break;
+                      }
+                  }
+                  if (finProd>0 && finProd>inicProd)
+                  {                      
+                      try                   
+                      {
+                          precio=nf.parse(s.substring(inicProd,finProd).trim()).doubleValue();
+                      } catch (ParseException ex)
+                      {
+                          modo=0;
+                          continue;
+                      }
+                      pro_codartE.setText(""+codProd);
+                      pro_codartE.pro_codiE_focusLost();
+                      ArrayList v=new ArrayList();
+                      v.add(pro_codartE.getText());
+                      v.add(pro_codartE.getTextNomb());
+                      v.add(precio);
+                      v.add("Importado");
+                      v.add(0);
+                      jt.addLinea(v);
+                  }
+                  modo=0; // Buscando codigo
+            }
+            
+         }
+         
+         
     }
     void Bimpri_actionPerformed()
    {
@@ -944,6 +1052,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         pro_codiE = new gnu.chu.camposdb.proPanel();
         cLabel11 = new gnu.chu.controles.CLabel();
         tar_fechaE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        BTexto = new gnu.chu.controles.CButton();
         jt = new gnu.chu.controles.CGridEditable(5) {
             public void cambiaColumna(int col,int colNueva, int row)
             {
@@ -1040,43 +1149,44 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        Pcabe.setMaximumSize(new java.awt.Dimension(550, 85));
-        Pcabe.setMinimumSize(new java.awt.Dimension(550, 85));
-        Pcabe.setPreferredSize(new java.awt.Dimension(550, 85));
+        Pcabe.setMaximumSize(new java.awt.Dimension(585, 85));
+        Pcabe.setMinimumSize(new java.awt.Dimension(585, 85));
+        Pcabe.setPreferredSize(new java.awt.Dimension(585, 85));
         Pcabe.setLayout(null);
 
         cLabel5.setText("Fecha");
         Pcabe.add(cLabel5);
-        cLabel5.setBounds(10, 62, 50, 17);
+        cLabel5.setBounds(10, 62, 40, 17);
 
         tar_feciniE.setMaximumSize(new java.awt.Dimension(10, 18));
         tar_feciniE.setMinimumSize(new java.awt.Dimension(10, 18));
         tar_feciniE.setPreferredSize(new java.awt.Dimension(10, 18));
         Pcabe.add(tar_feciniE);
-        tar_feciniE.setBounds(65, 2, 70, 18);
+        tar_feciniE.setBounds(60, 0, 62, 18);
 
-        cLabel6.setText("A Fecha");
+        cLabel6.setText("A");
         Pcabe.add(cLabel6);
-        cLabel6.setBounds(151, 2, 43, 18);
+        cLabel6.setBounds(130, 0, 15, 18);
 
         tar_fecfinE.setMaximumSize(new java.awt.Dimension(10, 18));
         tar_fecfinE.setMinimumSize(new java.awt.Dimension(10, 18));
         tar_fecfinE.setPreferredSize(new java.awt.Dimension(10, 18));
         Pcabe.add(tar_fecfinE);
-        tar_fecfinE.setBounds(198, 2, 70, 18);
+        tar_fecfinE.setBounds(150, 0, 62, 18);
 
         cLabel1.setText("Articulo");
         Pcabe.add(cLabel1);
-        cLabel1.setBounds(170, 62, 50, 17);
+        cLabel1.setBounds(140, 60, 50, 17);
 
+        tar_nusemE.setEnabled(false);
         tar_nusemE.setMinimumSize(new java.awt.Dimension(10, 18));
         tar_nusemE.setPreferredSize(new java.awt.Dimension(10, 18));
         Pcabe.add(tar_nusemE);
-        tar_nusemE.setBounds(70, 30, 30, 18);
+        tar_nusemE.setBounds(270, 0, 20, 18);
 
-        cLabel2.setText("Tipo");
+        cLabel2.setText("Tarifa");
         Pcabe.add(cLabel2);
-        cLabel2.setBounds(280, 2, 24, 18);
+        cLabel2.setBounds(300, 0, 40, 18);
 
         cPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Copiar de", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
         cPanel1.setLayout(null);
@@ -1084,61 +1194,65 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         cLabel3.setText("Fecha");
         cLabel3.setPreferredSize(new java.awt.Dimension(33, 18));
         cPanel1.add(cLabel3);
-        cLabel3.setBounds(9, 16, 40, 17);
+        cLabel3.setBounds(1, 15, 40, 17);
 
         tar_fecopE.setPreferredSize(new java.awt.Dimension(10, 18));
         cPanel1.add(tar_fecopE);
-        tar_fecopE.setBounds(50, 16, 65, 17);
+        tar_fecopE.setBounds(40, 15, 65, 17);
 
         cLabel7.setText("Increm.");
         cLabel7.setPreferredSize(new java.awt.Dimension(64, 18));
         cPanel1.add(cLabel7);
-        cLabel7.setBounds(330, 16, 50, 17);
+        cLabel7.setBounds(310, 15, 50, 17);
 
         tar_incremE.setMinimumSize(new java.awt.Dimension(10, 18));
         tar_incremE.setPreferredSize(new java.awt.Dimension(10, 18));
         cPanel1.add(tar_incremE);
-        tar_incremE.setBounds(380, 16, 50, 17);
+        tar_incremE.setBounds(360, 15, 40, 17);
         cPanel1.add(Bocul);
         Bocul.setBounds(452, 22, 2, 2);
 
         cLabel8.setText("Tarifa");
         cLabel8.setPreferredSize(new java.awt.Dimension(33, 18));
         cPanel1.add(cLabel8);
-        cLabel8.setBounds(120, 16, 40, 17);
+        cLabel8.setBounds(110, 15, 40, 17);
 
         tar_copiaE.setMaximumSize(new java.awt.Dimension(160, 18));
         tar_copiaE.setMinimumSize(new java.awt.Dimension(160, 18));
         tar_copiaE.setPreferredSize(new java.awt.Dimension(160, 18));
         cPanel1.add(tar_copiaE);
-        tar_copiaE.setBounds(160, 16, 165, 17);
+        tar_copiaE.setBounds(150, 15, 150, 17);
 
         Pcabe.add(cPanel1);
-        cPanel1.setBounds(110, 22, 435, 40);
+        cPanel1.setBounds(10, 20, 410, 40);
 
         tar_codiE.setAncTexto(30);
         tar_codiE.setFormato(Types.DECIMAL,"##9");
         tar_codiE.setPreferredSize(new java.awt.Dimension(162, 17));
         Pcabe.add(tar_codiE);
-        tar_codiE.setBounds(310, 2, 230, 18);
+        tar_codiE.setBounds(340, 0, 240, 18);
 
         cLabel10.setText("Semana");
         Pcabe.add(cLabel10);
-        cLabel10.setBounds(4, 30, 60, 18);
+        cLabel10.setBounds(220, 0, 50, 18);
 
         pro_codiE.setAncTexto(80);
         Pcabe.add(pro_codiE);
-        pro_codiE.setBounds(220, 62, 320, 17);
+        pro_codiE.setBounds(190, 60, 380, 17);
 
         cLabel11.setText("De Fecha");
         Pcabe.add(cLabel11);
-        cLabel11.setBounds(10, 2, 49, 18);
+        cLabel11.setBounds(2, 2, 55, 18);
 
         tar_fechaE.setMaximumSize(new java.awt.Dimension(10, 18));
         tar_fechaE.setMinimumSize(new java.awt.Dimension(10, 18));
         tar_fechaE.setPreferredSize(new java.awt.Dimension(10, 18));
         Pcabe.add(tar_fechaE);
-        tar_fechaE.setBounds(60, 62, 70, 17);
+        tar_fechaE.setBounds(50, 60, 70, 17);
+
+        BTexto.setText("Texto");
+        Pcabe.add(BTexto);
+        BTexto.setBounds(430, 30, 90, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1154,7 +1268,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         jt.setLayout(jtLayout);
         jtLayout.setHorizontalGroup(
             jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 553, Short.MAX_VALUE)
+            .add(0, 656, Short.MAX_VALUE)
         );
         jtLayout.setVerticalGroup(
             jtLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -1250,6 +1364,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BTexto;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CPanel Bimpresion;

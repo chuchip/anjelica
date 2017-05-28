@@ -146,7 +146,7 @@ public class PdInvControl extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2017-05-01 "+(swAdmin?"Administrador":""));
+        this.setVersion("2017-05-26 "+(swAdmin?"Administrador":""));
         condWhere=" where emp_codi =  "+EU.em_cod;
         strSql = "SELECT * FROM coninvcab "+condWhere+
          "order by cci_feccon,cam_codi,alm_codi";
@@ -1226,7 +1226,7 @@ public class PdInvControl extends ventanaPad implements PAD
     
     boolean importaInvProduc() throws SQLException, ParseException 
     {
-         if (nav.pulsado==navegador.EDIT)
+         if (nav.pulsado!=navegador.EDIT)
          {
              msgBox("Importacion solo se puede hacer en Modo Edicion");
              return false;
