@@ -227,6 +227,10 @@ public class PaiPanel extends CPanel
   {
   
   }
+  public void setColumnaAlias(String columna)
+  {
+      pai_codiE.setColumnaAlias(columna);
+  }
  public void setText(String pais) {
 
     pai_codiE.setText(pais);

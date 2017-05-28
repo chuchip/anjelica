@@ -10,7 +10,7 @@ import gnu.chu.sql.*;
 /**
  *
  * <p>T�tulo: ayuSbe</p>
- * <p>Descripcion: Pantalla de Ayuda de Empresas.
+ * <p>Descripcion: Pantalla de Ayuda de SubEmpresas.
 * Muestra un grid con las empresas a las que tiene acceso cada usuario
 * </p>
  * <p>Copyright: Copyright (c) 2007

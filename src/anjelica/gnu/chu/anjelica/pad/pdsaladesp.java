@@ -62,7 +62,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
   CTextField sde_nifE = new CTextField(Types.CHAR,"X",15);
   CLabel sde_nifL1 = new CLabel();
   CTextField sde_nuexplE = new CTextField(Types.CHAR,"X",15);
-  CLinkBox pai_codiE = new CLinkBox();
+  PaiPanel pai_inicE = new PaiPanel();
   CLabel cLabel15 = new CLabel();
   CLabel sde_nrgsaL = new CLabel();
   CTextField sde_nrgsaE = new CTextField(Types.CHAR,"X",12);
@@ -156,7 +156,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(515, 432));
-    this.setVersion("2016-10-03"+(modConsulta?"SOLO LECTURA":""));
+    this.setVersion("2017-05-28"+(modConsulta?"SOLO LECTURA":""));
     strSql = "SELECT * FROM v_saladesp "+
         " ORDER BY sde_codi ";
 
@@ -204,11 +204,9 @@ public class pdsaladesp extends ventanaPad   implements PAD
     sde_nifL1.setBounds(new Rectangle(2, 136, 67, 17));
     sde_nifL1.setText("Num. Expl.");
     sde_nuexplE.setToolTipText("Numero de Explotaci�n");
-    sde_nuexplE.setBounds(new Rectangle(78, 136, 129, 17));
-    pai_codiE.setRequestFocusEnabled(true);
-    pai_codiE.setAceptaNulo(true);
-    pai_codiE.setAncTexto(45);
-    pai_codiE.setBounds(new Rectangle(236, 100, 253, 18));
+    sde_nuexplE.setBounds(new Rectangle(78, 136, 129, 17));    
+   
+    pai_inicE.setBounds(new Rectangle(236, 100, 253, 18));
     cLabel15.setText("Pais");
     cLabel15.setBounds(new Rectangle(206, 100, 29, 18));
     sde_nrgsaL.setText("NRGSA");
@@ -266,7 +264,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
     Pprinc.add(Bcancelar, null);
     Pprinc.add(sde_nifE, null);
     Pprinc.add(sde_nifL, null);
-    Pprinc.add(pai_codiE, null);
+    Pprinc.add(pai_inicE, null);
     Pprinc.add(cLabel33, null);
     Pprinc.add(sde_codposE, null);
     Pprinc.add(cLabel15, null);
@@ -279,11 +277,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
   {
     Pprinc.setButton(KeyEvent.VK_F4,Baceptar);
     prv_codiE.iniciar(dtStat,this,vl,EU);
-    s="SELECT pai_codi,pai_nomb FROM v_paises ORDER BY pai_nomb";
-    dtStat.select(s);
-    pai_codiE.setFormato(Types.DECIMAL,"###9",2);
-    pai_codiE.setFormato(true);
-    pai_codiE.addDatos(dtStat);
+    pai_inicE.iniciar(dtStat, this, vl, EU);
 
     sde_codiE.setColumnaAlias("sde_codi");
     sde_nombE.setColumnaAlias("sde_nomb");
@@ -297,7 +291,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
     sde_nuexplE.setColumnaAlias("sde_nuexpl");
     sde_nrgsaE.setColumnaAlias("sde_nrgsa");
     sde_comenE.setColumnaAlias("sde_comen");
-    pai_codiE.setColumnaAlias("pai_codi");
+    pai_inicE.setColumnaAlias("pai_inic");
     sde_orgconE.setColumnaAlias("sde_orgcon");
 
     activarEventos();
@@ -335,7 +329,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
       sde_nuexplE.setText(dtCon1.getString("sde_nuexpl"));
       sde_nrgsaE.setText(dtCon1.getString("sde_nrgsa"));
       sde_comenE.setText(dtCon1.getString("sde_comen"));
-      pai_codiE.setText(dtCon1.getString("pai_codi"));
+      pai_inicE.setText(dtCon1.getString("pai_inic"));
       sde_orgconE.setText(dtCon1.getString("sde_orgcon"));
       s="SELECT p.prv_codi,p.prv_nomb FROM v_prvsade m,v_proveedo p"+
           " WHERE sde_codi = "+dt.getString("sde_codi")+
@@ -374,7 +368,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
     sde_nuexplE.setEnabled(act);
     sde_nrgsaE.setEnabled(act);
     sde_comenE.setEnabled(act);
-    pai_codiE.setEnabled(act);
+    pai_inicE.setEnabled(act);
     sde_orgconE.setEnabled(act);
     jt.setEnabled(act);
     Baceptar.setEnabled(act);
@@ -432,7 +426,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
     v.add(sde_nuexplE.getStrQuery());
     v.add(sde_nrgsaE.getStrQuery());
     v.add(sde_comenE.getStrQuery());
-    v.add(pai_codiE.getStrQuery());
+    v.add(pai_inicE.getStrQuery());
     v.add(sde_orgconE.getStrQuery());
 
     s = "SELECT * FROM v_saladesp ";
@@ -535,7 +529,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
     Pprinc.resetTexto();
     jt.removeAllDatos();
     activar(true);
-    pai_codiE.setText("");
+    pai_inicE.setText("");
     jt.requestFocusInicio();
     sde_codiE.requestFocus();
     mensaje("Introduzca datos del Sala Despiece a insertar ...");
@@ -570,7 +564,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
         sde_nombE.requestFocus();
         return false;
       }
-      if (!pai_codiE.controla())
+      if (!pai_inicE.controlar())
       {
         mensajeErr("Pais no es valido");
         return false;
@@ -610,7 +604,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
   {
     try
     {
-      jt.procesaAllFoco();
+      jt.salirGrid();
       s="SELECT * FROM v_saladesp WHERE sde_codi = "+sde_codiE.getValorInt();
       if (dtStat.select(s))
       {
@@ -647,7 +641,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
     dt.setDato("sde_nuexpl", sde_nuexplE.getText());
     dt.setDato("sde_nrgsa", sde_nrgsaE.getText());
     dt.setDato("sde_comen", sde_comenE.getText());
-    dt.setDato("pai_codi", pai_codiE.getText());
+    dt.setDato("pai_inic", pai_inicE.getText());
     dt.setDato("sde_orgcon", sde_orgconE.getText());
     dtAdd.update(stUp);
     s="DELETE FROM  v_prvsade "+
@@ -773,18 +767,18 @@ public class pdsaladesp extends ventanaPad   implements PAD
     return true;
   }
   
-  public static int getPais(DatosTabla dt, int salaDesp) throws SQLException
+  public static String getPais(DatosTabla dt, int salaDesp) throws SQLException
   {
-      String s="select v_saladesp.pai_codi,pai_nomb from v_saladesp left join paises on paises.pai_codi=v_saladesp.pai_codi where sde_codi="+salaDesp;
+      String s="select v_saladesp.pai_inic,pai_nomb from v_saladesp left join paises on paises.pai_inic=v_saladesp.pai_inic where sde_codi="+salaDesp;
       if (!dt.select(s))
-          return 0;
-      return dt.getInt("pai_codi");      
+          return null;
+      return dt.getString("pai_inic");      
   }
   
   public static String getNombrePais(DatosTabla dt, int salaDesp) throws SQLException
   {
-      int paiCodi=getPais(dt,salaDesp);
-      if (paiCodi==0)
+      String paiCodi=getPais(dt,salaDesp);
+      if (paiCodi==null)
           return null;
       return dt.getString("pai_nomb");      
   }
@@ -806,7 +800,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
       if (!getDatosSalaDesp(dt,sdeCodi))
           return "**Sala Despiece "+sdeCodi+" NO Encontrada**";
       String numRegSanitario=dt.getString("sde_nrgsa");
-      String s = "select pai_nomb,pai_nomcor from v_paises where pai_codi = " +dt.getInt("pai_codi");
+      String s = "select pai_nomb,pai_nomcor from v_paises where pai_inic = '" +dt.getInt("pai_inic")+"'";
       if (dt.select(s))
           numRegSanitario = (swPaisCorto?  dt.getString("pai_nomcor") :dt.getString("pai_nomb") )
               + "-" + numRegSanitario;

@@ -12,8 +12,8 @@ import gnu.chu.camposdb.PaiPanel;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;     
 import gnu.chu.utilidades.*;
+import gnu.chu.winayu.AyuSdeMat;
 import gnu.chu.winayu.ayuMat;
-import gnu.chu.winayu.ayuSde;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
@@ -50,6 +50,7 @@ import javax.swing.event.*;
  */
 public class MantAlbComCarne extends MantAlbCom  
 {
+   
    String ultMat=null,ultSalDes,ultNac,ultCeb,ultSacr,ultFecCad,ultFecSac,ultFecPro;
    CLinkBox mat_codiE,sde_codiE;
    
@@ -731,36 +732,43 @@ public class MantAlbComCarne extends MantAlbCom
     acp_engpaiE.resetCambio();
     ultMat=null;
   }
-   void ej_consMat(ayuMat ayMat)
-  {
-    if (ayMat.consulta)
+    void ej_consMat() 
     {
-      mat_codiE.setText(ayMat.mat_codiT);
-      if (! mat_codiE.controla())
-      {
-          int res=mensajes.mensajeYesNo("Matadero "+ayMat.mat_nombT +
-               " NO Habilitado para este Proveedor. Habilitarlo ?");
-          if (res==mensajes.YES)
-          {
-              altaMat(mat_codiE.getValorInt());
-              mat_codiE.addDatos(""+ayMat.mat_codiT,ayMat.mat_nombT);
-              mat_codiE.setText(ayMat.mat_codiT);
-          }
-      }
+        if (ayuMat.isAlta())
+        {
+            altaMat(ayuMat.getCodigoSelecion());
+            mat_codiE.addDatos("" + ayuMat.getCodigoSelecion(), ayuMat.getNombreSelecion());
+            mat_codiE.setValorInt(ayuMat.getCodigoSelecion());
+        }
+
+        if (ayuMat.isConsulta())
+        {
+            mat_codiE.setValorInt(ayuMat.getCodigoSelecion());
+            if (!mat_codiE.controla())
+            {
+                int res = mensajes.mensajeYesNo("Matadero " + ayuMat.getNombreSelecion()
+                    + " NO Habilitado para este Proveedor. Habilitarlo ?");
+                if (res == mensajes.YES)
+                {
+                    altaMat(mat_codiE.getValorInt());
+                    mat_codiE.addDatos("" + ayuMat.getCodigoSelecion(), ayuMat.getNombreSelecion());
+                    mat_codiE.setValorInt(ayuMat.getCodigoSelecion());
+                }
+            }
+        }
+
+        ayuMat.setVisible(false);
+        this.setEnabled(true);
+        this.toFront();
+        try
+        {
+            this.setSelected(true);
+        } catch (Exception k)
+        {
+        }
+        this.setFoco(null);
+        mat_codiE.requestFocus();
     }
-   
-    ayMat.dispose();
-    this.setEnabled(true);
-      this.toFront();
-      try
-      {
-        this.setSelected(true);
-      }
-      catch (Exception k)
-      {}
-      this.setFoco(null);
-      mat_codiE.requestFocus();
-  }
   void altaMat(int matCodi)
   {
     try {
@@ -778,26 +786,28 @@ public class MantAlbComCarne extends MantAlbCom
    */
   public void consSdeCodi()
   {
-    final ayuSde aySde;
-
+    if (vl==null)
+        return;
     try
     {
-      aySde = new ayuSde(EU, vl);
-      aySde.addInternalFrameListener(new InternalFrameAdapter()
+      if (ayuSde==null)
       {
-                @Override
-        public void internalFrameClosing(InternalFrameEvent e)
+        ayuSde = new AyuSdeMat(EU, vl,dtCon1)
         {
-          ej_consSde(aySde);
-        }
-      });
+               @Override
+          public void matar()
+          {
+            ej_consSde();
+          }
+        };
 
-      vl.add(aySde);
-      aySde.setLocation(25, 25);
-      aySde.setVisible(true);
+        vl.add(ayuSde);
+      }
+      ayuSde.setLocation(25, 25);
+      ayuSde.setVisible(true);
       this.setEnabled(false);
-      this.setFoco(aySde);
-      aySde.iniciarVentana();
+      this.setFoco(ayuSde);
+      ayuSde.iniciarVentana('S',prv_codiE.getValorInt());
     }
     catch (Exception j)
     {
@@ -805,25 +815,31 @@ public class MantAlbComCarne extends MantAlbCom
     }
   }
 
-  void ej_consSde(ayuSde aySde)
+  void ej_consSde()
   {
-    if (aySde.consulta)
+    if (ayuSde.isAlta())
     {
-      sde_codiE.setText(aySde.sde_codiT);
+         altaSde(ayuSde.getCodigoSelecion());
+         sde_codiE.addDatos(""+ayuSde.getCodigoSelecion(),ayuSde.getNombreSelecion());
+         sde_codiE.setValorInt(ayuSde.getCodigoSelecion());
+    }
+    if (ayuSde.isConsulta())
+    {
+      sde_codiE.setValorInt(ayuSde.getCodigoSelecion());
       if (! sde_codiE.controla())
       {
-          int res=mensajes.mensajeYesNo("Sala Despiece "+aySde.sde_nombT +
+          int res=mensajes.mensajeYesNo("Sala Despiece "+ayuSde.getNombreSelecion() +
                " NO Habilitada para este Proveedor. Habilitarla ?");
           if (res==mensajes.YES)
           {
               altaSde(sde_codiE.getValorInt());
-              sde_codiE.addDatos(""+aySde.sde_codiT,aySde.sde_nombT);
-              sde_codiE.setText(aySde.sde_codiT);
+              sde_codiE.addDatos(""+ayuSde.getCodigoSelecion(),ayuSde.getNombreSelecion());
+              sde_codiE.setValorInt(ayuSde.getCodigoSelecion());
           }
       }
     }
 
-    aySde.dispose();
+    ayuSde.setVisible(false);
     this.setEnabled(true);
       this.toFront();
       try
@@ -852,25 +868,26 @@ public class MantAlbComCarne extends MantAlbCom
      * Llama a la Ayuda de Mataderos
      */
     public void consMatCodi() {
-        final ayuMat ayMat;
+    
 
         try {
-            ayMat = new ayuMat(EU, vl);
-            ayMat.addInternalFrameListener(new InternalFrameAdapter()
+            if (ayuMat==null)
             {
-
-                @Override
-                public void internalFrameClosing(InternalFrameEvent e) {
-                    ej_consMat(ayMat);
-                }
-            });
-
-            vl.add(ayMat);
-            ayMat.setLocation(25, 25);
-            ayMat.setVisible(true);
+                ayuMat = new  AyuSdeMat(EU, vl,dtCon1)
+                {
+                    @Override
+                    public void matar  ()
+                    {
+                        ej_consMat();
+                    }
+                };
+                vl.add(ayuMat);
+            }
+            ayuMat.setLocation(25, 25);
+            ayuMat.setVisible(true);
             this.setEnabled(false);
-            this.setFoco(ayMat);
-            ayMat.iniciarVentana();
+            this.setFoco(ayuMat);
+            ayuMat.iniciarVentana('M',prv_codiE.getValorInt());
         } catch (Exception j) {
             this.setEnabled(true);
         }

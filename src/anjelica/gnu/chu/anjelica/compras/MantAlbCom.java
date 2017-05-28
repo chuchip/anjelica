@@ -47,6 +47,7 @@ import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.vlike;
 import gnu.chu.utilidades.*;
+import gnu.chu.winayu.AyuSdeMat;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
@@ -69,6 +70,8 @@ import net.sf.jasperreports.engine.*;
 
 public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSource,MantAlbCom_Interface
 {
+  AyuSdeMat ayuSde=null;
+  AyuSdeMat ayuMat=null;
   CLabel acc_idL = new CLabel("Id");
   CTextField acc_idE = new CTextField(Types.DECIMAL,"#,###,##9");
   CButton creaIncidB = new CButton(Iconos.getImageIcon("destornillador"));
@@ -736,7 +739,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20170328)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20170528)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -6671,7 +6674,16 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
          frProd.setVisible(false);
          frProd.dispose();
        }
-
+       if (ayuSde!=null)
+       {
+           ayuSde.setVisible(false);
+           ayuSde.dispose();
+       }
+       if (ayuMat!=null)
+       {
+           ayuMat.setVisible(false);
+           ayuMat.dispose();
+       }
        super.matar(cerrarConexion);
      }
 

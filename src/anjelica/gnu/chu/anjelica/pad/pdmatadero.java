@@ -62,7 +62,7 @@ public class pdmatadero extends ventanaPad   implements PAD
   CTextField mat_nifE = new CTextField(Types.CHAR,"X",15);
   CLabel mat_nifL1 = new CLabel();
   CTextField mat_nuexplE = new CTextField(Types.CHAR,"X",15);
-  CLinkBox pai_codiE = new CLinkBox();
+  PaiPanel pai_inicE = new PaiPanel();
   CLabel cLabel15 = new CLabel();
   CLabel mat_nrgsaL = new CLabel();
   CTextField mat_nrgsaE = new CTextField(Types.CHAR,"X",12);
@@ -156,7 +156,7 @@ public class pdmatadero extends ventanaPad   implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(515, 432));
-    this.setVersion("2016-10-03"+(modConsulta?"SOLO LECTURA":""));
+    this.setVersion("2017-05-28"+(modConsulta?"SOLO LECTURA":""));
     strSql = "SELECT * FROM v_matadero "+
         " ORDER BY mat_codi ";
 
@@ -204,10 +204,7 @@ public class pdmatadero extends ventanaPad   implements PAD
     mat_nifL1.setText("Num. Expl.");
     mat_nuexplE.setToolTipText("Numero de Explotaci�n");
     mat_nuexplE.setBounds(new Rectangle(78, 136, 129, 17));
-    pai_codiE.setRequestFocusEnabled(true);
-    pai_codiE.setAceptaNulo(true);
-    pai_codiE.setAncTexto(45);
-    pai_codiE.setBounds(new Rectangle(236, 100, 253, 18));
+    pai_inicE.setBounds(new Rectangle(236, 100, 253, 18));
     cLabel15.setText("Pais");
     cLabel15.setBounds(new Rectangle(206, 100, 29, 18));
     mat_nrgsaL.setText("NRGSA");
@@ -266,7 +263,7 @@ public class pdmatadero extends ventanaPad   implements PAD
     Pprinc.add(Bcancelar, null);
     Pprinc.add(mat_nifE, null);
     Pprinc.add(mat_nifL, null);
-    Pprinc.add(pai_codiE, null);
+    Pprinc.add(pai_inicE, null);
     Pprinc.add(cLabel33, null);
     Pprinc.add(mat_codposE, null);
     Pprinc.add(cLabel15, null);
@@ -277,11 +274,7 @@ public class pdmatadero extends ventanaPad   implements PAD
   {
     Pprinc.setButton(KeyEvent.VK_F4,Baceptar);
     prv_codiE.iniciar(dtStat,this,vl,EU);
-    s="SELECT pai_codi,pai_nomb FROM v_paises ORDER BY pai_nomb";
-    dtStat.select(s);
-    pai_codiE.setFormato(Types.DECIMAL,"###9",2);
-    pai_codiE.setFormato(true);
-    pai_codiE.addDatos(dtStat);
+    pai_inicE.iniciar(dtStat, this, vl, EU);
 
     mat_codiE.setColumnaAlias("mat_codi");
     mat_nombE.setColumnaAlias("mat_nomb");
@@ -295,7 +288,7 @@ public class pdmatadero extends ventanaPad   implements PAD
     mat_nuexplE.setColumnaAlias("mat_nuexpl");
     mat_nrgsaE.setColumnaAlias("mat_nrgsa");
     mat_comenE.setColumnaAlias("mat_comen");
-    pai_codiE.setColumnaAlias("pai_codi");
+    pai_inicE.setColumnaAlias("pai_inic");
     mat_orgconE.setColumnaAlias("mat_orgcon");
 
     activarEventos();
@@ -333,7 +326,7 @@ public class pdmatadero extends ventanaPad   implements PAD
       mat_nuexplE.setText(dtCon1.getString("mat_nuexpl"));
       mat_nrgsaE.setText(dtCon1.getString("mat_nrgsa"));
       mat_comenE.setText(dtCon1.getString("mat_comen"));
-      pai_codiE.setText(dtCon1.getString("pai_codi"));
+      pai_inicE.setText(dtCon1.getString("pai_inic"));
       mat_orgconE.setText(dtCon1.getString("mat_orgcon"));
       s="SELECT p.prv_codi,p.prv_nomb FROM V_PRVMATA m,v_proveedo p"+
           " WHERE mat_codi = "+dt.getString("mat_codi")+
@@ -372,7 +365,7 @@ public class pdmatadero extends ventanaPad   implements PAD
     mat_nuexplE.setEnabled(act);
     mat_nrgsaE.setEnabled(act);
     mat_comenE.setEnabled(act);
-    pai_codiE.setEnabled(act);
+    pai_inicE.setEnabled(act);
     mat_orgconE.setEnabled(act);
     jt.setEnabled(act);
     Baceptar.setEnabled(act);
@@ -430,7 +423,7 @@ public class pdmatadero extends ventanaPad   implements PAD
     v.addElement(mat_nuexplE.getStrQuery());
     v.addElement(mat_nrgsaE.getStrQuery());
     v.addElement(mat_comenE.getStrQuery());
-    v.addElement(pai_codiE.getStrQuery());
+    v.addElement(pai_inicE.getStrQuery());
     v.addElement(mat_orgconE.getStrQuery());
 
     s = "SELECT * FROM v_matadero ";
@@ -533,7 +526,7 @@ public class pdmatadero extends ventanaPad   implements PAD
     jt.removeAllDatos();
     activar(true);
     jt.requestFocusInicio();
-    pai_codiE.setText("");
+    pai_inicE.setText("");
     mat_codiE.requestFocus();
     mensaje("Introduzca datos del Matadero a insertar ...");
   }
@@ -568,7 +561,7 @@ public class pdmatadero extends ventanaPad   implements PAD
         mat_nombE.requestFocus();
         return false;
       }
-      if (!pai_codiE.controla())
+      if (!pai_inicE.controlar())
       {
         mensajeErr("Pais no es valido");
         return false;
@@ -605,11 +598,12 @@ public class pdmatadero extends ventanaPad   implements PAD
     }
 
   }
+  @Override
   public void ej_addnew1()
   {
     try
     {
-      jt.procesaAllFoco();
+      jt.salirGrid();
       s="SELECT * FROM v_matadero WHERE mat_codi = "+mat_codiE.getValorInt();
       if (dtStat.select(s))
       {
@@ -646,7 +640,7 @@ public class pdmatadero extends ventanaPad   implements PAD
     dt.setDato("mat_nuexpl", mat_nuexplE.getText());
     dt.setDato("mat_nrgsa", mat_nrgsaE.getText());
     dt.setDato("mat_comen", mat_comenE.getText());
-    dt.setDato("pai_codi", pai_codiE.getText());
+    dt.setDato("pai_inic", pai_inicE.getText());
     dt.setDato("mat_orgcon", mat_orgconE.getText());
     dtAdd.update(stUp);
     s="DELETE FROM  V_PRVMATA "+
@@ -776,15 +770,15 @@ public class pdmatadero extends ventanaPad   implements PAD
    * Devuelve el pais del matadero
    * @param dt
    * @param matCodi
-   * @return 0 si no encuentra el matadero o el pais esta a null
+   * @return null si no encuentra el matadero o el pais esta a null
    * @throws SQLException 
    */
-  public static int getPaisMatadero(DatosTabla dt,int matCodi) throws SQLException
+  public static String getPaisMatadero(DatosTabla dt,int matCodi) throws SQLException
   {
-       String s="select pai_codi,mat_nrgsa from v_matadero where mat_codi ="+matCodi;
+       String s="select pai_inic,mat_nrgsa from v_matadero where mat_codi ="+matCodi;
        if (!dt.select(s))
-           return 0;
-       return dt.getInt("pai_codi",true);
+           return null;
+       return dt.getString("pai_inic");
   }
   public static boolean getDatosMatadero(DatosTabla dt,int matCodi) throws SQLException
   {
@@ -796,7 +790,7 @@ public class pdmatadero extends ventanaPad   implements PAD
       if (!getDatosMatadero(dt,matCodi))
           return "**Matadero "+matCodi+" NO Encontrado**";
       String numRegSanitario=dt.getString("mat_nrgsa");
-      String s = "select pai_nomb,pai_nomcor from v_paises where pai_codi = " +dt.getInt("pai_codi");
+      String s = "select pai_nomb,pai_nomcor from v_paises where pai_inic = '" +dt.getInt("pai_inic")+"'";
       if (dt.select(s))
           numRegSanitario = (swPaisCorto?  dt.getString("pai_nomcor") :dt.getString("pai_nomb") )
               + "-" + numRegSanitario;
