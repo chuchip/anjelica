@@ -10,7 +10,7 @@ import gnu.chu.sql.*;
 import java.util.ArrayList;
 import javax.swing.*;
 /**
- *
+ * @deprecated usar AyuSdeMat
  * <p>Titulo: ayuSde</p>
  * <p>Descripcion: Pantalla de Ayuda de Salas de Despiece</p>
  * <p>Copyright: Copyright (c) 2005-2017

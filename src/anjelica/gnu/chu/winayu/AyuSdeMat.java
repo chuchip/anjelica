@@ -163,20 +163,21 @@ public class AyuSdeMat extends   ventana
           s+=" order by nomb,nrgsa";
           if (!dtCon1.select(s))
           {
-              int ret=mensajes.mensajeYesNo("Registro NO ENCONTRADO", "¿Dar de Alta?",this);
-              if (ret==mensajes.YES)
+              if (permisoAlta)
               {
-                  modoAlta=true;
-                  activaAlta(true);                                   
-                  nrgsaE.setText(nombE.getText());
-                  pai_codiE.setText(nombE.getText().substring(0,2));
-                  nrgsaE.requestFocusLater();
+                int ret=mensajes.mensajeYesNo("Registro NO ENCONTRADO", "¿Dar de Alta?",this);
+                if (ret==mensajes.YES)
+                {
+                    modoAlta=true;
+                    activaAlta(true);                                   
+                    nrgsaE.setText(nombE.getText());
+                    pai_codiE.setText(nombE.getText().substring(0,2));
+                    nrgsaE.requestFocusLater();
+                    return;
+                }
               }
-              else
-              {
-                  mensajeErr("Registro no Encontrado");
-                  nombE.requestFocusLater();
-              }
+              mensajeErr("Registro no Encontrado");
+              nombE.requestFocusLater();
               return;
           }
           jt.removeAllDatos();
@@ -234,7 +235,7 @@ public class AyuSdeMat extends   ventana
                 }
             }
             dtCon1.commit();
-            msgBox("Registro dado de alta con codigo"+codiT);
+            msgBox("Registro dado de alta con código: "+codiT);
             swAlta=true;
             consulta = true;
             matar();

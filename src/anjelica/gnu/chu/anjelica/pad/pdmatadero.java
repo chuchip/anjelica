@@ -790,7 +790,7 @@ public class pdmatadero extends ventanaPad   implements PAD
       if (!getDatosMatadero(dt,matCodi))
           return "**Matadero "+matCodi+" NO Encontrado**";
       String numRegSanitario=dt.getString("mat_nrgsa");
-      String s = "select pai_nomb,pai_nomcor from v_paises where pai_inic = '" +dt.getInt("pai_inic")+"'";
+      String s = "select pai_nomb,pai_nomcor from v_paises where pai_inic = '" +dt.getString("pai_inic")+"'";
       if (dt.select(s))
           numRegSanitario = (swPaisCorto?  dt.getString("pai_nomcor") :dt.getString("pai_nomb") )
               + "-" + numRegSanitario;

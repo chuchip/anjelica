@@ -13,7 +13,6 @@ import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;     
 import gnu.chu.utilidades.*;
 import gnu.chu.winayu.AyuSdeMat;
-import gnu.chu.winayu.ayuMat;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
@@ -21,7 +20,6 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;     
 import java.util.Hashtable;
-import javax.swing.event.*;
 
 /**
  *
@@ -800,7 +798,7 @@ public class MantAlbComCarne extends MantAlbCom
             ej_consSde();
           }
         };
-
+        ayuSde.setPermiteAlta(true);
         vl.add(ayuSde);
       }
       ayuSde.setLocation(25, 25);
@@ -881,6 +879,7 @@ public class MantAlbComCarne extends MantAlbCom
                         ej_consMat();
                     }
                 };
+                ayuMat.setPermiteAlta(true);
                 vl.add(ayuMat);
             }
             ayuMat.setLocation(25, 25);

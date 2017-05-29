@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 /**
- *
+ *  @deprecated usar AyuSdeMat
  * <p>Título: ayumat</p>
  * <p>Descripcion: Pantalla de Ayuda de Mataderos</p>
  * <p>Copyright: Copyright (c) 2005-2015

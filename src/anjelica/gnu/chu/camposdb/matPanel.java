@@ -1,5 +1,26 @@
 package gnu.chu.camposdb;
 
+/**
+ * 
+ * <p>Título: matPanel</p>
+ * <p>Descripcion: Control para introducir el codigo delmatadero </p>
+ * <p>Copyright: Copyright (c) 2005-2017
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,ed
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * <p>Empresa: MISL</p>
+ * @author chuchiP
+ * @version 1.0
+ */
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
@@ -8,16 +29,11 @@ import gnu.chu.controles.*;
 import gnu.chu.sql.*;
 import gnu.chu.winayu.*;
 import gnu.chu.utilidades.*;
-import javax.swing.event.*;
 
-/**
- * Panel con el Codigo del Matadero
- * @Author Chuchi P
- *
- * Version 1.0
-*/
+
 public class matPanel extends CPanel
 {
+  AyuSdeMat aymat=null;
   private boolean swControl=true;
   String nRegSan;
   int matCodi=0;
@@ -335,20 +351,22 @@ public class matPanel extends CPanel
    */
   public void consMat()
   {
-    final ayuMat aymat;
-
     try
     {
-      aymat = new ayuMat(eu, vl);
-      aymat.addInternalFrameListener(new InternalFrameAdapter()
-      {
-        public void internalFrameClosing(InternalFrameEvent e)
+        if (aymat==null)
         {
-          ej_consMat(aymat);
-        }
-      });
+            aymat = new AyuSdeMat(eu, vl,dt)
+            {
+                @Override
+                public void matar()
+                {
+                  ej_consMat();
+                }
 
-      vl.add(aymat);
+            };   
+            vl.add(aymat);
+        }
+      
       aymat.setLocation(25, 25);
       aymat.setVisible(true);
       if (intfr != null)
@@ -356,7 +374,7 @@ public class matPanel extends CPanel
         intfr.setEnabled(false);
         intfr.setFoco(aymat);
       }
-      aymat.iniciarVentana();
+      aymat.iniciarVentana('M',0);
 
     }
     catch (Exception j)
@@ -366,16 +384,16 @@ public class matPanel extends CPanel
     }
   }
 
-  void ej_consMat(ayuMat aymat)
+  void ej_consMat()
   {
-    if (aymat.consulta)
+    if (aymat.isConsulta())
     {
-      mat_codiE.setText(aymat.mat_codiT);
+      mat_codiE.setValorInt(aymat.getCodigoSelecion());
       if (swControl)
-        mat_nombE.setText(aymat.mat_nombT);
+        mat_nombE.setText(aymat.getNombreSelecion());
     }
     mat_codiE.requestFocus();
-    aymat.dispose();
+    aymat.setVisible(false);
 
     if (intfr != null)
     {

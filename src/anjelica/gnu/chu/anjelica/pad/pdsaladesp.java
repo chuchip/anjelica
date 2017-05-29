@@ -800,7 +800,7 @@ public class pdsaladesp extends ventanaPad   implements PAD
       if (!getDatosSalaDesp(dt,sdeCodi))
           return "**Sala Despiece "+sdeCodi+" NO Encontrada**";
       String numRegSanitario=dt.getString("sde_nrgsa");
-      String s = "select pai_nomb,pai_nomcor from v_paises where pai_inic = '" +dt.getInt("pai_inic")+"'";
+      String s = "select pai_nomb,pai_nomcor from v_paises where pai_inic = '" +dt.getString("pai_inic")+"'";
       if (dt.select(s))
           numRegSanitario = (swPaisCorto?  dt.getString("pai_nomcor") :dt.getString("pai_nomb") )
               + "-" + numRegSanitario;
