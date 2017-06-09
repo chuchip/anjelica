@@ -114,6 +114,9 @@ public class Cldegen extends ventana
         utdesp =new utildesp();
         dtDesp=new DatosTabla(ct);
         dtAux=new DatosTabla(ct);
+        dtCon1.select("SELECT sbe_codi,sbe_nomb FROM subempresa "+
+            " where sbe_tipo ='A' order by sbe_codi");        
+        sbe_codiE.addDatos(dtCon1);
         tid_codiE.iniciar(dtAux, this, vl, EU);
         activarEventos();
         feciniE.requestFocus();
@@ -169,10 +172,12 @@ public class Cldegen extends ventana
                  if (!jt.isEnabled())
                      return;
                  verDatosDesg();
+                 jt.requestFocusSelectedLater();
              }
         });
         Bprint.addActionListener(new ActionListener()
         {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 genListado();
             }
@@ -300,8 +305,8 @@ public class Cldegen extends ventana
         int nRow=jt.getRowCount();
         String s="SELECT sum(avl_canti) as canti,sum(avl_canti*avl_prbase) as importe FROM v_albventa where pro_codi=?"+
             " and avc_fecalb between to_date('"+
-            Formatear.sumaDias(feciniE.getDate(),7)+"','dd-MM-yyyy')"+ 
-            " and to_date('"+Formatear.sumaDias(fecfinE.getDate(),7)+"','dd-MM-yyyy')";
+            (opVentasSem.isSelected()?feciniE.getFecha("dd-MM-yyyy"): Formatear.sumaDias(feciniE.getDate(),7))+"','dd-MM-yyyy')"+ 
+            " and to_date('"+(opVentasSem.isSelected()?fecfinE.getFecha("dd-MM-yyyy"):  Formatear.sumaDias(fecfinE.getDate(),7))+"','dd-MM-yyyy')";
         PreparedStatement ps1=dtStat.getPreparedStatement(s);
         ResultSet rs;
         double importe;
@@ -327,13 +332,13 @@ public class Cldegen extends ventana
              + " and c.deo_codi = l.deo_codi "
              + " and l.def_kilos > 0 "
              + (alm_codiE.isNull()?"": " and c.deo_almdes  = "+alm_codiE.getValorInt() )
-             + " and c.eje_nume = c.eje_nume "
-             + (tipoProenE.getValor().equals("T") && fam_codentE.isNull()  ?"":
+             + " and c.eje_nume = c.eje_nume "             
+             + (tipoProenE.getValor().equals("T") && fam_codentE.isNull() ?"":
                  " and exists (select * from  v_articulo as ar,v_despori as po" +
                  " where ar.pro_codi= po.pro_codi"
                 + (tipoProenE.getValor().equals("T")?"":" and ar.pro_artcon  = "+tipoProenE.getValor())
                  + " and ar.pro_tiplot = 'V' " // Producto es vendible.
-                 + (fam_codentE.isNull()?"": " and ar.fam_codi = "+fam_codentE.getValorInt() )
+                 + (fam_codentE.isNull()?"": " and ar.fam_codi = "+fam_codentE.getValorInt() )               
                  + " and po.eje_nume = c.eje_nume "
                  + " and po.deo_codi= c.deo_codi) ")
                 + (opIncReg.isSelected()  ?"":
@@ -350,6 +355,7 @@ public class Cldegen extends ventana
              + " where "+condWhere
              + " and a.pro_codi = l.pro_codi "
              + " and a.pro_tiplot = 'V' " // Producto es vendible.
+             + (sbe_codiE.isNull()?"": " and a.sbe_codi = "+sbe_codiE.getValorInt() )
              + (grp_codiE.isNull() ?"":" and fp.fpr_codi = a.fam_codi ")
              + (fam_codiE.isNull()?"": " and a.fam_codi = "+fam_codiE.getValorInt() )
              + (grp_codiE.isNull()?"": " and fp.agr_codi = "+grp_codiE.getValorInt() )
@@ -472,6 +478,9 @@ public class Cldegen extends ventana
         opSoloValor = new gnu.chu.controles.CCheckBox();
         opIncReg = new gnu.chu.controles.CCheckBox();
         opIncCosto = new gnu.chu.controles.CCheckBox();
+        opVentasSem = new gnu.chu.controles.CCheckBox();
+        CLabel15 = new gnu.chu.controles.CLabel();
+        sbe_codiE = new gnu.chu.controles.CLinkBox();
         jtDes = new gnu.chu.controles.Cgrid(9);
         Pfinal = new gnu.chu.controles.CPanel();
         CLabel5 = new gnu.chu.controles.CLabel();
@@ -537,13 +546,14 @@ public class Cldegen extends ventana
         opVer.setPreferredSize(new java.awt.Dimension(28, 18));
         opVer.addItem("Todos","T");
         opVer.addItem("Produccion","S");
+        opVer.addItem("Tactil","T");
         opVer.addItem("Despieces","N");
         Pentra.add(opVer);
         opVer.setBounds(340, 0, 110, 19);
 
         Baceptar.setText("Aceptar");
         Pentra.add(Baceptar);
-        Baceptar.setBounds(440, 90, 110, 27);
+        Baceptar.setBounds(450, 90, 100, 27);
 
         CLabel10.setText("Grupo");
         Pentra.add(CLabel10);
@@ -573,9 +583,9 @@ public class Cldegen extends ventana
         Pentra.add(tipoProenE);
         tipoProenE.setBounds(110, 62, 120, 18);
 
-        CLabel13.setText("Tipo  Desp");
+        CLabel13.setText("Sección");
         Pentra.add(CLabel13);
-        CLabel13.setBounds(3, 82, 70, 18);
+        CLabel13.setBounds(2, 100, 70, 18);
 
         tid_codiE.setAncTexto(40);
         tid_codiE.getComboBox().setPreferredSize(new Dimension(400,18));
@@ -610,7 +620,7 @@ public class Cldegen extends ventana
             }
         });
         Pentra.add(opSoloValor);
-        opSoloValor.setBounds(320, 100, 120, 18);
+        opSoloValor.setBounds(230, 100, 100, 18);
         opSoloValor.getAccessibleContext().setAccessibleName("Inc.Costo Prod.");
 
         opIncReg.setText("Inc. reenv.");
@@ -625,7 +635,27 @@ public class Cldegen extends ventana
         opIncCosto.setActionCommand("");
         opIncCosto.setPreferredSize(new java.awt.Dimension(83, 18));
         Pentra.add(opIncCosto);
-        opIncCosto.setBounds(320, 82, 120, 18);
+        opIncCosto.setBounds(330, 82, 120, 18);
+
+        opVentasSem.setText("Ventas Semana");
+        opVentasSem.setToolTipText("Ventas del periodo desp.");
+        opVentasSem.setPreferredSize(new java.awt.Dimension(83, 18));
+        opVentasSem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                opVentasSemActionPerformed(evt);
+            }
+        });
+        Pentra.add(opVentasSem);
+        opVentasSem.setBounds(330, 100, 120, 18);
+
+        CLabel15.setText("Tipo  Desp");
+        Pentra.add(CLabel15);
+        CLabel15.setBounds(3, 82, 70, 18);
+
+        sbe_codiE.setAncTexto(25);
+        sbe_codiE.setFormato(Types.DECIMAL,"#9");
+        Pentra.add(sbe_codiE);
+        sbe_codiE.setBounds(50, 100, 178, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -803,6 +833,10 @@ public class Cldegen extends ventana
         // TODO add your handling code here:
     }//GEN-LAST:event_opSoloValorActionPerformed
 
+    private void opVentasSemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_opVentasSemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_opVentasSemActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
@@ -813,6 +847,7 @@ public class Cldegen extends ventana
     private gnu.chu.controles.CLabel CLabel12;
     private gnu.chu.controles.CLabel CLabel13;
     private gnu.chu.controles.CLabel CLabel14;
+    private gnu.chu.controles.CLabel CLabel15;
     private gnu.chu.controles.CLabel CLabel2;
     private gnu.chu.controles.CLabel CLabel3;
     private gnu.chu.controles.CLabel CLabel4;
@@ -839,7 +874,9 @@ public class Cldegen extends ventana
     private gnu.chu.controles.CCheckBox opIncCosto;
     private gnu.chu.controles.CCheckBox opIncReg;
     private gnu.chu.controles.CCheckBox opSoloValor;
+    private gnu.chu.controles.CCheckBox opVentasSem;
     private gnu.chu.controles.CComboBox opVer;
+    private gnu.chu.controles.CLinkBox sbe_codiE;
     private gnu.chu.camposdb.tidCodi2 tid_codiE;
     private gnu.chu.controles.CComboBox tipoProdE;
     private gnu.chu.controles.CComboBox tipoProenE;

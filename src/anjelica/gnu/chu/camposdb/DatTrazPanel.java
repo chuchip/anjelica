@@ -366,7 +366,7 @@ public class DatTrazPanel extends CPanel {
     {
         int len = crotalBase.length();
         int numAleatorio;
-        String numCrot = crotalBase;
+        String numCrot;
         if (len > 6)
         {
             numCrot = crotalBase.substring(0, len - 6);

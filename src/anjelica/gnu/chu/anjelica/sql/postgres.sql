@@ -286,7 +286,7 @@ cli_zoncre varchar(2),	-- Zona Credito
 cli_activ varchar(2) default 'S' not null,	-- Activo (S/N)
 cli_giro varchar(2),	-- Pago por GIRO (S/N)
 cli_libiva varchar(2),	-- Libro de IVA
-cli_carte varchar(2),	-- Cartera.
+cli_codrut varchar(5),	-- Codigo reparto
 cli_diario varchar(2),	--  Diario Contable
 cli_sefacb varchar(1),	-- Serie Fact. en Contab.
 cli_dtopp decimal(5,2),	-- DTO Pronto Pago
@@ -2323,6 +2323,7 @@ create table anjelica.v_matadero
  mat_orgcon  VARCHAR(15),	-- Organismo Control
  mat_cercal  VARCHAR(15),	-- Certificacion Calidad (NO USADO)
  mat_etical  VARCHAR(15)	-- Etiqueta de Calidad (NO USADO)
+ pai_inic varchar(2),		-- Pais
 );
 create unique index ix_matadero on v_matadero(mat_codi);
 --
@@ -4250,13 +4251,15 @@ create  view v_hisdespori as select  1 as emp_codi, c.*, 1 as deo_emloge, 1 as d
 l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcost, deo_kilos , deo_preusu,deo_tiempo
  from deorcahis as c, deorlihis as l where c.eje_nume=l.eje_nume
  and c.deo_codi= l.deo_codi and c.his_rowid=l.his_rowid;
+drop view v_despsal;
 create  view v_despsal as select c.eje_nume,c.deo_codi,c.deo_numdes,tid_codi,deo_fecha, deo_almori,deo_almdes,deo_ejloge,
 deo_seloge,deo_nuloge,deo_incval,
-l.def_orden, pro_codi, def_ejelot, def_emplot, def_serlot, pro_lote,pro_numind ,def_kilos,def_numpie,def_prcost,
+l.def_orden, pro_codi, def_ejelot, def_emplot, def_serlot, pro_lote,pro_numind ,def_kilos,def_numpie,def_prcost,def_numcaj,
 def_feccad,def_preusu,def_tiempo,l.alm_codi,deo_desnue
  from anjelica.desporig as c, anjelica.v_despfin as l where c.eje_nume=l.eje_nume
  and c.deo_codi= l.deo_codi;
 grant select on  anjelica.v_despsal to public;
+
 create  view v_despiece as select  1 as emp_codi, c.*, g.grd_serie,g.grd_kilo,grd_unid,grd_prmeco,grd_incval,
 grd_valor,grd_block,grd_feccad,g.prv_codi as grd_prvcod,grd_desnue,grd_fecpro,grd_fecha,
 1 as deo_emloge, 1 as deo_emplot ,

@@ -283,6 +283,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     pro_artconE.addItem("Congelado","1");
     pro_artconE.addItem("NO Congel.","2");
     pro_cosincE.setToolTipText("Incluir Costo Añadido");
+    pro_cosincE.setSelected(true);
     pro_cosincE.setBounds(new Rectangle(435, 45, 90, 18));
     Baceptar.setBounds(new Rectangle(410, 65, 115, 24));
     this.getContentPane().add(Pprinc, BorderLayout.CENTER);

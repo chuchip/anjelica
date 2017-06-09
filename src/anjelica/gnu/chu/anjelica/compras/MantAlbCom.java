@@ -1,3 +1,4 @@
+
 package gnu.chu.anjelica.compras;
 /**
  *
@@ -285,7 +286,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     {
       try
       {
-        if (nav.pulsado != navegador.ADDNEW && nav.pulsado!=navegador.EDIT)
+        if (nav.pulsado != navegador.ADDNEW && nav.pulsado!=navegador.EDIT )
         {          
           if (ARG_MODPRECIO)
           {
@@ -739,7 +740,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20170528)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20170604)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -768,6 +769,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     opAutoClas.setToolTipText("Clasificacion de Productos Automatica según su peso");
     opImpEti.setToolTipText("Imprimir Etiqueta");
     opAgrupar.setToolTipText("Agrupar Productos");
+    
     opBloquea.setMargin(new Insets(0, 0, 0, 0));
     cPanel3.setOpaque(true);
     rgs_clinombE.setEnabled(false);
@@ -814,7 +816,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     Bdesagr.setToolTipText("Desagrupar Productos");
     Bdesagr.setMargin(new Insets(0, 0, 0, 0));
     Bdesagr.setText("F6");
-
+    Bdesagr.setDependePadre(false);
     PVerted.setLayout(gridBagLayout3);
     PVertInf.setBorder(BorderFactory.createRaisedBevelBorder());
 
@@ -1122,7 +1124,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     dif_kgsE.setBounds(new Rectangle(117, 47, 61, 15));
     dif_porcE.setEnabled(false);
     opAgrupar.setText("Agr.Prod.");
-    opAgrupar.setSelected(true);
+    opAgrupar.setSelected(false);
    
     cLabel13.setText("Recepcion");
     cLabel13.setBounds(new Rectangle(3, 17, 67, 15));
@@ -1665,7 +1667,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         @Override
         public void valueChanged(ListSelectionEvent e)
         {
-            if (e.getValueIsAdjusting() || !jtHist.isEnabled()) // && e.getFirstIndex() == e.getLastIndex())
+            if (e.getValueIsAdjusting() || !jtHist.isEnabled() ) // && e.getFirstIndex() == e.getLastIndex())
                 return;
             cambiaLineaHist(jtHist.getValorInt(3));
         }
@@ -1705,7 +1707,6 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     });
     acc_serieE.addFocusListener(new FocusAdapter()
     {
-
             @Override
       public void focusLost(FocusEvent e)
       {
@@ -1949,8 +1950,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        verDatos(dtCons);
-        
+        verDatos(dtCons);        
       }
     });
     opIncPortes.addActionListener(new ActionListener()
@@ -2218,11 +2218,11 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   void Bdesagr_actionPerformed()
   {
     jtDes.setLineaEditable(true);
-
+   
     int nColErr=cambiaLinDes(jtDes.getSelectedRow());
     if (nColErr>=0)
     {
-      jtDes.requestFocus(jtDes.getSelectedRow(), nColErr);
+      jtDes.requestFocus( nColErr);
       return;
     }
     int numInd=jtDes.getValorInt(JTD_NUMIND);
@@ -2627,7 +2627,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         " and acl_nulin = " + nLinAlb;
     dtStat.select(s);
   }
-
+  /**
+  *
+  */
   int cambiaLinDes(int row) 
   {
     if (swCargaAlb || swCargaLin)
@@ -3274,7 +3276,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     if (jt.getValorInt(0) == 0)
       jtDes.removeAllDatos();
     jt.setEnabled(false);
-    Bdesagr.setEnabled(true);
+    Bdesagr.setEnabled(ARG_ADMIN); // True si es modo administrador
     jtDes.setEnabled(true);
 
     if (jt.getValorInt(0)==0)
@@ -4093,6 +4095,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     else
       alm_codiE.setEnabled(b);
    
+    jtHist.setEnabled(!b);
     acc_idE.setEnabled(b);
     bloquearC.setEnabled(!b);
     sbe_codiE.setEnabled(b);
@@ -4101,7 +4104,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     BbusPed.setEnabled(b);
     cll_codiE.setEnabled(b);
     jt.setEnabled(b);
-    if (!b)
+    if (ARG_ADMIN)
       Bdesagr.setEnabled(b);
     jtDes.setEnabled(b);
     Pcabe.setEnabled(b);
@@ -4114,9 +4117,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     avc_anoE.setEnabled(b);
     avc_numeE.setEnabled(b);
     if (!b || nav.pulsado==navegador.QUERY)
-    {
       acc_impokgE.setEnabled(b);
-    }
     acc_fecrecE.setEnabled(b);
     usu_nombE.setEnabled(b);
     prv_codiE.setEnabled(b);
@@ -4497,8 +4498,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         activaModPrecio();
 
         jt.requestFocusInicio();
-        acl_prcomE.setEditable(!opAgrupar.isSelected());
-        jt.setEnabled(true);
+//        acl_prcomE.setEditable(!opAgrupar.isSelected());
+        jt.setEnabled(!opAgrupar.isSelected());
 //      numLinE.setValorDec(nLin);
         kilostE.setValorDec(kilosT);
         imptotE.setValorDec(opVerPrecios.isSelected()?impLin:0);

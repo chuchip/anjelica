@@ -1,3 +1,4 @@
+package gnu.chu.anjelica.pad;
 /**
  *
  * <p>Titulo: MantTarifa </p>
@@ -11,16 +12,13 @@
  *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
  *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
  *  Véase la Licencia Pública General de GNU para más detalles.
- *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Debería haber recibidof una copia de la Licencia Pública General junto con este programa.
  *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
  *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
  * </p>
  * @author chuchiP
  *
  */ 
-
-package gnu.chu.anjelica.pad;
-
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.controles.StatusBar;
@@ -240,10 +238,9 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
          int inicProd,finProd;
          int codProd=0;
          double precio;
-        
-        DecimalFormatSymbols symbols=DecimalFormatSymbols.getInstance();
-        char sep=symbols.getDecimalSeparator();
-        NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+              
+        char sep=new DecimalFormatSymbols(new Locale("es","","")).getDecimalSeparator();
+        NumberFormat nf = NumberFormat.getInstance(new Locale("es","",""));
          for (int n=0;n<nLen;n++)
          {
             if (modo==0)
@@ -289,7 +286,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
                   {
 //                      if (!Character.isAlphabetic(s.charAt(n)))
 //                          break;
-                     if (!Character.isDigit(s.charAt(n)) && s.charAt(n)!=sep)
+                     if (!Character.isDigit(s.charAt(n)) && s.charAt(n)!=sep )
                       {
                           finProd=n;
                           break;

@@ -159,7 +159,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2017-04-04" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2017-05-30" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM v_articulo where pro_activ != 0 "+
                 " ORDER BY pro_codi";
 
@@ -1069,7 +1069,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     dt.setDato("pro_codequ",pro_codequE.isNull()?null:pro_codequE.getValorInt());
     dt.setDato("pro_kgmiun",pro_kgmiunE.isNull()?null:pro_kgmiunE.getValorDec());
     dt.setDato("pro_kgmaun",pro_kgmiunE.isNull()?null:pro_kgmaunE.getValorDec());
-    dt.setDato("pro_cointa",pro_kgmiunE.isNull()?null:pro_cointaE.getValorDec());
+    dt.setDato("pro_cointa",pro_cointaE.getValorDec());
   }
     @Override
   public void canc_addnew()

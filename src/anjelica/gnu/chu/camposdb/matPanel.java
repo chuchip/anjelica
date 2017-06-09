@@ -3,7 +3,7 @@ package gnu.chu.camposdb;
 /**
  * 
  * <p>Título: matPanel</p>
- * <p>Descripcion: Control para introducir el codigo delmatadero </p>
+ * <p>Descripcion: Control para introducir el codigo del matadero </p>
  * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por

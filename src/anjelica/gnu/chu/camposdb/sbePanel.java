@@ -278,7 +278,7 @@ public class sbePanel extends CPanel
           return false;
       return dt.getInt("sbe_albped")!=0;
   }
-  public boolean getSubEmpresa(DatosTabla dt,int sbeCodi,int empCodi,String tipo) throws SQLException
+  public static boolean getSubEmpresa(DatosTabla dt,int sbeCodi,int empCodi,String tipo) throws SQLException
   {
      return dt.select("SELECT * FROM subempresa where sbe_codi = "+sbeCodi+
             (empCodi==0?"":" and emp_codi = "+empCodi)+

@@ -1,16 +1,29 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gnu.chu.anjelica.margenes;
-
+/**
+ *
+ * <p>Titulo: MantPreMedios </p>
+ * <p>Descripción: Mantenimiento Precios Medios</p>
+ * <p>Copyright: Copyright (c) 2005-2017
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibidof una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * @author chuchiP
+ *
+ */ 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
-import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -22,10 +35,12 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 /**
  *
@@ -87,7 +102,7 @@ public class MantPreMedios extends ventana
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2017-02-19" );
+      this.setVersion("2017-05-31" );
       statusBar = new StatusBar(this);
       
       iniciarFrame();
@@ -107,7 +122,7 @@ public class MantPreMedios extends ventana
         htBolas.put(40203, 2.7);
         htBolas.put(40205, 2.5);
         htBolas.put(40225, 2.5);
-        
+        htLomos.put(10994,new Integer[]{10994,10995});
         htLomos.put(10904,new Integer[]{10904,10905});
         htLomos.put(10994,new Integer[]{10994,10995});
         htLomos.put(10903,new Integer[]{10903});
@@ -200,8 +215,12 @@ public class MantPreMedios extends ventana
                jt.addLinea(v);
            } while (dtCon1.next());
            jt1.removeAllDatos();
-           Set<Integer> stLomos= htLomos.keySet();
-           Iterator<Integer> it =stLomos.iterator();
+           
+           List<Integer> stLomos= Collections.list(htLomos.keys());
+           
+            Collections.sort(stLomos);
+            Iterator<Integer> it = stLomos.iterator();
+
            Integer lomo;           
            while ((lomo=it.next())!=null)
            {

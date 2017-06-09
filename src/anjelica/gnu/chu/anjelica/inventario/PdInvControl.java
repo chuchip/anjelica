@@ -1216,6 +1216,7 @@ public class PdInvControl extends ventanaPad implements PAD
     {
         String s="select * from v_coninvent where cci_feccon = '"+fecori+"'"+
                 " and alm_codi = "+almCodi+
+                " and lci_peso>0"+
                 " and pro_codi = ?"+
                 " and prp_ano = ?"+
                 " and prp_seri = ?"+

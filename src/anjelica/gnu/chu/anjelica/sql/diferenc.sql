@@ -1,3 +1,10 @@
+alter table v_matadero add pai_inic varchar(2);
+alter table v_saladesp add pai_inic varchar(2);
+update v_matadero set pai_inic = (select pai_inic from paises where pai_codi = v_matadero.pai_codi) where pai_codi>0; --and acc_ano=2016;
+update v_saladesp set pai_inic = (select pai_inic from paises where pai_codi = v_saladesp.pai_codi) where pai_codi>0; --and acc_ano=2016;
+alter table v_matadero drop pai_codi;
+alter table v_saladesp  drop pai_codi;
+
 -- Para insercion tarifa
 create table tarifa_origen 
 (
