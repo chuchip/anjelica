@@ -158,7 +158,8 @@ public class pdclien extends ventanaPad implements PAD
     CLabel cLabel21 = new CLabel();
     CLabel cLabel20 = new CLabel();
     CTextField cli_libivaE = new CTextField(Types.CHAR, "X", 2);
-    CTextField cli_codrepE = new CTextField(Types.CHAR, "X", 5);
+    CTextField cli_codrepE = new CTextField(Types.CHAR, "X", 5); // Codigo Reparto
+    CButton cli_codrepB = new CButton(Iconos.getImageIcon("buscar"));
     CLabel cli_codrutL = new CLabel("Cod.Reparto");
     CTextField cli_tipdocE = new CTextField(Types.CHAR, "X", 2);
     CLabel cLabel23 = new CLabel();
@@ -196,7 +197,7 @@ public class pdclien extends ventanaPad implements PAD
     CLinkBox div_codiE = new CLinkBox();
     CPanel Pcabe = new CPanel();
     CPanel Pdiscrim = new CPanel();
-    TitledBorder titledBorder2;
+    TitledBorder titledBorder2=new TitledBorder("");
     CLinkBox cli_disc1E = new CLinkBox();
     CLabel cli_disc1L = new CLabel();
     CLabel cli_disc2L = new CLabel();
@@ -321,12 +322,13 @@ public class pdclien extends ventanaPad implements PAD
   {
       cli_codiE.setValorInt(cliCodi);
   }
+  
   private void jbInit() throws Exception
   {
-      titledBorder2 = new TitledBorder("");
+      
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2017-02-24");
+      this.setVersion("2017-06-09");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -625,6 +627,7 @@ public class pdclien extends ventanaPad implements PAD
       zon_codiE.setBounds(new Rectangle(65, 100, 325, 20));
       zon_codiE.setAncTexto(30);
       rut_codiE.setAncTexto(30);
+      rut_codiE.setMayusculas(true);
       rep_codiL.setText("Represent");
       rep_codiL.setBounds(new Rectangle(0, 125, 65, 20));
       rep_codiE.setBounds(new Rectangle(65, 125, 325, 20));
@@ -655,7 +658,10 @@ public class pdclien extends ventanaPad implements PAD
       cli_servirE.setBounds(new Rectangle(115, 260, 75, 18));
       cli_codrutL.setBounds(new Rectangle(410, 240, 80, 19));
       cli_codrepE.setBounds(new Rectangle(495, 240, 50, 19));
+      cli_codrepE.setToolTipText("F3- Buscar siguiente codigo reparto");
       cli_codrepE.setMayusc(true);
+      cli_codrepB.setToolTipText("F3- Buscar siguiente codigo reparto");
+      cli_codrepB.setBounds(new Rectangle(550, 240, 18, 18));
       llenaEstCont(cli_estconE);
       this.getContentPane().add(Pprinc, BorderLayout.CENTER);
       PdatFra.setLayout(null);
@@ -815,7 +821,7 @@ public class pdclien extends ventanaPad implements PAD
         PdatGen.add(cli_servirE, null);
         PdatGen.add(cli_codrutL, null);
         PdatGen.add(cli_codrepE,null);
-
+        PdatGen.add(cli_codrepB,null);
         PdatGen.add(cli_email1E, null);
         PdatGen.add(cli_email1L, null);
         PdatGen.add(cli_estconE, null);
@@ -1089,6 +1095,23 @@ public class pdclien extends ventanaPad implements PAD
   }
   void activarEventos()
   {
+      cli_codrepE.addKeyListener(new KeyAdapter()
+      {
+         @Override
+         public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode()==KeyEvent.VK_F3)
+            {
+                buscaCodReparto();
+            }
+         }  
+      });
+      cli_codrepB.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent e)
+          {
+            buscaCodReparto();
+          }
+    });
 //    copiaCliente.addActionListener(new ActionListener()
 //    {
 //      public void actionPerformed(ActionEvent e)
@@ -1101,6 +1124,7 @@ public class pdclien extends ventanaPad implements PAD
             @Override
       public void focusLost(FocusEvent e)
       {
+          
         if (cli_codfaE.getValorInt() == 0 && nav.pulsado!=navegador.QUERY)
           cli_codfaE.setValorInt(cli_codiE.getValorInt());
         if (nav.pulsado == navegador.ADDNEW)
@@ -1109,6 +1133,7 @@ public class pdclien extends ventanaPad implements PAD
     });
     Tpanel.addChangeListener(new ChangeListener()
     {
+        @Override
       public void stateChanged(ChangeEvent e)
       {
         if (Tpanel.getSelectedIndex() == 4 && ! nav.isEdicion())
@@ -1118,8 +1143,9 @@ public class pdclien extends ventanaPad implements PAD
     jt.tableView.getSelectionModel().addListSelectionListener(new
         ListSelectionListener()
     {
+      @Override
       public void valueChanged(ListSelectionEvent e)
-      {
+      {        
         if (e.getValueIsAdjusting() || nav.isEdicion())
           return;
         if ( ! jt.isEnabled() || jt.isVacio() )
@@ -1131,6 +1157,7 @@ public class pdclien extends ventanaPad implements PAD
 
     Bbusmax.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Bbusmax_actionPerformed();
@@ -1138,6 +1165,7 @@ public class pdclien extends ventanaPad implements PAD
     });
     cli_tipivaE.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         if (!cli_tipivaE.isEnabled() || nav.pulsado==navegador.QUERY)
@@ -1167,12 +1195,46 @@ public class pdclien extends ventanaPad implements PAD
 //    Baceptar.setEnabled(true);
 //    Bcancelar.setEnabled(true);
 //  }
-
+  /**
+   * Busca codigo Reparto
+   */
+  void buscaCodReparto()
+  {
+        try
+        {
+            if (rut_codiE.getText().length()!=2)
+            {
+                msgBox(("Introduzca codigo ruta de 2 caracteres"));
+                return;
+            }
+            int nRep=0;
+            String s="select to_number(substring(cli_codrut from 3),'999') as codrut  from clientes where cli_codrut like '"+rut_codiE.getText()+"%'"+
+                " and cli_activ = 'S' "+
+                " order by codrut";
+            if (dtCon1.select(s))
+            {               
+                do
+                {
+                    nRep++;
+                    if (dtCon1.getInt("codrut")>nRep)
+                        break;
+                } while (dtCon1.next());
+             }
+             else
+                nRep++;                  
+            cli_codrepE.setText(rut_codiE.getText()+ nRep);
+        } catch (SQLException ex)
+        {
+            Error("Error al buscar siguiente codigo reparto",ex);
+        }
+  }
+  @Override
   public void PADPrimero()
   {
     nRegE.setValorInt(1);
     verDatos();
   }
+    @Override
   public void PADAnterior()
   {
     nRegE.setValorInt(nRegE.getValorInt()-1);
@@ -1408,7 +1470,22 @@ public class pdclien extends ventanaPad implements PAD
         cli_codpoE.requestFocus();
         return false;
     }
-
+    if (cli_activE.getValor().equals("S"))
+    {
+        if (cli_codrepE.isNull())
+        {
+            mensajeErr("Introduzca código Reparto de cliente");
+            return false;
+        }
+        s="select cli_codi,cli_nomb from clientes where cli_codrut = '"+cli_codrepE.getText()+"'"+
+            " and cli_activ = 'S' AND cli_codi !="+cli_codiE.getValorInt();
+        if (dtStat.select(s))
+        {
+            msgBox("Codigo de reparto lo tiene asignado el cliente "+dtStat.getInt("cli_codi")+" - "+
+                dtStat.getString("cli_nomb"));
+            return false;
+        }
+    }
         
     if (cli_direcE.isNull())
     {
