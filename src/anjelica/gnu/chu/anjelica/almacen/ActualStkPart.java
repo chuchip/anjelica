@@ -799,7 +799,7 @@ public class ActualStkPart
    * @param nInd
    * @param almCodi
    * @param lock bloquear registro
-   * @return
+   * @return true si encuentra el registro en stock partidas.
    * @throws SQLException 
    */
   public static boolean checkIndiv(DatosTabla dt, int proCodi, int ejeLot,int empLot,
