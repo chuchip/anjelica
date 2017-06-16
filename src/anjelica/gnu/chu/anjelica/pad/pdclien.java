@@ -45,6 +45,7 @@ import javax.swing.event.*;
  */
 public class pdclien extends ventanaPad implements PAD
 {
+    boolean CHECKCODREP=true; // Comprueba que el Codigo Reparto sea valido
     public static final char EST_CONTACT='C';
     public static final char EST_NOCONT='N';
     public static final char EST_AUSENTE='A';
@@ -328,7 +329,7 @@ public class pdclien extends ventanaPad implements PAD
       
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2017-06-09");
+      this.setVersion("2017-06-15");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -337,6 +338,7 @@ public class pdclien extends ventanaPad implements PAD
       nav = new navegador(this, dtCons, false, modConsulta ? navegador.CURYCON : navegador.NORMAL);
 
       iniciar(this);
+      CHECKCODREP=EU.getValorParam("checkCodRep",CHECKCODREP);
       cLabel11.setText("Nombre Fiscal");
       cLabel11.setBounds(new Rectangle(1, 2, 90, 16));
       cli_nifL.setText("NIF");
@@ -1213,12 +1215,18 @@ public class pdclien extends ventanaPad implements PAD
                 " order by codrut";
             if (dtCon1.select(s))
             {               
+                boolean swRoto=false;
                 do
                 {
                     nRep++;
                     if (dtCon1.getInt("codrut")>nRep)
+                    {
+                        swRoto=true;
                         break;
+                    }
                 } while (dtCon1.next());
+                if (!swRoto)
+                    nRep=dtCon1.getInt("codrut")+1;
              }
              else
                 nRep++;                  
@@ -1470,7 +1478,7 @@ public class pdclien extends ventanaPad implements PAD
         cli_codpoE.requestFocus();
         return false;
     }
-    if (cli_activE.getValor().equals("S"))
+    if (cli_activE.getValor().equals("S") && CHECKCODREP)
     {
         if (cli_codrepE.isNull())
         {
