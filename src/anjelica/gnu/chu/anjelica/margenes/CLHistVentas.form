@@ -99,6 +99,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Aceptar"/>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Baceptar.addMenu(&quot;Consultar&quot;);"/>
+              </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="230" y="2" width="120" height="23"/>

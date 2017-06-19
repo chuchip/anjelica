@@ -47,6 +47,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 public class CLHistVentas extends ventana {
+ 
   private int DIVCODI=1;
   private  Date fecIniMes,fecFinMes,fecIniMesAnt,fecFinMesAnt; 
   String s;
@@ -107,7 +108,7 @@ public class CLHistVentas extends ventana {
   private void jbInit() throws Exception
   {
       iniciarFrame();
-
+      
       this.setVersion("2016-12-27"+(actual?"(Actualizar)":""));
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
@@ -122,7 +123,10 @@ public class CLHistVentas extends ventana {
   public void iniciarVentana() throws Exception
   {
     if (EU.isRootAV())
+    {
+        Baceptar.addMenu("Solo Euros");
         DIVCODI=0;
+    }
     dtAdd=new DatosTabla(ctUp);
     anoE.setValorInt(EU.ejercicio);
     activarEventos();
@@ -132,7 +136,7 @@ public class CLHistVentas extends ventana {
     Baceptar.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            consultar();
+            consultar(e.getActionCommand().contains("Euros"));
         }
     });
     jtMes.tableView.getSelectionModel().addListSelectionListener(new
@@ -438,8 +442,17 @@ public class CLHistVentas extends ventana {
     dtAdd.update();
     dtAdd.commit();
   }
-  void consultar()
+  /**
+   * 
+   * @param euros 
+   */
+  void consultar(boolean euros)
   {
+    if (euros)
+        DIVCODI=1;
+    else
+        DIVCODI=EU.isRootAV()?0:1;
+    
     s="SELECT * FROM calendario where cal_ano="+ anoE.getValorInt()+
             (mesE.getValorInt()>0?" and cal_mes= "+mesE.getValorInt():"")+
             " order by cal_mes";
@@ -607,6 +620,7 @@ public class CLHistVentas extends ventana {
         mesE.setBounds(110, 2, 23, 18);
 
         Baceptar.setText("Aceptar");
+        Baceptar.addMenu("Consultar");
         Pcabe.add(Baceptar);
         Baceptar.setBounds(230, 2, 120, 23);
 
