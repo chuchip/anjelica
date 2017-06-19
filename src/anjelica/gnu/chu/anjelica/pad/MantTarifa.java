@@ -124,7 +124,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2017-05-22" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2017-06-19" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -137,6 +137,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
       navActivarAll();
       dtCons.setLanzaDBCambio(false);
       initComponents();
+      Pcabe.setAltButton(Bocul);
       iniciarBotones(Baceptar, Bcancelar);
       this.setSize(new Dimension(582,522));
       conecta();
@@ -261,7 +262,12 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
                   }
                   if (finProd>0)
                   {
-                      codProd=Integer.valueOf(s.substring(inicProd,finProd).trim());
+                      try {
+                        codProd=Integer.valueOf(s.substring(inicProd,finProd).trim());
+                      } catch (NumberFormatException ex )
+                      {
+                         continue;
+                      }
                       modo=1; // Buscando precio
                       continue;
                   }
@@ -1207,7 +1213,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         cPanel1.add(tar_incremE);
         tar_incremE.setBounds(360, 15, 40, 17);
         cPanel1.add(Bocul);
-        Bocul.setBounds(452, 22, 2, 2);
+        Bocul.setBounds(522, 22, 2, 2);
 
         cLabel8.setText("Tarifa");
         cLabel8.setPreferredSize(new java.awt.Dimension(33, 18));
@@ -1247,7 +1253,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         Pcabe.add(tar_fechaE);
         tar_fechaE.setBounds(50, 60, 70, 17);
 
-        BTexto.setText("Texto");
+        BTexto.setText("Importar");
         Pcabe.add(BTexto);
         BTexto.setBounds(430, 30, 90, 20);
 

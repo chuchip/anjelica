@@ -263,7 +263,7 @@
                 <Component class="gnu.chu.controles.CButton" name="Bocul">
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="452" y="22" width="2" height="2"/>
+                      <AbsoluteConstraints x="522" y="22" width="2" height="2"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -369,7 +369,7 @@
             </Component>
             <Component class="gnu.chu.controles.CButton" name="BTexto">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Texto"/>
+                <Property name="text" type="java.lang.String" value="Importar"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
