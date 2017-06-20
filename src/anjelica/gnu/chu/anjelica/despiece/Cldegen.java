@@ -36,6 +36,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -44,6 +45,7 @@ import net.sf.jasperreports.engine.*;
 
 public class Cldegen extends ventana
 {
+    boolean swIgnEvento=false;
     int TARIFA_MAYOR;
     final private int JT_PROCOD=0;
     final private int JT_PRTARIFA=6;
@@ -83,8 +85,7 @@ public class Cldegen extends ventana
         try {
             jbInit();
         } catch (Exception ex) {
-            ErrorInit(ex);
-            setErrorInit(true);
+            ErrorInit(ex);            
         }
     }
 
@@ -92,7 +93,7 @@ public class Cldegen extends ventana
 
         iniciarFrame(); 
        
-        this.setVersion("2017-04-23");
+        this.setVersion("2017-06-19");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -160,19 +161,22 @@ public class Cldegen extends ventana
                 buscaDatos();
             }
         });
-
         
         jt.addListSelectionListener(new ListSelectionListener ()
         {
              @Override
              public void valueChanged(ListSelectionEvent e)
              {
+                 if (swIgnEvento)
+                     return;
                  if (e.getValueIsAdjusting()) // && e.getFirstIndex() == e.getLastIndex())
                      return;
                  if (!jt.isEnabled())
                      return;
-                 verDatosDesg();
-                 jt.requestFocusSelectedLater();
+                 swIgnEvento=true;
+                 verDatosDesg();                
+//                 jt.requestFocusSelectedLater();
+                 swIgnEvento=false;
              }
         });
         Bprint.addActionListener(new ActionListener()
@@ -393,7 +397,7 @@ public class Cldegen extends ventana
                 prvNomb=null;
              else
                 prvNomb=gnu.chu.anjelica.pad.pdprove.getNombPrv(utdesp.getPrvCompra(),dtStat);
-             Vector v=new Vector ();
+             ArrayList v=new ArrayList ();
              v.add(dtDesp.getInt("deo_codi"));
              v.add(prvNomb);
              v.add(""+dtDesp.getInt("pro_lote"));
@@ -411,7 +415,7 @@ public class Cldegen extends ventana
              }
              jtDes.addLinea(v);
             } while (dtDesp.next());
-            jtDes.requestFocusInicio();
+//            jtDes.requestFocusInicio();
         } catch (SQLException k)
         {
             Error("Error al ver datos de desglose",k);
