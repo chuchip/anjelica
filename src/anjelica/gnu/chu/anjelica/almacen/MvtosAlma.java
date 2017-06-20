@@ -702,8 +702,8 @@ public class MvtosAlma
            ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "+
            ", r.rgs_fecha as fecdoc "+
            ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
-           " FROM v_regstock r WHERE "+        
-           " tir_afestk = '='"+ // Solo Inventarios
+           " FROM v_inventar r WHERE "+        
+//           " tir_afestk = '='"+ // Solo Inventarios
            " and rgs_kilos <> 0 "+
 //            " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
            (almCodi==0?"":" and alm_codi = "+almCodi)+
