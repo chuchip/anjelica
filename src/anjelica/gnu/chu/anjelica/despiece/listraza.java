@@ -249,7 +249,7 @@ public class listraza  implements JRDataSource
             dtCur.getString("avp_serlot"),dtCur.getInt("pro_codi"),
                           dtCur.getInt("avp_emplot"),
                       dtCur.getInt("avp_ejelot"),dtCur.getInt("avp_numpar"),
-                      dtCur.getInt("avp_numind"),dtCur.getInt("alm_codi"),
+                      dtCur.getInt("avp_numind"),0, //dtCur.getInt("alm_codi"),
                       dtCon1,dtStat,EU);
         msgLogL=utdes.getMsgAviso();
         if (msgLogL != null) {
