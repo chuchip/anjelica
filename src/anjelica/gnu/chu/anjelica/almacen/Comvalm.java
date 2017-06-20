@@ -50,10 +50,12 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
+import javax.swing.JCheckBoxMenuItem;
 
 
 public class Comvalm extends ventana
 {
+  
   boolean P_VERPRECIO=false;
   JPopupMenu JpopupMenu = new JPopupMenu("Filtro");
   private MvtosAlma mvtosAlm = new MvtosAlma();
@@ -140,7 +142,7 @@ public class Comvalm extends ventana
   {
       iniciarFrame();
 
-      this.setVersion("2016-05-02");
+      this.setVersion("2016-06-20");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -283,24 +285,18 @@ public class Comvalm extends ventana
         JpopupMenu.show(Bfiltro,0,24);
       }
     });
-    ActionListener al1=new ActionListener() 
-    {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-          opTodos.setSelected(false);
-          opNinguno.setSelected(false);
-          JpopupMenu.show(Bfiltro,0,24);
-      }
-    };
-    opTrasp.addActionListener(al1);
-    opCompras.addActionListener(al1);
-    opSalidaDep.addActionListener(al1);
-    opInventDep.addActionListener(al1);
-    opVentas.addActionListener(al1);
-    opDespEnt.addActionListener(al1);
-    opDespSal.addActionListener(al1);
-    opRegul.addActionListener(al1);
-    opInven.addActionListener(al1);
+    
+   
+    
+    opTrasp.addActionListener(new ActionMvto(this,opTrasp));
+    opCompras.addActionListener(new ActionMvto(this,opCompras));
+    opSalidaDep.addActionListener(new ActionMvto(this,opSalidaDep));
+    opInventDep.addActionListener(new ActionMvto(this,opInventDep));
+    opVentas.addActionListener(new ActionMvto(this,opVentas));
+    opDespEnt.addActionListener(new ActionMvto(this,opDespEnt));
+    opDespSal.addActionListener(new ActionMvto(this,opDespSal));
+    opRegul.addActionListener(new ActionMvto(this,opRegul));
+    opInven.addActionListener(new ActionMvto(this,opInven));
         
     Bacepta.addActionListener(new ActionListener()
     {
@@ -335,6 +331,20 @@ public class Comvalm extends ventana
   }
       });
   }
+   
+  void acionMvto(JCheckBoxMenuItem hijo)
+  {
+    if (opTodos.isSelected())
+    {
+             activaTodoFiltro(false);
+             hijo.setSelected(true);
+    }
+    
+    opTodos.setSelected(false);
+    opNinguno.setSelected(false);
+    JpopupMenu.show(Bfiltro,0,24);
+  }
+  
   void verDocumento()
   {
     if (jf==null)
@@ -464,13 +474,16 @@ public class Comvalm extends ventana
   }
   void  activaTodoFiltro(boolean sel)
   {
+      
       opCompras.setSelected(sel);
       opVentas.setSelected(sel);
+      opSalidaDep.setSelected(sel);
       opDespEnt.setSelected(sel);
       opDespSal.setSelected(sel);
       opRegul.setSelected(sel);     
       opInven.setSelected(sel);   
       opTrasp.setSelected(sel);   
+      opInventDep.setSelected(sel);   
 //      opSalidaDep.setSelected(!sel);
 //      opInventDep.setSelected(!sel);
   }
@@ -1187,3 +1200,19 @@ public class Comvalm extends ventana
     private gnu.chu.controles.CComboBox tipfecC;
     // End of variables declaration//GEN-END:variables
 }
+
+ class ActionMvto implements  ActionListener
+    {
+     Comvalm padre;
+     JCheckBoxMenuItem hijo;
+     public  ActionMvto( Comvalm padre,JCheckBoxMenuItem hijo)
+     {
+         this.padre=padre;
+         this.hijo=hijo;
+     }
+      @Override
+      public void actionPerformed(ActionEvent e) {
+          padre.acionMvto(hijo);
+         
+      }
+    }
