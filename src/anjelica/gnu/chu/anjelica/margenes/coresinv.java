@@ -15,8 +15,8 @@ import javax.swing.SwingConstants;
 
 /**
 * <p>Titulo: coresinv</p>
-* <p>Descripción: Consulta Resultados Inventario<br>
-* <p>Copyright: Copyright (c) 2005-2015
+* <p>Descripción: Consulta Resultados por Inventario<br>
+* <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -35,6 +35,7 @@ import javax.swing.SwingConstants;
 public class coresinv extends ventana
 {
   String s;
+  private int DIVCODI=1;
   CPanel Pprinc = new CPanel();
   proPanel pro_codiE = new proPanel();
   CLabel cLabel1 = new CLabel();
@@ -66,6 +67,8 @@ public class coresinv extends ventana
   Cgrid jt = new Cgrid(11);
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   CCheckBox opCong = new CCheckBox();
+  CCheckBox opDivi = new CCheckBox();
+  
   CCheckBox opIncTodo = new CCheckBox("Inc.Todo");
 
   public coresinv(EntornoUsuario eu, Principal p)
@@ -128,8 +131,16 @@ public class coresinv extends ventana
     Presul.setMinimumSize(new Dimension(471, 85));
     Presul.setPreferredSize(new Dimension(471, 85));
     opCong.setSelected(true);
-    opCong.setText("Incluir Congelado");
-    opCong.setBounds(new Rectangle(348, 4, 136, 16));
+    opCong.setText("Inc. Congelado");
+    opCong.setBounds(new Rectangle(348, 4, 106, 16));
+    if (EU.isRootAV())
+    {
+        opDivi.setText("Div");
+        opDivi.setBounds(new Rectangle(456, 4, 140, 16));
+        opDivi.setSelected(true);
+    }
+    else
+        opDivi.setSelected(false);
     impVentasE.setEditable(false);
     impComprasE.setEditable(false);
     impInviniE.setEditable(false);
@@ -167,6 +178,8 @@ public class coresinv extends ventana
     Pentdat.add(fecfinE, null);
     Pentdat.add(cLabel4, null);
     Pentdat.add(opCong, null);
+    if (EU.isRootAV())
+        Pentdat.add(opDivi, null);
     Pentdat.add(opIncTodo, null);
     Pprinc.setLayout(gridBagLayout1);
    
@@ -260,6 +273,8 @@ public class coresinv extends ventana
   public void iniciarVentana() throws Exception
   {
     String s,feulin;
+     if (EU.isRootAV())
+        DIVCODI=0;
     s =
         "select distinct(rgs_fecha) as cci_feccon from v_regstock as r " +
         " where r.emp_codi = " + EU.em_cod +
@@ -333,6 +348,10 @@ public class coresinv extends ventana
   {
     try
     {
+       if (EU.isRootAV())
+        DIVCODI=opDivi.isSelected()?0:1;
+       else
+        DIVCODI=1;
       Presul.resetTexto();
       s = "select a.* from v_articulo as a  " +
           "  where 1=1  "+
@@ -372,6 +391,7 @@ public class coresinv extends ventana
             " where avc_fecalb >= TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy') " +
             " and avc_fecalb <= TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') " +
             " and avc_serie != 'X' " +
+            " and div_codi >= "+DIVCODI+
             " AND pro_codi = " + dtStat.getInt("pro_codi");
 
         dtCon1.select(s);
@@ -386,7 +406,7 @@ public class coresinv extends ventana
             " and c.acc_nume = l.acc_nume " +
             " and p.pro_codi = l.pro_codi" +
             " and c.prv_codi = pv.prv_codi " +
-            "and c.acc_fecrec >= TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy')" +
+            " and c.acc_fecrec >= TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy')" +
             " AND c.acc_fecrec <= TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') " +
             " and L.pro_codi = " + dtStat.getInt("pro_codi");
         dtCon1.select(s);
@@ -395,9 +415,8 @@ public class coresinv extends ventana
 
         s = "select sum(rgs_kilos*rgs_prregu) as importe, "+
             " sum(rgs_kilos) as kilos " +
-            " from v_regstock as r " +
-            " where r.emp_codi = " + EU.em_cod +
-            " and tir_afestk='=' " +
+            " from v_inventar as r " +
+            " where r.emp_codi = " + EU.em_cod +           
             " and r.pro_codi = " + dtStat.getInt("pro_codi") +
             " and rgs_fecha = TO_DATE('" + feciniE.getText() +
             "','dd-MM-yyyy') ";
@@ -408,12 +427,10 @@ public class coresinv extends ventana
 
         s = "select sum(rgs_kilos*rgs_prregu) as importe, " +
             " sum(rgs_kilos) as kilos " +
-            " from v_regstock as r " +
-            " where r.emp_codi = " + EU.em_cod +
-            " and tir_afestk='=' " +
+            " from v_inventar as r " +
+            " where r.emp_codi = " + EU.em_cod +           
             " and r.pro_codi = " + dtStat.getInt("pro_codi") +
-            " and rgs_fecha = TO_DATE('" + fecfinE.getText() +
-            "','dd-MM-yyyy') ";
+            " and rgs_fecha = TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') ";
         dtCon1.select(s);
         impInvFinP = dtCon1.getDouble("importe", true);
         kgInvFinP = dtCon1.getDouble("kilos", true);
