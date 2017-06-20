@@ -40,6 +40,7 @@ import gnu.chu.print.util;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.ventana;
 import java.awt.*;
 import java.awt.event.*;
@@ -376,9 +377,8 @@ public class lisaldos   extends ventana  implements JRDataSource
     sbe_codiE.setAceptaNulo(true);
 //    activar(true);
 
-    s="select distinct(rgs_fecha) as cci_feccon from v_regstock as r "+
+    s="select distinct(rgs_fecha) as cci_feccon from v_inventar as r "+
          " where r.emp_codi = "+EU.em_cod+
-         " and tir_afestk='=' "+
          " order by cci_feccon desc ";
 
      if (dtStat.select(s))
@@ -627,6 +627,15 @@ public class lisaldos   extends ventana  implements JRDataSource
     {
       mensajeErr("Introduzca Fecha de Saldo");
       return;
+    }
+    if (fecsalE.getText().equals(feulinE.getText()) && pro_cosincE.isSelected())
+    {
+        int ret=mensajes.mensajeYesNo("Fecha Salida es la de Inventario. Incrementar costo seguro?");
+        if (ret!=mensajes.YES)
+        {
+            pro_cosincE.setSelected(false);
+            return;
+        }
     }
     camCodi=cam_codiE.getText().trim();
     if (camCodi.equals(""))
