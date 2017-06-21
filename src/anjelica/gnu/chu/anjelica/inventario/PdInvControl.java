@@ -146,7 +146,7 @@ public class PdInvControl extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2017-05-26 "+(swAdmin?"Administrador":""));
+        this.setVersion("2017-06-21 "+(swAdmin?"Administrador":""));
         condWhere=" where emp_codi =  "+EU.em_cod;
         strSql = "SELECT * FROM coninvcab "+condWhere+
          "order by cci_feccon,cam_codi,alm_codi";
@@ -204,6 +204,7 @@ public class PdInvControl extends ventanaPad implements PAD
     prp_serieE.setColumnaAlias("prp_seri");
     prp_partE.setColumnaAlias("prp_part");
     prp_indiE.setColumnaAlias("prp_indi");
+    prp_pesoE.setColumnaAlias("lci_peso");
     lci_numpalE.setColumnaAlias("lci_numpal");
     lci_numcajE.setColumnaAlias("lci_numcaj");
     activarEventos();
@@ -609,6 +610,7 @@ public class PdInvControl extends ventanaPad implements PAD
     v.add(prp_serieE.getStrQuery());
     v.add(prp_partE.getStrQuery());
     v.add(prp_indiE.getStrQuery());
+    v.add(prp_pesoE.getStrQuery());
     v.add(lci_numcajE.getStrQuery());
     v.add(lci_numpalE.getStrQuery());
        
@@ -638,6 +640,7 @@ public class PdInvControl extends ventanaPad implements PAD
       v1.add(prp_partE.getStrQuery());
       v1.add(prp_indiE.getStrQuery());
       v1.add(lci_numpalE.getStrQuery());
+      v1.add(prp_pesoE.getStrQuery());
       condLineas=creaWhere("",v1,false);
       activaTodo();
       Pcabe.setQuery(false);
