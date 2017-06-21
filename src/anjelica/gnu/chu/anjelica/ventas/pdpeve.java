@@ -28,7 +28,7 @@ import javax.swing.event.ListSelectionListener;
  *
  * <p>Título: pdpeve </p>
  * <p>Descripción: Mantenimiento Pedidos de Ventas. Incluye panel consulta stock de Productos</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -102,14 +102,15 @@ public class pdpeve  extends ventanaPad   implements PAD
     }
   };
   CButton BirAlbaran = new CButton(Iconos.getImageIcon("up"));
+  CButton BponPrecio = new CButton(Iconos.getImageIcon("precio"));
   CLabel cli_poblE = new CLabel();
   CLabel cli_poblL = new CLabel();
   CLabel cLabel3 = new CLabel();
   
   CTextField eje_numeE = new CTextField(Types.DECIMAL,"###9");
   CTextField pvc_numeE = new CTextField(Types.DECIMAL,"#####9");
-  CLabel cLabel4 = new CLabel();
-  CTextField pvc_fecpedE = new CTextField(Types.DATE,"dd-MM-yyyy");
+  CLabel pvc_fecpedL = new CLabel();
+  CTextField pvc_fecpedE = new CTextField(Types.DATE,"dd-MM-yy");
   CTextField pvc_horpedE = new CTextField(Types.DECIMAL,"99.99");
   CLabel pvc_fecentL = new CLabel("Fec.Entrega");  
   CTextField pvc_fecentE = new CTextField(Types.DATE,"dd-MM-yyyy");
@@ -279,7 +280,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2017-03-02"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2017-06-21"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -409,8 +410,8 @@ public class pdpeve  extends ventanaPad   implements PAD
    
     cLabel3.setText("N. Pedido");
     cLabel3.setBounds(new Rectangle(3, 20, 57, 16));
-    cLabel4.setText("Fec. Ped.");
-    cLabel4.setBounds(new Rectangle(2, 4, 59, 16));
+    pvc_fecpedL.setText("Fec. Ped.");
+    
     
     
     cLabel7.setText("Conf");
@@ -442,6 +443,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     Ppie.setPreferredSize(new Dimension(469, 24));
     Ppie.setLayout(null);
     pstock.setBorder(BorderFactory.createLineBorder(Color.black));
+    
     conf_jt();
     BirAlbaran.setToolTipText("Busca Albaranes de este cliente");
     BirAlbaran.setFocusable(false);
@@ -455,9 +457,11 @@ public class pdpeve  extends ventanaPad   implements PAD
     Bcancelar.setPreferredSize(new Dimension(125, 20));
     Bcancelar.setMargin(new Insets(0, 0, 0, 0));
     usu_nombE.setBounds(new Rectangle(226, 4, 81, 16));
+    BponPrecio.setToolTipText("Poner precio tarifa");
+    BponPrecio.setBounds(new Rectangle(2, 4, 18, 18));
+    pvc_fecpedL.setBounds(new Rectangle(25, 4, 57, 16));
+    pvc_fecpedE.setBounds(new Rectangle(87, 4, 50, 16));
     pvc_horpedE.setBounds(new Rectangle(146, 4, 35, 16));
-    pvc_fecpedE.setBounds(new Rectangle(62, 4, 81, 16));
-    
     pvc_fecentL.setBounds(new Rectangle(147, 20, 67, 16));
     pvc_fecentE.setBounds(new Rectangle(218, 20, 75, 16));
     pvc_fecpreL.setBounds(new Rectangle(300, 20, 67, 16));
@@ -563,7 +567,12 @@ public class pdpeve  extends ventanaPad   implements PAD
     Pcabe.add(pvc_verfecE, null);
     pvc_comenS.getViewport().add(pvc_comenE, null);
     pvc_comalbS.getViewport().add(pvc_comrepE, null);
-    Ppie.add(cLabel4, null);
+    cantE.setEnabled(false);        
+    nlE.setEnabled(false);    
+    pvc_impresE.setEnabled(false);
+
+    Ppie.add(BponPrecio, null);
+    Ppie.add(pvc_fecpedL, null);
     Ppie.add(pvc_fecpedE, null);
     Ppie.add(pvc_horpedE, null);
     Ppie.add(cLabel9, null);
@@ -729,7 +738,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   @Override
   public void iniciarVentana() throws Exception
   {
-
+    
     Pprinc.setButton(KeyEvent.VK_F2, BirGrid);
     pstock.setPedidos(opPedidos.isSelected());
     pro_codiE.getFieldBotonCons().setEnabled(false);
@@ -749,8 +758,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     avc_serieE.setColumnaAlias("avc_serie");
     avc_numeE.setColumnaAlias("avc_nume");
     Pcabe.setDefButton(Baceptar);
-    jt.setDefButton(Baceptar);
-   
+    jt.setButton(KeyEvent.VK_F5,BponPrecio);
+    
     boolean verDatDif=true;
     if (getLabelEstado()!=null)
     {
@@ -806,6 +815,22 @@ public class pdpeve  extends ventanaPad   implements PAD
  }
   void activarEventos()
   {
+   BponPrecio.addActionListener(new ActionListener()
+   {
+     @Override
+     public void actionPerformed(ActionEvent e)
+     {
+        if ( ! jt.isEnabled())
+          return;       
+        if (jt.getValorDec(JT_PRETAR)!=0)
+        {
+            jt.setValor(jt.getValorDec(JT_PRETAR),JT_PRECIO);
+            pvl_precioE.setValorDec(jt.getValorDec(JT_PRETAR));
+        }
+        jt.requestFocus(JT_PRECIO);
+      }
+    });
+   
      pvl_precioE.addKeyListener(new KeyAdapter()
     {
       @Override
@@ -1425,7 +1450,7 @@ public class pdpeve  extends ventanaPad   implements PAD
           usu_nombE.setText(EU.usuario);
           pvc_comenE.resetTexto();
           pvc_comrepE.resetTexto();
-          pvc_fecpedE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
+          pvc_fecpedE.setText(Formatear.getFechaAct("dd-MM-yy"));
           pvc_horpedE.setText(Formatear.getFechaAct("HH.ss"));
           pvc_deposE.setValor("N");
           pvc_estadE.setValor("P");
@@ -1550,7 +1575,10 @@ public class pdpeve  extends ventanaPad   implements PAD
       mensajeErr("Pedido ... INSERTADO");
       mensaje("");
       if (! swExterno)
+      {
+         salirEnabled(false);
          nuevoPedido();
+      }
       else
         nav.pulsado=navegador.NINGUNO;
     } catch (Exception k)
@@ -1801,24 +1829,29 @@ public class pdpeve  extends ventanaPad   implements PAD
 
   public void activar(int modo,boolean b)
   {
-
+    BponPrecio.setEnabled(b);
     Baceptar.setEnabled(b);
     Bcancelar.setEnabled(b);
     cli_codiE.setEnabled(b);  
     pvc_incfraE.setEnabled(b);  
+    
     if (modo!=navegador.ADDNEW && modo!=navegador.EDIT )
     {
       if (modo!=navegador.QUERY)
       {
         jt.setEnabled(b);
-        pro_codiE.getFieldBotonCons().setEnabled(b);
-        Ppie.setEnabled(b);        
+        pro_codiE.getFieldBotonCons().setEnabled(b);        
       }
       pvc_idE.setEnabled(b);
       eje_numeE.setEnabled(b);
       pvc_numeE.setEnabled(b);
     }
-  
+    if (modo==navegador.QUERY || !b)
+    {
+        pvc_fecpedE.setEnabled(b);
+        pvc_horpedE.setEnabled(b);
+        usu_nombE.setEnabled(b);      
+    }
    
     pvc_estadE.setEnabled(modo==navegador.EDIT && b);  
     pvc_deposE.setEnabled(b);
@@ -1906,7 +1939,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       pvc_comrepE.setText(dtCon1.getString("pvc_comrep"));
       pvc_incfraE.setSelected(dtCon1.getString("pvc_incfra").equals("S"));
 //      alm_codiE.setValor(dtCon1.getInt("alm_codi"));
-      pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));
+      pvc_fecpedE.setDate(dtCon1.getDate("pvc_fecped"));
       pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","HH.mm"));
       usu_nombE.setText(dtCon1.getString("usu_nomb"));
       avc_numeE.setText(dtCon1.getString("avc_nume"));
