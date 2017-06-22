@@ -722,12 +722,14 @@ constraint ix_albavel primary key (avc_ano,emp_codi,avc_nume,avc_serie,avl_numli
 create index ix_albavel2 on anjelica.v_albavel (pro_codi,avc_cerra);
 create index ix_albavel3 on anjelica.v_albavel (avl_fecalt);
 
+
+
 drop view anjelica.v_albventa;
-create view anjelica.v_albventa as select c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,avc_dtocom,
-cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,
+create view anjelica.v_albventa as select c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,
+cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,avc_revpre,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
 avc_basimp,avc_kilos,avc_unid,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
-avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_profer,avl_prbase,avc_repres,cli_ruta,
+avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,avc_repres,
 tar_preci,avl_unid,
 avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,avl_dtolin 
 from v_albavel as l, v_albavec as c 
@@ -3052,6 +3054,9 @@ UNION
 select usu_nomb as tra_codi, usu_nomco as tra_nomb from usuarios where usu_activ='S'; -- Transportista Ventas
 grant select on  v_transport to public;
 grant select on  v_tranpvent to public;
+
+create view v_transventext as select * from transportista where tra_tipo='V';
+grant select on  v_transventext to public;
 ---
 -- Cabecera de Descargas de Camiones
 ---
@@ -3284,6 +3289,7 @@ insert into parametros values('*','impAlbTexto','Impresion Albaranes Venta modo 
 insert into parametros values('*','impFraTexto','Impresion Facturas Venta modo texto', 0);
 insert into parametros values('*','famProdReci','Familia de productos de reciclaje',99);
 insert into parametros values('*','despPend','Permite dejar despieces pendientes',0);
+insert into parametros values('*','checkCodRep','Comprueba que el codigo Reparto este nulo',0);
 --
 -- Tabla con las diferentes camaras
 -- por empresa
@@ -3380,9 +3386,10 @@ create table anjelica.linvproduc
     prp_peso decimal(6,2) not null,		-- Peso de inventario
 	prv_codi int not null,			-- Prvoveedor
 	prp_fecsac date not null,		-- Fecha Sacrificio
-	prp_feccad date ,				-- Fecha Cad.
-	prp_fecpro date ,				-- Fecha Produccion.
 	lip_fecalt timestamp not  null default current_timestamp,
+	pai_codi varchar(3),	
+	prp_feccad date ,				-- Fecha Cad.
+	prp_fecpro date ,				-- Fecha Produccion.	
   constraint ix_linvproduc primary key(cip_codi,lip_numlin)
 );
 create index ix_linvproduc2 on linvproduc(pro_codi,prp_ano,prp_part,prp_seri,prp_indi);

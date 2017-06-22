@@ -1210,7 +1210,7 @@ public class pdalbara extends ventanaPad  implements PAD
         
         Ptab1.add(PotroDat, "Otros");
         //Ptab1.add(PComClie, "Comentarios");
-        Ptab1.add(jtPalet, "Palets");
+        Ptab1.add(jtPalet, "Transporte");
         PAlb1.add(avc_obserS, null);
         PAlb1.add(avc_obserL, null);
         

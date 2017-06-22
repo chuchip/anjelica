@@ -20,6 +20,7 @@ package gnu.chu.anjelica.margenes;
  *
  */ 
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.despiece.pdprvades;
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -36,7 +37,6 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -52,7 +52,7 @@ public class MantPreMedios extends ventana
    Hashtable<Integer,Integer[]> htLomos = new Hashtable();
    Hashtable<Integer,Boolean> htLomCom = new Hashtable();
     
-   final double PRECIO_DESP=2.8;
+//   final double PRECIO_DESP=2.8;
    public MantPreMedios(EntornoUsuario eu, Principal p)
   {
     this(eu,p,null);
@@ -102,7 +102,7 @@ public class MantPreMedios extends ventana
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2017-05-31" );
+      this.setVersion("2017-06-21" );
       statusBar = new StatusBar(this);
       
       iniciarFrame();
@@ -181,7 +181,7 @@ public class MantPreMedios extends ventana
     {
         try
         {
-            jt.removeAllDatos();
+            jtBolas.removeAllDatos();
            String s="select a.pro_codi,sum(avp_canti) as kilos from v_albventa_detalle as a , clientes as c,v_despfin as d where a.cli_codi=c.cli_codi "+
             " and avc_fecalb>='"+tar_feciniE.getFechaDB()+"'"+ //  -- Lunes
             " and (a.pro_codi>=40201 and a.pro_codi<=40299) "+
@@ -210,11 +210,11 @@ public class MantPreMedios extends ventana
                double precio=htBolas.get(dtCon1.getInt("pro_codi"));
                v.add(precio);
                double importeVenta=dtCon1.getDouble("kilos",true)*precio;
-               double importeDesp=(dtStat.getDouble("kilos",true)-dtCon1.getDouble("kilos",true))*PRECIO_DESP;
+               double importeDesp=(dtStat.getDouble("kilos",true)-dtCon1.getDouble("kilos",true))*precioBolaE.getValorDec();
                v.add((importeVenta+importeDesp)/dtStat.getDouble("kilos",true));
-               jt.addLinea(v);
+               jtBolas.addLinea(v);
            } while (dtCon1.next());
-           jt1.removeAllDatos();
+           jtLomos.removeAllDatos();
            
            List<Integer> stLomos= Collections.list(htLomos.keys());
            
@@ -239,15 +239,16 @@ public class MantPreMedios extends ventana
               v.add(lomo);
               v.add(MantArticulos.getNombProd(lomo, dtStat));
               v.add(dtCon1.getDouble("kilos",true));
+              v.add(pdprvades.getPrecioOrigen(dtStat,lomo, Formatear.sumaDiasDate(tar_feciniE.getDate(),-7)));
               s="select sum(acl_canti) as kilos,sum(acl_canti*acl_prcom) as importe from v_albacom where  acc_fecrec between '"+fecIniComE.getFechaDB()+
                   "' and '"+ fecFinComE.getFechaDB()+"'"+
                    " and (pro_codi="+codigo1+
                    " or pro_codi= "+codigo2+")";
               
-              dtCon1.select(s);
+              dtCon1.select(s);              
               v.add(dtCon1.getDouble("kilos",true));
               v.add(dtCon1.getDouble("kilos",true)==0?0:dtCon1.getDouble("importe",true)/dtCon1.getDouble("kilos",true));
-              jt1.addLinea(v);
+              jtLomos.addLinea(v);
            }
            
         } catch (SQLException | ParseException k)
@@ -291,8 +292,8 @@ public class MantPreMedios extends ventana
         BirGrid = new gnu.chu.controles.CButton();
         cLabel3 = new gnu.chu.controles.CLabel();
         eje_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        jt1 = new gnu.chu.controles.Cgrid(5);
-        jt = new gnu.chu.controles.Cgrid(7);
+        jtLomos = new gnu.chu.controles.Cgrid(6);
+        jtBolas = new gnu.chu.controles.Cgrid(7);
         PPie = new gnu.chu.controles.CPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
         fecStockE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
@@ -300,6 +301,8 @@ public class MantPreMedios extends ventana
         fecIniComE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel11 = new gnu.chu.controles.CLabel();
         fecFinComE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        cLabel12 = new gnu.chu.controles.CLabel();
+        precioBolaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"9.99");
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -343,22 +346,24 @@ public class MantPreMedios extends ventana
         gridBagConstraints.weightx = 1.0;
         Pprinc.add(PCondi, gridBagConstraints);
 
-        jt1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jt1.setPreferredSize(new java.awt.Dimension(40, 40));
+        jtLomos.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtLomos.setPreferredSize(new java.awt.Dimension(40, 40));
 
         ArrayList v1=new ArrayList();
-        v1.add("Producto");
-        v1.add("Nombre");
-        v1.add("Kil.Inv."); // 0
-        v1.add("Kil.Compra"); // 0
-        v1.add("Prec.Compra"); // 0
-        jt1.setCabecera(v1);
-        jt1.setAnchoColumna(new int[]{50,200,70,70,60});
-        jt1.setAlinearColumna(new int[]{0,0,2,2,2});
-        jt1.setFormatoColumna(2, "##,##9.99");
-        jt1.setFormatoColumna(3, "##,##9.99");
-        jt1.setFormatoColumna(4, "--,--9.999");
-        jt1.setAjustarGrid(true);
+        v1.add("Producto"); //0
+        v1.add("Nombre"); // 1
+        v1.add("Kil.Inv."); // 2
+        v1.add("Prec.Ant"); // 3
+        v1.add("Kil.Compra"); // 4
+        v1.add("Prec.Compra"); // 5
+        jtLomos.setCabecera(v1);
+        jtLomos.setAnchoColumna(new int[]{50,200,70,60,70,60});
+        jtLomos.setAlinearColumna(new int[]{0,0,2,2,2,2});
+        jtLomos.setFormatoColumna(2, "##,##9.99");
+        jtLomos.setFormatoColumna(3, "--,--9.999");
+        jtLomos.setFormatoColumna(4, "##,##9.99");
+        jtLomos.setFormatoColumna(5, "--,--9.999");
+        jtLomos.setAjustarGrid(true);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -368,10 +373,10 @@ public class MantPreMedios extends ventana
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
-        Pprinc.add(jt1, gridBagConstraints);
+        Pprinc.add(jtLomos, gridBagConstraints);
 
-        jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jt.setPreferredSize(new java.awt.Dimension(40, 40));
+        jtBolas.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtBolas.setPreferredSize(new java.awt.Dimension(40, 40));
 
         ArrayList v=new ArrayList();
         v.add("Producto");//0
@@ -381,15 +386,15 @@ public class MantPreMedios extends ventana
         v.add("Kg.Venta"); // 4
         v.add("Pr.Venta"); // 5
         v.add("Pr.Medio"); // 6
-        jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{60,200,65,65,65,50,50});
-        jt.setAlinearColumna(new int[]{0,0,2,2,2,2,2});
-        jt.setFormatoColumna(2, "##,##9.99");
-        jt.setFormatoColumna(3, "--,--9.99");
-        jt.setFormatoColumna(4, "##,##9.99");
-        jt.setFormatoColumna(5, "#9.99");
-        jt.setFormatoColumna(6, "#9.99");
-        jt.setAjustarGrid(true);
+        jtBolas.setCabecera(v);
+        jtBolas.setAnchoColumna(new int[]{60,200,65,65,65,50,50});
+        jtBolas.setAlinearColumna(new int[]{0,0,2,2,2,2,2});
+        jtBolas.setFormatoColumna(2, "##,##9.99");
+        jtBolas.setFormatoColumna(3, "--,--9.99");
+        jtBolas.setFormatoColumna(4, "##,##9.99");
+        jtBolas.setFormatoColumna(5, "#9.99");
+        jtBolas.setFormatoColumna(6, "#9.99");
+        jtBolas.setAjustarGrid(true);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -398,12 +403,12 @@ public class MantPreMedios extends ventana
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        Pprinc.add(jt, gridBagConstraints);
+        Pprinc.add(jtBolas, gridBagConstraints);
 
         PPie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        PPie.setMaximumSize(new java.awt.Dimension(480, 22));
-        PPie.setMinimumSize(new java.awt.Dimension(480, 22));
-        PPie.setPreferredSize(new java.awt.Dimension(480, 22));
+        PPie.setMaximumSize(new java.awt.Dimension(560, 22));
+        PPie.setMinimumSize(new java.awt.Dimension(560, 22));
+        PPie.setPreferredSize(new java.awt.Dimension(560, 22));
         PPie.setLayout(null);
 
         cLabel7.setText("Fec.Stock");
@@ -426,15 +431,23 @@ public class MantPreMedios extends ventana
         PPie.add(fecIniComE);
         fecIniComE.setBounds(220, 3, 70, 17);
 
-        cLabel11.setText("Fin. Compra");
+        cLabel11.setText("Pr.Desp.");
         PPie.add(cLabel11);
-        cLabel11.setBounds(300, 3, 70, 17);
+        cLabel11.setBounds(460, 0, 60, 17);
 
         fecFinComE.setMaximumSize(new java.awt.Dimension(10, 18));
         fecFinComE.setMinimumSize(new java.awt.Dimension(10, 18));
         fecFinComE.setPreferredSize(new java.awt.Dimension(10, 18));
         PPie.add(fecFinComE);
         fecFinComE.setBounds(380, 3, 70, 17);
+
+        cLabel12.setText("Fin. Compra");
+        PPie.add(cLabel12);
+        cLabel12.setBounds(300, 3, 70, 17);
+
+        precioBolaE.setText("2.9");
+        PPie.add(precioBolaE);
+        precioBolaE.setBounds(520, 0, 30, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -455,6 +468,7 @@ public class MantPreMedios extends ventana
     private gnu.chu.controles.CPanel PPie;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CLabel cLabel11;
+    private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel5;
@@ -465,8 +479,9 @@ public class MantPreMedios extends ventana
     private gnu.chu.controles.CTextField fecFinComE;
     private gnu.chu.controles.CTextField fecIniComE;
     private gnu.chu.controles.CTextField fecStockE;
-    private gnu.chu.controles.Cgrid jt;
-    private gnu.chu.controles.Cgrid jt1;
+    private gnu.chu.controles.Cgrid jtBolas;
+    private gnu.chu.controles.Cgrid jtLomos;
+    private gnu.chu.controles.CTextField precioBolaE;
     private gnu.chu.controles.CTextField tar_feciniE;
     // End of variables declaration//GEN-END:variables
 }

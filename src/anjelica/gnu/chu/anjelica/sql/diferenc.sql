@@ -92,7 +92,7 @@ left join v_proveedo as pv on l.prv_codi = pv.prv_codi where
  c.cip_codi=l.cip_codi;
 grant select on  v_invproduc to public;
 --
--- Incluyir en tarifa la comision de los representantes
+-- Incluir en tarifa la comision de los representantes
 --
 alter table  tarifa add tar_comrep float default 0 not null;   -- Comision Representantes
 alter table  taricli add tar_comrep float default 0 not null;   -- Comision Representantes
@@ -103,8 +103,8 @@ alter table histventas add div_codi int not null default 1;
 --
 -- Incluida fecha alta en v_albcompar
 --
-alter table v_albcompar drop  acp_fecalt;
-alter table v_albcompar add  acp_fecalt  timestamp not null  default current_timestamp;
+--alter table v_albcompar drop  acp_fecalt;
+--alter table v_albcompar add  acp_fecalt  timestamp not null  default current_timestamp;
 --
 -- Incluido comision por kg. y kilos de portes en albaranes de compras
 --
@@ -149,7 +149,7 @@ alter table  pedicoc add  pcc_feclis date; -- Listado
 --
 -- Clasificacion de Lomos por proveedores
 --
-alter claslomos add prv_codi int not null default 0;
+alter table claslomos add prv_codi int not null default 0;
 -- 
 -- Ampliado campo NIF a 30 Caracteres
 --
@@ -191,11 +191,8 @@ alter table v_albavec add avc_rcaedi varchar(2);
 drop view v_albdepserv;
 drop view v_cliprv;
 drop view v_cliente;
-
 alter table clientes rename cli_carte  to cli_codrut; -- Codigo cliente en rutas.
-
 alter table clientes alter cli_codrut type varchar(5); -- Codigo cliente en rutas.
-
 alter table cliencamb rename cli_carte to cli_codrut; -- Codigo cliente en rutas.
 alter table cliencamb alter cli_codrut type varchar(5); -- Codigo cliente en rutas.
 update clientes set cli_codrut='' where cli_codrut = '1';
@@ -232,7 +229,7 @@ alter table desproval alter dpv_preori set not null;
 -- Añadido campos de posicion lote y peso del codigo barras prv.
 alter table v_proveedo add prv_poloin smallint;	-- Posicion inicial Lote en cod.Barras interno prv
 alter table v_proveedo add prv_polofi smallint;	-- Posicion final Lote en cod.Barras interno prv
-alter table v_proveedo addprv_popein smallint;	-- Posicion inicial peso en cod.Barras interno prv
+alter table v_proveedo add prv_popein smallint;	-- Posicion inicial peso en cod.Barras interno prv
 alter table v_proveedo add prv_popefi smallint;	-- Posicion final peso en cod.Barras interno prv
 --
 -- Cambiados paises a iniciales
@@ -240,14 +237,10 @@ alter table v_proveedo add prv_popefi smallint;	-- Posicion final peso en cod.Ba
 alter table v_albcompar alter opcional1  type varchar(2);
 alter table v_albcompar alter opcional2  type varchar(2);
 alter table v_albcompar alter clasificacion  type varchar(2);
-
 drop trigger albcompar_update on anjelica.v_albcompar;
 update v_albcompar set opcional1 = (select pai_inic from paises where pai_codi = v_albcompar.acp_paisac) where acp_paisac>0; --and acc_ano=2016;
-
 update v_albcompar set opcional2 = (select pai_inic from paises where pai_codi = v_albcompar.acp_painac) where acp_painac>0; -- and acc_ano=2016;
-
 update v_albcompar set clasificacion = (select pai_inic from paises where pai_codi = v_albcompar.acp_engpai) where acp_engpai>0; -- and acc_ano=2016;
-
 alter table v_albcompar rename acp_paisac to acp_paisac1;
 alter table v_albcompar rename acp_painac to acp_painac1;
 alter table v_albcompar rename acp_engpai to acp_paieng1;
@@ -285,40 +278,44 @@ alter table pedvenc add rut_codi varchar(2);
 alter table hispedvenc add rut_codi varchar(2) ;
 alter table pedvenc add pvc_fecpre date; 
 alter table hispedvenc add pvc_fecpre date;
-
+--
+-- Empresa
 alter table empresa rename emp_empcon to emp_loclcc;
 update  empresa set emp_loclcc= 9;
 alter table empresa alter emp_loclcc set not null;
 drop view v_empresa;
-CREATE or replace VIEW anjelica.v_empresa as select emp_codi,emp_nomb ,	 -- Nombre de Empresa
- emp_dire,	 -- Direccion Empresa
- emp_pobl,	 -- Poblacion Empresa
- emp_codpo ,	    	 -- Codigo Postal
- emp_telef ,	 -- Telefono
- emp_fax ,	 -- FAX
- emp_nif ,	 -- NIF
- emp_loclcc, -- Longitud campo cliente en contablidad
- emp_nurgsa , -- Codigo Numero Registro Sanitario
- emp_nomsoc , -- Nombre Social
- pai_codi ,	    	 -- Pais por defecto
- emp_orgcon , -- Organismo de Control.
- emp_cercal , -- Certificacion Calidad
- emp_labcal , -- Etiqueta Calidad
- emp_obsfra ,--Observaciones Factura
- emp_obsalb ,--Observaciones Albaran
- emp_vetnom , --Nombre Veterinario
- emp_vetnum , --Numero Veterinario
- emp_numexp , --Numero Explotacion
- emp_codcom ,         -- Comunidad de Empresa
- emp_codpvi ,    	 -- Provincia de Empresa
- emp_divimp ,         -- Divisa de Importacion
- emp_divexp ,         -- Divisa de Exportación
- emp_desspr , -- Destino Subproductos
- emp_codedi , -- Codigo EDI
- emp_regmer , -- Registro Mercantil
- emp_dirweb , -- Direccion web de la empresa 
- cop_nombre as emp_nomprv
- from anjelica.empresa left join   anjelica.prov_espana on substring(emp_codpo from 1 for 2)  = cop_codi;
+CREATE OR REPLACE VIEW v_empresa AS 
+ SELECT empresa.emp_codi,
+    empresa.emp_nomb,
+    empresa.emp_dire,
+    empresa.emp_pobl,
+    empresa.emp_codpo,
+    empresa.emp_telef,
+    empresa.emp_fax,
+    empresa.emp_nif,
+    empresa.emp_loclcc,
+    empresa.emp_nurgsa,
+    empresa.emp_nomsoc,
+    empresa.pai_codi,
+    empresa.emp_orgcon,
+    empresa.emp_cercal,
+    empresa.emp_labcal,
+    empresa.emp_obsfra,
+    empresa.emp_obsalb,
+    empresa.emp_vetnom,
+    empresa.emp_vetnum,
+    empresa.emp_numexp,
+    empresa.emp_codcom,
+    empresa.emp_codpvi,
+    empresa.emp_divimp,
+    empresa.emp_divexp,
+    empresa.emp_desspr,
+    empresa.emp_codedi,
+    empresa.emp_regmer,
+    empresa.emp_dirweb,
+    prov_espana.cop_nombre AS emp_nomprv
+   FROM empresa
+     LEFT JOIN prov_espana ON "substring"(empresa.emp_codpo::text, 1, 2) = prov_espana.cop_codi::text;
  grant select on anjelica.v_empresa to public;
     -- Longitud cuenta contable cliente
 drop view anjelica.v_coninvent;
@@ -328,7 +325,7 @@ select c.emp_codi,c.cci_codi,c.usu_nomb,cci_feccon, cam_codi,alm_codi,lci_nume,p
 prp_indi,lci_peso,lci_kgsord,lci_numind,lci_regaut,lci_coment,lci_numcaj,lci_numpal,alm from coninvcab as c, coninvlin as l where
 c.emp_codi=c.emp_codi
 and c.cci_codi=l.cci_codi;
-
+--
 alter table usuarios add usu_clanum smallint not null default 0; -- Password Corta de usuario (sin encriptar)
 --alter table usuarios add constraint ix_passnum unique(usu_pasnum);
 
@@ -343,7 +340,7 @@ alter table pedvenc add pvc_incfra char(1) not null default 'N'; -- Incluir Fra?
 alter table hispedvenc add pvc_incfra char(1) not null default 'N'; -- Incluir Fra?
 alter table pedvenc add pvc_comrep varchar(200);
 alter table hispedvenc add pvc_comrep varchar(200);
---drop view v_pedven;
+drop view v_pedven;
 create or replace view anjelica.v_pedven as select  c.emp_codi,c.eje_nume, c.pvc_nume , cli_codi , alm_codi, pvc_fecped,
  pvc_fecent, pvc_comen , pvc_comrep, pvc_confir , avc_ano , avc_serie , avc_nume ,
  c.usu_nomb , pvc_cerra , pvc_nupecl , pvc_impres ,pvc_depos,

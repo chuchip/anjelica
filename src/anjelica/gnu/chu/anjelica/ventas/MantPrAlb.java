@@ -4,7 +4,7 @@
  *
  * Created on 03-dic-2009, 22:41:09
  *
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -165,7 +165,7 @@ public class MantPrAlb extends ventana {
      
         iniciarFrame();
 
-        this.setVersion("2016-10-03" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
+        this.setVersion("2017-06-21" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
         
        
         initComponents();
@@ -1013,9 +1013,6 @@ public class MantPrAlb extends ventana {
                     {
                         feulVen=dtStat.getFecha("avc_fecalb","dd-MM-yy");
                         prulVen=dtStat.getString("avl_prven");
-                        if (precTar==0)
-                            precTar=MantTarifa.getPrecTar(dtStat,dtAlb.getInt("pro_codi"),cli_codacE.getValorInt(),
-                                cli_codacE.getLikeCliente().getInt("tar_codi"), avc_fecalbE.getText());
                     }
                     htPrulv.put(dtAlb.getInt("pro_codi"), new precVentas(prulVen, feulVen, precTar));
                 }
@@ -1024,9 +1021,12 @@ public class MantPrAlb extends ventana {
                     prulVen=prVenta.getPrecioVenta();
                     feulVen=prVenta.getFecVenta();
                     if (precTar==0)
-                     precTar=prVenta.getPrecioTar();
-                    
+                     precTar=prVenta.getPrecioTar();                    
                 }
+                if (precTar==0)
+                   precTar=MantTarifa.getPrecTar(dtStat,dtAlb.getInt("pro_codi"),cli_codacE.getValorInt(),
+                           cli_codacE.getLikeCliente().getInt("tar_codi"), avc_fecalbE.getText());
+
                 String prCompra=htCompra.get(dtAlb.getInt("pro_codi"));
                 if (prCompra==null)
                 { // Busco el precio de Compra
@@ -1071,7 +1071,7 @@ public class MantPrAlb extends ventana {
                 v.add(prulCom); // Precio Compra.
                 v.add(prulVen); // Precio Ult. Venta.
                 v.add(feulVen); // Fec. Ult.Venta
-                v.add(""+precTar); // Precio Tarifa
+                v.add(precTar); // Precio Tarifa
                 v.add(""); // almacen.
                 v.add(dtAlb.getString("avl_coment"));
                 v.add(avlNumlin);

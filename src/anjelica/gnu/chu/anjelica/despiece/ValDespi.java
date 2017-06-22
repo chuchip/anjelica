@@ -124,10 +124,11 @@ public class ValDespi extends ventana {
           setTitulo("Valoracion/Agrupacion despieces");
          if (jf.gestor.apuntar(this))
             jbInit();
+         else
+           setErrorInit(true);
        } catch (Exception ex)
        {
-            Logger.getLogger(ValDespi.class.getName()).log(Level.SEVERE, null, ex);
-            setErrorInit(true);
+            ErrorInit(ex);
        }
    }
 
@@ -143,9 +144,8 @@ public class ValDespi extends ventana {
 
 
             jbInit();
-        } catch (Exception e) {
-            Logger.getLogger(ValDespi.class.getName()).log(Level.SEVERE, null, e);
-            setErrorInit(true);
+        } catch (Exception e) {            
+            ErrorInit(e);
         } 
    }
    private void ponParametros(Hashtable<String,String> ht)
