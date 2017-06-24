@@ -13,6 +13,7 @@ $BODY$
   cuantos int;
   tipoMvto char(1);
   mvtPrven numeric;
+  mvtPrbase  numeric;
   mvtDtoCom numeric;
   mvtFecdoc date;
   mvtFecmvt timestamp;
@@ -38,9 +39,9 @@ $BODY$
 	end if;
 	if TG_TABLE_NAME = 'v_albvenpar' then
 	   if TG_OP =  'INSERT' OR TG_OP = 'UPDATE' then
-	     select avl_prven,avc_fecalb,avl_fecalt,alm_codori,
+	     select avl_prven,avl_prbase,avc_fecalb,avl_fecalt,alm_codori,
 	          alm_coddes,cli_codi
-		 into mvtPrven,mvtFecdoc,mvtFecmvt,almOrig,almFinal,mvtCliprv
+		 into mvtPrven,mvtPrbase,mvtFecdoc,mvtFecmvt,almOrig,almFinal,mvtCliprv
 	         from anjelica.v_albventa where 
 			avl_numlin = NEW.avl_numlin and
 			emp_codi=NEW.emp_codi and
@@ -63,7 +64,7 @@ $BODY$
 				pro_codi  , 
 				pro_ejelot ,pro_serlot, 
 				pro_numlot ,pro_indlot ,
-				mvt_canti, mvt_unid , mvt_prec,mvt_cliprv )
+				mvt_canti, mvt_unid , mvt_prec,mvt_prenet,mvt_cliprv )
 			values 		
 			(
 			TG_OP,
@@ -83,7 +84,7 @@ $BODY$
 			NEW.avp_numind,
 			NEW.avp_canti,
 			NEW.avp_numuni,
-			mvtPrven,
+			mvtPrven,mvtPrven,
                         mvtCliprv
 			);
 			almCodi=almOrig;
@@ -96,7 +97,7 @@ $BODY$
 			pro_codi  , 
 			pro_ejelot ,pro_serlot, 
 			pro_numlot ,pro_indlot ,
-			mvt_canti, mvt_unid , mvt_prec,mvt_cliprv )
+			mvt_canti, mvt_unid , mvt_prec,mvt_prenet,mvt_cliprv )
 		values 		
 		(
 		TG_OP,
@@ -116,7 +117,7 @@ $BODY$
 		NEW.avp_numind,
 		NEW.avp_canti,
 		NEW.avp_numuni,
-		mvtPrven,
+		mvtPrven,mvtPrbase,
                 mvtCliprv
 		);
 		return NEW;
@@ -138,6 +139,7 @@ $BODY$
 			mvt_canti=NEW.avp_canti,
 			mvt_unid =NEW.avp_numuni,
 			mvt_prec = mvtPrven ,
+			mvt_prenet = mvtPrbase,
                         mvt_cliprv = mvtCliprv
                 WHERE   mvt_tipdoc='V' and			
 		        mvt_empcod =OLD.emp_codi and

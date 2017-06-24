@@ -283,3 +283,13 @@ alter table v_saladesp  drop pai_codi;
 alter table v_articulo add pro_kgmiun float; -- kg. Minimo Unidad.
 alter table v_articulo add pro_kgmaun float; -- kg. Maximo Unidad.
 alter table v_articulo add pro_cointa float; -- Costo a Incrementar en Tarifa
+-- Incluida columna de dto. Linea
+alter table mvtosalm add mvt_prenet float;
+ALTER TABLE mvtosalm DISABLE TRIGGER USER;
+update mvtosalm set mvt_prenet=mvt_prec;
+update mvtosalm set mvt_prenet = mvt_prec  - mvt_prec * 
+(select avc_dtopp+avc_dtocom FROM V_ALBAVEC AS V WHERE MVT_EMPCOD=EMP_CODI AND MVT_EJEDOC=AVC_ANO AND MVT_SERDOC=AVC_SERIE AND MVT_NUMDOC=AVC_NUME ) / 100
+ where mvt_tipdoc='V' AND mvt_serdoc!='X' 
+AND EXISTS(SELECT * FROM V_ALBAVEC AS V WHERE MVT_EMPCOD=EMP_CODI AND MVT_EJEDOC=AVC_ANO AND MVT_SERDOC=AVC_SERIE AND MVT_NUMDOC=AVC_NUME AND avc_dtopp+avc_dtocom>0);
+ALTER TABLE mvtosalm enable TRIGGER USER;
+-- UPDATE FN_MVTOALM y fn_actpralb ... 

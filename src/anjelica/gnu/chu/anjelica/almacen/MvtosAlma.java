@@ -693,18 +693,18 @@ public class MvtosAlma
             numProd=1;
             sql="";
          }
-         sql+=" select 1 as orden,'RE' as sel,tir_afestk as tipmov,r.rgs_fecha as fecmov,"+
+         sql+=" select 1 as orden,'RE' as sel,'=' as tipmov,r.rgs_fecha as fecmov,"+
            "  r.pro_serie as serie,r.pro_nupar as  lote,"+
            " r.rgs_kilos as canti,r.rgs_prregu as precio,r.pro_numind as numind, "+
            " rgs_recprv as cliCodi,0 as numalb, r.eje_nume as ejeNume,"+
            " r.emp_codi  as empcodi,r.pro_codi as pro_codori"+
-           ", tir_tipo as repCodi,tir_nomb as zonCodi,0 as sbe_codi,'' as rut_codi "+
+           ", '' as repCodi,'' as zonCodi,0 as sbe_codi,'' as rut_codi "+
            ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,r.eje_nume as ejedoc "+
            ", r.rgs_fecha as fecdoc "+
            ", 0 as alm_codori,0 as alm_coddes,'N' as avc_depos "+
            " FROM v_inventar r WHERE "+        
 //           " tir_afestk = '='"+ // Solo Inventarios
-           " and rgs_kilos <> 0 "+
+           "  rgs_kilos <> 0 "+
 //            " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
            (almCodi==0?"":" and alm_codi = "+almCodi)+
            (proLote==0?"":" and r.pro_nupar  = "+proLote)+
@@ -771,6 +771,19 @@ public class MvtosAlma
   {
       this.incInvInicial=incInvInicial;
   }
+  /**
+   * Busca Acumulados mvtos. 
+   * El importe calculado es el Neto (con dto pp, etc).Columna mvt_prenet
+   * @param fecIni
+   * @param fecFin
+   * @param almCodi
+   * @param proCodi
+   * @param proLote
+   * @param dt
+   * @return
+   * @throws SQLException
+   * @throws ParseException 
+   */
   public boolean getAcumuladosMvtos( String fecIni, String fecFin,
             int almCodi,int proCodi,int proLote, DatosTabla dt) throws SQLException,ParseException
   {
@@ -778,7 +791,7 @@ public class MvtosAlma
        resetAcumMvtos();
        setLote(proLote);
        String s = "SELECT mvt_tipdoc,mvt_tipo, sum(mvt_canti) as canti,sum(mvt_unid) as unid, "+
-            " sum(mvt_canti* mvt_prec)  as importe "+
+            " sum(mvt_canti* mvt_prenet)  as importe "+
              " from mvtosalm where "+
              "   mvt_canti <> 0 "+
              " and mvt_serdoc!='X' "+

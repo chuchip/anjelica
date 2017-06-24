@@ -3940,9 +3940,10 @@ create table anjelica.mvtosalm
 	pro_indlot int not null, -- Individuo del Lote.
 	mvt_canti float not null, -- Cantidad
 	mvt_unid int not null,    -- Unidades
-	mvt_prec float,		 -- Precio
-        mvt_cliprv int,          -- Cliente / Proveedor.
-        mvt_feccad date          -- Fecha Caducidad del Indiv.
+	mvt_prec float,		      -- Precio Bruto
+	mvt_prenet float,  		  --  Precio Neto (Inc. Dtos.)
+    mvt_cliprv int,          -- Cliente / Proveedor.
+    mvt_feccad date          -- Fecha Caducidad del Indiv.
 );
 CREATE INDEX ix_mvtalm1 on anjelica.mvtosalm(mvt_tipdoc,mvt_fecdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc);
 CREATE INDEX ix_mvtalm2 on anjelica.mvtosalm(pro_codi,pro_ejelot,pro_serlot,pro_numlot,pro_indlot,mvt_time);

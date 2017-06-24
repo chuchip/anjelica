@@ -1818,7 +1818,10 @@ public class MantTraspAlm extends ventanaPad implements PAD
   {
         if (!checkFecha())
             return;
-
+        msgExplica("Importacion", "El fichero debe ser en formato texto plano (CSV, por ejemplo).\n"
+            + "Debe tener, en este orden los siguientes campos: \n"
+            + "Articulo;Nombre;Ejerc;Serie;Lote;Indiv;Peso\n"
+            + "Los campos deben estar limitados por ';'. ");
         try
         {
             configurarFile();

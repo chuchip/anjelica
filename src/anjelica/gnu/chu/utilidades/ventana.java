@@ -374,14 +374,15 @@ public class ventana extends CInternalFrame implements ejecutable
         else
             mensaje(s,true);
     }
-
-
-    /**
-    * Escribe un mensaje en la barra de estado.
-    */
-    public void mensaje(String  s,boolean t)
+    
+/**
+ * Escribe un mensaje en la barra estado
+ * @param msg
+ * @param sonido  con Sonido (true), Sin sonido (false)
+ */    
+    public void mensaje(String  msg,boolean sonido)
     {
-    statusBar.setText(s,t);
+    statusBar.setText(msg,sonido);
     }
   
     /**
