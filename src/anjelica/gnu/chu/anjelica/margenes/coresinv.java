@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.SwingConstants;
 
@@ -35,12 +34,17 @@ import javax.swing.SwingConstants;
 public class coresinv extends ventana
 {
   String s;
+  double kgComP,impComP,kgInvIniP,impInvIniP,kgInvFinP,impInvFinP,ganaP,kgMvtos,impMvtos;
+  double kgVen;
+  double impVen;
+  double kgVenT=0,impVenT=0,kgComT=0,impComT=0,kgInvIniT=0;
+  double impInvIniT=0,kgInvFinT=0,impInvFinT=0,ganaT=0,kgMvtosT=0,impMvtosT=0;
   private int DIVCODI=1;
   CPanel Pprinc = new CPanel();
   proPanel pro_codiE = new proPanel();
   CLabel cLabel1 = new CLabel();
   CPanel Presul = new CPanel();
-  CLabel cLabel2 = new CLabel();
+  CLabel impVentasL = new CLabel();
   CComboBox feciniE = new CComboBox();
   CLabel cLabel3 = new CLabel();
   CLabel cLabel4 = new CLabel();
@@ -48,12 +52,17 @@ public class coresinv extends ventana
   CTextField impVentasE = new CTextField(Types.DECIMAL,"---,---,--9.99");
   CLabel cLabel5 = new CLabel();
   CTextField impComprasE = new CTextField(Types.DECIMAL,"---,---,--9.99");
-  CLabel cLabel6 = new CLabel();
+  CLabel impInviniL = new CLabel();
   CTextField impInviniE = new CTextField(Types.DECIMAL,"---,---,--9.99");
-  CLabel cLabel7 = new CLabel();
+  CLabel impInvfinL = new CLabel();
   CTextField impInvfinE = new CTextField(Types.DECIMAL,"---,---,--9.99");
-  CLabel cLabel8 = new CLabel();
+  CLabel gananL = new CLabel("Ganancia");
   CTextField gananE = new CTextField(Types.DECIMAL,"-,---,--9.99");
+  CLabel porcGanL= new CLabel("€/Kg");
+  CTextField porcGanE = new CTextField(Types.DECIMAL,"--9.999");
+  CLabel mvtosL = new CLabel("Mvtos");
+  CTextField kgMvtosE = new CTextField(Types.DECIMAL,"--,---,--9.9");
+  CTextField impMvtosE = new CTextField(Types.DECIMAL,"---,---,--9.99");
   CButton Baceptar = new CButton(Iconos.getImageIcon("check"));
   CTextField kgVentasE = new CTextField(Types.DECIMAL,"--,---,--9.9");
   CLabel cLabel11 = new CLabel();
@@ -64,7 +73,7 @@ public class coresinv extends ventana
   CLabel cLabel13 = new CLabel();
   CLabel cLabel14 = new CLabel();
   CPanel Pentdat = new CPanel();
-  Cgrid jt = new Cgrid(11);
+  Cgrid jt = new Cgrid(13);
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   CCheckBox opCong = new CCheckBox();
   CCheckBox opDivi = new CCheckBox();
@@ -148,11 +157,13 @@ public class coresinv extends ventana
     kgVentasE.setEditable(false);
     kgComprasE.setEditable(false);
     kgInviniE.setEditable(false);
+    kgMvtosE.setEditable(false);
     kgInvfinE.setEditable(false);
     pro_codiE.setBounds(new Rectangle(60, 25, 271, 20));
     opIncTodo.setToolTipText("Incluir productos NO vendibles");
     opIncTodo.setBounds(new Rectangle(335, 25, 85, 18));
-    Presul.add(cLabel2, null);
+    opIncTodo.setSelected(true);
+    Presul.add(impVentasL, null);
     Presul.add(impVentasE, null);
     Presul.add(cLabel12, null);
     Presul.add(kgVentasE, null);
@@ -161,15 +172,21 @@ public class coresinv extends ventana
     Presul.add(cLabel5, null);
     Presul.add(impComprasE, null);
     Presul.add(impInviniE, null);
-    Presul.add(cLabel6, null);
+    Presul.add(impInviniL, null);
     Presul.add(kgInviniE, null);
     Presul.add(impInvfinE, null);
     Presul.add(kgInvfinE, null);
     Presul.add(cLabel13, null);
     Presul.add(cLabel14, null);
+    Presul.add(mvtosL, null);
+    Presul.add(impMvtosE, null);
+    Presul.add(kgMvtosE, null);   
     Presul.add(gananE, null);
-    Presul.add(cLabel8, null);
-    Presul.add(cLabel7, null);
+    Presul.add(gananL, null);
+    Presul.add(porcGanE, null);
+    Presul.add(porcGanL, null);
+
+    Presul.add(impInvfinL, null);
     Pentdat.add(pro_codiE, null);
     Pentdat.add(cLabel1, null);
     Pentdat.add(Baceptar, null);
@@ -195,44 +212,54 @@ public class coresinv extends ventana
     v.add("Kg.InvIni"); // 7
     v.add("Imp.InvFin"); // 8
     v.add("Kg.InvFin"); // 9
-    v.add("Ganancia"); // 10
+    v.add("Imp.Mvtos"); // 10
+    v.add("Kg.Mvtos"); // 11
+
+    v.add("Ganancia"); // 12
     jt.setCabecera(v);
-    jt.setAnchoColumna(new int[]{40,130,80,70,80,70,80,70,80,70,60});
-    jt.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2,2,2,2});
+    jt.setAnchoColumna(new int[]{40,130,80,70,80,70,80,70,80,70,80,70,60});
+    jt.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2,2,2,2,2,2});
 //    jt.setAjustar(true);
     cLabel1.setText("Producto");
     cLabel1.setBounds(new Rectangle(6, 25, 51, 20));
     Presul.setBorder(BorderFactory.createRaisedBevelBorder());
     Presul.setLayout(null);
-    cLabel2.setText("Ventas");
-    cLabel2.setBounds(new Rectangle(11, 23, 42, 17));
+    
     feciniE.setBounds(new Rectangle(58, 4, 109, 17));
     cLabel3.setBounds(new Rectangle(4, 4, 51, 18));
     cLabel3.setText("De Fecha");
     cLabel4.setBounds(new Rectangle(187, 4, 47, 17));
     cLabel4.setText("A Fecha");
     fecfinE.setBounds(new Rectangle(233, 4, 109, 17));
-    impVentasE.setText("");
+    
+    impVentasL.setText("Ventas");
+    impVentasL.setBounds(new Rectangle(11, 23, 42, 17));
     impVentasE.setBounds(new Rectangle(64, 22, 96, 18));
     cLabel5.setText("Compras");
     cLabel5.setBounds(new Rectangle(238, 22, 51, 18));
     impComprasE.setBounds(new Rectangle(290, 22, 96, 18));
     impComprasE.setText("");
-    cLabel6.setText("Inv. Inicial");
-    cLabel6.setBounds(new Rectangle(5, 42, 59, 18));
+    impInviniL.setText("Inv. Inicial");
+    impInviniL.setBounds(new Rectangle(5, 42, 59, 18));
     impInviniE.setBounds(new Rectangle(65, 42, 96, 18));
-    impInviniE.setText("");
-    cLabel7.setBounds(new Rectangle(239, 42, 50, 18));
-    cLabel7.setText("Inv. Final");
-    impInvfinE.setText("");
+    impInvfinL.setBounds(new Rectangle(239, 42, 50, 18));
+    impInvfinL.setText("Inv. Final");
+    
     impInvfinE.setBounds(new Rectangle(290, 42, 96, 18));
-    cLabel8.setText("Ganancia");
-    cLabel8.setBounds(new Rectangle(138, 63, 57, 20));
+    porcGanE.setEditable(false);
     gananE.setEditable(false);
-    gananE.setBounds(new Rectangle(200, 63, 100, 18));
+    impMvtosE.setEditable(false);
+    
+    mvtosL.setBounds(new Rectangle(5, 63, 59, 18));    
+    impMvtosE.setBounds(new Rectangle(65, 63, 96, 18));
+    kgMvtosE.setBounds(new Rectangle(162, 63, 71, 18));    
+    gananL.setBounds(new Rectangle(239, 63, 50, 18));    
+    gananE.setBounds(new Rectangle(290, 63, 96, 18));
+    porcGanE.setBounds(new Rectangle(390, 63, 50, 18));
+    porcGanL.setBounds(new Rectangle(442, 63, 30, 18));
     Baceptar.setBounds(new Rectangle(420, 23, 85, 23));
     Baceptar.setText("Aceptar");
-    kgVentasE.setText("");
+
     kgVentasE.setBounds(new Rectangle(161, 22, 74, 18));
     cLabel11.setBounds(new Rectangle(162, 2, 57, 18));
     cLabel11.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -245,9 +272,7 @@ public class coresinv extends ventana
     cLabel12.setHorizontalAlignment(SwingConstants.CENTER);
     cLabel12.setHorizontalTextPosition(SwingConstants.CENTER);
     cLabel12.setText("Euros");
-    kgInviniE.setBounds(new Rectangle(162, 42, 71, 18));
-    kgInviniE.setText("");
-    kgInvfinE.setText("");
+    kgInviniE.setBounds(new Rectangle(162, 42, 71, 18));    
     kgInvfinE.setBounds(new Rectangle(390, 42, 71, 18));
     cLabel13.setText("Kg");
     cLabel13.setHorizontalAlignment(SwingConstants.CENTER);
@@ -353,113 +378,119 @@ public class coresinv extends ventana
        else
         DIVCODI=1;
       Presul.resetTexto();
-      s = "select a.* from v_articulo as a  " +
-          "  where 1=1  "+
-          (opIncTodo.isSelected()?"": " and a.pro_tiplot='V' ") +
+      String condArticulo= (opIncTodo.isSelected()?"": " and a.pro_tiplot='V' ") +
           ( !opCong.isSelected() ? " and a.pro_artcon = 0 " : "") +
-          (pro_codiE.isNull() ? "" : " and pro_codi = " + pro_codiE.getValorInt()) +
-          " ORDER BY pro_codi ";
+          (pro_codiE.isNull() ? "" : " and pro_codi = " + pro_codiE.getValorInt());
+      s = "select 'VI' as tipo,a.pro_codi,"
+          + " 0 as canti, sum(avl_canti*avl_prbase) as importe from v_albventa as v, v_articulo as a  " +
+            " where avc_fecalb >= TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy') " +
+            " and avc_fecalb <= TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') " +
+            " and avc_serie >= 'A' AND avc_serie <='C' "+
+            " and div_codi >= "+DIVCODI+
+            " and a.pro_codi = v.pro_codi "+
+            condArticulo+
+            " group by a.pro_codi "+
+           " UNION ALL "+
+            "select 'VK' as tipo,a.pro_codi,"
+            + " sum(avl_canti) as canti, 0 as importe from v_albventa as v, v_articulo as a  " +
+            " where avc_fecalb >= TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy') " +
+            " and avc_fecalb <= TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') " +
+            " and avc_serie >= 'A' AND avc_serie <='C' "+
+            " and div_codi >= "+DIVCODI+
+            " and a.pro_tiplot ='V' "+ // En kg. Solo tratamos prod. vendibles.
+            " and a.pro_codi = v.pro_codi "+
+            condArticulo+
+            " group by a.pro_codi "+
+            " UNION ALL "+
+            "SELECT  'C' as tipo,a.pro_codi,sum(acl_canti) as canti, " +
+            " sum(acl_canti*acl_prcom) as importe from v_albacom as v,v_articulo as a " +
+            " where acc_fecrec >= TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy')" +
+            " AND acc_fecrec <= TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') " +
+             " and a.pro_codi = v.pro_codi "+
+            condArticulo+
+            " group by a.pro_codi "+
+            " UNION ALL "+
+            "select 'I' as tipo,a.pro_codi,sum(rgs_kilos) as canti,  sum(rgs_kilos*rgs_prregu) as importe " +            
+            " from v_inventar as r, v_articulo as a " +
+            " where  rgs_fecha = TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy') "+
+            " and a.pro_codi = r.pro_codi "+
+            condArticulo+
+          " group by a.pro_codi "+
+            " UNION ALL "+
+            "select 'F' as tipo,a.pro_codi, sum(rgs_kilos) as canti,sum(rgs_kilos*rgs_prregu) as importe " +
+            " from v_inventar as r, v_articulo as a " +
+            " where  rgs_fecha = TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') "+
+            " and a.pro_codi = r.pro_codi "+
+            condArticulo+
+          " group by a.pro_codi "+
+            " UNION ALL "+
+          "select 'M' as tipo,a.pro_codi,sum(mvt_canti) as canti,"
+          + "sum(mvt_canti* mvt_prenet) as importe from mvtosalm as v,v_articulo as a where mvt_tipdoc = 'V' "
+          + "and  mvt_time::date >= TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy') " +
+            " and mvt_time::date <= TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') " +
+            " and mvt_serdoc >= 'A' and mvt_serdoc<='C' "+ // Solo albaranes venta normales       
+            " and a.pro_codi = v.pro_codi "+
+            condArticulo+
+            " group by a.pro_codi "+
+          " ORDER BY 2,1 ";
 
-      if (! dtStat.select(s))
+      if (! dtCon1.select(s))
       {
         mensajeErr("NO encontrados PRODUCTOS");
         return;
       }
 
-      mensaje("ESPERATE MUYAYO ... BUSCANDO");
+      mensaje("ESPERATE MUYAYO ... BUSCANDO",false);
       activar(false);
       Baceptar.setText("Cancelar");
-     Baceptar.setIcon(Iconos.getImageIcon("cancel"));
-
-      double kgComP,impComP,kgInvIniP,impInvIniP,kgInvFinP,impInvFinP,ganaP;
-      double kgVenT=0,impVenT=0,kgComT=0,impComT=0,kgInvIniT=0;
-      double impInvIniT=0,kgInvFinT=0,impInvFinT=0,ganaT=0;
-      double kgVen;
-      double impVen;
+      Baceptar.setIcon(Iconos.getImageIcon("cancel"));
+    
+     
+      kgVenT=0;impVenT=0;kgComT=0;impComT=0;kgInvIniT=0;
+      impInvIniT=0;kgInvFinT=0;impInvFinT=0;ganaT=0;kgMvtosT=0;impMvtosT=0;
       
       jt.setEnabled(false);
       jt.panelG.setVisible(false);
       jt.removeAllDatos();
+      
+     
+      int proCodi=dtCon1.getInt("pro_codi");
       do
       {
-
-        mensajeErr("Tratando Producto ..."+dtStat.getInt("pro_codi"),false);
-        kgComP=0;impComP=0;kgInvIniP=0;impInvIniP=0;
-        kgInvFinP=0;impInvFinP=0;
-
-        s = "select sum(avl_canti) as canti, sum(avl_canti*avl_prbase) as importe from v_albventa " +
-            " where avc_fecalb >= TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy') " +
-            " and avc_fecalb <= TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') " +
-            " and avc_serie != 'X' " +
-            " and div_codi >= "+DIVCODI+
-            " AND pro_codi = " + dtStat.getInt("pro_codi");
-
-        dtCon1.select(s);
-        kgVen = dtCon1.getDouble("canti",true);       
-        impVen = dtCon1.getDouble("importe",true);                  
-
-        s = "SELECT sum(acl_canti) as acl_canti, " +
-            " sum(acl_canti*acl_prcom) as acl_prcom from v_albacoc c,v_albacol l,v_articulo p,v_proveedo pv  " +
-            " where c.acc_ano = l.acc_ano " +
-            "and c.emp_codi = l.emp_codi " +
-            "and c.acc_serie = l.acc_serie " +
-            " and c.acc_nume = l.acc_nume " +
-            " and p.pro_codi = l.pro_codi" +
-            " and c.prv_codi = pv.prv_codi " +
-            " and c.acc_fecrec >= TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy')" +
-            " AND c.acc_fecrec <= TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') " +
-            " and L.pro_codi = " + dtStat.getInt("pro_codi");
-        dtCon1.select(s);
-        impComP=dtCon1.getDouble("acl_prcom", true);
-        kgComP=dtCon1.getDouble("acl_canti", true);
-
-        s = "select sum(rgs_kilos*rgs_prregu) as importe, "+
-            " sum(rgs_kilos) as kilos " +
-            " from v_inventar as r " +
-            " where r.emp_codi = " + EU.em_cod +           
-            " and r.pro_codi = " + dtStat.getInt("pro_codi") +
-            " and rgs_fecha = TO_DATE('" + feciniE.getText() +
-            "','dd-MM-yyyy') ";
-
-        dtCon1.select(s);
-        impInvIniP=dtCon1.getDouble("importe", true);
-        kgInvIniP=dtCon1.getDouble("kilos", true);
-
-        s = "select sum(rgs_kilos*rgs_prregu) as importe, " +
-            " sum(rgs_kilos) as kilos " +
-            " from v_inventar as r " +
-            " where r.emp_codi = " + EU.em_cod +           
-            " and r.pro_codi = " + dtStat.getInt("pro_codi") +
-            " and rgs_fecha = TO_DATE('" + fecfinE.getText() +"','dd-MM-yyyy') ";
-        dtCon1.select(s);
-        impInvFinP = dtCon1.getDouble("importe", true);
-        kgInvFinP = dtCon1.getDouble("kilos", true);
-        if (kgInvFinP+kgInvIniP+kgComP+kgVen+impVen!=0)
+        if (proCodi!=dtCon1.getInt("pro_codi"))
         {
-          ArrayList v=new ArrayList();
-          v.add(dtStat.getString("pro_codi"));
-          v.add(dtStat.getString("pro_nomb"));
-          v.add(Formatear.format(impVen,"--,---,--9.9"));
-          v.add(Formatear.format(kgVen,"----,--9.9"));
-          v.add(Formatear.format(impComP,"--,---,--9.9"));
-          v.add(Formatear.format(kgComP,"----,--9.9"));
-          v.add(Formatear.format(impInvIniP,"--,---,--9.9"));
-          v.add(Formatear.format(kgInvIniP,"----,--9.9"));
-          v.add(Formatear.format(impInvFinP,"--,---,--9.9"));
-          v.add(Formatear.format(kgInvFinP,"----,--9.9"));
-          ganaP=(impVen- impComP) + (impInvFinP-impInvIniP);
-          v.add(Formatear.format(ganaP,"----,--9.9"));
-          jt.addLinea(v);
-          impVenT+=impVen;
-          kgVenT+=kgVen;
-          impComT+=impComP;
-          kgComT+=kgComP;
-          impInvIniT+=impInvIniP;
-          kgInvIniT+=kgInvIniP;
-          impInvFinT+=impInvFinP;
-          kgInvFinT+=kgInvFinP;
+            addLineaGrid(proCodi,pro_codiE.getNombArt(proCodi));          
+            proCodi=dtCon1.getInt("pro_codi");
         }
-     } while (dtStat.next() && Baceptar.isEnabled());
+        mensajeErr("Tratando Producto ..."+dtCon1.getInt("pro_codi"),false);
+        switch (dtCon1.getString("tipo"))
+        {
+            case "VI":
+                 impVen = dtCon1.getDouble("importe",true);  
+                 break;
+            case "VK":
+                 kgVen = dtCon1.getDouble("canti",true);      
+                 break;
+            case "C":
+                kgComP = dtCon1.getDouble("canti",true);       
+                impComP = dtCon1.getDouble("importe",true);  
+                break;
+            case "I":
+                kgInvIniP=dtCon1.getDouble("canti", true);
+                impInvIniP=dtCon1.getDouble("importe", true);               
+                break;
+            case "F":
+               kgInvFinP = dtCon1.getDouble("canti", true);
+               impInvFinP = dtCon1.getDouble("importe", true);               
+               break;
+            case "M":
+               kgMvtos = dtCon1.getDouble("canti", true);
+               impMvtos = dtCon1.getDouble("importe", true);
+               break;
+
+        }                                         
+     } while (dtCon1.next() && Baceptar.isEnabled());
+     addLineaGrid(proCodi,pro_codiE.getNombArt(proCodi));
      impVentasE.setValorDec(impVenT);
      kgVentasE.setValorDec(kgVenT);
      impComprasE.setValorDec(impComT);
@@ -470,9 +501,12 @@ public class coresinv extends ventana
 
      impInvfinE.setValorDec(impInvFinT);
      kgInvfinE.setValorDec(kgInvFinT);
-
-     gananE.setValorDec((impVentasE.getValorDec()-impComprasE.getValorDec())+
+     
+     impMvtosE.setValorDec(impMvtosT);
+     kgMvtosE.setValorDec(kgMvtosT);
+     gananE.setValorDec((impMvtosE.getValorDec()-impComprasE.getValorDec())+
                         ( impInvfinE.getValorDec()- impInviniE.getValorDec()));
+     porcGanE.setValorDec(gananE.getValorDec()/kgMvtosT);
      if (!Baceptar.isEnabled())
        mensajeErr("Consulta Cancelada...");
      else
@@ -488,6 +522,49 @@ public class coresinv extends ventana
       Error("Error al buscar datos", k);
     }
   }
+    void addLineaGrid(int proCodi, String proNomb) 
+    {
+        impVenT += impVen;
+        kgVenT += kgVen;
+        impComT += impComP;
+        kgComT += kgComP;
+        impInvIniT += impInvIniP;
+        kgInvIniT += kgInvIniP;
+        impInvFinT += impInvFinP;
+        kgInvFinT += kgInvFinP;
+        kgMvtosT += kgMvtos;
+        impMvtosT += impMvtos;
+        ganaP = (impMvtos - impComP) + (impInvFinP - impInvIniP);
+        if (kgVen == 0 && kgMvtos != 0)
+        {
+            resetValores();
+            return;
+        }
+        ArrayList v = new ArrayList();
+        v.add(proCodi);
+        v.add(proNomb);
+        v.add(Formatear.format(impVen, "--,---,--9.9"));
+        v.add(Formatear.format(kgVen, "----,--9.9"));
+        v.add(Formatear.format(impComP, "--,---,--9.9"));
+        v.add(Formatear.format(kgComP, "----,--9.9"));
+        v.add(Formatear.format(impInvIniP, "--,---,--9.9"));
+        v.add(Formatear.format(kgInvIniP, "----,--9.9"));
+        v.add(Formatear.format(impInvFinP, "--,---,--9.9"));
+        v.add(Formatear.format(kgInvFinP, "----,--9.9"));
+        v.add(Formatear.format(impMvtos, "--,---,--9.9"));
+        v.add(Formatear.format(kgMvtos, "----,--9.9"));
+
+        v.add(Formatear.format(ganaP, "----,--9.9"));
+        jt.addLinea(v);
+        resetValores();
+
+    }
+    void resetValores()
+    {
+        kgComP=0;impComP=0;kgInvIniP=0;impInvIniP=0;impVen=0;kgVen=0;
+        kgMvtos=0;impMvtos=0;
+        kgInvFinP=0;impInvFinP=0;
+    }
   void activar(boolean enab)
   {
     fecfinE.setEnabled(enab);
