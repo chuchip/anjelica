@@ -66,6 +66,7 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class PdInvControl extends ventanaPad implements PAD
 {
+
  private String condLineas="";
   private  final int JT_NUMPAL=11;
   private  final int JT_NUMCAJ=10;
@@ -146,7 +147,7 @@ public class PdInvControl extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2017-06-21 "+(swAdmin?"Administrador":""));
+        this.setVersion("2017-06-23 "+(swAdmin?"Administrador":""));
         condWhere=" where emp_codi =  "+EU.em_cod;
         strSql = "SELECT * FROM coninvcab "+condWhere+
          "order by cci_feccon,cam_codi,alm_codi";
@@ -375,6 +376,12 @@ public class PdInvControl extends ventanaPad implements PAD
     numpesE1.setText("0");
     kiltotE1.setText("0");
     jt.requestFocusLater(jt.getSelectedRow(), jt.getSelectedColumn());
+    
+    
+    lci_numpalE.setValorInt(lci_numpalE.getValorInt()+1);
+    jt.setValor(""+lci_numpalE.getValorInt(),JT_NUMPAL);
+    lci_numcajE.setValorInt(1);
+    jt.setValor(""+1,JT_NUMCAJ);
   }
   /**
    * Devuelve el palet donde se leyo por ultima vez un indiviuo
@@ -481,7 +488,7 @@ public class PdInvControl extends ventanaPad implements PAD
           nav.pulsado = navegador.EDIT;
         }
       }
-
+      
     }
     catch (Exception k)
     {
@@ -492,6 +499,8 @@ public class PdInvControl extends ventanaPad implements PAD
     Pcabe.setEnabled(false);
     activar(true, navegador.EDIT);
     jt.requestFocusInicio();
+     jt.setValor("1",JT_NUMCAJ);
+    jt.setValor("1",JT_NUMPAL);
   }
 
   /**
