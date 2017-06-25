@@ -93,7 +93,7 @@ public class lisaldos   extends ventana  implements JRDataSource
   CButton Baceptar = new CButton("Aceptar",Iconos.getImageIcon("check"));
   String camCodi;
   ResultSet dtProd;
-  CLabel cLabel2 = new CLabel();
+  CLabel alm_codiL = new CLabel();
   CLinkBox alm_inicE = new CLinkBox();
     //  int almOri,almFin;
   CLabel cLabel4 = new CLabel();
@@ -174,7 +174,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     ifMvtos.setPadre(this);
     ifStk.setVisible(false);
     ifStk.setClosable(false);
-    fecsalE.setBounds(new Rectangle(55, 22, 79, 17));
+    fecsalE.setBounds(new Rectangle(55, 22, 75, 17));
     cLabel6.setBounds(new Rectangle(5, 22, 50, 17));
     cLabel6.setText("En Fecha");
     opIgnDespSVal.setSelected(true);
@@ -209,8 +209,8 @@ public class lisaldos   extends ventana  implements JRDataSource
                                            new Insets(0, 5, 0, 0), 0, 0));
 
     conecta();
-    cLabel2.setText("Almacen");
-    cLabel2.setBounds(new Rectangle(5, 45, 60, 17));
+    alm_codiL.setText("Almacen");
+    alm_codiL.setBounds(new Rectangle(5, 45, 60, 17));
     alm_inicE.setAncTexto(30);
     alm_inicE.setBounds(new Rectangle(60, 45, 186, 17));
     Baceptar.setMargin(new Insets(0, 0, 0, 0));
@@ -265,8 +265,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     importeL.setBounds(new Rectangle(260, 3, 55, 17));
     importeE.setBounds(new Rectangle(310, 3, 85, 17));
     importeE.setEditable(false);
-    pro_congeL.setText("Incluir");
-    pro_congeL.setBounds(new Rectangle(280, 45, 50, 18));
+    
     ordenL.setText("Orden");
     ordenE.addItem("Producto", "P");
     ordenE.addItem("Familia", "F");
@@ -279,7 +278,9 @@ public class lisaldos   extends ventana  implements JRDataSource
     Pdatcon.setLayout(null);
     
     cam_codiE.setAncTexto(25);
-    pro_artconE.setBounds(new Rectangle(332, 45,100, 18));
+    pro_congeL.setText("Incluir");
+    pro_congeL.setBounds(new Rectangle(255, 45, 45, 18));
+    pro_artconE.setBounds(new Rectangle(300, 45,90, 18));
     pro_artconE.addItem("TODOS","0");
     pro_artconE.addItem("Congelado","1");
     pro_artconE.addItem("NO Congel.","2");
@@ -291,7 +292,7 @@ public class lisaldos   extends ventana  implements JRDataSource
     Pdatcon.add(ordenE, null);
     Pdatcon.add(ordenL, null);
     Pdatcon.add(pro_congeL, null);
-    Pdatcon.add(cLabel2, null);
+    Pdatcon.add(alm_codiL, null);
     Pdatcon.add(cLabel5, null);
     Pdatcon.add(pro_codiE, null);
     Pdatcon.add(opAjuCosto, null);

@@ -1956,7 +1956,7 @@ void pdreprese_actionPerformed(ActionEvent e) {
   }
 
   void ALclresstock_actionPerformed(ActionEvent e) {
-    lanzaEjecutable(new gnu.chu.anjelica.almacen.clresstock(menu.this,EU));
+    lanzaEjecutable(new gnu.chu.anjelica.almacen.CLResumStock(menu.this,EU));
   }
   void ALlisaldos_actionPerformed(ActionEvent e) {
       

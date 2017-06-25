@@ -285,10 +285,11 @@ public class TrasInven extends ventanaPad implements PAD {
             {
                 stkPart.regeneraStock(dtBloq, proArtcon,
                         opInsAllAlmac.isSelected()?0:alm_codiE.getValorInt(),
-                        cci_fecconE.getDate(),0,opResetear.isSelected());
+                        cci_fecconE.getDate(),0,opResetear.isSelected(),opInvControl.isSelected());
             }
-            dtBloq.executeUpdate("update almacen set alm_feulin = TO_DATE('"+cci_fecconE.getFechaDB()+"','yyyyMMdd')"+
-                (opInsAllAlmac.isSelected()?"":" where alm_codi = "+alm_codiE.getValorInt()));
+            if (!opInvControl.isSelected())
+                dtBloq.executeUpdate("update almacen set alm_feulin = TO_DATE('"+cci_fecconE.getFechaDB()+"','yyyyMMdd')"+
+                    (opInsAllAlmac.isSelected()?"":" where alm_codi = "+alm_codiE.getValorInt()));
             
             ctUp.commit();
 
@@ -556,6 +557,7 @@ public class TrasInven extends ventanaPad implements PAD {
         opInsAllAlmac = new gnu.chu.controles.CCheckBox();
         opIgnCongel = new gnu.chu.controles.CCheckBox();
         opLeidoDep = new gnu.chu.controles.CCheckBox();
+        opInvControl = new gnu.chu.controles.CCheckBox();
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -701,7 +703,7 @@ public class TrasInven extends ventanaPad implements PAD {
         tipoTraspE.setMinimumSize(new java.awt.Dimension(78, 18));
         tipoTraspE.setPreferredSize(new java.awt.Dimension(78, 18));
         Ptraspa.add(tipoTraspE);
-        tipoTraspE.setBounds(81, 2, 140, 18);
+        tipoTraspE.setBounds(81, 2, 120, 18);
 
         cLabel4.setText("Traspasar productos");
         Ptraspa.add(cLabel4);
@@ -717,7 +719,7 @@ public class TrasInven extends ventanaPad implements PAD {
         opResetear.setText("Poner a 0 prod. sin inventariar");
         opResetear.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Ptraspa.add(opResetear);
-        opResetear.setBounds(0, 20, 171, 17);
+        opResetear.setBounds(2, 20, 171, 17);
 
         cLabel5.setText("Anterior Inventario");
         Ptraspa.add(cLabel5);
@@ -745,6 +747,11 @@ public class TrasInven extends ventanaPad implements PAD {
         opLeidoDep.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Ptraspa.add(opLeidoDep);
         opLeidoDep.setBounds(310, 50, 120, 17);
+
+        opInvControl.setText("Inv.Control");
+        opInvControl.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        Ptraspa.add(opInvControl);
+        opInvControl.setBounds(230, 2, 90, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -780,6 +787,7 @@ public class TrasInven extends ventanaPad implements PAD {
     private gnu.chu.controles.CCheckBox opIgnCongel;
     private gnu.chu.controles.CCheckBox opIncCong;
     private gnu.chu.controles.CCheckBox opInsAllAlmac;
+    private gnu.chu.controles.CCheckBox opInvControl;
     private gnu.chu.controles.CCheckBox opLeidoDep;
     private gnu.chu.controles.CCheckBox opResetear;
     private gnu.chu.controles.CCheckBox opTrasp;

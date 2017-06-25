@@ -42,6 +42,7 @@ import org.apache.log4j.Logger;
 public class ActualStkPart
 {
   private boolean actStkAutomatico=true; 
+//  private boolean controlInv=false; // Busca stock sobre Control Inventario
   boolean checkUnid=true; // Indica si debe comprobar que no haya mas de una unidad en stock Partidas
   MvtosAlma mvtos=null;
   private HashMap<Integer,Double>  difProd=new HashMap() ;
@@ -1089,7 +1090,7 @@ public class ActualStkPart
             if (Formatear.comparaFechas(fecsup, fecinv)<0)   
                    restar=true;         
         }
-        s = getSqlMvt(true,proArtcon, almCodi, fecinv,fecsup,pro_codi,false);
+        s = getSqlMvt(true,proArtcon, almCodi, fecinv,fecsup,pro_codi,swIncProd);
      } catch (ParseException k1)
      {
          throw new SQLException("Error al montar select ",k1);
@@ -1152,7 +1153,7 @@ public class ActualStkPart
     public boolean regeneraStock(DatosTabla dt,int proArtcon, int almCodi,
                                 Date fecinv,int pro_codi,boolean resetear) throws Exception
    {
-          return regeneraStock(dt, proArtcon, almCodi, fecinv, pro_codi, false,resetear);
+          return regeneraStock(dt, proArtcon, almCodi, fecinv, pro_codi, resetear,false);
    }
    /**
     * Regenera Stock volviendo a acumular las entradas/Salidas/Regularizaciones, etc.
@@ -1161,17 +1162,17 @@ public class ActualStkPart
     * @param dt DatosTabla Cursor Temporal
     * @param proArtcon int Es Articulo Congelado (2 Ambos, -1 SI, 0 No)
     * @param almCodi int Almacen sobre el que regenerar Stock. 0=Todos
-    * @param fecinv String Fecha de Inventario
-    * @param controlCam true Restringir por camara. (OBSOLETO. Siempre es false)
+    * @param fecinv String Fecha de Inventario  
     * @param pro_codi Producto a regenerar (0 = todos)
     * @param resetear Poner todos los acumulados a 0
+    * @param swInvControl Renerar sobre Inventario Control
     * @throws Exception  En caso error de base de datos.
     * @return boolean false si no hay registros a actualizar
     */
-   private boolean regeneraStock(DatosTabla dt,int proArtcon, int almCodi,
-                                Date fecinv,int pro_codi,boolean controlCam,boolean resetear) throws Exception
+   public boolean regeneraStock(DatosTabla dt,int proArtcon, int almCodi,
+                                Date fecinv,int pro_codi,boolean resetear,boolean swInvControl) throws Exception
    {
-     HashMap ht =getStockInd(dt,proArtcon,almCodi,fecinv,null,pro_codi,controlCam);
+     HashMap ht =getStockInd(dt,proArtcon,almCodi,fecinv,null,pro_codi,swInvControl);
      if (ht==null)
          return false;
      
@@ -1188,11 +1189,7 @@ public class ActualStkPart
        s+=" and pro_codi = "+pro_codi;
      else
      {
-       if (controlCam)
-         s += " and exists (select pro_codi from v_articulo " +
-             "  where v_articulo.pro_codi = stockpart.pro_codi " +
-             " and cam_codi = '" + camara + "')";
-       else if (proArtcon != 2) // Incluir Congelados
+       if (proArtcon != 2) // Incluir Congelados
          s += " and exists (select pro_codi from v_articulo " +
              "  where v_articulo.pro_codi = stockpart.pro_codi " +
              " and pro_artcon " + (proArtcon == 0 ? "= 0" : " <> 0") + ")";
@@ -1202,7 +1199,6 @@ public class ActualStkPart
              " where c.pro_codi = stockpart.pro_codi  " +
              " and c.emp_codi = " + empCodi +
              (almCodi==0?"":" and c.alm_codi = " + almCodi )+
-             (controlCam ? " and c.cam_codi = '" + camara + "'" : "") +
              " and c.cci_feccon = TO_DATE('" + fecinv + "','dd-MM-yyyy')) ";
      }
      if (padre!=null)
@@ -1216,14 +1212,12 @@ public class ActualStkPart
     else
     {
       s+=(almCodi==0?"":"  and pro_almcom="+almCodi);
-      s+= (controlCam ? " and cam_codi = '" + camara + "'" :
-          proArtcon != 2 ? "  and pro_artcon " + (proArtcon == 0 ? "= 0" : " <> 0") : "");
+      s+=  proArtcon != 2 ? "  and pro_artcon " + (proArtcon == 0 ? "= 0" : " <> 0") : "";
      if (! resetear) // No resetear TODOS los productos
        s+=" AND exists (select pro_codi FROM coninvlin as i "+
          " where i.pro_codi = v_articulo.pro_codi  "+
          " and i.emp_codi = "+empCodi+
          (almCodi==0?"":" and i.alm_codi = "+almCodi)+
-         (controlCam ?" and i.cam_codi = '"+camara+"'":"")+
          " and i.cci_feccon = TO_DATE('" + fecinv + "','dd-MM-yyyy') )";
     }
      dtAdd.executeUpdate(s);
@@ -1251,6 +1245,31 @@ public class ActualStkPart
      }
 
      boolean ret=regAcuProducto(dt,proArtcon,fecinv,pro_codi);
+     if (swInvControl)
+     { // Regenerar stock sobre Inventario Control. Pongo camara Actual      
+         s="update stockpart set cam_codi=("+
+            " select cam_codi FROM v_coninvent as i where stockpart.pro_codi=i.pro_codi " +
+             " and i.lci_peso > 0"+
+             " and stockpart.eje_nume=i.prp_ano "+
+             " and stockpart.pro_serie = i.prp_seri "+
+             " and stockpart.pro_nupar = i.prp_part "+
+             " and stockpart.pro_numind=i.prp_indi"+
+             " AND i.cci_feccon = TO_DATE('" + Formatear.getFecha(fecinv,"dd-MM-yyyy") + "','dd-MM-yyyy')) "+
+             " where exists ( select r.cam_codi FROM v_coninvent as r,v_articulo as a"+
+                " where  stockpart.pro_codi=r.pro_codi " +
+                " and stockpart.eje_nume=r.prp_ano "+
+                " and stockpart.pro_serie = r.prp_seri "+
+                " and stockpart.pro_nupar = r.prp_part "+
+                " and stockpart.pro_numind=r.prp_indi "+
+                " and lci_peso > 0 " +
+                " and lci_regaut = 0 "+
+                (almCodi==0?"":" and alm_codi = " + almCodi) +
+                (pro_codi == 0 ? "" : " and r.pro_codi = " + pro_codi) +
+                " and a.pro_codi = r.pro_codi " +
+                (proArtcon != 2?" and a.pro_artcon " + (proArtcon == 0 ? "= 0" : " <> 0"):"") +
+                " AND r.cci_feccon = TO_DATE('" + Formatear.getFecha(fecinv,"dd-MM-yyyy") + "','dd-MM-yyyy')) ";
+          dtAdd.executeUpdate(s);
+     }
      dtAdd.executeUpdate("update ajustedb set aju_regacu=1"); // Habilito Reg. Acum.
      return ret;
    }
