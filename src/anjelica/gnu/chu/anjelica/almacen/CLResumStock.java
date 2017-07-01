@@ -55,6 +55,7 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingConstants;
@@ -69,6 +70,9 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class CLResumStock extends ventana implements  JRDataSource
 {
+   private boolean P_VERPRECIO=false;
+   Date feulin;
+   MvtosAlma mvtosAlm=null;
    String tablaTemp;    
   private boolean VERNEGATIVO=true;
   CButton Blistar = new CButton(Iconos.getImageIcon("print"));
@@ -88,7 +92,11 @@ public class CLResumStock extends ventana implements  JRDataSource
   int unidT;
   String s;
   
- public CLResumStock(EntornoUsuario eu, Principal p)
+  public CLResumStock(EntornoUsuario eu, Principal p)
+  {
+      this(eu,p,null);
+  }
+ public CLResumStock(EntornoUsuario eu, Principal p,Hashtable<String,String> ht)
   {
     EU = eu;
     vl = p.panel1;
@@ -99,6 +107,7 @@ public class CLResumStock extends ventana implements  JRDataSource
 
     try
     {
+        ponParametros(ht);
       if (jf.gestor.apuntar(this))
         jbInit();
       else
@@ -110,7 +119,7 @@ public class CLResumStock extends ventana implements  JRDataSource
     }
   }
 
-  public CLResumStock(gnu.chu.anjelica.menu p, EntornoUsuario eu)
+  public CLResumStock(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable<String,String> ht)
   {
     EU = eu;
     vl = p.getLayeredPane();
@@ -119,6 +128,7 @@ public class CLResumStock extends ventana implements  JRDataSource
 
     try
     {
+      ponParametros(ht);
       jbInit();
     }
     catch (Exception e)
@@ -126,7 +136,14 @@ public class CLResumStock extends ventana implements  JRDataSource
       ErrorInit(e);
     }
   }
-
+private void ponParametros(Hashtable<String,String> ht)
+  {
+      if (ht == null)
+        return;
+    if (ht.get("verPrecio") != null)
+      P_VERPRECIO = Boolean.valueOf(ht.get("verPrecio"));
+       
+  }
 private void jbInit() throws Exception
 {
    iniciarFrame();
@@ -153,6 +170,8 @@ private void jbInit() throws Exception
    @Override
   public void iniciarVentana() throws Exception
   {
+  
+     feulin=ActualStkPart.getDateUltInv(Formatear.getDateAct(),dtStat);
      jtRes.setEnabled(false);
      tablaTemp="resstock"+ + Formatear.getDateAct().getTime();
      s="SELECT table_name FROM   information_schema.tables   WHERE    table_name = '"+tablaTemp+"'";
@@ -165,7 +184,12 @@ private void jbInit() throws Exception
           + " prv_codi int,"
           + " prv_nomb varchar(50),"        
           + " unidades int,"
+          + " cajas int,"
           + " cantidad float,"
+          + " unPedVen int," 
+          + " kgPedVen float,"        
+          + " unPedCom int," 
+          + " kgPedCom float,"                 
           + " fecsac date,"
           + " feccad date)";
         dtAdd.executeUpdate(s);
@@ -323,6 +347,7 @@ private void jbInit() throws Exception
 
   void consulta() 
   {  
+    
     Pgrids.removeAll();
     
     jtRes.removeAllDatos();
@@ -332,6 +357,18 @@ private void jbInit() throws Exception
     maxLinGrid=0;
     try
     {
+      if (mvtosAlm==null && P_VERPRECIO)
+      {
+        mvtosAlm = new MvtosAlma();
+        mvtosAlm.setUsaDocumentos(false);
+        mvtosAlm.setIncUltFechaInv(false);
+        mvtosAlm.setIgnDespSinValor(true);
+        mvtosAlm.setEntornoUsuario(EU);
+      
+        mvtosAlm.setSoloInventario(false);
+        mvtosAlm.setIncluyeSerieX(false);
+        mvtosAlm.iniciarMvtos(feulin,Formatear.getDateAct(),dtCon1);
+      }
       s = getSqlCab(tlaCodi,sbe_codiE.getValorInt());
       if (!dtCon1.select(s))
       {
@@ -737,12 +774,23 @@ private void jbInit() throws Exception
 //          v.add( cantTV);
 //        }
         jt.addLinea(v);
+     
+        
         ArrayList vr=new ArrayList();
         vr.add(dtCon1.getInt("pro_codi"));
         vr.add(dtCon1.getString("pro_desc"));
         vr.add(cantTSU); // Unidades Totales
         vr.add(cantTSK); // Kilos  Totales
         vr.add(kgCad==0?"":kgCad);
+        if (P_VERPRECIO)
+        {
+            if ( mvtosAlm.calculaMvtos(dtCon1.getInt("pro_codi"), dtAux, dtStat, null,null))
+              vr.add(mvtosAlm.getPrecioStock()+ dtCon1.getDouble("pro_cosinc")) ;
+            else
+                vr.add("");
+        }
+        else
+            vr.add("");
         jtRes.addLinea(vr);
         productos.add(pro_descL.getText());
         grids.add(jt);
@@ -937,8 +985,7 @@ private void jbInit() throws Exception
   String getSqlCab(int tlaCodi, int sbeCodi)
   {
     if (tlaCodi == 99)
-    {
-        
+    {        
         String condArt = " 1 = 1 "+
           (!proiniE.isNull() ? "  and pro_codi "+(profinE.isNull()?"":">") +
             "= " + proiniE.getValorInt() : "") +
@@ -947,7 +994,7 @@ private void jbInit() throws Exception
            " and pro_tiplot = 'V'";
         if (sbeCodi!=0)
           condArt+=" and sbe_codi ="+sbeCodi;
-        s = "SELECT pro_codi,pro_nomcor as pro_desc from v_articulo where " +
+        s = "SELECT pro_codi,pro_nomcor as pro_desc,pro_cosinc from v_articulo where " +
             condArt +
             " order by pro_codi";
     }
@@ -1024,7 +1071,7 @@ private void jbInit() throws Exception
         opCaducE = new gnu.chu.controles.CCheckBox();
         PTab1 = new gnu.chu.controles.CTabbedPane();
         Presum = new gnu.chu.controles.CPanel();
-        jtRes = new gnu.chu.controles.Cgrid(5);
+        jtRes = new gnu.chu.controles.Cgrid(6);
         jtDet = new gnu.chu.controles.Cgrid(4);
         PScroll = new javax.swing.JScrollPane();
         Pgrids = new gnu.chu.controles.CPanel();
@@ -1152,9 +1199,9 @@ private void jbInit() throws Exception
         Pcabe.add(diasCaducE);
         diasCaducE.setBounds(360, 60, 30, 17);
 
-        opCaducE.setText("Ver solo Cad.");
+        opCaducE.setText("Ver solo Caducado");
         Pcabe.add(opCaducE);
-        opCaducE.setBounds(400, 60, 100, 17);
+        opCaducE.setBounds(400, 60, 140, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1173,12 +1220,14 @@ private void jbInit() throws Exception
         v.add("Unid.");//2
         v.add("Kilos");//3
         v.add("Kg.Cad");//4
+        v.add("Costo");//5
         jtRes.setCabecera(v);
-        jtRes.setAnchoColumna(new int[]{60,250,50,50,70});
-        jtRes.setAlinearColumna(new int[]{2,0,2,2,2});
+        jtRes.setAnchoColumna(new int[]{60,250,50,50,70,50});
+        jtRes.setAlinearColumna(new int[]{2,0,2,2,2,2});
         jtRes.setFormatoColumna(2,"---,--9");
         jtRes.setFormatoColumna(3,"----,--9.9");
         jtRes.setFormatoColumna(4,"----,--9");
+        jtRes.setFormatoColumna(5,"##9.99");
         jtRes.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtRes.setMaximumSize(new java.awt.Dimension(100, 100));
         jtRes.setMinimumSize(new java.awt.Dimension(100, 100));
@@ -1203,7 +1252,6 @@ private void jbInit() throws Exception
         jtDet.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtDet.setMaximumSize(new java.awt.Dimension(100, 50));
         jtDet.setMinimumSize(new java.awt.Dimension(100, 50));
-        jtDet.setPreferredSize(new java.awt.Dimension(100, 50));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;

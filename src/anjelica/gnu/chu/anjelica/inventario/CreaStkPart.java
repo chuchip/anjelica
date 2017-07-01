@@ -240,7 +240,7 @@ public class CreaStkPart extends ventana
        dtCon1.setDato("pro_numind",pro_numindE.getValorInt() );
        dtCon1.setDato("alm_codi",alm_codiE.getValorInt() );
        dtCon1.setDato("stp_unini",stp_unactE.getValorDec() );
-       dtCon1.setDato("stp_feccre",Fecha.getFechaSys("dd-MM-yyyy"),"dd-MM-yyyy");
+       dtCon1.setDato("stp_feccre","current_timestamp");
        dtCon1.setDato("stp_fefici",(Date) null);
        dtCon1.setDato("stp_kilini",stp_kilactE.getValorDec());
        dtCon1.setDato("stp_kilact",stp_kilactE.getValorDec());

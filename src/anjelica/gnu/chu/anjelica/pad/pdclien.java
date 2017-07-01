@@ -907,9 +907,11 @@ public class pdclien extends ventanaPad implements PAD
   {
     cli_precfiE.addItem("No","0");
     cli_precfiE.addItem("Si","1");
-    cli_servirE.addItem("Si","1");
-    cli_servirE.addItem("No","0");
-    cli_servirE.addItem("No!","2");
+    cli_servirE.addItem("Si",""+cliPanel.SERVIR_SI);
+    cli_servirE.addItem("No",""+cliPanel.SERVIR_NO);
+    cli_servirE.addItem("Inc.Fra",""+cliPanel.SERVIR_INCFRA);
+    cli_servirE.addItem("No!",""+cliPanel.SERVIR_NO_FORZADO);
+    
     eti_codiE.addDatos(etiqueta.getReports(dtStat,EU.em_cod,1));
     eti_codiE.setFormato(Types.DECIMAL,"###9",4);
 
@@ -2620,5 +2622,18 @@ public class pdclien extends ventanaPad implements PAD
       } while (dtSel.next());
       dtUpd.commit();
       return s;
+  }
+  public static String getUltimoCambio(DatosTabla dt,int cliCodi) throws SQLException
+  {
+       String s="select clc_comen,clc_fecha,clc_hora,usu_nomco from cliencamb as cl, usuarios as u where cli_codi = "+
+              cliCodi+
+           " and cl.usu_nomb = u.usu_nomb "+
+              " order by clc_fecha desc,clc_hora desc";
+          if (dt.select(s))
+          {
+             return dt.getString("clc_comen")+"\n\nUsuario:"+dt.getString("usu_nomco") +"  Fecha: "+dt.getFecha("clc_fecha","dd-MM-yy")+" "+
+                 dt.getDouble("clc_hora");
+          } 
+          return "";
   }
 }

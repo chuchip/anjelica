@@ -15,6 +15,7 @@ import gnu.chu.anjelica.almacen.pstockAct;
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.MantTarifa;
+import gnu.chu.anjelica.pad.pdclien;
 import net.sf.jasperreports.engine.*;
 import gnu.chu.anjelica.pad.pdconfig;
 
@@ -280,7 +281,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2017-06-21"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2017-06-27"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -759,7 +760,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     avc_numeE.setColumnaAlias("avc_nume");
     Pcabe.setDefButton(Baceptar);
     jt.setButton(KeyEvent.VK_F5,BponPrecio);
-    
+    jt.setDefButton(Baceptar);
     boolean verDatDif=true;
     if (getLabelEstado()!=null)
     {
@@ -2145,11 +2146,22 @@ public class pdpeve  extends ventanaPad   implements PAD
 
             if (cli_codiE.hasCambio())
             {
-                 if (!cli_codiE.isServir())
+                 if (cli_codiE.isIncluirFra())
                  {
-                    msgBox("ATENCION!. Cliente esta marcado como para no servir");  
+                    String msgAviso=pdclien.getUltimoCambio(dtStat,cli_codiE.getValorInt());
+                    msgExplica("ATENCION!. Cliente esta marcado como Incluir Facturas",msgAviso);  
                     pvc_incfraE.setSelected(true);
                  }
+                 else
+                 {
+                    if (cli_codiE.getEstadoServir()==cliPanel.SERVIR_NO )
+                    {
+                       String msgAviso=pdclien.getUltimoCambio(dtStat,cli_codiE.getValorInt());
+                       msgExplica("ATENCION!. Cliente esta marcado como para no servir",msgAviso);  
+                       pvc_incfraE.setSelected(true);
+                    }
+                 }
+               
                 cli_codiE.resetCambio();
                 rut_codiE.setText(cli_codiE.getLikeCliente().getString("rut_codi"));
                 if (cli_codiE.getLikeCliente().getInt("cli_gener") == 0 && nav.getPulsado() == navegador.ADDNEW)

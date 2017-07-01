@@ -1071,13 +1071,14 @@ public class ActualStkPart
     * @param fecinv Fecha Inventario. Se considera que los inventarios se hacen a final del dia.
     * @param pro_codi Producto (0 Todos) 
     * @param swIncProd Si es true llenara el Hash difProd con los diferentes productos
-    *                   encontrados   
+    *                   encontrados  
+    * @para swInvControl Usar inventario control
     * @return HashMap con los diferentes individuos encontrados
     * @throws Exception
     */
    private HashMap getStockInd(DatosTabla dt,int proArtcon, int almCodi,
                                 Date fecinv,Date fecsup,int pro_codi,
-                                boolean swIncProd) throws SQLException
+                                boolean swIncProd,boolean swInvControl) throws SQLException
    {
 
      if (swIncProd)
@@ -1090,7 +1091,7 @@ public class ActualStkPart
             if (Formatear.comparaFechas(fecsup, fecinv)<0)   
                    restar=true;         
         }
-        s = getSqlMvt(true,proArtcon, almCodi, fecinv,fecsup,pro_codi,swIncProd);
+        s = getSqlMvt(true,proArtcon, almCodi, fecinv,fecsup,pro_codi,swInvControl);
      } catch (ParseException k1)
      {
          throw new SQLException("Error al montar select ",k1);
@@ -1172,7 +1173,7 @@ public class ActualStkPart
    public boolean regeneraStock(DatosTabla dt,int proArtcon, int almCodi,
                                 Date fecinv,int pro_codi,boolean resetear,boolean swInvControl) throws Exception
    {
-     HashMap ht =getStockInd(dt,proArtcon,almCodi,fecinv,null,pro_codi,swInvControl);
+     HashMap ht =getStockInd(dt,proArtcon,almCodi,fecinv,null,pro_codi,true,swInvControl);
      if (ht==null)
          return false;
      
@@ -1287,7 +1288,7 @@ public class ActualStkPart
    public void insInventCong(DatosTabla dtAdd, DatosTabla dtStat,int almCodi,
                                 Date fecinv,Date fecsup,String usuNomb) throws ParseException,SQLException
    {
-     HashMap<String,String> ht =getStockInd(dtStat,-1,almCodi,fecinv,fecsup,0,true);
+     HashMap<String,String> ht =getStockInd(dtStat,-1,almCodi,fecinv,fecsup,0,true,false);
      if (ht==null)
          return ;
      /**

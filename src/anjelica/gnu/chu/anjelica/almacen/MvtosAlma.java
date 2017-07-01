@@ -84,7 +84,7 @@ public class MvtosAlma
   double kgEntDes=0;
   private ventana padre;
   private EntornoUsuario EU;
-  private boolean swAjusteCostos=false;
+  private boolean swAjusteCostos=false; 
   private String msgLog="",msgDesp="",msgCompra="";
   private boolean cancelarConsulta=false;
   private double preStk,canStk;
@@ -790,7 +790,7 @@ public class MvtosAlma
        resetAcumulados();
        resetAcumMvtos();
        setLote(proLote);
-       String s = "SELECT mvt_tipdoc,mvt_tipo, sum(mvt_canti) as canti,sum(mvt_unid) as unid, "+
+       String s = "SELECT mvt_tipdoc,mvt_tipo, sum(mvt_canti) as camvtnti,sum(mvt_unid) as unid, "+
             " sum(mvt_canti* mvt_prenet)  as importe "+
              " from mvtosalm where "+
              "   mvt_canti <> 0 "+
@@ -1822,18 +1822,18 @@ public class MvtosAlma
      if (papa!=null)
          EU=papa.EU;
   }
-  /**
-   * Establece si se deben sumar los ajustes de costos
-   * @param incAjusteCostos 
-   */
-  public void setIncAjusteCostos(boolean incAjusteCostos)
-  {
-      swAjusteCostos=incAjusteCostos;
-  }
-  public boolean getIncAjusteCostos()
-  {
-      return swAjusteCostos;
-  }
+//  /**
+//   * Establece si se deben sumar los ajustes de costos
+//   * @param incAjusteCostos 
+//   */
+//  public void setIncAjusteCostos(boolean incAjusteCostos)
+//  {
+//      swAjusteCostos=incAjusteCostos;
+//  }
+//  public boolean getIncAjusteCostos()
+//  {
+//      return swAjusteCostos;
+//  }
   /**
    * Establece la variable del entorno usuario
    * @param eu 

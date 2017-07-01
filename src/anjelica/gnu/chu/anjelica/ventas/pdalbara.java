@@ -214,6 +214,7 @@ public class pdalbara extends ventanaPad  implements PAD
   /**
    * Codigo de Producto (1)
    */
+  private final int JT_CANTI=3;
   private final int JT_PROCODI=1; 
   private final int JT_PRONOMB=2; 
   /**
@@ -2340,8 +2341,9 @@ public class pdalbara extends ventanaPad  implements PAD
                      jt.getValorInt(jt.tableView.getSelectedRow(), 0),
                      jt.getValorInt(jt.tableView.getSelectedRow(), JT_PROCODI),
                      jt.getValorInt(jt.tableView.getSelectedRow(), JT_NUMPALE),
-                     jt.getValString(jt.tableView.getSelectedRow(), 2),                     
-                     verPrecios?jt.getValorDec(jt.tableView.getSelectedRow(), 5):0);
+                     jt.getValString(jt.tableView.getSelectedRow(), 2),  
+                     verPrecios?jt.getValorDec(jt.tableView.getSelectedRow(), 5):0,
+                     jt.getValorDec(jt.tableView.getSelectedRow(), JT_CANTI)<0);
       }
     });
     jtDes.tableView.addMouseListener(new MouseAdapter()
@@ -3869,8 +3871,9 @@ public class pdalbara extends ventanaPad  implements PAD
                    jt.getValorInt(0, 0),
                    jt.getValorInt(0, JT_PROCODI), 
                    jt.getValorInt(0, JT_NUMPALE),
-                   jt.getValString(0, 2), 
-                   verPrecios?jt.getValorDec(0, 5):0);
+                   jt.getValString(0, JT_PRONOMB), 
+                   verPrecios?jt.getValorDec(0, 5):0,
+                   jt.getValorDec(0, JT_CANTI)<0         );
       actModPrecio();
       antPrecio = verPrecios?jt.getValorDec(5):0;
 //      debug("Ant. Precio: "+antPrecio);
@@ -3919,8 +3922,8 @@ public class pdalbara extends ventanaPad  implements PAD
        }
       
        verDesgLinea(empCodi,avcAno, serie, numAlb, -1, jt.getValorInt(0, JT_PROCODI),
-           jt.getValorInt(0, JT_NUMPALE),jt.getValString(0, 2),
-           jt.getValorDec(0, 5));
+           jt.getValorInt(0, JT_NUMPALE),jt.getValString(0, JT_PRONOMB),
+           jt.getValorDec(0, JT_PRECIO),jt.getValorDec(0, JT_CANTI)<0);
 
   }
   /**
@@ -3948,7 +3951,7 @@ public class pdalbara extends ventanaPad  implements PAD
        swActDesg = true;
        verDesgLinea(empCodi,avcAno,serie,numAlb, -1, jt.getValorInt(0, JT_PROCODI),
            jt.getValorInt(0, JT_NUMPALE),
-           jt.getValString(0, 2),  jt.getValorDec(0, 5));
+           jt.getValString(0, JT_PRONOMB),  jt.getValorDec(0, JT_PRECIO),jt.getValorDec(0, JT_CANTI)<0);
   }
   /**
    * Llena el grid de lineas de albaran. Solo para albaranes deposito.
@@ -4003,7 +4006,7 @@ public class pdalbara extends ventanaPad  implements PAD
         swActDesg = true;
         verDesgLinea(0,0, "", 0, jt.getValorInt(0, 0), jt.getValorInt(0, JT_PROCODI),
             jt.getValorInt(0, JT_NUMPALE),
-             jt.getValString(0, 1),jt.getValorDec(0, 5));
+             jt.getValString(0, JT_PRONOMB),jt.getValorDec(0, JT_PRECIO),jt.getValorDec(0, JT_CANTI)<0);
     }
     
     String getStrSqlDesgPend(int empCodi, int avcAno, String serie, int numAlb,int proCodi)
@@ -4032,9 +4035,21 @@ public class pdalbara extends ventanaPad  implements PAD
               + "and p.avp_numind = i.avs_numind ) "
               + " order by l.pro_codi ";
   }
-    
+  /**
+   * Muestra el desglose de la linea de albaran
+   * @param empCodi
+   * @param ejeNume
+   * @param serie
+   * @param numAlb
+   * @param nLin
+   * @param proCodi
+   * @param numPale
+   * @param proNomb
+   * @param precio
+   * @param swNeg indica si la cantidad es negativa
+   */
   void verDesgLinea(int empCodi, int ejeNume, String serie, int numAlb,
-                    int nLin, int proCodi,int numPale,String proNomb, double precio)
+                    int nLin, int proCodi,int numPale,String proNomb, double precio,boolean swNeg)
   {
     if (!swActDesg)
       return;
@@ -4054,7 +4069,7 @@ public class pdalbara extends ventanaPad  implements PAD
               default:
                   s=getStrSqlDesg(vistaInd,
                       hisRowid<=0?empCodi:-1, ejeNume, serie,
-                      hisRowid<=0?numAlb:hisRowid, nLin, proCodi,numPale, proNomb, precio,verPrecios);
+                      hisRowid<=0?numAlb:hisRowid, nLin, proCodi,numPale, proNomb, precio,swNeg,verPrecios);
                   break;
           }
       }
@@ -4109,7 +4124,7 @@ public class pdalbara extends ventanaPad  implements PAD
                              int proCodi, int numPale,String proNomb,double precio,boolean modPrecio)
   {
       return getStrSqlDesg(VISTAIND ,empCodi,ejeNume,serie, numAlb, nLin,proCodi, numPale,
-          proNomb, precio, modPrecio);
+          proNomb, precio, modPrecio,false);
   }
 /**
  * Devuelve sentencia SQL para mostras los individuos sobre un albaran normal
@@ -4130,7 +4145,7 @@ public class pdalbara extends ventanaPad  implements PAD
  */
   public static String getStrSqlDesg(String vistaDet,
       int empCodi, int ejeNume, String serie, int numAlb, int nLin,
-                             int proCodi,int numPale, String proNomb,double precio,boolean modPrecio)
+                             int proCodi,int numPale, String proNomb,double precio,boolean swNegat,boolean modPrecio)
   {
     return "SELECT p.pro_codi,p.pro_nomb,a.avp_emplot,a.avp_ejelot,a.avp_serlot, " +
         " a.avp_numpar,a.avp_numind,a.avp_canti,a.avp_canbru,a.avp_canori,avp_numuni,a.avp_numlin "+
@@ -4142,6 +4157,7 @@ public class pdalbara extends ventanaPad  implements PAD
         " and avl_numpal = "+numPale+
         (nLin >= 0 ? " and a.avl_numlin = " + nLin :
          " and a.pro_codi = " + proCodi +
+        " and avl_canti  "+(swNegat?"<=":">=")+"0"+
          (proNomb==null?"":" and (a.pro_nomb is null or a.pro_nomb = '"+proNomb+"')")+
          (modPrecio?" and a.avl_prven = " + precio:"")) +
           " and p.pro_codi = a.pro_codi " +      
@@ -6022,9 +6038,10 @@ public class pdalbara extends ventanaPad  implements PAD
 //        swPasLin=true;
         if (nav.pulsado!=navegador.EDIT)
         {
-          if (!cli_codiE.isServir())
+          if (cli_codiE.getEstadoServir()==cliPanel.SERVIR_NO)
           {
-              msgBox("ATENCIO CLIENTE ESTA MARCADO COMO NO SERVIBLE. NO SE PODRA IMPRIMIR");
+             String msgAviso=pdclien.getUltimoCambio(dtStat,cli_codiE.getValorInt());
+             msgExplica("ATENCION!. MARCADO COMO NO SERVIBLE",msgAviso);  
           }
           pvc_anoE.setEnabled(false);
           pvc_numeE.setEnabled(false);
@@ -8454,12 +8471,29 @@ public class pdalbara extends ventanaPad  implements PAD
         verDatos(dtCons);
         return;
       }
-      if (opDispSalida.getValor().equals(DSAL_IMPRE) && !cli_codiE.isServir())
+      if (opDispSalida.getValor().equals(DSAL_IMPRE))
       {
-        msgBox("CLIENTE ESTA MARCADO COMO NO SERVIBLE. IMPOSIBLE IMPRIMIR");
-        verDatos(dtCons);
-        return;          
+        if (cli_codiE.isIncluirFra())
+        {
+            String ret=mensajes.mensajeGetTexto("A ESTE CLIENTE SE LE DEBERIA INCLUIR UNA FRA. ESCRIBA 'OK' PARA CONTINUAR","Atenicon");
+            if (ret == null || !ret.toUpperCase().equals("OK"))
+            {
+                verDatos(dtCons);
+                return;
+            }
+        }
+        else
+        {
+            if (cli_codiE.getEstadoServir()==cliPanel.SERVIR_NO || cli_codiE.getEstadoServir()==cliPanel.SERVIR_NO_FORZADO)
+            {
+                msgBox("CLIENTE ESTA MARCADO COMO NO SERVIBLE. IMPOSIBLE IMPRIMIR");
+                verDatos(dtCons);
+                return;          
+            }
+        }      
       }
+      
+     
       if (cli_codiE.getLikeCliente().getInt("cli_albval")==pdclien.LISTAR_ALB_VALORADOS &&
           !opValora.isSelected() && opDispSalida.getValor().equals(DSAL_IMPRE) && avsNume==0 )
       {

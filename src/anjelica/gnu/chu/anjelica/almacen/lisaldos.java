@@ -672,7 +672,7 @@ public class lisaldos   extends ventana  implements JRDataSource
       mvtosAlm.setIgnDespSinValor(opIgnDespSVal.isSelected());
       mvtosAlm.setAlmacen(alm_inicE.getValorInt());
       mvtosAlm.setEntornoUsuario(EU);
-      mvtosAlm.setIncAjusteCostos(opAjuCosto.isSelected());
+//      mvtosAlm.setIncAjusteCostos(opAjuCosto.isSelected());
       mvtosAlm.setSoloInventario(fecsalE.getText().equals(feulinE.getText()));
       
       if (!alm_inicE.isNull())

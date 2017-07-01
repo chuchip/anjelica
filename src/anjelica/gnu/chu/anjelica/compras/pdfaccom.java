@@ -49,6 +49,7 @@ import net.sf.jasperreports.engine.*;
 
 public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
 {
+  private String fccFacprvOLD="";
   private boolean swConsulta=false;
   String s;
   int numDec=2;
@@ -77,6 +78,8 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
   CLabel div_codiL = new CLabel();
   CLinkBox div_codiE = new CLinkBox();
   CPanel Ppie = new CPanel();
+  CLabel fcc_kilfraL = new CLabel("Kilos Fra");
+  CTextField fcc_kilfraE = new CTextField(Types.DECIMAL,"---,--9.9");
   CLabel fcc_implinL = new CLabel();
   CTextField fcc_implinE = new CTextField(Types.DECIMAL,"----,--9.99");
 
@@ -309,7 +312,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
 
    iniciarFrame();
    this.setSize(new Dimension(764, 531));
-   this.setVersion("2017-04-02 "+(modPrecio?"-Modificar Precios-":"")+
+   this.setVersion("2017-06-27 "+(modPrecio?"-Modificar Precios-":"")+
          (admin?"-ADMINISTRADOR-":"")+ (swConsulta?"-Solo Consulta-":""));
    strSql = "SELECT emp_codi,eje_nume,fcc_nume " +
        " FROM v_facaco WHERE emp_codi = " + EU.em_cod +
@@ -339,7 +342,9 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
     cLabel19.setText("Coment");
     cLabel19.setBounds(new Rectangle(135, 49, 50, 18));
     fcc_comentE.setText("");
-    fcc_comentE.setBounds(new Rectangle(187, 49, 527, 18));
+    fcc_comentE.setBounds(new Rectangle(187, 49, 397, 18));
+    fcc_kilfraL.setBounds(new Rectangle(588, 49, 80, 18));
+    fcc_kilfraE.setBounds(new Rectangle(647, 49, 60, 18));
     BirGrid.setBounds(new Rectangle(405, 34, 5, 5));
     BinsAlb.setBounds(new Rectangle(685, 27, 24, 20));
     cLabel17.setBounds(new Rectangle(424, 27, 95, 18));
@@ -605,6 +610,8 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
     Pcabe.add(fcc_conpagE, null);
     Pcabe.add(cLabel19, null);
     Pcabe.add(fcc_comentE, null);
+    Pcabe.add(fcc_kilfraE, null);
+    Pcabe.add(fcc_kilfraL, null);
     Pcabe.add(cLabel15, null);
     Pcabe.add(emp_codiE, null);
     Pcabe.add(cPanel3, null);
@@ -695,6 +702,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
    fpa_codiE.setColumnaAlias("fpa_codi");
    fcc_comentE.setColumnaAlias("fcc_coment");
    fcc_conpagE.setColumnaAlias("fcc_conpag");
+   fcc_kilfraE.setColumnaAlias("fcc_kilfra");
    activar(false);
    jtFra.setButton(KeyEvent.VK_F4, Baceptar);
    jtVto.jtVto.setButton(KeyEvent.VK_F4, Baceptar);
@@ -1128,6 +1136,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
        activaTodo();
        return;
      }
+     fccFacprvOLD=dtStat.getString("fcc_facprv");
      if (pdejerci.isCerrado(dtStat, eje_numeE.getValorInt(), emp_codiE.getValorInt()))
      {
        if (!admin)
@@ -1302,8 +1311,9 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
    {
       s="SELECT * FROM v_facaco WHERE emp_codi = " + emp_codiE.getValorInt() +
          " and fcc_facprv = '"+fcc_facprvE.getText()+"'"+
-         " and prv_codi = "+prv_codiE.getValorInt();
-     if (dtStat.select(s))
+         " and prv_codi = "+prv_codiE.getValorInt()+
+         (nav.getPulsado()==navegador.EDIT?" and fcc_facprv != '"+fccFacprvOLD+"'":"");
+     if (dtStat.select(s) )
      {
         int ret=mensajes.mensajePreguntar("Ya se cargo una factura con este numero. Continuar ?");
         if (ret!=mensajes.YES)
@@ -1447,6 +1457,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
    dtAdd.setDato("fcc_prec1",fcc_prec1E.getValorDec());
    dtAdd.setDato("fcc_conpag",fcc_conpagE.getValor());
    dtAdd.setDato("fcc_coment",fcc_comentE.getText());
+   dtAdd.setDato("fcc_kilfra",fcc_kilfraE.getValorDec());
    dtAdd.update(stUp);
  }
 
@@ -1676,6 +1687,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
    Bcancelar.setEnabled(b);
    fpa_codiE.setEnabled(b);
    fcc_comentE.setEnabled(b);
+   fcc_kilfraE.setEnabled(b);
    fcc_conpagE.setEnabled(b);
    if (modo==navegador.QUERY)
      return;
@@ -1762,6 +1774,7 @@ private void insLiAlb0() throws IllegalArgumentException, ParseException,
      fpa_codiE.setValorInt(dtCon1.getInt("fpa_codi",true));
      fcc_conpagE.setValor(dtCon1.getString("fcc_conpag"));
      fcc_comentE.setText(dtCon1.getString("fcc_coment"));
+     fcc_kilfraE.setText(dtCon1.getString("fcc_kilfra",true));
      jtVto.setDatosFra("C",emp_codiE.getValorInt(),eje_numeE.getValorInt(),fcc_numeE.getValorInt());
      jtVto.verGrupoFra();
      s="SELECT l.*,p.pro_nomb FROM v_falico as l,v_articulo as p "+

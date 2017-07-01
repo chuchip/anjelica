@@ -535,11 +535,11 @@ public class coresinv extends ventana
         kgMvtosT += kgMvtos;
         impMvtosT += impMvtos;
         ganaP = (impMvtos - impComP) + (impInvFinP - impInvIniP);
-        if (kgVen == 0 && kgMvtos != 0)
-        {
-            resetValores();
-            return;
-        }
+//        if (kgVen == 0 && kgMvtos == 0)
+//        {
+//            resetValores();
+//            return;
+//        }
         ArrayList v = new ArrayList();
         v.add(proCodi);
         v.add(proNomb);

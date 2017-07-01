@@ -420,7 +420,7 @@ cli_feulco date,        -- Fecha Ult. Contacto
 cli_estcon char(1) default 'N',     -- Estado de Contacto (No contacto,Ausente,Contacto, Llamar)
 cli_email1 char(60),     -- Correo Electronico Comercial (Tarifas)
 cli_email2 char(60),     -- Correo Electronico Administr. (Facturas/Alb.)
-usu_nom varchar(15) not null, -- Usuario que realiza el Cambio
+usu_nomb varchar(15) not null, -- Usuario que realiza el Cambio
 clc_fecha date not null, -- Fecha de Cambio
 clc_hora decimal(5,2) not null, -- Hora de Cambio
 clc_comen varchar(100) -- Comentario sobre el Cambio
@@ -683,7 +683,7 @@ avl_numues varchar(15),
 avl_fecmue date,
 avl_fecrli date,
 avl_numcaj smallint not null default 0, -- Numero de Caja
-avl_numpal int not null default 0, -- Numero Pale
+avl_numpal int not null default 0, -- Numero Palet
 avl_coment varchar(50),      -- Comentario
 aux_2 varchar(50),
 aux_3 varchar(50),
@@ -729,7 +729,7 @@ create view anjelica.v_albventa as select c.avc_id,c.emp_codi,c.avc_ano,c.avc_se
 cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,avc_revpre,
 fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
 avc_basimp,avc_kilos,avc_unid,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
-avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_prbase,avc_repres,
+avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_profer,avl_prbase,avc_repres,
 tar_preci,avl_unid,
 avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,avl_dtolin 
 from v_albavel as l, v_albavec as c 
@@ -2593,7 +2593,7 @@ create table anjelica.v_facaco
   div_codi int,         	-- Divisa
   fpa_codi int,         	-- Forma de Pago
   fcc_sumli2 float,
-  fcc_sumto2 float,
+  fcc_kilfra float,			-- Kilos Facturados
   fcc_sumim12 float,
   fcc_sumim22 float,
   fcc_sumim33 float,
@@ -3340,7 +3340,7 @@ create table anjelica.coninvlin
     lci_coment varchar(45),			-- Comentario
 	lci_causa varchar(30), 		-- Causa Probable Incidencia.	
 	lci_numcaj smallint not null default 0,	-- Numero Caja
-    lci_numpal varchar not null default '',	-- Numero Palet
+    lci_numpal varchar(5) not null default '',	-- Numero Palet
 	alm_codlin int not null, -- Almacen (Para List. Dif. Inventario)
   constraint ix_coninvlin primary key(cci_codi,lci_nume,emp_codi,)
 );
@@ -3404,6 +3404,45 @@ grant select on  v_invproduc to public;
 -- Vista para selecionar los diferentes tipos de camaras
 create view anjelica.v_camaras as
 select emp_codi,dis_codi as cam_codi ,dis_nomb as cam_nomb from v_discrim where dis_tipo='AC';
+--
+-- cabecera traspaso entre Camaras
+--
+create table cabtrascam
+(
+	tcc_id serial not null, -- Numero Traspaso
+	usu_nomb varchar(15) not null,
+	tcc_fecha date not null, -- fecha traspaso	
+	alm_codi int not null, -- Almacen Origen y Final
+	cam_codi char(2) not null -- Camara Destino
+);
+--
+-- Lineas traspaso entre Camaras
+--
+create table lintrascam
+(
+	tcc_id int not null, -- Numero Traspaso
+	tcl_numlin int not null, -- Numero Linea
+	pro_codi int,			-- Producto	
+	tcl_ejelot int,			-- Ejercicio Lote
+	tcl_serlot char(1), 	-- Serie de Lote
+	tcl_numpar int,			-- Numero de Partida (Lote)
+	tcl_numind int,			--  Numero de Individuo
+	tcl_numuni float,		-- Numero de Unidades
+	tcl_canti float not null,  -- Kilos 
+	tcl_numpal int,  -- Numero Palet
+	tcl_numcaj int,		 -- Numero caja
+	tcl_fecalt timestamp default current_timestamp not null, -- Fecha/Hora traspaso
+	 constraint ix_lintrascam primary key(tcc_id,tcl_numlin)
+);
+create view traspcamaras as 
+select 	usu_nomb,
+	tcc_fecha , -- fecha traspaso	
+	alm_codi , -- Almacen Origen y Final
+	cam_codi ,
+	l.* from cabtrascam  as c, lintrascam as l where c.tcc_id = l.tcc_id 
+	order by tcl_numlin;
+	
+);
 --
 -- Precios para inventarios
 --

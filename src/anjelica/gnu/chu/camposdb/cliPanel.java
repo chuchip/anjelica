@@ -35,6 +35,10 @@ import gnu.chu.winayu.*;
  */
 public class cliPanel extends CPanel
 {
+  public final static int SERVIR_NO=0;
+  public final  static int SERVIR_SI=1;
+  public final  static int SERVIR_NO_FORZADO=2;
+  public final  static int SERVIR_INCFRA=3;
   Principal jf;
   private Integer peso=1;
   private boolean swControl=true;
@@ -224,7 +228,20 @@ public class cliPanel extends CPanel
    */
   public boolean isServir() throws SQLException
   {
-      return getLikeCliente().getInt("cli_servir")==1;
+      return getLikeCliente().getInt("cli_servir")==SERVIR_NO;
+  }
+  public int getEstadoServir() throws SQLException
+  {
+       return getLikeCliente().getInt("cli_servir");
+  }
+  /**
+   * 
+   * @return true si esta marcado como incluir factura
+   * @throws SQLException 
+   */
+   public boolean isIncluirFra() throws SQLException
+  {
+      return getLikeCliente().getInt("cli_servir")==SERVIR_INCFRA;
   }
   /**
    * Devuelve si a un cliente se le puede servir o no.
@@ -233,7 +250,7 @@ public class cliPanel extends CPanel
    */
   public boolean isNoServirForzado() throws SQLException
   {
-      return getLikeCliente().getInt("cli_servir")==2;
+      return getLikeCliente().getInt("cli_servir")==SERVIR_NO_FORZADO;
   }
   /**
    * Hace el boton de consultar visible

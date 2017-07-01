@@ -135,6 +135,7 @@ JMenuItem mantArticVenta = new JMenuItem();
   JMenuItem pdregalm = new JMenuItem();
   JMenuItem costkpar = new JMenuItem();
   JMenuItem trasAlma = new JMenuItem();
+  JMenuItem trasCama = new JMenuItem();
   JMenuItem pdbanteso = new JMenuItem();
   JMenuItem coarbtraz = new JMenuItem();
   JPopupMenu JpopupVentas = new JPopupMenu();
@@ -624,6 +625,13 @@ JMenuItem mantArticVenta = new JMenuItem();
         trasAlma_actionPerformed(e);
       }
     });
+    trasCama.setText("Trasp.Camaras");
+    trasCama.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        trasCama_actionPerformed(e);
+      }
+    });
+
     pdbanteso.setText("Bancos Tesor");
     pdbanteso.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -1026,6 +1034,7 @@ JMenuItem mantArticVenta = new JMenuItem();
     JPopupAlmacen.add(pdregalm);
     JPopupAlmacen.add(costkpar);
      JPopupAlmacen.add(trasAlma);
+     JPopupAlmacen.add(trasCama);
     JPopupAlmacen.add(coarbtraz);
     JPopupAlmacen.add(creaStk);
     JPopupAlmacen.add(pdmotregu);
@@ -1956,7 +1965,9 @@ void pdreprese_actionPerformed(ActionEvent e) {
   }
 
   void ALclresstock_actionPerformed(ActionEvent e) {
-    lanzaEjecutable(new gnu.chu.anjelica.almacen.CLResumStock(menu.this,EU));
+    Hashtable<String,String> ht=new Hashtable();
+    ht.put("verPrecio", "true");
+    lanzaEjecutable(new gnu.chu.anjelica.almacen.CLResumStock(menu.this,EU,ht));
   }
   void ALlisaldos_actionPerformed(ActionEvent e) {
       
@@ -2079,6 +2090,12 @@ void pdreprese_actionPerformed(ActionEvent e) {
     ht.put("admin","true");
     //lanzaEjecutable(new gnu.chu.anjelica.inventario.traspalma(menu.this,EU));
     lanzaEjecutable(new gnu.chu.anjelica.almacen.MantTraspAlm(menu.this,EU,ht));
+  }
+   void trasCama_actionPerformed(ActionEvent e) {
+    Hashtable ht=new Hashtable();
+    ht.put("admin","true");
+    //lanzaEjecutable(new gnu.chu.anjelica.inventario.traspalma(menu.this,EU));
+    lanzaEjecutable(new gnu.chu.anjelica.almacen.MantTraspCam(menu.this,EU,ht));
   }
   void prueba()
   {

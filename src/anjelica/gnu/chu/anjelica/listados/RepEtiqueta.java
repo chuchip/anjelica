@@ -91,7 +91,7 @@ public class RepEtiqueta extends ventana
 
         iniciarFrame();
 
-        this.setVersion("2017-05-26");
+        this.setVersion("2017-07-01");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -112,6 +112,7 @@ public class RepEtiqueta extends ventana
         tipetiqE.setDatos(etiqueta.getReports(dtStat, EU.em_cod, 0));
         trazPanel.iniciar(dtStat,dtCon1,this,vl,EU);
         trazPanel.setEditable(true);
+        Pprinc.setDefButton(Baceptar.getBotonAccion());
         resetCambio();
         activarEventos();
         pro_codiE.requestFocusLater();
@@ -188,7 +189,6 @@ public class RepEtiqueta extends ventana
         });
         pro_numindE.addFocusListener(new FocusAdapter()
         {
-
             @Override
             public void focusLost(FocusEvent e) {
                 if (!cambioInd())
@@ -441,9 +441,7 @@ public class RepEtiqueta extends ventana
     {
       try
       {
-       
-
-        // Fin del Bucle ya tenemos todos los datos.
+        Bindi_actionPerformed();
         mensajeErr("Espere, por favor ... Imprimiendo");
         etiq.setTipoEtiq(dtStat, EU.em_cod,
                           tipetiqE.getValorInt());

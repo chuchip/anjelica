@@ -168,7 +168,7 @@ public class MantInvProduc extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         FECHANULA=Formatear.getDate("01-01-2000", "dd-MM-yyyy");
         iniciarFrame();
-        this.setVersion("2017-06-16 "+(swAdmin?"Administrador":""));
+        this.setVersion("2017-06-26 "+(swAdmin?"Administrador":""));
        
         strSql = "SELECT * FROM cinvproduc "+
          "order by cip_fecinv,cam_codi,alm_codi";
@@ -1463,6 +1463,7 @@ public class MantInvProduc extends ventanaPad implements PAD
          s="select * from v_coninvent where cci_feccon = '"+cip_fecinvE.getFechaDB()+"'"+
                 " and cam_codi = '"+cam_codiE.getText()+"'"+
                 " and alm_codi = "+alm_codiE.getValorInt()+
+                (lci_numpalE.isNull()?"":" and lci_numpal = '"+lci_numpalE.getText()+"'")+
                 " order by lci_nume";
             if (!dtCon1.select(s))
             {
@@ -1769,6 +1770,7 @@ public class MantInvProduc extends ventanaPad implements PAD
             cLabel14 = new gnu.chu.controles.CLabel();
             BRegLin = new gnu.chu.controles.CButton();
             BImportar = new gnu.chu.controles.CButton();
+            lci_numpalE = new gnu.chu.controles.CTextField(Types.CHAR, "X",4);
 
             prp_empcodE.setToolTipText("");
             prp_empcodE.setEnabled(false);
@@ -2095,7 +2097,7 @@ public class MantInvProduc extends ventanaPad implements PAD
             Bgrupo.setText("F5");
             Bgrupo.setToolTipText("Copia los datos de la linea anterior");
             Ppie.add(Bgrupo);
-            Bgrupo.setBounds(20, 42, 50, 20);
+            Bgrupo.setBounds(20, 40, 50, 20);
 
             PAcum1.setBorder(javax.swing.BorderFactory.createTitledBorder("Parcial"));
             PAcum1.setLayout(null);
@@ -2164,7 +2166,9 @@ public class MantInvProduc extends ventanaPad implements PAD
 
             BImportar.setText("Importar");
             Ppie.add(BImportar);
-            BImportar.setBounds(40, 62, 80, 17);
+            BImportar.setBounds(10, 60, 80, 17);
+            Ppie.add(lci_numpalE);
+            lci_numpalE.setBounds(100, 60, 40, 17);
 
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
@@ -2220,6 +2224,7 @@ public class MantInvProduc extends ventanaPad implements PAD
     private gnu.chu.controles.Cgrid jtRes;
     private gnu.chu.controles.CTextField kiltotE;
     private gnu.chu.controles.CTextField kiltotE1;
+    private gnu.chu.controles.CTextField lci_numpalE;
     private gnu.chu.controles.CTextField lip_fecaltE;
     private gnu.chu.controles.CTextField lip_numlinE;
     private gnu.chu.controles.CTextField nlinE;

@@ -1,3 +1,18 @@
+-- Kilos facturados factura compra
+ alter table v_facaco rename fcc_sumto2 to fcc_kilfra; 
+-- Incluido precio oferta
+drop view anjelica.v_albventa;
+create view anjelica.v_albventa as select c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,
+cli_codi,avc_clinom,avc_fecalb, usu_nomb,avc_tipfac, cli_codfa,avc_revpre,
+fvc_ano,fvc_nume,c.avc_cerra,avc_impres,avc_fecemi,sbe_codi,avc_cobrad,avc_obser,avc_fecrca,
+avc_basimp,avc_kilos,avc_unid,div_codi,avc_impalb,avc_impcob,avc_dtopp,avc_dtootr,avc_valora,fvc_serie,
+avc_depos,avl_numlin,pro_codi,avl_numpal,pro_nomb,avl_canti,avl_prven,avl_profer,avl_prbase,avc_repres,
+tar_preci,avl_unid,
+avl_canbru,avl_fecalt,fvl_numlin,avl_fecrli,alm_codori,alm_coddes,avl_dtolin 
+from v_albavel as l, v_albavec as c 
+where c.emp_codi=l.emp_codi and c.avc_ano=l.avc_ano and c.avc_serie=l.avc_serie 
+and c.avc_nume=l.avc_nume;
+grant select on anjelica.v_albventa to public;
 -- Incluida columna de dto. Linea
 alter table mvtosalm add mvt_prenet float;
 ALTER TABLE mvtosalm DISABLE TRIGGER USER;
