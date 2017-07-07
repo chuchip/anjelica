@@ -211,7 +211,7 @@ public class CLDepCli extends ventana
             {// Salida o Entrada
                
                 if (fecfinE.isNull())
-                    fecfinE.setText(feciniE.getText());
+                    fecfinE.setText(tipoConsulta.equals("E")?Formatear.getFechaAct("dd-MM-yyyy"):feciniE.getText());
             }
             else
             {
@@ -242,6 +242,7 @@ public class CLDepCli extends ventana
     }   
     void verSalidas() throws Exception
     {
+         jtCab.removeAllDatos();
         String s="select * from v_albdepserv   where avs_fecha between '"+feciniE.getFechaDB()+
             "' and '"+fecfinE.getFechaDB()+"'"+
             (cli_codiE.isNull()?"":" and cli_codi = "+cli_codiE.getValorInt())+
@@ -251,7 +252,7 @@ public class CLDepCli extends ventana
             msgBox("Ningun albaran deposito tiene mercancia servida con estos criterios");
             return;
         }
-        jtCab.removeAllDatos();
+       
         
         do
         {
@@ -272,18 +273,19 @@ public class CLDepCli extends ventana
     }
     void verEntradas() throws Exception
     {
+         jtCab.removeAllDatos();
           String s="select * from v_albavec as c,v_cliente as cl   where avc_fecalb between '"+feciniE.getFechaDB()+
             "' and '"+fecfinE.getFechaDB()+"'"+
             " and avc_depos ='D'" +
               " and c.cli_codi = cl.cli_codi "+
-            (cli_codiE.isNull()?"":" and cli_codi = "+cli_codiE.getValorInt())+
+            (cli_codiE.isNull()?"":" and c.cli_codi = "+cli_codiE.getValorInt())+
             " order by avc_fecalb";
         if (! dtCon1.select(s))
         {
             msgBox("Ningun albaran metido a Deposito en este periodo");
             return;
         }
-        jtCab.removeAllDatos();
+       
         
         do
         {
