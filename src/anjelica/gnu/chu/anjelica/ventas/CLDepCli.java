@@ -92,7 +92,7 @@ public class CLDepCli extends ventana
 
         iniciarFrame();
 
-        this.setVersion("2016-08-30");
+        this.setVersion("2017-07-07");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -107,6 +107,7 @@ public class CLDepCli extends ventana
         feciniE.setDate(Formatear.getDateAct());
         fecInvE.setDate(Formatear.getDateAct());
         cli_codiE.iniciar(dtStat, this, vl, EU);
+        gnu.chu.anjelica.pad.pdconfig.llenaDiscr(dtStat,cam_codiE,"AC",EU.em_cod);
         PCabe.setDefButton(Baceptar);
         
         activarEventos();
@@ -207,7 +208,7 @@ public class CLDepCli extends ventana
                 return;
             }
             if (!tipoConsulta.equals("I"))
-            {
+            {// Salida o Entrada
                
                 if (fecfinE.isNull())
                     fecfinE.setText(feciniE.getText());
@@ -271,14 +272,56 @@ public class CLDepCli extends ventana
     }
     void verEntradas() throws Exception
     {
+          String s="select * from v_albavec as c,v_cliente as cl   where avc_fecalb between '"+feciniE.getFechaDB()+
+            "' and '"+fecfinE.getFechaDB()+"'"+
+            " and avc_depos ='D'" +
+              " and c.cli_codi = cl.cli_codi "+
+            (cli_codiE.isNull()?"":" and cli_codi = "+cli_codiE.getValorInt())+
+            " order by avc_fecalb";
+        if (! dtCon1.select(s))
+        {
+            msgBox("Ningun albaran metido a Deposito en este periodo");
+            return;
+        }
+        jtCab.removeAllDatos();
         
+        do
+        {
+            ArrayList v=new ArrayList();
+            v.add(dtCon1.getFecha("avc_fecalb","dd-MM-yy")); // 0
+            v.add(dtCon1.getInt("emp_codi"));
+            v.add(dtCon1.getInt("avc_ano"));
+            v.add(dtCon1.getString("avc_serie"));
+            v.add(dtCon1.getInt("avc_nume"));
+            v.add(dtCon1.getInt("cli_codi"));
+            v.add(dtCon1.getString("cli_nomb"));
+            v.add("");
+            v.add("");
+            jtCab.addLinea(v);
+        } while (dtCon1.next());
+        jtCab.requestFocus();
+        mensajeErr("Consulta realizada");  
     }
     
     void verInventario() throws Exception
     {
         Ptab.setSelectedIndex(1);
         jtStock.removeAllDatos();
-        String s="select a.*,ar.pro_nomb as art_nomb,cl.cli_nomb from v_albventa_detalle as a,v_articulo as ar,v_cliente as cl   "
+        int cciCodi=0;
+        String s;
+        if (!cam_codiE.isNull())
+        {
+            s="select cci_codi,cci_feccon  from coninvcab where cam_codi = '"+cam_codiE.getText()+"'"+
+                " order by cci_feccon desc";
+            if (!dtStat.select(s))
+            {
+                msgBox("No encontrados inventarios sobre esta camara");
+                return;
+            }
+            cciCodi=dtStat.getInt("cci_codi");
+        }
+        s="select a.*,ar.pro_nomb as art_nomb,cl.cli_nomb from v_albventa_detalle as a,"
+            + " v_articulo as ar,v_cliente as cl "
             + " where  a.pro_codi=ar.pro_codi "+
             " and cl.cli_codi = a.cli_codi "+
             (feciniE.isNull()?"":" and avc_fecalb >='"+feciniE.getFechaDB()+"'")+
@@ -291,6 +334,12 @@ public class CLDepCli extends ventana
             + " and a.avc_serie=s.avc_serie and a.avc_ano=s.avc_ano"
             + " and avs_ejelot = avp_ejelot and avs_emplot= avp_emplot"
             + " and avs_serlot = avp_serlot and avs_numpar=avp_numpar and avs_numind=avp_numind)"
+            +(cciCodi==0?"": " and exists (select * from coninvlin as inl where cci_codi="+cciCodi+
+            " and inl.pro_codi=a.pro_codi "+
+            " and inl.prp_ano =a.avp_ejelot"+
+            " and inl.prp_seri = a.avp_serlot"+
+            " and inl.prp_part= a.avp_numpar"+
+            " and inl.prp_indi=a.avp_numind)")
             +" order by cli_codi,pro_codi,avc_ano,avc_serie,avc_nume";
         if (!dtCon1.select(s))
         {
@@ -388,6 +437,8 @@ public class CLDepCli extends ventana
         fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel8 = new gnu.chu.controles.CLabel();
         fecInvE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        cLabel11 = new gnu.chu.controles.CLabel();
+        cam_codiE = new gnu.chu.controles.CLinkBox();
         PPie = new gnu.chu.controles.CPanel();
         Ptab = new gnu.chu.controles.CTabbedPane();
         PSalida = new gnu.chu.controles.CPanel();
@@ -399,9 +450,9 @@ public class CLDepCli extends ventana
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         PCabe.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        PCabe.setMaximumSize(new java.awt.Dimension(549, 51));
-        PCabe.setMinimumSize(new java.awt.Dimension(549, 51));
-        PCabe.setPreferredSize(new java.awt.Dimension(549, 51));
+        PCabe.setMaximumSize(new java.awt.Dimension(549, 71));
+        PCabe.setMinimumSize(new java.awt.Dimension(549, 71));
+        PCabe.setPreferredSize(new java.awt.Dimension(549, 71));
         PCabe.setLayout(null);
 
         cLabel6.setText("De Fec. Alb");
@@ -410,9 +461,9 @@ public class CLDepCli extends ventana
         PCabe.add(feciniE);
         feciniE.setBounds(70, 2, 76, 17);
 
-        cLabel10.setText("De Cliente");
+        cLabel10.setText("Camara");
         PCabe.add(cLabel10);
-        cLabel10.setBounds(5, 26, 65, 18);
+        cLabel10.setBounds(10, 50, 65, 18);
         PCabe.add(cli_codiE);
         cli_codiE.setBounds(70, 26, 360, 18);
 
@@ -434,7 +485,7 @@ public class CLDepCli extends ventana
 
         Baceptar.setText("Aceptar");
         PCabe.add(Baceptar);
-        Baceptar.setBounds(440, 22, 100, 24);
+        Baceptar.setBounds(440, 40, 100, 24);
 
         cLabel7.setText("A ");
         PCabe.add(cLabel7);
@@ -447,6 +498,16 @@ public class CLDepCli extends ventana
         cLabel8.setBounds(420, 0, 50, 17);
         PCabe.add(fecInvE);
         fecInvE.setBounds(470, 0, 76, 17);
+
+        cLabel11.setText("De Cliente");
+        PCabe.add(cLabel11);
+        cLabel11.setBounds(5, 26, 65, 18);
+
+        cam_codiE.setAncTexto(25);
+        cam_codiE.setMayusculas(true);
+        cam_codiE.setPreferredSize(new java.awt.Dimension(250, 17));
+        PCabe.add(cam_codiE);
+        cam_codiE.setBounds(70, 50, 230, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -566,10 +627,12 @@ public class CLDepCli extends ventana
     private gnu.chu.controles.CTabbedPane Ptab;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
+    private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CPanel cPanel2;
+    private gnu.chu.controles.CLinkBox cam_codiE;
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CTextField fecInvE;
     private gnu.chu.controles.CTextField fecfinE;
