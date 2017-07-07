@@ -17,7 +17,7 @@ import net.sf.jasperreports.engine.*;
  *
  * <p>Titulo: clAlbSinCosto</p>
  * <p>Descripción: Cons/Listado Albaranes sin costo </p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -65,7 +65,7 @@ public class clAlbSinCosto extends ventana
      jf=p;
      eje=true;
 
-     setTitulo("Cons./Listado Albaranes sin Precio ");
+     setTitulo("Cons./Listado Albaranes con Incidencias");
 
      try  {
        if(jf.gestor.apuntar(this))
@@ -82,7 +82,7 @@ public class clAlbSinCosto extends ventana
 
      EU=eu;
      vl=p.getLayeredPane();
-     setTitulo("Cons./Listado Albaranes sin Precio");
+     setTitulo("Cons./Listado Albaranes con Incidencias");
      eje=false;
 
      try  {
@@ -96,7 +96,7 @@ public class clAlbSinCosto extends ventana
  private void jbInit() throws Exception
  {
    iniciarFrame();
-   this.setVersion("2015-08-19");
+   this.setVersion("2017-07-07");
    this.setSize(new Dimension(623, 442));
    conecta();
    statusBar = new StatusBar(this);
@@ -171,7 +171,7 @@ public class clAlbSinCosto extends ventana
     jtLin.setFormatoColumna(2,"---,--9.99");
     jtLin.setFormatoColumna(3,"---9");
     jtLin.setFormatoColumna(4,"----9.99");
-
+     tipListE.setPreferredSize(new Dimension(300,18));
     jtLin.setAjustarGrid(true);
 
     jtLin.setBuscarVisible(false);
@@ -202,9 +202,10 @@ public class clAlbSinCosto extends ventana
   public void iniciarVentana() throws Exception
   {
 
-    tipListE.addItem("Precios 0","P");
+    tipListE.addItem("Precios=0","0");
     tipListE.addItem("Sin Factur","F");
     tipListE.addItem("NO Valorado","V");
+    tipListE.addItem("Fra.Fuera Periodo","P");
     Pentra.setDefButton(Bconsulta);
     empiniE.setValorInt(EU.em_cod);
     empfinE.setValorInt(EU.em_cod);
@@ -335,55 +336,74 @@ public class clAlbSinCosto extends ventana
       fecfinE.requestFocus();
       return;
     }
+    try {
+          switch (tipListE.getValor())
+          {
+              case "0":
+                  // Precios 0  
+                  s = "SELECT c.avc_fecalb,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,c.cli_codi,cl.cli_nomb, "
+                      + " c.avc_impalb,c.avc_confo,cl.cli_tipfac,cl.cli_giro "
+                      + "  FROM v_albavec as c left join clientes as cl on  c.cli_codi = cl.cli_codi "
+                      + "  WHERE " + getCondWhere()
+                      + " and c.avc_valora !=  " + pdalbara.AVC_VALORADO
+                      +// No incluir los puestos como valorados
+                      " and exists (select * from v_albavel as l,v_articulo as ar "
+                      + "  where c.emp_codi = l.emp_codi "
+                      + " and c.avc_ano = l.avc_ano "
+                      + " and c.avc_serie = l.avc_serie "
+                      + " and c.avc_nume = l.avc_nume "
+                      + " and l.avl_canti != 0 "
+                      + " and l.avl_prven = 0 "
+                      + " and l.pro_codi = ar.pro_codi "
+                      + " and ar.pro_tiplot = 'V') "
+                      + " ORDER BY c.avc_fecalb,c.cli_codi";
+                  break;
+              case "V":
+                  s = "SELECT c.avc_fecalb,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,c.cli_codi,cl.cli_nomb, "
+                      + " c.avc_impalb,c.avc_confo,cl.cli_tipfac,cl.cli_giro "
+                      + "  FROM v_albavec as c left join clientes as cl on  c.cli_codi = cl.cli_codi "
+                      + "  WHERE " + getCondWhere()
+                      + " and avc_valora !=  " + pdalbara.AVC_VALORADO
+                      + " ORDER BY c.avc_fecalb,c.cli_codi";
+                  break;
+              case "F":
+                  s = "SELECT c.avc_fecalb,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,c.cli_codi,cl.cli_nomb, "
+                      + " c.avc_impalb,c.avc_confo,cl.cli_tipfac,cl.cli_giro "
+                      + "  FROM v_albavec as c left join clientes as cl on  c.cli_codi = cl.cli_codi "
+                      + "  WHERE " + getCondWhere()
+                      + " and (fvc_ano = 0 or fvc_ano is null) "
+                      + " and avc_impalb != 0 "
+                      + " ORDER BY c.avc_fecalb,c.cli_codi";
+                  break;
+              case "P":
+                  s = "SELECT c.avc_fecalb,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,c.cli_codi,cl.cli_nomb, "
+                      + " c.avc_impalb,c.avc_confo,cl.cli_tipfac,cl.cli_giro "
+                      + "  FROM v_albavec as c left join clientes as cl on  c.cli_codi = cl.cli_codi "
+                      + "  WHERE " + getCondWhere()
+                      + " and exists (select fvc_ano from v_facvec as f where c.avc_ano = f.fvc_ano and "
+                      + " c.fvc_serie= f.fvc_serie and c.fvc_nume = f.fvc_nume"+
+                      " and  c.emp_codi = f.emp_codi "
+                      + " and fvc_fecfra not between '" + feciniE.getFechaDB() + "' and '" + fecfinE.getFechaDB() + "')"
+                      + " and avc_impalb != 0 "
+                      + " ORDER BY c.avc_fecalb,c.cli_codi";
 
-    if (tipListE.getValor().equals("P")) // Precios 0
-      s = "SELECT c.avc_fecalb,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,c.cli_codi,cl.cli_nomb, " +
-        " c.avc_impalb,c.avc_confo,cl.cli_tipfac,cl.cli_giro "+
-        "  FROM v_albavec as c left join clientes as cl on  c.cli_codi = cl.cli_codi " +
-          "  WHERE "+getCondWhere()+
-          " and c.avc_valora !=  "+pdalbara.AVC_VALORADO +// No incluir los puestos como valorados
-          " and exists (select * from v_albavel as l,v_articulo as ar " +
-          "  where c.emp_codi = l.emp_codi " +
-          " and c.avc_ano = l.avc_ano " +
-          " and c.avc_serie = l.avc_serie " +
-          " and c.avc_nume = l.avc_nume " +
-          " and l.avl_canti != 0 " +
-          " and l.avl_prven = 0 " +
-          " and l.pro_codi = ar.pro_codi "+
-          " and ar.pro_tiplot = 'V') "+
-          " ORDER BY c.avc_fecalb,c.cli_codi";
-   else if (tipListE.getValor().equals("V")) // NO Valorados
-     s = "SELECT c.avc_fecalb,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,c.cli_codi,cl.cli_nomb, " +
-         " c.avc_impalb,c.avc_confo,cl.cli_tipfac,cl.cli_giro "+
-         "  FROM v_albavec as c left join clientes as cl on  c.cli_codi = cl.cli_codi " +
-        "  WHERE "+getCondWhere()+
-        " and avc_valora !=  "+pdalbara.AVC_VALORADO +
-         " ORDER BY c.avc_fecalb,c.cli_codi";
-   else // Sin facturar
-     s = "SELECT c.avc_fecalb,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,c.cli_codi,cl.cli_nomb, " +
-         " c.avc_impalb,c.avc_confo,cl.cli_tipfac,cl.cli_giro "+
-         "  FROM v_albavec as c left join clientes as cl on  c.cli_codi = cl.cli_codi " +
-         "  WHERE "+getCondWhere()+
-         " and (fvc_ano = 0 or fvc_ano is null) "+
-         " and avc_impalb != 0 "+
-         " ORDER BY c.avc_fecalb,c.cli_codi";
+          }
 
-   try {
-     dtCon1.select(s);
-     jt.setEnabled(false);
-     jt.setDatos(dtCon1);
-     jt.setEnabled(true);
-     if (jt.isVacio())
-     {
-       mensajeErr("NO Encontrados albaranes con estos criterios");
-       return;
-     }
-     jt.requestFocusInicio();
-     verDatLin();
-   } catch (Exception k)
-   {
-     Error("Error al buscar Datos",k);
-   }
+          dtCon1.select(s);
+          jt.setEnabled(false);
+          jt.setDatos(dtCon1);
+          jt.setEnabled(true);
+          if (jt.isVacio())
+          {
+              mensajeErr("NO Encontrados albaranes con estos criterios");
+              return;
+          }
+          jt.requestFocusInicio();
+          verDatLin();
+      } catch (Exception k)
+      {
+          Error("Error al buscar Datos", k);
+      }
   }
   void Bprint_actionPerformed()
   {
