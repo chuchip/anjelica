@@ -25,6 +25,7 @@ import gnu.chu.utilidades.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.listados.Listados;
+import gnu.chu.anjelica.pad.pdtransp;
 import java.awt.*;
 import java.util.*;
 import javax.swing.BorderFactory;
@@ -45,19 +46,19 @@ public class copedco extends ventana
   boolean verPrecio;
   CPanel Pprinc = new CPanel();
   CPanel Pcond = new CPanel();
-  Cgrid jtCab = new Cgrid(9);
+  Cgrid jtCab = new Cgrid(10);
   Cgrid jtLin = new Cgrid(13);
-  CLabel cLabel4 = new CLabel();
+  CLabel prv_codiL = new CLabel();
   prvPanel prv_codiE = new prvPanel();
   CComboBox pcc_estadE = new CComboBox();
   CLabel pcc_estadL = new CLabel();
   CTextField pcc_fecpedE = new CTextField(Types.DATE,"dd-MM-yyyy");
-  CLabel cLabel3 = new CLabel();
+  CLabel pcc_fecrecL = new CLabel();
   CButton Baceptar = new CButton(Iconos.getImageIcon("check"));
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   boolean modCons=false;
   int pcoNume=0,ejeNume=0;
-  CLabel pcc_estrecL = new CLabel();
+  CLabel pcc_estrecL = new CLabel("Est.Recep.");
   CComboBox pcc_estrecE = new CComboBox();
   CLabel cLabel2 = new CLabel();
   empPanel emp_codiE = new empPanel();
@@ -65,7 +66,9 @@ public class copedco extends ventana
   CTextField pcc_fecrecE = new CTextField(Types.DATE,"dd-MM-yyyy");
   sbePanel sbe_codiE = new sbePanel();
   CLabel cLabel6 = new CLabel();
-
+  CLabel tra_codiL = new CLabel("Transport.");
+  CLinkBox tra_codiE = new CLinkBox();
+  
   public copedco(EntornoUsuario eu, Principal p)
  {
    this(eu,p,null);
@@ -140,12 +143,12 @@ public class copedco extends ventana
  {
     iniciarFrame();
     this.setSize(new Dimension(666, 522));
-    this.setVersion(" (2017-01-01)" + (verPrecio ? "- Ver Precios" : ""));
+    this.setVersion(" (2017-07-09)" + (verPrecio ? "- Ver Precios" : ""));
     Pprinc.setLayout(gridBagLayout1);
     Pcond.setBorder(BorderFactory.createRaisedBevelBorder());
-    Pcond.setMaximumSize(new Dimension(500, 49));
-    Pcond.setMinimumSize(new Dimension(500, 49));
-    Pcond.setPreferredSize(new Dimension(500, 49));
+    Pcond.setMaximumSize(new Dimension(500, 65));
+    Pcond.setMinimumSize(new Dimension(500, 65));
+    Pcond.setPreferredSize(new Dimension(500, 65));
     Pcond.setLayout(null);
     statusBar = new StatusBar(this);
     conecta();
@@ -160,12 +163,12 @@ public class copedco extends ventana
     cLabel2.setText("Emp.");
     cLabel2.setBounds(new Rectangle(5, 2, 34, 17));
     emp_codiE.setBounds(new Rectangle(39, 2, 44, 17));
-    cLabel3.setRequestFocusEnabled(true);
+    pcc_fecrecL.setRequestFocusEnabled(true);
     cLabel5.setRequestFocusEnabled(true);
     cLabel5.setToolTipText("Fecha de Pedido superior a.");
     cLabel5.setBounds(new Rectangle(191, 3, 72, 17));
     cLabel5.setText("De Fec.Ped.");
-    pcc_fecrecE.setBounds(new Rectangle(411, 2, 74, 17));
+    
     pcc_fecrecE.setToolTipText("Fecha Entrega Inferior A");
     sbe_codiE.setBounds(new Rectangle(141, 2, 44, 17));
     cLabel6.setBounds(new Rectangle(87, 2, 54, 17));
@@ -177,22 +180,30 @@ public class copedco extends ventana
                                                  GridBagConstraints.VERTICAL,
                                                  new Insets(0, 5, 0, 0), 0, 0));
 
-    cLabel4.setText("Proveedor");
-    cLabel4.setBounds(new Rectangle(2, 23, 59, 17));
+    prv_codiL.setText("Proveedor");
+    prv_codiL.setBounds(new Rectangle(2, 23, 59, 17));
     prv_codiE.setAncTexto(40);
     prv_codiE.setBounds(new Rectangle(59, 23, 260, 17));
+    
     if (verPrecio)
         opVerPrecios.setSelected(true);
     else
         opVerPrecios.setEnabled(false);
     opVerPrecios.setBounds(new Rectangle(322, 23, 85, 17));
     
-    
+   tra_codiL.setBounds(new Rectangle(3, 42, 69, 18));
+   tra_codiE.setBounds(new Rectangle(74, 42, 350, 18));
+    pcc_estrecL.setBounds(new Rectangle(430, 42, 70, 17));
+    pcc_estrecE.setBounds(new Rectangle(501, 42, 99, 17));
+
+    tra_codiE.setAncTexto(45);
+    tra_codiE.setFormato(Types.DECIMAL,"###9");
     pcc_estadL.setText("Estado");
     pcc_estadL.setBounds(new Rectangle(410, 23, 47, 17));
     pcc_estadE.setBounds(new Rectangle(460, 23, 80, 17));
-    cLabel3.setText("A Fec. Ped.");
-    cLabel3.setBounds(new Rectangle(344, 2, 65, 17));
+    pcc_fecrecL.setText("Con Fec. Recep.");
+    pcc_fecrecL.setBounds(new Rectangle(344, 2, 85, 17));
+    pcc_fecrecE.setBounds(new Rectangle(431, 2, 74, 17));
     Baceptar.setBounds(new Rectangle(545, 20, 107, 23));
     Baceptar.setMargin(new Insets(0, 0, 0, 0));
     Baceptar.setText("Aceptar F4");
@@ -204,9 +215,7 @@ public class copedco extends ventana
     jtLin.setPreferredSize(new Dimension(468, 184));    
     
     pcc_fecpedE.setBounds(new Rectangle(264, 2, 74, 17));
-    pcc_estrecL.setText("Recep.");
-    pcc_estrecL.setBounds(new Rectangle(490, 2, 60, 17));
-    pcc_estrecE.setBounds(new Rectangle(551, 2, 99, 17));
+    
     this.getContentPane().add(Pprinc,  BorderLayout.CENTER);
     this.getContentPane().add(statusBar,  BorderLayout.SOUTH);
 
@@ -220,9 +229,10 @@ public class copedco extends ventana
     v.add("Estado"); // 7
     v.add("Albaran"); // 8
     v.add("Comentario"); // 9
+    v.add("Trans."); // 9
     jtCab.setCabecera(v);
-    jtCab.setAlinearColumna(new int[]{2,0,2,2,1,1,1,2,0});
-    jtCab.setAnchoColumna(new int[]{40,120,60,60,80,80,40,60,150});
+    jtCab.setAlinearColumna(new int[]{2,0,2,2,1,1,1,2,0,2});
+    jtCab.setAnchoColumna(new int[]{40,120,60,60,80,80,40,60,150,40});
     ArrayList vl = new ArrayList();
     vl.add("Prod"); // 0
     vl.add("Nombre Prod"); // 1
@@ -245,7 +255,9 @@ public class copedco extends ventana
 
     Pprinc.add(Pcond,     new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 9, 0));
-    Pcond.add(cLabel4, null);
+    Pcond.add(tra_codiL, null);
+    Pcond.add(tra_codiE, null);
+    Pcond.add(prv_codiL, null);
     Pcond.add(Baceptar, null);
     Pcond.add(pcc_estadE, null);
     Pcond.add(pcc_estadL, null);
@@ -254,7 +266,7 @@ public class copedco extends ventana
     Pcond.add(pcc_estrecL, null);
     Pcond.add(cLabel2, null);
     Pcond.add(pcc_fecrecE, null);
-    Pcond.add(cLabel3, null);
+    Pcond.add(pcc_fecrecL, null);
     Pcond.add(pcc_fecpedE, null);
     Pcond.add(emp_codiE, null);
     Pcond.add(cLabel6, null);
@@ -290,6 +302,7 @@ public class copedco extends ventana
    if (!dtStat.select(s))
      throw new SQLException("NO HAY NINGUNA DIVISA DEFINIDA");
    div_codiE.addItem(dtStat);
+   pdtransp.llenaPrvCompra(dtStat, tra_codiE);
    emp_codiE.setValorInt(EU.em_cod);
    pcc_fecpedE.setDate(Formatear.sumaDiasDate(Formatear.getDateAct(),-10));
    pcc_fecrecE.setDate(Formatear.sumaDiasDate(Formatear.getDateAct(),5));
@@ -378,25 +391,7 @@ public class copedco extends ventana
         mensajeErr("Fecha PEDIDO NO valida");
         return;
       }
-      s = "SELECT c.*,p.prv_nomb FROM pedicoc as c,v_proveedo as p " +
-          " WHERE c.emp_codi = " + emp_codiE.getValorInt() +
-          (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+sbe_codiE.getValorInt())+
-          " and p.prv_codi = c.prv_codi ";
-      if (!prv_codiE.isNull())
-        s += " AND c.prv_codi = " + prv_codiE.getValorInt();
-
-      if (!pcc_fecpedE.isNull())
-        s += " AND c.pcc_fecped >= TO_DATE('" + pcc_fecpedE.getText() + "','dd-MM-yyyy')";
-
-      if (!pcc_fecrecE.isNull())
-        s += " AND c.pcc_fecrec <= TO_DATE('" + pcc_fecrecE.getText() + "','dd-MM-yyyy')";
-      if (!pcc_estadE.getValor().equals("-"))
-        s += " AND c.pcc_estad = '" + pcc_estadE.getValor() + "'";
-
-      if (!pcc_estrecE.getValor().equals("-"))
-        s += " AND c.pcc_estrec = '" + pcc_estrecE.getValor() + "'";
-
-      s += " ORDER BY c.eje_nume,c.pcc_nume desc";
+      s=getStrSql(false);
 
 
 //      debug("S: "+s);
@@ -412,7 +407,7 @@ public class copedco extends ventana
       }
       do
       {
-        Vector v=new Vector();
+        ArrayList v=new ArrayList();
         v.add(dtCon1.getString("prv_codi"));
         v.add(dtCon1.getString("prv_nomb"));
         v.add(dtCon1.getString("eje_nume"));
@@ -422,6 +417,7 @@ public class copedco extends ventana
         v.add(pcc_estadE.getText(dtCon1.getString("pcc_estad")));
         v.add(dtCon1.getString("acc_nume"));
         v.add(dtCon1.getString("pcc_comen"));
+        v.add(dtCon1.getInt("tra_codi",true));
         jtCab.addLinea(v);
       } while (dtCon1.next());
       jtCab.setEnabled(true);
@@ -548,21 +544,28 @@ public class copedco extends ventana
   {
     new miThread("")
     {
+      @Override
       public void run()
       {
         listar();
       }
     };
   }
-  String getStrSql()
+ /**
+  * 
+  * @param incLineas Incluye lineas de albaran
+  * @return 
+  */
+  String getStrSql(boolean incLineas)
   {
-             s = "SELECT c.*,l.*,p.prv_nomb FROM pedicoc as c,pedicol as l,v_proveedo as p " +
+    s = "SELECT p.prv_nomb,c.*"+(incLineas?",l.*":"")+
+        " FROM pedicoc as c, "+(incLineas?" pedicol as l,":"")+ "v_proveedo as p " +
         " WHERE c.emp_codi = " + emp_codiE.getValorInt()+
         (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+sbe_codiE.getValorInt())+
         " and p.prv_codi = c.prv_codi "+
-        " and c.emp_codi = l.emp_codi "+
+        (incLineas?" and c.emp_codi = l.emp_codi "+
         " and c.eje_nume = l.eje_nume "+
-        " and c.pcc_nume = l.pcc_nume ";
+        " and c.pcc_nume = l.pcc_nume ":"");
     if (!prv_codiE.isNull())
       s += " AND c.prv_codi = " + prv_codiE.getValorInt();
 
@@ -577,8 +580,8 @@ public class copedco extends ventana
 
     if (!pcc_estrecE.getValor().equals("-"))
       s += " AND c.pcc_estrec = '" + pcc_estrecE.getValor() + "'";
-
-    s += " ORDER BY c.eje_nume,c.pcc_nume desc,l.pcl_numli";
+    s+=(tra_codiE.isNull()?"":" and tra_codi = "+tra_codiE.getValorInt())+
+        " ORDER BY c.eje_nume,c.pcc_nume desc"+ (incLineas?",l.pcl_numli":"");
     return s;
   }
   
@@ -588,7 +591,7 @@ public class copedco extends ventana
     mensaje("Espere ... Generando listado");
     try
     {
-       s=getStrSql();
+      s=getStrSql(true);
 
 
       if (!dtCon1.select(s))

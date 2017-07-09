@@ -2,6 +2,7 @@ package gnu.chu.anjelica.compras;
 
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.almacen.pdalmace;
+import gnu.chu.anjelica.pad.pdtransp;
 import gnu.chu.camposdb.*;
 import gnu.chu.controles.*;
 import gnu.chu.interfaces.ejecutable;
@@ -61,7 +62,7 @@ public class clprpeco extends ventana implements  JRDataSource
   CLabel cLabel9 = new CLabel();
   CLinkBox tla_codiE = new CLinkBox();
   CLinkBox emp_codiE = new CLinkBox();
-  Cgrid jt = new Cgrid(9);
+  Cgrid jt = new Cgrid(10);
   CCheckBox opDesgl = new CCheckBox();
   CButton Bimpri=new CButton(Iconos.getImageIcon("print"));
   CCheckBox opPedPend = new CCheckBox();
@@ -74,6 +75,8 @@ public class clprpeco extends ventana implements  JRDataSource
   CLabel kilosL = new CLabel("Kilos");
   CTextField unidadE = new CTextField(Types.DECIMAL,"#,##9");
   CTextField kilosE = new CTextField(Types.DECIMAL,"###,##9.99");
+  CLabel tra_codiL = new CLabel("Transport.");
+  CLinkBox tra_codiE = new CLinkBox();
   
   public clprpeco(EntornoUsuario eu, Principal p)
  {
@@ -140,7 +143,7 @@ public class clprpeco extends ventana implements  JRDataSource
  {
    iniciarFrame();
    this.setSize(new Dimension(751, 510));
-   this.setVersion(" (2017-02-24)" + (verPrecio ? "- Ver Precios" : ""));
+   this.setVersion(" (2017-07-09)" + (verPrecio ? "- Ver Precios" : ""));
    statusBar = new StatusBar(this);
 
    opPedPend.setToolTipText("Ver SOLO Pedidos Pedidos Pendientes");
@@ -185,6 +188,11 @@ public class clprpeco extends ventana implements  JRDataSource
    Pprinc.setLayout(gridBagLayout1);
 
    confGrid();
+   tra_codiL.setBounds(new Rectangle(3, 60, 69, 18));
+   tra_codiE.setBounds(new Rectangle(74, 60, 350, 18));
+
+   tra_codiE.setAncTexto(45);
+   tra_codiE.setFormato(Types.DECIMAL,"###9");
    cam_codiE.setAncTexto(25);
    cam_codiE.setBounds(new Rectangle(513, 3, 208, 17));
    feeninE.setFormato("dd-MM-yyyy");
@@ -198,9 +206,9 @@ public class clprpeco extends ventana implements  JRDataSource
    cLabel1.setText("Tipo Listado");
    cLabel4.setBounds(new Rectangle(2, 21, 53, 17));
    cLabel4.setText("De Prod");
-   PtipoCons.setMaximumSize(new Dimension(728, 65));
-   PtipoCons.setMinimumSize(new Dimension(728, 65));
-   PtipoCons.setPreferredSize(new Dimension(728, 65));
+   PtipoCons.setMaximumSize(new Dimension(728, 80));
+   PtipoCons.setMinimumSize(new Dimension(728, 80));
+   PtipoCons.setPreferredSize(new Dimension(728, 80));
    PtipoCons.setBorder(BorderFactory.createRaisedBevelBorder());
    PtipoCons.setLayout(null);
    Ppie.setMaximumSize(new Dimension(400, 25));
@@ -219,7 +227,7 @@ public class clprpeco extends ventana implements  JRDataSource
    cLabel10.setText("Empr.");
    cLabel10.setBounds(new Rectangle(538, 20, 39, 17));
    profinE.setBounds(new Rectangle(311, 20, 224, 17));
-   Baceptar.setBounds(new Rectangle(608, 38, 113, 22));
+   Baceptar.setBounds(new Rectangle(608, 55, 113, 22));
    Baceptar.setMargin(new Insets(0, 0, 0, 0));
    alm_codiE.setAncTexto(30);
    alm_codiE.setBounds(new Rectangle(282, 3, 164, 17));
@@ -243,6 +251,8 @@ public class clprpeco extends ventana implements  JRDataSource
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     Pprinc.add(Ppie,   new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
             ,GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+    PtipoCons.add(tra_codiL, null);
+    PtipoCons.add(tra_codiE, null);
     PtipoCons.add(opDesgl, null);
     PtipoCons.add(opPedPend, null);
     PtipoCons.add(opVerPrecios, null);
@@ -285,6 +295,7 @@ public class clprpeco extends ventana implements  JRDataSource
    alm_codiE.setFormato(true);
    alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
    pdalmace.llenaLinkBox(alm_codiE, dtCon1,'*');
+   pdtransp.llenaPrvCompra(dtStat, tra_codiE);
 //   s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
 //       " ORDER BY alm_codi";
 //   dtStat.select(s);
@@ -300,7 +311,7 @@ public class clprpeco extends ventana implements  JRDataSource
    proiniE.iniciar(dtStat, this, vl, EU);
    profinE.iniciar(dtStat, this, vl, EU);
 
-   feeninE.setText(Formatear.sumaDias(Formatear.getDateAct(),-10));
+   feeninE.setText(Formatear.sumaDias(Formatear.getDateAct(),-3));
    feenfiE.setText(Formatear.sumaDias(Formatear.getDateAct(),3));
    emp_codiE.setValorInt(EU.em_cod);
    activarEventos();
@@ -410,6 +421,7 @@ void irMantPedidos()
        (proiniE.isNull() || tlaCodi != 99 ? "" : " and l.pro_codi >= " + proiniE.getText()) +
        (profinE.isNull() || tlaCodi != 99 ? "" : " and l.pro_codi <= " + profinE.getText()) +
        (opPedPend.isSelected()?" and pcc_estrec = 'P'":"")+
+       (tra_codiE.isNull()?"":" and tra_codi = "+tra_codiE.getValorInt())+
        (tlaCodi == 99 ? "" : " and l.pro_codi = pr.pro_codi " +
         " and pr.tla_codi = " + tla_codiE.getValorInt() +
         " and pr.tla_orden = gp.tla_orden " +
@@ -566,6 +578,7 @@ void irMantPedidos()
             v.add(kg);          
             v.add(opVerPrecios.isSelected()?importe:0);
             v.add(tipo);                     
+            v.add(dtCon1.getInt("tra_codi",true));
             jt.addLinea(v);
          }
      } while (dtCon1.next());
@@ -605,6 +618,7 @@ void irMantPedidos()
    else
        v.add( opVerPrecios.isSelected()? cantCaj==0?0:impEntr/cantCaj:0);
    v.add("");
+   v.add("");
    swBreakAcum=false;
    jt.addLinea(v);
  }
@@ -623,15 +637,16 @@ void irMantPedidos()
      v.add("Kilos"); // 6
      v.add("Precio"); // 7
      v.add("Estad"); // 8
+     v.add("Trans.");
      jt.setCabecera(v);
 
      jt.setAnchoColumna(new int[]
      {
-         45,130, 130, 40, 70, 35, 55, 45, 50
+         45,130, 130, 40, 70, 35, 55, 45, 50,40
      });
      jt.setAlinearColumna(new int[]
      {
-         2,0, 0,2, 1, 2, 2, 2, 0
+         2,0, 0,2, 1, 2, 2, 2, 0,2
      });
      jt.setAjustarGrid(true);
      jt.setFormatoColumna(5, "----9");
