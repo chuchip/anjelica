@@ -91,7 +91,7 @@ public class RepEtiqueta extends ventana
 
         iniciarFrame();
 
-        this.setVersion("2017-07-01");
+        this.setVersion("2017-07-06");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -311,7 +311,7 @@ public class RepEtiqueta extends ventana
           return;
       if (!cambioInd())
           return;
-
+  
       if (!pro_codiE.controlar())
       {
         mensajeErr(pro_codiE.getMsgError());
@@ -427,6 +427,7 @@ public class RepEtiqueta extends ventana
   }
     void resetCambio() {
         pro_numindE.resetCambio();
+        deo_kilosE.resetCambio();
         pro_ejercE.resetCambio();
         alm_codiE.resetCambio();
         pro_codiE.resetCambio();
