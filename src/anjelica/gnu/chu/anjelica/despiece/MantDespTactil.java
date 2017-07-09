@@ -398,7 +398,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2017-05-19"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2017-06-07"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -1288,7 +1288,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Pcabe.setQuery(true);
     Pcabe.resetTexto();
     deo_incvalE.setEnabled(true);
-    grd_unidE.setEnabled(false);
+    grd_unidE.setEnabled(true);
     deo_blockE.addItem("Terminado","T");
     if (Integer.parseInt(Formatear.getFechaAct("MM"))>2)
         eje_numeE.setValorInt(EU.ejercicio);
@@ -1317,12 +1317,17 @@ public class MantDespTactil  extends ventanaPad implements PAD
        if (!deo_blockE.getValor().equals("T"))
         v.add(deo_blockE.getStrQuery());
        else
+       {
+           int kgLim=3;
+           if (grd_unidE.getValorInt()!=0)
+               kgLim=grd_unidE.getValorInt();
           s+=" and deo_block = 'S' and  "
               + " deo_fecha >= current_date - 30 "
-              + "and (select sum(def_kilos) from v_despfin as f  where o.deo_codi=f.deo_codi and o.eje_nume=f.eje_nume)+3 >= "
+              + "and (select sum(def_kilos) from v_despfin as f  where o.deo_codi=f.deo_codi and o.eje_nume=f.eje_nume)+ "+kgLim+" >= "
               + "(select sum(deo_kilos) from desorilin as f where o.deo_codi=f.deo_codi and o.eje_nume=f.eje_nume) "
-              + "and (select sum(def_kilos) from v_despfin as f  where o.deo_codi=f.deo_codi and o.eje_nume=f.eje_nume)- 3 <= "
+              + "and (select sum(def_kilos) from v_despfin as f  where o.deo_codi=f.deo_codi and o.eje_nume=f.eje_nume)- "+kgLim+" <= "
               + "(select sum(deo_kilos) from desorilin as f where o.deo_codi=f.deo_codi and o.eje_nume=f.eje_nume) ";
+       }
        v.add(grd_feccadE.getStrQuery());
        v.add(usu_nombE.getStrQuery());
        v.add(deo_almoriE.getStrQuery());
@@ -1954,6 +1959,11 @@ public class MantDespTactil  extends ventanaPad implements PAD
       grd_feccadE.setText(dtStat.getFecha("deo_feccad","dd-MM-yyyy"));
       cli_codiE.setValorInt(dtStat.getInt("cli_codi",true));
       deo_incvalE.setValor(dtStat.getString("deo_incval"));
+      tid_codiE.setText(dtStat.getString("tid_codi"));
+      grd_fechaE.setText(dtStat.getFecha("deo_fecha","dd-MM-yyyy"));
+      usu_nombE.setText(dtStat.getString("usu_nomb"));
+      deo_almoriE.setText(dtStat.getString("deo_almori"));
+      deo_almdesE.setText(dtStat.getString("deo_almdes"));
       s="SELECT d.*,pr.pro_nomb FROM desorilin d,v_articulo pr "+
           " WHERE d.pro_codi = pr.pro_codi "+
           " AND d.eje_nume = "+eje_numeE.getValorInt()+
@@ -1964,11 +1974,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
       double kgLiOr=0;
       if (dtCon1.select(s))
       { 
-        tid_codiE.setText(dtStat.getString("tid_codi"));
-        grd_fechaE.setText(dtStat.getFecha("deo_fecha","dd-MM-yyyy"));
-        usu_nombE.setText(dtStat.getString("usu_nomb"));
-        deo_almoriE.setText(dtStat.getString("deo_almori"));
-        deo_almdesE.setText(dtStat.getString("deo_almdes"));
+       
         do
         {
           ArrayList v=new ArrayList();
@@ -1994,6 +2000,14 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
         verProdSalida(eje_numeE.getValorInt(),deo_codiE.getValorInt());
         verLinSal(EU.em_cod,eje_numeE.getValorInt(),deo_codiE.getValorInt());
+      }
+      else
+      {
+        grd_unioriE1.setValorDec(0);
+        grd_kilorgE1.setValorDec(0);
+        grd_unioriE.setValorDec(0);
+        grd_kilorgE.setValorDec(0);
+        kildifE.setValorDec(0);
       }
     } catch (Exception k)
     {
