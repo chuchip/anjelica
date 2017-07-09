@@ -1265,7 +1265,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
      */
     public static boolean isDespieceAgrup(int tidCodi, DatosTabla dt) throws SQLException
     {
-        if (tidCodi==AUTO_DESPIECE)
+        if (tidCodi==AUTO_DESPIECE || tidCodi==CONGELADO_DESPIECE )
             return true;
         String s= "SELECT * FROM tipodesp WHERE "+
               " tid_codi = "+tidCodi;

@@ -229,7 +229,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2017-05-19" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2017-07-05" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -1222,6 +1222,29 @@ public class MantDesp extends ventanaPad implements PAD
                     {
                         deo_lotnueE.setEnabled(isDespAgru);
                         deo_lotnueE.setValor("0");
+                    }
+                    else
+                    { // Compruebo si son los mismos lotes en cabecera.
+                       int numLote=0;
+                       isDespAgru=true;
+                       for (int n=0;n< jtCab.getRowCount();n++)
+                       {
+                           if (jtCab.getValorInt(n,JTCAB_NUMLOT)!=0)
+                           {
+                               if (numLote==0)
+                                   numLote=jtCab.getValorInt(n,JTCAB_NUMLOT);
+                               if (numLote!=jtCab.getValorInt(n,JTCAB_NUMLOT))
+                               {
+                                       isDespAgru=false;
+                                       break;
+                               }
+                           }
+                       }
+                       int lotNue=deo_lotnueE.getValorInt();                       
+                       deo_lotnueE.setEnabled(isDespAgru);
+                       deo_lotnueE.setValor(isDespAgru ? "0" : "-1");
+                       if (lotNue!=deo_lotnueE.getValorInt())
+                           cambiaLote();
                     }
                 }
             }
