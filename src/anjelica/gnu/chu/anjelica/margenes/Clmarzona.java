@@ -35,7 +35,7 @@ import java.util.Vector;
  * <p>Título: Clmarzona</p>
  * <p>Descripción: Consulta/Listado Margenes por zonas</p>
  * <p>Created on 03-abr-2009, 18:14:38</p>
- *  <p>Copyright: Copyright (c) 2005-2015
+ *  <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -116,7 +116,7 @@ public class Clmarzona extends ventana {
   {
       iniciarFrame();
 
-      this.setVersion("2016-03-21");
+      this.setVersion("2017-07-04");
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -398,7 +398,7 @@ public class Clmarzona extends ventana {
                 (opIgnRepAlb.isSelected()?" rep_codi ": " avc_repres ") + "= '"+repCodi + "'")
                 + (cli_codiE.isNull() ? "" : " AND cl.cli_codi = '" + cli_codiE.getValorInt() + "'")
                 + (emp_codiE.getValorInt()==0?"": " and c.emp_codi = "+emp_codiE.getValorInt())
-                + (sbe_codiE.getValorInt()==0?"": " and c.sbe_codi = "+sbe_codiE.getValorInt())
+                + (sbe_codiE.getValorInt()==0?"": " and cl.sbe_codi = "+sbe_codiE.getValorInt())
                 + " and p.pro_tiplot='V' "
                 + (proCod != null ? "and l.pro_codi = " + proCod : "")
                 + " group by f.fpr_codi,p.pro_codi,P.PRO_NOMB,pro_tiplot ";
@@ -628,8 +628,7 @@ public class Clmarzona extends ventana {
   }
 
   double getImpGana(int proCodi, String fecini,String fecfin,String zona,String repr) throws Exception
-  {
-    
+  {    
     mvtosAlm.calculaMvtos( proCodi,dtCon1,dtStat, zona, repr);
     kgCom = mvtosAlm.getKilosEntrada();
     impCom= mvtosAlm.getImporteEntrada();
