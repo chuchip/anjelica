@@ -137,6 +137,7 @@ public class RegCosDes extends ventana {
        
         Baceptar.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("Regenerar"))
                  buscaDatos();
