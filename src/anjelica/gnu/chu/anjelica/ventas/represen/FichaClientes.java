@@ -26,7 +26,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-
 /**
  *
  * <p>Titulo: FichaClientes</p>
@@ -108,6 +107,7 @@ public class FichaClientes extends ventana implements PAD
   CPanel Palbave = new CPanel();
   DatosTabla dtCli;
   DatosTabla dtAlb;
+  DatosTabla dtCont;
 //  DatosTabla dtCon1;
 //   DatosTabla dtStat;
   DatosTabla dtCob;
@@ -224,7 +224,7 @@ public class FichaClientes extends ventana implements PAD
   CLabel cLabel22 = new CLabel();
   CTextField cob_cresobE = new CTextField(Types.DECIMAL,"-,---,--9.99");
   Cgrid jtAco = new Cgrid(8);
-  Cgrid jtFco = new Cgrid(8);
+  Cgrid jtFco = new Cgrid(6);
   CPanel cPanel3 = new CPanel();
   CPanel cPanel4 = new CPanel();
   GridBagLayout gridBagLayout1 = new GridBagLayout();
@@ -368,7 +368,7 @@ public class FichaClientes extends ventana implements PAD
   {
     iniciarFrame();
     this.setSize(732, 535);
-    this.setVersion("2017-02-20");
+    this.setVersion("2017-07-04");
     if (CONBD)
     {
       conecta();
@@ -379,6 +379,14 @@ public class FichaClientes extends ventana implements PAD
       dtAlb = new DatosTabla(ct);
       dtCob= new DatosTabla(ct);
       dtBlo= new  DatosTabla(ct);
+      if (! EU.getValorParam("jdbc_url_cont", "").equals(""))
+      {          
+        conexion ctCont=new conexion(EU.getValorParam("jdbc_usu_cont", "sa")
+          ,EU.getValorParam("jdbc_pass_cont", "as")
+          ,EU.getValorParam("jdbc_driver_cont", "com.microsoft.sqlserver.jdbc.SQLServerDriver")
+          ,EU.getValorParam("jdbc_url_cont", ""));
+        dtCont= new DatosTabla(ctCont);
+      }
     }
 
     statusBar = new StatusBar(this);
@@ -454,19 +462,15 @@ public class FichaClientes extends ventana implements PAD
     ArrayList v2 = new ArrayList();
     v2.add("Emp"); // 0
     v2.add("Año"); // 1
-    v2.add("Serie"); // 2
+    v2.add("TE"); // 2
     v2.add("Numero"); // 3
     v2.add("Fec.Fra."); // 4
-    v2.add("Imp.Alb."); // 5
-    v2.add("Imp.Cob"); // 6
-    v2.add("Imp.Pend"); // 7
+    v2.add("Imp.Pend."); // 5
 
     jtFco.setCabecera(v2);
-    jtFco.setAnchoColumna(new int[]{33,28,30,56,75,82,83,83});
+    jtFco.setAnchoColumna(new int[]{33,58,30,86,75,82});
     jtFco.setFormatoColumna(5, "--,---,--9.99");
-    jtFco.setFormatoColumna(6, "--,---,--9.99");
-    jtFco.setFormatoColumna(7, "--,---,--9.99");
-    jtFco.setAlinearColumna(new int[]{2,2,0,2,1,2,2,2});
+    jtFco.setAlinearColumna(new int[]{2,2,0,2,1,2});
     ArrayList v3 = new ArrayList();
     v3.add("Emp"); // 0
     v3.add("Año"); // 1
@@ -601,13 +605,12 @@ public class FichaClientes extends ventana implements PAD
 
 
     cLabel19.setText("Fras. Pend.");
-    cLabel19.setBounds(new Rectangle(4, 3, 64, 17));
-    cdo_conceE.setText("");
+    cLabel19.setBounds(new Rectangle(4, 3, 70, 17));  
     cob_frapeiE.setSonidoAutoNext(false);
     cob_frapeiE.setBounds(new Rectangle(72, 4, 93, 17));
     cob_frapeiE.setText("");
-    cob_frapenE.setBackground(Color.red);
-    cob_frapenE.setForeground(Color.white);
+    cob_frapenE.setBackground(Color.CYAN);
+    cob_frapenE.setForeground(Color.BLACK);
     cob_frapenE.setOpaque(true);
     cob_frapenE.setText("");
 //    cTextField1.setBounds(new Rectangle(210, 35, 30, 18));
@@ -619,28 +622,26 @@ public class FichaClientes extends ventana implements PAD
     cob_frapenE.setText("");
     cob_frapenE.setBounds(new Rectangle(167, 4, 29, 17));
     cob_frapenE.setOpaque(true);
-    cob_frapenE.setForeground(Color.white);
-    cob_frapenE.setBackground(Color.red);
     cLabel111.setText("Talones Ctra");
     cLabel111.setBounds(new Rectangle(114, 4, 73, 17));
 
-    cob_talcanE.setBackground(Color.red);
-    cob_talcanE.setForeground(Color.white);
+    cob_talcanE.setBackground(Color.YELLOW);
+    cob_talcanE.setForeground(Color.BLACK);
     cob_talcanE.setOpaque(true);
     cob_talcanE.setText("");
     cob_talcanE.setBounds(new Rectangle(297, 4, 25, 17));
     cLabel112.setText("Devoluciones");
     cLabel112.setBounds(new Rectangle(17, 25, 80, 17));
-    cob_devoiE.setBackground(Color.white);
-    cob_devoiE.setDisabledTextColor(Color.black);
+    cob_devoiE.setBackground(Color.YELLOW);
+    cob_devoiE.setDisabledTextColor(Color.BLACK);
     cob_devoiE.setText("0");
     cob_devoiE.setSonidoAutoNext(false);
     cob_devoiE.setBounds(new Rectangle(98, 23, 71, 17));
     cob_devonE.setText("");
     cob_devonE.setBounds(new Rectangle(172, 23, 30, 17));
     cob_devonE.setOpaque(true);
-    cob_devonE.setForeground(Color.white);
-    cob_devonE.setBackground(Color.red);
+    cob_devonE.setForeground(Color.BLACK);
+    cob_devonE.setBackground(Color.YELLOW);
     cLabel20.setText("Riesgo Total");
     cLabel20.setBounds(new Rectangle(209, 23, 75, 17));
 
@@ -655,15 +656,13 @@ public class FichaClientes extends ventana implements PAD
 
     fpa_nombE.setText("");
     fpa_nombE.setBounds(new Rectangle(265, 4, 414, 17));
-    cob_albpenE.setBackground(Color.red);
-    cob_albpenE.setForeground(Color.white);
+    cob_albpenE.setBackground(Color.CYAN);
+    cob_albpenE.setForeground(Color.WHITE);
     cob_albpenE.setOpaque(true);
     cob_albpenE.setText("");
     cob_albpenE.setText("");
     cob_albpenE.setBounds(new Rectangle(171, 3, 29, 17));
     cob_albpenE.setOpaque(true);
-    cob_albpenE.setForeground(Color.white);
-    cob_albpenE.setBackground(Color.red);
     cob_albpeiE.setText("");
     cob_albpeiE.setSonidoAutoNext(false);
     cob_albpeiE.setBounds(new Rectangle(72, 3, 93, 17));
@@ -709,26 +708,25 @@ public class FichaClientes extends ventana implements PAD
 
     cLabel113.setText("Devoluciones");
     cLabel113.setBounds(new Rectangle(217, 3, 80, 17));
-    cob_devanE.setBackground(Color.red);
-    cob_devanE.setForeground(Color.white);
+    cob_devanE.setBackground(Color.CYAN);
+    cob_devanE.setForeground(Color.BLACK);
     cob_devanE.setOpaque(true);
     cob_devanE.setBounds(new Rectangle(410, 3, 30, 17));
 
-    cob_devaiE.setDisabledTextColor(Color.black);
+    cob_devaiE.setDisabledTextColor(Color.BLACK);
     cob_devaiE.setBounds(new Rectangle(304, 3, 101, 17));
-    cob_devaiE.setBackground(Color.white);
+    cob_devaiE.setBackground(Color.CYAN);
     cLabel114.setText("Devoluciones");
     cLabel114.setBounds(new Rectangle(211, 2, 80, 17));
-    cob_devfnE.setBackground(Color.red);
-    cob_devfnE.setForeground(Color.white);
-    cob_devfnE.setOpaque(true);
-    cob_devfnE.setText("");
+    cob_devfnE.setBackground(Color.CYAN);
+    cob_devfnE.setForeground(Color.BLACK);
+
     cob_devfnE.setBounds(new Rectangle(404, 2, 30, 17));
-    cob_devfiE.setSonidoAutoNext(false);
+    
     cob_devfiE.setBounds(new Rectangle(297, 2, 101, 17));
     cob_devfiE.setText("");
-    cob_devfiE.setDisabledTextColor(Color.black);
-    cob_devfiE.setBackground(Color.white);
+    cob_devfiE.setDisabledTextColor(Color.BLACK);
+    cob_devfiE.setBackground(Color.CYAN);
     cPanel6.setBorder(BorderFactory.createRaisedBevelBorder());
     cPanel6.setMinimumSize(new Dimension(180, 24));
     cPanel6.setPreferredSize(new Dimension(180, 24));
@@ -2012,10 +2010,13 @@ public class FichaClientes extends ventana implements PAD
     limpiaCobros();
     if (relClien)
         mensaje("Buscando datos de Cobros ...",false);
-
-    s="SELECT * FROM clientes WHERE cli_codi = "+cliCodi;
+    String cueCodi="";
+    s="SELECT * FROM clientes WHERE cli_codi = "+cliCodi;    
     if (dtCob.select(s))
+    {
       cdo_conceE.setValorDec(dtCob.getDouble("cli_riesg"));
+      cueCodi=dtCob.getString("cue_codi");
+    }
     else
       cdo_conceE.setValorDec(0);
 
@@ -2061,48 +2062,45 @@ public class FichaClientes extends ventana implements PAD
       jtAco.requestFocus(0,0);
       jtAco.setEnabled(true);
     }
-    if (verCobros)
+    if (dtCont!=null)
     {
-    s = "SELECT  * FROM v_facvec WHERE "+
-        " cli_codi = "+cliCodi+
-       " AND fvc_cobrad = 0 " +
-       " and Fvc_sumtot <> 0"+
-       " ORDER BY fvc_fecfra";
+    s = "SELECT  ano,empresa,tipo_efec,test_sit, nominal,COB_PARCIAL,cuenta,num_efec,TIPO_DOC,fec_fra FROM EFECTOS WHERE  "+
+        " cuenta = '"+cueCodi+"'"+
+        " and empresa='VP' "+
+       " ORDER BY fec_fra";
 //   System.out.println("s: "+s);
    nDevol=0;
    iDevol=0;
    GregorianCalendar gc= new GregorianCalendar();
 
-   if (dtCob.select(s))
+   if (dtCont.select(s))
    {
      jtFco.setEnabled(false);
      do
      {
        if (mataConsulta)
             return;
-       Vector v = new Vector();
-       v.addElement(dtCob.getString("emp_codi"));
-       v.addElement(dtCob.getString("fvc_ano"));
-       v.addElement("F"); //dtCob.getString("fvc_serie"));
-       v.addElement(dtCob.getString("Fvc_nume"));
-       v.addElement(dtCob.getFecha("fvc_fecfra","dd-MM-yyyy"));
-       if (restaDias(Formatear.getFechaAct("dd-MM-yyyy"),dtCob.getFecha("fvc_fecfra","dd-MM-yyyy"))>30)
+       ArrayList v = new ArrayList();
+       v.add(dtCont.getString("empresa"));
+       v.add(dtCont.getString("ano"));
+       v.add(dtCont.getString("tipo_efec")); //dtCob.getString("fvc_serie"));
+       v.add(dtCont.getString("num_efec"));
+       v.add(dtCont.getFecha("fec_fra","dd-MM-yyyy"));
+       if (restaDias(Formatear.getFechaAct("dd-MM-yyyy"),dtCont.getFecha("fec_fra","dd-MM-yyyy"))>30)
          exceFechaL.setText("FACTURAS CON + 30 DIAS");
-       v.addElement(dtCob.getString("Fvc_sumtot"));
-       v.addElement(dtCob.getString("fvc_impcob"));
-       v.addElement("" +(dtCob.getDouble("Fvc_sumtot") - dtCob.getDouble("fvc_impcob")));
-       if (dtCob.getDouble("fvc_impcob")>=0)
+       v.add(dtCont.getDouble("nominal")-dtCont.getDouble("COB_PARCIAL",true));
+       if (dtCont.getDouble("test_sit")!=3)
        {
          nFacCob++;
-         iFacCob += dtCob.getDouble("Fvc_sumtot") -dtCob.getDouble("fvc_impcob");
+         iFacCob += dtCont.getDouble("nominal")-dtCont.getDouble("COB_PARCIAL",true);
        }
        else
        {
          nDevol++;
-         iDevol+=dtCob.getDouble("Fvc_sumtot") -dtCob.getDouble("fvc_impcob");
+         iDevol+=dtCont.getDouble("nominal")-dtCont.getDouble("COB_PARCIAL",true);
        }
        jtFco.addLinea(v);
-     }  while (dtCob.next());
+     }  while (dtCont.next());
      cob_devfiE.setValorDec(iDevol);
      cob_devfnE.setValorDec(nDevol);
      cob_devaiE.setValorDec(iDevol);
@@ -2110,50 +2108,51 @@ public class FichaClientes extends ventana implements PAD
      jtFco.requestFocus(0,0);
      jtFco.setEnabled(true);
    }
-   s="SELECT * FROM v_forpago where fpa_codi = "+fpaCodi;
-   if (! dtCon1.select(s))
-     fpa_nombE.setText("Forma de Pago: "+fpaCodi+" NO encontrada");
-   else
-     fpa_nombE.setText(dtCon1.getString("fpa_nomb"));
+    if (verCobros)
+    {
+            s = "SELECT * FROM v_forpago where fpa_codi = " + fpaCodi;
+            if (!dtCon1.select(s))
+                fpa_nombE.setText("Forma de Pago: " + fpaCodi + " NO encontrada");
+            else
+                fpa_nombE.setText(dtCon1.getString("fpa_nomb"));
 
-    // Buscar cobros cuya fecha vto. sea superior a la de hoy.
+            // Buscar cobros cuya fecha vto. sea superior a la de hoy.
+            s = "SELECT  f.emp_codi,f.fvc_ano,f.fvc_nume,c.cob_fecvto,c.cob_impor,"
+                + " c.tpc_codi, ct.tpc_nomb,c.cob_impor,cob_obser "
+                + " FROM v_facvec f,v_cobros c, v_cobtipo as ct "
+                + " where cli_codi = " + cliCodi
+                + " AND fvc_cobrad = -1 "
+                + " and  c.cob_anofac=f.fvc_ano "
+                + " and c.tpc_codi = ct.tpc_codi "
+                + " and c.fac_nume =f.fvc_nume"
+                + " and cob_fecvto > TO_DATE('" + Formatear.getFechaAct("dd-MM-yyyy") + "','dd-MM-yyyy') "
+                + " order by cob_fecvto";
 
-   s="SELECT  f.emp_codi,f.fvc_ano,f.fvc_nume,c.cob_fecvto,c.cob_impor,"+
-       " c.tpc_codi, ct.tpc_nomb,c.cob_impor,cob_obser "+
-       " FROM v_facvec f,v_cobros c, v_cobtipo as ct "+
-      " where cli_codi = "+cliCodi+
-      " AND fvc_cobrad = -1 "+
-      " and  c.cob_anofac=f.fvc_ano "+
-      " and c.tpc_codi = ct.tpc_codi "+
-      " and c.fac_nume =f.fvc_nume"+
-      " and cob_fecvto > TO_DATE('"+Formatear.getFechaAct("dd-MM-yyyy")+"','dd-MM-yyyy') "+
-      " order by cob_fecvto";
-
-//   System.out.println("s: "+s);
-   if (dtCob.select(s))
-   {
-     jtTpe.setEnabled(false);
-     do
-     {
-       if (mataConsulta)
-            return;
-       Vector v = new Vector();
-       v.addElement(dtCob.getString("emp_codi"));
-       v.addElement(dtCob.getString("fvc_ano"));
-       v.addElement("T"); //dtCob.getString("fvc_serie"));
-       v.addElement(dtCob.getString("fvc_nume"));
-       v.addElement(dtCob.getFecha("cob_fecvto","dd-MM-yyyy"));
-       v.addElement(dtCob.getString("cob_impor"));
-       v.addElement(dtCob.getString("cob_obser"));
-       iTalCob+=dtCob.getDouble("cob_impor");
-       nTalCob++;
-       jtTpe.addLinea(v);
-     }
-     while (dtCob.next());
-     jtTpe.requestFocus(0,0);
-     jtTpe.setEnabled(true);
-   }
-   }
+            //   System.out.println("s: "+s);
+            if (dtCob.select(s))
+            {
+                jtTpe.setEnabled(false);
+                do
+                {
+                    if (mataConsulta)
+                        return;
+                    ArrayList v = new ArrayList();
+                    v.add(dtCob.getString("emp_codi"));
+                    v.add(dtCob.getString("fvc_ano"));
+                    v.add("T"); //dtCob.getString("fvc_serie"));
+                    v.add(dtCob.getString("fvc_nume"));
+                    v.add(dtCob.getFecha("cob_fecvto", "dd-MM-yyyy"));
+                    v.add(dtCob.getString("cob_impor"));
+                    v.add(dtCob.getString("cob_obser"));
+                    iTalCob += dtCob.getDouble("cob_impor");
+                    nTalCob++;
+                    jtTpe.addLinea(v);
+                } while (dtCob.next());
+                jtTpe.requestFocus(0, 0);
+                jtTpe.setEnabled(true);
+            }
+        }
+    }
    cob_talcaiE.setValorDec(iTalCob);
    cob_talcanE.setValorDec(nTalCob);
    cob_frapeiE.setValorDec(iFacCob);
