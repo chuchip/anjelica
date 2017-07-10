@@ -123,7 +123,7 @@ public class pdtransp extends ventanaPad   implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(436, 341));
-    this.setVersion("20160315");
+    this.setVersion("20170709");
 
     strSql = "SELECT * FROM transportista  ORDER BY tra_codi ";
 
@@ -245,6 +245,7 @@ public class pdtransp extends ventanaPad   implements PAD
     Pprinc.add(cLabel12, null);
   }
 
+  @Override
   public void iniciarVentana() throws Exception
   {
 /*
@@ -594,6 +595,7 @@ public class pdtransp extends ventanaPad   implements PAD
     dt.setDato("tra_aduori", tra_aduoriE.getText());
     dt.setDato("tra_adudes", tra_adudesE.getText());
   }
+  @Override
   public void canc_addnew()
   {
     mensaje("");
@@ -602,6 +604,7 @@ public class pdtransp extends ventanaPad   implements PAD
     verDatos();
   }
 
+  @Override
   public void PADDelete()
   {
     try
@@ -669,6 +672,13 @@ public class pdtransp extends ventanaPad   implements PAD
     mensajeErr("Borrado  de Datos Cancelada");
     verDatos();
   }
-
+  public  static boolean llenaPrvCompra(DatosTabla dt,CLinkBox lk) throws SQLException
+  {
+    String s="select tra_codi,tra_nomb from v_transport order by tra_nomb";
+    if (!dt.select(s))
+        return false;
+    lk.addDatos(dt);
+    return true;
+  }
 
 }
