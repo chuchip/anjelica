@@ -242,6 +242,7 @@ public class ClClien extends ventana
           v.add(dtCon1.getString("cli_codpo"));
           v.add(dtCon1.getString("cli_activ"));
           v.add(dtCon1.getFecha("cli_fecalt", "dd-MM-yyyy"));
+          v.add(dtCon1.getFecha("cli_feulve", "dd-MM-yyyy"));
           jt.addLinea(v);
           v.clear();
           v.add(dtCon1.getString("cli_codi"));
@@ -389,7 +390,7 @@ public class ClClien extends ventana
         cLabel25 = new gnu.chu.controles.CLabel();
         cli_servirE = new gnu.chu.controles.CComboBox();
         CTabed = new gnu.chu.controles.CTabbedPane();
-        jt = new gnu.chu.controles.Cgrid(6);
+        jt = new gnu.chu.controles.Cgrid(7);
         jtRies = new gnu.chu.controles.Cgrid(10);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
@@ -527,14 +528,15 @@ public class ClClien extends ventana
         v.add("CP"); // 3
         v.add("Activ"); //4
         v.add("Fec.Alta"); //5
+        v.add("Fe.Ul.Ve"); //6
         jt.setCabecera(v);
         jt.setMaximumSize(new Dimension(444, 208));
         jt.setMinimumSize(new Dimension(444, 208));
         jt.setPreferredSize(new Dimension(444, 208));
         jt.setAnchoColumna(new int[]
-            {40, 160, 120, 50, 40,80});
+            {40, 160, 120, 50, 40,80,80});
         jt.setAlinearColumna(new int[]
-            {2, 0, 0, 2, 1,1});
+            {2, 0, 0, 2, 1,1,2});
         jt.setAjustarGrid(true);
         CTabed.addTab("General", jt);
 
