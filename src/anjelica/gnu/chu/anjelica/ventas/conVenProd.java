@@ -62,7 +62,7 @@ public class conVenProd  extends ventana
   CComboBox pro_artconE = new CComboBox();
   AlbVenZR alVeZo=null;
   String AGENTE_ARG=null;
-
+  CCheckBox sbe_excluC=new CCheckBox("Excluir Seccion");
   public conVenProd(EntornoUsuario eu, gnu.chu.Menu.Principal p)
   {
     this(eu,p,null);
@@ -130,7 +130,7 @@ public class conVenProd  extends ventana
    private void jbInit() throws Exception
    {
      iniciarFrame();
-     this.setVersion("2016-08-22");
+     this.setVersion("2017-07-06");
      this.setSize(new Dimension(590,446));
      Pprinc.setLayout(gridBagLayout1);
 
@@ -202,6 +202,7 @@ public class conVenProd  extends ventana
      sbe_codiE.setBounds(new Rectangle(75, 44, 50, 18)); 
      sbe_nombL = sbe_codiE.creaLabelSbe();
      sbe_nombL.setBounds(new Rectangle(128, 44, 150, 18)); 
+     sbe_excluC.setBounds(new Rectangle(290, 44, 150, 18)); 
      Baceptar.setBounds(new Rectangle(495, 22, 80, 21));
      sbe_codiE.setLabelSbe(sbe_codiE.creaLabelSbe());
      this.getContentPane().add(Pprinc, BorderLayout.CENTER);
@@ -224,6 +225,7 @@ public class conVenProd  extends ventana
      PintrDatos.add(sbe_codiE, null);
      PintrDatos.add(sbe_codiE, null);
      PintrDatos.add(sbe_nombL, null);
+     PintrDatos.add(sbe_excluC, null);
     Pprinc.add(jt,   new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 2, 0, 0), 0, 0));
    }
@@ -233,6 +235,7 @@ public class conVenProd  extends ventana
    {
      jt.tableView.setToolTipText("Doble click encima linea para detalles venta");
      pro_codiE.iniciar(dtStat,this,vl,EU);
+     sbe_codiE.setTipo(sbePanel.TIPO_ARTICULO);
      sbe_codiE.iniciar(dtStat, this, vl, EU);
      sbe_codiE.setLabelSbe(sbe_nombL);
      sbe_codiE.setValorInt(0);
@@ -368,7 +371,8 @@ public class conVenProd  extends ventana
                 (pro_artconE.getValor().equals("C")?"!=0":"=0"))+
            " and avc_serie >= 'A' AND avc_serie <='C' " +
            " and cl.cli_codi = l.cli_codi " +
-           (sbe_codiE.getValorInt()==0?"": " and cl.sbe_codi = "+sbe_codiE.getValorInt())+
+           (sbe_codiE.getValorInt()==0?"": " and a.sbe_codi "+ (sbe_excluC.isSelected()?"!":"") +
+           "= "+sbe_codiE.getValorInt())+
            " and l.avl_canti != 0 " +
            (EU.isRootAV()?"":" and l.div_codi > 0 ")+
            (repCodi != null ? " and cl.rep_codi LIKE '" + repCodi + "'" : "") +

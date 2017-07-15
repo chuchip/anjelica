@@ -127,6 +127,7 @@ public class pdalbara extends ventanaPad  implements PAD
   CButton Bdespiece=new CButton();
   int paiEmp;
   rangoEtiquetas rangoEtiq;
+  registroListVentas regListado;
   boolean swChangePalet=false;
   private final int JTP_NUMLIN=10;
   private final int JTP_PRV=11;
@@ -719,7 +720,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-05-22" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-07-15" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1997,6 +1998,11 @@ public class pdalbara extends ventanaPad  implements PAD
       {
           @Override
           public void mouseClicked(MouseEvent e) {
+              if ( e.getButton() == MouseEvent.BUTTON3 )
+              {
+                  verRegistroListado();
+                  return;
+              }
               if (e.getClickCount() < 2 )
                   return;
               if (inTransation())
@@ -8133,6 +8139,29 @@ public class pdalbara extends ventanaPad  implements PAD
     this.setEnabled(true);
     mensaje("");
   }
+  void verRegistroListado()
+  {
+   try
+      {
+          if (regListado==null)
+          {
+            regListado = new registroListVentas();            
+
+            regListado.iniciar(this);
+            regListado.setLocation(this.getLocation().x+20, this.getLocation().y+20);
+            this.getLayeredPane().add(regListado,1);
+
+          }           
+          regListado.llenaGrid(avc_idE.getValorInt());
+          regListado.setVisible(true);
+          regListado.setSelected(true);
+          this.setEnabled(false);
+          this.setFoco(rangoEtiq);
+      } catch (SQLException | PropertyVetoException ex)
+      {
+          Error("Error al presentar ventana parametros etiquetas",ex);
+      }
+  }
   
   void verVentanaEtiquetas()
   {
@@ -8425,7 +8454,7 @@ public class pdalbara extends ventanaPad  implements PAD
                 "\n\nAtentamente\n\n"+emp_codiE.getEmpNomb());
             ifMail.setDatosDoc("T",sqlAlb, opValora.isSelected());
             ifMail.setCliCodi(cli_codiE.getText());
-
+            ifMail.setIdAlbaran(avc_idE.getValorInt());
              break;
            default:
              
@@ -8526,6 +8555,7 @@ public class pdalbara extends ventanaPad  implements PAD
         liAlb.envAlbarFax(ct.getConnection(), dtStat, sqlAlb, EU,
                   opValora.isSelected(),null,
                   avc_obserE.getText(),true,NUMCOPIAS_ALBGRAF,avsNume);
+         Principal.guardaRegistro(dtAdd,"AVL",EU.usuario,avc_idE.getValorInt(),"");
         return;
       }
       switch (opDispSalida.getValor())
@@ -8551,11 +8581,13 @@ public class pdalbara extends ventanaPad  implements PAD
                 "  de fecha: "+avc_fecalbE.getText()+
                 "\n\nAtentamente\n\n"+emp_codiE.getEmpNomb());
             ifMail.setDatosDoc("A",sqlAlb, opValora.isSelected());
+            
             ifMail.setCliCodi(cli_codiE.getText());
-
+            ifMail.setIdAlbaran(avc_idE.getValorInt());
              break;
            default:
              liAlb.impAlbaran(emp_codiE.getValorInt(),dtStat, dtCon1, sqlAlb, EU, opValora.isSelected());
+             Principal.guardaRegistro(dtAdd,"AVL",EU.usuario,avc_idE.getValorInt(),"");
       }
       mensajeErr("Albaran ... Impreso");
 
@@ -8566,6 +8598,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
     }
   }
+ 
   /**
    * Establece la fecha de Alta de La linea a la del albaran 
    */
@@ -8644,7 +8677,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
   /**
    * Establece el estado de albaran impreso
-   * @param albImpreso
+   * @param albImpreso 0 es no impreso.
    * @throws SQLException 
    */
   void setAlbaranImpreso(int albImpreso) throws SQLException
@@ -8654,6 +8687,7 @@ public class pdalbara extends ventanaPad  implements PAD
                " and avc_serie = '" + avc_seriE.getText() + "'" +
                " and avc_nume = " + avc_numeE.getValorInt();
       dtAdd.executeUpdate(s);
+      Principal.guardaRegistro(dtAdd, albImpreso==0?"AV2":"AV1", EU.usuario, avc_idE.getValorInt(),"");
       dtAdd.commit();
       verIconoListado(albImpreso);
   }
