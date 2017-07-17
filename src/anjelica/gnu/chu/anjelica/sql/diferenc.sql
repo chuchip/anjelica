@@ -1,3 +1,83 @@
+--
+alter table mensajes alter men_codi type varchar(3);
+--
+-- Incluye campo es deposito en lineas Inventario Control
+alter table coninvlin add lci_depos smallint not null default 0; -- Es deposito.
+drop view v_coninvent;
+create view anjelica.v_coninvent as
+select c.emp_codi,c.cci_codi,c.usu_nomb,cci_feccon, cam_codi,alm_codi,lci_nume,prp_ano, prp_empcod, prp_seri, prp_part, pro_codi, pro_nomb,
+prp_indi,lci_peso,lci_kgsord,lci_numind,lci_regaut,lci_coment, lci_causa,lci_numcaj,lci_numpal,l.alm_codlin,l.lci_depos from coninvcab as c, coninvlin as l where
+c.emp_codi=c.emp_codi
+and c.cci_codi=l.cci_codi;
+grant select on  v_coninvent to public;
+-- Incluyo fecha sacrificio en Despieces.
+alter table desporig add deo_fecsac date;		-- Fecha Sacrificio
+alter table deorcahis add deo_fecsac date;		-- Fecha Sacrificio
+drop view v_despori;
+create  view v_despori as select  1 as emp_codi, c.*, 1 as deo_emloge, 1 as deo_emplot ,
+l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcost, deo_kilos , deo_preusu,deo_tiempo
+ from desporig as c, desorilin as l where c.eje_nume=l.eje_nume
+ and c.deo_codi= l.deo_codi;
+grant select on  anjelica.v_despori to public;
+drop view v_hisdespori;
+create  view v_hisdespori as select  1 as emp_codi, c.*, 1 as deo_emloge, 1 as deo_emplot ,
+l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcost, deo_kilos , deo_preusu,deo_tiempo
+ from deorcahis as c, deorlihis as l where c.eje_nume=l.eje_nume
+ and c.deo_codi= l.deo_codi and c.his_rowid=l.his_rowid;
+ grant select on  anjelica.v_hisdespori to public;
+drop view v_despsal;
+CREATE OR REPLACE VIEW v_despsal AS 
+ SELECT c.eje_nume,
+    c.deo_codi,
+    c.deo_numdes,
+    c.tid_codi,
+    c.deo_fecha,
+    c.deo_almori,
+    c.deo_almdes,
+    c.deo_ejloge,
+    c.deo_seloge,
+    c.deo_nuloge,
+    c.deo_incval,
+    l.def_orden,
+    l.pro_codi,
+    l.def_ejelot,
+    l.def_emplot,
+    l.def_serlot,
+    l.pro_lote,
+    l.pro_numind,
+    l.def_kilos,
+    l.def_numpie,
+    l.def_prcost,
+    l.def_unicaj,
+    l.def_feccad,
+    l.def_preusu,
+    l.def_tiempo,
+    l.alm_codi,
+    c.deo_desnue
+   FROM desporig c,
+    v_despfin l
+  WHERE c.eje_nume = l.eje_nume AND c.deo_codi = l.deo_codi;
+grant select on  anjelica.v_despsal to public;
+drop view v_despiece;
+create  view v_despiece as select  1 as emp_codi, c.*, g.grd_serie,g.grd_kilo,grd_unid,grd_prmeco,grd_incval,
+grd_valor,grd_block,grd_feccad,g.prv_codi as grd_prvcod,grd_desnue,grd_fecpro,grd_fecha,
+1 as deo_emloge, 1 as deo_emplot ,
+l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcost, deo_kilos , deo_preusu,deo_tiempo
+ from desporig as c left join grupdesp as g on c.eje_nume=g.eje_nume and c.deo_numdes = g.grd_nume, 
+ desorilin as l 
+  where c.eje_nume=l.eje_nume
+ and c.deo_codi= l.deo_codi;
+ grant select on  anjelica.v_despiece to public;
+--
+-- Añadido transportista a pedicos compras.
+alter table pedicoc add tra_codi int;
+--
+alter table parametros alter par_valor  type varchar(100);
+alter table parametros alter par_nomb  type varchar(30);
+--
+-- Añadida camaras
+--
+alter table tilialca add cam_codi varchar(2);
 -- Kilos facturados factura compra
  alter table v_facaco rename fcc_sumto2 to fcc_kilfra; 
 -- Incluido precio oferta

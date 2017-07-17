@@ -44,6 +44,7 @@ public class Desporig  implements java.io.Serializable {
      private Integer deoNumdes;
      private Date deoFeccad;
      private Date deoFecpro;
+     private Date deoFecsac;
      private String deoIncval;
      private String deoValor;
      private String deoBlock=null;
@@ -65,7 +66,7 @@ public class Desporig  implements java.io.Serializable {
     }
     public Desporig(DesporigId id, Integer tidCodi, Date deoFecha, String usuNomb, Integer deoAlmori, 
             Integer deoAlmdes, Integer deoEjloge, String deoSeloge, Integer deoNuloge, Short deoCerra,
-            Short deoLotnue, Integer deoNumdes, Date deoFeccad, Date deoFecpro, String deoIncval, 
+            Short deoLotnue, Integer deoNumdes, Date deoFeccad, Date deoFecpro,Date deoFecSacr, String deoIncval, 
             String deoValor, String deoBlock, int prvCodi, char deoDesnue, Date deoFecval, String deoUsuval) {
        this.id = id;
        this.tidCodi = tidCodi;
@@ -81,6 +82,7 @@ public class Desporig  implements java.io.Serializable {
        this.deoNumdes = deoNumdes;
        this.deoFeccad = deoFeccad;
        this.deoFecpro = deoFecpro;
+       this.deoFecsac = deoFecSacr;
        this.deoIncval = deoIncval;
        this.deoValor = deoValor;
        this.deoBlock = deoBlock;
@@ -189,9 +191,14 @@ public class Desporig  implements java.io.Serializable {
     public Date getDeoFecpro() {
         return this.deoFecpro;
     }
-    
+    public Date getDeoFecsac() {
+        return this.deoFecsac;
+    }
     public void setDeoFecpro(Date deoFecpro) {
         this.deoFecpro = deoFecpro;
+    }
+    public void setDeoFecsac(Date deoFecsac) {
+        this.deoFecsac = deoFecsac;
     }
     public String getDeoIncval() {
         return this.deoIncval;
@@ -287,6 +294,7 @@ public class Desporig  implements java.io.Serializable {
        this.deoNumdes = dt.getInt("deo_numdes");
        this.deoFeccad = dt.getDate("deo_Feccad");
        this.deoFecpro = dt.getDate("deo_fecpro");
+       this.deoFecsac = dt.getDate("deo_fecsac");
        this.deoIncval = dt.getString("deo_incval");
        this.deoValor = dt.getString("deo_Valor");
        this.deoBlock = dt.getString("deo_Block");
@@ -328,6 +336,7 @@ public class Desporig  implements java.io.Serializable {
       dtAdd.setDato("tid_codi", getTidCodi());
       dtAdd.setDato("deo_feccad",getDeoFeccad());
       dtAdd.setDato("deo_fecpro",getDeoFecpro());
+      dtAdd.setDato("deo_fecsac",getDeoFecsac());
       dtAdd.setDato("deo_ejloge",getDeoEjloge());
       dtAdd.setDato("deo_seloge",getDeoSeloge());
       dtAdd.setDato("deo_nuloge",getDeoNuloge());

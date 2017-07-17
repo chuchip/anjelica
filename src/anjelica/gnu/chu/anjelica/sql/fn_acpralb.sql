@@ -26,7 +26,7 @@ $BODY$
     
 -- Albaranes de Venta
    
-   select aju_regmvt,aju_delmvt,aju_delmvt into ajuRegmvt,ajuDelmvt,DEBUG from anjelica.ajustedb;
+   select aju_regmvt,aju_delmvt,aju_debug into ajuRegmvt,ajuDelmvt,DEBUG from anjelica.ajustedb;
 	if not found then
 		RAISE EXCEPTION 'NO encontrado Ajustes DB';
 	end if;
@@ -167,7 +167,7 @@ $BODY$
 	    end if;
 	    if TG_OP =  'DELETE' then	
                if DEBUG = 1 then
-                RAISE NOTICE  'borrando mvto de alb. venta';		      
+--                RAISE NOTICE  'borrando mvto de alb. venta';		      
                end if;
 	       DELETE FROM anjelica.mvtosalm  where
 			mvt_tipdoc='V' and			

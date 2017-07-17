@@ -130,6 +130,16 @@ create table anjelica.menus
 	mnu_args varchar(100)          -- Argumentos a Pasar
 );
 
+create table registro
+(
+	reg_codi serial,
+	reg_time timestamp not null default current_timestamp,
+	usu_nomb varchar(15) not null,
+	reg_numdoc int, -- Numero documento.
+	men_codi varchar(3), -- Codigo mensaje
+	reg_valor varchar(255)
+);
+
 --
 -- Tabla Maestra de Articulos
 --
@@ -1574,6 +1584,7 @@ deo_lotnue smallint,    -- Lote Nuevo (0: No, -1 SI)
 deo_numdes int not null default 0,       -- Numero Grupo de despiece
 deo_feccad date,        -- Fecha Caducidad
 deo_fecpro date,        -- Fecha Producion
+deo_fecsac date,		-- Fecha Sacrificio
 deo_incval char(1) not null default 'N',    -- Marcado como produccion (S/N)
 deo_valor char(1) not null default 'N',     -- Valorado (S/N)
 deo_block char(1) default 'N',  -- Abierto en tactil(S). Cerrado (N) Bloqueado (B) ?
@@ -1609,6 +1620,7 @@ create table anjelica.deorcahis
     deo_numdes int,         -- Numero Grupo de despiece
     deo_feccad date,        -- Fecha Caducidad
     deo_fecpro date,        -- Fecha Producion
+	deo_fecsac date,		-- Fecha Sacrificio
     deo_incval char(1) not null default 'N',    -- Marcado para Valorar (S/N)
     deo_valor char(1) not null default 'N',     -- Valorado (S/N)
     deo_block char(1) default 'N',  -- Abierto en tactil(S). Cerrado (N) Bloqueado (B) ?
@@ -2519,6 +2531,7 @@ CREATE TABLE pedicoc
   prv_codi int not null,	-- Proveedor
   pcc_fecped date not null,	-- Fecha Pedido
   pcc_fecrec date,		-- Fecha entrega
+  tra_codi int ,		-- Transportista
   alm_codi int not null,	-- Almacen Recepcion
   pcc_estad varchar(1) not null,   -- Estado (Pendiente, Confirmado, preFact)
   pcc_estrec varchar(1) not null,-- Estado Recep. (Recep./Cancelado/Pend/Bloqueado)
@@ -2532,7 +2545,7 @@ CREATE TABLE pedicoc
   pcc_portes char(1),		-- Portes Pagados o Debidos
   sbe_codi smallint not null,   -- SubEmpresa
   pcc_feccon date,			-- Fecha Confirmacion
-  pcc_feclis date, -- Fecha en que se listo
+  pcc_feclis date, -- Fecha en que se listo  
   constraint ix_pedicoc primary key(eje_nume,emp_codi,pcc_nume)
 );
 --
@@ -2766,7 +2779,7 @@ grant select on anjelica.v_inventar to public;
 -- drop table histmens;
 create table  anjelica.histmens
 (
-        him_codi serial,    -- Numero secuencial usado para razones del usuario
+    him_codi serial,    -- Numero secuencial usado para razones del usuario
 	usu_nomb varchar(20) not null,
 	him_fecha date not null, -- Fecha creacion Mensaje.
 	him_hora  decimal(4,2) not null, -- Fecha creacion Mensaje.
@@ -2790,11 +2803,19 @@ create table anjelica.razonmens
 -- drop table mensajes;
 create table anjelica.mensajes
 (
-	men_codi char(2) not null,  -- Codigo de Mensaje
+	men_codi char(3) not null,  -- Codigo de Mensaje
 	men_nomb varchar(255) not null,  -- Nombre de Mensaje
-        men_tipo char(1) not null default 'A', -- Tipo: 'A' Aviso, 'C' Critico, 'I' Informacion
+    men_tipo char(1) not null default 'A', -- Tipo: 'A' Aviso, 'C' Critico, 'I' Informacion
 	primary key(men_codi)
 );
+insert into mensajes values('AVL','Listado ALBARAN Venta','I');
+insert into mensajes values('AVE','Enviado  ALBARAN venta por email','I');
+insert into mensajes values('AVF','Enviado  ALBARAN venta  por Fax','I');
+
+insert into mensajes values('AVL','Listado Fra venta  %a','I');
+insert into mensajes values('AVE','Enviado  Fra venta %a por email a %e','I');
+insert into mensajes values('AVF','Enviado  Fra venta %a por Fax a %e','I');
+
 insert into mensajes values('MS','Sale del Menu %u','I');
 insert into mensajes values('EM','Entro en Menu %u','I');
 insert into mensajes values('CS','Creado Stock por %u Prod: %p Unid: %U Kilos: %k Lote: %l','C');
@@ -2808,6 +2829,7 @@ insert into mensajes values('V4','Anulada ALTA de Alb. Ventas No %a','A');
 insert into mensajes values('V5','Camb. Cabec. Albaran %s','I');
 insert into mensajes values('V6','Puestos precios a 0 de Prod:  %p ALBARAN %a','I');
 insert into mensajes values('V7','Modificado Alb. YA listado. ALBARAN %a','A');
+
 insert into mensajes values('ER','Error al Guardar Mensaje con Cod: %c','C');
 insert into mensajes values('C1','Modificado Alb. Compras No: %a con factura: %f','I');
 insert into mensajes values('C2','BORRADO ALBARAN Compras No %a','A');
@@ -3274,9 +3296,9 @@ grant select on  v_config to public;
 create table anjelica.parametros
 (
     usu_nomb varchar(15) not null default '*', -- Si * aplica a todos los usuarios
-    par_nomb varchar(15) not null,    -- Nombre parametro
+    par_nomb varchar(30) not null,    -- Nombre parametro
     par_desc varchar(50) not null,    -- Descripción Parametro
-    par_valor int not null,           -- Char (0: False,-1: True)
+    par_valor varchar(100) not null,           -- Char (0: False,-1: True)
     constraint ix_parametros primary key (usu_nomb,par_nomb)
 );
 insert into parametros values('*','checktidcodi','Validar producto sobre tipo despiece', 1);
@@ -3290,6 +3312,10 @@ insert into parametros values('*','impFraTexto','Impresion Facturas Venta modo t
 insert into parametros values('*','famProdReci','Familia de productos de reciclaje',99);
 insert into parametros values('*','despPend','Permite dejar despieces pendientes',0);
 insert into parametros values('*','checkCodRep','Comprueba que el codigo Reparto este nulo',0);
+insert into parametros values('*','jdbc_usu_cont','Usuario Contabilidad','sa');
+insert into parametros values('*','jdbc_pass_cont','Contraseña Contabilidad','as');
+insert into parametros values('*','jdbc_driver_cont','Driver Contabilidad','com.microsoft.sqlserver.jdbc.SQLServerDriver');
+insert into parametros values('*','jdbc_url_cont','URL conexion Contabilidad','jdbc:sqlserver://w2003:1433;databaseName=BCONTA01');
 --
 -- Tabla con las diferentes camaras
 -- por empresa
@@ -3341,7 +3367,8 @@ create table anjelica.coninvlin
 	lci_causa varchar(30), 		-- Causa Probable Incidencia.	
 	lci_numcaj smallint not null default 0,	-- Numero Caja
     lci_numpal varchar(5) not null default '',	-- Numero Palet
-	alm_codlin int not null, -- Almacen (Para List. Dif. Inventario)
+	alm_codlin int not null, -- Almacen (Para List. Dif. Inventario
+	lci_depos smallint not null default 0, -- Es deposito. 0=No
   constraint ix_coninvlin primary key(cci_codi,lci_nume,emp_codi,)
 );
 create index ix_coninvl2 on coninvlin(pro_codi,prp_ano,prp_part,prp_seri,prp_indi);
@@ -3350,7 +3377,8 @@ create index ix_coninvl2 on coninvlin(pro_codi,prp_ano,prp_part,prp_seri,prp_ind
 --
 create view anjelica.v_coninvent as
 select c.emp_codi,c.cci_codi,c.usu_nomb,cci_feccon, cam_codi,alm_codi,lci_nume,prp_ano, prp_empcod, prp_seri, prp_part, pro_codi, pro_nomb,
-prp_indi,lci_peso,lci_kgsord,lci_numind,lci_regaut,lci_coment, lci_causa,lci_numcaj,lci_numpal,alm_codlin from coninvcab as c, coninvlin as l where
+prp_indi,lci_peso,lci_kgsord,lci_numind,lci_regaut,lci_coment, lci_causa,lci_numcaj,lci_numpal,
+l.alm_codlin,l.lci_depos from coninvcab as c, coninvlin as l where
 c.emp_codi=c.emp_codi
 and c.cci_codi=l.cci_codi;
 grant select on  v_coninvent to public;
@@ -3637,6 +3665,7 @@ create table anjelica.tilialca
  tla_nulipr int not null,	-- Numero Lineas por Producto.
  tla_diagfe int not null,	-- Dias a Agrupar Fechas Caducidad (0 Sin agrupar)
  tla_vekgca char(1) not null,	-- Ver Kilos o Unidades
+ cam_codi varchar(2),		-- Camara
  constraint ix_tilialca primary  key (tla_codi)
 );
 --
@@ -4299,12 +4328,37 @@ l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcos
  from deorcahis as c, deorlihis as l where c.eje_nume=l.eje_nume
  and c.deo_codi= l.deo_codi and c.his_rowid=l.his_rowid;
 drop view v_despsal;
-create  view v_despsal as select c.eje_nume,c.deo_codi,c.deo_numdes,tid_codi,deo_fecha, deo_almori,deo_almdes,deo_ejloge,
-deo_seloge,deo_nuloge,deo_incval,
-l.def_orden, pro_codi, def_ejelot, def_emplot, def_serlot, pro_lote,pro_numind ,def_kilos,def_numpie,def_prcost,def_numcaj,
-def_feccad,def_preusu,def_tiempo,l.alm_codi,deo_desnue
- from anjelica.desporig as c, anjelica.v_despfin as l where c.eje_nume=l.eje_nume
- and c.deo_codi= l.deo_codi;
+CREATE OR REPLACE VIEW v_despsal AS 
+ SELECT c.eje_nume,
+    c.deo_codi,
+    c.deo_numdes,
+    c.tid_codi,
+    c.deo_fecha,
+    c.deo_almori,
+    c.deo_almdes,
+    c.deo_ejloge,
+    c.deo_seloge,
+    c.deo_nuloge,
+    c.deo_incval,
+    l.def_orden,
+    l.pro_codi,
+    l.def_ejelot,
+    l.def_emplot,
+    l.def_serlot,
+    l.pro_lote,
+    l.pro_numind,
+    l.def_kilos,
+    l.def_numpie,
+    l.def_prcost,
+    l.def_unicaj,
+    l.def_feccad,
+    l.def_preusu,
+    l.def_tiempo,
+    l.alm_codi,
+    c.deo_desnue
+   FROM desporig c,
+    v_despfin l
+  WHERE c.eje_nume = l.eje_nume AND c.deo_codi = l.deo_codi;
 grant select on  anjelica.v_despsal to public;
 
 create  view v_despiece as select  1 as emp_codi, c.*, g.grd_serie,g.grd_kilo,grd_unid,grd_prmeco,grd_incval,

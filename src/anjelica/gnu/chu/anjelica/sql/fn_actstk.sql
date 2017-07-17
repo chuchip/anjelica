@@ -1,5 +1,10 @@
-CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
-  RETURNS TRIGGER AS $grabar$   
+-- Function: fn_actstk()
+
+-- DROP FUNCTION fn_actstk();
+
+CREATE OR REPLACE FUNCTION fn_actstk()
+  RETURNS trigger AS
+$BODY$   
   DECLARE   
   STKNEW RECORD;
   STKOLD RECORD;
@@ -18,7 +23,7 @@ CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
   BEGIN
         kilos=0;
         unid=0;      
-	
+--RAISE  NOTICE 'oPERACION %',TG_OP;	
         if TG_OP =  'INSERT' or TG_OP =  'UPDATE' then 
             select * INTO STKNEW FROM  anjelica.stockpart where 
                 pro_codi= NEW.pro_codi and
@@ -28,36 +33,46 @@ CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
                 pro_numind  = NEW.pro_indlot and
                 alm_codi = NEW.alm_codi;                
             if STKNEW is  null then
+--		RAISE  NOTICE 'NO EXISTIA STOCK-PARTIDAS ';	
+            -- No existe ese individuo en stock-partidas
                 kilos=NEW.mvt_canti;
                 unid=NEW.mvt_unid;
                 if NEW.mvt_tipo = 'S' then
                         kilos=kilos*-1;
                         unid= unid * -1;
                 end if;
-				select cam_codi INTO  camCodi FROM  anjelica.v_articulo where 
-					pro_codi= NEW.pro_codi;
-                
-				acpFecpro=null;
-				acpNucrot=null;
-				acpPainac=null;
-				mvtFeccad=NEW.mvt_feccad;
-				acpPaisac=null;
-				acpFecsac=null;
-				matCodi=null;
-				sdeCodi=null;
-				acpEngpai=null;
-				if NEW.mvt_tipdoc = 'C' then
-					
-					select acp_fecpro,acp_nucrot,acp_painac,acp_feccad,acp_paisac,acp_fecsac,mat_codi,sde_codi,acp_engpai 
-					into acpFecpro,acpNucrot,acpPainac,mvtFeccad,acpPaisac,acpFecsac,matCodi,sdeCodi,acpEngpai 
-						from anjelica.v_albcompar where 
-						pro_codi=NEW.pro_codi -- Codigo de producto.
-						and NEW.pro_ejelot=acc_ano
-						and NEW.pro_serlot=acc_serie
-						and NEW.pro_numlot=acc_nume
-						and NEW.pro_indlot=acp_numind;
-					RAISE NOTICE 'buscando registro en compras. Fec.Cad %',mvtFeccad;
-				end if;
+		select cam_codi INTO  camCodi FROM  anjelica.v_articulo where 
+			pro_codi= NEW.pro_codi;
+
+		acpFecpro=null;
+		acpNucrot=null;
+		acpPainac=null;
+		mvtFeccad=NEW.mvt_feccad;
+		acpPaisac=null;
+		acpFecsac=null;
+		matCodi=null;
+		sdeCodi=null;
+		acpEngpai=null;
+		--RAISE  NOTICE 'Tipo documento %',NEW.mvt_tipdoc;
+		if NEW.mvt_tipdoc = 'C' then					
+			select acp_fecpro,acp_nucrot,acp_painac,acp_paisac,acp_fecsac,mat_codi,sde_codi,acp_engpai 
+			into acpFecpro,acpNucrot,acpPainac,acpPaisac,acpFecsac,matCodi,sdeCodi,acpEngpai 
+				from anjelica.v_albcompar where 
+				pro_codi=NEW.pro_codi -- Codigo de producto.
+				and NEW.pro_ejelot=acc_ano
+				and NEW.pro_serlot=acc_serie
+				and NEW.pro_numlot=acc_nume
+				and NEW.pro_indlot=acp_numind;
+			-- RAISE NOTICE 'buscando registro en compras. Fec.Cad %',mvtFeccad;
+		end if;
+		if NEW.mvt_tipdoc = 'd' then					 
+			select deo_fecpro,deo_fecsac
+			into acpFecpro,acpFecsac
+				from anjelica.v_despori where 						
+				 NEW.mvt_ejedoc=eje_nume
+				 and NEW.mvt_numdoc=deo_codi;
+			--RAISE NOTICE 'buscando registro en Despieces. Doc: % - % Fec.Cad %',NEW.mvt_ejedoc,NEW.mvt_numdoc,mvtFeccad;
+		end if;
                 insert into anjelica.stockpart (eje_nume,
                     emp_codi,pro_serie, stp_tiplot,pro_nupar,                    
                     pro_codi,pro_numind,alm_codi,
@@ -93,10 +108,10 @@ CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
                 end if;
                 UPDATE anjelica.stockpart set stp_kilact= kilos,
                         stp_unact=unid,
-						prv_codi = NEW.mvt_cliprv,
+			prv_codi = NEW.mvt_cliprv,
                         stp_fefici = current_timestamp 
-						WHERE   pro_codi = NEW.pro_codi and 
-						eje_nume=NEW.pro_ejelot  and 
+			WHERE   pro_codi = NEW.pro_codi and 
+			 eje_nume=NEW.pro_ejelot  and 
                          pro_codi= NEW.pro_codi and
                          pro_serie = NEW.pro_serlot and
                          pro_nupar = NEW.pro_numlot and
@@ -143,4 +158,8 @@ CREATE OR REPLACE FUNCTION anjelica."fn_actstk"()
         
 	return NEW;
 END;
-$grabar$ LANGUAGE 'plpgsql';
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION fn_actstk()
+  OWNER TO anjelica;
