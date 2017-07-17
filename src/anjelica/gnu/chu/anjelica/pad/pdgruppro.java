@@ -19,7 +19,7 @@ import java.util.*;
  * <p>Título: pdgruppro </p>
  * <p>Descripción: Mantenimiento de Grupos de Productos</p>
  * <p>Empresa: miCasa</p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -35,7 +35,7 @@ import java.util.*;
  * @author chuchiP
  * @version 1.0
  */
-public class pdgruppro    extends ventanaPad     implements PAD
+public class pdgruppro    extends ventanaPad   implements PAD
 {
   String s;
   boolean modConsulta=false;
@@ -68,7 +68,7 @@ public class pdgruppro    extends ventanaPad     implements PAD
       this(eu, p, null);
     }
 
-    public pdgruppro(EntornoUsuario eu, Principal p,Hashtable ht)
+    public pdgruppro(EntornoUsuario eu, Principal p,Hashtable<String,String> ht)
     {
       EU = eu;
       vl = p.panel1;
@@ -80,8 +80,7 @@ public class pdgruppro    extends ventanaPad     implements PAD
         if (ht != null)
         {
           if (ht.get("modConsulta") != null)
-            modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-                booleanValue();
+            modConsulta = Boolean.valueOf(ht.get("modConsulta").toString());
         }
         setTitulo("Mantenimiento Grupos Productos");
         if (jf.gestor.apuntar(this))
@@ -95,7 +94,7 @@ public class pdgruppro    extends ventanaPad     implements PAD
       }
     }
 
-    public pdgruppro(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable ht)
+    public pdgruppro(gnu.chu.anjelica.menu p, EntornoUsuario eu,Hashtable<String,String> ht)
     {
       EU = eu;
       vl = p.getLayeredPane();
@@ -106,8 +105,7 @@ public class pdgruppro    extends ventanaPad     implements PAD
         if (ht != null)
         {
           if (ht.get("modConsulta") != null)
-            modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-                booleanValue();
+            modConsulta = Boolean.parseBoolean(ht.get("modConsulta").toString());
         }
         setTitulo("Mantenimiento Grupos Productos");
         jbInit();

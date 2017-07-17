@@ -579,7 +579,7 @@ public class DatosTabla   implements Serializable
    stmOpen = true;
    Error = false;
    sqlOpen = false;
-   if (conexion.getDriverType() != conexion.ORACLE)
+   if (conexion.getDriverType() != conexion.ORACLE && conexion.getDriverType() != conexion.MSQL)
    {
 //     setSchema("anjelica");
      this.executeUpdate("SET search_path TO anjelica,public");

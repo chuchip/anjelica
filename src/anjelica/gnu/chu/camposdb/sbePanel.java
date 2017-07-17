@@ -37,6 +37,8 @@ import java.util.logging.Logger;
 public class sbePanel extends CPanel
 {
  String tipo="C"; // Por defecto (C)lientes
+ public static final String TIPO_ARTICULO="A";
+ public static final String TIPO_CLIENTE="C";
  CTextField emp_codiE=null;
  DatosTabla dt;
  EntornoUsuario eu;

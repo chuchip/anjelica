@@ -1002,6 +1002,7 @@ public class PdInvControl extends ventanaPad implements PAD
     dtAdd.setDato("lci_numpal",lci_numpalE.getText());
     dtAdd.setDato("lci_numcaj",lci_numcajE.getText());
     dtAdd.setDato("alm_codlin",alm_codiE.getValorInt());
+    dtAdd.setDato("lci_depos",0);
     dtAdd.update(stUp);
     ctUp.commit();
     return nl;
@@ -1556,6 +1557,7 @@ public class PdInvControl extends ventanaPad implements PAD
             dtAdd.setDato("lci_numind", dtCon1.getInt("lci_numind"));
             dtAdd.setDato("lci_numpal",dtCon1.getString("lci_numind"));
             dtAdd.setDato("alm_codlin",dtCon1.getString("alm_codlin"));
+            dtAdd.setDato("lci_depos",0);
             dtAdd.update(stUp);  
             
        } while (dtCon1.next());
@@ -1631,7 +1633,7 @@ public class PdInvControl extends ventanaPad implements PAD
             dtAdd.setDato("lci_numind", datInd.getNumuni());
             dtAdd.setDato("lci_numpal",0);
             dtAdd.setDato("alm_codlin",datInd.getAlmCodi());
-
+            dtAdd.setDato("lci_depos",0);
             dtAdd.update(stUp);  
             lAlm.put(datInd.getAlmCodi(),new Dimension(cciCodi,++nl));
           }

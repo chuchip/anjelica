@@ -16,6 +16,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
@@ -53,7 +55,10 @@ public class TrasInven extends ventanaPad implements PAD {
    int tirCodi;
    ActualStkPart stkPart;
    paregalm pRegAlm;
-    
+   PreparedStatement psDep;
+   ResultSet rsDep;
+   PreparedStatement psDepAbo;
+   PreparedStatement psStkAbo;
  public TrasInven(EntornoUsuario eu, Principal p)
  {
    EU = eu;
@@ -95,7 +100,7 @@ public class TrasInven extends ventanaPad implements PAD {
         nav = new navegador(this, dtCons, false,navegador.CURYCON);
         iniciarFrame();
 
-        this.setVersion("2016-04-27" );
+        this.setVersion("2017-07-17" );
         strSql = "SELECT emp_codi, alm_codi, cci_feccon FROM coninvcab where emp_codi = "+EU.em_cod+
                 " group by emp_codi, alm_codi,cci_feccon "+
             " order by cci_feccon";
@@ -258,7 +263,8 @@ public class TrasInven extends ventanaPad implements PAD {
             stkPart.setActStkAutomatico(true);
             setMensajePopEspere("Insertando apuntes de regularización...");
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY - 1);
-            
+            updateDepositos();
+           
             if (! tipoTraspE.getValor().equals(TIPOSTOCKPARTI))
             {// No es inventario tipo stock/partidas
                 insertaRegul(); // Inserta Apuntes de Regularizacion sobre inventario
@@ -299,7 +305,98 @@ public class TrasInven extends ventanaPad implements PAD {
         }
 
     }
-
+    /**
+     * Actualiza el inventario para marcar los productos que estan en deposito
+     * @throws SQLException
+     * @throws ParseException 
+     */
+    void updateDepositos() throws SQLException, ParseException
+    {
+       s = "update coninvlin set lci_depos=0 "
+                      + " where emp_codi = " + EU.em_cod
+                      + " and  cci_codi IN (SELECT cci_codi from coninvcab c where "
+                      + " c.emp_codi =" + EU.em_cod
+                      + (opInsAllAlmac.isSelected()?"": " and c.alm_codi = " + alm_codiE.getValorInt())
+                      + " and c.cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
+                      + " ) ";      
+       dtAdd.executeUpdate(s);
+       dtAdd.commit();
+       if (!opLeidoDep.isSelected()) 
+           return;
+        psDep=dtStat.getPreparedStatement("SELECT max(avc_fecalb) as avc_fecalb FROM v_albventa_detalle "+
+                        " WHERE avc_depos ='D' "+
+                        " and avl_fecalt < to_date('"+cci_fecconE.getText()+"','dd-MM-yyyy')"+
+                        " and pro_codi =  ?"+
+                        " and avp_ejelot= ?"+
+                        " and avp_serlot= ? "+
+                        " and avp_numpar = ?"+
+                        " and avp_numind = ?");
+        psDepAbo=dtBloq.getPreparedStatement("SELECT avc_fecalb  FROM v_albventa_detalle "+
+                        " WHERE avc_fecalb > ? "+
+                        " and avc_depos != 'D' "+ 
+                        " and pro_codi =  ?"+
+                        " and avp_ejelot= ?"+
+                        " and avp_serlot= ?"+
+                        " and avp_numpar = ?"+
+                        " and avp_numind = ?");
+        
+        psStkAbo=dtAdd.getPreparedStatement("update coninvlin set lci_depos=1 "+
+                        " WHERE cci_codi = ? "+
+                        " and pro_codi =  ?"+
+                        " and prp_ano= ?"+
+                        " and prp_seri= ?"+
+                        " and prp_part = ?"+
+                        " and prp_indi = ?");
+        s = "select  l.cci_codi,l.pro_codi,prp_ano,l.prp_empcod,prp_seri,prp_part,prp_indi "
+                + "  from v_coninvent as l, v_articulo a,v_albventa_detalle as ad "
+                + " where  l.emp_codi = " + emp_codiE.getValorInt()
+                +" and avl_fecalt < '"+cci_fecconE.getFechaDB()+"'" 
+                + " and ad.pro_codi =  l.pro_codi "
+                + " and avp_ejelot= l.prp_ano"
+                + " and avp_serlot= prp_seri"
+                + " and avp_numpar = prp_part"
+                + " and avp_numind = prp_indi"
+                + " and lci_peso <> 0 "
+                + (opIgnCongel.isSelected()? " and a.pro_artcon = 0":"")
+                + (pro_artconE.getValorInt()==2?"":" and a.pro_artcon "+
+                   (pro_artconE.getValorInt()==0?"":"!")+
+                 "= 0")
+                + " and l.lci_regaut =0 "  // No es apunte automatico
+                + (opInsAllAlmac.isSelected()?"": " and l.alm_codi = " + alm_codiE.getValorInt())
+                +" and l.cci_feccon = '" + cci_fecconE.getFechaDB()+ "' "
+                + " and l.pro_codi = a.pro_codi ";
+        if (!dtCon1.select(s))
+            return;
+        do
+        {
+            psDep.setInt(1, dtCon1.getInt("pro_codi"));
+            psDep.setInt(2, dtCon1.getInt("prp_ano"));
+            psDep.setString(3, dtCon1.getString("prp_seri"));
+            psDep.setInt(4, dtCon1.getInt("prp_part"));
+            psDep.setInt(5, dtCon1.getInt("prp_indi"));
+            rsDep = psDep.executeQuery();
+            rsDep.next();
+            psDepAbo.setDate(1,rsDep.getDate("avc_fecalb"));
+            psDepAbo.setInt(2, dtCon1.getInt("pro_codi"));
+            psDepAbo.setInt(3, dtCon1.getInt("prp_ano"));
+            psDepAbo.setString(4, dtCon1.getString("prp_seri"));
+            psDepAbo.setInt(5, dtCon1.getInt("prp_part"));
+            psDepAbo.setInt(6, dtCon1.getInt("prp_indi"));
+            rsDep = psDepAbo.executeQuery();
+            if (!rsDep.next())
+            { // Lo pongo como deposito
+                psStkAbo.setInt(1,dtCon1.getInt("cci_codi"));
+                psStkAbo.setInt(2, dtCon1.getInt("pro_codi"));
+                psStkAbo.setInt(3, dtCon1.getInt("prp_ano"));
+                psStkAbo.setString(4, dtCon1.getString("prp_seri"));
+                psStkAbo.setInt(5, dtCon1.getInt("prp_part"));
+                psStkAbo.setInt(6, dtCon1.getInt("prp_indi"));
+                psStkAbo.executeUpdate();
+            }
+        } while (dtCon1.next());
+        dtAdd.commit();
+    }
+             
     /**
      * Inserta en la tabla regalmacen las regularizaciones tipo inventario
      *
@@ -310,7 +407,7 @@ public class TrasInven extends ventanaPad implements PAD {
         
         setMensajePopEspere("Insertando Regularizaciones .... A esperar tocan ;-)",false);
         // Busco los productos en Inventario agrupandolos por Individuo.
-        s = "select c.alm_codi, l.pro_codi,prp_ano,l.prp_empcod,prp_seri,prp_part,prp_indi,a.pro_coinst, "
+        s = "select c.alm_codi, l.pro_codi,prp_ano,l.prp_empcod,prp_seri,prp_part,prp_indi,lci_depos,a.pro_coinst, "
                 + " sum(lci_peso) as lci_peso, "
                 + " sum(lci_kgsord) as lci_kgsord, "
                 + " sum (lci_numind) as lci_numind,i.ipr_prec "
@@ -329,7 +426,7 @@ public class TrasInven extends ventanaPad implements PAD {
                 + " AND i.cci_feccon::date = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "
                 + " and l.pro_codi = i.pro_codi "
                 + " and l.pro_codi = a.pro_codi "
-                + " group by c.alm_codi,i.ipr_prec,l.pro_codi,prp_ano, "
+                + " group by c.alm_codi,i.ipr_prec,l.pro_codi,prp_ano,lci_depos, "
                 + " l.prp_empcod,prp_seri,prp_part,prp_indi,pro_coinst ";
 
         if (!dtCon1.select(s))
@@ -341,6 +438,7 @@ public class TrasInven extends ventanaPad implements PAD {
 
         int nReg = 1;
         int rgsNume;
+        boolean swLeidoDep=opLeidoDep.isSelected();
         s = "SELECT max(rgs_nume) as rgs_nume FROM regalmacen  ";
         dtStat.select(s);
         rgsNume = dtStat.getInt("rgs_nume", true) + 1;
@@ -348,47 +446,23 @@ public class TrasInven extends ventanaPad implements PAD {
         int sbeCodi = 1;
         double kilosDeposito=0;
         do {          
-            if (opLeidoDep.isSelected())
-            {   // Busco si ese individuo se leyo en un alb. de deposito.
-                s="SELECT max(avc_fecalb) as avc_fecalb FROM v_albventa_detalle "+
-                        " WHERE avc_depos ='D' "+
-                        " and avl_fecalt < to_date('"+cci_fecconE.getText()+"','dd-MM-yyyy')"+
-                        " and pro_codi = "+dtCon1.getInt("pro_codi")+
-                        " and avp_ejelot= "+dtCon1.getInt("prp_ano")+
-                        " and avp_serlot= '"+ dtCon1.getString("prp_seri")+ "' "+
-                        " and avp_numpar = "+dtCon1.getInt("prp_part")+
-                        " and avp_numind = "+dtCon1.getInt("prp_indi");
-                dtStat.select(s); 
-                if (dtStat.getObject("avc_fecalb")!=null)
-                { // Compruebo si no esta en un albaran posterior que no es de deposito. (Posible Abono)
-                    s="SELECT avc_fecalb  FROM v_albventa_detalle "+
-                        " WHERE avc_fecalb > to_date('"+dtStat.getFecha("avc_fecalb","dd-MM-yyyy")+"','dd-MM-yyyy')"+
-                        " and avc_depos != 'D' "+ 
-                        " and pro_codi = "+dtCon1.getInt("pro_codi")+
-                        " and avp_ejelot= "+dtCon1.getInt("prp_ano")+
-                        " and avp_serlot= '"+ dtCon1.getString("prp_seri")+ "' "+
-                        " and avp_numpar = "+dtCon1.getInt("prp_part")+
-                        " and avp_numind = "+dtCon1.getInt("prp_indi"); 
-                    if (!dtStat.select(s))
-                    { // No tiene apuntes posteriores.
-                        // Por ultimo compruebo si no se ha entregado ya.
-                        dtAdd.addNew("invdepos");
-                        dtAdd.setDato("ind_fecha", cciFeccon);
-                        dtAdd.setDato("pro_codi", dtCon1.getInt("pro_codi"));
-                        dtAdd.setDato("eje_nume", dtCon1.getInt("prp_ano"));
-                        dtAdd.setDato("emp_codi", dtCon1.getInt("prp_empcod"));
-                        dtAdd.setDato("pro_serie", dtCon1.getString("prp_seri"));
-                        dtAdd.setDato("pro_nupar", dtCon1.getInt("prp_part"));
-                        dtAdd.setDato("pro_numind",  dtCon1.getInt("prp_indi"));
-                        dtAdd.setDato("ind_numuni", dtCon1.getInt("lci_numind"));
-                        dtAdd.setDato("alm_codi", dtCon1.getInt("alm_codi"));
-                        dtAdd.setDato("ind_kilos", dtCon1.getDouble("lci_peso"));
-                        dtAdd.update();
-                        kilosDeposito+=dtCon1.getDouble("lci_peso");
-                        continue;
-                    }              
-                }
-            }
+            if (dtCon1.getInt("lci_depos")!=0 && swLeidoDep)
+            {   
+                dtAdd.addNew("invdepos");
+                dtAdd.setDato("ind_fecha", cciFeccon);
+                dtAdd.setDato("pro_codi", dtCon1.getInt("pro_codi"));
+                dtAdd.setDato("eje_nume", dtCon1.getInt("prp_ano"));
+                dtAdd.setDato("emp_codi", dtCon1.getInt("prp_empcod"));
+                dtAdd.setDato("pro_serie", dtCon1.getString("prp_seri"));
+                dtAdd.setDato("pro_nupar", dtCon1.getInt("prp_part"));
+                dtAdd.setDato("pro_numind",  dtCon1.getInt("prp_indi"));
+                dtAdd.setDato("ind_numuni", dtCon1.getInt("lci_numind"));
+                dtAdd.setDato("alm_codi", dtCon1.getInt("alm_codi"));
+                dtAdd.setDato("ind_kilos", dtCon1.getDouble("lci_peso"));
+                dtAdd.update();
+                kilosDeposito+=dtCon1.getDouble("lci_peso");
+                continue;
+            }            
             almCodi = dtCon1.getInt("alm_codi");
             pRegAlm.setRegNume(++rgsNume);        
             pRegAlm.insRegistro(cciFeccon, dtCon1.getInt("pro_codi"),

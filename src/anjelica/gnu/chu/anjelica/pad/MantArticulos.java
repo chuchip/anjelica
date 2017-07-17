@@ -251,6 +251,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     cam_codiE.setColumnaAlias("cam_codi");
     sbe_codiE.setColumnaAlias("sbe_codi");
     pro_artconE.setColumnaAlias("pro_artcon");
+    pro_encajaE.setColumnaAlias("pro_encaja");
     pro_indtcoE.setColumnaAlias("pro_indtco");
     pro_envvacE.setColumnaAlias("pro_envvac");
     pro_activE.setColumnaAlias("pro_activ");
@@ -381,6 +382,7 @@ public class MantArticulos extends ventanaPad  implements PAD
       sbe_codiE.setValorInt(dtCon1.getInt("sbe_codi"));
       cam_codiE.setText(dtCon1.getString("cam_codi"));
       pro_artconE.setValor(dtCon1.getInt("pro_artcon"));
+      pro_encajaE.setValor(dtCon1.getInt("pro_encaja"));
       pro_indtcoE.setValor(dtCon1.getInt("pro_indtco"));
       pro_envvacE.setValor(dtCon1.getInt("pro_envvac"));
       pro_activE.setValor(dtCon1.getInt("pro_activ"));
@@ -491,6 +493,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     sbe_codiE.setEnabled(act);
     cam_codiE.setEnabled(act);
     pro_artconE.setEnabled(act);
+    pro_encajaE.setEnabled(act);
     pro_indtcoE.setEnabled(act);
     pro_envvacE.setEnabled(act);
     pro_activE.setEnabled(act);
@@ -607,6 +610,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     v.add(sbe_codiE.getStrQuery());
     v.add(cam_codiE.getStrQuery());
     v.add(pro_artconE.getStrQuery());
+    v.add(pro_encajaE.getStrQuery());
     v.add(pro_indtcoE.getStrQuery());
     v.add(pro_envvacE.getStrQuery());
     v.add(pro_activE.getStrQuery());
@@ -849,6 +853,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_stockE.setEnabled(false);
     pro_fulconE.setEnabled(false);
     pro_artconE.setValor("0");
+    pro_encajaE.setValor("-1");
     pro_indtcoE.setValor("-1");
     pro_envvacE.setValor("0");
     pro_activE.setValor("-1");
@@ -1045,6 +1050,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     dt.setDato("sbe_codi",sbe_codiE.getValorInt());
     dt.setDato("cam_codi",cam_codiE.getText());
     dt.setDato("pro_artcon", pro_artconE.getValor());
+    dt.setDato("pro_encaja", pro_encajaE.getValor());
     dt.setDato("pro_indtco", pro_indtcoE.getValor());
     dt.setDato("pro_envvac", pro_envvacE.getValor());
     dt.setDato("pro_activ", pro_activE.getValor());
@@ -1194,7 +1200,7 @@ public class MantArticulos extends ventanaPad  implements PAD
        Error("Error al imprimir albaran", k);
      }
    }
-/**
+   /**
      * Devuelve literal para Imprimir en etiquetas dependiendo si el producto es congelado
      * o no lo es.
      * @param codProd codigo de producto
@@ -1215,6 +1221,7 @@ public class MantArticulos extends ventanaPad  implements PAD
        conservarE = "Conservar a -18ºC";
      return conservarE;
    }
+  
    /**
     * Devuelve los kilos estimados para las unidades mandadas de un producto
     * @param codProd
@@ -1530,6 +1537,8 @@ public class MantArticulos extends ventanaPad  implements PAD
         cLabel37 = new gnu.chu.controles.CLabel();
         pro_cosincE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9.999");
         pro_codartE = new gnu.chu.camposdb.proPanel();
+        cLabel46 = new gnu.chu.controles.CLabel();
+        pro_encajaE = new gnu.chu.controles.CComboBox();
         Pdiscrim = new gnu.chu.camposdb.DiscProPanel();
         Pfamil = new gnu.chu.controles.CPanel();
         cLabel39 = new gnu.chu.controles.CLabel();
@@ -1731,7 +1740,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         Pinicio.add(cLabel10);
         cLabel10.setBounds(154, 100, 165, 18);
         Pinicio.add(pro_numcroE);
-        pro_numcroE.setBounds(400, 125, 35, 18);
+        pro_numcroE.setBounds(440, 125, 35, 18);
 
         cLabel11.setText("Tipo Articulo");
         Pinicio.add(cLabel11);
@@ -1761,9 +1770,9 @@ public class MantArticulos extends ventanaPad  implements PAD
         Pinicio.add(pro_oblfsaE);
         pro_oblfsaE.setBounds(0, 125, 180, 18);
 
-        cLabel13.setText("Congelado");
+        cLabel13.setText("Encajado");
         Pinicio.add(cLabel13);
-        cLabel13.setBounds(370, 100, 68, 18);
+        cLabel13.setBounds(180, 125, 60, 18);
 
         pro_artconE.addItem("No","0");
         pro_artconE.addItem("Si","-1");
@@ -1781,7 +1790,7 @@ public class MantArticulos extends ventanaPad  implements PAD
 
         cLabel16.setText("Nº Crotales Iguales");
         Pinicio.add(cLabel16);
-        cLabel16.setBounds(290, 125, 110, 18);
+        cLabel16.setBounds(330, 125, 110, 18);
         Pinicio.add(pro_cadcongE);
         pro_cadcongE.setBounds(320, 100, 35, 18);
 
@@ -1979,6 +1988,15 @@ public class MantArticulos extends ventanaPad  implements PAD
         pro_codartE.setAncTexto(70);
         Pinicio.add(pro_codartE);
         pro_codartE.setBounds(70, 50, 380, 18);
+
+        cLabel46.setText("Congelado");
+        Pinicio.add(cLabel46);
+        cLabel46.setBounds(370, 100, 68, 18);
+
+        pro_encajaE.addItem("No","0");
+        pro_encajaE.addItem("Si","-1");
+        Pinicio.add(pro_encajaE);
+        pro_encajaE.setBounds(240, 125, 51, 18);
 
         Ptab.addTab("Inicio", Pinicio);
         Ptab.addTab("Discriminadores", Pdiscrim);
@@ -2223,6 +2241,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CLabel cLabel43;
     private gnu.chu.controles.CLabel cLabel44;
     private gnu.chu.controles.CLabel cLabel45;
+    private gnu.chu.controles.CLabel cLabel46;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
@@ -2261,6 +2280,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CComboBox pro_costkmiE;
     private gnu.chu.controles.CTextField pro_deunveE;
     private gnu.chu.controles.CTextField pro_diacomE;
+    private gnu.chu.controles.CComboBox pro_encajaE;
     private gnu.chu.controles.CComboBox pro_envvacE;
     private gnu.chu.controles.CTextField pro_fecaltE;
     private gnu.chu.controles.CTextField pro_feulcoE;
@@ -2309,6 +2329,22 @@ public class MantArticulos extends ventanaPad  implements PAD
         return null;
 
      return dt.getInt("pro_artcon")!=0;
+   }
+    /**
+     * Devuelve si es encajdo o no.
+     * @param codProd codigo de producto
+     * @param dt DatosTabla sobre el que ejecutar la select
+     * @return boolean Null si no encuentra el producto.
+     *         true si es encajado. False si no.
+     * @throws SQLException
+     */
+    public static Boolean isEncajado(int codProd, DatosTabla dt) throws SQLException
+   {
+     String s = "select pro_encaja from v_articulo  where " +
+         "  pro_codi = " + codProd;
+     if (! dt.select(s))
+        return null;
+     return dt.getInt("pro_encaja",true)!=0;
    }
     /**
      *  Devuelve  si el producto influye en el dto comercial..
@@ -2402,6 +2438,16 @@ public class MantArticulos extends ventanaPad  implements PAD
 
      return dt.getDouble("pro_cosinc");
    }
+   public static double getPesoCaja(DatosTabla dt,int codProd) throws SQLException
+   {
+     String s = "select pro_kgcaj  from v_articulo  where " +
+         "  pro_codi = " + codProd;
+     if (! dt.select(s))
+        return 20;
+
+     return dt.getDouble("pro_kgcaj")==0?20:dt.getDouble("pro_kgcaj");
+   }
+  
    /**
      * Devuelve literal para Imprimir en etiquetas dependiendo si el producto es congelado
      * o no lo es.

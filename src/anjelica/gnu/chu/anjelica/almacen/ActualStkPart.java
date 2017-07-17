@@ -957,6 +957,7 @@ public class ActualStkPart
         " FROM v_coninvent as r,v_articulo as a " +
         " where lci_peso > 0 " +
         " and lci_regaut = 0 "+
+        " and lci_depos = 0 "+
         (almCodi==0?"":" and alm_codi = " + almCodi) +
         (pro_codi == 0 ? "" : " and r.pro_codi = " + pro_codi) +
          " and a.pro_codi = r.pro_codi " +

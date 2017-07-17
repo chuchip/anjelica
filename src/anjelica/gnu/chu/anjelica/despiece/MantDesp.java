@@ -1075,6 +1075,11 @@ public class MantDesp extends ventanaPad implements PAD
             if (utdesp.getFechaProduccion() != null)
                 deo_fecproE.setDate(utdesp.getFechaProduccion());
         }
+        if (deo_fecsacE.isNull())
+        {
+            if (utdesp.getFecSacrif()!= null)
+                deo_fecsacE.setDate(utdesp.getFecSacrif());
+        }
         
         if (deo_feccadE.isNull() && reset)
         {
@@ -1089,6 +1094,13 @@ public class MantDesp extends ventanaPad implements PAD
             deo_feccadE.requestFocusLater();
             return false;
         }
+        if (Formatear.comparaFechas(deo_fecproE.getDate(),deo_fecsacE.getDate() ) < 0)
+        {
+            mensajeErr("Fecha Produccion NO puede ser inferior a Sacrificio");
+            deo_fecsacE.requestFocusLater();
+            return false;
+        }
+
         if ((prv_codiE.isNull() || !prv_codiE.controla(true)) && reset)
         {
             mensajeErr("Proveedor del Despiece NO es Valido");
@@ -2685,6 +2697,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_desnueE.setSelected(dtStat.getString("deo_desnue", true).equals("S"));
                 deo_feccadE.setText(dtStat.getFecha("deo_feccad", "dd-MM-yyyy"));
                 deo_fecproE.setDate(dtStat.getDate("deo_fecpro"));
+                deo_fecsacE.setDate(dtStat.getDate("deo_fecsac"));
                 prv_codiE.setText(dtStat.getString("prv_codi"), true);
                 deo_ejlogeE.setText(dtStat.getString("deo_ejloge"));
                 deo_selogeE.setText(dtStat.getString("deo_seloge")); 
@@ -3425,7 +3438,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_fechaE.getDate(),
                 deo_fecproE.isNull() ? deo_fechaE.getDate() : deo_fecproE.getDate(),
                 jtLin.getValDate(linea, JTLIN_FECCAD),
-                utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
+                deo_fecsacE.getDate(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
                 jtLin.getValDate(linea, JTLIN_FECCAD),deo_numdesE.getValorInt());
             mensajeErr("Etiqueta ... Listada");
         } catch (Throwable ex)
@@ -3469,7 +3482,7 @@ public class MantDesp extends ventanaPad implements PAD
                 null,
                 deo_fecproE.getDate(),
                 deo_feccadE.getDate(), 
-                utdesp.fecSacrE);
+                deo_fecsacE.getDate() );
             etiq.setNumCopias(numCopiasE.getValorInt());
             etiq.listar(etiqueta.ETIQINT);
         
@@ -3563,7 +3576,18 @@ public class MantDesp extends ventanaPad implements PAD
      * @throws Exception
      */
     int guardaLinDespFin(int ejeLot, int empLot, String serLot, int numLot, int nInd,
-        int proCodi, double kilos, int numPiezas, int uniCaj, String feccad, int defOrden) throws Exception {
+        int proCodi, double kilos, int numPiezas, int uniCaj, String feccad, int defOrden) throws Exception 
+    {   
+        if (desorca!=null )
+        {
+            if (desorca.getDeoFeccad()==null)
+            { // Guardo Datos trazabilidad
+                desorca.setDeoFecsac(deo_fecsacE.getDate());
+                desorca.setDeoFecpro(deo_fecproE.getDate());
+                desorca.setDeoFeccad(deo_feccadE.getDate());
+                desorca.update(dtAdd);
+            }
+        }
         utdesp.iniciar(dtAdd, eje_numeE.getValorInt(), EU.em_cod,
             deo_almdesE.getValorInt(), deo_almoriE.getValorInt(), EU);
         utdesp.setTipoProduccion(deo_incvalE.getValor());
@@ -3684,6 +3708,7 @@ public class MantDesp extends ventanaPad implements PAD
         desorca.setTidCodi(tid_codiE.getValorInt());
         desorca.setDeoFeccad(deo_feccadE.getDate());
         desorca.setDeoFecpro(deo_fecproE.getDate() == null ? deo_fechaE.getDate() : deo_fecproE.getDate());
+        desorca.setDeoFecsac(deo_fecsacE.getDate());
         desorca.setPrvCodi(prv_codiE.getValorInt());
         desorca.setDeoDesnue(deo_desnueE.getSelecionChar());
         desorca.setDeoEjloge(deo_ejlogeE.getValorInt());
@@ -4069,6 +4094,8 @@ public class MantDesp extends ventanaPad implements PAD
         cLabel22 = new gnu.chu.controles.CLabel();
         deo_incvalE = new gnu.chu.controles.CComboBox();
         BForzarProd = new gnu.chu.controles.CButton(Iconos.getImageIcon("insertar"));
+        cLabel21 = new gnu.chu.controles.CLabel();
+        deo_fecsacE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
@@ -4507,7 +4534,7 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel6.setText("Fec. Cad.");
                 Pcabe.add(cLabel6);
-                cLabel6.setBounds(540, 70, 60, 17);
+                cLabel6.setBounds(540, 70, 55, 17);
 
                 deo_feccadE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_feccadE);
@@ -4534,16 +4561,16 @@ public class MantDesp extends ventanaPad implements PAD
                 Pcabe.add(cLabel10);
                 cLabel10.setBounds(1, 70, 70, 15);
 
-                cLabel7.setText("Produccion");
+                cLabel7.setText("Produc.");
                 Pcabe.add(cLabel7);
-                cLabel7.setBounds(400, 90, 70, 15);
+                cLabel7.setBounds(400, 90, 50, 15);
                 Pcabe.add(cli_codiE);
                 cli_codiE.setBounds(60, 90, 330, 17);
 
                 opSimular.setText("Simular");
                 opSimular.setToolTipText("Simula despiece");
                 Pcabe.add(opSimular);
-                opSimular.setBounds(590, 90, 80, 17);
+                opSimular.setBounds(550, 0, 80, 17);
 
                 cLabel22.setText("Cliente");
                 Pcabe.add(cLabel22);
@@ -4552,11 +4579,19 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_incvalE.addItem("No","N");
                 deo_incvalE.addItem("Si","S");
                 Pcabe.add(deo_incvalE);
-                deo_incvalE.setBounds(470, 90, 60, 17);
+                deo_incvalE.setBounds(450, 90, 60, 17);
 
                 BForzarProd.setToolTipText("Forzar Todos individuos a Produccion");
                 Pcabe.add(BForzarProd);
-                BForzarProd.setBounds(540, 90, 24, 18);
+                BForzarProd.setBounds(510, 90, 24, 18);
+
+                cLabel21.setText("Fec. Sacr.");
+                Pcabe.add(cLabel21);
+                cLabel21.setBounds(540, 90, 55, 17);
+
+                deo_fecsacE.setPreferredSize(new java.awt.Dimension(10, 18));
+                Pcabe.add(deo_fecsacE);
+                deo_fecsacE.setBounds(595, 90, 70, 17);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -4590,16 +4625,16 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel8.setText("Copias ");
                 Ppie.add(cLabel8);
-                cLabel8.setBounds(210, 2, 50, 17);
+                cLabel8.setBounds(205, 2, 45, 17);
                 Ppie.add(numCopiasE);
-                numCopiasE.setBounds(260, 2, 40, 17);
+                numCopiasE.setBounds(250, 2, 30, 17);
                 Ppie.add(eti_codiE);
                 eti_codiE.setBounds(120, 2, 80, 17);
 
                 opVerGrupo.setText("Ver Grupo");
                 opVerGrupo.setToolTipText("Ver grupo de despiece");
                 Ppie.add(opVerGrupo);
-                opVerGrupo.setBounds(400, 2, 75, 17);
+                opVerGrupo.setBounds(400, 2, 80, 17);
 
                 opVerAgrup.setText("Agrupar");
                 opVerAgrup.setToolTipText("Ver Lineas agrupadas");
@@ -5077,6 +5112,7 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel cLabel19;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel20;
+    private gnu.chu.controles.CLabel cLabel21;
     private gnu.chu.controles.CLabel cLabel22;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel5;
@@ -5108,6 +5144,7 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField deo_feccadE;
     private gnu.chu.controles.CTextField deo_fechaE;
     private gnu.chu.controles.CTextField deo_fecproE;
+    private gnu.chu.controles.CTextField deo_fecsacE;
     private gnu.chu.controles.CComboBox deo_incvalE;
     private gnu.chu.controles.CTextField deo_kilosE;
     private gnu.chu.controles.CComboBox deo_lotnueE;

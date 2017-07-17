@@ -323,7 +323,7 @@
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="400" y="125" width="35" height="18"/>
+                      <AbsoluteConstraints x="440" y="125" width="35" height="18"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -390,11 +390,11 @@
                 </Component>
                 <Component class="gnu.chu.controles.CLabel" name="cLabel13">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Congelado"/>
+                    <Property name="text" type="java.lang.String" value="Encajado"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="370" y="100" width="68" height="18"/>
+                      <AbsoluteConstraints x="180" y="125" width="60" height="18"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -434,7 +434,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="290" y="125" width="110" height="18"/>
+                      <AbsoluteConstraints x="330" y="125" width="110" height="18"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -975,6 +975,26 @@
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="70" y="50" width="380" height="18"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CLabel" name="cLabel46">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Congelado"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="370" y="100" width="68" height="18"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="gnu.chu.controles.CComboBox" name="pro_encajaE">
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="pro_encajaE.addItem(&quot;No&quot;,&quot;0&quot;);&#xa;pro_encajaE.addItem(&quot;Si&quot;,&quot;-1&quot;);"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                      <AbsoluteConstraints x="240" y="125" width="51" height="18"/>
                     </Constraint>
                   </Constraints>
                 </Component>

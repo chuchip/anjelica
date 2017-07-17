@@ -51,7 +51,9 @@ public class MantPreMedios extends ventana
    Hashtable<Integer,Double> htBolas = new Hashtable();
    Hashtable<Integer,Integer[]> htLomos = new Hashtable();
    Hashtable<Integer,Boolean> htLomCom = new Hashtable();
-    
+   private final int COD_BOLAFIN=40299;
+   private final int COD_BOLAINICIO=40200;
+   
 //   final double PRECIO_DESP=2.8;
    public MantPreMedios(EntornoUsuario eu, Principal p)
   {
@@ -102,7 +104,7 @@ public class MantPreMedios extends ventana
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2017-06-21" );
+      this.setVersion("2017-07-12" );
       statusBar = new StatusBar(this);
       
       iniciarFrame();
@@ -182,38 +184,39 @@ public class MantPreMedios extends ventana
         try
         {
             jtBolas.removeAllDatos();
-           String s="select a.pro_codi,sum(avp_canti) as kilos from v_albventa_detalle as a , clientes as c,v_despfin as d where a.cli_codi=c.cli_codi "+
+           String s="select a.pro_codi,sum(avp_canti) as kilos from v_albventa_detalle as a , "
+               + "clientes as c,v_despfin as d where a.cli_codi=c.cli_codi "+
             " and avc_fecalb>='"+tar_feciniE.getFechaDB()+"'"+ //  -- Lunes
-            " and (a.pro_codi>=40201 and a.pro_codi<=40299) "+
-            " and d.def_serlot='G' "+
-            " and a.pro_codi=d.pro_codi and a.avp_ejelot=d.def_ejelot and a.avp_serlot=d.def_serlot and a.avp_numpar=d.pro_lote and a.avp_numind = d.pro_numind "+
+            " and (a.pro_codi>="+COD_BOLAINICIO+" and a.pro_codi<="+COD_BOLAFIN+") "+
+            //" and d.def_serlot='G' "+
+            " and a.pro_codi=d.pro_codi and "
+               + "a.avp_ejelot=d.def_ejelot and a.avp_serlot=d.def_serlot and a.avp_numpar=d.pro_lote"
+               + " and a.avp_numind = d.pro_numind "+
             " and d.def_tiempo>='"+tar_feciniE.getFechaDB()+"' " + // Lunes
             " group  by a.pro_codi"+
             " order by pro_codi";
            String s1;
-           if (!dtCon1.select(s))
-           {
-               msgBox("NO ENCONTRADOS DATOS");
-               return;
+           if (dtCon1.select(s))
+           {           
+            do
+            {
+                ArrayList v=new ArrayList();
+                v.add(dtCon1.getInt("pro_codi"));
+                v.add(MantArticulos.getNombProd(dtCon1.getInt("pro_codi"), dtStat));
+                s1="select sum(def_kilos) as kilos from v_despsal where pro_codi = "+dtCon1.getInt("pro_codi")+
+                    " and deo_fecha between '"+tar_feciniE.getFechaDB()+"' and '"+fecFinComE.getFechaDB()+"'";
+                dtStat.select(s1);
+                v.add(dtStat.getDouble("kilos",true)); // Kilos producidos
+                v.add(dtStat.getDouble("kilos",true)-dtCon1.getDouble("kilos",true)); // Kilos a despiezados
+                v.add(dtCon1.getDouble("kilos",true));
+                double precio=htBolas.get(dtCon1.getInt("pro_codi"));
+                v.add(precio);
+                double importeVenta=dtCon1.getDouble("kilos",true)*precio;
+                double importeDesp=(dtStat.getDouble("kilos",true)-dtCon1.getDouble("kilos",true))*precioBolaE.getValorDec();
+                v.add((importeVenta+importeDesp)/dtStat.getDouble("kilos",true));
+                jtBolas.addLinea(v);
+            } while (dtCon1.next());
            }
-           do
-           {
-               ArrayList v=new ArrayList();
-               v.add(dtCon1.getInt("pro_codi"));
-               v.add(MantArticulos.getNombProd(dtCon1.getInt("pro_codi"), dtStat));
-               s1="select sum(def_kilos) as kilos from v_despsal where pro_codi = "+dtCon1.getInt("pro_codi")+
-                   " and deo_fecha between '"+tar_feciniE.getFechaDB()+"' and '"+fecFinComE.getFechaDB()+"'";
-               dtStat.select(s1);
-               v.add(dtStat.getDouble("kilos",true)); // Kilos producidos
-               v.add(dtStat.getDouble("kilos",true)-dtCon1.getDouble("kilos",true)); // Kilos a despiezados
-               v.add(dtCon1.getDouble("kilos",true));
-               double precio=htBolas.get(dtCon1.getInt("pro_codi"));
-               v.add(precio);
-               double importeVenta=dtCon1.getDouble("kilos",true)*precio;
-               double importeDesp=(dtStat.getDouble("kilos",true)-dtCon1.getDouble("kilos",true))*precioBolaE.getValorDec();
-               v.add((importeVenta+importeDesp)/dtStat.getDouble("kilos",true));
-               jtBolas.addLinea(v);
-           } while (dtCon1.next());
            jtLomos.removeAllDatos();
            
            List<Integer> stLomos= Collections.list(htLomos.keys());

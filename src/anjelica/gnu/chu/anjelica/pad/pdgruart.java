@@ -11,16 +11,17 @@ import javax.swing.BorderFactory;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
 import java.awt.event.*;
+import java.net.UnknownHostException;
 /**
  *
  * <p>Título: pdgruart </p>
  * <p>Descripción: Mantenimiento Grupos de  Articulos</p>
  * <p>Empresa: miSL</p>
- * <p>Copyright: Copyright (c) 2005-2014
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
- *  o bien (según su elección) de cualquier versión posterior.
+ *  o bien (según su elección) de cualquier Fsión posterior.
  *  Este programa se distribuye con la esperanza de que sea útil,
  *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
  *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
@@ -34,6 +35,7 @@ import java.awt.event.*;
  */
 public class pdgruart  extends ventanaPad  implements PAD
 {
+  final int JT_ORDEN=1;
   int focus_grid=-1;
   boolean swVerLin=false;
   String s;
@@ -47,13 +49,16 @@ public class pdgruart  extends ventanaPad  implements PAD
   CLabel cLabel6 = new CLabel();
   CTextField tla_diagfeE = new CTextField(Types.DECIMAL, "#9");
   CLabel cLabel1 = new CLabel();
-  CLabel cLabel7 = new CLabel();
+  CLabel tla_diagfeL = new CLabel();
   CComboBox tla_vekgcaE = new CComboBox();
   CTextField tla_codiE = new CTextField(Types.DECIMAL, "#9");
-  CLabel cLabel5 = new CLabel();
+  CLabel tla_vekgcaL = new CLabel();
   CTextField tla_nombE = new CTextField(Types.CHAR, "X", 60);
+  CLabel cam_codiL = new CLabel("Camara");
+  CLinkBox cam_codiE = new CLinkBox();
   CGridEditable jtCab = new CGridEditable(2)
   {
+    @Override
     public void afterCambiaLineaDis(int nRow)
     {
       if (nav.pulsado==navegador.EDIT || nav.pulsado==navegador.ADDNEW)
@@ -66,6 +71,7 @@ public class pdgruart  extends ventanaPad  implements PAD
       }
     }
 
+    @Override
     public void afterCambiaLinea()
     {
       try
@@ -78,6 +84,7 @@ public class pdgruart  extends ventanaPad  implements PAD
       }
     }
 
+    @Override
     public int cambiaLinea(int row, int col)
     {
       try {
@@ -89,6 +96,7 @@ public class pdgruart  extends ventanaPad  implements PAD
       return -1;
     }
 
+    @Override
     public boolean deleteLinea(int row, int col)
     {
       try {
@@ -104,6 +112,7 @@ public class pdgruart  extends ventanaPad  implements PAD
   };
   CGridEditable jtLin = new CGridEditable(2)
   {
+    @Override
     public void cambiaColumna(int col, int colNueva, int row)
     {
       try
@@ -117,11 +126,11 @@ public class pdgruart  extends ventanaPad  implements PAD
       }
     }
 
+    @Override
     public int cambiaLinea(int row, int col)
     {
       return cambiaLineaJtLin(row);
     }
-
   };
 //  CButton Baceptar = new CButton("Aceptar");
 //  CButton Bcancelar = new CButton("Cancelar");
@@ -171,7 +180,7 @@ public class pdgruart  extends ventanaPad  implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(553, 440));
-    this.setVersion("2006-01-21");
+    this.setVersion("2017-07-10");
     strSql = "SELECT * FROM tilialca "+getOrderQuery();
 
     statusBar = new StatusBar(this);
@@ -181,25 +190,34 @@ public class pdgruart  extends ventanaPad  implements PAD
     confGrids();
     Pprinc.setLayout(gridBagLayout1);
     Pcabe.setBorder(BorderFactory.createRaisedBevelBorder());
-    Pcabe.setMaximumSize(new Dimension(537, 44));
-    Pcabe.setMinimumSize(new Dimension(537, 44));
-    Pcabe.setPreferredSize(new Dimension(537, 44));
+    Pcabe.setMaximumSize(new Dimension(537, 64));
+    Pcabe.setMinimumSize(new Dimension(537, 64));
+    Pcabe.setPreferredSize(new Dimension(537, 64));
     Pcabe.setLayout(null);
     tla_nombE.setMayusc(true);
     cLabel6.setRequestFocusEnabled(true);
-    cLabel6.setToolTipText("N�mero Lineas a Imprimir por grupo");
+    cLabel6.setToolTipText("Número Lineas a Imprimir por grupo");
     cLabel6.setText("No. Lineas Por Grupo");
     cLabel6.setBounds(new Rectangle(383, 20, 119, 17));
     tla_diagfeE.setToolTipText("Agrupar Fechas Caducidad en grupos de N dias");
-    tla_diagfeE.setText(" 0");
+    cam_codiE.setAncTexto(25);
+    cam_codiE.setFormato(Types.CHAR,"X",2);
+    cam_codiE.setMayusculas(true);
+    
+    cam_codiE.setPreferredSize(new java.awt.Dimension(250, 17));
+    cam_codiL.setBounds(new Rectangle(5, 40, 60, 17));
+    cam_codiE.setBounds(new Rectangle(70, 40, 250, 17));
+    
     tla_diagfeE.setBounds(new Rectangle(315, 20, 26, 17));
     cLabel1.setText("Tipo Listado");
     cLabel1.setBounds(new Rectangle(4, 2, 70, 17));
-    cLabel7.setToolTipText("Agrupar Fechas Caducidad en grupos de N dias");
-    cLabel7.setText("Agrupar Fecha Caducidad");
-    cLabel7.setBounds(new Rectangle(164, 20, 151, 17));
-    cLabel5.setText("Ver");
-    cLabel5.setBounds(new Rectangle(5, 20, 31, 17));
+    
+    tla_diagfeL.setToolTipText("Agrupar Fechas Caducidad en grupos de N dias");
+    tla_diagfeL.setText("Agrupar Caducidad");
+    tla_diagfeL.setBounds(new Rectangle(184, 20, 131, 17));
+    
+    tla_vekgcaL.setText("Ver");
+    tla_vekgcaL.setBounds(new Rectangle(5, 20, 31, 17));
     tla_nuliprE.setToolTipText("Número Lineas a Imprimir por grupo");
     tla_nuliprE.setBounds(new Rectangle(503, 20, 27, 17));
     Baceptar.setMaximumSize(new Dimension(112, 28));
@@ -221,11 +239,13 @@ public class pdgruart  extends ventanaPad  implements PAD
     Pcabe.add(tla_nombE, null);
     Pcabe.add(tla_codiE, null);
     Pcabe.add(tla_nuliprE, null);
-    Pcabe.add(cLabel5, null);
+    Pcabe.add(tla_vekgcaL, null);
     Pcabe.add(tla_vekgcaE, null);
     Pcabe.add(cLabel6, null);
     Pcabe.add(tla_diagfeE, null);
-    Pcabe.add(cLabel7, null);
+    Pcabe.add(cam_codiE, null);
+    Pcabe.add(cam_codiL, null);
+    Pcabe.add(tla_diagfeL, null);
     Pcabe.add(Birgrid, null);
     Pprinc.add(jtCab,   new GridBagConstraints(0, 1, 2, 1, 2.0, 2.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 1, 0, 3), 0, 0));
@@ -237,8 +257,10 @@ public class pdgruart  extends ventanaPad  implements PAD
             ,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(6, 4, 3, 0), 0, 0));
   }
 
+  @Override
   public void iniciarVentana() throws Exception
   {
+    cam_codiE.setColumnaAlias("cam_codi");
     tla_codiE.setColumnaAlias("tla_codi");
     tla_nombE.setColumnaAlias("tla_nomb");
     tla_nuliprE.setColumnaAlias("tla_nulipr");
@@ -246,7 +268,7 @@ public class pdgruart  extends ventanaPad  implements PAD
     tla_vekgcaE.setColumnaAlias("tla_vekgca");
 
 
-    Pcabe.setButton(KeyEvent.VK_F2,Birgrid);
+    Pcabe.setButton(KeyEvent.VK_F2,Birgrid);    
     jtCab.setButton(KeyEvent.VK_F2,Birgrid);
     jtLin.setButton(KeyEvent.VK_F2,Birgrid);
     Pcabe.setDefButton(Baceptar);
@@ -262,6 +284,7 @@ public class pdgruart  extends ventanaPad  implements PAD
   {
     Birgrid.addFocusListener(new FocusAdapter()
     {
+      @Override
       public void focusGained(FocusEvent e)
       {
         Birgrid_focusGained();
@@ -269,9 +292,12 @@ public class pdgruart  extends ventanaPad  implements PAD
     });
     jtCab.addMouseListener(new MouseAdapter()
     {
+      @Override
       public void mouseClicked(MouseEvent e)
       {
         try {
+          if (jtCab.isEnabled())
+              return;
           Birgrid_focusGained();
         } catch (Exception k)
         {
@@ -281,8 +307,11 @@ public class pdgruart  extends ventanaPad  implements PAD
     });
     jtLin.addMouseListener(new MouseAdapter()
     {
+      @Override
       public void mouseClicked(MouseEvent e)
       {
+       if (jtLin.isEnabled())
+              return;
         Birgrid_focusGained();
       }
     });
@@ -291,60 +320,59 @@ public class pdgruart  extends ventanaPad  implements PAD
   {
     if (nav.pulsado != navegador.EDIT && nav.pulsado != navegador.ADDNEW)
           return;
-    try {
-      if (focus_grid == 0)
-      {
-        irGridInicio();
-        return;
-      }
-      if (focus_grid == 2)
-      {
-        irGridCab();
-        return;
-      }
-      if (focus_grid == 1)
-      {
+    if (jtCab.isEnabled())
+    {
         irGridLin();
         return;
-      }
-    } catch (Exception k)
-    {
-      Error("Error al Ir a Grid",k);
     }
+    if (!jtCab.isEnabled())
+    {
+        if (jtLin.isEnabled())
+            irGridCab();
+        else
+            irGridInicio();
+    }  
+      
+   
   }
 
   void irGridLin()
   {
-    jtCab.procesaAllFoco();
+    jtCab.salirGrid();
     if (jtCab.getValString(0).trim().equals(""))
     {
-      mensaje("Introduzca una descripcion para poder introducir sus productos");
+      mensaje("Introduzca una descripcion para poder introducir sus lineas de productos");
+      jtCab.requestFocusLater();
       return;
     }
     jtCab.setEnabled(false);
     jtLin.setEnabled(true);
     jtLin.requestFocusInicio();
-    focus_grid = 2;
+   
   }
 
-  void irGridCab() throws Exception
+  void irGridCab() 
   {
-
-    int nCol = cambiaLineaJtLin(jtLin.getSelectedRow());
-    if (nCol >= 0)
-    {
-      jtLin.requestFocusLater(jtLin.getSelectedRow(), nCol);
-      return;
-    }
-    jtLin.setEnabled(false);
-    guardaGridLin();
-    jtCab.setEnabled(true);
-    jtCab.requestFocusLater();
-    focus_grid = 1;
+      try
+      {
+          int nCol = cambiaLineaJtLin(jtLin.getSelectedRow());
+          if (nCol >= 0)
+          {
+              jtLin.requestFocusLater(jtLin.getSelectedRow(), nCol);
+              return;
+          }
+          jtLin.setEnabled(false);
+          guardaGridLin();  
+          jtCab.setEnabled(true);
+          jtCab.requestFocusLater();
+      } catch (SQLException | UnknownHostException ex)
+      {
+          Error("Error al ir a grid Cabecera", ex);
+      }
 
   }
 
-  void guardaGridLin() throws Exception
+  void guardaGridLin() throws SQLException, UnknownHostException
   {
     int col;
     if ( (col = cambiaLineaJtLin(jtLin.getSelectedRow())) >= 0)
@@ -408,8 +436,26 @@ public class pdgruart  extends ventanaPad  implements PAD
 
     return tlaOrden;
   }
-
-  private void guardaCabe() throws Exception
+  private void ordenarLineas() throws SQLException
+  {
+     int nLin=jtCab.getRowCount();
+     for (int n=1;n<=nLin;n++)
+     {
+         s="update tilialgr set tla_orden = "+(n*1000)+" where tla_codi = "+ tla_codiE.getValorInt()+
+             " and tla_orden = "+jtCab.getValorInt(n-1,JT_ORDEN);
+         dtAdd.executeUpdate(s);
+         s="update tilialpr set tla_orden = "+(n*1000)+" where tla_codi = "+ tla_codiE.getValorInt()+
+             " and tla_orden = "+jtCab.getValorInt(n-1,JT_ORDEN);
+         dtAdd.executeUpdate(s);
+     }
+     s="update tilialgr set tla_orden = tla_orden/1000  where tla_codi = "+ tla_codiE.getValorInt();
+     dtAdd.executeUpdate(s);
+     s="update tilialpr set tla_orden =  tla_orden/1000  where tla_codi = "+ tla_codiE.getValorInt();
+     dtAdd.executeUpdate(s);
+     dtAdd.commit();     
+  }
+  
+  private void guardaCabe() throws SQLException, UnknownHostException
   {
     if (!selectRegPant(dtAdd,true))
     {
@@ -424,6 +470,7 @@ public class pdgruart  extends ventanaPad  implements PAD
     dtAdd.setDato("tla_nulipr",tla_nuliprE.getValorInt());
     dtAdd.setDato("tla_diagfe",tla_diagfeE.getValorInt());
     dtAdd.setDato("tla_vekgca",tla_vekgcaE.getValor());
+    dtAdd.setDato("cam_codi",cam_codiE.isNull()?null:cam_codiE.getText());
     dtAdd.update();
   }
   int getMaxCod() throws SQLException
@@ -436,7 +483,8 @@ public class pdgruart  extends ventanaPad  implements PAD
   {
     if (!checkCabe())
       return;
-    focus_grid=1;
+    jtCab.setEnabled(true);
+    jtLin.setEnabled(false);
     jtCab.requestFocusInicio();
   }
   boolean checkCabe()
@@ -456,17 +504,20 @@ public class pdgruart  extends ventanaPad  implements PAD
     }
     return true;
   }
+  @Override
   public void afterConecta() throws SQLException, java.text.ParseException
   {
+    tla_vekgcaE.addItem("Ambos", "A");
     tla_vekgcaE.addItem("Unid", "U");
     tla_vekgcaE.addItem("Kilos", "K");
+    gnu.chu.anjelica.pad.pdconfig.llenaDiscr(dtStat,cam_codiE,"AC",EU.em_cod);
   }
 
   private void confGrids() throws Exception
   {
-    Vector v = new Vector();
-    v.addElement("Descr. Grupo");
-    v.addElement("Orden");
+    ArrayList v = new ArrayList();
+    v.add("Descr. Grupo");
+    v.add("Orden");
     jtCab.setCabecera(v);
     jtCab.setMaximumSize(new Dimension(535, 146));
     jtCab.setMinimumSize(new Dimension(535, 146));
@@ -474,14 +525,14 @@ public class pdgruart  extends ventanaPad  implements PAD
     jtCab.setAlinearColumna(new int[] {0, 2});
     jtCab.setAnchoColumna(new int[] {150, 20});
     tla_ordenE.setEnabled(false);
-    Vector vc = new Vector();
-    jtLin.setDebugGraphicsOptions(0);
+        
     jtLin.setMaximumSize(new Dimension(537, 104));
     jtLin.setMinimumSize(new Dimension(537, 104));
     jtLin.setPreferredSize(new Dimension(537, 104));
     jtLin.setPonValoresInFocus(true);
-    vc.add(pro_descE);
-    vc.add(tla_ordenE);
+    ArrayList vc = new ArrayList();
+    vc.add(pro_descE); // 0 
+    vc.add(tla_ordenE); // 1
     jtCab.setCampos(vc);
     jtCab.setAjustarGrid(true);
     pro_codiE.iniciar(dtStat, this, vl, EU);
@@ -525,6 +576,7 @@ public class pdgruart  extends ventanaPad  implements PAD
       tla_nombE.setText(dtCon1.getString("tla_nomb"));
       tla_nuliprE.setValorInt(dtCon1.getInt("tla_nulipr"));
       tla_diagfeE.setValorInt(dtCon1.getInt("tla_diagfe"));
+      cam_codiE.setText(dtCon1.getString("cam_codi"));
       tla_vekgcaE.setValor(dtCon1.getString("tla_vekgca"));
       jtCab.removeAllDatos();
       jtLin.removeAllDatos();
@@ -592,27 +644,28 @@ public class pdgruart  extends ventanaPad  implements PAD
     s = "select * from tilialca WHERE tla_codi = " + tla_codiE.getValorInt();
     return dt.select(s,block);
   }
-
+ @Override
   public void PADPrimero()
   {
     verDatos();
   }
-
+ @Override
   public void PADAnterior()
   {
     verDatos();
   }
 
+  @Override
   public void PADSiguiente()
   {
     verDatos();
   }
-
+ @Override
   public void PADUltimo()
   {
     verDatos();
   }
-
+ @Override
   public void PADQuery()
   {
     Pcabe.setQuery(true);
@@ -641,6 +694,7 @@ public class pdgruart  extends ventanaPad  implements PAD
 
       v.add(tla_nombE.getStrQuery());
       v.add(tla_diagfeE.getStrQuery());
+      v.add(cam_codiE.getStrQuery());
       v.add(tla_vekgcaE.getStrQuery());
       v.add(tla_nuliprE.getStrQuery());
       s=Pcabe.getStrQuery();
@@ -705,23 +759,31 @@ public class pdgruart  extends ventanaPad  implements PAD
     activar(true);
     mensaje("Modificando registro Actual ... ");
     jtLin.setEnabled(false);
+    jtCab.setEnabled(false);
     tla_codiE.setEnabled(false);
-    Bcancelar.setEnabled(false);
-    focus_grid=0;
+    Bcancelar.setEnabled(false);    
     nav.pulsado=navegador.EDIT;
     tla_nombE.requestFocus();
   }
 
+  @Override
   public void ej_edit1()
   {
     try
     {
-      guardaCabe();
+      if (jtLin.isEnabled())
+          irGridCab();
+      else
+      {
+        guardaCabe();
+      }
+      ordenarLineas();
       resetBloqueo(dtAdd, "tilialca", tla_codiE.getText(), false);
       ctUp.commit();
       mensajeErr("REGISTRO ... MODIFICADO");
       mensaje("");
       activaTodo();
+      verDatos();
       nav.pulsado = navegador.NINGUNO;
     }
     catch (Exception k)
@@ -733,6 +795,7 @@ public class pdgruart  extends ventanaPad  implements PAD
   {
   }
 
+  @Override
   public void PADAddNew()
   {
     try {
@@ -757,7 +820,7 @@ public class pdgruart  extends ventanaPad  implements PAD
     Pprinc.resetTexto();
     tla_codiE.setEnabled(false);
     jtLin.setEnabled(false);
-    focus_grid=0;
+    jtCab.setEnabled(true);
     swVerLin=true;
     tla_nombE.requestFocus();
   }
@@ -801,11 +864,13 @@ public class pdgruart  extends ventanaPad  implements PAD
     return false;
   }
 
+  @Override
   public void ej_addnew1()
   {
     try
     {
       guardaCabe();
+      ordenarLineas();
       resetBloqueo(dtAdd, "tilialca", tla_codiE.getText(), false);
       ctUp.commit();
       mensajeErr("REGISTRO ... MODIFICADO");
@@ -816,9 +881,11 @@ public class pdgruart  extends ventanaPad  implements PAD
         rgSelect();
         verDatos();
       }
+      else
+        verDatos();
       activaTodo();
     }
-    catch (Exception k)
+    catch (SQLException | UnknownHostException k)
     {
       Error("Error al INSERTAR registro", k);
     }
@@ -929,6 +996,7 @@ public class pdgruart  extends ventanaPad  implements PAD
     tla_nombE.setEnabled(b);
     tla_nuliprE.setEnabled(b);
     tla_diagfeE.setEnabled(b);
+    cam_codiE.setEnabled(b);
     tla_vekgcaE.setEnabled(b);
     jtCab.setEnabled(b);
     jtLin.setEnabled(b);

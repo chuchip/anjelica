@@ -913,7 +913,7 @@ public class Comvalm extends ventana
             opCostFij.setText("Costos Fijos");
             opCostFij.setToolTipText("Usar Costos Fijos Desp.");
             Pentra.add(opCostFij);
-            opCostFij.setBounds(340, 45, 90, 23);
+            opCostFij.setBounds(340, 45, 88, 17);
 
             Bacepta.setText("Aceptar");
             Bacepta.setToolTipText("");

@@ -6,6 +6,7 @@ package gnu.chu.anjelica.compras;
  * <p>Descripción: Mantenimiento Albaranes de Compra</p>
  * <p>Parametros: modPrecio Indica si se puede modificar los precios del albaran.
  *  admin: Modo Aministrador.
+ *  reclas: Reclasficiacion piezas (F6)
  *  AlbSinPed true/False Indica si se pueden cargar albaranes sin un pedido de compras
  * </p>
  * <p> Creado a partir pdalbaco2</p>
@@ -400,6 +401,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   CLabel prv_codiL1 = new CLabel();
   CCheckBox opBloquea = new CCheckBox();
   boolean ARG_ADMIN=false;
+  boolean ARG_RECLAS=true;
   boolean ARG_MODPRECIO=false;
   boolean ARG_ALBSINPED=false;
   //private int ARG_TIPOETIQ=etiqueta.NORMAL;
@@ -652,24 +654,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 
     try
     {
-      if (ht != null)
-      {
-//        if (ht.get("tipoEtiq") != null)
-//          ARG_TIPOETIQ = Integer.parseInt(ht.get("tipoEtiq").toString());
-        if (ht.get("modPrecio") != null)
-          ARG_MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
-        if (ht.get("admin") != null)
-          ARG_ADMIN = Boolean.parseBoolean(ht.get("admin"));
-        if (ht.get("AlbSinPed") != null)
-          ARG_ALBSINPED = Boolean.parseBoolean(ht.get("AlbSinPed"));
-
-        if (ARG_ADMIN)
-        {
-          ARG_ALBSINPED=true;
-          ARG_MODPRECIO = true;
-        }
-
-      }
+      ponParametros(ht);
+      
       setTitulo("Mantenimiento Albaranes Compras");
 
       if (jf.gestor.apuntar(this))
@@ -696,34 +682,40 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 
     try
     {
-      if (ht != null)
-      {
-//        if (ht.get("tipoEtiq") != null)
-//          ARG_TIPOETIQ = Integer.parseInt(ht.get("tipoEtiq").toString());
-        if (ht.get("modPrecio") != null)
-          ARG_MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
-        if (ht.get("admin") != null)
-          ARG_ADMIN = Boolean.parseBoolean(ht.get("admin"));
-        if (ht.get("AlbSinPed") != null)
-          ARG_ALBSINPED = Boolean.parseBoolean(ht.get("AlbSinPed"));
-
-        if (ARG_ADMIN)
-        {
-          ARG_ALBSINPED=true;
-          ARG_MODPRECIO = true;
-        }
-      }
+      ponParametros(ht);
       setTitulo("Mantenimiento Albaranes Compras");
       jf=null;
       jbInit();
     }
     catch (Exception e)
-    {
-      Logger.getLogger(MantAlbCom.class.getName()).log(Level.SEVERE, null, e);
+    {     
       setErrorInit(true);
     }
   }
+  
+    void ponParametros(Hashtable<String, String> ht) 
+    {
+        if (ht != null)
+        {
+//        if (ht.get("tipoEtiq") != null)
+//          ARG_TIPOETIQ = Integer.parseInt(ht.get("tipoEtiq").toString());
+            if (ht.get("modPrecio") != null)
+                ARG_MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
+            if (ht.get("admin") != null)
+                ARG_ADMIN = Boolean.parseBoolean(ht.get("admin"));
+            if (ht.get("AlbSinPed") != null)
+                ARG_ALBSINPED = Boolean.parseBoolean(ht.get("AlbSinPed"));
+            if (ht.get("reclas") != null)
+                ARG_RECLAS = Boolean.parseBoolean(ht.get("reclas"));
 
+            if (ARG_ADMIN)
+            {
+                ARG_RECLAS = true;
+                ARG_ALBSINPED = true;
+                ARG_MODPRECIO = true;
+            }
+        }
+    }
     boolean getIndAlbcompar(int nLiAlb, int nInd,DatosTabla dt) throws SQLException {
         // No lo encuentro por Num. Linea. Pruebo por Num. Individuo
         String ss = "SELECT * FROM v_albcompar " +
@@ -740,7 +732,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20170604)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20170711)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -3276,7 +3268,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     if (jt.getValorInt(0) == 0)
       jtDes.removeAllDatos();
     jt.setEnabled(false);
-    Bdesagr.setEnabled(ARG_ADMIN); // True si es modo administrador
+    Bdesagr.setEnabled(ARG_RECLAS);
     jtDes.setEnabled(true);
 
     if (jt.getValorInt(0)==0)
@@ -4104,7 +4096,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     BbusPed.setEnabled(b);
     cll_codiE.setEnabled(b);
     jt.setEnabled(b);
-    if (ARG_ADMIN)
+    if (ARG_RECLAS)
       Bdesagr.setEnabled(b);
     jtDes.setEnabled(b);
     Pcabe.setEnabled(b);

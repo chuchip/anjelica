@@ -790,7 +790,7 @@ public class MvtosAlma
        resetAcumulados();
        resetAcumMvtos();
        setLote(proLote);
-       String s = "SELECT mvt_tipdoc,mvt_tipo, sum(mvt_canti) as camvtnti,sum(mvt_unid) as unid, "+
+       String s = "SELECT mvt_tipdoc,mvt_tipo, sum(mvt_canti) as canti,sum(mvt_unid) as unid, "+
             " sum(mvt_canti* mvt_prenet)  as importe "+
              " from mvtosalm where "+
              "   mvt_canti <> 0 "+

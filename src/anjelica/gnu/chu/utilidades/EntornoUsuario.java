@@ -81,7 +81,7 @@ public class EntornoUsuario implements Serializable
   public String pathInstall="";
   private String usu_rese1;
   private String log4j=null;
-  private HashMap<String,Integer> htParam=new HashMap();
+  private HashMap<String,String> htParam=new HashMap();
   private HashMap<String,String> htPrinter=new HashMap();
   
 
@@ -260,7 +260,7 @@ public class EntornoUsuario implements Serializable
        {
         do
         {
-           htParam.put(dt.getString("par_nomb"),dt.getInt("par_valor"));
+           htParam.put(dt.getString("par_nomb"),dt.getString("par_valor"));
          } while (dt.next());
        }
        s="select par_nomb,par_valor from parametros where usu_nomb ='"+usuario+"'";
@@ -268,7 +268,7 @@ public class EntornoUsuario implements Serializable
        {
            do
            {
-               htParam.put(dt.getString("par_nomb"),dt.getInt("par_valor"));
+               htParam.put(dt.getString("par_nomb"),dt.getString("par_valor"));
            } while (dt.next());
        }
    }
@@ -288,17 +288,39 @@ public class EntornoUsuario implements Serializable
    {
        return usu_nomb;
    }
+   /**
+    * 
+    * @param param
+    * @param paramDef
+    * @return 
+    */
    public boolean getValorParam(String param,boolean paramDef)
    {
        if (htParam.get(param)==null)
            return paramDef;
-       return htParam.get(param)==0?false:true;
+       try {
+         return Integer.parseInt(htParam.get(param)) != 0;
+       } catch ( NumberFormatException k)
+       {
+           return paramDef;
+       }
    }
    public int getValorParam(String param,int paramDef)
    {
        if (htParam.get(param)==null)
            return paramDef;
-       return htParam.get(param);
+       try {
+        return  Integer.parseInt(htParam.get(param));
+       } catch ( NumberFormatException k)
+       {
+           return paramDef;
+       }
+   }
+   public String getValorParam(String param,String paramDef)
+   {
+       if (htParam.get(param)==null)
+           return paramDef;
+       return htParam.get(param);       
    }
    public void setParametrosConfiguracion(java.util.ResourceBundle paramConfig)
    {

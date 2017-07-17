@@ -2187,6 +2187,8 @@ public class Cgrid extends CPanel implements Serializable
     }
     /**
     * Funcinn que me busca la posicinn de una columna
+     * @param nomcol Nombre de Columna
+     * @return Numero de columna
     **/
     public int buscarPosicionColumna(String nomcol){
        int pos=-1;

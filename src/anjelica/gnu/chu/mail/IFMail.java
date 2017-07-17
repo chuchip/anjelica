@@ -37,6 +37,7 @@ import java.util.logging.Logger;
  * @version 1.0 Inicial
  */
 public class IFMail extends ventana {
+    private int idAlbaran;
     private ventana padre;
     lialbven liAlb = null;
     lisfactu liFra = null;
@@ -198,6 +199,10 @@ public class IFMail extends ventana {
             cli_emailE.resetTexto();
         }
     }
+     public void setIdAlbaran(int idAlb)
+    {
+        this.idAlbaran=idAlb;
+    }
     /**
      * Llena combo de correos con los correos del cliente.
      */
@@ -302,6 +307,7 @@ public class IFMail extends ventana {
             hm.put("%c", cli_codiE.getValorInt());
             hm.put("%a",asuntoE.getText());
             Principal.guardaMens(padre.dtCon1, "EF",hm,null,EU.usuario);
+            Principal.guardaRegistro(padre.dtCon1,"FVE",EU.usuario,idAlbaran,toEmailE.getText());
             cancelEmail();
             padre.mensajeErr("Email ..... Enviado");
         }
@@ -355,6 +361,7 @@ public class IFMail extends ventana {
             hm.put("%c", cli_codiE.getValorInt());
             hm.put("%a",asuntoE.getText());
             Principal.guardaMens(padre.dtCon1, "EA",hm,null,EU.usuario);
+            Principal.guardaRegistro(padre.dtCon1,"AVE",EU.usuario,idAlbaran,toEmailE.getText());
             cancelEmail();
             padre.mensajeErr("Email ..... Enviado");
         }

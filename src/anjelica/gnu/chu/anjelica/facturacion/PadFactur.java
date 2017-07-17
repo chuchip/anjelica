@@ -853,6 +853,7 @@ public class PadFactur extends ventanaPad   implements PAD {
             ifMail.setIconifiable(false);
             ifMail.setLocation(this.getLocation().x + 30, this.getLocation().x + 30);
             ifMail.setLisfactu(lifact);
+            ifMail.setIdAlbaran(fvc_idE.getValorInt());
             vl.add(ifMail, 1);
         }
         ifMail.setVisible(true);

@@ -547,6 +547,21 @@ public class Principal extends JFrame
   {
     guardaMens(dt1,codMens,ht,null,Usuario.usuario);
   }
+  public static void guardaRegistro(DatosTabla dt,String tipoReg,String usuario,int idDoc,String mensaje) throws SQLException  
+  {
+     guardaRegistro(dt,tipoReg,usuario,idDoc,mensaje,true);
+  }
+  public static void guardaRegistro(DatosTabla dt,String tipoReg,String usuario,int idDoc,String mensaje,boolean commit) throws SQLException
+  {
+      dt.addNew("registro",false);
+      dt.setDato("usu_nomb", usuario);
+      dt.setDato("reg_numdoc", idDoc);
+      dt.setDato("men_codi", tipoReg);
+      dt.setDato("reg_valor", mensaje);
+      dt.update();
+      if (commit)
+        dt.commit();
+  }
     /**
    * Guarda mensajes en la tabla histmens
    * @param codMens Codigo Mensaje

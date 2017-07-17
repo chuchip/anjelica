@@ -1289,6 +1289,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Pcabe.resetTexto();
     deo_incvalE.setEnabled(true);
     grd_unidE.setEnabled(true);
+    grd_unidE.setQuery(false);
     deo_blockE.addItem("Terminado","T");
     if (Integer.parseInt(Formatear.getFechaAct("MM"))>2)
         eje_numeE.setValorInt(EU.ejercicio);
@@ -1311,7 +1312,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
        v.add(deo_codiE.getStrQuery());
 //       v.add(pro_loteE.getStrQuery());
        v.add(grd_fechaE.getStrQuery());
-       v.add(grd_unidE.getStrQuery());
+      
        v.add(tid_codiE.getStrQuery());
        v.add(deo_incvalE.getStrQuery());
        if (!deo_blockE.getValor().equals("T"))
@@ -1321,6 +1322,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
            int kgLim=3;
            if (grd_unidE.getValorInt()!=0)
                kgLim=grd_unidE.getValorInt();
+           
           s+=" and deo_block = 'S' and  "
               + " deo_fecha >= current_date - 30 "
               + "and (select sum(def_kilos) from v_despfin as f  where o.deo_codi=f.deo_codi and o.eje_nume=f.eje_nume)+ "+kgLim+" >= "
@@ -3129,8 +3131,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
         return;
     if (kildifE.getValorDec() < -3)
     {
-        msgBox("Kilos diferencia son mayor de 3");
-        return;
+        int ret=mensajes.mensajeYesNo("Los Kilos  de diferencia son mayor de 3.CERRAR SEGURO?");
+        if (ret!=mensajes.YES)
+            return;
     }
     if (kildifE.getValorDec() > 0)
     {

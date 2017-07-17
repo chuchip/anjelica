@@ -674,7 +674,7 @@ public class lisfactu extends ventana  implements JRDataSource
             ifMail.setVisible(false);
             ifMail.setIconifiable(false);
             ifMail.setLocation(this.getLocation().x + 30, this.getLocation().x + 30);
-            ifMail.setLisfactu(this);
+            ifMail.setLisfactu(this);            
             vl.add(ifMail, 1);
         }
         ifMail.setVisible(true);
