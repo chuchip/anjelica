@@ -22,7 +22,7 @@ import net.sf.jasperreports.engine.JasperReport;
  * <p>Título: clrealve</p>
  * <p>Descripción: Consulta/Listado  Relación Albaranes de Ventas<br>
  * Permite consultar y listar ordenando por fecha y cliente
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -269,7 +269,7 @@ public class clrealve extends ventana
   private String getStrSql(String condWhere)
   {
     return "SELECT a.emp_codi, a.avc_ano, a.avc_serie, a.avc_nume,a.avc_fecalb,a.cli_codi, " +
-        " cl.cli_nomb,avc_impalb " +
+        " cl.cli_nomb,avc_impalb,a.avc_id " +
         "  FROM v_albavec as a,clientes as cl " +
         " WHERE cl.cli_codi = a.cli_codi " +
         condWhere+" ORDER BY  "+   (ordenE.getValor().equals("C")? "a.cli_codi,":"")+
@@ -289,6 +289,15 @@ public class clrealve extends ventana
                 "a.emp_codi,a.avc_ano,a.avc_serie,a.avc_nume";
             liAlb.impAlbaran(PcondBus.getEmpresa()==0?EU.em_cod:PcondBus.getEmpresa(),
                 dtStat, dtCon1, s, EU, valorado);
+             if (!dtCon1.select(s))
+                return;                
+              do
+              {          
+                     s= "update  v_albavec set avc_impres = 1 WHERE avc_id =" + dtCon1.getInt("avc_id");
+                     dtAdd.executeUpdate(s);
+                     Principal.guardaRegistro(dtAdd, "AVL", EU.usuario, dtCon1.getInt("avc_id"),"",false);
+              } while (dtCon1.next());
+              dtAdd.commit();
        } catch (Exception ex) {
           Error("Error al imprimir albaran",ex);
        }
@@ -358,6 +367,9 @@ public class clrealve extends ventana
 
        JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
        gnu.chu.print.util.printJasper(jp, EU);
+      
+       
+      
        resetMsgEspere();
        mensajeErr("Listado ... GENERADO");
     } catch (Exception k)

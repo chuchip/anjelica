@@ -19,7 +19,7 @@ import gnu.chu.mail.MailHtml;
  * <p>Título: lialbven</p>
  * <p>Descripción: Clase para imprimir los albaranes de Ventas <br>
  *   Imprime en modo texto (dump) o en pdf para enviar por fax.</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia

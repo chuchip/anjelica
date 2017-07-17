@@ -108,7 +108,7 @@ public class registroListVentas extends ventana
         v.add("Accion");
         v.add("Salida");
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{50,40,60,70,250});
+        jt.setAnchoColumna(new int[]{58,40,60,70,250});
         jt.setAlinearColumna(new int[]{1,1,0,0,0});
         jt.setMaximumSize(new java.awt.Dimension(100, 100));
         jt.setMinimumSize(new java.awt.Dimension(100, 100));

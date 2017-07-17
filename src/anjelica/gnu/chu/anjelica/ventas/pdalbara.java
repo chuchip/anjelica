@@ -2012,13 +2012,16 @@ public class pdalbara extends ventanaPad  implements PAD
                   if ( (avcImpres & 1) == 0)
                   {
                       setAlbaranImpreso(1);
+                      Principal.guardaRegistro(dtAdd, "AV1", EU.usuario, avc_idE.getValorInt(),"");
                       msgBox("Puesto Albaran como impreso");
                   }
                   else
                   {
                     setAlbaranImpreso(0);
+                    Principal.guardaRegistro(dtAdd, "AV2", EU.usuario, avc_idE.getValorInt(),"");
                     msgBox("Quitada marca de listado al albaran");
                   }
+                  
               } catch (SQLException ex)
               {
                   Error("Error al establece estado de listado a albaran", ex);
@@ -8682,12 +8685,9 @@ public class pdalbara extends ventanaPad  implements PAD
    */
   void setAlbaranImpreso(int albImpreso) throws SQLException
   {
-      s= "update  v_albavec set avc_impres = "+albImpreso +" WHERE avc_ano =" + avc_anoE.getValorInt() +
-               " and emp_codi = " + emp_codiE.getValorInt() +
-               " and avc_serie = '" + avc_seriE.getText() + "'" +
-               " and avc_nume = " + avc_numeE.getValorInt();
+      s= "update  v_albavec set avc_impres = "+albImpreso +" WHERE avc_id =" + avc_idE.getValorInt() ;
       dtAdd.executeUpdate(s);
-      Principal.guardaRegistro(dtAdd, albImpreso==0?"AV2":"AV1", EU.usuario, avc_idE.getValorInt(),"");
+    
       dtAdd.commit();
       verIconoListado(albImpreso);
   }
