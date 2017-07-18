@@ -8374,12 +8374,16 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   private String getSqlListaAlb()
   {
-      return "SELECT c.emp_codi as avc_empcod, c.*,cl.*" +
-          " FROM v_albavec as c,clientes cl WHERE c.avc_ano =" + avc_anoE.getValorInt() +
-          " and c.emp_codi = " + emp_codiE.getValorInt() +
-          " and c.avc_serie = '" + avc_seriE.getText() + "'" +
-          " and c.avc_nume = " + avc_numeE.getValorInt() +
-          " and c.cli_codi = cl.cli_codi ";
+     return getSqlListaAlb(avc_anoE.getValorInt(),emp_codiE.getValorInt() , avc_seriE.getText() ,avc_numeE.getValorInt());
+  }
+  public static String getSqlListaAlb(int avcAno,int empCod,String avcSerie,int avcNume)
+  {
+       return "SELECT c.emp_codi as avc_empcod, c.*,cl.*" +
+          " FROM v_albavec as c,clientes cl WHERE c.avc_ano =" + avcAno +
+          " and c.emp_codi = " + empCod+
+          " and c.avc_serie = '" + avcSerie+ "'" +
+          " and c.avc_nume = " + avcNume +
+          " and c.cli_codi = cl.cli_codi ";  
   }
   void imprPalets()
   {

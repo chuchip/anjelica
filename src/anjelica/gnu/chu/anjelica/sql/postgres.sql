@@ -1874,9 +1874,10 @@ create table anjelica.desproval
     eje_nume int not null,
     dpv_nusem int not null, -- Numero de Semana
     pro_codi int not null,
-    dpv_preci decimal(6,2) not null, -- Precio Final
-	dpv_preori decimal(6,2) not null -- Precio original 
-	dpv_preval decimal(6,2) not null -- Precio Valoracion
+    dpv_preci decimal(6,2) not null, -- Precio Final Desp. Forzado)
+	dpv_preori decimal(6,2) not null, -- Precio original (Origen desp)
+	dpv_preval decimal(6,2) not null, -- Precio Valoracion Alb.
+	dpv_pretar decimal(6,2) not null -- Precio tarifa 
 );
 create index ix_desproval on desproval(eje_nume,dpv_nusem);
 --
@@ -2808,14 +2809,18 @@ create table anjelica.mensajes
     men_tipo char(1) not null default 'A', -- Tipo: 'A' Aviso, 'C' Critico, 'I' Informacion
 	primary key(men_codi)
 );
-insert into mensajes values('AVL','Listado ALBARAN Venta','I');
-insert into mensajes values('AVE','Enviado  ALBARAN venta por email','I');
-insert into mensajes values('AVF','Enviado  ALBARAN venta  por Fax','I');
-
+-- Mensajes para tabla registro
+INSERT INTO mensajes (men_codi,men_nomb,men_tipo) VALUES ('AVL','Listado','I');
+INSERT INTO mensajes (men_codi,men_nomb,men_tipo) VALUES ('AVE','E-Mail','I');
+INSERT INTO mensajes (men_codi,men_nomb,men_tipo) VALUES ('AVF','Fax','I');
+INSERT INTO mensajes (men_codi,men_nomb,men_tipo) VALUES ('AV1','Forzado List.','I');
+INSERT INTO mensajes (men_codi,men_nomb,men_tipo) VALUES ('AV2','Anulado List.','I');
+INSERT INTO mensajes (men_codi,men_nomb,men_tipo) VALUES ('AV3','Alb.Valorado','I');
+insert into mensajes values('AV2','Enviado  ALBARAN venta  por Fax','I');
 insert into mensajes values('AVL','Listado Fra venta  %a','I');
 insert into mensajes values('AVE','Enviado  Fra venta %a por email a %e','I');
 insert into mensajes values('AVF','Enviado  Fra venta %a por Fax a %e','I');
-
+--- Mensajes normales
 insert into mensajes values('MS','Sale del Menu %u','I');
 insert into mensajes values('EM','Entro en Menu %u','I');
 insert into mensajes values('CS','Creado Stock por %u Prod: %p Unid: %U Kilos: %k Lote: %l','C');

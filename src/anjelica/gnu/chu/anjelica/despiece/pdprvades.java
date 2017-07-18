@@ -43,7 +43,7 @@ public class pdprvades extends ventanaPad implements PAD
   int ejeNume, numSem;
   CPanel Pprinc = new CPanel();
   CPanel Pcabe = new CPanel();
-  CGridEditable jt = new CGridEditable(5)
+  CGridEditable jt = new CGridEditable(6)
   {
     @Override
     public void cambiaColumna(int col,int colNueva, int row)
@@ -81,6 +81,7 @@ public class pdprvades extends ventanaPad implements PAD
   CTextField dpv_preciE= new CTextField(Types.DECIMAL,"###9.99");
   CTextField dpv_preoriE= new CTextField(Types.DECIMAL,"###9.99");
   CTextField dpv_prevalE= new CTextField(Types.DECIMAL,"###9.99");
+  CTextField dpv_pretarE= new CTextField(Types.DECIMAL,"###9.99");
   CLabel cLabel2 = new CLabel();
   CTextField dpv_nusemE = new CTextField(Types.DECIMAL,"99");
   CLabel cLabel3 = new CLabel();
@@ -133,7 +134,7 @@ public class pdprvades extends ventanaPad implements PAD
     {
       iniciarFrame();
       this.setSize(new Dimension(482,493));
-      this.setVersion("2017-02-27");
+      this.setVersion("2017-07-18");
 
       strSql = "SELECT dpv_nusem,eje_nume FROM desproval " +
           " WHERE eje_nume = " + EU.ejercicio +
@@ -154,11 +155,12 @@ public class pdprvades extends ventanaPad implements PAD
       cabecera.add("Codigo"); // 0 -- Codigo
       cabecera.add("Nombre"); //1 -- Nombre
       cabecera.add("Pr.Fin"); // 2 -- Precio Final
-      cabecera.add("Pr.Ori"); // 2 -- Precio Orig.
-      cabecera.add("Pr.Val"); // 2 -- Precio Orig.
+      cabecera.add("Pr.Ori"); // 3 -- Precio Orig.
+      cabecera.add("Pr.Val"); // 4 -- Precio Val.
+      cabecera.add("Pr.Tar"); // 5 -- Precio Tarifa
       jt.setCabecera(cabecera);
-      jt.setAnchoColumna(new int[]{46, 283, 60,60,60});
-      jt.setAlinearColumna(new int[]   {2, 0, 2,2,2});
+      jt.setAnchoColumna(new int[]{46, 283, 60,60,60,60});
+      jt.setAlinearColumna(new int[]   {2, 0, 2,2,2,2});
       pro_codiE.iniciar(dtStat, this, vl, EU);
       pro_codiE.setProNomb(null);
 
@@ -169,6 +171,7 @@ public class pdprvades extends ventanaPad implements PAD
       v.add(dpv_preciE);
       v.add(dpv_preoriE);
       v.add(dpv_prevalE);
+      v.add(dpv_pretarE);
       jt.setCampos(v);
       jt.setMaximumSize(new Dimension(467, 400));
       jt.setMinimumSize(new Dimension(467, 400));
@@ -294,7 +297,7 @@ public class pdprvades extends ventanaPad implements PAD
       {
           int  nusem=dpv_nusemE.getValorInt()==1?52:dpv_nusemE.getValorInt()-1;
           int  ejNume=eje_numeE.getValorInt()- (nusem==52?1:0);
-          s = "SELECT d.pro_codi,a.pro_nomb,d.dpv_preci,dpv_preori,dpv_preval " +
+          s = "SELECT d.pro_codi,a.pro_nomb,d.dpv_preci,dpv_preori,dpv_preval,dpv_pretar " +
             " FROM desproval as d,v_articulo as a " +
             " WHERE dpv_nusem = " + nusem +
             " and eje_nume = " + ejNume +
@@ -378,6 +381,7 @@ public class pdprvades extends ventanaPad implements PAD
           dtAdd.setDato("dpv_preci",jt.getValorDec(n,2));
           dtAdd.setDato("dpv_preori",jt.getValorDec(n,3));
           dtAdd.setDato("dpv_preval",jt.getValorDec(n,4));
+          dtAdd.setDato("dpv_pretar",jt.getValorDec(n,5));
           dtAdd.update(stUp);
         }
         ctUp.commit();
@@ -417,7 +421,7 @@ public class pdprvades extends ventanaPad implements PAD
 
     void verDatLin(int ejerc,int nusem) throws Exception
     {
-      s = "SELECT d.pro_codi,a.pro_nomb,d.dpv_preci,dpv_preori,dpv_preval " +
+      s = "SELECT d.pro_codi,a.pro_nomb,d.dpv_preci,dpv_preori,dpv_preval,dpv_pretar " +
           " FROM desproval as d,v_articulo as a " +
           " WHERE dpv_nusem = " + nusem +
           " and eje_nume = " + ejerc +
@@ -609,7 +613,8 @@ public class pdprvades extends ventanaPad implements PAD
         return 0;
       }
       jt.setValor(pro_codiE.getNombArtUltimo(), row,1);
-      if (dpv_preciE.getValorDec() == 0 && dpv_preoriE.getValorDec() ==0  && dpv_prevalE.getValorDec() ==0 )
+      if (dpv_preciE.getValorDec() == 0 && dpv_preoriE.getValorDec() ==0  && dpv_prevalE.getValorDec() ==0 
+           && dpv_pretarE.getValorDec() ==0 )
       {
         mensajeErr("Introduzca un precio de Tarifa");
         return 1;
@@ -644,50 +649,33 @@ public class pdprvades extends ventanaPad implements PAD
       return getPrecioOrigen(dt,proCodi,d.width, d.height);
    }
   /**
-   * Devuelve el precio fijo para un producto en la fecha indicada.
+   * Devuelve el precio fijo de despiece  para un producto en la fecha indicada.
    * -1 Si no existe precio .
    * @param dt
    * @param proCodi
    * @param fecha
-   * @return Precio fijo
+   * @return Precio fijo en el campo 1. 1 Si es forzado, 0 si no es forzado
    * @throws SQLException 
    */
-  public static double getPrecioFinal(DatosTabla dt, int proCodi,Date fecha)  throws SQLException
+  public static double[] getPrecioFinal(DatosTabla dt, int proCodi,Date fecha)  throws SQLException
   {
       Dimension d=getAnoySemana(fecha); 
     
       return getPrecioFinal(dt,proCodi,d.width, d.height);     
   }
-  public static double getPrecioFinal(DatosTabla dt, int proCodi,int ejeNume,int semCodi) throws SQLException
+  public static double[] getPrecioFinal(DatosTabla dt, int proCodi,int ejeNume,int semCodi) throws SQLException
   {
-      String sql="SELECT dpv_preci FROM desproval " +
+      String sql="SELECT dpv_preci,dpv_pretar FROM desproval " +
           " WHERE eje_nume = " + ejeNume +
             " and dpv_nusem = "+semCodi+
             " and pro_codi = "+proCodi;
       if (! dt.select(sql))
-          return -1;
-      return dt.getDouble("dpv_preci");
+          return new double[]{-1,0};
+      if (dt.getDouble("dpv_preci")>0)
+          return  new double[]{dt.getDouble("dpv_preci"),1};
+       return new double[]{dt.getDouble("dpv_pretar"),0};  
   }
-  /**
-   * Devuelve el precio final para el codigo de un articulo venta.
-   * @param dt
-   * @param codArt
-   * @param ejeNume
-   * @param semCodi
-   * @return
-   * @throws SQLException 
-   */
-  public static double getPrecioFinal(DatosTabla dt, String codArt,int ejeNume,int semCodi) throws SQLException
-  {
-      String sql="SELECT dpv_preci FROM desproval as d,v_articulo as a " +
-          " WHERE eje_nume = " + ejeNume +
-            " and dpv_nusem = "+semCodi+
-            " and d.pro_codi = a.pro_codi "+
-            " and a.pro_codart ='"+codArt+"'";       
-      if (! dt.select(sql))
-          return -1;
-      return dt.getDouble("dpv_preci");
-  }
+  
   public static double getPrecioOrigen(DatosTabla dt, int proCodi,int ejeNume,int semCodi) throws SQLException
   {
       String sql="SELECT dpv_preori FROM desproval " +

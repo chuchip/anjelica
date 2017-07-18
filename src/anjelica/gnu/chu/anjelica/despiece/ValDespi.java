@@ -159,7 +159,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2017-04-07" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2017-07-18" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -1478,16 +1478,25 @@ public class ValDespi extends ventana {
       recalcCostoLin();
       return entSinValor;
   }
+  /**
+   * Devuelve el precio final del despiece para un producto.
+   * @param dt
+   * @param proCodi
+   * @param fecIniSem
+   * @return
+   * @throws SQLException 
+   */
   double getPrecioFinal(DatosTabla dt,int proCodi, Date  fecIniSem) throws SQLException
   {
       swCostoBloq=false;
-      double costo= pdprvades.getPrecioFinal(dt, proCodi, fecIniSem);
-      if (costo>0)
+      double costDesp[]= pdprvades.getPrecioFinal(dt, proCodi, fecIniSem);
+      if (costDesp[0]>0)
       {
-          swCostoBloq=true;
-          return costo;
+          if (costDesp[1]!=0)
+            swCostoBloq=true;
+          return costDesp[0];
       }
-      costo=MantTarifa.getPrecTar(dt,proCodi ,0,TARIFA_MAYOR, fecIniSem);
+      double costo=MantTarifa.getPrecTar(dt,proCodi ,0,TARIFA_MAYOR, fecIniSem);
       return costo==0?0:costo-DTO_TARIFA_MAYOR;
   }
       

@@ -91,6 +91,7 @@ public class menu extends JFrame
   JMenuItem mantTiemPed = new JMenuItem("Tiempo Pedidos");
   JMenuItem clvenrep = new JMenuItem();
   JMenuItem clventasmes = new JMenuItem();
+  JMenuItem manEnvAlbEmail = new JMenuItem("Envio Alb.Venta Email");
   JMenuItem CLRankClie = new JMenuItem();
   JMenuItem mantTariCliente = new JMenuItem();
   JMenuItem cargaInv = new JMenuItem();
@@ -391,6 +392,12 @@ JMenuItem mantArticVenta = new JMenuItem();
         clventasmes_actionPerformed(e);
       }
     });
+     manEnvAlbEmail.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        manEnvAlbEmail_actionPerformed(e);
+      }
+    });
+    
  clvenrep.setText("Ventas Repr.");
     clvenrep.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -1129,6 +1136,7 @@ JMenuItem mantArticVenta = new JMenuItem();
     JpopupVentas.add(CLRankClie);
      JpopupVentas.add(mantTariCliente);
      JpopupVentas.add(mantAlbRuta);
+     JpopupVentas.add(manEnvAlbEmail);
     popupFact.add(lirelfact);
     popupFact.add(pdfactu);
     popupFact.add(genfactu);
@@ -1873,6 +1881,13 @@ void limpiaDB()
 //    ht.put("zonaRep","FV");
    
     lanzaEjecutable(new gnu.chu.anjelica.ventas.CLVentasMes(menu.this,EU));
+  }
+ void manEnvAlbEmail_actionPerformed(ActionEvent e) {
+    
+       Hashtable ht = new Hashtable();
+    ht.put("zonaRep","FV");
+   
+    lanzaEjecutable(new gnu.chu.anjelica.ventas.MantEnvioAlbEmail(menu.this,EU,ht));
   }
  void CLRankClie_actionPerformed(ActionEvent e) {
 
