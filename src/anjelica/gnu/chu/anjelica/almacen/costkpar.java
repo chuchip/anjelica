@@ -11,6 +11,7 @@ import java.util.*;
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.inventario.CreaStkPart;
 import gnu.chu.interfaces.ejecutable;
+import javax.swing.JMenuItem;
 
 /**
  *
@@ -44,6 +45,7 @@ public class costkpar extends ventana
   static final int JT_ALMAC=8;
   static final int JT_NUMPAL=9;
   static final int JT_NUMCAJ=10;
+   JMenuItem verMvtos = new JMenuItem("Ver Mvtos");
   private String filtroEmpr;
   String s;
   CPanel Pprinc = new CPanel();
@@ -119,7 +121,7 @@ public class costkpar extends ventana
   {
     iniciarFrame();
     this.setSize(new Dimension(621,471));
-    this.setVersion("2015-12-29");
+    this.setVersion("2017-07-19");
     Pprinc.setLayout(gridBagLayout1);
 
     conecta();
@@ -151,7 +153,7 @@ public class costkpar extends ventana
 
     cLabel8.setText("Un. Iniciales");
     cLabel8.setBounds(new Rectangle(257, 43, 75, 17));
-    cLabel9.setText("Cant. Incial");
+    cLabel9.setText("Cant. Inicial");
     cLabel9.setBounds(new Rectangle(383, 43, 66, 17));
     cLabel10.setText("Fec.Creacion");
     cLabel10.setBounds(new Rectangle(3, 62, 86, 17));
@@ -245,6 +247,7 @@ public class costkpar extends ventana
     @Override
   public void iniciarVentana() throws Exception
   {
+    jt.getPopMenu().add(verMvtos);
     filtroEmpr=empPanel.getStringAccesos(dtStat, EU.usuario,true);
     Pcabe.setDefButton(Baceptar);
     Pcabe.setButton(KeyEvent.VK_F4,Baceptar);
@@ -297,15 +300,41 @@ public class costkpar extends ventana
         opStock.setSelected(false);
       }
     });
+    verMvtos.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!jt.isVacio() )
+                    mostrarMvtos();
+            }
+        });
     jt.addMouseListener(new MouseAdapter()
     {
       @Override
       public void mouseClicked(MouseEvent e)
       {
+       
           if (e.getClickCount()>1)
             editStkPart();
+           
+            
       }
     });
+  }
+  
+ void mostrarMvtos() {
+    ejecutable prog;
+    if ((prog = jf.gestor.getProceso(Comvalm.getNombreClase())) == null)
+        return;
+    gnu.chu.anjelica.almacen.Comvalm cm = (gnu.chu.anjelica.almacen.Comvalm) prog;
+    
+    cm.setProCodi(jt.getValorInt(JT_ARTIC));
+    cm.setLote(jt.getValorInt( JT_LOTE));
+    cm.setIndividuo(jt.getValorInt(JT_INDI));
+    cm.setSerie(jt.getValString(JT_SERIE));
+    cm.setEjercicio(jt.getValorInt( JT_EJERC));
+    cm.ejecutaConsulta();
+    jf.gestor.ir(cm);
   }
   public void setProducto(int proCodi)
   {
