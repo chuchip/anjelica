@@ -192,7 +192,7 @@ public class Cgrid extends CPanel implements Serializable
 
     // Variable Global donde se dejaremos el valor Double de un campo del grid
     Double ValorDec;
-
+    public double valorAux; // Valor auxiliar identificador grid
     // Variable utilizada para saber si hay que guardar la configuracinn;
     public boolean CONFIGURAR=false;
 
@@ -1112,12 +1112,13 @@ public class Cgrid extends CPanel implements Serializable
       if (Formatear.isNullDate(fecha))
           return null;
       return Formatear.getDate(fecha,formFec);
-
     }
 
     /**
      * Funcion que me devuelve el valor de la fila seleccionada,columna
      * especificada(nombre) en forma de String.
+     * @param col
+     * @return 
      **/
     public String getValString(String col)
     {

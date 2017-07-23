@@ -398,7 +398,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2017-06-07"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2017-07-21"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -1470,7 +1470,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
     activar(true);
     activar(CABECERA,false);
-    if (PARAM_ADMIN)
+//    if (PARAM_ADMIN)
         tid_codiE.setEnabled(true);
     deo_blockE.setEnabled(true);
     grd_unidE.setEnabled(true);

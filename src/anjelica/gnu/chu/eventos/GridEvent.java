@@ -94,10 +94,19 @@ public class GridEvent extends EventObject
   {
       this.colNueva=colNueva;
   }
+  /**
+   * Devuelve el numero de linea actual
+   * @return  numero linea actual
+   */
   public int getLinea()
   {
       return linea;
   }
+  /**
+   * Devuelve linea nueva  la q se ira. Solo valido en cambialinea, no en aftercambialinea
+   * @return 
+   */
+
   public int getLineaNueva()
   {
       return lineaNueva;

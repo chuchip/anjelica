@@ -206,6 +206,7 @@ pro_codequ int,		-- Producto Equivalente Padre
 pro_kgmiun float , -- kg. Minimo Unidad.
 pro_kgmaun float , -- kg. Maximo Unidad.
 pro_cointa flota , -- Costo a Incrementar en Tarifa
+pro_encaja smallint, -- Producto encajado (0: No)
 constraint ix_articulo primary key(pro_codi)
 );
 create index ix_articul1 on v_articulo(pro_codart);
@@ -3056,7 +3057,7 @@ create table anjelica.v_provincia
 create table anjelica.transportista
 (
  tra_codi int not null,         -- Codigo de Transportista
- tra_nomb varchar(40) NOT NULL, -- Nombre del Transportista
+ tra_nomb varchar(40) NOT NULL, -- Nombre del Transportista 
  tra_direc varchar(40),		-- Direccion del Transportista
  tra_pobl varchar(30), 		-- Poblacion del transportista
  tra_codpos int,		-- Cod. Postal
@@ -3076,9 +3077,17 @@ create table anjelica.transportista
  constraint ix_transport primary key(tra_codi)
 );
 create view v_transport as select * from transportista where tra_tipo='C'; -- Transportista Compras
-create view v_tranpvent as select tra_codi,tra_nomb from transportista where tra_tipo='V'
+CREATE OR REPLACE VIEW v_tranpvent AS 
+ SELECT 'T'::text || transportista.tra_codi AS tra_codi,
+    transportista.tra_nomb
+   FROM transportista
+  WHERE transportista.tra_tipo = 'V'::bpchar
 UNION
-select usu_nomb as tra_codi, usu_nomco as tra_nomb from usuarios where usu_activ='S'; -- Transportista Ventas
+ SELECT usuarios.usu_nomb AS tra_codi,
+    usuarios.usu_nomco AS tra_nomb
+   FROM usuarios
+  WHERE usuarios.usu_activ = 'S'::bpchar;
+  
 grant select on  v_transport to public;
 grant select on  v_tranpvent to public;
 
@@ -4275,6 +4284,21 @@ create table tiempostarea
 	constraint ix_tiempostarea primary  key (usu_nomb,tit_tipdoc,tit_id)
 );
 grant all on anjelica.tiempostarea to public;
+--
+-- Tabla Transporte pedidos venta
+-- 
+create table transpedidos
+(
+	trp_orden int not null, 	-- Orden
+	tra_codi int not null,	    -- Transporte. 0=Nuestros medios
+	trp_fecha date,		-- Fecha Transporte
+	trp_tipo char(1) not null default 'E', -- Encajado, Colgado		
+	trp_fecent timestamp,		-- Fecha Entrega
+	trp_id int not null,	    -- Identificador documento	
+	trp_kilos int not null, 	-- Kilos
+	constraint ix_transpedidos primary  key (tra_codi,trp_fecha,trp_tipo,trp_id)
+);
+grant all on anjelica.transpedidos to public;
 --drop view v_cliprv;
 create view anjelica.v_cliprv as 
 select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.clientes 

@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  * Regenera los costos en los despieces (costos de productos de salida).
  * Pone en el campo def_preusu de la tabla v_despfin el valor de def_prcost
  * y recalcula el valor de def_prcost.</p>
- * <p>Copyright: Copyright (c) 2010-2015</p>
+ * <p>Copyright: Copyright (c) 2010-2017</p>
 *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
 *  los términos de la Licencia Publica General de GNU según es publicada por
 *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -149,7 +149,6 @@ public class RegCosDes extends ventana {
             public void actionPerformed(ActionEvent e) {
               msgEspere("Cancelando actualización ");
               popEspere_BCancelarSetEnabled(false);
-              return;
             }
         });
     }
@@ -306,45 +305,56 @@ public class RegCosDes extends ventana {
     }
     private void buscaDatos() {
        
-        try {
-            if (! checkDatosDesp())
-                return;
-            String s="select * from v_despfin as fi,desporig as orig  "+
-                    " WHERE  fi.def_preusu !=  0 " +
-                     " AND fi.deo_codi =  orig.deo_codi " +
-                     " and fi.eje_nume = orig.eje_nume " +
-                   condWhereOrig;
-            swRegenerar=true;
-            if (dtStat.select(s))
-            {
-                int res=mensajes.mensajeYesNo("Ya se lanzo la regeneración de costos en este periodo. Lanzarlo de nuevo ?");
-                if (res!=mensajes.YES)
-                {
-                   msgBox("Abortada la regeneración de costos");
-                   return;
-                }
-                swRegenerar=false;
-            }
-            new miThread("") {
+      
+         
+           new miThread("")
+        {
 
-                @Override
-                public void run() {
-                    jt.tableView.setVisible(false);
-                    buscaDato1();
-                    resetMsgEspere();
-                    jt.tableView.setVisible(true);
+            @Override
+            public void run() {
+                try
+                {
+                    msgEspere("Comprobando validez despieces ...");
+                    if (!checkDatosDesp())
+                    {
+                        resetMsgEspere();
+                        return;
+                    }
+                    setLabelMsgEspere("Buscando despieces ya valorados");
+                    String s = "select * from v_despfin as fi,desporig as orig  "
+                        + " WHERE  fi.def_preusu !=  0 "
+                        + " AND fi.deo_codi =  orig.deo_codi "
+                        + " and fi.eje_nume = orig.eje_nume "
+                        + condWhereOrig;
+                    swRegenerar = true;
+                    if (dtStat.select(s))
+                    {
+                        int res = mensajes.mensajeYesNo("Ya se lanzo la regeneración de costos en este periodo. Lanzarlo de nuevo ?");
+                        if (res != mensajes.YES)
+                        {
+                            msgBox("Abortada la regeneración de costos");
+                            resetMsgEspere();
+                            return;
+                        }
+                        swRegenerar = false;
+                    }
+                } catch (SQLException k)
+                {
+                    Error("Error al calcular despieces", k);
                 }
-            };
-        } catch (SQLException k) {
-            Error("Error al calcular despieces", k);
-        }
+                jt.tableView.setVisible(false);
+                buscaDato1();
+                resetMsgEspere();
+                jt.tableView.setVisible(true);
+            }
+        };
+       
     }
 
     private void buscaDato1() {
         try {
           
-            String s;
-            msgEspere("Recalculando despieces ...");
+            String s;            
             setLabelMsgEspere("Regenerando Costos");
             popEspere_BCancelarSetEnabled(true);
             if (mvtosAlm == null) {
@@ -446,16 +456,20 @@ public class RegCosDes extends ventana {
                     + " order by deo_codi ";
            if (dtCon1.select(s)) 
             buscoDesp(false);
-           s = "select  pro_codi,deo_numdes as deo_codi,  deo_tiempo as fechaMvt,"
-                    + " deo_kilos as kilos,deo_kilos*deo_prcost as costo,deo_kilos*deo_preusu as costoAnt  "
-                    + " from v_despiece as orig WHERE 1=1  " + condWhereGrupo
-                    + " and deo_numdes > 0"           
-                    + " and deo_kilos > 0 "
-                    + " order by deo_codi ";
-           if (dtCon1.select(s)) 
-            buscoDesp(true);
+           if ( getPopEspere().isBCancelarEnabled())
+           {
+                s = "select  pro_codi,deo_numdes as deo_codi,  deo_tiempo as fechaMvt,"
+                         + " deo_kilos as kilos,deo_kilos*deo_prcost as costo,deo_kilos*deo_preusu as costoAnt  "
+                         + " from v_despiece as orig WHERE 1=1  " + condWhereGrupo
+                         + " and deo_numdes > 0"           
+                         + " and deo_kilos > 0 "
+                         + " order by deo_codi ";
+                if (dtCon1.select(s)) 
+                 buscoDesp(true);
+           }
            ctUp.commit();
-           msgBox("Costos ... Recalculados");
+           if ( getPopEspere().isBCancelarEnabled())
+            msgBox("Costos ... Recalculados");
         } catch (Exception k) {
             Error("Error al calcular despieces", k);
         }

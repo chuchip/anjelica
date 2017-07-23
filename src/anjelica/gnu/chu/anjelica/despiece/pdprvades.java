@@ -229,6 +229,7 @@ public class pdprvades extends ventanaPad implements PAD
       eje_numeE.setColumnaAlias("eje_nume");
       activarEventos();
       activar(false);
+      jt.setNumRegCargar(0);
       verDatos();
       nav.requestFocus();
       Pprinc.setDefButton(Baceptar);

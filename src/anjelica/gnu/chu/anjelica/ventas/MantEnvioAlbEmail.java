@@ -1,13 +1,31 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gnu.chu.anjelica.ventas;
-
+/**
+ * <p>Titulo: Mantenimiento envio albaranes por email</p>
+ * <p>Descripcion: mantenimiento Envio de albaranes valorados por email.
+ * </p>
+* <p>Copyright: Copyright (c) 2005-2017
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * <p>Empresa: micasa</p>
+ * @author chuchiP
+ * @version 1.0
+ */
 import gnu.chu.Menu.Principal;
-import gnu.chu.anjelica.pad.pdconfig;
+import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.eventos.GridAdapter;
+import gnu.chu.eventos.GridEvent;
+import gnu.chu.eventos.GridListener;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
@@ -27,13 +45,17 @@ import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class MantEnvioAlbEmail extends ventana
 {
-      lialbven liAlb = null;
+    PreparedStatement psRegEmail;
+    PreparedStatement psReg;
+    ResultSet rsReg;
+    lialbven liAlb = null;
     String msgCorreo;
-    int JT_INCLUIR=8;
-    int jt_CORREO=7;
+    final int JT_INCLUIR=8;
+    final int JT_AVCID=9;
+    final int jt_CORREO=7;
+    final int JT_ENVIADO=6;
     private boolean ARG_MODCONSULTA=false;
     /**
      * Creates new form MantEnvioAlbEmail
@@ -97,7 +119,7 @@ public class MantEnvioAlbEmail extends ventana
      
         iniciarFrame();
 
-        this.setVersion("2017-07-17" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
+        this.setVersion("2017-07-22" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
         
        
         initComponents();
@@ -112,10 +134,26 @@ public class MantEnvioAlbEmail extends ventana
         fecIniE.setText(Formatear.sumaDias(Formatear.getDateAct(),-15));
         fecFinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
         cli_codiE.iniciar(dtStat, this, vl, EU);
+        psReg=dtCon1.getPreparedStatement("select r.*,men_nomb from registro as r,mensajes as m "
+                + "where reg_numdoc = ? and r.men_codi = 'AVP' "
+                + " and r.men_codi = m.men_codi"
+                + " ORDER BY reg_codi DESC");
         //String s="select emp_nomb  from empresa where emp_codi= "+EU.empresa 
         activarEventos();
 }
     private void activarEventos() {
+        jt.addGridListener(new GridAdapter()
+        {
+                   
+            @Override
+            public void afterCambiaLinea(GridEvent event) {
+                cuentaSeleccion();
+                if (jt.isEnabled())
+                    verEmailsEnvio(event.getLinea());
+            }
+
+     
+        });
         Bbuscar.addActionListener(new ActionListener()
         {
             @Override
@@ -130,8 +168,74 @@ public class MantEnvioAlbEmail extends ventana
                enviarEmail();
             }
         });
+        Binvsel.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               filtrar(e.getActionCommand());
+            }
+        });
     }
-    
+    void filtrar(String accionComando)
+    {
+        char accion=accionComando.charAt(0);
+        jt.setEnabled(false);
+        jt.salirGrid();
+        int nRow=jt.getRowCount();
+        for (int n=0;n<nRow;n++)
+        {
+            switch (accion)
+            {
+                case 'D':
+                    jt.setValor(false,n,JT_INCLUIR);
+                    break;
+                case 'S':
+                    jt.setValor(true,n,JT_INCLUIR);
+                    break;
+                default:
+                    jt.setValor(!jt.getValBoolean(n,JT_INCLUIR),n,JT_INCLUIR);
+            }                
+        }
+        cuentaSeleccion();
+        jt.setEnabled(true);
+        jt.requestFocusLater();
+    }
+    void verEmailsEnvio(int linea)
+    {
+        try
+        {
+            jtEnv.removeAllDatos();
+            if (jt.getValString(linea,JT_ENVIADO).equals("N"))
+                return;
+            psReg.setInt(1, jt.getValorInt(linea,JT_AVCID));
+            rsReg=psReg.executeQuery();
+            while (rsReg.next())
+            {
+                ArrayList v=new ArrayList();                
+                v.add(Formatear.getFecha(rsReg.getDate("reg_time"),"dd-MM-yy"));
+                v.add(Formatear.getFecha(rsReg.getDate("reg_time"),"HH:mm"));
+                v.add(rsReg.getString("usu_nomb"));
+                v.add(rsReg.getString("men_nomb"));
+                v.add(rsReg.getString("reg_valor"));
+                jtEnv.addLinea(v);
+            }
+        } catch (SQLException ex)
+        {
+            Error("Error al ver datos emails enviados",ex);
+        }
+            
+    }
+    void cuentaSeleccion()
+    {
+         int nRow=jt.getRowCount();
+         int nSel=0;
+         for (int n=0;n<nRow;n++)
+         {
+             if (jt.getValBoolean(n,JT_INCLUIR))
+                 nSel++;
+         }
+         numRegSelE.setValorDec(nSel);
+    }
     void buscarAlbaran()
     {
         try
@@ -139,19 +243,20 @@ public class MantEnvioAlbEmail extends ventana
             if (!checkBuscar())
                 return;
             jt.setEnabled(false);
+            jtEnv.setEnabled(false);
             jt.removeAllDatos();
-            PreparedStatement psRegEmail=dtCon1.getPreparedStatement("select reg_codi,r.reg_valor from registro as r,"
+            
+            psRegEmail=dtCon1.getPreparedStatement("select reg_codi,r.reg_valor from registro as r,"
                 + "  v_albavec as a where a.avc_id = r.reg_numdoc and men_codi ='AVP' \n" +
                 "and a.cli_codi = ?  order by reg_codi desc");
-            PreparedStatement psReg=dtCon1.getPreparedStatement("select * from registro "
-                + "where reg_numdoc = ? and men_codi = 'AVP' ORDER BY reg_codi DESC");
-            ResultSet rsReg;
+            
+            
             String s="select a.*,c.cli_nomb,c.cli_email2 from v_albavec as a,v_cliente as c "
                 + "where avc_fecalb between '"+fecIniE.getFechaDB()+"' and '"+fecFinE.getFechaDB()+"'"+
                  " and avc_revpre = " + pdalbara.REVPRE_REVISA+
                  " and a.cli_codi = c.cli_codi "+
                  " and a.emp_codi = "+EU.em_cod+
-                 (EU.isRootAV() ? "" : " AND v.div_codi > 0 ")+
+                 (EU.isRootAV() ? "" : " AND a.div_codi > 0 ")+
                 (cli_codiE.isNull()?"":" and a.cli_codi = "+cli_codiE.getValorInt())+
                 (opEnvioC.getValor().equals("T")?"":
                     " and  "+(opEnvioC.getValor().equals("N")?" NOT ":"")+
@@ -189,12 +294,14 @@ public class MantEnvioAlbEmail extends ventana
                     v.add(dtCon1.getString("cli_nomb"));
                     v.add(estado); // Estado
                     v.add(correo); // Correo
-                    v.add(false);
+                    v.add(true);
+                    v.add(dtCon1.getInt("avc_id"));
                     jt.addLinea(v);
                 } while (dtCon1.next());
-                jt.setEnabled(true);
+                jt.setEnabled(true);                
                 jt.requestFocusInicio();
-            }
+                jtEnv.setEnabled(true);
+            }   verEmailsEnvio(0);
         } catch (ParseException | SQLException ex)
         {
            Error("Error al buscar albaranes",ex);
@@ -213,8 +320,10 @@ public class MantEnvioAlbEmail extends ventana
                   {
                       enviaAlbaranEmail(jt.getValorInt(n,0),jt.getValString(n,1),jt.getValorInt(n,2),
                           jt.getValString(n,jt_CORREO));
+                      jt.setValor(false,n,JT_INCLUIR);
                   }
               } 
+              msgBox("Albaranes valorados enviados por email");
           } catch (Exception ex)
           {
              Error("Error al mandar albaranes por email",ex);
@@ -268,6 +377,7 @@ public class MantEnvioAlbEmail extends ventana
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         avc_anoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         avc_serieE = new gnu.chu.controles.CTextField(Types.CHAR,"X",1);
@@ -289,8 +399,8 @@ public class MantEnvioAlbEmail extends ventana
         cLabel8 = new gnu.chu.controles.CLabel();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
         Bbuscar = new gnu.chu.controles.CButton();
-        jt = new gnu.chu.controles.CGridEditable(9);
-        jtEnv = new gnu.chu.controles.Cgrid();
+        jt = new gnu.chu.controles.CGridEditable(10);
+        jtEnv = new gnu.chu.controles.Cgrid(5);
         Ppie = new gnu.chu.controles.CPanel();
         opCopia = new gnu.chu.controles.CCheckBox();
         Benviar = new gnu.chu.controles.CButton();
@@ -314,9 +424,12 @@ public class MantEnvioAlbEmail extends ventana
 
         opIncluirC.setText("cCheckBox3");
 
-        Pprinc.setLayout(null);
+        Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
+        Pcabe.setMaximumSize(new java.awt.Dimension(439, 39));
+        Pcabe.setMinimumSize(new java.awt.Dimension(439, 39));
+        Pcabe.setPreferredSize(new java.awt.Dimension(439, 39));
         Pcabe.setLayout(null);
 
         cLabel5.setText("De Fecha");
@@ -359,8 +472,12 @@ public class MantEnvioAlbEmail extends ventana
         Pcabe.add(Bbuscar);
         Bbuscar.setBounds(330, 20, 100, 19);
 
-        Pprinc.add(Pcabe);
-        Pcabe.setBounds(0, 0, 440, 50);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        Pprinc.add(Pcabe, gridBagConstraints);
 
         ArrayList v=new ArrayList();
         v.add("Ej."); // 0
@@ -372,8 +489,11 @@ public class MantEnvioAlbEmail extends ventana
         v.add("E"); // 6
         v.add("Correo"); // 7
         v.add("Inc"); //8
+        v.add("ID");
         jt.setCabecera(v);
         try {
+            CTextField tf1=new CTextField();
+            tf1.setEnabled(false);
             ArrayList vc=new ArrayList();
             vc.add(avc_anoE);
             vc.add(avc_serieE);
@@ -384,6 +504,7 @@ public class MantEnvioAlbEmail extends ventana
             vc.add(avc_estadE);
             vc.add(avc_emailE);
             vc.add(opIncluirC);
+            vc.add(tf1);
             jt.setCampos(vc);
         } catch (Exception k)
         {
@@ -391,19 +512,54 @@ public class MantEnvioAlbEmail extends ventana
             return;
         }
         jt.setFormatoCampos();
-        jt.setAnchoColumna(new int[]{30,15,40,60,50,200,10,200,20});
-        jt.setAlinearColumna(new int[]{2,0,2,1,2,0,1,0,1});
+        jt.setAnchoColumna(new int[]{30,15,40,60,50,200,10,200,20,10});
+        jt.setAlinearColumna(new int[]{2,0,2,1,2,0,1,0,1,0});
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        Pprinc.add(jt);
-        jt.setBounds(0, 60, 490, 140);
+        jt.setCanDeleteLinea(false);
+        jt.setCanInsertLinea(false);
+        jt.setMaximumSize(new java.awt.Dimension(489, 139));
+        jt.setMinimumSize(new java.awt.Dimension(489, 139));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        Pprinc.add(jt, gridBagConstraints);
 
+        {
+            ArrayList v1=new ArrayList();
+            v1.add("Fecha");
+            v1.add("Hora");
+            v1.add("Usuario");
+            v1.add("Accion");
+            v1.add("Salida");
+            jtEnv.setCabecera(v1);
+            jtEnv.setAnchoColumna(new int[]{58,40,60,70,250});
+            jtEnv.setAlinearColumna(new int[]{1,1,0,0,0});
+            jtEnv.setAjustarGrid(true);
+        }
         jtEnv.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        Pprinc.add(jtEnv);
-        jtEnv.setBounds(0, 210, 490, 40);
+        jtEnv.setMaximumSize(new java.awt.Dimension(489, 39));
+        jtEnv.setMinimumSize(new java.awt.Dimension(489, 39));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        Pprinc.add(jtEnv, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
+        Ppie.setMaximumSize(new java.awt.Dimension(489, 29));
+        Ppie.setMinimumSize(new java.awt.Dimension(489, 29));
+        Ppie.setPreferredSize(new java.awt.Dimension(489, 29));
         Ppie.setLayout(null);
 
+        opCopia.setSelected(true);
         opCopia.setText("Copia Local");
         Ppie.add(opCopia);
         opCopia.setBounds(290, 2, 79, 23);
@@ -412,9 +568,9 @@ public class MantEnvioAlbEmail extends ventana
         Ppie.add(Benviar);
         Benviar.setBounds(380, 2, 100, 19);
 
-        Binvsel.addMenu("Invertir Seleccion");
-        Binvsel.addMenu("Seleccionar Todo");
-        Binvsel.addMenu("Deselecionar Todo");
+        Binvsel.addMenu("Invertir Seleccion","I");
+        Binvsel.addMenu("Seleccionar Todo","T");
+        Binvsel.addMenu("Deselecionar Todo","N");
         Binvsel.setText("Filtrar");
         Ppie.add(Binvsel);
         Binvsel.setBounds(190, 2, 90, 22);
@@ -427,8 +583,13 @@ public class MantEnvioAlbEmail extends ventana
         Ppie.add(numRegSelE);
         numRegSelE.setBounds(80, 2, 30, 17);
 
-        Pprinc.add(Ppie);
-        Ppie.setBounds(0, 260, 490, 30);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
+        Pprinc.add(Ppie, gridBagConstraints);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 

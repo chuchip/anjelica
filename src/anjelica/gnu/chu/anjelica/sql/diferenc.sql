@@ -1,3 +1,9 @@
+alter table v_articulo add pro_encaja; -- Encajado.
+update v_articulo set pro_encaja=-1; 
+--
+alter table desproval add dpv_pretar decimal(6,2);
+update desproval set dpv_pretar=0;
+alter table desproval alter dpv_pretar set not null;
 --
 alter table mensajes alter men_codi type varchar(3);
 --

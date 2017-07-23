@@ -680,5 +680,20 @@ public class pdtransp extends ventanaPad   implements PAD
     lk.addDatos(dt);
     return true;
   }
-
+  /**
+   * 
+   * @param dt
+   * @param traCodi
+   * @param tipo Tipo transportista
+   * @return null si no encuentra el transportista
+   * @throws SQLException 
+   */
+  public  static String getNombreTransportista(DatosTabla dt,int traCodi,String tipo) throws SQLException
+  {
+    String s="select tra_codi,tra_nomb,tra_tipo from transportista where tra_codi ="+traCodi+
+        (tipo==null?"":"and tra_tipo = '"+tipo+"'");
+    if (!dt.select(s))
+        return null;    
+    return dt.getString("tra_nomb");
+  }
 }

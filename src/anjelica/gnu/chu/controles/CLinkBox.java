@@ -451,18 +451,14 @@ public class CLinkBox
     }
   }
 
+ 
   /**
-   * @deprecated usar setCeroIsNull
-   * @param e boolean ¿ cero es nulo ?
+   * Establece que 0 es igual a null
+   * @param ceroIsNull  por defecto es true
    */
-  public void setCeroNull(boolean e)
+  public void setCeroIsNull(boolean ceroIsNull)
   {
-    setCeroIsNull(e);
-  }
-
-  public void setCeroIsNull(boolean e)
-  {
-    texto.setCeroIsNull(e);
+    texto.setCeroIsNull(ceroIsNull);
   }
 
   public boolean getCeroIsNull()

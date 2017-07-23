@@ -28,6 +28,8 @@ import gnu.chu.controles.CButton;
 import gnu.chu.controles.CLabel;
 import gnu.chu.controles.Cgrid;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.eventos.CambioEvent;
+import gnu.chu.eventos.CambioListener;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
@@ -247,6 +249,7 @@ private void jbInit() throws Exception
     sbe_codiE.setTipo("A");
     sbe_codiE.setValorInt(0);
     sbe_codiE.setAceptaNulo(true);
+     tla_codiE.resetCambio();
     ponTipListado();
     activarEventos();
   }
@@ -276,21 +279,14 @@ private void jbInit() throws Exception
         Blistar_actionPerformed();
       }
     });
-    tla_codiE.addFocusListener(new FocusAdapter()
+    tla_codiE.addCambioListener(new CambioListener()
     {
-            @Override
-      public void focusGained(FocusEvent e)
-      {
-        tla_codiE.resetCambio();
-      }
-
-            @Override
-      public void focusLost(FocusEvent e)
-      {
-        if (!tla_codiE.hasCambio())return;
-        ponTipListado();
-      }
-    });
+         @Override
+         public void cambio(CambioEvent event) {
+               ponTipListado();
+         }
+     });
+   
     jtRes.tableView.getSelectionModel().addListSelectionListener(new
         ListSelectionListener()
     {
@@ -901,10 +897,14 @@ private void jbInit() throws Exception
             vr.add(cantTSK); // Kilos  Totales
             vr.add(kgCad==0?"":kgCad);
             if (P_VERPRECIO)
-                vr.add(cantTSK>0?importeT/cantTSK:0);
+            {
+                vr.add(Formatear.redondea(cantTSK>0?importeT/cantTSK:0,2));
+                jt.valorAux=Formatear.redondea(cantTSK>0?importeT/cantTSK:0,2);
+            }
             else
                 vr.add("");
             jtRes.addLinea(vr);
+            
             productos.add(pro_descL.getText());
             grids.add(jt);
             Pgrids.add(pro_descL, new GridBagConstraints(posX, posY, 1, 1, 1.0, 1.0
@@ -1199,7 +1199,9 @@ private void jbInit() throws Exception
           return opVerDatos=='A'|| opVerDatos=='U'?grid.getValorInt(linGrid, "Unid"):0;
       if (campo.equals("stp_kilact"))
           return opVerDatos=='A'|| opVerDatos=='K'?grid.getValorDec(linGrid, "Kilos"):0;
-      
+      if (campo.equals("stp_preact"))
+          return opVerCostos.isSelected()?grid.valorAux:null;
+//      
 //      if (campo.equals("stp_kilstk"))
 //        nCol=3;
 //      if (campo.equals("stp_kilcom"))

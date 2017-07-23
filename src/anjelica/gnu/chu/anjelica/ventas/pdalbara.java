@@ -126,8 +126,8 @@ public class pdalbara extends ventanaPad  implements PAD
   CComboBox pvc_deposE=new CComboBox();
   CButton Bdespiece=new CButton();
   int paiEmp;
-  rangoEtiquetas rangoEtiq;
-  registroListVentas regListado;
+  RangoEtiquetas rangoEtiq;
+  RegistroListVentas regListado;
   boolean swChangePalet=false;
   private final int JTP_NUMLIN=10;
   private final int JTP_PRV=11;
@@ -8148,7 +8148,7 @@ public class pdalbara extends ventanaPad  implements PAD
       {
           if (regListado==null)
           {
-            regListado = new registroListVentas();            
+            regListado = new RegistroListVentas();            
 
             regListado.iniciar(this);
             regListado.setLocation(this.getLocation().x+20, this.getLocation().y+20);
@@ -8172,7 +8172,7 @@ public class pdalbara extends ventanaPad  implements PAD
       {
           if (rangoEtiq==null)
           {
-            rangoEtiq = new rangoEtiquetas()
+            rangoEtiq = new RangoEtiquetas()
             {
                 @Override
                 public void muerto()

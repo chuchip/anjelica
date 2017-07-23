@@ -49,7 +49,12 @@ import javax.swing.event.ListSelectionListener;
 public class ValDespi extends ventana {
    int TARIFA_MAYOR;
    double DTO_TARIFA_MAYOR;
-   private boolean swCostoBloq=false;
+   private int swCostoOrig=0;
+   private String costoOrig[] = new String[]{"","TV","TD","PD"};
+   final static int COSTO_PM=0;
+   final static int COSTO_TARVEN=1;
+   final static int COSTO_TARDES=2;
+   final static int COSTO_PRFIDE=3;
    boolean swValGrupo=false;
    String msgError;
    double impDocum=0;
@@ -159,7 +164,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2017-07-18" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2017-07-21" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -953,7 +958,7 @@ public class ValDespi extends ventana {
            if (fecIniSem==null)
                calcFechaCostos(jtDesp.getValDate(rowEdit, JTDES_FECDES));
            if (Baceptar.isEnabled()) 
-           {
+           { // en modo edicion
                fecInv = Formatear.getDate(feulin, "dd-MM-yyyy");
                Date fecDesp = jtDesp.getValDate(rowEdit, JTDES_FECDES);
                if (Formatear.comparaFechas(fecInv, fecDesp) > 0) {
@@ -996,7 +1001,8 @@ public class ValDespi extends ventana {
                        deo_prcogrE.setValorDec(precAcu);
                    } else {
                        jtLin.setValor(precAcu, JTLIN_COSTO);
-                       jtLin.setValor(swCostoBloq,JTLIN_COSBLO);
+                       jtLin.setValor(swCostoOrig==COSTO_PRFIDE,JTLIN_COSBLO);
+                       jtLin.setValor(costoOrig[swCostoOrig],JTLIN_COSBLO+2);
                        def_prcostE.setValorDec(precAcu);
                    }
                }
@@ -1457,7 +1463,8 @@ public class ValDespi extends ventana {
         if (costo>0)
         {
             jtLin.setValor(costo, n,JTLIN_COSTO);
-            jtLin.setValor(swCostoBloq, n,JTLIN_COSBLO);
+            jtLin.setValor(swCostoOrig==COSTO_PRFIDE, n,JTLIN_COSBLO);
+            jtLin.setValor(costoOrig[swCostoOrig],n,JTLIN_COSBLO+2);
             continue;
         }
         precAcu=getPrecioMedioDesp(proCodi,
@@ -1487,16 +1494,18 @@ public class ValDespi extends ventana {
    * @throws SQLException 
    */
   double getPrecioFinal(DatosTabla dt,int proCodi, Date  fecIniSem) throws SQLException
-  {
-      swCostoBloq=false;
+  {      
       double costDesp[]= pdprvades.getPrecioFinal(dt, proCodi, fecIniSem);
       if (costDesp[0]>0)
       {
           if (costDesp[1]!=0)
-            swCostoBloq=true;
+            swCostoOrig=COSTO_PRFIDE;
+          else
+            swCostoOrig=COSTO_TARDES;
           return costDesp[0];
       }
       double costo=MantTarifa.getPrecTar(dt,proCodi ,0,TARIFA_MAYOR, fecIniSem);
+      swCostoOrig=costo==0?COSTO_PM:COSTO_TARVEN;
       return costo==0?0:costo-DTO_TARIFA_MAYOR;
   }
       
@@ -1948,6 +1957,7 @@ public class ValDespi extends ventana {
          v.add("");
          v.add(false);
          v.add(dtAdd.getString("def_preusu", true));
+         v.add("");
          jtLin.addLinea(v);
       
          kilos += dtAdd.getDouble("def_kilos", true);
@@ -2206,7 +2216,6 @@ public class ValDespi extends ventana {
 
         pro_codiE = new gnu.chu.camposdb.proPanel();
         deo_prcogrE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9.9999");
-        def_preusuE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9.9999");
         def_prcostE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9.9999");
         def_prebloC = new gnu.chu.controles.CCheckBox();
         Pprinc = new gnu.chu.controles.CPanel();
@@ -2248,7 +2257,7 @@ public class ValDespi extends ventana {
                 }
             }
         } ;
-        jtLin = new gnu.chu.controles.CGridEditable(9){
+        jtLin = new gnu.chu.controles.CGridEditable(10){
             @Override
             public void afterCambiaLinea()
             {
@@ -2528,11 +2537,12 @@ public class ValDespi extends ventana {
             v.addElement("% Costo"); // 6
             v.addElement("Bloq"); // 7
             v.addElement("Costo Usu"); // 8
+            v.addElement("Or."); // 9
             jtLin.setCabecera(v);
             jtLin.setAnchoColumna(new int[]
-                {54, 172, 36, 56, 60, 60, 50,50,60});
+                {54, 172, 36, 56, 60, 60, 50,50,60,40});
             jtLin.setAlinearColumna(new int[]
-                {2, 0, 2, 2, 2, 2, 2,1,2});
+                {2, 0, 2, 2, 2, 2, 2,1,2,0});
             jtLin.setFormatoColumna(3, "---,--9.99");
             jtLin.setFormatoColumna(4, "---9.9999");
             jtLin.setFormatoColumna(5, "---9.9999");
@@ -2542,12 +2552,12 @@ public class ValDespi extends ventana {
             jtLin.resetRenderer(7);
             jtLin.setAjustarGrid(true);
             CTextField[] tfLin = new CTextField[10];
-            for (int n=0;n<8;n++)
+            for (int n=0;n<9;n++)
             {
                 tfLin[n]=new CTextField();
                 tfLin[n].setEnabled(false);
             }
-            def_preusuE.setEnabled(false);
+
             //    c7.setEnabled(false);
             Vector v1 = new Vector();
             v1.addElement(tfLin[0]);
@@ -2558,7 +2568,8 @@ public class ValDespi extends ventana {
             v1.addElement(tfLin[5]);
             v1.addElement(tfLin[6]);
             v1.addElement(def_prebloC);
-            v1.addElement(def_preusuE);
+            v1.addElement(tfLin[7]);
+            v1.addElement(tfLin[8]);
             jtLin.setCampos(v1);
             jtLin.setCanInsertLinea(false);
             jtLin.setCanDeleteLinea(false);
@@ -2742,7 +2753,6 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CTextField def_prcostE;
     private gnu.chu.controles.CCheckBox def_prebloC;
-    private gnu.chu.controles.CTextField def_preusuE;
     private gnu.chu.controles.CTextField deo_codiE;
     private gnu.chu.controles.CTextField deo_prcogrE;
     private gnu.chu.controles.CTextField eje_numeE;

@@ -89,6 +89,7 @@ public class menu extends JFrame
   JMenu ItemInventario = new JMenu();
   JPopupMenu menuTiempos = new JPopupMenu();
   JMenuItem mantTiemPed = new JMenuItem("Tiempo Pedidos");
+  JMenuItem mantTranPed = new JMenuItem("Trans Pedidos");
   JMenuItem clvenrep = new JMenuItem();
   JMenuItem clventasmes = new JMenuItem();
   JMenuItem manEnvAlbEmail = new JMenuItem("Envio Alb.Venta Email");
@@ -1026,6 +1027,7 @@ JMenuItem mantArticVenta = new JMenuItem();
     JPopupAlmacen.add(jMenuAlmacen);
    JPopupAlmacen.add(ItemInventario);
     JpopupVentas.add(ItemRepresen);
+    JpopupVentas.add(mantTranPed);
     JpopupPedVentas.add(pdpedven);
     JpopupPedVentas.add(clpevepr);
     //JpopupPedVentas.add(clpedven);
@@ -1257,6 +1259,13 @@ JMenuItem mantArticVenta = new JMenuItem();
          HashMap <String,String> ht = new HashMap();
          ht.put("admin", "true");
         lanzaEjecutable(new gnu.chu.anjelica.tiempos.MantTiemPedidos(menu.this,EU,ht));   
+      }
+    });
+    mantTranPed.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+         HashMap <String,String> ht = new HashMap();
+         ht.put("admin", "true");
+        lanzaEjecutable(new gnu.chu.anjelica.ventas.MantTransPedidos(menu.this,EU,ht));   
       }
     });
      pdpedven.addActionListener(new ActionListener()

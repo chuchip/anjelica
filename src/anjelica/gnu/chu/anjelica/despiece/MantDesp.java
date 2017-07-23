@@ -229,7 +229,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2017-07-05" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2017-07-21" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -1683,8 +1683,8 @@ public class MantDesp extends ventanaPad implements PAD
             deo_almdesE.setEnabled(false);
             if (uniFinE.getValorInt() > 0 )
             {
-                if ( tid_codiE.getValorInt()!=0 && ! P_ADMIN)
-                    tid_codiE.setEnabled(false);
+//                if ( tid_codiE.getValorInt()!=0 && ! P_ADMIN)
+//                    tid_codiE.setEnabled(false);
                 deo_lotnueE.setEnabled(false);
             }
             tid_codiE.setDeoCodi(deo_codiE.getText()); // Para q no se controle a si mismo.
