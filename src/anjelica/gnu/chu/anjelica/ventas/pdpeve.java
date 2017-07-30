@@ -49,6 +49,9 @@ import javax.swing.event.ListSelectionListener;
 
 public class pdpeve  extends ventanaPad   implements PAD
 {
+  ArrayList<Integer> alArtStock=new ArrayList();
+  ArrayList<Integer> alArtStockP=new ArrayList();
+   JMenuItem MbusCliente = new JMenuItem("Buscar Ped. Cliente");
   DatosTabla dtHist;
   private String tablaCab="pedvenc";
   ayuVenPro ayVePr = null;
@@ -281,7 +284,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2017-06-27"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2017-07-29"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -739,7 +742,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   @Override
   public void iniciarVentana() throws Exception
   {
-    
+    cli_codiE.getPopMenu().add(MbusCliente);
     Pprinc.setButton(KeyEvent.VK_F2, BirGrid);
     pstock.setPedidos(opPedidos.isSelected());
     pro_codiE.getFieldBotonCons().setEnabled(false);
@@ -814,8 +817,24 @@ public class pdpeve  extends ventanaPad   implements PAD
         Error("Error al ver datos de historicos",k);
     }
  }
+   void buscaCliente()
+  {
+       if (cli_codiE.isNull() || nav.isEdicion() )
+           return;
+        int cliCodi=cli_codiE.getValorInt();
+        PADQuery();
+        cli_codiE.setValorInt(cliCodi);
+        ej_query();
+  }
   void activarEventos()
   {
+     MbusCliente.addActionListener(new java.awt.event.ActionListener()
+      {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscaCliente();
+          }
+      });
    BponPrecio.addActionListener(new ActionListener()
    {
      @Override
@@ -1249,6 +1268,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   public void PADEdit()
   {
     try {
+      alArtStock.clear();
       if (hisRowid!=0)
       {
         msgBox("Viendo Pedido historico ... IMPOSIBLE MODIFICAR");
@@ -1257,6 +1277,7 @@ public class pdpeve  extends ventanaPad   implements PAD
         return;
       }
       activar(navegador.EDIT, true);
+      verDatos();
       if (avc_anoE.getValorInt()==9999)
       {
           msgBox("Albaran se BORRO. Imposible editar");
@@ -1473,6 +1494,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   @Override
   public void PADAddNew()
   {  
+      alArtStock.clear();
       swExterno=false;
       pvc_fecentE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
       pvc_fecpreE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -2029,7 +2051,20 @@ public class pdpeve  extends ventanaPad   implements PAD
           mensajeErr("Este producto no tiene equivalencia Kilos/Caja. Imposible realizar el pedido en Cajas");
           return JT_TIPCAN;
       }
-          
+      if (alArtStock.indexOf(pro_codiE.getValorInt())>=0 || alArtStockP.indexOf(pro_codiE.getValorInt())>=0 )
+          return -1; // ya aviso sobre este producto
+       HashMap<Integer, Double> hm= MantArticulos.getRelUnidadKilos(pro_codiE.getValorInt() ,dtStat);
+       double kilos= pvl_cantiE.getValorInt() *  ( pvl_tipoE.getValor().startsWith("P")?hm.get(MantArticulos.KGXUNI):
+           pvl_tipoE.getValor().startsWith("C")?hm.get(MantArticulos.KGXCAJ):1);
+      if (pro_codiE.getLikeProd().getDouble("pro_stock")< kilos)
+      {
+          int ret=mensajes.mensajeYesNo("ATENCION. SOLO HAY "+Formatear.redondea(pro_codiE.getLikeProd().getDouble("pro_stock"),0)+ " KG. ("+
+              Formatear.redondea(pro_codiE.getLikeProd().getDouble("pro_stkuni"),0)+
+              " Unidades/Cajas)  EN STOCK\nSeguir Avisando de este producto?");
+          if (ret==mensajes.NO)
+              alArtStockP.add(pro_codiE.getValorInt());
+          alArtStock.add(pro_codiE.getValorInt());
+      }
     } catch (Exception k)
     {
       Error("Erro al controlar cambio de linea",k);
@@ -2148,8 +2183,8 @@ public class pdpeve  extends ventanaPad   implements PAD
             {
                  if (cli_codiE.isIncluirFra())
                  {
-                    String msgAviso=pdclien.getUltimoCambio(dtStat,cli_codiE.getValorInt());
-                    msgExplica("ATENCION!. Cliente esta marcado como Incluir Facturas",msgAviso);  
+//                    String msgAviso=pdclien.getUltimoCambio(dtStat,cli_codiE.getValorInt());
+//                    msgExplica("ATENCION!. Cliente esta marcado como Incluir Facturas",msgAviso);  
                     pvc_incfraE.setSelected(true);
                  }
                  else
@@ -2174,9 +2209,9 @@ public class pdpeve  extends ventanaPad   implements PAD
                         + " order by avc_nume asc";
                     if (dtStat.select(s))
                     {
-                        int res = -1;
+                        int res = mensajes.NO;
                         if (dtStat.getInt("avc_nume") == 0)
-                            res = mensajes.mensajePreguntar("Cliente ya tiene pedido " + dtStat.getInt("pvc_nume")
+                            res = mensajes.mensajeYesNo("Cliente ya tiene pedido " + dtStat.getInt("pvc_nume")
                                 + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy") + " sin preparar. ¿ Editar pedido ?");
                         else
                         {
@@ -2184,7 +2219,7 @@ public class pdpeve  extends ventanaPad   implements PAD
                             {
                                 if ((dtStat.getInt("avc_impres", true) & 1) == 0 && dtStat.getString("avc_serie").equals("A"))
                                 {
-                                    res = mensajes.mensajePreguntar("Cliente con albaran " + dtStat.getInt("avc_nume")
+                                    res = mensajes.mensajeYesNo("Cliente con albaran " + dtStat.getInt("avc_nume")
                                         + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy")
                                         + " preparado sin servir. ¿ Editar Pedido ?");
                                     break;
@@ -2335,5 +2370,32 @@ public class pdpeve  extends ventanaPad   implements PAD
             return -1;
         else
             return dt.getInt("pvc_id");
+    }
+    /**
+     * Llamar a Mantenimiento Pedidos desde otro programa
+     * @param jf clase Principal (menu)
+     * @param ejeNume Ejercicio
+     * @param numPedido  Numero Pedido
+     */
+    public static void irMantPedido( Principal jf, int ejeNume,int numPedido)
+    {
+        if (jf==null)
+            return;
+        ejecutable prog;
+        if ((prog = jf.gestor.getProceso(pdpeve.getNombreClase())) == null)
+            return;
+        pdpeve cm = (pdpeve) prog;
+        if (cm.inTransation())
+        {
+            mensajes.mensajeAviso("Mantenimiento Pedidos de Ventas ocupado. No se puede realizar el Alta");
+            return;
+        }
+        cm.PADQuery();
+        cm.setEjercicioPedido(ejeNume);
+        cm.setNumeroPedido(numPedido);
+       
+
+        cm.ej_query();
+        jf.gestor.ir(cm);
     }
 }

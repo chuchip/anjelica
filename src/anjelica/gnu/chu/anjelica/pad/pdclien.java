@@ -46,6 +46,9 @@ import javax.swing.event.*;
 public class pdclien extends ventanaPad implements PAD
 {
     boolean CHECKCODREP=true; // Comprueba que el Codigo Reparto sea valido
+    public static final int ENV_ALBVAL_IGN=0;
+    public static final int ENV_ALBVAL_SI=1;
+    public static final int ENV_ALBVAL_NO=2;
     public static final char EST_CONTACT='C';
     public static final char EST_NOCONT='N';
     public static final char EST_AUSENTE='A';
@@ -234,6 +237,8 @@ public class pdclien extends ventanaPad implements PAD
     private CLabel rut_codiL = new CLabel("Ruta");
     private CLabel cli_servirL = new CLabel("Servir");
     private CComboBox cli_servirE = new CComboBox();
+    private CLabel cli_enalvaL = new CLabel("Env.Alb.Valorados");
+    private CComboBox cli_enalvaE = new CComboBox();
     private CLinkBox rep_codiE = new CLinkBox();
     private CLabel cli_feulveL = new CLabel();
     private CTextField cli_feulveE = new CTextField(Types.DATE, "dd-MM-yyyy");
@@ -658,6 +663,8 @@ public class pdclien extends ventanaPad implements PAD
       rut_codiE.setBounds(new Rectangle(115, 240, 275, 18));
       cli_servirL.setBounds(new Rectangle(1, 260, 110, 18));
       cli_servirE.setBounds(new Rectangle(115, 260, 75, 18));
+      cli_enalvaL.setBounds(new Rectangle(1, 280, 110, 18));
+      cli_enalvaE.setBounds(new Rectangle(115, 280, 75, 18));
       cli_codrutL.setBounds(new Rectangle(410, 240, 80, 19));
       cli_codrepE.setBounds(new Rectangle(495, 240, 50, 19));
       cli_codrepE.setToolTipText("F3- Buscar siguiente codigo reparto");
@@ -821,6 +828,8 @@ public class pdclien extends ventanaPad implements PAD
         PdatGen.add(rut_codiE, null);
         PdatGen.add(cli_servirL, null);
         PdatGen.add(cli_servirE, null);
+        PdatGen.add(cli_enalvaL, null);
+        PdatGen.add(cli_enalvaE, null);
         PdatGen.add(cli_codrutL, null);
         PdatGen.add(cli_codrepE,null);
         PdatGen.add(cli_codrepB,null);
@@ -910,8 +919,12 @@ public class pdclien extends ventanaPad implements PAD
     cli_servirE.addItem("Si",""+cliPanel.SERVIR_SI);
     cli_servirE.addItem("No",""+cliPanel.SERVIR_NO);
     cli_servirE.addItem("Inc.Fra",""+cliPanel.SERVIR_INCFRA);
+    
     cli_servirE.addItem("No!",""+cliPanel.SERVIR_NO_FORZADO);
     
+    cli_enalvaE.addItem("--",""+ENV_ALBVAL_IGN);
+    cli_enalvaE.addItem("No",""+ENV_ALBVAL_NO);
+    cli_enalvaE.addItem("Si",""+ENV_ALBVAL_SI);
     eti_codiE.addDatos(etiqueta.getReports(dtStat,EU.em_cod,1));
     eti_codiE.setFormato(Types.DECIMAL,"###9",4);
 
@@ -1072,6 +1085,7 @@ public class pdclien extends ventanaPad implements PAD
     cli_email1E.setColumnaAlias("cli_email1");
     cli_email2E.setColumnaAlias("cli_email2");
     cli_servirE.setColumnaAlias("cli_servir");
+    cli_enalvaE.setColumnaAlias("cli_enalva");
 //    cli_nurgsaE.setColumnaAlias("cli_nurgsa");
 //    jt.getPopMenu().add(copiaCliente,0);
     activaTodo();
@@ -1390,6 +1404,7 @@ public class pdclien extends ventanaPad implements PAD
     v.add(cli_email1E.getStrQuery());
     v.add(cli_email2E.getStrQuery());
     v.add(cli_servirE.getStrQuery());
+    v.add(cli_enalvaE.getStrQuery());
     Pcabe.setQuery(false);
     PdatGen.setQuery(false);
     PdatEnv.setQuery(false);
@@ -1913,6 +1928,7 @@ public class pdclien extends ventanaPad implements PAD
     dtAdd.setDato("cli_email1",cli_email1E.getText());
     dtAdd.setDato("cli_email2",cli_email2E.getText());
     dtAdd.setDato("cli_servir",cli_servirE.getValorInt());
+    dtAdd.setDato("cli_enalva",cli_enalvaE.getValorInt());
 //    dtAdd.setDato("cli_nurgsa",cli_nurgsaE.getText());
     dtAdd.update(stUp);
     ctUp.commit();
@@ -2260,6 +2276,7 @@ public class pdclien extends ventanaPad implements PAD
 
       cli_activE.setValor(dtCon1.getString("cli_activ"));
       cli_servirE.setValor(dtCon1.getInt("cli_servir"));
+      cli_enalvaE.setValor(dtCon1.getInt("cli_enalva"));
       cli_generE.setValor(dtCon1.getString("cli_gener"));
       sbe_codiE.setValorInt(dtCon1.getInt("sbe_codi",true));
       cli_giroE.setValor(dtCon1.getString("cli_giro"));

@@ -189,8 +189,9 @@ public class Comvalm extends ventana
     activarEventos();
     this.setEnabled(true);
     PtotalE.setEnabled(false);
-     pro_codiE.requestFocus();    
+    pro_codiE.requestFocusLater();
   }
+  
   public void setProCodi(int proCodi)
   {
       pro_codiE.setValorInt(proCodi,true);

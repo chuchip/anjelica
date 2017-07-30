@@ -146,7 +146,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2016-12-15 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2017-07-30 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -289,6 +289,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
     }
     private boolean  checkLineaRepe(int empCodi,int avcAno, String avcSerie,int avcNume, int row)
     {
+        if (avcAno==0 || avcNume==0 ||avcSerie.trim().equals(""))
+            return false;
         int nRows = jt.getRowCount();
         for (int n = 0; n < nRows; n++)
         {
@@ -1660,6 +1662,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
       
       this.setEnabled(true);
       rgSelect();
+      PADUltimo();
       verDatos();
       mensaje("");
       mensajeErr("Nuevas Condiciones ... Establecidas");

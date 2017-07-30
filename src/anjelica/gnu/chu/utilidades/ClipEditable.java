@@ -109,7 +109,8 @@ public class ClipEditable
     @Override
   public void mouseClicked(MouseEvent e)
   {
-    if (e.getModifiers() == MouseEvent.BUTTON1_MASK)
+    
+    if (e.getButton()!=MouseEvent.BUTTON3)
       return;
 
     paste.setEnabled(c.isEnabled());

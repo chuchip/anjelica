@@ -32,11 +32,14 @@ import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.eventos.GridAdapter;
 import gnu.chu.eventos.GridEvent;
+import gnu.chu.interfaces.PAD;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventana;
+import gnu.chu.utilidades.ventanaPad;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -51,11 +54,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
-public class MantTransPedidos extends  ventana  
+public class MantTransPedidos extends  ventanaPad implements PAD  
 {
     boolean DEBUG=true;
     PreparedStatement psTra;
@@ -112,7 +113,7 @@ public class MantTransPedidos extends  ventana
                     ARG_SBECODI = ht.get("sbeCodi");
               
             }
-            setTitulo("Mant. Tiempos Pedidos Ventas");
+            setTitulo("Mant. Transportes Pedidos Ventas");
             if (jf.gestor.apuntar(this)) {
                 jbInit();
             } else {
@@ -136,7 +137,7 @@ public class MantTransPedidos extends  ventana
                 if (ht.get("sbeCodi") != null)
                     ARG_SBECODI = ht.get("sbeCodi");
             }
-            setTitulo("Mant. Tiempos Pedidos Ventas");
+             setTitulo("Mant. Transportes Pedidos Ventas");
 
             jbInit();
         } catch (Exception e) {
@@ -152,7 +153,7 @@ public class MantTransPedidos extends  ventana
         jf=padre.jf;
 
         EU=padre.EU;
-        setTitulo("Mant. Tiempos Pedidos Ventas");
+         setTitulo("Mant. Transportes Pedidos Ventas");
 
         jbInit();
     }
@@ -161,12 +162,29 @@ public class MantTransPedidos extends  ventana
 
         iniciarFrame();
 
-        this.setVersion("2017-03-19");
+        this.setVersion("2017-07-23");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
+   statusBar = new StatusBar(this);
+        nav = new navegador(this, dtCons, false, navegador.NORMAL);
+        
+        iniciarFrame();
+        this.setVersion("2017-97-25 ");
+        
+        strSql = "SELECT * FROM cabtrapedven "+
+            " order by trp_fecha,rut_codi";
 
+        this.getContentPane().add(nav, BorderLayout.NORTH);
+        this.getContentPane().add(statusBar, BorderLayout.SOUTH);
+        this.setPad(this);
+        conecta();
+       
+        initComponents();
+        iniciarBotones(Baceptar, Bcancelar);
+     
+        navActivarAll();
         conecta();
     }
 
@@ -178,23 +196,15 @@ public class MantTransPedidos extends  ventana
      Pcabe.setDefButton(Baceptar);
      pvc_feciniE.setAceptaNulo(false);
      pvc_fecfinE.setAceptaNulo(false);
-     cli_codiE.setCeroIsNull(true);
-     MantRepres.llenaLinkBox(rep_codiE, dtCon1);
-     pdconfig.llenaDiscr(dtStat, zon_codiE, pdconfig.D_ZONA,EU.em_cod);
+    
      pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS, EU.em_cod);
      String s="select tra_codi,tra_nomb from transportista where tra_tipo='V' ORDER BY tra_nomb";
      dtCon1.select(s);
      tra_codbusE.addDatos(dtCon1);
      trp_fecbusE.setDate(Formatear.getDateAct());
      rut_codiE.setCeroIsNull(true);
-     cli_codiE.iniciar(dtStat, this, vl, EU);
-     cli_codiE.setCampoReparto(true); 
-    
-    
-     sbe_codiE.iniciar(dtStat, this, vl, EU);
-     
-     sbe_codiE.setAceptaNulo(true);
-     sbe_codiE.setValorInt(0);
+   
+   
      pvc_feciniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -7));
      pvc_fecfinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
       activarEventos();
@@ -211,7 +221,7 @@ public class MantTransPedidos extends  ventana
             Baceptar_actionPerformed();
           }
         });
-     jtCabPed.addGridListener(new GridAdapter()
+     jtCab.addGridListener(new GridAdapter()
      {
          @Override
          public void cambioColumna(GridEvent event)   { 
@@ -244,8 +254,8 @@ public class MantTransPedidos extends  ventana
 //              }
               verDatPed(jtCabPed.getValorInt(JTCAB_EMPPED),
                 jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED));
-              actTotalGrid();
-              verUsuPedido(event.getLinea());
+//              actTotalGrid();
+//              verUsuPedido(event.getLinea());
           }
      });
      
@@ -409,6 +419,12 @@ public class MantTransPedidos extends  ventana
         }
         return -1;
     }
+    /**
+     * Muestra los kilos de pedido
+     * @param empCodi
+     * @param ejeNume
+     * @param pvcNume 
+     */
     void verDatPed(int empCodi,int ejeNume,int pvcNume)
    {
      try
@@ -429,9 +445,6 @@ public class MantTransPedidos extends  ventana
        }
      
 
-       pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));
-       pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","hh.mm"));
-       pvc_comenE.setText(dtCon1.getString("pvc_comen"));
        
        
        double kilosColgado=0;
@@ -441,8 +454,7 @@ public class MantTransPedidos extends  ventana
          ArrayList v=new ArrayList();
          v.add("P");
          v.add(dtCon1.getString("pro_codi"));
-         v.add(pro_codiE.getNombArtCli(dtCon1.getInt("pro_codi"),
-                                              cli_codiE.getValorInt(),EU.em_cod,dtStat));
+         v.add(pro_codiE.getNombArt(dtCon1.getInt("pro_codi")));
          v.add(dtCon1.getString("prv_codi"));
          v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi"),dtStat));
          v.add(dtCon1.getFecha("pvl_feccad"));
@@ -473,97 +485,97 @@ public class MantTransPedidos extends  ventana
        Error("Error al Ver datos de pedido",k);
      }
    }
-   void verUsuPedido(int row)
-   {    
-      jtUsuPed.removeAllDatos(); 
-      try {
-        ResultSet rs;
-    
-        int pvcId = pdpeve.getIdPedido(dtStat, jtCabPed.getValorInt(row, JTCAB_EMPPED),
-                    jtCabPed.getValorInt(row, JTCAB_EJEPED),
-                    jtCabPed.getValorInt(row, JTCAB_NUMPED));
-         if (pvcId > 0)
-         {
-             s="select tp.*,tra_nomb from transpedidos tp left join transportista  as tr on tr.tra_tipo='V' "
-               + " and tr.tra_codi = tp.tra_codi where trp_id= "+pvcId+
-                   " and trp_fecha = '"+ Formatear.getFecha(fechaReparto ,"yyyyMMdd")+"'" ;
-             if (! dtStat.select(s))
-                 return;
-                  do
-                  {
-                      ArrayList v=new ArrayList();
-                      if (dtStat.getInt("trp_kilos")<1)
-                          continue;
-                      v.add(dtStat.getString("tra_codi"));
-                      v.add(dtStat.getString("tra_nomb"));
-                      v.add(dtStat.getInt("trp_kilos"));    
-                      v.add(dtStat.getString("trp_tipo")); 
-                      jtUsuPed.addLinea(v);
-                  } while (dtStat.next());
-         }
-      } catch (SQLException  k )
-      {
-          Error("Error al ver usuarios del pedido ",k);
-      }
-   }
-   void actTotalGrid()
-   {
-      try {
-          jtUsu.removeAllDatos();
-          
-          ResultSet rs;
-          int nRows = jtCabPed.getRowCount();
-          
-          HashMap<String, Dimension> hmP = new HashMap();
-          Dimension hmU;
-          for (int n = 0; n < nRows; n++)
-          {
-              int pvcId = pdpeve.getIdPedido(dtStat, jtCabPed.getValorInt(n, JTCAB_EMPPED),
-                  jtCabPed.getValorInt(n, JTCAB_EJEPED),
-                  jtCabPed.getValorInt(n, JTCAB_NUMPED));
-              if (pvcId > 0)
-              {
-                  psTra.setInt(1, pvcId);
-                  
-                  rs = psTra.executeQuery();
-                  while (rs.next())
-                  {
-                      hmU = hmP.get(rs.getString("tra_nomb"));
-                      if (hmU == null)
-                      {
-                          hmU = new Dimension();
-                          hmU.setSize(rs.getInt("trp_kilos"), 1);
-                      } else
-                      {
-                          hmU.setSize(hmU.getWidth() + rs.getInt("trp_kilos"),
-                              hmU.getHeight() + 1);
-                      }
-                      hmP.put(rs.getString("tra_nomb"), hmU);
-                  }
-                 
-              }
-          }
-          int totMin=0,numReg=0;
-          for (Map.Entry pair : hmP.entrySet())
-          {
-              ArrayList v = new ArrayList();
-              v.add(pair.getKey());
-              hmU = (Dimension) pair.getValue();
-              if (hmU.getWidth() <= 1)
-                  continue;
-              v.add(hmU.getWidth());
-              v.add(hmU.getHeight());
-              jtUsu.addLinea(v);
-              numReg+=hmU.getHeight();
-              totMin += hmU.getWidth();
-          }
-          tit_numregE.setValorDec(numReg);
-          kilosTotalE.setValorDec(totMin);
-      } catch (SQLException k)
-      {
-          Error("Error al ver acumulados de pedidos",k);
-      }
-   }
+//   void verUsuPedido(int row)
+//   {    
+//      jtUsuPed.removeAllDatos(); 
+//      try {
+//        ResultSet rs;
+//    
+//        int pvcId = pdpeve.getIdPedido(dtStat, jtCabPed.getValorInt(row, JTCAB_EMPPED),
+//                    jtCabPed.getValorInt(row, JTCAB_EJEPED),
+//                    jtCabPed.getValorInt(row, JTCAB_NUMPED));
+//         if (pvcId > 0)
+//         {
+//             s="select tp.*,tra_nomb from transpedidos tp left join transportista  as tr on tr.tra_tipo='V' "
+//               + " and tr.tra_codi = tp.tra_codi where trp_id= "+pvcId+
+//                   " and trp_fecha = '"+ Formatear.getFecha(fechaReparto ,"yyyyMMdd")+"'" ;
+//             if (! dtStat.select(s))
+//                 return;
+//                  do
+//                  {
+//                      ArrayList v=new ArrayList();
+//                      if (dtStat.getInt("trp_kilos")<1)
+//                          continue;
+//                      v.add(dtStat.getString("tra_codi"));
+//                      v.add(dtStat.getString("tra_nomb"));
+//                      v.add(dtStat.getInt("trp_kilos"));    
+//                      v.add(dtStat.getString("trp_tipo")); 
+//                      jtUsuPed.addLinea(v);
+//                  } while (dtStat.next());
+//         }
+//      } catch (SQLException  k )
+//      {
+//          Error("Error al ver usuarios del pedido ",k);
+//      }
+//   }
+//   void actTotalGrid()
+//   {
+//      try {
+//          jtUsu.removeAllDatos();
+//          
+//          ResultSet rs;
+//          int nRows = jtCabPed.getRowCount();
+//          
+//          HashMap<String, Dimension> hmP = new HashMap();
+//          Dimension hmU;
+//          for (int n = 0; n < nRows; n++)
+//          {
+//              int pvcId = pdpeve.getIdPedido(dtStat, jtCabPed.getValorInt(n, JTCAB_EMPPED),
+//                  jtCabPed.getValorInt(n, JTCAB_EJEPED),
+//                  jtCabPed.getValorInt(n, JTCAB_NUMPED));
+//              if (pvcId > 0)
+//              {
+//                  psTra.setInt(1, pvcId);
+//                  
+//                  rs = psTra.executeQuery();
+//                  while (rs.next())
+//                  {
+//                      hmU = hmP.get(rs.getString("tra_nomb"));
+//                      if (hmU == null)
+//                      {
+//                          hmU = new Dimension();
+//                          hmU.setSize(rs.getInt("trp_kilos"), 1);
+//                      } else
+//                      {
+//                          hmU.setSize(hmU.getWidth() + rs.getInt("trp_kilos"),
+//                              hmU.getHeight() + 1);
+//                      }
+//                      hmP.put(rs.getString("tra_nomb"), hmU);
+//                  }
+//                 
+//              }
+//          }
+//          int totMin=0,numReg=0;
+//          for (Map.Entry pair : hmP.entrySet())
+//          {
+//              ArrayList v = new ArrayList();
+//              v.add(pair.getKey());
+//              hmU = (Dimension) pair.getValue();
+//              if (hmU.getWidth() <= 1)
+//                  continue;
+//              v.add(hmU.getWidth());
+//              v.add(hmU.getHeight());
+//              jtUsu.addLinea(v);
+//              numReg+=hmU.getHeight();
+//              totMin += hmU.getWidth();
+//          }
+//          tit_numregE.setValorDec(numReg);
+//          kilosTotalE.setValorDec(totMin);
+//      } catch (SQLException k)
+//      {
+//          Error("Error al ver acumulados de pedidos",k);
+//      }
+//   }
    /**
     * Muestra las lineas del pedido y del albaran si existe.
     * @param empCodi
@@ -608,6 +620,8 @@ public class MantTransPedidos extends  ventana
       return;
     int rowCount;
     int nLin=0;
+    double kilosColgado=0;
+    double kilosEncajado=0;
     do
     {
       rowCount = jtLinPed.getRowCount();
@@ -615,8 +629,7 @@ public class MantTransPedidos extends  ventana
       ArrayList v = new ArrayList();
       v.add("A");
       v.add(dtCon1.getString("pro_codi"));
-      v.add(pro_codiE.getNombArtCli(dtCon1.getInt("pro_codi"),
-                                           cli_codiE.getValorInt(), EU.em_cod, dtStat));
+      v.add(pro_codiE.getNombArt(dtCon1.getInt("pro_codi")));
       if (dtCon1.getInt("tipo")==0)
       {
         v.add("");
@@ -634,12 +647,20 @@ public class MantTransPedidos extends  ventana
     
       v.add(dtCon1.getString("avp_numuni"));
       v.add(""); // Precio
-      v.add(false); // COnf
+      v.add(false); // Conf
       v.add(dtCon1.getString("avp_canti"));            
       v.add(""); // NL
       jtLinPed.addLinea(v);
+        if (pro_codiE.getLikeProd().getInt("pro_encaja")==0)
+         {// Genero colgado
+             kilosColgado+=dtCon1.getDouble("avp_canti");
+         }
+         else
+             kilosEncajado+=dtCon1.getDouble("avp_canti");
     } while (dtCon1.next());
-    
+       kilosCajasAlbE.setValorDec(kilosEncajado);
+       kilosColgadoAlbE.setValorDec(kilosColgado);
+       kilosAlbarE.setValorDec(kilosEncajado + kilosColgado);
    }
 //   void actAcumJT()
 //   {
@@ -678,9 +699,7 @@ public class MantTransPedidos extends  ventana
         fechaReparto=trp_fecbusE.getDate();
         if (! ejecSelect)
           return true;
-     swCliente=false;
-     if (!cli_codiE.isNull())
-         swCliente=true;
+     
      s = "SELECT c.*,trp_orden, av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_poble,"
          + " c.rut_codi, al.rut_nomb FROM pedvenc as c"
          + " left join transpedidos on trp_id = pvc_id and trp_kilos > 0"
@@ -688,26 +707,10 @@ public class MantTransPedidos extends  ventana
          + " and c.avc_serie= av.avc_serie and c.avc_nume =  av.avc_nume and av.emp_codi = c.emp_codi "
          + ",clientes as cl,v_rutas as al " +       
         " WHERE c.emp_codi = "+EU.em_cod+       
-        " and c.pvc_confir = '"+pvc_confirE.getValor()+"' "+
+        " and c.pvc_confir = 'S'"+
         " and cl.cli_codi = c.cli_codi " +
-        " and c.rut_codi = al.rut_codi "+     
-        (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = "+sbe_codiE.getValorInt())+
-        (zon_codiE.isNull() || swCliente?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
-        (rep_codiE.isNull() || swCliente?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'");
+        " and c.rut_codi = al.rut_codi "    ;
 
-    if (verPedidosE.getValor().equals("P"))
-      s += " AND (c.avc_ano = 0 or pvc_cerra=0)";
-    if (verPedidosE.getValor().equals("L"))
-      s += " AND c.avc_ano != 0";
-    if (!pvc_confirE.getValor().equals("*"))
-      s += " and pvc_confir = '" + pvc_confirE.getValor() + "'";
-    if (swCliente)
-      s += " AND c.cli_codi = " + cli_codiE.getValorInt();
-   
-    s+="and  "+
-            (albPedidC.getValor().equals("P")?"pvc_fecent":"avc_fecalb ")+
-            " between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +       
-        " and  to_date('" + pvc_fecfinE.getText()  + "','dd-MM-yyyy')" ;
     s += " order by trp_orden,c.pvc_fecent,c.cli_codi ";
 
     jtCabPed.setEnabled(false);
@@ -716,80 +719,12 @@ public class MantTransPedidos extends  ventana
     if (!dtCon1.select(s))
     {
       mensajeErr("NO hay PEDIDOS que cumplan estas condiciones");
-      verPedidosE.requestFocus();
+    //  verPedidosE.requestFocus();
       return false;
     }
     return true;
   }
-  private void confJTCab()
-  {
-    ArrayList v=new ArrayList();
-    v.add("Ord."); //0
-    v.add("Trans"); //0
-    v.add("Nombre Trans"); //1 
-    v.add("Kilos"); // 2
-    v.add("Tipo"); // 3 Encajado , Colgado
-    v.add("Fecha"); // 4 Fec.Transporte
-    v.add("H:"); // 6 Hora.
-    v.add("M:"); // 7 Minuto
-    v.add("Em"); // 8
-    v.add("Eje."); // 9
-    v.add("N.Ped");// 10
-    v.add("Cliente"); // 11
-    v.add("Nombre Cliente"); // 12
-    v.add("Población"); // 13
-    v.add("Fec.Entrega"); // 14
-    v.add("Conf"); // 15
-    v.add("Cerr");// 16
-    v.add("Dep?"); // 17
-    v.add("Ruta");// 18
-    v.add("Ej.Alb");//19
-    v.add("S.Alb"); //20
-    v.add("Num.Alb"); // 21
-    
-    jtCabPed.setCabecera(v);
-    ArrayList v1=new ArrayList();
-    v1.add(trp_ordenE);
-    v1.add(tra_codiE);
-    v1.add(tra_nombE);
-    v1.add(trp_kilosE);
-    v1.add(trp_tipoE);
-    v1.add(trp_fechaE);
-    v1.add(trp_horaE);
-    v1.add(trp_minutoE);
-    for (int n=0;n<14;n++)
-    {
-        if (n==11 || n==12 )
-        {
-            CCheckBox cc=new CCheckBox();
-            cc.setEnabled(false);            
-            v1.add(cc);
-        }
-        else
-        {
-            CTextField tf=new CTextField();
-            tf.setEnabled(false);
-            v1.add(tf);
-        }
-    }
-    try {
-      jtCabPed.setCampos(v1);
-    }  catch (Exception k)
-    {
-        msgBox(k.getMessage());
-        Error("Error al establecer campos",k);
-    }
-    jtCabPed.setMaximumSize(new Dimension(548, 158));
-    jtCabPed.setMinimumSize(new Dimension(548, 158));
-    jtCabPed.setPreferredSize(new Dimension(548, 158));
-    jtCabPed.setAnchoColumna(new int[]{40,30,100,40,20,55,20,20,26,40,49,55,150,100,76,30,40,40,100,40,40,60});
-    jtCabPed.setAlinearColumna(new int[]{2,2,0,2,1,2,2,0,2,2,2,2,0,0,1,1,1,1,0,2,1,2});
-    
-    jtCabPed.setFormatoCampos();
-    jtCabPed.setCanDeleteLinea(false);
-    jtCabPed.setCanInsertLinea(false);
-    
-  }
+ 
   private void confJtLin() throws Exception
    {
      ArrayList v = new ArrayList();
@@ -818,10 +753,7 @@ public class MantTransPedidos extends  ventana
      jtLinPed.setFormatoColumna(8, "BSN");
      jtLinPed.setAjustarGrid(true);
     }
-    public void setCliCodiText(String cliCodi)
-    {
-        cli_codiE.setText(cliCodi);
-    }
+  
  
     public void Baceptar_doClick()
     {
@@ -834,7 +766,7 @@ public class MantTransPedidos extends  ventana
     {
         if (! jtCabPed.isVacio())
         {
-            jtCabPed.salirGrid();            
+            jtCab.salirGrid();            
             guardaDatos(jtCabPed.getSelectedRow());                        
         }
         
@@ -843,7 +775,7 @@ public class MantTransPedidos extends  ventana
         fecTranAnt=Formatear.getFechaAct("dd-MM-yy");
         if (! iniciarCons(true))
           return;
-        boolean swServ=verPedidosE.getValor().equals("S"); // A servir (tienen albaran y no esta listado)
+//        boolean swServ=verPedidosE.getValor().equals("S"); // A servir (tienen albaran y no esta listado)
       psTra = dtCon1.getPreparedStatement("select tp.*,tra_nomb from transpedidos tp left join transportista  as tr on tr.tra_tipo='V' "
          + " and tr.tra_codi = tp.tra_codi where trp_id= ? "
          + (tra_codbusE.isNull()?"":" and tp.tra_codi = "+tra_codbusE.getValorInt()) );
@@ -864,24 +796,17 @@ public class MantTransPedidos extends  ventana
                 continue;
 
             
-        }
-        if (swServ) 
-        {      // Mostrar solo los disponibles para servir (tienen albaran y no estan listados)
-                if (dtCon1.getObject("avc_impres")==null)
-                    continue;
-                if ((dtCon1.getInt("avc_impres") & 1) == 1)
-                    continue;
-        }
+        }     
         boolean swImpres=false;
-        if (!albListadoC.getValor().equals("*"))
-        {                      
-            if (dtCon1.getObject("avc_impres")!=null)               
-                swImpres= (dtCon1.getInt("avc_impres") & 1) == 1;
-            if (swImpres && albListadoC.getValor().equals("N"))
-                continue;
-            if (! swImpres && albListadoC.getValor().equals("S"))
-                continue;
-        }
+//        if (!albListadoC.getValor().equals("*"))
+//        {                      
+//            if (dtCon1.getObject("avc_impres")!=null)               
+//                swImpres= (dtCon1.getInt("avc_impres") & 1) == 1;
+//            if (swImpres && albListadoC.getValor().equals("N"))
+//                continue;
+//            if (! swImpres && albListadoC.getValor().equals("S"))
+//                continue;
+//        }
         if (!rut_codiE.isNull() && !swCliente)
         {
             if (dtCon1.getObject("cli_ruta")!=null)
@@ -967,8 +892,8 @@ public class MantTransPedidos extends  ventana
           jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED));
       jtCabPed.requestFocusInicio();
       inCambio=false;
-      actTotalGrid();
-      verUsuPedido(0);
+//      actTotalGrid();
+//      verUsuPedido(0);
       
     }
     catch (SQLException | ParseException k)
@@ -996,57 +921,49 @@ public class MantTransPedidos extends  ventana
         trp_minutoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"99");
         PPrinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
-        cLabel1 = new gnu.chu.controles.CLabel();
-        cli_codiE = new gnu.chu.camposdb.cliPanel();
-        cLabel5 = new gnu.chu.controles.CLabel();
-        sbe_codiE = new gnu.chu.camposdb.sbePanel();
         cLabel6 = new gnu.chu.controles.CLabel();
         pvc_feciniE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel7 = new gnu.chu.controles.CLabel();
         pvc_fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
-        rep_codiE = new gnu.chu.controles.CLinkBox();
-        zon_codiE = new gnu.chu.controles.CLinkBox();
         cLabel9 = new gnu.chu.controles.CLabel();
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
-        cLabel10 = new gnu.chu.controles.CLabel();
-        verPedidosE = new gnu.chu.controles.CComboBox();
-        pvc_confirE = new gnu.chu.controles.CComboBox();
-        cLabel21 = new gnu.chu.controles.CLabel();
         cLabel2 = new gnu.chu.controles.CLabel();
         servRutaC = new gnu.chu.controles.CComboBox();
-        cLabel3 = new gnu.chu.controles.CLabel();
-        albListadoC = new gnu.chu.controles.CComboBox();
         cLabel22 = new gnu.chu.controles.CLabel();
         rut_codiE = new gnu.chu.controles.CLinkBox();
-        albPedidC = new gnu.chu.controles.CComboBox();
-        cLabel11 = new gnu.chu.controles.CLabel();
         tra_codbusE = new gnu.chu.controles.CLinkBox();
-        cLabel19 = new gnu.chu.controles.CLabel();
         cLabel8 = new gnu.chu.controles.CLabel();
         trp_fecbusE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
+        cLabel4 = new gnu.chu.controles.CLabel();
+        trp_idE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#####9");
+        jtCab = new gnu.chu.controles.CGridEditable(16);
+        jtCabPed = new gnu.chu.controles.Cgrid(12);
+        jtLinPed = new gnu.chu.controles.Cgrid(11);
         Ppie = new gnu.chu.controles.CPanel();
-        cLabel17 = new gnu.chu.controles.CLabel();
         nPedT = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
-        pvc_fecpedE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
-        pvc_horpedE = new gnu.chu.controles.CTextField(Types.DECIMAL, "99.99");
-        cLabel20 = new gnu.chu.controles.CLabel();
-        scrollarea1 = new javax.swing.JScrollPane();
-        pvc_comenE = new gnu.chu.controles.CTextArea();
         cLabel23 = new gnu.chu.controles.CLabel();
-        cLabel24 = new gnu.chu.controles.CLabel();
-        kilosTotalE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
-        tit_numregE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
-        jtUsu = new gnu.chu.controles.Cgrid(3);
-        jtUsuPed = new gnu.chu.controles.Cgrid(4);
-        Bborrar = new gnu.chu.controles.CButton(Iconos.getImageIcon("delete-row"));
         cLabel25 = new gnu.chu.controles.CLabel();
         kilosPedidE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
         cLabel26 = new gnu.chu.controles.CLabel();
         kilosCajasE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
         cLabel27 = new gnu.chu.controles.CLabel();
         kilosColgadoE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
-        jtLinPed = new gnu.chu.controles.Cgrid(11);
-        jtCabPed = new gnu.chu.controles.CGridEditable(22);
+        cLabel28 = new gnu.chu.controles.CLabel();
+        kilosAlbarE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        cLabel29 = new gnu.chu.controles.CLabel();
+        kilosCajasAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        cLabel30 = new gnu.chu.controles.CLabel();
+        kilosColgadoAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        cLabel31 = new gnu.chu.controles.CLabel();
+        cLabel32 = new gnu.chu.controles.CLabel();
+        cLabel33 = new gnu.chu.controles.CLabel();
+        cLabel34 = new gnu.chu.controles.CLabel();
+        kilosPedidE1 = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        cLabel35 = new gnu.chu.controles.CLabel();
+        kilosCajasE1 = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        cLabel36 = new gnu.chu.controles.CLabel();
+        kilosColgadoE1 = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        BInsTodoPed = new gnu.chu.controles.CButton();
 
         tra_codiE.setText("0");
 
@@ -1068,133 +985,72 @@ public class MantTransPedidos extends  ventana
         PPrinc.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        Pcabe.setMaximumSize(new java.awt.Dimension(725, 85));
-        Pcabe.setMinimumSize(new java.awt.Dimension(725, 85));
+        Pcabe.setMaximumSize(new java.awt.Dimension(725, 50));
+        Pcabe.setMinimumSize(new java.awt.Dimension(725, 50));
         Pcabe.setName(""); // NOI18N
-        Pcabe.setPreferredSize(new java.awt.Dimension(725, 85));
+        Pcabe.setPreferredSize(new java.awt.Dimension(725, 50));
         Pcabe.setLayout(null);
-
-        cLabel1.setText("Ver Pedidos");
-        Pcabe.add(cLabel1);
-        cLabel1.setBounds(2, 1, 70, 18);
-        Pcabe.add(cli_codiE);
-        cli_codiE.setBounds(80, 22, 280, 18);
-
-        cLabel5.setText("Delegación");
-        Pcabe.add(cLabel5);
-        cLabel5.setBounds(370, 22, 70, 18);
-        Pcabe.add(sbe_codiE);
-        sbe_codiE.setBounds(440, 22, 37, 18);
 
         cLabel6.setText("De Fecha");
         Pcabe.add(cLabel6);
-        cLabel6.setBounds(200, 1, 49, 18);
+        cLabel6.setBounds(10, 3, 49, 18);
         Pcabe.add(pvc_feciniE);
-        pvc_feciniE.setBounds(260, 1, 76, 18);
+        pvc_feciniE.setBounds(70, 3, 76, 18);
 
         cLabel7.setText("A Fecha");
         Pcabe.add(cLabel7);
-        cLabel7.setBounds(340, 1, 43, 18);
+        cLabel7.setBounds(160, 3, 43, 18);
         Pcabe.add(pvc_fecfinE);
-        pvc_fecfinE.setBounds(390, 1, 75, 18);
-
-        rep_codiE.setAncTexto(30);
-        rep_codiE.setMayusculas(true);
-        rep_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
-        Pcabe.add(rep_codiE);
-        rep_codiE.setBounds(60, 42, 190, 18);
-
-        zon_codiE.setAncTexto(30);
-        zon_codiE.setMayusculas(true);
-        zon_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
-        Pcabe.add(zon_codiE);
-        zon_codiE.setBounds(310, 42, 230, 18);
+        pvc_fecfinE.setBounds(210, 3, 75, 18);
 
         cLabel9.setText("Transp.");
         Pcabe.add(cLabel9);
-        cLabel9.setBounds(490, 20, 50, 18);
+        cLabel9.setBounds(310, 25, 50, 18);
 
         Baceptar.setText("Aceptar");
         Pcabe.add(Baceptar);
-        Baceptar.setBounds(610, 60, 100, 25);
+        Baceptar.setBounds(620, 30, 100, 25);
 
-        cLabel10.setText("De Cliente");
-        Pcabe.add(cLabel10);
-        cLabel10.setBounds(5, 22, 70, 18);
-
-        verPedidosE.addItem("Pendientes","P");
-        verPedidosE.addItem("A servir","S");
-        verPedidosE.addItem("Preparados","L");
-        verPedidosE.addItem("Todos","T");
-        Pcabe.add(verPedidosE);
-        verPedidosE.setBounds(80, 1, 110, 18);
-
-        pvc_confirE.addItem("Si","S");
-        pvc_confirE.addItem("No","N");
-        pvc_confirE.addItem("**","*");
-        Pcabe.add(pvc_confirE);
-        pvc_confirE.setBounds(540, 1, 50, 18);
-
-        cLabel21.setText("Repres.");
-        cLabel21.setPreferredSize(new java.awt.Dimension(60, 18));
-        Pcabe.add(cLabel21);
-        cLabel21.setBounds(5, 42, 50, 18);
-
-        cLabel2.setText("Servidos en Ruta ");
+        cLabel2.setText("ID");
         Pcabe.add(cLabel2);
-        cLabel2.setBounds(2, 65, 100, 17);
+        cLabel2.setBounds(630, 0, 20, 17);
 
         servRutaC.addItem("**","*");
         servRutaC.addItem("Si","S");
         servRutaC.addItem("No","N");
         Pcabe.add(servRutaC);
-        servRutaC.setBounds(100, 65, 50, 17);
-
-        cLabel3.setText("Listados Albaran ");
-        Pcabe.add(cLabel3);
-        cLabel3.setBounds(160, 65, 100, 17);
-
-        albListadoC.addItem("**","*");
-        albListadoC.addItem("Si","S");
-        albListadoC.addItem("No","N");
-        Pcabe.add(albListadoC);
-        albListadoC.setBounds(260, 65, 50, 17);
+        servRutaC.setBounds(570, 0, 50, 17);
 
         cLabel22.setText("Ruta");
         cLabel22.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel22);
-        cLabel22.setBounds(350, 65, 40, 18);
+        cLabel22.setBounds(10, 25, 40, 18);
 
         rut_codiE.setFormato(Types.CHAR,"X",2);
         rut_codiE.setAncTexto(30);
         rut_codiE.setMayusculas(true);
         rut_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
         Pcabe.add(rut_codiE);
-        rut_codiE.setBounds(390, 65, 200, 18);
-
-        albPedidC.addItem("Pedidos","P");
-        albPedidC.addItem("Albaran","A");
-        Pcabe.add(albPedidC);
-        albPedidC.setBounds(620, 2, 90, 17);
-
-        cLabel11.setText("Confirmado");
-        Pcabe.add(cLabel11);
-        cLabel11.setBounds(470, 1, 70, 18);
+        rut_codiE.setBounds(50, 25, 250, 18);
 
         tra_codbusE.setAncTexto(30);
         Pcabe.add(tra_codbusE);
-        tra_codbusE.setBounds(540, 20, 170, 17);
-
-        cLabel19.setText("Zona");
-        cLabel19.setPreferredSize(new java.awt.Dimension(60, 18));
-        Pcabe.add(cLabel19);
-        cLabel19.setBounds(270, 42, 40, 18);
+        tra_codbusE.setBounds(360, 25, 230, 17);
 
         cLabel8.setText("Fec.Transporte");
         Pcabe.add(cLabel8);
-        cLabel8.setBounds(549, 40, 90, 18);
+        cLabel8.setBounds(300, 0, 90, 18);
         Pcabe.add(trp_fecbusE);
-        trp_fecbusE.setBounds(646, 40, 60, 18);
+        trp_fecbusE.setBounds(400, 0, 60, 18);
+
+        cLabel4.setText("Servidos en Ruta ");
+        Pcabe.add(cLabel4);
+        cLabel4.setBounds(470, 0, 100, 17);
+
+        trp_idE.setToolTipText("");
+        trp_idE.setEnabled(false);
+        Pcabe.add(trp_idE);
+        trp_idE.setBounds(650, 0, 2, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1203,127 +1059,101 @@ public class MantTransPedidos extends  ventana
         gridBagConstraints.weightx = 1.0;
         PPrinc.add(Pcabe, gridBagConstraints);
 
-        Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        Ppie.setMaximumSize(new java.awt.Dimension(705, 105));
-        Ppie.setMinimumSize(new java.awt.Dimension(705, 105));
-        Ppie.setPreferredSize(new java.awt.Dimension(705, 105));
-        Ppie.setLayout(null);
+        try {
+            ArrayList v=new ArrayList();
+            v.add("Ord."); //0
+            v.add("Kilos"); //1
+            v.add("Fecha"); // 2Fec.Transporte
+            v.add("H:"); // 3Hora.
+            v.add("M:"); // 4Minuto
+            v.add("Em"); // 5
+            v.add("Eje."); // 6
+            v.add("N.Ped");// 7
+            v.add("Cliente"); // 8
+            v.add("Nombre Cliente"); // 9
+            v.add("Población"); // 10
+            v.add("Ej.Alb");//11
+            v.add("S.Alb"); //12
+            v.add("Num.Alb"); //13
+            v.add("Cerr");// 14
+            v.add("Dep?"); // 15
+            jtCab.setCabecera(v);
+            ArrayList v1=new ArrayList();
+            v1.add(trp_ordenE); //0
+            v1.add(trp_kilosE); // 1
+            v1.add(trp_fechaE); // 2
+            v1.add(trp_horaE); // 3
+            v1.add(trp_minutoE); // 4
+            for (int n=5;n<14;n++)
+            {
 
-        cLabel17.setText("N.Docs");
-        cLabel17.setPreferredSize(new java.awt.Dimension(60, 18));
-        Ppie.add(cLabel17);
-        cLabel17.setBounds(130, 58, 50, 18);
-
-        nPedT.setEnabled(false);
-        Ppie.add(nPedT);
-        nPedT.setBounds(100, 78, 30, 18);
-
-        pvc_fecpedE.setEnabled(false);
-        Ppie.add(pvc_fecpedE);
-        pvc_fecpedE.setBounds(590, 83, 70, 18);
-
-        pvc_horpedE.setEnabled(false);
-        Ppie.add(pvc_horpedE);
-        pvc_horpedE.setBounds(660, 83, 40, 18);
-
-        cLabel20.setText("T. Kilos");
-        cLabel20.setPreferredSize(new java.awt.Dimension(60, 18));
-        Ppie.add(cLabel20);
-        cLabel20.setBounds(10, 58, 50, 18);
-
-        pvc_comenE.setColumns(20);
-        pvc_comenE.setRows(5);
-        scrollarea1.setViewportView(pvc_comenE);
-
-        Ppie.add(scrollarea1);
-        scrollarea1.setBounds(10, 0, 210, 55);
-
-        cLabel23.setText("Kilos Pedido ");
-        cLabel23.setPreferredSize(new java.awt.Dimension(60, 18));
-        Ppie.add(cLabel23);
-        cLabel23.setBounds(150, 83, 75, 18);
-
-        cLabel24.setText("Fecha Ped.");
-        cLabel24.setPreferredSize(new java.awt.Dimension(60, 18));
-        Ppie.add(cLabel24);
-        cLabel24.setBounds(530, 83, 70, 18);
-
-        kilosTotalE.setEnabled(false);
-        Ppie.add(kilosTotalE);
-        kilosTotalE.setBounds(70, 60, 40, 18);
-
-        tit_numregE.setEnabled(false);
-        Ppie.add(tit_numregE);
-        tit_numregE.setBounds(180, 58, 40, 18);
-
-        ArrayList vu=new ArrayList();
-        vu.add("Trans.");
-        vu.add("Kilos.");
-        vu.add("Ped");
-        jtUsu.setCabecera(vu);
-        jtUsu.setAnchoColumna(new int[]{100,40,40});
-
-        jtUsu.setAjustarColumnas(true);
-        jtUsu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jtUsu.setBuscarVisible(false);
-        Ppie.add(jtUsu);
-        jtUsu.setBounds(230, 0, 270, 80);
-
-        ArrayList vu1=new ArrayList();
-        vu1.add("Tr");
-        vu1.add("Transporte");
-        vu1.add("Kilos");
-        vu1.add("Tipo");
-        jtUsuPed.setCabecera(vu1);
-        jtUsuPed.setAnchoColumna(new int[]{40,100,40,20});
-
-        jtUsuPed.setAjustarColumnas(true);
-        jtUsuPed.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jtUsuPed.setBuscarVisible(false);
-        Ppie.add(jtUsuPed);
-        jtUsuPed.setBounds(500, 0, 170, 80);
-
-        Bborrar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BborrarActionPerformed(evt);
+                CTextField tf=new CTextField();
+                tf.setEnabled(false);
+                v1.add(tf);
             }
-        });
-        Ppie.add(Bborrar);
-        Bborrar.setBounds(670, 0, 30, 30);
+            CCheckBox cb1=new CCheckBox();
+            cb1.setEnabled(false);
+            v1.add(cb1);
+            CCheckBox cb2=new CCheckBox();
+            cb2.setEnabled(false);
+            v1.add(cb2);
+            try {
+                jtCab.setCampos(v1);
+            }  catch (Exception k)
+            {
+                msgBox(k.getMessage());
+                Error("Error al establecer campos",k);
+            }
+            jtCab.setMaximumSize(new Dimension(548, 158));
+            jtCab.setMinimumSize(new Dimension(548, 158));
+            jtCab.setPreferredSize(new Dimension(548, 158));
+            jtCabPed.setAnchoColumna(new int[]{20,40,55,20,20,26,40,49,55,150,100});
+            jtCabPed.setAlinearColumna(new int[]{2,2,1,2,2,0,2,2,2,0,0});
 
-        cLabel25.setText("Total Pedidos ");
-        cLabel25.setPreferredSize(new java.awt.Dimension(60, 18));
-        Ppie.add(cLabel25);
-        cLabel25.setBounds(10, 78, 80, 18);
+            jtCab.setFormatoCampos();
+            jtCab.setCanDeleteLinea(false);
+            jtCab.setCanInsertLinea(false);
+        } catch (Exception k){Error("Error al configurar grid cabecera",k);}
+        jtCab.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtCab.setMaximumSize(new java.awt.Dimension(681, 220));
+        jtCab.setMinimumSize(new java.awt.Dimension(681, 220));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        PPrinc.add(jtCab, gridBagConstraints);
 
-        kilosPedidE.setEnabled(false);
-        Ppie.add(kilosPedidE);
-        kilosPedidE.setBounds(230, 83, 40, 18);
-
-        cLabel26.setText("Kilos Cajas");
-        cLabel26.setPreferredSize(new java.awt.Dimension(60, 18));
-        Ppie.add(cLabel26);
-        cLabel26.setBounds(280, 83, 70, 18);
-
-        kilosCajasE.setEnabled(false);
-        Ppie.add(kilosCajasE);
-        kilosCajasE.setBounds(350, 83, 40, 18);
-
-        cLabel27.setText("Kg. Colgado");
-        cLabel27.setPreferredSize(new java.awt.Dimension(60, 18));
-        Ppie.add(cLabel27);
-        cLabel27.setBounds(400, 83, 70, 18);
-
-        kilosColgadoE.setEnabled(false);
-        Ppie.add(kilosColgadoE);
-        kilosColgadoE.setBounds(470, 83, 35, 18);
-
+        try {
+            ArrayList v=new ArrayList();
+            v.add("Em"); // 0
+            v.add("Eje."); // 1
+            v.add("N.Ped");// 2
+            v.add("Cliente"); // 3
+            v.add("Nombre Cliente"); // 4
+            v.add("Población"); // 5
+            v.add("Fec.Entrega"); // 6
+            v.add("Conf"); // 7
+            v.add("Cerr");// 8
+            v.add("Dep?"); // 9
+            v.add("Ruta");// 10
+            v.add("Inc");//11
+            jtCabPed.setCabecera(v);
+        } catch (Exception k){Error("Error al configurar grid cabecera",k);}
+        jtCabPed.setFormatoColumna(11,"BS");
+        jtCabPed.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtCabPed.setMaximumSize(new java.awt.Dimension(681, 220));
+        jtCabPed.setMinimumSize(new java.awt.Dimension(681, 220));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        PPrinc.add(Ppie, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        PPrinc.add(jtCabPed, gridBagConstraints);
 
         try {confJtLin();} catch (Exception k){Error("Error al configurar grid Lineas",k);}
         jtLinPed.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -1339,110 +1169,260 @@ public class MantTransPedidos extends  ventana
         gridBagConstraints.weighty = 1.0;
         PPrinc.add(jtLinPed, gridBagConstraints);
 
-        try {confJTCab();} catch (Exception k){Error("Error al configurar grid cabecera",k);}
-        jtCabPed.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jtCabPed.setMaximumSize(new java.awt.Dimension(681, 220));
-        jtCabPed.setMinimumSize(new java.awt.Dimension(681, 220));
+        Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        Ppie.setMaximumSize(new java.awt.Dimension(705, 125));
+        Ppie.setMinimumSize(new java.awt.Dimension(705, 125));
+        Ppie.setPreferredSize(new java.awt.Dimension(705, 125));
+        Ppie.setLayout(null);
+
+        nPedT.setEnabled(false);
+        Ppie.add(nPedT);
+        nPedT.setBounds(500, 40, 30, 17);
+
+        cLabel23.setText("Kilos");
+        cLabel23.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel23);
+        cLabel23.setBounds(80, 70, 40, 18);
+
+        cLabel25.setText("Num.Pedidos ");
+        cLabel25.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel25);
+        cLabel25.setBounds(420, 40, 80, 17);
+
+        kilosPedidE.setEnabled(false);
+        Ppie.add(kilosPedidE);
+        kilosPedidE.setBounds(120, 70, 40, 18);
+
+        cLabel26.setText("Kg. Cajas");
+        cLabel26.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel26);
+        cLabel26.setBounds(170, 70, 70, 18);
+
+        kilosCajasE.setEnabled(false);
+        Ppie.add(kilosCajasE);
+        kilosCajasE.setBounds(240, 70, 40, 18);
+
+        cLabel27.setText("Kg. Colgado");
+        cLabel27.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel27);
+        cLabel27.setBounds(290, 70, 70, 18);
+
+        kilosColgadoE.setEnabled(false);
+        Ppie.add(kilosColgadoE);
+        kilosColgadoE.setBounds(360, 70, 35, 18);
+
+        cLabel28.setBackground(java.awt.Color.orange);
+        cLabel28.setText("Pedido");
+        cLabel28.setOpaque(true);
+        cLabel28.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel28);
+        cLabel28.setBounds(20, 70, 50, 18);
+
+        kilosAlbarE.setEnabled(false);
+        Ppie.add(kilosAlbarE);
+        kilosAlbarE.setBounds(120, 90, 40, 18);
+
+        cLabel29.setText("Kg. Cajas");
+        cLabel29.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel29);
+        cLabel29.setBounds(170, 90, 70, 18);
+
+        kilosCajasAlbE.setEnabled(false);
+        Ppie.add(kilosCajasAlbE);
+        kilosCajasAlbE.setBounds(240, 90, 40, 18);
+
+        cLabel30.setText("Kg. Colgado");
+        cLabel30.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel30);
+        cLabel30.setBounds(290, 90, 70, 18);
+
+        kilosColgadoAlbE.setEnabled(false);
+        Ppie.add(kilosColgadoAlbE);
+        kilosColgadoAlbE.setBounds(360, 90, 35, 18);
+
+        cLabel31.setText("Kilos");
+        cLabel31.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel31);
+        cLabel31.setBounds(80, 90, 40, 18);
+
+        cLabel32.setBackground(java.awt.Color.orange);
+        cLabel32.setText("Albaran");
+        cLabel32.setOpaque(true);
+        cLabel32.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel32);
+        cLabel32.setBounds(20, 90, 50, 18);
+
+        cLabel33.setBackground(java.awt.Color.orange);
+        cLabel33.setText("Transp.");
+        cLabel33.setOpaque(true);
+        cLabel33.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel33);
+        cLabel33.setBounds(20, 40, 50, 17);
+
+        cLabel34.setText("Kilos");
+        cLabel34.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel34);
+        cLabel34.setBounds(80, 40, 40, 17);
+
+        kilosPedidE1.setEnabled(false);
+        Ppie.add(kilosPedidE1);
+        kilosPedidE1.setBounds(120, 40, 40, 17);
+
+        cLabel35.setText("Kg. Cajas");
+        cLabel35.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel35);
+        cLabel35.setBounds(170, 40, 70, 17);
+
+        kilosCajasE1.setEnabled(false);
+        Ppie.add(kilosCajasE1);
+        kilosCajasE1.setBounds(240, 40, 40, 17);
+
+        cLabel36.setText("Kg. Colgado");
+        cLabel36.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel36);
+        cLabel36.setBounds(290, 40, 70, 17);
+
+        kilosColgadoE1.setEnabled(false);
+        Ppie.add(kilosColgadoE1);
+        kilosColgadoE1.setBounds(360, 40, 35, 17);
+
+        BInsTodoPed.setText("cButton1");
+        Ppie.add(BInsTodoPed);
+        BInsTodoPed.setBounds(10, 0, 90, 20);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        PPrinc.add(jtCabPed, gridBagConstraints);
+        PPrinc.add(Ppie, gridBagConstraints);
 
         getContentPane().add(PPrinc, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void BborrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BborrarActionPerformed
-       try
-       {
-           if (jtUsuPed.isVacio())
-               return;
-            int pvcId=pdpeve.getIdPedido(dtStat,jtCabPed.getValorInt(JTCAB_EMPPED),
-                jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED));
-            if ( pvcId<0)
-                throw new SQLException("Error al Buscar pedido "+jtCabPed.getValorInt(JTCAB_EMPPED)+
-                    "-"+jtCabPed.getValorInt(JTCAB_EJEPED)+"-"+jtCabPed.getValorInt(JTCAB_NUMPED));
-            
-           dtAdd.executeUpdate("delete from transpedidos where trp_id="+pvcId+
-                " and tra_codi="+jtUsuPed.getValString(0)+
-                " and trp_fecha ='"+Formatear.getFecha(fechaReparto, "yyyyMMdd")+"'");
-           dtAdd.commit();
-           jtUsuPed.removeLinea();
-       } catch (SQLException k)
-       {
-           
-       }
-    }//GEN-LAST:event_BborrarActionPerformed
-
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BInsTodoPed;
     private gnu.chu.controles.CButton Baceptar;
-    private gnu.chu.controles.CButton Bborrar;
     private gnu.chu.controles.CPanel PPrinc;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Ppie;
-    private gnu.chu.controles.CComboBox albListadoC;
-    private gnu.chu.controles.CComboBox albPedidC;
-    private gnu.chu.controles.CLabel cLabel1;
-    private gnu.chu.controles.CLabel cLabel10;
-    private gnu.chu.controles.CLabel cLabel11;
-    private gnu.chu.controles.CLabel cLabel17;
-    private gnu.chu.controles.CLabel cLabel19;
     private gnu.chu.controles.CLabel cLabel2;
-    private gnu.chu.controles.CLabel cLabel20;
-    private gnu.chu.controles.CLabel cLabel21;
     private gnu.chu.controles.CLabel cLabel22;
     private gnu.chu.controles.CLabel cLabel23;
-    private gnu.chu.controles.CLabel cLabel24;
     private gnu.chu.controles.CLabel cLabel25;
     private gnu.chu.controles.CLabel cLabel26;
     private gnu.chu.controles.CLabel cLabel27;
-    private gnu.chu.controles.CLabel cLabel3;
-    private gnu.chu.controles.CLabel cLabel5;
+    private gnu.chu.controles.CLabel cLabel28;
+    private gnu.chu.controles.CLabel cLabel29;
+    private gnu.chu.controles.CLabel cLabel30;
+    private gnu.chu.controles.CLabel cLabel31;
+    private gnu.chu.controles.CLabel cLabel32;
+    private gnu.chu.controles.CLabel cLabel33;
+    private gnu.chu.controles.CLabel cLabel34;
+    private gnu.chu.controles.CLabel cLabel35;
+    private gnu.chu.controles.CLabel cLabel36;
+    private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CLabel cLabel9;
-    private gnu.chu.camposdb.cliPanel cli_codiE;
-    private gnu.chu.controles.CGridEditable jtCabPed;
+    private gnu.chu.controles.CGridEditable jtCab;
+    private gnu.chu.controles.Cgrid jtCabPed;
     private gnu.chu.controles.Cgrid jtLinPed;
-    private gnu.chu.controles.Cgrid jtUsu;
-    private gnu.chu.controles.Cgrid jtUsuPed;
+    private gnu.chu.controles.CTextField kilosAlbarE;
+    private gnu.chu.controles.CTextField kilosCajasAlbE;
     private gnu.chu.controles.CTextField kilosCajasE;
+    private gnu.chu.controles.CTextField kilosCajasE1;
+    private gnu.chu.controles.CTextField kilosColgadoAlbE;
     private gnu.chu.controles.CTextField kilosColgadoE;
+    private gnu.chu.controles.CTextField kilosColgadoE1;
     private gnu.chu.controles.CTextField kilosPedidE;
-    private gnu.chu.controles.CTextField kilosTotalE;
+    private gnu.chu.controles.CTextField kilosPedidE1;
     private gnu.chu.controles.CTextField nPedT;
-    private gnu.chu.controles.CTextArea pvc_comenE;
-    private gnu.chu.controles.CComboBox pvc_confirE;
     private gnu.chu.controles.CTextField pvc_fecfinE;
     private gnu.chu.controles.CTextField pvc_feciniE;
-    private gnu.chu.controles.CTextField pvc_fecpedE;
-    private gnu.chu.controles.CTextField pvc_horpedE;
-    private gnu.chu.controles.CLinkBox rep_codiE;
     private gnu.chu.controles.CLinkBox rut_codiE;
-    private gnu.chu.camposdb.sbePanel sbe_codiE;
-    private javax.swing.JScrollPane scrollarea1;
     private gnu.chu.controles.CComboBox servRutaC;
-    private gnu.chu.controles.CTextField tit_numregE;
     private gnu.chu.controles.CLinkBox tra_codbusE;
     private gnu.chu.controles.CTextField tra_codiE;
     private gnu.chu.controles.CTextField tra_nombE;
     private gnu.chu.controles.CTextField trp_fecbusE;
     private gnu.chu.controles.CTextField trp_fechaE;
     private gnu.chu.controles.CTextField trp_horaE;
+    private gnu.chu.controles.CTextField trp_idE;
     private gnu.chu.controles.CTextField trp_kilosE;
     private gnu.chu.controles.CTextField trp_minutoE;
     private gnu.chu.controles.CTextField trp_ordenE;
     private gnu.chu.controles.CTextField trp_tipoE;
-    private gnu.chu.controles.CComboBox verPedidosE;
-    private gnu.chu.controles.CLinkBox zon_codiE;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void PADPrimero() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void PADAnterior() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void PADSiguiente() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void PADUltimo() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void ej_query1() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void canc_query() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void ej_edit1() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void canc_edit() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void ej_addnew1() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void canc_addnew() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void ej_delete1() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void canc_delete() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void activar(boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
    
 }

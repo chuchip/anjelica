@@ -1,3 +1,13 @@
+--
+-- Añadido campo enviar albaranes valorados por email
+--
+alter table clientes add cli_enalva smallint not null default 0;
+alter table cliencamb add cli_enalva smallint not null default 0;
+drop view v_cliente;
+create or replace view anjelica.v_cliente as select *,cli_codrut as cli_carte,cli_codrut as cli_valor from anjelica.clientes;
+grant select on anjelica.v_cliente to PUBLIC;
+--
+-- Prodcuto encajado o colgado?
 alter table v_articulo add pro_encaja; -- Encajado.
 update v_articulo set pro_encaja=-1; 
 --

@@ -1,14 +1,7 @@
 package gnu.chu.camposdb;
 
 
-import gnu.chu.Menu.Principal;
-import gnu.chu.anjelica.pad.pdclien;
 import java.sql.*;
-import gnu.chu.controles.*;
-import gnu.chu.interfaces.ejecutable;
-import gnu.chu.utilidades.mensajes;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 /**
  *
  * <p>Título: cliAvcPanel</p>

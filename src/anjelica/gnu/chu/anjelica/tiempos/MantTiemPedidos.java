@@ -363,11 +363,10 @@ public class MantTiemPedidos extends  ventana
      
 
        pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));
-       pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","hh.mm"));
+       pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","HH.mm"));
        pvc_comenE.setText(dtCon1.getString("pvc_comen"));
-       
-       
-      
+       double kilosColgado=0;
+       double kilosEncajado=0;
        do
        {
          ArrayList v=new ArrayList();
@@ -384,6 +383,12 @@ public class MantTiemPedidos extends  ventana
          v.add(dtCon1.getString("pvl_comen"));
          v.add(dtCon1.getString("pvl_numlin"));
          jtLinPed.addLinea(v);
+        if (pro_codiE.getLikeProd().getInt("pro_encaja")==0)
+         {// Genero colgado
+             kilosColgado+=dtCon1.getDouble("pvl_kilos");
+         }
+         else
+             kilosEncajado+=dtCon1.getDouble("pvl_kilos");
        } while (dtCon1.next());
        if (jtCabPed.getValorInt(JTCAB_EJEALB)!=0)
        {
@@ -391,7 +396,9 @@ public class MantTiemPedidos extends  ventana
                jtCabPed.getValorInt(JTCAB_NUMALB) );
        }
        int nRows=jtCabPed.getRowCount();
-       
+        kilosCajasE.setValorDec(kilosEncajado);
+       kilosColgadoE.setValorDec(kilosColgado);
+       kilosPedidE.setValorDec(kilosEncajado+kilosColgado);
      } catch (Exception k)
      {
        Error("Error al Ver datos de pedido",k);
@@ -525,6 +532,8 @@ public class MantTiemPedidos extends  ventana
       return;
     int rowCount;
     int nLin=0;
+    double kilosColgado=0;
+    double kilosEncajado=0;
     do
     {
       rowCount = jtLinPed.getRowCount();
@@ -555,8 +564,14 @@ public class MantTiemPedidos extends  ventana
       v.add(dtCon1.getString("avp_canti"));            
       v.add(""); // NL
       jtLinPed.addLinea(v);
+      if (pro_codiE.getLikeProd().getInt("pro_encaja")==0)
+         kilosColgado+=dtCon1.getDouble("avp_canti");
+      else
+         kilosEncajado+=dtCon1.getDouble("avp_canti");
     } while (dtCon1.next());
-    
+    kilosCajasAlbE.setValorDec(kilosEncajado);
+    kilosColgadoAlbE.setValorDec(kilosColgado);
+    kilosAlbarE.setValorDec(kilosEncajado + kilosColgado);
    }
 //   void actAcumJT()
 //   {
@@ -907,6 +922,20 @@ public class MantTiemPedidos extends  ventana
         jtUsu = new gnu.chu.controles.Cgrid(3);
         jtUsuPed = new gnu.chu.controles.Cgrid(2);
         Bborrar = new gnu.chu.controles.CButton(Iconos.getImageIcon("delete-row"));
+        cLabel25 = new gnu.chu.controles.CLabel();
+        kilosPedidE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        cLabel26 = new gnu.chu.controles.CLabel();
+        kilosCajasE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        cLabel27 = new gnu.chu.controles.CLabel();
+        kilosColgadoE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        cLabel28 = new gnu.chu.controles.CLabel();
+        kilosAlbarE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        cLabel29 = new gnu.chu.controles.CLabel();
+        kilosCajasAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        cLabel30 = new gnu.chu.controles.CLabel();
+        kilosColgadoAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
+        cLabel31 = new gnu.chu.controles.CLabel();
+        cLabel32 = new gnu.chu.controles.CLabel();
         jtLinPed = new gnu.chu.controles.Cgrid(11);
         jtCabPed = new gnu.chu.controles.CGridEditable(16);
 
@@ -1045,19 +1074,19 @@ public class MantTiemPedidos extends  ventana
         PPrinc.add(Pcabe, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        Ppie.setMaximumSize(new java.awt.Dimension(700, 60));
-        Ppie.setMinimumSize(new java.awt.Dimension(700, 60));
-        Ppie.setPreferredSize(new java.awt.Dimension(705, 100));
+        Ppie.setMaximumSize(new java.awt.Dimension(705, 130));
+        Ppie.setMinimumSize(new java.awt.Dimension(705, 130));
+        Ppie.setPreferredSize(new java.awt.Dimension(705, 130));
         Ppie.setLayout(null);
 
         cLabel17.setText("N.Docs");
         cLabel17.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel17);
-        cLabel17.setBounds(130, 58, 50, 18);
+        cLabel17.setBounds(130, 70, 50, 18);
 
         nPedT.setEnabled(false);
         Ppie.add(nPedT);
-        nPedT.setBounds(100, 78, 30, 18);
+        nPedT.setBounds(660, 110, 30, 18);
 
         pvc_fecpedE.setEnabled(false);
         Ppie.add(pvc_fecpedE);
@@ -1070,19 +1099,19 @@ public class MantTiemPedidos extends  ventana
         cLabel20.setText("Minutos");
         cLabel20.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel20);
-        cLabel20.setBounds(10, 58, 60, 18);
+        cLabel20.setBounds(10, 70, 60, 18);
 
         pvc_comenE.setColumns(20);
         pvc_comenE.setRows(5);
         scrollarea1.setViewportView(pvc_comenE);
 
         Ppie.add(scrollarea1);
-        scrollarea1.setBounds(10, 0, 210, 55);
+        scrollarea1.setBounds(10, 0, 210, 60);
 
         cLabel23.setText("Total Pedidos ");
         cLabel23.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel23);
-        cLabel23.setBounds(10, 78, 80, 18);
+        cLabel23.setBounds(570, 110, 80, 18);
 
         cLabel24.setText("Fecha Ped.");
         cLabel24.setPreferredSize(new java.awt.Dimension(60, 18));
@@ -1091,11 +1120,11 @@ public class MantTiemPedidos extends  ventana
 
         tiemTotalE.setEnabled(false);
         Ppie.add(tiemTotalE);
-        tiemTotalE.setBounds(70, 58, 40, 18);
+        tiemTotalE.setBounds(70, 70, 40, 18);
 
         tit_numregE.setEnabled(false);
         Ppie.add(tit_numregE);
-        tit_numregE.setBounds(180, 58, 40, 18);
+        tit_numregE.setBounds(180, 70, 40, 18);
 
         ArrayList vu=new ArrayList();
         vu.add("Usuario");
@@ -1130,6 +1159,74 @@ public class MantTiemPedidos extends  ventana
         });
         Ppie.add(Bborrar);
         Bborrar.setBounds(670, 30, 30, 30);
+
+        cLabel25.setText("Kilos");
+        cLabel25.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel25);
+        cLabel25.setBounds(70, 90, 40, 18);
+
+        kilosPedidE.setEnabled(false);
+        Ppie.add(kilosPedidE);
+        kilosPedidE.setBounds(110, 90, 40, 18);
+
+        cLabel26.setText("Kg. Cajas");
+        cLabel26.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel26);
+        cLabel26.setBounds(160, 90, 70, 18);
+
+        kilosCajasE.setEnabled(false);
+        Ppie.add(kilosCajasE);
+        kilosCajasE.setBounds(230, 90, 40, 18);
+
+        cLabel27.setText("Kg. Colgado");
+        cLabel27.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel27);
+        cLabel27.setBounds(280, 90, 70, 18);
+
+        kilosColgadoE.setEnabled(false);
+        Ppie.add(kilosColgadoE);
+        kilosColgadoE.setBounds(350, 90, 35, 18);
+
+        cLabel28.setBackground(java.awt.Color.orange);
+        cLabel28.setText("Pedido");
+        cLabel28.setOpaque(true);
+        cLabel28.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel28);
+        cLabel28.setBounds(10, 90, 50, 18);
+
+        kilosAlbarE.setEnabled(false);
+        Ppie.add(kilosAlbarE);
+        kilosAlbarE.setBounds(110, 110, 40, 18);
+
+        cLabel29.setText("Kg. Cajas");
+        cLabel29.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel29);
+        cLabel29.setBounds(160, 110, 70, 18);
+
+        kilosCajasAlbE.setEnabled(false);
+        Ppie.add(kilosCajasAlbE);
+        kilosCajasAlbE.setBounds(230, 110, 40, 18);
+
+        cLabel30.setText("Kg. Colgado");
+        cLabel30.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel30);
+        cLabel30.setBounds(280, 110, 70, 18);
+
+        kilosColgadoAlbE.setEnabled(false);
+        Ppie.add(kilosColgadoAlbE);
+        kilosColgadoAlbE.setBounds(350, 110, 35, 18);
+
+        cLabel31.setText("Kilos");
+        cLabel31.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel31);
+        cLabel31.setBounds(70, 110, 40, 18);
+
+        cLabel32.setBackground(java.awt.Color.orange);
+        cLabel32.setText("Albaran");
+        cLabel32.setOpaque(true);
+        cLabel32.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel32);
+        cLabel32.setBounds(10, 110, 50, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1211,7 +1308,15 @@ public class MantTiemPedidos extends  ventana
     private gnu.chu.controles.CLabel cLabel22;
     private gnu.chu.controles.CLabel cLabel23;
     private gnu.chu.controles.CLabel cLabel24;
+    private gnu.chu.controles.CLabel cLabel25;
+    private gnu.chu.controles.CLabel cLabel26;
+    private gnu.chu.controles.CLabel cLabel27;
+    private gnu.chu.controles.CLabel cLabel28;
+    private gnu.chu.controles.CLabel cLabel29;
     private gnu.chu.controles.CLabel cLabel3;
+    private gnu.chu.controles.CLabel cLabel30;
+    private gnu.chu.controles.CLabel cLabel31;
+    private gnu.chu.controles.CLabel cLabel32;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
@@ -1221,6 +1326,12 @@ public class MantTiemPedidos extends  ventana
     private gnu.chu.controles.Cgrid jtLinPed;
     private gnu.chu.controles.Cgrid jtUsu;
     private gnu.chu.controles.Cgrid jtUsuPed;
+    private gnu.chu.controles.CTextField kilosAlbarE;
+    private gnu.chu.controles.CTextField kilosCajasAlbE;
+    private gnu.chu.controles.CTextField kilosCajasE;
+    private gnu.chu.controles.CTextField kilosColgadoAlbE;
+    private gnu.chu.controles.CTextField kilosColgadoE;
+    private gnu.chu.controles.CTextField kilosPedidE;
     private gnu.chu.controles.CTextField nPedT;
     private gnu.chu.controles.CTextArea pvc_comenE;
     private gnu.chu.controles.CComboBox pvc_confirE;

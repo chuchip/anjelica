@@ -115,7 +115,7 @@ import javax.swing.event.ListSelectionListener;
 
  
 public class pdalbara extends ventanaPad  implements PAD  
-{  
+{   
   public final static int AVC_NOVALORADO=0;
   public final static int AVC_VALORADO=1;
   public final static int AVC_REVVALOR=2;// Fue Modificado despues de valorado.
@@ -150,7 +150,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private final char IMPR_ALB_TRA='t'; 
   private final char IMPR_PALETS='P';
   private final char IMPR_ETIQUETAS='E';
-  private char ultSelecImpr=IMPR_ALB_GRAF;
+  private char ultSelecImpr=IMPR_ALB_TRA;
   
   private final String DSAL_IMPRE="I";
   private final String DSAL_FAX="F";
@@ -187,6 +187,9 @@ public class pdalbara extends ventanaPad  implements PAD
   private boolean IMPALBTEXTO=false;
   DatTrazFrame datTrazFrame;
   private vlike lkDepo;
+
+  JMenuItem MbusCliente = new JMenuItem("Buscar Alb. Cliente");
+  
   JMenuItem verDatTraz = new JMenuItem("Ver Datos Trazabilidad");
   JMenuItem verMvtos = new JMenuItem("Ver Mvtos");
   private boolean swTieneEnt=false;
@@ -1472,7 +1475,8 @@ public class pdalbara extends ventanaPad  implements PAD
     @Override
   public void iniciarVentana() throws Exception
   {
-   
+     cli_codiE.getPopMenu().add(MbusCliente);
+    //cli_codiE.getpop
     jtDes.getPopMenu().add(verDatTraz);
     jtDes.getPopMenu().add(verMvtos);
     
@@ -1498,13 +1502,14 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     
     Bimpri.addMenu("---","-");
+    Bimpri.addMenu("Alb/H.Traz", ""+IMPR_ALB_TRA);
     Bimpri.addMenu("Alb Gráfico", ""+IMPR_ALB_GRAF);
     
     if (IMPALBTEXTO)   
         Bimpri.addMenu("Alb Texto", ""+IMPR_ALB_TEXT);    
     Bimpri.addMenu("H.Traz.", ""+IMPR_HOJA_TRA );
     Bimpri.addMenu("H.Traz.Edic", ""+IMPR_HOJA_TRAF );
-    Bimpri.addMenu("Alb/H.Traz", ""+IMPR_ALB_TRA);
+   
        
     Bimpri.addMenu("Palets", ""+IMPR_PALETS);
     Bimpri.addMenu("Etiquetas", ""+IMPR_ETIQUETAS);
@@ -1822,8 +1827,44 @@ public class pdalbara extends ventanaPad  implements PAD
        swChangePalet =true;
        return palet;
   }
+  void buscaCliente()
+  {
+       if (cli_codiE.isNull() || nav.isEdicion() )
+           return;
+        int cliCodi=cli_codiE.getValorInt();
+        PADQuery();
+        cli_codiE.setValorInt(cliCodi);
+        ej_query();
+  }
   void activarEventos()
   {
+      pvc_anoE.addMouseListener(new MouseAdapter()
+      {
+        @Override
+        public void mouseClicked(MouseEvent e)
+        {        
+            if (!pvc_anoE.isNull() && e.getClickCount()>1 && !nav.isEdicion())
+                pdpeve.irMantPedido(jf,pvc_anoE.getValorInt(),pvc_numeE.getValorInt());
+        }
+      }); 
+      pvc_numeE.addMouseListener(new MouseAdapter()
+      {
+        @Override
+        public void mouseClicked(MouseEvent e)
+        {        
+            if (!pvc_numeE.isNull() && e.getClickCount()>1 && !nav.isEdicion())
+                pdpeve.irMantPedido(jf,pvc_anoE.getValorInt(),pvc_numeE.getValorInt());
+        }
+      }); 
+
+      MbusCliente.addActionListener(new java.awt.event.ActionListener()
+      {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscaCliente();
+          }
+      });
+   
       avc_cucomiE.addActionListener(new java.awt.event.ActionListener()
       {
           @Override
@@ -4382,6 +4423,7 @@ public class pdalbara extends ventanaPad  implements PAD
       }
       mensaje("");
       mensajeErr("Nuevas Condiciones ... Establecidas");
+      nav.requestFocus();
     }
     catch (Exception k)
     {
@@ -4627,7 +4669,7 @@ public class pdalbara extends ventanaPad  implements PAD
         else
             avc_deposE.setEnabled(false);      
     }
-    confAlbDep=true;
+    confAlbDep=true; // No comprueba nunca si tiene albaranes deposito
     cli_codiE.setEnabled(avsNume==0);
     
 //    pvc_anoE.setEnabled(false);
@@ -5031,7 +5073,7 @@ public class pdalbara extends ventanaPad  implements PAD
   public void PADAddNew()
   {
       try
-      {
+      {         
           //    swPasLin=false;
           swAvisoAlbRep=true;
           if (P_PONPRECIO || P_MODPRECIO)
@@ -5096,7 +5138,7 @@ public class pdalbara extends ventanaPad  implements PAD
           avc_valoraE.setValor(""+AVC_NOVALORADO);
           nav.pulsado=navegador.ADDNEW;
           despieceC.setValor("N");
-          confAlbDep=false;
+          confAlbDep=true; // No comprueba nunca si tiene albaranes deposito;
           
           jt.setValor(swUsaPalets?1:0,JT_NUMPALE);
           avl_numpalE.setValorInt(swUsaPalets?1:0);
@@ -8508,25 +8550,13 @@ public class pdalbara extends ventanaPad  implements PAD
         return;
       }
       if (opDispSalida.getValor().equals(DSAL_IMPRE))
-      {
-        if (cli_codiE.isIncluirFra())
-        {
-            String ret=mensajes.mensajeGetTexto("A ESTE CLIENTE SE LE DEBERIA INCLUIR UNA FRA. ESCRIBA 'OK' PARA CONTINUAR","Atenicon");
-            if (ret == null || !ret.toUpperCase().equals("OK"))
-            {
-                verDatos(dtCons);
-                return;
-            }
-        }
-        else
-        {
+      {       
             if (cli_codiE.getEstadoServir()==cliPanel.SERVIR_NO || cli_codiE.getEstadoServir()==cliPanel.SERVIR_NO_FORZADO)
             {
                 msgBox("CLIENTE ESTA MARCADO COMO NO SERVIBLE. IMPOSIBLE IMPRIMIR");
                 verDatos(dtCons);
                 return;          
             }
-        }      
       }
       
      
@@ -9339,7 +9369,7 @@ public class pdalbara extends ventanaPad  implements PAD
     pvc_fecentE.setText(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy"));
     usu_nompedE.setText(dtCon1.getString("usu_nomb"));
     pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));
-    pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped", "hh.mm"));
+    pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped", "HH.mm"));
     pvc_comenE.setText(dtCon1.getString("pvc_comen"));
     pvc_deposE.setValor(dtCon1.getString("pvc_depos"));
     if (nav.pulsado==navegador.ADDNEW)

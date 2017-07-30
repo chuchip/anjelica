@@ -270,22 +270,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
        jf.gestor.ir(cm);
     }
     void irPedido() {
-        ejecutable prog;
-        if ((prog = jf.gestor.getProceso(pdpeve.getNombreClase())) == null)
-            return;
-        pdpeve cm = (pdpeve) prog;
-        if (cm.inTransation())
-        {
-            msgBox("Mantenimiento Pedidos de Ventas ocupado. No se puede realizar el Alta");
-            return;
-        }
-        cm.PADQuery();
-        cm.setEjercicioPedido(jtCabPed.getValorInt(JTCAB_EJEPED));
-        cm.setNumeroPedido(jtCabPed.getValorInt(JTCAB_NUMPED));
-       
-
-        cm.ej_query();
-        jf.gestor.ir(cm);
+        pdpeve.irMantPedido(jf,jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED));
     } 
     public String getCliNomb()
     {
@@ -334,7 +319,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      
        usu_nombE.setText(dtCon1.getString("usu_nomb"));
        pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));
-       pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","hh.mm"));
+       pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","HH.mm"));
        pvc_comenE.setText(dtCon1.getString("pvc_comen"));
        pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
        

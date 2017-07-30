@@ -21,6 +21,7 @@ package gnu.chu.anjelica.ventas;
  * @version 1.0
  */
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.eventos.GridAdapter;
@@ -253,10 +254,11 @@ public class MantEnvioAlbEmail extends ventana
             
             String s="select a.*,c.cli_nomb,c.cli_email2 from v_albavec as a,v_cliente as c "
                 + "where avc_fecalb between '"+fecIniE.getFechaDB()+"' and '"+fecFinE.getFechaDB()+"'"+
-                 " and avc_revpre = " + pdalbara.REVPRE_REVISA+
+                 " and (avc_revpre = " + pdalbara.REVPRE_REVISA + " OR c.cli_enalva="+pdclien.ENV_ALBVAL_SI+")"+
                  " and a.cli_codi = c.cli_codi "+
                  " and a.emp_codi = "+EU.em_cod+
                  (EU.isRootAV() ? "" : " AND a.div_codi > 0 ")+
+                 " and c.cli_enalva != "+pdclien.ENV_ALBVAL_NO+
                 (cli_codiE.isNull()?"":" and a.cli_codi = "+cli_codiE.getValorInt())+
                 (opEnvioC.getValor().equals("T")?"":
                     " and  "+(opEnvioC.getValor().equals("N")?" NOT ":"")+

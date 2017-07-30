@@ -289,7 +289,7 @@ ban_codi int,		-- Codigo de Banco
 cli_baofic int,		-- Oficina de Banco
 cli_badico int,		-- Digito Control de Banco
 cli_bacuen float,	-- Cuenta de Banco
-cli_bareme int,		-- Banco para remesas NO SE UTILIZA
+cli_bareme int,		-- Banco para remesas 
 cli_vaccom date,	-- Inicio de Vacaciones
 cli_vacfin date,	-- Final de Vacaciones
 cli_zonrep varchar(2),	-- Zona/Represent.
@@ -340,8 +340,10 @@ cli_estcon char(1) default 'N',     -- Estado de Contacto (No contacto,Ausente,C
 cli_email1 char(60),     -- Correo Electronico Comercial (Tarifas)
 cli_email2 char(60),     -- Correo Electronico Administr. (Facturas/Alb.)
 cli_servir smallint default -1 not null, --  Puede servir?. 0 NO . 1 Si. 2: No! (no podra cargar pedidos ni alb.)
+cli_enalva smallint not null default 0, -- Enviar Alb. Valorados. (0: No afecta. 1: SI. 2: No )
 constraint ix_vcliente primary key(cli_codi)
 );
+drop view v_cliente;
 create or replace view anjelica.v_cliente as select *,cli_codrut as cli_carte,cli_codrut as cli_valor from anjelica.clientes;
 grant select on anjelica.v_cliente to PUBLIC;
 --
@@ -436,6 +438,7 @@ clc_fecha date not null, -- Fecha de Cambio
 clc_hora decimal(5,2) not null, -- Hora de Cambio
 clc_comen varchar(100) -- Comentario sobre el Cambio
 cli_servir smallint default -1 not null, --  Puede servir?. 0 NO 
+cli_enalva smallint not null default 0, -- Enviar Alb. Valorados. (0: No afecta. 1: SI. 2: No )
 );
 create index ix_cliencamb on cliencamb(cli_codi,clc_fecha,clc_hora);
 --
@@ -4287,18 +4290,25 @@ grant all on anjelica.tiempostarea to public;
 --
 -- Tabla Transporte pedidos venta
 -- 
-create table transpedidos
+create table cabtrapedven
 (
-	trp_orden int not null, 	-- Orden
-	tra_codi int not null,	    -- Transporte. 0=Nuestros medios
-	trp_fecha date,		-- Fecha Transporte
-	trp_tipo char(1) not null default 'E', -- Encajado, Colgado		
-	trp_fecent timestamp,		-- Fecha Entrega
-	trp_id int not null,	    -- Identificador documento	
-	trp_kilos int not null, 	-- Kilos
-	constraint ix_transpedidos primary  key (tra_codi,trp_fecha,trp_tipo,trp_id)
+	trp_id serial,			-- Numero identificador
+	tra_codi int not null,  -- Transporte.
+	rut_codi varchar(2),	-- Ruta
+	trp_fecha date			-- Fecha Transporte
 );
-grant all on anjelica.transpedidos to public;
+
+grant all on anjelica.cabtrapedven to public;
+create table lintrapedven
+(
+	trp_id int not null,
+	trp_orden int not null, 	-- Orden
+	trp_tipo char(1) not null default 'E', -- Encajado, Colgado		
+	trp_fecent timestamp,		-- Fecha Entrega (con hora y minutos)
+	trp_numdoc int not null,	    -- Identificador documento	
+	trp_kilos int not null 	-- Kilos
+);
+create index ix_litrapedve on lintrapedven (trp_id); 
 --drop view v_cliprv;
 create view anjelica.v_cliprv as 
 select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.clientes 
