@@ -332,7 +332,8 @@ public class Gestor extends Thread implements Serializable
             miInternalFrame.transferFocus();
           }
         });
-        JButton bprog = new JButton(miObjeto.getNombre());
+        JButton bprog = new JButton(miObjeto.getAcronimo());
+        
         bprog.setHorizontalAlignment(SwingConstants.CENTER);
         
         bprog.setToolTipText(miObjeto.getNombre());
@@ -966,7 +967,7 @@ public class Gestor extends Thread implements Serializable
               Logger.getRootLogger().error("Error al poner visible la clase: "+miClase);
           }
           ((CInternalFrame)bicho).repaint();
-          
+          bicho.setAcronimo(principal.getAcronimo());
           controlaProg(bicho);
           // Añadir boton a la barra de estado
 //          miGestor.apuntar(bicho);
@@ -1096,7 +1097,7 @@ class SListener extends InternalFrameAdapter
       {
         if (Class.forName("javax.swing.JButton").isAssignableFrom(c[n].getClass()))
         {
-          if (((JButton) c[n]).getText().equals(miClase.getNombre()))
+          if (((JButton) c[n]).getText().equals(miClase.getNombre()) || ((JButton) c[n]).getText().equals(miClase.getAcronimo())  )
           {
             miGestor.principal.statuBar.panel2.remove(c[n]);
             miGestor.principal.statuBar.validate();

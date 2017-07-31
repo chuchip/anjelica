@@ -373,6 +373,7 @@ public class MenuPrincipal extends CInternalFrame
              EjecutarAcro(prog, param);
           else if (frmPrincipal.puedeEjecutarParam()) {
              comandOld = Eleccion.getText().trim();
+             frmPrincipal.setAcronimo(Eleccion.getText().trim());
              LanzarPrograma(comandOld, comandOld);
           }
 
@@ -614,6 +615,7 @@ public class MenuPrincipal extends CInternalFrame
                 String desc = LineaMenu[pulsado][4].toString();
                 String clas = LineaMenu[pulsado][6].toString();
                 comandOld = LineaMenu[pulsado][1].toString().trim();
+                frmPrincipal.setAcronimo(comandOld);
                 LanzarPrograma(desc, clas);
             } else {
                     return;
@@ -629,6 +631,7 @@ public class MenuPrincipal extends CInternalFrame
   public void EjecutarAcro(String acro, String param) {
     if (acro.toUpperCase().compareTo("MENU") == 0) {
       comandOld = acro.trim();
+      frmPrincipal.setAcronimo(comandOld);
         MenuAnterior = "MENU";
         SubMenu = "MENU";
 
@@ -647,6 +650,7 @@ public class MenuPrincipal extends CInternalFrame
                     return;
                 }
                 comandOld = Query.getString("mnu_acro");
+                frmPrincipal.setAcronimo(comandOld);
                 if (Query.getString("mnu_tipo",true).equals("P"))
                 {
                     MenuAnterior = Query.getString("mnu_padr",true);
