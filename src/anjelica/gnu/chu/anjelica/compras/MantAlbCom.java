@@ -732,7 +732,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20170711)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20170810)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -2397,7 +2397,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 
     if (!acc_copvfaE.controlar())
     {
-      mensajeErr(acc_copvfaE.getMsgError());
+      mensajeErr("Proveedor a Facturar "+acc_copvfaE.getMsgError());
       return false;
     }
     if (!sbe_codiE.controla(true))
@@ -4477,7 +4477,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
             accDtopp=dtCon1.getDouble("acl_dtopp");
           jt.addLinea(v);
           
-          impLin += impLinAct;
+          impLin += dtCon1.getDouble("acl_canti",true)
+              * impLinAct;
           kilosT += dtCon1.getDouble("acl_canti",true);
           unidT += dtCon1.getInt("acl_numcaj",true);
           
@@ -5689,12 +5690,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     {
       pcc_numeE.setValorDec(conped.getNumPed());
       eje_numeE.setValorDec(conped.getEjePed());
-      if (prv_codiE.isNull())
-      {
-          prv_codiE.setText(conped.prv_codiE.getText());         
-          acc_copvfaE.setText(conped.prv_codiE.getText());  
-      }
-
+      prv_codiE.setValorInt(conped.getProveedor());  
+      acc_copvfaE.setValorInt(conped.getProveedor());  
     }
     conped.dispose();
 

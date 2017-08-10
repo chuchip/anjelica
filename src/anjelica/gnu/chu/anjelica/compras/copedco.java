@@ -57,7 +57,7 @@ public class copedco extends ventana
   CButton Baceptar = new CButton(Iconos.getImageIcon("check"));
   GridBagLayout gridBagLayout1 = new GridBagLayout();
   boolean modCons=false;
-  int pcoNume=0,ejeNume=0;
+  int pcoNume=0,ejeNume=0,prvCodi=0;
   CLabel pcc_estrecL = new CLabel("Est.Recep.");
   CComboBox pcc_estrecE = new CComboBox();
   CLabel cLabel2 = new CLabel();
@@ -483,6 +483,10 @@ public class copedco extends ventana
  {
    return ejeNume;
  }
+ public int getProveedor()
+ {
+     return prvCodi;
+ }
  public void resetPed()
  {
    ejeNume=0;
@@ -492,7 +496,7 @@ public class copedco extends ventana
  {
     ejeNume=jtCab.getValorInt(2);
     pcoNume=jtCab.getValorInt(3);
-  
+    prvCodi=jtCab.getValorInt(0);
 
    if (modCons)
      matar();
