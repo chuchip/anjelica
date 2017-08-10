@@ -1,5 +1,33 @@
 package gnu.chu.anjelica.ventas;
 
+
+/**
+ *
+ * <p>Titulo: MantAlbRuta </p>
+* <p>Descripcion: Mantenimiento Albaranes de ruta
+*  Utilizado para meter los albaranes entregados en una ruta por un
+*  repartidor</p>
+* <p>Parametros: modSala: true/false. Indica si es en modo sala, con lo cual 
+* solo podra modificar partes para poner kms,vehiculo y comentarios.
+* Por defecto modSala=false
+* </p>
+ * <p>Copyright: Copyright (c) 2005-2017
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,ed
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * <p>Empresa: miSL</p>
+* @author Chuchi P
+* @version 1.0
+*/
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.facturacion.PadFactur;
 import gnu.chu.anjelica.listados.Listados;
@@ -43,33 +71,6 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 
-/**
- *
- * <p>Titulo: MantAlbRuta </p>
-* <p>Descripcion: Mantenimiento Albaranes de ruta
-*  Utilizado para meter los albaranes entregados en una ruta por un
-*  repartidor</p>
-* <p>Parametros: modSala: true/false. Indica si es en modo sala, con lo cual 
-* solo podra modificar partes para poner kms,vehiculo y comentarios.
-* Por defecto modSala=false
-* </p>
- * <p>Copyright: Copyright (c) 2005-2017
- *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
- *  los terminos de la Licencia Pública General de GNU según es publicada por
- *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
- *  o bien (según su elección) de cualquier versión posterior.
- *  Este programa se distribuye con la esperanza de que sea útil,ed
- *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
- *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
- *  Véase la Licencia Pública General de GNU para más detalles.
- *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
- *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
- *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
- * </p>
- * <p>Empresa: miSL</p>
-* @author Chuchi P
-* @version 1.0
-*/
 public class ManAlbRuta extends ventanaPad implements PAD
 {
     boolean swOrdenado=false;
@@ -109,6 +110,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         {
             ponParametros(ht);
             setTitulo("Mantenimiento salidas de ruta");
+            setAcronimo("masaru");
             if (jf.gestor.apuntar(this))
                 jbInit();
             else
@@ -126,6 +128,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         try {
           ponParametros(ht);
+            setAcronimo("masaru");
           setTitulo("Mantenimiento salidas de ruta");
           jbInit();
         } catch (Exception e) {

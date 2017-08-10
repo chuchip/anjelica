@@ -111,19 +111,18 @@ public class actCabAlbFra
   public boolean actDatosAlb(int empCodi, int avcAno, String avcSerie,
                              int avcNume,boolean incIva,
                              double dtopp,double dtoCom,int recequ,Date fecAlb) throws SQLException
-  {
-    if (fecAlb==null)
-    {// Buscar fecha Albaran
-        s = "SELECT * FROM v_albavec as c WHERE c.avc_ano = " + avcAno +
+  {   
+    s = "SELECT * FROM v_albavec as c WHERE c.avc_ano = " + avcAno +
             " and c.emp_codi = " + empCodi +
             " and c.avc_serie = '" + avcSerie + "'" +
             " and c.avc_nume = " + avcNume;
-        if (!dtLin.select(s))
+    if (!dtLin.select(s))
               throw new SQLException("No encontrado Albaran"+s);
-        fecAlb=dtLin.getDate("avc_fecalb");
-
-    }
-    
+        ht.put("avc_id",dtLin.getInt("avc_id"));
+    if (fecAlb==null)
+         fecAlb=dtLin.getDate("avc_fecalb");
+    int avcId=dtLin.getInt("avc_id");
+    ht.put("avc_id",avcId);
     ht.put("incIva", incIva);
     ht.put("avc_impbru", (double) 0);
     ht.put("kilos", (double) 0);
@@ -139,7 +138,10 @@ public class actCabAlbFra
     ht.put("avc_tipree", (double) 0);
     ht.put("avc_impree", (double) 0);
     ht.put("avc_impalb", (double) 0);
-
+    ht.put("avt_numpal",(int) 0);
+    ht.put("avt_numcaj",(int) 0);
+    ht.put("avt_numbol",(int) 0);
+    ht.put("avt_numcol",(int) 0);
     s = "SELECT l.pro_codi,sum(l.avl_canti) as avl_canti, sum(avl_unid) as avl_unid, " +
         " avl_prven-avl_dtolin as avl_prven,pro_tipiva,pro_indtco,pro_tiplot FROM V_ALBAVEL as l, v_articulo as a " +
         " WHERE l.avc_ano = " + avcAno +
@@ -235,6 +237,7 @@ public class actCabAlbFra
       ht.put("avc_impree", (double) 0);
       ht.put("avc_impalb", (double) 0);
     }
+    PTransVenta.getDatos(dtLin,ht,avcId);
     return true;
   }
   public String getValString(String name)

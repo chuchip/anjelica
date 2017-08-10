@@ -8,7 +8,7 @@ package gnu.chu.anjelica.ventas;
  * puestos, dandoz< la opción de actualizarlos.
  * Created on 03-dic-2009, 22:41:09
  *
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -102,6 +102,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
               
             }
             setTitulo("Cons/List.  Pedidos Ventas");
+            setAcronimo("clpeve");
             if (jf.gestor.apuntar(this)) {
                 jbInit();
             } else {
@@ -125,8 +126,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                 if (ht.get("sbeCodi") != null)
                     ARG_SBECODI = ht.get("sbeCodi");
             }
-             setTitulo("Cons/List.  Pedidos de Ventas");
-
+            setTitulo("Cons/List.  Pedidos de Ventas");
+            setAcronimo("clpeve");
             jbInit();
         } catch (Exception e) {
            ErrorInit(e);
@@ -150,7 +151,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2017-01-15");
+        this.setVersion("2017-07-31");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -590,6 +591,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         " and c.alm_codi >= " + alm_codiE.getValorInt() +       
         " and cl.cli_codi = c.cli_codi " +
         " and c.rut_codi = al.rut_codi "+     
+         " and pvc_confir = 'S'"+
         (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = "+sbe_codiE.getValorInt())+
         (zon_codiE.isNull() || swCliente?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
         (rep_codiE.isNull() || swCliente?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'");
@@ -598,12 +600,10 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
       s += " AND (c.avc_ano = 0 or pvc_cerra=0)";
     if (verPedidosE.getValor().equals("L"))
       s += " AND c.avc_ano != 0";
-    if (!pvc_confirE.getValor().equals("*"))
-      s += " and pvc_confir = '" + pvc_confirE.getValor() + "'";
+
     if (swCliente)
       s += " AND c.cli_codi = " + cli_codiE.getValorInt();
-    if (! pvc_listadoE.getValor().equals("*"))
-      s+=" AND c.pvc_impres = '"+pvc_listadoE.getValor()+"'";
+ 
     s += " order by c.pvc_fecent,c.cli_codi ";
 
     jtCabPed.setEnabled(false);
@@ -688,7 +688,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     {
       if (! iniciarCons(true))
         return;
-      boolean swServ=verPedidosE.getValor().equals("S"); // A servir (tienen albaran y no esta listado)
+      boolean swServ=verPedidosE.getValor().equals("S") || 
+          verPedidosE.getValor().equals("M") ; // A servir (tienen albaran y no esta listado)
      
       
       do
@@ -710,10 +711,17 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         }
         if (swServ) 
         {      // Mostrar solo los disponibles para servir (tienen albaran y no estan listados)
+                if (dtCon1.getInt("pvc_cerra")==0)
+                    continue;
                 if (dtCon1.getObject("avc_impres")==null)
                     continue;
-                if ((dtCon1.getInt("avc_impres") & 1) == 1)
-                    continue;
+                if ((dtCon1.getInt("avc_impres") & 1) != 0 )
+                { // Esta impreso
+                    if ( verPedidosE.getValor().equals("S"))
+                        continue;
+                    if (dtCon1.getInt("avc_impres")  == 1 && verPedidosE.getValor().equals("M"))
+                        continue;
+                }
         }
         boolean swImpres=false;
         if (!albListadoC.getValor().equals("*"))
@@ -793,13 +801,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         rep_codiE = new gnu.chu.controles.CLinkBox();
         zon_codiE = new gnu.chu.controles.CLinkBox();
         cLabel18 = new gnu.chu.controles.CLabel();
-        cLabel9 = new gnu.chu.controles.CLabel();
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
         cLabel10 = new gnu.chu.controles.CLabel();
         verPedidosE = new gnu.chu.controles.CComboBox();
-        pvc_confirE = new gnu.chu.controles.CComboBox();
-        cLabel12 = new gnu.chu.controles.CLabel();
-        pvc_listadoE = new gnu.chu.controles.CComboBox();
         cLabel21 = new gnu.chu.controles.CLabel();
         alm_codiE = new gnu.chu.controles.CLinkBox();
         cLabel2 = new gnu.chu.controles.CLabel();
@@ -850,15 +854,15 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         cLabel6.setText("De Fecha");
         Pcabe.add(cLabel6);
-        cLabel6.setBounds(200, 1, 49, 18);
+        cLabel6.setBounds(440, 0, 49, 18);
         Pcabe.add(pvc_feciniE);
-        pvc_feciniE.setBounds(260, 1, 76, 18);
+        pvc_feciniE.setBounds(500, 0, 76, 18);
 
         cLabel7.setText("A Fecha");
         Pcabe.add(cLabel7);
-        cLabel7.setBounds(340, 1, 43, 18);
+        cLabel7.setBounds(580, 0, 43, 18);
         Pcabe.add(pvc_fecfinE);
-        pvc_fecfinE.setBounds(390, 1, 75, 18);
+        pvc_fecfinE.setBounds(630, 0, 75, 18);
 
         cLabel16.setText("Alm");
         cLabel16.setPreferredSize(new java.awt.Dimension(60, 18));
@@ -882,10 +886,6 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         Pcabe.add(cLabel18);
         cLabel18.setBounds(270, 42, 40, 18);
 
-        cLabel9.setText("Confirmado");
-        Pcabe.add(cLabel9);
-        cLabel9.setBounds(470, 1, 70, 18);
-
         Baceptar.setText("Aceptar");
         Pcabe.add(Baceptar);
         Baceptar.setBounds(610, 50, 100, 30);
@@ -896,26 +896,11 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         verPedidosE.addItem("Pendientes","P");
         verPedidosE.addItem("A servir","S");
+        verPedidosE.addItem("A servir + Modif.","M");
         verPedidosE.addItem("Preparados","L");
         verPedidosE.addItem("Todos","T");
         Pcabe.add(verPedidosE);
-        verPedidosE.setBounds(80, 1, 110, 18);
-
-        pvc_confirE.addItem("Si","S");
-        pvc_confirE.addItem("No","N");
-        pvc_confirE.addItem("**","*");
-        Pcabe.add(pvc_confirE);
-        pvc_confirE.setBounds(540, 1, 50, 18);
-
-        cLabel12.setText("Listado");
-        Pcabe.add(cLabel12);
-        cLabel12.setBounds(610, 1, 50, 18);
-
-        pvc_listadoE.addItem("**","*");
-        pvc_listadoE.addItem("Si","S");
-        pvc_listadoE.addItem("No","N");
-        Pcabe.add(pvc_listadoE);
-        pvc_listadoE.setBounds(660, 1, 50, 18);
+        verPedidosE.setBounds(80, 1, 160, 18);
 
         cLabel21.setText("Repres.");
         cLabel21.setPreferredSize(new java.awt.Dimension(60, 18));
@@ -1080,7 +1065,6 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     private gnu.chu.controles.CLinkBox alm_codiE;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
-    private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel16;
     private gnu.chu.controles.CLabel cLabel17;
     private gnu.chu.controles.CLabel cLabel18;
@@ -1094,19 +1078,16 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
-    private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.Cgrid jtCabPed;
     private gnu.chu.controles.Cgrid jtLinPed;
     private gnu.chu.controles.CTextField nPedT;
     private gnu.chu.controles.CTextArea pvc_comenE;
-    private gnu.chu.controles.CComboBox pvc_confirE;
     private gnu.chu.controles.CTextField pvc_fecfinE;
     private gnu.chu.controles.CTextField pvc_feciniE;
     private gnu.chu.controles.CTextField pvc_fecpedE;
     private gnu.chu.controles.CTextField pvc_horpedE;
     private gnu.chu.controles.CCheckBox pvc_impresE;
-    private gnu.chu.controles.CComboBox pvc_listadoE;
     private gnu.chu.controles.CTextField pvc_nupeclE;
     private gnu.chu.controles.CLinkBox rep_codiE;
     private gnu.chu.controles.CLinkBox rut_codiE;
@@ -1131,4 +1112,5 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
             throw new JRException("Error al listar pedidos",ex);
         }
     }
+    
 }

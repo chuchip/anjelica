@@ -68,6 +68,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   CLabel pvc_estadL=new CLabel("Estado");
   CLabel pvc_deposL=new CLabel("Deposito");
   CComboBox pvc_deposE=new CComboBox();
+  CCheckBox opAvisoStock=new CCheckBox("Aviso Stock",true);
   CComboBox pvc_estadE=new CComboBox();
   CButton Bimpri=new CButton(Iconos.getImageIcon("print"));
   CButton BbusProd=new CButton(Iconos.getImageIcon("buscar"));
@@ -232,7 +233,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     {
       ponParametros(ht);
       setTitulo("Mant. Pedidos de Ventas");
-
+      setAcronimo("mapeve");
       if (jf.gestor.apuntar(this))
         jbInit();
       else
@@ -284,7 +285,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2017-07-29"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2017-07-31"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -438,7 +439,8 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_estadE.setBounds(new Rectangle(65, 54, 138, 17));
     pvc_deposE.addItem(pdalbara.DEPOSITOS);
     pvc_deposL.setBounds(new Rectangle(210, 54, 60, 17));
-    pvc_deposE.setBounds(new Rectangle(275, 54, 138, 17));
+    pvc_deposE.setBounds(new Rectangle(275, 54, 88, 17));
+    opAvisoStock.setBounds(new Rectangle(370, 54, 88, 17));
     cli_codiL.setText("Cliente");
     cli_codiL.setBounds(new Rectangle(3, 3, 43, 16));
     Ppie.setBorder(BorderFactory.createRaisedBevelBorder());
@@ -549,6 +551,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     Pcabe.add(pvc_estadE,null);
     Pcabe.add(pvc_deposL,null);
     Pcabe.add(pvc_deposE,null);
+    Pcabe.add(opAvisoStock,null);
     Pcabe.add(cLabel10, null);
     Pcabe.add(pvc_incfraE, null);
     Pcabe.add(pvc_idL, null);
@@ -1450,6 +1453,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       {
           nav.setEnabled(false);
           activar(navegador.ADDNEW, true);
+         
           jt.setEnabled(false);
           jt.removeAllDatos();
           pvc_incfraE.setSelected(false);
@@ -1483,6 +1487,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       Error("Error en PADAddNew ",k);
       return;
     }
+    Baceptar.setEnabled(false);
     mensaje("Creando nuevo Pedido ...");
     jt.requestFocusInicio();
     cli_codiE.requestFocus();
@@ -1495,6 +1500,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   public void PADAddNew()
   {  
       alArtStock.clear();
+      jt.removeAllDatos();
       swExterno=false;
       pvc_fecentE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
       pvc_fecpreE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -1579,7 +1585,6 @@ public class pdpeve  extends ventanaPad   implements PAD
   public void ej_addnew1()
   {
     try {
-      
       pvc_numeE.setValorInt(getNumPed(true));
       
       dtAdd.addNew("pedvenc",false);
@@ -1878,6 +1883,8 @@ public class pdpeve  extends ventanaPad   implements PAD
    
     pvc_estadE.setEnabled(modo==navegador.EDIT && b);  
     pvc_deposE.setEnabled(b);
+    opAvisoStock.setEnabled(b);
+    
     pvc_nupeclE.setEnabled(b);
     pvc_fecentE.setEnabled(b);
     rut_codiE.setEnabled(b);
@@ -2051,7 +2058,7 @@ public class pdpeve  extends ventanaPad   implements PAD
           mensajeErr("Este producto no tiene equivalencia Kilos/Caja. Imposible realizar el pedido en Cajas");
           return JT_TIPCAN;
       }
-      if (alArtStock.indexOf(pro_codiE.getValorInt())>=0 || alArtStockP.indexOf(pro_codiE.getValorInt())>=0 )
+      if (alArtStock.indexOf(pro_codiE.getValorInt())>=0 || alArtStockP.indexOf(pro_codiE.getValorInt())>=0 || !opAvisoStock.isSelected() )
           return -1; // ya aviso sobre este producto
        HashMap<Integer, Double> hm= MantArticulos.getRelUnidadKilos(pro_codiE.getValorInt() ,dtStat);
        double kilos= pvl_cantiE.getValorInt() *  ( pvl_tipoE.getValor().startsWith("P")?hm.get(MantArticulos.KGXUNI):
@@ -2211,8 +2218,10 @@ public class pdpeve  extends ventanaPad   implements PAD
                     {
                         int res = mensajes.NO;
                         if (dtStat.getInt("avc_nume") == 0)
+                        {
                             res = mensajes.mensajeYesNo("Cliente ya tiene pedido " + dtStat.getInt("pvc_nume")
                                 + " en fecha: " + dtStat.getFecha("pvc_fecent", "dd-MM-yy") + " sin preparar. ¿ Editar pedido ?");
+                        }
                         else
                         {
                             do
@@ -2249,6 +2258,7 @@ public class pdpeve  extends ventanaPad   implements PAD
             pstock.verFamilias();
 
             jt.requestFocusInicioLater();
+            Baceptar.setEnabled(true);
         } catch (SQLException | ParseException k)
         {
             Error("Error al ir al grid", k);

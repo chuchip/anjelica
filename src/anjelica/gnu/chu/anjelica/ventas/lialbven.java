@@ -303,6 +303,14 @@ public class lialbven implements JRDataSource
             return (double)ht.get("avc_dtopp")+(double)ht.get("avc_dtocom");
         if (nombre.equals("avc_impdpp"))
             return (double)ht.get("avc_impdpp")+(double)ht.get("avc_impdco");
+        if (nombre.equals("avt_numcaj"))
+            return (int)ht.get("avt_numcaj");
+        if (nombre.equals("avt_numpal"))
+            return (int)ht.get("avt_numpal");
+        if (nombre.equals("avt_numbol"))
+            return (int)ht.get("avt_numbol");
+        if (nombre.equals("avt_numcol"))
+            return (int)ht.get("avt_numcol");
 
     throw new Exception("Campo "+jRField.getName()+" NO encontrado");
     } catch (Exception k)

@@ -116,6 +116,7 @@ import javax.swing.event.ListSelectionListener;
  
 public class pdalbara extends ventanaPad  implements PAD  
 {   
+  PTransVenta PTrans=new PTransVenta();
   public final static int AVC_NOVALORADO=0;
   public final static int AVC_VALORADO=1;
   public final static int AVC_REVVALOR=2;// Fue Modificado despues de valorado.
@@ -645,7 +646,7 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       ponParametros(ht);
       
-     
+      setAcronimo("maalve");
       setTitulo("Mant. Albaranes Ventas");
       if (jf.gestor.apuntar(this))
         jbInit();
@@ -723,7 +724,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-07-15" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-08-10" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1215,7 +1216,9 @@ public class pdalbara extends ventanaPad  implements PAD
         
         Ptab1.add(PotroDat, "Otros");
         //Ptab1.add(PComClie, "Comentarios");
-        Ptab1.add(jtPalet, "Transporte");
+        if (isEmpPlanta)
+            Ptab1.add(jtPalet, "Palets");
+        Ptab1.add(PTrans,"Transp.");
         PAlb1.add(avc_obserS, null);
         PAlb1.add(avc_obserL, null);
         
@@ -1397,6 +1400,7 @@ public class pdalbara extends ventanaPad  implements PAD
           avc_represE.getComboBox().setPreferredSize(new Dimension(250, 18));
           avc_represE.setFormato(Types.CHAR, "XX", 2);
           avc_represE.texto.setMayusc(true);
+          PTrans.iniciarPanel(dtAdd);
           MantRepres.llenaLinkBox(avc_represE, P_REPRES, dtCon1);
           cli_rutaE.setAncTexto(30);
           cli_rutaE.setFormato(Types.CHAR, "XX");
@@ -3308,6 +3312,8 @@ public class pdalbara extends ventanaPad  implements PAD
            dt.getInt("avc_nume"));
       verDatPedido(true);
       verDatPalets();
+      PTrans.setAvcId(dt.getInt("avc_id"));
+      PTrans.actualizaPantalla();
       if (hisRowid==0)
           actGridHist(dt.getInt("emp_codi"),dt.getInt("avc_ano"),dt.getString("avc_serie"),dt.getInt("avc_nume"));
     }
@@ -5010,6 +5016,8 @@ public class pdalbara extends ventanaPad  implements PAD
       }
       actProdRecicla();
       guardaPalets();
+      PTrans.setAvcId(avc_idE.getValorInt());
+      PTrans.guardaValores(false);
       resetBloqueo(dtAdd);
       ctUp.commit();
       activaTodo();
@@ -5128,6 +5136,7 @@ public class pdalbara extends ventanaPad  implements PAD
           avc_almoriE.setValor(""+ALMACEN);
           pvc_numeE.resetCambio();
           jtLinPed.removeAllDatos();
+          PTrans.resetTexto();
           avpNumparAnt=0;
           avpNumindAnt=0;
           avpEjelotAnt=0;
@@ -5189,6 +5198,8 @@ public class pdalbara extends ventanaPad  implements PAD
         ponAlbPedido();                    
       actProdRecicla();
       guardaPalets();
+      PTrans.setAvcId(avc_idE.getValorInt());
+      PTrans.guardaValores(false);
       resetBloqueo(dtAdd);
       ctUp.commit();
     }
@@ -7948,7 +7959,7 @@ public class pdalbara extends ventanaPad  implements PAD
     verMvtos.setEnabled(!b);
     verDepoC.setEnabled(!b);
     rutPanelE.setEnabledRuta(!b);
-    
+    PTrans.setEnabled(b);
     avc_deposE.setEnabled(b);
    
 

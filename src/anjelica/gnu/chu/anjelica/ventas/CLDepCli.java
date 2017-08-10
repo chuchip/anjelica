@@ -5,7 +5,6 @@ package gnu.chu.anjelica.ventas;
  * <p>Descripción: Consulta/Listado Depositos de clientes </p>
  * Este programa muestra el inventario en deposito tanto de un cliente como en total, en una fecha dada.
  * Permite sacar el genero entregado de una fecha a otra, asi como lo metido a deposito de una fecha a otra.
- * 
  *
  * <p>Copyright: Copyright (c) 2005-2016
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
@@ -165,10 +164,10 @@ public class CLDepCli extends ventana
        }
        cm.PADQuery();
 
-       cm.setSerieAlbaran(jtCab.getValString(JTCAB_SERALB));
-       cm.setEmpresaAlbaran(jtCab.getValorInt(JTCAB_EMPALB));
-       cm.setNumeroAlbaran(jtCab.getValorInt(JTCAB_NUMALB));
-       cm.setEjercAlbaran(jtCab.getValorInt(JTCAB_EJEALB));
+       cm.setSerieAlbaran(jtCab.getValString(jtCab.getSelectedRowDisab(), JTCAB_SERALB));
+       cm.setEmpresaAlbaran(jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_EMPALB));
+       cm.setNumeroAlbaran(jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_NUMALB));
+       cm.setEjercAlbaran(jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_EJEALB));
     
        cm.ej_query();
        cm.setAlbaranDeposito(jtCab.getValorInt(JTCAB_ALBDEP));
@@ -188,7 +187,7 @@ public class CLDepCli extends ventana
           return;
        }
        cm.PADQuery();
-       String[] alb=jtStock.getValString(7).split("-");
+       String[] alb=jtStock.getValString(jtStock.getSelectedRowDisab(),7).split("-");
 
        cm.setSerieAlbaran(alb[1]);       
        cm.setNumeroAlbaran(Integer.parseInt(alb[2]));

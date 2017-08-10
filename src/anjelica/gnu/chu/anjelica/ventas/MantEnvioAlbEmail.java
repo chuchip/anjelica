@@ -30,6 +30,7 @@ import gnu.chu.eventos.GridListener;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -311,6 +312,19 @@ public class MantEnvioAlbEmail extends ventana
     }
     void enviarEmail() 
     {
+        new miThread("")
+        {
+            @Override
+            public void run()
+            {
+                msgEspere("Mandando albaranes por email");
+                enviaEmail1();
+                resetMsgEspere();
+            }
+        };
+     }
+    void enviaEmail1()
+    {
           try
           {
               if (liAlb == null)
@@ -318,8 +332,10 @@ public class MantEnvioAlbEmail extends ventana
               int nRows=jt.getRowCount();
               for (int n=0;n<nRows;n++)
               {
+                  setMensajePopEspere("Enviando Email a :"+jt.getValorInt(n,5),false);
                   if (jt.getValBoolean(n,JT_INCLUIR) && !jt.getValString(n,jt_CORREO).trim().equals(""))
                   {
+                      
                       enviaAlbaranEmail(jt.getValorInt(n,0),jt.getValString(n,1),jt.getValorInt(n,2),
                           jt.getValString(n,jt_CORREO));
                       jt.setValor(false,n,JT_INCLUIR);
