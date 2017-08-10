@@ -502,10 +502,10 @@ public class ClClien extends ventana
         Pcabe.add(cLabel25);
         cLabel25.setBounds(430, 44, 40, 17);
 
+        cli_servirE.addItem("TODOS","%");
         cli_servirE.addItem("Si","1");
         cli_servirE.addItem("No","0");
         cli_servirE.addItem("No!","2");
-        cli_servirE.addItem("TODOS","%");
         Pcabe.add(cli_servirE);
         cli_servirE.setBounds(490, 44, 80, 17);
 

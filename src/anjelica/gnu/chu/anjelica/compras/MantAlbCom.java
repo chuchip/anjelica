@@ -657,7 +657,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       ponParametros(ht);
       
       setTitulo("Mantenimiento Albaranes Compras");
-
+      setAcronimo("maalco");
       if (jf.gestor.apuntar(this))
         jbInit();
       else

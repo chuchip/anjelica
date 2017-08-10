@@ -104,7 +104,7 @@ public class ClDifInv extends ventana {
         eje = true;
 
         setTitulo("Cons/List. Diferencias Inventario");
-
+        setAcronimo("codiin");
         try {
             if (jf.gestor.apuntar(this)) {       
                     jbInit();

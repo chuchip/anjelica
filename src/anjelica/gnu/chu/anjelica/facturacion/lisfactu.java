@@ -164,7 +164,7 @@ public class lisfactu extends ventana  implements JRDataSource
    eje=true;
 
    setTitulo("Listado Facturas Ventas");
-
+    setAcronimo("lifrve");
    try  {
      if(jf.gestor.apuntar(this))
          jbInit();

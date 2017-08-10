@@ -127,7 +127,7 @@ public class PadFactur extends ventanaPad   implements PAD {
                booleanValue();
        }
        setTitulo("Mant. Facturas Ventas");
-
+       setAcronimo("mafrve");
      jf=null;
      jbInit();
    }

@@ -42,11 +42,14 @@ import java.awt.print.PrinterException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Locale;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
@@ -150,7 +153,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
     public void iniciarVentana() throws Exception
     {
       pro_codiE.iniciar(dtStat, this, vl, EU);
-     
+      pro_codiE.setUsaCodigoVenta(true);
       pro_codiE.setColumnaAlias("pro_codart");
       tar_feciniE.setColumnaAlias("tar_fecini");
       tar_fecfinE.setColumnaAlias("tar_fecfin");
@@ -166,6 +169,14 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
 
     void activarEventos()
     {
+         BTexto.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                BTexto_actionPerformed();
+            }
+         });
         Bimpri.addActionListener(new ActionListener()
         {
             @Override
@@ -200,6 +211,102 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
       GregorianCalendar gc = new GregorianCalendar();
       gc.setTime(fecha);
       return gc.get(GregorianCalendar.WEEK_OF_YEAR);
+    }
+    void BTexto_actionPerformed()
+    {
+         String s=mensajes.mensajeExplica("Copie y pegue", "Codigo:Precio","");
+         if (s==null)
+             return;
+         int nLen=s.length();
+         int modo=0; // Buscando codigo producto
+         int inicProd,finProd;
+         int codProd=0;
+         double precio;
+              
+        char sep=new DecimalFormatSymbols(new Locale("es","","")).getDecimalSeparator();
+        NumberFormat nf = NumberFormat.getInstance(new Locale("es","",""));
+         for (int n=0;n<nLen;n++)
+         {
+            if (modo==0)
+            {              
+              if (Character.isDigit(s.charAt(n)) )
+              {
+                  inicProd=n;
+                  finProd=0;
+                  for (;n<nLen;n++)
+                  {
+//                      if (!Character.isAlphabetic(s.charAt(n)))
+//                          break;
+                      if (s.charAt(n)==':')
+                      {
+                          finProd=n;
+                          break;
+                      }
+                  }
+                  if (finProd>0)
+                  {
+                      try {
+                        codProd=Integer.valueOf(s.substring(inicProd,finProd).trim());
+                      } catch (NumberFormatException ex )
+                      {
+                         continue;
+                      }
+                      modo=1; // Buscando precio
+                      continue;
+                  }
+              }
+            }
+            if (modo==1)
+            { // Buscando precio
+                 if (!Character.isDigit(s.charAt(n)) )
+                 {
+                     modo=0;
+                     continue;
+                 }
+//                if (!Character.isAlphabetic(s.charAt(n)))
+//                { 
+//                    modo=0;
+//                    continue;
+//                }
+            
+                  inicProd=n;
+                  finProd=0;
+                  for (;n<nLen;n++)
+                  {
+//                      if (!Character.isAlphabetic(s.charAt(n)))
+//                          break;
+                     if (!Character.isDigit(s.charAt(n)) && s.charAt(n)!=sep )
+                      {
+                          finProd=n;
+                          break;
+                      }
+                  }
+                  if (finProd>0 && finProd>inicProd)
+                  {                      
+                      try                   
+                      {
+                          precio=nf.parse(s.substring(inicProd,finProd).trim()).doubleValue();
+                      } catch (ParseException ex)
+                      {
+                          modo=0;
+                          continue;
+                      }
+                      pro_codartE.setText(""+codProd);
+                      pro_codartE.pro_codiE_focusLost();
+                      ArrayList v=new ArrayList();
+                      v.add(pro_codartE.getText());
+                      v.add(pro_codartE.getTextNomb());
+                      v.add(precio);
+                      v.add("Importado");
+                      v.add(0);
+                      jt.addLinea(v);
+                  }
+                  modo=0; // Buscando codigo
+            }
+            
+         }
+         
+         
     }
     void Bimpri_actionPerformed()
    {
@@ -783,6 +890,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         pro_codiE = new gnu.chu.camposdb.proPanel();
         Bocul = new gnu.chu.controles.CButton();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
+        BTexto = new gnu.chu.controles.CButton();
         jt = new gnu.chu.controles.CGridEditable(5) {
             public void cambiaColumna(int col,int colNueva, int row)
             {
@@ -792,6 +900,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
                     {
                         if (! pro_codartE.hasCambio())
                         return;
+                        pro_codartE.pro_codiE_focusLost();
                         String nombArt;
                         if (pro_codartE.getText().equals("X"))
                         {
@@ -903,11 +1012,15 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         pro_codiE.setAncTexto(80);
         pro_codiE.setUsaCodigoVenta(true);
         Pcabe.add(pro_codiE);
-        pro_codiE.setBounds(190, 25, 350, 17);
+        pro_codiE.setBounds(190, 25, 280, 17);
         Pcabe.add(Bocul);
         Bocul.setBounds(545, 30, 2, 2);
         Pcabe.add(cli_codiE);
         cli_codiE.setBounds(190, 3, 350, 18);
+
+        BTexto.setText("Importar");
+        Pcabe.add(BTexto);
+        BTexto.setBounds(480, 25, 60, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -992,6 +1105,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BTexto;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CPanel Bimpresion;

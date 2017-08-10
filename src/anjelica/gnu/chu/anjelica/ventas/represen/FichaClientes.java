@@ -17,6 +17,7 @@ import javax.swing.event.*;
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantRepres;
+import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.camposdb.cliPanel;
 import java.text.ParseException;
 import java.util.Date;
@@ -279,8 +280,8 @@ public class FichaClientes extends ventana implements PAD
   CLabel exceCredL = new CLabel();
   CLabel exceFechaL = new CLabel();
   CButton Blote = new CButton();
-  CLabel cLabel33 = new CLabel();
-  CTextField cli_codpoE = new CTextField(Types.DECIMAL,"#99999");
+  CLabel cli_servirL = new CLabel("Servir");
+  CComboBox cli_servirE = new CComboBox();
   CLabel cLabel34 = new CLabel();
   CTextField cli_comenE = new CTextField(Types.CHAR,"X",255);
   CButton Bcancel = new CButton("Cancelar",Iconos.getImageIcon("cancel"));
@@ -368,7 +369,7 @@ public class FichaClientes extends ventana implements PAD
   {
     iniciarFrame();
     this.setSize(732, 535);
-    this.setVersion("2017-07-04");
+    this.setVersion("2017-08-08");
     if (CONBD)
     {
       conecta();
@@ -414,6 +415,7 @@ public class FichaClientes extends ventana implements PAD
     cLabel9.setText("Repr.");
     cLabel9.setBounds(new Rectangle(210, 80, 34, 18));
     cli_codiE.iniciar(dtStat,this,vl,EU);
+    cli_codiE.iniciar(jf);
     cli_codiE.setCliNomb(null);
     cli_codiE.setEnabled(true);
     rep_codiE.setAncTexto(30);
@@ -862,9 +864,9 @@ public class FichaClientes extends ventana implements PAD
     Blote.setMnemonic('0');
     Blote.setText("Ver Lote (F2)");
     Bbuscar.setMargin(new Insets(0, 0, 0, 0));
-    cLabel33.setText("Cod Postal");
-    cLabel33.setBounds(new Rectangle(530, 80, 61, 16));
-    cli_codpoE.setBounds(new Rectangle(600, 80, 50, 15));
+   
+    cli_servirL.setBounds(new Rectangle(530, 80, 61, 16));
+    cli_servirE.setBounds(new Rectangle(600, 80, 50, 15));
     cLabel34.setText("Coment");
     cLabel34.setBounds(new Rectangle(415, 60, 47, 14));
     cli_comenE.setBounds(new Rectangle(455, 60, 247, 17));
@@ -894,8 +896,8 @@ public class FichaClientes extends ventana implements PAD
         Pdatcli.add(cLabel9, null);
         Pdatcli.add(rep_codiE, null);
         Pdatcli.add(cLabel10, null);
-        Pdatcli.add(cLabel33, null);
-        Pdatcli.add(cli_codpoE, null);
+        Pdatcli.add(cli_servirL, null);
+        Pdatcli.add(cli_servirE, null);
         Pdatcli.add(cli_comenE, null);
         Pdatcli.add(cli_pobleE, null);
         Pdatcli.add(cLabel36, null);
@@ -1113,7 +1115,8 @@ public class FichaClientes extends ventana implements PAD
    rep_codiE.getComboBox().setPreferredSize(new Dimension(200,18));
    zon_codiE.getComboBox().setPreferredSize(new Dimension(200,18));
    cli_activE.setColumnaAlias("cli_activ");
-   cli_codpoE.setColumnaAlias("cli_codpo");
+   pdclien.iniciarServir(cli_servirE);
+   cli_servirE.setColumnaAlias("cli_servir");
    cli_comenE.setMayusc(true);
    cli_comenE.setColumnaAlias("upper(cli_comen)");
 
@@ -1568,7 +1571,7 @@ public class FichaClientes extends ventana implements PAD
     v.add(cli_nomcoE.getStrQuery());
     v.add(rep_codiE.getStrQuery());
     v.add(cli_activE.getStrQuery());
-    v.add(cli_codpoE.getStrQuery());
+    v.add(cli_servirE.getStrQuery());
     v.add(cli_comenE.getStrQuery());
 
     if (agente!=null)
@@ -1668,7 +1671,7 @@ public class FichaClientes extends ventana implements PAD
     zon_codiE.setText(dt.getString("zon_codi"));
     rep_codiE.setText(dt.getString("rep_codi"));
     cli_activE.setValor(dt.getString("cli_activ").toUpperCase());
-    cli_codpoE.setValorDec(dt.getInt("cli_codpo",true));
+    cli_servirE.setValor(dt.getInt("cli_servir"));
     cli_comenE.setText(dt.getString("cli_comen"));
     if (mataConsulta)
         return;
@@ -2694,7 +2697,6 @@ public class FichaClientes extends ventana implements PAD
         dtBlo.setDato("cli_zonrep",zon_codiE.getText());
         dtBlo.setDato("cli_zoncre",rep_codiE.getText());
         dtBlo.setDato("cli_activ",cli_activE.getValor());
-        dtBlo.setDato("cli_codpo",cli_codpoE.getText());
       }
       dtBlo.update(stUp);
       s=" INSERT INTO cliencamb values("+dtBlo.getStrInsert()+
@@ -2766,7 +2768,7 @@ public class FichaClientes extends ventana implements PAD
     cli_poblE.setEnabled(b);
     cli_direE.setEnabled(b);
     cli_direeE.setEnabled(b);
-    cli_codpoE.setEnabled(b);
+    cli_servirE.setEnabled(b);
     zon_codiE.setEnabled(b);
     if (agente==null)
         rep_codiE.setEnabled(b);

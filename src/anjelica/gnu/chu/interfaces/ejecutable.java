@@ -28,6 +28,12 @@ public interface ejecutable
    * Devuelve el nombre del programa
    */
   public String getNombre();
+  /**
+   * Devuelve el Acronimo del Programa
+   * @return 
+   */
+  public String getAcronimo();
+  public void setAcronimo(String acronimo);
 
   /**
    * Devuelve el identificador de proceso del programa

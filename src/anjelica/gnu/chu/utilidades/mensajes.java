@@ -58,6 +58,7 @@ public class mensajes {
     return mensajeYesNo(msg, null);
   }
   static public int mensajeYesNo(String titulo,String msg, Component comp) {
+      
          int i = JOptionPane.showConfirmDialog(comp, msg, titulo, JOptionPane.YES_NO_OPTION,
                                          JOptionPane.QUESTION_MESSAGE);
          return i;

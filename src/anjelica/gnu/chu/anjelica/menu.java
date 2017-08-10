@@ -214,10 +214,11 @@ JMenuItem mantArticVenta = new JMenuItem();
   public menu()
   {
     try {
+       
       jbInit();
       String hostname = InetAddress.getLocalHost().getHostName();
       System.out.println("Hostname: "+hostname);
-
+      UIManager.put("Button.defaultButtonFollowsFocus", Boolean.TRUE);        
       System.out.println("Version java: "+System.getProperties().getProperty("java.runtime.version"));
 
 //      PlasticLookAndFeel.setMyCurrentTheme(new  com.jgoodies.looks.plastic.theme.ExperienceBlue());

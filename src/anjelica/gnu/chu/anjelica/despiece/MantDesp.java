@@ -181,7 +181,7 @@ public class MantDesp extends ventanaPad implements PAD
         eje = true;
 
         setTitulo("Mantenimiento Despieces");
-
+        setAcronimo("mandes");
         try
         {
             if (ht != null)

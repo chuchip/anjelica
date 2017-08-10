@@ -268,7 +268,7 @@ public class pdclien extends ventanaPad implements PAD
     eje = true;
 
     setTitulo("Mantenimiento de Clientes");
-
+    setAcronimo("mancli");
     try
     {
       if (ht != null)
@@ -916,11 +916,8 @@ public class pdclien extends ventanaPad implements PAD
   {
     cli_precfiE.addItem("No","0");
     cli_precfiE.addItem("Si","1");
-    cli_servirE.addItem("Si",""+cliPanel.SERVIR_SI);
-    cli_servirE.addItem("No",""+cliPanel.SERVIR_NO);
-    cli_servirE.addItem("Inc.Fra",""+cliPanel.SERVIR_INCFRA);
-    
-    cli_servirE.addItem("No!",""+cliPanel.SERVIR_NO_FORZADO);
+    iniciarServir(cli_servirE);
+
     
     cli_enalvaE.addItem("--",""+ENV_ALBVAL_IGN);
     cli_enalvaE.addItem("No",""+ENV_ALBVAL_NO);
@@ -1091,6 +1088,13 @@ public class pdclien extends ventanaPad implements PAD
     activaTodo();
     verDatos();
     activarEventos();
+  }
+  public static void iniciarServir(CComboBox cli_servirE)
+  {
+    cli_servirE.addItem("Si",""+cliPanel.SERVIR_SI);
+    cli_servirE.addItem("No",""+cliPanel.SERVIR_NO);
+    cli_servirE.addItem("Inc.Fra",""+cliPanel.SERVIR_INCFRA);
+    cli_servirE.addItem("No!",""+cliPanel.SERVIR_NO_FORZADO);
   }
   public static void llenaTipoFact(CComboBox tipFacE)
   {

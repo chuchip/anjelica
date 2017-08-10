@@ -35,7 +35,7 @@ import gnu.chu.winayu.*;
  */
 public class cliPanel extends CPanel
 {
-  JPopupMenu menuCliente = new JPopupMenu("Cliente");
+//  JPopupMenu menuCliente = new JPopupMenu("Cliente");
   JMenuItem mantClientes = new JMenuItem("Mant. Cliente");
   public final static int SERVIR_NO=0;
   public final  static int SERVIR_SI=1;
@@ -116,11 +116,12 @@ public class cliPanel extends CPanel
   
   public JPopupMenu getPopMenu()
   {
-      return menuCliente;
+      return cli_codiE.getMenuContestual().getPopMenu();
   }
   public void iniciar(Principal principal)
   {
-      menuCliente.add(mantClientes);
+      cli_codiE.getMenuContestual().getPopMenu().add(mantClientes);
+      
      
       jf=principal;
       cli_codiE.addMouseListener(new MouseAdapter()
@@ -130,10 +131,10 @@ public class cliPanel extends CPanel
         {
             if (e.getButton()!=MouseEvent.BUTTON1)
                 return;
-            if (!cli_codiE.isNull() && e.getClickCount()>1)
+            if (!cli_codiE.isNull() && e.getClickCount()>1 && !cli_codiE.isEnabled())
                 llamaMantClientes();
-            else
-                menuCliente.show(cliPanel.this,e.getX(),e.getY());
+//            else
+//                menuCliente.show(cliPanel.this,e.getX(),e.getY());
         }
       }); 
        mantClientes.addActionListener(new java.awt.event.ActionListener()

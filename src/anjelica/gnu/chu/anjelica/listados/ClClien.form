@@ -306,7 +306,7 @@
             </Component>
             <Component class="gnu.chu.controles.CComboBox" name="cli_servirE">
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="cli_servirE.addItem(&quot;Si&quot;,&quot;1&quot;);&#xa;    cli_servirE.addItem(&quot;No&quot;,&quot;0&quot;);&#xa;    cli_servirE.addItem(&quot;No!&quot;,&quot;2&quot;);&#xa; cli_servirE.addItem(&quot;TODOS&quot;,&quot;%&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="cli_servirE.addItem(&quot;TODOS&quot;,&quot;%&quot;);&#xa;cli_servirE.addItem(&quot;Si&quot;,&quot;1&quot;);&#xa;    cli_servirE.addItem(&quot;No&quot;,&quot;0&quot;);&#xa;    cli_servirE.addItem(&quot;No!&quot;,&quot;2&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

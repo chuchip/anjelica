@@ -92,7 +92,7 @@ public class PdInvControl extends ventanaPad implements PAD
     eje = true;
 
     setTitulo("Mantenimiento  Inventarios de Control");
-
+    setAcronimo("mainco");
     try
     {
       if (ht != null)
@@ -121,6 +121,7 @@ public class PdInvControl extends ventanaPad implements PAD
     EU = eu;
     vl = p.getLayeredPane();
     setTitulo("Mantenimiento  Inventarios de Control");
+      setAcronimo("mainco");
     eje = false;
 
     try
@@ -766,6 +767,7 @@ public class PdInvControl extends ventanaPad implements PAD
     mensajeErr("Modificación ... CANCELADA");
     verDatos(dtCons);
     activaTodo();
+    nav.setPulsado(navegador.NINGUNO);
   }
 
     @Override
@@ -817,6 +819,7 @@ public class PdInvControl extends ventanaPad implements PAD
     }
 
     mensaje("");
+    nav.setPulsado(navegador.NINGUNO);
     try
     {
       if (dtCons.getNOREG())
@@ -824,6 +827,7 @@ public class PdInvControl extends ventanaPad implements PAD
       activaTodo();
       mensajeErr("Control de Inventario ... Insertado");
     }
+  
     catch (Exception k)
     {
       Error("Error al Insertar datos", k);

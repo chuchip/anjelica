@@ -117,7 +117,7 @@ public class MantInvProduc extends ventanaPad implements PAD
     eje = true;
 
     setTitulo("Mantenimiento  Inventarios Produccion");
-
+    setAcronimo("mainpr");
     try
     {
       

@@ -84,6 +84,7 @@ public class Comvalm extends ventana
     eje = true;
 
     setTitulo("Cons. Mvtos Almacen ");
+    setAcronimo("comval");
     ponParametros(ht);
     try
     {

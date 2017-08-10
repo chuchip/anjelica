@@ -62,7 +62,7 @@ public class Cldegen extends ventana
         eje = true;
 
         setTitulo("Cons./List Despieces Generados");
-
+         setAcronimo("cldege");
         try {
             if (jf.gestor.apuntar(this)) {       
                     jbInit();

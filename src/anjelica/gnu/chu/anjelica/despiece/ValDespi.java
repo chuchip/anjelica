@@ -127,6 +127,7 @@ public class ValDespi extends ventana {
        {
           ponParametros(ht);
           setTitulo("Valoracion/Agrupacion despieces");
+          setAcronimo("valdes");
          if (jf.gestor.apuntar(this))
             jbInit();
          else

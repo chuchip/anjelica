@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
  */
 public class ventana extends CInternalFrame implements ejecutable
 {
+  String acronimo=null;
   private JLabel labelEstado;
   private String labelMsgEspere="Espere, por favor";
   private PopOcupado popOcupado;
@@ -123,6 +124,10 @@ public class ventana extends CInternalFrame implements ejecutable
     this.setTitle(titulo);
     titProg=titulo;
   }
+  /**
+   * Devuelve el titulo del programa
+   * @return 
+   */
   public String getTitulo()
   {
     return titProg;
@@ -429,8 +434,18 @@ public class ventana extends CInternalFrame implements ejecutable
   {
     return 10;
   }
-
-
+  @Override
+  public String getAcronimo()
+  {
+      if (acronimo==null)
+          return getTitulo();
+      return acronimo;
+  }
+  @Override
+  public void setAcronimo(String acronimo)
+  {
+      this.acronimo=acronimo;
+  }
   public boolean isMatable()
   {
     return true;
@@ -921,8 +936,8 @@ public class ventana extends CInternalFrame implements ejecutable
    * Se usa cuando se esta lanzando algo en background y se quiere que el usuario
    * vea que se esta trabajando.
    * 
-   * @see actualizaMsg
-   * @seee resetMsgEspere (Quita la ventana de mensajeEspere)
+   * @see setMensajePopEspere (actualizar mensaje)
+   * @see resetMsgEspere (Quita la ventana de mensajeEspere)
    * @see popEspere_BCancelaraddActionListener
    * @param msg mensaje
    */

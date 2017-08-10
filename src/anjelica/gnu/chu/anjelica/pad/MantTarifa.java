@@ -84,7 +84,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
       eje = true;
 
       setTitulo("Mant. Tarifas de Productos");
-
+      setAcronimo("matave");
       try
       {
         if (ht != null)
@@ -867,6 +867,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
       while (dtStat.next());
     }
     pro_codartE.iniciar(dtStat, this, vl, EU);
+    pro_codartE.setUsaCodigoVenta(true);
     tar_impriE.setDatos(pdtipotar.getTiposTarifa(dtCon1,-1));
     loc_codiE.setDatos(MantIdiomas.getDatos(dtAdd));
     loc_codiE.setValor(MantPaises.getLocalePais(pdempresa.getPais(dtStat, EU.em_cod), dtCon1));

@@ -335,7 +335,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     eje = true;
 
     setTitulo("Despieces TACTIL");
-
+    setAcronimo("madeta");
     try
     {
       if (ht!=null)

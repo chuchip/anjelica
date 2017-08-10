@@ -515,6 +515,17 @@ constraint ix_albavec primary key (emp_codi,avc_ano,avc_nume,avc_serie)
 );
 create index albavec1 on v_albavec (avc_fecalb,cli_codi);
 create index albavec2 on v_albavec (cli_codi,avc_fecalb);
+--
+-- Tabla de transporte del albaran.
+-- Indica  numero palets, lomos, cajas
+--
+create table albventra
+(
+	avc_id int not null,-- Numero de Albaran
+	avt_tipo char(1) not null, -- Tipo: 'Cajas','Bolsas','Palets','Fresco'
+	avt_unid smallint not null,
+	constraint ix_albvenbul primary key(avc_id,avt_tipo)
+);
 ---
 -- Historico cabecera de albaranes de venta
 -- 
