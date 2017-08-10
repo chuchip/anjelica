@@ -149,7 +149,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2017-07-30 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2017-08-10 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -423,6 +423,9 @@ public class ManAlbRuta extends ventanaPad implements PAD
             Error("Error al comprobar albaran para ruta", ex);
         }
     }
+    /**
+     * Actualizar acumulado
+     */
     void actAcumul()
     {
         int nRow=jt.getRowCount();
@@ -1665,7 +1668,9 @@ public class ManAlbRuta extends ventanaPad implements PAD
       
       this.setEnabled(true);
       rgSelect();
-      PADUltimo();
+      dtCons.last();
+      nav.setEnabled(navegador.ULTIMO, false);
+      nav.setEnabled(navegador.SIGUIENTE, false);
       verDatos();
       mensaje("");
       mensajeErr("Nuevas Condiciones ... Establecidas");

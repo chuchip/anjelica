@@ -4366,7 +4366,9 @@ public class pdalbara extends ventanaPad  implements PAD
         @Override
         public void run()
         {
+          msgEspere("Buscando albaranes");
           buscaAlb();
+          resetMsgEspere();
         }
       };
     }
