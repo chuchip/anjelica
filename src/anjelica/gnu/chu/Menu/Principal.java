@@ -38,7 +38,7 @@ import javax.swing.*;
  */
 public class Principal extends JFrame
 {
-  String acronimo;
+ 
   vlike lkUsu=new vlike();
   sendMail sm;
   public HashMap ht=new HashMap();
@@ -638,14 +638,8 @@ public class Principal extends JFrame
     guardaMens(dt1,codMens,ht,explicac,Usuario.usuario);
    
   }
-  public String getAcronimo()
-  {
-      return acronimo;
-  }
-  public void setAcronimo(String acronimo)
-  {
-      this.acronimo=acronimo;
-  }
+ 
+ 
 //   void enviaSalError() throws Throwable
 //   {
 //     if (gnu.chu.Menu.LoginDB.getDirMailAviso()==null)

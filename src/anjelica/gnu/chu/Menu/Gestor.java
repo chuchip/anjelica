@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -24,6 +26,7 @@ import java.util.logging.Level;
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import org.apache.log4j.Logger;
 /**
 * Gestor de programas. El gestor es el encargado de mantener una estructura de datos con
@@ -323,15 +326,19 @@ public class Gestor extends Thread implements Serializable
         final CInternalFrame miInternalFrame = (CInternalFrame) miObjeto;
         miInternalFrame.addInternalFrameListener(new SListener(this,
             miInternalFrame, miObjeto));
-        miInternalFrame.addInternalFrameListener(new InternalFrameAdapter()
-        {
-          @Override
-          public void internalFrameDeiconified(InternalFrameEvent e)
-          {
-            miInternalFrame.requestFocus();
-            miInternalFrame.transferFocus();
-          }
-        });
+//        miInternalFrame.addInternalFrameListener(new InternalFrameAdapter()
+//        {
+//          @Override
+//          public void internalFrameDeiconified(InternalFrameEvent e)
+//          {
+//            miInternalFrame.requestFocus();
+//            miInternalFrame.transferFocus();
+//          }
+//        
+//        });
+//        miInternalFrame.addPropertyChangeListener(
+//                    new FrameFocusListener(miInternalFrame));
+
         JButton bprog = new JButton(miObjeto.getAcronimo());
         
         bprog.setHorizontalAlignment(SwingConstants.CENTER);
@@ -364,16 +371,16 @@ public class Gestor extends Thread implements Serializable
   {
     try {
     Component c[]=vl.getComponents();
-    for (int n=0;n<c.length;n++)
-    {
-      if(c[n]==prog)
-      {
-        prog.setSelected(!prog.isSelected());
+        for (Component c1 : c)
+        {
+            if (c1 == prog)
+            {
+                prog.setSelected(!prog.isSelected());
 //        prog.requestFocus();
-        return;
-      }
-    }
-    prog.setVisible(true);
+                return;
+            }
+        }
+      prog.setVisible(true);
       prog.setIcon(false);
     } catch (Exception k){SystemOut.print(k);}
   }
@@ -967,7 +974,7 @@ public class Gestor extends Thread implements Serializable
               Logger.getRootLogger().error("Error al poner visible la clase: "+miClase);
           }
           ((CInternalFrame)bicho).repaint();
-          bicho.setAcronimo(principal.getAcronimo());
+          //bicho.setAcronimo(principal.getAcronimo());
           controlaProg(bicho);
           // Añadir boton a la barra de estado
 //          miGestor.apuntar(bicho);
@@ -1082,6 +1089,7 @@ class SListener extends InternalFrameAdapter
     miVentana = frame;
     miClase = programa;
   }
+  
     @Override
   public void internalFrameClosing(InternalFrameEvent e) {
 
@@ -1117,6 +1125,7 @@ class SListener extends InternalFrameAdapter
     {
       ( (JInternalFrame) miClase).requestFocus();
       ( (JInternalFrame) miClase).setSelected(true);
+      ((JInternalFrame)miVentana).transferFocus();
     }
     catch (Exception k)
     {
@@ -1199,5 +1208,4 @@ class HiloEjecucion extends Thread {
     }
   }
 }
-
-
+ 

@@ -119,13 +119,15 @@ public void ir(String pid)
     }
     ir (ej);
   }
-
+/**
+ * Ir a Internal Frame
+ * @param ej 
+ */
   void ir(CInternalFrame ej)
   {
     if (ej==null)
         return;
     try {
-//        ej.setSelected(true);
         if (ej.isIcon())
             ej.setIcon(false);
         ej.moveToFront();

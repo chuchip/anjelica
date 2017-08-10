@@ -79,6 +79,7 @@ public class LoginDB extends JFrame
       try
       {
           jbInit();
+          UIManager.put("Button.defaultButtonFollowsFocus", Boolean.TRUE);        
       } catch (Exception ex)
       {
           Logger.getLogger(LoginDB.class.getName()).log(Level.SEVERE, null, ex);
