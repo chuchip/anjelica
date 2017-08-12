@@ -252,19 +252,14 @@ public class pdregalm extends ventanaPad implements PAD
     pro_codiE1.iniciar(dtStat, this, vl, EU);
   //  pro_codiE1.setAceptaInactivo(false);
  }
-
-    @Override
- public void iniciarVentana() throws Exception
+   @Override
+ public void afterConecta() throws SQLException
  {
-   linPantE.setValorInt(ROWSGRID);
-   linPantE.resetCambio();
-   linPantE.setDependePadre(false);
-   pRegAlm.iniciar(dtCon1);
    tir_codiE1.setFormato(Types.DECIMAL, "##9", 3);
    tir_codiE1.setAnchoComboDesp(450);
 //     tir_codiE1.setFormato(Types.DECIMAL, "##9", 3);
 
-   s = "SELECT * FROM v_motregu ORDER BY tir_codi";
+   s = "SELECT * FROM v_motregu ORDER BY tir_nomb";
    if (dtCon1.select(s))
    {
      do
@@ -275,6 +270,15 @@ public class pdregalm extends ventanaPad implements PAD
      }
      while (dtCon1.next());
    }
+ }
+    @Override
+ public void iniciarVentana() throws Exception
+ {
+   linPantE.setValorInt(ROWSGRID);
+   linPantE.resetCambio();
+   linPantE.setDependePadre(false);
+   pRegAlm.iniciar(dtCon1);
+  
 
    pRegAlm.setDefButton(Baceptar);
    Pcond.setDefButton(Baceptar);
@@ -471,8 +475,10 @@ public void ej_query()
     Error("Error al introducir criterios de busqueda",k);
   }
 }
+  @Override
  public void ej_query1(){
 }
+  @Override
  public void canc_query(){
   feciniE.setText(QfecIni);
   fecfinE.setText(QfecFin);

@@ -349,7 +349,7 @@ public class paregalm extends CPanel {
        tir_codiE.setAnchoComboDesp(350);
 //     tir_codiE1.setFormato(Types.DECIMAL, "##9", 3);
 
-        s = "SELECT * FROM v_motregu ORDER BY tir_codi";
+        s = "SELECT * FROM v_motregu ORDER BY tir_nomb";
         if (dtCon1.select(s)) {
             do {
                 tir_codiE.addDatos(dtCon1.getString("tir_codi"),
