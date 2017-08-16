@@ -151,7 +151,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2017-07-31");
+        this.setVersion("2017-08-13");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -580,7 +580,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      swCliente=false;
      if (!cli_codiE.isNull())
          swCliente=true;
-     s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_poble,"
+     s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_codrut, cl.cli_poble,"
          + " c.rut_codi, al.rut_nomb FROM pedvenc as c"
          + " left join v_albavec as av on c.avc_ano = av.avc_ano "
          + " and c.avc_serie= av.avc_serie and c.avc_nume =  av.avc_nume and av.emp_codi = c.emp_codi "
@@ -627,7 +627,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     v.add("Nombre Cliente"); // 4
     v.add("Población"); // 5
     v.add("Fec.Entrega"); // 6
-    v.add("Conf"); // 7
+    v.add("C.Rep"); // 7
     v.add("Cerr");// 8
     v.add("Dep?"); // 9
     v.add("Ruta");// 10
@@ -638,10 +638,10 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     jtCabPed.setMaximumSize(new Dimension(548, 158));
     jtCabPed.setMinimumSize(new Dimension(548, 158));
     jtCabPed.setPreferredSize(new Dimension(548, 158));
-    jtCabPed.setAnchoColumna(new int[]{26,40,49,55,150,100,76,30,40,40,100,40,40,60});
-    jtCabPed.setAlinearColumna(new int[]{2,2,2,2,0,0,1,1,1,1,0,2,1,2});
+    jtCabPed.setAnchoColumna(new int[]{26,40,49,55,150,100,76,40,40,40,100,40,40,60});
+    jtCabPed.setAlinearColumna(new int[]{2,2,2,2,0,0,1,0,1,1,0,2,1,2});
 
-    jtCabPed.setFormatoColumna(7,"BSN");
+    
     jtCabPed.setFormatoColumna(8,"BSN");
   }
   private void confJtLin() throws Exception
@@ -752,7 +752,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         v.add(dtCon1.getObject("pvc_clinom")==null?dtCon1.getString("cli_nomb"):dtCon1.getString("pvc_clinom")); // 4
         v.add(dtCon1.getObject("cli_poble")); // 5 
         v.add(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy")); // 5
-        v.add(dtCon1.getString("pvc_confir")); // 6
+        v.add(dtCon1.getString("cli_codrut")); // 6
         v.add(dtCon1.getInt("pvc_cerra")!=0); // 7
         v.add(dtCon1.getString("pvc_depos")); // 8
         v.add(dtCon1.getString("rut_nomb")); // 9

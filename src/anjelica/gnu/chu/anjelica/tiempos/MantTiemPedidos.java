@@ -151,7 +151,7 @@ public class MantTiemPedidos extends  ventana
 
         iniciarFrame();
 
-        this.setVersion("2017-03-19");
+        this.setVersion("2017-08-13");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -606,7 +606,7 @@ public class MantTiemPedidos extends  ventana
      swCliente=false;
      if (!cli_codiE.isNull())
          swCliente=true;
-     s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_poble,"
+     s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_codrut, cl.cli_poble,"
          + " c.rut_codi, al.rut_nomb FROM pedvenc as c"
          + " left join v_albavec as av on c.avc_ano = av.avc_ano "
          + " and c.avc_serie= av.avc_serie and c.avc_nume =  av.avc_nume and av.emp_codi = c.emp_codi "
@@ -657,7 +657,7 @@ public class MantTiemPedidos extends  ventana
     v.add("Nombre Cliente"); // 6
     v.add("Población"); // 7
     v.add("Fec.Entrega"); // 8
-    v.add("Conf"); // 9
+    v.add("C.Rep"); // 9
     v.add("Cerr");// 10
     v.add("Dep?"); // 11
     v.add("Ruta");// 12
@@ -671,7 +671,7 @@ public class MantTiemPedidos extends  ventana
     v1.add(tit_tiempoE);
     for (int n=0;n<14;n++)
     {
-        if (n==8 || n==9 )
+        if (n==8)
         {
             CCheckBox cc=new CCheckBox();
             cc.setEnabled(false);            
@@ -694,8 +694,8 @@ public class MantTiemPedidos extends  ventana
     jtCabPed.setMaximumSize(new Dimension(548, 158));
     jtCabPed.setMinimumSize(new Dimension(548, 158));
     jtCabPed.setPreferredSize(new Dimension(548, 158));
-    jtCabPed.setAnchoColumna(new int[]{80,30,26,40,49,55,150,100,76,30,40,40,100,40,40,60});
-    jtCabPed.setAlinearColumna(new int[]{0,2,2,2,2,2,0,0,1,1,1,1,0,2,1,2});
+    jtCabPed.setAnchoColumna(new int[]{80,30,26,40,49,55,150,100,76,40,40,40,100,40,40,60});
+    jtCabPed.setAlinearColumna(new int[]{0,2,2,2,2,2,0,0,1,0,1,1,0,2,1,2});
     
     jtCabPed.setFormatoCampos();
     jtCabPed.setCanDeleteLinea(false);
@@ -836,7 +836,7 @@ public class MantTiemPedidos extends  ventana
         v.add(dtCon1.getObject("pvc_clinom")==null?dtCon1.getString("cli_nomb"):dtCon1.getString("pvc_clinom")); // 4
         v.add(dtCon1.getObject("cli_poble")); // 5 
         v.add(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy")); // 5
-        v.add(dtCon1.getString("pvc_confir")); // 6
+        v.add(dtCon1.getString("cli_codrut")); // 6
         v.add(dtCon1.getInt("pvc_cerra")!=0); // 7
         v.add(dtCon1.getString("pvc_depos")); // 8
         v.add(dtCon1.getString("rut_nomb")); // 9

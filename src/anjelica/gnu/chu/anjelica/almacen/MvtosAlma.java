@@ -410,7 +410,7 @@ public class MvtosAlma
             ", '' as repCodi,'' as zonCodi,0 as sbe_codi,'' as rut_codi, "+
             " mvt_unid as unidades,1 as div_codi,alm_codi,mvt_serdoc as avc_serie,mvt_ejedoc as ejedoc, "+
             " mvt_fecdoc as fecdoc "+
-            ", 'N' as avc_depos "+
+            ", 'N' as avc_depos,mvt_prenet as precioneto "+
              " from mvtosalm where "+
              "  mvt_canti <> 0 "+           
             (almCodi==0?"":" and alm_codi = "+almCodi)+
@@ -440,7 +440,7 @@ public class MvtosAlma
             " avs_numuni as unidades,1 as div_codi, 1 as alm_codi,avc_serie as avc_serie,"
             + "avc_ano as ejedoc, "+
             " avs_fecha as fecdoc "+
-            ", 'N' as avc_depos "+
+            ", 'N' as avc_depos,0 as precioneto "+
              " from v_albvenserv where avs_fecha >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+
             " and avs_fecha <= TO_DATE('"+fecFin+"','dd-MM-yyyy') "+
             (ejercLote==0?"":" and avs_ejelot = "+ejercLote)+
@@ -462,7 +462,7 @@ public class MvtosAlma
            ", '' as repCodi,'' as zonCodi,0 as sbe_codi,'' as rut_codi "+
            ", ind_numuni as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,0 as ejedoc"+
            " ,r.ind_fecha as fecdoc, "+
-           " 'N' as avc_depos "+
+           " 'N' as avc_depos,0 as precioneto  "+
            " FROM invdepos r  WHERE "+         
            " ind_kilos <> 0 "+
 //            " and rgs_trasp != 0 "+ // Tienen q estar traspasados.
@@ -492,7 +492,7 @@ public class MvtosAlma
            ", '' as repCodi,'' as zonCodi,0 as sbe_codi,'' as rut_codi "+
            ", rgs_canti as unidades, 1 as div_codi,alm_codi,'.' as avc_serie,0 as ejedoc"+
            " ,r.rgs_fecha as fecdoc, "+
-           " 'N' as avc_depos "+
+           " 'N' as avc_depos,rgs_prregu as precioneto  "+
            " FROM v_inventar r  WHERE "+         
            " rgs_kilos <> 0 "+
 //            " and rgs_trasp != 0 "+ // Tienen q estar traspasados.

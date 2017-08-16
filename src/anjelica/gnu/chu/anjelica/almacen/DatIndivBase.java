@@ -24,6 +24,7 @@ import java.util.Objects;
 public class DatIndivBase 
 {
     public double canti;
+    double precio;
     int proCodi,ejeNume,lote,numind,almCodi,numuni;    
     
     String serie;
@@ -96,7 +97,14 @@ public class DatIndivBase
     {
         return canti;
     }
-    
+    public void setPrecio(double precio)
+    {
+        this.precio=precio;
+    }
+    public double getPrecio()
+    {
+        return precio;
+    }
     public DatIndivBase()
     {
         

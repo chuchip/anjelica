@@ -267,7 +267,7 @@ public class CLPeVenPro extends ventana implements  JRDataSource
     if (producto.equals(""))
       return;
     boolean swGrupo=producto.startsWith("L");
-    s="SELECT cl.cli_codi, cl.cli_nomb,  pvl_canti,pvl_tipo,pvl_comen FROM v_pedven as p, clientes as cl "+       
+    s="SELECT cl.cli_codi, cl.cli_nomb, cl.cli_codrut, pvl_canti,pvl_tipo,pvl_comen FROM v_pedven as p, clientes as cl "+       
         condWhere+        
          " and p.pro_codart = '"+producto+"'"+
         " and cl.cli_codi = p.cli_codi "+      

@@ -124,6 +124,30 @@ public class Comvalm extends ventana
    {        
      return "gnu.chu.anjelica.almacen.Comvalm";
    }
+   /**
+    * Invoca este programa desde fuera, para realizar una consulta rapida
+    * @param jf
+    * @param proCodi
+    * @param ejeNume
+    * @param serie
+    * @param lote
+    * @param indiv 
+    */
+   public static void ir(Principal jf,int proCodi,int ejeNume,String serie,int lote,int indiv )
+   {
+     ejecutable prog;
+     if ((prog = jf.gestor.getProceso(Comvalm.getNombreClase())) == null)
+        return;
+    gnu.chu.anjelica.almacen.Comvalm cm = (gnu.chu.anjelica.almacen.Comvalm) prog;
+
+    cm.setProCodi(proCodi);
+    cm.setLote(lote);
+    cm.setIndividuo(indiv);
+    cm.setSerie(serie);
+    cm.setEjercicio(ejeNume);
+    cm.ejecutaConsulta();
+    jf.gestor.ir(cm);
+  }
   private void ponParametros(Hashtable<String,String> ht)
   {
       if (ht==null)

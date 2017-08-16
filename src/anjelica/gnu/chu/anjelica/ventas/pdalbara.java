@@ -2632,25 +2632,12 @@ public class pdalbara extends ventanaPad  implements PAD
   }
 
   void mostrarMvtos() {
-    ejecutable prog;
-    if ((prog = jf.gestor.getProceso(Comvalm.getNombreClase())) == null)
-        return;
-    gnu.chu.anjelica.almacen.Comvalm cm = (gnu.chu.anjelica.almacen.Comvalm) prog;
-//    for (int n = jt.getSelectedRow(); n >= 0; n--)
-//    {
-//        if (jt.getValorInt(n, JT_PROCODI) != 0)
-//        {
-//            cm.setProCodi(jt.getValorInt(n, JT_PROCODI));
-//            break;
-//        }
-//    }
-    cm.setProCodi(jt.getValorInt(jt.getSelectedRowDisab(),JT_PROCODI));
-    cm.setLote(jtDes.getValorInt(jtDes.getSelectedRowDisab(), JTDES_LOTE));
-    cm.setIndividuo(jtDes.getValorInt(jtDes.getSelectedRowDisab(), JTDES_NUMIND));
-    cm.setSerie(jtDes.getValString(jtDes.getSelectedRowDisab(), JTDES_SERIE));
-    cm.setEjercicio(jtDes.getValorInt(jtDes.getSelectedRowDisab(), JTDES_EJE));
-    cm.ejecutaConsulta();
-    jf.gestor.ir(cm);
+    Comvalm.ir(jf,jt.getValorInt(jt.getSelectedRowDisab(),JT_PROCODI),
+        jtDes.getValorInt(jtDes.getSelectedRowDisab(), JTDES_EJE),
+       jtDes.getValString(jtDes.getSelectedRowDisab(), JTDES_SERIE),
+       jtDes.getValorInt(jtDes.getSelectedRowDisab(), JTDES_LOTE),
+       jtDes.getValorInt(jtDes.getSelectedRowDisab(), JTDES_NUMIND));  
+  
   }
   void mostrarDatosTraz()
   {

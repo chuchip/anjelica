@@ -88,7 +88,7 @@ public class pdregalm extends ventanaPad implements PAD
      vl=p.panel1;
      jf=p;
      eje=true;
-
+     setAcronimo("mareal");
      setTitulo("Mant. Regularizaciones de Almacen");
 
      try  {
