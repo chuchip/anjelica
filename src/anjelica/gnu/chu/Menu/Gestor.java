@@ -301,8 +301,11 @@ public class Gestor extends Thread implements Serializable
       if(result == JOptionPane.YES_OPTION)
       {
         pesoActual += peso;
-        if(cuenta > 1) // hay mas de una copia en circulación          
+        if(cuenta > 1) // hay mas de una copia en circulación       
+        {
           miObjeto.setNombre(miObjeto.getNombre()+" ("+cuenta+")");
+          miObjeto.setAcronimo(miObjeto.getAcronimo()+" ("+cuenta+")");
+        }
         tabla.anadir(new StringBuffer().append(miObjeto.getNombre()), miObjeto,
             new StringBuffer().append(lePID), new StringBuffer().append(nombre));
       }

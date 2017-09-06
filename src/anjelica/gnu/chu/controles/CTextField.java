@@ -284,7 +284,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
         {
           switch (e.getKeyCode())
           {
-            case KeyEvent.VK_ENTER:
+            case KeyEvent.VK_ENTER:                
               if (e.isControlDown())
               {
                 defaultButton = getDefaultButton();
@@ -468,6 +468,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
     return query;
   }
 
+  @Override
   public String getStrQuery()
   {
     return strQuery;

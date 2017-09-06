@@ -119,11 +119,11 @@ public class MantPreMedios extends ventana
      @Override
     public void iniciarVentana() throws Exception
     {
-        htBolas.put(40201, 2.5);
-        htBolas.put(40202, 2.6);
-        htBolas.put(40203, 2.7);
-        htBolas.put(40205, 2.5);
-        htBolas.put(40225, 2.5);
+        htBolas.put(40201, 2.55);
+        htBolas.put(40202, 2.65);
+        htBolas.put(40203, 2.75);
+        htBolas.put(40205, 2.55);
+        htBolas.put(40225, 2.55);
         htLomos.put(10994,new Integer[]{10994,10995});
         htLomos.put(10904,new Integer[]{10904,10905});
         htLomos.put(10994,new Integer[]{10994,10995});
@@ -223,10 +223,11 @@ public class MantPreMedios extends ventana
            
             Collections.sort(stLomos);
             Iterator<Integer> it = stLomos.iterator();
-
+            
            Integer lomo;           
-           while ((lomo=it.next())!=null)
+           while (it.hasNext())
            {
+               lomo=it.next();
                Integer[] codigos=htLomos.get(lomo);
                int codigo1=codigos[0];
                int codigo2=codigos[0];
@@ -305,7 +306,7 @@ public class MantPreMedios extends ventana
         cLabel11 = new gnu.chu.controles.CLabel();
         fecFinComE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel12 = new gnu.chu.controles.CLabel();
-        precioBolaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"9.99");
+        precioBolaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"9.999");
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -448,7 +449,7 @@ public class MantPreMedios extends ventana
         PPie.add(cLabel12);
         cLabel12.setBounds(300, 3, 70, 17);
 
-        precioBolaE.setText("2.9");
+        precioBolaE.setValorDec(2.95);
         PPie.add(precioBolaE);
         precioBolaE.setBounds(520, 0, 30, 20);
 

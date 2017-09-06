@@ -2456,7 +2456,7 @@ create table anjelica.claslomos
 -- drop table tipodesp;
 create table anjelica.tipodesp
 (
-	tid_codi int not null, -- Codigo de Despiece
+	tid_codi int not null, -- Codigo de Despiece. 4 DIGITOS
 	tid_nomb varchar(50) not null, -- Descripcion Despiece
 	tid_activ int not null,   -- Activo: 2, Solo TACTIL:1 Inactivo: 0
 	tid_agrup int not null default 0, -- Numero Max.Desp/Dia
@@ -2480,6 +2480,7 @@ create table anjelica.tipdesent
 	tid_codi int not null, -- Codigo Despiece
 	tde_nuli int not null, -- No de Linea
 	pro_codi int not null,  -- Cod. Producto.
+	tde_grupo varchar(10),
         primary key (tid_codi,tde_nuli)
 );
 ---
@@ -2491,8 +2492,8 @@ create table anjelica.tipdessal
 	tid_codi int not null, -- Codigo de Despiece
 	pro_codi int not null, -- Codigo Producto
 	tds_unid int not null, -- Nº Unidades a Generar por cada una de la cabecera
-        tds_costo float not null, -- Costo deseado (en €)
-	tds_grupo int not null -- Grupo del Producto
+    tds_costo float not null, -- Costo deseado (en €)
+	tds_grupo varchar(10) -- Grupo del Producto
 );
 create index ix_tipdessal on tipdessal(tid_codi,pro_codi);
 ---

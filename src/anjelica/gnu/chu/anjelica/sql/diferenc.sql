@@ -1,4 +1,12 @@
 --
+-- Añadido grupo a productos entrada de tipos de despiece. tipdesent
+--
+alter table tipdesent add tde_grupo varchar(10);
+--
+-- Modificado tipo de campo grupo a productos salida de tipos de despiece. tipdesent
+--
+alter table tipdessal alter tds_grupo type varchar(10);
+--
 -- Añadido campo enviar albaranes valorados por email
 --
 alter table clientes add cli_enalva smallint not null default 0;

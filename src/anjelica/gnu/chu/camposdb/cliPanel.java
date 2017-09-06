@@ -11,12 +11,13 @@ import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.winayu.*;
+import java.text.ParseException;
 
 /**
  *
  * <p>Título: cliPanel</p>
  * <p>Descripción: Panel para introducir el codigo del cliente</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -186,6 +187,7 @@ public class cliPanel extends CPanel
   void jbInit() throws Exception {
 
     this.setLayout(gridBagLayout1);
+    cli_codiE.setMayusc(true);
     cli_codrepL.setBackground(Color.orange);
     cli_codrepL.setForeground(Color.black);
     cli_codrepL.setMaximumSize(new Dimension(35, 18));
@@ -318,7 +320,7 @@ public class cliPanel extends CPanel
     {
       @Override
       public void actionPerformed(ActionEvent e)
-      {
+      {     
         consCli();
       }
     });
@@ -332,7 +334,7 @@ public class cliPanel extends CPanel
         public void focusLost(FocusEvent e)
         {
           if (getQuery())
-          {
+          {        
             return;
           }
           try
@@ -664,6 +666,7 @@ public void setZona(String zonCli)
   
   @Override
   public void setQuery(boolean modoQuery) {
+   
     cli_codiE.setQuery(modoQuery);
     Bcons.setEnabled(!modoQuery);
   }
@@ -675,11 +678,26 @@ public void setZona(String zonCli)
   public String getStrQuery() {
     return cli_codiE.getStrQuery();
   }
-
+  
   public void consCli()
   {
-    consCli(null);
+      String cliCodi = null;
+      if (cli_codiE.isQuery())
+      {
+          if (!cli_codiE.getText().trim().equals(""))
+          {
+              try
+              {
+                  Integer.parseInt(cli_codiE.getText().trim());
+              } catch (NumberFormatException k)
+              {
+                  cliCodi = cli_codiE.getText().trim();
+              }
+          }
+      }
+      consCli(cliCodi);
   }
+  
   public void consCli(String nombCli)
   {
       try
@@ -708,12 +726,14 @@ public void setZona(String zonCli)
           intfr.setFoco(ayucli);
         }
         ayucli.setZona(zona);
-        ayucli.iniciarVentana();
+       
         if (nombCli!=null)
         {
-          ayucli.setCliNomb(nombCli);
-          ayucli.Bbuscar_actionPerformed();
+          ayucli.setCliNomb(nombCli.toUpperCase());
+          ayucli.Bbuscar_actionPerformed();          
         }
+        else
+            ayucli.iniciarVentana();
       }
       catch (Exception j)
       {        

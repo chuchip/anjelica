@@ -64,6 +64,7 @@ public class tidCodi2 extends CLinkBox
                       JLayeredPane layPane, EntornoUsuario entUsuario) throws SQLException
   {
     this.setFormato(Types.DECIMAL,"###9");
+    this.setAncTexto(40);
     this.infFrame=infFrame;
     this.layPane=layPane;
     EU=entUsuario;
@@ -90,6 +91,7 @@ public class tidCodi2 extends CLinkBox
       }
     });
   }
+  @Override
   public boolean controla()
   {
     return controla(true);
@@ -177,9 +179,7 @@ public class tidCodi2 extends CLinkBox
     ArrayList<Integer> al=MantArticulos.getEquivalentes(proCodi, dt);
     
     if (al==null)
-    {
         al=new ArrayList();
-    }
     al.add(proCodi);
     articList.add(al);
   }
@@ -187,7 +187,12 @@ public class tidCodi2 extends CLinkBox
   {
       this.deoCodi=deoCodi;
   }
-  public void setArticulos(ArrayList lista) throws SQLException
+  /**
+   * Llena el combo con los tipos de despieces disponible segun el articulo mandado.
+   * @param lista Lista de articulos
+   * @throws SQLException 
+   */
+  public void setArticulos(ArrayList<String> lista) throws SQLException
   {
     clearArticulos();
     if (lista==null)
@@ -196,7 +201,7 @@ public class tidCodi2 extends CLinkBox
     int art;
     for (int n=0;n<nRow;n++)
     {
-        art=Integer.parseInt(lista.get(n).toString().trim());
+        art=Integer.parseInt(lista.get(n).trim());
         if (art!=0)
             addArticulo(art);
     }   
@@ -311,8 +316,8 @@ public class tidCodi2 extends CLinkBox
         if (swIncDespLibre)
             addDatos(""+MantTipDesp.LIBRE_DESPIECE,"LIBRE");
         addDatos(""+MantTipDesp.AUTO_DESPIECE,"REENVASADO");
-        addDatos(""+MantTipDesp.CONGELADO_DESPIECE,"CONGELADO");
-    }
+        addDatos(""+MantTipDesp.CONGELADO_DESPIECE,"CONGELADO");      
+    }    
     return true;
   }
   public boolean isIncluirEstaticos()

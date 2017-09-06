@@ -148,7 +148,7 @@ public class PdInvControl extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2017-06-23 "+(swAdmin?"Administrador":""));
+        this.setVersion("2017-08-19 "+(swAdmin?"Administrador":""));
         condWhere=" where emp_codi =  "+EU.em_cod;
         strSql = "SELECT * FROM coninvcab "+condWhere+
          "order by cci_feccon,cam_codi,alm_codi";
@@ -632,6 +632,7 @@ public class PdInvControl extends ventanaPad implements PAD
     
     try
     {
+      nav.pulsado=navegador.NINGUNO;
       if (!dtCons.select(s))     
       {
         mensaje("");
@@ -676,6 +677,7 @@ public class PdInvControl extends ventanaPad implements PAD
     mensaje("");
     verDatos(dtCons);
     mensajeErr("Consulta ... CANCELADA");
+    nav.pulsado=navegador.NINGUNO;
     activaTodo();
   }
 
@@ -757,6 +759,7 @@ public class PdInvControl extends ventanaPad implements PAD
     }
     mensajeErr("Control de Inventario ... MODIFICADO");
     activaTodo();
+    nav.pulsado=navegador.NINGUNO;
     mensaje("");
   }
 
@@ -1070,6 +1073,7 @@ public class PdInvControl extends ventanaPad implements PAD
       nav.pulsado = navegador.NINGUNO;
     }
 
+ @Override
     public void PADDelete()
     {
       Baceptar.setEnabled(true);
@@ -1077,6 +1081,7 @@ public class PdInvControl extends ventanaPad implements PAD
       mensaje("Borrar  .. Control Inventario");
       Bcancelar.requestFocus();
     }
+ @Override
     public void ej_delete1()
     {
       try
@@ -1100,6 +1105,7 @@ public class PdInvControl extends ventanaPad implements PAD
         mensaje("Control de Inventario ... BORRADO");
         rgSelect();
         activaTodo();
+        nav.pulsado=navegador.NINGUNO;
       }
       catch (Exception k)
       {
@@ -1112,6 +1118,7 @@ public class PdInvControl extends ventanaPad implements PAD
       mensaje("");
       mensajeErr("Borrado ... CANCELADO");
       activaTodo();
+      nav.pulsado=navegador.NINGUNO;
     }
    
  @Override

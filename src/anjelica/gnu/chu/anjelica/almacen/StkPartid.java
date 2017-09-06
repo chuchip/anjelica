@@ -168,6 +168,8 @@ public class StkPartid {
           return false;
       if (! isControlExist())
           return true;
+      if (getKilos()==0)
+          return false;
       return getKilos()>=kilos;
   }
 }

@@ -652,6 +652,8 @@ public class pstockAct extends CPanel
 //      }
 //    };
       verDesglProd0(bt, proCodi, precio);
+      this.revalidate();
+      this.repaint();
   }
   /**
    * Busca Desglose de un producto.

@@ -5,7 +5,7 @@
  * Description:  Pantalla de Ayuda de Clientes,    permite Consultar clientes
  * por nombre, NIF o Razon Social.
  * Siempre sera Llamado desde otro programa.
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *   Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -30,6 +30,7 @@ import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.mensajes;
+import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -110,6 +111,7 @@ public class ayuClientes extends ventana
 
   void activarEventos()
   {
+    
     Baceptar.addActionListener(new java.awt.event.ActionListener()
     {
       @Override
@@ -188,7 +190,8 @@ public class ayuClientes extends ventana
     s="1=1 ";
     if (! cli_nombE.isNull())
       s+="and ( UPPER(cli_nomb) LIKE '%"+cli_nombE.getText()+"%'"+
-          " or UPPER(cli_nomco) LIKE '%"+cli_nombE.getText()+"%')";
+          " or UPPER(cli_nomco) LIKE '%"+cli_nombE.getText()+"%'" +
+          "  or UPPER(cli_codrut) like '%"+cli_nombE.getText()+"%')";
 
    
     if (! cli_poblE.isNull())
@@ -206,7 +209,7 @@ public class ayuClientes extends ventana
             " FROM clientes " +
             " WHERE " + s +
             (zona==null?"":" AND cli_zonrep LIKE '"+zona+"'")+
-            (cli_codrepE.isNull()?"":" AND cli_codrut like '%"+cli_codrepE.getText()+"%'")+
+            (cli_codrepE.isNull() || !cli_nombE.isNull()?"":" AND cli_codrut like '%"+cli_codrepE.getText()+"%'")+
             " order by cli_nomb";
 //        debug("AyuCli: "+strSql);
         jt.removeAllDatos();
@@ -229,11 +232,13 @@ public class ayuClientes extends ventana
             vd.add(v);
         } while (dtCon1.next());
         jt.setDatos(vd);
-//        jt.setDatos(dtCon1);
-        jt.requestFocusInicio();
-        jt.setEnabled(true);
+//        jt.setDatos(dtCon1);   
+        jt.requestFocusInicioLater();
+        jt.setEnabled(true);       
         verComentario();
         mensajeErr("Consulta de clientes, realizada");
+        statusBar.setEnabled(true);       
+        
       } catch (Exception k)
       {
         Error("Error al buscar clientes",k);

@@ -87,7 +87,7 @@ public class MantArticulos extends ventanaPad  implements PAD
               booleanValue();
       }
       setTitulo("Mantenimiento de Articulos");
-
+      setAcronimo("manart");
       if (jf.gestor.apuntar(this))
         jbInit();
       else
@@ -159,7 +159,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2017-05-30" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2017-08-27" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM v_articulo where pro_activ != 0 "+
                 " ORDER BY pro_codi";
 

@@ -724,7 +724,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-08-10" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-08-23" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1837,8 +1837,10 @@ public class pdalbara extends ventanaPad  implements PAD
            return;
         int cliCodi=cli_codiE.getValorInt();
         PADQuery();
-        cli_codiE.setValorInt(cliCodi);
-        ej_query();
+        cli_codiE.getCampoCiente().setTipoCampo(Types.DECIMAL);
+        cli_codiE.getCampoCiente().setFormato("#####9");
+        cli_codiE.setText(""+cliCodi);
+        buscaAlb();
   }
   void activarEventos()
   {
@@ -4334,14 +4336,40 @@ public class pdalbara extends ventanaPad  implements PAD
     emp_codiE.setValorDec(EU.em_cod);
     if (EU.getSbeCodi()!=0)
       sbe_codiE.setValorInt(EU.getSbeCodi());
+            
+    cli_codiE.getCampoCiente().setTipoCampo(Types.CHAR);
+    cli_codiE.getCampoCiente().setFormato("X");
+
     cli_codiE.requestFocus();
   }
 
   @Override
   public void ej_query1()
   {
-
+      String cliCodi = cli_codiE.getStrQuery().trim();
+      String cliValor = cli_codiE.getText();
+      cli_codiE.getCampoCiente().setTipoCampo(Types.DECIMAL);
+      cli_codiE.getCampoCiente().setFormato("#####9");
+      if (!cliCodi.equals(""))
+      {
+          try
+          {
+              Integer.parseInt(cliValor);
+              cli_codiE.getCampoCiente().setStrQuery("cli_codi = " + cliValor);
+          } catch (NumberFormatException k)
+          {
+              try
+              {
+                  cli_codiE.getCampoCiente().setStrQuery("cli_codi = " + pdclien.getCodigoCliente(dtStat, cliValor));
+              } catch (SQLException ex)
+              {
+                  Error("Codigo cliente erroneo", ex);
+              }
+          }
+      }
+       
       Component c = Pcabe.getErrorConf();
+       
       if (c != null)
       {
         mensajeErr("Condiciones de Busqueda NO validas");

@@ -2617,7 +2617,7 @@ public class Cgrid extends CPanel implements Serializable
     }
 
     /**
-    * Funcion que extiende las columnas del grid segnn la escala.
+    * Funcion que extiende las columnas del grid segun la escala.
     */
    public void cuadrarGrid() {
       cuadrar();

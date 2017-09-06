@@ -26,6 +26,7 @@ public interface ejecutable
 
   /**
    * Devuelve el nombre del programa
+   * @return 
    */
   public String getNombre();
   /**
