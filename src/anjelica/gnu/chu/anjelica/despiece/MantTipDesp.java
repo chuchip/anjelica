@@ -68,7 +68,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
       eje = true;
 
       setTitulo("Mantenimiento Tipos de Despiece");
-
+      setAcronimo("matide");
       try
       {
         if (ht != null)
@@ -94,6 +94,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
       EU = eu;
       vl = p.getLayeredPane();
       setTitulo("Mantenimiento Tipos de Despiece");
+      setAcronimo("matide");
       eje = false;
 
       try
@@ -107,7 +108,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
     }
     private void jbInit() throws Exception
     {
-      this.setVersion("2016-09-18" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2017-10-03" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -310,6 +311,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
               dtAdd.addNew();
               dtAdd.setDato("tid_codi",tid_codiE.getValorInt());
               dtAdd.setDato("pro_codi",jtEnt.getValorInt(n,0));
+              dtAdd.setDato("tde_grupo",jtEnt.getValString(n,2));
               dtAdd.setDato("tde_nuli",nl);
               dtAdd.update(stUp);
               nl++;
@@ -326,7 +328,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
               dtAdd.setDato("pro_codi", jtSal.getValorInt(n, JTSAL_CODPRO));
               dtAdd.setDato("tds_unid", jtSal.getValorInt(n, JTSAL_UNID));
               dtAdd.setDato("tds_costo", jtSal.getValorInt(n, JTSAL_COSTO));
-              dtAdd.setDato("tds_grupo", jtSal.getValorInt(n, JTSAL_GRUPO));
+              dtAdd.setDato("tds_grupo", jtSal.getValString(n, JTSAL_GRUPO));
               dtAdd.update(stUp);
               nl++;
             }
@@ -336,7 +338,6 @@ public class MantTipDesp  extends ventanaPad implements PAD
       } catch (Exception k)
       {
         Error("Error en La insercion de Referencias",k);
-        return;
       }
     }
     /**
@@ -388,7 +389,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
 
     void verDatEnt(int tidCodi) throws Exception
     {
-      s = "SELECT d.pro_codi,p.pro_nomb " +
+      s = "SELECT d.pro_codi,p.pro_nomb,tde_grupo " +
           " FROM tipdesent d,v_articulo p" +
           " WHERE tid_codi = "+tidCodi+
           " AND d.pro_codi = p.pro_codi "+
@@ -404,6 +405,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
         ArrayList v=new ArrayList();
         v.add(dtCon1.getString("pro_codi"));
         v.add(dtCon1.getString("pro_nomb"));
+        v.add(dtCon1.getString("tde_grupo"));
         jtEnt.addLinea(v);
       } while (dtCon1.next());
       jtEnt.requestFocusInicio();
@@ -867,8 +869,9 @@ public class MantTipDesp  extends ventanaPad implements PAD
         pro_codsE = new gnu.chu.camposdb.proPanel();
         pro_nombsE = new gnu.chu.controles.CTextField();
         tds_unidE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9");
-        tds_grupoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9");
+        tds_grupoE = new gnu.chu.controles.CTextField(Types.CHAR,"X",10);
         tds_costoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
+        tde_grupoE = new gnu.chu.controles.CTextField(Types.CHAR,"X",10);
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -886,7 +889,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
         tid_mervenE = new gnu.chu.controles.CCheckBox();
         cLabel8 = new gnu.chu.controles.CLabel();
         tid_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        jtEnt = new gnu.chu.controles.CGridEditable(2){
+        jtEnt = new gnu.chu.controles.CGridEditable(3){
             public void cambiaColumna(int col, int colNueva,int row)
             {
                 try
@@ -961,6 +964,10 @@ public class MantTipDesp  extends ventanaPad implements PAD
         pro_nombE.setEnabled(false);
 
         pro_nombsE.setEnabled(false);
+
+        tds_grupoE.setMayusc(true);
+
+        tde_grupoE.setMayusc(true);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -1043,12 +1050,14 @@ public class MantTipDesp  extends ventanaPad implements PAD
             ArrayList cabecera = new ArrayList();
             cabecera.add("Codigo"); // 0 -- Codigo Producto
             cabecera.add("Nombre"); //1  -- Nombre Producto
+            cabecera.add("Grupo"); //2  -- Grupo
             jtEnt.setCabecera(cabecera);
-            jtEnt.setAnchoColumna(new int[]{46, 283});
-            jtEnt.setAlinearColumna(new int[] {2, 0});
+            jtEnt.setAnchoColumna(new int[]{46, 283,60});
+            jtEnt.setAlinearColumna(new int[] {2, 0,0});
             ArrayList v = new ArrayList();
             v.add(pro_codiE.getFieldProCodi());
             v.add(pro_nombE);
+            v.add(tde_grupoE);
             jtEnt.setCampos(v);
             jtEnt.setAjustarGrid(true);
             jtEnt.setAjusAncCol(true);
@@ -1090,8 +1099,8 @@ public class MantTipDesp  extends ventanaPad implements PAD
             linea.add("Grupo"); // 4  -- Grupo
             jtSal.setCabecera(linea);
             jtSal.setPonValoresInFocus(false);
-            jtSal.setAnchoColumna(new int[] {46, 283,60,60,40});
-            jtSal.setAlinearColumna(new int[] {2, 0,2,2,2});
+            jtSal.setAnchoColumna(new int[] {46, 283,60,60,100});
+            jtSal.setAlinearColumna(new int[] {2, 0,2,2,0});
             jtSal.setFormatoColumna(3, "##9.99");
             tds_unidE.setValorDec(1);
             tds_grupoE.setValorDec(1);
@@ -1201,6 +1210,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
     private gnu.chu.camposdb.proPanel pro_codsE;
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CTextField pro_nombsE;
+    private gnu.chu.controles.CTextField tde_grupoE;
     private gnu.chu.controles.CTextField tds_costoE;
     private gnu.chu.controles.CTextField tds_grupoE;
     private gnu.chu.controles.CTextField tds_unidE;

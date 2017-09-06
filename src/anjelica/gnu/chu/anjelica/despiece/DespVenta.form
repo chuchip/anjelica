@@ -238,9 +238,6 @@
               </Constraints>
             </Component>
             <Component class="gnu.chu.camposdb.tidCodi2" name="tid_codiE">
-              <Properties>
-                <Property name="ancTexto" type="int" value="40"/>
-              </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="90" y="40" width="340" height="17"/>

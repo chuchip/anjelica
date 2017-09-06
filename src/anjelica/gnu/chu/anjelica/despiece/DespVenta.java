@@ -527,13 +527,13 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                ||  tidCodi==MantTipDesp.CONGELADO_DESPIECE)
           return null;//checkAutoDespiece(dt, jt, proCodi, unidEntrada);
 
-       HashMap<Integer,Integer> htGru  = new HashMap();
+       HashMap<String,Integer> htGru  = new HashMap();
        String s="SELECT distinct(tds_grupo) as tds_grupo FROM tipdessal  WHERE tid_codi = "+tidCodi;
        if (dt.select(s))
        {
          do
          {
-           htGru.put(dt.getInt("tds_grupo"),0);
+           htGru.put(dt.getString("tds_grupo",true),0);
          } while (dt.next());
        }
              
@@ -551,25 +551,25 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
               return "Producto: " + jt.getValorInt(n, 0) +
                       " NO Encontrado en este Tipo de Despiece";
          
-         if (htGru.get(dt.getInt("tds_grupo"))==null)
-           htGru.put(dt.getInt("tds_grupo"),jt.getValorInt(n,JT_UNID)*jt.getValorInt(n,JTLIN_NUMCAJ));
+         if (htGru.get(dt.getString("tds_grupo"))==null)
+           htGru.put(dt.getString("tds_grupo"),jt.getValorInt(n,JT_UNID)*jt.getValorInt(n,JTLIN_NUMCAJ));
          else
          {
            if (jt.getColumnCount()==6)
-            nEle= htGru.get(dt.getInt("tds_grupo")) + jt.getValorInt(n,JT_UNID);
+            nEle= htGru.get(dt.getString("tds_grupo")) + jt.getValorInt(n,JT_UNID);
            else    
-            nEle= htGru.get(dt.getInt("tds_grupo")) + (jt.getValorInt(n,JT_UNID) * jt.getValorInt(n,JTLIN_NUMCAJ));
-           htGru.put(dt.getInt("tds_grupo"),nEle);
+            nEle= htGru.get(dt.getString("tds_grupo")) + (jt.getValorInt(n,JT_UNID) * jt.getValorInt(n,JTLIN_NUMCAJ));
+           htGru.put(dt.getString("tds_grupo"),nEle);
          }
        }
-       Iterator<Integer> en=htGru.keySet().iterator();
-       int grupo;
+       Iterator<String> en=htGru.keySet().iterator();
+       String grupo;
        int tdsUnid;
        while (en.hasNext())
        {
          grupo =  en.next();
          s="SELECT tds_unid,pro_codi FROM tipdessal  WHERE tid_codi = "+tidCodi+
-             " and tds_grupo = " + grupo;
+             " and tds_grupo = '" + grupo+"'";
          dt.select(s);
          nEle=htGru.get(grupo);
          tdsUnid=dt.getInt("tds_unid")*unidEntrada;
@@ -1333,8 +1333,6 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         Bir.setText("cButton1");
         Pcabe.add(Bir);
         Bir.setBounds(440, 70, 2, 2);
-
-        tid_codiE.setAncTexto(40);
         Pcabe.add(tid_codiE);
         tid_codiE.setBounds(90, 40, 340, 17);
 

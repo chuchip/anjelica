@@ -47,6 +47,7 @@ import javax.swing.event.ListSelectionListener;
 
 
 public class ValDespi extends ventana {
+    ArrayList<Integer> errorProd=new ArrayList();
    int TARIFA_MAYOR;
    double DTO_TARIFA_MAYOR;
    private int swCostoOrig=0;
@@ -165,7 +166,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2017-07-21" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2017-08-27" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -442,7 +443,13 @@ public class ValDespi extends ventana {
                      mensajeErr("No se puede Anular Valoracion si se esta editando");
                }
                else
+               {
                    BValorar_ActionPerformed();
+                   if (jtLin.isEnabled())
+                       jtLin.requestFocusLater();
+                   if (jtCab.isEnabled())
+                       jtCab.requestFocusLater();
+               }
             }
         });
        Binvsel.addActionListener(new ActionListener() {
@@ -1772,12 +1779,12 @@ public class ValDespi extends ventana {
  
  void preparaStatements() throws SQLException
  {     
-    s= "SELECT mvt_time,mvt_tipo, mvt_canti,mvt_prec,mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,mvt_numdoc "+
+    s= "SELECT mvt_time,mvt_tipo,mvt_tipdoc, mvt_canti,mvt_prec,mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,mvt_numdoc "+
              " from mvtosalm  "+
              " where pro_codi =  ?" +
              " AND mvt_time::date >= ?  "+           
-            " and mvt_time <= ? "+
-            " order by mvt_time";             
+             " and mvt_time <= ? "+
+             " order by mvt_time";             
     psMvt=dtCon1.getPreparedStatement(s);
     s= "SELECT sum(rgs_kilos) as kilos, sum(rgs_kilos*rgs_prregu) as importe "+
              " from v_inventar  "+
@@ -1813,6 +1820,7 @@ public class ValDespi extends ventana {
             grupos.add(dtCon1.getInt("deo_codi"));
             nEle++;
         } while (dtCon1.next());
+        errorProd.clear();
         for (int n=0;n<nEle;n++)
         {
            getPrecioMedioDesp(proCodi,ejerc,grupos.get(n), tipoDoc);
@@ -1907,28 +1915,40 @@ public class ValDespi extends ventana {
           
             if (rs.getString("mvt_tipo").equals("E"))
             {
-                importe=kilos*precioMedio;
+                if (precioMedio>0 && kilos>0)
+                    importe=kilos*precioMedio;
+                else
+                {
+                    kilos=0;
+                    importe=0;
+                }
                 if (kilos<-0.01)
                 {
                     if (msgError==null)
                         msgError="Producto : "+proCodi+" Stock negativo en entrada de fecha: "+
                             Formatear.getFecha(rs.getTimestamp("mvt_time"),"dd-MM-yyyy HH:mm");
                     kilos=0;
+                    importe=0;
+                    continue;
                 }
                 kilos+=rs.getDouble("mvt_canti");
-                if (rs.getDouble("mvt_prec")!=0 && ! isDocumActual)
-                {
-                    importe+= rs.getDouble("mvt_canti")* 
-                        rs.getDouble("mvt_prec") ;
-                    precioMedio=kilos==0?0:importe/kilos;
+                if (rs.getDouble("mvt_prec")!=0 && ! isDocumActual )
+                {                                             
+                        importe+=  rs.getDouble("mvt_canti")* 
+                                rs.getDouble("mvt_prec") ;
+                        precioMedio=kilos==0?0:importe/kilos;
                 }
+                      
             }
             else
                 kilos-=rs.getDouble("mvt_canti");
         } while (rs.next());
     }
-    if (msgError!=null && !swValGrupo)
+    if (msgError!=null && !swValGrupo && errorProd.indexOf(proCodi)<0 )
+    {
+        errorProd.add(proCodi);
         msgBox(msgError);
+    }
     return kgDocum==0?0:impDocum/kgDocum;
  }
  void verDatLi1(String sql) throws SQLException

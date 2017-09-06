@@ -814,7 +814,7 @@ public class Cldegen extends ventana
         jt.setFormatoColumna(4,"----,--9.99");
         jt.setFormatoColumna(5,"--9.9999");
         jt.setFormatoColumna(JT_PRTARIFA,"#9.99");
-        jt.setFormatoColumna(JT_KGVENTA,"--9.9");
+        jt.setFormatoColumna(JT_KGVENTA,"--,--9.9");
         jt.setFormatoColumna(JT_PRVENTA,"--9.99");
         jt.setAjustarGrid(true);
 

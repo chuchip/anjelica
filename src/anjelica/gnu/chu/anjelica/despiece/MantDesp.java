@@ -88,6 +88,9 @@ import javax.swing.event.ListSelectionListener;
 
 public class MantDesp extends ventanaPad implements PAD
 {   
+    public final static String DESP_CERRADO="N";
+    public final static String DESP_ABIERTO="S";
+    public final static String DESP_BLOQUEADO="B";
     DatosTabla dtAux;
     private boolean swErrCab=false;// Indica si la linea desglose esta en error.
     int tipoEmp; // Tipo Empresa (Sala Despiece o Plantacion)
@@ -229,7 +232,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2017-07-21" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2017-08-20" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -1277,11 +1280,10 @@ public class MantDesp extends ventanaPad implements PAD
                 }
                 tid_codiE.setArticulos(jtCab.getValorColumna(JTCAB_PROCODI));
                 if (!CHECKTIDCODI && !AVISATIDCODI)
-                {
                     tid_codiE.clearArticulos();
-                }
                 tid_codiE.releer();
                 tid_codiE.resetTexto();
+                tid_codiE.setValorInt(MantTipDesp.AUTO_DESPIECE);
                 tid_codiE.requestFocusLater();
 
                 return;
@@ -3050,6 +3052,12 @@ public class MantDesp extends ventanaPad implements PAD
                 jtCab.setValor(stkPartid.getKilos(),linea, JTCAB_KILOS);
                 deo_kilosE.setValorDec(stkPartid.getKilos());
             }
+            if (deo_kilosE.getValorDec()<=0)
+            {
+                mensajeErr("Kilos debe ser superior a 0");
+                return JTCAB_PROCODI;
+            }
+                
             // Procedo a guardar la linea.
             dtAdd.commit();
             if (jtCab.getValorInt(linea, JTCAB_NL) != 0)
@@ -3935,8 +3943,8 @@ public class MantDesp extends ventanaPad implements PAD
 //       });
 // }
     public static void deoBlockE_addItem(CComboBox grdBlock) {
-        grdBlock.addItem("Cerrado", "N");
         grdBlock.addItem("Abierto", "S");
+        grdBlock.addItem("Cerrado", DESP_CERRADO);      
         grdBlock.addItem("Bloqueado", "B");
     }
 
@@ -4818,8 +4826,6 @@ public class MantDesp extends ventanaPad implements PAD
                 Ptipdes.setMinimumSize(new java.awt.Dimension(669, 23));
                 Ptipdes.setPreferredSize(new java.awt.Dimension(669, 23));
                 Ptipdes.setLayout(null);
-
-                tid_codiE.setAncTexto(40);
                 Ptipdes.add(tid_codiE);
                 tid_codiE.setBounds(30, 2, 320, 20);
 
