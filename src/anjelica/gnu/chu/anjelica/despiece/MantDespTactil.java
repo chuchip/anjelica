@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -65,6 +67,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
   cliPanel cli_codiE = new cliPanel();
   CLabel deo_incvalL=new CLabel("Produccion");
   CComboBox deo_incvalE=new CComboBox();
+  CButton BirGrid =new CButton(Iconos.getImageIcon("flechaabajo"));
+  CButton Bocul =new CButton();
   int tipoEmp; // Tipo Empresa (Sala Despiece o Plantacion)
   private boolean isEmpPlanta=false; // Indica si la empresa es tipo Plantacion
   final static String TABLA_BLOCK="desporig";
@@ -87,6 +91,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
   private int  tipoetiq=0,tipoetiqOld=0;
   boolean modLinSal=false;
   final static int CABECERA=0;
+   final static int CABECERA_ALL=4;
   final static int  TODOS=1;
   final static int ENTRADA=2;
   final static int SALIDA=3;
@@ -114,10 +119,10 @@ public class MantDespTactil  extends ventanaPad implements PAD
   CLabel tid_codiL = new CLabel();
   tidCodi2 tid_codiE = new tidCodi2();
   CTextField del_numlinE=new CTextField(Types.DECIMAL,"##9");
-  Cgrid jtOri = new Cgrid(9);
+  Cgrid jtOri = new Cgrid(3);
   CLabel cLabel1 = new CLabel();
   CLabel cLabel5 = new CLabel();
-  Cgrid jtFin = new Cgrid(6);
+  Cgrid jtFin = new Cgrid(4);
   CLabel cLabel7 = new CLabel();
   CTextField grd_unioriE = new CTextField(Types.DECIMAL,"###9");
   CLabel cLabel8 = new CLabel();
@@ -162,16 +167,24 @@ public class MantDespTactil  extends ventanaPad implements PAD
       }
       return true;
     }
+      @Override
     public void afterDeleteLinea()
     {
-      calcSumCab(jtEnt.getValorInt(JTENT_PROCODI), jtEnt.getValorDec(JTENT_KILOS));
+        try {
+            calcSumCab(jtEnt.getValorInt(JTENT_PROCODI), jtEnt.getValorDec(JTENT_KILOS));
+        } catch (SQLException k)
+        {
+            Error("Error al calcular suma",k);
+        }
     }
 
+        @Override
     public boolean afterInsertaLinea(boolean insLinea)
     {
       pdf_jtEnt();
       return true;
     }
+      @Override
     public void cambiaColumna(int col, int colNueva,int row)
     {
       try
@@ -184,8 +197,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
         Error("Error al buscar Nombre Articulo", k);
       }
     }
-
-        @Override
+    @Override
     public int cambiaLinea(int row, int col)
     {
       return check_jtEnt(row);
@@ -210,7 +222,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
         setEditEnt(true);
     }
 
-        @Override
+    @Override
     public boolean deleteLinea(int row, int col)
     {
       if (!jtSal.isVacio() && row == JTENT_PROCODI)
@@ -223,7 +235,6 @@ public class MantDespTactil  extends ventanaPad implements PAD
       del_jtEnt(eje_numeE.getValorInt(),deo_codiE.getValorInt(), jtEnt.getValorInt(row,JTENT_NL));
       return true;
     }
-//
   };
   CLabel numPiezasL = new CLabel();
   CLabel cLabel14 = new CLabel();
@@ -237,6 +248,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
   Cgrid jtSal = new Cgrid(7);
   CLabel def_kilsalL = new CLabel();
   CTextField kilsalE = new CTextField(Types.DECIMAL,"###9.999");
+  CCheckBox opImpInt=new CCheckBox("Imp.Int.");
   CLabel def_usunomL = new CLabel();
   CComboBox def_usunomE = new CComboBox();
   
@@ -398,7 +410,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2017-07-21"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2017-09-03"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -413,7 +425,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    opImpEti.setSelected(true);
    grd_unioriE.setEnabled(false);
    grd_unioriE.setBounds(new Rectangle(228, 2, 44, 17));
-   deo_blockE.setEnabled(false);
+
   
    grd_unifinE.setEnabled(false);
    grd_unifinE.setBounds(new Rectangle(226, 1, 44, 17));
@@ -439,7 +451,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     cLabel6.setBounds(new Rectangle(4, 2, 53, 16));
     tid_codiL.setText("Tipo Desp.");
     tid_codiL.setBounds(new Rectangle(4, 22, 58, 18));
-    tid_codiE.setAncTexto(30);
+   
     tid_codiE.setBounds(new Rectangle(67, 22, 285, 18));
     grd_unidE.setBounds(new Rectangle(441, 2, 42, 16));
     cLabel1.setBackground(Color.red);
@@ -478,10 +490,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Bimpetin.setText("Imp. Etiquetas Interiores");
 
     numCopiasL.setText("Copias");
-    Bimpetin.setBounds(new Rectangle(415, 2, 147, 18));
-    numCopiasE.setBounds(new Rectangle(565, 2, 38, 17));
-    numCopiasL.setBounds(new Rectangle(610, 2, 49, 17));
-    
+    numCopiasL.setBounds(new Rectangle(415, 2, 49, 17));
+    numCopiasE.setBounds(new Rectangle(465, 2, 38, 17));    
+    Bimpetin.setBounds(new Rectangle(505, 2, 147, 18));
     numCopiasE.setValorInt(1);    
     numPiezasL.setText("N. Piezas");    
     
@@ -517,7 +528,11 @@ public class MantDespTactil  extends ventanaPad implements PAD
     def_kilsalL.setText("Kilos");
     def_kilsalL.setBounds(new Rectangle(395, 2, 30, 18));
     kilsalE.setBounds(new Rectangle(430, 2, 56, 18));
-
+    opImpInt.setFocusable(false);
+    opImpInt.setToolTipText("Imprimir Etiqueta Interior");
+    opImpInt.setSelected(false);
+    opImpInt.setBounds(new Rectangle(495, 2, 80, 18));
+    
     def_usunomL.setText("Operario");
     def_usunomL.setBounds(new Rectangle(500, 2, 53, 18));
     
@@ -545,7 +560,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Psalpr1.setLayout(null);
     cLabel17.setRequestFocusEnabled(true);
     cLabel17.setBounds(new Rectangle(528, 3, 31, 17));
-    cLabel17.setText("Kilos");
+    cLabel17.setText("Kilos:");
     grd_unisalE.setBounds(new Rectangle(480, 3, 44, 17));
     grd_unisalE.setEnabled(false);
     cLabel18.setBounds(new Rectangle(424, 3, 52, 17));
@@ -606,19 +621,33 @@ public class MantDespTactil  extends ventanaPad implements PAD
 //    jtEnt.setAjustarGrid(true);
     jtEnt.setAjustarGrid(true);
     jtEnt.setAjustarColumnas(false);
-
-    jtOri.setCabecera(vc);
+    ArrayList vOri=new ArrayList();
+    vOri.add("Grupo");
+    vOri.add("Nombre");
+    vOri.add("Piezas");
+    
+    jtOri.setCabecera(vOri);
     jtOri.setMaximumSize(new Dimension(497, 148));
     jtOri.setMinimumSize(new Dimension(497, 148));
     jtOri.setPreferredSize(new Dimension(497, 148));
     jtOri.setBuscarVisible(false);
     jtOri.setAnchoColumna(new int[]
-                          {70, 230, 30, 50, 30, 60, 40, 70,30});
+                          {100, 230, 40});
     jtOri.setAlinearColumna(new int[]
-                            {2, 0, 2, 2,1, 2, 2, 2, 2});
-    jtOri.setFormatoColumna(7, "---,--9.99");
+                            {0, 0, 2});
     jtOri.setAjustarGrid(true);
-    jtOri.setAjustarColumnas(false);
+    vOri.add("Falta");
+    jtFin.setCabecera(vOri);
+    jtFin.setMaximumSize(new Dimension(497, 148));
+    jtFin.setMinimumSize(new Dimension(497, 148));
+    jtFin.setPreferredSize(new Dimension(497, 148));
+    jtFin.setBuscarVisible(false);
+    jtFin.setAnchoColumna(new int[]
+                          {100, 230, 40,30});
+    jtFin.setAlinearColumna(new int[]
+                            {0, 0, 2,2});
+    jtFin.setAjustarGrid(true);
+ 
     ArrayList v= new ArrayList();
     v.add("Producto"); // 0
     v.add("Descripcion"); // 1
@@ -626,23 +655,11 @@ public class MantDespTactil  extends ventanaPad implements PAD
     v.add("N.Piez"); // 3
     v.add("Ind"); // 4
     v.add("Usuario");// 5
-    jtFin.setCabecera(v);
     v.add("Impr"); // 6
     jtSal.setCabecera(v);
-
     
-    jtFin.setFormatoColumna(2, "--,---9.99");
-    jtFin.setFormatoColumna(3, "###9");
-    
-    jtFin.setMaximumSize(new Dimension(497, 113));
-    jtFin.setMinimumSize(new Dimension(497, 113));
-    jtFin.setPreferredSize(new Dimension(497, 113));
-    jtFin.setBuscarVisible(false);
-    jtFin.setAnchoColumna(new int[]  {70, 230, 70, 50,50,60});
-    jtFin.setAlinearColumna(new int[] {2, 0, 2, 2, 2,2});
-    jtFin.setAjustarGrid(true);
-    jtFin.setAjustarColumnas(false);
-
+ 
+ 
     jtSal.setFormatoColumna(2, "--,---9.99");
     jtSal.setFormatoColumna(3, "###9");
     jtSal.setFormatoColumna(4, "---9");
@@ -696,6 +713,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
     deo_incvalE.addItem("Si","S");
     deo_incvalL.setBounds(new Rectangle(385, 61, 70, 18));
     deo_incvalE.setBounds(new Rectangle(458, 61, 50, 18));
+    Bocul.setBounds(new Rectangle(528, 61, 2, 2));
+    BirGrid.setBounds(new Rectangle(538, 61, 18, 18));
     deo_almdesE.setAncTexto(30);
     deo_almdesE.setBounds(new Rectangle(349, 41, 186, 19));
     cLabel110.setText("Alm.Final");
@@ -757,6 +776,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
     Psalpro.add(pro_codsalE, null);
     Psalpro.add(kilsalE, null);
+    Psalpro.add(opImpInt, null);
     Psalpro.add(def_numpiL, null);
     Psalpro.add(def_numpiE, null);
     Psalpro.add(def_kilsalL, null);
@@ -811,6 +831,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
     Pcabe.add(cli_codiE, null);
     Pcabe.add(deo_incvalL, null);
     Pcabe.add(deo_incvalE, null);
+    Pcabe.add(Bocul, null);
+    Pcabe.add(BirGrid, null);
     Pcabe.add(deo_almoriE, null);
     Pcabe.add(cLabel110, null);
     Pcabe.add(cLabel23, null);
@@ -846,8 +868,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  public void iniciarVentana() throws Exception
  {
    cli_codiE.iniciar(dtAux,this,vl,EU);
-   jtEnt.cuadrarGrid();
-   jtFin.cuadrarGrid();
+ 
    jtOri.cuadrarGrid();
    jtSal.cuadrarGrid();
    pro_kilenE.setEnabled(isEmpPlanta);
@@ -855,7 +876,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    gnu.chu.Menu.LoginDB.iniciarLKEmpresa(EU,dtStat);
    pro_codenE.setAyudaLotes(true);
    Pcabe.setButton(KeyEvent.VK_F4,Baceptar);
-   
+   Pcabe.setButton(KeyEvent.VK_F2, BirGrid);
    utdesp =new utildesp();
    pro_codsalE.iniciar(dtStat, this, vl, EU);
    pro_codsalE.setEnabled(false);
@@ -867,11 +888,14 @@ public class MantDespTactil  extends ventanaPad implements PAD
    jtSal.setButton(KeyEvent.VK_F9,BrepEti);
    jtSal.setButton(KeyEvent.VK_F5,BDuplLinea);
    jtSal.setButton(KeyEvent.VK_F4,Baceptar);
+   jtSal.setButton(KeyEvent.VK_F2, BirGrid);
+   jtEnt.setButton(KeyEvent.VK_F2, BirGrid);
    
    Pfin.setButton(KeyEvent.VK_F4,Baceptar);
    Pfin.setButton(KeyEvent.VK_F8,BborLiSa);
    Pfin.setButton(KeyEvent.VK_F9,BrepEti);
    Pfin.setButton(KeyEvent.VK_F5,BDuplLinea);
+   Pfin.setButton(KeyEvent.VK_F2, BirGrid);
    pdalmace.llenaLinkBox(deo_almoriE, dtCon1);
    pdalmace.llenaLinkBox(deo_almdesE, dtCon1);
 //   s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
@@ -907,14 +931,79 @@ public class MantDespTactil  extends ventanaPad implements PAD
    verDatos(dtCons);
    actButton(true);
  }
-
+ 
+ 
+ void irGrid()
+ {
+    if (!jtEnt.isEnabled())
+    {
+        if (deo_codiE.getValorInt()==0)
+             irGridEnt();
+        else
+        {
+            try
+            {
+                if (!checkFechaCad())
+                {
+                    grd_feccadE.requestFocusLater();
+                    return;
+                }
+                jtEnt.setEnabled(true);
+                if (jtEnt.isVacio())
+                    jtEnt.requestFocusInicioLater();
+                else
+                    jtEnt.requestFocusFinalLater();
+            } catch (ParseException ex)
+            {
+               Error("Error al comprobar fecha caducidad",ex);
+               return;
+            }
+        }
+        Ptabed.setSelectedIndex(1);
+        return;
+    }
+    if (jtEnt.cambiaLinea(jtEnt.getSelectedRow(),1)>=0)
+    {
+        jtEnt.requestFocusLater();
+        return;
+    }
+    jtEnt.setEnabled(false);
+    Ptabed.setSelectedIndex(2);
+    
+ }
  void activarEventos()
  {
+    jtEnt.addMouseListener(new MouseAdapter()
+    {
+         @Override
+         public void mouseClicked(MouseEvent e) {
+             if (e.getClickCount()<2 && (nav.pulsado==navegador.EDIT || nav.pulsado==navegador.ADDNEW) )
+                 return;
+           irGrid();
+         }
+    });
+    
+    Bocul.addFocusListener(new FocusAdapter()
+    {
+         @Override
+        public void focusGained(FocusEvent e) {
+          if (nav.pulsado==navegador.EDIT || nav.pulsado==navegador.ADDNEW) 
+            irGrid();
+        } 
+    } );
+    BirGrid.addActionListener(new ActionListener()
+    {
+          @Override
+        public void actionPerformed(ActionEvent e) {
+           if (nav.pulsado==navegador.EDIT || nav.pulsado==navegador.ADDNEW)  
+            irGrid();
+        }
+    });
     BcerrDesp.addActionListener(new ActionListener()
     {
-        @Override
+          @Override
         public void actionPerformed(ActionEvent e) {
-            cerrarDespiece();
+          cerrarDespiece();
         }
     });
     BDuplLinea.addActionListener(new ActionListener()
@@ -1005,7 +1094,12 @@ public class MantDespTactil  extends ventanaPad implements PAD
        if (! borrarLinSa(jtSal.getSelectedRow()))
          return;
        jtSal.removeLinea();
-       actAcumSal();
+       try {
+        actAcumSal();
+       } catch (SQLException k)
+       {
+           Error("Error al actualizar acumulados",k);
+       }
      }
    });
    BrepEti.addActionListener(new ActionListener()
@@ -1080,29 +1174,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
      {
          mensajeErr("Producto debe ser vendible para imprimir etiquetas interiores");
          return;
-     }
-     buscaDatInd();
-    CodigoBarras codBarras = new CodigoBarras("D",eje_numeE.getText(),SERIE,
-                deo_codiE.getValorInt(),pro_codsalE.getValorInt(),0,0); 
-     etiq.iniciar(deo_codiE.getText(),
-                 codBarras.getLote(),
-                  pro_codsalE.getText(), pro_codsalE.getTextNomb(),
-                  utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre,
-                  utdesp.despiezadoE, null,
-                  0,utdesp.getConservar(),
-                  utdesp.sacrificadoE,
-                  null,grd_fechaE.getDate(),
-                  grd_feccadE.getDate(), 
-                  utdesp.fecSacrE);
-       
-
-//     new miThread("aaa")
-//     {
-//       public void run()
-//       {
-           imprEtiq0();
-//       }
-//     };
+     }    
+     buscaDatInd();       
+     imprEtiqInt0(numCopiasE.getValorInt());
    }
    catch (Exception ex)
    {
@@ -1148,17 +1222,30 @@ public class MantDespTactil  extends ventanaPad implements PAD
    }
    return true;
  }
- void imprEtiq0()
+ void imprEtiqInt0(int numCopias)
  {
    try
    {
+  
+     CodigoBarras codBarras = new CodigoBarras("D",eje_numeE.getText(),SERIE,
+                deo_codiE.getValorInt(),pro_codsalE.getValorInt(),0,0); 
+     etiq.iniciar(deo_codiE.getText(),
+                 codBarras.getLote(),
+                  pro_codsalE.getText(), pro_codsalE.getTextNomb(),
+                  utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre,
+                  utdesp.despiezadoE, null,
+                  0,utdesp.getConservar(),
+                  utdesp.sacrificadoE,
+                  null,grd_fechaE.getDate(),
+                  grd_feccadE.getDate(), 
+                  utdesp.fecSacrE);
 //     this.setEnabled(false);
 //     for (int n = 0; n < netiintE.getValorInt(); n++)
 //     {
 //     EU.previsual=false;
      if (etiq == null)
         etiq = new etiqueta(EU);
-     etiq.setNumCopias(numCopiasE.getValorInt());
+     etiq.setNumCopias(numCopias);
 //     if ( numCopiasE.getValorInt()>1 )
 //       etiq.setPrintDialog(false);
 //     else
@@ -1224,7 +1311,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
        eje_numeE.requestFocus();
        return;
      }
-     if (! checkFechaCad())
+     if (!deo_codiE.isNull() && ! checkFechaCad())
      {
           grd_feccadE.requestFocus();
           return;
@@ -1236,7 +1323,10 @@ public class MantDespTactil  extends ventanaPad implements PAD
    }
    Porig.setEnabled(true);
    jtEnt.setEnabled(true);
-   jtEnt.requestFocusInicio();
+   if (jtEnt.isVacio())
+         jtEnt.requestFocusInicioLater();
+     else
+         jtEnt.requestFocusFinalLater();  
    jtEnt.afterCambiaLinea();
    if (jtEnt.isVacio())
      pdf_jtEnt();
@@ -1282,7 +1372,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
   }
     @Override
   public void PADQuery() {
-    activar(CABECERA,true);
+    activar(CABECERA_ALL,true);
+  
     Baceptar.setEnabled(true);
     Bcancelar.setEnabled(true);
     Pcabe.setQuery(true);
@@ -1290,7 +1381,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
     deo_incvalE.setEnabled(true);
     grd_unidE.setEnabled(true);
     grd_unidE.setQuery(false);
+    deo_blockE.setEnabled(true);    
     deo_blockE.addItem("Terminado","T");
+    BcerrDesp.setEnabled(false);
     if (Integer.parseInt(Formatear.getFechaAct("MM"))>2)
         eje_numeE.setValorInt(EU.ejercicio);
     deo_codiE.requestFocus();
@@ -1315,7 +1408,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
       
        v.add(tid_codiE.getStrQuery());
        v.add(deo_incvalE.getStrQuery());
-       if (!deo_blockE.getValor().equals("T"))
+       if (!deo_blockE.getValor().equals(MantDesp.DESP_BLOQUEADO))
         v.add(deo_blockE.getStrQuery());
        else
        {
@@ -1377,6 +1470,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     }
     verDatos(dtCons);
   }
+  
     @Override
   public void afterConecta() throws SQLException, java.text.ParseException
   {
@@ -1417,13 +1511,20 @@ public class MantDespTactil  extends ventanaPad implements PAD
         activaTodo();
         return;
     }
-    if (deo_blockE.getValor().equals("B") && ! EU.isRootAV())
+    if (deo_blockE.getValor().equals(MantDesp.DESP_BLOQUEADO) && ! EU.isRootAV())
     {
         msgBox("Despiece Bloqueado. Imposible Modificar");
         nav.pulsado = navegador.NINGUNO;
         activaTodo();
         return;
     }
+     if (deo_blockE.getValor().equals(MantDesp.DESP_CERRADO) && !PARAM_ADMIN)
+       {
+          mensajeErr("DESPIECE CERRADO ... IMPOSIBLE MODIFICAR");
+          nav.pulsado = navegador.NINGUNO;
+          activaTodo();
+          return;
+       }
     try {
      if (!checkMvtos(eje_numeE.getValorInt(), deo_codiE.getValorInt()))
                 return;
@@ -1469,18 +1570,24 @@ public class MantDespTactil  extends ventanaPad implements PAD
     modLinSal=false;
 
     activar(true);
-    activar(CABECERA,false);
+    activar(CABECERA_ALL,false);
 //    if (PARAM_ADMIN)
         tid_codiE.setEnabled(true);
-    deo_blockE.setEnabled(true);
+    
     grd_unidE.setEnabled(true);
     if (PARAM_ADMIN)
+    {
       grd_fechaE.setEnabled(true);
-
+      deo_blockE.setEnabled(true);
+    }
+    Ptabed.setSelectedIndex(1);
+    
 //    grd_feccadE.setEnabled(true);
     Bcancelar.setEnabled(false);
+    jtEnt.setEnabled(true);
     jtEnt.requestFocusInicio();
   }
+  
   private boolean checkMvtos(int ejeNume, int deoCodi ) throws SQLException
   {               
        dtStat.select("select min(deo_tiempo) as tiempo from desorilin where eje_nume="+ejeNume+
@@ -1532,6 +1639,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
 //    deo_blockE.setValor("S");
     activar(true);
     activar(SALIDA,false);
+
     usu_nombE.setEnabled(false);
     usu_nombE.setText(EU.usuario);
 //    pro_loteE.setEnabled(false);
@@ -1539,7 +1647,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     pro_codenE.setEditable(true);
     setEditEnt(true);
     utdesp.cambio=true;
-   
+   jtEnt.setEnabled(false);
 //    Porig.setEnabled(false);
 //    Pfin.setEnabled(false);
 //    Pconsul.setEnabled(false);
@@ -1555,7 +1663,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
       return;
     }
   
-    if (deo_blockE.getValor().equals("B") && ! EU.isRootAV())
+    if (deo_blockE.getValor().equals(MantDesp.DESP_BLOQUEADO ) && ! EU.isRootAV())
     {
         msgBox("Estado NO puede ser  Bloqueado");
         return;
@@ -1582,7 +1690,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
               grd_feccadE.requestFocus();
               return;
       }
-      if (deo_blockE.getValor().equals("N"))
+      if (deo_blockE.getValor().equals(MantDesp.DESP_CERRADO))
       {
         String msgErr;
         if ((msgErr=checkCerrar())!=null)
@@ -1768,7 +1876,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
         activaTodo();
         return;
     }
-    if (deo_blockE.getValor().equals("B") && ! EU.isRootAV())
+    if (deo_blockE.getValor().equals(MantDesp.DESP_BLOQUEADO) && ! EU.isRootAV())
     {
         msgBox("Despiece Bloqueado. Imposible Borrar");
         nav.pulsado = navegador.NINGUNO;
@@ -1858,11 +1966,12 @@ public class MantDespTactil  extends ventanaPad implements PAD
   {
     if (modo == TODOS)
     {
-      activar(CABECERA, activ);
+      activar(CABECERA_ALL, activ);
       activar(ENTRADA, activ);
       activar(SALIDA, activ);
       if (!activ || PARAM_ADMIN)
             deo_incvalE.setEnabled(activ);
+      jtEnt.setEnabled(false);
       grd_feccadE.setEnabled(activ);
       Baceptar.setEnabled(activ);
       Bcancelar.setEnabled(activ);
@@ -1870,20 +1979,21 @@ public class MantDespTactil  extends ventanaPad implements PAD
     }
     switch (modo)
     {
-      case CABECERA:
-       
+      case CABECERA_ALL: 
+//        deo_blockE.setEnabled(activ);
+        grd_unidE.setEnabled(activ);
+        tid_codiE.setEnabled(activ);
+      case CABECERA:       
         deo_codiE.setEnabled(activ);
         eje_numeE.setEnabled(activ);
         deo_codiE.setEnabled(activ);
-        grd_fechaE.setEnabled(activ);
-        grd_unidE.setEnabled(activ);
-        tid_codiE.setEnabled(activ);
+        grd_fechaE.setEnabled(activ);               
         deo_almoriE.setEnabled(activ);
         deo_almdesE.setEnabled(activ);
         usu_nombE.setEnabled(activ);
         cli_codiE.setEnabled(activ);
-        Bfincab.setEnabled(activ);
-        deo_blockE.setEnabled(activ);
+        Bfincab.setEnabled(activ);      
+        deo_blockE.setEnabled(false);       
         break;
       case SALIDA:
         Bsalkil.setEnabled(activ);
@@ -1923,7 +2033,62 @@ public class MantDespTactil  extends ventanaPad implements PAD
   {
     return " order by eje_nume,deo_codi ";
   }
-
+  /**
+   * Ver Acumulados
+   * @param ejeNume
+   * @param deoCodi
+   * @param tidCodi
+   * @throws SQLException 
+   */
+  void verAcumulados(int ejeNume,int deoCodi,int tidCodi) throws SQLException
+  {
+      jtOri.removeAllDatos();
+      jtFin.removeAllDatos();
+      int npFin=0;
+      s=" SELECT td.tde_grupo,dpv_nomb, count(*) as cuantos FROM v_despori as d,"
+          + " tipdesent as td left join v_tipocorte as tc on dpv_nume=td.tde_grupo "+
+          " WHERE d.eje_nume = "+ejeNume+
+          " AND d.deo_codi = "+deoCodi+
+          " and td.tid_codi=d.tid_codi"+
+          " and td.pro_codi=d.pro_codi "+
+          " group by tde_grupo,dpv_nomb "+
+          " ORDER BY tde_grupo";
+      if (dtCon1.select(s))
+      { 
+          
+          do
+          {
+              ArrayList v=new ArrayList();
+              v.add(dtCon1.getString("tde_grupo"));
+              v.add(dtCon1.getString("dpv_nomb"));
+              v.add(dtCon1.getString("cuantos"));
+              jtOri.addLinea(v);
+              npFin+=dtCon1.getInt("cuantos");
+          } while (dtCon1.next());
+      }
+      s="select tds_grupo,dpv_nomb from tipdessal as td   left join v_tipocorte as tc on dpv_nume=td.tds_grupo "+
+        " where tid_codi= "+tidCodi+
+        " and tds_unid>0 group by tds_grupo,dpv_nomb ";
+     
+      if (dtCon1.select(s))
+      { 
+          do
+          {
+              ArrayList v=new ArrayList();
+              v.add(dtCon1.getString("tds_grupo"));
+              v.add(dtCon1.getString("dpv_nomb"));
+              v.add(npFin);
+              s="select sum(def_unicaj) as cuantos from v_despsal as d "+
+                " WHERE d.eje_nume = "+ejeNume+
+                " AND d.deo_codi = "+deoCodi+
+                " and pro_codi in (select pro_codi from tipdessal where tid_codi="+tid_codiE.getValorInt()+
+                  " and tds_grupo='"+dtCon1.getString("tds_grupo")+"')";
+              dtStat.select(s);
+              v.add(npFin-dtStat.getInt("cuantos",true));
+              jtFin.addLinea(v);
+          } while (dtCon1.next());
+      }
+  }
   void verDatos(DatosTabla dt)
   {
     if (! jtEnt.isVacio())
@@ -1966,6 +2131,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
       usu_nombE.setText(dtStat.getString("usu_nomb"));
       deo_almoriE.setText(dtStat.getString("deo_almori"));
       deo_almdesE.setText(dtStat.getString("deo_almdes"));
+//      verAcumulados(dtStat.getInt("eje_nume"),dtStat.getInt("deo_codi"),dtStat.getInt("tid_codi"));
+  
+    
       s="SELECT d.*,pr.pro_nomb FROM desorilin d,v_articulo pr "+
           " WHERE d.pro_codi = pr.pro_codi "+
           " AND d.eje_nume = "+eje_numeE.getValorInt()+
@@ -1990,7 +2158,6 @@ public class MantDespTactil  extends ventanaPad implements PAD
           v.add(dtCon1.getString("deo_kilos"));
           v.add(dtCon1.getString("del_numlin"));
           jtEnt.addLinea(v);
-          jtOri.addLinea(v);
           nLiOr++;
           kgLiOr+=dtCon1.getDouble("deo_kilos");
         } while (dtCon1.next());
@@ -2032,7 +2199,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
         " AND d.deo_codi = " + deoCodi+
         " ORDER BY pro_numind";
     jtSal.removeAllDatos();
-    jtFin.removeAllDatos();
+  
     grd_unisalE.resetTexto();
     grd_kilsalE.resetTexto();
     grd_unifinE.resetTexto();
@@ -2042,18 +2209,17 @@ public class MantDespTactil  extends ventanaPad implements PAD
       return;
     do
     {
-      ArrayList v=new ArrayList();
-      v.add(dtCon1.getString("pro_codi"));
-      v.add(dtCon1.getString("pro_nomb"));
-      v.add(dtCon1.getString("def_kilos"));
-      v.add(dtCon1.getString("def_unicaj"));
-      v.add(dtCon1.getString("pro_numind"));      
-      if (dtCon1.getDouble("def_prcost") != 0)
-        swTienePrec = true;      
-     v.add(dtCon1.getString("usu_nomb"));
-      jtFin.addLinea(v);      
-      v.add(false);
-      jtSal.addLinea(v);
+        ArrayList v = new ArrayList();
+        v.add(dtCon1.getString("pro_codi"));
+        v.add(dtCon1.getString("pro_nomb"));
+        v.add(dtCon1.getString("def_kilos"));
+        v.add(dtCon1.getString("def_unicaj"));
+        v.add(dtCon1.getString("pro_numind"));
+        if (dtCon1.getDouble("def_prcost") != 0)
+            swTienePrec = true;
+        v.add(dtCon1.getString("usu_nomb"));
+        v.add(false);
+        jtSal.addLinea(v);
     } while (dtCon1.next());
     actAcumSal();
     grd_unifinE.setText(grd_unisalE.getText());
@@ -2073,18 +2239,21 @@ public class MantDespTactil  extends ventanaPad implements PAD
      htProd.clear();
      x=0;
      y=0;
-     s = "SELECT distinct(d.pro_codi) FROM v_despfin d " +
+     s = "SELECT  d.pro_codi,tds_grupo FROM v_despfin d "
+         + "left join tipdessal as ts on d.pro_codi=ts.pro_codi and tid_codi ="+tid_codiE.getValorInt()+
         " WHERE d.emp_codi = " + EU.em_cod +        
         " AND d.eje_nume = " + ejeNume+
         " AND d.deo_codi = " + deoCodi+
-        " ORDER BY d.pro_codi";
+        " group by tds_grupo,d.pro_codi"+
+        " ORDER BY tds_grupo,d.pro_codi";
      if (!dtCon1.select(s))
          return;
      do
      {
         ponBoton(dtCon1.getInt("pro_codi"));
      } while (dtCon1.next());
-     
+     Pprofin.revalidate();
+     Pprofin.repaint();
   }
   /**
    * Carga en el panel los productos para los tipos de despiece.
@@ -2192,8 +2361,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
   
     
   }
-
-  
+  /**
+   * Llena con los valores por defecto
+   */  
   void pdf_jtEnt()
   {
     emp_codenE.setValorDec(EU.em_cod);
@@ -2236,7 +2406,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
             " and pro_codi = "+pro_codenE.getValorInt();
         if (! dtStat.select(s))
         {
-          mensajeErr("Producto "+pro_codenE.getValorInt()+ " NO ENCONTRADO EN TIPO DESPIECE");
+          msgBox("Producto "+pro_codenE.getValorInt()+ " NO ENCONTRADO EN TIPO DESPIECE");
           return JTENT_PROCODI;
         }
       }
@@ -2290,12 +2460,12 @@ public class MantDespTactil  extends ventanaPad implements PAD
       StkPartid stkPartid= buscaPeso();
       if (stkPartid.hasError())
       {
-         mensajeErr(stkPartid.getMensaje());
+        msgBox(stkPartid.getMensaje());
         return JTENT_PROCODI;
       }
       if ( stkPartid.isLockIndiv())
       {
-          mensajeErr("Individuo esta bloqueado. Imposible realizar despiece");
+          msgBox("Individuo esta bloqueado. Imposible realizar despiece");
           return JTENT_PROCODI;
       }
       if ( stkPartid.isControlExist())
@@ -2306,11 +2476,11 @@ public class MantDespTactil  extends ventanaPad implements PAD
            jtEnt.setValor(kilStock,row,JTENT_KILOS);
            kilEnt=kilStock;
           }
-          if (kilEnt  == 0)
-          {
-            mensajeErr("Introduzca peso de Producto");
-            return 7;
-          }
+//          if (kilEnt  == 0)
+//          {
+//            msgBox("Este individuo ya no Tiene Kilos en Stock");
+//            return 7;
+//          }
           if (jtEnt.getValorInt(row,JTENT_NL)>0 )
           { // Ya existia linea en desglose (con otros kilos, claro)            
             if (dtCon1.select(s))
@@ -2324,7 +2494,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
 //          }
           if (! stkPartid.hasStock(kilEnt) )
           {
-            mensajeErr("No hay suficiente Stock de este individuo. Exist:"+kilStock);
+            msgBox("No hay suficiente Stock para este individuo. Existencias Actuales: "+kilStock+" Kg");
             return 7;
           }
           
@@ -2377,7 +2547,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     return -1;
   }
 
-  void calcSumCab(int proCodi,double kgLin)
+  void calcSumCab(int proCodi,double kgLin) throws SQLException
   {
     int nRow=jtEnt.getRowCount();
     int nInd=0,selRow=jtEnt.getSelectedRow();
@@ -2403,7 +2573,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     grd_unioriE1.setValorDec(nInd);
     grd_kilorgE1.setValorDec(kg);
     kildifE.setValorDec(grd_kilsalE.getValorDec()-grd_kilorgE1.getValorDec());
-
+    verAcumulados(eje_numeE.getValorInt(),deo_codiE.getValorInt(),tid_codiE.getValorInt());
   }
 
   StkPartid buscaPeso() throws Exception
@@ -2504,7 +2674,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
 //      pro_loteE.setValorInt(deo_codiE.getValorInt());
       activar(CABECERA,false);
       activar(SALIDA, true);
-      deo_blockE.setEnabled(true);
+      grd_unidE.setEnabled(true);
+      
+//      deo_blockE.setEnabled(true);
       verProTipDes(tid_codiE.getValorInt());
     }
     
@@ -2726,7 +2898,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    }
  }
 
- void actAcumSal()
+ void actAcumSal() throws SQLException
  {
    int nRow=jtSal.getRowCount();
    int nPieza=0;
@@ -2769,6 +2941,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
    grd_unisalE.setValorDec(nPieza);
    grd_kilsalE.setValorDec(kgSal);
    kildifE.setValorDec(grd_kilsalE.getValorDec()-grd_kilorgE1.getValorDec());
+   
+   verAcumulados(eje_numeE.getValorInt(),deo_codiE.getValorInt(),tid_codiE.getValorInt());
  }
  
  void imprPaginaEtiq() throws Exception
@@ -2847,10 +3021,10 @@ public class MantDespTactil  extends ventanaPad implements PAD
                    null,grd_fechaE.getDate(),
                   pro_codsalE.isCongelado()?null:grd_feccadE.getDate(),utdesp.getFecSacrif());
      etiq.setPrintDialog(false);    
-    
-//     etiq.setFechaCongelado(utildesp.getFechaCongelado(jtSal.getValorInt(linea,JTSAL_PROCODI ),
-//         grd_fechaE.getDate(), dtStat));
+  
      etiq.listarDefec();
+     if (opImpInt.isSelected())
+        imprEtiqInt0(def_numpiE.getValorInt());
    }
    catch (Throwable k)
    {
@@ -3010,6 +3184,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    }
    return true;
  }
+ 
  int borraLinDesp(int ejeLot,int empLot,String serLot,int numLot,int proCodi,int nInd) throws Exception
  {
    s = "select * from v_despfin " +
@@ -3057,13 +3232,13 @@ public class MantDespTactil  extends ventanaPad implements PAD
     }
    }
    // Compruebo que el Número de codigos salidos coincidan con el tipo despiece
-   HashMap<Integer,Integer> htGru = new HashMap();
+   HashMap<String,Integer> htGru = new HashMap();
    s="SELECT distinct(tds_grupo) as tds_grupo FROM tipdessal  WHERE tid_codi = "+tid_codiE.getValorInt();
    if (dtStat.select(s))
    {
      do
      {
-       htGru.put(dtStat.getInt("tds_grupo"),0);
+       htGru.put(dtStat.getString("tds_grupo"),0);
      } while (dtStat.next());
    }
 
@@ -3092,23 +3267,23 @@ public class MantDespTactil  extends ventanaPad implements PAD
                       " NO Encontrado en Tipos de Despiece";
        }
      }
-     if (htGru.get(dtStat.getInt("tds_grupo"))==null)
-       htGru.put(dtStat.getInt("tds_grupo"),jtSal.getValorInt(n,3));
+     if (htGru.get(dtStat.getString("tds_grupo"))==null)
+       htGru.put(dtStat.getString("tds_grupo"),jtSal.getValorInt(n,3));
      else
      {
-       nEle= htGru.get(dtStat.getInt("tds_grupo"));
+       nEle= htGru.get(dtStat.getString("tds_grupo"));
        nEle+=jtSal.getValorInt(n,3);
-       htGru.put(dtStat.getInt("tds_grupo"),nEle);
+       htGru.put(dtStat.getString("tds_grupo"),nEle);
      }
    }
-   Iterator<Integer> en=htGru.keySet().iterator();
-   int grupo;
+   Iterator<String> en=htGru.keySet().iterator();
+   String grupo;
    int tdsUnid;
    while (en.hasNext())
    {
      grupo =  en.next();
      s="SELECT tds_unid,pro_codi FROM tipdessal  WHERE tid_codi = "+tid_codiE.getValorInt()+
-         " and tds_grupo = " + grupo;
+         " and tds_grupo = '" + grupo+"'";
      dtStat.select(s);
      nEle=htGru.get(grupo);
      tdsUnid=dtStat.getInt("tds_unid")*grd_unidE.getValorInt();
@@ -3127,7 +3302,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
   */
  void cerrarDespiece()
  {
-    if (!deo_blockE.getValor().equals("S"))
+    if (deo_blockE.getValor().equals(MantDesp.DESP_CERRADO))
         return;
     if (kildifE.getValorDec() < -3)
     {
