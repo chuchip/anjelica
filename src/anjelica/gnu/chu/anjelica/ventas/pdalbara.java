@@ -73,7 +73,9 @@ import gnu.chu.anjelica.despiece.DatTrazFrame;
 import gnu.chu.anjelica.despiece.DespVenta;
 import gnu.chu.anjelica.despiece.listraza;
 import gnu.chu.anjelica.despiece.utildesp;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.listados.etiqueta;
+import static gnu.chu.anjelica.listados.etiqueta.LOGOTIPO;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.*;
 import gnu.chu.anjelica.sql.IndivStock;
@@ -97,6 +99,7 @@ import gnu.hylafax.HylaFAXClient;
 import gnu.inet.ftp.ServerResponseException;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.print.PrinterException;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.sql.*;
@@ -112,10 +115,17 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
  
 public class pdalbara extends ventanaPad  implements PAD  
 {   
+  JasperReport jr=null;
   PTransVenta PTrans=new PTransVenta();
   public final static int AVC_NOVALORADO=0;
   public final static int AVC_VALORADO=1;
@@ -151,6 +161,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private final char IMPR_ALB_TRA='t'; 
   private final char IMPR_PALETS='P';
   private final char IMPR_ETIQUETAS='E';
+  private final char IMPR_ETIQDIRE='D';
   private char ultSelecImpr=IMPR_ALB_TRA;
   
   private final String DSAL_IMPRE="I";
@@ -724,7 +735,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-08-23" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-09-10" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -853,7 +864,7 @@ public class pdalbara extends ventanaPad  implements PAD
         Bimpri.setMargin(new Insets(0, 0, 0, 0));
         Bimpri.setText("F9");
         Bimpri.setBounds(new Rectangle(331, 21, 65, 17));
-        Bimpri.setToolTipText("Imprimir Albaran");
+        Bimpri.setToolTipText("Imprimir");
 
         Ppie.setBorder(BorderFactory.createLoweredBevelBorder());
         Ppie.setMaximumSize(new Dimension(550, 40));
@@ -1516,8 +1527,8 @@ public class pdalbara extends ventanaPad  implements PAD
    
        
     Bimpri.addMenu("Palets", ""+IMPR_PALETS);
-    Bimpri.addMenu("Etiquetas", ""+IMPR_ETIQUETAS);
-    
+    Bimpri.addMenu("Etiq.Prod.", ""+IMPR_ETIQUETAS);
+    Bimpri.addMenu("Etiq.Direc.", ""+IMPR_ETIQDIRE);
     
     opValora.setSelected(true);
     jtRes.setDefButton(Baceptar);
@@ -8144,12 +8155,68 @@ public class pdalbara extends ventanaPad  implements PAD
 
 //    ctUp.commit();
   }
-
+  /**
+   * Imprimir etiqueta dirección.
+   */
+  void imprEtiqDirecion()
+    {
+        try
+        {           
+            String res=mensajes.mensajeGetTexto("Numero Etiquetas", "Imprimir etiqueta",this, 
+                ""+PTrans.getNumeroCajas());
+            int numEti=0;
+            if (res==null)
+                return;
+            try {
+              numEti=Integer.parseInt(res.trim());
+            } catch (NumberFormatException ex){ 
+                msgBox("Introduzca un numero valido");
+                return; 
+            }
+            if (numEti<=0 || numEti>=99)
+            {
+                msgBox("Numero de etiquetas NO valido");
+                return;
+            }
+            if (jr==null)
+                jr = Listados.getJasperReport(EU,"etiqDireccion");
+            
+            java.util.HashMap mp = new java.util.HashMap();
+            
+            mp.put("logotipo",Iconos.getPathIcon()+LOGOTIPO);
+            mp.put("cli_codrut",cli_codiE.getLikeCliente().getString("cli_codrut"));
+            mp.put("documento",emp_codiE.getValorInt()+"-"+avc_anoE.getValorInt()+
+                avc_seriE.getText()+avc_numeE.getValorInt());
+            mp.put("cli_nomen",cli_codiE.getLikeCliente().getString("cli_nomen"));
+            mp.put("cli_nomen",cli_codiE.getLikeCliente().getString("cli_nomen"));
+            mp.put("cli_diree",cli_codiE.getLikeCliente().getString("cli_diree"));
+            mp.put("cli_poble",cli_codiE.getLikeCliente().getString("cli_poble"));
+            mp.put("cli_codpoe",cli_codiE.getLikeCliente().getString("cli_codpoe"));
+       
+            ResourceBundle rsB=ResourceBundle.getBundle("gnu.chu.anjelica.locale.jasper",Locale.getDefault());
+            mp.put(JRParameter.REPORT_LOCALE,Locale.getDefault());
+            mp.put(JRParameter.REPORT_RESOURCE_BUNDLE,rsB);
+            
+            JasperPrint jp = JasperFillManager.fillReport(jr, mp, new JREmptyDataSource());
+            if (EU.getSimulaPrint()) 
+                return;
+            gnu.chu.print.util.printJasper(jp, EU,numEti);
+        } catch (JRException  | SQLException   | PrinterException ex)
+        {
+            Error("Error al imprimir etiqueta",ex);
+        }
+    }
 /**
  * Imprime albaran/hojas de trazabilidad,palets, etc. Segun lo mandado en indice
+ * @param indice
  */
   private void imprimir(char indice)
   {
+    if (indice==IMPR_ETIQDIRE)
+    {
+        imprEtiqDirecion();
+        return;
+    }
     if (!opDispSalida.getValor().equals(DSAL_IMPRE))
     {
         if (indice!=IMPR_ALB_GRAF && indice!=IMPR_HOJA_TRA)
@@ -8158,6 +8225,8 @@ public class pdalbara extends ventanaPad  implements PAD
             return;
         }
     }
+   
+        
     this.setEnabled(false);
     if (nav.pulsado == navegador.ADDNEW || nav.pulsado == navegador.EDIT)
     {
