@@ -39,7 +39,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
-import java.util.Vector;
 
 public class MantTipDesp  extends ventanaPad implements PAD
 {
@@ -108,7 +107,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
     }
     private void jbInit() throws Exception
     {
-      this.setVersion("2017-10-03" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2017-09-09" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -790,20 +789,21 @@ public class MantTipDesp  extends ventanaPad implements PAD
    */
   public static void llenaTipDesp(DatosTabla dt, CLinkBox lk) throws SQLException
   {
-     llenaTipDesp(dt,lk,0);
+     llenaTipDesp(dt,lk,1);
   }
   /**
    * LLena un Linkbox con todos los tipos de despieces  disponibles
    * @param dt
    * @param lk
-   * @param tid_activ -1 TODO,0 Tipos despiece Activos,  OTROS solo si tid_activ es mayor
+   * @param tid_activ 0 TODO. 1 Solo activos
    * @throws SQLException 
    */
   public static void llenaTipDesp(DatosTabla dt, CLinkBox lk,int tid_activ) throws SQLException
   {
       String s = "SELECT tid_codi,tid_nomb FROM tipodesp "+
-              (tid_activ==-1?"":
-              " WHERE tid_activ>"+tid_activ)+" order by tid_nomb";
+              "where 1= 1 " +
+              (tid_activ==1?"":" and tid_activ!=0")+
+          "  order by tid_nomb";
       dt.select(s);
       lk.addDatos(dt);
   }
@@ -987,9 +987,8 @@ public class MantTipDesp  extends ventanaPad implements PAD
         Pcabe.add(cLabel3);
         cLabel3.setBounds(2, 23, 42, 17);
 
-        tid_activE.addItem("Si", "2");
+        tid_activE.addItem("Si", "1");
         tid_activE.addItem("No", "0");
-        tid_activE.addItem("Tactil","1");
         Pcabe.add(tid_activE);
         tid_activE.setBounds(48, 23, 52, 17);
 

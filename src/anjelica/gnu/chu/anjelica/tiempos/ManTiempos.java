@@ -1,6 +1,13 @@
 package gnu.chu.anjelica.tiempos;
 
+import gnu.chu.sql.DatosTabla;
+import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.ventanaPad;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -32,7 +39,69 @@ public class ManTiempos extends ventanaPad
     public ManTiempos() {
         initComponents();
     }
-
+    /**
+     * Guarda o actuliza regisro de tiempo
+     * @param dt
+     * @param id
+     * @param host si es null,lo cogera del sistema.
+     * @param usuario
+     * @param tipDoc
+     * @param idDoc
+     * @param tiempoInicio
+     * @param tiempoFinal
+     * @param coment
+     * @return
+     * @throws SQLException
+     * @throws UnknownHostException 
+     */
+    public static  int guardaTiempo(DatosTabla dt,int id, String host, String usuario,
+        String tipDoc,int idDoc,Date tiempoInicio,Date tiempoFinal,String coment) throws SQLException, UnknownHostException
+    {
+        if (id==0)
+        {
+            dt.addNew("tiemposdoc",false);           
+        }
+        else
+        {
+            if (!dt.select("select * from tiemposdoc where tdo_id="+id,true))
+                throw new SQLException("Registro de tiempos: "+id+" No encontrado");
+            dt.edit();
+        }
+        dt.setDato("tdo_host", host == null
+            ? Inet4Address.getLocalHost().getHostAddress() : host);
+        dt.setDato("usu_nomb", usuario);
+        dt.setDato("tdo_tipdoc", tipDoc);
+        dt.setDato("tdo_iddoc", idDoc);
+        dt.setDato("tdo_inicio", tiempoInicio==null?Formatear.getDateAct():tiempoInicio);
+        if (tiempoFinal != null)
+            dt.setDato("tdo_final", tiempoFinal);
+        dt.setDato("tdo_coment", coment);
+        dt.update();
+        if (id==0)
+        {
+            dt.select("SELECT lastval()");
+            id=dt.getInt(1);
+        }
+        dt.commit();
+        return id;
+    }
+    /**
+     * Guarda el tiempo Final
+     * @param dt
+     * @param id
+     * @param tiempoFinal si el tiempoFinal es null, pondra hora actual.   
+     * @throws SQLException
+     */
+    public static void guardaTiempo(DatosTabla dt,int id, Date tiempoFinal,String coment) throws SQLException
+    {
+        if (!dt.select("select * from tiemposdoc where tdo_id="+id,true))
+             throw new SQLException("Registro de tiempos: "+id+" No encontrado");
+        dt.edit();
+        dt.setDato("tdo_final", tiempoFinal==null?Formatear.getDateAct():tiempoFinal);
+        dt.setDato("tdo_coment", coment);
+        dt.update();
+        dt.commit();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -43,86 +112,75 @@ public class ManTiempos extends ventanaPad
     private void initComponents() {
 
         Princ = new gnu.chu.controles.CPanel();
+        PCabe = new gnu.chu.controles.CPanel();
+        cLabel9 = new gnu.chu.controles.CLabel();
+        usu_nombE = new gnu.chu.controles.CComboBox();
+        jt = new gnu.chu.controles.Cgrid(9);
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
-        jt = new gnu.chu.controles.Cgrid();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         Princ.setLayout(null);
+
+        PCabe.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        PCabe.setLayout(null);
+
+        cLabel9.setText("Operario");
+        cLabel9.setPreferredSize(new java.awt.Dimension(52, 18));
+        PCabe.add(cLabel9);
+        cLabel9.setBounds(0, 2, 60, 18);
+        PCabe.add(usu_nombE);
+        usu_nombE.setBounds(60, 2, 210, 18);
+
+        Princ.add(PCabe);
+        PCabe.setBounds(0, 10, 420, 50);
+
+        ArrayList v=new ArrayList();
+        v.add("Host"); //0
+        v.add("Usuario"); //1
+        v.add("TD"); // 2
+        v.add("Docum"); // 3
+        v.add("Cliente"); // 4
+        v.add("Inicio"); // 5
+        v.add("Fin"); // 6
+        v.add("Tiempo"); // 7
+        v.add("Coment"); //8
+        jt.setCabecera(v);
+        jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        Princ.add(jt);
+        jt.setBounds(0, 60, 420, 180);
 
         Ppie.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         Ppie.setLayout(null);
 
         Baceptar.setText("Aceptar");
         Ppie.add(Baceptar);
-        Baceptar.setBounds(30, 100, 100, 31);
+        Baceptar.setBounds(20, 10, 100, 30);
 
         Bcancelar.setText("Cancelar");
         Ppie.add(Bcancelar);
-        Bcancelar.setBounds(280, 100, 100, 30);
+        Bcancelar.setBounds(290, 10, 100, 30);
 
         Princ.add(Ppie);
-        Ppie.setBounds(0, 170, 420, 140);
-
-        jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        Princ.add(jt);
-        jt.setBounds(0, 0, 420, 160);
+        Ppie.setBounds(0, 260, 420, 50);
 
         getContentPane().add(Princ, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try
-        {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels())
-            {
-                if ("Nimbus".equals(info.getName()))
-                {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex)
-        {
-            java.util.logging.Logger.getLogger(ManTiempos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex)
-        {
-            java.util.logging.Logger.getLogger(ManTiempos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex)
-        {
-            java.util.logging.Logger.getLogger(ManTiempos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex)
-        {
-            java.util.logging.Logger.getLogger(ManTiempos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
-            public void run() {
-                new ManTiempos().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
+    private gnu.chu.controles.CPanel PCabe;
     private gnu.chu.controles.CPanel Ppie;
     private gnu.chu.controles.CPanel Princ;
+    private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.Cgrid jt;
+    private gnu.chu.controles.CComboBox usu_nombE;
     // End of variables declaration//GEN-END:variables
 }
+

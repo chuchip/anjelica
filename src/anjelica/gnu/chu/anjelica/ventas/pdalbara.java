@@ -79,6 +79,7 @@ import static gnu.chu.anjelica.listados.etiqueta.LOGOTIPO;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.*;
 import gnu.chu.anjelica.sql.IndivStock;
+import gnu.chu.anjelica.tiempos.ManTiempos;
 import gnu.chu.camposdb.*;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;
@@ -88,7 +89,6 @@ import gnu.chu.hylafax.IFFax;
 import gnu.chu.hylafax.SendFax;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.interfaces.VirtualGrid;
-import gnu.chu.interfaces.ejecutable;
 import gnu.chu.mail.IFMail;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.conexion;
@@ -102,6 +102,7 @@ import java.awt.event.*;
 import java.awt.print.PrinterException;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.*;
@@ -125,6 +126,8 @@ import net.sf.jasperreports.engine.JasperReport;
  
 public class pdalbara extends ventanaPad  implements PAD  
 {   
+  int idTiempo=0;
+  int pvcNumeOld=0;
   JasperReport jr=null;
   PTransVenta PTrans=new PTransVenta();
   public final static int AVC_NOVALORADO=0;
@@ -1793,14 +1796,37 @@ public class pdalbara extends ventanaPad  implements PAD
 //      if ( MantTarifa.isTarifaCosto(dtStat,cli_codiE.getLikeCliente().getInt("tar_codi")) )
 //       avc_valoraE.setValor("1");      
       cli_rutaE.setText(pvc_numeE.isNull()? cli_codiE.getLikeCliente().getString("rut_codi"):
-          pdpeve.getRuta(dtStat, emp_codiE.getValorInt(),pvc_anoE.getValorInt(), pvc_numeE.getValorInt()));
+      pdpeve.getRuta(dtStat, emp_codiE.getValorInt(),pvc_anoE.getValorInt(), pvc_numeE.getValorInt()));
+      guardaComienzoTiempo();
+    
     }
-    catch (SQLException k)
+    catch (SQLException | UnknownHostException k)
     {
       Error("Error al Buscar datos de Cliente", k);
     }
   }
-  
+  void guardaComienzoTiempo() throws SQLException,UnknownHostException
+  {
+      if (nav.pulsado == navegador.EDIT || nav.pulsado == navegador.ADDNEW)
+      {
+          if (pvc_anoE.getValorInt() == 0 || pvc_numeE.getValorInt() == 0)
+              return;
+         
+          if (pvcNumeOld!=pvc_numeE.getValorInt() && idTiempo>0)
+          {
+              ManTiempos.guardaTiempo(dtAdd, idTiempo,null,"Cambio pedido en "+
+                  (nav.pulsado == navegador.ADDNEW ? "Alta" : "Modificado"));
+              idTiempo=0;
+          }         
+          if (idTiempo == 0)
+          {              
+              pvcNumeOld=pvc_numeE.getValorInt();
+              idTiempo = ManTiempos.guardaTiempo(dtAdd, 0, null, EU.usuario, "P",
+                  pdpeve.getIdPedido(dtAdd, emp_codiE.getValorInt(), pvc_anoE.getValorInt(), pvc_numeE.getValorInt()),
+                  null, null, nav.pulsado == navegador.ADDNEW ? "Alta Albaran" : "Modificado Albaran");
+          }
+      }
+  }
   boolean canModDepos() throws SQLException
   {
         if ( verDepoC.getValor().equals("O") && swTieneEnt)
@@ -1855,6 +1881,14 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   void activarEventos()
   {
+      despieceC.addActionListener(new ActionListener()
+      {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+             if (jt.isEnabled())
+                jt.requestFocusLater();
+          }
+      });
       pvc_anoE.addMouseListener(new MouseAdapter()
       {
         @Override
@@ -1873,7 +1907,17 @@ public class pdalbara extends ventanaPad  implements PAD
                 pdpeve.irMantPedido(jf,pvc_anoE.getValorInt(),pvc_numeE.getValorInt());
         }
       }); 
-
+      pvc_numeE.addFocusListener(new FocusAdapter()
+      {
+          @Override
+          public void focusLost(FocusEvent e) {
+            try {
+              guardaComienzoTiempo();
+            } catch (SQLException | UnknownHostException ex) {
+                Error("Error al guardar registro tiempo",ex);
+            }
+          }
+      });
       MbusCliente.addActionListener(new java.awt.event.ActionListener()
       {
           @Override
@@ -4596,6 +4640,7 @@ public class pdalbara extends ventanaPad  implements PAD
         activaTodo();
         return;
       }
+      idTiempo=0;
       nLiMaxEdit=0;
       if (! canModif())
       {
@@ -4728,6 +4773,7 @@ public class pdalbara extends ventanaPad  implements PAD
       activaTodo();
       return;
     }
+    guardaComienzoTiempo();
     jt.setEnabled(true);
     pro_codiE.setEditable(true);
     isLock=false;
@@ -5047,6 +5093,8 @@ public class pdalbara extends ventanaPad  implements PAD
       PTrans.setAvcId(avc_idE.getValorInt());
       PTrans.guardaValores(false);
       resetBloqueo(dtAdd);
+      if (idTiempo>0)
+            ManTiempos.guardaTiempo(dtAdd, idTiempo,null,"Fin Edicion Pedido");
       ctUp.commit();
       activaTodo();
       if (P_MODPRECIO &&  fvc_numeE.getValorInt() == 0  )
@@ -5094,6 +5142,8 @@ public class pdalbara extends ventanaPad  implements PAD
     try
     {
       resetBloqueo(dtAdd);
+      if (idTiempo>0)
+            ManTiempos.guardaTiempo(dtAdd, idTiempo,null,"Cancelada Edicion");
     }
     catch (SQLException | ParseException k)
     {
@@ -5109,9 +5159,10 @@ public class pdalbara extends ventanaPad  implements PAD
   public void PADAddNew()
   {
       try
-      {         
+      {
           //    swPasLin=false;
           swAvisoAlbRep=true;
+          idTiempo=0;
           if (P_PONPRECIO || P_MODPRECIO)
               verPrecios=true;
           avl_prvenE.setEditable(verPrecios);
@@ -5147,8 +5198,7 @@ public class pdalbara extends ventanaPad  implements PAD
           fvc_numeE.setEnabled(false);
           usu_nombE.setEnabled(false);
           avc_fecemiE.setEnabled(false);
-          tar_codiE.setEnabled(false);
-          
+          tar_codiE.setEnabled(false);          
 //    avc_cerraE.setEnabled(false);
           avc_cerraE.setSelected(true);
           avc_anoE.setEnabled(false);
@@ -5229,6 +5279,8 @@ public class pdalbara extends ventanaPad  implements PAD
       PTrans.setAvcId(avc_idE.getValorInt());
       PTrans.guardaValores(false);
       resetBloqueo(dtAdd);
+      if (idTiempo>0)
+            ManTiempos.guardaTiempo(dtAdd, idTiempo,null,"Alta Pedido");
       ctUp.commit();
     }
     catch (Throwable k)
@@ -5740,16 +5792,12 @@ public class pdalbara extends ventanaPad  implements PAD
           jf.guardaMens("V4", jf.ht);
         }
         borraAlbaran(true);
-        ctUp.commit();
-        try
-        {
-          resetBloqueo(dtAdd);
-        }
-        catch (SQLException | ParseException k)
-        {
-          mensajes.mensajeAviso("Error al Quitar el bloqueo\n" + k.getMessage());
-        }
+     
+        ctUp.commit();       
+        resetBloqueo(dtAdd);        
       }
+      if (idTiempo>0)
+            ManTiempos.guardaTiempo(dtAdd, idTiempo,null,"Cancelada Alta");
       if (inAddNew)
       {
         strSql = getStrSql(" avc_nume = " + lastAvcNume +
@@ -9630,7 +9678,7 @@ public class pdalbara extends ventanaPad  implements PAD
               msgBox("Albaran de deposito y con genero entregado. Imposible borra lineas");
               return false;
           }
-          borraLinea(row);
+          borraLinea(row);          
           ctUp.commit();
         }
         catch (Exception k)
@@ -9642,8 +9690,9 @@ public class pdalbara extends ventanaPad  implements PAD
 
       @Override
       public void afterDeleteLinea()
-      {
+      {          
         actAcumLin();
+        jt.requestFocus(jt.getSelectedRow(), JT_PROCODI);
       }
 
       @Override

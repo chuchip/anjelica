@@ -1611,6 +1611,8 @@ deo_fecval timestamp,    -- Fecha de Valoracion.
 deo_usuval varchar(20),  -- Usuario q hizo valoración
 constraint ix_despori primary key(eje_nume,deo_codi)
 );
+alter table anjelica.desorilin add constraint cabdesp_lin
+   foreign key (eje_nume,deo_codi) references anjelica.desporig(eje_nume,deo_codi) DEFERRABLE INITIALLY DEFERRED;
 -- insert into desporig select d.eje_nume,deo_codi,tid_codi,deo_fecha,usu_nomb,deo_almori,deo_almdes,deo_ejloge,deo_seloge,deo_nuloge,deo_cerra,0,deo_numdes,g.grd_fecval,g.grd_fecpro,
 -- g.grd_incval, grd_valor, grd_block,prv_codi,grd_desnue,grd_unid,grd_fecval,grd_usuval from v_desporig as d,grupdesp as g  where d.eje_nume=2011 and d.eje_nume=g.eje_nume
 -- and d.deo_numdes=g.grd_nume and d.emp_codi=g.emp_codi;
@@ -1758,6 +1760,9 @@ def_tippro char(1) not null default 'N' -- Tipo Produccion
 create index  ix_despfin  on anjelica.v_despfin (eje_nume,deo_codi,def_orden);
 create index ix_despfin1 on anjelica.v_despfin(pro_codi, def_ejelot , def_emplot , def_serlot , pro_lote , pro_numind);
 create index ix_despfin2 on anjelica.v_despfin(def_tiempo);
+alter table anjelica.v_despfin add constraint cabdesp_fin
+   foreign key (eje_nume,deo_codi) references anjelica.desporig(eje_nume,deo_codi) DEFERRABLE INITIALLY DEFERRED;
+
 --
 -- Historico Lineas (entrada a almacen) de despiece (Cambios en v_despfin)
 ---
@@ -2459,7 +2464,7 @@ create table anjelica.tipodesp
 	tid_codi int not null, -- Codigo de Despiece. 4 DIGITOS
 	tid_nomb varchar(50) not null, -- Descripcion Despiece
 	tid_activ int not null,   -- Activo: 2, Solo TACTIL:1 Inactivo: 0
-	tid_agrup int not null default 0, -- Numero Max.Desp/Dia
+	tid_agrup int not null default 0, -- Numero Max.Desp/Dia (en tid_codi=9999 es para libre)
 	tid_fecalt date not null, -- Fecha Alta
 	tid_feulmo date, -- Fecha Ultima Modificación
 	usu_nomb varchar(15),     -- Usuario que hizo ultima modificación
@@ -3540,6 +3545,7 @@ create table anjelica.pedvenc;
  pvc_depos char(1) not null default 'N', -- Deposito ?
  rut_codi varchar(2),			-- Ruta
  pvc_fecpre date,				-- Fecha Preparación
+ pvc_id serial					-- Id Pedido
  constraint ix_pedvenc primary key(emp_codi,eje_nume,pvc_nume)
 );
 --
@@ -4288,7 +4294,7 @@ create view anjelica.v_partes as select c.*,l.par_linea,l.pro_codi,pal_kilos,pal
 pro_ejelot,pro_serlot,pro_numlot,pro_indlot,pro_feccad,pal_acsala, pal_comsal,pal_accion,pal_coment from anjelica.partecab as c,anjelica.partelin as l where c.par_codi=l.par_codi;
 grant select on anjelica.v_partes to public;
 --
--- Tabla Tiempos preparacion pedidos/Despieces
+-- Tabla Tiempos preparacion pedidos/Despieces (Estimados)
 -- 
 create table tiempostarea
 (
@@ -4299,6 +4305,23 @@ create table tiempostarea
 	constraint ix_tiempostarea primary  key (usu_nomb,tit_tipdoc,tit_id)
 );
 grant all on anjelica.tiempostarea to public;
+--
+-- Tiempos en Diferentes programas (reales)
+-- 
+create table tiemposdoc
+(
+	tdo_id serial not null,			-- identificador registo
+	tdo_host varchar(25) not null,	-- Nombre Host
+	usu_nomb varchar(15) not null,	-- Usuario
+	tdo_tipdoc char(1) not null,	-- "A" Albaran Venta,"D" Despiece, "C" Albaran Compra
+	tdo_docum int not null,			-- Identificador documento
+	tdo_iddoc timestamp not null, 		-- Hora inicio
+	tdo_final timestamp,				-- hora final
+	tdo_coment varchar(150),			-- Comentario sobre tarea	
+	constraint ix_tiemposdoc primary  key (usu_nomb,tdo_tipdoc,tdo_id)
+);
+grant all on anjelica.tiemposdoc to public;
+--
 --
 -- Tabla Transporte pedidos venta
 -- 

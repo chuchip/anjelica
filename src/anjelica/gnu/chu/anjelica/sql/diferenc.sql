@@ -1,4 +1,26 @@
 --
+-- Tiempos en documento
+--
+create table tiemposdoc
+(
+	tdo_id serial not null,			-- identificador registo
+	tdo_host varchar(25) not null,	-- Nombre Host
+	usu_nomb varchar(15) not null,	-- Usuario
+	tdo_tipdoc char(1) not null,	-- 'P' Pedido Venta, "A" Albaran Venta,"D" Despiece, "C" Albaran Compra
+	tdo_iddoc int not null,			-- Identificador documento
+	tdo_inicio timestamp not null, 		-- Hora inicio
+	tdo_final timestamp,				-- hora final
+	tdo_coment varchar(150),			-- Comentario sobre tarea	
+	constraint ix_tiemposdoc primary  key (usu_nomb,tdo_tipdoc,tdo_id)
+);
+grant all on anjelica.tiemposdoc to public;
+--
+--
+alter table anjelica.desorilin add constraint cabdesp_lin
+   foreign key (eje_nume,deo_codi) references anjelica.desporig(eje_nume,deo_codi) DEFERRABLE INITIALLY DEFERRED;
+alter table anjelica.v_despfin add constraint cabdesp_fin
+   foreign key (eje_nume,deo_codi) references anjelica.desporig(eje_nume,deo_codi) DEFERRABLE INITIALLY DEFERRED;
+--
 -- Añadido grupo a productos entrada de tipos de despiece. tipdesent
 --
 alter table tipdesent add tde_grupo varchar(10);

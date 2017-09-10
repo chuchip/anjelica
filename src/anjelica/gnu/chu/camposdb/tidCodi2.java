@@ -37,6 +37,7 @@ import javax.swing.*;
 public class tidCodi2 extends CLinkBox
 {
   private boolean ADMIN=false;
+
   private boolean incluirEstaticos=true;
   AyuTid ayuTid;
   CInternalFrame infFrame;
@@ -45,10 +46,12 @@ public class tidCodi2 extends CLinkBox
   DatosTabla dt;
   String msgError;
   ArrayList<ArrayList> articList=new ArrayList();
-  private int tidActiv=0; // Ver tipos articulos inactivos
-  private boolean swIncDespLibre=true;
+  private boolean tidActiv=true; 
+  private boolean swIncDespLibre=true; // Incluir despiece libre
   private boolean swModoCons=true; // Modo consulta. No limita el despiece libre
   private String deoCodi=null;
+  boolean verSoloActivo=false;
+  
   public tidCodi2()
   {
     this(false);
@@ -72,7 +75,7 @@ public class tidCodi2 extends CLinkBox
     texto.setToolTipText("Pulse F3 para buscar tipos despiece");
    
     swIncDespLibre=dtb.select("select * from tipodesp  as t "+
-            " WHERE tid_activ!=0 "+
+            " WHERE tid_activ != 0 "+ // Solo si esta activo
            " and tid_codi = "+MantTipDesp.LIBRE_DESPIECE);
     
     if (! releer())
@@ -81,7 +84,7 @@ public class tidCodi2 extends CLinkBox
   }
   private void activarEventos()
   {
-      texto.addKeyListener(new KeyAdapter()
+    texto.addKeyListener(new KeyAdapter()
     {
       @Override
       public void keyPressed(KeyEvent e)
@@ -106,6 +109,7 @@ public class tidCodi2 extends CLinkBox
   @Override
     public boolean controla(boolean reqFoc) 
     {
+        String s;
         setError(false);
         msgError = "";
         if (isNull())
@@ -123,11 +127,25 @@ public class tidCodi2 extends CLinkBox
             return false;
         }
         
-        if (getValorInt() == MantTipDesp.LIBRE_DESPIECE && !swModoCons && !ADMIN)
+        try
         {
-            try
+            if (getValorInt()<9990)
             {
-                String s = "select  tid_agrup from tipodesp "
+                s = "select  tid_activ from tipodesp "
+                    + " WHERE tid_codi = " + getValorInt()
+                    + " and tid_activ != 0";// Solo activos
+                tidActiv = dt.select(s);
+                if (!tidActiv)
+                {
+                    msgError = "Tipo de Despiece esta inactivo";
+                    setError(true);
+                    requestFocus();
+                    return false;
+                }
+            }
+            if (getValorInt() == MantTipDesp.LIBRE_DESPIECE && !swModoCons && !ADMIN)
+            {
+                s = "select  tid_agrup from tipodesp "
                     + " WHERE tid_codi = " + MantTipDesp.LIBRE_DESPIECE;
                 if (!dt.select(s))
                 {
@@ -151,10 +169,13 @@ public class tidCodi2 extends CLinkBox
                     requestFocus();
                     return false;
                 }
-            } catch (SQLException ex)
-            {
-                Logger.getLogger(tidCodi2.class.getName()).log(Level.SEVERE, null, ex);
+
             }
+
+        } catch (SQLException ex)
+        {
+            Logger.getLogger(tidCodi2.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
         return true;
     }
@@ -222,20 +243,12 @@ public class tidCodi2 extends CLinkBox
   {
     articList.clear();
   }
+ 
   /**
-   * Indica si se deben mostrar los tipos de despieces inactivos
-   * Por defecto es false = 0
-   * @param verInactivo  -1 ver todos. 0 Tipos despiece Activos, OTROS solo si tid_activ es mayor
-   */
-  public void setTidActiv(int verInactivo)
-  {
-      this.tidActiv=verInactivo;
-  }
-  /**
-   * Devuelve si se mostrara los tipos de despieces inactivos
+   * Devuelve si El tipo despiece actual esta inactivo
    * @return 
    */
-  public int getTidActiv()
+  public boolean getTidActiv()
   {
       return this.tidActiv;
   }
@@ -248,9 +261,9 @@ public class tidCodi2 extends CLinkBox
   public boolean releer() throws SQLException
   {
     setError(false);
-    String s="select tid_codi, tid_nomb from tipodesp  as t "+
-            (tidActiv==-1?"":" WHERE tid_activ>"+tidActiv)+
-             " and tid_codi < 9990 "+
+    String s="select tid_codi, tid_nomb from tipodesp  as t "+           
+             " where tid_codi < 9990 "+
+             (verSoloActivo?" and tid_activ != 0":"")+ // Solo activos
              " ORDER BY t.tid_nomb";
     if (! articList.isEmpty())
     {
@@ -261,10 +274,9 @@ public class tidCodi2 extends CLinkBox
 //      {
 //          if (articList.indexOf(articList.get(n))>=n)
 //              artDif++;
-//      }
+//      }      
       s="select t.tid_codi, t.tid_nomb from tipodesp as t,tipdesent as te  WHERE "+
-        " t.tid_codi=te.tid_codi "+
-        (tidActiv==-1?" ":" and tid_activ>"+tidActiv)+
+        " t.tid_codi=te.tid_codi "+        
         "  and pro_codi in  (";
      
 //      s += " and  (select count(*) from tipdesent where tipdesent.tid_codi = tipodesp.tid_codi "+
@@ -278,8 +290,7 @@ public class tidCodi2 extends CLinkBox
 //      s=s.substring(0,s.length()-1)+")) >= "+artDif;
       s=s.substring(0,s.length()-1)+") group by t.tid_codi,tid_nomb ";
       if (dt.select(s))
-      {
-        
+      {        
         Statement st=dt.getConexion().createStatement();
         ResultSet rs;
         do
@@ -320,10 +331,20 @@ public class tidCodi2 extends CLinkBox
     }    
     return true;
   }
+  /**
+   * Deuvelve si se incluye los tipos despiece, libres, reenvasado y congelado.
+   * 
+   * @return  true si se incluyen (por defecto se incluyen)
+   */
   public boolean isIncluirEstaticos()
   {
       return incluirEstaticos;
   }
+  /**
+   * Indica  si se deben incluir los tipos despiece, libres, reenvasado y congelado.
+   * @param incluirEstaticos
+   * 
+   */
   public void setIncluirEstaticos(boolean incluirEstaticos)
   {
       this.incluirEstaticos=incluirEstaticos;
@@ -396,5 +417,14 @@ public class tidCodi2 extends CLinkBox
 
     public void setAdmin(boolean ADMIN) {
         this.ADMIN = ADMIN;
+    }
+    /**
+     * Ver solo activos.
+     * @param versoloactivo
+     * 
+     */
+    public void setVerSoloActivo(boolean versoloactivo)
+    {
+        verSoloActivo=versoloactivo;
     }
 }

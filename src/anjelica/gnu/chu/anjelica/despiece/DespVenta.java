@@ -59,8 +59,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class DespVenta extends ventana {
@@ -620,7 +618,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
             {
                 int ret=mensajes.mensajeYesNo("Despiece sin guardar. Continuar en él ?");
                 if (ret!=mensajes.NO)
-                    return;
+                    return;                
                 cancelarDespiece();
             }
         }
@@ -633,22 +631,26 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
              " and deo_codi = " + deoCodi;
            if (!dtAdd.select(s))
                throw new SQLException("No encontrada cabecera despiece"+deoCodi);
-          
-           dtAdd.executeUpdate("delete from desporig WHERE eje_nume = " + ejeNume +
-             " and deo_codi = " + deoCodi);
+           
            dtAdd.executeUpdate("delete from desorilin WHERE eje_nume = " + ejeNume +
              " and deo_codi = " + deoCodi);
+           dtAdd.executeUpdate("delete from desporig WHERE eje_nume = " + ejeNume +
+             " and deo_codi = " + deoCodi);
+         
            deoCodi=0;
     }
     void cancelarDespiece()
     {
         try
         {
-           cancelaCabecera();
-         
-           int nRow=jt.getRowCount();
-           for (int n=0;n<nRow;n++)
-               borraLinDesp(jt.getValorInt(n,JT_ORDEN));
+        
+          String s = "DELETE FROM v_despfin " +
+           " WHERE eje_nume = " + + ejeNume +
+           " and emp_codi = " +empCodi +
+           " and deo_codi = " + deoCodi ;
+          dtAdd.executeUpdate(s);
+          cancelaCabecera();       
+          dtAdd.commit();
            resetBloqueo(dtAdd,TABLA_BLOCK,
                    ejeNume+
                    "|" + deoCodi,true);
@@ -720,7 +722,11 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
            tid_codiE.requestFocus();
            return false;
        }
-
+       if (!tid_codiE.controla(true))           
+       {
+           mensajeErr(tid_codiE.getMsgError());
+           return false;
+       }
        if ((tid_codiE.getValorInt()!=MantTipDesp.AUTO_DESPIECE  
            && tid_codiE.getValorInt()!=MantTipDesp.CONGELADO_DESPIECE)
                && ! MantTipDesp.checkArticuloEntrada(dtStat, pro_codiE.getValorInt(), tid_codiE.getValorInt()))
@@ -874,7 +880,12 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
          s=pro_codsalE.getNombArt();
          jt.setValor(s,linea,1);
          if (pro_kilsalE.getValorDec()==0 ||  pro_codsalE.isNull())
-           return -1; // Si NO tengo Kilos o no me han metido el codigo de prod. paso de todo
+         {
+           if (jt.getValorInt(linea,JT_NUMIND)==0)
+            return -1; // Si NO tengo Kilos o no me han metido el codigo de prod. paso de todo
+           borraLinDesp(jt.getValorInt(linea,JT_ORDEN));
+           return -1;
+         }
 
          if (!pro_codsalE.controla(false,false))
          {

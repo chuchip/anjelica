@@ -232,7 +232,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2017-08-20" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2017-09-09" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -286,8 +286,7 @@ public class MantDesp extends ventanaPad implements PAD
         pro_codlE.setProNomb(null);
         pro_codlE.iniciar(dtProd, this, vl, EU);
         pro_codlE.setEntrada(true);
-        tid_codiE.setCeroIsNull(true);
-        tid_codiE.setTidActiv(1); // Solo activo. NO tactil.
+        tid_codiE.setCeroIsNull(true);       
         tid_codiE.setModoConsulta(false);
         tid_codiE.iniciar(dtProd, this, vl, EU);
         tid_codiE.setAdmin(P_ADMIN);

@@ -12,6 +12,8 @@ import gnu.chu.anjelica.sql.Desorilin;
 import gnu.chu.anjelica.sql.DesorilinId;
 import gnu.chu.anjelica.sql.Desporig;
 import gnu.chu.anjelica.sql.DesporigId;
+import gnu.chu.anjelica.tiempos.ManTiempos;
+import gnu.chu.anjelica.ventas.pdpeve;
 import gnu.chu.camposdb.cliPanel;
 import gnu.chu.camposdb.proPanel;
 import gnu.chu.camposdb.tidCodi2;
@@ -32,8 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -62,6 +62,7 @@ import javax.swing.SwingConstants;
  */
 public class MantDespTactil  extends ventanaPad implements PAD
 {
+    int idTiempo=0;
     private final int PROCIERRE=99;
  private gnu.chu.controles.CComboBox eti_codiE=new gnu.chu.controles.CComboBox();
   cliPanel cli_codiE = new cliPanel();
@@ -410,12 +411,14 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2017-09-03"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2017-09-09"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
 
-   strSql = getStrSql() + " and eje_nume = " + EU.ejercicio +
+   strSql = getStrSql() + 
+       " and deo_block = 'S' "+
+       " and eje_nume = " + EU.ejercicio +
        getOrderQuery();
 
    conecta();
@@ -877,13 +880,15 @@ public class MantDespTactil  extends ventanaPad implements PAD
    pro_codenE.setAyudaLotes(true);
    Pcabe.setButton(KeyEvent.VK_F4,Baceptar);
    Pcabe.setButton(KeyEvent.VK_F2, BirGrid);
+   jtEnt.setButton(KeyEvent.VK_F4,Baceptar);
    utdesp =new utildesp();
    pro_codsalE.iniciar(dtStat, this, vl, EU);
    pro_codsalE.setEnabled(false);
    pro_codsalE.setEntrada(true);
+    
+ 
+ 
    
-   tid_codiE.iniciar(dtStat, this, vl, EU);
-   tid_codiE.setIncluirEstaticos(false);
    jtSal.setButton(KeyEvent.VK_F8,BborLiSa);
    jtSal.setButton(KeyEvent.VK_F9,BrepEti);
    jtSal.setButton(KeyEvent.VK_F5,BDuplLinea);
@@ -1264,40 +1269,32 @@ public class MantDespTactil  extends ventanaPad implements PAD
    mensajeErr("Etiqueta ... Listada");
  }
 
-
-
- private void irGridEnt()
- {
-   try {
-//     if (tid_codiE.combo.getItemCount()==0)
-//     {
-//       pro_codiE.requestFocus();
-//       mensajeErr("Producto SIN tipos despieces VALIDOS");
-//       return;
-//     }
-
-     if (! tid_codiE.controla() || tid_codiE.isNull())
+boolean checkCabecera() throws ParseException, SQLException
+{
+      if (! tid_codiE.controla() || tid_codiE.isNull())
      {
        mensajeErr("Tipo de Despiece NO VALIDO");
-       return;
+       return false;
      }
+     
      if (grd_unidE.getValorInt()==0 && ! isEmpPlanta)
      {
        mensajeErr("Introduzca UNIDADES a Despiezar");
        grd_unidE.requestFocus();
-       return;
+       return false;
      }
      if (grd_fechaE.isNull())
      {
        mensajeErr("Introduzca la Fecha de Despiece");
        grd_fechaE.requestFocus();
-       return;
+       return false;
      }
      s = pdejerci.checkFecha(dtStat, eje_numeE.getValorInt(), EU.em_cod, grd_fechaE.getDate());
-     if (s != null) {
+     if (s != null) 
+     {
          mensajeErr(s);
          grd_fechaE.requestFocus();
-         return;
+         return false;
      }
 //     if (emp_codiE.getValorDec()==0)
 //     {
@@ -1309,13 +1306,33 @@ public class MantDespTactil  extends ventanaPad implements PAD
      {
        mensajeErr("Ejercicio NO VALIDO");
        eje_numeE.requestFocus();
-       return;
+       return false;
      }
      if (!deo_codiE.isNull() && ! checkFechaCad())
      {
           grd_feccadE.requestFocus();
-          return;
+          return false;
      }
+     if (!cli_codiE.controlar(cliPanel.COMPROBAR))
+     {       
+         msgBox("Codigo cliente NO VALIDO.Introduzca 9999 si es produccion");
+         return false;
+     }
+     return true;
+}
+
+ private void irGridEnt()
+ {
+   try {
+//     if (tid_codiE.combo.getItemCount()==0)
+//     {
+//       pro_codiE.requestFocus();
+//       mensajeErr("Producto SIN tipos despieces VALIDOS");
+//       return;
+//     }
+        if (!checkCabecera())
+            return;
+   
    } catch (ParseException | SQLException k)
    {
      Error("Error al Ir al grid de Entrada",k);
@@ -1381,6 +1398,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     deo_incvalE.setEnabled(true);
     grd_unidE.setEnabled(true);
     grd_unidE.setQuery(false);
+    deo_blockE.setValor("S");
     deo_blockE.setEnabled(true);    
     deo_blockE.addItem("Terminado","T");
     BcerrDesp.setEnabled(false);
@@ -1485,6 +1503,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
       datTrazFrame.setEditable(true);
       vl.add(datTrazFrame);
       datTrazFrame.setLocation(this.getLocation().x, this.getLocation().y + 30);
+      tid_codiE.setIncluirEstaticos(false); // 
+      tid_codiE.iniciar(dtStat, this, vl, EU);
       dtAux = new DatosTabla(ct);
       tipoEmp=pdconfig.getTipoEmpresa(EU.em_cod, dtStat);
       isEmpPlanta=tipoEmp==pdconfig.TIPOEMP_PLANTACION;
@@ -1504,6 +1524,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     @Override
   public void PADEdit()
   {      
+    idTiempo=0;
     if (jtEnt.isVacio())
     {
         msgBox("Despiece VACIO. Imposible Modificar");
@@ -1559,6 +1580,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
       dtAdd.commit();
       verProTipDes(tid_codiE.getValorInt());
       actAcumSal();
+      idTiempo = ManTiempos.guardaTiempo(dtAdd, 0, null, EU.usuario, "D",
+                  Integer.parseInt(""+eje_numeE.getValorInt()+deo_codiE.getValorInt()) ,
+                  null, null, nav.pulsado == navegador.ADDNEW ? "Alta Despiece" : "Modificado Despiece");
     } catch (SQLException | UnknownHostException k)
     {
         Error("Error al realizar copia de registro actual",k);
@@ -1571,8 +1595,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
 
     activar(true);
     activar(CABECERA_ALL,false);
+    cli_codiE.setEnabled(true);
 //    if (PARAM_ADMIN)
-        tid_codiE.setEnabled(true);
+    tid_codiE.setEnabled(true);
     
     grd_unidE.setEnabled(true);
     if (PARAM_ADMIN)
@@ -1617,133 +1642,146 @@ public class MantDespTactil  extends ventanaPad implements PAD
     ej_addnew1();
   }
     @Override
-  public void canc_edit() {
-  }
+  public void canc_edit() {  }
     @Override
-  public void PADAddNew() {
-    mensaje("Insertando Nuevo despiece");
-    Pcabe.resetTexto();
-    jtEnt.removeAllDatos();
-    grd_unioriE1.setValorDec(0);
-    grd_kilorgE1.setValorDec(0);
-    modLinSal=false;
-    jtSal.removeAllDatos();
-    Pprofin.removeAll();
-    datTrazFrame.resetInit();
+    public void PADAddNew() {
+        try
+        {
+            idTiempo=0;
+            mensaje("Insertando Nuevo despiece");
+            Pcabe.resetTexto();
+            jtEnt.removeAllDatos();
+            grd_unioriE1.setValorDec(0);
+            grd_kilorgE1.setValorDec(0);
+            modLinSal = false;
+            jtSal.removeAllDatos();
+            Pprofin.removeAll();
+            datTrazFrame.resetInit();
 //    emp_codiE.setValorDec(EU.em_cod);
-    eje_numeE.setValorDec(EU.ejercicio);
-    grd_fechaE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-    if (PARAM_ADMIN)
-      grd_fechaE.setEnabled(true);
-    Ptabed.setSelectedIndex(1);
+            eje_numeE.setValorDec(EU.ejercicio);
+            grd_fechaE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
+            if (PARAM_ADMIN)
+                grd_fechaE.setEnabled(true);
+            Ptabed.setSelectedIndex(1);
 //    deo_blockE.setValor("S");
-    activar(true);
-    activar(SALIDA,false);
+            activar(true);
+            activar(SALIDA, false);
 
-    usu_nombE.setEnabled(false);
-    usu_nombE.setText(EU.usuario);
+            usu_nombE.setEnabled(false);
+            usu_nombE.setText(EU.usuario);
 //    pro_loteE.setEnabled(false);
-    deo_codiE.setEnabled(false);
-    pro_codenE.setEditable(true);
-    setEditEnt(true);
-    utdesp.cambio=true;
-   jtEnt.setEnabled(false);
+            deo_codiE.setEnabled(false);
+            pro_codenE.setEditable(true);
+            setEditEnt(true);
+            utdesp.cambio = true;
+            tid_codiE.setVerSoloActivo(true);
+            tid_codiE.releer();
+            jtEnt.setEnabled(false);
 //    Porig.setEnabled(false);
 //    Pfin.setEnabled(false);
 //    Pconsul.setEnabled(false);
-    grd_unidE.requestFocus();
-  }
+            grd_unidE.requestFocus();
+        } catch (SQLException ex)
+        {
+            Error("Error al añadir nuevo registro", ex);
+        }
+    }
 
     @Override
   public void ej_addnew1()
   {
-    if (grd_unioriE1.getValorInt()==0)
-    {
-      mensajeErr("Introduzca alguna Linea de Entrada");
-      return;
-    }
-  
-    if (deo_blockE.getValor().equals(MantDesp.DESP_BLOQUEADO ) && ! EU.isRootAV())
-    {
-        msgBox("Estado NO puede ser  Bloqueado");
-        return;
-    }
-   
-    jtEnt.ponValores(jtEnt.getSelectedRow());
-
-    int nCol;
-    if ((nCol=check_jtEnt(jtEnt.getSelectedRow()))>=0)
-    {
-      jtEnt.requestFocus(jtEnt.getSelectedRow(),nCol);
-      return;
-    }
-    if (deo_codiE.getValorInt()==0)
-    {
-      mensajeErr("Introduzca al menos un producto a Despiezar");
-      tid_codiE.requestFocus();
-      return;
-    }
-    try
-    {
-      if (! checkFechaCad())
-      {
-              grd_feccadE.requestFocus();
-              return;
-      }
-      if (deo_blockE.getValor().equals(MantDesp.DESP_CERRADO))
-      {
-        String msgErr;
-        if ((msgErr=checkCerrar())!=null)
+        try
         {
-          if (!PARAM_ADMIN)
-          {
-            msgBox(msgErr);
-            return;
-          }
-          else
-          {
-              int res=mensajes.mensajeYesNo(msgErr+"\n Cerrar de todos modos ? ");
-              if (res!=mensajes.YES)
-              {
-                deo_blockE.setValor("S");
+            if (!checkCabecera())
                 return;
-              }
-              if (jf != null)
-              {
-                jf.ht.clear();
-                jf.ht.put("%a", deo_codiE.getText());
-                jf.guardaMens("D5", jf.ht);
-              }
+            if (grd_unioriE1.getValorInt() == 0)
+            {
+                mensajeErr("Introduzca alguna Linea de Entrada");
+                return;
+            }
 
-          }
+            if (deo_blockE.getValor().equals(MantDesp.DESP_BLOQUEADO) && !EU.isRootAV())
+            {
+                msgBox("Estado NO puede ser  Bloqueado");
+                return;
+            }
+
+            jtEnt.ponValores(jtEnt.getSelectedRow());
+
+            int nCol;
+            if ((nCol = check_jtEnt(jtEnt.getSelectedRow())) >= 0)
+            {
+                jtEnt.requestFocus(jtEnt.getSelectedRow(), nCol);
+                return;
+            }
+            if (deo_codiE.getValorInt() == 0)
+            {
+                mensajeErr("Introduzca al menos un producto a Despiezar");
+                tid_codiE.requestFocus();
+                return;
+            }
+
+            if (!checkFechaCad())
+            {
+                grd_feccadE.requestFocus();
+                return;
+            }
+            if (deo_blockE.getValor().equals(MantDesp.DESP_CERRADO))
+            {
+                String msgErr;
+                if ((msgErr = checkCerrar()) != null)
+                {
+                    if (!PARAM_ADMIN)
+                    {
+                        msgBox(msgErr);
+                        return;
+                    } else
+                    {
+                        int res = mensajes.mensajeYesNo(msgErr + "\n Cerrar de todos modos ? ");
+                        if (res != mensajes.YES)
+                        {
+                            deo_blockE.setValor("S");
+                            return;
+                        }
+                        if (jf != null)
+                        {
+                            jf.ht.clear();
+                            jf.ht.put("%a", deo_codiE.getText());
+                            jf.guardaMens("D5", jf.ht);
+                        }
+
+                    }
+                }
+            }
+
+            if (isEmpPlanta && getNumLinImprimir() > 0)
+            {
+                int ret = mensajes.mensajeYesNo("¿ Salir sin imprimir etiquetas ?");
+                if (ret != mensajes.YES)
+                    return;
+            }
+            actualCabDesp(); // Actualizo Cabecera Despiece
+
+            resetBloqueo(dtAdd, TABLA_BLOCK,
+                eje_numeE.getValorInt()
+                + "|" + deo_codiE.getValorInt(), true);
+            if (idTiempo>0)
+                ManTiempos.guardaTiempo(dtAdd, idTiempo,null,nav.pulsado==navegador.ADDNEW?"Alta Despiece":"Modificado Despiece");
+
+            ctUp.commit();
+            verProdSalida(eje_numeE.getValorInt(), deo_codiE.getValorInt());
+            actAcumSal();
+
+        } catch (Exception k)
+        {
+            Error("Error al actualizar dato de Despiece", k);
+            return;
         }
-      }
-       
-      if (isEmpPlanta && getNumLinImprimir()>0)
-      {
-         int ret= mensajes.mensajeYesNo("¿ Salir sin imprimir etiquetas ?");
-         if (ret!=mensajes.YES)
-             return;
-      }
-      actualCabDesp(); // Actualizo Cabecera Despiece
-      
-      resetBloqueo(dtAdd,TABLA_BLOCK,
-                   eje_numeE.getValorInt() +
-                   "|" + deo_codiE.getValorInt(),true);
-      ctUp.commit();
-      verProdSalida(eje_numeE.getValorInt(), deo_codiE.getValorInt());
-      actAcumSal();
-
-    } catch (Exception k)
-    {
-      Error("Error al actualizar dato de Despiece",k);
-      return;
+        activaTodo();
+        mensaje("");
+        mensajeErr("Despiece ... GUARDADO");
+        nav.pulsado = navegador.NINGUNO;
     }
-    activaTodo();
-    mensaje("");
-    mensajeErr("Despiece ... GUARDADO");
-    nav.pulsado=navegador.NINGUNO;
-  }
   
   int getNumLinImprimir()
   {
@@ -1808,7 +1846,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
           jf.ht.put("%a", deo_codiE.getText());
           jf.guardaMens("D2", jf.ht);
         }
-
+        if (idTiempo>0)
+            ManTiempos.guardaTiempo(dtAdd, idTiempo,null,"Cancelado Despiece");
         ctUp.commit();
       } catch (Exception k)
       {
@@ -2068,7 +2107,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
       }
       s="select tds_grupo,dpv_nomb from tipdessal as td   left join v_tipocorte as tc on dpv_nume=td.tds_grupo "+
         " where tid_codi= "+tidCodi+
-        " and tds_unid>0 group by tds_grupo,dpv_nomb ";
+        " and tds_unid>0 group by tds_grupo,dpv_nomb order by tds_grupo";
      
       if (dtCon1.select(s))
       { 
@@ -2077,14 +2116,34 @@ public class MantDespTactil  extends ventanaPad implements PAD
               ArrayList v=new ArrayList();
               v.add(dtCon1.getString("tds_grupo"));
               v.add(dtCon1.getString("dpv_nomb"));
-              v.add(npFin);
+              
               s="select sum(def_unicaj) as cuantos from v_despsal as d "+
                 " WHERE d.eje_nume = "+ejeNume+
                 " AND d.deo_codi = "+deoCodi+
                 " and pro_codi in (select pro_codi from tipdessal where tid_codi="+tid_codiE.getValorInt()+
                   " and tds_grupo='"+dtCon1.getString("tds_grupo")+"')";
               dtStat.select(s);
+              v.add(dtStat.getInt("cuantos",true));
               v.add(npFin-dtStat.getInt("cuantos",true));
+              jtFin.addLinea(v);
+          } while (dtCon1.next());
+      }
+      s="select sum(def_unicaj) as cuantos,d.pro_codi,ar.pro_nomb from v_despsal as d, v_articulo as ar"+
+                " WHERE d.eje_nume = "+ejeNume+
+                " AND d.deo_codi = "+deoCodi+
+                " AND d.pro_codi=ar.pro_codi "+
+                " and ar.pro_tiplot = 'V'"+
+                " and d.pro_codi not in (select pro_codi from tipdessal where tid_codi="+tid_codiE.getValorInt()+" ) "+
+                " group by d.pro_codi,pro_nomb";
+      if (dtCon1.select(s))
+      {
+          do 
+          {
+              ArrayList v=new ArrayList();
+              v.add(dtCon1.getString("pro_codi"));
+              v.add(dtCon1.getString("pro_nomb"));
+              v.add(dtCon1.getInt("cuantos",true));
+              v.add(0-dtCon1.getInt("cuantos",true));
               jtFin.addLinea(v);
           } while (dtCon1.next());
       }
@@ -2108,7 +2167,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
       /**
        * Vuelvo a leer el despiece por si acaso
        */
-     
+      tid_codiE.setVerSoloActivo(false);
+      tid_codiE.releer();
       eje_numeE.setValorInt(dt.getInt("eje_nume"));
       deo_codiE.setValorInt(dt.getInt("deo_codi"));
      
@@ -2693,7 +2753,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    * Guarda cabecera  origen de despiece
    * @return 
    */
-  int guardaOrigCabDesp() throws SQLException,ParseException
+  int guardaOrigCabDesp() throws SQLException,ParseException, UnknownHostException
   {
       desorca=new Desporig();
       deo_codiE.setValorInt(utildesp.incNumDesp(dtAdd,EU.em_cod,eje_numeE.getValorInt()));
@@ -2704,6 +2764,13 @@ public class MantDespTactil  extends ventanaPad implements PAD
       setBloqueo(dtAdd,TABLA_BLOCK,
                    eje_numeE.getValorInt() +
                    "|" + deo_codiE.getValorInt(),false);
+     
+      if ( idTiempo==0)
+      {
+            idTiempo = ManTiempos.guardaTiempo(dtAdd, 0, null, EU.usuario, "D",
+                  Integer.parseInt(""+eje_numeE.getValorInt()+deo_codiE.getValorInt()) ,
+                  null, null, nav.pulsado == navegador.ADDNEW ? "Alta Despiece" : "Modificado Despiece");
+      }   
       return desorca.getId().getDeoCodi();
   }
   /**
@@ -3304,6 +3371,18 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
     if (deo_blockE.getValor().equals(MantDesp.DESP_CERRADO))
         return;
+    if (jtEnt.isVacio())
+    { // Despiece vacio.
+        try {
+            deo_blockE.setValor("N");            
+            actualCabDesp();
+            ctUp.commit();
+            mensajeErr("Despiece cerrado");
+            return;
+        } catch (SQLException | ParseException  ex) {
+            Error("Error al cerrar despiece",ex);
+        }
+    }
     if (kildifE.getValorDec() < -3)
     {
         int ret=mensajes.mensajeYesNo("Los Kilos  de diferencia son mayor de 3.CERRAR SEGURO?");

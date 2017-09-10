@@ -135,7 +135,7 @@
             </Component>
             <Component class="gnu.chu.controles.CComboBox" name="tid_activE">
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="tid_activE.addItem(&quot;Si&quot;, &quot;2&quot;);&#xa;tid_activE.addItem(&quot;No&quot;, &quot;0&quot;);&#xa;tid_activE.addItem(&quot;Tactil&quot;,&quot;1&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="tid_activE.addItem(&quot;Si&quot;, &quot;1&quot;);&#xa;tid_activE.addItem(&quot;No&quot;, &quot;0&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

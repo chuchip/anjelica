@@ -4,7 +4,7 @@ package gnu.chu.winayu;
  * <p>Título: AyuTid</p>
  * <p>Descripción: Ventana Para ayuda de tipos de despiece </p>
  *
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -38,10 +38,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JLayeredPane;
 
-/**
- *
- * @author jpuente
- */
 public class AyuTid extends ventana {
     private boolean chose=false;
     private int tidCodi;
@@ -99,7 +95,7 @@ public class AyuTid extends ventana {
   public void reset()
   {
       chose=false;
-      Pcond.resetTexto();
+      //tid_nombE.resetTexto();
       tid_nombE.requestFocusLater();
   }
    public boolean getChose() {
@@ -156,6 +152,7 @@ public class AyuTid extends ventana {
      chose=false;
      String s="SELECT tid_codi,tid_nomb FROM tipodesp as td where 1=1 "+
              (tid_nombE.isNull(true)?"": " and upper(tid_nomb) LIKE '%"+tid_nombE.getText()+"%'")+
+             " and tid_activ != 0 "+
              (pro_codiniE.isNull()?"":" and tid_codi in (select tid_codi from tipdesent WHERE pro_codi ="+pro_codiniE.getValorInt()+")")+
              (pro_codfinE.isNull()?"":" and tid_codi in (select tid_codi from tipdessal WHERE pro_codi ="+pro_codfinE.getValorInt()+")")+
              " order by tid_nomb ";
