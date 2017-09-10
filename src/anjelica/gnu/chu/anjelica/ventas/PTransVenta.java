@@ -66,6 +66,14 @@ public class PTransVenta extends CPanel
         } while (dt.next());
     }
     /**
+     * Devuelve el numero de cajas
+     * @return 
+     */
+    public int getNumeroCajas()
+    {
+        return avt_numcajE.getValorInt();
+    }
+    /**
      * 
      * @throws SQLException 
      */

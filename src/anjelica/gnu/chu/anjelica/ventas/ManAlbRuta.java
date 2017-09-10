@@ -1438,7 +1438,10 @@ public class ManAlbRuta extends ventanaPad implements PAD
                       return;
                   try {
                     numEti=Integer.parseInt(res.trim());
-                  } catch (NumberFormatException ex){ return; }
+                  } catch (NumberFormatException ex){ 
+                      msgBox("Introduzca un numero valido");
+                      return; 
+                  }
                   if (numEti<=0 || numEti>=99)
                   {
                       msgBox("Numero de etiquetas NO valido");
@@ -1466,8 +1469,14 @@ public class ManAlbRuta extends ventanaPad implements PAD
     {
         try
         {
-            String s="select * from v_albruta where alr_nume="+alrNume+
-                " and alr_orden="+alrOrden;
+            String s="select r.*,cl.cli_codrut from v_albruta as r,"
+                + " v_albavec as a,v_cliente as cl where alr_nume="+alrNume+
+                " and alr_orden="+alrOrden+
+                " and r.avc_nume= a.avc_nume "+
+                " and r.avc_ano=a.avc_ano "+
+                " and r.avc_serie = a.avc_serie "+
+                " and r.emp_codi = a.emp_codi "+
+                " and a.cli_codi = cl.cli_codi";                
             if (!dtStat.select(s))
             {
                 msgBox("No encontrado salida a ruta para este  Albaran");
@@ -1480,6 +1489,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
             java.util.HashMap mp = new java.util.HashMap();
             
             mp.put("logotipo",Iconos.getPathIcon()+LOGOTIPO);
+            mp.put("cli_codrut",dtStat.getString("cli_codrut"));
             mp.put("documento",dtStat.getString("emp_codi")+"-"+dtStat.getString("avc_ano")+
                 dtStat.getString("avc_serie")+dtStat.getString("avc_nume"));
             mp.put("cli_nomen",dtStat.getString("cli_nomen"));
@@ -1501,6 +1511,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
             Error("Error al imprimir etiqueta",ex);
         }
     }
+    
     void insertarAuto()
     {
         try
