@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2017-01-31T19:46:45 -->
+<!-- 2017-10-03T19:17:00 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fichaCliente" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="39eb12a8-c5c2-4d17-9869-ecdad5a68cd9">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Anjelica "/>
 	<parameter name="subReport" class="java.lang.String">
@@ -99,7 +99,9 @@
 			<band height="4"/>
 		</groupHeader>
 		<groupFooter>
-			<band height="4"/>
+			<band>
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			</band>
 		</groupFooter>
 	</group>
 	<background>
@@ -117,9 +119,10 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="83" splitType="Stretch">
+		<band height="98" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<subreport>
-				<reportElement x="0" y="58" width="530" height="20" uuid="24c971f2-cee8-45b6-846c-9608ec405e0c">
+				<reportElement x="0" y="58" width="556" height="40" uuid="24c971f2-cee8-45b6-846c-9608ec405e0c">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>

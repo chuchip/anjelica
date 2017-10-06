@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-08-16T14:44:22 -->
+<!-- 2017-09-10T08:49:23 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="etiqDireccion" pageWidth="272" pageHeight="283" columnWidth="258" leftMargin="14" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Error" uuid="f9b24ccf-03d6-4baa-aa11-d7c50d0ccf74">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="mm"/>
@@ -33,6 +33,7 @@
 		<parameterDescription><![CDATA[26007]]></parameterDescription>
 		<defaultValueExpression><![CDATA["26007"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="cli_codrut" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -40,7 +41,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="283" splitType="Stretch">
+		<band height="282" splitType="Stretch">
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="180" width="216" height="31" forecolor="#000000" backcolor="#FFFFFF" uuid="a5af6dd5-79a9-44f9-99e0-c946626cde2c">
 					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
@@ -58,14 +59,14 @@
 				<textFieldExpression><![CDATA[$P{diremp}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="121" y="169" width="22" height="11" uuid="bd89841f-f51e-4732-b317-a1f3084e2785"/>
+				<reportElement x="57" y="168" width="22" height="11" uuid="bd89841f-f51e-4732-b317-a1f3084e2785"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<text><![CDATA[Doc:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="143" y="169" width="70" height="11" uuid="03159e31-60e6-4435-a991-e4132f140877"/>
+				<reportElement x="79" y="168" width="70" height="11" uuid="03159e31-60e6-4435-a991-e4132f140877"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
@@ -79,7 +80,7 @@
 				<textFieldExpression><![CDATA[$P{cli_nomen}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="168" width="108" height="12" uuid="6cc3ed9d-5adf-410c-a09b-b4d71b7933c0"/>
+				<reportElement x="1" y="168" width="54" height="12" uuid="6cc3ed9d-5adf-410c-a09b-b4d71b7933c0"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -144,6 +145,20 @@
 				</textElement>
 				<text><![CDATA[Consigna]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="154" y="168" width="28" height="11" uuid="bb9dc988-c9c6-45a3-a304-d7c286afb7a4"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[C.Rep]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="184" y="168" width="28" height="11" uuid="b5161356-e9d6-42e3-b6e5-2b8203534fdc"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cli_codrut}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 </jasperReport>

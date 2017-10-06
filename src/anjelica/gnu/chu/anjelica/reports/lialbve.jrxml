@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2017-02-09T20:34:38 -->
+<!-- 2017-08-09T10:20:50 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lialbve" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0" uuid="477b1d9c-ee98-4d62-8ff7-69c661821105">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -28,6 +28,10 @@
 		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
 	</parameter>
+	<parameter name="avt_numpal" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="avt_numcaj" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="avt_numbol" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="avt_numcol" class="java.lang.Integer" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[SELECT -1 as avl_numlin, avl_numpal,l.pro_codi,SUM(l.avl_canti) as avl_canti,
 sum(avl_unid) as avl_unid,
@@ -307,23 +311,9 @@ order by 1,2,3]]>
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="40" splitType="Stretch">
+		<band height="39" splitType="Stretch">
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="337" y="2" width="65" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="4d05d2b1-4ea5-4ce5-a72d-5bae235af6ae"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{kilos}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="52" y="2" width="73" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b5fe0282-4b82-4f94-b35a-48e780fd5714"/>
+				<reportElement key="textField" mode="Opaque" x="91" y="1" width="62" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="4d05d2b1-4ea5-4ce5-a72d-5bae235af6ae"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -331,11 +321,11 @@ order by 1,2,3]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<text><![CDATA[Unidades]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$V{kilos}]]></textFieldExpression>
+			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" mode="Opaque" x="2" y="18" width="518" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="176a1aab-522c-4445-9593-a3d48711da96"/>
 				<box>
@@ -369,23 +359,7 @@ order by 1,2,3]]>
 				</graphicElement>
 			</line>
 			<textField pattern="###0;-###0" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="130" y="2" width="28" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="c0e7a11a-e479-4dba-a2b5-c7f13ac87ae8">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{unidades}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="260" y="2" width="77" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b9fa4222-6faf-469f-9e69-a0de385aea31">
+				<reportElement key="textField" mode="Opaque" x="36" y="0" width="23" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="c0e7a11a-e479-4dba-a2b5-c7f13ac87ae8">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<box>
@@ -395,11 +369,142 @@ order by 1,2,3]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<text><![CDATA[Total Kilos]]></text>
+				<textFieldExpression><![CDATA[$V{unidades}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-11" mode="Opaque" x="254" y="1" width="44" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="db05ed4d-3ebf-465a-a579-01edf2f9a0ae">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{avt_numcaj}>0]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Nº Cajas]]></text>
 			</staticText>
+			<staticText>
+				<reportElement key="staticText-11" mode="Opaque" x="424" y="1" width="66" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="911518a8-df50-4c13-8d11-3e8f1fff767d">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{avt_numcol}>0]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Nº Colgado]]></text>
+			</staticText>
+			<textField pattern="###0.###" isBlankWhenNull="true">
+				<reportElement x="496" y="1" width="24" height="16" uuid="f0c190d1-9338-48d3-8ff5-d65225818794">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{avt_numcol}>0]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[$P{avt_numcol}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.###" isBlankWhenNull="true">
+				<reportElement x="390" y="1" width="24" height="16" uuid="df250791-46f1-4ab3-a3bd-e9eadc6032cf">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{avt_numbol}>0]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[$P{avt_numbol}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-11" mode="Opaque" x="334" y="1" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="e2074738-0165-4448-825c-9a130b52e15a">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{avt_numbol}>0]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Nº Bolsas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-11" mode="Opaque" x="4" y="0" width="30" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5834f049-3d10-48e6-a1de-c16dff35b1ce">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Unid:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-11" mode="Opaque" x="65" y="1" width="23" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5f9749d2-7abb-49e7-a82a-2a7fac741842">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Kgs:]]></text>
+			</staticText>
+			<textField pattern="###0.###" isBlankWhenNull="true">
+				<reportElement x="300" y="1" width="24" height="16" uuid="965cd0be-1bb8-4eec-bf08-e1e5f47c8a85">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{avt_numcaj}>0]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[$P{avt_numcaj}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-11" mode="Opaque" x="170" y="1" width="44" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="229d9c4b-e5fd-4582-8a0a-d3dd578209fa">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{avt_numpal}>0]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Nº Palets]]></text>
+			</staticText>
+			<textField pattern="###0.###" isBlankWhenNull="true">
+				<reportElement x="215" y="1" width="24" height="16" uuid="d28fd562-4977-4eea-a4f8-5da886118142">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{avt_numpal}>0]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[$P{avt_numpal}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 	<summary>

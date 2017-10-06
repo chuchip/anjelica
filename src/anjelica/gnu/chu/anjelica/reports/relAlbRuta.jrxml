@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-01-14T10:25:46 -->
+<!-- 2017-10-03T13:09:44 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relAlbRuta" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="16085ab3-6a21-4d59-a4cb-6c23448b50d6">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -23,6 +23,7 @@
 	<field name="alr_unid" class="java.lang.Integer"/>
 	<field name="alr_bultos" class="java.lang.Integer"/>
 	<field name="cli_poble" class="java.lang.String"/>
+	<field name="cli_codrut" class="java.lang.String"/>
 	<variable name="numAlb" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{avc_nume}]]></variableExpression>
 	</variable>
@@ -82,7 +83,7 @@
 				<text><![CDATA[Repartidor]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="490" y="22" width="29" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="6feef911-599b-486d-91a0-b8dc1659b1f1"/>
+				<reportElement key="staticText" mode="Opaque" x="483" y="22" width="29" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="6feef911-599b-486d-91a0-b8dc1659b1f1"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
@@ -90,7 +91,7 @@
 				<text><![CDATA[Id]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="520" y="22" width="53" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="ab1856ab-0e30-4b6c-8889-c367e0cb25cc"/>
+				<reportElement key="textField" mode="Opaque" x="513" y="22" width="53" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="ab1856ab-0e30-4b6c-8889-c367e0cb25cc"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
@@ -116,9 +117,9 @@
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="21" splitType="Stretch">
+		<band height="23" splitType="Stretch">
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="1" y="0" width="95" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="20ea4032-dc9f-4f77-96c5-c6a5a37ba24e"/>
+				<reportElement key="staticText" mode="Opaque" x="1" y="0" width="84" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="20ea4032-dc9f-4f77-96c5-c6a5a37ba24e"/>
 				<box>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
@@ -129,7 +130,7 @@
 				<text><![CDATA[Albaran]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="98" y="0" width="42" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="d7ce923a-363b-496f-8884-2229144d9d32"/>
+				<reportElement key="staticText" mode="Opaque" x="90" y="0" width="42" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="d7ce923a-363b-496f-8884-2229144d9d32"/>
 				<box>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
@@ -140,7 +141,7 @@
 				<text><![CDATA[Cliente]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="143" y="0" width="200" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="0c9a968c-fafd-458d-96e0-e8a57e7025af"/>
+				<reportElement key="staticText" mode="Opaque" x="135" y="0" width="185" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="0c9a968c-fafd-458d-96e0-e8a57e7025af"/>
 				<box>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
@@ -199,10 +200,21 @@
 				</textElement>
 				<text><![CDATA[Bult.]]></text>
 			</staticText>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="322" y="0" width="25" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="23fae928-72f5-4d83-9c4f-6c2a4ef47154"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Rep]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="22" splitType="Stretch">
+		<band height="25" splitType="Stretch">
 			<textField pattern=" 0000" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="1" y="2" width="29" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="fa43896b-6641-4646-b169-56270ba7ab38"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
@@ -212,7 +224,9 @@
 				<textFieldExpression><![CDATA[$F{avc_ano}]]></textFieldExpression>
 			</textField>
 			<textField pattern=" 0000" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="31" y="2" width="21" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="712ace67-6fa1-417a-b104-29de9d085e61"/>
+				<reportElement key="textField" mode="Opaque" x="31" y="2" width="10" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="712ace67-6fa1-417a-b104-29de9d085e61">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
@@ -220,7 +234,7 @@
 				<textFieldExpression><![CDATA[$F{avc_serie}]]></textFieldExpression>
 			</textField>
 			<textField pattern=" #####0" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="54" y="2" width="42" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="2b5ae361-21fd-423d-b3ef-db99e5ae94c4"/>
+				<reportElement key="textField" mode="Opaque" x="43" y="2" width="42" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="2b5ae361-21fd-423d-b3ef-db99e5ae94c4"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
@@ -228,7 +242,7 @@
 				<textFieldExpression><![CDATA[$F{avc_nume}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="98" y="3" width="42" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="8406e6e8-0eac-45e9-808f-24af8e259451"/>
+				<reportElement key="textField" mode="Opaque" x="90" y="2" width="42" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="8406e6e8-0eac-45e9-808f-24af8e259451"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
@@ -236,7 +250,7 @@
 				<textFieldExpression><![CDATA[$F{cli_codi}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="143" y="3" width="200" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="ea8841eb-3dc6-4894-9287-c436fb00d370">
+				<reportElement key="textField" mode="Opaque" x="135" y="3" width="185" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="ea8841eb-3dc6-4894-9287-c436fb00d370">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
@@ -278,6 +292,16 @@
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{alr_bultos}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="322" y="2" width="25" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="717f3793-fe35-41ec-8177-5d50a0d92bba">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cli_codrut}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

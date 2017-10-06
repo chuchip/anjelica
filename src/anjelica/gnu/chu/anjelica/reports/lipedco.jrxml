@@ -1,39 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"  ?>
-<!-- Created with iReport - A designer for JasperReports -->
-<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
-<jasperReport
-		 name="lipedco"
-		 columnCount="1"
-		 printOrder="Vertical"
-		 orientation="Portrait"
-		 pageWidth="595"
-		 pageHeight="842"
-		 columnWidth="547"
-		 columnSpacing="0"
-		 leftMargin="14"
-		 rightMargin="14"
-		 topMargin="20"
-		 bottomMargin="20"
-		 whenNoDataType="NoPages"
-		 isTitleNewPage="false"
-		 isSummaryNewPage="false">
-	<property name="ireport.scriptlethandling" value="0" />
-	<property name="ireport.encoding" value="UTF-8" />
-	<import value="java.util.*" />
-	<import value="net.sf.jasperreports.engine.*" />
-	<import value="net.sf.jasperreports.engine.data.*" />
-	<parameter name="nomusu" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="subject" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="logotipo" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="verPrecios" isForPrompting="false" class="java.lang.Boolean">
-		<defaultValueExpression ><![CDATA[new Boolean(true)]]></defaultValueExpression>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2017-05-25T13:42:19 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lipedco" pageWidth="595" pageHeight="842" columnWidth="547" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="1cb302a0-820f-4833-81b9-c0786dd38007">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="nomusu" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="subject" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="logotipo" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="verPrecios" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
 	</parameter>
-	<queryString><![CDATA[select c.*,l.*,pv.prv_nomb from pedicoc as c,pedicol as l,v_proveedo as pv
+	<queryString>
+		<![CDATA[select c.*,l.*,pv.prv_nomb from pedicoc as c,pedicol as l,v_proveedo as pv
 where c.emp_codi = l.emp_codi
 and c.eje_nume= l.eje_nume
 and c.pcc_nume =l .pcc_nume
 and c.prv_codi  = pv.prv_codi
-order by c.emp_codi,c.eje_nume,c.pcc_nume,l.pcl_numli]]></queryString>
+order by c.emp_codi,c.eje_nume,c.pcc_nume,l.pcl_numli]]>
+	</queryString>
 	<field name="eje_nume" class="java.lang.Integer"/>
 	<field name="emp_codi" class="java.lang.Integer"/>
 	<field name="pcc_nume" class="java.lang.Integer"/>
@@ -62,1023 +49,610 @@ order by c.emp_codi,c.eje_nume,c.pcc_nume,l.pcl_numli]]></queryString>
 	<variable name="tcanti" class="java.lang.Double" resetType="Group" resetGroup="pccnume" calculation="Sum">
 		<variableExpression><![CDATA[$F{pcl_cantpe}]]></variableExpression>
 	</variable>
-		<group  name="pccnume" isStartNewColumn="false" isStartNewPage="true" isResetPageNumber="false" isReprintHeaderOnEachPage="false" minHeightToStartNewPage="0" >
-			<groupExpression><![CDATA[$F{pcc_nume}]]></groupExpression>
-			<groupHeader>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-			</groupHeader>
-			<groupFooter>
-			<band height="65"  isSplitAllowed="true" >
+	<group name="pccnume" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{pcc_nume}]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="65" splitType="Stretch">
 				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="4"
-						y="1"
-						width="56"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+					<reportElement key="staticText" mode="Opaque" x="4" y="1" width="56" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="a1dda7d6-c0f3-4fdc-bf55-9f8c83f92029"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-				<text><![CDATA[Coment:]]></text>
+					<text><![CDATA[Coment:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="pccnume"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="67"
-						y="1"
-						width="497"
-						height="32"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+				<textField evaluationTime="Group" evaluationGroup="pccnume" pattern="" isBlankWhenNull="false">
+					<reportElement key="textField" mode="Opaque" x="67" y="1" width="497" height="32" forecolor="#000000" backcolor="#FFFFFF" uuid="259febc5-5d38-4861-a499-fb61f1a63372"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{pcc_comen}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{pcc_comen}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="128"
-						y="40"
-						width="39"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="true" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+					<reportElement key="staticText" mode="Opaque" x="128" y="40" width="39" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="d01c400c-0cea-4a39-899d-20d3b7cbf8c3"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="true" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-				<text><![CDATA[Total]]></text>
+					<text><![CDATA[Total]]></text>
 				</staticText>
 				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="184"
-						y="40"
-						width="64"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+					<reportElement key="staticText" mode="Opaque" x="184" y="40" width="64" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="83b1cc14-c204-42c1-9a01-ec9115fe9aa6"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-				<text><![CDATA[Unidades]]></text>
+					<text><![CDATA[Unidades]]></text>
 				</staticText>
 				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="326"
-						y="40"
-						width="37"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+					<reportElement key="staticText" mode="Opaque" x="326" y="40" width="37" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="36357bcb-1181-4a75-9f18-78fb5d7f7495"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-				<text><![CDATA[Kilos]]></text>
+					<text><![CDATA[Kilos]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern=" #,##0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="252"
-						y="40"
-						width="66"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+				<textField pattern=" #,##0" isBlankWhenNull="false">
+					<reportElement key="textField" mode="Opaque" x="252" y="40" width="66" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="bd1aa074-551f-450f-afdb-490cd5b3fc49"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{tindiv}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{tindiv}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern=" #,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="374"
-						y="40"
-						width="84"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+				<textField pattern=" #,##0.00" isBlankWhenNull="false">
+					<reportElement key="textField" mode="Opaque" x="374" y="40" width="84" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="ab0592f0-cd0d-478c-bc69-1df35a375576"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{tcanti}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{tcanti}]]></textFieldExpression>
 				</textField>
-				<rectangle radius="5" >
-					<reportElement
-						mode="Transparent"
-						x="116"
-						y="34"
-						width="348"
-						height="28"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="rectangle"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<graphicElement stretchType="NoStretch" pen="Thin" fill="Solid" />
+				<rectangle radius="5">
+					<reportElement key="rectangle" mode="Transparent" x="116" y="34" width="348" height="28" forecolor="#000000" backcolor="#FFFFFF" uuid="6cf87c44-7e4b-4dc3-b278-cb316bb47520"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.5" lineStyle="Solid"/>
+					</graphicElement>
 				</rectangle>
 			</band>
-			</groupFooter>
-		</group>
-		<background>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</background>
-		<title>
-			<band height="282"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="62"
-						y="127"
-						width="318"
-						height="20"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{prv_nomb}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="294"
-						y="204"
-						width="183"
-						height="20"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="282" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="62" y="127" width="318" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="6f9d2424-18df-4900-a43a-18d7ee5707ac"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prv_nomb}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="294" y="204" width="183" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="7861a276-3920-420b-ac27-c5ef6daf49fe"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[Fecha Recepcion/Date of arrival:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" pattern="dd-MM-yy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="480"
-						y="204"
-						width="77"
-						height="20"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{pcc_fecrec}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="421"
-						y="105"
-						width="64"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+			</staticText>
+			<textField pattern="dd-MM-yy" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Opaque" x="480" y="204" width="77" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="6e0cd08a-79dc-4cc2-b925-4e2c3aa15494"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pcc_fecrec}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="421" y="105" width="64" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="4fa15918-4393-4171-afae-bb5f3d14397b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[Nº Pedido]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="489"
-						y="105"
-						width="54"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{pcc_nume}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="384"
-						y="127"
-						width="46"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="true" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{prv_codi}]]></textFieldExpression>
-				</textField>
-				<image  scaleImage="FillFrame" vAlign="Top" hAlign="Left" isUsingCache="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="5"
-						y="3"
-						width="107"
-						height="79"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="image"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<graphicElement stretchType="NoStretch" pen="None" fill="Solid" />
-					<imageExpression class="java.lang.String"><![CDATA[$P{logotipo}]]></imageExpression>
-				</image>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="117"
-						y="3"
-						width="157"
-						height="77"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<text><![CDATA[Comercial IberRioja SL
-Crta. El Cortijo, KM. 3
-26001 Logroño (La Rioja)
-Tno: 9(41) 210370
-Fax: 9(41) 212505]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="3"
-						y="105"
-						width="86"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="489" y="105" width="54" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="b24c9e4c-4dbf-4d1c-97f7-5b0865df85e0"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pcc_nume}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="384" y="127" width="46" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="0e2bf843-ee0b-4985-9928-aef684caf521"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prv_codi}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Left" vAlign="Top" isUsingCache="false">
+				<reportElement key="image" mode="Opaque" x="5" y="3" width="107" height="79" forecolor="#000000" backcolor="#FFFFFF" uuid="e48348cc-ee2c-46d0-9112-c4685c060d5c"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.0" lineStyle="Solid"/>
+				</graphicElement>
+				<imageExpression><![CDATA[$P{logotipo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="117" y="3" width="267" height="77" forecolor="#000000" backcolor="#FFFFFF" uuid="81b0b2b1-add0-4f0a-a5a1-88120259a5db"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Vacunos Puente S.LU.
+Polígono La Alberguería,
+C/ Angel Arina Fernández N.2
+Viana – Navarra – España C.P. 31230
+Teléfono: 948 646 679   Fax: 948 645 590]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="3" y="105" width="86" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="0f3b85ed-6a59-43f4-a56f-6b0af87d901e"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[Fecha/Date:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" pattern="dd-MM-yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="97"
-						y="105"
-						width="102"
-						height="20"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{pcc_fecped}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="3"
-						y="127"
-						width="54"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+			</staticText>
+			<textField pattern="dd-MM-yyyy" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="97" y="105" width="102" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="97e6fd4f-07bb-49b3-bc75-82a5a0f3b4e2"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pcc_fecped}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="3" y="127" width="54" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="6df4af0f-8537-42bb-ab97-c3a3741d4c55"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[Para/To:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="1"
-						y="150"
-						width="127"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="1" y="150" width="127" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="b6afefde-0cfa-4860-8f8d-a49336aa4bec"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[Atencion/Attention: ]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="135"
-						y="150"
-						width="296"
-						height="20"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{prv_percon}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="2"
-						y="174"
-						width="58"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="135" y="150" width="296" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="294c3be8-bd09-447d-8710-452e4330e2d7"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prv_percon}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="2" y="174" width="58" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="ca5aa884-c257-48da-a1e6-b1697107fd4b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[De/From:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="66"
-						y="174"
-						width="142"
-						height="20"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{nomusu}]]></textFieldExpression>
-				</textField>
-				<line direction="BottomUp">
-					<reportElement
-						mode="Opaque"
-						x="4"
-						y="92"
-						width="543"
-						height="0"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<graphicElement stretchType="NoStretch" pen="2Point" fill="Solid" />
-				</line>
-				<line direction="BottomUp">
-					<reportElement
-						mode="Opaque"
-						x="4"
-						y="200"
-						width="543"
-						height="0"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<graphicElement stretchType="NoStretch" pen="2Point" fill="Solid" />
-				</line>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="2"
-						y="204"
-						width="125"
-						height="20"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="66" y="174" width="142" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="d7175bc4-e131-4361-b4f2-0c17e3201838"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nomusu}]]></textFieldExpression>
+			</textField>
+			<line direction="BottomUp">
+				<reportElement key="line" mode="Opaque" x="4" y="92" width="543" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="b39b4065-cad9-422f-96ea-50605b9aeafb"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line direction="BottomUp">
+				<reportElement key="line" mode="Opaque" x="4" y="200" width="543" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="029690dd-759e-45cf-b73d-7fdc2682b479"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="2" y="204" width="125" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="e649f583-5da4-46bd-9a1a-3668f39696af"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[ASUNTO / SUBJECT: ]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="2"
-						y="225"
-						width="556"
-						height="42"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{subject}]]></textFieldExpression>
-				</textField>
-				<line direction="BottomUp">
-					<reportElement
-						mode="Opaque"
-						x="2"
-						y="274"
-						width="553"
-						height="0"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<graphicElement stretchType="NoStretch" pen="Dotted" fill="Solid" />
-				</line>
-			</band>
-		</title>
-		<pageHeader>
-			<band height="5"  isSplitAllowed="true" >
-			</band>
-		</pageHeader>
-		<columnHeader>
-			<band height="23"  isSplitAllowed="true" >
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="1"
-						width="41"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" mode="Opaque" x="2" y="225" width="556" height="42" forecolor="#000000" backcolor="#FFFFFF" uuid="5cddedca-ef4a-43c8-b1df-733b57f4689b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{subject}]]></textFieldExpression>
+			</textField>
+			<line direction="BottomUp">
+				<reportElement key="line" mode="Opaque" x="2" y="274" width="553" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="c3ad8d92-4682-4be1-a02b-87ddf8ad86b5"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="1.0" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="5" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="0" y="1" width="41" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="b0024472-9b25-4a9c-97db-14d74feb35bf"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[Produc.	]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="42"
-						y="0"
-						width="195"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="42" y="0" width="195" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="209296ad-1548-4e6f-92c6-ace9e3095097"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[Nombre/Description]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="239"
-						y="0"
-						width="30"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="239" y="0" width="30" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="c0452824-3caf-4fb0-b3a7-9aabfef9e622"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[Unid]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="270"
-						y="0"
-						width="60"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="270" y="0" width="60" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="2011c195-f3dd-426f-b683-021233cff70b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[Kilos]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="332"
-						y="0"
-						width="50"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="332" y="0" width="50" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="6aeac7bc-06ff-4b8e-8ce5-39a0ca39c318"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[Precio]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Opaque"
-						x="384"
-						y="0"
-						width="182"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="staticText"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="384" y="0" width="182" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="54c7bdfa-937a-42eb-b9c2-addfff04e857"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
 				<text><![CDATA[Comentario/Comment]]></text>
-				</staticText>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="20"
-						width="40"
-						height="0"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<graphicElement stretchType="NoStretch" pen="Thin" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="42"
-						y="20"
-						width="195"
-						height="0"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<graphicElement stretchType="NoStretch" pen="Thin" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="239"
-						y="20"
-						width="30"
-						height="0"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<graphicElement stretchType="NoStretch" pen="Thin" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="270"
-						y="20"
-						width="60"
-						height="0"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<graphicElement stretchType="NoStretch" pen="Thin" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="332"
-						y="20"
-						width="50"
-						height="0"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<graphicElement stretchType="NoStretch" pen="Thin" fill="Solid" />
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="384"
-						y="20"
-						width="182"
-						height="0"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="line"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<graphicElement stretchType="NoStretch" pen="Thin" fill="Solid" />
-				</line>
-			</band>
-		</columnHeader>
-		<detail>
-			<band height="20"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" pattern="####0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="0"
-						width="41"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{pro_codi}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="42"
-						y="0"
-						width="195"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{pro_nomb}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern=" #,##0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="239"
-						y="0"
-						width="30"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{pcl_nucape}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern=" #,##0.0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="270"
-						y="0"
-						width="60"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{pcl_cantpe}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern=" ###0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="330"
-						y="0"
-						width="50"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false">
-							<printWhenExpression><![CDATA[new Boolean($P{verPrecios}.booleanValue()==true)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{pcl_precpe}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="384"
-						y="0"
-						width="182"
-						height="19"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="textField"
-						stretchType="NoStretch"
-						positionType="FixRelativeToTop"
-						isPrintRepeatedValues="true"
-						isRemoveLineWhenBlank="false"
-						isPrintInFirstWholeBand="false"
-						isPrintWhenDetailOverflows="false"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="SansSerif"  size="12" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{pcl_comen}]]></textFieldExpression>
-				</textField>
-			</band>
-		</detail>
-		<columnFooter>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</columnFooter>
-		<pageFooter>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</pageFooter>
-		<summary>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</summary>
+			</staticText>
+			<line>
+				<reportElement key="line" mode="Opaque" x="0" y="20" width="40" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="686be3ea-0786-482f-960c-c1f97bf6fa4a"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line" mode="Opaque" x="42" y="20" width="195" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="52289a78-e619-4847-a5ee-89ad2cfdf3e7"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line" mode="Opaque" x="239" y="20" width="30" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="4818c05a-64fc-4ba0-b390-122ff38768a1"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line" mode="Opaque" x="270" y="20" width="60" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="711a60ac-c000-48bd-ba18-9b3d735ce3ff"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line" mode="Opaque" x="332" y="20" width="50" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="8c9b5f98-9bba-462a-951e-ede45a7d5635"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line" mode="Opaque" x="384" y="20" width="182" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="d60dafa7-2e7a-4cda-a489-ea631396990a"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="####0" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="0" y="0" width="41" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="68fee8e7-6383-458b-b1cb-1e469f9c4ddb"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pro_codi}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="42" y="0" width="195" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="7de83894-6e67-4df0-9a1c-b0e0ddb63f29"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
+			</textField>
+			<textField pattern=" #,##0" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="239" y="0" width="30" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="e4433cd3-5490-49df-b63a-b208c36573a4"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pcl_nucape}]]></textFieldExpression>
+			</textField>
+			<textField pattern=" #,##0.0" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="270" y="0" width="60" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="7da11e7d-3361-4bf8-9e75-4d90e31d5f4e"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pcl_cantpe}]]></textFieldExpression>
+			</textField>
+			<textField pattern=" ###0.00" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="330" y="0" width="50" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="21e925c6-0610-4524-824f-5cc9939119eb">
+					<printWhenExpression><![CDATA[new Boolean($P{verPrecios}.booleanValue()==true)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pcl_precpe}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="384" y="0" width="182" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="609241f0-3908-4bfc-8a65-9f59fd6a33d4"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pcl_comen}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
 </jasperReport>

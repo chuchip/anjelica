@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2017-06-19T11:40:17 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="etiqueta" pageWidth="226" pageHeight="226" columnWidth="222" leftMargin="4" rightMargin="0" topMargin="2" bottomMargin="2" uuid="f9b8d25b-383c-4386-b023-7f424b6aee8b">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.unit." value="mm"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="normal" isDefault="true" markup="none" fontName="SansSerif" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<parameter name="lote" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="articulo" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="nacido" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="cebado" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="despiezado" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ntraza" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="pesoN" class="java.lang. Double" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="conservar" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="sacrificado" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="codbarra" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="codarti" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="fecrecep" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="fecprod" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="feccadu" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="logotipo" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\jpuente.ext\\Documents\\anjelica\\icons\\vp25.png"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="diremp" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Polígono La Alberguería\n"+
+"948 64 66 79\n"+
+"31230 Viana"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="datmat" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["ESPAÑA\n"+
+"10.22780/NA\n"+
+"C.E.E."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecSacr" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[Fecha de Sacrificio]]></parameterDescription>
+	</parameter>
+	<variable name="codbarras" class="java.awt.Image"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band height="210">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Transparent" x="140" y="123" width="80" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="361bec11-8174-4a9f-9d1d-5210d21ce0fd"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{lote}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Transparent" x="159" y="11" width="58" height="34" forecolor="#000000" backcolor="#FFFFFF" uuid="af10c17a-952e-46dd-b9cb-2ee9fb140d5b"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{datmat}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="81" y="46" width="138" height="28" forecolor="#000000" backcolor="#FFFFFF" uuid="52437f3c-7070-426d-9913-e26acd7c3468">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.4" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{articulo}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Left" vAlign="Top" isUsingCache="false">
+				<reportElement key="image" mode="Opaque" x="4" y="0" width="77" height="74" forecolor="#000000" backcolor="#FFFFFF" uuid="392f4048-459a-4f9c-b02b-fe7b2cbff621"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<graphicElement fill="Solid"/>
+				<imageExpression><![CDATA[$P{logotipo}]]></imageExpression>
+			</image>
+			<ellipse>
+				<reportElement key="ellipse" mode="Transparent" x="155" y="7" width="66" height="36" forecolor="#000000" backcolor="#FFFFFF" uuid="a0b25352-549e-49bd-9ccc-2bff18683bc5"/>
+				<graphicElement fill="Solid"/>
+			</ellipse>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="29" y="75" width="76" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c2373ded-6517-40d1-a091-d38b2025e82e"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nacido}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="108" y="75" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="885d44cc-880b-4dac-a1f1-2ef9cca28525"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Eleve]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="159" y="75" width="62" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="a572d01a-d927-4b8d-b4a9-a078bea474d2"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cebado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="3" y="87" width="66" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f0de37e5-577d-43d0-ba89-b0920bac2d29"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Abattu]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="70" y="87" width="148" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="4b8c1453-c914-473f-9f79-e4f653a94422">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{sacrificado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="3" y="99" width="66" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6d050e79-c4f7-4a3e-a89c-f371d1039dc6"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Conditionee]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="70" y="99" width="148" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="3d78e540-5a92-4bd2-a1f1-6c8f805b201a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{despiezado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="3" y="111" width="66" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c77da3d6-7bde-4c37-a7a8-77b14555039c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[traçabilité]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="70" y="111" width="152" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="383cfb09-d523-4b6c-9188-481c092536ab">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ntraza}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##0.00" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Transparent" x="130" y="135" width="66" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="07b4a5dc-a4f4-4419-bb4c-5308854bdc6c"/>
+				<box>
+					<topPen lineWidth="0.3" lineStyle="Dotted" lineColor="#000000"/>
+					<leftPen lineWidth="0.3" lineStyle="Dotted" lineColor="#000000"/>
+					<bottomPen lineWidth="0.3" lineStyle="Dotted" lineColor="#000000"/>
+					<rightPen lineWidth="0.3" lineStyle="Dotted" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None" markup="html">
+					<font fontName="Monospaced" size="18" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pesoN}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="normal" mode="Opaque" x="3" y="149" width="127" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="6a2bbadc-2b05-47af-82b6-fb9512f33901"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{conservar}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="81" y="33" width="26" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="9c1750dd-064e-46c4-879a-d301dc722876"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ REF:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="109" y="33" width="48" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="6a8a42ac-037b-4c35-8279-397077013b8c"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{codarti}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MM-yy" isBlankWhenNull="true">
+				<reportElement key="textField" style="normal" mode="Opaque" x="70" y="123" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e82ceeb9-673f-40ba-ab52-f3e23e005a8c"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fecprod}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="120" y="123" width="20" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="ac0e308f-355f-45e5-ae09-106a04983dd7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Lot]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Transparent" x="81" y="0" width="134" height="33" forecolor="#000000" backcolor="#FFFFFF" uuid="560dfbf4-2722-46af-8c54-d844abf2fadf"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{diremp}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="4" y="172" width="207" height="37" uuid="c1598d06-2533-4892-afab-a6c1d0b6b37b"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="true" checksumRequired="false" barWidth="0" barHeight="0">
+					<jr:codeExpression><![CDATA[$P{codbarra}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField pattern="dd-MM-yy" isBlankWhenNull="true">
+				<reportElement key="textField" style="normal" mode="Opaque" x="90" y="136" width="38" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6cd2d55d-9679-48dd-aa63-d4c80259346b">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{feccadu}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-1" style="normal" mode="Opaque" x="197" y="136" width="22" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="85db6593-a34c-4b8e-ba42-0bdc6d711699">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[KG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="3" y="123" width="66" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="da098111-2298-4a8e-833d-328220e2aed0">
+					<printWhenExpression><![CDATA[$P{fecprod}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Date Abbatage]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" style="normal" mode="Opaque" x="3" y="136" width="87" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e69c7b8f-2642-4bd3-9c2e-7238462b47ba"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Aconsommer jusqu'au]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText" mode="Opaque" x="3" y="75" width="26" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="3d705f9c-5509-4428-a652-e41b6060b105"/>
+				<box>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Ne]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band/>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

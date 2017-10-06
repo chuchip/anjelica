@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-07-18T14:13:35 -->
+<!-- 2017-10-03T13:13:00 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relAlbRutaExt" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="16085ab3-6a21-4d59-a4cb-6c23448b50d6">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -26,6 +26,7 @@ cop_nombre,emp_nomb,	 -- Nombre de Empresa
  emp_telef ,	 -- Telefono
  emp_fax ,	 -- FAX
  emp_nif,	 -- NIF
+ cli_codrut, -- Codigo ruta
  emp_nomprv,alr_horrep,alr_comrep,pai_nomb
 from anjelica.v_albruta as a,anjelica.v_cliente as cl left join anjelica.prov_espana on   cl.pai_codi=11 and substring(cli_codpoe  from 1 for 2) = cop_codi,
 anjelica.v_empresa   as em, anjelica.paises as pai
@@ -84,6 +85,7 @@ order by alr_orden]]>
 	<field name="pai_nomb" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="cli_codrut" class="java.lang.String"/>
 	<variable name="numAlb" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{avc_nume}]]></variableExpression>
 	</variable>
@@ -521,7 +523,7 @@ order by alr_orden]]>
 				<textFieldExpression><![CDATA[$F{alr_horrep}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" mode="Opaque" x="52" y="60" width="468" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="9dd5f586-9ad7-48de-93a4-1c901e56ac73">
+				<reportElement key="textField" mode="Opaque" x="52" y="60" width="438" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="9dd5f586-9ad7-48de-93a4-1c901e56ac73">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
@@ -545,6 +547,16 @@ order by alr_orden]]>
 			<textField>
 				<reportElement x="460" y="22" width="104" height="18" uuid="1b5f2197-5449-41e4-a88b-8b880ce99543"/>
 				<textFieldExpression><![CDATA[$F{pai_nomb}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="495" y="60" width="40" height="18" uuid="70beabe8-4c07-42c0-9f5c-45b028e7e2a9">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Et.Merc.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="" x="535" y="60" width="29" height="18" uuid="54303a24-5c1e-46df-b102-f056d4bc1c40"/>
+				<textFieldExpression><![CDATA[$F{cli_codrut}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

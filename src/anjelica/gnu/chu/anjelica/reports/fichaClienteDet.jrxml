@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2017-01-31T19:17:54 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fichaClienteDet" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a30f4e35-157d-4e20-bbbf-54b01488d929">
+<!-- 2017-10-03T19:29:46 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fichaClienteDet" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="a30f4e35-157d-4e20-bbbf-54b01488d929">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Anjelica "/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<parameter name="ejeNume" class="java.lang.Integer"/>
 	<parameter name="pvcNume" class="java.lang.Integer"/>
 	<queryString>
-		<![CDATA[select a.pro_codi,pro_nomb,pvl_canti,pvl_tipo,pvl_precio, pvl_comen
+		<![CDATA[select eje_nume,pvc_nume,pvc_fecent, a.pro_codi,pro_nomb,pvl_canti,pvl_tipo,pvl_precio, pvl_comen
 from  anjelica.v_pedven as v left join anjelica.v_articulo as a on a.pro_codi=v.pro_codi where 
 eje_nume = $P{ejeNume} and
 pvc_nume = $P{pvcNume}
@@ -18,6 +19,9 @@ limit 5]]>
 	<field name="pvl_tipo" class="java.lang.String"/>
 	<field name="pvl_precio" class="java.lang.Double"/>
 	<field name="pvl_comen" class="java.lang.String"/>
+	<field name="eje_nume" class="java.lang.Integer"/>
+	<field name="pvc_nume" class="java.lang.Integer"/>
+	<field name="pvc_fecent" class="java.sql.Date"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -32,24 +36,28 @@ limit 5]]>
 	</columnHeader>
 	<detail>
 		<band height="35" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField>
-				<reportElement x="10" y="0" width="80" height="17" uuid="2788db5f-4888-468b-b7fe-728091a826d5"/>
+				<reportElement x="2" y="17" width="80" height="17" uuid="2788db5f-4888-468b-b7fe-728091a826d5"/>
 				<textFieldExpression><![CDATA[$F{pro_codi}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="10" y="18" width="320" height="17" uuid="3847dd16-4e2c-4e4f-9504-e1e612decd2e"/>
+				<reportElement x="410" y="17" width="142" height="17" uuid="3847dd16-4e2c-4e4f-9504-e1e612decd2e">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
 				<textFieldExpression><![CDATA[$F{pvl_comen}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="366" y="0" width="20" height="17" uuid="411c8b4e-fbb6-4d39-a579-f6eee5f13762"/>
+				<reportElement x="350" y="17" width="20" height="17" uuid="411c8b4e-fbb6-4d39-a579-f6eee5f13762"/>
 				<textFieldExpression><![CDATA[$F{pvl_tipo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="0" width="230" height="17" uuid="5decd362-4149-42c5-a5cf-071297341e49"/>
+				<reportElement x="86" y="17" width="230" height="17" uuid="5decd362-4149-42c5-a5cf-071297341e49"/>
 				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
 			</textField>
 			<textField pattern="##0">
-				<reportElement x="334" y="0" width="30" height="17" uuid="3364d0f6-0195-43cc-a7b9-6c1a502d33b1">
+				<reportElement x="318" y="17" width="30" height="17" uuid="3364d0f6-0195-43cc-a7b9-6c1a502d33b1">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -57,12 +65,41 @@ limit 5]]>
 				<textFieldExpression><![CDATA[$F{pvl_canti}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="391" y="0" width="40" height="17" uuid="974be0a0-68dc-452c-94ee-35db80fc7d88">
+				<reportElement x="372" y="17" width="28" height="17" uuid="974be0a0-68dc-452c-94ee-35db80fc7d88">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{pvl_precio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="40" height="16" uuid="3144415a-21fa-4cd8-8906-896078a8a6dc">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Pedido]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement x="40" y="0" width="30" height="16" uuid="31b2fb22-201d-4fb8-80b1-8eb7ee98ec71"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{eje_nume}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="76" y="0" width="60" height="16" uuid="81e9cd4f-87c1-4b50-a3fd-89c6b619c4fd"/>
+				<textFieldExpression><![CDATA[$F{pvc_nume}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="167" y="0" width="70" height="16" uuid="67f9ea5f-f0c2-4c48-87d1-c25b91972695">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Fecha Entrega]]></text>
+			</staticText>
+			<textField pattern="M/d/yy">
+				<reportElement x="237" y="0" width="70" height="16" uuid="7f415886-ebf6-4502-affb-1948c3600de4">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{pvc_fecent}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -70,7 +107,9 @@ limit 5]]>
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band splitType="Stretch"/>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</band>
 	</pageFooter>
 	<summary>
 		<band splitType="Stretch"/>
