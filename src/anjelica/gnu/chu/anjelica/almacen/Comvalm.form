@@ -216,7 +216,7 @@
             </Component>
             <Component class="gnu.chu.camposdb.proPanel" name="pro_codiE">
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.camposdb.proPanel()&#xa;{&#xa;    @Override&#xa;    public void afterFocusLost(boolean error)&#xa;    {&#xa;        if (!error)&#xa;        return;&#xa;        try {&#xa;            pro_cosincE.setValorDec(getLikeProd().getDouble(&quot;pro_cosinc&quot;));&#xa;            &#xa;&#xa;        } catch (Exception k )&#xa;        {&#xa;            Error(&quot;Error al buscar Costo a incrementar al producto&quot;,k);&#xa;        }&#xa;    }}&#xa;    "/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.camposdb.proPanel()&#xa;{&#xa;    @Override&#xa;    protected void despuesLlenaCampos()&#xa;    {&#xa;        Bacepta.doClick();&#xa;    }&#xa;    @Override&#xa;    public void afterFocusLost(boolean error)&#xa;    {&#xa;        if (!error)&#xa;        return;&#xa;        try {&#xa;            pro_cosincE.setValorDec(getLikeProd().getDouble(&quot;pro_cosinc&quot;));&#xa;&#xa;        } catch (Exception k )&#xa;        {&#xa;            Error(&quot;Error al buscar Costo a incrementar al producto&quot;,k);&#xa;        }&#xa;    }}&#xa;    "/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

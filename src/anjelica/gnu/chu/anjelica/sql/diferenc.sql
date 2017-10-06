@@ -1,3 +1,4 @@
+alter table taricli add tar_butapa int not null default 1; -- Buscar tarifa padre . 1 Si. 0 No
 --
 -- Tiempos en documento
 --

@@ -304,25 +304,19 @@ public class RepEtiqueta extends ventana
     deo_kilosE.requestFocusLater();
     
    }
-    void Bindi_actionPerformed()
-    {
-      try {
-      if (muerto)
-          return;
-      if (!cambioInd())
-          return;
-  
+  boolean checkIndividuo() throws SQLException
+  {
       if (!pro_codiE.controlar())
       {
         mensajeErr(pro_codiE.getMsgError());
-        return;
+        return false;
       }
-      famProd = pro_codiE.getFamilia();
+       famProd = pro_codiE.getFamilia();
       if (pro_ejercE.getValorInt() == 0)
       {
         mensajeErr("Introduzca Ejercicio de Lote");
         pro_ejercE.requestFocus();
-        return;
+        return false;
       }
 //      if (deo_emplotE.getValorInt() == 0)
 //      {
@@ -334,13 +328,13 @@ public class RepEtiqueta extends ventana
       {
         mensajeErr("Introduzca Serie de Lote");
         pro_serieE.requestFocus();
-        return;
+        return false;
       }
       if (pro_loteE.getValorInt() == 0)
       {
         mensajeErr("Introduzca N.de Lote");
         pro_loteE.requestFocus();
-        return;
+       return false;
       }
     
      
@@ -348,11 +342,24 @@ public class RepEtiqueta extends ventana
       {
         mensajeErr("Introduzca peso de Producto");
         deo_kilosE.requestFocus();
-        return;
+        return false;
       }
-       trazPanel.setDatos(pro_codiE.getValorInt(),pro_ejercE.getValorInt(),pro_serieE.getText(),pro_loteE.getValorInt(),pro_numindE.getValorInt());
-       trazPanel.actualizar();
-       trazPanel.resetCambio();
+      return true;
+  }
+    void Bindi_actionPerformed()
+    {
+      try {
+      if (muerto)
+          return;
+      if (!cambioInd())
+          return;
+      if (!checkIndividuo())
+          return;
+     
+      trazPanel.setDatos(pro_codiE.getValorInt(),pro_ejercE.getValorInt(),pro_serieE.getText(),
+           pro_loteE.getValorInt(),pro_numindE.getValorInt());
+      trazPanel.actualizar();
+      trazPanel.resetCambio();
 
       } catch (Exception k)
       {
@@ -442,7 +449,8 @@ public class RepEtiqueta extends ventana
     {
       try
       {
-        Bindi_actionPerformed();
+        if (!checkIndividuo())
+            return;
         mensajeErr("Espere, por favor ... Imprimiendo");
         etiq.setTipoEtiq(dtStat, EU.em_cod,
                           tipetiqE.getValorInt());
@@ -500,7 +508,16 @@ public class RepEtiqueta extends ventana
 
         Pprinc = new gnu.chu.controles.CPanel();
         cLabel9 = new gnu.chu.controles.CLabel();
-        pro_codiE = new gnu.chu.camposdb.proPanel();
+        pro_codiE = new gnu.chu.camposdb.proPanel()
+        {
+            @Override
+            protected void despuesLlenaCampos()
+            {
+                Bindi_actionPerformed();
+                Baceptar.requestFocus();
+            }
+        }
+        ;
         cLabel6 = new gnu.chu.controles.CLabel();
         pro_ejercE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         cLabel7 = new gnu.chu.controles.CLabel();

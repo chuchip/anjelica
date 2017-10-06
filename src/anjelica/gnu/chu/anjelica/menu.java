@@ -1835,10 +1835,10 @@ void limpiaDB()
   }
   void comprasItem1_actionPerformed(ActionEvent e) {
     Hashtable ht = new Hashtable();
-     ht.put("modPrecio","true");
+     ht.put("modPrecio","false");
 ////    ht.put("modConsulta","true");
-     ht.put("admin","true");
-     ht.put("AlbSinPed","true");
+//     ht.put("godmode","true");
+     ht.put("AlbSinPed","false");
 
 //     ht.put("verPrecio","true");
      lanzaEjecutable(new gnu.chu.anjelica.compras.MantAlbComCarne(menu.this, EU,ht));
@@ -2138,7 +2138,7 @@ void pdreprese_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
     ht.put("modPrecio","true");
 //     ht.put("ponPrecio","true");
-    ht.put("admin","true");
+    ht.put("admin","false");
     if (dtAdd.getConexion().getConURL().contains("anjelicars"))
     {
         ht.put("facil","true");

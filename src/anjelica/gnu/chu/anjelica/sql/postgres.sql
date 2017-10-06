@@ -1989,9 +1989,10 @@ create  index ix_tari1 on anjelica.tarifa(tar_fecini,tar_fecfin,tar_codi,pro_cod
 -- drop table taricli;
 create table anjelica.taricli
 (
-tar_fecini date not null,
+tar_fecini date not null, -- Fecha Inicial
 tar_fecfin date,	-- 
 cli_codi int not null, -- Codigo de Tarifa
+tar_butapa int not null default 1, -- Buscar tarifa padre . 1 Si. 0 No
 tar_linea int not null, -- Linea de tarifa
 pro_codart varchar(15) not null, -- Codigo de Articulo
 pro_nomb VARCHAR(50) not null, -- Descripcion del Articulo
@@ -4025,7 +4026,7 @@ grant select on anjelica.stkpart to public;
 create table anjelica.mvtosalm
 (	
     mvt_oper char(10) not null, --
-    mvt_time timestamp not null default current_timestamp,	-- Fecha de mvto.
+     timestamp not null default current_timestamp,	-- Fecha de mvto.
 	mvt_tipo char(1) not null default 'S', -- Entrada o Salida
 	mvt_tipdoc char(1) not null, -- C (Alb. Compra), V (Alb.Venta), R (Regulariz), Despiece Entrada a alm.(d), Desp. Salida (D)
     alm_codi int not null,             -- Almacen

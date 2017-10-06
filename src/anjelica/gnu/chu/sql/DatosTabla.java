@@ -2683,7 +2683,7 @@ private String parseaSelect(boolean forUpdate) throws SQLException
       for (n=1;n<= getColumnCount();n++)
       {
         if (dtFin.findColumn(getColumnName(n),false)==0)
-            continue;
+            continue; // No existe la columna en destino.
         if (getTipCampo(n)==Types.TIMESTAMP)
         {
             dtFin.setDato(getColumnName(n) ,getTimeStamp(n));

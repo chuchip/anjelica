@@ -309,7 +309,8 @@ public class ValDespi extends ventana {
        jtDesp.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-              
+                if (jf==null)
+                    return;
                 if (jtDesp.getSelectedColumn()==JTDES_NUMDES && e.getClickCount()>1)
                 {
                       ejecutable prog;
@@ -685,7 +686,6 @@ public class ValDespi extends ventana {
     */
    public static void  anulaValoracionDesp(DatosTabla dt,int ejeNume,String tipoDesp,int deoCodi) throws SQLException
    {
-       
        String s = "UPDATE v_despfin SET def_prcost = 0 "+
                 " WHERE eje_nume = " + ejeNume +
                 " AND " +
@@ -1765,7 +1765,7 @@ public class ValDespi extends ventana {
  }
  String getStrSqlFin(int ejeNume,boolean agrupa, int numDesp,boolean isGrupo)
  {
-      return " select f.pro_codi as pro_codi,sum(f.def_numpie) as def_numpie, " +
+      return " select f.pro_codi as pro_codi,sum(f.def_unicaj) as def_unicaj, " +
          " sum(f.def_kilos) as def_kilos ,sum(f.def_prcost*f.def_kilos) as def_prcost, " +
          " avg(def_preusu) as def_preusu "+
          " from v_despfin as f "+
@@ -1971,7 +1971,7 @@ public class ValDespi extends ventana {
 
          v.add("" + codArt);
          v.add(pro_codiE.getNombArt("" + codArt));
-         v.add(dtAdd.getString("def_numpie"));
+         v.add(dtAdd.getString("def_unicaj"));
          v.add(dtAdd.getString("def_kilos"));
          v.add("" + (dtAdd.getDouble("def_prcost", true) / dtAdd.getDouble("def_kilos", true)));
          v.add("");

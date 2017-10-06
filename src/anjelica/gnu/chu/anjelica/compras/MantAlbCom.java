@@ -264,7 +264,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         return false;
       try
       {
-        if (! isLineaEntera(row))
+        if (! isLineaEntera(row) && !ARG_GOD)
           return false;
         if (jt.getValorInt(row,0)==0 && !jtDes.isVacio())
         {
@@ -401,6 +401,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   CLabel prv_codiL1 = new CLabel();
   CCheckBox opBloquea = new CCheckBox();
   boolean ARG_ADMIN=false;
+  boolean ARG_GOD=false;
   boolean ARG_RECLAS=true;
   boolean ARG_MODPRECIO=false;
   boolean ARG_ALBSINPED=false;
@@ -703,11 +704,14 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
                 ARG_MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
             if (ht.get("admin") != null)
                 ARG_ADMIN = Boolean.parseBoolean(ht.get("admin"));
+             if (ht.get("godmode") != null)
+                ARG_GOD = Boolean.parseBoolean(ht.get("godmode"));
             if (ht.get("AlbSinPed") != null)
                 ARG_ALBSINPED = Boolean.parseBoolean(ht.get("AlbSinPed"));
             if (ht.get("reclas") != null)
                 ARG_RECLAS = Boolean.parseBoolean(ht.get("reclas"));
-
+            if (ARG_GOD)
+                ARG_ADMIN=true;
             if (ARG_ADMIN)
             {
                 ARG_RECLAS = true;
@@ -2638,9 +2642,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         }
         if (acp_cantiE.getValorDec() == 0 && jtDes.getValorInt(row, DESNIND) == 0)
             return -1;
-        if (acp_cantiE.getValorDec() == 0)
+        if (acp_cantiE.getValorDec() <= 0)
         {
-            mensajeErr("Si tiene individuo no se puede dejar el peso a 0. Borre el individuo");
+            mensajeErr("Si tiene individuo el peso no puede ser inferior a  0");
             return 0;
         }
         int ret = cambiaLinDesg0(row);
@@ -2859,7 +2863,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 */
 
   /**
-   * Guarda Linea despiece
+   * Guarda Linea desglose
    * @throws SQLException error en base datos
    * @throws java.text.ParseException error en sentencia select
    * @throws java.net.UnknownHostException error en SetBloqueo
@@ -3318,7 +3322,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
                      acc_serieE.getText(), acc_numeE.getValorInt(),
                      jtDes.getValorInt(0), alm_codiE.getValorInt(),
                      acp_cantiE.getValorDec(), acp_canindE.getValorInt())) {
-                    jtDes.setLineaEditable(false);
+                   
+                    jtDes.setLineaEditable(ARG_GOD);
                 } else {
                     if (ARG_ADMIN) {
                         acp_numindE.setEditable(true);
@@ -3493,8 +3498,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
       if (hisRowid!=0)
       {
-        msgBox("Viendo albaran historico ... IMPOSIBLE MODIFICAR/BORRAR");       
-        return false;
+        msgBox("Viendo albaran historico ... IMPOSIBLE MODIFICAR/BORRAR");     
+        if (!ARG_GOD)
+         return false;
       }
       s = "SELECT * FROM V_albacoc WHERE acc_ano =" + acc_anoE.getValorInt() +
           " and emp_codi = " + emp_codiE.getValorInt() +
@@ -3517,7 +3523,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       }
       if (!ARG_MODPRECIO && opBloquea.isSelected())
       {
-        msgBox("ALBARAN YA TIENE PRECIOS ASIGNADOS .. IMPOSIBLE MODIFICAR");        
+        msgBox("ALBARAN YA TIENE PRECIOS ASIGNADOS .. IMPOSIBLE MODIFICAR");   
         return false;
       }
       if (pdejerci.isCerrado(dtStat, acc_anoE.getValorInt(), emp_codiE.getValorInt()))
@@ -3533,7 +3539,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     if (Formatear.comparaFechas(pdalmace.getFechaInventario(alm_codiE.getValorInt(), dtStat) , acc_fecrecE.getDate())>= 0 )
     {
           msgBox("Albaran con fecha anterior a Ult. Fecha Inventario. Imposible Editar/Borrar");
-          return false;
+          if (!ARG_GOD)
+            return false;
     }
     if (nav.pulsado!=navegador.DELETE)
         return true;
@@ -3541,20 +3548,23 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       if (! jtRecl.isVacio())
       {
         msgBox("Albaran TIENE vertederos Asignados... IMPOSIBLE BORRAR");
-        return false;
+        if (!ARG_GOD)
+          return false;
       }
      
       if (MvtosAlma.hasMvtosSalida(dtCon1, 0, emp_codiE.getValorInt(), acc_anoE.getValorInt(), 
               acc_serieE.getText(), acc_numeE.getValorInt(), 0,0,acc_fecrecE.getText())!=0)
       {
           msgBox("Este albaran tiene mvtos de salida. Imposible BORRAR");
-          return false;
+          if (!ARG_GOD)
+             return false;
       }
            
       if (dtAdd.getInt("frt_ejerc",true)!=0)
       {
         msgBox("Albaran ESTA metido en UNA FRA. DE TRANSP. IMPOSIBLE BORRAR");
-        return false;
+        if (!ARG_GOD)
+             return false;
       }
     return true;
   }
@@ -5442,6 +5452,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   }
   void irParteInc(final int numParte)
   {
+     if (jf==null)
+           return;
       msgEspere("Llamando a  Programa de incidencias");
      new miThread("")
      {
@@ -5454,7 +5466,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
               public void run()
               { 
                   ejecutable prog;                 
-                 
+               
                   if ((prog = jf.gestor.getProceso(MantPartes.getNombreClase())) == null)
                   {
                       resetMsgEspere();
@@ -5691,6 +5703,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       pcc_numeE.setValorDec(conped.getNumPed());
       eje_numeE.setValorDec(conped.getEjePed());
       prv_codiE.setValorInt(conped.getProveedor());  
+      cambioPrv();
       acc_copvfaE.setValorInt(conped.getProveedor());  
     }
     conped.dispose();

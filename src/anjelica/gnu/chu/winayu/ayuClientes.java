@@ -225,10 +225,10 @@ public class ayuClientes extends ventana
         {
             ArrayList v=new ArrayList();
             v.add(dtCon1.getString("cli_codi"));
-            v.add(dtCon1.getString("cli_nomco"));
+            v.add(dtCon1.getString("cli_nomb"));            
             v.add(dtCon1.getString("cli_pobl"));
             v.add(dtCon1.getString("cli_codrut"));
-            v.add(dtCon1.getString("cli_nomb"));
+            v.add(dtCon1.getString("cli_nomco"));
             vd.add(v);
         } while (dtCon1.next());
         jt.setDatos(vd);

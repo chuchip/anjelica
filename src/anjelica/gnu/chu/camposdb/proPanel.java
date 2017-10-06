@@ -554,7 +554,8 @@ public class proPanel extends CPanel
         prp_partE.setValorInt(codBarra.getProLote() );
         pro_codiE.setValorInt(codBarra.getProCodi());
         prp_indiE.setValorInt(codBarra.getProIndi());
-        prp_pesoE.setValorDec(codBarra.getProKilos()); 
+        if (prp_pesoE != null)
+            prp_pesoE.setValorDec(codBarra.getProKilos()); 
         proCodiAnt=0;
         proCodArtAnt="";
         e.consume();
@@ -1539,7 +1540,8 @@ public class proPanel extends CPanel
       prp_serieE.setText(ayuLot.jt.getValString(ayuLot.rowAct, 2));
       prp_partE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, 3));
       prp_indiE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, 4));
-      prp_pesoE.setText(ayuLot.jt.getValString(ayuLot.rowAct, 5));     
+      if (prp_pesoE!=null)
+        prp_pesoE.setText(ayuLot.jt.getValString(ayuLot.rowAct, 5));     
     }
     ayuLot.setVisible(false);
     intfr.setEnabled(true);

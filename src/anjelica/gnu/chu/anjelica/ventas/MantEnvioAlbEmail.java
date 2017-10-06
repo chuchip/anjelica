@@ -84,7 +84,7 @@ public class MantEnvioAlbEmail extends ventana
        if (ht.get("modConsulta") != null)
          ARG_MODCONSULTA = Boolean.parseBoolean(ht.get("modConsulta").toString());
      }
-     setTitulo("Mantenimiento Precios de Albaranes");
+     setTitulo("Envio Masivo Alb. por Email");
      if (jf.gestor.apuntar(this))
        jbInit();
      else
@@ -107,7 +107,7 @@ public class MantEnvioAlbEmail extends ventana
                     ARG_MODCONSULTA = Boolean.parseBoolean(ht.get("modConsulta").toString());
                 }
             }
-            setTitulo("Mantenimiento Precios de Albaranes");
+           setTitulo("Envio Masivo Alb. por Email");
 
 
             jbInit();

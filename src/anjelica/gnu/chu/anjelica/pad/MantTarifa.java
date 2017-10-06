@@ -124,7 +124,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2017-06-19" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2017-10-01" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -929,6 +929,17 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
             if (dt.select(s))
              return dt.getDouble("tar_preci", true)+ proCointa;  
        }
+        s = " SELECT tar_butapa " +
+              " FROM taricli as t "+         
+             " where cli_codi = " + cliCodi +
+             " AND tar_fecini <=  TO_DATE('" + fecAlb + "','dd-MM-yyyy')" +
+             " AND (tar_fecfin >=  TO_DATE('" + fecAlb + "','dd-MM-yyyy') or tar_fecfin is null) "+
+            " order by tar_fecini";
+        if (dt.select(s))
+        {
+            if (dt.getInt("tar_butapa")==0)
+                return 0; // No buscar precio en tarifas generales.
+        }
    }
    /** 
     * Busco precio para el producto en tarifa mandada

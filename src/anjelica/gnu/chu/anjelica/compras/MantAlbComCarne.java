@@ -151,7 +151,8 @@ public class MantAlbComCarne extends MantAlbCom
           if (! jtDes.isLineaEditable())
           {
              mensajeErr("Una linea cuyo individuo haya tenido movientos NO se puede borrar");
-            return false;
+             if (! ARG_GOD)
+                 return false;
           }
           if (jtDes.getValorInt(JTD_NUMIND)==0)
             return true;
@@ -482,7 +483,8 @@ public class MantAlbComCarne extends MantAlbCom
                     int acl_nulin,int mat_codi,int sde_codi,
                     double acp_canti, int acp_canind) throws SQLException
   {
-
+    if (acp_numind>0 && acp_canti<=0)
+        throw new SQLException("Cantidad no puede ser 0, si tiene individuo");
     dtAdd.addNew("v_albcompar",false);
     dtAdd.setDato("acc_ano",acc_anoE.getValorInt());
     dtAdd.setDato("emp_codi",emp_codiE.getValorInt());
@@ -730,6 +732,9 @@ public class MantAlbComCarne extends MantAlbCom
     acp_engpaiE.resetCambio();
     ultMat=null;
   }
+  /**
+   * Ejecuta consulta sobre mataderos
+   */
     void ej_consMat() 
     {
         if (ayuMat.isAlta())

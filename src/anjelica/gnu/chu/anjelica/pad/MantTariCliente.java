@@ -2,7 +2,7 @@
  *
  * <p>Titulo: MantTariCliente </p>
  * <p>Descripción: Mantenimiento Tarifas de Ventas para clientes</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -120,7 +120,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2017-04-07" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2017-10-01" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -420,7 +420,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
     void guardaDatos(String fecha,String tipo)
     {
       try {
-
+        int tarButapa=tar_butapaE.getValorInt(); 
         borDatos(fecha,tipo);
 
         int nRow = jt.getRowCount();
@@ -443,6 +443,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
           dtAdd.addNew();
           dtAdd.setDato("tar_fecini",tar_feciniE.getText(),"dd-MM-yyyy");
           dtAdd.setDato("tar_fecfin",tar_fecfinE.getText(),"dd-MM-yyyy");
+          dtAdd.setDato("tar_butapa",tarButapa);
           dtAdd.setDato("tar_linea",n);
           dtAdd.setDato("cli_codi",cli_codiE.getValorInt());
           dtAdd.setDato("pro_codart",jt.getValString(n,0));
@@ -475,12 +476,16 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
           return;
         tar_feciniE.setText(dtCons.getFecha("tar_fecini","dd-MM-yyyy"));
         cli_codiE.setText(dtCons.getString("cli_codi"));
-        s = "SELECT tar_fecfin " +
+        
+        s = "SELECT tar_fecfin,tar_butapa " +
           " FROM taricli " +
           " WHERE tar_fecini = TO_DATE('"+tar_feciniE.getText()+"','dd-MM-yyyy') "+
           " AND cli_codi = "+tipo;
         if ( dtCon1.select(s))
+        {
+            tar_butapaE.setValor(dtCon1.getString("tar_butapa"));
             tar_fecfinE.setDate(dtCon1.getDate("tar_fecfin"));
+        }
         
         verDatLin(tar_feciniE.getText(),cli_codiE.getText(),tar_fecfinE.getText(),0);
       } catch (Exception k)
@@ -885,12 +890,12 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         tar_feciniE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel6 = new gnu.chu.controles.CLabel();
         tar_fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
-        cLabel1 = new gnu.chu.controles.CLabel();
         cLabel2 = new gnu.chu.controles.CLabel();
-        pro_codiE = new gnu.chu.camposdb.proPanel();
         Bocul = new gnu.chu.controles.CButton();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
         BTexto = new gnu.chu.controles.CButton();
+        cLabel7 = new gnu.chu.controles.CLabel();
+        tar_butapaE = new gnu.chu.controles.CComboBox();
         jt = new gnu.chu.controles.CGridEditable(5) {
             public void cambiaColumna(int col,int colNueva, int row)
             {
@@ -969,6 +974,8 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         Bimpri = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
         opImpRef = new gnu.chu.controles.CCheckBox();
         loc_codiE = new gnu.chu.controles.CComboBox();
+        cLabel3 = new gnu.chu.controles.CLabel();
+        pro_codiE = new gnu.chu.camposdb.proPanel();
 
         pro_codartE.setAceptaNulo(false);
         pro_codartE.setUsaCodigoVenta(true);
@@ -1001,18 +1008,9 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         Pcabe.add(tar_fecfinE);
         tar_fecfinE.setBounds(60, 25, 70, 18);
 
-        cLabel1.setText("Articulo");
-        Pcabe.add(cLabel1);
-        cLabel1.setBounds(140, 25, 50, 18);
-
-        cLabel2.setText("Cliente");
+        cLabel2.setText("Buscar en Tarifas Generales");
         Pcabe.add(cLabel2);
-        cLabel2.setBounds(140, 3, 50, 18);
-
-        pro_codiE.setAncTexto(80);
-        pro_codiE.setUsaCodigoVenta(true);
-        Pcabe.add(pro_codiE);
-        pro_codiE.setBounds(190, 25, 280, 17);
+        cLabel2.setBounds(140, 25, 180, 18);
         Pcabe.add(Bocul);
         Bocul.setBounds(545, 30, 2, 2);
         Pcabe.add(cli_codiE);
@@ -1021,6 +1019,15 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         BTexto.setText("Importar");
         Pcabe.add(BTexto);
         BTexto.setBounds(480, 25, 60, 20);
+
+        cLabel7.setText("Cliente");
+        Pcabe.add(cLabel7);
+        cLabel7.setBounds(140, 3, 50, 18);
+
+        tar_butapaE.addItem("Si","1");
+        tar_butapaE.addItem("No","0");
+        Pcabe.add(tar_butapaE);
+        tar_butapaE.setBounds(310, 25, 60, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1072,7 +1079,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         cLabel4.setText("Idioma");
         cLabel4.setPreferredSize(new java.awt.Dimension(33, 18));
         Bimpresion.add(cLabel4);
-        cLabel4.setBounds(10, 20, 40, 17);
+        cLabel4.setBounds(10, 22, 40, 17);
 
         Bimpri.setText("Imprimir");
         Bimpri.setToolTipText("Imprimir Tarifa");
@@ -1080,13 +1087,22 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         Bimpri.setMinimumSize(new java.awt.Dimension(24, 24));
         Bimpri.setPreferredSize(new java.awt.Dimension(24, 24));
         Bimpresion.add(Bimpri);
-        Bimpri.setBounds(330, 15, 80, 24);
+        Bimpri.setBounds(330, 22, 80, 24);
 
         opImpRef.setText("Impr. Ref.");
         Bimpresion.add(opImpRef);
-        opImpRef.setBounds(240, 20, 80, 17);
+        opImpRef.setBounds(240, 22, 80, 17);
         Bimpresion.add(loc_codiE);
-        loc_codiE.setBounds(50, 20, 180, 18);
+        loc_codiE.setBounds(50, 22, 180, 18);
+
+        cLabel3.setText("Articulo");
+        Bimpresion.add(cLabel3);
+        cLabel3.setBounds(10, 2, 50, 18);
+
+        pro_codiE.setAncTexto(80);
+        pro_codiE.setUsaCodigoVenta(true);
+        Bimpresion.add(pro_codiE);
+        pro_codiE.setBounds(60, 2, 280, 17);
 
         Ppie.add(Bimpresion);
         Bimpresion.setBounds(130, 2, 420, 50);
@@ -1114,11 +1130,12 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Ppie;
     private gnu.chu.controles.CPanel Pprinc;
-    private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel2;
+    private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
+    private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CGridEditable jt;
     private gnu.chu.controles.CComboBox loc_codiE;
@@ -1126,6 +1143,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
     private gnu.chu.camposdb.proPanel pro_codartE;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CTextField pro_nombE;
+    private gnu.chu.controles.CComboBox tar_butapaE;
     private gnu.chu.controles.CTextField tar_comenG;
     private gnu.chu.controles.CTextField tar_comrepE;
     private gnu.chu.controles.CTextField tar_fecfinE;

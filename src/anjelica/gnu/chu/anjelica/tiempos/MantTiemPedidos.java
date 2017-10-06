@@ -151,7 +151,7 @@ public class MantTiemPedidos extends  ventana
 
         iniciarFrame();
 
-        this.setVersion("2017-08-13");
+        this.setVersion("2017-10-04");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -632,7 +632,7 @@ public class MantTiemPedidos extends  ventana
             (albPedidC.getValor().equals("P")?"pvc_fecent":"avc_fecalb ")+
             " between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +       
         " and  to_date('" + pvc_fecfinE.getText()  + "','dd-MM-yyyy')" ;
-    s += " order by c.pvc_fecent,c.cli_codi ";
+    s += " order by c.rut_codi, c.pvc_fecent,c.cli_codi ";
 
     jtCabPed.setEnabled(false);
     jtCabPed.removeAllDatos();

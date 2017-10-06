@@ -13,7 +13,6 @@ import gnu.chu.anjelica.sql.DesorilinId;
 import gnu.chu.anjelica.sql.Desporig;
 import gnu.chu.anjelica.sql.DesporigId;
 import gnu.chu.anjelica.tiempos.ManTiempos;
-import gnu.chu.anjelica.ventas.pdpeve;
 import gnu.chu.camposdb.cliPanel;
 import gnu.chu.camposdb.proPanel;
 import gnu.chu.camposdb.tidCodi2;
@@ -393,7 +392,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
         return "gnu.chu.anjelica.despiece.MantDespTactil";
  }
    public void setDeoCodi(String deoCodi) {
-        deo_codiE.setText(deoCodi);       
+        deo_codiE.setText(deoCodi);      
+        deo_blockE.resetTexto();
     }
     public void setEjeNume(String ejeNume)
     {
@@ -411,7 +411,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2017-09-09"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2017-09-22"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -940,6 +940,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
  
  void irGrid()
  {
+    if (nav.getPulsado()!= navegador.EDIT && nav.getPulsado()!= navegador.ADDNEW)
+        return;
     if (!jtEnt.isEnabled())
     {
         if (deo_codiE.getValorInt()==0)
@@ -982,9 +984,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
     {
          @Override
          public void mouseClicked(MouseEvent e) {
-             if (e.getClickCount()<2 && (nav.pulsado==navegador.EDIT || nav.pulsado==navegador.ADDNEW) )
-                 return;
-           irGrid();
+           if (e.getClickCount()>1 )
+               irGrid();
          }
     });
     
@@ -992,7 +993,6 @@ public class MantDespTactil  extends ventanaPad implements PAD
     {
          @Override
         public void focusGained(FocusEvent e) {
-          if (nav.pulsado==navegador.EDIT || nav.pulsado==navegador.ADDNEW) 
             irGrid();
         } 
     } );
@@ -1000,7 +1000,6 @@ public class MantDespTactil  extends ventanaPad implements PAD
     {
           @Override
         public void actionPerformed(ActionEvent e) {
-           if (nav.pulsado==navegador.EDIT || nav.pulsado==navegador.ADDNEW)  
             irGrid();
         }
     });
@@ -1398,7 +1397,8 @@ boolean checkCabecera() throws ParseException, SQLException
     deo_incvalE.setEnabled(true);
     grd_unidE.setEnabled(true);
     grd_unidE.setQuery(false);
-    deo_blockE.setValor("S");
+    if (!PARAM_ADMIN)
+        deo_blockE.setValor("S");
     deo_blockE.setEnabled(true);    
     deo_blockE.addItem("Terminado","T");
     BcerrDesp.setEnabled(false);
@@ -3410,7 +3410,8 @@ boolean checkCabecera() throws ParseException, SQLException
         kilsalE.setValorDec(kildifE.getValorDec()*-1);
         Bsalkil_focusGained();
     }
-    ej_edit1();    
+    ej_edit1();  
+    Ptabed.setSelectedIndex(0);
  }
  void duplicaLinea()
  {

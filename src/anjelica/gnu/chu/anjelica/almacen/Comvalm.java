@@ -204,6 +204,7 @@ public class Comvalm extends ventana
 //    alm_codiE.addDatos(dtStat);
     alm_codiE.setText("0");
     pro_codiE.iniciar(dtStat, this, vl, EU);
+    pro_codiE.setCamposLote(pro_ejercE, pro_serieE, pro_loteE, pro_numindE, null);
     Pentra.setButton(KeyEvent.VK_F4,Bacepta);
     String feulin=MvtosAlma.llenaComboFecInv(dtStat,EU.em_cod,EU.ejercicio,feulinE,0);
     feciniE.setText(feulin);
@@ -741,6 +742,11 @@ public class Comvalm extends ventana
         cLabel4 = new gnu.chu.controles.CLabel();
         pro_codiE = new gnu.chu.camposdb.proPanel()
         {
+            @Override
+            protected void despuesLlenaCampos()
+            {
+                Bacepta.doClick();
+            }
             @Override
             public void afterFocusLost(boolean error)
             {

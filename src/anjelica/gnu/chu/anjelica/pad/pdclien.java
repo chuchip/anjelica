@@ -2601,7 +2601,7 @@ public class pdclien extends ventanaPad implements PAD
  public static String getNombreCliente(DatosTabla dt, int cliCodi) throws SQLException
  {
     String s = "SELECT cli_nomb,cli_nomen,cli_diree,cli_codpoe,cli_poble,"
-        + "cli_horenv,cli_comenv from clientes WHERE cli_codi = " + cliCodi;
+        + "cli_horenv,cli_comenv,cli_codrut from clientes WHERE cli_codi = " + cliCodi;
     if (! dt.select(s))
       return null;
     return dt.getString("cli_nomb");

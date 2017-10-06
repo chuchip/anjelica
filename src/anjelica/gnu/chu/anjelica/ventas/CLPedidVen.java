@@ -485,12 +485,13 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                 return false;
                if (swImpreso)
                {
-                   s = "select l.*,p.prv_nomb ,c.cli_codi,c.alm_codi,c.pvc_fecped, "
+                   s = "select l.*,p.prv_nomb ,c.cli_codi,cl.cli_codrut,c.alm_codi,c.pvc_fecped, "
                        + " c.pvc_fecent,c.pvc_clinom,c.usu_nomb,c.pvc_comen,al.alm_nomb, "
-                       + " a.pro_nomb, cl.cli_nomb,cl.cli_pobl "
+                       + " a.pro_nomb, cl.cli_nomb,cl.cli_pobl,c.rut_codi,rut_nomb "
                        + " from pedvenl as l left join v_proveedo p on  p.prv_codi = l.prv_codi, "
-                       + " pedvenc as c,v_articulo as a,v_almacen as al,clientes as cl "
+                       + " pedvenc as c,v_articulo as a,v_almacen as al,clientes as cl,v_rutas as rt "
                        + " where  c.emp_codi = l.emp_codi "
+                       + " and rt.rut_codi = c.rut_codi "
                        + " and c.eje_nume = l.eje_nume "
                        + " and c.pvc_nume = l.pvc_nume "
                        + " and l.pro_codi = a.pro_codi "
@@ -604,7 +605,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     if (swCliente)
       s += " AND c.cli_codi = " + cli_codiE.getValorInt();
  
-    s += " order by c.pvc_fecent,c.cli_codi ";
+    s += " order by c.rut_codi,c.pvc_fecent,c.cli_codi ";
 
     jtCabPed.setEnabled(false);
     jtCabPed.removeAllDatos();
@@ -1101,15 +1102,15 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
     @Override
     public Object getFieldValue(JRField jrf) throws JRException {
+        String campo = jrf.getName().toLowerCase();
         try
-        {
-            String campo = jrf.getName().toLowerCase();
+        {          
             if (campo.equals("orden"))
                 return nLineaReport;
             return dtCon1.getObject(campo);
         } catch (SQLException ex)
         {
-            throw new JRException("Error al listar pedidos",ex);
+            throw new JRException("Error al listar pedidos. Campo: "+campo,ex);
         }
     }
     

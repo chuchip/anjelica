@@ -38,7 +38,7 @@ package gnu.chu.anjelica.ventas;
  *   Poner albarán como No facturar (conforme)
  * checkPedido: true o false, indica si se comprobara si exiten pedidos pendientes. Por defecto es true.
  *</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -202,7 +202,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private boolean IMPALBTEXTO=false;
   DatTrazFrame datTrazFrame;
   private vlike lkDepo;
-
+  JMenuItem MRestHist = new JMenuItem("Restaurar Historico");
   JMenuItem MbusCliente = new JMenuItem("Buscar Alb. Cliente");
   
   JMenuItem verDatTraz = new JMenuItem("Ver Datos Trazabilidad");
@@ -738,7 +738,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-09-10" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-10-03" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1497,7 +1497,8 @@ public class pdalbara extends ventanaPad  implements PAD
     //cli_codiE.getpop
     jtDes.getPopMenu().add(verDatTraz);
     jtDes.getPopMenu().add(verMvtos);
-    
+    if (P_ADMIN)
+        jtHist.getPopMenu().add(MRestHist);
     EU.getImpresora(gnu.chu.print.util.ALBARAN);
     dtHist=new DatosTabla(ct);
     dtPedi=new DatosTabla(ct);
@@ -1959,6 +1960,11 @@ public class pdalbara extends ventanaPad  implements PAD
                       return;
                   if (avc_numeE.getValorInt()==0)
                       return;
+                  if (!checkAlbCerrado())
+                  {
+                      avc_cerraE.setSelected(false);
+                      return;
+                  }
                   dtAdd.executeUpdate("update v_albavec set avc_cerra="+(avc_cerraE.isSelected()?-1:0)+
                       " where "+getCondCurrent());
                   if (pvc_numeE.getValorInt()!=0)
@@ -2480,6 +2486,13 @@ public class pdalbara extends ventanaPad  implements PAD
             public void actionPerformed(ActionEvent e) {
                 if (! nav.isEdicion() )
                     mostrarDatosTraz();
+            }
+        });
+     MRestHist.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (! nav.isEdicion() && !jtHist.isVacio() )
+                    restaurarHistorico(jtHist.getValorInt(3));
             }
         });
      verMvtos.addActionListener(new ActionListener() {
@@ -4548,7 +4561,7 @@ public class pdalbara extends ventanaPad  implements PAD
     return dtStat.getInt("fvc_trasp")!=0;
   }
   
-  private boolean canModif() throws SQLException
+  private boolean canModif() throws SQLException, ParseException
   {
       if (!P_ADMIN)
       {
@@ -4557,6 +4570,17 @@ public class pdalbara extends ventanaPad  implements PAD
               msgBox("Albaran ya esta servido en una ruta. Imposible Modificar/Borrar");
               return false;
           }
+       
+      }
+      if (Formatear.comparaFechas(Formatear.getDateAct(),avc_fecalbE.getDate())>3 && !avc_cucomiE.isSelected() )
+      {
+           if (P_ADMIN)
+              msgBox("ATENCION!!. Modificando Albaran con más de 3 dias");
+           else
+           {
+             msgBox("Albaran tiene más de 3 dias. Imposible Modificar/Borrar.\n Pida Permiso en Administracion");
+             return false;
+           }
       }
       if (verDepoC.getValor().equals("S") || verDepoC.getValor().equals("P") )
       {
@@ -4626,7 +4650,78 @@ public class pdalbara extends ventanaPad  implements PAD
       }
       dtUpd.commit();
   }
-  
+  void restaurarHistorico(int rowidHis)
+  {
+      try
+      {
+          int ret=mensajes.mensajePreguntar("Restaurar albaran a como estaba en Historico?. ", this);
+          if (ret!=mensajes.OK)
+              return;
+          copiaAlbaranNuevo(dtCon1,dtAdd,"Restaurado a Albaran con id:"+rowidHis,EU.usuario,avc_anoE.getValorInt(),
+              emp_codiE.getValorInt(),avc_seriE.getText(),avc_numeE.getValorInt());
+          /**
+           * Borro el albaran
+           */
+          s = "delete from v_albvenpar WHERE avc_ano = " + avc_anoE.getValorInt() +
+                " and emp_codi = " + emp_codiE.getValorInt() +
+                " and avc_nume = " + avc_numeE.getValorInt() +
+                " and avc_serie = '" + avc_seriE.getText() + "'" ;
+          dtAdd.executeUpdate(s);
+          s = "delete from v_albavel WHERE avc_ano = " + avc_anoE.getValorInt() +
+                " and emp_codi = " + emp_codiE.getValorInt() +
+                " and avc_nume = " + avc_numeE.getValorInt() +
+                " and avc_serie = '" + avc_seriE.getText() + "'" ;
+          dtAdd.executeUpdate(s);
+          s = "delete from v_albavec WHERE avc_ano = " + avc_anoE.getValorInt() +
+                " and emp_codi = " + emp_codiE.getValorInt() +
+                " and avc_nume = " + avc_numeE.getValorInt() +
+                " and avc_serie = '" + avc_seriE.getText() + "'" ;
+          dtAdd.executeUpdate(s);
+          String s1="select * from hisalcave where his_rowid= "+rowidHis;
+          dtCon1.select(s1);
+          dtAdd.addNew("v_albavec");
+          dtCon1.copy(dtAdd);
+          s1="select * from hisallive where his_rowid= "+rowidHis;
+          dtCon1.select(s1);
+          dtAdd.addNew("v_albavel");
+          dtCon1.copy(dtAdd);
+          s1="select * from hisalpave where his_rowid= "+rowidHis;
+          dtCon1.select(s1);
+          dtAdd.addNew("v_albvenpar");
+          dtCon1.copy(dtAdd);
+          PreparedStatement ps=dtAdd.getPreparedStatement("update mvtosalm  set mvt_time =? where "
+              + " mvt_tipdoc='V'"
+              + " and mvt_empcod= ?"
+              + " and mvt_ejedoc=?"
+              + " and mvt_serdoc=?"
+              + " and mvt_numdoc=?"
+              + " and mvt_lindoc=?");
+           ps.setInt(2, emp_codiE.getValorInt());
+              ps.setInt(3, avc_anoE.getValorInt());
+              ps.setString(4,avc_seriE.getText());
+              ps.setInt(5, avc_numeE.getValorInt());
+          /**
+           * Restauro la fecha del movimiento
+           */
+          s = "select * from v_albventa WHERE avc_ano = " + avc_anoE.getValorInt() +
+                " and emp_codi = " + emp_codiE.getValorInt() +
+                " and avc_nume = " + avc_numeE.getValorInt() +
+                " and avc_serie = '" + avc_seriE.getText() + "'" ;
+          dtCon1.select(s);
+          do
+          {
+              ps.setTimestamp(1, dtCon1.getTimeStamp("avl_fecalt"));
+             
+              ps.setInt(6, dtCon1.getInt("avl_numlin"));
+              ps.executeUpdate();
+          } while (dtCon1.next());
+          dtAdd.commit();
+          msgBox("Restaurado albaran a rowid: "+rowidHis);
+      } catch (SQLException ex)
+      {
+          Error("Error al restaurar Albarán", ex);
+      }
+  }
     @Override
   public void PADEdit()
   {         
@@ -4634,10 +4729,25 @@ public class pdalbara extends ventanaPad  implements PAD
 //                      "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt());
     try
     {
+      if ( traspCont && ! swEntdepos)
+      {
+        msgBox("Factura se traspaso a contabilidad .. IMPOSIBLE MODIFICAR");
+        nav.pulsado = navegador.NINGUNO;
+        activaTodo();
+        return;
+      }
       if (hisRowid!=0)
       {
-        msgBox("Viendo albaran historico ... IMPOSIBLE MODIFICAR");
+        if (!P_ADMIN)
+        {
+            msgBox("Viendo albaran historico ... IMPOSIBLE MODIFICAR");
+            nav.pulsado=navegador.NINGUNO;
+            activaTodo();
+            return;
+        }
+        restaurarHistorico(hisRowid);
         activaTodo();
+        nav.pulsado=navegador.NINGUNO;
         return;
       }
       idTiempo=0;
@@ -4688,13 +4798,7 @@ public class pdalbara extends ventanaPad  implements PAD
         activaTodo();
         return;
       }
-      if ( traspCont && ! swEntdepos)
-      {
-        msgBox("Factura se traspaso a contabilidad .. IMPOSIBLE MODIFICAR");
-        nav.pulsado = navegador.NINGUNO;
-        activaTodo();
-        return;
-      }
+     
       
       swAvisoDto=true;
       //selCabAlb(dtAdd,avc_anoE.getValorInt(), emp_codiE.getValorInt(),avc_seriE.getText() ,avc_numeE.getValorInt(),true);
@@ -5078,6 +5182,8 @@ public class pdalbara extends ventanaPad  implements PAD
             return;
           }
       }
+      if (! checkAlbCerrado())
+          return;
       if (swEntdepos)
       {
         s="UPDATE albvenserc set avs_fecha = TO_DATE('"+avc_fecalbE.getText()+"','dd-MM-yyyy') "+
@@ -5270,6 +5376,8 @@ public class pdalbara extends ventanaPad  implements PAD
             return;
           }
       }
+      if (! checkAlbCerrado())
+          return;
       if (! swEntdepos)
         actAlbaran();
       else
@@ -5318,6 +5426,28 @@ public class pdalbara extends ventanaPad  implements PAD
     nav.ponEnabled(false);
     PADAddNew();
     graba = true;
+  }
+  /**
+   * Comprueba si un albaran le falta algo de preparar cuando se marca como cerrado.
+   * Solo comprueba que haya una referencia de los productos de pedido en albaran. No comprueba cantidades.
+   * @return true si no falta ningun producto o esta abierto.
+   */
+  boolean checkAlbCerrado() throws SQLException
+  {
+      if (!avc_cerraE.isSelected() || pvc_numeE.isNull() || P_ADMIN)
+          return true;
+      String sql="select P.PRO_CODI from v_pedven as P  where p.avc_ano="+avc_anoE.getValorInt()
+          + " and p.avc_nume="+avc_numeE.getValorInt()
+          + "  and p.avc_serie='"+avc_seriE.getText()+ "'" 
+          +  " and pro_codi not in (select pro_codi from v_albavel as l where p.avc_ano=l.avc_ano" 
+          + " and p.avc_nume=l.avc_nume and p.avc_serie=l.avc_serie)";
+      if (dtCon1.select(sql))
+      {
+          String ret=mensajes.mensajeGetTexto("Faltan productos de cargar. Si esta seguro que desea cerrar el pedido, teclee 'si'","Pedido cerrado?");
+          if (ret==null || !ret.toUpperCase().equals("SI"))
+              return false;
+      }
+      return true;
   }
   void actNumPale(int row) throws SQLException
   {
@@ -5823,7 +5953,7 @@ public class pdalbara extends ventanaPad  implements PAD
     nav.pulsado = navegador.NINGUNO;
   }
 
-  void borraAlbaran(boolean swDestruir) throws Exception
+  void borraAlbaran(boolean swDestruir) throws SQLException
   {
      if (swEntdepos)
      {
@@ -5859,7 +5989,7 @@ public class pdalbara extends ventanaPad  implements PAD
     {
         s = "DELETE FROM v_albavec WHERE "+getCondCurrent();
          if (dtAdd.executeUpdate(s,stUp) != 1)
-          throw new Exception("No encontrado Cabecera Albaran.\n Select: " + s);   
+          throw new SQLException("No encontrado Cabecera Albaran.\n Select: " + s);   
          // Borro Historicos
         dtAdd.executeUpdate( "DELETE FROM hisalpave WHERE "+getCondCurrent(),stUp);
         dtAdd.executeUpdate( "DELETE FROM hisallive WHERE "+getCondCurrent(),stUp);
@@ -6936,7 +7066,7 @@ public class pdalbara extends ventanaPad  implements PAD
       if (pro_codiE.getTipoLote()!='V')
         guardaLinDes(row);
 
-      if (jt.getValorInt(row, 0) == 0)
+      if (jt.getValorInt(row, JT_UNID) == 0 && pro_codiE.getTipoLote()=='V')
       {
         mensajeErr("Introduzca Individuos de Producto");
         return 1;
@@ -7114,6 +7244,17 @@ public class pdalbara extends ventanaPad  implements PAD
         double unid = 0;
         double canti = 0;
         
+        String sqlCondPartida=  " WHERE emp_codi = " + emp_codiE.getValorInt()
+                        + " AND avc_ano = " + avc_anoE.getValorInt()
+                        + " and avc_nume = " + avc_numeE.getValorInt()
+                        + " and avc_serie = '" + avc_seriE.getText() + "'"
+                        + " and avp_canti > 0 "  // Solo tenemos en cuenta cargos.                                            
+                        + " and avp_serlot = '" + avp_serlotE.getText() + "'"
+                        + " and avp_numpar = " + avp_numparE.getValorInt()
+                        + " and avp_ejelot = " + avp_ejelotE.getValorInt()
+                        + " and avp_emplot = " + avp_emplotE.getValorInt()
+                        + " and avp_numind = " + avp_numindE.getValorInt()
+                        + " and pro_codi = " + pro_codiE.getText();
         if (jt.getValorInt(0) > 0)
         { // Tiene Numero de Linea el Albaran
             if (swEntdepos)
@@ -7129,21 +7270,12 @@ public class pdalbara extends ventanaPad  implements PAD
             }
             else
             {
-                s = "SELECT sum(avp_numuni) as avp_numuni, sum(avp_canti) as avp_canti FROM v_albvenpar "
-                        + " WHERE emp_codi = " + emp_codiE.getValorInt()
-                        + " AND avc_ano = " + avc_anoE.getValorInt()
-                        + " and avc_nume = " + avc_numeE.getValorInt()
-                        + " and avc_serie = '" + avc_seriE.getText() + "'"
-                        + " and avp_canti > 0 "  // Solo tenemos en cuenta cargos.
-                        + " and avl_numlin = " + jt.getValorInt(0)                              
-                        + " and avp_serlot = '" + avp_serlotE.getText() + "'"
-                        + " and avp_numpar = " + avp_numparE.getValorInt()
-                        + " and avp_ejelot = " + avp_ejelotE.getValorInt()
-                        + " and avp_emplot = " + avp_emplotE.getValorInt()
-                        + " and avp_numind = " + avp_numindE.getValorInt()
-                        + " and pro_codi = " + pro_codiE.getText();
+                s = "SELECT sum(avp_numuni) as avp_numuni, sum(avp_canti) as avp_canti FROM v_albvenpar "+
+                      sqlCondPartida+
+                      " and avl_numlin = " + jt.getValorInt(0);
             }
             dtCon1.select(s);
+           
             canti = dtCon1.getDouble("avp_canti", true) * -1;
             unid = dtCon1.getDouble("avp_numuni", true) * -1;
         }
@@ -7191,7 +7323,7 @@ public class pdalbara extends ventanaPad  implements PAD
                     + " and i.avs_emplot = " + avp_emplotE.getValorInt()
                     + " and i.avs_numind = " + avp_numindE.getValorInt();
             if (dtStat.select(s)) {
-                mensajeErr("Individuo ya se registro como entregado en Alb. Interior: "+dtStat.getInt("avs_nume")
+                msgBox("Individuo ya se registro como entregado en Alb. Interior: "+dtStat.getInt("avs_nume")
                         +" de fecha: "
                         + dtStat.getFecha("avs_fecha"));
                 return false;
@@ -7210,7 +7342,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
             // Miro a ver si se ha servido en este albaran.
             if (unid + unAlb > 1) {
-                mensajeErr("Individuo ya se registro en este albaran");
+                msgBox("Individuo ya se registro en este albaran");
                 return false;
             }
             if (swActual)
@@ -7225,7 +7357,7 @@ public class pdalbara extends ventanaPad  implements PAD
             StkPartid canStk=buscaPeso();
             if (canStk.isLockIndiv())
             { // Individuo bloqueado.
-                  mensajeErr("Individuo esta bloqueado ");
+                  msgBox("Individuo esta bloqueado ");
                     return false;
             }
             if (canStk.hasError())
@@ -7233,13 +7365,24 @@ public class pdalbara extends ventanaPad  implements PAD
             if (canStk.isControlExist())
             {
                 if ( canti >= 0
-                        && canStk.getKilos() <= canti - 0.1) {
-                    mensajeErr("Partida de Stock solo tiene " +  canStk.getKilos()
+                        && canStk.getKilos() <= canti - 0.1) 
+                {
+                    s = "SELECT avl_numlin FROM v_albvenpar "+
+                            sqlCondPartida;
+                   if (dtCon1.select(s))
+                    { // Este individuo ya existe en este albaran.                      
+                        if (dtCon1.getInt("avl_numlin")!=jt.getValorInt(0))
+                        {
+                            msgBox("Individuo ya se introduzco en linea: "+dtCon1.getInt("avl_numlin"));
+                            return false;
+                        }
+                    }
+                    msgBox("Partida de Stock solo tiene " +  canStk.getKilos()
                             + "  kg. Disponibles");
                     return false;
                 }
                 if (canStk.getUnidades() < unid) {
-                    mensajeErr("Partida de Stock solo tiene " + canStk.getUnidades()
+                    msgBox("Partida de Stock solo tiene " + canStk.getUnidades()
                             + " Unidades Disponibles");
                     return false;
                 }
@@ -7259,7 +7402,7 @@ public class pdalbara extends ventanaPad  implements PAD
                         || emp_codiE.getValorInt() != lkDepo.getInt("emp_codi")
                         || avc_anoE.getValorInt() != lkDepo.getInt("avc_ano")
                         || !avc_seriE.getText().equals(lkDepo.getString("avc_serie"))) {
-                    mensajeErr("Este individuo pertenece a otro albaran de deposito");
+                    msgBox("Este individuo pertenece a otro albaran de deposito");
                     return false;
                 }
             }
@@ -8135,7 +8278,7 @@ public class pdalbara extends ventanaPad  implements PAD
    * @param row
    * @throws Exception
    */
-  void borraLinea(int row) throws Exception
+  void borraLinea(int row) throws SQLException
   {
     if (jt.getValorInt(row, 0) == 0)
       return;
