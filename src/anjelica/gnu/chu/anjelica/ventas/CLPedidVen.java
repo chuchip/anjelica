@@ -25,7 +25,6 @@ package gnu.chu.anjelica.ventas;
 
 
 import gnu.chu.Menu.Principal;
-import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantRepres;
 import gnu.chu.anjelica.pad.pdconfig;
@@ -50,6 +49,10 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -62,8 +65,17 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class CLPedidVen extends  ventana   implements  JRDataSource
 {
+    String pvc_comen;
+    ArrayList<String> htCam=new ArrayList();
+    ArrayList<String> htCamAll=new ArrayList();
+    ArrayList<String> htCamDef=new ArrayList();
+    
+    ArrayList<JCheckBoxMenuItem> alMenuItems=new ArrayList();
+    JPopupMenu JpopupMenu = new JPopupMenu("Camaras");
+    JCheckBoxMenuItem mCamTodas=new JCheckBoxMenuItem("*TODAS*");
     boolean swCliente=false;
     int nLineaReport;
+    int nLineaDet;
     boolean swImpreso=true;
     proPanel pro_codiE= new proPanel();
     prvPanel prv_codiE = new prvPanel();
@@ -76,10 +88,21 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     private final int JTCAB_EMPPED=0;
     private final int JTCAB_EJEPED=1;
     private final int JTCAB_NUMPED=2;
+    private final int JTCAB_CLICOD=3;
+    private final int JTCAB_CLINOMB=4;
+    private final int JTCAB_CLIPOBL=5;
+    private final int JTCAB_FECENT=6;
+    private final int JTCAB_CODREP=7;
+    private final int JTCAB_RUTA=10;
     private final int JTCAB_SERALB=12;
     private final int JTCAB_NUMALB= 13;   
     private final int JTCAB_EJEALB=11;
     private final int JTCAB_NOMCLI=4;
+    private final int JTLIN_CANTI=6;
+    private final int JTLIN_PROCOD=1;
+    private final int JTLIN_PRONOMB=2;
+    private final int JTLIN_TIPLIN=0;
+    private final int JTLIN_COMENT=9;
 //    private final int JTCAB_POBCLI=5;
     
     public CLPedidVen(EntornoUsuario eu, Principal p) {
@@ -151,7 +174,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2017-08-13");
+        this.setVersion("2017-10-12");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -171,21 +194,117 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      pdconfig.llenaDiscr(dtStat, zon_codiE, pdconfig.D_ZONA,EU.em_cod);
      pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS, EU.em_cod);
      rut_codiE.setCeroIsNull(true);
-     cli_codiE.iniciar(dtStat, this, vl, EU);
+     cli_codiE.iniciar(dtStat, this, vl, EU);     
      cli_codiE.setCampoReparto(true);
-     pdalmace.llenaLinkBox(alm_codiE, dtStat);
-     
-     
+     s="select * from programasparam where prf_host='"+Formatear.getHostName()+"'"+
+         " and prf_id ='clpedven.camaras'";
+     if (dtStat.select(s))
+     {
+        do
+        {
+            htCamDef.add(dtStat.getString("prf_valor"));
+        } while (dtStat.next());
+     }
+     s="select cam_codi,cam_nomb from v_camaras order by cam_codi";
+     if (dtStat.select(s))
+     {
+        mCamTodas.setSelected(htCamDef.isEmpty());
+        JpopupMenu.add(mCamTodas);
+        do
+        {         
+            JCheckBoxMenuItem mCam=new JCheckBoxMenuItem(dtStat.getString("cam_nomb"));
+            alMenuItems.add(mCam);
+                        
+            JpopupMenu.add(mCam);
+            final String camCodi=dtStat.getString("cam_codi");
+            if (htCamDef.indexOf(camCodi)>=0)
+            {
+                mCam.setSelected(true);
+                htCam.add(camCodi);
+            }
+            htCamAll.add(camCodi);
+            mCam.addActionListener(new ActionListener() 
+            {             
+               @Override
+               public void actionPerformed(ActionEvent e) {
+                if (htCam.indexOf(camCodi)>=0)
+                   htCam.remove(camCodi);
+                else
+                   htCam.add(camCodi);
+                JpopupMenu.show(BFiltroCam,0,24);
+               }
+           });
+        } while (dtStat.next());
+     }
      sbe_codiE.iniciar(dtStat, this, vl, EU);
      
      sbe_codiE.setAceptaNulo(true);
      sbe_codiE.setValorInt(0);
      pvc_feciniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -7));
      pvc_fecfinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-      activarEventos();
+     activarEventos();
     }
+
+    @Override
+    public void matar(boolean cerrarConexion) {
+        try
+        {
+            if (muerto || ct.isClosed())
+            {
+                super.matar(cerrarConexion);
+                return;
+            }
+            guardaParam();
+           
+            super.matar(cerrarConexion); //To change body of generated methods, choose Tools | Templates.
+        } catch (SQLException ex)
+        {
+            muerto=true;
+            Error("Error al guardar parametros programa",ex);
+        }
+    }
+    void guardaParam() throws SQLException
+    {
+         s="delete from programasparam where prf_host='"+Formatear.getHostName()+"'"+
+                " and prf_id ='clpedven.camaras'";
+            dtAdd.executeUpdate(s);
+            for (String cam:htCam)
+            {
+                dtAdd.addNew("programasparam");
+                dtAdd.setDato("prf_host",Formatear.getHostName());
+                dtAdd.setDato("prf_id","clpedven.camaras");
+                dtAdd.setDato("prf_valor",cam);
+                dtAdd.update();
+            }
+            dtAdd.commit();
+    }
+    
     void activarEventos()
     {
+        BFiltroCam.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              JpopupMenu.show(BFiltroCam,0,24);
+            }
+        });
+        mCamTodas.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {            
+              htCam.clear();
+              for (JCheckBoxMenuItem menuItem:alMenuItems)
+              {
+                  menuItem.setSelected(mCamTodas.isSelected());                
+              }
+              if (mCamTodas.isSelected())
+              {
+                for (String cam:htCamAll)
+                {
+                      htCam.add(cam);
+                }
+              }
+              JpopupMenu.show(BFiltroCam,0,24);
+            }
+        });
         Bimpri.addActionListener(new ActionListener()
         {
           @Override
@@ -210,7 +329,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
       {
         if (e.getValueIsAdjusting() || ! jtCabPed.isEnabled() || jtCabPed.isVacio() ) // && e.getFirstIndex() == e.getLastIndex())
           return;
-        verDatPed(jtCabPed.getValorInt(0),jtCabPed.getValorInt(1),jtCabPed.getValorInt(2));
+        verDatPed(jtCabPed.getValorInt(JTCAB_EMPPED),jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED),
+            jtCabPed.getValorInt(JTCAB_EJEALB),jtCabPed.getValString(JTCAB_SERALB),jtCabPed.getValorInt(JTCAB_NUMALB));
 //      System.out.println(" Row "+getValString(0,5)+ " - "+getValString(1,5));
 
       }
@@ -299,7 +419,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         return jtCabPed.getValorInt(JTCAB_NUMALB);
     }
 
-    void verDatPed(int empCodi,int ejeNume,int pvcNume)
+    void verDatPed(int empCodi,int ejeNume,int pvcNume,int ejeAlb,String serAlb,int numAlb)
    {
      try
      {
@@ -317,11 +437,12 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
          msgBox("NO ENCONTRADOS DATOS PARA ESTE PEDIDO");
          return;
        }
-     
+       pvc_comen=dtCon1.getString("pvc_comen");
        usu_nombE.setText(dtCon1.getString("usu_nomb"));
        pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));
        pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","HH.mm"));
        pvc_comenE.setText(dtCon1.getString("pvc_comen"));
+       
        pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
        
        pvc_nupeclE.setText(dtCon1.getString("pvc_nupecl"));
@@ -342,10 +463,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
          v.add(dtCon1.getString("pvl_numlin"));
          jtLinPed.addLinea(v);
        } while (dtCon1.next());
-       if (jtCabPed.getValorInt(JTCAB_EJEALB)!=0)
+       if (ejeAlb!=0)
        {
-           verDatAlbaranPed(empCodi,jtCabPed.getValorInt(JTCAB_EJEALB),jtCabPed.getValString(JTCAB_SERALB),
-               jtCabPed.getValorInt(JTCAB_NUMALB) );
+           verDatAlbaranPed(empCodi,ejeAlb,serAlb,numAlb );
        }
 //       actAcumJT();
      } catch (Exception k)
@@ -459,7 +579,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         jr =  Listados.getJasperReport(EU, "relpedven");
 
         ResultSet rs;
-        nLineaReport=0;
+        nLineaReport=-1;
+        nLineaDet=9999;
 //        rs=dtCon1.getStatement().executeQuery(dtCon1.getStrSelect());
 
         JasperPrint jp = JasperFillManager.fillReport(jr, mp,this);
@@ -478,49 +599,39 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      {
         try
         {
-        
-           if (nLineaReport==0 || !dtCon1.next())
-           {
-               if (nLineaReport>=jtCabPed.getRowCount())
+          if (!swImpreso)
+          {
+              nLineaReport++;
+              if (nLineaReport>=jtCabPed.getRowCount())
                 return false;
-               if (swImpreso)
-               {
-                   s = "select l.*,p.prv_nomb ,c.cli_codi,cl.cli_codrut,c.alm_codi,c.pvc_fecped, "
-                       + " c.pvc_fecent,c.pvc_clinom,c.usu_nomb,c.pvc_comen,al.alm_nomb, "
-                       + " a.pro_nomb, cl.cli_nomb,cl.cli_pobl,c.rut_codi,rut_nomb "
-                       + " from pedvenl as l left join v_proveedo p on  p.prv_codi = l.prv_codi, "
-                       + " pedvenc as c,v_articulo as a,v_almacen as al,clientes as cl,v_rutas as rt "
-                       + " where  c.emp_codi = l.emp_codi "
-                       + " and rt.rut_codi = c.rut_codi "
-                       + " and c.eje_nume = l.eje_nume "
-                       + " and c.pvc_nume = l.pvc_nume "
-                       + " and l.pro_codi = a.pro_codi "
-                       + " and al.alm_codi = c.alm_codi "
-                       + " and c.cli_codi = cl.cli_codi "
-                       + " and c.alm_codi = al.alm_codi "
-                       + " and c.emp_codi =  " + jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED)
-                       + " and C.cli_codi = cl.cli_codi "
-                       + " AND C.eje_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED)
-                       + " and C.pvc_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED)
-                       + " order by pvl_numlin ";
-               } 
-               else
-               {
-                   s = "SELECT c.*, cl.cli_nomb,cl.cli_poble"
+              s = "SELECT c.*, cl.cli_nomb,cl.cli_poble"
                        + "  FROM pedvenc as c,v_cliente as cl "
                        + " WHERE c.emp_codi =  " + jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED)
                        + " and C.cli_codi = cl.cli_codi "
                        + " AND C.eje_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED)
                        + " and C.pvc_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED);
-               }
-               if (!dtCon1.select(s))
-               {
-                   throw new JRException("Error al localizar pedido para listar. Linea: "
-                       + nLineaReport + " Pedido: " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED));
-               }               
+                  if (!dtCon1.select(s))
+                  {
+                        throw new JRException("Error al localizar pedido para listar. Linea: "
+                            + nLineaReport + " Pedido: " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED));
+                  }    
+                  return true;
+         }
+         if (nLineaReport<0 || nLineaDet+1>=jtLinPed.getRowCount())
+         {
                nLineaReport++;
-
+               if (nLineaReport>=jtCabPed.getRowCount())
+                return false;
+               nLineaDet=0;
+               verDatPed(jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED),
+                       jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED),
+                       jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED),
+                       jtCabPed.getValorInt(nLineaReport,JTCAB_EJEALB),
+                       jtCabPed.getValString(nLineaReport,JTCAB_SERALB),jtCabPed.getValorInt(nLineaReport,JTCAB_NUMALB)
+               );                      
            }
+           else   
+             nLineaDet++;
            return true;
         } catch (SQLException ex)
         {
@@ -540,8 +651,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         jr = Listados.getJasperReport(EU, "pedventas");
 
       
-        nLineaReport=0;
-
+        nLineaReport=-1;
+        nLineaDet=9999;
         JasperPrint jp = JasperFillManager.fillReport(jr, mp,this);
         gnu.chu.print.util.printJasper(jp, EU);
 
@@ -579,6 +690,16 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         if (! ejecSelect)
           return true;
      swCliente=false;
+     String camCodi="";
+     if (!mCamTodas.isSelected())
+     {
+        for (String cam:htCam)
+        {
+             camCodi+="'"+cam+"',";
+        }
+        if (!camCodi.equals(""))
+         camCodi=camCodi.substring(0,camCodi.length()-1);
+     }
      if (!cli_codiE.isNull())
          swCliente=true;
      s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_codrut, cl.cli_poble,"
@@ -589,10 +710,12 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         " WHERE pvc_fecent between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +       
         " and  to_date('" + pvc_fecfinE.getText()  + "','dd-MM-yyyy')" +
         " and c.emp_codi = "+EU.em_cod+
-        " and c.alm_codi >= " + alm_codiE.getValorInt() +       
         " and cl.cli_codi = c.cli_codi " +
         " and c.rut_codi = al.rut_codi "+     
          " and pvc_confir = 'S'"+
+         (camCodi.equals("")?"":
+         " and exists (select a.pro_codi from v_pedven as l,v_articulo as a where"
+         + " a.pro_codi=l.pro_codi and l.pvc_id=c.pvc_id and a.cam_codi in ("+camCodi+"))" )+
         (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = "+sbe_codiE.getValorInt())+
         (zon_codiE.isNull() || swCliente?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
         (rep_codiE.isNull() || swCliente?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'");
@@ -691,8 +814,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         return;
       boolean swServ=verPedidosE.getValor().equals("S") || 
           verPedidosE.getValor().equals("M") ; // A servir (tienen albaran y no esta listado)
-     
-      
+           
       do
       {
         if (!servRutaC.getValor().equals("*"))
@@ -771,7 +893,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
       }
       jtCabPed.requestFocusInicio();
       jtCabPed.setEnabled(true);
-      verDatPed(jtCabPed.getValorInt(0),jtCabPed.getValorInt(1),jtCabPed.getValorInt(2));
+      verDatPed(jtCabPed.getValorInt(JTCAB_EMPPED),jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED),
+            jtCabPed.getValorInt(JTCAB_EJEALB),jtCabPed.getValString(JTCAB_SERALB),jtCabPed.getValorInt(JTCAB_NUMALB));
     }
     catch (SQLException | ParseException k)
     {
@@ -798,7 +921,6 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         pvc_feciniE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel7 = new gnu.chu.controles.CLabel();
         pvc_fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
-        cLabel16 = new gnu.chu.controles.CLabel();
         rep_codiE = new gnu.chu.controles.CLinkBox();
         zon_codiE = new gnu.chu.controles.CLinkBox();
         cLabel18 = new gnu.chu.controles.CLabel();
@@ -806,13 +928,13 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         cLabel10 = new gnu.chu.controles.CLabel();
         verPedidosE = new gnu.chu.controles.CComboBox();
         cLabel21 = new gnu.chu.controles.CLabel();
-        alm_codiE = new gnu.chu.controles.CLinkBox();
         cLabel2 = new gnu.chu.controles.CLabel();
         servRutaC = new gnu.chu.controles.CComboBox();
         cLabel3 = new gnu.chu.controles.CLabel();
         albListadoC = new gnu.chu.controles.CComboBox();
         cLabel22 = new gnu.chu.controles.CLabel();
         rut_codiE = new gnu.chu.controles.CLinkBox();
+        BFiltroCam = new gnu.chu.controles.CButton(Iconos.getImageIcon("filter"));
         jtLinPed = new gnu.chu.controles.Cgrid(11);
         jtCabPed = new gnu.chu.controles.Cgrid(14);
         Ppie = new gnu.chu.controles.CPanel();
@@ -843,32 +965,27 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         cLabel1.setText("Ver Pedidos");
         Pcabe.add(cLabel1);
-        cLabel1.setBounds(2, 1, 70, 18);
+        cLabel1.setBounds(2, 2, 70, 18);
         Pcabe.add(cli_codiE);
-        cli_codiE.setBounds(80, 22, 280, 18);
+        cli_codiE.setBounds(80, 22, 340, 18);
 
         cLabel5.setText("Delegación");
         Pcabe.add(cLabel5);
-        cLabel5.setBounds(370, 22, 70, 18);
+        cLabel5.setBounds(590, 22, 70, 18);
         Pcabe.add(sbe_codiE);
-        sbe_codiE.setBounds(440, 22, 37, 18);
+        sbe_codiE.setBounds(660, 22, 37, 18);
 
         cLabel6.setText("De Fecha");
         Pcabe.add(cLabel6);
-        cLabel6.setBounds(440, 0, 49, 18);
+        cLabel6.setBounds(440, 2, 49, 18);
         Pcabe.add(pvc_feciniE);
-        pvc_feciniE.setBounds(500, 0, 76, 18);
+        pvc_feciniE.setBounds(500, 2, 76, 18);
 
         cLabel7.setText("A Fecha");
         Pcabe.add(cLabel7);
-        cLabel7.setBounds(580, 0, 43, 18);
+        cLabel7.setBounds(580, 2, 43, 18);
         Pcabe.add(pvc_fecfinE);
-        pvc_fecfinE.setBounds(630, 0, 75, 18);
-
-        cLabel16.setText("Alm");
-        cLabel16.setPreferredSize(new java.awt.Dimension(60, 18));
-        Pcabe.add(cLabel16);
-        cLabel16.setBounds(480, 22, 30, 18);
+        pvc_fecfinE.setBounds(630, 2, 75, 18);
 
         rep_codiE.setAncTexto(30);
         rep_codiE.setMayusculas(true);
@@ -901,16 +1018,12 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         verPedidosE.addItem("Preparados","L");
         verPedidosE.addItem("Todos","T");
         Pcabe.add(verPedidosE);
-        verPedidosE.setBounds(80, 1, 160, 18);
+        verPedidosE.setBounds(80, 2, 160, 18);
 
         cLabel21.setText("Repres.");
         cLabel21.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel21);
         cLabel21.setBounds(5, 42, 50, 18);
-
-        alm_codiE.setAncTexto(25);
-        Pcabe.add(alm_codiE);
-        alm_codiE.setBounds(510, 22, 200, 17);
 
         cLabel2.setText("Servidos en Ruta ");
         Pcabe.add(cLabel2);
@@ -943,6 +1056,10 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         rut_codiE.setPreferredSize(new java.awt.Dimension(152, 18));
         Pcabe.add(rut_codiE);
         rut_codiE.setBounds(390, 65, 200, 18);
+
+        BFiltroCam.setText("Camaras");
+        Pcabe.add(BFiltroCam);
+        BFiltroCam.setBounds(290, 2, 90, 19);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1057,16 +1174,15 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BFiltroCam;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButtonMenu Bimpri;
     private gnu.chu.controles.CPanel PPrinc;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Ppie;
     private gnu.chu.controles.CComboBox albListadoC;
-    private gnu.chu.controles.CLinkBox alm_codiE;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
-    private gnu.chu.controles.CLabel cLabel16;
     private gnu.chu.controles.CLabel cLabel17;
     private gnu.chu.controles.CLabel cLabel18;
     private gnu.chu.controles.CLabel cLabel19;
@@ -1102,16 +1218,44 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
     @Override
     public Object getFieldValue(JRField jrf) throws JRException {
-        String campo = jrf.getName().toLowerCase();
-        try
-        {          
-            if (campo.equals("orden"))
-                return nLineaReport;
-            return dtCon1.getObject(campo);
-        } catch (SQLException ex)
-        {
-            throw new JRException("Error al listar pedidos. Campo: "+campo,ex);
-        }
+        String campo = jrf.getName().toLowerCase();          
+            switch (campo)
+            {        
+                case "emp_codi":
+                    return jtCabPed.getValorInt(nLineaReport,JTCAB_EMPPED);
+                case "eje_nume":
+                    return jtCabPed.getValorInt(nLineaReport,JTCAB_EJEPED);
+                case "pvc_nume":
+                    return jtCabPed.getValorInt(nLineaReport,JTCAB_NUMPED);
+                case "pvl_numlin":
+                    return  nLineaDet;
+                case "pvl_canti":
+                    return jtLinPed.getValString(nLineaDet,JTLIN_CANTI);
+                case "pro_codi":
+                    return jtLinPed.getValorInt(nLineaDet,JTLIN_PROCOD);
+                case "pro_nomb":
+                    return jtLinPed.getValString(nLineaDet,JTLIN_PRONOMB);
+                case "pvl_comen":
+                    return jtLinPed.getValString(nLineaDet,JTLIN_COMENT);
+                case "pvc_comen":
+                    return pvc_comenE.getText();
+                case "pvl_tipo":
+                    return jtLinPed.getValString(nLineaDet,JTLIN_TIPLIN);
+                case "cli_codi":
+                     return jtCabPed.getValorInt(nLineaReport,JTCAB_CLICOD);
+                case "pvc_clinom":
+                    return jtCabPed.getValString(nLineaReport,JTCAB_CLINOMB);
+                 case "cli_pobl":
+                    return jtCabPed.getValString(nLineaReport,JTCAB_CLIPOBL);
+                case "cli_codrut":
+                    return jtCabPed.getValString(nLineaReport,JTCAB_CODREP);
+                case "rut_nomb":
+                    return jtCabPed.getValString(nLineaReport,JTCAB_RUTA);
+                case "pvc_fecent":
+                    return jtCabPed.getValString(nLineaReport,JTCAB_FECENT);
+                    
+            }
+            throw new JRException("Campo NO ENCONTRADO: "+campo);      
     }
     
 }
