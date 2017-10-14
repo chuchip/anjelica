@@ -6,6 +6,9 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.util.*;
 import java.text.*;
@@ -35,7 +38,6 @@ import javax.mail.internet.MimeUtility;
 public class  Formatear
 {
   public static final Locale local = Locale.US;//new Locale("es","es","");
-
   static boolean swFormat=false;
   public final static char DECIMALSEPARATOR='.';//new DecimalFormatSymbols().getDecimalSeparator();
   public final static char GROUPSEPARATOR=',';//new DecimalFormatSymbols().getGroupingSeparator();
@@ -2121,5 +2123,20 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
             frameSize.width = screenSize.width;
         return new Point((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
     }
-
+    public  static String getHostName() 
+    {
+        try
+        {
+            return InetAddress.getLocalHost().getHostName();
+        } catch ( UnknownHostException k)
+        {
+          try 
+          {
+              return Inet4Address.getLocalHost().getHostAddress();
+          } catch ( UnknownHostException k1)
+          {
+             return "*FAIL*";
+          }
+        }
+    }
 }

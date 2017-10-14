@@ -119,6 +119,7 @@ public class tidCodi2 extends CLinkBox
             requestFocus();
             return false;
         }
+        super.controla(false);
         if (getError())
         {
             msgError = "Tipo de Despiece no Valido";
@@ -277,6 +278,7 @@ public class tidCodi2 extends CLinkBox
 //      }      
       s="select t.tid_codi, t.tid_nomb from tipodesp as t,tipdesent as te  WHERE "+
         " t.tid_codi=te.tid_codi "+        
+       (verSoloActivo?" and tid_activ != 0":"")+ // Solo activos
         "  and pro_codi in  (";
      
 //      s += " and  (select count(*) from tipdesent where tipdesent.tid_codi = tipodesp.tid_codi "+
@@ -425,6 +427,6 @@ public class tidCodi2 extends CLinkBox
      */
     public void setVerSoloActivo(boolean versoloactivo)
     {
-        verSoloActivo=versoloactivo;
+        this.verSoloActivo=versoloactivo;
     }
 }

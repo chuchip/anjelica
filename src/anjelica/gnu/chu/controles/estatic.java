@@ -44,9 +44,9 @@ public abstract class estatic
     {}
     return null;
   }
-  public static AbstractButton getButtonPanel(int tecla,java.util.Hashtable htButton,Component padre)
+  public static AbstractButton getButtonPanel(int tecla,java.util.Hashtable<Integer,AbstractButton> htButton ,Component padre)
     {
-      AbstractButton bot = (AbstractButton) htButton.get("" + tecla);
+      AbstractButton bot = htButton.get(tecla);
       if (bot == null)
       {
         try

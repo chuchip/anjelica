@@ -401,7 +401,7 @@ public class listraza  implements JRDataSource
     {
       if (dtGrid == null)
       {
-        dtGrid = new DatosTrazaGrid()
+        dtGrid = new DatosTrazaGrid(EU)
         {
           @Override
           public void matar()

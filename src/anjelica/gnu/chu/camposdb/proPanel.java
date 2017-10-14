@@ -2,9 +2,11 @@ package gnu.chu.camposdb;
 
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.controles.CButton;
+import gnu.chu.controles.CGridEditable;
 import gnu.chu.controles.CInternalFrame;
 import gnu.chu.controles.CPanel;
 import gnu.chu.controles.CTextField;
+import gnu.chu.controles.estatic;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.vlike;
 import gnu.chu.utilidades.CodigoBarras;
@@ -19,8 +21,10 @@ import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
@@ -1565,6 +1569,8 @@ public class proPanel extends CPanel
   {
 
   }
+ 
+
 
 }
 

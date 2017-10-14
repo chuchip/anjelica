@@ -13,8 +13,6 @@ import gnu.chu.interfaces.*;
 import gnu.chu.sql.*;
 import gnu.chu.Menu.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
@@ -146,14 +144,9 @@ public class ventana extends CInternalFrame implements ejecutable
     pe.setEjecutable(this);
     pe.Bcancelar.requestFocus();
     pe.setVisible(true);
-    try  {
-        logger.error("Usuario: "+EU.usu_nomb+" en host: "+Inet4Address.getLocalHost().getHostAddress()+"\n"+
+    logger.error("Usuario: "+EU.usu_nomb+" en host: "+Formatear.getHostName() +"\n"+
                  s+"\n"+systemOut.getMessage() );
-    } catch (UnknownHostException k1)
-    {
-        logger.error("Usuario: "+EU.usu_nomb+"\nHost: DESCONOCIDO \n"+
-                 s+"\n"+systemOut.getMessage() );
-    }
+  
 
 //    enviaMailError(((pe.getResultado() == PopError.REINTENTAR)?"ERROR REINTENTADO\n":"ERROR CANCELADO\n") + s);
 
@@ -174,15 +167,9 @@ public class ventana extends CInternalFrame implements ejecutable
   public int fatalError(String s, Throwable k)
   {
 
-    k.printStackTrace( systemOut);
-    try {
-       logger.error("Usuario: "+EU.usu_nomb+"\nHost: "+Inet4Address.getLocalHost().getHostAddress()+"\n"+
+    k.printStackTrace( systemOut);   
+       logger.error("Usuario: "+EU.usu_nomb+"\nHost: "+Formatear.getHostName()+"\n"+
                  s+"\n"+systemOut.getMessage() );
-    } catch (UnknownHostException k1)
-    {
-        logger.error("Usuario: "+EU.usu_nomb+"\nHost: DESCONOCIDO \n"+
-                 s+"\n"+systemOut.getMessage() );
-    }
 //    enviaMailError(s);
 
     PopError pe= new PopError(s+"\n"+systemOut.getMessage());
@@ -231,15 +218,9 @@ public class ventana extends CInternalFrame implements ejecutable
    */
   protected void ErrorInit(Throwable j)
   {
-    j.printStackTrace(systemOut);
-    try  {
-        logger.error("Usuario: "+EU.usu_nomb+" en host: "+Inet4Address.getLocalHost().getHostAddress()+"\n"+
+    j.printStackTrace(systemOut);   
+        logger.error("Usuario: "+EU.usu_nomb+" en host: "+Formatear.getHostName()+"\n"+
                  "\n Error en el constructor\n"+systemOut.getMessage() );
-    } catch (UnknownHostException k1)
-    {
-        logger.error("Usuario: "+EU.usu_nomb+"\nHost: DESCONOCIDO \n"+
-                 "\n Error en el constructor\n"+systemOut.getMessage() );
-    }
 
 //    enviaMailError("ERROR EN EL COSTRUCTOR");
 
@@ -250,8 +231,7 @@ public class ventana extends CInternalFrame implements ejecutable
    * Envia un mensaje de Error al Administrador
    */
   public void enviaMailError(String s) {
-    try  {
-        logger.error("Usuario: "+EU.usu_nomb+" en host: "+Inet4Address.getLocalHost().getHostAddress()+"\n"+
+        logger.error("Usuario: "+EU.usu_nomb+" en host: "+Formatear.getHostName()+"\n"+
                 s );
         if (jf != null)
         {
@@ -259,11 +239,7 @@ public class ventana extends CInternalFrame implements ejecutable
           jf.ht.put("%s",s);
           jf.guardaMens("ME", jf.ht);
         }
-    } catch (UnknownHostException k1)
-    {
-        logger.error("Usuario: "+EU.usu_nomb+"\nHost: DESCONOCIDO \n"+
-                 s );
-    }
+   
 
 //    sendMail.enviaMailError("[AnJelica] Error en Programa: "+titProg+"\n"+s,systemOut,EU);
   }
@@ -319,7 +295,7 @@ public class ventana extends CInternalFrame implements ejecutable
           ctUp.close();
       }
     }
-    catch (Exception k)
+    catch (PropertyVetoException | SQLException k)
     {
       debug("Error al cerrar la conexion ... pasando del tema");
     }
@@ -330,7 +306,6 @@ public class ventana extends CInternalFrame implements ejecutable
     processEvent(new InternalFrameEvent(this,
                                         InternalFrameEvent.
                                         INTERNAL_FRAME_CLOSING));
-    return;
   }
   /**
    * Establece si la ventana debe tener una cabecera
@@ -344,6 +319,7 @@ public class ventana extends CInternalFrame implements ejecutable
              PlasticInternalFrameUI.IS_PALETTE,
              !cabecera);
   }
+  @Override
   public void matar()
   {
     matar(true);
@@ -776,13 +752,8 @@ public class ventana extends CInternalFrame implements ejecutable
       return false;
     }
     dt.addNew("bloqueos");
-    dt.setDato("usu_nomb", EU.usuario);
-    try {
-      dt.setDato("blo_tty", java.net.InetAddress.getLocalHost().getHostName());
-    } catch ( java.net.UnknownHostException k1)
-    {
-      throw new SQLException("No encontrado Nombre de Localhost "+k1.getMessage());
-    }
+    dt.setDato("usu_nomb", EU.usuario);   
+    dt.setDato("blo_tty", Formatear.getHostName());
     dt.setDato("blo_fecha", Fecha.getFechaSys("dd-MM-yyyy"), "dd-MM-yyyy");
     dt.setDato("blo_hora", Fecha.getFechaSys("hh.mm"));
     dt.setDato("blo_tabla", tabla);
@@ -847,26 +818,15 @@ public class ventana extends CInternalFrame implements ejecutable
   }
   public void aviso(String aviso)
   {
-      try  {
-        logger.error("Usuario: "+EU.usu_nomb+"en host: "+Inet4Address.getLocalHost().getHostAddress()+"\n"+
+      logger.error("Usuario: "+EU.usu_nomb+"en host: "+Formatear.getHostName()+"\n"+
                 aviso );
-    } catch (UnknownHostException k1)
-    {
-        logger.error("Usuario: "+EU.usu_nomb+"\nHost: DESCONOCIDO \n"+
-                 aviso );
-    }
+  
   }
 
   public void aviso(String aviso, Throwable t1)
-  {
-   try  {
-        logger.error("Usuario: "+EU.usu_nomb+"en host: "+Inet4Address.getLocalHost().getHostAddress()+"\n"+
-                aviso,t1 );
-    } catch (UnknownHostException k1)
-    {
-        logger.error("Usuario: "+EU.usu_nomb+"\nHost: DESCONOCIDO \n"+
-                 aviso,t1 );
-    }
+  {   
+     logger.error("Usuario: "+EU.usu_nomb+"en host: "+Formatear.getHostName()+"\n"+
+                aviso,t1 ); 
   }
   /**
    * Establece que se esta realizando una petición (trabajando)

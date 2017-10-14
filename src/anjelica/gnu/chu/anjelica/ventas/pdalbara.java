@@ -126,6 +126,7 @@ import net.sf.jasperreports.engine.JasperReport;
  
 public class pdalbara extends ventanaPad  implements PAD  
 {   
+  boolean P_IMPRES=false;
   int idTiempo=0;
   int pvcNumeOld=0;
   JasperReport jr=null;
@@ -138,7 +139,7 @@ public class pdalbara extends ventanaPad  implements PAD
     {"Entregado","E"}
   };
   CComboBox pvc_deposE=new CComboBox();
-  CButton Bdespiece=new CButton();
+//  CButton Bdespiece=new CButton();
   int paiEmp;
   RangoEtiquetas rangoEtiq;
   RegistroListVentas regListado;
@@ -450,7 +451,7 @@ public class pdalbara extends ventanaPad  implements PAD
         }
         else
         {
-            if (!despieceC.getValor().equals("N"))   
+            if (autoDespiece!='N')   
             {
                 jtDes.requestFocus(0,JTDES_EMP);
                 jtDes.ponValores(0);
@@ -629,7 +630,8 @@ public class pdalbara extends ventanaPad  implements PAD
   CButton BmvReg = new CButton(Iconos.getImageIcon("run"));
   CLabel cLabel31 = new CLabel();
   CComboBox div_codiE = new CComboBox();
-  CComboBox despieceC = new CComboBox();
+  CButtonMenu despieceC = new CButtonMenu(Iconos.getImageIcon("cuchillo"));
+  char autoDespiece='N';
   CLabel lockE = new CLabel();
   CLabel printE = new CLabel();
   CPanel PotroDat = new CPanel();
@@ -865,7 +867,7 @@ public class pdalbara extends ventanaPad  implements PAD
         fvc_anoE.setBounds(new Rectangle(475, 38, 37, 16));
         fvc_numeE.setBounds(new Rectangle(515, 38, 56, 16));
         Bimpri.setMargin(new Insets(0, 0, 0, 0));
-        Bimpri.setText("F9");
+
         Bimpri.setBounds(new Rectangle(331, 21, 65, 17));
         Bimpri.setToolTipText("Imprimir");
 
@@ -974,7 +976,7 @@ public class pdalbara extends ventanaPad  implements PAD
         Bcancelar.setMaximumSize(new Dimension(110, 28));
         Bcancelar.setMinimumSize(new Dimension(110, 28));
         Bcancelar.setPreferredSize(new Dimension(110, 28));
-        Bdespiece.setBounds(new Rectangle(670, 2, 2, 2));
+        //Bdespiece.setBounds(new Rectangle(670, 2, 2, 2));
         Baceptar.setText("Aceptar (F4)");
         opValora.setMargin(new Insets(0, 0, 0, 0));
         opValora.setText("Valorado");
@@ -1164,11 +1166,13 @@ public class pdalbara extends ventanaPad  implements PAD
         div_codiE.setBounds(new Rectangle(558, 56, 120, 16));
         despieceC.setPreferredSize(new Dimension(100, 24));
         despieceC.setToolTipText("Generar Despieces");
-        
+        despieceC.setText("No Desp.");
+        despieceC.setToolTipText("Realizar AutoDespiece sobre lecturas");
         despieceC.setBounds(new Rectangle(136, 5, 82, 17));
-        despieceC.addItem("NO Desp.", "N");
-        despieceC.addItem("Despiece", "D");
-        despieceC.addItem("Todo Desp.", "M");
+        despieceC.addMenu(" ", " ");
+        despieceC.addMenu("NO Desp.", "N");
+        despieceC.addMenu("Despiece", "D");
+//        despieceC.addMenu("Todo Desp.", "M");
         avc_revpreL.setText("Revisar Precios");
         avc_deposE.setBounds(new Rectangle(215, 57, 105, 18));
         verDepoC.setBounds(new Rectangle(445, 75, 110, 20));
@@ -1358,7 +1362,7 @@ public class pdalbara extends ventanaPad  implements PAD
                 GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         cPanel2.add(BmvReg, null);
         cPanel2.add(despieceC, null);
-        cPanel2.add(Bdespiece, null);
+//        cPanel2.add(Bdespiece, null);
         cPanel2.add(opAgru, null);
         cPanel2.add(BValTar, null);
         cPanel2.add(Bcancelar, null);
@@ -1537,14 +1541,22 @@ public class pdalbara extends ventanaPad  implements PAD
     opValora.setSelected(true);
     jtRes.setDefButton(Baceptar);
     jtPalet.setDefButton(Baceptar);
-    
-    nav.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
-    Pcabe.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
-    Pcabe.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
-    jt.setButton(KeyEvent.VK_F9, Bimpri.getBotonAccion());
+      
     nav.setButton(KeyEvent.VK_F5, BValTar.getBotonAccion());
     jt.setButton(KeyEvent.VK_F5, BValTar.getBotonAccion());
     Pcabe.setButton(KeyEvent.VK_F5, BValTar.getBotonAccion());
+    CButton BF9;
+    if (P_IMPRES)
+    {
+        Bimpri.setText("F9");
+        BF9=Bimpri.getBotonAccion();
+    }
+    else
+        BF9=despieceC.getBotonAccion();
+    jt.setButton(KeyEvent.VK_F9,BF9);
+    nav.setButton(KeyEvent.VK_F9, BF9);
+    Pcabe.setButton(KeyEvent.VK_F9, BF9);
+    Pcabe.setButton(KeyEvent.VK_F9, BF9);
     Pcabe.setDefButton(Baceptar);
     Pcabe.setButton(KeyEvent.VK_F4, Baceptar);
     jt.setButton(KeyEvent.VK_F4, Baceptar);
@@ -1886,6 +1898,11 @@ public class pdalbara extends ventanaPad  implements PAD
       {
           @Override
           public void actionPerformed(ActionEvent e) {
+             if (e.getActionCommand().equals(" "))
+                autoDespiece=autoDespiece=='N'?'D':'N';
+             else
+                autoDespiece=despieceC.getValor(e.getActionCommand()).charAt(0);
+             despieceC.setText(autoDespiece=='N'?"No Desp.":"Desp");
              if (jt.isEnabled())
                 jt.requestFocusLater();
           }
@@ -2187,28 +2204,28 @@ public class pdalbara extends ventanaPad  implements PAD
         }
       }
     }); 
-    Bdespiece.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {         
-          switch (despieceC.getValor())
-          {
-            case "N":
-                despieceC.setValor("D");
-                break;    
-            case "D":
-                despieceC.setValor("M");
-                break;    
-            case "M":
-                despieceC.setValor("N");
-          }
-          if (jt.isEnabled())
-              jt.requestFocusLater();
-          if (jtDes.isEnabled())
-              jtDes.requestFocusLater();
-      }
-    });
+//    Bdespiece.addActionListener(new ActionListener()
+//    {
+//      @Override
+//      public void actionPerformed(ActionEvent e)
+//      {         
+//          switch (autoDespiece)
+//          {
+//            case 'N':
+//                despieceC.setValor("D");
+//                break;    
+//            case "D":
+//                despieceC.setValor("M");
+//                break;    
+//            case "M":
+//                despieceC.setValor("N");
+//          }
+//          if (jt.isEnabled())
+//              jt.requestFocusLater();
+//          if (jtDes.isEnabled())
+//              jtDes.requestFocusLater();
+//      }
+//    });
 
 
     avc_deposE.addActionListener(new ActionListener()
@@ -2815,8 +2832,11 @@ public class pdalbara extends ventanaPad  implements PAD
         jtDes.setValor(indStk.getStpKilact(),JTDES_KILBRU);
         jtDes.setValor(indStk.getStpKilact(),JTDES_KILORI);
         jtDes.salirGrid();
-        if (despieceC.getValor().equals("D"))
-            despieceC.setValor("N");
+//        if (autoDespiece=='D')
+//        {
+//            autoDespiece='N';
+//            despieceC.setText("No Desp.");
+//        }
     }
     try {
         salirLineasDesglose();
@@ -4830,7 +4850,8 @@ public class pdalbara extends ventanaPad  implements PAD
     if (avc_valoraE.getValorInt()==AVC_VALORADO && !P_MODPRECIO)
         avc_valoraE.setValor(""+AVC_REVVALOR);
     
-    despieceC.setValor("N");
+    autoDespiece='N';
+    despieceC.setText("No Desp.");
 //    opModif.setSelected(false);
     activar(true);
     if (P_MODPRECIO)        
@@ -5290,7 +5311,7 @@ public class pdalbara extends ventanaPad  implements PAD
           PotroDat.resetTexto();
           cli_pobleE.setText("");
           cli_codiE.resetCambio();
-          cli_codiE.requestFocus();
+          
           emp_codiE.setValorDec(EU.em_cod);
           avc_anoE.setValorDec(EU.ejercicio);
           avc_seriE.setText("A");
@@ -5330,7 +5351,8 @@ public class pdalbara extends ventanaPad  implements PAD
 //    opModif.setSelected(false);
           avc_valoraE.setValor(""+AVC_NOVALORADO);
           nav.pulsado=navegador.ADDNEW;
-          despieceC.setValor("N");
+          autoDespiece='N';
+          despieceC.setText("No Desp.");
           confAlbDep=true; // No comprueba nunca si tiene albaranes deposito;
           
           jt.setValor(swUsaPalets?1:0,JT_NUMPALE);
@@ -5338,6 +5360,10 @@ public class pdalbara extends ventanaPad  implements PAD
           avsNume=0;
           dtAdd.commit();
           mensaje("Introduciendo Nuevo Albaran ...");
+          if (P_CONPEDIDO)
+             BbusPed_actionPerformed();
+          else
+            cli_codiE.requestFocus();
       } catch (SQLException ex)
       {
         Error("Error al iniciar transaccion de insertar",ex);
@@ -6397,7 +6423,7 @@ public class pdalbara extends ventanaPad  implements PAD
             return;
           }
         }
-        if (jt.getValorInt(JT_NULIAL)==0 && !despieceC.getValor().equals("N"))       
+        if (jt.getValorInt(JT_NULIAL)==0 && autoDespiece!='N')       
         {
             int nRow=jtDes.getRowCount();
             int nLin=0;
@@ -8194,7 +8220,7 @@ public class pdalbara extends ventanaPad  implements PAD
     avc_impalbE.setEnabled(false);
     avc_impcobE.setEnabled(false);
     despieceC.setEnabled(b);    
-    Bdespiece.setEnabled(b);    
+    //Bdespiece.setEnabled(b);    
     avc_numpalB.setEnabled(b);
     avc_numpalC.setEnabled(b);
     emp_codiE.setEnabled(b);
@@ -9121,9 +9147,15 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     if (copeve!=null)
     {
-      copeve.matar(false);
-      copeve.setVisible(false);
-      copeve.dispose();
+        try {
+            copeve.matar(false);
+            if (!ct.isClosed())
+                copeve.guardaParam();
+            copeve.setVisible(false);
+            copeve.dispose();
+        } catch (SQLException ex) {
+            Error("Error al guardar parametros",ex);
+        }
     }
 
     if (ifFax!=null)

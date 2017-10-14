@@ -3351,6 +3351,19 @@ insert into parametros values('*','jdbc_usu_cont','Usuario Contabilidad','sa');
 insert into parametros values('*','jdbc_pass_cont','Contraseña Contabilidad','as');
 insert into parametros values('*','jdbc_driver_cont','Driver Contabilidad','com.microsoft.sqlserver.jdbc.SQLServerDriver');
 insert into parametros values('*','jdbc_url_cont','URL conexion Contabilidad','jdbc:sqlserver://w2003:1433;databaseName=BCONTA01');
+insert into parametros values('*','crotalAutoma','Numero Crotal Automatico',1);
+insert into parametros values('*','minLonCrotal','Numero Minimo digitos Crotal',10);
+--
+-- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
+--
+create table anjelica.programasParam
+(
+	prf_host varchar(50), -- Host
+	usu_nomb varchar(15), -- Si * aplica a todos los usuarios
+    prf_id varchar(30) not null,    -- Nombre parametro    
+    prf_valor varchar(15) not null --  Valor
+);
+grant all on anjelica.programasParam to public;
 --
 -- Tabla con las diferentes camaras
 -- por empresa

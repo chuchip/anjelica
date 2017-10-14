@@ -1,3 +1,11 @@
+create table anjelica.programasParam
+(
+	prf_host varchar(50), -- Host
+	usu_nomb varchar(15), -- Si * aplica a todos los usuarios
+    prf_id varchar(30) not null,    -- Nombre parametro    
+    prf_valor varchar(15) not null --  Valor
+);
+-- 
 alter table taricli add tar_butapa int not null default 1; -- Buscar tarifa padre . 1 Si. 0 No
 --
 -- Tiempos en documento

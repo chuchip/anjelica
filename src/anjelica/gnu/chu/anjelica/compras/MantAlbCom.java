@@ -71,8 +71,8 @@ import javax.swing.event.*;
 import net.sf.jasperreports.engine.*;
 
 public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSource,MantAlbCom_Interface
-{
-  AyuSdeMat ayuSde=null;
+{  
+    AyuSdeMat ayuSde=null;
   AyuSdeMat ayuMat=null;
   CLabel acc_idL = new CLabel("Id");
   CTextField acc_idE = new CTextField(Types.DECIMAL,"#,###,##9");
@@ -736,7 +736,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20170810)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20171007)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -1668,15 +1668,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
             cambiaLineaHist(jtHist.getValorInt(3));
         }
     });
-    acp_nucrotE.addKeyListener(new KeyAdapter()
-    {
-            @Override
-      public void keyPressed(KeyEvent e)
-      {
-        if (e.getKeyCode() == KeyEvent.VK_F3 &&  acp_nucrotE.isEditable())            
-          genNumCrotal();
-      }
-    });
+    
     acc_dtoppE.addFocusListener(new FocusAdapter()
     {
       @Override
@@ -7082,63 +7074,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 //         }
 //       }
 //     }
-    public static String getRandomCrotal(String crotalBase)
-    {
-         int len = crotalBase.length();
-         int numAleatorio;
-         String numCrot;
-            if (len > 6) {
-                numCrot = crotalBase.substring(0, len - 6);
-                len = 6;
-            } else
-                numCrot="";
-            if (len==0) len=6;
-            int numMult = 1;
-            String formato = "";
-            for (int n = 0; n < len; n++) {
-                numMult = numMult * 10;
-                formato = formato + "9";
-            }
-            numAleatorio=(int) (Math.random() * numMult)+1;
-            if (numAleatorio>=numMult)
-                numAleatorio=numMult-1;
-            numCrot = numCrot + Formatear.format(numAleatorio, formato);
-            return numCrot;
-    }
-   /**
-    * Genera un numero de crotal aleatorio sobre el ya introducido. Modifica los ultimos 6 digitos.
-    */
-    private void genNumCrotal() {
-       
-        String numCrot=null;
-        int numIntentos=0;
-        for (numIntentos=0;numIntentos<10;numIntentos++)
-        {
-            
-            numCrot = getRandomCrotal( acp_nucrotE.getText());
-
-            try {
-                if (proNumcro > 0) {
-                    int numCrotal = getNumCrotal(numCrot, 0, jt.getValorInt(1));
-                    if (numCrotal < proNumcro) {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            } catch (SQLException k) {
-                Error("Error al generar numero crotal automaticamente", k);
-                return;
-            }
-        }
-        if (numIntentos>=10)
-        {
-            msgBox("No ha sido posible generar un número crotal nuevo automaticamente. Aumente el numero de digitos del crotal");
-            return;
-        }
-        acp_nucrotE.setText(numCrot);
-        jtDes.requestFocus(jtDes.getSelectedRow(),3);
-    }
+  
+ 
      int getRecPrv(String tipo)
      {
        if (tipo.equals("P"))

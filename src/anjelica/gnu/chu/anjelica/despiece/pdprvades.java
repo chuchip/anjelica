@@ -230,6 +230,8 @@ public class pdprvades extends ventanaPad implements PAD
       activarEventos();
       activar(false);
       jt.setNumRegCargar(0);
+      if (!dtCons.getNOREG())
+        dtCons.last();
       verDatos();
       nav.requestFocus();
       Pprinc.setDefButton(Baceptar);
@@ -483,6 +485,7 @@ public class pdprvades extends ventanaPad implements PAD
         mensaje("");
         mensajeErr("No encontrados Registros para estos criterios");
         rgSelect();
+        dtCons.last();
         activaTodo();
         return;
       }
@@ -490,6 +493,7 @@ public class pdprvades extends ventanaPad implements PAD
       strSql = s;
       activaTodo();
       rgSelect();
+      dtCons.last();
       verDatos();
       mensajeErr("Nuevos regisgtros selecionados");
     }
@@ -628,7 +632,23 @@ public class pdprvades extends ventanaPad implements PAD
     return -1;
   }
   /**
-   * Devuelve la semana y el año para una fecha dada
+   * Devuelve fecha inicio de costos para una fecha. 
+   * Teniendo en cuenta que el jueves empieza la semana.
+   * @param fecha
+   * @return 
+   */
+  public static Date getFechaCosto(Date fecha)
+  { 
+     GregorianCalendar gc=new GregorianCalendar();
+     gc.setTime(fecha);
+     int diaSemana=gc.get(GregorianCalendar.DAY_OF_WEEK); 
+     if (diaSemana>GregorianCalendar.WEDNESDAY)
+        return Formatear.sumaDiasDate(fecha, 9-diaSemana);    // lunes de Siguiente semana
+     else
+        return Formatear.sumaDiasDate(fecha, (diaSemana-2)*-1); // Lunes de semana en curso
+  }
+  /**
+   * Devuelve la semana y el año para una fecha dada en Valoracion Despieces
    * @param fecha
    * @return  Dimension. Width sera el año. heigh sera la semana
    */
@@ -638,6 +658,8 @@ public class pdprvades extends ventanaPad implements PAD
       gc.setFirstDayOfWeek(1);
       gc.setTime(fecha);
       int semana = gc.get(GregorianCalendar.WEEK_OF_YEAR);
+      int dia=gc.get(GregorianCalendar.DAY_OF_WEEK); // Dia de la semana
+  
       int ano= gc.get(GregorianCalendar.YEAR);
 //      if (semana>1)
 //          semana--;

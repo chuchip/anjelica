@@ -1840,7 +1840,7 @@ void limpiaDB()
 //     ht.put("godmode","true");
      ht.put("AlbSinPed","false");
 
-//     ht.put("verPrecio","true");
+     ht.put("admin","true");
      lanzaEjecutable(new gnu.chu.anjelica.compras.MantAlbComCarne(menu.this, EU,ht));
   }
  void albComPlanta_actionPerformed(ActionEvent e) {

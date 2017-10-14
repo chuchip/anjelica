@@ -1049,8 +1049,16 @@ public class ValDespi extends ventana {
      
      gc.setTime(fecDesp);
      int diaSemana=gc.get(GregorianCalendar.DAY_OF_WEEK); 
+     if (diaSemana>GregorianCalendar.WEDNESDAY)
+     {
+        fecIniSem=Formatear.sumaDiasDate(fecDesp, 9-diaSemana);
+        fecFinSem=Formatear.sumaDiasDate(fecDesp, 15-diaSemana); 
+     }
+     else
+     {   
      fecIniSem=Formatear.sumaDiasDate(fecDesp, (diaSemana-2)*-1); // Empieza la semana el Lunes
-     fecFinSem=Formatear.sumaDiasDate(fecDesp, 8-diaSemana); // Termina el sabado.
+     fecFinSem=Formatear.sumaDiasDate(fecDesp, 8-diaSemana); // Termina el Domingo  
+     }
      rangoSemana = "BETWEEN {d '"+Formatear.getFechaDB(fecIniSem)+"'} and {d '"+
          Formatear.getFechaDB(fecFinSem)+"'}";   
    }

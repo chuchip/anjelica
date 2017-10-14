@@ -1097,6 +1097,7 @@ public class MantPrAlb extends ventana {
             Error("Error al buscar Lineas de Albaran",k);
         }
     }
+    
     /**
      * Actualiza los costos en las lineas del grid, 
      * anteriormente cargadas.
@@ -1123,7 +1124,8 @@ public class MantPrAlb extends ventana {
                  if (prec==null)
                  {
 
-                      prCosto=pdprvades.getPrecioValorar(dtCos1,jtLin.getValorInt(n,0),avc_fecalbE.getDate());
+                      prCosto=pdprvades.getPrecioValorar(dtCos1,jtLin.getValorInt(n,0), 
+                          pdprvades.getFechaCosto(avc_fecalbE.getDate()));
                       if (prCosto<=0)
                       {
                         if (! mvtosAlm.calculaMvtos(jtLin.getValorInt(n,0), dtCos1, dtCos2, null,null))

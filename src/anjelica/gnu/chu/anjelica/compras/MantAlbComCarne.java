@@ -48,7 +48,8 @@ import java.util.Hashtable;
  */
 public class MantAlbComCarne extends MantAlbCom  
 {
-   
+   public static int MINLONCROTAL=10;
+   private int CROTALAUTOMA=1; // Numero crotal Automatico
    String ultMat=null,ultSalDes,ultNac,ultCeb,ultSacr,ultFecCad,ultFecSac,ultFecPro;
    CLinkBox mat_codiE,sde_codiE;
    
@@ -114,6 +115,18 @@ public class MantAlbComCarne extends MantAlbCom
 
    private void activarEventos0()
    {
+    acp_nucrotE.addKeyListener(new KeyAdapter()
+    {
+            @Override
+      public void keyPressed(KeyEvent e)
+      {
+        if (e.getKeyCode() == KeyEvent.VK_F3 &&  acp_nucrotE.isEditable())     
+        {
+          genNumCrotal();
+          jtDes.requestFocus(jtDes.getSelectedRow(),JTD_NUMCRO);
+        }
+      }
+    });
      mat_codiE.addKeyListener(new KeyAdapter()
      {
       @Override
@@ -136,6 +149,9 @@ public class MantAlbComCarne extends MantAlbCom
    @Override
   public void confGridDesglose() throws Exception
   {
+      CROTALAUTOMA=EU.getValorParam("crotalAutoma", CROTALAUTOMA);
+      MINLONCROTAL=EU.getValorParam("minLonCrotal", MINLONCROTAL);
+      
       acp_painacE = new PaiPanel();
       acp_engpaiE = new PaiPanel();
       acp_paisacE = new PaiPanel();
@@ -336,21 +352,35 @@ public class MantAlbComCarne extends MantAlbCom
          return JTD_FECPRO;
      }
      if (proNumcro>0)
-    {
-        if (acp_nucrotE.isNull())
+     {        
+        if (acp_nucrotE.isNull() || acp_nucrotE.getText().length()<MINLONCROTAL)
         {
-            mensajeErr("Es obligatorio introducir codigo crotal para este producto");
-            return JTD_NUMCRO;
+            if (CROTALAUTOMA!=0)
+            {
+                genNumCrotal();
+                jtDes.setValor(acp_nucrotE.getText(),JTD_NUMCRO);
+            }
+             if (acp_nucrotE.isNull() || acp_nucrotE.getText().length()<MINLONCROTAL)
+            {
+                mensajeErr("Producto debe tener numero crotal. Longitud minima: "+MINLONCROTAL);
+                return JTD_NUMCRO;
+            }
         }
-        /*
-        * @todo revisar en caso de f6. Xq falla.
-        */
+        
         int numCrotal=getNumCrotal(acp_nucrotE.getText(),numIndAnt,jt.getValorInt(JT_PROCOD));
         if (numCrotal>= proNumcro)
         {
-            mensajeErr("No puede haber mas de "+proNumcro+"  numeros de crotal iguales");
-            if (acp_nucrotE.isEditable())
-                return JTD_NUMCRO;
+            if (CROTALAUTOMA!=0)
+            {
+               genNumCrotal();
+               jtDes.setValor(acp_nucrotE.getText(),JTD_NUMCRO);
+            }
+            else
+            {
+                mensajeErr("No puede haber mas de "+proNumcro+"  numeros de crotal iguales");
+                if (acp_nucrotE.isEditable())
+                    return JTD_NUMCRO;
+            }
         }
         if (mat_codiE.isNull())
         {
@@ -936,4 +966,69 @@ public class MantAlbComCarne extends MantAlbCom
      {
         return  "gnu.chu.anjelica.compras.MantAlbComCarne";
      }
+       /**
+    * Genera un numero de crotal aleatorio sobre el ya introducido. Modifica los ultimos 6 digitos.
+    */
+    private void genNumCrotal() {
+       
+        String numCrot=null;
+        int numIntentos=0;
+        if (acp_nucrotE.isNull())
+            acp_nucrotE.setText(acp_painacE.getText());
+        for (numIntentos=0;numIntentos<10;numIntentos++)
+        {            
+            numCrot = getRandomCrotal( acp_nucrotE.getText(),MINLONCROTAL);
+            try {
+                if (proNumcro > 0) {
+                    int numCrotal = getNumCrotal(numCrot, 0, jt.getValorInt(1));
+                    if (numCrotal < proNumcro) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            } catch (SQLException k) {
+                Error("Error al generar numero crotal automaticamente", k);
+                return;
+            }
+        }
+        if (numIntentos>=10)
+        {
+            msgBox("No ha sido posible generar un número crotal nuevo automaticamente. Aumente el numero de digitos del crotal");
+            return;
+        }
+        acp_nucrotE.setText(numCrot);      
+    }
+    public static String getRandomCrotal(String crotalBase,EntornoUsuario eu)
+    {
+        int minLonCrotal=MINLONCROTAL;
+        if (eu!=null)
+          minLonCrotal=eu.getValorParam("minLonCrotal", MINLONCROTAL); 
+        return getRandomCrotal(crotalBase,minLonCrotal);
+    }
+       /**
+      * Genera un numero crotal aleatorio.
+      * @param crotalBase
+      * @param MINLONCROTAL Longitud Minima del Numero Crotal
+      * @return 
+      */
+    public static String getRandomCrotal(String crotalBase,int MINLONCROTAL)
+    {
+        if (crotalBase==null)
+            crotalBase="";
+        int maxLonCrotal=MINLONCROTAL;
+        int len = crotalBase.length();         
+        String numCrot;
+        if (len >= MINLONCROTAL) 
+        {
+             numCrot = crotalBase.substring(0, len - MINLONCROTAL/2);    
+             maxLonCrotal=len;
+             len = numCrot.length();
+        }
+        else            
+             numCrot=crotalBase;           
+        for (int n = len; n < maxLonCrotal; n++) 
+            numCrot+=""+(int)( Math.random() * 10);             
+        return numCrot;
+    }
 } 

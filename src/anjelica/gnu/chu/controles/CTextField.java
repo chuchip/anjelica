@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Hashtable;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,6 +53,7 @@ import javax.swing.text.PlainDocument;
 
 public class CTextField extends JTextField implements  CQuery,CEditable,TableCellRenderer
 {
+  private Hashtable<Integer,AbstractButton> htButton=new Hashtable();
   Color colBackGround=null;
   private boolean incluirComodines=true;
   boolean aceptaComodines=true;
@@ -624,10 +626,12 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
     return getButton(KeyEvent.VK_F2);
   }
 
-    public AbstractButton getButton(int tecla)
-    {
+  public AbstractButton getButton(int tecla)
+  {
+      if (htButton.get(tecla)!=null)
+          return htButton.get(tecla);
       Component yo = this;
-      AbstractButton boton=null;
+      AbstractButton boton;
       if (gridEdit != null)
       {
         yo = gridEdit;
@@ -636,7 +640,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
           return boton;
       }
       return estatic.getButton(tecla,this);
-    }
+  }
 
 
     @Override
@@ -828,8 +832,19 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
      }
      setText(txt,true);
   }
-
-  
+  /**
+   * Establece un boton de accion para una tecla.
+   * Machacara el del CPanel en caso de estar establecido.
+   * @param tecla
+   * @param boton 
+   */
+   public void setButton(int tecla, AbstractButton boton)
+  {
+    if (boton==null)
+      htButton.remove(tecla);
+    else
+      htButton.put(tecla,boton);
+  }
   public void setBackground(Color colorBack)
   {
       colBackGround=colorBack;

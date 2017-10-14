@@ -6,7 +6,7 @@ package gnu.chu.anjelica.despiece;
  * <p>Descripcion: Serie de Funciones con Utilidades para mant. de Despiece
  * Localiza datos de trazabilidad de  un individuo en particular.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -613,7 +613,7 @@ public class utildesp
 //                    System.out.println("pues esta repetido el crotal: "+ntrazaE);
                if (swGenCrotal)
                {
-                   ntrazaE=MantAlbComCarne.getRandomCrotal(ntrazaE);
+                   ntrazaE=MantAlbComCarne.getRandomCrotal(ntrazaE,EU);
                    crotales.add(ntrazaE);
                    if (checkRepetic(crotales,ntrazaE))
                    {

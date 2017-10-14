@@ -36,7 +36,7 @@ public class CPanel extends JPanel implements CEditable,CQuery,CContenedor
   boolean editable=true;
   boolean swAddFocoListen=false;
   private boolean swBuscaDisa=false;
-  Hashtable htButton=new Hashtable();
+  Hashtable<Integer,AbstractButton> htButton=new Hashtable();
     /**
     * Crea un Nuevo VPanel
     */
@@ -188,9 +188,9 @@ public void setAltButton(AbstractButton b)
   public void setButton(int tecla, AbstractButton boton)
   {
     if (boton==null)
-      htButton.remove(""+tecla);
+      htButton.remove(tecla);
     else
-      htButton.put(""+tecla,boton);
+      htButton.put(tecla,boton);
   }
 
 

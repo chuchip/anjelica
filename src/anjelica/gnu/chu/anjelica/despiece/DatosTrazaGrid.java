@@ -23,10 +23,11 @@ package gnu.chu.anjelica.despiece;
  * @version 1.0
  */
 
-import static gnu.chu.anjelica.compras.MantAlbCom.getRandomCrotal;
+import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.listraza.DatosTraza;
 import gnu.chu.controles.CGridEditable;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.SystemOut;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
@@ -38,15 +39,18 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class DatosTrazaGrid extends ventana {
+    int MINLONCROTAL=MantAlbComCarne.MINLONCROTAL;
     private final int JT_NUMCRO=4;
     private boolean cambioCrotal=false;
-    /** Creates new form DatosTrazaGrid */
-    public DatosTrazaGrid() {
+  
+    public DatosTrazaGrid(EntornoUsuario eu)
+    {
+        EU=eu;
         this.setTitulo("Datos Trazabilidad");
         this.setResizable(true);
         this.setClosable(false);
         this.setIconifiable(false);
-
+        MINLONCROTAL=EU.getValorParam("minLonCrotal", MINLONCROTAL);
         statusBar = new StatusBar(this);
         initComponents();
         this.setSize(new Dimension(740, 481));
@@ -69,7 +73,7 @@ public class DatosTrazaGrid extends ventana {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode()==KeyEvent.VK_F3)
                 {
-                    pro_loteE.setText(getRandomCrotal( pro_loteE.getText()));
+                    pro_loteE.setText(MantAlbComCarne.getRandomCrotal(pro_loteE.getText(),MINLONCROTAL));
                     cambioCrotal=true;
                 }
             }
@@ -197,7 +201,7 @@ public class DatosTrazaGrid extends ventana {
             }
             if (swRep>1)
             {
-                jt.setValor(getRandomCrotal(jt.getValString(n,JT_NUMCRO)),n,JT_NUMCRO);
+                jt.setValor(MantAlbComCarne.getRandomCrotal(jt.getValString(n,JT_NUMCRO),MINLONCROTAL),n,JT_NUMCRO);
                 cambioCrotal=true;
             }
         }

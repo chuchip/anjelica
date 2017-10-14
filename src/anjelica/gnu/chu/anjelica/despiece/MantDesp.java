@@ -88,6 +88,8 @@ import javax.swing.event.ListSelectionListener;
 
 public class MantDesp extends ventanaPad implements PAD
 {   
+    int tidCodAnt=0;
+    ArrayList<Integer> dtFinAnt=new ArrayList();
     public final static String DESP_CERRADO="N";
     public final static String DESP_ABIERTO="S";
     public final static String DESP_BLOQUEADO="B";
@@ -979,25 +981,39 @@ public class MantDesp extends ventanaPad implements PAD
             }
             if (!swVacio)
                 return; // Tiene individuos de salida. No hago nada
-
-            if (tid_codiE.getValorDec() == MantTipDesp.LIBRE_DESPIECE || !cargaPSC.isSelected())
-                return;
-
-            boolean enab = jtLin.isEnabled();
-            jtLin.setEnabled(false);
-            jtLin.removeAllDatos();
-            s = DespVenta.getSqlProdSal(tid_codiE.getValorInt(), jtCab.getValorInt(0, JTCAB_PROCODI));
-
-            if (!dtCon1.select(s))
-            {
-                mensajeErr("Despieces NO encontrados");
+            if (tidCodAnt!=0 && tidCodAnt==tid_codiE.getValorInt())
+            {             
+                llenaGridSalDefecto(dtFinAnt);
                 return;
             }
+            if (tid_codiE.getValorDec() == MantTipDesp.LIBRE_DESPIECE || !cargaPSC.isSelected())
+                return;
+            s = DespVenta.getSqlProdSal(tid_codiE.getValorInt(), jtCab.getValorInt(0, JTCAB_PROCODI));   
+            if (!dtCon1.select(s))        
+                return;
+            ArrayList<Integer> dtArt=new ArrayList();
             do
             {
+                dtArt.add(dtCon1.getInt("pro_codi"));
+            } while (dtCon1.next());
+            llenaGridSalDefecto(dtArt);
+        } catch (ParseException | SQLException ex)
+        {
+            Error("Error al buscar Desp. Lineas", ex);
+        }
+    }
+    void llenaGridSalDefecto(ArrayList<Integer> dtList) throws SQLException
+    {
+         boolean enab = jtLin.isEnabled();
+            jtLin.setEnabled(false);
+            jtLin.removeAllDatos();
+           
+            int nRow=dtList.size();
+            for (int n=0;n<nRow;n++)
+            {
                 ArrayList v = new ArrayList();
-                v.add(dtCon1.getString("pro_codi"));
-                v.add(dtCon1.getString("pro_nomb"));
+                v.add(dtList.get(n));
+                v.add(pro_codlE.getNombArt(dtList.get(n)));
                 v.add("0"); // kgs
                 v.add("1"); //Unid.
                 v.add("0");  // Costo
@@ -1008,14 +1024,9 @@ public class MantDesp extends ventanaPad implements PAD
                 v.add("0");
                 v.add("");
                 jtLin.addLinea(v);
-            } while (dtCon1.next());
+            }
             jtLin.setEnabled(enab);
-        } catch (Exception ex)
-        {
-            Error("Error al buscar Desp. Lineas", ex);
-        }
     }
-
     boolean checkCab() throws Exception {
         return checkCab(true);
     }
@@ -1280,9 +1291,19 @@ public class MantDesp extends ventanaPad implements PAD
                 tid_codiE.setArticulos(jtCab.getValorColumna(JTCAB_PROCODI));
                 if (!CHECKTIDCODI && !AVISATIDCODI)
                     tid_codiE.clearArticulos();
+                tid_codiE.setVerSoloActivo(nav.getPulsado()==navegador.ADDNEW);
                 tid_codiE.releer();
+   
                 tid_codiE.resetTexto();
-                tid_codiE.setValorInt(MantTipDesp.AUTO_DESPIECE);
+                
+                if (!opRepet.isSelected() || tidCodAnt==0)
+                    tid_codiE.setValorInt(MantTipDesp.AUTO_DESPIECE);
+                else
+                {
+                    tid_codiE.setValorInt(tidCodAnt);
+                    if (!tid_codiE.controla(false))
+                         tid_codiE.setValorInt(MantTipDesp.AUTO_DESPIECE);
+                }
                 tid_codiE.requestFocusLater();
 
                 return;
@@ -1426,6 +1447,7 @@ public class MantDesp extends ventanaPad implements PAD
         tid_codiE.clearArticulos();
         try
         {
+            tid_codiE.setVerSoloActivo(false);
             tid_codiE.releer();
             tid_codiE.resetTexto();
         } catch (SQLException k)
@@ -1921,10 +1943,12 @@ public class MantDesp extends ventanaPad implements PAD
             kgDifE.setValorDec(0);
             kgOrigE.setValorDec(0);
             kgFinE.setValorDec(0);
-            tid_codiE.setValorDec(0);
+            
             deo_kilosE.setEnabled(true);
 //    deo_prcostE.setEnabled(false); // El costo no se puede introducir  o si?.
             jtLin.removeAllDatos();
+            tid_codiE.setValorDec(0);
+           
             proCodTD = 0;
             deo_lotnueE.setValor("-1");
             opSimular.setSelected(false);
@@ -2180,6 +2204,19 @@ public class MantDesp extends ventanaPad implements PAD
         activaTodo();
         mensajeErr("Despiece .... Introducido");
         nav.pulsado = navegador.NINGUNO;
+        if (opRepet.isSelected())
+        {
+            tidCodAnt=tid_codiE.getValorInt();
+            dtFinAnt.clear();
+            int nRows=jtLin.getRowCount();
+            for (int n=0;n<nRows;n++)
+            {
+                if (jtLin.getValorInt(n,JTLIN_PROCODI)>0 && jtLin.getValorDec(n,JTLIN_KILOS)>0 )
+                    dtFinAnt.add(jtLin.getValorInt(n,JTLIN_PROCODI));
+            }
+        }
+        else
+           tidCodAnt=0;
         PADAddNew(); // Vuelta a Introducir.
     }
     /**
@@ -2635,6 +2672,7 @@ public class MantDesp extends ventanaPad implements PAD
 
             if (!tid_codiE.getArticulos().isEmpty())
             {
+                tid_codiE.setVerSoloActivo(false);
                 tid_codiE.clearArticulos();
                 tid_codiE.releer();
             }
@@ -4112,6 +4150,7 @@ public class MantDesp extends ventanaPad implements PAD
         eti_codiE = new gnu.chu.controles.CComboBox();
         opVerGrupo = new gnu.chu.controles.CCheckBox("0","-1");
         opVerAgrup = new gnu.chu.controles.CCheckBox();
+        opRepet = new gnu.chu.controles.CCheckBox();
         Ptabpan = new gnu.chu.controles.CTabbedPane();
         Pgrid = new gnu.chu.controles.CPanel();
         jtLin = new gnu.chu.controles.CGridEditable(11)
@@ -4628,15 +4667,15 @@ public class MantDesp extends ventanaPad implements PAD
                 Bimpeti.addMenu("Interior");
                 Bimpeti.setText("(F9) Impr.Etiq");
                 Ppie.add(Bimpeti);
-                Bimpeti.setBounds(0, 2, 110, 17);
+                Bimpeti.setBounds(80, 0, 110, 17);
 
                 cLabel8.setText("Copias ");
                 Ppie.add(cLabel8);
-                cLabel8.setBounds(205, 2, 45, 17);
+                cLabel8.setBounds(0, 0, 45, 17);
                 Ppie.add(numCopiasE);
-                numCopiasE.setBounds(250, 2, 30, 17);
+                numCopiasE.setBounds(45, 0, 30, 17);
                 Ppie.add(eti_codiE);
-                eti_codiE.setBounds(120, 2, 80, 17);
+                eti_codiE.setBounds(200, 0, 80, 17);
 
                 opVerGrupo.setText("Ver Grupo");
                 opVerGrupo.setToolTipText("Ver grupo de despiece");
@@ -4647,6 +4686,12 @@ public class MantDesp extends ventanaPad implements PAD
                 opVerAgrup.setToolTipText("Ver Lineas agrupadas");
                 Ppie.add(opVerAgrup);
                 opVerAgrup.setBounds(330, 2, 70, 17);
+
+                opRepet.setSelected(true);
+                opRepet.setText("RR");
+                opRepet.setToolTipText("Repetir Despiece en Alta");
+                Ppie.add(opRepet);
+                opRepet.setBounds(285, 2, 40, 17);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -4825,8 +4870,10 @@ public class MantDesp extends ventanaPad implements PAD
                 Ptipdes.setMinimumSize(new java.awt.Dimension(669, 23));
                 Ptipdes.setPreferredSize(new java.awt.Dimension(669, 23));
                 Ptipdes.setLayout(null);
+
+                tid_codiE.setAncTexto(40);
                 Ptipdes.add(tid_codiE);
-                tid_codiE.setBounds(30, 2, 320, 20);
+                tid_codiE.setBounds(30, 2, 310, 20);
 
                 cLabel13.setText("Tipo");
                 Ptipdes.add(cLabel13);
@@ -5179,6 +5226,7 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField numCopiasE;
     private gnu.chu.controles.CCheckBox opImpEt;
     private gnu.chu.controles.CCheckBox opMantFecha;
+    private gnu.chu.controles.CCheckBox opRepet;
     private gnu.chu.controles.CCheckBox opSimular;
     private gnu.chu.controles.CCheckBox opVerAgrup;
     private gnu.chu.controles.CCheckBox opVerGrupo;
