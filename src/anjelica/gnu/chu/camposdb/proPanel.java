@@ -748,7 +748,7 @@ public class proPanel extends CPanel
       if (e.getKeyCode() == KeyEvent.VK_F3  || (e.getKeyChar()=='3' && e.getModifiers()==KeyEvent.CTRL_MASK) )
       {
        if (! isEditable() || ! isEnabled())
-                   return;
+          return;
       }
       else
           return;

@@ -31,12 +31,14 @@ import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.camposdb.proPanel;
 import gnu.chu.camposdb.prvPanel;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.controles.miCellRender;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -103,6 +105,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     private final int JTLIN_PRONOMB=2;
     private final int JTLIN_TIPLIN=0;
     private final int JTLIN_COMENT=9;
+    private final int JTLIN_PRV=3;
+    private final int JTLIN_FECCAD=5;
 //    private final int JTCAB_POBCLI=5;
     
     public CLPedidVen(EntornoUsuario eu, Principal p) {
@@ -174,7 +178,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2017-10-12");
+        this.setVersion("2017-10-16");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -186,6 +190,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     @Override
     public void iniciarVentana() throws Exception 
     {
+       
      Pcabe.setDefButton(Baceptar);
      pvc_feciniE.setAceptaNulo(false);
      pvc_fecfinE.setAceptaNulo(false);
@@ -226,7 +231,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
             mCam.addActionListener(new ActionListener() 
             {             
                @Override
-               public void actionPerformed(ActionEvent e) {
+               public void actionPerformed(ActionEvent e) {                
+                if (mCamTodas.isSelected())
+                     mCamTodas.setSelected(false);
                 if (htCam.indexOf(camCodi)>=0)
                    htCam.remove(camCodi);
                 else
@@ -265,9 +272,11 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     }
     void guardaParam() throws SQLException
     {
-         s="delete from programasparam where prf_host='"+Formatear.getHostName()+"'"+
+        s="delete from programasparam where prf_host='"+Formatear.getHostName()+"'"+
                 " and prf_id ='clpedven.camaras'";
-            dtAdd.executeUpdate(s);
+        dtAdd.executeUpdate(s);
+        if (!mCamTodas.isSelected())
+        {
             for (String cam:htCam)
             {
                 dtAdd.addNew("programasparam");
@@ -276,9 +285,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                 dtAdd.setDato("prf_valor",cam);
                 dtAdd.update();
             }
-            dtAdd.commit();
-    }
-    
+        }
+        dtAdd.commit();
+    }    
     void activarEventos()
     {
         BFiltroCam.addActionListener(new ActionListener() {
@@ -430,7 +439,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
            " and p.pvc_nume = "+pvcNume+
            " order by p.pvl_numlin ";
        jtLinPed.removeAllDatos();
-       Ppie.resetTexto();
+      // Ppie.resetTexto();
        nPedT.setValorDec(jtCabPed.getRowCount());
        if (! dtCon1.select(s))
        {
@@ -476,8 +485,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     
    void verDatAlbaranPed(int empCodi,int avcAno,String avcSerie, int avcNume) throws SQLException
    {
-      s="select 1 as tipo,l.pro_codi,sum(avp_numuni) as avp_numuni,sum(avp_canti) as avp_canti, " +
-             " s.prv_codi,s.stp_feccad "+
+      s="select 1 as tipo,l.pro_codi,sum(avp_numuni) as avp_numuni,sum(avp_canti) as avp_canti " +
+             (opIgnPrvE.isSelected()?"":", s.prv_codi")+
+             (opIgnCadE.isSelected()?"":",s.stp_feccad ")+
              " from v_albvenpar as l,v_stkpart as s " +
              " WHERE s.eje_nume = l.avp_ejelot " +
              " and s.emp_codi = l.avp_emplot " +
@@ -489,10 +499,13 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
              " and l.avc_ano = " + avcAno +
              " and l.avc_serie = '" +avcSerie + "'" +
              " and l.avc_nume = " + avcNume +
-             " GROUP BY l.pro_codi  ,s.prv_codi, stp_feccad "+
+             " GROUP BY l.pro_codi  "+
+            (opIgnPrvE.isSelected()?"":",s.prv_codi")
+            + (opIgnCadE.isSelected()?"":", stp_feccad ")+
              " UNION ALL "+
-             "select 0 as tipo, l.pro_codi,sum(avp_numuni) as avp_numuni,sum(avp_canti) as avp_canti, " +
-              " c.cli_codi AS prv_codi, c.avc_fecalb as stp_feccad " +
+             "select 0 as tipo, l.pro_codi,sum(avp_numuni) as avp_numuni,sum(avp_canti) as avp_canti " +
+              (opIgnPrvE.isSelected()?"":", c.cli_codi AS prv_codi ")
+              + (opIgnCadE.isSelected()?"":", c.avc_fecalb as stp_feccad ") +
               " from v_albvenpar as l,v_albavec as c  where  c.avc_ano = l.avc_ano  "+
               " and c.emp_codi = l.emp_codi "+
               " and c.avc_serie = l.avc_serie "+
@@ -502,7 +515,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
              " and l.avc_ano = " + avcAno +
              " and l.avc_serie = '" + avcSerie + "'" +
              " and l.avc_nume = " + avcNume +
-             " GROUP BY l.pro_codi ,c.cli_codi , avc_fecalb "+
+             " GROUP BY l.pro_codi"
+            + (opIgnPrvE.isSelected()?"":" ,c.cli_codi")
+            + (opIgnCadE.isSelected()?"":" , avc_fecalb ")+
              " order by 2 ";
 
 //    debug(s);
@@ -512,8 +527,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     int nLin=0;
     do
     {
-      rowCount = jtLinPed.getRowCount();
-      
+      rowCount = jtLinPed.getRowCount();      
+        
       ArrayList v = new ArrayList();
       v.add("A");
       v.add(dtCon1.getString("pro_codi"));
@@ -526,20 +541,37 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
       }
       else
       {
-        v.add(dtCon1.getString("prv_codi"));
-        v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi"), dtStat));
+        v.add(opIgnPrvE.isSelected()?"":dtCon1.getString("prv_codi"));
+        v.add(opIgnPrvE.isSelected()?"":prv_codiE.getNombPrv(dtCon1.getString("prv_codi"), dtStat));
       }
       if (dtCon1.getInt("tipo")==0)
         v.add("");
       else
-        v.add(dtCon1.getFecha("stp_feccad","dd-MM-yy"));
+        v.add(opIgnCadE.isSelected()?"":dtCon1.getFecha("stp_feccad","dd-MM-yy"));
     
       v.add(dtCon1.getString("avp_numuni"));
       v.add(""); // Precio
       v.add(false); // COnf
-      v.add(dtCon1.getString("avp_canti"));            
+      v.add(Formatear.format(dtCon1.getString("avp_canti"),"#,##9.99")+" Kg");         
       v.add(""); // NL
-      jtLinPed.addLinea(v);
+      nLin=0;
+      while (nLin<rowCount)
+      {
+
+        if (jtLinPed.getValString(nLin,0).equals("A") ||
+            jtLinPed.getValorInt(nLin,JTLIN_PROCOD)!=dtCon1.getInt("pro_codi")
+            )
+        {
+          nLin++;
+          continue;
+        }
+        v.set(JTLIN_PROCOD,"");
+        v.set(JTLIN_PRONOMB,"");
+        jtLinPed.addLinea(v,nLin+1);
+        break;
+      }
+      if (nLin>=rowCount)
+        jtLinPed.addLinea(v);
     } while (dtCon1.next());
     
    }
@@ -569,6 +601,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         return;
       }
       try {
+          /**
+           * Listado relacion de pedidos. 
+           */
         swImpreso=false;
         java.util.HashMap mp = Listados.getHashMapDefault();
         mp.put("fecini",pvc_feciniE.getDate());
@@ -579,7 +614,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         jr =  Listados.getJasperReport(EU, "relpedven");
 
         ResultSet rs;
-        nLineaReport=-1;
+        nLineaReport=0;
         nLineaDet=9999;
 //        rs=dtCon1.getStatement().executeQuery(dtCon1.getStrSelect());
 
@@ -599,40 +634,44 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      {
         try
         {
-          if (!swImpreso)
-          {
-              nLineaReport++;
-              if (nLineaReport>=jtCabPed.getRowCount())
-                return false;
-              s = "SELECT c.*, cl.cli_nomb,cl.cli_poble"
+            
+            if (!swImpreso)
+            { 
+                 if (nLineaReport>=jtCabPed.getRowCount())
+                    return false;
+                  s = "SELECT c.*, cl.cli_nomb,cl.cli_poble"
                        + "  FROM pedvenc as c,v_cliente as cl "
                        + " WHERE c.emp_codi =  " + jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED)
                        + " and C.cli_codi = cl.cli_codi "
                        + " AND C.eje_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED)
                        + " and C.pvc_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED);
-                  if (!dtCon1.select(s))
-                  {
-                        throw new JRException("Error al localizar pedido para listar. Linea: "
-                            + nLineaReport + " Pedido: " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED));
-                  }    
-                  return true;
-         }
-         if (nLineaReport<0 || nLineaDet+1>=jtLinPed.getRowCount())
-         {
+               if (!dtCon1.select(s))
+               {
+                   throw new JRException("Error al localizar pedido para listar. Linea: "
+                       + nLineaReport + " Pedido: " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED));
+               }      
                nLineaReport++;
-               if (nLineaReport>=jtCabPed.getRowCount())
-                return false;
-               nLineaDet=0;
-               verDatPed(jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED),
-                       jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED),
-                       jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED),
-                       jtCabPed.getValorInt(nLineaReport,JTCAB_EJEALB),
-                       jtCabPed.getValString(nLineaReport,JTCAB_SERALB),jtCabPed.getValorInt(nLineaReport,JTCAB_NUMALB)
-               );                      
-           }
-           else   
-             nLineaDet++;
-           return true;
+          }
+          else
+          {            
+                if (nLineaReport<0 || nLineaDet+1>=jtLinPed.getRowCount())
+                {
+                      nLineaReport++;
+                      if (nLineaReport>=jtCabPed.getRowCount())
+                       return false;
+                      nLineaDet=0;
+                      verDatPed(jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED),
+                              jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED),
+                              jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED),
+                              jtCabPed.getValorInt(nLineaReport,JTCAB_EJEALB),
+                              jtCabPed.getValString(nLineaReport,JTCAB_SERALB),jtCabPed.getValorInt(nLineaReport,JTCAB_NUMALB)
+                      );                      
+                  }
+                  else   
+                    nLineaDet++;
+
+                 }
+          return true;
         } catch (SQLException ex)
         {
             throw new JRException("Error al buscar pedido a listar",ex);
@@ -643,13 +682,10 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     {
       try
       {
-        swImpreso=true;
-       
-
+        swImpreso=true;       
         java.util.HashMap mp =Listados.getHashMapDefault();
         JasperReport jr;
         jr = Listados.getJasperReport(EU, "pedventas");
-
       
         nLineaReport=-1;
         nLineaDet=9999;
@@ -795,6 +831,16 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      jtLinPed.setFormatoColumna(7, "-,--9.99");
      jtLinPed.setFormatoColumna(8, "BSN");
      jtLinPed.setAjustarGrid(true);
+      cgpedven vg = new cgpedven(jtLinPed);
+        for (int n = 0; n < jtLinPed.getColumnCount(); n++)
+        {
+            miCellRender mc = jtLinPed.getRenderer(n);
+            if (mc == null)
+                continue;
+            mc.setVirtualGrid(vg);
+            mc.setErrBackColor(Color.CYAN);
+            mc.setErrForeColor(Color.BLACK);
+        }
     }
     public void setCliCodiText(String cliCodi)
     {
@@ -951,6 +997,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         Bimpri = new gnu.chu.controles.CButtonMenu();
         pvc_nupeclE = new gnu.chu.controles.CTextField();
         cLabel23 = new gnu.chu.controles.CLabel();
+        opIgnCadE = new gnu.chu.controles.CCheckBox();
+        opIgnPrvE = new gnu.chu.controles.CCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -1136,7 +1184,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         pvc_impresE.setEnabled(false);
         pvc_impresE.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Ppie.add(pvc_impresE);
-        pvc_impresE.setBounds(225, 40, 70, 17);
+        pvc_impresE.setBounds(230, 40, 70, 17);
 
         pvc_comenE.setColumns(20);
         pvc_comenE.setRows(5);
@@ -1159,6 +1207,18 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         cLabel23.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel23);
         cLabel23.setBounds(225, 1, 80, 18);
+
+        opIgnCadE.setSelected(true);
+        opIgnCadE.setText("IgnorarCaducidad");
+        opIgnCadE.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        Ppie.add(opIgnCadE);
+        opIgnCadE.setBounds(440, 40, 130, 17);
+
+        opIgnPrvE.setSelected(true);
+        opIgnPrvE.setText("Ignorar Proveedor");
+        opIgnPrvE.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        Ppie.add(opIgnPrvE);
+        opIgnPrvE.setBounds(310, 40, 130, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1199,6 +1259,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     private gnu.chu.controles.Cgrid jtCabPed;
     private gnu.chu.controles.Cgrid jtLinPed;
     private gnu.chu.controles.CTextField nPedT;
+    private gnu.chu.controles.CCheckBox opIgnCadE;
+    private gnu.chu.controles.CCheckBox opIgnPrvE;
     private gnu.chu.controles.CTextArea pvc_comenE;
     private gnu.chu.controles.CTextField pvc_fecfinE;
     private gnu.chu.controles.CTextField pvc_feciniE;
@@ -1218,7 +1280,16 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
     @Override
     public Object getFieldValue(JRField jrf) throws JRException {
-        String campo = jrf.getName().toLowerCase();          
+        try          
+        {
+            
+            String campo = jrf.getName().toLowerCase();
+            if (!swImpreso)
+            {
+                if (campo.equals("orden"))
+                    return nLineaReport;
+                return dtCon1.getObject(campo);
+            }
             switch (campo)
             {        
                 case "emp_codi":
@@ -1242,10 +1313,10 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                 case "pvl_tipo":
                     return jtLinPed.getValString(nLineaDet,JTLIN_TIPLIN);
                 case "cli_codi":
-                     return jtCabPed.getValorInt(nLineaReport,JTCAB_CLICOD);
+                    return jtCabPed.getValorInt(nLineaReport,JTCAB_CLICOD);
                 case "pvc_clinom":
                     return jtCabPed.getValString(nLineaReport,JTCAB_CLINOMB);
-                 case "cli_pobl":
+                case "cli_pobl":
                     return jtCabPed.getValString(nLineaReport,JTCAB_CLIPOBL);
                 case "cli_codrut":
                     return jtCabPed.getValString(nLineaReport,JTCAB_CODREP);
@@ -1255,7 +1326,11 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                     return jtCabPed.getValString(nLineaReport,JTCAB_FECENT);
                     
             }
-            throw new JRException("Campo NO ENCONTRADO: "+campo);      
+            throw new JRException("Campo NO VALIDO: "+campo);
+        } catch (SQLException ex)
+        {
+            throw new JRException("Error al leer campo de base datos",ex);
+        }
     }
     
 }

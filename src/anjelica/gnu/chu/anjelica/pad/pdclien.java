@@ -2013,6 +2013,7 @@ public class pdclien extends ventanaPad implements PAD
       dtAdd.setDato("cli_codi",cli_codiE.getValorInt());
       dtAdd.setDato("emp_codi",emp_codiE.getValorInt());
       dtAdd.setDato("cli_fecalt",Formatear.getFechaAct("dd-MM-yyyy"),"dd-MM-yyyy");
+      dtAdd.setDato("cli_ordrut",0);
       actDatos();
     }
     catch (SQLException | ParseException k)

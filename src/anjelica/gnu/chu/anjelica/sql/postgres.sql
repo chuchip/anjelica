@@ -341,6 +341,7 @@ cli_email1 char(60),     -- Correo Electronico Comercial (Tarifas)
 cli_email2 char(60),     -- Correo Electronico Administr. (Facturas/Alb.)
 cli_servir smallint default -1 not null, --  Puede servir?. 0 NO . 1 Si. 2: No! (no podra cargar pedidos ni alb.)
 cli_enalva smallint not null default 0, -- Enviar Alb. Valorados. (0: No afecta. 1: SI. 2: No )
+cli_ordrut smallint, -- Orden en ruta.
 constraint ix_vcliente primary key(cli_codi)
 );
 drop view v_cliente;
@@ -439,6 +440,7 @@ clc_hora decimal(5,2) not null, -- Hora de Cambio
 clc_comen varchar(100) -- Comentario sobre el Cambio
 cli_servir smallint default -1 not null, --  Puede servir?. 0 NO 
 cli_enalva smallint not null default 0, -- Enviar Alb. Valorados. (0: No afecta. 1: SI. 2: No )
+cli_ordrut smallint -- Orden en ruta.
 );
 create index ix_cliencamb on cliencamb(cli_codi,clc_fecha,clc_hora);
 --
@@ -2242,8 +2244,8 @@ cor_totcob char(1) not null -- Totalmente cobrado (S/N)
 -- Tabla Cabecera Albaranes de ruta.
 --
 drop view anjelica.v_albruta;
-drop view anjelica.v_cobruta;
-drop table anjelica.albrutacab;
+-- drop view anjelica.v_cobruta;
+-- drop table anjelica.albrutacab;
 create table anjelica.albrutacab
 (
 	alr_nume serial not null, -- ID
@@ -2263,8 +2265,8 @@ create table anjelica.albrutacab
  --
 -- Tabla Cabecera Lineas de ruta.
 --
- drop view anjelica.v_albruta;
- drop table anjelica.albrutalin;
+-- drop view anjelica.v_albruta;
+-- drop table anjelica.albrutalin;
 create table anjelica.albrutalin
 (
 	alr_nume int not null, -- ID
@@ -2291,7 +2293,6 @@ al.avc_unid
 from anjelica.albrutacab as c, anjelica.albrutalin as l,anjelica.v_albavec as al 
 where c.alr_nume=l.alr_nume and al.avc_id = l.avc_id;
 grant select on v_albruta to public;
-
 --
 --
 --
@@ -2319,6 +2320,45 @@ fr.emp_codi,fr.fvc_ano,fr.fvc_serie,fr.fvc_nume,fr.cli_codi,fr.fvc_clinom,fvc_fe
 from albrutacab as c, cobrosruta as l,v_facvec as fr
 where c.alr_nume=l.alr_nume and fr.fvc_id = l.fvc_id;
 grant select on v_cobruta to public;
+--
+-- Tabla Cabecera Pedidos en rutas.
+--
+-- drop view v_pedruta;
+--drop table anjelica.pedrutacab;
+create table anjelica.pedrutacab
+(
+	pru_id serial not null, -- ID
+	rut_codi char(2) not null, -- Ruta
+	usu_nomb varchar(15) not null, -- Usuario o transportista	
+	prc_fecsal TIMESTAMP not null, -- Fecha Salida Ruta.		
+	prc_coment varchar(255) -- Comentarios sobre ruta.	
+ ); 
+ grant all on pedrutacab to public;
+ --
+-- Tabla Linea Pedidos en rutas.
+--
+create table anjelica.pedrutalin
+(
+	pru_id int not null, -- ID
+	plr_orden int not null, -- Orden de carga
+	pvc_id int not null,  -- ID. Pedidos
+	plr_kilcaj float not null, -- Kilos Cajas
+	plr_kilcol float not null, -- Kilos Colgado	
+	cli_nomen varchar(50) not null, -- Nombre Cliente 
+	cli_diree varchar(100) not null, -- Direccion entrega
+	cli_poble varchar(50) not null, -- Poblacion entrega
+	cli_codpoe varchar(8), -- Cod. Postal Envio
+	alr_comrep varchar(80), -- Comentario Reparto
+	constraint ix_pedrutalin primary key (pru_id,plr_orden)
+);
+drop view v_pedruta;
+create or replace view v_pedruta as select c.*,l.plr_orden,l.pvc_id,plr_kilcaj,plr_kilcol,
+cli_nomen,cli_diree,cli_poble,cli_codpoe,alr_comrep,emp_codi,
+p.eje_nume,p.pvc_nume,p.cli_codi,p.pvc_clinom,p.pvc_fecent
+from anjelica.pedrutacab as c, anjelica.pedrutalin as l,anjelica.pedvenc as p
+where c.pru_id=l.pru_id and p.pvc_id = l.pvc_id;
+grant select on v_pedruta to public;
+ --
 ---
 -- Tabla vehiculos
 ---
@@ -3218,8 +3258,9 @@ create index ix_taripor on taripor(tra_codi,tap_codi,tap_fecini);
 create table anjelica.comision_represent
 (
 	avc_id int  not null, -- Numero Albaran
-	cor_linea varchar(30) not null, -- LINEA
+	cor_linea varchar(30) not null, -- Lineas
 	cor_coment varchar(120) not null, -- Comentario
+	cor_comres varchar(120) not null, -- Respuesta Comentario
 	constraint ix_comrep primary key (avc_id,cor_linea)f
  );
 grant all on anjelica.comision_represent to public;
@@ -3353,6 +3394,7 @@ insert into parametros values('*','jdbc_driver_cont','Driver Contabilidad','com.
 insert into parametros values('*','jdbc_url_cont','URL conexion Contabilidad','jdbc:sqlserver://w2003:1433;databaseName=BCONTA01');
 insert into parametros values('*','crotalAutoma','Numero Crotal Automatico',1);
 insert into parametros values('*','minLonCrotal','Numero Minimo digitos Crotal',10);
+insert into parametros values('*','controlprodmin','Control Productos Minoristas',0);
 --
 -- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
 --

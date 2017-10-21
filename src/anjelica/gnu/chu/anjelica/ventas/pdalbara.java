@@ -182,7 +182,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private boolean pesoManual=false; // Indica si se restara peso de cajas al darle enter en campo PESO.
   private boolean swUsaPalets=true;
   private boolean swCanti=false;
-  private boolean isEmpPlanta=false;
+  private boolean isEmpPlanta=false; // Empresa es tipo Plantacion.
   public final static String TABLACAB="v_albavec";
   public final static String TABLALIN="v_albavel";
   public final static String TABLAIND="v_albvenpar";
@@ -740,7 +740,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-10-03" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-10-16" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1153,6 +1153,7 @@ public class pdalbara extends ventanaPad  implements PAD
         opAgrPrv.setVerifyInputWhenFocusTarget(true);
         opAgrPrv.setText("Agrupar Proveed.");
         opAgrPrv.setBounds(new Rectangle(488, 21, 137, 17));
+        
         opAgrFecha.setBounds(new Rectangle(488, 38, 137, 17));
         opAgrFecha.setText("Agrupar Fec.Cad");
         opAgrFecha.setVerifyInputWhenFocusTarget(true);
@@ -1185,7 +1186,8 @@ public class pdalbara extends ventanaPad  implements PAD
         avc_numpalC.setBounds(new Rectangle(615, 75, 80 , 16));
         avc_revpreL.setBounds(new Rectangle(345, 80, 90, 16));
         avc_revpreE.setBounds(new Rectangle(437, 80, 100, 16));
-
+        opAgrPrv.setSelected(true);
+        opAgrFecha.setSelected(true);
         Ppie.add(cLabel10, null);
         Ppie.add(impDtoE, null);
         Ppie.add(numLinE, null);
@@ -1428,6 +1430,7 @@ public class pdalbara extends ventanaPad  implements PAD
           paiEmp = pdempresa.getPais(dtStat, EU.em_cod);
           isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
           swUsaPalets=pdconfig.getUsaPalets(EU.em_cod, dtStat);
+          CONTROL_PRO_MIN= EU.getValorParam("controlprodmin", CONTROL_PRO_MIN);
           avl_numpalE.setEnabled(swUsaPalets);
           if (pdconfig.getConfiguracion(EU.em_cod,dtStat))
           {
@@ -2559,30 +2562,20 @@ public class pdalbara extends ventanaPad  implements PAD
             consPrecios();
         }
 
-      });
-    
-      avl_cantiE.addFocusListener(new FocusAdapter()
-      {
-        @Override
-        public void focusGained(FocusEvent e)
-        {
-          irGridFoco();
-        }
-      });
+      });         
     }
     else
     {
-      jt.setReqFocusEdit(true);
-      avl_cantiE.addFocusListener(new FocusAdapter()
-      {
+      jt.setReqFocusEdit(true);     
+    }
+    avl_cantiE.addFocusListener(new FocusAdapter()
+    {
         @Override
         public void focusGained(FocusEvent e)
         {
           irGridFoco();
         }
-      });
-    }
-
+    });
     avp_ejelotE.addKeyListener(new KeyAdapter()
     {
       @Override
@@ -6627,10 +6620,11 @@ public class pdalbara extends ventanaPad  implements PAD
   {
        if (avpNumparAnt!=0 && isEmpPlanta && jtDes.getValorInt(JTDES_LOTE)==0)
        {
+        jtDes.setValor(EU.em_cod,JTDES_EMP);   
         jtDes.setValor(avpNumparAnt,JTDES_LOTE);
         jtDes.setValor(avpNumindAnt,JTDES_NUMIND );
         jtDes.setValor(avpSerlotAnt,JTDES_SERIE);            
-        jtDes.setValor(avpEjelotAnt,JTDES_EJE);
+        jtDes.setValor(avpEjelotAnt==0?EU.ejercicio:avpEjelotAnt,JTDES_EJE);
        }
   }
 
@@ -7093,8 +7087,8 @@ public class pdalbara extends ventanaPad  implements PAD
         guardaLinDes(row);
 
       if (jt.getValorInt(row, JT_UNID) == 0 && pro_codiE.getTipoLote()=='V')
-      {
-        mensajeErr("Introduzca Individuos de Producto");
+      {        
+        msgBox("Introduzca Numero de Individuos del Producto");
         return 1;
       }
 
@@ -7205,7 +7199,7 @@ public class pdalbara extends ventanaPad  implements PAD
               mensajeErr("Introduzca Serie de Lote");
               return 5;
           }
-          if (avp_numuniE.getValorInt() == 0) {
+          if (avp_numuniE.getValorInt() == 0 && avp_cantiE.getValorDec()>0) {
               mensajeErr("Introduzca Número de Unidades");
               return 4;
           }
@@ -7656,20 +7650,20 @@ public class pdalbara extends ventanaPad  implements PAD
     {
       rowCount = jtLinPed.getRowCount();
       // Busco posibles lineas de Venta con estas caracteristicas
-      for (int n=0;n<rowCount;n++)
-      {
-        if (jtLinPed.getValString(nLin,0).equals("A") &&
-          jtLinPed.getValorInt(nLin,1)==dtCon1.getInt("pro_codi") &&
-          (opAgrPrv.isSelected() || jtLinPed.getValorInt(nLin,JTP_PRV)==0
-              || jtLinPed.getValorInt(nLin,JTP_PRV)==dtCon1.getInt("prv_codi")) &&
-          (opAgrFecha.isSelected() || jtLinPed.getValString(nLin,JTP_FECCAD).equals("")
-             || jtLinPed.getValString(nLin,JTP_FECCAD).equals(dtCon1.getFecha("stp_feccad","dd-MM-yy")))
-           )
-         {
-           jtLinPed.setValor((dtCon1.getDouble("avp_numuni")+jtLinPed.getValorDec(n,JTP_UNID)),n,JTP_UNID);
-           break;
-         }
-      }
+//      for (int n=0;n<rowCount;n++)
+//      {
+//        if (jtLinPed.getValString(nLin,0).equals("A") &&
+//          jtLinPed.getValorInt(nLin,1)==dtCon1.getInt("pro_codi") &&
+//          (opAgrPrv.isSelected() || jtLinPed.getValorInt(nLin,JTP_PRV)==0
+//              || jtLinPed.getValorInt(nLin,JTP_PRV)==dtCon1.getInt("prv_codi")) &&
+//          (opAgrFecha.isSelected() || jtLinPed.getValString(nLin,JTP_FECCAD).equals("")
+//             || jtLinPed.getValString(nLin,JTP_FECCAD).equals(dtCon1.getFecha("stp_feccad","dd-MM-yy")))
+//           )
+//         {
+//           jtLinPed.setValor((dtCon1.getDouble("avp_numuni")+jtLinPed.getValorDec(n,JTP_CANMOD)),n,JTP_CANMOD);
+//           break;
+//         }
+//      }
       ArrayList v = new ArrayList();
       v.add("A");
       v.add(dtCon1.getString("pro_codi"));
@@ -7686,8 +7680,8 @@ public class pdalbara extends ventanaPad  implements PAD
 
       v.add(dtCon1.getString("avp_numuni"));
       v.add("");
-      v.add(dtCon1.getString("avp_canti"));
-      v.add("");
+      v.add(""); // Precio
+       v.add(Formatear.format(dtCon1.getString("avp_canti"),"#,##9.99")+" Kg");
       v.add(false);
       v.add("");
       if (opAgrPrv.isSelected())
@@ -7699,11 +7693,7 @@ public class pdalbara extends ventanaPad  implements PAD
       {
 
         if (jtLinPed.getValString(nLin,0).equals("A") ||
-            jtLinPed.getValorInt(nLin,1)!=dtCon1.getInt("pro_codi") /*||
-            ! ((opAgrPrv.isSelected() ||  jtLinPed.getValorInt(nLin,10)==0
-           || jtLinPed.getValorInt(nLin,10)==dtCon1.getInt("prv_codi")) &&
-           (opAgrFecha.isSelected() || jtLinPed.getValString(nLin,4).equals("")
-             || jtLinPed.getValString(nLin,4).equals(dtCon1.getFecha("stp_feccad","dd-MM-yy"))))*/
+            jtLinPed.getValorInt(nLin,1)!=dtCon1.getInt("pro_codi")
             )
         {
           nLin++;
@@ -8072,17 +8062,17 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     if (pro_codiE.getTipoLote()!='V' || ! pro_codiE.isActivo())
     {
-      mensajeErr("Imposible ir a Desglose");
+      msgBox("Imposible ir a Desglose. Producto no esta activo o no es de Venta");
       jt.requestFocusSelectedLater();   
       return;
     }
 
 
-    SwingUtilities.invokeLater(new Thread()
-    {
-      @Override
-      public void run()
-      {
+//    SwingUtilities.invokeLater(new Thread()
+//    {
+//      @Override
+//      public void run()
+//      {
         jt.setEnabled(false);
         if (jtDes.isVacio())
         {
@@ -8114,13 +8104,14 @@ public class pdalbara extends ventanaPad  implements PAD
        
         Baceptar.setEnabled(false);
         Bimpri.setEnabled(false);
-      }
-    });
+//      }
+//    });
 
 
   }
   /**
    * Rutina que prepara todo para ir al grid de desglose
+   * Llamada cuando se entra del campo avp_canti, (focusgained)
    */
   void irGridFoco()
   {
@@ -8138,14 +8129,7 @@ public class pdalbara extends ventanaPad  implements PAD
           && jt.getValorInt(0) == 0
           && pro_codiE.getTipoLote()=='V' && pro_codiE.isActivo() && pro_codiE.getValorInt() > 0)
       {
-        SwingUtilities.invokeLater(new Thread()
-        {
-          @Override
-          public void run()
-          {
-            irGridDes0();
-          }
-        });
+            irGridDes();
       }
     }
     catch (SQLException k)
@@ -8153,48 +8137,48 @@ public class pdalbara extends ventanaPad  implements PAD
       Error("Error al Ir al Grid de Despiece", k);
     }
   }
-
-  void irGridDes0()
-  {
-    botonBascula.setPesoCajas(pro_codiE.getPesoCajas());
-    if (jt.getValorInt(0) == 0)
-    {
-      jtDes.removeAllDatos();
-      avp_numuniE.resetTexto();
-//      avp_emplotE.resetTexto();
-      avp_ejelotE.resetTexto();
-      avp_serlotE.resetTexto();
-      avp_numparE.resetTexto();
-      avp_numindE.resetTexto();
-      avp_cantiE.resetTexto();
-    }
-    jt.setEnabled(false);
-    jtDes.setEnabled(true);
-   
-    jtDes.setValor(EU.em_cod, 0, JTDES_EMP);
-    jtDes.setValor(avpEjelotAnt==0?EU.ejercicio:avpEjelotAnt,0, JTDES_EJE);
-    jtDes.setValor(avpSerlotAnt.equals("")?"A":avpSerlotAnt,0, JTDES_SERIE);
-    if (isEmpPlanta || P_FACIL)
-    {
-        jtDes.setValor(avpNumparAnt,0, JTDES_LOTE);
-        jtDes.setValor(avpNumindAnt,0, JTDES_NUMIND);
-    }
-    jtDes.setValor(1, 0, JTDES_UNID);
-    jtDes.ponValores(0);
-    Baceptar.setEnabled(false);
-    Bimpri.setEnabled(false);
-        SwingUtilities.invokeLater(new Thread()
-    {
-      @Override
-      public void run()
-      {        
-        jtDes.requestFocus();
-        jtDes.requestFocus(0,  isEmpPlanta || P_FACIL?JTDES_UNID:JTDES_LOTE);
-        resetCambioIndividuo();
-      }
-    });
-
-  }
+//
+//  void irGridDes0()
+//  {
+//    botonBascula.setPesoCajas(pro_codiE.getPesoCajas());
+//    if (jt.getValorInt(0) == 0)
+//    {
+//      jtDes.removeAllDatos();
+//      avp_numuniE.resetTexto();
+////      avp_emplotE.resetTexto();
+//      avp_ejelotE.resetTexto();
+//      avp_serlotE.resetTexto();
+//      avp_numparE.resetTexto();
+//      avp_numindE.resetTexto();
+//      avp_cantiE.resetTexto();
+//    }
+//    jt.setEnabled(false);
+//    jtDes.setEnabled(true);
+//   
+//    jtDes.setValor(EU.em_cod, 0, JTDES_EMP);
+//    jtDes.setValor(avpEjelotAnt==0?EU.ejercicio:avpEjelotAnt,0, JTDES_EJE);
+//    jtDes.setValor(avpSerlotAnt.equals("")?"A":avpSerlotAnt,0, JTDES_SERIE);
+//    if (isEmpPlanta || P_FACIL)
+//    {
+//        jtDes.setValor(avpNumparAnt,0, JTDES_LOTE);
+//        jtDes.setValor(avpNumindAnt,0, JTDES_NUMIND);
+//    }
+//    jtDes.setValor(1, 0, JTDES_UNID);
+//    jtDes.ponValores(0);
+//    Baceptar.setEnabled(false);
+//    Bimpri.setEnabled(false);
+////    SwingUtilities.invokeLater(new Thread()
+////    {
+////      @Override
+////      public void run()
+////      {        
+//        jtDes.requestFocus();
+//        jtDes.requestFocus(0,  isEmpPlanta || P_FACIL?JTDES_UNID:JTDES_LOTE);
+//        resetCambioIndividuo();
+////      }
+////    });
+//
+//  }
 
     @Override
   public void activar(boolean b)
@@ -9579,7 +9563,7 @@ public class pdalbara extends ventanaPad  implements PAD
     v.add("Proveed"); // 3
     v.add("Fec.Cad"); // 4
     v.add("C.Ped"); // 5
-    v.add("C.Pre"); // 6
+    v.add("C.Prep"); // 6
     v.add("Prec"); // 7
     v.add("Comentario"); // 8 Comentario
     v.add("CP"); // 9 Confirmado Precio ?

@@ -113,6 +113,7 @@ public class CLVenRep extends ventana {
                     ARG_MODIF = Boolean.parseBoolean(ht.get("modif"));
             }
             setTitulo("Consulta Ventas Representantes");
+            setAcronimo("covere");
             if (jf.gestor.apuntar(this)) {
                 jbInit();
             } else {
@@ -149,7 +150,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2017-05-22" + ARG_ZONAREP);
+        this.setVersion("2017-10-18" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -192,6 +193,7 @@ public class CLVenRep extends ventana {
         jtLin.setButton(KeyEvent.VK_F2, BirGrid);
         jtLin.setButton(KeyEvent.VK_F5, BFill);
         jtLin.setButton(KeyEvent.VK_F9, Btarifa);
+        Presumen.setButton(KeyEvent.VK_F2, BirGrid);
         activarEventos();
     }
 
@@ -245,17 +247,20 @@ public class CLVenRep extends ventana {
                     
                     if (jtLin.getValorDec(JTLIN_PRTAR)>jtLin.getValorDec(JTLIN_PRECIO) )
                     { // Precio tarifa superior o igual a precio venta
-                        comRep= pdtipotar.getComisionTarifaInf(dtStat,jtCab.getValorInt(JTCAB_TARIFA));
-                        if (comRep==0)
-                            return; 
-                        prMin=jtLin.getValorDec(JTLIN_PRECIO)-comRep;
+                        msgBox("Precio por debajo tarifa");
+                        jtLin.requestFocusSelectedLater();
+                        return;
                     }
                     else
                     {
-                        comRep= pdtipotar.getComisionTarifa(dtStat,jtCab.getValorInt(JTCAB_TARIFA));
+                        comRep= pdtipotar.getComisionTarifaInf(dtStat,jtCab.getValorInt(JTCAB_TARIFA));
                         if (comRep==0 )
+                        {
+                            msgBox("NO ENCONTARADO TIPO TARIFA");
+                            jtLin.requestFocusSelectedLater();
                             return;
-                        prMin=jtLin.getValorDec(JTLIN_PRECIO)-comRep;
+                        }
+                        prMin=jtLin.getValorDec(JTLIN_PRECIO)-jtLin.getValorDec(JTLIN_PRTAR)+comRep;
                     }                                      
                     jtLin.setValor(prMin, JTLIN_PRMIN); 
                     avl_proferE.setValorDec(prMin);
@@ -340,7 +345,7 @@ public class CLVenRep extends ventana {
                     return;
                 }
                 swGridFoco=false;
-                guardaCambios();
+                guardaCambios(jtLin.getSelectedRow());
                 verLineas();
                 jtCab.requestFocusSelectedLater();
             }
@@ -473,7 +478,7 @@ public class CLVenRep extends ventana {
     }
     void limpiarGrid()
     {
-        guardaCambios();
+        guardaCambios(jtLin.getSelectedRow());
         jtLin.setEnabled(false);
         jtCab.removeAllDatos();
         jtLin.removeAllDatos();
@@ -593,7 +598,7 @@ public class CLVenRep extends ventana {
         {
             if (!checkCond()) 
                 return;
-            guardaCambios();
+            guardaCambios(jtLin.getSelectedRow());
             String s = "select a.pro_codi,a.pro_nomb,sum(avl_canti) as avl_canti,"
                 + "sum(avl_unid) as avl_unid,sum(avl_prven*avl_canti) as importe from v_albventa as a,clientes as cl "
                 + " WHERE  a.emp_codi = " + emp_codiE.getValorInt()
@@ -635,7 +640,7 @@ public class CLVenRep extends ventana {
      * 
      */
     void consultar(boolean sinPrecMinimo) {
-        guardaCambios();
+        guardaCambios(jtLin.getSelectedRow());
         PreparedStatement ps;
         ResultSet rs;
         try {          
@@ -707,14 +712,14 @@ public class CLVenRep extends ventana {
             Error("Error al comprobar condiciones al buscar Albaranes", k);
         }
     }
-    public void guardaCambios()
+    public void guardaCambios(int row)
     {
-       jtLinCambiaLinea(jtLin.getSelectedRow(),0);
+       jtLinCambiaLinea(row,0);
     }
     public int jtLinCambiaLinea(int row, int col) {
         try
         {
-            guardaComentario(idAlbaran, jtLin.getValString(row, 7), cor_comentE.getText().trim());
+            guardaComentario(idAlbaran, jtLin.getValString(row, 7), cor_comentE.getText().trim(), cor_comresE.getText().trim());
             if (!avl_proferE.isEnabled() || jtLin.isVacio() || jtLin.getValString(row, 5).equals("") || jtLin.getValString(row, 7).trim().equals(""))
                 return -1;
             double avlPrven = avl_proferE.getValorDec();
@@ -751,7 +756,7 @@ public class CLVenRep extends ventana {
         }
     }
     
-    void guardaComentario(int avcId, String lineas,String coment)  throws SQLException
+    void guardaComentario(int avcId, String lineas,String coment,String comResp)  throws SQLException
     {
         String s="select * from comision_represent where avc_id = "+avcId+
             " and cor_linea='"+lineas+"'";
@@ -761,7 +766,7 @@ public class CLVenRep extends ventana {
                 return; 
             dtAdd.addNew("comision_represent");
             dtAdd.setDato("avc_id",avcId);
-            dtAdd.setDato("cor_linea",lineas);
+            dtAdd.setDato("cor_linea",lineas);            
         }
         else
         {
@@ -774,6 +779,7 @@ public class CLVenRep extends ventana {
             dtAdd.edit();
         }
         dtAdd.setDato("cor_coment",coment);
+        dtAdd.setDato("cor_comres",comResp);
         dtAdd.update();
         dtAdd.commit();
     }
@@ -787,9 +793,15 @@ public class CLVenRep extends ventana {
        String s="select * from comision_represent where avc_id = "+avcId+
             " and cor_linea='"+lineas+"'";
         if (! dtCon1.select(s))
+        {
            cor_comentE.resetTexto();
+           cor_comresE.resetTexto();
+        }
         else
+        {
             cor_comentE.setText(dtCon1.getString("cor_coment"));
+            cor_comresE.setText(dtCon1.getString("cor_comres",true));
+        }
        
     }
     void verPedido() throws SQLException
@@ -830,6 +842,8 @@ public class CLVenRep extends ventana {
             }
             getCondAlb(jtCab.getSelectedRow());
             String linAlb;
+            PreparedStatement psCom=dtCon1.getPreparedStatement("select * from comision_represent where avc_id = ? and cor_linea=?");
+            ResultSet rsCom;
             do
             {
                 linAlb = MantPrAlb.getNumLinAlb(condAlb,
@@ -848,6 +862,10 @@ public class CLVenRep extends ventana {
                     dtCon1.getDouble("avl_prven") - dtCon1.getDouble("avl_profer"):0);
                 v.add(linAlb);
                 v.add(dtCon1.getDouble("tar_preci", true));
+                psCom.setInt(1,idAlbaran);
+                psCom.setString(2,linAlb);
+                rsCom=psCom.executeQuery();                
+                v.add(rsCom.next());
                 jtLin.addLinea(v);
             } while (dtCon1.next());
             if (ARG_MODIF)
@@ -861,7 +879,7 @@ public class CLVenRep extends ventana {
     @Override
     public void matar()
     {
-        guardaCambios();
+        guardaCambios(jtLin.getSelectedRow());
         super.matar();
     }
     /**
@@ -958,6 +976,7 @@ public class CLVenRep extends ventana {
         avl_gananE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--9.99");
         avl_numlinE = new gnu.chu.controles.CTextField();
         avl_proferE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--9.99");
+        avl_comentE = new gnu.chu.controles.CCheckBox();
         Pprinc = new gnu.chu.controles.CPanel();
         Pcondic = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -1006,7 +1025,7 @@ public class CLVenRep extends ventana {
     jtCab.setFormatoColumna(9,"----,--9.99");
     jtCab.setAlinearColumna(new int[]{2,1,2,1,2,0,2,2,2,2,2});
     jtCab.setAjustarGrid(true);
-    jtLin = new gnu.chu.controles.CGridEditable(9){
+    jtLin = new gnu.chu.controles.CGridEditable(10){
 
     }
     ;
@@ -1020,9 +1039,10 @@ public class CLVenRep extends ventana {
     v1.add("Gananc"); // 6
     v1.add("NL"); // 7
     v1.add("Pr.Tarifa"); // 8
+    v1.add("Com"); // 9
     jtLin.setCabecera(v1);
-    jtLin.setAnchoColumna(new int[]{60,180,50,70,60,60,60,20,60});
-    jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,0,2});
+    jtLin.setAnchoColumna(new int[]{60,180,50,70,60,60,60,20,60,30});
+    jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,0,2,1});
     try{
         ArrayList vc = new ArrayList();
         vc.add(pro_codiE);
@@ -1034,6 +1054,7 @@ public class CLVenRep extends ventana {
         vc.add(avl_gananE);
         vc.add(avl_numlinE);
         vc.add(avl_prtariE);
+        vc.add(avl_comentE);
         jtLin.setCampos(vc);
     } catch (Exception k ){Error("Error al iniciar grid",k);}
     jtLin.setFormatoColumna(2,"---9");
@@ -1042,6 +1063,7 @@ public class CLVenRep extends ventana {
     jtLin.setFormatoColumna(5,"--9.99");
     jtLin.setFormatoColumna(6,"--9.99");
     jtLin.setFormatoColumna(8,"--9.99");
+    jtLin.setFormatoColumna(9,"BSN");
     jtLin.setCanDeleteLinea(false);
     jtLin.setCanInsertLinea(false);
     jtLin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -1073,6 +1095,9 @@ public class CLVenRep extends ventana {
     BirGrid = new gnu.chu.controles.CButton(Iconos.getImageIcon("reload"));
     BFill = new gnu.chu.controles.CButton(Iconos.getImageIcon("fill"));
     Btarifa = new gnu.chu.controles.CButton(Iconos.getImageIcon("calc"));
+    cor_comresE = new gnu.chu.controles.CTextField(Types.CHAR,"X",120);
+    cLabel9 = new gnu.chu.controles.CLabel();
+    cLabel15 = new gnu.chu.controles.CLabel();
     jtPed = new gnu.chu.controles.CGridEditable(6)
     ;
     ArrayList v2=new ArrayList();
@@ -1121,6 +1146,9 @@ public class CLVenRep extends ventana {
     avl_gananE.setEnabled(false);
 
     avl_numlinE.setEnabled(false);
+
+    avl_comentE.setText("cCheckBox1");
+    avl_comentE.setEnabled(false);
 
     Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -1283,10 +1311,10 @@ public class CLVenRep extends ventana {
     Pprinc.add(jtLin, gridBagConstraints);
 
     Presumen.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-    Presumen.setMaximumSize(new java.awt.Dimension(628, 40));
-    Presumen.setMinimumSize(new java.awt.Dimension(628, 40));
+    Presumen.setMaximumSize(new java.awt.Dimension(628, 60));
+    Presumen.setMinimumSize(new java.awt.Dimension(628, 60));
     Presumen.setOpaque(false);
-    Presumen.setPreferredSize(new java.awt.Dimension(628, 40));
+    Presumen.setPreferredSize(new java.awt.Dimension(628, 60));
     Presumen.setLayout(null);
 
     cLabel2.setText("Num. Albaranes");
@@ -1298,10 +1326,10 @@ public class CLVenRep extends ventana {
     Presumen.add(numAlbE);
     numAlbE.setBounds(105, 2, 47, 17);
 
-    cLabel4.setText("Importe");
+    cLabel4.setText("Respuesta");
     cLabel4.setPreferredSize(new java.awt.Dimension(57, 17));
     Presumen.add(cLabel4);
-    cLabel4.setBounds(162, 2, 57, 17);
+    cLabel4.setBounds(1, 40, 70, 17);
 
     impAlbE.setEnabled(false);
     Presumen.add(impAlbE);
@@ -1325,7 +1353,7 @@ public class CLVenRep extends ventana {
     Presumen.add(impGanE);
     impGanE.setBounds(460, 2, 60, 17);
     Presumen.add(cor_comentE);
-    cor_comentE.setBounds(10, 20, 610, 17);
+    cor_comentE.setBounds(70, 20, 550, 17);
 
     BirGrid.setToolTipText("F2 para moverse entre Tablas");
     Presumen.add(BirGrid);
@@ -1338,6 +1366,18 @@ public class CLVenRep extends ventana {
     Btarifa.setToolTipText("F9 Buscar Precio Tarifa");
     Presumen.add(Btarifa);
     Btarifa.setBounds(530, 0, 20, 20);
+    Presumen.add(cor_comresE);
+    cor_comresE.setBounds(70, 39, 550, 17);
+
+    cLabel9.setText("Importe");
+    cLabel9.setPreferredSize(new java.awt.Dimension(57, 17));
+    Presumen.add(cLabel9);
+    cLabel9.setBounds(162, 2, 57, 17);
+
+    cLabel15.setText("Incidencia");
+    cLabel15.setPreferredSize(new java.awt.Dimension(57, 17));
+    Presumen.add(cLabel15);
+    cLabel15.setBounds(1, 20, 70, 17);
 
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
@@ -1384,6 +1424,7 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CPanel Pcondic;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CPanel Presumen;
+    private gnu.chu.controles.CCheckBox avl_comentE;
     private gnu.chu.controles.CTextField avl_gananE;
     private gnu.chu.controles.CTextField avl_kilosE;
     private gnu.chu.controles.CTextField avl_numlinE;
@@ -1398,6 +1439,7 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel14;
+    private gnu.chu.controles.CLabel cLabel15;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -1405,7 +1447,9 @@ public class CLVenRep extends ventana {
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel8;
+    private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CTextField cor_comentE;
+    private gnu.chu.controles.CTextField cor_comresE;
     private gnu.chu.camposdb.empPanel emp_codiE;
     private gnu.chu.controles.CTextField fecFinE;
     private gnu.chu.controles.CTextField fecIniE;

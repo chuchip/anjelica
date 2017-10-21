@@ -252,6 +252,11 @@ public class EntornoUsuario implements Serializable
      return getLikeUsuario().getString("usu_admdb").equals("S");
     
    }
+   /**
+    * Inicializa HashMap con los valores de la tabla parametros
+    * @param dt
+    * @throws SQLException 
+    */   
    public void iniciarParametros(DatosTabla dt) throws SQLException
    {
        htParam.clear();
@@ -289,9 +294,9 @@ public class EntornoUsuario implements Serializable
        return usu_nomb;
    }
    /**
-    * 
-    * @param param
-    * @param paramDef
+    * Devuelve un valor buscado en la tabal parametros
+    * @param param Parametro a buscar
+    * @param paramDef Valor a devolver si no encuentra el parametro
     * @return 
     */
    public boolean getValorParam(String param,boolean paramDef)
@@ -305,6 +310,12 @@ public class EntornoUsuario implements Serializable
            return paramDef;
        }
    }
+   /**
+    * Devuelve un valor buscadondolo en la tabal parametros
+    * @param param Parametro a buscar
+    * @param paramDef Valor a devolver si no encuentra el parametro
+    * @return valor en la tabla parametros  o paramDef si no lo encuentra.
+    */
    public int getValorParam(String param,int paramDef)
    {
        if (htParam.get(param)==null)
@@ -338,6 +349,12 @@ public class EntornoUsuario implements Serializable
     public void setPathReportAlt(String pathReportAlt) {
         this.pathReportAlt = pathReportAlt;
     }
+    /**
+     * Devuelve un parametro del entorno de Anjelica (anjelica.confifg)
+     * @param key Parametro
+     * @param valor Valor a devolver si no lo encuentra
+     * @return Valor del parametro
+     */
    public String getParametroConfig(String key, String valor)
    {
      try

@@ -213,13 +213,8 @@ public class MantDespTactil  extends ventanaPad implements PAD
       {
           Error("Error al cambiar linea cabecera",k);
           return;
-      }
-      pro_codenE.setEditable(jtEnt.getValorDec(JTENT_NL)==0);
-      int row=jtEnt.getSelectedRow();
-      if (!jtSal.isVacio() && row == JTENT_PROCODI)
-        setEditEnt(false);
-      else
-        setEditEnt(true);
+      }            
+      setEditableCamposEnt(jtSal.isVacio() || jtEnt.getSelectedRow()>0);
     }
 
     @Override
@@ -411,7 +406,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2017-09-22"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2017-10-15"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -1589,7 +1584,7 @@ boolean checkCabecera() throws ParseException, SQLException
         return;
     }
     mensaje("Editando despiece");
-    setEditEnt(true);
+    setEditableCamposEnt(false);
     utdesp.cambio = true;
     modLinSal=false;
 
@@ -1671,8 +1666,8 @@ boolean checkCabecera() throws ParseException, SQLException
             usu_nombE.setText(EU.usuario);
 //    pro_loteE.setEnabled(false);
             deo_codiE.setEnabled(false);
-            pro_codenE.setEditable(true);
-            setEditEnt(true);
+            
+            setEditableCamposEnt(true);
             utdesp.cambio = true;
             tid_codiE.setVerSoloActivo(true);
             tid_codiE.releer();
@@ -2949,7 +2944,7 @@ boolean checkCabecera() throws ParseException, SQLException
        jtSal.setLinea(v);
      }
      if (jtEnt.getSelectedRow() == 0)
-       setEditEnt(false);
+       setEditableCamposEnt(false);
      if (opImpEti.isSelected() && pro_codsalE.isVendible())
        imprEtiSal(jtSal.getSelectedRow());
      if (!modLinSal)
@@ -3194,8 +3189,13 @@ boolean checkCabecera() throws ParseException, SQLException
 //
 // }
 
- void setEditEnt(boolean edit)
+ /**
+  * Pone como editables los campos de entrada (Productos a desglosar)
+  * @param edit 
+  */
+ void setEditableCamposEnt(boolean edit)
  {
+   pro_codenE.setEditable(edit);
    eje_numenE.setEditable(edit);
    pro_lotenE.setEditable(edit);
    pro_serenE.setEditable(edit);

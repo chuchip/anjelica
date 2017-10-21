@@ -150,6 +150,7 @@ JMenuItem mantArticVenta = new JMenuItem();
   JMenuItem cldepcli = new JMenuItem();
   JMenuItem lialbara = new JMenuItem();
   JMenuItem clrelpedven = new JMenuItem();
+  JMenuItem marutped = new JMenuItem();
 
    JMenuItem manpralbar = new JMenuItem();
   JMenuItem clvenArt = new JMenuItem();
@@ -684,6 +685,12 @@ JMenuItem mantArticVenta = new JMenuItem();
         lialbara_actionPerformed(e);
       }
     });
+    marutped.setText("Mant.Pedidos Ruta");
+    marutped.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        marutped_actionPerformed(e);
+      }
+    });
     clrelpedven.setText("CL Ped.Ventas");
     clrelpedven.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -1132,6 +1139,7 @@ JMenuItem mantArticVenta = new JMenuItem();
     JpopupVentas.add(cldepcli);
     JpopupVentas.add(lialbara);
     JpopupPedVentas.add(clrelpedven);
+    JpopupPedVentas.add(marutped);
      JpopupVentas.add(manpralbar);
     JpopupVentas.add(clvenArt);
     JpopupVentas.add(coVenPro);
@@ -2158,6 +2166,11 @@ void pdreprese_actionPerformed(ActionEvent e) {
 
     lanzaEjecutable(new gnu.chu.anjelica.ventas.clrealve(this,EU));
   }
+   void marutped_actionPerformed(ActionEvent e) {
+    HashMap ht=new HashMap();
+    lanzaEjecutable(new gnu.chu.anjelica.ventas.ManPedRuta(this,EU,ht));
+  }
+  
     void clrelalbve_actionPerformed(ActionEvent e) {
     HashMap ht=new HashMap();
     lanzaEjecutable(new gnu.chu.anjelica.ventas.CLPedidVen(this,EU,ht));

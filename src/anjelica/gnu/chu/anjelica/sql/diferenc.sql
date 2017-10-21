@@ -1,3 +1,12 @@
+-- Añadir campo orden ruta a tabla clientes
+Alter table clientes add cli_ordrut smallint
+drop view v_cliente;
+create or replace view anjelica.v_cliente as select *,cli_codrut as cli_carte,cli_codrut as cli_valor from anjelica.clientes;
+grant select on anjelica.v_cliente to PUBLIC;;
+--
+--
+alter table comision_represent add cor_comres varchar(120);
+--
 create table anjelica.programasParam
 (
 	prf_host varchar(50), -- Host
@@ -5,6 +14,7 @@ create table anjelica.programasParam
     prf_id varchar(30) not null,    -- Nombre parametro    
     prf_valor varchar(15) not null --  Valor
 );
+grant all on anjelica.programasParam to public;
 -- 
 alter table taricli add tar_butapa int not null default 1; -- Buscar tarifa padre . 1 Si. 0 No
 --

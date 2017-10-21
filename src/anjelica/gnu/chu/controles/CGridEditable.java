@@ -1278,7 +1278,12 @@ public class CGridEditable extends Cgrid implements CQuery {
     resetCambio();
     afterCambiaLinea();
   }
-
+  /**
+   * LLama a cambia Linea si no hay ningun error interno
+   * @param row
+   * @param col
+   * @return 
+   */
   public int cambiaLinea1(int row, int col)
   {
     int n;
@@ -1297,6 +1302,8 @@ public class CGridEditable extends Cgrid implements CQuery {
         }
       }
     }
+    if (getReordenando())
+        return -1;
 
     n = cambiaLinea(row, col);  
     return n;

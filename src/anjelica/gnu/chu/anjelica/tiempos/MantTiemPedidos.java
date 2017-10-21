@@ -2,7 +2,7 @@ package gnu.chu.anjelica.tiempos;
 /*
  *<p>Titulo: MantTiempPedidos </p>
  * <p>Descripción: Mantenimiento Tiempos utilizados para los diferentes Pedidos de Venta.
- * Created on 27-02-2017
+ * 
  *
  * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
