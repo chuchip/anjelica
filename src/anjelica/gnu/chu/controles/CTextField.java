@@ -736,7 +736,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
           setdate(Text);
           // Primero comprueba si la fecha es Nula.
           Text="";
-          for(n=0;n<Formato.length();Text=Text+fecha[n++])
+          for(n=0;n<Formato.length();Text=Text+fecha[n++]);
 
           if (! setdate1())
           {
@@ -1184,11 +1184,7 @@ String procesaTecla()
         return (sal_CHAR());
       case Types.DECIMAL:
         if (sal_DECIMAL())
-        {
-          if (!checkValDec(Texto))
-            return false;
-          return true;
-        }
+          return checkValDec(Texto);
         else
           return false;
         case Types.DATE:
@@ -1573,7 +1569,6 @@ String procesaTecla()
           Error=true;
           return false;
         }
-        p=-1;
         return true;
       }
     }
@@ -2554,8 +2549,8 @@ String procesaTecla()
       }
     }
 
-    if (dia[0]==' ')
-      dia[0]='0';
+    if (dia[0] == ' ')
+          dia[0] = '0';
     if (dia[1]==' ')
     {
       dia[1]=dia[0];
@@ -2589,15 +2584,23 @@ String procesaTecla()
       if (Character.isDigit(ano[n]))
         ndigano++;
     }
+    int anoInt;
     try
     {
-      n = Integer.parseInt(ano1.trim());
+      anoInt = Integer.parseInt(ano1.trim());
     }
     catch (NumberFormatException k)
     {
-      n = -1;
+      anoInt = -1;
     }
-
+    if (ndigano==0)
+    {
+        ndigano=2;
+        String anoActual=Formatear.getFechaAct("yy");
+        ano[0]=anoActual.charAt(0);
+        ano[1]=anoActual.charAt(1);
+        anoInt=Integer.parseInt(anoActual);;
+    }
     if (ndigano != 2 && ndigano != 4)
     {
       MsgError = "El numero de digitos del Año debe ser 2 ó 4";
@@ -2608,22 +2611,22 @@ String procesaTecla()
     if (ndigano <= 2 && nano == 4)
     {
       // Ajustar a 4 digitos el ano.
-      if (n < SigloSig)
-        n = 2000 + n;
+      if (anoInt< SigloSig)
+        anoInt = 2000 + anoInt;
       else
-        n = 1900 + n;
+        anoInt = 1900 + anoInt;
         // Lo vuelve a pasar a la variable ano.
-      s = "" + n;
+      s = "" + anoInt;
       for (int n1 = 0; n1 < 4; n1++)
         ano[n1] = s.charAt(n1);
     }
 
     if (ajusActual)
     {
-      if (n < 1900  && nano==4)
+      if (anoInt < 1900  && nano==4)
       {
-        n = n + 2000;
-        s = "" + n;
+        anoInt = anoInt + 2000;
+        s = "" + anoInt;
         for (int n1 = 0; n1 < 4; n1++)
           ano[n1] = s.charAt(n1);
       }
@@ -2757,8 +2760,6 @@ String procesaTecla()
       }
 
     }
-
-
     return true;
 
   }
@@ -2779,32 +2780,32 @@ String procesaTecla()
   private String getDate1()
   {
 
-    String t;
-    int ndia=0;
-    int nmes=0;
-    int nano=0;
-    t="";
-    for (int n=0;n<Formato.length();n++)
-    {
-      switch (Formato.charAt(n))
-    {
-      case 'd':
-        t=t+dia[ndia];
-        fecha[n]=dia[ndia++];
-        break;
-      case 'M':
-        t=t+mes[nmes];
-        fecha[n]=mes[nmes++];
-        break;
-      case 'y':
-        t=t+ano[nano];
-        fecha[n]=ano[nano++];
-        break;
-      default:
-        t=t+SepFecha;
-    }
-    }
-    return t;
+      String t;
+      int ndia = 0;
+      int nmes = 0;
+      int nano = 0;
+      t = "";
+      for (int n = 0; n < Formato.length(); n++)
+      {
+          switch (Formato.charAt(n))
+          {
+              case 'd':
+                  t = t + dia[ndia];
+                  fecha[n] = dia[ndia++];
+                  break;
+              case 'M':
+                  t = t + mes[nmes];
+                  fecha[n] = mes[nmes++];
+                  break;
+              case 'y':
+                  t = t + ano[nano];
+                  fecha[n] = ano[nano++];
+                  break;
+              default:
+                  t = t + SepFecha;
+          }
+      }
+      return t;
   }
 
 
