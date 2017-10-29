@@ -166,7 +166,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2017-08-27" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2017-10-29" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -1046,19 +1046,10 @@ public class ValDespi extends ventana {
    void calcFechaCostos(Date fecDesp) //throws Exception
    {
      GregorianCalendar gc=new GregorianCalendar();
-     
-     gc.setTime(fecDesp);
-     int diaSemana=gc.get(GregorianCalendar.DAY_OF_WEEK); 
-     if (diaSemana>GregorianCalendar.WEDNESDAY)
-     {
-        fecIniSem=Formatear.sumaDiasDate(fecDesp, 9-diaSemana);
-        fecFinSem=Formatear.sumaDiasDate(fecDesp, 15-diaSemana); 
-     }
-     else
-     {   
-     fecIniSem=Formatear.sumaDiasDate(fecDesp, (diaSemana-2)*-1); // Empieza la semana el Lunes
-     fecFinSem=Formatear.sumaDiasDate(fecDesp, 8-diaSemana); // Termina el Domingo  
-     }
+     fecDesp=pdprvades.getFechaCosto(fecDesp);
+     fecIniSem=fecDesp;
+     fecFinSem=Formatear.sumaDiasDate(fecDesp, 7); 
+
      rangoSemana = "BETWEEN {d '"+Formatear.getFechaDB(fecIniSem)+"'} and {d '"+
          Formatear.getFechaDB(fecFinSem)+"'}";   
    }

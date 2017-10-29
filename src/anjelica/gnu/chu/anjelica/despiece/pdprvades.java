@@ -134,7 +134,7 @@ public class pdprvades extends ventanaPad implements PAD
     {
       iniciarFrame();
       this.setSize(new Dimension(482,493));
-      this.setVersion("2017-07-18");
+      this.setVersion("2017-10-29");
 
       strSql = "SELECT dpv_nusem,eje_nume FROM desproval " +
           " WHERE eje_nume = " + EU.ejercicio +
@@ -641,11 +641,14 @@ public class pdprvades extends ventanaPad implements PAD
   { 
      GregorianCalendar gc=new GregorianCalendar();
      gc.setTime(fecha);
-     int diaSemana=gc.get(GregorianCalendar.DAY_OF_WEEK); 
-     if (diaSemana>GregorianCalendar.WEDNESDAY)
-        return Formatear.sumaDiasDate(fecha, 9-diaSemana);    // lunes de Siguiente semana
-     else
-        return Formatear.sumaDiasDate(fecha, (diaSemana-2)*-1); // Lunes de semana en curso
+     gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.MONDAY);
+     return gc.getTime();
+//        dpv_feciniE.setText(Formatear.getFechaVer(gc.getTime()));
+//     int diaSemana=gc.get(GregorianCalendar.DAY_OF_WEEK); 
+//     if (diaSemana>GregorianCalendar.WEDNESDAY)
+//        return Formatear.sumaDiasDate(fecha, 9-diaSemana);    // lunes de Siguiente semana
+//     else
+//        return Formatear.sumaDiasDate(fecha, (diaSemana-2)*-1); // Lunes de semana en curso
   }
   /**
    * Devuelve la semana y el año para una fecha dada en Valoracion Despieces
@@ -686,6 +689,15 @@ public class pdprvades extends ventanaPad implements PAD
     
       return getPrecioFinal(dt,proCodi,d.width, d.height);     
   }
+  /**
+   * Devuelve el precio final para un producto en una semana
+   * @param dt
+   * @param proCodi
+   * @param ejeNume
+   * @param semCodi
+   * @return
+   * @throws SQLException 
+   */
   public static double[] getPrecioFinal(DatosTabla dt, int proCodi,int ejeNume,int semCodi) throws SQLException
   {
       String sql="SELECT dpv_preci,dpv_pretar FROM desproval " +
