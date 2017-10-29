@@ -906,11 +906,12 @@ public class pdpedco extends ventanaPad   implements PAD
     mensaje("Crear nuevo pedido ...");
     eje_numeE.setValorDec(EU.ejercicio);
     emp_codiE.setValorInt(EU.em_cod);
-    sbe_codiE.setValorInt(EU.getSbeCodi());
+    sbe_codiE.setValorInt(EU.getSbeCodi()==0?1:EU.getSbeCodi());
     pro_codiE.resetTexto();
     pro_codiE.resetCambio();
     pcc_estrecE.setEnabled(false);
-    pcc_fecpedE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
+    pcc_fecpedE.setDate(Formatear.getDateAct());
+
     pcc_fecrecE.requestFocus();
   }
   @Override
