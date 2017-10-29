@@ -150,7 +150,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2017-10-03 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2017-10-22 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -450,7 +450,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
             unid+=jt.getValorInt(n,JT_UNID);
         }
         kilosTotE.setValorDec(kilos);
-        uniTotE.setValorInt(unid);
+       
         numAlbE.setValorInt(nAlb);
         bulTotE.setValorDec(bultos);
         palTotE.setValorDec(palets);
@@ -484,7 +484,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     jtFra.removeAllDatos();
     activar(true);
     kilosTotE.setValorDec(0);
-    uniTotE.setValorDec(0);
+ 
     numAlbE.setValorDec(0);
     Tpanel1.setSelectedIndex(0);
     jtFra.requestFocusInicio();
@@ -626,9 +626,12 @@ public class ManAlbRuta extends ventanaPad implements PAD
          int orden = 0;
          if (! ARG_MODSALA)
          {
-             jt.salirGrid();
-             if (cambiaLinJT(jt.getSelectedRow()) >= 0)
-                 return;
+             if (!ordenarC.isSelected())
+             {
+                jt.salirGrid();
+                if (cambiaLinJT(jt.getSelectedRow()) >= 0)
+                    return;
+             }
 
              for (int n = 0; n < nl; n++)
              {
@@ -792,14 +795,12 @@ public class ManAlbRuta extends ventanaPad implements PAD
         veh_codiE = new gnu.chu.controles.CLinkBox();
         cLabel15 = new gnu.chu.controles.CLabel();
         alr_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###,##9");
-        BInsAuto = new gnu.chu.controles.CButton(Iconos.getImageIcon("fill"));
         BirGrid = new gnu.chu.controles.CButton();
         tra_codiE = new gnu.chu.controles.CComboBox();
+        BInsAuto = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("fill"));
         PPie = new gnu.chu.controles.CPanel();
-        cLabel12 = new gnu.chu.controles.CLabel();
         numAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        uniTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        kilosTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###,##9.99");
+        kilosTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###,##9.9");
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
         cLabel16 = new gnu.chu.controles.CLabel();
@@ -814,6 +815,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         palTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         Bimpri = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("print"));
         Borden = new gnu.chu.controles.CButton(Iconos.getImageIcon("order"));
+        ordenarC = new gnu.chu.controles.CCheckBox();
         Tpanel1 = new gnu.chu.controles.CTabbedPane();
         jt = new gnu.chu.controles.CGridEditable(17){
             @Override
@@ -1012,14 +1014,15 @@ public class ManAlbRuta extends ventanaPad implements PAD
         cLabel15.setBounds(190, 67, 70, 17);
         Pcabe.add(alr_numeE);
         alr_numeE.setBounds(500, 67, 50, 17);
-
-        BInsAuto.setToolTipText("Insertar Alb. Pend. de Ruta");
-        Pcabe.add(BInsAuto);
-        BInsAuto.setBounds(510, 23, 30, 24);
         Pcabe.add(BirGrid);
         BirGrid.setBounds(540, 120, 2, 2);
         Pcabe.add(tra_codiE);
         tra_codiE.setBounds(290, 2, 210, 17);
+
+        BInsAuto.addMenu("Pedidos", "P");
+        BInsAuto.addMenu("Albaranes", "A");
+        Pcabe.add(BInsAuto);
+        BInsAuto.setBounds(502, 20, 50, 26);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1034,22 +1037,13 @@ public class ManAlbRuta extends ventanaPad implements PAD
         PPie.setPreferredSize(new java.awt.Dimension(549, 49));
         PPie.setLayout(null);
 
-        cLabel12.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        cLabel12.setText("Unid.");
-        PPie.add(cLabel12);
-        cLabel12.setBounds(260, 2, 40, 17);
-
         numAlbE.setEditable(false);
         PPie.add(numAlbE);
-        numAlbE.setBounds(80, 2, 40, 17);
-
-        uniTotE.setEditable(false);
-        PPie.add(uniTotE);
-        uniTotE.setBounds(300, 2, 40, 17);
+        numAlbE.setBounds(45, 2, 40, 17);
 
         kilosTotE.setEditable(false);
         PPie.add(kilosTotE);
-        kilosTotE.setBounds(190, 2, 60, 17);
+        kilosTotE.setBounds(130, 2, 50, 17);
         PPie.add(Baceptar);
         Baceptar.setBounds(350, 2, 90, 28);
         PPie.add(Bcancelar);
@@ -1060,22 +1054,22 @@ public class ManAlbRuta extends ventanaPad implements PAD
         PPie.add(cLabel16);
         cLabel16.setBounds(130, 22, 50, 17);
 
-        cLabel17.setText("Nº Facturas");
+        cLabel17.setText("Nº Fras");
         PPie.add(cLabel17);
-        cLabel17.setBounds(0, 22, 70, 17);
+        cLabel17.setBounds(0, 22, 50, 17);
 
-        cLabel18.setText("Nº Albaranes ");
+        cLabel18.setText("Nº Alb.");
         PPie.add(cLabel18);
-        cLabel18.setBounds(0, 2, 80, 17);
+        cLabel18.setBounds(0, 2, 40, 17);
 
         numFrasE.setEditable(false);
         PPie.add(numFrasE);
-        numFrasE.setBounds(80, 22, 40, 17);
+        numFrasE.setBounds(45, 20, 40, 17);
 
         cLabel19.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         cLabel19.setText("Kilos");
         PPie.add(cLabel19);
-        cLabel19.setBounds(150, 2, 40, 17);
+        cLabel19.setBounds(90, 2, 40, 17);
 
         impFrasE.setEditable(false);
         PPie.add(impFrasE);
@@ -1084,20 +1078,20 @@ public class ManAlbRuta extends ventanaPad implements PAD
         cLabel13.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         cLabel13.setText("Bultos");
         PPie.add(cLabel13);
-        cLabel13.setBounds(395, 31, 40, 17);
+        cLabel13.setBounds(190, 2, 40, 17);
 
         bulTotE.setEditable(false);
         PPie.add(bulTotE);
-        bulTotE.setBounds(435, 31, 30, 17);
+        bulTotE.setBounds(230, 2, 30, 17);
 
         cLabel14.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         cLabel14.setText("Palets");
         PPie.add(cLabel14);
-        cLabel14.setBounds(470, 31, 40, 17);
+        cLabel14.setBounds(260, 2, 40, 17);
 
         palTotE.setEditable(false);
         PPie.add(palTotE);
-        palTotE.setBounds(510, 31, 30, 17);
+        palTotE.setBounds(300, 2, 30, 17);
 
         Bimpri.addMenu("Albaranes","A");
         Bimpri.addMenu("Facturas","F");
@@ -1109,6 +1103,11 @@ public class ManAlbRuta extends ventanaPad implements PAD
         Borden.setToolTipText("Ordenar por Num. Albaran");
         PPie.add(Borden);
         Borden.setBounds(330, 30, 60, 18);
+
+        ordenarC.setText("Modo Ordenar");
+        ordenarC.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        PPie.add(ordenarC);
+        ordenarC.setBounds(440, 30, 100, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1248,7 +1247,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private gnu.chu.controles.CButton BInsAuto;
+    private gnu.chu.controles.CButtonMenu BInsAuto;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
     private javax.swing.JMenuItem BimprEti;
@@ -1283,7 +1282,6 @@ public class ManAlbRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField bulTotE;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel11;
-    private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel14;
     private gnu.chu.controles.CLabel cLabel15;
@@ -1322,10 +1320,10 @@ public class ManAlbRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField kilosTotE;
     private gnu.chu.controles.CTextField numAlbE;
     private gnu.chu.controles.CTextField numFrasE;
+    private gnu.chu.controles.CCheckBox ordenarC;
     private gnu.chu.controles.CTextField palTotE;
     private gnu.chu.controles.CLinkBox rut_codiE;
     private gnu.chu.controles.CComboBox tra_codiE;
-    private gnu.chu.controles.CTextField uniTotE;
     private gnu.chu.controles.CLinkBox veh_codiE;
     // End of variables declaration//GEN-END:variables
    @Override
@@ -1364,6 +1362,31 @@ public class ManAlbRuta extends ventanaPad implements PAD
     
     void activarEventos()
     {
+        ordenarC.addActionListener(new ActionListener()
+         {
+              @Override
+              public void actionPerformed(ActionEvent e)
+              {
+                  if (ordenarC.isSelected())
+                  {
+                    jt.salirGrid();
+                    if (cambiaLinJT(jt.getSelectedRow())>=0)
+                    {
+                        ordenarC.setSelected(false);
+                        jt.requestFocusLater();
+                        return;
+                    }
+                    jt.setEnabled(false);              
+                  }
+                  else
+                  {
+                     jt.setEnabled(true); 
+                     jt.requestFocusInicioLater();                   
+                  }
+                  jt.setDragEnabled(ordenarC.isSelected());      
+                
+              }
+         });
          jt.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -1391,7 +1414,6 @@ public class ManAlbRuta extends ventanaPad implements PAD
                   jt.setEnabled(true);
                   jtFra.setEnabled(true);
                   jtFra.requestFocusInicioLater();
-                  return;
               }         
             }
          });
@@ -1417,7 +1439,11 @@ public class ManAlbRuta extends ventanaPad implements PAD
               @Override
               public void actionPerformed(ActionEvent e)
               {
-                  insertarAuto();
+                  if (e.getActionCommand().startsWith("Alb"))                      
+                    insertarAutoAlb();
+                  else
+                    insertarAutoPed();                  
+                    
               }
          });
          BirGrid.addActionListener(new ActionListener()
@@ -1523,32 +1549,73 @@ public class ManAlbRuta extends ventanaPad implements PAD
             Error("Error al imprimir etiqueta",ex);
         }
     }
-    
-    void insertarAuto()
+    boolean checkInsertAuto()
+    {
+        if (!jt.isVacio())
+        {
+            jt.salirGrid();
+            if (cambiaLinJT(jt.getSelectedRow()) > 0)
+                return false;
+        }
+        if (rut_codiE.isNull())
+        {
+            mensajeErr("Inserte primero la ruta");
+            return false;
+        }
+        if (alr_fechaE.isNull())
+        {
+            mensajeErr("Inserte primero la fecha de registro");
+            return false;
+        }
+        return true;
+    }
+    void insertarAutoPed()
+    {
+         try
+        {
+           String s="select c.cli_ruta,c.avc_fecalb,c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,"
+                + "c.cli_codi,cl.cli_ordrut,c.avc_clinom,avc_kilos,avc_unid,cl.cli_nomen,cl.cli_diree,cl.cli_poble,"
+                + "cl.cli_codpoe,cli_horenv,cli_comenv from v_albavec as c,"
+                + "v_cliente as cl,v_pedruta as pr where c.cli_codi = cl.cli_codi "
+               + " and pr.rut_codi = '"+rut_codiE.getText()+"'"
+               + " and pr.prc_fecsal::date= '"+alr_fechaE.getFechaDB()+"'"
+               + " and c.avc_nume = pr.avc_nume and c.avc_ano = pr.avc_ano and c.avc_serie = pr.avc_serie "               
+               + " order by plr_orden";
+           if (!dtCon1.select(s))
+           {
+               msgBox("No encontradas pedidos en ruta y fecha establecidos");
+               return;
+           }
+           jt.setEnabled(false);
+           do
+           {
+              if (checkLineaRepe(dtCon1.getInt("emp_codi"),dtCon1.getInt("avc_ano"),dtCon1.getString("avc_serie"),
+                  dtCon1.getInt("avc_nume"),-1))
+                    continue;
+               addLineaAlb();
+           } while (dtCon1.next());
+           jt.setEnabled(!ordenarC.isSelected());
+           jt.requestFocusFinalLater();
+            msgBox("Albaranes de ruta cargados");
+        } catch (ParseException | SQLException ex)
+        {
+            Error("Error al buscar albaranes para ruta",ex);
+        }
+    }
+    void insertarAutoAlb()
     {
         try
         {
-            if (! jt.isVacio())
-            {
-                jt.salirGrid();
-                if (cambiaLinJT(jt.getSelectedRow())>0)                
-                    return;
-            }
-            if (rut_codiE.isNull())
-            {
-                mensajeErr("Inserte primero la ruta");
+            if (!checkInsertAuto())
                 return;
-            }
-            if (alr_fechaE.isNull())
-            {
-                mensajeErr("Inserte primero la fecha de registro");
-                return;
-            }
+          
             String fecIni=Formatear.getFecha(Formatear.sumaDiasDate(alr_fechaE.getDate(),-7),"yyyy-MM-dd");
-            String s="select c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,"
-                + "c.cli_codi,c.avc_clinom,avc_kilos,avc_unid,cl.cli_nomen,cl.cli_diree,cl.cli_poble,"
-                + "cl.cli_codpoe,cli_horenv,cli_comenv from v_albavec as c,v_cliente as cl where c.cli_codi = cl.cli_codi and cl.rut_codi = '"+rut_codiE.getText()+"'"+
-                " and c.avc_fecalb between '"+fecIni+"' and '"+alr_fechaE.getFechaDB()+"'";
+            String s="select c.cli_ruta,c.avc_fecalb,c.avc_id,c.emp_codi,c.avc_ano,c.avc_serie,c.avc_nume,"
+                + "c.cli_codi,cl.cli_ordrut,c.avc_clinom,avc_kilos,avc_unid,cl.cli_nomen,cl.cli_diree,cl.cli_poble,"
+                + "cl.cli_codpoe,cli_horenv,cli_comenv from v_albavec as c,"
+                + "v_cliente as cl where c.cli_codi = cl.cli_codi and c.cli_ruta = '"+rut_codiE.getText()+"'"+
+                " and c.avc_fecalb between '"+fecIni+"' and '"+alr_fechaE.getFechaDB()+"'"+
+                " order by cli_ordrut,avc_fecalb";
             if (! dtCon1.select(s))
             {
                 mensajeErr("NO hay ningun albaran para estos criterios");
@@ -1563,32 +1630,38 @@ public class ManAlbRuta extends ventanaPad implements PAD
                if (checkLineaRepe(dtCon1.getInt("emp_codi"),dtCon1.getInt("avc_ano"),dtCon1.getString("avc_serie"),
                   dtCon1.getInt("avc_nume"),-1))
                     continue;
-                ArrayList a=new ArrayList();
-                a.add(dtCon1.getString("emp_codi"));
-                a.add(dtCon1.getString("avc_ano"));
-                a.add(dtCon1.getString("avc_serie"));
-                a.add(dtCon1.getString("avc_nume"));
-                a.add("1");
-                a.add("1"); // Palets
-                a.add(dtCon1.getString("cli_codi"));
-                a.add(dtCon1.getString("avc_clinom",true).equals("")?dtCon1.getString("cli_nomen"):dtCon1.getString("avc_clinom",true));
-                a.add(dtCon1.getString("cli_diree"));
-                a.add(dtCon1.getString("cli_codpoe"));
-                a.add(dtCon1.getString("cli_poble"));                
-                a.add(dtCon1.getString("avc_unid"));
-                a.add(dtCon1.getString("avc_kilos"));
-                a.add(dtCon1.getString("cli_horenv"));
-                a.add(dtCon1.getString("cli_comenv"));
-                a.add(false);
-                jt.addLinea(a);  
+                addLineaAlb();
+              
             } while (dtCon1.next());
-            jt.setEnabled(true);
+            jt.setEnabled(!ordenarC.isSelected());
             jt.requestFocusFinalLater();
             msgBox("Albaranes de ruta cargados");
         } catch (ParseException | SQLException ex)
         {
             Error("Error al buscar albaranes para ruta",ex);
         }
+    }
+    void addLineaAlb() throws SQLException
+    {
+        ArrayList a = new ArrayList();
+        a.add(dtCon1.getString("emp_codi"));
+        a.add(dtCon1.getString("avc_ano"));
+        a.add(dtCon1.getString("avc_serie"));
+        a.add(dtCon1.getString("avc_nume"));
+        a.add("1");
+        a.add("1"); // Palets
+        a.add(dtCon1.getString("cli_codi"));
+        a.add(dtCon1.getString("avc_clinom", true).equals("") ? dtCon1.getString("cli_nomen") : dtCon1.getString("avc_clinom", true));
+        a.add(dtCon1.getString("cli_ruta"));
+        a.add(dtCon1.getString("cli_diree"));
+        a.add(dtCon1.getString("cli_codpoe"));
+        a.add(dtCon1.getString("cli_poble"));
+        a.add(dtCon1.getString("avc_unid"));
+        a.add(dtCon1.getString("avc_kilos"));
+        a.add(dtCon1.getString("cli_horenv"));
+        a.add(dtCon1.getString("cli_comenv"));
+        a.add(false);
+        jt.addLinea(a);
     }
     private void verDocumento() {
         if (jf == null )
@@ -1726,11 +1799,14 @@ public class ManAlbRuta extends ventanaPad implements PAD
         {
             if (! checkCabecera())
                 return;
-            jt.salirGrid();
-            if (cambiaLinJT(jt.getSelectedRow())>=0)
+            if (!ordenarC.isSelected())
             {
-                Tpanel1.setSelectedIndex(0);
-                return;
+                jt.salirGrid();
+                if (cambiaLinJT(jt.getSelectedRow())>=0)
+                {
+                    Tpanel1.setSelectedIndex(0);
+                    return;
+                }
             }
             int nl=jt.getRowCount();
             int orden=0;
@@ -2058,8 +2134,9 @@ public class ManAlbRuta extends ventanaPad implements PAD
         jtFra.setEnabled(b);
         Pcabe.setEnabled(b);
         Borden.setEnabled(!b);
-        if (opcion!=navegador.QUERY)
+        if (opcion!=navegador.QUERY && opcion!=navegador.DELETE)
         {
+            ordenarC.setEnabled(b);
             alr_fecsalH.setEnabled(b);
             alr_fecregH.setEnabled(b);
             alr_fecsalM.setEnabled(b);

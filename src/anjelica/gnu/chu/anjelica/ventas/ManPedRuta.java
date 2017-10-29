@@ -155,7 +155,7 @@ public class ManPedRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2017-10-19 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2017-10-23 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM pedrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -328,17 +328,17 @@ public class ManPedRuta extends ventanaPad implements PAD
         jt.setValor(0, row, JT_KILTOT);
     }
     
-    void verDatos()
+    boolean verDatos()
     {
         if (dtCons.getNOREG())
-            return;
+            return false;
         try {
             pru_idE.setValorInt(dtCons.getInt("pru_id"));
             if (! dtCon1.select("select * from pedrutacab where pru_id ="+dtCons.getInt("pru_id")))
             {
                 Pcabe.resetTexto();
                 msgBox("No encontrado parte ruta con ID: "+dtCons.getInt("pru_id"));
-                return;
+                return false;
             }
             rut_codiE.setText(dtCon1.getString("rut_codi"));
             tra_codiE.setValor(dtCon1.getString("usu_nomb"));           
@@ -382,15 +382,13 @@ public class ManPedRuta extends ventanaPad implements PAD
                  verDatPed(jt.getValorInt(0,JT_EJEPED),jt.getValorInt(0,JT_NUMPED));
 
              }
-//             else
-//                 msgBox("No encontradas albaranes para parte ruta con ID: "+dtCons.getInt("alr_nume"));
-
-             
-            actAcumul();
+             actAcumul();
         } catch (SQLException ex)
         {
             Error("Error al comprobar albaran para ruta", ex);
+            return false;
         }
+        return true;
     }
     /**
      * Actualizar acumulado
@@ -477,11 +475,17 @@ public class ManPedRuta extends ventanaPad implements PAD
              activaTodo();
              return;
          }
+         if (!verDatos())
+         {
+             nav.pulsado = navegador.NINGUNO;
+             activaTodo();
+             return;
+         }
          String s = "SELECT * FROM pedrutacab WHERE pru_id = " + pru_idE.getValorInt();
-         if (!dtAdd.select(s, true))
+         if (!dtBloq.select(s, true))
          {
              mensajeErr("Registro ha sido borrado");
-             resetBloqueo(dtAdd, "pedrutacab", pru_idE.getText(), true);
+             resetBloqueo(dtBloq, "pedrutacab", pru_idE.getText(), true);
              activaTodo();
              mensaje("");
              return;
@@ -563,7 +567,7 @@ public class ManPedRuta extends ventanaPad implements PAD
      
          if (! ARG_MODSALA)
          {
-             if (!swOrdenar.isSelected())
+             if (!ordenarC.isSelected())
              {
                 jt.salirGrid();
                 if (cambiaLinJT(jt.getSelectedRow()) >= 0)
@@ -572,8 +576,8 @@ public class ManPedRuta extends ventanaPad implements PAD
              if (getNumeroPedidos()==0)
                 return ;        
          }
-         dtAdd.edit();
-         guardaCab(pru_idE.getValorInt());
+         dtBloq.edit();
+         guardaCab(dtBloq,pru_idE.getValorInt());
          // borro lineas e inserto las nuevas
          
          if (! ARG_MODSALA)
@@ -710,7 +714,7 @@ public class ManPedRuta extends ventanaPad implements PAD
         kgColgadoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###,##9.9");
         kgTotalE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###,##9.9");
         cLabel20 = new gnu.chu.controles.CLabel();
-        swOrdenar = new gnu.chu.controles.CCheckBox();
+        ordenarC = new gnu.chu.controles.CCheckBox();
         Bordenar = new gnu.chu.controles.CButton(Iconos.getImageIcon("order"));
 
         eje_numeE.setValorDec(EU.ejercicio);
@@ -790,7 +794,7 @@ public class ManPedRuta extends ventanaPad implements PAD
         Pcabe.add(pru_idE);
         pru_idE.setBounds(80, 0, 60, 17);
 
-        BInsAuto.setToolTipText("Insertar Alb. Pend. de Ruta");
+        BInsAuto.setToolTipText("Insertar Ped.. Pend. en Ruta");
         Pcabe.add(BInsAuto);
         BInsAuto.setBounds(510, 0, 30, 24);
         Pcabe.add(BirGrid);
@@ -987,10 +991,10 @@ public class ManPedRuta extends ventanaPad implements PAD
         PPie.add(cLabel20);
         cLabel20.setBounds(110, 2, 80, 17);
 
-        swOrdenar.setText("Modo Ordenar");
-        swOrdenar.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        PPie.add(swOrdenar);
-        swOrdenar.setBounds(2, 20, 100, 17);
+        ordenarC.setText("Modo Ordenar");
+        ordenarC.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        PPie.add(ordenarC);
+        ordenarC.setBounds(2, 20, 100, 17);
 
         Bordenar.setText("Ordenar");
         PPie.add(Bordenar);
@@ -1056,6 +1060,7 @@ public class ManPedRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField kgTotalE;
     private gnu.chu.controles.CTextField kgTotalE1;
     private gnu.chu.controles.CTextField numPedidosE;
+    private gnu.chu.controles.CCheckBox ordenarC;
     private gnu.chu.controles.CTextField plr_kilcajE;
     private gnu.chu.controles.CTextField plr_kilcolE;
     private gnu.chu.controles.CTextField plr_kiltotE;
@@ -1067,7 +1072,6 @@ public class ManPedRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField pvc_fecentE;
     private gnu.chu.controles.CTextField pvc_numeE;
     private gnu.chu.controles.CLinkBox rut_codiE;
-    private gnu.chu.controles.CCheckBox swOrdenar;
     private gnu.chu.controles.CComboBox tra_codiE;
     // End of variables declaration//GEN-END:variables
    private void confJtLin() throws Exception
@@ -1141,17 +1145,17 @@ public class ManPedRuta extends ventanaPad implements PAD
                 verDatPed(jt.getValorInt(jt.getSelectedRowDisab(), JT_EJEPED), jt.getValorInt(jt.getSelectedRowDisab(),JT_NUMPED));
             }
         });
-        swOrdenar.addActionListener(new ActionListener()
+        ordenarC.addActionListener(new ActionListener()
          {
               @Override
               public void actionPerformed(ActionEvent e)
               {
-                  if (swOrdenar.isSelected())
+                  if (ordenarC.isSelected())
                   {
                     jt.salirGrid();
                     if (cambiaLinJT(jt.getSelectedRow())>=0)
                     {
-                        swOrdenar.setSelected(false);
+                        ordenarC.setSelected(false);
                         jt.requestFocusLater();
                         return;
                     }
@@ -1162,8 +1166,8 @@ public class ManPedRuta extends ventanaPad implements PAD
                      jt.setEnabled(true); 
                      jt.requestFocusInicioLater();                   
                   }
-                  jt.setDragEnabled(swOrdenar.isSelected());      
-                  jtClien.setDragEnabled(swOrdenar.isSelected());
+                  jt.setDragEnabled(ordenarC.isSelected());      
+                  jtClien.setDragEnabled(ordenarC.isSelected());
               }
          });
          jt.addMouseListener(new MouseAdapter() {
@@ -1270,9 +1274,20 @@ public class ManPedRuta extends ventanaPad implements PAD
     {
         try
         {
+            if (! jt.isVacio())
+            {
+                jt.salirGrid();
+                if (cambiaLinJT(jt.getSelectedRow())>0)                
+                    return;
+            }
             if (!rut_codiE.controla(true))
             {
                 msgBox("Introduzca ruta");
+                return;
+            }
+            if (prc_fecsalE.isNull())
+            {
+                mensajeErr("Inserte primero la fecha de Salida");
                 return;
             }
             String s="select * from pedvenc as p, v_cliente as cl where "
@@ -1491,7 +1506,7 @@ public class ManPedRuta extends ventanaPad implements PAD
         {
             if (! checkCabecera())
                 return;
-            if (!swOrdenar.isSelected())
+            if (!ordenarC.isSelected())
             {
                 jt.salirGrid();
                 if (cambiaLinJT(jt.getSelectedRow())>=0)
@@ -1502,7 +1517,7 @@ public class ManPedRuta extends ventanaPad implements PAD
         
         
             dtAdd.addNew("pedrutacab", false);
-            int id = guardaCab(0);
+            int id = guardaCab(dtAdd,0);
             
             int orden=1;
             int nl = jt.getRowCount();
@@ -1534,20 +1549,20 @@ public class ManPedRuta extends ventanaPad implements PAD
      * @throws SQLException
      * @throws ParseException 
      */
-    int guardaCab(int id) throws SQLException,ParseException
+    int guardaCab(DatosTabla dt,int id) throws SQLException,ParseException
     {
         if (id>0)
-            dtAdd.setDato("pru_id",id);
-        dtAdd.setDato("rut_codi",rut_codiE.getText());
-        dtAdd.setDato("usu_nomb",tra_codiE.getValor());
-        dtAdd.setDato("prc_fecsal","{ts '"+prc_fecsalE.getFecha("yyyy-MM-dd")+" "+
+            dt.setDato("pru_id",id);
+        dt.setDato("rut_codi",rut_codiE.getText());
+        dt.setDato("usu_nomb",tra_codiE.getValor());
+        dt.setDato("prc_fecsal","{ts '"+prc_fecsalE.getFecha("yyyy-MM-dd")+" "+
                 prc_fecsalH.getText()+":"+prc_fecsalM.getText()+"'}");          
-        dtAdd.setDato("prc_coment",prc_comentE.getText());
-        dtAdd.update();
+        dt.setDato("prc_coment",prc_comentE.getText());
+        dt.update();
         if (id>0)
             return id;
-        dtAdd.select("SELECT lastval()");
-        return dtAdd.getInt(1);
+        dt.select("SELECT lastval()");
+        return dt.getInt(1);
     }
     /**
      * Guarda orden de tabla clientes.
@@ -1698,7 +1713,7 @@ public class ManPedRuta extends ventanaPad implements PAD
                 jt.requestFocusLater();
                 return;
             }
-             if (swOrdenar.isSelected())
+             if (ordenarC.isSelected())
              {
                 jt.salirGrid();
                 if (cambiaLinJT(jt.getSelectedRow())>=0)
@@ -1765,7 +1780,7 @@ public class ManPedRuta extends ventanaPad implements PAD
                     jt.addLinea(a);
              } while (dtAdd.next());            
              dtAdd.executeUpdate("drop table "+tabla);
-             jt.setEnabled(!swOrdenar.isSelected());
+             jt.setEnabled(!ordenarC.isSelected());
               swCarga=false;
              jt.requestFocusInicio();
              msgBox("Pedidos ordenados");
@@ -1835,7 +1850,7 @@ public class ManPedRuta extends ventanaPad implements PAD
         Pcabe.setEnabled(b);
         if (opcion!=navegador.QUERY && opcion!=navegador.DELETE)
         {
-            swOrdenar.setEnabled(b);
+            ordenarC.setEnabled(b);
             Bordenar.setEnabled(b);
             prc_fecsalH.setEnabled(b);          
             prc_fecsalM.setEnabled(b);

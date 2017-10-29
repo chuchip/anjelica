@@ -51,8 +51,6 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionEvent;
@@ -670,7 +668,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                   else   
                     nLineaDet++;
 
-                 }
+            }
           return true;
         } catch (SQLException ex)
         {

@@ -46,6 +46,8 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -58,6 +60,12 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class CLPeVenPro extends ventana implements  JRDataSource
 {
+    ArrayList<String> htCam=new ArrayList();
+    ArrayList<String> htCamAll=new ArrayList();    
+    String camCodi;
+    ArrayList<JCheckBoxMenuItem> alMenuItems=new ArrayList();
+    JPopupMenu JpopupMenu = new JPopupMenu("Camaras");
+    JCheckBoxMenuItem mCamTodas=new JCheckBoxMenuItem("*TODAS*");
     final static int JT_CANTI = 3;
     
     int linProd = 0;
@@ -149,12 +157,11 @@ public class CLPeVenPro extends ventana implements  JRDataSource
 
     Pprinc.setButton(KeyEvent.VK_F4, Baceptar);  
      
-     sbe_codiE.iniciar(dtStat, this, vl, EU);
+    sbe_codiE.iniciar(dtStat, this, vl, EU);
      
-     sbe_codiE.setAceptaNulo(true);
-     sbe_codiE.setValorInt(0);
-   
-   
+    sbe_codiE.setAceptaNulo(true);
+    sbe_codiE.setValorInt(0);
+      
  
     pro_codiE.iniciar(dtStat, this, vl, EU);
     MantRepres.llenaLinkBox(rep_codiE, dtCon1);
@@ -170,11 +177,64 @@ public class CLPeVenPro extends ventana implements  JRDataSource
     
     pvc_feciniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -7));
     pvc_fecfinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-
+    s="select cam_codi,cam_nomb from v_camaras order by cam_codi";
+     if (dtStat.select(s))
+     {
+        mCamTodas.setSelected(true);
+        JpopupMenu.add(mCamTodas);
+        do
+        {         
+            JCheckBoxMenuItem mCam=new JCheckBoxMenuItem(dtStat.getString("cam_nomb"));
+            alMenuItems.add(mCam);
+                        
+            JpopupMenu.add(mCam);
+            final String camCodi=dtStat.getString("cam_codi");
+        
+            htCamAll.add(camCodi);
+            mCam.addActionListener(new ActionListener() 
+            {             
+               @Override
+               public void actionPerformed(ActionEvent e) {                
+                if (mCamTodas.isSelected())
+                     mCamTodas.setSelected(false);
+                if (htCam.indexOf(camCodi)>=0)
+                   htCam.remove(camCodi);
+                else
+                   htCam.add(camCodi);
+                JpopupMenu.show(BFiltroCam,0,24);
+               }
+           });
+        } while (dtStat.next());
+     }
     activarEventos();
   }
   void activarEventos()
   {
+       BFiltroCam.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              JpopupMenu.show(BFiltroCam,0,24);
+            }
+        });
+      mCamTodas.addActionListener(new ActionListener()
+      {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              htCam.clear();
+              for (JCheckBoxMenuItem menuItem : alMenuItems)
+              {
+                  menuItem.setSelected(mCamTodas.isSelected());
+              }
+              if (mCamTodas.isSelected())
+              {
+                  for (String cam : htCamAll)
+                  {
+                      htCam.add(cam);
+                  }
+              }
+              JpopupMenu.show(BFiltroCam, 0, 24);
+          }
+      });
     Bimpri.addActionListener(new ActionListener()
     {
       @Override
@@ -282,6 +342,7 @@ public class CLPeVenPro extends ventana implements  JRDataSource
       ArrayList v=new ArrayList();
       v.add(dtCon1.getString("cli_codi"));
       v.add(dtCon1.getString("cli_nomb"));
+      v.add(dtCon1.getString("cli_codrut"));
       v.add(dtCon1.getString("pvl_canti")+dtCon1.getString("pvl_tipo"));
       v.add(dtCon1.getString("pvl_comen"));
       jtCli.addLinea(v);
@@ -309,13 +370,22 @@ public class CLPeVenPro extends ventana implements  JRDataSource
    
     if (! ejecSelect)
       return true; // No ejecutar select, solo comprobar campos.
-
+     camCodi="";
+     if (!mCamTodas.isSelected())
+     {
+        for (String cam:htCam)
+        {
+             camCodi+="'"+cam+"',";
+        }
+        if (!camCodi.equals(""))
+         camCodi=camCodi.substring(0,camCodi.length()-1);
+     }
     s = "SELECT "+
-         " pro_codi,pro_codart, pve_nomb " +
-        " ,sum(pvl_kilos) as pvl_kilos  FROM v_pedven as  p,v_cliente as cl " ;        
+         " p.pro_codi,p.pro_codart, pve_nomb " +
+        " ,sum(pvl_kilos) as pvl_kilos  FROM v_pedven as  p,v_cliente as cl,v_articulo as a " ;        
 
     condWhere=" where   pvc_confir='S' "+
-        " and p.cli_codi = cl.cli_codi "+
+        " and p.cli_codi = cl.cli_codi "+      
         (pvc_feciniE.isNull()?"":" AND pvc_fecent >= {ts '" + pvc_feciniE.getFechaDB() + "'}") +
         (pvc_fecfinE.isNull()?"": " and pvc_fecent <= {ts '" + pvc_fecfinE.getFechaDB() + "'}")+
         (alm_codiE.getValorInt()==0?"":" and p.alm_codi = " + alm_codiE.getValorInt())+
@@ -329,9 +399,12 @@ public class CLPeVenPro extends ventana implements  JRDataSource
       condWhere += " AND p.avc_ano != 0";
    
     s+= condWhere+
+          " and a.pro_codi = p.pro_codi "+       
+         (camCodi.equals("")?"":
+         " and  a.cam_codi in ("+camCodi+")" )+
         (pro_codiE.isNull()?"": " and p.pro_codart = '"+pro_codiE.getText()+"'")+       
-       " group by pro_codi,pro_codart ,pve_nomb "+
-        " order by pro_codart ";
+       " group by p.pro_codi,p.pro_codart ,pve_nomb "+
+        " order by p.pro_codart ";
 //     debug(s);
     jtProd.setEnabled(false);
     jtCli.setEnabled(false);
@@ -370,21 +443,22 @@ public class CLPeVenPro extends ventana implements  JRDataSource
     jtProd.setAlinearColumna(new int[]{0,2,0,2});
     jtProd.setFormatoColumna(3,"##9.99");
   }
-    private void confJtCli() throws Exception
+   private void confJtCli() throws Exception
    {
      ArrayList v = new ArrayList();
      v.add("Cliente"); // 0
      v.add("Nombre Cliente"); // 1
-     v.add("Canti"); // 2
-     v.add("Coment."); // 2
+     v.add("CR"); // 2
+     v.add("Canti"); // 3
+     v.add("Coment."); // 4
      jtCli.setCabecera(v);
     
     jtCli.setBuscarVisible(false);
      jtCli.setPuntoDeScroll(50);
-     jtCli.setAnchoColumna(new int[]{60, 100, 70,200});
-     jtCli.setAlinearColumna(new int[] {2, 0, 2});
+     jtCli.setAnchoColumna(new int[]{60, 100, 40,70,200});
+     jtCli.setAlinearColumna(new int[] {2, 0, 0, 2});
      jtCli.setAjustarGrid(true);
-     jtCli.setFormatoColumna(2,"----9");
+     jtCli.setFormatoColumna(3,"----9");
    }
    private void confJtPed() throws Exception
    {
@@ -520,10 +594,13 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         return jtCli.getValorInt(linClien,0);
       if (campo.equals("cli_nomb"))
         return jtCli.getValString(linClien,1);
-      if (campo.equals("pvl_canti"))
+       if (campo.equals("cli_codrut"))
         return jtCli.getValString(linClien,2);
-      if (campo.equals("pvl_comen"))
+       if (campo.equals("pvl_canti"))
         return jtCli.getValString(linClien,3);
+       if (campo.equals("pvl_comen"))           
+        return jtCli.getValString(linClien,4);
+
       throw new JRException("Campo: "+campo+ " No definido");
     }
 
@@ -559,8 +636,9 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         verPedidosE = new gnu.chu.controles.CComboBox();
         cLabel16 = new gnu.chu.controles.CLabel();
         alm_codiE = new gnu.chu.controles.CLinkBox();
+        BFiltroCam = new gnu.chu.controles.CButton(Iconos.getImageIcon("filter"));
         jtProd = new gnu.chu.controles.Cgrid(4);
-        jtCli = new gnu.chu.controles.Cgrid(4);
+        jtCli = new gnu.chu.controles.Cgrid(5);
         jtPed = new gnu.chu.controles.Cgrid(10);
 
         Bimpri.setToolTipText("Imprimir Relacion Productos en Pedidos");
@@ -661,6 +739,10 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         Pcondi.add(alm_codiE);
         alm_codiE.setBounds(410, 40, 170, 17);
 
+        BFiltroCam.setText("Camaras");
+        Pcondi.add(BFiltroCam);
+        BFiltroCam.setBounds(490, 0, 90, 19);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -714,6 +796,7 @@ public class CLPeVenPro extends ventana implements  JRDataSource
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BFiltroCam;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bimpri;
     private gnu.chu.controles.CPanel Pcondi;
