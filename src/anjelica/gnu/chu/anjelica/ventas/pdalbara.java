@@ -3200,8 +3200,12 @@ public class pdalbara extends ventanaPad  implements PAD
     verDatos(dtCons);
     nav.setPulsado(navegador.NINGUNO);
   }
-
-  void verDatos(DatosTabla dt)
+/**
+ * Ver TODOS los datos del albaran.
+ * @param dt
+ * @return 
+ */
+  boolean verDatos(DatosTabla dt)
   {
     tablaCab=TABLACAB;
     tablaLin=TABLALIN;
@@ -3209,8 +3213,11 @@ public class pdalbara extends ventanaPad  implements PAD
     vistaInd=VISTAIND;
     hisRowid=0;
 
-    verDatos(dt, opAgru.isSelected());
+    boolean ret=verDatos(dt, opAgru.isSelected());
+    if (!ret)
+        return false;
     resetTiempoPedidos();
+    return true;
   }
   void resetTiempoPedidos()
   {
@@ -3220,14 +3227,20 @@ public class pdalbara extends ventanaPad  implements PAD
             temporizador.restart();
     }
   }
-  void verDatos(DatosTabla dt, boolean agrupa)
+  /**
+   * Ver todos los datos del albaran activo en dt
+   * @param dt
+   * @param agrupa ver las lineas de albaran (true=si)
+   * @return 
+   */
+  boolean verDatos(DatosTabla dt, boolean agrupa)
   {
     try
     {
       avsNume=0;
       swEntdepos=false;
-      if (dtCons.getNOREG())
-        return;
+      if (dt.getNOREG())
+        return false;
 
       opVerdat=true;
       if (!selCabAlb(tablaCab,dtAdd,dt.getInt("avc_ano"),
@@ -3247,7 +3260,7 @@ public class pdalbara extends ventanaPad  implements PAD
         nav.setEnabled(navegador.EDIT, false);
         nav.setEnabled(navegador.DELETE, false);
         opVerdat=false;
-        return;
+        return false;
       }
       pComClien.mostrarComentarios(dtAdd.getInt("cli_codi"));
       nav.setEnabled(navegador.EDIT, true);
@@ -3390,9 +3403,12 @@ public class pdalbara extends ventanaPad  implements PAD
     catch (Exception k)
     {
       Error("Error al Ver Datos de Albaran", k);
+      return false;
     }
     opVerdat=false;
+    return true;
   }
+  
   void actGridHist(int empCodi,int avcAno,String avcSerie, int avcNume) throws SQLException
   {
             jtHist.setEnabled(false);
@@ -3623,9 +3639,16 @@ public class pdalbara extends ventanaPad  implements PAD
         msgBox("Factura TIENE recibos cuyo IMPORTE no coincide con el de la Fra\n"+
                "AVISE AL DEPARTAMTENTO DE TESORERIA");
   }
-
+/**
+ * Ver datos linea albaran
+ * @param dt
+ * @param agrupa
+ * @param incIva
+ * @throws SQLException
+ * @throws ParseException 
+ */
   void verDatLin(DatosTabla dt, boolean agrupa, boolean incIva) throws
-      Exception
+      SQLException,ParseException
   {
     verDatLin(dt.getInt("avc_ano"),  hisRowid>0?-1:dt.getInt("emp_codi"),          
               dt.getString("avc_serie"),
@@ -3838,7 +3861,7 @@ public class pdalbara extends ventanaPad  implements PAD
    * @throws Exception
    */
   void verDatLin(int ano, int empCodi, String serie, int nume, double avcImpcob,
-                 boolean agrupa, boolean incIva) throws Exception
+                 boolean agrupa, boolean incIva) throws SQLException,ParseException
   {
      String proNomb;
      swActDesg = false;
@@ -4576,6 +4599,8 @@ public class pdalbara extends ventanaPad  implements PAD
   
   private boolean canModif() throws SQLException, ParseException
   {
+      if (!verDatos(dtCons,false))
+          return false;
       if (!P_ADMIN)
       {
           if (rutPanelE.getNumeroRuta()!=0 && !avc_cucomiE.isSelected())
@@ -4765,6 +4790,7 @@ public class pdalbara extends ventanaPad  implements PAD
       }
       idTiempo=0;
       nLiMaxEdit=0;
+      
       if (! canModif())
       {
           nav.pulsado = navegador.NINGUNO;
@@ -4875,13 +4901,7 @@ public class pdalbara extends ventanaPad  implements PAD
     jtPalet.setEnabled(false);
     mensaje("Editando Albaran ...");
     opAgru.setEnabled(false);
-    if (opAgru.isSelected())
-    {
-      if (swEntdepos)
-        verDatLin(dtCons, false, true);
-      else
-        verDatos(dtCons, false);
-    }
+  
     if (!setBloqueo(dtStat, "v_albavec",
                     avc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
                     "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt(), true))

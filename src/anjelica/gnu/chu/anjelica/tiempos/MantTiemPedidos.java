@@ -22,6 +22,7 @@ package gnu.chu.anjelica.tiempos;
 
 import gnu.chu.anjelica.ventas.*;
 import gnu.chu.Menu.Principal;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantRepres;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.camposdb.proPanel;
@@ -34,6 +35,8 @@ import gnu.chu.eventos.GridEvent;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
+import static gnu.chu.utilidades.Formatear.getDate;
+import static gnu.chu.utilidades.Formatear.sumaDias;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
@@ -42,20 +45,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.print.PrinterException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRField;
+import net.sf.jasperreports.engine.JRResultSetDataSource;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 
-public class MantTiemPedidos extends  ventana  
+public class MantTiemPedidos extends  ventana   implements  JRDataSource
 {
+    String usuario;
+    ResultSet rsReport;
+    Date horaInicio;
     PreparedStatement ps;
     boolean inCambio=true;
     String usuNomAnt;
@@ -151,7 +167,7 @@ public class MantTiemPedidos extends  ventana
 
         iniciarFrame();
 
-        this.setVersion("2017-10-04");
+        this.setVersion("2017-10-30");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -186,7 +202,13 @@ public class MantTiemPedidos extends  ventana
     }
     void activarEventos()
     {
- 
+        BImpri.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Bimpri_actionPerformed();
+            }
+        });
 
         Baceptar.addActionListener(new ActionListener()
         {
@@ -587,9 +609,9 @@ public class MantTiemPedidos extends  ventana
 //   }
    
    
-    private boolean iniciarCons(boolean ejecSelect) throws SQLException, ParseException
+    private boolean checkCond()
     {
-        if (pvc_feciniE.getError())
+         if (pvc_feciniE.getError())
         {
           mensajeErr("Fecha INICIAL no es valida");
           pvc_feciniE.requestFocus();
@@ -601,50 +623,52 @@ public class MantTiemPedidos extends  ventana
           pvc_feciniE.requestFocus();
           return false;
         }
-        if (! ejecSelect)
-          return true;
-     swCliente=false;
-     if (!cli_codiE.isNull())
-         swCliente=true;
-     s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_codrut, cl.cli_poble,"
-         + " c.rut_codi, al.rut_nomb FROM pedvenc as c"
-         + " left join v_albavec as av on c.avc_ano = av.avc_ano "
-         + " and c.avc_serie= av.avc_serie and c.avc_nume =  av.avc_nume and av.emp_codi = c.emp_codi "
-         + ",clientes as cl,v_rutas as al " +       
-        " WHERE c.emp_codi = "+EU.em_cod+       
-        " and c.pvc_confir = '"+pvc_confirE.getValor()+"' "+
-        " and cl.cli_codi = c.cli_codi " +
-        " and c.rut_codi = al.rut_codi "+     
-        (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = "+sbe_codiE.getValorInt())+
-        (zon_codiE.isNull() || swCliente?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
-        (rep_codiE.isNull() || swCliente?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'");
-
-    if (verPedidosE.getValor().equals("P"))
-      s += " AND (c.avc_ano = 0 or pvc_cerra=0)";
-    if (verPedidosE.getValor().equals("L"))
-      s += " AND c.avc_ano != 0";
-    if (!pvc_confirE.getValor().equals("*"))
-      s += " and pvc_confir = '" + pvc_confirE.getValor() + "'";
-    if (swCliente)
-      s += " AND c.cli_codi = " + cli_codiE.getValorInt();
-   
-    s+="and  "+
-            (albPedidC.getValor().equals("P")?"pvc_fecent":"avc_fecalb ")+
-            " between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +       
-        " and  to_date('" + pvc_fecfinE.getText()  + "','dd-MM-yyyy')" ;
-    s += " order by c.rut_codi, c.pvc_fecent,c.cli_codi ";
-
-    jtCabPed.setEnabled(false);
-    jtCabPed.removeAllDatos();
-//      debug("s: "+s);
-    if (!dtCon1.select(s))
-    {
-      mensajeErr("NO hay PEDIDOS que cumplan estas condiciones");
-      verPedidosE.requestFocus();
-      return false;
+        return true;
     }
-    return true;
-  }
+    private boolean iniciarCons() throws SQLException, ParseException {
+        if (!checkCond())
+            return false;
+
+        swCliente = false;
+        if (!cli_codiE.isNull())
+            swCliente = true;
+        s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_codrut, cl.cli_poble,"
+            + " c.rut_codi, al.rut_nomb FROM pedvenc as c"
+            + " left join v_albavec as av on c.avc_ano = av.avc_ano "
+            + " and c.avc_serie= av.avc_serie and c.avc_nume =  av.avc_nume and av.emp_codi = c.emp_codi "
+            + ",clientes as cl,v_rutas as al "
+            + " WHERE c.emp_codi = " + EU.em_cod
+            + " and c.pvc_confir = 'S' "
+            + " and cl.cli_codi = c.cli_codi "
+            + " and c.rut_codi = al.rut_codi "
+            + (sbe_codiE.getValorInt() == 0 ? "" : " and cl.sbe_codi = " + sbe_codiE.getValorInt())
+            + (zon_codiE.isNull() || swCliente ? "" : " and cl.zon_codi = '" + zon_codiE.getText() + "'")
+            + (rep_codiE.isNull() || swCliente ? "" : " and cl.rep_codi = '" + rep_codiE.getText() + "'");
+
+        if (verPedidosE.getValor().equals("P"))
+            s += " AND (c.avc_ano = 0 or pvc_cerra=0)";
+        if (verPedidosE.getValor().equals("L"))
+            s += " AND c.avc_ano != 0";
+        if (swCliente)
+            s += " AND c.cli_codi = " + cli_codiE.getValorInt();
+
+        s += "and  "
+            + (albPedidC.getValor().equals("P") ? "pvc_fecent" : "avc_fecalb ")
+            + " between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')"
+            + " and  to_date('" + pvc_fecfinE.getText() + "','dd-MM-yyyy')";
+        s += " order by c.rut_codi, c.pvc_fecent,c.cli_codi ";
+
+        jtCabPed.setEnabled(false);
+        jtCabPed.removeAllDatos();
+//      debug("s: "+s);
+        if (!dtCon1.select(s))
+        {
+            mensajeErr("NO hay PEDIDOS que cumplan estas condiciones");
+            verPedidosE.requestFocus();
+            return false;
+        }
+        return true;
+    }
   private void confJTCab()
   {
     ArrayList v=new ArrayList();
@@ -742,130 +766,116 @@ public class MantTiemPedidos extends  ventana
    
     void Baceptar_actionPerformed()
     {
-    try
-    {
-        if (! jtCabPed.isVacio())
-            guardaDatos(jtCabPed.getSelectedRow());
-        inCambio=true;
-        usuNomAnt=EU.usuario;
-        if (! iniciarCons(true))
-          return;
-        boolean swServ=verPedidosE.getValor().equals("S"); // A servir (tienen albaran y no esta listado)
-     
-      
-      do
-      {
-        if (!servRutaC.getValor().equals("*"))
+        try
         {
-            boolean servRuta=false;
-            if (dtCon1.getInt("avc_id",true)!=0)                
-            {
-                s="select alr_nume from albrutalin where avc_id="+dtCon1.getInt("avc_id");
-                servRuta=dtStat.select(s);
-            }
-            if (servRuta && servRutaC.getValor().equals("N"))
-                continue;
-            if (! servRuta && servRutaC.getValor().equals("S"))
-                continue;
+            if (!jtCabPed.isVacio())
+                guardaDatos(jtCabPed.getSelectedRow());
+            inCambio = true;
+            usuNomAnt = EU.usuario;
+            if (!iniciarCons())
+                return;
+            boolean swServ = verPedidosE.getValor().equals("S"); // A servir (tienen albaran y no esta listado)
 
-            
-        }
-        if (swServ) 
-        {      // Mostrar solo los disponibles para servir (tienen albaran y no estan listados)
-                if (dtCon1.getObject("avc_impres")==null)
-                    continue;
-                if ((dtCon1.getInt("avc_impres") & 1) == 1)
-                    continue;
-        }
-        boolean swImpres=false;
-        if (!albListadoC.getValor().equals("*"))
-        {                      
-            if (dtCon1.getObject("avc_impres")!=null)               
-                swImpres= (dtCon1.getInt("avc_impres") & 1) == 1;
-            if (swImpres && albListadoC.getValor().equals("N"))
-                continue;
-            if (! swImpres && albListadoC.getValor().equals("S"))
-                continue;
-        }
-        if (!rut_codiE.isNull() && !swCliente)
-        {
-            if (dtCon1.getObject("cli_ruta")!=null)
+            do
             {
-                if (! rut_codiE.getText().equals(dtCon1.getString("cli_ruta")))
-                    continue;
-            }
-            else
-                 if (! rut_codiE.getText().equals(dtCon1.getString("rut_codi")))
-                    continue;
-        }
-        ArrayList v=new ArrayList();
-        int pvcId=pdpeve.getIdPedido(dtStat, dtCon1.getInt("emp_codi"), dtCon1.getInt("eje_nume"), 
-            dtCon1.getInt("pvc_nume"));
-        if (pvcId<0)
-        {
-            v.add("");
-            v.add(0);
-        }
-        else
-        {
-             s="Select * from tiempostarea where tit_tipdoc = 'P' and tit_id="+pvcId+
-                 " and tit_tiempo>0 "+
-                 (usu_nombE.isNull(true)?"": " and usu_nomb ='"+usu_nombE.getText()+"'");
-             if (!dtStat.select(s))
-             {
-                v.add("");
-                v.add(0);  
-             }
-             else
-             {
-                v.add(dtStat.getString("usu_nomb"));
-                v.add(dtStat.getInt("tit_tiempo"));
-             }
-        }
-        if (!usu_nombE.isNull(true))
-        {
-            if (dtStat.getNOREG())
-                continue;
+                if (!servRutaC.getValor().equals("*"))
+                {
+                    boolean servRuta = false;
+                    if (dtCon1.getInt("avc_id", true) != 0)
+                    {
+                        s = "select alr_nume from albrutalin where avc_id=" + dtCon1.getInt("avc_id");
+                        servRuta = dtStat.select(s);
+                    }
+                    if (servRuta && servRutaC.getValor().equals("N"))
+                        continue;
+                    if (!servRuta && servRutaC.getValor().equals("S"))
+                        continue;
+
+                }
+                if (swServ)
+                {      // Mostrar solo los disponibles para servir (tienen albaran y no estan listados)
+                    if (dtCon1.getObject("avc_impres") == null)
+                        continue;
+                    if ((dtCon1.getInt("avc_impres") & 1) == 1)
+                        continue;
+                }
+               
+              
+                if (!rut_codiE.isNull() && !swCliente)
+                {
+                    if (dtCon1.getObject("cli_ruta") != null)
+                    {
+                        if (!rut_codiE.getText().equals(dtCon1.getString("cli_ruta")))
+                            continue;
+                    } else
+                        if (!rut_codiE.getText().equals(dtCon1.getString("rut_codi")))
+                            continue;
+                }
+                ArrayList v = new ArrayList();
+                int pvcId = pdpeve.getIdPedido(dtStat, dtCon1.getInt("emp_codi"), dtCon1.getInt("eje_nume"),
+                    dtCon1.getInt("pvc_nume"));
+                if (pvcId < 0)
+                {
+                    v.add("");
+                    v.add(0);
+                } else
+                {
+                    s = "Select * from tiempostarea where tit_tipdoc = 'P' and tit_id=" + pvcId
+                        + " and tit_tiempo>0 "
+                        + (usu_nombE.isNull(true) ? "" : " and usu_nomb ='" + usu_nombE.getText() + "'");
+                    if (!dtStat.select(s))
+                    {
+                        v.add("");
+                        v.add(0);
+                    } else
+                    {
+                        v.add(dtStat.getString("usu_nomb"));
+                        v.add(dtStat.getInt("tit_tiempo"));
+                    }
+                }
+                if (!usu_nombE.isNull(true))
+                {
+                    if (dtStat.getNOREG())
+                        continue;
 //            if (! dtStat.getString("usu_nomb").equals(usu_nombE.getText()))
 //                continue;
+                }
+                v.add(dtCon1.getString("emp_codi")); // 0
+                v.add(dtCon1.getString("eje_nume")); // 1
+                v.add(dtCon1.getString("pvc_nume")); // 2
+                v.add(dtCon1.getString("cli_codi")); // 3
+                v.add(dtCon1.getObject("pvc_clinom") == null ? dtCon1.getString("cli_nomb") : dtCon1.getString("pvc_clinom")); // 4
+                v.add(dtCon1.getObject("cli_poble")); // 5 
+                v.add(dtCon1.getFecha("pvc_fecent", "dd-MM-yyyy")); // 5
+                v.add(dtCon1.getString("cli_codrut")); // 6
+                v.add(dtCon1.getInt("pvc_cerra") != 0); // 7
+                v.add(dtCon1.getString("pvc_depos")); // 8
+                v.add(dtCon1.getString("rut_nomb")); // 9
+                v.add(dtCon1.getString("avc_ano")); //10
+                v.add(dtCon1.getString("avc_serie")); // 11
+                v.add(dtCon1.getString("avc_nume")); //12
+                jtCabPed.addLinea(v);
+
+            } while (dtCon1.next());
+            nPedT.setValorDec(jtCabPed.getRowCount());
+            if (jtCabPed.isVacio())
+            {
+                mensajeErr("No encontrados pedidos con estos criterios");
+                return;
+            }
+            jtCabPed.requestFocusInicio();
+            jtCabPed.setEnabled(true);
+            verDatPed(jtCabPed.getValorInt(JTCAB_EMPPED),
+                jtCabPed.getValorInt(JTCAB_EJEPED), jtCabPed.getValorInt(JTCAB_NUMPED));
+            jtCabPed.requestFocusInicio();
+            inCambio = false;
+            actTotalGrid();
+            verUsuPedido(0);
+
+        } catch (SQLException | ParseException k)
+        {
+            Error("Error al buscar pedidos", k);
         }
-        v.add(dtCon1.getString("emp_codi")); // 0
-        v.add(dtCon1.getString("eje_nume")); // 1
-        v.add(dtCon1.getString("pvc_nume")); // 2
-        v.add(dtCon1.getString("cli_codi")); // 3
-        v.add(dtCon1.getObject("pvc_clinom")==null?dtCon1.getString("cli_nomb"):dtCon1.getString("pvc_clinom")); // 4
-        v.add(dtCon1.getObject("cli_poble")); // 5 
-        v.add(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy")); // 5
-        v.add(dtCon1.getString("cli_codrut")); // 6
-        v.add(dtCon1.getInt("pvc_cerra")!=0); // 7
-        v.add(dtCon1.getString("pvc_depos")); // 8
-        v.add(dtCon1.getString("rut_nomb")); // 9
-        v.add(dtCon1.getString("avc_ano")); //10
-        v.add(dtCon1.getString("avc_serie")); // 11
-        v.add(dtCon1.getString("avc_nume")); //12
-        jtCabPed.addLinea(v);
-           
-      } while (dtCon1.next());
-      nPedT.setValorDec(jtCabPed.getRowCount());
-      if (jtCabPed.isVacio())
-      {
-          mensajeErr("No encontrados pedidos con estos criterios");
-          return;
-      }
-      jtCabPed.requestFocusInicio();
-      jtCabPed.setEnabled(true);
-      verDatPed(jtCabPed.getValorInt(JTCAB_EMPPED),
-          jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED));
-      jtCabPed.requestFocusInicio();
-      inCambio=false;
-      actTotalGrid();
-      verUsuPedido(0);
-      
-    }
-    catch (SQLException | ParseException k)
-    {
-      Error("Error al buscar pedidos", k);
-    }
   }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -896,17 +906,16 @@ public class MantTiemPedidos extends  ventana
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
         cLabel10 = new gnu.chu.controles.CLabel();
         verPedidosE = new gnu.chu.controles.CComboBox();
-        pvc_confirE = new gnu.chu.controles.CComboBox();
         cLabel21 = new gnu.chu.controles.CLabel();
         cLabel2 = new gnu.chu.controles.CLabel();
         servRutaC = new gnu.chu.controles.CComboBox();
-        cLabel3 = new gnu.chu.controles.CLabel();
-        albListadoC = new gnu.chu.controles.CComboBox();
         cLabel22 = new gnu.chu.controles.CLabel();
         rut_codiE = new gnu.chu.controles.CLinkBox();
         albPedidC = new gnu.chu.controles.CComboBox();
-        cLabel11 = new gnu.chu.controles.CLabel();
         usu_nombE = new gnu.chu.controles.CTextField(Types.CHAR,"X",15);
+        cLabel11 = new gnu.chu.controles.CLabel();
+        horaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"99");
+        minutoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"99");
         Ppie = new gnu.chu.controles.CPanel();
         cLabel17 = new gnu.chu.controles.CLabel();
         nPedT = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
@@ -936,6 +945,7 @@ public class MantTiemPedidos extends  ventana
         kilosColgadoAlbE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
         cLabel31 = new gnu.chu.controles.CLabel();
         cLabel32 = new gnu.chu.controles.CLabel();
+        BImpri = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
         jtLinPed = new gnu.chu.controles.Cgrid(11);
         jtCabPed = new gnu.chu.controles.CGridEditable(16);
 
@@ -993,9 +1003,9 @@ public class MantTiemPedidos extends  ventana
         Pcabe.add(cLabel18);
         cLabel18.setBounds(270, 42, 40, 18);
 
-        cLabel9.setText("Usuario");
+        cLabel9.setText("Hora Inicio");
         Pcabe.add(cLabel9);
-        cLabel9.setBounds(490, 20, 50, 18);
+        cLabel9.setBounds(160, 65, 70, 18);
 
         Baceptar.setText("Aceptar");
         Pcabe.add(Baceptar);
@@ -1012,12 +1022,6 @@ public class MantTiemPedidos extends  ventana
         Pcabe.add(verPedidosE);
         verPedidosE.setBounds(80, 1, 110, 18);
 
-        pvc_confirE.addItem("Si","S");
-        pvc_confirE.addItem("No","N");
-        pvc_confirE.addItem("**","*");
-        Pcabe.add(pvc_confirE);
-        pvc_confirE.setBounds(540, 1, 50, 18);
-
         cLabel21.setText("Repres.");
         cLabel21.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel21);
@@ -1032,16 +1036,6 @@ public class MantTiemPedidos extends  ventana
         servRutaC.addItem("No","N");
         Pcabe.add(servRutaC);
         servRutaC.setBounds(100, 65, 50, 17);
-
-        cLabel3.setText("Listados Albaran ");
-        Pcabe.add(cLabel3);
-        cLabel3.setBounds(190, 65, 100, 17);
-
-        albListadoC.addItem("**","*");
-        albListadoC.addItem("Si","S");
-        albListadoC.addItem("No","N");
-        Pcabe.add(albListadoC);
-        albListadoC.setBounds(290, 65, 50, 17);
 
         cLabel22.setText("Ruta");
         cLabel22.setPreferredSize(new java.awt.Dimension(60, 18));
@@ -1059,12 +1053,20 @@ public class MantTiemPedidos extends  ventana
         albPedidC.addItem("Albaran","A");
         Pcabe.add(albPedidC);
         albPedidC.setBounds(620, 2, 90, 17);
-
-        cLabel11.setText("Confirmado");
-        Pcabe.add(cLabel11);
-        cLabel11.setBounds(470, 1, 70, 18);
         Pcabe.add(usu_nombE);
         usu_nombE.setBounds(540, 20, 120, 17);
+
+        cLabel11.setText("Usuario");
+        Pcabe.add(cLabel11);
+        cLabel11.setBounds(490, 20, 50, 18);
+
+        horaE.setText("0");
+        Pcabe.add(horaE);
+        horaE.setBounds(230, 65, 20, 17);
+
+        minutoE.setText("0");
+        Pcabe.add(minutoE);
+        minutoE.setBounds(252, 65, 20, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1228,6 +1230,10 @@ public class MantTiemPedidos extends  ventana
         Ppie.add(cLabel32);
         cLabel32.setBounds(10, 110, 50, 18);
 
+        BImpri.setText("Imprimir");
+        Ppie.add(BImpri);
+        BImpri.setBounds(420, 100, 80, 19);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -1290,12 +1296,12 @@ public class MantTiemPedidos extends  ventana
 
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BImpri;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bborrar;
     private gnu.chu.controles.CPanel PPrinc;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Ppie;
-    private gnu.chu.controles.CComboBox albListadoC;
     private gnu.chu.controles.CComboBox albPedidC;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
@@ -1313,7 +1319,6 @@ public class MantTiemPedidos extends  ventana
     private gnu.chu.controles.CLabel cLabel27;
     private gnu.chu.controles.CLabel cLabel28;
     private gnu.chu.controles.CLabel cLabel29;
-    private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel30;
     private gnu.chu.controles.CLabel cLabel31;
     private gnu.chu.controles.CLabel cLabel32;
@@ -1322,6 +1327,7 @@ public class MantTiemPedidos extends  ventana
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.camposdb.cliPanel cli_codiE;
+    private gnu.chu.controles.CTextField horaE;
     private gnu.chu.controles.CGridEditable jtCabPed;
     private gnu.chu.controles.Cgrid jtLinPed;
     private gnu.chu.controles.Cgrid jtUsu;
@@ -1332,9 +1338,9 @@ public class MantTiemPedidos extends  ventana
     private gnu.chu.controles.CTextField kilosColgadoAlbE;
     private gnu.chu.controles.CTextField kilosColgadoE;
     private gnu.chu.controles.CTextField kilosPedidE;
+    private gnu.chu.controles.CTextField minutoE;
     private gnu.chu.controles.CTextField nPedT;
     private gnu.chu.controles.CTextArea pvc_comenE;
-    private gnu.chu.controles.CComboBox pvc_confirE;
     private gnu.chu.controles.CTextField pvc_fecfinE;
     private gnu.chu.controles.CTextField pvc_feciniE;
     private gnu.chu.controles.CTextField pvc_fecpedE;
@@ -1352,6 +1358,109 @@ public class MantTiemPedidos extends  ventana
     private gnu.chu.controles.CComboBox verPedidosE;
     private gnu.chu.controles.CLinkBox zon_codiE;
     // End of variables declaration//GEN-END:variables
+ 
+    void Bimpri_actionPerformed()
+    {
+   
+     try {
+          if (jtCabPed.isVacio())
+              return;
+          guardaDatos(jtCabPed.getSelectedRow());
+        swCliente = false;
+        if (!cli_codiE.isNull())
+            swCliente = true;
+        s = "SELECT  c.rut_codi,ru.rut_nomb,t.tit_tiempo,t.usu_nomb,c.cli_codi,c.pvc_nume,pvc_fecent,pvc_clinom,cl.cli_poble,cli_codrut"
+            + " FROM clientes as cl,tiempostarea as t,pedvenc as c left join v_rutas as ru on c.rut_codi= ru.rut_codi "
+            + " WHERE c.emp_codi = " + EU.em_cod
+            + " and c.pvc_confir = 'S' "
+            + " and tit_tiempo>0   and tit_id= pvc_id "
+            + " and cl.cli_codi = c.cli_codi "
+            + (usu_nombE.isNull()?"": " and t.usu_nomb ='"+usu_nombE.getText()+"'")
+            + (sbe_codiE.getValorInt() == 0 ? "" : " and cl.sbe_codi = " + sbe_codiE.getValorInt())
+            + (zon_codiE.isNull() || swCliente ? "" : " and cl.zon_codi = '" + zon_codiE.getText() + "'")
+            + (rut_codiE.isNull() || swCliente ? "": " and c.rut_codi = '"+rut_codiE.getText()+"'")
+            + (rep_codiE.isNull() || swCliente ? "" : " and cl.rep_codi = '" + rep_codiE.getText() + "'");
+        if (verPedidosE.getValor().equals("P"))
+            s += " AND (c.avc_ano = 0 or pvc_cerra=0)";
+        if (verPedidosE.getValor().equals("L"))
+            s += " AND c.avc_ano != 0";
+        if (swCliente)
+            s += " AND c.cli_codi = " + cli_codiE.getValorInt();
 
+        s += "and pvc_fecent "
+            + " between '" + pvc_feciniE.getFechaDB()+"'"
+            + " and  '" + pvc_fecfinE.getFechaDB()+ "'";
+        s += " order by t.usu_nomb, c.rut_codi,c.cli_codi "; 
+      dtCon1.setStrSelect(s);
+      rsReport= ct.createStatement().executeQuery(dtCon1.getStrSelect());
+      
+      java.util.HashMap mp = Listados.getHashMapDefault();       
+       mp.put("fecini",pvc_feciniE.getDate());
+       mp.put("fecfin",pvc_fecfinE.getDate());
+       mp.put("cli_codrut",rut_codiE.getText());
+       mp.put("rut_nomb",rut_codiE.isNull()?null:rut_codiE.getTextCombo());
+       horaInicio=Formatear.getDate("01-01-2017"+" "+
+            Formatear.format(horaE.getText(),"99")+":"+
+            Formatear.format(minutoE.getText(),"99"),"dd-MM-yyyy HH:mm");
+       mp.put("hora",horaInicio);
+       JasperReport jr = Listados.getJasperReport(EU,"tiemposPedido");       
+        nLineaReport=0;
+        
+       JasperPrint jp = JasperFillManager.fillReport(jr, mp,this);
+       gnu.chu.print.util.printJasper(jp, EU);
+       
+        mensajeErr("Relacion tiempos de Pedidos  ... IMPRESO ");
+     }
+     catch (SQLException | JRException | ParseException | PrinterException k)
+     {
+       Error("Error al imprimir Pedido Venta", k);
+     }
+   }
+
+    @Override
+    public boolean next() throws JRException {
+        try
+        {
+           boolean ret= rsReport.next();
+           if (!ret)
+               return ret;
+           if (usuario!=null && !usuario.equals(rsReport.getString("usu_nomb")))
+                 horaInicio=Formatear.getDate("01-01-2017"+" "+
+                  Formatear.format(horaE.getText(),"99")+":"+
+                  Formatear.format(minutoE.getText(),"99"),"dd-MM-yyyy HH:mm");
+           usuario=rsReport.getString("usu_nomb");
+           return ret;
+        } catch (SQLException | ParseException ex)
+        {
+            throw new JRException("Error al realizar next de  report"+ex.getMessage());
+        }
+    }
+
+    @Override
+    public Object getFieldValue(JRField jrf) throws JRException {
+     try {
+        String campo = jrf.getName().toLowerCase();  
+        if (campo.equals("horainicio"))
+        {    
+            Date hora=horaInicio;
+            horaInicio = sumaMinutos(horaInicio, rsReport.getInt("tit_tiempo"));
+            return hora;
+        }
+        return rsReport.getObject(campo);
+     } catch (SQLException k)
+     {
+         throw new JRException("Error al mostrar campos de report: "+k.getMessage());
+     }     
+    }
+  public static Date sumaMinutos(Date fecha, int minutos) 
+   {
+     if (fecha==null)
+          return null;
+      GregorianCalendar gc= new GregorianCalendar();
+      gc.setTime(fecha);
+      gc.add(GregorianCalendar.HOUR,(int)minutos/60);
+      gc.add(GregorianCalendar.MINUTE,minutos-(int)(minutos/60)*60);
+      return gc.getTime();
+   } 
    
 }

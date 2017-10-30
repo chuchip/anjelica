@@ -150,7 +150,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2017-10-18" + ARG_ZONAREP);
+        this.setVersion("2017-10-29" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -260,7 +260,8 @@ public class CLVenRep extends ventana {
                             jtLin.requestFocusSelectedLater();
                             return;
                         }
-                        prMin=jtLin.getValorDec(JTLIN_PRECIO)-jtLin.getValorDec(JTLIN_PRTAR)+comRep;
+                        prMin=jtLin.getValorDec(JTLIN_PRECIO)-jtLin.getValorDec(JTLIN_PRTAR)+comRep; 
+                        prMin=jtLin.getValorDec(JTLIN_PRECIO)-prMin;
                     }                                      
                     jtLin.setValor(prMin, JTLIN_PRMIN); 
                     avl_proferE.setValorDec(prMin);
@@ -528,10 +529,11 @@ public class CLVenRep extends ventana {
                     }
                     else
                     {
-                        comRep= dtCon1.getDouble("tar_comrep");
+                        comRep= dtCon1.getDouble("tar_corein");
                         if (comRep==0 )
                             continue; 
-                        prMin=dtCon1.getDouble("avl_prven")-comRep;
+                        prMin=dtCon1.getDouble("avl_prven")-
+                            ((dtCon1.getDouble("avl_prven")-dtCon1.getDouble("tar_preci"))+comRep);
                     }                                      
                     ps.setDouble(1, prMin);
                     ps.setInt(2, dtCon1.getInt("avc_ano"));

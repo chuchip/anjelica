@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2017-10-03T21:39:00 -->
+<!-- 2017-10-12T17:51:22 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pedventas" pageWidth="595" pageHeight="842" columnWidth="561" leftMargin="17" rightMargin="17" topMargin="19" bottomMargin="19" uuid="ee4d6d84-be02-432c-9ad2-4f29cec281bf">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -24,35 +24,19 @@ and al.alm_codi = c.alm_codi
 and c.cli_codi = cl.cli_codi
 order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 	</queryString>
-	<field name="emp_codi" class="java.lang.Integer"/>
 	<field name="eje_nume" class="java.lang.Integer"/>
 	<field name="pvc_nume" class="java.lang.Integer"/>
 	<field name="pvl_numlin" class="java.lang.Integer"/>
-	<field name="pvl_kilos" class="java.lang.Double"/>
 	<field name="pro_codi" class="java.lang.Integer"/>
 	<field name="pvl_comen" class="java.lang.String"/>
-	<field name="pvl_precio" class="java.lang.Double"/>
-	<field name="pvl_precon" class="java.lang.Integer"/>
-	<field name="prv_codi" class="java.lang.Integer"/>
-	<field name="pvl_feccad" class="java.util.Date"/>
-	<field name="pvl_fecped" class="java.sql.Timestamp"/>
-	<field name="pvl_fecmod" class="java.sql.Timestamp"/>
-	<field name="prv_nomb" class="java.lang.String"/>
 	<field name="cli_codi" class="java.lang.Integer"/>
-	<field name="alm_codi" class="java.lang.Integer"/>
-	<field name="pvc_fecped" class="java.sql.Timestamp"/>
-	<field name="pvc_fecent" class="java.util.Date"/>
-	<field name="usu_nomb" class="java.lang.String"/>
+	<field name="pvc_fecent" class="java.lang.String"/>
 	<field name="pvc_comen" class="java.lang.String"/>
-	<field name="alm_nomb" class="java.lang.String"/>
 	<field name="pro_nomb" class="java.lang.String"/>
 	<field name="pvc_clinom" class="java.lang.String"/>
 	<field name="cli_pobl" class="java.lang.String"/>
 	<field name="pvl_tipo" class="java.lang.String"/>
-	<field name="pvl_unid" class="java.lang.Double"/>
-	<field name="pvl_canti" class="java.lang.Double"/>
-	<field name="orden" class="java.lang.Integer"/>
-	<field name="rut_codi" class="java.lang.String"/>
+	<field name="pvl_canti" class="java.lang.String"/>
 	<field name="rut_nomb" class="java.lang.String"/>
 	<field name="cli_codrut" class="java.lang.String"/>
 	<group name="pedido" minHeightToStartNewPage="200">
@@ -60,7 +44,7 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 		<groupHeader>
 			<band height="53" splitType="Stretch">
 				<staticText>
-					<reportElement key="staticText-2" mode="Opaque" x="88" y="0" width="53" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="ff19429d-f2c0-447d-a7b8-e2313f04e50e"/>
+					<reportElement key="staticText-2" mode="Opaque" x="5" y="0" width="53" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="ff19429d-f2c0-447d-a7b8-e2313f04e50e"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -74,7 +58,7 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 					<text><![CDATA[NºPedido]]></text>
 				</staticText>
 				<textField pattern="###0" isBlankWhenNull="false">
-					<reportElement key="textField-1" mode="Opaque" x="142" y="0" width="28" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="84a3427c-b352-48f7-9f2d-f4427465af96"/>
+					<reportElement key="textField-1" mode="Opaque" x="59" y="0" width="28" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="84a3427c-b352-48f7-9f2d-f4427465af96"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -88,7 +72,7 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 					<textFieldExpression><![CDATA[$F{eje_nume}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#####0" isBlankWhenNull="false">
-					<reportElement key="textField-1" mode="Opaque" x="172" y="0" width="40" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="8542e2c0-6ba6-4359-a4ff-1e90f5391410"/>
+					<reportElement key="textField-1" mode="Opaque" x="89" y="0" width="40" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="8542e2c0-6ba6-4359-a4ff-1e90f5391410"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -115,7 +99,7 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 					</textElement>
 					<text><![CDATA[Fecha Entrega]]></text>
 				</staticText>
-				<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<textField pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-3" mode="Opaque" x="487" y="0" width="64" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="d0f825ab-c6c5-4f83-bac3-5d80b262840a"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -186,7 +170,7 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 					<textFieldExpression><![CDATA[$F{cli_pobl}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement key="staticText-8" mode="Opaque" x="2" y="36" width="45" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="610a5907-74ad-4e03-8006-b7d23d1bac43"/>
+					<reportElement key="staticText-8" mode="Opaque" x="10" y="36" width="45" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="610a5907-74ad-4e03-8006-b7d23d1bac43"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -200,7 +184,7 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 					<text><![CDATA[Producto]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-9" mode="Opaque" x="50" y="36" width="201" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="79f1ba5e-e9fd-41c6-a592-9f19886a26cc"/>
+					<reportElement key="staticText-9" mode="Opaque" x="56" y="36" width="201" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="79f1ba5e-e9fd-41c6-a592-9f19886a26cc"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -214,7 +198,7 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 					<text><![CDATA[Producto]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-10" mode="Opaque" x="255" y="36" width="52" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="2d0610b0-df79-4d53-bbab-418359c2729c">
+					<reportElement key="staticText-10" mode="Opaque" x="260" y="36" width="46" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="2d0610b0-df79-4d53-bbab-418359c2729c">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box>
@@ -230,7 +214,7 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 					<text><![CDATA[Cant.]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-11" mode="Opaque" x="310" y="36" width="36" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="db1e1cdf-739f-4f5b-9783-b27205213c8e"/>
+					<reportElement key="staticText-11" mode="Opaque" x="310" y="36" width="248" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="db1e1cdf-739f-4f5b-9783-b27205213c8e"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -241,64 +225,8 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 						<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<text><![CDATA[Precio]]></text>
+					<text><![CDATA[Comentario]]></text>
 				</staticText>
-				<staticText>
-					<reportElement key="staticText-12" mode="Opaque" x="351" y="36" width="151" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="c04d6a02-e307-4a6b-a2f6-7eca515dd73c"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
-						<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<text><![CDATA[Proveedor]]></text>
-				</staticText>
-				<staticText>
-					<reportElement key="staticText-13" mode="Opaque" x="506" y="36" width="53" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="bf9349e2-61cf-4727-9c21-466fd438b06b"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
-						<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<text><![CDATA[Fec.Cad]]></text>
-				</staticText>
-				<staticText>
-					<reportElement key="staticText-2" mode="Opaque" x="1" y="0" width="39" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="0740eddd-c6c0-4b31-910a-c4a86c26bcd9"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-						<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<text><![CDATA[Orden]]></text>
-				</staticText>
-				<textField pattern="###0" isBlankWhenNull="false">
-					<reportElement key="textField-4" mode="Opaque" x="40" y="0" width="23" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="6c9d6fe8-2ce9-4a7a-8945-1e4fccd5f3ef"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-						<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{orden}]]></textFieldExpression>
-				</textField>
 				<textField pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-7" mode="Opaque" x="337" y="19" width="30" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="2cac3081-7000-4725-88f0-9029ae27c77f">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -330,21 +258,7 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 					<text><![CDATA[Ruta]]></text>
 				</staticText>
 				<textField pattern="#####0" isBlankWhenNull="false">
-					<reportElement key="textField-1" mode="Opaque" x="255" y="0" width="25" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="d199b6f2-f352-426f-ae56-4aa5b84d8006"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-						<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{rut_codi}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#####0" isBlankWhenNull="false">
-					<reportElement key="textField-1" mode="Opaque" x="280" y="0" width="130" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="a2bbbbe8-987d-4a90-9d79-8988516f4e56"/>
+					<reportElement key="textField-1" mode="Opaque" x="251" y="0" width="158" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="a2bbbbe8-987d-4a90-9d79-8988516f4e56"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -360,10 +274,9 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="69" splitType="Stretch">
-				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<band height="29">
 				<textField pattern="" isBlankWhenNull="false">
-					<reportElement key="textField-17" mode="Opaque" x="0" y="0" width="559" height="32" forecolor="#000000" backcolor="#FFFFFF" uuid="d2aed75d-ca2c-44b2-b23b-4d92d9b8d2b2"/>
+					<reportElement key="textField-17" mode="Opaque" x="0" y="0" width="559" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="d2aed75d-ca2c-44b2-b23b-4d92d9b8d2b2"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -376,64 +289,8 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{pvc_comen}]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement key="staticText-3" mode="Opaque" x="-1" y="34" width="62" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="db3d48df-7cdd-425d-8c85-671f87f3e819"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-						<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<text><![CDATA[Hora Pedido]]></text>
-				</staticText>
-				<textField pattern="dd/MM/yyyy HH.mm.ss" isBlankWhenNull="false">
-					<reportElement key="textField-2" mode="Opaque" x="63" y="34" width="115" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="5d0ebf1d-addc-43d5-a1af-49c391923fa9"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-						<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{pvc_fecped}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement key="staticText-6" mode="Opaque" x="207" y="34" width="40" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="64b882b5-985b-4b0f-9b61-c9b313ac8b9a"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-						<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<text><![CDATA[Usuario]]></text>
-				</staticText>
-				<textField pattern="" isBlankWhenNull="false">
-					<reportElement key="textField-5" mode="Opaque" x="255" y="34" width="103" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="c3e85b8a-4911-4693-9654-50b2dc037118"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-						<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{usu_nomb}]]></textFieldExpression>
-				</textField>
 				<line>
-					<reportElement x="20" y="59" width="510" height="1" uuid="0de67d8c-1475-403f-81f1-c2a2e2f3f573">
+					<reportElement x="10" y="22" width="510" height="1" uuid="0de67d8c-1475-403f-81f1-c2a2e2f3f573">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
@@ -442,44 +299,6 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 						<pen lineWidth="1.0" lineStyle="Double"/>
 					</graphicElement>
 				</line>
-			</band>
-		</groupFooter>
-	</group>
-	<group name="linped">
-		<groupExpression><![CDATA[$F{pvl_numlin}]]></groupExpression>
-		<groupHeader>
-			<band splitType="Immediate"/>
-		</groupHeader>
-		<groupFooter>
-			<band height="16" splitType="Stretch">
-				<printWhenExpression><![CDATA[new Boolean($F{pvl_comen} != null  && ! $F{pvl_comen}.equals(""))]]></printWhenExpression>
-				<textField pattern="" isBlankWhenNull="false">
-					<reportElement key="textField-17" mode="Opaque" x="0" y="0" width="560" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="3c3560c4-1372-4618-a52c-7fe0e2de5cb8"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-						<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{pvl_comen}]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupFooter>
-	</group>
-	<group name="ruta">
-		<groupExpression><![CDATA[$F{rut_codi}]]></groupExpression>
-		<groupHeader>
-			<band>
-				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			</band>
-		</groupHeader>
-		<groupFooter>
-			<band>
-				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			</band>
 		</groupFooter>
 	</group>
@@ -506,48 +325,6 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 				</textElement>
 				<text><![CDATA[Pedidos de Ventas]]></text>
 			</staticText>
-			<staticText>
-				<reportElement key="staticText-7" mode="Opaque" x="141" y="2" width="52" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="101e0af6-4eeb-4687-aa28-9d5c7aabd8b1"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<text><![CDATA[Almacén]]></text>
-			</staticText>
-			<textField pattern="###0" isBlankWhenNull="false">
-				<reportElement key="textField-9" mode="Opaque" x="195" y="2" width="35" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="486475cf-0d0d-4655-903d-b5c0afd8a271"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{alm_codi}]]></textFieldExpression>
-			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-10" mode="Opaque" x="234" y="2" width="161" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="2d836fdf-0bed-4b4b-b3d8-5e8ed94241e4"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
-					<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{alm_nomb}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="462" y="2" width="28" height="14" uuid="43e9a13b-29aa-4630-bdd5-bc74953d8b9a"/>
 				<text><![CDATA[Hoja]]></text>
@@ -579,7 +356,7 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 	<detail>
 		<band height="16" splitType="Stretch">
 			<textField pattern="####0" isBlankWhenNull="false">
-				<reportElement key="textField-11" mode="Opaque" x="1" y="0" width="45" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="a7967240-e328-46f9-bcef-c57bab9172ac"/>
+				<reportElement key="textField-11" mode="Opaque" x="10" y="0" width="45" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="a7967240-e328-46f9-bcef-c57bab9172ac"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -593,7 +370,7 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 				<textFieldExpression><![CDATA[$F{pro_codi}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-12" mode="Opaque" x="50" y="0" width="201" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="5bcff822-4b5f-4937-839a-db11c9387fc0"/>
+				<reportElement key="textField-12" mode="Opaque" x="56" y="0" width="201" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="5bcff822-4b5f-4937-839a-db11c9387fc0"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -607,7 +384,7 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 				<textFieldExpression><![CDATA[$F{pro_nomb}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-13" mode="Opaque" x="255" y="0" width="35" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="b1233b4f-f2d4-4169-a255-8d00e1f4bc40"/>
+				<reportElement key="textField-13" mode="Opaque" x="260" y="0" width="46" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="b1233b4f-f2d4-4169-a255-8d00e1f4bc40"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -620,22 +397,8 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pvl_canti}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
-				<reportElement key="textField-14" mode="Opaque" x="310" y="0" width="36" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="4972ecc8-9dc5-459f-a8f0-41710e0a2c16"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
-					<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{pvl_precio}]]></textFieldExpression>
-			</textField>
-			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-15" mode="Opaque" x="351" y="0" width="151" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="822bd7fc-76f3-4473-929d-fafb4c2d332a"/>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField-17" mode="Opaque" x="310" y="0" width="248" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="3c3560c4-1372-4618-a52c-7fe0e2de5cb8"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -646,26 +409,10 @@ order by l.emp_codi,l.eje_nume,l.pvc_nume,l.pvl_numlin]]>
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{prv_nomb}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pvl_comen}]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yy" isBlankWhenNull="true">
-				<reportElement key="textField-16" mode="Opaque" x="506" y="0" width="53" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="be6dd4cf-b465-4c16-a4f5-a8ee099f3d66"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
-					<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{pvl_feccad}]]></textFieldExpression>
-			</textField>
-			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-15" mode="Opaque" x="292" y="0" width="15" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="c5858e47-4514-45ac-ba46-5ce8dd5612cc">
-					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-				</reportElement>
+			<textField pattern="###0" isBlankWhenNull="false">
+				<reportElement key="textField-4" mode="Opaque" x="-1" y="0" width="11" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="73304f47-d708-4820-a3f6-f7cd83fb3bd5"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

@@ -2,6 +2,7 @@ package gnu.chu.anjelica.compras;
 
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.almacen.pdalmace;
+import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.pdtransp;
 import gnu.chu.camposdb.*;
 import gnu.chu.controles.*;
@@ -143,7 +144,7 @@ public class clprpeco extends ventana implements  JRDataSource
  {
    iniciarFrame();
    this.setSize(new Dimension(751, 510));
-   this.setVersion(" (2017-07-09)" + (verPrecio ? "- Ver Precios" : ""));
+   this.setVersion(" (2017-10-29)" + (verPrecio ? "- Ver Precios" : ""));
    statusBar = new StatusBar(this);
 
    opPedPend.setToolTipText("Ver SOLO Pedidos Pedidos Pendientes");
@@ -368,7 +369,11 @@ void irMantPedidos()
               public void run()
               { 
                   ejecutable prog;                 
-                 
+                  if (jf==null)
+                  {
+                        resetMsgEspere();
+                      return;
+                  } 
                   if ((prog = jf.gestor.getProceso(pdpedco.getNombreClase())) == null)
                   {
                       resetMsgEspere();
@@ -683,7 +688,7 @@ void irMantPedidos()
        mp.put("pro_nomb1",profinE.getTextNomb());
        mp.put("alm_codi",alm_codiE.getValorInt()+" -> "+alm_codiE.getTextCombo());
        mp.put("cam_codi",cam_codiE.isNull()?"":cam_codiE.getText()+" -> "+cam_codiE.getTextCombo());
-       jr = gnu.chu.print.util.getJasperReport(EU, "pedcompr");
+       jr = Listados.getJasperReport(EU, "pedcompr");
        s=dtCon1.parseaSql(getStrSql(tla_codiE.getValorInt()));
 //      debug(s);
        Statement st= ct.createStatement();

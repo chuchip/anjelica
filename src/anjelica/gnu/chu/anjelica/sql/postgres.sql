@@ -2354,7 +2354,7 @@ create table anjelica.pedrutalin
 drop view v_pedruta;
 create or replace view v_pedruta as select c.*,l.plr_orden,l.pvc_id,plr_kilcaj,plr_kilcol,
 cli_nomen,cli_diree,cli_poble,cli_codpoe,alr_comrep,emp_codi,
-p.eje_nume,p.pvc_nume,p.cli_codi,p.pvc_clinom,p.pvc_fecent
+p.eje_nume,p.pvc_nume,p.avc_nume,p.avc_serie,p.avc_ano,p.cli_codi,p.pvc_clinom,p.pvc_fecent
 from anjelica.pedrutacab as c, anjelica.pedrutalin as l,anjelica.pedvenc as p
 where c.pru_id=l.pru_id and p.pvc_id = l.pvc_id;
 grant select on v_pedruta to public;
@@ -4357,7 +4357,7 @@ create table tiempostarea
 	usu_nomb varchar(15) not null,	    -- Usuario
 	tit_tipdoc char(1) not null,		-- "Pedido","D" Despiece
 	tit_id int not null,				-- Identificador documento
-	tit_tiempo float not null, 			-- Tiempo Identificador	
+	tit_tiempo int not null, 			-- Tiempo Identificador	
 	constraint ix_tiempostarea primary  key (usu_nomb,tit_tipdoc,tit_id)
 );
 grant all on anjelica.tiempostarea to public;

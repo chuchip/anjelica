@@ -234,7 +234,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2017-09-09" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2017-29-10" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -1614,6 +1614,7 @@ public class MantDesp extends ventanaPad implements PAD
             return;
         }
         try {
+            
             if (hisRowid>0)
             {
                  
@@ -1622,10 +1623,17 @@ public class MantDesp extends ventanaPad implements PAD
                 if (ret!=mensajes.YES)
                 {
                     msgBox("Cancelada edicion de datos de historico");
+                    nav.pulsado=navegador.NINGUNO;
                     activaTodo();
                     return;
                 }
                 recuperaHist();
+                return;
+            }
+            if (! verDatos(dtCons,false,false,true))
+            {
+                nav.pulsado = navegador.NINGUNO;
+                activaTodo();
                 return;
             }
             swErrCab=false;
@@ -1634,12 +1642,14 @@ public class MantDesp extends ventanaPad implements PAD
             if (deo_blockE.getValor().equals("B"))
             {
                 mensajeErr("REGISTRO BLOQUEADO");
+                nav.pulsado = navegador.NINGUNO;
                 activaTodo();
                 return;
             }
             if (deo_blockE.getValor().equals("S") && deo_serlotE.getText().equals(MantDesp.SERIE))
             { // Abierto y del tactil.
                 mensajeErr("REGISTRO BLOQUEADO ... CIERRELO EN EL TACTIL PRIMERO");
+                nav.pulsado = navegador.NINGUNO;
                 activaTodo();
                 return;
             }
@@ -1648,6 +1658,7 @@ public class MantDesp extends ventanaPad implements PAD
                 if (!MODPRECIO)
                 {
                     mensajeErr("DESPIECE VALORADO ... IMPOSIBLE MODIFICAR");
+                    nav.pulsado = navegador.NINGUNO;
                     activaTodo();
                     return;
                 }
@@ -1678,6 +1689,7 @@ public class MantDesp extends ventanaPad implements PAD
             if (!setBloqueo(dtAdd, TABLA_BLOCK, eje_numeE.getValorInt() + "|"
                 + deo_codiE.getValorInt(),false))
             {
+                nav.pulsado = navegador.NINGUNO;
                 msgBox(msgBloqueo);
                 activaTodo();
                 return;
@@ -1732,9 +1744,8 @@ public class MantDesp extends ventanaPad implements PAD
             opSimular.setSelected(false);
             opSimular.setEnabled(false);
             deo_blockE.setValor("N");
+              
             
-            if (opVerAgrup.isSelected())
-             verDatos(dtCons,false,false,true);
             if (isBlock)
                 irGridLin();
             else
@@ -2641,21 +2652,21 @@ public class MantDesp extends ventanaPad implements PAD
         verDatos(dtCons);
     }
 
-    void verDatos(DatosTabla dt) {
+    boolean verDatos(DatosTabla dt) {
         tablaCab="desporig";
         tablaEnt="desorilin";
         tablaSal="v_despfin";
         vistaDesp="v_despori";
         hisRowid=0;
         condHist="";
-        verDatos(dt, opVerGrupo.isSelected(),opVerAgrup.isSelected(),  true);
+        return verDatos(dt, opVerGrupo.isSelected(),opVerAgrup.isSelected(),  true);
     }
-    void verDatos(DatosTabla dt, boolean verGrupo, boolean limpiaDesp)
+    boolean verDatos(DatosTabla dt, boolean verGrupo, boolean limpiaDesp)
     {
-       verDatos(dt, verGrupo,opVerAgrup.isSelected(),  true);  
+      return verDatos(dt, verGrupo,opVerAgrup.isSelected(),  true);  
     }
     
-    void verDatos(DatosTabla dt, boolean verGrupo,boolean verAgrup, boolean limpiaDesp) {
+    boolean verDatos(DatosTabla dt, boolean verGrupo,boolean verAgrup, boolean limpiaDesp) {
         try
         {
             jtCab.removeAllDatos();
@@ -2667,7 +2678,7 @@ public class MantDesp extends ventanaPad implements PAD
                 jtDesp.removeAllDatos();
             }
             if (dt.getNOREG())
-                return;
+                return false;
             
 
             if (!tid_codiE.getArticulos().isEmpty())
@@ -2692,7 +2703,7 @@ public class MantDesp extends ventanaPad implements PAD
             {
                 msgBox("Datos de  DESPIECE ... NO ENCONTRADOS");
                 Pcabe.resetTexto();
-                return;
+                return false;
             }
 
             double kilos;
@@ -2825,7 +2836,9 @@ public class MantDesp extends ventanaPad implements PAD
         } catch (Exception k)
         {
             Error("Error al ver datos", k);
+            return false;
         }
+        return true;
     }
 
     void verDatLin(int ejeNume, int numDesp, boolean opGrupo,boolean opAgrup) throws SQLException {
