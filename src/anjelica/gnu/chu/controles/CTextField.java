@@ -1491,11 +1491,11 @@ String procesaTecla()
     {
       if (equal == false)
       {
-        // Buscar Comodines - ? % *
-        if (text.indexOf('*')>=0 || text.indexOf('?')>=0 )
-          strQuer1=" LIKE '"+text+"'";
-        else if (text.indexOf('%')>=0 )
-          strQuer1=" like '"+text+"'";
+        if (text.contains("*"))
+            text=text.replace('*', '%');
+        // Buscar Comodines - ? % * *
+        if (text.indexOf('%')>=0 || text.indexOf('?')>=0 )
+          strQuer1=" LIKE '"+text+"'";     
         else
           strQuer1=" = '"+text+"'";
       }
