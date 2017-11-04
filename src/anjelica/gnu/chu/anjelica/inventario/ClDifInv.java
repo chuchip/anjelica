@@ -150,6 +150,12 @@ public class ClDifInv extends ventana {
       dtAdd=new DatosTabla(ct);
       MvtosAlma.llenaComboFecInv(dtStat,EU.em_cod,EU.ejercicio,feulinE,12);
       cci_fecconE.iniciar(dtStat, this, vl, EU);
+      String sql="select MAX(cci_feccon) as fechas from "+TABLA_INV_CAB +
+          " where emp_codi = " + EU.em_cod ;
+          
+      dtStat.select(sql);
+      if (dtStat.getObject("fechas") != null)
+        cci_fecconE.setText(dtStat.getFecha("fechas","dd-MM-yyyy"));
       pdalmace.llenaLinkBox(alm_codiniE, dtStat,'*');
       pdalmace.llenaLinkBox(alm_codfinE, dtStat,'*');
   
@@ -164,12 +170,7 @@ public class ClDifInv extends ventana {
       alm_codfinE.addDatos("0","Todos");
       alm_codfinE.setCeroIsNull(false);
       alm_codfinE.setText("0");
-      s ="select MAX(cci_feccon) as cci_feccon from "+TABLA_INV_CAB +
-          " where emp_codi = " + EU.em_cod ;
-
-      dtStat.select(s);
-      if (dtStat.getObject("cci_feccon") != null)
-        cci_fecconE.setText(dtStat.getFecha("cci_feccon","dd-MM-yyyy"));
+  
     
       gnu.chu.anjelica.pad.pdconfig.llenaDiscr(dtCon1, cam_codiE, "AC", EU.em_cod);
       pro_codiE.iniciar(dtStat,this,vl,EU);
@@ -192,6 +193,18 @@ public class ClDifInv extends ventana {
      */
     void activarEventos()
     {
+      opInvControl.addActionListener(new ActionListener() {
+            @Override
+        public void actionPerformed(ActionEvent e) {
+                try
+                {
+                    llenaComboInv();
+                } catch (SQLException ex)
+                {
+                    Error("Error al cargar Lista Inventarios disponibles",ex);
+                }
+        }
+      });
       jt.addListSelectionListener(new ListSelectionListener ()
       {
          @Override
@@ -348,7 +361,15 @@ public class ClDifInv extends ventana {
           }
       });
     }
-    
+    void llenaComboInv() throws SQLException
+    {          
+     String feulInv;
+      if (opInvControl.isSelected())
+        feulInv=MvtosAlma.llenaComboFecInvControl(dtStat,EU.em_cod,feulinE,12);
+      else        
+       feulInv=MvtosAlma.llenaComboFecInv(dtStat,EU.em_cod,EU.ejercicio,feulinE,12);
+      feulinE.setText(feulInv);
+    }
     void Baceptar_actionPerformed(ActionEvent e)
     {
       if (cci_fecconE.getError())
@@ -1318,13 +1339,32 @@ public class ClDifInv extends ventana {
                 + condProd
                 + " AND r.ind_fecha = TO_DATE('" + feulst + "','dd-MM-yyyy') ";
         }
-        s += " union all "+// Inventario Inicial.
+        if (opInvControl.isSelected())
+              s += " union all "+// Inventario Control Inicial.
+            " select 0 as orden,'R' as sel,'=' as tipmov,r.cci_feccon as fecmov,"
+            + "  r.prp_seri as serie,r.prp_part as  lote,"
+            + " r.lci_peso as canti,r.prp_indi as numind, "
+            + " R.pro_codi, prp_ano,alm_codi as almori,'' AS seralb "
+            + " FROM v_coninvent r,v_articulo a WHERE "
+            + " a.pro_codi =r.pro_codi "
+            + " and lci_peso > 0 "
+            + condAlmStr
+//            (almCodi == 0 ? "" : " and r.alm_codi = " + almCodi)
+            + (camCodiE.equals("--") ? " and a.cam_codi in "
+                + condCamaras
+                : (camCodiE.equals("") ? "" : " and a.cam_codi = '" + camCodiE + "'"))
+            + (PROCODI != 0 ? "  and R.PRo_codi = " + PROCODI : "")
+            + (LOTE >= 0 ? " and r.prp_part = " + LOTE : "")
+            + condProd
+            + " AND r.cci_feccon = TO_DATE('" + feulst + "','dd-MM-yyyy') ";
+        else
+            s += " union all "+// Inventario Inicial.
             " select 0 as orden,'R' as sel,'=' as tipmov,r.rgs_fecha as fecmov,"
             + "  r.pro_serie as serie,r.pro_nupar as  lote,"
             + " r.rgs_kilos as canti,r.pro_numind as numind, "
             + " R.pro_codi, eje_nume,alm_codi as almori,'' AS seralb "
             + " FROM v_inventar r,v_articulo a WHERE "
-            + " a.pro_codi =r.pro_codi "
+            + " a.pro_codi =r.pro_codi "           
             + condAlmStr
 //            (almCodi == 0 ? "" : " and r.alm_codi = " + almCodi)
             + (camCodiE.equals("--") ? " and a.cam_codi in "
@@ -1334,6 +1374,7 @@ public class ClDifInv extends ventana {
             + (LOTE >= 0 ? " and r.pro_nupar = " + LOTE : "")
             + condProd
             + " AND r.rgs_fecha = TO_DATE('" + feulst + "','dd-MM-yyyy') ";
+        
         s += " ORDER BY 4,1,3 desc"; // FECHA y tipo
         return s;
     }
@@ -1381,6 +1422,7 @@ public class ClDifInv extends ventana {
         opMvtos = new gnu.chu.controles.CCheckBox();
         alm_codfinE = new gnu.chu.controles.CLinkBox();
         cLabel12 = new gnu.chu.controles.CLabel();
+        opInvControl = new gnu.chu.controles.CCheckBox();
         Ptab1 = new gnu.chu.controles.CTabbedPane();
         jt = new gnu.chu.controles.Cgrid(14);
         jtRep = new gnu.chu.controles.Cgrid(11);
@@ -1447,9 +1489,9 @@ public class ClDifInv extends ventana {
         Pgeneral.setLayout(new java.awt.GridBagLayout());
 
         Pcondic.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        Pcondic.setMaximumSize(new java.awt.Dimension(440, 150));
-        Pcondic.setMinimumSize(new java.awt.Dimension(440, 150));
-        Pcondic.setPreferredSize(new java.awt.Dimension(440, 150));
+        Pcondic.setMaximumSize(new java.awt.Dimension(500, 150));
+        Pcondic.setMinimumSize(new java.awt.Dimension(500, 150));
+        Pcondic.setPreferredSize(new java.awt.Dimension(500, 150));
         Pcondic.setLayout(null);
 
         cLabel1.setText("A");
@@ -1460,11 +1502,11 @@ public class ClDifInv extends ventana {
         Pcondic.add(cLabel2);
         cLabel2.setBounds(10, 10, 80, 17);
         Pcondic.add(feulinE);
-        feulinE.setBounds(330, 10, 90, 17);
+        feulinE.setBounds(390, 10, 90, 17);
 
         cLabel3.setText("Ult. Inventario");
         Pcondic.add(cLabel3);
-        cLabel3.setBounds(250, 10, 80, 17);
+        cLabel3.setBounds(310, 10, 80, 17);
 
         alm_codiniE.setAncTexto(30);
         alm_codiniE.setFormato(Types.DECIMAL, "#9", 2);
@@ -1479,13 +1521,13 @@ public class ClDifInv extends ventana {
         cam_codiE.texto.setMayusc(true);
         cam_codiE.setFormato(Types.CHAR,"XX",2);
         Pcondic.add(cam_codiE);
-        cam_codiE.setBounds(80, 50, 230, 17);
+        cam_codiE.setBounds(80, 50, 280, 17);
 
         cLabel5.setText("Lote");
         Pcondic.add(cLabel5);
-        cLabel5.setBounds(320, 50, 25, 15);
+        cLabel5.setBounds(380, 50, 25, 15);
         Pcondic.add(pro_loteE);
-        pro_loteE.setBounds(370, 50, 50, 17);
+        pro_loteE.setBounds(430, 50, 50, 17);
 
         cLabel6.setText("Camara");
         Pcondic.add(cLabel6);
@@ -1512,7 +1554,7 @@ public class ClDifInv extends ventana {
         opCalInv.setSelected(true);
         opCalInv.setText("Calcular Inventarios");
         Pcondic.add(opCalInv);
-        opCalInv.setBounds(150, 130, 140, 17);
+        opCalInv.setBounds(140, 130, 140, 17);
 
         cLabel9.setText("Umbral Kilos ");
         cLabel9.setToolTipText("Ignorar si Kilos por producto es inferior que el valor introducido ");
@@ -1539,24 +1581,30 @@ public class ClDifInv extends ventana {
 
         opDatStock.setText("Stock");
         opDatStock.setToolTipText("Usar Inventario ya Traspasado");
+        opDatStock.setEnabled(false);
         opDatStock.setFocusable(false);
         opDatStock.setMaximumSize(new java.awt.Dimension(41, 17));
         Pcondic.add(opDatStock);
-        opDatStock.setBounds(190, 10, 60, 17);
+        opDatStock.setBounds(430, 90, 60, 17);
 
         opMvtos.setSelected(true);
         opMvtos.setText("Usar Mvtos.");
         Pcondic.add(opMvtos);
-        opMvtos.setBounds(10, 130, 130, 17);
+        opMvtos.setBounds(10, 130, 100, 17);
 
         alm_codfinE.setAncTexto(30);
         alm_codfinE.setFormato(Types.DECIMAL, "#9", 2);
         Pcondic.add(alm_codfinE);
-        alm_codfinE.setBounds(260, 30, 170, 17);
+        alm_codfinE.setBounds(260, 30, 220, 17);
 
         cLabel12.setText("Almacen");
         Pcondic.add(cLabel12);
         cLabel12.setBounds(10, 30, 60, 17);
+
+        opInvControl.setText("Inv. Control");
+        opInvControl.setToolTipText("Usa Inventario Control");
+        Pcondic.add(opInvControl);
+        opInvControl.setBounds(200, 10, 100, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -2080,6 +2128,7 @@ public class ClDifInv extends ventana {
     private gnu.chu.controles.CTextField margenE;
     private gnu.chu.controles.CCheckBox opCalInv;
     private gnu.chu.controles.CCheckBox opDatStock;
+    private gnu.chu.controles.CCheckBox opInvControl;
     private gnu.chu.controles.CCheckBox opMvtos;
     private gnu.chu.controles.CComboBox pro_artconE;
     private gnu.chu.camposdb.proPanel pro_codiE;
