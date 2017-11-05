@@ -202,7 +202,7 @@ public class pdpeve  extends ventanaPad   implements PAD
   CLabel cLabel10 = new CLabel();
   CComboBox opVerProd = new CComboBox();
   CCheckBox opPedidos = new CCheckBox();
-//  CLabel cLabel11 = new CLabel();
+//  CLabel avc_dtoppL = new CLabel();
   CLabel cLabel5 = new CLabel();
   CTextField nlE = new CTextField(Types.DECIMAL,"#9");
   CTextField cantE = new CTextField(Types.DECIMAL,"---9");

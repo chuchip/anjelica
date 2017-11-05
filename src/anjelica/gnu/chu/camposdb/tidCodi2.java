@@ -37,7 +37,9 @@ import javax.swing.*;
 public class tidCodi2 extends CLinkBox
 {
   private boolean ADMIN=false;
-
+  private boolean tidAsprfi=false;
+  private boolean tidAuclpe=false;
+ 
   private boolean incluirEstaticos=true;
   AyuTid ayuTid;
   CInternalFrame infFrame;
@@ -73,7 +75,7 @@ public class tidCodi2 extends CLinkBox
     EU=entUsuario;
     dt=dtb;
     texto.setToolTipText("Pulse F3 para buscar tipos despiece");
-   
+    combo.setFocusable(false);
     swIncDespLibre=dtb.select("select * from tipodesp  as t "+
             " WHERE tid_activ != 0 "+ // Solo si esta activo
            " and tid_codi = "+MantTipDesp.LIBRE_DESPIECE);
@@ -132,7 +134,7 @@ public class tidCodi2 extends CLinkBox
         {
             if (getValorInt()<9990)
             {
-                s = "select  tid_activ from tipodesp "
+                s = "select  tid_activ,tid_asprfi,tid_auclpe from tipodesp "
                     + " WHERE tid_codi = " + getValorInt()
                     + " and tid_activ != 0";// Solo activos
                 tidActiv = dt.select(s);
@@ -143,6 +145,8 @@ public class tidCodi2 extends CLinkBox
                     requestFocus();
                     return false;
                 }
+                tidAsprfi=dt.getInt("tid_asprfi")!=0;
+                tidAuclpe=dt.getInt("tid_auclpe")!=0;
             }
             if (getValorInt() == MantTipDesp.LIBRE_DESPIECE && !swModoCons && !ADMIN)
             {
@@ -179,6 +183,14 @@ public class tidCodi2 extends CLinkBox
             return false;
         }
         return true;
+    }
+    public boolean getAsignarProdSalida()
+    {
+        return tidAsprfi;
+    }
+     public boolean getClasificaPeso()
+    {
+        return tidAuclpe;
     }
   public void setModoConsulta(boolean modoConsulta )
   {

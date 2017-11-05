@@ -2511,6 +2511,8 @@ create table anjelica.tipodesp
 	usu_nomb varchar(15),     -- Usuario que hizo ultima modificación
 	tid_usoequ smallint not null default -1, -- Usar Productos equivalentes
 	tid_merven smallint not null default 0, -- Linea Mer Venta para AutoDespiece.
+	tid_asprfi smallint not null default 0, -- Asignar Producto Salida 
+	tid_auclpe smallint not null default 0, -- Autoclasificar por peso.
 	primary key (tid_codi)
 );
 create index ix_tipodes1 on tipodesp (tid_nomb);
@@ -2526,8 +2528,9 @@ create table anjelica.tipdesent
 	tid_codi int not null, -- Codigo Despiece
 	tde_nuli int not null, -- No de Linea
 	pro_codi int not null,  -- Cod. Producto.
-	tde_grupo varchar(10),
-        primary key (tid_codi,tde_nuli)
+	tde_grupo varchar(10),	-- Grupo al que pertenece
+	tde_unid int not null default 1, -- Numero Unidades
+    primary key (tid_codi,tde_nuli)
 );
 ---
 -- TABLA TIPOS DESPIECE (Salidas)
@@ -2539,7 +2542,9 @@ create table anjelica.tipdessal
 	pro_codi int not null, -- Codigo Producto
 	tds_unid int not null, -- Nº Unidades a Generar por cada una de la cabecera
     tds_costo float not null, -- Costo deseado (en €)
-	tds_grupo varchar(10) -- Grupo del Producto
+	tds_grupo varchar(10), -- Grupo del Producto
+	tds_proini int, 	  -- Producto Inicial.
+	tds_pescla float	  -- Peso Minimo
 );
 create index ix_tipdessal on tipdessal(tid_codi,pro_codi);
 ---

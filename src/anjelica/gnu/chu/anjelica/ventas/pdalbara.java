@@ -486,7 +486,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
   CGridEditable jt;
   CPanel Ppie = new CPanel();
-  CLabel cLabel7 = new CLabel();
+  CLabel tar_codiL = new CLabel();
   CLinkBox tar_codiE = new CLinkBox();
   CLabel cLabel8 = new CLabel();
   CTextField numLinE = new CTextField(Types.DECIMAL, "##9");
@@ -496,7 +496,7 @@ public class pdalbara extends ventanaPad  implements PAD
   CTextField unidE = new CTextField(Types.DECIMAL, "---9");
   CLabel cLabel10 = new CLabel();
   CTextField impLinE = new CTextField(Types.DECIMAL, "----,--9");
-  CLabel cLabel11 = new CLabel();
+  CLabel avc_dtoppL = new CLabel();
   CTextField avc_dtoppE = new CTextField(Types.DECIMAL, "#9.99");
   CLabel cLabel12 = new CLabel();
   
@@ -628,14 +628,14 @@ public class pdalbara extends ventanaPad  implements PAD
   CCheckBox opAgrPrv = new CCheckBox();
   CCheckBox opAgrFecha = new CCheckBox();
   CButton BmvReg = new CButton(Iconos.getImageIcon("run"));
-  CLabel cLabel31 = new CLabel();
+  CLabel div_codiL = new CLabel();
   CComboBox div_codiE = new CComboBox();
   CButtonMenu despieceC = new CButtonMenu(Iconos.getImageIcon("cuchillo"));
   char autoDespiece='N';
   CLabel lockE = new CLabel();
   CLabel printE = new CLabel();
   CPanel PotroDat = new CPanel();
-  CLabel cLabel33 = new CLabel();
+  CLabel sbe_codiL = new CLabel();
   sbePanel sbe_codiE = new sbePanel();
   CLabel cLabel210 = new CLabel();
   CLabel sbe_nombL;
@@ -692,6 +692,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     catch (Exception e)
     {
+        e.printStackTrace();
       setErrorInit(true);
     }
   }
@@ -740,7 +741,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-10-16" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-11-05" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -769,11 +770,10 @@ public class pdalbara extends ventanaPad  implements PAD
         printE.setHorizontalTextPosition(SwingConstants.CENTER);
         printE.setBounds(new Rectangle(446, 2, 41, 19));
         PotroDat.setLayout(null);
-        cLabel33.setText("Delegac.");
-        cLabel33.setBounds(new Rectangle(6, 76, 62, 18));
+       
         BmvReg.setText("Mvto.Reg (F9)");
         opAgru.setToolTipText("Ver Lineas Agrupadas");
-        sbe_codiE.setBounds(new Rectangle(58, 76, 43, 18));
+        
         
         cLabel210.setBounds(new Rectangle(485, 3, 101, 17));
         cLabel210.setText("Disp.Salida");
@@ -830,9 +830,9 @@ public class pdalbara extends ventanaPad  implements PAD
         pro_codiE.getFieldProCodi().setToolTipText("F3 Buscar por nombre. Doble Click Restaurar Nombre Articulo");
         Pprinc.setLayout(gridBagLayout1);
         Pcabe.setBorder(BorderFactory.createRaisedBevelBorder());
-        Pcabe.setMaximumSize(new Dimension(595, 98));
-        Pcabe.setMinimumSize(new Dimension(595, 98));
-        Pcabe.setPreferredSize(new Dimension(595, 98));
+        Pcabe.setMaximumSize(new Dimension(595, 78));
+        Pcabe.setMinimumSize(new Dimension(595, 78));
+        Pcabe.setPreferredSize(new Dimension(595, 78));
         Pcabe.setLayout(null);
         Clabel1.setText("Empresa");
         Clabel1.setBounds(new Rectangle(2, 4, 51, 16));
@@ -865,6 +865,7 @@ public class pdalbara extends ventanaPad  implements PAD
         fvc_anoE.setCeroIsNull(false);
         fvc_numeE.setCeroIsNull(false);
         fvc_anoE.setBounds(new Rectangle(475, 38, 37, 16));
+        fvc_serieE.setBounds(new Rectangle(456, 38, 18, 16));
         fvc_numeE.setBounds(new Rectangle(515, 38, 56, 16));
         Bimpri.setMargin(new Insets(0, 0, 0, 0));
 
@@ -877,11 +878,8 @@ public class pdalbara extends ventanaPad  implements PAD
         Ppie.setPreferredSize(new Dimension(550, 40));
         Ppie.setQuery(false);
         Ppie.setLayout(null);
-        cLabel7.setRequestFocusEnabled(true);
-        cLabel7.setText("Tarifa");
-        cLabel7.setBounds(new Rectangle(9, 57, 35, 16));
-        tar_codiE.setAncTexto(25);
-        tar_codiE.setBounds(new Rectangle(51, 57, 157, 18));
+        
+      
         cLabel8.setPreferredSize(new Dimension(50, 15));
         cLabel8.setText("N. Lineas");
         cLabel8.setBounds(new Rectangle(4, 2, 56, 17));
@@ -897,11 +895,7 @@ public class pdalbara extends ventanaPad  implements PAD
         cLabel10.setText("Imp. Lineas");
         cLabel10.setBounds(new Rectangle(198, 2, 65, 17));
         impLinE.setBounds(new Rectangle(266, 2, 68, 17));
-        cLabel11.setText("Dto PP");
-        cLabel11.setBounds(new Rectangle(412, 57, 39, 16));
-        avc_dtoppE.setToolTipText("Dto. Pronto Pago");
-        avc_dtoppE.setValorDec(0.0);
-        avc_dtoppE.setBounds(new Rectangle(452, 57, 39, 16));
+        
 
         BValTar.addMenu("Precio Tarifa","T");
         BValTar.addMenu("Resetear Precios","P");
@@ -919,8 +913,7 @@ public class pdalbara extends ventanaPad  implements PAD
             avc_revpreE.setEnabled(false);            
         }
         sbe_codiE.setEnabled(P_ADMIN);           
-        cLabel12.setText("%");
-        cLabel12.setBounds(new Rectangle(491, 57, 15, 16));
+       
         
         rut_codiL.setBounds(new Rectangle(150, 2, 29, 16));
         cli_rutaE.setBounds(new Rectangle(182, 2, 210, 16));
@@ -948,8 +941,8 @@ public class pdalbara extends ventanaPad  implements PAD
         avc_represE.setBounds(new Rectangle(320, 125, 215, 17));
         avc_cerraE.setMaximumSize(new Dimension(74, 23));
         avc_cerraE.setText("Cerrado");
-        avc_cerraE.setBounds(new Rectangle(330, 57, 76, 18));
-        avc_cerraE.setBounds(new Rectangle(330, 57, 76, 16));
+        
+
         jtDes.setMaximumSize(new Dimension(400, 77));
         jtDes.setMinimumSize(new Dimension(400, 77));
         jtDes.setPreferredSize(new Dimension(400, 77));
@@ -1012,8 +1005,7 @@ public class pdalbara extends ventanaPad  implements PAD
         opCopia.setSelected(true);
         opCopia.setText("Imprimir Copia a Papel");
         opCopia.setBounds(new Rectangle(293, 20, 165, 17));
-        avc_almoriE.setBounds(new Rectangle(320, 75, 120, 20));
-        avc_almoriE.setPreferredSize(new Dimension(180, 20));
+     
         
         alm_codoriL.setText("Alm. Origen");
         alm_codoriL.setBounds(new Rectangle(2, 105, 70, 18));
@@ -1081,11 +1073,10 @@ public class pdalbara extends ventanaPad  implements PAD
         vca2.add(avr_cantiE);
         vca2.add(nlE);
         jtRes.setCampos(vca2);
-        jtRes.setBounds(new Rectangle(2, 145, 550, 115));
         
         
-        avc_almoriL.setText("Almacen");
-        avc_almoriL.setBounds(new Rectangle(266, 75, 53, 18));
+        
+       
         cLabel24.setText("Pedido");
         cLabel24.setBounds(new Rectangle(1, 1, 40, 16));
         BbusPed.setBounds(new Rectangle(149, 1, 18, 17));
@@ -1161,10 +1152,26 @@ public class pdalbara extends ventanaPad  implements PAD
         BmvReg.setBounds(new Rectangle(7, 5, 126, 18));
         BmvReg.setMargin(new Insets(0, 0, 0, 0));
         BmvReg.setToolTipText("Insertar Mvto. de Regularizacion (F9)");
-        cLabel31.setText("Divisa");
-        cLabel31.setBounds(new Rectangle(521, 56, 43, 16));
+        div_codiL.setText("Divisa");
+        div_codiL.setBounds(new Rectangle(400, 2, 60, 16));        
+        div_codiE.setBounds(new Rectangle(455, 2, 120, 16));
+        jtRes.setBounds(new Rectangle(2, 145, 550, 115));
+        sbe_codiL.setText("Delegac.");
+        sbe_codiL.setBounds(new Rectangle(2, 145, 62, 18));
+        sbe_codiE.setBounds(new Rectangle(64, 145, 43, 18));
+        sbe_nombL=sbe_codiE.creaLabelSbe();
+        sbe_nombL.setBounds(new Rectangle(110, 145, 149, 16));
+        sbe_codiE.setLabelSbe(sbe_nombL);
+        avc_almoriL.setText("Almacen");
+        avc_almoriL.setBounds(new Rectangle(2, 165, 53, 18));
+        avc_almoriE.setBounds(new Rectangle(57, 165, 220, 20));
+        tar_codiL.setText("Tarifa");
+        tar_codiL.setBounds(new Rectangle(2, 185, 35, 16));
+        tar_codiE.setAncTexto(25);
+        tar_codiE.setBounds(new Rectangle(40, 185, 157, 18));
+        
+        avc_almoriE.setPreferredSize(new Dimension(180, 20));
 
-        div_codiE.setBounds(new Rectangle(558, 56, 120, 16));
         despieceC.setPreferredSize(new Dimension(100, 24));
         despieceC.setToolTipText("Generar Despieces");
         despieceC.setText("No Desp.");
@@ -1175,15 +1182,14 @@ public class pdalbara extends ventanaPad  implements PAD
         despieceC.addMenu("Despiece", "D");
 //        despieceC.addMenu("Todo Desp.", "M");
         avc_revpreL.setText("Revisar Precios");
-        avc_deposE.setBounds(new Rectangle(215, 57, 105, 18));
-        verDepoC.setBounds(new Rectangle(445, 75, 110, 20));
-        verDepoC.setPreferredSize(new Dimension(140,20));
+        
+        
         avc_numpalC.setToolTipText("Destarar Palet");
         avc_numpalC.setSelected(true);
-        avc_numpalB.setBounds(new Rectangle(565, 75, 40, 20));
+        
         avc_numpalB.setToolTipText("Siguiente Palet");
 //        avc_numpalE.setBounds(new Rectangle(587, 75, 25, 16));
-        avc_numpalC.setBounds(new Rectangle(615, 75, 80 , 16));
+       
         avc_revpreL.setBounds(new Rectangle(345, 80, 90, 16));
         avc_revpreE.setBounds(new Rectangle(437, 80, 100, 16));
         opAgrPrv.setSelected(true);
@@ -1250,9 +1256,12 @@ public class pdalbara extends ventanaPad  implements PAD
         PotroDat.add(alm_codoriL, null);
         PotroDat.add(alm_codoriE, null);
         PotroDat.add(alm_coddesL, null);
-        PotroDat.add(residuosL,null);
-      
-        PotroDat.add(jtRes,null);        
+        //PotroDat.add(residuosL,null);
+        PotroDat.add(sbe_codiL,null);
+        PotroDat.add(sbe_codiE,null);
+        PotroDat.add(sbe_nombL,null);
+//        jtRes.setBounds(new Rectangle(2, 145, 550, 115));
+//        PotroDat.add(jtRes,null);        
         
         PotroDat.add(alm_coddesE, null);
         PotroDat.add(avc_idL, null);
@@ -1267,11 +1276,17 @@ public class pdalbara extends ventanaPad  implements PAD
         PotroDat.add(rut_codiL, null);
         PotroDat.add(cli_rutaE, null);
         PotroDat.add(rutPanelE, null);
+        PotroDat.add(div_codiL, null);
+        PotroDat.add(div_codiE, null);
+        PotroDat.add(avc_almoriL, null);
+        PotroDat.add(avc_almoriE, null);
+        PotroDat.add(tar_codiE, null);
+        PotroDat.add(tar_codiL, null);
+
 //        PotroDat.add(rut_nombE, null);
         avc_obserS.getViewport().add(avc_obserE, null);
         jScrollPane1.getViewport().add(pvc_comenE, null);
-        conecta();
-        iniciar(this);
+        
         Ppedido.add(Pcabped,
                 new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
                 GridBagConstraints.NONE,
@@ -1285,7 +1300,8 @@ public class pdalbara extends ventanaPad  implements PAD
                 GridBagConstraints.NONE,
                 new Insets(1, 0, 0, 0), 0, 0));
 
-        
+        conecta();
+        iniciar(this);
         Pgrid.add(jt,
                 new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.BOTH,
@@ -1312,14 +1328,26 @@ public class pdalbara extends ventanaPad  implements PAD
         Pcabe.add(avc_numpalB,null);
 //        Pcabe.add(avc_numpalE,null);
         Pcabe.add(avc_numpalC,null);
+        avc_deposE.setBounds(new Rectangle(2, 57, 105, 18));
+        avc_cerraE.setBounds(new Rectangle(110, 57, 76, 16));
+        avc_dtoppL.setText("Dto PP");
+        avc_dtoppL.setBounds(new Rectangle(190, 57, 39, 16));
+        avc_dtoppE.setToolTipText("Dto. Pronto Pago");
+        avc_dtoppE.setValorDec(0.0);
+        avc_dtoppE.setBounds(new Rectangle(232, 57, 39, 16));
+        cLabel12.setText("%");
+        cLabel12.setBounds(new Rectangle(275, 57, 15, 16));
+        verDepoC.setBounds(new Rectangle(300, 57, 110, 20));
+        verDepoC.setPreferredSize(new Dimension(140,20));
+        avc_numpalB.setBounds(new Rectangle(415, 57, 40, 20));
+        avc_numpalC.setBounds(new Rectangle(460, 57, 80 , 16));
         Pcabe.add(avc_deposE, null);
+        Pcabe.add(avc_cerraE, null);
         Pcabe.add(fvc_serieE, null);
         Pcabe.add(Clabel1, null);
         Pcabe.add(emp_codiE, null);
         Pcabe.add(cli_codiE, null);
         Pcabe.add(cLabel3, null);
-        Pcabe.add(tar_codiE, null);
-        Pcabe.add(cLabel7, null);
         Pcabe.add(avc_valoraE, null);
         Pcabe.add(Bfincab, null);
         Pcabe.add(facturadoL, null);
@@ -1327,16 +1355,15 @@ public class pdalbara extends ventanaPad  implements PAD
         Pcabe.add(cLabel17, null);
         Pcabe.add(cli_pobleE, null);
         Pcabe.add(avc_dtoppE, null);
-        Pcabe.add(cLabel11, null);
+        Pcabe.add(avc_dtoppL, null);
         Pcabe.add(cLabel12, null);
-        Pcabe.add(avc_almoriE, null);
+       
         Pped1.add(pvc_numeE, null);
         Pped1.add(cLabel24, null);
         Pped1.add(pvc_anoE, null);
         Pped1.add(BbusPed, null);
-        sbe_nombL.setBounds(new Rectangle(104, 76, 149, 16));
-        fvc_serieE.setBounds(new Rectangle(456, 38, 18, 16));
-        Pcabe.add(sbe_nombL, null);
+        
+        
         Pcabe.add(avc_fecalbE, null);
         Pcabe.add(avc_fecalbL, null);
         Pcabe.add(printE, null);
@@ -1345,16 +1372,11 @@ public class pdalbara extends ventanaPad  implements PAD
         Pcabe.add(avc_anoE, null);
         Pcabe.add(cLabel2, null);
         Pcabe.add(avc_seriE, null);
-        Pcabe.add(cLabel33, null);
-        Pcabe.add(sbe_codiE, null);
-        Pcabe.add(avc_cerraE, null);
+       
         Pcabe.add(lockE, null);
         Pcabe.add(avc_confoE, null);
-        Pcabe.add(avc_almoriL, null);
         
         Pcabe.add(fvc_numeE, null);
-        Pcabe.add(div_codiE, null);
-        Pcabe.add(cLabel31, null);
         Pcabe.add(avc_dtocomE, null);
         Pcabe.add(cLabel13, null);
         Pcabe.add(dtComPL, null);
@@ -1372,7 +1394,7 @@ public class pdalbara extends ventanaPad  implements PAD
         confGridHist();
         Phist.setLayout(new java.awt.BorderLayout());
         Phist.add(jtHist, java.awt.BorderLayout.CENTER);
-        
+      
     }
     private void confGridHist()
     {
@@ -1465,8 +1487,6 @@ public class pdalbara extends ventanaPad  implements PAD
           emp_codiE.iniciar(dtStat,this,vl, EU);
           sbe_codiE.iniciar(dtStat,this,vl,EU);
           sbe_codiE.setFieldEmpCodi(emp_codiE.getTextField());
-          sbe_nombL=sbe_codiE.creaLabelSbe();
-          sbe_codiE.setLabelSbe(sbe_nombL);
           pdnumeracion.llenaSeriesAlbVen(true,avc_seriE,true,P_ADMIN);
           
           s="SELECT div_codi,div_nomb FROM v_divisa ORDER BY div_nomb";
@@ -1562,6 +1582,7 @@ public class pdalbara extends ventanaPad  implements PAD
     Pcabe.setButton(KeyEvent.VK_F9, BF9);
     Pcabe.setDefButton(Baceptar);
     Pcabe.setButton(KeyEvent.VK_F4, Baceptar);
+    PTrans.getPanelBultos().setButton(KeyEvent.VK_F4, Baceptar);
     jt.setButton(KeyEvent.VK_F4, Baceptar);
     
    
@@ -2831,6 +2852,8 @@ public class pdalbara extends ventanaPad  implements PAD
 //            despieceC.setText("No Desp.");
 //        }
     }
+    else
+        despVenta.resetTipoDespiece();
     try {
         salirLineasDesglose();
      } catch (SQLException ex) 
@@ -5152,7 +5175,7 @@ public class pdalbara extends ventanaPad  implements PAD
             }
         }
     }
-   
+    pComClien.mostrarComentarios(cli_codiE.getValorInt());
     if (!P_MODPRECIO)
       return true;
     int res;

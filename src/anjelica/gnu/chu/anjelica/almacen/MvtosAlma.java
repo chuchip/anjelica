@@ -1990,29 +1990,51 @@ public class MvtosAlma
      * @throws SQLException
      */
     public static String  llenaComboFecInv(DatosTabla dt, int empCodi, int ejeNume, CComboBox feulinE
-            ,int maxElemen) throws SQLException {
-
+            ,int maxElemen) throws SQLException 
+    {
+        feulinE.removeAllItems();
         String feulin;
-        String s = "select distinct(rgs_fecha) as cci_feccon from v_inventar as r  "
+        String s = "select distinct(rgs_fecha) as fechas from v_inventar as r  "
                 + (empCodi==0?"": "where r.emp_codi = " + empCodi)                            
-                + " order by cci_feccon desc ";
-
-        if (dt.select(s)) {
-            int nMax=1;
-            feulin = dt.getFecha("cci_feccon", "dd-MM-yyyy");
-            do {
-                feulinE.addItem(dt.getFecha("cci_feccon", "dd-MM-yyyy"), dt.getFecha("cci_feccon", "dd-MM-yyyy"));
-                nMax++;
-                if (nMax>maxElemen && maxElemen > 0)
-                    break;
-            } while (dt.next());
-        } else {
+                + " order by fechas desc ";
+        if (dt.select(s))
+        {
+            return llenaComboFechas(dt,feulinE,maxElemen);
+        }
+        else 
+        {
             feulin = "01-01-" + ejeNume; // Buscamos desde el principio del año.
             feulinE.addItem(feulin);
         }
         feulinE.setText(feulin);
         return feulin;
     }
+    public static String  llenaComboFecInvControl(DatosTabla dt, int empCodi, CComboBox feulinE ,int maxElemen) throws SQLException 
+    {      
+        feulinE.removeAllItems();
+        String s="SELECT DISTINCT(cci_feccon) as fechas FROM coninvcab "
+            + (empCodi==0?"": "where emp_codi = " + empCodi)             
+            + " order by fechas desc";
+       
+        if (dt.select(s))
+            return llenaComboFechas(dt,feulinE,maxElemen);
+        return null;
+    }
+    static String llenaComboFechas(DatosTabla dt, CComboBox feulinE, int maxElemen) throws SQLException 
+    {
+        String feulin;
+        int nMax = 1;
+        feulin = dt.getFecha("fechas", "dd-MM-yyyy");
+        do
+        {
+            feulinE.addItem(dt.getFecha("fechas", "dd-MM-yyyy"), dt.getFecha("fechas", "dd-MM-yyyy"));
+            nMax++;
+            if (nMax > maxElemen && maxElemen > 0)
+                break;
+        } while (dt.next());
+        return feulin ;
+    }
+  
     /**
      * Comprueba si un individuo ha tenido salidas a partir de una fecha
      * @param dt
@@ -2021,7 +2043,7 @@ public class MvtosAlma
      * @param ejeNume
      * @param serie
      * @param numpar
-     * @param numind . Si es cero se ignorara.
+     * @param numInd . Si es cero se ignorara.
      * @param kilos a buscar. Si es cero se ignorara
      * @param fecha Fecha en formato 'dd-MM-yyyy'
      * @throws SQLException 

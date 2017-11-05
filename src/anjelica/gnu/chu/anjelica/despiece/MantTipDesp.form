@@ -48,6 +48,18 @@
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,10)"/>
       </AuxValues>
     </Component>
+    <Component class="gnu.chu.controles.CTextField" name="tde_unidE">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;#9&quot;)"/>
+      </AuxValues>
+    </Component>
+    <Component class="gnu.chu.camposdb.proPanel" name="tds_proiniE">
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="tds_pesclaE">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;##9.99&quot;)"/>
+      </AuxValues>
+    </Component>
   </NonVisualComponents>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -84,13 +96,13 @@
               </Border>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[640, 50]"/>
+              <Dimension value="[640, 70]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[640, 50]"/>
+              <Dimension value="[640, 70]"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[640, 50]"/>
+              <Dimension value="[640, 70]"/>
             </Property>
           </Properties>
           <Constraints>
@@ -145,11 +157,11 @@
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel4">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Alta "/>
+                <Property name="text" type="java.lang.String" value="Fecha Alta "/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="250" y="23" width="30" height="17"/>
+                  <AbsoluteConstraints x="0" y="42" width="70" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -162,17 +174,17 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="280" y="23" width="60" height="17"/>
+                  <AbsoluteConstraints x="70" y="42" width="60" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel5">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Ult. Mod"/>
+                <Property name="text" type="java.lang.String" value="Fecha Ult. Modifaci&#xf3;n"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="350" y="23" width="60" height="17"/>
+                  <AbsoluteConstraints x="190" y="42" width="140" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -185,7 +197,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="410" y="23" width="60" height="17"/>
+                  <AbsoluteConstraints x="330" y="42" width="60" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -195,7 +207,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="480" y="23" width="50" height="17"/>
+                  <AbsoluteConstraints x="470" y="42" width="60" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -208,7 +220,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="530" y="23" width="100" height="17"/>
+                  <AbsoluteConstraints x="530" y="42" width="100" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -229,7 +241,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="530" y="2" width="100" height="17"/>
+                  <AbsoluteConstraints x="105" y="23" width="100" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -239,7 +251,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="110" y="23" width="90" height="17"/>
+                  <AbsoluteConstraints x="210" y="23" width="80" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -259,7 +271,27 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="93" y="2" width="39" height="17"/>
+                  <AbsoluteConstraints x="90" y="2" width="39" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="tid_auclpeE">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Clasif. Peso"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="390" y="23" width="100" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="tid_asprfiE">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Prod.Salida"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="290" y="23" width="100" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -280,8 +312,8 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(3){&#xa;    public void cambiaColumna(int col, int colNueva,int row)&#xa;    {&#xa;        try&#xa;        {&#xa;            if (col == 0)&#xa;            {&#xa;                String nombArt = pro_codiE.getNombArt(pro_codiE.getText());&#xa;                if (nombArt == null)&#xa;                jtEnt.setValor(&quot;**PRODUCTO NO ENCONTRADO**&quot;, row, 1);&#xa;                else&#xa;                jtEnt.setValor(nombArt, row, 1);&#xa;            }&#xa;        }&#xa;        catch (Exception k)&#xa;        {&#xa;            Error(&quot;Error al buscar Nombre Articulo&quot;, k);&#xa;        }&#xa;    }&#xa;&#xa;    @Override&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        //      tar_feciniG.setText(tar_feciniE.getText());&#xa;        //      tar_fecfinG.setText(tar_fecfinE.getText());&#xa;    }&#xa;&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return cambiaLineaJT();&#xa;    }&#xa;}&#xa;"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="try {&#xa;pro_codiE.iniciar(dtStat, this, vl, EU);&#xa;pro_codiE.setProNomb(null);&#xa;pro_codiE.setAceptaInactivo(false);&#xa;ArrayList cabecera = new ArrayList();&#xa;cabecera.add(&quot;Codigo&quot;); // 0 -- Codigo Producto&#xa;cabecera.add(&quot;Nombre&quot;); //1  -- Nombre Producto&#xa;cabecera.add(&quot;Grupo&quot;); //2  -- Grupo&#xa;jtEnt.setCabecera(cabecera);&#xa;jtEnt.setAnchoColumna(new int[]{46, 283,60});&#xa;jtEnt.setAlinearColumna(new int[] {2, 0,0});&#xa;ArrayList v = new ArrayList();&#xa;v.add(pro_codiE.getFieldProCodi());&#xa;v.add(pro_nombE);&#xa;v.add(tde_grupoE);&#xa;jtEnt.setCampos(v);&#xa;jtEnt.setAjustarGrid(true);&#xa;jtEnt.setAjusAncCol(true);&#xa;} catch (Exception k ){}"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(4){&#xa;    public void cambiaColumna(int col, int colNueva,int row)&#xa;    {&#xa;        try&#xa;        {&#xa;            if (col == 0)&#xa;            {&#xa;                String nombArt = pro_codiE.getNombArt(pro_codiE.getText());&#xa;                if (nombArt == null)&#xa;                jtEnt.setValor(&quot;**PRODUCTO NO ENCONTRADO**&quot;, row, 1);&#xa;                else&#xa;                jtEnt.setValor(nombArt, row, 1);&#xa;            }&#xa;        }&#xa;        catch (Exception k)&#xa;        {&#xa;            Error(&quot;Error al buscar Nombre Articulo&quot;, k);&#xa;        }&#xa;    }&#xa;&#xa;    @Override&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        //      tar_feciniG.setText(tar_feciniE.getText());&#xa;        //      tar_fecfinG.setText(tar_fecfinE.getText());&#xa;    }&#xa;&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return cambiaLineaJT();&#xa;    }&#xa;}&#xa;"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="try {&#xa;pro_codiE.iniciar(dtStat, this, vl, EU);&#xa;pro_codiE.setProNomb(null);&#xa;pro_codiE.setAceptaInactivo(false);&#xa;ArrayList cabecera = new ArrayList();&#xa;cabecera.add(&quot;Codigo&quot;); // 0 -- Codigo Producto&#xa;cabecera.add(&quot;Nombre&quot;); //1  -- Nombre Producto&#xa;cabecera.add(&quot;Grupo&quot;); //2  -- Grupo&#xa;cabecera.add(&quot;Unid&quot;); //4  -- Unid&#xa;jtEnt.setCabecera(cabecera);&#xa;jtEnt.setAnchoColumna(new int[]{46, 283,60,40});&#xa;jtEnt.setAlinearColumna(new int[] {2, 0,0,2});&#xa;ArrayList v = new ArrayList();&#xa;v.add(pro_codiE.getFieldProCodi());&#xa;v.add(pro_nombE);&#xa;v.add(tde_grupoE);&#xa;v.add(tde_unidE);&#xa;jtEnt.setCampos(v);&#xa;jtEnt.setAjustarGrid(true);&#xa;jtEnt.setAjusAncCol(true);&#xa;} catch (Exception k ){}"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -297,7 +329,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="204" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="194" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -317,8 +349,8 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(5){&#xa;    @Override&#xa;    public void cambiaColumna(int col,int colNueva, int row)&#xa;    {&#xa;        try&#xa;        {&#xa;            if (col == 0)&#xa;            {&#xa;                String nombArt = pro_codsE.getNombArt(pro_codsE.getText());&#xa;                if (nombArt == null)&#xa;                jtSal.setValor(&quot;**PRODUCTO NO ENCONTRADO**&quot;, row, 1);&#xa;                else&#xa;                jtSal.setValor(nombArt, row, 1);&#xa;            }&#xa;        }&#xa;        catch (Exception k)&#xa;        {&#xa;            Error(&quot;Error al buscar Nombre Articulo&quot;, k);&#xa;        }&#xa;    }&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return cambiaLineaSal();&#xa;    }&#xa;};&#xa;"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="try {&#xa; pro_codsE.iniciar(dtStat, this, vl, EU);&#xa;  pro_codsE.setProNomb(null);&#xa; pro_codsE.setAceptaInactivo(false);&#xa; ArrayList linea = new ArrayList();&#xa; linea.add(&quot;Codigo&quot;); // 0 -- Codigo Producto&#xa; linea.add(&quot;Nombre&quot;); //1  -- Nombre Producto&#xa; linea.add(&quot;N. Unid&quot;); // 2  -- Unidades x unidad entrada&#xa; linea.add(&quot;Costo&quot;); // 3 Costo Estimado&#xa; linea.add(&quot;Grupo&quot;); // 4  -- Grupo&#xa; jtSal.setCabecera(linea);&#xa; jtSal.setPonValoresInFocus(false);&#xa; jtSal.setAnchoColumna(new int[] {46, 283,60,60,100});&#xa; jtSal.setAlinearColumna(new int[] {2, 0,2,2,0});&#xa; jtSal.setFormatoColumna(3, &quot;##9.99&quot;);&#xa; tds_unidE.setValorDec(1);&#xa; tds_grupoE.setValorDec(1);&#xa; ArrayList vecL=new ArrayList();&#xa; vecL.add(pro_codsE.getFieldProCodi());//0&#xa; vecL.add(pro_nombsE); // 1&#xa; vecL.add(tds_unidE); // 2&#xa; vecL.add(tds_costoE); // 3&#xa; vecL.add(tds_grupoE); //4&#xa; jtSal.setCampos(vecL);&#xa; jtSal.setAjustarGrid(true);&#xa; jtSal.setAjusAncCol(true);&#xa;} catch (Exception k){}"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(7){&#xa;    @Override&#xa;    public void cambiaColumna(int col,int colNueva, int row)&#xa;    {&#xa;        try&#xa;        {&#xa;            if (col == 0)&#xa;            {&#xa;                String nombArt = pro_codsE.getNombArt(pro_codsE.getText());&#xa;                if (nombArt == null)&#xa;                jtSal.setValor(&quot;**PRODUCTO NO ENCONTRADO**&quot;, row, 1);&#xa;                else&#xa;                jtSal.setValor(nombArt, row, 1);&#xa;            }&#xa;        }&#xa;        catch (Exception k)&#xa;        {&#xa;            Error(&quot;Error al buscar Nombre Articulo&quot;, k);&#xa;        }&#xa;    }&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return cambiaLineaSal();&#xa;    }&#xa;};&#xa;"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="try {&#xa; pro_codsE.iniciar(dtStat, this, vl, EU);&#xa;tds_proiniE.iniciar(dtStat, this, vl, EU);&#xa; tds_proiniE.setProNomb(null);&#xa;tds_proiniE.setAceptaInactivo(false);&#xa;  pro_codsE.setProNomb(null);&#xa; pro_codsE.setAceptaInactivo(false);&#xa; ArrayList linea = new ArrayList();&#xa; linea.add(&quot;Codigo&quot;); // 0 -- Codigo Producto&#xa; linea.add(&quot;Nombre&quot;); //1  -- Nombre Producto&#xa; linea.add(&quot;N. Unid&quot;); // 2  -- Unidades x unidad entrada&#xa; linea.add(&quot;Costo&quot;); // 3 Costo Estimado&#xa; linea.add(&quot;Grupo&quot;); // 4  -- Grupo&#xa;linea.add(&quot;Pr.Final&quot;); // 5  -- Grupo&#xa;linea.add(&quot;Peso&quot;); // 6  -- Grupo&#xa; jtSal.setCabecera(linea);&#xa; jtSal.setPonValoresInFocus(false);&#xa; jtSal.setAnchoColumna(new int[] {46, 283,60,60,70,70,70});&#xa; jtSal.setAlinearColumna(new int[] {2, 0,2,2,0,2,2});&#xa; &#xa; tds_unidE.setValorDec(1);&#xa; tds_grupoE.setValorDec(1);&#xa; ArrayList vecL=new ArrayList();&#xa; vecL.add(pro_codsE.getFieldProCodi());//0&#xa; vecL.add(pro_nombsE); // 1&#xa; vecL.add(tds_unidE); // 2&#xa; vecL.add(tds_costoE); // 3&#xa; vecL.add(tds_grupoE); //4&#xa; vecL.add(tds_proiniE.getFieldProCodi()); //4&#xa; vecL.add(tds_pesclaE); //4&#xa; jtSal.setCampos(vecL);&#xa; jtSal.setAjustarGrid(true);&#xa; jtSal.setAjusAncCol(true);&#xa;} catch (Exception k){}"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

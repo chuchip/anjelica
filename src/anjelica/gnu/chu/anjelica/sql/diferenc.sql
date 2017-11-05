@@ -1,3 +1,9 @@
+-- Añadir a tipos de despiece
+alter table anjelica.tipodesp add tid_asprfi smallint not null default 0; -- Asignar Producto Salida 
+alter table anjelica.tipodesp add  tid_auclpe smallint not null default 0; -- Autoclasificar por peso.
+alter table anjelica.tipdesent add tde_unid int not null  default 1;-- Numero Unidades
+alter table anjelica.tipdessal add tds_proini int;
+alter table anjelica.tipdessal add tds_pescla float ;
 -- Añadir campo orden ruta a tabla clientes
 Alter table clientes add cli_ordrut smallint
 drop view v_cliente;

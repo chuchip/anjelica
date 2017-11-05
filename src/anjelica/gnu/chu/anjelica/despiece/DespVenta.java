@@ -62,7 +62,8 @@ import java.util.Iterator;
 
 
 public class DespVenta extends ventana {
-    
+    int tidCodiAnt=0;
+    private boolean tidAsprfi=false;
     int primeraLinea;
     Desporig desorca;
     Desorilin desorli;
@@ -149,6 +150,7 @@ public class DespVenta extends ventana {
         stkPart=new ActualStkPart(dtAdd,EU.em_cod);
         tid_codiE.iniciar(dtStat, padre, padre.vl, EU);
         tid_codiE.setValorInt(MantTipDesp.AUTO_DESPIECE);
+        tid_codiE.setVerSoloActivo(true);
 //        pro_codsalE.setProNomb(pro_nombE);
         ArrayList vc=new ArrayList();
         vc.add(pro_codsalE.getFieldProCodi());
@@ -175,6 +177,7 @@ public class DespVenta extends ventana {
         
         tid_codiE.clearArticulos();
         tid_codiE.addArticulo(proCodi);
+        
         tid_codiE.releer();
     }
     public void setLote(int ejeNume,String serieLote,int lote, int indiv) throws SQLException
@@ -215,6 +218,14 @@ public class DespVenta extends ventana {
           toFront();
 //          setEnabled(true);
           buscaPeso();
+          if (tidCodiAnt!=0 && tidAsprfi)
+          {
+             if (tid_codiE.controla())
+             {
+                 irGrid();
+                 return;
+             }
+          }
           new miThread("")
           {
               @Override
@@ -230,19 +241,6 @@ public class DespVenta extends ventana {
           };
           tid_codiE.requestFocusLater();
 
-//          SwingUtilities.invokeLater(new Thread()
-//          {
-//            @Override
-//            public void run()
-//            {
-//              if (pro_codiE.isNull())
-//                pro_codiE.requestFocus();
-//              else
-//                pro_loteE.requestFocus();
-//              Pcabe.setEnabled(false);
-//              jt.setEnabled(false);
-//            }
-//          });
     }
     
     void pro_codiE_despuesLlenaCampos()
@@ -423,6 +421,8 @@ public class DespVenta extends ventana {
             resetBloqueo(dtAdd,TABLA_BLOCK, ejeNume+"|"+empCodi+
                          "|"+deoCodi,false);
             dtAdd.commit();
+            tidCodiAnt=tid_codiE.getValorInt();
+            tidAsprfi=tid_codiE.getAsignarProdSalida();
             nuevoDespiece=true;
         } catch (SQLException | ParseException k)
         {
@@ -430,7 +430,13 @@ public class DespVenta extends ventana {
         }
         matar();
     }
-    
+    public void resetTipoDespiece()
+    {
+       tidCodiAnt=0;
+       tidAsprfi=false;  
+       tid_codiE.resetTexto();
+       tid_codiE.resetCambio();
+    }
     public IndivStock getIndiviuoDespiece()
     {        
         IndivStock idSt= new IndivStock(almCodi,jt.getValorInt(primeraLinea,JT_PROCOD),
@@ -761,8 +767,18 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                     llenaGrid();
                }
                tid_codiE.setEnabled(false);
+                if (tid_codiE.getAsignarProdSalida() )
+               {
+                   int proCodi=MantTipDesp.getArticuloSalida(dtStat, pro_codiE.getValorInt(), tid_codiE.getValorInt());
+                   if (proCodi>0)
+                   {
+                       jt.setValor(proCodi,0,JT_PROCOD);
+                       jt.setValor(pro_codsalE.getNombArt(proCodi),0,JT_PRONOMB);
+                   }
+               }
 //               activar(false);
                jt.setEnabled(true);
+              
                jt.requestFocusInicioLater();
 //            }
 //            else
@@ -828,7 +844,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
             jt.addLinea(v);
             return;
         }
-        if (tid_codiE.getValorInt()==MantTipDesp.LIBRE_DESPIECE ||  
+        if (tid_codiE.getValorInt()==MantTipDesp.LIBRE_DESPIECE ||  tid_codiE.getAsignarProdSalida() || 
                 ! cargaPSC.isSelected())
           return;
        

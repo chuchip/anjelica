@@ -30,6 +30,10 @@ public class PTransVenta extends CPanel
     {
         this.avcId=avcId;
     }
+    public CPanel getPanelBultos()
+    {
+        return Pbultra;
+    }
     public int getAvcId()
     {
         return this.avcId;

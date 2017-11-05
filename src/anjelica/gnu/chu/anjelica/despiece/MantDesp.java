@@ -234,7 +234,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2017-29-10" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2017-01-11" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -3525,8 +3525,9 @@ public class MantDesp extends ventanaPad implements PAD
                 return;
             }
             buscaDatInd();
-            int proCodi=jtLin.getValorInt(jtDesp.getSelectedRowDisab(), JTLIN_PROCODI);
-            String proNomb=jtLin.getValString(jtDesp.getSelectedRowDisab(), JTLIN_PRONOMB);
+            int nRow=jtLin.isEnabled()?jtLin.getSelectedRow():jtLin.getSelectedRowDisab();
+            int proCodi=jtLin.getValorInt(nRow, JTLIN_PROCODI);
+            String proNomb=jtLin.getValString(nRow, JTLIN_PRONOMB);
             CodigoBarras codBarras = new CodigoBarras("D",eje_numeE.getText(),deo_selogeE.getText(),
                 deo_nulogeE.getValorInt(),proCodi,0,0,deo_numdesE.getValorInt()); 
             
