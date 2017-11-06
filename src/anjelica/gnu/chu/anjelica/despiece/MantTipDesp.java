@@ -872,6 +872,54 @@ public class MantTipDesp  extends ventanaPad implements PAD
           return 0;
        return dt.getInt("pro_codi");
    }
+    /**
+    * Devuelve Grupo del articulo de salida
+    * @param dt
+    * @param proCodi
+    * @param tidCodi
+    * @return Grupo
+    * @throws SQLException 
+    */
+   public static String getGrupoSalida(DatosTabla dt, int proCodi,int tidCodi) throws SQLException
+   {
+        if (tidCodi==LIBRE_DESPIECE || tidCodi==AUTO_DESPIECE)
+          return null;  
+        String s = "SELECT tds_grupo FROM tipdessal where pro_codi="+proCodi+
+              " and tid_codi = "+tidCodi;
+        if (!dt.select(s))
+          return null;
+       return dt.getString("tds_grupo");
+   }
+   
+   public static int getProductoPeso(DatosTabla dt, int proCodi,double kilos,int tidCodi) throws SQLException
+   {
+     String grupo=getGrupoSalida(dt,proCodi,tidCodi);
+     if (grupo==null)
+         return 0;
+     return getProductoPeso(dt,grupo,kilos,tidCodi);
+   }
+   /**
+    * Devuelve el codigo de producto para un grupo en un despiece, segun el peso.
+    * @param dt
+    * @param grupo
+    * @param kilos
+    * @param tidCodi
+    * @return
+    * @throws SQLException 
+    */
+   public static int getProductoPeso(DatosTabla dt, String grupo,double kilos,int tidCodi) throws SQLException
+   {
+        if (tidCodi==LIBRE_DESPIECE || tidCodi==AUTO_DESPIECE)
+          return 0;  
+        String s = "SELECT pro_codi FROM tipdessal WHERE tds_pescla <= " + kilos+
+            " and tds_grupo = '"+grupo+"'"+
+            " and tid_codi = "+tidCodi+
+            " order by tds_pescla desc";       
+        if (!dt.select(s))
+          return 0;
+       return dt.getInt("pro_codi");
+   }
+    
    /**
    * Comprueba si un articulo esta en los productos de entrada un tipo de despiece
    * @param dt DatosTabla

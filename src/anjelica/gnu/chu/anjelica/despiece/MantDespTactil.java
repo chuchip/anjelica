@@ -67,7 +67,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
   cliPanel cli_codiE = new cliPanel();
   CLabel deo_incvalL=new CLabel("Produccion");
   CComboBox deo_incvalE=new CComboBox();
-  CButton BirGrid =new CButton(Iconos.getImageIcon("flechaabajo"));
+  CButton BirGrid =new CButton(Iconos.getImageIcon("duplicar"));
   CButton Bocul =new CButton();
   int tipoEmp; // Tipo Empresa (Sala Despiece o Plantacion)
   private boolean isEmpPlanta=false; // Indica si la empresa es tipo Plantacion
@@ -159,7 +159,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     public boolean insertaLinea(int row, int col)
     {
       if (!jtEnt.binsert)
-        return true;
+        return pro_codenE.getValorInt()!=0;
       if (!jtSal.isVacio() && row == 0)
       {
         mensajeErr("NO se puede insertar encima de la primera Linea con prod. Salida");
@@ -181,6 +181,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
         @Override
     public boolean afterInsertaLinea(boolean insLinea)
     {
+    
       pdf_jtEnt();
       return true;
     }

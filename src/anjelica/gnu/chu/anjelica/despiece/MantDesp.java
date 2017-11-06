@@ -234,7 +234,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2017-01-11" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2017-05-11" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -3195,6 +3195,17 @@ public class MantDesp extends ventanaPad implements PAD
                 mensajeErr("Codigo de Producto NO valido");
                 return 0;
             }
+            if (opAutoClas.isSelected() && tid_codiE.getClasificaPeso())
+            {
+                int proCodi=MantTipDesp.getProductoPeso(dtStat,pro_codlE.getValorInt(),def_kilosE.getValorDec(),tid_codiE.getValorInt());
+                if (proCodi!=0)
+                {
+                    pro_codlE.setValorInt(proCodi);
+                    jtLin.setValor(proCodi,linea,JTLIN_PROCODI);
+                    jtLin.setValor(pro_codlE.getNombArt( proCodi),linea,JTLIN_PRONOMB);
+                }
+            }
+           
             
 //     if (! pro_codlE.isVendible())
 //     {
@@ -4394,10 +4405,11 @@ public class MantDesp extends ventanaPad implements PAD
                 cLabel18 = new gnu.chu.controles.CLabel();
                 kgDifE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9.99");
                 opImpEt = new gnu.chu.controles.CCheckBox();
-                BirGrid = new gnu.chu.controles.CButton();
+                BirGrid = new gnu.chu.controles.CButton(Iconos.getImageIcon("duplicar"));
                 cLabel20 = new gnu.chu.controles.CLabel();
                 impFinE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---,--9.99");
                 cargaPSC = new gnu.chu.controles.CCheckBox();
+                opAutoClas = new gnu.chu.controles.CCheckBox();
 
                 deo_serlotE.setText("A");
                 deo_serlotE.setMayusc(true);
@@ -5013,13 +5025,12 @@ public class MantDesp extends ventanaPad implements PAD
                 opImpEt.setText("Impr.Etiqueta");
                 opImpEt.setToolTipText("Carga productos de salida del tipo de despiece");
                 Ptotal1.add(opImpEt);
-                opImpEt.setBounds(539, 2, 100, 17);
+                opImpEt.setBounds(570, 2, 100, 17);
 
-                BirGrid.setText("Ir Grid");
                 BirGrid.setToolTipText("Moverse entre grids");
                 BirGrid.setActionCommand("r Grid");
                 Ptotal1.add(BirGrid);
-                BirGrid.setBounds(640, 2, 50, 17);
+                BirGrid.setBounds(670, 2, 20, 17);
 
                 cLabel20.setText("Importe");
                 Ptotal1.add(cLabel20);
@@ -5030,9 +5041,16 @@ public class MantDesp extends ventanaPad implements PAD
                 impFinE.setBounds(275, 2, 70, 17);
 
                 cargaPSC.setSelected(true);
-                cargaPSC.setText("Carga PS");
+                cargaPSC.setText("PS");
+                cargaPSC.setToolTipText("Carga Productos Salidos Tipo Despiece");
                 Ptotal1.add(cargaPSC);
-                cargaPSC.setBounds(465, 2, 80, 17);
+                cargaPSC.setBounds(530, 2, 40, 17);
+
+                opAutoClas.setSelected(true);
+                opAutoClas.setText("Clasif");
+                opAutoClas.setToolTipText("Carga Productos Salidos Tipo Despiece");
+                Ptotal1.add(opAutoClas);
+                opAutoClas.setBounds(465, 2, 60, 17);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -5238,6 +5256,7 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField kgFinE;
     private gnu.chu.controles.CTextField kgOrigE;
     private gnu.chu.controles.CTextField numCopiasE;
+    private gnu.chu.controles.CCheckBox opAutoClas;
     private gnu.chu.controles.CCheckBox opImpEt;
     private gnu.chu.controles.CCheckBox opMantFecha;
     private gnu.chu.controles.CCheckBox opRepet;

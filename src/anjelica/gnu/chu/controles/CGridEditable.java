@@ -47,7 +47,7 @@ public class CGridEditable extends Cgrid implements CQuery {
     private boolean ponValoresEnabled = false;
     private boolean ponValoresInFocus = false;
     boolean reqFocusEdit = false;
-    public boolean binsert = false;
+    public boolean binsert = false; // Indica si se ha pulsado el boton insertar (en cambiaLinea)
 
     int colNueva = 0; // Col. donde ir cuando se inserta una Linea
     private int eatCambioLinea = 0;
