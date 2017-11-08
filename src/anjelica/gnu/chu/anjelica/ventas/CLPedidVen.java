@@ -36,6 +36,7 @@ import gnu.chu.interfaces.ejecutable;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.cgpedven;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -555,10 +556,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
       nLin=0;
       while (nLin<rowCount)
       {
-
         if (jtLinPed.getValString(nLin,0).equals("A") ||
-            jtLinPed.getValorInt(nLin,JTLIN_PROCOD)!=dtCon1.getInt("pro_codi")
-            )
+            jtLinPed.getValorInt(nLin,JTLIN_PROCOD)!=dtCon1.getInt("pro_codi"))
         {
           nLin++;
           continue;

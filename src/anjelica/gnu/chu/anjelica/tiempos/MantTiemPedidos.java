@@ -30,6 +30,7 @@ import gnu.chu.camposdb.prvPanel;
 import gnu.chu.controles.CCheckBox;
 import gnu.chu.controles.CTextField;
 import gnu.chu.controles.StatusBar;
+import gnu.chu.controles.miCellRender;
 import gnu.chu.eventos.GridAdapter;
 import gnu.chu.eventos.GridEvent;
 import gnu.chu.interfaces.ejecutable;
@@ -38,8 +39,10 @@ import gnu.chu.utilidades.Formatear;
 import static gnu.chu.utilidades.Formatear.getDate;
 import static gnu.chu.utilidades.Formatear.sumaDias;
 import gnu.chu.utilidades.Iconos;
+import gnu.chu.utilidades.cgpedven;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -69,6 +72,9 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class MantTiemPedidos extends  ventana   implements  JRDataSource
 {
+    private final int JTLIN_PROCOD=1;
+    private final int JTLIN_PRONOMB=2;
+    
     String usuario;
     ResultSet rsReport;
     Date horaInicio;
@@ -167,7 +173,7 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2017-10-30");
+        this.setVersion("2017-11-08");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -396,12 +402,8 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
          v.add(dtCon1.getString("pro_codi"));
          v.add(pro_codiE.getNombArtCli(dtCon1.getInt("pro_codi"),
                                               cli_codiE.getValorInt(),EU.em_cod,dtStat));
-         v.add(dtCon1.getString("prv_codi"));
-         v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi"),dtStat));
-         v.add(dtCon1.getFecha("pvl_feccad"));
+         
          v.add(dtCon1.getString("pvl_canti")+" "+dtCon1.getString("pvl_tipo"));
-         v.add(dtCon1.getString("pvl_precio"));
-         v.add(dtCon1.getInt("pvl_precon") != 0);
          v.add(dtCon1.getString("pvl_comen"));
          v.add(dtCon1.getString("pvl_numlin"));
          jtLinPed.addLinea(v);
@@ -418,7 +420,7 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
                jtCabPed.getValorInt(JTCAB_NUMALB) );
        }
        int nRows=jtCabPed.getRowCount();
-        kilosCajasE.setValorDec(kilosEncajado);
+       kilosCajasE.setValorDec(kilosEncajado);
        kilosColgadoE.setValorDec(kilosColgado);
        kilosPedidE.setValorDec(kilosEncajado+kilosColgado);
      } catch (Exception k)
@@ -520,8 +522,7 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
     */
    void verDatAlbaranPed(int empCodi,int avcAno,String avcSerie, int avcNume) throws SQLException
    {
-      s="select 1 as tipo,l.pro_codi,sum(avp_numuni) as avp_numuni,sum(avp_canti) as avp_canti, " +
-             " s.prv_codi,s.stp_feccad "+
+      s="select 1 as tipo,l.pro_codi,sum(avp_numuni) as avp_numuni,sum(avp_canti) as avp_canti "+            
              " from v_albvenpar as l,v_stkpart as s " +
              " WHERE s.eje_nume = l.avp_ejelot " +
              " and s.emp_codi = l.avp_emplot " +
@@ -533,10 +534,9 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
              " and l.avc_ano = " + avcAno +
              " and l.avc_serie = '" +avcSerie + "'" +
              " and l.avc_nume = " + avcNume +
-             " GROUP BY l.pro_codi  ,s.prv_codi, stp_feccad "+
+             " GROUP BY l.pro_codi  "+
              " UNION ALL "+
-             "select 0 as tipo, l.pro_codi,sum(avp_numuni) as avp_numuni,sum(avp_canti) as avp_canti, " +
-              " c.cli_codi AS prv_codi, c.avc_fecalb as stp_feccad " +
+             "select 0 as tipo, l.pro_codi,sum(avp_numuni) as avp_numuni,sum(avp_canti) as avp_canti " +
               " from v_albvenpar as l,v_albavec as c  where  c.avc_ano = l.avc_ano  "+
               " and c.emp_codi = l.emp_codi "+
               " and c.avc_serie = l.avc_serie "+
@@ -546,7 +546,7 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
              " and l.avc_ano = " + avcAno +
              " and l.avc_serie = '" + avcSerie + "'" +
              " and l.avc_nume = " + avcNume +
-             " GROUP BY l.pro_codi ,c.cli_codi , avc_fecalb "+
+             " GROUP BY l.pro_codi"+
              " order by 2 ";
 
 //    debug(s);
@@ -556,41 +556,46 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
     int nLin=0;
     double kilosColgado=0;
     double kilosEncajado=0;
-    do
+    
+     do
     {
-      rowCount = jtLinPed.getRowCount();
-      
+      rowCount = jtLinPed.getRowCount();      
+        
       ArrayList v = new ArrayList();
       v.add("A");
       v.add(dtCon1.getString("pro_codi"));
       v.add(pro_codiE.getNombArtCli(dtCon1.getInt("pro_codi"),
                                            cli_codiE.getValorInt(), EU.em_cod, dtStat));
-      if (dtCon1.getInt("tipo")==0)
-      {
-        v.add("");
-        v.add("");
-      }
-      else
-      {
-        v.add(dtCon1.getString("prv_codi"));
-        v.add(prv_codiE.getNombPrv(dtCon1.getString("prv_codi"), dtStat));
-      }
-      if (dtCon1.getInt("tipo")==0)
-        v.add("");
-      else
-        v.add(dtCon1.getFecha("stp_feccad","dd-MM-yy"));
-    
+        
       v.add(dtCon1.getString("avp_numuni"));
-      v.add(""); // Precio
-      v.add(false); // COnf
-      v.add(dtCon1.getString("avp_canti"));            
+      v.add(Formatear.format(dtCon1.getString("avp_canti"),"#,##9.99")+" Kg");         
       v.add(""); // NL
-      jtLinPed.addLinea(v);
-      if (pro_codiE.getLikeProd().getInt("pro_encaja")==0)
-         kilosColgado+=dtCon1.getDouble("avp_canti");
-      else
-         kilosEncajado+=dtCon1.getDouble("avp_canti");
+      nLin=0;
+      while (nLin<rowCount)
+      {
+
+        if (jtLinPed.getValString(nLin,0).equals("A") ||
+            jtLinPed.getValorInt(nLin,JTLIN_PROCOD)!=dtCon1.getInt("pro_codi") )
+        {
+          nLin++;
+          continue;
+        }
+        v.set(JTLIN_PROCOD,"");
+        v.set(JTLIN_PRONOMB,"");
+        jtLinPed.addLinea(v,nLin+1);
+        break;
+      }
+      if (nLin>=rowCount)
+        jtLinPed.addLinea(v);
+      if (dtCon1.getInt("tipo")==0)
+      {
+        if (pro_codiE.getLikeProd().getInt("pro_encaja")==0)
+          kilosColgado+=dtCon1.getDouble("avp_canti");
+       else
+          kilosEncajado+=dtCon1.getDouble("avp_canti");
+      }
     } while (dtCon1.next());
+    
     kilosCajasAlbE.setValorDec(kilosEncajado);
     kilosColgadoAlbE.setValorDec(kilosColgado);
     kilosAlbarE.setValorDec(kilosEncajado + kilosColgado);
@@ -732,27 +737,31 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
      v.add("Tipo"); // 0 Albaran o Pedido
      v.add("Prod."); // 1
      v.add("Desc. Prod."); // 2
-     v.add("Prv"); // 3
-     v.add("Nombre Prv"); // 4
-     v.add("Fec.Cad"); // 5
-     v.add("Cant"); // 6
-     v.add("Precio"); // 7
-     v.add("Conf"); // 8 Confirmado Precio ?
-     v.add("Comentario"); // 9 Comentario
-     v.add("NL."); // 10
+     v.add("Cant"); // 3
+     v.add("Comentario"); // 4 Comentario
+     v.add("NL."); // 5
      jtLinPed.setCabecera(v);
      jtLinPed.setMaximumSize(new Dimension(548, 127));
      jtLinPed.setMinimumSize(new Dimension(548, 127));
      jtLinPed.setPreferredSize(new Dimension(548, 127));
      jtLinPed.setPuntoDeScroll(50);
      jtLinPed.setAnchoColumna(new int[]
-                        {20,50, 160, 50, 100, 55, 50, 50, 30, 200, 30});
+                        {20,50, 160, 50, 200});
      jtLinPed.setAlinearColumna(new int[]
-                          {1,2, 0, 2, 0, 1, 2, 2, 1, 0, 2});
+                          {1,2, 0, 2, 0, 2});
      
-     jtLinPed.setFormatoColumna(7, "-,--9.99");
-     jtLinPed.setFormatoColumna(8, "BSN");
-     jtLinPed.setAjustarGrid(true);
+     jtLinPed.setFormatoColumna(3, "-,--9.99");
+     jtLinPed.setAjustarGrid(true);       
+      cgpedven vg = new cgpedven(jtLinPed);
+        for (int n = 0; n < jtLinPed.getColumnCount(); n++)
+        {
+            miCellRender mc = jtLinPed.getRenderer(n);
+            if (mc == null)
+                continue;
+            mc.setVirtualGrid(vg);
+            mc.setErrBackColor(Color.CYAN);
+            mc.setErrForeColor(Color.BLACK);
+        }
     }
     public void setCliCodiText(String cliCodi)
     {
@@ -946,7 +955,7 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
         cLabel31 = new gnu.chu.controles.CLabel();
         cLabel32 = new gnu.chu.controles.CLabel();
         BImpri = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
-        jtLinPed = new gnu.chu.controles.Cgrid(11);
+        jtLinPed = new gnu.chu.controles.Cgrid(6);
         jtCabPed = new gnu.chu.controles.CGridEditable(16);
 
         tit_usunomE.setText("cTextField1");

@@ -800,7 +800,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(11)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(6)"/>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="try {confJtLin();} catch (Exception k){Error(&quot;Error al configurar grid Lineas&quot;,k);}"/>
           </AuxValues>
           <Constraints>
