@@ -2429,7 +2429,11 @@ boolean checkCabecera() throws ParseException, SQLException
     jtEnt.setValor(eje_numeE.getText(), 3);
     jtEnt.setValor("A", 4);
   }
-
+/**
+ * Comprueba que una linea entrada sea valida
+ * @param row
+ * @return 
+ */
   int check_jtEnt(int row)
   {
     try
@@ -2513,6 +2517,8 @@ boolean checkCabecera() throws ParseException, SQLException
                kilAnt=0;
          }
       }
+     
+
       StkPartid stkPartid= buscaPeso();
       if (stkPartid.hasError())
       {
@@ -2550,6 +2556,22 @@ boolean checkCabecera() throws ParseException, SQLException
 //          }
           if (! stkPartid.hasStock(kilEnt) )
           {
+                   // Compruebo que no me lean el mismo individuo 2 veces.
+            int nRows=jtEnt.getRowCount();
+            for (int n=0;n<nRows;n++)
+            {
+                if (n==jtEnt.getSelectedRow())
+                    continue;
+              if (jtEnt.getValorInt(n,JTENT_PROCODI)== pro_codenE.getValorInt() && // Prod.
+                  jtEnt.getValorInt(n,JTENT_EJER) == eje_numenE.getValorInt() && // ejer
+                  jtEnt.getValString(n,JTENT_SERIE).equals(pro_serenE.getText()) && // Serie
+                  jtEnt.getValorInt(n,JTENT_LOTE)== pro_lotenE.getValorInt() && // Lote
+                  jtEnt.getValorInt(n,JTENT_NUMIND) == pro_indenE.getValorInt()   ) // Individuo
+              {
+                  msgBox("Error: Individuo introducido en linea: "+n);
+                  return 0;
+              }
+            }     
             msgBox("No hay suficiente Stock para este individuo. Existencias Actuales: "+kilStock+" Kg");
             return 7;
           }

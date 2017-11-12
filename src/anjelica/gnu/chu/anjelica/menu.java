@@ -169,6 +169,7 @@ JMenuItem mantArticVenta = new JMenuItem();
   JMenuItem MenuFicha= new JMenuItem();
   JMenuItem MenuLogs= new JMenuItem();
   JMenuItem etiqMarcar= new JMenuItem();
+  JMenuItem etiqSolom= new JMenuItem();
   JMenuItem precioMedio= new JMenuItem();
   JMenuItem clcobreal = new JMenuItem();
   JMenuItem cacobrea = new JMenuItem();
@@ -782,6 +783,12 @@ JMenuItem mantArticVenta = new JMenuItem();
         lanzaEtiqMarcar();
       }
     });
+    etiqSolom.setText("Etiq.Solomillo");
+    etiqSolom.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        lanzaEtiqSolomillo();
+      }
+    });
      MenuLogs.setText("Ver Logs");
     MenuLogs.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -1165,6 +1172,7 @@ JMenuItem mantArticVenta = new JMenuItem();
     jPopupVarios.add(MenuFicha);
     jPopupVarios.add(MenuLogs);
     jPopupVarios.add(etiqMarcar);
+    jPopupVarios.add(etiqSolom);
     jPopupVarios.add(precioMedio);
     EU=gnu.chu.Menu.LoginDB.cargaEntornoUsu();
     EU.usuario="cpuente";
@@ -1578,6 +1586,10 @@ JMenuItem mantArticVenta = new JMenuItem();
   void lanzaEtiqMarcar()
   {
       lanzaEjecutable(new gnu.chu.anjelica.listados.CreaEtiqMarca(this,EU));
+  }
+  void lanzaEtiqSolomillo()
+  {
+      lanzaEjecutable(new gnu.chu.anjelica.listados.CreaEtiqSolom(this,EU));
   }
   void lanzaPreciosMedios()
   {

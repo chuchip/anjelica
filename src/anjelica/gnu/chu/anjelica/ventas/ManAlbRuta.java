@@ -481,6 +481,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
     
     veh_codiE.setText("");
     jt.removeAllDatos();
+    jt.setDragEnabled(false); 
+    ordenarC.setSelected(false);
     jtFra.removeAllDatos();
     activar(true);
     kilosTotE.setValorDec(0);
@@ -548,6 +550,9 @@ public class ManAlbRuta extends ventanaPad implements PAD
        Error("Error al bloquear el registro", k);
        return;
      }
+     jt.setDragEnabled(false); 
+     ordenarC.setSelected(false);
+
      alr_numeE.setEnabled(false);
      alr_fechaE.resetCambio();
      resetCambioAlb();
@@ -1350,6 +1355,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         alr_fecregE.setColumnaAlias("alr_fecreg");
         alr_vekminE.setColumnaAlias("alr_vekmin");
         alr_vekmfiE.setColumnaAlias("alr_vekmfi");
+        jt.setDragEnabled(false); 
         Pcabe.setDefButton(Baceptar);
         jt.setDefButton(Baceptar);
         jtFra.setDefButton(Baceptar);

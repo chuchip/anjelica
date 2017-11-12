@@ -1,8 +1,8 @@
 package gnu.chu.anjelica.listados;
 /**
  *
- * <p>Titulo: CreaEtiqMarca </p>
- * <p>Descripción: Crear etiquetas para Marcar Lomos a Clientes </p>
+ * <p>Titulo: CreaEtiqSolom </p>
+ * <p>Descripción: Crear etiquetas para Marcar Solomillos </p>
  * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU según es publicada por
@@ -21,7 +21,6 @@ package gnu.chu.anjelica.listados;
 * @version 1.0
 */
 import gnu.chu.Menu.Principal;
-import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.controles.CButton;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -33,8 +32,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
-import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.ArrayList;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -43,27 +42,22 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 
-/**
- *
- * @author cpuente
- */
-public class CreaEtiqMarca extends ventana  implements  JRDataSource
+public class CreaEtiqSolom extends ventana  implements  JRDataSource
 {
+    int numeroEtiq;
     String botonTexto="";
     int numHoja;
-    String[] articulos= new String[]{"20+","VA108","7 COST","8 COST.","23+","25+","28+",
-        "PIST.","LNP","LOMO P.-90","8 COST SP","8C.EXTRA",
-        "BOLA +60","BOLA -60","LOMO TERN.",
-        "T-BONE","108B","108B ESP."};
+    String[] articulos= new String[]{"20+","23+","25+","28+","30+","LNP 28+","LNP 30+",   
+        };
     
-     public CreaEtiqMarca(EntornoUsuario eu, Principal p) {
+     public CreaEtiqSolom(EntornoUsuario eu, Principal p) {
         EU = eu;
         vl = p.panel1;
         jf = p;
         eje = true;
 
-        setTitulo("Crear Etiquetas Marcar");
-        setAcronimo("cretma");
+        setTitulo("Crear Etiquetas Solomillos");
+         setAcronimo("cretso");
         try {
             if (jf.gestor.apuntar(this)) {
                 jbInit();
@@ -75,12 +69,11 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
         }
     }
 
-    public CreaEtiqMarca(gnu.chu.anjelica.menu p, EntornoUsuario eu) {
+    public CreaEtiqSolom(gnu.chu.anjelica.menu p, EntornoUsuario eu) {
 
         EU = eu;
         vl = p.getLayeredPane();
-        setTitulo("Crear Etiquetas Marcar");
-         setAcronimo("cretma");
+        setTitulo("Crear Etiquetas Solomillos");
         eje = false;
 
         try {
@@ -94,7 +87,7 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2017-11-12");
+        this.setVersion("2017-11-02");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -128,26 +121,17 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
     void ponTexto(String texto)
     {
         botonTexto=texto;
-        pro_nombE.setText(texto+" "+opMer.getText());
+        pro_nombE.setText(texto);
 //        numEtiquE.setValorInt(1);
         numEtiquE.requestFocus();
     }
     @Override
-    public void iniciarVentana() throws Exception {
-        cli_codiE.iniciar(dtStat,this,vl,EU);
-        cli_codiE.setCampoReparto(true);
+    public void iniciarVentana() throws Exception {        
+        fechaE.setDate(Formatear.getDateAct());
         activarEventos();
     }
     private void activarEventos()
-    {
-        opMer.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e)
-                {
-                   ponTexto(botonTexto);
-                }
-            });  
+    {       
          Bimprimir.addActionListener(new ActionListener()
             {
                 @Override
@@ -161,39 +145,31 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
     {
         try
         {
-            try
+             
+            if (etiqInicioE.isNull())
             {
-                if (cli_codiE.getValorInt()==9999)
-                {
-                    cli_codiE.setTextReparto("");
-                }
-                else
-                {
-                    if (! cli_codiE.controlar())
-                    {
-                        msgBox("Introduzca codigo cliente");
-                        return;
-                    }
-                }
-                if (numEtiquE.isNull())
-                {
-                    msgBox("Introduzca numero copias");
-                    return;                    
-                }
-            } catch (SQLException ex)
+                msgBox("Etiqueta Inicial debe ser superior a 0");
+                etiqInicioE.setValorInt(1);
+                etiqInicioE.requestFocus();
+                return;                    
+            }
+            if (fechaE.isNull() || fechaE.getError())
             {
-                Error("Error al controlar cliente", ex);
+                msgBox("Fecha No valida");
+                fechaE.setDate(Formatear.getDateAct());
+                fechaE.requestFocus();
+                return;                                    
+            }
+            if (numEtiquE.isNull())
+            {
+                msgBox("Introduzca numero copias");
+                numEtiquE.requestFocus();
+                return;                    
             }
             java.util.HashMap mp = new java.util.HashMap();
-            JasperReport jr = Listados.getJasperReport(EU, "etiqMarcar");
+            JasperReport jr = Listados.getJasperReport(EU, "etiqSolomillos");
             numHoja=0;
-//            mp.put("cli_codrep1",cli_codiE.getCodigoReparto());
-//            mp.put("cli_codrep2",cli_codiE.getCodigoReparto());
-//            mp.put("pro_nomb1",pro_nombE.getText());
-//            mp.put("pro_nomb2",pro_nombE.getText());
-//            mp.put("cli_nomb1",Formatear.cortar(cli_codiE.getTextNomb(),15));
-//            mp.put("cli_nomb2",Formatear.cortar(cli_codiE.getTextNomb(),15));
-                     
+            numeroEtiq=etiqInicioE.getValorInt();
             JasperPrint jp = JasperFillManager.fillReport(jr, mp, this);
             if (EU.getSimulaPrint())
                 return;
@@ -214,97 +190,62 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
     private void initComponents() {
 
         Pprinc = new gnu.chu.controles.CPanel();
-        cli_codiL = new gnu.chu.controles.CLabel();
-        cli_codiE = new gnu.chu.camposdb.cliPanel();
         Pbotones = new gnu.chu.controles.CPanel();
         cLabel2 = new gnu.chu.controles.CLabel();
         numEtiquE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
         Bimprimir = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
         cLabel1 = new gnu.chu.controles.CLabel();
         pro_nombE = new gnu.chu.controles.CTextField(Types.CHAR,"X",15);
-        opImpNomb = new gnu.chu.controles.CCheckBox();
-        opMer = new gnu.chu.controles.CComboBox();
-        cli_codrepE = new gnu.chu.controles.CTextField(Types.CHAR,"X",5);
-        cli_codiL1 = new gnu.chu.controles.CLabel();
+        cLabel3 = new gnu.chu.controles.CLabel();
+        fechaE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
+        cLabel4 = new gnu.chu.controles.CLabel();
+        etiqInicioE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
 
         Pprinc.setLayout(null);
-
-        cli_codiL.setText("Cod. Cliente");
-        cli_codiL.setPreferredSize(new java.awt.Dimension(39, 18));
-        Pprinc.add(cli_codiL);
-        cli_codiL.setBounds(10, 20, 80, 18);
-        Pprinc.add(cli_codiE);
-        cli_codiE.setBounds(90, 20, 450, 17);
 
         Pbotones.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
         Pbotones.setLayout(null);
         Pprinc.add(Pbotones);
-        Pbotones.setBounds(10, 40, 530, 90);
+        Pbotones.setBounds(10, 10, 530, 120);
 
-        cLabel2.setText("Numero Etiquetas");
+        cLabel2.setText("Etiqueta Inicial");
         Pprinc.add(cLabel2);
-        cLabel2.setBounds(390, 135, 110, 17);
+        cLabel2.setBounds(400, 132, 90, 17);
 
         numEtiquE.setText("1");
         Pprinc.add(numEtiquE);
-        numEtiquE.setBounds(500, 135, 40, 17);
+        numEtiquE.setBounds(120, 152, 40, 17);
 
         Bimprimir.setText("Imprimir");
         Pprinc.add(Bimprimir);
-        Bimprimir.setBounds(240, 160, 90, 30);
+        Bimprimir.setBounds(170, 152, 90, 30);
 
-        cLabel1.setText("Producto");
+        cLabel1.setText("Fecha");
         Pprinc.add(cLabel1);
-        cLabel1.setBounds(130, 135, 60, 17);
+        cLabel1.setBounds(270, 132, 40, 17);
 
         pro_nombE.setMayusc(true);
         Pprinc.add(pro_nombE);
-        pro_nombE.setBounds(190, 135, 190, 17);
+        pro_nombE.setBounds(70, 132, 190, 17);
 
-        opImpNomb.setText("Imprimir Nombre Cliente");
-        opImpNomb.setToolTipText("Imprimir Nombre corto Cliente");
-        Pprinc.add(opImpNomb);
-        opImpNomb.setBounds(10, 160, 170, 17);
+        cLabel3.setText("Producto");
+        Pprinc.add(cLabel3);
+        cLabel3.setBounds(10, 132, 60, 17);
+        Pprinc.add(fechaE);
+        fechaE.setBounds(310, 132, 60, 17);
 
-        opMer.addItem("");
-        opMer.addItem("C/MER");
-        opMer.addItem("S/MER");
-        Pprinc.add(opMer);
-        opMer.setBounds(10, 135, 110, 17);
+        cLabel4.setText("Numero Etiquetas");
+        Pprinc.add(cLabel4);
+        cLabel4.setBounds(10, 152, 110, 17);
 
-        cli_codrepE.setMayusc(true);
-        cli_codrepE.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                cli_codrepEFocusLost(evt);
-            }
-        });
-        Pprinc.add(cli_codrepE);
-        cli_codrepE.setBounds(90, 0, 40, 17);
-
-        cli_codiL1.setText("Cod. Reparto");
-        cli_codiL1.setPreferredSize(new java.awt.Dimension(39, 18));
-        Pprinc.add(cli_codiL1);
-        cli_codiL1.setBounds(10, 0, 80, 18);
+        etiqInicioE.setText("1");
+        Pprinc.add(etiqInicioE);
+        etiqInicioE.setBounds(500, 132, 40, 17);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void cli_codrepEFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cli_codrepEFocusLost
-        try
-        {
-            if (! cli_codrepE.hasCambio())
-                return;
-            cli_codrepE.resetCambio();
-            int cliCodi=pdclien.getCodigoCliente(dtStat,cli_codrepE.getText());
-            if (cliCodi>0)
-                cli_codiE.setValorInt(cliCodi);
-        } catch (SQLException ex)
-        {
-            Error("Error al buscar cliente a partir del codigo", ex);
-        }
-    }//GEN-LAST:event_cli_codrepEFocusLost
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -313,18 +254,18 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel2;
-    private gnu.chu.camposdb.cliPanel cli_codiE;
-    private gnu.chu.controles.CLabel cli_codiL;
-    private gnu.chu.controles.CLabel cli_codiL1;
-    private gnu.chu.controles.CTextField cli_codrepE;
+    private gnu.chu.controles.CLabel cLabel3;
+    private gnu.chu.controles.CLabel cLabel4;
+    private gnu.chu.controles.CTextField etiqInicioE;
+    private gnu.chu.controles.CTextField fechaE;
     private gnu.chu.controles.CTextField numEtiquE;
-    private gnu.chu.controles.CCheckBox opImpNomb;
-    private gnu.chu.controles.CComboBox opMer;
     private gnu.chu.controles.CTextField pro_nombE;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public boolean next() throws JRException {
+        if (numHoja>0)
+            numeroEtiq++;
         numHoja++;
         return numHoja<=numEtiquE.getValorInt();            
     }
@@ -332,17 +273,23 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
     @Override
     public Object getFieldValue(JRField jrf) throws JRException {
        
-        String campo = jrf.getName().toLowerCase();
-        switch (campo)
+        try
         {
-          case "cli_codrep":
-              return cli_codiE.getCodigoReparto();                  
-          case "pro_nomb":
-              return  pro_nombE.getText();
-          case "cli_nomb":
-              return opImpNomb.isSelected()?Formatear.cortar(cli_codiE.getTextNomb(),15):null;
+            String campo = jrf.getName().toLowerCase();
+            switch (campo)
+            {
+                case "fecha":
+                    return fechaE.getDate();
+                case "pro_nomb":
+                    return  pro_nombE.getText();
+                case "numero":
+                    return numeroEtiq;
+            }
+            return null;
+        } catch (ParseException ex)
+        {
+            throw new JRException("Error al buscar Fecha: "+ex.getMessage());
         }
-        return null;
     }
       
 }

@@ -32,6 +32,7 @@ import java.util.*;
 import gnu.chu.Menu.*;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.interfaces.ejecutable;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import javax.swing.JMenuItem;
 import javax.swing.event.ListSelectionListener;
@@ -39,17 +40,29 @@ import javax.swing.event.ListSelectionEvent;
 
 public class pdregalm extends ventanaPad implements PAD
 {
+  final int JT_PROCOD=0;
+  final int JT_PRONOMB=1;
+  final int JT_FECHA=2;
+  final int JT_EJERC=3;
+  final int JT_SERIE=4;
+  final int JT_LOTE=5;
+  final int JT_INDIV=6;
+  final int JT_TIPREG=7;
+  final int JT_UNID=8;
+  final int JT_CANTI=9;
+  final int JT_COSTO=10;
+  final int JT_ID=11;
   JMenuItem MirMvto = new JMenuItem("Ver Mvtos");
   paregalm pRegAlm; // Panel Regularizaciones Almacen
   int ROWSGRID=20;
   String QfecIni,QfecFin,QproCodi,QtirCodi;
   String afeStk;
   CPanel Pprinc = new CPanel();
-//  CButton Baceptar = new CButton("Aceptar",Iconos.getImageIcon("check"));
+  CButton BImportar = new CButton("Importar",Iconos.getImageIcon("choose"));
 //  CButton Bcancelar = new CButton("Cancelar",Iconos.getImageIcon("cancel"));
 
   String s;
-  Cgrid jt = new Cgrid(13);
+  Cgrid jt = new Cgrid(12);
   CPanel Pcond = new CPanel();
   CLabel cLabel12 = new CLabel();
   CTextField feciniE = new CTextField(Types.DATE,"dd-MM-yyyy");
@@ -134,7 +147,7 @@ public class pdregalm extends ventanaPad implements PAD
    {
      iniciarFrame();
      this.setSize(new Dimension(583, 562));
-     this.setVersion("2016-01-16 "+(P_ADMIN?"  ADMIN":""));
+     this.setVersion("2017-11-12 "+(P_ADMIN?"  ADMIN":""));
      Pprinc.setDefButton(Baceptar);
      Pprinc.setDefButtonDisable(false);
      Pprinc.setLayout(null);
@@ -177,6 +190,9 @@ public class pdregalm extends ventanaPad implements PAD
     Baceptar.setMaximumSize(new Dimension(103, 24));
     Baceptar.setMinimumSize(new Dimension(103, 24));
     Baceptar.setPreferredSize(new Dimension(103, 24));
+    BImportar.setMaximumSize(new Dimension(103, 24));
+    BImportar.setMinimumSize(new Dimension(103, 24));
+    BImportar.setPreferredSize(new Dimension(103, 24));
     Bcancelar.setMaximumSize(new Dimension(103, 24));
     Bcancelar.setMinimumSize(new Dimension(103, 24));
     Bcancelar.setPreferredSize(new Dimension(103, 24));
@@ -190,7 +206,7 @@ public class pdregalm extends ventanaPad implements PAD
     v.add("Nombre Prod"); // 1
     v.add("Fecha"); // 2
     v.add("Ejer"); // 3
-    v.add("Emp"); // 4
+//    v.add("Emp"); // 4
     v.add("Serie"); // 5
     v.add("Lote"); // 6
     v.add("Ind");  // 7
@@ -200,8 +216,8 @@ public class pdregalm extends ventanaPad implements PAD
     v.add("Precio"); // 11
     v.add("rowid"); // 12
     jt.setCabecera(v);
-    jt.setAnchoColumna(new int[]{40,150,90,40,40,30,50,40,90,60,60,60,1});
-    jt.setAlinearColumna(new int[]{0,0,1,2,2,1,2,2,0,2,2,2,2});
+    jt.setAnchoColumna(new int[]{40,150,90,40,30,50,40,90,60,60,60,1});
+    jt.setAlinearColumna(new int[]{0,0,1,2,1,2,2,0,2,2,2,2});
     jt.setAjustarGrid(true);
     jt.getPopMenu().add(MirMvto);
     pRegAlm.setPreferredSize(new Dimension(519, 172));
@@ -225,16 +241,19 @@ public class pdregalm extends ventanaPad implements PAD
     linPantE.setBounds(new Rectangle(442, 5, 40, 16));
     this.getContentPane().add(Pprinc,  BorderLayout.CENTER);
     Pprinc.setLayout(gridBagLayout1);
-    Pprinc.add(Pcond,    new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0
+    Pprinc.add(Pcond,    new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-    Pprinc.add(jt,       new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0
+    Pprinc.add(jt,       new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-    Pprinc.add(pRegAlm,        new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0
+    Pprinc.add(pRegAlm,        new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 3, 0), 0, 0));
-    Pprinc.add(Bcancelar,     new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 50), 0, 0));
     Pprinc.add(Baceptar,     new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 50, 0, 0), 0, 0));
+    Pprinc.add(Bcancelar,     new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 50), 0, 0));
+    Pprinc.add(BImportar,     new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 50, 0, 0), 0, 0));
+
     Pcond.add(cLabel12, null);
     Pcond.add(feciniE, null);
     Pcond.add(cLabel15, null);
@@ -295,6 +314,13 @@ public class pdregalm extends ventanaPad implements PAD
               mostrarMvtos(jt.getSelectedRowDisab());
           }
       });
+      BImportar.addActionListener(new java.awt.event.ActionListener()
+      {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
+             importarRegula();
+          }
+      });
    linPantE.addFocusListener(new FocusAdapter()
    {
             @Override
@@ -335,7 +361,7 @@ public class pdregalm extends ventanaPad implements PAD
         if (e.getValueIsAdjusting() || !jt.isEnabled())
           return;
         try {
-          pRegAlm.verDatReg(jt.getValInt(12));
+          pRegAlm.verDatReg(jt.getValorInt(JT_ID));
         } catch (Exception k)
         {
           Error("Error al Ver Datos Regularizacion",k);
@@ -355,18 +381,21 @@ public class pdregalm extends ventanaPad implements PAD
    }
  }
  void mostrarMvtos(int linea) {
+    if (jf==null)
+        return;
     ejecutable prog;
     if ((prog = jf.gestor.getProceso(Comvalm.getNombreClase())) == null)
         return;
     gnu.chu.anjelica.almacen.Comvalm cm = (gnu.chu.anjelica.almacen.Comvalm) prog;//   
-    cm.setProCodi(jt.getValorInt(linea,0));
-    cm.setLote(jt.getValorInt(linea, 6));
-    cm.setIndividuo(jt.getValorInt(linea, 7));
-    cm.setSerie(jt.getValString(linea, 5));
-    cm.setEjercicio(jt.getValorInt(linea, 3));
+    cm.setProCodi(jt.getValorInt(linea,JT_PROCOD));
+    cm.setLote(jt.getValorInt(linea, JT_LOTE));
+    cm.setIndividuo(jt.getValorInt(linea, JT_INDIV));
+    cm.setSerie(jt.getValString(linea, JT_SERIE));
+    cm.setEjercicio(jt.getValorInt(linea, JT_EJERC));
     cm.ejecutaConsulta();
     jf.gestor.ir(cm);
   }
+  @Override
  public void PADAnterior(){
    try
    {
@@ -502,7 +531,7 @@ public void ej_query()
    }
    try
    {
-     s = "select * from regalmacen WHERE rgs_nume = " + jt.getValorInt(12);
+     s = "select * from regalmacen WHERE rgs_nume = " + jt.getValorInt(JT_ID);
      if (!dtAdd.select(s, true))
      {
        mensaje("");
@@ -528,7 +557,7 @@ public void ej_query()
    try
    {
      pRegAlm.borrarRegistro(dtAdd.getDouble("rgs_kilos"),dtAdd.getInt("rgs_canti"),dtAdd.getInt("tir_codi"));
-     pRegAlm.setRegNume(jt.getValorInt(12));
+     pRegAlm.setRegNume(jt.getValorInt(JT_ID));
      pRegAlm.insRegistro();
      ctUp.commit();
      mensaje("");
@@ -561,10 +590,54 @@ public void ej_query()
  public void PADAddNew(){
    activar(true,navegador.ADDNEW);
    jt.setEnabled(false);
+   BImportar.setEnabled(true);
    pRegAlm.addNew();
    mensaje("Insertando NUEVO Registro");
  }
-
+ void importarRegula()
+ {
+      try
+      {
+          if (pRegAlm.cci_fecconE.isNull() )
+          {
+              msgBox("Introduzca Fecha Movimiento");
+              pRegAlm.cci_fecconE.requestFocus();
+              return;
+          }
+          if (!pRegAlm.tir_codiE.controla(true))
+          {
+              msgBox("Tipo Regularización No valido");
+              pRegAlm.tir_codiE.requestFocus();
+              return;
+          }
+          s="select * from v_coninvent where cci_feccon='"+pRegAlm.cci_fecconE.getFechaDB()+"'";
+          if (!dtCon1.select(s))
+          {
+              msgBox("No encontraro Control Inventario en esta fecha");
+              return;
+          }
+          int nReg=0;
+          do
+          {
+              paregalm.insRegularizacion(dtAdd, pRegAlm.cci_fecconE.getDate(),
+                  dtCon1.getInt("pro_codi"),dtCon1.getInt("prp_empcod"),dtCon1.getInt("prp_ano") ,
+                  dtCon1.getString("prp_seri"), dtCon1.getInt("prp_part"),  dtCon1.getInt("prp_indi"),
+                   dtCon1.getInt("lci_numind"),dtCon1.getDouble("lci_peso"),dtCon1.getInt("alm_codi"),
+                  pRegAlm.tir_codiE.getValorInt(),0,"Importado Inventario:"+pRegAlm.cci_fecconE.getFecha("dd-MM-yy"),
+                  0,null,0,0,1,0,0,"",0,EU.usuario,0,0);
+              nReg++;
+          } while (dtCon1.next());
+          dtAdd.commit();
+           msgBox("Importado Control inventario. Numero Registros: "+nReg);
+           nav.setPulsado(navegador.NINGUNO);
+           this.setEnabled(true);
+           activaTodo();
+           jt.setEnabled(true);
+      } catch (ParseException | SQLException ex)
+      {
+          Error("Error al Importar Inventario",ex);
+      }
+ }
 
     @Override
  public void ej_addnew1()
@@ -613,7 +686,7 @@ public void ej_query()
    }
    try
    {
-     s = "select * from regalmacen WHERE rgs_nume = " + jt.getValorInt(12);
+     s = "select * from regalmacen WHERE rgs_nume = " + jt.getValorInt(JT_ID);
      if (!dtAdd.select(s, true))
      {
        mensaje("");
@@ -676,6 +749,7 @@ public void ej_query()
  {
    Baceptar.setEnabled(b);
    Bcancelar.setEnabled(b);
+   BImportar.setEnabled(false);
    linPantE.setEnabled(!b);
    if (modo!=navegador.ADDNEW)
    {
@@ -712,7 +786,7 @@ public void ej_query()
      }
      jt.requestFocusInicio();
      jt.setEnabled(true);
-     pRegAlm.verDatReg(jt.getValorInt(12));
+     pRegAlm.verDatReg(jt.getValorInt(JT_ID));
    }
    catch (Exception k)
    {
@@ -731,9 +805,9 @@ public void ej_query()
 
    v.add(dtCon1.getString("pro_codi")); // 0
    v.add(dtCon1.getString("pro_nomb")); // 1
-   v.add(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(dtCon1.getTimeStamp("rgs_fecha"))); // 2
+   v.add(new SimpleDateFormat("dd-MM-yy HH:mm").format(dtCon1.getTimeStamp("rgs_fecha"))); // 2
    v.add(dtCon1.getString("eje_nume")); // 3
-   v.add(dtCon1.getString("emp_codi")); // 4
+//   v.add(dtCon1.getString("emp_codi")); // 4
    v.add(dtCon1.getString("pro_serie")); // 5
    v.add(dtCon1.getString("pro_nupar")); // 6
    v.add(dtCon1.getString("pro_numind")); // 7
@@ -753,8 +827,7 @@ public void ej_query()
  
     @Override
  public boolean checkAddNew()
- {
-   
+ {   
     return pRegAlm.checkCampos();
  }
   public static String getNombreClase()

@@ -865,7 +865,7 @@ public class paregalm extends CPanel {
             
             if (tir_codiE.getTextCombo().endsWith("-)") && cci_horconE.getText().equals("0") && cci_minconE.getText().equals("0") )
             {
-                Timestamp feulmv=stkPart.getFechaUltMvt(dtStat,pro_codiE.getValorInt(),
+                Timestamp feulmv=ActualStkPart.getFechaUltMvt(dtStat,pro_codiE.getValorInt(),
                             deo_ejelotE.getValorInt(),EU.em_cod,
                             deo_serlotE.getText(),
                             pro_loteE.getValorInt(), pro_numindE.getValorInt(),
