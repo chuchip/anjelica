@@ -223,7 +223,7 @@ public class utildesp
             int proIndi,
             int almCodi, DatosTabla dtCon1, DatosTabla dtStat,
             EntornoUsuario EU) throws SQLException {
-        setBuscaCompra(false);
+        setBuscaCompra(true);
         return buscaDatosIndiv(serie, proCodi, empLot, ejeLot, proLote, proIndi, almCodi, dtCon1, dtStat, EU);
     }
     
@@ -1292,10 +1292,15 @@ public class utildesp
 //            logo=null;
 //        else
             logo=etiq.getLogotipo();
-        CodigoBarras codBarras = new CodigoBarras(indiceEti,ejloge,seloge,nuloge,proCodi,numInd,kilos,grupoLote);
+           
+        CodigoBarras codBarras = new CodigoBarras(indiceEti,ejloge,seloge,nuloge,proCodi,
+             TIPOETIQ==etiqueta.ETIQINT?0:numInd,
+            TIPOETIQ==etiqueta.ETIQINT?0:kilos,
+            grupoLote);
       
             
-        etiq.iniciar(codBarras.getCodBarra() ,codBarras.getLote() ,
+        etiq.iniciar(TIPOETIQ !=etiqueta.ETIQINT?codBarras.getCodBarra():codBarras.getLote(false),
+            codBarras.getLote(TIPOETIQ!=etiqueta.ETIQINT)  ,
                 "" + proCodi, nombArt,
                 paisNacimientoNombre, paisEngordeNombre, despiezadoE,
                 ntrazaE,kilos,

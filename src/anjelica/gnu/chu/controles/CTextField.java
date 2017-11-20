@@ -432,6 +432,8 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
 
   public boolean leePesoBasc(double valorDec)
   {
+    if (getTipoCampo()==Types.DATE)
+         return false;
     if (valorDec == 0)
     {
       if (bascula != null)
@@ -952,7 +954,11 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
       }
     }
 }
-
+/**
+ * Devuelve el componente si hay un error en el campo de Texto (Fecha mal introducida, numeros con texto,etc)
+ * @return Compenente si hay un error en la configuración. Null en caso de que no haya error.
+ */
+  @Override
   public Component getErrorConf()
   {
     if (errorFoco)
@@ -960,6 +966,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
     else
       return null;
   }
+  @Override
   public void resetTexto()
   {
     setText("");

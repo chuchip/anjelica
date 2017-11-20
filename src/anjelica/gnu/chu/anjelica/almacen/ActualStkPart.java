@@ -757,7 +757,7 @@ public class ActualStkPart
    * @param kilos int
    * @param unids int
    * @throws SQLException
-   * @return boolean
+   * @return boolean TRUE si hay stock en kilos y unidades suficientes.
    */
   public static boolean checkStock(DatosTabla dt, int proCodi, int ejeLot,int empLot,
                             String serLot, int numLot,

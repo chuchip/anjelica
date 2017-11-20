@@ -196,7 +196,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.CTextField" name="numEtiqE">
+        <Component class="gnu.chu.controles.CTextField" name="numCopiasE">
           <Properties>
             <Property name="text" type="java.lang.String" value="1"/>
           </Properties>

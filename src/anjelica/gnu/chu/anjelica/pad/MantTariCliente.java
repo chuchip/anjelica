@@ -23,6 +23,7 @@ package gnu.chu.anjelica.pad;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.listados.Listados;
+import static gnu.chu.anjelica.pad.MantTarifa.getTarifaPortaPapeles;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.sql.DatosTabla;
@@ -217,95 +218,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
          String s=mensajes.mensajeExplica("Copie y pegue", "Codigo:Precio","");
          if (s==null)
              return;
-         int nLen=s.length();
-         int modo=0; // Buscando codigo producto
-         int inicProd,finProd;
-         int codProd=0;
-         double precio;
-              
-        char sep=new DecimalFormatSymbols(new Locale("es","","")).getDecimalSeparator();
-        NumberFormat nf = NumberFormat.getInstance(new Locale("es","",""));
-         for (int n=0;n<nLen;n++)
-         {
-            if (modo==0)
-            {              
-              if (Character.isDigit(s.charAt(n)) )
-              {
-                  inicProd=n;
-                  finProd=0;
-                  for (;n<nLen;n++)
-                  {
-//                      if (!Character.isAlphabetic(s.charAt(n)))
-//                          break;
-                      if (s.charAt(n)==':')
-                      {
-                          finProd=n;
-                          break;
-                      }
-                  }
-                  if (finProd>0)
-                  {
-                      try {
-                        codProd=Integer.valueOf(s.substring(inicProd,finProd).trim());
-                      } catch (NumberFormatException ex )
-                      {
-                         continue;
-                      }
-                      modo=1; // Buscando precio
-                      continue;
-                  }
-              }
-            }
-            if (modo==1)
-            { // Buscando precio
-                 if (!Character.isDigit(s.charAt(n)) )
-                 {
-                     modo=0;
-                     continue;
-                 }
-//                if (!Character.isAlphabetic(s.charAt(n)))
-//                { 
-//                    modo=0;
-//                    continue;
-//                }
-            
-                  inicProd=n;
-                  finProd=0;
-                  for (;n<nLen;n++)
-                  {
-//                      if (!Character.isAlphabetic(s.charAt(n)))
-//                          break;
-                     if (!Character.isDigit(s.charAt(n)) && s.charAt(n)!=sep )
-                      {
-                          finProd=n;
-                          break;
-                      }
-                  }
-                  if (finProd>0 && finProd>inicProd)
-                  {                      
-                      try                   
-                      {
-                          precio=nf.parse(s.substring(inicProd,finProd).trim()).doubleValue();
-                      } catch (ParseException ex)
-                      {
-                          modo=0;
-                          continue;
-                      }
-                      pro_codartE.setText(""+codProd);
-                      pro_codartE.pro_codiE_focusLost();
-                      ArrayList v=new ArrayList();
-                      v.add(pro_codartE.getText());
-                      v.add(pro_codartE.getTextNomb());
-                      v.add(precio);
-                      v.add("Importado");
-                      v.add(0);
-                      jt.addLinea(v);
-                  }
-                  modo=0; // Buscando codigo
-            }
-            
-         }
-         
+        jt.setDatos(getTarifaPortaPapeles(s,pro_codartE));     
          
     }
     void Bimpri_actionPerformed()

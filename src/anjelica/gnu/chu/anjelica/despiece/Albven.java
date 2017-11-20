@@ -286,7 +286,7 @@ public class Albven extends ventana {
        jtDesg.removeAllDatos();
        String s=pdalbara.getStrSqlDesg(empCodi, avc_numeE.geValorIntAno() ,
                avc_numeE.getTextSerie(),avc_numeE.geValorIntNume(),-1,jtLin.getValorInt(1),
-               0,(String) null,0,false);
+               0,(String) null,0,0,false);
   
        try  {
         if (! dtCon1.select(s))

@@ -192,7 +192,14 @@ public class proPanel extends CPanel
   {
     pro_codiE.resetValor();
   }
-  
+  /**
+   * Devuelve el valor anterior del codigo de producto.
+   * @return 
+   */
+  public int getCopiaInt()
+  {
+      return pro_codiE.getCopiaInt();
+  }
     @Override
   public boolean hasCambio()
   {

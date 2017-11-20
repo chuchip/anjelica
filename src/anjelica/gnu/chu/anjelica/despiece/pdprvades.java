@@ -176,7 +176,7 @@ public class pdprvades extends ventanaPad implements PAD
       jt.setMaximumSize(new Dimension(467, 400));
       jt.setMinimumSize(new Dimension(467, 400));
       jt.setPreferredSize(new Dimension(467, 400));
-      jt.setAjustarGrid(true);
+
       jt.setConfigurar("gnu.chu.anjelica.depiece.pdprvades", EU, dtStat);
 
       iniciar(this);

@@ -1151,10 +1151,10 @@ public class CGridEditable extends Cgrid implements CQuery {
     switch (e.getKeyCode())
     {
       case KeyEvent.VK_RIGHT:
-        procesaTeclaRigth(tf, table, col, row);
+        procesaTeclaRigth(e,tf, table, col, row);
         return;
       case KeyEvent.VK_LEFT:
-        procesaTeclaLeft(tf, table, col, row);
+        procesaTeclaLeft(e,tf, table, col, row);
         return;
       case KeyEvent.VK_DOWN: // Baja de Linea
  //       if (!isLkBox)
@@ -1215,9 +1215,16 @@ public class CGridEditable extends Cgrid implements CQuery {
   {
     e.consume();
     if (tCampo.get(columna).equals("T"))
+    {
       ( (CTextField) campos.get(columna)).leePesoBasc();
-    if (tCampo.get(columna).equals("T"))
+      ( (CTextField) campos.get(columna)).procesaSalir();  
+      if (( (CTextField) campos.get(columna)).getError()) 
+      {
+          msgError=( (CTextField) campos.get(columna)).getMsgError();
+          return;
+      }
       this.setValor(( (CTextField) campos.get(columna)).getText(),columna);
+    }
 
 //    if (tCampo.get(nColuT).equals("T"))
 //      this.setValor(( (CTextField) campos.get(nColuT)).getText(),columna);
@@ -1226,12 +1233,23 @@ public class CGridEditable extends Cgrid implements CQuery {
       ( (CTextField) campos.get(columna)).selectAll();
   }
 
-  void procesaTeclaRigth(CTextField tf, JTable table, int col, int row)
+  void procesaTeclaRigth(KeyEvent e,CTextField tf, JTable table, int col, int row)
   {
     if (tf != null)
     {
       if (tf.getCaretPosition() != tf.getTextSuper().length())
         return;
+    }
+    int columna= getSelectedColumn();
+    if (tCampo.get(columna).equals("T"))
+    {     
+      ( (CTextField) campos.get(columna)).procesaSalir();  
+      if (( (CTextField) campos.get(columna)).getError()) 
+      {
+          msgError=( (CTextField) campos.get(columna)).getMsgError();
+          e.consume();
+          return;
+      }
     }
     if (table.getSelectedColumn() == getUltColAct())
     {
@@ -1243,23 +1261,35 @@ public class CGridEditable extends Cgrid implements CQuery {
     requestFocus(row, col);
   }
 
-  void procesaTeclaLeft(CTextField tf, JTable table, int col, int row)
+  void procesaTeclaLeft(KeyEvent ke,CTextField tf, JTable table, int col, int row)
   {
     if (tf == null)
     {
-      procesaTeclaLeft1(table, col, row);
+      procesaTeclaLeft1(ke,table, col, row);
       return;
     }
+    
     if (tf.getCaretPosition() == 0 ||
         (tf.getSelectionStart() == 0 &&
          tf.getSelectionEnd() == tf.getTextSuper().length()))
     {
-      procesaTeclaLeft1(table, col, row);
+      procesaTeclaLeft1(ke,table, col, row);
     }
   }
 
-  void procesaTeclaLeft1(JTable table, int col, int row)
+  void procesaTeclaLeft1(KeyEvent ke,JTable table, int col, int row)
   {
+    int columna= getSelectedColumn();
+    if (tCampo.get(columna).equals("T"))
+    {     
+      ( (CTextField) campos.get(columna)).procesaSalir();  
+      if (( (CTextField) campos.get(columna)).getError()) 
+      {
+          msgError=( (CTextField) campos.get(columna)).getMsgError();
+          ke.consume();
+          return;
+      }
+    }
     if (table.getSelectedColumn() == colIni)
     { // Subir de Columna
       if (getSelectedRow() > 0)
@@ -1753,6 +1783,17 @@ public class CGridEditable extends Cgrid implements CQuery {
   {    
     if (ke.isAltDown() || ke.isControlDown() || ke.isShiftDown())
       return;
+    int columna=getSelectedColumn();
+    if (tCampo.get(columna).equals("T"))
+    {     
+      ( (CTextField) campos.get(columna)).procesaSalir();  
+      if (( (CTextField) campos.get(columna)).getError()) 
+      {
+          msgError=( (CTextField) campos.get(columna)).getMsgError();
+          ke.consume();
+          return;
+      }
+    }
     int ultColAct = getUltColAct();
     if (getSelectedColumn() == ultColAct)
     {
@@ -1843,7 +1884,17 @@ public class CGridEditable extends Cgrid implements CQuery {
       return;
     eatCambioCol++;
     int colNueva;
-
+    int columna=getSelectedColumn();
+    if (tCampo.get(columna).equals("T"))
+    {     
+      ( (CTextField) campos.get(columna)).procesaSalir();  
+      if (( (CTextField) campos.get(columna)).getError()) 
+      {
+          msgError=( (CTextField) campos.get(columna)).getMsgError();
+          ke.consume();
+          return;
+      }
+    }
     if (!ke.isShiftDown())
     {
       int ultColAct = getUltColAct();

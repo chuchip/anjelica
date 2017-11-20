@@ -4,6 +4,7 @@ package gnu.chu.anjelica.despiece;
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.pdalmace;
+import static gnu.chu.anjelica.despiece.ValDespi.JTCAB_PROCODI;
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.pdprove;
@@ -741,7 +742,7 @@ public class MantInvProduc extends ventanaPad implements PAD
       
       jt.requestFocusInicio();
       verDatosGrupo();
-   
+      verCostosOrigen();
       calcTotales(true);
     }
     catch (SQLException | ParseException k)
@@ -791,7 +792,35 @@ public class MantInvProduc extends ventanaPad implements PAD
         v.add(""); // 10
         jtRes.addLinea(v);
   }
-  
+  void verCostosOrigen() throws ParseException, SQLException
+  {
+      Date fecIniSem=pdprvades.getFechaCosto(Formatear.sumaDiasDate(cip_fecinvE.getDate(),-7));
+    
+      jtCosto.removeAllDatos();
+      s="select  pro_codi,pro_nomb,sum(prp_peso) as peso,count(*) as unidades"
+          + "  from v_invproduc where cip_fecinv='"+cip_fecinvE.getFechaDB()+"'"+
+          (opTodaFecha.isSelected()?"":" and cip_codi="+cip_codiE.getValorInt())
+          +" group by pro_codi,pro_nomb " +
+          "order by pro_codi";
+      if (!dtCon1.select(s))
+          return;
+      double importe=0,peso=0;
+      double costo;
+      do
+      {
+          ArrayList v=new ArrayList();
+          v.add(dtCon1.getInt("pro_codi"));
+          v.add(dtCon1.getString("pro_nomb"));
+          v.add(dtCon1.getInt("unidades"));
+          v.add(Formatear.format(dtCon1.getDouble("peso"),"##,##9.9"));         
+          costo=pdprvades.getPrecioOrigen(dtStat, dtCon1.getInt("pro_codi"), fecIniSem);
+          v.add(Formatear.format(costo,"-,--9.99"));
+          peso+=dtCon1.getDouble("peso");
+          importe+=dtCon1.getDouble("peso")*costo;
+          jtCosto.addLinea(v);
+      } while (dtCon1.next());
+      prMedioE.setValorDec(importe/peso);
+  }
   boolean calcDatosGrupo() throws SQLException,ParseException
   {
       s="SELECT table_name FROM   information_schema.tables   WHERE    table_name = 'invprdtmp'";
@@ -1748,6 +1777,11 @@ public class MantInvProduc extends ventanaPad implements PAD
             opSoloStock = new gnu.chu.controles.CCheckBox();
             opIgnRepet = new gnu.chu.controles.CCheckBox();
             opIgnFecCad = new gnu.chu.controles.CCheckBox();
+            PCostos = new gnu.chu.controles.CPanel();
+            jtCosto = new gnu.chu.controles.Cgrid(5);
+            cLabel17 = new gnu.chu.controles.CLabel();
+            prMedioE = new gnu.chu.controles.CTextField(Types.DECIMAL, "-##9.99");
+            opTodaFecha = new javax.swing.JCheckBox();
             Ppie = new gnu.chu.controles.CPanel();
             PAcum = new gnu.chu.controles.CPanel();
             cLabel2 = new gnu.chu.controles.CLabel();
@@ -2056,6 +2090,37 @@ public class MantInvProduc extends ventanaPad implements PAD
 
             PtabPane1.addTab("Resumen", PGrupo);
 
+            PCostos.setLayout(null);
+
+            ArrayList vcosto=new ArrayList();
+            vcosto.add("Art.");
+            vcosto.add("Nombre");
+            vcosto.add("Unid");
+            vcosto.add("Kilos");
+            vcosto.add("Costo");
+            jtCosto.setCabecera(vcosto);
+            jtCosto.setAnchoColumna(new int[]{40,200,30,45,45});
+            jtCosto.setAlinearColumna(new int[]{2,0,2,2,2});
+            jtCosto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+            PCostos.add(jtCosto);
+            jtCosto.setBounds(10, 10, 720, 140);
+
+            cLabel17.setText("Precio Medio");
+            PCostos.add(cLabel17);
+            cLabel17.setBounds(20, 160, 90, 15);
+
+            prMedioE.setEditable(false);
+            prMedioE.setBackground(new java.awt.Color(0, 255, 255));
+            PCostos.add(prMedioE);
+            prMedioE.setBounds(110, 160, 50, 17);
+
+            opTodaFecha.setSelected(true);
+            opTodaFecha.setText("Toda Fecha");
+            PCostos.add(opTodaFecha);
+            opTodaFecha.setBounds(200, 160, 100, 17);
+
+            PtabPane1.addTab("Costos Origen", PCostos);
+
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy = 1;
@@ -2193,6 +2258,7 @@ public class MantInvProduc extends ventanaPad implements PAD
     private gnu.chu.controles.CButton Bressub;
     private gnu.chu.controles.CPanel PAcum;
     private gnu.chu.controles.CPanel PAcum1;
+    private gnu.chu.controles.CPanel PCostos;
     private gnu.chu.controles.CPanel PDatGrupo;
     private gnu.chu.controles.CPanel PGrupo;
     private gnu.chu.controles.CPanel Pcabe;
@@ -2207,6 +2273,7 @@ public class MantInvProduc extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel cLabel14;
     private gnu.chu.controles.CLabel cLabel15;
     private gnu.chu.controles.CLabel cLabel16;
+    private gnu.chu.controles.CLabel cLabel17;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -2221,6 +2288,7 @@ public class MantInvProduc extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField cip_fecinvE;
     private gnu.chu.controles.CTextField diasRedon;
     private gnu.chu.controles.CGridEditable jt;
+    private gnu.chu.controles.Cgrid jtCosto;
     private gnu.chu.controles.Cgrid jtRes;
     private gnu.chu.controles.CTextField kiltotE;
     private gnu.chu.controles.CTextField kiltotE1;
@@ -2237,8 +2305,10 @@ public class MantInvProduc extends ventanaPad implements PAD
     private gnu.chu.controles.CCheckBox opIgnPrv;
     private gnu.chu.controles.CCheckBox opIgnRepet;
     private gnu.chu.controles.CCheckBox opSoloStock;
+    private javax.swing.JCheckBox opTodaFecha;
     private gnu.chu.controles.CComboBox ordenFechaC;
     private gnu.chu.controles.CTextField pai_codiE;
+    private gnu.chu.controles.CTextField prMedioE;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CTextField prp_anoE;

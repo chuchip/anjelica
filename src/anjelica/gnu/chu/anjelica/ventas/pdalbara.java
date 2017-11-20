@@ -741,7 +741,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-11-05" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-11-18" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -2496,11 +2496,12 @@ public class pdalbara extends ventanaPad  implements PAD
           return;
         verDesgLinea(emp_codiE.getValorInt(), avc_anoE.getValorInt(),
                      avc_seriE.getText(), avc_numeE.getValorInt(),
-                     jt.getValorInt(jt.tableView.getSelectedRow(), 0),
+                     jt.getValorInt(jt.tableView.getSelectedRow(), JT_NULIAL),
                      jt.getValorInt(jt.tableView.getSelectedRow(), JT_PROCODI),
                      jt.getValorInt(jt.tableView.getSelectedRow(), JT_NUMPALE),
-                     jt.getValString(jt.tableView.getSelectedRow(), 2),  
-                     verPrecios?jt.getValorDec(jt.tableView.getSelectedRow(), 5):0,
+                     jt.getValString(jt.tableView.getSelectedRow(), JT_PRONOMB),  
+                     verPrecios?jt.getValorDec(jt.tableView.getSelectedRow(), JT_PRECIO):0,
+                     verPrecios?jt.getValorDec(jt.tableView.getSelectedRow(), JT_PRETAR):0,
                      jt.getValorDec(jt.tableView.getSelectedRow(), JT_CANTI)<0);
       }
     });
@@ -2856,7 +2857,7 @@ public class pdalbara extends ventanaPad  implements PAD
         despVenta.resetTipoDespiece();
     try {
         salirLineasDesglose();
-     } catch (SQLException ex) 
+     } catch (SQLException | ParseException ex) 
      {
             Error("Error al guardar linea desglose albaran",ex);
      }
@@ -3066,7 +3067,7 @@ public class pdalbara extends ventanaPad  implements PAD
         try {
             pvc_anoE.setValorInt(copeve.ejeNumeS);
             pvc_numeE.setValorInt(copeve.pvcNumeS);
-            cli_codiE.setValorInt(copeve.cliCodiS);
+            cli_codiE.setValorInt(copeve.cliCodiS);            
             cli_codiE.setNombreCliente(copeve.getCliNomb());
             cli_rutaE.setText(copeve.getRuta());
             afterFocusLostCli(false);
@@ -3075,21 +3076,26 @@ public class pdalbara extends ventanaPad  implements PAD
                 if (getAlbaranCab(dtCons, EU.em_cod, copeve.getEjercicioAlbaran(), copeve.getSerieAlbaran(), copeve.getNumeroAlbaran()))
                 {
                     verDatos(dtCons);
-                    PADEdit();
+                    PADEdit();                    
+                    jt.requestFocusFinal();
+                    jt.mueveSigLinea(JT_PROCODI);
                     return;
                 }
-            }
+            }           
         } catch (SQLException ex) {
            Error("Error al buscar ruta", ex);
         }
     }
     try {
-      actPedAlbaran();
+      actPedAlbaran();     
     } catch (SQLException | ParseException k)
     {
       Error("Error al Actualizar pedido de albaran",k);
     }
-    cli_codiE.requestFocus();
+    if (copeve.empCodiS!=0)
+        irGridLin();
+    else
+        cli_codiE.requestFocus();
   }
   /**
    * Cambia campo avc_valora para especificar si esta valorado o no el albaran.
@@ -4044,7 +4050,8 @@ public class pdalbara extends ventanaPad  implements PAD
                    jt.getValorInt(0, JT_PROCODI), 
                    jt.getValorInt(0, JT_NUMPALE),
                    jt.getValString(0, JT_PRONOMB), 
-                   verPrecios?jt.getValorDec(0, 5):0,
+                   verPrecios?jt.getValorDec(0, JT_PRECIO):0,
+                   verPrecios?jt.getValorDec(0, JT_PRETAR):0,
                    jt.getValorDec(0, JT_CANTI)<0         );
       actModPrecio();
       antPrecio = verPrecios?jt.getValorDec(5):0;
@@ -4095,7 +4102,9 @@ public class pdalbara extends ventanaPad  implements PAD
       
        verDesgLinea(empCodi,avcAno, serie, numAlb, -1, jt.getValorInt(0, JT_PROCODI),
            jt.getValorInt(0, JT_NUMPALE),jt.getValString(0, JT_PRONOMB),
-           jt.getValorDec(0, JT_PRECIO),jt.getValorDec(0, JT_CANTI)<0);
+           verPrecios?jt.getValorDec(0, JT_PRECIO):0,
+           verPrecios?jt.getValorDec(0, JT_PRETAR):0,
+           jt.getValorDec(0, JT_CANTI)<0);
 
   }
   /**
@@ -4123,7 +4132,10 @@ public class pdalbara extends ventanaPad  implements PAD
        swActDesg = true;
        verDesgLinea(empCodi,avcAno,serie,numAlb, -1, jt.getValorInt(0, JT_PROCODI),
            jt.getValorInt(0, JT_NUMPALE),
-           jt.getValString(0, JT_PRONOMB),  jt.getValorDec(0, JT_PRECIO),jt.getValorDec(0, JT_CANTI)<0);
+           jt.getValString(0, JT_PRONOMB), 
+           verPrecios?jt.getValorDec(0, JT_PRECIO):0,
+           verPrecios?jt.getValorDec(0, JT_PRETAR):0,
+            jt.getValorDec(0, JT_CANTI)<0);
   }
   /**
    * Llena el grid de lineas de albaran. Solo para albaranes deposito.
@@ -4178,7 +4190,10 @@ public class pdalbara extends ventanaPad  implements PAD
         swActDesg = true;
         verDesgLinea(0,0, "", 0, jt.getValorInt(0, 0), jt.getValorInt(0, JT_PROCODI),
             jt.getValorInt(0, JT_NUMPALE),
-             jt.getValString(0, JT_PRONOMB),jt.getValorDec(0, JT_PRECIO),jt.getValorDec(0, JT_CANTI)<0);
+             jt.getValString(0, JT_PRONOMB),
+             verPrecios?jt.getValorDec(0, JT_PRECIO):0,
+             verPrecios?jt.getValorDec(0, JT_PRETAR):0,
+             jt.getValorDec(0, JT_CANTI)<0);
     }
     
     String getStrSqlDesgPend(int empCodi, int avcAno, String serie, int numAlb,int proCodi)
@@ -4221,7 +4236,7 @@ public class pdalbara extends ventanaPad  implements PAD
    * @param swNeg indica si la cantidad es negativa
    */
   void verDesgLinea(int empCodi, int ejeNume, String serie, int numAlb,
-                    int nLin, int proCodi,int numPale,String proNomb, double precio,boolean swNeg)
+                    int nLin, int proCodi,int numPale,String proNomb, double precio,double prTarifa,boolean swNeg)
   {
     if (!swActDesg)
       return;
@@ -4241,7 +4256,8 @@ public class pdalbara extends ventanaPad  implements PAD
               default:
                   s=getStrSqlDesg(vistaInd,
                       hisRowid<=0?empCodi:-1, ejeNume, serie,
-                      hisRowid<=0?numAlb:hisRowid, nLin, proCodi,numPale, proNomb, precio,swNeg,verPrecios);
+                      hisRowid<=0?numAlb:hisRowid, nLin, proCodi,numPale, proNomb, precio,prTarifa,
+                      swNeg,verPrecios);
                   break;
           }
       }
@@ -4293,10 +4309,11 @@ public class pdalbara extends ventanaPad  implements PAD
     }
   }
   public static String getStrSqlDesg(int empCodi, int ejeNume, String serie, int numAlb, int nLin,
-                             int proCodi, int numPale,String proNomb,double precio,boolean modPrecio)
+                             int proCodi, int numPale,String proNomb,double precio,
+                             double prTarifa,boolean modPrecio)
   {
       return getStrSqlDesg(VISTAIND ,empCodi,ejeNume,serie, numAlb, nLin,proCodi, numPale,
-          proNomb, precio, modPrecio,false);
+          proNomb, precio,prTarifa, modPrecio,false);
   }
 /**
  * Devuelve sentencia SQL para mostras los individuos sobre un albaran normal
@@ -4312,12 +4329,14 @@ public class pdalbara extends ventanaPad  implements PAD
  * @param numPale
  * @param proNomb Nombre de producto
  * @param precio
- * @param modPrecio Sacar precio (true=si)
+ * @param prTarifa
+ * @param verPrecio Sacar precio (true=si)
  * @return
  */
   public static String getStrSqlDesg(String vistaDet,
       int empCodi, int ejeNume, String serie, int numAlb, int nLin,
-                             int proCodi,int numPale, String proNomb,double precio,boolean swNegat,boolean modPrecio)
+                             int proCodi,int numPale, String proNomb,double precio,
+                             double prTarifa,boolean swNegat,boolean verPrecio)
   {
     return "SELECT p.pro_codi,p.pro_nomb,a.avp_emplot,a.avp_ejelot,a.avp_serlot, " +
         " a.avp_numpar,a.avp_numind,a.avp_canti,a.avp_canbru,a.avp_canori,avp_numuni,a.avp_numlin "+
@@ -4331,7 +4350,8 @@ public class pdalbara extends ventanaPad  implements PAD
          " and a.pro_codi = " + proCodi +
         " and avl_canti  "+(swNegat?"<=":">=")+"0"+
          (proNomb==null?"":" and (a.pro_nomb is null or a.pro_nomb = '"+proNomb+"')")+
-         (modPrecio?" and a.avl_prven = " + precio:"")) +
+         (verPrecio?" and a.avl_prven = " + precio+
+           " and a.tar_preci = " + prTarifa:""))+
           " and p.pro_codi = a.pro_codi " +      
         " order by a.avp_numlin";
   }
@@ -6491,7 +6511,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
   }
   
-  void salirLineasDesglose() throws SQLException
+  void salirLineasDesglose() throws SQLException,ParseException
   {
         guardaLinDes(jt.getSelectedRow());
         if (jt.getSelectedColumn() == JT_KILOS &&  ! verPrecios)
@@ -6720,7 +6740,7 @@ public class pdalbara extends ventanaPad  implements PAD
    * @param nLiGrAl int Nº de Linea de Albaran
    * @throws Exception Error en DB
    */
-  void guardaLinDes(int nLiGrAl) throws SQLException
+  void guardaLinDes(int nLiGrAl) throws SQLException,ParseException
   {
      dtAdd.commit(); // Para resetear el current_timestamp
     String condWhere;
@@ -7262,17 +7282,7 @@ public class pdalbara extends ventanaPad  implements PAD
           if (!checkIndiv(row,!swEntdepos ||  ! P_ADMIN || avp_cantiE.getValorDec()==0 ))
               return 6; // A lote de Producto.
          
-          if (! swEntdepos)
-          { // No es entrega de desposito
-              if (avp_cantiE.isEditable() && ! isEmpPlanta)
-              {
-                if ( dtCon1.getDouble("stp_kilact") > avp_cantiE.getValorDec() + 0.1
-                      && avp_numuniE.getValorInt() == 1) {
-//                  lanzaDespVentas(row);
-                }
-              }       
-          }
-          else
+          if ( swEntdepos)
           { // Es entrega de deposito.
               if ( avc_numeE.getValorInt() == 0)
               {
@@ -7302,7 +7312,7 @@ public class pdalbara extends ventanaPad  implements PAD
    * @param swActual Actualizar campos en grid?
    * @return false si el individuo no es valido
    */
-    private boolean checkIndiv(int row,boolean swActual) throws SQLException
+    private boolean checkIndiv(int row,boolean swActual) throws SQLException,ParseException
     {
         double unid = 0;
         double canti = 0;
@@ -7449,7 +7459,9 @@ public class pdalbara extends ventanaPad  implements PAD
                             + " Unidades Disponibles");
                     return false;
                 }
-            }
+            }            
+            if (!P_ADMIN && Formatear.comparaFechas(canStk.getFechaCad(),avc_fecalbE.getDate())<10)
+                msgBox("!Atencion! Menos de 10 dias para cumplirse la Fecha Caducidad");
         }
         else
         { //Es entrega de mercancia

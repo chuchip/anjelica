@@ -484,7 +484,7 @@ public class RepEtiqueta extends ventana
             utDesp.getConservar(), utDesp.getMatadero(),
             utDesp.getFechaProduccion(),utDesp.getFechaProduccion(), utDesp.getFecCaduc(),
             utDesp.getFecSacrif());
-        
+        etiq.setNumCopias(numCopiasE.getValorInt());
         etiq.listarDefec();
               
         pro_codiE.requestFocus();
@@ -531,7 +531,7 @@ public class RepEtiqueta extends ventana
         trazPanel = new gnu.chu.camposdb.DatTrazPanel();
         Baceptar = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("print"));
         cLabel10 = new gnu.chu.controles.CLabel();
-        numEtiqE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
+        numCopiasE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         cLabel11 = new gnu.chu.controles.CLabel();
         tipetiqE = new gnu.chu.controles.CComboBox();
         Bindi = new gnu.chu.controles.CButton();
@@ -596,9 +596,9 @@ public class RepEtiqueta extends ventana
         Pprinc.add(cLabel10);
         cLabel10.setBounds(10, 2, 60, 17);
 
-        numEtiqE.setText("1");
-        Pprinc.add(numEtiqE);
-        numEtiqE.setBounds(110, 230, 30, 17);
+        numCopiasE.setText("1");
+        Pprinc.add(numCopiasE);
+        numCopiasE.setBounds(110, 230, 30, 17);
 
         cLabel11.setText("Num. Etiquetas ");
         Pprinc.add(cLabel11);
@@ -643,7 +643,7 @@ public class RepEtiqueta extends ventana
     private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CTextField deo_kilosE;
-    private gnu.chu.controles.CTextField numEtiqE;
+    private gnu.chu.controles.CTextField numCopiasE;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CTextField pro_ejercE;
     private gnu.chu.controles.CTextField pro_loteE;

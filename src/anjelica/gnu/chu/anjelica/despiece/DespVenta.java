@@ -28,6 +28,8 @@ package gnu.chu.anjelica.despiece;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.pdalmace;
+import static gnu.chu.anjelica.despiece.MantDesp.JTLIN_PROCODI;
+import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.sql.Desorilin;
 import gnu.chu.anjelica.sql.DesorilinId;
@@ -62,6 +64,7 @@ import java.util.Iterator;
 
 
 public class DespVenta extends ventana {
+    etiqueta etiq;
     int tidCodiAnt=0;
     private boolean tidAsprfi=false;
     int primeraLinea;
@@ -249,6 +252,20 @@ public class DespVenta extends ventana {
     }
     void activarEventos()
     {
+        BImprimir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                if (e.getActionCommand().startsWith("Inter"))
+                     imprEtiq(jt.getSelectedRow(),true); 
+                else
+                {
+                    if (jt.getValorInt(JT_NUMIND)>0)
+                        imprEtiq(jt.getSelectedRow(),false);                      
+
+                }
+            }
+        });
         BF2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -497,8 +514,9 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
        desorca.setId(new DesporigId(ejeNume,deoCodi));
    }
    desorca.setTidCodi(tid_codiE.getValorInt());
+   desorca.setDeoFecsac(def_fecsacE.getDate());
    desorca.setDeoFeccad(def_feccadE.getDate());
-   desorca.setDeoFecpro(Formatear.getDateAct());
+   desorca.setDeoFecpro(def_fecproE.getDate());
    desorca.setPrvCodi(prvCodi);
    desorca.setDeoDesnue('N');
    desorca.setDeoEjloge(deo_ejelotE.getValorInt());
@@ -945,7 +963,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
             mensajeErr("Linea " + linea + "... Guardada");
 
            if ( pro_codsalE.isVendible() && pro_codsalE.getEtiCodi()>=0 && jt.isEnabled()) // && pro_codlE.getConStkInd())
-             imprEtiq(linea);
+             imprEtiq(linea,false);
          }
        }
        catch (SQLException ex)
@@ -1018,13 +1036,10 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                              dtCon1, dtStat, EU))
        {
          mensajeErr(utdesp.getMsgAviso());
-         if (prvCodi==0)
-            prvCodi=prvDespiece;
-    //     return false;
+         prvCodi=prvDespiece;
          return true;
        }
-       if (prvCodi==0)
-            prvCodi=prvDespiece;
+       prvCodi=utdesp.getPrvCodi();
 //       if (tid_codiE.getValorInt()!=MantTipDesp.AUTO_DESPIECE)
 //         utdesp.setDespNuestro(Formatear.getFechaAct("dd-MM-yyyy"), dtStat);
        def_feccadE.setText(utdesp.feccadE);
@@ -1116,29 +1131,43 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                    ejeNume+
                    "|" + deoCodi,false);
     }
+ 
 
  /**
   * Imprime la etiqueta
   * @param linea Linea de despiece
   * Tipo etiqueta:
   */
- void imprEtiq(int linea)
+ void imprEtiq(int linea,boolean etiqInterna)
  {
    int proCodeti;
    try {
 
 
      String nombArt=pro_codsalE.getNombArt(pro_codsalE.getText());
-     if (pro_codsalE.getLikeProd().isNull("pro_codeti"))
-       proCodeti = 0;
+     if (etiqInterna)
+         proCodeti=etiqueta.ETIQINT;
      else
-       proCodeti = pro_codsalE.getLikeProd().getInt("pro_codeti");
+     {
+        if (pro_codsalE.getLikeProd().isNull("pro_codeti"))
+          proCodeti = 0;
+        else
+          proCodeti = pro_codsalE.getLikeProd().getInt("pro_codeti");
+     }
 
 //     debug("Nombre Articulo: "+nombArt);
      utdesp.iniciar(dtAdd,ejeNume,empCodi,almCodi,
                     almCodi,EU);
      utdesp.setLogotipo(null);
      utdesp.setDirEmpresa(null);
+//      etiq.iniciar(tipetiqE.getValorInt()!=etiqueta.ETIQINT?codBarras.getCodBarra():codBarras.getLote(false),
+//            codBarras.getLote(tipetiqE.getValorInt()!=etiqueta.ETIQINT),
+//            pro_codiE.getText(),pro_codiE.getTextNomb(),utDesp.getPaisNacimiento(),utDesp.getPaisEngorde(),
+//            utDesp.getSalaDespiece(),
+//            utDesp.getNumCrot(),deo_kilosE.getValorDec(),
+//            utDesp.getConservar(), utDesp.getMatadero(),
+//            utDesp.getFechaProduccion(),utDesp.getFechaProduccion(), utDesp.getFecCaduc(),
+//            utDesp.getFecSacrif());
      utdesp.imprEtiq(proCodeti,dtCon1,jt.getValorInt(linea,0), nombArt,
                     "D",
                     pro_loteE.getValorInt(),
@@ -1293,6 +1322,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         cLabel11 = new gnu.chu.controles.CLabel();
         def_fecsacE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         BcopLin = new gnu.chu.controles.CButton("F5",Iconos.getImageIcon("fill"));
+        BImprimir = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("print"));
 
         pro_nombE.setEnabled(false);
 
@@ -1404,9 +1434,9 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
 
         Ppie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         Ppie.setMaximumSize(new java.awt.Dimension(500, 40));
-        Ppie.setMinimumSize(new java.awt.Dimension(500, 40));
+        Ppie.setMinimumSize(new java.awt.Dimension(550, 40));
         Ppie.setName(""); // NOI18N
-        Ppie.setPreferredSize(new java.awt.Dimension(530, 40));
+        Ppie.setPreferredSize(new java.awt.Dimension(550, 40));
         Ppie.setLayout(null);
 
         cLabel6.setText("Kilos");
@@ -1419,7 +1449,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
 
         Baceptar.setText("Aceptar (F4)");
         Ppie.add(Baceptar);
-        Baceptar.setBounds(394, 5, 110, 30);
+        Baceptar.setBounds(450, 2, 100, 30);
 
         cLabel7.setText("Fec.Cad.");
         Ppie.add(cLabel7);
@@ -1464,6 +1494,12 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         Ppie.add(BcopLin);
         BcopLin.setBounds(40, 20, 53, 17);
 
+        BImprimir.addMenu("Normal","N");
+        BImprimir.addMenu("Interna","I");
+        BImprimir.setToolTipText("");
+        Ppie.add(BImprimir);
+        BImprimir.setBounds(400, 2, 45, 25);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -1479,6 +1515,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton BF2;
+    private gnu.chu.controles.CButtonMenu BImprimir;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton BcopLin;
     private gnu.chu.controles.CButton Bir;

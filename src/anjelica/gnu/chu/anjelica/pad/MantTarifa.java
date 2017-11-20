@@ -233,13 +233,17 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     {
          String s=mensajes.mensajeExplica("Copie y pegue", "Codigo:Precio","");
          if (s==null)
-             return;
+             return;        
+         jt.setDatos(getTarifaPortaPapeles(s,pro_codartE));                  
+    }
+    public static ArrayList getTarifaPortaPapeles(String s,gnu.chu.camposdb.proPanel pro_codartE)
+    {
          int nLen=s.length();
          int modo=0; // Buscando codigo producto
          int inicProd,finProd;
          int codProd=0;
          double precio;
-              
+        ArrayList vp=new ArrayList();
         char sep=new DecimalFormatSymbols(new Locale("es","","")).getDecimalSeparator();
         NumberFormat nf = NumberFormat.getInstance(new Locale("es","",""));
          for (int n=0;n<nLen;n++)
@@ -316,14 +320,14 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
                       v.add(precio);
                       v.add("Importado");
                       v.add(0);
-                      jt.addLinea(v);
+                      vp.add(v);
+//                      jt.addLinea(v);
                   }
                   modo=0; // Buscando codigo
             }
             
          }
-         
-         
+         return vp;
     }
     void Bimpri_actionPerformed()
    {
