@@ -84,6 +84,7 @@ public class utildesp
   public int proCodiDes;
   boolean dtRes;
   public String feccadE=null;
+  public Date feccadD=null;
   boolean cambio=true;
   public int prvCodi=0;
   private String acp_painac,acp_engpai,acp_paisac;
@@ -223,7 +224,7 @@ public class utildesp
             int proIndi,
             int almCodi, DatosTabla dtCon1, DatosTabla dtStat,
             EntornoUsuario EU) throws SQLException {
-        setBuscaCompra(true);
+        setBuscaCompra(false);
         return buscaDatosIndiv(serie, proCodi, empLot, ejeLot, proLote, proIndi, almCodi, dtCon1, dtStat, EU);
     }
     
@@ -336,6 +337,7 @@ public class utildesp
             datInd.getSerie(), datInd.getLote(), datInd.getNumind(),datInd.getAlmCodi(),false))
     {
         feccadE=dtStat.getFecha("stp_feccad","dd-MM-yyyy");
+        feccadD=dtStat.getDate("stp_feccad");
         if (feccadE.equals(""))
             feccadE=null;
         fecProdE=dtStat.getDate("stp_fecpro");
@@ -472,7 +474,10 @@ public class utildesp
                 fecrecepE = dtStat.getFecha("deo_fecha", "dd-MM-yyyy");
             }
             if (feccadE==null && dtCon1.getObject("def_feccad") != null)
+            {
                 feccadE = dtCon1.getFecha("def_feccad", "dd-MM-yyyy");
+                feccadD=dtCon1.getDate("def_feccad");
+            }
             if (fecCadDesp==null && dtCon1.getObject("def_feccad") != null)
                 fecCadDesp=dtCon1.getDate("def_feccad");
             swDesp = true;
@@ -527,7 +532,10 @@ public class utildesp
             accPrcom=dtStat.getDouble("prcom",true);
 
           if (feccadE==null)
+          {
             feccadE=dtStat.getFecha("acp_feccad","dd-MM-yyyy");
+            feccadD=dtStat.getDate("acp_feccad");
+          }
           fecCadPrvE=dtStat.getDate("acp_feccad");
           if (fecSacrE==null)
             fecSacrE=dtStat.getDate("acp_fecsac");
@@ -1009,7 +1017,7 @@ public class utildesp
   public int guardaLinDesp(int ejeLot,int empLot,String serLot,int numLot,int nInd,
                     int numDesp,int proCodi,double kilos,int numPie,
                     String feccad, int defOrden,int uniCaj,double precCost,
-                    int defCerra) throws Exception
+                    int defCerra) throws SQLException
  {
    String s;
    if (defOrden==0)

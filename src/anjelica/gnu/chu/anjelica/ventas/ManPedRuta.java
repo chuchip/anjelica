@@ -155,7 +155,7 @@ public class ManPedRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2017-10-23 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2017-11-27 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM pedrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -465,7 +465,7 @@ public class ManPedRuta extends ventanaPad implements PAD
           verDatos();
       }
      activar(true);
-     
+     jt.setEnabled(false);
      try
      {
          if (!setBloqueo(dtAdd, "pedrutacab", pru_idE.getText()))
@@ -716,6 +716,7 @@ public class ManPedRuta extends ventanaPad implements PAD
         cLabel20 = new gnu.chu.controles.CLabel();
         ordenarC = new gnu.chu.controles.CCheckBox();
         Bordenar = new gnu.chu.controles.CButton(Iconos.getImageIcon("order"));
+        Bfecha = new gnu.chu.controles.CButton(Iconos.getImageIcon("fill"));
 
         eje_numeE.setValorDec(EU.ejercicio);
 
@@ -815,7 +816,6 @@ public class ManPedRuta extends ventanaPad implements PAD
         jt.setMaximumSize(new java.awt.Dimension(559, 151));
         jt.setMinimumSize(new java.awt.Dimension(559, 151));
         jt.setName(""); // NOI18N
-        jt.setPreferredSize(new java.awt.Dimension(559, 151));
         ArrayList v=new ArrayList();
         v.add("Ejer."); // 0
         v.add("N.Ped."); // 1
@@ -872,7 +872,6 @@ public class ManPedRuta extends ventanaPad implements PAD
         jtLinPed.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtLinPed.setMaximumSize(new java.awt.Dimension(200, 81));
         jtLinPed.setMinimumSize(new java.awt.Dimension(200, 81));
-        jtLinPed.setPreferredSize(new java.awt.Dimension(200, 81));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -1000,6 +999,11 @@ public class ManPedRuta extends ventanaPad implements PAD
         PPie.add(Bordenar);
         Bordenar.setBounds(340, 23, 80, 19);
 
+        Bfecha.setText("Fechas");
+        Bfecha.setToolTipText("Establece la fecha de pedido a la de la ruta");
+        PPie.add(Bfecha);
+        Bfecha.setBounds(430, 23, 80, 19);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -1020,6 +1024,7 @@ public class ManPedRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CButton BInsAuto;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
+    private gnu.chu.controles.CButton Bfecha;
     private gnu.chu.controles.CButton BirGrid;
     private gnu.chu.controles.CButton Bordenar;
     private gnu.chu.controles.CPanel PDatPed;
@@ -1120,6 +1125,15 @@ public class ManPedRuta extends ventanaPad implements PAD
     
     void activarEventos()
     {
+        Bfecha.addActionListener(new ActionListener()
+         {
+              @Override
+              public void actionPerformed(ActionEvent e)
+              {
+                  Bfecha_actionPerformed();
+              }
+        });
+        
         BImpri.addActionListener(new ActionListener()
          {
               @Override
@@ -1846,7 +1860,7 @@ public class ManPedRuta extends ventanaPad implements PAD
     
     public void activar(boolean b,int opcion) {
         jt.setEnabled(b);
-         jt.setDragEnabled(false);      
+        jt.setDragEnabled(false);      
         Pcabe.setEnabled(b);
         if (opcion!=navegador.QUERY && opcion!=navegador.DELETE)
         {
@@ -1856,18 +1870,36 @@ public class ManPedRuta extends ventanaPad implements PAD
             prc_fecsalM.setEnabled(b);
             BInsAuto.setEnabled(b);
         }
-        pru_idE.setEnabled(b);
-               
+        pru_idE.setEnabled(b);               
 
-        rut_codiE.setEnabled(b);        
-      
-        
+        rut_codiE.setEnabled(b);             
+        Bfecha.setEnabled(b);
         prc_comentE.setEnabled(b);
         Baceptar.setEnabled(b);
         Bcancelar.setEnabled(b);
     }
    
-    
+    void Bfecha_actionPerformed()
+    {
+        if (jt.isVacio())
+            return;
+        String s;
+        try 
+        {
+            int nl=jt.getRowCount();
+            for (int n=0;n<nl;n++)
+            {
+                s="update pedvenc set pvc_fecped='"+prc_fecsalE.getFechaDB()+"', pvc_fecent='"+prc_fecsalE.getFechaDB()+"'"+
+                    " where emp_codi="+EU.em_cod+" AND eje_nume="+jt.getValorInt(n,JT_EJEPED)+" AND pvc_nume="+jt.getValorInt(n,JT_NUMPED);
+                dtAdd.executeUpdate(s);            
+            } 
+            dtAdd.commit();
+            msgBox("Actualizados "+nl+" pedidos a Fecha: "+prc_fecsalE.getText());
+        } catch (SQLException | ParseException k)
+        {
+            Error("Error al actualizar fecha de pedidos",k);
+        }
+    }
     void Bimpri_actionPerformed()
     {
    

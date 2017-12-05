@@ -903,7 +903,8 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
     }
     else
     {
-      if (! super.isEnabled() && activado) {
+      if (! super.isEnabled() && activado) 
+      {
         super.setEnabled(true);
         if (isFocusOwner())
           selectAll();
@@ -911,12 +912,12 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
     }
   }
   
+  @Override
   public void setEditable(boolean edit)
   {
     editable = edit;
     if (editable)
     {
-     
       if (editadoParent || ! iniciado)
       {
         super.setEditable(true);
@@ -927,7 +928,8 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
     }
     if (gridEdit!=null && isEnabled())
         super.setBackground(Color.LIGHT_GRAY);
-    super.setEditable(false);      
+    super.setEditable(false);     
+   
   }
     @Override
   public void setEditableParent(boolean edit)
@@ -940,7 +942,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
       if (super.isEditable())
       {
          if (gridEdit!=null && isEnabled())
-            super.setBackground(Color.LIGHT_GRAY);
+            super.setBackground(Color.LIGHT_GRAY);       
         super.setEditable(false);
       }
     }

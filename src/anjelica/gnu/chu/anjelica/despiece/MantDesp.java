@@ -3861,18 +3861,18 @@ public class MantDesp extends ventanaPad implements PAD
 
         try
         {
-            if (!ActualStkPart.checkStock(dtStat, pro_codlE.getValorInt(),
+            if (!ActualStkPart.checkStock(dtStat, pro_codlE.getCopiaInt(),
                 deo_ejlogeE.getValorInt(), EU.em_cod,
                 deo_selogeE.getText(), deo_nulogeE.getValorInt(),
                 jtLin.getValorInt(row,JTLIN_NUMIND), deo_almdesE.getValorInt(),
                 def_kilosE.getCopiaDouble(), def_numpieE.getCopiaInt()))
             {
-                if (! ActualStkPart.checkIndiv(dtStat, pro_codlE.getValorInt(),
+                if (! ActualStkPart.checkIndiv(dtStat, pro_codlE.getCopiaInt(),
                 deo_ejlogeE.getValorInt(),
                 deo_selogeE.getText(), deo_nulogeE.getValorInt(),
                 jtLin.getValorInt(row,JTLIN_NUMIND)))
                 {
-                     enviaMailError("MantDesp. Ind. No encontrado: "+ pro_codlE.getValorInt()+" Lote: "+
+                     enviaMailError("MantDesp. Ind. No encontrado: "+ pro_codlE.getCopiaInt()+" Lote: "+
                         deo_ejlogeE.getValorInt()+
                         deo_selogeE.getText()+ deo_nulogeE.getValorInt()+"-"+
                         jtLin.getValorInt(row,JTLIN_NUMIND));

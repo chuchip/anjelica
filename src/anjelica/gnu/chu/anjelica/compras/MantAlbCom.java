@@ -800,6 +800,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     creaIncidB.setMargin(new Insets(0,0,0,0));
     creaIncidB.setBounds(new Rectangle(480,46,38,30));
     
+
+        
     acc_totfraL.setBounds(new Rectangle(0, 120, 132, 18));
     
     acc_totfraE.setBounds(new Rectangle(135, 120, 43, 18));

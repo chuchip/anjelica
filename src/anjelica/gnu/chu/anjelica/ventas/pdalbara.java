@@ -71,6 +71,7 @@ import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.DatTrazFrame;
 import gnu.chu.anjelica.despiece.DespVenta;
+import gnu.chu.anjelica.despiece.MantTipDesp;
 import gnu.chu.anjelica.despiece.listraza;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.Listados;
@@ -78,6 +79,9 @@ import gnu.chu.anjelica.listados.etiqueta;
 import static gnu.chu.anjelica.listados.etiqueta.LOGOTIPO;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.*;
+import gnu.chu.anjelica.sql.DesorilinId;
+import gnu.chu.anjelica.sql.Desporig;
+import gnu.chu.anjelica.sql.DesporigId;
 import gnu.chu.anjelica.sql.IndivStock;
 import gnu.chu.anjelica.tiempos.ManTiempos;
 import gnu.chu.camposdb.*;
@@ -90,6 +94,7 @@ import gnu.chu.hylafax.SendFax;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.interfaces.VirtualGrid;
 import gnu.chu.mail.IFMail;
+import gnu.chu.mail.sendMail;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.conexion;
 import gnu.chu.sql.vlike;
@@ -142,6 +147,7 @@ public class pdalbara extends ventanaPad  implements PAD
 //  CButton Bdespiece=new CButton();
   int paiEmp;
   RangoEtiquetas rangoEtiq;
+  RangoDespiece rangoDesp;
   RegistroListVentas regListado;
   boolean swChangePalet=false;
   private final int JTP_NUMLIN=10;
@@ -166,6 +172,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private final char IMPR_PALETS='P';
   private final char IMPR_ETIQUETAS='E';
   private final char IMPR_ETIQDIRE='D';
+  private final char CAMBIA_CODIGO='c';
   private char ultSelecImpr=IMPR_ALB_TRA;
   
   private final String DSAL_IMPRE="I";
@@ -208,6 +215,7 @@ public class pdalbara extends ventanaPad  implements PAD
   
   JMenuItem verDatTraz = new JMenuItem("Ver Datos Trazabilidad");
   JMenuItem verMvtos = new JMenuItem("Ver Mvtos");
+  JMenuItem imprEtiq = new JMenuItem("Impr.Etiq");
   private boolean swTieneEnt=false;
   private int avsNume=0; // Numero de albaran Deposito
   private boolean swEntdepos=false; // Indica si estamos añadiendo/modificando un albaran de entrega de genero
@@ -317,7 +325,7 @@ public class pdalbara extends ventanaPad  implements PAD
   boolean P_FACIL= false; // Indica si esta en modo facil.
   boolean P_ETIALBARAN= false; // Indica si la etiqueta mostrara el numero albaran en vez del lote
   boolean P_PONPRECIO = false; // Indica si se pueden Poner Precios
-  boolean P_CHECKPED= true; // Comprueba si hay pedidos nuevos.
+  boolean P_CHECKPED= false; // Comprueba si hay pedidos nuevos.
   private boolean verPrecios=false;
   boolean graba = false;
   lialbven liAlb = null;
@@ -741,7 +749,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-11-18" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-12-04" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1453,6 +1461,7 @@ public class pdalbara extends ventanaPad  implements PAD
           isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
           swUsaPalets=pdconfig.getUsaPalets(EU.em_cod, dtStat);
           CONTROL_PRO_MIN= EU.getValorParam("controlprodmin", CONTROL_PRO_MIN);
+          P_CHECKPED=EU.getValorParam("checkPedAlbVenta", P_CHECKPED);
           avl_numpalE.setEnabled(swUsaPalets);
           if (pdconfig.getConfiguracion(EU.em_cod,dtStat))
           {
@@ -1523,7 +1532,9 @@ public class pdalbara extends ventanaPad  implements PAD
      cli_codiE.getPopMenu().add(MbusCliente);
     //cli_codiE.getpop
     jtDes.getPopMenu().add(verDatTraz);
+    jtDes.getPopMenu().add(imprEtiq);
     jtDes.getPopMenu().add(verMvtos);
+    
     if (P_ADMIN)
         jtHist.getPopMenu().add(MRestHist);
     EU.getImpresora(gnu.chu.print.util.ALBARAN);
@@ -1560,7 +1571,8 @@ public class pdalbara extends ventanaPad  implements PAD
     Bimpri.addMenu("Palets", ""+IMPR_PALETS);
     Bimpri.addMenu("Etiq.Prod.", ""+IMPR_ETIQUETAS);
     Bimpri.addMenu("Etiq.Direc.", ""+IMPR_ETIQDIRE);
-    
+    if (P_ADMIN)
+        Bimpri.addMenu("Cambia.Prod.", ""+CAMBIA_CODIGO);
     opValora.setSelected(true);
     jtRes.setDefButton(Baceptar);
     jtPalet.setDefButton(Baceptar);
@@ -2314,6 +2326,7 @@ public class pdalbara extends ventanaPad  implements PAD
     });
     BmvReg.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         if (! jtDes.isEnabled())
@@ -2334,7 +2347,7 @@ public class pdalbara extends ventanaPad  implements PAD
           pro_codiE.resetCambio();
           String proNomb = pro_codiE.getNombArtCli(pro_codiE.getValorInt(),
               cli_codiE.getValorInt());
-          jt.setValor(proNomb,  2);
+          jt.setValor(proNomb,  JT_PRONOMB);
           pro_nombE.setText(proNomb);
         } catch (SQLException k)
         {
@@ -2543,6 +2556,39 @@ public class pdalbara extends ventanaPad  implements PAD
             public void actionPerformed(ActionEvent e) {
                 if (! nav.isEdicion() )
                     mostrarMvtos();
+            }
+        });
+     imprEtiq.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (! nav.isEdicion() )
+                    {
+                        
+                        int etiCodi=etiqueta.getEtiquetaDefault(dtCon1,emp_codiE.getValorInt());          
+                        etiq.setTipoEtiq(dtStat, EU.em_cod,  etiCodi);
+                        boolean swExtranjero=false;
+                        String idioma=null;
+                        if (cli_codiE.getLikeCliente().getInt("pai_codi")!=paiEmp)
+                        {
+
+                                swExtranjero=true;
+                                idioma=MantPaises.getLocalePais(cli_codiE.getLikeCliente().getInt("pai_codi"), dtStat);
+
+                        }
+                        utdesp.setIdioma(idioma);
+                        imprEtiq(swExtranjero,idioma,jt.getValorInt(jt.getSelectedRowDisab(),JT_PROCODI),
+                            jtDes.getValorInt(jtDes.getSelectedRowDisab(), JTDES_EMP),
+                            jtDes.getValorInt(jtDes.getSelectedRowDisab(),JTDES_EJE),
+                            jtDes.getValString(jtDes.getSelectedRowDisab(),JTDES_SERIE),
+                            jtDes.getValorInt(jtDes.getSelectedRowDisab(),JTDES_LOTE) ,
+                            jtDes.getValorInt(jtDes.getSelectedRowDisab(),JTDES_NUMIND),avc_almoriE.getValorInt(),
+                            jtDes.getValorDec(jtDes.getSelectedRowDisab(),JTDES_KILOS));    
+                    }
+                 } catch (Throwable ex) 
+                 {
+                     Error("Error al imprimir etiqueta",ex);
+                 }
             }
         });
     jt.tableView.addMouseListener(new MouseAdapter()
@@ -3076,9 +3122,12 @@ public class pdalbara extends ventanaPad  implements PAD
                 if (getAlbaranCab(dtCons, EU.em_cod, copeve.getEjercicioAlbaran(), copeve.getSerieAlbaran(), copeve.getNumeroAlbaran()))
                 {
                     verDatos(dtCons);
-                    PADEdit();                    
+                    PADEdit();    
+                    jt.setEnabled(false);
                     jt.requestFocusFinal();
                     jt.mueveSigLinea(JT_PROCODI);
+                    jt.setEnabled(true);
+                    jt.requestFocusFinalLater();
                     return;
                 }
             }           
@@ -3879,6 +3928,41 @@ public class pdalbara extends ventanaPad  implements PAD
          " ORDER BY pro_codi";
   }
   /**
+   * Pone mismos codigos en lineas de albaran que en desglose
+   * @throws SQLException 
+   * @return String con los errores. Null si no hubo ninguno
+   */
+  String unificaLineas() throws SQLException
+      {
+           s="select c.pro_codi as prodLin,ap.pro_codi as prodDesg,c.avl_numlin "+
+            " from v_albventa as c,v_albvenpar as ap where "+
+            " c.avc_ano=ap.avc_ano"+
+            " and c.avc_nume = ap.avc_nume and c.avc_serie = ap.avc_serie "+
+            " and c.emp_codi=ap.emp_codi and c.avl_numlin=ap.avl_numlin "+
+            " and c.pro_codi not in (select p.pro_codi from v_albvenpar as p where c.avc_ano=p.avc_ano"+
+            " and c.avc_nume = p.avc_nume and c.avc_serie = p.avc_serie "+
+            " and c.emp_codi=p.emp_codi and c.avl_numlin=p.avl_numlin)"+
+            " and c.pro_codi>99"+
+            " and c.avc_id = "+avc_idE.getValorInt();
+        if (dtCon1.select(s))
+        {
+            s="";
+            do
+            {
+               s+="\nEn linea: "+dtCon1.getInt("avl_numlin")+" Producto de Lineas: "+dtCon1.getInt("prodLin")+
+                   " Prod. Desglose: "+dtCon1.getInt("prodDesg");
+               dtAdd.executeUpdate("update v_albavel set pro_codi="+dtCon1.getInt("prodDesg")+" where emp_codi="+emp_codiE.getValorInt()+
+                   " and avc_ano="+avc_anoE.getValorInt()+" and avc_serie='"+avc_seriE.getText()+"'"+
+                   " and avc_nume ="+avc_numeE.getValorInt()+" and avl_numlin="+dtCon1.getInt("avl_numlin"));
+            } while (dtCon1.next());
+            dtAdd.commit();
+            return s;
+//            verDatos(dtCons);
+        }
+        else
+            return null;
+      }
+  /**
    * Ver Datos de Linea de Albaran
    * @param ano int 
    * @param empCodi int si es < 0 El numero se refiere al numero de Historico
@@ -3914,6 +3998,18 @@ public class pdalbara extends ventanaPad  implements PAD
         verLinPend(empCodi,ano,serie,nume);
         return;
      }
+     
+     if (P_ADMIN)
+     {
+        s=unificaLineas();
+        if (s!=null)
+        {
+            mensajes.mensajeExplica("Atencion. Albaranes con problemas corregido",s);
+            sendMail.enviaMailAviso("Inconsistencia en albaran: "+avc_numeE.getValorInt(), s, EU);
+        }
+     }
+
+   
      if (agrupa)
       s=getSqlLinList(tablaLin,ano,empCodi,serie,nume,verPrecios);
     else
@@ -3970,7 +4066,8 @@ public class pdalbara extends ventanaPad  implements PAD
               v.add(""+Formatear.redondea(dtCon1.getDouble("avl_prven",true),NUMDECPRECIO));
               if (dtCon1.getDouble("tar_preci")==0)
               { // Si no tiene precio tarifa guardado en el alb. pongo el precio de tarifa estandard
-                v.add(MantTarifa.getPrecTar(dtStat,dtCon1.getInt("pro_codi"), cli_codiE.getValorInt(), tar_codiE.getValorInt(), avc_fecalbE.getText()));
+                double prTarif=MantTarifa.getPrecTar(dtStat,dtCon1.getInt("pro_codi"), cli_codiE.getValorInt(), tar_codiE.getValorInt(), avc_fecalbE.getText());
+                v.add(0);
               }
               else
                 v.add(dtCon1.getString("tar_preci"));
@@ -5763,10 +5860,13 @@ public class pdalbara extends ventanaPad  implements PAD
          avlPrbase = Formatear.redondea(avlPrbase, NUMDECPRECIO);
          dtAdd.setDato("avl_prven", precio);
          dtAdd.setDato("avl_prbase", avlPrbase);
-         dtAdd.setDato("tar_preci", prTari);
       }
-         
-      dtAdd.setDato("avl_unid", jt.getValorInt(n, 4));
+      prTari= verPrecios?jt.getValorDec(n, JT_PRETAR):
+          Formatear.redondea(
+          MantTarifa.getPrecTar(dtStat,jt.getValorInt(n, JT_PROCODI), cli_codiE.getValorInt(), 
+                tar_codiE.getValorInt(), avc_fecalbE.getText()),2);
+      dtAdd.setDato("tar_preci",prTari);
+      dtAdd.setDato("avl_unid", jt.getValorInt(n, JT_UNID));
       dtAdd.setDato("avl_canbru", jt.getValorDec(n, JT_KILBRU));
       dtAdd.setDato("avl_numpal", jt.getValorDec(n, JT_NUMPALE));
       pro_codiE.getNombArt(jt.getValString(n, 1));
@@ -7100,7 +7200,9 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avl_dtolin", 0);
     dtAdd.setDato("avl_prbase", 0);
     dtAdd.setDato("avl_ptsinc", 0);
-    dtAdd.setDato("tar_preci", jt.getValorDec(nLin, JT_PRETAR));
+    dtAdd.setDato("tar_preci",verPrecios?jt.getValorDec(nLin, JT_PRETAR):0);
+//            MantTarifa.getPrecTar(dtStat,jt.getValorInt(nLin, JT_PROCODI), cli_codiE.getValorInt(), 
+//                tar_codiE.getValorInt(), avc_fecalbE.getText()));
     dtAdd.setDato("avl_unid", jt.getValorInt(nLin, JT_UNID));
     dtAdd.setDato("avl_pincre", 0);
     dtAdd.setDato("avl_pcomi", 0);
@@ -7460,8 +7562,8 @@ public class pdalbara extends ventanaPad  implements PAD
                     return false;
                 }
             }            
-            if (!P_ADMIN && Formatear.comparaFechas(canStk.getFechaCad(),avc_fecalbE.getDate())<10)
-                msgBox("!Atencion! Menos de 10 dias para cumplirse la Fecha Caducidad");
+//            if (!P_ADMIN && Formatear.comparaFechas(canStk.getFechaCad(),avc_fecalbE.getDate())<10)
+//                msgBox("!Atencion! Menos de 10 dias para cumplirse la Fecha Caducidad");
         }
         else
         { //Es entrega de mercancia
@@ -8136,7 +8238,7 @@ public class pdalbara extends ventanaPad  implements PAD
           v.add( EU.em_cod);
           v.add( avpEjelotAnt==0?EU.ejercicio:avpEjelotAnt);
           v.add("1");
-          v.add(avpSerlotAnt);
+          v.add(avpSerlotAnt.equals("")?"A":avpSerlotAnt);
           v.add(isEmpPlanta?0:avpNumparAnt);
           v.add(isEmpPlanta?0:avpNumindAnt);
           v.add("0");
@@ -8152,13 +8254,13 @@ public class pdalbara extends ventanaPad  implements PAD
         ponValorLoteAnt();
         jtDes.setEnabled(true);
         jtDes.requestFocus();
-        jtDes.requestFocus(0, colDesp);
         jtDes.actualizarGrid();
         
         resetCambioIndividuo();
        
         Baceptar.setEnabled(false);
         Bimpri.setEnabled(false);
+        jtDes.requestFocusLater(0, colDesp);
 //      }
 //    });
 
@@ -8532,6 +8634,8 @@ public class pdalbara extends ventanaPad  implements PAD
       imprHojaTraza(indice==IMPR_HOJA_TRAF);
     if (indice==IMPR_ETIQUETAS)
       verVentanaEtiquetas();
+    if (indice==CAMBIA_CODIGO)
+      verVentanaRangoDesp();
     if (indice==IMPR_PALETS)
       imprPalets();
     this.setEnabled(true);
@@ -8560,7 +8664,47 @@ public class pdalbara extends ventanaPad  implements PAD
           Error("Error al presentar ventana parametros etiquetas",ex);
       }
   }
-  
+  void verVentanaRangoDesp()
+  {
+      try
+      {
+          if (rangoDesp==null)
+          {
+            rangoDesp = new RangoDespiece()
+            {
+                @Override
+                public void muerto()
+                {
+                   if (rangoDesp.isAceptado())
+                       realizaRangoDesp();
+                }
+            };
+
+            rangoDesp.iniciar(this);
+            rangoDesp.setLocation(this.getLocation().x+20, this.getLocation().y+20);
+            this.getLayeredPane().add(rangoDesp,1);
+
+          }       
+          rangoDesp.reset();
+          boolean swSelec=false;
+          for (int n=0;n<jt.getRowCount();n++)
+          {
+              if (jt.getValBoolean(n,JT_SELLIN))
+              {
+                  swSelec=true;
+                  break;
+              }
+          }
+          rangoDesp.setLineasSelecionadas(swSelec);
+          rangoDesp.setVisible(true);
+          rangoDesp.setSelected(true);
+          this.setEnabled(false);
+          this.setFoco(rangoDesp);
+      } catch (SQLException | PropertyVetoException ex)
+      {
+          Error("Error al presentar ventana Rango Despieces",ex);
+      }
+}
   void verVentanaEtiquetas()
   {
       try
@@ -8602,6 +8746,130 @@ public class pdalbara extends ventanaPad  implements PAD
           Error("Error al presentar ventana parametros etiquetas",ex);
       }
 }
+  void realizaRangoDesp()
+  {
+      try {
+     String linSelec="";
+      if (rangoDesp.getLineasSelecionadas())
+      {
+          if (! opAgru.isSelected())
+          {
+             for (int n=0;n<jt.getRowCount();n++)
+             {
+                 if (jt.getValBoolean(n,JT_SELLIN))
+                     linSelec+=(linSelec.isEmpty()?"":",")+
+                         jt.getValorInt(n,JT_NULIAL);
+             }
+             if (! linSelec.isEmpty())
+                 linSelec="and avl_numlin IN ("+linSelec+")";
+          }
+          else
+          {
+             for (int n=0;n<jt.getRowCount();n++)
+             {
+                 if (jt.getValBoolean(n,JT_SELLIN))
+                     linSelec+=(linSelec.isEmpty()?"":") or (")+
+                         getCondSelecLinea(n);
+             }
+               if (! linSelec.isEmpty())
+                 linSelec="and  ("+linSelec+")";
+          }
+      }
+    String s = "SELECT * FROM v_albventa_detalle " +
+          " WHERE emp_codi = " + emp_codiE.getValorInt() +
+          " AND avc_ano = " + avc_anoE.getValorInt() +
+          " and avc_nume = " + avc_numeE.getValorInt() +
+          " and avc_serie = '" + avc_seriE.getText() + "'"+
+           linSelec+
+           (rangoDesp.getArticuloOrigen()==0?"":" and pro_codi ="+rangoDesp.getArticuloOrigen())+
+           (rangoDesp.getLineaInicial()==0?"":" and avl_numlin >="+rangoDesp.getLineaInicial())+
+           (rangoDesp.getLineaFinal()==0?"":" and avl_numlin <="+rangoDesp.getLineaFinal());
+      if (!dtCon1.select(s))
+      {
+        mensajeErr("No encontradas lineas de Partidas en este albaran");
+        return;
+      }  
+      
+     Desporig desorca;
+     gnu.chu.anjelica.sql.Desorilin desorli;
+    
+      int almCodi=avc_almoriE.getValorInt();
+      int ejeNume=EU.ejercicio;
+      do
+      {
+    
+          
+          utdesp.busDatInd(dtCon1.getString("avp_serlot"), dtCon1.getInt("pro_codi"),
+              EU.em_cod,
+              dtCon1.getInt("avp_ejelot"),
+              dtCon1.getInt("avp_numpar"),
+              dtCon1.getInt("avp_numind"), // N. Ind.
+              almCodi,
+              dtBloq, dtStat, EU);
+          int prvCodi = utdesp.getPrvCodi();
+          int deoCodi = utildesp.incNumDesp(dtAdd, EU.em_cod, ejeNume);
+          desorca = new Desporig();
+          desorca.setId(new DesporigId(ejeNume, deoCodi));
+          desorca.setCliente(cli_codiE.getValorInt());
+          desorca.setDeoAlmdes(almCodi);
+          desorca.setDeoAlmori(almCodi);
+          desorca.setDeoFecha(Formatear.getDateAct());
+          desorca.setDeoIncval("N");
+          desorca.setTidCodi(MantTipDesp.AUTO_DESPIECE);
+          desorca.setDeoFecsac(utdesp.fecSacrE);
+          desorca.setDeoFeccad(utdesp.feccadD);
+          desorca.setDeoFecpro(utdesp.getFechaProduccion());
+          desorca.setPrvCodi(prvCodi);
+          desorca.setDeoDesnue('N');
+          desorca.setDeoEjloge(dtCon1.getInt("avp_ejelot"));
+          desorca.setDeoSeloge(dtCon1.getString("avp_serlot"));
+          desorca.setDeoNuloge(dtCon1.getInt("avp_numpar"));
+          desorca.setDeoLotnue((short) 0);
+          desorca.setDeoCerra((short) -1);
+          desorca.setDeoBlock("N");
+        
+          desorca.save(dtAdd, ejeNume, EU);
+          desorli = new gnu.chu.anjelica.sql.Desorilin();
+          desorli.setId(new DesorilinId(ejeNume, deoCodi, 0));
+          desorli.getId().setDelNumlin(desorli.getNextLinea(dtAdd));
+          desorli.setDeoEjelot(dtCon1.getInt("avp_ejelot"));
+          desorli.setDeoKilos(dtCon1.getDouble("avp_canti"));
+          desorli.setDeoPrcost(0.0);
+          //despOriLin.setDeoPrusu(null);
+          desorli.setDeoSerlot(dtCon1.getString("avp_serlot").charAt(0));
+          desorli.setProCodi(dtCon1.getInt("pro_codi"));
+          desorli.setProLote(dtCon1.getInt("avp_numpar"));
+          desorli.setProNumind(dtCon1.getInt("avp_numind"));
+          desorli.save(dtAdd);
+
+          int nInd = utildesp.getMaxNumInd(dtAdd, rangoDesp.getArticuloFinal(), dtCon1.getInt("avp_ejelot"),
+              EU.em_cod,
+              dtCon1.getString("avp_serlot"), dtCon1.getInt("avp_numpar"));
+          utdesp.iniciar(dtAdd, ejeNume, EU.em_cod,
+              almCodi, almCodi, EU);
+          utdesp.setGrupoDesp(0);
+          utdesp.setTipoProduccion(false);
+          utdesp.guardaLinDesp(dtCon1.getInt("avp_ejelot"), EU.em_cod, dtCon1.getString("avp_serlot"),
+              dtCon1.getInt("avp_numpar"), nInd, deoCodi, rangoDesp.getArticuloFinal(),
+              dtCon1.getDouble("avp_canti"), 1, utdesp.feccadE, 1, 1,
+              0, -1);
+         dtAdd.executeUpdate("update v_albvenpar set pro_codi="+rangoDesp.getArticuloFinal()+
+                  ",avp_numind="+nInd+
+                  " where emp_codi="+emp_codiE.getValorInt()+
+                  " and avc_ano="+avc_anoE.getValorInt()+" and avc_serie='"+avc_seriE.getText()+"'"+
+                  " and avc_nume ="+avc_numeE.getValorInt()+" and pro_codi="+dtCon1.getInt("pro_codi")+
+                  " and avp_numpar="+dtCon1.getInt("avp_numpar")+" and avp_serlot='"+dtCon1.getString("avp_serlot")+"'"+
+                  " and avp_ejelot="+dtCon1.getInt("avp_ejelot")+" and avp_numind ="+dtCon1.getInt("avp_numind"));
+      } while (dtCon1.next());
+      unificaLineas();
+      dtAdd.commit();
+      verDatos(dtCons);
+      msgBox("Cambiada referencia de articulos");
+      } catch (SQLException k)
+      {
+          Error("Error al realizar despiece por rango",k);
+      }
+  }
   void imprEtiq()
   {
     try
@@ -8695,15 +8963,16 @@ public class pdalbara extends ventanaPad  implements PAD
            etiq.listarPagina(dtStat,avc_fecalbE.getDate(),
                      datosInd,codBarras);
             return;
-      }
+      } 
       s = "SELECT * FROM v_albventa_detalle " +
           " WHERE emp_codi = " + emp_codiE.getValorInt() +
           " AND avc_ano = " + avc_anoE.getValorInt() +
           " and avc_nume = " + avc_numeE.getValorInt() +
           " and avc_serie = '" + avc_seriE.getText() + "'"+
+           linSelec+
            (rangoEtiq.getArticulo()==0?"":" and pro_codi ="+rangoEtiq.getArticulo())+
-            (rangoEtiq.getLineaInicial()==0?"":" and avl_numlin >="+rangoEtiq.getLineaInicial())+
-            (rangoEtiq.getLineaFinal()==0?"":" and avl_numlin <="+rangoEtiq.getLineaFinal());
+           (rangoEtiq.getLineaInicial()==0?"":" and avl_numlin >="+rangoEtiq.getLineaInicial())+
+           (rangoEtiq.getLineaFinal()==0?"":" and avl_numlin <="+rangoEtiq.getLineaFinal());
       if (!dtCon1.select(s))
       {
         mensajeErr("No encontradas lineas de Partidas en este albaran");
@@ -8719,45 +8988,10 @@ public class pdalbara extends ventanaPad  implements PAD
       utdesp.setIdioma(idioma);
       do
       {
-        proNomb = pro_codiE.getNombArt(dtCon1.getString("pro_codi"));
-        
-        if (swExtranjero)
-            proNomb=MantArticulos.getNombreProdLocale(dtCon1.getInt("pro_codi"),idioma,dtStat);
-            
-        int avpNumpar=dtCon1.getInt("avp_numpar");
-        utdesp.busDatInd(dtCon1.getString("avp_serlot"),
-                         dtCon1.getInt("pro_codi"),
-                         dtCon1.getInt("avp_emplot"),
-                         dtCon1.getInt("avp_ejelot"),
-                         avpNumpar,
-                         dtCon1.getInt("avp_numind"),
-                         avc_almoriE.getValorInt(),
-                         dtBloq, dtStat, EU);
-        
-        String lote=   (avpNumpar > 9999 ? Formatear.format(avpNumpar, "99999") :
-        Formatear.format(avpNumpar, "9999"));
-        String codBarras = dtCon1.getString("avp_ejelot").substring(2) +
-            Formatear.format(dtCon1.getString("avp_emplot"), avpNumpar > 9999?"9":"99") +
-            dtCon1.getString("avp_serlot") +
-            lote+
-            Formatear.format(dtCon1.getString("pro_codi"), "99999") +
-            Formatear.format(dtCon1.getString("avp_numind"), "999") +
-            Formatear.format(dtCon1.getString("avp_canti"), "999.99");
-        etiq.iniciar(codBarras,
-                     Formatear.format(dtCon1.getString("avp_ejelot"), "9999") +                                        
-                     dtCon1.getString("avp_serlot") +
-                     lote +
-                     "/" +
-                     Formatear.format(dtCon1.getString("avp_numind"), "999"),
-                     dtCon1.getString("pro_codi"), proNomb,
-                     utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre, utdesp.despiezadoE,
-                     utdesp.ntrazaE, dtCon1.getDouble("avp_canti"),
-                     utdesp.getConservar(), utdesp.sacrificadoE,
-                     utdesp.getFecCompra(),
-                     utdesp.getFechaProduccion(),                     
-                     utdesp.getFecCaduc(),utdesp.fecSacrE);
-    
-        etiq.listarDefec();
+        imprEtiq(swExtranjero,idioma,dtCon1.getInt("pro_codi"),
+             dtCon1.getInt("avp_emplot"),dtCon1.getInt("avp_ejelot"),
+             dtCon1.getString("avp_serlot"),dtCon1.getInt("avp_numpar"),
+             dtCon1.getInt("avp_numind"),avc_almoriE.getValorInt(),dtCon1.getDouble("avp_canti"));        
       } while (dtCon1.next());
 
     }
@@ -8767,6 +9001,49 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     mensajeErr("Etiqueta ... Listada");
   }
+  
+  void imprEtiq(boolean swExtranjero,String idioma,
+      int proCodi,int empLote,int ejeLote,String serLote,int numLote,int numInd,int almCodi,double canti) throws Throwable
+  {
+        String proNomb = pro_codiE.getNombArt(proCodi);        
+        if (swExtranjero)
+            proNomb=MantArticulos.getNombreProdLocale(proCodi,idioma,dtStat);
+            
+        int avpNumpar=numLote;
+        utdesp.busDatInd(serLote,
+                         proCodi,
+                         empLote,
+                         ejeLote,
+                         avpNumpar,
+                         numInd,
+                         almCodi,
+                         dtBloq, dtStat, EU);
+        
+        String lote=   (avpNumpar > 9999 ? Formatear.format(avpNumpar, "99999") :
+        Formatear.format(avpNumpar, "9999"));
+        String codBarras = (""+ejeLote).substring(2) +
+            Formatear.format(empLote, avpNumpar > 9999?"9":"99") +
+            serLote +
+            lote+
+            Formatear.format(proCodi, "99999") +
+            Formatear.format(numInd, "999") +
+            Formatear.format(canti, "999.99");
+        etiq.iniciar(codBarras,
+                     Formatear.format(ejeLote, "9999") +                                        
+                    serLote +
+                     lote +
+                     "/" +
+                     Formatear.format(numInd, "999"),
+                     ""+proCodi, proNomb,
+                     utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre, utdesp.despiezadoE,
+                     utdesp.ntrazaE, canti,
+                     utdesp.getConservar(), utdesp.sacrificadoE,
+                     utdesp.getFecCompra(),
+                     utdesp.getFechaProduccion(),                     
+                     utdesp.getFecCaduc(),utdesp.fecSacrE);
+    
+        etiq.listarDefec();
+      }
   private String getSqlListaAlb()
   {
      return getSqlListaAlb(avc_anoE.getValorInt(),emp_codiE.getValorInt() , avc_seriE.getText() ,avc_numeE.getValorInt());

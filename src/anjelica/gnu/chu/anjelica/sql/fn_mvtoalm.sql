@@ -243,7 +243,7 @@ $BODY$
 			pro_codi  , 
 			pro_ejelot ,pro_serlot, 
 			pro_numlot ,pro_indlot ,
-			mvt_canti, mvt_unid , mvt_prec,mvt_cliprv,mvt_feccad )
+			mvt_canti, mvt_unid , mvt_prec,mvt_prenet,mvt_cliprv,mvt_feccad )
 		values 		
 		(
 		TG_OP,current_timestamp,
@@ -254,7 +254,7 @@ $BODY$
 		NEW.pro_codi,	
 		NEW.acc_ano,	NEW.acc_serie,
 		NEW.acc_nume,	NEW.acp_numind,	
-		NEW.acp_canti,	NEW.acp_canind,	mvtPrven,  mvtCliprv,   NEW.acp_feccad);
+		NEW.acp_canti,	NEW.acp_canind,	mvtPrven,  mvtPrven, mvtCliprv,   NEW.acp_feccad);
 		return NEW;
 	    end if;
 	    if TG_OP =  'UPDATE' then
@@ -268,6 +268,7 @@ $BODY$
 			mvt_canti=NEW.acp_canti,
 			mvt_unid =NEW.acp_canind,
 			mvt_prec = mvtPrven,
+                        mvt_prenet = mvtPrven,
                         mvt_cliprv=mvtCliprv,
                         mvt_feccad= NEW.acp_feccad,
 			mvt_lindoc=NEW.acl_nulin
@@ -342,7 +343,7 @@ $BODY$
 			pro_codi  , 
 			pro_ejelot ,pro_serlot, 
 			pro_numlot ,pro_indlot ,
-			mvt_canti, mvt_unid , mvt_prec,
+			mvt_canti, mvt_unid , mvt_prec,mvt_prenet,
                         mvt_cliprv,mvt_feccad )
 		values 		
 		(
@@ -360,7 +361,7 @@ $BODY$
 		NEW.pro_numind,
 		NEW.def_kilos,
 		NEW.def_numpie,
-		NEW.def_prcost,
+		NEW.def_prcost,NEW.def_prcost,
                 mvtCliprv, NEW.def_feccad
 		);
 		return NEW;
@@ -377,6 +378,7 @@ $BODY$
 			mvt_canti=NEW.def_kilos,
 			mvt_unid =NEW.def_numpie,
 			mvt_prec = NEW.def_prcost,
+                        mvt_prenet = NEW.def_prcost,
                         mvt_cliprv=mvtCliprv,
                         mvt_feccad= NEW.def_feccad
                 where	mvt_tipdoc='d' and		
@@ -444,7 +446,7 @@ $BODY$
 			pro_codi  , 
 			pro_ejelot ,pro_serlot, 
 			pro_numlot ,pro_indlot ,
-			mvt_canti, mvt_unid , mvt_prec,mvt_cliprv )
+			mvt_canti, mvt_unid , mvt_prec,mvt_prenet,mvt_cliprv )
 		values 		
 		(
 		TG_OP,
@@ -465,6 +467,7 @@ $BODY$
 		NEW.deo_kilos,
 		1,
 		NEW.deo_prcost,
+                NEW.deo_prcost,
                 mvtCliprv
 		);
 		return NEW;
@@ -480,7 +483,8 @@ $BODY$
 			pro_indlot =NEW.pro_numind,
 			mvt_canti=NEW.deo_kilos,
 			mvt_cliprv=mvtCliprv,
-			mvt_prec = NEW.deo_prcost
+			mvt_prec = NEW.deo_prcost,
+			mvt_prenet = NEW.deo_prcost
                 where 	mvt_tipdoc='D' and		
 		        mvt_ejedoc=OLD.eje_nume and
 		        mvt_numdoc=OLD.deo_codi and		       
@@ -598,7 +602,7 @@ $BODY$
 				pro_codi  , 
 				pro_ejelot ,pro_serlot, 
 				pro_numlot ,pro_indlot ,
-				mvt_canti, mvt_unid , mvt_prec,mvt_cliprv )
+				mvt_canti, mvt_unid , mvt_prec,mvt_prenet,mvt_cliprv )
 			values 		
 			(
 			TG_OP,
@@ -619,6 +623,7 @@ $BODY$
 			NEW.rgs_kilos,
 			NEW.rgs_canti,
 			NEW.rgs_prregu,
+                        NEW.rgs_prregu,
 			 NEW.rgs_cliprv
 			);
 		end if;

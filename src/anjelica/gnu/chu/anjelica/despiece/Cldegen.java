@@ -93,7 +93,7 @@ public class Cldegen extends ventana
 
         iniciarFrame(); 
        
-        this.setVersion("2017-06-19");
+        this.setVersion("2017-11-29");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -353,7 +353,7 @@ public class Cldegen extends ventana
              + " sum (def_numpie) as def_numpie, "
              + " sum(def_kilos* (def_prcost"+(opIncCosto.isSelected()?"+ pro_cosinc":"")+")"
              + " ) as costo,sum(def_kilos* (def_prcost"+(opIncCosto.isSelected()?"+ pro_cosinc":"")+")"
-            + " )/sum(def_kilos) as imp,0 as precTarifa,0 as kgVenta,0 as prVenta "
+            + " )/sum(def_kilos) as imp,0 as precTarifa,0 as kgVenta,0 as prVenta,a.fam_codi "
              + " from v_despfin l ,desporig c,v_articulo a "
              + (grp_codiE.isNull() ?"":", v_famipro as fp ")
              + " where "+condWhere
@@ -364,8 +364,8 @@ public class Cldegen extends ventana
              + (fam_codiE.isNull()?"": " and a.fam_codi = "+fam_codiE.getValorInt() )
              + (grp_codiE.isNull()?"": " and fp.agr_codi = "+grp_codiE.getValorInt() )
              + (tipoProdE.getValor().equals("T")?"": " and pro_artcon  = "+tipoProdE.getValor() )
-             + " group by l.pro_Codi,a.pro_nomb "
-             + " order by l.pro_codi";
+             + " group by a.fam_codi,l.pro_Codi,a.pro_nomb "
+             + " order by a.fam_codi,l.pro_codi";
         return s;
     }
     /**
@@ -495,7 +495,7 @@ public class Cldegen extends ventana
         impTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9.9");
         opDesgl = new gnu.chu.controles.CCheckBox();
         Bprint = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
-        jt = new gnu.chu.controles.Cgrid(9);
+        jt = new gnu.chu.controles.Cgrid(10);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -797,6 +797,7 @@ public class Cldegen extends ventana
         );
 
         Vector v=new Vector();
+
         v.add("Producto"); // 0
         v.add("Descripcion"); // 1
         v.add("Kilos"); // 2
@@ -806,9 +807,10 @@ public class Cldegen extends ventana
         v.add("Tarifa"); // 6
         v.add("Kg.Venta"); // 7
         v.add("Pr.Venta"); // 8
+        v.add("Fam"); // 9
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{50,200,60,40,70,60,40,45,45});
-        jt.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2,2});
+        jt.setAnchoColumna(new int[]{50,200,60,40,70,60,40,45,45,40});
+        jt.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2,2,2});
         jt.setFormatoColumna(2,"---,--9.99");
         jt.setFormatoColumna(3,"--,--9");
         jt.setFormatoColumna(4,"----,--9.99");

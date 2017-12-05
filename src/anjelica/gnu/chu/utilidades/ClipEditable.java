@@ -15,7 +15,6 @@ import gnu.chu.interfaces.*;
 public class ClipEditable
     extends MouseAdapter implements ClipboardOwner
 {
-
   CEditable editable;
   Component c;
   JTextComponent tc = null;
@@ -30,7 +29,12 @@ public class ClipEditable
     {
       this.c = (Component) editable;
       if (editable instanceof JTextComponent)
+      {
         this.tc = (JTextComponent) editable;
+        if (! tc.isEditable() || !tc.isEnabled() )
+                 paste.setEnabled(false);
+      }
+      
     }
     else
       this.c = new CTextField();
@@ -40,6 +44,7 @@ public class ClipEditable
     popMenu.add(selec);
     copy.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         String s = editable.getText();
@@ -51,6 +56,7 @@ public class ClipEditable
 
     selec.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
 
@@ -64,10 +70,13 @@ public class ClipEditable
     });
     paste.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         try
         {
+            
+       
           String strPaste=getClipboardContents();
 
           strPaste = formatPaste(strPaste);
@@ -83,6 +92,10 @@ public class ClipEditable
       }
     });
 
+  }
+  public JMenuItem getJMenuItemPaste()
+  {
+      return paste;
   }
   public String getClipboardContents() {
      String result = "";
@@ -112,8 +125,10 @@ public class ClipEditable
     
     if (e.getButton()!=MouseEvent.BUTTON3)
       return;
-
-    paste.setEnabled(c.isEnabled());
+    if (tc!=null)
+        paste.setEnabled(tc.isEnabled() && tc.isEditable());
+    else
+        paste.setEnabled(c.isEnabled());
 
     popMenu.show(c, e.getX(), e.getY());
   }
@@ -220,6 +235,7 @@ public class ClipEditable
     {}
     return s;
   }
+  @Override
   public void lostOwnership(Clipboard clipboard, Transferable contents)
   {
 

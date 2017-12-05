@@ -2158,7 +2158,7 @@ void pdreprese_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
     ht.put("modPrecio","true");
 //     ht.put("ponPrecio","true");
-    ht.put("admin","false");
+    ht.put("admin","true");
     if (dtAdd.getConexion().getConURL().contains("anjelicars"))
     {
         ht.put("facil","true");

@@ -51,8 +51,7 @@ public class MantPreMedios extends ventana
    Hashtable<Integer,Double> htBolas = new Hashtable();
    Hashtable<Integer,Integer[]> htLomos = new Hashtable();
    Hashtable<Integer,Boolean> htLomCom = new Hashtable();
-   private final int COD_BOLAFIN=40299;
-   private final int COD_BOLAINICIO=40200;
+  
    
 //   final double PRECIO_DESP=2.8;
    public MantPreMedios(EntornoUsuario eu, Principal p)
@@ -124,6 +123,11 @@ public class MantPreMedios extends ventana
         htBolas.put(40203, 2.75);
         htBolas.put(40205, 2.55);
         htBolas.put(40225, 2.55);
+        htBolas.put(10201, 2.55);
+        htBolas.put(10202, 2.65);
+        htBolas.put(10203, 2.75);
+        htBolas.put(10205, 2.55);
+        htBolas.put(10225, 2.55);
         htLomos.put(10994,new Integer[]{10994,10995});
         htLomos.put(10904,new Integer[]{10904,10905});
         htLomos.put(10994,new Integer[]{10994,10995});
@@ -184,10 +188,21 @@ public class MantPreMedios extends ventana
         try
         {
             jtBolas.removeAllDatos();
+            Iterator<Integer> itBolas = htBolas.keySet().iterator();
+            Integer bola;
+           
+           String codBolas="";
+             
+           while (itBolas.hasNext())
+           {
+               bola=itBolas.next();
+               codBolas+=bola+","; 
+           }
+           codBolas=codBolas.substring(0,codBolas.length()-1);
            String s="select a.pro_codi,sum(avp_canti) as kilos from v_albventa_detalle as a , "
                + "clientes as c,v_despfin as d where a.cli_codi=c.cli_codi "+
             " and avc_fecalb>='"+tar_feciniE.getFechaDB()+"'"+ //  -- Lunes
-            " and (a.pro_codi>="+COD_BOLAINICIO+" and a.pro_codi<="+COD_BOLAFIN+") "+
+            " and a.pro_codi in ("+codBolas+") "+
             //" and d.def_serlot='G' "+
             " and a.pro_codi=d.pro_codi and "
                + "a.avp_ejelot=d.def_ejelot and a.avp_serlot=d.def_serlot and a.avp_numpar=d.pro_lote"
@@ -221,8 +236,8 @@ public class MantPreMedios extends ventana
            
            List<Integer> stLomos= Collections.list(htLomos.keys());
            
-            Collections.sort(stLomos);
-            Iterator<Integer> it = stLomos.iterator();
+           Collections.sort(stLomos);
+           Iterator<Integer> it = stLomos.iterator();
             
            Integer lomo;           
            while (it.hasNext())
@@ -233,7 +248,7 @@ public class MantPreMedios extends ventana
                int codigo2=codigos[0];
                if (codigos.length>1)
                   codigo2=codigos[1];
-               boolean incCompra=htLomCom.get(lomo);
+               boolean incCompra=false;// htLomCom.get(lomo);
                s="select sum(lci_peso) as kilos from v_coninvent where lci_peso>0 and cci_feccon='"+fecStockE.getFechaDB()+"'"+
                    " and (pro_codi="+codigo1+
                    " or pro_codi= "+codigo2+")"+ 
@@ -265,16 +280,17 @@ public class MantPreMedios extends ventana
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(Formatear.getDate("01-01-"+eje_numeE.getValorInt(),"dd-MM-yyyy"));
 //        gc.set(GregorianCalendar.YEAR, eje_numeE.getValorInt());
-        gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.MONDAY);
+        gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.SUNDAY);
         gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt());     
         tar_feciniE.setDate(new java.util.Date(gc.getTimeInMillis()));
         gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt()+1);
 //        gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.SUNDAY);
         
-        fecStockE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-2)); // Sabado anterior
-        
-        fecIniComE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4) ); // Jueves anteerior
-        fecFinComE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",3) );
+        fecStockE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-1)); // Sabado anterior
+        fecIniComE.setDate(tar_feciniE.getDate());
+        fecFinComE.setDate(tar_feciniE.getDate());
+//        fecIniComE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4) ); // Jueves anteerior
+//        fecFinComE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",3) );
     }
     
     /**
@@ -451,7 +467,7 @@ public class MantPreMedios extends ventana
 
         precioBolaE.setValorDec(2.95);
         PPie.add(precioBolaE);
-        precioBolaE.setBounds(520, 0, 30, 20);
+        precioBolaE.setBounds(520, 0, 35, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

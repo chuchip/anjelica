@@ -153,6 +153,7 @@ public class DespVenta extends ventana {
         stkPart=new ActualStkPart(dtAdd,EU.em_cod);
         tid_codiE.iniciar(dtStat, padre, padre.vl, EU);
         tid_codiE.setValorInt(MantTipDesp.AUTO_DESPIECE);
+        tid_codiE.getComboBox().setFocusable(false);
         tid_codiE.setVerSoloActivo(true);
 //        pro_codsalE.setProNomb(pro_nombE);
         ArrayList vc=new ArrayList();
@@ -490,16 +491,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
   desorli.setProLote(numLot);
   desorli.setProNumind(numInd);
   desorli.save(dtAdd);
-  try
-   {
-     stkPart.restar(ejeLot, serLot, numLot, numInd, proCodi,
-                    almCodi, kilos, 1);
-   }
-   catch (java.sql.SQLWarning k)
-   {
-     enviaMailError("Usuario: "+EU.usuario+"\nNO SE Pudo restar stock en despVenta: "+
-                             " deo_codi: " + deoCodi + "\n" + k.getMessage());
-   }
+
 }
  /**
  * Actualiza cabecera de despiece

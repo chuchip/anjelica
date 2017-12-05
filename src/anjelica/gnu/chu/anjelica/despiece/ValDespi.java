@@ -87,6 +87,7 @@ public class ValDespi extends ventana {
    final static int JTDES_PROC=7;
    final static int JTDES_SEL=8;
    final static int JTDES_CER=9;
+   final static int JTDES_CLIENTE=10;
 //   final static int JTDES_LOTE=8;
    final static int JTCAB_NDES=0; // Numero de despiece
    final static int JTCAB_PROCODI=1; // Articulo
@@ -166,7 +167,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2017-10-29" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2017-11-23" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -191,6 +192,7 @@ public class ValDespi extends ventana {
      feulin=ActualStkPart.getFechaUltInv(0,0,null,dtStat);
      TARIFA_MAYOR=pdtipotar.getTarifaBase(dtStat, EU.em_cod);
      DTO_TARIFA_MAYOR=pdtipotar.getIncrementoTarifa(dtStat,TARIFA_MAYOR);
+     cli_codiE.iniciar(dtStat,this,vl,EU);
      if (feulin == null)
         feulin = "01-01-" + EU.ejercicio; // Buscamos desde el principio del año.
      
@@ -2062,23 +2064,25 @@ public class ValDespi extends ventana {
         jtDesp.setButton(KeyEvent.VK_F5, BAgrupar.getBotonAccion());  
        if (agrupaC.getValor().equals("A"))
        {
-         s="select 1 as orden,eje_nume, deo_codi, -1 as deo_numdes,deo_fecha as fecha from  desporig as d "
+         s="select 1 as orden,eje_nume, deo_codi, -1 as deo_numdes,deo_fecha as fecha,cli_nomb from  desporig as d left join v_cliente as cl on d.cli_codi = cl.cli_codi"
             + " where  d.eje_nume = "+eje_numeE.getValorInt()
             + " and deo_numdes="+grd_numeE.getValorInt()
+            + (cli_codiE.isNull()?"": " and d.cli_codi = "+cli_codiE.getValorInt())
             + " UNION ALL "
-            + "select 0 as orden,eje_nume, 0 as deo_codi,  grd_nume as deo_numdes,grd_fecha as fecha  from grupdesp as g "
+            + "select 0 as orden,eje_nume, 0 as deo_codi,  grd_nume as deo_numdes,grd_fecha as fecha,'GRUPO' as cli_nomb  from grupdesp as g "
             + " where g.eje_nume = "+eje_numeE.getValorInt()
             + " and g.grd_nume = "+grd_numeE.getValorInt()
             + " UNION ALL ";
        }
        String s1="select 2 as orden,eje_nume, deo_codi, 0 as deo_numdes,"
-               + " deo_fecha as fecha  from desporig as d "
+               + " deo_fecha as fecha,cli_nomb  from desporig as d left join v_cliente as cl on d.cli_codi = cl.cli_codi "
                + " where d.deo_fecha>=TO_DATE('"+fecinfE.getText()+"','dd-MM-yy')"
                +(fecsupE.isNull()?"":" and d.deo_fecha<=TO_DATE('"+fecsupE.getText()+"','dd-MM-yy')" )
                + " and d.eje_nume = "+eje_numeE.getValorInt()
                + (tid_codiniE.isNull()?"":" and d.tid_codi "+               
                (tid_codfinE.isNull()?"":">")+
                "= "+tid_codiniE.getValorInt())
+               + (cli_codiE.isNull()?"": " and d.cli_codi = "+cli_codiE.getValorInt())
               + (tid_codfinE.isNull()?"":" and d.tid_codi<= "+tid_codfinE.getValorInt())
                + (opProduc.getValor().equals("*")?"": " and deo_incval = '"+opProduc.getValor()+"'")
                + (deo_codiE.getValorInt()==0?"":" and d.eje_nume = "+eje_numeE.getValorInt()
@@ -2089,7 +2093,7 @@ public class ValDespi extends ventana {
        if (opVerGrupo.isSelected())
         s+= " UNION ALL "
                + "select 2 as orden,eje_nume, 0 as deo_codi,  grd_nume as deo_numdes,"
-               + " grd_fecha as fecha from grupdesp as g "
+               + " grd_fecha as fecha,'GRUPO' as cli_nomb from grupdesp as g "
                + " where exists( "+s1+" and deo_numdes>0 "
                + (agrupaC.getValor().equals("A")?" and deo_numdes != "+grd_numeE.getValorInt():"")
                + " and g.eje_nume=d.eje_nume and g.grd_nume=d.deo_numdes ) ";
@@ -2199,6 +2203,7 @@ public class ValDespi extends ventana {
              v.add(sel);
              v.add(rs.getString("deo_block").equals("N"));
              v.add(deoUnid);
+             v.add(dtCon1.getString("cli_nomb"));
              lista.add(v);
          } while (dtCon1.next());
          if (lista.isEmpty())
@@ -2261,7 +2266,9 @@ public class ValDespi extends ventana {
         tid_codiniE = new gnu.chu.camposdb.tidCodi2();
         cLabel14 = new gnu.chu.controles.CLabel();
         opProduc = new gnu.chu.controles.CComboBox();
-        jtDesp = new gnu.chu.controles.Cgrid(11);
+        cLabel15 = new gnu.chu.controles.CLabel();
+        cli_codiE = new gnu.chu.camposdb.cliPanel();
+        jtDesp = new gnu.chu.controles.Cgrid(12);
         jtCab = new gnu.chu.controles.CGridEditable(9)
         {
             @Override
@@ -2319,9 +2326,9 @@ public class ValDespi extends ventana {
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcond.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        Pcond.setMaximumSize(new java.awt.Dimension(595, 65));
-        Pcond.setMinimumSize(new java.awt.Dimension(595, 65));
-        Pcond.setPreferredSize(new java.awt.Dimension(595, 65));
+        Pcond.setMaximumSize(new java.awt.Dimension(595, 85));
+        Pcond.setMinimumSize(new java.awt.Dimension(595, 85));
+        Pcond.setPreferredSize(new java.awt.Dimension(595, 85));
         Pcond.setQuery(true);
         Pcond.setLayout(null);
 
@@ -2331,9 +2338,9 @@ public class ValDespi extends ventana {
         Pcond.add(fecinfE);
         fecinfE.setBounds(70, 20, 60, 17);
 
-        cLabel2.setText("Tipo");
+        cLabel2.setText("Cliente");
         Pcond.add(cLabel2);
-        cLabel2.setBounds(10, 40, 40, 15);
+        cLabel2.setBounds(10, 60, 50, 15);
         Pcond.add(eje_numeE);
         eje_numeE.setBounds(70, 2, 32, 17);
 
@@ -2379,7 +2386,7 @@ public class ValDespi extends ventana {
         Bbuscar.addMenu("Despieces");
         Bbuscar.addMenu("Albaran de Venta");
         Pcond.add(Bbuscar);
-        Bbuscar.setBounds(470, 40, 120, 24);
+        Bbuscar.setBounds(470, 60, 120, 24);
 
         opVerGrupo.setSelected(true);
         opVerGrupo.setText("Ver Grupos");
@@ -2413,6 +2420,12 @@ public class ValDespi extends ventana {
         Pcond.add(opProduc);
         opProduc.setBounds(520, 2, 70, 17);
 
+        cLabel15.setText("Tipo");
+        Pcond.add(cLabel15);
+        cLabel15.setBounds(10, 40, 40, 15);
+        Pcond.add(cli_codiE);
+        cli_codiE.setBounds(60, 60, 370, 17);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -2431,11 +2444,12 @@ public class ValDespi extends ventana {
             v.add("Proc"); // 7 Procesado
             v.add("Sel"); // / 8 selecionado
             v.add("Cer"); // 9 Cerrado
-            v.add("Unid"); // 10 Kilos Desp (entrada)
+            v.add("Unid"); // 10 Unid Desp (entrada)
+            v.add("Cliente"); // 11 Cliente
             jtDesp.setCabecera(v);
         }
-        jtDesp.setAlinearColumna(new int[]{2,1,2,1,0,2,1,1,1,1,2});
-        jtDesp.setAnchoColumna(new int[]{50,40,70,80,200,70,40,40,30,20,40});
+        jtDesp.setAlinearColumna(new int[]{2,1,2,1,0,2,1,1,1,1,2,0});
+        jtDesp.setAnchoColumna(new int[]{30,30,60,60,180,60,40,40,30,20,30,120});
         jtDesp.setFormatoColumna(JTDES_FECDES, "dd-MM-yy");
         jtDesp.setFormatoColumna(JTDES_KILOS , "##,##9.99");
         jtDesp.setFormatoColumna(JTDES_VAL, "BSN");
@@ -2451,7 +2465,7 @@ public class ValDespi extends ventana {
         jtDesp.setLayout(jtDespLayout);
         jtDespLayout.setHorizontalGroup(
             jtDespLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 628, Short.MAX_VALUE)
+            .addGap(0, 645, Short.MAX_VALUE)
         );
         jtDespLayout.setVerticalGroup(
             jtDespLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2475,11 +2489,11 @@ public class ValDespi extends ventana {
         jtCab.setLayout(jtCabLayout);
         jtCabLayout.setHorizontalGroup(
             jtCabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 628, Short.MAX_VALUE)
+            .addGap(0, 645, Short.MAX_VALUE)
         );
         jtCabLayout.setVerticalGroup(
             jtCabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 44, Short.MAX_VALUE)
+            .addGap(0, 57, Short.MAX_VALUE)
         );
 
         try {
@@ -2601,11 +2615,11 @@ public class ValDespi extends ventana {
         jtLin.setLayout(jtLinLayout);
         jtLinLayout.setHorizontalGroup(
             jtLinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 628, Short.MAX_VALUE)
+            .addGap(0, 645, Short.MAX_VALUE)
         );
         jtLinLayout.setVerticalGroup(
             jtLinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 44, Short.MAX_VALUE)
+            .addGap(0, 57, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -2763,6 +2777,7 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel14;
+    private gnu.chu.controles.CLabel cLabel15;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -2771,6 +2786,7 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CLabel cLabel9;
+    private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CTextField def_prcostE;
     private gnu.chu.controles.CCheckBox def_prebloC;
     private gnu.chu.controles.CTextField deo_codiE;

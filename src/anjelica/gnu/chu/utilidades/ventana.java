@@ -215,6 +215,7 @@ public class ventana extends CInternalFrame implements ejecutable
   }
   /**
    * Rutina de Error en el JbInit envia un mensaje de Error
+     * @param j
    */
   protected void ErrorInit(Throwable j)
   {

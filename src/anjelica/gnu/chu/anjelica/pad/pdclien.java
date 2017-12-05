@@ -81,7 +81,7 @@ public class pdclien extends ventanaPad implements PAD
     CLabel cLabel2 = new CLabel();
     CTextField cli_nombE = new CTextField(Types.CHAR, "X", 40);
     CLabel cLabel7 = new CLabel();
-    CTextField cli_nomcoE = new CTextField(Types.CHAR, "X", 50);
+    CTextField cli_nomcoE = new CTextField(Types.CHAR, "X", 120);
     CPanel PdatGen = new CPanel();
     CLinkBox cli_zonrepE = new CLinkBox();
     CLabel cLabel6 = new CLabel();
@@ -213,7 +213,7 @@ public class pdclien extends ventanaPad implements PAD
     CPanel Phistor = new CPanel();
     Cgrid jt = new Cgrid(4);
     int clicodiAnt, empCodiAnt;
-    CLabel cLabel8 = new CLabel();
+    CLabel cli_generL = new CLabel();
     CComboBox cli_generE = new CComboBox();
     sbePanel sbe_codiE = new sbePanel();
     CLabel cLabel111 = new CLabel();
@@ -456,7 +456,7 @@ public class pdclien extends ventanaPad implements PAD
       cLabel4.setBounds(new Rectangle(296, 20, 59, 19));
       cli_direcE.setBounds(new Rectangle(355, 20, 316, 17));
       cli_direcE.setMayusc(true);
-      cli_nomcoE.setBounds(new Rectangle(100, 1, 417, 17));
+      cli_nomcoE.setBounds(new Rectangle(90, 1, 580, 17));
       cli_nomcoE.setMayusc(true);
       cLabel2.setBounds(new Rectangle(209, 3, 51, 16));
       cli_codiE.setBounds(new Rectangle(87, 3, 53, 16));
@@ -607,12 +607,9 @@ public class pdclien extends ventanaPad implements PAD
 
       Phistor.setLayout(null);
       jt.setBounds(new Rectangle(8, 10, 662, 310));
-      cLabel8.setRequestFocusEnabled(true);
-      cLabel8.setToolTipText("Cliente Generico");
-      cLabel8.setText("Generico");
-      cLabel8.setBounds(new Rectangle(555, 1, 55, 17));
-
-      cli_generE.setBounds(new Rectangle(613, 1, 55, 17));
+      cli_generL.setRequestFocusEnabled(true);
+      cli_generL.setToolTipText("Cliente Generico");
+      cli_generL.setText("Generico");
       sbe_codiE.setBounds(new Rectangle(445, 151, 43, 18));
 
       cLabel111.setBounds(new Rectangle(392, 151, 53, 18));
@@ -642,8 +639,8 @@ public class pdclien extends ventanaPad implements PAD
 
       rep_codiE.setAncTexto(30);
       cli_feulveL.setText("Fec. Ult. Venta");
-      cli_feulveL.setBounds(new Rectangle(415, 205, 90, 20));
-      cli_feulveE.setBounds(new Rectangle(585, 205, 80, 20));
+      cli_feulveL.setBounds(new Rectangle(415, 195, 90, 20));
+      cli_feulveE.setBounds(new Rectangle(585, 195, 80, 20));
       cli_feulveE.setEnabled(false);
       cli_feulcoL.setText("Fec.Ult.Contacto");
       cli_feulcoL.setBounds(new Rectangle(445, 100, 110, 20));
@@ -663,6 +660,9 @@ public class pdclien extends ventanaPad implements PAD
       rut_codiE.setBounds(new Rectangle(115, 240, 275, 18));
       cli_servirL.setBounds(new Rectangle(1, 260, 110, 18));
       cli_servirE.setBounds(new Rectangle(115, 260, 75, 18));
+      cli_generL.setBounds(new Rectangle(200, 260, 55, 17));
+      cli_generE.setBounds(new Rectangle(257, 260, 55, 17));
+
       cli_enalvaL.setBounds(new Rectangle(1, 280, 110, 18));
       cli_enalvaE.setBounds(new Rectangle(115, 280, 75, 18));
       cli_codrutL.setBounds(new Rectangle(410, 240, 80, 19));
@@ -858,7 +858,7 @@ public class pdclien extends ventanaPad implements PAD
         PdatGen.add(cLabel15, null);
         PdatGen.add(tar_codiE, null);
         PdatGen.add(cli_generE, null);
-        PdatGen.add(cLabel8, null);
+        PdatGen.add(cli_generL, null);
         PdatGen.add(cli_fecaltE, null);
         PdatGen.add(cli_fecaltL, null);
         PdatGen.add(cLabel32, null);
