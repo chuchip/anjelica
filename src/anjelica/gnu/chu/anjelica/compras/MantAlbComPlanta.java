@@ -239,7 +239,11 @@ public class MantAlbComPlanta extends MantAlbCom
       throw new SQLException("Error al Parsear fechas",k);
     }
   }
-
+  @Override
+  public void verDiferentesLotes() 
+  {
+      
+  }
 void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
                     int pro_codi,
                     int acl_nulin,
@@ -272,6 +276,12 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
     dtAdd.setDato("acp_canind", acp_canind);
     dtAdd.update(stUp);
   }
+
+    /**
+     *
+     * @param forzarCambioPrv
+     */
+    @Override
   public void cambioPrv(boolean forzarCambioPrv)
   {      
     try {

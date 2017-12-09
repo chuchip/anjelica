@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public interface MantAlbCom_Interface
 {  
- 
+   public void verDiferentesLotes() ;
    public void confGridDesglose() throws Exception;
    public int cambiaLinDesg0(int row) throws Exception;
    public String getLinGrDes();

@@ -538,8 +538,7 @@ public class CGridEditable extends Cgrid implements CQuery {
     for (int n = 0; n < nCol; n++)
     {
       final Component comp = (Component) v.get(n);
-      if (Class.forName("gnu.chu.controles.CButton").isAssignableFrom(comp.
-          getClass()))
+      if (Class.forName("gnu.chu.controles.CButton").isAssignableFrom(comp.getClass()))
       { 
         ((CButton) comp).setMargin(new Insets(0,0,0,0));
         tableView.getColumn(tableView.getColumnName(n)).setCellRenderer(new CButton());

@@ -4412,28 +4412,32 @@ create table tiemposdoc
 );
 grant all on anjelica.tiemposdoc to public;
 --
+-- Decodificacion Etiquetas Proveedores
 --
--- Tabla Transporte pedidos venta
--- 
-create table cabtrapedven
+create table  etiqprov
 (
-	trp_id serial,			-- Numero identificador
-	tra_codi int not null,  -- Transporte.
-	rut_codi varchar(2),	-- Ruta
-	trp_fecha date			-- Fecha Transporte
+	etp_codi int not null,	-- Codigo Etiqueta
+	prv_codi int not null,	-- Proveedor
+	etp_nomb varchar(50) not null, -- Nombre etiqueta	
+	etp_long int not null,	-- Longitud Cod. Barras. 0 Sin definir.
+	etp_proini int,			-- Pos. Cod. Producto Inicio
+	etp_profin int,			-- Pos Cod. Producto Final
+	etp_lotini int,			-- Pos Lote Inicio
+	etp_lotfin int,			-- Pos Lote Final.
+	etp_fcdini int,			-- Fecha Cad. Inicio
+	etp_fcdfin int,			-- Fecha Cad. Final
+	etp_fecfor char(10),	-- Formato Fecha (YYMMDD)
+	etp_kgenin int,			-- Parte entera Kilos Inicio
+	etp_kgenfi int,			-- Parte entera Kilos Final
+	etp_kgdein int,			-- Parte Decimal Kilos Inicio
+	etp_kgdefi int,			-- Parte Decimal Kilos Final
+	constraint ix_etiqprov primary  key (etp_codi)
 );
+grant all on anjelica.etiqprov to public;
+--insert into etiqprov values(1,98,'Tilburg',null,null,0,5,5,11,'yyMMdd',11,14,14,16)
 
-grant all on anjelica.cabtrapedven to public;
-create table lintrapedven
-(
-	trp_id int not null,
-	trp_orden int not null, 	-- Orden
-	trp_tipo char(1) not null default 'E', -- Encajado, Colgado		
-	trp_fecent timestamp,		-- Fecha Entrega (con hora y minutos)
-	trp_numdoc int not null,	    -- Identificador documento	
-	trp_kilos int not null 	-- Kilos
-);
-create index ix_litrapedve on lintrapedven (trp_id); 
+012345678901234567890
+-A23B18010201526--122
 --drop view v_cliprv;
 create view anjelica.v_cliprv as 
 select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.clientes 

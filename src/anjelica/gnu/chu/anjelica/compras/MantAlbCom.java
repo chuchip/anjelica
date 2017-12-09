@@ -72,6 +72,9 @@ import net.sf.jasperreports.engine.*;
 
 public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSource,MantAlbCom_Interface
 {  
+  boolean swInsLinEti=false;
+  boolean checkCabecera=false;
+   PEtiqProv pEtiPrv=null;
     AyuSdeMat ayuSde=null;
   AyuSdeMat ayuMat=null;
   CLabel acc_idL = new CLabel("Id");
@@ -736,7 +739,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20171007)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20171209)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -1319,7 +1322,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     Tpanel1.addTab("Incid.", PIncid);
     Tpanel1.addTab( "Más Datos",Potros);    
     Tpanel1.addTab("Historico", Phist);
-    
+    if (pEtiPrv!=null)
+        Tpanel1.addTab("Eti.Prv", pEtiPrv);
     Ppedido.add(jtPed,   new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(1, 0, 0, 0), 0, 0));
     Ppedido.add(cLabel27,   new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
@@ -2037,7 +2041,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       }
     });
     
-    jtDes.tableView.addMouseListener(new MouseAdapter()
+    jtDes.addMouseListener(new MouseAdapter()
     {
             @Override
       public void mouseClicked(MouseEvent e)
@@ -2056,7 +2060,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         }
       }
     });
-    jt.tableView.addMouseListener(new MouseAdapter()
+    jt.addMouseListener(new MouseAdapter()
     {
             @Override
       public void mouseClicked(MouseEvent e)
@@ -2325,7 +2329,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   }
   
   void cambioPrv()
-  {    
+  {        
       cambioPrv(false);
   }
   
@@ -2461,6 +2465,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     if (swCargaAlb)
       return;
+    if (pEtiPrv!=null)
+         pEtiPrv.activar(false);
+
     if (!jtDes.isEnabled())
     { // Vengo de la cabecera
       if (!checkCabecera())
@@ -2492,6 +2499,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       pro_codiE.getNombArt(jt.getValString(0,JT_PROCOD));
       setEditCant(pro_codiE.getTipoLote());
       pro_codiE.resetCambio();
+      checkCabecera=true;
     }
     else
     { // Vengo de Las lineas de individuo
@@ -2678,6 +2686,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
                 return 0;
             }
             guardaUltValoresDesg();
+            verDiferentesLotes();
             lineaAnt = linea;
         }
     } catch (Exception k)
@@ -3221,6 +3230,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
    */
   void irGridDes0()
   {
+    if (!checkCabecera)
+        return;
     try
     {
       swCargaLin=true;
@@ -3262,6 +3273,10 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     {
       Error("Error al controlar el Codigo Prod.", k);
       return;
+    }
+    if (pEtiPrv!=null)
+    {
+        pEtiPrv.activar(true);
     }
     if (jt.getValorInt(0) == 0)
       jtDes.removeAllDatos();
@@ -3565,6 +3580,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   @Override
   public void PADEdit()
   {
+    checkCabecera=true;
     try
     {
       if (!checkEdicion())
@@ -3773,6 +3789,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     @Override
   public void PADAddNew()
   {
+    checkCabecera=false;
     cargaAlbVentas=false;
     mensaje("Insertando Albaran ...");
     Pcabe.resetTexto();
@@ -4102,6 +4119,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     jt.setEnabled(b);
     if (ARG_RECLAS)
       Bdesagr.setEnabled(b);
+    
     jtDes.setEnabled(b);
     Pcabe.setEnabled(b);
     Potros.setEnabled(b);
@@ -4767,8 +4785,11 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     }
     jtDes.requestFocusInicio();
     jtDes.setEnabled(false);
+    if (pEtiPrv!=null && nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.ADDNEW)
+        verDiferentesLotes();    
     swActDesg=true;
   }
+  
   
   String getPais(String pais) throws SQLException
   {

@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;     
+import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
@@ -48,6 +49,7 @@ import java.util.Hashtable;
  */
 public class MantAlbComCarne extends MantAlbCom  
 {
+ 
    public static int MINLONCROTAL=10;
    private int CROTALAUTOMA=1; // Numero crotal Automatico
    String ultMat=null,ultSalDes,ultNac,ultCeb,ultSacr,ultFecCad,ultFecSac,ultFecPro;
@@ -254,7 +256,6 @@ public class MantAlbComCarne extends MantAlbCom
     sde_codiE.setFormato(Types.DECIMAL,"####9",5);
     mat_codiE.setFormato(true);
     mat_codiE.setFormato(Types.DECIMAL,"####9",5);
-
    
     
     acp_nucrotE.setToolTipText("Pulse F3 para generar Num. Crotal");
@@ -264,29 +265,33 @@ public class MantAlbComCarne extends MantAlbCom
     acp_clasiE.setMayusc(true);
     vc1.add(acp_numindE); // 0
     vc1.add(acp_cantiE); // 1
-    vc1.add(acp_clasiE); // 1
-    vc1.add(acp_nucrotE); // 2
-    vc1.add(mat_codiE); // 3 Matadero
-    vc1.add(sde_codiE); // 4
-    vc1.add(acp_painacE.getFieldPaiCodi()); // 5
-    vc1.add(acp_painacE.getFieldPaiNomb()); // 5
-    vc1.add(acp_engpaiE.getFieldPaiCodi()); // 6
-    vc1.add(acp_engpaiE.getFieldPaiNomb()); // 6
-    vc1.add(acp_paisacE.getFieldPaiCodi()); // 7
-    vc1.add(acp_paisacE.getFieldPaiNomb()); // 7
-    vc1.add(acp_feccadE); // 8
-    vc1.add(acp_fecsacE); // 9
-    vc1.add(acp_fecproE); // 10
-    vc1.add(acp_numlinE); // 11
-    vc1.add(acp_canindE); // 12
+    vc1.add(acp_clasiE); // 2
+    vc1.add(acp_nucrotE); // 3
+    vc1.add(mat_codiE); // 4 Matadero
+    vc1.add(sde_codiE); // 5
+    vc1.add(acp_painacE.getFieldPaiCodi()); // 6
+    vc1.add(acp_painacE.getFieldPaiNomb()); // 7
+    vc1.add(acp_engpaiE.getFieldPaiCodi()); // 8
+    vc1.add(acp_engpaiE.getFieldPaiNomb()); // 9
+    vc1.add(acp_paisacE.getFieldPaiCodi()); // 10
+    vc1.add(acp_paisacE.getFieldPaiNomb()); // 11
+    vc1.add(acp_feccadE); // 12
+    vc1.add(acp_fecsacE); // 13
+    vc1.add(acp_fecproE); // 14
+    vc1.add(acp_numlinE); // 15
+    vc1.add(acp_canindE); // 16
     jtDes.setAjusAncCol(false);
     jtDes.setColNueva(1);
     jtDes.setCampos(vc1);
     jtDes.setFormatoCampos();
+    pEtiPrv =new PEtiqProv(this);
+    
+    
 //      jtDes.setFormatoColumna(1,"---9.99");
 //    jtDes.setFormatoColumna(8,acp_feccadE.getFormato());
 //    jtDes.setFormatoColumna(JTD_FECSAC,acp_fecsacE.getFormato());
 //    jtDes.setFormatoColumna(JTD_FECPRO,acp_fecproE.getFormato());
+    Tpanel1.addTab("Eti.Prv", pEtiPrv);
   }
   
     /**
@@ -297,9 +302,7 @@ public class MantAlbComCarne extends MantAlbCom
      */
     @Override
    public int cambiaLinDesg0(int row) throws Exception
-   {
-    
-   
+   {       
     if (mat_codiE.getError() && !mat_codiE.isNull())
      {
        mensajeErr("Introduzca un Codigo de Matadero  valido");
@@ -541,33 +544,161 @@ public class MantAlbComCarne extends MantAlbCom
     dtAdd.update(stUp);
     
   }
+    public void cambioPrv(boolean forzarCambioPrv, CLinkBox sdeCodi, CLinkBox matCodi) {
+        try
+        {
+            if (prv_codiE.isNull())
+                return;
+            s = "SELECT v_saladesp.sde_codi,sde_nrgsa FROM v_prvsade,v_saladesp "
+                + " WHERE prv_codi = " + prv_codiE.getText()
+                + " and v_prvsade.sde_codi = v_saladesp.sde_codi "
+                + " ORDER BY sde_nrgsa";
+            dtStat.select(s);
+            sdeCodi.addDatos(dtStat);
+            s = "SELECT v_matadero.mat_codi,mat_nrgsa FROM v_prvmata,v_matadero "
+                + " WHERE prv_codi = " + prv_codiE.getText()
+                + " and v_prvmata.mat_codi = v_matadero.mat_codi "
+                + " order by mat_nrgsa";
+            dtStat.select(s);
+            matCodi.addDatos(dtStat);
+            if (acc_copvfaE.isNull() || forzarCambioPrv)
+            {
+                acc_copvfaE.setText(prv_codiE.getText());
+                acc_copvfaE.controla(false);
+            }
+           
+        } catch (Exception k)
+        {
+            Error("Error al buscar datos Mataderos de Proveedores", k);
+        }
+
+    }
    @Override
   public void cambioPrv(boolean forzarCambioPrv)
   {
-    try {
-      if (prv_codiE.isNull())
-          return;
-      s = "SELECT v_saladesp.sde_codi,sde_nrgsa FROM v_prvsade,v_saladesp "+
-          " WHERE prv_codi = " +prv_codiE.getText()+
-          " and v_prvsade.sde_codi = v_saladesp.sde_codi "+
-          " ORDER BY sde_nrgsa";
-      dtStat.select(s);
-      sde_codiE.addDatos(dtStat);
-      s = "SELECT v_matadero.mat_codi,mat_nrgsa FROM v_prvmata,v_matadero "+
-          " WHERE prv_codi = " + prv_codiE.getText()+
-          " and v_prvmata.mat_codi = v_matadero.mat_codi "+
-          " order by mat_nrgsa";
-      dtStat.select(s);
-      mat_codiE.addDatos(dtStat);
-      if (acc_copvfaE.isNull() || forzarCambioPrv)
+      try
       {
-        acc_copvfaE.setText(prv_codiE.getText());
-        acc_copvfaE.controla(false);
+          cambioPrv(forzarCambioPrv, sde_codiE, mat_codiE);
+          if (pEtiPrv != null)
+              pEtiPrv.cambioPrv();
+      } catch (Exception k)
+      {
+          Error("Error al buscar datos Mataderos de Proveedores", k);
       }
-    } catch (Exception k)
+  }
+  
+  void ponDatosTraza(ArrayList v)
+  {       
+          acp_clasiE.setText((String) v.get(0));
+          mat_codiE.setText((String) v.get(1));
+          sde_codiE.setText((String) v.get(2));
+          acp_painacE.setText((String) v.get(3));
+          acp_engpaiE.setText((String) v.get(4));
+          acp_paisacE.setText((String) v.get(5));
+          acp_feccadE.setDate((java.util.Date) v.get(6));
+          acp_fecsacE.setDate((java.util.Date) v.get(7));          
+          jtDes.setValor( v.get(0),JTD_CLASI);
+          jtDes.setValor( v.get(1),JTD_MATCODI);
+          jtDes.setValor( v.get(2),JTD_SDECODI);
+          jtDes.setValor( v.get(3),JTD_PAINAC);
+          jtDes.setValor( v.get(4),JTD_ENGPAI);
+          jtDes.setValor( v.get(5),JTD_PAISAC);
+          jtDes.setValor(v.get(6),JTD_FECCAD);
+          jtDes.setValor( v.get(7),JTD_FECPRO);
+          Tpanel1.setSelectedIndex(0);          
+          jtDes.requestFocusLater();
+  }
+  /**
+   * Muestra en el grid de Etiqueta Proveedores los diferentes lotes
+   */
+   @Override
+  public void verDiferentesLotes()
+  {
+      if (swInsLinEti)
+          return;
+    int nl=jtDes.getRowCount();
+    pEtiPrv.getGridLotes().setEnabled(false);
+    pEtiPrv.limpia();
+    pEtiPrv.setProducto(pro_codiE.getValorInt());
+
+
+    String lote,clasi;
+    ArrayList<String> lotes=new ArrayList();
+    ArrayList<String> clasif=new ArrayList();
+    for (int n=0;n<nl;n++)
     {
-      Error("Error al buscar datos Mataderos de Proveedores",k);
+        lote=jtDes.getValString(n,JTD_MATCODI)+jtDes.getValString(n,JTD_SDECODI)+
+            jtDes.getValString(n,JTD_PAINAC)+jtDes.getValString(n,JTD_ENGPAI)+
+            jtDes.getValString(n,JTD_PAISAC)+jtDes.getValString(n,JTD_FECCAD)+
+            jtDes.getValString(n,JTD_FECPRO);
+        if (lotes.indexOf(lote)>=0)
+            continue;
+        lotes.add(lote);
+        ArrayList v=pEtiPrv.getGridLotes().getLineaDefecto();
+        clasi=jtDes.getValString(n,JTD_CLASI);
+        if (clasi.trim().equals(""))
+            clasi="NL"+n;
+        if (clasif.indexOf(clasi)>=0)
+            clasi="NL"+n;
+        clasif.add(clasi);
+            
+        v.set(pEtiPrv.JTLOTE_LOTE ,clasi);
+        v.set(pEtiPrv.JTLOTE_MAT , jtDes.getValString(n,JTD_MATCODI));
+        v.set(pEtiPrv.JTLOTE_SDE , jtDes.getValString(n,JTD_SDECODI));
+        v.set(pEtiPrv.JTLOTE_PN , jtDes.getValString(n,JTD_PAINAC));
+        v.set(pEtiPrv.JTLOTE_PC , jtDes.getValString(n,JTD_ENGPAI));
+        v.set(pEtiPrv.JTLOTE_PS , jtDes.getValString(n,JTD_PAISAC));
+        v.set(pEtiPrv.JTLOTE_FECCAD , jtDes.getValString(n,JTD_FECCAD));
+        v.set(pEtiPrv.JTLOTE_FECPRO , jtDes.getValString(n,JTD_FECPRO));
+        pEtiPrv.getGridLotes().addLinea(v);
     }
+  }
+  /**
+   * Inserta lineas de Etiquetas Proveedor
+   * @param al 
+   */
+  void insertaLineasEtiqueta(ArrayList<ArrayList> al)
+  {      
+      int nl=al.size();
+      if (nl==0)
+          return;
+      jtDes.setEnabled(false);
+      swInsLinEti=true;
+     
+      for (int n=0;n<nl;n++)
+      {
+          jtDes.setEnabled(false);
+          ArrayList v=al.get(n);
+          ArrayList vc=jtDes.getLineaDefecto();
+          jtDes.addLinea(vc);
+          jtDes.requestFocusFinal();
+          jtDes.setEnabled(true);
+          acp_cantiE.setValorDec((double) v.get(1));
+          acp_clasiE.setText((String) v.get(0));
+          mat_codiE.setValorInt((int) v.get(2));
+          sde_codiE.setValorInt((int) v.get(3));
+          acp_painacE.setText((String) v.get(4));
+          acp_engpaiE.setText((String) v.get(5));
+          acp_paisacE.setText((String) v.get(6));
+          acp_feccadE.setDate((java.util.Date) v.get(7));
+          acp_fecsacE.setDate((java.util.Date) v.get(8));
+          jtDes.setValor( v.get(1),JTD_CANTI);
+          jtDes.setValor( v.get(0),JTD_CLASI);
+          jtDes.setValor( v.get(2),JTD_MATCODI);
+          jtDes.setValor( v.get(3),JTD_SDECODI);
+          jtDes.setValor( v.get(4),JTD_PAINAC);
+          jtDes.setValor( v.get(5),JTD_ENGPAI);
+          jtDes.setValor( v.get(6),JTD_PAISAC);
+          jtDes.setValor(v.get(7),JTD_FECCAD);
+          jtDes.setValor( v.get(8),JTD_FECPRO);
+
+          jtDes.mueveSigLinea();
+
+      }
+      Tpanel1.setSelectedIndex(0);
+      jtDes.setEnabled(true);
+      jtDes.requestFocusFinalLater();
+      swInsLinEti=false;
   }
   /**
    * Actualizo Datos de Desglose
