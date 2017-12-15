@@ -2518,7 +2518,7 @@ public class pdalbara extends ventanaPad  implements PAD
                      jt.getValorDec(jt.tableView.getSelectedRow(), JT_CANTI)<0);
       }
     });
-    jtDes.tableView.addMouseListener(new MouseAdapter()
+    jtDes.addMouseListener(new MouseAdapter()
     {
             @Override
       public void mouseClicked(MouseEvent e)

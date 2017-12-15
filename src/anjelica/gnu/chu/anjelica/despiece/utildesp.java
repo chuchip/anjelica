@@ -88,7 +88,7 @@ public class utildesp
   boolean cambio=true;
   public int prvCodi=0;
   private String acp_painac,acp_engpai,acp_paisac;
-  private int mat_codi,sde_codi;
+  private String stp_matad,stp_saldes;
   private String mat_nrgsa,sde_nrgsa,paisSacrificioNombre;
 // Variables Cabecera de Despiece
   int ejeNume, empCodi, numDesp;
@@ -251,8 +251,8 @@ public class utildesp
         dtAdd.setDato("stp_engpai",acp_engpai);
         dtAdd.setDato("stp_paisac",acp_paisac);
         dtAdd.setDato("stp_fecsac",getFecSacrif());        
-        dtAdd.setDato("mat_codi",mat_codi);
-        dtAdd.setDato("sde_codi",sde_codi);
+        dtAdd.setDato("stp_matad",stp_matad);
+        dtAdd.setDato("stp_saldes",stp_saldes);
         dtAdd.setDato("stp_traaut",0);
         dtAdd.setDato("stp_fefici","current_timestamp");
         dtAdd.update();
@@ -329,8 +329,8 @@ public class utildesp
     acp_engpai=null;
     acp_paisac=null;
     fecSacrE=null;
-    mat_codi=0;
-    sde_codi=0;
+    stp_matad="";
+    stp_saldes="";
     boolean swTidCodi;
     swForzaTraza=false;
     if (ActualStkPart.checkIndiv(dtStat, datInd.getProducto(), datInd.getEjercLot(),0,
@@ -346,8 +346,8 @@ public class utildesp
         acp_engpai=dtStat.getString("stp_engpai",false);
         acp_paisac=dtStat.getString("stp_paisac",false);
         fecSacrE=dtStat.getDate("stp_fecsac");
-        mat_codi=dtStat.getInt("mat_codi",true);
-        sde_codi=dtStat.getInt("sde_codi",true);
+        stp_matad=dtStat.getString("stp_matad",true);
+        stp_saldes=dtStat.getString("stp_saldes",true);        
         swForzaTraza=dtStat.getInt("stp_traaut")==0;
     }
     if (!pdempresa.checkEmpresa(dtCon1, empLot))
@@ -565,19 +565,12 @@ public class utildesp
             msgAviso = "No encontrado PAIS CEBADO: " +  acp_engpai;
             paisEngordeNombre = "";
           }
-          if (mat_codi==0)
-            mat_codi = dtStat.getInt("mat_codi");
-          if (!pdmatadero.getDatosMatadero(dtCon1, mat_codi))
-          {
-            msgAviso = "No encontrado MATADERO: " +  mat_codi;
-            sacrificadoE = "";
-          }
-          else
-          {
-            sacrificadoE=dtCon1.getString("mat_nrgsa");
-            mat_nrgsa=sacrificadoE;
-            sacrificadoE=getRegistroSanitario(dtCon1,sacrificadoE,dtCon1.getInt("pai_codi"));           
-          }
+          if (stp_matad.isEmpty())
+            stp_matad = dtStat.getString("acp_matad");
+          sacrificadoE=stp_matad;
+          mat_nrgsa=sacrificadoE;
+          sacrificadoE=getRegistroSanitario(false,dtCon1,sacrificadoE,dtStat.getString("acp_paisac"));           
+
           if (acp_paisac==null)
             acp_paisac = dtStat.getString("acp_paisac");
           paisSacrificioNombre=MantPaises.getNombrePais(acp_paisac, dtCon1);      
@@ -587,29 +580,13 @@ public class utildesp
             msgAviso = "No encontrado PAIS Sacrificio: " +  acp_paisac;    
             paisSacrificioNombre="";
           }
-          if (sde_codi==0) 
-            sde_codi=dtStat.getInt("sde_codi");
+          if (stp_saldes.isEmpty()) 
+            stp_saldes=dtStat.getString("acp_saldes");
           if (deoDesnue)
-            s = "select pai_nomb,pai_nomcor from v_paises where pai_codi = " + paiEmp;
-          else
-            s = "SELECT pai_codi,sde_nrgsa FROM v_saladesp m " +
-                " WHERE  m.sde_codi = " + sde_codi;
-          if (!dtCon1.select(s))
-          {
-            msgAviso = "No encontrado Sala de Despiece: " +sde_codi;
-            despiezadoE = "";
-          }
-          else
-          {
-            if (!deoDesnue)
-            {
-              despiezadoE =dtCon1.getString("sde_nrgsa");
-              sde_nrgsa=despiezadoE;
-              despiezadoE=getRegistroSanitario(dtCon1,despiezadoE,dtCon1.getInt("pai_codi"));          
-            }
-            else
-              despiezadoE = (swPaisCorto?  dtCon1.getString("pai_nomcor") :dtCon1.getString("pai_nomb") ) + "-" +empRGSA;
-          }
+            stp_saldes= pdempresa.getNumeroRegistroSanitario(dtCon1,EU.em_cod);
+          despiezadoE = stp_saldes;
+          sde_nrgsa=despiezadoE;
+          
        if (ntrazaE==null)
         ntrazaE = dtStat.getString("acp_nucrot");
        if (repiteIndiv>0 && ntrazaE.length()>0)
@@ -646,7 +623,11 @@ public class utildesp
     despiezadoD=despiezadoE;
     return true;
   }
-  public String getRegistroSanitario(DatosTabla dt,String numRegSanitario,int paiCodi) throws SQLException
+  public   String getRegistroSanitario(DatosTabla dt,String numRegSanitario,int paiCodi) throws SQLException
+  {          
+      return getRegistroSanitario(swPaisCorto,dt, numRegSanitario, paiCodi);
+  }
+  public  static String getRegistroSanitario(boolean swPaisCorto,DatosTabla dt,String numRegSanitario,int paiCodi) throws SQLException
   {          
         String s = "select pai_nomb,pai_nomcor from v_paises where pai_codi = " +paiCodi;
         if (dt.select(s))
@@ -654,9 +635,10 @@ public class utildesp
               + "-" + numRegSanitario;
         return numRegSanitario;
   }
-  public String getRegistroSanitario(DatosTabla dt,String numRegSanitario,String paiInicic) throws SQLException
+ 
+  public  static String getRegistroSanitario(boolean swPaisCorto,DatosTabla dt,String numRegSanitario,String paiInic) throws SQLException
   {          
-        String s = "select pai_nomb,pai_nomcor from v_paises where pai_codi = '" +paiInicic+"'";
+        String s = "select pai_nomb,pai_nomcor from v_paises where pai_inic = '" +paiInic+"'";
         if (dt.select(s))
           numRegSanitario = (swPaisCorto?  dt.getString("pai_nomcor") :dt.getString("pai_nomb") )
               + "-" + numRegSanitario;
@@ -1368,17 +1350,17 @@ public class utildesp
     {
         return despiezadoE;
     }
-    public int getMatCodi() {
-        return mat_codi;
+    public String getMatCodi() {
+        return stp_matad;
     }
-    public void setMatCodi(int matadero) {
-         mat_codi=matadero;
+    public void setMatCodi(String matadero) {
+         stp_matad=matadero;
     }
-    public int getSdeCodi() {
-        return sde_codi;
+    public String getSdeCodi() {
+        return stp_saldes;
     }
-   public void setSdeCodi(int salaDespiece) {
-        sde_codi=salaDespiece;
+   public void setSdeCodi(String salaDespiece) {
+        stp_saldes=salaDespiece;
     }
     public String getPaisEngordeCodigo() {
         return acp_engpai;

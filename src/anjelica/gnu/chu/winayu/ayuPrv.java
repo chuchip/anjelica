@@ -3,7 +3,6 @@ package gnu.chu.winayu;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
 import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.sql.*;
@@ -13,7 +12,7 @@ import javax.swing.*;
  *
  * <p>Título: ayuPrv</p>
  * <p>Descripcion: Ventana de Ayuda para buscar proveedores por nombre. </p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -46,8 +45,8 @@ public class ayuPrv extends ventana // implements  Runnable
   CTextField prv_nombE = new CTextField();
   CButton Belegir = new CButton(Iconos.getImageIcon("rotarup"));
   CButton Baceptar = new CButton(Iconos.getImageIcon("buscar"));
-  CLabel CLabel1 = new CLabel();
-  GridBagLayout gridBagLayout1 = new GridBagLayout();
+  CLabel prv_activL = new CLabel("Activo");
+  CComboBox prv_activE = new CComboBox();
   GridBagLayout gridBagLayout2 = new GridBagLayout();
 
   public ayuPrv(EntornoUsuario e,JLayeredPane fr)
@@ -97,20 +96,21 @@ public class ayuPrv extends ventana // implements  Runnable
     Pcons.setMaximumSize(new Dimension(455, 41));
     Pcons.setMinimumSize(new Dimension(455, 41));
     Pcons.setPreferredSize(new Dimension(455, 41));
-    Pcons.setDefButton(Baceptar);
-    prv_nombL.setMaximumSize(new Dimension(47, 16));
-    prv_nombL.setMinimumSize(new Dimension(47, 16));
-    prv_nombL.setPreferredSize(new Dimension(47, 16));
+    Pcons.setDefButton(Baceptar);    
+    prv_nombL.setBounds(2,2,47,17);
+    prv_nombE.setBounds(52,2,200,17);
     prv_nombL.setText("Nombre");
-
+    prv_activL.setBounds(2,20,47,17);
+    prv_activE.addItem("Si","S");
+    prv_activE.addItem("No","N");
+    prv_activE.addItem("*","*");
+    prv_activE.setBounds(52,20,47,17);
     Baceptar.setText("F4 Buscar");
-    Baceptar.setMaximumSize(new Dimension(133, 28));
-    Baceptar.setMinimumSize(new Dimension(133, 28));
-    Baceptar.setPreferredSize(new Dimension(133, 28));
+    Baceptar.setBounds(300,4,133,28);
     Baceptar.setMargin(new Insets(0, 0, 0, 0));
     Baceptar.setMnemonic('B');
 
-    Pcons.setLayout(gridBagLayout1);
+    Pcons.setLayout(null);
     Pprinc.setLayout(gridBagLayout2);
 
     // Configurando el Grid.
@@ -137,11 +137,13 @@ public class ayuPrv extends ventana // implements  Runnable
 
         // Poniendo Orejas.
     Belegir.addActionListener(new java.awt.event.ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         Belegir_actionPerformed();
       }
     });
     Baceptar.addActionListener(new java.awt.event.ActionListener() {
+         @Override
       public void actionPerformed(ActionEvent e) {
         Baceptar_actionPerformed();
       }
@@ -149,6 +151,7 @@ public class ayuPrv extends ventana // implements  Runnable
 
     jt.tableView.addMouseListener(new MouseAdapter()
     {
+         @Override
       public void mouseClicked(MouseEvent m)
       {
         if (m.getClickCount() > 1)
@@ -167,9 +170,7 @@ public class ayuPrv extends ventana // implements  Runnable
     });
     Belegir.setToolTipText("Elegir el Registro Activo");
 
-    prv_nombE.setMaximumSize(new Dimension(234, 15));
-    prv_nombE.setMinimumSize(new Dimension(234, 15));
-    prv_nombE.setPreferredSize(new Dimension(234, 15));
+  
     prv_nombE.setMayusc(true);
     this.getContentPane().add(statusBar, BorderLayout.SOUTH);
     this.getContentPane().add(Pprinc, BorderLayout.CENTER);
@@ -177,14 +178,11 @@ public class ayuPrv extends ventana // implements  Runnable
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(2, 1, 0, 5), 0, 0));
     Pprinc.add(Pcons,     new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 1, 5, 5), 0, 0));
-    Pcons.add(prv_nombE,   new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 0, 5), 0, 0));
-    Pcons.add(prv_nombL,  new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 1, 0, 0), 0, 0));
-    Pcons.add(Baceptar,   new GridBagConstraints(2, 0, 1, 2, 0.0, 0.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(3, 0, 10, 10), 0, 0));
-    Pcons.add(CLabel1,  new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0
-            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 25, 1, 168), 87, 17));
+    Pcons.add(prv_nombE, null);
+    Pcons.add(prv_nombL, null);
+    Pcons.add(Baceptar,  null);
+    Pcons.add(prv_activL, null);
+    Pcons.add(prv_activE, null);
     Belegir.setBounds(200,0,25,22);
     jt.panelBuscar.add(Belegir,null);//, new XYConstraints(200,0, 25, 22));
 
@@ -210,6 +208,7 @@ public class ayuPrv extends ventana // implements  Runnable
 
     strSql = "select prv_codi,prv_nomb,prv_nomco FROM v_proveedo " +
         " where upper(prv_nomb) like '%" + prv_nombE.getText() + "%'" +
+        (prv_activE.getValor().equals("*")?"":" and prv_activ = '"+prv_activE.getValor()+"'")+
         " order by prv_codi";
 
     rgSelect();

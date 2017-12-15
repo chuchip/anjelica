@@ -37,13 +37,8 @@ import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.ventana;
-import gnu.chu.winayu.ayuMat;
-import gnu.chu.winayu.ayuSde;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -51,11 +46,7 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JLayeredPane;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 
 
 public class DatTrazPanel extends CPanel {
@@ -136,18 +127,7 @@ public class DatTrazPanel extends CPanel {
     }
     void activarEventos()
     {
-        sde_codiE.addFocusListener(new FocusAdapter()
-        {
-             public void focusLost(FocusEvent e) {
-                 buscaSde();
-             }
-        });
-        mat_codiE.addFocusListener(new FocusAdapter()
-        {
-             public void focusLost(FocusEvent e) {
-                 buscaMat();
-             }
-        });
+     
         acp_nucrotE.addKeyListener(new KeyAdapter()
         {
             @Override
@@ -158,24 +138,7 @@ public class DatTrazPanel extends CPanel {
             }
         });
 
-        mat_codiE.addKeyListener(new KeyAdapter()
-        {
-                @Override
-          public void keyPressed(KeyEvent e)
-          {
-            if (e.getKeyCode() == KeyEvent.VK_F3)
-              consMatCodi();
-          }
-        });
-        sde_codiE.addKeyListener(new KeyAdapter()
-        {
-                @Override
-          public void keyPressed(KeyEvent e)
-          {
-            if (e.getKeyCode() == KeyEvent.VK_F3)
-              consSdeCodi();
-          }
-        });
+       
        acc_numeE.addMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -301,12 +264,12 @@ public class DatTrazPanel extends CPanel {
         utDesp.setPaisSacrificioNombre(acp_paisacE.getTextNomb());  
         
         
-        utDesp.setMatCodi(mat_codiE.getValorInt());
-        utDesp.setMatadero(pdmatadero.getRegistroSanitario(dtStat,mat_codiE.getValorInt(),false));
+        utDesp.setMatCodi(acp_matadE.getText());
+        utDesp.setMatadero(acp_matadE.getText());
         
         utDesp.setFechaProduccion(acc_fecprodE.getDate());
-        utDesp.setSdeCodi(sde_codiE.getValorInt());
-        utDesp.setSalaDespiece(pdsaladesp.getRegistroSanitario(dtStat,sde_codiE.getValorInt(),false));
+        utDesp.setSdeCodi(acp_saldesE.getText());
+        utDesp.setSalaDespiece(acp_saldesE.getText());
         utDesp.setNumCrot(acp_nucrotE.getText());
         
         utDesp.setFecCaduc(avc_feccadE.getDate());
@@ -331,14 +294,13 @@ public class DatTrazPanel extends CPanel {
         acp_paisacE.setText(utDesp.getPaisSacrificioCodigo());       
         avc_fecalbE.setDate(utDesp.getFecCompra());
         conservarE.setText(utDesp.getConservar());
-        mat_codiE.setValorInt(utDesp.getMatCodi());
-        sde_codiE.setValorInt(utDesp.getSdeCodi());
+        acp_matadE.setText(utDesp.getMatCodi());
+        acp_saldesE.setText(utDesp.getSdeCodi());
         acc_numeE.setValorInt(utDesp.getProLoteCompra());
         acc_fecprodE.setDate(utDesp.getFechaProduccion());
         avc_feccadE.setDate(utDesp.getFecCaduc());
         forzadaTrazC.setSelected(utDesp.isForzadaTrazab());
-        buscaSde();
-        buscaMat();
+       
     }
         
     @Override
@@ -353,11 +315,12 @@ public class DatTrazPanel extends CPanel {
         avc_fecalbE.setEditable(editable);
         
         conservarE.setEditable(editable);
-        mat_codiE.setEditable(editable);
+        acp_matadE.setEditable(editable);
         prv_codiE.setEditable(editable);
-        sde_codiE.setEditable(editable);
+        acp_saldesE.setEditable(editable);
         avc_feccadE.setEditable(editable);
     }
+    @Override
     public boolean isEditable()
     {
         return acp_engpaiE.isEditable();
@@ -389,129 +352,8 @@ public class DatTrazPanel extends CPanel {
         return numCrot;
     }
 
-    /**
-     * Consulta Mataderos
-     * Llama a la Ayuda de Mataderos
-     */
-    public void consMatCodi() {
-        final ayuMat ayMat;
-
-        try
-        {
-            ayMat = new ayuMat(EU, papa.vl);
-            ayMat.addInternalFrameListener(new InternalFrameAdapter()
-            {
-
-                @Override
-                public void internalFrameClosing(InternalFrameEvent e) {
-                    ej_consMat(ayMat);
-                }
-            });
-
-            papa.vl.add(ayMat);
-            ayMat.setLocation(25, 25);
-            ayMat.setVisible(true);
-            papa.setEnabled(false);
-            papa.setFoco(ayMat);
-            ayMat.iniciarVentana();
-        } catch (Exception j)
-        {
-            this.setEnabled(true);
-        }
-    }
-
-  void ej_consMat(ayuMat ayMat)
-  {
-    if (ayMat.consulta)
-    {
-      mat_codiE.setText(ayMat.mat_codiT);
-      buscaMat();
-    }
-    ayMat.dispose();
-    papa.setEnabled(true);
-    papa.toFront();
-    try
-    {
-        papa.setSelected(true);
-    }
-    catch (Exception k)   {}
-    papa.setFoco(null);
-    mat_codiE.requestFocus();
-  }
-    /**
-   * Consulta Mataderos
-   * Llama a la Ayuda de Mataderos
-   */
-  public void consSdeCodi()
-  {
-    final ayuSde aySde;
-
-    try
-    {
-      aySde = new ayuSde(EU, papa.vl);
-      aySde.addInternalFrameListener(new InternalFrameAdapter()
-      {
-        @Override
-        public void internalFrameClosing(InternalFrameEvent e)
-        {
-          ej_consSde(aySde);
-        }
-      });
-
-      papa.vl.add(aySde);
-      aySde.setLocation(25, 25);
-      aySde.setVisible(true);
-      papa.setEnabled(false);
-      papa.setFoco(aySde);
-      aySde.iniciarVentana();
-    }
-    catch (Exception j)
-    {
-        this.setEnabled(true);
-    }
-  }
-
-  void ej_consSde(ayuSde aySde)
-  {
-    if (aySde.consulta)
-    {
-      sde_codiE.setText(aySde.sde_codiT);
-      buscaSde();
-   
-    }
-
-    aySde.dispose();
-    papa.setEnabled(true);
-      papa.toFront();
-      try
-      {
-        papa.setSelected(true);
-      }
-      catch (Exception k)
-      {}
-      papa.setFoco(null);
-      sde_codiE.requestFocus();
-  }
-  void buscaSde() 
-  {
-        try
-        {
-            sde_nombE.setText(pdsaladesp.getRegistroSanitario(dtStat, sde_codiE.getValorInt(), false));
-        } catch (SQLException ex)
-        {
-            Logger.getLogger(DatTrazPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-  }
-  void buscaMat() 
-  {
-        try
-        {
-            mat_nombE.setText(pdmatadero.getRegistroSanitario(dtStat, mat_codiE.getValorInt(), false));
-        } catch (SQLException ex)
-        {
-            Logger.getLogger(DatTrazPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-  }
+ 
+ 
   /**
    * Carga las salas de despieces y mataderos disponibles para un proveedor
    */
@@ -548,9 +390,9 @@ public class DatTrazPanel extends CPanel {
         cLabel2 = new gnu.chu.controles.CLabel();
         cLabel3 = new gnu.chu.controles.CLabel();
         cLabel4 = new gnu.chu.controles.CLabel();
-        mat_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
+        acp_matadE = new gnu.chu.controles.CTextField(Types.CHAR,"X",15);
         cLabel5 = new gnu.chu.controles.CLabel();
-        sde_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
+        acp_saldesE = new gnu.chu.controles.CTextField(Types.CHAR,"X",15);
         cLabel6 = new gnu.chu.controles.CLabel();
         prv_codiE = new gnu.chu.camposdb.prvPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
@@ -570,8 +412,6 @@ public class DatTrazPanel extends CPanel {
         acp_painacE = new gnu.chu.camposdb.PaiPanel();
         acp_paisacE = new gnu.chu.camposdb.PaiPanel();
         acp_engpaiE = new gnu.chu.camposdb.PaiPanel();
-        mat_nombE = new gnu.chu.controles.CLabel();
-        sde_nombE = new gnu.chu.controles.CLabel();
         forzadaTrazC = new gnu.chu.controles.CCheckBox();
 
         setLayout(null);
@@ -591,14 +431,18 @@ public class DatTrazPanel extends CPanel {
         cLabel4.setText("Matadero");
         add(cLabel4);
         cLabel4.setBounds(10, 60, 72, 15);
-        add(mat_codiE);
-        mat_codiE.setBounds(80, 60, 50, 17);
+
+        acp_matadE.setMayusc(true);
+        add(acp_matadE);
+        acp_matadE.setBounds(80, 60, 150, 17);
 
         cLabel5.setText("Sala Desp.");
         add(cLabel5);
         cLabel5.setBounds(10, 80, 72, 15);
-        add(sde_codiE);
-        sde_codiE.setBounds(80, 80, 50, 17);
+
+        acp_saldesE.setMayusc(true);
+        add(acp_saldesE);
+        acp_saldesE.setBounds(80, 80, 150, 17);
 
         cLabel6.setText("Proveedor ");
         add(cLabel6);
@@ -673,16 +517,6 @@ public class DatTrazPanel extends CPanel {
         add(acp_engpaiE);
         acp_engpaiE.setBounds(320, 20, 180, 18);
 
-        mat_nombE.setBackground(java.awt.Color.orange);
-        mat_nombE.setOpaque(true);
-        add(mat_nombE);
-        mat_nombE.setBounds(135, 60, 210, 17);
-
-        sde_nombE.setBackground(java.awt.Color.orange);
-        sde_nombE.setOpaque(true);
-        add(sde_nombE);
-        sde_nombE.setBounds(135, 80, 210, 17);
-
         forzadaTrazC.setText("Forzada Traz");
         forzadaTrazC.setEnabled(false);
         forzadaTrazC.setEnabledParent(false);
@@ -700,9 +534,11 @@ public class DatTrazPanel extends CPanel {
     private gnu.chu.controles.CLabel acp_feccadL1;
     private gnu.chu.controles.CTextField acp_fecsacE;
     private gnu.chu.controles.CLabel acp_fecsacL;
+    private gnu.chu.controles.CTextField acp_matadE;
     private gnu.chu.controles.CTextField acp_nucrotE;
     private gnu.chu.camposdb.PaiPanel acp_painacE;
     private gnu.chu.camposdb.PaiPanel acp_paisacE;
+    private gnu.chu.controles.CTextField acp_saldesE;
     private gnu.chu.controles.CTextField avc_fecalbE;
     private gnu.chu.controles.CTextField avc_feccadE;
     private gnu.chu.controles.CLabel cLabel1;
@@ -716,10 +552,6 @@ public class DatTrazPanel extends CPanel {
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CTextField conservarE;
     private gnu.chu.controles.CCheckBox forzadaTrazC;
-    private gnu.chu.controles.CTextField mat_codiE;
-    private gnu.chu.controles.CLabel mat_nombE;
     private gnu.chu.camposdb.prvPanel prv_codiE;
-    private gnu.chu.controles.CTextField sde_codiE;
-    private gnu.chu.controles.CLabel sde_nombE;
     // End of variables declaration//GEN-END:variables
 }

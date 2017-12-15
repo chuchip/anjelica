@@ -86,17 +86,17 @@ public class conalbco extends ventana implements  JRDataSource
   CLabel cLabel11 = new CLabel();
   CTextField acp_nucrotE = new CTextField();
   CLabel cLabel12 = new CLabel();
-  CTextField mat_codiE = new CTextField(Types.DECIMAL,"####9");
+  CTextField acp_matadE = new CTextField(Types.CHAR,"X",15);
   CLabel cLabel13 = new CLabel();
-  CTextField sde_codiE = new CTextField(Types.DECIMAL,"####9");
+  CTextField sde_codiE = new CTextField(Types.CHAR,"X",15);
   CTextField acp_paisacE = new CTextField(Types.CHAR,"XX",2);
   CLabel cLabel14 = new CLabel();
   CLabel cLabel15 = new CLabel();
   CTextField acp_feccadE = new CTextField(Types.DATE,"dd-MM-yyyy");
   CLabel cLabel16 = new CLabel();
   CTextField acp_fecsacE = new CTextField(Types.DATE,"dd-MM-yyyy");
-  CLabel mat_nombE = new CLabel();
-  CLabel sde_nombE = new CLabel();
+//  CLabel mat_nombE = new CLabel();
+//  CLabel sde_nombE = new CLabel();
   CLabel pai_nacnomE = new CLabel();
   CLabel pai_engnomE = new CLabel();
   CLabel pai_sacnomE = new CLabel();
@@ -280,11 +280,11 @@ public class conalbco extends ventana implements  JRDataSource
     pai_nacnomE.setBounds(new Rectangle(95, 20, 143, 16));
     acp_painacE.setBounds(new Rectangle(59, 20, 33, 16));
     cLabel9.setBounds(new Rectangle(6, 20, 55, 16));
-    sde_nombE.setBounds(new Rectangle(577, 39, 151, 16));
-    sde_codiE.setBounds(new Rectangle(535, 39, 39, 16));
+//    sde_nombE.setBounds(new Rectangle(577, 39, 151, 16));
+    sde_codiE.setBounds(new Rectangle(535, 39, 129, 16));
     cLabel13.setBounds(new Rectangle(477, 39, 60, 16));
-    mat_nombE.setBounds(new Rectangle(577, 2, 151, 16));
-    mat_codiE.setBounds(new Rectangle(535, 2, 39, 16));
+
+    acp_matadE.setBounds(new Rectangle(535, 2, 129, 16));
     cLabel12.setBounds(new Rectangle(477, 2, 54, 16));
     acp_nucrotE.setBounds(new Rectangle(60, 2, 338, 16));
     cLabel11.setBounds(new Rectangle(4, 2, 60, 16));
@@ -318,11 +318,11 @@ public class conalbco extends ventana implements  JRDataSource
     PTraza.add(cLabel15, null);
     PTraza.add(acp_feccadE, null);
     PTraza.add(cLabel16, null);
-    PTraza.add(sde_nombE, null);
+//    PTraza.add(sde_nombE, null);
     PTraza.add(cLabel13, null);
     PTraza.add(sde_codiE, null);
-    PTraza.add(mat_codiE, null);
-    PTraza.add(mat_nombE, null);
+    PTraza.add(acp_matadE, null);
+//    PTraza.add(mat_nombE, null);
     PTraza.add(cLabel12, null);
     Pdatcon.setMinimumSize(new Dimension(739, 80));
     Pdatcon.setPreferredSize(new Dimension(739, 80));
@@ -423,12 +423,7 @@ public class conalbco extends ventana implements  JRDataSource
     cLabel15.setText("Fec.Caducidad");
     cLabel16.setRequestFocusEnabled(true);
     cLabel16.setText("Fec.Sacrificio");
-    mat_nombE.setBackground(Color.yellow);
-    mat_nombE.setOpaque(true);
-    mat_nombE.setText("");
-    sde_nombE.setText("");
-    sde_nombE.setOpaque(true);
-    sde_nombE.setBackground(Color.yellow);
+  
     acp_feccadE.setText("");
     pai_nacnomE.setText("");
     pai_nacnomE.setOpaque(true);
@@ -858,8 +853,7 @@ public class conalbco extends ventana implements  JRDataSource
     if (inDatoIndiv)
       return;
     PTraza.resetTexto();
-    mat_nombE.setText("");
-    sde_nombE.setText("");
+    
     pai_sacnomE.setText("");
     pai_nacnomE.setText("");
     pai_engnomE.setText("");
@@ -883,41 +877,41 @@ public class conalbco extends ventana implements  JRDataSource
         return;
       }
       acp_nucrotE.setText(dtCon1.getString("acp_nucrot"));
-      mat_codiE.setText(dtCon1.getString("mat_codi"));
-      sde_codiE.setText(dtCon1.getString("sde_codi"));
+      acp_matadE.setText(dtCon1.getString("acp_matad"));
+      sde_codiE.setText(dtCon1.getString("acp_saldes"));
       acp_painacE.setText(dtCon1.getString("acp_painac"));
       acp_paiengE.setText(dtCon1.getString("acp_engpai"));
       acp_paisacE.setText(dtCon1.getString("acp_paisac"));
       acp_feccadE.setText(dtCon1.getFecha("acp_feccad", "dd-MM-yyyy"));
       acp_fecsacE.setText(dtCon1.getFecha("acp_fecsac", "dd-MM-yyyy"));
-      if (mat_codiE.getValorInt()!=0)
-      {
-        s = "SELECT mat_nrgsa,pai_codi FROM v_matadero m WHERE m.mat_codi = " + mat_codiE.getValorInt();
-        if (dtStat.select(s))
-        {
-          mat_nombE.setText(dtStat.getString("mat_nrgsa"));
-          s = MantPaises.getNombrePais( dtStat.getInt("pai_codi"),dtStat);
-          if (s!=null)
-            mat_nombE.setText(s + "-" + mat_nombE.getText());
-        }
-        else
-          mat_nombE.setText(mat_codiE.getValorInt() + " NO ENCONTRADO");
-      }
-      if (sde_codiE.getValorInt()!=0)
-      {
-        s = "SELECT sde_nrgsa,pai_codi FROM v_saladesp m " +
-            " WHERE m.sde_codi = " + sde_codiE.getValorInt();
-        if (dtStat.select(s))
-        {
-          sde_nombE.setText(dtStat.getString("sde_nrgsa"));
-          
-         s = MantPaises.getNombrePais( dtStat.getInt("pai_codi"),dtStat);
-          if (s!=null)
-            sde_nombE.setText(s + "-" + sde_nombE.getText());
-        }
-        else
-          sde_nombE.setText(sde_codiE.getText() + " NO ENCONTRADO");
-      }
+//      if (acp_matadE.getValorInt()!=0)
+//      {
+//        s = "SELECT mat_nrgsa,pai_codi FROM v_matadero m WHERE m.mat_codi = " + acp_matadE.getValorInt();
+//        if (dtStat.select(s))
+//        {
+//          mat_nombE.setText(dtStat.getString("mat_nrgsa"));
+//          s = MantPaises.getNombrePais( dtStat.getInt("pai_codi"),dtStat);
+//          if (s!=null)
+//            mat_nombE.setText(s + "-" + mat_nombE.getText());
+//        }
+//        else
+//          mat_nombE.setText(acp_matadE.getValorInt() + " NO ENCONTRADO");
+//      }
+//      if (sde_codiE.getValorInt()!=0)
+//      {
+//        s = "SELECT sde_nrgsa,pai_codi FROM v_saladesp m " +
+//            " WHERE m.sde_codi = " + sde_codiE.getValorInt();
+//        if (dtStat.select(s))
+//        {
+//          sde_nombE.setText(dtStat.getString("sde_nrgsa"));
+//          
+//         s = MantPaises.getNombrePais( dtStat.getInt("pai_codi"),dtStat);
+//          if (s!=null)
+//            sde_nombE.setText(s + "-" + sde_nombE.getText());
+//        }
+//        else
+//          sde_nombE.setText(sde_codiE.getText() + " NO ENCONTRADO");
+//      }
       if (!acp_painacE.isNull())
       {
         s = MantPaises.getNombrePais( acp_painacE.getText(),dtStat);
@@ -1112,6 +1106,7 @@ public class conalbco extends ventana implements  JRDataSource
 
   }
 
+  @Override
   public Object getFieldValue(JRField f) throws JRException
   {
       String campo=f.getName().toLowerCase();
@@ -1122,11 +1117,11 @@ public class conalbco extends ventana implements  JRDataSource
       if (campo.equals("acc_serie"))
         return "";
       if (campo.equals("prv_codi") || campo.equals("acc_ano") || campo.equals("acc_nume"))
-        return new Integer(rs.getInt(campo));
+        return rs.getInt(campo);
       if (campo.equals("acc_impokg"))
       {
         if (ARG_VERPRECIO)
-          return new Double(rs.getDouble("acc_impokg"));
+          return rs.getDouble("acc_impokg");
         else
           return new Double(0);
       }
@@ -1148,57 +1143,24 @@ public class conalbco extends ventana implements  JRDataSource
       }
 
       if (campo.equals("pro_codi"))
-        return new Integer(rs.getInt("pro_codi"));
+        return rs.getInt("pro_codi");
       if ( campo.equals("acl_canti"))
-       return new Double(rs.getDouble(campo));
+       return rs.getDouble(campo);
       if (campo.equals("acl_prcom"))
       {
         if (ARG_VERPRECIO)
-          return new Double(rs.getDouble("acl_prcom"));
+          return rs.getDouble("acl_prcom");
         else
           return new Double(0);
       }
       if (campo.equals("acl_impor"))
       {
-        return new Double(rs.getDouble("acl_canti")*
-                          rs.getDouble("acl_prcom"));
+        return rs.getDouble("acl_canti")*
+            rs.getDouble("acl_prcom");
       }
      if (campo.equals("acl_numcaj"))
-       return new Integer(rs.getInt(campo));
+       return rs.getInt(campo);
 
-/*      if (campo.equals("acp_numind"))
-        return new Integer(dtAdd.getInt(campo));
-      if (campo.equals("acp_canti"))
-        return new Double(dtAdd.getDouble(campo));
-      if (campo.equals("acp_nucrot"))
-        return dtAdd.getString(campo);
-      if (campo.equals("mat_nomb"))
-      {
-        s = "SELECT mat_nrgsa FROM v_matadero " +
-            " WHERE mat_codi = " + dtAdd.getInt("mat_codi");
-        if (! dtStat.select(s))
-          return "*****";
-        else
-          return dtStat.getString("mat_nrgsa");
-      }
-      if (campo.equals("sde_nomb"))
-      {
-        s = "SELECT sde_nrgsa FROM v_saladesp " +
-            " WHERE sde_codi = " + dtAdd.getInt("sde_codi");
-        if (!dtStat.select(s))
-          return "*****";
-        else
-          return dtStat.getString("sde_nrgsa");
-      }
-      if (campo.equals("pai_nacid"))
-        return getPais(dtAdd.getInt("acp_painac"));
-      if (campo.equals("pai_engor"))
-        return getPais(dtAdd.getInt("acp_engpai"));
-      if (campo.equals("pai_sacrif"))
-        return getPais(dtAdd.getInt("acp_paisac"));
-      if (campo.equals("cambio"))
-        return new Integer(cambio);
-*/
       }
     catch (Exception k)
     {

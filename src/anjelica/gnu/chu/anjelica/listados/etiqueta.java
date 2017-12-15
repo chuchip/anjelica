@@ -345,6 +345,8 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     dt.select("select eti_codi,eti_nomb from etiquetas "+
              " WHERE emp_codi = "+empCodi+ 
              " and eti_client = "+incCliente+
+             " and eti_activ != 0"+
+//             " and eti_defec = 'N' "+ // No enseña la que sea por defecto
              " order by eti_defec desc,eti_codi");
     return dt;
   }

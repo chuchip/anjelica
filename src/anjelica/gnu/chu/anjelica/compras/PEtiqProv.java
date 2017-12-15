@@ -59,8 +59,8 @@ public class PEtiqProv extends javax.swing.JPanel
     DatosTabla dtCon1;
     EntornoUsuario EU;
     
-    CLinkBox mat_codiE = new CLinkBox();
-    CLinkBox sde_codiE = new CLinkBox();
+    CTextField acp_matadE = new CTextField(Types.CHAR,"X",15);
+    CTextField acp_saldesE = new CTextField(Types.CHAR,"X",15);
     PaiPanel acp_painacE=new PaiPanel();
     PaiPanel acp_engpaiE=new PaiPanel();
     PaiPanel acp_paisacE=new PaiPanel();
@@ -79,15 +79,7 @@ public class PEtiqProv extends javax.swing.JPanel
         initComponents();   
        
         pro_codiE.iniciar(dtAdd, padre, padre.vl, EU);
-        mat_codiE.setAncTexto(40);
-        sde_codiE.setAncTexto(40);
-        mat_codiE.setCeroIsNull(true);
-        sde_codiE.setCeroIsNull(true);
-        sde_codiE.setFormato(Types.DECIMAL,"####9",5);
-        mat_codiE.setFormato(true);
-        mat_codiE.setFormato(Types.DECIMAL,"####9",5);
-        mat_codiE.setAceptaNulo(false);
-        sde_codiE.setAceptaNulo(false);
+      
         acp_painacE.iniciar(padre.dtStat, padre, padre.vl, EU);
         acp_paisacE.iniciar(padre.dtStat, padre, padre.vl, EU);
         acp_engpaiE.iniciar(padre.dtStat, padre, padre.vl, EU);
@@ -99,7 +91,6 @@ public class PEtiqProv extends javax.swing.JPanel
     
     void cambioPrv() throws SQLException
     {
-        padre.cambioPrv(true,sde_codiE,mat_codiE);
         String s="select etp_codi,etp_nomb from etiqprov where prv_codi="+padre.prv_codiE.getValorInt()+
             " order by etp_codi";
         if (!dtCon1.select(s))
@@ -137,20 +128,20 @@ public class PEtiqProv extends javax.swing.JPanel
             for (int n=0;n<nRow;n++)
             {
            
-                mat_codiE.setText(jtLote.getValString(n,JTLOTE_MAT)); // 1 Matadero
-                if (!mat_codiE.controla(false))
+                
+                if (jtLote.getValString(n,JTLOTE_MAT).isEmpty())
                 {
                     jtLote.setEnabled(true);
                     jtLote.requestFocusLater(n, JTLOTE_MAT);
-                    msgBox("Matadero NO VALIDO EN linea: "+n);
+                    msgBox("Introduzca Matadero EN linea: "+n);
                     return;
                 }
-                sde_codiE.setText(jtLote.getValString(n,JTLOTE_SDE)); // 2 Sala Desp
-                if (!sde_codiE.controla(false))
+                acp_saldesE.setText(jtLote.getValString(n,JTLOTE_SDE)); // 2 Sala Desp
+                if (jtLote.getValString(n,JTLOTE_SDE).isEmpty())
                 {
                     jtLote.setEnabled(true);
                     jtLote.requestFocusLater(n, JTLOTE_SDE);
-                    msgBox("Sala Despiece NO VALIDA EN linea: "+n);
+                    msgBox("Introduzca  Sala Despiece EN linea: "+n);
                     return;
                 }
                 
@@ -210,8 +201,8 @@ public class PEtiqProv extends javax.swing.JPanel
                     msgBox("Lote : "+jtEti.getValString(n,JTETI_LOTE)+" de linea: "+n+" No encontrado en desglose");
                     return;
                 }
-                v.add(jtLote.getValorInt(nl,JTLOTE_MAT)); // 2
-                v.add(jtLote.getValorInt(nl,JTLOTE_SDE)); 
+                v.add(jtLote.getValString(nl,JTLOTE_MAT)); // 2
+                v.add(jtLote.getValString(nl,JTLOTE_SDE)); 
                 v.add(jtLote.getValString(nl,JTLOTE_PN));
                 v.add(jtLote.getValString(nl,JTLOTE_PC));
                 v.add(jtLote.getValString(nl,JTLOTE_PS));
@@ -220,6 +211,7 @@ public class PEtiqProv extends javax.swing.JPanel
                 al.add(v);
             }
             padre.insertaLineasEtiqueta(al);
+            jtEti.removeAllDatos();
         } catch (SQLException | ParseException ex)
         {
             padre.Error("Error al Comprobar validez lotes", ex);
@@ -228,6 +220,31 @@ public class PEtiqProv extends javax.swing.JPanel
     }
     void activarEventos()
     {
+        Bcopia.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int n=jtLote.getSelectedRow();
+                if (jtLote.getSelectedRow()>0)
+                {                           
+                    jtLote.setEnabled(false);
+                    jtLote.setValor(jtLote.getValString(n-1,JTLOTE_MAT ),n,JTLOTE_MAT);
+                    jtLote.setValor(jtLote.getValString(n-1,JTLOTE_SDE ),n,JTLOTE_SDE);
+                    jtLote.setValor(jtLote.getValString(n-1,JTLOTE_PN ),n,JTLOTE_PN);
+                    jtLote.setValor(jtLote.getValString(n-1,JTLOTE_PC ),n,JTLOTE_PC);
+                    jtLote.setValor(jtLote.getValString(n-1,JTLOTE_PS ),n,JTLOTE_PS);
+                    jtLote.setEnabled(true);
+                    jtLote.requestFocusLater();
+                }
+            }
+        });
+        Blimpia.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                limpia();
+            }
+        });
         acp_loteE.addMouseListener(new MouseAdapter()
         {
               @Override
@@ -358,22 +375,22 @@ public class PEtiqProv extends javax.swing.JPanel
                 event.setColError(ret);
             }
         });
-        mat_codiE.addKeyListener(new KeyAdapter()
-        {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_F3)
-                    consMatCodi();
-            }
-        });
-        sde_codiE.addKeyListener(new KeyAdapter()
-        {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_F3)
-                    consSdeCodi();
-            }
-        });
+//        acp_matadE.addKeyListener(new KeyAdapter()
+//        {
+//            @Override
+//            public void keyPressed(KeyEvent e) {
+//                if (e.getKeyCode() == KeyEvent.VK_F3)
+//                    consMatCodi();
+//            }
+//        });
+//        acp_saldesE.addKeyListener(new KeyAdapter()
+//        {
+//            @Override
+//            public void keyPressed(KeyEvent e) {
+//                if (e.getKeyCode() == KeyEvent.VK_F3)
+//                    consSdeCodi();
+//            }
+//        });
     }
     int   cambiaLineaEtiqueta(int linea)
     {
@@ -395,8 +412,11 @@ public class PEtiqProv extends javax.swing.JPanel
     {
       numCajParcialE.setText("0");
     }
+   
     public void limpia()
     {
+        jtEti.setEnabled(false);
+        jtLote.setEnabled(false);
         jtEti.removeAllDatos();
         jtLote.removeAllDatos();
         jtLote.ponValores(0);
@@ -445,6 +465,7 @@ public class PEtiqProv extends javax.swing.JPanel
 
        jtLote.addLinea(v);
     }
+    
     boolean procesaCodBarras(String codBarras,int row)
     {
         try
@@ -485,7 +506,9 @@ public class PEtiqProv extends javax.swing.JPanel
     String getSubString(String codBarras,int inicio,int fin)
     {
         if (fin==0)
-            return "";        
+            return "";  
+        if (fin==-1)
+            fin=codBarras.length();
         if (codBarras.length()<fin)
             return "";
         return codBarras.substring(inicio,fin);
@@ -493,174 +516,179 @@ public class PEtiqProv extends javax.swing.JPanel
       /**
    * Ejecuta consulta sobre mataderos
    */
-    void ej_consMat() 
-    {
-        if (ayuMat.isAlta())
-        {
-            altaMat(ayuMat.getCodigoSelecion());
-            mat_codiE.addDatos("" + ayuMat.getCodigoSelecion(), ayuMat.getNombreSelecion());
-            mat_codiE.setValorInt(ayuMat.getCodigoSelecion());
-        }
-
-        if (ayuMat.isConsulta())
-        {
-            mat_codiE.setValorInt(ayuMat.getCodigoSelecion());
-            if (!mat_codiE.controla())
-            {
-                int res = mensajes.mensajeYesNo("Matadero " + ayuMat.getNombreSelecion()
-                    + " NO Habilitado para este Proveedor. Habilitarlo ?");
-                if (res == mensajes.YES)
-                {
-                    altaMat(mat_codiE.getValorInt());
-                    mat_codiE.addDatos("" + ayuMat.getCodigoSelecion(), ayuMat.getNombreSelecion());
-                    mat_codiE.setValorInt(ayuMat.getCodigoSelecion());
-                }
-            }
-        }
-
-        ayuMat.setVisible(false);
-        this.setEnabled(true);
-        padre.toFront();
-        try
-        {
-            padre.setSelected(true);
-        } catch (Exception k)
-        {
-        }
-        padre.setFoco(null);
-        mat_codiE.requestFocus();
-    }
-  void altaMat(int matCodi)
-  {
-    try {
-        pdprove.insMatadero(padre.prv_codiE.getValorInt(), matCodi, dtAdd);
-        dtAdd.commit();
-        padre.msgBox("Matadero Insertado");
-    } catch (SQLException k)
-    {
-        padre.Error("Error al dar alta Matadero", k);
-    }
-  }
-  
-   /**
-   * Consulta Mataderos
-   * Llama a la Ayuda de Mataderos
-   */
-  public void consSdeCodi()
-  {
-    if (padre.vl==null)
-        return;
-    try
-    {
-      if (ayuSde==null)
-      {
-        ayuSde = new AyuSdeMat(padre.EU, padre.vl,dtCon1)
-        {
-               @Override
-          public void matar()
-          {
-            ej_consSde();
-          }
-        };
-        ayuSde.setPermiteAlta(true);
-        padre.vl.add(ayuSde);
-      }
-      ayuSde.setLocation(25, 25);
-      ayuSde.setVisible(true);
-      padre.setEnabled(false);
-      padre.setFoco(ayuSde);
-      ayuSde.iniciarVentana('S',padre.prv_codiE.getValorInt());
-    }
-    catch (Exception j)
-    {
-        this.setEnabled(true);
-    }
-  }
-
-  void ej_consSde()
-  {
-    if (ayuSde.isAlta())
-    {
-         altaSde(ayuSde.getCodigoSelecion());
-         sde_codiE.addDatos(""+ayuSde.getCodigoSelecion(),ayuSde.getNombreSelecion());
-         sde_codiE.setValorInt(ayuSde.getCodigoSelecion());
-    }
-    if (ayuSde.isConsulta())
-    {
-      sde_codiE.setValorInt(ayuSde.getCodigoSelecion());
-      if (! sde_codiE.controla())
-      {
-          int res=mensajes.mensajeYesNo("Sala Despiece "+ayuSde.getNombreSelecion() +
-               " NO Habilitada para este Proveedor. Habilitarla ?");
-          if (res==mensajes.YES)
-          {
-              altaSde(sde_codiE.getValorInt());
-              sde_codiE.addDatos(""+ayuSde.getCodigoSelecion(),ayuSde.getNombreSelecion());
-              sde_codiE.setValorInt(ayuSde.getCodigoSelecion());
-          }
-      }
-    }
-
-    ayuSde.setVisible(false);
-    padre.setEnabled(true);
-      padre.toFront();
-      try
-      {
-        padre.setSelected(true);
-      }
-      catch (Exception k)
-      {}
-      padre.setFoco(null);
-      sde_codiE.requestFocus();
-  }
-  void altaSde(int sdeCodi)
-  {
-    try {
-        pdprove.insSalaDesp(padre.prv_codiE.getValorInt(), sdeCodi, dtAdd);
-        dtAdd.commit();
-        padre.msgBox("Sala Despiece Insertada");
-    } catch (SQLException k)
-    {
-        padre.Error("Error al dar alta Sala de Despiece", k);
-    }
-  }
-    
-      /**
-     * Consulta Mataderos
-     * Llama a la Ayuda de Mataderos
-     */
-    public void consMatCodi() {
-    
-
-        try {
-            if (ayuMat==null)
-            {
-                ayuMat = new  AyuSdeMat(padre.EU, padre.vl,dtCon1)
-                {
-                    @Override
-                    public void matar  ()
-                    {
-                        ej_consMat();
-                    }
-                };
-                ayuMat.setPermiteAlta(true);
-                padre.vl.add(ayuMat);
-            }
-            ayuMat.setLocation(25, 25);
-            ayuMat.setVisible(true);
-            padre.setEnabled(false);
-            padre.setFoco(ayuMat);
-            ayuMat.iniciarVentana('M',padre.prv_codiE.getValorInt());
-        } catch (Exception j) {
-            padre.setEnabled(true);
-        }
-    }
+//    void ej_consMat() 
+//    {
+//        if (ayuMat.isAlta())
+//        {
+//            altaMat(ayuMat.getCodigoSelecion());
+//            acp_matadE.addDatos("" + ayuMat.getCodigoSelecion(), ayuMat.getNombreSelecion());
+//            acp_matadE.setValorInt(ayuMat.getCodigoSelecion());
+//            padre.acp_matadE.addDatos("" + ayuMat.getCodigoSelecion(), ayuMat.getNombreSelecion());            
+//
+//        }
+//
+//        if (ayuMat.isConsulta())
+//        {
+//            acp_matadE.setValorInt(ayuMat.getCodigoSelecion());
+//            if (!acp_matadE.controla())
+//            {
+//                int res = mensajes.mensajeYesNo("Matadero " + ayuMat.getNombreSelecion()
+//                    + " NO Habilitado para este Proveedor. Habilitarlo ?");
+//                if (res == mensajes.YES)
+//                {
+//                    altaMat(acp_matadE.getValorInt());
+//                    acp_matadE.addDatos("" + ayuMat.getCodigoSelecion(), ayuMat.getNombreSelecion());
+//                    padre.acp_matadE.addDatos("" + ayuMat.getCodigoSelecion(), ayuMat.getNombreSelecion());            
+//                    acp_matadE.setValorInt(ayuMat.getCodigoSelecion());
+//                }
+//            }
+//        }
+//
+//        ayuMat.setVisible(false);
+//        this.setEnabled(true);
+//        padre.toFront();
+//        try
+//        {
+//            padre.setSelected(true);
+//        } catch (Exception k)
+//        {
+//        }
+//        padre.setFoco(null);
+//        acp_matadE.requestFocus();
+//    }
+//  void altaMat(int matCodi)
+//  {
+//    try {
+//        pdprove.insMatadero(padre.prv_codiE.getValorInt(), matCodi, dtAdd);
+//        dtAdd.commit();
+//        padre.msgBox("Matadero Insertado");
+//    } catch (SQLException k)
+//    {
+//        padre.Error("Error al dar alta Matadero", k);
+//    }
+//  }
+//  
+//   /**
+//   * Consulta Mataderos
+//   * Llama a la Ayuda de Mataderos
+//   */
+//  public void consSdeCodi()
+//  {
+//    if (padre.vl==null)
+//        return;
+//    try
+//    {
+//      if (ayuSde==null)
+//      {
+//        ayuSde = new AyuSdeMat(padre.EU, padre.vl,dtCon1)
+//        {
+//               @Override
+//          public void matar()
+//          {
+//            ej_consSde();
+//          }
+//        };
+//        ayuSde.setPermiteAlta(true);
+//        padre.vl.add(ayuSde);
+//      }
+//      ayuSde.setLocation(25, 25);
+//      ayuSde.setVisible(true);
+//      padre.setEnabled(false);
+//      padre.setFoco(ayuSde);
+//      ayuSde.iniciarVentana('S',padre.prv_codiE.getValorInt());
+//    }
+//    catch (Exception j)
+//    {
+//        this.setEnabled(true);
+//    }
+//  }
+//
+//  void ej_consSde()
+//  {
+//    if (ayuSde.isAlta())
+//    {
+//         altaSde(ayuSde.getCodigoSelecion());
+//         acp_saldesE.addDatos(""+ayuSde.getCodigoSelecion(),ayuSde.getNombreSelecion());
+//         padre.acp_saldesE.addDatos(""+ayuSde.getCodigoSelecion(),ayuSde.getNombreSelecion());
+//         acp_saldesE.setValorInt(ayuSde.getCodigoSelecion());
+//    }
+//    if (ayuSde.isConsulta())
+//    {
+//      acp_saldesE.setValorInt(ayuSde.getCodigoSelecion());
+//      if (! acp_saldesE.controla())
+//      {
+//          int res=mensajes.mensajeYesNo("Sala Despiece "+ayuSde.getNombreSelecion() +
+//               " NO Habilitada para este Proveedor. Habilitarla ?");
+//          if (res==mensajes.YES)
+//          {
+//              altaSde(acp_saldesE.getValorInt());
+//              acp_saldesE.addDatos(""+ayuSde.getCodigoSelecion(),ayuSde.getNombreSelecion());
+//              padre.acp_saldesE.addDatos(""+ayuSde.getCodigoSelecion(),ayuSde.getNombreSelecion());
+//              acp_saldesE.setValorInt(ayuSde.getCodigoSelecion());
+//          }
+//      }
+//    }
+//
+//    ayuSde.setVisible(false);
+//    padre.setEnabled(true);
+//      padre.toFront();
+//      try
+//      {
+//        padre.setSelected(true);
+//      }
+//      catch (Exception k)
+//      {}
+//      padre.setFoco(null);
+//      acp_saldesE.requestFocus();
+//  }
+//  void altaSde(int sdeCodi)
+//  {
+//    try {
+//        pdprove.insSalaDesp(padre.prv_codiE.getValorInt(), sdeCodi, dtAdd);
+//        dtAdd.commit();
+//        padre.msgBox("Sala Despiece Insertada");
+//    } catch (SQLException k)
+//    {
+//        padre.Error("Error al dar alta Sala de Despiece", k);
+//    }
+//  }
+//    
+//      /**
+//     * Consulta Mataderos
+//     * Llama a la Ayuda de Mataderos
+//     */
+//    public void consMatCodi() {
+//    
+//
+//        try {
+//            if (ayuMat==null)
+//            {
+//                ayuMat = new  AyuSdeMat(padre.EU, padre.vl,dtCon1)
+//                {
+//                    @Override
+//                    public void matar  ()
+//                    {
+//                        ej_consMat();
+//                    }
+//                };
+//                ayuMat.setPermiteAlta(true);
+//                padre.vl.add(ayuMat);
+//            }
+//            ayuMat.setLocation(25, 25);
+//            ayuMat.setVisible(true);
+//            padre.setEnabled(false);
+//            padre.setFoco(ayuMat);
+//            ayuMat.iniciarVentana('M',padre.prv_codiE.getValorInt());
+//        } catch (Exception j) {
+//            padre.setEnabled(true);
+//        }
+//    }
     void activar(boolean enab)
     {
-        etp_codiE.setEnabled(enab);
-        jtEti.setEnabled(enab);
+        etp_codiE.setEnabled(enab);     
+        jtEti.setEnabled(etp_codiE.isNull()?false:enab);
         jtLote.setEnabled(false);
-        BTraspasa.setEnabled(enab);
+        BTraspasa.setEnabled(etp_codiE.isNull()?false:enab);
         Bressub.setEnabled(enab);
     }
     /**
@@ -674,10 +702,10 @@ public class PEtiqProv extends javax.swing.JPanel
         java.awt.GridBagConstraints gridBagConstraints;
 
         etp_codbarE = new gnu.chu.controles.CTextField();
-        etp_loteE = new gnu.chu.controles.CTextField(Types.CHAR,"X",10);
+        etp_loteE = new gnu.chu.controles.CTextField(Types.CHAR,"X",20);
         etp_feccadE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         etp_kilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.999");
-        acp_loteE = new gnu.chu.controles.CTextField(Types.CHAR,"X",10);
+        acp_loteE = new gnu.chu.controles.CTextField(Types.CHAR,"X",20);
         jtEti = new gnu.chu.controles.CGridEditable(4);
         jtLote = new gnu.chu.controles.CGridEditable(11);
         Pcabe = new gnu.chu.controles.CPanel();
@@ -694,6 +722,8 @@ public class PEtiqProv extends javax.swing.JPanel
         Bressub = new gnu.chu.controles.CButton("F2",Iconos.getImageIcon("reload"));
         etp_codiL2 = new gnu.chu.controles.CLabel();
         pro_codiE = new gnu.chu.camposdb.proPanel();
+        Blimpia = new gnu.chu.controles.CButton("Limpia",Iconos.getImageIcon("eraser"));
+        Bcopia = new gnu.chu.controles.CButton("F5",Iconos.getImageIcon("reload"));
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -721,7 +751,6 @@ public class PEtiqProv extends javax.swing.JPanel
         jtEti.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtEti.setMaximumSize(new java.awt.Dimension(225, 99));
         jtEti.setMinimumSize(new java.awt.Dimension(225, 99));
-        jtEti.setPreferredSize(new java.awt.Dimension(225, 99));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -751,8 +780,8 @@ public class PEtiqProv extends javax.swing.JPanel
         acp_loteE.setEditable(false);
         //acp_feccadE.setEditable(false);
         vc1.add(acp_loteE); // 0
-        vc1.add(mat_codiE); // 1 Matadero
-        vc1.add(sde_codiE); // 2 Sala Despiece
+        vc1.add(acp_matadE); // 1 Matadero
+        vc1.add(acp_saldesE); // 2 Sala Despiece
         vc1.add(acp_painacE.getFieldPaiCodi()); // 3
         vc1.add(acp_painacE.getFieldPaiNomb()); // 4
         vc1.add(acp_engpaiE.getFieldPaiCodi()); // 5
@@ -773,7 +802,6 @@ public class PEtiqProv extends javax.swing.JPanel
         jtLote.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtLote.setMaximumSize(new java.awt.Dimension(498, 89));
         jtLote.setMinimumSize(new java.awt.Dimension(498, 89));
-        jtLote.setPreferredSize(new java.awt.Dimension(498, 89));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -799,7 +827,7 @@ public class PEtiqProv extends javax.swing.JPanel
         Pcabe.add(etp_codiL);
         etp_codiL.setBounds(310, 2, 60, 17);
 
-        etp_feprdiE.setText("30");
+        etp_feprdiE.setText("40");
         Pcabe.add(etp_feprdiE);
         etp_feprdiE.setBounds(370, 2, 30, 17);
 
@@ -813,14 +841,14 @@ public class PEtiqProv extends javax.swing.JPanel
 
         Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         Ppie.setEditable(false);
-        Ppie.setMaximumSize(new java.awt.Dimension(489, 40));
-        Ppie.setMinimumSize(new java.awt.Dimension(489, 40));
-        Ppie.setPreferredSize(new java.awt.Dimension(489, 40));
+        Ppie.setMaximumSize(new java.awt.Dimension(489, 44));
+        Ppie.setMinimumSize(new java.awt.Dimension(489, 44));
+        Ppie.setPreferredSize(new java.awt.Dimension(489, 44));
         Ppie.setLayout(null);
 
         BTraspasa.setText("Traspasar");
         Ppie.add(BTraspasa);
-        BTraspasa.setBounds(350, 2, 100, 24);
+        BTraspasa.setBounds(370, 20, 110, 20);
 
         cLabel1.setText("Nº Cajas");
         Ppie.add(cLabel1);
@@ -844,13 +872,22 @@ public class PEtiqProv extends javax.swing.JPanel
         Bressub.setText("F2");
         Bressub.setToolTipText("Pone Contadores subtotal a 0");
         Ppie.add(Bressub);
-        Bressub.setBounds(230, 2, 50, 20);
+        Bressub.setBounds(290, 0, 50, 20);
 
         etp_codiL2.setText("Producto");
         Ppie.add(etp_codiL2);
         etp_codiL2.setBounds(10, 20, 60, 18);
         Ppie.add(pro_codiE);
         pro_codiE.setBounds(70, 20, 270, 18);
+
+        Blimpia.setToolTipText("Borra Etiquetas");
+        Ppie.add(Blimpia);
+        Blimpia.setBounds(370, 0, 80, 20);
+
+        Bcopia.setText("F5");
+        Bcopia.setToolTipText("Pone Contadores subtotal a 0");
+        Ppie.add(Bcopia);
+        Bcopia.setBounds(230, 0, 50, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -864,6 +901,8 @@ public class PEtiqProv extends javax.swing.JPanel
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton BTraspasa;
+    private gnu.chu.controles.CButton Bcopia;
+    private gnu.chu.controles.CButton Blimpia;
     private gnu.chu.controles.CButton Bressub;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Ppie;

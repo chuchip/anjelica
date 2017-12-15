@@ -935,6 +935,15 @@ public class pdempresa extends ventanaPad   implements PAD
     String s="select * from empresa WHERE emp_codi = "+empCodi;
     return dt.select(s);
   }
+  public static String getNumeroRegistroSanitario(DatosTabla dt,int empCodi) throws SQLException
+  {
+    String s="select emp_nurgsa from empresa WHERE emp_codi = "+empCodi;
+    if (! dt.select(s))
+        return null;
+    else
+        return dt.getString("emp_nurgsa");
+  } 
+
   /**
    * Comprueba si un usuario puede acceder a los datos de otra empresa.
    * Para ello comprueba si la empresa esta agrupada con la mandada y

@@ -1,5 +1,50 @@
+ALTER TABLE stockpart DISABLE TRIGGER USER;
+drop view v_stkpart;
+alter table stockpart alter mat_codi type integer;
+alter table stockpart alter mat_codi type integer;
+alter table stockpart add  stp_matad  varchar(15);   -- Matadero
+alter table stockpart add  stp_saldes varchar(15);		-- Sala despiece
+
+create view anjelica.v_stkpart as select * from anjelica.stockpart;
+grant select on anjelica.v_stkpart to public;
+ALTER TABLE stockpart ENABLE TRIGGER USER;
+--
+alter table etiquetas add eti_activ smallint not null default -1;
+--
+drop view anjelica.v_compras;
+alter table v_albcompar alter acp_clasi type varchar(20);
+alter table HISALPACO alter acp_clasi type varchar(20);
+alter table v_albcompar rename opcional1 to acp_matad; -- Matadero
+alter table v_albcompar rename opcional2 to acp_saldes; -- Sala despiece
+alter table v_albcompar alter acp_matad type varchar(15); -- Matadero
+alter table v_albcompar alter acp_saldes type varchar(15); -- Matadero
+alter table v_albcompar disable trigger user;
+update v_albcompar set acp_matad = (select mat_nrgsa from v_matadero as m where v_albcompar.mat_codi=m.mat_codi) 
+where exists (select mat_nrgsa from v_matadero as m where v_albcompar.mat_codi=m.mat_codi)
+and acp_matad is null;
+update v_albcompar set acp_saldes = (select sde_nrgsa from v_saladesp as m where v_albcompar.sde_codi=m.sde_codi) 
+where exists (select sde_nrgsa from v_saladesp as m where v_albcompar.sde_codi=m.sde_codi) 
+and acp_matad is null;
+alter table v_albcompar enable trigger user;
+ create or replace view anjelica.v_compras as 
+select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,c.sbe_codi,
+l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi,
+i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_fecpro,i.acp_nucrot,i.acp_clasi,i.acp_painac,i.sde_codi,i,acp_matad,i.acp_saldes,
+i.acp_paisac,i.acp_engpai,i.mat_codi
+from anjelica.v_albacoc as c,anjelica.v_albacol as l, anjelica.v_albcompar as i
+where c.acc_ano=l.acc_ano
+and c.emp_codi=l.emp_codi
+and c.acc_serie=l.acc_serie
+and c.acc_nume=l.acc_nume
+and c.acc_ano=i.acc_ano
+and c.emp_codi=i.emp_codi
+and c.acc_serie=i.acc_serie
+and c.acc_nume=i.acc_nume
+and l.acl_nulin=i.acl_nulin;
+grant select on anjelica.v_compras to public;
+
 -- 
--- Aumentaqr el tamaño del nombre comercial a 120 Caracteres.
+-- Aumentar el tamaño del nombre comercial a 120 Caracteres.
 drop view v_albdepserv;
 drop view v_cliprv;
 drop view v_cliente;

@@ -391,7 +391,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   CLabel cLabel2 = new CLabel();
   CLabel cLabel3 = new CLabel();
   CTextField acp_cantiE= new CTextField(Types.DECIMAL,"--,--9.99");
-  CTextField acp_clasiE= new CTextField(Types.CHAR,"X",10);
+  CTextField acp_clasiE= new CTextField(Types.CHAR,"X",20);
   CTextField acp_nucrotE= new CTextField(Types.CHAR,"X",60);
  
   CButton Bulcabe = new CButton();
@@ -1321,9 +1321,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     Tpanel1.addTab( "Reclamac.",PVerted);
     Tpanel1.addTab("Incid.", PIncid);
     Tpanel1.addTab( "Más Datos",Potros);    
-    Tpanel1.addTab("Historico", Phist);
     if (pEtiPrv!=null)
         Tpanel1.addTab("Eti.Prv", pEtiPrv);
+    Tpanel1.addTab("Historico", Phist);
     Ppedido.add(jtPed,   new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(1, 0, 0, 0), 0, 0));
     Ppedido.add(cLabel27,   new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
@@ -2332,7 +2332,38 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {        
       cambioPrv(false);
   }
-  
+  public void cambioPrv(boolean forzarCambioPrv) 
+  {
+    try
+        {
+            if (prv_codiE.isNull())
+                return;
+//            s = "SELECT v_saladesp.sde_codi,sde_nrgsa FROM v_prvsade,v_saladesp "
+//                + " WHERE prv_codi = " + prv_codiE.getText()
+//                + " and v_prvsade.sde_codi = v_saladesp.sde_codi "
+//                + " ORDER BY sde_nrgsa";
+//            dtStat.select(s);
+//            sdeCodi.addDatos(dtStat);
+//            s = "SELECT v_matadero.mat_codi,mat_nrgsa FROM v_prvmata,v_matadero "
+//                + " WHERE prv_codi = " + prv_codiE.getText()
+//                + " and v_prvmata.mat_codi = v_matadero.mat_codi "
+//                + " order by mat_nrgsa";
+//            dtStat.select(s);
+//            matCodi.addDatos(dtStat);
+            if (acc_copvfaE.isNull() || forzarCambioPrv)
+            {
+                acc_copvfaE.setText(prv_codiE.getText());
+                acc_copvfaE.controla(false);
+            }          
+            if (pEtiPrv!=null)
+                pEtiPrv.cambioPrv();
+            
+        } catch (Exception k)
+        {
+            Error("Error al buscar datos Mataderos de Proveedores", k);
+        }
+
+    }
   
   /**
    * Comprueba que los datos de la cabecera del albaran son validos
@@ -2466,7 +2497,9 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     if (swCargaAlb)
       return;
     if (pEtiPrv!=null)
+    {
          pEtiPrv.activar(false);
+    }
 
     if (!jtDes.isEnabled())
     { // Vengo de la cabecera
@@ -3660,7 +3693,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       prvAnt=prv_codiE.getValorInt();
       estIniE.setValor("P");
       estFinE.setValor("A");
-      
+      if (pEtiPrv!=null)
+        pEtiPrv.limpia();
       jtRecl.resetCambio();
       jtRecl.requestFocusInicio();
       irGridLin();
@@ -6261,26 +6295,27 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
          return dtAdd.getInt(campo);
        if (campo.equals("acp_canti"))
          return dtAdd.getDouble(campo);
-       if (campo.equals("acp_nucrot"))
+       if (campo.equals("acp_nucrot") || campo.equals("acp_matad") || campo.equals("acp_saldes"))
          return dtAdd.getString(campo);
-       if (campo.equals("mat_nomb"))
-       {
-         s = "SELECT mat_nrgsa FROM v_matadero " +
-             " WHERE mat_codi = " + dtAdd.getInt("mat_codi");
-         if (! dtStat.select(s))
-           return "*****";
-         else
-           return dtStat.getString("mat_nrgsa");
-       }
-       if (campo.equals("sde_nomb"))
-       {
-         s = "SELECT sde_nrgsa FROM v_saladesp " +
-             " WHERE sde_codi = " + dtAdd.getInt("sde_codi");
-         if (!dtStat.select(s))
-           return "*****";
-         else
-           return dtStat.getString("sde_nrgsa");
-       }
+       if (campo.equals("acp_matad") || campo.equals("acp_saldes"))
+           return dtAdd.getString("campo");
+//       {
+//         s = "SELECT mat_nrgsa FROM v_matadero " +
+//             " WHERE mat_codi = " + dtAdd.getInt("mat_codi");
+//         if (! dtStat.select(s))
+//           return "*****";
+//         else
+//           return dtStat.getString("mat_nrgsa");
+//       }
+//       if (campo.equals("sde_nomb"))
+//       {
+//         s = "SELECT sde_nrgsa FROM v_saladesp " +
+//             " WHERE sde_codi = " + dtAdd.getInt("sde_codi");
+//         if (!dtStat.select(s))
+//           return "*****";
+//         else
+//           return dtStat.getString("sde_nrgsa");
+//       }
        if (campo.equals("pai_nacid"))
          return getPais(dtAdd.getString("acp_painac"));
        if (campo.equals("pai_engor"))

@@ -277,26 +277,7 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
     dtAdd.update(stUp);
   }
 
-    /**
-     *
-     * @param forzarCambioPrv
-     */
-    @Override
-  public void cambioPrv(boolean forzarCambioPrv)
-  {      
-    try {
-      if (prv_codiE.isNull())
-           return;
-       if (acc_copvfaE.isNull() || forzarCambioPrv)
-      {
-        acc_copvfaE.setText(prv_codiE.getText());
-        acc_copvfaE.controla(false);
-      }
-    } catch (Exception k)
-    {
-      Error("Error al buscar datos Mataderos de Proveedores",k);
-    }
-  }
+  
   /**
    * Actualizo Datos de Desglose
    * @param nLinAlb int

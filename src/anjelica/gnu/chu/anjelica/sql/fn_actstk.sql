@@ -14,8 +14,8 @@ $BODY$
   mvtFeccad DATE;
   acpPaisac char(2);
   acpFecsac DATE;
-  matCodi int;
-  sdeCodi int;
+  matCodi char(15);
+  sdeCodi char(15);
   acpEngpai char(2);  
   camCodi char(2);
   kilos float;
@@ -55,7 +55,7 @@ $BODY$
 		acpEngpai=null;
 		--RAISE  NOTICE 'Tipo documento %',NEW.mvt_tipdoc;
 		if NEW.mvt_tipdoc = 'C' then					
-			select acp_fecpro,acp_nucrot,acp_painac,acp_paisac,acp_fecsac,mat_codi,sde_codi,acp_engpai 
+			select acp_fecpro,acp_nucrot,acp_painac,acp_paisac,acp_fecsac,acp_matad,acp_saldes,acp_engpai 
 			into acpFecpro,acpNucrot,acpPainac,acpPaisac,acpFecsac,matCodi,sdeCodi,acpEngpai 
 				from anjelica.v_albcompar where 
 				pro_codi=NEW.pro_codi -- Codigo de producto.
@@ -86,8 +86,8 @@ $BODY$
 					stp_engpai ,		-- Pais de engorde
 					stp_paisac ,		-- Pais de Sacrificio
 					stp_fecsac ,	-- Fecha Sacrificio					
-					mat_codi ,		-- Matadero
-					sde_codi )		-- Sala despiece
+					stp_matad ,		-- Matadero
+					stp_saldes )		-- Sala despiece
                  values
                  (
                         NEW.pro_ejelot, 
@@ -97,7 +97,8 @@ $BODY$
 						current_timestamp,
                         kilos,kilos,
                         NEW.mvt_cliprv,mvtFeccad,camCodi,
-						acpFecpro,acpNucrot,acpPainac,acpEngpai,acpPaisac,acpFecsac,matCodi,sdeCodi);
+						acpFecpro,acpNucrot,acpPainac,acpEngpai,acpPaisac,acpFecsac,
+                        matCodi,sdeCodi);
             else
                 if NEW.mvt_tipo='E' then
                    kilos=STKNEW.stp_kilact+NEW.mvt_canti;

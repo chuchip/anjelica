@@ -1274,7 +1274,7 @@ create table anjelica.v_albcompar
    gradograsa int,		-- NO USADO
    categoria char(1),		-- NO USADO
    pro_codi int,		-- Codigo de Producto
-   acp_clasi varchar(10),   -- Clasificación
+   acp_clasi varchar(20),   -- Clasificación / Lote Prv.
    tipo_c2 varchar(10),		-- NO USADO
    tipo_c3 varchar(10),		-- NO USADO
    tipo_c4 varchar(10),		-- NO USADO
@@ -1314,7 +1314,7 @@ constraint ix_albcompar primary key(acc_ano,emp_codi,acc_serie,acc_nume,acl_nuli
 select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,c.sbe_codi,
 l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi,
 i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_fecpro,i.acp_nucrot,i.acp_clasi,i.acp_painac,i.sde_codi,
-i.acp_paisac,i.acp_engpai,i.mat_codi
+i.acp_paisac,i.acp_engpai,i.mat_codi,i.acp_matad,i.acp_saldes
 from anjelica.v_albacoc as c,anjelica.v_albacol as l, anjelica.v_albcompar as i
 where c.acc_ano=l.acc_ano
 and c.emp_codi=l.emp_codi
@@ -1339,33 +1339,36 @@ and c.acc_nume=l.acc_nume
 --
 -- Historico Individuos albaranes de compras
 --
-create table anjelica.hisalpaco
+CREATE TABLE hisalpaco
 (
-   acc_ano int not null,	-- Ejerc. del Alb. de Compra
-   emp_codi int not null,	-- Empresa del Alb. de Compra
-   acc_serie char(1) not null,	-- Serie del Alb. de Compra
-   acc_nume int not null,	-- Numero del Alb. de Compra
-   acp_numlin int, 		-- Numero de Linea de la Partida
-   acp_claani int,		-- Clase de Animal  (NO USADO)
-   acp_numind int,		-- Numero de Ind.
-   pcc_nume int ,		-- Numero de Pedido (NO USADO)
-   acp_nucrot varchar(30),	-- Numero de Crotal
-   acp_painac char(2),		-- Pais de Nacimiento
-   acp_feccad date,		-- Fecha Caducidad
-   acp_paisac char(2),		-- Pais de Sacrificio
-   acp_fecsac date,		-- Fecha de Sacrificio
-   acp_fecpro date,             -- Fecha de Produccion
-   observaciones varchar(255),
-   clasificacion char(1),       -- NO USADO
-   pro_codi int,		-- Codigo de Producto
-   acp_canind int ,		-- Cant.de Individuos
-   mat_codi int,		-- Codigo de Matadero
-   acl_nulin int,		-- Numero de Linea del Albaran
-   sde_codi int,		-- Codigo Sala Despiece
-   acp_engpai char(2),		-- Pais de Engorde
-   acp_canti float,		-- Kilos
-   his_rowid int not null
-);
+  acc_ano integer NOT NULL,
+  emp_codi integer NOT NULL,
+  acc_serie character(1) NOT NULL,
+  acc_nume integer NOT NULL,
+  acp_numlin integer,
+  acp_claani integer,
+  acp_numind integer,
+  pcc_nume integer,
+  acp_nucrot character varying(30),
+  acp_painac1 integer,
+  acp_feccad date,
+  acp_paisac1 integer,
+  acp_fecsac date,
+  observaciones character varying(255),
+  acp_engpai character varying(2),
+  pro_codi integer,
+  acp_canind integer,
+  mat_codi integer,
+  acl_nulin integer,
+  sde_codi integer,
+  acp_paieng1 integer,
+  acp_canti double precision,
+  his_rowid integer NOT NULL,
+  acp_fecpro date,
+  acp_clasi character varying(20),
+  acp_paisac character varying(2),
+  acp_painac character varying(2)
+)
  create index ix_hisalpaco on hisalpaco   (his_rowid,acl_nulin);
 --
 -- Proveedores
@@ -2979,9 +2982,10 @@ create table anjelica.etiquetas
 	eti_defec char(1) not null,  -- Etiqueta Defecto (S/N)
 	eti_nuetpa smallint not null default 1, -- Numero Etiquetas por Pagina
     eti_client smallint not null -- Etiqueta para cliente (0 Todos)
+	eti_activ smallint not null default -1, -- Activa
 );
 INSERT INTO etiquetas (emp_codi,eti_codi,eti_nomb,eti_logo,eti_ficnom,eti_defec,eti_client)
-    VALUES (1,1,'ESTANDART','anjelica.png','etiqueta','S',0);
+    VALUES (1,1,'ESTANDART','anjelica.png','etiqueta','S',0,-1);
 
 ---
 --- Tabla de Bloqueos
@@ -4100,8 +4104,10 @@ create table anjelica.stockpart
 	stp_engpai char(2),		-- Pais de engorde
 	stp_paisac char(2),		-- Pais de Sacrificio
 	stp_fecsac date,	-- Fecha Sacrificio
-	mat_codi int,		-- Matadero
-	sde_codi int,		-- Sala despiece
+	stp_matad varchar(15),   -- Matadero
+	stp_saldes varchar(15),		-- Sala despiece
+	sde_codi int,
+	mat_codi int,
 	stp_traaut smallint default 1 not null,-- Trazabilidad Automatica.
 	constraint ix_stockpart primary key (pro_codi,eje_nume,pro_serie,pro_nupar,pro_numind);
 );
@@ -4434,10 +4440,11 @@ create table  etiqprov
 	constraint ix_etiqprov primary  key (etp_codi)
 );
 grant all on anjelica.etiqprov to public;
---insert into etiqprov values(1,98,'Tilburg',null,null,0,5,5,11,'yyMMdd',11,14,14,16)
+-- insert into etiqprov values(1,98,'Tilburg',42,null,null,17,23,26,32,'yyMMdd',36,39,39,42);
+-- insert into etiqprov values(3, 69,'Beimer',44,null,null,27,35,38,44,'yyMMdd',20,23,23,25);
+-- insert into etiqprov values(3, 58866, 'Beimer-1', 44,null,null,27,35,38,44,'yyMMdd',20,23,23,25);
+--insert into etiqprov values(4, 74, 'Verhey', 35,null,null,28,34,0,0,null,20,23,23,25);
 
-012345678901234567890
--A23B18010201526--122
 --drop view v_cliprv;
 create view anjelica.v_cliprv as 
 select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.clientes 

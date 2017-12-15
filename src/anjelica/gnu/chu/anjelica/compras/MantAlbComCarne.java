@@ -53,7 +53,7 @@ public class MantAlbComCarne extends MantAlbCom
    public static int MINLONCROTAL=10;
    private int CROTALAUTOMA=1; // Numero crotal Automatico
    String ultMat=null,ultSalDes,ultNac,ultCeb,ultSacr,ultFecCad,ultFecSac,ultFecPro;
-   CLinkBox mat_codiE,sde_codiE;
+   CTextField acp_matadE,acp_saldesE;
    
    PaiPanel acp_painacE;
    PaiPanel acp_engpaiE;
@@ -129,24 +129,24 @@ public class MantAlbComCarne extends MantAlbCom
         }
       }
     });
-     mat_codiE.addKeyListener(new KeyAdapter()
-     {
-      @Override
-      public void keyPressed(KeyEvent e)
-      {
-        if (e.getKeyCode() == KeyEvent.VK_F3)
-          consMatCodi();
-      }
-     });
-     sde_codiE.addKeyListener(new KeyAdapter()
-     {
-      @Override
-      public void keyPressed(KeyEvent e)
-      {
-        if (e.getKeyCode() == KeyEvent.VK_F3)
-          consSdeCodi();
-      }
-     });
+//     acp_matadE.addKeyListener(new KeyAdapter()
+//     {
+//      @Override
+//      public void keyPressed(KeyEvent e)
+//      {
+//        if (e.getKeyCode() == KeyEvent.VK_F3)
+//          consMatCodi();
+//      }
+//     });
+//     acp_saldesE.addKeyListener(new KeyAdapter()
+//     {
+//      @Override
+//      public void keyPressed(KeyEvent e)
+//      {
+//        if (e.getKeyCode() == KeyEvent.VK_F3)
+//          consSdeCodi();
+//      }
+//     });
    }
    @Override
   public void confGridDesglose() throws Exception
@@ -211,9 +211,10 @@ public class MantAlbComCarne extends MantAlbCom
         }
     };
     
-    mat_codiE=new CLinkBox();
-    sde_codiE=new CLinkBox();
-      
+    acp_matadE=new CTextField(Types.CHAR,"X",15);
+    acp_saldesE=new CTextField(Types.CHAR,"X",15);
+    acp_matadE.setMayusc(true);
+    acp_saldesE.setMayusc(true);
     acp_feccadE    = new CTextField(Types.DATE,"dd-MM-yyyy");
     acp_fecsacE    = new CTextField(Types.DATE,"dd-MM-yyyy");
     acp_fecproE    = new CTextField(Types.DATE,"dd-MM-yyyy");
@@ -249,13 +250,7 @@ public class MantAlbComCarne extends MantAlbCom
     ArrayList vc1=new ArrayList();
     acp_feccadE.setText("");
 
-    mat_codiE.setAncTexto(40);
-    sde_codiE.setAncTexto(40);
-    mat_codiE.setCeroIsNull(true);
-    sde_codiE.setCeroIsNull(true);
-    sde_codiE.setFormato(Types.DECIMAL,"####9",5);
-    mat_codiE.setFormato(true);
-    mat_codiE.setFormato(Types.DECIMAL,"####9",5);
+  
    
     
     acp_nucrotE.setToolTipText("Pulse F3 para generar Num. Crotal");
@@ -267,8 +262,8 @@ public class MantAlbComCarne extends MantAlbCom
     vc1.add(acp_cantiE); // 1
     vc1.add(acp_clasiE); // 2
     vc1.add(acp_nucrotE); // 3
-    vc1.add(mat_codiE); // 4 Matadero
-    vc1.add(sde_codiE); // 5
+    vc1.add(acp_matadE); // 4 Matadero
+    vc1.add(acp_saldesE); // 5
     vc1.add(acp_painacE.getFieldPaiCodi()); // 6
     vc1.add(acp_painacE.getFieldPaiNomb()); // 7
     vc1.add(acp_engpaiE.getFieldPaiCodi()); // 8
@@ -303,16 +298,16 @@ public class MantAlbComCarne extends MantAlbCom
     @Override
    public int cambiaLinDesg0(int row) throws Exception
    {       
-    if (mat_codiE.getError() && !mat_codiE.isNull())
-     {
-       mensajeErr("Introduzca un Codigo de Matadero  valido");
-       return JTD_MATCODI;
-     }
-     if (sde_codiE.getError() && !sde_codiE.isNull())
-     {
-       mensajeErr("Introduzca un Codigo de SALA DE DESPIECE valido");
-       return JTD_SDECODI;
-     }
+//      if (acp_matadE.isNull())
+//     {
+//       mensajeErr("Introduzca un Codigo de Matadero  valido");
+//       return JTD_MATCODI;
+//     }
+//     if (acp_saldesE.isNull())
+//     {
+//       mensajeErr("Introduzca un Codigo de SALA DE DESPIECE valido");
+//       return JTD_SDECODI;
+//     }
      if (!acp_painacE.controlar(false) && !acp_painacE.isNull())
      {
        mensajeErr("Introduzca un PAIS DE NACIMIENTO");
@@ -356,72 +351,71 @@ public class MantAlbComCarne extends MantAlbCom
      }
      if (proNumcro>0)
      {        
-        if (acp_nucrotE.isNull() || acp_nucrotE.getText().length()<MINLONCROTAL)
-        {
-            if (CROTALAUTOMA!=0)
-            {
-                genNumCrotal();
-                jtDes.setValor(acp_nucrotE.getText(),JTD_NUMCRO);
-            }
-             if (acp_nucrotE.isNull() || acp_nucrotE.getText().length()<MINLONCROTAL)
-            {
-                mensajeErr("Producto debe tener numero crotal. Longitud minima: "+MINLONCROTAL);
-                return JTD_NUMCRO;
-            }
-        }
-        
-        int numCrotal=getNumCrotal(acp_nucrotE.getText(),numIndAnt,jt.getValorInt(JT_PROCOD));
-        if (numCrotal>= proNumcro)
-        {
-            if (CROTALAUTOMA!=0)
-            {
-               genNumCrotal();
-               jtDes.setValor(acp_nucrotE.getText(),JTD_NUMCRO);
-            }
-            else
-            {
-                mensajeErr("No puede haber mas de "+proNumcro+"  numeros de crotal iguales");
-                if (acp_nucrotE.isEditable())
-                    return JTD_NUMCRO;
-            }
-        }
-        if (mat_codiE.isNull())
-        {
-          mensajeErr("Codigo de Matadero Obligatorio para este producto");
-          return JTD_MATCODI;
-        }
-        if (sde_codiE.isNull())
-        {
-            mensajeErr("SALA DE DESPIECE Obligatoria para este producto");
-            return JTD_SDECODI;
-        }
-        if (acp_painacE.isNull())
-        {
-            mensajeErr("PAIS DE NACIMIENTO Obligatorio para este producto");
-            return JTD_PAINAC;
-        }
-        if (acp_engpaiE.isNull())
-        {
-            mensajeErr("PAIS DE CEBADO Obligatorio para este producto");
-            return JTD_ENGPAI;
-        }
-        if (acp_paisacE.isNull())
-        {
-            mensajeErr("PAIS DE SACRIFICIO Obligatorio para este producto");
-            return JTD_PAISAC;
-        }
-    }
-     if (nav.pulsado==navegador.ADDNEW)
-      {
-        if (Formatear.comparaFechas(acp_feccadE.getDate(), Formatear.getDateAct()) <
-            0)
-        {
-          mensajeErr("Fecha de Caducidad NO puede ser inferior a la actual");
-          return JTD_FECCAD;
-        }
-      }
-      
-     return -1;
+           if (acp_nucrotE.isNull() || acp_nucrotE.getText().length() < MINLONCROTAL)
+           {
+               if (CROTALAUTOMA != 0)
+               {
+                   genNumCrotal();
+                   jtDes.setValor(acp_nucrotE.getText(), JTD_NUMCRO);
+               }
+               if (acp_nucrotE.isNull() || acp_nucrotE.getText().length() < MINLONCROTAL)
+               {
+                   mensajeErr("Producto debe tener numero crotal. Longitud minima: " + MINLONCROTAL);
+                   return JTD_NUMCRO;
+               }
+           }
+
+           int numCrotal = getNumCrotal(acp_nucrotE.getText(), numIndAnt, jt.getValorInt(JT_PROCOD));
+           if (numCrotal >= proNumcro)
+           {
+               if (CROTALAUTOMA != 0)
+               {
+                   genNumCrotal();
+                   jtDes.setValor(acp_nucrotE.getText(), JTD_NUMCRO);
+               } else
+               {
+                   mensajeErr("No puede haber mas de " + proNumcro + "  numeros de crotal iguales");
+                   if (acp_nucrotE.isEditable())
+                       return JTD_NUMCRO;
+               }
+           }
+           if (acp_matadE.isNull())
+           {
+               mensajeErr("Codigo de Matadero Obligatorio para este producto");
+               return JTD_MATCODI;
+           }
+           if (acp_saldesE.isNull())
+           {
+               mensajeErr("SALA DE DESPIECE Obligatoria para este producto");
+               return JTD_SDECODI;
+           }
+           if (acp_painacE.isNull())
+           {
+               mensajeErr("PAIS DE NACIMIENTO Obligatorio para este producto");
+               return JTD_PAINAC;
+           }
+           if (acp_engpaiE.isNull())
+           {
+               mensajeErr("PAIS DE CEBADO Obligatorio para este producto");
+               return JTD_ENGPAI;
+           }
+           if (acp_paisacE.isNull())
+           {
+               mensajeErr("PAIS DE SACRIFICIO Obligatorio para este producto");
+               return JTD_PAISAC;
+           }
+       }
+       if (nav.pulsado == navegador.ADDNEW)
+       {
+           if (Formatear.comparaFechas(acp_feccadE.getDate(), Formatear.getDateAct())
+               < 0)
+           {
+               mensajeErr("Fecha de Caducidad NO puede ser inferior a la actual");
+               return JTD_FECCAD;
+           }
+       }
+
+       return -1;
   }
    
    @Override
@@ -430,7 +424,7 @@ public class MantAlbComCarne extends MantAlbCom
 //    numIndAnt=jtDes.getValorInt(JTD_NUMIND);
 //    System.out.println("Lin. Ant: "+numIndAnt);
     return acp_numindE.getValorInt()+""+acp_cantiE.getValorDec()+acp_clasiE.getText()+ acp_nucrotE.getText()+
-        mat_codiE.getValorInt()+sde_codiE.getValorInt()+
+        acp_matadE.getText()+acp_saldesE.getText()+
         acp_painacE.getText()+acp_engpaiE.getText()+
         acp_paisacE.getText()+acp_feccadE.getText()+acp_fecsacE.getText()+
         acp_fecproE.getText()+
@@ -443,10 +437,10 @@ public class MantAlbComCarne extends MantAlbCom
         ultFecCad=acp_feccadE.getText();
         ultFecSac=acp_fecsacE.getText();
         ultFecPro=acp_fecproE.getText();
-        ultMat=mat_codiE.getCellEditorValue().toString();
+        ultMat=acp_matadE.getText();
         ultNac=acp_painacE.getText();
         ultSacr=acp_paisacE.getText();
-        ultSalDes=sde_codiE.getText();
+        ultSalDes=acp_saldesE.getText();
   }
   /**
    * 
@@ -477,8 +471,8 @@ public class MantAlbComCarne extends MantAlbCom
                  jtDes.getValDate(row,JTD_FECPRO),
                  jt.getValorInt(JT_PROCOD), // codigo Prod. 
                  nLiAlb,
-                 mat_codiE.getTextoInt(jtDes.getValString(row,JTD_MATCODI,true)),
-                 sde_codiE.getTextoInt(jtDes.getValString(row,JTD_SDECODI,true)),
+                 jtDes.getValString(row,JTD_MATCODI,true),
+                 jtDes.getValString(row,JTD_SDECODI,true),
                  jtDes.getValorDec(row, JTD_CANTI),
                  jtDes.getValorInt(row, JTD_CANIND));
 
@@ -504,8 +498,8 @@ public class MantAlbComCarne extends MantAlbCom
  * @param acp_fecpro
  * @param pro_codi
  * @param acl_nulin
- * @param mat_codi
- * @param sde_codi
+ * @param acp_matad
+ * @param acp_saldes
  * @param acp_canti
  * @param acp_canind
  * @throws SQLException 
@@ -513,7 +507,7 @@ public class MantAlbComCarne extends MantAlbCom
   void guardaLinDes(int acp_numlin,int acp_numind,String acp_clasi,String acp_nucrot,
                     String acp_painac,java.util.Date acp_feccad,String acp_paisac,
                     String acp_engpai,java.util.Date acp_fecsac,java.util.Date acp_fecpro,int pro_codi,
-                    int acl_nulin,int mat_codi,int sde_codi,
+                    int acl_nulin,String acp_matad,String acp_saldes,
                     double acp_canti, int acp_canind) throws SQLException
   {
     if (acp_numind>0 && acp_canti<=0)
@@ -537,61 +531,20 @@ public class MantAlbComCarne extends MantAlbCom
     dtAdd.setDato("acp_fecsac",acp_fecsac); // Fecha Sacrificio
     dtAdd.setDato("acp_fecpro",acp_fecpro); // Fecha Produccion
     dtAdd.setDato("pro_codi", pro_codi);
-    dtAdd.setDato("mat_codi",mat_codi); // Matadero
-    dtAdd.setDato("sde_codi",sde_codi); // Sala Despiece
+    dtAdd.setDato("acp_matad",acp_matad); // Matadero
+    dtAdd.setDato("acp_saldes",acp_saldes); // Sala Despiece
     dtAdd.setDato("acp_canti", acp_canti);
     dtAdd.setDato("acp_canind", acp_canind);
     dtAdd.update(stUp);
     
   }
-    public void cambioPrv(boolean forzarCambioPrv, CLinkBox sdeCodi, CLinkBox matCodi) {
-        try
-        {
-            if (prv_codiE.isNull())
-                return;
-            s = "SELECT v_saladesp.sde_codi,sde_nrgsa FROM v_prvsade,v_saladesp "
-                + " WHERE prv_codi = " + prv_codiE.getText()
-                + " and v_prvsade.sde_codi = v_saladesp.sde_codi "
-                + " ORDER BY sde_nrgsa";
-            dtStat.select(s);
-            sdeCodi.addDatos(dtStat);
-            s = "SELECT v_matadero.mat_codi,mat_nrgsa FROM v_prvmata,v_matadero "
-                + " WHERE prv_codi = " + prv_codiE.getText()
-                + " and v_prvmata.mat_codi = v_matadero.mat_codi "
-                + " order by mat_nrgsa";
-            dtStat.select(s);
-            matCodi.addDatos(dtStat);
-            if (acc_copvfaE.isNull() || forzarCambioPrv)
-            {
-                acc_copvfaE.setText(prv_codiE.getText());
-                acc_copvfaE.controla(false);
-            }
-           
-        } catch (Exception k)
-        {
-            Error("Error al buscar datos Mataderos de Proveedores", k);
-        }
-
-    }
-   @Override
-  public void cambioPrv(boolean forzarCambioPrv)
-  {
-      try
-      {
-          cambioPrv(forzarCambioPrv, sde_codiE, mat_codiE);
-          if (pEtiPrv != null)
-              pEtiPrv.cambioPrv();
-      } catch (Exception k)
-      {
-          Error("Error al buscar datos Mataderos de Proveedores", k);
-      }
-  }
   
+ 
   void ponDatosTraza(ArrayList v)
   {       
           acp_clasiE.setText((String) v.get(0));
-          mat_codiE.setText((String) v.get(1));
-          sde_codiE.setText((String) v.get(2));
+          acp_matadE.setText((String) v.get(1));
+          acp_saldesE.setText((String) v.get(2));
           acp_painacE.setText((String) v.get(3));
           acp_engpaiE.setText((String) v.get(4));
           acp_paisacE.setText((String) v.get(5));
@@ -675,8 +628,8 @@ public class MantAlbComCarne extends MantAlbCom
           jtDes.setEnabled(true);
           acp_cantiE.setValorDec((double) v.get(1));
           acp_clasiE.setText((String) v.get(0));
-          mat_codiE.setValorInt((int) v.get(2));
-          sde_codiE.setValorInt((int) v.get(3));
+          acp_matadE.setText((String) v.get(2));
+          acp_saldesE.setText((String) v.get(3));
           acp_painacE.setText((String) v.get(4));
           acp_engpaiE.setText((String) v.get(5));
           acp_paisacE.setText((String) v.get(6));
@@ -735,8 +688,8 @@ public class MantAlbComCarne extends MantAlbCom
     if (nIndAnt==nInd && acp_cantiE.getValorDec() == dtCon1.getDouble("acp_canti") &&
             acp_clasiE.getText().equals(dtCon1.getString("acp_clasi")) &&
             acp_nucrotE.getText().equals(dtCon1.getString("acp_nucrot")) &&
-            mat_codiE.getValorInt() == dtCon1.getInt("mat_codi") &&
-            sde_codiE.getValorInt() == dtCon1.getInt("sde_codi") &&
+            acp_matadE.getText().equals(dtCon1.getString("acp_matad")) &&
+            acp_saldesE.getText().equals(dtCon1.getString("acp_saldes")) &&
             acp_painacE.getText().equals(dtCon1.getString("acp_painac")) &&
             acp_engpaiE.getText().equals(dtCon1.getString("acp_engpai")) &&
             acp_paisacE.getText().equals(dtCon1.getString("acp_paisac")) &&
@@ -795,15 +748,14 @@ public class MantAlbComCarne extends MantAlbCom
         
   
 
-    String sacrificadoE,despiezadoE;
+
     String nombArt;
     
     nombArt=pro_codiE.getNombArt(proCodi,emp_codiE.getValorInt());
-    int sdeCodi=0,matCodi=0;
-    try {
-      matCodi=Integer.parseInt(mat_codiE.getTexto(jtDes.getValString(JTD_MATCODI)));
-    } catch (NumberFormatException k) {}
-    sacrificadoE = pdmatadero.getRegistroSanitario(dtCon1, matCodi, false);
+    
+    String  matCodi=jtDes.getValString(nLin, JTD_MATCODI);
+   
+//    sacrificadoE = pdmatadero.getRegistroSanitario(dtCon1, matCodi, false);
 //    s = "SELECT mat_nrgsa,pai_codi FROM v_matadero m WHERE m.mat_codi = " + matCodi;
 //    if (dtCon1.select(s))
 //    {
@@ -814,10 +766,8 @@ public class MantAlbComCarne extends MantAlbCom
 //    }
 //    else
 //      sacrificadoE=matCodi+" NO ENCONTRADO";
-    try {
-      sdeCodi=Integer.parseInt(sde_codiE.getTexto(jtDes.getValString(nLin,JTD_SDECODI)));
-    } catch (NumberFormatException k) {}
-    despiezadoE=pdsaladesp.getRegistroSanitario(dtCon1, sdeCodi, false);
+    String sdeCodi=jtDes.getValString(nLin,JTD_SDECODI);    
+//    despiezadoE=pdsaladesp.getRegistroSanitario(dtCon1, sdeCodi, false);
 //    s = "SELECT sde_nrgsa,pai_codi FROM v_saladesp m " +
 //        " WHERE m.sde_codi = " + sdeCodi;
 //    if (dtCon1.select(s))
@@ -829,7 +779,7 @@ public class MantAlbComCarne extends MantAlbCom
 //    }
 //    else
 //      despiezadoE = sdeCodi + " NO ENCONTRADO";
-
+    matCodi=utildesp.getRegistroSanitario(false, dtStat, matCodi, jtDes.getValString(nLin, JTD_PAISAC));
     if (etiq == null)
       etiq = new etiqueta(EU);
     String paisNacido=MantPaises.getNombrePais(jtDes.getValString(nLin, JTD_PAINAC), dtCon1);
@@ -840,18 +790,18 @@ public class MantAlbComCarne extends MantAlbCom
         paisEngorde="Pais "+jtDes.getValString(nLin, JTD_ENGPAI)+" NO encontrado";
 
     String paisSacrificio=MantPaises.getNombrePais(jtDes.getValString(nLin, JTD_PAISAC), dtCon1);
-    if (paisSacrificio==null)
-        paisSacrificio="Pais "+jtDes.getValString(nLin, JTD_PAISAC)+" NO encontrado";
+//    if (paisSacrificio==null)
+//        paisSacrificio="Pais "+jtDes.getValString(nLin, JTD_PAISAC)+" NO encontrado";
     
     etiq.iniciar(codBarras.getCodBarra(), codBarras.getLote(),
                  proCodi, nombArt,
                  paisNacido,
                  paisEngorde,
-                 despiezadoE,
+                 sdeCodi,
                  Formatear.cortar(jtDes.getValString(nLin, JTD_NUMCRO),30),
                  jtDes.getValorDec(nLin, JTD_CANTI),
                  getConservar(jt.getValorInt(JT_PROCOD)),
-                 sacrificadoE,   acc_fecrecE.getDate() ,
+                 matCodi,   acc_fecrecE.getDate() ,
                  jtDes.getValDate(nLin,JTD_FECPRO) ,
                  jtDes.getValDate(nLin,JTD_FECCAD) ,
                  jtDes.getValDate(nLin, JTD_FECSAC));
@@ -891,172 +841,174 @@ public class MantAlbComCarne extends MantAlbCom
     acp_painacE.resetCambio();
     acp_paisacE.resetCambio();
     acp_engpaiE.resetCambio();
+    pEtiPrv.limpia();
     ultMat=null;
   }
   /**
    * Ejecuta consulta sobre mataderos
+     * @throws java.sql.SQLException
    */
-    void ej_consMat() 
-    {
-        if (ayuMat.isAlta())
-        {
-            altaMat(ayuMat.getCodigoSelecion());
-            mat_codiE.addDatos("" + ayuMat.getCodigoSelecion(), ayuMat.getNombreSelecion());
-            mat_codiE.setValorInt(ayuMat.getCodigoSelecion());
-        }
-
-        if (ayuMat.isConsulta())
-        {
-            mat_codiE.setValorInt(ayuMat.getCodigoSelecion());
-            if (!mat_codiE.controla())
-            {
-                int res = mensajes.mensajeYesNo("Matadero " + ayuMat.getNombreSelecion()
-                    + " NO Habilitado para este Proveedor. Habilitarlo ?");
-                if (res == mensajes.YES)
-                {
-                    altaMat(mat_codiE.getValorInt());
-                    mat_codiE.addDatos("" + ayuMat.getCodigoSelecion(), ayuMat.getNombreSelecion());
-                    mat_codiE.setValorInt(ayuMat.getCodigoSelecion());
-                }
-            }
-        }
-
-        ayuMat.setVisible(false);
-        this.setEnabled(true);
-        this.toFront();
-        try
-        {
-            this.setSelected(true);
-        } catch (Exception k)
-        {
-        }
-        this.setFoco(null);
-        mat_codiE.requestFocus();
-    }
-  void altaMat(int matCodi)
-  {
-    try {
-        pdprove.insMatadero(prv_codiE.getValorInt(), matCodi, dtAdd);
-        dtAdd.commit();
-        msgBox("Matadero Insertado");
-    } catch (SQLException k)
-    {
-        Error("Error al dar alta Matadero", k);
-    }
-  }
-   /**
-   * Consulta Mataderos
-   * Llama a la Ayuda de Mataderos
-   */
-  public void consSdeCodi()
-  {
-    if (vl==null)
-        return;
-    try
-    {
-      if (ayuSde==null)
-      {
-        ayuSde = new AyuSdeMat(EU, vl,dtCon1)
-        {
-               @Override
-          public void matar()
-          {
-            ej_consSde();
-          }
-        };
-        ayuSde.setPermiteAlta(true);
-        vl.add(ayuSde);
-      }
-      ayuSde.setLocation(25, 25);
-      ayuSde.setVisible(true);
-      this.setEnabled(false);
-      this.setFoco(ayuSde);
-      ayuSde.iniciarVentana('S',prv_codiE.getValorInt());
-    }
-    catch (Exception j)
-    {
-        this.setEnabled(true);
-    }
-  }
-
-  void ej_consSde()
-  {
-    if (ayuSde.isAlta())
-    {
-         altaSde(ayuSde.getCodigoSelecion());
-         sde_codiE.addDatos(""+ayuSde.getCodigoSelecion(),ayuSde.getNombreSelecion());
-         sde_codiE.setValorInt(ayuSde.getCodigoSelecion());
-    }
-    if (ayuSde.isConsulta())
-    {
-      sde_codiE.setValorInt(ayuSde.getCodigoSelecion());
-      if (! sde_codiE.controla())
-      {
-          int res=mensajes.mensajeYesNo("Sala Despiece "+ayuSde.getNombreSelecion() +
-               " NO Habilitada para este Proveedor. Habilitarla ?");
-          if (res==mensajes.YES)
-          {
-              altaSde(sde_codiE.getValorInt());
-              sde_codiE.addDatos(""+ayuSde.getCodigoSelecion(),ayuSde.getNombreSelecion());
-              sde_codiE.setValorInt(ayuSde.getCodigoSelecion());
-          }
-      }
-    }
-
-    ayuSde.setVisible(false);
-    this.setEnabled(true);
-      this.toFront();
-      try
-      {
-        this.setSelected(true);
-      }
-      catch (Exception k)
-      {}
-      this.setFoco(null);
-      sde_codiE.requestFocus();
-  }
-  void altaSde(int sdeCodi)
-  {
-    try {
-        pdprove.insSalaDesp(prv_codiE.getValorInt(), sdeCodi, dtAdd);
-        dtAdd.commit();
-        msgBox("Sala Despiece Insertada");
-    } catch (SQLException k)
-    {
-        Error("Error al dar alta Sala de Despiece", k);
-    }
-  }
-    
-      /**
-     * Consulta Mataderos
-     * Llama a la Ayuda de Mataderos
-     */
-    public void consMatCodi() {
-    
-
-        try {
-            if (ayuMat==null)
-            {
-                ayuMat = new  AyuSdeMat(EU, vl,dtCon1)
-                {
-                    @Override
-                    public void matar  ()
-                    {
-                        ej_consMat();
-                    }
-                };
-                ayuMat.setPermiteAlta(true);
-                vl.add(ayuMat);
-            }
-            ayuMat.setLocation(25, 25);
-            ayuMat.setVisible(true);
-            this.setEnabled(false);
-            this.setFoco(ayuMat);
-            ayuMat.iniciarVentana('M',prv_codiE.getValorInt());
-        } catch (Exception j) {
-            this.setEnabled(true);
-        }
-    }
+//    void ej_consMat() 
+//    {
+//        if (ayuMat.isAlta())
+//        {
+//            altaMat(ayuMat.getCodigoSelecion());
+//            acp_matadE.addDatos("" + ayuMat.getCodigoSelecion(), ayuMat.getNombreSelecion());
+//            acp_matadE.setValorInt(ayuMat.getCodigoSelecion());
+//        }
+//
+//        if (ayuMat.isConsulta())
+//        {
+//            acp_matadE.setValorInt(ayuMat.getCodigoSelecion());
+//            if (!acp_matadE.controla())
+//            {
+//                int res = mensajes.mensajeYesNo("Matadero " + ayuMat.getNombreSelecion()
+//                    + " NO Habilitado para este Proveedor. Habilitarlo ?");
+//                if (res == mensajes.YES)
+//                {
+//                    altaMat(acp_matadE.getValorInt());
+//                    acp_matadE.addDatos("" + ayuMat.getCodigoSelecion(), ayuMat.getNombreSelecion());
+//                    acp_matadE.setValorInt(ayuMat.getCodigoSelecion());
+//                }
+//            }
+//        }
+//
+//        ayuMat.setVisible(false);
+//        this.setEnabled(true);
+//        this.toFront();
+//        try
+//        {
+//            this.setSelected(true);
+//        } catch (Exception k)
+//        {
+//        }
+//        this.setFoco(null);
+//        acp_matadE.requestFocus();
+//    }
+//  void altaMat(int matCodi)
+//  {
+//    try {
+//        pdprove.insMatadero(prv_codiE.getValorInt(), matCodi, dtAdd);
+//        dtAdd.commit();
+//        msgBox("Matadero Insertado");
+//    } catch (SQLException k)
+//    {
+//        Error("Error al dar alta Matadero", k);
+//    }
+//  }
+//   /**
+//   * Consulta Mataderos
+//   * Llama a la Ayuda de Mataderos
+//   */
+//  public void consSdeCodi()
+//  {
+//    if (vl==null)
+//        return;
+//    try
+//    {
+//      if (ayuSde==null)
+//      {
+//        ayuSde = new AyuSdeMat(EU, vl,dtCon1)
+//        {
+//               @Override
+//          public void matar()
+//          {
+//            ej_consSde();
+//          }
+//        };
+//        ayuSde.setPermiteAlta(true);
+//        vl.add(ayuSde);
+//      }
+//      ayuSde.setLocation(25, 25);
+//      ayuSde.setVisible(true);
+//      this.setEnabled(false);
+//      this.setFoco(ayuSde);
+//      ayuSde.iniciarVentana('S',prv_codiE.getValorInt());
+//    }
+//    catch (Exception j)
+//    {
+//        this.setEnabled(true);
+//    }
+//  }
+//
+//  void ej_consSde()
+//  {
+//    if (ayuSde.isAlta())
+//    {
+//         altaSde(ayuSde.getCodigoSelecion());
+//         acp_saldesE.addDatos(""+ayuSde.getCodigoSelecion(),ayuSde.getNombreSelecion());
+//         acp_saldesE.setValorInt(ayuSde.getCodigoSelecion());
+//    }
+//    if (ayuSde.isConsulta())
+//    {
+//      acp_saldesE.setValorInt(ayuSde.getCodigoSelecion());
+//      if (! acp_saldesE.controla())
+//      {
+//          int res=mensajes.mensajeYesNo("Sala Despiece "+ayuSde.getNombreSelecion() +
+//               " NO Habilitada para este Proveedor. Habilitarla ?");
+//          if (res==mensajes.YES)
+//          {
+//              altaSde(acp_saldesE.getValorInt());
+//              acp_saldesE.addDatos(""+ayuSde.getCodigoSelecion(),ayuSde.getNombreSelecion());
+//              acp_saldesE.setValorInt(ayuSde.getCodigoSelecion());
+//          }
+//      }
+//    }
+//
+//    ayuSde.setVisible(false);
+//    this.setEnabled(true);
+//      this.toFront();
+//      try
+//      {
+//        this.setSelected(true);
+//      }
+//      catch (Exception k)
+//      {}
+//      this.setFoco(null);
+//      acp_saldesE.requestFocus();
+//  }
+//  void altaSde(int sdeCodi)
+//  {
+//    try {
+//        pdprove.insSalaDesp(prv_codiE.getValorInt(), sdeCodi, dtAdd);
+//        dtAdd.commit();
+//        msgBox("Sala Despiece Insertada");
+//    } catch (SQLException k)
+//    {
+//        Error("Error al dar alta Sala de Despiece", k);
+//    }
+//  }
+//    
+//      /**
+//     * Consulta Mataderos
+//     * Llama a la Ayuda de Mataderos
+//     */
+//    public void consMatCodi() {
+//    
+//
+//        try {
+//            if (ayuMat==null)
+//            {
+//                ayuMat = new  AyuSdeMat(EU, vl,dtCon1)
+//                {
+//                    @Override
+//                    public void matar  ()
+//                    {
+//                        ej_consMat();
+//                    }
+//                };
+//                ayuMat.setPermiteAlta(true);
+//                vl.add(ayuMat);
+//            }
+//            ayuMat.setLocation(25, 25);
+//            ayuMat.setVisible(true);
+//            this.setEnabled(false);
+//            this.setFoco(ayuMat);
+//            ayuMat.iniciarVentana('M',prv_codiE.getValorInt());
+//        } catch (Exception j) {
+//            this.setEnabled(true);
+//        }
+//    }
    @Override
     public ArrayList getDatosDesgl() throws SQLException
     {
@@ -1065,21 +1017,23 @@ public class MantAlbComCarne extends MantAlbCom
       v.add(dtCon1.getString("acp_canti"));
       v.add(dtCon1.getString("acp_clasi",true));
       v.add(dtCon1.getString("acp_nucrot"));
-      s = "SELECT mat_nrgsa FROM v_matadero m "+
-          " WHERE m.mat_codi = " + dtCon1.getInt("mat_codi");
-      if (dtStat.select(s))
-        v.add(dtCon1.getInt("mat_codi")+" - "+ dtStat.getString("mat_nrgsa"));
-      else
-        v.add(dtCon1.getInt("mat_codi")+" - Mat. "+dtCon1.getInt("mat_codi")+"  NO ENCONTRADO");
+      v.add(dtCon1.getString("acp_matad"));
+//      s = "SELECT mat_nrgsa FROM v_matadero m "+
+//          " WHERE m.mat_codi = " + dtCon1.getInt("mat_codi");
+//      if (dtStat.select(s))
+//        v.add(dtCon1.getInt("mat_codi")+" - "+ dtStat.getString("mat_nrgsa"));
+//      else
+//        v.add(dtCon1.getInt("mat_codi")+" - Mat. "+dtCon1.getInt("mat_codi")+"  NO ENCONTRADO");
 
-      s = "SELECT sde_nrgsa FROM v_saladesp m "+
-          " WHERE m.sde_codi = " + dtCon1.getInt("sde_codi");
-      if (dtStat.select(s))
-        v.add(dtCon1.getInt("sde_codi")+" - "+ dtStat.getString("sde_nrgsa"));
-      else
-        v.add(dtCon1.getInt("sde_codi") + " - S.DESP. "+dtCon1.getInt("sde_codi") +
-                     " NO ENCONTRADO");
+//      s = "SELECT sde_nrgsa FROM v_saladesp m "+
+//          " WHERE m.sde_codi = " + dtCon1.getInt("sde_codi");
+//      if (dtStat.select(s))
+//        v.add(dtCon1.getInt("sde_codi")+" - "+ dtStat.getString("sde_nrgsa"));
+//      else
+//        v.add(dtCon1.getInt("sde_codi") + " - S.DESP. "+dtCon1.getInt("sde_codi") +
+//                     " NO ENCONTRADO");
 
+      v.add(dtCon1.getString("acp_saldes"));
       v.add(dtCon1.getString("acp_painac"));
       v.add(getPais(dtCon1.getString("acp_painac")));
       v.add(dtCon1.getString("acp_engpai"));
