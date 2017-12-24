@@ -261,13 +261,19 @@ public class CheckMvtos extends ventana
           mvtos.setDesglIndiv(true);
           mvtos.setIncIniFechaInv(true);
           mvtos.setIncluyeSerieX(true);
+//          mvtos.setLote(561);
+//          mvtos.setIndividuo(1);
           int almCodi=alm_codiE.getValorInt();
           mvtos.setAlmacen(almCodi);
-          String sql=mvtos.getSqlMvt(feciniE.getFecha("dd-MM-yyyy"), fecfinE.getFecha("dd-MM-yyyy"),0);
+          int ARTDEBUG=30901;
+          ARTDEBUG=0;
+          String sql=mvtos.getSqlMvt(feciniE.getFecha("dd-MM-yyyy"), fecfinE.getFecha("dd-MM-yyyy"),ARTDEBUG);
           DatIndivMvto dtInd;
           boolean swIgn;
           int row;       
           boolean swSoloVentas=opSoloVentas.isSelected();
+          boolean swSoloCompras=opSoloCompras.isSelected();
+          boolean swSoloKilos=opSoloKilos.isSelected();
           double canti;
           if (dtCon1.select(sql))
           {
@@ -281,7 +287,8 @@ public class CheckMvtos extends ventana
                   }
                   if (swSoloVentas && !dtCon1.getString("sel").equals("VE"))
                          swIgn=true;
-               
+                  if (swSoloCompras &&  !dtCon1.getString("sel").equals("CO"))
+                      swIgn=true;
                   if (! swIgn)
                   {
 //                     if ( !(dtCon1.getInt("pro_codori")==40801 && dtCon1.getInt("lote")==10299 &&   dtCon1.getInt("numind")==3))
@@ -304,28 +311,29 @@ public class CheckMvtos extends ventana
                         listIndiv.set(row, dtInd);
                     else
                         listIndiv.add(dtInd);
-                  }
-                  if (dtCon1.getString("avc_serie").equals("X") )
-                  {
-                      if (almCodi!=0 && almCodi !=dtCon1.getInt("alm_coddes"))
-                          continue;
-                      dtInd = new DatIndivMvto(dtCon1.getInt("alm_coddes"), dtCon1.getInt("pro_codori"),
-                        dtCon1.getInt("ejeNume"), dtCon1.getString("serie"), dtCon1.getInt("lote"), dtCon1.getInt("numind"));
-                      row = listIndiv.indexOf(dtInd);
-                      if (row >= 0)
-                            dtInd = listIndiv.get(row);
-                 
-                      dtInd.setCanti(dtInd.getCanti() + dtCon1.getDouble("canti"));                     
-                      dtInd.setNumuni(dtInd.getNumuni()+ dtCon1.getInt("unidades") );
-                      if (row >= 0)
-                            listIndiv.set(row, dtInd);
-                      else
-                            listIndiv.add(dtInd);
+                  
+                    if (dtCon1.getString("avc_serie").equals("X") )
+                    {
+                        if (almCodi!=0 && almCodi !=dtCon1.getInt("alm_coddes"))
+                            continue;
+                        dtInd = new DatIndivMvto(dtCon1.getInt("alm_coddes"), dtCon1.getInt("pro_codori"),
+                          dtCon1.getInt("ejeNume"), dtCon1.getString("serie"), dtCon1.getInt("lote"), dtCon1.getInt("numind"));
+                        row = listIndiv.indexOf(dtInd);
+                        if (row >= 0)
+                              dtInd = listIndiv.get(row);
+
+                        dtInd.setCanti(dtInd.getCanti() + dtCon1.getDouble("canti"));                     
+                        dtInd.setNumuni(dtInd.getNumuni()+ dtCon1.getInt("unidades") );
+                        if (row >= 0)
+                              listIndiv.set(row, dtInd);
+                        else
+                              listIndiv.add(dtInd);
+                    }
                   }
               } while (dtCon1.next());
           }
           mvtos.setUsaDocumentos(false);
-          sql=mvtos.getSqlMvt(feciniE.getFecha("dd-MM-yyyy"), fecfinE.getFecha("dd-MM-yyyy"),0);
+          sql=mvtos.getSqlMvt(feciniE.getFecha("dd-MM-yyyy"), fecfinE.getFecha("dd-MM-yyyy"),ARTDEBUG);
           if (dtCon1.select(sql))
           {
               do
@@ -338,6 +346,8 @@ public class CheckMvtos extends ventana
                   }
                   if (swSoloVentas && !dtCon1.getString("sel").equals("V"))
                          swIgn=true;
+                  if (swSoloCompras &&  !dtCon1.getString("sel").equals("C"))
+                      swIgn=true;
                   //                
                 
                   //
@@ -373,7 +383,7 @@ public class CheckMvtos extends ventana
             precio2=dtInd1.getCanti2()==0?0: Formatear.redondea(dtInd1.getPrecio2()/dtInd1.getCanti2(),2);
             if (dtInd1.getCanti()!=dtInd1.getCanti2()||
                 //Formatear.redondea(dtInd1.getNumuni()-dtInd1.getNumuni2(),0)!=0 || 
-               precio!= precio2 )
+               (precio!= precio2 && !swSoloKilos))
             {
                 ArrayList v=new ArrayList();
                 v.add(dtInd1.getAlmCodi());
@@ -421,17 +431,19 @@ public class CheckMvtos extends ventana
         cLabel5 = new gnu.chu.controles.CLabel();
         fecfinE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
-        opSoloVentas = new gnu.chu.controles.CCheckBox();
         BRegenerar = new gnu.chu.controles.CButton(Iconos.getImageIcon("run"));
+        opSoloCompras = new gnu.chu.controles.CCheckBox();
+        opSoloVentas = new gnu.chu.controles.CCheckBox();
+        opSoloKilos = new gnu.chu.controles.CCheckBox();
         jt = new gnu.chu.controles.Cgrid(13);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        Pcabe.setMaximumSize(new java.awt.Dimension(450, 50));
-        Pcabe.setMinimumSize(new java.awt.Dimension(450, 50));
+        Pcabe.setMaximumSize(new java.awt.Dimension(550, 50));
+        Pcabe.setMinimumSize(new java.awt.Dimension(550, 50));
         Pcabe.setName(""); // NOI18N
-        Pcabe.setPreferredSize(new java.awt.Dimension(450, 50));
+        Pcabe.setPreferredSize(new java.awt.Dimension(550, 50));
         Pcabe.setLayout(null);
 
         cLabel1.setText("Almacen");
@@ -464,13 +476,21 @@ public class CheckMvtos extends ventana
         Pcabe.add(Baceptar);
         Baceptar.setBounds(300, 20, 90, 19);
 
-        opSoloVentas.setText("Solo Ventas");
-        Pcabe.add(opSoloVentas);
-        opSoloVentas.setBounds(311, 2, 88, 17);
-
         BRegenerar.setToolTipText("Regenerar Precios");
         Pcabe.add(BRegenerar);
         BRegenerar.setBounds(405, 20, 20, 20);
+
+        opSoloCompras.setText("Solo Compras");
+        Pcabe.add(opSoloCompras);
+        opSoloCompras.setBounds(311, 2, 110, 17);
+
+        opSoloVentas.setText("Solo Ventas");
+        Pcabe.add(opSoloVentas);
+        opSoloVentas.setBounds(420, 2, 81, 23);
+
+        opSoloKilos.setText("Solo Kilos");
+        Pcabe.add(opSoloKilos);
+        opSoloKilos.setBounds(440, 20, 69, 23);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -537,6 +557,8 @@ public class CheckMvtos extends ventana
     private gnu.chu.controles.CTextField fecfinE;
     private gnu.chu.controles.CTextField feciniE;
     private gnu.chu.controles.Cgrid jt;
+    private gnu.chu.controles.CCheckBox opSoloCompras;
+    private gnu.chu.controles.CCheckBox opSoloKilos;
     private gnu.chu.controles.CCheckBox opSoloVentas;
     // End of variables declaration//GEN-END:variables
 }
