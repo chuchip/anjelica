@@ -99,9 +99,9 @@ public class DespVenta extends ventana {
         setResizable(true);
         setMaximizable(false);
         setIconifiable(false);
-        this.setSize(500,440);
+        this.setSize(540,440);
         this.setTitle("Carga Despiece desde Ventas");
-        setVersion("20161023");
+        setVersion("20181224");
     }
     /**
      * Establece el cliente para el que se genera el despiece

@@ -994,7 +994,7 @@ public class utildesp
  * @param precCost
  * @param defCerra
  * @return Numero de orden insertado 
- * @throws Exception
+ * @throws SQLException
  */
   public int guardaLinDesp(int ejeLot,int empLot,String serLot,int numLot,int nInd,
                     int numDesp,int proCodi,double kilos,int numPie,

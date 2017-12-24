@@ -4,6 +4,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.pdalmace;
+import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.pdconfig;
@@ -61,6 +62,8 @@ import javax.swing.SwingConstants;
  */
 public class MantDespTactil  extends ventanaPad implements PAD
 {
+    
+    String crotal;
     int idTiempo=0;
     private final int PROCIERRE=99;
  private gnu.chu.controles.CComboBox eti_codiE=new gnu.chu.controles.CComboBox();
@@ -407,7 +410,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2017-10-15"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2017-12-24"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -1210,6 +1213,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
      else
      {
        utdesp.setDespNuestro(grd_fechaE.getText(),dtStat);
+       crotal=utdesp.getNumCrot();
        if (grd_feccadE.isNull())
        {
          if (MANTFECDES)
@@ -3090,7 +3094,18 @@ boolean checkCabecera() throws ParseException, SQLException
        jtSal.setValor(true,linea,JTSAL_IMPRIM);
        return;
      }
-     buscaDatInd(); 
+      if (!utdesp.busDatInd(SERIE, jtSal.getValorInt(linea,JTSAL_PROCODI),
+                           EU.em_cod,
+                           eje_numeE.getValorInt(),
+                           deo_codiE.getValorInt(),
+                           jtSal.getValorInt(linea, JTSAL_NUMIND), // No Ind.
+                           deo_almoriE.getValorInt(),
+                           dtCon1, dtStat, EU))
+      {
+          msgBox("NO ENCONTRADO INDIVIDUO");
+      }
+  
+//     buscaDatInd(); 
      utdesp.actualConservar(jtSal.getValorInt(linea,JTSAL_PROCODI),dtStat);
      CodigoBarras codBarras= new CodigoBarras("D",eje_numeE.getText().substring(2),
             SERIE,deo_codiE.getValorInt(),jtSal.getValorInt(linea, JTSAL_PROCODI),
@@ -3101,7 +3116,7 @@ boolean checkCabecera() throws ParseException, SQLException
      etiq.iniciar(codBarras.getCodBarra(),codBarras.getLote(),
                   jtSal.getValString(linea,JTSAL_PROCODI),jtSal.getValString(linea,JTSAL_PRONOMB),
                   utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre, utdesp.despiezadoE,
-                  utdesp.ntrazaE, jtSal.getValorDec(linea,JTSAL_KILOS),
+                  utdesp.getNumCrot() , jtSal.getValorDec(linea,JTSAL_KILOS),
                   utdesp.getConservar(), utdesp.sacrificadoE,
                    null,grd_fechaE.getDate(),
                   pro_codsalE.isCongelado()?null:grd_feccadE.getDate(),utdesp.getFecSacrif());
@@ -3121,6 +3136,8 @@ boolean checkCabecera() throws ParseException, SQLException
  int guardaLinDesp(int ejeLot,int empLot,String serLot,int numLot,
                     int proCodi,double kilos,int numPie,String defUsunom, int numDes) throws Exception
  {
+     
+   pro_codsalE.getNombArt(proCodi);
    int nInd = utildesp.getMaxNumInd(dtAdd,proCodi,eje_numeE.getValorInt(),
                                     EU.em_cod,SERIE,deo_codiE.getValorInt());
   
@@ -3190,7 +3207,25 @@ boolean checkCabecera() throws ParseException, SQLException
    }
    dtAdd.setDato("def_feccad",fecha);//def_kilosE.getValorDec());
    dtAdd.update(stUp);
-   return nInd;
+   if (grd_unioriE1.getValorInt()>1 && pro_codsalE.getNumeroCrotales()>1 )
+       {// Compruebo si tengo que poner otro numero crotal
+          s="select count(*) as cuantos from stockpart where pro_nupar="+ numLot+
+              " and pro_serie='"+serLot+"' "+
+              " and eje_nume="+ejeLot+
+              " and pro_codi = "+proCodi+
+              " and stp_nucrot='"+crotal+"'";
+          dtStat.select(s);
+          if (dtStat.getInt("cuantos",true)>= pro_codsalE.getNumeroCrotales() )
+               crotal=MantAlbComCarne.getRandomCrotal(crotal,EU);              
+    }
+    utdesp.setNumCrot(crotal);
+    s="update stockpart set stp_nucrot='"+crotal+"' where pro_nupar="+ numLot+
+            " and pro_serie='"+serLot+"' "+
+            " and eje_nume="+ejeLot+
+            " and pro_codi = "+proCodi+
+            " and pro_numind="+nInd;
+     dtAdd.executeUpdate(s);
+     return nInd;
  }
  
  /**

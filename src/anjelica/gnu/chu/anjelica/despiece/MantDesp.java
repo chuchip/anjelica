@@ -88,6 +88,7 @@ import javax.swing.event.ListSelectionListener;
 
 public class MantDesp extends ventanaPad implements PAD
 {   
+    String crotal;
     int tidCodAnt=0;
     ArrayList<Integer> dtFinAnt=new ArrayList();
     public final static String DESP_CERRADO="N";
@@ -3347,6 +3348,7 @@ public class MantDesp extends ventanaPad implements PAD
                 prv_codiE.setValorInt(prvDespiece);
              return true;
         }
+        crotal=utdesp.getNumCrot();
         if (prv_codiE.isNull())
         {
             if (tid_codiE.getValorInt() == MantTipDesp.AUTO_DESPIECE
@@ -3495,7 +3497,16 @@ public class MantDesp extends ventanaPad implements PAD
                 utdesp.setDirEmpresa(cli_codiE.getTextNomb());
             else
                 utdesp.setDirEmpresa(null);
-
+            if (!utdesp.busDatInd(deo_selogeE.getText(),pro_codlE.getValorInt(),
+                EU.em_cod,
+                deo_ejlogeE.getValorInt(),
+                deo_nulogeE.getValorInt(),
+                jtLin.getValorInt(linea, JTLIN_NUMIND), // N. Ind.
+                0, // deo_almoriE.getValorInt(),
+                dtCon1, dtStat, EU))
+            {
+                msgBox(utdesp.getMsgAviso());
+            }
             utdesp.imprEtiq(eti_codiE.getValorInt() == 0 ? proCodeti : eti_codiE.getValorInt(), 
                 dtStat, pro_codlE.getValorInt(), nombArt,
                 "D",
@@ -3658,13 +3669,43 @@ public class MantDesp extends ventanaPad implements PAD
                 desorca.update(dtAdd);
             }
         }
+        pro_codlE.getNombArt(proCodi);
         utdesp.iniciar(dtAdd, eje_numeE.getValorInt(), EU.em_cod,
             deo_almdesE.getValorInt(), deo_almoriE.getValorInt(), EU);
         utdesp.setTipoProduccion(deo_incvalE.getValor());
-        return utdesp.guardaLinDesp(ejeLot, empLot, serLot, numLot, nInd, deo_codiE.getValorInt(), proCodi,
+        
+        int ret= utdesp.guardaLinDesp(ejeLot, empLot, serLot, numLot, nInd, deo_codiE.getValorInt(), proCodi,
             kilos, numPiezas, feccad, defOrden, uniCaj,
             MODPRECIO ? def_prcostE.getValorDec() : 0,
             Integer.parseInt(deo_cerraE.getSelecion()));
+        if (uniOrigE.getValorInt()>1 && pro_codlE.getNumeroCrotales()>1 )
+        {// Compruebo si tengo que poner otro numero crotal
+           s="select count(*) as cuantos from stockpart where pro_nupar="+ numLot+
+               " and pro_serie='"+serLot+"' "+
+               " and eje_nume="+ejeLot+
+               " and pro_codi = "+proCodi+
+               " and stp_nucrot='"+crotal+"'";
+           dtStat.select(s);
+           if (dtStat.getInt("cuantos",true)>= pro_codlE.getNumeroCrotales() )
+           {               
+//               s="select stp_nucrot from stockpart where pro_nupar="+ numLot+
+//                " and pro_serie='"+serLot+"' "+
+//                " and eje_nume="+ejeLot+
+//                " and pro_codi = "+proCodi+
+//                " and stp_nucrot is not null";               
+//               if (dtStat.select(s))
+//                   crotal=dtStat.getString("stp_nucrot");
+                crotal=MantAlbComCarne.getRandomCrotal(crotal,EU);              
+           }
+           utdesp.setNumCrot(crotal);
+           s="update stockpart set stp_nucrot='"+crotal+"' where pro_nupar="+ numLot+
+                " and pro_serie='"+serLot+"' "+
+                " and eje_nume="+ejeLot+
+                " and pro_codi = "+proCodi+
+                " and pro_numind="+nInd;
+           dtAdd.executeUpdate(s);
+        }
+        return ret;
     }
 
     /**
