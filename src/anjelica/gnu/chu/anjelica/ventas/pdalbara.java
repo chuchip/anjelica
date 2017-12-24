@@ -131,6 +131,8 @@ import net.sf.jasperreports.engine.JasperReport;
  
 public class pdalbara extends ventanaPad  implements PAD  
 {   
+  String cliValor;
+  int codCli;
   boolean P_IMPRES=false;
   int idTiempo=0;
   int pvcNumeOld=0;
@@ -749,7 +751,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-12-04" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2017-12-22" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1600,6 +1602,7 @@ public class pdalbara extends ventanaPad  implements PAD
    
     fvc_serieE.setColumnaAlias("fvc_serie");
     cli_codiE.setColumnaAlias("C.cli_codi");
+    cli_codiE.getCampoNombreCliente().setColumnaAlias("upper(avc_clinom)");
     emp_codiE.setColumnaAlias("emp_codi");
     avc_anoE.setColumnaAlias("avc_ano");
     avc_seriE.setColumnaAlias("avc_serie");
@@ -4583,24 +4586,28 @@ public class pdalbara extends ventanaPad  implements PAD
             
     cli_codiE.getCampoCiente().setTipoCampo(Types.CHAR);
     cli_codiE.getCampoCiente().setFormato("X");
-
+    
+    cli_codiE.setEnabledNombre(true);
+    
     cli_codiE.requestFocus();
   }
 
   @Override
   public void ej_query1()
   {
+      codCli=0;
       String cliCodi = cli_codiE.getStrQuery().trim();
-      String cliValor = cli_codiE.getText();
+      cliValor = cli_codiE.getText();
       cli_codiE.getCampoCiente().setTipoCampo(Types.DECIMAL);
       cli_codiE.getCampoCiente().setFormato("#####9");
       if (!cliCodi.equals(""))
       {
           try
           {
-              Integer.parseInt(cliValor);
+              codCli=Integer.parseInt(cliValor);
+              cli_codiE.getNombCliente(dtStat, codCli );
               cli_codiE.getCampoCiente().setStrQuery("cli_codi = " + cliValor);
-          } catch (NumberFormatException k)
+          } catch (SQLException | NumberFormatException k)
           {
               try
               {
@@ -4637,7 +4644,11 @@ public class pdalbara extends ventanaPad  implements PAD
       try
       {
       ArrayList v = new ArrayList();
+          System.out.println("cli_codiE.cli_codiE.getTextSuper()"+cliValor);
+      //cli_codiE.getNombCliente(dtStat, cli_codiE.cli_codiE.getTextSuper() );
       v.add(cli_codiE.getStrQuery());
+      v.add(cli_codiE.isGenerico() || codCli==0
+          ?cli_codiE.getCampoNombreCliente().getStrQuery():"");
       v.add(emp_codiE.getStrQuery());
       v.add(avc_anoE.getStrQuery());
       v.add(avc_seriE.getStrQuery());

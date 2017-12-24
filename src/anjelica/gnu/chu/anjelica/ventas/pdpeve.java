@@ -49,6 +49,7 @@ import javax.swing.event.ListSelectionListener;
 
 public class pdpeve  extends ventanaPad   implements PAD
 {
+    int codCli;
   ArrayList<Integer> alArtStock=new ArrayList();
   ArrayList<Integer> alArtStockP=new ArrayList();
    JMenuItem MbusCliente = new JMenuItem("Buscar Ped. Cliente");
@@ -285,7 +286,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(779, 530));
     this.setMinimumSize(new Dimension(769, 530));
-    this.setVersion("2017-07-31"+ (P_ADMIN?" (Admin) ":""));
+    this.setVersion("2017-12-22"+ (P_ADMIN?" (Admin) ":""));
 
     Pprinc.setLayout(gridBagLayout1);
     strSql = "SELECT * FROM pedvenc WHERE emp_codi = " + EU.em_cod +
@@ -754,6 +755,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     pvc_idE.setColumnaAlias("pvc_id");
     eje_numeE.setColumnaAlias("eje_nume");
     cli_codiE.setColumnaAlias("cli_codi");
+    cli_codiE.getCampoNombreCliente().setColumnaAlias("upper(pvc_clinom)");
     pvc_numeE.setColumnaAlias("pvc_nume");
     pvc_nupeclE.setColumnaAlias("pvc_nupecl");
     pvc_fecentE.setColumnaAlias("pvc_fecent");
@@ -1190,6 +1192,7 @@ public class pdpeve  extends ventanaPad   implements PAD
 
 
     activar(navegador.QUERY,true);
+    cli_codiE.setEnabledNombre(true);
     cli_codiE.requestFocus();
     mensaje("Introduzca filtro de Consulta ...");
   }
@@ -1209,8 +1212,24 @@ public class pdpeve  extends ventanaPad   implements PAD
      }
      nav.pulsado=navegador.NINGUNO;
      ArrayList v = new ArrayList();
-
+      codCli=0;
+      String cliCodi = cli_codiE.getStrQuery().trim();
+      String liValor = cli_codiE.getText();
+      
+      if (!cliCodi.equals(""))
+      {
+          try
+          {
+              codCli=Integer.parseInt(cli_codiE.getText());
+              cli_codiE.getNombCliente(dtStat, codCli );
+          } catch (NumberFormatException k)
+          {
+              
+          }
+      }
      v.add(cli_codiE.getStrQuery());
+     v.add(cli_codiE.isGenerico() || codCli==0
+          ?cli_codiE.getCampoNombreCliente().getStrQuery():"");
       v.add(pvc_idE.getStrQuery());
      v.add(eje_numeE.getStrQuery());
      v.add(pvc_numeE.getStrQuery());
