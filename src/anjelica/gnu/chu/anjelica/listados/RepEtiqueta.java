@@ -4,6 +4,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.despiece.utildesp;
+import static gnu.chu.camposdb.DatTrazPanel.DIAS_CADUCIDAD;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.utilidades.CodigoBarras;
 import gnu.chu.utilidades.EntornoUsuario;
@@ -23,6 +24,8 @@ import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
@@ -91,17 +94,18 @@ public class RepEtiqueta extends ventana
 
         iniciarFrame();
 
-        this.setVersion("2017-07-06");
+        this.setVersion("2017-12-25");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
 
         initComponents();
-        this.setSize(new Dimension(730, 530));
+        this.setSize(new Dimension(530, 330));
     }
 
     @Override
     public void iniciarVentana() throws Exception {
+        estadoL.setVisible(false);
         pro_codiE.iniciar(dtStat, this, vl, EU);
         pro_codiE.setCamposLote(pro_ejercE, pro_serieE, pro_loteE, pro_numindE, deo_kilosE);
         pdalmace.llenaLinkBox(alm_codiE, dtStat, '*');
@@ -180,6 +184,14 @@ public class RepEtiqueta extends ventana
                     ayudaLote();
             }
         });
+        
+        diasCadE.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               ponFechaCad(diasCadE.getValorInt());
+            }
+        });
         Baceptar.addActionListener(new ActionListener()
         {
             @Override
@@ -191,9 +203,16 @@ public class RepEtiqueta extends ventana
         {
             @Override
             public void focusLost(FocusEvent e) {
-                if (!cambioInd())
+                if (muerto)
                     return;
-                buscaPeso();
+                if (!cambioInd())
+                    return;                
+                if (buscaPeso())
+                {
+                    if (cambioInd())
+                        Bindi_actionPerformed();
+                    
+                }
             }
         });
         Bindi.addFocusListener(new FocusAdapter()
@@ -227,8 +246,23 @@ public class RepEtiqueta extends ventana
     }
     boolean cambioInd()
     {
-     return deo_kilosE.hasCambio() || pro_numindE.hasCambio() || pro_ejercE.hasCambio() 
+     return  pro_numindE.hasCambio() || pro_ejercE.hasCambio() 
             || pro_loteE.hasCambio() || pro_codiE.hasCambio() || alm_codiE.hasCambio();
+    }
+    
+    void ponFechaCad(int dias)
+    {
+        if (dias==0)
+            return;
+        trazPanel.setFechaCaducidad(Formatear.sumaDiasDate(Formatear.getDateAct() , dias));
+        trazPanel.setFechaProduccion(Formatear.sumaDiasDate(Formatear.getDateAct() , dias-30));
+        try
+        {
+            if (trazPanel.getFechaSacrificio()!=null)
+                trazPanel.setFechaSacrificio(Formatear.sumaDiasDate(Formatear.getDateAct() , dias-32));
+        } catch (ParseException ex)
+        {
+        }
     }
     /**
    * Consulta Lotes Disponibles de Productos.
@@ -349,17 +383,26 @@ public class RepEtiqueta extends ventana
     void Bindi_actionPerformed()
     {
       try {
-      if (muerto)
-          return;
-      if (!cambioInd())
-          return;
-      if (!checkIndividuo())
-          return;
+        if (muerto)
+            return;
+        if (!cambioInd())
+            return;
+        if (!checkIndividuo())
+            return;
      
       trazPanel.setDatos(pro_codiE.getValorInt(),pro_ejercE.getValorInt(),pro_serieE.getText(),
            pro_loteE.getValorInt(),pro_numindE.getValorInt());
-      trazPanel.actualizar();
+      trazPanel.actualizar();      
       trazPanel.resetCambio();
+      resetCambio();
+      long diasCad=Formatear.comparaFechas(trazPanel.getFechaCaducidad(),Formatear.getDateAct());
+      if (diasCad<DIAS_CADUCIDAD)
+      {          
+           estadoL.setText((diasCad<0?"CADUCADO HACE ":"CADUCA EN ")+Math.abs(diasCad)+ " DIAS");
+           estadoL.setVisible(true);
+      }
+      else
+          estadoL.setVisible(false);
 
       } catch (Exception k)
       {
@@ -388,7 +431,7 @@ public class RepEtiqueta extends ventana
     }
 
     boolean buscaPeso()
-  {
+    {
       try
       {
           return buscaPeso(pro_ejercE.getValorInt(),
@@ -423,7 +466,7 @@ public class RepEtiqueta extends ventana
             return false;
         }
         if (ponPeso)
-            deo_kilosE.setValorDec(stkPart.getKilos());
+            deo_kilosE.setValorDec(stkPart.getKilos());       
         return true;
     }
     catch (SQLException k)
@@ -433,6 +476,7 @@ public class RepEtiqueta extends ventana
     }
   }
     void resetCambio() {
+        diasCadE.setValor("0");
         pro_numindE.resetCambio();
         deo_kilosE.resetCambio();
         pro_ejercE.resetCambio();
@@ -538,6 +582,9 @@ public class RepEtiqueta extends ventana
         Bcancelar = new gnu.chu.controles.CButton(Iconos.getImageIcon("cancel"));
         cLabel12 = new gnu.chu.controles.CLabel();
         alm_codiE = new gnu.chu.controles.CLinkBox();
+        estadoL = new gnu.chu.controles.CLabel();
+        cLabel13 = new gnu.chu.controles.CLabel();
+        diasCadE = new gnu.chu.controles.CComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -549,9 +596,9 @@ public class RepEtiqueta extends ventana
         Pprinc.add(pro_codiE);
         pro_codiE.setBounds(70, 20, 340, 17);
 
-        cLabel6.setText("Tipo List.");
+        cLabel6.setText("Caducidad");
         Pprinc.add(cLabel6);
-        cLabel6.setBounds(150, 230, 60, 17);
+        cLabel6.setBounds(150, 250, 70, 17);
         Pprinc.add(pro_ejercE);
         pro_ejercE.setBounds(40, 40, 40, 17);
 
@@ -606,7 +653,7 @@ public class RepEtiqueta extends ventana
         Pprinc.add(tipetiqE);
         tipetiqE.setBounds(210, 230, 130, 17);
         Pprinc.add(Bindi);
-        Bindi.setBounds(420, 40, 20, 20);
+        Bindi.setBounds(420, 50, 2, 2);
         Pprinc.add(Bcancelar);
         Bcancelar.setBounds(470, 230, 45, 20);
 
@@ -620,6 +667,26 @@ public class RepEtiqueta extends ventana
         alm_codiE.combo.setPreferredSize(new Dimension(200,17));
         Pprinc.add(alm_codiE);
         alm_codiE.setBounds(70, 2, 240, 17);
+
+        estadoL.setBackground(java.awt.Color.red);
+        estadoL.setForeground(java.awt.Color.white);
+        estadoL.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        estadoL.setOpaque(true);
+        Pprinc.add(estadoL);
+        estadoL.setBounds(340, 0, 180, 18);
+
+        cLabel13.setText("Tipo List.");
+        Pprinc.add(cLabel13);
+        cLabel13.setBounds(150, 230, 60, 17);
+
+        diasCadE.addItem("---", "0");
+        diasCadE.addItem("10 Dias", "10");
+        diasCadE.addItem("15 Dias", "15");
+        diasCadE.addItem("20 Dias", "25");
+        diasCadE.addItem("25 Dias", "25");
+        diasCadE.addItem("30 Dias", "30");
+        Pprinc.add(diasCadE);
+        diasCadE.setBounds(220, 250, 120, 18);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
@@ -636,6 +703,7 @@ public class RepEtiqueta extends ventana
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
+    private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel6;
@@ -643,6 +711,8 @@ public class RepEtiqueta extends ventana
     private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CTextField deo_kilosE;
+    private gnu.chu.controles.CComboBox diasCadE;
+    private gnu.chu.controles.CLabel estadoL;
     private gnu.chu.controles.CTextField numCopiasE;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CTextField pro_ejercE;
