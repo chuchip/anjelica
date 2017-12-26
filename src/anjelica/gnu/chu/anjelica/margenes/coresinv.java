@@ -232,8 +232,8 @@ public class coresinv extends ventana
     cLabel4.setText("A Fecha");
     fecfinE.setBounds(new Rectangle(233, 4, 109, 17));
     
-    impVentasL.setText("Ventas");
-    impVentasL.setBounds(new Rectangle(11, 23, 42, 17));
+    impVentasL.setText("D.Ventas");
+    impVentasL.setBounds(new Rectangle(2, 23, 52, 17));
     impVentasE.setBounds(new Rectangle(64, 22, 96, 18));
     cLabel5.setText("Compras");
     cLabel5.setBounds(new Rectangle(238, 22, 51, 18));

@@ -36,6 +36,7 @@ import java.text.ParseException;
  */
 public class cliPanel extends CPanel
 {
+    boolean isGenerico=false;
 //  JPopupMenu menuCliente = new JPopupMenu("Cliente");
   JMenuItem mantClientes = new JMenuItem("Mant. Cliente");
   public final static int SERVIR_NO=0;
@@ -54,7 +55,7 @@ public class cliPanel extends CPanel
   boolean  mascaraDB=false;
   boolean actRep=true;
   public CTextField cli_codiE= new CTextField(Types.DECIMAL,"#####9");
-  private CTextField cli_nombE= new CTextField();
+  private CTextField cli_nombE= new CTextField(Types.CHAR,"X",40);
   private CLabel cli_codrepL= new CLabel();
   public CLabel cli_nomcL=new CLabel();
   JLayeredPane vl;
@@ -201,6 +202,7 @@ public class cliPanel extends CPanel
     cli_nombE.setMinimumSize(new Dimension(313, 18));
     cli_nombE.setOpaque(true);
     cli_nombE.setEnabled(false);
+    cli_nombE.setMayusculas(true);
     cli_nombE.setPreferredSize(new Dimension(313, 18));
     cli_nomcL.setBackground(new java.awt.Color(255, 255, 227));
     cli_nomcL.setOpaque(true);
@@ -523,10 +525,12 @@ public class cliPanel extends CPanel
   }
   public String getNombCliente(DatosTabla dt,int cliCodi, String zona) throws SQLException
   {
+    isGenerico=false;
     String s = "SELECT * from clientes WHERE cli_codi = '" + cliCodi +"'"+
           (zona==null?"":" AND cli_zonrep LIKE '"+zona+"'");
     if (! dt.selectInto(s,lk))
       return null;
+    isGenerico= dt.getInt("cli_gener")!=0;
     return dt.getString("cli_nomb");
   }
 //  public boolean ejec_sele(String s)
@@ -658,6 +662,8 @@ public void setZona(String zonCli)
   @Override
   public void setEnabled(boolean activo) {   
     cli_codiE.setEnabled(activo);
+    if (!activo)
+        cli_nombE.setEnabled(false);
     Bcons.setEnabled(activo);
   }
   public boolean getEnabled() {
@@ -668,7 +674,8 @@ public void setZona(String zonCli)
   public void setQuery(boolean modoQuery) {
    
     cli_codiE.setQuery(modoQuery);
-    Bcons.setEnabled(!modoQuery);
+    cli_nombE.setQuery(modoQuery);
+//    Bcons.setEnabled(!modoQuery);
   }
   @Override
   public boolean getQuery() {
@@ -792,6 +799,10 @@ public void setZona(String zonCli)
                                                GridBagConstraints.BOTH,
                                                new Insets(0, 0, 0, 0), 0, 0));
      this.cli_nombE=cli_nombE;
+   }
+   public boolean isGenerico() throws SQLException
+   {
+       return isGenerico;
    }
 
   public String getNomComercial(){

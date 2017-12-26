@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 * @todo Posibilidad de exportar proveedores y facturas de compras
 *
 * </p>
-* <p>Copyright: Copyright (c) 2005-2013
+* <p>Copyright: Copyright (c) 2005-2017
 *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
 *  los terminos de la Licencia Pública General de GNU según es publicada por
 *  la Free Software Foundation, bien de la versión 2 de dicha Licencia

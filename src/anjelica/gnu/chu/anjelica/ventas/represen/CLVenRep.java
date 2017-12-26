@@ -36,8 +36,6 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRException;
@@ -150,7 +148,7 @@ public class CLVenRep extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2017-10-29" + ARG_ZONAREP);
+        this.setVersion("2017-12-20" + ARG_ZONAREP);
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -243,26 +241,17 @@ public class CLVenRep extends ventana {
                 {
                     if (jtLin.isVacio() || jtLin.getValorDec(JTLIN_PRTAR)==0) 
                         return;                    
-                    double prMin,comRep;
+                    double prMin;
                     
-                    if (jtLin.getValorDec(JTLIN_PRTAR)>jtLin.getValorDec(JTLIN_PRECIO) )
+                   
+                    prMin= pdtipotar.getComision(dtStat,jtCab.getValorInt(JTCAB_TARIFA),jtLin.getValorDec(JTLIN_PRECIO),
+                           jtLin.getValorDec(JTLIN_PRTAR));
+                    if (prMin==-2)
                     { // Precio tarifa superior o igual a precio venta
-                        msgBox("Precio por debajo tarifa");
+                         msgBox("Precio por debajo tarifa MINIMA" );
                         jtLin.requestFocusSelectedLater();
                         return;
                     }
-                    else
-                    {
-                        comRep= pdtipotar.getComisionTarifaInf(dtStat,jtCab.getValorInt(JTCAB_TARIFA));
-                        if (comRep==0 )
-                        {
-                            msgBox("NO ENCONTARADO TIPO TARIFA");
-                            jtLin.requestFocusSelectedLater();
-                            return;
-                        }
-                        prMin=jtLin.getValorDec(JTLIN_PRECIO)-jtLin.getValorDec(JTLIN_PRTAR)+comRep; 
-                        prMin=jtLin.getValorDec(JTLIN_PRECIO)-prMin;
-                    }                                      
                     jtLin.setValor(prMin, JTLIN_PRMIN); 
                     avl_proferE.setValorDec(prMin);
                     jtLin.setValor(jtLin.getValorDec(JTLIN_PRECIO)-
@@ -504,7 +493,7 @@ public class CLVenRep extends ventana {
                 " and avc_nume = ?"+                
                 " and avl_numlin = ?");
             
-            String s="select a.*,tar_comrep,tar_corein from v_albventa as a,v_cliente as cl, tipotari as ta "           
+            String s="select a.*,tar_comrep,tar_comfij,tar_corein,tar_prmipe from v_albventa as a,v_cliente as cl, tipotari as ta "           
                 + " WHERE   "
                 + " cl.tar_codi = ta.tar_codi "
                 + " and tar_preci>0 "
@@ -520,21 +509,11 @@ public class CLVenRep extends ventana {
             double comRep,prMin;
             do
             {
-                     if (dtCon1.getDouble("tar_preci")>dtCon1.getDouble("avl_prven") )
-                    { // Precio tarifa superior o igual a precio venta
-                        comRep=dtCon1.getDouble("tar_corein");
-                        if (comRep==0)
-                            continue; 
-                        prMin=dtCon1.getDouble("avl_prven")-comRep;
-                    }
-                    else
-                    {
-                        comRep= dtCon1.getDouble("tar_corein");
-                        if (comRep==0 )
-                            continue; 
-                        prMin=dtCon1.getDouble("avl_prven")-
-                            ((dtCon1.getDouble("avl_prven")-dtCon1.getDouble("tar_preci"))+comRep);
-                    }                                      
+                    prMin=pdtipotar.getPrecioMinimo(dtCon1.getDouble("avl_prven"),dtCon1.getDouble("tar_preci",true),
+                           dtCon1.getDouble("tar_comfij",true),dtCon1.getDouble("tar_comrep",true),
+                           dtCon1.getDouble("tar_corein",true),
+                           dtCon1.getDouble("tar_prmipe",true) );
+                                                
                     ps.setDouble(1, prMin);
                     ps.setInt(2, dtCon1.getInt("avc_ano"));
                     ps.setString(3, dtCon1.getString("avc_serie"));
@@ -543,9 +522,8 @@ public class CLVenRep extends ventana {
                     ps.executeUpdate();
                     nLinAct++;
             } while (dtCon1.next());
-
-                dtAdd.commit();
-                msgBox("Actualizados Precios minimos en " + nLinAct + " lineas");
+            dtAdd.commit();
+            msgBox("Actualizados Precios minimos en " + nLinAct + " lineas");
         } catch (SQLException k)
         {
             Error("Error al Actualizar Precios Minimos",k);            

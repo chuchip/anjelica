@@ -1,3 +1,6 @@
+alter table tipotari add tar_comfij float; -- Comision fija (si tiene)
+alter table tipotari add tar_prmipe float; -- precio minimo permitido
+--
 ALTER TABLE stockpart DISABLE TRIGGER USER;
 drop view v_stkpart;
 alter table stockpart alter mat_codi type integer;

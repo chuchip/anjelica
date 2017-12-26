@@ -1051,7 +1051,7 @@ public class MantAlbComCarne extends MantAlbCom
      {
         return  "gnu.chu.anjelica.compras.MantAlbComCarne";
      }
-       /**
+    /**
     * Genera un numero de crotal aleatorio sobre el ya introducido. Modifica los ultimos 6 digitos.
     */
     private void genNumCrotal() {

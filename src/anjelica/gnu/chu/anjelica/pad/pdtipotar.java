@@ -710,4 +710,45 @@ public class pdtipotar extends ventanaPad implements PAD
              throw new SQLException ("Tarifa  "+tarCodi+ " no encontrada");
         return dt.getDouble("tar_corein");
      }
+     /**
+      * Devuelve la comision de esta tarifa cuando esta por debajo tarifa
+      * @param dt
+      * @param tarCodi
+      * @param precioVenta
+      * @param precioTarifa
+      * @return
+      * @throws SQLException 
+      */
+     public static double getComision(DatosTabla dt,int tarCodi,double precioVenta,double precioTarifa) throws SQLException
+     {
+        if (precioTarifa==0)
+            return -1;
+        String s="select tar_comfij,tar_corein,tar_comrep,tar_prmipe from tipotari where "+
+             "  tar_codi ="+tarCodi;
+        if (!dt.select(s))
+             throw new SQLException ("Tarifa  "+tarCodi+ " no encontrada");
+        return getPrecioMinimo(precioVenta,precioTarifa,dt.getDouble("tar_comfij",true),dt.getDouble("tar_comfij",true),
+            dt.getDouble("tar_corein",true),dt.getDouble("tar_prmipe",true));
+     }
+     /**
+      * 
+      * @param precioVenta Precio de venta
+      * @param precioTarifa precio de tarifa
+      * @param comFija Comision Fija
+      * @param comNormal Comision Normal (venta por encima tarifa)
+      * @param comMinima Comision Minima (Venta por debajo tarifa pero por encima precio Minimo)
+      * @param tarPrMinPer
+      * @return Precio Minimo venta
+      */
+     public static double getPrecioMinimo(double precioVenta,double precioTarifa,double comFija,double comNormal,
+         double comMinima,double tarPrMinPer)
+     {
+            if (precioTarifa==0 || precioVenta<=0)
+                return -1;
+            if (precioVenta>=precioTarifa)
+                return comFija>0?precioVenta-comFija:precioVenta- ((precioVenta-precioTarifa)+comNormal);
+            if (precioVenta>precioTarifa-tarPrMinPer)
+                return precioVenta-comMinima;
+            return -2;
+     }
 }

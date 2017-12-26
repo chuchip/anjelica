@@ -28,8 +28,6 @@ import gnu.chu.anjelica.compras.MantAlbComPlanta;
 import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.pad.pdconfig;
-import gnu.chu.anjelica.pad.pdmatadero;
-import gnu.chu.anjelica.pad.pdsaladesp;
 import gnu.chu.controles.CCheckBox;
 import gnu.chu.controles.CPanel;
 import gnu.chu.interfaces.ejecutable;
@@ -46,10 +44,12 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
+import java.util.Date;
 import javax.swing.JLayeredPane;
 
 
 public class DatTrazPanel extends CPanel {
+    public static final int DIAS_CADUCIDAD=10;
     private CCheckBox opDatosCompra;
     private LotePanel lotePanel=null;
     private String s;
@@ -300,9 +300,28 @@ public class DatTrazPanel extends CPanel {
         acc_fecprodE.setDate(utDesp.getFechaProduccion());
         avc_feccadE.setDate(utDesp.getFecCaduc());
         forzadaTrazC.setSelected(utDesp.isForzadaTrazab());
-       
+    
     }
-        
+    public void  setFechaCaducidad(Date fecCad)
+    {
+        avc_feccadE.setDate(fecCad);
+    }
+    public void  setFechaProduccion(Date fecProduc)
+    {
+        acc_fecprodE.setDate(fecProduc);
+    }
+    public void  setFechaSacrificio(Date fecSacrif)
+    {
+        acp_fecsacE.setDate(fecSacrif);
+    }
+    public Date getFechaSacrificio() throws ParseException
+    {
+        return acp_fecsacE.getDate();
+    }
+    public Date getFechaCaducidad()
+    {
+        return utDesp.getFecCaduc();
+    }
     @Override
     public void setEditable(boolean editable)
     {

@@ -1996,6 +1996,8 @@ tar_codori int not null default 0,		-- Tarifa Original (0: No depende de nadie)
 tar_incpre float not null default 0,	-- Se Incrementara precio sobre tar_codori (Cant. Fija, no en porcentaje)
 tar_comrep float not null,				-- Comision Repres.
 tar_corein float not null ,				-- Comision Repres. por debajo
+tar_comfij float,						-- Comision Fija 
+tar_prmipe float,						-- Precio Minimo
 constraint ix_tipotari primary key (tar_codi)
 );
 ---
