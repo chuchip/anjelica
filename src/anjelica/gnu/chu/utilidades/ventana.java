@@ -12,9 +12,16 @@ import gnu.chu.controles.*;
 import gnu.chu.interfaces.*;
 import gnu.chu.sql.*;
 import gnu.chu.Menu.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.logging.Level;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import org.apache.log4j.Logger;
 
 
@@ -45,6 +52,8 @@ import org.apache.log4j.Logger;
  */
 public class ventana extends CInternalFrame implements ejecutable
 {
+  String fileSonidoAlarma=null;
+  private boolean sonidoalarma=false;
   String acronimo=null;
   private JLabel labelEstado;
   private String labelMsgEspere="Espere, por favor";
@@ -465,6 +474,32 @@ public class ventana extends CInternalFrame implements ejecutable
     if (isCloseable())
       super.setClosed(b);
   }
+  public void setSonidoAlarma(boolean swSonidoAlarma)
+  {
+      this.sonidoalarma=swSonidoAlarma;
+  }
+  public void sonidoAlarma()
+  {
+      try
+      {
+          if (fileSonidoAlarma==null)
+              fileSonidoAlarma= EU.getValorParam("fileSonidoAlarma", "q:\\icons\\alarm.wav");
+         
+          AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(fileSonidoAlarma).getAbsoluteFile());
+          Clip clip = AudioSystem.getClip();
+          clip.open(audioInputStream);
+          clip.start();
+      } catch (LineUnavailableException ex)
+      {
+          java.util.logging.Logger.getLogger(ventana.class.getName()).log(Level.SEVERE, null, ex);
+      } catch (IOException ex)
+      {
+          java.util.logging.Logger.getLogger(ventana.class.getName()).log(Level.SEVERE, null, ex);
+      } catch (UnsupportedAudioFileException ex)
+      {
+          java.util.logging.Logger.getLogger(ventana.class.getName()).log(Level.SEVERE, null, ex);
+      }
+  }
   /**
    * Muestra un mensaje de aviso en formato popup (Modal mode)
    * Con el texto 'aviso', arriba y el mensaje mandado como parametro.
@@ -474,6 +509,10 @@ public class ventana extends CInternalFrame implements ejecutable
    */
   public void msgBox(String msg)
   {
+    if (sonidoalarma)
+    {
+     sonidoAlarma();   
+    }
     mensajes.mensajeAviso(msg, this);
   }
   public void msgExplica(String title,String msgAviso )
