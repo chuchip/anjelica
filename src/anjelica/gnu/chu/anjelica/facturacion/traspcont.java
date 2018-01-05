@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import java.io.*;
 import gnu.chu.sql.vlike;
+import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -107,8 +108,7 @@ public class traspcont extends ventana
         setErrorInit(true);
     }
     catch (Exception e) {
-      Logger.getLogger(traspcont.class.getName()).log(Level.SEVERE, null, e);
-      setErrorInit(true);
+       ErrorInit(e);      
     }
   }
 
@@ -124,8 +124,7 @@ public class traspcont extends ventana
       jbInit();
     }
     catch (Exception e) {
-      Logger.getLogger(traspcont.class.getName()).log(Level.SEVERE, null, e);
-      setErrorInit(true);
+     ErrorInit(e);      
     }
   }
 
@@ -133,7 +132,7 @@ public class traspcont extends ventana
   {
     iniciarFrame();
     this.setSize(new Dimension(715, 459));
-    this.setVersion("2016-03-05");
+    this.setVersion("2018-01-05");
 
     conecta();
     statusBar= new StatusBar(this);
@@ -267,6 +266,7 @@ public class traspcont extends ventana
     });
     Bcancelar.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Bcancelar_actionPerformed();
@@ -275,6 +275,7 @@ public class traspcont extends ventana
 
     Bbusfra.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Bbusfra_actionPerformed(true);
@@ -282,6 +283,7 @@ public class traspcont extends ventana
     });
     BinsFra.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Bbusfra_actionPerformed(false);
@@ -289,6 +291,7 @@ public class traspcont extends ventana
     });
     Bbusfic.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Bbusfic_actionPerformed();
@@ -410,8 +413,7 @@ public class traspcont extends ventana
           String fechAsiento;
 
           int nRow = jtFra.getRowCount();
-          int nFra;
-
+         
           for (n = 0; n < nRow; n++)
           {
               if (!jtFra.getValBoolean(n, 8))
@@ -426,17 +428,17 @@ public class traspcont extends ventana
               ht.put(dtCon1.getString("cli_codi"), ""); // Pongo el Cliente para que realize el trasp.
               fechAsiento = dtCon1.getFecha("fvc_fecfra", "yyyyMMdd");
               cuenClie = Formatear.ajusIzq(Formatear.format(dtCon1.getInt("cue_codi",true), "###########9").trim(), 12);
-              factura = dtCon1.getString("fvc_ano").substring(2)
-                  + Formatear.format(dtCon1.getInt("fvc_nume"), "999999");
-              nFra = Integer.parseInt((dtCon1.getString("fvc_ano").substring(2)) + ""
-                  + dtCon1.getInt("fvc_nume"));
+              factura = dtCon1.getString("fvc_ano").substring(2)+
+                (dtCon1.getInt("fvc_ano")>2017?dtCon1.getString("fvc_serie")+Formatear.format(dtCon1.getInt("fvc_nume"), "99999"):
+                  Formatear.format(dtCon1.getInt("fvc_nume"), "999999"));
+             
               // Asiento contra la cuenta del Cliente
               impLinea(numAsiento, fechAsiento, cuenClie, CONTRAPART,
                   dtCon1.getDouble("fvc_sumtot"),
-                  nFra, factura, 0, 0, 0, 0);
+                   factura, 0, 0, 0, 0);
 
               impLinea(numAsiento, fechAsiento, CUENTABASE, cuenClie, 0,
-                  nFra, factura, dtCon1.getDouble("fvc_basimp"), 0, 0, 0);
+                   factura, dtCon1.getDouble("fvc_basimp"), 0, 0, 0);
 
               // Asiento para el IVA
               if (dtCon1.getDouble("fvc_poriva") > 0)
@@ -444,7 +446,6 @@ public class traspcont extends ventana
                   impLinea(numAsiento, fechAsiento,
                       getCuentaIva(dtCon1.getDate("fvc_fecfra"), dtCon1.getDouble("fvc_poriva"), dtCon1.getDouble("fvc_porreq") > 0),
                       cuenClie, 0,
-                      nFra,
                       factura, dtCon1.getDouble("fvc_impiva"), dtCon1.getDouble("fvc_basimp"),
                       dtCon1.getDouble("fvc_poriva"), dtCon1.getDouble("fvc_porreq"));
               }
@@ -453,7 +454,6 @@ public class traspcont extends ventana
 //            impLinea(numAsiento,fechAsiento, CUENTAREQ,cuenClie,0,dtCon1.getInt("fvc_nume"),
                   impLinea(numAsiento, fechAsiento,
                       getCuentaReeq(dtCon1.getDate("fvc_fecfra"), dtCon1.getDouble("fvc_poriva")), cuenClie, 0,
-                      nFra,
                       factura, dtCon1.getDouble("fvc_imprec"), 0,
                       0, 0);
 
@@ -523,7 +523,7 @@ public class traspcont extends ventana
   }
 
   void impLinea(int numAsiento,String fechAsiento,String cuenta,String contra,
-                double debe,int nFra,String factura,double haber,
+                double debe,String factura,double haber,
                 double base,double iva,double recequ) throws Exception
   {
     linea=Formatear.format(numAsiento,"#####9")+
@@ -531,7 +531,7 @@ public class traspcont extends ventana
         cuenta+
         contra+
         Formatear.ajusDer(""+Formatear.format(Formatear.redondea(debe*CAMBIO,0),"---------9.99"),16)+
-        Formatear.ajusIzq("N/Fra. "+nFra,25)+
+        Formatear.ajusIzq("N/Fra. "+factura,25)+
         Formatear.ajusDer(""+Formatear.format(Formatear.redondea(haber*CAMBIO,0),"---------9.99"),16)+
         factura+
         Formatear.ajusDer(Formatear.format(Formatear.redondea(base*CAMBIO,0),"---------9.99"),16)+ // Base Imp.
@@ -627,7 +627,7 @@ public class traspcont extends ventana
         recalcTot();
         jtFra.requestFocusInicio();
     }
-    catch (Exception k)
+    catch (ParseException | SQLException k)
     {
       Error("Error al buscar Facturas", k);
     }
