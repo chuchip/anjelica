@@ -71,12 +71,32 @@ public class Listados
     public void setCodListado(int codListado) {
         this.codListado = codListado;
     }
-    
+    /**
+     * @deprecated usar getNombreFichero
+     * @return 
+     */
     public String getNombFich() {
+        return getNombreFichero();
+    }
+    /**
+     * 
+     * @param incExtension
+     * @return 
+     */
+    public String getNombreFichero(boolean incExtension) {
+        if (incExtension)
+        {
+            if (nombFich.endsWith(".jasper"))
+              return nombFich;
+            else
+              return nombFich+".jasper";
+        }
         if (nombFich.endsWith(".jasper"))
-          return nombFich;
-        else
-          return nombFich+".jasper";
+            return nombFich.substring(0,nombFich.length()-7);
+        return nombFich;
+    }
+    public String getNombreFichero() {
+      return getNombreFichero(true);
     }
 
     public void setNombFich(String nombFich) {
@@ -117,19 +137,28 @@ public class Listados
         return lis.getNombFich();
     }
     
-    public static JasperReport  getJasperReport(EntornoUsuario EU, String fichJasper) throws JRException
+    public static File getFileJasperReport(EntornoUsuario EU, String fichJasper,String extension)
     {
+      File f;
       if (! fichJasper.endsWith(".jasper"))
-          fichJasper+= ".jasper";
+          fichJasper+= extension+".jasper";
       if (EU.getPathReportAlt() != null)
       {
-          File f=new File(EU.getPathReportAlt()+ fichJasper );
+          f=new File(EU.getPathReportAlt()+ fichJasper );
           if (f.exists()){
-            JasperReport jr = (JasperReport) JRLoader.loadObjectFromFile(EU.getPathReportAlt() + fichJasper );
-            return jr;
+            return f;            
           }
       }
-      JasperReport jr = (JasperReport) JRLoader.loadObjectFromFile(EU.pathReport + fichJasper);
+      f=new File(EU.pathReport+ fichJasper);
+      if (f.exists())
+          return f;            
+      return null;
+    }
+        
+    public static JasperReport  getJasperReport(EntornoUsuario EU, String fichJasper) throws JRException
+    {
+      File f=getFileJasperReport(EU,fichJasper,"");    
+      JasperReport jr = (JasperReport) JRLoader.loadObjectFromFile(f.getAbsolutePath());
       return jr;
     }
     public String getPathLogo()
