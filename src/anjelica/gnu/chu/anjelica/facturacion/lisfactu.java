@@ -189,7 +189,6 @@ public class lisfactu extends ventana  implements JRDataSource
    }
    catch (Exception e) {
      ErrorInit(e);
-     setErrorInit(true);
    }
  }
 
@@ -197,7 +196,7 @@ public class lisfactu extends ventana  implements JRDataSource
  {
    iniciarFrame();
    this.setSize(new Dimension(600, 539));
-   setVersion("2016-12-02");
+   setVersion("2018-01-04");
 
    titledBorder2 = new TitledBorder("");
    Princ.setLayout(gridBagLayout1);
@@ -1142,7 +1141,10 @@ private String buscaBanco(int banCodi) throws SQLException
       fvcNume=dtFra.getInt("fvc_nume");
       
      Listados lis=  Listados.getListado(EU.em_cod, (getFraPreImpr()?Listados.CABPI_FRV: Listados.CAB_FRV), dtStat);
-     JasperReport jr = Listados.getJasperReport(EU,lis.getNombFich() );
+     File f=Listados.getFileJasperReport(EU, lis.getNombreFichero(false),dtFra.getString("fvc_ano"));
+     if (f!=null)
+         lis.setNombFich(f.getName());
+     JasperReport jr = Listados.getJasperReport(EU,lis.getNombreFichero() );
      HashMap mp = Listados.getHashMapDefault();
      mp.put(JRParameter.REPORT_CONNECTION, ct);
  //     mp.put("valora", new Boolean(valora));
@@ -1216,7 +1218,11 @@ private String buscaBanco(int banCodi) throws SQLException
    {
      try
      {
-       String campo = jRField.getName();
+       String campo = jRField.getName().toLowerCase();
+        if (campo.equals("numfra"))
+            return dtFra.getString("fvc_ano").substring(2,4) +dtFra.getString("fvc_serie")+
+                Formatear.format(dtFra.getString("fvc_nume"),"99999");
+        
        if (campo.equals("cli_nomb") ||
            campo.equals("cli_nomco") ||
            campo.equals("cli_direc") ||
@@ -1251,15 +1257,15 @@ private String buscaBanco(int banCodi) throws SQLException
            return (double)htCab.get("fvc_dtopp")+(double)htCab.get("fvc_dtoco");
        if (campo.equals("fvc_impdto"))
            return (double)htCab.get("fvc_impdpp")+(double)htCab.get("fvc_impdco");
-       if (campo.equals("diaVto1") ||
-           campo.equals("diaVto2") ||
-           campo.equals("diaVto3"))
+       if (campo.equals("diavto1") ||
+           campo.equals("diavto2") ||
+           campo.equals("diavto3"))
          return getDiaVto(campo);
-       if (campo.equals("impVto1") ||
-           campo.equals("impVto2") ||
-           campo.equals("impVto3"))
+       if (campo.equals("impvto1") ||
+           campo.equals("impvto2") ||
+           campo.equals("impvto3"))
          return getImpVto(campo);
-       if (campo.equals("banNomb"))
+       if (campo.equals("bannomb"))
          return banNomb;
        if (campo.equals("fpa_nomb"))
          return dtFra.getString("fpa_nomb");
