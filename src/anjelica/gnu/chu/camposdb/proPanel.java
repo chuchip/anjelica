@@ -1547,12 +1547,12 @@ public class proPanel extends CPanel
   {
     if (ayuLot.consulta)
     {    
-      prp_anoE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, 1));
-      prp_serieE.setText(ayuLot.jt.getValString(ayuLot.rowAct, 2));
-      prp_partE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, 3));
-      prp_indiE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, 4));
+      prp_anoE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, ayuLote.JT_EJE));
+      prp_serieE.setText(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_SER));
+      prp_partE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, ayuLote.JT_LOTE));
+      prp_indiE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, ayuLote.JT_IND));
       if (prp_pesoE!=null)
-        prp_pesoE.setText(ayuLot.jt.getValString(ayuLot.rowAct, 5));     
+        prp_pesoE.setText(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_PESO));     
     }
     ayuLot.setVisible(false);
     intfr.setEnabled(true);
