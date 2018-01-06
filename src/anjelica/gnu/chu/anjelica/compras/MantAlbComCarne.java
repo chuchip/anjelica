@@ -332,7 +332,10 @@ public class MantAlbComCarne extends MantAlbCom
        return JTD_FECCAD;
      }
      if (Formatear.comparaFechas(acp_feccadE.getDate(), acc_fecrecE.getDate())<=0)
-         msgBox("ATENCION Fecha Caducidad deberia ser superior a la del Albarán");
+     {
+         msgBox("ATENCION Fecha Caducidad debe ser superior a la del Albarán");
+         return JTD_FECCAD;
+     }
 
      if (proOblfsa && ( acp_fecsacE.isNull() || acp_fecsacE.getError()))
      {
@@ -343,6 +346,30 @@ public class MantAlbComCarne extends MantAlbCom
      {
          jtDes.setValor(acp_fecsacE.getText(),row,JTD_FECPRO);
          acp_fecproE.setText(acp_fecsacE.getText());
+     }
+     if (!acp_fecsacE.isNull())
+     {
+         if (Formatear.comparaFechas(acp_fecsacE.getDate(), acc_fecrecE.getDate())>= 0)
+         {
+            msgBox("ATENCION Fecha Sacrificio  debe ser inferior a la del Albarán");
+            return JTD_FECSAC;
+         }
+     }
+     if (!acp_fecproE.isNull())
+     {
+         if (Formatear.comparaFechas(acp_fecproE.getDate(), acc_fecrecE.getDate())>= 0)
+         {
+            msgBox("ATENCION Fecha Producción  debe ser inferior a la del Albarán");
+            return JTD_FECPRO;
+         }
+         if (!acp_fecsacE.isNull()) 
+         {
+             if (Formatear.comparaFechas(acp_fecproE.getDate(), acp_fecsacE.getDate())<0) 
+             {
+                msgBox("ATENCION Fecha Producción  debe ser Superior o Igual  a la de Sacrificio");
+                return JTD_FECPRO;
+             }
+         }
      }
      if (acp_fecsacE.isNull() && acp_fecproE.isNull())
      {
@@ -407,8 +434,7 @@ public class MantAlbComCarne extends MantAlbCom
        }
        if (nav.pulsado == navegador.ADDNEW)
        {
-           if (Formatear.comparaFechas(acp_feccadE.getDate(), Formatear.getDateAct())
-               < 0)
+           if (Formatear.comparaFechas(acp_feccadE.getDate(), Formatear.getDateAct()) < 0)
            {
                mensajeErr("Fecha de Caducidad NO puede ser inferior a la actual");
                return JTD_FECCAD;
