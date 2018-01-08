@@ -13,39 +13,17 @@ import javax.swing.JFileChooser;
 import java.io.*;
 import gnu.chu.sql.vlike;
 import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-/**
-*
-* <p>Título: traspcont</p> 
-* <p>Descripción: Traspaso a Contabilidad de las facturas
-* Este Programa genera un fichero ASCII con las facturas selecionadas. Estas
-* facturas pueden ser importadas por el programa CONTAPLUS. Lo que exporta son las facturas de VENTAS
-* y los datos de los clientes.
-*
-* @todo habria que implementar el exportar a diferentes programas de contabilidad.
-* @todo Posibilidad de exportar proveedores y facturas de compras
-*
-* </p>
-* <p>Copyright: Copyright (c) 2005-2017
-*  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
-*  los terminos de la Licencia Pública General de GNU según es publicada por
-*  la Free Software Foundation, bien de la versión 2 de dicha Licencia
-*  o bien (según su elección) de cualquier versión posterior.
-*  Este programa se distribuye con la esperanza de que sea útil,ed
-*  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
-*  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
-*  Véase la Licencia Pública General de GNU para más detalles.
-*  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
-*  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
-*  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
-* </p>
-* @author chuchiP
-* @version 1.1 Las Cuentas de IVA Las coge de la tabla cuentasiva
-*/
+
 
 public class traspcont extends ventana
 {
+  final int JT_EMP=1;
+  final int JT_EJER=0;
+  final int JT_SERIE=2;
+  final int JT_NUFRA=3;
+  final int JT_SELEC=9;
+  final int JT_CLIEN=5;
+  final int  JT_IMPOR=7;
   vlike lkCli= new vlike();
   String FINLINEA;
   JFileChooser ficeleE;
@@ -79,7 +57,7 @@ public class traspcont extends ventana
   CTextField rem_direcE = new CTextField();
   CLabel cLabel11 = new CLabel();
   CButton Bbusfic = new CButton(Iconos.getImageIcon("folder"));
-  Cgrid jtFra = new Cgrid(9);
+  Cgrid jtFra = new Cgrid(10);
   CButton Bcancelar = new CButton("Anular",Iconos.getImageIcon("cancel"));
   CPanel cPanel1 = new CPanel();
   CLabel cLabel5 = new CLabel();
@@ -132,7 +110,7 @@ public class traspcont extends ventana
   {
     iniciarFrame();
     this.setSize(new Dimension(715, 459));
-    this.setVersion("2018-01-05");
+    this.setVersion("2018-01-08");
 
     conecta();
     statusBar= new StatusBar(this);
@@ -162,23 +140,24 @@ public class traspcont extends ventana
     ArrayList v=new ArrayList();
     v.add("Ejer"); // 0
     v.add("Emp"); // 1
-    v.add("Fact."); // 2
-    v.add("Fec.Fra"); // 3
-    v.add("Cli"); // 4
-    v.add("Nombre Cliente"); // 5
-    v.add("Imp.Fra"); // 6
-    v.add("Tra"); // 7
-    v.add("INC"); // 8
+    v.add("Ser"); // 2
+    v.add("Fact."); // 3
+    v.add("Fec.Fra"); // 4
+    v.add("Cli"); // 5
+    v.add("Nombre Cliente"); // 6
+    v.add("Imp.Fra"); // 7
+    v.add("Tra"); // 8
+    v.add("INC"); // 9
     jtFra.setCabecera(v);
     jtFra.setMaximumSize(new Dimension(693, 197));
     jtFra.setMinimumSize(new Dimension(693, 197));
     jtFra.setPreferredSize(new Dimension(693, 197));
     jtFra.setBuscarVisible(false);
-    jtFra.setAnchoColumna(new int[]{40,40,50,90,70,180,80,40,40});
-    jtFra.setAlinearColumna(new int[]{2,2,2,1,2,0,2,1,1});
-    jtFra.setFormatoColumna(7,"B SN");
+    jtFra.setAnchoColumna(new int[]{40,40,30,50,90,70,180,80,40,40});
+    jtFra.setAlinearColumna(new int[]{2,2,0,2,1,2,0,2,1,1});
     jtFra.setFormatoColumna(8,"B SN");
-    jtFra.setFormatoColumna(6,"---,--9.99");
+    jtFra.setFormatoColumna(9,"B SN");
+    jtFra.setFormatoColumna(7,"---,--9.99");
 
     Bcancelar.setMargin(new Insets(0, 0, 0, 0));
     Bcancelar.setBounds(new Rectangle(447, 2, 106, 27));
@@ -302,14 +281,15 @@ public class traspcont extends ventana
             @Override
       public void mouseClicked(MouseEvent e)
       {
-        if (!jtFra.isEnabled() || jtFra.getSelectedColumn()!=8 )
+        if (!jtFra.isEnabled() || jtFra.getSelectedColumn()!=JT_SELEC )
           return;
-        jtFra.setValor(new Boolean(!jtFra.getValBoolean(8)));
+        jtFra.setValor((!jtFra.getValBoolean(JT_SELEC)));
         recalcTot();
       }
     });
     Binvert.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         if (!jtFra.isEnabled())
@@ -318,7 +298,7 @@ public class traspcont extends ventana
         int nRow = jtFra.getRowCount();
         for (int n = 0; n < nRow; n++)
         {
-          jtFra.setValor(new Boolean(!jtFra.getValBoolean(n, 8)), n, 8);
+          jtFra.setValor((!jtFra.getValBoolean(n, JT_SELEC)), n, JT_SELEC);
         }
         recalcTot();
       }
@@ -378,9 +358,10 @@ public class traspcont extends ventana
         if (!jtFra.getValBoolean(n, 8))
           continue;
         s = "UPDATE v_facvec SET fvc_trasp = 0 " +
-            " WHERE fvc_ano = " + jtFra.getValorInt(n, 0) +
-            " AND emp_codi = " + jtFra.getValorInt(n, 1) +
-            " AND fvc_nume = " + jtFra.getValorInt(n, 2);
+            " WHERE fvc_ano = " + jtFra.getValorInt(n, JT_EJER) +
+            " AND emp_codi = " + jtFra.getValorInt(n, JT_EMP) +
+            " AND fvc_serie = '" + jtFra.getValString(n, JT_SERIE) +"'"+
+            " AND fvc_nume = " + jtFra.getValorInt(n, JT_NUFRA);
         stUp.executeUpdate(s);
       }
       ctUp.commit();
@@ -416,20 +397,21 @@ public class traspcont extends ventana
          
           for (n = 0; n < nRow; n++)
           {
-              if (!jtFra.getValBoolean(n, 8))
+              if (!jtFra.getValBoolean(n, JT_SELEC))
                   continue;
               s = "SELECT c.emp_codi as fvc_empcod, c.*,cl.* FROM v_facvec as c,clientes as cl "
                   + " WHERE  c.cli_codi = cl.cli_codi "
-                  + " AND c.fvc_ano = " + jtFra.getValorInt(n, 0)
-                  + " AND c.emp_codi = " + jtFra.getValorInt(n, 1)
-                  + " AND c.fvc_nume = " + jtFra.getValorInt(n, 2)
-                  + " order by c.emp_codi,c.fvc_ano,c.fvc_nume ";
+                  + " AND c.fvc_ano = " + jtFra.getValorInt(n, JT_EJER)
+                  + " AND c.emp_codi = " + jtFra.getValorInt(n, JT_EMP)
+                  + " AND c.fvc_nume = " + jtFra.getValorInt(n, JT_NUFRA)
+                  + " AND c.fvc_serie = '" + jtFra.getValString(n, JT_SERIE) +"'"
+                  + " order by c.emp_codi,c.fvc_ano,c.fvc_serie,c.fvc_nume ";
               dtCon1.select(s);
               ht.put(dtCon1.getString("cli_codi"), ""); // Pongo el Cliente para que realize el trasp.
               fechAsiento = dtCon1.getFecha("fvc_fecfra", "yyyyMMdd");
               cuenClie = Formatear.ajusIzq(Formatear.format(dtCon1.getInt("cue_codi",true), "###########9").trim(), 12);
               factura = dtCon1.getString("fvc_ano").substring(2)+
-                (dtCon1.getInt("fvc_ano")>2017?dtCon1.getString("fvc_serie")+Formatear.format(dtCon1.getInt("fvc_nume"), "99999"):
+                (dtCon1.getInt("fvc_ano")!=2017?dtCon1.getString("fvc_serie")+Formatear.format(dtCon1.getInt("fvc_nume"), "99999"):
                   Formatear.format(dtCon1.getInt("fvc_nume"), "999999"));
              
               // Asiento contra la cuenta del Cliente
@@ -460,16 +442,17 @@ public class traspcont extends ventana
               numAsiento++;
               // Actualizo fra.
               s = "UPDATE v_facvec SET fvc_trasp = -1 "
-                  + " WHERE fvc_ano = " + jtFra.getValorInt(n, 0)
-                  + " AND emp_codi = " + jtFra.getValorInt(n, 1)
-                  + " AND fvc_nume = " + jtFra.getValorInt(n, 2);
+                  + " WHERE fvc_ano = " + jtFra.getValorInt(n, JT_EJER)
+                  + " AND emp_codi = " + jtFra.getValorInt(n, JT_EMP)
+                  + " AND fvc_serie = '" + jtFra.getValString(n, JT_SERIE) +"'"
+                  + " AND fvc_nume = " + jtFra.getValorInt(n, JT_NUFRA);
               stUp.executeUpdate(s);
           }
           fr.close();
       } catch (Exception k)
       {
-          Error("Error al Exportar Facturas\n Error en Fra: " + jtFra.getValorInt(n, 0) + "/"
-              + jtFra.getValorInt(n, 1) + "-" + jtFra.getValorInt(n, 2) + " De cliente: " + jtFra.getValorInt(n, 4), k);
+          Error("Error al Exportar Facturas\n Error en Fra: " + jtFra.getValorInt(n, JT_EJER) + "/"
+              + jtFra.getValorInt(n, JT_EMP) + "-" + jtFra.getValString(n, JT_SERIE)+jtFra.getValorInt(n, JT_NUFRA) + " De cliente: " + jtFra.getValorInt(n, JT_CLIEN), k);
           return;
       }
       // Exportando Cuentas
@@ -602,9 +585,10 @@ public class traspcont extends ventana
           swEnc=false;
           for (n=0;n<nRow;n++)
           {
-            if (jtFra.getValorInt(n,0) == dtCon1.getInt("fvc_ano") &&
-                jtFra.getValorInt(n,1) == dtCon1.getInt("fvc_empcod")  &&
-                jtFra.getValorInt(n,2) == dtCon1.getInt("fvc_nume") )
+            if (jtFra.getValorInt(n,JT_EJER) == dtCon1.getInt("fvc_ano") &&
+                jtFra.getValorInt(n,JT_EMP) == dtCon1.getInt("fvc_empcod")  &&
+                jtFra.getValorInt(n,JT_NUFRA) == dtCon1.getInt("fvc_nume") &&
+                jtFra.getValString(n,JT_SERIE).equals(dtCon1.getString("fvc_serie")) )
             {
               swEnc = true; // Linea duplicada
               break;
@@ -615,6 +599,7 @@ public class traspcont extends ventana
           ArrayList v= new ArrayList();
           v.add(dtCon1.getString("fvc_ano"));
           v.add(dtCon1.getString("fvc_empcod"));
+          v.add(dtCon1.getString("fvc_serie"));
           v.add(dtCon1.getString("fvc_nume"));
           v.add(dtCon1.getFecha("fvc_fecfra","dd-MM-yyyy"));
           v.add(dtCon1.getString("cli_codi"));
@@ -640,10 +625,10 @@ public class traspcont extends ventana
 
     for (int n=0;n<nRow;n++)
     {
-      if (jtFra.getValBoolean(n,8))
+      if (jtFra.getValBoolean(n,JT_SELEC))
       {
         nGiros++;
-        impGiros += jtFra.getValorDec(n, 6);
+        impGiros += jtFra.getValorDec(n, JT_IMPOR);
       }
     }
     rem_numfraE.setValorInt(nGiros);
