@@ -1,4 +1,24 @@
+-- iNDIVIDIDUOS PASADOS DE 10901 A 10911 (TIPO DESPIECE 105)
 
+select sum(deo_kilos),c.pro_codi,pro_lote,c.acl_prcom from v_despori as d,v_compras as c where  tid_codi=105 and deo_fecha>='20171224' 
+and pro_lote >=1069
+and d.pro_codi=c.pro_codi
+and d.pro_lote=c.acc_nume
+and d.deo_ejelot=c.acc_ano
+and deo_serlot=c.acc_serie
+and pro_numind = c.acp_numind
+group by c.pro_codi,pro_lote,acl_prcom
+order by c.pro_codi,pro_lote
+
+select pro_numind,c.pro_codi,pro_lote,c.acl_prcom from v_despori as d,v_compras as c where  tid_codi=105 and deo_fecha>='20171224' 
+and pro_lote >=1069
+and d.pro_codi=c.pro_codi
+and d.pro_lote=c.acc_nume
+and d.deo_ejelot=c.acc_ano
+and deo_serlot=c.acc_serie
+and pro_numind = c.acp_numind
+--group by c.pro_codi,pro_lote,acl_prcom
+order by c.pro_codi,pro_lote
 --
 select 'A' as tipo, usu_nomb ,avc_nume,avc_serie,cl.cli_codi,cl.cli_nomb,min(avl_fecalt) as fecmin, max(avl_fecalt) as fecmax from v_albventa as a, v_cliente as cl
 where cl.cli_codi = a.cli_codi

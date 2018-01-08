@@ -3435,6 +3435,7 @@ insert into parametros values('*','jdbc_url_cont','URL conexion Contabilidad','j
 insert into parametros values('*','crotalAutoma','Numero Crotal Automatico',1);
 insert into parametros values('*','minLonCrotal','Numero Minimo digitos Crotal',10);
 insert into parametros values('*','controlprodmin','Control Productos Minoristas',0);
+insert into parametros values('*','tipdespclasi','Tipo despiece Cambio Clasificacion',105);
 --
 -- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
 --
@@ -4097,15 +4098,15 @@ create table anjelica.stockpart
 	stp_kilact float,	-- Kilos Actuales
 	prv_codi int,		-- Proveedor
 	stp_feccad date,	-- Fecha de Caducidad	
-	stp_numpal sallint, -- Numero Palet
-	stp_numcaj smallint, -- Numero caja
+	stp_numpal varchar(5), -- Ubicacion Numero Palet 
+	stp_numcaj smallint, -- Ubicacion Numero caja en palet
 	cam_codi varchar(2), -- Camara en que esta ubicada
 	stp_fecpro date,	 -- Fecha Produccion.
 	stp_nucrot varchar(30), -- Numeo Crotal
 	stp_painac char(2),		 -- Pais de Nacimiento
 	stp_engpai char(2),		-- Pais de engorde
 	stp_paisac char(2),		-- Pais de Sacrificio
-	stp_fecsac date,	-- Fecha Sacrificio
+	stp_fecsac date,	    -- Fecha Sacrificio
 	stp_matad varchar(15),   -- Matadero
 	stp_saldes varchar(15),		-- Sala despiece
 	sde_codi int,

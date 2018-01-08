@@ -1,3 +1,9 @@
+-- Puesto numero palet a varchar(5)
+drop view v_stkpart;
+alter table stockpart  alter stp_numpal type varchar(5);
+create view anjelica.v_stkpart as select * from stockpart;
+grant select on v_stkpart to public;
+ --
 alter table tipotari add tar_comfij float; -- Comision fija (si tiene)
 alter table tipotari add tar_prmipe float; -- precio minimo permitido
 --

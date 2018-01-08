@@ -85,7 +85,7 @@ $BODY$
 			NEW.avp_canti,
 			NEW.avp_numuni,
 			mvtPrven,mvtPrven,
-                        mvtCliprv
+            mvtCliprv
 			);
 			almCodi=almOrig;
 		end if;
