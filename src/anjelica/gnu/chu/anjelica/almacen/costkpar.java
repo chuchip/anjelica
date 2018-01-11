@@ -18,7 +18,7 @@ import javax.swing.JMenuItem;
  * <p>Titulo: costkpar</p>
  * <p>Descripción: Consulta tabla de Stock Partidas </p>
  *
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia

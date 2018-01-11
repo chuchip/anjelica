@@ -71,7 +71,6 @@ import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.DatTrazFrame;
 import gnu.chu.anjelica.despiece.DespVenta;
-import gnu.chu.anjelica.despiece.MantTipDesp;
 import gnu.chu.anjelica.despiece.listraza;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.Listados;
@@ -92,7 +91,6 @@ import gnu.chu.eventos.GridEvent;
 import gnu.chu.hylafax.IFFax;
 import gnu.chu.hylafax.SendFax;
 import gnu.chu.interfaces.PAD;
-import gnu.chu.interfaces.VirtualGrid;
 import gnu.chu.mail.IFMail;
 import gnu.chu.mail.sendMail;
 import gnu.chu.sql.DatosTabla;
@@ -131,6 +129,8 @@ import net.sf.jasperreports.engine.JasperReport;
  
 public class pdalbara extends ventanaPad  implements PAD  
 {   
+  private int TIDE_AUTOCLASI=105; 
+    
   String cliValor;
   int codCli;
   boolean P_IMPRES=false;
@@ -396,6 +396,7 @@ public class pdalbara extends ventanaPad  implements PAD
   CTextField fvc_anoE = new CTextField(Types.DECIMAL, "###9");
   CTextField fvc_numeE = new CTextField(Types.DECIMAL, "#####9");
   CButtonMenu Bimpri = new CButtonMenu(Iconos.getImageIcon("print"));
+  CButtonMenu Butil = new CButtonMenu(Iconos.getImageIcon("configure"));
   proPanel pro_codresE = new proPanel();
   CTextField pro_nomresE=new CTextField();
   CTextField avr_cantiE=new CTextField(Types.DECIMAL,"#,##9.99");
@@ -629,7 +630,7 @@ public class pdalbara extends ventanaPad  implements PAD
   CLabel cLabel29 = new CLabel();
   GridBagLayout gridBagLayout2 = new GridBagLayout();
   CPanel Pped1 = new CPanel();
-  CPanel cPanel2 = new CPanel();
+  CPanel Ppie2 = new CPanel();
   CLabel avc_idL = new CLabel("ID");
   CTextField avc_idE = new CTextField(Types.DECIMAL,"#######9");
   CLabel avc_obserL = new CLabel();
@@ -751,7 +752,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2017-12-22" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2018-01-08" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -877,6 +878,12 @@ public class pdalbara extends ventanaPad  implements PAD
         fvc_anoE.setBounds(new Rectangle(475, 38, 37, 16));
         fvc_serieE.setBounds(new Rectangle(456, 38, 18, 16));
         fvc_numeE.setBounds(new Rectangle(515, 38, 56, 16));
+        Butil.setMargin(new Insets(0, 0, 0, 0));
+
+        Butil.setBounds(new Rectangle(390, 5, 50, 20));
+
+        Butil.setToolTipText("Utilidades");
+
         Bimpri.setMargin(new Insets(0, 0, 0, 0));
 
         Bimpri.setBounds(new Rectangle(331, 21, 65, 17));
@@ -961,7 +968,8 @@ public class pdalbara extends ventanaPad  implements PAD
         PAlb1.setMinimumSize(new Dimension(290, 77));
         PAlb1.setLayout(null);
         PAlb1.setBorder(BorderFactory.createRaisedBevelBorder());
-        avc_obserS.setBounds(new Rectangle(1, 16, 287, 58));
+        avc_obserS.setBounds(new Rectangle(1, 16, 287, 48));
+        
         avc_obserL.setBounds(new Rectangle(1, 1, 76, 16));
         jtDes.setBuscarVisible(false);
         Birgrid.setBounds(new Rectangle(281, 21, 47, 17));
@@ -971,11 +979,11 @@ public class pdalbara extends ventanaPad  implements PAD
         opAgru.setMargin(new Insets(0, 0, 0, 0));
         opAgru.setText("Agrupar Lineas");
         opAgru.setBounds(new Rectangle(227, 5, 100, 17));
-        Baceptar.setBounds(new Rectangle(428, 2, 112, 24));
+        Baceptar.setBounds(new Rectangle(448, 2, 112, 24));
         Baceptar.setMaximumSize(new Dimension(110, 28));
         Baceptar.setMinimumSize(new Dimension(110, 28));
         Baceptar.setPreferredSize(new Dimension(110, 28));
-        Bcancelar.setBounds(new Rectangle(551, 2, 112, 24));
+        Bcancelar.setBounds(new Rectangle(571, 2, 112, 24));
         Bcancelar.setMaximumSize(new Dimension(110, 28));
         Bcancelar.setMinimumSize(new Dimension(110, 28));
         Bcancelar.setPreferredSize(new Dimension(110, 28));
@@ -1136,14 +1144,14 @@ public class pdalbara extends ventanaPad  implements PAD
         Pped1.setLayout(null);
         pvc_numeE.setBounds(new Rectangle(79, 1, 65, 16));
         pvc_anoE.setBounds(new Rectangle(38, 1, 38, 16));
-        cPanel2.setForeground(Color.black);
-        cPanel2.setBorder(BorderFactory.createLineBorder(Color.black));
-        cPanel2.setMaximumSize(new Dimension(110, 32));
-        cPanel2.setMinimumSize(new Dimension(110, 32));
-        cPanel2.setOpaque(true);
-        cPanel2.setPreferredSize(new Dimension(110, 32));
+        Ppie2.setForeground(Color.black);
+        Ppie2.setBorder(BorderFactory.createLineBorder(Color.black));
+        Ppie2.setMaximumSize(new Dimension(110, 32));
+        Ppie2.setMinimumSize(new Dimension(110, 32));     
+        Ppie2.setPreferredSize(new Dimension(110, 32));
+        
         fvc_serieE.setMayusc(true);
-        cPanel2.setLayout(null);
+        Ppie2.setLayout(null);
         avc_idE.setEnabled(false);
         avc_idL.setBounds(new Rectangle(10, 1, 20, 16));
         avc_idE.setBounds(new Rectangle(32, 1, 80, 16));
@@ -1223,6 +1231,7 @@ public class pdalbara extends ventanaPad  implements PAD
         Ppie.add(cLabel210, null);
         Ppie.add(opValora, null);
         Ppie.add(Bimpri, null);
+        
         Ptab1.setMaximumSize(new Dimension(538, 381));
         Ptab1.setMinimumSize(new Dimension(538, 381));
         Ptab1.setPreferredSize(new Dimension(538, 381));
@@ -1257,7 +1266,11 @@ public class pdalbara extends ventanaPad  implements PAD
         Ptab1.add(PTrans,"Transp.");
         PAlb1.add(avc_obserS, null);
         PAlb1.add(avc_obserL, null);
-        
+        PTrans.removePanelBultos();
+        PTrans.getPanelBultos().setBorder(null);
+        PTrans.getPanelBultos().setBounds(0, 66, 290, 25);
+        PTrans.getPanelBultos().setDefButton(Baceptar);
+        PAlb1.add(PTrans.getPanelBultos(), null);    
         PotroDat.add(avc_impcobL, null);
         PotroDat.add(avc_impcobE, null);
         PotroDat.add(avc_cucomiE, null);
@@ -1391,16 +1404,17 @@ public class pdalbara extends ventanaPad  implements PAD
         Pcabe.add(cLabel13, null);
         Pcabe.add(dtComPL, null);
         Pcabe.add(Pped1, null);
-        Pprinc.add(cPanel2,
-                new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+        Pprinc.add(Ppie2,
+                new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
                 GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-        cPanel2.add(BmvReg, null);
-        cPanel2.add(despieceC, null);
-//        cPanel2.add(Bdespiece, null);
-        cPanel2.add(opAgru, null);
-        cPanel2.add(BValTar, null);
-        cPanel2.add(Bcancelar, null);
-        cPanel2.add(Baceptar, null);
+        Ppie2.add(BmvReg, null);
+        Ppie2.add(despieceC, null);
+//        Ppie2.add(Bdespiece, null);
+        Ppie2.add(opAgru, null);
+        Ppie2.add(BValTar, null);
+        Ppie2.add(Butil, null);
+        Ppie2.add(Bcancelar, null);
+        Ppie2.add(Baceptar, null);
         confGridHist();
         Phist.setLayout(new java.awt.BorderLayout());
         Phist.add(jtHist, java.awt.BorderLayout.CENTER);
@@ -1463,6 +1477,7 @@ public class pdalbara extends ventanaPad  implements PAD
           isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
           swUsaPalets=pdconfig.getUsaPalets(EU.em_cod, dtStat);
           CONTROL_PRO_MIN= EU.getValorParam("controlprodmin", CONTROL_PRO_MIN);
+          TIDE_AUTOCLASI= EU.getValorParam("tipdespclasi", TIDE_AUTOCLASI);
           P_CHECKPED=EU.getValorParam("checkPedAlbVenta", P_CHECKPED);
           avl_numpalE.setEnabled(swUsaPalets);
           if (pdconfig.getConfiguracion(EU.em_cod,dtStat))
@@ -1569,12 +1584,11 @@ public class pdalbara extends ventanaPad  implements PAD
     Bimpri.addMenu("H.Traz.", ""+IMPR_HOJA_TRA );
     Bimpri.addMenu("H.Traz.Edic", ""+IMPR_HOJA_TRAF );
    
-       
-    Bimpri.addMenu("Palets", ""+IMPR_PALETS);
-    Bimpri.addMenu("Etiq.Prod.", ""+IMPR_ETIQUETAS);
-    Bimpri.addMenu("Etiq.Direc.", ""+IMPR_ETIQDIRE);
-    if (P_ADMIN)
-        Bimpri.addMenu("Cambia.Prod.", ""+CAMBIA_CODIGO);
+    if (swUsaPalets)
+        Bimpri.addMenu("Palets", ""+IMPR_PALETS);
+    Butil.addMenu("Etiq.Prod.", ""+IMPR_ETIQUETAS);
+    Butil.addMenu("Etiq.Direc.", ""+IMPR_ETIQDIRE);    
+    Butil.addMenu("Cambia.Prod.", ""+CAMBIA_CODIGO);
     opValora.setSelected(true);
     jtRes.setDefButton(Baceptar);
     jtPalet.setDefButton(Baceptar);
@@ -1596,7 +1610,13 @@ public class pdalbara extends ventanaPad  implements PAD
     Pcabe.setButton(KeyEvent.VK_F9, BF9);
     Pcabe.setDefButton(Baceptar);
     Pcabe.setButton(KeyEvent.VK_F4, Baceptar);
-    PTrans.getPanelBultos().setButton(KeyEvent.VK_F4, Baceptar);
+   
+//    PTrans.getPanelBultos().setPreferredSize(new Dimension(350, 37));
+//    PTrans.getPanelBultos().setMinimumSize(new Dimension(350, 37));
+//    PTrans.getPanelBultos().setMaximumSize(new Dimension(350, 37));
+//    Pprinc.add( PTrans.getPanelBultos(),
+//                new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+//                GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
     jt.setButton(KeyEvent.VK_F4, Baceptar);
     
    
@@ -2467,6 +2487,15 @@ public class pdalbara extends ventanaPad  implements PAD
         }
       }
     });
+    Butil.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {        
+        imprimir(Butil.getValor(e.getActionCommand()).charAt(0) );
+      }
+    });
+    
     Bimpri.addActionListener(new ActionListener()
     {
       @Override
@@ -3226,14 +3255,14 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     if (ayuLot.consulta)
     {
-      avp_emplotE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, ayuLote.JT_EMP));
+      avp_emplotE.setValorDec(EU.em_cod);
       avp_ejelotE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, ayuLote.JT_EJE));
       avp_serlotE.setText(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_SER));
       avp_numparE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, ayuLote.JT_LOTE));
       avp_numindE.setValorDec(ayuLot.jt.getValorInt(ayuLot.rowAct, ayuLote.JT_IND));
       avp_cantiE.setText(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_PESO ));
 //    
-      jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_EMP), JTDES_EMP);
+      jtDes.setValor(EU.em_cod, JTDES_EMP);
       jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_EJE), JTDES_EJE);
       jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_SER), JTDES_SERIE);
       jtDes.setValor(ayuLot.jt.getValString(ayuLot.rowAct, ayuLote.JT_LOTE), JTDES_LOTE);
@@ -8357,6 +8386,7 @@ public class pdalbara extends ventanaPad  implements PAD
     verDepoC.setEnabled(!b);
     rutPanelE.setEnabledRuta(!b);
     PTrans.setEnabled(b);
+    PTrans.getPanelBultos().setEnabled(b);
     avc_deposE.setEnabled(b);
    
 
@@ -8826,7 +8856,7 @@ public class pdalbara extends ventanaPad  implements PAD
           desorca.setDeoAlmori(almCodi);
           desorca.setDeoFecha(Formatear.getDateAct());
           desorca.setDeoIncval("N");
-          desorca.setTidCodi(MantTipDesp.AUTO_DESPIECE);
+          desorca.setTidCodi(TIDE_AUTOCLASI);
           desorca.setDeoFecsac(utdesp.fecSacrE);
           desorca.setDeoFeccad(utdesp.feccadD);
           desorca.setDeoFecpro(utdesp.getFechaProduccion());
@@ -8876,7 +8906,7 @@ public class pdalbara extends ventanaPad  implements PAD
       dtAdd.commit();
       verDatos(dtCons);
       msgBox("Cambiada referencia de articulos");
-      } catch (SQLException k)
+      } catch (SQLException | ParseException k)
       {
           Error("Error al realizar despiece por rango",k);
       }
@@ -9914,9 +9944,9 @@ public class pdalbara extends ventanaPad  implements PAD
     v.add("Prv"); // 11
   
     jt.setCabecera(v);
-    jt.setMaximumSize(new Dimension(477, 250));
-    jt.setMinimumSize(new Dimension(31, 250));
-    jt.setPreferredSize(new Dimension(477, 250));
+    jt.setMaximumSize(new Dimension(477, 205));
+    jt.setMinimumSize(new Dimension(477, 205));
+    jt.setPreferredSize(new Dimension(477, 205));
     jt.setPuntoDeScroll(50);
     jt.setAnchoColumna(new int[]
                        {20,50, 160, 100, 60, 45, 45,45, 150,30,30,50});

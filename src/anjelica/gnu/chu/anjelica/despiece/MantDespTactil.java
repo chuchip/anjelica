@@ -286,7 +286,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     {
         if (ayuLot.consulta)
         {
-          jtEnt.setValor(ayuLot.jt.getValString(ayuLot.rowAct,ayuLote.JT_EMP),JTENT_EMP);
+          jtEnt.setValor(EU.em_cod,JTENT_EMP);
           jtEnt.setValor(ayuLot.jt.getValString(ayuLot.rowAct,ayuLote.JT_EJE),JTENT_EJER);
           jtEnt.setValor(ayuLot.jt.getValString(ayuLot.rowAct,ayuLote.JT_SER),JTENT_SERIE);
           jtEnt.setValor(ayuLot.jt.getValString(ayuLot.rowAct,ayuLote.JT_LOTE ),JTENT_LOTE);
@@ -1355,10 +1355,16 @@ boolean checkCabecera() throws ParseException, SQLException
        mensajeErr("Fecha Caducidad .. Incorrecta");
        return false;
      }
-     if (Formatear.comparaFechas(grd_feccadE.getDate(), grd_fechaE.getDate()) < 7)
+     if (Formatear.comparaFechas(grd_feccadE.getDate(), grd_fechaE.getDate()) <= 0)
      {
-         mensajeErr("Fecha Despiece debe ser superior en más de siete dias a la producion");
+         msgBox("Fecha Despiece debe ser superior a la producion");
          return false;
+     }     
+     if (Formatear.comparaFechas(grd_feccadE.getDate(), grd_fechaE.getDate()) < 10)
+     {
+         int ret=mensajes.mensajeYesNo("Fecha Despiece debe ser superior en más de diez dias a la producion. ¿Continuar?");
+         if (ret!=mensajes.YES)
+             return false;
      }
      return true;
  }

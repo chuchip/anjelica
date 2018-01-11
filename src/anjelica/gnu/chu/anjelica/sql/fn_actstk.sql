@@ -102,6 +102,7 @@ RAISE  NOTICE 'oPERACION %',TG_OP;
                     acpFecpro,acpNucrot,acpPainac,acpEngpai,acpPaisac,acpFecsac,
                     matCodi,sdeCodi);
             else
+	        RAISE  NOTICE 'EXISTIA REGISTRO EN STOCK-PARTIDAS ';	
                if NEW.mvt_tipdoc = 'V' or NEW.mvt_tipdoc = 'R' or NEW.mvt_tipdoc = 'D' or NEW.mvt_tipdoc = 'd'  then
                 if NEW.mvt_tipdoc != 'd' then
                     mvtCliprv=STKNEW.prv_codi;
@@ -116,15 +117,26 @@ RAISE  NOTICE 'oPERACION %',TG_OP;
                 sdeCodi=STKNEW.stp_saldes;
                 acpEngpai=STKNEW.stp_engpai;		
                end if;
-               
--- Actualizacion de Registro Stock.		
-                if NEW.mvt_tipo='E' then
-                   kilos=STKNEW.stp_kilact+NEW.mvt_canti;
-                   unid=STKNEW.stp_unact+NEW.mvt_unid;                  
+		kilos=STKNEW.stp_kilact;
+		unid=STKNEW.stp_unact;
+               if  TG_OP =  'UPDATE' then
+                if OLD.mvt_tipo='E' then                 
+                   kilos=STKNEW.stp_kilact-OLD.mvt_canti;
+                   unid=STKNEW.stp_unact-OLD.mvt_unid;                  
                 else  
-                   kilos=STKNEW.stp_kilact-NEW.mvt_canti;
-                   unid=STKNEW.stp_unact-NEW.mvt_unid;
+                   kilos=STKNEW.stp_kilact+OLD.mvt_canti;
+                   unid=STKNEW.stp_unact+OLD.mvt_unid;
                 end if;
+	      end if;
+-- Actualizacion de Registro Stock.		
+                if NEW.mvt_tipo='E' then                 
+                   kilos=kilos+NEW.mvt_canti;
+                   unid=unid+NEW.mvt_unid;                  
+                else  
+                   kilos=kilos-NEW.mvt_canti;
+                   unid=unid-NEW.mvt_unid;
+                end if;
+ RAISE  NOTICE 'update  % cantidad % kilos %',STKNEW.stp_kilact,NEW.mvt_canti,kilos	;
                 UPDATE anjelica.stockpart set stp_kilact= kilos,
                         stp_unact=unid,
 			prv_codi = mvtCliprv,
@@ -160,7 +172,8 @@ RAISE  NOTICE 'oPERACION %',TG_OP;
 			RAISE EXCEPTION 'No encontrado Apunte stock anterior Almacen:% Art: % Individuo:% % %-%',OLD.alm_codi,
 			OLD.pro_codi,OLD.pro_ejelot,OLD.pro_serlot,OLD.pro_numlot,OLD.pro_indlot;
 			return null;
-	    end if;
+	    end if;	    
+
             if OLD.mvt_tipo='E' then
                  kilos=STKOLD.stp_kilact-OLD.mvt_canti;
                  unid=STKOLD.stp_unact-OLD.mvt_unid;
@@ -168,6 +181,7 @@ RAISE  NOTICE 'oPERACION %',TG_OP;
                  kilos=STKOLD.stp_kilact+OLD.mvt_canti;
                  unid=STKOLD.stp_unact+OLD.mvt_unid;
             end if;
+   
             UPDATE anjelica.stockpart set stp_kilact= kilos,
                    stp_unact=unid,
                    stp_fefici = current_timestamp 

@@ -999,7 +999,7 @@ public class utildesp
   public int guardaLinDesp(int ejeLot,int empLot,String serLot,int numLot,int nInd,
                     int numDesp,int proCodi,double kilos,int numPie,
                     String feccad, int defOrden,int uniCaj,double precCost,
-                    int defCerra) throws SQLException
+                    int defCerra) throws SQLException,ParseException
  {
    String s;
    if (defOrden==0)
@@ -1065,6 +1065,12 @@ public class utildesp
    dtAdd.setDato("def_feccad",fecha);//def_kilosE.getValorDec());
 
    dtAdd.update(dtAdd.getStatement());
+   s="update stockpart set stp_feccad='"+Formatear.getFechaDB(feccad) +"' where pro_nupar="+ numLot+
+                " and pro_serie='"+serLot+"' "+
+                " and eje_nume="+ejeLot+
+                " and pro_codi = "+proCodi+
+                " and pro_numind="+nInd;
+   dtAdd.executeUpdate(s);
    return defOrden;
  }
   

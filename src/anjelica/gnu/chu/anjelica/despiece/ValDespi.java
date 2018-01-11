@@ -156,6 +156,7 @@ public class ValDespi extends ventana {
             ErrorInit(e);
         } 
    }
+   
    private void ponParametros(Hashtable<String,String> ht)
    {
         if (ht != null) {
@@ -167,7 +168,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2017-11-23" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2017-12-28" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -977,7 +978,9 @@ public class ValDespi extends ventana {
               
                if (jtCab.isEnabled()) 
                {
-                   precAcu=pdprvades.getPrecioOrigen(dtStat, jtCab.getValorInt(JTCAB_PROCODI), fecIniSem);
+                   precAcu=0;
+                   if (!opValorInd.isSelected())
+                    precAcu=pdprvades.getPrecioOrigen(dtStat, jtCab.getValorInt(JTCAB_PROCODI), fecIniSem);
                    if (precAcu<=0)
                     precAcu= getPrecioMedioDesp(jtCab.getValorInt(JTCAB_PROCODI),
                        jtDesp.getValString(JTDES_TIPO).equals("G"),
@@ -1377,12 +1380,15 @@ public class ValDespi extends ventana {
                 jtCab.setValor(costo, n,JTCAB_COSTO);
                 continue;
             }
-            costo=pdprvades.getPrecioOrigen(dtStat, proCodi, fecIniSem);
-            if (costo>0)
+            if (! opValorInd.isSelected())
             {
-                jtCab.setValor(costo, n,JTCAB_COSTO);
-                continue;
-            } 
+                costo=pdprvades.getPrecioOrigen(dtStat, proCodi, fecIniSem);
+                if (costo>0)
+                {
+                    jtCab.setValor(costo, n,JTCAB_COSTO);
+                    continue;
+                } 
+            }
             precAcu=getPrecioMedioDesp(proCodi,
                 jtDesp.getValString(JTDES_TIPO).equals("G"),
                 jtDesp.getValorInt(JTDES_EJER),                  
@@ -1804,12 +1810,15 @@ public class ValDespi extends ventana {
   * @throws SQLException 
   */
  private double getPrecioMedioDesp(int proCodi,boolean isGrupo, int ejerc,int deoCodi, String tipoDoc) throws SQLException
- {
-   
+ {   
    impDocum=0;
    kgDocum=0;
+   if (opValorInd.isSelected() && tipoDoc.equals("D"))
+      return getPrecioIndiv(proCodi,ejerc,deoCodi, isGrupo);
+
    if (isGrupo)
    {
+         
         s="select deo_codi from desporig where eje_nume= "+ejerc+
             " and deo_numdes ="+deoCodi;
         if (!dtCon1.select(s))
@@ -1828,10 +1837,85 @@ public class ValDespi extends ventana {
         }  
         return kgDocum==0?0:impDocum/kgDocum;
    }
-  
    return getPrecioMedioDesp(proCodi,ejerc,deoCodi, tipoDoc);
  }
  
+ /**
+  * Devuelve precios segun costos de individuo para un producto de un despiece
+  * @param proCodi
+  * @param ejerc
+  * @param deoCodi
+  * @param isGrupo
+  * @return precio Medio
+  * @throws SQLException 
+  */
+    double getPrecioIndiv(int proCodi, int ejerc, int deoCodi,boolean isGrupo) throws SQLException 
+    {
+        String msgError="";
+        double impCosto = 0;
+        double kilos = 0;
+        if (!isGrupo)
+            s = "select deo_kilos,pro_lote,deo_ejelot,deo_serlot,pro_numind from desorilin as d "
+                + " where deo_codi=" + deoCodi
+                + " and eje_nume=" + ejerc
+                + " and pro_codi = " + proCodi;
+        else
+            s = "select deo_kilos,pro_lote,deo_ejelot,deo_serlot,pro_numind from v_despori as d "
+                + " where deo_numdes=" + deoCodi
+                + " and eje_nume=" + ejerc
+                + " and pro_codi = " + proCodi;
+            
+        if (!dtCon1.select(s))
+            return 0;
+        do
+        {
+            s = "select * from  v_compras as c where   c.pro_codi= " + proCodi
+                + "and c.acc_nume= " + dtCon1.getInt("pro_lote")
+                + "and c.acc_ano =" + dtCon1.getInt("deo_ejelot")
+                + "and c.acc_serie='" + dtCon1.getString("deo_serlot")+"'"
+                + " and  c.acp_numind=" + dtCon1.getString("pro_numind");
+            if (dtStat.select(s))
+            {
+                if (dtStat.getDouble("acl_prcom") == 0)
+                {
+                    msgError += "Producto : " + proCodi + " Lote: " + dtCon1.getInt("deo_ejelot") + dtCon1.getString("deo_serlot")
+                        + dtCon1.getInt("pro_lote") + "/" + dtCon1.getString("pro_numind")
+                        + " Costo de compra a 0 \n";
+                    continue;
+                }
+                impCosto += dtCon1.getDouble("deo_kilos") * dtStat.getDouble("acl_prcom");
+            } else
+            {
+                s = "select * from  v_despfin as c where   c.pro_codi= " + proCodi
+                    + "and c.pro_lote= " + dtCon1.getInt("pro_lote")
+                    + "and c.def_ejelot =" + dtCon1.getInt("deo_ejelot")
+                    + "and c.def_serlot='" + dtCon1.getString("deo_serlot")+"'"
+                    + " and  c.pro_numind=" + dtCon1.getString("pro_numind");
+                if (!dtStat.select(s))
+                {
+                    msgError = "Producto : " + proCodi + " Lote: " + dtCon1.getInt("deo_ejelot") + dtCon1.getString("deo_serlot")
+                        + dtCon1.getInt("pro_lote") + "/" + dtCon1.getString("pro_numind")
+                        + " NO ENCONTRADO NI EN COMPRAS NI EN DESPIECES \n";
+                    continue;
+                }
+                if (dtStat.getDouble("def_prcost") == 0)
+                {
+                    msgError = "Producto : " + proCodi + " Lote: " + dtCon1.getInt("deo_ejelot") + dtCon1.getString("deo_serlot")
+                        + dtCon1.getInt("pro_lote") + "/" + dtCon1.getString("pro_numind")
+                        + " Costo despiece a 0 \n";
+                    continue;
+                }
+                impCosto += dtCon1.getDouble("deo_kilos") * dtStat.getDouble("def_prcost");
+            }
+            kilos += dtCon1.getDouble("deo_kilos");
+        } while (dtCon1.next());
+        if (!msgError.equals(""))
+        {
+            mensajes.mensajeExplica("Error al calcular costo por individuos", msgError);
+            return 0;
+        }
+        return impCosto / kilos;
+ }
  /**
   * Busca el precio Medio  de Entrada
   * @param proCodi
@@ -1844,7 +1928,7 @@ public class ValDespi extends ventana {
  double getPrecioMedioDesp(int proCodi, int ejerc,int deoCodi, String tipoDoc) throws SQLException
  {
      if (tipoDoc.equals("D") )
-     {
+     {         
          s="select max(deo_tiempo) as maxTiempo, min (deo_tiempo) as minTiempo from desorilin where deo_codi="+deoCodi+
              " and eje_nume="+ejerc+
              " and pro_codi = "+proCodi;
@@ -2316,6 +2400,7 @@ public class ValDespi extends ventana {
         Bir = new gnu.chu.controles.CButton(Iconos.getImageIcon("reload"));
         Binvsel = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("filter"));
         BAgrupar = new gnu.chu.controles.CButtonMenu();
+        opValorInd = new gnu.chu.controles.CCheckBox();
 
         def_prebloC.setText("cCheckBox1");
 
@@ -2326,9 +2411,9 @@ public class ValDespi extends ventana {
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcond.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        Pcond.setMaximumSize(new java.awt.Dimension(595, 85));
-        Pcond.setMinimumSize(new java.awt.Dimension(595, 85));
-        Pcond.setPreferredSize(new java.awt.Dimension(595, 85));
+        Pcond.setMaximumSize(new java.awt.Dimension(605, 85));
+        Pcond.setMinimumSize(new java.awt.Dimension(605, 85));
+        Pcond.setPreferredSize(new java.awt.Dimension(605, 85));
         Pcond.setQuery(true);
         Pcond.setLayout(null);
 
@@ -2631,10 +2716,10 @@ public class ValDespi extends ventana {
         Pprinc.add(jtLin, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        Ppie.setMaximumSize(new java.awt.Dimension(610, 85));
-        Ppie.setMinimumSize(new java.awt.Dimension(610, 85));
+        Ppie.setMaximumSize(new java.awt.Dimension(620, 85));
+        Ppie.setMinimumSize(new java.awt.Dimension(620, 85));
         Ppie.setName(""); // NOI18N
-        Ppie.setPreferredSize(new java.awt.Dimension(610, 85));
+        Ppie.setPreferredSize(new java.awt.Dimension(620, 85));
         Ppie.setLayout(null);
 
         Bcancelar.setText("Cancelar");
@@ -2719,7 +2804,7 @@ public class ValDespi extends ventana {
         BValorar.addMenu("Valorar");
         BValorar.addMenu("Anular Valoracion");
         Ppie.add(BValorar);
-        BValorar.setBounds(460, 55, 130, 24);
+        BValorar.setBounds(440, 55, 110, 24);
 
         Baceptar.setText("Aceptar");
         Baceptar.setPreferredSize(new java.awt.Dimension(47, 19));
@@ -2729,20 +2814,25 @@ public class ValDespi extends ventana {
         Bir.setText("F2");
         Bir.setToolTipText("Ir a siguiente grid");
         Ppie.add(Bir);
-        Bir.setBounds(537, 30, 60, 22);
+        Bir.setBounds(570, 55, 40, 22);
 
         Binvsel.addMenu("Invertir Seleccion");
         Binvsel.addMenu("Seleccionar Todo");
         Binvsel.addMenu("Deselecionar Todo");
         Binvsel.setText("Filtrar");
         Ppie.add(Binvsel);
-        Binvsel.setBounds(410, 30, 90, 22);
+        Binvsel.setBounds(410, 30, 80, 22);
 
         BAgrupar.setText("Agrupar (F5)");
         BAgrupar.addMenu("Agrupar");
         BAgrupar.addMenu("Desagrupar");
         Ppie.add(BAgrupar);
-        BAgrupar.setBounds(320, 55, 130, 24);
+        BAgrupar.setBounds(320, 55, 110, 24);
+
+        opValorInd.setText("Costo Individuo");
+        opValorInd.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
+        Ppie.add(opValorInd);
+        opValorInd.setBounds(497, 30, 120, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -2807,6 +2897,7 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CTextField numRegSelE;
     private gnu.chu.controles.CComboBox opCerradoC;
     private gnu.chu.controles.CComboBox opProduc;
+    private gnu.chu.controles.CCheckBox opValorInd;
     private gnu.chu.controles.CCheckBox opVerGrupo;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.camposdb.tidCodi2 tid_codfinE;

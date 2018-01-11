@@ -146,7 +146,7 @@ public class PdInvControl extends ventanaPad implements PAD
   {
        statusBar = new StatusBar(this);
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
-        
+        setSonidoAlarma(true);
         iniciarFrame();
         this.setVersion("2017-08-19 "+(swAdmin?"Administrador":""));
         condWhere=" where emp_codi =  "+EU.em_cod;

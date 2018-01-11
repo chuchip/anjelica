@@ -24,6 +24,7 @@ import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
@@ -56,7 +57,7 @@ public class RepEtiqueta extends ventana
     etiqueta etiq;
     String famProd;    
     private ayuLote ayuLot = null;
-     
+    Date  fecCad,fecProd,fecSacr;
     public RepEtiqueta(EntornoUsuario eu, Principal p) {
         EU = eu;
         vl = p.panel1;
@@ -253,13 +254,28 @@ public class RepEtiqueta extends ventana
     void ponFechaCad(int dias)
     {
         if (dias==0)
+        {
+            if (fecCad!=null)
+            {
+                trazPanel.setFechaCaducidad(fecCad);
+                trazPanel.setFechaProduccion(fecProd);
+                trazPanel.setFechaSacrificio(fecSacr);
+            }
             return;
-        trazPanel.setFechaCaducidad(Formatear.sumaDiasDate(Formatear.getDateAct() , dias));
-        trazPanel.setFechaProduccion(Formatear.sumaDiasDate(Formatear.getDateAct() , dias-30));
+        }
+       
         try
         {
-            if (trazPanel.getFechaSacrificio()!=null)
-                trazPanel.setFechaSacrificio(Formatear.sumaDiasDate(Formatear.getDateAct() , dias-32));
+            if (fecCad == null)
+            {
+                fecCad = trazPanel.getFechaCaducidad();
+                fecProd = trazPanel.getFechaProduccion();
+                fecSacr = trazPanel.getFechaSacrificio();
+            }
+            trazPanel.setFechaCaducidad(Formatear.sumaDiasDate(Formatear.getDateAct(), dias));
+            trazPanel.setFechaProduccion(Formatear.sumaDiasDate(Formatear.getDateAct(), dias - 30));
+            if (trazPanel.getFechaSacrificio() != null)
+                trazPanel.setFechaSacrificio(Formatear.sumaDiasDate(Formatear.getDateAct(), dias - 32));
         } catch (ParseException ex)
         {
         }
@@ -476,6 +492,7 @@ public class RepEtiqueta extends ventana
     }
   }
     void resetCambio() {
+        fecCad=null;
         diasCadE.setValor("0");
         pro_numindE.resetCambio();
         deo_kilosE.resetCambio();
@@ -682,7 +699,7 @@ public class RepEtiqueta extends ventana
         diasCadE.addItem("---", "0");
         diasCadE.addItem("10 Dias", "10");
         diasCadE.addItem("15 Dias", "15");
-        diasCadE.addItem("20 Dias", "25");
+        diasCadE.addItem("20 Dias", "20");
         diasCadE.addItem("25 Dias", "25");
         diasCadE.addItem("30 Dias", "30");
         Pprinc.add(diasCadE);

@@ -28,7 +28,6 @@ package gnu.chu.anjelica.despiece;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.pdalmace;
-import static gnu.chu.anjelica.despiece.MantDesp.JTLIN_PROCODI;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.sql.Desorilin;
@@ -99,7 +98,7 @@ public class DespVenta extends ventana {
         setResizable(true);
         setMaximizable(false);
         setIconifiable(false);
-        this.setSize(540,440);
+        this.setSize(570,440);
         this.setTitle("Carga Despiece desde Ventas");
         setVersion("20181224");
     }
@@ -199,6 +198,9 @@ public class DespVenta extends ventana {
           deoCodi=0;
           Baceptar.setEnabled(true);
           tid_codiE.setEnabled(true);
+          def_fecproE.setEnabled(true);
+          def_fecsacE.setEnabled(true);
+
           jt.setEnabled(false);
 //          pro_codiE.resetTexto();
 //          pro_loteE.resetTexto();
@@ -436,6 +438,7 @@ public class DespVenta extends ventana {
             }
 
             actualCabDesp();
+//            MantDesp.actFechaStock(dtAdd,def_fecproE.getDate(),def_fecsacE.getDate(),ejeNume,deoCodi,EU.em_cod); 
             resetBloqueo(dtAdd,TABLA_BLOCK, ejeNume+"|"+empCodi+
                          "|"+deoCodi,false);
             dtAdd.commit();
@@ -942,6 +945,42 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                  return 0;
              }
          }
+         if (def_feccadE.isNull())
+         {
+             msgBox("Introduzca fecha Caducidad");
+             def_feccadE.setText(utdesp.feccadE);
+             return 0;
+         }
+        if ( Formatear.comparaFechas(def_feccadE.getDate(),Formatear.getDateAct() )<=0)
+        {
+            msgBox("Fecha Caducidad  debe ser superior a la actual");
+            def_feccadE.requestFocusLater();
+            return 0;
+        }
+        if (Formatear.comparaFechas(def_feccadE.getDate(), Formatear.getDateAct())<=10)
+        {
+            int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en diez dias a la actual. Continuar?");
+            if (ret!=mensajes.YES)
+            {
+               def_feccadE.requestFocusLater();
+               return 0;
+            }
+        }
+         if ( Formatear.comparaFechas(def_fecproE.getDate(),Formatear.getDateAct()) > 0)
+         {
+            msgBox("Fecha Produccion NO puede ser superior a la actual");
+            def_fecproE.requestFocusLater();
+            return 0;
+         }
+         if (!def_fecsacE.isNull() )
+        {
+            if (Formatear.comparaFechas(def_fecsacE.getDate(), def_fecproE.getDate())>0)
+            {
+                msgBox("Fecha Sacrificio NO puede ser superior a la de produccion");
+                def_fecsacE.requestFocusLater();
+                return 0;
+            }
+        }
          if (checkExcluyentes("SELECT * FROM artiexcl where pro_codini ="+pro_codsalE.getValorInt()+
                  " and pro_codfin in (",linea))
              return 0;
@@ -956,9 +995,11 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
 
            if ( pro_codsalE.isVendible() && pro_codsalE.getEtiCodi()>=0 && jt.isEnabled()) // && pro_codlE.getConStkInd())
              imprEtiq(linea,false);
+           def_fecproE.setEnabled(false);
+           def_fecsacE.setEnabled(false);
          }
        }
-       catch (SQLException ex)
+       catch (SQLException | ParseException ex)
        {
          Error("Error al Cambiar Linea de Grid", ex);
        }
@@ -1016,6 +1057,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
        unisalE.setValorDec(totUnid);
        difkilE.setValorDec(deo_kilosE.getValorDec()-totKilos);
     }
+    
     boolean  genDatEtiq() throws Exception
     {
        int prvDespiece=pdconfig.getPrvDespiece(empCodi,dtStat);
@@ -1106,6 +1148,9 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                               pro_numindE.getValorInt(), deo_kilosE.getValorDec(),0,
                               dtAdd);
       Baceptar.setEnabled(true);
+      def_fecproE.setEnabled(true);
+      def_fecsacE.setEnabled(true);
+
     }
    void guardaCabOrig() throws SQLException, ParseException
    {

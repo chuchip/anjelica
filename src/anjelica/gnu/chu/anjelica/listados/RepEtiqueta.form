@@ -295,7 +295,7 @@
         </Component>
         <Component class="gnu.chu.controles.CComboBox" name="diasCadE">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="diasCadE.addItem(&quot;---&quot;, &quot;0&quot;);&#xa;diasCadE.addItem(&quot;10 Dias&quot;, &quot;10&quot;);&#xa;diasCadE.addItem(&quot;15 Dias&quot;, &quot;15&quot;);&#xa;diasCadE.addItem(&quot;20 Dias&quot;, &quot;25&quot;);&#xa;diasCadE.addItem(&quot;25 Dias&quot;, &quot;25&quot;);&#xa;diasCadE.addItem(&quot;30 Dias&quot;, &quot;30&quot;);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="diasCadE.addItem(&quot;---&quot;, &quot;0&quot;);&#xa;diasCadE.addItem(&quot;10 Dias&quot;, &quot;10&quot;);&#xa;diasCadE.addItem(&quot;15 Dias&quot;, &quot;15&quot;);&#xa;diasCadE.addItem(&quot;20 Dias&quot;, &quot;20&quot;);&#xa;diasCadE.addItem(&quot;25 Dias&quot;, &quot;25&quot;);&#xa;diasCadE.addItem(&quot;30 Dias&quot;, &quot;30&quot;);"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

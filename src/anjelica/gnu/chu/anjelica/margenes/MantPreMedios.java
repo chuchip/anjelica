@@ -3,7 +3,7 @@ package gnu.chu.anjelica.margenes;
  *
  * <p>Titulo: MantPreMedios </p>
  * <p>Descripción: Mantenimiento Precios Medios</p>
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -48,6 +48,8 @@ import java.util.List;
  */
 public class MantPreMedios extends ventana
 {
+   
+   private int TIDE_AUTOCLASI=105; 
    Hashtable<Integer,Double> htBolas = new Hashtable();
    Hashtable<Integer,Integer[]> htLomos = new Hashtable();
    Hashtable<Integer,Boolean> htLomCom = new Hashtable();
@@ -118,6 +120,7 @@ public class MantPreMedios extends ventana
      @Override
     public void iniciarVentana() throws Exception
     {
+        TIDE_AUTOCLASI= EU.getValorParam("tipdespclasi", TIDE_AUTOCLASI);
         htBolas.put(40201, 2.55);
         htBolas.put(40202, 2.65);
         htBolas.put(40203, 2.75);
@@ -254,19 +257,64 @@ public class MantPreMedios extends ventana
                    " or pro_codi= "+codigo2+")"+ 
                    (incCompra?" and prp_part not in (select acc_nume from v_albacoc where acc_fecrec>='"+fecIniComE.getFechaDB()+"')":"");
               dtCon1.select(s);
+              double costoInv=pdprvades.getPrecioOrigen(dtStat,lomo, Formatear.sumaDiasDate(tar_feciniE.getDate(),-7));
               ArrayList v=new ArrayList();
               v.add(lomo);
               v.add(MantArticulos.getNombProd(lomo, dtStat));
               v.add(dtCon1.getDouble("kilos",true));
-              v.add(pdprvades.getPrecioOrigen(dtStat,lomo, Formatear.sumaDiasDate(tar_feciniE.getDate(),-7)));
+              v.add(costoInv);
+              v.add(dtCon1.getDouble("kilos",true)*costoInv);
               s="select sum(acl_canti) as kilos,sum(acl_canti*acl_prcom) as importe from v_albacom where  acc_fecrec between '"+fecIniComE.getFechaDB()+
                   "' and '"+ fecFinComE.getFechaDB()+"'"+
                    " and (pro_codi="+codigo1+
                    " or pro_codi= "+codigo2+")";
               
-              dtCon1.select(s);              
-              v.add(dtCon1.getDouble("kilos",true));
-              v.add(dtCon1.getDouble("kilos",true)==0?0:dtCon1.getDouble("importe",true)/dtCon1.getDouble("kilos",true));
+              dtCon1.select(s);
+              double kilCompra=dtCon1.getDouble("kilos",true);
+              double impCompra=dtCon1.getDouble("importe",true);
+              s="select sum(deo_kilos) as kilos, sum(deo_kilos*c.acl_prcom) as importe "
+                  + "from v_despori as d,v_compras as c where  tid_codi= "+TIDE_AUTOCLASI+
+                   " and deo_fecha>='"+ fecIniComE.getFechaDB()+"'"+ 
+                   " and c.acc_fecrec>='"+fecFinComE.getFechaDB()+"'"+ 
+                   " and d.pro_codi=c.pro_codi "+
+                   " and d.pro_lote=c.acc_nume "+
+                   " and d.deo_ejelot=c.acc_ano "+
+                   " and deo_serlot=c.acc_serie "+
+                   " and pro_numind = c.acp_numind "+
+                   " and (c.pro_codi="+codigo1+
+                   " or c.pro_codi= "+codigo2+")";
+              dtCon1.select(s);
+              kilCompra-=dtCon1.getDouble("kilos",true);
+              impCompra-=dtCon1.getDouble("importe",true);
+              // Añado los pedidos cde compra
+              s="select * from v_pedico as c where "+
+                   "  pcc_fecrec between '"+ fecIniComE.getFechaDB()+"' and '"+ fecFinComE.getFechaDB()+"'"+ 
+                   " and pcc_estrec = 'P'" +// Solo pendientes.
+                   " and (c.pro_codi="+codigo1+
+                   " or c.pro_codi= "+codigo2+")";
+              if (dtCon1.select(s))
+              {
+                  do
+                  {
+                      switch (dtCon1.getString("pcc_estad"))
+                      {
+                          case "P":
+                              kilCompra+=dtCon1.getDouble("pcl_cantpe");        
+                              impCompra+=dtCon1.getDouble("pcl_cantpe")*dtCon1.getDouble("pcl_precpe");
+                              break;
+                          case "C":                      
+                              kilCompra+=dtCon1.getDouble("pcl_cantco");        
+                              impCompra+=dtCon1.getDouble("pcl_cantco")*dtCon1.getDouble("pcl_precco");
+                              break;
+                          default:
+                              kilCompra+=dtCon1.getDouble("pcl_cantfa");        
+                              impCompra+=dtCon1.getDouble("pcl_cantfa")*dtCon1.getDouble("pcl_precfa");
+                      }
+                  } while (dtCon1.next());
+              }
+              v.add(kilCompra);
+              v.add(kilCompra==0?0:impCompra/kilCompra);
+              v.add(impCompra);
               jtLomos.addLinea(v);
            }
            
@@ -286,9 +334,9 @@ public class MantPreMedios extends ventana
         gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt()+1);
 //        gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.SUNDAY);
         
-        fecStockE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-1)); // Sabado anterior
+        fecStockE.setDate(Formatear.sumaDiasDate(tar_feciniE.getDate(),-1)); // Sabado anterior
         fecIniComE.setDate(tar_feciniE.getDate());
-        fecFinComE.setDate(tar_feciniE.getDate());
+        fecFinComE.setDate(Formatear.sumaDiasDate(fecIniComE.getDate(),7));
 //        fecIniComE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4) ); // Jueves anteerior
 //        fecFinComE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",3) );
     }
@@ -312,7 +360,7 @@ public class MantPreMedios extends ventana
         BirGrid = new gnu.chu.controles.CButton();
         cLabel3 = new gnu.chu.controles.CLabel();
         eje_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        jtLomos = new gnu.chu.controles.Cgrid(6);
+        jtLomos = new gnu.chu.controles.Cgrid(8);
         jtBolas = new gnu.chu.controles.Cgrid(7);
         PPie = new gnu.chu.controles.CPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
@@ -374,15 +422,19 @@ public class MantPreMedios extends ventana
         v1.add("Nombre"); // 1
         v1.add("Kil.Inv."); // 2
         v1.add("Prec.Ant"); // 3
-        v1.add("Kil.Compra"); // 4
-        v1.add("Prec.Compra"); // 5
+        v1.add("Imp.Ant"); // 4
+        v1.add("Kil.Compra"); // 5
+        v1.add("Prec.Compra"); // 6
+        v1.add("Imp.Compra"); // 7
         jtLomos.setCabecera(v1);
-        jtLomos.setAnchoColumna(new int[]{50,200,70,60,70,60});
-        jtLomos.setAlinearColumna(new int[]{0,0,2,2,2,2});
+        jtLomos.setAnchoColumna(new int[]{50,200,70,60,70,70,60,70});
+        jtLomos.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2});
         jtLomos.setFormatoColumna(2, "##,##9.99");
         jtLomos.setFormatoColumna(3, "--,--9.999");
-        jtLomos.setFormatoColumna(4, "##,##9.99");
-        jtLomos.setFormatoColumna(5, "--,--9.999");
+        jtLomos.setFormatoColumna(4, "-,---,--9.9");
+        jtLomos.setFormatoColumna(5, "##,##9.99");
+        jtLomos.setFormatoColumna(6, "--,--9.999");
+        jtLomos.setFormatoColumna(7, "-,---,--9.9");
         jtLomos.setAjustarGrid(true);
 
         gridBagConstraints = new java.awt.GridBagConstraints();

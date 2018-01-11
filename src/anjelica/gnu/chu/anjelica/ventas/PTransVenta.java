@@ -34,6 +34,10 @@ public class PTransVenta extends CPanel
     {
         return Pbultra;
     }
+    public void removePanelBultos()
+    {
+        this.remove(Pbultra);
+    }
     public int getAvcId()
     {
         return this.avcId;
@@ -244,43 +248,43 @@ public class PTransVenta extends CPanel
         add(cLabel7);
         cLabel7.setBounds(10, 90, 70, 17);
 
-        Pbultra.setBorder(javax.swing.BorderFactory.createTitledBorder("Bultos Transporte"));
+        Pbultra.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         Pbultra.setLayout(null);
 
         cLabel11.setText("Palets");
         Pbultra.add(cLabel11);
-        cLabel11.setBounds(10, 20, 50, 17);
+        cLabel11.setBounds(2, 2, 40, 17);
 
         avt_numpalE.setText("0");
         Pbultra.add(avt_numpalE);
-        avt_numpalE.setBounds(60, 20, 30, 17);
+        avt_numpalE.setBounds(40, 2, 25, 17);
 
         cLabel9.setText("Cajas");
         Pbultra.add(cLabel9);
-        cLabel9.setBounds(100, 20, 40, 17);
+        cLabel9.setBounds(72, 2, 40, 17);
 
         avt_numcajE.setText("0");
         Pbultra.add(avt_numcajE);
-        avt_numcajE.setBounds(150, 20, 30, 17);
+        avt_numcajE.setBounds(110, 2, 25, 17);
 
         cLabel8.setText("Bolsas");
         Pbultra.add(cLabel8);
-        cLabel8.setBounds(10, 40, 50, 17);
+        cLabel8.setBounds(142, 2, 50, 17);
 
         avt_numbolE.setText("0");
         Pbultra.add(avt_numbolE);
-        avt_numbolE.setBounds(60, 40, 30, 17);
+        avt_numbolE.setBounds(184, 2, 25, 17);
 
         cLabel10.setText("Colgado");
         Pbultra.add(cLabel10);
-        cLabel10.setBounds(100, 40, 50, 17);
+        cLabel10.setBounds(210, 2, 50, 17);
 
         avt_numcolE.setText("0");
         Pbultra.add(avt_numcolE);
-        avt_numcolE.setBounds(150, 40, 30, 17);
+        avt_numcolE.setBounds(260, 2, 25, 17);
 
         add(Pbultra);
-        Pbultra.setBounds(10, 140, 190, 80);
+        Pbultra.setBounds(10, 140, 290, 30);
     }// </editor-fold>//GEN-END:initComponents
 
 

@@ -310,6 +310,10 @@ public class DatTrazPanel extends CPanel {
     {
         acc_fecprodE.setDate(fecProduc);
     }
+      public Date  getFechaProduccion() throws ParseException
+    {
+        return acc_fecprodE.getDate();
+    }
     public void  setFechaSacrificio(Date fecSacrif)
     {
         acp_fecsacE.setDate(fecSacrif);

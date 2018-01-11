@@ -24,7 +24,7 @@ import javax.swing.event.InternalFrameEvent;
  * <p>Descripcion: Pantalla de Ayuda de Lotes disponibles
  * Saca los lotes disponibles sobre los productos mandados en cargaGrid
  * </p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2018
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
  *  o bien (según su elección) de cualquier versión posterior.
@@ -51,15 +51,16 @@ public class ayuLote extends ventana
   CPanel Pprod = new CPanel();
   CLabel cLabel1 = new CLabel();
   proPanel pro_codiE = new proPanel();
-  public Cgrid jt = new Cgrid(8);
-  public static int JT_EMP=0;
-  public static int JT_EJE=1;
-  public static int JT_SER=2;
-  public static int JT_LOTE=3;
-  public static int JT_IND=4;
-  public static int JT_PESO=5;
-  public static int JT_NUMUNI=6;
-  public static int JT_BLOCK=7;
+  public Cgrid jt = new Cgrid(9);
+  public static int JT_EJE=0;
+  public static int JT_SER=1;
+  public static int JT_LOTE=2;
+  public static int JT_IND=3;
+  public static int JT_PESO=4;
+  public static int JT_NUMUNI=5;
+  public static int JT_UBIPAL=6;
+  public static int JT_UBICAJ=7;
+  public static int JT_BLOCK=8;
   public boolean consulta=false;
   GridBagLayout gridBagLayout1 = new GridBagLayout();
 
@@ -108,20 +109,21 @@ public class ayuLote extends ventana
     jt.setMinimumSize(new Dimension(393, 269));
     jt.setPreferredSize(new Dimension(393, 269));
     ArrayList v= new ArrayList();
-    v.add("Emp"); // 0
     v.add("Ejer"); // 1
     v.add("Ser"); // 2
     v.add("Lote"); // 3
     v.add("Ind"); // 4
     v.add("Peso"); // 5
-    v.add("N.Unid"); // 6
+    v.add("Unid."); // 6
+    v.add("Palet"); // 6
+    v.add("Caja"); // 6
     v.add("Blo"); // 7
     jt.setCabecera(v);
-    jt.setAnchoColumna(new int[]{40,60,30,60,60,90,60,30});
-    jt.setAlinearColumna(new int[]{2,2,1,2,2,2,2,1});
-    jt.setFormatoColumna(5,"---,--9.99");
-    jt.setFormatoColumna(6,"--9");
-    jt.setFormatoColumna(7,"B-");
+    jt.setAnchoColumna(new int[]{60,30,60,60,90,40,40,40,30});
+    jt.setAlinearColumna(new int[]{2,1,2,2,2,2,0,2,1});
+    jt.setFormatoColumna(JT_PESO ,"---,--9.99");
+    jt.setFormatoColumna(JT_NUMUNI,"--9");
+    jt.setFormatoColumna(JT_BLOCK,"B-");
     jt.setConfigurar("gnu.chu.winayu.ayuLote",EU,dtCon1);
     jt.setAjustarGrid(true);
     this.getContentPane().add(statusBar, BorderLayout.SOUTH);
@@ -199,7 +201,7 @@ public class ayuLote extends ventana
     {
       pro_codiE.setText(""+proCodi);
       
-      String s="SELECT emp_codi,eje_nume,pro_serie,pro_nupar,pro_numind,stp_kilact,stp_unact,stk_block "+
+      String s="SELECT eje_nume,pro_serie,pro_nupar,pro_numind,stp_kilact,stp_unact,stp_numpal,stp_numcaj, stk_block "+
           " FROM v_stkpart WHERE pro_codi = "+proCodi+
           " AND emp_codi = "+EU.em_cod+
           (almCodi!=0?" and alm_codi = "+almCodi:"")+
@@ -207,7 +209,7 @@ public class ayuLote extends ventana
           (pro_codiE.hasControlExist()?" and stp_kilact > 0 and stp_unact > 0 ":"")+
           " and pro_nupar > 0 "+
 //          " and emp_codi in ("+empAccesos+")"+
-          " ORDER BY emp_codi, eje_nume desc,pro_serie,pro_nupar desc,pro_numind";
+          " ORDER BY eje_nume desc,pro_serie,pro_nupar desc,pro_numind";
 
       dtCon1.select(s);
       jt.setDatos(dtCon1);

@@ -1247,31 +1247,29 @@ public class ActualStkPart
      }
 
      boolean ret=regAcuProducto(dt,proArtcon,fecinv,pro_codi);
-     if (swInvControl)
-     { // Regenerar stock sobre Inventario Control. Pongo camara Actual      
-         s="update stockpart set cam_codi=("+
-            " select cam_codi FROM v_coninvent as i where stockpart.pro_codi=i.pro_codi " +
-             " and i.lci_peso > 0"+
-             " and stockpart.eje_nume=i.prp_ano "+
-             " and stockpart.pro_serie = i.prp_seri "+
-             " and stockpart.pro_nupar = i.prp_part "+
-             " and stockpart.pro_numind=i.prp_indi"+
-             " AND i.cci_feccon = TO_DATE('" + Formatear.getFecha(fecinv,"dd-MM-yyyy") + "','dd-MM-yyyy')) "+
-             " where exists ( select r.cam_codi FROM v_coninvent as r,v_articulo as a"+
-                " where  stockpart.pro_codi=r.pro_codi " +
-                " and stockpart.eje_nume=r.prp_ano "+
-                " and stockpart.pro_serie = r.prp_seri "+
-                " and stockpart.pro_nupar = r.prp_part "+
-                " and stockpart.pro_numind=r.prp_indi "+
-                " and lci_peso > 0 " +
-                " and lci_regaut = 0 "+
-                (almCodi==0?"":" and alm_codi = " + almCodi) +
-                (pro_codi == 0 ? "" : " and r.pro_codi = " + pro_codi) +
-                " and a.pro_codi = r.pro_codi " +
-                (proArtcon != 2?" and a.pro_artcon " + (proArtcon == 0 ? "= 0" : " <> 0"):"") +
-                " AND r.cci_feccon = TO_DATE('" + Formatear.getFecha(fecinv,"dd-MM-yyyy") + "','dd-MM-yyyy')) ";
-          dtAdd.executeUpdate(s);
-     }
+      // Regenerar stock sobre Inventario Control. Pongo camara Actual      
+       String s1 = " FROM v_coninvent as i where stockpart.pro_codi=i.pro_codi "
+           + " and i.lci_peso > 0"
+           + " and stockpart.eje_nume=i.prp_ano "
+           + " and stockpart.pro_serie = i.prp_seri "
+           + " and stockpart.pro_nupar = i.prp_part "
+           + " and stockpart.pro_numind=i.prp_indi"
+           + " AND i.cci_feccon = TO_DATE('" + Formatear.getFecha(fecinv, "dd-MM-yyyy") + "','dd-MM-yyyy') "
+           + " and lci_peso > 0 "
+           + " and lci_regaut = 0 "
+           + (almCodi == 0 ? "" : " and alm_codi = " + almCodi)
+           + ")";
+
+       s = "update stockpart set cam_codi=( select distinct(cam_codi) " + s1
+           + " , stp_numcaj =   (select distinct(lci_numcaj) " + s1
+           + " , stp_numpal =   (select distinct(lci_numpal)" + s1
+           + " where exists ( select cam_codi  " + s1
+           + (proArtcon == 2 ? "" : " and pro_codi in"
+               + " (select pro_codi from v_articulo as a where stockpart.pro_codi = a.pro_codi "
+               + " and a.pro_artcon " + (proArtcon == 0 ? "= 0" : " <> 0") + ")")
+           + (almCodi == 0 ? "" : " and alm_codi = " + almCodi);
+       dtAdd.executeUpdate(s);
+ 
      dtAdd.executeUpdate("update ajustedb set aju_regacu=1"); // Habilito Reg. Acum.
      return ret;
    }

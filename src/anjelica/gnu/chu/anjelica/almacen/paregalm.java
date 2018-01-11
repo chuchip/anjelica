@@ -573,7 +573,7 @@ public class paregalm extends CPanel {
         alm_codiE.setText(dtCon1.getString("alm_codi"));
         stp_unactE.setText(dtCon1.getString("rgs_canti"));
         deo_kilosE.setText(dtCon1.getString("rgs_kilos"));
-        rgs_prreguE.setText(dtCon1.getString("rgs_prregu"));
+        rgs_prreguE.setValorDec(dtCon1.getDouble("rgs_prregu",true));
         verCliPrv(dtCon1.getString("tir_tipo", true));
         if (cli_codiE.isVisible()) {
             cli_codiE.setText(dtCon1.getString("rgs_cliprv"));
@@ -824,10 +824,10 @@ public class paregalm extends CPanel {
                         int res=mensajes.mensajeYesNo("Este individuo No tiene suficiente stock (Stock Actual: "+stkPart.getKilosStk()+") Lo dejara en NEGATIVO. CONTINUAR?");
                         if (res!=mensajes.YES)
                             return false;
-                        papa.enviaMailError("Creada Regularización sobre Individuo sin stock. Producto: "+
-                                pro_codiE.getValorInt()+" Individuo:"+deo_ejelotE.getValorInt()+deo_serlotE.getText()+pro_loteE.getValorInt()+"-"+
-                                pro_numindE.getValorInt()+
-                                " en Almacen: "+alm_codiE.getValorInt());
+//                        papa.enviaMailError("Creada Regularización sobre Individuo sin stock. Producto: "+
+//                                pro_codiE.getValorInt()+" Individuo:"+deo_ejelotE.getValorInt()+deo_serlotE.getText()+pro_loteE.getValorInt()+"-"+
+//                                pro_numindE.getValorInt()+
+//                                " en Almacen: "+alm_codiE.getValorInt());
                     }
                 }
             }

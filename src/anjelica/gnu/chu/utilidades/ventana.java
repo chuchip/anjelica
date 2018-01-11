@@ -483,7 +483,7 @@ public class ventana extends CInternalFrame implements ejecutable
       try
       {
           if (fileSonidoAlarma==null)
-              fileSonidoAlarma= EU.getValorParam("fileSonidoAlarma", "q:\\icons\\alarm.wav");
+              fileSonidoAlarma= EU.getValorParam("fileSonidoAlarmaIn", "q:\\icons\\alarm.wav");
          
           AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(fileSonidoAlarma).getAbsoluteFile());
           Clip clip = AudioSystem.getClip();

@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Título: pdregalm</p>
  * <p>Descripcion: Mantenimientos de Regularizaciones en almacén (Actualiza la tabla v_regstock) </p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2017
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -212,12 +212,16 @@ public class pdregalm extends ventanaPad implements PAD
     v.add("Ind");  // 7
     v.add("Tipo Reg."); // 8
     v.add("Unid."); // 9
-    v.add("Cant."); // 10
+    v.add("Kilos"); // 10
     v.add("Precio"); // 11
     v.add("rowid"); // 12
     jt.setCabecera(v);
     jt.setAnchoColumna(new int[]{40,150,90,40,30,50,40,90,60,60,60,1});
     jt.setAlinearColumna(new int[]{0,0,1,2,1,2,2,0,2,2,2,2});
+    jt.setFormatoColumna(8, "---9");
+    jt.setFormatoColumna(9, "---,--9.99");
+    jt.setFormatoColumna(10, "---,--9.999");
+    jt.setFormatoColumna(11, "#######");
     jt.setAjustarGrid(true);
     jt.getPopMenu().add(MirMvto);
     pRegAlm.setPreferredSize(new Dimension(519, 172));
@@ -355,6 +359,7 @@ public class pdregalm extends ventanaPad implements PAD
    jt.tableView.getSelectionModel().addListSelectionListener(new
         ListSelectionListener()
     {
+      @Override
       public void valueChanged(ListSelectionEvent e)
       {
 

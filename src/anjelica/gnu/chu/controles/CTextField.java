@@ -2854,11 +2854,13 @@ String procesaTecla()
    *  Emula que se conecta a una columna, aunque no se Linka a la base
    * de datos.
    * Util para realizar Querys sin unirlo a la base de datos.
+     * @param col
    */
    public void setColumnaAlias(String col)
    {
      conectaColumna=col;
    }
+  @Override
    public String getColumnaAlias()
    {
            return conectaColumna;

@@ -68,13 +68,13 @@
               </Border>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[595, 85]"/>
+              <Dimension value="[605, 85]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[595, 85]"/>
+              <Dimension value="[605, 85]"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[595, 85]"/>
+              <Dimension value="[605, 85]"/>
             </Property>
             <Property name="query" type="boolean" value="true"/>
           </Properties>
@@ -448,14 +448,14 @@
               </Border>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[610, 85]"/>
+              <Dimension value="[620, 85]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[610, 85]"/>
+              <Dimension value="[620, 85]"/>
             </Property>
             <Property name="name" type="java.lang.String" value="" noResource="true"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[610, 85]"/>
+              <Dimension value="[620, 85]"/>
             </Property>
           </Properties>
           <Constraints>
@@ -705,7 +705,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="460" y="55" width="130" height="24"/>
+                  <AbsoluteConstraints x="440" y="55" width="110" height="24"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -735,7 +735,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="537" y="30" width="60" height="22"/>
+                  <AbsoluteConstraints x="570" y="55" width="40" height="22"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -749,7 +749,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="410" y="30" width="90" height="22"/>
+                  <AbsoluteConstraints x="410" y="30" width="80" height="22"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -762,7 +762,20 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="320" y="55" width="130" height="24"/>
+                  <AbsoluteConstraints x="320" y="55" width="110" height="24"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opValorInd">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Costo Individuo"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Dialog" size="11" style="1"/>
+                </Property>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="497" y="30" width="120" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

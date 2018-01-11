@@ -591,7 +591,7 @@ public class CLHistVentas extends ventana {
         kilosL6 = new gnu.chu.controles.CLabel();
         kilosDifE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9");
         kilosL7 = new gnu.chu.controles.CLabel();
-        importeDifE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9");
+        importeDifE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--,---,--9");
         kilosL8 = new gnu.chu.controles.CLabel();
         gananciaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9");
         kilosL9 = new gnu.chu.controles.CLabel();
@@ -802,11 +802,11 @@ public class CLHistVentas extends ventana {
         kilosL7.setText("Dif. Imp.");
         kilosL7.setOpaque(true);
         Pacum.add(kilosL7);
-        kilosL7.setBounds(473, 0, 65, 15);
+        kilosL7.setBounds(473, 0, 70, 15);
 
         importeDifE.setEditable(false);
         Pacum.add(importeDifE);
-        importeDifE.setBounds(473, 20, 65, 17);
+        importeDifE.setBounds(473, 20, 70, 17);
 
         kilosL8.setBackground(new java.awt.Color(255, 200, 0));
         kilosL8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -835,11 +835,11 @@ public class CLHistVentas extends ventana {
         kilosL10.setText("Dif.Gana");
         kilosL10.setOpaque(true);
         Pacum.add(kilosL10);
-        kilosL10.setBounds(540, 0, 60, 15);
+        kilosL10.setBounds(545, 0, 60, 15);
 
         gananciaDifE.setEditable(false);
         Pacum.add(gananciaDifE);
-        gananciaDifE.setBounds(540, 20, 60, 17);
+        gananciaDifE.setBounds(545, 20, 60, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
