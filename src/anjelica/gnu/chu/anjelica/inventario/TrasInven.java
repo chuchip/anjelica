@@ -291,8 +291,9 @@ public class TrasInven extends ventanaPad implements PAD {
             {
                 stkPart.regeneraStock(dtBloq, proArtcon,
                         opInsAllAlmac.isSelected()?0:alm_codiE.getValorInt(),
-                        cci_fecconE.getDate(),0,opResetear.isSelected(),opInvControl.isSelected());
+                        cci_fecconE.getDate(),0,opResetear.isSelected(),opInvControl.isSelected());             
             }
+            
             if (!opInvControl.isSelected())
                 dtBloq.executeUpdate("update almacen set alm_feulin = TO_DATE('"+cci_fecconE.getFechaDB()+"','yyyyMMdd')"+
                     (opInsAllAlmac.isSelected()?"":" where alm_codi = "+alm_codiE.getValorInt()));
@@ -326,6 +327,7 @@ public class TrasInven extends ventanaPad implements PAD {
         psDep=dtStat.getPreparedStatement("SELECT max(avc_fecalb) as avc_fecalb FROM v_albventa_detalle "+
                         " WHERE avc_depos ='D' "+
                         " and avl_fecalt < to_date('"+cci_fecconE.getText()+"','dd-MM-yyyy')"+
+                        " and avp_canti>0"+
                         " and pro_codi =  ?"+
                         " and avp_ejelot= ?"+
                         " and avp_serlot= ? "+
@@ -376,6 +378,8 @@ public class TrasInven extends ventanaPad implements PAD {
             psDep.setInt(5, dtCon1.getInt("prp_indi"));
             rsDep = psDep.executeQuery();
             rsDep.next();
+            if (rsDep.getDate("avc_fecalb")==null)
+                continue; // No hay albaran deposito 
             psDepAbo.setDate(1,rsDep.getDate("avc_fecalb"));
             psDepAbo.setInt(2, dtCon1.getInt("pro_codi"));
             psDepAbo.setInt(3, dtCon1.getInt("prp_ano"));
@@ -507,8 +511,7 @@ public class TrasInven extends ventanaPad implements PAD {
                         " en camara "+dtCon1.getString("cam_codi",true)+")");
                     return false;
                 }
-                s =
-                        "select  cci_codi,pro_codi,cam_codi from v_coninvent as l "
+                s =   "select  cci_codi,pro_codi,cam_codi from v_coninvent as l "
                         + " where emp_codi = " + emp_codiE.getValorInt()
                         + (opInsAllAlmac.isSelected()?"":" and alm_codi = "+alm_codiE.getValorInt())
                         + " and lci_peso <> 0 "
