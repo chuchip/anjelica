@@ -77,8 +77,11 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
@@ -88,6 +91,7 @@ import javax.swing.event.ListSelectionListener;
 
 public class MantDesp extends ventanaPad implements PAD
 {   
+    Date fechaCaduc;
     String crotal;
     int tidCodAnt=0;
     ArrayList<Integer> dtFinAnt=new ArrayList();
@@ -235,7 +239,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2017-05-11" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2018-06-01" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -382,7 +386,40 @@ public class MantDesp extends ventanaPad implements PAD
         activar(false);
     }
 
-    void activarEventos() {
+    void activarEventos() 
+    {
+        deo_feccadE.addFocusListener(new FocusAdapter()
+        {
+            @Override
+             public void focusLost(FocusEvent e) {
+                 if (deo_feccadE.hasCambio() && nav.pulsado==navegador.ADDNEW)
+                 {
+                     try {
+                         deo_feccadE.resetCambio();
+                         deo_fecproE.setDate(Formatear.sumaDiasDate(deo_feccadE.getDate(), -30));
+                         deo_fecsacE.setDate(Formatear.sumaDiasDate(deo_feccadE.getDate(), -32));
+                     } catch (ParseException ex) {
+                         Error("ERROR AL poner fechas produccion",ex);
+                     }
+                 }
+             }
+             
+        });
+        BRestFec.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try
+                {
+                    deo_feccadE.setDate(deo_fecaorE.getDate());
+                    deo_fecproE.setDate(deo_feprorE.getDate());
+                    deo_fecsacE.setDate(deo_fesaorE.getDate());
+                } catch (ParseException ex)
+                {
+                   Error("ERROR AL resturar fechas caducidad,produccion",ex);
+                }
+            }
+        });
         BForzarProd.addActionListener(new ActionListener()
         {
             @Override
@@ -1081,13 +1118,22 @@ public class MantDesp extends ventanaPad implements PAD
         if (deo_feccadE.isNull())
         {
             if (utdesp.feccadE != null)
+            {
                 deo_feccadE.setText(utdesp.feccadE);
+                deo_feccadE.resetCambio();
+            }
         }
      
         if (deo_fecproE.isNull())
         {
             if (utdesp.getFechaProduccion() != null)
                 deo_fecproE.setDate(utdesp.getFechaProduccion());
+        }
+        if (nav.pulsado==navegador.ADDNEW && Formatear.comparaFechas(deo_fecproE.getDate(),Formatear.getDateAct()) > 0)
+        {
+            msgBox("Fecha Produccion NO puede ser superior a la actual");
+            deo_fecproE.requestFocus();
+            return false;
         }
         if (deo_fecsacE.isNull())
         {
@@ -1102,15 +1148,25 @@ public class MantDesp extends ventanaPad implements PAD
             return false;
         }
         
-        if (Formatear.comparaFechas(deo_feccadE.getDate(), deo_fecproE.getDate()) < 7)
+//        if (Formatear.comparaFechas(deo_feccadE.getDate(), deo_fecproE.getDate()) < 1)
+//        {
+//            mensajeErr("Fecha Despiece debe ser superior en más de siete dias a la producion");
+//            deo_feccadE.requestFocusLater();
+//            return false;
+//        }
+      
+        if (!deo_fecsacE.isNull() )
         {
-            mensajeErr("Fecha Despiece debe ser superior en más de siete dias a la producion");
-            deo_feccadE.requestFocusLater();
-            return false;
+            if (Formatear.comparaFechas(deo_fecsacE.getDate(), deo_fecproE.getDate())>0)
+            {
+                msgBox("Fecha Sacrificio NO puede ser superior a la de produccion");
+                deo_fecsacE.requestFocus();
+                return false;
+            }
         }
         if (Formatear.comparaFechas(deo_fecproE.getDate(),deo_fecsacE.getDate() ) < 0)
         {
-            mensajeErr("Fecha Produccion NO puede ser inferior a Sacrificio");
+            msgBox("Fecha Produccion NO puede ser inferior a Sacrificio");
             deo_fecsacE.requestFocusLater();
             return false;
         }
@@ -1231,6 +1287,9 @@ public class MantDesp extends ventanaPad implements PAD
                 return;
             if (!genDatEtiq())
                 return;
+            deo_fecaorE.setDate(utdesp.getFechaProduccion());
+            deo_fesaorE.setDate(utdesp.getFecSacrif());
+            deo_feprorE.setDate(utdesp.getFechaProduccion());
             if (!checkCab())
                 return;
             resetCambioLineaCab();
@@ -1327,6 +1386,7 @@ public class MantDesp extends ventanaPad implements PAD
             }
             activar(false, 1);
             Pcabe.setEnabled(false);
+            POtros.setEnabled(false);
             Plotgen.setEnabled(true);
             //    opMantLote.setEnabled(true);
             if (!opSimular.isSelected())
@@ -1422,6 +1482,7 @@ public class MantDesp extends ventanaPad implements PAD
     public void PADQuery() {
         mensajeErr("");
         Pcabe.setEnabled(true);
+        POtros.setEnabled(true);
         Plotgen.setEnabled(true);
 //    Ptotal.setEnabled(true);
         usu_nombE.setEnabled(true);
@@ -1617,8 +1678,7 @@ public class MantDesp extends ventanaPad implements PAD
         try {
             
             if (hisRowid>0)
-            {
-                 
+            {                 
                 int ret=mensajes.mensajeYesNo("Esta viendo el historico del despiece."+
                     " Si edita este despiece volvera al estado anterior. ¿ Seguro que desea continuar ? ", this);
                 if (ret!=mensajes.YES)
@@ -1710,6 +1770,7 @@ public class MantDesp extends ventanaPad implements PAD
             activar(true, navegador.EDIT);
 
             pro_codiE.resetCambio();
+            deo_feccadE.resetCambio();
             proCodTD = 1;
             opMantFecha.setSelected(false);
             Baceptar.setEnabled(true);
@@ -1873,6 +1934,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_numdesE.getValorInt()==0?deo_codiE.getValorInt():deo_numdesE.getValorInt());
            
             actualCabDesp();
+//            actFechaStock();
             ctUp.commit();
             resetBloqueo(dtAdd, TABLA_BLOCK,
                 eje_numeE.getValorInt()
@@ -1931,6 +1993,11 @@ public class MantDesp extends ventanaPad implements PAD
             tid_codiE.setDeoCodi(null);
             
             Pcabe.resetTexto();
+            deo_feccadE.resetTexto();
+            deo_fecproE.resetTexto();
+            deo_fecsacE.resetTexto();
+            deo_feccadE.resetCambio();
+           
             pro_codiE.resetCambio();
             deo_fechaE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
             usu_nombE.setText(EU.usuario);
@@ -2202,6 +2269,7 @@ public class MantDesp extends ventanaPad implements PAD
             mensaje("Insertando Datos .. Espere, por favor");
             ordenarLineasCab();
             actualCabDesp(); // Actualizo Cabecera Despiece
+//            actFechaStock();
             ctUp.commit();
             resetBloqueo(dtAdd, TABLA_BLOCK, eje_numeE.getValorInt()
                 + "|" + deo_codiE.getValorInt());
@@ -2598,13 +2666,17 @@ public class MantDesp extends ventanaPad implements PAD
                 jtCab.setEnabled(enab);
                 Baceptar.setEnabled(enab);
                 deo_codiE.setEnabled(enab);
-                usu_nombE.setEnabled(enab);                
+                usu_nombE.setEnabled(enab);                               
             case navegador.ADDNEW:
 //               deo_numdesE.setEnabled(enab);
+               BRestFec.setEnabled(enab);     
+               deo_fecsacE.setEnabled(enab);     
+               deo_fecproE.setEnabled(enab);    
                deo_selogeE.setEnabled(enab);
                deo_nulogeE.setEnabled(enab);
 //        deo_blockE.setEnabled(enab);
             case navegador.EDIT:
+                deo_feccadE.setEnabled(enab);                  
                 cli_codiE.setEnabled(enab);
                 deo_almoriE.setEnabled(enab);
                 deo_almdesE.setEnabled(enab);
@@ -2621,6 +2693,7 @@ public class MantDesp extends ventanaPad implements PAD
                 Plotgen.setEnabled(enab);
                 cargaPSC.setEnabled(enab);
                 Pcabe.setEnabled(enab);
+                POtros.setEnabled(enab);
                 deo_lotnueE.setEnabled(false);
                 Plotgen.setEnabled(enab);
                 tid_codiE.setEnabled(enab);
@@ -2747,6 +2820,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_fechaE.setDate(dtStat.getDate("deo_fecha"));
                 deo_desnueE.setSelected(dtStat.getString("deo_desnue", true).equals("S"));
                 deo_feccadE.setText(dtStat.getFecha("deo_feccad", "dd-MM-yyyy"));
+                deo_feccadE.resetCambio();
                 deo_fecproE.setDate(dtStat.getDate("deo_fecpro"));
                 deo_fecsacE.setDate(dtStat.getDate("deo_fecsac"));
                 prv_codiE.setText(dtStat.getString("prv_codi"), true);
@@ -3178,12 +3252,14 @@ public class MantDesp extends ventanaPad implements PAD
             if (def_numpieE.getValorDec()==0)
             {
                mensajeErr("Numero de Piezas deberia ser 1");
+               def_numpieE.setValorDec(1);
                return JTLIN_UNID;
             }
             
             if (def_numpieE.getValorDec()>1 && !P_ADMIN)
             {
                msgBox("Numero de Piezas deberia ser 1");
+               def_numpieE.setValorDec(1);
                return JTLIN_UNID;
             }   
             if (def_prcostE.getValorDec() < 0)
@@ -3264,8 +3340,25 @@ public class MantDesp extends ventanaPad implements PAD
             {
                 def_feccadE.setText(deo_feccadE.getText());
                 jtLin.setValor(deo_feccadE.getText(), linea, 5);
-                mensajeErr("Fecha Caducidad NO valida");
-                return 0;
+                msgBox("Fecha Caducidad NO valida");
+                return JTLIN_FECCAD;
+            }
+            
+            if (Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<=0)
+            {
+                msgBox("Fecha Caducidad  debe ser superior a la del despiece");
+                return JTLIN_FECCAD;
+            }
+            if (nav.pulsado==navegador.ADDNEW && Formatear.comparaFechas(def_feccadE.getDate(),Formatear.getDateAct() )<=0)
+            {
+                msgBox("Fecha Caducidad  debe ser superior a la actual");
+                return JTLIN_FECCAD;
+            }
+            if (Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<=10)
+            {
+                int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en diez dias a la del despiece. Continuar?");
+                if (ret!=mensajes.YES)
+                     return JTLIN_FECCAD;
             }
             if (pro_codlE.hasCambio() || def_kilosE.hasCambio() || def_numpieE.hasCambio() ||  def_feccadE.hasCambio() && pro_codlE.isNull() == false)
             {
@@ -3462,6 +3555,8 @@ public class MantDesp extends ventanaPad implements PAD
             jtLin.setValor("" + nInd, linea, 6);
             jtLin.setValor("" + nOrd, linea, 7);
             ctUp.commit();
+            deo_fecproE.setEnabled(false);
+            deo_fecsacE.setEnabled(false);
         } catch (Exception ex)
         {
             Error("Error al Guardar Datos Despiece", ex);
@@ -3788,7 +3883,30 @@ public class MantDesp extends ventanaPad implements PAD
 //                + " deo_codi: " + deo_codiE.getValorInt() + "\n" + k.getMessage());
 //        }
     }
-
+    
+//    /**
+//     * Actualiza las fechas de produccion y sacrificio en stock-partidas.
+//     * @throws SQLException 
+//     */
+//    void actFechaStock() throws SQLException,ParseException
+//    {
+//       actFechaStock(dtAdd,deo_fecproE.getDate(),deo_fecsacE.getDate(),eje_numeE.getValorInt(),deo_codiE.getValorInt(),EU.em_cod);
+//    }
+//    public static void actFechaStock(DatosTabla dt,Date fecProd, Date fecSacr,int ejeNume,int deoCodi,int empCodi) throws SQLException,ParseException
+//    {
+//       String s="update stockpart set stp_fecpro='"+Formatear.getFechaDB(fecProd)+"'"+
+//         " , stp_fecsac="+(fecSacr==null?"null ":"'"+Formatear.getFechaDB(fecSacr)+ "'")+
+//         " where exists (select * from v_despfin as d where d.pro_codi = stockpart.pro_codi"+
+//         " and d.pro_lote=stockpart.pro_nupar"+
+//         " and d.pro_numind=stockpart.pro_numind"+
+//         " and d.def_serlot=stockpart.pro_serie"+
+//         " and d.def_ejelot=stockpart.eje_nume"+
+//         " and d.eje_nume="+ejeNume+
+//         " and deo_codi="+deoCodi+
+//         "and d.emp_codi="+empCodi+
+//         ")";
+//         dt.executeUpdate(s);
+//    }        
     /**
      * Actualiza cabecera de despiece
      * @throws SQLException
@@ -4173,10 +4291,6 @@ public class MantDesp extends ventanaPad implements PAD
         deo_numdesE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
         cLabel1 = new gnu.chu.controles.CLabel();
         deo_fechaE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
-        cLabel11 = new gnu.chu.controles.CLabel();
-        deo_almoriE = new gnu.chu.controles.CLinkBox();
-        cLabel12 = new gnu.chu.controles.CLabel();
-        deo_almdesE = new gnu.chu.controles.CLinkBox();
         Plotgen = new gnu.chu.controles.CPanel();
         cLabel2 = new gnu.chu.controles.CLabel();
         deo_lotnueE = new gnu.chu.controles.CComboBox();
@@ -4197,16 +4311,12 @@ public class MantDesp extends ventanaPad implements PAD
         BsaltaCab = new gnu.chu.controles.CButton();
         usu_nombE = new gnu.chu.controles.CTextField();
         cLabel9 = new gnu.chu.controles.CLabel();
-        opMantFecha = new gnu.chu.controles.CCheckBox();
         cLabel10 = new gnu.chu.controles.CLabel();
-        cLabel7 = new gnu.chu.controles.CLabel();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
-        opSimular = new gnu.chu.controles.CCheckBox("0","-1");
         cLabel22 = new gnu.chu.controles.CLabel();
-        deo_incvalE = new gnu.chu.controles.CComboBox();
-        BForzarProd = new gnu.chu.controles.CButton(Iconos.getImageIcon("insertar"));
         cLabel21 = new gnu.chu.controles.CLabel();
         deo_fecsacE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        BRestFec = new gnu.chu.controles.CButton(Iconos.getImageIcon("data-undo"));
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
@@ -4437,6 +4547,23 @@ public class MantDesp extends ventanaPad implements PAD
                 BvalDesp = new gnu.chu.controles.CButton(Iconos.getImageIcon("precio"));
                 Phist = new gnu.chu.controles.CPanel();
                 jtHist = new gnu.chu.controles.Cgrid(4);
+                POtros = new gnu.chu.controles.CPanel();
+                cLabel11 = new gnu.chu.controles.CLabel();
+                deo_almoriE = new gnu.chu.controles.CLinkBox();
+                cLabel12 = new gnu.chu.controles.CLabel();
+                deo_almdesE = new gnu.chu.controles.CLinkBox();
+                cLabel7 = new gnu.chu.controles.CLabel();
+                deo_incvalE = new gnu.chu.controles.CComboBox();
+                BForzarProd = new gnu.chu.controles.CButton(Iconos.getImageIcon("insertar"));
+                opSimular = new gnu.chu.controles.CCheckBox("0","-1");
+                opMantFecha = new gnu.chu.controles.CCheckBox();
+                cPanel1 = new gnu.chu.controles.CPanel();
+                cLabel23 = new gnu.chu.controles.CLabel();
+                deo_feprorE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+                cLabel24 = new gnu.chu.controles.CLabel();
+                deo_fecaorE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+                cLabel25 = new gnu.chu.controles.CLabel();
+                deo_fesaorE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
                 Ptotal1 = new gnu.chu.controles.CPanel();
                 BcopLin = new gnu.chu.controles.CButton("F5",Iconos.getImageIcon("fill"));
                 cLabel16 = new gnu.chu.controles.CLabel();
@@ -4520,9 +4647,10 @@ public class MantDesp extends ventanaPad implements PAD
                 Pprinc.setLayout(new java.awt.GridBagLayout());
 
                 Pcabe.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-                Pcabe.setMaximumSize(new java.awt.Dimension(600, 110));
-                Pcabe.setMinimumSize(new java.awt.Dimension(600, 110));
-                Pcabe.setPreferredSize(new java.awt.Dimension(600, 110));
+                Pcabe.setMaximumSize(new java.awt.Dimension(690, 90));
+                Pcabe.setMinimumSize(new java.awt.Dimension(690, 90));
+                Pcabe.setPreferredSize(new java.awt.Dimension(690, 90));
+                Pcabe.setQuery(true);
                 Pcabe.setLayout(null);
 
                 eje_numeL.setText("Ejercicio");
@@ -4543,9 +4671,9 @@ public class MantDesp extends ventanaPad implements PAD
 
                 deo_numdesL.setText("Grupo ");
                 Pcabe.add(deo_numdesL);
-                deo_numdesL.setBounds(570, 22, 37, 17);
+                deo_numdesL.setBounds(570, 2, 37, 17);
                 Pcabe.add(deo_numdesE);
-                deo_numdesE.setBounds(610, 22, 48, 17);
+                deo_numdesE.setBounds(610, 2, 48, 17);
 
                 cLabel1.setText("Fecha");
                 Pcabe.add(cLabel1);
@@ -4554,26 +4682,6 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_fechaE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_fechaE);
                 deo_fechaE.setBounds(250, 2, 70, 17);
-
-                cLabel11.setText("Alm. Orig");
-                Pcabe.add(cLabel11);
-                cLabel11.setBounds(0, 22, 51, 17);
-
-                deo_almoriE.setToolTipText("Almacen Origen");
-                deo_almoriE.setAncTexto(30);
-                deo_almoriE.setFormato(Types.DECIMAL,"##9");
-                Pcabe.add(deo_almoriE);
-                deo_almoriE.setBounds(60, 22, 214, 17);
-
-                cLabel12.setText("Alm. Dest");
-                Pcabe.add(cLabel12);
-                cLabel12.setBounds(280, 22, 53, 17);
-
-                deo_almdesE.setToolTipText("Almacen Destino");
-                deo_almdesE.setAncTexto(30);
-                deo_almoriE.setFormato(Types.DECIMAL,"##9");
-                Pcabe.add(deo_almdesE);
-                deo_almdesE.setBounds(350, 22, 214, 17);
 
                 Plotgen.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
                 Plotgen.setLayout(null);
@@ -4624,38 +4732,40 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_desnueE.setBounds(410, 2, 100, 17);
 
                 Pcabe.add(Plotgen);
-                Plotgen.setBounds(0, 42, 520, 23);
+                Plotgen.setBounds(2, 22, 520, 23);
 
                 cLabel3.setText("Estado");
                 Pcabe.add(cLabel3);
-                cLabel3.setBounds(530, 45, 37, 15);
+                cLabel3.setBounds(530, 22, 37, 15);
 
                 deo_blockE.setEnabled(false);
                 deoBlockE_addItem(deo_blockE);
                 Pcabe.add(deo_blockE);
-                deo_blockE.setBounds(570, 45, 90, 17);
+                deo_blockE.setBounds(570, 22, 90, 17);
                 Pcabe.add(prv_codiE);
-                prv_codiE.setBounds(70, 70, 320, 17);
+                prv_codiE.setBounds(70, 48, 320, 17);
 
+                deo_fecproE.setDependePadre(false);
                 deo_fecproE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_fecproE);
-                deo_fecproE.setBounds(465, 70, 70, 17);
+                deo_fecproE.setBounds(470, 48, 70, 17);
 
                 cLabel5.setText("Fec.Produc.");
                 Pcabe.add(cLabel5);
-                cLabel5.setBounds(395, 70, 70, 17);
+                cLabel5.setBounds(400, 48, 70, 17);
 
-                cLabel6.setText("Fec. Cad.");
+                cLabel6.setText("Fec. Caduc.");
                 Pcabe.add(cLabel6);
-                cLabel6.setBounds(540, 70, 55, 17);
+                cLabel6.setBounds(400, 70, 70, 17);
 
+                deo_feccadE.setDependePadre(false);
                 deo_feccadE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_feccadE);
-                deo_feccadE.setBounds(595, 70, 70, 17);
+                deo_feccadE.setBounds(470, 70, 70, 17);
 
                 BsaltaCab.setText("cButton1");
                 Pcabe.add(BsaltaCab);
-                BsaltaCab.setBounds(660, 75, 1, 1);
+                BsaltaCab.setBounds(660, 50, 1, 1);
 
                 usu_nombE.setEnabled(false);
                 Pcabe.add(usu_nombE);
@@ -4665,55 +4775,33 @@ public class MantDesp extends ventanaPad implements PAD
                 Pcabe.add(cLabel9);
                 cLabel9.setBounds(330, 2, 50, 17);
 
-                opMantFecha.setText("MF");
-                opMantFecha.setToolTipText("Mantener Fecha Despiece en Mvtos");
-                Pcabe.add(opMantFecha);
-                opMantFecha.setBounds(630, 2, 40, 17);
-
                 cLabel10.setText("Proveedor");
                 Pcabe.add(cLabel10);
-                cLabel10.setBounds(1, 70, 70, 15);
-
-                cLabel7.setText("Produc.");
-                Pcabe.add(cLabel7);
-                cLabel7.setBounds(400, 90, 50, 15);
+                cLabel10.setBounds(10, 48, 70, 15);
                 Pcabe.add(cli_codiE);
-                cli_codiE.setBounds(60, 90, 330, 17);
-
-                opSimular.setText("Simular");
-                opSimular.setToolTipText("Simula despiece");
-                Pcabe.add(opSimular);
-                opSimular.setBounds(550, 0, 80, 17);
+                cli_codiE.setBounds(60, 67, 330, 17);
 
                 cLabel22.setText("Cliente");
                 Pcabe.add(cLabel22);
-                cLabel22.setBounds(10, 90, 50, 15);
-
-                deo_incvalE.addItem("No","N");
-                deo_incvalE.addItem("Si","S");
-                Pcabe.add(deo_incvalE);
-                deo_incvalE.setBounds(450, 90, 60, 17);
-
-                BForzarProd.setToolTipText("Forzar Todos individuos a Produccion");
-                Pcabe.add(BForzarProd);
-                BForzarProd.setBounds(510, 90, 24, 18);
+                cLabel22.setBounds(10, 67, 50, 15);
 
                 cLabel21.setText("Fec. Sacr.");
                 Pcabe.add(cLabel21);
-                cLabel21.setBounds(540, 90, 55, 17);
+                cLabel21.setBounds(550, 48, 55, 17);
 
+                deo_fecsacE.setDependePadre(false);
                 deo_fecsacE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_fecsacE);
-                deo_fecsacE.setBounds(595, 90, 70, 17);
+                deo_fecsacE.setBounds(610, 48, 70, 17);
 
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 0;
-                gridBagConstraints.gridwidth = 2;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
-                Pprinc.add(Pcabe, gridBagConstraints);
+                BRestFec.setToolTipText("Restaurar fechas Produccion y Caducidad");
+                BRestFec.setDependePadre(false);
+                BRestFec.setFocusable(false);
+                Pcabe.add(BRestFec);
+                BRestFec.setBounds(550, 68, 40, 20);
+                BRestFec.getAccessibleContext().setAccessibleDescription("Restaurar Fecha Caducidad");
+
+                Pprinc.add(Pcabe, new java.awt.GridBagConstraints());
 
                 Ppie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
                 Ppie.setMaximumSize(new java.awt.Dimension(559, 26));
@@ -4866,7 +4954,7 @@ public class MantDesp extends ventanaPad implements PAD
                     );
                     jtLinLayout.setVerticalGroup(
                         jtLinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 188, Short.MAX_VALUE)
+                        .addGap(0, 198, Short.MAX_VALUE)
                     );
 
                     gridBagConstraints = new java.awt.GridBagConstraints();
@@ -4896,7 +4984,7 @@ public class MantDesp extends ventanaPad implements PAD
                 );
                 jtCabLayout.setVerticalGroup(
                     jtCabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 188, Short.MAX_VALUE)
+                    .addGap(0, 198, Short.MAX_VALUE)
                 );
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
@@ -4921,7 +5009,7 @@ public class MantDesp extends ventanaPad implements PAD
                 );
                 jtDespLayout.setVerticalGroup(
                     jtDespLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 189, Short.MAX_VALUE)
+                    .addGap(0, 199, Short.MAX_VALUE)
                 );
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
@@ -5013,12 +5101,95 @@ public class MantDesp extends ventanaPad implements PAD
                 );
                 jtHistLayout.setVerticalGroup(
                     jtHistLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 408, Short.MAX_VALUE)
+                    .addGap(0, 428, Short.MAX_VALUE)
                 );
 
                 Phist.add(jtHist, java.awt.BorderLayout.CENTER);
 
                 Ptabpan.addTab("Historico", Phist);
+
+                POtros.setLayout(null);
+
+                cLabel11.setText("Alm. Orig");
+                POtros.add(cLabel11);
+                cLabel11.setBounds(10, 10, 51, 17);
+
+                deo_almoriE.setToolTipText("Almacen Origen");
+                deo_almoriE.setAncTexto(30);
+                deo_almoriE.setFormato(Types.DECIMAL,"##9");
+                POtros.add(deo_almoriE);
+                deo_almoriE.setBounds(70, 10, 214, 17);
+
+                cLabel12.setText("Alm. Dest");
+                POtros.add(cLabel12);
+                cLabel12.setBounds(290, 10, 53, 17);
+
+                deo_almdesE.setToolTipText("Almacen Destino");
+                deo_almdesE.setAncTexto(30);
+                deo_almoriE.setFormato(Types.DECIMAL,"##9");
+                POtros.add(deo_almdesE);
+                deo_almdesE.setBounds(360, 10, 214, 17);
+
+                cLabel7.setText("Produc.");
+                POtros.add(cLabel7);
+                cLabel7.setBounds(10, 40, 50, 15);
+
+                deo_incvalE.addItem("No","N");
+                deo_incvalE.addItem("Si","S");
+                POtros.add(deo_incvalE);
+                deo_incvalE.setBounds(60, 40, 60, 17);
+
+                BForzarProd.setToolTipText("Forzar Todos individuos a Produccion");
+                POtros.add(BForzarProd);
+                BForzarProd.setBounds(130, 40, 24, 18);
+
+                opSimular.setText("Simular");
+                opSimular.setToolTipText("Simula despiece");
+                POtros.add(opSimular);
+                opSimular.setBounds(170, 40, 80, 17);
+
+                opMantFecha.setText("MF");
+                opMantFecha.setToolTipText("Mantener Fecha Despiece en Mvtos");
+                POtros.add(opMantFecha);
+                opMantFecha.setBounds(250, 40, 40, 17);
+
+                cPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Fechas Originales"));
+                cPanel1.setLayout(null);
+
+                cLabel23.setText("Produccion");
+                cPanel1.add(cLabel23);
+                cLabel23.setBounds(10, 20, 80, 20);
+
+                deo_feprorE.setDependePadre(false);
+                deo_feprorE.setEnabled(false);
+                deo_feprorE.setPreferredSize(new java.awt.Dimension(10, 18));
+                cPanel1.add(deo_feprorE);
+                deo_feprorE.setBounds(80, 20, 70, 17);
+
+                cLabel24.setText("Caducidad");
+                cPanel1.add(cLabel24);
+                cLabel24.setBounds(200, 20, 70, 17);
+
+                deo_fecaorE.setDependePadre(false);
+                deo_fecaorE.setEnabled(false);
+                deo_fecaorE.setPreferredSize(new java.awt.Dimension(10, 18));
+                cPanel1.add(deo_fecaorE);
+                deo_fecaorE.setBounds(270, 20, 70, 17);
+
+                cLabel25.setText("Sacrificio");
+                cPanel1.add(cLabel25);
+                cLabel25.setBounds(360, 20, 55, 17);
+
+                deo_fesaorE.setDependePadre(false);
+                deo_fesaorE.setEnabled(false);
+                deo_fesaorE.setPreferredSize(new java.awt.Dimension(10, 18));
+                cPanel1.add(deo_fesaorE);
+                deo_fesaorE.setBounds(420, 20, 70, 17);
+
+                POtros.add(cPanel1);
+                cPanel1.setBounds(10, 70, 550, 50);
+
+                Ptabpan.addTab("Varios", POtros);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -5203,6 +5374,7 @@ public class MantDesp extends ventanaPad implements PAD
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton BForzarProd;
+    private gnu.chu.controles.CButton BRestFec;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CButton BcopLin;
@@ -5215,6 +5387,7 @@ public class MantDesp extends ventanaPad implements PAD
     private javax.swing.JMenuItem MFechaLin;
     private javax.swing.JMenuItem MVerMvtCab;
     private javax.swing.JMenuItem MVerMvtLin;
+    private gnu.chu.controles.CPanel POtros;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Pgrid;
     private gnu.chu.controles.CPanel Phist;
@@ -5239,12 +5412,16 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel cLabel20;
     private gnu.chu.controles.CLabel cLabel21;
     private gnu.chu.controles.CLabel cLabel22;
+    private gnu.chu.controles.CLabel cLabel23;
+    private gnu.chu.controles.CLabel cLabel24;
+    private gnu.chu.controles.CLabel cLabel25;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CLabel cLabel9;
+    private gnu.chu.controles.CPanel cPanel1;
     private gnu.chu.controles.CCheckBox cargaPSC;
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CTextField def_feccadE;
@@ -5266,10 +5443,13 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CCheckBox deo_desnueE;
     private gnu.chu.controles.CTextField deo_ejelotE;
     private gnu.chu.controles.CTextField deo_ejlogeE;
+    private gnu.chu.controles.CTextField deo_fecaorE;
     private gnu.chu.controles.CTextField deo_feccadE;
     private gnu.chu.controles.CTextField deo_fechaE;
     private gnu.chu.controles.CTextField deo_fecproE;
     private gnu.chu.controles.CTextField deo_fecsacE;
+    private gnu.chu.controles.CTextField deo_feprorE;
+    private gnu.chu.controles.CTextField deo_fesaorE;
     private gnu.chu.controles.CComboBox deo_incvalE;
     private gnu.chu.controles.CTextField deo_kilosE;
     private gnu.chu.controles.CComboBox deo_lotnueE;
