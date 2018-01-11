@@ -17,13 +17,14 @@ import java.text.ParseException;
 
 public class traspcont extends ventana
 {
-  final int JT_EMP=1;
+  
   final int JT_EJER=0;
+  final int JT_EMP=1;
   final int JT_SERIE=2;
   final int JT_NUFRA=3;
-  final int JT_SELEC=9;
   final int JT_CLIEN=5;
   final int  JT_IMPOR=7;
+  final int JT_SELEC=9;
   vlike lkCli= new vlike();
   String FINLINEA;
   JFileChooser ficeleE;
@@ -193,6 +194,7 @@ public class traspcont extends ventana
     BinsFra.setVerifyInputWhenFocusTarget(true);
     opIncTras.setText("Inc. Fras. ya Traspasadas");
 //    opIncTras.setSelected(true);
+    numAsientoE.setValorInt(1);
     opIncTras.setBounds(new Rectangle(491, 151, 196, 18));
     this.getContentPane().add(statusBar,  BorderLayout.SOUTH);
     this.getContentPane().add(Pprinc, BorderLayout.CENTER);
@@ -238,6 +240,7 @@ public class traspcont extends ventana
   {
     Baceptar.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Baceptar_actionPerformed();
@@ -355,7 +358,7 @@ public class traspcont extends ventana
       int nRow = jtFra.getRowCount();
       for (int n = 0; n < nRow; n++)
       {
-        if (!jtFra.getValBoolean(n, 8))
+        if (!jtFra.getValBoolean(n, JT_SELEC))
           continue;
         s = "UPDATE v_facvec SET fvc_trasp = 0 " +
             " WHERE fvc_ano = " + jtFra.getValorInt(n, JT_EJER) +
