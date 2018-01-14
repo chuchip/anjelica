@@ -159,7 +159,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2017-08-27" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2018-01-11" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM v_articulo where pro_activ != 0 "+
                 " ORDER BY pro_codi";
 
@@ -579,7 +579,7 @@ public class MantArticulos extends ventanaPad  implements PAD
       mensaje("Error en Criterios de busqueda (Panel Inicio)");
       return;
     }
-      if ((c=Pfamil.getErrorConf())!=null)
+    if ((c=Pfamil.getErrorConf())!=null)
     {
       c.requestFocus();
       mensaje("Error en Criterios de busqueda (Panel parametros)");
@@ -899,13 +899,13 @@ public class MantArticulos extends ventanaPad  implements PAD
       mensajeErr("Familia NO es valida");
       return false;
     }
-    if (pro_diacomE.getValorInt()==0)
+    if (pro_diacomE.getValorInt()==0 && pro_tiplotE.getValor().equals("V") )
     {
       mensajeErr("Introduzca Dias de Consumo (Caducidad fresco)");
       pro_diacomE.requestFocus();
       return false;
     }
-    if (pro_cadcongE.getValorInt()==0)
+    if (pro_cadcongE.getValorInt()==0 && pro_tiplotE.getValor().equals("V"))
     {
       mensajeErr("Introduzca Meses Dias de Consumo Congelado");
       pro_cadcongE.requestFocus();

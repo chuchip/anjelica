@@ -90,8 +90,13 @@ import javax.swing.event.ListSelectionListener;
 
 
 public class MantDesp extends ventanaPad implements PAD
-{   
-    Date fechaCaduc;
+{       
+    Date ultFecCaduc;
+    Date deoFecpro;
+    Date deoFecSacr;
+    int tipoEtiqueta=0;
+    int etiquetaInterior;
+//    Date fechaCaduc;
     String crotal;
     int tidCodAnt=0;
     ArrayList<Integer> dtFinAnt=new ArrayList();
@@ -170,9 +175,9 @@ public class MantDesp extends ventanaPad implements PAD
     String s; 
     int nIndDes = 0;
     int nLiCab = 0;
-    JMenuItem ImprEtiqMI = new JMenuItem("Imprimir");
+  //  JMenuItem ImprEtiqMI = new JMenuItem("Imprimir");
     private int proCodeti;
-    private char ultAcion = 'N';
+    private int ultCodigoEtiqueta = 0;
     boolean swPrimeraLinea = false;
     private int hisRowid=0;
     /** Creates new form MantDesp */
@@ -239,7 +244,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2018-06-01" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2018-01-12" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -311,6 +316,7 @@ public class MantDesp extends ventanaPad implements PAD
 
     @Override
     public void iniciarVentana() throws Exception {
+        etiquetaInterior=etiqueta.getCodigoEtiqInterior(EU);
         cli_codiE.setColumnaAlias("cli_codi");
         deo_desnueE.setEnabled(false);
         LoginDB.iniciarLKEmpresa(EU, dtStat);
@@ -380,40 +386,31 @@ public class MantDesp extends ventanaPad implements PAD
         verDatos(dtCons);
 //    this.setEnabled(true);
         mensajeErr("");
-        eti_codiE.setDatos(etiqueta.getReports(dtStat, EU.em_cod,0));    
-        eti_codiE.addItem("Defecto","0");
-        eti_codiE.setValor("0");
+        etiqueta.getReports(dtStat, EU.em_cod,0);
+        if (!dtStat.getNOREG())
+        {
+            do 
+            {
+               Bimpeti.addMenu(dtStat.getString("eti_nomb"), dtStat.getString("eti_codi")); 
+            } while (dtStat.next());
+        }        
+        
         activar(false);
     }
 
     void activarEventos() 
     {
-        deo_feccadE.addFocusListener(new FocusAdapter()
-        {
-            @Override
-             public void focusLost(FocusEvent e) {
-                 if (deo_feccadE.hasCambio() && nav.pulsado==navegador.ADDNEW)
-                 {
-                     try {
-                         deo_feccadE.resetCambio();
-                         deo_fecproE.setDate(Formatear.sumaDiasDate(deo_feccadE.getDate(), -30));
-                         deo_fecsacE.setDate(Formatear.sumaDiasDate(deo_feccadE.getDate(), -32));
-                     } catch (ParseException ex) {
-                         Error("ERROR AL poner fechas produccion",ex);
-                     }
-                 }
-             }
-             
-        });
+      
+        
         BRestFec.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try
                 {
-                    deo_feccadE.setDate(deo_fecaorE.getDate());
-                    deo_fecproE.setDate(deo_feprorE.getDate());
-                    deo_fecsacE.setDate(deo_fesaorE.getDate());
+                    ultFecCaduc=deo_feccadE.getDate();
+                    def_feccadE.setDate(ultFecCaduc);
+                    jtLin.setValor(ultFecCaduc,JTLIN_FECCAD);
                 } catch (ParseException ex)
                 {
                    Error("ERROR AL resturar fechas caducidad,produccion",ex);
@@ -692,41 +689,54 @@ public class MantDesp extends ventanaPad implements PAD
 //    });
         Bimpeti.addActionListener(new ActionListener()
         {
-
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                if (!e.getActionCommand().startsWith("I") && !nav.isEdicion())
-                {
-                    msgBox("NO esta en modo EDICION. Solo se pueden imprimir etiquetas internas");
-                    return;
-                }
-                if (jtLin.getValorInt(JTLIN_NUMIND) == 0 && !opSimular.isSelected() && !e.getActionCommand().startsWith("I"))
+               
+                if (jtLin.getValorInt(jtLin.getSelectedRowDisab(),JTLIN_NUMIND) == 0)
                 {
                     mensajeErr("Linea sin individuo. Imposible imprimir");
                     return;
+                }             
+                if (Bimpeti.getValor(e.getActionCommand()).equals("U"))
+                    tipoEtiqueta=ultCodigoEtiqueta;
+                else
+                    tipoEtiqueta=Integer.parseInt( Bimpeti.getValor(e.getActionCommand()));
+                ultCodigoEtiqueta = tipoEtiqueta;
+                try {
+                    if (!jtLin.isEnabled())
+                        pro_codlE.getNombArt(jtLin.getValString(jtLin.getSelectedRowDisab(),JTLIN_PROCODI));                
+                    ponFechas(pro_codlE.getDiasCaducidad(),jtLin.getValDate(jtLin.getSelectedRowDisab(),JTLIN_FECCAD));
+                }catch (ParseException | SQLException ex ) {
+                       Error("Error al poner fechas produccion",ex);
+                       return;
                 }
-                if (e.getActionCommand().startsWith("I"))
-                {
-                    ultAcion = 'I';
-                }
-                if (ultAcion != 'I')
-                {
-                    jtLin.ponValores(jtLin.getSelectedRow());
-                }
-                if (e.getActionCommand().startsWith("P"))
-                {
-                    ultAcion = 'P';
-                }
-                if (e.getActionCommand().startsWith("N"))
-                {
-                    ultAcion = 'N';
-                }
-                imprEtiq(jtLin.getSelectedRow(),
-                    ultAcion);
-                jtLin.requestFocusLater(jtLin.getSelectedRow(), jtLin.getSelectedColumn());
+                imprEtiq(jtLin.isEnabled()?jtLin.getSelectedRow():
+                    jtLin.getSelectedRowDisab(), tipoEtiqueta);
+                if (jtLin.isEnabled())
+                    jtLin.requestFocusLater(jtLin.getSelectedRowDisab(), jtLin.getSelectedColumn());
             }
         });
+        BImpEtiInt.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {                
+                try {
+                   if (!jtLin.isEnabled())
+                        pro_codlE.getNombArt(jtLin.getValString(jtLin.getSelectedRowDisab(),JTLIN_PROCODI));      
+                   ponFechas(pro_codlE.getDiasCaducidad(),jtLin.getValDate(jtLin.getSelectedRowDisab(),JTLIN_FECCAD));
+                } catch (ParseException | SQLException ex) {
+                       Error("Error al poner fechas produccion",ex);
+                       return;
+                }
+
+                if (jtLin.getValorInt(jtLin.getSelectedRowDisab(),JTLIN_NUMIND) == 0)
+                {
+                    mensajeErr("Linea sin individuo. Imposible imprimir");
+                    return;
+                }     
+                imprEtiqInt();
+            }
+         });
         jtHist.tableView.getSelectionModel().addListSelectionListener(new
         ListSelectionListener()
         {
@@ -1119,7 +1129,8 @@ public class MantDesp extends ventanaPad implements PAD
         {
             if (utdesp.feccadE != null)
             {
-                deo_feccadE.setText(utdesp.feccadE);
+                deo_feccadE.setDate(utdesp.getFechaCaducidad());
+                ultFecCaduc=utdesp.getFechaCaducidad();
                 deo_feccadE.resetCambio();
             }
         }
@@ -1287,11 +1298,10 @@ public class MantDesp extends ventanaPad implements PAD
                 return;
             if (!genDatEtiq())
                 return;
-            deo_fecaorE.setDate(utdesp.getFechaProduccion());
-            deo_fesaorE.setDate(utdesp.getFecSacrif());
-            deo_feprorE.setDate(utdesp.getFechaProduccion());
+           
             if (!checkCab())
                 return;
+      
             resetCambioLineaCab();
             if (nav.pulsado==navegador.ADDNEW && deo_lotnueE.getValorInt()!=FORZAR_LOTE)
             {
@@ -1787,6 +1797,7 @@ public class MantDesp extends ventanaPad implements PAD
             tid_codiE.setDeoCodi(deo_codiE.getText()); // Para q no se controle a si mismo.
             proCodTD = jtCab.getValorInt(0, JTCAB_PROCODI);
             genDatEtiq();
+            ultFecCaduc=jtLin.getValDate(jtLin.getRowCount()-1,JTLIN_FECCAD);
             proCodiB = 0;
             boolean isBlock = deo_blockE.getValor().equals("S");
             if (isBlock && ActualStkPart.isBloqueado(dtStat, jtCab.getValorInt(0, JTCAB_PROCODI), jtCab.getValorInt(0, JTCAB_EJELOT),
@@ -1983,6 +1994,7 @@ public class MantDesp extends ventanaPad implements PAD
             swErrCab=false;
             proCodiB = 0;
             utdesp.feccadE = null;
+            ultCodigoEtiqueta=0;
             swMantLote = false;
             mensaje("Introducir Nuevo Despiece");
             nav.pulsado = navegador.ADDNEW;
@@ -2241,9 +2253,9 @@ public class MantDesp extends ventanaPad implements PAD
             kgDifE.getValorDec(),
             utdesp.getFecDesp(),
             utdesp.getFechaProduccion(),
-            utdesp.getFecCaduc(),
+            utdesp.getFechaCaducidad(),
             utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
-            utdesp.getFecCaduc(),deo_numdesE.getValorInt() );
+            utdesp.getFechaCaducidad(),deo_numdesE.getValorInt() );
     }
 
     @Override
@@ -2669,14 +2681,13 @@ public class MantDesp extends ventanaPad implements PAD
                 usu_nombE.setEnabled(enab);                               
             case navegador.ADDNEW:
 //               deo_numdesE.setEnabled(enab);
-               BRestFec.setEnabled(enab);     
-               deo_fecsacE.setEnabled(enab);     
-               deo_fecproE.setEnabled(enab);    
+//               deo_fecsacE.setEnabled(enab);     
+//               deo_fecproE.setEnabled(enab);    
                deo_selogeE.setEnabled(enab);
                deo_nulogeE.setEnabled(enab);
 //        deo_blockE.setEnabled(enab);
             case navegador.EDIT:
-                deo_feccadE.setEnabled(enab);                  
+//                deo_feccadE.setEnabled(enab);                  
                 cli_codiE.setEnabled(enab);
                 deo_almoriE.setEnabled(enab);
                 deo_almdesE.setEnabled(enab);
@@ -3206,6 +3217,12 @@ public class MantDesp extends ventanaPad implements PAD
             {
                 guardaDesOrig(linea);
             }
+            if (linea==0)
+            {
+                deo_feccadE.resetTexto();
+                deo_fecsacE.resetTexto();
+                deo_fecproE.resetTexto();
+            }
             deo_almoriE.setEnabled(false);
         } catch (Exception k)
         {
@@ -3243,7 +3260,10 @@ public class MantDesp extends ventanaPad implements PAD
         {
             if (def_kilosE.getValorDec() == 0)
                 return -1; // Si NO tengo Kilos paso de todo
-            
+            if ( (!pro_codlE.hasCambio() && !def_kilosE.hasCambio() && !def_numpieE.hasCambio()
+                &&  !def_feccadE.hasCambio()) || pro_codlE.isNull())
+                  return -1; // No Hubo cambios
+           
             if (def_kilosE.getValorDec() < 0)
             {
                 mensajeErr("Kilos no pueden estar en negativo");
@@ -3335,7 +3355,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_fechaE.requestFocus();
                 return 0;
             }
-
+            
             if (def_feccadE.isNull() || def_feccadE.getError())
             {
                 def_feccadE.setText(deo_feccadE.getText());
@@ -3343,25 +3363,24 @@ public class MantDesp extends ventanaPad implements PAD
                 msgBox("Fecha Caducidad NO valida");
                 return JTLIN_FECCAD;
             }
-            
-            if (Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<=0)
+            if (Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<=0 && pro_codlE.getDiasCaducidad()>0)
             {
                 msgBox("Fecha Caducidad  debe ser superior a la del despiece");
                 return JTLIN_FECCAD;
             }
-            if (nav.pulsado==navegador.ADDNEW && Formatear.comparaFechas(def_feccadE.getDate(),Formatear.getDateAct() )<=0)
+            if (nav.pulsado==navegador.ADDNEW && Formatear.comparaFechas(def_feccadE.getDate(),Formatear.getDateAct() )<=0 && pro_codlE.getDiasCaducidad()>0)
             {
                 msgBox("Fecha Caducidad  debe ser superior a la actual");
                 return JTLIN_FECCAD;
             }
-            if (Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<=10)
+            if (Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<= 10 && pro_codlE.getDiasCaducidad()>0)
             {
-                int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en diez dias a la del despiece. Continuar?");
+                int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en 10 dias a la del despiece. Continuar?");
                 if (ret!=mensajes.YES)
                      return JTLIN_FECCAD;
             }
-            if (pro_codlE.hasCambio() || def_kilosE.hasCambio() || def_numpieE.hasCambio() ||  def_feccadE.hasCambio() && pro_codlE.isNull() == false)
-            {
+//            if (pro_codlE.hasCambio() || def_kilosE.hasCambio() || def_numpieE.hasCambio() ||  def_feccadE.hasCambio() && pro_codlE.isNull() == false)
+//            {
                 if (jtLin.getValorInt(linea,JTLIN_NUMIND)!=0)
                 {
                         if (!ActualStkPart.checkStock(dtStat, pro_codlE.getCopiaInt(),
@@ -3393,21 +3412,21 @@ public class MantDesp extends ventanaPad implements PAD
                 
                 }
                 mensajeErr("");
+                ultFecCaduc=def_feccadE.getDate();
+                ponFechas(pro_codlE.getDiasCaducidad(),ultFecCaduc);
                 if (!opSimular.isSelected())
                 {
                     guardaLineaFin(linea);
                     mensajeErr("Linea " + linea + "... Guardada");
                 }
+            
+               
                 if (opImpEt.isSelected() && pro_codlE.isVendible() && pro_codlE.getEtiCodi() >= 0
                     && jtLin.isEnabled()) // && pro_codlE.getConStkInd())
-                {
-                    if (ultAcion == 'I')
-                    {
-                        ultAcion = 'N';
-                    }
-                    imprEtiq(linea, ultAcion);
+                {                                        
+                    imprEtiq(linea, ultCodigoEtiqueta);
                 }
-            }
+//            }
         } catch (Exception ex)
         {
             Error("Error al Cambiar Linea de Grid", ex);
@@ -3467,7 +3486,6 @@ public class MantDesp extends ventanaPad implements PAD
             else
                deo_desnueE.setSelected(false);
         }
-
         return true;
     }
 
@@ -3555,8 +3573,7 @@ public class MantDesp extends ventanaPad implements PAD
             jtLin.setValor("" + nInd, linea, 6);
             jtLin.setValor("" + nOrd, linea, 7);
             ctUp.commit();
-            deo_fecproE.setEnabled(false);
-            deo_fecsacE.setEnabled(false);
+           
         } catch (Exception ex)
         {
             Error("Error al Guardar Datos Despiece", ex);
@@ -3571,14 +3588,9 @@ public class MantDesp extends ventanaPad implements PAD
      * @param personal Cambia el nombre de la empresa por el que se elija.
      * Tipo etiqueta:
      */
-    void imprEtiq(int linea, char personal) {
+    void imprEtiq(int linea, int tipoEtiq) {
         try
-        {
-            if (personal == 'I')
-            {
-                imprEtiqInt();
-                return;
-            }
+        {          
             String nombArt = pro_codlE.getNombArt(pro_codlE.getText());
             if (pro_codlE.getLikeProd().isNull("pro_codeti"))
                 proCodeti = 0;
@@ -3588,7 +3600,7 @@ public class MantDesp extends ventanaPad implements PAD
 //     debug("Nombre Articulo: "+nombArt);
             utdesp.iniciar(dtAdd, eje_numeE.getValorInt(), EU.em_cod, deo_almdesE.getValorInt(),
                 deo_almoriE.getValorInt(), EU);
-            if (personal == 'P' && cli_codiE.getValorInt()!=0)
+            if (tipoEtiq !=0 && cli_codiE.getValorInt()!=0)
                 utdesp.setDirEmpresa(cli_codiE.getTextNomb());
             else
                 utdesp.setDirEmpresa(null);
@@ -3602,18 +3614,18 @@ public class MantDesp extends ventanaPad implements PAD
             {
                 msgBox(utdesp.getMsgAviso());
             }
-            utdesp.imprEtiq(eti_codiE.getValorInt() == 0 ? proCodeti : eti_codiE.getValorInt(), 
+            utdesp.imprEtiq(tipoEtiqueta == 0 ? proCodeti : tipoEtiqueta, 
                 dtStat, pro_codlE.getValorInt(), nombArt,
                 "D",
                 opSimular.isSelected() ? jtCab.getValorInt(0, JTCAB_NUMLOT) : deo_nulogeE.getValorInt(),
                 opSimular.isSelected() ? jtCab.getValString(0, JTCAB_EJELOT) : deo_ejlogeE.getText(),
                 opSimular.isSelected() ? jtCab.getValString(0, JTCAB_SERLOT) : deo_selogeE.getText(),
                 opSimular.isSelected() ? jtCab.getValorInt(0, JTCAB_NUMIND) : jtLin.getValorInt(linea, JTLIN_NUMIND),
-                def_kilosE.getValorDec(),
-                deo_fechaE.getDate(),
-                deo_fecproE.isNull() ? deo_fechaE.getDate() : deo_fecproE.getDate(),
+                jtLin.getValorDec(linea, JTLIN_KILOS),
+                deoFecpro,
+                deoFecpro==null ? deo_fechaE.getDate() : deoFecpro,
                 jtLin.getValDate(linea, JTLIN_FECCAD),
-                deo_fecsacE.getDate(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
+                deoFecSacr,//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
                 jtLin.getValDate(linea, JTLIN_FECCAD),deo_numdesE.getValorInt());
             mensajeErr("Etiqueta ... Listada");
         } catch (Throwable ex)
@@ -3660,7 +3672,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_feccadE.getDate(), 
                 deo_fecsacE.getDate() );
             etiq.setNumCopias(numCopiasE.getValorInt());
-            etiq.listar(etiqueta.ETIQINT);
+            etiq.listar(etiquetaInterior);
         
 //     this.setEnabled(true);
             mensaje("");
@@ -3793,16 +3805,41 @@ public class MantDesp extends ventanaPad implements PAD
                 crotal=MantAlbComCarne.getRandomCrotal(crotal,EU);              
            }
            utdesp.setNumCrot(crotal);
-           s="update stockpart set stp_nucrot='"+crotal+"' where pro_nupar="+ numLot+
+           s="update stockpart set stp_nucrot='"+crotal+"'"+
+               (Formatear.comparaFechas(def_feccadE.getDate(),deo_feccadE.getDate())==0?"": ",stp_fecpro='"+Formatear.getFechaDB(deoFecpro)+"'")+
+               (deoFecSacr==null || Formatear.comparaFechas(def_feccadE.getDate(),deo_feccadE.getDate())==0?"":", stp_fecsac = '"+Formatear.getFechaDB(deoFecSacr)+"'")+
+               " where pro_nupar="+ numLot+
                 " and pro_serie='"+serLot+"' "+
                 " and eje_nume="+ejeLot+
                 " and pro_codi = "+proCodi+
                 " and pro_numind="+nInd;
            dtAdd.executeUpdate(s);
+
         }
         return ret;
     }
-
+    /**
+     * Establece las fechas de produccion y sacrificio, segun la fecha caducidad y dias 
+     * @param diasCad
+     * @param fecCaduc
+     * @throws ParseException 
+     */
+    void ponFechas(int diasCad,Date fecCaduc) throws ParseException
+    {
+        if (Formatear.comparaFechas(fecCaduc, utdesp.getFechaCaducidad())==0)
+        {
+            deoFecpro=utdesp.getFechaProduccion();
+            deoFecSacr=utdesp.getFecSacrif();
+        }
+        else
+        {
+            deoFecpro= Formatear.sumaDiasDate(fecCaduc,diasCad*-1);
+            if (deo_fecsacE.isNull())
+                deoFecSacr=null;
+            else
+                deoFecSacr=Formatear.sumaDiasDate(fecCaduc,(diasCad+2)*-1);
+        }
+   }
     /**
      * Establece el numero de lote cuando hay varios productos
      * Pongo como numero de Lote el del Grupo con la serie "G"
@@ -4280,6 +4317,7 @@ public class MantDesp extends ventanaPad implements PAD
         MFechaLin = new javax.swing.JMenuItem();
         MVerMvtCab = new javax.swing.JMenuItem();
         MVerMvtLin = new javax.swing.JMenuItem();
+        ImprEtiqMI = new javax.swing.JMenuItem("Imprimir");
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         eje_numeL = new gnu.chu.controles.CLabel();
@@ -4323,10 +4361,10 @@ public class MantDesp extends ventanaPad implements PAD
         Bimpeti = new gnu.chu.controles.CButtonMenu();
         cLabel8 = new gnu.chu.controles.CLabel();
         numCopiasE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
-        eti_codiE = new gnu.chu.controles.CComboBox();
         opVerGrupo = new gnu.chu.controles.CCheckBox("0","-1");
         opVerAgrup = new gnu.chu.controles.CCheckBox();
         opRepet = new gnu.chu.controles.CCheckBox();
+        BImpEtiInt = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
         Ptabpan = new gnu.chu.controles.CTabbedPane();
         Pgrid = new gnu.chu.controles.CPanel();
         jtLin = new gnu.chu.controles.CGridEditable(11)
@@ -4342,8 +4380,8 @@ public class MantDesp extends ventanaPad implements PAD
                 String txt = jtLin.getValString(JTLIN_FECCAD).trim().replace(def_feccadE.getSepFecha(), ' ').trim();
                 if (txt.equals(""))
                 {
-                    jtLin.setValor(deo_feccadE.getText(),JTLIN_FECCAD);
-                    def_feccadE.setText(deo_feccadE.getText());
+                    jtLin.setValor(ultFecCaduc,JTLIN_FECCAD);
+                    def_feccadE.setDate(ultFecCaduc);
                 }
                 try {
                     actKilos(JTLIN_GRID);
@@ -4355,8 +4393,8 @@ public class MantDesp extends ventanaPad implements PAD
             @Override
             public boolean afterInsertaLinea(boolean ins)
             {
-                jtLin.setValor(deo_feccadE.getText(), 5);
-                def_feccadE.setText(deo_feccadE.getText());
+                jtLin.setValor(ultFecCaduc, JTLIN_FECCAD);
+                def_feccadE.setDate(ultFecCaduc);
                 return true;
             }
             @Override
@@ -4557,13 +4595,6 @@ public class MantDesp extends ventanaPad implements PAD
                 BForzarProd = new gnu.chu.controles.CButton(Iconos.getImageIcon("insertar"));
                 opSimular = new gnu.chu.controles.CCheckBox("0","-1");
                 opMantFecha = new gnu.chu.controles.CCheckBox();
-                cPanel1 = new gnu.chu.controles.CPanel();
-                cLabel23 = new gnu.chu.controles.CLabel();
-                deo_feprorE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
-                cLabel24 = new gnu.chu.controles.CLabel();
-                deo_fecaorE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
-                cLabel25 = new gnu.chu.controles.CLabel();
-                deo_fesaorE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
                 Ptotal1 = new gnu.chu.controles.CPanel();
                 BcopLin = new gnu.chu.controles.CButton("F5",Iconos.getImageIcon("fill"));
                 cLabel16 = new gnu.chu.controles.CLabel();
@@ -4638,6 +4669,12 @@ public class MantDesp extends ventanaPad implements PAD
                 MVerMvtLin.addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
                         MVerMvtLinActionPerformed(evt);
+                    }
+                });
+
+                ImprEtiqMI.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        ImprEtiqMIActionPerformed(evt);
                     }
                 });
 
@@ -4745,6 +4782,7 @@ public class MantDesp extends ventanaPad implements PAD
                 Pcabe.add(prv_codiE);
                 prv_codiE.setBounds(70, 48, 320, 17);
 
+                deo_fecproE.setEditable(false);
                 deo_fecproE.setDependePadre(false);
                 deo_fecproE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_fecproE);
@@ -4758,6 +4796,7 @@ public class MantDesp extends ventanaPad implements PAD
                 Pcabe.add(cLabel6);
                 cLabel6.setBounds(400, 70, 70, 17);
 
+                deo_feccadE.setEditable(false);
                 deo_feccadE.setDependePadre(false);
                 deo_feccadE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_feccadE);
@@ -4789,12 +4828,13 @@ public class MantDesp extends ventanaPad implements PAD
                 Pcabe.add(cLabel21);
                 cLabel21.setBounds(550, 48, 55, 17);
 
+                deo_fecsacE.setEditable(false);
                 deo_fecsacE.setDependePadre(false);
                 deo_fecsacE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_fecsacE);
                 deo_fecsacE.setBounds(610, 48, 70, 17);
 
-                BRestFec.setToolTipText("Restaurar fechas Produccion y Caducidad");
+                BRestFec.setToolTipText("Restaurar fecha Caducidad");
                 BRestFec.setDependePadre(false);
                 BRestFec.setFocusable(false);
                 Pcabe.add(BRestFec);
@@ -4817,20 +4857,16 @@ public class MantDesp extends ventanaPad implements PAD
                 Ppie.add(Bcancelar);
                 Bcancelar.setBounds(590, 1, 100, 24);
 
-                Bimpeti.addMenu("Normal");
-                Bimpeti.addMenu("Personal");
-                Bimpeti.addMenu("Interior");
                 Bimpeti.setText("(F9) Impr.Etiq");
+                Bimpeti.addMenu("-----","U");
                 Ppie.add(Bimpeti);
-                Bimpeti.setBounds(80, 0, 110, 17);
+                Bimpeti.setBounds(170, 0, 110, 17);
 
                 cLabel8.setText("Copias ");
                 Ppie.add(cLabel8);
                 cLabel8.setBounds(0, 0, 45, 17);
                 Ppie.add(numCopiasE);
-                numCopiasE.setBounds(45, 0, 30, 17);
-                Ppie.add(eti_codiE);
-                eti_codiE.setBounds(200, 0, 80, 17);
+                numCopiasE.setBounds(45, 0, 25, 17);
 
                 opVerGrupo.setText("Ver Grupo");
                 opVerGrupo.setToolTipText("Ver grupo de despiece");
@@ -4847,6 +4883,10 @@ public class MantDesp extends ventanaPad implements PAD
                 opRepet.setToolTipText("Repetir Despiece en Alta");
                 Ppie.add(opRepet);
                 opRepet.setBounds(285, 2, 40, 17);
+
+                BImpEtiInt.setText("Etiq. Inter.");
+                Ppie.add(BImpEtiInt);
+                BImpEtiInt.setBounds(78, 0, 90, 18);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -4922,361 +4962,308 @@ public class MantDesp extends ventanaPad implements PAD
                     JMenu etiqueta = new JMenu("Etiqueta");
 
                     etiqueta.add(ImprEtiqMI);
-                    ImprEtiqMI.addActionListener(new ActionListener()
-                        {
-                            public void actionPerformed(ActionEvent e)
-                            {
-                                if (jtLin.isVacio())
-                                return;
-                                try {
-                                    // opSimular.setSelected(true);
-                                    genDatEtiq();
-                                    pro_codlE.setValorInt(jtLin.getValorInt(jtLin.getSelectedRowDisab(),JTLIN_PROCODI));
-                                    def_kilosE.setValorDec(jtLin.getValorDec(jtLin.getSelectedRowDisab(),JTLIN_KILOS));
-                                    imprEtiq(jtLin.getSelectedRowDisab(),
-                                        ultAcion);
-                                } catch (Exception ex) {
-                                    Error("Error al imprimir etiqueta",ex);
-                                }
-                            }
-                        });
-                        jtLin.getPopMenu().add(etiqueta);
-                        if (P_ADMIN)
-                        jtLin.getPopMenu().add(MFechaLin);
-                        jtLin.getPopMenu().add(MVerMvtLin);
-                    } catch (Exception k) { Error("Error al configurar grid lineas",k);}
 
-                    javax.swing.GroupLayout jtLinLayout = new javax.swing.GroupLayout(jtLin);
-                    jtLin.setLayout(jtLinLayout);
-                    jtLinLayout.setHorizontalGroup(
-                        jtLinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 683, Short.MAX_VALUE)
-                    );
-                    jtLinLayout.setVerticalGroup(
-                        jtLinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 198, Short.MAX_VALUE)
-                    );
+                    jtLin.getPopMenu().add(etiqueta);
+                    if (P_ADMIN)
+                    jtLin.getPopMenu().add(MFechaLin);
+                    jtLin.getPopMenu().add(MVerMvtLin);
+                } catch (Exception k) { Error("Error al configurar grid lineas",k);}
 
-                    gridBagConstraints = new java.awt.GridBagConstraints();
-                    gridBagConstraints.gridx = 0;
-                    gridBagConstraints.gridy = 3;
-                    gridBagConstraints.gridwidth = 3;
-                    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-                    gridBagConstraints.weightx = 1.0;
-                    gridBagConstraints.weighty = 2.0;
-                    gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
-                    Pgrid.add(jtLin, gridBagConstraints);
-
-                    jtCab.setCampos(vc1);
-                } catch (Exception k){Error("Error al inicializa jtCab",k); }
-                jtCab.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-                jtCab.setMaximumSize(new java.awt.Dimension(449, 109));
-                jtCab.setMinimumSize(new java.awt.Dimension(449, 109));
-                if (P_ADMIN)
-                jtCab.getPopMenu().add(MFechaCab);
-                jtCab.getPopMenu().add(MVerMvtCab);
-
-                javax.swing.GroupLayout jtCabLayout = new javax.swing.GroupLayout(jtCab);
-                jtCab.setLayout(jtCabLayout);
-                jtCabLayout.setHorizontalGroup(
-                    jtCabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 682, Short.MAX_VALUE)
+                javax.swing.GroupLayout jtLinLayout = new javax.swing.GroupLayout(jtLin);
+                jtLin.setLayout(jtLinLayout);
+                jtLinLayout.setHorizontalGroup(
+                    jtLinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGap(0, 683, Short.MAX_VALUE)
                 );
-                jtCabLayout.setVerticalGroup(
-                    jtCabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                jtLinLayout.setVerticalGroup(
+                    jtLinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGap(0, 198, Short.MAX_VALUE)
                 );
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 2.0;
-                gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
-                Pgrid.add(jtCab, gridBagConstraints);
-
-                jtDesp.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-                jtDesp.setBuscarVisible(false);
-                jtDesp.setMaximumSize(new java.awt.Dimension(150, 50));
-                jtDesp.setMinimumSize(new java.awt.Dimension(150, 50));
-
-                javax.swing.GroupLayout jtDespLayout = new javax.swing.GroupLayout(jtDesp);
-                jtDesp.setLayout(jtDespLayout);
-                jtDespLayout.setHorizontalGroup(
-                    jtDespLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 148, Short.MAX_VALUE)
-                );
-                jtDespLayout.setVerticalGroup(
-                    jtDespLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 199, Short.MAX_VALUE)
-                );
-
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-                gridBagConstraints.weighty = 1.0;
-                Pgrid.add(jtDesp, gridBagConstraints);
-
-                Ptipdes.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-                Ptipdes.setMaximumSize(new java.awt.Dimension(669, 23));
-                Ptipdes.setMinimumSize(new java.awt.Dimension(669, 23));
-                Ptipdes.setPreferredSize(new java.awt.Dimension(669, 23));
-                Ptipdes.setLayout(null);
-
-                tid_codiE.setAncTexto(40);
-                Ptipdes.add(tid_codiE);
-                tid_codiE.setBounds(30, 2, 310, 20);
-
-                cLabel13.setText("Tipo");
-                Ptipdes.add(cLabel13);
-                cLabel13.setBounds(0, 2, 40, 17);
-
-                cLabel14.setText("Unid");
-                Ptipdes.add(cLabel14);
-                cLabel14.setBounds(350, 1, 40, 18);
-
-                cLabel15.setText("Kilos");
-                Ptipdes.add(cLabel15);
-                cLabel15.setBounds(430, 1, 27, 18);
-
-                kgOrigE.setEnabled(false);
-                Ptipdes.add(kgOrigE);
-                kgOrigE.setBounds(470, 1, 60, 18);
-
-                uniOrigE.setEnabled(false);
-                Ptipdes.add(uniOrigE);
-                uniOrigE.setBounds(390, 1, 30, 18);
-
-                BsalLin.setText("cButton1");
-                Ptipdes.add(BsalLin);
-                BsalLin.setBounds(647, 2, 2, 2);
-
-                cLabel19.setText("Importe");
-                Ptipdes.add(cLabel19);
-                cLabel19.setBounds(530, 1, 44, 17);
-
-                impOrigE.setEnabled(false);
-                Ptipdes.add(impOrigE);
-                impOrigE.setBounds(580, 1, 70, 17);
-
-                BvalDesp.setToolTipText("Generar Auto Despiece");
-                BvalDesp.setFocusable(false);
-                Ptipdes.add(BvalDesp);
-                BvalDesp.setBounds(660, 1, 18, 18);
-                BvalDesp.getAccessibleContext().setAccessibleDescription("");
-
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 2;
+                gridBagConstraints.gridy = 3;
                 gridBagConstraints.gridwidth = 3;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
-                Pgrid.add(Ptipdes, gridBagConstraints);
-
-                Ptabpan.addTab("Principal", Pgrid);
-
-                Phist.setLayout(new java.awt.BorderLayout());
-
-                ArrayList vh=new ArrayList();
-                vh.add("Fecha/Hora");
-                vh.add("Usuario");
-                vh.add("Comentario");
-                vh.add("Id");
-                jtHist.setCabecera(vh);
-                jtHist.setAjustarGrid(true);
-                jtHist.setAlinearColumna(new int[]{1,0,0,2});
-                jtHist.setAnchoColumna(new int[]{90,120,200,40});
-                jtHist.setFormatoColumna(3, "####9");
-                jtHist.setFormatoColumna(0,"dd-MM-yyyy HH:mm");
-
-                javax.swing.GroupLayout jtHistLayout = new javax.swing.GroupLayout(jtHist);
-                jtHist.setLayout(jtHistLayout);
-                jtHistLayout.setHorizontalGroup(
-                    jtHistLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 685, Short.MAX_VALUE)
-                );
-                jtHistLayout.setVerticalGroup(
-                    jtHistLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 428, Short.MAX_VALUE)
-                );
-
-                Phist.add(jtHist, java.awt.BorderLayout.CENTER);
-
-                Ptabpan.addTab("Historico", Phist);
-
-                POtros.setLayout(null);
-
-                cLabel11.setText("Alm. Orig");
-                POtros.add(cLabel11);
-                cLabel11.setBounds(10, 10, 51, 17);
-
-                deo_almoriE.setToolTipText("Almacen Origen");
-                deo_almoriE.setAncTexto(30);
-                deo_almoriE.setFormato(Types.DECIMAL,"##9");
-                POtros.add(deo_almoriE);
-                deo_almoriE.setBounds(70, 10, 214, 17);
-
-                cLabel12.setText("Alm. Dest");
-                POtros.add(cLabel12);
-                cLabel12.setBounds(290, 10, 53, 17);
-
-                deo_almdesE.setToolTipText("Almacen Destino");
-                deo_almdesE.setAncTexto(30);
-                deo_almoriE.setFormato(Types.DECIMAL,"##9");
-                POtros.add(deo_almdesE);
-                deo_almdesE.setBounds(360, 10, 214, 17);
-
-                cLabel7.setText("Produc.");
-                POtros.add(cLabel7);
-                cLabel7.setBounds(10, 40, 50, 15);
-
-                deo_incvalE.addItem("No","N");
-                deo_incvalE.addItem("Si","S");
-                POtros.add(deo_incvalE);
-                deo_incvalE.setBounds(60, 40, 60, 17);
-
-                BForzarProd.setToolTipText("Forzar Todos individuos a Produccion");
-                POtros.add(BForzarProd);
-                BForzarProd.setBounds(130, 40, 24, 18);
-
-                opSimular.setText("Simular");
-                opSimular.setToolTipText("Simula despiece");
-                POtros.add(opSimular);
-                opSimular.setBounds(170, 40, 80, 17);
-
-                opMantFecha.setText("MF");
-                opMantFecha.setToolTipText("Mantener Fecha Despiece en Mvtos");
-                POtros.add(opMantFecha);
-                opMantFecha.setBounds(250, 40, 40, 17);
-
-                cPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Fechas Originales"));
-                cPanel1.setLayout(null);
-
-                cLabel23.setText("Produccion");
-                cPanel1.add(cLabel23);
-                cLabel23.setBounds(10, 20, 80, 20);
-
-                deo_feprorE.setDependePadre(false);
-                deo_feprorE.setEnabled(false);
-                deo_feprorE.setPreferredSize(new java.awt.Dimension(10, 18));
-                cPanel1.add(deo_feprorE);
-                deo_feprorE.setBounds(80, 20, 70, 17);
-
-                cLabel24.setText("Caducidad");
-                cPanel1.add(cLabel24);
-                cLabel24.setBounds(200, 20, 70, 17);
-
-                deo_fecaorE.setDependePadre(false);
-                deo_fecaorE.setEnabled(false);
-                deo_fecaorE.setPreferredSize(new java.awt.Dimension(10, 18));
-                cPanel1.add(deo_fecaorE);
-                deo_fecaorE.setBounds(270, 20, 70, 17);
-
-                cLabel25.setText("Sacrificio");
-                cPanel1.add(cLabel25);
-                cLabel25.setBounds(360, 20, 55, 17);
-
-                deo_fesaorE.setDependePadre(false);
-                deo_fesaorE.setEnabled(false);
-                deo_fesaorE.setPreferredSize(new java.awt.Dimension(10, 18));
-                cPanel1.add(deo_fesaorE);
-                deo_fesaorE.setBounds(420, 20, 70, 17);
-
-                POtros.add(cPanel1);
-                cPanel1.setBounds(10, 70, 550, 50);
-
-                Ptabpan.addTab("Varios", POtros);
-
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 1;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-                gridBagConstraints.weightx = 2.0;
-                gridBagConstraints.weighty = 2.0;
-                Pprinc.add(Ptabpan, gridBagConstraints);
-
-                Ptotal1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-                Ptotal1.setMaximumSize(new java.awt.Dimension(669, 22));
-                Ptotal1.setMinimumSize(new java.awt.Dimension(669, 22));
-                Ptotal1.setPreferredSize(new java.awt.Dimension(669, 23));
-                Ptotal1.setLayout(null);
-
-                BcopLin.setToolTipText("Copiar Linea Anterior");
-                Ptotal1.add(BcopLin);
-                BcopLin.setBounds(2, 2, 53, 17);
-
-                cLabel16.setText("Kilos");
-                Ptotal1.add(cLabel16);
-                cLabel16.setBounds(130, 2, 27, 17);
-
-                kgFinE.setEnabled(false);
-                Ptotal1.add(kgFinE);
-                kgFinE.setBounds(160, 2, 60, 17);
-
-                cLabel17.setText("Unid");
-                Ptotal1.add(cLabel17);
-                cLabel17.setBounds(60, 2, 30, 17);
-
-                uniFinE.setEnabled(false);
-                Ptotal1.add(uniFinE);
-                uniFinE.setBounds(90, 2, 30, 17);
-
-                cLabel18.setText("Dif Kilos");
-                Ptotal1.add(cLabel18);
-                cLabel18.setBounds(350, 2, 50, 17);
-
-                kgDifE.setEnabled(false);
-                Ptotal1.add(kgDifE);
-                kgDifE.setBounds(400, 2, 60, 17);
-
-                opImpEt.setSelected(true);
-                opImpEt.setText("Impr.Etiqueta");
-                opImpEt.setToolTipText("Carga productos de salida del tipo de despiece");
-                Ptotal1.add(opImpEt);
-                opImpEt.setBounds(570, 2, 100, 17);
-
-                BirGrid.setToolTipText("Moverse entre grids");
-                BirGrid.setActionCommand("r Grid");
-                Ptotal1.add(BirGrid);
-                BirGrid.setBounds(670, 2, 20, 17);
-
-                cLabel20.setText("Importe");
-                Ptotal1.add(cLabel20);
-                cLabel20.setBounds(230, 2, 44, 17);
-
-                impFinE.setEnabled(false);
-                Ptotal1.add(impFinE);
-                impFinE.setBounds(275, 2, 70, 17);
-
-                cargaPSC.setSelected(true);
-                cargaPSC.setText("PS");
-                cargaPSC.setToolTipText("Carga Productos Salidos Tipo Despiece");
-                Ptotal1.add(cargaPSC);
-                cargaPSC.setBounds(530, 2, 40, 17);
-
-                opAutoClas.setSelected(true);
-                opAutoClas.setText("Clasif");
-                opAutoClas.setToolTipText("Carga Productos Salidos Tipo Despiece");
-                Ptotal1.add(opAutoClas);
-                opAutoClas.setBounds(465, 2, 60, 17);
-
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.gridwidth = 2;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 2.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
-                Pprinc.add(Ptotal1, gridBagConstraints);
+                Pgrid.add(jtLin, gridBagConstraints);
 
-                getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
+                jtCab.setCampos(vc1);
+            } catch (Exception k){Error("Error al inicializa jtCab",k); }
+            jtCab.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+            jtCab.setMaximumSize(new java.awt.Dimension(449, 109));
+            jtCab.setMinimumSize(new java.awt.Dimension(449, 109));
+            if (P_ADMIN)
+            jtCab.getPopMenu().add(MFechaCab);
+            jtCab.getPopMenu().add(MVerMvtCab);
 
-                pack();
-            }// </editor-fold>//GEN-END:initComponents
+            javax.swing.GroupLayout jtCabLayout = new javax.swing.GroupLayout(jtCab);
+            jtCab.setLayout(jtCabLayout);
+            jtCabLayout.setHorizontalGroup(
+                jtCabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 682, Short.MAX_VALUE)
+            );
+            jtCabLayout.setVerticalGroup(
+                jtCabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 198, Short.MAX_VALUE)
+            );
+
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 1;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+            gridBagConstraints.weightx = 1.0;
+            gridBagConstraints.weighty = 2.0;
+            gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 0);
+            Pgrid.add(jtCab, gridBagConstraints);
+
+            jtDesp.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+            jtDesp.setBuscarVisible(false);
+            jtDesp.setMaximumSize(new java.awt.Dimension(150, 50));
+            jtDesp.setMinimumSize(new java.awt.Dimension(150, 50));
+
+            javax.swing.GroupLayout jtDespLayout = new javax.swing.GroupLayout(jtDesp);
+            jtDesp.setLayout(jtDespLayout);
+            jtDespLayout.setHorizontalGroup(
+                jtDespLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 148, Short.MAX_VALUE)
+            );
+            jtDespLayout.setVerticalGroup(
+                jtDespLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 199, Short.MAX_VALUE)
+            );
+
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.gridy = 1;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+            gridBagConstraints.weighty = 1.0;
+            Pgrid.add(jtDesp, gridBagConstraints);
+
+            Ptipdes.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+            Ptipdes.setMaximumSize(new java.awt.Dimension(669, 23));
+            Ptipdes.setMinimumSize(new java.awt.Dimension(669, 23));
+            Ptipdes.setPreferredSize(new java.awt.Dimension(669, 23));
+            Ptipdes.setLayout(null);
+
+            tid_codiE.setAncTexto(40);
+            Ptipdes.add(tid_codiE);
+            tid_codiE.setBounds(30, 2, 310, 20);
+
+            cLabel13.setText("Tipo");
+            Ptipdes.add(cLabel13);
+            cLabel13.setBounds(0, 2, 40, 17);
+
+            cLabel14.setText("Unid");
+            Ptipdes.add(cLabel14);
+            cLabel14.setBounds(350, 1, 40, 18);
+
+            cLabel15.setText("Kilos");
+            Ptipdes.add(cLabel15);
+            cLabel15.setBounds(430, 1, 27, 18);
+
+            kgOrigE.setEnabled(false);
+            Ptipdes.add(kgOrigE);
+            kgOrigE.setBounds(470, 1, 60, 18);
+
+            uniOrigE.setEnabled(false);
+            Ptipdes.add(uniOrigE);
+            uniOrigE.setBounds(390, 1, 30, 18);
+
+            BsalLin.setText("cButton1");
+            Ptipdes.add(BsalLin);
+            BsalLin.setBounds(647, 2, 2, 2);
+
+            cLabel19.setText("Importe");
+            Ptipdes.add(cLabel19);
+            cLabel19.setBounds(530, 1, 44, 17);
+
+            impOrigE.setEnabled(false);
+            Ptipdes.add(impOrigE);
+            impOrigE.setBounds(580, 1, 70, 17);
+
+            BvalDesp.setToolTipText("Generar Auto Despiece");
+            BvalDesp.setFocusable(false);
+            Ptipdes.add(BvalDesp);
+            BvalDesp.setBounds(660, 1, 18, 18);
+            BvalDesp.getAccessibleContext().setAccessibleDescription("");
+
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 2;
+            gridBagConstraints.gridwidth = 3;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints.weightx = 1.0;
+            gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
+            Pgrid.add(Ptipdes, gridBagConstraints);
+
+            Ptabpan.addTab("Principal", Pgrid);
+
+            Phist.setLayout(new java.awt.BorderLayout());
+
+            ArrayList vh=new ArrayList();
+            vh.add("Fecha/Hora");
+            vh.add("Usuario");
+            vh.add("Comentario");
+            vh.add("Id");
+            jtHist.setCabecera(vh);
+            jtHist.setAjustarGrid(true);
+            jtHist.setAlinearColumna(new int[]{1,0,0,2});
+            jtHist.setAnchoColumna(new int[]{90,120,200,40});
+            jtHist.setFormatoColumna(3, "####9");
+            jtHist.setFormatoColumna(0,"dd-MM-yyyy HH:mm");
+
+            javax.swing.GroupLayout jtHistLayout = new javax.swing.GroupLayout(jtHist);
+            jtHist.setLayout(jtHistLayout);
+            jtHistLayout.setHorizontalGroup(
+                jtHistLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 685, Short.MAX_VALUE)
+            );
+            jtHistLayout.setVerticalGroup(
+                jtHistLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 428, Short.MAX_VALUE)
+            );
+
+            Phist.add(jtHist, java.awt.BorderLayout.CENTER);
+
+            Ptabpan.addTab("Historico", Phist);
+
+            POtros.setLayout(null);
+
+            cLabel11.setText("Alm. Orig");
+            POtros.add(cLabel11);
+            cLabel11.setBounds(10, 10, 51, 17);
+
+            deo_almoriE.setToolTipText("Almacen Origen");
+            deo_almoriE.setAncTexto(30);
+            deo_almoriE.setFormato(Types.DECIMAL,"##9");
+            POtros.add(deo_almoriE);
+            deo_almoriE.setBounds(70, 10, 214, 17);
+
+            cLabel12.setText("Alm. Dest");
+            POtros.add(cLabel12);
+            cLabel12.setBounds(290, 10, 53, 17);
+
+            deo_almdesE.setToolTipText("Almacen Destino");
+            deo_almdesE.setAncTexto(30);
+            deo_almoriE.setFormato(Types.DECIMAL,"##9");
+            POtros.add(deo_almdesE);
+            deo_almdesE.setBounds(360, 10, 214, 17);
+
+            cLabel7.setText("Produc.");
+            POtros.add(cLabel7);
+            cLabel7.setBounds(10, 40, 50, 15);
+
+            deo_incvalE.addItem("No","N");
+            deo_incvalE.addItem("Si","S");
+            POtros.add(deo_incvalE);
+            deo_incvalE.setBounds(60, 40, 60, 17);
+
+            BForzarProd.setToolTipText("Forzar Todos individuos a Produccion");
+            POtros.add(BForzarProd);
+            BForzarProd.setBounds(130, 40, 24, 18);
+
+            opSimular.setText("Simular");
+            opSimular.setToolTipText("Simula despiece");
+            POtros.add(opSimular);
+            opSimular.setBounds(170, 40, 80, 17);
+
+            opMantFecha.setText("MF");
+            opMantFecha.setToolTipText("Mantener Fecha Despiece en Mvtos");
+            POtros.add(opMantFecha);
+            opMantFecha.setBounds(250, 40, 40, 17);
+
+            Ptabpan.addTab("Varios", POtros);
+
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 1;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+            gridBagConstraints.weightx = 2.0;
+            gridBagConstraints.weighty = 2.0;
+            Pprinc.add(Ptabpan, gridBagConstraints);
+
+            Ptotal1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+            Ptotal1.setMaximumSize(new java.awt.Dimension(669, 22));
+            Ptotal1.setMinimumSize(new java.awt.Dimension(669, 22));
+            Ptotal1.setPreferredSize(new java.awt.Dimension(669, 23));
+            Ptotal1.setLayout(null);
+
+            BcopLin.setToolTipText("Copiar Linea Anterior");
+            Ptotal1.add(BcopLin);
+            BcopLin.setBounds(2, 2, 53, 17);
+
+            cLabel16.setText("Kilos");
+            Ptotal1.add(cLabel16);
+            cLabel16.setBounds(130, 2, 27, 17);
+
+            kgFinE.setEnabled(false);
+            Ptotal1.add(kgFinE);
+            kgFinE.setBounds(160, 2, 60, 17);
+
+            cLabel17.setText("Unid");
+            Ptotal1.add(cLabel17);
+            cLabel17.setBounds(60, 2, 30, 17);
+
+            uniFinE.setEnabled(false);
+            Ptotal1.add(uniFinE);
+            uniFinE.setBounds(90, 2, 30, 17);
+
+            cLabel18.setText("Dif Kilos");
+            Ptotal1.add(cLabel18);
+            cLabel18.setBounds(350, 2, 50, 17);
+
+            kgDifE.setEnabled(false);
+            Ptotal1.add(kgDifE);
+            kgDifE.setBounds(400, 2, 60, 17);
+
+            opImpEt.setSelected(true);
+            opImpEt.setText("Impr.Etiqueta");
+            opImpEt.setToolTipText("Carga productos de salida del tipo de despiece");
+            Ptotal1.add(opImpEt);
+            opImpEt.setBounds(570, 2, 100, 17);
+
+            BirGrid.setToolTipText("Moverse entre grids");
+            BirGrid.setActionCommand("r Grid");
+            Ptotal1.add(BirGrid);
+            BirGrid.setBounds(670, 2, 20, 17);
+
+            cLabel20.setText("Importe");
+            Ptotal1.add(cLabel20);
+            cLabel20.setBounds(230, 2, 44, 17);
+
+            impFinE.setEnabled(false);
+            Ptotal1.add(impFinE);
+            impFinE.setBounds(275, 2, 70, 17);
+
+            cargaPSC.setSelected(true);
+            cargaPSC.setText("PS");
+            cargaPSC.setToolTipText("Carga Productos Salidos Tipo Despiece");
+            Ptotal1.add(cargaPSC);
+            cargaPSC.setBounds(530, 2, 40, 17);
+
+            opAutoClas.setSelected(true);
+            opAutoClas.setText("Clasif");
+            opAutoClas.setToolTipText("Carga Productos Salidos Tipo Despiece");
+            Ptotal1.add(opAutoClas);
+            opAutoClas.setBounds(465, 2, 60, 17);
+
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 2;
+            gridBagConstraints.gridwidth = 2;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints.weightx = 1.0;
+            gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
+            Pprinc.add(Ptotal1, gridBagConstraints);
+
+            getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
+
+            pack();
+        }// </editor-fold>//GEN-END:initComponents
 
     private void MFechaCabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MFechaCabActionPerformed
         try
@@ -5357,6 +5344,25 @@ public class MantDesp extends ventanaPad implements PAD
                 jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_NUMLOT),                
                 jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_NUMIND));
     }//GEN-LAST:event_MVerMvtCabActionPerformed
+
+    private void ImprEtiqMIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImprEtiqMIActionPerformed
+          if (jtLin.isVacio())
+            return;
+        try
+        {
+            // opSimular.setSelected(true);
+            genDatEtiq();
+            pro_codlE.setValorInt(jtLin.getValorInt(jtLin.getSelectedRowDisab(), JTLIN_PROCODI));
+            ponFechas(pro_codlE.getDiasCaducidad(),
+                jtLin.getValDate(jtLin.getSelectedRowDisab(),JTLIN_FECCAD));
+            def_kilosE.setValorDec(jtLin.getValorDec(jtLin.getSelectedRowDisab(), JTLIN_KILOS));
+            imprEtiq(jtLin.getSelectedRowDisab(),
+                ultCodigoEtiqueta);
+        } catch (Exception ex)
+        {
+            Error("Error al imprimir etiqueta", ex);
+        }
+    }//GEN-LAST:event_ImprEtiqMIActionPerformed
     void mostrarMvtos(int proCodi,int ejeNume,String serie, int lote,int numInd) 
     {
         ejecutable prog;
@@ -5374,6 +5380,7 @@ public class MantDesp extends ventanaPad implements PAD
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton BForzarProd;
+    private gnu.chu.controles.CButton BImpEtiInt;
     private gnu.chu.controles.CButton BRestFec;
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
@@ -5383,6 +5390,7 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CButton BsalLin;
     private gnu.chu.controles.CButton BsaltaCab;
     private gnu.chu.controles.CButton BvalDesp;
+    private javax.swing.JMenuItem ImprEtiqMI;
     private javax.swing.JMenuItem MFechaCab;
     private javax.swing.JMenuItem MFechaLin;
     private javax.swing.JMenuItem MVerMvtCab;
@@ -5412,16 +5420,12 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel cLabel20;
     private gnu.chu.controles.CLabel cLabel21;
     private gnu.chu.controles.CLabel cLabel22;
-    private gnu.chu.controles.CLabel cLabel23;
-    private gnu.chu.controles.CLabel cLabel24;
-    private gnu.chu.controles.CLabel cLabel25;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CLabel cLabel9;
-    private gnu.chu.controles.CPanel cPanel1;
     private gnu.chu.controles.CCheckBox cargaPSC;
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CTextField def_feccadE;
@@ -5443,13 +5447,10 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CCheckBox deo_desnueE;
     private gnu.chu.controles.CTextField deo_ejelotE;
     private gnu.chu.controles.CTextField deo_ejlogeE;
-    private gnu.chu.controles.CTextField deo_fecaorE;
     private gnu.chu.controles.CTextField deo_feccadE;
     private gnu.chu.controles.CTextField deo_fechaE;
     private gnu.chu.controles.CTextField deo_fecproE;
     private gnu.chu.controles.CTextField deo_fecsacE;
-    private gnu.chu.controles.CTextField deo_feprorE;
-    private gnu.chu.controles.CTextField deo_fesaorE;
     private gnu.chu.controles.CComboBox deo_incvalE;
     private gnu.chu.controles.CTextField deo_kilosE;
     private gnu.chu.controles.CComboBox deo_lotnueE;
@@ -5466,7 +5467,6 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel eje_numeL1;
     private gnu.chu.controles.CLabel eje_numeL2;
     private gnu.chu.controles.CLabel eje_numeL3;
-    private gnu.chu.controles.CComboBox eti_codiE;
     private gnu.chu.controles.CTextField impFinE;
     private gnu.chu.controles.CTextField impOrigE;
     private gnu.chu.controles.CGridEditable jtCab;

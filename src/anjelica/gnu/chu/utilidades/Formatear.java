@@ -5,15 +5,12 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.util.*;
 import java.text.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.internet.MimeUtility;
 
 /**

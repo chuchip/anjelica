@@ -62,7 +62,7 @@ import javax.swing.SwingConstants;
  */
 public class MantDespTactil  extends ventanaPad implements PAD
 {
-    
+    int etiquetaInterior;
     String crotal;
     int idTiempo=0;
     private final int PROCIERRE=99;
@@ -869,9 +869,9 @@ public class MantDespTactil  extends ventanaPad implements PAD
     @Override
  public void iniciarVentana() throws Exception
  {
+   etiquetaInterior=etiqueta.getCodigoEtiqInterior(EU);
    cli_codiE.iniciar(dtAux,this,vl,EU);
- 
-   jtOri.cuadrarGrid();
+    jtOri.cuadrarGrid();
    jtSal.cuadrarGrid();
    pro_kilenE.setEnabled(isEmpPlanta);
    Pcabe.setButton(KeyEvent.VK_F2,Bfincab);
@@ -1254,7 +1254,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
 //       etiq.setPrintDialog(false);
 //     else
 //       etiq.setPrintDialog(true);
-     etiq.listar(etiqueta.ETIQINT);
+     etiq.listar(etiquetaInterior);
      etiq.setTipoEtiq(dtStat, EU.em_cod, 0);
 //       mensaje("Imprimiendo etiqueta: " + n + " de " + netiintE.getValorInt());
 //     }

@@ -594,8 +594,8 @@ public class MantInvProduc extends ventanaPad implements PAD
         }
         jt.setValor(utdesp.getFecSacrif()==null?FECHANULA:
             utdesp.getFecSacrif(),linea,JT_FECSAC);
-        jt.setValor(utdesp.getFecCaduc()==null?FECHANULA:
-            utdesp.getFecCaduc(),linea,JT_FECCAD);
+        jt.setValor(utdesp.getFechaCaducidad()==null?FECHANULA:
+            utdesp.getFechaCaducidad(),linea,JT_FECCAD);
         jt.setValor(utdesp.getFechaProduccion()==null?FECHANULA:
             utdesp.getFechaProduccion(),linea,JT_FECPRO);
 

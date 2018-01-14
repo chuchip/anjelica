@@ -25,7 +25,6 @@ import gnu.chu.controles.*;
 import gnu.chu.utilidades.*;
 import java.sql.*;
 import gnu.chu.Menu.*;
-import gnu.chu.anjelica.compras.pdtaripor;
 import gnu.chu.anjelica.pad.MantTarifa;
 import gnu.chu.anjelica.pad.pdtipotar;
 import gnu.chu.interfaces.ejecutable;
@@ -407,7 +406,7 @@ public class Cldegen extends ventana
              v.add(utdesp.getFecCadPrv());
              v.add(utdesp.getFecDesp());
              if (! swCong)
-                v.add(utdesp.getFecCaduc());
+                v.add(utdesp.getFechaCaducidad());
              else
              {
                 java.util.Date fecCong=Formatear.sumaMesDate(utdesp.getFechaProduccion(),mesCadCong);

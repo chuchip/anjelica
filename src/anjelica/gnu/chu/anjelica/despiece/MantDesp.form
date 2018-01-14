@@ -180,6 +180,14 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="MVerMvtLinActionPerformed"/>
       </Events>
     </Component>
+    <Component class="javax.swing.JMenuItem" name="ImprEtiqMI">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ImprEtiqMIActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JMenuItem(&quot;Imprimir&quot;)"/>
+      </AuxValues>
+    </Component>
   </NonVisualComponents>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -514,6 +522,7 @@
             </Component>
             <Component class="gnu.chu.controles.CTextField" name="deo_fecproE">
               <Properties>
+                <Property name="editable" type="boolean" value="false"/>
                 <Property name="dependePadre" type="boolean" value="false"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[10, 18]"/>
@@ -550,6 +559,7 @@
             </Component>
             <Component class="gnu.chu.controles.CTextField" name="deo_feccadE">
               <Properties>
+                <Property name="editable" type="boolean" value="false"/>
                 <Property name="dependePadre" type="boolean" value="false"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[10, 18]"/>
@@ -633,6 +643,7 @@
             </Component>
             <Component class="gnu.chu.controles.CTextField" name="deo_fecsacE">
               <Properties>
+                <Property name="editable" type="boolean" value="false"/>
                 <Property name="dependePadre" type="boolean" value="false"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[10, 18]"/>
@@ -649,7 +660,7 @@
             </Component>
             <Component class="gnu.chu.controles.CButton" name="BRestFec">
               <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="Restaurar fechas Produccion y Caducidad"/>
+                <Property name="toolTipText" type="java.lang.String" value="Restaurar fecha Caducidad"/>
                 <Property name="dependePadre" type="boolean" value="false"/>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
@@ -719,11 +730,11 @@
                 <Property name="text" type="java.lang.String" value="(F9) Impr.Etiq"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="Bimpeti.addMenu(&quot;Normal&quot;);&#xa;Bimpeti.addMenu(&quot;Personal&quot;);&#xa;Bimpeti.addMenu(&quot;Interior&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Bimpeti.addMenu(&quot;-----&quot;,&quot;U&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="80" y="0" width="110" height="17"/>
+                  <AbsoluteConstraints x="170" y="0" width="110" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -743,14 +754,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="45" y="0" width="30" height="17"/>
-                </Constraint>
-              </Constraints>
-            </Component>
-            <Component class="gnu.chu.controles.CComboBox" name="eti_codiE">
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="200" y="0" width="80" height="17"/>
+                  <AbsoluteConstraints x="45" y="0" width="25" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -791,6 +795,19 @@
                 </Constraint>
               </Constraints>
             </Component>
+            <Component class="gnu.chu.controles.CButton" name="BImpEtiInt">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Etiq. Inter."/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CButton(Iconos.getImageIcon(&quot;print&quot;))"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="78" y="0" width="90" height="18"/>
+                </Constraint>
+              </Constraints>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="gnu.chu.controles.CTabbedPane" name="Ptabpan">
@@ -828,8 +845,8 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(11)&#xa;{&#xa;    @Override&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        proCodAnt=pro_codlE.getValorInt();&#xa;        defKilAnt=def_kilosE.getValorDec();&#xa;        pro_codlE.resetCambio();&#xa;        def_kilosE.resetCambio();&#xa;        def_feccadE.resetCambio();&#xa;        String txt = jtLin.getValString(JTLIN_FECCAD).trim().replace(def_feccadE.getSepFecha(), &apos; &apos;).trim();&#xa;        if (txt.equals(&quot;&quot;))&#xa;        {&#xa;            jtLin.setValor(deo_feccadE.getText(),JTLIN_FECCAD);&#xa;            def_feccadE.setText(deo_feccadE.getText());&#xa;        }&#xa;        try {&#xa;            actKilos(JTLIN_GRID);&#xa;        } catch (SQLException k)&#xa;        {&#xa;            Error(&quot;Error al actualizar kilos grid&quot;,k);&#xa;        }&#xa;    }&#xa;    @Override&#xa;    public boolean afterInsertaLinea(boolean ins)&#xa;    {&#xa;        jtLin.setValor(deo_feccadE.getText(), 5);&#xa;        def_feccadE.setText(deo_feccadE.getText());&#xa;        return true;&#xa;    }&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        //      System.out.println(&quot;cambiaLinea: &quot;+pro_codlE.getText()+&#xa;            //                         &quot; - &quot;+def_kilosE.getValorDec());&#xa;        return cambiaLineajtLin(row);&#xa;    }&#xa;    @Override&#xa;    public boolean deleteLinea(int row, int col)&#xa;    {&#xa;        jtLin.setValor(&quot;&quot;+proCodAnt,JTLIN_PROCODI); // Rest. El valor Antiguo&#xa;        jtLin.setValor(&quot;&quot;+defKilAnt,JTLIN_KILOS); // Rest. Kilos ANTIGUOS&#xa;        return borraLineajtLIn(row);&#xa;&#xa;    }&#xa;    @Override&#xa;    public void afterDeleteLinea()&#xa;    {&#xa;        SwingUtilities.invokeLater(new Thread()&#xa;            {&#xa;                public void run()&#xa;                {&#xa;                    try {&#xa;                        tid_codiE.setEnabled(getNuLiDes(true)==0);&#xa;                        if (AGRUPALOTE)&#xa;                        deo_lotnueE.setEnabled(tid_codiE.isEnabled());&#xa;                    } catch (SQLException k)&#xa;                    {&#xa;                        Error(&quot;Error al contar el numero de lineas finales&quot;,k);&#xa;                        return;&#xa;                    }&#xa;                }&#xa;            });&#xa;        }&#xa;        @Override&#xa;        public void cambiaColumna(int col,int colNueva,int row)&#xa;        {&#xa;            try {&#xa;                if (col == JTLIN_PROCODI)&#xa;                jtLin.setValor(pro_codlE.getNombArt(pro_codlE.getText()), row, JTLIN_PRONOMB);&#xa;            } catch (Exception k)&#xa;            {&#xa;                Error(&quot;Error al buscar Nombre Articulo&quot;,k);&#xa;            }&#xa;        }&#xa;&#xa;    }"/>
-                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="try {&#xa;ArrayList v = new ArrayList();&#xa;&#xa;   v.add(&quot;Producto&quot;); // 0&#xa;   v.add(&quot;Descripcion&quot;); // 1&#xa;   v.add(&quot;Kgs&quot;); // 2&#xa;   v.add(&quot;Unid&quot;); // 3 (Unidades Pesadas).&#xa;   v.add(&quot;Costo&quot;); // 4&#xa;   v.add(&quot;Fec.Cad&quot;); // 5&#xa;   v.add(&quot;N.Ind&quot;); // 6&#xa;   v.add(&quot;N.Lin&quot;); // 7&#xa;   v.add(&quot;U/C&quot;); // 8 Unidades por Caja&#xa;   v.add(&quot;Pr.Usu&quot;); // 9&#xa;   v.add(&quot;Fec.Mvto&quot;); // 10&#xa;   jtLin.setCabecera(v);&#xa;&#xa;   &#xa;   jtLin.setAnchoColumna(new int[]&#xa;                         {54, 220, 70, 40, 70,90, 40, 40,40,70,100});&#xa;   jtLin.setAlinearColumna(new int[]&#xa;                           {2, 0, 2, 2, 2, 1,2, 2,2,2,0});&#xa;&#xa;&#xa;   jtLin.setAjustarGrid(true);&#xa;   jtLin.setAjustarColumnas(false);&#xa;&#xa;   pro_nombE.setEnabled(false);&#xa;   if (! MODPRECIO)&#xa;     def_prcostE.setEnabled(false);&#xa;   def_numindE.setEnabled(false);&#xa;//   def_numpieE.setEnabled(false);&#xa;   def_numpieE.setValorDec(1);&#xa;   def_ordenE.setValorDec(1);&#xa;   def_ordenE.setEnabled(false);&#xa;   ArrayList v1= new ArrayList();&#xa;&#xa;   def_unicajE.setText(&quot;1&quot;);&#xa;   def_ordenE.setText(&quot;0&quot;);&#xa;   v1.add(pro_codlE.getTextField()); // 0&#xa;   v1.add(pro_nombE); // 1&#xa;   v1.add(def_kilosE); // 2&#xa;   v1.add(def_numpieE); // 3&#xa;   v1.add(def_prcostE); // 4&#xa;   v1.add(def_feccadE); // 5&#xa;   v1.add(def_numindE); // 6&#xa;   v1.add(def_ordenE); // 7&#xa;   v1.add(def_unicajE); // 8&#xa;   v1.add(def_preusuE); // 9&#xa;   v1.add(def_tiempoE); // 10&#xa;   jtLin.setCampos(v1);&#xa;   jtLin.setFormatoCampos();&#xa;   /*jtLin.setFormatoColumna(JTLIN_KILOS, &quot;--,---9.99&quot;);&#xa;   jtLin.setFormatoColumna(JTLIN_UNID, &quot;##9&quot;);&#xa;   jtLin.setFormatoColumna(JTLIN_COSTO, &quot;---9.9999&quot;);&#xa;   jtLin.setFormatoColumna(JTLIN_FECCAD, deo_feccadE.getFormato());&#xa;   jtLin.setFormatoColumna(JTLIN_NUMIND, &quot;---9&quot;);&#xa;   jtLin.setFormatoColumna(JTLIN_ORDEN, &quot;##9&quot;);&#xa;   jtLin.setFormatoColumna(JTLIN_NUMCAJ, &quot;##9&quot;);&#xa;   jtLin.setFormatoColumna(JTLIN_PREUSU, &quot;---9.9999&quot;); */&#xa;   JMenu etiqueta = new JMenu(&quot;Etiqueta&quot;);&#xa;  &#xa;   etiqueta.add(ImprEtiqMI);&#xa;   ImprEtiqMI.addActionListener(new ActionListener()&#xa;   {&#xa;        public void actionPerformed(ActionEvent e)&#xa;        {&#xa;            if (jtLin.isVacio())&#xa;                return;&#xa;            try {&#xa;               // opSimular.setSelected(true);&#xa;                genDatEtiq();&#xa;                pro_codlE.setValorInt(jtLin.getValorInt(jtLin.getSelectedRowDisab(),JTLIN_PROCODI));&#xa;                def_kilosE.setValorDec(jtLin.getValorDec(jtLin.getSelectedRowDisab(),JTLIN_KILOS));&#xa;                imprEtiq(jtLin.getSelectedRowDisab(),&#xa;                        ultAcion);&#xa;            } catch (Exception ex) {&#xa;                Error(&quot;Error al imprimir etiqueta&quot;,ex);&#xa;            }&#xa;        }&#xa;   });&#xa;   jtLin.getPopMenu().add(etiqueta);&#xa;   if (P_ADMIN)&#xa;    jtLin.getPopMenu().add(MFechaLin);&#xa;jtLin.getPopMenu().add(MVerMvtLin);&#xa;} catch (Exception k) { Error(&quot;Error al configurar grid lineas&quot;,k);}"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(11)&#xa;{&#xa;    @Override&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        proCodAnt=pro_codlE.getValorInt();&#xa;        defKilAnt=def_kilosE.getValorDec();&#xa;        pro_codlE.resetCambio();&#xa;        def_kilosE.resetCambio();&#xa;        def_feccadE.resetCambio();&#xa;        String txt = jtLin.getValString(JTLIN_FECCAD).trim().replace(def_feccadE.getSepFecha(), &apos; &apos;).trim();&#xa;        if (txt.equals(&quot;&quot;))&#xa;        {&#xa;            jtLin.setValor(ultFecCaduc,JTLIN_FECCAD);&#xa;            def_feccadE.setDate(ultFecCaduc);&#xa;        }&#xa;        try {&#xa;            actKilos(JTLIN_GRID);&#xa;        } catch (SQLException k)&#xa;        {&#xa;            Error(&quot;Error al actualizar kilos grid&quot;,k);&#xa;        }&#xa;    }&#xa;    @Override&#xa;    public boolean afterInsertaLinea(boolean ins)&#xa;    {&#xa;        jtLin.setValor(ultFecCaduc, JTLIN_FECCAD);&#xa;        def_feccadE.setDate(ultFecCaduc);&#xa;        return true;&#xa;    }&#xa;    @Override&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        //      System.out.println(&quot;cambiaLinea: &quot;+pro_codlE.getText()+&#xa;            //                         &quot; - &quot;+def_kilosE.getValorDec());&#xa;        return cambiaLineajtLin(row);&#xa;    }&#xa;    @Override&#xa;    public boolean deleteLinea(int row, int col)&#xa;    {&#xa;        jtLin.setValor(&quot;&quot;+proCodAnt,JTLIN_PROCODI); // Rest. El valor Antiguo&#xa;        jtLin.setValor(&quot;&quot;+defKilAnt,JTLIN_KILOS); // Rest. Kilos ANTIGUOS&#xa;        return borraLineajtLIn(row);&#xa;&#xa;    }&#xa;    @Override&#xa;    public void afterDeleteLinea()&#xa;    {&#xa;        SwingUtilities.invokeLater(new Thread()&#xa;            {&#xa;                public void run()&#xa;                {&#xa;                    try {&#xa;                        tid_codiE.setEnabled(getNuLiDes(true)==0);&#xa;                        if (AGRUPALOTE)&#xa;                        deo_lotnueE.setEnabled(tid_codiE.isEnabled());&#xa;                    } catch (SQLException k)&#xa;                    {&#xa;                        Error(&quot;Error al contar el numero de lineas finales&quot;,k);&#xa;                        return;&#xa;                    }&#xa;                }&#xa;            });&#xa;        }&#xa;        @Override&#xa;        public void cambiaColumna(int col,int colNueva,int row)&#xa;        {&#xa;            try {&#xa;                if (col == JTLIN_PROCODI)&#xa;                jtLin.setValor(pro_codlE.getNombArt(pro_codlE.getText()), row, JTLIN_PRONOMB);&#xa;            } catch (Exception k)&#xa;            {&#xa;                Error(&quot;Error al buscar Nombre Articulo&quot;,k);&#xa;            }&#xa;        }&#xa;&#xa;    }"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="try {&#xa;ArrayList v = new ArrayList();&#xa;&#xa;   v.add(&quot;Producto&quot;); // 0&#xa;   v.add(&quot;Descripcion&quot;); // 1&#xa;   v.add(&quot;Kgs&quot;); // 2&#xa;   v.add(&quot;Unid&quot;); // 3 (Unidades Pesadas).&#xa;   v.add(&quot;Costo&quot;); // 4&#xa;   v.add(&quot;Fec.Cad&quot;); // 5&#xa;   v.add(&quot;N.Ind&quot;); // 6&#xa;   v.add(&quot;N.Lin&quot;); // 7&#xa;   v.add(&quot;U/C&quot;); // 8 Unidades por Caja&#xa;   v.add(&quot;Pr.Usu&quot;); // 9&#xa;   v.add(&quot;Fec.Mvto&quot;); // 10&#xa;   jtLin.setCabecera(v);&#xa;&#xa;   &#xa;   jtLin.setAnchoColumna(new int[]&#xa;                         {54, 220, 70, 40, 70,90, 40, 40,40,70,100});&#xa;   jtLin.setAlinearColumna(new int[]&#xa;                           {2, 0, 2, 2, 2, 1,2, 2,2,2,0});&#xa;&#xa;&#xa;   jtLin.setAjustarGrid(true);&#xa;   jtLin.setAjustarColumnas(false);&#xa;&#xa;   pro_nombE.setEnabled(false);&#xa;   if (! MODPRECIO)&#xa;     def_prcostE.setEnabled(false);&#xa;   def_numindE.setEnabled(false);&#xa;//   def_numpieE.setEnabled(false);&#xa;   def_numpieE.setValorDec(1);&#xa;   def_ordenE.setValorDec(1);&#xa;   def_ordenE.setEnabled(false);&#xa;   ArrayList v1= new ArrayList();&#xa;&#xa;   def_unicajE.setText(&quot;1&quot;);&#xa;   def_ordenE.setText(&quot;0&quot;);&#xa;   v1.add(pro_codlE.getTextField()); // 0&#xa;   v1.add(pro_nombE); // 1&#xa;   v1.add(def_kilosE); // 2&#xa;   v1.add(def_numpieE); // 3&#xa;   v1.add(def_prcostE); // 4&#xa;   v1.add(def_feccadE); // 5&#xa;   v1.add(def_numindE); // 6&#xa;   v1.add(def_ordenE); // 7&#xa;   v1.add(def_unicajE); // 8&#xa;   v1.add(def_preusuE); // 9&#xa;   v1.add(def_tiempoE); // 10&#xa;   jtLin.setCampos(v1);&#xa;   jtLin.setFormatoCampos();&#xa;   /*jtLin.setFormatoColumna(JTLIN_KILOS, &quot;--,---9.99&quot;);&#xa;   jtLin.setFormatoColumna(JTLIN_UNID, &quot;##9&quot;);&#xa;   jtLin.setFormatoColumna(JTLIN_COSTO, &quot;---9.9999&quot;);&#xa;   jtLin.setFormatoColumna(JTLIN_FECCAD, deo_feccadE.getFormato());&#xa;   jtLin.setFormatoColumna(JTLIN_NUMIND, &quot;---9&quot;);&#xa;   jtLin.setFormatoColumna(JTLIN_ORDEN, &quot;##9&quot;);&#xa;   jtLin.setFormatoColumna(JTLIN_NUMCAJ, &quot;##9&quot;);&#xa;   jtLin.setFormatoColumna(JTLIN_PREUSU, &quot;---9.9999&quot;); */&#xa;   JMenu etiqueta = new JMenu(&quot;Etiqueta&quot;);&#xa;  &#xa;   etiqueta.add(ImprEtiqMI);&#xa;  &#xa;   jtLin.getPopMenu().add(etiqueta);&#xa;   if (P_ADMIN)&#xa;    jtLin.getPopMenu().add(MFechaLin);&#xa;jtLin.getPopMenu().add(MVerMvtLin);&#xa;} catch (Exception k) { Error(&quot;Error al configurar grid lineas&quot;,k);}"/>
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1230,107 +1247,6 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Container class="gnu.chu.controles.CPanel" name="cPanel1">
-                  <Properties>
-                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                      <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                        <TitledBorder title="Fechas Originales"/>
-                      </Border>
-                    </Property>
-                  </Properties>
-                  <Constraints>
-                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="10" y="70" width="550" height="50"/>
-                    </Constraint>
-                  </Constraints>
-
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
-                    <Property name="useNullLayout" type="boolean" value="true"/>
-                  </Layout>
-                  <SubComponents>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel23">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Produccion"/>
-                      </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="10" y="20" width="80" height="20"/>
-                        </Constraint>
-                      </Constraints>
-                    </Component>
-                    <Component class="gnu.chu.controles.CTextField" name="deo_feprorE">
-                      <Properties>
-                        <Property name="dependePadre" type="boolean" value="false"/>
-                        <Property name="enabled" type="boolean" value="false"/>
-                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[10, 18]"/>
-                        </Property>
-                      </Properties>
-                      <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
-                      </AuxValues>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="80" y="20" width="70" height="17"/>
-                        </Constraint>
-                      </Constraints>
-                    </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel24">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Caducidad"/>
-                      </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="200" y="20" width="70" height="17"/>
-                        </Constraint>
-                      </Constraints>
-                    </Component>
-                    <Component class="gnu.chu.controles.CTextField" name="deo_fecaorE">
-                      <Properties>
-                        <Property name="dependePadre" type="boolean" value="false"/>
-                        <Property name="enabled" type="boolean" value="false"/>
-                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[10, 18]"/>
-                        </Property>
-                      </Properties>
-                      <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
-                      </AuxValues>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="270" y="20" width="70" height="17"/>
-                        </Constraint>
-                      </Constraints>
-                    </Component>
-                    <Component class="gnu.chu.controles.CLabel" name="cLabel25">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Sacrificio"/>
-                      </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="360" y="20" width="55" height="17"/>
-                        </Constraint>
-                      </Constraints>
-                    </Component>
-                    <Component class="gnu.chu.controles.CTextField" name="deo_fesaorE">
-                      <Properties>
-                        <Property name="dependePadre" type="boolean" value="false"/>
-                        <Property name="enabled" type="boolean" value="false"/>
-                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[10, 18]"/>
-                        </Property>
-                      </Properties>
-                      <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
-                      </AuxValues>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="420" y="20" width="70" height="17"/>
-                        </Constraint>
-                      </Constraints>
-                    </Component>
-                  </SubComponents>
-                </Container>
               </SubComponents>
             </Container>
           </SubComponents>

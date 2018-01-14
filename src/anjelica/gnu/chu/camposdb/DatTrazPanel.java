@@ -4,7 +4,7 @@
  * <p>Descripcion: Panel para sacar los datos de trazabilidad y compra de un 
  * individuo.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -272,7 +272,7 @@ public class DatTrazPanel extends CPanel {
         utDesp.setSalaDespiece(acp_saldesE.getText());
         utDesp.setNumCrot(acp_nucrotE.getText());
         
-        utDesp.setFecCaduc(avc_feccadE.getDate());
+        utDesp.setFechaCaducidad(avc_feccadE.getDate());
         utDesp.setFecSacrif(acp_fecsacE.getDate());
         
 
@@ -298,7 +298,7 @@ public class DatTrazPanel extends CPanel {
         acp_saldesE.setText(utDesp.getSdeCodi());
         acc_numeE.setValorInt(utDesp.getProLoteCompra());
         acc_fecprodE.setDate(utDesp.getFechaProduccion());
-        avc_feccadE.setDate(utDesp.getFecCaduc());
+        avc_feccadE.setDate(utDesp.getFechaCaducidad());
         forzadaTrazC.setSelected(utDesp.isForzadaTrazab());
     
     }
@@ -324,7 +324,7 @@ public class DatTrazPanel extends CPanel {
     }
     public Date getFechaCaducidad()
     {
-        return utDesp.getFecCaduc();
+        return utDesp.getFechaCaducidad();
     }
     @Override
     public void setEditable(boolean editable)

@@ -277,7 +277,7 @@ public class listraza  implements JRDataSource
         }
         DatosTraza dtTraza=new DatosTraza(utdes.ntrazaE,
                 utdes.paisNacimientoNombre,utdes.sacrificadoE,utdes.despiezadoE,utdes.paisEngordeNombre,
-                artVenta,  utdes.getFecSacrif() ,utdes.getFecCaduc(), dtCur.getString("pro_nomb"),
+                artVenta,  utdes.getFecSacrif() ,utdes.getFechaCaducidad(), dtCur.getString("pro_nomb"),
                 dtCur.getDouble("avp_canti"),
                 dtCur.getInt("avp_numind"),
                 dtCur.getInt("avp_numpar"),

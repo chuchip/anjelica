@@ -1237,10 +1237,19 @@ public class proPanel extends CPanel
   {
       return lkPrd.getInt("pro_mancos")!=0;
   }
-  public int getDiasCad() throws SQLException
+  /**
+   * Devuelve los dias de caducidad que tiene ese producto (en fresco  o congelado)
+   * @return dias de caducidad que tiene ese producto 
+   * @throws SQLException 
+   */
+  public int getDiasCaducidad() throws SQLException
   {
-      return lkPrd.getInt("pro_diacom");
+      if (lkPrd.getInt("pro_artcon")==0)
+        return lkPrd.getInt("pro_diacom");
+      else
+        return lkPrd.getInt("pro_cadcong")*30;
   }
+  
   public String getCamara()
   {
     return camCodi;

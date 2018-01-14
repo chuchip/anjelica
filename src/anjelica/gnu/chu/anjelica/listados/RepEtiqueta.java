@@ -25,8 +25,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
@@ -53,6 +51,8 @@ import javax.swing.SwingUtilities;
  */
 public class RepEtiqueta extends ventana
 {
+    int ultCodigoEtiqueta=0;
+    int tipoEtiqueta=0;
     utildesp utDesp=new utildesp();
     etiqueta etiq;
     String famProd;    
@@ -106,6 +106,15 @@ public class RepEtiqueta extends ventana
 
     @Override
     public void iniciarVentana() throws Exception {
+        etiqueta.getReports(dtStat, EU.em_cod,0);
+        if (!dtStat.getNOREG())
+        {
+            do 
+            {
+               Baceptar.addMenu(dtStat.getString("eti_nomb"), dtStat.getString("eti_codi")); 
+            } while (dtStat.next());
+        }        
+        
         estadoL.setVisible(false);
         pro_codiE.iniciar(dtStat, this, vl, EU);
         pro_codiE.setCamposLote(pro_ejercE, pro_serieE, pro_loteE, pro_numindE, deo_kilosE);
@@ -114,7 +123,7 @@ public class RepEtiqueta extends ventana
         pro_ejercE.setText("" + EU.ejercicio);
         pro_serieE.setText("A");
         etiq = new etiqueta(EU);
-        tipetiqE.setDatos(etiqueta.getReports(dtStat, EU.em_cod, 0));
+      
         trazPanel.iniciar(dtStat,dtCon1,this,vl,EU);
         trazPanel.setEditable(true);
         Pprinc.setDefButton(Baceptar.getBotonAccion());
@@ -197,7 +206,19 @@ public class RepEtiqueta extends ventana
         {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listar(e.getActionCommand().startsWith("Listar"));
+                if (Baceptar.getValor(e.getActionCommand()).equals("U"))
+                    tipoEtiqueta=ultCodigoEtiqueta;
+                else
+                    tipoEtiqueta=Integer.parseInt( Baceptar.getValor(e.getActionCommand()));
+                ultCodigoEtiqueta=tipoEtiqueta;
+                listar(tipoEtiqueta);
+            }
+        });
+        BImpEtiInt.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {            
+                listar(etiqueta.getCodigoEtiqInterior(EU));
             }
         });
         pro_numindE.addFocusListener(new FocusAdapter()
@@ -273,11 +294,12 @@ public class RepEtiqueta extends ventana
                 fecSacr = trazPanel.getFechaSacrificio();
             }
             trazPanel.setFechaCaducidad(Formatear.sumaDiasDate(Formatear.getDateAct(), dias));
-            trazPanel.setFechaProduccion(Formatear.sumaDiasDate(Formatear.getDateAct(), dias - 30));
+            trazPanel.setFechaProduccion(Formatear.sumaDiasDate(Formatear.getDateAct(), dias - pro_codiE.getDiasCaducidad() ));
             if (trazPanel.getFechaSacrificio() != null)
-                trazPanel.setFechaSacrificio(Formatear.sumaDiasDate(Formatear.getDateAct(), dias - 32));
-        } catch (ParseException ex)
+                trazPanel.setFechaSacrificio(Formatear.sumaDiasDate(Formatear.getDateAct(), (pro_codiE.getDiasCaducidad() +2 )));
+        } catch (ParseException | SQLException ex)
         {
+            Error("Error al poner fechas",ex);
         }
     }
     /**
@@ -504,9 +526,9 @@ public class RepEtiqueta extends ventana
     }
   /**
    * Listar etiqueta y guardar los datos de trazabilidad si es necesario
-   * @param guardar 
+   * @param tipoEtiq tipoEtiqueta 
    */
-    void listar(boolean guardar)
+    void listar(int tipoEtiq)
     {
       try
       {
@@ -514,7 +536,7 @@ public class RepEtiqueta extends ventana
             return;
         mensajeErr("Espere, por favor ... Imprimiendo");
         etiq.setTipoEtiq(dtStat, EU.em_cod,
-                          tipetiqE.getValorInt());
+                          tipoEtiq);
         
         CodigoBarras codBarras=new CodigoBarras("R",pro_ejercE.getText(),
                 pro_serieE.getText(),
@@ -523,9 +545,9 @@ public class RepEtiqueta extends ventana
                 deo_kilosE.getValorDec());
  
         etiq.setNumCopias(1);
-
+        int ETIQINT=etiqueta.getCodigoEtiqInterior(EU);
         utDesp= trazPanel.getUtilDespiece(true);
-         if ( utDesp.getFechaProduccion() != null && Formatear.comparaFechas(utDesp.getFecCaduc() , utDesp.getFechaProduccion() )<10)
+         if ( utDesp.getFechaProduccion() != null && Formatear.comparaFechas(utDesp.getFechaCaducidad() , utDesp.getFechaProduccion() )<10)
         {
             msgBox("Fecha caducidad debe ser superior en 10 dias a fecha produccion");
             return;
@@ -535,17 +557,17 @@ public class RepEtiqueta extends ventana
             msgBox("Fecha Sacrificio debe ser inferior a fecha produccion");
             return;
         }
-        if (guardar && trazPanel.hasCambio())
+        if (opGuardar.isSelected() && trazPanel.hasCambio())
             utDesp.actualTrazabilidad(dtAdd);
-        etiq.iniciar(tipetiqE.getValorInt()!=etiqueta.ETIQINT?codBarras.getCodBarra():codBarras.getLote(false),
-            codBarras.getLote(tipetiqE.getValorInt()!=etiqueta.ETIQINT),
+        etiq.iniciar(tipoEtiq!=ETIQINT?codBarras.getCodBarra():codBarras.getLote(false),
+            codBarras.getLote(tipoEtiq!=ETIQINT),
             pro_codiE.getText(),pro_codiE.getTextNomb(),utDesp.getPaisNacimiento(),utDesp.getPaisEngorde(),
             utDesp.getSalaDespiece(),
             utDesp.getNumCrot(),deo_kilosE.getValorDec(),
             utDesp.getConservar(), utDesp.getMatadero(),
-            utDesp.getFechaProduccion(),utDesp.getFechaProduccion(), utDesp.getFecCaduc(),
+            utDesp.getFechaProduccion(),utDesp.getFechaProduccion(), utDesp.getFechaCaducidad(),
             utDesp.getFecSacrif());
-        etiq.setNumCopias(numCopiasE.getValorInt());
+        etiq.setNumCopias(tipoEtiq==ETIQINT?numCopiasE.getValorInt():1);
         etiq.listarDefec();
               
         pro_codiE.requestFocus();
@@ -594,14 +616,14 @@ public class RepEtiqueta extends ventana
         cLabel10 = new gnu.chu.controles.CLabel();
         numCopiasE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         cLabel11 = new gnu.chu.controles.CLabel();
-        tipetiqE = new gnu.chu.controles.CComboBox();
         Bindi = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton(Iconos.getImageIcon("cancel"));
         cLabel12 = new gnu.chu.controles.CLabel();
         alm_codiE = new gnu.chu.controles.CLinkBox();
         estadoL = new gnu.chu.controles.CLabel();
-        cLabel13 = new gnu.chu.controles.CLabel();
         diasCadE = new gnu.chu.controles.CComboBox();
+        BImpEtiInt = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
+        opGuardar = new gnu.chu.controles.CCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -615,7 +637,7 @@ public class RepEtiqueta extends ventana
 
         cLabel6.setText("Caducidad");
         Pprinc.add(cLabel6);
-        cLabel6.setBounds(150, 250, 70, 17);
+        cLabel6.setBounds(20, 250, 70, 17);
         Pprinc.add(pro_ejercE);
         pro_ejercE.setBounds(40, 40, 40, 17);
 
@@ -650,11 +672,10 @@ public class RepEtiqueta extends ventana
         Pprinc.add(trazPanel);
         trazPanel.setBounds(10, 70, 510, 150);
 
-        Baceptar.setText("Listar");
-        Baceptar.addMenu("Listar y Guardar", "G");
-        Baceptar.addMenu("Solo Listar", "L");
+        Baceptar.setText("Imprimir");
+        Baceptar.addMenu("----","U");
         Pprinc.add(Baceptar);
-        Baceptar.setBounds(350, 230, 110, 26);
+        Baceptar.setBounds(260, 230, 110, 26);
 
         cLabel10.setText("Almacen ");
         Pprinc.add(cLabel10);
@@ -667,12 +688,10 @@ public class RepEtiqueta extends ventana
         cLabel11.setText("Num. Etiquetas ");
         Pprinc.add(cLabel11);
         cLabel11.setBounds(20, 230, 90, 17);
-        Pprinc.add(tipetiqE);
-        tipetiqE.setBounds(210, 230, 130, 17);
         Pprinc.add(Bindi);
         Bindi.setBounds(420, 50, 2, 2);
         Pprinc.add(Bcancelar);
-        Bcancelar.setBounds(470, 230, 45, 20);
+        Bcancelar.setBounds(470, 222, 45, 20);
 
         cLabel12.setText("Ejerc");
         Pprinc.add(cLabel12);
@@ -692,10 +711,6 @@ public class RepEtiqueta extends ventana
         Pprinc.add(estadoL);
         estadoL.setBounds(340, 0, 180, 18);
 
-        cLabel13.setText("Tipo List.");
-        Pprinc.add(cLabel13);
-        cLabel13.setBounds(150, 230, 60, 17);
-
         diasCadE.addItem("---", "0");
         diasCadE.addItem("10 Dias", "10");
         diasCadE.addItem("15 Dias", "15");
@@ -703,7 +718,16 @@ public class RepEtiqueta extends ventana
         diasCadE.addItem("25 Dias", "25");
         diasCadE.addItem("30 Dias", "30");
         Pprinc.add(diasCadE);
-        diasCadE.setBounds(220, 250, 120, 18);
+        diasCadE.setBounds(90, 250, 120, 18);
+
+        BImpEtiInt.setText("Etiq. Inter.");
+        Pprinc.add(BImpEtiInt);
+        BImpEtiInt.setBounds(150, 228, 90, 20);
+
+        opGuardar.setSelected(true);
+        opGuardar.setText("Guardar");
+        Pprinc.add(opGuardar);
+        opGuardar.setBounds(390, 222, 70, 18);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
@@ -712,6 +736,7 @@ public class RepEtiqueta extends ventana
 
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton BImpEtiInt;
     private gnu.chu.controles.CButtonMenu Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CButton Bindi;
@@ -720,7 +745,6 @@ public class RepEtiqueta extends ventana
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
-    private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel6;
@@ -731,12 +755,12 @@ public class RepEtiqueta extends ventana
     private gnu.chu.controles.CComboBox diasCadE;
     private gnu.chu.controles.CLabel estadoL;
     private gnu.chu.controles.CTextField numCopiasE;
+    private gnu.chu.controles.CCheckBox opGuardar;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CTextField pro_ejercE;
     private gnu.chu.controles.CTextField pro_loteE;
     private gnu.chu.controles.CTextField pro_numindE;
     private gnu.chu.controles.CTextField pro_serieE;
-    private gnu.chu.controles.CComboBox tipetiqE;
     private gnu.chu.camposdb.DatTrazPanel trazPanel;
     // End of variables declaration//GEN-END:variables
 }

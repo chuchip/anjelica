@@ -1,14 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gnu.chu.anjelica.compras;
 
-import gnu.chu.anjelica.pad.pdprove;
 import gnu.chu.camposdb.PaiPanel;
 import gnu.chu.controles.CGridEditable;
-import gnu.chu.controles.CLinkBox;
 import gnu.chu.controles.CTextField;
 import gnu.chu.eventos.GridAdapter;
 import gnu.chu.eventos.GridEvent;
@@ -17,13 +10,11 @@ import gnu.chu.sql.vlike;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
-import gnu.chu.utilidades.mensajes;
 import gnu.chu.winayu.AyuSdeMat;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -31,12 +22,26 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
- * @author cpuente
+ * <p>Título: PEtiqProv</p>
+ * <p>Descripción: Panel para introducir etiquetas proveedores</p>
+ *  <p>Copyright: Copyright (c) 2005-2018
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,ed
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * <p>Empresa: MISL</p>
+ * @author Chuchi P
+ * @version 1.0
  */
 public class PEtiqProv extends javax.swing.JPanel
 {
@@ -84,6 +89,7 @@ public class PEtiqProv extends javax.swing.JPanel
         acp_paisacE.iniciar(padre.dtStat, padre, padre.vl, EU);
         acp_engpaiE.iniciar(padre.dtStat, padre, padre.vl, EU);
         pro_codiE.setEnabled(false);
+        jtLote.setButton(KeyEvent.VK_F5,Bcopia);
         activar(false);
         cambioPrv();
         activarEventos();       
@@ -340,6 +346,10 @@ public class PEtiqProv extends javax.swing.JPanel
                         jtEti.setValor("",jtEti.getSelectedRow(),JTETI_ETIQ);
                         jtEti.mueveSigLinea(0);
                     }
+                    else
+                    {
+                        msgBox("Codigo BARRAS no Valido");
+                    }
                     swAutomatico=false;
               }
         });
@@ -405,7 +415,7 @@ public class PEtiqProv extends javax.swing.JPanel
         return -1;
     }
     void msgBox(String msg)
-    {
+    {        
         padre.msgBox(msg);
     }
     void Bressub_actionPerformed()

@@ -244,7 +244,7 @@ public class utildesp
             datInd.getSerie(), datInd.getLote(), datInd.getNumind(),datInd.getAlmCodi(),true))
             return false;
         dtAdd.edit();
-        dtAdd.setDato("stp_feccad",getFecCaduc());
+        dtAdd.setDato("stp_feccad",getFechaCaducidad());
         dtAdd.setDato("stp_fecpro",getFechaProduccion());
         dtAdd.setDato("stp_nucrot",getNumCrot());
         dtAdd.setDato("stp_painac",acp_painac);
@@ -1279,6 +1279,7 @@ public class utildesp
                       double kilos, java.util.Date fecDesp, java.util.Date fecProd, java.util.Date fecCad,
                       java.util.Date fecSacr,java.util.Date cadProdDate,int grupoLote) throws  Throwable
     {
+        int etiquetaInterior=etiqueta.getCodigoEtiqInterior(EU);
         actualConservar(proCodi, dtStat);
         if (etiq == null) {
             etiq = new etiqueta(EU);
@@ -1290,13 +1291,13 @@ public class utildesp
             logo=etiq.getLogotipo();
            
         CodigoBarras codBarras = new CodigoBarras(indiceEti,ejloge,seloge,nuloge,proCodi,
-             TIPOETIQ==etiqueta.ETIQINT?0:numInd,
-            TIPOETIQ==etiqueta.ETIQINT?0:kilos,
+             TIPOETIQ==etiquetaInterior?0:numInd,
+            TIPOETIQ==etiquetaInterior?0:kilos,
             grupoLote);
       
             
-        etiq.iniciar(TIPOETIQ !=etiqueta.ETIQINT?codBarras.getCodBarra():codBarras.getLote(false),
-            codBarras.getLote(TIPOETIQ!=etiqueta.ETIQINT)  ,
+        etiq.iniciar(TIPOETIQ !=etiquetaInterior?codBarras.getCodBarra():codBarras.getLote(false),
+            codBarras.getLote(TIPOETIQ!=etiquetaInterior)  ,
                 "" + proCodi, nombArt,
                 paisNacimientoNombre, paisEngordeNombre, despiezadoE,
                 ntrazaE,kilos,
@@ -1440,7 +1441,7 @@ public class utildesp
     * Devuelve la fecha de caducidad real (si es congelado, la de congelado)
     * @return Date 
     */
-   public java.util.Date getFecCaduc()
+   public java.util.Date getFechaCaducidad()
    {
         try {
             return Formatear.getDate2000(
@@ -1449,7 +1450,7 @@ public class utildesp
             return null;
         }
    }
-   public void setFecCaduc(java.util.Date fecCaduc)
+   public void setFechaCaducidad(java.util.Date fecCaduc)
    {
        feccadE=Formatear.getFecha(fecCaduc,"dd-MM-yyyy");
    }

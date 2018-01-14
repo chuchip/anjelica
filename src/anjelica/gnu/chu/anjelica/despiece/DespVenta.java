@@ -8,7 +8,7 @@ package gnu.chu.anjelica.despiece;
  *   autollenardesp para ver  si debe hacer autollenado de
  *   los productos para un tipo de despiece (por defecto, NO)
  * </p>
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -58,11 +58,16 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
 
 public class DespVenta extends ventana {
+    Date deoFecpro;
+    Date deoFecSacr;
+    Date fecCadAnt;
+    int etiquetaInterior;    
     etiqueta etiq;
     int tidCodiAnt=0;
     private boolean tidAsprfi=false;
@@ -74,7 +79,7 @@ public class DespVenta extends ventana {
     private boolean AUTOLLENARDESP=false;
     public static final String SERIE="V";
     boolean swEdicion=false;
-    public final static int JT_PROCOD=0,JT_PRONOMB=1,JT_ORDEN=5,JT_NUMIND=4,JT_KILOS=2,JT_UNID=3,JTLIN_NUMCAJ=8;
+    public final static int JT_PROCOD=0,JT_PRONOMB=1,JT_KILOS=2,JT_FECCAD=3,JT_UNID=4,JT_NUMIND=5, JT_ORDEN=6,JTLIN_NUMCAJ=8;
     
     boolean nuevoDespiece=false;
     int proCodAnt;
@@ -84,7 +89,6 @@ public class DespVenta extends ventana {
     BotonBascula botonBascula;
     int ejeNume,empCodi,deoCodi;
     utildesp utdesp;
-    DatosTabla dtAdd;
     int almCodi,prvCodi,cliCodi;
     ActualStkPart stkPart;
 
@@ -100,7 +104,7 @@ public class DespVenta extends ventana {
         setIconifiable(false);
         this.setSize(570,440);
         this.setTitle("Carga Despiece desde Ventas");
-        setVersion("20181224");
+        setVersion("20180114");
     }
     /**
      * Establece el cliente para el que se genera el despiece
@@ -129,7 +133,7 @@ public class DespVenta extends ventana {
         dtStat=padre.dtStat;
         dtCon1=padre.dtCon1;
         dtAdd=new DatosTabla(new conexion(EU));
-
+        etiquetaInterior=etiqueta.getCodigoEtiqInterior(EU);
         utdesp =new utildesp();
         ejeNume=EU.ejercicio;
         empCodi=EU.em_cod;
@@ -159,10 +163,12 @@ public class DespVenta extends ventana {
         vc.add(pro_codsalE.getFieldProCodi());
         vc.add(pro_nombE);
         vc.add(pro_kilsalE);
+        vc.add(def_feccadE);
         vc.add(pro_unidE);
         vc.add(pro_indsalE);
         vc.add(def_ordenE);
         jt.setCampos(vc);
+        jt.setFormatoCampos();
         jt.removeAllDatos();
         jt.setButton(KeyEvent.VK_F2,BF2);
         jt.setButton(KeyEvent.VK_F5, BcopLin);
@@ -198,8 +204,6 @@ public class DespVenta extends ventana {
           deoCodi=0;
           Baceptar.setEnabled(true);
           tid_codiE.setEnabled(true);
-          def_fecproE.setEnabled(true);
-          def_fecsacE.setEnabled(true);
 
           jt.setEnabled(false);
 //          pro_codiE.resetTexto();
@@ -389,9 +393,10 @@ public class DespVenta extends ventana {
                     v.add(60); // Mer Venta
                     v.add(pro_codiE.getTextNomb());
                     v.add(difkilE.getValorDec()); // Kg
+                    v.add(deo_feccadE.getDate());
                     v.add(1); // Unid                  
                     v.add("0"); // N Ind.
-                    v.add("0"); // N. Orden
+                    v.add("0"); // N. Orden                    
                     jt.addLinea(v);                  
                     jt.setEnabled(true);
                     jt.requestFocusFinal();
@@ -409,6 +414,7 @@ public class DespVenta extends ventana {
                     v.add(pro_codiE.getValorInt());
                     v.add(pro_codiE.getTextNomb());
                     v.add(difkilE.getValorDec()); // Kg
+                    v.add(deo_feccadE.getDate());
                     v.add(1); // Unid                  
                     v.add("0"); // N Ind.
                     v.add("0"); // N. Orden
@@ -510,7 +516,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
    }
    desorca.setTidCodi(tid_codiE.getValorInt());
    desorca.setDeoFecsac(def_fecsacE.getDate());
-   desorca.setDeoFeccad(def_feccadE.getDate());
+   desorca.setDeoFeccad(deo_feccadE.getDate());
    desorca.setDeoFecpro(def_fecproE.getDate());
    desorca.setPrvCodi(prvCodi);
    desorca.setDeoDesnue('N');
@@ -842,7 +848,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         }    
         return s;
     }
-    void llenaGrid() throws SQLException
+    void llenaGrid() throws SQLException,ParseException
     {
 
         if (tid_codiE.getValorInt()==MantTipDesp.AUTO_DESPIECE)
@@ -851,9 +857,10 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
             v.add(pro_codiE.getValorInt());
             v.add(pro_codiE.getTextNomb());
             v.add("0"); // Kg
+             v.add(deo_feccadE.getDate());
             v.add("1"); // Unid
             v.add("0"); // N Ind.
-            v.add("0"); // N. Orden
+            v.add("0"); // N. Orden           
             jt.addLinea(v);
             return;
         }
@@ -875,9 +882,10 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
             v.add(dtCon1.getString("pro_codi"));
             v.add(dtCon1.getString("pro_nomb"));
             v.add("0"); // Kg
+            v.add(deo_feccadE.getDate());
             v.add("1"); // Unid
             v.add("0"); // N Ind.
-            v.add("0"); // N. Orden
+            v.add("0"); // N. Orden            
             jt.addLinea(v);
         } while (dtCon1.next());   
         
@@ -905,9 +913,12 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
        mensajeErr("", false);
        try
        {
-         String s;
-         s=pro_codsalE.getNombArt();
-         jt.setValor(s,linea,1);
+         String proNomb;
+         proNomb=pro_codsalE.getNombArt();
+         jt.setValor(proNomb,linea,JT_PRONOMB);
+         if (!pro_codsalE.hasCambio() && !pro_kilsalE.hasCambio() && !def_feccadE.hasCambio())
+             return -1; // No hubo cambios en la linea.
+      
          if (pro_kilsalE.getValorDec()==0 ||  pro_codsalE.isNull())
          {
            if (jt.getValorInt(linea,JT_NUMIND)==0)
@@ -945,59 +956,43 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                  return 0;
              }
          }
+         
          if (def_feccadE.isNull())
          {
              msgBox("Introduzca fecha Caducidad");
              def_feccadE.setText(utdesp.feccadE);
-             return 0;
+             return JT_FECCAD;
          }
-        if ( Formatear.comparaFechas(def_feccadE.getDate(),Formatear.getDateAct() )<=0)
-        {
-            msgBox("Fecha Caducidad  debe ser superior a la actual");
-            def_feccadE.requestFocusLater();
-            return 0;
-        }
-        if (Formatear.comparaFechas(def_feccadE.getDate(), Formatear.getDateAct())<=10)
-        {
-            int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en diez dias a la actual. Continuar?");
-            if (ret!=mensajes.YES)
-            {
-               def_feccadE.requestFocusLater();
-               return 0;
-            }
-        }
-         if ( Formatear.comparaFechas(def_fecproE.getDate(),Formatear.getDateAct()) > 0)
+         if (pro_codsalE.getDiasCaducidad() > 0)
          {
-            msgBox("Fecha Produccion NO puede ser superior a la actual");
-            def_fecproE.requestFocusLater();
-            return 0;
+               if (Formatear.comparaFechas(def_feccadE.getDate(), Formatear.getDateAct()) <= 0)
+               {
+                   msgBox("Fecha Caducidad  debe ser superior a la actual");
+                   def_feccadE.setText(utdesp.feccadE);
+                   return JT_FECCAD;
+               }
+               if (Formatear.comparaFechas(def_feccadE.getDate(), Formatear.getDateAct()) <= 10)
+               {
+                   int ret = mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en diez dias a la actual. Continuar?");
+                   if (ret != mensajes.YES)
+                       return JT_FECCAD;
+               }              
          }
-         if (!def_fecsacE.isNull() )
-        {
-            if (Formatear.comparaFechas(def_fecsacE.getDate(), def_fecproE.getDate())>0)
-            {
-                msgBox("Fecha Sacrificio NO puede ser superior a la de produccion");
-                def_fecsacE.requestFocusLater();
-                return 0;
-            }
-        }
          if (checkExcluyentes("SELECT * FROM artiexcl where pro_codini ="+pro_codsalE.getValorInt()+
                  " and pro_codfin in (",linea))
              return 0;
          if (checkExcluyentes("SELECT * FROM artiexcl where pro_codfin ="+pro_codsalE.getValorInt()+
                  " and pro_codini in (",linea))
              return 0;
-         if (pro_codsalE.hasCambio() || pro_kilsalE.hasCambio() )
-         {
-            mensajeErr("");
-            guardaLinea(linea);
-            mensajeErr("Linea " + linea + "... Guardada");
+          pro_codsalE.resetCambio();
+          pro_kilsalE.resetCambio();
+          def_feccadE.resetCambio();
+          mensajeErr("");
+          guardaLinea(linea);
+          mensajeErr("Linea " + linea + "... Guardada");
 
-           if ( pro_codsalE.isVendible() && pro_codsalE.getEtiCodi()>=0 && jt.isEnabled()) // && pro_codlE.getConStkInd())
+          if ( pro_codsalE.isVendible() && pro_codsalE.getEtiCodi()>=0 && jt.isEnabled()) // && pro_codlE.getConStkInd())
              imprEtiq(linea,false);
-           def_fecproE.setEnabled(false);
-           def_fecsacE.setEnabled(false);
-         }
        }
        catch (SQLException | ParseException ex)
        {
@@ -1076,6 +1071,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
        prvCodi=utdesp.getPrvCodi();
 //       if (tid_codiE.getValorInt()!=MantTipDesp.AUTO_DESPIECE)
 //         utdesp.setDespNuestro(Formatear.getFechaAct("dd-MM-yyyy"), dtStat);
+       deo_feccadE.setText(utdesp.feccadE);
        def_feccadE.setText(utdesp.feccadE);
        def_fecproE.setDate(utdesp.getFechaProduccion());
        def_fecsacE.setDate(utdesp.fecSacrE);
@@ -1108,10 +1104,22 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                 deo_serlotE.getText(), pro_loteE.getValorInt(),nInd,
                 pro_codsalE.getValorInt(),
                 pro_kilsalE.getValorDec(), pro_unidE.getValorInt(),1,
-                def_feccadE.getText(),defOrden);    
-    
+                deo_feccadE.getText(),defOrden);         
+     if (Formatear.comparaFechas(def_feccadE.getDate(),deo_feccadE.getDate())!=0)
+     {
+         ponFechas(pro_codsalE.getDiasCaducidad(),def_feccadE.getDate());
+         String s="update stockpart set stp_fecpro='"+Formatear.getFechaDB(deoFecpro)+"'"+
+               (deoFecSacr==null ?"":", stp_fecsac = '"+Formatear.getFechaDB(deoFecSacr)+"'")+
+               " where pro_nupar="+ pro_loteE.getValorInt()+
+                " and pro_serie='"+deo_serlotE.getText()+"' "+
+                " and eje_nume="+deo_ejelotE.getValorInt()+
+                " and pro_codi = "+pro_codsalE.getValorInt()+
+                " and pro_numind="+nInd;
+         dtAdd.executeUpdate(s);
+     }
      jt.setValor(""+nInd,linea,JT_NUMIND);
      jt.setValor(""+defOrden,linea,JT_ORDEN);
+     
      dtAdd.commit();
      
    }
@@ -1148,8 +1156,6 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                               pro_numindE.getValorInt(), deo_kilosE.getValorDec(),0,
                               dtAdd);
       Baceptar.setEnabled(true);
-      def_fecproE.setEnabled(true);
-      def_fecsacE.setEnabled(true);
 
     }
    void guardaCabOrig() throws SQLException, ParseException
@@ -1183,7 +1189,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
 
      String nombArt=pro_codsalE.getNombArt(pro_codsalE.getText());
      if (etiqInterna)
-         proCodeti=etiqueta.ETIQINT;
+         proCodeti=etiquetaInterior;
      else
      {
         if (pro_codsalE.getLikeProd().isNull("pro_codeti"))
@@ -1191,7 +1197,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         else
           proCodeti = pro_codsalE.getLikeProd().getInt("pro_codeti");
      }
-
+     ponFechas(pro_codsalE.getDiasCaducidad(),def_feccadE.getDate());
 //     debug("Nombre Articulo: "+nombArt);
      utdesp.iniciar(dtAdd,ejeNume,empCodi,almCodi,
                     almCodi,EU);
@@ -1212,9 +1218,9 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                     jt.getValorInt(linea,JT_NUMIND),
                     pro_kilsalE.getValorDec(),
                     Formatear.getDateAct(),
-                    def_fecproE.getDate(),
+                    deoFecpro,
                     def_feccadE.getDate(),
-                    def_fecsacE.getDate(),                    
+                    deoFecSacr,
                     def_feccadE.getDate(),0);
       mensajeErr("Etiqueta ... Listada");
    }
@@ -1223,7 +1229,28 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
      Error("Error al Guardar Datos Despiece", ex);
    }
  }
-
+  /**
+     * Establece las fechas de produccion y sacrificio, segun la fecha caducidad y dias 
+     * @param diasCad
+     * @param fecCaduc
+     * @throws ParseException 
+     */
+    void ponFechas(int diasCad,Date fecCaduc) throws ParseException
+    {
+        if (Formatear.comparaFechas(fecCaduc, utdesp.getFechaCaducidad())==0)
+        {
+            deoFecpro=utdesp.getFechaProduccion();
+            deoFecSacr=utdesp.getFecSacrif();
+        }
+        else
+        {
+            deoFecpro= Formatear.sumaDiasDate(fecCaduc,diasCad*-1);
+            if (def_fecsacE.isNull())
+                deoFecSacr=null;
+            else
+                deoFecSacr=Formatear.sumaDiasDate(fecCaduc,(diasCad+2)*-1);
+        }
+   }
 // /**
 //  *
 //  * @param dt DatosTabla conexion para realiar la select.
@@ -1282,6 +1309,8 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         pro_kilsalE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
         def_ordenE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
         pro_unidE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
+        pro_nombE1 = new gnu.chu.controles.CTextField(Types.CHAR,"X",40);
+        def_feccadE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         pro_codiE = new gnu.chu.camposdb.proPanel(){
@@ -1304,16 +1333,20 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         Bir = new gnu.chu.controles.CButton();
         tid_codiE = new gnu.chu.camposdb.tidCodi2();
         cargaPSC = new gnu.chu.controles.CCheckBox();
-        jt = new gnu.chu.controles.CGridEditable(6){
+        jt = new gnu.chu.controles.CGridEditable(7){
             @Override
             public void afterCambiaLinea()
             {
                 proCodAnt=pro_codsalE.getValorInt();
                 defKilAnt=pro_kilsalE.getValorDec();
                 defUnidAnt=pro_unidE.getValorInt();
+                try {
+                    fecCadAnt=deo_feccadE.getDate();
+                }   catch (ParseException k){}
                 pro_codsalE.resetCambio();
                 pro_kilsalE.resetCambio();
                 pro_unidE.resetCambio();
+                deo_feccadE.resetCambio();
                 actAcumulados();
             }
             @Override
@@ -1326,7 +1359,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
             @Override
             public boolean deleteLinea(int row, int col)
             {
-                jt.setValor(""+proCodAnt,0); // Rest. El valor Antiguo
+                jt.setValor(""+proCodAnt,JT_PROCOD); // Rest. El valor Antiguo
                 jt.setValor(""+defKilAnt,JT_KILOS); // Rest. Kilos ANTIGUOS
                 jt.setValor(""+defUnidAnt,JT_UNID);
                 return borraLinDesp(jt.getValorInt(row,JT_ORDEN));
@@ -1337,18 +1370,19 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         v.add("Producto"); //0
         v.add("Nombre"); // 1
         v.add("Kilos"); // 2
-        v.add("Unid"); // 3
-        v.add("Ind."); // 4
-        v.add("Ord"); // 5
+        v.add("Fec.Cad."); //3
+        v.add("Unid"); // 4
+        v.add("Ind."); // 5
+        v.add("Ord"); // 6
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{80,180,60,40,50,30});
-        jt.setAlinearColumna(new int[]{2,0,2,2,2,2});
+        jt.setAnchoColumna(new int[]{80,180,60,60,40,50,30});
+        jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2});
         Ppie = new gnu.chu.controles.CPanel();
         cLabel6 = new gnu.chu.controles.CLabel();
         kilsalE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
         cLabel7 = new gnu.chu.controles.CLabel();
-        def_feccadE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        deo_feccadE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         BF2 = new gnu.chu.controles.CButton();
         cLabel8 = new gnu.chu.controles.CLabel();
         difkilE = new gnu.chu.controles.CTextField(Types.DECIMAL,"---9.99");
@@ -1369,6 +1403,8 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         def_ordenE.setEnabled(false);
 
         pro_unidE.setText("1");
+
+        pro_nombE1.setEnabled(false);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -1486,13 +1522,15 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
 
         Baceptar.setText("Aceptar (F4)");
         Ppie.add(Baceptar);
-        Baceptar.setBounds(450, 2, 100, 30);
+        Baceptar.setBounds(450, 2, 100, 22);
 
         cLabel7.setText("Fec.Cad.");
         Ppie.add(cLabel7);
         cLabel7.setBounds(270, 2, 50, 17);
-        Ppie.add(def_feccadE);
-        def_feccadE.setBounds(320, 2, 70, 17);
+
+        deo_feccadE.setEditable(false);
+        Ppie.add(deo_feccadE);
+        deo_feccadE.setBounds(320, 2, 70, 17);
 
         BF2.setText("F2");
         BF2.setToolTipText("Ir de cabecera a Lineas y viceversa");
@@ -1518,12 +1556,16 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         cLabel10.setText("Fec. Prod.");
         Ppie.add(cLabel10);
         cLabel10.setBounds(100, 20, 60, 17);
+
+        def_fecproE.setEditable(false);
         Ppie.add(def_fecproE);
         def_fecproE.setBounds(160, 20, 70, 17);
 
         cLabel11.setText("Fec. Sacrificio");
         Ppie.add(cLabel11);
         cLabel11.setBounds(240, 20, 80, 17);
+
+        def_fecsacE.setEditable(false);
         Ppie.add(def_fecsacE);
         def_fecsacE.setBounds(320, 20, 70, 17);
 
@@ -1535,7 +1577,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
         BImprimir.addMenu("Interna","I");
         BImprimir.setToolTipText("");
         Ppie.add(BImprimir);
-        BImprimir.setBounds(400, 2, 45, 25);
+        BImprimir.setBounds(400, 2, 45, 22);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1576,6 +1618,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
     private gnu.chu.controles.CTextField def_fecsacE;
     private gnu.chu.controles.CTextField def_ordenE;
     private gnu.chu.controles.CTextField deo_ejelotE;
+    private gnu.chu.controles.CTextField deo_feccadE;
     private gnu.chu.controles.CTextField deo_kilosE;
     private gnu.chu.controles.CTextField deo_serlotE;
     private gnu.chu.controles.CTextField difkilE;
@@ -1587,6 +1630,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
     private gnu.chu.controles.CTextField pro_kilsalE;
     private gnu.chu.controles.CTextField pro_loteE;
     private gnu.chu.controles.CTextField pro_nombE;
+    private gnu.chu.controles.CTextField pro_nombE1;
     private gnu.chu.controles.CTextField pro_numindE;
     private gnu.chu.controles.CTextField pro_unidE;
     private gnu.chu.camposdb.tidCodi2 tid_codiE;

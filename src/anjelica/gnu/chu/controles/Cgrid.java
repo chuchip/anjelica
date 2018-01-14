@@ -901,7 +901,7 @@ public class Cgrid extends CPanel implements Serializable
           if (Formato[col].equals(""))
               return Formatear.getFechaVer((java.util.Date) dat);
           else
-              return Formatear.formatearFecha((java.util.Date)  dat, Formato[col]);
+              return Formatear.getFecha((java.util.Date)  dat, Formato[col]);
       }
       if (! Formato[col].equals(""))
       {

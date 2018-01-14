@@ -9081,7 +9081,7 @@ public class pdalbara extends ventanaPad  implements PAD
                      utdesp.getConservar(), utdesp.sacrificadoE,
                      utdesp.getFecCompra(),
                      utdesp.getFechaProduccion(),                     
-                     utdesp.getFecCaduc(),utdesp.fecSacrE);
+                     utdesp.getFechaCaducidad(),utdesp.fecSacrE);
     
         etiq.listarDefec();
       }

@@ -5,21 +5,16 @@ import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantPaises;
-import gnu.chu.anjelica.pad.pdmatadero;
-import gnu.chu.anjelica.pad.pdprove;
-import gnu.chu.anjelica.pad.pdsaladesp;
 import gnu.chu.camposdb.PaiPanel;
 import gnu.chu.comm.BotonBascula;
 import gnu.chu.controles.*;     
 import gnu.chu.utilidades.*;
-import gnu.chu.winayu.AyuSdeMat;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;     
-import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
@@ -327,7 +322,7 @@ public class MantAlbComCarne extends MantAlbCom
         return -1;
      if (acp_feccadE.isNull() || acp_feccadE.getError())
      {
-       acp_feccadE.setDate(Formatear.sumaDiasDate(acc_fecrecE.getDate(),pro_codiE.getDiasCad()) );
+       acp_feccadE.setDate(Formatear.sumaDiasDate(acc_fecrecE.getDate(),pro_codiE.getDiasCaducidad()) );
        mensajeErr("Introduzca Fecha de Caducidad");
        return JTD_FECCAD;
      }

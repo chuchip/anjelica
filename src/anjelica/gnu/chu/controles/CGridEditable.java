@@ -602,7 +602,7 @@ public class CGridEditable extends Cgrid implements CQuery {
         if (Formato[n].equals("") || Formato[n].charAt(0) != 'B')
           vCampo.add( ( (CCheckBox) comp).getSelecion());
         else
-          vCampo.add(Boolean.valueOf(( (CCheckBox) comp).isSelected()));
+          vCampo.add(( (CCheckBox) comp).isSelected());
 
         comp.setBackground(Color.yellow);
         comp.setForeground(Color.black);
@@ -996,7 +996,16 @@ public class CGridEditable extends Cgrid implements CQuery {
             if (getQuery())
               ( (CTextField) campos.get(n)).resetTexto();
             else
-              ( (CTextField) campos.get(n)).setText(vCampo.get(n).toString());
+            {
+               if (( (CTextField) campos.get(n)).getTipoCampo()==Types.DATE && vCampo.get(n) instanceof java.util.Date)
+               {
+                   ( (CTextField) campos.get(n)).setDate((java.util.Date) vCampo.get(n));
+               }
+               else
+               {
+                    ( (CTextField) campos.get(n)).setText(vCampo.get(n).toString());
+               }
+            }
         }
         if (tCampo.get(n).equals("P"))
           ( (CEditable) campos.get(n)).setText(vCampo.get(n).toString());
@@ -1628,8 +1637,12 @@ public class CGridEditable extends Cgrid implements CQuery {
         v.add(vCampo.get(n));
     }
   }
-
-  public void setDefaultValor(int col,String valor)
+    /**
+     * Pone el valor por defecto para una columna. Se usara cada vez que se inserte una linea
+     * @param col
+     * @param valor 
+     */
+  public void setDefaultValor(int col,Object valor)
   {
     vCampo.set(col,valor);
   }

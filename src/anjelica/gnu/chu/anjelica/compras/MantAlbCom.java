@@ -1574,7 +1574,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     @Override
   public void iniciarVentana() throws Exception
   {
-
+    setSonidoAlarma(true);
     pRegAlm= new paregalm();
     pRegAlm.iniciar(EU, dtStat, dtAdd, vl, this,dtCon1);
     if (! gnu.chu.anjelica.pad.pdconfig.getConfiguracion(EU.em_cod,dtStat,lkConfig))

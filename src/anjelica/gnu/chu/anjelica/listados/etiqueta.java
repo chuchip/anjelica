@@ -80,7 +80,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   public final static int NORMAL=0;
   public final static int MINI=1;
   public final static int REDUCIDA=2;
-  public final static int ETIQINT=4;
+ 
   boolean preVisual=false;
   boolean printDialog=false;
   boolean simulaPrint=false;
@@ -162,6 +162,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
 
   public void listar(int tipEtiq) throws Throwable
   {
+    int ETIQINT=getCodigoEtiqInterior(EU);
     fichEtiq="etiqueta";
     if (tipEtiq==MINI)
       fichEtiq="etiqmini";
@@ -611,5 +612,9 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
       return;
     gnu.chu.print.util.printJasper(jp, EU,numCopias);
     }
-   
+    public static int getCodigoEtiqInterior(EntornoUsuario eu)
+    {
+        int ETIQINT=4;
+        return eu.getValorParam("etiquetainterna", ETIQINT);
+    }
 }
