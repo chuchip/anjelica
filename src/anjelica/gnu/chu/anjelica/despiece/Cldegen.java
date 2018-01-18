@@ -299,7 +299,7 @@ public class Cldegen extends ventana
         {
             jt.setValor(
             MantTarifa.getPrecTar(dtStat,jt.getValorInt(n,0) ,0,TARIFA_MAYOR, 
-                Formatear.sumaDias(feciniE.getDate(),7)),
+                (opVentasSem.isSelected()?feciniE.getFecha("dd-MM-yyyy"):Formatear.sumaDias(feciniE.getDate(),7))) ,
                 n,JT_PRTARIFA);
         }
     }

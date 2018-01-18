@@ -489,16 +489,10 @@ public class ventana extends CInternalFrame implements ejecutable
           Clip clip = AudioSystem.getClip();
           clip.open(audioInputStream);
           clip.start();
-      } catch (LineUnavailableException ex)
+      } catch (Throwable ex)
       {
           java.util.logging.Logger.getLogger(ventana.class.getName()).log(Level.SEVERE, null, ex);
-      } catch (IOException ex)
-      {
-          java.util.logging.Logger.getLogger(ventana.class.getName()).log(Level.SEVERE, null, ex);
-      } catch (UnsupportedAudioFileException ex)
-      {
-          java.util.logging.Logger.getLogger(ventana.class.getName()).log(Level.SEVERE, null, ex);
-      }
+      } 
   }
   /**
    * Muestra un mensaje de aviso en formato popup (Modal mode)

@@ -79,7 +79,8 @@ public class DespVenta extends ventana {
     private boolean AUTOLLENARDESP=false;
     public static final String SERIE="V";
     boolean swEdicion=false;
-    public final static int JT_PROCOD=0,JT_PRONOMB=1,JT_KILOS=2,JT_FECCAD=3,JT_UNID=4,JT_NUMIND=5, JT_ORDEN=6,JTLIN_NUMCAJ=8;
+    public final static int JT_PROCOD=0,JT_PRONOMB=1,JT_KILOS=2,
+        JT_FECCAD=3,JT_UNID=4,JT_NUMIND=5, JT_ORDEN=6,JT_NUMCAJ=8;
     
     boolean nuevoDespiece=false;
     int proCodAnt;
@@ -434,7 +435,7 @@ public class DespVenta extends ventana {
             }
             else
             { // Compruebo integridad de despiece, ya q se marcara como cerrado.
-                s=checkArtSalidaDesp(dtCon1,tid_codiE.getValorInt(),jt, pro_codiE.getValorInt(),1);
+                s=checkArtSalidaDesp(dtCon1,tid_codiE.getValorInt(),jt, pro_codiE.getValorInt(),1,false);
                 if (s!=null)
                 {
                     mensajeErr(s);
@@ -542,8 +543,10 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
      * @return String con el mensaje de error. Null si no hay error
      * @throws SQLException 
      */
-    static String checkArtSalidaDesp(DatosTabla dt,int tidCodi,Cgrid jt,int proCodi,int unidEntrada) throws SQLException
+    static String checkArtSalidaDesp(DatosTabla dt,int tidCodi,
+        Cgrid jt,int proCodi,int unidEntrada,boolean swMantDesp) throws SQLException
     {
+       
        int nRow=jt.getRowCount();
        int nEle=0;
        if (tidCodi==MantTipDesp.AUTO_DESPIECE || tidCodi==MantTipDesp.LIBRE_DESPIECE 
@@ -575,13 +578,15 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                       " NO Encontrado en este Tipo de Despiece";
          
          if (htGru.get(dt.getString("tds_grupo"))==null)
-           htGru.put(dt.getString("tds_grupo"),jt.getValorInt(n,JT_UNID)*jt.getValorInt(n,JTLIN_NUMCAJ));
+           htGru.put(dt.getString("tds_grupo"),jt.getValorInt(n,swMantDesp?MantDesp.JTLIN_UNID:JT_UNID)*
+               jt.getValorInt(n,swMantDesp?MantDesp.JTLIN_NUMCAJ:JT_NUMCAJ));
          else
          {
-           if (jt.getColumnCount()==6)
-            nEle= htGru.get(dt.getString("tds_grupo")) + jt.getValorInt(n,JT_UNID);
+           if (!swMantDesp)
+            nEle= htGru.get(dt.getString("tds_grupo")) + jt.getValorInt(n, JT_UNID);
            else    
-            nEle= htGru.get(dt.getString("tds_grupo")) + (jt.getValorInt(n,JT_UNID) * jt.getValorInt(n,JTLIN_NUMCAJ));
+            nEle= htGru.get(dt.getString("tds_grupo")) + (jt.getValorInt(n,MantDesp.JTLIN_UNID) * 
+                jt.getValorInt(n,   MantDesp.JTLIN_NUMCAJ));
            htGru.put(dt.getString("tds_grupo"),nEle);
          }
        }
@@ -771,6 +776,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                if (!checkCabecera())
                 return;
                genDatEtiq();
+               jt.setDefaultValor( JT_FECCAD,deo_feccadE.getText());
                if (!tid_codiE.isEnabled())
                { // Vuelta a entrar
                    if (deoCodi!=0 && Pcabe.hasCambio())
@@ -783,10 +789,11 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                }
                else
                { // Primera vez que se entra
-                    llenaGrid();
+                    llenaGrid();   
+                    jt.setValor(deo_feccadE.getDate(),0,JT_FECCAD);
                }
                tid_codiE.setEnabled(false);
-                if (tid_codiE.getAsignarProdSalida() )
+               if (tid_codiE.getAsignarProdSalida() )
                {
                    int proCodi=MantTipDesp.getArticuloSalida(dtStat, pro_codiE.getValorInt(), tid_codiE.getValorInt());
                    if (proCodi>0)
@@ -795,6 +802,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                        jt.setValor(pro_codsalE.getNombArt(proCodi),0,JT_PRONOMB);
                    }
                }
+            
 //               activar(false);
                jt.setEnabled(true);
               
@@ -857,7 +865,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
             v.add(pro_codiE.getValorInt());
             v.add(pro_codiE.getTextNomb());
             v.add("0"); // Kg
-             v.add(deo_feccadE.getDate());
+            v.add(deo_feccadE.getDate());
             v.add("1"); // Unid
             v.add("0"); // N Ind.
             v.add("0"); // N. Orden           
@@ -1104,19 +1112,17 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                 deo_serlotE.getText(), pro_loteE.getValorInt(),nInd,
                 pro_codsalE.getValorInt(),
                 pro_kilsalE.getValorDec(), pro_unidE.getValorInt(),1,
-                deo_feccadE.getText(),defOrden);         
-     if (Formatear.comparaFechas(def_feccadE.getDate(),deo_feccadE.getDate())!=0)
-     {
-         ponFechas(pro_codsalE.getDiasCaducidad(),def_feccadE.getDate());
-         String s="update stockpart set stp_fecpro='"+Formatear.getFechaDB(deoFecpro)+"'"+
+                deo_feccadE.getText(),defOrden);             
+     ponFechas(pro_codsalE.getDiasCaducidad(),def_feccadE.getDate());
+     String s="update stockpart set stp_feccad='"+def_feccadE.getFechaDB()+"'"+
+               ", stp_fecpro='"+Formatear.getFechaDB(deoFecpro)+"'"+
                (deoFecSacr==null ?"":", stp_fecsac = '"+Formatear.getFechaDB(deoFecSacr)+"'")+
                " where pro_nupar="+ pro_loteE.getValorInt()+
                 " and pro_serie='"+deo_serlotE.getText()+"' "+
                 " and eje_nume="+deo_ejelotE.getValorInt()+
                 " and pro_codi = "+pro_codsalE.getValorInt()+
                 " and pro_numind="+nInd;
-         dtAdd.executeUpdate(s);
-     }
+     dtAdd.executeUpdate(s);
      jt.setValor(""+nInd,linea,JT_NUMIND);
      jt.setValor(""+defOrden,linea,JT_ORDEN);
      
@@ -1237,10 +1243,10 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
      */
     void ponFechas(int diasCad,Date fecCaduc) throws ParseException
     {
-        if (Formatear.comparaFechas(fecCaduc, utdesp.getFechaCaducidad())==0)
+        if (Formatear.comparaFechas(fecCaduc, deo_feccadE.getDate() )==0)
         {
-            deoFecpro=utdesp.getFechaProduccion();
-            deoFecSacr=utdesp.getFecSacrif();
+            deoFecpro=def_fecproE.getDate();
+            deoFecSacr=def_fecsacE.getDate();
         }
         else
         {

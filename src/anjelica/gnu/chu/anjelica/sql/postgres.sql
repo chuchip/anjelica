@@ -3435,7 +3435,7 @@ insert into parametros values('*','jdbc_url_cont','URL conexion Contabilidad','j
 insert into parametros values('*','crotalAutoma','Numero Crotal Automatico',1);
 insert into parametros values('*','minLonCrotal','Numero Minimo digitos Crotal',10);
 insert into parametros values('*','controlprodmin','Control Productos Minoristas',0);
-insert into parametros values('*','tipdespclasi','Tipo despiece Cambio Clasificacion',105);
+insert into parametros values('*','tipdespclasi','Tipo despiece Cambio Clasificacion',108);
 --
 -- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
 --
@@ -3548,13 +3548,15 @@ create table anjelica.linvproduc
 	lip_fecalt timestamp not  null default current_timestamp,
 	pai_codi varchar(3),	
 	prp_feccad date ,				-- Fecha Cad.
-	prp_fecpro date ,				-- Fecha Produccion.	
+	prp_fecpro date ,				-- Fecha Produccion.
+	vpc_id int,			-- Numero valoracion.
   constraint ix_linvproduc primary key(cip_codi,lip_numlin)
 );
 create index ix_linvproduc2 on linvproduc(pro_codi,prp_ano,prp_part,prp_seri,prp_indi);
 
 create view anjelica.v_invproduc as
-select c.cip_codi,c.usu_nomb,cip_fecinv, c.cam_codi,c.alm_codi,lip_numlin,prp_ano, prp_seri, prp_part, l.pro_codi, a.pro_nomb,
+create view anjelica.v_invproduc as
+select c.cip_codi,c.usu_nomb,cip_fecinv, c.tid_codi,c.cam_codi,c.alm_codi,cip_coment,lip_numlin,prp_ano, prp_seri, prp_part, l.pro_codi, a.pro_nomb,
 prp_indi,prp_peso,l.prv_codi,prv_nomb,prp_fecsac,prp_feccad,prp_fecpro,lip_fecalt,l.pai_codi from cinvproduc as c, linvproduc as l left join v_articulo as a on l.pro_codi=a.pro_codi
 left join v_proveedo as pv on l.prv_codi = pv.prv_codi where
  c.cip_codi=l.cip_codi;

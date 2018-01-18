@@ -244,7 +244,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2018-01-12" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2018-01-16" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -1169,18 +1169,10 @@ public class MantDesp extends ventanaPad implements PAD
         if (!deo_fecsacE.isNull() )
         {
             if (Formatear.comparaFechas(deo_fecsacE.getDate(), deo_fecproE.getDate())>0)
-            {
-                msgBox("Fecha Sacrificio NO puede ser superior a la de produccion");
-                deo_fecsacE.requestFocus();
-                return false;
-            }
+                msgBox("Fecha Sacrificio NO puede ser superior a la de produccion");              
         }
         if (Formatear.comparaFechas(deo_fecproE.getDate(),deo_fecsacE.getDate() ) < 0)
-        {
             msgBox("Fecha Produccion NO puede ser inferior a Sacrificio");
-            deo_fecsacE.requestFocusLater();
-            return false;
-        }
 
         if ((prv_codiE.isNull() || !prv_codiE.controla(true)) && reset)
         {
@@ -2167,7 +2159,7 @@ public class MantDesp extends ventanaPad implements PAD
                 if (isComprobarTipoDespiece())
                 {
                     s = DespVenta.checkArtSalidaDesp(dtCon1, tid_codiE.getValorInt(),
-                        jtLin, pro_codiE.getValorInt(), uniOrigE.getValorInt());
+                        jtLin, pro_codiE.getValorInt(), uniOrigE.getValorInt(),true);
                     if (s != null)
                     {
                         mensajeErr(s);
@@ -3600,7 +3592,7 @@ public class MantDesp extends ventanaPad implements PAD
 //     debug("Nombre Articulo: "+nombArt);
             utdesp.iniciar(dtAdd, eje_numeE.getValorInt(), EU.em_cod, deo_almdesE.getValorInt(),
                 deo_almoriE.getValorInt(), EU);
-            if (tipoEtiq !=0 && cli_codiE.getValorInt()!=0)
+            if (tipoEtiq !=0 && tipoEtiq !=etiqueta.getCodigoEtiqInterior(EU) &&  cli_codiE.getValorInt()!=0)
                 utdesp.setDirEmpresa(cli_codiE.getTextNomb());
             else
                 utdesp.setDirEmpresa(null);
@@ -3614,7 +3606,7 @@ public class MantDesp extends ventanaPad implements PAD
             {
                 msgBox(utdesp.getMsgAviso());
             }
-            utdesp.imprEtiq(tipoEtiqueta == 0 ? proCodeti : tipoEtiqueta, 
+            utdesp.imprEtiq(tipoEtiqueta, 
                 dtStat, pro_codlE.getValorInt(), nombArt,
                 "D",
                 opSimular.isSelected() ? jtCab.getValorInt(0, JTCAB_NUMLOT) : deo_nulogeE.getValorInt(),
@@ -3668,9 +3660,9 @@ public class MantDesp extends ventanaPad implements PAD
                 0, utdesp.getConservar(),
                 utdesp.sacrificadoE,
                 null,
-                deo_fecproE.getDate(),
-                deo_feccadE.getDate(), 
-                deo_fecsacE.getDate() );
+                deoFecpro,
+                def_feccadE.getDate(), 
+                deoFecSacr);
             etiq.setNumCopias(numCopiasE.getValorInt());
             etiq.listar(etiquetaInterior);
         
@@ -3826,10 +3818,10 @@ public class MantDesp extends ventanaPad implements PAD
      */
     void ponFechas(int diasCad,Date fecCaduc) throws ParseException
     {
-        if (Formatear.comparaFechas(fecCaduc, utdesp.getFechaCaducidad())==0)
+        if (Formatear.comparaFechas(fecCaduc, deo_feccadE.getDate() )==0)
         {
-            deoFecpro=utdesp.getFechaProduccion();
-            deoFecSacr=utdesp.getFecSacrif();
+            deoFecpro=deo_fecproE.getDate();
+            deoFecSacr=deo_fecsacE.getDate();
         }
         else
         {
@@ -5346,22 +5338,7 @@ public class MantDesp extends ventanaPad implements PAD
     }//GEN-LAST:event_MVerMvtCabActionPerformed
 
     private void ImprEtiqMIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImprEtiqMIActionPerformed
-          if (jtLin.isVacio())
-            return;
-        try
-        {
-            // opSimular.setSelected(true);
-            genDatEtiq();
-            pro_codlE.setValorInt(jtLin.getValorInt(jtLin.getSelectedRowDisab(), JTLIN_PROCODI));
-            ponFechas(pro_codlE.getDiasCaducidad(),
-                jtLin.getValDate(jtLin.getSelectedRowDisab(),JTLIN_FECCAD));
-            def_kilosE.setValorDec(jtLin.getValorDec(jtLin.getSelectedRowDisab(), JTLIN_KILOS));
-            imprEtiq(jtLin.getSelectedRowDisab(),
-                ultCodigoEtiqueta);
-        } catch (Exception ex)
-        {
-            Error("Error al imprimir etiqueta", ex);
-        }
+         Bimpeti.getBotonAccion().doClick();
     }//GEN-LAST:event_ImprEtiqMIActionPerformed
     void mostrarMvtos(int proCodi,int ejeNume,String serie, int lote,int numInd) 
     {

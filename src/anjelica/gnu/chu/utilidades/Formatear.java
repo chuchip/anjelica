@@ -1897,7 +1897,7 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
     * Devuelve el dia de la fecha mandada
     * @param fecha Objeto Date con la fecha
     * 
-    * @return Año de la fecha
+    * @return dia de la fecha
     */
    public static int getDay(Date fecha)
    {
@@ -2011,6 +2011,12 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
    {
      return sumaDias(getDate(fecha, formato), numDias);
    } 
+   /**
+    * Suma dias a una fecha. 
+    * @param fecha fecha
+    * @param numDias numero dias
+    * @return  Fecha en formato dd-MM-yyyy
+    */
     public static String sumaDias(Date fecha,int numDias)
     {
       return getFechaVer(sumaDiasDate(fecha,numDias));

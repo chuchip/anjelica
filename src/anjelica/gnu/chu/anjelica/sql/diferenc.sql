@@ -1,3 +1,36 @@
+--
+---
+-- Cabecera Prevision Valoracion Produccion
+--
+create table prevalproca
+(
+	vpc_codi serial not null, -- Codigo Valoracion Produccion
+	tid_codi int not null, -- Tipo despiece
+	pro_codi int not null -- Codigo producto.	
+);
+--
+---
+-- Lineas Prevision Valoracion Produccion
+--
+create table prevalproli
+(
+	vpc_codi int not null, -- Codigo Valoracion Produccion
+	vpl_codi serial not null, -- Codigo Numero Linea
+	tde_grupo  varchar(10) not null,	-- Grupo al que pertenece
+	vpl_peso float not null -- % Peso sobre total.	
+);
+--
+---
+-- Detalle Prevision Valoracion Produccion
+--
+create table prevalprode
+(
+	vpl_codi int not null, -- Codigo Numero Linea
+	pro_codi int not null, -- Codigo producto salida
+	vpd_unid int not null -- % Unidades sobre grupo
+);
+
+--
 -- Puesto numero palet a varchar(5)
 drop view v_stkpart;
 alter table stockpart  alter stp_numpal type varchar(5);

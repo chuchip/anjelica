@@ -49,7 +49,7 @@ import java.util.List;
 public class MantPreMedios extends ventana
 {
    
-   private int TIDE_AUTOCLASI=105; 
+   private int TIDE_AUTOCLASI=108; 
    Hashtable<Integer,Double> htBolas = new Hashtable();
    Hashtable<Integer,Integer[]> htLomos = new Hashtable();
    Hashtable<Integer,Boolean> htLomCom = new Hashtable();
@@ -105,7 +105,7 @@ public class MantPreMedios extends ventana
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2017-07-12" );
+      this.setVersion("2018-01-17" );
       statusBar = new StatusBar(this);
       
       iniciarFrame();
@@ -331,12 +331,12 @@ public class MantPreMedios extends ventana
         gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.SUNDAY);
         gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt());     
         tar_feciniE.setDate(new java.util.Date(gc.getTimeInMillis()));
-        gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt()+1);
+        gc.set(GregorianCalendar.WEEK_OF_YEAR, cta_semanaE.getValorInt());
 //        gc.set(GregorianCalendar.DAY_OF_WEEK, GregorianCalendar.SUNDAY);
         
         fecStockE.setDate(Formatear.sumaDiasDate(tar_feciniE.getDate(),-1)); // Sabado anterior
-        fecIniComE.setDate(tar_feciniE.getDate());
-        fecFinComE.setDate(Formatear.sumaDiasDate(fecIniComE.getDate(),7));
+        fecIniComE.setDate(Formatear.sumaDiasDate(tar_feciniE.getDate(),-3)); // Jueves anterior
+        fecFinComE.setDate(Formatear.sumaDiasDate(tar_feciniE.getDate(),6)); // Sabado siguiente.
 //        fecIniComE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4) ); // Jueves anteerior
 //        fecFinComE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",3) );
     }

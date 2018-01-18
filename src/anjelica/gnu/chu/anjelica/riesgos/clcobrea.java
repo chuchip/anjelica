@@ -10,12 +10,11 @@ import java.sql.*;
 import java.awt.event.*;
 import java.util.*;
 import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.view.*;
 /**
  *
  * <p>Titulo: clcobrea</p>
  * <p>Descripción: Consulta/Listado Cobros realizados</p>
- * <p>Copyright: Copyright (c) 2005-2012
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -443,7 +442,7 @@ private void jbInit() throws Exception
     if (empFinE.getText().trim().equals(""))
       empFinE.setText("99");
     if (! serieIniE.isNull(true))
-    cond+=" and co.cob_serie >= '" + serieIniE.getText() + "'" ;
+        cond+=" and co.cob_serie >= '" + serieIniE.getText() + "'" ;
     if (! serieFinE.isNull(true))
       cond+=" and co.cob_serie <= '" + serieFinE.getText() + "'" ;
 

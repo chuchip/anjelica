@@ -2009,7 +2009,7 @@ void pdreprese_actionPerformed(ActionEvent e) {
   }
   void ALlisaldos_actionPerformed(ActionEvent e) {
       
-    lanzaEjecutable(new gnu.chu.anjelica.almacen.lisaldos(menu.this,EU));
+    lanzaEjecutable(new gnu.chu.anjelica.almacen.CLsaldos(menu.this,EU));
   }
   void ALCheckMvt_actionPerformed(ActionEvent e) {
              
