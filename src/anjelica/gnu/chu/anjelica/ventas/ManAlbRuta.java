@@ -11,7 +11,7 @@ package gnu.chu.anjelica.ventas;
 * solo podra modificar partes para poner kms,vehiculo y comentarios.
 * Por defecto modSala=false
 * </p>
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -34,11 +34,15 @@ import gnu.chu.anjelica.listados.Listados;
 import static gnu.chu.anjelica.listados.etiqueta.LOGOTIPO;
 import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.anjelica.pad.pdconfig;
+import gnu.chu.anjelica.pad.pdtransp;
+import gnu.chu.controles.CComboBox;
+import gnu.chu.controles.CLinkBox;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.eventos.GridAdapter;
 import gnu.chu.eventos.GridEvent;
 import gnu.chu.interfaces.PAD;
 import gnu.chu.interfaces.ejecutable;
+import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
@@ -150,7 +154,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2017-10-22 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2018-01-19 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM albrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -478,7 +482,12 @@ public class ManAlbRuta extends ventanaPad implements PAD
     tra_codiE.setValor(EU.usuario);
     alr_fechaE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
     alr_fecsalE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-    
+    try {
+        llenaComboTransp(false);
+    } catch (SQLException k)
+    {
+        Error ("Error al llenar combo transportistas",k);
+    }
     veh_codiE.setText("");
     jt.removeAllDatos();
     jt.setDragEnabled(false); 
@@ -1335,13 +1344,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
     public void iniciarVentana() throws Exception {
         Pcabe.setAltButton(BirGrid);
         pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS ,EU.em_cod);
-        String s="select tra_codi,tra_nomb from v_tranpvent "+
-            (ARG_MODSALA?" where tra_codi ='"+EU.usuario+"'":"")+            
-            " order by tra_codi";
-        if (dtCon1.select(s))
-            tra_codiE.addItem(dtCon1);
-        tra_codiE.addItem("Externo","Externo");
-        s="select veh_codi,veh_nomb from vehiculos order by veh_nomb";
+        llenaComboTransp(true);
+        String s="select veh_codi,veh_nomb from vehiculos order by veh_nomb";
         if (dtCon1.select(s))
             veh_codiE.addDatos(dtCon1);
         if (ARG_MODSALA)
@@ -1365,7 +1369,11 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         verDatos();
     }
-    
+    void llenaComboTransp(boolean incTodo) throws SQLException
+    {
+        pdtransp.llenaComboTransp(incTodo,dtCon1,tra_codiE,  ARG_MODSALA?EU.usuario:null);
+    }
+   
     void activarEventos()
     {
         ordenarC.addActionListener(new ActionListener()
@@ -1859,6 +1867,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
             }
             insLinFac(id);
             dtAdd.commit();
+            llenaComboTransp(true);
             mensajeErr("Albaranes de ruta.. guardados");
             activaTodo();
             strSql="SELECT * FROM albrutacab where alr_nume = "+id;
@@ -2103,7 +2112,12 @@ public class ManAlbRuta extends ventanaPad implements PAD
       mensajeErr("Insercion ... CANCELADA");
       activaTodo();
       verDatos();
-      
+      try {
+        llenaComboTransp(true);
+    } catch (SQLException k)
+    {
+        Error ("Error al llenar combo transportistas",k);
+    }
       nav.pulsado = navegador.NINGUNO;
     }
     

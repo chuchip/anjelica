@@ -1,12 +1,23 @@
 --
+alter table transportista  add tra_activ  char(1) default 'S' not null; -- Activo (S/N)
+CREATE OR REPLACE VIEW v_tranpvent AS 
+ SELECT 'T'::text || transportista.tra_codi AS tra_codi,
+    transportista.tra_nomb, tra_activ as trp_activ
+   FROM transportista
+  WHERE transportista.tra_tipo = 'V'::bpchar
+UNION
+ SELECT usuarios.usu_nomb AS tra_codi,
+    usuarios.usu_nomco AS tra_nomb,usu_activ as trp_activ
+   FROM usuarios;
 ---
 -- Cabecera Prevision Valoracion Produccion
 --
 create table prevalproca
 (
-	vpc_codi serial not null, -- Codigo Valoracion Produccion
+	vpc_codi int not null, -- Codigo Valoracion Produccion
 	tid_codi int not null, -- Tipo despiece
-	pro_codi int not null -- Codigo producto.	
+	pro_codi int not null, -- Codigo producto.	
+   primary key (vpc_codi)
 );
 --
 ---
@@ -15,9 +26,9 @@ create table prevalproca
 create table prevalproli
 (
 	vpc_codi int not null, -- Codigo Valoracion Produccion
-	vpl_codi serial not null, -- Codigo Numero Linea
 	tde_grupo  varchar(10) not null,	-- Grupo al que pertenece
-	vpl_peso float not null -- % Peso sobre total.	
+	vpl_peso float not null, -- % Peso sobre total.	
+	primary key (vpc_codi,tde_grupo)
 );
 --
 ---
@@ -25,11 +36,73 @@ create table prevalproli
 --
 create table prevalprode
 (
-	vpl_codi int not null, -- Codigo Numero Linea
+	vpc_codi int not null, -- Codigo Valoracion Produccion
+	tde_grupo  varchar(10) not null,
 	pro_codi int not null, -- Codigo producto salida
 	vpd_unid int not null -- % Unidades sobre grupo
 );
+create index ix_prevalprode on prevalprode(vpc_codi,vpl_codi);
 
+insert into prevalproca values(1,1400,10901);
+insert into prevalproli values(1,'8SA',55);
+insert into prevalproli values(1,'8SB',20);
+insert into prevalproli values(1,'113',12.75);
+
+insert into prevalprode values(1,'8SB',40829,20);
+insert into prevalprode values(1,'8SB',40821,80);
+
+insert into prevalprode values(1,'113',11315,20);
+insert into prevalprode values(1,'113',11317,55);
+insert into prevalprode values(1,'113',11314,25);
+insert into prevalprode values(1,'113',11319,30);
+
+
+alter table linvproduc add vpc_id int;			-- Numero valoracion.
+--
+---
+-- Cabecera Prevision Valoracion Produccion
+--
+create table valproca
+(
+	vpc_codi int not null, -- Codigo Valoracion Produccion
+	vpc_id serial not null,   -- Numero valoracion	
+	vpc_unid int not null, -- Unidades
+	vpc_kilos double not null, -- Kilos	
+	vpc_costo double not null, -- Costo
+	primary key (vpc_id)
+);
+create table valprode
+(
+	vpc_id int not null, -- Numero valoracion	
+	tde_grupo  varchar(10) not null,	-- Grupo al que pertenece
+	pro_codi int not null, -- Producto.
+	vpl_unid int not null, -- Unidades.
+	vpl_kilos int not null, -- Kilos
+	vpl_costo float not null, --- Costo	
+	primary key (vpc_codi,tde_grupo)
+);
+--
+---
+-- Lineas Prevision Valoracion Produccion
+--
+create table prevalproli
+(
+	vpc_codi int not null, -- Codigo Valoracion Produccion
+	tde_grupo  varchar(10) not null,	-- Grupo al que pertenece
+	vpl_peso float not null, -- % Peso sobre total.	
+	primary key (vpc_codi,tde_grupo)
+);
+--
+---
+-- Detalle Prevision Valoracion Produccion
+--
+create table prevalprode
+(
+	vpc_codi int not null, -- Codigo Valoracion Produccion
+	tde_grupo  varchar(10) not null,
+	pro_codi int not null, -- Codigo producto salida
+	vpd_unid int not null -- % Unidades sobre grupo
+);
 --
 -- Puesto numero palet a varchar(5)
 drop view v_stkpart;

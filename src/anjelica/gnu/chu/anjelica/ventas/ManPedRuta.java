@@ -34,6 +34,7 @@ import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.pad.pdprove;
+import gnu.chu.anjelica.pad.pdtransp;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.controles.miCellRender;
 import gnu.chu.eventos.GridAdapter;
@@ -416,11 +417,17 @@ public class ManPedRuta extends ventanaPad implements PAD
     }
     @Override
   public void PADAddNew()
-  {    
-    
+  {        
     mensaje("Insertar Nuevo Registro");
     swOrdenado=false;
     Pcabe.resetTexto();
+    try {
+        llenaComboTransp(false);
+    } catch (SQLException k)
+    {
+        Error("Error al llenar combo de transportes",k);
+        return;
+    }
     prc_comentE.resetTexto();
     tra_codiE.setValor(EU.usuario);    
     prc_fecsalE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -761,10 +768,10 @@ public class ManPedRuta extends ventanaPad implements PAD
         Pcabe.add(cLabel1);
         cLabel1.setBounds(180, 23, 10, 17);
 
-        cLabel7.setText("Operario");
+        cLabel7.setText("Transporte");
         cLabel7.setPreferredSize(new java.awt.Dimension(52, 18));
         Pcabe.add(cLabel7);
-        cLabel7.setBounds(150, 0, 60, 17);
+        cLabel7.setBounds(150, 0, 70, 17);
 
         cLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         cLabel2.setText(":");
@@ -801,7 +808,7 @@ public class ManPedRuta extends ventanaPad implements PAD
         Pcabe.add(BirGrid);
         BirGrid.setBounds(540, 120, 2, 2);
         Pcabe.add(tra_codiE);
-        tra_codiE.setBounds(210, 0, 210, 17);
+        tra_codiE.setBounds(220, 0, 220, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1099,12 +1106,7 @@ public class ManPedRuta extends ventanaPad implements PAD
     public void iniciarVentana() throws Exception {
         Pcabe.setAltButton(BirGrid);
         pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS ,EU.em_cod);
-        String s="select tra_codi,tra_nomb from v_tranpvent "+
-            (ARG_MODSALA?" where tra_codi ='"+EU.usuario+"'":"")+            
-            " order by tra_codi";
-        if (dtCon1.select(s))
-            tra_codiE.addItem(dtCon1);
-        tra_codiE.addItem("Externo","Externo");
+        llenaComboTransp(true);
      
         if (ARG_MODSALA)
             tra_codiE.setEnabled(false);
@@ -1544,6 +1546,8 @@ public class ManPedRuta extends ventanaPad implements PAD
             }   
             guardaOrden();
             dtAdd.commit();
+            llenaComboTransp(true);
+
             mensajeErr("Pedidos de ruta.. guardados");
             activaTodo();
             strSql="SELECT * FROM pedrutacab where pru_id = "+id;
@@ -1829,6 +1833,14 @@ public class ManPedRuta extends ventanaPad implements PAD
       mensaje("");
       mensajeErr("Insercion ... CANCELADA");
       activaTodo();
+      try {
+        llenaComboTransp(false);
+      } catch (SQLException k)
+      {
+            Error("Error al llenar combo de transportes",k);
+            return;
+      }
+
       verDatos();
       
       nav.pulsado = navegador.NINGUNO;
@@ -1919,5 +1931,9 @@ public class ManPedRuta extends ventanaPad implements PAD
      {
        Error("Error al imprimir Pedido Venta", k);
      }
+   }
+   void llenaComboTransp(boolean incTodo) throws SQLException
+   {
+      pdtransp.llenaComboTransp(incTodo,dtCon1,tra_codiE,  ARG_MODSALA?EU.usuario:null);
    }
 }

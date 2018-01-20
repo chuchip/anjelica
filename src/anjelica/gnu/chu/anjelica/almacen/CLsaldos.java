@@ -215,7 +215,7 @@ public class CLsaldos extends ventana implements JRDataSource
         Pdatcon.add(cLabel2);
         cLabel2.setBounds(10, 2, 60, 17);
         Pdatcon.add(fecsalE);
-        fecsalE.setBounds(70, 20, 65, 17);
+        fecsalE.setBounds(75, 20, 65, 17);
 
         opIgnDespSVal.setSelected(true);
         opIgnDespSVal.setText("Ign. Desp. SV");
@@ -227,7 +227,7 @@ public class CLsaldos extends ventana implements JRDataSource
         Pdatcon.add(cLabel3);
         cLabel3.setBounds(210, 60, 50, 17);
         Pdatcon.add(sbe_codiE);
-        sbe_codiE.setBounds(280, 20, 40, 18);
+        sbe_codiE.setBounds(280, 20, 40, 17);
 
         cLabel4.setText("Seccion");
         Pdatcon.add(cLabel4);
@@ -270,7 +270,7 @@ public class CLsaldos extends ventana implements JRDataSource
         opIncSemana.setText("Inc. Semana");
         opIncSemana.setToolTipText("Mostrar todos los productos que hayan tenido stock en la semana");
         Pdatcon.add(opIncSemana);
-        opIncSemana.setBounds(135, 20, 90, 17);
+        opIncSemana.setBounds(140, 20, 88, 17);
 
         cLabel7.setText("Almacen");
         Pdatcon.add(cLabel7);
@@ -943,7 +943,11 @@ public class CLsaldos extends ventana implements JRDataSource
         if (opIncSemana.isSelected())
         {
               if (! mvtosDom.calculaMvtos(dtProd.getInt("pro_codi"), dtCon1, dtStat, null,null))
+              {
+                 if (! dtProd.next())
+                    return false;
                  continue;             
+              }
               kilos = 0;
               unid = 0;
               kgCom = mvtosDom.getKilosCompra();
@@ -952,8 +956,7 @@ public class CLsaldos extends ventana implements JRDataSource
               precio = mvtosDom.getPrecioStock()
                   + (pro_cosincE.isSelected() ? dtProd.getDouble("pro_cosinc") : 0);
               if (mvtosDom.getKilosStock() >= 1)
-                  return true;
-        
+                  return true;        
         }    
         if (! dtProd.next())
           return false;

@@ -8,7 +8,7 @@ package gnu.chu.anjelica.ventas;
  * puestos, dandoz< la opción de actualizarlos.
  * Created on 03-dic-2009, 22:41:09
  *
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -52,6 +52,7 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionEvent;
@@ -86,6 +87,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     boolean verPrecio;
     String ARG_REPCODI = "";
     String ARG_SBECODI = "";
+    boolean  ARG_ADMIN = false;
     private final int JTCAB_EMPPED=0;
     private final int JTCAB_EJEPED=1;
     private final int JTCAB_NUMPED=2;
@@ -112,21 +114,15 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         this(eu, p, null);
     }
 
-    public CLPedidVen(EntornoUsuario eu, Principal p, HashMap<String,String> ht) {
+    public CLPedidVen(EntornoUsuario eu, Principal p, Hashtable<String,String> ht) {
         EU = eu;
         vl = p.panel1;
         jf = p;
         eje = true;
 
         try {
-            if (ht != null) {
-                 if (ht.get("repCodi") != null) 
-                    ARG_REPCODI = ht.get("repCodi");
-                
-                if (ht.get("sbeCodi") != null)
-                    ARG_SBECODI = ht.get("sbeCodi");
-              
-            }
+            ponParametros(ht);
+           
             setTitulo("Cons/List.  Pedidos Ventas");
             setAcronimo("clpeve");
             if (jf.gestor.apuntar(this)) {
@@ -139,25 +135,32 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         }
     }
 
-    public CLPedidVen(gnu.chu.anjelica.menu p, EntornoUsuario eu, HashMap <String,String> ht) {
+    public CLPedidVen(gnu.chu.anjelica.menu p, EntornoUsuario eu, Hashtable <String,String> ht) {
         EU = eu;
         vl = p.getLayeredPane();
         eje = false;
 
         try {
-            if (ht != null) {
-                if (ht.get("repCodi") != null) 
-                    ARG_REPCODI = ht.get("repCodi");
-                
-                if (ht.get("sbeCodi") != null)
-                    ARG_SBECODI = ht.get("sbeCodi");
-            }
+            ponParametros(ht);
             setTitulo("Cons/List.  Pedidos de Ventas");
             setAcronimo("clpeve");
             jbInit();
         } catch (Exception e) {
            ErrorInit(e);
         }
+    }
+    void  ponParametros(Hashtable<String,String> ht)
+    {
+        if (ht != null) 
+        {
+            if (ht.get("repCodi") != null) 
+               ARG_REPCODI = ht.get("repCodi");
+
+           if (ht.get("sbeCodi") != null)
+               ARG_SBECODI = ht.get("sbeCodi");       
+           if (ht.get("admin") != null)
+               ARG_ADMIN=Boolean.parseBoolean(ht.get("admin"));
+       }
     }
     public CLPedidVen(ventana papa) throws Exception
     {
@@ -177,7 +180,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2017-10-16");
+        this.setVersion("2018-01-19");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -189,7 +192,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     @Override
     public void iniciarVentana() throws Exception 
     {
-       
+     tit_usunomE.setEnabled(ARG_ADMIN);
+     tit_usunomE.setText(EU.usuario);
      Pcabe.setDefButton(Baceptar);
      pvc_feciniE.setAceptaNulo(false);
      pvc_fecfinE.setAceptaNulo(false);
@@ -431,7 +435,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
    {
      try
      {
-       s="SELECT p.*,cl.cli_pobl FROM v_pedven as p,v_cliente as cl "+
+       s="SELECT p.*,cl.cli_pobl,tt.usu_nomb as tit_usunom,tit_tiempo FROM v_pedven as p"
+           + " left join tiempostarea as tt on tit_tipdoc='P' and tit_id=p.pvc_id and tt.usu_nomb='"+tit_usunomE.getText()+"'"
+           + ",v_cliente as cl "+
            " WHERE p.emp_codi =  "+empCodi+
            " and p.cli_codi = cl.cli_codi "+ 
            " AND p.eje_nume = "+ejeNume+
@@ -445,6 +451,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
          msgBox("NO ENCONTRADOS DATOS PARA ESTE PEDIDO");
          return;
        }
+       tit_usuasiE.setText(dtCon1.getString("tit_usunom",true));
+       tit_tiempoE.setText(dtCon1.getString("tit_tiempo",true));
        pvc_comen=dtCon1.getString("pvc_comen");
        usu_nombE.setText(dtCon1.getString("usu_nomb"));
        pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));
@@ -453,7 +461,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
        
        pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
        
-       pvc_nupeclE.setText(dtCon1.getString("pvc_nupecl"));
+    
        do
        {
          ArrayList v=new ArrayList();
@@ -739,13 +747,15 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
          + " c.rut_codi, al.rut_nomb FROM pedvenc as c"
          + " left join v_albavec as av on c.avc_ano = av.avc_ano "
          + " and c.avc_serie= av.avc_serie and c.avc_nume =  av.avc_nume and av.emp_codi = c.emp_codi "
-         + ",clientes as cl,v_rutas as al " +       
-        " WHERE pvc_fecent between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +       
+         + " left join tiempostarea as tt on tit_tipdoc='P' and tit_id=c.pvc_id and tt.usu_nomb='"+tit_usunomE.getText()+"'"
+         + ",clientes as cl,v_rutas as al "       
+        + " WHERE pvc_fecent between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +       
         " and  to_date('" + pvc_fecfinE.getText()  + "','dd-MM-yyyy')" +
         " and c.emp_codi = "+EU.em_cod+
         " and cl.cli_codi = c.cli_codi " +
         " and c.rut_codi = al.rut_codi "+     
          " and pvc_confir = 'S'"+
+         (opPedAsigUsu.isSelected()?" and tt.usu_nomb='"+tit_usunomE.getText()+"'":"")+
          (camCodi.equals("")?"":
          " and exists (select a.pro_codi from v_pedven as l,v_articulo as a where"
          + " a.pro_codi=l.pro_codi and l.pvc_id=c.pvc_id and a.cam_codi in ("+camCodi+"))" )+
@@ -978,12 +988,14 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         cLabel22 = new gnu.chu.controles.CLabel();
         rut_codiE = new gnu.chu.controles.CLinkBox();
         BFiltroCam = new gnu.chu.controles.CButton(Iconos.getImageIcon("filter"));
+        cLabel8 = new gnu.chu.controles.CLabel();
+        tit_usunomE = new gnu.chu.controles.CTextField(Types.CHAR,"X",15);
+        opPedAsigUsu = new gnu.chu.controles.CCheckBox();
         jtLinPed = new gnu.chu.controles.Cgrid(11);
         jtCabPed = new gnu.chu.controles.Cgrid(14);
         Ppie = new gnu.chu.controles.CPanel();
         cLabel17 = new gnu.chu.controles.CLabel();
         nPedT = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
-        cLabel19 = new gnu.chu.controles.CLabel();
         pvc_fecpedE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         pvc_horpedE = new gnu.chu.controles.CTextField(Types.DECIMAL, "99.99");
         cLabel20 = new gnu.chu.controles.CLabel();
@@ -992,10 +1004,13 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         scrollarea1 = new javax.swing.JScrollPane();
         pvc_comenE = new gnu.chu.controles.CTextArea();
         Bimpri = new gnu.chu.controles.CButtonMenu();
-        pvc_nupeclE = new gnu.chu.controles.CTextField();
         cLabel23 = new gnu.chu.controles.CLabel();
         opIgnCadE = new gnu.chu.controles.CCheckBox();
         opIgnPrvE = new gnu.chu.controles.CCheckBox();
+        cLabel24 = new gnu.chu.controles.CLabel();
+        tit_usuasiE = new gnu.chu.controles.CTextField();
+        cLabel25 = new gnu.chu.controles.CLabel();
+        tit_tiempoE = new gnu.chu.controles.CTextField(Types.DECIMAL, "##9");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -1020,9 +1035,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         Pcabe.add(sbe_codiE);
         sbe_codiE.setBounds(660, 22, 37, 18);
 
-        cLabel6.setText("De Fecha");
+        cLabel6.setText("Usuario");
         Pcabe.add(cLabel6);
-        cLabel6.setBounds(440, 2, 49, 18);
+        cLabel6.setBounds(250, 2, 49, 17);
         Pcabe.add(pvc_feciniE);
         pvc_feciniE.setBounds(500, 2, 76, 18);
 
@@ -1104,7 +1119,18 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         BFiltroCam.setText("Camaras");
         Pcabe.add(BFiltroCam);
-        BFiltroCam.setBounds(290, 2, 90, 19);
+        BFiltroCam.setBounds(490, 20, 90, 19);
+
+        cLabel8.setText("De Fecha");
+        Pcabe.add(cLabel8);
+        cLabel8.setBounds(440, 2, 49, 18);
+        Pcabe.add(tit_usunomE);
+        tit_usunomE.setBounds(300, 2, 76, 17);
+
+        opPedAsigUsu.setText("Asig.");
+        opPedAsigUsu.setToolTipText("Ver solo pedidos asignados a este usuario");
+        Pcabe.add(opPedAsigUsu);
+        opPedAsigUsu.setBounds(380, 2, 60, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1143,22 +1169,17 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         Ppie.setMaximumSize(new java.awt.Dimension(650, 60));
         Ppie.setMinimumSize(new java.awt.Dimension(650, 60));
-        Ppie.setPreferredSize(new java.awt.Dimension(650, 60));
+        Ppie.setPreferredSize(new java.awt.Dimension(680, 60));
         Ppie.setLayout(null);
 
-        cLabel17.setText("Usuario");
+        cLabel17.setText("Tiempo Asignado");
         cLabel17.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel17);
-        cLabel17.setBounds(440, 20, 50, 18);
+        cLabel17.setBounds(500, 0, 100, 18);
 
         nPedT.setEnabled(false);
         Ppie.add(nPedT);
         nPedT.setBounds(305, 1, 30, 18);
-
-        cLabel19.setText("Ped.Cliente ");
-        cLabel19.setPreferredSize(new java.awt.Dimension(60, 18));
-        Ppie.add(cLabel19);
-        cLabel19.setBounds(343, 1, 70, 17);
 
         pvc_fecpedE.setEnabled(false);
         Ppie.add(pvc_fecpedE);
@@ -1175,7 +1196,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         usu_nombE.setEnabled(false);
         Ppie.add(usu_nombE);
-        usu_nombE.setBounds(490, 20, 110, 18);
+        usu_nombE.setBounds(480, 20, 90, 18);
 
         pvc_impresE.setText("Listado ");
         pvc_impresE.setEnabled(false);
@@ -1194,11 +1215,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         Bimpri.addMenu("Relacion", "R");
         Bimpri.addMenu("Pedidos", "P");
         Ppie.add(Bimpri);
-        Bimpri.setBounds(520, 1, 80, 20);
-
-        pvc_nupeclE.setEnabled(false);
-        Ppie.add(pvc_nupeclE);
-        pvc_nupeclE.setBounds(410, 1, 100, 17);
+        Bimpri.setBounds(560, 40, 80, 20);
 
         cLabel23.setText("Total Pedidos ");
         cLabel23.setPreferredSize(new java.awt.Dimension(60, 18));
@@ -1215,7 +1232,25 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         opIgnPrvE.setText("Ignorar Proveedor");
         opIgnPrvE.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         Ppie.add(opIgnPrvE);
-        opIgnPrvE.setBounds(310, 40, 130, 17);
+        opIgnPrvE.setBounds(310, 40, 120, 17);
+
+        cLabel24.setText("Usuario");
+        cLabel24.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel24);
+        cLabel24.setBounds(430, 20, 50, 18);
+
+        tit_usuasiE.setEnabled(false);
+        Ppie.add(tit_usuasiE);
+        tit_usuasiE.setBounds(400, 0, 90, 18);
+
+        cLabel25.setText("Asignado");
+        cLabel25.setPreferredSize(new java.awt.Dimension(60, 18));
+        Ppie.add(cLabel25);
+        cLabel25.setBounds(340, 0, 60, 18);
+
+        tit_tiempoE.setEnabled(false);
+        Ppie.add(tit_tiempoE);
+        tit_tiempoE.setBounds(600, 0, 40, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1242,34 +1277,39 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel17;
     private gnu.chu.controles.CLabel cLabel18;
-    private gnu.chu.controles.CLabel cLabel19;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel20;
     private gnu.chu.controles.CLabel cLabel21;
     private gnu.chu.controles.CLabel cLabel22;
     private gnu.chu.controles.CLabel cLabel23;
+    private gnu.chu.controles.CLabel cLabel24;
+    private gnu.chu.controles.CLabel cLabel25;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
+    private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.Cgrid jtCabPed;
     private gnu.chu.controles.Cgrid jtLinPed;
     private gnu.chu.controles.CTextField nPedT;
     private gnu.chu.controles.CCheckBox opIgnCadE;
     private gnu.chu.controles.CCheckBox opIgnPrvE;
+    private gnu.chu.controles.CCheckBox opPedAsigUsu;
     private gnu.chu.controles.CTextArea pvc_comenE;
     private gnu.chu.controles.CTextField pvc_fecfinE;
     private gnu.chu.controles.CTextField pvc_feciniE;
     private gnu.chu.controles.CTextField pvc_fecpedE;
     private gnu.chu.controles.CTextField pvc_horpedE;
     private gnu.chu.controles.CCheckBox pvc_impresE;
-    private gnu.chu.controles.CTextField pvc_nupeclE;
     private gnu.chu.controles.CLinkBox rep_codiE;
     private gnu.chu.controles.CLinkBox rut_codiE;
     private gnu.chu.camposdb.sbePanel sbe_codiE;
     private javax.swing.JScrollPane scrollarea1;
     private gnu.chu.controles.CComboBox servRutaC;
+    private gnu.chu.controles.CTextField tit_tiempoE;
+    private gnu.chu.controles.CTextField tit_usuasiE;
+    private gnu.chu.controles.CTextField tit_usunomE;
     private gnu.chu.controles.CTextField usu_nombE;
     private gnu.chu.controles.CComboBox verPedidosE;
     private gnu.chu.controles.CLinkBox zon_codiE;

@@ -24,7 +24,7 @@ import javax.swing.BorderFactory;
  * <p>Título: pdusua </p>
  * <p>Descripción: Mantenimiento Tabla de Usuarios</p>
  * <p>Empresa: miCasa</p>
- *  <p>Copyright: Copyright (c) 2005-2013
+ *  <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -845,6 +845,21 @@ public class pdusua extends ventanaPad   implements PAD
     if (! dt.selectInto(s,vl))
       return null;
     return vl;
+  }
+  /**
+   * Devuelve estado de un usuario
+   * @param usuario
+   * @param dt
+   * @return 0: No existe usuario. -1 Usuario dado de baja. 1 Usuario dado de alta
+   * @throws SQLException 
+   */
+  public static int checkUsuario(String usuario,DatosTabla dt) throws SQLException
+  {
+    String s="select u.* from usuarios as u WHERE u.usu_nomb= '"+usuario+"'";
+   
+    if (!dt.select(s))
+      return 0;
+    return dt.getString("usu_activ").equals("S")?1:-1;
   }
   /**
    * Comprueba si un usuario contraseña son correctos

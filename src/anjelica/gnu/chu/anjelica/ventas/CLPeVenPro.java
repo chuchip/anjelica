@@ -3,7 +3,7 @@ package gnu.chu.anjelica.ventas;
  *
  * <p>Título: CLPeVenPro </p>
  * <p>Descripción: Consulta/Listado Pedidos de Ventas Agrupados por Productos</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -46,6 +46,7 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionEvent;
@@ -76,27 +77,20 @@ public class CLPeVenPro extends ventana implements  JRDataSource
 
     String ARG_REPCODI = "";
     String ARG_SBECODI = "";
- 
+    boolean  ARG_ADMIN = false;
     
     public CLPeVenPro(EntornoUsuario eu, Principal p) {
         this(eu, p, null);
     }
 
-    public CLPeVenPro(EntornoUsuario eu, Principal p, HashMap<String,String> ht) {
+    public CLPeVenPro(EntornoUsuario eu, Principal p, Hashtable<String,String> ht) {
         EU = eu;
         vl = p.panel1;
         jf = p;
         eje = true;
 
         try {
-            if (ht != null) {
-                 if (ht.get("repCodi") != null) 
-                    ARG_REPCODI = ht.get("repCodi");
-                
-                if (ht.get("sbeCodi") != null)
-                    ARG_SBECODI = ht.get("sbeCodi");
-              
-            }
+            ponParametros(ht);
             setTitulo("Cons/List. Productos Pedidos de Ventas");
             if (jf.gestor.apuntar(this)) {
                 jbInit();
@@ -108,19 +102,13 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         }
     }
 
-    public CLPeVenPro(gnu.chu.anjelica.menu p, EntornoUsuario eu, HashMap <String,String> ht) {
+    public CLPeVenPro(gnu.chu.anjelica.menu p, EntornoUsuario eu, Hashtable <String,String> ht) {
         EU = eu;
         vl = p.getLayeredPane();
         eje = false;
 
         try {
-            if (ht != null) {
-                if (ht.get("repCodi") != null) 
-                    ARG_REPCODI = ht.get("repCodi");
-                
-                if (ht.get("sbeCodi") != null)
-                    ARG_SBECODI = ht.get("sbeCodi");
-            }
+             ponParametros(ht);
              setTitulo("Cons/List. Productos Pedidos de Ventas");
 
             jbInit();
@@ -128,7 +116,19 @@ public class CLPeVenPro extends ventana implements  JRDataSource
            ErrorInit(e);
         }
     }
-    
+    void ponParametros(Hashtable<String,String> ht)
+    {
+        if (ht != null)
+        {
+            if (ht.get("repCodi") != null)
+                ARG_REPCODI = ht.get("repCodi");
+
+            if (ht.get("sbeCodi") != null)
+                ARG_SBECODI = ht.get("sbeCodi");
+            if (ht.get("admin") != null)
+                ARG_ADMIN = Boolean.parseBoolean(ht.get("admin"));
+        }
+    }
     private void jbInit() throws Exception {
         statusBar = new StatusBar(this);
 
@@ -145,6 +145,8 @@ public class CLPeVenPro extends ventana implements  JRDataSource
     @Override
  public void iniciarVentana() throws Exception
   {
+    tit_usunomE.setEnabled(ARG_ADMIN);
+    tit_usunomE.setText(EU.usuario);
     confJtPro();
     confJtCli();
     confJtPed();
@@ -171,9 +173,8 @@ public class CLPeVenPro extends ventana implements  JRDataSource
     pvc_feciniE.setAceptaNulo(true);
     pvc_feciniE.setAceptaNulo(true);
     
-    pdalmace.llenaLinkBox(alm_codiE, dtStat);
- 
-    alm_codiE.setText("");
+//    pdalmace.llenaLinkBox(alm_codiE, dtStat);
+//    alm_codiE.setText("");
     
     pvc_feciniE.setText(Formatear.sumaDias(Formatear.getDateAct(), -7));
     pvc_fecfinE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -382,14 +383,16 @@ public class CLPeVenPro extends ventana implements  JRDataSource
      }
     s = "SELECT "+
          " p.pro_codi,p.pro_codart, pve_nomb " +
-        " ,sum(pvl_kilos) as pvl_kilos  FROM v_pedven as  p,v_cliente as cl,v_articulo as a " ;        
+        " ,sum(pvl_kilos) as pvl_kilos  FROM v_pedven as  p"
+        + " left join tiempostarea as tt on tit_tipdoc='P' and tit_id=p.pvc_id and tt.usu_nomb='"+tit_usunomE.getText()+"'"
+        + ",v_cliente as cl,v_articulo as a " ;        
 
     condWhere=" where   pvc_confir='S' "+
         " and p.cli_codi = cl.cli_codi "+      
         (pvc_feciniE.isNull()?"":" AND pvc_fecent >= {ts '" + pvc_feciniE.getFechaDB() + "'}") +
         (pvc_fecfinE.isNull()?"": " and pvc_fecent <= {ts '" + pvc_fecfinE.getFechaDB() + "'}")+
-        (alm_codiE.getValorInt()==0?"":" and p.alm_codi = " + alm_codiE.getValorInt())+
-        (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = " + alm_codiE.getValorInt())+
+//        (alm_codiE.getValorInt()==0?"":" and p.alm_codi = " + alm_codiE.getValorInt())+
+        (sbe_codiE.getValorInt()==0?"":" and cl.sbe_codi = " + sbe_codiE.getValorInt())+
         (zon_codiE.isNull()?"":" and cl.zon_codi = '"+zon_codiE.getText()+"'")+
         (rep_codiE.isNull()?"":" and cl.rep_codi = '"+rep_codiE.getText()+"'")+
         (rut_codiE.isNull()?"": " and p.rut_codi ='"+rut_codiE.getText()+"'"); 
@@ -399,6 +402,7 @@ public class CLPeVenPro extends ventana implements  JRDataSource
       condWhere += " AND p.avc_ano != 0";
    
     s+= condWhere+
+         (opPedAsigUsu.isSelected()?" and tt.usu_nomb='"+tit_usunomE.getText()+"'":"")+
           " and a.pro_codi = p.pro_codi "+       
          (camCodi.equals("")?"":
          " and  a.cam_codi in ("+camCodi+")" )+
@@ -537,7 +541,8 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         mp.put("feeninP",pvc_feciniE.getDate());
         mp.put("feenfiP",pvc_fecfinE.getDate());
         mp.put("tiplis", verPedidosE.getText());
-        mp.put("alm_nombP", alm_codiE.isNull()?null: alm_codiE.getTextCombo());
+        mp.put("usuNombP", opPedAsigUsu.isSelected()?tit_usunomE.getText():"");
+//        mp.put("alm_nombP", alm_codiE.isNull()?null: alm_codiE.getTextCombo());
         mp.put("zonaP", zon_codiE.isNull()?null: zon_codiE.getTextCombo());
         mp.put("represP", rep_codiE.isNull()?null: rep_codiE.getTextCombo());
         mp.put("rutaP", rut_codiE.isNull()?null: rut_codiE.getTextCombo());
@@ -634,9 +639,10 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         cLabel2 = new gnu.chu.controles.CLabel();
         cLabel3 = new gnu.chu.controles.CLabel();
         verPedidosE = new gnu.chu.controles.CComboBox();
-        cLabel16 = new gnu.chu.controles.CLabel();
-        alm_codiE = new gnu.chu.controles.CLinkBox();
         BFiltroCam = new gnu.chu.controles.CButton(Iconos.getImageIcon("filter"));
+        cLabel8 = new gnu.chu.controles.CLabel();
+        tit_usunomE = new gnu.chu.controles.CTextField(Types.CHAR,"X",15);
+        opPedAsigUsu = new gnu.chu.controles.CCheckBox();
         jtProd = new gnu.chu.controles.Cgrid(4);
         jtCli = new gnu.chu.controles.Cgrid(5);
         jtPed = new gnu.chu.controles.Cgrid(10);
@@ -730,18 +736,20 @@ public class CLPeVenPro extends ventana implements  JRDataSource
         Pcondi.add(verPedidosE);
         verPedidosE.setBounds(80, 1, 110, 18);
 
-        cLabel16.setText("Alm");
-        cLabel16.setPreferredSize(new java.awt.Dimension(60, 18));
-        Pcondi.add(cLabel16);
-        cLabel16.setBounds(370, 40, 30, 18);
-
-        alm_codiE.setAncTexto(25);
-        Pcondi.add(alm_codiE);
-        alm_codiE.setBounds(410, 40, 170, 17);
-
         BFiltroCam.setText("Camaras");
         Pcondi.add(BFiltroCam);
         BFiltroCam.setBounds(490, 0, 90, 19);
+
+        cLabel8.setText("Usuario");
+        Pcondi.add(cLabel8);
+        cLabel8.setBounds(370, 43, 49, 17);
+        Pcondi.add(tit_usunomE);
+        tit_usunomE.setBounds(420, 43, 76, 17);
+
+        opPedAsigUsu.setText("Asig.");
+        opPedAsigUsu.setToolTipText("Ver solo pedidos asignados a este usuario");
+        Pcondi.add(opPedAsigUsu);
+        opPedAsigUsu.setBounds(500, 43, 60, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -801,8 +809,6 @@ public class CLPeVenPro extends ventana implements  JRDataSource
     private gnu.chu.controles.CButton Bimpri;
     private gnu.chu.controles.CPanel Pcondi;
     private gnu.chu.controles.CPanel Pprinc;
-    private gnu.chu.controles.CLinkBox alm_codiE;
-    private gnu.chu.controles.CLabel cLabel16;
     private gnu.chu.controles.CLabel cLabel18;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel21;
@@ -811,15 +817,18 @@ public class CLPeVenPro extends ventana implements  JRDataSource
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
+    private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.Cgrid jtCli;
     private gnu.chu.controles.Cgrid jtPed;
     private gnu.chu.controles.Cgrid jtProd;
+    private gnu.chu.controles.CCheckBox opPedAsigUsu;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CTextField pvc_fecfinE;
     private gnu.chu.controles.CTextField pvc_feciniE;
     private gnu.chu.controles.CLinkBox rep_codiE;
     private gnu.chu.controles.CLinkBox rut_codiE;
     private gnu.chu.camposdb.sbePanel sbe_codiE;
+    private gnu.chu.controles.CTextField tit_usunomE;
     private gnu.chu.controles.CComboBox verPedidosE;
     private gnu.chu.controles.CLinkBox zon_codiE;
     // End of variables declaration//GEN-END:variables

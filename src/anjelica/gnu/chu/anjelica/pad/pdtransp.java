@@ -1,4 +1,4 @@
-  package gnu.chu.anjelica.pad;
+package gnu.chu.anjelica.pad;
 
 import gnu.chu.controles.*;
 import gnu.chu.sql.*;
@@ -56,6 +56,8 @@ public class pdtransp extends ventanaPad   implements PAD
   CTextField tra_nifE = new CTextField(Types.CHAR,"X",15);
   CLabel cLabel1 = new CLabel();
   CTextField tra_vehicE = new CTextField(Types.CHAR,"X",30);
+  CLabel tra_activL = new CLabel("Activo");
+  CComboBox tra_activE = new CComboBox();
   CLabel cLabel2 = new CLabel();
   CTextField tra_matricE = new CTextField(Types.CHAR,"X",10);
   CLabel cLabel6 = new CLabel();
@@ -123,7 +125,7 @@ public class pdtransp extends ventanaPad   implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(436, 341));
-    this.setVersion("20170709");
+    this.setVersion("20180119");
 
     strSql = "SELECT * FROM transportista  ORDER BY tra_codi ";
 
@@ -153,6 +155,10 @@ public class pdtransp extends ventanaPad   implements PAD
     tra_matricE.setBounds(new Rectangle(62, 115, 87, 17));
     cLabel2.setBounds(new Rectangle(2, 115, 59, 16));
     tra_vehicE.setBounds(new Rectangle(62, 97, 219, 16));
+    tra_activL.setBounds(new Rectangle(290, 97, 60, 16));
+    tra_activE.setBounds(new Rectangle(353, 97, 60, 16));
+    tra_activE.addItem("Si","S");
+    tra_activE.addItem("No","N");
     cLabel1.setBounds(new Rectangle(0, 97, 59, 16));
     tra_faxE.setBounds(new Rectangle(293, 60, 129, 17));
     cLabel8.setBounds(new Rectangle(243, 60, 29, 17));
@@ -235,6 +241,8 @@ public class pdtransp extends ventanaPad   implements PAD
     Pprinc.add(Baceptar, null);
     Pprinc.add(cLabel6, null);
     Pprinc.add(tra_vehicE, null);
+    Pprinc.add(tra_activL, null);
+    Pprinc.add(tra_activE, null);
     Pprinc.add(cLabel1, null);
     Pprinc.add(cLabel11, null);
     Pprinc.add(tra_porsegE, null);
@@ -275,7 +283,7 @@ public class pdtransp extends ventanaPad   implements PAD
     tra_porreeE.setColumnaAlias("tra_porree");
     tra_aduoriE.setColumnaAlias("tra_aduori");
     tra_adudesE.setColumnaAlias("tra_adudes");
-
+    tra_activE.setColumnaAlias("tra_activ");
     activarEventos();
     activaTodo();
     verDatos();
@@ -324,16 +332,17 @@ public class pdtransp extends ventanaPad   implements PAD
       tra_porreeE.setText(dtCon1.getString("tra_porree"));
       tra_aduoriE.setText(dtCon1.getString("tra_aduori"));
       tra_adudesE.setText(dtCon1.getString("tra_adudes"));
-
+      tra_activE.setValor(dtCon1.getString("tra_activ"));
     } catch (Exception k)
     {
       Error("Error al ver Datos",k);
-      return;
     }
   }
 
+  @Override
   public void activar(boolean act)
   {
+    tra_activE.setEnabled(act);
     tra_codiE.setEnabled(act);
     tra_nombE.setEnabled(act);
     tra_direcE.setEnabled(act);
@@ -417,7 +426,7 @@ public class pdtransp extends ventanaPad   implements PAD
     v.add(tra_porreeE.getStrQuery());
     v.add(tra_aduoriE.getStrQuery());
     v.add(tra_adudesE.getStrQuery());
-
+    v.add(tra_activE.getStrQuery());
     s = "SELECT * FROM transportista ";
     s = creaWhere(s, v,true);
     s+=" ORDER BY tra_codi ";
@@ -594,6 +603,7 @@ public class pdtransp extends ventanaPad   implements PAD
     dt.setDato("tra_porree", tra_porreeE.getText());
     dt.setDato("tra_aduori", tra_aduoriE.getText());
     dt.setDato("tra_adudes", tra_adudesE.getText());
+    dt.setDato("tra_activ", tra_activE.getValor());
   }
   @Override
   public void canc_addnew()
@@ -696,4 +706,24 @@ public class pdtransp extends ventanaPad   implements PAD
         return null;    
     return dt.getString("tra_nomb");
   }
+  /**
+   * Llena un Combo con los transportistas disponibles (Incluye usuarios)
+   * @param incTodo Incluir tambien usuarios/Transportes Inactivos.? (true=si)
+   * @param dt
+   * @param comboBox
+   * @param usuario
+   * @throws SQLException 
+   */
+   public static void llenaComboTransp(boolean incTodo,DatosTabla  dt,CComboBox comboBox,String usuario) throws SQLException
+    {
+        comboBox.removeAllItems();
+        String s="select tra_codi,tra_nomb from v_tranpvent "+
+            " where 1=1 "+
+            (usuario==null?"":" and  tra_codi ='"+usuario+"'")+
+            (incTodo?"":" and trp_activ='S'")+
+            " order by tra_codi";
+        if (dt.select(s))
+            comboBox.addItem(dt);
+        comboBox.addItem("Externo","Externo");
+    }
 }

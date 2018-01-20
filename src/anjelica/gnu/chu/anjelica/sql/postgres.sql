@@ -3175,19 +3175,19 @@ create table anjelica.transportista
  tra_aduori float,		-- Importe de Aduanas de Origen (Ambos Tipos Calculo)
  tra_adudes float,		-- Importe de Aduanas de Dest. (Ambos Tipos Calculo)
  tra_tipo char(1) not null default 'C', -- Tipo Transportista. 'C': Compras. 'V' Ventas.
+ tra_activ  char(1) default 'S' not null, -- Activo (S/N)
  constraint ix_transport primary key(tra_codi)
 );
 create view v_transport as select * from transportista where tra_tipo='C'; -- Transportista Compras
 CREATE OR REPLACE VIEW v_tranpvent AS 
  SELECT 'T'::text || transportista.tra_codi AS tra_codi,
-    transportista.tra_nomb
+    transportista.tra_nomb, tra_activ as trp_activ
    FROM transportista
   WHERE transportista.tra_tipo = 'V'::bpchar
 UNION
  SELECT usuarios.usu_nomb AS tra_codi,
-    usuarios.usu_nomco AS tra_nomb
-   FROM usuarios
-  WHERE usuarios.usu_activ = 'S'::bpchar;
+    usuarios.usu_nomco AS tra_nomb,usu_activ as trp_activ
+   FROM usuarios;
   
 grant select on  v_transport to public;
 grant select on  v_tranpvent to public;
@@ -4363,31 +4363,19 @@ grant all on tipostareaope to public;
 create table tareasoperarios
 (
     usu_codi varchar(8) not null, -- Operario
+	tao_id	serial not null,	  -- Identificador tarea
     tao_fecha date not null,      -- Fecha
     tao_horini varchar(4) not null, -- Hora Inicio (Formato HHMM)
     tao_horfin varchar(4),          -- Hora Final
     tto_codi smallint not null,     -- Tipo Tarea
-    tto_coment varchar(256),        -- Comentario
-    constraint ix_tareasoper primary  key (usu_codi,tao_fecha,tao_horini)
-);
-create table preciosmedios
-(
-pro_codi int not null,
-prm_costo float not null
-);
---
--- Tabla ajustes costos productos
--- 
-create table costoprod
-(
-	cap_nume int not null,				-- Identificador
-	cap_linea smallint not null,		-- Linea en la carga
-	cap_fecha date not null,			-- Fecha Variacion costo
-	pro_codi int  not null,				-- Codigo Producto	
-	sbe_codi int not null default 0,	-- Sección Empresa (0:todas)	
-	cap_costo float not null,			-- Costo a Incrementar.	
-	constraint ix_costoprod primary  key (cap_nume,cap_linea)
-);
+    tto_tarea varchar(100),        -- Tarea
+    tao_horini varchar(4) not null, -- Hora Inicio (Formato HHMM)
+    tao_horfin varchar(4),          -- Hora Final
+	constraint  primary  key (tao_id)   
+); 
+crate index ix_areasoper primary  key (usu_codi,tao_fecha,tao_horini)
+
+
 create index ix_costopro1 on  costoprod (cap_fecha,pro_codi);
 -- select 'insert into prodtarifa values(''' || pro_codart || ''',' ||  pro_codi || ');' from v_articulo where '' || pro_codi!=pro_codart
 --drop view v_partes;

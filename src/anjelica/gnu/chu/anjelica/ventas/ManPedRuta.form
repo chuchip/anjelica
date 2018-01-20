@@ -207,14 +207,14 @@
             </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel7">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Operario"/>
+                <Property name="text" type="java.lang.String" value="Transporte"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[52, 18]"/>
                 </Property>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="150" y="0" width="60" height="17"/>
+                  <AbsoluteConstraints x="150" y="0" width="70" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -319,7 +319,7 @@
             <Component class="gnu.chu.controles.CComboBox" name="tra_codiE">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="210" y="0" width="210" height="17"/>
+                  <AbsoluteConstraints x="220" y="0" width="220" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

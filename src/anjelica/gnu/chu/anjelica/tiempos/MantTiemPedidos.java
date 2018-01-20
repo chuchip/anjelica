@@ -25,6 +25,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantRepres;
 import gnu.chu.anjelica.pad.pdconfig;
+import gnu.chu.anjelica.pad.pdusua;
 import gnu.chu.camposdb.proPanel;
 import gnu.chu.camposdb.prvPanel;
 import gnu.chu.controles.CCheckBox;
@@ -36,8 +37,6 @@ import gnu.chu.eventos.GridEvent;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
-import static gnu.chu.utilidades.Formatear.getDate;
-import static gnu.chu.utilidades.Formatear.sumaDias;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.cgpedven;
 import gnu.chu.utilidades.ventana;
@@ -59,19 +58,16 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
-import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 
 
 public class MantTiemPedidos extends  ventana   implements  JRDataSource
-{
+{    
     private final int JTLIN_PROCOD=1;
     private final int JTLIN_PRONOMB=2;
     
@@ -227,8 +223,25 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
      jtCabPed.addGridListener(new GridAdapter()
      {
          @Override
+          public void deleteLinea(GridEvent event){
+              try {
+                borrarLinea( event.getLinea());
+                jtCabPed.setValor("",JTCAB_USUA);
+                jtCabPed.setValor("0",JTCAB_TIEMPO);
+                usu_nombE.setText("");
+                tit_tiempoE.setValorDec(0);
+              } catch (SQLException k)
+              {
+                  Error("Error al borrar linea",k);
+              }
+              event.setPuedeBorrarLinea(false);
+                
+          }
+          
+         @Override
           public void cambiaLinea(GridEvent event){
-              guardaDatos(event.getLinea());
+              int res=guardaDatos(event.getLinea());              
+              event.setColError(res);
           }
            @Override
           public void afterCambiaLinea(GridEvent event){
@@ -318,6 +331,17 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
         cm.ej_query();
         jf.gestor.ir(cm);
     } 
+    void borrarLinea(int linea) throws SQLException
+    {        
+       int pvcId=pdpeve.getIdPedido(dtStat,jtCabPed.getValorInt(linea,JTCAB_EMPPED),
+           jtCabPed.getValorInt(linea,JTCAB_EJEPED),jtCabPed.getValorInt(linea,JTCAB_NUMPED));
+       if ( pvcId<0)
+           throw new SQLException("Error al Buscar pedido "+jtCabPed.getValorInt(linea,JTCAB_EMPPED)+
+               "-"+jtCabPed.getValorInt(linea,JTCAB_EJEPED)+"-"+jtCabPed.getValorInt(linea,JTCAB_NUMPED));
+       s="delete from tiempostarea where tit_tipdoc = 'P' and tit_id="+pvcId;
+       dtAdd.executeUpdate(s);
+       dtAdd.commit();
+    }
     public String getCliNomb()
     {
         return jtCabPed.getValString(JTCAB_NOMCLI);
@@ -332,10 +356,10 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
         return pdpeve.getRuta(dtCon1, empCodiS, ejeNumeS, pvcNumeS);
     }
     
-    void guardaDatos(int linea)
+    int guardaDatos(int linea)
     {
         if (inCambio)
-            return;
+            return -1;
         try
         {
             
@@ -350,6 +374,21 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
                 tit_usunomE.setText(usuNomAnt);
             }
             usuNomAnt=tit_usunomE.getText();
+            if (tit_tiempoE.getValorInt()>0)
+            {
+                int res=pdusua.checkUsuario(usuNomAnt,dtStat);
+                if (res==0)
+                {
+                    msgBox("Usuario NO existe");                
+                    return JTCAB_USUA;
+                }
+                if (res<0)
+                {
+                    msgBox("Usuario esta INACTIVO");
+                    return JTCAB_USUA;
+                }
+            }
+           
             s="Select * from tiempostarea where tit_tipdoc = 'P' and tit_id="+pvcId+
                 " and usu_nomb='"+tit_usunomE.getText()+"'";
             if (!dtAdd.select(s,true))
@@ -369,6 +408,7 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
         {
             Error("Error al actualizar tiempo de pedido",ex);
         }
+        return -1;
     }
     void verDatPed(int empCodi,int ejeNume,int pvcNume)
    {
@@ -727,7 +767,7 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
     jtCabPed.setAlinearColumna(new int[]{0,2,2,2,2,2,0,0,1,0,1,1,0,2,1,2});
     
     jtCabPed.setFormatoCampos();
-    jtCabPed.setCanDeleteLinea(false);
+    jtCabPed.setCanDeleteLinea(true);
     jtCabPed.setCanInsertLinea(false);
     
   }
@@ -778,7 +818,15 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
         try
         {
             if (!jtCabPed.isVacio())
-                guardaDatos(jtCabPed.getSelectedRow());
+            {
+                
+                int res=guardaDatos(jtCabPed.getSelectedRow());
+                if (res>=0)
+                {
+                    jtCabPed.requestFocusLater(jtCabPed.getSelectedRow(), res);
+                    return;
+                }
+            }
             inCambio = true;
             usuNomAnt = EU.usuario;
             if (!iniciarCons())
@@ -1374,7 +1422,13 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
      try {
           if (jtCabPed.isVacio())
               return;
-          guardaDatos(jtCabPed.getSelectedRow());
+          int res=guardaDatos(jtCabPed.getSelectedRow());
+          if (res>=0)
+          {
+            jtCabPed.requestFocusLater(jtCabPed.getSelectedRow(), res);
+            return;
+          }
+         
         swCliente = false;
         if (!cli_codiE.isNull())
             swCliente = true;
