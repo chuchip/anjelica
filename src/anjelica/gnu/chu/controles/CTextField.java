@@ -995,7 +995,11 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
   {
     tieneCambio=hasCambio?1:0;
   }
-  
+  /*
+   * Rutina que fuerza a que la proxima llamada a hasCambio devuelva lo que
+   * se mande aqui como parametro
+   * @param hasCambio boolean valor a devolver por la proxima llamada a hasCambio
+  */
    public void setCambio(boolean hasCambio)
   {
     tieneCambio=hasCambio?1:0;

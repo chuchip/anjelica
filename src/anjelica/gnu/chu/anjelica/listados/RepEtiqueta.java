@@ -33,7 +33,7 @@ import javax.swing.SwingUtilities;
  * mostrar. Permite elegir diferentes tipos de etiqueta.
  *
  * </p>
- * <p>Copyright: Copyright (c) 2005-20176</p>
+ * <p>Copyright: Copyright (c) 2005-2018</p>
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por

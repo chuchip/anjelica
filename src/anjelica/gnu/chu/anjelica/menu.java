@@ -111,6 +111,7 @@ public class menu extends JFrame
   JMenuItem pdreprese = new JMenuItem();
   JMenuItem ALclstkdes = new JMenuItem();
   JMenuItem ALclresstock = new JMenuItem();
+  JMenuItem ALCheckstock = new JMenuItem();
   JMenuItem ALlisaldos = new JMenuItem();
   JMenuItem ALCheckMvt = new JMenuItem();
   JMenuItem ALclUbiArt = new JMenuItem();
@@ -501,6 +502,13 @@ JMenuItem mantArticVenta = new JMenuItem();
     ALclresstock.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         ALclresstock_actionPerformed(e);
+      }
+    });
+    ALCheckstock.setText("Check Stock");
+    ALCheckstock.addActionListener(new java.awt.event.ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ALCheckstock_actionPerformed(e);
       }
     });
     ALclUbiArt.setText("CL Ubic.Art");
@@ -1049,6 +1057,7 @@ JMenuItem mantArticVenta = new JMenuItem();
 //    JpopupPedVentas.add(clvenrep);
     JPopupAlmacen.add(ALclstkdes);
     JPopupAlmacen.add(ALclresstock);
+    JPopupAlmacen.add(ALCheckstock);
     JPopupAlmacen.add(ALlisaldos);
     JPopupAlmacen.add(ALCheckMvt);
     JPopupAlmacen.add(ALclUbiArt);
@@ -2006,6 +2015,10 @@ void pdreprese_actionPerformed(ActionEvent e) {
     Hashtable<String,String> ht=new Hashtable();
     ht.put("verPrecio", "true");
     lanzaEjecutable(new gnu.chu.anjelica.almacen.CLResumStock(menu.this,EU,ht));
+  }
+  void ALCheckstock_actionPerformed(ActionEvent e) {
+   
+    lanzaEjecutable(new gnu.chu.anjelica.almacen.CheckStock(menu.this,EU));
   }
   void ALlisaldos_actionPerformed(ActionEvent e) {
       

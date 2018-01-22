@@ -135,6 +135,8 @@ public class Comvalm extends ventana
     */
    public static void ir(Principal jf,int proCodi,int ejeNume,String serie,int lote,int indiv )
    {
+     if (jf==null)
+         return;
      ejecutable prog;
      if ((prog = jf.gestor.getProceso(Comvalm.getNombreClase())) == null)
         return;

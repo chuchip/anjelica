@@ -43,6 +43,7 @@ import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.almacen.CheckStock;
 import gnu.chu.anjelica.almacen.Comvalm;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.compras.MantAlbCom;
@@ -2087,7 +2088,7 @@ public class MantDesp extends ventanaPad implements PAD
      */
     boolean checkGridCab() {
         if (jtCab.isEnabled())
-        {
+        {            
             swErrCab=cambiaLineajtCab(jtCab.getSelectedRow()) >= 0;
             if (swErrCab)
             {
@@ -3101,8 +3102,19 @@ public class MantDesp extends ventanaPad implements PAD
                 {
                     if (stkPartid.hasError())
                     {
-                        mensajeErr(stkPartid.getMensaje());
-                        return JTCAB_PROCODI;
+                        if (!swErrCab)
+                        {
+                            int ret = mensajes.mensajeYesNo(stkPartid.getMensaje()+" ¿SOLUCIONAR ?");
+                            if (ret == mensajes.YES)
+                            {                       
+                                CheckStock.ir(jf, pro_codiE.getValorInt(),deo_ejelotE.getValorInt(),
+                                    deo_serlotE.getText(), pro_loteE.getValorInt(), pro_numindE.getValorInt());
+                                pro_loteE.setCambio(true);                
+                            }
+                        }
+                        else
+                            mensajeErr(stkPartid.getMensaje());
+                         return JTCAB_PROCODI;
                     }
                     if (stkPartid.isLockIndiv())
                     {
@@ -3130,8 +3142,14 @@ public class MantDesp extends ventanaPad implements PAD
                    kilact += dtCon1.getDouble("deo_kilos");
                 if (! stkPartid.hasStock( kilact))
                 {               
-                   mensajeErr("No hay suficiente stock de este individuo");
-                  return 0;
+                        int ret = mensajes.mensajeYesNo("NO HAY "+deo_kilosE.getValorDec()+" KG. DISPONIBLES DE ESTE INDIVIDUO ¿SOLUCIONAR ?");
+                        if (ret == mensajes.YES)
+                        {                       
+                            CheckStock.ir(jf, pro_codiE.getValorInt(),deo_ejelotE.getValorInt(),
+                                deo_serlotE.getText(), pro_loteE.getValorInt(), pro_numindE.getValorInt());
+                            pro_loteE.setCambio(true);                
+                        }
+                        return JTLIN_PROCODI;
                  }
             }
 

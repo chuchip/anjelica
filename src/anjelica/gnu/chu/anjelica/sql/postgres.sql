@@ -880,6 +880,7 @@ avp_canti decimal(9,3) not null,  -- Kilos a facturar (netos)
 avp_canbru decimal(9,3) not null, -- Cantidad brutos (Kilos)
 constraint ix_albvenpar primary key  (avc_ano,emp_codi,avc_nume,avc_serie,avl_numlin,avp_numlin)
 );
+
 DROP VIEW anjelica.v_albventa_detalle ;
 CREATE OR REPLACE VIEW v_albventa_detalle AS 
  SELECT c.emp_codi,    c.avc_ano,    c.avc_serie,    c.avc_nume,
@@ -2830,7 +2831,7 @@ create table anjelica.regalmacen
 pro_codi int not null,		-- Codigo Producto
 rgs_fecha timestamp not null,	-- Fecha y hora de Regularizacion
 rgs_nume int not null, 		-- Numero de Regularizacion (Contador)
-eje_nume int  ,			-- Ejercicio de Reg.
+eje_nume int  ,			-- Ejercicio del Lote
 emp_codi int ,			-- Empresa del lote
 pro_serie char(1),		-- Serie de Producto
 pro_nupar int,			-- Numero Partida
@@ -4126,7 +4127,7 @@ grant select on anjelica.stkpart to public;
 create table anjelica.mvtosalm
 (	
     mvt_oper char(10) not null, --
-     timestamp not null default current_timestamp,	-- Fecha de mvto.
+    mvt_time timestamp not null default current_timestamp,	-- Fecha de mvto.
 	mvt_tipo char(1) not null default 'S', -- Entrada o Salida
 	mvt_tipdoc char(1) not null, -- C (Alb. Compra), V (Alb.Venta), R (Regulariz), Despiece Entrada a alm.(d), Desp. Salida (D)
     alm_codi int not null,             -- Almacen
@@ -4497,33 +4498,10 @@ l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcos
  and c.deo_codi= l.deo_codi and c.his_rowid=l.his_rowid;
 drop view v_despsal;
 CREATE OR REPLACE VIEW v_despsal AS 
- SELECT c.eje_nume,
-    c.deo_codi,
-    c.deo_numdes,
-    c.tid_codi,
-    c.deo_fecha,
-    c.deo_almori,
-    c.deo_almdes,
-    c.deo_ejloge,
-    c.deo_seloge,
-    c.deo_nuloge,
-    c.deo_incval,
-    l.def_orden,
-    l.pro_codi,
-    l.def_ejelot,
-    l.def_emplot,
-    l.def_serlot,
-    l.pro_lote,
-    l.pro_numind,
-    l.def_kilos,
-    l.def_numpie,
-    l.def_prcost,
-    l.def_unicaj,
-    l.def_feccad,
-    l.def_preusu,
-    l.def_tiempo,
-    l.alm_codi,
-    c.deo_desnue
+ SELECT c.eje_nume,    c.deo_codi,    c.deo_numdes,    c.tid_codi,    c.deo_fecha,    c.deo_almori,    c.deo_almdes,    c.deo_ejloge,
+    c.deo_seloge,    c.deo_nuloge,    c.deo_incval,    l.def_orden,    l.pro_codi,    l.def_ejelot,    l.def_emplot,
+    l.def_serlot,    l.pro_lote,    l.pro_numind,    l.def_kilos,    l.def_numpie,    l.def_prcost,    l.def_unicaj,
+    l.def_feccad,    l.def_preusu,    l.def_tiempo,    l.alm_codi,    c.deo_desnue
    FROM desporig c,
     v_despfin l
   WHERE c.eje_nume = l.eje_nume AND c.deo_codi = l.deo_codi;

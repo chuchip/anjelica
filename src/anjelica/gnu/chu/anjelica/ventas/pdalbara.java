@@ -65,6 +65,7 @@ import gnu.chu.anjelica.DatosIVA;
 import gnu.chu.anjelica.almacen.DatIndiv;
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
+import gnu.chu.anjelica.almacen.CheckStock;
 import gnu.chu.anjelica.almacen.Comvalm;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.almacen.pdmotregu;
@@ -7588,17 +7589,31 @@ public class pdalbara extends ventanaPad  implements PAD
                     { // Este individuo ya existe en este albaran.                      
                         if (dtCon1.getInt("avl_numlin")!=jt.getValorInt(0))
                         {
-                            msgBox("Individuo ya se introduzco en linea: "+dtCon1.getInt("avl_numlin"));
+                            msgBox("Individuo ya se introdujo en linea: "+dtCon1.getInt("avl_numlin"));
                             return false;
                         }
                     }
-                    msgBox("Partida de Stock solo tiene " +  canStk.getKilos()
-                            + "  kg. Disponibles");
+                 
+                    int ret=mensajes.mensajeYesNo("Partida de Stock solo tiene " +  canStk.getKilos()
+                            + "  kg. Disponibles. ¿ SOLUCIONAR ?");
+                    if (ret==mensajes.YES)
+                    {
+                        CheckStock.ir(jf, pro_codiE.getValorInt(),avp_ejelotE.getValorInt(), 
+                            avp_serlotE.getText(),  avp_numparE.getValorInt(),avp_numindE.getValorInt());                        
+                        avp_numparE.setCambio(true);
+                    }
                     return false;
                 }
-                if (canStk.getUnidades() < unid) {
-                    msgBox("Partida de Stock solo tiene " + canStk.getUnidades()
-                            + " Unidades Disponibles");
+                if (canStk.getUnidades() < unid) 
+                {
+                    int ret = mensajes.mensajeYesNo("Partida de Stock solo tiene " + canStk.getUnidades()
+                        + " Unidades Disponibles. ¿SOLUCIONAR?");
+                    if (ret == mensajes.YES)
+                    {
+                        CheckStock.ir(jf, pro_codiE.getValorInt(), avp_ejelotE.getValorInt(),
+                            avp_serlotE.getText(), avp_numparE.getValorInt(), avp_numindE.getValorInt());
+                        avp_numparE.setCambio(true);
+                    }
                     return false;
                 }
             }            
@@ -7991,8 +8006,30 @@ public class pdalbara extends ventanaPad  implements PAD
                   canti=0;
              else
                 canti+=cantStk.getKilos();
-             if (canti<0)
-                  canti=0;
+             if (canti<=0)
+             {
+                 int ret=mensajes.mensajeYesNo("Individuo con solo  "+canti+
+                     " kilos disponibles en stock. ¿ SOLUCIONAR ?");
+                 if (ret==mensajes.YES)
+                 {
+                   CheckStock.ir(jf, pro_codiE.getValorInt(),avp_ejelotE.getValorInt(), 
+                            avp_serlotE.getText(),  avp_numparE.getValorInt(),avp_numindE.getValorInt());
+                   avp_numparE.setCambio(true);
+                 }                 
+                 canti=0;
+             }
+            
+          }
+          else
+          {
+               int ret=mensajes.mensajeYesNo("Individuo sin stock. ¿ SOLUCIONAR ?");
+               if (ret==mensajes.YES)
+               {
+                   CheckStock.ir(jf, pro_codiE.getValorInt(),avp_ejelotE.getValorInt(), 
+                            avp_serlotE.getText(),  avp_numparE.getValorInt(),avp_numindE.getValorInt());
+                   avp_numparE.setCambio(true);
+               }
+
           }
 
           avp_cantiE.setEditable( cantStk.hasControlInd() && cantStk.isControlExist() ?P_ADMIN:true);

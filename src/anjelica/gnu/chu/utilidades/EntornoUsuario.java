@@ -231,6 +231,12 @@ public class EntornoUsuario implements Serializable
      }
      return 0;
    }
+   /**
+    * Devuelve la contraseña numerica (corta) de un usuario
+    * @param dt
+    * @return
+    * @throws SQLException 
+    */
    public int getClaveUsuario(DatosTabla dt) throws SQLException
    {
        if (getLikeUsuario()==null && dt!=null)

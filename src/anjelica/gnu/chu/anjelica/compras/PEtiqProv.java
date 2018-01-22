@@ -239,9 +239,9 @@ public class PEtiqProv extends javax.swing.JPanel
                     jtLote.setValor(jtLote.getValString(n-1,JTLOTE_PN ),n,JTLOTE_PN);
                     jtLote.setValor(jtLote.getValString(n-1,JTLOTE_PC ),n,JTLOTE_PC);
                     jtLote.setValor(jtLote.getValString(n-1,JTLOTE_PS ),n,JTLOTE_PS);
-                    jtLote.setEnabled(true);
-                    jtLote.requestFocusLater();
+                    jtLote.setEnabled(true);                    
                 }
+                jtLote.requestFocusLater();
             }
         });
         Blimpia.addActionListener(new ActionListener()
@@ -333,10 +333,12 @@ public class PEtiqProv extends javax.swing.JPanel
             }
         });
         etp_codbarE.addFocusListener(new FocusAdapter()
-        {@
-              Override
+        {
+              @Override
               public void focusLost(FocusEvent e) {
                   if (swAutomatico)
+                      return;
+                  if (etp_codbarE.isNull(true) )
                       return;
                     boolean ret=procesaCodBarras(etp_codbarE.getText(),jtEti.getSelectedRow());
                     swAutomatico=true;

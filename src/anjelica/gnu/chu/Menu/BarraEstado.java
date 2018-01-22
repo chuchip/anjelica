@@ -196,8 +196,8 @@ public class BarraEstado extends CPanel
           CPasswordField pf = new CPasswordField(10);
           panel.add(label,BorderLayout.NORTH);
           panel.add(pf,BorderLayout.SOUTH);
-         do 
-         {
+          do 
+          {
 //        System.out.println("saliendo...");
                          
              int okCxl= JOptionPane.showConfirmDialog(null,panel,MenuPri.EntornoUsu.usu_nomb+" Bloqueado",JOptionPane.OK_CANCEL_OPTION,

@@ -7,7 +7,7 @@ package gnu.chu.anjelica.inventario;
  * Este programa solo se deberia usar en casos limitados, si sabemos a ciencia
  * cierta que un individuo existe pero, por algun error, el programa no nos lo deja introducir.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
