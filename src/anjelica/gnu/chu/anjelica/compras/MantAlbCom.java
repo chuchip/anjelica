@@ -10,7 +10,7 @@ package gnu.chu.anjelica.compras;
  *  AlbSinPed true/False Indica si se pueden cargar albaranes sin un pedido de compras
  * </p>
  * <p> Creado a partir pdalbaco2</p>
- *  <p>Copyright: Copyright (c) 2005-2017
+ *  <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -269,10 +269,10 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       {
         if (! isLineaEntera(row) && !ARG_GOD)
           return false;
-        if (jt.getValorInt(row,0)==0 && !jtDes.isVacio())
+        if (jt.getValorInt(row,JT_PROCOD)!=0 && !jtDes.isVacio())
         {
-            int res=mensajes.mensajeYesNo("Linea tiene individuos. ¿Mantenerla?");
-            if (res==mensajes.YES)
+            int res=mensajes.mensajeYesNo("Linea tiene individuos. ¿ Borrar seguro ?");
+            if (res!=mensajes.YES)
                 return false;
         }       
         borraLinea(row);
@@ -739,7 +739,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20180106)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20180125)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (ARG_ADMIN?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -2497,9 +2497,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     if (swCargaAlb)
       return;
     if (pEtiPrv!=null)
-    {
          pEtiPrv.activar(false);
-    }
 
     if (!jtDes.isEnabled())
     { // Vengo de la cabecera
@@ -2510,7 +2508,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
 //        cargaALbVentas();
 //        return;
 //      }
-      if (pcc_numeE.isEnabled())
+      if (nav.pulsado==navegador.ADDNEW )
       {
         if (!cargaLinPedido(false))
         {
@@ -3671,12 +3669,14 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       fcc_anoE.setEnabled(false);
       fcc_numeE.setEnabled(false);
    //   prv_codiE.setEnabled(false);
-      eje_numeE.setEnabled(false);
+     
       avc_anoE.setEnabled(false);
       avc_numeE.setEnabled(false);
       acc_idE.setEnabled(false);
-      pcc_numeE.setEnabled(false);
-      BbusPed.setEnabled(false);
+      pcc_numeE.setEnabled(ARG_ADMIN);
+      eje_numeE.setEnabled(ARG_ADMIN);      
+      BbusPed.setEnabled(ARG_ADMIN);
+      
       if (ARG_MODPRECIO)
         acc_totfraE.setEnabled(true);
 //      alm_codiE.setEnabled(false);

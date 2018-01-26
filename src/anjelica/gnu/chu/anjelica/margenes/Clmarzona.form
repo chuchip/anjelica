@@ -90,7 +90,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="80" y="87" width="40" height="17"/>
+                  <AbsoluteConstraints x="10" y="87" width="40" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -245,14 +245,14 @@
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Incl. todas Reg."/>
-                <Property name="toolTipText" type="java.lang.String" value="Incluir Regularizaciones Genericas"/>
+                <Property name="toolTipText" type="java.lang.String" value="Incluir TODAS las regularizaciones"/>
               </Properties>
               <AccessibilityProperties>
                 <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value="Incluir Regularizaciones"/>
               </AccessibilityProperties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="430" y="87" width="110" height="18"/>
+                  <AbsoluteConstraints x="300" y="87" width="110" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -323,7 +323,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="120" y="87" width="270" height="17"/>
+                  <AbsoluteConstraints x="50" y="87" width="240" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -336,6 +336,17 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="520" y="47" width="110" height="18"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opIgnVertE">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ign. todas Reg."/>
+                <Property name="toolTipText" type="java.lang.String" value="Ignorar TODAS las Regularizaciones"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="410" y="87" width="110" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>

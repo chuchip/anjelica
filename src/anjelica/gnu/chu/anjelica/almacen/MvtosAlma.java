@@ -57,6 +57,7 @@ public class MvtosAlma
   private Date dateFin;
   private boolean swCompraNoValor,swDespNoValor;
   private boolean swIgnRegul=false; // Ignorar reg. De secciones no suyas
+  private boolean swIgnAllRegul=false; // Ignorar TODAS las regularizaciones.
   private boolean swIgnDespFecha=false; // Ignorar despieces de ult.fecha
   boolean swSoloInv=false; // Solo busca registros en inventarios
   boolean incInvFinal=false; // Por defecto no se incluye inventario de ult. fecha
@@ -257,6 +258,10 @@ public class MvtosAlma
   public void setIgnoraRegular(boolean ignRegul)
   {
        swIgnRegul=ignRegul;
+  }
+  public void setIgnoraTodasRegular(boolean ignRegul)
+  {
+       swIgnAllRegul=ignRegul;
   }
   /**
    * Indica si se buscaran los movimientos desglosandolo. 
@@ -1391,8 +1396,8 @@ public class MvtosAlma
             swIgnMvto = false;
             if (sel == 'R')
             {
-                if (swIgnRegul && swDiscr && DT_zonCodi == null)
-                { // Ignorar Regularizaciones Genericas                             
+                if ( swIgnAllRegul || (swIgnRegul && swDiscr && DT_zonCodi == null))
+                { // Ignorar Regularizaciones                       
                     swIgnMvto = true;
                 }
             }

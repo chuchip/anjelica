@@ -448,6 +448,7 @@ public class Clmarzona extends ventana {
     
     fecinv=feulinE.getText();
     mvtosAlm.setIgnoraRegular(! opIncVertE.isSelected());
+    mvtosAlm.setIgnoraTodasRegular(opIgnVertE.isSelected() );
     mvtosAlm.setEmpresa(emp_codiE.getValorInt());
     mvtosAlm.setSbeCodi(sbe_codiE.getValorInt());
     mvtosAlm.setCliente(cli_codiE.getValorInt());
@@ -672,6 +673,7 @@ public class Clmarzona extends ventana {
         cLabel20 = new gnu.chu.controles.CLabel();
         rut_codiE = new gnu.chu.controles.CLinkBox();
         opIgnRepAlb = new gnu.chu.controles.CCheckBox();
+        opIgnVertE = new gnu.chu.controles.CCheckBox();
         PPie = new gnu.chu.controles.CPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
         cLabel8 = new gnu.chu.controles.CLabel();
@@ -736,7 +738,7 @@ public class Clmarzona extends ventana {
         cLabel16.setText("Ruta");
         cLabel16.setPreferredSize(new java.awt.Dimension(60, 18));
         Pcabe.add(cLabel16);
-        cLabel16.setBounds(80, 87, 40, 17);
+        cLabel16.setBounds(10, 87, 40, 17);
 
         zon_codiE.setAncTexto(30);
         zon_codiE.setPreferredSize(new java.awt.Dimension(92, 18));
@@ -795,9 +797,9 @@ public class Clmarzona extends ventana {
 
         opIncVertE.setSelected(true);
         opIncVertE.setText("Incl. todas Reg.");
-        opIncVertE.setToolTipText("Incluir Regularizaciones Genericas");
+        opIncVertE.setToolTipText("Incluir TODAS las regularizaciones");
         Pcabe.add(opIncVertE);
-        opIncVertE.setBounds(430, 87, 110, 18);
+        opIncVertE.setBounds(300, 87, 110, 18);
         opIncVertE.getAccessibleContext().setAccessibleDescription("Incluir Regularizaciones");
 
         opIncComent.setText("Inc.  Comentario");
@@ -824,13 +826,18 @@ public class Clmarzona extends ventana {
         rut_codiE.setAncTexto(30);
         rut_codiE.setPreferredSize(new java.awt.Dimension(92, 18));
         Pcabe.add(rut_codiE);
-        rut_codiE.setBounds(120, 87, 270, 17);
+        rut_codiE.setBounds(50, 87, 240, 17);
 
         opIgnRepAlb.setSelected(true);
         opIgnRepAlb.setText("Ignorar Rep. Alb");
         opIgnRepAlb.setToolTipText("Ignorar representante de Albaran");
         Pcabe.add(opIgnRepAlb);
         opIgnRepAlb.setBounds(520, 47, 110, 18);
+
+        opIgnVertE.setText("Ign. todas Reg.");
+        opIgnVertE.setToolTipText("Ignorar TODAS las Regularizaciones");
+        Pcabe.add(opIgnVertE);
+        opIgnVertE.setBounds(410, 87, 110, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1108,6 +1115,7 @@ public class Clmarzona extends ventana {
     private gnu.chu.controles.Cgrid jtGru;
     private gnu.chu.controles.CTextField kgsVenE;
     private gnu.chu.controles.CCheckBox opIgnRepAlb;
+    private gnu.chu.controles.CCheckBox opIgnVertE;
     private gnu.chu.controles.CCheckBox opIncComent;
     private gnu.chu.controles.CCheckBox opIncVertE;
     private gnu.chu.controles.CTextField pmComE;

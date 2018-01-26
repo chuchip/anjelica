@@ -44,6 +44,7 @@ import gnu.chu.interfaces.PAD;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
+import gnu.chu.utilidades.FloatDimension;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.mensajes;
@@ -59,6 +60,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import java.net.UnknownHostException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -67,6 +69,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
@@ -357,13 +360,16 @@ public class ManAlbRuta extends ventanaPad implements PAD
         
             jt.removeAllDatos();
             jtFra.removeAllDatos();
+            jtSec.removeAllDatos();
+            Hashtable<Integer,FloatDimension> ht = new Hashtable();
             if ( dtCon1.select("select l.*,cl.cli_nomen as cli_nomb,cl.cli_pobl,cl.cli_codrut from v_albruta as l "
                  + " left join v_cliente as cl "+
                 " on l.cli_codi = cl.cli_codi where alr_nume ="+dtCons.getInt("alr_nume")+                
                  " order by "+
                 (swOrdenado?"l.emp_codi,l.avc_ano,l.avc_serie,l.avc_nume ":"alr_orden")))
-            {
-
+            {                 
+               
+                 
                  do
                  {
                      ArrayList a = new ArrayList();
@@ -381,25 +387,35 @@ public class ManAlbRuta extends ventanaPad implements PAD
                      a.add(dtCon1.getString("cli_diree", true));
                      a.add(dtCon1.getString("cli_codpoe", true));
                      a.add(dtCon1.getObject("cli_nomen")==null?dtCon1.getString("cli_pobl"):
-                         dtCon1.getString("cli_poble"));
-                                       
-                     
-                     
+                         dtCon1.getString("cli_poble"));                                                            
+                     int unid;
+                     double canti;
                      if (dtCon1.getObject("alr_unid") == null)
                      {
-                         a.add(dtCon1.getString("avc_unid"));
-                         a.add(dtCon1.getString("avc_kilos"));
+                         unid=dtCon1.getInt("avc_unid");
+                         canti=dtCon1.getDouble("avc_kilos");
                      } else
                      {  
-                         a.add(dtCon1.getString("alr_unid"));
-                         a.add(dtCon1.getString("alr_kilos"));
+                         unid=dtCon1.getInt("alr_unid");
+                         canti=dtCon1.getDouble("alr_kilos");
                      }
+                     a.add(unid);
+                     a.add(canti);
                      a.add(dtCon1.getString("alr_horrep"));
                      a.add(dtCon1.getString("alr_comrep"));
                      a.add((dtCon1.getInt("alr_repet") != 0));
+                     a.add(dtCon1.getInt("sbe_codi"));
                      jt.addLinea(a);
-                 } while (dtCon1.next());
+                     FloatDimension  d=ht.get(dtCon1.getInt("sbe_codi"));
+                     if (d==null)
+                         d=new FloatDimension(0,0);                   
+                     unid=(int) d.getValor1()+1;
+                     canti=d.getValor2()+canti;
+                     d.setValores(unid, canti);
+                     ht.put(dtCon1.getInt("sbe_codi"),d);
+                 } while (dtCon1.next());                 
                  jt.requestFocusInicio();
+                
              }
 //             else
 //                 msgBox("No encontradas albaranes para parte ruta con ID: "+dtCons.getInt("alr_nume"));
@@ -427,6 +443,28 @@ public class ManAlbRuta extends ventanaPad implements PAD
              }
              
             actAcumul();
+            Set<Integer> keys = ht.keySet();
+            PreparedStatement ps=dtStat.getPreparedStatement("SELECT * FROM v_subemprcliente WHERE EMP_CODI="+  EU.em_cod+" and sbe_codi=?" );
+            String sbeNomb="";
+            ResultSet rs;
+            for(Integer key: keys)
+            {
+                ps.setInt(1, key);
+                rs=ps.executeQuery();
+                if (rs.next())
+                    sbeNomb=rs.getString("sbe_nomb");
+                else
+                    sbeNomb="*Seccion NO encontrada*";
+                FloatDimension d= ht.get(key);
+                ArrayList v=new ArrayList();
+                v.add(key);
+                v.add(sbeNomb);
+                v.add(Formatear.format(d.getValor1(),"###9"));
+                v.add(Formatear.format(d.getValor2(),"----,---.9"));
+                v.add(Formatear.format( (d.getValor1()/numAlbE.getValorDec())*100,"##9.99") );
+                v.add(Formatear.format( (d.getValor2()/kilosTotE.getValorDec())*100,"##9.99") );
+                jtSec.addLinea(v);
+            }
         } catch (SQLException ex)
         {
             Error("Error al comprobar albaran para ruta", ex);
@@ -782,6 +820,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         cli_direeE = new gnu.chu.controles.CTextField(Types.CHAR,"X",100);
         cli_codpoeE = new gnu.chu.controles.CTextField(Types.CHAR,"X",8);
         cli_codrutE = new gnu.chu.controles.CTextField(Types.CHAR,"X",2);
+        avc_sbecodE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9");
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel5 = new gnu.chu.controles.CLabel();
@@ -831,7 +870,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         Borden = new gnu.chu.controles.CButton(Iconos.getImageIcon("order"));
         ordenarC = new gnu.chu.controles.CCheckBox();
         Tpanel1 = new gnu.chu.controles.CTabbedPane();
-        jt = new gnu.chu.controles.CGridEditable(17){
+        jt = new gnu.chu.controles.CGridEditable(18){
             @Override
             public int cambiaLinea(int row, int col)
             {
@@ -873,6 +912,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
             }
         }
         ;
+        jtSec = new gnu.chu.controles.Cgrid(6);
 
         emp_codiE.setText("1");
 
@@ -913,6 +953,8 @@ public class ManAlbRuta extends ventanaPad implements PAD
 
         cli_codrutE.setText("A");
         cli_codrutE.setEnabled(false);
+
+        avc_sbecodE.setEnabled(false);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -1151,10 +1193,11 @@ public class ManAlbRuta extends ventanaPad implements PAD
         v.add("Horario"); // 14
         v.add("Coment."); // 15
         v.add("Dupl."); // 16
+        v.add("Sec"); // 17
         jt.setCabecera(v);
         jt.setColNueva(3);
-        jt.setAnchoColumna(new int[]{20,40,20,40,30,30,40,200,40,120,40,90,40,50,100,120,45});
-        jt.setAlinearColumna(new int[]{2,2,1,2,2,2,2,0,0,0,0,0,2,2,0,0,1});
+        jt.setAnchoColumna(new int[]{20,40,20,40,30,30,40,200,40,120,40,90,40,50,100,120,45,30});
+        jt.setAlinearColumna(new int[]{2,2,1,2,2,2,2,0,0,0,0,0,2,2,0,0,1,2});
 
         ArrayList vc=new ArrayList();
         vc.add(emp_codiE);
@@ -1174,6 +1217,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
         vc.add(alr_horrepE);
         vc.add(alr_comrepE);
         vc.add(alr_repetE);
+        vc.add(avc_sbecodE);
         try {
             jt.setCampos(vc);
         } catch (Exception k)
@@ -1246,6 +1290,20 @@ public class ManAlbRuta extends ventanaPad implements PAD
         jtFra.setFormatoColumna(8,"----,--9.99");
         Tpanel1.addTab("Facturas", jtFra);
 
+        {
+            ArrayList vs=new ArrayList();
+            vs.add("Seccion"); // 0
+            vs.add("Nombre"); // 1
+            vs.add("N.Alb."); // 2
+            vs.add("Kilos"); // 3
+            vs.add("% Alb."); // 4
+            vs.add("% Kilos."); // 5
+            jtSec.setCabecera(vs);
+            jtSec.setAnchoColumna(new int[]{40,150,60,75,50,50});
+            jtSec.setAlinearColumna(new int[]{2,0,2,2,2,2});
+        }
+        Tpanel1.addTab("Secciones", jtSec);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -1291,6 +1349,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField avc_anoE;
     private gnu.chu.controles.CTextField avc_kilosE;
     private gnu.chu.controles.CTextField avc_numeE;
+    private gnu.chu.controles.CTextField avc_sbecodE;
     private gnu.chu.controles.CTextField avc_serieE;
     private gnu.chu.controles.CTextField avc_unidE;
     private gnu.chu.controles.CTextField bulTotE;
@@ -1331,6 +1390,7 @@ public class ManAlbRuta extends ventanaPad implements PAD
     private javax.swing.JScrollPane jScrollPane2;
     private gnu.chu.controles.CGridEditable jt;
     private gnu.chu.controles.CGridEditable jtFra;
+    private gnu.chu.controles.Cgrid jtSec;
     private gnu.chu.controles.CTextField kilosTotE;
     private gnu.chu.controles.CTextField numAlbE;
     private gnu.chu.controles.CTextField numFrasE;

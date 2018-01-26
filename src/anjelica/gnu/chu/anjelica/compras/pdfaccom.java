@@ -2,7 +2,7 @@ package gnu.chu.anjelica.compras;
 /**
  * <p>Titulo:   PDFACCOM </p>
  * <p>Descripción: Mantenimiento FACTURAS DE COMPRAS
- * <p>Copyright: (c) 2005-2017
+ * <p>Copyright: (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
 *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -930,7 +930,12 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
        fcc_fecfraE.requestFocus();
        return false;
      }
-
+     if (fcc_kilfraE.isNull())
+     {
+         msgBox("Introduzca kilos de factura");
+         fcc_kilfraE.requestFocus();
+         return false;
+     }
    }
    catch (Exception k)
    {

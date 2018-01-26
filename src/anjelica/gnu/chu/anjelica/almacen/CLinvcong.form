@@ -308,7 +308,7 @@
             <Component class="gnu.chu.controles.CCheckBox" name="opDesgInd">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Deg. Indiv."/>
+                <Property name="text" type="java.lang.String" value="Desg. Indiv."/>
                 <Property name="toolTipText" type="java.lang.String" value="Desglosar Individuos"/>
               </Properties>
               <Constraints>

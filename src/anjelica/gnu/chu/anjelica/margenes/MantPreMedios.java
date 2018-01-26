@@ -274,8 +274,8 @@ public class MantPreMedios extends ventana
               double impCompra=dtCon1.getDouble("importe",true);
               s="select sum(deo_kilos) as kilos, sum(deo_kilos*c.acl_prcom) as importe "
                   + "from v_despori as d,v_compras as c where  tid_codi= "+TIDE_AUTOCLASI+
-                   " and deo_fecha>='"+ fecIniComE.getFechaDB()+"'"+ 
-                   " and c.acc_fecrec>='"+fecFinComE.getFechaDB()+"'"+ 
+                   " and deo_fecha>='"+ tar_feciniE.getFechaDB()+"'"+ 
+                   " and c.acc_fecrec>='"+tar_feciniE.getFechaDB()+"'"+ 
                    " and d.pro_codi=c.pro_codi "+
                    " and d.pro_lote=c.acc_nume "+
                    " and d.deo_ejelot=c.acc_ano "+
@@ -388,7 +388,7 @@ public class MantPreMedios extends ventana
 
         cLabel5.setText("Fecha");
         PCondi.add(cLabel5);
-        cLabel5.setBounds(180, 3, 60, 17);
+        cLabel5.setBounds(180, 3, 50, 17);
 
         tar_feciniE.setMaximumSize(new java.awt.Dimension(10, 18));
         tar_feciniE.setMinimumSize(new java.awt.Dimension(10, 18));

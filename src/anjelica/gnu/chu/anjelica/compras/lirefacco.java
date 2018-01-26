@@ -65,12 +65,12 @@ public class lirefacco  extends ventana
   CLabel cLabel4 = new CLabel();
   
   CLabel prv_codiL = new CLabel();
-  CLabel kilosTotL = new CLabel("Kilos");
-  CTextField kilosTotE = new CTextField(Types.DECIMAL,"---,--9.99");
+  CLabel kilosTotL = new CLabel("Kilos Lin.");
+  CTextField kilosTotE = new CTextField(Types.DECIMAL,"----,--9.99");
   prvPanel prv_codiE = new prvPanel();
   CCheckBox opIncDto = new CCheckBox("Inc. Dtos.");
   CPanel Pcriterios = new CPanel();
-  Cgrid jt = new Cgrid(12);
+  Cgrid jt = new Cgrid(13);
   CButton Bcons = new CButton("Cons.", Iconos.getImageIcon("check"));
   CPanel Pacum = new CPanel();
   GridBagLayout gridBagLayout1 = new GridBagLayout();
@@ -78,6 +78,8 @@ public class lirefacco  extends ventana
   CTextField fcc_basim1E = new CTextField(Types.DECIMAL,"---,---,--9.99");
   CTextField fcc_imptotE = new CTextField(Types.DECIMAL,"---,---,--9.99");
   CTextField fcc_impiv1E = new CTextField(Types.DECIMAL,"---,---,--9.99");
+  CLabel fcc_kilfraL=new CLabel("Kilos Fra");
+  CTextField fcc_kilfraE = new CTextField(Types.DECIMAL,"----,--9.99");
   CLabel cLabel10 = new CLabel();
   CLabel fcc_imptotL = new CLabel();
   CLabel cLabel12 = new CLabel();
@@ -138,9 +140,12 @@ public class lirefacco  extends ventana
     Pprinc.setLayout(gridBagLayout1);
 
     statusBar = new StatusBar(this);
-    kilosTotL.setBounds(new Rectangle(430, 24, 50, 17));
+    kilosTotL.setBounds(new Rectangle(420, 24, 50, 17));
     kilosTotE.setEditable(false);
     kilosTotE.setBounds(new Rectangle(485, 24, 90, 17));
+    fcc_kilfraL.setBounds(new Rectangle(420, 4, 60, 18));
+    fcc_kilfraE.setBounds(new Rectangle(485, 4, 90, 18));
+
     opImpTot.setSelected(true);
     opImpTot.setText("Solo Totales");
     opImpTot.setBounds(new Rectangle(473, 30, 131, 15));
@@ -193,6 +198,7 @@ public class lirefacco  extends ventana
     fcc_imirp1E.setEditable(false);
     fcc_impiv1E.setEditable(false);
     fcc_imptotE.setEditable(false);
+    fcc_kilfraE.setEditable(false);
 
     feciniE.setBounds(new Rectangle(57, 23, 76, 17));
     cLabel1.setText("De Fecha");
@@ -253,6 +259,8 @@ public class lirefacco  extends ventana
     Pacum.add(kilosTotE,null);
     
     Pacum.add(fcc_impiv1E, null);
+    Pacum.add(fcc_kilfraL, null);
+    Pacum.add(fcc_kilfraE, null);
     Pacum.add(fcc_basim1E, null);
     Pacum.add(fcc_imptotE, null);
     Pacum.add(fcc_imptotL, null);
@@ -297,10 +305,11 @@ public class lirefacco  extends ventana
     v.add("IRPF"); // 8
     v.add("Imp.IRPF"); // 9
     v.add("Total"); // 10
-    v.add("Kilos"); // 11
+    v.add("Kg.Lineas"); // 11
+    v.add("Kil.Fra."); // 11
     jt.setCabecera(v);
-    jt.setAnchoColumna(new int[]{70,55,55,160,60,70,40,70,40,70,80,80});
-    jt.setAlinearColumna(new int[]{2,1,2,0,2,2,2,2,2,2,2,2});
+    jt.setAnchoColumna(new int[]{70,55,55,160,60,70,40,70,40,60,70,70,70});
+    jt.setAlinearColumna(new int[]{2,1,2,0,2,2,2,2,2,2,2,2,2});
     jt.setFormatoColumna(4,"----,--9.99");
     jt.setFormatoColumna(5,"----,--9.99");
     jt.setFormatoColumna(6,"99.9");
@@ -309,11 +318,13 @@ public class lirefacco  extends ventana
     jt.setFormatoColumna(9,"----,--9.99");
     jt.setFormatoColumna(10,"--,---,--9.99");
     jt.setFormatoColumna(11,"---,--9.99");
+    jt.setFormatoColumna(12,"---,--9.99");
   }
   void activarEventos()
   {
     BactFras.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         BactFras_actionPerformed();
@@ -321,6 +332,7 @@ public class lirefacco  extends ventana
     });
     Blistar.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         Blistar_actionPerformed();
@@ -328,6 +340,7 @@ public class lirefacco  extends ventana
     });
     Bcons.addActionListener(new ActionListener()
    {
+     @Override
      public void actionPerformed(ActionEvent e)
      {
        Bcons_actionPerformed();
@@ -372,6 +385,7 @@ public class lirefacco  extends ventana
       double bImpIVAT=0;
       double sumTot=0;
       double kgTot=0;
+      double kilFraT=0;
       PreparedStatement ps=dtStat.getPreparedStatement("select sum(fcl_canti) "+
               " as fcl_canti from v_falico where emp_codi = ? and eje_nume=? and fcc_nume=?");
       ResultSet rs;
@@ -403,17 +417,19 @@ public class lirefacco  extends ventana
            v.add(rs.getDouble("fcl_canti"));
            kgTot+=rs.getDouble("fcl_canti");
         }
+        v.add(dtCon1.getDouble("fcc_kilfra"));
         bImpT+=dtCon1.getDouble("fcc_basim1");
         bImpIRFPT+=dtCon1.getDouble("fcc_imirp1");
         bImpIVAT+=dtCon1.getDouble("fcc_impiv1");
         sumTot+=dtCon1.getDouble("fcc_sumtot");
-        
+        kilFraT+=dtCon1.getDouble("fcc_kilfra");
         jt.addLinea(v);
       } while (dtCon1.next());
       fcc_basim1E.setValorDec(bImpT);
       fcc_imirp1E.setValorDec(bImpIRFPT);
       fcc_impiv1E.setValorDec(bImpIVAT);
       fcc_imptotE.setValorDec(sumTot);
+      fcc_kilfraE.setValorDec(kilFraT);
       kilosTotE.setValorDec(kgTot);
       jt.panelG.setVisible(true);
       jt.requestFocusInicio();
@@ -432,7 +448,7 @@ public class lirefacco  extends ventana
   {
     return " SELECT f.eje_nume,f.emp_codi,fcc_nume,fcc_fecfra,f.prv_codi,pv.prv_nomb,prv_nif,"+
        " fcc_sumlin,fcc_basim1,fcc_piva1 as fcc_piva1,fcc_impiv1,"+
-       " fcc_pirpf1  as fcc_pirpf1,fcc_imirp1,fcc_sumtot "+
+       " fcc_pirpf1  as fcc_pirpf1,fcc_imirp1,fcc_sumtot,fcc_kilfra "+
        " FROM v_facaco f left join v_proveedo as pv on "+
        " pv.PRV_CODI = f.prv_codi "+
        " where 1=1 " +

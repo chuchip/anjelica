@@ -24,7 +24,7 @@ $BODY$
   BEGIN
        
 
-RAISE  NOTICE 'oPERACION %',TG_OP;	
+-- RAISE  NOTICE 'oPERACION %',TG_OP;	
         if TG_OP =  'INSERT' or TG_OP =  'UPDATE' then 
 		kilos=0;
 		unid=0;      
@@ -65,7 +65,7 @@ RAISE  NOTICE 'oPERACION %',TG_OP;
                 pro_numind  = NEW.pro_indlot and
                 alm_codi = NEW.alm_codi;                
             if STKNEW is  null then
-		RAISE  NOTICE 'NO EXISTIA REGISTRO EN STOCK-PARTIDAS ';	
+		-- RAISE  NOTICE 'NO EXISTIA REGISTRO EN STOCK-PARTIDAS ';	
             -- No existe ese individuo en stock-partidas
                 kilos=NEW.mvt_canti;
                 unid=NEW.mvt_unid;
@@ -102,7 +102,7 @@ RAISE  NOTICE 'oPERACION %',TG_OP;
                     acpFecpro,acpNucrot,acpPainac,acpEngpai,acpPaisac,acpFecsac,
                     matCodi,sdeCodi);
             else
-	        RAISE  NOTICE 'EXISTIA REGISTRO EN STOCK-PARTIDAS ';	
+	        -- RAISE  NOTICE 'EXISTIA REGISTRO EN STOCK-PARTIDAS ';	
                if NEW.mvt_tipdoc = 'V' or NEW.mvt_tipdoc = 'R' or NEW.mvt_tipdoc = 'D' or NEW.mvt_tipdoc = 'd'  then
                 if NEW.mvt_tipdoc != 'd' then
                     mvtCliprv=STKNEW.prv_codi;

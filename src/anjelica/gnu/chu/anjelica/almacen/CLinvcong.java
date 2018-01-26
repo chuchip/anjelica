@@ -19,6 +19,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.*;
 
@@ -26,7 +28,7 @@ import java.util.*;
  *   Consulta Listado de Stock Agrupandolos por fecha caducidad.
  *   Saca los datos de la tabla de stock-partidas (v_stkpart)
  *
- *  <p>  Copyright: Copyright (c) 2005-2017
+ *  <p>  Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -44,6 +46,10 @@ import java.util.*;
  */
 public class CLinvcong extends ventana
 {
+  private String tablaTemp="clinvcong";
+  PreparedStatement psAdd,psSel;
+  ResultSet rsSel;
+      
   private boolean swPrimeraVez=true;
   private int proCodi;
   private String proNomb;
@@ -129,6 +135,7 @@ public class CLinvcong extends ventana
     @Override
   public void iniciarVentana() throws Exception
   {
+      tablaTemp+=System.currentTimeMillis();
       filtroEmpr=empPanel.getStringAccesos(dtStat, EU.usuario,true);
       pdalmace.llenaLinkBox(alm_codiE,dtStat,'*');
       alm_codiE.addDatos("0","*TODOS*");
@@ -427,7 +434,7 @@ public class CLinvcong extends ventana
         pro_loteE.setBounds(420, 22, 50, 17);
 
         opDesgInd.setSelected(true);
-        opDesgInd.setText("Deg. Indiv.");
+        opDesgInd.setText("Desg. Indiv.");
         opDesgInd.setToolTipText("Desglosar Individuos");
         Pcabe.add(opDesgInd);
         opDesgInd.setBounds(480, 22, 90, 18);
@@ -565,11 +572,12 @@ public class CLinvcong extends ventana
     {
         actualizaMsg("Buscando datos... preparando datos temporales ",false);
         dtAdd.setCerrarCursor(false);
-        if (!swPrimeraVez)
-            dtAdd.executeUpdate("drop table clstkfecca");
+        String  s= "SELECT *  FROM   pg_catalog.pg_tables  WHERE   tablename  = '"+tablaTemp+"'";
+        if (dtAdd.select(s))
+            dtAdd.executeUpdate("drop table "+tablaTemp);
  
         swPrimeraVez=false;
-        String s="CREATE  TEMP TABLE clstkfecca ("+
+        s="CREATE  TEMP TABLE  "+tablaTemp+"("+
             " pro_codi int,"+
             " fam_codi int,"+
             " prv_codi int,"+
@@ -685,171 +693,255 @@ public class CLinvcong extends ventana
     
     private void verDatos(boolean agruFec) throws Exception
     {
-            String prvNomb;
-            proCodi=dtCon1.getInt("pro_codi");
-            int famCodi=0;
-            proNomb=gnu.chu.anjelica.pad.MantArticulos.getNombProd(proCodi,dtStat);
-            int nProd=0;
-            impAct=0;
-            impTot=0;
-            uniAct=0;
-            kilAct=0;
-            kilTot=0;
-            uniTot=0;
-            Date fecDesp,fecCadCong;
-            double precCompra;
-            long diasCad;
-            long diasCong;
-            ArrayList<ArrayList> datos=new ArrayList();
-            char orden=ordenE.getValor().charAt(0);
-            do  
-            {
-                if (cancelarConsulta)
-                    break;
-              
-                if (proCodi!=dtCon1.getInt("pro_codi") )
-                {
-                    setMensajePopEspere("Cargando datos de consulta. Producto: "+proCodi,false);
-                    if (nProd>1 || opSoloTot.isSelected())
-                        datos.add(addSubTotal());
-                    nProd=0;
-                    proCodi=dtCon1.getInt("pro_codi");
-                    proNomb=gnu.chu.anjelica.pad.MantArticulos.getNombProd(proCodi,dtStat);
-                    if (proNomb==null)
-                        proNomb="*PRODUCTO NO ENCONTRADO*";
-                    uniAct=0;
-                    kilAct=0; 
-                    impAct=0;
-                }
-                if (orden=='F')
-                {
-                    if (famCodi!=dtCon1.getInt("fam_codi"))
-                    { 
-                       famCodi=dtCon1.getInt("fam_codi"); 
-                       ArrayList al=new ArrayList();
-                       al.add("");
-                       al.add("Fam: "+MantFamPro.getNombreFam(famCodi,dtStat));
-                       for (int n=0;n<13;n++)
-                           al.add("");
-                       datos.add(al);
-                    }
-                }
-                if (!agruFec)
-                {
-                   if (!utdesp.busDatInd(dtCon1.getString("pro_serie"),proCodi,
-                        EU.em_cod, dtCon1.getInt("eje_nume"), dtCon1.getInt("pro_nupar"),
-                        dtCon1.getInt("pro_numind"),dtDesp,dtStat, EU))
-                   {
-                        prvNomb="*DESCONOCIDO*";
-                        precCompra=0;
-                   }
-                   else
-                   {
-                       precCompra=utdesp.getPrecioCompra()==-1?0:utdesp.getPrecioCompra() ;
-                       prvNomb=gnu.chu.anjelica.pad.pdprove.getNombPrv(utdesp.getPrvCompra(),dtStat);
-                   }
-                }
-                else
-                {
-                    precCompra=dtCon1.getDouble("costo")/dtCon1.getDouble("stp_kilact");
-                    prvNomb=dtCon1.getInt("prv_codi")==0?"*DESCONOCIDO*":gnu.chu.anjelica.pad.pdprove.getNombPrv(
-                        dtCon1.getInt("prv_codi"),dtStat);
-                }
-               
-                fecDesp=agruFec?dtCon1.getDate("fecdes"):utdesp.getFecDesp();
-                 // Si el producto se compro ya congelado (es nulo).
-                 // Hago equivalente la fecha Desp. a la fecha de cong.
-                if (fecDesp==null)
-                {
-                    fecDesp=agruFec?dtCon1.getDate("feccom"):utdesp.getFecCompra();
-                    diasCad=9999;
-                }
-                else
-                    diasCad=agruFec?Formatear.comparaFechas(dtCon1.getDate("feccad"),fecDesp):
-                        Formatear.comparaFechas(utdesp.getFecCadPrv(),fecDesp);
-               
-                fecCadCong=agruFec?dtCon1.getDate("fecade"):utdesp.getFechaCadDesp();
-                if (fecCadCong==null)
-                   fecCadCong=agruFec?dtCon1.getDate("feccad"):utdesp.getFecCadPrv();
-                
-                diasCong=agruFec?Formatear.comparaFechas(fecCadCong, fecDesp):
-                    Formatear.comparaFechas(fecCadCong,fecDesp);
-                if (diasCong<32)
-                    fecCadCong=Formatear.sumaDiasDate(fecCadCong, 23*30); // Le sumo 23 Meses.
-                diasCong=Formatear.comparaFechas(fecCadCong, Formatear.getDateAct());
-                if (! feciniE.isNull())
-                {
-                    if (fecDesp==null)
-                        continue;
-                    if (Formatear.comparaFechas(fecDesp,feciniE.getDate())<0)
-                        continue;
-                }
-                
-                if (!fecfinE.isNull())
-                {
-                    if (fecDesp==null)
-                        continue;
-                    if (Formatear.comparaFechas(fecfinE.getDate(), fecDesp)<0)
-                        continue;
-                }
-                if (! opSoloTot.isSelected())
-                {
-                    ArrayList v=new ArrayList();
-                    if (nProd==0)
-                    {
-                        v.add(proCodi);
-                        v.add(proNomb); //Producto
-                    }
-                    else
-                    {
-                        v.add("");
-                        v.add(""); //Producto
-                    }
+        String s;
+        boolean swDesgInd=opDesgInd.isSelected();
+        if (!swDesgInd)
+        {
+            s= "SELECT *  FROM   pg_catalog.pg_tables  WHERE   tablename  = '"+tablaTemp+"'";
+            if (dtAdd.select(s))
+                dtAdd.executeUpdate("drop table "+tablaTemp);
 
+            swPrimeraVez=false;
+            s="CREATE  TEMP TABLE  "+tablaTemp+"("+
+                " pro_codi int,"+ //1                
+                " prv_nomb varchar(100),"+ // 2
+                " stp_unact int,"+ // 3
+                " stp_kilact float,"+   // 4
+                " feccom date,"+ //5
+                " feccad date,"+ // 6
+                " fecdes date,"+ // 7
+                " feccong date,"+ //8
+                " fecadcon date,"+ //9
+                " numdesp varchar(30),"+ //10
+                " costo float, " // 11
+                + "lote varchar(35) )";   //12
+            dtAdd.executeUpdate(s);
+            psAdd=dtAdd.getPreparedStatement("insert into "+tablaTemp+" values (?,?,?,?,?,?,?,?,?,?,?,?)");
+            psSel=dtAdd.getPreparedStatement("select feccad,costo, fecadcon from "+tablaTemp+" where pro_codi=? "
+                + " and lote= ?"
+                + " and  numdesp =? ");
+        }
+        String prvNomb;
+        proCodi = dtCon1.getInt("pro_codi");
+        int famCodi = 0;
+        proNomb = gnu.chu.anjelica.pad.MantArticulos.getNombProd(proCodi, dtStat);
+        int nProd = 0;
+        impAct = 0;
+        impTot = 0;
+        uniAct = 0;
+        kilAct = 0;
+        kilTot = 0;
+        uniTot = 0;
+        java.util.Date fecDesp, fecCadCong;
+        double precCompra;
+        long diasCad;
+        long diasCong;
+        ArrayList<ArrayList> datos = new ArrayList();
+        char orden = ordenE.getValor().charAt(0);
+        do
+        {
+            if (cancelarConsulta)
+                break;
+
+            if (proCodi != dtCon1.getInt("pro_codi"))
+            {
+                setMensajePopEspere("Cargando datos de consulta. Producto: " + proCodi, false);
+                if (nProd > 1 || opSoloTot.isSelected())
+                    datos.add(addSubTotal());
+                nProd = 0;
+                proCodi = dtCon1.getInt("pro_codi");
+                proNomb = gnu.chu.anjelica.pad.MantArticulos.getNombProd(proCodi, dtStat);
+                if (proNomb == null)
+                    proNomb = "*PRODUCTO NO ENCONTRADO*";
+                uniAct = 0;
+                kilAct = 0;
+                impAct = 0;
+            }
+            if (orden == 'F')
+            {
+                if (famCodi != dtCon1.getInt("fam_codi"))
+                {
+                    famCodi = dtCon1.getInt("fam_codi");
+                    ArrayList al = new ArrayList();
+                    al.add("");
+                    al.add("Fam: " + MantFamPro.getNombreFam(famCodi, dtStat));
+                    for (int n = 0; n < 13; n++)
+                    {
+                        al.add("");
+                    }
+                    datos.add(al);
+                }
+            }
+          
+            if (!utdesp.busDatInd(dtCon1.getString("pro_serie"), proCodi,
+                  EU.em_cod, dtCon1.getInt("eje_nume"), dtCon1.getInt("pro_nupar"),
+                  dtCon1.getInt("pro_numind"), dtDesp, dtStat, EU))
+           {
+                    prvNomb = "*DESCONOCIDO*";
+                    precCompra = 0;
+           } else
+           {
+                  precCompra = utdesp.getPrecioCompra() == -1 ? 0 : utdesp.getPrecioCompra();
+                  prvNomb = gnu.chu.anjelica.pad.pdprove.getNombPrv(utdesp.getPrvCompra(), dtStat);
+            }
+            fecDesp = agruFec ? dtCon1.getDate("fecdes") : utdesp.getFecDesp();
+            // Si el producto se compro ya congelado (es nulo).
+            // Hago equivalente la fecha Desp. a la fecha de cong.
+            if (fecDesp == null)
+            {
+                fecDesp = agruFec ? dtCon1.getDate("feccom") : utdesp.getFecCompra();
+                diasCad = 9999;
+            } else
+                diasCad = agruFec ? Formatear.comparaFechas(dtCon1.getDate("feccad"), fecDesp)
+                    : Formatear.comparaFechas(utdesp.getFecCadPrv(), fecDesp);
+
+            fecCadCong = agruFec ? dtCon1.getDate("fecade") : utdesp.getFechaCadDesp();
+            if (fecCadCong == null)
+                fecCadCong = agruFec ? dtCon1.getDate("feccad") : utdesp.getFecCadPrv();
+
+            diasCong = agruFec ? Formatear.comparaFechas(fecCadCong, fecDesp)
+                : Formatear.comparaFechas(fecCadCong, fecDesp);
+            if (diasCong < 32)
+                fecCadCong =  Formatear.sumaDiasDate(fecCadCong, 23 * 30); // Le sumo 23 Meses.
+            diasCong = Formatear.comparaFechas(fecCadCong, Formatear.getDateAct());
+            if (!feciniE.isNull())
+            {
+                if (fecDesp == null)
+                    continue;
+                if (Formatear.comparaFechas(fecDesp, feciniE.getDate()) < 0)
+                    continue;
+            }
+
+            if (!fecfinE.isNull())
+            {
+                if (fecDesp == null)
+                    continue;
+                if (Formatear.comparaFechas(fecfinE.getDate(), fecDesp) < 0)
+                    continue;
+            }
+            if (!opSoloTot.isSelected())
+            {
+                ArrayList v = new ArrayList();
+                if (nProd == 0)
+                {
+                    v.add(proCodi);
+                    v.add(proNomb); //Producto
+                } else
+                {
+                    v.add("");
+                    v.add(""); //Producto
+                }
+                String numDesp=utdesp.getEjeDesp() == 0 ? "C" + utdesp.getAccSerie() + utdesp.getAccAno() + "/"
+                        + utdesp.getAccNume() : "D" + utdesp.getEjeDesp() + "/" + utdesp.getDeoCodi();
+                if (!swDesgInd)
+                {
+                    String lote=dtCon1.getString("eje_nume") + "-" + dtCon1.getString("pro_serie") + "-"
+                        + dtCon1.getString("pro_nupar");
+
+                    psSel.setInt (1,proCodi);
+                    psSel.setString(2,lote);
+                    psSel.setString(3,numDesp);
+                    rsSel=psSel.executeQuery();
+                    if (rsSel.next())
+                    {
+                        utdesp.setFecCadPrv(rsSel.getDate("feccad"));  
+                        precCompra=rsSel.getDouble("costo");
+                        fecCadCong=rsSel.getDate("fecadcon");
+                    }
+                    psAdd.setInt(1,proCodi );                   
+                    psAdd.setString(2,prvNomb);
+                    psAdd.setInt(3,dtCon1.getInt("stp_unact"));
+                    psAdd.setDouble(4,dtCon1.getDouble("stp_kilact"));
+                    psAdd.setDate(5, utdesp.getFecCompra()==null?null:new java.sql.Date(utdesp.getFecCompra().getTime()));
+                    psAdd.setDate(6, utdesp.getFecCadPrv()==null?null: new java.sql.Date( utdesp.getFecCadPrv().getTime()) );
+                    psAdd.setDate(7,fecDesp==null?null: new java.sql.Date(fecDesp.getTime()) );
+                    psAdd.setDate(8,fecDesp==null? (utdesp.getFecCompra()==null?null:new java.sql.Date(utdesp.getFecCompra().getTime()))
+                        : new java.sql.Date(fecDesp.getTime()) );
+                    psAdd.setDate(9,fecCadCong==null?null: new java.sql.Date(fecCadCong.getTime()));
+                    psAdd.setString(10,numDesp);
+                    psAdd.setDouble(11,precCompra);
+                    psAdd.setString(12,lote );
+                    psAdd.executeUpdate();
+                }
+                else
+                {
                     v.add(prvNomb); // Proveedor
-                    v.add(agruFec?"":dtCon1.getString("eje_nume")+"-"+dtCon1.getString("pro_serie")+"-"+
-                        dtCon1.getString("pro_nupar")+"-"+
-                        dtCon1.getInt("pro_numind"));
+                    v.add(agruFec ? "" : dtCon1.getString("eje_nume") + "-" + dtCon1.getString("pro_serie") + "-"
+                        + dtCon1.getString("pro_nupar") + "-"
+                        + dtCon1.getInt("pro_numind"));
                     v.add(dtCon1.getInt("stp_unact"));
                     v.add(dtCon1.getDouble("stp_kilact"));
-                    v.add(agruFec?dtCon1.getDate("feccom"):utdesp.getFecCompra());
-                    v.add(agruFec?dtCon1.getDate("feccad"):utdesp.getFecCadPrv());
-                    v.add(diasCad==9999?"":diasCad);
+                    v.add(agruFec ? dtCon1.getDate("feccom") : utdesp.getFecCompra());
+                    v.add(agruFec ? dtCon1.getDate("feccad") : utdesp.getFecCadPrv());
+                    v.add(diasCad == 9999 ? "" : diasCad);
                     v.add(fecDesp);
                     v.add(fecCadCong);
-                    v.add(fecCadCong==null?"":diasCong);
-                    v.add(PARAM_VERCOSTOS?precCompra:0);
-                    v.add(PARAM_VERCOSTOS?precCompra*dtCon1.getDouble("stp_kilact"):0);
-                    v.add(agruFec?0:
-                        utdesp.getEjeDesp()==0?"C"+utdesp.getAccSerie()+utdesp.getAccAno()+"/"+
-                            utdesp.getAccNume() :"D"+utdesp.getEjeDesp()+"/"+utdesp.getDeoCodi());
+                    v.add(fecCadCong == null ? "" : diasCong);
+                    v.add(PARAM_VERCOSTOS ? precCompra : 0);
+                    v.add(PARAM_VERCOSTOS ? precCompra * dtCon1.getDouble("stp_kilact") : 0);
+                    v.add(agruFec ? 0  : numDesp);
                     datos.add(v);
-                }
-                nProd++;
-                uniAct+=dtCon1.getInt("stp_unact");
-                kilAct+=dtCon1.getDouble("stp_kilact");
-                uniTot+=dtCon1.getInt("stp_unact");
-                kilTot+=dtCon1.getDouble("stp_kilact");
-                impAct+=precCompra*dtCon1.getDouble("stp_kilact");
-                impTot+=precCompra*dtCon1.getDouble("stp_kilact");
-            } while (dtCon1.next());
-            dtStat.commit();
-            if (nProd>1 || opSoloTot.isSelected())
-                 datos.add(addSubTotal());
-            jt.addLineas(datos);
-            kilTotE.setValorDec(kilTot);
-            uniTotE.setValorInt(uniTot);
-            if (PARAM_VERCOSTOS)
-                impTotE.setValorDec(impTot);
-            activar(true);
-            resetMsgEspere();
-            if (cancelarConsulta) {
-                mensajeErr("Consulta Cancelada");
-            } else {
-                mensajeErr("Consulta realizada ...");
+                }                
             }
-            activar(true);
-            mensaje("");
+          
+            nProd++;
+            uniAct += dtCon1.getInt("stp_unact");
+            kilAct += dtCon1.getDouble("stp_kilact");
+            uniTot += dtCon1.getInt("stp_unact");
+            kilTot += dtCon1.getDouble("stp_kilact");
+            impAct += precCompra * dtCon1.getDouble("stp_kilact");
+            impTot += precCompra * dtCon1.getDouble("stp_kilact");
+        } while (dtCon1.next());
+        dtStat.commit();
+         if (!swDesgInd)
+        {
+            s = "select sum(stp_unact) as unid, sum(stp_kilact) as kilos,tt.pro_codi,pro_nomb,prv_nomb,"
+                + "numdesp,lote,feccom,fecdes,feccong,fecadcon,costo,"
+                + " feccad "
+                + " from "+tablaTemp+" as tt left join v_articulo as a on tt.pro_codi = a.pro_codi "
+                + " group by tt.pro_codi,pro_nomb,prv_nomb,numdesp,lote,feccom,fecdes,feccong,fecadcon,feccad,costo "
+                + " order by tt.pro_codi,feccom,lote ";
+            if (dtAdd.select(s))
+            {
+                do
+                {
+                    ArrayList v= new ArrayList();
+                    v.add(dtAdd.getInt("pro_codi"));
+                    v.add(dtAdd.getString("pro_nomb"));
+                    v.add(dtAdd.getString("prv_nomb"));
+                    v.add(dtAdd.getString("lote"));
+                    v.add(dtAdd.getInt("unid"));
+                    v.add(dtAdd.getDouble("kilos"));
+                    v.add(dtAdd.getDate("feccom"));
+                    v.add(dtAdd.getDate("feccad"));
+                    v.add(Formatear.comparaFechas( dtAdd.getDate("feccom"),dtAdd.getDate("feccad")));
+                    v.add(dtAdd.getDate("feccong"));
+                    v.add(dtAdd.getDate("fecadcon"));
+                    v.add(Formatear.comparaFechas( dtAdd.getDate("feccong"),dtAdd.getDate("fecadcon")));
+                    v.add(dtAdd.getDouble("costo"));
+                    v.add(dtAdd.getDouble("costo")*dtAdd.getDouble("kilos"));
+                    v.add(dtAdd.getString("numdesp"));
+                    datos.add(v);                    
+                } while (dtAdd.next());
+            }
+        } else if (nProd > 1 || opSoloTot.isSelected())
+            datos.add(addSubTotal());
+        jt.addLineas(datos);
+        kilTotE.setValorDec(kilTot);
+        uniTotE.setValorInt(uniTot);
+        if (PARAM_VERCOSTOS)
+            impTotE.setValorDec(impTot);
+        activar(true);
+        resetMsgEspere();
+        if (cancelarConsulta)
+        {
+            mensajeErr("Consulta Cancelada");
+        } else
+        {
+            mensajeErr("Consulta realizada ...");
+        }
+        activar(true);
+        mensaje("");
        
     }//GEN-LAST:event_BaceptarActionPerformed
     private void activar(boolean activ)

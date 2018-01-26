@@ -444,7 +444,7 @@ public class DespVenta extends ventana {
                 }
             }
 
-            actualCabDesp();
+//          actualCabDesp();
 //            MantDesp.actFechaStock(dtAdd,def_fecproE.getDate(),def_fecsacE.getDate(),ejeNume,deoCodi,EU.em_cod); 
             resetBloqueo(dtAdd,TABLA_BLOCK, ejeNume+"|"+empCodi+
                          "|"+deoCodi,false);
@@ -1112,8 +1112,11 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                 deo_serlotE.getText(), pro_loteE.getValorInt(),nInd,
                 pro_codsalE.getValorInt(),
                 pro_kilsalE.getValorDec(), pro_unidE.getValorInt(),1,
-                deo_feccadE.getText(),defOrden);             
+                def_feccadE.getText(),defOrden);             
      ponFechas(pro_codsalE.getDiasCaducidad(),def_feccadE.getDate());
+    
+     jt.setValor(""+nInd,linea,JT_NUMIND);
+     jt.setValor(""+defOrden,linea,JT_ORDEN);
      String s="update stockpart set stp_feccad='"+def_feccadE.getFechaDB()+"'"+
                ", stp_fecpro='"+Formatear.getFechaDB(deoFecpro)+"'"+
                (deoFecSacr==null ?"":", stp_fecsac = '"+Formatear.getFechaDB(deoFecSacr)+"'")+
@@ -1123,11 +1126,9 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                 " and pro_codi = "+pro_codsalE.getValorInt()+
                 " and pro_numind="+nInd;
      dtAdd.executeUpdate(s);
-     jt.setValor(""+nInd,linea,JT_NUMIND);
-     jt.setValor(""+defOrden,linea,JT_ORDEN);
-     
      dtAdd.commit();
-     
+   
+//     dtAdd.commit();
    }
    catch (Exception ex)
    {
@@ -1147,8 +1148,6 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                                  -1);
  }
  
-
-
    void  guardaCabDesp() throws SQLException, ParseException
    {
        if (deoCodi==0)
@@ -1164,21 +1163,33 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
       Baceptar.setEnabled(true);
 
     }
-   void guardaCabOrig() throws SQLException, ParseException
-   {
-     desorca=new Desporig();
-     deoCodi=utildesp.incNumDesp(dtAdd,EU.em_cod,ejeNume);
-     desorca.setId(new DesporigId(ejeNume,deoCodi));
-     desorca.setCliente(cliCodi);
-     desorca.setDeoAlmdes(almCodi);
-     desorca.setDeoAlmori(almCodi);
-     desorca.setDeoDesnue(tid_codiE.getValorInt()==9999?'S':'N');
-     desorca.setDeoFecha(Formatear.getDateAct());
-     desorca.setDeoIncval("N");
-     desorca.save(dtAdd, ejeNume,EU);
-     setBloqueo(dtAdd,TABLA_BLOCK,
-                   ejeNume+
-                   "|" + deoCodi,false);
+    void guardaCabOrig() throws SQLException, ParseException {
+        desorca = new Desporig();
+        deoCodi = utildesp.incNumDesp(dtAdd, EU.em_cod, ejeNume);
+        desorca.setId(new DesporigId(ejeNume, deoCodi));
+        desorca.setCliente(cliCodi);
+        desorca.setDeoAlmdes(almCodi);
+        desorca.setDeoAlmori(almCodi);
+        desorca.setDeoDesnue(tid_codiE.getValorInt() == 9999 ? 'S' : 'N');
+        desorca.setDeoFecha(Formatear.getDateAct());
+        desorca.setTidCodi(tid_codiE.getValorInt());
+        desorca.setDeoFecsac(def_fecsacE.getDate());
+        desorca.setDeoFeccad(deo_feccadE.getDate());
+        desorca.setDeoFecpro(def_fecproE.getDate());
+        desorca.setPrvCodi(prvCodi);
+        desorca.setDeoDesnue('N');
+        desorca.setDeoEjloge(deo_ejelotE.getValorInt());
+        desorca.setDeoSeloge(deo_serlotE.getText());
+        desorca.setDeoNuloge(pro_loteE.getValorInt());
+        desorca.setDeoLotnue((short) 0);
+        desorca.setDeoCerra((short) -1);
+        desorca.setDeoBlock("N");
+
+        desorca.setDeoIncval("N");
+        desorca.save(dtAdd, ejeNume, EU);
+        setBloqueo(dtAdd, TABLA_BLOCK,
+            ejeNume
+            + "|" + deoCodi, false);
     }
  
 

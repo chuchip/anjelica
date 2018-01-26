@@ -1065,12 +1065,12 @@ public class utildesp
    dtAdd.setDato("def_feccad",fecha);//def_kilosE.getValorDec());
 
    dtAdd.update(dtAdd.getStatement());
-   s="update stockpart set stp_feccad='"+Formatear.getFechaDB(feccad) +"' where pro_nupar="+ numLot+
-                " and pro_serie='"+serLot+"' "+
-                " and eje_nume="+ejeLot+
-                " and pro_codi = "+proCodi+
-                " and pro_numind="+nInd;
-   dtAdd.executeUpdate(s);
+//   s="update stockpart set stp_feccad='"+Formatear.getFechaDB(feccad) +"' where pro_nupar="+ numLot+
+//                " and pro_serie='"+serLot+"' "+
+//                " and eje_nume="+ejeLot+
+//                " and pro_codi = "+proCodi+
+//                " and pro_numind="+nInd;
+//   dtAdd.executeUpdate(s);
    return defOrden;
  }
   
@@ -1469,6 +1469,13 @@ public class utildesp
     */
     public java.util.Date getFecCadPrv() {
         return fecCadPrvE;
+    }
+     /**
+    * Establece la fecha de Caducidad del Proveedor.
+    * @param Fecha caducidad
+    */
+    public  void setFecCadPrv(Date fecCaduc) {
+        fecCadPrvE=fecCaduc;
     }
      /**
     * Devuelve la fecha de Compra del Proveedor.
