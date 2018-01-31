@@ -30,7 +30,6 @@ import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.anjelica.pad.pdempresa;
-import gnu.chu.anjelica.pad.pdmatadero;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.CodigoBarras;
 import gnu.chu.utilidades.EntornoUsuario;

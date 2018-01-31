@@ -932,9 +932,12 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
      }
      if (fcc_kilfraE.isNull())
      {
-         msgBox("Introduzca kilos de factura");
-         fcc_kilfraE.requestFocus();
-         return false;
+         int ret=mensajes.mensajeYesNo("Deberia Introduzca los kilos de factura. ¿Continuar?");
+         if (ret!=mensajes.YES)
+         {
+            fcc_kilfraE.requestFocus();
+            return false;
+         }
      }
    }
    catch (Exception k)

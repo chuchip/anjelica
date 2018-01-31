@@ -67,11 +67,13 @@ import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.CheckStock;
 import gnu.chu.anjelica.almacen.Comvalm;
+import gnu.chu.anjelica.almacen.IFIndivCaducidad;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.DatTrazFrame;
 import gnu.chu.anjelica.despiece.DespVenta;
+import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.listraza;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.Listados;
@@ -130,8 +132,8 @@ import net.sf.jasperreports.engine.JasperReport;
  
 public class pdalbara extends ventanaPad  implements PAD  
 {   
-  private int TIDE_AUTOCLASI=105; 
-    
+  private int TIDE_AUTOCLASI=105;   
+  
   String cliValor;
   int codCli;
   boolean P_IMPRES=false;
@@ -5655,7 +5657,7 @@ public class pdalbara extends ventanaPad  implements PAD
   boolean checkAlbCerrado() throws SQLException
   {
       if (!avc_cerraE.isSelected() || pvc_numeE.isNull() || P_ADMIN)
-          return true;
+          return checkFechaCad();
       String sql="select P.PRO_CODI from v_pedven as P  where p.avc_ano="+avc_anoE.getValorInt()
           + " and p.avc_nume="+avc_numeE.getValorInt()
           + "  and p.avc_serie='"+avc_seriE.getText()+ "'" 
@@ -5667,8 +5669,57 @@ public class pdalbara extends ventanaPad  implements PAD
           if (ret==null || !ret.toUpperCase().equals("SI"))
               return false;
       }
-      return true;
+      return checkFechaCad();      
   }
+  boolean checkFechaCad()  throws SQLException
+  {
+       String s = "SELECT * FROM v_albvenpar " +
+          " WHERE emp_codi = " + emp_codiE.getValorInt() +
+          " AND avc_ano = " + avc_anoE.getValorInt() +
+          " and avc_nume = " + avc_numeE.getValorInt() +
+          " and avc_serie = '" + avc_seriE.getText() + "'";
+       if (!dtCon1.select(s))
+           return true;
+       ArrayList<DatIndiv> dtInd=new ArrayList();
+       
+       do
+       {
+           if (!utdesp.busDatInd(dtCon1.getString("avp_serlot") ,dtCon1.getInt("pro_codi"),dtCon1.getInt("avp_emplot"),
+               dtCon1.getInt("avp_ejelot"),dtCon1.getInt("avp_numpar"),dtCon1.getInt("avp_numind"),dtStat,dtPedi,EU))
+               continue;
+           utdesp.getDatosIndividuo();
+           if (Formatear.comparaFechas(utdesp.getFechaCaducidad(), Formatear.getDateAct())< MantDesp.MIN_DIAS_CAD)
+           { // Tiene menos de 10 dias               
+               DatIndiv dt=new DatIndiv(); 
+               dt.setIndivBase(utdesp.getDatosIndividuo());                               
+               dt.setFechaCaducidad(utdesp.getFechaCaducidad());
+               dt.setCanti(dtCon1.getDouble("avp_canti"));
+               dtInd.add(dt);
+           }
+       } while (dtCon1.next());
+       if (dtInd.isEmpty())
+           return true;
+       
+       IFIndivCaducidad ifIndCad =new IFIndivCaducidad(this);
+//       this.setEnabled(false);
+      
+      
+       ifIndCad.iniciar(dtInd,dtStat);
+       return ifIndCad.getResultado()==ifIndCad.ACEPTAR;
+  }   
+  
+//  void salirIndCaducidad()
+//  {     
+//      setEnabled(true);
+//      setFoco(null);
+//      try
+//      {
+//          setSelected(true);
+//      } catch (PropertyVetoException k)
+//      {
+//      }
+//  }
+
   void actNumPale(int row) throws SQLException
   {
       if (!avl_numpalE.hasCambio())
@@ -8646,79 +8697,85 @@ public class pdalbara extends ventanaPad  implements PAD
  * Imprime albaran/hojas de trazabilidad,palets, etc. Segun lo mandado en indice
  * @param indice
  */
-  private void imprimir(char indice)
-  {
-    if (indice==IMPR_ETIQDIRE)
-    {
-        imprEtiqDirecion();
-        return;
-    }
-    if (!opDispSalida.getValor().equals(DSAL_IMPRE))
-    {
-        if (indice!=IMPR_ALB_GRAF && indice!=IMPR_HOJA_TRA)
+    private void imprimir(char indice) {
+        try
         {
-            msgBox("Este tipo de listado solo puede ser mandado a impresora");
-            return;
-        }
-    }
-   
-        
-    this.setEnabled(false);
-    if (nav.pulsado == navegador.ADDNEW || nav.pulsado == navegador.EDIT)
-    {
-      graba = false;
-      if (nav.pulsado == navegador.EDIT)
-        ej_edit();
-      else
-        ej_addnew();
+            if (indice == IMPR_ETIQDIRE)
+            {
+                imprEtiqDirecion();
+                return;
+            }
+            if (!opDispSalida.getValor().equals(DSAL_IMPRE))
+            {
+                if (indice != IMPR_ALB_GRAF && indice != IMPR_HOJA_TRA)
+                {
+                    msgBox("Este tipo de listado solo puede ser mandado a impresora");
+                    return;
+                }
+            }
+            if (!checkFechaCad())
+                return;
+            this.setEnabled(false);
+            if (nav.pulsado == navegador.ADDNEW || nav.pulsado == navegador.EDIT)
+            {
+                graba = false;
+                if (nav.pulsado == navegador.EDIT)
+                    ej_edit();
+                else
+                    ej_addnew();
 //      Baceptar.doClick();
-      if (!graba)
-      {
-        this.setEnabled(true);
-        return;
-      }
-    }
-    else
-    {
-      if (jt.getSelectedColumn() == 5 && verPrecios &&
-          fvc_anoE.getValorInt() == 0 &&
-          fvc_numeE.getValorInt() == 0)
-      {
-        try {
-           actPrecioAlb(jt.getSelectedRow());
-        } catch (SQLException k)
+                if (!graba)
+                {
+                    this.setEnabled(true);
+                    return;
+                }
+            } else
+            {
+                if (jt.getSelectedColumn() == 5 && verPrecios
+                    && fvc_anoE.getValorInt() == 0
+                    && fvc_numeE.getValorInt() == 0)
+                {
+                    try
+                    {
+                        actPrecioAlb(jt.getSelectedRow());
+                    } catch (SQLException k)
+                    {
+                        Error("Error al Actualizar Precio de Albaran", k);
+                        return;
+                    }
+                }
+                if (jt.getSelectedColumn() == JT_NUMPALE)
+                {
+                    try
+                    {
+                        actNumPale(jt.getSelectedRow());
+                    } catch (SQLException k)
+                    {
+                        Error("Error al Actualizar Pale de Albaran", k);
+                        return;
+                    }
+                }
+            }
+
+            ultSelecImpr = indice;
+            if (indice == IMPR_ALB_GRAF || indice == IMPR_ALB_TEXT
+                || indice == IMPR_ALB_TRA)
+                imprAlbar(indice);
+            if (indice == IMPR_HOJA_TRA || indice == IMPR_HOJA_TRAF || indice == IMPR_ALB_TRA)
+                imprHojaTraza(indice == IMPR_HOJA_TRAF);
+            if (indice == IMPR_ETIQUETAS)
+                verVentanaEtiquetas();
+            if (indice == CAMBIA_CODIGO)
+                verVentanaRangoDesp();
+            if (indice == IMPR_PALETS)
+                imprPalets();
+            this.setEnabled(true);
+            mensaje("");
+        } catch (SQLException ex)
         {
-            Error("Error al Actualizar Precio de Albaran",k);
-            return;
+            Error("Error al imprimir Albaran",ex);
         }
-      }      
-      if (jt.getSelectedColumn()==JT_NUMPALE)
-      {
-          try {
-            actNumPale(jt.getSelectedRow());
-           } catch (SQLException k)
-           {
-             Error("Error al Actualizar Pale de Albaran",k);
-             return;
-           }
-      }
     }
-   
-    ultSelecImpr=indice;
-    if (indice==IMPR_ALB_GRAF || indice == IMPR_ALB_TEXT
-        || indice== IMPR_ALB_TRA )
-      imprAlbar(indice);
-    if (indice==IMPR_HOJA_TRA || indice==IMPR_HOJA_TRAF  || indice == IMPR_ALB_TRA)
-      imprHojaTraza(indice==IMPR_HOJA_TRAF);
-    if (indice==IMPR_ETIQUETAS)
-      verVentanaEtiquetas();
-    if (indice==CAMBIA_CODIGO)
-      verVentanaRangoDesp();
-    if (indice==IMPR_PALETS)
-      imprPalets();
-    this.setEnabled(true);
-    mensaje("");
-  }
   void verRegistroListado()
   {
    try
@@ -9528,7 +9585,7 @@ public class pdalbara extends ventanaPad  implements PAD
       dgAlb.setVisible(false);
       dgAlb.dispose();
     }
-
+    
     if (ayVePr != null)
     {
       ayVePr.setVisible(false);

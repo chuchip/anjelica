@@ -1,4 +1,17 @@
 --
+-- 
+create view v_subemprcliente AS
+select emp_codi,sbe_codi,sbe_nomb from subempresa where sbe_tipo='C';
+grant select on v_subemprcliente to public;
+---
+create or replace view v_albruta as select c.*,l.alr_orden,l.avc_id,alr_bultos,alr_palets,
+alr_unid,alr_kilos,alr_horrep,alr_comrep,cli_nomen,cli_diree,cli_poble,cli_codpoe,alr_repet,
+al.emp_codi,al.avc_ano,al.avc_serie,al.avc_nume,al.cli_codi,al.avc_clinom,al.avc_kilos,
+al.avc_unid ,al.sbe_codi
+from anjelica.albrutacab as c, anjelica.albrutalin as l,anjelica.v_albavec as al 
+where c.alr_nume=l.alr_nume and al.avc_id = l.avc_id;
+grant select on v_albruta to public;
+--
 alter table transportista  add tra_activ  char(1) default 'S' not null; -- Activo (S/N)
 CREATE OR REPLACE VIEW v_tranpvent AS 
  SELECT 'T'::text || transportista.tra_codi AS tra_codi,

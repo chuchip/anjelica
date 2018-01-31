@@ -1341,6 +1341,48 @@ public class proPanel extends CPanel
     return proCoinst==-1;
   }
   /**
+   *  Devuelve los kilos Medios por unidad
+   * @return 
+   */
+  public double getKilosMediosUnidad()
+  {
+      try 
+      {
+        return lkPrd.getDouble("pro_kguni");
+      } catch (SQLException k)
+      {
+          return -1;
+      }
+  }
+  /**
+   * Devuelve los kilos Minimos por unidad
+   * @return 
+   */
+  public double getKilosMinimoUnidad()
+  {
+      try 
+      {
+        return lkPrd.getDouble("pro_kgmiun");
+      } catch (SQLException k)
+      {
+          return -1;
+      }
+  }
+  /**
+   * Devuelve los kilos Maximos por unidad
+   * @return 
+   */
+  public double getKilosMaximoUnidad()
+  {
+      try 
+      {
+        return lkPrd.getDouble("pro_kgmaun");
+      } catch (SQLException k)
+      {
+          return -1;
+      }
+  }
+  /**
    * Controlar Stock?.
    * @return 'S' o 'N'
    */

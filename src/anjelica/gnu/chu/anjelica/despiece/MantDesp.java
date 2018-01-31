@@ -92,6 +92,7 @@ import javax.swing.event.ListSelectionListener;
 
 public class MantDesp extends ventanaPad implements PAD
 {       
+    public final static int MIN_DIAS_CAD=10;
     Date ultFecCaduc;
     Date deoFecpro;
     Date deoFecSacr;
@@ -245,7 +246,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2018-01-16" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2018-01-31" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -3268,8 +3269,16 @@ public class MantDesp extends ventanaPad implements PAD
         mensajeErr("", false);
         try
         {
-            if (def_kilosE.getValorDec() == 0)
+            if (def_kilosE.getValorDec() == 0 )
+            {
+                if (jtLin.getValorInt(linea,JTLIN_NUMIND)>0)
+                {
+                    if (!borraLineajtLIn(linea))
+                        return JTLIN_KILOS;
+                    jtLin.setValor(0,linea,JTLIN_NUMIND);
+                }
                 return -1; // Si NO tengo Kilos paso de todo
+            }
             if ( (!pro_codlE.hasCambio() && !def_kilosE.hasCambio() && !def_numpieE.hasCambio()
                 &&  !def_feccadE.hasCambio()) || pro_codlE.isNull())
                   return -1; // No Hubo cambios
@@ -3383,7 +3392,7 @@ public class MantDesp extends ventanaPad implements PAD
                 msgBox("Fecha Caducidad  debe ser superior a la actual");
                 return JTLIN_FECCAD;
             }
-            if (Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<= 10 && pro_codlE.getDiasCaducidad()>0)
+            if (Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<= MIN_DIAS_CAD && pro_codlE.getDiasCaducidad()>0)
             {
                 int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en 10 dias a la del despiece. Continuar?");
                 if (ret!=mensajes.YES)
@@ -3815,7 +3824,9 @@ public class MantDesp extends ventanaPad implements PAD
                 crotal=MantAlbComCarne.getRandomCrotal(crotal,EU);              
            }
            utdesp.setNumCrot(crotal);
-           s="update stockpart set stp_nucrot='"+crotal+"'"+
+       
+        }
+        s="update stockpart set stp_nucrot='"+crotal+"'"+
                (Formatear.comparaFechas(def_feccadE.getDate(),deo_feccadE.getDate())==0?"": ",stp_fecpro='"+Formatear.getFechaDB(deoFecpro)+"'")+
                (deoFecSacr==null || Formatear.comparaFechas(def_feccadE.getDate(),deo_feccadE.getDate())==0?"":", stp_fecsac = '"+Formatear.getFechaDB(deoFecSacr)+"'")+
                " where pro_nupar="+ numLot+
@@ -3823,9 +3834,8 @@ public class MantDesp extends ventanaPad implements PAD
                 " and eje_nume="+ejeLot+
                 " and pro_codi = "+proCodi+
                 " and pro_numind="+nInd;
-           dtAdd.executeUpdate(s);
+        dtAdd.executeUpdate(s);
 
-        }
         return ret;
     }
     /**

@@ -23,7 +23,7 @@ import java.util.Date;
  */
 public class DatIndiv extends DatIndivBase
 {
-
+ 
     private Date fecCaduc, fecSacrif;
     private int prvCodi=0;
     private String auxiliar;
@@ -33,7 +33,18 @@ public class DatIndiv extends DatIndivBase
     public int getNumLinea() {
         return numLinea;
     }
-
+    /**
+     * Especifica datos De individuo Base.
+     * @param dt 
+     */
+    public void setIndivBase(DatIndivBase dt)
+    {
+        setProducto(dt.getProducto());
+        setEjercLot(dt.getEjercLot());
+        setLote(dt.getLote());
+        setSerie(dt.getSerie());        
+        setNumind(dt.getNumind()) ;
+    }
     public void setNumLinea(int numLinea) {
         this.numLinea = numLinea;
     }

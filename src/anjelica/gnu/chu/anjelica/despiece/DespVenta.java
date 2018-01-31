@@ -443,11 +443,9 @@ public class DespVenta extends ventana {
                     return;
                 }
             }
-
+          resetBloqueo(dtAdd,TABLA_BLOCK,ejeNume+  "|" + deoCodi,false);
 //          actualCabDesp();
 //            MantDesp.actFechaStock(dtAdd,def_fecproE.getDate(),def_fecsacE.getDate(),ejeNume,deoCodi,EU.em_cod); 
-            resetBloqueo(dtAdd,TABLA_BLOCK, ejeNume+"|"+empCodi+
-                         "|"+deoCodi,false);
             dtAdd.commit();
             tidCodiAnt=tid_codiE.getValorInt();
             tidAsprfi=tid_codiE.getAsignarProdSalida();
@@ -528,9 +526,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
    desorca.setDeoCerra((short) -1);
    desorca.setDeoBlock( "N");
    desorca.update(dtAdd); 
-   resetBloqueo(dtAdd,TABLA_BLOCK,
-                   ejeNume+
-                   "|" + deoCodi,false);
+   resetBloqueo(dtAdd,TABLA_BLOCK,ejeNume+"|" + deoCodi,false);
  }
  
     /**
@@ -681,9 +677,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
           dtAdd.executeUpdate(s);
           cancelaCabecera();       
           dtAdd.commit();
-           resetBloqueo(dtAdd,TABLA_BLOCK,
-                   ejeNume+
-                   "|" + deoCodi,true);
+           resetBloqueo(dtAdd,TABLA_BLOCK,ejeNume+"|" + deoCodi,true);
         } catch (Exception k)
         {
             Error("Error al cancelar despiece",k);
@@ -1097,11 +1091,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
      int defOrden=jt.getValorInt(linea,JT_ORDEN);
  
      if (deoCodi== 0)
-     {
-       guardaCabDesp();
-       setBloqueo(dtAdd,TABLA_BLOCK, ejeNume+"|"+empCodi+
-                         "|"+deoCodi,false);
-     }
+       guardaCabDesp();     
 
      if (nInd==0)
      { // Existe linea. Anulo stock Anterior.
@@ -1187,9 +1177,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
 
         desorca.setDeoIncval("N");
         desorca.save(dtAdd, ejeNume, EU);
-        setBloqueo(dtAdd, TABLA_BLOCK,
-            ejeNume
-            + "|" + deoCodi, false);
+        setBloqueo(dtAdd, TABLA_BLOCK,ejeNume+ "|" + deoCodi, false);
     }
  
 

@@ -184,7 +184,7 @@ pro_artcon int, 	-- Articulo Congelado 0=No
 pro_unicaj int default 1 not null,-- Unidades por Caja (NO USUADO)
 pro_cajpal int default 0 not null,	-- Cajas por Palet
 pro_kguni float default 0 not null,	-- Kilos por Unidad
-pro_kgcaj float default 0 not null,	-- Kilos por Caja/Unidad
+pro_kgcaj float default 0 not null,	-- Kilos por Caja
 pro_stock float default 0 not null,	-- Kilos actuales (Stock)
 pro_kgmin float default 0 not null,	-- Kg. Minimos en Stock
 pro_kgmax float default 0 not null,	-- Kg. Maximos en Stock
@@ -3303,7 +3303,7 @@ create table anjelica.comision_represent
 	cor_linea varchar(30) not null, -- Lineas
 	cor_coment varchar(120) not null, -- Comentario
 	cor_comres varchar(120) not null, -- Respuesta Comentario
-	constraint ix_comrep primary key (avc_id,cor_linea)f
+	constraint ix_comrep primary key (avc_id,cor_linea)
  );
 grant all on anjelica.comision_represent to public;
 --
@@ -3849,6 +3849,9 @@ create table anjelica.subempresa
  
  constraint ix_subempr primary key (emp_codi,sbe_codi,sbe_tipo)
 );
+create view v_subemprcliente AS
+select emp_codi,sbe_codi,sbe_nomb from subempresa where sbe_tipo='C';
+grant select on v_subemprcliente to public;
 INSERT INTO SUBEMPRESA VALUES(1,1,'GENERAL','C',0);
 INSERT INTO SUBEMPRESA VALUES(1,1,'ARTICULO','A',0);
 --

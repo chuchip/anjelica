@@ -1552,9 +1552,9 @@ public class MantArticulos extends ventanaPad  implements PAD
         cLabel42 = new gnu.chu.controles.CLabel();
         pro_codequE = new gnu.chu.camposdb.proPanel();
         cLabel43 = new gnu.chu.controles.CLabel();
-        pro_kgmiunE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.9");
+        pro_kgmiunE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
         cLabel44 = new gnu.chu.controles.CLabel();
-        pro_kgmaunE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.9");
+        pro_kgmaunE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
         cLabel45 = new gnu.chu.controles.CLabel();
         pro_cointaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--9.99");
         Pexclu = new gnu.chu.controles.CPanel();

@@ -13,16 +13,13 @@ import java.awt.event.KeyEvent;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.vlike;
 import java.net.UnknownHostException;
-/**
- * @todo Incluir campo emp_loclcc en frame
- */
 
 /**
  *
  * <p>Título: pdempresa </p>
  * <p>Descripción: Mantenimiento de Empresas</p>
  * <p>Empresa: miCasa</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -45,8 +42,11 @@ public class pdempresa extends ventanaPad   implements PAD
   boolean modConsulta=true;
 //  CButton Baceptar = new CButton();
 //  CButton Bcancelar = new CButton();
-  CLabel emp_dirwebL=new CLabel("Direc.Web:");
+  CLabel emp_dirwebL=new CLabel("Dirección Web");
   CTextField emp_dirwebE = new CTextField(Types.CHAR,"X",100);
+  CLabel emp_loclccL=new CLabel("N. Digitos Contabilidad");
+  CTextField emp_loclccE = new CTextField(Types.DECIMAL,"#9");
+
   CTextField emp_codiE = new CTextField(Types.DECIMAL,"#9");
   CTextField emp_poblE = new CTextField(Types.CHAR,"X",30);
   CTextField emp_nombE = new CTextField(Types.CHAR,"X",40);
@@ -160,7 +160,7 @@ public class pdempresa extends ventanaPad   implements PAD
   {
     iniciarFrame();
     this.setSize(new Dimension(643, 455));
-    this.setVersion("2016-01-14"+ (modConsulta ? "SOLO LECTURA" : ""));
+    this.setVersion("2018-01-28"+ (modConsulta ? "SOLO LECTURA" : ""));
     strSql = "SELECT * FROM empresa  order by emp_codi ";
 
 
@@ -273,8 +273,10 @@ public class pdempresa extends ventanaPad   implements PAD
     emp_regmerE.setBounds(new Rectangle(118, 297, 514, 17));
     cLabel113.setText("Registro Mercantil");
     cLabel113.setBounds(new Rectangle(4, 297, 111, 17)); 
-    emp_dirwebL.setBounds(new Rectangle(4, 315, 110, 17)); 
-    emp_dirwebE.setBounds(new Rectangle(75, 315, 450, 17)); 
+    emp_dirwebL.setBounds(new Rectangle(4, 315, 120, 17)); 
+    emp_dirwebE.setBounds(new Rectangle(125, 315, 250, 17)); 
+    emp_loclccL.setBounds(new Rectangle(390, 315, 135, 17)); 
+    emp_loclccE.setBounds(new Rectangle(528, 315, 30, 17)); 
     Bcancelar.setBounds(new Rectangle(349, 347, 106, 27));
     Baceptar.setBounds(new Rectangle(191, 347, 106, 27));
     emp_codpviE.setBounds(new Rectangle(409, 239, 30, 17));
@@ -317,6 +319,9 @@ public class pdempresa extends ventanaPad   implements PAD
     Pprinc.add(cLabel8, null);
     Pprinc.add(emp_dirwebL,null);
     Pprinc.add(emp_dirwebE,null);
+    Pprinc.add(emp_loclccL,null);
+    Pprinc.add(emp_loclccE,null);
+
     Pprinc.add(jScrollPane1, null);
     jScrollPane1.getViewport().add(emp_obsfraE, null);
     Pprinc.add(Bcancelar, null);
@@ -383,6 +388,7 @@ public class pdempresa extends ventanaPad   implements PAD
     emp_codediE.setColumnaAlias("emp_codedi");
     emp_regmerE.setColumnaAlias("emp_regmer");
     emp_dirwebE.setColumnaAlias("emp_dirweb");
+    emp_loclccE.setColumnaAlias("emp_loclcc");
     activarEventos();
     activaTodo();
     verDatos();
@@ -432,6 +438,7 @@ public class pdempresa extends ventanaPad   implements PAD
        emp_codediE.setText(dtCon1.getString("emp_codedi"));
        emp_regmerE.setText(dtCon1.getString("emp_regmer"));
        emp_dirwebE.setText(dtCon1.getString("emp_dirweb"));
+       emp_loclccE.setValorInt(dtCon1.getInt("emp_loclcc"));
     } catch (Exception k)
     {
       Error("Error al ver Datos",k);
@@ -468,6 +475,7 @@ public class pdempresa extends ventanaPad   implements PAD
     emp_codediE.setEnabled(enab);
     emp_regmerE.setEnabled(enab);
     emp_dirwebE.setEnabled(enab);
+    emp_loclccE.setEnabled(enab);
     Baceptar.setEnabled(enab);
     Bcancelar.setEnabled(enab);
   }
@@ -561,6 +569,7 @@ public class pdempresa extends ventanaPad   implements PAD
     v.add(emp_codediE.getStrQuery());
     v.add(emp_regmerE.getStrQuery());
     v.add(emp_dirwebE.getStrQuery());
+    v.add(emp_loclccE.getStrQuery());
 
 
     v.add(emp_codiE.getStrQuery());
@@ -783,6 +792,8 @@ public class pdempresa extends ventanaPad   implements PAD
     dt.setDato("emp_codedi",emp_codediE.getText());
     dt.setDato("emp_regmer",emp_regmerE.getText());
     dt.setDato("emp_dirweb",emp_dirwebE.getText());
+    dt.setDato("emp_loclcc",emp_loclccE.getValorInt());
+    
   }
   
   @Override

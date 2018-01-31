@@ -2931,6 +2931,18 @@ boolean checkCabecera() throws ParseException, SQLException
         return;
      }
    }
+   if (kilsalE.getValorDec()/def_numpiE.getValorInt()< pro_codsalE.getKilosMinimoUnidad() && pro_codsalE.getKilosMinimoUnidad()>0)
+   {
+       msgBox("Cada pieza debe pesar como minimo: "+pro_codsalE.getKilosMinimoUnidad());
+       def_numpiE.requestFocus();
+       return;
+   }
+   if (kilsalE.getValorDec()/def_numpiE.getValorInt()> pro_codsalE.getKilosMaximoUnidad() && pro_codsalE.getKilosMaximoUnidad()>0)
+   {
+       msgBox("Cada pieza debe pesar como maximo: "+pro_codsalE.getKilosMaximoUnidad());
+       def_numpiE.requestFocus();
+       return;
+   }
    kilsalE.resetCambio();
    def_usunomE.resetCambio();
    def_numpiE.resetCambio();
