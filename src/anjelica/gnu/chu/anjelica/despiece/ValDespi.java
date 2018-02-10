@@ -3,7 +3,7 @@ package gnu.chu.anjelica.despiece;
  *
  * <p>Titulo: ValDespi</p>
  * <p>Descripción: Clase para Valorar y agrupar despieces</p>
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -807,6 +807,12 @@ public class ValDespi extends ventana {
 
        sumTotalesCab();
        recalcCostoLin();
+       if (!Formatear.esIgual(impCabE.getValorDec(),impFinE.getValorDec(),1))
+       {
+           msgBox("Importe ENTRADA difiere de Importe SALIDA. CORRIJA COSTOS");
+           jtLin.requestFocusInicio();
+           return;
+       }
        if (jtLin.isEnabled()) {
            jtLin.salirGrid();
        } else {
@@ -832,10 +838,11 @@ public class ValDespi extends ventana {
            }
        }
 
-       int nLiAf = 0;
+       int nLiAf;
        try {
            for (int n = 0; n < nRow; n++) {
                s = "UPDATE v_despfin SET def_prcost = " + jtLin.getValorDec(n, JTLIN_COSFIN)
+                       + " , def_blkcos = "+(jtLin.getValBoolean(n, JTLIN_COSBLO)?1:0)
                        + " WHERE eje_nume = " + eje_numeE.getValorInt()
                        + " AND "
                        + (jtDesp.getValString(rowEdit, JTDES_TIPO).startsWith("G") ? "def_numdes" : "deo_codi")
@@ -1206,6 +1213,7 @@ public class ValDespi extends ventana {
                             precAcu = Formatear.redondea(precAcu, NUMDEC_COSTO);
                         }
                         s = "UPDATE v_despfin SET def_prcost = " + precAcu
+                            + " deo_blkcos = 0"
                             + " WHERE eje_nume = " + eje_numeE.getValorInt()
                             + " AND "
                             + (isGrupo ? "def_numdes" : "deo_codi")
@@ -1525,7 +1533,7 @@ public class ValDespi extends ventana {
   }
       
   /**
-   * Recalcular Costo de Lineas (Despiece de Salida)
+   * Recalcular Costo de Lineas (Despiece de Salida - v_despfin - Entrada a almacen)
    */
   void recalcCostoLin()
   {
@@ -1560,7 +1568,7 @@ public class ValDespi extends ventana {
             costo=-99.99;
         if (costo>100)
             costo=100;
-        jtLin.setValor("" + costo, n, JTLIN_COSPOR);
+        jtLin.setValor(costo, n, JTLIN_COSPOR);
       }
     }
 //      jtLin.setValor(""+(jtLin.getValorDec(n,3)*jtLin.getValorDec(n,4)/totCosto*100),n,6);
@@ -1579,7 +1587,7 @@ public class ValDespi extends ventana {
       if (jtLin.getValBoolean(n,JTLIN_COSBLO))
       {
         swAjus=true;
-        jtLin.setValor(""+jtLin.getValorDec(n,JTLIN_COSTO), n, JTLIN_COSFIN);
+        jtLin.setValor(jtLin.getValorDec(n,JTLIN_COSTO), n, JTLIN_COSFIN);
         totFin+=jtLin.getValorDec(n,JTLIN_COSFIN)*jtLin.getValorDec(n,JTLIN_KILOS);
         continue;
       }
@@ -1768,11 +1776,11 @@ public class ValDespi extends ventana {
  void verDatLin(int ejeNume,int numDesp,int numLin,boolean agrupa) throws SQLException
  {
      boolean isGrupo=jtDesp.getValString(numLin,JTDES_TIPO).startsWith("G");
-    verDatLi1(getStrSqlFin(ejeNume,agrupa,numDesp,isGrupo));
+     verDatLi1(getStrSqlFin(ejeNume,agrupa,numDesp,isGrupo));
  }
  String getStrSqlFin(int ejeNume,boolean agrupa, int numDesp,boolean isGrupo)
  {
-      return " select f.pro_codi as pro_codi,sum(f.def_unicaj) as def_unicaj, " +
+      return " select f.pro_codi as pro_codi,def_blkcos, sum(f.def_unicaj) as def_unicaj, " +
          " sum(f.def_kilos) as def_kilos ,sum(f.def_prcost*f.def_kilos) as def_prcost, " +
          " avg(def_preusu) as def_preusu "+
          " from v_despfin as f "+
@@ -1780,7 +1788,7 @@ public class ValDespi extends ventana {
          " and eje_nume = " + ejeNume +
          " AND "+(! agrupa? "f.deo_codi = "+numDesp:
              (isGrupo?" f.def_numdes = " + numDesp: "f.deo_codi = "+numDesp)) +
-         " group by f.pro_codi " +
+         " group by f.pro_codi,def_blkcos " +
          " order by f.pro_codi ";
  }
  
@@ -2036,6 +2044,11 @@ public class ValDespi extends ventana {
     }
     return kgDocum==0?0:impDocum/kgDocum;
  }
+ /**
+  * Ver Lineas v_despfin (entrada a almacen)
+  * @param sql
+  * @throws SQLException 
+  */
  void verDatLi1(String sql) throws SQLException
  {
      double kilos = 0, costo = 0;
@@ -2061,7 +2074,7 @@ public class ValDespi extends ventana {
          v.add("" + (dtAdd.getDouble("def_prcost", true) / dtAdd.getDouble("def_kilos", true)));
          v.add("");
          v.add("");
-         v.add(false);
+         v.add(dtAdd.getInt("def_blkcos")!=0);
          v.add(dtAdd.getString("def_preusu", true));
          v.add("");
          jtLin.addLinea(v);
@@ -2132,7 +2145,9 @@ public class ValDespi extends ventana {
            }
        };
    }
-   
+   /**
+    * Busca despieces segun parametros de cabecera
+    */
    private void buscaDesp1()
    {
        msgEspere("Buscando Despieces ...");
@@ -2181,7 +2196,7 @@ public class ValDespi extends ventana {
                + " where exists( "+s1+" and deo_numdes>0 "
                + (agrupaC.getValor().equals("A")?" and deo_numdes != "+grd_numeE.getValorInt():"")
                + " and g.eje_nume=d.eje_nume and g.grd_nume=d.deo_numdes ) ";
-       s+= " order by 1,5";
+       s+= " order by 1,5,3";
 //       System.out.println(s);
        try {
          jtDesp.setEnabled(false);
@@ -2209,6 +2224,7 @@ public class ValDespi extends ventana {
          double deoKilos;
          int nRegSel=0,deoUnid;
          boolean sel;
+         boolean swBreak;
          ArrayList<ArrayList> lista=new ArrayList();
          do
          {
@@ -2219,6 +2235,30 @@ public class ValDespi extends ventana {
                  jtDesp.panelG.setVisible(true);
                  resetMsgEspere();
                  return;
+             }
+             if (opDespUnid.isSelected())
+             {
+               if ( dtCon1.getInt("deo_codi")==0)
+                   continue;
+               s="select count(distinct pro_codi)  as cuantos from  desorilin where eje_nume="+dtCon1.getInt("eje_nume")+
+                   " and deo_codi= "+dtCon1.getInt("deo_codi")+
+                    "union all "+
+                    "select count(distinct pro_codi)  as cuantos from  v_despfin where eje_nume="+dtCon1.getInt("eje_nume")+
+                   " and deo_codi= "+dtCon1.getInt("deo_codi");
+               swBreak=false;
+               if (dtStat.select(s))
+               {
+                   do 
+                   {
+                       if (dtStat.getInt("cuantos")!=1)
+                       {
+                           swBreak=true;
+                           break;
+                       }
+                   } while (dtStat.next());
+                   if (swBreak)
+                       continue;
+               }
              }
              ArrayList v=new ArrayList();
              v.add(dtCon1.getInt("eje_nume")); // 0 Ejercicio despiece
@@ -2352,6 +2392,7 @@ public class ValDespi extends ventana {
         opProduc = new gnu.chu.controles.CComboBox();
         cLabel15 = new gnu.chu.controles.CLabel();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
+        opDespUnid = new gnu.chu.controles.CCheckBox();
         jtDesp = new gnu.chu.controles.Cgrid(12);
         jtCab = new gnu.chu.controles.CGridEditable(9)
         {
@@ -2510,6 +2551,12 @@ public class ValDespi extends ventana {
         cLabel15.setBounds(10, 40, 40, 15);
         Pcond.add(cli_codiE);
         cli_codiE.setBounds(60, 60, 370, 17);
+
+        opDespUnid.setText("Desp. Unidades");
+        opDespUnid.setToolTipText("Ver Solo Separacion Unidades");
+        opDespUnid.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
+        Pcond.add(opDespUnid);
+        opDespUnid.setBounds(480, 40, 120, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -2896,6 +2943,7 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CTextField kilosFinE;
     private gnu.chu.controles.CTextField numRegSelE;
     private gnu.chu.controles.CComboBox opCerradoC;
+    private gnu.chu.controles.CCheckBox opDespUnid;
     private gnu.chu.controles.CComboBox opProduc;
     private gnu.chu.controles.CCheckBox opValorInd;
     private gnu.chu.controles.CCheckBox opVerGrupo;

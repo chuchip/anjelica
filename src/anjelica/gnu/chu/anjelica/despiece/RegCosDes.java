@@ -2,6 +2,7 @@ package gnu.chu.anjelica.despiece;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
+import static gnu.chu.anjelica.despiece.ValDespi.JTLIN_COSPOR;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
@@ -13,7 +14,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -47,7 +52,7 @@ public class RegCosDes extends ventana {
     private String condWhereOrig,condWhereGrupo;
     DatosTabla dtAdd;
     final static int MAXPERM=1;
-    PreparedStatement prstFin,prstFin1,prstUpd1,prstUpd,prstDesp;
+    PreparedStatement prstFin,prstFin1,prstFinCuantos,prstUpd1,prstUpd,prstDesp;
     ResultSet rsFin,rsFin1,rsDesp;
     MvtosAlma mvtosAlm;
     private final int NUMDEC_COSTO=4;
@@ -91,7 +96,7 @@ public class RegCosDes extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2015-12-17");
+        this.setVersion("2018-02-10");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -226,7 +231,7 @@ public class RegCosDes extends ventana {
            msgEspere("Anulando Regeneracion de costos en despieces ...");
            setLabelMsgEspere("Anulando Costos");
            popEspere_BCancelarSetEnabled(false);
-           String s = "UPDATE v_despfin set def_prcost = def_preusu "
+           String s = "UPDATE v_despfin set def_prcost = def_preusu,def_preusu=0 "
                         + " WHERE   eje_nume = " + eje_numeE.getValorInt()
                         + " and def_preusu != 0 "
                         + " AND exists (select deo_codi from v_despori  as orig "
@@ -486,11 +491,15 @@ public class RegCosDes extends ventana {
                     + " and eje_nume = " + eje_numeE.getValorInt();
         String condWher1= condWhere   
                     + (agrupados?" and deo_numdes = ? ":" AND deo_codi = ? ");
-        String s = "select pro_codi, sum(def_kilos) as def_kilos, sum(def_kilos*def_preusu) as def_prcost"
+        String s = "select pro_codi, def_blkcos, sum(def_kilos) as def_kilos, sum(def_kilos*def_preusu) as def_prcost"
                     + " from v_despsal  "+
                      condWher1
-                    + " group by pro_codi";
+                    + " group by pro_codi,def_blkcos ";
         prstFin = ct.prepareStatement(s);
+        s="select count(distinct pro_codi) as cuantos "
+                    + " from v_despsal  "+
+                     condWher1;
+        prstFinCuantos=ct.prepareStatement(s);    
         s = "select  sum(def_kilos*def_preusu) as def_prcost "
                     + " from v_despsal  "+  condWher1;
         prstFin1 = ct.prepareStatement(s); // Importe total de productos salida.
@@ -498,7 +507,7 @@ public class RegCosDes extends ventana {
             
         s = "update v_despfin set def_prcost = ?"+
                 (agrupados?condWhere+" and deo_codi in (select deo_codi from desporig where eje_nume="+
-                         eje_numeE.getValorInt()+ " and deo_numdes= ?)  and pro_codi = ? " :
+                eje_numeE.getValorInt()+ " and deo_numdes= ?)  and pro_codi = ? " :
                 condWher1);
         prstUpd1 = ctUp.prepareStatement(s);
         s="select * from desporig where eje_nume="+eje_numeE.getValorInt()+
@@ -585,8 +594,8 @@ public class RegCosDes extends ventana {
     /**
      * Recalcular costos de entrada (v_despfin)
      * @param deoCodi Numero de despieces o grupo Despiece
-     * @param impTotCalc Importe total a calcular
-     * @param impTotAnt Importe Total anterior de entrada
+     * @param impTotCalc Importe total a calcular  (Importe Final)
+     * @param impTotAnt Importe Total anterior de entrada (Cabecera)
      * @throws SQLException
      */
     private void recalcEntr(int deoCodi, double impTotCalc, double impTotAnt) throws SQLException
@@ -611,7 +620,7 @@ public class RegCosDes extends ventana {
         prstFin1.setInt(1, deoCodi);
         rsFin1 = prstFin1.executeQuery();
         rsFin1.next();
-        double impLinAnt=rsFin1.getDouble("def_prcost"); // Importe de Lineas antes de recalc.
+        double impLinAnt=rsFin1.getDouble("def_prcost"); // Importe TOTAL de Lineas antes de recalc.
         if ( Math.abs(impLinAnt-impTotAnt)>3)
         {
               prstDesp.setInt(1,deoCodi);
@@ -624,34 +633,106 @@ public class RegCosDes extends ventana {
                             Formatear.format(impTotAnt,"---,--9.99")+" :Salidas:  "+
                             Formatear.format(impLinAnt,"---,--9.99"));
         }
+        prstFinCuantos.setInt(1, deoCodi);                
+        rsFin1 = prstFinCuantos.executeQuery();
+        rsFin1.next();
+        int nRow=rsFin1.getInt("cuantos"); // Numero de lineas 
+        HashMap<Integer,ArrayList<Double>> htProd=new HashMap();
+        double costo;
+        boolean swAjus=false; // Indica si hay algun precio bloqueado
+        final int COSTO=0;
+        final int KILOS=1;
+        final int COSPOR=2;
+        final int COSBLO=3;
+        final int COSFIN=4;
+        // Calculo el % de Costo sobre el costo total original y lo pongo en cada producto
+        if (nRow==1)
+        {
+            ArrayList v=new ArrayList();
+            v.add(rsFin.getDouble("def_prcost")/rsFin.getDouble("def_kilos"));
+            v.add(rsFin.getDouble("def_kilos") );
+            v.add(100);  // Porcentaje de Kilos
+            v.add(0);  // Bloqueado
+            v.add(0); // Costo Final
+            htProd.put(rsFin.getInt("pro_codi"),v);                
+        }
+        do 
+        {
+             costo =  rsFin.getDouble("def_prcost");
+             if (impLinAnt == 0)
+                costo = 0;
+             else
+                costo = costo / impLinAnt * 100; 
+            if (costo <=-100)
+                costo=-99.99;
+            if (costo>100)
+                costo=100;          
+            ArrayList v=new ArrayList();
+            v.add(rsFin.getDouble("def_prcost")/rsFin.getDouble("def_kilos"));
+            v.add(rsFin.getDouble("def_kilos") );
+            v.add(costo);          
+            v.add(rsFin.getDouble("def_blkcos"));
+            v.add(0); // Costo Final
+            htProd.put(rsFin.getInt("pro_codi"),v);            
+        } while (rsFin.next());
+        double totLin=0;
+        double totFin=0;
+        double totFi1=0;
+        
+        for(Map.Entry<Integer, ArrayList<Double>> entry : htProd.entrySet()) 
+        {
+            int proCodi = entry.getKey();
+            ArrayList<Double> v= entry.getValue();
+            costo=impTotCalc * v.get(COSPOR) / 100;
+            costo=costo / v.get(KILOS);
+             if (v.get(COSBLO)!=0)
+             {
+                  swAjus=true;
+                  v.set(COSFIN, v.get(COSTO));
+                  totFin+=v.get(COSTO)*v.get(KILOS);
+                  continue;   
+              }
+
+              if (costo >= 0)
+              {
+                 totFi1+=costo*v.get(KILOS);
+                 totFin+=costo*v.get(KILOS);
+                 costo= Formatear.redondea(costo,NUMDEC_COSTO);
+                 v.set(COSFIN,costo );
+                 totLin+= costo*v.get(KILOS);
+              }
+              htProd.put(proCodi,v);
+       }
+    
+        if (swAjus) // Hay algun precio bloqueado.
+        {
+              double porc1;
+              double dif=impTotCalc-totFin;
+              for(Map.Entry<Integer, ArrayList<Double>> entry : htProd.entrySet())         
+              {
+                  int proCodi = entry.getKey();
+                  ArrayList<Double> v= entry.getValue();
+                  if (v.get(COSBLO)==0)
+                  {
+                    totLin = v.get(KILOS) * v.get(COSFIN);
+                    porc1 = totLin / totFi1;
+                    v.set(COSFIN,(totLin + (porc1 * dif))/v.get(KILOS));
+                    htProd.put(proCodi,v);
+                  }
+                }
+        }
         prstUpd = prstUpd1;
         prstUpd.setInt(2, deoCodi);
-       
-        double prCost;
-        double impLin=0;
-        do {
-            
-            if (rsFin.isLast())
-                prCost= Formatear.redondea((impTotCalc - impLin) / rsFin.getDouble("def_kilos"),NUMDEC_COSTO);
-            else
-            {
-                prCost = rsFin.getDouble("def_prcost") / impLinAnt * impTotCalc;
-                impLin+=prCost;
-                try {
-                    prCost = Formatear.redondea(prCost / rsFin.getDouble("def_kilos"),NUMDEC_COSTO);
-                } catch (NumberFormatException k)
-                {
-                    Error("Error al tranformar numero a 2 decimales",k);
-                }
-            }
-            if (Math.abs(prCost- (rsFin.getDouble("def_prcost")/rsFin.getDouble("def_kilos")) ) > MAXPERM )
-                    addLineaComent(deoCodi,"AVI","Precio producto "+rsFin.getInt("pro_codi")+ " > "+MAXPERM+ " : "+
-                Formatear.format(Math.abs(prCost- (rsFin.getDouble("def_prcost")/rsFin.getDouble("def_kilos")) ),
-                            "---,--9.99"));
-            prstUpd.setInt(3, rsFin.getInt("pro_codi"));
-            prstUpd.setDouble(1, prCost);
+        for(Map.Entry<Integer, ArrayList<Double>> entry : htProd.entrySet())         
+        {
+            int proCodi = entry.getKey();
+            ArrayList<Double> v= entry.getValue();
+                  
+            prstUpd.setInt(3, proCodi);
+            prstUpd.setDouble(1, v.get(COSFIN) );
             prstUpd.executeUpdate();
-        } while (rsFin.next());
+        }  
+
        //ctUp.commit();
     }
     /** This method is called from within the constructor to
