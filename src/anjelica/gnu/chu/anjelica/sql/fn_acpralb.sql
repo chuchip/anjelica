@@ -10,13 +10,13 @@ $BODY$
   BEGIN
   -- RAISE NOTICE  'en fn_acpralb %', TG_TABLE_NAME;
         if TG_TABLE_NAME = 'v_albavel' then
-           update anjelica.mvtosalm set mvt_prec = NEW.avl_prven where
-        mvt_empcod =OLD.emp_codi and
-        mvt_ejedoc=OLD.avc_ano and
-        mvt_numdoc=OLD.avc_nume and
-        mvt_serdoc=OLD.avc_serie and
-mvt_tipdoc='V' AND
-        mvt_lindoc=OLD.avl_numlin;
+           update anjelica.mvtosalm set mvt_prec = NEW.avl_prven,mvt_prenet= NEW.avl_prbase
+		      where  mvt_empcod =OLD.emp_codi and
+				mvt_ejedoc=OLD.avc_ano and
+				mvt_numdoc=OLD.avc_nume and
+				mvt_serdoc=OLD.avc_serie and
+				mvt_tipdoc='V' AND
+				mvt_lindoc=OLD.avl_numlin;
         end if; 
         if TG_TABLE_NAME = 'v_albacol' then
            update anjelica.mvtosalm set mvt_prec = NEW.acl_prcom,

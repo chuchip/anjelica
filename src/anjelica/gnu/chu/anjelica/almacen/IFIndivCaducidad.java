@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gnu.chu.anjelica.almacen;
 
 
@@ -22,10 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JDialog;
 
-/**
- *
- * @author cpuente
- */
+
 public class IFIndivCaducidad
 {    
 
@@ -44,7 +36,7 @@ public class IFIndivCaducidad
          papa=padre;
          frame = new JDialog((Frame) null, true);
          
-         frame.setSize(new Dimension(500, 400));
+         frame.setSize(new Dimension(650, 400));
         
          frame.setTitle("Individuos con Caducidad");
        
@@ -53,8 +45,6 @@ public class IFIndivCaducidad
         //setVisibleCabeceraVentana(false);
         
         panel=new PIndivCaduc();
-        panel.setMaximumSize(new Dimension(100,100));
-        panel.setPreferredSize(new Dimension(100,100));
         activarEventos();
         frame.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
@@ -65,6 +55,7 @@ public class IFIndivCaducidad
     {
         frame.addWindowListener(new WindowAdapter()
         {
+            @Override
             public void windowClosing(WindowEvent e) {
                 swAceptado = CANCELAR;
                 frame.setVisible(false);
@@ -97,13 +88,13 @@ public class IFIndivCaducidad
     public void iniciar(ArrayList<DatIndiv> listIndiv,DatosTabla dtStat) throws SQLException
     {
 
-//        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-//        Dimension frameSize = frame.getSize();
-//        if (frameSize.height > screenSize.height)
-//          frameSize.height = screenSize.height;
-//        if (frameSize.width > screenSize.width)
-//          frameSize.width = screenSize.width;
-        frame.setLocation((int)papa.getLocation().x+20, (int)papa.getLocation().y+80);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = frame.getSize();
+        if (frameSize.height > screenSize.height)
+          frameSize.height = screenSize.height;
+        if (frameSize.width > screenSize.width)
+          frameSize.width = screenSize.width;
+        frame.setLocation((screenSize.width - frameSize.width) / 2, (int)papa.getLocation().y+80);
         swAceptado=CANCELAR;  
      
         jt.removeAllDatos();
@@ -118,6 +109,7 @@ public class IFIndivCaducidad
             v.add(dtInd1.getNumind()); // 5
             v.add(dtInd1.getCanti()); // 6
             v.add(dtInd1.getFechaCaducidad()); // 7
+            v.add(dtInd1.getAuxiliar()); // 8
             jt.addLinea(v);
         }
         jt.requestFocusInicio();

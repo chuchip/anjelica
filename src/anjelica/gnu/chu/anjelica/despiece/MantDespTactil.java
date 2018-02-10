@@ -1212,12 +1212,12 @@ public class MantDespTactil  extends ventanaPad implements PAD
      }
      else
      {
-       utdesp.setDespNuestro(grd_fechaE.getText(),dtStat);
-       crotal=utdesp.getNumCrot();
+       utdesp.setDespieceNuestro(true);
+       crotal=utdesp.getNumeroCrotal();
        if (grd_feccadE.isNull())
        {
          if (MANTFECDES)
-           grd_feccadE.setText(utdesp.feccadE);
+           grd_feccadE.setDate(utdesp.getFechaCaducidad());
          else
            grd_feccadE.setText(Formatear.sumaDias(grd_fechaE.getDate(),pro_codenE.lkPrd.getInt("pro_diacom")));
        }
@@ -1236,13 +1236,14 @@ public class MantDespTactil  extends ventanaPad implements PAD
      etiq.iniciar(deo_codiE.getText(),
                  codBarras.getLote(),
                   pro_codsalE.getText(), pro_codsalE.getTextNomb(),
-                  utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre,
-                  utdesp.despiezadoE, null,
+                  utdesp.getPaisNacimientoNombre(),
+                  utdesp.getPaisEngordeNombre(),
+                  utdesp.getDespiezado() , null,
                   0,utdesp.getConservar(),
-                  utdesp.sacrificadoE,
+                  utdesp.getSacrificado(),
                   null,grd_fechaE.getDate(),
                   grd_feccadE.getDate(), 
-                  utdesp.fecSacrE);
+                  utdesp.getFechaSacrificio());
 //     this.setEnabled(false);
 //     for (int n = 0; n < netiintE.getValorInt(); n++)
 //     {
@@ -3133,11 +3134,11 @@ boolean checkCabecera() throws ParseException, SQLException
                  
      etiq.iniciar(codBarras.getCodBarra(),codBarras.getLote(),
                   jtSal.getValString(linea,JTSAL_PROCODI),jtSal.getValString(linea,JTSAL_PRONOMB),
-                  utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre, utdesp.despiezadoE,
-                  utdesp.getNumCrot() , jtSal.getValorDec(linea,JTSAL_KILOS),
-                  utdesp.getConservar(), utdesp.sacrificadoE,
+                  utdesp.getPaisNacimientoNombre(), utdesp.getPaisEngordeNombre(), utdesp.getDespiezado(),
+                  utdesp.getNumeroCrotal() , jtSal.getValorDec(linea,JTSAL_KILOS),
+                  utdesp.getConservar(), utdesp.getSacrificado(),
                    null,grd_fechaE.getDate(),
-                  pro_codsalE.isCongelado()?null:grd_feccadE.getDate(),utdesp.getFecSacrif());
+                  pro_codsalE.isCongelado()?null:grd_feccadE.getDate(),utdesp.getFechaSacrificio());
      etiq.setPrintDialog(false);    
   
      etiq.listarDefec();
@@ -3236,7 +3237,7 @@ boolean checkCabecera() throws ParseException, SQLException
           if (dtStat.getInt("cuantos",true)>= pro_codsalE.getNumeroCrotales() )
                crotal=MantAlbComCarne.getRandomCrotal(crotal,EU);              
     }
-    utdesp.setNumCrot(crotal);
+    utdesp.setNumeroCrotal(crotal);
     s="update stockpart set stp_nucrot='"+crotal+"' where pro_nupar="+ numLot+
             " and pro_serie='"+serLot+"' "+
             " and eje_nume="+ejeLot+

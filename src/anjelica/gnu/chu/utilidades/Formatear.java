@@ -1906,10 +1906,17 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
     
      return Integer.parseInt(getFecha(fecha,"dd"));
    }
+   /**
+    * Devuelve la fecha añadiendole 2000 años en caso de que el año sea inferior al 2000.
+    * @param fecha
+    * @return 
+    */
    public static Date getDate2000(Date fecha)
    {
       try
       {
+          if (fecha==null)
+              return null;
           return Formatear.getYear(fecha)<2000?
               Formatear.getDate(Formatear.getFecha(fecha,"dd-MM-")+ (2000+Formatear.getYear(fecha)),"dd-MM-yyyy"):
               fecha;

@@ -946,6 +946,13 @@ public class pdempresa extends ventanaPad   implements PAD
     String s="select * from empresa WHERE emp_codi = "+empCodi;
     return dt.select(s);
   }
+  /**
+   * Devuelve el Numero de registro Sanitario de la Empresa
+   * @param dt
+   * @param empCodi
+   * @return
+   * @throws SQLException 
+   */
   public static String getNumeroRegistroSanitario(DatosTabla dt,int empCodi) throws SQLException
   {
     String s="select emp_nurgsa from empresa WHERE emp_codi = "+empCodi;

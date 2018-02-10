@@ -78,6 +78,7 @@ public class PaiPanel extends CPanel
        controlar();
      }
   }
+  
   public CTextField getFieldPaiNomb()
   {
       return pai_nombE;
@@ -85,6 +86,20 @@ public class PaiPanel extends CPanel
   public CTextField getFieldPaiCodi()
   {
       return pai_codiE;
+  }
+  
+    @Override
+  public void setEditable(boolean editable)
+  {
+      if (pai_codiE!=null)
+          pai_codiE.setEditable(editable);
+  }
+    @Override
+  public boolean isEditable()
+  {
+      if (pai_codiE!=null)
+          return pai_codiE.isEditable();
+      return false;
   }
   public void setBotonConsultar(boolean activo) {
     Bcons.setVisible(activo);

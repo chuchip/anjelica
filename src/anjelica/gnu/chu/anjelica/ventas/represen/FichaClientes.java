@@ -381,7 +381,7 @@ public class FichaClientes extends ventana implements PAD
       dtCob= new DatosTabla(ct);
       dtBlo= new  DatosTabla(ct);
       if (! EU.getValorParam("jdbc_url_cont", "").equals(""))
-      {          
+      {  //Esta definida la conexion a bd contabilidad       
         conexion ctCont=new conexion(EU.getValorParam("jdbc_usu_cont", "sa")
           ,EU.getValorParam("jdbc_pass_cont", "as")
           ,EU.getValorParam("jdbc_driver_cont", "com.microsoft.sqlserver.jdbc.SQLServerDriver")

@@ -150,7 +150,7 @@ public class PDetComp extends CPanel
     acc_serieE.setText(utDesp.accSerie);
     acc_numeE.setValorInt(utDesp.accNume);
     acl_prcomE.setValorDec(utDesp.accPrcom);
-    acc_feccadE.setText(utDesp.feccadE);
+    acc_feccadE.setText(Formatear.getFecha(utDesp.getFechaCaducidad(),"dd-MM-yyyy"));
     deo_codiE.setValorInt(utDesp.deoCodi);
     swCompraInt.setSelected(utDesp.isCompraInterna());
   }

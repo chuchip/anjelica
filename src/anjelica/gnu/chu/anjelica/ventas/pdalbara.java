@@ -73,7 +73,6 @@ import gnu.chu.anjelica.almacen.pdmotregu;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.despiece.DatTrazFrame;
 import gnu.chu.anjelica.despiece.DespVenta;
-import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.listraza;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.listados.Listados;
@@ -133,7 +132,7 @@ import net.sf.jasperreports.engine.JasperReport;
 public class pdalbara extends ventanaPad  implements PAD  
 {   
   private int TIDE_AUTOCLASI=105;   
-  
+  private int AVISO_DIAS_CAD=1;
   String cliValor;
   int codCli;
   boolean P_IMPRES=false;
@@ -186,6 +185,7 @@ public class pdalbara extends ventanaPad  implements PAD
   
   double impDtoCom=0,impDtoPP=0;
   JMenuItem MFechaAlb = new JMenuItem("Est.Fec.Alb");
+  JMenuItem MAllFechaAlb = new JMenuItem("Est. Todas Fec.Alb");
   JMenuItem MFechaCab = new JMenuItem("Rest.Fec.Mvto");
   JMenuItem MAllFechaCab = new JMenuItem("Rest.Todas Fec.Mvto");
   private javax.swing.Timer temporizador; 
@@ -1481,6 +1481,7 @@ public class pdalbara extends ventanaPad  implements PAD
           swUsaPalets=pdconfig.getUsaPalets(EU.em_cod, dtStat);
           CONTROL_PRO_MIN= EU.getValorParam("controlprodmin", CONTROL_PRO_MIN);
           TIDE_AUTOCLASI= EU.getValorParam("tipdespclasi", TIDE_AUTOCLASI);
+          AVISO_DIAS_CAD= EU.getValorParam("avisodiascad", AVISO_DIAS_CAD);
           P_CHECKPED=EU.getValorParam("checkPedAlbVenta", P_CHECKPED);
           avl_numpalE.setEnabled(swUsaPalets);
           if (pdconfig.getConfiguracion(EU.em_cod,dtStat))
@@ -2056,7 +2057,7 @@ public class pdalbara extends ventanaPad  implements PAD
                   dtAdd.commit();
                   msgBox("Tipo Albaran cambiado a "+
                       (avc_cerraE.isSelected()?"CERRADO":"ABIERTO"));
-              } catch (SQLException ex)
+              } catch (SQLException | ParseException ex)
               {
                  Error("Al cambiar estado albaran (cerrado/abierto)",ex);
               }
@@ -2165,6 +2166,14 @@ public class pdalbara extends ventanaPad  implements PAD
           @Override
           public void actionPerformed(java.awt.event.ActionEvent evt) {
               MFechaAlbActionPerformed(jt.getSelectedRowDisab());
+          }
+      });
+      
+       MAllFechaAlb.addActionListener(new java.awt.event.ActionListener()
+      {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
+              MFechaAlbActionPerformed(-1);
           }
       });
       MAllFechaCab.addActionListener(new java.awt.event.ActionListener()
@@ -5654,7 +5663,7 @@ public class pdalbara extends ventanaPad  implements PAD
    * Solo comprueba que haya una referencia de los productos de pedido en albaran. No comprueba cantidades.
    * @return true si no falta ningun producto o esta abierto.
    */
-  boolean checkAlbCerrado() throws SQLException
+  boolean checkAlbCerrado() throws SQLException,ParseException
   {
       if (!avc_cerraE.isSelected() || pvc_numeE.isNull() || P_ADMIN)
           return checkFechaCad();
@@ -5671,10 +5680,10 @@ public class pdalbara extends ventanaPad  implements PAD
       }
       return checkFechaCad();      
   }
-  boolean checkFechaCad()  throws SQLException
+  boolean checkFechaCad()  throws SQLException,ParseException
   {
-       String s = "SELECT * FROM v_albvenpar " +
-          " WHERE emp_codi = " + emp_codiE.getValorInt() +
+       String s = "SELECT p.*,a.pro_dimica FROM v_albvenpar as p left join v_articulo as a on a.pro_codi = p.pro_codi  " +
+          " WHERE p.emp_codi = " + emp_codiE.getValorInt() +
           " AND avc_ano = " + avc_anoE.getValorInt() +
           " and avc_nume = " + avc_numeE.getValorInt() +
           " and avc_serie = '" + avc_seriE.getText() + "'";
@@ -5688,12 +5697,16 @@ public class pdalbara extends ventanaPad  implements PAD
                dtCon1.getInt("avp_ejelot"),dtCon1.getInt("avp_numpar"),dtCon1.getInt("avp_numind"),dtStat,dtPedi,EU))
                continue;
            utdesp.getDatosIndividuo();
-           if (Formatear.comparaFechas(utdesp.getFechaCaducidad(), Formatear.getDateAct())< MantDesp.MIN_DIAS_CAD)
-           { // Tiene menos de 10 dias               
+           long diasCad=Formatear.comparaFechas(utdesp.getFechaCaducidad(), avc_fecalbE.getDate() );
+           if (diasCad< dtCon1.getInt("pro_dimica") && AVISO_DIAS_CAD!=0)
+           { // Tiene menos de los dias configurados en tabla articulos               
                DatIndiv dt=new DatIndiv(); 
                dt.setIndivBase(utdesp.getDatosIndividuo());                               
                dt.setFechaCaducidad(utdesp.getFechaCaducidad());
                dt.setCanti(dtCon1.getDouble("avp_canti"));
+               dt.setAuxiliar(
+                   diasCad > 0?"Caduca en "+Formatear.comparaFechas(utdesp.getFechaCaducidad(), avc_fecalbE.getDate())
+                   +" Dias":"¡¡PRODUCTO CADUCADO!!" );
                dtInd.add(dt);
            }
        } while (dtCon1.next());
@@ -8771,7 +8784,7 @@ public class pdalbara extends ventanaPad  implements PAD
                 imprPalets();
             this.setEnabled(true);
             mensaje("");
-        } catch (SQLException ex)
+        } catch (SQLException | ParseException ex)
         {
             Error("Error al imprimir Albaran",ex);
         }
@@ -8951,8 +8964,8 @@ public class pdalbara extends ventanaPad  implements PAD
           desorca.setDeoFecha(Formatear.getDateAct());
           desorca.setDeoIncval("N");
           desorca.setTidCodi(TIDE_AUTOCLASI);
-          desorca.setDeoFecsac(utdesp.fecSacrE);
-          desorca.setDeoFeccad(utdesp.feccadD);
+          desorca.setDeoFecsac(utdesp.getFechaSacrificio());
+          desorca.setDeoFeccad(utdesp.getFechaCaducidad());
           desorca.setDeoFecpro(utdesp.getFechaProduccion());
           desorca.setPrvCodi(prvCodi);
           desorca.setDeoDesnue('N');
@@ -8986,7 +8999,7 @@ public class pdalbara extends ventanaPad  implements PAD
           utdesp.setTipoProduccion(false);
           utdesp.guardaLinDesp(dtCon1.getInt("avp_ejelot"), EU.em_cod, dtCon1.getString("avp_serlot"),
               dtCon1.getInt("avp_numpar"), nInd, deoCodi, rangoDesp.getArticuloFinal(),
-              dtCon1.getDouble("avp_canti"), 1, utdesp.feccadE, 1, 1,
+              dtCon1.getDouble("avp_canti"), 1, utdesp.getFechaCaducidad() , 1, 1,
               0, -1);
          dtAdd.executeUpdate("update v_albvenpar set pro_codi="+rangoDesp.getArticuloFinal()+
                   ",avp_numind="+nInd+
@@ -9170,10 +9183,10 @@ public class pdalbara extends ventanaPad  implements PAD
                      "/" +
                      Formatear.format(numInd, "999"),
                      ""+proCodi, proNomb,
-                     utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre, utdesp.despiezadoE,
-                     utdesp.ntrazaE, canti,
-                     utdesp.getConservar(), utdesp.sacrificadoE,
-                     utdesp.getFecCompra(),
+                     utdesp.getPaisNacimientoNombre(), utdesp.getPaisEngordeNombre(), utdesp.getDespiezado(),
+                     utdesp.getNumeroCrotal(), canti,
+                     utdesp.getConservar(), utdesp.getSacrificado(),
+                     utdesp.getFechaCompra(),
                      utdesp.getFechaProduccion(),                     
                      utdesp.getFechaCaducidad(),utdesp.fecSacrE);
     
@@ -9408,7 +9421,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
       try
       {
-           if (opAgru.isSelected())
+           if (opAgru.isSelected() && nl>=0)
             {
                 msgBox("Desagrupe las lineas para establecer fecha Albaran");
                 return;
@@ -9418,12 +9431,15 @@ public class pdalbara extends ventanaPad  implements PAD
               " and emp_codi = " + emp_codiE.getValorInt() +
               " and avc_serie = '" + avc_seriE.getText() + "'" +
               " and avc_nume = " + avc_numeE.getValorInt() +
-              " and avl_numlin = "+jt.getValorInt(nl,JT_NULIAL);
+              (nl>=0?" and avl_numlin = "+jt.getValorInt(nl,JT_NULIAL):"");
           
           dtAdd.executeUpdate(s1);
-          jt.setValor(avc_fecalbE.getDate(),nl,JT_FECMVT);
-          changeFecMvto(nl);
+          if (nl>=0)
+            jt.setValor(avc_fecalbE.getDate(),nl,JT_FECMVT);
+          changeFecMvto(nl,avc_fecalbE.getFechaDB());
           dtAdd.commit();
+          if (nl==-1)
+              verDatos(dtCons);
           msgBox("Fecha Linea establecida a la del albaran");
       } catch (Exception ex)
       {
@@ -9447,12 +9463,12 @@ public class pdalbara extends ventanaPad  implements PAD
                 return;
             }
             if (nl>=0)
-                changeFecMvto(nl);
+                changeFecMvto(nl,Formatear.getFechaDB(jt.getValString(nl,JT_FECMVT)));
             else
             {
                 for (int n=0;n<jt.getRowCount();n++)
                 {
-                  changeFecMvto(n);   
+                  changeFecMvto(n,Formatear.getFechaDB(jt.getValString(nl,JT_FECMVT)));   
                 }
             }
             dtAdd.commit();
@@ -9464,11 +9480,25 @@ public class pdalbara extends ventanaPad  implements PAD
         }
 
     }  
-    private void   changeFecMvto(int nl) throws SQLException,ParseException
+
+  /**
+   * Cambia la fecha de mvto a la de la fecha establecida en la linea
+   * @param nl Numero Linea. -1 Todos.
+   * @param fecMvto Fecha Movimiento en formato 'yyyyMMdd'
+   * @throws SQLException
+   * @throws ParseException 
+   */
+    private void   changeFecMvto(int nl, String fecMvto) throws SQLException,ParseException
     {
-        s="UPDATE mvtosalm set mvt_time='"+
-                Formatear.getFechaDB(jt.getValString(nl,JT_FECMVT),"dd-MM-yy")+
-                "' where mvt_ejedoc="+avc_anoE.getValorInt()+
+        if (nl<0)
+            s="UPDATE mvtosalm set mvt_time='"+fecMvto+"'"+                
+                " where mvt_ejedoc="+avc_anoE.getValorInt()+
+                " and mvt_numdoc="+avc_numeE.getValorInt()+
+                " and mvt_serdoc='"+avc_seriE.getText()+"'"+
+                " and mvt_tipdoc='V'";
+        else
+            s="UPDATE mvtosalm set mvt_time='"+fecMvto+"'"+
+                " where mvt_ejedoc="+avc_anoE.getValorInt()+
                 " and mvt_numdoc="+avc_numeE.getValorInt()+
                 " and mvt_serdoc='"+avc_seriE.getText()+"'"+
                 " and mvt_tipdoc='V'"+
@@ -10443,6 +10473,7 @@ public class pdalbara extends ventanaPad  implements PAD
     if (P_ADMIN)
     {
         jt.getPopMenu().add(MFechaAlb);
+        jt.getPopMenu().add(MAllFechaAlb);
         jt.getPopMenu().add(MFechaCab);
         jt.getPopMenu().add(MAllFechaCab);
     }

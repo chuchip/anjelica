@@ -1,5 +1,6 @@
 package gnu.chu.camposdb;
 
+import gnu.chu.anjelica.pad.MantPaises;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
@@ -33,6 +34,8 @@ public class prvPanel extends CPanel
 {
   private ayuPrv ayprv;
   private boolean error=false,prvActiv=true;
+  private String prvNurgsa="";
+  private int paiCodi=0;
   private int prvIntern;
   boolean swControl=true;
   int prvCodi=0;
@@ -565,8 +568,7 @@ public class prvPanel extends CPanel
 
   /**
    * Controla si el codigo del proveedor es valido
-   * @throws SQLException En caso de error en la DB
-   * @throws ParseException En caso error en la DB
+   * @throws SQLException En caso de error en la DB   
    * @return boolean false si hay un error
    */
   public boolean controlar() throws SQLException
@@ -574,6 +576,7 @@ public class prvPanel extends CPanel
     return controla(true,true);
   }
 
+  @Override
   public boolean hasCambio()
   {
     return prv_codiE.hasCambio();
@@ -587,7 +590,7 @@ public class prvPanel extends CPanel
    * @param reqFocus boolean Ejecutar requestFocus si hay un error
    * @param ponNombre boolean Poner el nombre del proveedor en prv_nomb
    * @throws SQLException error en DB
-   * @throws ParseException error en DB
+ 
    * @return boolean false si hay un error
    */
   public boolean controla(boolean reqFocus,boolean ponNombre) throws SQLException
@@ -653,14 +656,29 @@ public class prvPanel extends CPanel
     prvIntern=0;
     if (codPrv.trim().equals(""))
       return null;
-    String s = "SELECT prv_activ,prv_nomb,fpa_codi,prv_intern FROM v_proveedo WHERE prv_codi= " + codPrv;
+    String s = "SELECT prv_nurgsa,pai_codi,prv_activ,prv_nomb,fpa_codi,prv_intern FROM v_proveedo WHERE prv_codi= " + codPrv;
     dt.select(s);
     if (dt.getNOREG())
       return null;
     fpaCodi=dt.getInt("fpa_codi",true);
     prvIntern=dt.getInt("prv_intern",true);
     prvActiv=dt.getString("prv_activ").equals("S");
+    prvNurgsa=dt.getString("prv_nurgsa",true);
+    paiCodi=dt.getInt("pai_codi",true);    
     return dt.getString("prv_nomb");
+  }
+  public String getNumeroRegistroSanitario()
+  {
+      return prvNurgsa;
+  }
+  public int getPais()
+  {
+      return paiCodi;
+  }
+  
+  public String getInicialesPais(DatosTabla dtStat) throws SQLException
+  {
+      return MantPaises.getInicialesPais(paiCodi, dtStat );
   }
   /**
    * Indica si el prvoeedor esta activo

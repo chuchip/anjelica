@@ -274,7 +274,7 @@ public class lotVenPro extends ventana
     Pcabec.add(emp_codiL, null);
 
     utDesp=new utildesp();
-    utDesp.setSaltaDespInt(true);
+//    utDesp.setSaltaDespInt(true);
     Pcabec.setEnabled(false);
     pdetCom.setEnabled(false);
     jt.tableView.getSelectionModel().addListSelectionListener(new

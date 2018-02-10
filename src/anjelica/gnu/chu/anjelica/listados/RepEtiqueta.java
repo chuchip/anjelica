@@ -58,6 +58,7 @@ public class RepEtiqueta extends ventana
     String famProd;    
     private ayuLote ayuLot = null;
     Date  fecCad,fecProd,fecSacr;
+    
     public RepEtiqueta(EntornoUsuario eu, Principal p) {
         EU = eu;
         vl = p.panel1;
@@ -552,7 +553,7 @@ public class RepEtiqueta extends ventana
             msgBox("Fecha caducidad debe ser superior en 10 dias a fecha produccion");
             return;
         }
-        if (utDesp.getFecSacrif()!=null && Formatear.comparaFechas(utDesp.getFechaProduccion(),utDesp.getFecSacrif() )<0)
+        if (utDesp.getFechaSacrificio()!=null && Formatear.comparaFechas(utDesp.getFechaProduccion(),utDesp.getFechaSacrificio() )<0)
         {
             msgBox("Fecha Sacrificio debe ser inferior a fecha produccion");
             return;
@@ -563,10 +564,10 @@ public class RepEtiqueta extends ventana
             codBarras.getLote(tipoEtiq!=ETIQINT),
             pro_codiE.getText(),pro_codiE.getTextNomb(),utDesp.getPaisNacimiento(),utDesp.getPaisEngorde(),
             utDesp.getSalaDespiece(),
-            utDesp.getNumCrot(),deo_kilosE.getValorDec(),
+            utDesp.getNumeroCrotal(),deo_kilosE.getValorDec(),
             utDesp.getConservar(), utDesp.getMatadero(),
             utDesp.getFechaProduccion(),utDesp.getFechaProduccion(), utDesp.getFechaCaducidad(),
-            utDesp.getFecSacrif());
+            utDesp.getFechaSacrificio());
         etiq.setNumCopias(tipoEtiq==ETIQINT?numCopiasE.getValorInt():1);
         etiq.listarDefec();
               

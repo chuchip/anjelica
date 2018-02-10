@@ -446,9 +446,9 @@ public class clstkfeca extends ventana
             dtStat.setDato("stp_unact",dtCon1.getInt("stp_unact"));
             dtStat.setDato("stp_kilact",dtCon1.getDouble("stp_kilact"));
             dtStat.setDato("costo",utdesp.getPrecioCompra()==-1?0:utdesp.getPrecioCompra()*dtCon1.getDouble("stp_kilact"));
-            dtStat.setDato("feccom",redondeaFecha(utdesp.getFecCompra()));
-            dtStat.setDato("feccad",redondeaFecha(utdesp.getFecCadPrv()));
-            dtStat.setDato("fecdes",redondeaFecha(utdesp.getFecDesp()));
+            dtStat.setDato("feccom",redondeaFecha(utdesp.getFechaCompra()));
+            dtStat.setDato("feccad",redondeaFecha(utdesp.getFechaCaducidadCompra()));
+            dtStat.setDato("fecdes",redondeaFecha(utdesp.getFechaDespiece()));
             dtStat.setDato("fecade",redondeaFecha(utdesp.getFechaCadDesp()));
             
             dtStat.update();
@@ -585,13 +585,13 @@ public class clstkfeca extends ventana
                 
                 v.add(dtCon1.getInt("stp_unact"));
                 v.add(dtCon1.getDouble("stp_kilact"));
-                v.add(agruFec?dtCon1.getDate("feccom"):utdesp.getFecCompra());
-                v.add(agruFec?dtCon1.getDate("feccad"):utdesp.getFecCadPrv());
-                v.add(agruFec?dtCon1.getDate("fecdes"):utdesp.getFecDesp());
+                v.add(agruFec?dtCon1.getDate("feccom"):utdesp.getFechaCompra());
+                v.add(agruFec?dtCon1.getDate("feccad"):utdesp.getFechaCaducidadCompra());
+                v.add(agruFec?dtCon1.getDate("fecdes"):utdesp.getFechaDespiece());
                 v.add(agruFec?dtCon1.getDate("fecade"):utdesp.getFechaCadDesp());
                 v.add(PARAM_VERCOSTOS?precCompra:0);
                 v.add(PARAM_VERCOSTOS?precCompra*dtCon1.getDouble("stp_kilact"):0);
-                v.add(agruFec?0:utdesp.getEjeDesp()+"/"+utdesp.getDeoCodi());
+                v.add(agruFec?0:utdesp.getEjercicioDespiece()+"/"+utdesp.getNumeroDespiece());
                 uniAct+=dtCon1.getInt("stp_unact");
                 kilAct+=dtCon1.getDouble("stp_kilact");
                 uniTot+=dtCon1.getInt("stp_unact");

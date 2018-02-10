@@ -52,6 +52,7 @@ import org.apache.log4j.Logger;
  */
 public class ventana extends CInternalFrame implements ejecutable
 {
+  boolean ARG_ADMIN=false;
   String fileSonidoAlarma=null;
   private boolean sonidoalarma=false;
   String acronimo=null;
@@ -721,11 +722,24 @@ public class ventana extends CInternalFrame implements ejecutable
     return isBloqueado(dt,tabla,registro,false,true);
   }
   /**
+   * Esta llamado con Argumento 
+   * @return 
+   */
+  public boolean isArgumentoAdmin()
+  {
+      return ARG_ADMIN;
+  }
+  public void setArgumentoAdmin(boolean swAdmin)
+  {
+      ARG_ADMIN=swAdmin;
+  }
+  /**
    * Comprueba si un registro esta bloqueado en una tabla
    * @param dt DatosTabla Para realizar la conexion a la DB
    * @param tabla String Nombre de la TABLA
    * @param registro String Definici�n del registro
    * @param porMi boolean TRUE Devuelve false (no bloqueado) si esta bloqueado por mi mismo.
+   * @param swCheck
    * @throws SQLException Error en la DB
    * @return boolean true (bloqueado) false (No bloqueado)
    */
@@ -743,7 +757,7 @@ public class ventana extends CInternalFrame implements ejecutable
           "\n El registro se edito el: " +
           dt.getFecha("blo_fecha", "dd-MM-yyyy") + " " +
           dt.getDouble("blo_hora");
-      if ((dt.getString("usu_nomb").equals(EU.usuario) || EU.isAdminDB(dt)) && swCheck)
+      if ((dt.getString("usu_nomb").equals(EU.usuario) || EU.isAdminDB(dt) || isArgumentoAdmin()) && swCheck)
       {
          int res= mensajes.mensajePreguntar(msgBloqueo+"\n Desbloquear y continuar ");
          if (res==mensajes.YES)

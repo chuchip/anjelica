@@ -1,3 +1,4 @@
+
 package gnu.chu.anjelica.despiece;
 /**
  *
@@ -53,6 +54,7 @@ import gnu.chu.anjelica.compras.MantAlbComPlanta;
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantArticulos;
+import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.pad.pdejerci;
 import gnu.chu.anjelica.sql.Desorilin;
@@ -81,17 +83,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 
 public class MantDesp extends ventanaPad implements PAD
-{       
+{    
+    DatTrazFrame datTrazFrame;
     public final static int MIN_DIAS_CAD=10;
     Date ultFecCaduc;
     Date deoFecpro;
@@ -246,7 +246,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (P_ADMIN)
             MODPRECIO=true; 
-        setVersion("2018-01-31" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2018-02-08" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -498,10 +498,7 @@ public class MantDesp extends ventanaPad implements PAD
                 {
                     if (utdesp == null)
                         return;
-                    if (deo_desnueE.isSelected())
-                        utdesp.setDespNuestro(deo_fechaE.getText(), dtStat);
-                    else
-                        utdesp.resetDespNuestro();
+                    utdesp.setDespieceNuestro(deo_desnueE.isSelected());
                 } catch (Exception k)
                 {
                     Error("Error al poner el Despiece como nuestro", k);
@@ -616,7 +613,7 @@ public class MantDesp extends ventanaPad implements PAD
             }
         });
      
-        jtLin.tableView.addMouseListener(new MouseAdapter()
+        jtLin.addMouseListener(new MouseAdapter()
         {
 
             @Override
@@ -627,7 +624,7 @@ public class MantDesp extends ventanaPad implements PAD
                 }
             }
         });
-        jtCab.tableView.addMouseListener(new MouseAdapter()
+        jtCab.addMouseListener(new MouseAdapter()
         {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -706,7 +703,9 @@ public class MantDesp extends ventanaPad implements PAD
                 ultCodigoEtiqueta = tipoEtiqueta;
                 try {
                     if (!jtLin.isEnabled())
-                        pro_codlE.getNombArt(jtLin.getValString(jtLin.getSelectedRowDisab(),JTLIN_PROCODI));                
+                    {
+                        pro_codlE.setText(jtLin.getValString(jtLin.getSelectedRowDisab(),JTLIN_PROCODI));
+                    }
                     ponFechas(pro_codlE.getDiasCaducidad(),jtLin.getValDate(jtLin.getSelectedRowDisab(),JTLIN_FECCAD));
                 }catch (ParseException | SQLException ex ) {
                        Error("Error al poner fechas produccion",ex);
@@ -724,7 +723,7 @@ public class MantDesp extends ventanaPad implements PAD
             public void actionPerformed(ActionEvent e) {                
                 try {
                    if (!jtLin.isEnabled())
-                        pro_codlE.getNombArt(jtLin.getValString(jtLin.getSelectedRowDisab(),JTLIN_PROCODI));      
+                        pro_codlE.setText(jtLin.getValString(jtLin.getSelectedRowDisab(),JTLIN_PROCODI));
                    ponFechas(pro_codlE.getDiasCaducidad(),jtLin.getValDate(jtLin.getSelectedRowDisab(),JTLIN_FECCAD));
                 } catch (ParseException | SQLException ex) {
                        Error("Error al poner fechas produccion",ex);
@@ -870,14 +869,15 @@ public class MantDesp extends ventanaPad implements PAD
                 {
                     utdesp = new utildesp();
                 }
-                utdesp.busDatInd(jtCab.getValString(JTCAB_SERLOT),
-                    jtCab.getValorInt(JTCAB_PROCODI),
-                    EU.em_cod, jtCab.getValorInt(JTCAB_EJELOT),
-                    jtCab.getValorInt(JTCAB_NUMLOT),
-                    jtCab.getValorInt(JTCAB_NUMIND), dtCon1, dtStat, EU);
-                if (utdesp.getDeoCodi() == 0)
+                int row=jtCab.getSelectedRowDisab();
+                utdesp.busDatInd(jtCab.getValString(row, JTCAB_SERLOT),
+                    jtCab.getValorInt(row,JTCAB_PROCODI),
+                    EU.em_cod, jtCab.getValorInt(row,JTCAB_EJELOT),
+                    jtCab.getValorInt(row,JTCAB_NUMLOT),
+                    jtCab.getValorInt(row,JTCAB_NUMIND), dtCon1, dtStat, EU);
+                if (utdesp.getNumeroDespiece() == 0)
                 {
-                    if (utdesp.getAccNume() != 0)
+                    if (utdesp.getNumeroAlbaranCompra() != 0)
                     {
                         ejecutable prog;
                         if (isEmpPlanta)
@@ -898,8 +898,8 @@ public class MantDesp extends ventanaPad implements PAD
                             return;
                         }
                         cm.PADQuery();
-                        cm.setEjeNume(utdesp.getAccAno());
-                        cm.setAccCodi("" + utdesp.getAccNume());
+                        cm.setEjeNume(utdesp.getEjercicioAlbaranCompra());
+                        cm.setAccCodi("" + utdesp.getNumeroAlbaranCompra());
                         cm.ej_query();
                         jf.gestor.ir(cm);
                         return;
@@ -909,7 +909,7 @@ public class MantDesp extends ventanaPad implements PAD
                 }
                 PADQuery();
                 setEjeNume(jtCab.getValorInt(JTCAB_EJELOT));
-                setDeoCodi("" + utdesp.getDeoCodi());
+                setDeoCodi("" + utdesp.getNumeroDespiece());
                 ej_query();
             } catch (SQLException ex)
             {
@@ -1129,7 +1129,7 @@ public class MantDesp extends ventanaPad implements PAD
         }
         if (deo_feccadE.isNull())
         {
-            if (utdesp.feccadE != null)
+            if (utdesp.getFechaCaducidad() != null)
             {
                 deo_feccadE.setDate(utdesp.getFechaCaducidad());
                 ultFecCaduc=utdesp.getFechaCaducidad();
@@ -1150,8 +1150,8 @@ public class MantDesp extends ventanaPad implements PAD
         }
         if (deo_fecsacE.isNull())
         {
-            if (utdesp.getFecSacrif()!= null)
-                deo_fecsacE.setDate(utdesp.getFecSacrif());
+            if (utdesp.getFechaSacrificio()!= null)
+                deo_fecsacE.setDate(utdesp.getFechaSacrificio());
         }
         
         if (deo_feccadE.isNull() && reset)
@@ -1656,7 +1656,7 @@ public class MantDesp extends ventanaPad implements PAD
                     jtLin.getValorDec(n,JTLIN_KILOS),
                     jtLin.getValorInt(n,JTLIN_UNID),
                     jtLin.getValorInt(n,JTLIN_NUMCAJ),
-                    jtLin.getValString(n,JTLIN_FECCAD),
+                    jtLin.getValDate(n,JTLIN_FECCAD),
                     jtLin.getValorInt(n,JTLIN_ORDEN)
                     );
 //             insStkPart(jtLin.getValorInt(n,JTLIN_PROCODI), deo_ejlogeE.getValorInt(),
@@ -1987,7 +1987,7 @@ public class MantDesp extends ventanaPad implements PAD
             inTidCodi=false;
             swErrCab=false;
             proCodiB = 0;
-            utdesp.feccadE = null;
+            utdesp.setFechaCaducidad( null);
             ultCodigoEtiqueta=0;
             swMantLote = false;
             mensaje("Introducir Nuevo Despiece");
@@ -2245,10 +2245,10 @@ public class MantDesp extends ventanaPad implements PAD
             "" + deo_ejelotE.getValorInt(), deo_serlotE.getText(),
             pro_numindE.getValorInt(),
             kgDifE.getValorDec(),
-            utdesp.getFecDesp(),
+            utdesp.getFechaDespiece(),
             utdesp.getFechaProduccion(),
             utdesp.getFechaCaducidad(),
-            utdesp.getFecSacrif(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
+            utdesp.getFechaSacrificio(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
             utdesp.getFechaCaducidad(),deo_numdesE.getValorInt() );
     }
 
@@ -3387,16 +3387,20 @@ public class MantDesp extends ventanaPad implements PAD
                 msgBox("Fecha Caducidad  debe ser superior a la del despiece");
                 return JTLIN_FECCAD;
             }
-            if (nav.pulsado==navegador.ADDNEW && Formatear.comparaFechas(def_feccadE.getDate(),Formatear.getDateAct() )<=0 && pro_codlE.getDiasCaducidad()>0)
+            if (Formatear.comparaFechas(def_feccadE.getDate(),deo_fechaE.getDate() )<0 && pro_codlE.getDiasCaducidad()>0)
             {
-                msgBox("Fecha Caducidad  debe ser superior a la actual");
-                return JTLIN_FECCAD;
-            }
-            if (Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<= MIN_DIAS_CAD && pro_codlE.getDiasCaducidad()>0)
-            {
-                int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en 10 dias a la del despiece. Continuar?");
+                int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior a la del Despiece. ¿Continuar?");
                 if (ret!=mensajes.YES)
-                     return JTLIN_FECCAD;
+                    return JTLIN_FECCAD;
+            }
+            else
+            {
+                if (Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<= MIN_DIAS_CAD && pro_codlE.getDiasCaducidad()>0)
+                {
+                    int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en 10 dias a la del despiece. Continuar?");
+                    if (ret!=mensajes.YES)
+                         return JTLIN_FECCAD;
+                }
             }
 //            if (pro_codlE.hasCambio() || def_kilosE.hasCambio() || def_numpieE.hasCambio() ||  def_feccadE.hasCambio() && pro_codlE.isNull() == false)
 //            {
@@ -3479,7 +3483,7 @@ public class MantDesp extends ventanaPad implements PAD
                 prv_codiE.setValorInt(prvDespiece);
              return true;
         }
-        crotal=utdesp.getNumCrot();
+        crotal=utdesp.getNumeroCrotal();
         if (prv_codiE.isNull())
         {
             if (tid_codiE.getValorInt() == MantTipDesp.AUTO_DESPIECE
@@ -3490,9 +3494,8 @@ public class MantDesp extends ventanaPad implements PAD
                 prv_codiE.setValorInt(prvDespiece);
         }
         if (nav.pulsado != navegador.ADDNEW || deo_desnueE.isPulsado())
-        {
-            if (deo_desnueE.isSelected())
-                utdesp.setDespNuestro(deo_fechaE.getText(), dtStat);
+        {            
+            utdesp.setDespieceNuestro(deo_desnueE.isSelected());
             return true;
         }
         if (! deo_desnueE.isPulsado())
@@ -3500,7 +3503,7 @@ public class MantDesp extends ventanaPad implements PAD
             if (prv_codiE.getValorInt() == prvDespiece)
             {
                 deo_desnueE.setSelected(true);
-                utdesp.setDespNuestro(deo_fechaE.getText(), dtStat);
+                utdesp.setDespieceNuestro(deo_desnueE.isSelected());
             }
             else
                deo_desnueE.setSelected(false);
@@ -3562,7 +3565,7 @@ public class MantDesp extends ventanaPad implements PAD
                     deo_selogeE.getText(), deo_nulogeE.getValorInt(), nInd,
                     pro_codlE.getValorInt(),
                     def_kilosE.getValorDec(), def_numpieE.getValorInt(), def_unicajE.getValorInt(),
-                    def_feccadE.getText(), 0);
+                    def_feccadE.getDate(), 0);
 //                insStkPart(pro_codlE.getValorInt(), deo_ejlogeE.getValorInt(),
 //                    EU.em_cod,
 //                    deo_selogeE.getText(), deo_nulogeE.getValorInt(),
@@ -3583,7 +3586,7 @@ public class MantDesp extends ventanaPad implements PAD
                     deo_selogeE.getText(), deo_nulogeE.getValorInt(), nInd,
                     pro_codlE.getValorInt(), def_kilosE.getValorDec(),
                     def_numpieE.getValorInt(), def_unicajE.getValorInt(),
-                    def_feccadE.getText(), nOrd);//
+                    def_feccadE.getDate(), nOrd);//
 //                insStkPart(pro_codlE.getValorInt(), deo_ejlogeE.getValorInt(),
 //                    EU.em_cod,
 //                    deo_selogeE.getText(), deo_nulogeE.getValorInt(),
@@ -3682,10 +3685,12 @@ public class MantDesp extends ventanaPad implements PAD
 //            java.util.Date fecCong=utildesp.getDateCongelado(proCodi, deo_fecproE.getDate(), dtStat);    
             etiq.iniciar(codBarras.getLote(),
                codBarras.getLote(),
-                ""+proCodi, proNomb, utdesp.paisNacimientoNombre, utdesp.paisEngordeNombre,
-                utdesp.despiezadoE, null,
+                ""+proCodi, proNomb, MantPaises.getNombrePais(utdesp.getPaisNacimiento(),dtStat),
+                MantPaises.getNombrePais(utdesp.getPaisEngorde(),dtStat),
+                utdesp.getDespiezado(),
+                null,
                 0, utdesp.getConservar(),
-                utdesp.sacrificadoE,
+                MantPaises.getNombrePais(utdesp.getPaisSacrificio(),dtStat),
                 null,
                 deoFecpro,
                 def_feccadE.getDate(), 
@@ -3783,7 +3788,7 @@ public class MantDesp extends ventanaPad implements PAD
      * @throws Exception
      */
     int guardaLinDespFin(int ejeLot, int empLot, String serLot, int numLot, int nInd,
-        int proCodi, double kilos, int numPiezas, int uniCaj, String feccad, int defOrden) throws Exception 
+        int proCodi, double kilos, int numPiezas, int uniCaj, Date feccad, int defOrden) throws Exception 
     {   
         if (desorca!=null )
         {
@@ -3823,7 +3828,7 @@ public class MantDesp extends ventanaPad implements PAD
 //                   crotal=dtStat.getString("stp_nucrot");
                 crotal=MantAlbComCarne.getRandomCrotal(crotal,EU);              
            }
-           utdesp.setNumCrot(crotal);
+           utdesp.setNumeroCrotal(crotal);
        
         }
         s="update stockpart set stp_nucrot='"+crotal+"'"+
@@ -4230,6 +4235,8 @@ public class MantDesp extends ventanaPad implements PAD
     public void matar(boolean cerrCon) {
         try
         {
+            if (datTrazFrame!=null)
+                datTrazFrame.dispose();
             if (cerrCon)
             {
                 if (ctProd != null && ctProd.isConectado())
@@ -4338,6 +4345,8 @@ public class MantDesp extends ventanaPad implements PAD
         MVerMvtCab = new javax.swing.JMenuItem();
         MVerMvtLin = new javax.swing.JMenuItem();
         ImprEtiqMI = new javax.swing.JMenuItem("Imprimir");
+        MVerTraCab = new javax.swing.JMenuItem();
+        MVerTraLin = new javax.swing.JMenuItem();
         Pprinc = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         eje_numeL = new gnu.chu.controles.CLabel();
@@ -4698,6 +4707,20 @@ public class MantDesp extends ventanaPad implements PAD
                     }
                 });
 
+                MVerTraCab.setText("Ver Datos Trazabilidad");
+                MVerTraCab.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        MVerTraCabActionPerformed(evt);
+                    }
+                });
+
+                MVerTraLin.setText("Ver Datos Trazabilidad");
+                MVerTraLin.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        MVerTraLinActionPerformed(evt);
+                    }
+                });
+
                 Pprinc.setForeground(new java.awt.Color(255, 255, 255));
                 Pprinc.setMaximumSize(new java.awt.Dimension(669, 187));
                 Pprinc.setMinimumSize(new java.awt.Dimension(669, 187));
@@ -4987,6 +5010,7 @@ public class MantDesp extends ventanaPad implements PAD
                     if (P_ADMIN)
                     jtLin.getPopMenu().add(MFechaLin);
                     jtLin.getPopMenu().add(MVerMvtLin);
+                    jtLin.getPopMenu().add(MVerTraLin);
                 } catch (Exception k) { Error("Error al configurar grid lineas",k);}
 
                 javax.swing.GroupLayout jtLinLayout = new javax.swing.GroupLayout(jtLin);
@@ -5018,6 +5042,7 @@ public class MantDesp extends ventanaPad implements PAD
             if (P_ADMIN)
             jtCab.getPopMenu().add(MFechaCab);
             jtCab.getPopMenu().add(MVerMvtCab);
+            jtCab.getPopMenu().add(MVerTraCab);
 
             javax.swing.GroupLayout jtCabLayout = new javax.swing.GroupLayout(jtCab);
             jtCab.setLayout(jtCabLayout);
@@ -5344,6 +5369,7 @@ public class MantDesp extends ventanaPad implements PAD
         }
 
     }//GEN-LAST:event_MFechaLinActionPerformed
+    
     void verMvtosLinDes()
     {
         if (!jtLin.isVacio())
@@ -5368,6 +5394,21 @@ public class MantDesp extends ventanaPad implements PAD
     private void ImprEtiqMIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImprEtiqMIActionPerformed
          Bimpeti.getBotonAccion().doClick();
     }//GEN-LAST:event_ImprEtiqMIActionPerformed
+
+    private void MVerTraCabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MVerTraCabActionPerformed
+        mostrarDatosTraz(jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_PROCODI),
+            jtCab.getValString(jtCab.getSelectedRowDisab(),JTCAB_SERLOT),
+            jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_EJELOT),
+            jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_NUMLOT), 
+            jtCab.getValorInt(jtCab.getSelectedRowDisab(),JTCAB_NUMIND));
+    }//GEN-LAST:event_MVerTraCabActionPerformed
+
+    private void MVerTraLinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MVerTraLinActionPerformed
+           mostrarDatosTraz(jtLin.getValorInt(jtLin.getSelectedRowDisab(),JTLIN_PROCODI), 
+                deo_selogeE.getText(),deo_ejlogeE.getValorInt(),
+                deo_nulogeE.getValorInt(),
+                jtLin.getValorInt(jtLin.getSelectedRowDisab(),JTLIN_NUMIND));
+    }//GEN-LAST:event_MVerTraLinActionPerformed
     void mostrarMvtos(int proCodi,int ejeNume,String serie, int lote,int numInd) 
     {
         ejecutable prog;
@@ -5382,6 +5423,49 @@ public class MantDesp extends ventanaPad implements PAD
         cm.setEjercicio(ejeNume);
         cm.ejecutaConsulta();
         jf.gestor.ir(cm);
+  }
+  void mostrarDatosTraz(int proCodi,String serie,int ejeLote,int lote,int numind)
+  {
+      try {
+          if (datTrazFrame==null)
+          {
+              datTrazFrame=new DatTrazFrame(this)
+              {
+                    @Override
+                    public void matar()
+                    {
+                       salirDatTraza();
+                    }
+              };
+              datTrazFrame.iniciar(dtStat, dtCon1,this,vl,EU);
+              vl.add(datTrazFrame);
+              datTrazFrame.setLocation(this.getLocation().x, this.getLocation().y + 30);
+          }
+          datTrazFrame.setDatos(proCodi,
+                      serie,
+                      ejeLote,
+                      lote,
+                      numind);
+           datTrazFrame.actualizar();
+           this.setEnabled(false);
+           datTrazFrame.mostrar();
+      } catch (SQLException k)
+      {
+          Error("Error a mostrar Datos de Trazabilidad",k);
+      }
+  }
+  private void salirDatTraza()
+  {
+    datTrazFrame.setVisible(false);
+    this.toFront();
+    this.setEnabled(true);
+    try
+    {
+      this.setSelected(true);
+    }
+    catch (Exception k)
+    {}
+    
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton BForzarProd;
@@ -5400,6 +5484,8 @@ public class MantDesp extends ventanaPad implements PAD
     private javax.swing.JMenuItem MFechaLin;
     private javax.swing.JMenuItem MVerMvtCab;
     private javax.swing.JMenuItem MVerMvtLin;
+    private javax.swing.JMenuItem MVerTraCab;
+    private javax.swing.JMenuItem MVerTraLin;
     private gnu.chu.controles.CPanel POtros;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Pgrid;

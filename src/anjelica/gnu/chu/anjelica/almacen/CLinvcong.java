@@ -619,9 +619,9 @@ public class CLinvcong extends ventana
             dtAdd.setDato("stp_unact",dtCon1.getInt("stp_unact"));
             dtAdd.setDato("stp_kilact",dtCon1.getDouble("stp_kilact"));
             dtAdd.setDato("costo",utdesp.getPrecioCompra()==-1?0:utdesp.getPrecioCompra()*dtCon1.getDouble("stp_kilact"));
-            dtAdd.setDato("feccom",redondeaFecha(utdesp.getFecCompra()));
-            dtAdd.setDato("feccad",redondeaFecha(utdesp.getFecCadPrv()));
-            dtAdd.setDato("fecdes",redondeaFecha(utdesp.getFecDesp()));
+            dtAdd.setDato("feccom",redondeaFecha(utdesp.getFechaCompra()));
+            dtAdd.setDato("feccad",redondeaFecha(utdesp.getFechaCaducidadCompra()));
+            dtAdd.setDato("fecdes",redondeaFecha(utdesp.getFechaDespiece()));
             dtAdd.setDato("fecade",redondeaFecha(utdesp.getFechaCadDesp()));
             
             dtAdd.update();
@@ -784,20 +784,20 @@ public class CLinvcong extends ventana
                   precCompra = utdesp.getPrecioCompra() == -1 ? 0 : utdesp.getPrecioCompra();
                   prvNomb = gnu.chu.anjelica.pad.pdprove.getNombPrv(utdesp.getPrvCompra(), dtStat);
             }
-            fecDesp = agruFec ? dtCon1.getDate("fecdes") : utdesp.getFecDesp();
+            fecDesp = agruFec ? dtCon1.getDate("fecdes") : utdesp.getFechaDespiece();
             // Si el producto se compro ya congelado (es nulo).
             // Hago equivalente la fecha Desp. a la fecha de cong.
             if (fecDesp == null)
             {
-                fecDesp = agruFec ? dtCon1.getDate("feccom") : utdesp.getFecCompra();
+                fecDesp = agruFec ? dtCon1.getDate("feccom") : utdesp.getFechaCompra();
                 diasCad = 9999;
             } else
                 diasCad = agruFec ? Formatear.comparaFechas(dtCon1.getDate("feccad"), fecDesp)
-                    : Formatear.comparaFechas(utdesp.getFecCadPrv(), fecDesp);
+                    : Formatear.comparaFechas(utdesp.getFechaCaducidadCompra(), fecDesp);
 
             fecCadCong = agruFec ? dtCon1.getDate("fecade") : utdesp.getFechaCadDesp();
             if (fecCadCong == null)
-                fecCadCong = agruFec ? dtCon1.getDate("feccad") : utdesp.getFecCadPrv();
+                fecCadCong = agruFec ? dtCon1.getDate("feccad") : utdesp.getFechaCaducidadCompra();
 
             diasCong = agruFec ? Formatear.comparaFechas(fecCadCong, fecDesp)
                 : Formatear.comparaFechas(fecCadCong, fecDesp);
@@ -831,8 +831,8 @@ public class CLinvcong extends ventana
                     v.add("");
                     v.add(""); //Producto
                 }
-                String numDesp=utdesp.getEjeDesp() == 0 ? "C" + utdesp.getAccSerie() + utdesp.getAccAno() + "/"
-                        + utdesp.getAccNume() : "D" + utdesp.getEjeDesp() + "/" + utdesp.getDeoCodi();
+                String numDesp=utdesp.getEjercicioDespiece() == 0 ? "C" + utdesp.getAccSerie() + utdesp.getEjercicioAlbaranCompra() + "/"
+                        + utdesp.getNumeroAlbaranCompra() : "D" + utdesp.getEjercicioDespiece() + "/" + utdesp.getNumeroDespiece();
                 if (!swDesgInd)
                 {
                     String lote=dtCon1.getString("eje_nume") + "-" + dtCon1.getString("pro_serie") + "-"
@@ -844,7 +844,7 @@ public class CLinvcong extends ventana
                     rsSel=psSel.executeQuery();
                     if (rsSel.next())
                     {
-                        utdesp.setFecCadPrv(rsSel.getDate("feccad"));  
+                        utdesp.setFechaCaducidadCompra(rsSel.getDate("feccad"));  
                         precCompra=rsSel.getDouble("costo");
                         fecCadCong=rsSel.getDate("fecadcon");
                     }
@@ -852,10 +852,10 @@ public class CLinvcong extends ventana
                     psAdd.setString(2,prvNomb);
                     psAdd.setInt(3,dtCon1.getInt("stp_unact"));
                     psAdd.setDouble(4,dtCon1.getDouble("stp_kilact"));
-                    psAdd.setDate(5, utdesp.getFecCompra()==null?null:new java.sql.Date(utdesp.getFecCompra().getTime()));
-                    psAdd.setDate(6, utdesp.getFecCadPrv()==null?null: new java.sql.Date( utdesp.getFecCadPrv().getTime()) );
+                    psAdd.setDate(5, utdesp.getFechaCompra()==null?null:new java.sql.Date(utdesp.getFechaCompra().getTime()));
+                    psAdd.setDate(6, utdesp.getFechaCaducidadCompra()==null?null: new java.sql.Date( utdesp.getFechaCaducidadCompra().getTime()) );
                     psAdd.setDate(7,fecDesp==null?null: new java.sql.Date(fecDesp.getTime()) );
-                    psAdd.setDate(8,fecDesp==null? (utdesp.getFecCompra()==null?null:new java.sql.Date(utdesp.getFecCompra().getTime()))
+                    psAdd.setDate(8,fecDesp==null? (utdesp.getFechaCompra()==null?null:new java.sql.Date(utdesp.getFechaCompra().getTime()))
                         : new java.sql.Date(fecDesp.getTime()) );
                     psAdd.setDate(9,fecCadCong==null?null: new java.sql.Date(fecCadCong.getTime()));
                     psAdd.setString(10,numDesp);
@@ -871,8 +871,8 @@ public class CLinvcong extends ventana
                         + dtCon1.getInt("pro_numind"));
                     v.add(dtCon1.getInt("stp_unact"));
                     v.add(dtCon1.getDouble("stp_kilact"));
-                    v.add(agruFec ? dtCon1.getDate("feccom") : utdesp.getFecCompra());
-                    v.add(agruFec ? dtCon1.getDate("feccad") : utdesp.getFecCadPrv());
+                    v.add(agruFec ? dtCon1.getDate("feccom") : utdesp.getFechaCompra());
+                    v.add(agruFec ? dtCon1.getDate("feccad") : utdesp.getFechaCaducidadCompra());
                     v.add(diasCad == 9999 ? "" : diasCad);
                     v.add(fecDesp);
                     v.add(fecCadCong);

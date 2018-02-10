@@ -58,8 +58,30 @@ public class DatTrazFrame extends ventana {
       setErrorInit(true);
     }
   }
- 
- 
+  public DatTrazFrame(ventana padre)
+  {
+    setTitulo("Datos Trazabilidad");
+    vl=padre.vl;
+    EU=padre.EU;
+    
+    jf=padre.jf;
+    papa=padre;
+    try
+    {
+      jbInit();
+    }
+    catch (Exception k)
+    {
+      fatalError("constructor: ", k);
+      setErrorInit(true);
+    }
+  }
+  
+  public void iniciar() throws SQLException
+  {
+      iniciar(papa.dtStat,papa.dtCon1,papa,vl,EU);
+      
+  }
   public void iniciar(DatosTabla dtStat, DatosTabla dtCon1,CInternalFrame intFrame,
                       JLayeredPane layPan, EntornoUsuario EU) throws SQLException
   {
@@ -125,6 +147,7 @@ public class DatTrazFrame extends ventana {
     this.add(statusBar,BorderLayout.SOUTH);
     this.setSize(new Dimension(525, 475));
   }
+ 
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

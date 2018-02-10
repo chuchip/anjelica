@@ -1249,7 +1249,15 @@ public class proPanel extends CPanel
       else
         return lkPrd.getInt("pro_cadcong")*30;
   }
-  
+  /**
+   * Devuelve los dias minimos para caducar que debe tener un producto para caducar
+   * @return
+   * @throws SQLException 
+   */
+  public int getMinDiasCad() throws SQLException
+  {     
+     return lkPrd.getInt("pro_dimica");   
+  }
   public String getCamara()
   {
     return camCodi;

@@ -402,9 +402,9 @@ public class Cldegen extends ventana
              v.add(""+dtDesp.getInt("pro_lote"));
              v.add(""+dtDesp.getInt("def_numpie"));
              v.add(dtDesp.getString("def_kilos "));
-             v.add(utdesp.getFecCompra());
-             v.add(utdesp.getFecCadPrv());
-             v.add(utdesp.getFecDesp());
+             v.add(utdesp.getFechaCompra());
+             v.add(utdesp.getFechaCaducidadCompra());
+             v.add(utdesp.getFechaDespiece());
              if (! swCong)
                 v.add(utdesp.getFechaCaducidad());
              else

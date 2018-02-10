@@ -49,11 +49,12 @@ public class PEtiqProv extends javax.swing.JPanel
     final int JTLOTE_LOTE=0;
     final int JTLOTE_MAT=1;
     final int JTLOTE_SDE=2;
-    final int JTLOTE_PN=3;
-    final int JTLOTE_PC=5;
-    final int JTLOTE_PS=7;
-    final int JTLOTE_FECCAD=9;
-    final int JTLOTE_FECPRO=10;
+    final int JTLOTE_PSD=3;     
+    final int JTLOTE_PN=5;
+    final int JTLOTE_PC=7;
+    final int JTLOTE_PS=9;
+    final int JTLOTE_FECCAD=11;
+    final int JTLOTE_FECPRO=12;
     final int JTETI_ETIQ=0;
     final int JTETI_LOTE=1;
     final int JTETI_FECCAD=2;
@@ -69,6 +70,8 @@ public class PEtiqProv extends javax.swing.JPanel
     PaiPanel acp_painacE=new PaiPanel();
     PaiPanel acp_engpaiE=new PaiPanel();
     PaiPanel acp_paisacE=new PaiPanel();
+    PaiPanel acp_paisdeE=new PaiPanel();
+    
     CTextField acp_feccadE=new CTextField(Types.DATE,"dd-MM-yyyy");
     CTextField acp_fecproE=new CTextField(Types.DATE,"dd-MM-yyyy");
     AyuSdeMat ayuSde = null;
@@ -88,6 +91,7 @@ public class PEtiqProv extends javax.swing.JPanel
         acp_painacE.iniciar(padre.dtStat, padre, padre.vl, EU);
         acp_paisacE.iniciar(padre.dtStat, padre, padre.vl, EU);
         acp_engpaiE.iniciar(padre.dtStat, padre, padre.vl, EU);
+        acp_paisdeE.iniciar(padre.dtStat, padre, padre.vl, EU);
         pro_codiE.setEnabled(false);
         jtLote.setButton(KeyEvent.VK_F5,Bcopia);
         activar(false);
@@ -167,12 +171,20 @@ public class PEtiqProv extends javax.swing.JPanel
                     msgBox("Pais Sacrificio NO VALIDO EN linea: "+n);
                     return;
                 }
-                acp_engpaiE.setText(jtLote.getValString(n,JTLOTE_PC)); // 2 Sala Desp
+                acp_engpaiE.setText(jtLote.getValString(n,JTLOTE_PC)); // 2 Pais Engorde
                 if (!acp_engpaiE.controlar(false))
                 {
                     jtLote.setEnabled(true);
                     jtLote.requestFocusLater(n, JTLOTE_PC);
                     msgBox("Pais Criado NO VALIDO EN linea: "+n);
+                    return;
+                }
+                acp_paisdeE.setText(jtLote.getValString(n,JTLOTE_PSD)); // 2 Pais Sala Desp
+                if (!acp_paisdeE.controlar(false))
+                {
+                    jtLote.setEnabled(true);
+                    jtLote.requestFocusLater(n, JTLOTE_PSD);
+                    msgBox("Pais Despiece NO VALIDO EN linea: "+n);
                     return;
                 }
                 if (jtLote.getValDate(n,JTLOTE_FECCAD)==null)
@@ -208,8 +220,9 @@ public class PEtiqProv extends javax.swing.JPanel
                     return;
                 }
                 v.add(jtLote.getValString(nl,JTLOTE_MAT)); // 2
-                v.add(jtLote.getValString(nl,JTLOTE_SDE)); 
-                v.add(jtLote.getValString(nl,JTLOTE_PN));
+                v.add(jtLote.getValString(nl,JTLOTE_SDE));  // 3
+                v.add(jtLote.getValString(nl,JTLOTE_PSD)); // 4
+                v.add(jtLote.getValString(nl,JTLOTE_PN)); //5
                 v.add(jtLote.getValString(nl,JTLOTE_PC));
                 v.add(jtLote.getValString(nl,JTLOTE_PS));
                 v.add(jtLote.getValDate(nl,JTLOTE_FECCAD));
@@ -236,6 +249,7 @@ public class PEtiqProv extends javax.swing.JPanel
                     jtLote.setEnabled(false);
                     jtLote.setValor(jtLote.getValString(n-1,JTLOTE_MAT ),n,JTLOTE_MAT);
                     jtLote.setValor(jtLote.getValString(n-1,JTLOTE_SDE ),n,JTLOTE_SDE);
+                    jtLote.setValor(jtLote.getValString(n-1,JTLOTE_PSD ),n,JTLOTE_PSD);
                     jtLote.setValor(jtLote.getValString(n-1,JTLOTE_PN ),n,JTLOTE_PN);
                     jtLote.setValor(jtLote.getValString(n-1,JTLOTE_PC ),n,JTLOTE_PC);
                     jtLote.setValor(jtLote.getValString(n-1,JTLOTE_PS ),n,JTLOTE_PS);
@@ -263,6 +277,7 @@ public class PEtiqProv extends javax.swing.JPanel
                     v.add(jtLote.getValString(JTLOTE_LOTE)); // 2
                     v.add(jtLote.getValString(JTLOTE_MAT)); // 2
                     v.add(jtLote.getValString(JTLOTE_SDE)); 
+                    v.add(jtLote.getValString(JTLOTE_PSD));
                     v.add(jtLote.getValString(JTLOTE_PN));
                     v.add(jtLote.getValString(JTLOTE_PC));
                     v.add(jtLote.getValString(JTLOTE_PS));
@@ -719,7 +734,7 @@ public class PEtiqProv extends javax.swing.JPanel
         etp_kilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.999");
         acp_loteE = new gnu.chu.controles.CTextField(Types.CHAR,"X",20);
         jtEti = new gnu.chu.controles.CGridEditable(4);
-        jtLote = new gnu.chu.controles.CGridEditable(11);
+        jtLote = new gnu.chu.controles.CGridEditable(13);
         Pcabe = new gnu.chu.controles.CPanel();
         etp_codiL1 = new gnu.chu.controles.CLabel();
         etp_codiE = new gnu.chu.controles.CComboBox();
@@ -774,32 +789,37 @@ public class PEtiqProv extends javax.swing.JPanel
         v1.add("Lote"); //0
         v1.add("Matad"); // 1
         v1.add("S.Desp"); //2
-        v1.add("P.N"); // 3
-        v1.add("Nacido"); // 4
-        v1.add("P.C"); // 5
-        v1.add("Cebado"); // 6
-        v1.add("P.S"); // 7
-        v1.add("Sacrif"); // 8
-        v1.add("Fec.Cad"); // 9
-        v1.add("Fec.Pro"); // 10
+        v1.add("P.SD"); // 3
+        v1.add("Pais Desp."); // 4
+        v1.add("P.N"); // 5
+        v1.add("Nacido"); // 6
+        v1.add("P.C"); // 7
+        v1.add("Cebado"); // 8
+        v1.add("P.S"); // 9
+        v1.add("Sacrif"); // 10
+        v1.add("Fec.Cad"); // 11
+        v1.add("Fec.Pro"); // 12
         jtLote.setCabecera(v1);
         jtLote.setCanInsertLinea(false);
         jtLote.setCanDeleteLinea(false);
         jtLote.setBuscarVisible(false);
-        jtLote.setAnchoColumna(new int[]{50,130,130,30,130,30,130,30,130,80,80});
-        jtLote.setAlinearColumna(new int[]{0,0,0,0,0,0,0,0,0,1,1});
+        jtLote.setAnchoColumna(new int[]{50,130,130,30,130,30,130,30,130,30,130,80,80});
+        jtLote.setAlinearColumna(new int[]{0,0,0,0,0,0,0,0,0,0,0,1,1});
         ArrayList vc1=new ArrayList();
         acp_loteE.setEditable(false);
         //acp_feccadE.setEditable(false);
         vc1.add(acp_loteE); // 0
         vc1.add(acp_matadE); // 1 Matadero
         vc1.add(acp_saldesE); // 2 Sala Despiece
-        vc1.add(acp_painacE.getFieldPaiCodi()); // 3
-        vc1.add(acp_painacE.getFieldPaiNomb()); // 4
-        vc1.add(acp_engpaiE.getFieldPaiCodi()); // 5
-        vc1.add(acp_engpaiE.getFieldPaiNomb()); // 6
-        vc1.add(acp_paisacE.getFieldPaiCodi()); // 7
-        vc1.add(acp_paisacE.getFieldPaiNomb()); // 8
+        vc1.add(acp_paisdeE.getFieldPaiCodi()); // 3
+        vc1.add(acp_paisdeE.getFieldPaiNomb()); // 4
+
+        vc1.add(acp_painacE.getFieldPaiCodi()); // 5
+        vc1.add(acp_painacE.getFieldPaiNomb()); // 6
+        vc1.add(acp_engpaiE.getFieldPaiCodi()); // 7
+        vc1.add(acp_engpaiE.getFieldPaiNomb()); // 8
+        vc1.add(acp_paisacE.getFieldPaiCodi()); // 9
+        vc1.add(acp_paisacE.getFieldPaiNomb()); // 10
         vc1.add(acp_feccadE); // 9
         vc1.add(acp_fecproE); // 10
         try{

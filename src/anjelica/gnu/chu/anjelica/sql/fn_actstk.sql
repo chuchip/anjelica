@@ -13,6 +13,7 @@ $BODY$
   acpPainac char(2);
   mvtFeccad DATE;
   acpPaisac char(2);
+  acpPaisde char(2);
   acpFecsac DATE;
   matCodi char(15);
   sdeCodi char(15);
@@ -34,6 +35,7 @@ $BODY$
 		acpPainac=null;
 		mvtFeccad=NEW.mvt_feccad;
 		acpPaisac=null;
+		acpPaisde=null;
 		matCodi=null;
 		sdeCodi=null;
 		acpEngpai=null;
@@ -47,8 +49,8 @@ $BODY$
 			--RAISE NOTICE 'buscando registro en Despieces. Doc: % - % Fec.Cad %',NEW.mvt_ejedoc,NEW.mvt_numdoc,mvtFeccad;
             end if;
             if NEW.mvt_tipdoc = 'C' then					
-                select prv_codi,acp_fecpro,acp_nucrot,acp_painac,acp_paisac,acp_fecsac,acp_matad,acp_saldes,acp_engpai,acp_feccad
-                    into mvtCliprv,acpFecpro,acpNucrot,acpPainac,acpPaisac,acpFecsac,matCodi,sdeCodi,acpEngpai,mvtFeccad
+                select prv_codi,acp_fecpro,acp_nucrot,acp_painac,acp_paisac,acp_paisde,acp_fecsac,acp_matad,acp_saldes,acp_engpai,acp_feccad
+                    into mvtCliprv,acpFecpro,acpNucrot,acpPainac,acpPaisac,acpPaisde,acpFecsac,matCodi,sdeCodi,acpEngpai,mvtFeccad
                         from anjelica.v_compras where 
                         pro_codi=NEW.pro_codi -- Codigo de producto.
                         and NEW.pro_ejelot=acc_ano
@@ -88,6 +90,7 @@ $BODY$
                     stp_painac ,		 -- Pais de Nacimiento
                     stp_engpai ,		-- Pais de engorde
                     stp_paisac ,		-- Pais de Sacrificio
+					stp_paisde,		-- Pais Sala Despiece
                     stp_fecsac ,	-- Fecha Sacrificio					
                     stp_matad ,		-- Matadero
                     stp_saldes )		-- Sala despiece
@@ -99,7 +102,7 @@ $BODY$
                     current_timestamp,
                     kilos,kilos,
                     mvtCliprv,mvtFeccad,camCodi,
-                    acpFecpro,acpNucrot,acpPainac,acpEngpai,acpPaisac,acpFecsac,
+                    acpFecpro,acpNucrot,acpPainac,acpEngpai,acpPaisac, acpPaisde, acpFecsac,
                     matCodi,sdeCodi);
             else
 	        -- RAISE  NOTICE 'EXISTIA REGISTRO EN STOCK-PARTIDAS ';	
@@ -112,7 +115,8 @@ $BODY$
                 end if;
                 acpNucrot=STKNEW.stp_nucrot;
                 acpPainac=STKNEW.stp_painac;
-                acpPaisac=STKNEW.stp_paisac;               
+                acpPaisac=STKNEW.stp_paisac;  
+				acpPaisde=STKNEW.stp_paisde;  
                 matCodi=STKNEW.stp_matad;
                 sdeCodi=STKNEW.stp_saldes;
                 acpEngpai=STKNEW.stp_engpai;		
@@ -146,6 +150,7 @@ $BODY$
                         stp_nucrot=acpNucrot,
                         stp_painac=acpPainac,
                         stp_paisac=acpPaisac,
+						stp_paisde=acpPaisde,
                         stp_matad=matCodi,
                         stp_saldes=sdeCodi,
                         stp_engpai=acpEngpai,

@@ -78,6 +78,7 @@ public class DatTrazPanel extends CPanel {
         acp_painacE.iniciar(dtStat, padre, layPane, EU);
         acp_paisacE.iniciar(dtStat, padre, layPane, EU);
         acp_engpaiE.iniciar(dtStat, padre, layPane, EU);
+        acp_paisdeE.iniciar(dtStat, padre, layPane, EU);
         acp_painacE.setPeso(3);
 //        s = "SELECT pai_inic,pai_nomb FROM v_paises ORDER BY pai_nomb";
 //        if (dtStat.select(s))
@@ -101,7 +102,7 @@ public class DatTrazPanel extends CPanel {
     {
         if (opDatosCompra==null)
             return;
-        opDatosCompra.setSelected(verDatosCompra);
+        opDatosCompra.setSelected(verDatosCompra);      
     }
     public boolean getVerDatosCompra()
     {
@@ -202,20 +203,13 @@ public class DatTrazPanel extends CPanel {
     public void actualizar() throws SQLException
     {
         if (utDesp==null)
-        {
             utDesp=new utildesp();
-        }
       
         utDesp.busDatInd(serInd, proCodi, EU.em_cod, ejeInd,lotInd, numInd,dtCon1,dtStat,EU);
         verDatos();
     }
     void verDatos() throws SQLException
-    {
-        if (getVerDatosCompra())
-        {
-            verDatosCompra();
-            return;
-        }
+    {       
         if (lotePanel!=null)
         {
             if (lotePanel.getProNumind()!=numInd)
@@ -224,25 +218,26 @@ public class DatTrazPanel extends CPanel {
                 utDesp.busDatInd(serInd, proCodi, EU.em_cod, ejeInd,lotInd, numInd,dtCon1,dtStat,EU);
             }
         }
+        utDesp.setVerDatosCompra(getVerDatosCompra());
         verDatosInd();  
     }
-    
-    
-    void verDatosCompra() throws SQLException
-    {
-         if (lotePanel!=null)
-        {
-            if (lotePanel.getProNumind()!=utDesp.getProIndiCompra())
-            {
-                lotePanel.setDatos(utDesp.getProCodiCompra(), utDesp.getProSerieCompra(),
-                        utDesp.getEjeLotCompra(), utDesp.getProLoteCompra(), utDesp.getProIndiCompra());
-                utDesp.busDatInd(utDesp.getProSerieCompra(),
-                    utDesp.getProCodiCompra(), EU.em_cod,utDesp.getEjeLotCompra(),  utDesp.getProLoteCompra(),
-                    utDesp.getProIndiCompra(), dtCon1, dtStat, EU);
-            }
-        }
-        verDatosInd();      
-    }
+        
+//    void verDatosCompra() throws SQLException
+//    {
+//         if (lotePanel!=null)
+//        {
+//            if (lotePanel.getProNumind()!=utDesp.getProIndiCompra())
+//            {                
+//                lotePanel.setDatos(utDesp.getProCodiCompra(), utDesp.getProSerieCompra(),
+//                        utDesp.getEjeLotCompra(), utDesp.getProLoteCompra(), utDesp.getProIndiCompra());
+//                utDesp.setVerDatosCompra(true);
+//                utDesp.busDatInd(utDesp.getProSerieCompra(),
+//                    utDesp.getProCodiCompra(), EU.em_cod,utDesp.getEjeLotCompra(),  utDesp.getProLoteCompra(),
+//                    utDesp.getProIndiCompra(), dtCon1, dtStat, EU);
+//            }
+//        }
+//        verDatosInd();      
+//    }
     /**
      * Devuelve una clase utilDesp con los valores de la trazabilidad
      * @param actual Muestra los datos de pantalla, en caso contrario busca los encontrados en DB
@@ -254,29 +249,22 @@ public class DatTrazPanel extends CPanel {
     {
         if (!actual)
             return utDesp;
-        utDesp.setAcpPainac(acp_painacE.getText());
-        utDesp.setPaisNacimiento(acp_painacE.getTextNomb());
-
-        utDesp.setPaisEngordeCodigo(acp_engpaiE.getText());
-        utDesp.setPaisEngordeNombre(acp_engpaiE.getTextNomb());
-        
-        utDesp.setPaisSacrificioCodigo(acp_paisacE.getText());
-        utDesp.setPaisSacrificioNombre(acp_paisacE.getTextNomb());  
-        
-        
-        utDesp.setMatCodi(acp_matadE.getText());
+        utDesp.setPaisNacimiento(acp_painacE.getText());        
+        utDesp.setPaisEngorde(acp_engpaiE.getText());
+        utDesp.setPaisSalaDespiece(acp_paisdeE.getText());
+        utDesp.setPaisSacrificio(acp_paisacE.getText());
         utDesp.setMatadero(acp_matadE.getText());
         
         utDesp.setFechaProduccion(acc_fecprodE.getDate());
-        utDesp.setSdeCodi(acp_saldesE.getText());
         utDesp.setSalaDespiece(acp_saldesE.getText());
-        utDesp.setNumCrot(acp_nucrotE.getText());
+        
+        utDesp.setNumeroCrotal(acp_nucrotE.getText());
         
         utDesp.setFechaCaducidad(avc_feccadE.getDate());
-        utDesp.setFecSacrif(acp_fecsacE.getDate());
+        utDesp.setFechaSacrificio(acp_fecsacE.getDate());
         
 
-        utDesp.setFecCompra(avc_fecalbE.getDate());
+        utDesp.setFechaCompra(avc_fecalbE.getDate());
         utDesp.setConservar(conservarE.getText());
    
         utDesp.setCambio(false);
@@ -285,18 +273,21 @@ public class DatTrazPanel extends CPanel {
     }
     void verDatosInd()
     {
-        prv_codiE.setValorInt(utDesp.getPrvCompra());
+        prv_codiE.setValorInt(utDesp.getProveedor());
+        acc_tipdocL.setText(utDesp.isDespiece()?"Desp":"Compra");
         
-        acp_engpaiE.setText(utDesp.getPaisEngordeCodigo());
-        acp_fecsacE.setDate(utDesp.getFecSacrif());
-        acp_nucrotE.setText(utDesp.getNumCrot());
-        acp_painacE.setText(utDesp.getAcpPainac());
-        acp_paisacE.setText(utDesp.getPaisSacrificioCodigo());       
-        avc_fecalbE.setDate(utDesp.getFecCompra());
+        acp_engpaiE.setText(utDesp.getPaisEngorde());
+        acp_fecsacE.setDate(utDesp.getFechaSacrificio());
+        acp_nucrotE.setText(utDesp.getNumeroCrotal());
+        acp_paisdeE.setText(utDesp.getPaisSalaDespiece());
+        acp_painacE.setText(utDesp.getPaisNacimiento());
+        acp_paisacE.setText(utDesp.getPaisSacrificio());       
+        avc_fecalbE.setDate(utDesp.getFechaCompra());
         conservarE.setText(utDesp.getConservar());
-        acp_matadE.setText(utDesp.getMatCodi());
-        acp_saldesE.setText(utDesp.getSdeCodi());
-        acc_numeE.setValorInt(utDesp.getProLoteCompra());
+        acp_matadE.setText(utDesp.getMatadero());
+        acp_saldesE.setText(utDesp.getSalaDespiece());
+        acc_ejenumE.setValorInt(utDesp.isDespiece()?utDesp.getEjercicioDespiece(): utDesp.getEjercicioAlbaranCompra());
+        acc_numeE.setValorInt(utDesp.isDespiece()?utDesp.getNumeroDespiece():utDesp.getNumeroAlbaranCompra());
         acc_fecprodE.setDate(utDesp.getFechaProduccion());
         avc_feccadE.setDate(utDesp.getFechaCaducidad());
         forzadaTrazC.setSelected(utDesp.isForzadaTrazab());
@@ -334,6 +325,7 @@ public class DatTrazPanel extends CPanel {
         acp_nucrotE.setEditable(editable);
         acc_fecprodE.setEditable(editable);
         acp_painacE.setEditable(editable);
+        acp_paisdeE.setEditable(editable);
         acp_paisacE.setEditable(editable);
         avc_fecalbE.setEditable(editable);
         
@@ -436,6 +428,8 @@ public class DatTrazPanel extends CPanel {
         acp_paisacE = new gnu.chu.camposdb.PaiPanel();
         acp_engpaiE = new gnu.chu.camposdb.PaiPanel();
         forzadaTrazC = new gnu.chu.controles.CCheckBox();
+        acp_paisdeE = new gnu.chu.camposdb.PaiPanel();
+        acc_ejenumE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#####9");
 
         setLayout(null);
 
@@ -445,7 +439,7 @@ public class DatTrazPanel extends CPanel {
 
         cLabel2.setText("Documento");
         add(cLabel2);
-        cLabel2.setBounds(310, 40, 70, 18);
+        cLabel2.setBounds(270, 40, 70, 18);
 
         cLabel3.setText("Sacrificado");
         add(cLabel3);
@@ -465,7 +459,7 @@ public class DatTrazPanel extends CPanel {
 
         acp_saldesE.setMayusc(true);
         add(acp_saldesE);
-        acp_saldesE.setBounds(80, 80, 150, 17);
+        acp_saldesE.setBounds(250, 80, 150, 17);
 
         cLabel6.setText("Proveedor ");
         add(cLabel6);
@@ -533,10 +527,14 @@ public class DatTrazPanel extends CPanel {
         acc_tipdocL.setOpaque(true);
         add(acc_tipdocL);
         acc_tipdocL.setBounds(440, 40, 60, 17);
+
+        acp_painacE.setEditable(false);
         add(acp_painacE);
         acp_painacE.setBounds(80, 20, 180, 18);
+
+        acp_paisacE.setEditable(false);
         add(acp_paisacE);
-        acp_paisacE.setBounds(80, 40, 220, 18);
+        acp_paisacE.setBounds(80, 40, 180, 18);
         add(acp_engpaiE);
         acp_engpaiE.setBounds(320, 20, 180, 18);
 
@@ -545,10 +543,21 @@ public class DatTrazPanel extends CPanel {
         forzadaTrazC.setEnabledParent(false);
         forzadaTrazC.setFocusable(false);
         add(forzadaTrazC);
-        forzadaTrazC.setBounds(400, 80, 100, 17);
+        forzadaTrazC.setBounds(410, 80, 90, 17);
+
+        acp_paisdeE.setEditable(false);
+        add(acp_paisdeE);
+        acp_paisdeE.setBounds(80, 80, 160, 18);
+
+        acc_ejenumE.setFocusable(false);
+        acc_ejenumE.setMinimumSize(new java.awt.Dimension(10, 18));
+        acc_ejenumE.setPreferredSize(new java.awt.Dimension(10, 18));
+        add(acc_ejenumE);
+        acc_ejenumE.setBounds(340, 40, 40, 18);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CTextField acc_ejenumE;
     private gnu.chu.controles.CTextField acc_fecprodE;
     private gnu.chu.controles.CTextField acc_numeE;
     private gnu.chu.controles.CLabel acc_tipdocL;
@@ -561,6 +570,7 @@ public class DatTrazPanel extends CPanel {
     private gnu.chu.controles.CTextField acp_nucrotE;
     private gnu.chu.camposdb.PaiPanel acp_painacE;
     private gnu.chu.camposdb.PaiPanel acp_paisacE;
+    private gnu.chu.camposdb.PaiPanel acp_paisdeE;
     private gnu.chu.controles.CTextField acp_saldesE;
     private gnu.chu.controles.CTextField avc_fecalbE;
     private gnu.chu.controles.CTextField avc_feccadE;

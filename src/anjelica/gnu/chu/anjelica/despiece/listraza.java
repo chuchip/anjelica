@@ -261,7 +261,7 @@ public class listraza  implements JRDataSource
             msgLog+=msgLogL;
         }
     
-        if (utdes.swDesp)
+        if (utdes.isDespiece())
         {
             s = "SELECT pro_nomb FROM v_articulo WHERE pro_codi = " +
                     utdes.proCodiDes;
@@ -275,9 +275,9 @@ public class listraza  implements JRDataSource
             artVenta=Formatear.format(dtCur.getInt("pro_codi"), "#####9") + "  " +
                 dtCur.getString("pro_nomb");
         }
-        DatosTraza dtTraza=new DatosTraza(utdes.ntrazaE,
-                utdes.paisNacimientoNombre,utdes.sacrificadoE,utdes.despiezadoE,utdes.paisEngordeNombre,
-                artVenta,  utdes.getFecSacrif() ,utdes.getFechaCaducidad(), dtCur.getString("pro_nomb"),
+        DatosTraza dtTraza=new DatosTraza(utdes.getNumeroCrotal(),
+                utdes.getPaisNacimientoNombre(),utdes.getSacrificado(),utdes.getDespiezado(),utdes.getPaisEngordeNombre(),
+                artVenta,  utdes.getFechaSacrificio() ,utdes.getFechaCaducidad(), dtCur.getString("pro_nomb"),
                 dtCur.getDouble("avp_canti"),
                 dtCur.getInt("avp_numind"),
                 dtCur.getInt("avp_numpar"),

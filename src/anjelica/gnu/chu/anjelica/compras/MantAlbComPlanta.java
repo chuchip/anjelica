@@ -320,7 +320,7 @@ void guardaLinDes(int acp_numlin,int acp_numind,String acp_nucrot,
     // int canInd=dtCon1.getInt("acp_canind");
     int nIndiv;
 //    int nLiAlDe=dtCon1.getInt("acl_nulin");
-    if (nInd!=nIndAnt && ARG_ADMIN)
+    if (nInd!=nIndAnt && isArgumentoAdmin())
         nIndiv=nInd;
     else
       nIndiv=utildesp.getMaxNumInd(dtCon1,jt.getValorInt(JT_PROCOD),acc_anoE.getValorInt(),emp_codiE.getValorInt(),

@@ -1,4 +1,53 @@
 --
+drop view v_despsal;
+ALTER TABLE v_despfin DISABLE TRIGGER USER;
+alter table v_despfin add def_blkcos smallint not null default 0; -- Bloqueado costo
+CREATE OR REPLACE VIEW v_despsal AS 
+ SELECT c.eje_nume,    c.deo_codi,    c.deo_numdes,    c.tid_codi,    c.deo_fecha,    c.deo_almori,    c.deo_almdes,    c.deo_ejloge,
+    c.deo_seloge,    c.deo_nuloge,    c.deo_incval,    l.def_orden,    l.pro_codi,    l.def_ejelot,    l.def_emplot,
+    l.def_serlot,    l.pro_lote,    l.pro_numind,    l.def_kilos,    l.def_numpie,    l.def_prcost,    l.def_unicaj,
+    l.def_feccad,    l.def_preusu,    l.def_tiempo,    l.alm_codi, l.def_blkcos,   c.deo_desnue
+   FROM desporig c,
+    v_despfin l
+  WHERE c.eje_nume = l.eje_nume AND c.deo_codi = l.deo_codi;
+ ALTER TABLE v_despfin enable TRIGGER USER;
+grant select on  anjelica.v_despsal to public;
+--
+DROP TRIGGER albavel_UPDATE ON anjelica.v_albavel;
+create trigger albavel_UPDATE AFTER UPDATE  on anjelica.v_albavel for each row   WHEN (OLD.avl_prven IS DISTINCT FROM NEW.avl_prven OR OLD.avl_prbase IS DISTINCT FROM NEW.avl_prbase ) execute procedure anjelica.fn_acpralb();
+--
+ALTER TABLE stockpart DISABLE TRIGGER USER;
+drop view v_stkpart;
+alter table stockpart add stp_paisde  varchar(2);
+create view anjelica.v_stkpart as select * from anjelica.stockpart;
+grant select on anjelica.v_stkpart to public;
+ALTER TABLE stockpart ENABLE TRIGGER USER;
+create or replace view anjelica.v_compras as 
+select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,c.sbe_codi,
+l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi,
+i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_fecpro,i.acp_nucrot,i.acp_clasi,i.acp_painac,i.sde_codi,
+i.acp_paisac,i.acp_engpai,i.mat_codi,i.acp_matad,i.acp_saldes,i.acp_paisde
+from anjelica.v_albacoc as c,anjelica.v_albacol as l, anjelica.v_albcompar as i
+where c.acc_ano=l.acc_ano
+and c.emp_codi=l.emp_codi
+and c.acc_serie=l.acc_serie
+and c.acc_nume=l.acc_nume
+and c.acc_ano=i.acc_ano
+and c.emp_codi=i.emp_codi
+and c.acc_serie=i.acc_serie
+and c.acc_nume=i.acc_nume
+and l.acl_nulin=i.acl_nulin;
+grant select on anjelica.v_compras to public;
+-- stockpart
+
+alter table v_albcompar add acp_paisde char(2);
+alter table hisalpaco add acp_paisde character varying(2);
+--
+-- Añade campo con los dias minimos de caducidad
+alter table v_articulo add pro_dimica smallint;
+update v_articulo set pro_dimica = 14 where pro_artcon=0;
+update v_Articulo set pro_dimica = 60 where pro_artcon!=0;
+--
 -- 
 create view v_subemprcliente AS
 select emp_codi,sbe_codi,sbe_nomb from subempresa where sbe_tipo='C';
@@ -286,9 +335,10 @@ alter table cliencamb add cli_enalva smallint not null default 0;
 drop view v_cliente;
 create or replace view anjelica.v_cliente as select *,cli_codrut as cli_carte,cli_codrut as cli_valor from anjelica.clientes;
 grant select on anjelica.v_cliente to PUBLIC;
+
 --
 -- Prodcuto encajado o colgado?
-alter table v_articulo add pro_encaja; -- Encajado.
+alter table v_articulo add pro_encaja smallint; -- Encajado.
 update v_articulo set pro_encaja=-1; 
 --
 alter table desproval add dpv_pretar decimal(6,2);
@@ -321,6 +371,7 @@ l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcos
  from deorcahis as c, deorlihis as l where c.eje_nume=l.eje_nume
  and c.deo_codi= l.deo_codi and c.his_rowid=l.his_rowid;
  grant select on  anjelica.v_hisdespori to public;
+ 
 drop view v_despsal;
 CREATE OR REPLACE VIEW v_despsal AS 
  SELECT c.eje_nume,
@@ -368,12 +419,14 @@ l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcos
 -- Añadido transportista a pedicos compras.
 alter table pedicoc add tra_codi int;
 --
+
 alter table parametros alter par_valor  type varchar(100);
 alter table parametros alter par_nomb  type varchar(30);
 --
 -- Añadida camaras
 --
 alter table tilialca add cam_codi varchar(2);
+
 -- Kilos facturados factura compra
  alter table v_facaco rename fcc_sumto2 to fcc_kilfra; 
 -- Incluido precio oferta
@@ -628,11 +681,6 @@ alter table v_albavec alter avc_repres  set not null; -- Representante
 alter table  desproval add dpv_preori decimal(6,2);
 update desproval set dpv_preori = 0;
 alter table desproval alter dpv_preori set not null;
--- Añadido campos de posicion lote y peso del codigo barras prv.
-alter table v_proveedo add prv_poloin smallint;	-- Posicion inicial Lote en cod.Barras interno prv
-alter table v_proveedo add prv_polofi smallint;	-- Posicion final Lote en cod.Barras interno prv
-alter table v_proveedo add prv_popein smallint;	-- Posicion inicial peso en cod.Barras interno prv
-alter table v_proveedo add prv_popefi smallint;	-- Posicion final peso en cod.Barras interno prv
 --
 -- Cambiados paises a iniciales
 --

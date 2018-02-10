@@ -991,9 +991,9 @@ public class Cgrid extends CPanel implements Serializable
     /**
     * Funcion que me rellena el grid con los datos de un Vector en el orden
     * en que se encuentran almacenados.
-    * @deprecated Usar setDatos en su lugar
+    *
     */
-    public boolean almacenarDatos(ArrayList<ArrayList> dt){
+    private boolean almacenarDatos(ArrayList<ArrayList> dt){
           boolean enab=isEnabled();
           setEnabled(false);
           gridActivo=true;

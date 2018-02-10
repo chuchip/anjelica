@@ -25,7 +25,7 @@ import java.util.Hashtable;
  *  admin: Modo Aministrador.
  *  AlbSinPed true/False Indica si se pueden cargar albaranes sin un pedido de compras
  * <p>Created on 03-abr-2009, 18:14:38</p>
- *  <p>Copyright: Copyright (c) 2005-2016
+ *  <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -47,50 +47,17 @@ public class MantAlbComCarne extends MantAlbCom
  
    public static int MINLONCROTAL=10;
    private int CROTALAUTOMA=1; // Numero crotal Automatico
-   String ultMat=null,ultSalDes,ultNac,ultCeb,ultSacr,ultFecCad,ultFecSac,ultFecPro;
+   String ultMat=null,ultSalDes,ultNac,ultCeb,ultSacr,ultFecCad,ultFecSac,ultFecPro,
+       ultPaiSde;
    CTextField acp_matadE,acp_saldesE;
    
    PaiPanel acp_painacE;
    PaiPanel acp_engpaiE;
    PaiPanel acp_paisacE;
-   
+   PaiPanel acp_paisdeE;
   
    CTextField acp_feccadE,acp_fecsacE,acp_fecproE;
-   /**
-    * Codigo matadero 4
-    */   
-   final int JTD_MATCODI=4;
-   /**
-    * Sala Despiece 5
-    */
-   final int JTD_SDECODI=5;
-   /**
-    * Pais Nacimiento - 6
-    */
-   final int JTD_PAINAC=6; 
-   final int JTD_PNACNO=7; 
-   /**
-    * Pais Engorde 8
-    */
-   final int JTD_ENGPAI=8;
-   final int JTD_PENGNO=9;
-   /**
-    * Pais Sacrificio 10
-    */
-   final int JTD_PAISAC=10;
-   final int JTD_PSACNO=11;
-   /**
-    * Fecha Caducicad 12
-    */
-   final int JTD_FECCAD=12;
-   /**
-    * Fecha Sacrificio 13
-    */
-   final int JTD_FECSAC=13;
-   /**
-    * Fecha Prodcuccion 14
-    */
-   final int JTD_FECPRO=14;
+  
    
    
    public MantAlbComCarne(EntornoUsuario eu, Principal p) {
@@ -152,11 +119,13 @@ public class MantAlbComCarne extends MantAlbCom
       acp_painacE = new PaiPanel();
       acp_engpaiE = new PaiPanel();
       acp_paisacE = new PaiPanel();
-      
+      acp_paisdeE  = new PaiPanel();
       acp_painacE.iniciar(dtStat, this, vl, EU);
       acp_paisacE.iniciar(dtStat, this, vl, EU);
       acp_engpaiE.iniciar(dtStat, this, vl, EU);
-    jtDes = new CGridEditable(17)
+      acp_paisdeE.iniciar(dtStat, this, vl, EU);
+      
+    jtDes = new CGridEditable(19)
     {
         @Override
         public boolean deleteLinea(int row, int col)
@@ -224,23 +193,26 @@ public class MantAlbComCarne extends MantAlbCom
     v1.add("Crotal"); // 3
     v1.add("Matad"); // 4
     v1.add("S.Desp"); //5
-    v1.add("P.N"); // 6
-     v1.add("Nacido"); // 7
-    v1.add("P.C"); // 8
-    v1.add("Cebado"); // 9
-    v1.add("P.S"); // 10 
-    v1.add("Sacrif"); // 11
-    v1.add("Fec.Cad"); // 12
-    v1.add("Fec.Sac"); // 13
-    v1.add("Fec.Pro"); // 14
-    v1.add("N.Lin"); // 15
-    v1.add("C.Ind."); // 16 Cantidad de Indiv.
+    v1.add("P.SD"); // 6
+    v1.add("Despiezado"); // 7
+
+    v1.add("P.N"); // 8
+     v1.add("Nacido"); // 9
+    v1.add("P.C"); // 10
+    v1.add("Cebado"); // 11
+    v1.add("P.S"); // 12
+    v1.add("Sacrif"); // 13
+    v1.add("Fec.Cad"); // 14
+    v1.add("Fec.Sac"); // 15
+    v1.add("Fec.Pro"); // 16
+    v1.add("N.Lin"); // 17
+    v1.add("C.Ind."); // 18 Cantidad de Indiv.
     jtDes.setCabecera(v1);
     jtDes.setMaximumSize(new Dimension(743, 168));
     jtDes.setMinimumSize(new Dimension(743, 158));
     jtDes.setPreferredSize(new Dimension(743, 168));
-    jtDes.setAnchoColumna(new int[]{50,70,70,120,150,150,30,130,30,130,30,130,80,80,80,40,40});
-    jtDes.setAlinearColumna(new int[]{2,2,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2});
+    jtDes.setAnchoColumna(new int[]{50,70,70,120,150,150,30,130,30,130,30,130,30,130,80,80,80,40,40});
+    jtDes.setAlinearColumna(new int[]{2,2,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2});
     botonBascula = new BotonBascula(EU,this);
     ArrayList vc1=new ArrayList();
     acp_feccadE.setText("");
@@ -258,18 +230,20 @@ public class MantAlbComCarne extends MantAlbCom
     vc1.add(acp_clasiE); // 2
     vc1.add(acp_nucrotE); // 3
     vc1.add(acp_matadE); // 4 Matadero
-    vc1.add(acp_saldesE); // 5
-    vc1.add(acp_painacE.getFieldPaiCodi()); // 6
-    vc1.add(acp_painacE.getFieldPaiNomb()); // 7
-    vc1.add(acp_engpaiE.getFieldPaiCodi()); // 8
-    vc1.add(acp_engpaiE.getFieldPaiNomb()); // 9
-    vc1.add(acp_paisacE.getFieldPaiCodi()); // 10
-    vc1.add(acp_paisacE.getFieldPaiNomb()); // 11
-    vc1.add(acp_feccadE); // 12
-    vc1.add(acp_fecsacE); // 13
-    vc1.add(acp_fecproE); // 14
-    vc1.add(acp_numlinE); // 15
-    vc1.add(acp_canindE); // 16
+    vc1.add(acp_saldesE); // 5    
+    vc1.add(acp_paisdeE.getFieldPaiCodi()); // 6
+    vc1.add(acp_paisdeE.getFieldPaiNomb()); // 7
+    vc1.add(acp_painacE.getFieldPaiCodi()); // 8
+    vc1.add(acp_painacE.getFieldPaiNomb()); // 9
+    vc1.add(acp_engpaiE.getFieldPaiCodi()); // 10
+    vc1.add(acp_engpaiE.getFieldPaiNomb()); // 11
+    vc1.add(acp_paisacE.getFieldPaiCodi()); // 12
+    vc1.add(acp_paisacE.getFieldPaiNomb()); // 13
+    vc1.add(acp_feccadE); // 14
+    vc1.add(acp_fecsacE); // 15
+    vc1.add(acp_fecproE); // 16
+    vc1.add(acp_numlinE); // 17
+    vc1.add(acp_canindE); // 18
     jtDes.setAjusAncCol(false);
     jtDes.setColNueva(1);
     jtDes.setCampos(vc1);
@@ -317,6 +291,11 @@ public class MantAlbComCarne extends MantAlbCom
      {
        mensajeErr("Introduzca un PAIS DE SACRIFICIO");
        return JTD_PAISAC;
+     }
+     if (!acp_paisdeE.controlar(false) && !acp_paisdeE.isNull())
+     {
+       mensajeErr("Introduzca Pais de Sala Despiece");
+       return JTD_PAISDE;
      }
       if (getLinGrDes().equals(lineaAnt))
         return -1;
@@ -426,6 +405,11 @@ public class MantAlbComCarne extends MantAlbCom
                mensajeErr("PAIS DE SACRIFICIO Obligatorio para este producto");
                return JTD_PAISAC;
            }
+            if (acp_paisdeE.isNull())
+           {
+               mensajeErr("PAIS de Sala Depiece Obligatorio para este producto");
+               return JTD_PAISDE;
+           }
        }
        if (nav.pulsado == navegador.ADDNEW)
        {
@@ -439,19 +423,26 @@ public class MantAlbComCarne extends MantAlbCom
        return -1;
   }
    
-   @Override
+    /**
+     * Devuelve un String con todos los campos de la linea Desglose
+     * @return
+     */
+    @Override
   public String getLinGrDes()
   {
 //    numIndAnt=jtDes.getValorInt(JTD_NUMIND);
 //    System.out.println("Lin. Ant: "+numIndAnt);
     return acp_numindE.getValorInt()+""+acp_cantiE.getValorDec()+acp_clasiE.getText()+ acp_nucrotE.getText()+
-        acp_matadE.getText()+acp_saldesE.getText()+
+        acp_matadE.getText()+acp_saldesE.getText()+acp_paisdeE.getText()+
         acp_painacE.getText()+acp_engpaiE.getText()+
         acp_paisacE.getText()+acp_feccadE.getText()+acp_fecsacE.getText()+
         acp_fecproE.getText()+
         acp_numlinE.getValorInt()+
         acp_canindE.getValorInt();
   }
+  /**
+   * Guarda los valores de la linea de desglose en variables temporales
+   */
    @Override
   public void guardaUltValoresDesg(){
         ultCeb=acp_engpaiE.getText();
@@ -462,6 +453,7 @@ public class MantAlbComCarne extends MantAlbCom
         ultNac=acp_painacE.getText();
         ultSacr=acp_paisacE.getText();
         ultSalDes=acp_saldesE.getText();
+        ultPaiSde=acp_paisdeE.getText();
   }
   /**
    * 
@@ -481,10 +473,11 @@ public class MantAlbComCarne extends MantAlbCom
         imprEtiq(jt.getValString(JT_PROCOD), row, nInd);
 //    debug("guardaLinDes: row "+row+" nLiAlDe: "+nLiAlDe+" nInd: "+nInd);
        
-      jtDes.setValor(""+nInd,row,DESNIND);
+      jtDes.setValor(""+nInd,row,JTD_NUMIND);
       guardaLinDes(nLiAlDe,nInd,jtDes.getValString(row,JTD_CLASI),
                  Formatear.cortar(jtDes.getValString(row,JTD_NUMCRO),30),
-                 jtDes.getValString(row,JTD_PAINAC,true),
+                 jtDes.getValString(row,JTD_PAISDE,true),
+                 jtDes.getValString(row,JTD_PAINAC,true),                                
                  jtDes.getValDate(row,JTD_FECCAD),
                  jtDes.getValString(row,JTD_PAISAC,true),
                  jtDes.getValString(row,JTD_ENGPAI,true),
@@ -526,7 +519,7 @@ public class MantAlbComCarne extends MantAlbCom
  * @throws SQLException 
  */
   void guardaLinDes(int acp_numlin,int acp_numind,String acp_clasi,String acp_nucrot,
-                    String acp_painac,java.util.Date acp_feccad,String acp_paisac,
+                    String acp_paisde,String acp_painac,java.util.Date acp_feccad,String acp_paisac,
                     String acp_engpai,java.util.Date acp_fecsac,java.util.Date acp_fecpro,int pro_codi,
                     int acl_nulin,String acp_matad,String acp_saldes,
                     double acp_canti, int acp_canind) throws SQLException
@@ -546,6 +539,7 @@ public class MantAlbComCarne extends MantAlbCom
      dtAdd.setDato("acp_clasi",acp_clasi);
     dtAdd.setDato("acp_nucrot",acp_nucrot);
     dtAdd.setDato("acp_painac",acp_painac);
+    dtAdd.setDato("acp_paisde",acp_paisde);
     dtAdd.setDato("acp_feccad",acp_feccad);
     dtAdd.setDato("acp_paisac", acp_paisac);
     dtAdd.setDato("acp_engpai",acp_engpai); // Pais Engorde
@@ -560,25 +554,30 @@ public class MantAlbComCarne extends MantAlbCom
     
   }
   
- 
+  /**
+   * Pone los Datos trazabilidad en grid Desglose, pasados a traves de un arrayList
+   * @param v 
+   */
   void ponDatosTraza(ArrayList v)
   {       
           acp_clasiE.setText((String) v.get(0));
           acp_matadE.setText((String) v.get(1));
           acp_saldesE.setText((String) v.get(2));
-          acp_painacE.setText((String) v.get(3));
-          acp_engpaiE.setText((String) v.get(4));
-          acp_paisacE.setText((String) v.get(5));
-          acp_feccadE.setDate((java.util.Date) v.get(6));
-          acp_fecsacE.setDate((java.util.Date) v.get(7));          
+          acp_paisdeE.setText((String) v.get(3));
+          acp_painacE.setText((String) v.get(4));
+          acp_engpaiE.setText((String) v.get(5));
+          acp_paisacE.setText((String) v.get(6));
+          acp_feccadE.setDate((java.util.Date) v.get(7));
+          acp_fecsacE.setDate((java.util.Date) v.get(8));          
           jtDes.setValor( v.get(0),JTD_CLASI);
           jtDes.setValor( v.get(1),JTD_MATCODI);
           jtDes.setValor( v.get(2),JTD_SDECODI);
-          jtDes.setValor( v.get(3),JTD_PAINAC);
-          jtDes.setValor( v.get(4),JTD_ENGPAI);
-          jtDes.setValor( v.get(5),JTD_PAISAC);
-          jtDes.setValor(v.get(6),JTD_FECCAD);
-          jtDes.setValor( v.get(7),JTD_FECPRO);
+          jtDes.setValor( v.get(3),JTD_PAISDE);
+          jtDes.setValor( v.get(4),JTD_PAINAC);
+          jtDes.setValor( v.get(5),JTD_ENGPAI);
+          jtDes.setValor( v.get(6),JTD_PAISAC);
+          jtDes.setValor(v.get(7),JTD_FECCAD);
+          jtDes.setValor( v.get(8),JTD_FECPRO);
           Tpanel1.setSelectedIndex(0);          
           jtDes.requestFocusLater();
   }
@@ -651,20 +650,22 @@ public class MantAlbComCarne extends MantAlbCom
           acp_clasiE.setText((String) v.get(0));
           acp_matadE.setText((String) v.get(2));
           acp_saldesE.setText((String) v.get(3));
-          acp_painacE.setText((String) v.get(4));
-          acp_engpaiE.setText((String) v.get(5));
-          acp_paisacE.setText((String) v.get(6));
-          acp_feccadE.setDate((java.util.Date) v.get(7));
-          acp_fecsacE.setDate((java.util.Date) v.get(8));
+          acp_paisdeE.setText((String) v.get(4));
+          acp_painacE.setText((String) v.get(5));
+          acp_engpaiE.setText((String) v.get(6));
+          acp_paisacE.setText((String) v.get(7));
+          acp_feccadE.setDate((java.util.Date) v.get(8));
+          acp_fecsacE.setDate((java.util.Date) v.get(9));
           jtDes.setValor( v.get(1),JTD_CANTI);
           jtDes.setValor( v.get(0),JTD_CLASI);
           jtDes.setValor( v.get(2),JTD_MATCODI);
           jtDes.setValor( v.get(3),JTD_SDECODI);
-          jtDes.setValor( v.get(4),JTD_PAINAC);
-          jtDes.setValor( v.get(5),JTD_ENGPAI);
-          jtDes.setValor( v.get(6),JTD_PAISAC);
-          jtDes.setValor(v.get(7),JTD_FECCAD);
-          jtDes.setValor( v.get(8),JTD_FECPRO);
+          jtDes.setValor( v.get(4),JTD_PAISDE);
+          jtDes.setValor( v.get(5),JTD_PAINAC);
+          jtDes.setValor( v.get(6),JTD_ENGPAI);
+          jtDes.setValor( v.get(7),JTD_PAISAC);
+          jtDes.setValor(v.get(8),JTD_FECCAD);
+          jtDes.setValor( v.get(9),JTD_FECPRO);
 
           jtDes.mueveSigLinea();
 
@@ -711,6 +712,7 @@ public class MantAlbComCarne extends MantAlbCom
             acp_nucrotE.getText().equals(dtCon1.getString("acp_nucrot")) &&
             acp_matadE.getText().equals(dtCon1.getString("acp_matad")) &&
             acp_saldesE.getText().equals(dtCon1.getString("acp_saldes")) &&
+            acp_paisdeE.getText().equals(dtCon1.getString("acp_paisde")) &&
             acp_painacE.getText().equals(dtCon1.getString("acp_painac")) &&
             acp_engpaiE.getText().equals(dtCon1.getString("acp_engpai")) &&
             acp_paisacE.getText().equals(dtCon1.getString("acp_paisac")) &&
@@ -726,7 +728,7 @@ public class MantAlbComCarne extends MantAlbCom
     // int canInd=dtCon1.getInt("acp_canind");
     int nIndiv;
 //    int nLiAlDe=dtCon1.getInt("acl_nulin");
-    if (nInd!=nIndAnt && ARG_ADMIN)
+    if (nInd!=nIndAnt && isArgumentoAdmin())
         nIndiv=nInd;
     else
       nIndiv=utildesp.getMaxNumInd(dtCon1,jt.getValorInt(JT_PROCOD),acc_anoE.getValorInt(),emp_codiE.getValorInt(),
@@ -746,6 +748,7 @@ public class MantAlbComCarne extends MantAlbCom
   }
    /**
    * Imprime etiqueta
+     * @param proCodi
    * @param nLin Numero de linea del grid de desglose
    * @param nInd Numero de Individuo.
    * @throws SQLException
@@ -774,7 +777,7 @@ public class MantAlbComCarne extends MantAlbCom
     
     nombArt=pro_codiE.getNombArt(proCodi,emp_codiE.getValorInt());
     
-    String  matCodi=jtDes.getValString(nLin, JTD_MATCODI);
+//    String  matCodi=jtDes.getValString(nLin, JTD_MATCODI);
    
 //    sacrificadoE = pdmatadero.getRegistroSanitario(dtCon1, matCodi, false);
 //    s = "SELECT mat_nrgsa,pai_codi FROM v_matadero m WHERE m.mat_codi = " + matCodi;
@@ -787,7 +790,7 @@ public class MantAlbComCarne extends MantAlbCom
 //    }
 //    else
 //      sacrificadoE=matCodi+" NO ENCONTRADO";
-    String sdeCodi=jtDes.getValString(nLin,JTD_SDECODI);    
+   
 //    despiezadoE=pdsaladesp.getRegistroSanitario(dtCon1, sdeCodi, false);
 //    s = "SELECT sde_nrgsa,pai_codi FROM v_saladesp m " +
 //        " WHERE m.sde_codi = " + sdeCodi;
@@ -800,17 +803,23 @@ public class MantAlbComCarne extends MantAlbCom
 //    }
 //    else
 //      despiezadoE = sdeCodi + " NO ENCONTRADO";
-    matCodi=utildesp.getRegistroSanitario(false, dtStat, matCodi, jtDes.getValString(nLin, JTD_PAISAC));
+    String matadero=utildesp.getRegistroSanitario(false, dtStat, jtDes.getValString(nLin, JTD_MATCODI), jtDes.getValString(nLin, JTD_PAISAC));
+    String despiezado=utildesp.getRegistroSanitario(false, dtStat, jtDes.getValString(nLin,JTD_SDECODI),
+        jtDes.getValString(nLin, JTD_PAISDE));
     if (etiq == null)
       etiq = new etiqueta(EU);
+    String paisSalDesp=MantPaises.getNombrePais(jtDes.getValString(nLin, JTD_PAISDE), dtCon1);
+    if (paisSalDesp==null)
+        paisSalDesp="***";
+    
     String paisNacido=MantPaises.getNombrePais(jtDes.getValString(nLin, JTD_PAINAC), dtCon1);
     if (paisNacido==null)
-        paisNacido="Pais "+jtDes.getValString(nLin, JTD_PAINAC)+" NO encontrado";
+        paisNacido="***";
     String paisEngorde=MantPaises.getNombrePais(jtDes.getValString(nLin, JTD_ENGPAI), dtCon1);
     if (paisEngorde==null)
-        paisEngorde="Pais "+jtDes.getValString(nLin, JTD_ENGPAI)+" NO encontrado";
+        paisEngorde="***";
 
-    String paisSacrificio=MantPaises.getNombrePais(jtDes.getValString(nLin, JTD_PAISAC), dtCon1);
+//    String paisSacrificio=MantPaises.getNombrePais(jtDes.getValString(nLin, JTD_PAISAC), dtCon1);
 //    if (paisSacrificio==null)
 //        paisSacrificio="Pais "+jtDes.getValString(nLin, JTD_PAISAC)+" NO encontrado";
     
@@ -818,11 +827,11 @@ public class MantAlbComCarne extends MantAlbCom
                  proCodi, nombArt,
                  paisNacido,
                  paisEngorde,
-                 sdeCodi,
+                 despiezado,
                  Formatear.cortar(jtDes.getValString(nLin, JTD_NUMCRO),30),
                  jtDes.getValorDec(nLin, JTD_CANTI),
                  getConservar(jt.getValorInt(JT_PROCOD)),
-                 matCodi,   acc_fecrecE.getDate() ,
+                 matadero,   acc_fecrecE.getDate() ,
                  jtDes.getValDate(nLin,JTD_FECPRO) ,
                  jtDes.getValDate(nLin,JTD_FECCAD) ,
                  jtDes.getValDate(nLin, JTD_FECSAC));
@@ -841,24 +850,32 @@ public class MantAlbComCarne extends MantAlbCom
     mensajeErr("Etiqueta ... Listada");  
   }
    @Override
-  public void copiaJtValorAnt()
+  public void copiaJtValorAnt() throws SQLException
   {
     if (ultMat!=null)
     {
         jtDes.setValor(ultMat,  JTD_MATCODI);
         jtDes.setValor(ultSalDes, JTD_SDECODI);
+        jtDes.setValor(ultPaiSde, JTD_PAISDE);
         jtDes.setValor(ultNac, JTD_PAINAC);
         jtDes.setValor(ultCeb, JTD_ENGPAI);
         jtDes.setValor(ultSacr, JTD_PAISAC );
         jtDes.setValor(ultFecCad, JTD_FECCAD );
         jtDes.setValor(ultFecSac, JTD_FECSAC);
         jtDes.setValor(ultFecPro, JTD_FECPRO);
-        jtDes.setValor("0",JTD_NUMLIN);
+        jtDes.setValor(0,JTD_NUMLIN);
+    }
+    else
+    {
+        jtDes.setValor(prv_codiE.getNumeroRegistroSanitario(), JTD_SDECODI);
+        jtDes.setValor(prv_codiE.getInicialesPais(dtStat), JTD_PAISDE);
+        jtDes.setValor(MantPaises.getNombrePais(prv_codiE.getPais(),dtStat), JTD_PASDNO);
     }
   }
    @Override
   public void PADAddNew0()
   {
+    acp_paisdeE.resetCambio();
     acp_painacE.resetCambio();
     acp_paisacE.resetCambio();
     acp_engpaiE.resetCambio();
@@ -1055,6 +1072,8 @@ public class MantAlbComCarne extends MantAlbCom
 //                     " NO ENCONTRADO");
 
       v.add(dtCon1.getString("acp_saldes"));
+      v.add(dtCon1.getString("acp_paisde",true));
+      v.add(getPais(dtCon1.getString("acp_paisde",true)));
       v.add(dtCon1.getString("acp_painac"));
       v.add(getPais(dtCon1.getString("acp_painac")));
       v.add(dtCon1.getString("acp_engpai"));

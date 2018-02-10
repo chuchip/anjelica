@@ -22,7 +22,9 @@ package gnu.chu.anjelica.despiece;
  * @author chuchiP
  * @version 1.1
  */
-
+/**
+ * @todo Incluir Nombre Pais del Matadero en trazabilidad
+ */
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.DatIndivBase;
@@ -42,7 +44,7 @@ import org.apache.log4j.Logger;
 
 public class utildesp
 {
-  boolean swForzaTraza=false;
+  private boolean swForzaTraza=false;
   DatIndivBase datInd=new DatIndivBase();
   private String tipoProduc="N";
   private String idioma=null;
@@ -61,38 +63,42 @@ public class utildesp
   private int repiteIndiv=0;
   private boolean buscaIndDesp=false;
   private Date fecCadDesp;
-
-  private boolean  swBuscaCompra=false;
-  private java.util.Date fecCadPrvE,fecCompraE,fecDespE,fecProdE;
+  boolean  deoDesnue; 
+  private String sdeEmp;
+  private int paisEmp;
+  private boolean  opVerDatosCompra=false; // Ver datos de la Compra (Ignorar registros en stockpartidas y desp.)
+  private java.util.Date fecCadPrvE,fecCompraE,fecDespE,fecProdE,fecSacPrvE,fecProdPrvE;
   
  // private int deoNumdes=0;
-  public boolean swDesp; // Indica si el individuo salio de un despiece
+  private boolean swDesp; // Indica si el individuo salio de un despiece
   private String msgAviso;
   private Date deoFecval;
   public String fecrepL;
   public String fecrecepE;
-  public String paisNacimientoNombre,paisEngordeNombre,despiezadoE,ntrazaE,sacrificadoE;
+  private String ntrazaE,ntrazaPrv;
   private String conservarE;
-  public String despiezadoD;
+//  public String despiezadoD;
   public String accSerie;
   public int deoAno,deoCodi,accNume,accAno;
   public double accPrcom;
-  int paiEmp;
-  String empRGSA;
+  
+
   public java.util.Date fecSacrE=null;
   public int proCodiDes;
   boolean dtRes;
-  public String feccadE=null;
-  public Date feccadD=null;
+  //private String feccadE=null;
+  Date feccadE=null; // Fecha Caducidad
+  
   boolean cambio=true;
   public int prvCodi=0;
-  private String acp_painac,acp_engpai,acp_paisac;
-  private String stp_matad,stp_saldes;
-  private String mat_nrgsa,sde_nrgsa,paisSacrificioNombre;
+  private String acp_paisde,acp_painac,acp_engpai,acp_paisac,acpPainacPrv,acpEngpaiPrv,acpPaisacPrv,acpPaisdePrv;
+  
+  private String stp_matad,stpMatadPrv,salaDesp,salaDespPrv;
+  //private String paisSacrificioNombre;
 // Variables Cabecera de Despiece
   int ejeNume, empCodi, numDesp;
   int almDest, almOrig;
-  DatosTabla dtAdd;
+  DatosTabla dtAdd,dtStat;
   int grdNume=0;
   EntornoUsuario EU;
 //  ActualStkPart actStkPart;
@@ -101,7 +107,7 @@ public class utildesp
 
   Logger loger = Logger.getLogger(utildesp.class.getName());
   public int prvCompra;
-  private boolean swSaltaDespInt=false;
+  //private boolean swSaltaDespInt=false;
   private boolean swAlbInt=false;
   private int  ejeLotY,proLoteY,  empLotY ;
   private boolean swPaisCorto=false; // Especifica si pone el nombre del pais o las siglas del pais.
@@ -124,19 +130,19 @@ public class utildesp
    * Especifica si se deben saltar los albaranes de compra internos
    * @param saltaDespInt 
    */
-  public void setSaltaDespInt(boolean saltaDespInt)
-  {
-    swSaltaDespInt = saltaDespInt;
-  }
+//  public void setSaltaDespInt(boolean saltaDespInt)
+//  {
+//    swSaltaDespInt = saltaDespInt;
+//  }
 /**
  * @deprecated 
  * Devuelve si se deben saltar los albaranes de compra internos
  * @return 
  */
-  public boolean getSaltaDespInt()
-  {
-    return swSaltaDespInt;
-  }
+//  public boolean getSaltaDespInt()
+//  {
+//    return swSaltaDespInt;
+//  }
 
   public boolean isCompraInterna()
   {
@@ -181,26 +187,7 @@ public class utildesp
   {
     return busDatInd(serie,proCodi,empLot,ejeLot,proLote,proIndi,0,dtCon1,dtStat,EU);
   }
-  /**
-   * Busca datos de compra de un lote.
-   * @param serie Serie del individuo
-   * @param proCodi Produco
-   * @param empLot
-   * @param ejeLot
-   * @param proLote
-     * @param nInd
-   * @param dt1
-   * @param dt2
-   * @param EU
-   * @return  true si encuentra los datos del individuo
-   * @throws java.sql.SQLException
-   */
-  public boolean buscaDatCompra(String serie, int proCodi,int empLot,int ejeLot,
-          int proLote,int nInd,DatosTabla dt1,DatosTabla dt2,EntornoUsuario EU) throws SQLException
-  {
-      setBuscaCompra(true);
-      return buscaDatosIndiv(serie, proCodi, empLot, ejeLot, proLote, nInd, 0,dt1, dt2, EU);
-  }
+ 
   /**
    * Busca datos de trazabilidad de un individio en particular
    * @param serie String
@@ -223,7 +210,7 @@ public class utildesp
             int proIndi,
             int almCodi, DatosTabla dtCon1, DatosTabla dtStat,
             EntornoUsuario EU) throws SQLException {
-        setBuscaCompra(false);
+        
         return buscaDatosIndiv(serie, proCodi, empLot, ejeLot, proLote, proIndi, almCodi, dtCon1, dtStat, EU);
     }
     
@@ -245,19 +232,23 @@ public class utildesp
         dtAdd.edit();
         dtAdd.setDato("stp_feccad",getFechaCaducidad());
         dtAdd.setDato("stp_fecpro",getFechaProduccion());
-        dtAdd.setDato("stp_nucrot",getNumCrot());
+        dtAdd.setDato("stp_nucrot",getNumeroCrotal());
+        dtAdd.setDato("stp_paisde",acp_paisde);
         dtAdd.setDato("stp_painac",acp_painac);
         dtAdd.setDato("stp_engpai",acp_engpai);
         dtAdd.setDato("stp_paisac",acp_paisac);
-        dtAdd.setDato("stp_fecsac",getFecSacrif());        
+        dtAdd.setDato("stp_fecsac",getFechaSacrificio());        
         dtAdd.setDato("stp_matad",stp_matad);
-        dtAdd.setDato("stp_saldes",stp_saldes);
+        dtAdd.setDato("stp_saldes",salaDesp);
         dtAdd.setDato("stp_traaut",0);
         dtAdd.setDato("stp_fefici","current_timestamp");
         dtAdd.update();
         return true;
     }
-    
+    /**
+     * Indica si la trazabilidad esta forzada en stock-Partidas
+     * @return 
+     */
     public boolean isForzadaTrazab()
     {
         return swForzaTraza;
@@ -272,140 +263,137 @@ public class utildesp
    * @param proIndi int si es 0 no buscar individuo.
    * @param almCodi int
    * @param dtCon1 DatosTabla
-   * @param dtStat DatosTabla
+   * @param dtStat DatosTabla (este DatossTabla es guardado para futuros usos de buscar paises)
    * @param EU EntornoUsuario
    * @throws SQLException
    * @throws ParseException
    * @return boolean true si encuentra los datos del individuo
    */
     private boolean buscaDatosIndiv(String serie, int proCodi, int empLot,
-            int ejeLot, int proLote,
-            int proIndi,
-            int almCodi, DatosTabla dtCon1, DatosTabla dtStat,
-            EntornoUsuario EU) throws SQLException {
+        int ejeLot, int proLote,
+        int proIndi,
+        int almCodi, DatosTabla dtCon1, DatosTabla dtStat,
+        EntornoUsuario EU) throws SQLException
+    {
+        this.dtStat=dtStat;
         prvCodi = 0;
-    
-    datInd.setProducto(proCodi);
-    datInd.setEjercLot(ejeLot);
-    datInd.setSerie(serie);    
-    datInd.setLote(proLote);
-    datInd.setNumind(proIndi);
-    datInd.setAlmCodi(almCodi);
-    
-//    debug("Buscando Datos Indiv. Prod: "+proCodi+" Lote: "+serie+"/"+proLote+"-"+proIndi,EU);
-    int proCodiOrig=proCodi;
-    String s;
-    fecProdE=null;
-    fecDespE=null;
-    msgAviso = null;
-    boolean busca = true;
-    int nVuelta = 0;
-    swDesp = false;
-    swAlbInt=false;
-    ntrazaE = null;
-    sacrificadoE = "";
-    despiezadoE = null;
-    paisNacimientoNombre = null;
-    paisEngordeNombre = null;
-    fecSacrE = null;
-    
-    feccadE=null;
-    fecCadDesp=null;
-    deoCodi=0;
-    boolean deoDesnue=false;
-    deoAno=0;
-    accSerie="";
-    accAno=0;
-    accNume=0;
-    accPrcom=-1;
-    prvCompra=0;
-    fecCompraE=null;
-    fecCadPrvE=null;
-    ejeLotY=0;
-    proLoteY = 0;
-    empLotY = 0;
-    acp_painac=null;
-    acp_engpai=null;
-    acp_paisac=null;
-    fecSacrE=null;
-    stp_matad="";
-    stp_saldes="";
-    boolean swTidCodi;
-    swForzaTraza=false;
-    if (ActualStkPart.checkIndiv(dtStat, datInd.getProducto(), datInd.getEjercLot(),0,
-            datInd.getSerie(), datInd.getLote(), datInd.getNumind(),datInd.getAlmCodi(),false))
-    {
-        feccadE=dtStat.getFecha("stp_feccad","dd-MM-yyyy");
-        feccadD=dtStat.getDate("stp_feccad");
-        if (feccadE.equals(""))
-            feccadE=null;
-        fecProdE=dtStat.getDate("stp_fecpro");
-        ntrazaE=dtStat.getString("stp_nucrot",false);
-        acp_painac=dtStat.getString("stp_painac",false);
-        acp_engpai=dtStat.getString("stp_engpai",false);
-        acp_paisac=dtStat.getString("stp_paisac",false);
-        fecSacrE=dtStat.getDate("stp_fecsac");
-        stp_matad=dtStat.getString("stp_matad",true);
-        stp_saldes=dtStat.getString("stp_saldes",true);        
-        swForzaTraza=dtStat.getInt("stp_traaut")==0;
-    }
-    if (!pdempresa.checkEmpresa(dtCon1, empLot))
-    {
-      msgAviso = "No encontrados datos de Empresa: " + empLot;
-      return false;
-    }
-   paiEmp = dtCon1.getInt("pai_codi",true);
-   empRGSA = dtCon1.getString("emp_nurgsa");
-   
-   while (busca)
-   {
-      nVuelta++;
-      if (nVuelta > 20)
-      {
-        msgAviso = "Mas de " + nVuelta + " depieces consecutivos " + empLot +
-            "-" + dtCon1.getInt("eje_nume") +
-            "-" + dtCon1.getInt("deo_codi") + " Busqueda cancelada";
-        sacrificadoE="-----";
-        paisNacimientoNombre="----";
-        return false;
-      }
-      // Primero busco en Compras el Individuo mandado.
-      s = "select *, acl_prcom  as prcom  "+
-         " from  v_compras " +
-          " WHERE acc_ano = " + ejeLot +
-          (empLot==0?"": " and emp_codi = " + empLot )+          
-          " and acc_serie = '" + serie + "'" +
-          " and acc_nume = " + proLote +
-          (proIndi==0?(proCodi!=0?"":" and pro_codi = " + proCodi )          
-          :" and acp_numind = " + proIndi )+
-          (proCodi!=0?"":" and pro_codi = " + proCodi )+
-          (almCodi!=0?" and alm_codi = "+almCodi:"");
+        datInd.setProducto(proCodi);
+        datInd.setEjercLot(ejeLot);
+        datInd.setSerie(serie);
+        datInd.setLote(proLote);
+        datInd.setNumind(proIndi);
+        datInd.setAlmCodi(almCodi);
 
-      dtRes=dtStat.select(s);
-      if (!dtRes )
-      {
-        // No encontrado individuo  en compras, lo busco en salidas de despieces
-        s = "SELECT * FROM v_despsal "+
-            " WHERE pro_codi = " + proCodi +
-            " and def_ejelot = " + ejeLot +
-            " and def_serlot = '" + serie + "'" +
-            " and pro_lote = " + proLote +
-            " and "+(proIndi==0?" pro_codi= "+proCodi
-            :" pro_numind = " + proIndi)+
-            (almCodi!=0?" and deo_almdes = "+almCodi:"")+
-            " order by def_tiempo desc";
-        if (!dtCon1.select(s))
-        {
-          msgAviso = "No encontrado origen de Individuo en Compras o Despieces";
-          return false;
+//    debug("Buscando Datos Indiv. Prod: "+proCodi+" Lote: "+serie+"/"+proLote+"-"+proIndi,EU);
+        int proCodiOrig = proCodi;
+        String s;
+        fecProdE = null;
+        fecDespE = null;
+        msgAviso = null;
+        boolean busca = true;
+        int nVuelta = 0;
+        swDesp = false;
+        swAlbInt = false;
+        ntrazaE = null;
+        fecSacrE = null;
+
+        feccadE = null;
+        fecCadDesp = null;
+        deoCodi = 0;
+        deoDesnue = false;
+        deoAno = 0;
+        accSerie = "";
+        accAno = 0;
+        accNume = 0;
+        accPrcom = -1;
+        prvCompra = 0;
+        fecCompraE = null;
+        fecCadPrvE = null;
+        fecProdPrvE=null;
+        fecSacPrvE=null;
+        ejeLotY = 0;
+        proLoteY = 0;
+        empLotY = 0;
+        acp_paisde=null; acp_painac = null; acp_engpai = null;acp_paisac = null;
+        acpEngpaiPrv=null;acpPainacPrv=null;acpPaisacPrv=null;acpPaisdePrv=null;
+        fecSacrE = null;
+        stp_matad = "";
+        stpMatadPrv="";
+        salaDesp = "";
+        salaDespPrv="";
+        boolean swTidCodi;
+        swForzaTraza = false;
+        if (ActualStkPart.checkIndiv(dtStat, datInd.getProducto(), datInd.getEjercLot(), 0,
+            datInd.getSerie(), datInd.getLote(), datInd.getNumind(), datInd.getAlmCodi(), false) && !opVerDatosCompra)
+        { // Pongo los datos de Stock-partidas
+            prvCodi= dtStat.getInt("prv_codi",true);
+            feccadE = dtStat.getDate("stp_feccad");
+            fecProdE = dtStat.getDate("stp_fecpro");
+            ntrazaE = dtStat.getString("stp_nucrot", false);
+            acp_painac = dtStat.getString("stp_painac", false);
+            acp_paisde = dtStat.getString("stp_paisde", false);
+            acp_engpai = dtStat.getString("stp_engpai", false);
+            acp_paisac = dtStat.getString("stp_paisac", false);
+            fecSacrE = dtStat.getDate("stp_fecsac");
+            stp_matad = dtStat.getString("stp_matad", true);
+            salaDesp = dtStat.getString("stp_saldes", true);
+            swForzaTraza = dtStat.getInt("stp_traaut") == 0;
         }
-        if (accPrcom==-1)
-             accPrcom=dtCon1.getDouble("def_prcost",true);
-        swTidCodi=false;
-        if (tidCodi==0 || tidCodi==dtCon1.getInt("tid_codi"))
-            swTidCodi=true;
-        if (!deoDesnue && !swForzaTraza)
-            deoDesnue=dtCon1.getString("deo_desnue").equals("S");
+        if (!pdempresa.checkEmpresa(dtCon1, empLot))
+        {
+            msgAviso = "No encontrados datos de Empresa: " + empLot;
+            return false;
+        }
+        sdeEmp = dtCon1.getString("emp_nurgsa");
+        paisEmp=dtCon1.getInt("pai_codi", true);
+        
+        while (busca)
+        {
+            nVuelta++;
+            if (nVuelta > 20)
+            {
+                msgAviso = "Mas de " + nVuelta + " depieces consecutivos " + empLot
+                    + "-" + dtCon1.getInt("eje_nume")
+                    + "-" + dtCon1.getInt("deo_codi") + " Busqueda cancelada";
+                return false;
+            }
+            // Primero busco en Compras el Individuo mandado.
+            s = "select *, acl_prcom  as prcom  "
+                + " from  v_compras "
+                + " WHERE acc_ano = " + ejeLot
+                + (empLot == 0 ? "" : " and emp_codi = " + empLot)
+                + " and acc_serie = '" + serie + "'"
+                + " and acc_nume = " + proLote
+                + (proIndi == 0 ? (proCodi != 0 ? "" : " and pro_codi = " + proCodi)
+                    : " and acp_numind = " + proIndi)
+                + (proCodi != 0 ? "" : " and pro_codi = " + proCodi)
+                + (almCodi != 0 ? " and alm_codi = " + almCodi : "");
+
+            dtRes = dtStat.select(s);
+            if (!dtRes)
+            {
+                // No encontrado individuo  en compras, lo busco en salidas de despieces
+                s = "SELECT * FROM v_despsal "
+                    + " WHERE pro_codi = " + proCodi
+                    + " and def_ejelot = " + ejeLot
+                    + " and def_serlot = '" + serie + "'"
+                    + " and pro_lote = " + proLote
+                    + " and " + (proIndi == 0 ? " pro_codi= " + proCodi
+                        : " pro_numind = " + proIndi)
+                    + (almCodi != 0 ? " and deo_almdes = " + almCodi : "")
+                    + " order by def_tiempo desc";
+                if (!dtCon1.select(s))
+                {
+                    msgAviso = "No encontrado origen de Individuo en Compras o Despieces";
+                    return false;
+                }
+                if (accPrcom == -1)
+                    accPrcom = dtCon1.getDouble("def_prcost", true);
+                swTidCodi = false;
+                if (tidCodi == 0 || tidCodi == dtCon1.getInt("tid_codi"))
+                    swTidCodi = true; // Encontrado en despiece, con tidCodi valido
+                if (!deoDesnue && !swForzaTraza)
+                    deoDesnue = dtCon1.getString("deo_desnue").equals("S"); // Despiece nuestro.
 //        }
 //        else
 //        {
@@ -413,215 +401,214 @@ public class utildesp
 //                System.out.println("update desporig set tid_codi=9997 where eje_nume="+dtCon1.getInt("eje_nume")+
 //                     " and deo_codi= "+dtCon1.getInt("deo_codi")+" ant tid_codi= "+dtCon1.getInt("tid_codi")+";");
 //        }
-        // Busco el producto de origen en despiece entrada.
-        s = "SELECT d.* FROM v_despori as d "
+                // Busco el producto de origen en despiece entrada.
+                s = "SELECT d.* FROM v_despori as d "
                     + " WHERE d.eje_nume = " + dtCon1.getInt("eje_nume")
                     + " and d.deo_codi = " + dtCon1.getInt("deo_codi")
                     + " order by deo_codi,del_numlin";
-        if (!dtStat.select(s))
-        {
-                msgAviso = "NO encontrado cabecera de Despiece: "
+                if (!dtStat.select(s))
+                {
+                    msgAviso = "NO encontrado cabecera de Despiece: "
                         + (EU != null ? EU.em_cod + "-" : "") + dtCon1.getInt("eje_nume")
                         + "-" + dtCon1.getInt("deo_codi") + " Para Individ: "
                         + empLot + "|" + ejeLot + "-" + proCodi + ":" + serie + proLote + "-" + proIndi;
-                return false;
-        }
-         if (buscaIndDesp)
-         {
-             String ind;
-             do
-             {
-               ind=getIndividuo(dtStat.getInt("pro_codi"),
-                        dtStat.getInt("deo_ejelot"),
-                        dtStat.getInt("deo_emplot"),
-                        dtStat.getInt("pro_lote"),
-                        dtStat.getInt("pro_numind"),
-                        dtStat.getString("deo_serlot"));
-//               System.out.println("ind desp: "+ind);
-               indiv.add(ind);
-               if (! checkRepetic(indiv,ind) )
-                   break;
-//                 System.out.println("pues esta repetido el individuo: "+ind);
-             } while (dtStat.next());
-//             if (dtStat.isLast())
-//                 msgAviso = "Individuo repetido mas de " + repiteIndiv + "veces \n";
-         }
-         
-        if (prvCodi==0 && swTidCodi)
-        {
-          prvCodi = dtStat.getInt("prv_codi", true);
-          deoCodi=dtStat.getInt("deo_codi");
-          deoAno=dtStat.getInt("eje_nume");
-          fecDespE=dtStat.getDate("deo_fecha");
-          if (fecProdE==null)
-            fecProdE=dtStat.getDate("deo_fecpro");
-        }
+                    return false;
+                }
+                if (buscaIndDesp)
+                {
+                    String ind;
+                    do
+                    {
+                        ind = getIndividuo(dtStat.getInt("pro_codi"),
+                            dtStat.getInt("deo_ejelot"),
+                            dtStat.getInt("deo_emplot"),
+                            dtStat.getInt("pro_lote"),
+                            dtStat.getInt("pro_numind"),
+                            dtStat.getString("deo_serlot"));
+                        indiv.add(ind);
+                        if (!checkRepetic(indiv, ind))
+                            break;//               
+                    } while (dtStat.next());
+                }
 
-        serie = dtStat.getString("deo_serlot");
-        proCodi = dtStat.getInt("pro_codi");
-        proCodiDes=proCodi;
-        empLot = dtStat.getInt("deo_emplot");
-        ejeLot = dtStat.getInt("deo_ejelot");
-        proLote = dtStat.getInt("pro_lote");
-        proIndi = dtStat.getInt("pro_numind");
+                if (prvCodi == 0 && swTidCodi)
+                {
+                    prvCodi = dtStat.getInt("prv_codi", true);
+                    deoCodi = dtStat.getInt("deo_codi");
+                    deoAno = dtStat.getInt("eje_nume");
+                    fecDespE = dtStat.getDate("deo_fecha");
+                    if (fecProdE == null)
+                        fecProdE = dtStat.getDate("deo_fecpro");
+                }
+                serie = dtStat.getString("deo_serlot"); // Serie Producto Origen
+                proCodi = dtStat.getInt("pro_codi");
+                proCodiDes = proCodi;
+                empLot = dtStat.getInt("deo_emplot");
+                ejeLot = dtStat.getInt("deo_ejelot");
+                proLote = dtStat.getInt("pro_lote");
+                proIndi = dtStat.getInt("pro_numind");
 //        debug("Encontrado en Desp: "+dtCon1.getInt("deo_codi")+" Viene de Prod: "+proCodi+" Lote: "+serie+"/"+proLote+"-"+proIndi,EU);
-        if ( swTidCodi)
-        {
-            if (!swDesp)
-            {
-                fecrepL = "Fec.Prod";
-                fecrecepE = dtStat.getFecha("deo_fecha", "dd-MM-yyyy");
+                if (swTidCodi)
+                {
+                    if (!swDesp)
+                    {
+                        fecrepL = "Fec.Prod";
+                        fecrecepE = dtStat.getFecha("deo_fecha", "dd-MM-yyyy");
+                    }
+                    if (feccadE == null && dtCon1.getObject("def_feccad") != null )
+                        feccadE = dtCon1.getDate("def_feccad");
+                    if (fecCadDesp == null && dtCon1.getObject("def_feccad") != null)
+                        fecCadDesp = dtCon1.getDate("def_feccad");
+                    swDesp = true;
+                }
             }
-            if (feccadE==null && dtCon1.getObject("def_feccad") != null)
-            {
-                feccadE = dtCon1.getFecha("def_feccad", "dd-MM-yyyy");
-                feccadD=dtCon1.getDate("def_feccad");
-            }
-            if (fecCadDesp==null && dtCon1.getObject("def_feccad") != null)
-                fecCadDesp=dtCon1.getDate("def_feccad");
-            swDesp = true;
-        }
-      }
-      else
-      { // Encontrado en Compras.
-          accNume=dtStat.getInt("acc_nume");
-          accAno=dtStat.getInt("acc_ano");
-          accSerie=dtStat.getString("acc_serie");
-          proCodiCompra=proCodi;
-          proLoteCompra=proLote;
-          proSerieCompra=serie;
-          proIndiCompra=proIndi;
-          ejeLotCompra=ejeLot;
+            else
+            { // Encontrado en Compras.
+                accNume = dtStat.getInt("acc_nume");
+                accAno = dtStat.getInt("acc_ano");
+                accSerie = dtStat.getString("acc_serie");
+                proCodiCompra = proCodi;
+                proLoteCompra = proLote;
+                proSerieCompra = serie;
+                proIndiCompra = proIndi;
+                ejeLotCompra = ejeLot;
 //        debug("Encontrado en Compras. Lote: "+proLote+"  Prod: "+proCodi+" Lote: "+serie+"/"+proLote+"-"+proIndi,EU);
-          if (swSaltaDespInt && dtStat.getString("acc_serie").equals(EntornoUsuario.SERIEY))
-          { // Albaran Interno. Saltarlo.
-            s="SELECT * FROM v_albcopave WHERE emp_codi = "+empLot+
-                " and acc_ano = "+ejeLot+
-                " and acc_serie = '"+serie+"'"+
-                " and acc_nume = "+proLote+
-                " and acl_nulin = "+dtStat.getInt("acl_nulin")+
-                " and acp_numlin = "+dtStat.getInt("acp_numlin");
-            if (dtCon1.select(s))
-            { // Pongo datos albaran venta.
-              ejeLotY=ejeLot;
-              proLoteY=proLote;
-              empLotY=empLot;
-              proCodi=dtCon1.getInt("pro_codi");
-              ejeLot=dtCon1.getInt("avp_ejelot");
-              serie=dtCon1.getString("avp_serlot");
-              proLote=dtCon1.getInt("avp_numpar");
-              proIndi=dtCon1.getInt("avp_numind");
-              swAlbInt=true;
-              continue;
-            }
-          }
-          if (prvCodi==0)
-          {
-            prvCodi = dtStat.getInt("prv_codi", true);
-            accSerie=dtStat.getString("acc_serie");
-            accNume=dtStat.getInt("acc_nume");
-            accAno=dtStat.getInt("acc_ano");
-          }
-          if (prvCompra==0)
-          {
-            prvCompra=dtStat.getInt("prv_codi", true);
-            fecCompraE=dtStat.getDate("acc_fecrec");
-          }
-          if (accPrcom==-1)
-            accPrcom=dtStat.getDouble("prcom",true);
+//                if (swSaltaDespInt && dtStat.getString("acc_serie").equals(EntornoUsuario.SERIEY))
+//                { // Albaran Interno. Saltarlo.
+//                    s = "SELECT * FROM v_albcopave WHERE emp_codi = " + empLot
+//                        + " and acc_ano = " + ejeLot
+//                        + " and acc_serie = '" + serie + "'"
+//                        + " and acc_nume = " + proLote
+//                        + " and acl_nulin = " + dtStat.getInt("acl_nulin")
+//                        + " and acp_numlin = " + dtStat.getInt("acp_numlin");
+//                    if (dtCon1.select(s))
+//                    { // Pongo datos albaran venta.
+//                        ejeLotY = ejeLot;
+//                        proLoteY = proLote;
+//                        empLotY = empLot;
+//                        proCodi = dtCon1.getInt("pro_codi");
+//                        ejeLot = dtCon1.getInt("avp_ejelot");
+//                        serie = dtCon1.getString("avp_serlot");
+//                        proLote = dtCon1.getInt("avp_numpar");
+//                        proIndi = dtCon1.getInt("avp_numind");
+//                        swAlbInt = true;
+//                        continue;
+//                    }
+//                }
+                if (prvCodi == 0)
+                { // Sin proveedor.
+                    prvCodi = dtStat.getInt("prv_codi", true);
+                    accSerie = dtStat.getString("acc_serie");
+                    accNume = dtStat.getInt("acc_nume");
+                    accAno = dtStat.getInt("acc_ano");
+                }
+                if (prvCompra == 0)
+                { // Sin proveedor de albaran compra
+                    prvCompra = dtStat.getInt("prv_codi", true);
+                    fecCompraE = dtStat.getDate("acc_fecrec");
+                }
+                if (accPrcom == -1)
+                    accPrcom = dtStat.getDouble("prcom", true);
 
-          if (feccadE==null)
-          {
-            feccadE=dtStat.getFecha("acp_feccad","dd-MM-yyyy");
-            feccadD=dtStat.getDate("acp_feccad");
-          }
-          fecCadPrvE=dtStat.getDate("acp_feccad");
-          if (fecSacrE==null)
-            fecSacrE=dtStat.getDate("acp_fecsac");
-          if (fecProdE==null)
-            fecProdE=dtStat.getDate("acp_fecpro");
+                if (feccadE == null)
+                    feccadE = dtStat.getDate("acp_feccad");                
+                fecCadPrvE = dtStat.getDate("acp_feccad");
+               
+                if (fecProdE==null)
+                    fecProdE=dtStat.getDate("acp_fecpro");
+                fecProdPrvE = dtStat.getDate("acp_fecpro");
+                
+                if (fecSacrE == null)
+                    fecSacrE = dtStat.getDate("acp_fecsac");
+                fecSacPrvE=dtStat.getDate("acp_fecsac");
+                if (!swDesp)
+                {
+                    fecrepL = "Fec.Recep:";
+                    fecrecepE = dtStat.getFecha("acc_fecrec", "dd-MM-yyyy");
+                }
+//          if (swBuscaCompra)
+//              return true;
+                if (acp_painac == null)
+                    acp_painac = dtStat.getString("acp_painac");
+                acpPainacPrv=dtStat.getString("acp_painac");
+                if (acp_paisde == null)
+                    acp_paisde = dtStat.getString("acp_paisde");
+                acpPaisdePrv=dtStat.getString("acp_paisde");                
+                
+                
+//                paisNacimientoNombre = MantPaises.getNombrePais(acp_painac, dtCon1);
+//                if (paisNacimientoNombre == null)
+//                {
+//                    msgAviso = "No encontrado PAIS NACIMIENTO: " + acp_painac;
+//                    paisNacimientoNombre = "";
+//                }
+                if (acp_engpai == null)
+                    acp_engpai = dtStat.getString("acp_engpai");
+                acpEngpaiPrv=dtStat.getString("acp_engpai");
+//                paisEngordeNombre = MantPaises.getNombrePais(acp_engpai, dtCon1);
+//                if (paisEngordeNombre == null)
+//                {
+//                    msgAviso = "No encontrado PAIS CEBADO: " + acp_engpai;
+//                    paisEngordeNombre = "";
+//                }
+                if (stp_matad.isEmpty())
+                    stp_matad = dtStat.getString("acp_matad");
+                
+                stpMatadPrv = dtStat.getString("acp_matad");               
+//                sacrificadoE = getRegistroSanitario(false, dtCon1, stp_matad, dtStat.getString("acp_paisac"));
 
-          if (!swDesp)
-          {
-            fecrepL = "Fec.Recep:";
-            fecrecepE = dtStat.getFecha("acc_fecrec", "dd-MM-yyyy");
-          }
-          if (swBuscaCompra)
-              return true;
-          if (acp_painac==null)
-            acp_painac=dtStat.getString("acp_painac");
-          paisNacimientoNombre=MantPaises.getNombrePais(acp_painac, dtCon1);         
-          if (paisNacimientoNombre==null)
-          {
-            msgAviso = "No encontrado PAIS NACIMIENTO: " +  acp_painac;
-            paisNacimientoNombre = "";
-          }
-          if (acp_engpai==null)
-            acp_engpai=dtStat.getString("acp_engpai");
-          paisEngordeNombre=MantPaises.getNombrePais(acp_engpai, dtCon1);         
-          if (paisEngordeNombre==null)
-          {
-            msgAviso = "No encontrado PAIS CEBADO: " +  acp_engpai;
-            paisEngordeNombre = "";
-          }
-          if (stp_matad.isEmpty())
-            stp_matad = dtStat.getString("acp_matad");
-          sacrificadoE=stp_matad;
-          mat_nrgsa=sacrificadoE;
-          sacrificadoE=getRegistroSanitario(false,dtCon1,sacrificadoE,dtStat.getString("acp_paisac"));           
+                if (acp_paisac == null)
+                    acp_paisac = dtStat.getString("acp_paisac");
+                acpPaisacPrv=dtStat.getString("acp_paisac");
 
-          if (acp_paisac==null)
-            acp_paisac = dtStat.getString("acp_paisac");
-          paisSacrificioNombre=MantPaises.getNombrePais(acp_paisac, dtCon1);      
-          
-          if (paisSacrificioNombre==null)
-          {
-            msgAviso = "No encontrado PAIS Sacrificio: " +  acp_paisac;    
-            paisSacrificioNombre="";
-          }
-          if (stp_saldes.isEmpty()) 
-            stp_saldes=dtStat.getString("acp_saldes");
-          if (deoDesnue)
-            stp_saldes= pdempresa.getNumeroRegistroSanitario(dtCon1,EU.em_cod);
-          despiezadoE = stp_saldes;
-          sde_nrgsa=despiezadoE;
-          
-       if (ntrazaE==null)
-        ntrazaE = dtStat.getString("acp_nucrot");
-       if (repiteIndiv>0 && ntrazaE.length()>0)
-       {
-            crotales.add(ntrazaE);
+                if (salaDesp.isEmpty())
+                    salaDesp = dtStat.getString("acp_saldes");
+                salaDespPrv = dtStat.getString("acp_saldes");            
+
+                if (ntrazaE == null)
+                    ntrazaE = dtStat.getString("acp_nucrot");
+                ntrazaPrv= dtStat.getString("acp_nucrot");
+                if (repiteIndiv > 0 && ntrazaE.length() > 0)
+                {
+                    crotales.add(ntrazaE);
 //           System.out.println("crotal: "+ntrazaE);
-            if (checkRepetic(crotales,ntrazaE))
-            {
+                    if (checkRepetic(crotales, ntrazaE))
+                    {
 //                    System.out.println("pues esta repetido el crotal: "+ntrazaE);
-               if (swGenCrotal)
-               {
-                   ntrazaE=MantAlbComCarne.getRandomCrotal(ntrazaE,EU);
-                   crotales.add(ntrazaE);
-                   if (checkRepetic(crotales,ntrazaE))
-                   {
-                       msgAviso = (msgAviso==null?"":msgAviso+"\n")+
-                       "Numero crotal: " +ntrazaE+ " No se pudo generar otro aleatorio. ";
-                   }
-               }
-               else
-                     msgAviso = (msgAviso==null?"":msgAviso+"\n")+
-                       "Numero crotal: " +ntrazaE+ " Repetido más de: "+repiteIndiv+" Veces";
-            }
+                        if (swGenCrotal)
+                        {
+                            ntrazaE = MantAlbComCarne.getRandomCrotal(ntrazaE, EU);
+                            crotales.add(ntrazaE);
+                            if (checkRepetic(crotales, ntrazaE))
+                            {
+                                msgAviso = (msgAviso == null ? "" : msgAviso + "\n")
+                                    + "Numero crotal: " + ntrazaE + " No se pudo generar otro aleatorio. ";
+                            }
+                        } else
+                            msgAviso = (msgAviso == null ? "" : msgAviso + "\n")
+                                + "Numero crotal: " + ntrazaE + " Repetido más de: " + repiteIndiv + " Veces";
+                    }
 
-       } 
-        actualConservar(proCodiOrig, dtCon1);
-        busca = false;
-      }
+                }
+                actualConservar(proCodiOrig, dtCon1);
+                busca = false;
+            }
+        }
+        if (swDesp)
+            fecrepL = "Fec.Desp";
+        else
+            fecrepL = "Fecha Recepc.";
+//        despiezadoD = despiezadoE;
+        return true;
     }
-    if (swDesp)
-      fecrepL = "Fec.Desp";
-    else
-      fecrepL = "Fecha Recepc.";
-    despiezadoD=despiezadoE;
-    return true;
-  }
+    /**
+     * Indica si el individuo salio de un despiece
+     * @return  true, salio de un despiece. 
+     */
+    public boolean isDespiece()
+    {
+        return swDesp;
+    }
   public   String getRegistroSanitario(DatosTabla dt,String numRegSanitario,int paiCodi) throws SQLException
   {          
       return getRegistroSanitario(swPaisCorto,dt, numRegSanitario, paiCodi);
@@ -643,6 +630,12 @@ public class utildesp
               + "-" + numRegSanitario;
         return numRegSanitario;
   }
+  /**
+   * Comprueba repeticion de crotales.
+   * @param v
+   * @param cadena
+   * @return 
+   */
   boolean checkRepetic(Vector v, String cadena) {
         int idx = 0;
         int n;
@@ -664,36 +657,17 @@ public class utildesp
         serie;
     }
 
-
   /**
-    * Pone los datos como si fuera un desp. Nuestro
+    * Pone los despiece al del proveedor.
     *
     * @throws Exception Si hay error  base datos
     */
    public void resetDespNuestro() throws Exception
    {
-     despiezadoE = despiezadoD;
+     deoDesnue=false;
    }
 
-  /**
-   * Pone los datos como si fuera un desp. Nuestro
-   * @param fecDesp Fecha Despiece (Formato: dd-MM-yyyy)
-   * @param dt Datos Tabla para buscar nombre pais desp.
-   * @throws Exception Si hay error  base datos
-   */
-  public void setDespNuestro(String fecDesp, DatosTabla dt) throws Exception
-  {
-    fecrepL = "Fec.Desp";
-    fecrecepE = fecDesp;
-    String s = "select pai_inic,pai_nomcor,pai_nomb from v_paises where pai_codi = " + paiEmp;
-    if (!dt.select(s))
-    {
-      msgAviso = "No encontrado PAIS de Despiece: " + paiEmp;
-      despiezadoE = "";
-      return;
-    }
-    despiezadoE = (swPaisCorto?  dt.getString("pai_nomcor") :dt.getString("pai_nomb") ) + "-" + empRGSA;
-  }
+ 
 
   public int busCliVenta(String serie, int proCodi, int empLot,
                           int ejeLot, int proLote,
@@ -786,7 +760,7 @@ public class utildesp
       return grdNume+1;
   }
 
-
+  
    public static StkPartid buscaPeso(DatosTabla dt,int ejeLot,int empLot,
                                  String serLot,int numLot,int numind,int proCodi,
                                  int almCodi) throws SQLException
@@ -957,7 +931,7 @@ public class utildesp
     }
     
   public int guardaLinDesp(int ejeLot, int empLot, String serLot, int numLot, int nInd,
-                           int proCodi, double kilos,int numPie, String feccad,int defOrden,
+                           int proCodi, double kilos,int numPie, Date feccad,int defOrden,
                            int uniCaj, double precCost,
                            int defCerra) throws Exception
   {
@@ -997,7 +971,7 @@ public class utildesp
  */
   public int guardaLinDesp(int ejeLot,int empLot,String serLot,int numLot,int nInd,
                     int numDesp,int proCodi,double kilos,int numPie,
-                    String feccad, int defOrden,int uniCaj,double precCost,
+                    Date feccad, int defOrden,int uniCaj,double precCost,
                     int defCerra) throws SQLException,ParseException
  {
    String s;
@@ -1043,25 +1017,25 @@ public class utildesp
    else
      dtAdd.edit(dtAdd.getCondWhere());
 
-   java.util.Date fecha;
-   try
-   {
-     fecha=Formatear.getDate(feccad,"dd-MM-yyyy");
-     int ano=Integer.parseInt(Formatear.getFecha(fecha,"yyyy").trim());
-     if (ano<2000)
-       throw new Exception("Año: "+ano+" NO VALIDO");
-   } catch (Exception k1)
-   {
-     loger.warn("Usuario: "+EU.usu_nomb+"\nError en fecha despices\nDespiece: "+
-                                          " and deo_codi = " + numDesp +
-                                          " and def_orden = " + defOrden+" con fecha cad: "+feccad+" NO VALIDO\n"+
-                                          k1.getMessage(),k1);
-     fecha=null;
-   }
+//   java.util.Date fecha;
+//   try
+//   {
+//     fecha=Formatear.getDate(feccad,"dd-MM-yyyy");
+//     int ano=Integer.parseInt(Formatear.getFecha(fecha,"yyyy").trim());
+//     if (ano<2000)
+//       throw new Exception("Año: "+ano+" NO VALIDO");
+//   } catch (Exception k1)
+//   {
+//     loger.warn("Usuario: "+EU.usu_nomb+"\nError en fecha despices\nDespiece: "+
+//                                          " and deo_codi = " + numDesp +
+//                                          " and def_orden = " + defOrden+" con fecha cad: "+feccad+" NO VALIDO\n"+
+//                                          k1.getMessage(),k1);
+//     fecha=null;
+//   }
    dtAdd.setDato("pro_codi", proCodi);//pro_codlE.getValorInt());
    dtAdd.setDato("def_numpie",numPie);//def_numpieE.getValorInt());
    dtAdd.setDato("def_kilos", kilos); //def_kilosE.getValorDec());
-   dtAdd.setDato("def_feccad",fecha);//def_kilosE.getValorDec());
+   dtAdd.setDato("def_feccad",feccad);//def_kilosE.getValorDec());
 
    dtAdd.update(dtAdd.getStatement());
 //   s="update stockpart set stp_feccad='"+Formatear.getFechaDB(feccad) +"' where pro_nupar="+ numLot+
@@ -1106,7 +1080,7 @@ public class utildesp
   * Devuelve el Numero de despiece.
   * @return 
   */
- public int getDeoCodi()
+ public int getNumeroDespiece()
  {
      return deoCodi;
  }
@@ -1114,7 +1088,7 @@ public class utildesp
   * Devuelve el ejercicio del Numero de despiece.
   * @return 
   */
- public int getEjeDesp()
+ public int getEjercicioDespiece()
  {
      return deoAno;
  }
@@ -1130,7 +1104,7 @@ public class utildesp
   * Devuelve numero de albaran compra producto origen
   * @return Numero Albaran Compra
   */
- public int getAccNume()
+ public int getNumeroAlbaranCompra()
  {
      return accNume;
  }
@@ -1138,7 +1112,7 @@ public class utildesp
   * Devuelve ejercicio del albaran compra producto origen
   * @return  ejercicio del albaran compra
   */
- public int getAccAno()
+ public int getEjercicioAlbaranCompra()
  {
      return accAno;
  }
@@ -1168,7 +1142,7 @@ public class utildesp
 // public void actOriDesp(DatosTabla dtAdd,Desporig desorig) throws SQLException
 // {
 //   String s = "select * from desporig WHERE eje_nume = " + desorig.getId().getEjeNume() +
-//          " and deo_codi = " + desorig.getId().getDeoCodi();
+//          " and deo_codi = " + desorig.getId().getNumeroDespiece();
 //   if (! dtAdd.select(s))
 //       throw new SQLException("Cabecera de despiece NO ENCONTRADA "+s);
 //   dtAdd.edit("desporig"); 
@@ -1227,14 +1201,14 @@ public class utildesp
     dt.update();
     return numDespInt;
  }
-  public String getDatMatadero()
-  {
-      return this.datmat;
-  }
-  public void setDatMatadero(String datMatadero)
-  {
-      this.datmat=datMatadero;
-  }
+//  public String getDatMatadero()
+//  {
+//      return this.datmat;
+//  }
+//  public void setDatMatadero(String datMatadero)
+//  {
+//      this.datmat=datMatadero;
+//  }
    public String getDirEmpresa()
   {
       return this.diremp;
@@ -1293,14 +1267,15 @@ public class utildesp
              TIPOETIQ==etiquetaInterior?0:numInd,
             TIPOETIQ==etiquetaInterior?0:kilos,
             grupoLote);
-      
-            
+        
+        
         etiq.iniciar(TIPOETIQ !=etiquetaInterior?codBarras.getCodBarra():codBarras.getLote(false),
             codBarras.getLote(TIPOETIQ!=etiquetaInterior)  ,
                 "" + proCodi, nombArt,
-                paisNacimientoNombre, paisEngordeNombre, despiezadoE,
-                ntrazaE,kilos,
-                conservarE, sacrificadoE,null,
+                getPaisNacimientoNombre(dtStat) ,
+                getPaisEngordeNombre(dtStat),getDespiezado(),
+                getNumeroCrotal(),kilos,
+                conservarE, getSacrificado(),null,
                 fecProd,fecCad,fecSacr);
         etiq.setDatMatadero(datmat);
         etiq.setDirEmpresa(diremp);
@@ -1310,110 +1285,165 @@ public class utildesp
     }
 
 
-    public String getAcpPainac() {
-        return acp_painac;
+    public String getPaisNacimiento() {
+        return opVerDatosCompra?acpPainacPrv:acp_painac;
     }
-    public void setAcpPainac(String paisNacimiento) {
+    public String getPaisNacimientoNombre() throws SQLException{
+        return getPaisNacimientoNombre(dtStat);
+    }
+    public String getPaisNacimientoNombre(DatosTabla dt) throws SQLException{
+        return MantPaises.getNombrePais(getPaisNacimiento(), dt);
+    }
+    public void setPaisNacimiento(String paisNacimiento) {
         acp_painac=paisNacimiento;
     }
-    public void setPaisNacimiento(String paisNacimiento)
-    {
-        paisNacimientoNombre=paisNacimiento;
+     public void setPaisSalaDespiece(String paisSalaDesp) {
+        acp_paisde=paisSalaDesp;
     }
-    public String getPaisNacimiento()
-    {
-        return paisNacimientoNombre;
+    public String getPaisSalaDespiece()  {
+        return opVerDatosCompra?acpPaisdePrv:acp_paisde;
     }
-    public void setPaisEngordeNombre(String paisEngorde)
-    {
-        paisEngordeNombre=paisEngorde;
+    public String getPaisSalaDespieceNombre() throws SQLException{
+        return getPaisSalaDespieceNombre(dtStat);
     }
-    public void setMatadero(String sacrificado)
-    {
-        sacrificadoE=sacrificado;
+   public String getPaisSalaDespieceNombre(DatosTabla dt) throws SQLException{
+        return MantPaises.getNombrePais(getPaisSalaDespiece(), dt);
     }
-    /**
-     *  Devuelve el Nombre Pais del matadero + Nº Reg. Sanitario del Matadero
-     * @return 
-     */
-    public String getMatadero()
+//    public void setMatadero(String sacrificado)
+//    {
+//        sacrificadoE=sacrificado;
+//    }
+    
+    
+   /**
+    * Establece si considerar el despiece como nuestro
+    * @param despNuestro true sala despiece es nuestra. False,mantener sala despiece de nuestro proveedor.
+    */
+    public void setDespieceNuestro(boolean despNuestro)
     {
-        return sacrificadoE;
+        deoDesnue=despNuestro;
     }
-    /**
-     * Establece el String con el nombre del Pais de la Sala Despiece + Nº Reg.Sanitario Sala Despiece
-     * @param despiezado 
-     */
-    public void setSalaDespiece(String despiezado)
+    public boolean getDespieceNuestro()
     {
-        this.despiezadoE=despiezado;
+        return deoDesnue;
     }
     /**
-     * Devuelve el Nombre Pais de sala despiece + Nº Reg. Sanitario de sala despiece
-     * @return String
+     * Devuelve un literal con el nombre del Pais de Sacrificio + " " + Matadero
+     * @return
+     * @throws SQLException 
      */
-    public String getSalaDespiece()
+    public String getSacrificado() throws SQLException
     {
-        return despiezadoE;
+        return getSacrificado(dtStat);
     }
-    public String getMatCodi() {
+    /**
+     * Devuelve un literal con el nombre del Pais de Sacrificio + " " + Matadero
+     * @param dt DatosTabla
+     * @return "HOLANDA EG387" 
+     * @throws SQLException 
+     */
+    public String getSacrificado(DatosTabla dt) throws SQLException
+    {
+        return getPaisSacrificioNombre(dt)+" "+getMatadero();
+    }
+   /**
+    * Devuelve el Matadero (Numero registro sanitario solo, sin pais).
+    * @return 
+    */ 
+    public String getMatadero() {
         return stp_matad;
     }
-    public void setMatCodi(String matadero) {
+    public void setMatadero(String matadero) {
          stp_matad=matadero;
     }
-    public String getSdeCodi() {
-        return stp_saldes;
+    /**
+     * Devuelve el codigo de la sala de despiece (numero registro sanitario, sin pais)
+     * @return 
+     */
+    public String getSalaDespiece() {
+      
+      if (deoDesnue && opVerDatosCompra)
+        return sdeEmp;
+      else
+        return opVerDatosCompra?salaDespPrv:salaDesp;
     }
-   public void setSdeCodi(String salaDespiece) {
-        stp_saldes=salaDespiece;
+   /**
+     * Devuelve el nombre del Pais de la sala de despiece + " " + Sala Despiece     
+     * @return
+     * @throws SQLException 
+     */
+    public String getDespiezado () throws SQLException
+    {
+        return getDespiezado(dtStat);
     }
-    public String getPaisEngordeCodigo() {
-        return acp_engpai;
+    /**
+     * Devuelve el nombre del Pais de la sala de despiece + " " + Sala Despiece
+     * @param dt
+     * @return
+     * @throws SQLException 
+     */
+    public String getDespiezado (DatosTabla dt) throws SQLException
+    {
+        if (deoDesnue)
+          return MantPaises.getNombrePais(paisEmp,dt)+" "+sdeEmp;
+        else
+           return getPaisSalaDespieceNombre(dt)+" "+salaDesp; 
     }
-    public void setPaisEngordeCodigo(String paisEngorde) {
+   public void setSalaDespiece(String salaDespiece) {
+        salaDesp=salaDespiece;
+    }
+   
+    public String getPaisEngorde() {
+        return opVerDatosCompra? acpEngpaiPrv:acp_engpai;
+    }
+    public String getPaisEngordeNombre() throws SQLException
+    {
+         return getPaisEngordeNombre(dtStat);
+    }
+    public String getPaisEngordeNombre(DatosTabla dt) throws SQLException
+    {
+         return MantPaises.getNombrePais(getPaisEngorde(), dt);
+    }
+    /**
+     * Establece el pais de engorde para trazabilidad (nunca el del proveedor)
+     * @param paisEngorde 
+     */
+    public void setPaisEngorde(String paisEngorde) {
         acp_engpai=paisEngorde;
     }
 
-    public String getPaisSacrificioCodigo() {
-        return acp_paisac;
+    public String getPaisSacrificio() {
+        return opVerDatosCompra?acpPaisacPrv:acp_paisac;
     }
-    public void setPaisSacrificioCodigo(String paisSacrificio) {
+    public String getPaisSacrificioNombre() throws SQLException
+    {
+        return getPaisSacrificioNombre(dtStat);
+    }
+    public String getPaisSacrificioNombre(DatosTabla dt) throws SQLException
+    {
+           return MantPaises.getNombrePais(getPaisSacrificio(), dt);
+    }
+    public void setPaisSacrificio(String paisSacrificio) {
         acp_paisac=paisSacrificio;
     }
     /**
      * Numero de crotal . A veces se le llama trazabilidad
      * @return 
      */
-    public String getNumCrot() {
-        return ntrazaE;
+    public String getNumeroCrotal() {
+        return  opVerDatosCompra?ntrazaPrv:ntrazaE;
     }
-    public void setNumCrot(String numCrotal) {
+    public void setNumeroCrotal(String numCrotal) {
          ntrazaE=numCrotal;
     }
-
-    public String getMatNrgsa() {
-        return mat_nrgsa;
-    }
-
-    public String getSdeNrgsa() {
-        return sde_nrgsa;
-    }
-    public String getPaisSacrificioNombre()
+   
+   public java.util.Date getFechaSacrificio()
    {
-     return paisSacrificioNombre;
-   }
-   public void setPaisSacrificioNombre(String paisSacrifNombre)
-   {
-     paisSacrificioNombre=paisSacrifNombre;
-   }
-   public java.util.Date getFecSacrif()
-   {
-     return Formatear.getDate2000(fecSacrE);
+     return Formatear.getDate2000(opVerDatosCompra?fecSacPrvE:fecSacrE );
    }
        
 
-   public void setFecSacrif(java.util.Date fechaSacrificio)
+   public void setFechaSacrificio(java.util.Date fechaSacrificio)
    {
        fecSacrE=fechaSacrificio;
    }
@@ -1442,20 +1472,15 @@ public class utildesp
     */
    public java.util.Date getFechaCaducidad()
    {
-        try {
-            return Formatear.getDate2000(
-                Formatear.getDate(feccadE, "dd-MM-yyyy"));
-        } catch (ParseException ex) {
-            return null;
-        }
+      return opVerDatosCompra?fecCadPrvE:feccadE;
    }
    public void setFechaCaducidad(java.util.Date fecCaduc)
    {
-       feccadE=Formatear.getFecha(fecCaduc,"dd-MM-yyyy");
+       feccadE=fecCaduc;
    }
    /**
     * Devuelve la fecha de caducidad del ultimo despiece 
-    * Equivalente a fecha caducidad si hay despieces.
+    * 
     * @return 
     */
    public Date getFechaCadDesp()
@@ -1466,28 +1491,28 @@ public class utildesp
     * Devuelve la fecha de Caducidad del Proveedor.
     * @return fecha caducidad segun  Proveedor
     */
-    public java.util.Date getFecCadPrv() {
+    public java.util.Date getFechaCaducidadCompra() {
         return fecCadPrvE;
     }
      /**
     * Establece la fecha de Caducidad del Proveedor.
     * @param Fecha caducidad
     */
-    public  void setFecCadPrv(Date fecCaduc) {
+    public  void setFechaCaducidadCompra(Date fecCaduc) {
         fecCadPrvE=fecCaduc;
     }
      /**
     * Devuelve la fecha de Compra del Proveedor.
     * @return date con fecha Compra
     */
-    public Date getFecCompra() {
+    public Date getFechaCompra() {
         return fecCompraE;
     }
-    public void setFecCompra(java.util.Date fechaCompra)
+    public void setFechaCompra(java.util.Date fechaCompra)
     {
         fecCompraE=fechaCompra;
     }
-     public Date getFecDesp() {
+     public Date getFechaDespiece() {
         return fecDespE;
     }
     public void setFechaProduccion(Date fechaProd)
@@ -1501,22 +1526,30 @@ public class utildesp
       */
    public Date getFechaProduccion()
    {
-       if (fecProdE!=null)
-         return Formatear.getDate2000( fecProdE);
-       if (fecDespE!=null)
-         return Formatear.getDate2000(fecDespE);
-       return Formatear.getDate2000(fecCompraE);
+     return Formatear.getDate2000(opVerDatosCompra?fecProdPrvE:fecProdE);
    }
    /**
-    * Si es puesto a false en el caso de encontrar el individuo a buscar en despieces
-    * NO lo seguira buscando en compras.
-    * Por defecto es 'true'. La función buscaDatCompra() pone este valor a true de nuevo.
-    * @param swCompra 
+    * Mostrar datos trazabilidad segun la compra. 
+    * Por defecto es 'false'.
+    * @param swCompra Si es puesto a true, ignorara los valores marcados en stockpartidas y mostrara los datos
+    * de compra.
     */
-   public void setBuscaCompra(boolean swCompra)
+   public void setVerDatosCompra(boolean swCompra)
    {
-       swBuscaCompra=swCompra;
+       opVerDatosCompra=swCompra;
    }
+   /**
+    * Devuelve el Codigo de Proveedor
+    * @return 
+    */
+   public int getProveedor()
+   {
+       return opVerDatosCompra?prvCompra:prvCodi;
+   }
+   /**
+    * Devuelve el proveedor de Compra
+    * @return 
+    */
    public int getPrvCompra()
    {
        return prvCompra;
@@ -1546,10 +1579,7 @@ public class utildesp
     public String getMsgAviso() {
         return msgAviso;
     }
-    public String getPaisEngorde()
-    {
-        return paisEngordeNombre;
-    }
+  
     public boolean hasCambio()
     {
         return cambio;

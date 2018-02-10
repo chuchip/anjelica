@@ -18,8 +18,8 @@
   <SubComponents>
     <Container class="gnu.chu.controles.Cgrid" name="jt">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Producto&quot;); // 0&#xa;v.add(&quot;Nombre&quot;); // 1&#xa;v.add(&quot;Ejer&quot;); // 2&#xa;v.add(&quot;Serie&quot;); // 3&#xa;v.add(&quot;Lote&quot;); //4&#xa;v.add(&quot;Ind&quot;); // 5&#xa;v.add(&quot;Kilos&quot;); // 6&#xa;v.add(&quot;Fec.Cad&quot;); // 7&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]{40,180,40,30,50,40,50,70});&#xa;jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,1});&#xa;jt.setFormatoColumna(6, &quot;---,--9.99&quot;);&#xa;&#xa;jt.setAjustarGrid(true);"/>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(8)"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Producto&quot;); // 0&#xa;v.add(&quot;Nombre&quot;); // 1&#xa;v.add(&quot;Ejer&quot;); // 2&#xa;v.add(&quot;Serie&quot;); // 3&#xa;v.add(&quot;Lote&quot;); //4&#xa;v.add(&quot;Ind&quot;); // 5&#xa;v.add(&quot;Kilos&quot;); // 6&#xa;v.add(&quot;Fec.Cad&quot;); // 7&#xa;v.add(&quot;Incidencia&quot;); // 7&#xa;jt.setCabecera(v);&#xa;jt.setAnchoColumna(new int[]{40,180,40,30,50,40,50,70,120});&#xa;jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,1,0});&#xa;jt.setFormatoColumna(6, &quot;---,--9.99&quot;);&#xa;&#xa;jt.setAjustarGrid(true);"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(9)"/>
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

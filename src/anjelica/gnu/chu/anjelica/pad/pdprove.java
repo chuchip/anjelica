@@ -18,7 +18,7 @@ import javax.swing.border.*;
  *
  * <p>Título: pdprove</p>
  * <p>Descripción: Mantenimiento de la Tabla de Proveedores.</p>
- * <p>Copy zright: Copyright (c) 2005-2016
+ * <p>Copy zright: Copyright (c) 2005-2018
  *   Este programa es software libre. Puede redistribuirlo y/o modficarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -169,63 +169,7 @@ public class pdprove extends ventanaPad implements PAD
   CLinkBox div_codiE = new CLinkBox();
   CLabel cLabel41 = new CLabel();
   CTextField prv_nexploE = new CTextField(Types.CHAR,"X",15);
-  CPanel Pdatmat = new CPanel();
-  CLabel cLabel13 = new CLabel();
-  CGridEditable jtSde = new CGridEditable(2)
-  {
-    public int cambiaLinea(int row, int col)
-    {
-      return checkSde()?-1:0;
-    }
 
-    public void cambiaColumna(int col, int colNueva,int row)
-    {
-      String nombArt;
-      try
-      {
-        if (col == 0)
-        {
-          nombArt = sde_codiE.getNombMat(sde_codiE.getValorInt());
-          jtSde.setValor(nombArt, row, 1);
-          sde_codiE.resetCambio();
-        }
-      }
-      catch (Exception k)
-      {
-        Error("Error al buscar Nombre Matadero", k);
-      }
-    }
-  };
-  CLabel cLabel14 = new CLabel();
-  CGridEditable jtMat = new CGridEditable(2)
-  {
-    public int cambiaLinea(int row, int col)
-    {
-      return checkMat() ? -1 : 0;
-    }
-
-    public void cambiaColumna(int col, int colNueva,int row)
-    {
-      String nombArt;
-      try
-      {
-        if (col == 0)
-        {
-//          if (mat_codiE.hasCambio() || jtMat.isChangeRow())
- //         {
-            nombArt = mat_codiE.getNombMat(mat_codiE.getValorInt());
-            jtMat.setValor(nombArt, row, 1);
-            mat_codiE.resetCambio();
-
-//          }
-        }
-      }
-      catch (Exception k)
-      {
-        Error("Error al buscar Nombre Matadero", k);
-      }
-    }
-  };
   matPanel mat_codiE = new matPanel();
   CTextField mat_nombE = new CTextField(Types.CHAR,"X",50);
   sdePanel sde_codiE = new sdePanel();
@@ -263,8 +207,7 @@ public class pdprove extends ventanaPad implements PAD
      if (ht != null)
      {
        if (ht.get("modConsulta") != null)
-         modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-             booleanValue();
+         modConsulta = Boolean.parseBoolean(ht.get("modConsulta").toString());
      }
 
      if (jf.gestor.apuntar(this))
@@ -294,8 +237,7 @@ public class pdprove extends ventanaPad implements PAD
      if (ht != null)
      {
        if (ht.get("modConsulta") != null)
-         modConsulta = Boolean.valueOf(ht.get("modConsulta").toString()).
-             booleanValue();
+         modConsulta = Boolean.parseBoolean(ht.get("modConsulta").toString());
      }
 
      jbInit();
@@ -312,7 +254,7 @@ public class pdprove extends ventanaPad implements PAD
     titledBorder2 = new TitledBorder("");
     iniciarFrame();
     setSize(new Dimension(688,500));
-    this.setVersion("2017-02-14");
+    this.setVersion("2018-02-04");
     strSql = "SELECT * FROM v_proveedo where emp_codi = "+EU.em_cod+" ORDER BY prv_codi ";
 
     statusBar = new StatusBar(this);
@@ -527,8 +469,8 @@ public class pdprove extends ventanaPad implements PAD
     cLabel310.setBounds(new Rectangle(-1, 126, 81, 17));
     cLabel310.setText("Aplicar Oreo");
     prv_aploreE.setBounds(new Rectangle(86, 124, 55, 17));
-    prv_aploreE.setText("cComboBox1");
-    cLabel40.setText("N� Reg. Sanitario");
+    
+    cLabel40.setText("N. Reg. Sanitario");
     cLabel40.setBounds(new Rectangle(421, 277, 98, 18));
     prv_nurgsaE.setBounds(new Rectangle(566, 277, 104, 18));
     cLabel12.setText("Divisa");
@@ -537,57 +479,9 @@ public class pdprove extends ventanaPad implements PAD
     div_codiE.setAncTexto(30);
     div_codiE.setBounds(new Rectangle(51, 73, 344, 17));
     cLabel41.setBounds(new Rectangle(421, 254, 87, 18));
-    cLabel41.setText("N� Explotacion");
+    cLabel41.setText("N. Explotacion");
     prv_nexploE.setBounds(new Rectangle(530, 254, 140, 18));
-    Pdatmat.setText("cPanel1");
-    cLabel13.setBackground(Color.red);
-    cLabel13.setForeground(Color.white);
-    cLabel13.setOpaque(true);
-    cLabel13.setHorizontalAlignment(SwingConstants.CENTER);
-    cLabel13.setHorizontalTextPosition(SwingConstants.CENTER);
-    cLabel13.setText("Salas Despiece");
-    cLabel13.setBounds(new Rectangle(102, 2, 105, 17));
-    cLabel14.setText("Mataderos");
-    cLabel14.setBounds(new Rectangle(102, 172, 105, 17));
-    cLabel14.setHorizontalTextPosition(SwingConstants.CENTER);
-    cLabel14.setHorizontalAlignment(SwingConstants.CENTER);
-    cLabel14.setOpaque(true);
-    cLabel14.setForeground(Color.white);
-    cLabel14.setBackground(Color.red);
-    Vector v=new Vector();
-    v.addElement("Codigo");
-    v.addElement("Nombre");
-    jtMat.setCabecera(v);
-    jtMat.setAnchoColumna(new int[]{60,250});
-    jtMat.setAlinearColumna(new int[]{2,0});
-
-    jtMat.setFormatoColumna(0,"####9");
-    jtMat.setAjustarGrid(true);
-
-    Vector v1=new Vector();
-    v1.addElement("Codigo");
-    v1.addElement("Nombre");
-    jtSde.setCabecera(v1);
-    jtSde.setAnchoColumna(new int[]{60,250});
-    jtSde.setAlinearColumna(new int[]{2,0});
-
-    jtSde.setFormatoColumna(0,"####9");
-    jtSde.setAjustarGrid(true);
-    mat_nombE.setEnabled(false);
-    Vector vcMat=new Vector();
-    vcMat.addElement(mat_codiE.getTextField());
-    vcMat.addElement(mat_nombE);
-    jtMat.setCampos(vcMat);
-
-    sde_nombE.setEnabled(false);
-    Vector vcSal=new Vector();
-    vcSal.addElement(sde_codiE.getTextField());
-    vcSal.addElement(sde_nombE);
-    jtSde.setCampos(vcSal);
-    jtSde.setBounds(new Rectangle(100, 19, 360, 146));
-
     PdatFra.setLayout(null);
-    jtMat.setBounds(new Rectangle(102, 188, 360, 146));
     PdatGen.setDefButtonDisable(false);
     PdatGen.setDefButton(Baceptar);
     Baceptar.setMargin(new Insets(0, 0, 0, 0));
@@ -607,8 +501,7 @@ public class pdprove extends ventanaPad implements PAD
     PdatGen.setButton(KeyEvent.VK_F4, Baceptar);
     PdatFra.setButton(KeyEvent.VK_F4, Baceptar);
     PdatEnv.setButton(KeyEvent.VK_F4, Baceptar);
-    jtSde.setButton(KeyEvent.VK_F4, Baceptar);
-    jtMat.setButton(KeyEvent.VK_F4, Baceptar);
+ 
 
 
     prv_disc2E.setAncTexto(30);
@@ -709,7 +602,7 @@ public class pdprove extends ventanaPad implements PAD
     PdatCon.add(prv_carterE, null);
     PdatCon.add(prv_tipivaE, null);
     PdatCon.add(cli_tipivaL1, null);
-    Tpanel.add(Pdatmat,   "Matad/S.Desp.");
+    
     PdatEnv.add(prv_plzentE, null);
     PdatEnv.add(cli_codpoeL1, null);
     PdatFra.add(prv_irpfE, null);
@@ -724,11 +617,10 @@ public class pdprove extends ventanaPad implements PAD
     PdatGen.add(cLabel11, null);
     PdatFra.add(cLabel12, null);
     PdatFra.add(div_codiE, null);
-    Pdatmat.setLayout(null);
-    Pdatmat.add(jtSde, null);
-    Pdatmat.add(cLabel13, null);
-    Pdatmat.add(jtMat, null);
-    Pdatmat.add(cLabel14, null);
+  
+   
+  
+  
     Pdiscrim.add(prv_disc2E, null);
     Pdiscrim.add(prv_disc4L, null);
     Pdiscrim.add(prv_disc3L, null);
@@ -1199,8 +1091,7 @@ public class pdprove extends ventanaPad implements PAD
 
   public void ej_edit1()
   {
-   jtSde.procesaAllFoco();
-   jtMat.procesaAllFoco();
+ 
    try
    {
      dtAdd.edit();
@@ -1277,24 +1168,7 @@ public class pdprove extends ventanaPad implements PAD
     dtAdd.setDato("prv_feulmo",Formatear.getFechaAct("dd-MM-yyyy"),"dd-MM-yyyy");
     dtAdd.setDato("prv_intern",prv_internE.getValorInt());
     dtAdd.update(stUp);
-    s="delete from v_prvsade where prv_codi = "+prv_codiE.getValorInt();
-    stUp.executeUpdate(s);
-    s="delete from v_prvmata where prv_codi = "+prv_codiE.getValorInt();
-    stUp.executeUpdate(s);
-    int nRow=jtSde.getRowCount();
-    for (int n=0;n<nRow;n++)
-    {
-      if (jtSde.getValorDec(n,0)==0)
-        continue;
-      insSalaDesp(prv_codiE.getValorInt(),jtSde.getValorInt(n,0),dtAdd);
-    }
-    nRow=jtMat.getRowCount();
-    for (int n=0;n<nRow;n++)
-    {
-      if (jtMat.getValorDec(n,0)==0)
-        continue;
-      insMatadero(prv_codiE.getValorInt(),jtMat.getValorInt(n,0),dtAdd);
-    }
+  
     ctUp.commit();
   }
   public static void insSalaDesp(int prvCodi, int sdeCodi, DatosTabla dt) throws SQLException
@@ -1370,8 +1244,7 @@ public class pdprove extends ventanaPad implements PAD
   @Override
   public void ej_addnew1()
   {
-    jtSde.salirGrid();
-    jtMat.salirGrid();
+   
     try
     {
       dtAdd.addNew("v_proveedo");
@@ -1389,6 +1262,7 @@ public class pdprove extends ventanaPad implements PAD
     mensaje("");
     mensajeErr("Proveedor .... INSERTADO");
   }
+  @Override
   public void canc_addnew()
   {
       activaTodo();
@@ -1409,10 +1283,7 @@ public class pdprove extends ventanaPad implements PAD
     Bcancelar.setEnabled(b);
     prv_observT.setEnabled(b);
     prv_codiE.setEnabled(b);
-    emp_codiE.setEnabled(b);
-    jtSde.setEnabled(b);
-    jtMat.setEnabled(b);
-
+    emp_codiE.setEnabled(b);   
   }
   public void PADQuery(){
     activar(true);
@@ -1437,11 +1308,8 @@ public class pdprove extends ventanaPad implements PAD
  {
 
    mensaje("Insertando ... NUEVO PROVEEDOR");
-   jtMat.removeAllDatos();
-   jtSde.removeAllDatos();
+  
    activar(true);
-   jtMat.requestFocusInicio();
-   jtSde.requestFocusInicio();
    PdatGen.resetTexto();
    PdatEnv.resetTexto();
    PdatFra.resetTexto();
@@ -1570,7 +1438,7 @@ public class pdprove extends ventanaPad implements PAD
     prv_orgofiE.setText(dtCon1.getString("prv_orgofi"));
     prv_aploreE.setValor(dtCon1.getString("prv_aplore")); // Nuevo
     prv_nexploE.setText(dtCon1.getString("prv_nexplo")); // Nuevo
-    prv_nurgsaE.setText(dtCon1.getString("prv_nurgsa")); // Nuevo
+    prv_nurgsaE.setText(dtCon1.getString("prv_nurgsa")); // Numero registro Sanitario
     div_codiE.setText(dtCon1.getString("div_codi")); // Nuevo
     prv_coimivE.setText(dtCon1.getString("prv_coimiv"));
     prv_dtocomE.setText(dtCon1.getString("prv_dtocom"));
@@ -1579,40 +1447,7 @@ public class pdprove extends ventanaPad implements PAD
     prv_fecaltE.setText(dtCon1.getFecha("prv_fecalt","dd-MM-yyyy"));
     prv_feulmoE.setText(dtCon1.getFecha("prv_feulmo","dd-MM-yyyy"));
     prv_internE.setValor(dtCon1.getString("prv_intern"));
-    jtSde.removeAllDatos();
-    jtMat.removeAllDatos();
-    s="select p.sde_codi,s.sde_nomb from v_prvsade as p,v_saladesp S"+
-       " WHERE p.prv_codi = "+prv_codiE.getValorInt()+
-       " and s.sde_codi = p.sde_codi "+
-       " order by p.sde_codi ";
-    if (dtStat.select(s))
-    {
-      do
-      {
-        Vector v = new Vector();
-        v.addElement(dtStat.getString("sde_codi"));
-        v.addElement(dtStat.getString("sde_nomb"));
-        jtSde.addLinea(v);
-      }
-      while (dtStat.next());
-    }
-    jtSde.requestFocusInicio();
-    s = "select p.mat_codi,m.mat_nomb from v_prvmata as p,v_matadero m" +
-        " WHERE p.prv_codi = " + prv_codiE.getValorInt() +
-        " and p.mat_codi = m.mat_codi " +
-        " order by p.mat_codi ";
-    if (dtStat.select(s))
-    {
-      do
-      {
-        Vector v = new Vector();
-        v.addElement(dtStat.getString("mat_codi"));
-        v.addElement(dtStat.getString("mat_nomb"));
-        jtMat.addLinea(v);
-      }
-      while (dtStat.next());
-    }
-    jtMat.requestFocusInicio();
+
 
 
     } catch (Exception k)
@@ -1621,6 +1456,7 @@ public class pdprove extends ventanaPad implements PAD
     }
   }
 
+  @Override
   public void PADDelete()
   {
     Baceptar.setEnabled(true);

@@ -9,7 +9,7 @@ import gnu.chu.controles.*;
 import gnu.chu.sql.*;
 
 public class ventanaPad extends ventana
-{
+{  
   public boolean swThread = false; // Ejecutar los ej_addnew1, ej_edit1, etc en background (true) o no (false)
   public CButton Baceptar = new CButton("Aceptar F4", Iconos.getImageIcon("check"));
   public CButton Bcancelar = new CButton("Cancelar",
@@ -213,6 +213,11 @@ public class ventanaPad extends ventana
 
   /**
    * Monta las condiciones where de una Select.
+     * @param sel String con la select base
+     * @param c Array de Strings con los valores
+     * @param nc Numero de Campos
+     * @param incEmp Incluir Empresa
+     * @return 
    */
   public String creaWhere(String sel, String c[], int nc, boolean incEmp)
   {
@@ -220,7 +225,7 @@ public class ventanaPad extends ventana
     String s = "";
     for (n = 0; n < nc; n++)
     {
-      if (c[n] == null) // A�adido por si acaso
+      if (c[n] == null) // Añadido por si acaso
         continue;
       if (c[n].compareTo("") == 0)
         continue;
@@ -249,6 +254,7 @@ public class ventanaPad extends ventana
 
   /**
    * Bloquea el registro activo
+     * @param s
    */
   public boolean bloqueaRegistro(String s)
   {

@@ -64,6 +64,7 @@ import java.util.Iterator;
 
 
 public class DespVenta extends ventana {
+    private boolean saliendo=false;
     Date deoFecpro;
     Date deoFecSacr;
     Date fecCadAnt;
@@ -198,31 +199,22 @@ public class DespVenta extends ventana {
         pro_numindE.setValorInt(indiv);
         buscaPeso();
     }
+    /**
+     * Funcion llamada para empezar a cargar el despiece. Pone visible la pantalla.
+     * @throws SQLException 
+     */
     public void mostrar() throws SQLException
     {
           nuevoDespiece=false;
-          
+          saliendo=false;
           deoCodi=0;
           Baceptar.setEnabled(true);
           tid_codiE.setEnabled(true);
 
           jt.setEnabled(false);
-//          pro_codiE.resetTexto();
-//          pro_loteE.resetTexto();
-//          deo_ejelotE.resetTexto();
-//          deo_kilosE.resetTexto();
-//          deo_serlotE.resetTexto();
-//          tid_codiE.resetTexto();
-//          pro_numindE.resetTexto();
-//          
        
           Ppie.resetTexto();
           jt.removeAllDatos();
-//          deo_ejelotE.setValorInt(EU.ejercicio);
-//          deo_serlotE.setText("A");
-//          pro_codiE.resetCambio();
-//          pro_codiE.setValorInt(proCodi);
-          //pro_codiE.resetCambio();
           activar(true);
           setVisible(true);
           statusBar.setEnabled(true);
@@ -403,7 +395,9 @@ public class DespVenta extends ventana {
                     jt.requestFocusFinal();
                     jt.ponValores(jt.getSelectedRow());
                     pro_kilsalE.setCambio(true);
+                    saliendo=true;
                     cambiaLineajtLin(jt.getSelectedRow()); 
+                    saliendo=false;
                   }
                   else
                   {
@@ -424,7 +418,9 @@ public class DespVenta extends ventana {
                     jt.requestFocusFinal();
                     jt.ponValores(jt.getSelectedRow());
                     pro_kilsalE.setCambio(true);
+                    saliendo=true;
                     cambiaLineajtLin(jt.getSelectedRow());
+                    saliendo=false;
                   }
                 }
                 else
@@ -962,23 +958,29 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
          if (def_feccadE.isNull())
          {
              msgBox("Introduzca fecha Caducidad");
-             def_feccadE.setText(utdesp.feccadE);
+             def_feccadE.setDate(utdesp.getFechaCaducidad());
              return JT_FECCAD;
          }
-         if (pro_codsalE.getDiasCaducidad() > 0)
+         if (pro_codsalE.getDiasCaducidad() > 0 && !saliendo)
          {
                if (Formatear.comparaFechas(def_feccadE.getDate(), Formatear.getDateAct()) <= 0)
                {
-                   msgBox("Fecha Caducidad  debe ser superior a la actual");
-                   def_feccadE.setText(utdesp.feccadE);
-                   return JT_FECCAD;
-               }
-               if (Formatear.comparaFechas(def_feccadE.getDate(), Formatear.getDateAct()) <= 10)
-               {
-                   int ret = mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en diez dias a la actual. Continuar?");
+                   int ret =mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior a la actual. Continuar?");
                    if (ret != mensajes.YES)
+                   {
+                       def_feccadE.setDate(utdesp.getFechaCaducidad());
                        return JT_FECCAD;
-               }              
+                    }
+               }
+               else
+               {
+                    if (Formatear.comparaFechas(def_feccadE.getDate(), Formatear.getDateAct()) <= 10)
+                    {
+                        int ret = mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en diez dias a la actual. Continuar?");
+                        if (ret != mensajes.YES)
+                            return JT_FECCAD;
+                    }
+               }
          }
          if (checkExcluyentes("SELECT * FROM artiexcl where pro_codini ="+pro_codsalE.getValorInt()+
                  " and pro_codfin in (",linea))
@@ -1073,8 +1075,8 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
        prvCodi=utdesp.getPrvCodi();
 //       if (tid_codiE.getValorInt()!=MantTipDesp.AUTO_DESPIECE)
 //         utdesp.setDespNuestro(Formatear.getFechaAct("dd-MM-yyyy"), dtStat);
-       deo_feccadE.setText(utdesp.feccadE);
-       def_feccadE.setText(utdesp.feccadE);
+       deo_feccadE.setDate(utdesp.getFechaCaducidad());
+       def_feccadE.setDate(utdesp.getFechaCaducidad());
        def_fecproE.setDate(utdesp.getFechaProduccion());
        def_fecsacE.setDate(utdesp.fecSacrE);
        return true;
@@ -1102,7 +1104,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                 deo_serlotE.getText(), pro_loteE.getValorInt(),nInd,
                 pro_codsalE.getValorInt(),
                 pro_kilsalE.getValorDec(), pro_unidE.getValorInt(),1,
-                def_feccadE.getText(),defOrden);             
+                def_feccadE.getDate(),defOrden);             
      ponFechas(pro_codsalE.getDiasCaducidad(),def_feccadE.getDate());
     
      jt.setValor(""+nInd,linea,JT_NUMIND);
@@ -1126,7 +1128,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
    }
  }
  int guardaLinDesp(int ejeLot,int empLot,String serLot,int numLot,int nInd,
-                    int proCodi,double kilos,int numPiezas,int uniCaj,String feccad,int defOrden) throws Exception
+                    int proCodi,double kilos,int numPiezas,int uniCaj,Date feccad,int defOrden) throws Exception
  {
    utdesp.iniciar(dtAdd,ejeNume,empCodi,
                   almCodi,almCodi,EU);
@@ -1212,10 +1214,10 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
 //            codBarras.getLote(tipetiqE.getValorInt()!=etiqueta.ETIQINT),
 //            pro_codiE.getText(),pro_codiE.getTextNomb(),utDesp.getPaisNacimiento(),utDesp.getPaisEngorde(),
 //            utDesp.getSalaDespiece(),
-//            utDesp.getNumCrot(),deo_kilosE.getValorDec(),
+//            utDesp.getNumeroCrotal(),deo_kilosE.getValorDec(),
 //            utDesp.getConservar(), utDesp.getMatadero(),
 //            utDesp.getFechaProduccion(),utDesp.getFechaProduccion(), utDesp.getFecCaduc(),
-//            utDesp.getFecSacrif());
+//            utDesp.getFechaSacrificio());
      utdesp.imprEtiq(proCodeti,dtCon1,jt.getValorInt(linea,0), nombArt,
                     "D",
                     pro_loteE.getValorInt(),

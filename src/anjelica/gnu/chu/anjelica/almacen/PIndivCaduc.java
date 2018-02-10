@@ -37,7 +37,7 @@ public class PIndivCaduc extends javax.swing.JPanel
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jt = new gnu.chu.controles.Cgrid(8);
+        jt = new gnu.chu.controles.Cgrid(9);
         Pconfir = new gnu.chu.controles.CPanel();
         msgAvisoL = new gnu.chu.controles.CLabel();
         Bcancelar = new gnu.chu.controles.CButton(Iconos.getImageIcon("cancel"));
@@ -64,9 +64,10 @@ public class PIndivCaduc extends javax.swing.JPanel
         v.add("Ind"); // 5
         v.add("Kilos"); // 6
         v.add("Fec.Cad"); // 7
+        v.add("Incidencia"); // 7
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]{40,180,40,30,50,40,50,70});
-        jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,1});
+        jt.setAnchoColumna(new int[]{40,180,40,30,50,40,50,70,120});
+        jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,1,0});
         jt.setFormatoColumna(6, "---,--9.99");
 
         jt.setAjustarGrid(true);

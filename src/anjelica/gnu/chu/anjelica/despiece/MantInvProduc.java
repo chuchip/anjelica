@@ -592,8 +592,8 @@ public class MantInvProduc extends ventanaPad implements PAD
             mensajeErr(utdesp.getMsgAviso());
             return false;
         }
-        jt.setValor(utdesp.getFecSacrif()==null?FECHANULA:
-            utdesp.getFecSacrif(),linea,JT_FECSAC);
+        jt.setValor(utdesp.getFechaSacrificio()==null?FECHANULA:
+            utdesp.getFechaSacrificio(),linea,JT_FECSAC);
         jt.setValor(utdesp.getFechaCaducidad()==null?FECHANULA:
             utdesp.getFechaCaducidad(),linea,JT_FECCAD);
         jt.setValor(utdesp.getFechaProduccion()==null?FECHANULA:
@@ -601,7 +601,7 @@ public class MantInvProduc extends ventanaPad implements PAD
 
         jt.setValor(utdesp.getPrvCompra(),linea,JT_PRVCOD);
         jt.setValor( pdprove.getNombPrv(utdesp.getPrvCompra(), dtStat),linea,JT_PRVNOMB);
-        jt.setValor(utdesp.getAcpPainac(),linea,JT_PAINAC);
+        jt.setValor(utdesp.getPaisNacimiento(),linea,JT_PAINAC);
         return true;
     }
     catch (SQLException k)
@@ -1939,7 +1939,7 @@ public class MantInvProduc extends ventanaPad implements PAD
                 v.add("Fec.Sacr."); // 10
                 v.add("Fec.Cad."); // 11
                 v.add("Fec.Pro."); // 12
-                v.add("Pais"); // 13
+                v.add("Pais Nac."); // 13
                 v.add("Fec.Alta"); // 14
                 jt.setCabecera(v);
                 Vector v1 = new Vector();

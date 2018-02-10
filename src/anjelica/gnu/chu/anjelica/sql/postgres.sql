@@ -155,7 +155,7 @@ pro_deunve varchar(15), -- Descripcion Unidades de Venta (NO SE USA)
 sbe_codi int not null,	-- SubEmpresa
 pro_codeti int,		-- Codigo de Etiqueta. (0 por defecto. -1 Sin etiqueta)
 pro_numcro int not null,    -- No Crotales iguales (0, por defecto = ilimitados)
-pro_diacom int,		-- Dias de Consumo
+pro_diacom int,		-- Dias de Consumo (Dias Caducidad)
 pro_offein date,	-- Oferta desde Fecha  -- NO UTILIZADO
 pro_offefi date,	-- Oferta hasta fecha -- NO UTILIZADO
 pro_tipiva int,		-- Tipo de IVA
@@ -207,6 +207,7 @@ pro_kgmiun float , -- kg. Minimo Unidad.
 pro_kgmaun float , -- kg. Maximo Unidad.
 pro_cointa flota , -- Costo a Incrementar en Tarifa
 pro_encaja smallint, -- Producto encajado (0: No)
+pro_dimica smallint, -- Dias Mininmos caducidad 
 constraint ix_articulo primary key(pro_codi)
 );
 create index ix_articul1 on v_articulo(pro_codart);
@@ -1292,10 +1293,10 @@ create table anjelica.v_albcompar
    precinto3 int ,		-- NO USADO
    precinto4 int ,		-- NO USADO
    acp_canind int ,		-- Cant.de Individuos (normalmente 1)
-   mat_codi int,		-- Codigo de Matadero
+   mat_codi int,		-- Codigo de Matadero. DEPRECATED
    acl_nulin int not null,	-- Numero de Linea del Albaran
    traspasado smallint,		-- NO USADO
-   sde_codi int,		-- Codigo Sala Despiece
+   sde_codi int,		-- Codigo Sala Despiece. DEPRECATED
    aux_1 varchar(50),		-- NO USADO
    aux_2 varchar(50),		-- NO USADO
    aux_3 varchar(50),		-- NO USADO
@@ -1306,6 +1307,7 @@ create table anjelica.v_albcompar
    pesomediacanal1 float,		-- NO USADO
    pesomediacanal2 float,		-- NO USADO
    pesocueros float,		-- NO USADO
+   acp_paisde char(2),		-- Pais sala de despiece
 constraint ix_albcompar primary key(acc_ano,emp_codi,acc_serie,acc_nume,acl_nulin,acp_numlin)
 );
 -- create index ix_albcompar on v_albcompar (acc_ano,emp_codi,acc_serie,acc_nume,acp_numlin);
@@ -1316,7 +1318,7 @@ constraint ix_albcompar primary key(acc_ano,emp_codi,acc_serie,acc_nume,acl_nuli
 select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,c.sbe_codi,
 l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi,
 i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_fecpro,i.acp_nucrot,i.acp_clasi,i.acp_painac,i.sde_codi,
-i.acp_paisac,i.acp_engpai,i.mat_codi,i.acp_matad,i.acp_saldes
+i.acp_paisac,i.acp_engpai,i.mat_codi,i.acp_matad,i.acp_saldes,i.acp_paisde
 from anjelica.v_albacoc as c,anjelica.v_albacol as l, anjelica.v_albcompar as i
 where c.acc_ano=l.acc_ano
 and c.emp_codi=l.emp_codi
@@ -1369,7 +1371,8 @@ CREATE TABLE hisalpaco
   acp_fecpro date,
   acp_clasi character varying(20),
   acp_paisac character varying(2),
-  acp_painac character varying(2)
+  acp_painac character varying(2),
+  acp_paisde character varying(2)
 )
  create index ix_hisalpaco on hisalpaco   (his_rowid,acl_nulin);
 --
@@ -1411,7 +1414,7 @@ cue_codi varchar(12),		-- Cuenta Contable
 prv_exeiva smallint,		-- Exento de IVA
 prv_irpf smallint default 0 NOT NULL,	-- Tiene IRPF?
 prv_rpfsbi smallint default 0 not null,	--  IRPF s/Base Imponible?
-prv_activ varchar(2),		-- Discriminador 1 Activo (S/N)
+prv_activ varchar(2),		-- Activo (S/N)
 prv_disc2 varchar(2),		-- Discriminador 2
 prv_disc3 varchar(2),		-- Discriminador 3
 prv_disc4 varchar(2),		-- Discriminador 4
@@ -1437,10 +1440,6 @@ prv_dtorap float,		-- Dto de Rappel
 prv_fecalt date,		-- Fecha de Alta.
 prv_feulmo date,		-- Fecha Ult. Modific.
 prv_intern smallint default 0 not null, 	-- Proveedor Interno ?
-prv_poloin smallint,	-- Posicion inicial Lote en cod.Barras interno prv
-prv_polofi smallint,	-- Posicion final Lote en cod.Barras interno prv
-prv_popein smallint,	-- Posicion inicial peso en cod.Barras interno prv
-prv_popefi smallint,	-- Posicion final peso en cod.Barras interno prv
 constraint ix_proveedo primary key(prv_codi)
 );
 --
@@ -1792,6 +1791,7 @@ def_feccad date,	-- Fecha. Caducidad
 def_preusu float not null default 0,     -- Precio de Costo introducido por el usuario
 def_tiempo timestamp default  current_timestamp, -- Fecha de Movimiento.
 def_tippro char(1) not null default 'N' -- Tipo Produccion
+def_blkcos smallint int not null default 0, -- Bloqueado costo
 );
 create index  ix_despfin  on anjelica.v_despfin (eje_nume,deo_codi,def_orden);
 create index ix_despfin1 on anjelica.v_despfin(pro_codi, def_ejelot , def_emplot , def_serlot , pro_lote , pro_numind);
@@ -2990,7 +2990,6 @@ create table anjelica.etiquetas
 );
 INSERT INTO etiquetas (emp_codi,eti_codi,eti_nomb,eti_logo,eti_ficnom,eti_defec,eti_client)
     VALUES (1,1,'ESTANDART','anjelica.png','etiqueta','S',0,-1);
-
 ---
 --- Tabla de Bloqueos
 ---
@@ -3438,6 +3437,7 @@ insert into parametros values('*','crotalAutoma','Numero Crotal Automatico',1);
 insert into parametros values('*','minLonCrotal','Numero Minimo digitos Crotal',10);
 insert into parametros values('*','controlprodmin','Control Productos Minoristas',0);
 insert into parametros values('*','tipdespclasi','Tipo despiece Cambio Clasificacion',108);
+INSERT INTO PARAMETROS VALUES('*','avisodiascad','Aviso dias Caducidad',1); -- Comprobar dias Caducidad. 1 SI. 0 No
 --
 -- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
 --
@@ -4116,6 +4116,7 @@ create table anjelica.stockpart
 	stp_fecsac date,	    -- Fecha Sacrificio
 	stp_matad varchar(15),   -- Matadero
 	stp_saldes varchar(15),		-- Sala despiece
+	stp_sdepai  varchar(2),	 -- pais sala despiece
 	sde_codi int,
 	mat_codi int,
 	stp_traaut smallint default 1 not null,-- Trazabilidad Automatica.
@@ -4505,7 +4506,7 @@ CREATE OR REPLACE VIEW v_despsal AS
  SELECT c.eje_nume,    c.deo_codi,    c.deo_numdes,    c.tid_codi,    c.deo_fecha,    c.deo_almori,    c.deo_almdes,    c.deo_ejloge,
     c.deo_seloge,    c.deo_nuloge,    c.deo_incval,    l.def_orden,    l.pro_codi,    l.def_ejelot,    l.def_emplot,
     l.def_serlot,    l.pro_lote,    l.pro_numind,    l.def_kilos,    l.def_numpie,    l.def_prcost,    l.def_unicaj,
-    l.def_feccad,    l.def_preusu,    l.def_tiempo,    l.alm_codi,    c.deo_desnue
+    l.def_feccad,    l.def_preusu,    l.def_tiempo,    l.alm_codi, l.def_blkcos,   c.deo_desnue
    FROM desporig c,
     v_despfin l
   WHERE c.eje_nume = l.eje_nume AND c.deo_codi = l.deo_codi;
@@ -4791,7 +4792,7 @@ WHERE nspname = 'public' AND relkind IN ('r', 'v');
 
 create trigger albvenpar_insert AFTER insert  on anjelica.v_albvenpar for each row execute procedure anjelica.fn_mvtoalm();
 create trigger albvenpar_update BEFORE UPDATE OR DELETE  on anjelica.v_albvenpar for each row execute procedure anjelica.fn_mvtoalm();
-create trigger albavel_UPDATE AFTER UPDATE  on anjelica.v_albavel for each row   WHEN (OLD.avl_prven IS DISTINCT FROM NEW.avl_prven) execute procedure anjelica.fn_acpralb();
+create trigger albavel_UPDATE AFTER UPDATE  on anjelica.v_albavel for each row   WHEN (OLD.avl_prven IS DISTINCT FROM NEW.avl_prven OR OLD.avl_prbase IS DISTINCT FROM NEW.avl_prbase ) execute procedure anjelica.fn_acpralb();
 create trigger albavec_UPDATE AFTER UPDATE  on anjelica.v_albavec for each row  
  WHEN (OLD.cli_codi IS DISTINCT FROM NEW.cli_codi or OLD.avc_fecalb  IS DISTINCT FROM NEW.avc_fecalb ) 
  execute procedure anjelica.fn_acpralb();

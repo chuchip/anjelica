@@ -5,7 +5,7 @@ package gnu.chu.anjelica.pad;
  * <p>Título: MantArticulos </p>
  * <p>Descripcion: Mantenimiento Tabla de Articulos</p>
  * <p>Empresa: miSL</p>
-*  <p>Copyright: Copyright (c) 2005-2017
+*  <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -45,8 +45,6 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -159,7 +157,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         iniciarFrame();
 //        this.setResizable(false);
 
-        this.setVersion("2018-01-11" + (modConsulta ? "SOLO LECTURA" : ""));
+        this.setVersion("2018-02-06" + (modConsulta ? "SOLO LECTURA" : ""));
         strSql = "SELECT * FROM v_articulo where pro_activ != 0 "+
                 " ORDER BY pro_codi";
 
@@ -215,7 +213,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         " ORDER BY fpr_nomb";
     dtStat.select(s);
     fam_codiE.addDatos(dtStat);
-    fam_codiE.setFormato(Types.DECIMAL,"#9",2);
+    fam_codiE.setFormato(Types.DECIMAL,"##9");
    
   
     sbe_codiE.iniciar(dtStat, this, vl, EU);
@@ -271,6 +269,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     env_codiE.setColumnaAlias("env_codi");
     cat_codiE.setColumnaAlias("cat_codi");
     cal_codiE.setColumnaAlias("cal_codi");
+    pro_dimicaE.setColumnaAlias("pro_dimica");
     activarEventos();
     verDatos(dtCons);
     }
@@ -405,6 +404,7 @@ public class MantArticulos extends ventanaPad  implements PAD
       pro_feulmoE.setDate(dtCon1.getDate("pro_feulmo"));
       usu_nombE.setText(dtCon1.getString("usu_nomb"));
       cat_codiE.setValorDec(dtCon1.getInt("cat_codi"));
+      pro_dimicaE.setValorInt(dtCon1.getInt("pro_dimica"));
       cal_codiE.setValorDec(dtCon1.getInt("cal_codi"));
       pro_codequE.setValorInt(dtCon1.getInt("pro_codequ",true));
       pro_kgmiunE.setValorDec(dtCon1.getDouble("pro_kgmiun",true));
@@ -515,6 +515,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_codetiE.setEnabled(act);
     env_codiE.setEnabled(act);
     cat_codiE.setEnabled(act);
+    pro_dimicaE.setEnabled(act);
     cal_codiE.setEnabled(act);
     if (!act || nav.pulsado==navegador.QUERY)
     {
@@ -629,6 +630,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     v.add(pro_codetiE.getStrQuery());
     v.add(env_codiE.getStrQuery());
     v.add(cat_codiE.getStrQuery());
+    v.add(pro_dimicaE.getStrQuery());
     v.add(cal_codiE.getStrQuery());
     s = "SELECT * FROM v_articulo ";
     s = creaWhere(s, v,true);
@@ -860,6 +862,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     pro_codetiE.setValorInt(0);
     env_codiE.setValorInt(0);
     cat_codiE.setValorInt(1);
+    pro_dimicaE.setValorInt(10);
     cal_codiE.setValorInt(1);
     try
     {
@@ -959,6 +962,12 @@ public class MantArticulos extends ventanaPad  implements PAD
    {
      mensajeErr("Categoria NO VALIDA");
      return false;
+   }
+   if (pro_dimicaE.isNull())
+   {
+        msgBox("Establezca Dias minimos Caducidad");
+        pro_dimicaE.requestFocus();
+        return false;
    }
    if (! cal_codiE.controla())
    {
@@ -1075,6 +1084,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     dt.setDato("pro_codequ",pro_codequE.isNull()?null:pro_codequE.getValorInt());
     dt.setDato("pro_kgmiun",pro_kgmiunE.isNull()?null:pro_kgmiunE.getValorDec());
     dt.setDato("pro_kgmaun",pro_kgmiunE.isNull()?null:pro_kgmaunE.getValorDec());
+    dt.setDato("pro_dimica",pro_dimicaE.getValorInt());
     dt.setDato("pro_cointa",pro_cointaE.getValorDec());
   }
     @Override
@@ -1557,6 +1567,8 @@ public class MantArticulos extends ventanaPad  implements PAD
         pro_kgmaunE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9.99");
         cLabel45 = new gnu.chu.controles.CLabel();
         pro_cointaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"--9.99");
+        cLabel47 = new gnu.chu.controles.CLabel();
+        pro_dimicaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
         Pexclu = new gnu.chu.controles.CPanel();
         jtExclu = new gnu.chu.controles.CGridEditable(2) {
             public void cambiaColumna(int col,int colNueva, int row)
@@ -1697,7 +1709,7 @@ public class MantArticulos extends ventanaPad  implements PAD
         Pinicio.add(cLabel4);
         cLabel4.setBounds(0, 26, 51, 18);
 
-        fam_codiE.setAncTexto(30);
+        fam_codiE.setAncTexto(35);
         Pinicio.add(fam_codiE);
         fam_codiE.setBounds(60, 26, 285, 18);
 
@@ -2086,6 +2098,12 @@ public class MantArticulos extends ventanaPad  implements PAD
         Pfamil.add(pro_cointaE);
         pro_cointaE.setBounds(580, 70, 40, 18);
 
+        cLabel47.setText("Min. Dias Caducidad");
+        Pfamil.add(cLabel47);
+        cLabel47.setBounds(380, 10, 120, 18);
+        Pfamil.add(pro_dimicaE);
+        pro_dimicaE.setBounds(500, 10, 30, 18);
+
         Ptab.addTab("Parametros", Pfamil);
 
         Pexclu.setLayout(new javax.swing.BoxLayout(Pexclu, javax.swing.BoxLayout.LINE_AXIS));
@@ -2242,6 +2260,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CLabel cLabel44;
     private gnu.chu.controles.CLabel cLabel45;
     private gnu.chu.controles.CLabel cLabel46;
+    private gnu.chu.controles.CLabel cLabel47;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
@@ -2280,6 +2299,7 @@ public class MantArticulos extends ventanaPad  implements PAD
     private gnu.chu.controles.CComboBox pro_costkmiE;
     private gnu.chu.controles.CTextField pro_deunveE;
     private gnu.chu.controles.CTextField pro_diacomE;
+    private gnu.chu.controles.CTextField pro_dimicaE;
     private gnu.chu.controles.CComboBox pro_encajaE;
     private gnu.chu.controles.CComboBox pro_envvacE;
     private gnu.chu.controles.CTextField pro_fecaltE;
