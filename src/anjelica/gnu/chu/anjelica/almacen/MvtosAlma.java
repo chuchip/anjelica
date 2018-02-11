@@ -184,6 +184,11 @@ public class MvtosAlma
   {
       this.swFecDocumento=swFecDocumento;
   }
+  
+//  public void setIntervaloVenta(Date fechaInicio,Date fechaFinal, DatosTabla dt) throws SQLException
+//  {
+//      
+//  }
   public void setLote(int lote)
   {
       proLote=lote;
@@ -425,9 +430,11 @@ public class MvtosAlma
             (proNumind==0?"":" and pro_indlot = "+proNumind)+
             (!swSerieX?" and mvt_tipdoc !='X'":"")+
             (proCodi==0?"":" AND pro_codi = " + (proCodi==-1?"?":proCodi)) +
+            (swFecDocumento? (" AND mvt_fecdoc >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+           
+            " and mvt_fecdoc <= TO_DATE('"+fecFin+"','dd-MM-yyyy')"):
             " AND mvt_time::date >= TO_DATE('"+fecIni+"','dd-MM-yyyy') "+           
             " and mvt_time::date <= TO_DATE('"+fecFin+"','dd-MM-yyyy"+
-             (incluyeHora?"hh:mm:ss":"")+"') "; 
+             (incluyeHora?"hh:mm:ss":""+"') ")); 
     }
     
     
@@ -990,7 +997,7 @@ public class MvtosAlma
         }
         else
         {           
-            fefi = Formatear.sumaDias(fecIni, "dd-MM-yyyy", -1);
+            fefi = Formatear.sumaDias(fecIni, "dd-MM-yyyy", swFecDocumento?0:-1);
             if (fecInv.equals(fefi))
             {
                 setIncUltFechaInv(true);

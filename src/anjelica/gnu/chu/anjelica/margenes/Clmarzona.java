@@ -453,7 +453,9 @@ public class Clmarzona extends ventana {
     mvtosAlm.setSbeCodi(sbe_codiE.getValorInt());
     mvtosAlm.setCliente(cli_codiE.getValorInt());
     mvtosAlm.setRutCodi(rut_codiE.isNull()?(String) null:rut_codiE.getText());
+    
     mvtosAlm.iniciarMvtos(feulinE.getDate(), feciniE.getDate(),fecfinE.getDate(),dtCon1);
+    mvtosAlm.setFechasDocumento(opFechaDoc.isSelected());
 //    mvtosAlm.setIgnoraRepAlb(opIgnRepAlb.isSelected());
     mvtosAlm.resetMensajes();
     do
@@ -674,6 +676,7 @@ public class Clmarzona extends ventana {
         rut_codiE = new gnu.chu.controles.CLinkBox();
         opIgnRepAlb = new gnu.chu.controles.CCheckBox();
         opIgnVertE = new gnu.chu.controles.CCheckBox();
+        opFechaDoc = new gnu.chu.controles.CCheckBox();
         PPie = new gnu.chu.controles.CPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
         cLabel8 = new gnu.chu.controles.CLabel();
@@ -728,12 +731,12 @@ public class Clmarzona extends ventana {
         cLabel5.setText("De Fecha");
         cLabel5.setPreferredSize(new java.awt.Dimension(52, 18));
         Pcabe.add(cLabel5);
-        cLabel5.setBounds(240, 2, 52, 17);
+        cLabel5.setBounds(10, 2, 52, 17);
 
         cLabel6.setText("A Fecha");
         cLabel6.setPreferredSize(new java.awt.Dimension(44, 18));
         Pcabe.add(cLabel6);
-        cLabel6.setBounds(390, 2, 44, 17);
+        cLabel6.setBounds(160, 2, 44, 17);
 
         cLabel16.setText("Ruta");
         cLabel16.setPreferredSize(new java.awt.Dimension(60, 18));
@@ -757,29 +760,29 @@ public class Clmarzona extends ventana {
         cLabel2.setText("Fecha Ult. Inv.");
         cLabel2.setPreferredSize(new java.awt.Dimension(74, 18));
         Pcabe.add(cLabel2);
-        cLabel2.setBounds(430, 25, 90, 18);
+        cLabel2.setBounds(450, 25, 90, 18);
 
         feulinE.setPreferredSize(new java.awt.Dimension(28, 18));
         Pcabe.add(feulinE);
-        feulinE.setBounds(520, 25, 120, 18);
+        feulinE.setBounds(540, 25, 100, 18);
 
         cLabel3.setText("Empresa");
         cLabel3.setPreferredSize(new java.awt.Dimension(49, 18));
         Pcabe.add(cLabel3);
-        cLabel3.setBounds(12, 2, 49, 17);
+        cLabel3.setBounds(410, 45, 60, 17);
 
         emp_codiE.setPreferredSize(new java.awt.Dimension(29, 18));
         Pcabe.add(emp_codiE);
-        emp_codiE.setBounds(65, 2, 41, 17);
+        emp_codiE.setBounds(470, 45, 41, 17);
 
         cLabel4.setText("Delegacion");
         cLabel4.setPreferredSize(new java.awt.Dimension(70, 18));
         Pcabe.add(cLabel4);
-        cLabel4.setBounds(124, 2, 70, 17);
+        cLabel4.setBounds(530, 45, 70, 17);
 
         sbe_codiE.setToolTipText("Tratar solo Ventas de Subseccion introducida");
         Pcabe.add(sbe_codiE);
-        sbe_codiE.setBounds(198, 2, 38, 17);
+        sbe_codiE.setBounds(600, 45, 38, 17);
 
         Baceptar.setText("Aceptar");
         Pcabe.add(Baceptar);
@@ -799,24 +802,24 @@ public class Clmarzona extends ventana {
         opIncVertE.setText("Incl. todas Reg.");
         opIncVertE.setToolTipText("Incluir TODAS las regularizaciones");
         Pcabe.add(opIncVertE);
-        opIncVertE.setBounds(300, 87, 110, 18);
+        opIncVertE.setBounds(300, 87, 118, 18);
         opIncVertE.getAccessibleContext().setAccessibleDescription("Incluir Regularizaciones");
 
-        opIncComent.setText("Inc.  Comentario");
+        opIncComent.setText("Inc.  Coment.");
         opIncComent.setToolTipText("Incluir productos tipo comentario");
         Pcabe.add(opIncComent);
-        opIncComent.setBounds(532, 2, 110, 17);
+        opIncComent.setBounds(542, 2, 100, 17);
         Pcabe.add(feciniE);
-        feciniE.setBounds(292, 2, 90, 17);
+        feciniE.setBounds(67, 2, 90, 17);
         Pcabe.add(fecfinE);
-        fecfinE.setBounds(440, 2, 92, 17);
+        fecfinE.setBounds(210, 2, 90, 17);
 
         cLabel19.setText("Producto");
         cLabel19.setPreferredSize(new java.awt.Dimension(50, 18));
         Pcabe.add(cLabel19);
         cLabel19.setBounds(12, 25, 50, 18);
         Pcabe.add(cli_codiE);
-        cli_codiE.setBounds(69, 47, 430, 18);
+        cli_codiE.setBounds(69, 47, 330, 18);
 
         cLabel20.setText("Zona");
         cLabel20.setPreferredSize(new java.awt.Dimension(60, 18));
@@ -832,12 +835,17 @@ public class Clmarzona extends ventana {
         opIgnRepAlb.setText("Ignorar Rep. Alb");
         opIgnRepAlb.setToolTipText("Ignorar representante de Albaran");
         Pcabe.add(opIgnRepAlb);
-        opIgnRepAlb.setBounds(520, 47, 110, 18);
+        opIgnRepAlb.setBounds(420, 2, 120, 18);
 
         opIgnVertE.setText("Ign. todas Reg.");
         opIgnVertE.setToolTipText("Ignorar TODAS las Regularizaciones");
         Pcabe.add(opIgnVertE);
-        opIgnVertE.setBounds(410, 87, 110, 18);
+        opIgnVertE.setBounds(420, 87, 120, 18);
+
+        opFechaDoc.setText("Fechas Doc.");
+        opFechaDoc.setToolTipText("Rango Fechas de Documento ?");
+        Pcabe.add(opFechaDoc);
+        opFechaDoc.setBounds(310, 2, 100, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1114,6 +1122,7 @@ public class Clmarzona extends ventana {
     private gnu.chu.controles.Cgrid jt;
     private gnu.chu.controles.Cgrid jtGru;
     private gnu.chu.controles.CTextField kgsVenE;
+    private gnu.chu.controles.CCheckBox opFechaDoc;
     private gnu.chu.controles.CCheckBox opIgnRepAlb;
     private gnu.chu.controles.CCheckBox opIgnVertE;
     private gnu.chu.controles.CCheckBox opIncComent;

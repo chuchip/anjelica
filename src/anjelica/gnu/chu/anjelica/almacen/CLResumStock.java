@@ -344,6 +344,8 @@ private void jbInit() throws Exception
   {
     try
     {
+      if (dtStat.getConexion().isClosed())
+          return;
       s = "select * from tilialca where tla_codi = " + tla_codiE.getValorInt();
       if (!dtStat.select(s))
         return;

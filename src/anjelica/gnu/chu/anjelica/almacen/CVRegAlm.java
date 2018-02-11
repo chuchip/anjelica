@@ -143,6 +143,8 @@ private void jbInit() throws Exception
         pro_artconC = new gnu.chu.controles.CComboBox();
         cLabel3 = new gnu.chu.controles.CLabel();
         tir_afestkE = new gnu.chu.controles.CComboBox();
+        cLabel5 = new gnu.chu.controles.CLabel();
+        cli_codiE = new gnu.chu.camposdb.cliPanel();
         jt = new gnu.chu.controles.Cgrid(10);
         Ppie = new gnu.chu.controles.CPanel();
         cLabel11 = new gnu.chu.controles.CLabel();
@@ -191,13 +193,13 @@ private void jbInit() throws Exception
 
         cLabel1.setText("Tipo");
         Pcabe.add(cLabel1);
-        cLabel1.setBounds(340, 43, 50, 14);
+        cLabel1.setBounds(410, 42, 30, 15);
 
         tir_codiE.setFormato(Types.DECIMAL,"##9");
         tir_codiE.setAncTexto(35);
         tir_codiE.setAnchoComboDesp(350);
         Pcabe.add(tir_codiE);
-        tir_codiE.setBounds(70, 43, 260, 17);
+        tir_codiE.setBounds(410, 22, 220, 17);
 
         Baceptar.setText("Aceptar");
         Baceptar.addActionListener(new java.awt.event.ActionListener() {
@@ -206,38 +208,46 @@ private void jbInit() throws Exception
             }
         });
         Pcabe.add(Baceptar);
-        Baceptar.setBounds(460, 40, 90, 24);
+        Baceptar.setBounds(530, 40, 90, 24);
 
         cLabel9.setText("Producto");
         Pcabe.add(cLabel9);
         cLabel9.setBounds(10, 22, 60, 17);
         Pcabe.add(pro_codiE);
-        pro_codiE.setBounds(70, 22, 330, 17);
+        pro_codiE.setBounds(70, 22, 270, 17);
 
         cLabel2.setText("Tipo Prod.");
         Pcabe.add(cLabel2);
-        cLabel2.setBounds(330, 2, 62, 18);
+        cLabel2.setBounds(430, 2, 62, 18);
 
         pro_artconC.addItem("Todos", "T");
         pro_artconC.addItem("Congelado", "1");
         pro_artconC.addItem("No Congelado", "0");
         pro_artconC.setMinimumSize(new java.awt.Dimension(32, 20));
         Pcabe.add(pro_artconC);
-        pro_artconC.setBounds(390, 2, 142, 18);
+        pro_artconC.setBounds(490, 2, 142, 18);
 
         cLabel3.setText("Cod.Reg.");
         Pcabe.add(cLabel3);
-        cLabel3.setBounds(10, 43, 60, 14);
+        cLabel3.setBounds(345, 22, 60, 15);
 
         tir_afestkE.addItem("Todos","*");
         tir_afestkE.addItem("Suma","+");
         tir_afestkE.addItem("Resta","-");
         Pcabe.add(tir_afestkE);
-        tir_afestkE.setBounds(380, 43, 70, 17);
+        tir_afestkE.setBounds(450, 42, 70, 17);
+
+        cLabel5.setText("Cliente");
+        cLabel5.setPreferredSize(new java.awt.Dimension(50, 18));
+        Pcabe.add(cLabel5);
+        cLabel5.setBounds(10, 42, 50, 18);
+        Pcabe.add(cli_codiE);
+        cli_codiE.setBounds(69, 42, 330, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         Pprinc.add(Pcabe, gridBagConstraints);
 
@@ -413,6 +423,7 @@ private void jbInit() throws Exception
                         + ")", true);
             } while (dtCon1.next());
         }
+        cli_codiE.iniciar(dtStat,this,vl,EU);
         pro_codiE.iniciar(dtStat, this, vl, EU);
         fecfinE.setDate(Formatear.getDateAct() );
         feciniE.setDate(Formatear.sumaMesDate(Formatear.getDateAct(), -1));
@@ -444,6 +455,7 @@ private void jbInit() throws Exception
              " and tir_afestk != '=' "+
              (tir_afestkE.getValor().equals("*")?"":" and tir_afestk = '"+tir_afestkE.getValor()+"'")+
              (pro_codiE.isNull()?"":" and r.pro_codi = "+pro_codiE.getValorInt())+
+             (cli_codiE.isNull()?"":" and rgs_cliprv="+cli_codiE.getValorInt())+
              (pro_artconC.getValor().equals("T")?"":" and pro_artcon "+
                  (pro_artconC.getValor().equals("0")?"":"!")+"= 0" )+
              (tir_codiE.isNull()?"":" and tir_codi = "+tir_codiE.getValorInt())+
@@ -464,7 +476,7 @@ private void jbInit() throws Exception
              v.add(dtCon1.getTimeStamp("rgs_fecha")); // 2
              v.add(dtCon1.getInt("eje_nume")+dtCon1.getString("pro_serie")+ 
                  dtCon1.getInt("pro_nupar")+"-"+dtCon1.getInt("pro_numind")); // 3
-             v.add(dtCon1.getString("tir_nomb")); // 4
+             v.add("("+dtCon1.getString("tir_afestk")+") "+dtCon1.getString("tir_nomb")); // 4
             v.add(dtCon1.getString("rgs_canti")); // 5
             v.add(dtCon1.getString("rgs_kilos")); // 6
             v.add(dtCon1.getString("rgs_prregu")); // 7
@@ -529,6 +541,7 @@ private void jbInit() throws Exception
               + (pro_codiE.isNull()?" in (select distinct(pro_codi) from v_regstock"
               + " where rgs_fecha between '"+feciniE.getFechaDB()+"' and '"+fecfinE.getFechaDB()+"') ":
                  "  =  "+pro_codiE.getValorInt())
+              +(cli_codiE.isNull()?"":" and rgs_cliprv="+cli_codiE.getValorInt())
               + (pro_artconC.getValor().equals("T")?"":" and pro_artcon "+
                 (pro_artconC.getValor().equals("0")?"":"!")+"= 0" )
               + " AND mvt_time::date >= '"+ Formatear.getFechaDB(feulin)+ "'"
@@ -572,8 +585,7 @@ private void jbInit() throws Exception
           Date fecInicial=feciniE.getDate();
           setMensajePopEspere("Actualizando producto: "+dtCon1.getInt("pro_codi"),false);
           do
-          {
-             
+          {             
               if (dtCon1.getInt("pro_codi")!=proCodi)
               {
                   setMensajePopEspere("Actualizando producto: "+dtCon1.getInt("pro_codi"),false);
@@ -583,8 +595,7 @@ private void jbInit() throws Exception
                   kilos=ht.get("kilos");
                   costo=ht.get("importe")/kilos;
                   if (kilos==0)
-                      costo=0;
-                  
+                      costo=0;                  
               }
               if (dtCon1.getString("mvt_tipdoc").equals("R"))
               {
@@ -668,7 +679,9 @@ private void jbInit() throws Exception
     private gnu.chu.controles.CLabel cLabel20;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
+    private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel9;
+    private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CTextField fecfinE;
     private gnu.chu.controles.CTextField feciniE;
     private gnu.chu.controles.CTextField ganDifE;

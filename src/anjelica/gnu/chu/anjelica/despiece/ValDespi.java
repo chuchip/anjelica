@@ -1213,7 +1213,7 @@ public class ValDespi extends ventana {
                             precAcu = Formatear.redondea(precAcu, NUMDEC_COSTO);
                         }
                         s = "UPDATE v_despfin SET def_prcost = " + precAcu
-                            + " deo_blkcos = 0"
+                            + ", deo_blkcos = 0"
                             + " WHERE eje_nume = " + eje_numeE.getValorInt()
                             + " AND "
                             + (isGrupo ? "def_numdes" : "deo_codi")
