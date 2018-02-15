@@ -721,7 +721,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20180202)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20180215)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (isArgumentoAdmin()?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -2044,7 +2044,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           if (Birgrid.isEnabled())
           {
             if (!jtDes.isEnabled())
-              irGridDes0();
+              irGrid();
           }
         }
         catch (Exception k)
@@ -4801,12 +4801,13 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
             " and l.his_rowid="+hisRowid);
         
 //    debug("verDesgLinea: "+s);
+    boolean enabAnt=jtDes.isEnabled();
     jtDes.setEnabled(false);
     jtDes.removeAllDatos();
     if (!dtCon1.select(s))
     {
       if (nav.pulsado==navegador.EDIT || nav.pulsado==navegador.ADDNEW)
-        jtDes.setEnabled(true);
+        jtDes.setEnabled(enabAnt);
       return;
     }
     swActDesg=false;
@@ -4831,7 +4832,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
       pro_codiE.setEditable(false);
     }
     jtDes.requestFocusInicio();
-    jtDes.setEnabled(false);
+    jtDes.setEnabled(enabAnt);
     if (pEtiPrv!=null && nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.ADDNEW)
         verDiferentesLotes();    
     swActDesg=true;
