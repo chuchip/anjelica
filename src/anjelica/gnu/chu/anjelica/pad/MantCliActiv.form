@@ -90,7 +90,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="zon_codiL">
+            <Component class="gnu.chu.controles.CTextField" name="zon_codiL">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Zona"/>
               </Properties>
@@ -100,7 +100,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="zon_codiL1">
+            <Component class="gnu.chu.controles.CTextField" name="zon_codiL1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Represent"/>
               </Properties>
@@ -123,7 +123,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel1">
+            <Component class="gnu.chu.controles.CTextField" name="cLabel1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Activo "/>
               </Properties>
@@ -143,7 +143,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel2">
+            <Component class="gnu.chu.controles.CTextField" name="cLabel2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Fecha Ult. Mvto Menor "/>
               </Properties>
@@ -163,7 +163,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel3">
+            <Component class="gnu.chu.controles.CTextField" name="cLabel3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="A Fec.Alta "/>
               </Properties>
@@ -193,7 +193,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel4">
+            <Component class="gnu.chu.controles.CTextField" name="cLabel4">
               <Properties>
                 <Property name="text" type="java.lang.String" value="De Fec.Alta "/>
               </Properties>
@@ -213,7 +213,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="zon_codiL2">
+            <Component class="gnu.chu.controles.CTextField" name="zon_codiL2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Seccion"/>
               </Properties>
@@ -230,7 +230,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.pvc_comentL" name="sbe_nombL">
+            <Component class="gnu.chu.controles.CTextField" name="sbe_nombL">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="c8" id="orange" palette="1" red="ff" type="palette"/>
@@ -304,7 +304,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="gnu.chu.controles.pvc_comentL" name="cLabel5">
+            <Component class="gnu.chu.controles.CTextField" name="cLabel5">
               <Properties>
                 <Property name="text" type="java.lang.String" value="N&#xba; Clientes"/>
               </Properties>

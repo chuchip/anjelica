@@ -343,6 +343,7 @@ cli_email2 char(60),     -- Correo Electronico Administr. (Facturas/Alb.)
 cli_servir smallint default -1 not null, --  Puede servir?. 0 NO . 1 Si. 2: No! (no podra cargar pedidos ni alb.)
 cli_enalva smallint not null default 0, -- Enviar Alb. Valorados. (0: No afecta. 1: SI. 2: No )
 cli_ordrut smallint, -- Orden en ruta.
+cli_comped varchar(256), -- Comentarios preparación pedidos
 constraint ix_vcliente primary key(cli_codi)
 );
 CREATE OR REPLACE VIEW v_cliente AS 
@@ -374,7 +375,7 @@ CREATE OR REPLACE VIEW v_cliente AS
     clientes.cli_estcon, clientes.cli_email1, clientes.cli_email2, 
     clientes.cli_horenv, clientes.cli_comenv, clientes.cli_servir, 
     clientes.cli_enalva, clientes.cli_ordrut, clientes.cli_codrut AS cli_carte, 
-    clientes.cli_codrut AS cli_valor
+    clientes.cli_codrut AS cli_valor,cli_comped
    FROM clientes;
 grant select on anjelica.v_cliente to PUBLIC;
 --
@@ -472,6 +473,7 @@ clc_comen varchar(100) -- Comentario sobre el Cambio
 cli_servir smallint default -1 not null, --  Puede servir?. 0 NO 
 cli_enalva smallint not null default 0, -- Enviar Alb. Valorados. (0: No afecta. 1: SI. 2: No )
 cli_ordrut smallint -- Orden en ruta.
+cli_comped varchar(256)
 );
 create index ix_cliencamb on cliencamb(cli_codi,clc_fecha,clc_hora);
 --
@@ -3437,7 +3439,9 @@ insert into parametros values('*','crotalAutoma','Numero Crotal Automatico',1);
 insert into parametros values('*','minLonCrotal','Numero Minimo digitos Crotal',10);
 insert into parametros values('*','controlprodmin','Control Productos Minoristas',0);
 insert into parametros values('*','tipdespclasi','Tipo despiece Cambio Clasificacion',108);
-INSERT INTO PARAMETROS VALUES('*','avisodiascad','Aviso dias Caducidad',1); -- Comprobar dias Caducidad. 1 SI. 0 No
+INSERT INTO PARAMETROS VALUES('*','avisodiascad','Aviso dias Caducidad',1); -- Comprobar dias
+ Caducidad. 1 SI. 0 No
+ insert into parametros values('*','tipdesp108A109','Tipo despiece 108 A 109',401);
 --
 -- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
 --
@@ -3777,8 +3781,8 @@ grant select on anjelica.v_hispedven to public;
 create table anjelica.compedven
 (
  cli_codi int not null,
- cpv_fecha date not null,
- cpv_come varchar(512)
+ cpv_fecha date not null, -- fecha null es comentario generico.
+ cpv_come varchar(512) not null,
 );
 create index  ix_compedven  on compedven (cli_codi,cpv_fecha);
 --

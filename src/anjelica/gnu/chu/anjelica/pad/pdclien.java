@@ -1,5 +1,27 @@
 package gnu.chu.anjelica.pad;
 
+/**
+ *
+ * <p>Título: pdclien</p>
+ * <p>Descripción: Mantenimiento de la Tabla de Clientes. Los cambios los guarda en
+ * la tabla cliencamb </p>
+* <p>Copyright: Copyright (c) 2005-2018
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los terminos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,ed
+ *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * @author chuchiP
+ * <p>Empresa: MISL</p>
+ * @version 2.0 
+ */
 import gnu.chu.anjelica.menu;
 import gnu.chu.controles.*;
 import gnu.chu.interfaces.*;
@@ -21,28 +43,6 @@ import java.util.logging.Logger;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
-/**
- *
- * <p>Título: pdclien</p>
- * <p>Descripción: Mantenimiento de la Tabla de Clientes. Los cambios los guarda en
- * la tabla cliencamb </p>
-* <p>Copyright: Copyright (c) 2005-2017
- *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
- *  los terminos de la Licencia Pública General de GNU según es publicada por
- *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
- *  o bien (según su elección) de cualquier versión posterior.
- *  Este programa se distribuye con la esperanza de que sea útil,ed
- *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
- *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
- *  Véase la Licencia Pública General de GNU para más detalles.
- *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
- *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
- *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
- * </p>
- * @author chuchiP
- * <p>Empresa: MISL</p>
- * @version 1.2 (Incluido campo de etiquetas de cliente)
- */
 public class pdclien extends ventanaPad implements PAD
 {
     boolean CHECKCODREP=true; // Comprueba que el Codigo Reparto sea valido
@@ -61,6 +61,7 @@ public class pdclien extends ventanaPad implements PAD
     String s;
     CTabbedPane Tpanel = new CTabbedPane();
     CLabel cli_comentL = new CLabel();
+    CLabel cli_compedL = new CLabel();
     CLabel cli_zonrepL = new CLabel();
     CTextField cli_poblE = new CTextField(Types.CHAR, "X", 30);
     CTextField cli_telconE = new CTextField(Types.CHAR, "X", 15);
@@ -136,7 +137,10 @@ public class pdclien extends ventanaPad implements PAD
     CComboBox cli_recequE = new CComboBox();
     CComboBox cli_agralbE = new CComboBox();
     JScrollPane cli_comenS = new JScrollPane();
+    JScrollPane cli_compedS = new JScrollPane();
+    
     JTextArea cli_comenT = new JTextArea();
+    JTextArea cli_compedT = new JTextArea();
     CLabel cli_riesgL = new CLabel();
     CTextField cli_riesgE = new CTextField(Types.DECIMAL, "--,---,--9.99");
     CComboBox cli_exeivaE = new CComboBox();
@@ -334,7 +338,7 @@ public class pdclien extends ventanaPad implements PAD
       
       iniciarFrame();
       this.setSize(new Dimension(687, 496));
-      this.setVersion("2017-06-15");
+      this.setVersion("2018-02-18");
       strSql = "SELECT * FROM clientes where emp_codi = " + EU.em_cod
               + "ORDER BY cli_codi ";
 
@@ -429,8 +433,6 @@ public class pdclien extends ventanaPad implements PAD
       cli_exeivaL.setBounds(new Rectangle(526, 156, 67, 18));
       cli_agralbL.setText("Agrup. Albaranes");
       cli_agralbL.setBounds(new Rectangle(0, 122, 100, 20));
-      cli_comenS.setBounds(new Rectangle(230, 60, 400, 70));
-      cli_comentL.setBounds(new Rectangle(225, 40, 69, 14));
       cli_zoncreE.setBounds(new Rectangle(115, 171, 275, 18));
       cli_zoncreL.setBounds(new Rectangle(0, 171, 112, 18));
       cli_zonrepE.setBounds(new Rectangle(115, 150, 276, 19));
@@ -583,7 +585,7 @@ public class pdclien extends ventanaPad implements PAD
       Pcabe.setLayout(null);
       Pdiscrim.setBorder(titledBorder2);
 
-      Pdiscrim.setBounds(new Rectangle(230, 140, 407, 106));
+      Pdiscrim.setBounds(new Rectangle(230, 160, 407, 106));
       Pdiscrim.setLayout(null);
 
       titledBorder2.setTitle("Discriminadores");
@@ -688,8 +690,15 @@ public class pdclien extends ventanaPad implements PAD
       cLabel35.setText("Telef. Cto.");
       cLabel1.setText("Codigo Cliente");
       cli_zonrepL.setText("Zona / Represent.");
-      cli_comentL.setText("Comentario");
-
+      cli_comentL.setText("Comentario General");
+      cli_comentL.setBounds(new Rectangle(225, 40, 125, 16));
+      cli_comenS.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+      cli_comenS.setBounds(new Rectangle(230,58, 400, 36));
+      cli_compedL.setText("Comentario Pedido");
+      cli_compedL.setBounds(new Rectangle(225, 95, 125, 16));
+      cli_compedS.setBounds(new Rectangle(230,112, 400, 36));      
+      cli_compedS.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+      
       Pcabe.setButton(KeyEvent.VK_F4, Baceptar);
       PdatGen.setButton(KeyEvent.VK_F4, Baceptar);
       PdatFra.setButton(KeyEvent.VK_F4, Baceptar);
@@ -890,9 +899,13 @@ public class pdclien extends ventanaPad implements PAD
         PdatCon.add(cli_vacfinL, null);
       PdatCon.add(cli_vaccomE, null);
       PdatCon.add(cli_vacfinE, null);
+      cli_comenS.getViewport().add(cli_comenT, null);
       PdatCon.add(cli_comenS, null);
         PdatCon.add(cli_comentL, null);
-        cli_comenS.getViewport().add(cli_comenT, null);
+        cli_compedS.getViewport().add(cli_compedT, null);
+        PdatCon.add(cli_compedL, null);
+        PdatCon.add(cli_compedS, null);
+
       emp_nombL.setBounds(new Rectangle(382, 81, 285, 19));
       Phistor.add(jt, null);
 
@@ -1670,6 +1683,13 @@ public class pdclien extends ventanaPad implements PAD
         cli_comenT.requestFocus();
         return false;
       }
+      if (cli_compedT.getText().length()>250 )
+      {
+        mensajeErr("Campo comentario Pedido no puede ser superior a 250 caracteres");
+        cli_compedT.requestFocus();
+        return false;
+      }
+
       if (cli_nomenE.isNull())
       {
           mensajeErr("Introduzca nombre de entrega");
@@ -1906,6 +1926,7 @@ public class pdclien extends ventanaPad implements PAD
     dtAdd.setDato("cli_recequ",cli_recequE.getValor());
     dtAdd.setDato("cli_agralb",cli_agralbE.getValor());
     dtAdd.setDato("cli_comen",cli_comenT.getText());
+    dtAdd.setDato("cli_comped",cli_compedT.getText());
     dtAdd.setDato("cli_riesg",cli_riesgE.getValorDec());
     dtAdd.setDato("pai_codi",pai_codiE.getValorInt());
     dtAdd.setDato("cue_codi",cue_codiE.getText());
@@ -2047,6 +2068,7 @@ public class pdclien extends ventanaPad implements PAD
     Baceptar.setEnabled(b);
     Bcancelar.setEnabled(b);
     cli_comenT.setEnabled(b);
+    cli_compedT.setEnabled(b);
     cli_codiE.setEnabled(b);
 //    emp_codiE.setEnabled(b);
   }
@@ -2069,6 +2091,7 @@ public class pdclien extends ventanaPad implements PAD
     if (EU.getSbeCodi()!=0)
       sbe_codiE.setValorInt(EU.getSbeCodi());
     cli_comenT.setEnabled(false);
+    cli_compedT.setEnabled(false);
     cli_nombE.requestFocus();
     cli_fecaltE.setEnabled(true);
     cli_feulmoE.setEnabled(true);
@@ -2091,6 +2114,7 @@ public class pdclien extends ventanaPad implements PAD
     cli_fecaltE.setEnabled(false);
     cli_feulmoE.setEnabled(false);
     cli_comenT.setText("");
+    cli_compedT.setText("");
     cli_tipivaE.setValor("1"); // Iva del 7
     cli_recequE.setValor("0");
     pai_codiE.setValorInt(MantPaises.PAI_ESPANA);
@@ -2297,6 +2321,7 @@ public class pdclien extends ventanaPad implements PAD
       cli_recequE.setValor(dtCon1.getString("cli_recequ"));
       cli_agralbE.setValor(dtCon1.getString("cli_agralb"));
       cli_comenT.setText(dtCon1.getString("cli_comen"));
+      cli_compedT.setText(dtCon1.getString("cli_comped",true));
       cli_riesgE.setText(dtCon1.getString("cli_riesg"));
       pai_codiE.setText(dtCon1.getString("pai_codi"));
       cue_codiE.setText(dtCon1.getString("cue_codi"));

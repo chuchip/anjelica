@@ -432,8 +432,9 @@ public class utildesp
                 }
 
                 if (prvCodi == 0 && swTidCodi)
-                {
                     prvCodi = dtStat.getInt("prv_codi", true);
+                if (swTidCodi)
+                {
                     deoCodi = dtStat.getInt("deo_codi");
                     deoAno = dtStat.getInt("eje_nume");
                     fecDespE = dtStat.getDate("deo_fecha");
@@ -834,6 +835,8 @@ public class utildesp
     stkPart.setKilos(Formatear.redondea(dt.getDouble("stp_kilact"),2));
     stkPart.setUnidades(dt.getInt("stp_unact"));
     stkPart.setFechaCad(dt.getDate("stp_feccad"));
+    stkPart.setKilosIniciales(Formatear.redondea(dt.getDouble("stp_kilini"),2));
+    stkPart.setUnidadesIniciales(dt.getInt("stp_unini"));
     return stkPart;
   }
   public void setStockPartidas(StkPartid stkPart)

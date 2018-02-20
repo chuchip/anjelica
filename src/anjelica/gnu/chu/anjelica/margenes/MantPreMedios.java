@@ -50,6 +50,7 @@ public class MantPreMedios extends ventana
 {
    
    private int TIDE_AUTOCLASI=108; 
+   private int TIDE_108A109=401;
    Hashtable<Integer,Double> htBolas = new Hashtable();
    Hashtable<Integer,Integer[]> htLomos = new Hashtable();
    Hashtable<Integer,Boolean> htLomCom = new Hashtable();
@@ -105,7 +106,7 @@ public class MantPreMedios extends ventana
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2018-01-17" );
+      this.setVersion("2018-02-14" );
       statusBar = new StatusBar(this);
       
       iniciarFrame();
@@ -121,6 +122,7 @@ public class MantPreMedios extends ventana
     public void iniciarVentana() throws Exception
     {
         TIDE_AUTOCLASI= EU.getValorParam("tipdespclasi", TIDE_AUTOCLASI);
+        TIDE_108A109= EU.getValorParam("tipdesp108A109", TIDE_108A109);
         htBolas.put(40201, 2.55);
         htBolas.put(40202, 2.65);
         htBolas.put(40203, 2.75);
@@ -286,6 +288,15 @@ public class MantPreMedios extends ventana
               dtCon1.select(s);
               kilCompra-=dtCon1.getDouble("kilos",true);
               impCompra-=dtCon1.getDouble("importe",true);
+              // Sumo Despieces de 108 a 109
+              s="select sum(def_kilos) as kilos, sum(def_kilos*def_prcost) as importe "
+                  + "from v_despsal as d where  tid_codi= "+TIDE_108A109+
+                   " and deo_fecha>='"+ tar_feciniE.getFechaDB()+"'"+ 
+                   " and (pro_codi="+codigo1+
+                   " or pro_codi= "+codigo2+")";
+              dtCon1.select(s);
+              kilCompra+=dtCon1.getDouble("kilos",true);
+              impCompra+=dtCon1.getDouble("importe",true);
               // Añado los pedidos cde compra
               s="select * from v_pedico as c where "+
                    "  pcc_fecrec between '"+ fecIniComE.getFechaDB()+"' and '"+ fecFinComE.getFechaDB()+"'"+ 

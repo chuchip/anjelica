@@ -96,7 +96,7 @@ public class RepEtiqueta extends ventana
 
         iniciarFrame();
 
-        this.setVersion("2017-12-25");
+        this.setVersion("2018-02-20");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -297,7 +297,7 @@ public class RepEtiqueta extends ventana
             trazPanel.setFechaCaducidad(Formatear.sumaDiasDate(Formatear.getDateAct(), dias));
             trazPanel.setFechaProduccion(Formatear.sumaDiasDate(Formatear.getDateAct(), dias - pro_codiE.getDiasCaducidad() ));
             if (trazPanel.getFechaSacrificio() != null)
-                trazPanel.setFechaSacrificio(Formatear.sumaDiasDate(Formatear.getDateAct(), (pro_codiE.getDiasCaducidad() +2 )));
+                trazPanel.setFechaSacrificio(Formatear.sumaDiasDate(Formatear.getDateAct(),  dias - (pro_codiE.getDiasCaducidad() +2 )));
         } catch (ParseException | SQLException ex)
         {
             Error("Error al poner fechas",ex);
@@ -562,10 +562,10 @@ public class RepEtiqueta extends ventana
             utDesp.actualTrazabilidad(dtAdd);
         etiq.iniciar(tipoEtiq!=ETIQINT?codBarras.getCodBarra():codBarras.getLote(false),
             codBarras.getLote(tipoEtiq!=ETIQINT),
-            pro_codiE.getText(),pro_codiE.getTextNomb(),utDesp.getPaisNacimiento(),utDesp.getPaisEngorde(),
-            utDesp.getSalaDespiece(),
+            pro_codiE.getText(),pro_codiE.getTextNomb(),utDesp.getPaisNacimientoNombre(),utDesp.getPaisEngordeNombre(),
+            utDesp.getDespiezado(),
             utDesp.getNumeroCrotal(),deo_kilosE.getValorDec(),
-            utDesp.getConservar(), utDesp.getMatadero(),
+            utDesp.getConservar(), utDesp.getSacrificado(),
             utDesp.getFechaProduccion(),utDesp.getFechaProduccion(), utDesp.getFechaCaducidad(),
             utDesp.getFechaSacrificio());
         etiq.setNumCopias(tipoEtiq==ETIQINT?numCopiasE.getValorInt():1);

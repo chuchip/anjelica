@@ -38,7 +38,7 @@ package gnu.chu.anjelica.ventas;
  *   Poner albarán como No facturar (conforme)
  * checkPedido: true o false, indica si se comprobara si exiten pedidos pendientes. Por defecto es true.
  *</p>
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -201,6 +201,7 @@ public class pdalbara extends ventanaPad  implements PAD
   public final static String VISTAIND="v_albventa_detalle";
   Cgrid jtHist=new Cgrid(4);
   CPanel Phist=new CPanel();
+  CPanel PCliente=new CPanel();
   DatosTabla dtHist,dtPedi;
   private int hisRowid=0;
   private BotonBascula botonBascula;
@@ -1242,7 +1243,10 @@ public class pdalbara extends ventanaPad  implements PAD
         Pprinc.add(Ptab1, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         Ptab1.addTab("Albaran", Pgrid);
         Ptab1.addTab("Pedidos", Ppedido);
-        Ptab1.addTab("Cliente", pComClien);
+        Ptab1.addTab("Cliente", PCliente);
+        PCliente.setLayout(new GridBagLayout());
+        pComClien.setPreferredSize(new Dimension(100,150));
+        PCliente.add(pComClien, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 1, 1));
         Ptab1.addTab("Historico",Phist);
         Pcabped.add(cLabel26, null);
         Pcabped.add(pvc_comenL, null);
@@ -9188,7 +9192,7 @@ public class pdalbara extends ventanaPad  implements PAD
                      utdesp.getConservar(), utdesp.getSacrificado(),
                      utdesp.getFechaCompra(),
                      utdesp.getFechaProduccion(),                     
-                     utdesp.getFechaCaducidad(),utdesp.fecSacrE);
+                     utdesp.getFechaCaducidad(),utdesp.getFechaSacrificio());
     
         etiq.listarDefec();
       }

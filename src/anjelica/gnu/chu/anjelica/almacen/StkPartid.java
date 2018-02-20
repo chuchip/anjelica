@@ -28,6 +28,8 @@ import java.util.Date;
 public class StkPartid {
     private Date fecCad=null;
     private double kilos=0;
+    private double kilosIniciales=0;
+    private int unidadesIniciales=0;
     private boolean indivStock;
     private boolean controlInd;
     private int estado;
@@ -74,6 +76,22 @@ public class StkPartid {
     public void setKilos(double kilos) {
         this.kilos = kilos;
     }
+    public void setKilosIniciales(double kilosIni) {
+        this.kilosIniciales = kilosIni;
+    }
+    public double getKilosIniciales()
+    {
+        return kilosIniciales;
+    }
+    public void setUnidadesIniciales(int unidadesInic)
+    {
+        unidadesIniciales=unidadesInic;
+    }
+    public int getUnidadesIniciales()
+    {
+        return unidadesIniciales;
+    }
+
     /**
      * Establece la fecha de caducidad
      * @param fecCad 

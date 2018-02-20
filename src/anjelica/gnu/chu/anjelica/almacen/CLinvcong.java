@@ -581,6 +581,7 @@ public class CLinvcong extends ventana
             " pro_codi int,"+
             " fam_codi int,"+
             " prv_codi int,"+
+            " prv_nomb varchar(80),"+
             " stp_unact int,"+
             " stp_kilact float,"+
             " costo float,"+
@@ -616,6 +617,7 @@ public class CLinvcong extends ventana
             dtAdd.setDato("pro_codi",dtCon1.getInt("pro_codi"));
             dtAdd.setDato("fam_codi",dtCon1.getInt("fam_codi"));
             dtAdd.setDato("prv_codi",prvCodi);
+            dtAdd.setDato("prv_nomb",gnu.chu.anjelica.pad.pdprove.getNombPrv(prvCodi, dtStat));
             dtAdd.setDato("stp_unact",dtCon1.getInt("stp_unact"));
             dtAdd.setDato("stp_kilact",dtCon1.getDouble("stp_kilact"));
             dtAdd.setDato("costo",utdesp.getPrecioCompra()==-1?0:utdesp.getPrecioCompra()*dtCon1.getDouble("stp_kilact"));
@@ -690,7 +692,11 @@ public class CLinvcong extends ventana
              Error("Error al buscar datos", k);
         }
     }
-    
+    /**
+     * 
+     * @param agruFec Agrupar fechas
+     * @throws Exception 
+     */
     private void verDatos(boolean agruFec) throws Exception
     {
         String s;
@@ -772,19 +778,29 @@ public class CLinvcong extends ventana
                     datos.add(al);
                 }
             }
-          
-            if (!utdesp.busDatInd(dtCon1.getString("pro_serie"), proCodi,
-                  EU.em_cod, dtCon1.getInt("eje_nume"), dtCon1.getInt("pro_nupar"),
-                  dtCon1.getInt("pro_numind"), dtDesp, dtStat, EU))
-           {
-                    prvNomb = "*DESCONOCIDO*";
-                    precCompra = 0;
-           } else
-           {
-                  precCompra = utdesp.getPrecioCompra() == -1 ? 0 : utdesp.getPrecioCompra();
-                  prvNomb = gnu.chu.anjelica.pad.pdprove.getNombPrv(utdesp.getPrvCompra(), dtStat);
+            
+            if (! agruFec)
+            {
+                if (!utdesp.busDatInd(dtCon1.getString("pro_serie"), proCodi,
+                      EU.em_cod, dtCon1.getInt("eje_nume"), dtCon1.getInt("pro_nupar"),
+                      dtCon1.getInt("pro_numind"), dtDesp, dtStat, EU))
+               {
+                        prvNomb = "*DESCONOCIDO*";
+                        precCompra = 0;                        
+                        continue;
+               } else
+               {
+                      precCompra = utdesp.getPrecioCompra() == -1 ? 0 : utdesp.getPrecioCompra();
+                      prvNomb = gnu.chu.anjelica.pad.pdprove.getNombPrv(utdesp.getPrvCompra(), dtStat);
+                }
+                fecDesp =  utdesp.getFechaDespiece();                
             }
-            fecDesp = agruFec ? dtCon1.getDate("fecdes") : utdesp.getFechaDespiece();
+            else
+            {
+                prvNomb =  dtCon1.getString("prv_nomb");
+                precCompra = dtCon1.getDouble("costo");
+                fecDesp =  dtCon1.getDate("fecdes");
+            }
             // Si el producto se compro ya congelado (es nulo).
             // Hago equivalente la fecha Desp. a la fecha de cong.
             if (fecDesp == null)
@@ -798,12 +814,10 @@ public class CLinvcong extends ventana
             fecCadCong = agruFec ? dtCon1.getDate("fecade") : utdesp.getFechaCadDesp();
             if (fecCadCong == null)
                 fecCadCong = agruFec ? dtCon1.getDate("feccad") : utdesp.getFechaCaducidadCompra();
+            if (Formatear.comparaFechas(fecCadCong, fecDesp)<40)
+                fecCadCong =  Formatear.sumaDiasDate(fecDesp, 23 * 30); // Le sumo 23 Meses  a la fecha Despiece
 
-            diasCong = agruFec ? Formatear.comparaFechas(fecCadCong, fecDesp)
-                : Formatear.comparaFechas(fecCadCong, fecDesp);
-            if (diasCong < 32)
-                fecCadCong =  Formatear.sumaDiasDate(fecCadCong, 23 * 30); // Le sumo 23 Meses.
-            diasCong = Formatear.comparaFechas(fecCadCong, Formatear.getDateAct());
+            diasCong = Formatear.comparaFechas(Formatear.getDateAct(),fecCadCong);
             if (!feciniE.isNull())
             {
                 if (fecDesp == null)
@@ -914,10 +928,10 @@ public class CLinvcong extends ventana
                     v.add(dtAdd.getDouble("kilos"));
                     v.add(dtAdd.getDate("feccom"));
                     v.add(dtAdd.getDate("feccad"));
-                    v.add(Formatear.comparaFechas( dtAdd.getDate("feccom"),dtAdd.getDate("feccad")));
+                    v.add(Formatear.comparaFechas( dtAdd.getDate("feccad"),dtAdd.getDate("feccong"))); // Dias para caducar al desp.
                     v.add(dtAdd.getDate("feccong"));
                     v.add(dtAdd.getDate("fecadcon"));
-                    v.add(Formatear.comparaFechas( dtAdd.getDate("feccong"),dtAdd.getDate("fecadcon")));
+                    v.add(Formatear.comparaFechas(  Formatear.getDateAct(),dtAdd.getDate("fecadcon")));
                     v.add(dtAdd.getDouble("costo"));
                     v.add(dtAdd.getDouble("costo")*dtAdd.getDouble("kilos"));
                     v.add(dtAdd.getString("numdesp"));

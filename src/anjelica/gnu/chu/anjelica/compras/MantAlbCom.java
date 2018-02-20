@@ -5038,15 +5038,18 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
         return -1;
       s=pro_codiE.getNombArt();
       jt.setValor(s,linea,JT_PRONOM);
-      if (pro_codiE.getValorInt()!=0 &&  !pro_codiE.controla(false,false))
+      if (nav.pulsado==navegador.ADDNEW || nav.pulsado==navegador.EDIT )
       {
-        mensajeErr("PRODUCTO .... NO Valido");
-        return 0;
-      }
-      if (! pro_codiE.isActivo())
-      {
-          mensajeErr("Producto NO esta ACTIVO");
+        if (pro_codiE.getValorInt()!=0 &&  !pro_codiE.controla(false,false))
+        {
+          mensajeErr("PRODUCTO .... NO Valido");
           return 0;
+        }
+        if (! pro_codiE.isActivo())
+        {
+            mensajeErr("Producto NO esta ACTIVO");
+            return 0;
+        }
       }
       if (prv_codiE.isNull())
         return -1;

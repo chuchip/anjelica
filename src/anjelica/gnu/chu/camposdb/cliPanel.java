@@ -12,6 +12,8 @@ import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
 import gnu.chu.winayu.*;
 import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -755,11 +757,16 @@ public void setZona(String zonCli)
     evQuery=false;
     if (aycli.consulta)
     {
-      cli_codiE.setText(aycli.getCliCodi());
-      if (swControl)
-         cli_nombE.setText(aycli.getCliNomb());
-      setNomComercial(aycli.getNombCom());
-      cli_codrepL.setText(aycli.getCodigoReparto());
+        try {
+            cli_codiE.setText(aycli.getCliCodi());
+            if (swControl && !isGenerico())
+                cli_nombE.setText(aycli.getCliNomb());
+            if ( !isGenerico())
+                setNomComercial(aycli.getNombCom());
+            cli_codrepL.setText(aycli.getCodigoReparto());
+        } catch (SQLException ex) {
+            Logger.getLogger(cliPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     cli_codiE.requestFocus();
     aycli.setVisible(false);

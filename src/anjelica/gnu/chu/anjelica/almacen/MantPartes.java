@@ -899,22 +899,7 @@ public class MantPartes  extends ventanaPad implements PAD
     prv_codiE.setVisible(swProv);
     pac_cliprvL.setText(swProv?"Proveedor":"Cliente");
   }
-   /**
-     *  Devuelve numero de unidades en stock de un producto.
-     */ 
-    int getUnidIndi()
-    {           
-      try
-      {
-          StkPartid stkPartid = buscaPeso();
-          return stkPartid.getUnidades()<1?0:stkPartid.getUnidades();
-      } catch (Exception ex)
-      {
-          Error("Error al buscar Unidades de un inviduo",ex);
-      }
-      return 0;
-          
-    }
+  
      StkPartid buscaPeso() throws Exception {
        
         StkPartid stkPartid = utildesp.buscaPeso(dtCon1, pro_ejelotE.getValorInt(), EU.em_cod,
@@ -1325,10 +1310,17 @@ public class MantPartes  extends ventanaPad implements PAD
             @Override
             protected void despuesLlenaCampos()
             {
-                int deoUnid=getUnidIndi();
-                pal_unidadE.setValorInt(deoUnid);
-                if (deoUnid<1)
-                return;
+                try {
+                    StkPartid stkp= buscaPeso();
+                    if (!stkp.hasError())
+                    {
+                        pro_feccadE.setDate(stkp.getFechaCad());
+                        jt.setValor(stkp.getFechaCad(), JT_FECCAD);
+                    }
+                } catch (Exception k)
+                {
+                    Error("Error al buscar peso de individuo",k);
+                }
                 jt.procesaAllFoco();
                 jt.mueveSigLinea(0);
             }

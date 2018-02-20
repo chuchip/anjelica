@@ -1,3 +1,54 @@
+drop view v_albdepserv;
+drop view v_cliprv;
+drop view v_cliente;
+alter table clientes add cli_comped varchar(256); -- Comentarios preparación pedidos
+alter table cliencamb add cli_comped varchar(256); -- Comentarios preparación pedidos
+CREATE OR REPLACE VIEW v_cliente AS 
+ SELECT clientes.cli_codi, clientes.cli_nomb, clientes.cli_nomco, 
+    clientes.cli_direc, clientes.cli_pobl, clientes.cli_codpo, 
+    clientes.cli_telef, clientes.cli_fax, clientes.cli_nif, clientes.cli_percon, 
+    clientes.cli_telcon, clientes.cli_nomen, clientes.cli_diree, 
+    clientes.cli_poble, clientes.cli_codpoe, clientes.cli_telefe, 
+    clientes.cli_faxe, clientes.emp_codi, clientes.cli_plzent, 
+    clientes.tar_codi, clientes.cli_codfa, clientes.cli_tipfac, 
+    clientes.fpa_codi, clientes.cli_dipa1, clientes.cli_dipa2, 
+    clientes.ban_codi, clientes.cli_baofic, clientes.cli_badico, 
+    clientes.cli_bacuen, clientes.cli_bareme, clientes.cli_vaccom, 
+    clientes.cli_vacfin, clientes.cli_zonrep, clientes.cli_zoncre, 
+    clientes.cli_activ, clientes.cli_giro, clientes.cli_libiva, 
+    clientes.cli_codrut, clientes.cli_diario, clientes.cli_sefacb, 
+    clientes.cli_dtopp, clientes.cli_comis, clientes.cli_dtootr, 
+    clientes.cli_albval, clientes.cli_recequ, clientes.cli_agralb, 
+    clientes.cli_comen, clientes.cli_riesg, clientes.pai_codi, 
+    clientes.cue_codi, clientes.cli_exeiva, clientes.cli_tipiva, 
+    clientes.cli_poriva, clientes.cli_tipdoc, clientes.cli_sitfac, 
+    clientes.cli_orgofi, clientes.cli_coimiv, clientes.div_codi, 
+    clientes.cli_pdtoco, clientes.cli_prapel, clientes.rut_codi, 
+    clientes.cli_precfi, clientes.cli_fecalt, clientes.cli_feulmo, 
+    clientes.cli_disc1, clientes.cli_disc2, clientes.cli_disc3, 
+    clientes.cli_disc4, clientes.cli_gener, clientes.sbe_codi, 
+    clientes.cli_intern, clientes.eti_codi, clientes.zon_codi, 
+    clientes.rep_codi, clientes.cli_feulve, clientes.cli_feulco, 
+    clientes.cli_estcon, clientes.cli_email1, clientes.cli_email2, 
+    clientes.cli_horenv, clientes.cli_comenv, clientes.cli_servir, 
+    clientes.cli_enalva, clientes.cli_ordrut, clientes.cli_codrut AS cli_carte, 
+    clientes.cli_codrut AS cli_valor,cli_comped 
+   FROM clientes;
+   create view anjelica.v_albdepserv as select sa.*,ca.avc_fecalb,ca.avc_id,cl.cli_nomb,cl.cli_nomco
+ from albvenserc as sa, v_albavec as ca,
+clientes as cl
+where ca.avc_ano=sa.avc_ano
+and  ca.emp_codi = sa.emp_codi
+and  ca.avc_serie= sa.avc_serie
+and  ca.avc_nume= sa.avc_nume
+and sa.cli_codi = cl.cli_codi;
+grant select on anjelica.v_albdepserv to public;
+create view anjelica.v_cliprv as 
+select 'E' as tipo, cli_codi as codigo, cli_nomb as nombre from anjelica.clientes 
+union all
+select 'C' AS tipo,prv_codi as codigo, prv_nomb as nombre from anjelica.v_proveedo;
+grant select on anjelica.v_cliprv to public;
+grant select on anjelica.v_cliente to public;
 --
 drop view v_despsal;
 ALTER TABLE v_despfin DISABLE TRIGGER USER;
