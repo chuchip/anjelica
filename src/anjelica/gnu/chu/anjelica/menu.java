@@ -2192,6 +2192,7 @@ void pdreprese_actionPerformed(ActionEvent e) {
   
     void clrelalbve_actionPerformed(ActionEvent e) {
     Hashtable ht=new Hashtable();
+    ht.put("admin","true");
     lanzaEjecutable(new gnu.chu.anjelica.ventas.CLPedidVen(this,EU,ht));
   }
   void clpedidven_actionPerformed(ActionEvent e) {

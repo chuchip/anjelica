@@ -76,7 +76,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     JPopupMenu JpopupMenu = new JPopupMenu("Camaras");
     JCheckBoxMenuItem mCamTodas=new JCheckBoxMenuItem("*TODAS*");
     boolean swCliente=false;
-    int nLineaReport;
+    int nLineaReport,nLineaSalto;
     int nLineaDet;
     boolean swImpreso=true;
     proPanel pro_codiE= new proPanel();
@@ -87,7 +87,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     boolean verPrecio;
     String ARG_REPCODI = "";
     String ARG_SBECODI = "";
-    boolean  ARG_ADMIN = false;
+    
     private final int JTCAB_EMPPED=0;
     private final int JTCAB_EJEPED=1;
     private final int JTCAB_NUMPED=2;
@@ -159,7 +159,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
            if (ht.get("sbeCodi") != null)
                ARG_SBECODI = ht.get("sbeCodi");       
            if (ht.get("admin") != null)
-               ARG_ADMIN=Boolean.parseBoolean(ht.get("admin"));
+               setArgumentoAdmin(Boolean.parseBoolean(ht.get("admin")));
        }
     }
     public CLPedidVen(ventana papa) throws Exception
@@ -192,7 +192,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     @Override
     public void iniciarVentana() throws Exception 
     {
-     tit_usunomE.setEnabled(ARG_ADMIN);
+     tit_usunomE.setEnabled(isArgumentoAdmin());
      tit_usunomE.setText(EU.usuario);
      Pcabe.setDefButton(Baceptar);
      pvc_feciniE.setAceptaNulo(false);
@@ -435,8 +435,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
    {
      try
      {
-       s="SELECT p.*,cl.cli_pobl,tt.usu_nomb as tit_usunom,tit_tiempo FROM v_pedven as p"
-           + " left join tiempostarea as tt on tit_tipdoc='P' and tit_id=p.pvc_id and tt.usu_nomb='"+tit_usunomE.getText()+"'"
+       s="SELECT p.*,cl.cli_pobl,tit_tiempo,usu_nomco FROM v_pedven as p"
+           + " left join v_tiempospedido as tt on  tit_id=p.pvc_id and tt.usu_nomb='"+tit_usunomE.getText()+"' "
            + ",v_cliente as cl "+
            " WHERE p.emp_codi =  "+empCodi+
            " and p.cli_codi = cl.cli_codi "+ 
@@ -451,7 +451,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
          msgBox("NO ENCONTRADOS DATOS PARA ESTE PEDIDO");
          return;
        }
-       tit_usuasiE.setText(dtCon1.getString("tit_usunom",true));
+      
+       usu_nomcoE.setText(dtCon1.getString("usu_nomco",true));
        tit_tiempoE.setText(dtCon1.getString("tit_tiempo",true));
        pvc_comen=dtCon1.getString("pvc_comen");
        usu_nombE.setText(dtCon1.getString("usu_nomb"));
@@ -620,9 +621,10 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         ResultSet rs;
         nLineaReport=0;
+        nLineaSalto=0;
         nLineaDet=9999;
 //        rs=dtCon1.getStatement().executeQuery(dtCon1.getStrSelect());
-
+       
         JasperPrint jp = JasperFillManager.fillReport(jr, mp,this);
         gnu.chu.print.util.printJasper(jp, EU);
 
@@ -644,8 +646,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
             { 
                  if (nLineaReport>=jtCabPed.getRowCount())
                     return false;
-                  s = "SELECT c.*, cl.cli_nomb,cl.cli_poble"
-                       + "  FROM pedvenc as c,v_cliente as cl "
+                  s = "SELECT c.*,ti.usu_nomco,tit_tiempo, cl.cli_nomb,cl.cli_poble"
+                       + "  FROM pedvenc as c left join v_tiempospedido as ti on ti.tid_id=c.pvc_id "
+                      + " where ,v_cliente as cl "
                        + " WHERE c.emp_codi =  " + jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED)
                        + " and C.cli_codi = cl.cli_codi "
                        + " AND C.eje_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED)
@@ -655,7 +658,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                    throw new JRException("Error al localizar pedido para listar. Linea: "
                        + nLineaReport + " Pedido: " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED));
                }      
-               nLineaReport++;
+               nLineaReport++;               
           }
           else
           {            
@@ -663,8 +666,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                 {
                       nLineaReport++;
                       if (nLineaReport>=jtCabPed.getRowCount())
-                       return false;
+                         return false;
                       nLineaDet=0;
+                      nLineaSalto++;
                       verDatPed(jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED),
                               jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED),
                               jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED),
@@ -694,6 +698,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
       
         nLineaReport=-1;
         nLineaDet=9999;
+        nLineaSalto=0;
         JasperPrint jp = JasperFillManager.fillReport(jr, mp,this);
         gnu.chu.print.util.printJasper(jp, EU);
 
@@ -1008,9 +1013,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         opIgnCadE = new gnu.chu.controles.CCheckBox();
         opIgnPrvE = new gnu.chu.controles.CCheckBox();
         cLabel24 = new gnu.chu.controles.CLabel();
-        tit_usuasiE = new gnu.chu.controles.CTextField();
         cLabel25 = new gnu.chu.controles.CLabel();
         tit_tiempoE = new gnu.chu.controles.CTextField(Types.DECIMAL, "##9");
+        usu_nomcoE = new gnu.chu.controles.CTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -1167,15 +1172,15 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         PPrinc.add(jtCabPed, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        Ppie.setMaximumSize(new java.awt.Dimension(650, 60));
-        Ppie.setMinimumSize(new java.awt.Dimension(650, 60));
+        Ppie.setMaximumSize(new java.awt.Dimension(780, 60));
+        Ppie.setMinimumSize(new java.awt.Dimension(780, 60));
         Ppie.setPreferredSize(new java.awt.Dimension(680, 60));
         Ppie.setLayout(null);
 
-        cLabel17.setText("Tiempo Asignado");
+        cLabel17.setText("Tiempos");
         cLabel17.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel17);
-        cLabel17.setBounds(500, 0, 100, 18);
+        cLabel17.setBounds(570, 0, 60, 18);
 
         nPedT.setEnabled(false);
         Ppie.add(nPedT);
@@ -1239,10 +1244,6 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
         Ppie.add(cLabel24);
         cLabel24.setBounds(430, 20, 50, 18);
 
-        tit_usuasiE.setEnabled(false);
-        Ppie.add(tit_usuasiE);
-        tit_usuasiE.setBounds(400, 0, 90, 18);
-
         cLabel25.setText("Asignado");
         cLabel25.setPreferredSize(new java.awt.Dimension(60, 18));
         Ppie.add(cLabel25);
@@ -1250,7 +1251,11 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         tit_tiempoE.setEnabled(false);
         Ppie.add(tit_tiempoE);
-        tit_tiempoE.setBounds(600, 0, 40, 18);
+        tit_tiempoE.setBounds(630, 2, 40, 18);
+
+        usu_nomcoE.setEnabled(false);
+        Ppie.add(usu_nomcoE);
+        usu_nomcoE.setBounds(400, 2, 170, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1308,9 +1313,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     private javax.swing.JScrollPane scrollarea1;
     private gnu.chu.controles.CComboBox servRutaC;
     private gnu.chu.controles.CTextField tit_tiempoE;
-    private gnu.chu.controles.CTextField tit_usuasiE;
     private gnu.chu.controles.CTextField tit_usunomE;
     private gnu.chu.controles.CTextField usu_nombE;
+    private gnu.chu.controles.CTextField usu_nomcoE;
     private gnu.chu.controles.CComboBox verPedidosE;
     private gnu.chu.controles.CLinkBox zon_codiE;
     // End of variables declaration//GEN-END:variables
@@ -1328,7 +1333,15 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                 return dtCon1.getObject(campo);
             }
             switch (campo)
-            {        
+            {
+                case "salto":
+                    return (int) ( (nLineaSalto-1)/4);
+                case "nlineasalto":
+                    return nLineaSalto;
+                case "usu_nomco":
+                    return usu_nomcoE.getText();
+                case "tit_tiempo":
+                    return  tit_tiempoE.getValorInt();
                 case "emp_codi":
                     return jtCabPed.getValorInt(nLineaReport,JTCAB_EMPPED);
                 case "eje_nume":

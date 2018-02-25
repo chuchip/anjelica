@@ -1,3 +1,51 @@
+ALTER TABLE stockpart DISABLE TRIGGER USER;
+drop view v_stkpart;
+alter table stockpart add stp_paisde  varchar(2);
+create view anjelica.v_stkpart as select * from anjelica.stockpart;
+grant select on anjelica.v_stkpart to public;
+ALTER TABLE stockpart ENABLE TRIGGER USER;
+create or replace view anjelica.v_compras as 
+select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,c.sbe_codi,
+l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi,
+i.acp_numlin,i.acp_numind,i.acp_canti,i.acp_canind,i.acp_feccad,i.acp_fecsac,i.acp_fecpro,i.acp_nucrot,i.acp_clasi,i.acp_painac,i.sde_codi,
+i.acp_paisac,i.acp_engpai,i.mat_codi,i.acp_matad,i.acp_saldes,i.acp_paisde
+from anjelica.v_albacoc as c,anjelica.v_albacol as l, anjelica.v_albcompar as i
+where c.acc_ano=l.acc_ano
+and c.emp_codi=l.emp_codi
+and c.acc_serie=l.acc_serie
+and c.acc_nume=l.acc_nume
+and c.acc_ano=i.acc_ano
+and c.emp_codi=i.emp_codi
+and c.acc_serie=i.acc_serie
+and c.acc_nume=i.acc_nume
+and l.acl_nulin=i.acl_nulin;
+grant select on anjelica.v_compras to public;
+-- stockpart
+alter table v_albcompar add acp_paisde char(2);
+alter table hisalpaco add acp_paisde character varying(2);
+--
+DROP TRIGGER albavel_UPDATE ON anjelica.v_albavel;
+create trigger albavel_UPDATE AFTER UPDATE  on anjelica.v_albavel for each row   WHEN (OLD.avl_prven IS DISTINCT FROM NEW.avl_prven OR OLD.avl_prbase IS DISTINCT FROM NEW.avl_prbase ) execute procedure anjelica.fn_acpralb();
+--
+drop view v_despsal;
+ALTER TABLE v_despfin DISABLE TRIGGER USER;
+alter table v_despfin add def_blkcos smallint not null default 0; -- Bloqueado costo
+CREATE OR REPLACE VIEW v_despsal AS 
+ SELECT c.eje_nume,    c.deo_codi,    c.deo_numdes,    c.tid_codi,    c.deo_fecha,    c.deo_almori,    c.deo_almdes,    c.deo_ejloge,
+    c.deo_seloge,    c.deo_nuloge,    c.deo_incval,    l.def_orden,    l.pro_codi,    l.def_ejelot,    l.def_emplot,
+    l.def_serlot,    l.pro_lote,    l.pro_numind,    l.def_kilos,    l.def_numpie,    l.def_prcost,    l.def_unicaj,
+    l.def_feccad,    l.def_preusu,    l.def_tiempo,    l.alm_codi, l.def_blkcos,   c.deo_desnue
+   FROM desporig c,
+    v_despfin l
+  WHERE c.eje_nume = l.eje_nume AND c.deo_codi = l.deo_codi;
+ ALTER TABLE v_despfin enable TRIGGER USER;
+grant select on  anjelica.v_despsal to public;
+---
+create view v_tiempospedido as
+select t.*,u.usu_nomco from tiempostarea as t left join usuarios as u on u.usu_nomb=t.usu_nomb
+where t.tit_tipdoc = 'P';
+grant select on v_tiempospedido  to public;
+---
 delete from mensajes;
 INSERT INTO mensajes (men_codi,men_nomb,men_tipo) VALUES ('MS','Sale del Menu %u','I');
 INSERT INTO mensajes (men_codi,men_nomb,men_tipo) VALUES ('EM','Entro en Menu %u','I');
@@ -52,8 +100,7 @@ INSERT INTO mensajes (men_codi,men_nomb,men_tipo) VALUES ('AVF','Fax','I');
 INSERT INTO mensajes (men_codi,men_nomb,men_tipo) VALUES ('AV1','Forzado List.','I');
 INSERT INTO mensajes (men_codi,men_nomb,men_tipo) VALUES ('AV2','Anulado List.','I');
 INSERT INTO mensajes (men_codi,men_nomb,men_tipo) VALUES ('AVP','Alb.Valorado','I');
-
-
+---
 create table registro
 (
 	reg_codi serial,
@@ -65,9 +112,7 @@ create table registro
 );
 
 alter table hisalcave rename avc_rcaedi to avc_repres; -- Representante
-
 alter table taricli add tar_butapa int not null default 1; -- Buscar tarifa padre . 1 Si. 0 No
-
 create table albventra
 (
 	avc_id int not null,-- Numero de Albaran
@@ -105,8 +150,16 @@ CREATE OR REPLACE VIEW v_cliente AS
     clientes.cli_estcon, clientes.cli_email1, clientes.cli_email2, 
     clientes.cli_horenv, clientes.cli_comenv, clientes.cli_servir, 
     clientes.cli_enalva, clientes.cli_ordrut, clientes.cli_codrut AS cli_carte, 
-    clientes.cli_codrut AS cli_valor
+    clientes.cli_codrut AS cli_valor,cli_comped 
    FROM clientes;
+   create view anjelica.v_albdepserv as select sa.*,ca.avc_fecalb,ca.avc_id,cl.cli_nomb,cl.cli_nomco
+ from albvenserc as sa, v_albavec as ca,
+clientes as cl
+where ca.avc_ano=sa.avc_ano
+and  ca.emp_codi = sa.emp_codi
+and  ca.avc_serie= sa.avc_serie
+and  ca.avc_nume= sa.avc_nume
+and sa.cli_codi = cl.cli_codi;
 grant select on anjelica.v_cliente to PUBLIC;
 CREATE OR REPLACE view v_transventext as select * from transportista where tra_tipo='V'; v_transventext as select * from transportista where tra_tipo='V';
 grant select on  v_transventext to public;
@@ -172,6 +225,7 @@ update v_albcompar set acp_saldes = (select sde_nrgsa from v_saladesp as m where
 where exists (select sde_nrgsa from v_saladesp as m where v_albcompar.sde_codi=m.sde_codi) 
 and acp_matad is null;
 alter table v_albcompar enable trigger user;
+drop view v_compras;
  create or replace view anjelica.v_compras as 
 select c.acc_ano, c.emp_codi,c.acc_serie, c.acc_nume, c.prv_codi, c.acc_fecrec, c.fcc_ano, c.fcc_nume,c.acc_portes,c.frt_ejerc,c.frt_nume,c.acc_cerra,c.sbe_codi,
 l.acl_nulin,l.pro_codi,l.pro_nomart, acl_numcaj,l.acl_Canti,l.acl_prcom,l.acl_canfac,acl_kgrec,l.acl_comen, l.acl_dtopp,l.alm_codi,
@@ -516,8 +570,8 @@ alter table  desproval add dpv_preval decimal(6,2);
 update desproval set dpv_preval = 0;
 alter table desproval alter dpv_preval set not null;
 --
-
-
+alter table clientes add cli_comped varchar(256); -- Comentarios preparación pedidos
+alter table cliencamb add cli_comped varchar(256); -- Comentarios preparación pedidos
 alter table clientes   add cli_servir smallint default 1 not null;
 alter table cliencamb   add cli_servir smallint default 1 not null;
 --

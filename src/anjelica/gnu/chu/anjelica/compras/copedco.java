@@ -3,7 +3,7 @@ package gnu.chu.anjelica.compras;
 *  Consulta  Pedidos de compras
  *
  *
- *  <p>Copyright: Copyright (c) 2005-2017
+ *  <p>Copyright: Copyright (c) 2005-2018
  *  @param verPrecio Ver precios
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por

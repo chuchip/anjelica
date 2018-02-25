@@ -404,10 +404,10 @@
               </Border>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[650, 60]"/>
+              <Dimension value="[780, 60]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[650, 60]"/>
+              <Dimension value="[780, 60]"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[680, 60]"/>
@@ -425,14 +425,14 @@
           <SubComponents>
             <Component class="gnu.chu.controles.CLabel" name="cLabel17">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Tiempo Asignado"/>
+                <Property name="text" type="java.lang.String" value="Tiempos"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[60, 18]"/>
                 </Property>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="500" y="0" width="100" height="18"/>
+                  <AbsoluteConstraints x="570" y="0" width="60" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -593,16 +593,6 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="gnu.chu.controles.CTextField" name="tit_usuasiE">
-              <Properties>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="400" y="0" width="90" height="18"/>
-                </Constraint>
-              </Constraints>
-            </Component>
             <Component class="gnu.chu.controles.CLabel" name="cLabel25">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Asignado"/>
@@ -625,7 +615,17 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="600" y="0" width="40" height="18"/>
+                  <AbsoluteConstraints x="630" y="2" width="40" height="18"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CTextField" name="usu_nomcoE">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="400" y="2" width="170" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>

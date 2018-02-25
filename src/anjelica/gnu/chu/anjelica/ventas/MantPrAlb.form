@@ -39,7 +39,7 @@
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;----.99&quot;)"/>
       </AuxValues>
     </Component>
-    <Component class="gnu.chu.controles.CTextField" name="pro_prcostE">
+    <Component class="gnu.chu.controles.CTextField" name="pro_prmedE">
       <Properties>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
@@ -196,6 +196,14 @@
         <Property name="text" type="java.lang.String" value="Ir Mant.Albaran"/>
         <Property name="toolTipText" type="java.lang.String" value="Ir a Mant.Albaran Ventas"/>
       </Properties>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="pro_prpuroE">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;----.99&quot;)"/>
+      </AuxValues>
     </Component>
   </NonVisualComponents>
   <SyntheticProperties>
@@ -580,8 +588,8 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(16){&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return jtLinCambiaLinea(row,col);&#xa;    }&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        buscaDesglose(jtLin.getSelectedRow());&#xa;    }&#xa;}"/>
-                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList vl= new ArrayList();&#xa;vl.add(&quot;Prod.&quot;);&#xa;vl.add(&quot;Nombre&quot;); // 1&#xa;vl.add(&quot;Und&quot;); //2&#xa;vl.add(&quot;Kilos&quot;); // 3&#xa;vl.add(&quot;Precio&quot;); // 4&#xa;vl.add(&quot;PrTec&quot;); // 5&#xa;vl.add(&quot;PrPed&quot;); // 6 &#xa;vl.add(&quot;PMedio&quot;); // 7&#xa;vl.add(&quot;Gananc.&quot;); // 8&#xa;vl.add(&quot;PCompra&quot;); // 9&#xa;vl.add(&quot;PrUV.&quot;);  // 10&#xa;vl.add(&quot;FecUV&quot;); // 11&#xa;vl.add(&quot;Pr.Tar.&quot;);  // 12&#xa;vl.add(&quot;C.PM&quot;); //13&#xa;vl.add(&quot;Comen&quot;); // 14&#xa;vl.add(&quot;NL&quot;); // 15&#xa;jtLin.setCabecera(vl);&#xa;jtLin.setAnchoColumna(new int[]{45,180,25,55,45,45,45,45,5,45,45,65,45,35,130,30});&#xa;jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,2,2,2,2,1,2,2,0,2});&#xa;&#xa;ArrayList vc=new ArrayList();&#xa;vc.add(pro_codiE); // 0&#xa;vc.add(pro_nombE); // 1&#xa;vc.add(avl_unidE); // 2&#xa;vc.add(avl_cantiE); // 3&#xa;vc.add(avl_prvenE); // 4&#xa;vc.add(avl_prtecnE); // 5&#xa;vc.add(pvl_precioE); // 6 Precio pedido&#xa;vc.add(pro_prcostE);&#xa;vc.add(pro_ganancE);&#xa;vc.add(pro_prulcoE);&#xa;vc.add(avl_prulveE);&#xa;vc.add(avl_feulveE);&#xa;vc.add(tar_preciE);&#xa;vc.add(alm_codiE);&#xa;vc.add(avl_comentE);&#xa;vc.add(avl_numlinE);&#xa;try {&#xa;jtLin.setCampos(vc); } catch (Exception k) {msgBox(&quot;Error al inicializar grid&quot;+k.getMessage());}&#xa;jtLin.setFormatoCampos();"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CGridEditable(17){&#xa;    public int cambiaLinea(int row, int col)&#xa;    {&#xa;        return jtLinCambiaLinea(row,col);&#xa;    }&#xa;    public void afterCambiaLinea()&#xa;    {&#xa;        buscaDesglose(jtLin.getSelectedRow());&#xa;    }&#xa;}"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList vl= new ArrayList();&#xa;vl.add(&quot;Prod.&quot;); // 0&#xa;vl.add(&quot;Nombre&quot;); // 1&#xa;vl.add(&quot;Und&quot;); //2&#xa;vl.add(&quot;Kilos&quot;); // 3&#xa;vl.add(&quot;Precio&quot;); // 4&#xa;vl.add(&quot;PrTec&quot;); // 5&#xa;vl.add(&quot;PrPed&quot;); // 6 &#xa;vl.add(&quot;C.Puro&quot;); // 7&#xa;vl.add(&quot;C.Med.&quot;); // 8&#xa;vl.add(&quot;Gananc.&quot;); // 9&#xa;vl.add(&quot;PCompra&quot;); // 10&#xa;vl.add(&quot;PrUV.&quot;);  // 11&#xa;vl.add(&quot;FecUV&quot;); // 12&#xa;vl.add(&quot;Pr.Tar.&quot;);  // 13&#xa;vl.add(&quot;C.Cto&quot;); //14&#xa;vl.add(&quot;Comen&quot;); // 15&#xa;vl.add(&quot;NL&quot;); // 16&#xa;jtLin.setCabecera(vl);&#xa;jtLin.setAnchoColumna(new int[]{45,180,25,55,45,45,45,45,45,5,45,45,65,45,35,130,30});&#xa;jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,2,2,2,2,2,1,2,2,0,2});&#xa;&#xa;ArrayList vc=new ArrayList();&#xa;vc.add(pro_codiE); // 0&#xa;vc.add(pro_nombE); // 1&#xa;vc.add(avl_unidE); // 2&#xa;vc.add(avl_cantiE); // 3&#xa;vc.add(avl_prvenE); // 4&#xa;vc.add(avl_prtecnE); // 5&#xa;vc.add(pvl_precioE); // 6 Precio pedido&#xa;vc.add(pro_prpuroE);// 7 Precio Puro&#xa;vc.add(pro_prmedE); // 8  precio Medio&#xa;vc.add(pro_ganancE);&#xa;vc.add(pro_prulcoE);&#xa;vc.add(avl_prulveE);&#xa;vc.add(avl_feulveE);&#xa;vc.add(tar_preciE);&#xa;vc.add(alm_codiE);&#xa;vc.add(avl_comentE);&#xa;vc.add(avl_numlinE);&#xa;try {&#xa;jtLin.setCampos(vc); } catch (Exception k) {msgBox(&quot;Error al inicializar grid&quot;+k.getMessage());}&#xa;jtLin.setFormatoCampos();"/>
                   </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -853,7 +861,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="720" y="9" width="20" height="20"/>
+                  <AbsoluteConstraints x="640" y="20" width="20" height="20"/>
                 </Constraint>
               </Constraints>
             </Component>

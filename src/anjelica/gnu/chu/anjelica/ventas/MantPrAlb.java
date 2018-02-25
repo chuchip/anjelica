@@ -4,7 +4,7 @@
  *
  * Created on 03-dic-2009, 22:41:09
  *
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -53,7 +53,13 @@ import javax.swing.event.ListSelectionListener;
  * @author cpuente
  */
 public class MantPrAlb extends ventana {
-  
+   final int   JTL_PROCOD=0;
+   final int   JTL_PRCME=8;
+   final int  JTL_PRUVE=11;
+   final int  JTL_CMPM=14;
+   final int JTL_COMEN=15;
+   final int JTL_NUMLIN=16;
+   
     int numDecPrecio=2;
     String formDecPrecio=".99";
 //    boolean inActualCosto=false;
@@ -165,7 +171,7 @@ public class MantPrAlb extends ventana {
      
         iniciarFrame();
 
-        this.setVersion("2017-06-21" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
+        this.setVersion("2018-12-21" + (ARG_MODCONSULTA ? "SOLO LECTURA" : ""));
         
        
         initComponents();
@@ -200,7 +206,7 @@ public class MantPrAlb extends ventana {
         avl_prulveE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----");
         avl_feulveE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
         pro_prulcoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
-        pro_prcostE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
+        pro_prmedE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
         tar_preciE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
         avl_prtecnE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----");
         avl_prvenE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----");
@@ -218,6 +224,7 @@ public class MantPrAlb extends ventana {
         avl_numlinE = new gnu.chu.controles.CTextField(Types.CHAR,"X",500);
         avl_comentE = new gnu.chu.controles.CTextField(Types.CHAR,"X",50);
         MIrAlbaran = new javax.swing.JMenuItem();
+        pro_prpuroE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----.99");
         Pprinc = new gnu.chu.controles.CPanel();
         Pcondic = new gnu.chu.controles.CPanel();
         cLabel3 = new gnu.chu.controles.CLabel();
@@ -257,7 +264,7 @@ public class MantPrAlb extends ventana {
         jtSelAlb.setFormatoColumna(4,"----,--9.99");
         jtSelAlb.setAlinearColumna(new int[]{0,1,2,0,2,0,0});
         PLinea = new gnu.chu.controles.CPanel();
-        jtLin = new gnu.chu.controles.CGridEditable(16){
+        jtLin = new gnu.chu.controles.CGridEditable(17){
             public int cambiaLinea(int row, int col)
             {
                 return jtLinCambiaLinea(row,col);
@@ -294,7 +301,7 @@ public class MantPrAlb extends ventana {
 
         pro_prulcoE.setEnabled(false);
 
-        pro_prcostE.setEnabled(false);
+        pro_prmedE.setEnabled(false);
 
         tar_preciE.setEnabled(false);
 
@@ -359,6 +366,8 @@ public class MantPrAlb extends ventana {
 
         MIrAlbaran.setText("Ir Mant.Albaran");
         MIrAlbaran.setToolTipText("Ir a Mant.Albaran Ventas");
+
+        pro_prpuroE.setEnabled(false);
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -487,25 +496,26 @@ public class MantPrAlb extends ventana {
         jtLin.setMinimumSize(new java.awt.Dimension(650, 359));
         jtLin.setPreferredSize(new java.awt.Dimension(650, 259));
         ArrayList vl= new ArrayList();
-        vl.add("Prod.");
+        vl.add("Prod."); // 0
         vl.add("Nombre"); // 1
         vl.add("Und"); //2
         vl.add("Kilos"); // 3
         vl.add("Precio"); // 4
         vl.add("PrTec"); // 5
         vl.add("PrPed"); // 6
-        vl.add("PMedio"); // 7
-        vl.add("Gananc."); // 8
-        vl.add("PCompra"); // 9
-        vl.add("PrUV.");  // 10
-        vl.add("FecUV"); // 11
-        vl.add("Pr.Tar.");  // 12
-        vl.add("C.PM"); //13
-        vl.add("Comen"); // 14
-        vl.add("NL"); // 15
+        vl.add("C.Puro"); // 7
+        vl.add("C.Med."); // 8
+        vl.add("Gananc."); // 9
+        vl.add("PCompra"); // 10
+        vl.add("PrUV.");  // 11
+        vl.add("FecUV"); // 12
+        vl.add("Pr.Tar.");  // 13
+        vl.add("C.Cto"); //14
+        vl.add("Comen"); // 15
+        vl.add("NL"); // 16
         jtLin.setCabecera(vl);
-        jtLin.setAnchoColumna(new int[]{45,180,25,55,45,45,45,45,5,45,45,65,45,35,130,30});
-        jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,2,2,2,2,1,2,2,0,2});
+        jtLin.setAnchoColumna(new int[]{45,180,25,55,45,45,45,45,45,5,45,45,65,45,35,130,30});
+        jtLin.setAlinearColumna(new int[]{2,0,2,2,2,2,2,2,2,2,2,2,1,2,2,0,2});
 
         ArrayList vc=new ArrayList();
         vc.add(pro_codiE); // 0
@@ -515,7 +525,8 @@ public class MantPrAlb extends ventana {
         vc.add(avl_prvenE); // 4
         vc.add(avl_prtecnE); // 5
         vc.add(pvl_precioE); // 6 Precio pedido
-        vc.add(pro_prcostE);
+        vc.add(pro_prpuroE);// 7 Precio Puro
+        vc.add(pro_prmedE); // 8  precio Medio
         vc.add(pro_ganancE);
         vc.add(pro_prulcoE);
         vc.add(avl_prulveE);
@@ -664,7 +675,7 @@ public class MantPrAlb extends ventana {
 
         BPonPrecio.setToolTipText("Establece precio");
         PLinea1.add(BPonPrecio);
-        BPonPrecio.setBounds(720, 9, 20, 20);
+        BPonPrecio.setBounds(640, 20, 20, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -839,7 +850,7 @@ public class MantPrAlb extends ventana {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (jtLin.isEnabled() && e.getKeyCode()==KeyEvent.VK_F3)
-                    avl_prvenE.setValorDec(jtLin.getValorDec(10));
+                    avl_prvenE.setValorDec(jtLin.getValorDec(JTL_PRUVE));
             }
         } );
         opAgrpLin.addActionListener(new ActionListener()
@@ -897,8 +908,8 @@ public class MantPrAlb extends ventana {
     {
         if (avl_prtecnE.isEditable() && avl_prtecnE.isEnabled())
         {
-            jtLin.setValor(jtLin.getValorDec(7),5);
-            avl_prtecnE.setValorDec(jtLin.getValorDec(7));
+            jtLin.setValor(jtLin.getValorDec(JTL_PRCME),5);
+            avl_prtecnE.setValorDec(jtLin.getValorDec(JTL_PRCME));
         }
         
         jtLin.requestFocusLater();
@@ -1066,7 +1077,8 @@ public class MantPrAlb extends ventana {
                     v.add(dtAlb.getString("avl_profer")); // 6
 //                else
 //                    v.addElement("0");// Precio Pedido
-                v.add("0"); // Precio Costo. // 7
+                v.add("0"); // Precio Medio Puro. // 7
+                v.add("0"); // Precio medio (Val.Despieces). // 8
                 v.add(""); // Ganancia.
                 v.add(prulCom); // Precio Compra.
                 v.add(prulVen); // Precio Ult. Venta.
@@ -1106,8 +1118,8 @@ public class MantPrAlb extends ventana {
     {
 //        inActualCosto=true;
         String prTecS="";
-        double prCosto;
-        HashMap<Integer,Double> htCosto = new HashMap();
+        double prPuro,prMedio;
+        HashMap<Integer, ArrayList<Double>> htCosto = new HashMap();
         int nRow=jtLin.getRowCount();
         int nLin=jtSelAlb.getSelectedRow();
         try {
@@ -1119,32 +1131,38 @@ public class MantPrAlb extends ventana {
             {
                 if (nLin!=jtSelAlb.getSelectedRow())
                     break;
-                 Double prec=htCosto.get(jtLin.getValorInt(n,0));
+                 ArrayList<Double> precios=htCosto.get(jtLin.getValorInt(n,0));
+                 
                  prTecS="";
-                 if (prec==null)
+                 if (precios==null)
                  {
-
-                      prCosto=pdprvades.getPrecioValorar(dtCos1,jtLin.getValorInt(n,0), 
-                          pdprvades.getFechaCosto(avc_fecalbE.getDate()));
-                      if (prCosto<=0)
-                      {
-                        if (! mvtosAlm.calculaMvtos(jtLin.getValorInt(n,0), dtCos1, dtCos2, null,null))
-                              prCosto=0;
-                        else
-                        {
-                            if (mvtosAlm.getDespiecesSinValor())
-                              prTecS="SV";
-                            prCosto = mvtosAlm.getPrecioStock()+MantArticulos.getCostoIncrementar(dtCos1,jtLin.getValorInt(n,0));
-                        }
-                      }
-                      else
-                          prTecS="PF";
-                      htCosto.put(jtLin.getValorInt(n,0), prCosto);
-                 }
+                    precios=new ArrayList();
+                    if (!mvtosAlm.calculaMvtos(jtLin.getValorInt(n, 0), dtCos1, dtCos2, null, null))
+                        prPuro = 0;
+                    else
+                    {
+                        if (mvtosAlm.getDespiecesSinValor())
+                            prTecS = "SV";
+                        prPuro = mvtosAlm.getPrecioStock() + MantArticulos.getCostoIncrementar(dtCos1, jtLin.getValorInt(n, 0));
+                    }
+                    prMedio = pdprvades.getPrecioValorar(dtCos1, jtLin.getValorInt(n, JTL_PROCOD),
+                        pdprvades.getFechaCosto(avc_fecalbE.getDate()));
+                    if (prMedio > 0)
+                        prTecS = "PM";
+                    else
+                        prMedio=prPuro;
+                    precios.add(prPuro);
+                    precios.add(prMedio);
+                    htCosto.put(jtLin.getValorInt(n, 0), precios);
+                }
                  else
-                       prCosto=prec;
-                 jtLin.setValor(prCosto,n,7);
-                 jtLin.setValor(prTecS,n,13);
+                 {
+                    prPuro=precios.get(0);
+                    prMedio=precios.get(1);
+                 }
+                 jtLin.setValor(prPuro,n,7);
+                 jtLin.setValor(prMedio,n,8);
+                 jtLin.setValor(prTecS,n,JTL_CMPM);
             }
         } catch (SQLException | ParseException k)
         {
@@ -1168,8 +1186,8 @@ public class MantPrAlb extends ventana {
               " LEFT OUTER JOIN  v_stkpart as s on "+
               "( a.avp_emplot = s.emp_codi  and a.avp_ejelot = s.eje_nume "+
               " and a.avp_numpar  = s.pro_nupar and a.avp_numind = s.pro_numind" +
-              "  and a.avp_serlot = s.pro_serie " +
-              "  and s.alm_codi =  "+jtLin.getValorDec(row,13)+")"+
+              "  and a.avp_serlot = s.pro_serie) " +
+//              "  and s.alm_codi =  "+jtLin.getValorDec(row,JTL_ALM)+")"+
               " where a.emp_codi = "+emp_codiE.getValorInt()+
               " and l.emp_codi = a.emp_codi "+
               " and l.avc_ano = a.avc_ano " +
@@ -1177,13 +1195,13 @@ public class MantPrAlb extends ventana {
               " and l.avc_nume = a.avc_nume " +
               " and l.avl_numlin = a.avl_numlin " +
               ( (opAgrpLin.isSelected()?
-              " and l.avl_numlin in ("+jtLin.getValString(row,15)+")":
-               " and l.avl_numlin = "+jtLin.getValorDec(row,15)) )+
+              " and l.avl_numlin in ("+jtLin.getValString(row,JTL_NUMLIN)+")":
+               " and l.avl_numlin = "+jtLin.getValorDec(row,JTL_NUMLIN)) )+
               avc_numacE.getCondWhere("l", true)+
               (opAgrpLin.isSelected()?
               " group by s.prv_codi,stp_feccad,a.avp_ejelot, avp_serlot, a.avp_numpar":
                   "");
-        avl_comentE.setText(jtLin.getValString(14));
+        avl_comentE.setText(jtLin.getValString(JTL_COMEN));
         try {
           jtDes.removeAllDatos();
           if (! dtCon1.select(s))
@@ -1483,17 +1501,17 @@ public class MantPrAlb extends ventana {
          int nLinPrecio=0,nLinPreTec=0;
          for (int row=0;row<jtLin.getRowCount();row++)
          {
-           if (jtLin.getValString(row,15).trim().equals(""))
+           if (jtLin.getValString(row,JTL_NUMLIN).trim().equals(""))
            {
                enviaMailError("Error de Aplicacion: (MantPrAlb). Lineas de albaran estan en blanco. "+
                        " Albaran: "+avc_numacE.getCondWhere(null, true));
                msgBox("Error de Aplicacion. La linea: "+row+ " No se guardara. Intentelo de nuevo o avise al programador");
                continue;
            }
-            String condWhere = " WHERE emp_codi = " + emp_codiE.getValorInt() +
+           String condWhere = " WHERE emp_codi = " + emp_codiE.getValorInt() +
                 avc_numacE.getCondWhere(null, true)+
-             ( (agrupLin?" and avl_numlin in ("+jtLin.getValString(row,15)+")":
-               " and avl_numlin = "+jtLin.getValorDec(row,15)) );
+             ( (agrupLin?" and avl_numlin in ("+jtLin.getValString(row,JTL_NUMLIN)+")":
+               " and avl_numlin = "+jtLin.getValorDec(row,JTL_NUMLIN)) );
            
 //            s = "select avl_prven,avl_prepvp from  v_albavel " + condWhere;
             
@@ -1512,7 +1530,7 @@ public class MantPrAlb extends ventana {
              ", avl_prbase = "+avlPrbase+
              (pvl_precioE.isEditable()? ", avl_profer = "+jtLin.getValorDec(row, 6):"")+
              ", avl_prepvp = "+jtLin.getValorDec(row,5)+
-             ", avl_coment = '"+jtLin.getValString(row,14)+"'"+
+             ", avl_coment = '"+jtLin.getValString(row,JTL_COMEN)+"'"+
              condWhere;
 //      debug("actPrecioAlb - s: "+s);
                nRows=dtAdd.executeUpdate(dtAdd.getStrSelect(s));
@@ -1615,7 +1633,8 @@ public class MantPrAlb extends ventana {
     private gnu.chu.controles.CTextField pro_codiE;
     private gnu.chu.controles.CTextField pro_ganancE;
     private gnu.chu.controles.CTextField pro_nombE;
-    private gnu.chu.controles.CTextField pro_prcostE;
+    private gnu.chu.controles.CTextField pro_prmedE;
+    private gnu.chu.controles.CTextField pro_prpuroE;
     private gnu.chu.controles.CTextField pro_prulcoE;
     private gnu.chu.controles.CTextField pvl_precioE;
     private gnu.chu.controles.CLinkBox rep_codiE;

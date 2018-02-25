@@ -13,6 +13,7 @@ import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.DatosProd;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
@@ -322,20 +323,29 @@ public class Clmarzona extends ventana {
       return;
     }
     try {
-    if (!emp_codiE.controla())
-    {
-        mensajeErr(emp_codiE.getMsgError());
-        return;
-    }
-    if (emp_codiE.getValorInt()!=0 && !sbe_codiE.controla())
-    {
-        mensajeErr("SubEmpresa NO valida");
-        return;
-    }
+        if (!emp_codiE.controla())
+        {
+            mensajeErr(emp_codiE.getMsgError());
+            return;
+        }
+        if (emp_codiE.getValorInt()!=0 && !sbe_codiE.controla())
+        {
+            mensajeErr("SubEmpresa NO valida");
+            return;
+        }
     } catch (SQLException k)
     {
         Error("Error al controlar condiciones de consulta",k);
         return;
+    }
+    if ((! cli_codiE.isNull() || ! zon_codiE.isNull() || !rep_codiE.isNull()) && opIncVertE.isSelected())  
+    {
+        int ret=mensajes.mensajePreguntar("Incluir Vertederos, ¿ seguro ?");
+        if (ret!=mensajes.YES)
+        {
+            opIncVertE.setSelected(false);
+            return;
+        }
     }
     cancelaConsulta=false;
     mensaje("");

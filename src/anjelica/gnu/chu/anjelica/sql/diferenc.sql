@@ -1,3 +1,9 @@
+create view v_tiempospedido as
+select t.*,u.usu_nomco from tiempostarea as t left join usuarios as u on u.usu_nomb=t.usu_nomb
+where t.tit_tipdoc = 'P';
+grant select on v_tiempospedido  to public;
+---
+grant select on v_tiempospedido  to public;
 drop view v_albdepserv;
 drop view v_cliprv;
 drop view v_cliente;

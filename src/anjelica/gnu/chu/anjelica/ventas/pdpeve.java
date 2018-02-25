@@ -2153,11 +2153,12 @@ public class pdpeve  extends ventanaPad   implements PAD
        java.util.HashMap mp = Listados.getHashMapDefault();
        
        JasperReport jr = Listados.getJasperReport(EU,"pedventas");
-       s="select 1 as orden, l.*,p.prv_nomb ,c.cli_codi,c.alm_codi,c.pvc_fecped, "+
-        " c.pvc_fecent,c.pvc_clinom,c.usu_nomb,c.pvc_comen,al.alm_nomb, "+
-        " a.pro_nomb, cl.cli_nomb,cl.cli_pobl "+
+       s="select 1 as salto, 1 as orden, l.*,p.prv_nomb ,c.cli_codi,c.alm_codi,c.pvc_fecped, "+
+        " c.pvc_fecent,cl.cli_codrut,c.pvc_clinom,c.usu_nomb,c.pvc_comen,al.alm_nomb,ru.rut_nomb,"+
+        " a.pro_nomb, cl.cli_nomb,cl.cli_pobl,tt.usu_nomco,tt.usu_nomb as tit_usunom,tit_tiempo "+
         " from pedvenl as l left join v_proveedo p on  p.prv_codi = l.prv_codi, "+
-        " pedvenc as c,v_articulo as a,v_almacen as al,clientes as cl "+
+        " pedvenc as c left join v_rutas as ru on ru.rut_codi= c.rut_codi left join v_tiempospedido as tt on  tit_id=c.pvc_id  "
+           + ",v_articulo as a,v_almacen as al,clientes as cl "+
         " where  c.emp_codi = l.emp_codi "+
         " and c.eje_nume = l.eje_nume "+
         " and c.pvc_nume = l.pvc_nume "+
