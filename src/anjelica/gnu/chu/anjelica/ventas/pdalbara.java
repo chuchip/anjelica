@@ -162,6 +162,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private final int JTP_PRECIO=7;
   private final int JTP_PROCODI=1;
   private boolean CONTROL_PRO_MIN=false; // Controlar venta de prod. de minoristas a mayor. ¡¡ CHAPUZA!!
+  private boolean INC_HOJATRA=false; // Incluir Hoja transporte
   private int avpNumparAnt=0,avpNumindAnt=0,avpEjelotAnt=0;
   private String avpSerlotAnt="";
   private boolean swPreguntaDestruir=false; // Pregunta si se debe destruir todo rastro de un albaran
@@ -1268,8 +1269,7 @@ public class pdalbara extends ventanaPad  implements PAD
         
         Ptab1.add(PotroDat, "Otros");
         //Ptab1.add(PComClie, "Comentarios");
-        if (isEmpPlanta)
-            Ptab1.add(jtPalet, "Palets");
+       
         Ptab1.add(PTrans,"Transp.");
         PAlb1.add(avc_obserS, null);
         PAlb1.add(avc_obserL, null);
@@ -1473,7 +1473,7 @@ public class pdalbara extends ventanaPad  implements PAD
           avc_represE.getComboBox().setPreferredSize(new Dimension(250, 18));
           avc_represE.setFormato(Types.CHAR, "XX", 2);
           avc_represE.texto.setMayusc(true);
-          PTrans.iniciarPanel(dtAdd);
+          
           MantRepres.llenaLinkBox(avc_represE, P_REPRES, dtCon1);
           cli_rutaE.setAncTexto(30);
           cli_rutaE.setFormato(Types.CHAR, "XX");
@@ -1483,11 +1483,13 @@ public class pdalbara extends ventanaPad  implements PAD
           paiEmp = pdempresa.getPais(dtStat, EU.em_cod);
           isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
           swUsaPalets=pdconfig.getUsaPalets(EU.em_cod, dtStat);
+          INC_HOJATRA= EU.getValorParam("inchojatrans",INC_HOJATRA );
           CONTROL_PRO_MIN= EU.getValorParam("controlprodmin", CONTROL_PRO_MIN);
           TIDE_AUTOCLASI= EU.getValorParam("tipdespclasi", TIDE_AUTOCLASI);
           AVISO_DIAS_CAD= EU.getValorParam("avisodiascad", AVISO_DIAS_CAD);
           P_CHECKPED=EU.getValorParam("checkPedAlbVenta", P_CHECKPED);
           avl_numpalE.setEnabled(swUsaPalets);
+          PTrans.iniciarPanel(dtAdd,INC_HOJATRA,this);
           if (pdconfig.getConfiguracion(EU.em_cod,dtStat))
           {
               ALMACEN=dtStat.getInt("cfg_almven");
@@ -1498,6 +1500,8 @@ public class pdalbara extends ventanaPad  implements PAD
               for (int n=0;n<NUMDECPRECIO;n++)
                   FORMDECPRECIO+="9";
           }
+          if (isEmpPlanta)          
+            Ptab1.add(jtPalet, "Palets");            
           confGridCab();
           PajuPed.iniciar(this);
           IMPALBTEXTO=EU.getValorParam("impAlbTexto",IMPALBTEXTO);
@@ -1619,12 +1623,7 @@ public class pdalbara extends ventanaPad  implements PAD
     Pcabe.setDefButton(Baceptar);
     Pcabe.setButton(KeyEvent.VK_F4, Baceptar);
    
-//    PTrans.getPanelBultos().setPreferredSize(new Dimension(350, 37));
-//    PTrans.getPanelBultos().setMinimumSize(new Dimension(350, 37));
-//    PTrans.getPanelBultos().setMaximumSize(new Dimension(350, 37));
-//    Pprinc.add( PTrans.getPanelBultos(),
-//                new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-//                GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+
     jt.setButton(KeyEvent.VK_F4, Baceptar);
     
    
@@ -2136,7 +2135,7 @@ public class pdalbara extends ventanaPad  implements PAD
                   jt.setValor(palet,JT_NUMPALE);
                   avl_numpalE.setValorInt(palet);
               }
-              Ptab1.setSelectedIndex(4); // Panel de Palets
+              Ptab1.setSelectedComponent(jtPalet); // Panel de Palets
               jtPalet.requestFocusLater(jtPalet.getRowCount()-1,1);
           }
       });
@@ -5412,6 +5411,11 @@ public class pdalbara extends ventanaPad  implements PAD
             return;
           }
       }
+     if (! PTrans.checkValores())
+      {
+          Ptab1.setSelectedComponent(PTrans);
+          return;
+      }
       if (! checkAlbCerrado())
           return;
       if (swEntdepos)
@@ -5592,7 +5596,11 @@ public class pdalbara extends ventanaPad  implements PAD
         jt.requestFocusInicio();
         return;
       }
-      
+      if (! PTrans.checkValores())
+      {
+          Ptab1.setSelectedComponent(PTrans);
+          return;
+      }
       jt.salirGrid();
      
       int nCol = cambiaLinAlb(jt.getSelectedRow());

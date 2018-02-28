@@ -237,7 +237,7 @@ public class actCabAlbFra
       ht.put("avc_impree", (double) 0);
       ht.put("avc_impalb", (double) 0);
     }
-    PTransVenta.getDatos(dtLin,ht,avcId);
+    PTransVenta.getDatosBultos(dtLin,ht,avcId);
     return true;
   }
   public String getValString(String name)

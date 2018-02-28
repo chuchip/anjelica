@@ -1,13 +1,40 @@
 package gnu.chu.anjelica.ventas;
-
+/**
+ *
+ * <p>Titulo: PTransVenta </p>
+ * <p>Descripción: Panel para mantenimiento Hoja Trasnportistas  de Ventas</p>
+ *<p> Es utilizada en pdalbara</p>
+ * <p>Copyright: Copyright (c) 2005-2018
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los términos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,
+ *  pero SIN
+ * NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * @author chuchiP
+ *
+ */ 
 import gnu.chu.controles.CPanel;
+import gnu.chu.eventos.CambioEvent;
+import gnu.chu.eventos.CambioListener;
 import gnu.chu.sql.DatosTabla;
+import gnu.chu.utilidades.ventana;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.Hashtable;
 
 public class PTransVenta extends CPanel
 {
+    boolean incHojaTrans;
+    ventana padre;
    int avcId; // Numero Albaran Venta
    DatosTabla dt;
     final static String CAJAS="C";
@@ -19,12 +46,37 @@ public class PTransVenta extends CPanel
         initComponents();
     }
     
-    public void iniciarPanel(DatosTabla dt) throws SQLException
+    public void iniciarPanel(DatosTabla dt,boolean incHojaTrans,ventana papa) throws SQLException
     {
+        this.padre=papa;
+        this.incHojaTrans=incHojaTrans;
         this.dt=dt;
         String s="select tra_codi,tra_nomb from v_transventext order by tra_nomb";
         dt.select(s);
         tra_codiE.addDatos(dt);
+        if (incHojaTrans)
+            activarEventos();
+    }
+    void activarEventos()
+    {
+        tra_codiE.addCambioListener(new CambioListener()
+        {
+            @Override
+            public void cambio(CambioEvent event) {
+                try
+                {
+                    verUltimosValores(0,tra_codiE.getValorInt());
+                } catch (SQLException ex)
+                {
+                    padre.Error("Error al buscar ultimos valores", ex);
+                }
+            }
+        });
+    }
+    @Override
+    public void resetCambio()
+    {
+        tra_codiE.resetCambio();
     }
     public void setAvcId(int avcId)
     {
@@ -42,11 +94,62 @@ public class PTransVenta extends CPanel
     {
         return this.avcId;
     }
+    public void actualizaPantalla() throws SQLException
+    {
+        if (incHojaTrans)
+            actualizaPantallaTrans();
+        actualizaPantallaBultos();
+    }
     /**
-     * 
+     * Muestra los ultimos valores para un cliente y/o transportista
+     * @param cliCodi 
+     * @param traCodi Si es 0, buscara solo por cliente.
      * @throws SQLException 
      */
-    public void actualizaPantalla() throws SQLException
+    public void verUltimosValores(int cliCodi,int traCodi) throws SQLException
+    {
+      String s="select  ht.* from v_albavec as a,albvenht as ht where cli_codi="+   cliCodi+
+          (traCodi==0?"":" and tra_codi="+traCodi)+
+          " and ht.avc_id = a.avc_id order by ht.avc_id desc";
+      if (!dt.select(s))
+      {
+          if (traCodi==0) 
+            return;
+          s="select  ht.* from v_albavec as a,albvenht as ht where  tra_codi="+traCodi+
+            " and ht.avc_id = a.avc_id order by ht.avc_id desc";
+          if (!dt.select(s))
+              return;
+      }
+      tra_codiE.setValorInt(dt.getInt("tra_codi"));    
+      avt_portesE.setValor(dt.getString("avt_portes"));      
+      avt_connomE.setText(dt.getString("avt_connom"));
+      avt_condniE.setText(dt.getString("avt_condni"));
+      avt_matri1E.setText(dt.getString("avt_matri1"));
+      avt_matri2E.setText(dt.getString("avt_matri2"));
+      
+    }
+     private void actualizaPantallaTrans() throws SQLException
+     {
+        this.resetTexto();
+        if (avcId==0)
+            return;
+        String s="select * from albvenht where avc_id = "+avcId;
+        if (!dt.select(s))
+            return;
+        tra_codiE.setValorInt(dt.getInt("tra_codi"));
+        avt_fectraE.setDate(dt.getDate("avt_fectra"));
+        avt_portesE.setValor(dt.getString("avt_portes"));
+        avt_kilosE.setValorDec(dt.getDouble("avt_kilos"));
+        avt_connomE.setText(dt.getString("avt_connom"));
+        avt_condniE.setText(dt.getString("avt_condni"));
+        avt_matri1E.setText(dt.getString("avt_matri1"));
+        avt_matri2E.setText(dt.getString("avt_matri2"));
+     }
+    /**
+     * Actualiza Pantalla Bultos
+     * @throws SQLException 
+     */
+    private void actualizaPantallaBultos() throws SQLException
     {
         resetUnidades();
         if (avcId==0)
@@ -81,16 +184,62 @@ public class PTransVenta extends CPanel
     {
         return avt_numcajE.getValorInt();
     }
+    
+    public boolean checkValores()
+    {
+        if (!incHojaTrans)
+              return true;
+        if (tra_codiE.isNull() )
+            return true;
+        if (!tra_codiE.controla(true))
+        {
+           padre.msgBox("Transportista NO valido");
+           return false;           
+        }
+        
+        return true;
+    }
+    public void guardaValores(boolean commit) throws SQLException,ParseException
+    {
+        if (incHojaTrans)
+            guardaValoresTrans();
+        guardaValoresBultos(commit);
+    }
     /**
      * 
      * @throws SQLException 
      */
-    void guardaValores(boolean commit) throws SQLException
+     private void guardaValoresTrans() throws SQLException,ParseException
+     {
+        if (tra_codiE.isNull())
+            return;
+        if (dt.select("select * from albvenht where avc_id="+avcId,true))
+            dt.edit();
+        else
+        {
+            dt.addNew("albvenht");
+            dt.setDato("avc_id",avcId);            
+        }      
+        dt.setDato("tra_codi",tra_codiE.getValorInt());
+        dt.setDato("avt_fectra",avt_fectraE.getDate());
+        dt.setDato("avt_portes",avt_portesE.getValor());
+        dt.setDato("avt_kilos",avt_kilosE.getValorDec());
+        dt.setDato("avt_connom",avt_connomE.getText());
+        dt.setDato("avt_condni",avt_condniE.getText());
+        dt.setDato("avt_matri1",avt_matri1E.getText());
+        dt.setDato("avt_matri2",avt_matri2E.getText());
+        dt.update();
+     }
+    /**
+     * 
+     * @throws SQLException 
+     */
+    private void guardaValoresBultos(boolean commit) throws SQLException
     {
-        guarda(BOLSAS,avt_numbolE.getValorInt());
-        guarda(CAJAS,avt_numcajE.getValorInt());
-        guarda(PALETS,avt_numpalE.getValorInt()); 
-        guarda(COLGADO,avt_numcolE.getValorInt());
+        guardaBultos(BOLSAS,avt_numbolE.getValorInt());
+        guardaBultos(CAJAS,avt_numcajE.getValorInt());
+        guardaBultos(PALETS,avt_numpalE.getValorInt()); 
+        guardaBultos(COLGADO,avt_numcolE.getValorInt());
         if (commit)
             dt.commit();
     }
@@ -100,7 +249,7 @@ public class PTransVenta extends CPanel
      * @param unid
      * @throws SQLException 
      */
-    void guarda(String tipo,int unid) throws SQLException
+    void guardaBultos(String tipo,int unid) throws SQLException
     {
         if (dt.select("select * from albventra where avc_id="+avcId+" and avt_tipo='"+tipo+"'",true))
             dt.edit();
@@ -116,6 +265,11 @@ public class PTransVenta extends CPanel
     @Override
     public void resetTexto()
     {
+        if (incHojaTrans)
+        {
+            super.resetTexto();
+            tra_codiE.setText("");
+        }
         resetUnidades();
     }
     public void resetUnidades()
@@ -147,7 +301,7 @@ public class PTransVenta extends CPanel
         return  -1;
     }
     
-    public static void getDatos(DatosTabla dt,Hashtable ht,int avcId) throws SQLException
+    public static void getDatosBultos(DatosTabla dt,Hashtable ht,int avcId) throws SQLException
     {
         String s="select * from albventra where avc_id = "+avcId;
         if (!dt.select(s))
@@ -184,14 +338,14 @@ public class PTransVenta extends CPanel
         cLabel1 = new gnu.chu.controles.CLabel();
         tra_codiE = new gnu.chu.controles.CLinkBox();
         cLabel2 = new gnu.chu.controles.CLabel();
-        avc_connomE = new gnu.chu.controles.CTextField(Types.CHAR,"X",50);
+        avt_connomE = new gnu.chu.controles.CTextField(Types.CHAR,"X",50);
         cLabel3 = new gnu.chu.controles.CLabel();
-        avc_connifE = new gnu.chu.controles.CTextField(Types.CHAR,"X",30);
+        avt_condniE = new gnu.chu.controles.CTextField(Types.CHAR,"X",30);
         cLabel4 = new gnu.chu.controles.CLabel();
-        avc_fecfraE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        avt_fectraE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel5 = new gnu.chu.controles.CLabel();
-        avc_matri2 = new gnu.chu.controles.CTextField(Types.CHAR,"X",20);
-        avc_matri1 = new gnu.chu.controles.CTextField(Types.CHAR,"X",20);
+        avt_matri2E = new gnu.chu.controles.CTextField(Types.CHAR,"X",20);
+        avt_matri1E = new gnu.chu.controles.CTextField(Types.CHAR,"X",20);
         cLabel7 = new gnu.chu.controles.CLabel();
         Pbultra = new gnu.chu.controles.CPanel();
         cLabel11 = new gnu.chu.controles.CLabel();
@@ -202,12 +356,16 @@ public class PTransVenta extends CPanel
         avt_numbolE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
         cLabel10 = new gnu.chu.controles.CLabel();
         avt_numcolE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##9");
+        cLabel6 = new gnu.chu.controles.CLabel();
+        avt_portesE = new gnu.chu.controles.CComboBox();
+        cLabel12 = new gnu.chu.controles.CLabel();
+        avt_kilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##,##9.99");
 
         setLayout(null);
 
-        cLabel1.setText("Conductor");
+        cLabel1.setText("Portes");
         add(cLabel1);
-        cLabel1.setBounds(10, 30, 90, 17);
+        cLabel1.setBounds(220, 30, 60, 17);
 
         tra_codiE.setFormato(Types.DECIMAL, "##9");
         tra_codiE.setAncTexto(40);
@@ -217,36 +375,36 @@ public class PTransVenta extends CPanel
         cLabel2.setText("Transportista");
         add(cLabel2);
         cLabel2.setBounds(10, 11, 90, 15);
-        add(avc_connomE);
-        avc_connomE.setBounds(100, 30, 290, 17);
+        add(avt_connomE);
+        avt_connomE.setBounds(100, 60, 290, 17);
 
-        cLabel3.setText("N.I.F.");
+        cLabel3.setText("D.N.I");
         add(cLabel3);
-        cLabel3.setBounds(10, 50, 40, 17);
-        add(avc_connifE);
-        avc_connifE.setBounds(100, 50, 120, 17);
+        cLabel3.setBounds(10, 80, 40, 17);
+        add(avt_condniE);
+        avt_condniE.setBounds(100, 80, 120, 17);
 
         cLabel4.setText("Matricula");
         add(cLabel4);
-        cLabel4.setBounds(10, 70, 60, 17);
-        add(avc_fecfraE);
-        avc_fecfraE.setBounds(140, 110, 80, 17);
+        cLabel4.setBounds(10, 100, 60, 17);
+        add(avt_fectraE);
+        avt_fectraE.setBounds(140, 140, 80, 17);
 
-        cLabel5.setText("Fecha Transporte ");
+        cLabel5.setText("Kilos");
         add(cLabel5);
-        cLabel5.setBounds(10, 110, 110, 17);
+        cLabel5.setBounds(10, 30, 70, 17);
 
-        avc_matri2.setMayusc(true);
-        add(avc_matri2);
-        avc_matri2.setBounds(100, 90, 120, 17);
+        avt_matri2E.setMayusc(true);
+        add(avt_matri2E);
+        avt_matri2E.setBounds(100, 120, 120, 17);
 
-        avc_matri1.setMayusc(true);
-        add(avc_matri1);
-        avc_matri1.setBounds(100, 70, 120, 17);
+        avt_matri1E.setMayusc(true);
+        add(avt_matri1E);
+        avt_matri1E.setBounds(100, 100, 120, 17);
 
         cLabel7.setText("Matricula 2");
         add(cLabel7);
-        cLabel7.setBounds(10, 90, 70, 17);
+        cLabel7.setBounds(10, 120, 70, 17);
 
         Pbultra.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         Pbultra.setLayout(null);
@@ -284,28 +442,49 @@ public class PTransVenta extends CPanel
         avt_numcolE.setBounds(260, 2, 25, 17);
 
         add(Pbultra);
-        Pbultra.setBounds(10, 140, 290, 30);
+        Pbultra.setBounds(10, 170, 290, 30);
+
+        cLabel6.setText("Conductor");
+        add(cLabel6);
+        cLabel6.setBounds(10, 60, 90, 17);
+
+        avt_portesE.addItem("Pagado", "P");
+        avt_portesE.addItem("Debido", "D");
+        add(avt_portesE);
+        avt_portesE.setBounds(310, 30, 80, 20);
+
+        cLabel12.setText("Fecha Transporte ");
+        add(cLabel12);
+        cLabel12.setBounds(10, 140, 110, 17);
+
+        avt_kilosE.setMayusc(true);
+        add(avt_kilosE);
+        avt_kilosE.setBounds(70, 30, 80, 17);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CPanel Pbultra;
-    private gnu.chu.controles.CTextField avc_connifE;
-    private gnu.chu.controles.CTextField avc_connomE;
-    private gnu.chu.controles.CTextField avc_fecfraE;
-    private gnu.chu.controles.CTextField avc_matri1;
-    private gnu.chu.controles.CTextField avc_matri2;
+    private gnu.chu.controles.CTextField avt_condniE;
+    private gnu.chu.controles.CTextField avt_connomE;
+    private gnu.chu.controles.CTextField avt_fectraE;
+    private gnu.chu.controles.CTextField avt_kilosE;
+    private gnu.chu.controles.CTextField avt_matri1E;
+    private gnu.chu.controles.CTextField avt_matri2E;
     private gnu.chu.controles.CTextField avt_numbolE;
     private gnu.chu.controles.CTextField avt_numcajE;
     private gnu.chu.controles.CTextField avt_numcolE;
     private gnu.chu.controles.CTextField avt_numpalE;
+    private gnu.chu.controles.CComboBox avt_portesE;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
+    private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel5;
+    private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
     private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CLabel cLabel9;

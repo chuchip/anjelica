@@ -1,3 +1,41 @@
+--
+alter table v_articulo add pro_dimica smallint;
+update v_articulo set pro_dimica = 14 where pro_artcon=0;
+update v_Articulo set pro_dimica = 60 where pro_artcon!=0;
+--
+grant select on  anjelica.prodventa to public;
+create table disproventa
+(
+	dpv_tipo int not null, -- Tipo Discriminador. 1. Codigo Corte. 2. Animal. 3 Origen. 4 Clasif.
+	dpv_nume char(3) not null, -- Codigo
+	dpv_nomb varchar(30) not null -- Nombre
+);
+create view v_tipoanimal as select dpv_nume,dpv_nomb from disproventa where dpv_tipo=2;
+grant select on anjelica.v_tipoanimal to public;
+create view v_tipocorte as select dpv_nume,dpv_nomb from disproventa where dpv_tipo=1;
+grant select on anjelica.v_tipocorte to public;
+create view v_clasiprod as select dpv_nume,dpv_nomb from disproventa where dpv_tipo=4;
+grant select on anjelica.v_clasiprod to public;
+----
+insert into parametros values('*','inchojatrans','Incluir Hoja transportista', 1);
+---
+-- tabla hoja trasnporte de Albaran Venta
+--drop table albvenht;
+create table albvenht
+(
+	avc_id int not null,-- Numero de Albaran	
+	tra_codi int not null, -- Transportista
+	avt_fectra date, -- Fecha transporte
+	avt_portes char(1) not null, --  Portes (Debidos/Pagados)
+	avt_kilos float not null,	 -- Kilos transportados
+	avt_connom varchar(128), -- Nombre Conductor
+	avt_condni varchar(25), -- Dni Conductor
+	avt_matri1 varchar(25), -- Matricula 1
+	avt_matri2 varchar(25), -- Matricula 2	
+	constraint ix_albvenht primary key(avc_id)
+);
+grant all on albvenht to public;
+--
 ALTER TABLE stockpart DISABLE TRIGGER USER;
 drop view v_stkpart;
 alter table stockpart add stp_paisde  varchar(2);

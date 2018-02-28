@@ -20,11 +20,11 @@
   <SubComponents>
     <Component class="gnu.chu.controles.CLabel" name="cLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Conductor"/>
+        <Property name="text" type="java.lang.String" value="Portes"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="10" y="30" width="90" height="17"/>
+          <AbsoluteConstraints x="220" y="30" width="60" height="17"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -52,33 +52,33 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CTextField" name="avc_connomE">
+    <Component class="gnu.chu.controles.CTextField" name="avt_connomE">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,50)"/>
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="100" y="30" width="290" height="-1"/>
+          <AbsoluteConstraints x="100" y="60" width="290" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
     <Component class="gnu.chu.controles.CLabel" name="cLabel3">
       <Properties>
-        <Property name="text" type="java.lang.String" value="N.I.F."/>
+        <Property name="text" type="java.lang.String" value="D.N.I"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="10" y="50" width="40" height="17"/>
+          <AbsoluteConstraints x="10" y="80" width="40" height="17"/>
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CTextField" name="avc_connifE">
+    <Component class="gnu.chu.controles.CTextField" name="avt_condniE">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.CHAR,&quot;X&quot;,30)"/>
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="100" y="50" width="120" height="-1"/>
+          <AbsoluteConstraints x="100" y="80" width="120" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -88,31 +88,31 @@
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="10" y="70" width="60" height="17"/>
+          <AbsoluteConstraints x="10" y="100" width="60" height="17"/>
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CTextField" name="avc_fecfraE">
+    <Component class="gnu.chu.controles.CTextField" name="avt_fectraE">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yyyy&quot;)"/>
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="140" y="110" width="80" height="-1"/>
+          <AbsoluteConstraints x="140" y="140" width="80" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
     <Component class="gnu.chu.controles.CLabel" name="cLabel5">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Fecha Transporte "/>
+        <Property name="text" type="java.lang.String" value="Kilos"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="10" y="110" width="110" height="17"/>
+          <AbsoluteConstraints x="10" y="30" width="70" height="17"/>
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CTextField" name="avc_matri2">
+    <Component class="gnu.chu.controles.CTextField" name="avt_matri2E">
       <Properties>
         <Property name="mayusc" type="boolean" value="true"/>
       </Properties>
@@ -121,11 +121,11 @@
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="100" y="90" width="120" height="-1"/>
+          <AbsoluteConstraints x="100" y="120" width="120" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="gnu.chu.controles.CTextField" name="avc_matri1">
+    <Component class="gnu.chu.controles.CTextField" name="avt_matri1E">
       <Properties>
         <Property name="mayusc" type="boolean" value="true"/>
       </Properties>
@@ -134,7 +134,7 @@
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="100" y="70" width="120" height="-1"/>
+          <AbsoluteConstraints x="100" y="100" width="120" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -144,7 +144,7 @@
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="10" y="90" width="70" height="17"/>
+          <AbsoluteConstraints x="10" y="120" width="70" height="17"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -158,7 +158,7 @@
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="10" y="140" width="290" height="30"/>
+          <AbsoluteConstraints x="10" y="170" width="290" height="30"/>
         </Constraint>
       </Constraints>
 
@@ -260,5 +260,48 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="gnu.chu.controles.CLabel" name="cLabel6">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Conductor"/>
+      </Properties>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+          <AbsoluteConstraints x="10" y="60" width="90" height="17"/>
+        </Constraint>
+      </Constraints>
+    </Component>
+    <Component class="gnu.chu.controles.CComboBox" name="avt_portesE">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="avt_portesE.addItem(&quot;Pagado&quot;, &quot;P&quot;);&#xa;avt_portesE.addItem(&quot;Debido&quot;, &quot;D&quot;);"/>
+      </AuxValues>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+          <AbsoluteConstraints x="310" y="30" width="80" height="-1"/>
+        </Constraint>
+      </Constraints>
+    </Component>
+    <Component class="gnu.chu.controles.CLabel" name="cLabel12">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Fecha Transporte "/>
+      </Properties>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+          <AbsoluteConstraints x="10" y="140" width="110" height="17"/>
+        </Constraint>
+      </Constraints>
+    </Component>
+    <Component class="gnu.chu.controles.CTextField" name="avt_kilosE">
+      <Properties>
+        <Property name="mayusc" type="boolean" value="true"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DECIMAL,&quot;##,##9.99&quot;)"/>
+      </AuxValues>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+          <AbsoluteConstraints x="70" y="30" width="80" height="-1"/>
+        </Constraint>
+      </Constraints>
+    </Component>
   </SubComponents>
 </Form>

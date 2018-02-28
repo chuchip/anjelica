@@ -541,6 +541,7 @@ avc_recfin decimal(5,2),
 avc_tipalb varchar(1),
 avc_rcaedi varchar(3),
 avc_nalsab varchar(15),
+avc_nalsab varchar(15),
 avc_ncarg char(17),
 avc_nrelen varchar(17),
 avc_repres varchar(2),
@@ -3420,6 +3421,7 @@ create table anjelica.parametros
     par_valor varchar(100) not null,           -- Char (0: False,-1: True)
     constraint ix_parametros primary key (usu_nomb,par_nomb)
 );
+insert into parametros values('*','inchojatrans','Incluir Hoja transportista', 0);
 insert into parametros values('*','checktidcodi','Validar producto sobre tipo despiece', 1);
 insert into parametros values('*','autollenardesp','Auto llenar despiece con los productos', 0);
 insert into parametros values('*','cargaproequi','Carga Productos Equivalentes en Tactil', 0);

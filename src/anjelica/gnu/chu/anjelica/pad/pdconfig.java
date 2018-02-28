@@ -17,7 +17,7 @@ import javax.swing.border.*;
  *
  * <p>Título: pdconfig </p>
  * <p>Descripción: Mantenimiento de configuraciones por empresa</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
