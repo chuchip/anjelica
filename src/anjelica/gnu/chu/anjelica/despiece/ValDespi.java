@@ -2184,7 +2184,7 @@ public class ValDespi extends ventana {
                + (tid_codiniE.isNull()?"":" and d.tid_codi "+               
                (tid_codfinE.isNull()?"":">")+
                "= "+tid_codiniE.getValorInt())
-               + (cli_codiE.isNull()?"": " and d.cli_codi = "+cli_codiE.getValorInt())
+               + (cli_codiE.isNull()?"": " and d.cli_codi = "+cli_codiE.getValorInt())               
               + (tid_codfinE.isNull()?"":" and d.tid_codi<= "+tid_codfinE.getValorInt())
                + (opProduc.getValor().equals("*")?"": " and deo_incval = '"+opProduc.getValor()+"'")
                + (deo_codiE.getValorInt()==0?"":" and d.eje_nume = "+eje_numeE.getValorInt()
@@ -2238,6 +2238,15 @@ public class ValDespi extends ventana {
                  jtDesp.panelG.setVisible(true);
                  resetMsgEspere();
                  return;
+             }
+             
+             if ( !deo_lotoriE.isNull() && dtCon1.getInt("deo_codi")!=0)
+             {  
+               s="select pro_codi  as cuantos from  desorilin where eje_nume="+dtCon1.getInt("eje_nume")+
+                   " and deo_codi= "+dtCon1.getInt("deo_codi")+
+                   " and pro_lote "+deo_lotmomE.getValor()+deo_lotoriE.getValorInt();
+               if (!dtStat.select(s))
+                  continue;
              }
              if (opDespUnid.isSelected())
              {
@@ -2422,6 +2431,9 @@ public class ValDespi extends ventana {
         proOrigenE = new gnu.chu.camposdb.proPanel();
         cLabel17 = new gnu.chu.controles.CLabel();
         proFinalE = new gnu.chu.camposdb.proPanel();
+        cLabel18 = new gnu.chu.controles.CLabel();
+        deo_lotmomE = new gnu.chu.controles.CComboBox();
+        deo_lotoriE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#####9");
         jtDesp = new gnu.chu.controles.Cgrid(12);
         jtCab = new gnu.chu.controles.CGridEditable(9)
         {
@@ -2493,12 +2505,13 @@ public class ValDespi extends ventana {
         Pcond.add(fecinfE);
         fecinfE.setBounds(70, 20, 60, 17);
 
-        cLabel2.setText("Art. Origen");
+        cLabel2.setText("Lote");
         Pcond.add(cLabel2);
-        cLabel2.setBounds(335, 60, 70, 15);
+        cLabel2.setBounds(370, 80, 40, 15);
         Pcond.add(eje_numeE);
         eje_numeE.setBounds(70, 2, 32, 17);
 
+        deo_codiE.setFocusTraversalPolicy(null);
         deo_codiE.setFocusTraversalPolicyProvider(true);
         Pcond.add(deo_codiE);
         deo_codiE.setBounds(360, 20, 51, 17);
@@ -2598,6 +2611,20 @@ public class ValDespi extends ventana {
         cLabel17.setBounds(10, 80, 60, 15);
         Pcond.add(proFinalE);
         proFinalE.setBounds(70, 80, 290, 17);
+
+        cLabel18.setText("Art. Origen");
+        Pcond.add(cLabel18);
+        cLabel18.setBounds(335, 60, 70, 15);
+
+        deo_lotmomE.addItem("Mayor", ">");
+        deo_lotmomE.addItem("Menor", "<");
+        Pcond.add(deo_lotmomE);
+        deo_lotmomE.setBounds(400, 80, 60, 20);
+
+        deo_lotoriE.setFocusTraversalPolicy(null);
+        deo_lotoriE.setFocusTraversalPolicyProvider(true);
+        Pcond.add(deo_lotoriE);
+        deo_lotoriE.setBounds(460, 80, 51, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -2958,6 +2985,7 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CLabel cLabel15;
     private gnu.chu.controles.CLabel cLabel16;
     private gnu.chu.controles.CLabel cLabel17;
+    private gnu.chu.controles.CLabel cLabel18;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -2970,6 +2998,8 @@ public class ValDespi extends ventana {
     private gnu.chu.controles.CTextField def_prcostE;
     private gnu.chu.controles.CCheckBox def_prebloC;
     private gnu.chu.controles.CTextField deo_codiE;
+    private gnu.chu.controles.CComboBox deo_lotmomE;
+    private gnu.chu.controles.CTextField deo_lotoriE;
     private gnu.chu.controles.CTextField deo_prcogrE;
     private gnu.chu.controles.CTextField eje_numeE;
     private gnu.chu.controles.CTextField fecinfE;

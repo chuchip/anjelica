@@ -206,7 +206,7 @@ public class MantPreMedios extends ventana
            codBolas=codBolas.substring(0,codBolas.length()-1);
            String s="select a.pro_codi,sum(avp_canti) as kilos from v_albventa_detalle as a , "
                + "clientes as c,v_despfin as d where a.cli_codi=c.cli_codi "+
-            " and avc_fecalb>='"+tar_feciniE.getFechaDB()+"'"+ //  -- Lunes
+            " and avl_fecalt>='"+tar_feciniE.getFechaDB()+"'"+ //  -- Lunes
             " and a.pro_codi in ("+codBolas+") "+
             //" and d.def_serlot='G' "+
             " and a.pro_codi=d.pro_codi and "
@@ -227,7 +227,7 @@ public class MantPreMedios extends ventana
                     " and deo_fecha between '"+tar_feciniE.getFechaDB()+"' and '"+fecFinComE.getFechaDB()+"'";
                 dtStat.select(s1);
                 v.add(dtStat.getDouble("kilos",true)); // Kilos producidos
-                v.add(dtStat.getDouble("kilos",true)-dtCon1.getDouble("kilos",true)); // Kilos a despiezados
+                v.add(dtStat.getDouble("kilos",true)-dtCon1.getDouble("kilos",true)); // Kilos despiezados (por difencia)
                 v.add(dtCon1.getDouble("kilos",true));
                 double precio=htBolas.get(dtCon1.getInt("pro_codi"));
                 v.add(precio);
