@@ -168,12 +168,12 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2017-12-28" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2018-02-28" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
-        
+       
         conecta();
    }
    public static String getNombreClase()
@@ -1717,7 +1717,8 @@ public class ValDespi extends ventana {
      int numdes=jtDesp.getValorInt(row,JTDES_NUMDES);
      boolean isGrupo=false;
      try {
-        isGrupo=jtDesp.getValString(row,JTDES_TIPO).equals("G");
+        String grupo=jtDesp.getValString(row,JTDES_TIPO);
+        isGrupo=grupo==null?false:grupo.equals("G");
      } catch (NullPointerException k)
      {
          Error("Error al cargar despiece",k);

@@ -3612,6 +3612,59 @@ select 	usu_nomb,
 	order by tcl_numlin;
 	
 );
+-- 
+-- Cabecera Reservas productos para clientes
+--
+create table cabresprcli
+(
+	rpc_id serial not null, -- Numero  Reserva
+	usu_nomb varchar(15) not null,
+	rpc_fecha date not null, -- fecha traspaso	
+	cli_codi int not null -- Cliente al que se le realiza la reserva	
+);
+grant  select,update,insert, delete on cabresprcli to public;
+--
+-- Lineas  Reservas productos para clientes
+--
+create table  linresprcli
+(
+	rpc_id int not null, -- Numero Traspaso
+	rpc_numlin int not null, -- Numero Linea
+	pro_codi int,			-- Producto	
+	rpc_ejelot int,			-- Ejercicio Lote
+	rpc_serlot char(1), 	-- Serie de Lote
+	rpc_numpar int,			-- Numero de Partida (Lote)
+	rpc_numind int,			--  Numero de Individuo
+	rpc_numuni int,		-- Numero de Unidades
+	rpc_canti float not null,  -- Kilos 
+	rpc_fecalt timestamp default current_timestamp not null, -- Fecha/Hora traspaso
+	 constraint ix_linresprcli primary key(rpc_id,rpc_numlin)
+);
+grant select,update,insert, delete  on linresprcli to public;
+create view v_resprcli as 
+select 	usu_nomb,
+	rpc_fecha , -- fecha traspaso	
+	cli_codi , -- Cliente
+	l.* from cabresprcli  as c, linresprcli as l where c.rpc_id = l.rpc_id 
+	order by rpc_numlin;
+grant select  on v_resprcli to public;	
+--
+-- tabla hoja trasnporte de Albaran Venta
+--
+create table albvenht
+(
+	avc_id int not null,-- Numero de Albaran	
+	tra_codi int not null, -- Transportista
+	avt_fectra date, -- Fecha transporte
+	avt_portes char(1) not null, --  Portes (Debidos/Pagados)
+	avt_kilos float not null,	 -- Kilos transportados
+	avt_connom varchar(128), -- Nombre Conductor
+	avt_condni varchar(25), -- Dni Conductor
+	avt_matri1 varchar(25), -- Matricula 1
+	avt_matri2 varchar(25), -- Matricula 2	
+	constraint ix_albvenht primary key(avc_id)
+);
+grant all on albvenht to public;
 --
 -- Precios para inventarios
 --
@@ -4098,7 +4151,7 @@ create table anjelica.stockpart
 	pro_serie char(1),	-- Serie
  	stp_tiplot char(1),	-- Tipo Lote (P: Partida S: Acumulado,  B Bloqueado)
  	pro_nupar int,		-- Partida
-	stk_block int not null default 0, --   Bloqueado. 0: No
+	stk_block int not null default 0, --   Reservado Cliente: 0: Ninguno.
 	pro_codi int,		-- Producto
 	pro_numind int,		-- Numero Individuo
 	alm_codi int,		-- Almacen

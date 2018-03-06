@@ -112,15 +112,16 @@ public class actCabAlbFra
                              int avcNume,boolean incIva,
                              double dtopp,double dtoCom,int recequ,Date fecAlb) throws SQLException
   {   
-    s = "SELECT * FROM v_albavec as c WHERE c.avc_ano = " + avcAno +
+    s = "SELECT c.*,tra_codi,avt_portes FROM v_albavec as c left join albvenht as ht on c.avc_id=ht.avc_id WHERE c.avc_ano = " + avcAno +
             " and c.emp_codi = " + empCodi +
             " and c.avc_serie = '" + avcSerie + "'" +
             " and c.avc_nume = " + avcNume;
     if (!dtLin.select(s))
-              throw new SQLException("No encontrado Albaran"+s);
-        ht.put("avc_id",dtLin.getInt("avc_id"));
+           throw new SQLException("No encontrado Albaran"+s);
+    
     if (fecAlb==null)
          fecAlb=dtLin.getDate("avc_fecalb");
+  
     int avcId=dtLin.getInt("avc_id");
     ht.put("avc_id",avcId);
     ht.put("incIva", incIva);
@@ -142,6 +143,24 @@ public class actCabAlbFra
     ht.put("avt_numcaj",(int) 0);
     ht.put("avt_numbol",(int) 0);
     ht.put("avt_numcol",(int) 0);
+    ht.put("avt_numcol",(int) 0);
+    ht.put("tra_nomb","");
+    ht.put("tra_direc","");
+    ht.put("tra_pobl","");
+    ht.put("tra_nif","");
+    ht.put("avt_portes","");
+    if (dtLin.getObject("tra_codi")!=null)
+    {
+         ht.put("avt_portes",dtLin.getString("avt_portes").equals("D")?"DEBIDOS":"PAGADOS");
+         s = "SELECT * from transportista where tra_codi = "+dtLin.getInt("tra_codi");
+         if (dtLin.select(s))
+         {
+            ht.put("tra_nomb",dtLin.getString("tra_nomb"));
+            ht.put("tra_direc",dtLin.getString("tra_direc"));
+            ht.put("tra_pobl",dtLin.getString("tra_pobl"));
+            ht.put("tra_nif",dtLin.getString("tra_nif"));
+         }
+    }
     s = "SELECT l.pro_codi,sum(l.avl_canti) as avl_canti, sum(avl_unid) as avl_unid, " +
         " avl_prven-avl_dtolin as avl_prven,pro_tipiva,pro_indtco,pro_tiplot FROM V_ALBAVEL as l, v_articulo as a " +
         " WHERE l.avc_ano = " + avcAno +

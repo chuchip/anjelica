@@ -1,3 +1,19 @@
+--
+create table albvenht
+(
+	avc_id int not null,-- Numero de Albaran	
+	tra_codi int not null, -- Transportista
+	avt_fectra date, -- Fecha transporte
+	avt_portes char(1) not null, --  Portes (Debidos/Pagados)
+	avt_kilos float not null,	 -- Kilos transportados
+	avt_connom varchar(128), -- Nombre Conductor
+	avt_condni varchar(25), -- Dni Conductor
+	avt_matri1 varchar(25), -- Matricula 1
+	avt_matri2 varchar(25), -- Matricula 2	
+	constraint ix_albvenht primary key(avc_id)
+);
+grant all on albvenht to public;
+---
 create view v_tiempospedido as
 select t.*,u.usu_nomco from tiempostarea as t left join usuarios as u on u.usu_nomb=t.usu_nomb
 where t.tit_tipdoc = 'P';
@@ -39,7 +55,7 @@ CREATE OR REPLACE VIEW v_cliente AS
     clientes.cli_enalva, clientes.cli_ordrut, clientes.cli_codrut AS cli_carte, 
     clientes.cli_codrut AS cli_valor,cli_comped 
    FROM clientes;
-   create view anjelica.v_albdepserv as select sa.*,ca.avc_fecalb,ca.avc_id,cl.cli_nomb,cl.cli_nomco
+create view anjelica.v_albdepserv as select sa.*,ca.avc_fecalb,ca.avc_id,cl.cli_nomb,cl.cli_nomco
  from albvenserc as sa, v_albavec as ca,
 clientes as cl
 where ca.avc_ano=sa.avc_ano

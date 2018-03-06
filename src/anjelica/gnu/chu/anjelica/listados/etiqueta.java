@@ -574,7 +574,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   { 
         
          if (jr==null || tipoEtiq!=tipEtiqOld)
-            jr = util.getJasperReport(EU,fichEtiq);
+            jr = Listados.getJasperReport(EU,fichEtiq);
          
         this.dt=dt;
         

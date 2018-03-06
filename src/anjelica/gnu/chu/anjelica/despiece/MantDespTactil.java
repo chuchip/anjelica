@@ -2538,7 +2538,7 @@ boolean checkCabecera() throws ParseException, SQLException
       }
       if ( stkPartid.isLockIndiv())
       {
-          msgBox("Individuo esta bloqueado. Imposible realizar despiece");
+          msgBox(stkPartid.getMensaje());
           return JTENT_PROCODI;
       }
       if ( stkPartid.isControlExist())

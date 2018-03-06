@@ -26,6 +26,7 @@ import java.util.Date;
  */
 
 public class StkPartid {
+    private boolean lockIndiv=false;
     private Date fecCad=null;
     private double kilos=0;
     private double kilosIniciales=0;
@@ -35,14 +36,18 @@ public class StkPartid {
     private int estado;
     public final static int ARTIC_NOT_FOUND = 1; // Articulo NO encontrado
     public final static int INDIV_NOT_FOUND= 2; //"NO encontrado Partida para estos valores";
+    public final static int INDIV_LOCK=3; //Bloqueado a otro cliente
     public final static int INDIV_OK=0; // Individuo Encontrado
+    
     private final String[] literal=new String[]{null,"Articulo NO encontrado",
         "Individuo NO encontrado en Stock-Partidas",
-        "Individuo Bloqueado",
+        "Individuo Reservado a otro cliente",
         "Articulo sin Control Individuos",
         "Articulo sin Control Existencias",
         "Articulo sin Control Existencias ni Indiv."
   };
+    private int reservadoCliente=0;
+    private boolean controlExist;
     public boolean hasControlInd() {
         return controlInd;
     }
@@ -59,15 +64,29 @@ public class StkPartid {
         this.controlExist = controlExist;
     }
 
-    public boolean isLockIndiv() {
-        return estado==INDIV_OK && lockIndiv;
+    public int getReservadoCliente() {
+        return reservadoCliente;
     }
 
-    public void setLockIndiv(boolean lockIndiv) {
-        this.lockIndiv = lockIndiv;
+    public void setReservadoCliente(int reservaCliente) {
+        this.reservadoCliente = reservaCliente;
     }
-    private boolean controlExist;
-    private boolean lockIndiv;
+    
+    /**
+     * Dice si el articulo esta bloqueado para otro cliente
+     *
+     * @return
+     */
+    public boolean isLockIndiv() {
+        return lockIndiv;
+    }
+
+    public void setLockIndiv(boolean bloqueado)
+    {
+        if (bloqueado)
+            setEstado(INDIV_LOCK);
+        lockIndiv = bloqueado;
+    }
     
     public double getKilos() {
         return kilos;
@@ -134,7 +153,7 @@ public class StkPartid {
   }
   public String getMensaje()
   {
-      return getMensaje(estado);
+      return getMensaje(estado)+(estado==INDIV_LOCK?". (Cliente: "+getReservadoCliente()+")":"");
   }
   /**
    * Indica si existe el individuo existe en stock partidas
@@ -162,10 +181,26 @@ public class StkPartid {
   {   
       this(estado,0,0);
   }
+  /**
+   * Devuelve si el individuo tiene errores.
+   * @return 
+   */
   public boolean hasError()
+  {
+      return hasError(0);
+  }
+  
+   /**
+   * Devuelve si el individuo tiene errores.
+   * @param cliCodi si esta bloqueado y el cliente es diferente al mandado considera que tiene error.
+   * @return 
+   */
+  public boolean hasError(int cliCodi)
   {
       if (estado==ARTIC_NOT_FOUND)
           return true;
+      if (estado==INDIV_LOCK)
+          return cliCodi==getReservadoCliente();
       return estado==INDIV_NOT_FOUND && hasControlInd();
   }
   

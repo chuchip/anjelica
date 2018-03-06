@@ -766,7 +766,7 @@ public class utildesp
                                  String serLot,int numLot,int numind,int proCodi,
                                  int almCodi) throws SQLException
    {
-        return buscaPeso(dt,ejeLot,empLot,serLot,numLot,numind,proCodi,almCodi,false);
+        return buscaPeso(dt,ejeLot,empLot,serLot,numLot,numind,proCodi,almCodi,0);
    }
   /**
    * Busca el Peso de un individuo segun la tabla v_stkpart
@@ -778,13 +778,13 @@ public class utildesp
    * @param numind Individuo del Lote
    * @param proCodi Producto
    * @param almCodi Almacen si es cero, busca en todos.
-   * @param incBloq Incluir Individuos bloqueados
+   * @param cliReserva Incluir Individuos bloqueados
    * @return mensaje de Error. NULL si todo ha ido bien
    * @throws SQLException En caso de error en base datos
    */
   public static StkPartid buscaPeso(DatosTabla dt,int ejeLot,int empLot,
                                  String serLot,int numLot,int numind,int proCodi,
-                                 int almCodi,boolean incBloq) throws SQLException
+                                 int almCodi,int cliReserva) throws SQLException
   {
      StkPartid stkPart=new StkPartid(StkPartid.ARTIC_NOT_FOUND);
      String s = "SELECT pro_coinst,pro_coexis,pro_stock,pro_stkuni "+
@@ -811,27 +811,29 @@ public class utildesp
        if (dt.select(s))
        {
            s = "SELECT * FROM V_STKPART WHERE " +
-            " EJE_NUME= " + ejeLot +
-            " AND EMP_CODI= " + empLot +
-            " AND PRO_SERIE='" + serLot + "'" +
-            " AND pro_nupar= " + numLot +
-            " and pro_numind= " + numind+          
-            (almCodi!=0?" and alm_codi = "+almCodi:"");
+                " EJE_NUME= " + ejeLot +
+                " AND EMP_CODI= " + empLot +
+                " AND PRO_SERIE='" + serLot + "'" +
+                " AND pro_nupar= " + numLot +
+                " and pro_numind= " + numind+          
+                (almCodi!=0?" and alm_codi = "+almCodi:"");
            if (!dt.select(s))
            {
                 stkPart.setEstado(StkPartid.INDIV_NOT_FOUND);           
                 return stkPart;
-            }
+           }
+           // Encontrado individuo (sin articulo)
        }
        else
        {
             stkPart.setEstado(StkPartid.INDIV_NOT_FOUND);           
             return stkPart;
-
        }
     }
-    stkPart.setEstado(StkPartid.INDIV_OK);     
-    stkPart.setLockIndiv(dt.getInt("stk_block")!=0);   
+    stkPart.setEstado(StkPartid.INDIV_OK);
+    
+    stkPart.setReservadoCliente(dt.getInt("stk_block"));   
+    stkPart.setLockIndiv(dt.getInt("stk_block")>0 && dt.getInt("stk_block")!=cliReserva);
     stkPart.setKilos(Formatear.redondea(dt.getDouble("stp_kilact"),2));
     stkPart.setUnidades(dt.getInt("stp_unact"));
     stkPart.setFechaCad(dt.getDate("stp_feccad"));
@@ -847,6 +849,7 @@ public class utildesp
   {
      return this.stkPart;
   }
+ 
   void debug(String msg,EntornoUsuario EU)
   {
     if (EU==null)

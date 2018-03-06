@@ -44,7 +44,7 @@ import javax.swing.event.InternalFrameEvent;
 public class ayuLote extends ventana
 {
   String empAccesos;
-  boolean verBloqueados=false;
+  boolean verBloqueados=true;
   int proCodi;
   public int rowAct;
   CPanel Pprinc = new CPanel();
@@ -117,13 +117,13 @@ public class ayuLote extends ventana
     v.add("Unid."); // 6
     v.add("Palet"); // 6
     v.add("Caja"); // 6
-    v.add("Blo"); // 7
+    v.add("Reserv."); // 7
     jt.setCabecera(v);
-    jt.setAnchoColumna(new int[]{60,30,60,60,90,40,40,40,30});
-    jt.setAlinearColumna(new int[]{2,1,2,2,2,2,0,2,1});
+    jt.setAnchoColumna(new int[]{60,30,60,60,90,40,40,40,50});
+    jt.setAlinearColumna(new int[]{2,1,2,2,2,2,0,2,2});
     jt.setFormatoColumna(JT_PESO ,"---,--9.99");
     jt.setFormatoColumna(JT_NUMUNI,"--9");
-    jt.setFormatoColumna(JT_BLOCK,"B-");
+//    jt.setFormatoColumna(JT_BLOCK,"B-");
     jt.setConfigurar("gnu.chu.winayu.ayuLote",EU,dtCon1);
     jt.setAjustarGrid(true);
     this.getContentPane().add(statusBar, BorderLayout.SOUTH);
@@ -196,7 +196,7 @@ public class ayuLote extends ventana
   {
     if (prCod!=null)
       proCodi=Integer.parseInt(prCod.trim());
-      consulta=false;
+    consulta=false;
     try
     {
       pro_codiE.setText(""+proCodi);

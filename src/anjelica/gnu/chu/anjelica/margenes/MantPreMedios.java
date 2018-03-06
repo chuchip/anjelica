@@ -106,7 +106,7 @@ public class MantPreMedios extends ventana
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2018-02-14" );
+      this.setVersion("2018-02-28" );
       statusBar = new StatusBar(this);
       
       iniciarFrame();
@@ -289,6 +289,18 @@ public class MantPreMedios extends ventana
               kilCompra-=dtCon1.getDouble("kilos",true);
               impCompra-=dtCon1.getDouble("importe",true);
               // Sumo Despieces de 108 a 109
+              s="select pro_codi,deo_codi "
+                  + "from v_despsal as d where  tid_codi= "+TIDE_108A109+
+                   " and deo_fecha>='"+ tar_feciniE.getFechaDB()+"'"+ 
+                   " and (pro_codi="+codigo1+
+                   " or pro_codi= "+codigo2+") "+
+                  " and def_prcost <= 0";
+              if (dtCon1.select(s))
+              {
+                  msgBox("DESPIECES DE TIPO 108 A 109 SIN VALORAR EN PRODUCTO: "+dtCon1.getInt("pro_codi")+
+                      " DESPIECE: "+dtCon1.getInt("deo_codi")     );
+                  return;
+              }
               s="select sum(def_kilos) as kilos, sum(def_kilos*def_prcost) as importe "
                   + "from v_despsal as d where  tid_codi= "+TIDE_108A109+
                    " and deo_fecha>='"+ tar_feciniE.getFechaDB()+"'"+ 

@@ -159,7 +159,7 @@ public class lialbven implements JRDataSource
    String avcSerie=rs.getString("avc_serie");
    int avcNume=rs.getInt("avc_nume");
    Listados lis=Listados.getListado(EU.em_cod,  Listados.CAB_AVC, dtCon1);
-   JasperReport jr = Listados.getJasperReport(EU, lis.getNombFich());
+   JasperReport jr = Listados.getJasperReport(EU, lis.getNombreFichero());
    java.util.HashMap mp = Listados.getHashMapDefault();
    mp.put(JRParameter.REPORT_CONNECTION,ct);
    if (avsNume==0)
@@ -275,9 +275,14 @@ public class lialbven implements JRDataSource
             nombre.equals("cli_poble") ||
             nombre.equals("avc_serie") || nombre.equals("cli_horenv") ||  nombre.equals("cli_codrut") ||  
             nombre.equals("rut_codi") ||  
-            nombre.equals("cli_comenv"))
+            nombre.equals("cli_comenv") ||
+            nombre.equals("avt_connom") || nombre.equals("avt_condni") || nombre.equals("avt_matri1") || nombre.equals("avt_matri2")  
+            )
           return rs.getString(nombre);
-
+        if (nombre.equals("tra_codi"))
+            return rs.getInt(nombre);
+         if (nombre.equals("avt_kilos"))
+            return rs.getDouble(nombre);
         if (nombre.equals("avc_empcod") ||
             nombre.equals("avc_nume") ||
             nombre.equals("cli_codi") ||
@@ -311,7 +316,8 @@ public class lialbven implements JRDataSource
             return (int)ht.get("avt_numbol");
         if (nombre.equals("avt_numcol"))
             return (int)ht.get("avt_numcol");
-
+         if (nombre.equals("avt_portes") || nombre.equals("tra_pobl")  || nombre.equals("tra_nomb") || nombre.equals("tra_direc") || nombre.equals("tra_nif"))
+            return (String)ht.get(nombre);
     throw new Exception("Campo "+jRField.getName()+" NO encontrado");
     } catch (Exception k)
     {
@@ -384,8 +390,8 @@ public class lialbven implements JRDataSource
       {
         do
         {
-          impLin=Formatear.Redondea(Formatear.Redondea(dtLin.getDouble("avl_canti",true), 2) *
-                                Formatear.Redondea(dtLin.getDouble("avl_prven",true),3),2);
+          impLin=Formatear.redondea(Formatear.redondea(dtLin.getDouble("avl_canti",true), 2) *
+                                Formatear.redondea(dtLin.getDouble("avl_prven",true),3),2);
          proNomb=dtLin.getString("pro_nomb",true);
 /**         if (proNomb.equals(""))
          {

@@ -145,6 +145,11 @@ public class PTransVenta extends CPanel
         avt_matri1E.setText(dt.getString("avt_matri1"));
         avt_matri2E.setText(dt.getString("avt_matri2"));
      }
+     
+     public void  setKilosBrutos(double kilos)
+     {
+         avt_kilosE.setValorDec(kilos);
+     }
     /**
      * Actualiza Pantalla Bultos
      * @throws SQLException 

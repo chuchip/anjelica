@@ -93,6 +93,7 @@ public class menu extends JFrame
   JMenuItem clvenrep = new JMenuItem();
   JMenuItem clventasmes = new JMenuItem();
   JMenuItem manEnvAlbEmail = new JMenuItem("Envio Alb.Venta Email");
+  JMenuItem manReserCliente = new JMenuItem("Mant.Reserva Clientes");
   JMenuItem CLRankClie = new JMenuItem();
   JMenuItem mantTariCliente = new JMenuItem();
   JMenuItem cargaInv = new JMenuItem();
@@ -400,6 +401,11 @@ JMenuItem mantArticVenta = new JMenuItem();
      manEnvAlbEmail.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         manEnvAlbEmail_actionPerformed(e);
+      }
+    });
+       manReserCliente.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        manReserCliente_actionPerformed(e);
       }
     });
     
@@ -1158,6 +1164,8 @@ JMenuItem mantArticVenta = new JMenuItem();
      JpopupVentas.add(mantTariCliente);
      JpopupVentas.add(mantAlbRuta);
      JpopupVentas.add(manEnvAlbEmail);
+     JpopupVentas.add(manReserCliente);
+     
     popupFact.add(lirelfact);
     popupFact.add(pdfactu);
     popupFact.add(genfactu);
@@ -1922,6 +1930,14 @@ void limpiaDB()
    
     lanzaEjecutable(new gnu.chu.anjelica.ventas.MantEnvioAlbEmail(menu.this,EU,ht));
   }
+  void manReserCliente_actionPerformed(ActionEvent e) {
+    
+       Hashtable ht = new Hashtable();
+   
+    lanzaEjecutable(new gnu.chu.anjelica.ventas.MantReservaClientes(menu.this,EU,ht));
+  }
+
+ 
  void CLRankClie_actionPerformed(ActionEvent e) {
 
     lanzaEjecutable(new gnu.chu.anjelica.ventas.CLRankClie(menu.this,EU));

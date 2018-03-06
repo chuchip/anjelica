@@ -1,3 +1,38 @@
+-- 
+-- Cabecera Reservas productos para clientes
+--
+create table cabresprcli
+(
+	rpc_id serial not null, -- Numero  Reserva
+	usu_nomb varchar(15) not null,
+	rpc_fecha date not null, -- fecha traspaso	
+	cli_codi int not null -- Cliente al que se le realiza la reserva	
+);
+grant  select,update,insert, delete on cabresprcli to public;
+--
+-- Lineas  Reservas productos para clientes
+--
+create table  linresprcli
+(
+	rpc_id int not null, -- Numero Traspaso
+	rpc_numlin int not null, -- Numero Linea
+	pro_codi int,			-- Producto	
+	rpc_ejelot int,			-- Ejercicio Lote
+	rpc_serlot char(1), 	-- Serie de Lote
+	rpc_numpar int,			-- Numero de Partida (Lote)
+	rpc_numind int,			--  Numero de Individuo
+	rpc_numuni int,		-- Numero de Unidades
+	rpc_canti float not null,  -- Kilos 
+	rpc_fecalt timestamp default current_timestamp not null, -- Fecha/Hora traspaso
+	 constraint ix_linresprcli primary key(rpc_id,rpc_numlin)
+);
+grant select,update,insert, delete  on linresprcli to public;
+create view v_resprcli as 
+select 	usu_nomb,
+	rpc_fecha , -- fecha traspaso	
+	cli_codi , -- Cliente
+	l.* from cabresprcli  as c, linresprcli as l where c.rpc_id = l.rpc_id 
+	order by rpc_numlin;
 --
 alter table v_articulo add pro_dimica smallint;
 update v_articulo set pro_dimica = 14 where pro_artcon=0;
@@ -18,6 +53,7 @@ create view v_clasiprod as select dpv_nume,dpv_nomb from disproventa where dpv_t
 grant select on anjelica.v_clasiprod to public;
 ----
 insert into parametros values('*','inchojatrans','Incluir Hoja transportista', 1);
+INSERT INTO PARAMETROS VALUES('*','avisodiascad','Aviso dias Caducidad',0); -- Comprobar dias
 ---
 -- tabla hoja trasnporte de Albaran Venta
 --drop table albvenht;

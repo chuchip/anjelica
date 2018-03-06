@@ -2519,28 +2519,28 @@ public class MantDesp extends ventanaPad implements PAD
             + " and deo_codi = " + deo_codiE.getValorInt();
         stUp.executeUpdate(s);
      
-        for (int n = 0; n < nRow; n++)
-        {
-            if (deo_blockE.getValor().equals("S"))
-            {
-                stkPart.ponerStock(jtCab.getValorInt(n, JTCAB_PROCODI), jtCab.getValorInt(n, JTCAB_EJELOT),
-                    EU.em_cod, jtCab.getValString(n, JTCAB_SERLOT),
-                    jtCab.getValorInt(n, JTCAB_NUMLOT), jtCab.getValorInt(n, JTCAB_NUMIND),
-                    deo_almoriE.getValorInt(),
-                    jtCab.getValorDec(n, JTCAB_KILOS), 1);
-                stkPart.setBloqueo(jtCab.getValorInt(n, JTCAB_PROCODI), jtCab.getValorInt(n, JTCAB_EJELOT),
-                    EU.em_cod, jtCab.getValString(n, JTCAB_SERLOT),
-                    jtCab.getValorInt(n, JTCAB_NUMLOT), jtCab.getValorInt(n, JTCAB_NUMIND),
-                    deo_almoriE.getValorInt(),
-                    false);
-            } else
-            {
-                anuStkPart(jtCab.getValorInt(n, JTCAB_PROCODI), jtCab.getValorInt(n, JTCAB_EJELOT),
-                    EU.em_cod, jtCab.getValString(n, JTCAB_SERLOT),
-                    jtCab.getValorInt(n, JTCAB_NUMLOT), jtCab.getValorInt(n, JTCAB_NUMIND),
-                    jtCab.getValorDec(n, JTCAB_KILOS) * -1, -1, deo_almoriE.getValorInt());
-            }
-        }
+//        for (int n = 0; n < nRow; n++)
+//        {
+//            if (deo_blockE.getValor().equals("S"))
+//            {
+//                stkPart.ponerStock(jtCab.getValorInt(n, JTCAB_PROCODI), jtCab.getValorInt(n, JTCAB_EJELOT),
+//                    EU.em_cod, jtCab.getValString(n, JTCAB_SERLOT),
+//                    jtCab.getValorInt(n, JTCAB_NUMLOT), jtCab.getValorInt(n, JTCAB_NUMIND),
+//                    deo_almoriE.getValorInt(),
+//                    jtCab.getValorDec(n, JTCAB_KILOS), 1);
+//                stkPart.setBloqueo(jtCab.getValorInt(n, JTCAB_PROCODI), jtCab.getValorInt(n, JTCAB_EJELOT),
+//                    EU.em_cod, jtCab.getValString(n, JTCAB_SERLOT),
+//                    jtCab.getValorInt(n, JTCAB_NUMLOT), jtCab.getValorInt(n, JTCAB_NUMIND),
+//                    deo_almoriE.getValorInt(),
+//                    false);
+//            } else
+//            {
+//                anuStkPart(jtCab.getValorInt(n, JTCAB_PROCODI), jtCab.getValorInt(n, JTCAB_EJELOT),
+//                    EU.em_cod, jtCab.getValString(n, JTCAB_SERLOT),
+//                    jtCab.getValorInt(n, JTCAB_NUMLOT), jtCab.getValorInt(n, JTCAB_NUMIND),
+//                    jtCab.getValorDec(n, JTCAB_KILOS) * -1, -1, deo_almoriE.getValorInt());
+//            }
+//        }
         nRow = jtLin.getRowCount();
 
         for (int n = 0; n < nRow; n++)
@@ -3116,7 +3116,7 @@ public class MantDesp extends ventanaPad implements PAD
                     }
                     if (stkPartid.isLockIndiv())
                     {
-                        mensajeErr("Individuo bloqueado");
+                        mensajeErr(stkPartid.getMensaje());
                         return JTCAB_EJELOT;
                     }
                     
