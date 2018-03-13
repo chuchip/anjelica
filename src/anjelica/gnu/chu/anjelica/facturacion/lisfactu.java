@@ -1269,11 +1269,11 @@ private String buscaBanco(int banCodi) throws SQLException
          return banNomb;
        if (campo.equals("fpa_nomb"))
          return dtFra.getString("fpa_nomb");
-       if (campo.equals("numLinComCab"))
+       if (campo.equals("numlincomcab"))
            return numLiComCab;
-       if (campo.equals("numLinComPie"))
+       if (campo.equals("numlincompie"))
            return numLiComPie;
-       if (campo.equals("numLinFra"))
+       if (campo.equals("numlinfra"))
            return numLinFra;
        throw new Exception("Campo " + jRField.getName() + " NO encontrado");
 

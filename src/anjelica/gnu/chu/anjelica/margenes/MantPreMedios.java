@@ -272,6 +272,7 @@ public class MantPreMedios extends ventana
                    " or pro_codi= "+codigo2+")";
               
               dtCon1.select(s);
+              double kgEntra=dtCon1.getDouble("kilos",true);
               double kilCompra=dtCon1.getDouble("kilos",true);
               double impCompra=dtCon1.getDouble("importe",true);
               s="select sum(deo_kilos) as kilos, sum(deo_kilos*c.acl_prcom) as importe "
@@ -286,6 +287,7 @@ public class MantPreMedios extends ventana
                    " and (c.pro_codi="+codigo1+
                    " or c.pro_codi= "+codigo2+")";
               dtCon1.select(s);
+              double kgB=dtCon1.getDouble("kilos",true);
               kilCompra-=dtCon1.getDouble("kilos",true);
               impCompra-=dtCon1.getDouble("importe",true);
               // Sumo Despieces de 108 a 109
@@ -307,6 +309,7 @@ public class MantPreMedios extends ventana
                    " and (pro_codi="+codigo1+
                    " or pro_codi= "+codigo2+")";
               dtCon1.select(s);
+              double kg108=dtCon1.getDouble("kilos",true);
               kilCompra+=dtCon1.getDouble("kilos",true);
               impCompra+=dtCon1.getDouble("importe",true);
               // Añado los pedidos cde compra
@@ -315,6 +318,7 @@ public class MantPreMedios extends ventana
                    " and pcc_estrec = 'P'" +// Solo pendientes.
                    " and (c.pro_codi="+codigo1+
                    " or c.pro_codi= "+codigo2+")";
+              double kgPed=0;
               if (dtCon1.select(s))
               {
                   do
@@ -322,14 +326,17 @@ public class MantPreMedios extends ventana
                       switch (dtCon1.getString("pcc_estad"))
                       {
                           case "P":
+                              kgPed+=dtCon1.getDouble("pcl_cantpe");
                               kilCompra+=dtCon1.getDouble("pcl_cantpe");        
                               impCompra+=dtCon1.getDouble("pcl_cantpe")*dtCon1.getDouble("pcl_precpe");
                               break;
-                          case "C":                      
+                          case "C":           
+                              kgPed+=dtCon1.getDouble("pcl_cantco");
                               kilCompra+=dtCon1.getDouble("pcl_cantco");        
                               impCompra+=dtCon1.getDouble("pcl_cantco")*dtCon1.getDouble("pcl_precco");
                               break;
                           default:
+                              kgPed+=dtCon1.getDouble("pcl_cantfa");      
                               kilCompra+=dtCon1.getDouble("pcl_cantfa");        
                               impCompra+=dtCon1.getDouble("pcl_cantfa")*dtCon1.getDouble("pcl_precfa");
                       }
@@ -338,6 +345,11 @@ public class MantPreMedios extends ventana
               v.add(kilCompra);
               v.add(kilCompra==0?0:impCompra/kilCompra);
               v.add(impCompra);
+              v.add(kgEntra);
+              v.add(kgPed);
+              v.add(kgB);
+              v.add(kg108);
+             
               jtLomos.addLinea(v);
            }
            
@@ -383,7 +395,7 @@ public class MantPreMedios extends ventana
         BirGrid = new gnu.chu.controles.CButton();
         cLabel3 = new gnu.chu.controles.CLabel();
         eje_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        jtLomos = new gnu.chu.controles.Cgrid(8);
+        jtLomos = new gnu.chu.controles.Cgrid(12);
         jtBolas = new gnu.chu.controles.Cgrid(7);
         PPie = new gnu.chu.controles.CPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
@@ -446,18 +458,27 @@ public class MantPreMedios extends ventana
         v1.add("Kil.Inv."); // 2
         v1.add("Prec.Ant"); // 3
         v1.add("Imp.Ant"); // 4
-        v1.add("Kil.Compra"); // 5
+        v1.add("Kg.Compra"); // 5
         v1.add("Prec.Compra"); // 6
         v1.add("Imp.Compra"); // 7
+        v1.add("Kg.Entra"); // 8
+        v1.add("Kg.Pedido"); // 9
+        v1.add("Kg. B"); // 10
+        v1.add("Kg.108"); // 11
+
         jtLomos.setCabecera(v1);
-        jtLomos.setAnchoColumna(new int[]{50,200,70,60,70,70,60,70});
-        jtLomos.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2});
+        jtLomos.setAnchoColumna(new int[]{50,200,70,60,70,70,60,70,50,50,50,50});
+        jtLomos.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2,2,2,2,2});
         jtLomos.setFormatoColumna(2, "##,##9.99");
         jtLomos.setFormatoColumna(3, "--,--9.999");
         jtLomos.setFormatoColumna(4, "-,---,--9.9");
         jtLomos.setFormatoColumna(5, "##,##9.99");
         jtLomos.setFormatoColumna(6, "--,--9.999");
         jtLomos.setFormatoColumna(7, "-,---,--9.9");
+        jtLomos.setFormatoColumna(8, "--,--9.9");
+        jtLomos.setFormatoColumna(9, "--,--9.9");
+        jtLomos.setFormatoColumna(10, "--,--9.9");
+        jtLomos.setFormatoColumna(11, "--,--9.9");
         jtLomos.setAjustarGrid(true);
 
         gridBagConstraints = new java.awt.GridBagConstraints();

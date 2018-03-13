@@ -1,5 +1,26 @@
 package gnu.chu.anjelica.almacen;
-
+/**
+ *
+ * <p>Titulo: PIndivCaduc </p>
+ * <p>Descripción: Panel para mostrar individuos con fecha caducidad problematica</p>
+ *<p> Es utilizada en IFindivCaducidad</p>
+ * <p>Copyright: Copyright (c) 2005-2018
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los términos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,
+ *  pero SIN
+ * NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * @author chuchiP
+ *
+ */ 
 import gnu.chu.controles.CButton;
 import gnu.chu.controles.Cgrid;
 import gnu.chu.utilidades.Iconos;
@@ -8,10 +29,6 @@ import java.util.ArrayList;
 
 public class PIndivCaduc extends javax.swing.JPanel
 {
-
-    /**
-     * Creates new form PIndivCaduc
-     */
     public PIndivCaduc() {
         initComponents();
     }
@@ -22,6 +39,18 @@ public class PIndivCaduc extends javax.swing.JPanel
     public CButton getBotonCancelar()
     {
         return Bcancelar;
+    }
+    /**
+     * Establece el mensaje de aviso 
+     * @param msg 
+     */
+    public void setTextoAviso(String msg)
+    {
+        msgAvisoL.setText(msg);
+    }
+    public void setTextoAviso2(String msg)
+    {
+        msgAviso2L.setText(msg);
     }
     public Cgrid getGrid()
     {
@@ -42,7 +71,7 @@ public class PIndivCaduc extends javax.swing.JPanel
         msgAvisoL = new gnu.chu.controles.CLabel();
         Bcancelar = new gnu.chu.controles.CButton(Iconos.getImageIcon("cancel"));
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
-        cLabel2 = new gnu.chu.controles.CLabel();
+        msgAviso2L = new gnu.chu.controles.CLabel();
 
         setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -93,12 +122,12 @@ public class PIndivCaduc extends javax.swing.JPanel
         Pconfir.add(Baceptar);
         Baceptar.setBounds(20, 35, 100, 24);
 
-        cLabel2.setBackground(java.awt.Color.orange);
-        cLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        cLabel2.setText("¿ Continuar ?");
-        cLabel2.setOpaque(true);
-        Pconfir.add(cLabel2);
-        cLabel2.setBounds(80, 17, 110, 16);
+        msgAviso2L.setBackground(java.awt.Color.orange);
+        msgAviso2L.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        msgAviso2L.setText("¿ Continuar ?");
+        msgAviso2L.setOpaque(true);
+        Pconfir.add(msgAviso2L);
+        msgAviso2L.setBounds(80, 17, 110, 16);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -113,8 +142,8 @@ public class PIndivCaduc extends javax.swing.JPanel
     private gnu.chu.controles.CButton Baceptar;
     private gnu.chu.controles.CButton Bcancelar;
     private gnu.chu.controles.CPanel Pconfir;
-    private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.Cgrid jt;
+    private gnu.chu.controles.CLabel msgAviso2L;
     private gnu.chu.controles.CLabel msgAvisoL;
     // End of variables declaration//GEN-END:variables
 }

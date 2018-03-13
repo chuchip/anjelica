@@ -1,3 +1,9 @@
+
+alter table usuarios add usu_clanum smallint not null default 0; -- Password Corta de usuario (sin encriptar)
+insert into parametros values('*','checkCodRep','Comprueba que el codigo Reparto este nulo',0);
+insert into parametros values('*','checkCuenCont','Comprueba que la cuenta contable sea valida',0);
+insert into parametros values('*','diasAlbVentaMod','Restrincion modificar Alb.Venta con mas de n dias',0);
+insert into parametros values('*','errordiascad','Error si hay menos de n dias de cad.',-1); 
 -- 
 -- Cabecera Reservas productos para clientes
 --
@@ -235,7 +241,7 @@ and  ca.avc_serie= sa.avc_serie
 and  ca.avc_nume= sa.avc_nume
 and sa.cli_codi = cl.cli_codi;
 grant select on anjelica.v_cliente to PUBLIC;
-CREATE OR REPLACE view v_transventext as select * from transportista where tra_tipo='V'; v_transventext as select * from transportista where tra_tipo='V';
+CREATE OR REPLACE view v_transventext as select * from transportista where tra_tipo='V'; 
 grant select on  v_transventext to public;
 
 
@@ -462,7 +468,6 @@ alter table pedicoc add tra_codi int;
 
 alter table parametros alter par_valor  type varchar(100);
 alter table parametros alter par_nomb  type varchar(30);
-
 alter table tilialca add cam_codi varchar(2);
 
 --
@@ -625,9 +630,6 @@ alter table clientes alter cli_codrut type varchar(5); -- Codigo cliente en ruta
 alter table cliencamb rename cli_carte to cli_codrut; -- Codigo cliente en rutas.
 alter table cliencamb alter cli_codrut type varchar(5); -- Codigo cliente en rutas.
 update clientes set cli_codrut = rut_codi || cli_codrut;
-
-
-
 drop view v_cliprv;
 drop view v_cliente;
 alter table clientes alter cli_nif type varchar(30);
@@ -652,7 +654,6 @@ alter table cliencamb   add cli_servir smallint default 1 not null;
 alter table v_despfin add def_tippro char(1) not null default 'N' ;
 alter table desfinhis  add def_tippro char(1) not null default 'N' ;
 --
-
 alter table configuracion add cfg_tarini smallint not null default 2;
 alter table tipotari add constraint  ix_tipotari unique(tar_codi);
 --

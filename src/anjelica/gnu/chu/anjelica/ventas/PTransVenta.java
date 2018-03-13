@@ -216,8 +216,11 @@ public class PTransVenta extends CPanel
      */
      private void guardaValoresTrans() throws SQLException,ParseException
      {
-        if (tra_codiE.isNull())
+        if (tra_codiE.isNull())    
+        {
+            dt.executeUpdate("delete from albvenht where avc_id="+avcId);
             return;
+        }
         if (dt.select("select * from albvenht where avc_id="+avcId,true))
             dt.edit();
         else

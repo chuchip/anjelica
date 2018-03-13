@@ -178,11 +178,11 @@ public class costkpar extends ventana
     v.add("Fec.Modif."); // 15
     v.add("Un.Ini"); // 16
     v.add("Kg.Ini"); // 17
-    v.add("Blo"); // 18
+    v.add("Reserv."); // 18
     jt.setCabecera(v);
     jt.setToolTipText("Doble click para editar apunte Stock");
-    jt.setAnchoColumna(new int[]{50,100,40,30,50,40,40,40,60, 50,40,40,40,80,95,95,40,60,30});
-    jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,2,2,1,2,2,2,1,1,1,2,2,1});
+    jt.setAnchoColumna(new int[]{50,100,40,30,50,40,40,40,60, 50,40,40,40,80,95,95,40,60,50});
+    jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,2,2,1,2,2,2,1,1,1,2,2,2});
     jt.setFormatoColumna(6,"--,--9");
     jt.setFormatoColumna(7,"---,--9.99");
     jt.setFormatoColumna(13,"dd-MM-yy");
@@ -190,7 +190,7 @@ public class costkpar extends ventana
     jt.setFormatoColumna(15,"dd-MM-yy HH:mm:ss");
     jt.setFormatoColumna(16,"--,--9");
     jt.setFormatoColumna(17,"---,--9.99");
-    jt.setFormatoColumna(18,"B-");
+    //jt.setFormatoColumna(18,"B-");
     jt.setMaximumSize(new Dimension(594, 179));
     jt.setMinimumSize(new Dimension(594, 179));
     jt.setPreferredSize(new Dimension(594, 179));

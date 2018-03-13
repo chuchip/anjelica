@@ -1,6 +1,27 @@
 package gnu.chu.anjelica.almacen;
 
-
+/**
+ *
+ * <p>Titulo: IFIndivCaducidad </p>
+ * <p>Descripción: JDialog para mostrar individuos con fecha caducidad problematica</p>
+ *<p> Es utilizada en pdalbara</p>
+ * <p>Copyright: Copyright (c) 2005-2018
+ *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
+ *  los términos de la Licencia Pública General de GNU según es publicada por
+ *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
+ *  o bien (según su elección) de cualquier versión posterior.
+ *  Este programa se distribuye con la esperanza de que sea útil,
+ *  pero SIN
+ * NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
+ *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
+ *  Véase la Licencia Pública General de GNU para más detalles.
+ *  Debería haber recibido una copia de la Licencia Pública General junto con este programa.
+ *  Si no ha sido así, escriba a la Free Software Foundation, Inc.,
+ *  en 675 Mass Ave, Cambridge, MA 02139, EEUU.
+ * </p>
+ * @author chuchiP
+ *
+ */ 
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.controles.Cgrid;
 import gnu.chu.sql.DatosTabla;
@@ -20,7 +41,6 @@ import javax.swing.JDialog;
 
 public class IFIndivCaducidad
 {    
-
     JDialog frame;
     ventana papa; 
     PIndivCaduc panel; 
@@ -75,6 +95,20 @@ public class IFIndivCaducidad
                 matar();
             }
         });
+    }
+    /**
+     * Establece que hay un error en fechas caducidad. 
+     * No habilitara el boton de acpeptar
+     * @param error 
+     */
+    public void setError(boolean error)
+    {
+       panel.getBotonCancelar().setEnabled(!error);
+       if (error)
+       {
+           panel.setTextoAviso("Articulos con Fecha Caducidad ERRONEA");
+           panel.setTextoAviso2("CORRIJALA");
+       }
     }
      public int getResultado()
     {

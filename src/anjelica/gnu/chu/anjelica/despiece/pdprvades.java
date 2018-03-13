@@ -20,7 +20,7 @@ import javax.swing.BorderFactory;
  * <p>Descripción: Mantenimiento Productos Valorados para Despiece </p>
  * <p> Marca Precios FIJOS de compra y ventas para los productos
  * en una semana determinada. Utilizado en programa valoracion despieces y Precios Medios</p>
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -298,6 +298,16 @@ public class pdprvades extends ventanaPad implements PAD
     {
       try
       {
+          s = "SELECT d.pro_codi,a.pro_nomb,d.dpv_preci,dpv_preori,dpv_preval,dpv_pretar " +
+            " FROM desproval as d,v_articulo as a " +
+            " WHERE dpv_nusem = " + dpv_nusemE.getValorInt() +
+            " and eje_nume = " + eje_numeE.getValorInt() +
+            " and a.pro_codi = d.pro_codi order by pro_codi";
+          if (dtCon1.select(s))
+          {
+              msgBox("No se puede copiar tarifa, pues ya existe una en esta semana ");
+              return;
+          }
           int  nusem=dpv_nusemE.getValorInt()==1?52:dpv_nusemE.getValorInt()-1;
           int  ejNume=eje_numeE.getValorInt()- (nusem==52?1:0);
           s = "SELECT d.pro_codi,a.pro_nomb,d.dpv_preci,dpv_preori,dpv_preval,dpv_pretar " +
@@ -520,6 +530,7 @@ public class pdprvades extends ventanaPad implements PAD
     ejeNume=eje_numeE.getValorInt();
     numSem=dpv_nusemE.getValorInt();
     activar(true);
+    BCopia.setEnabled(false);
     dpv_nusemE.requestFocus();
   }
   @Override

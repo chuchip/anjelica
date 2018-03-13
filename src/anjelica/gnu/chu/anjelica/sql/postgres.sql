@@ -3432,7 +3432,7 @@ insert into parametros values('*','impAlbTexto','Impresion Albaranes Venta modo 
 insert into parametros values('*','impFraTexto','Impresion Facturas Venta modo texto', 0);
 insert into parametros values('*','famProdReci','Familia de productos de reciclaje',99);
 insert into parametros values('*','despPend','Permite dejar despieces pendientes',0);
-insert into parametros values('*','checkCodRep','Comprueba que el codigo Reparto este nulo',0);
+insert into parametros values('*','checkCodRep','Comprueba que el codigo Reparto este nulo',1);
 insert into parametros values('*','jdbc_usu_cont','Usuario Contabilidad','sa');
 insert into parametros values('*','jdbc_pass_cont','Contraseña Contabilidad','as');
 insert into parametros values('*','jdbc_driver_cont','Driver Contabilidad','com.microsoft.sqlserver.jdbc.SQLServerDriver');
@@ -3444,6 +3444,9 @@ insert into parametros values('*','tipdespclasi','Tipo despiece Cambio Clasifica
 INSERT INTO PARAMETROS VALUES('*','avisodiascad','Aviso dias Caducidad',1); -- Comprobar dias
  Caducidad. 1 SI. 0 No
  insert into parametros values('*','tipdesp108A109','Tipo despiece 108 A 109',401);
+ insert into parametros values('*','checkCuenCont','Comprueba que la cuenta contable sea valida',1);
+ insert into parametros values('*','diasAlbVentaMod','Restrincion modificar Alb.Venta con mas de n dias',0);
+ insert into parametros values('*','errordiascad','Error si hay menos de n dias de cad.',0); 
 --
 -- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
 --

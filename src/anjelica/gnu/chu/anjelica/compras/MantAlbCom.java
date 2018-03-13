@@ -721,7 +721,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     iniciarFrame();
     this.setSize(new Dimension(770, 530));
-    this.setVersion("(20180215)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
+    this.setVersion("(20180311)  "+(ARG_MODPRECIO?"- Modificar Precios":"")+
           (isArgumentoAdmin()?"--ADMINISTRADOR--":"")+(ARG_ALBSINPED?"Alb. s/Ped":""));
 
     statusBar = new StatusBar(this);
@@ -3114,7 +3114,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
     acc_numeE.setValorDec(getNumAlb());
     activarCabecera(false);
-   
+    actualizaPedido("R");
 //      sbe_codiE.setEnabled(false);
 
     dtAdd.addNew("v_albacoc",false);
@@ -3551,9 +3551,17 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   {
       if (hisRowid!=0)
       {
-        msgBox("Viendo albaran historico ... IMPOSIBLE MODIFICAR/BORRAR");     
         if (!ARG_GOD)
-         return false;
+        {
+           int ret=mensajes.mensajeYesNo("Esta viendo albaran HISTORICO. SEGURO QUE DESEA EDITARLO?");
+           if (ret!=mensajes.YES)
+               return false;
+        }
+        else
+        {
+          msgBox("Viendo albaran historico ... IMPOSIBLE MODIFICAR/BORRAR");     
+          return false;
+        }
       }
       s = "SELECT * FROM V_albacoc WHERE acc_ano =" + acc_anoE.getValorInt() +
           " and emp_codi = " + emp_codiE.getValorInt() +
@@ -4963,7 +4971,7 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   }
   /**
    * Borra la linea de albaran.
-   * @param row int N.De Linea dentro del grid
+   * @param row int Numero de Linea dentro del grid
    * @throws Exception error BD
    */
   void borraLinea(int row) throws Exception
@@ -5158,8 +5166,40 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
    
     actDatosCabAlb();
     
-    if (eje_numeE.getValorInt()!=0 && pcc_numeE.getValorInt()!=0)
-    {
+  
+    actualizaPedido("R");
+//    if (frtNume!=0)
+//      actAcumFra(emp_codiE.getValorInt(),frtEjer,frtNume);
+    return true;
+  }
+  /**
+   *  Pone al pedido el numero de albaran y pone el estado del albaran al estado
+   * @param estado
+   * @throws SQLException 
+   */
+  void actualizaPedido(String estado) throws SQLException
+  {
+       if (eje_numeE.getValorInt()==0 || pcc_numeE.getValorInt()==0)
+         return;
+       if (estado.equals("P"))
+       {// Poner pedido como pendiente.
+            s="SELECT * FROM pedicoc where emp_codi = " + EU.em_cod +
+             " AND eje_nume = " + eje_numeE.getValorInt() +
+             " and pcc_nume = " + pcc_numeE.getValorInt();
+         if (dtCon1.select(s,true))
+         {
+           dtCon1.edit(dtCon1.getCondWhere());
+           dtCon1.setDato("acc_nume",0);
+           dtCon1.setDato("acc_ano",0);
+           dtCon1.setDato("acc_serie","");
+           dtCon1.setDato("pcc_estrec","P");
+           dtCon1.setDato("acc_cerra",0); // Lo marco como NO cerrado
+           dtCon1.update(stUp);
+         }
+         return;
+       }
+       
+      
       s = "UPDATE pedicoc set acc_nume = " + acc_numeE.getValorInt() + "," +
           " acc_ano = " + acc_anoE.getValorInt() + "," +
           " acc_serie = '" + acc_serieE.getText() + "'," +
@@ -5169,10 +5209,6 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           " AND eje_nume = " + eje_numeE.getValorInt() +
           " and pcc_nume = " + pcc_numeE.getValorInt();
       stUp.executeUpdate(s);
-    }
-//    if (frtNume!=0)
-//      actAcumFra(emp_codiE.getValorInt(),frtEjer,frtNume);
-    return true;
   }
   /**
    * Actualizar datos de linea de albaran
@@ -5289,13 +5325,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
   }
   void borraAlbaran() throws Exception
   {
-//    s = "DELETE FROM v_albacoc WHERE acc_ano =" + acc_anoE.getValorInt() +
-//        " and emp_codi = " + emp_codiE.getValorInt() +
-//        " and acc_serie = '" + acc_serieE.getText() + "'" +
-//        " and acc_nume = " + acc_numeE.getValorInt();
-//    if (dtAdd.executeUpdate(s) != 1)
-//      throw new Exception("No encontrado Cabecera Albaran.\n Select: " + s);
-//    if (acc_serieE.getText().equals("Y"))
+
+    if (acc_serieE.getText().equals("Y"))
     { // Borro los datos de las partidas en ventas
       s = "DELETE FROM v_albcopave WHERE acc_ano =" + acc_anoE.getValorInt() +
           " and emp_codi = " + emp_codiE.getValorInt() +
@@ -5303,22 +5334,8 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
           " and acc_nume = " + acc_numeE.getValorInt();
       dtAdd.executeUpdate(s);
     }
-    /**
-     * Pone el Pedido a Pendiente.
-     */
-    s="SELECT * FROM pedicoc where emp_codi = " + EU.em_cod +
-        " AND eje_nume = " + eje_numeE.getValorInt() +
-        " and pcc_nume = " + pcc_numeE.getValorInt();
-    if (dtCon1.select(s,true))
-    {
-      dtCon1.edit(dtCon1.getCondWhere());
-      dtCon1.setDato("acc_nume",0);
-      dtCon1.setDato("acc_ano",0);
-      dtCon1.setDato("acc_serie","");
-      dtCon1.setDato("pcc_estrec","P");
-      dtCon1.setDato("acc_cerra",0); // Lo marco como NO cerrado
-      dtCon1.update(stUp);
-    }
+    actualizaPedido("P");
+    
 
     int nRow = jt.getRowCount();
 // Actualizo las Linea de Albaran.
@@ -5820,8 +5837,10 @@ public abstract class MantAlbCom extends ventanaPad   implements PAD, JRDataSour
     estPedi = dtCon1.getString("pcc_estrec").charAt(0);
     if (estPedi == 'R' || estPedi == 'C')
     {
-      if (nav.pulsado == navegador.ADDNEW
-          || (ejPedAnt != eje_numeE.getValorInt() &&
+      if (nav.pulsado == navegador.EDIT
+//          && (dtCon1.getInt("acc_ano")!=eje_numeE.getValorInt() 
+//           dtCon1.getInt("acc_nume")!=pcc_numeE.getValorInt())
+          && (ejPedAnt != eje_numeE.getValorInt() ||
               nuPedAnt != pcc_numeE.getValorInt()))
       {
         mensajeErr("Pedido YA Esta Facturado o Cancelado (" + estPedi + ")");

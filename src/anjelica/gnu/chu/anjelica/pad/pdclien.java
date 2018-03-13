@@ -46,6 +46,7 @@ import javax.swing.event.*;
 public class pdclien extends ventanaPad implements PAD
 {
     boolean CHECKCODREP=true; // Comprueba que el Codigo Reparto sea valido
+    boolean CHECKCUENCONT=true; // Comprueba que la cuenta contable sea valida
     public static final int ENV_ALBVAL_IGN=0;
     public static final int ENV_ALBVAL_SI=1;
     public static final int ENV_ALBVAL_NO=2;
@@ -348,6 +349,7 @@ public class pdclien extends ventanaPad implements PAD
 
       iniciar(this);
       CHECKCODREP=EU.getValorParam("checkCodRep",CHECKCODREP);
+      CHECKCUENCONT=EU.getValorParam("checkCuenCont",CHECKCUENCONT);
       cLabel11.setText("Nombre Fiscal");
       cLabel11.setBounds(new Rectangle(1, 2, 90, 16));
       cli_nifL.setText("NIF");
@@ -1601,20 +1603,14 @@ public class pdclien extends ventanaPad implements PAD
         return false;
       }
       
-      if (cue_codiE.getText().length()!= pdempresa.getLongCuentaCliente(dtStat,EU.em_cod))
+      if (cue_codiE.getText().length()!= pdempresa.getLongCuentaCliente(dtStat,EU.em_cod) && CHECKCUENCONT)
       {
         mensajeErr("Longitud Cuenta contable no es correcta");
         cue_codiE.requestFocus();
         return false;         
       }
       
-      if (cue_codiE.getText().length()!= pdempresa.getLongCuentaCliente(dtStat,EU.em_cod))
-      {
-        mensajeErr("Longitud Cuenta contable no es correcta");
-        cue_codiE.requestFocus();
-        return false;         
-      }
-      if (!cue_codiE.getText().endsWith(cli_codfaE.getText().trim()))
+      if (!cue_codiE.getText().endsWith(cli_codfaE.getText().trim()) && CHECKCUENCONT)
       {
         msgBox("Cuenta contable deberia terminar como el cliente a facturar");
         cue_codiE.requestFocus();

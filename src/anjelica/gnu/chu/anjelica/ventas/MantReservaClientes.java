@@ -288,19 +288,17 @@ public class MantReservaClientes extends ventanaPad implements PAD
     }
     private void activar(boolean estado, int modo)
     {
+       
         Baceptar.setEnabled(estado);
         Bcancelar.setEnabled(estado);
         if (modo==navegador.DELETE)
             return;
+        cli_codiE.setEnabled(estado);
         if (modo!=navegador.EDIT)
-        {
-          
             rpc_fechaE.setEnabled(estado);
-        }
      
         Pcabe.setEnabled(estado);
-
-        
+       
         if (modo==navegador.QUERY || ! estado)
         {            
             rpc_idE.setEnabled(estado);
@@ -995,6 +993,14 @@ public class MantReservaClientes extends ventanaPad implements PAD
         cLabel5 = new gnu.chu.controles.CLabel();
         usu_nombE = new gnu.chu.controles.CTextField();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
+        Ppie = new gnu.chu.controles.CPanel();
+        Baceptar = new gnu.chu.controles.CButton();
+        Bcancelar = new gnu.chu.controles.CButton();
+        cLabel6 = new gnu.chu.controles.CLabel();
+        numIndE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
+        cLabel7 = new gnu.chu.controles.CLabel();
+        kilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##,##9.99");
+        Ptab1 = new javax.swing.JTabbedPane();
         jt = new gnu.chu.controles.CGridEditable(8){
             @Override
             public int cambiaLinea(int row, int col)
@@ -1010,13 +1016,8 @@ public class MantReservaClientes extends ventanaPad implements PAD
 
         }
         ;
-        Ppie = new gnu.chu.controles.CPanel();
-        Baceptar = new gnu.chu.controles.CButton();
-        Bcancelar = new gnu.chu.controles.CButton();
-        cLabel6 = new gnu.chu.controles.CLabel();
-        numIndE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        cLabel7 = new gnu.chu.controles.CLabel();
-        kilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##,##9.99");
+        PCons = new gnu.chu.controles.CPanel();
+        jtArt = new gnu.chu.controles.Cgrid(8);
 
         pro_nocabE.setEnabled(false);
 
@@ -1086,9 +1087,9 @@ public class MantReservaClientes extends ventanaPad implements PAD
         Pinic.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        Pcabe.setMaximumSize(new java.awt.Dimension(460, 75));
-        Pcabe.setMinimumSize(new java.awt.Dimension(460, 75));
-        Pcabe.setPreferredSize(new java.awt.Dimension(460, 75));
+        Pcabe.setMaximumSize(new java.awt.Dimension(460, 55));
+        Pcabe.setMinimumSize(new java.awt.Dimension(460, 55));
+        Pcabe.setPreferredSize(new java.awt.Dimension(460, 55));
         Pcabe.setLayout(null);
 
         cLabel1.setText("Reserva");
@@ -1105,7 +1106,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
 
         cLabel3.setText("Cliente");
         Pcabe.add(cLabel3);
-        cLabel3.setBounds(2, 25, 60, 17);
+        cLabel3.setBounds(2, 22, 60, 18);
 
         BirGrid.setText("cButton1");
         Pcabe.add(BirGrid);
@@ -1119,7 +1120,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
         Pcabe.add(usu_nombE);
         usu_nombE.setBounds(360, 2, 93, 17);
         Pcabe.add(cli_codiE);
-        cli_codiE.setBounds(60, 30, 389, 18);
+        cli_codiE.setBounds(60, 22, 389, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1127,44 +1128,6 @@ public class MantReservaClientes extends ventanaPad implements PAD
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
         Pinic.add(Pcabe, gridBagConstraints);
-
-        jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jt.setPreferredSize(new java.awt.Dimension(101, 101));
-
-        ArrayList v=new ArrayList();
-        v.add("Artic"); // 0
-        v.add("Nombre"); // 1
-        v.add("Ejerc"); // 2
-        v.add("Serie"); // 3
-        v.add("Lote"); // 4
-        v.add("Indiv"); // 5
-        v.add("Peso"); // 6
-        v.add("Unid."); // 7
-        jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]    {60,120,40,40,60,30, 50,40});
-        jt.setAlinearColumna(new int[] {2,0,2,1,2,2, 2,2});
-
-        try {
-            ArrayList vc1=new ArrayList();
-            vc1.add(pro_codiE.getTextField()); // 0
-            vc1.add(pro_nocabE); // 1
-            vc1.add(rpc_ejelotE); // 2
-            vc1.add(rpc_serlotE); // 3
-            vc1.add(rpc_numparE); // 4
-            vc1.add(rpc_numindE); // 5
-            vc1.add(rpc_cantiE); // 6
-            vc1.add(rpc_numuniE); // 7
-            jt.setCampos(vc1);
-            jt.setFormatoCampos();
-        } catch (Exception k){Error("Error al cargar campos en grid",k);}
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        Pinic.add(jt, gridBagConstraints);
 
         Ppie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         Ppie.setMaximumSize(new java.awt.Dimension(550, 25));
@@ -1202,6 +1165,65 @@ public class MantReservaClientes extends ventanaPad implements PAD
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         Pinic.add(Ppie, gridBagConstraints);
 
+        jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jt.setPreferredSize(new java.awt.Dimension(101, 101));
+
+        ArrayList v=new ArrayList();
+        v.add("Artic"); // 0
+        v.add("Nombre"); // 1
+        v.add("Ejerc"); // 2
+        v.add("Serie"); // 3
+        v.add("Lote"); // 4
+        v.add("Indiv"); // 5
+        v.add("Peso"); // 6
+        v.add("Unid."); // 7
+        jt.setCabecera(v);
+        jt.setAnchoColumna(new int[]    {60,120,40,40,60,30, 50,40});
+        jt.setAlinearColumna(new int[] {2,0,2,1,2,2, 2,2});
+
+        try {
+            ArrayList vc1=new ArrayList();
+            vc1.add(pro_codiE.getTextField()); // 0
+            vc1.add(pro_nocabE); // 1
+            vc1.add(rpc_ejelotE); // 2
+            vc1.add(rpc_serlotE); // 3
+            vc1.add(rpc_numparE); // 4
+            vc1.add(rpc_numindE); // 5
+            vc1.add(rpc_cantiE); // 6
+            vc1.add(rpc_numuniE); // 7
+            jt.setCampos(vc1);
+            jt.setFormatoCampos();
+        } catch (Exception k){Error("Error al cargar campos en grid",k);}
+
+        Ptab1.addTab("Carga", jt);
+
+        PCons.setLayout(new java.awt.BorderLayout());
+
+        ArrayList va=new ArrayList();
+        va.add("Articulo");
+        va.add("Nombre");
+        va.add("Ud.Reserva");
+        va.add("Kg.Reserva");
+        va.add("Ud.Entrega");
+        va.add("Kg.Entrega");
+        va.add("Ud.Origen");
+        va.add("Kg.Origen");
+        jtArt.setCabecera(va);
+        jtArt.setAnchoColumna(new int[]{50,200,50,80,50,80,50,80});
+        jtArt.setAjustarGrid(true);
+        jtArt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        PCons.add(jtArt, java.awt.BorderLayout.CENTER);
+
+        Ptab1.addTab("Consulta", PCons);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        Pinic.add(Ptab1, gridBagConstraints);
+
         getContentPane().add(Pinic, java.awt.BorderLayout.CENTER);
 
         pack();
@@ -1215,9 +1237,11 @@ public class MantReservaClientes extends ventanaPad implements PAD
     private gnu.chu.controles.CButton Bcancelar1;
     private gnu.chu.controles.CButton BirGrid;
     private gnu.chu.controles.CInternalFrame IFLote;
+    private gnu.chu.controles.CPanel PCons;
     private gnu.chu.controles.CPanel Pcabe;
     private gnu.chu.controles.CPanel Pinic;
     private gnu.chu.controles.CPanel Ppie;
+    private javax.swing.JTabbedPane Ptab1;
     private gnu.chu.controles.CLabel cLabel1;
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
@@ -1235,6 +1259,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField deo_ejelot1E;
     private gnu.chu.controles.CTextField deo_serlot1E;
     private gnu.chu.controles.CGridEditable jt;
+    private gnu.chu.controles.Cgrid jtArt;
     private gnu.chu.controles.CTextField kilosE;
     private gnu.chu.controles.CTextField numIndE;
     private gnu.chu.camposdb.proPanel pro_codi1E;

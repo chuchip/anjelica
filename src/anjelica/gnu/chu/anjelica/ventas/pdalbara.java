@@ -3,6 +3,7 @@ package gnu.chu.anjelica.ventas;
  *
  * <p>Titulo: pdalbara </p>
  * <p>Descripción: Mantenimiento Albaranes de Ventas</p>
+ * <p>Copyright: Copyright (c) 2005-2018</p>
  * <p>Parámetros (Respetar mayúsculas y minúsculas):</p>
  * <p>- facil (true/false)
  *  Por defecto es false. Si es true, en altas, cargara un solo individuo 
@@ -133,6 +134,7 @@ public class pdalbara extends ventanaPad  implements PAD
 {   
   private int TIDE_AUTOCLASI=105;   
   private int AVISO_DIAS_CAD=1;
+  private int ERROR_DIASCAD=3;
   String cliValor;
   int codCli;
   boolean P_IMPRES=false;
@@ -169,10 +171,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private final char IMPR_ALB_GRAF='A';
   private final char IMPR_ALB_TEXT='a';
   private final char IMPR_HOJA_TRA='T';
-  private final char IMPR_HOJA_TRAF='1';
-  /**
-   * hoja Traz + Albaran
-   */
+  private final char IMPR_HOJA_TRAF='1'; // hoja Traz + Albaran
   private final char IMPR_ALB_TRA='t'; 
   private final char IMPR_PALETS='P';
   private final char IMPR_ETIQUETAS='E';
@@ -235,8 +234,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private final static int FD_PRTARI=6; // Campo de Pr. tarifa en grid.
   private final static int FD_PRECIO=5; // Campo de Precio
   
-
-  private final int JTDES_EMP=0;
+  private final int JTDES_EMP=0; 
   private final int JTDES_EJE=1;
   private final int JTDES_UNID=2;
   private final int JTDES_SERIE=3;
@@ -246,40 +244,19 @@ public class pdalbara extends ventanaPad  implements PAD
   private final int JTDES_NUMLIN=7; // Numero Linea de desglose individuos
   private final int JTDES_KILBRU=8; // Campo Kilos en grid desglose individuos
   private final int JTDES_KILORI=9; // Campo Kilos en grid desglose individuos
-  /**
-   * Codigo de Producto (1)
-   */
+ 
   private final int JT_CANTI=3;
-  private final int JT_PROCODI=1; 
-  private final int JT_PRONOMB=2; 
-  /**
-   * Numero Linea Albaran (0)
-   */
-  private final int JT_NULIAL=0; // Numero de Albaran.
-  /**
-   * Kilos Linea albaran (3)
-   */
-  private int JT_KILOS=3;   
-  /**
-   * Unidades de Linea Albaran (4)
-   */
-  private int JT_UNID=4; 
+  private final int JT_PROCODI=1; // Codigo de Producto (1)   
+  private final int JT_PRONOMB=2;   
+  private final int JT_NULIAL=0; // Numero Linea Albaran (0)
+  private int JT_KILOS=3;    // Kilos Linea albaran (3)
+  private int JT_UNID=4; // Unidades de Linea Albaran (4)
   private  int JT_FECMVT=7; // Fecha Mvto.
   private int JT_NUMPALE=8; // Numero Pale
   private int JT_SELLIN=10; // Numero Pale
-  //private int JT_CODENV=9; // Codigo Envase
-  /**
-   * Kilos Brutos (10)
-   */
-  private int JT_KILBRU=10; // Kilos brutos
-  /**
-   * Precio de albaran (5)
-   */
-  private int JT_PRECIO=5;
-  /**
-   * Precio de Tarifa (6)
-   */
-  private int JT_PRETAR=6;
+  private int JT_KILBRU=10; // Kilos Brutos (10)
+  private int JT_PRECIO=5; // Precio de albaran (5)  
+  private int JT_PRETAR=6; //  Precio de Tarifa (6)
   private final int JTRES_PROCODI=0;
   private final int JTRES_KILOS=2;
   private final int JTRES_NL=3;
@@ -333,6 +310,7 @@ public class pdalbara extends ventanaPad  implements PAD
   boolean P_ETIALBARAN= false; // Indica si la etiqueta mostrara el numero albaran en vez del lote
   boolean P_PONPRECIO = false; // Indica si se pueden Poner Precios
   boolean P_CHECKPED= false; // Comprueba si hay pedidos nuevos.
+  private int DIASALBMOD=3; // Dias de Restricion al modificar y/o borrar albaranes 
   private boolean verPrecios=false;
   boolean graba = false;
   lialbven liAlb = null;
@@ -552,13 +530,14 @@ public class pdalbara extends ventanaPad  implements PAD
   CTextField avp_numindE = new CTextField(Types.DECIMAL, "###9");
   CTextField avp_canbruE = new CTextField(Types.DECIMAL, "---,--9.99");
   CTextField avp_canoriE = new CTextField(Types.DECIMAL, "---,--9.99");
+  private boolean swActPesoBruto=false;
   CTextField avp_cantiE = new CTextField(Types.DECIMAL, "---,--9.99")
   {
       @Override
       public void afterProcesaEnter()
       {
           if (! avp_cantiE.hasCambio())
-              return;          
+              return;
           avp_canbruE.setValorDec(avp_cantiE.getValorDec());
           jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILBRU);
           jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILORI);
@@ -579,9 +558,7 @@ public class pdalbara extends ventanaPad  implements PAD
           if (pesoManual)
               avp_cantiE.setValorDec(avp_cantiE.getValorDec()-(avp_numuniE.getValorInt()*botonBascula.getPesoCajas()));
           avp_cantiE.resetCambio();
-          actualizaPesoBruto();
-      }
-     
+      }                      
   };
   CTextField avp_numlinE = new CTextField(Types.DECIMAL, "##9");
   CLabel cLabel17 = new CLabel();
@@ -757,7 +734,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2018-03-06" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2018-03-08" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1483,11 +1460,14 @@ public class pdalbara extends ventanaPad  implements PAD
           paiEmp = pdempresa.getPais(dtStat, EU.em_cod);
           isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
           swUsaPalets=pdconfig.getUsaPalets(EU.em_cod, dtStat);
+          EU.iniciarParametros(dtStat);
           INC_HOJATRA= EU.getValorParam("inchojatrans",INC_HOJATRA );
           CONTROL_PRO_MIN= EU.getValorParam("controlprodmin", CONTROL_PRO_MIN);
           TIDE_AUTOCLASI= EU.getValorParam("tipdespclasi", TIDE_AUTOCLASI);
           AVISO_DIAS_CAD= EU.getValorParam("avisodiascad", AVISO_DIAS_CAD);
           P_CHECKPED=EU.getValorParam("checkPedAlbVenta", P_CHECKPED);
+          DIASALBMOD=EU.getValorParam("diasAlbVentaMod", DIASALBMOD);
+          ERROR_DIASCAD= EU.getValorParam("errordiascad", ERROR_DIASCAD);
           avl_numpalE.setEnabled(swUsaPalets);
           PTrans.iniciarPanel(dtAdd,INC_HOJATRA,this);
           if (pdconfig.getConfiguracion(EU.em_cod,dtStat))
@@ -1906,6 +1886,11 @@ public class pdalbara extends ventanaPad  implements PAD
           }
       }
   }
+  /**
+   * Comprueba si se puede modificar un albaran de deposito.
+   * @return
+   * @throws SQLException 
+   */
   boolean canModDepos() throws SQLException
   {
         if ( verDepoC.getValor().equals("O") && swTieneEnt)
@@ -1918,7 +1903,7 @@ public class pdalbara extends ventanaPad  implements PAD
             msgBox("Un albaran solo se puede modificar de Deposito a Normal o viceversa");
             return false;
         }
-        return !checkEdicionAlbaran();
+        return true;
   }
   int addLineaPalet()
   {
@@ -1960,6 +1945,27 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   void activarEventos()
   {
+    
+//      avc_deposE.addActionListener(new ActionListener()
+//      {
+//          @Override
+//          public void actionPerformed(ActionEvent e) {
+//              if (nav.isEdicion())
+//                  return;
+//              try 
+//              {
+//                if (!dtCon1.select( getSqlListaAlb()))
+//                 return;
+//                if (dtCon1.getString("avc_depos").equals("D"))
+//                {
+//                    
+//                }
+//              } catch (SQLException k)
+//              {
+//                  Error("Error al cambiar estado de albaran",k);
+//              }
+//          }
+//      });
       despieceC.addActionListener(new ActionListener()
       {
           @Override
@@ -2145,8 +2151,9 @@ public class pdalbara extends ventanaPad  implements PAD
           public void actionPerformed(java.awt.event.ActionEvent evt) {
               try
               {
-                  if (nav.pulsado!=navegador.NINGUNO  || !avc_deposE.hasCambio() )
+                  if (nav.isEdicion() ||  !avc_deposE.isEnabled())
                       return ;
+                  avc_deposE.setEnabled(false);
                   if (!canModDepos())
                   {
                       avc_deposE.setValor(avc_deposE.getValorOld());
@@ -2157,6 +2164,7 @@ public class pdalbara extends ventanaPad  implements PAD
                   dtAdd.commit();
                   msgBox("Tipo Albaran cambiado a "+avc_deposE.getText());
                   avc_deposE.resetCambio();
+                  avc_deposE.setEnabled(true);
               } catch (SQLException ex)
               {
                   Error("Error al cambiar albaran a deposito", ex);     
@@ -3362,6 +3370,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     try
     {
+      avc_deposE.setEnabled(false);
       avsNume=0;
       swEntdepos=false;
       if (dt.getNOREG())
@@ -3430,8 +3439,10 @@ public class pdalbara extends ventanaPad  implements PAD
       avc_represE.setText(dtAdd.getString("avc_repres"));
       alm_codoriE.setValor(dtAdd.getString("alm_codori"));
       alm_coddesE.setValor(dtAdd.getString("alm_coddes"));
-      avc_deposE.setValor(dtAdd.getString("avc_depos"));
+      
+      avc_deposE.setValor(dtAdd.getString("avc_depos"));      
       avc_deposE.resetCambio();
+      avc_deposE.setEnabled(P_ADMIN);
       verDepoC.setEnabled(false);
       swTieneEnt=false;
       verDepoC.removeAllItems();
@@ -4570,7 +4581,8 @@ public class pdalbara extends ventanaPad  implements PAD
   public void setAlbaranDeposito(int albDeposito)
   {
       try
-      {        
+      {     
+          avc_deposE.setEnabled(false);
           avc_deposE.setValor("D");
               
           avsNume=albDeposito;          
@@ -4794,63 +4806,118 @@ public class pdalbara extends ventanaPad  implements PAD
   
   private boolean canModif() throws SQLException, ParseException
   {
-      if (!verDatos(dtCons,false))
+      if (!selCabAlb(dtAdd, avc_anoE.getValorInt(), emp_codiE.getValorInt(), avc_seriE.getText(),
+          avc_numeE.getValorInt(), true, false))
+      {
+          msgBox("Albaran NO encontrado .. PROBABLEMENTE se ha borrado");
+          return false;
+      }
+      if (!verDatos(dtCons, false))
           return false;
       if (!P_ADMIN)
       {
-          if (rutPanelE.getNumeroRuta()!=0 && !avc_cucomiE.isSelected())
+          if (rutPanelE.getNumeroRuta() != 0 && !avc_cucomiE.isSelected())
           {
               msgBox("Albaran ya esta servido en una ruta. Imposible Modificar/Borrar");
               return false;
           }
-       
+
       }
-      if (Formatear.comparaFechas(Formatear.getDateAct(),avc_fecalbE.getDate())>3 && !avc_cucomiE.isSelected() )
+      if (DIASALBMOD > 0 && Formatear.comparaFechas(Formatear.getDateAct(), avc_fecalbE.getDate()) > DIASALBMOD
+          && !avc_cucomiE.isSelected())
       {
-           if (P_ADMIN)
-              msgBox("ATENCION!!. Modificando Albaran con más de 3 dias");
-           else
-           {
-             msgBox("Albaran tiene más de 3 dias. Imposible Modificar/Borrar.\n Pida Permiso en Administracion");
-             return false;
-           }
+          if (P_ADMIN)
+              msgBox("ATENCION!!. Modificando o borrando Albaran con más de 3 dias");
+          else
+          {
+              msgBox("Albaran tiene más de 3 dias. Imposible Modificar/Borrar.\n Pida Permiso en Administracion");
+              return false;
+          }
       }
-      if (verDepoC.getValor().equals("S") || verDepoC.getValor().equals("P") )
+      if (verDepoC.getValor().equals("S") || verDepoC.getValor().equals("P"))
       {
           msgBox("Elija un albaran para modificar/borrar. Debe ser el entrega o el facturado");
           return false;
       }
-      if ( verDepoC.getValor().equals("O") && swTieneEnt)
+      if (verDepoC.getValor().equals("O") && swTieneEnt)
       {
-          if (P_ADMIN )
+          if (P_ADMIN)
           {
               msgBox("ATENCION!!. Este albaran de deposito ya tiene genero entregado");
-              nLiMaxEdit=getMaxNumLinAlb(false,emp_codiE.getValorInt(),avc_anoE.getValorInt(),avc_seriE.getText(),
-                avc_numeE.getValorInt(),dtCon1); 
-          }
-          else
+              nLiMaxEdit = getMaxNumLinAlb(false, emp_codiE.getValorInt(), avc_anoE.getValorInt(), avc_seriE.getText(),
+                  avc_numeE.getValorInt(), dtCon1);
+          } else
           {
-            msgBox("Este albaran de deposito, ya tiene genero entregado. Imposible modificar o borrar");
-            return false;
+              msgBox("Este albaran de deposito, ya tiene genero entregado. Imposible modificar o borrar");
+              return false;
+          }
+      }
+      if (pdejerci.isCerrado(dtStat, avc_anoE.getValorInt(), emp_codiE.getValorInt()) && !swEntdepos)
+      {
+          if (!P_ADMIN)
+          {
+              msgBox("Albaran es de un ejercicio YA cerrado ... IMPOSIBLE MODIFICAR");
+              return false;
+          } else
+              msgBox("ATENCION!!! Albaran es de un ejercicio YA cerrado");
+      }
+
+      if ((fvc_anoE.getValorDec() > 0 || fvc_numeE.getValorDec() > 0)
+          && !P_ADMIN && !swEntdepos)
+      {
+          msgBox("Albaran YA se HA FACTURADO ... IMPOSIBLE MODIFICAR");
+          return false;
+      }
+      if (traspReci && !swEntdepos)
+      {
+          msgBox("Factura ha emitido algun recibo bancario .. IMPOSIBLE MODIFICAR");
+          return false;
+      }
+
+      if (traspCont && !swEntdepos)
+      {
+          msgBox("Factura ya esta traspasada a contabilidad .. IMPOSIBLE BORRAR");
+          return false;
+      }
+      if (avcImpres == 1 && !P_MODPRECIO)
+      {
+          int res = mensajes.mensajeYesNo("Albaran YA se ha listado\n ¿ Cancelar Borrado ?");
+          if (res != mensajes.NO)
+              return false;
+      }
+      if (avc_seriE.getValor().equals("X"))
+      {
+          msgBox("Albaranes de serie X ... IMPOSIBLE MODIFICAR O BORRAR");
+          return false;
+      }
+      if (avsNume == 0)
+      {
+          java.sql.Date fecMinMvt = getMinFechaMvto(avc_anoE.getValorInt(), emp_codiE.getValorInt(), avc_seriE.getText(),
+              avc_numeE.getValorInt());
+          if (fecMinMvt != null)
+          {
+              if (Formatear.comparaFechas(pdalmace.getFechaInventario(avc_almoriE.getValorInt(), dtStat), fecMinMvt) >= 0)
+              {
+                  msgBox("Albaran con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar");
+                  return false;
+              }
+          }
+      }
+
+      if (avc_seriE.getText().equals(EntornoUsuario.SERIEY) && swCompra)
+      {
+          if (MantAlbComCarne.isAlbCompra(dtStat, emp_codiE.getValorInt(),
+              avc_anoE.getValorInt(), avc_numeE.getValorInt(), false))
+          {
+              msgBox("Albaran se ha utilizado para realizar la compra: " + dtStat.getInt("acc_ano") + "-"
+                  + dtStat.getInt("acc_nume") + " IMPOSIBLE MODIFICAR O BORRAR");
+              return false;
           }
       }
       return true;
   }
   
-  private boolean canDelete()
-  {
-      if (verDepoC.getValor().equals("S") || verDepoC.getValor().equals("P") )
-      {
-          msgBox("Elija un albaran para modificar/borrar. Debe ser el entrega o el facturado");
-          return false;
-      }
-      if ( verDepoC.getValor().equals("O") && swTieneEnt)
-      {
-            msgBox("Este albaran de deposito, ya tiene genero entregado. Imposible modificar o borrar");
-            return false;
-      }
-      return true;
-  }
+ 
    public void copiaAlbaranNuevo(DatosTabla dt, DatosTabla dtUpd,String coment,String usuario, 
           int avcAno, int empCodi,String avcSerie,int avcNume) throws SQLException
   {
@@ -4962,13 +5029,7 @@ public class pdalbara extends ventanaPad  implements PAD
 //                      "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt());
     try
     {
-      if ( traspCont && ! swEntdepos)
-      {
-        msgBox("Factura se traspaso a contabilidad .. IMPOSIBLE MODIFICAR");
-        nav.pulsado = navegador.NINGUNO;
-        activaTodo();
-        return;
-      }
+   
       if (hisRowid!=0)
       {
         if (!P_ADMIN)
@@ -5004,61 +5065,10 @@ public class pdalbara extends ventanaPad  implements PAD
         }
       }
       avc_deposE.setEnabled(true);      
-      if (pdejerci.isCerrado(dtStat, avc_anoE.getValorInt(), emp_codiE.getValorInt()) && ! swEntdepos)
-      {
-        if (!P_ADMIN)
-        {
-          msgBox("Albaran es de un ejercicio YA cerrado ... IMPOSIBLE MODIFICAR");
-          nav.pulsado = navegador.NINGUNO;
-          activaTodo();
-          return;
-        }
-        else
-          msgBox("ATENCION!!! Albaran es de un ejercicio YA cerrado");
-      }
-
-      if ( (fvc_anoE.getValorDec() > 0 || fvc_numeE.getValorDec() > 0) &&
-          !P_ADMIN && ! swEntdepos)
-      {
-        msgBox("Albaran YA se HA FACTURADO ... IMPOSIBLE MODIFICAR");
-        nav.pulsado = navegador.NINGUNO;
-        activaTodo();
-        return;
-      }
-      if ( traspReci && ! swEntdepos)
-      {
-        msgBox("Factura ha emitido algun recibo bancario .. IMPOSIBLE MODIFICAR");
-        nav.pulsado = navegador.NINGUNO;
-        activaTodo();
-        return;
-      }
      
       
       swAvisoDto=true;
       //selCabAlb(dtAdd,avc_anoE.getValorInt(), emp_codiE.getValorInt(),avc_seriE.getText() ,avc_numeE.getValorInt(),true);
-
-      if ( ! selCabAlb(dtAdd,avc_anoE.getValorInt(), emp_codiE.getValorInt(),avc_seriE.getText(),
-                       avc_numeE.getValorInt(),true,false))
-      {
-        msgBox("Albaran NO encontrado .. PROBABLEMENTE se ha borrado");
-        nav.pulsado = navegador.NINGUNO;
-        activaTodo();
-        return;
-      }
-     
-      
-      if (avcImpres == 1 && ! P_MODPRECIO )
-      {
-        int res = mensajes.mensajeYesNo("Albaran YA se ha listado\n ¿ Cancelar modficación ?");
-        if (res != mensajes.NO)
-        {
-          nav.pulsado = navegador.NINGUNO;
-          activaTodo();
-          return;
-        }
-      }
-      if (checkEdicionAlbaran())
-        return;
 
     pro_nombE.setEditable(true);
     if (avc_valoraE.getValorInt()==AVC_VALORADO && !P_MODPRECIO)
@@ -5158,62 +5168,8 @@ public class pdalbara extends ventanaPad  implements PAD
     }
 
   }
-  /**
-   *
-   * Comprueba si es posible editar un albaran
-   *
-   * @return true en caso de error. False si todo esta bien.
-   * @throws SQLException 
-   */
-  private boolean checkEdicionAlbaran() throws SQLException
-  {
-      if (checkEdicionAlbaran0())
-      {
-          nav.pulsado = navegador.NINGUNO;
-          activaTodo();
-          return true;
-      }
-      return false;
-  }
-  /**
-   * Comprueba si es posible editar un albaran
-   * @return true en caso de error. False si todo esta bien.
-   * @throws SQLException 
-   */
-  private boolean  checkEdicionAlbaran0() throws SQLException
-  {
-    if ( avc_seriE.getValor().equals("X"))
-    {
-        msgBox("Albaranes de serie X ... IMPOSIBLE MODIFICAR O BORRAR");       
-        return true;
-    }
-    if (avsNume==0)
-    {
-        java.sql.Date fecMinMvt=getMinFechaMvto(avc_anoE.getValorInt(), emp_codiE.getValorInt(),avc_seriE.getText(),
-                           avc_numeE.getValorInt());
-        if (fecMinMvt!=null)
-        {
-            if (Formatear.comparaFechas(pdalmace.getFechaInventario(avc_almoriE.getValorInt(), dtStat) , fecMinMvt)>= 0 )
-            {
-                  msgBox("Albaran con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar");
-                  return true;
-            }
-        }
-    }
-    
-    if (avc_seriE.getText().equals(EntornoUsuario.SERIEY) && swCompra)
-    {
-      if (MantAlbComCarne.isAlbCompra(dtStat,emp_codiE.getValorInt(),
-                               avc_anoE.getValorInt(),avc_numeE.getValorInt(),false))
-      {
-        msgBox("Albaran se ha utilizado para realizar la compra: " + dtStat.getInt("acc_ano") + "-" +
-               dtStat.getInt("acc_nume") + " IMPOSIBLE MODIFICAR O BORRAR");
-        return true;
-      }
-    }
-    return false;
-  }
-
+  
+  
   private boolean checkCli() throws SQLException,
       DataFormatException, ParseException
   {
@@ -5692,6 +5648,12 @@ public class pdalbara extends ventanaPad  implements PAD
       }
       return checkFechaCad();      
   }
+  /**
+   * Comprueba fecha caducidad
+   * @return false si hay error. True si puede continuar.
+   * @throws SQLException
+   * @throws ParseException 
+   */
   boolean checkFechaCad()  throws SQLException,ParseException
   {
        if (AVISO_DIAS_CAD==0)
@@ -5704,7 +5666,7 @@ public class pdalbara extends ventanaPad  implements PAD
        if (!dtCon1.select(s))
            return true;
        ArrayList<DatIndiv> dtInd=new ArrayList();
-       
+       boolean swErrorDias=false;
        do
        {
            if (!utdesp.busDatInd(dtCon1.getString("avp_serlot") ,dtCon1.getInt("pro_codi"),dtCon1.getInt("avp_emplot"),
@@ -5712,27 +5674,28 @@ public class pdalbara extends ventanaPad  implements PAD
                continue;
            utdesp.getDatosIndividuo();
            long diasCad=Formatear.comparaFechas(utdesp.getFechaCaducidad(), avc_fecalbE.getDate() );
+           
            if (diasCad< dtCon1.getInt("pro_dimica"))
            { // Tiene menos de los dias configurados en tabla articulos               
                DatIndiv dt=new DatIndiv(); 
                dt.setIndivBase(utdesp.getDatosIndividuo());                               
                dt.setFechaCaducidad(utdesp.getFechaCaducidad());
-               dt.setCanti(dtCon1.getDouble("avp_canti"));
+               dt.setCanti(dtCon1.getDouble("avp_canti"));             
                dt.setAuxiliar(
-                   diasCad > 0?"Caduca en "+Formatear.comparaFechas(utdesp.getFechaCaducidad(), avc_fecalbE.getDate())
+                   diasCad > 0?"Caduca en "+diasCad
                    +" Dias":"¡¡PRODUCTO CADUCADO!!" );
                dtInd.add(dt);
            }
+           if (ERROR_DIASCAD >=0 &&  diasCad <= ERROR_DIASCAD)
+               swErrorDias=true;
        } while (dtCon1.next());
        if (dtInd.isEmpty())
            return true;
        
        IFIndivCaducidad ifIndCad =new IFIndivCaducidad(this);
-//       this.setEnabled(false);
-      
-      
+       ifIndCad.setError(swErrorDias);
        ifIndCad.iniciar(dtInd,dtStat);
-       return ifIndCad.getResultado()==ifIndCad.ACEPTAR;
+       return swErrorDias?false:ifIndCad.getResultado()==ifIndCad.ACEPTAR;
   }   
   
 //  void salirIndCaducidad()
@@ -6320,70 +6283,14 @@ public class pdalbara extends ventanaPad  implements PAD
           activaTodo();
           return;
         }
-          if (!canDelete()) {
+          if ( !canModif()) 
+          {
               nav.pulsado = navegador.NINGUNO;
               activaTodo();
               return;
           }
-//      aviso("Entrando en Delete: con Albaran: "+avc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
-//                      "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt());
           nav.pulsado = navegador.DELETE;
-          if (pdejerci.isCerrado(dtStat, avc_anoE.getValorInt(), emp_codiE.getValorInt()) && !swEntdepos) {
-              if (!P_ADMIN) {
-                  msgBox("Albaran es de un ejercicio YA cerrado ... IMPOSIBLE BORRAR");
-                  nav.pulsado = navegador.NINGUNO;
-                  activaTodo();
-                  return;
-              } else {
-                  msgBox("ATENCION!!! Albaran es de un ejercicio YA cerrado");
-              }
-          }
-
-          if ((fvc_anoE.getValorDec() > 0 || fvc_numeE.getValorDec() > 0) && !swEntdepos) {
-              msgBox("Albaran YA se HA FACTURADO ... IMPOSIBLE BORRAR");
-              nav.pulsado = navegador.NINGUNO;
-              activaTodo();
-              return;
-          }
-
-
-
-          if (traspReci && !swEntdepos) {
-              msgBox("Factura ha emitido algun recibo bancario .. IMPOSIBLE BORRAR");
-              nav.pulsado = navegador.NINGUNO;
-              activaTodo();
-              return;
-          }
-
-          if (traspCont && !swEntdepos) {
-              msgBox("Factura ya esta traspasada a contabilidad .. IMPOSIBLE BORRAR");
-              nav.pulsado = navegador.NINGUNO;
-              activaTodo();
-              return;
-          }
-          if (avcImpres == 1) {
-              int res = mensajes.mensajeYesNo("Albaran YA se ha listado\n ¿ Cancelar Borrado ?");
-              if (res != mensajes.NO) {
-                  nav.pulsado = navegador.NINGUNO;
-                  activaTodo();
-                  return;
-              }
-          }
-
-          //    s = "SELECT * FROM V_albavec WHERE avc_ano =" + avc_anoE.getValorInt() +
-          //        " and emp_codi = " + emp_codiE.getValorInt() +
-          //        " and avc_serie = '" + avc_seriE.getText() + "'" +
-          //        " and avc_nume = " + avc_numeE.getValorInt();
-          if (!selCabAlb(dtAdd, avc_anoE.getValorInt(), emp_codiE.getValorInt(), avc_seriE.getText(),
-                  avc_numeE.getValorInt(), true, false)) {
-              msgBox("Albaran NO encontrado .. PROBABLEMENTE se ha borrado");
-              nav.pulsado = navegador.NINGUNO;
-              activaTodo();
-              return;
-          }
-          if (checkEdicionAlbaran()) 
-              return;
-          
+      
           if (!setBloqueo(dtStat, "v_albavec",
                   avc_anoE.getValorInt() + "|" + emp_codiE.getValorInt()
                   + "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt(), true)) {
@@ -6741,6 +6648,8 @@ public class pdalbara extends ventanaPad  implements PAD
 
         Baceptar.setEnabled(true);
         Bimpri.setEnabled(true);
+        if (swActPesoBruto)
+            actualizaPesoBruto();
         if (pro_codiE.getTipoLote()=='V' &&  pro_codiE.getValorInt()>0  && avl_cantiE.getValorDec()!=0 )
         {
           pro_codiE.setEditable(false);
@@ -8503,7 +8412,9 @@ public class pdalbara extends ventanaPad  implements PAD
     rutPanelE.setEnabledRuta(!b);
     PTrans.setEnabled(b);
     PTrans.getPanelBultos().setEnabled(b);
-    avc_deposE.setEnabled(b);
+    
+    if (!b)
+        avc_deposE.setEnabled(P_ADMIN);
    
 
     Bdesgl.setEnabled(!b);
@@ -9987,6 +9898,7 @@ public class pdalbara extends ventanaPad  implements PAD
         {
             if (avp_cantiE.hasCambio())
             {
+               swActPesoBruto=true;
                avp_cantiE.resetCambio();
                avp_canbruE.setValorDec(avp_cantiE.getValorDec());
                jtDes.setValor(avp_cantiE.getValorDec(),JTDES_KILBRU);
@@ -10241,7 +10153,9 @@ public class pdalbara extends ventanaPad  implements PAD
     
     
   }
-  
+  /**
+   * Actualiza campo peso bruto en transporte.
+   */
   void actualizaPesoBruto()
   {
     if (!isEmpPlanta)  
@@ -10253,6 +10167,7 @@ public class pdalbara extends ventanaPad  implements PAD
         kgBruto+=jt.getValorDec(n,JT_KILBRU);
     }
     PTrans.setKilosBrutos(kgBruto);
+    swActPesoBruto=false;
   }
   void BmvReg_actionPerformed()
   {
