@@ -4,7 +4,7 @@ package gnu.chu.anjelica.tiempos;
  * <p>Descripción: Mantenimiento Tiempos utilizados para los diferentes Pedidos de Venta.
  * 
  *
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -190,7 +190,7 @@ public class MantTiemPedidos extends  ventana   implements  JRDataSource
      pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS, EU.em_cod);
      rut_codiE.setCeroIsNull(true);
      cli_codiE.iniciar(dtStat, this, vl, EU);
-     cli_codiE.setCampoReparto(true);
+     cli_codiE.setVerCampoReparto(true);
      ps = dtCon1.getPreparedStatement("select * from tiempostarea where tit_tipdoc = 'P' and tit_id= ?");
      
      

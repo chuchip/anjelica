@@ -125,7 +125,7 @@ public class clstkfeca extends ventana
     conecta();
     initComponents();
     this.setSize(new Dimension(632, 502));
-    this.setVersion("2013-08-28");
+    this.setVersion("2018-03-15");
   }
     @Override
   public void iniciarVentana() throws Exception
@@ -207,6 +207,7 @@ public class clstkfeca extends ventana
         pro_codiE = new gnu.chu.camposdb.proPanel();
         cLabel8 = new gnu.chu.controles.CLabel();
         numDiasAgrE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9");
+        opIncRes = new gnu.chu.controles.CCheckBox();
         jt = new gnu.chu.controles.Cgrid(13);
         Ppie = new gnu.chu.controles.CPanel();
         cLabel6 = new gnu.chu.controles.CLabel();
@@ -248,30 +249,30 @@ public class clstkfeca extends ventana
         fam_codiE.setMinimumSize(new java.awt.Dimension(64, 20));
         fam_codiE.setPreferredSize(new java.awt.Dimension(80, 20));
         Pcabe.add(fam_codiE);
-        fam_codiE.setBounds(71, 22, 280, 17);
+        fam_codiE.setBounds(71, 22, 200, 17);
 
         cLabel2.setText("Estado");
         Pcabe.add(cLabel2);
-        cLabel2.setBounds(370, 22, 56, 17);
+        cLabel2.setBounds(420, 22, 50, 17);
 
         tipoProdE.addItem("No Congelado", "N");
         tipoProdE.addItem("Congelado", "C");
         tipoProdE.addItem("Todos", "T");
         tipoProdE.setMinimumSize(new java.awt.Dimension(32, 20));
         Pcabe.add(tipoProdE);
-        tipoProdE.setBounds(430, 22, 140, 17);
+        tipoProdE.setBounds(470, 22, 100, 17);
 
         cLabel3.setText("Producto ");
         Pcabe.add(cLabel3);
         cLabel3.setBounds(10, 40, 60, 17);
 
-        cLabel4.setText("Kilos Minimos");
+        cLabel4.setText("Kg Minimos");
         Pcabe.add(cLabel4);
-        cLabel4.setBounds(440, 2, 90, 17);
+        cLabel4.setBounds(280, 22, 80, 17);
         cLabel4.getAccessibleContext().setAccessibleName("Con mas de");
 
         Pcabe.add(kilminE);
-        kilminE.setBounds(530, 2, 43, 17);
+        kilminE.setBounds(360, 22, 43, 17);
 
         cLabel5.setText("Familia");
         Pcabe.add(cLabel5);
@@ -286,6 +287,11 @@ public class clstkfeca extends ventana
         numDiasAgrE.setText("3");
         Pcabe.add(numDiasAgrE);
         numDiasAgrE.setBounds(370, 2, 20, 17);
+
+        opIncRes.setText("Inc. Reservado");
+        opIncRes.setToolTipText("Incluir reservas a clientes");
+        Pcabe.add(opIncRes);
+        opIncRes.setBounds(460, 2, 110, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -487,6 +493,7 @@ public class clstkfeca extends ventana
                 (tipoProdE.getValor().equals("N") ? "=0" : "!=0")) +
                 (pro_codiE.isNull()?"":" and a.pro_codi = "+pro_codiE.getValorInt())+
                 (filtroEmp==null?"":" and r.emp_codi in ("+filtroEmp+")")+
+                (opIncRes.isSelected()?"":" and r.stk_block = 0 ")+
                 " and stp_tiplot != 'S' "+ // Quito los registros de Acumulados
                 " and a.pro_tiplot = 'V' "+ // Solo Prod. Vendibles
                 " group by r.pro_codi,r.eje_nume,r.pro_serie,r.pro_nupar " +
@@ -646,6 +653,7 @@ public class clstkfeca extends ventana
     private gnu.chu.controles.CTextField kilTotE;
     private gnu.chu.controles.CTextField kilminE;
     private gnu.chu.controles.CTextField numDiasAgrE;
+    private gnu.chu.controles.CCheckBox opIncRes;
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CComboBox tipoProdE;
     private gnu.chu.controles.CTextField uniTotE;

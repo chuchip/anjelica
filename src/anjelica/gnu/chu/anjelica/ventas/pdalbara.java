@@ -734,7 +734,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2018-03-08" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2018-03-14" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1491,7 +1491,7 @@ public class pdalbara extends ventanaPad  implements PAD
           cli_codiE.setZona(P_ZONA);
           cli_codiE.iniciar(dtStat, this, vl, EU);
           cli_codiE.iniciar(jf);
-          cli_codiE.setCampoReparto(true);
+          cli_codiE.setVerCampoReparto(true);
           ifMail.iniciar(this);
           
           ifFax.iniciar(this);
@@ -5029,7 +5029,7 @@ public class pdalbara extends ventanaPad  implements PAD
 //                      "|" + avc_seriE.getText() + "|" + avc_numeE.getValorInt());
     try
     {
-   
+      Ptab1.setSelectedIndex(0);
       if (hisRowid!=0)
       {
         if (!P_ADMIN)
@@ -5456,6 +5456,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
       try
       {
+          Ptab1.setSelectedIndex(0);
           //    swPasLin=false;
           swAvisoAlbRep=true;
           idTiempo=0;
@@ -5656,7 +5657,7 @@ public class pdalbara extends ventanaPad  implements PAD
    */
   boolean checkFechaCad()  throws SQLException,ParseException
   {
-       if (AVISO_DIAS_CAD==0)
+       if (AVISO_DIAS_CAD==0 ||  swEntdepos)
            return true;
        String s = "SELECT p.*,a.pro_dimica FROM v_albvenpar as p left join v_articulo as a on a.pro_codi = p.pro_codi  " +
           " WHERE p.emp_codi = " + emp_codiE.getValorInt() +
@@ -5686,7 +5687,7 @@ public class pdalbara extends ventanaPad  implements PAD
                    +" Dias":"¡¡PRODUCTO CADUCADO!!" );
                dtInd.add(dt);
            }
-           if (ERROR_DIASCAD >=0 &&  diasCad <= ERROR_DIASCAD)
+           if (ERROR_DIASCAD >=0 &&  diasCad <= ERROR_DIASCAD && ! P_ADMIN)
                swErrorDias=true;
        } while (dtCon1.next());
        if (dtInd.isEmpty())
@@ -6277,6 +6278,7 @@ public class pdalbara extends ventanaPad  implements PAD
   public void PADDelete()
   {
       try {
+        Ptab1.setSelectedIndex(0);
         if (hisRowid!=0)
         {
           msgBox("Viendo albaran historico ... IMPOSIBLE BORRAR");

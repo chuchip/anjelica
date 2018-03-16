@@ -1,3 +1,13 @@
+drop view v_resprcli;
+alter table cabresprcli add rpc_cerra smallint default 0 not null, -- Cerrado (0: No)
+create view v_resprcli as 
+select 	usu_nomb,
+	rpc_fecha , -- fecha traspaso	
+	cli_codi ,rpc_cerra, -- Cliente
+	l.* from cabresprcli  as c, linresprcli as l where c.rpc_id = l.rpc_id 
+	order by rpc_numlin;
+grant select  on v_resprcli to public
+
 -- 
 -- Cabecera Reservas productos para clientes
 --
@@ -30,7 +40,7 @@ grant select,update,insert, delete  on linresprcli to public;
 create view v_resprcli as 
 select 	usu_nomb,
 	rpc_fecha , -- fecha traspaso	
-	cli_codi , -- Cliente
+	cli_codi ,rpc_cerra, -- Cliente
 	l.* from cabresprcli  as c, linresprcli as l where c.rpc_id = l.rpc_id 
 	order by rpc_numlin;
 grant select  on v_resprcli to public;

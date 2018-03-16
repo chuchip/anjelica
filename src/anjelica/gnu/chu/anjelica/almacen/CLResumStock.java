@@ -3,7 +3,7 @@ package gnu.chu.anjelica.almacen;
  * <p>Titulo: Consulta de stock actual</p>
  * <p>Descripcion: Permite Consultar el stock actual en camaras
  * </p>
-* <p>Copyright: Copyright (c) 2005-2017
+* <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -166,7 +166,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2017-06-24");
+   this.setVersion("2018-03-15");
    statusBar = new StatusBar(this);
  
    initComponents();
@@ -519,6 +519,7 @@ private void jbInit() throws Exception
             (swFecSacr?", stp_fecsac as fecsac ":"") +
             (swFecProd?", stp_fecpro as fecpro ":"") +
             " FROM v_stkpart where pro_codi = ?" +
+            (opIncRes.isSelected()?"":" and stk_block = 0 ")+
             (VERNEGATIVO?
                 "  and (stp_kilact > 0.49 or stp_kilact < -0.49)"+
                 (opVerDatos=='K'?"":" and stp_unact != 0 "):
@@ -1345,6 +1346,7 @@ private void jbInit() throws Exception
         corteKilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9");
         cLabel14 = new gnu.chu.controles.CLabel();
         BFechas = new gnu.chu.controles.CButton();
+        opIncRes = new gnu.chu.controles.CCheckBox();
         PTab1 = new gnu.chu.controles.CTabbedPane();
         Presum = new gnu.chu.controles.CPanel();
         jtRes = new gnu.chu.controles.Cgrid(6);
@@ -1512,7 +1514,12 @@ private void jbInit() throws Exception
 
         BFechas.setText("Fechas");
         Pcabe.add(BFechas);
-        BFechas.setBounds(510, 60, 70, 19);
+        BFechas.setBounds(530, 60, 70, 19);
+
+        opIncRes.setText("Inc. Res.");
+        opIncRes.setToolTipText("Incluir reservas a clientes");
+        Pcabe.add(opIncRes);
+        opIncRes.setBounds(450, 60, 80, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1635,6 +1642,7 @@ private void jbInit() throws Exception
     private javax.swing.JCheckBoxMenuItem opFecSacr;
     private gnu.chu.controles.CCheckBox opIncLoteE;
     private gnu.chu.controles.CCheckBox opIncPrvE;
+    private gnu.chu.controles.CCheckBox opIncRes;
     private gnu.chu.controles.CCheckBox opVerCostos;
     private gnu.chu.camposdb.proPanel profinE;
     private gnu.chu.camposdb.proPanel proiniE;

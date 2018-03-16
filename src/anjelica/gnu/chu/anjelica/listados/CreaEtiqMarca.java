@@ -135,7 +135,7 @@ public class CreaEtiqMarca extends ventana  implements  JRDataSource
     @Override
     public void iniciarVentana() throws Exception {
         cli_codiE.iniciar(dtStat,this,vl,EU);
-        cli_codiE.setCampoReparto(true);
+        cli_codiE.setVerCampoReparto(true);
         activarEventos();
     }
     private void activarEventos()

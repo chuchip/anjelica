@@ -3446,7 +3446,7 @@ INSERT INTO PARAMETROS VALUES('*','avisodiascad','Aviso dias Caducidad',1); -- C
  insert into parametros values('*','tipdesp108A109','Tipo despiece 108 A 109',401);
  insert into parametros values('*','checkCuenCont','Comprueba que la cuenta contable sea valida',1);
  insert into parametros values('*','diasAlbVentaMod','Restrincion modificar Alb.Venta con mas de n dias',0);
- insert into parametros values('*','errordiascad','Error si hay menos de n dias de cad.',0); 
+ insert into parametros values('*','errordiascad','Error si hay menos de n dias de cad.',-1); 
 --
 -- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
 --
@@ -3624,6 +3624,7 @@ create table cabresprcli
 	usu_nomb varchar(15) not null,
 	rpc_fecha date not null, -- fecha traspaso	
 	cli_codi int not null -- Cliente al que se le realiza la reserva	
+	rpc_cerra smallint default 0 not null, -- Cerrado (0: No)
 );
 grant  select,update,insert, delete on cabresprcli to public;
 --

@@ -50,8 +50,12 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import javax.swing.JFileChooser;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 
 public class MantReservaClientes extends ventanaPad implements PAD
@@ -139,7 +143,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
     }
     
     private void jbInit() throws Exception {      
-        setVersion("2018-02-03 "+ (isArgumentoAdmin()?"ADMIN":""));
+        setVersion("2018-03-15 "+ (isArgumentoAdmin()?"ADMIN":""));
         
         nav = new navegador(this, dtCons, false,  navegador.NORMAL);
         
@@ -206,6 +210,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
         rpc_fechaE.setColumnaAlias("rpc_fecha");
         usu_nombE.setColumnaAlias("usu_nomb");
         cli_codiE.setColumnaAlias("cli_codi");
+        rpc_cerraE.setColumnaAlias("rpc_cerra");
         activarEventos();
         navActivarAll();    
         verDatos(dtCons);
@@ -214,7 +219,18 @@ public class MantReservaClientes extends ventanaPad implements PAD
     private void activarEventos()
     {
      
-     
+      Ptab1.addChangeListener(new ChangeListener()
+      {
+          @Override
+          public void stateChanged(ChangeEvent e) {
+              if (Ptab1.getSelectedIndex()==1 && cliCodio!=cli_codiE.getValorInt() 
+                  && !nav.isEdicion())
+              {
+                  cliCodio=cli_codiE.getValorInt();
+                  verDatosResumen(cli_codiE.getValorInt());
+              }
+           }
+      }          );
       BirGrid.addFocusListener(new FocusAdapter()
       {
           @Override
@@ -294,6 +310,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
         if (modo==navegador.DELETE)
             return;
         cli_codiE.setEnabled(estado);
+        rpc_cerraE.setEnabled(estado);
         if (modo!=navegador.EDIT)
             rpc_fechaE.setEnabled(estado);
      
@@ -315,6 +332,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
         Pcabe.setQuery(true);
         Pcabe.resetTexto();
         mensaje("Introduzca condiciones de busqueda ...");
+        cliCodio=0;
         rpc_idE.requestFocus();
    }
     /**
@@ -429,6 +447,8 @@ public class MantReservaClientes extends ventanaPad implements PAD
 //    }
   @Override
     public void PADAddNew() {
+      Ptab1.setSelectedIndex(0);
+      rpc_cerraE.setValor("0");
       
         mensaje("Introducir Nuevo traspaso");
         swAddnew=true;
@@ -438,7 +458,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
         jt.removeAllDatos();
         resetCambioLineaCab();
         activar(true, navegador.ADDNEW);
-      
+        rpc_cerraE.setEnabled(false);
         Pcabe.resetTexto();
        
         rpc_fechaE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
@@ -647,8 +667,8 @@ public class MantReservaClientes extends ventanaPad implements PAD
         v.add(rpc_fechaE.getStrQuery());
         v.add(usu_nombE.getStrQuery());
         v.add(cli_codiE.getStrQuery());
-        
-        s = creaWhere(getStrSql(), v, false);
+        v.add(rpc_cerraE.getStrQuery());
+        s = creaWhere(getStrSql(), v, true);
         s += getOrderQuery();
 //       debug("Query: "+s);
 
@@ -727,10 +747,10 @@ public class MantReservaClientes extends ventanaPad implements PAD
         }
          
         mensaje("");
-        msgBox("Traspaso modificado ... Creado ALBARAN N. " + numAlb);
+        msgBox("Reserva modificada ... Creado ALBARAN N. " + numAlb);
         navActivarAll();       
         activaTodo();
-        mensajeErr("Traspaso Realizado ... ");
+        mensajeErr("Reserva Realizada ... ");
         nav.pulsado = navegador.NINGUNO;
     }
 
@@ -779,10 +799,10 @@ public class MantReservaClientes extends ventanaPad implements PAD
         }
          
         mensaje("");
-        msgBox("Traspaso REALIZADO ... ALBARAN N. " + numAlb);
+        msgBox("RESERVA REALIZADA ... ALBARAN N. " + numAlb);
         navActivarAll();       
         activaTodo();
-        mensajeErr("Traspaso Realizado ... ");
+        mensajeErr("Reserva Realizada ... ");
         nav.pulsado = navegador.NINGUNO;
     }
 
@@ -798,7 +818,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
     }
        @Override
     public void PADEdit() {
-           
+        Ptab1.setSelectedIndex(0);
         s=checkMvtos();
         if (s!=null)
         {
@@ -809,14 +829,16 @@ public class MantReservaClientes extends ventanaPad implements PAD
         }   
         cliCodio=cli_codiE.getValorInt();
 
-        
+          
 
         activar(true,navegador.EDIT);
+         rpc_cerraE.setEnabled(isArgumentoAdmin());
         mensaje("Editando registro...");
         jt.requestFocusInicioLater();
     }
      @Override
     public void PADDelete() {
+        Ptab1.setSelectedIndex(0);
         s=checkMvtos();
         if (s!=null)
         {
@@ -836,13 +858,13 @@ public class MantReservaClientes extends ventanaPad implements PAD
             ctUp.commit();
         } catch (SQLException k)
         {
-            Error("Error al anular traspaso",k);
+            Error("Error al anular Reserva",k);
         }
         
         navActivarAll();       
         activaTodo();
         mensaje("");
-        mensajeErr("Anulado  traspaso ... ");
+        mensajeErr("Anulada  Reserva ... ");
         nav.pulsado = navegador.NINGUNO;
     }
 
@@ -860,18 +882,77 @@ public class MantReservaClientes extends ventanaPad implements PAD
     public void activar(boolean b) {
         activar(b,navegador.TODOS);
     }
-    
+    private void verDatosResumen(int cliCodi)
+    {
+      try
+      {
+          jtArt.removeAllDatos();
+          s="select p.pro_nomb,a.pro_codi,sum(rpc_canti) as rpc_canti, sum(rpc_numuni) as rpc_numuni"
+              + " from v_resprcli as a left join v_articulo as p on a.pro_codi =p.pro_codi "+
+              " where cli_codi = "+cliCodi+
+//              " and rpc_fecha <= '"+rpc_fechaE.getFechaDB()+"'"+
+              " and rpc_cerra= 0 " + // No este cerrado.
+              " group by a.pro_codi,p.pro_nomb"+
+              " order by pro_codi";
+          if (!dtCon1.select(s))
+              return;
+          do
+          {
+              ArrayList v=new ArrayList();
+              v.add(dtCon1.getInt("pro_codi"));
+              v.add(dtCon1.getString("pro_nomb"));
+              s="select sum(rpc_canti) as rpc_canti, sum(rpc_numuni) as rpc_numuni "
+                  + "from  stockpart as s,v_resprcli as r where stk_block="+cliCodi+
+                  " and alm_codi = 1"+
+                  " and stp_unact>0 "+
+                  " and s.pro_codi ="+dtCon1.getInt("pro_codi")+
+                  " and r.cli_codi = "+cliCodi+
+                  " and rpc_fecha >= '"+rpc_fechaE.getFechaDB()+"'"+
+                  " and r.pro_codi=s.pro_codi "+
+                  " and s.eje_nume= r.rpc_ejelot "+
+                  " and s.pro_serie= r.rpc_serlot "+
+                  " and s.pro_nupar  = r.rpc_numpar "+
+                  " and s.pro_numind  = r.rpc_numind";
+              dtStat.select(s);
+              v.add(dtStat.getInt("rpc_numuni",true));
+              v.add(dtStat.getDouble("rpc_canti",true));
+              s="select sum(rpc_canti) as rpc_canti, sum(rpc_numuni) as rpc_numuni "
+                  + "from  stockpart as s,v_resprcli as r where stk_block="+cliCodi+
+                  " and alm_codi = 1"+
+                  " and stp_unact=0 "+
+                  " and s.pro_codi= "+dtCon1.getInt("pro_codi")+
+                  " and r.cli_codi = "+cliCodi+
+                  " and rpc_fecha >= '"+rpc_fechaE.getFechaDB()+"'"+
+                  " and r.pro_codi=s.pro_codi "+
+                   " and s.eje_nume= r.rpc_ejelot "+
+                  " and s.pro_serie= r.rpc_serlot "+
+                  " and s.pro_nupar  = r.rpc_numpar "+
+                  " and s.pro_numind  = r.rpc_numind";
+              dtStat.select(s);
+              v.add(dtStat.getInt("rpc_numuni",true));
+              v.add(dtStat.getDouble("rpc_canti",true));
+              v.add(dtCon1.getInt("rpc_numuni"));
+              v.add(dtCon1.getDouble("rpc_canti"));
+              jtArt.addLinea(v);
+          } while (dtCon1.next());
+          
+      } catch (SQLException | ParseException ex)
+      {
+         Error("Error al ver datos resumen", ex);
+      }
+    }
     private void verDatos(DatosTabla dt)
     {
         try {
             if (dt.getNOREG())
                 return;
-           
+            cliCodio=0;
             rpc_idE.setValorInt(dt.getInt("rpc_id"));
-            s="select p.pro_nomb,a.pro_codi,a.rpc_ejelot,a.rpc_serlot,a.rpc_numpar,rpc_numind,"
+            s="select p.pro_nomb,a.pro_codi,a.rpc_ejelot,a.rpc_serlot,a.rpc_numpar,rpc_numind,rpc_numlin,rpc_cerra,"
                 + "rpc_canti,rpc_numuni,a.usu_nomb,cli_codi, rpc_fecha  "
                 + " from v_resprcli as a left join v_articulo as p on a.pro_codi =p.pro_codi "+
-                " where rpc_id = "+dt.getInt("rpc_id");            
+                " where rpc_id = "+dt.getInt("rpc_id")+
+                " order by rpc_numlin ";            
             if (! dtCon1.select(s))
             {
                msgBox("Registro no encontrado. Probablemente se borro");
@@ -880,7 +961,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
             }
             usu_nombE.setText(dtCon1.getString("usu_nomb"));
             cli_codiE.setValorInt(dtCon1.getInt("cli_codi"));
-
+            rpc_cerraE.setValor(dtCon1.getString("rpc_cerra"));
             rpc_fechaE.setText(dtCon1.getFecha("rpc_fecha","dd-MM-yyyy"));
             jt.removeAllDatos();
             do
@@ -894,11 +975,13 @@ public class MantReservaClientes extends ventanaPad implements PAD
                 v.add(dtCon1.getInt("rpc_numind")); // 5
                 v.add(dtCon1.getDouble("rpc_canti")); // 6
                 v.add(dtCon1.getInt("rpc_numuni")); // 7
-
+                v.add(dtCon1.getInt("rpc_numlin")); // 8
                 jt.addLinea(v);
             } while (dtCon1.next());
             jt.requestFocusLater(0, 0);
             calcAcumulados();
+            if (Ptab1.getSelectedIndex()==1)
+                verDatosResumen(cli_codiE.getValorInt());
         } catch (SQLException k)
         {
             Error("Error al ver datos",k);
@@ -909,16 +992,46 @@ public class MantReservaClientes extends ventanaPad implements PAD
         int nPiezas=0;
         double kilos=0;
         int nRow=jt.getRowCount();
+        jtAcumArt.removeAllDatos();
+        HashMap<Integer,ArrayList> dt=new HashMap();
         for (int n=0;n<nRow;n++)
         {
             if (jt.getValorInt(n,JT_ARTIC)>0 )
             {
+                ArrayList v;
+                if ((v=dt.get(jt.getValorInt(n,JT_ARTIC)))==null)
+                {
+                    v=new ArrayList();
+                    v.add(jt.getValString(n,JT_NOMBR));
+                    v.add(jt.getValorInt(n,JT_UNID));
+                    v.add(jt.getValorDec(n,JT_PESO));
+                    dt.put(jt.getValorInt(n,JT_ARTIC),v);
+                }
+                else
+                {
+                    v.set(1, ((int) v.get(1)) + jt.getValorInt(n,JT_UNID));
+                    v.set(2, ((double) v.get(2)) + jt.getValorDec(n,JT_PESO));
+                    dt.put(jt.getValorInt(n,JT_ARTIC),v);
+                }
                 nPiezas+=jt.getValorInt(n,JT_UNID);
                 kilos+=jt.getValorDec(n,JT_PESO);
             }
         }
         numIndE.setValorDec(nPiezas);
         kilosE.setValorDec(kilos);
+        Iterator<Integer> it= dt.keySet().iterator();
+        int proCodi;
+        while (it.hasNext())
+        {
+          proCodi=it.next();
+          ArrayList v=dt.get(proCodi);
+          ArrayList v1=new ArrayList();
+          v1.add(proCodi);
+          v1.add(v.get(0));
+          v1.add(v.get(1));
+          v1.add(v.get(2));
+          jtAcumArt.addLinea(v1);
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -982,6 +1095,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
         pro_indfinE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
         Bcancelar1 = new gnu.chu.controles.CButton(Iconos.getImageIcon("cancel"));
         Baceptar1 = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
+        rpc_numlinE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
         Pinic = new gnu.chu.controles.CPanel();
         Pcabe = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -993,15 +1107,11 @@ public class MantReservaClientes extends ventanaPad implements PAD
         cLabel5 = new gnu.chu.controles.CLabel();
         usu_nombE = new gnu.chu.controles.CTextField();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
-        Ppie = new gnu.chu.controles.CPanel();
-        Baceptar = new gnu.chu.controles.CButton();
-        Bcancelar = new gnu.chu.controles.CButton();
-        cLabel6 = new gnu.chu.controles.CLabel();
-        numIndE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
-        cLabel7 = new gnu.chu.controles.CLabel();
-        kilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##,##9.99");
+        cLabel4 = new gnu.chu.controles.CLabel();
+        rpc_cerraE = new gnu.chu.controles.CComboBox();
         Ptab1 = new javax.swing.JTabbedPane();
-        jt = new gnu.chu.controles.CGridEditable(8){
+        Pcarga = new gnu.chu.controles.CPanel();
+        jt = new gnu.chu.controles.CGridEditable(9){
             @Override
             public int cambiaLinea(int row, int col)
             {
@@ -1016,8 +1126,17 @@ public class MantReservaClientes extends ventanaPad implements PAD
 
         }
         ;
+        jtAcumArt = new gnu.chu.controles.Cgrid(4);
+        Ppie = new gnu.chu.controles.CPanel();
+        Baceptar = new gnu.chu.controles.CButton();
+        Bcancelar = new gnu.chu.controles.CButton();
+        cLabel6 = new gnu.chu.controles.CLabel();
+        numIndE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
+        cLabel7 = new gnu.chu.controles.CLabel();
+        kilosE = new gnu.chu.controles.CTextField(Types.DECIMAL,"##,##9.99");
         PCons = new gnu.chu.controles.CPanel();
         jtArt = new gnu.chu.controles.Cgrid(8);
+        jtAlb = new gnu.chu.controles.Cgrid(5);
 
         pro_nocabE.setEnabled(false);
 
@@ -1030,7 +1149,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
         rpc_numuniE.setText("1");
         rpc_numuniE.setEnabled(false);
 
-        IFLote.setTitle("Traspaso Individuos");
+        IFLote.setTitle("Reserva Individuos");
         IFLote.setVisible(true);
 
         cPanel1.setLayout(null);
@@ -1084,12 +1203,15 @@ public class MantReservaClientes extends ventanaPad implements PAD
 
         IFLote.getContentPane().add(cPanel1, java.awt.BorderLayout.CENTER);
 
+        rpc_numlinE.setText("1");
+        rpc_numlinE.setEnabled(false);
+
         Pinic.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        Pcabe.setMaximumSize(new java.awt.Dimension(460, 55));
-        Pcabe.setMinimumSize(new java.awt.Dimension(460, 55));
-        Pcabe.setPreferredSize(new java.awt.Dimension(460, 55));
+        Pcabe.setMaximumSize(new java.awt.Dimension(460, 70));
+        Pcabe.setMinimumSize(new java.awt.Dimension(460, 70));
+        Pcabe.setPreferredSize(new java.awt.Dimension(460, 70));
         Pcabe.setLayout(null);
 
         cLabel1.setText("Reserva");
@@ -1104,9 +1226,9 @@ public class MantReservaClientes extends ventanaPad implements PAD
         Pcabe.add(rpc_fechaE);
         rpc_fechaE.setBounds(180, 2, 67, 17);
 
-        cLabel3.setText("Cliente");
+        cLabel3.setText("Estado");
         Pcabe.add(cLabel3);
-        cLabel3.setBounds(2, 22, 60, 18);
+        cLabel3.setBounds(0, 40, 60, 18);
 
         BirGrid.setText("cButton1");
         Pcabe.add(BirGrid);
@@ -1119,8 +1241,19 @@ public class MantReservaClientes extends ventanaPad implements PAD
         usu_nombE.setEnabled(false);
         Pcabe.add(usu_nombE);
         usu_nombE.setBounds(360, 2, 93, 17);
+
+        cli_codiE.setVerCampoReparto(true);
         Pcabe.add(cli_codiE);
         cli_codiE.setBounds(60, 22, 389, 18);
+
+        cLabel4.setText("Cliente");
+        Pcabe.add(cLabel4);
+        cLabel4.setBounds(2, 22, 60, 18);
+
+        rpc_cerraE.addItem("Abierto","0");
+        rpc_cerraE.addItem("Cerrado","1");
+        Pcabe.add(rpc_cerraE);
+        rpc_cerraE.setBounds(60, 40, 90, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1129,44 +1262,12 @@ public class MantReservaClientes extends ventanaPad implements PAD
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
         Pinic.add(Pcabe, gridBagConstraints);
 
-        Ppie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        Ppie.setMaximumSize(new java.awt.Dimension(550, 25));
-        Ppie.setMinimumSize(new java.awt.Dimension(550, 25));
-        Ppie.setPreferredSize(new java.awt.Dimension(550, 25));
-        Ppie.setLayout(null);
-
-        Baceptar.setText("Aceptar");
-        Ppie.add(Baceptar);
-        Baceptar.setBounds(360, 0, 90, 24);
-
-        Bcancelar.setText("Cancelar");
-        Ppie.add(Bcancelar);
-        Bcancelar.setBounds(460, 0, 90, 24);
-
-        cLabel6.setText("Unidades");
-        Ppie.add(cLabel6);
-        cLabel6.setBounds(10, 2, 60, 17);
-
-        numIndE.setEditable(false);
-        Ppie.add(numIndE);
-        numIndE.setBounds(70, 2, 40, 17);
-
-        cLabel7.setText("Kilos");
-        Ppie.add(cLabel7);
-        cLabel7.setBounds(120, 2, 40, 17);
-
-        kilosE.setEditable(false);
-        Ppie.add(kilosE);
-        kilosE.setBounds(160, 2, 60, 17);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-        Pinic.add(Ppie, gridBagConstraints);
+        Pcarga.setLayout(new java.awt.GridBagLayout());
 
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jt.setPreferredSize(new java.awt.Dimension(101, 101));
+        jt.setMaximumSize(new java.awt.Dimension(101, 200));
+        jt.setMinimumSize(new java.awt.Dimension(101, 200));
+        jt.setPreferredSize(new java.awt.Dimension(101, 200));
 
         ArrayList v=new ArrayList();
         v.add("Artic"); // 0
@@ -1177,9 +1278,10 @@ public class MantReservaClientes extends ventanaPad implements PAD
         v.add("Indiv"); // 5
         v.add("Peso"); // 6
         v.add("Unid."); // 7
+        v.add("NL"); // 8
         jt.setCabecera(v);
-        jt.setAnchoColumna(new int[]    {60,120,40,40,60,30, 50,40});
-        jt.setAlinearColumna(new int[] {2,0,2,1,2,2, 2,2});
+        jt.setAnchoColumna(new int[]    {60,120,40,40,60,30, 50,40,30});
+        jt.setAlinearColumna(new int[] {2,0,2,1,2,2, 2,2,2});
 
         try {
             ArrayList vc1=new ArrayList();
@@ -1191,13 +1293,83 @@ public class MantReservaClientes extends ventanaPad implements PAD
             vc1.add(rpc_numindE); // 5
             vc1.add(rpc_cantiE); // 6
             vc1.add(rpc_numuniE); // 7
+            vc1.add(rpc_numlinE); // 7
             jt.setCampos(vc1);
             jt.setFormatoCampos();
         } catch (Exception k){Error("Error al cargar campos en grid",k);}
 
-        Ptab1.addTab("Carga", jt);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        Pcarga.add(jt, gridBagConstraints);
 
-        PCons.setLayout(new java.awt.BorderLayout());
+        ArrayList vaa=new ArrayList();
+        vaa.add("Articulo");
+        vaa.add("Nombre");
+        vaa.add("Ud.Reserva");
+        vaa.add("Kg.Reserva");
+        jtAcumArt.setCabecera(vaa);
+        jtAcumArt.setAnchoColumna(new int[]{60,250,30,80});
+        jtAcumArt.setAlinearColumna(new int[]{2,0,2,2});
+        jtAcumArt.setFormatoColumna(2, "###9");
+        jtAcumArt.setFormatoColumna(3, "#,##9.99");
+        jtAcumArt.setAjustarGrid(true);
+        jtAcumArt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtAcumArt.setMaximumSize(new java.awt.Dimension(400, 101));
+        jtAcumArt.setMinimumSize(new java.awt.Dimension(400, 101));
+        jtAcumArt.setPreferredSize(new java.awt.Dimension(400, 101));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        Pcarga.add(jtAcumArt, gridBagConstraints);
+
+        Ppie.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        Ppie.setMaximumSize(new java.awt.Dimension(210, 65));
+        Ppie.setMinimumSize(new java.awt.Dimension(210, 65));
+        Ppie.setPreferredSize(new java.awt.Dimension(210, 65));
+        Ppie.setLayout(null);
+
+        Baceptar.setText("Aceptar");
+        Ppie.add(Baceptar);
+        Baceptar.setBounds(10, 40, 90, 24);
+
+        Bcancelar.setText("Cancelar");
+        Ppie.add(Bcancelar);
+        Bcancelar.setBounds(110, 40, 90, 24);
+
+        cLabel6.setText("Unidades");
+        Ppie.add(cLabel6);
+        cLabel6.setBounds(10, 2, 60, 17);
+
+        numIndE.setEditable(false);
+        Ppie.add(numIndE);
+        numIndE.setBounds(70, 2, 40, 17);
+
+        cLabel7.setText("Kilos");
+        Ppie.add(cLabel7);
+        cLabel7.setBounds(10, 20, 40, 17);
+
+        kilosE.setEditable(false);
+        Ppie.add(kilosE);
+        kilosE.setBounds(50, 20, 60, 17);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        Pcarga.add(Ppie, gridBagConstraints);
+
+        Ptab1.addTab("Carga", Pcarga);
+
+        PCons.setLayout(new java.awt.GridBagLayout());
 
         ArrayList va=new ArrayList();
         va.add("Articulo");
@@ -1210,9 +1382,45 @@ public class MantReservaClientes extends ventanaPad implements PAD
         va.add("Kg.Origen");
         jtArt.setCabecera(va);
         jtArt.setAnchoColumna(new int[]{50,200,50,80,50,80,50,80});
+        jtArt.setAlinearColumna(new int[]{2,0,2,2,2,2,2,2});
+        jtArt.setFormatoColumna(2, "###9");
+        jtArt.setFormatoColumna(3, "#,##9.99");
+        jtArt.setFormatoColumna(4, "###9");
+        jtArt.setFormatoColumna(5, "#,##9.99");
+        jtArt.setFormatoColumna(6, "###9");
+        jtArt.setFormatoColumna(7, "#,##9.99");
         jtArt.setAjustarGrid(true);
         jtArt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        PCons.add(jtArt, java.awt.BorderLayout.CENTER);
+        jtArt.setMaximumSize(new java.awt.Dimension(100, 220));
+        jtArt.setMinimumSize(new java.awt.Dimension(100, 220));
+        jtArt.setPreferredSize(new java.awt.Dimension(100, 220));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        PCons.add(jtArt, gridBagConstraints);
+
+        ArrayList val=new ArrayList();
+        val.add("Ejerc");
+        val.add("Serie");
+        val.add("Numero");
+        val.add("Fecha");
+        val.add("Kilos");
+        jtAlb.setCabecera(val);
+        jtAlb.setAjustarGrid(true);
+        jtAlb.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtAlb.setMaximumSize(new java.awt.Dimension(100, 120));
+        jtAlb.setMinimumSize(new java.awt.Dimension(100, 120));
+        jtAlb.setPreferredSize(new java.awt.Dimension(100, 120));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        PCons.add(jtAlb, gridBagConstraints);
 
         Ptab1.addTab("Consulta", PCons);
 
@@ -1239,6 +1447,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
     private gnu.chu.controles.CInternalFrame IFLote;
     private gnu.chu.controles.CPanel PCons;
     private gnu.chu.controles.CPanel Pcabe;
+    private gnu.chu.controles.CPanel Pcarga;
     private gnu.chu.controles.CPanel Pinic;
     private gnu.chu.controles.CPanel Ppie;
     private javax.swing.JTabbedPane Ptab1;
@@ -1249,6 +1458,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
     private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
+    private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel7;
@@ -1259,6 +1469,8 @@ public class MantReservaClientes extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField deo_ejelot1E;
     private gnu.chu.controles.CTextField deo_serlot1E;
     private gnu.chu.controles.CGridEditable jt;
+    private gnu.chu.controles.Cgrid jtAcumArt;
+    private gnu.chu.controles.Cgrid jtAlb;
     private gnu.chu.controles.Cgrid jtArt;
     private gnu.chu.controles.CTextField kilosE;
     private gnu.chu.controles.CTextField numIndE;
@@ -1269,10 +1481,12 @@ public class MantReservaClientes extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField pro_lote1E;
     private gnu.chu.controles.CTextField pro_nocabE;
     private gnu.chu.controles.CTextField rpc_cantiE;
+    private gnu.chu.controles.CComboBox rpc_cerraE;
     private gnu.chu.controles.CTextField rpc_ejelotE;
     private gnu.chu.controles.CTextField rpc_fechaE;
     private gnu.chu.controles.CTextField rpc_idE;
     private gnu.chu.controles.CTextField rpc_numindE;
+    private gnu.chu.controles.CTextField rpc_numlinE;
     private gnu.chu.controles.CTextField rpc_numparE;
     private gnu.chu.controles.CTextField rpc_numuniE;
     private gnu.chu.controles.CTextField rpc_serlotE;
@@ -1382,6 +1596,7 @@ public class MantReservaClientes extends ventanaPad implements PAD
         dtAdd.setDato("rpc_fecha", rpc_fechaE.getText(), "dd-MM-yyyy");
         dtAdd.setDato("usu_nomb", EU.usuario);
         dtAdd.setDato("cli_codi", cli_codiE.getValorInt());
+        dtAdd.setDato("rpc_cerra", rpc_cerraE.getValor());
         dtAdd.update();
         if (numAlb==0)
         {

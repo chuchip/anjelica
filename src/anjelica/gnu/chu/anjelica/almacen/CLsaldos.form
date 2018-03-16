@@ -36,13 +36,13 @@
               </Border>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[609, 79]"/>
+              <Dimension value="[609, 85]"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[609, 79]"/>
+              <Dimension value="[609, 85]"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[609, 79]"/>
+              <Dimension value="[609, 85]"/>
             </Property>
           </Properties>
           <Constraints>
@@ -262,7 +262,18 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="490" y="50" width="100" height="24"/>
+                  <AbsoluteConstraints x="490" y="58" width="100" height="24"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opIncRes">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Inc.Reservas"/>
+                <Property name="toolTipText" type="java.lang.String" value="Incluir gernero reservado a clientes"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="488" y="40" width="100" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

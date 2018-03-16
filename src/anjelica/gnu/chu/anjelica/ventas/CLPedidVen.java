@@ -203,7 +203,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS, EU.em_cod);
      rut_codiE.setCeroIsNull(true);
      cli_codiE.iniciar(dtStat, this, vl, EU);     
-     cli_codiE.setCampoReparto(true);
+     cli_codiE.setVerCampoReparto(true);
      s="select * from programasparam where prf_host='"+Formatear.getHostName()+"'"+
          " and prf_id ='clpedven.camaras'";
      if (dtStat.select(s))

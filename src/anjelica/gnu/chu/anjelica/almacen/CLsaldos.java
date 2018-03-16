@@ -59,6 +59,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -81,8 +83,8 @@ public class CLsaldos extends ventana implements JRDataSource
 //  boolean valDesp;
   boolean cancelado=false;
   char sel='d';
-  PreparedStatement ps;
-  ResultSet rs;
+  PreparedStatement ps, psStk;  
+  ResultSet rs,rsStk;;
   ifMvtosClase ifMvtos = new ifMvtosClase();
   IFStockPart ifStk=new IFStockPart(this);
   boolean imprList=false;
@@ -137,7 +139,7 @@ public class CLsaldos extends ventana implements JRDataSource
 
         iniciarFrame(); 
        
-        this.setVersion("2018-01-18");
+        this.setVersion("2018-03-15");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -204,6 +206,7 @@ public class CLsaldos extends ventana implements JRDataSource
         cLabel8 = new gnu.chu.controles.CLabel();
         ordenE = new gnu.chu.controles.CComboBox();
         Baceptar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
+        opIncRes = new gnu.chu.controles.CCheckBox();
         jt = new gnu.chu.controles.Cgrid(7);
         Ppie = new gnu.chu.controles.CPanel();
         cLabel9 = new gnu.chu.controles.CLabel();
@@ -216,9 +219,9 @@ public class CLsaldos extends ventana implements JRDataSource
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pdatcon.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        Pdatcon.setMaximumSize(new java.awt.Dimension(609, 79));
-        Pdatcon.setMinimumSize(new java.awt.Dimension(609, 79));
-        Pdatcon.setPreferredSize(new java.awt.Dimension(609, 79));
+        Pdatcon.setMaximumSize(new java.awt.Dimension(609, 85));
+        Pdatcon.setMinimumSize(new java.awt.Dimension(609, 85));
+        Pdatcon.setPreferredSize(new java.awt.Dimension(609, 85));
         Pdatcon.setLayout(null);
 
         cLabel1.setText("Incluir");
@@ -305,7 +308,12 @@ public class CLsaldos extends ventana implements JRDataSource
 
         Baceptar.setText("Aceptar");
         Pdatcon.add(Baceptar);
-        Baceptar.setBounds(490, 50, 100, 24);
+        Baceptar.setBounds(490, 58, 100, 24);
+
+        opIncRes.setText("Inc.Reservas");
+        opIncRes.setToolTipText("Incluir gernero reservado a clientes");
+        Pdatcon.add(opIncRes);
+        opIncRes.setBounds(488, 40, 100, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -316,7 +324,6 @@ public class CLsaldos extends ventana implements JRDataSource
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jt.setMaximumSize(new java.awt.Dimension(100, 109));
         jt.setMinimumSize(new java.awt.Dimension(100, 109));
-        jt.setPreferredSize(new java.awt.Dimension(100, 109));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -394,6 +401,7 @@ public class CLsaldos extends ventana implements JRDataSource
     private gnu.chu.controles.CTextField kilosE;
     private gnu.chu.controles.CCheckBox opAjuCosto;
     private gnu.chu.controles.CCheckBox opIgnDespSVal;
+    private gnu.chu.controles.CCheckBox opIncRes;
     private gnu.chu.controles.CCheckBox opIncSemana;
     private gnu.chu.controles.CComboBox ordenE;
     private gnu.chu.controles.CComboBox pro_artconE;
@@ -471,6 +479,10 @@ public class CLsaldos extends ventana implements JRDataSource
     sbe_codiE.setValorInt(0);
     sbe_codiE.setAceptaNulo(true);
 //    activar(true);
+    psStk=dtStat.getPreparedStatement("select sum(stp_unact) as stp_unact,sum(stp_kilact) as stp_kilact  "
+              + " from v_stkpart where stk_block !=0  "
+              + " and pro_codi = ?"
+              + " and alm_codi = "+pdalmace.ALMACENPRINCIPAL);
 
     s="select distinct(rgs_fecha) as cci_feccon from v_inventar as r "+
          " where r.emp_codi = "+EU.em_cod+
@@ -715,40 +727,52 @@ public class CLsaldos extends ventana implements JRDataSource
   }
   void Baceptar_actionPerformed(int opcion)
   {
-    ps=null;
-    ifMvtos.setVisible(false);
-    ifStk.setVisible(false);
-    if (fecsalE.isNull())
-    {
-      mensajeErr("Introduzca Fecha de Saldo");
-      return;
-    }
-    if (fecsalE.getText().equals(feulinE.getText()) && pro_cosincE.isSelected())
-    {
-        int ret=mensajes.mensajeYesNo("Fecha Salida es la de Inventario. Incrementar costo seguro?");
-        if (ret!=mensajes.YES)
-        {
-            pro_cosincE.setSelected(false);
-            return;
-        }
-    }
-    camCodi=cam_codiE.getText().trim();
-    if (camCodi.equals(""))
-      camCodi=null;
-    if (camCodi!=null)
-    {
-      camCodi = camCodi.replace('*', '%');
-      if (camCodi.equals("*") || camCodi.equals("**"))
-        camCodi = null;
-    }
-
+      try
+      {
+          ps=null;
+          ifMvtos.setVisible(false);
+          ifStk.setVisible(false);
+          if (fecsalE.isNull())
+          {
+              mensajeErr("Introduzca Fecha de Saldo");
+              return;
+          }
+          if (! opIncRes.isSelected() && Formatear.comparaFechas(fecsalE.getDate(),Formatear.getDateAct())!=0)
+          {
+              msgBox("Si fecha saldo no es la del dia, se deben incluir las reservas");
+              return;
+          }
+          
+          if (fecsalE.getText().equals(feulinE.getText()) && pro_cosincE.isSelected())
+          {
+              int ret=mensajes.mensajeYesNo("Fecha Salida es la de Inventario. Incrementar costo seguro?");
+              if (ret!=mensajes.YES)
+              {
+                  pro_cosincE.setSelected(false);
+                  return;
+              }
+          }
+          camCodi=cam_codiE.getText().trim();
+          if (camCodi.equals(""))
+              camCodi=null;
+          if (camCodi!=null)
+          {
+              camCodi = camCodi.replace('*', '%');
+              if (camCodi.equals("*") || camCodi.equals("**"))
+                  camCodi = null;
+          }
+          
 //    almOri=Integer.parseInt(alm_inicE.getText().trim());
 //    almFin=Integer.parseInt(alm_finalE.getText().trim());
-    
-    feulin = feulinE.getValor();
-   
-    threadCLsaldos th =new threadCLsaldos(this,opcion);
-    th.start();
+
+feulin = feulinE.getValor();
+
+threadCLsaldos th =new threadCLsaldos(this,opcion);
+th.start();
+      } catch (ParseException ex)
+      {
+          Error("Error al comprobar datos", ex);
+      }
   }
 
   boolean consultar()
@@ -945,8 +969,17 @@ public class CLsaldos extends ventana implements JRDataSource
                return false;
            continue;
         }
+        
         kilos=mvtosAlm.getKilosStock();
         unid=mvtosAlm.getUnidStock();
+        if (!opIncRes.isSelected())
+        {
+            psStk.setInt(1,dtProd.getInt("pro_codi") );       
+            rs=psStk.executeQuery();
+            rs.next();
+            kilos-=rs.getDouble("stp_kilact");
+            unid-=rs.getInt("stp_unact");
+        }
         kgCom=mvtosAlm.getKilosCompra();
         kgVen=mvtosAlm.getKilosVenta();
         kgReg=mvtosAlm.getKilosRegul();
@@ -1022,10 +1055,11 @@ public class CLsaldos extends ventana implements JRDataSource
   
 
   private void iniciarStatement(int proCodi, String fecini, String fecfin) throws SQLException
-  {
-    
+  {      
+
     if (ps==null)
     {
+
        String sql="SELECT  mvt_tipdoc as sel, mvt_tipo as tipmov,mvt_time as fecmov, alm_codi, pro_codi,"
            + "pro_ejelot,pro_serlot,pro_numlot,pro_indlot,"+
             " "+        

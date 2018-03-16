@@ -285,18 +285,19 @@ public class cliPanel extends CPanel
     Bcons.setVisible(activo);
     botonConsultar=activo;
   }
+  
    /**
    * Hace el Campo Codigo de Reparto visible
    * Por Defecto es invisible
    * @param activo true = visible
    */
-  public void setCampoReparto(boolean activo)
+  public void setVerCampoReparto(boolean activo)
   {
     cli_codrepL.setVisible(activo);
     swMostrarCodigoReparto=activo;
   }
   
-  public boolean getCampoReparto()
+  public boolean getVerCampoReparto()
   {
        return swMostrarCodigoReparto;
   }

@@ -670,7 +670,7 @@ public class pdpeve  extends ventanaPad   implements PAD
     cli_codiE.iniciar(dtStat, this, vl, EU);
     cli_codiE.iniciar(jf);
     cli_codiE.setAceptaNulo(false);
-    cli_codiE.setCampoReparto(true);
+    cli_codiE.setVerCampoReparto(true);
     pdconfig.llenaDiscr(dtStat, rut_codiE, pdconfig.D_RUTAS, EU.em_cod);
     pro_codiE.iniciar(dtStat, this, vl, EU);
     pro_codiE.setAceptaInactivo(false);

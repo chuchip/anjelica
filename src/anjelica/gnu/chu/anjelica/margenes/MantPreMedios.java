@@ -106,7 +106,7 @@ public class MantPreMedios extends ventana
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2018-02-28" );
+      this.setVersion("2018-03-14" );
       statusBar = new StatusBar(this);
       
       iniciarFrame();
@@ -257,7 +257,8 @@ public class MantPreMedios extends ventana
                s="select sum(lci_peso) as kilos from v_coninvent where lci_peso>0 and cci_feccon='"+fecStockE.getFechaDB()+"'"+
                    " and (pro_codi="+codigo1+
                    " or pro_codi= "+codigo2+")"+ 
-                   (incCompra?" and prp_part not in (select acc_nume from v_albacoc where acc_fecrec>='"+fecIniComE.getFechaDB()+"')":"");
+                   (incCompra?" and prp_part not in (select acc_nume from v_albacoc "
+                   + "where acc_fecrec>='"+fecIniComE.getFechaDB()+"')":"");
               dtCon1.select(s);
               double costoInv=pdprvades.getPrecioOrigen(dtStat,lomo, Formatear.sumaDiasDate(tar_feciniE.getDate(),-7));
               ArrayList v=new ArrayList();
@@ -266,7 +267,8 @@ public class MantPreMedios extends ventana
               v.add(dtCon1.getDouble("kilos",true));
               v.add(costoInv);
               v.add(dtCon1.getDouble("kilos",true)*costoInv);
-              s="select sum(acl_canti) as kilos,sum(acl_canti*acl_prcom) as importe from v_albacom where  acc_fecrec between '"+fecIniComE.getFechaDB()+
+              s="select sum(acl_canti) as kilos,sum(acl_canti*acl_prcom) as importe from v_albacom"
+                  + " where  acc_fecrec between '"+fecIniComE.getFechaDB()+
                   "' and '"+ fecFinComE.getFechaDB()+"'"+
                    " and (pro_codi="+codigo1+
                    " or pro_codi= "+codigo2+")";
@@ -278,6 +280,7 @@ public class MantPreMedios extends ventana
               s="select sum(deo_kilos) as kilos, sum(deo_kilos*c.acl_prcom) as importe "
                   + "from v_despori as d,v_compras as c where  tid_codi= "+TIDE_AUTOCLASI+
                    " and deo_fecha>='"+ tar_feciniE.getFechaDB()+"'"+ 
+                    " and deo_fecha<='"+ fecFinComE.getFechaDB()+"'"+ 
                    " and c.acc_fecrec>='"+tar_feciniE.getFechaDB()+"'"+ 
                    " and d.pro_codi=c.pro_codi "+
                    " and d.pro_lote=c.acc_nume "+
@@ -293,7 +296,8 @@ public class MantPreMedios extends ventana
               // Sumo Despieces de 108 a 109
               s="select pro_codi,deo_codi "
                   + "from v_despsal as d where  tid_codi= "+TIDE_108A109+
-                   " and deo_fecha>='"+ tar_feciniE.getFechaDB()+"'"+ 
+                  " and deo_fecha>='"+ fecIniComE.getFechaDB()+"'"+ 
+                  " and deo_fecha<='"+ fecFinComE.getFechaDB()+"'"+ 
                    " and (pro_codi="+codigo1+
                    " or pro_codi= "+codigo2+") "+
                   " and def_prcost <= 0";
@@ -305,7 +309,8 @@ public class MantPreMedios extends ventana
               }
               s="select sum(def_kilos) as kilos, sum(def_kilos*def_prcost) as importe "
                   + "from v_despsal as d where  tid_codi= "+TIDE_108A109+
-                   " and deo_fecha>='"+ tar_feciniE.getFechaDB()+"'"+ 
+                   " and deo_fecha>='"+ fecIniComE.getFechaDB()+"'"+ 
+                   " and deo_fecha<='"+ fecFinComE.getFechaDB()+"'"+ 
                    " and (pro_codi="+codigo1+
                    " or pro_codi= "+codigo2+")";
               dtCon1.select(s);

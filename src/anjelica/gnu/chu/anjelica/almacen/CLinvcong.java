@@ -7,7 +7,6 @@ import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.MantTipDesp;
 import gnu.chu.anjelica.despiece.utildesp;
 import gnu.chu.anjelica.pad.MantFamPro;
-import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.camposdb.empPanel;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.controles.miCellRender;
@@ -329,6 +328,7 @@ public class CLinvcong extends ventana
         cLabel12 = new gnu.chu.controles.CLabel();
         pro_loteE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
         opDesgInd = new gnu.chu.controles.CCheckBox();
+        opIncRes = new gnu.chu.controles.CCheckBox();
         jt = new gnu.chu.controles.Cgrid(15);
         Ppie = new gnu.chu.controles.CPanel();
         cLabel6 = new gnu.chu.controles.CLabel();
@@ -374,7 +374,7 @@ public class CLinvcong extends ventana
 
         cLabel4.setText("Lote");
         Pcabe.add(cLabel4);
-        cLabel4.setBounds(380, 22, 40, 17);
+        cLabel4.setBounds(310, 60, 40, 17);
         cLabel4.getAccessibleContext().setAccessibleName("Con mas de");
 
         Pcabe.add(kilminE);
@@ -416,12 +416,12 @@ public class CLinvcong extends ventana
 
         cLabel11.setText("Orden");
         Pcabe.add(cLabel11);
-        cLabel11.setBounds(310, 50, 34, 15);
+        cLabel11.setBounds(310, 40, 34, 17);
 
         ordenE.addItem("Familia","F");
         ordenE.addItem("Codigo", "C");
         Pcabe.add(ordenE);
-        ordenE.setBounds(350, 50, 90, 20);
+        ordenE.setBounds(350, 40, 90, 17);
 
         opSoloTot.setText("Solo Totales");
         Pcabe.add(opSoloTot);
@@ -431,13 +431,17 @@ public class CLinvcong extends ventana
         Pcabe.add(cLabel12);
         cLabel12.setBounds(440, 2, 90, 17);
         Pcabe.add(pro_loteE);
-        pro_loteE.setBounds(420, 22, 50, 17);
+        pro_loteE.setBounds(350, 60, 50, 17);
 
         opDesgInd.setSelected(true);
         opDesgInd.setText("Desg. Indiv.");
         opDesgInd.setToolTipText("Desglosar Individuos");
         Pcabe.add(opDesgInd);
         opDesgInd.setBounds(480, 22, 90, 18);
+
+        opIncRes.setText("Inc. Reservas");
+        Pcabe.add(opIncRes);
+        opIncRes.setBounds(360, 20, 110, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -570,7 +574,7 @@ public class CLinvcong extends ventana
     
     private void consultaAgruFec() throws Exception
     {
-        actualizaMsg("Buscando datos... preparando datos temporales ",false);
+        setMensajePopEspere("Buscando datos... preparando datos temporales ",false);
         dtAdd.setCerrarCursor(false);
         String  s= "SELECT *  FROM   pg_catalog.pg_tables  WHERE   tablename  = '"+tablaTemp+"'";
         if (dtAdd.select(s))
@@ -603,7 +607,7 @@ public class CLinvcong extends ventana
             }
             if (proCodi!=dtCon1.getInt("pro_codi"))
             {
-                actualizaMsg("Buscando datos... \nPreparando datos temporales.Producto: "+
+                setMensajePopEspere("Buscando datos... \nPreparando datos temporales.Producto: "+
                     proCodi,false);
                 proCodi=dtCon1.getInt("pro_codi");
             }
@@ -667,7 +671,8 @@ public class CLinvcong extends ventana
                 (filtroEmpr==null?"":" and r.emp_codi in ("+filtroEmpr+")")+
                 " and stp_tiplot != 'S' "+ // Quito los registros de Acumulados
                 " and a.pro_codi = r.pro_codi " +
-                " and a.pro_tiplot = 'V' "+ // Solo Prod. Vendibles              
+                " and a.pro_tiplot = 'V' "+ // Solo Prod. Vendibles    
+                (opIncRes.isSelected()?"":" and r.stk_block = 0 ")+
                 " and stp_kilact > "+(kilminE.getValorDec() == 0 ? "1" :  kilminE.getValorDec()) +
                 " order by "+
                 (ordenE.getValor().equals("F")?"fam_codi,":"")+
@@ -992,6 +997,7 @@ public class CLinvcong extends ventana
     private gnu.chu.controles.CTextField kilminE;
     private gnu.chu.controles.CTextField numDiasAgrE;
     private gnu.chu.controles.CCheckBox opDesgInd;
+    private gnu.chu.controles.CCheckBox opIncRes;
     private gnu.chu.controles.CCheckBox opSoloTot;
     private gnu.chu.controles.CComboBox ordenE;
     private gnu.chu.camposdb.proPanel pro_codiE;

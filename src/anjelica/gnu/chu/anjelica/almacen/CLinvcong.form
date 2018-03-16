@@ -131,7 +131,7 @@
               </AccessibilityProperties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="380" y="22" width="40" height="17"/>
+                  <AbsoluteConstraints x="310" y="60" width="40" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -261,7 +261,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="310" y="50" width="-1" height="-1"/>
+                  <AbsoluteConstraints x="310" y="40" width="-1" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -271,7 +271,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="350" y="50" width="90" height="-1"/>
+                  <AbsoluteConstraints x="350" y="40" width="90" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -301,7 +301,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="420" y="22" width="50" height="17"/>
+                  <AbsoluteConstraints x="350" y="60" width="50" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -314,6 +314,16 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="480" y="22" width="90" height="18"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opIncRes">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Inc. Reservas"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="360" y="20" width="110" height="18"/>
                 </Constraint>
               </Constraints>
             </Component>
