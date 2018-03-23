@@ -734,7 +734,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2018-03-14" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2018-03-23" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1935,13 +1935,21 @@ public class pdalbara extends ventanaPad  implements PAD
   void buscaCliente()
   {
        if (cli_codiE.isNull() || nav.isEdicion() )
-           return;
+       {
+           if (cli_codiE.isNull())
+            msgBox("Introduzca un codigo de cliente");
+           else
+              msgBox("NO se puede buscar por cliente cuando se esta en modo edicion"); 
+          return;
+       }
         int cliCodi=cli_codiE.getValorInt();
+        codCli=-1;
         PADQuery();
         cli_codiE.getCampoCiente().setTipoCampo(Types.DECIMAL);
         cli_codiE.getCampoCiente().setFormato("#####9");
         cli_codiE.setText(""+cliCodi);
         buscaAlb();
+        nav.pulsado=navegador.NINGUNO;
   }
   void activarEventos()
   {
@@ -2618,18 +2626,15 @@ public class pdalbara extends ventanaPad  implements PAD
             public void actionPerformed(ActionEvent e) {
                 try {
                     if (! nav.isEdicion() )
-                    {
-                        
+                    {                        
                         int etiCodi=etiqueta.getEtiquetaDefault(dtCon1,emp_codiE.getValorInt());          
                         etiq.setTipoEtiq(dtStat, EU.em_cod,  etiCodi);
                         boolean swExtranjero=false;
                         String idioma=null;
                         if (cli_codiE.getLikeCliente().getInt("pai_codi")!=paiEmp)
                         {
-
                                 swExtranjero=true;
                                 idioma=MantPaises.getLocalePais(cli_codiE.getLikeCliente().getInt("pai_codi"), dtStat);
-
                         }
                         utdesp.setIdioma(idioma);
                         imprEtiq(swExtranjero,idioma,jt.getValorInt(jt.getSelectedRowDisab(),JT_PROCODI),
@@ -4700,10 +4705,10 @@ public class pdalbara extends ventanaPad  implements PAD
       try
       {
       ArrayList v = new ArrayList();
-          System.out.println("cli_codiE.cli_codiE.getTextSuper()"+cliValor);
+//          System.out.println("cli_codiE.cli_codiE.getTextSuper()"+cliValor);
       //cli_codiE.getNombCliente(dtStat, cli_codiE.cli_codiE.getTextSuper() );
       v.add(cli_codiE.getStrQuery());
-      v.add(cli_codiE.isGenerico() || codCli==0
+      v.add(codCli>=0 && (cli_codiE.isGenerico() || codCli==0)
           ?cli_codiE.getCampoNombreCliente().getStrQuery():"");
       v.add(emp_codiE.getStrQuery());
       v.add(avc_anoE.getStrQuery());
@@ -4856,7 +4861,7 @@ public class pdalbara extends ventanaPad  implements PAD
       {
           if (!P_ADMIN)
           {
-              msgBox("Albaran es de un ejercicio YA cerrado ... IMPOSIBLE MODIFICAR");
+              msgBox("Albaran es de un ejercicio YA cerrado ... IMPOSIBLE "+(nav.getPulsado()==navegador.DELETE?"BORRAR":"EDITAR"));
               return false;
           } else
               msgBox("ATENCION!!! Albaran es de un ejercicio YA cerrado");
@@ -4865,23 +4870,23 @@ public class pdalbara extends ventanaPad  implements PAD
       if ((fvc_anoE.getValorDec() > 0 || fvc_numeE.getValorDec() > 0)
           && !P_ADMIN && !swEntdepos)
       {
-          msgBox("Albaran YA se HA FACTURADO ... IMPOSIBLE MODIFICAR");
+          msgBox("Albaran YA se HA FACTURADO ... IMPOSIBLE"+(nav.getPulsado()==navegador.DELETE?"BORRAR":"EDITAR"));
           return false;
       }
       if (traspReci && !swEntdepos)
       {
-          msgBox("Factura ha emitido algun recibo bancario .. IMPOSIBLE MODIFICAR");
+          msgBox("Factura ha emitido algun recibo bancario .. IMPOSIBLE "+(nav.getPulsado()==navegador.DELETE?"BORRAR":"EDITAR"));
           return false;
       }
 
       if (traspCont && !swEntdepos)
       {
-          msgBox("Factura ya esta traspasada a contabilidad .. IMPOSIBLE BORRAR");
+          msgBox("Factura ya esta traspasada a contabilidad .. IMPOSIBLE " +(nav.getPulsado()==navegador.DELETE?"BORRAR":"EDITAR"));
           return false;
       }
       if (avcImpres == 1 && !P_MODPRECIO)
       {
-          int res = mensajes.mensajeYesNo("Albaran YA se ha listado\n ¿ Cancelar Borrado ?");
+          int res = mensajes.mensajeYesNo("Albaran YA se ha listado\n ¿ Cancelar "+(nav.getPulsado()==navegador.DELETE?"Borrado":"Ediccion")+"?");
           if (res != mensajes.NO)
               return false;
       }
@@ -4898,7 +4903,7 @@ public class pdalbara extends ventanaPad  implements PAD
           {
               if (Formatear.comparaFechas(pdalmace.getFechaInventario(avc_almoriE.getValorInt(), dtStat), fecMinMvt) >= 0)
               {
-                  msgBox("Albaran con Mvtos anteriores a Ult. Fecha Inventario. Imposible Editar/Borrar");
+                  msgBox("Albaran con Mvtos anteriores a Ult. Fecha Inventario. Imposible "+(nav.getPulsado()==navegador.DELETE?"BORRAR":"EDITAR"));
                   return false;
               }
           }
@@ -4910,7 +4915,7 @@ public class pdalbara extends ventanaPad  implements PAD
               avc_anoE.getValorInt(), avc_numeE.getValorInt(), false))
           {
               msgBox("Albaran se ha utilizado para realizar la compra: " + dtStat.getInt("acc_ano") + "-"
-                  + dtStat.getInt("acc_nume") + " IMPOSIBLE MODIFICAR O BORRAR");
+                  + dtStat.getInt("acc_nume") + " IMPOSIBLE "+(nav.getPulsado()==navegador.DELETE?"BORRAR":"EDITAR"));
               return false;
           }
       }
@@ -5687,7 +5692,7 @@ public class pdalbara extends ventanaPad  implements PAD
                    +" Dias":"¡¡PRODUCTO CADUCADO!!" );
                dtInd.add(dt);
            }
-           if (ERROR_DIASCAD >=0 &&  diasCad <= ERROR_DIASCAD && ! P_ADMIN)
+           if (!avc_cucomiE.isSelected() && ERROR_DIASCAD >=0 &&  diasCad <= ERROR_DIASCAD && ! P_ADMIN)
                swErrorDias=true;
        } while (dtCon1.next());
        if (dtInd.isEmpty())
@@ -7159,6 +7164,20 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avs_canti", jt.getValorDec(nLin, JT_KILOS));
     dtAdd.setDato("avs_unid", jt.getValorInt(nLin, JT_UNID));
     dtAdd.update(stUp);
+  }
+  /**
+   * Devuelve si un albaran tiene todas las lineas valoradas.
+   * @return true si estan todas las lineas con precio.
+   * @throws SQLException 
+   */
+  boolean isValorado() throws SQLException
+  {
+       s = "select * from v_albavel WHERE avc_ano = " + avc_anoE.getValorInt() +
+          " and emp_codi = " + emp_codiE.getValorInt() +
+          " and avc_nume = " + avc_numeE.getValorInt() +
+          " and avc_serie = '" + avc_seriE.getText() + "'" +
+          " and avl_prven=0 ";
+       return !dtStat.select(s);
   }
   void guardaLinAlb(int nLiAlb, int nLin) throws SQLException
   {
@@ -8654,8 +8673,11 @@ public class pdalbara extends ventanaPad  implements PAD
                     return;
                 }
             }
-            if (!checkFechaCad())
-                return;
+            if (indice != CAMBIA_CODIGO)
+            {
+                if (!checkFechaCad())
+                    return;
+            }
             this.setEnabled(false);
             if (nav.pulsado == navegador.ADDNEW || nav.pulsado == navegador.EDIT)
             {
@@ -8701,7 +8723,14 @@ public class pdalbara extends ventanaPad  implements PAD
             ultSelecImpr = indice;
             if (indice == IMPR_ALB_GRAF || indice == IMPR_ALB_TEXT
                 || indice == IMPR_ALB_TRA)
-                imprAlbar(indice);
+            {
+                if (!imprAlbar(indice))
+                {
+                    this.setEnabled(true);
+                    mensaje("");
+                    return;
+                }
+            }
             if (indice == IMPR_HOJA_TRA || indice == IMPR_HOJA_TRAF || indice == IMPR_ALB_TRA)
                 imprHojaTraza(indice == IMPR_HOJA_TRAF);
             if (indice == IMPR_ETIQUETAS)
@@ -9231,7 +9260,7 @@ public class pdalbara extends ventanaPad  implements PAD
   /**
    * Imprimir albaran
    */
-  void imprAlbar(char indice)
+  boolean imprAlbar(char indice)
   {
 //    int nAlbImp = 0;
     try
@@ -9240,14 +9269,14 @@ public class pdalbara extends ventanaPad  implements PAD
       { // Albaran deposito. Pedir confirmación
           int ret=mensajes.mensajeYesNo("Albaran es de DEPOSITO. Listar seguro?");
           if (ret!=mensajes.YES)
-              return;
+              return false;
       }
 //       int empCodi,int avcAno,String avcSerie,int avcNume,DatosTabla dt
       if (checkAlbaran(emp_codiE.getValorInt(),avc_anoE.getValorInt(),avc_seriE.getText(), avc_numeE.getValorInt(),dtCon1)<0)
       {
           msgBox("IMPOSIBLE IMPRIMIR. Albaran con problemas integridad. Revise lineas contra individuos");
           enviaMailError(s);
-          return;
+          return false;
       }
       if (isBloqueado(dtStat, "v_albavec",
                       avc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
@@ -9255,7 +9284,7 @@ public class pdalbara extends ventanaPad  implements PAD
       {
         msgBox("NO se pudo listar albaran\n"+msgBloqueo);
         verDatos(dtCons);
-        return;
+        return false;
       }
       if (opDispSalida.getValor().equals(DSAL_IMPRE))
       {       
@@ -9263,7 +9292,7 @@ public class pdalbara extends ventanaPad  implements PAD
             {
                 msgBox("CLIENTE ESTA MARCADO COMO NO SERVIBLE. IMPOSIBLE IMPRIMIR");
                 verDatos(dtCons);
-                return;          
+                return false;
             }
       }
       
@@ -9273,14 +9302,20 @@ public class pdalbara extends ventanaPad  implements PAD
       {
            int ret=mensajes.mensajeYesNo("A este Cliente se le deberia listar los albaranes valorados. Listar seguro?");
            if (ret!=mensajes.YES)
-              return;
+              return false;
+      }
+      if (! isValorado() && opValora.isSelected() )
+      {
+          int ret=mensajes.mensajeYesNo("Este albaran tiene producos sin precio. Listar  valorado, seguro?");
+           if (ret!=mensajes.YES)
+              return false;
       }
       if (cli_codiE.getLikeCliente().getInt("cli_albval")==pdclien.LISTAR_ALB_SINVALORAR &&
           opValora.isSelected()  && opDispSalida.getValor().equals(DSAL_IMPRE)  && avsNume==0)
       {
            int ret=mensajes.mensajeYesNo("A este Cliente se le deberia listar los albaranes sin Valorar. Listar seguro?");
            if (ret!=mensajes.YES)
-              return;
+              return false;
       }
       mensaje("Imprimiendo albaran ...");
 
@@ -9297,11 +9332,11 @@ public class pdalbara extends ventanaPad  implements PAD
       sqlAlb = getSqlListaAlb();
       if (opDispSalida.getValor().equals(DSAL_IMPRE) )
       { // Albaran grafico o Hoja trazabilidad + Albaran. Solo imprime y sale.
-        liAlb.envAlbarFax(ct.getConnection(), dtStat, sqlAlb, EU,
+         liAlb.envAlbarFax(ct.getConnection(), dtStat, sqlAlb, EU,
                   opValora.isSelected(),null,
                   avc_obserE.getText(),true,NUMCOPIAS_ALBGRAF,avsNume);
          Principal.guardaRegistro(dtAdd,"AVL",EU.usuario,avc_idE.getValorInt(),"");
-        return;
+        return true;
       }
       switch (opDispSalida.getValor())
       {
@@ -9335,12 +9370,12 @@ public class pdalbara extends ventanaPad  implements PAD
              Principal.guardaRegistro(dtAdd,"AVL",EU.usuario,avc_idE.getValorInt(),"");
       }
       mensajeErr("Albaran ... Impreso");
-
+      return true;
     }
     catch (Exception k)
     {
       Error("Error al imprimir Albaran", k);
-
+      return false;
     }
   }
  
