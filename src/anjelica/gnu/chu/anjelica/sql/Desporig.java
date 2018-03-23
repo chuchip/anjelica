@@ -49,6 +49,7 @@ public class Desporig  implements java.io.Serializable {
      private String deoValor;
      private String deoBlock=null;
      private int prvCodi;
+     private int anularControl=0;
      private char deoDesnue;
      private Date deoFecval;
      private String deoUsuval;
@@ -221,6 +222,14 @@ public class Desporig  implements java.io.Serializable {
     public void setDeoBlock(String deoBlock) {
         this.deoBlock = deoBlock;
     }
+    public void setAnularControl(int anularControl)
+    {
+        this.anularControl=anularControl;
+    }
+    public int getAnularControl()
+    {
+        return anularControl;
+    }
     public int getPrvCodi() {
         return this.prvCodi;
     }
@@ -298,6 +307,7 @@ public class Desporig  implements java.io.Serializable {
        this.deoIncval = dt.getString("deo_incval");
        this.deoValor = dt.getString("deo_Valor");
        this.deoBlock = dt.getString("deo_Block");
+       this.anularControl=dt.getInt("deo_anucon");
        this.prvCodi = dt.getInt("prv_Codi");
        this.deoDesnue = dt.getString("deo_desnue").charAt(0);
        this.deoFecval = dt.getDate("deo_fecval");
@@ -350,6 +360,7 @@ public class Desporig  implements java.io.Serializable {
       dtAdd.setDato("cli_codi",getCliente() );
       if (getDeoBlock()!=null)
         dtAdd.setDato("deo_block",getDeoBlock());
+      dtAdd.setDato("deo_anucon",getAnularControl());
       if (getDeoNumuni()!=null)
         dtAdd.setDato("deo_numuni",deoNumuni);
       if (getDeoValor()!=null)

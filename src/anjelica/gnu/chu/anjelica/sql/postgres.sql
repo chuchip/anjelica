@@ -1647,6 +1647,7 @@ deo_numuni  int  not null default 0,   -- Unidades a meter como origen (Solo tac
 cli_codi int, -- Cliente para el que se hace el despiece
 deo_fecval timestamp,    -- Fecha de Valoracion.
 deo_usuval varchar(20),  -- Usuario q hizo valoración
+deo_anucon smallint default 0, -- Anular controles validacion
 constraint ix_despori primary key(eje_nume,deo_codi)
 );
 alter table anjelica.desorilin add constraint cabdesp_lin
@@ -1685,6 +1686,7 @@ create table anjelica.deorcahis
 	cli_codi int, -- Codigo cliente
     deo_fecval timestamp,    -- Fecha de Valoracion.
     deo_usuval varchar(20),  -- Usuario q hizo valoración
+	deo_anucon smallint default 0, -- Anular controles validacion
     his_usunom varchar(15) not null, -- Usuario que realiza el Cambio
     his_fecha timestamp not null, -- Fecha de Cambio
     his_coment varchar(100), -- Comentario sobre el Cambio
@@ -3431,7 +3433,6 @@ insert into parametros values('*','verNegResStock','Ver Stocks en negativo en Co
 insert into parametros values('*','impAlbTexto','Impresion Albaranes Venta modo texto', 0);
 insert into parametros values('*','impFraTexto','Impresion Facturas Venta modo texto', 0);
 insert into parametros values('*','famProdReci','Familia de productos de reciclaje',99);
-insert into parametros values('*','despPend','Permite dejar despieces pendientes',0);
 insert into parametros values('*','checkCodRep','Comprueba que el codigo Reparto este nulo',1);
 insert into parametros values('*','jdbc_usu_cont','Usuario Contabilidad','sa');
 insert into parametros values('*','jdbc_pass_cont','Contraseña Contabilidad','as');
@@ -4571,7 +4572,8 @@ l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcos
 drop view v_despsal;
 CREATE OR REPLACE VIEW v_despsal AS 
  SELECT c.eje_nume,    c.deo_codi,    c.deo_numdes,    c.tid_codi,    c.deo_fecha,    c.deo_almori,    c.deo_almdes,    c.deo_ejloge,
-    c.deo_seloge,    c.deo_nuloge,    c.deo_incval,    l.def_orden,    l.pro_codi,    l.def_ejelot,    l.def_emplot,
+    c.deo_seloge,    c.deo_nuloge,    c.deo_incval,  c.deo_lotnue,
+	l.def_orden,    l.pro_codi,    l.def_ejelot,    l.def_emplot,
     l.def_serlot,    l.pro_lote,    l.pro_numind,    l.def_kilos,    l.def_numpie,    l.def_prcost,    l.def_unicaj,
     l.def_feccad,    l.def_preusu,    l.def_tiempo,    l.alm_codi, l.def_blkcos,   c.deo_desnue
    FROM desporig c,

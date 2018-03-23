@@ -1,3 +1,9 @@
+-- 
+-- Anular opcion de desproteger despiece.
+--
+alter table deorcahis add deo_anucon smallint default 0;
+alter table desporig add deo_anucon smallint default 0;
+--
 drop view v_resprcli;
 alter table cabresprcli add rpc_cerra smallint default 0 not null, -- Cerrado (0: No)
 create view v_resprcli as 

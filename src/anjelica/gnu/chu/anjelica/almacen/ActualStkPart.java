@@ -540,20 +540,20 @@ public class ActualStkPart
     return anuStkPart(proCodi, ejeLot, empCodi, serLot, numLot, nInd, almCodi,
                       kilos, unid);
   }
-  public static boolean isBloqueado(DatosTabla dt,int proCodi, int ejeLot, int empLot, String serLot,
-                        int numLot,
-                        int nInd, int almCodi) throws SQLException
-  {
-      return dt.select("SELECT * FROM v_stkpart WHERE stk_block != 0 "+
-        " AND eje_nume = " + ejeLot +
-        " AND emp_codi =  " + empLot +
-        " and pro_serie = '" + serLot + "'" +
-        " and pro_nupar = " + numLot +
-        " and pro_numind = " + nInd +
-        " and pro_codi = " + proCodi +
-        " and alm_codi = " + almCodi);
-              
-  }
+//  public static boolean isBloqueado(DatosTabla dt,int proCodi, int ejeLot, int empLot, String serLot,
+//                        int numLot,
+//                        int nInd, int almCodi) throws SQLException
+//  {
+//      return dt.select("SELECT * FROM v_stkpart WHERE stk_block != 0 "+
+//        " AND eje_nume = " + ejeLot +
+//        " AND emp_codi =  " + empLot +
+//        " and pro_serie = '" + serLot + "'" +
+//        " and pro_nupar = " + numLot +
+//        " and pro_numind = " + nInd +
+//        " and pro_codi = " + proCodi +
+//        " and alm_codi = " + almCodi);
+//              
+//  }
   /**
    * Establece un registro de stock partidas como bloqueado
    * @param proCodi
@@ -567,21 +567,21 @@ public class ActualStkPart
    * @return false si no encuentra el registro.
    * @throws SQLException
    */
-   public boolean setBloqueo(int proCodi, int ejeLot, int empLot, String serLot,
-                        int numLot,
-                        int nInd, int almCodi, boolean bloquea) throws SQLException
-  {
-     String s="UPDATE stockpart set stk_block ="+(bloquea?-1:0)+
-        " WHERE eje_nume = " + ejeLot +
-        " AND emp_codi =  " + empLot +
-        " and pro_serie = '" + serLot + "'" +
-        " and pro_nupar = " + numLot +
-        " and pro_numind = " + nInd +
-        " and pro_codi = " + proCodi +
-        " and alm_codi = " + almCodi;
-     int nRowAf=dtAdd.executeUpdate(s);
-     return nRowAf!=0;
-  }
+//   public boolean setBloqueo(int proCodi, int ejeLot, int empLot, String serLot,
+//                        int numLot,
+//                        int nInd, int almCodi, boolean bloquea) throws SQLException
+//  {
+//     String s="UPDATE stockpart set stk_block ="+(bloquea?-1:0)+
+//        " WHERE eje_nume = " + ejeLot +
+//        " AND emp_codi =  " + empLot +
+//        " and pro_serie = '" + serLot + "'" +
+//        " and pro_nupar = " + numLot +
+//        " and pro_numind = " + nInd +
+//        " and pro_codi = " + proCodi +
+//        " and alm_codi = " + almCodi;
+//     int nRowAf=dtAdd.executeUpdate(s);
+//     return nRowAf!=0;
+//  }
    /**
     * Establece el stock de un individuo a los kilos y unidades mandados.
     * @param proCodi

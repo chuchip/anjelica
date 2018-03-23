@@ -4,7 +4,7 @@ package gnu.chu.anjelica.inventario;
  *
  * <p>Titulo: ClDifInv </p>
  * <p>Descripción: Consulta / Listado Diferencias Existencias Reales sobre las introducidas en Control </p>
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -135,7 +135,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2017-05-14");
+        this.setVersion("2018-03-21");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -599,18 +599,52 @@ public class ClDifInv extends ventana {
                                 (dtStat.getString("avc_depos").equals("D")?"D":"");
                    if (dtStat.getString("avc_depos").equals("D"))
                    {
-                    s="select * from v_albvenserv where "+
-                           " pro_codi = "+dtCon1.getInt("pro_codi")+
-                           " and avs_ejelot ="+dtCon1.getInt("PRP_ANO")+
-                           " and avs_serlot ='"+dtCon1.getString("PRP_SERI")+"'"+
-                           " and avs_numpar ="+dtCon1.getInt("PRP_PART")+
-                           " and avs_numind ="+dtCon1.getInt("PRP_INDI");
-                   if (dtStat.select(s))
-                     lciComent+=dtStat.getFecha("avs_fecha","dd-MM");
+                        s="select * from v_albvenserv where "+
+                               " pro_codi = "+dtCon1.getInt("pro_codi")+
+                               " and avs_ejelot ="+dtCon1.getInt("PRP_ANO")+
+                               " and avs_serlot ='"+dtCon1.getString("PRP_SERI")+"'"+
+                               " and avs_numpar ="+dtCon1.getInt("PRP_PART")+
+                               " and avs_numind ="+dtCon1.getInt("PRP_INDI");
+                       if (dtStat.select(s))
+                         lciComent+=dtStat.getFecha("avs_fecha","dd-MM");
                    }
-              } 
+              }
+               if (lciComent==null)
+               { 
+                   if (dtStat.select("select c.* from hisalpave as p, hisalcave as c"
+                       + " where pro_codi=" + dtCon1.getInt("pro_codi")
+                       + " and avp_numpar = " + dtCon1.getInt("PRP_PART")
+                       + " and avp_serlot = '" + dtCon1.getString("PRP_SERI") + "'"
+                       + " and avp_ejelot = " + dtCon1.getInt("PRP_ANO")
+                       + " and avp_numind = " + dtCon1.getInt("PRP_INDI")
+                       + " and c.avc_ano = p.avc_ano "
+                       + " and c.emp_codi = p.emp_codi"
+                       + " and c.avc_serie = p.avc_serie "
+                       + " and c.avc_nume = p.avc_nume "
+                       + //" AND avc_fecalb <= TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') "+
+                       " order by avc_fecalb desc "))
+                   {
+                       lciComent = "H:" + dtStat.getInt("avc_ano")
+                           + dtStat.getString("avc_serie") + dtStat.getInt("avc_nume") + "."
+                           + dtStat.getFecha("avc_fecalb", "dd-MM")
+                           + (dtStat.getString("avc_depos").equals("D") ? "D" : "");
+                       if (dtStat.getString("avc_depos").equals("D"))
+                       {
+                           s = "select * from v_albvenserv where "
+                               + " pro_codi = " + dtCon1.getInt("pro_codi")
+                               + " and avs_ejelot =" + dtCon1.getInt("PRP_ANO")
+                               + " and avs_serlot ='" + dtCon1.getString("PRP_SERI") + "'"
+                               + " and avs_numpar =" + dtCon1.getInt("PRP_PART")
+                               + " and avs_numind =" + dtCon1.getInt("PRP_INDI");
+                           if (dtStat.select(s))
+                               lciComent += dtStat.getFecha("avs_fecha", "dd-MM");
+                       }
+
+                   }
+               }
               if (lciComent==null)
               { // Comprobar si Salio en despieces
+                  
                   s="SELECT * FROM v_despori where  "+
                        " pro_codi = "+dtCon1.getInt("pro_codi")+
                        " and deo_ejelot ="+dtCon1.getInt("PRP_ANO")+

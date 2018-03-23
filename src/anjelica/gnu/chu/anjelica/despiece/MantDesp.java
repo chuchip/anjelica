@@ -21,7 +21,7 @@ package gnu.chu.anjelica.despiece;
  * El parametro MODPRECIO indica si se veran los precios.  Los precios NO se pueden 
  * modificar.
  * </P>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -91,6 +91,8 @@ import javax.swing.event.ListSelectionListener;
 
 public class MantDesp extends ventanaPad implements PAD
 {    
+    int ART_MER=80;
+    int ART_MERMA=4;
     DatTrazFrame datTrazFrame;
     public final static int MIN_DIAS_CAD=10;
     Date ultFecCaduc;
@@ -118,7 +120,7 @@ public class MantDesp extends ventanaPad implements PAD
     private String deoBlockAnt;
 //    AutoDesp autoDesp;
     String lastSqlWhereLin;
-    int proCodiB, ejeLoteB, numLoteB, numIndiB, almOrigB, numLinB;
+//    int proCodiB, ejeLoteB, numLoteB, numIndiB, almOrigB, numLinB;
     String serLoteB;
     double deoKilosB;
     final static String TABLA_BLOCK = "desporig";
@@ -131,7 +133,7 @@ public class MantDesp extends ventanaPad implements PAD
     
     private boolean verGrupo;
     private boolean AUTOLLENARDESP; // Variable cogida de tabla parametros
-    private boolean DESPPENDIENTE=false;
+    //private boolean DESPPENDIENTE=false;
 // Variable que indica si se podra mantener el lote de entrada
     private boolean AGRUPALOTE; // Variable cogida de tabla parametros.
     final private int JTCAB_GRID = 1;
@@ -165,11 +167,11 @@ public class MantDesp extends ventanaPad implements PAD
     private BotonBascula botonBascula;
     conexion ctProd;
     DatosTabla dtProd;
-    boolean P_ADMIN = false;
+//    boolean P_ADMIN = false;
     ActualStkPart stkPart;
     boolean swTienePrec = false;
     boolean inTidCodi = false;
-    public final static double LIMDIF = 0.02;
+    public final static double LIMDIF = 0.02; // 2 %.
     int proCodTD = 0;
 //  ayuLote ayuLot=null;
     utildesp utdesp;
@@ -201,13 +203,7 @@ public class MantDesp extends ventanaPad implements PAD
         setAcronimo("mandes");
         try
         {
-            if (ht != null)
-            {                
-                if (ht.get("modPrecio") != null)
-                    MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
-                if (ht.get("admin") != null)
-                    P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
-            }
+            setParametros(ht);
             if (jf.gestor.apuntar(this))
                 jbInit();
             else
@@ -226,14 +222,7 @@ public class MantDesp extends ventanaPad implements PAD
         vl = p.getLayeredPane();
         setTitulo("Mantenimiento Despieces");
         eje = false;
-        if (ht != null)
-        {          
-            if (ht.get("modPrecio") != null)
-                MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
-            if (ht.get("admin") != null)
-                P_ADMIN = Boolean.parseBoolean(ht.get("admin"));
-        }
-
+        setParametros(ht);
         try
         {
             jbInit();
@@ -242,18 +231,28 @@ public class MantDesp extends ventanaPad implements PAD
             ErrorInit(e);            
         }
     }
+    private void setParametros(Hashtable<String,String> ht)
+    {
+        if (ht != null)
+        {                
+            if (ht.get("modPrecio") != null)
+                MODPRECIO = Boolean.parseBoolean(ht.get("modPrecio"));
+            if (ht.get("admin") != null)
+                setArgumentoAdmin(Boolean.parseBoolean(ht.get("admin")));
+        }
 
+    }
     private void jbInit() throws Exception {
-        if (P_ADMIN)
+        if (isAdmin() )
             MODPRECIO=true; 
-        setVersion("2018-02-08" + (MODPRECIO ? " (VER PRECIOS)" : "") + (P_ADMIN ? " ADMINISTRADOR" : ""));
+        setVersion("2018-03-18" + (MODPRECIO ? " (VER PRECIOS)" : "") + (isArgumentoAdmin() ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
         AUTOLLENARDESP = EU.getValorParam("autollenardesp", AUTOLLENARDESP);
         AGRUPALOTE = EU.getValorParam("agrupalote", AGRUPALOTE);
         AVISATIDCODI = EU.getValorParam("avisatidcodi", AVISATIDCODI);
-        DESPPENDIENTE=EU.getValorParam("despPend", DESPPENDIENTE);
+//        DESPPENDIENTE=EU.getValorParam("despPend", DESPPENDIENTE);
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         statusBar = new StatusBar(this);
 
@@ -303,7 +302,7 @@ public class MantDesp extends ventanaPad implements PAD
         tid_codiE.setCeroIsNull(true);       
         tid_codiE.setModoConsulta(false);
         tid_codiE.iniciar(dtProd, this, vl, EU);
-        tid_codiE.setAdmin(P_ADMIN);
+        tid_codiE.setAdmin(isAdmin());
         pdalmace.llenaLinkBox(deo_almoriE, dtCon1);
         pdalmace.llenaLinkBox(deo_almdesE, dtCon1);
 //        s = "SELECT alm_codi, alm_nomb from v_almacen order by alm_codi";
@@ -326,9 +325,10 @@ public class MantDesp extends ventanaPad implements PAD
         jtCab.cuadrarGrid();
         jtLin.cuadrarGrid();
         utdesp = new utildesp();
-        opMantFecha.setEnabled(P_ADMIN);
-        deo_incvalE.setEnabled(P_ADMIN);
-        deo_cerraE.setEnabled(P_ADMIN);
+        opMantFecha.setEnabled(isAdmin());
+        deo_incvalE.setEnabled(isAdmin());
+        deo_cerraE.setEnabled(isAdmin());
+        opAnularControl.setEnabled(isAdmin());
         Pcabe.setDefButton(Baceptar);
         Pcabe.setEscButton(Bcancelar);
         Pcabe.setAltButton(BirGrid);
@@ -1789,27 +1789,27 @@ public class MantDesp extends ventanaPad implements PAD
             proCodTD = jtCab.getValorInt(0, JTCAB_PROCODI);
             genDatEtiq();
             ultFecCaduc=jtLin.getValDate(jtLin.getRowCount()-1,JTLIN_FECCAD);
-            proCodiB = 0;
+//            proCodiB = 0;
             boolean isBlock = deo_blockE.getValor().equals("S");
-            if (isBlock && ActualStkPart.isBloqueado(dtStat, jtCab.getValorInt(0, JTCAB_PROCODI), jtCab.getValorInt(0, JTCAB_EJELOT),
-                EU.em_cod, jtCab.getValString(0, JTCAB_SERLOT),
-                jtCab.getValorInt(0, JTCAB_NUMLOT), jtCab.getValorInt(0, JTCAB_NUMIND),
-                deo_almoriE.getValorInt()))
-            {
-                proCodiB = jtCab.getValorInt(0, JTCAB_PROCODI);
-                ejeLoteB = jtCab.getValorInt(0, JTCAB_EJELOT);
-                serLoteB = jtCab.getValString(0, JTCAB_SERLOT);
-                numLoteB = jtCab.getValorInt(0, JTCAB_NUMLOT);
-                numIndiB = jtCab.getValorInt(0, JTCAB_NUMIND);
-                numLinB = jtCab.getValorInt(0, JTCAB_NL);
-                almOrigB = deo_almoriE.getValorInt();
-                deoKilosB = Formatear.redondea((jtCab.getValorDec(0, JTCAB_KILOS) - kgDifE.getValorDec()) * -1, 2);
-            }
+//            if (isBlock && ActualStkPart.isBloqueado(dtStat, jtCab.getValorInt(0, JTCAB_PROCODI), jtCab.getValorInt(0, JTCAB_EJELOT),
+//                EU.em_cod, jtCab.getValString(0, JTCAB_SERLOT),
+//                jtCab.getValorInt(0, JTCAB_NUMLOT), jtCab.getValorInt(0, JTCAB_NUMIND),
+//                deo_almoriE.getValorInt()))
+//            {
+//                proCodiB = jtCab.getValorInt(0, JTCAB_PROCODI);
+//                ejeLoteB = jtCab.getValorInt(0, JTCAB_EJELOT);
+//                serLoteB = jtCab.getValString(0, JTCAB_SERLOT);
+//                numLoteB = jtCab.getValorInt(0, JTCAB_NUMLOT);
+//                numIndiB = jtCab.getValorInt(0, JTCAB_NUMIND);
+//                numLinB = jtCab.getValorInt(0, JTCAB_NL);
+//                almOrigB = deo_almoriE.getValorInt();
+//                deoKilosB = Formatear.redondea((jtCab.getValorDec(0, JTCAB_KILOS) - kgDifE.getValorDec()) * -1, 2);
+//            }
             opSimular.setSelected(false);
             opSimular.setEnabled(false);
             deo_blockE.setValor("N");
-              
-            
+            opAnularControl.setEnabled(isAdmin());
+            POtros.setEnabled(isAdmin());
             if (isBlock)
                 irGridLin();
             else
@@ -1885,11 +1885,8 @@ public class MantDesp extends ventanaPad implements PAD
         {
              if (kgDifE.getValorDec() >= kgOrigE.getValorDec() * LIMDIF)
              {
-                if (! DESPPENDIENTE)
-                {
-                    msgBox("No esta permitido dejar Despieces pendientes de cerrar");
+                    msgBox("Kilos entrada diferentes a Kilos salida. IMPOSIBLE GUARDAR DESPIECE");
                     return;
-                }
              }
         }
        
@@ -1908,26 +1905,27 @@ public class MantDesp extends ventanaPad implements PAD
             }
             // Ordenar las lineas
            
-            if (proCodiB != 0)
-            { // Antes tenia un producto bloqueado. Pongo kilos a 0 de producto entrada, si todavia sigue bloqueado
-                if (ActualStkPart.isBloqueado(dtStat, proCodiB, ejeLoteB, EU.em_cod, serLoteB, numLoteB, numIndiB, almOrigB))
-                {
-                    stkPart.ponerStock(proCodiB, ejeLoteB,
-                        EU.em_cod,
-                        serLoteB, numLoteB,
-                        numIndiB, almOrigB, 0,
-                        0);
-                    stkPart.setBloqueo(proCodiB, ejeLoteB,
-                        EU.em_cod,
-                        serLoteB, numLoteB,
-                        numIndiB, almOrigB, false);
-                }
-            }
+//            if (proCodiB != 0)
+//            { // Antes tenia un producto bloqueado. Pongo kilos a 0 de producto entrada, si todavia sigue bloqueado
+//                if (ActualStkPart.isBloqueado(dtStat, proCodiB, ejeLoteB, EU.em_cod, serLoteB, numLoteB, numIndiB, almOrigB))
+//                {
+//                    stkPart.ponerStock(proCodiB, ejeLoteB,
+//                        EU.em_cod,
+//                        serLoteB, numLoteB,
+//                        numIndiB, almOrigB, 0,
+//                        0);
+//                    stkPart.setBloqueo(proCodiB, ejeLoteB,
+//                        EU.em_cod,
+//                        serLoteB, numLoteB,
+//                        numIndiB, almOrigB, false);
+//                }
+//            }
             if (deo_blockE.getValor().equals("N"))
             {
                 if (kgDifE.getValorDec() >= kgOrigE.getValorDec() * LIMDIF)
                 {
-                    ponStockDif();
+                    msgBox("DIFERENCIA KILOS ENTRE ENTRADA Y SALIDA. IMPOSIBLE GUARDAR");
+                    return;
                 }
             }
             
@@ -1983,7 +1981,7 @@ public class MantDesp extends ventanaPad implements PAD
         {
             inTidCodi=false;
             swErrCab=false;
-            proCodiB = 0;
+//            proCodiB = 0;
             utdesp.setFechaCaducidad( null);
             ultCodigoEtiqueta=0;
             swMantLote = false;
@@ -2034,6 +2032,8 @@ public class MantDesp extends ventanaPad implements PAD
             proCodTD = 0;
             deo_lotnueE.setValor("-1");
             opSimular.setSelected(false);
+            opAnularControl.setSelected(false);
+            opAnularControl.setEnabled(isAdmin());
             dtAdd.commit();
             irGridCab();
 //    jtCab.requestFocusInicio();
@@ -2138,22 +2138,63 @@ public class MantDesp extends ventanaPad implements PAD
             }
             actKilos(0);
             if (kgDifE.getValorDec() < 0)
-            {
-                if (! P_ADMIN)
-                {
-                    msgBox("Kilos de salida superior a los de entrada. Imposible guardar");
-                    return false;
-                }
-                int res=mensajes.mensajeYesNo("Kilos de salida superior a entrada. ¿ Salir seguro ?");
-                if (res!=mensajes.YES)
-                    return false;
-                enviaMailError("Despiece: "+deo_codiE.getValorInt() +"Kilos de salida superior a entrada. Diferencia:"+kgDifE.getValorDec());
-               
-//                deo_blockE.setValor("S"); // Lo marco como bloqueado
+            {                   
+                    if (kgDifE.getValorDec()> -2)
+                    { // Kilos diferencia son menor de 2.
+                         jtCab.resetCambio();
+                         jtCab.setEnabled(false);
+                         jtCab.requestFocusFinal();
+                         ArrayList v = new ArrayList();
+                         v.add("99");
+                         v.add(pro_codiE.getNombArt(99));
+                         v.add(0);
+                         v.add("A");
+                         v.add(0);
+                         v.add(0);
+                         v.add(kgDifE.getValorDec()*-1);
+                         v.add(0);
+                         v.add(0);
+                         v.add(0);
+                         v.add("");
+                         jtCab.addLinea(v);
+                         jtCab.setEnabled(true);
+                         jtCab.requestFocusFinal();
+                         jtCab.ponValores(jtCab.getSelectedRow());
+                         cambiaLineajtCab(jtCab.getSelectedRow());
+                         jtLin.setEnabled(false);
+                    }
+                    msgBox("Kilos de salida superior a los de entrada. Corrija pesos");
+                    return false;               
             }
-
+            if (kgDifE.getValorDec() < kgOrigE.getValorDec() * 0.10 && kgDifE.getValorDec()> 0.01)
+            { // Insertar linea de mer
+                    jtLin.resetCambio();
+                    jtLin.setEnabled(false);
+                    jtLin.requestFocusFinal();
+                    ArrayList v = new ArrayList();
+                    v.add(tid_codiE.isAutoMer()?ART_MER:ART_MERMA);
+                    v.add(pro_codiE.getNombArt(tid_codiE.isAutoMer()?ART_MER:ART_MERMA));
+                    v.add(kgDifE.getValorDec());
+                    v.add(1);            
+                    v.add("");
+                    v.add( "");
+                    v.add("" );
+                    v.add(0);
+                    v.add(1);
+                    v.add("");
+                    v.add("");
+                    jtLin.addLinea(v);
+                    jtLin.setEnabled(true);
+                    jtLin.requestFocusFinal();
+                    jtLin.ponValores(jtLin.getSelectedRow());
+                    cambiaLineajtLin(jtLin.getSelectedRow());
+                    jtCab.setEnabled(false);
+                     msgBox("Kilos de salida inferior a los de entrada. COMPRUEBE PESOS!");
+                     return false;  
+            }
+            
             if (kgDifE.getValorDec() <= kgOrigE.getValorDec() * MantDesp.LIMDIF)
-            {
+            {                
                 // Compruebo integridad de despiece, ya q se marcara como cerrado.
                 if (isComprobarTipoDespiece())
                 {
@@ -2214,40 +2255,40 @@ public class MantDesp extends ventanaPad implements PAD
      * Pone stock por diferencia a producto original.
      * @throws Exception
      */
-    void ponStockDif() throws Throwable
-    {
-//      deo_blockE.setValor("N");
-
-        deo_blockE.setValor("S");
-        jtCab.salirFoco(0);
-//        stkPart.ponerStock(pro_codiE.getValorInt(), deo_ejelotE.getValorInt(),
+//    void ponStockDif() throws Throwable
+//    {
+////      deo_blockE.setValor("N");
+//
+//        deo_blockE.setValor("S");
+//        jtCab.salirFoco(0);
+////        stkPart.ponerStock(pro_codiE.getValorInt(), deo_ejelotE.getValorInt(),
+////            EU.em_cod,
+////            deo_serlotE.getText(), pro_loteE.getValorInt(),
+////            pro_numindE.getValorInt(), deo_almoriE.getValorInt(), kgDifE.getValorDec(),
+////            1);
+//        stkPart.setBloqueo(pro_codiE.getValorInt(), deo_ejelotE.getValorInt(),
 //            EU.em_cod,
 //            deo_serlotE.getText(), pro_loteE.getValorInt(),
-//            pro_numindE.getValorInt(), deo_almoriE.getValorInt(), kgDifE.getValorDec(),
-//            1);
-        stkPart.setBloqueo(pro_codiE.getValorInt(), deo_ejelotE.getValorInt(),
-            EU.em_cod,
-            deo_serlotE.getText(), pro_loteE.getValorInt(),
-            pro_numindE.getValorInt(), deo_almoriE.getValorInt(), true);
-        utdesp.iniciar(dtAdd, eje_numeE.getValorInt(), EU.em_cod,
-            deo_almdesE.getValorInt(), deo_almoriE.getValorInt(), EU);
-        utdesp.setLogotipo(null);
-        utdesp.setDirEmpresa(null);
-
-        proCodeti=pro_codiE.getLikeProd().isNull("pro_codeti")?0:pro_codiE.getLikeProd().getInt("pro_codeti");
-        
-        utdesp.imprEtiq(proCodeti, dtCon1, pro_codiE.getValorInt(), pro_nombE.getText(),
-           "D",
-            pro_loteE.getValorInt(),
-            "" + deo_ejelotE.getValorInt(), deo_serlotE.getText(),
-            pro_numindE.getValorInt(),
-            kgDifE.getValorDec(),
-            utdesp.getFechaDespiece(),
-            utdesp.getFechaProduccion(),
-            utdesp.getFechaCaducidad(),
-            utdesp.getFechaSacrificio(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
-            utdesp.getFechaCaducidad(),deo_numdesE.getValorInt() );
-    }
+//            pro_numindE.getValorInt(), deo_almoriE.getValorInt(), true);
+//        utdesp.iniciar(dtAdd, eje_numeE.getValorInt(), EU.em_cod,
+//            deo_almdesE.getValorInt(), deo_almoriE.getValorInt(), EU);
+//        utdesp.setLogotipo(null);
+//        utdesp.setDirEmpresa(null);
+//
+//        proCodeti=pro_codiE.getLikeProd().isNull("pro_codeti")?0:pro_codiE.getLikeProd().getInt("pro_codeti");
+//        
+//        utdesp.imprEtiq(proCodeti, dtCon1, pro_codiE.getValorInt(), pro_nombE.getText(),
+//           "D",
+//            pro_loteE.getValorInt(),
+//            "" + deo_ejelotE.getValorInt(), deo_serlotE.getText(),
+//            pro_numindE.getValorInt(),
+//            kgDifE.getValorDec(),
+//            utdesp.getFechaDespiece(),
+//            utdesp.getFechaProduccion(),
+//            utdesp.getFechaCaducidad(),
+//            utdesp.getFechaSacrificio(),//jtLin.getValDate(linea,5,def_feccadE.getFormato()),
+//            utdesp.getFechaCaducidad(),deo_numdesE.getValorInt() );
+//    }
 
     @Override
     public void ej_addnew1() {
@@ -2258,13 +2299,9 @@ public class MantDesp extends ventanaPad implements PAD
             {
                  if (kgDifE.getValorDec() >= kgOrigE.getValorDec() * LIMDIF)
                  {
-                    if (! DESPPENDIENTE)
-                    {
-                        msgBox("No esta permitido dejar Despieces pendientes de cerrar");
+                     if (tid_codiE.isAutoMer() )
+                        msgBox("KILOS ENTRADA Y SALIDA SON DISTINTOS. IMPOSIBLE CERRAR");
                         return;
-                    }
-                    else
-                    ponStockDif();
                  }
             }
 
@@ -2837,6 +2874,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_almdesE.setText(dtStat.getString("deo_almdes"));
                 tid_codiE.setText(dtStat.getString("tid_codi"));
                 cli_codiE.setValorInt(dtStat.getInt("cli_codi",true));
+                opAnularControl.setSelected(dtStat.getInt("deo_anucon",true)!=0);
                 if (hisRowid==0)
                 {
                     jtHist.setEnabled(false);
@@ -3270,7 +3308,7 @@ public class MantDesp extends ventanaPad implements PAD
             {
                 if (jtLin.getValorInt(linea,JTLIN_NUMIND)>0)
                 {
-                    if (!borraLineajtLIn(linea))
+                    if (!borraLineajtLin(linea))
                         return JTLIN_KILOS;
                     jtLin.setValor(0,linea,JTLIN_NUMIND);
                 }
@@ -3292,7 +3330,7 @@ public class MantDesp extends ventanaPad implements PAD
                return JTLIN_UNID;
             }
             
-            if (def_numpieE.getValorDec()>1 && !P_ADMIN)
+            if (def_numpieE.getValorDec()>1 && ! isArgumentoAdmin())
             {
                msgBox("Numero de Piezas deberia ser 1");
                def_numpieE.setValorDec(1);
@@ -3414,7 +3452,7 @@ public class MantDesp extends ventanaPad implements PAD
                                 deo_selogeE.getText(), deo_nulogeE.getValorInt(),
                                 jtLin.getValorInt(linea,JTLIN_NUMIND)))
                             {
-                              enviaMailError("MantDesp. Ind. No encontrado: "+ pro_codlE.getCopiaInt()+" Lote: "+
+                                  enviaMailError("MantDesp. Ind. No encontrado: "+ pro_codlE.getCopiaInt()+" Lote: "+
                                   deo_ejlogeE.getValorInt()+
                                   deo_selogeE.getText()+ deo_nulogeE.getValorInt()+"-"+
                                   jtLin.getValorInt(linea,JTLIN_NUMIND));
@@ -3570,15 +3608,15 @@ public class MantDesp extends ventanaPad implements PAD
             } 
             else
             {
-                if (proCodAnt!=0)
-                    anuStkPart(proCodAnt, deo_ejlogeE.getValorInt(),
-                        EU.em_cod,
-                        deo_selogeE.getText(), deo_nulogeE.getValorInt(),
-                        nInd, defKilAnt, 1, deo_almoriE.getValorInt());
-//                else
-//                {
-//                    enviaMailError("Anulo stock partidas con producto=0"+ ventana.getCurrentStackTrace());
-//                }
+//                if (proCodAnt!=0)
+//                    anuStkPart(proCodAnt, deo_ejlogeE.getValorInt(),
+//                        EU.em_cod,
+//                        deo_selogeE.getText(), deo_nulogeE.getValorInt(),
+//                        nInd, defKilAnt, 1, deo_almoriE.getValorInt());
+////                else
+////                {
+////                    enviaMailError("Anulo stock partidas con producto=0"+ ventana.getCurrentStackTrace());
+////                }
                 guardaLinDespFin(deo_ejlogeE.getValorInt(), EU.em_cod,
                     deo_selogeE.getText(), deo_nulogeE.getValorInt(), nInd,
                     pro_codlE.getValorInt(), def_kilosE.getValorDec(),
@@ -3740,14 +3778,14 @@ public class MantDesp extends ventanaPad implements PAD
         if (!dtAdd.select(s, true))
             return 0;
                 
-        if (anuStkPart(dtAdd.getInt("pro_codi"), dtAdd.getInt("def_ejelot"), EU.em_cod,
-            dtAdd.getString("def_serlot"), dtAdd.getInt("pro_lote"),
-            dtAdd.getInt("pro_numind"), dtAdd.getDouble("def_kilos"),
-            dtAdd.getInt("def_numpie"), deo_almdesE.getValorInt()) == 0)
-        {
-            msgBox("No encontrado apunte en Stock-Partidas");
-            return 0;
-        }
+//        if (anuStkPart(dtAdd.getInt("pro_codi"), dtAdd.getInt("def_ejelot"), EU.em_cod,
+//            dtAdd.getString("def_serlot"), dtAdd.getInt("pro_lote"),
+//            dtAdd.getInt("pro_numind"), dtAdd.getDouble("def_kilos"),
+//            dtAdd.getInt("def_numpie"), deo_almdesE.getValorInt()) == 0)
+//        {
+//            msgBox("No encontrado apunte en Stock-Partidas");
+//            return 0;
+//        }
         
         s = "DELETE FROM v_despfin " 
             + " WHERE eje_nume = " + eje_numeE.getValorInt()
@@ -3816,16 +3854,7 @@ public class MantDesp extends ventanaPad implements PAD
                " and stp_nucrot='"+crotal+"'";
            dtStat.select(s);
            if (dtStat.getInt("cuantos",true)>= pro_codlE.getNumeroCrotales() )
-           {               
-//               s="select stp_nucrot from stockpart where pro_nupar="+ numLot+
-//                " and pro_serie='"+serLot+"' "+
-//                " and eje_nume="+ejeLot+
-//                " and pro_codi = "+proCodi+
-//                " and stp_nucrot is not null";               
-//               if (dtStat.select(s))
-//                   crotal=dtStat.getString("stp_nucrot");
                 crotal=MantAlbComCarne.getRandomCrotal(crotal,EU);              
-           }
            utdesp.setNumeroCrotal(crotal);
        
         }
@@ -4009,8 +4038,9 @@ public class MantDesp extends ventanaPad implements PAD
         desorca.setDeoLotnue(new Short(deo_lotnueE.getValor()));
         desorca.setDeoCerra(new Short(deo_cerraE.getSelecion()));
         desorca.setDeoIncval(deo_incvalE.getValor());
-        desorca.setDeoBlock(deo_blockE.getValor());
+        desorca.setDeoBlock(deo_blockE.getValor());        
         desorca.setDeoValor("N");
+        desorca.setAnularControl(opAnularControl.isSelected()?1:0);
     }
 // /**
 //  * Actualiza grupo de despiece
@@ -4074,8 +4104,12 @@ public class MantDesp extends ventanaPad implements PAD
     boolean igualDouble(String val1, String val2) {
         return Double.parseDouble(val1.trim()) == Double.parseDouble(val2.trim());
     }
-
-    boolean borraLineajtLIn(int row) {
+    /**
+     * Borrar Linea de salida
+     * @param row
+     * @return 
+     */
+    boolean borraLineajtLin(int row) {
         if (jtLin.getValorInt(row, JTLIN_NUMIND) == 0)        
             return true;
 
@@ -4088,16 +4122,16 @@ public class MantDesp extends ventanaPad implements PAD
                 def_kilosE.getCopiaDouble(), def_numpieE.getCopiaInt()))
             {
                 if (! ActualStkPart.checkIndiv(dtStat, pro_codlE.getCopiaInt(),
-                deo_ejlogeE.getValorInt(),
-                deo_selogeE.getText(), deo_nulogeE.getValorInt(),
-                jtLin.getValorInt(row,JTLIN_NUMIND)))
+                    deo_ejlogeE.getValorInt(),
+                    deo_selogeE.getText(), deo_nulogeE.getValorInt(),
+                    jtLin.getValorInt(row,JTLIN_NUMIND)))
                 {
                      enviaMailError("MantDesp. Ind. No encontrado: "+ pro_codlE.getCopiaInt()+" Lote: "+
                         deo_ejlogeE.getValorInt()+
                         deo_selogeE.getText()+ deo_nulogeE.getValorInt()+"-"+
                         jtLin.getValorInt(row,JTLIN_NUMIND));
                      msgBox("Individuo NO ENCONTRADO. Hay un error interno");
-                     return true;
+                     return false;
                 }
                 msgBox("Individuo ha tenido mvtos. Imposible borrar linea");
                 return false;
@@ -4134,21 +4168,21 @@ public class MantDesp extends ventanaPad implements PAD
 //
 //    }
 
-    int anuStkPart(int proCodi, int ejeLot, int empLot, String serLot, int numLot, int nInd, double kilos, int unid, int almCodi) throws SQLException {
-        return anuStkPart(proCodi, ejeLot, empLot, serLot, numLot, nInd, kilos, unid, almCodi, false);
-    }
-
-    int anuStkPart(int proCodi, int ejeLot, int empLot, String serLot, int numLot, int nInd, double kilos, int unid, int almCodi, boolean anulaBloqueo) throws SQLException {
-        if (anulaBloqueo)
-        {
-            stkPart.setBloqueo(proCodi, ejeLot,
-                empLot,
-                serLot, numLot,
-                nInd, almCodi, false);
-        }
-        return stkPart.anuStkPart(proCodi, ejeLot, empLot, serLot, numLot,
-            nInd, almCodi, kilos, unid);
-    }
+//    int anuStkPart(int proCodi, int ejeLot, int empLot, String serLot, int numLot, int nInd, double kilos, int unid, int almCodi) throws SQLException {
+//        return anuStkPart(proCodi, ejeLot, empLot, serLot, numLot, nInd, kilos, unid, almCodi, false);
+//    }
+//
+//    int anuStkPart(int proCodi, int ejeLot, int empLot, String serLot, int numLot, int nInd, double kilos, int unid, int almCodi, boolean anulaBloqueo) throws SQLException {
+//        if (anulaBloqueo)
+//        {
+//            stkPart.setBloqueo(proCodi, ejeLot,
+//                empLot,
+//                serLot, numLot,
+//                nInd, almCodi, false);
+//        }
+//        return stkPart.anuStkPart(proCodi, ejeLot, empLot, serLot, numLot,
+//            nInd, almCodi, kilos, unid);
+//    }
 
     /**
      * Actualiza Total de kilos
@@ -4440,7 +4474,7 @@ public class MantDesp extends ventanaPad implements PAD
             {
                 jtLin.setValor(""+proCodAnt,JTLIN_PROCODI); // Rest. El valor Antiguo
                 jtLin.setValor(""+defKilAnt,JTLIN_KILOS); // Rest. Kilos ANTIGUOS
-                return borraLineajtLIn(row);
+                return borraLineajtLin(row);
 
             }
             @Override
@@ -4533,7 +4567,7 @@ public class MantDesp extends ventanaPad implements PAD
                     {
                         if (jtCab.getValorInt(row, JTCAB_NL) == 0)
                         return true;
-                        if (row==0 && existLineasSalida() && !P_ADMIN)
+                        if (row==0 && existLineasSalida() && ! isArgumentoAdmin())
                         {
                             msgBox("Hay productos de salida. Imposible borrar producto Origen");
                             return false;
@@ -4622,6 +4656,7 @@ public class MantDesp extends ventanaPad implements PAD
                 BForzarProd = new gnu.chu.controles.CButton(Iconos.getImageIcon("insertar"));
                 opSimular = new gnu.chu.controles.CCheckBox("0","-1");
                 opMantFecha = new gnu.chu.controles.CCheckBox();
+                opAnularControl = new gnu.chu.controles.CCheckBox("0","-1");
                 Ptotal1 = new gnu.chu.controles.CPanel();
                 BcopLin = new gnu.chu.controles.CButton("F5",Iconos.getImageIcon("fill"));
                 cLabel16 = new gnu.chu.controles.CLabel();
@@ -5015,7 +5050,7 @@ public class MantDesp extends ventanaPad implements PAD
                     etiqueta.add(ImprEtiqMI);
 
                     jtLin.getPopMenu().add(etiqueta);
-                    if (P_ADMIN)
+                    if (isAdmin())
                     jtLin.getPopMenu().add(MFechaLin);
                     jtLin.getPopMenu().add(MVerMvtLin);
                     jtLin.getPopMenu().add(MVerTraLin);
@@ -5047,7 +5082,7 @@ public class MantDesp extends ventanaPad implements PAD
             jtCab.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
             jtCab.setMaximumSize(new java.awt.Dimension(449, 109));
             jtCab.setMinimumSize(new java.awt.Dimension(449, 109));
-            if (P_ADMIN)
+            if (isAdmin())
             jtCab.getPopMenu().add(MFechaCab);
             jtCab.getPopMenu().add(MVerMvtCab);
             jtCab.getPopMenu().add(MVerTraCab);
@@ -5202,12 +5237,17 @@ public class MantDesp extends ventanaPad implements PAD
             opSimular.setText("Simular");
             opSimular.setToolTipText("Simula despiece");
             POtros.add(opSimular);
-            opSimular.setBounds(170, 10, 80, 17);
+            opSimular.setBounds(160, 10, 70, 17);
 
-            opMantFecha.setText("MF");
+            opMantFecha.setText("Mantener Fecha Despiece en Mvtos");
             opMantFecha.setToolTipText("Mantener Fecha Despiece en Mvtos");
             POtros.add(opMantFecha);
-            opMantFecha.setBounds(250, 10, 40, 17);
+            opMantFecha.setBounds(10, 40, 220, 17);
+
+            opAnularControl.setText("Anular Controles");
+            opAnularControl.setToolTipText("Anular controles");
+            POtros.add(opAnularControl);
+            opAnularControl.setBounds(230, 10, 150, 17);
 
             Ptabpan.addTab("Varios", POtros);
 
@@ -5555,6 +5595,7 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField kgFinE;
     private gnu.chu.controles.CTextField kgOrigE;
     private gnu.chu.controles.CTextField numCopiasE;
+    private gnu.chu.controles.CCheckBox opAnularControl;
     private gnu.chu.controles.CCheckBox opAutoClas;
     private gnu.chu.controles.CCheckBox opImpEt;
     private gnu.chu.controles.CCheckBox opMantFecha;

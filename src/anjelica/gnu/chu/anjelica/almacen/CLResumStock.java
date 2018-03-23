@@ -166,7 +166,7 @@ private void jbInit() throws Exception
 {
    iniciarFrame();
 
-   this.setVersion("2018-03-15");
+   this.setVersion("2018-03-21");
    statusBar = new StatusBar(this);
  
    initComponents();
@@ -307,10 +307,12 @@ private void jbInit() throws Exception
   {
        try
        {
+           jtDet.removeAllDatos();
            s="select * from "+tablaTemp+" where pro_codi ="+proCodi+
                " order by feccad";
-           dtAdd.select(s);
-           jtDet.removeAllDatos();
+           if (!dtAdd.select(s))
+               return;
+           
            do
            {
                ArrayList v = new ArrayList();

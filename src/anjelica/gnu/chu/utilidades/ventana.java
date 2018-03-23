@@ -721,13 +721,33 @@ public class ventana extends CInternalFrame implements ejecutable
   {
     return isBloqueado(dt,tabla,registro,false,true);
   }
+  
   /**
-   * Esta llamado con Argumento 
-   * @return 
+   * Devuelve si es administrador segun los parametros mandados al programa desde el menu
+   * @return true si es administrador segun los parametros mandados al programa desde el menu
    */
   public boolean isArgumentoAdmin()
+  {   
+        return ARG_ADMIN;             
+  }
+  /**
+   * Devuelve si es administrador segun los parametros mandados al programa desde el menu o si el usuario es admin
+   * @return true si es administrador
+   */
+  public boolean isAdmin()
   {
-      return ARG_ADMIN;
+       if (EU == null || dtStat==null || !dtStat.getConexion().isConectado() )
+        return ARG_ADMIN;     
+        else
+       {
+        try 
+        {
+            return ARG_ADMIN || EU.isAdminDB(dtStat);
+        } catch (SQLException k)
+        {
+            return ARG_ADMIN;
+        }
+      }
   }
   public void setArgumentoAdmin(boolean swAdmin)
   {

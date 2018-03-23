@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -61,7 +63,9 @@ import javax.swing.SwingConstants;
  * @version 1.0
  */
 public class MantDespTactil  extends ventanaPad implements PAD
+
 {
+    boolean isControlValidacion=true;
     int etiquetaInterior;
     String crotal;
     int idTiempo=0;
@@ -330,7 +334,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
   CTextField kildifE = new CTextField(Types.DECIMAL,"---,--9.999");
   CLabel cLabel24 = new CLabel();
   CTextField grd_feccadE = new CTextField(Types.DATE,"dd-MM-yyyy");
-  boolean PARAM_ADMIN=false;
+//  boolean PARAM_ADMIN=false;
   CButton BmodDaIn = new CButton();
   CLabel numCopiasL = new CLabel();
   CTextField numCopiasE = new CTextField(Types.DECIMAL,"##9");
@@ -349,11 +353,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
     setAcronimo("madeta");
     try
     {
-      if (ht!=null)
-      {
-        if (ht.get("admin") != null)
-          PARAM_ADMIN = Boolean.parseBoolean(ht.get("admin"));
-      }
+      setParametros(ht);
       if (jf.gestor.apuntar(this))
         jbInit();
       else
@@ -371,12 +371,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    vl = p.getLayeredPane();
    setTitulo("Despieces TACTIL");
    eje = false;
-   if (ht!=null)
-   {
-        if (ht.get("admin") != null)
-          PARAM_ADMIN = Boolean.parseBoolean(ht.get("admin"));
-   }
-
+   setParametros(ht);
    try
    {
      jbInit();
@@ -386,6 +381,15 @@ public class MantDespTactil  extends ventanaPad implements PAD
      ErrorInit(e);
      setErrorInit(true);
    }
+ }
+ private void setParametros(Hashtable<String,String> ht)
+ {
+           if (ht!=null)
+      {
+        if (ht.get("admin") != null)
+            setArgumentoAdmin(Boolean.parseBoolean(ht.get("admin")));
+      }
+
  }
  public static String getNombreClase() {
         return "gnu.chu.anjelica.despiece.MantDespTactil";
@@ -410,7 +414,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  {
    iniciarFrame();
    this.setSize(new Dimension(679,519));
-   setVersion("2017-12-24"+(PARAM_ADMIN?"(MODO ADMINISTRADOR)":""));
+   setVersion("2018-03-18"+(isArgumentoAdmin() ?"(MODO ADMINISTRADOR)":""));
    CARGAPROEQU=EU.getValorParam("cargaproequi",CARGAPROEQU);
    nav = new navegador(this,dtCons,false,navegador.NORMAL);
    statusBar=new StatusBar(this);
@@ -436,7 +440,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    grd_kilorgE.setEnabled(false);
    grd_kilorgE.setBounds(new Rectangle(383, 2, 93, 17));
    grd_kilorgE1.setEnabled(false);
-   deo_incvalE.setEnabled(PARAM_ADMIN);
+   deo_incvalE.setEnabled(isAdmin());
    Pconsul.setLayout(gridBagLayout2);
     
    cLabel3.setToolTipText("");
@@ -855,7 +859,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
    
     Ptabed.add(Pfin, "Final");
     Ppie.add(Bcancelar, null);
-    if (PARAM_ADMIN)
+    if (isAdmin())
         Ppie.add(BcerrDesp, null);
     Ppie.add(Baceptar, null);
     
@@ -1404,7 +1408,7 @@ boolean checkCabecera() throws ParseException, SQLException
     deo_incvalE.setEnabled(true);
     grd_unidE.setEnabled(true);
     grd_unidE.setQuery(false);
-    if (!PARAM_ADMIN)
+    if (!isAdmin())
         deo_blockE.setValor("S");
     deo_blockE.setEnabled(true);    
     deo_blockE.addItem("Terminado","T");
@@ -1546,7 +1550,7 @@ boolean checkCabecera() throws ParseException, SQLException
         activaTodo();
         return;
     }
-     if (deo_blockE.getValor().equals(MantDesp.DESP_CERRADO) && !PARAM_ADMIN)
+     if (deo_blockE.getValor().equals(MantDesp.DESP_CERRADO) && ! isArgumentoAdmin())
        {
           mensajeErr("DESPIECE CERRADO ... IMPOSIBLE MODIFICAR");
           nav.pulsado = navegador.NINGUNO;
@@ -1558,7 +1562,7 @@ boolean checkCabecera() throws ParseException, SQLException
                 return;
      if (swTienePrec)
      {
-       if (!PARAM_ADMIN)
+       if (! isArgumentoAdmin())
        {
           mensajeErr("DESPIECE VALORADO ... IMPOSIBLE MODIFICAR");
           nav.pulsado = navegador.NINGUNO;
@@ -1607,7 +1611,7 @@ boolean checkCabecera() throws ParseException, SQLException
     tid_codiE.setEnabled(true);
     
     grd_unidE.setEnabled(true);
-    if (PARAM_ADMIN)
+    if (isAdmin())
     {
       grd_fechaE.setEnabled(true);
       deo_blockE.setEnabled(true);
@@ -1667,7 +1671,7 @@ boolean checkCabecera() throws ParseException, SQLException
 //    emp_codiE.setValorDec(EU.em_cod);
             eje_numeE.setValorDec(EU.ejercicio);
             grd_fechaE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-            if (PARAM_ADMIN)
+            if (isAdmin())
                 grd_fechaE.setEnabled(true);
             Ptabed.setSelectedIndex(1);
 //    deo_blockE.setValor("S");
@@ -1687,6 +1691,7 @@ boolean checkCabecera() throws ParseException, SQLException
 //    Porig.setEnabled(false);
 //    Pfin.setEnabled(false);
 //    Pconsul.setEnabled(false);
+            isControlValidacion=true;
             grd_unidE.requestFocus();
         } catch (SQLException ex)
         {
@@ -1738,7 +1743,7 @@ boolean checkCabecera() throws ParseException, SQLException
                 String msgErr;
                 if ((msgErr = checkCerrar()) != null)
                 {
-                    if (!PARAM_ADMIN)
+                    if (!isArgumentoAdmin())
                     {
                         msgBox(msgErr);
                         return;
@@ -1832,6 +1837,7 @@ boolean checkCabecera() throws ParseException, SQLException
    desorca.setDeoNumuni(grd_unidE.getValorInt());
    desorca.setDeoIncval(deo_incvalE.getValor());
    desorca.setDeoValor("N");
+   desorca.setAnularControl(isControlValidacion?0:1);
   }
   
     @Override
@@ -1915,7 +1921,7 @@ boolean checkCabecera() throws ParseException, SQLException
     @Override
   public void PADDelete()
   {
-    if (jtEnt.isVacio() && !PARAM_ADMIN) 
+    if (jtEnt.isVacio() && ! isAdmin())
     {
         msgBox("Despiece VACIO. Imposible Borrar");
         nav.pulsado = navegador.NINGUNO;
@@ -1929,7 +1935,7 @@ boolean checkCabecera() throws ParseException, SQLException
         activaTodo();
         return;
     }
-    if (!PARAM_ADMIN && swTienePrec)
+    if (!isAdmin() && swTienePrec)
     {
       mensajeErr("DESPIECE VALORADO ... IMPOSIBLE BORRAR");
       activaTodo();
@@ -2015,7 +2021,7 @@ boolean checkCabecera() throws ParseException, SQLException
       activar(CABECERA_ALL, activ);
       activar(ENTRADA, activ);
       activar(SALIDA, activ);
-      if (!activ || PARAM_ADMIN)
+      if (!activ || isAdmin())
             deo_incvalE.setEnabled(activ);
       jtEnt.setEnabled(false);
       grd_feccadE.setEnabled(activ);
@@ -2047,7 +2053,7 @@ boolean checkCabecera() throws ParseException, SQLException
         grd_kilsalE.setEnabled(activ);
         if (! isEmpPlanta)
             kilsalE.setEnabled(activ);
-        if (PARAM_ADMIN || isEmpPlanta)
+        if (isAdmin() || isEmpPlanta)
             def_usunomE.setEnabled(activ);
         def_numpiE.setEnabled(activ);
 //        actButton(activ);
@@ -2198,6 +2204,7 @@ boolean checkCabecera() throws ParseException, SQLException
       usu_nombE.setText(dtStat.getString("usu_nomb"));
       deo_almoriE.setText(dtStat.getString("deo_almori"));
       deo_almdesE.setText(dtStat.getString("deo_almdes"));
+      isControlValidacion=dtStat.getInt("deo_anucon",true)==0;
 //      verAcumulados(dtStat.getInt("eje_nume"),dtStat.getInt("deo_codi"),dtStat.getInt("tid_codi"));
   
     
@@ -2935,14 +2942,20 @@ boolean checkCabecera() throws ParseException, SQLException
    if (kilsalE.getValorDec()/def_numpiE.getValorInt()< pro_codsalE.getKilosMinimoUnidad() && pro_codsalE.getKilosMinimoUnidad()>0)
    {
        msgBox("Cada pieza debe pesar como minimo: "+pro_codsalE.getKilosMinimoUnidad());
-       def_numpiE.requestFocus();
-       return;
+       if (isControlValidacion && !isAdmin())
+       {
+        def_numpiE.requestFocus();
+        return;
+       }
    }
    if (kilsalE.getValorDec()/def_numpiE.getValorInt()> pro_codsalE.getKilosMaximoUnidad() && pro_codsalE.getKilosMaximoUnidad()>0)
    {
        msgBox("Cada pieza debe pesar como maximo: "+pro_codsalE.getKilosMaximoUnidad());
-       def_numpiE.requestFocus();
-       return;
+       if (isControlValidacion && !isAdmin())
+       {
+        def_numpiE.requestFocus();
+        return;
+       }
    }
    kilsalE.resetCambio();
    def_usunomE.resetCambio();
@@ -3446,49 +3459,71 @@ boolean checkCabecera() throws ParseException, SQLException
   */
  void cerrarDespiece()
  {
-    if (deo_blockE.getValor().equals(MantDesp.DESP_CERRADO))
-        return;
-    if (jtEnt.isVacio())
-    { // Despiece vacio.
-        try {
-            deo_blockE.setValor("N");            
-            actualCabDesp();
-            ctUp.commit();
-            mensajeErr("Despiece cerrado");
-            return;
-        } catch (SQLException | ParseException  ex) {
+        try
+        {
+            if (deo_blockE.getValor().equals(MantDesp.DESP_CERRADO))
+                return;
+            if (jtEnt.isVacio())
+            { // Despiece vacio.
+                try {
+                    deo_blockE.setValor("N");
+                    actualCabDesp();
+                    ctUp.commit();
+                    mensajeErr("Despiece cerrado");
+                    return;
+                } catch (SQLException | ParseException  ex) {
+                    Error("Error al cerrar despiece",ex);
+                }
+            }
+            if (kildifE.getValorDec() < -3)
+            {
+                int ret=mensajes.mensajeYesNo("Los Kilos  de diferencia son mayor de 3.CERRAR SEGURO?");
+                if (ret!=mensajes.YES)
+                    return;
+            }
+            if (kildifE.getValorDec() > 0)
+            {
+                msgBox("Sobran kilos en la salida");
+                return;
+            }
+            s="select d.pro_codi,pro_numind, def_kilos/def_unicaj as kilunid FROM v_despfin as d,v_articulo as a WHERE "+
+                " d.emp_codi = " + EU.em_cod +
+                " AND eje_nume = " + eje_numeE.getValorInt() +
+                " AND deo_codi = " + deo_codiE.getValorInt()+
+                "  and a.pro_codi = d.pro_codi "+
+                " and ((def_kilos / def_unicaj < pro_kgmiun and pro_kgmiun > 0) "
+                + "or (def_kilos / def_unicaj > pro_kgmaun and pro_kgmaun > 0)) ";
+            if (dtCon1.select(s))
+            {
+                int ret=mensajes.mensajeYesNo("Error en Kg de unidades",
+                    " El producto "+dtCon1.getInt("pro_codi")+
+                    " con individuo "+dtCon1.getInt("pro_numind")+" NO esta entre los limites validos de peso\n ¿Cerrar seguro?",this);
+                if (ret!=mensajes.YES)
+                    return;
+            }
+            nav.setPulsado(navegador.EDIT);
+            nav.setEnabled(false);
+            PADEdit();
+            grd_unidE.setValorDec(grd_unioriE1.getValorInt());
+            deo_blockE.setValor("N");
+            if (kildifE.getValorDec()<0)
+            {
+                pro_codsalE.setValorInt(PROCIERRE);
+                def_numpiE.setText("1");
+                nlSalE.setText("");
+                modLinSal=false;
+                kilsalE.resetTexto();
+                kilsalE.setCambio(true);
+                kilsalE.setValorDec(kildifE.getValorDec()*-1);
+                Bsalkil_focusGained();
+            }
+            ej_edit1();
+            Ptabed.setSelectedIndex(0);
+            mensajeErr("Despiece CERRADO!");
+        } catch (SQLException ex)
+        {
             Error("Error al cerrar despiece",ex);
         }
-    }
-    if (kildifE.getValorDec() < -3)
-    {
-        int ret=mensajes.mensajeYesNo("Los Kilos  de diferencia son mayor de 3.CERRAR SEGURO?");
-        if (ret!=mensajes.YES)
-            return;
-    }
-    if (kildifE.getValorDec() > 0)
-    {
-        msgBox("Sobran kilos en la salida");
-        return;
-    }
-    nav.setPulsado(navegador.EDIT);
-    nav.setEnabled(false);
-    PADEdit();
-    grd_unidE.setValorDec(grd_unioriE1.getValorInt());
-    deo_blockE.setValor("N");
-    if (kildifE.getValorDec()<0)
-    {
-        pro_codsalE.setValorInt(PROCIERRE);
-        def_numpiE.setText("1");
-        nlSalE.setText("");
-        modLinSal=false;
-        kilsalE.resetTexto();
-        kilsalE.setCambio(true); 
-        kilsalE.setValorDec(kildifE.getValorDec()*-1);
-        Bsalkil_focusGained();
-    }
-    ej_edit1();  
-    Ptabed.setSelectedIndex(0);
  }
  void duplicaLinea()
  {
