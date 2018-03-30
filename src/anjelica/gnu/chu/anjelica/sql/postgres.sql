@@ -1845,7 +1845,7 @@ create table anjelica.motregu
     tir_afestk varchar(1) not null,	-- Como afecta al Stock
                                     -- (+ Suma, - Resta, = Inventario, * No Afecta)
     tir_tipo varchar(2) default '--',-- Tipo Regul. Definido en clase pdmotregu (VS: Vert. Sala,
-                                           VC: Vert.Cliente, VP: Vert. Proveedor,MC: Merma Cliente)
+                                           VC: Vert.Cliente, VP: Vert. Proveedor,MC: Merma Cliente,'RE' Regularizacion)
   constraint ix_motregu primary key (tir_codi)
 );
 grant select on anjelica.v_motregu to public;
@@ -3448,6 +3448,7 @@ INSERT INTO PARAMETROS VALUES('*','avisodiascad','Aviso dias Caducidad',1); -- C
  insert into parametros values('*','checkCuenCont','Comprueba que la cuenta contable sea valida',1);
  insert into parametros values('*','diasAlbVentaMod','Restrincion modificar Alb.Venta con mas de n dias',0);
  insert into parametros values('*','errordiascad','Error si hay menos de n dias de cad.',-1); 
+ insert into parametros values('*','solsinstock','Solucionar productos sin stock',0); 
 --
 -- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
 --

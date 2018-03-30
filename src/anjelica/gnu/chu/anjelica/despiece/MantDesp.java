@@ -245,7 +245,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (isAdmin() )
             MODPRECIO=true; 
-        setVersion("2018-03-18" + (MODPRECIO ? " (VER PRECIOS)" : "") + (isArgumentoAdmin() ? " ADMINISTRADOR" : ""));
+        setVersion("2018-03-30" + (MODPRECIO ? " (VER PRECIOS)" : "") + (isArgumentoAdmin() ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -1018,7 +1018,17 @@ public class MantDesp extends ventanaPad implements PAD
             if (tid_codiE.getValorDec() == MantTipDesp.CONGELADO_DESPIECE)
             { // Es a congelar
                 if (Formatear.comparaFechas(deo_feccadE.getDate(), deo_fecproE.getDate()) < 60)
-                    deo_feccadE.setDate(Formatear.sumaDiasDate(deo_fecproE.getDate(), MantTipDesp.DIAS_CONGELADO));
+                {
+                    Date fecCadCong = Formatear.sumaDiasDate(deo_fecproE.getDate(), MantTipDesp.DIAS_CONGELADO);
+                    deo_feccadE.setDate(fecCadCong);
+                    def_feccadE.setDate(fecCadCong);
+                    int nRow = jtLin.getRowCount();
+                    for (int n = 0; n < nRow; n++)
+                    {
+                        if (jtLin.getValorInt(n, JTLIN_NUMIND) == 0)
+                            jtLin.setValor(fecCadCong, n, JTLIN_FECCAD);
+                    }
+                }
             }
             boolean swVacio = true;
             for (int n = 0; n < jtLin.getRowCount(); n++)
@@ -1383,8 +1393,13 @@ public class MantDesp extends ventanaPad implements PAD
                     desorca.setTidCodi(tid_codiE.getValorInt());
                     desorca.updateTidCodi(dtAdd);
                     dtAdd.commit();
+                    if (tid_codiE.getValorDec() == MantTipDesp.CONGELADO_DESPIECE)
+                    {
+                        deo_feccadE.setDate(Formatear.sumaDiasDate(deo_fecproE.getDate(), MantTipDesp.DIAS_CONGELADO));
+                    }
                 }
             }
+
             activar(false, 1);
             Pcabe.setEnabled(false);
             POtros.setEnabled(false);
@@ -1404,7 +1419,7 @@ public class MantDesp extends ventanaPad implements PAD
             def_feccadE.setText(deo_feccadE.getText());
             if (jtLin.isVacio())
                 jtLin.removeAllDatos();
-
+            
             def_feccadE.resetCambio();
             jtLin.setEnabled(true);
 //            jtLin.requestFocusInicio();
@@ -3855,10 +3870,12 @@ public class MantDesp extends ventanaPad implements PAD
            dtStat.select(s);
            if (dtStat.getInt("cuantos",true)>= pro_codlE.getNumeroCrotales() )
                 crotal=MantAlbComCarne.getRandomCrotal(crotal,EU);              
-           utdesp.setNumeroCrotal(crotal);
-       
+           utdesp.setNumeroCrotal(crotal);       
         }
         s="update stockpart set stp_nucrot='"+crotal+"'"+
+                ", stp_painac='"+utdesp.getPaisNacimiento()+"'"+
+                ", stp_engpai='"+utdesp.getPaisEngorde()+"'"+
+                ", stp_paisac='"+utdesp.getPaisSacrificio()+"'"+
                (Formatear.comparaFechas(def_feccadE.getDate(),deo_feccadE.getDate())==0?"": ",stp_fecpro='"+Formatear.getFechaDB(deoFecpro)+"'")+
                (deoFecSacr==null || Formatear.comparaFechas(def_feccadE.getDate(),deo_feccadE.getDate())==0?"":", stp_fecsac = '"+Formatear.getFechaDB(deoFecSacr)+"'")+
                " where pro_nupar="+ numLot+

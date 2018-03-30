@@ -1,9 +1,13 @@
+insert into parametros values('*','solsinstock','Solucionar productos sin stock',0); 
 
+---
 alter table usuarios add usu_clanum smallint not null default 0; -- Password Corta de usuario (sin encriptar)
 insert into parametros values('*','checkCodRep','Comprueba que el codigo Reparto este nulo',0);
 insert into parametros values('*','checkCuenCont','Comprueba que la cuenta contable sea valida',0);
 insert into parametros values('*','diasAlbVentaMod','Restrincion modificar Alb.Venta con mas de n dias',0);
 insert into parametros values('*','errordiascad','Error si hay menos de n dias de cad.',-1); 
+
+solsinstock
 -- 
 -- Cabecera Reservas productos para clientes
 --

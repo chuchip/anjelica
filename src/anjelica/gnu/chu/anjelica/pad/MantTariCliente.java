@@ -51,6 +51,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
@@ -65,7 +67,8 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
   String localeEmpresa;
   boolean swLocaleEmpresa;
   String s;
-  String fecini,tipo;
+  String fecini;
+  int cliCodi;
   boolean ARG_MODCONSULTA=false;
   boolean swInicio=false;
   public MantTariCliente(EntornoUsuario eu, Principal p)
@@ -121,13 +124,11 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2017-10-01" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2017-30-03" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
-      strSql = "SELECT tar_fecini,tar_fecfin,cli_codi FROM taricli"+
-          " group by tar_fecini,tar_fecfin,cli_codi" +
-          " order by tar_fecini,cli_codi";
+      strSql = getStrSql()+getOrderSql();
       this.getContentPane().add(nav, BorderLayout.NORTH);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       this.setPad(this);
@@ -149,6 +150,15 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
 //                            GridBagConstraints.VERTICAL,
 //                            new Insets(0, 5, 0, 0), 0, 0));
 
+    }
+     public String getStrSql()
+    {
+        return "SELECT tar_fecini,tar_fecfin,cli_codi FROM taricli ";
+    }
+     public String getOrderSql()
+    {
+        return " group by tar_fecini,tar_fecfin,cli_codi"+
+         " order by tar_fecini ,cli_codi";
     }
     @Override
     public void iniciarVentana() throws Exception
@@ -296,10 +306,10 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
                 nav.pulsado=navegador.NINGUNO;
                 return;
             }
-            verDatLin(tar_feciniE.getText(), cli_codiE.getText(),tar_fecfinE.getText(),0);
+            verDatLin(tar_feciniE.getText(), cli_codiE.getValorInt(),tar_fecfinE.getText(),0);
             jt.cargaTodo();
             fecini=tar_feciniE.getText();
-            tipo=cli_codiE.getText();
+            cliCodi=cli_codiE.getValorInt();
             nav.pulsado = navegador.EDIT;
             mensaje("Editando ... ");
           }
@@ -329,33 +339,25 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         Error("ERROR al ir al Grid",k);
       }
     }
-
-    void guardaDatos(String fecha,String tipo)
+    /**
+     * Guarda Datos. 
+     * @param fecha
+     * @param cliCodi Cliente antiguo sobre el que borrar los datos. 
+     */
+    void guardaDatos(String fecha,int cliCodi) throws SQLException, ParseException
     {
-      try {
         int tarButapa=tar_butapaE.getValorInt(); 
-        borDatos(fecha,tipo);
+        borDatos(fecha,cliCodi);
 
         int nRow = jt.getRowCount();
-        int grupo=0;
-        int animal=0;
         dtAdd.addNew("taricli");
         for (int n = 0; n < nRow; n++)
-        {
-          if ( jt.getValString(n,0).trim().equals(""))
-          {
-              if (jt.getValString(n,1).trim().equals(""))
-                  continue;
-              else
-                  grupo++;
-          }
-          if ( jt.getValString(n,0).trim().equals("X") && !jt.getValString(n,1).trim().equals(""))
-              animal++;
+        {       
 //          if (jt.getValorDec(n,2)==0)
 //            continue;
           dtAdd.addNew();
-          dtAdd.setDato("tar_fecini",tar_feciniE.getText(),"dd-MM-yyyy");
-          dtAdd.setDato("tar_fecfin",tar_fecfinE.getText(),"dd-MM-yyyy");
+          dtAdd.setDato("tar_fecini",tar_feciniE.getDate());
+          dtAdd.setDato("tar_fecfin",tar_fecfinE.getDate());
           dtAdd.setDato("tar_butapa",tarButapa);
           dtAdd.setDato("tar_linea",n);
           dtAdd.setDato("cli_codi",cli_codiE.getValorInt());
@@ -368,17 +370,14 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         }
         ctUp.commit();
         mensajeErr("Datos ... Guardados");
-      } catch (SQLException | ParseException k)
-      {
-        Error("Error en La insercion de Referencias",k);
-      }
+     
     }
 
-    void  borDatos(String fecha,String tipo) throws SQLException,java.text.ParseException
+    void  borDatos(String fecha,int cliCodi) throws SQLException,java.text.ParseException
     {
       s = "DELETE FROM taricli " +
           " WHERE tar_fecini = TO_DATE('" + fecha + "','dd-MM-yyyy') " +
-          " AND cli_codi = " + tipo  ;
+          " AND cli_codi = " + cliCodi  ;
       stUp.executeUpdate(dtAdd.parseaSql(s));
     }
     void verDatos()
@@ -389,30 +388,30 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
           return;
         tar_feciniE.setText(dtCons.getFecha("tar_fecini","dd-MM-yyyy"));
         cli_codiE.setText(dtCons.getString("cli_codi"));
-        
+        cliCodi=cli_codiE.getValorInt();
         s = "SELECT tar_fecfin,tar_butapa " +
           " FROM taricli " +
           " WHERE tar_fecini = TO_DATE('"+tar_feciniE.getText()+"','dd-MM-yyyy') "+
-          " AND cli_codi = "+tipo;
+          " AND cli_codi = "+cliCodi;
         if ( dtCon1.select(s))
         {
             tar_butapaE.setValor(dtCon1.getString("tar_butapa"));
             tar_fecfinE.setDate(dtCon1.getDate("tar_fecfin"));
         }
         
-        verDatLin(tar_feciniE.getText(),cli_codiE.getText(),tar_fecfinE.getText(),0);
+        verDatLin(tar_feciniE.getText(),cliCodi,tar_fecfinE.getText(),0);
       } catch (Exception k)
       {
         Error("Error al ver datos",k);
       }
     }
 
-    void verDatLin(String fecha,String tipo,String fecfin,double increm) throws Exception
+    void verDatLin(String fecha,int cliCodi,String fecfin,double increm) throws Exception
     {
       s = "SELECT pro_codart,pro_nomb,tar_preci,tar_comen,tar_comrep " +
           " FROM taricli " +
           " WHERE tar_fecini = TO_DATE('"+fecha+"','dd-MM-yyyy') "+
-          " AND cli_codi = "+tipo+
+          " AND cli_codi = "+cliCodi+
           (pro_codiE.isNull()?"":" and pro_codart like '%"+pro_codiE.getText()+"%'")+
           " order by tar_linea";
       if (jt.isEnabled())
@@ -498,10 +497,9 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
     v.add(cli_codiE.getStrQuery());
     v.add(pro_codiE.getStrQuery());
     Pcabe.setQuery(false);
-    s="SELECT tar_fecini,tar_fecfin,cli_codi FROM taricli";
+    s=getStrSql();
     s=creaWhere(s,v);
-    s+=" group by tar_fecini,tar_fecfin,cli_codi"+
-        " order by tar_fecini,cli_codi";
+    s+=getOrderSql();
 //    debug(s);
     try
     {
@@ -548,31 +546,39 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
     }
     jt.cargaTodo();
     fecini=tar_feciniE.getText();
-    tipo=cli_codiE.getText();
+    cliCodi=cli_codiE.getValorInt();
     activar(true);
    
     jt.requestFocusInicioLater();
   }
   @Override
-  public void ej_edit1() {
-      jt.salirGrid();
+    public void ej_edit1() {
 
-    if (cambiaLineaJT()>=0)
-    {
-      jt.requestFocusSelected();
-      return;
+        jt.salirGrid();
+
+        if (cambiaLineaJT() >= 0)
+        {
+            jt.requestFocusSelected();
+            return;
+        }
+        int row = checkRepetido();
+        if (row >= 0)
+        {
+            jt.requestFocus(row, 0);
+            return;
+        }
+        try
+        {
+            guardaDatos(fecini, cliCodi);
+            activaTodo();
+            verDatos();
+            mensaje("");
+        } catch (SQLException | ParseException ex)
+        {
+            Error("Error al editar datos", ex);
+            return;
+        }
     }
-    int row=checkRepetido();
-    if (row>=0)
-    {
-        jt.requestFocus(row,0);
-        return;
-    }
-    guardaDatos(fecini,tipo);
-    activaTodo();
-    verDatos();
-    mensaje("");
-  }
   @Override
   public void canc_edit() {
     activaTodo();
@@ -608,9 +614,15 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
         jt.requestFocus(row,0);
         return;
     }
-    guardaDatos(tar_feciniE.getText(),cli_codiE.getText());
-    activaTodo();
-    verDatos();
+    try {
+        guardaDatos(tar_feciniE.getText(),cli_codiE.getValorInt());
+        activaTodo();
+        rgSelect();
+    } catch (SQLException | ParseException  k)
+    {
+        Error("Error al guardar datos de tarifa",k);
+        return;
+    }
     mensaje("");
   }
   int checkRepetido()
@@ -650,10 +662,10 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
   public void ej_delete1() {
     try
     {
-      borDatos(tar_feciniE.getText(), cli_codiE.getText());
+      borDatos(tar_feciniE.getText(), cli_codiE.getValorInt());
       ctUp.commit();
       rgSelect();
-    } catch (Exception k)
+    } catch (SQLException | ParseException k)
     {
       Error("Error al borrar datos",k);
     }
@@ -664,6 +676,7 @@ public class MantTariCliente extends ventanaPad implements PAD, JRDataSource
     mensajeErr("Datos .... Borrados");
 
   }
+  @Override
   public void canc_delete() {
     activaTodo();
     verDatos();

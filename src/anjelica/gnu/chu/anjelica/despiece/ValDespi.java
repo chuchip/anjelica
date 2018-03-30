@@ -1803,7 +1803,8 @@ public class ValDespi extends ventana {
              " where pro_codi =  ?" +
              " AND mvt_time::date >= ?  "+           
              " and mvt_time <= ? "+
-             " order by mvt_time";             
+             " and not (mvt_tipdoc = 'V' and mvt_serdoc='X') "+ // Ignorar traspaso entre Almacenes
+             " order by mvt_time,mvt_tipo";             
     psMvt=dtCon1.getPreparedStatement(s);
     s= "SELECT sum(rgs_kilos) as kilos, sum(rgs_kilos*rgs_prregu) as importe "+
              " from v_inventar  "+
@@ -2034,8 +2035,7 @@ public class ValDespi extends ventana {
                         importe+=  rs.getDouble("mvt_canti")* 
                                 rs.getDouble("mvt_prec") ;
                         precioMedio=kilos==0?0:importe/kilos;
-                }
-                      
+                }                      
             }
             else
                 kilos-=rs.getDouble("mvt_canti");

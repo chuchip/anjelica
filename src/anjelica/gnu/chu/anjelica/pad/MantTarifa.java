@@ -124,13 +124,11 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2017-10-01" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2018-03-30" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
-      strSql = "SELECT tar_fecini,tar_fecfin,tar_codi FROM tarifa"+
-          " group by tar_fecini,tar_fecfin,tar_codi" +
-          " order by tar_fecini,tar_codi";
+      strSql = getStrSql()+getOrderSql();
       this.getContentPane().add(nav, BorderLayout.NORTH);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       this.setPad(this);
@@ -154,6 +152,16 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 //                            new Insets(0, 5, 0, 0), 0, 0));
 
     }
+    public String getStrSql()
+    {
+       return "SELECT tar_fecini,tar_fecfin,tar_codi FROM tarifa ";
+    }
+    public String getOrderSql()
+    {
+       return  " group by tar_fecini ,tar_fecfin,tar_codi"+
+          " order by tar_fecini,tar_codi";
+    }
+      
     @Override
     public void iniciarVentana() throws Exception
     {
@@ -448,10 +456,9 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
       }
     }
 
-    void guardaDatos(String fecha,String tipo)
+    void guardaDatos(String fecha,String tipo) throws SQLException, ParseException
     {
-      try {
-
+    
         borDatos(fecha,tipo);
 
         int nRow = jt.getRowCount();
@@ -487,11 +494,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         }
         ctUp.commit();
         mensajeErr("Datos ... Guardados");
-      } catch (Exception k)
-      {
-        Error("Error en La insercion de Referencias",k);
-        return;
-      }
+     
     }
 
     void  borDatos(String fecha,String tipo) throws SQLException,java.text.ParseException
@@ -639,15 +642,14 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     v.add(tar_codiE.getStrQuery());
     v.add(pro_codiE.getStrQuery());
     Pcabe.setQuery(false);
-    s="SELECT tar_fecini,tar_fecfin,tar_codi FROM tarifa";
+    s=getStrSql();
     if (!tar_fechaE.isNull())
             s+=" where tar_fecini <= to_date('"+tar_fechaE.getText()+"','dd-MM-yyyy')"+
            " and tar_fecfin >= to_date('"+tar_fechaE.getText()+"','dd-MM-yyyy')";
     else
         s=creaWhere(s,v,tar_fechaE.isNull());
     
-    s+=" group by tar_fecini,tar_fecfin,tar_codi"+
-        " order by tar_fecini,tar_codi";
+    s+=getOrderSql();
 //    debug(s);
     try
     {
@@ -714,7 +716,13 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         jt.requestFocus(row,0);
         return;
     }
-    guardaDatos(fecini,tipo);
+    try {
+        guardaDatos(fecini,tipo);
+    } catch (SQLException | ParseException k)
+    {
+        Error("Error al guardar dato",k);
+        return;
+    }
     activaTodo();
     verDatos();
     mensaje("");
@@ -739,8 +747,9 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     mensaje("Insertando ....");
   }
 
+  @Override
   public void ej_addnew1() {
-    jt.procesaAllFoco();
+    jt.salirGrid();
 
     if (cambiaLineaJT()>=0)
     {
@@ -753,11 +762,19 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         jt.requestFocus(row,0);
         return;
     }
-    guardaDatos(tar_feciniE.getText(),tar_codiE.getText());
-    activaTodo();
-    verDatos();
+    try {
+        guardaDatos(tar_feciniE.getText(),tar_codiE.getText());
+        activaTodo();
+        strSql=getStrSql()+getOrderSql();
+        rgSelect();
+    } catch (SQLException | ParseException k)
+    {
+        Error("Error al guardar dato",k);
+        return;
+    }    
     mensaje("");
   }
+  
   int checkRepetido()
   {
       int nRow=jt.getRowCount();

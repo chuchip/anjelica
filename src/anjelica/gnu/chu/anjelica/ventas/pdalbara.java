@@ -142,6 +142,7 @@ public class pdalbara extends ventanaPad  implements PAD
   int pvcNumeOld=0;
   JasperReport jr=null;
   PTransVenta PTrans=new PTransVenta();
+  private boolean SOLSINSTOCK=true;
   public final static int AVC_NOVALORADO=0;
   public final static int AVC_VALORADO=1;
   public final static int AVC_REVVALOR=2;// Fue Modificado despues de valorado.
@@ -734,7 +735,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2018-03-23" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2018-03-28" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1468,6 +1469,7 @@ public class pdalbara extends ventanaPad  implements PAD
           P_CHECKPED=EU.getValorParam("checkPedAlbVenta", P_CHECKPED);
           DIASALBMOD=EU.getValorParam("diasAlbVentaMod", DIASALBMOD);
           ERROR_DIASCAD= EU.getValorParam("errordiascad", ERROR_DIASCAD);
+          SOLSINSTOCK=EU.getValorParam("solsinstock", SOLSINSTOCK);
           avl_numpalE.setEnabled(swUsaPalets);
           PTrans.iniciarPanel(dtAdd,INC_HOJATRA,this);
           if (pdconfig.getConfiguracion(EU.em_cod,dtStat))
@@ -3935,7 +3937,7 @@ public class pdalbara extends ventanaPad  implements PAD
          " and l.avc_serie = '" + serie + "'" +
          " and l.avc_nume = " + nume )+
          " and a.pro_tiplot='V' "+
-         " and l.avl_canti >= 0 " +
+         " and l.avl_canti != 0 " +
          " group by l.pro_codi,pro_tiplot,"+(modPrecio?"avl_prven,":"")+
          " avl_numpal,tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,a.pro_indtco " +
          " UNION ALL " +
@@ -3967,7 +3969,7 @@ public class pdalbara extends ventanaPad  implements PAD
          " and l.emp_codi = " + empCodi +
          " and l.avc_serie = '" + serie + "'" +
          " and l.avc_nume = " + nume )+
-         " and l.avl_canti >= 0 " +
+         " and l.avl_canti != 0 " +
         " and a.pro_tiplot<>'V' "+
          " ORDER BY 3,1,2";
   }
@@ -4771,7 +4773,9 @@ public class pdalbara extends ventanaPad  implements PAD
 
     nav.pulsado = navegador.NINGUNO;
   }
-
+  /**
+   * Actualiza campos en modo consulta para establecer si son editables
+   */
   void actModPrecio()
   {
     if (verPrecios && (fvc_anoE.getValorInt() == 0 || P_ADMIN) &&
@@ -5121,6 +5125,7 @@ public class pdalbara extends ventanaPad  implements PAD
       activaTodo();
       return;
     }
+    
     guardaComienzoTiempo();
     jt.setEnabled(true);
     pro_codiE.setEditable(true);
@@ -5166,6 +5171,8 @@ public class pdalbara extends ventanaPad  implements PAD
         jtPalet.setEnabled(true);
         jtPalet.requestFocusInicio();
     }
+    PTrans.resetCambio();
+    PTrans.verUltimosValores(0,PTrans.getTransportista());
     irGridLin();
   }  catch (Exception k)
     {
@@ -6657,7 +6664,7 @@ public class pdalbara extends ventanaPad  implements PAD
         Bimpri.setEnabled(true);
         if (swActPesoBruto)
             actualizaPesoBruto();
-        if (pro_codiE.getTipoLote()=='V' &&  pro_codiE.getValorInt()>0  && avl_cantiE.getValorDec()!=0 )
+        if (pro_codiE.getTipoLote()=='V' &&  pro_codiE.getValorInt()>0  && jt.getValorInt(JT_NULIAL)!=0  )
         {
           pro_codiE.setEditable(false);
 //          pro_nombE.setEditable(false);
@@ -6667,12 +6674,13 @@ public class pdalbara extends ventanaPad  implements PAD
           pro_codiE.setEditable(true);
           pro_nombE.setEditable(true);
         }
-        if (swLLenaCampos)
+        if (swLLenaCampos || P_FACIL)
         {
             swLLenaCampos=false;
-            jt.mueveSigLinea();            
+            jt.mueveSigLinea(JT_PROCODI);                        
         }
-        jt.requestFocusLater(jt.getSelectedRow(),JT_PROCODI);
+        else
+            jt.requestFocusLater(jt.getSelectedRow(),JT_PROCODI);
 //        if (verPrecios  && jt.getSelectedColumn() == JT_KILOS)
 //            jt.requestFocusLater(jt.getSelectedRow(),JT_KILOS);
 //        else
@@ -8009,7 +8017,7 @@ public class pdalbara extends ventanaPad  implements PAD
           int indiv=dtStat.getInt("avp_numuni",true);
           double canti=dtStat.getDouble("avp_canti",true);
           StkPartid cantStk=buscaPeso();
-          if (!cantStk.hasError())
+          if (!cantStk.hasError() )
           {
              if (! cantStk.hasControlInd())
                   canti=0;
@@ -8031,14 +8039,16 @@ public class pdalbara extends ventanaPad  implements PAD
           }
           else
           {
-               int ret=mensajes.mensajeYesNo("Individuo sin stock. ¿ SOLUCIONAR ?");
-               if (ret==mensajes.YES)
+               if (SOLSINSTOCK)
                {
-                   CheckStock.ir(jf, pro_codiE.getValorInt(),avp_ejelotE.getValorInt(), 
-                            avp_serlotE.getText(),  avp_numparE.getValorInt(),avp_numindE.getValorInt());
-                   avp_numparE.setCambio(true);
+                int ret=mensajes.mensajeYesNo("Individuo sin stock. ¿ SOLUCIONAR ?");
+                if (ret==mensajes.YES)
+                {
+                    CheckStock.ir(jf, pro_codiE.getValorInt(),avp_ejelotE.getValorInt(), 
+                             avp_serlotE.getText(),  avp_numparE.getValorInt(),avp_numindE.getValorInt());
+                    avp_numparE.setCambio(true);
+                }
                }
-
           }
 
           avp_cantiE.setEditable( cantStk.hasControlInd() && cantStk.isControlExist() ?P_ADMIN:true);
@@ -9924,8 +9934,7 @@ public class pdalbara extends ventanaPad  implements PAD
             {
                 if (!avp_serlotE.isNull() && !avp_numparE.isNull() && !avp_numindE.isNull())
                 {
-                    jtDes.requestFocusLater(row, JTDES_KILOS);
-                   
+                    jtDes.requestFocusLater(row, JTDES_KILOS);                   
                 }
             }
         }
@@ -10258,6 +10267,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
     jtDes.requestFocusLater();
   }
+  
   private void ponPrecios() throws SQLException
   {
         if (!P_MODPRECIO)
@@ -10341,6 +10351,7 @@ public class pdalbara extends ventanaPad  implements PAD
         {
           if (nav.pulsado != navegador.EDIT && nav.pulsado != navegador.ADDNEW && nav.pulsado != navegador.QUERY)
           {
+           
             if (col == 5 && P_MODPRECIO)
               if ( (fvc_anoE.getValorInt() == 0 || P_ADMIN) &&
                   (fvc_numeE.getValorInt() == 0 || P_ADMIN) && !traspCont &&
@@ -10355,8 +10366,31 @@ public class pdalbara extends ventanaPad  implements PAD
                 actNumPale(row);
             return;
           }
+          
           if (col == JT_PROCODI)
           {
+            if (colNueva==JT_KILOS  && P_FACIL  )
+            {
+                if (! pro_codiE.hasCambio())
+                    irGridDes(JTDES_KILOS);
+                else
+                {
+                    if (pro_codiE.controla(false))
+                    {
+                        String proNomb = pro_codiE.getNombArtCli(pro_codiE.getValorInt(),
+                            cli_codiE.getValorInt());
+                        jt.setValor(proNomb, row, JT_PRONOMB);
+                        pro_nombE.setText(proNomb);
+                        pro_codiE.resetCambio();
+                        if (pro_codiE.getTipoLote() == 'V' && pro_codiE.getValorInt() != 0)
+                        {
+                            jt.setValor(pro_codiE.getTextNomb(),JT_PRONOMB);
+                            irGridDes(JTDES_KILOS);    
+                        }
+                    }
+                }
+                return;
+            }
             prLiTar = 0;
             if (!pro_nombE.isNull() && !pro_codiE.hasCambio() || pro_codiE.getValorInt() == 0)
               return;
@@ -10381,11 +10415,10 @@ public class pdalbara extends ventanaPad  implements PAD
             pro_codiE.resetCambio();
             String proNomb = pro_codiE.getNombArtCli(pro_codiE.getValorInt(),
                 cli_codiE.getValorInt());
-            jt.setValor(proNomb, row, 2);
+            jt.setValor(proNomb, row, JT_PRONOMB);
             if (pro_nombE.isEnabled())
               pro_nombE.setText(proNomb);
-            ponPrecios();
-          
+            ponPrecios();          
           }
         }
         catch (SQLException k)
@@ -10410,7 +10443,7 @@ public class pdalbara extends ventanaPad  implements PAD
        
         if ((nav.pulsado != navegador.EDIT && nav.pulsado != navegador.ADDNEW) || isLock)
           return;
-        if (pro_codiE.getValorInt()>0)
+        if (pro_codiE.getValorInt()>0 && jt.getValorInt(JT_NULIAL)>0 )
         {
           pro_codiE.setEditable(false);
         }

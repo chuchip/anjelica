@@ -1334,8 +1334,8 @@ public class MvtosAlma
             }
             canti = canStk + dt.getDouble("canti");
             unid = uniStk + dt.getInt("unidades");
-            if ( swIgnCosto || avcSerieX )
-                precio = preStk; // No trato para costos los traspasos entre almacenes.
+            if ( swIgnCosto || avcSerieX  || (swIgnAllRegul && sel == 'R') )
+                precio = preStk; // No trato para costos los traspasos entre almacenes y/o ignoro regularizaciones.
             else
             {
                 if ((canStk < -0.1 || canti < -0.1) && resetCostoStkNeg)
@@ -1466,9 +1466,7 @@ public class MvtosAlma
                         if (!swIgnMvto)
                         {
                             if (swIncAcum)
-                            {
                                 impGana += dt.getDouble("canti", true) * (dt.getDouble("precio", true) - preStk);
-                            }
                         }
                     }
                 }

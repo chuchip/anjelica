@@ -42,19 +42,14 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- *
- * @author cpuente
- */
 public class MantPreMedios extends ventana
-{
-   
+{   
    private int TIDE_AUTOCLASI=108; 
    private int TIDE_108A109=401;
    Hashtable<Integer,Double> htBolas = new Hashtable();
    Hashtable<Integer,Integer[]> htLomos = new Hashtable();
    Hashtable<Integer,Boolean> htLomCom = new Hashtable();
-  
+
    
 //   final double PRECIO_DESP=2.8;
    public MantPreMedios(EntornoUsuario eu, Principal p)
@@ -106,7 +101,7 @@ public class MantPreMedios extends ventana
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2018-03-14" );
+      this.setVersion("2018-03-23" );
       statusBar = new StatusBar(this);
       
       iniciarFrame();
@@ -121,6 +116,7 @@ public class MantPreMedios extends ventana
      @Override
     public void iniciarVentana() throws Exception
     {
+       
         TIDE_AUTOCLASI= EU.getValorParam("tipdespclasi", TIDE_AUTOCLASI);
         TIDE_108A109= EU.getValorParam("tipdesp108A109", TIDE_108A109);
         htBolas.put(40201, 2.55);
@@ -184,184 +180,250 @@ public class MantPreMedios extends ventana
        {
             @Override
              public void actionPerformed(ActionEvent e) {
-              llenaBolas();  
+              calculaDatos();  
             }
        });
     }
-    void llenaBolas()
+    
+    void calculaDatos()
     {
         try
-        {
-            jtBolas.removeAllDatos();
-            Iterator<Integer> itBolas = htBolas.keySet().iterator();
-            Integer bola;
-           
-           String codBolas="";
-             
-           while (itBolas.hasNext())
-           {
-               bola=itBolas.next();
-               codBolas+=bola+","; 
-           }
-           codBolas=codBolas.substring(0,codBolas.length()-1);
-           String s="select a.pro_codi,sum(avp_canti) as kilos from v_albventa_detalle as a , "
-               + "clientes as c,v_despfin as d where a.cli_codi=c.cli_codi "+
-            " and avl_fecalt>='"+tar_feciniE.getFechaDB()+"'"+ //  -- Lunes
-            " and a.pro_codi in ("+codBolas+") "+
-            //" and d.def_serlot='G' "+
-            " and a.pro_codi=d.pro_codi and "
-               + "a.avp_ejelot=d.def_ejelot and a.avp_serlot=d.def_serlot and a.avp_numpar=d.pro_lote"
-               + " and a.avp_numind = d.pro_numind "+
-            " and d.def_tiempo>='"+tar_feciniE.getFechaDB()+"' " + // Lunes
-            " group  by a.pro_codi"+
-            " order by pro_codi";
-           String s1;
-           if (dtCon1.select(s))
-           {           
-            do
-            {
-                ArrayList v=new ArrayList();
-                v.add(dtCon1.getInt("pro_codi"));
-                v.add(MantArticulos.getNombProd(dtCon1.getInt("pro_codi"), dtStat));
-                s1="select sum(def_kilos) as kilos from v_despsal where pro_codi = "+dtCon1.getInt("pro_codi")+
-                    " and deo_fecha between '"+tar_feciniE.getFechaDB()+"' and '"+fecFinComE.getFechaDB()+"'";
-                dtStat.select(s1);
-                v.add(dtStat.getDouble("kilos",true)); // Kilos producidos
-                v.add(dtStat.getDouble("kilos",true)-dtCon1.getDouble("kilos",true)); // Kilos despiezados (por difencia)
-                v.add(dtCon1.getDouble("kilos",true));
-                double precio=htBolas.get(dtCon1.getInt("pro_codi"));
-                v.add(precio);
-                double importeVenta=dtCon1.getDouble("kilos",true)*precio;
-                double importeDesp=(dtStat.getDouble("kilos",true)-dtCon1.getDouble("kilos",true))*precioBolaE.getValorDec();
-                v.add((importeVenta+importeDesp)/dtStat.getDouble("kilos",true));
-                jtBolas.addLinea(v);
-            } while (dtCon1.next());
-           }
-           jtLomos.removeAllDatos();
-           
-           List<Integer> stLomos= Collections.list(htLomos.keys());
-           
-           Collections.sort(stLomos);
-           Iterator<Integer> it = stLomos.iterator();
-            
-           Integer lomo;           
-           while (it.hasNext())
-           {
-               lomo=it.next();
-               Integer[] codigos=htLomos.get(lomo);
-               int codigo1=codigos[0];
-               int codigo2=codigos[0];
-               if (codigos.length>1)
-                  codigo2=codigos[1];
-               boolean incCompra=false;// htLomCom.get(lomo);
-               s="select sum(lci_peso) as kilos from v_coninvent where lci_peso>0 and cci_feccon='"+fecStockE.getFechaDB()+"'"+
-                   " and (pro_codi="+codigo1+
-                   " or pro_codi= "+codigo2+")"+ 
-                   (incCompra?" and prp_part not in (select acc_nume from v_albacoc "
-                   + "where acc_fecrec>='"+fecIniComE.getFechaDB()+"')":"");
-              dtCon1.select(s);
-              double costoInv=pdprvades.getPrecioOrigen(dtStat,lomo, Formatear.sumaDiasDate(tar_feciniE.getDate(),-7));
-              ArrayList v=new ArrayList();
-              v.add(lomo);
-              v.add(MantArticulos.getNombProd(lomo, dtStat));
-              v.add(dtCon1.getDouble("kilos",true));
-              v.add(costoInv);
-              v.add(dtCon1.getDouble("kilos",true)*costoInv);
-              s="select sum(acl_canti) as kilos,sum(acl_canti*acl_prcom) as importe from v_albacom"
-                  + " where  acc_fecrec between '"+fecIniComE.getFechaDB()+
-                  "' and '"+ fecFinComE.getFechaDB()+"'"+
-                   " and (pro_codi="+codigo1+
-                   " or pro_codi= "+codigo2+")";
-              
-              dtCon1.select(s);
-              double kgEntra=dtCon1.getDouble("kilos",true);
-              double kilCompra=dtCon1.getDouble("kilos",true);
-              double impCompra=dtCon1.getDouble("importe",true);
-              s="select sum(deo_kilos) as kilos, sum(deo_kilos*c.acl_prcom) as importe "
-                  + "from v_despori as d,v_compras as c where  tid_codi= "+TIDE_AUTOCLASI+
-                   " and deo_fecha>='"+ tar_feciniE.getFechaDB()+"'"+ 
-                    " and deo_fecha<='"+ fecFinComE.getFechaDB()+"'"+ 
-                   " and c.acc_fecrec>='"+tar_feciniE.getFechaDB()+"'"+ 
-                   " and d.pro_codi=c.pro_codi "+
-                   " and d.pro_lote=c.acc_nume "+
-                   " and d.deo_ejelot=c.acc_ano "+
-                   " and deo_serlot=c.acc_serie "+
-                   " and pro_numind = c.acp_numind "+
-                   " and (c.pro_codi="+codigo1+
-                   " or c.pro_codi= "+codigo2+")";
-              dtCon1.select(s);
-              double kgB=dtCon1.getDouble("kilos",true);
-              kilCompra-=dtCon1.getDouble("kilos",true);
-              impCompra-=dtCon1.getDouble("importe",true);
-              // Sumo Despieces de 108 a 109
-              s="select pro_codi,deo_codi "
-                  + "from v_despsal as d where  tid_codi= "+TIDE_108A109+
-                  " and deo_fecha>='"+ fecIniComE.getFechaDB()+"'"+ 
-                  " and deo_fecha<='"+ fecFinComE.getFechaDB()+"'"+ 
-                   " and (pro_codi="+codigo1+
-                   " or pro_codi= "+codigo2+") "+
-                  " and def_prcost <= 0";
-              if (dtCon1.select(s))
-              {
-                  msgBox("DESPIECES DE TIPO 108 A 109 SIN VALORAR EN PRODUCTO: "+dtCon1.getInt("pro_codi")+
-                      " DESPIECE: "+dtCon1.getInt("deo_codi")     );
-                  return;
-              }
-              s="select sum(def_kilos) as kilos, sum(def_kilos*def_prcost) as importe "
-                  + "from v_despsal as d where  tid_codi= "+TIDE_108A109+
-                   " and deo_fecha>='"+ fecIniComE.getFechaDB()+"'"+ 
-                   " and deo_fecha<='"+ fecFinComE.getFechaDB()+"'"+ 
-                   " and (pro_codi="+codigo1+
-                   " or pro_codi= "+codigo2+")";
-              dtCon1.select(s);
-              double kg108=dtCon1.getDouble("kilos",true);
-              kilCompra+=dtCon1.getDouble("kilos",true);
-              impCompra+=dtCon1.getDouble("importe",true);
-              // Añado los pedidos cde compra
-              s="select * from v_pedico as c where "+
-                   "  pcc_fecrec between '"+ fecIniComE.getFechaDB()+"' and '"+ fecFinComE.getFechaDB()+"'"+ 
-                   " and pcc_estrec = 'P'" +// Solo pendientes.
-                   " and (c.pro_codi="+codigo1+
-                   " or c.pro_codi= "+codigo2+")";
-              double kgPed=0;
-              if (dtCon1.select(s))
-              {
-                  do
-                  {
-                      switch (dtCon1.getString("pcc_estad"))
-                      {
-                          case "P":
-                              kgPed+=dtCon1.getDouble("pcl_cantpe");
-                              kilCompra+=dtCon1.getDouble("pcl_cantpe");        
-                              impCompra+=dtCon1.getDouble("pcl_cantpe")*dtCon1.getDouble("pcl_precpe");
-                              break;
-                          case "C":           
-                              kgPed+=dtCon1.getDouble("pcl_cantco");
-                              kilCompra+=dtCon1.getDouble("pcl_cantco");        
-                              impCompra+=dtCon1.getDouble("pcl_cantco")*dtCon1.getDouble("pcl_precco");
-                              break;
-                          default:
-                              kgPed+=dtCon1.getDouble("pcl_cantfa");      
-                              kilCompra+=dtCon1.getDouble("pcl_cantfa");        
-                              impCompra+=dtCon1.getDouble("pcl_cantfa")*dtCon1.getDouble("pcl_precfa");
-                      }
-                  } while (dtCon1.next());
-              }
-              v.add(kilCompra);
-              v.add(kilCompra==0?0:impCompra/kilCompra);
-              v.add(impCompra);
-              v.add(kgEntra);
-              v.add(kgPed);
-              v.add(kgB);
-              v.add(kg108);
-             
-              jtLomos.addLinea(v);
-           }
-           
+        {           
+           calculaBolas();
+           calculaLomos();
         } catch (SQLException | ParseException k)
         {
             Error("Error al llenar grid bolas",k);
         }
+    }
+    void calculaLomos() throws SQLException, ParseException
+    { 
+        String s;
+        jtLomos.removeAllDatos();
+
+        List<Integer> stLomos = Collections.list(htLomos.keys());
+
+        Collections.sort(stLomos);
+        Iterator<Integer> it = stLomos.iterator();
+
+        Integer lomo;
+        while (it.hasNext())
+        {
+            lomo = it.next();
+            Integer[] codigos = htLomos.get(lomo);
+            int codigo1 = codigos[0];
+            int codigo2 = codigos[0];
+            if (codigos.length > 1)
+                codigo2 = codigos[1];
+            boolean incCompra = false;// htLomCom.get(lomo);
+            s = "select sum(lci_peso) as kilos from v_coninvent where lci_peso>0 and cci_feccon='" + fecStockE.getFechaDB() + "'"
+                + " and (pro_codi=" + codigo1
+                + " or pro_codi= " + codigo2 + ")"
+                + (incCompra ? " and prp_part not in (select acc_nume from v_albacoc "
+                    + "where acc_fecrec>='" + fecIniComE.getFechaDB() + "')" : "");
+            dtCon1.select(s);
+            double costoInv = pdprvades.getPrecioOrigen(dtStat, lomo, Formatear.sumaDiasDate(tar_feciniE.getDate(), -7));
+            ArrayList v = new ArrayList();
+            v.add(lomo);
+            v.add(MantArticulos.getNombProd(lomo, dtStat));
+            v.add(dtCon1.getDouble("kilos", true));
+            v.add(costoInv);
+            v.add(dtCon1.getDouble("kilos", true) * costoInv);
+            s = "select sum(acl_canti) as kilos,sum(acl_canti*acl_prcom) as importe from v_albacom"
+                + " where  acc_fecrec between '" + fecIniComE.getFechaDB()
+                + "' and '" + fecFinComE.getFechaDB() + "'"
+                + " and (pro_codi=" + codigo1
+                + " or pro_codi= " + codigo2 + ")";
+
+            dtCon1.select(s);
+            double kgEntra = dtCon1.getDouble("kilos", true);
+            double kilCompra = dtCon1.getDouble("kilos", true);
+            double impCompra = dtCon1.getDouble("importe", true);
+            s = "select sum(deo_kilos) as kilos, sum(deo_kilos*c.acl_prcom) as importe "
+                + "from v_despori as d,v_compras as c where  tid_codi= " + TIDE_AUTOCLASI
+                + " and deo_fecha>='" + tar_feciniE.getFechaDB() + "'"
+                + " and deo_fecha<='" + fecFinComE.getFechaDB() + "'"
+                + " and c.acc_fecrec>='" + tar_feciniE.getFechaDB() + "'"
+                + " and d.pro_codi=c.pro_codi "
+                + " and d.pro_lote=c.acc_nume "
+                + " and d.deo_ejelot=c.acc_ano "
+                + " and deo_serlot=c.acc_serie "
+                + " and pro_numind = c.acp_numind "
+                + " and (c.pro_codi=" + codigo1
+                + " or c.pro_codi= " + codigo2 + ")";
+            dtCon1.select(s);
+            double kgB = dtCon1.getDouble("kilos", true);
+            kilCompra -= dtCon1.getDouble("kilos", true);
+            impCompra -= dtCon1.getDouble("importe", true);
+            // Sumo Despieces de 108 a 109
+            s = "select pro_codi,deo_codi "
+                + "from v_despsal as d where  tid_codi= " + TIDE_108A109
+                + " and deo_fecha>='" + fecIniComE.getFechaDB() + "'"
+                + " and deo_fecha<='" + fecFinComE.getFechaDB() + "'"
+                + " and (pro_codi=" + codigo1
+                + " or pro_codi= " + codigo2 + ") "
+                + " and def_prcost <= 0";
+            if (dtCon1.select(s))
+            {
+                msgBox("DESPIECES DE TIPO 108 A 109 SIN VALORAR EN PRODUCTO: " + dtCon1.getInt("pro_codi")
+                    + " DESPIECE: " + dtCon1.getInt("deo_codi"));
+                return;
+            }
+            s = "select sum(def_kilos) as kilos, sum(def_kilos*def_prcost) as importe "
+                + "from v_despsal as d where  tid_codi= " + TIDE_108A109
+                + " and deo_fecha>='" + fecIniComE.getFechaDB() + "'"
+                + " and deo_fecha<='" + fecFinComE.getFechaDB() + "'"
+                + " and (pro_codi=" + codigo1
+                + " or pro_codi= " + codigo2 + ")";
+            dtCon1.select(s);
+            double kg108 = dtCon1.getDouble("kilos", true);
+            kilCompra += dtCon1.getDouble("kilos", true);
+            impCompra += dtCon1.getDouble("importe", true);
+            // Añado los pedidos cde compra
+            s = "select * from v_pedico as c where "
+                + "  pcc_fecrec between '" + fecIniComE.getFechaDB() + "' and '" + fecFinComE.getFechaDB() + "'"
+                + " and pcc_estrec = 'P'"
+                +// Solo pendientes.
+                " and (c.pro_codi=" + codigo1
+                + " or c.pro_codi= " + codigo2 + ")";
+            double kgPed = 0;
+            if (dtCon1.select(s))
+            {
+                do
+                {
+                    switch (dtCon1.getString("pcc_estad"))
+                    {
+                        case "P":
+                            kgPed += dtCon1.getDouble("pcl_cantpe");
+                            kilCompra += dtCon1.getDouble("pcl_cantpe");
+                            impCompra += dtCon1.getDouble("pcl_cantpe") * dtCon1.getDouble("pcl_precpe");
+                            break;
+                        case "C":
+                            kgPed += dtCon1.getDouble("pcl_cantco");
+                            kilCompra += dtCon1.getDouble("pcl_cantco");
+                            impCompra += dtCon1.getDouble("pcl_cantco") * dtCon1.getDouble("pcl_precco");
+                            break;
+                        default:
+                            kgPed += dtCon1.getDouble("pcl_cantfa");
+                            kilCompra += dtCon1.getDouble("pcl_cantfa");
+                            impCompra += dtCon1.getDouble("pcl_cantfa") * dtCon1.getDouble("pcl_precfa");
+                    }
+                } while (dtCon1.next());
+            }
+            v.add(kilCompra);
+            v.add(kilCompra == 0 ? 0 : impCompra / kilCompra);
+            v.add(impCompra);
+            v.add(kgEntra);
+            v.add(kgPed);
+            v.add(kgB);
+            v.add(kg108);
+
+            jtLomos.addLinea(v);
+        }
+    }
+    
+    void calculaBolas() throws SQLException, ParseException {
+        jtBolas.removeAllDatos();
+        Iterator<Integer> itBolas = htBolas.keySet().iterator();
+        Integer bola;
+        String codBolas = "";
+
+        while (itBolas.hasNext())
+        {
+            bola = itBolas.next();
+            codBolas += bola + ",";
+        }
+        codBolas = codBolas.substring(0, codBolas.length() - 1);
+        String s= "select d.pro_codi,st.stp_painac, 0 as kilventa,0 as kildesp, sum(def_kilos) as kilentra"
+            + " from v_despfin as d, stockpart as st "
+            + "where  d.pro_codi in (" + codBolas + ") "
+            + " and d.def_tiempo between '" + tar_feciniE.getFechaDB() + "' and '"+fecFinComE.getFechaDB()+"'"
+            + " and d.pro_codi = st.pro_codi "
+            + " and d.def_serlot = st.pro_serie "
+            + " and d.pro_lote = st.pro_nupar "
+            + " and d.def_ejelot = st.eje_nume "
+            + " and d.pro_numind = st.pro_numind "            
+            +" group  by d.pro_codi, stp_painac"
+        + " union all "
+            + "select a.pro_codi,st.stp_painac, sum(avp_canti) as kilventa,0 as kildesp,0 as kilentra"
+            + " from v_albventa_detalle as a, "
+            + "v_despfin as d,stockpart as st "
+            + "where avl_fecalt between '" + tar_feciniE.getFechaDB()  + "' and '"+fecFinComE.getFechaDB()+"'"
+            +" and a.pro_codi in (" + codBolas + ") "
+            + " and a.pro_codi=d.pro_codi and "
+            + "a.avp_ejelot=d.def_ejelot and a.avp_serlot=d.def_serlot and a.avp_numpar=d.pro_lote"
+            + " and a.avp_numind = d.pro_numind "
+            + " and d.def_tiempo between '" + tar_feciniE.getFechaDB() + "' and '"+fecFinComE.getFechaDB()+"'"
+            + " and d.pro_codi = st.pro_codi "
+            + " and d.def_serlot = st.pro_serie "
+            + " and d.pro_lote = st.pro_nupar "
+            + " and d.def_ejelot = st.eje_nume "
+            + " and d.pro_numind = st.pro_numind "            
+            +" group  by a.pro_codi, stp_painac"
+         + " union all "
+            + "select d.pro_codi,st.stp_painac, 0 as kilventa,sum(def_kilos) as kildesp,0 as  kilentra from  "
+            + "v_despori as d,stockpart as st, "
+            + " v_despfin as f "
+            + " where  d.pro_codi in (" + codBolas + ") "
+            + " and f.def_tiempo between '" + tar_feciniE.getFechaDB() + "' and '"+fecFinComE.getFechaDB()+"'"
+            + " and d.pro_codi = f.pro_codi "
+            + " and d.deo_serlot = f.def_serlot "
+            + " and d.pro_lote = f.pro_lote "
+            + " and d.deo_ejelot = f.def_ejelot "
+            + " and d.pro_numind = f.pro_numind "            
+            + " and d.deo_tiempo between '" + tar_feciniE.getFechaDB() + "' and '"+fecFinComE.getFechaDB()+"'"
+            + " and d.pro_codi = st.pro_codi "
+            + " and d.deo_serlot = st.pro_serie "
+            + " and d.pro_lote = st.pro_nupar "
+            + " and d.deo_ejelot = st.eje_nume "
+            + " and d.pro_numind = st.pro_numind "            
+            +" group  by d.pro_codi, stp_painac"+
+            " order by 1,2";
+        if (dtCon1.select(s))
+        {
+
+            int proCodi=dtCon1.getInt("pro_codi");
+            String pais=dtCon1.getString("stp_painac",true);
+            double kilVenta=0;
+            double kilDesp=0;
+            double kilEntra=0;            
+            do
+            {
+                if (proCodi!=dtCon1.getInt("pro_codi") || ! pais.equals(dtCon1.getString("stp_painac",true)))
+                {                 
+                    addLineaBola(proCodi,pais,kilVenta,kilEntra,kilDesp);
+                    kilVenta=0;
+                    kilDesp=0;
+                    kilEntra=0;
+                    proCodi=dtCon1.getInt("pro_codi");                    
+                    pais=dtCon1.getString("stp_painac",true);
+                }
+                kilVenta+=dtCon1.getDouble("kilventa");
+                kilEntra+=dtCon1.getDouble("kilentra");
+                kilDesp+=dtCon1.getDouble("kildesp");                               
+            } while (dtCon1.next());
+            addLineaBola(proCodi,pais,kilVenta,kilEntra,kilDesp);
+        }
+    }
+    void addLineaBola(int proCodi,String pais,double kilVenta,double kilEntra,double kilDesp) throws SQLException
+    {
+         if (pais==null)
+             pais="";
+         ArrayList v = new ArrayList();
+         v.add(proCodi);
+         v.add(MantArticulos.getNombProd(proCodi, dtStat));              
+         v.add(kilDesp);
+         v.add(kilVenta);
+         v.add(kilEntra);         
+          v.add(kilEntra-kilDesp-kilVenta);         
+         double precio = htBolas.get(dtCon1.getInt("pro_codi"));
+         v.add(precio);
+         double importeVenta = kilVenta * precio;
+         double importeDesp = kilDesp  * (pais.equals("DE")?precioBolaAlemE.getValorDec():
+             pais.equals("PO")?precioBolaPoloniaE.getValorDec():precioBolaOtrasE.getValorDec());
+         v.add((importeVenta + importeDesp) / kilEntra);         
+          v.add(pais);
+         jtBolas.addLinea(v);
     }
      void ponFechas() throws ParseException
     {
@@ -401,16 +463,22 @@ public class MantPreMedios extends ventana
         cLabel3 = new gnu.chu.controles.CLabel();
         eje_numeE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         jtLomos = new gnu.chu.controles.Cgrid(12);
-        jtBolas = new gnu.chu.controles.Cgrid(7);
+        jtBolas = new gnu.chu.controles.Cgrid(9);
+        PPrecioBola = new gnu.chu.controles.CPanel();
+        cLabel11 = new gnu.chu.controles.CLabel();
+        precioBolaPoloniaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"9.999");
+        cLabel13 = new gnu.chu.controles.CLabel();
+        cLabel14 = new gnu.chu.controles.CLabel();
+        precioBolaAlemE = new gnu.chu.controles.CTextField(Types.DECIMAL,"9.999");
+        cLabel15 = new gnu.chu.controles.CLabel();
+        precioBolaOtrasE = new gnu.chu.controles.CTextField(Types.DECIMAL,"9.999");
         PPie = new gnu.chu.controles.CPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
         fecStockE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel9 = new gnu.chu.controles.CLabel();
         fecIniComE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
-        cLabel11 = new gnu.chu.controles.CLabel();
         fecFinComE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel12 = new gnu.chu.controles.CLabel();
-        precioBolaE = new gnu.chu.controles.CTextField(Types.DECIMAL,"9.999");
 
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
@@ -450,6 +518,7 @@ public class MantPreMedios extends ventana
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         Pprinc.add(PCondi, gridBagConstraints);
@@ -489,6 +558,7 @@ public class MantPreMedios extends ventana
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -497,24 +567,29 @@ public class MantPreMedios extends ventana
         Pprinc.add(jtLomos, gridBagConstraints);
 
         jtBolas.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jtBolas.setPreferredSize(new java.awt.Dimension(40, 40));
+        jtBolas.setMaximumSize(new java.awt.Dimension(240, 40));
+        jtBolas.setMinimumSize(new java.awt.Dimension(240, 40));
+        jtBolas.setPreferredSize(new java.awt.Dimension(240, 40));
 
         ArrayList v=new ArrayList();
         v.add("Producto");//0
         v.add("Nombre"); // 1
-        v.add("Total"); // 2
-        v.add("Kg.Desp"); // 3
-        v.add("Kg.Venta"); // 4
-        v.add("Pr.Venta"); // 5
-        v.add("Pr.Medio"); // 6
+        v.add("Kg.Desp"); // 2
+        v.add("Kg.Venta"); // 3
+        v.add("Kg.Entra"); // 4
+        v.add("Kg.Inv"); // 5
+        v.add("Pr.Venta"); // 6
+        v.add("Pr.Medio"); // 7
+        v.add("Origen"); // 8
         jtBolas.setCabecera(v);
-        jtBolas.setAnchoColumna(new int[]{60,200,65,65,65,50,50});
-        jtBolas.setAlinearColumna(new int[]{0,0,2,2,2,2,2});
-        jtBolas.setFormatoColumna(2, "##,##9.99");
+        jtBolas.setAnchoColumna(new int[]{60,200,65,65,65,50,50,50,30});
+        jtBolas.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2,0});
+        jtBolas.setFormatoColumna(2, "--,--9.99");
         jtBolas.setFormatoColumna(3, "--,--9.99");
-        jtBolas.setFormatoColumna(4, "##,##9.99");
-        jtBolas.setFormatoColumna(5, "#9.99");
+        jtBolas.setFormatoColumna(4, "--,--9.99");
+        jtBolas.setFormatoColumna(5, "--,--9.99");
         jtBolas.setFormatoColumna(6, "#9.99");
+        jtBolas.setFormatoColumna(7, "#9.99");
         jtBolas.setAjustarGrid(true);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -526,53 +601,93 @@ public class MantPreMedios extends ventana
         gridBagConstraints.weighty = 1.0;
         Pprinc.add(jtBolas, gridBagConstraints);
 
+        PPrecioBola.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        PPrecioBola.setMaximumSize(new java.awt.Dimension(110, 100));
+        PPrecioBola.setMinimumSize(new java.awt.Dimension(110, 100));
+        PPrecioBola.setPreferredSize(new java.awt.Dimension(110, 100));
+        PPrecioBola.setLayout(null);
+
+        cLabel11.setText("Polaca");
+        PPrecioBola.add(cLabel11);
+        cLabel11.setBounds(0, 60, 60, 17);
+
+        precioBolaPoloniaE.setText("2.8");
+        PPrecioBola.add(precioBolaPoloniaE);
+        precioBolaPoloniaE.setBounds(70, 60, 35, 20);
+
+        cLabel13.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        cLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cLabel13.setText("Precio Despieces");
+        PPrecioBola.add(cLabel13);
+        cLabel13.setBounds(2, 5, 105, 20);
+
+        cLabel14.setText("Alemana");
+        PPrecioBola.add(cLabel14);
+        cLabel14.setBounds(0, 40, 60, 17);
+
+        precioBolaAlemE.setText("3.0");
+        precioBolaAlemE.setValorDec(2.95);
+        PPrecioBola.add(precioBolaAlemE);
+        precioBolaAlemE.setBounds(70, 40, 35, 20);
+
+        cLabel15.setText("Otras");
+        PPrecioBola.add(cLabel15);
+        cLabel15.setBounds(0, 80, 60, 17);
+
+        precioBolaOtrasE.setText("2.9");
+        PPrecioBola.add(precioBolaOtrasE);
+        precioBolaOtrasE.setBounds(70, 80, 35, 20);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 0);
+        Pprinc.add(PPrecioBola, gridBagConstraints);
+
         PPie.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         PPie.setMaximumSize(new java.awt.Dimension(560, 22));
         PPie.setMinimumSize(new java.awt.Dimension(560, 22));
-        PPie.setPreferredSize(new java.awt.Dimension(560, 22));
+        PPie.setPreferredSize(new java.awt.Dimension(500, 22));
         PPie.setLayout(null);
 
         cLabel7.setText("Fec.Stock");
         PPie.add(cLabel7);
-        cLabel7.setBounds(0, 3, 60, 17);
+        cLabel7.setBounds(20, 2, 60, 17);
 
         fecStockE.setMaximumSize(new java.awt.Dimension(10, 18));
         fecStockE.setMinimumSize(new java.awt.Dimension(10, 18));
         fecStockE.setPreferredSize(new java.awt.Dimension(10, 18));
         PPie.add(fecStockE);
-        fecStockE.setBounds(60, 3, 70, 17);
+        fecStockE.setBounds(80, 2, 70, 17);
 
         cLabel9.setText("Inic. Compra");
         PPie.add(cLabel9);
-        cLabel9.setBounds(140, 3, 80, 17);
+        cLabel9.setBounds(160, 2, 80, 17);
 
         fecIniComE.setMaximumSize(new java.awt.Dimension(10, 18));
         fecIniComE.setMinimumSize(new java.awt.Dimension(10, 18));
         fecIniComE.setPreferredSize(new java.awt.Dimension(10, 18));
         PPie.add(fecIniComE);
-        fecIniComE.setBounds(220, 3, 70, 17);
-
-        cLabel11.setText("Pr.Desp.");
-        PPie.add(cLabel11);
-        cLabel11.setBounds(460, 0, 60, 17);
+        fecIniComE.setBounds(240, 2, 70, 17);
 
         fecFinComE.setMaximumSize(new java.awt.Dimension(10, 18));
         fecFinComE.setMinimumSize(new java.awt.Dimension(10, 18));
         fecFinComE.setPreferredSize(new java.awt.Dimension(10, 18));
         PPie.add(fecFinComE);
-        fecFinComE.setBounds(380, 3, 70, 17);
+        fecFinComE.setBounds(400, 2, 70, 17);
 
         cLabel12.setText("Fin. Compra");
         PPie.add(cLabel12);
-        cLabel12.setBounds(300, 3, 70, 17);
-
-        precioBolaE.setValorDec(2.95);
-        PPie.add(precioBolaE);
-        precioBolaE.setBounds(520, 0, 35, 20);
+        cLabel12.setBounds(320, 2, 70, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 1.0;
         Pprinc.add(PPie, gridBagConstraints);
@@ -587,9 +702,13 @@ public class MantPreMedios extends ventana
     private gnu.chu.controles.CButton BirGrid;
     private gnu.chu.controles.CPanel PCondi;
     private gnu.chu.controles.CPanel PPie;
+    private gnu.chu.controles.CPanel PPrecioBola;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
+    private gnu.chu.controles.CLabel cLabel13;
+    private gnu.chu.controles.CLabel cLabel14;
+    private gnu.chu.controles.CLabel cLabel15;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel5;
@@ -602,7 +721,9 @@ public class MantPreMedios extends ventana
     private gnu.chu.controles.CTextField fecStockE;
     private gnu.chu.controles.Cgrid jtBolas;
     private gnu.chu.controles.Cgrid jtLomos;
-    private gnu.chu.controles.CTextField precioBolaE;
+    private gnu.chu.controles.CTextField precioBolaAlemE;
+    private gnu.chu.controles.CTextField precioBolaOtrasE;
+    private gnu.chu.controles.CTextField precioBolaPoloniaE;
     private gnu.chu.controles.CTextField tar_feciniE;
     // End of variables declaration//GEN-END:variables
 }

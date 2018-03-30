@@ -2213,7 +2213,7 @@ public class PdInvControl extends ventanaPad implements PAD
             kiltotE.setBounds(150, 13, 70, 17);
 
             Ppie.add(PAcum);
-            PAcum.setBounds(250, 2, 230, 40);
+            PAcum.setBounds(300, 0, 230, 40);
 
             Bgrupo.setText("F5");
             Bgrupo.setToolTipText("Copia los datos de la linea anterior");
@@ -2242,12 +2242,12 @@ public class PdInvControl extends ventanaPad implements PAD
             kiltotE1.setBounds(150, 13, 70, 17);
 
             Ppie.add(PAcum1);
-            PAcum1.setBounds(0, 2, 230, 40);
+            PAcum1.setBounds(60, 0, 230, 40);
 
             Bressub.setText("F2");
             Bressub.setToolTipText("Pone Contadores subtotal a 0");
             Ppie.add(Bressub);
-            Bressub.setBounds(480, 10, 50, 20);
+            Bressub.setBounds(0, 10, 50, 20);
 
             Baceptar.setText("Aceptar");
             Ppie.add(Baceptar);

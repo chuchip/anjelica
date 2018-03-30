@@ -380,7 +380,7 @@ public class coresinv extends ventana
       Presul.resetTexto();
       String condArticulo= (opIncTodo.isSelected()?"": " and a.pro_tiplot='V' ") +
           ( !opCong.isSelected() ? " and a.pro_artcon = 0 " : "") +
-          (pro_codiE.isNull() ? "" : " and pro_codi = " + pro_codiE.getValorInt());
+          (pro_codiE.isNull() ? "" : " and a.pro_codi = " + pro_codiE.getValorInt());
       s = "select 'VI' as tipo,a.pro_codi,"
           + " 0 as canti, sum(avl_canti*avl_prbase) as importe from v_albventa as v, v_articulo as a  " +
             " where avc_fecalb >= TO_DATE('" + feciniE.getText() +"','dd-MM-yyyy') " +

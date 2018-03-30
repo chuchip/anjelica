@@ -114,23 +114,6 @@ public class PfechaInv extends CPanel
         consFecha();
     }
   });
-//  intfr.addVetoableChangeListener(new VetoableChangeListener()
-//  {
-//    public void vetoableChange(PropertyChangeEvent evt)
-//				throws PropertyVetoException
-//    {
-//      if (iframe==null)
-//        return;
-//      if (! iframe.isVisible() || ! iniciado)
-//        return;
-//      System.out.println("xx: "+evt.getPropertyName());
-//      if (evt.getPropertyName().equals("selected"))
-//      {
-//        if (! new Boolean(evt.getNewValue().toString()).booleanValue())
-//          iframe.setVisible(false);
-//      }
-//    }
-//  });
 
   padre.addAncestorListener(new AncestorListener()
   {
@@ -218,7 +201,6 @@ public class PfechaInv extends CPanel
     {
       consFecha();
     }
-
  }
  public void Error(String s,Throwable k)
  {

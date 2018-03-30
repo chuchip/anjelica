@@ -930,7 +930,7 @@ public class CLinkBox
 
   protected void processCambio()
   {
-    if (!texto.isEnabled() || copia.trim().equals(texto.getText().trim()))
+    if (!texto.isEnabled() ||  ! hasCambio())
       return;
 
     copia=texto.getText();
@@ -1182,7 +1182,7 @@ public class CLinkBox
 
   public void setHasCambio(boolean hasCambio)
   {
-    texto.setHasCambio(hasCambio);
+    texto.setCambio(hasCambio);
   }
 
 
